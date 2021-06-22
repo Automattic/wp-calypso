@@ -20,7 +20,7 @@ interface Props {
 	endDate: Date | Moment | null | undefined;
 	startDateText: string;
 	endDateText: string;
-	buttonRef: object;
+	buttonRef: Record< string, unknown >;
 	onTriggerClick: () => void;
 	onClearClick: () => void;
 	triggerText: ( startDateText: string, endDateText: string ) => string;

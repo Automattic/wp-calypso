@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { Component, Fragment } from 'react';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
@@ -130,7 +129,7 @@ class CurrentPlan extends Component {
 		}
 
 		if ( JETPACK_SEARCH_PRODUCTS.includes( product ) ) {
-			const jetpackVersion = get( selectedSite, 'options.jetpack_version', 0 );
+			const jetpackVersion = selectedSite?.options?.jetpack_version ?? 0;
 			return <SearchProductThankYou { ...{ jetpackVersion } } />;
 		}
 

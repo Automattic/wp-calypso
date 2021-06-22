@@ -23,10 +23,6 @@ import getCartKey from './get-cart-key';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 
-// Aliasing wpcom functions explicitly bound to wpcom is required here;
-// otherwise we get `this is not defined` errors.
-const wpcom = wp.undocumented();
-
 const emptyCart = getEmptyResponseCart();
 
 const debug = debugFactory( 'calypso:checkout-system-decider' );
@@ -147,5 +143,5 @@ export default function CheckoutSystemDecider( {
 }
 
 function fetchStripeConfigurationWpcom( args ) {
-	return fetchStripeConfiguration( args, wpcom );
+	return fetchStripeConfiguration( args, wp );
 }

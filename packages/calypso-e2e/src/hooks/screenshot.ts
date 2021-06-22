@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { getScreenshotName } from '../media-helper';
+import { getFileName } from '../media-helper';
 
 /**
  * Type dependencies
@@ -33,5 +33,6 @@ export async function saveScreenshot( this: Context ): Promise< void > {
 		return;
 	}
 
-	await page.screenshot( { path: getScreenshotName( test.title ) } );
+	const path = getFileName( { name: test.title, type: 'screenshot' } );
+	await page.screenshot( { path: path } );
 }

@@ -69,8 +69,19 @@ function transmitDraftId( calypsoPort ) {
 function handlePostTrash( calypsoPort ) {
 	use( ( registry ) => {
 		return {
-			dispatch: ( namespace ) => {
+			dispatch: ( store ) => {
+				/**
+				 * Gutenberg 10.8.0 changed the way wp-data stores are referenced and uses
+				 * the store definition as the ID.
+				 * We need to keep supporting the old approach to make sure this also
+				 * works when Gutenberg < 10.8.0 is being used.
+				 * More context:
+				 * - https://github.com/WordPress/gutenberg/issues/27088;
+				 * - https://github.com/WordPress/gutenberg/pull/32153.
+				 **/
+				const namespace = store.name ?? store;
 				const actions = { ...registry.dispatch( namespace ) };
+
 				if ( namespace === 'core/editor' && actions.trashPost ) {
 					actions.trashPost = () => {
 						debug( 'override core/editor trashPost action to use postlist trash' );

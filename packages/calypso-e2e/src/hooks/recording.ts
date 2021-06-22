@@ -7,8 +7,13 @@ import { Context } from 'mocha';
 /**
  * Internal dependencies
  */
-import { getVideoName } from '../media-helper';
+import { getFileName } from '../media-helper';
 
+/**
+ * Clears the list of failed tests for a suite.
+ *
+ * @param {Context} this Current mocha context at the suite level.
+ */
 export async function clearFailedTest( this: Context ): Promise< void > {
 	// String here would be more logical as combination of magellan + mocha should result
 	// in at most one failure per run of mocha.
@@ -58,7 +63,7 @@ export async function saveVideo( this: Context ): Promise< void > {
 		await this.page.video().delete();
 	} else {
 		const original = await this.page.video().path();
-		const custom = getVideoName( this.failedTest[ 0 ] );
+		const custom = getFileName( { name: this.failedTest[ 0 ], type: 'video' } );
 		try {
 			await fs.rename( original, custom );
 		} catch ( err ) {

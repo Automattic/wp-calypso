@@ -5,23 +5,23 @@
 <!-- TOC -->
 
 - [Run tests](#run-tests)
-    - [Table of Contents](#table-of-contents)
-    - [Overview](#overview)
-    - [Target environment](#target-environment)
-        - [Staging](#staging)
-        - [Localhost](#localhost)
-    - [Running tests Selenium](#running-tests-selenium)
-        - [All tests](#all-tests)
-        - [Individual spec files](#individual-spec-files)
-        - [Individual suite](#individual-suite)
-    - [Running tests Playwright](#running-tests-playwright)
-        - [All tests](#all-tests)
-        - [Individual spec files](#individual-spec-files)
-        - [Individual suite](#individual-suite)
-    - [Execution parameters](#execution-parameters)
-        - [Headful](#headful)
-        - [Headless](#headless)
-    - [TeamCity](#teamcity)
+  - [Table of Contents](#table-of-contents)
+  - [Overview](#overview)
+  - [Target environment](#target-environment)
+    - [Staging](#staging)
+    - [Localhost](#localhost)
+  - [Running tests Selenium](#running-tests-selenium)
+    - [All tests](#all-tests)
+    - [Individual spec files](#individual-spec-files)
+    - [Individual suite](#individual-suite)
+  - [Running tests Playwright](#running-tests-playwright)
+    - [All tests](#all-tests)
+    - [Individual spec files](#individual-spec-files)
+    - [Individual suite](#individual-suite)
+  - [Execution parameters](#execution-parameters)
+    - [Headful](#headful)
+    - [Headless](#headless)
+  - [TeamCity](#teamcity)
 
 <!-- /TOC -->
 
@@ -240,7 +240,6 @@ Multiple viewport sizes can be specified in a similar manner:
 ```
 
 </details>
-
 
 ### Headless
 

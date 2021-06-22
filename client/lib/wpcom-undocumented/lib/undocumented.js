@@ -258,72 +258,6 @@ Undocumented.prototype.scheduleJetpackFullysync = function ( siteId, fn ) {
 	return this.wpcom.req.post( { path: endpointPath }, {}, fn );
 };
 
-Undocumented.prototype.invitesList = function ( siteId, data = {}, fn ) {
-	debug( '/sites/:site_id:/invites query', siteId, data );
-	return this.wpcom.req.get( '/sites/' + siteId + '/invites', data, fn );
-};
-
-Undocumented.prototype.getInvite = function ( siteId, inviteKey, fn ) {
-	debug( '/sites/:site_id:/invites/:inviteKey:/ query' );
-	return this.wpcom.req.get( { path: '/sites/' + siteId + '/invites/' + inviteKey }, fn );
-};
-
-Undocumented.prototype.acceptInvite = function ( invite, fn ) {
-	debug( '/sites/:site_id:/invites/:inviteKey:/accept query' );
-	const apiVersion = '1.2';
-
-	return this.wpcom.req.get(
-		'/sites/' + invite.site.ID + '/invites/' + invite.inviteKey + '/accept',
-		{
-			activate: invite.activationKey,
-			include_domain_only: true,
-			apiVersion,
-		},
-		fn
-	);
-};
-
-Undocumented.prototype.sendInvites = function (
-	siteId,
-	usernamesOrEmails,
-	role,
-	message,
-	isExternal,
-	fn
-) {
-	debug( '/sites/:site_id:/invites/new query' );
-	return this.wpcom.req.post(
-		'/sites/' + siteId + '/invites/new',
-		{},
-		{
-			invitees: usernamesOrEmails,
-			is_external: isExternal,
-			role: role,
-			message: message,
-			source: 'calypso',
-		},
-		fn
-	);
-};
-
-Undocumented.prototype.resendInvite = function ( siteId, inviteId, fn ) {
-	debug( '/sites/:site_id:/invites/:invite_id:/resend query' );
-	return this.wpcom.req.post( '/sites/' + siteId + '/invites/' + inviteId + '/resend', {}, {}, fn );
-};
-
-Undocumented.prototype.createInviteValidation = function ( siteId, usernamesOrEmails, role, fn ) {
-	debug( '/sites/:site_id:/invites/validate query' );
-	return this.wpcom.req.post(
-		'/sites/' + siteId + '/invites/validate',
-		{},
-		{
-			invitees: usernamesOrEmails,
-			role: role,
-		},
-		fn
-	);
-};
-
 // Used to preserve backslash in some known settings fields like custom time and date formats.
 function encode_backslash( value ) {
 	if ( typeof value !== 'string' || value.indexOf( '\\' ) === -1 ) {
@@ -948,6 +882,25 @@ Undocumented.prototype.getSitePlans = function ( siteDomain, fn ) {
 };
 
 /**
+ * Get a site specific details for WordPress.com featurs
+ *
+ * @param {Function} siteDomain The site slug
+ * @param {Function} fn The callback function
+ */
+Undocumented.prototype.getSiteFeatures = function ( siteDomain, fn ) {
+	debug( '/sites/:site_domain:/features query' );
+
+	return this._sendRequest(
+		{
+			path: `/sites/${ encodeURIComponent( siteDomain ) }/features`,
+			method: 'get',
+			apiVersion: '1.1',
+		},
+		fn
+	);
+};
+
+/**
  * Get cart.
  *
  * @param {string} cartKey The cart's key.
@@ -1079,17 +1032,6 @@ Undocumented.prototype.sitesExternalServices = function ( siteId, fn ) {
 		},
 		fn
 	);
-};
-
-/**
- * Return a list of happiness engineers gravatar urls
- *
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.getHappinessEngineers = function ( fn ) {
-	debug( 'meta/happiness-engineers/ query' );
-
-	return this.wpcom.req.get( { path: '/meta/happiness-engineers/' }, fn );
 };
 
 /**
@@ -1345,44 +1287,6 @@ Undocumented.prototype.transactions = function ( data, fn ) {
 Undocumented.prototype.updateCreditCard = function ( params, fn ) {
 	const data = pick( params, [ 'payment_partner', 'paygate_token' ] );
 	return this.wpcom.req.post( '/upgrades/' + params.purchaseId + '/update-credit-card', data, fn );
-};
-
-/**
- * GET paygate configuration
- *
- * @param {object} query - query parameters
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.paygateConfiguration = function ( query, fn ) {
-	debug( '/me/paygate-configuration query' );
-
-	return this.wpcom.req.get( '/me/paygate-configuration', query, fn );
-};
-
-/**
- * GET stripe configuration
- *
- * @param {object} query - query parameters
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.stripeConfiguration = function ( query, fn ) {
-	debug( '/me/stripe-configuration query' );
-
-	return this.wpcom.req.get( '/me/stripe-configuration', query, fn );
-};
-
-/**
- * GET ebanx js configuration
- *
- * @param {object} query - query parameters
- * @param {Function} fn The callback function
- *
- * @returns {Promise} promise
- */
-Undocumented.prototype.ebanxConfiguration = function ( query, fn ) {
-	debug( '/me/ebanx-configuration query' );
-
-	return this.wpcom.req.get( '/me/ebanx-configuration', query, fn );
 };
 
 /**

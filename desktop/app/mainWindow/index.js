@@ -47,6 +47,10 @@ function showAppWindow() {
 		windowConfig.webPreferences.allowRunningInsecureContent = true;
 	}
 
+	if ( process.platform === 'linux' ) {
+		windowConfig.icon = getPath( 'app-logo.png' );
+	}
+
 	mainWindow = new BrowserWindow( {
 		...windowConfig,
 		...bounds,
@@ -67,21 +71,28 @@ function showAppWindow() {
 		width: bounds.width,
 		height: bounds.height - TITLE_BAR_HEIGHT,
 	} );
+
+	// Windows and Linux don't resize properly and require extra space added to fit properly after resize.
 	mainWindow.on( 'resize', function () {
-		const newBounds = mainWindow.getBounds();
+		setTimeout( () => {
+			const newBounds = mainWindow.getBounds();
+			const boundsPadding = { width: 0, height: TITLE_BAR_HEIGHT };
+			if ( process.platform === 'win32' ) {
+				boundsPadding.width = 15;
+				boundsPadding.height = TITLE_BAR_HEIGHT + 55;
+			}
+			if ( process.platform === 'linux' ) {
+				boundsPadding.width = 1;
+				boundsPadding.height = TITLE_BAR_HEIGHT + 25;
+			}
 
-		// Windows doesn't resize properly and requires extra space added to fit properly after resize.
-		const boundsPadding =
-			process.platform === 'win32'
-				? { width: 20, height: TITLE_BAR_HEIGHT + 55 }
-				: { width: 0, height: TITLE_BAR_HEIGHT };
-
-		mainView.setBounds( {
-			x: 0,
-			y: TITLE_BAR_HEIGHT,
-			width: newBounds.width - boundsPadding.width,
-			height: newBounds.height - boundsPadding.height,
-		} );
+			mainView.setBounds( {
+				x: 0,
+				y: TITLE_BAR_HEIGHT,
+				width: newBounds.width - boundsPadding.width,
+				height: newBounds.height - boundsPadding.height,
+			} );
+		}, 10 );
 	} );
 
 	SessionManager.init( mainWindow );

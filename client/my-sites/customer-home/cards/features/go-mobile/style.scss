@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .customer-home__layout-col-right {
 	@include breakpoint-deprecated( '<480px' ) {
 		.go-mobile__subheader.customer-home__card-subheader {
@@ -7,7 +10,11 @@
 }
 
 .go-mobile.card {
-	padding: 16px 24px;
+	padding: 16px;
+
+	@include break-mobile {
+		padding: 16px 24px;
+	}
 }
 
 .go-mobile__app-badges {
@@ -23,6 +30,11 @@
 	padding-top: 20px;
 	border-top: 1px solid var( --color-neutral-5 );
 	color: var( --color-text-subtle );
+	display: none;
+
+	@include break-large() {
+		display: block;
+	}
 }
 
 .go-mobile__email-link-button {

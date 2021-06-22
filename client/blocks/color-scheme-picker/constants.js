@@ -34,6 +34,14 @@ import ectoplasmImg from 'calypso/assets/images/color-schemes/color-scheme-thumb
 export default function ( translate ) {
 	return compact( [
 		{
+			label: translate( 'Default' ),
+			value: 'classic-dark',
+			thumbnail: {
+				cssClass: 'is-classic-dark',
+				imageUrl: classicDarkImg,
+			},
+		},
+		{
 			label: translate( 'Aquatic' ),
 			value: 'aquatic',
 			thumbnail: {
@@ -63,14 +71,6 @@ export default function ( translate ) {
 			thumbnail: {
 				cssClass: 'is-classic-bright',
 				imageUrl: classicBrightImg,
-			},
-		},
-		{
-			label: translate( 'Classic Dark' ),
-			value: 'classic-dark',
-			thumbnail: {
-				cssClass: 'is-classic-dark',
-				imageUrl: classicDarkImg,
 			},
 		},
 		{

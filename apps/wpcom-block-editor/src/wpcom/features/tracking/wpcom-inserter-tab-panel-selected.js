@@ -13,15 +13,20 @@ const gutenbergTabPanelName = ( tabPanel ) =>
 /**
  * Return the event definition object to track `wpcom_block_picker_tab_panel_selected`.
  *
- * @returns {{handler: Function, selector: string, type: string}} event object definition.
+ * @returns {import('./types').DelegateEventHandler} event object definition.
  */
 export default () => ( {
-	// It would be nice to filter out events where the tab `is-active` before
-	// the click, but we can't do that because the update has already happened
-	selector: ( e ) => gutenbergTabPanelName( e.target ),
+	id: 'wpcom-inserter-tab-panel-selected',
+	selector: `.block-editor-inserter__tabs .components-tab-panel__tabs button:not(.is-active)`,
 	type: 'click',
-	handler: ( _event, tabName ) =>
+	// Using capture event listener to make sure the tab is not set to active
+	// before this event listener runs. This way we can prevent the listener
+	// from triggering when the tab is already active.
+	capture: true,
+	handler: ( event ) => {
+		const tabName = gutenbergTabPanelName( event.target );
 		tracksRecordEvent( 'wpcom_block_picker_tab_panel_selected', {
 			tab: tabName,
-		} ),
+		} );
+	},
 } );

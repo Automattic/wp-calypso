@@ -36,8 +36,4 @@ export default class WPAdminNewUserPage extends AsyncBaseContainer {
 			successNoticeLocator
 		);
 	}
-
-	static async refreshIfJNError( driver ) {
-		return await driverHelper.refreshIfJNError( driver );
-	}
 }

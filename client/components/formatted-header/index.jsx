@@ -25,12 +25,14 @@ function FormattedHeader( {
 	compactOnMobile,
 	align,
 	isSecondary,
+	hasScreenOptions,
 } ) {
 	const classes = classNames( 'formatted-header', className, {
 		'is-without-subhead': ! subHeaderText,
 		'is-compact-on-mobile': compactOnMobile,
 		'is-left-align': 'left' === align,
 		'is-right-align': 'right' === align,
+		'has-screen-options': hasScreenOptions,
 	} );
 
 	const headerClasses = classNames( 'formatted-header__title', { 'wp-brand-font': brandFont } );

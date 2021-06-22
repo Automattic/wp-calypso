@@ -35,9 +35,13 @@ $min_results_height: 180px;
 	.help-search__cta {
 		display: flex;
 		align-items: center;
-		padding: 10px $card_padding_large;
+		padding: 10px $card_padding_small;
 		color: var( --color-text );
 		line-height: 1;
+
+		@include break-mobile {
+			padding: 10px $card_padding_large;
+		}
 
 		&:hover,
 		&:focus {

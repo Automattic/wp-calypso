@@ -26,6 +26,7 @@
 	],
 	"oauth_client_id": 69041,
 	"features": {
+		"ad-tracking": true,
 		"activity-log/v2": true,
 		"always_use_logout_url": true,
 		"current-site/domain-warning": false,
@@ -69,5 +70,6 @@
 	"site_filter": [ "jetpack" ],
 	"theme": "jetpack-cloud",
 	"restricted_me_access": false,
-	"theme_color": "#2fb41f"
+	"theme_color": "#2fb41f",
+	"google_analytics_key": "G-K8CRH0LL00"
 }

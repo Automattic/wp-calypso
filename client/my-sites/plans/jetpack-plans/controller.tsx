@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { isEnabled } from '@automattic/calypso-config';
+import { TERM_MONTHLY, TERM_ANNUALLY } from '@automattic/calypso-products';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -12,13 +13,49 @@ import { getPlanRecommendationFromContext } from './plan-upgrade/utils';
 import SelectorPage from './selector';
 import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { TERM_ANNUALLY } from '@automattic/calypso-products';
-import { getHighlightedProduct, stringToDuration } from './utils';
+import { getMonthlySlugFromYearly, getYearlySlugFromMonthly } from './convert-slug-terms';
 
 /**
  * Type dependencies
  */
 import type { Duration, QueryArgs } from './types';
+
+function stringToDuration( duration?: string ): Duration | undefined {
+	if ( duration === undefined ) {
+		return undefined;
+	}
+	if ( duration === 'monthly' ) {
+		return TERM_MONTHLY;
+	}
+	return TERM_ANNUALLY;
+}
+
+/**
+ * Return the slug of a highlighted product if the given slug is Jetpack product
+ * slug, otherwise, return null.
+ *
+ * @param {string} productSlug the slug of a Jetpack product
+ *
+ * @returns {[string, string] | null} the monthly and yearly slug of a supported Jetpack product
+ */
+function getHighlightedProduct( productSlug?: string ): [ string, string ] | null {
+	if ( ! productSlug ) {
+		return null;
+	}
+
+	// If neither of these methods return a slug, it means that the `productSlug`
+	// is not really a Jetpack product slug.
+	const yearlySlug = getYearlySlugFromMonthly( productSlug );
+	const monthlySlug = getMonthlySlugFromYearly( productSlug );
+
+	if ( monthlySlug ) {
+		return [ monthlySlug, productSlug ];
+	} else if ( yearlySlug ) {
+		return [ productSlug, yearlySlug ];
+	}
+
+	return null;
+}
 
 export const productSelect = ( rootUrl: string ): PageJS.Callback => ( context, next ) => {
 	// Get the selected site's current plan term, and set it as default duration

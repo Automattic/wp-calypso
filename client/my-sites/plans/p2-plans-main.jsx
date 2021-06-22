@@ -3,7 +3,6 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -39,10 +38,6 @@ export class P2PlansMain extends Component {
 	}
 }
 
-export default connect( ( state, props ) => {
-	const siteId = get( props.site, [ 'ID' ] );
-
-	return {
-		siteId,
-	};
-} )( localize( P2PlansMain ) );
+export default connect( ( state, props ) => ( {
+	siteId: props.site?.ID,
+} ) )( localize( P2PlansMain ) );

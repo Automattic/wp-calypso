@@ -26,6 +26,7 @@ class MediaLibraryExternalHeader extends React.Component {
 		site: PropTypes.object.isRequired,
 		visible: PropTypes.bool.isRequired,
 		canCopy: PropTypes.bool,
+		postId: PropTypes.number,
 		selectedItems: PropTypes.array,
 		onSourceChange: PropTypes.func,
 		sticky: PropTypes.bool,
@@ -88,10 +89,10 @@ class MediaLibraryExternalHeader extends React.Component {
 	}
 
 	onCopy = () => {
-		const { site, selectedItems, source, onSourceChange } = this.props;
+		const { postId, site, selectedItems, source, onSourceChange } = this.props;
 
 		onSourceChange( '', () => {
-			this.props.addExternalMedia( selectedItems, site, source );
+			this.props.addExternalMedia( selectedItems, site, postId, source );
 		} );
 	};
 

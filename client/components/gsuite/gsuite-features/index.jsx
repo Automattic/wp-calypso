@@ -14,6 +14,9 @@ import {
 	GSUITE_BUSINESS_SLUG,
 } from 'calypso/lib/gsuite/constants';
 import GSuiteSingleFeature from './single-feature';
+import googleDocsIcon from 'calypso/assets/images/email-providers/google-workspace/services/docs.svg';
+import googleDriveIcon from 'calypso/assets/images/email-providers/google-workspace/services/drive.svg';
+import gmailIcon from 'calypso/assets/images/email-providers/google-workspace/services/gmail.svg';
 
 /**
  * Style dependencies
@@ -64,7 +67,7 @@ const GSuiteFeatures = ( { compact, domainName, productSlug, type } ) => {
 						? undefined
 						: translate( 'Professional ad-free email that works with most email clients.' )
 				}
-				imagePath={ '/calypso/images/g-suite/logo_gmail_48dp.svg' }
+				imagePath={ gmailIcon }
 				imageAlt={ 'Gmail Logo' }
 				compact={ compact }
 			/>
@@ -75,14 +78,14 @@ const GSuiteFeatures = ( { compact, domainName, productSlug, type } ) => {
 						? undefined
 						: translate( 'Collaborate in real-time with documents, spreadsheets and slides.' )
 				}
-				imagePath={ '/calypso/images/g-suite/logo_docs_48dp.svg' }
+				imagePath={ googleDocsIcon }
 				imageAlt={ 'Google Docs Logo' }
 				compact={ compact }
 			/>
 			<GSuiteSingleFeature
 				title={ getStorageTitle() }
 				description={ getStorageText() }
-				imagePath={ '/calypso/images/g-suite/logo_drive_48dp.svg' }
+				imagePath={ googleDriveIcon }
 				imageAlt={ 'Google Drive Logo' }
 				compact={ compact }
 			/>

@@ -3,15 +3,15 @@
 <!-- TOC -->
 
 - [Style Guide](#style-guide)
-    - [Tests](#tests)
-    - [Components](#components)
-    - [Page Objects](#page-objects)
-    - [Flows](#flows)
-    - [Async / Await](#async--await)
-    - [Selectors](#selectors)
-        - [Type](#type)
-        - [Naming](#naming)
-    - [Test Naming](#test-naming)
+  - [Tests](#tests)
+  - [Components](#components)
+  - [Page Objects](#page-objects)
+  - [Flows](#flows)
+  - [Async / Await](#async--await)
+  - [Selectors](#selectors)
+    - [Type](#type)
+    - [Naming](#naming)
+  - [Test Naming](#test-naming)
 
 <!-- /TOC -->
 

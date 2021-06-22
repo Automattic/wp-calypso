@@ -15,7 +15,7 @@ import { connectSocialUser, disconnectSocialUser } from 'calypso/state/login/act
 import FormButton from 'calypso/components/forms/form-button';
 import GoogleLoginButton from 'calypso/components/social-buttons/google';
 import AppleLoginButton from 'calypso/components/social-buttons/apple';
-import user from 'calypso/lib/user';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 
 class SocialLoginActionButton extends Component {
 	static propTypes = {
@@ -33,12 +33,12 @@ class SocialLoginActionButton extends Component {
 		fetchingUser: false,
 	};
 
-	refreshUser = () => {
-		user().fetch();
-
+	refreshUser = async () => {
 		this.setState( { fetchingUser: true } );
 
-		user().once( 'change', () => this.setState( { fetchingUser: false } ) );
+		await this.props.fetchCurrentUser();
+
+		this.setState( { fetchingUser: false } );
 	};
 
 	handleSocialServiceResponse = ( response ) => {
@@ -150,5 +150,6 @@ export default connect(
 	{
 		connectSocialUser,
 		disconnectSocialUser,
+		fetchCurrentUser,
 	}
 )( localize( SocialLoginActionButton ) );

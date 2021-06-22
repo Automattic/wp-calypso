@@ -3414,18 +3414,9 @@ describe( 'selectors', () => {
 			);
 		} );
 
-		test( "should return true if user can't manage a site, but it has background transfer and atomic store flow is enabled", () => {
+		test( "should return true if user can't manage a site, but it has background transfer", () => {
 			expect( canCurrentUserUseAnyWooCommerceBasedStore( createState( false, false, true ) ) ).toBe(
 				true
-			);
-		} );
-
-		test( "should return false if user can't manage a site, but it has background transfer and atomic store flow is disabled", () => {
-			// Enable all features except for the atomic store flow
-			config.isEnabled.mockImplementation( ( feature ) => feature !== 'signup/atomic-store-flow' );
-
-			expect( canCurrentUserUseAnyWooCommerceBasedStore( createState( false, false, true ) ) ).toBe(
-				false
 			);
 		} );
 	} );
@@ -3495,19 +3486,10 @@ describe( 'selectors', () => {
 			).toBe( false );
 		} );
 
-		test( "should return true if user can't manage a site, but it has background transfer and atomic store flow is enabled", () => {
+		test( "should return true if user can't manage a site, but it has background transfer", () => {
 			expect(
 				canCurrentUserUseWooCommerceCoreStore( createState( false, false, true, PLAN_ECOMMERCE ) )
 			).toBe( true );
-		} );
-
-		test( "should return false if user can't manage a site, but it has background transfer and atomic store flow is disabled", () => {
-			// Enable all features except for the atomic store flow
-			config.isEnabled.mockImplementation( ( feature ) => feature !== 'signup/atomic-store-flow' );
-
-			expect(
-				canCurrentUserUseWooCommerceCoreStore( createState( false, false, true, PLAN_ECOMMERCE ) )
-			).toBe( false );
 		} );
 
 		test( 'should return false if site is not eCommerce or Business', () => {

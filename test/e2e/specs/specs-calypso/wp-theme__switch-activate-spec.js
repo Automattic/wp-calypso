@@ -14,10 +14,12 @@ import LoginFlow from '../../lib/flows/login-flow.js';
 import CustomizerPage from '../../lib/pages/customizer-page';
 import ThemesPage from '../../lib/pages/themes-page.js';
 import ThemeDialogComponent from '../../lib/components/theme-dialog-component.js';
+import ThemeSwitchConfirmationComponent from '../../lib/components/theme-switch-confirmation-component.js';
 import SidebarComponent from '../../lib/components/sidebar-component';
 import WPAdminCustomizerPage from '../../lib/pages/wp-admin/wp-admin-customizer-page.js';
 import WPAdminLogonPage from '../../lib/pages/wp-admin/wp-admin-logon-page.js';
 import * as dataHelper from '../../lib/data-helper';
+import * as driverHelper from '../../lib/driver-helper';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
@@ -41,12 +43,19 @@ describe( `[${ host }] Activating Themes: (${ screenSize }) @parallel`, function
 		const themesPage = await ThemesPage.Expect( this.driver );
 		await themesPage.waitUntilThemesLoaded();
 		await themesPage.showOnlyFreeThemes();
-		await themesPage.searchFor( 'Twenty F' );
-		await themesPage.waitForThemeStartingWith( 'Twenty F' );
+		await themesPage.searchFor( 'Twenty Twen' );
+		await themesPage.waitForThemeStartingWith( 'Twenty Twen' );
 		await themesPage.clickNewThemeMoreButton();
 		const displayed = await themesPage.popOverMenuDisplayed();
 		assert( displayed, true, 'Popover menu not displayed' );
 		return await themesPage.clickPopoverItem( 'Activate' );
+	} );
+
+	it( 'Can see the theme switch confirmation dialog', async function () {
+		const themeSwitchConfirmationComponent = await ThemeSwitchConfirmationComponent.Expect(
+			this.driver
+		);
+		await themeSwitchConfirmationComponent.activateTheme();
 	} );
 
 	it( 'Can see the theme thanks dialog', async function () {
@@ -65,7 +74,7 @@ describe( `[${ host }] Activating Themes: (${ screenSize }) @parallel`, function
 		} );
 
 		it( 'Can customize the site from the theme thanks dialog', async function () {
-			await WPAdminCustomizerPage.refreshIfJNError( this.driver );
+			await driverHelper.refreshIfJNError( this.driver );
 			return await WPAdminCustomizerPage.Expect( this.driver );
 		} );
 	}

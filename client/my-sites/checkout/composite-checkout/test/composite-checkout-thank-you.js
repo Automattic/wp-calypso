@@ -16,13 +16,6 @@ import {
 } from '@automattic/calypso-products';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
-let mockGSuiteCountryIsValid = true;
-jest.mock( 'calypso/lib/user', () =>
-	jest.fn( () => ( {
-		get: () => ( { is_valid_google_apps_country: mockGSuiteCountryIsValid } ),
-	} ) )
-);
-
 jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud', () => jest.fn() );
 jest.mock( '@automattic/calypso-products', () => ( {
 	...jest.requireActual( '@automattic/calypso-products' ),
@@ -662,7 +655,6 @@ describe( 'getThankYouPageUrl', () => {
 				},
 			],
 		};
-		mockGSuiteCountryIsValid = true;
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
@@ -685,7 +677,6 @@ describe( 'getThankYouPageUrl', () => {
 				},
 			],
 		};
-		mockGSuiteCountryIsValid = false;
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
@@ -708,7 +699,6 @@ describe( 'getThankYouPageUrl', () => {
 				},
 			],
 		};
-		mockGSuiteCountryIsValid = false;
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
@@ -730,7 +720,6 @@ describe( 'getThankYouPageUrl', () => {
 				},
 			],
 		};
-		mockGSuiteCountryIsValid = false;
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',

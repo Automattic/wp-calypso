@@ -66,6 +66,7 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	total_tax: string; // Please try not to use this
 	total_tax_integer: number;
 	total_tax_display: string;
+	total_tax_breakdown: TaxBreakdownItem[];
 	total_cost: number; // Please try not to use this
 	total_cost_integer: number;
 	total_cost_display: string;
@@ -100,6 +101,15 @@ export interface ResponseCartTaxData {
 		subdivision_code?: string;
 	};
 	display_taxes: boolean;
+}
+
+export interface TaxBreakdownItem {
+	tax_collected: number;
+	tax_collected_integer: number;
+	tax_collected_display: string;
+	label?: string;
+	rate: number;
+	rate_display: string;
 }
 
 /**

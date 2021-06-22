@@ -2,6 +2,7 @@
  * WordPress dependencies
  */
 import {
+	getCurrentUser,
 	recordTracksEvent,
 	getTracksAnonymousUserId,
 	getTracksLoadPromise,
@@ -10,7 +11,6 @@ import {
 /**
  * Internal dependencies
  */
-import userUtils from 'calypso/lib/user/utils';
 import { logError } from './log-error';
 
 // SSR safety: Fail TypeScript compilation if `window` is used without an explicit undefined check
@@ -65,7 +65,7 @@ export const initializeAnonId = async (): Promise< string | null > => {
 				return;
 			}
 
-			if ( anonIdPollingIntervalMaxAttempts - 1 <= attempt || userUtils.isLoggedIn() ) {
+			if ( anonIdPollingIntervalMaxAttempts - 1 <= attempt || getCurrentUser() ) {
 				clearInterval( anonIdPollingInterval );
 				res( null );
 				return;

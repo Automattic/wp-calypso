@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
+import i18nCalypso, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import page from 'page';
 
 /**
@@ -105,6 +105,7 @@ export const QuickLinks = ( {
 			{ showCustomizer && (
 				<ActionBox
 					href={ menusUrl }
+					hideLinkIndicator
 					onClick={ trackEditMenusAction }
 					label={ translate( 'Edit menus' ) }
 					materialIcon="list"
@@ -113,6 +114,7 @@ export const QuickLinks = ( {
 			{ showCustomizer && (
 				<ActionBox
 					href={ customizeUrl }
+					hideLinkIndicator
 					onClick={ trackCustomizeThemeAction }
 					label={ translate( 'Customize theme' ) }
 					materialIcon="palette"
@@ -140,7 +142,13 @@ export const QuickLinks = ( {
 				href="https://wp.me/logo-maker"
 				onClick={ trackDesignLogoAction }
 				target="_blank"
-				label={ translate( 'Create a logo' ) }
+				label={
+					getLocaleSlug() === 'en' ||
+					getLocaleSlug() === 'en-gb' ||
+					i18nCalypso.hasTranslation( 'Create a logo with Fiverr' )
+						? translate( 'Create a logo with Fiverr' )
+						: translate( 'Create a logo' )
+				}
 				external
 				iconSrc={ fiverrIcon }
 			/>

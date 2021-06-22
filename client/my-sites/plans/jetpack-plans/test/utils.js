@@ -16,11 +16,11 @@ import {
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 } from '@automattic/calypso-products';
 import { getProductCost } from 'calypso/state/products-list/selectors/get-product-cost';
+import getHighestAnnualDiscount from 'calypso/my-sites/plans/jetpack-plans/plans-filter-bar/get-highest-annual-discount';
 import {
-	getHighestAnnualDiscount,
 	getMonthlySlugFromYearly,
 	getYearlySlugFromMonthly,
-} from 'calypso/my-sites/plans/jetpack-plans/utils';
+} from 'calypso/my-sites/plans/jetpack-plans/convert-slug-terms';
 
 let mockProductPrices;
 

@@ -23,7 +23,7 @@ import FormVerificationCodeInput from 'calypso/components/forms/form-verificatio
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import Notice from 'calypso/components/notice';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import userUtilities from 'calypso/lib/user/utils';
+import { redirectToLogout } from 'calypso/state/current-user/actions';
 import SecurityKeyForm from './security-key-form';
 import TwoFactorActions from './two-factor-actions';
 
@@ -185,7 +185,10 @@ class ReauthRequired extends React.Component {
 				<p>
 					<a
 						className="reauth-required__sign-out"
-						onClick={ this.getClickHandler( 'Reauth Required Log Out Link', userUtilities.logout ) }
+						onClick={ this.getClickHandler(
+							'Reauth Required Log Out Link',
+							this.props.redirectToLogout
+						) }
 					>
 						{ this.props.translate( 'Not you? Log out' ) }
 					</a>
@@ -312,5 +315,8 @@ export default connect(
 	( state ) => ( {
 		currentUserId: getCurrentUserId( state ),
 	} ),
-	{ recordGoogleEvent }
+	{
+		redirectToLogout,
+		recordGoogleEvent,
+	}
 )( localize( ReauthRequired ) );

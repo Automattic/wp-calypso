@@ -11,7 +11,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -155,10 +154,9 @@ export default connect( ( state ) => {
 	const isJetpack = isJetpackSite( state, siteId );
 	const isAtomic = isSiteWpcomAtomic( state, siteId );
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
-	const hasSharedaddy = isJetpackModuleActive( state, siteId, 'sharedaddy' );
 
 	return {
-		showButtons: siteId && canManageOptions && ( ! isJetpack || hasSharedaddy ),
+		showButtons: siteId && canManageOptions,
 		showConnections: !! siteId,
 		showTraffic: canManageOptions && !! siteId,
 		showBusinessTools: ( !! siteId && canManageOptions && ! isJetpack ) || isAtomic,

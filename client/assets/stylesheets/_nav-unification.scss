@@ -253,7 +253,9 @@
 			transform: translateX( -100% );
 			padding: 71px 24px 24px;
 		}
+	}
 
+	@media only screen and ( max-width: 660px ) {
 		.layout.focus-sites:not( .is-section-post-editor ) .layout__primary .main,
 		.layout.focus-sidebar:not( .is-section-post-editor ) .layout__primary .main {
 			transform: translateX( 100% );
@@ -272,5 +274,13 @@
 .theme-default.is-contrast.is-nav-unification {
 	.layout__secondary {
 		outline: 1px solid var( --color-sidebar-border );
+	}
+}
+
+// Ensure that the sidebar always remains on top.
+// Related issue: https://github.com/Automattic/wp-calypso/issues/53504
+.is-nav-unification {
+	.layout__secondary {
+		z-index: z-index( 'root', '.is-nav-unification .layout__secondary' );
 	}
 }

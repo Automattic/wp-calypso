@@ -11,6 +11,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
+import { addQueryArgs } from 'calypso/lib/route';
 import SignupForm from 'calypso/blocks/signup-form';
 import InviteFormHeader from 'calypso/my-sites/invites/invite-form-header';
 import { login } from 'calypso/lib/paths';
@@ -83,7 +84,10 @@ class InviteAcceptLoggedOut extends React.Component {
 		const { userData, bearerToken } = this.state;
 		return (
 			<WpcomLoginForm
-				log={ userData.username }
+				// in case the user signs up without a username, login for the first time using their email address
+				// users without a username are assigned one in the backend. But at this point, the client side don't have this generated username in memory yet
+				// so we failover to the email
+				log={ userData.username || userData.email }
 				authorization={ 'Bearer ' + bearerToken }
 				redirectTo={ window.location.href }
 			/>
@@ -96,11 +100,10 @@ class InviteAcceptLoggedOut extends React.Component {
 		this.props
 			.acceptInvite( invite )
 			.then( () => {
-				window.location =
-					'https://subscribe.wordpress.com?update=activate&email=' +
-					encodeURIComponent( invite.sentTo ) +
-					'&key=' +
-					invite.authKey;
+				window.location = addQueryArgs(
+					{ update: 'activate', email: invite.sentTo, key: invite.authKey },
+					'https://subscribe.wordpress.com'
+				);
 			} )
 			.catch( () => this.setState( { submitting: false } ) );
 		recordTracksEvent( 'calypso_invite_accept_logged_out_follow_by_email_click' );

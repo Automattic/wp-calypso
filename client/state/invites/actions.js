@@ -11,8 +11,9 @@ import wpcom from 'calypso/lib/wp';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { acceptedNotice } from 'calypso/my-sites/invites/utils';
 import { getInviteForSite } from 'calypso/state/invites/selectors';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { requestSites, receiveSites } from 'calypso/state/sites/actions';
+import { receiveSite } from 'calypso/state/sites/actions';
 import {
 	INVITES_DELETE_REQUEST,
 	INVITES_DELETE_REQUEST_FAILURE,
@@ -35,62 +36,60 @@ import 'calypso/state/invites/init';
  * @returns {Function}        Action thunk
  */
 export function requestSiteInvites( siteId ) {
-	return ( dispatch ) => {
+	return async ( dispatch ) => {
 		dispatch( {
 			type: INVITES_REQUEST,
 			siteId,
 		} );
 
-		wpcom
-			.undocumented()
-			.invitesList( siteId, { status: 'all', number: 100 } )
-			.then( ( { found, invites, links } ) => {
-				dispatch( {
-					type: INVITES_REQUEST_SUCCESS,
-					siteId,
-					found,
-					invites,
-					links,
-				} );
-			} )
-			.catch( ( error ) => {
-				dispatch( {
-					type: INVITES_REQUEST_FAILURE,
-					siteId,
-					error,
-				} );
+		try {
+			const { found, invites, links } = await wpcom.req.get( `/sites/${ siteId }/invites`, {
+				status: 'all',
+				number: 100,
 			} );
+
+			dispatch( {
+				type: INVITES_REQUEST_SUCCESS,
+				siteId,
+				found,
+				invites,
+				links,
+			} );
+		} catch ( error ) {
+			dispatch( {
+				type: INVITES_REQUEST_FAILURE,
+				siteId,
+				error,
+			} );
+		}
 	};
 }
 
 export function resendInvite( siteId, inviteId ) {
-	return ( dispatch ) => {
+	return async ( dispatch ) => {
 		dispatch( {
 			type: INVITE_RESEND_REQUEST,
 			siteId: siteId,
 			inviteId: inviteId,
 		} );
 
-		wpcom
-			.undocumented()
-			.resendInvite( siteId, inviteId )
-			.then( ( data ) => {
-				dispatch( {
-					type: INVITE_RESEND_REQUEST_SUCCESS,
-					siteId,
-					inviteId,
-					data,
-				} );
-			} )
-			.catch( ( error ) => {
-				dispatch( {
-					type: INVITE_RESEND_REQUEST_FAILURE,
-					siteId,
-					inviteId,
-					error,
-				} );
-				dispatch( errorNotice( translate( 'Invitation failed to resend.' ) ) );
+		try {
+			const data = await wpcom.req.post( `/sites/${ siteId }/invites/${ inviteId }/resend` );
+			dispatch( {
+				type: INVITE_RESEND_REQUEST_SUCCESS,
+				siteId,
+				inviteId,
+				data,
 			} );
+		} catch ( error ) {
+			dispatch( {
+				type: INVITE_RESEND_REQUEST_FAILURE,
+				siteId,
+				inviteId,
+				error,
+			} );
+			dispatch( errorNotice( translate( 'Invitation failed to resend.' ) ) );
+		}
 	};
 }
 
@@ -112,55 +111,60 @@ const deleteInvitesFailureNotice = ( siteId, inviteIds ) => ( dispatch, getState
 };
 
 export function deleteInvites( siteId, inviteIds ) {
-	return ( dispatch ) => {
+	return async ( dispatch ) => {
 		dispatch( {
 			type: INVITES_DELETE_REQUEST,
 			siteId: siteId,
 			inviteIds: inviteIds,
 		} );
 
-		wpcom
-			.undocumented()
-			.site( siteId )
-			.deleteInvites( inviteIds )
-			.then( ( data ) => {
-				if ( data.deleted.length > 0 ) {
-					dispatch( {
-						type: INVITES_DELETE_REQUEST_SUCCESS,
-						siteId,
-						inviteIds: data.deleted,
-						data,
-					} );
-					dispatch(
-						successNotice(
-							translate( 'Invite deleted.', 'Invites deleted.', { count: inviteIds.length } ),
-							{
-								displayOnNextPage: true,
-							}
-						)
-					);
+		try {
+			const data = await wpcom.req.post(
+				{
+					path: `/sites/${ siteId }/invites/delete`,
+					apiNamespace: 'wpcom/v2',
+				},
+				{
+					invite_ids: inviteIds,
 				}
+			);
 
-				// It's possible for the request to succeed, but the deletion to fail.
-				if ( data.invalid.length > 0 ) {
-					dispatch( {
-						type: INVITES_DELETE_REQUEST_FAILURE,
-						siteId,
-						inviteIds: data.invalid,
-						data,
-					} );
-					dispatch( deleteInvitesFailureNotice( siteId, inviteIds ) );
-				}
-			} )
-			.catch( ( error ) => {
+			if ( data.deleted.length > 0 ) {
+				dispatch( {
+					type: INVITES_DELETE_REQUEST_SUCCESS,
+					siteId,
+					inviteIds: data.deleted,
+					data,
+				} );
+				dispatch(
+					successNotice(
+						translate( 'Invite deleted.', 'Invites deleted.', { count: inviteIds.length } ),
+						{
+							displayOnNextPage: true,
+						}
+					)
+				);
+			}
+
+			// It's possible for the request to succeed, but the deletion to fail.
+			if ( data.invalid.length > 0 ) {
 				dispatch( {
 					type: INVITES_DELETE_REQUEST_FAILURE,
 					siteId,
-					inviteIds,
-					error,
+					inviteIds: data.invalid,
+					data,
 				} );
 				dispatch( deleteInvitesFailureNotice( siteId, inviteIds ) );
+			}
+		} catch ( error ) {
+			dispatch( {
+				type: INVITES_DELETE_REQUEST_FAILURE,
+				siteId,
+				inviteIds,
+				error,
 			} );
+			dispatch( deleteInvitesFailureNotice( siteId, inviteIds ) );
+		}
 	};
 }
 
@@ -195,57 +199,59 @@ export function createAccount( userData, invite ) {
 }
 
 export function generateInviteLinks( siteId ) {
-	return ( dispatch ) => {
-		wpcom
-			.undocumented()
-			.site( siteId )
-			.generateInviteLinks()
-			.then( () => {
-				dispatch( requestSiteInvites( siteId ) );
-			} );
+	return async ( dispatch ) => {
+		await wpcom.req.post( {
+			path: `/sites/${ siteId }/invites/links/generate`,
+			apiNamespace: 'wpcom/v2',
+		} );
+		dispatch( requestSiteInvites( siteId ) );
 	};
 }
 
 export function disableInviteLinks( siteId ) {
-	return ( dispatch ) => {
-		wpcom
-			.undocumented()
-			.site( siteId )
-			.disableInviteLinks()
-			.then( () => {
-				dispatch( requestSiteInvites( siteId ) );
-			} );
+	return async ( dispatch ) => {
+		await wpcom.req.post( {
+			path: `/sites/${ siteId }/invites/links/disable`,
+			apiNamespace: 'wpcom/v2',
+		} );
+		dispatch( requestSiteInvites( siteId ) );
 	};
 }
 
 export function acceptInvite( invite ) {
-	return ( dispatch ) => {
-		const result = wpcom.undocumented().acceptInvite( invite );
-		result
-			.then( ( data ) => {
-				if ( invite.role !== 'follower' && invite.role !== 'viewer' ) {
-					dispatch( receiveSites( data.sites ) );
+	return async ( dispatch ) => {
+		try {
+			const data = await wpcom.req.get(
+				`/sites/${ invite.site.ID }/invites/${ invite.inviteKey }/accept`,
+				{
+					activate: invite.activationKey,
+					include_domain_only: true,
+					apiVersion: '1.3',
 				}
+			);
 
-				if ( ! get( invite, 'site.is_vip' ) ) {
-					dispatch( successNotice( ...acceptedNotice( invite ) ) );
-				}
+			if ( invite.role !== 'follower' && invite.role !== 'viewer' ) {
+				dispatch( receiveSite( data.site ) );
+				await dispatch( fetchCurrentUser() );
+			}
 
-				recordTracksEvent( 'calypso_invite_accepted', {
-					is_p2_site: get( invite, 'site.is_wpforteams_site', false ),
-					inviter_blog_id: get( invite, 'site.ID', false ),
-				} );
+			if ( ! invite.site.is_vip ) {
+				dispatch( successNotice( ...acceptedNotice( invite ) ) );
+			}
 
-				dispatch( inviteAccepted( invite ) );
-				dispatch( requestSites() );
-			} )
-			.catch( ( error ) => {
-				if ( error.message ) {
-					dispatch( errorNotice( error.message, { displayOnNextPage: true } ) );
-				}
-				recordTracksEvent( 'calypso_invite_accept_failed', { error: error.error } );
+			recordTracksEvent( 'calypso_invite_accepted', {
+				is_p2_site: invite.site.is_wpforteams_site ?? false,
+				inviter_blog_id: invite.site.ID,
 			} );
 
-		return result;
+			dispatch( inviteAccepted( invite ) );
+			return data;
+		} catch ( error ) {
+			if ( error.message ) {
+				dispatch( errorNotice( error.message ) );
+			}
+			recordTracksEvent( 'calypso_invite_accept_failed', { error: error.error } );
+			throw error;
+		}
 	};
 }

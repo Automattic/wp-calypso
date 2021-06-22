@@ -40,6 +40,7 @@ import WooCommerceConnectCartHeader from 'calypso/extensions/woocommerce/compone
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { login } from 'calypso/lib/paths';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 /**
  * Style dependencies
@@ -92,7 +93,7 @@ export class UserStep extends Component {
 	}
 
 	componentDidMount() {
-		if ( flows.getFlow( this.props.flowName )?.showRecaptcha ) {
+		if ( flows.getFlow( this.props.flowName, this.props.userLoggedIn )?.showRecaptcha ) {
 			this.initGoogleRecaptcha();
 		}
 
@@ -123,7 +124,7 @@ export class UserStep extends Component {
 	}
 
 	setSubHeaderText( props ) {
-		const { flowName, oauth2Client, positionInFlow, translate, wccomFrom } = props;
+		const { flowName, oauth2Client, positionInFlow, translate, userLoggedIn, wccomFrom } = props;
 
 		let subHeaderText = props.subHeaderText;
 
@@ -173,7 +174,7 @@ export class UserStep extends Component {
 					}
 				);
 			}
-		} else if ( 1 === getFlowSteps( flowName ).length ) {
+		} else if ( 1 === getFlowSteps( flowName, userLoggedIn ).length ) {
 			// Displays specific sub header if users only want to create an account, without a site
 			subHeaderText = translate( 'Welcome to the WordPress.com community.' );
 		}
@@ -184,7 +185,7 @@ export class UserStep extends Component {
 			if ( this.props.isReskinned ) {
 				const loginUrl = this.getLoginLink();
 				subHeaderText = translate(
-					'Create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
+					'First, create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
 					{
 						components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
 					}
@@ -271,7 +272,7 @@ export class UserStep extends Component {
 		let recaptchaDidntLoad = false;
 		let recaptchaFailed = false;
 
-		if ( flows.getFlow( this.props.flowName )?.showRecaptcha ) {
+		if ( flows.getFlow( this.props.flowName, this.props.userLoggedIn )?.showRecaptcha ) {
 			if ( isRecaptchaLoaded ) {
 				recaptchaToken = await recordGoogleRecaptchaAction(
 					this.state.recaptchaClientId,
@@ -399,8 +400,8 @@ export class UserStep extends Component {
 		}
 
 		const stepAfterRedirect =
-			getNextStepName( this.props.flowName, this.props.stepName ) ||
-			getPreviousStepName( this.props.flowName, this.props.stepName );
+			getNextStepName( this.props.flowName, this.props.stepName, this.props.userLoggedIn ) ||
+			getPreviousStepName( this.props.flowName, this.props.stepName, this.props.userLoggedIn );
 		const queryArgs = new URLSearchParams( this.props?.initialContext?.query );
 		const queryArgsString = queryArgs.toString() ? '?' + queryArgs.toString() : '';
 
@@ -460,7 +461,9 @@ export class UserStep extends Component {
 					socialService={ socialService }
 					socialServiceResponse={ socialServiceResponse }
 					recaptchaClientId={ this.state.recaptchaClientId }
-					showRecaptchaToS={ flows.getFlow( this.props.flowName )?.showRecaptcha }
+					showRecaptchaToS={
+						flows.getFlow( this.props.flowName, this.props.userLoggedIn )?.showRecaptcha
+					}
 					horizontal={ isReskinned }
 					isReskinned={ isReskinned }
 				/>
@@ -490,6 +493,7 @@ export default connect(
 		suggestedUsername: getSuggestedUsername( state ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 		from: get( getCurrentQueryArguments( state ), 'from' ),
+		userLoggedIn: isUserLoggedIn( state ),
 	} ),
 	{
 		errorNotice,

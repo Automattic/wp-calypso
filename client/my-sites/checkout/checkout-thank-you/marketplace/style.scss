@@ -3,6 +3,7 @@
 	.layout__content {
 		background-color: var( --studio-white );
 		height: 100vh;
+		min-height: 100vh;
 		padding: 0;
 		@media ( max-width: 782px ) {
 			padding: 0;

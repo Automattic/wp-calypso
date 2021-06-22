@@ -22,9 +22,9 @@ export default class CommentsAreaComponent extends AsyncBaseContainer {
 	 */
 	async _postComment( comment ) {
 		const commentField = By.css( '#comment' );
-		const submitButton = By.css( '.form-submit #comment-submit' );
+		const submitButton = By.css( '#comment-submit' );
 
-		await driverHelper.scrollIntoView( this.driver, submitButton );
+		await driverHelper.scrollIntoView( this.driver, commentField );
 		await driverHelper.setWhenSettable( this.driver, commentField, comment );
 		await driverHelper.scrollIntoView( this.driver, submitButton );
 		await driverHelper.clickWhenClickable( this.driver, submitButton );

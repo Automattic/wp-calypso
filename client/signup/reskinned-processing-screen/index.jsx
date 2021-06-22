@@ -14,19 +14,19 @@ import './style.scss';
 // Total time to perform "loading"
 const DURATION_IN_MS = 6000;
 
-/**
- * This component is cloned from the CreateSite component of Gutenboarding flow
- * to work with the onboarding signup flow.
- */
-export default function ReskinnedProcessingScreen( { hasPaidDomain } ) {
+// This component is cloned from the CreateSite component of Gutenboarding flow
+// to work with the onboarding signup flow.
+export default function ReskinnedProcessingScreen( { flowName, hasPaidDomain } ) {
 	const { __ } = useI18n();
 
 	const steps = React.useRef(
-		[
-			__( 'Building your site' ),
-			hasPaidDomain && __( 'Getting your domain' ),
-			__( 'Applying design' ),
-		].filter( Boolean )
+		flowName === 'launch-site'
+			? [ __( 'Your site will be live shortly.' ) ] // copy from 'packages/launch/src/focused-launch/success'
+			: [
+					__( 'Building your site' ),
+					hasPaidDomain && __( 'Getting your domain' ),
+					__( 'Applying design' ),
+			  ].filter( Boolean )
 	);
 	const totalSteps = steps.current.length;
 

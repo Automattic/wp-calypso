@@ -3,7 +3,7 @@
  */
 import { translate } from 'i18n-calypso';
 import type { LineItem } from '@automattic/composite-checkout';
-import type { ResponseCart } from '@automattic/shopping-cart';
+import type { ResponseCart, TaxBreakdownItem } from '@automattic/shopping-cart';
 
 export function getLineItemsFromCart( cart: ResponseCart ): LineItem[] {
 	return cart.products.map( ( product ) => ( {
@@ -85,6 +85,37 @@ export function getTaxLineItemFromCart( responseCart: ResponseCart ): LineItem |
 			displayValue: responseCart.total_tax_display,
 		},
 	};
+}
+
+export function getTaxBreakdownLineItemsFromCart( responseCart: ResponseCart ): LineItem[] {
+	if ( ! responseCart.tax.display_taxes ) {
+		return [];
+	}
+	if (
+		! Array.isArray( responseCart.total_tax_breakdown ) ||
+		responseCart.total_tax_breakdown.length === 0
+	) {
+		const lineItem = getTaxLineItemFromCart( responseCart );
+		return lineItem ? [ lineItem ] : [];
+	}
+	return responseCart.total_tax_breakdown.map(
+		( taxBreakdownItem: TaxBreakdownItem ): LineItem => {
+			const id = `tax-line-item-${ taxBreakdownItem.label ?? taxBreakdownItem.rate }`;
+			const label = taxBreakdownItem.label
+				? `${ taxBreakdownItem.label } (${ taxBreakdownItem.rate_display })`
+				: String( translate( 'Tax' ) );
+			return {
+				id,
+				label,
+				type: 'tax',
+				amount: {
+					currency: responseCart.currency,
+					value: taxBreakdownItem.tax_collected_integer,
+					displayValue: taxBreakdownItem.tax_collected_display,
+				},
+			};
+		}
+	);
 }
 
 export function getCreditsLineItemFromCart( responseCart: ResponseCart ): LineItem | null {

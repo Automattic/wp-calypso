@@ -21,9 +21,9 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import userUtils from 'calypso/lib/user/utils';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { redirectToLogout } from 'calypso/state/current-user/actions';
 import wpcom from 'calypso/lib/wp';
 import normalizeInvite from './utils/normalize-invite';
 
@@ -66,19 +66,17 @@ class InviteAccept extends React.Component {
 
 	async fetchInvite() {
 		try {
-			const response = await wpcom
-				.undocumented()
-				.getInvite( this.props.siteId, this.props.inviteKey );
-
+			const { siteId, inviteKey, activationKey, authKey } = this.props;
+			const response = await wpcom.req.get( `/sites/${ siteId }/invites/${ inviteKey }` );
 			const invite = {
 				...normalizeInvite( response ),
-				activationKey: this.props.activationKey,
-				authKey: this.props.authKey,
+				activationKey,
+				authKey,
 			};
 
 			// Replace the plain invite key with the strengthened key
 			// from the url: invite key + secret
-			invite.inviteKey = this.props.inviteKey;
+			invite.inviteKey = inviteKey;
 
 			this.handleFetchInvite( false, invite );
 		} catch ( error ) {
@@ -130,8 +128,8 @@ class InviteAccept extends React.Component {
 		return loginUrl;
 	};
 
-	signUpLink = () => {
-		userUtils.logout( window.location.href );
+	signUpLink = async () => {
+		await this.props.redirectToLogout( window.location.href );
 	};
 
 	localeSuggestions = () => {
@@ -267,4 +265,5 @@ class InviteAccept extends React.Component {
 export default connect( ( state ) => ( { user: getCurrentUser( state ) } ), {
 	successNotice,
 	infoNotice,
+	redirectToLogout,
 } )( localize( InviteAccept ) );

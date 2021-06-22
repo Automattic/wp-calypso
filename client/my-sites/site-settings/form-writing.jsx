@@ -56,6 +56,7 @@ class SiteSettingsFormWriting extends Component {
 			siteId,
 			siteIsJetpack,
 			translate,
+			siteIsAutomatedTransfer,
 			updateFields,
 			showAdvancedDashboard,
 		} = this.props;
@@ -97,7 +98,7 @@ class SiteSettingsFormWriting extends Component {
 					updateFields={ updateFields }
 				/>
 
-				{ siteIsJetpack && (
+				{ siteIsJetpack && ! siteIsAutomatedTransfer && (
 					<div>
 						<SettingsSectionHeader
 							disabled={ isRequestingSettings || isSavingSettings }
@@ -213,6 +214,7 @@ const connectComponent = connect(
 				! siteIsAutomatedTransfer,
 			isPodcastingSupported,
 			showAdvancedDashboard,
+			siteIsAutomatedTransfer,
 		};
 	},
 	{ requestPostTypes },
@@ -261,6 +263,7 @@ const getFormSettings = ( settings ) => {
 		'time_format',
 		'timezone_string',
 		'podcasting_category_id',
+		'wpcom_publish_posts_with_markdown',
 	] );
 
 	// handling `gmt_offset` and `timezone_string` values

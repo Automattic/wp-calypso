@@ -25,10 +25,8 @@ import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopp
  */
 import './style.scss';
 
-const wpcom = wp.undocumented();
-
 function fetchStripeConfigurationWpcom( args: Record< string, unknown > ) {
-	return fetchStripeConfiguration( args, wpcom );
+	return fetchStripeConfiguration( args, wp );
 }
 
 function removeHashFromUrl(): void {
