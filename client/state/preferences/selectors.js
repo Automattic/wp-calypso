@@ -8,6 +8,8 @@ import { get, find, has } from 'lodash';
  */
 import { DEFAULT_PREFERENCE_VALUES } from './constants';
 
+import { SCALE_TOUCH_GRID } from 'calypso/lib/media/constants';
+
 import 'calypso/state/preferences/init';
 
 export const isFetchingPreferences = ( state ) => !! state.preferences.fetching;
@@ -37,7 +39,6 @@ export function getPreference( state, key ) {
 }
 
 export function getMediaScalePreference( state, key, isMobile ) {
-	const SCALE_TOUCH_GRID = 0.323;
 	const mediaScale = get(
 		find(
 			[
@@ -60,7 +61,7 @@ export function getMediaScalePreference( state, key, isMobile ) {
 	// preference value is greater than 0.323.
 	if ( ! isMobile && mediaScale > SCALE_TOUCH_GRID ) {
 		return SCALE_TOUCH_GRID;
-}
+	}
 
 	return mediaScale;
 }
