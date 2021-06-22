@@ -33,6 +33,7 @@
 
 .themes__autoloading-homepage-option-description {
 	font-size: $font-body-small;
+	min-height: 80px;
 
 	@include break-medium {
 		width: 70%;
@@ -91,6 +92,7 @@
 		flex-grow: 1;
 		overflow: hidden;
 		position: relative;
+		pointer-events: none;
 	}
 	iframe {
 		height: 357%;
