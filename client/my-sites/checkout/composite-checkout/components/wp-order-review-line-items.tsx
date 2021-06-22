@@ -50,11 +50,8 @@ import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/s
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import { getSublabel, getLabel } from '../lib/translate-cart';
-import type {
-	WPCOMProductSlug,
-	WPCOMProductVariant,
-	OnChangeItemVariant,
-} from './item-variation-picker';
+import { useGetProductVariants } from '../hooks/product-variants';
+import type { OnChangeItemVariant } from './item-variation-picker';
 import { getIntroductoryOfferIntervalDisplay } from 'calypso/lib/purchases/utils';
 import {
 	getProductDisplayCost,
@@ -309,7 +306,6 @@ export function WPOrderReviewLineItems( {
 	isSummary,
 	removeProductFromCart,
 	removeCoupon,
-	getItemVariants,
 	onChangePlanLength,
 	createUserAndSiteBeforeTransaction,
 }: {
@@ -318,7 +314,6 @@ export function WPOrderReviewLineItems( {
 	isSummary?: boolean;
 	removeProductFromCart?: RemoveProductFromCart;
 	removeCoupon: RemoveCouponFromCart;
-	getItemVariants?: ( productSlug: WPCOMProductSlug ) => WPCOMProductVariant[];
 	onChangePlanLength?: OnChangeItemVariant;
 	createUserAndSiteBeforeTransaction?: boolean;
 } ): JSX.Element {
@@ -336,7 +331,6 @@ export function WPOrderReviewLineItems( {
 							siteId={ siteId }
 							hasDeleteButton={ canItemBeDeleted( product ) }
 							removeProductFromCart={ removeProductFromCart }
-							getItemVariants={ getItemVariants }
 							onChangePlanLength={ onChangePlanLength }
 							isSummary={ isSummary }
 							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
@@ -828,7 +822,6 @@ function WPLineItem( {
 	className,
 	hasDeleteButton,
 	removeProductFromCart,
-	getItemVariants,
 	onChangePlanLength,
 	isSummary,
 	createUserAndSiteBeforeTransaction,
@@ -838,7 +831,6 @@ function WPLineItem( {
 	className?: string;
 	hasDeleteButton?: boolean;
 	removeProductFromCart?: RemoveProductFromCart;
-	getItemVariants?: ( productSlug: WPCOMProductSlug ) => WPCOMProductVariant[];
 	onChangePlanLength?: OnChangeItemVariant;
 	isSummary?: boolean;
 	createUserAndSiteBeforeTransaction?: boolean;

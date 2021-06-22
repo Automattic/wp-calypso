@@ -18,7 +18,7 @@ import {
 import { useIsWebPayAvailable } from '@automattic/wpcom-checkout';
 import { ThemeProvider } from 'emotion-theming';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
+import type { ResponseCart } from '@automattic/shopping-cart';
 import colorStudio from '@automattic/color-studio';
 import { useStripe } from '@automattic/calypso-stripe';
 import type { PaymentCompleteCallbackArguments } from '@automattic/composite-checkout';
@@ -33,7 +33,6 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import { getPlan } from '@automattic/calypso-products';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
@@ -56,7 +55,6 @@ import existingCardProcessor from './lib/existing-card-processor';
 import payPalProcessor from './lib/paypal-express-processor';
 import useGetThankYouUrl from './hooks/use-get-thank-you-url';
 import createAnalyticsEventHandler from './record-analytics';
-import { useProductVariants } from './hooks/product-variants';
 import { translateResponseCartToWPCOMCart } from './lib/translate-cart';
 import useCountryList from './hooks/use-country-list';
 import useCachedDomainContactDetails from './hooks/use-cached-domain-contact-details';
@@ -411,12 +409,6 @@ export default function CompositeCheckout( {
 		  } );
 	debug( 'filtered payment method objects', paymentMethods );
 
-	const planSlugs = getPlanProductSlugs( responseCart.products );
-	const getItemVariants = useProductVariants( {
-		siteId,
-		productSlug: planSlugs.length > 0 ? planSlugs[ 0 ] : undefined,
-	} );
-
 	const { analyticsPath, analyticsProps } = getAnalyticsPath(
 		purchaseId,
 		productAliasFromUrl,
@@ -674,7 +666,6 @@ export default function CompositeCheckout( {
 					siteId={ updatedSiteId }
 					siteUrl={ updatedSiteSlug }
 					countriesList={ countriesList }
-					getItemVariants={ getItemVariants }
 					addItemToCart={ addItemWithEssentialProperties }
 					showErrorMessageBriefly={ showErrorMessageBriefly }
 					isLoggedOutCart={ !! isLoggedOutCart }
@@ -684,14 +675,6 @@ export default function CompositeCheckout( {
 			</CheckoutProvider>
 		</React.Fragment>
 	);
-}
-
-function getPlanProductSlugs( items: ResponseCartProduct[] ): string[] {
-	return items
-		.filter( ( item ) => {
-			return getPlan( item.product_slug );
-		} )
-		.map( ( item ) => item.product_slug );
 }
 
 function getAnalyticsPath(
