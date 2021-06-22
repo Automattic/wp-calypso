@@ -24,7 +24,7 @@ import {
 } from '@automattic/calypso-products';
 import { requestProductsList } from 'calypso/state/products-list/actions';
 import type { Plan } from '@automattic/calypso-products';
-import type { WPCOMProductSlug, WPCOMProductVariant } from '../components/item-variation-picker';
+import type { WPCOMProductVariant } from '../components/item-variation-picker';
 
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );
 
@@ -39,8 +39,6 @@ export interface AvailableProductVariant {
 	priceFull: number;
 	priceFinal: number;
 }
-
-export type GetProductVariants = ( productSlug: WPCOMProductSlug ) => WPCOMProductVariant[];
 
 const Discount = styled.span`
 	color: ${ ( props ) => props.theme.colors.discount };
@@ -100,59 +98,6 @@ export function useGetProductVariants(
 	};
 
 	return productsWithPrices.map( getProductVariantFromAvailableVariant );
-}
-
-export function useProductVariants( {
-	siteId,
-	productSlug,
-}: {
-	siteId: number | undefined;
-	productSlug: string | undefined;
-} ): GetProductVariants {
-	const translate = useTranslate();
-	const reduxDispatch = useDispatch();
-
-	const variantProductSlugs = useVariantPlanProductSlugs( productSlug );
-
-	const productsWithPrices = useSelector( ( state ) => {
-		return computeProductsWithPrices(
-			state,
-			siteId,
-			variantProductSlugs, // : WPCOMProductSlug[]
-			0, // coupon: number
-			{} // couponDiscounts: object of product ID / absolute amount pairs
-		);
-	} );
-
-	const [ haveFetchedProducts, setHaveFetchedProducts ] = useState( false );
-	const shouldFetchProducts = ! productsWithPrices;
-
-	useEffect( () => {
-		debug( 'deciding whether to request product variant data' );
-		if ( shouldFetchProducts && ! haveFetchedProducts ) {
-			debug( 'dispatching request for product variant data' );
-			reduxDispatch( requestPlans() );
-			reduxDispatch( requestProductsList() );
-			setHaveFetchedProducts( true );
-		}
-	}, [ shouldFetchProducts, haveFetchedProducts, reduxDispatch ] );
-
-	const getProductVariant = ( variant: AvailableProductVariant ): WPCOMProductVariant => {
-		return {
-			variantLabel: getTermText( variant.plan.term, translate ),
-			variantDetails: <VariantPrice variant={ variant } />,
-			productSlug: variant.planSlug,
-			productId: variant.product.product_id,
-		};
-	};
-
-	return ( anyProductSlug: string ) => {
-		if ( anyProductSlug !== productSlug ) {
-			return [];
-		}
-
-		return productsWithPrices.map( getProductVariant );
-	};
 }
 
 function VariantPrice( { variant }: { variant: AvailableProductVariant } ) {
