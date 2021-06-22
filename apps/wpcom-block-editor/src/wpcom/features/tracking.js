@@ -392,6 +392,14 @@ const trackListViewToggle = ( isOpen ) => {
 	} );
 };
 
+/**
+ * Tracks editEntityRecord for global styles updates.
+ *
+ * @param {string} kind    Kind of the edited entity record.
+ * @param {string} type    Name of the edited entity record.
+ * @param {number} id      Record ID of the edited entity record.
+ * @param {object} updates The edits made to the record.
+ */
 const trackEditEntityRecord = ( kind, type, id, updates ) => {
 	if ( kind === 'postType' && type === 'wp_global_styles' ) {
 		const editedEntity = select( 'core' ).getEditedEntityRecord( kind, type, id );
@@ -410,6 +418,13 @@ const trackEditEntityRecord = ( kind, type, id, updates ) => {
 	}
 };
 
+/**
+ * Tracks saveEditedEntityRecord for saving global styles updates.
+ *
+ * @param {string} kind Kind of the edited entity record.
+ * @param {string} type Name of the edited entity record.
+ * @param {number} id   Record ID of the edited entity record.
+ */
 const trackSaveEditedEntityRecord = ( kind, type, id ) => {
 	if ( kind === 'postType' && type === 'wp_global_styles' ) {
 		const savedEntity = select( 'core' ).getEntityRecord( kind, type, id );

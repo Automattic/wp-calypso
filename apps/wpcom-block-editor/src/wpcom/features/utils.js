@@ -37,9 +37,9 @@ export const getEditorType = () => {
  * Compares two objects, returning values in newObject that do not correspond
  * to values in oldObject.
  *
- * @param {object} newObject The object that has had an update.
- * @param {object} oldObject The original object to reference.
- * @param {Array}  keyMap     Used in recursion.  A list of keys mapping to the changed item.
+ * @param {object|Array} newObject The object that has had an update.
+ * @param {object|Array} oldObject The original object to reference.
+ * @param {Array}  		 keyMap    Used in recursion.  A list of keys mapping to the changed item.
  *
  * @returns {Array[object]} Array of objects containing a keyMap array and value for the changed items.
  */
@@ -70,6 +70,17 @@ const compareObjects = ( newObject, oldObject, keyMap = [] ) => {
 	return changedItems;
 };
 
+/**
+ * Compares two objects by running compareObjects in both directions.
+ * This returns items on newContent that are different from those found in oldContent.
+ * Additionally, items found in oldContent that are not in newContent are added change list
+ * with their value as 'reset'.
+ *
+ * @param {object} newContent The object that has had an update.
+ * @param {object} oldContent The original object to reference.
+ *
+ * @returns {Array[object]} Array of objects containing a keyMap array and value for the changed items.
+ */
 const findUpdates = ( newContent, oldContent ) => {
 	const newItems = compareObjects( newContent, oldContent );
 
@@ -83,7 +94,15 @@ const findUpdates = ( newContent, oldContent ) => {
 	return [ ...newItems, ...removedItems ];
 };
 
-export const buildGlobalStylesEventProps = ( keyMap, value ) => {
+/**
+ * Builds event props for a change in global styles.
+ *
+ * @param {Array[string]} keyMap A list of keys mapping to the changed item in the global styles content object.
+ * @param {*} 			  value  New value of the updated item.
+ *
+ * @returns {object} An object containing the event properties for a global styles change.
+ */
+const buildGlobalStylesEventProps = ( keyMap, value ) => {
 	let blockName;
 	let elementType;
 	let changeType;
@@ -128,6 +147,13 @@ export const buildGlobalStylesEventProps = ( keyMap, value ) => {
 	};
 };
 
+/**
+ * Builds and sends tracks events for global styles changes.
+ *
+ * @param {Object} updated   The updated global styles content object.
+ * @param {Object} original	 The original global styles content object.
+ * @param {string} eventName Name of the tracks event to send.
+ */
 export const buildGlobalStylesContentEvents = debounce( ( updated, original, eventName ) => {
 	// Debouncing is necessary to avoid spamming tracks events with updates when sliding inputs
 	// such as a color picker are in use.
