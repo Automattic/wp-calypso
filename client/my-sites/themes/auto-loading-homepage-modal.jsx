@@ -153,8 +153,7 @@ class AutoLoadingHomepageModal extends Component {
 			screenshot: themeScreenshot,
 		} = this.props.theme;
 
-		// is HTTPS always appropriate?
-		const iframeSrcKeepHomepage = addQueryArgs( 'https://' + this.props.siteDomain, {
+		const iframeSrcKeepHomepage = addQueryArgs( '//' + this.props.siteDomain, {
 			theme: stylesheet,
 			hide_banners: 'true',
 			preview_overlay: 'true',
