@@ -51,9 +51,17 @@ export function getMediaScalePreference( state, key, isMobile ) {
 		null
 	);
 
-	if ( ( isMobile && mediaScale !== 1 ) || ( ! isMobile && mediaScale > SCALE_TOUCH_GRID ) ) {
+	// On mobile viewport, return the media scale value of 0.323 (3 columns per row)
+	// regardless of stored preference value, if it's not 1.
+	if ( isMobile && mediaScale !== 1 ) {
 		return SCALE_TOUCH_GRID;
 	}
+	// On non-mobile viewport, return the media scale value of 0.323 if the stored
+	// preference value is greater than 0.323.
+	if ( ! isMobile && mediaScale > SCALE_TOUCH_GRID ) {
+		return SCALE_TOUCH_GRID;
+}
+
 	return mediaScale;
 }
 /**
