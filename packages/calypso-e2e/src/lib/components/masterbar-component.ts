@@ -9,31 +9,33 @@ import { BaseContainer } from '../base-container';
 import { Page } from 'playwright';
 
 const selectors = {
-	navbar: '.masterbar',
-	newPostButton: '.masterbar__item-new',
+	container: '.masterbar',
+	writeButton: '*css=a >> text=Write',
 };
 /**
- * Component representing the navbar/masterbar at top of WPCOM.
+ * Component representing the Masterbar header at top of WPCOM.
  *
  * @augments {BaseContainer}
  */
-export class NavbarComponent extends BaseContainer {
+export class MasterbarComponent extends BaseContainer {
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
 	 */
 	constructor( page: Page ) {
-		super( page, selectors.navbar );
+		super( page, selectors.container );
 	}
 
 	/**
-	 * Locates and clicks on the new post button on the nav bar.
+	 * Locates and clicks on the "Write" button.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
-	async clickNewPost(): Promise< void > {
-		await this.page.waitForSelector( selectors.newPostButton );
-		await this.page.click( selectors.newPostButton, { timeout: 120000, clickCount: 10 } );
+	async clickWriteButton(): Promise< void > {
+		await Promise.all( [
+			this.page.waitForNavigation(),
+			this.page.click( selectors.writeButton ),
+		] );
 	}
 }

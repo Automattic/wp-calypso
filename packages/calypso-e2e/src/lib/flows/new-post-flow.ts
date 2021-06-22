@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { NavbarComponent, SidebarComponent } from '../components';
+import { MasterbarComponent, SidebarComponent } from '../components';
 import { GutenbergEditorPage } from '../pages';
 
 /**
@@ -25,14 +25,14 @@ export class NewPostFlow {
 	}
 
 	/**
-	 * Starts a new post from the navbar/masterbar button.
+	 * Starts a new post in the Gutenberg editor by clicking the "Write" button in the Masterbar
+	 * header.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
-	async newPostFromNavbar(): Promise< void > {
-		await SidebarComponent.Expect( this.page );
-		const navbarComponent = await NavbarComponent.Expect( this.page );
-		await navbarComponent.clickNewPost();
+	async startNewPostFromMasterbar(): Promise< void > {
+		const masterbarComponent = await MasterbarComponent.Expect( this.page );
+		await masterbarComponent.clickWriteButton();
 		await GutenbergEditorPage.Expect( this.page );
 	}
 }
