@@ -12,12 +12,8 @@ import { withShoppingCart } from '@automattic/shopping-cart';
 /**
  * Internal dependencies
  */
-import config from '@automattic/calypso-config';
 import DocumentHead from 'calypso/components/data/document-head';
-import {
-	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
-	GSUITE_BASIC_SLUG,
-} from 'calypso/lib/gsuite/constants';
+import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from 'calypso/lib/gsuite/constants';
 import GSuiteUpsellCard from 'calypso/components/upgrades/gsuite/gsuite-upsell-card';
 import Main from 'calypso/components/main';
 import QuerySites from 'calypso/components/data/query-sites';
@@ -59,7 +55,9 @@ export class GSuiteNudge extends React.Component {
 			receiptId: this.props.receiptId,
 			cart: this.props.cart,
 		};
+
 		const url = getThankYouPageUrl( getThankYouPageUrlArguments );
+
 		page.redirect( url );
 	};
 
@@ -84,10 +82,6 @@ export class GSuiteNudge extends React.Component {
 	render() {
 		const { domain, receiptId, selectedSiteId, siteSlug, siteTitle, translate } = this.props;
 
-		const productSlug = config.isEnabled( 'google-workspace-migration' )
-			? GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
-			: GSUITE_BASIC_SLUG;
-
 		return (
 			<Main className="gsuite-nudge">
 				<PageViewTracker
@@ -99,6 +93,7 @@ export class GSuiteNudge extends React.Component {
 					title="G Suite Upsell"
 					properties={ { site: siteSlug, domain, ...( receiptId && { receipt_id: receiptId } ) } }
 				/>
+
 				<DocumentHead
 					title={ translate( 'Add %(googleMailService)s < %(siteTitle)s', {
 						args: {
@@ -107,10 +102,12 @@ export class GSuiteNudge extends React.Component {
 						},
 					} ) }
 				/>
+
 				<QuerySites siteId={ selectedSiteId } />
+
 				<GSuiteUpsellCard
 					domain={ this.props.domain }
-					productSlug={ productSlug }
+					productSlug={ GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY }
 					onSkipClick={ this.handleSkipClick }
 					onAddEmailClick={ this.handleAddEmailClick }
 				/>

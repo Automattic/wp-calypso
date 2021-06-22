@@ -10,12 +10,8 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 /**
  * Internal dependencies
  */
-import config from '@automattic/calypso-config';
 import { hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
-import {
-	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
-	GSUITE_BASIC_SLUG,
-} from 'calypso/lib/gsuite/constants';
+import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from 'calypso/lib/gsuite/constants';
 import GSuiteUpsellCard from './gsuite-upsell-card';
 import HeaderCake from 'calypso/components/header-cake';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -29,6 +25,7 @@ export default function GSuiteUpgrade( { domain } ) {
 	const productsList = useSelector( getProductsList );
 
 	const isMounted = useRef( true );
+
 	useEffect( () => {
 		return () => {
 			isMounted.current = false;
@@ -55,25 +52,26 @@ export default function GSuiteUpgrade( { domain } ) {
 	const reduxDispatch = useDispatch();
 
 	const didRedirect = useRef( false );
+
 	useEffect( () => {
 		if ( didRedirect.current === true ) {
 			return;
 		}
+
 		if ( cart && ! isLoading && ! hasDomainInCart( cart, domain ) ) {
 			didRedirect.current = true;
+
 			const message = translate(
 				'To add email for %(domain)s, you must either own the domain or have it in your shopping cart.',
 				{ args: { domain } }
 			);
+
 			reduxDispatch( infoNotice( message, { displayOnNextPage: true } ) );
+
 			// Should we handle this more gracefully?
 			page( `/domains/add/${ selectedSiteSlug }` );
 		}
 	}, [ cart, domain, selectedSiteSlug, isLoading, translate, reduxDispatch ] );
-
-	const productSlug = config.isEnabled( 'google-workspace-migration' )
-		? GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
-		: GSUITE_BASIC_SLUG;
 
 	return (
 		<div>
@@ -83,7 +81,7 @@ export default function GSuiteUpgrade( { domain } ) {
 
 			<GSuiteUpsellCard
 				domain={ domain }
-				productSlug={ productSlug }
+				productSlug={ GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY }
 				onSkipClick={ handleSkipClick }
 				onAddEmailClick={ handleAddEmailClick }
 			/>
