@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { useEffect, useState } from 'react';
-import styled from '@emotion/styled';
+import { styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import formatCurrency, { CURRENCIES } from '@automattic/format-currency';
