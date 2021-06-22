@@ -50,7 +50,7 @@ describe( 'hasSiteSeoFeature', () => {
 	} );
 
 	it( 'returns undefined if the site has no plan', () => {
-		expect( hasSiteSeoFeature( state, wpcomSite.ID ) ).toBeUndefined();
+		expect( hasSiteSeoFeature( state, wpcomSite, wpcomSite.ID ) ).toBeUndefined();
 	} );
 
 	// WPCOM plans

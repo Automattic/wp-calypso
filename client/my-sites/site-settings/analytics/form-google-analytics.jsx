@@ -19,6 +19,7 @@ import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-act
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import GoogleAnalyticsJetpackForm from './form-google-analytics-jetpack';
 import GoogleAnalyticsSimpleForm from './form-google-analytics-simple';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 
 /**
  * Style dependencies
@@ -40,6 +41,7 @@ export const GoogleAnalyticsForm = ( props ) => {
 		uniqueEventTracker,
 		path,
 		isFreeWPCOM,
+		isAtomic,
 	} = props;
 	const [ isCodeValid, setIsCodeValid ] = useState( true );
 	const [ loggedGoogleAnalyticsModified, setLoggedGoogleAnalyticsModified ] = useState( false );
@@ -91,6 +93,7 @@ export const GoogleAnalyticsForm = ( props ) => {
 		recordSupportLinkClick,
 		setDisplayForm,
 		isFreeWPCOM,
+		isAtomic,
 	};
 	if ( props.siteIsJetpack && ! isFreeWPCOM ) {
 		return <GoogleAnalyticsJetpackForm { ...newProps } />;
@@ -118,6 +121,7 @@ const mapStateToProps = ( state ) => {
 		sitePlugins,
 		jetpackModuleActive,
 		isFreeWPCOM: isSiteWPCOMOnFreePlan( state, site, siteId ),
+		isAtomic: isAtomicSite( state, siteId ),
 	};
 };
 

@@ -49,6 +49,7 @@ const GoogleAnalyticsSimpleForm = ( {
 	site,
 	translate,
 	isFreeWPCOM,
+	isAtomic,
 } ) => {
 	const analyticsSupportUrl = 'https://wordpress.com/support/google-analytics/';
 	const nudgeTitle = translate(
@@ -75,11 +76,12 @@ const GoogleAnalyticsSimpleForm = ( {
 	};
 
 	const renderForm = () => {
-		const plan = isFreeWPCOM
-			? PLAN_PREMIUM
-			: findFirstSimilarPlanKey( site.plan.product_slug, {
-					type: TYPE_PREMIUM,
-			  } );
+		const plan =
+			isFreeWPCOM && isAtomic
+				? PLAN_PREMIUM
+				: findFirstSimilarPlanKey( site.plan.product_slug, {
+						type: TYPE_PREMIUM,
+				  } );
 
 		const nudge = (
 			<UpsellNudge

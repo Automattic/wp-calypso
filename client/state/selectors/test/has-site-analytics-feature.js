@@ -50,7 +50,7 @@ describe( 'hasSiteAnalyticsFeature', () => {
 	} );
 
 	it( 'returns undefined if the site has no plan', () => {
-		expect( hasSiteAnalyticsFeature( state, wpcomSite.ID ) ).toBeUndefined();
+		expect( hasSiteAnalyticsFeature( state, wpcomSite, wpcomSite.ID ) ).toBeUndefined();
 	} );
 
 	// WPCOM plans
