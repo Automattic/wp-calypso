@@ -227,7 +227,7 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	onGoogleConfirmNewUsers = () => {
-		const { domain } = this.props;
+		const { domain, gSuiteProduct } = this.props;
 		const { googleUsers } = this.state;
 
 		const usersAreValid = areAllUsersValid( googleUsers );
@@ -251,11 +251,9 @@ class EmailProvidersComparison extends React.Component {
 
 		shoppingCartManager
 			.addProductsToCart(
-				getItemsForCart(
-					domains,
-					GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
-					googleUsers
-				).map( ( item ) => fillInSingleCartItemAttributes( item, productsList ) )
+				getItemsForCart( domains, gSuiteProduct.product_slug, googleUsers ).map( ( item ) =>
+					fillInSingleCartItemAttributes( item, productsList )
+				)
 			)
 			.then( () => {
 				if ( this.isMounted ) {
