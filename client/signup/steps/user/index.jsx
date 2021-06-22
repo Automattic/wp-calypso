@@ -444,7 +444,7 @@ export class UserStep extends Component {
 		if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
 			isSocialSignupEnabled = true;
 		}
-		// debugger;
+
 		return (
 			<>
 				<SignupForm
