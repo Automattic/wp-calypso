@@ -10,11 +10,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import Notice from 'calypso/components/notice';
 
-const EmailExistingForwardsNotice = ( {
-	domainsWithForwards,
-	productName,
-	selectedDomainName,
-} ) => {
+const EmailExistingForwardsNotice = ( { domainsWithForwards, selectedDomainName } ) => {
 	const translate = useTranslate();
 
 	if ( ! domainsWithForwards.includes( selectedDomainName ) ) {
@@ -24,15 +20,13 @@ const EmailExistingForwardsNotice = ( {
 	return (
 		<Notice showDismiss={ false } status="is-warning">
 			{ translate(
-				'Please note that email forwards are not compatible with %(productName)s, ' +
-					'and will be disabled once %(productName)s is added to %(domainName)s.',
+				'Please note that email forwards are not compatible with our paid email service, ' +
+					'and will be disabled if you add a paid email service to %(domainName)s.',
 				{
 					args: {
 						domainName: selectedDomainName,
-						productName,
 					},
-					comment:
-						'%(productName)s is the name of the product, e.g. Professional Email, Google Workspace; %(domainName)s is a domain name, e.g. example.org',
+					comment: '%(domainName)s is a domain name, e.g. example.org',
 				}
 			) }
 		</Notice>
