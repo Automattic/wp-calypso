@@ -185,6 +185,7 @@ class GSuiteAddUsers extends React.Component {
 			domains,
 			domainsWithForwards,
 			gsuiteUsers,
+			isNewAccount,
 			isRequestingDomains,
 			selectedDomainName,
 			translate,
@@ -200,16 +201,16 @@ class GSuiteAddUsers extends React.Component {
 
 		return (
 			<Fragment>
-				<EmailExistingForwardsNotice
-					domainsWithForwards={ domainsWithForwards }
-					productName={ getGoogleMailServiceFamily() }
-					selectedDomainName={ selectedDomainName }
-				/>
+				{ userCanPurchaseGSuite && isNewAccount && (
+					<Fragment>
+						<EmailExistingForwardsNotice
+							domainsWithForwards={ domainsWithForwards }
+							selectedDomainName={ selectedDomainName }
+						/>
 
-				{ userCanPurchaseGSuite &&
-					selectedDomainInfo.map( ( domain ) => {
-						return <QueryEmailForwards key={ domain.domain } domainName={ domain.domain } />;
-					} ) }
+						<QueryEmailForwards domainName={ selectedDomainName } />
+					</Fragment>
+				) }
 
 				<SectionHeader
 					label={ translate( 'Add New Mailboxes', {
