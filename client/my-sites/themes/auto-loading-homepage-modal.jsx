@@ -9,6 +9,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { Dialog } from '@automattic/components';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
@@ -64,10 +65,25 @@ class AutoLoadingHomepageModal extends Component {
 		super( props );
 		this.state = {
 			homepageAction: 'keep_current_homepage',
-
 			// Used to reset state when dialog re-opens, see `getDerivedStateFromProps`
 			wasVisible: props.isVisible,
+			// Don't render the iframe on mobile; Doing it here prevents unnecessary data fetching vs. CSS.
+			isNarrow: isWithinBreakpoint( '<782px' ),
 		};
+	}
+
+	componentDidMount() {
+		// Change the isNarrow state when the size of the browser changes.
+		// (Putting this on an attribute instead of state because of react/no-did-mount-set-state)
+		this.unsubscribe = subscribeIsWithinBreakpoint( '<782px', ( isNarrow ) =>
+			this.setState( { isNarrow } )
+		);
+	}
+
+	componentWillUnmount() {
+		if ( typeof this.unsubscribe === 'function' ) {
+			this.unsubscribe();
+		}
 	}
 
 	static getDerivedStateFromProps( nextProps, prevState ) {
@@ -126,6 +142,7 @@ class AutoLoadingHomepageModal extends Component {
 			isCurrentTheme,
 			isVisible = false,
 		} = this.props;
+		const { isNarrow } = this.state;
 
 		// Nothing to do when it's the current theme.
 		if ( isCurrentTheme ) {
@@ -198,11 +215,13 @@ class AutoLoadingHomepageModal extends Component {
 						<div className="themes__theme-preview-item themes__theme-preview-item-iframe-container">
 							<div className="themes__iframe-wrapper">
 								<Spinner />
-								<iframe
-									loading="lazy"
-									title={ translate( 'Preview of current homepage with new theme applied' ) }
-									src={ iframeSrcKeepHomepage }
-								/>
+								{ ! isNarrow && (
+									<iframe
+										loading="lazy"
+										title={ translate( 'Preview of current homepage with new theme applied' ) }
+										src={ iframeSrcKeepHomepage }
+									/>
+								) }
 							</div>
 							<FormLabel>
 								<FormRadio
