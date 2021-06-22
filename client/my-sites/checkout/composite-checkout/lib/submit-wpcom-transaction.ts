@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { isEnabled } from '@automattic/calypso-config';
 import type {
 	WPCOMTransactionEndpointRequestPayload,
 	WPCOMTransactionEndpointResponse,
@@ -24,7 +25,8 @@ export default async function submitWpcomTransaction(
 			? { signupFlowName: 'jetpack-userless-checkout' }
 			: { signupFlowName: 'onboarding-registrationless' };
 
-		const isSitelessJetpackCheckout = isJetpackCheckout && ! transactionOptions.siteId;
+		const isSitelessJetpackCheckout =
+			isEnabled( 'jetpack/siteless-checkout' ) && isJetpackCheckout && ! transactionOptions.siteId;
 
 		return createAccount( createAccountOptions ).then( ( response ) => {
 			const siteIdFromResponse = response?.blog_details?.blogid;
