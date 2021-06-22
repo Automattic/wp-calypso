@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-export * from './navbar-component';
+export * from './masterbar-component';
 export * from './comments-component';
 export * from './sidebar-component';
 export * from './support-component';
