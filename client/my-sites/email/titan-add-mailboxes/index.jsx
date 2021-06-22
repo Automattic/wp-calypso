@@ -21,7 +21,6 @@ import {
 } from 'calypso/lib/titan/new-mailbox';
 import { Button, Card } from '@automattic/components';
 import DocumentHead from 'calypso/components/data/document-head';
-import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import {
 	emailManagement,
@@ -41,7 +40,6 @@ import {
 	hasLoadedSiteDomains,
 	isRequestingSiteDomains,
 } from 'calypso/state/sites/domains/selectors';
-import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -258,7 +256,6 @@ class TitanAddMailboxes extends React.Component {
 	render() {
 		const {
 			currentRoute,
-			domainsWithForwards,
 			isLoadingDomains,
 			isSelectedDomainNameValid,
 			maxTitanMailboxCount,
@@ -293,12 +290,6 @@ class TitanAddMailboxes extends React.Component {
 					<HeaderCake onClick={ this.goToEmail }>
 						{ getTitanProductName() + ': ' + selectedDomainName }
 					</HeaderCake>
-
-					<EmailExistingForwardsNotice
-						domainsWithForwards={ domainsWithForwards }
-						productName={ getTitanProductName() }
-						selectedDomainName={ selectedDomainName }
-					/>
 
 					{ selectedDomain && (
 						<TitanUnusedMailboxesNotice
@@ -337,7 +328,6 @@ export default connect(
 			selectedSite,
 			isLoadingDomains,
 			currentRoute: getCurrentRoute( state ),
-			domainsWithForwards: getDomainsWithForwards( state, domains ),
 			productsList: getProductsList( state ),
 			maxTitanMailboxCount: hasTitanMailWithUs( selectedDomain )
 				? getMaxTitanMailboxCount( selectedDomain )
