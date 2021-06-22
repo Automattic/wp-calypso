@@ -28,6 +28,7 @@ import {
 } from 'calypso/state/themes/selectors';
 import { setThemePreviewOptions } from 'calypso/state/themes/actions';
 import config from '@automattic/calypso-config';
+import ThemesSelectionHeader from './themes-selection-header';
 
 /**
  * Style dependencies
@@ -157,11 +158,17 @@ class ThemesSelection extends Component {
 	};
 
 	render() {
-		const { source, query, upsellUrl } = this.props;
+		const { source, query, upsellUrl, listLabel, noMarginBeforeHeader } = this.props;
 
 		return (
 			<div className="themes__selection">
 				<QueryThemes query={ query } siteId={ source } />
+				{ ! this.props.recommendedThemes && this.props.isLoggedIn && (
+					<ThemesSelectionHeader
+						label={ listLabel }
+						noMarginBeforeHeader={ noMarginBeforeHeader }
+					/>
+				) }
 				<ThemesList
 					upsellUrl={ upsellUrl }
 					themes={ this.props.recommendedThemes || this.props.themes }
