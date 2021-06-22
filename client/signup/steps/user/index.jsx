@@ -444,7 +444,7 @@ export class UserStep extends Component {
 		if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
 			isSocialSignupEnabled = true;
 		}
-
+		// debugger;
 		return (
 			<>
 				<SignupForm
@@ -466,7 +466,7 @@ export class UserStep extends Component {
 					}
 					horizontal={ isReskinned }
 					isReskinned={ isReskinned }
-					displayUsernameInput={ this.props.stepName === 'user' && ! this.props.isReskinned }
+					displayUsernameInput={ this.props.flowName === 'account' }
 				/>
 				<div id="g-recaptcha"></div>
 			</>
