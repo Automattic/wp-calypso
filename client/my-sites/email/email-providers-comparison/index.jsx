@@ -53,7 +53,7 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getTitanProductName } from 'calypso/lib/titan';
 import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
-import { emailManagementForwarding } from 'calypso/my-sites/email/paths';
+import { emailManagementForwarding, emailManagement } from 'calypso/my-sites/email/paths';
 import { errorNotice } from 'calypso/state/notices/actions';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
@@ -471,8 +471,10 @@ class EmailProvidersComparison extends React.Component {
 		);
 	}
 
-	goBack = () => {
-		page( `/email/${ this.props.selectedSiteSlug }` );
+	handleBack = () => {
+		const { selectedSiteSlug } = this.props;
+
+		page( emailManagement( selectedSiteSlug ) );
 	};
 
 	renderHeaderSection() {
@@ -492,9 +494,7 @@ class EmailProvidersComparison extends React.Component {
 
 		return (
 			<>
-				<HeaderCake onClick={ this.goBack }>
-					{ translate( 'Emails' ) }
-				</HeaderCake>
+				<HeaderCake onClick={ this.handleBack }>{ translate( 'Add Email' ) }</HeaderCake>
 				<PromoCard
 					isPrimary
 					title={ translate( 'Get your own @%(domainName)s email address', translateArgs ) }
