@@ -2,7 +2,6 @@
 
 .site-setup-list {
 	padding: 0;
-	@include grid-column( 1, 12 );
 	@include display-grid;
 	@include grid-template-columns( 12, 24px, 1fr );
 
