@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { BaseContainer } from '../base-container';
-import { PreviewComponent  } from '../components';
+import { PreviewComponent } from '../components';
 
 /**
  * Type dependencies
@@ -29,10 +29,13 @@ export class ThemesDetailPage extends BaseContainer {
 		super( page, selectors.main );
 	}
 
-	async preview(): Promise<void> {
-		await this.page.click( selectors.demoPane);
+	/**
+	 * Launches the live preview of the theme.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async preview(): Promise< void > {
+		await this.page.click( selectors.demoPane );
 		await PreviewComponent.Expect( this.page );
 	}
-
-
 }

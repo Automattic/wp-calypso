@@ -10,9 +10,14 @@ import { Page } from 'playwright';
 
 const selectors = {
 	previewPane: '.web-preview',
-	activateButton: 'text=Activate'
+	activateButton: 'text=Activate',
 };
 
+/**
+ * Component representing the site published preview component.
+ *
+ * @augments {BaseContainer}
+ */
 export class PreviewComponent extends BaseContainer {
 	/**
 	 * Constructs an instance of the component.
