@@ -3,6 +3,7 @@
  */
 import { BaseContainer } from '../base-container';
 import { waitForElementEnabled } from '../../element-helper';
+// import { getViewportName } from '../../browser-helper';
 
 /**
  * Type dependencies
@@ -12,10 +13,12 @@ import { Page } from 'playwright';
 const selectors = {
 	// Navigation tabs
 	navTabs: '.section-nav-tabs',
+	navTabsDropdownOptions: '.select-dropdown__option',
 
 	// Gallery view
 	gallery: '.media-library__content',
 	items: '.media-library__list-item',
+	placeholder: '.is-placeholder',
 	editButton: 'button[data-e2e-button="edit"]',
 
 	// Modal view
@@ -86,19 +89,29 @@ export class MediaPage extends BaseContainer {
 	}
 
 	/**
-	 * Clicks on the navigation tab.
+	 * Clicks on the navigation tab (desktop) or dropdown (mobile).
 	 *
 	 * @param {string} name Name of the tab to click.
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickTab( name: 'All' | 'Images' | 'Documents' | 'Videos' | 'Audio' ): Promise< void > {
-		await this.page.waitForSelector( selectors.navTabs );
+		const navTabs = await this.page.waitForSelector( selectors.navTabs );
 		const gallery = await this.page.waitForSelector( selectors.gallery );
-		await this.page.click( `${ selectors.navTabs } span:has-text("${ name }")` );
+		const isDropdown = await navTabs
+			.getAttribute( 'class' )
+			.then( ( value ) => value?.includes( 'is-dropdown' ) );
+		if ( isDropdown ) {
+			// Mobile view - navtabs become a dropdown.
+			await navTabs.click();
+			await this.page.click( `${ selectors.navTabsDropdownOptions } >> text=${ name }` );
+		} else {
+			// Desktop view - navtabs are constantly visible tabs.
+			await this.page.click( `${ selectors.navTabs } >> text=${ name }` );
+		}
 		// Wait for all placeholders to disappear.
 		// Alternatively, waiting for `networkidle` will achieve the same objective
 		// at the cost of much longer resolving time (~20s).
-		await this.page.waitForSelector( '.is-placeholder', { state: 'hidden' } );
+		await this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } );
 		await gallery.waitForElementState( 'stable' );
 	}
 
