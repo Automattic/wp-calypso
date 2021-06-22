@@ -204,25 +204,17 @@ const webpackConfig = {
 			TranspileConfig.loader( {
 				workerCount,
 				configFile: path.resolve( 'babel.config.js' ),
-				...( shouldUsePersistentCache
-					? {}
-					: {
-							cacheDirectory: path.resolve( cachePath, 'babel-client' ),
-							cacheIdentifier,
-							cacheCompression: false,
-					  } ),
+				cacheDirectory: path.resolve( cachePath, 'babel-client' ),
+				cacheIdentifier,
+				cacheCompression: false,
 				exclude: /node_modules\//,
 			} ),
 			TranspileConfig.loader( {
 				workerCount,
 				presets: [ require.resolve( '@automattic/calypso-build/babel/dependencies' ) ],
-				...( shouldUsePersistentCache
-					? {}
-					: {
-							cacheDirectory: path.resolve( cachePath, 'babel-client' ),
-							cacheIdentifier,
-							cacheCompression: false,
-					  } ),
+				cacheDirectory: path.resolve( cachePath, 'babel-client' ),
+				cacheIdentifier,
+				cacheCompression: false,
 				include: shouldTranspileDependency,
 			} ),
 			SassConfig.loader( {
