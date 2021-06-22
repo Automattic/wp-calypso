@@ -27,3 +27,7 @@ export function getPaginatedLicenses(
 export function getLicenseCounts( state: PartnerPortalStore ): LicenseCounts {
 	return state.partnerPortal.licenses.counts;
 }
+
+export function hasFetchedLicenseCounts( state: PartnerPortalStore ): boolean {
+	return state.partnerPortal.licenses.hasFetchedLicenseCounts;
+}
