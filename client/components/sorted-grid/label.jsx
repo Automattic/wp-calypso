@@ -4,12 +4,10 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { getMediaScalePreference } from 'calypso/state/preferences/selectors';
 
 const Label = ( { itemsCount, itemsPerRow, lastInRow, scale, text } ) => {
 	const margin = ( ( 1 % scale ) / ( itemsPerRow - 1 ) ) * 100 || 0;
@@ -31,20 +29,10 @@ Label.propTypes = {
 	lastInRow: PropTypes.bool,
 	scale: PropTypes.number.isRequired,
 	text: PropTypes.string,
-	isMobile: PropTypes.bool,
 };
 
 Label.defaultProps = {
 	text: '',
 };
 
-const connectComponent = connect(
-	( state, { isMobile } ) => ( {
-		scale: getMediaScalePreference( state, 'mediaScale', isMobile ),
-	} ),
-	null,
-	null,
-	{ pure: false }
-);
-
-export default connectComponent( Label );
+export default Label;

@@ -22,7 +22,7 @@ class SortedGrid extends PureComponent {
 		getItemGroup: PropTypes.func.isRequired,
 		items: PropTypes.array,
 		itemsPerRow: PropTypes.number.isRequired,
-		isMobile: PropTypes.bool,
+		scale: PropTypes.number.isRequired,
 	};
 
 	getItems() {
@@ -58,7 +58,7 @@ class SortedGrid extends PureComponent {
 								itemsCount={ count }
 								itemsPerRow={ this.props.itemsPerRow }
 								lastInRow={ last( keys( row.groups ) ) === group }
-								isMobile={ this.props.isMobile }
+								scale={ this.props.scale }
 							/>
 						)
 					);
@@ -82,7 +82,7 @@ class SortedGrid extends PureComponent {
 			'getItemGroup',
 			'items',
 			'renderItem',
-			'isMobile'
+			'scale'
 		);
 
 		return <InfiniteList items={ this.getItems() } renderItem={ this.renderItem } { ...props } />;

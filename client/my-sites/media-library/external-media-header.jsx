@@ -32,6 +32,7 @@ class MediaLibraryExternalHeader extends React.Component {
 		hasAttribution: PropTypes.bool,
 		hasRefreshButton: PropTypes.bool,
 		isFetchingNextPage: PropTypes.bool,
+		mediaScale: PropTypes.number,
 	};
 
 	constructor( props ) {
@@ -132,7 +133,7 @@ class MediaLibraryExternalHeader extends React.Component {
 
 				{ canCopy && this.renderCopyButton() }
 
-				<MediaLibraryScale onChange={ onMediaScaleChange } isMobile={ this.props.isMobile } />
+				<MediaLibraryScale onChange={ onMediaScaleChange } mediaScale={ this.props.mediaScale } />
 			</Card>
 		);
 	}
