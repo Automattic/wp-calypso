@@ -59,6 +59,7 @@ import './list-all.scss';
 
 class ListAll extends Component {
 	static propTypes = {
+		action: PropTypes.string,
 		canManageSitesMap: PropTypes.object.isRequired,
 		currentRoute: PropTypes.string.isRequired,
 		domainsList: PropTypes.array.isRequired,
@@ -550,13 +551,13 @@ export default connect(
 			domainsList: getFlatDomainsList( state ),
 			domainsDetails: getAllDomains( state ),
 			filteredDomainsList: getFilteredDomainsList( state, context ),
+			hasAllSitesLoaded: hasAllSitesList( state ),
+			isContactEmailEditContext: ListAllActions.editContactEmail === action,
 			purchases,
 			requestingFlatDomains: isRequestingAllDomains( state ),
 			requestingSiteDomains: getAllRequestingSiteDomains( state ),
 			sites,
-			hasAllSitesLoaded: hasAllSitesList( state ),
 			user,
-			isContactEmailEditContext: ListAllActions.editContactEmail === action,
 		};
 	},
 	{
