@@ -19,9 +19,9 @@ export type WPCOMProductVariant = {
 
 export type ItemVariationPickerProps = {
 	selectedItem: ResponseCartProduct;
-	getItemVariants: ( productSlug: WPCOMProductSlug ) => WPCOMProductVariant[];
 	onChangeItemVariant: OnChangeItemVariant;
 	isDisabled: boolean;
+	variants: WPCOMProductVariant[];
 };
 
 export type OnChangeItemVariant = (
@@ -32,12 +32,10 @@ export type OnChangeItemVariant = (
 
 export const ItemVariationPicker: FunctionComponent< ItemVariationPickerProps > = ( {
 	selectedItem,
-	getItemVariants,
 	onChangeItemVariant,
 	isDisabled,
+	variants,
 } ) => {
-	const variants = getItemVariants( selectedItem.product_slug );
-
 	if ( variants.length < 2 ) {
 		return null;
 	}
