@@ -466,6 +466,7 @@ export class UserStep extends Component {
 					}
 					horizontal={ isReskinned }
 					isReskinned={ isReskinned }
+					displayUsernameInput={ this.props.stepName === 'user' && ! this.props.isReskinned }
 				/>
 				<div id="g-recaptcha"></div>
 			</>
