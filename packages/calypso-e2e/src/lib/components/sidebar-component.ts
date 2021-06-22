@@ -74,19 +74,26 @@ export class SidebarComponent extends BaseContainer {
 	 * @param {{[key: string]: string}} param0 Named object parameter.
 	 * @param {string} param0.item Plaintext representation of the top level heading.
 	 * @param {string} param0.subitem Plaintext representation of the child level heading.
-	 * @throws {Error} If neither item or subitem were specified in the parameter.
 	 * @returns {Promise<void>} No return value.
 	 */
 	async gotoMenu( { item, subitem }: { item?: string; subitem?: string } ): Promise< void > {
 		let selector;
+		const viewport_name = getViewportName();
+
+		// If mobile, sidebar is hidden by default and focus is on the content.
+		// The sidebar must be first brought into view.
+		if ( viewport_name === 'mobile' ) {
+			await this._openSidebar();
+		}
 
 		if ( item ) {
 			item = toTitleCase( item ).trim();
 			// This will exclude entries where the `heading` term matches multiple times
 			// eg. `Settings` but they are sub-headings in reality, such as Jetpack > Settings.
 			// Since the sub-headings are always hidden unless heading is selected, this works to
-			// our advantage.
+			// our advantage by specifying to match only visible text.
 			selector = `${ selectors.heading } span:has-text("${ item }"):visible`;
+			await this._click( selector );
 		}
 
 		if ( subitem ) {
@@ -97,15 +104,24 @@ export class SidebarComponent extends BaseContainer {
 			// This works better than using CSS pseudo-classes like `:has-text` or `:text-matches` for text
 			// matching.
 			selector = `${ selectors.subheading } >> text="${ subitem }"`;
+			await this._click( selector );
 		}
+	}
 
-		if ( ! selector ) {
-			throw new Error(
-				`Selector is undefined. Check if item or subitem has been specified as argument(s).`
-			);
-		}
-
-		await this._click( selector );
+	/**
+	 * Opens the sidebar into view.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async _openSidebar(): Promise< void > {
+		const navbarComponent = await NavbarComponent.Expect( this.page );
+		await navbarComponent.clickMySite();
+		// Layout specifies whether sidebar or main content is being focused at this time.
+		const elementHandle = await this.page.waitForSelector( selectors.layout );
+		await elementHandle.waitForElementState( 'stable' );
+		const classAttributes = ( await elementHandle.getAttribute( 'class' ) ) as string;
+		const isSidebarOpen = classAttributes.includes( 'focus-sidebar' );
+		assert.strictEqual( isSidebarOpen, true );
 	}
 
 	/**
@@ -120,19 +136,6 @@ export class SidebarComponent extends BaseContainer {
 	 * @throws {assert.AssertionError} If on mobile the sidebar could not be toggled into view.
 	 */
 	async _click( selector: string ): Promise< void > {
-		const viewport_name = getViewportName();
-		// If mobile, sidebar is hidden by default and focus is on the content.
-		// The sidebar must be first brought into view.
-		if ( viewport_name === 'mobile' ) {
-			const navbarComponent = await NavbarComponent.Expect( this.page );
-			await navbarComponent.clickMySite();
-			const elementHandle = await this.page.waitForSelector( selectors.layout );
-			await elementHandle.waitForElementState( 'stable' );
-			const classAttributes = ( await elementHandle.getAttribute( 'class' ) ) as string;
-			const isSidebarOpen = classAttributes.includes( 'focus-sidebar' );
-			assert.strictEqual( isSidebarOpen, true );
-		}
-
 		// Wait for these promises in no particular order. We simply want to ensure the sidebar
 		// and the page is in a state to accept inputs.
 		await Promise.all( [
