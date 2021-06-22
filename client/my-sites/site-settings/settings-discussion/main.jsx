@@ -21,7 +21,7 @@ import config from '@automattic/calypso-config';
 
 const SiteSettingsDiscussion = ( { site, translate } ) => (
 	<Main className="settings-discussion site-settings">
-		<ScreenOptionsTab />
+		<ScreenOptionsTab wpAdminPath="options-discussion.php" />
 		<DocumentHead title={ translate( 'Site Settings' ) } />
 		<JetpackDevModeNotice />
 		<SidebarNavigation />

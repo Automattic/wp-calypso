@@ -30,8 +30,9 @@ const Taxonomies = ( { translate, labels, postType, site, taxonomy } ) => {
 	};
 
 	return (
+		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<div className="main main-column" role="main">
-			<ScreenOptionsTab />
+			<ScreenOptionsTab wpAdminPath={ `edit-tags.php?taxonomy=${ taxonomy }` } />
 			<DocumentHead
 				title={ translate( 'Manage %(taxonomy)s', { args: { taxonomy: labels.name } } ) }
 			/>

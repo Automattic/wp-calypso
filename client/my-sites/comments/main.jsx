@@ -71,7 +71,7 @@ export class CommentsManagement extends Component {
 
 		return (
 			<Main className="comments" wideLayout>
-				<ScreenOptionsTab />
+				<ScreenOptionsTab wpAdminPath="edit-comments.php" />
 				<PageViewTracker path={ analyticsPath } title="Comments" />
 				<DocumentHead title={ translate( 'Comments' ) } />
 				<SidebarNavigation />

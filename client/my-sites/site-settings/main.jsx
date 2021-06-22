@@ -31,7 +31,7 @@ import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 const SiteSettingsComponent = ( { siteId, translate } ) => {
 	return (
 		<Main className="site-settings">
-			<ScreenOptionsTab />
+			<ScreenOptionsTab wpAdminPath="options-general.php" />
 			<DocumentHead title={ translate( 'Site Settings' ) } />
 			<QueryProductsList />
 			<QuerySitePurchases siteId={ siteId } />
