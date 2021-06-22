@@ -39,18 +39,7 @@ export function getPreference( state, key ) {
 }
 
 export function getMediaScalePreference( state, key, isMobile ) {
-	const mediaScale = get(
-		find(
-			[
-				state.preferences?.localValues,
-				state.preferences?.remoteValues,
-				DEFAULT_PREFERENCE_VALUES,
-			],
-			( source ) => has( source, key )
-		),
-		key,
-		null
-	);
+	const mediaScale = getPreference( state, key );
 
 	// On mobile viewport, return the media scale value of 0.323 (3 columns per row)
 	// regardless of stored preference value, if it's not 1.
