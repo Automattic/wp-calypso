@@ -53,7 +53,7 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getTitanProductName } from 'calypso/lib/titan';
 import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
-import { emailManagementForwarding } from 'calypso/my-sites/email/paths';
+import { emailManagementForwarding, emailManagement } from 'calypso/my-sites/email/paths';
 import { errorNotice } from 'calypso/state/notices/actions';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
@@ -70,6 +70,7 @@ import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-add-mailboxes/titan-new-mailbox-list';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import HeaderCake from 'calypso/components/header-cake';
 
 /**
  * Style dependencies
@@ -470,6 +471,12 @@ class EmailProvidersComparison extends React.Component {
 		);
 	}
 
+	handleBack = () => {
+		const { selectedSiteSlug } = this.props;
+
+		page( emailManagement( selectedSiteSlug ) );
+	};
+
 	renderHeaderSection() {
 		const { selectedDomainName, translate } = this.props;
 
@@ -486,20 +493,23 @@ class EmailProvidersComparison extends React.Component {
 		};
 
 		return (
-			<PromoCard
-				isPrimary
-				title={ translate( 'Get your own @%(domainName)s email address', translateArgs ) }
-				image={ image }
-				className="email-providers-comparison__action-panel"
-			>
-				<p>
-					{ translate(
-						'Pick one of our flexible options to connect your domain with email ' +
-							'and start getting emails @%(domainName)s today.',
-						translateArgs
-					) }
-				</p>
-			</PromoCard>
+			<>
+				<HeaderCake onClick={ this.handleBack }>{ translate( 'Add Email' ) }</HeaderCake>
+				<PromoCard
+					isPrimary
+					title={ translate( 'Get your own @%(domainName)s email address', translateArgs ) }
+					image={ image }
+					className="email-providers-comparison__action-panel"
+				>
+					<p>
+						{ translate(
+							'Pick one of our flexible options to connect your domain with email ' +
+								'and start getting emails @%(domainName)s today.',
+							translateArgs
+						) }
+					</p>
+				</PromoCard>
+			</>
 		);
 	}
 
