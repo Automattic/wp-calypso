@@ -244,7 +244,7 @@ class AutoLoadingHomepageModal extends Component {
 									)
 								) }{ ' ' }
 								<ExternalLink
-									href={ localizeUrl( 'https://wordpress.com/support/themes/#switch-themes' ) }
+									href={ localizeUrl( 'https://wordpress.com/support/changing-themes/' ) }
 									icon
 									target="__blank"
 								>
@@ -265,7 +265,7 @@ class AutoLoadingHomepageModal extends Component {
 									} }
 								/>{ ' ' }
 								<ExternalLink
-									href={ localizeUrl( 'https://wordpress.com/support/themes/#switch-themes' ) }
+									href={ localizeUrl( 'https://wordpress.com/support/changing-themes/' ) }
 									icon
 									target="__blank"
 								>
