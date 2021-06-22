@@ -408,6 +408,9 @@ const webpackConfig = {
 						process.env.CALYPSO_ENV,
 					].join( '-' ),
 				},
+				infrastructureLogging: {
+					debug: /webpack\.cache/,
+				},
 				snapshot: {
 					managedPaths: [
 						path.resolve( __dirname, '../node_modules' ),
