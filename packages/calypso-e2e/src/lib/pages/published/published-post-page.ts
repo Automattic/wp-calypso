@@ -65,6 +65,7 @@ export class PublishedPostPage extends BaseContainer {
 		const button = await this.frame.waitForSelector( selector );
 		await button.waitForElementState( 'stable' );
 		await button.click();
+		await button.waitForElementState( 'stable' );
 	}
 
 	/**
