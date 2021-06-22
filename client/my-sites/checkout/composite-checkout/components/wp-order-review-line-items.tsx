@@ -305,6 +305,7 @@ export function WPNonProductLineItem( {
 
 export function WPOrderReviewLineItems( {
 	className,
+	siteId,
 	isSummary,
 	removeProductFromCart,
 	removeCoupon,
@@ -313,6 +314,7 @@ export function WPOrderReviewLineItems( {
 	createUserAndSiteBeforeTransaction,
 }: {
 	className?: string;
+	siteId?: number | undefined;
 	isSummary?: boolean;
 	removeProductFromCart?: RemoveProductFromCart;
 	removeCoupon: RemoveCouponFromCart;
@@ -331,6 +333,7 @@ export function WPOrderReviewLineItems( {
 					<WPOrderReviewListItem key={ product.uuid }>
 						<LineItem
 							product={ product }
+							siteId={ siteId }
 							hasDeleteButton={ canItemBeDeleted( product ) }
 							removeProductFromCart={ removeProductFromCart }
 							getItemVariants={ getItemVariants }
@@ -821,6 +824,7 @@ function GSuiteDiscountCallout( {
 
 function WPLineItem( {
 	product,
+	siteId,
 	className,
 	hasDeleteButton,
 	removeProductFromCart,
@@ -830,6 +834,7 @@ function WPLineItem( {
 	createUserAndSiteBeforeTransaction,
 }: {
 	product: ResponseCartProduct;
+	siteId?: number | undefined;
 	className?: string;
 	hasDeleteButton?: boolean;
 	removeProductFromCart?: RemoveProductFromCart;
@@ -863,10 +868,11 @@ function WPLineItem( {
 	const isDisabled = formStatus !== FormStatus.READY;
 
 	const isRenewal = isWpComProductRenewal( product );
-	// Show the variation picker when this is not a renewal
-	const shouldShowVariantSelector = getItemVariants && product && ! isRenewal;
 
 	const productSlug = product?.product_slug;
+
+	const shouldShowVariantSelector = product && ! isRenewal;
+	const variants = useGetProductVariants( siteId, productSlug );
 
 	const isGSuite =
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) || isGoogleWorkspaceProductSlug( productSlug );
@@ -965,10 +971,10 @@ function WPLineItem( {
 				</>
 			) }
 
-			{ shouldShowVariantSelector && getItemVariants && onChangePlanLength && (
+			{ shouldShowVariantSelector && onChangePlanLength && (
 				<ItemVariationPicker
+					variants={ variants }
 					selectedItem={ product }
-					getItemVariants={ getItemVariants }
 					onChangeItemVariant={ onChangePlanLength }
 					isDisabled={ isDisabled }
 				/>

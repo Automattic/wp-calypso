@@ -77,6 +77,7 @@ export default function WPCheckoutOrderReview( {
 	getItemVariants,
 	onChangePlanLength,
 	siteUrl,
+	siteId,
 	isSummary,
 	createUserAndSiteBeforeTransaction,
 }: {
@@ -86,6 +87,7 @@ export default function WPCheckoutOrderReview( {
 	getItemVariants?: GetProductVariants;
 	onChangePlanLength?: OnChangeItemVariant;
 	siteUrl?: string;
+	siteId?: number | undefined;
 	isSummary?: boolean;
 	createUserAndSiteBeforeTransaction?: boolean;
 } ): JSX.Element {
@@ -133,6 +135,7 @@ export default function WPCheckoutOrderReview( {
 
 			<WPOrderReviewSection>
 				<WPOrderReviewLineItems
+					siteId={ siteId }
 					removeProductFromCart={ removeProductFromCart }
 					removeCoupon={ removeCouponAndClearField }
 					getItemVariants={ getItemVariants }

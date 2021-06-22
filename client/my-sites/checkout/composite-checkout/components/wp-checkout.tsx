@@ -470,6 +470,7 @@ export default function WPCheckout( {
 							onChangePlanLength={ changePlanLength }
 							getItemVariants={ getItemVariants }
 							siteUrl={ siteUrl }
+							siteId={ siteId }
 							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 						/>
 					}
