@@ -243,19 +243,22 @@ class Block_Patterns_From_API {
 	}
 
 	/**
-	 * Because we prevent core pattern registration in full-site-editing-plugin.php in `remove_theme_support_for_core_block_patterns()`
+	 * Because we prevent core pattern registration in full-site-editing-plugin.php in
+	 * `remove_theme_support_for_core_block_patterns()`
 	 * we have to "manually" register core WordPress and Gutenberg patterns,
-	 * that is, those in wp-includes/block-patterns.php (Core) and lib/block-patterns.php (Gutenberg)
-	 * Gutenberg overrides existing core patterns and loads remote patterns.
-	 * We also have to manually register core WordPress and Gutenberg patterns in order to make them use the site locale, not the account locale.
+	 * that is, those in lib/block-patterns.php (Gutenberg)
+	 * Herem we're duplicating Gutenberg's functions in lib/block-patterns.php, that is,
+	 * overriding existing core patterns and loading remote patterns.
+	 * We duplicate because we have to manually register core WordPress and Gutenberg patterns
+	 * in order to make them use the site locale, not the account locale.
 	 */
 	private function reregister_core_and_gutenberg_patterns() {
 		$did_switch_locale = switch_to_locale( $this->utils->get_block_patterns_locale() );
 		add_theme_support( 'core-block-patterns' );
 
-		// WordPress Core patterns. See: WordPress wp-includes/block-patterns.php.
-		if ( function_exists( '_register_core_block_patterns_and_categories' ) ) {
-			_register_core_block_patterns_and_categories();
+		// Do this just in case.  See Gutenberg lib/block-patterns.php.
+		if ( function_exists( 'remove_core_patterns' ) ) {
+			remove_core_patterns();
 		}
 
 		// Gutenberg patterns. See Gutenberg lib/block-patterns.php.
