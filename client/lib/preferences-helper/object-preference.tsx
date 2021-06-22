@@ -34,11 +34,11 @@ const ObjectPreference: FunctionComponent< Props > = ( { value } ) => {
 	};
 
 	return (
-		<ul className="preferences-helper__list">
+		<ul className="preferences-helper__object-preference">
 			{ value &&
 				Object.keys( value ).map( ( property ) => (
 					<li key={ property }>
-						<span>{ property }</span>
+						<span className="preferences-helper__object-preference-property">{ property }</span>
 						{ renderProperty( property, value[ property ] ) }
 					</li>
 				) ) }
