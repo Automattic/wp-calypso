@@ -565,15 +565,24 @@ class EmailProvidersComparison extends React.Component {
 		return (
 			<Main wideLayout>
 				{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
-				<QueryEmailForwards domainName={ selectedDomainName } />;{ this.renderHeaderSection() }
+
+				<QueryEmailForwards domainName={ selectedDomainName } />
+
+				{ this.renderHeaderSection() }
+
 				{ this.renderDomainEligibilityNotice() }
+
 				<EmailExistingForwardsNotice
 					domainsWithForwards={ domainsWithForwards }
 					selectedDomainName={ selectedDomainName }
 				/>
+
 				{ this.renderTitanCard() }
+
 				{ this.renderGoogleCard() }
+
 				{ this.renderEmailForwardingCard() }
+
 				<TrackComponentView
 					eventName="calypso_email_providers_comparison_page_view"
 					eventProperties={ {
