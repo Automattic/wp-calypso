@@ -20,8 +20,8 @@ const EmailExistingForwardsNotice = ( { domainsWithForwards, selectedDomainName 
 	return (
 		<Notice showDismiss={ false } status="is-warning">
 			{ translate(
-				'Please note that email forwards are not compatible with our paid email service, ' +
-					'and will be disabled if you add a paid email service to %(domainName)s.',
+				'Please note that your existing email forwards for %(domainName)s will be removed if you upgrade to a hosted email solution. ' +
+					'As part of the upgrade, you will need to specify the email addresses you want to keep using.',
 				{
 					args: {
 						domainName: selectedDomainName,
