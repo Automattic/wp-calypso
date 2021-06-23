@@ -174,18 +174,6 @@ User.prototype.handleFetchSuccess = function ( userData ) {
 	this.emit( 'change' );
 };
 
-/**
- * Clear any user data.
- */
-User.prototype.clear = async function () {
-	/**
-	 * Clear internal user data and empty localStorage cache
-	 * to discard any user reference that the application may hold
-	 */
-	this.data = false;
-	await clearStore();
-};
-
 User.prototype.set = function ( attributes ) {
 	let changed = false;
 

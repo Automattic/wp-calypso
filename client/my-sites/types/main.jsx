@@ -46,7 +46,7 @@ function Types( {
 
 	return (
 		<Main wideLayout>
-			<ScreenOptionsTab />
+			<ScreenOptionsTab wpAdminPath={ `edit.php?post_type=${ query.type }` } />
 			<DocumentHead title={ get( postType, 'label', '' ) } />
 			<PageViewTracker path={ siteId ? '/types/:site' : '/types' } title="Custom Post Type" />
 			<SidebarNavigation />

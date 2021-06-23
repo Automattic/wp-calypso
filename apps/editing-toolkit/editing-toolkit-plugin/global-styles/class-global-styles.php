@@ -91,7 +91,7 @@ class Global_Styles {
 			'value' => self::SYSTEM_FONT,
 		),
 		'Arvo',
-		'Bodoni Mona',
+		'Bodoni Moda',
 		'Cabin',
 		'Chivo',
 		'Courier Prime',
@@ -204,8 +204,8 @@ class Global_Styles {
 							'base'     => 'Roboto',
 						),
 						array(
-							'label'    => 'Bodoni Mona / Overpass',
-							'headings' => 'Bodoni Mona',
+							'label'    => 'Bodoni Moda / Overpass',
+							'headings' => 'Bodoni Moda',
 							'base'     => 'Overpass',
 						),
 						array(

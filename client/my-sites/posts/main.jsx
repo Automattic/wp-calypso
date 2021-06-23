@@ -77,7 +77,7 @@ class PostsMain extends React.Component {
 
 		return (
 			<Main wideLayout className="posts">
-				<ScreenOptionsTab />
+				<ScreenOptionsTab wpAdminPath="edit.php" />
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
 				<DocumentHead title={ translate( 'Posts' ) } />
 				<SidebarNavigation />

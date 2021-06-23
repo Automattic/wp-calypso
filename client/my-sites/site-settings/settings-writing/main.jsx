@@ -21,7 +21,7 @@ import config from '@automattic/calypso-config';
 
 const SiteSettingsWriting = ( { site, translate } ) => (
 	<Main className="settings-writing site-settings">
-		<ScreenOptionsTab />
+		<ScreenOptionsTab wpAdminPath="options-writing.php" />
 		<DocumentHead title={ translate( 'Site Settings' ) } />
 		<JetpackDevModeNotice />
 		<SidebarNavigation />

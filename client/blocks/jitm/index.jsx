@@ -44,6 +44,8 @@ function renderTemplate( template, props ) {
 					placeholder={ null }
 				/>
 			);
+		case 'invisible':
+			return <>{ props.trackImpression && props.trackImpression() }</>;
 		default:
 			return (
 				<AsyncLoad
@@ -58,7 +60,7 @@ function renderTemplate( template, props ) {
 function getEventHandlers( props, dispatch ) {
 	const { jitm, currentSite, messagePath } = props;
 	const tracks = jitm.tracks || {};
-	const eventProps = { id: jitm.id, jitm: true };
+	const eventProps = { id: jitm.id, jitm: true, template: jitm?.template ?? 'default' };
 	const handlers = {};
 
 	if ( tracks.display ) {

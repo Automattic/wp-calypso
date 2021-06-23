@@ -17,6 +17,7 @@ import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/typ
 export const initialState = {
 	hasFetched: false,
 	isFetching: false,
+	hasFetchedLicenseCounts: false,
 	paginated: null,
 	counts: {
 		[ LicenseFilter.Attached ]: 0,
@@ -65,9 +66,22 @@ export const counts = ( state = initialState.counts, action: AnyAction ) => {
 	return state;
 };
 
+export const hasFetchedLicenseCounts = (
+	state = initialState.hasFetchedLicenseCounts,
+	action: AnyAction
+) => {
+	switch ( action.type ) {
+		case JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_RECEIVE:
+			return true;
+	}
+
+	return state;
+};
+
 export default combineReducers( {
 	hasFetched,
 	isFetching,
 	paginated,
 	counts,
+	hasFetchedLicenseCounts,
 } );

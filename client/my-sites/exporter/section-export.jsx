@@ -68,7 +68,7 @@ const SectionExport = ( { isJetpack, canUserExport, site, translate } ) => {
 
 	return (
 		<Main>
-			<ScreenOptionsTab />
+			<ScreenOptionsTab wpAdminPath="export.php" />
 			<DocumentHead title={ translate( 'Export' ) } />
 			<SidebarNavigation />
 			{ sectionContent }
