@@ -165,12 +165,11 @@ export function createGeneralTests( { it, editorType, postType } ) {
 		await editor.toggleNavigationSidebar();
 
 		const eventsStack = await getEventsStack( this.driver );
-		const editorCloseClickNotFired =
-			eventsStack.filter( ( [ eventName ] ) => eventName === 'wpcom_block_editor_close_click' )
-				.length === 0;
-		assert.strictEqual(
+		const editorCloseClickNotFired = ! eventsStack.some(
+			( [ eventName ] ) => eventName === 'wpcom_block_editor_close_click'
+		);
+		assert(
 			editorCloseClickNotFired,
-			true,
 			'"wpcom_block_editor_close_click" editor tracking event fired'
 		);
 	} );
