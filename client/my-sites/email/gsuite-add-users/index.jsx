@@ -17,11 +17,7 @@ import { Button, Card } from '@automattic/components';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
-import {
-	emailManagementAddGSuiteUsers,
-	emailManagementNewGSuiteAccount,
-	emailManagement,
-} from 'calypso/my-sites/email/paths';
+import { emailManagementAddGSuiteUsers, emailManagement } from 'calypso/my-sites/email/paths';
 import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import {
@@ -237,23 +233,14 @@ class GSuiteAddUsers extends React.Component {
 	}
 
 	render() {
-		const {
-			currentRoute,
-			isNewAccount,
-			productType,
-			translate,
-			selectedDomainName,
-			selectedSite,
-		} = this.props;
+		const { currentRoute, productType, translate, selectedDomainName, selectedSite } = this.props;
 
-		const analyticsPath = isNewAccount
-			? emailManagementNewGSuiteAccount( ':site', ':domain', ':productType', currentRoute )
-			: emailManagementAddGSuiteUsers(
-					':site',
-					selectedDomainName ? ':domain' : undefined,
-					':productType',
-					currentRoute
-			  );
+		const analyticsPath = emailManagementAddGSuiteUsers(
+			':site',
+			selectedDomainName ? ':domain' : undefined,
+			':productType',
+			currentRoute
+		);
 
 		const googleMailServiceFamily = getGoogleMailServiceFamily( getProductSlug( productType ) );
 
@@ -293,7 +280,6 @@ GSuiteAddUsers.propTypes = {
 	currentRoute: PropTypes.string,
 	domains: PropTypes.array.isRequired,
 	gsuiteUsers: PropTypes.array,
-	isNewAccount: PropTypes.bool,
 	isRequestingDomains: PropTypes.bool.isRequired,
 	productType: PropTypes.oneOf( [ GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE ] ),
 	selectedDomainName: PropTypes.string.isRequired,

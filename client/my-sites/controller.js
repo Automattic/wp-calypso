@@ -68,7 +68,6 @@ import {
 	emailManagementForwarding,
 	emailManagementManageTitanAccount,
 	emailManagementManageTitanMailboxes,
-	emailManagementNewGSuiteAccount,
 	emailManagementNewTitanAccount,
 	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
@@ -192,7 +191,6 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		emailManagementForwarding,
 		emailManagementManageTitanAccount,
 		emailManagementManageTitanMailboxes,
-		emailManagementNewGSuiteAccount,
 		emailManagementNewTitanAccount,
 		emailManagementTitanControlPanelRedirect,
 	];
@@ -201,10 +199,6 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 	let domainManagementPaths = allPaths.map( ( pathFactory ) => {
 		if ( pathFactory === emailManagementAddGSuiteUsers ) {
 			return emailManagementAddGSuiteUsers( slug, slug, contextParams.productType );
-		}
-
-		if ( pathFactory === emailManagementNewGSuiteAccount ) {
-			return emailManagementNewGSuiteAccount( slug, slug, contextParams.productType );
 		}
 
 		return pathFactory( slug, slug );
