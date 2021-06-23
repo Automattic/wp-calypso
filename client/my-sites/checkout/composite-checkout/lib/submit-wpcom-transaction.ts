@@ -26,7 +26,7 @@ export default async function submitWpcomTransaction(
 			: { signupFlowName: 'onboarding-registrationless' };
 
 		const isSitelessJetpackCheckout =
-			isEnabled( 'jetpack/siteless-checkout' ) && isJetpackCheckout && ! transactionOptions.siteId;
+			isEnabled( 'jetpack/siteless-checkout' ) && isJetpackCheckout && payload.cart.blog_id === '0';
 
 		return createAccount( createAccountOptions ).then( ( response ) => {
 			const siteIdFromResponse = response?.blog_details?.blogid;
