@@ -27,8 +27,13 @@ describe( DataHelper.createSuiteTitle( 'Likes (Logged Out)' ), function () {
 			await loginFlow.logIn();
 			const newPostFlow = new NewPostFlow( this.page );
 			postUrl = await newPostFlow.getNewTestPost();
-			// Clear the cookies for user.
-			await BrowserManager.clearCookies( this.page );
+			// Shut down the BrowserContext that generated the post as
+			// the logged in state appears to be 'sticky' on WPCOM.
+			// Clearing the cache does not appear to reset this state, nor
+			// does the explicit action of logging out.
+			await this.page.context().close();
+			// Generate a new BrowserContext and Page object to be used for testing.
+			this.page = await BrowserManager.start();
 		} );
 
 		it( 'Visit post', async function () {

@@ -220,7 +220,6 @@ export class GutenbergEditorPage extends BaseContainer {
 	 * @returns {Promise<string>} URl of the published entry.
 	 */
 	async _getPublishedURL(): Promise< string > {
-		console.log( 'get publish url hit!' );
 		const title = await this.getTitle();
 		return await this.frame.$eval(
 			`${ selectors.publishPanel } :text("${ title }")`,

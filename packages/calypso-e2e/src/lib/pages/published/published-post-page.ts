@@ -9,8 +9,6 @@ import { BaseContainer } from '../../base-container';
 import { Page, Frame } from 'playwright';
 
 const selectors = {
-	page: '#main',
-
 	// Like Widget
 	likeWidget: 'iframe.post-likes-widget',
 	likeButton: 'a.like',
@@ -33,7 +31,7 @@ export class PublishedPostPage extends BaseContainer {
 	 * @param {Page} page Underlying page on which interactions take place.
 	 */
 	constructor( page: Page ) {
-		super( page, selectors.page );
+		super( page );
 	}
 
 	/**
