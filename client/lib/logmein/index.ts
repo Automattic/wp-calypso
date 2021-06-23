@@ -1,52 +1,48 @@
 /**
+ * Append logmein=direct query parameter to mapped domain urls.
+ *
+ * This triggers a remote-login redirect flow that sets authentication cookies on the
+ * mapped domain enabling the nav bar and other features.
+ */
+/**
+ * External Dependencies
+ */
+import { Store } from 'redux';
+
+/**
  * Internal Dependencies
  */
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { isEnabled } from '@automattic/calypso-config';
 
-/**
- * Append logmein=direct query parameter to mapped domain urls.
- *
- * This triggers a remote-login redirect flow that sets authentication cookies on the
- * mapped domain enabling the nav bar and other features.
- */
-
-let reduxStore: any = null;
-
-// Used as placeholder / default domain to detect when we're looking at a relative url
+// Used as placeholder / default domain to detect when we're looking at a relative url,
+// Note: also prevents exceptions from being raised
 const INVALID_URL = `https://__domain__.invalid`;
 
 type Host = string;
 
-export function logmeinUrl( url: string ): string {
-	let newurl: URL;
-
+export function logmeinUrl( url: string, store: Store ): string {
 	// Disable feature if not enabled
 	if ( ! isEnabled( 'logmein' ) ) {
 		return url;
 	}
 
 	// logmein=direct only works for logged into wordpress.com users
-	if ( ! isUserLoggedIn( reduxStore.getState() ) ) {
+	if ( ! isUserLoggedIn( store.getState() ) ) {
 		return url;
 	}
 
-	try {
-		newurl = new URL( String( url ), INVALID_URL );
-	} catch ( e ) {
-		// Ignore unparseable urls
-		return url;
-	}
+	const newurl = new URL( String( url ), INVALID_URL );
 
-	// Ignore and passthrough /relative/urls that have no host specified
+	// Ignore and passthrough invalid or /relative/urls that have no host specified
 	if ( newurl.origin === INVALID_URL ) {
 		return url;
 	}
 
-	const sites = Object.values( getSitesItems( reduxStore.getState() ) );
+	const sites = Object.values( getSitesItems( store.getState() ) );
 	const mappedlinksite = sites.find(
-		( site ) => new URL( site.options.unmapped_url ).host === newurl.host
+		( site ) => new URL( site.options.unmapped_url, INVALID_URL ).host === newurl.host
 	);
 	if ( mappedlinksite ) {
 		newurl.host = new URL( mappedlinksite.URL ).host;
@@ -72,7 +68,6 @@ function isValidLogmeinSite( site: any ): boolean {
 		! site.options.is_automated_transfer &&
 		! site.options.is_domain_only &&
 		! site.options.is_redirect &&
-		! site.options.is_wpcom_atomic &&
 		! site.options.is_wpcom_store &&
 		site.options.is_mapped_domain
 	);
@@ -84,30 +79,37 @@ function allowedHosts( sites: any ): Host[] {
 		.filter( Boolean );
 }
 
-export function attachLogmein( store: any ): void {
-	reduxStore = store;
-	document.addEventListener( 'click', logmeinOnClick, false );
-	document.addEventListener( 'contextmenu', logmeinOnRightClick, false );
+export function attachLogmein( store: Store ): void {
+	document.addEventListener(
+		'click',
+		( event: MouseEvent ) => logmeinOnClick( event, store ),
+		false
+	);
+	document.addEventListener(
+		'contextmenu',
+		( event: MouseEvent ) => logmeinOnRightClick( event, store ),
+		false
+	);
 }
 
 const seen: Record< Host, boolean > = {};
-function logmeinOnClick( event: MouseEvent ) {
+export function logmeinOnClick( event: MouseEvent, store: Store ) {
 	const link = ( event.target as HTMLElement ).closest( 'a' );
 
 	if ( link && link.href ) {
 		// Only apply logmein to each host once
 		const host = new URL( String( link.href ), INVALID_URL ).host;
 		if ( ! seen[ host ] ) {
-			link.href = logmeinUrl( link.href );
+			link.href = logmeinUrl( link.href, store );
 			seen[ host ] = true;
 		}
 	}
 }
 
-function logmeinOnRightClick( event: MouseEvent ) {
+export function logmeinOnRightClick( event: MouseEvent, store: Store ) {
 	const link = ( event.target as HTMLElement ).closest( 'a' );
 
 	if ( link && link.href ) {
-		link.href = logmeinUrl( link.href );
+		link.href = logmeinUrl( link.href, store );
 	}
 }
