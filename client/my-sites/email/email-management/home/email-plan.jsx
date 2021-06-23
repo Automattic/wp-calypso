@@ -97,6 +97,9 @@ class EmailPlan extends React.Component {
 				return;
 			}
 
+			// We've finished loading both sets of data. If the two data sources have the same
+			// number of mailboxes, don't re-fetch the data below - this should help to
+			// prevent fetch loops triggered via componentDidUpdate().
 			if ( this.getMailboxes().length === emailForwards.length ) {
 				return;
 			}
