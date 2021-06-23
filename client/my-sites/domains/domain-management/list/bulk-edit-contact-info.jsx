@@ -19,11 +19,8 @@ import isRequestingContactDetailsCache from 'calypso/state/selectors/is-requesti
 import { requestContactDetailsCache, saveWhois } from 'calypso/state/domains/management/actions';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
-import { UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES } from 'calypso/lib/url/support';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import DesignatedAgentNotice from 'calypso/my-sites/domains/domain-management/components/designated-agent-notice';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
+import TransferLockOptOut from 'calypso/my-sites/domains/domain-management/list/transfer-lock-opt-out';
 import { debounce, isEmpty } from './utils';
 import wp from 'calypso/lib/wp';
 
@@ -136,37 +133,8 @@ class BulkEditContactInfo extends React.Component {
 
 	handleSaveContactInfo = () => this.props.handleSaveContactInfo( this.state.contactDetails );
 
-	renderTransferLockOptOut() {
-		const { translate } = this.props;
-		return (
-			<div>
-				<FormLabel>
-					<FormCheckbox
-						name="transfer-lock-opt-out"
-						disabled={ this.props.disabled || this.props.isSubmitting }
-						onChange={ this.onTransferLockOptOutChange }
-					/>
-					<span>
-						{ translate( 'Opt-out of the {{link}}60-day transfer lock{{/link}}.', {
-							components: {
-								link: (
-									<a
-										href={ UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES }
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							},
-						} ) }
-					</span>
-				</FormLabel>
-				<DesignatedAgentNotice saveButtonLabel={ translate( 'Save contact info' ) } />
-			</div>
-		);
-	}
-
 	render() {
-		const { emailOnly, isDisabled, isSubmitting } = this.props;
+		const { emailOnly, isDisabled, isSubmitting, translate } = this.props;
 		const { contactDetails, errorMessages } = this.state;
 
 		return (
@@ -181,7 +149,11 @@ class BulkEditContactInfo extends React.Component {
 					isDisabled={ isDisabled || isSubmitting }
 					emailOnly={ emailOnly }
 				/>
-				{ this.renderTransferLockOptOut() }
+				<TransferLockOptOut
+					disabled={ isDisabled || isSubmitting }
+					onChange={ this.onTransferLockOptOutChange }
+					saveButtonLabel={ translate( 'Save contact info' ) }
+				/>
 				<div className="list__form-buttons">
 					<Button
 						primary
