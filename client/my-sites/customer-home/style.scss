@@ -1,5 +1,9 @@
 @import './grid-mixins.scss';
 
+body.is-section-home {
+	background: white;
+}
+
 .customer-home__heading {
 	display: flex;
 
