@@ -163,4 +163,14 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 			By.css( '.edit-site-navigation-toggle__button' )
 		);
 	}
+
+	/**
+	 * Alias for `toggleNavigationSidebar`.
+	 * We need to have the same function names in both
+	 * this and gutenberg editor component to
+	 * make sure general tests are working as expected.
+	 */
+	async toggleBlockEditorSidebar() {
+		await this.toggleNavigationSidebar();
+	}
 }

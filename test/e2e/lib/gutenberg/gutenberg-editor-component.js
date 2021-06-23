@@ -677,7 +677,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		);
 	}
 
-	async toggleNavigationSidebar() {
+	async toggleBlockEditorSidebar() {
 		const dismissSidebarButtonSelector =
 			'button[aria-label="Block editor sidebar"][aria-expanded="false"]';
 		const toggleSidebarButtonSelector = 'button[aria-label="Close block editor sidebar"]';
