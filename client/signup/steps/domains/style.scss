@@ -128,15 +128,7 @@ body.is-section-signup.is-white-signup {
 		}
 
 		.register-domain-step {
-			width: 100vw;
-
-			@include break-large {
-				width: 62vw;
-			}
-
-			@include break-wide {
-				width: 48vw;
-			}
+			flex: 1;
 		}
 
 		.register-domain-step__search-card {
