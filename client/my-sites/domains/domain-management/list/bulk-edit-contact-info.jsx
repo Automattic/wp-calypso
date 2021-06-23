@@ -6,13 +6,12 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { debounce, isEmpty, mapValues, merge } from 'lodash';
+import { Button } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
 import DomainContactDetails from 'calypso/my-sites/checkout/composite-checkout/components/domain-contact-details';
-import { Button } from '@automattic/components';
 import { fetchUserSettings } from 'calypso/state/user-settings/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
@@ -25,7 +24,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import DesignatedAgentNotice from 'calypso/my-sites/domains/domain-management/components/designated-agent-notice';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
-
+import { debounce, isEmpty } from './utils';
 import wp from 'calypso/lib/wp';
 
 const wpcom = wp.undocumented();
@@ -69,9 +68,8 @@ class BulkEditContactInfo extends React.Component {
 	}
 
 	componentDidUpdate() {
-		const email = ! isEmpty( this.props.userSettings?.new_user_email )
-			? this.props.userSettings?.new_user_email
-			: this.props.userSettings?.user_email;
+		const { new_user_email, user_email } = this.props.userSettings ?? {};
+		const email = new_user_email?.length > 0 ? new_user_email : user_email;
 
 		if ( ! isEmpty( email ) && isEmpty( this.state.contactDetails?.email ) ) {
 			this.updateDomainContactFields( { email: email } );
@@ -81,7 +79,8 @@ class BulkEditContactInfo extends React.Component {
 			! isEmpty( this.props.contactDetailsCache ) &&
 			false === this.state.hasSetContactDetailsFromCache
 		) {
-			this.setContactDetailsFromCache( this.props.contactDetailsCache );
+			const contactDetailsCopy = JSON.parse( JSON.stringify( this.props.contactDetailsCache ) );
+			this.setContactDetailsFromCache( contactDetailsCopy );
 		}
 	}
 
@@ -101,7 +100,7 @@ class BulkEditContactInfo extends React.Component {
 	};
 
 	updateDomainContactFields = ( data ) => {
-		const newContactDetails = merge( {}, this.state.contactDetails, data );
+		const newContactDetails = Object.assign( {}, this.state.contactDetails, data );
 		this.setState( { contactDetails: newContactDetails } );
 		! isEmpty( newContactDetails ) && this.debouncedValidateContactDetails( newContactDetails );
 	};
@@ -118,9 +117,10 @@ class BulkEditContactInfo extends React.Component {
 		wpcom.validateDomainContactInformation( contactDetails, [], ( error, data ) => {
 			let errorMessages = ( data && data.messages ) || {};
 			if ( ! isEmpty( errorMessages ) ) {
-				errorMessages = mapValues( errorMessages, ( errors ) => {
-					return Array.isArray( errors ) ? errors.join( ' ' ) : errors;
-				} );
+				errorMessages = Object.entries( errorMessages ).reduce( ( result, [ field, errors ] ) => {
+					result[ field ] = Array.isArray( errors ) ? errors.join( ' ' ) : errors;
+					return result;
+				}, {} );
 			}
 
 			this.setState( {
