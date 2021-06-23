@@ -20,7 +20,7 @@ const EmailExistingForwardsNotice = ( { domainsWithForwards, selectedDomainName 
 	return (
 		<Notice showDismiss={ false } status="is-warning">
 			{ translate(
-				"Please note that your existing email forwards for '%(domainName)s' will be removed if you upgrade to a hosted email solution. " +
+				"Existing email forwards for '%(domainName)s' will be removed once you upgrade. " +
 					'Use the form below to set up the email addresses you want to continue using.',
 				{
 					args: {
