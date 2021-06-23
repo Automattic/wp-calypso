@@ -1,4 +1,12 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .quick-links.foldable-card.card {
+
+	@include break-large {
+		box-shadow: none;
+	}
+
 	.foldable-card__header {
 		padding: 16px;
 		min-height: auto;
@@ -30,6 +38,7 @@
 	transition: all 0.1s;
 	padding-top: 12px;
 	padding-bottom: 12px;
+	box-shadow: none;
 
 	.quick-links__action-box-image {
 		display: flex;
