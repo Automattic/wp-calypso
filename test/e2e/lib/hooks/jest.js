@@ -7,28 +7,54 @@ import config from 'config';
 /**
  * Internal dependencies
  */
-import { buildHooks as buildVideoHooks } from './video';
+import { buildHooks as buildVideoHooks, isVideoEnabled } from './video';
 import { buildHooks as buildBrowserHooks } from './browser';
 
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 
-const videoHooks = buildVideoHooks();
-const browserHooks = buildBrowserHooks();
+// const tempDir =
+// 	process.env.TEMP_ASSET_PATH || ( await mkdtemp( path.resolve( __dirname, '../../test-' ) ) );
 
-for ( const hook of videoHooks.afterAll ) {
-	afterAll( hook );
+if ( isVideoEnabled() ) {
+	const {
+		startFramebuffer,
+		stopFramebuffer,
+		// takeScreenshot,
+		// startVideoRecording,
+		// saveVideoRecording,
+		stopVideoRecording,
+	} = buildVideoHooks();
+
+	beforeAll( async () => {
+		await startFramebuffer();
+		// await startVideoRecording( { tempDir } );
+	} );
+
+	// afterEach( async () => {
+	// 	if ( this.currentTest && this.currentTest.state === 'failed' ) {
+	// 		await takeScreenshot( {
+	// 			tempDir,
+	// 			testName: this.currentTest.title,
+	// 			driver,
+	// 		} );
+	// 		await saveVideoRecording( { tempDir, testName: this.currentTest.title } );
+	// 	}
+	// } );
+
+	afterAll.push( async () => {
+		await stopFramebuffer();
+		await stopVideoRecording();
+	} );
 }
-for ( const hook of videoHooks.beforeAll ) {
-	beforeAll( hook );
-}
-for ( const hook of videoHooks.afterEach ) {
-	afterEach( hook );
-}
+
+const browserHooks = buildBrowserHooks();
 
 beforeAll( async () => {
 	const driver = await browserHooks.createBrowser();
 	global.__BROWSER__ = driver;
 }, startBrowserTimeoutMS );
 
-afterAll( browserHooks.saveBrowserLogs );
-afterAll( browserHooks.closeBrowser );
+afterAll( async () => {
+	// await browserHooks.saveBrowserLogs( { tempDir } );
+	await browserHooks.closeBrowser();
+} );
