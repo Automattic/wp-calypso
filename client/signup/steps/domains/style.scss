@@ -114,8 +114,12 @@ body.is-section-signup.is-white-signup {
 			margin: 0 20px;
 
 			@include break-large {
-				margin: 0 0 0 80px;
+				margin: 0 20px 0 40px;
 				padding: 40px 0;
+			}
+
+			@include break-huge {
+				margin: 0 0 0 80px;
 			}
 		}
 
