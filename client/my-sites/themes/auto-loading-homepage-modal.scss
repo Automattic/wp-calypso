@@ -46,6 +46,7 @@
 
 	@include break-medium {
 		width: 70%;
+		min-height: 0;
 	}
 }
 
@@ -73,10 +74,16 @@
 		margin-left: 2%;
 
 		img,
-		.themes__iframe-wrapper {
+		.themes__iframe-wrapper,
+		.themes__theme-preview-image-wrapper {
 			display: block;
 			height: 100%;
+		}
+
+		.themes__iframe-wrapper,
+		.themes__theme-preview-image-wrapper {
 			max-height: 235px;
+			overflow: hidden;
 		}
 
 		.form-label {
@@ -98,7 +105,7 @@
 	}
 
 	img {
-		max-width: 100%;
+		width: 100%;
 		height: auto;
 	}
 }
