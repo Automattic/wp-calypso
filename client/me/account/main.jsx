@@ -536,52 +536,42 @@ class Account extends React.Component {
 
 	renderPendingEmailChange() {
 		const { translate } = this.props;
+		const editContactInfoInBulkUrl = `/domains/manage?site=all&action=edit-contact-email`;
 
 		if ( ! this.hasPendingEmailChange() ) {
 			return null;
 		}
 
+		let text = translate(
+			'Your e-mail change is pending. Please take a moment to check %(email)s for an e-mail with the subject "[WordPress.com] New Email Address" to confirm your change. Failure to confirm within 14 days will result in suspension of your domain name.',
+			{
+				args: {
+					email: this.getUserSetting( 'new_user_email' ),
+				},
+			}
+		);
+
+		if ( this.hasCustomDomains() ) {
+			text = translate(
+				'Your e-mail change is pending. Please take a moment to:{{br/}}1. Check %(email)s for an e-mail with the subject "[WordPress.com] New Email Address" to confirm your change. Failure to confirm within 14 days will result in suspension of your domain name.{{br/}}2. Update contact information on your domain names if necessary {{link}}here{{/link}}.',
+				{
+					args: {
+						email: this.getUserSetting( 'new_user_email' ),
+					},
+					components: {
+						br: <br />,
+						link: <a href={ editContactInfoInBulkUrl } />,
+					},
+				}
+			);
+		}
+
 		return (
-			<Notice
-				showDismiss={ false }
-				status="is-info"
-				text={ translate(
-					'There is a pending change of your email to %(email)s. Please check your inbox for a confirmation link.',
-					{
-						args: {
-							email: this.getUserSetting( 'new_user_email' ),
-						},
-					}
-				) }
-			>
+			<Notice showDismiss={ false } status="is-info" text={ text }>
 				<NoticeAction onClick={ () => this.props.cancelPendingEmailChange() }>
 					{ translate( 'Cancel' ) }
 				</NoticeAction>
 			</Notice>
-		);
-	}
-
-	renderUpdateEmailInBulkNotice() {
-		const { translate } = this.props;
-		const editContactInfoInBulkUrl = `/domains/manage?site=all&action=edit-contact-email`;
-
-		if ( ! this.hasPendingEmailChange() || ! this.hasCustomDomains() ) {
-			return null;
-		}
-
-		return (
-			<Notice
-				showDismiss={ false }
-				status="is-info"
-				text={ translate(
-					'You can also update the contact info for all of your domains to this e-mail address by clicking {{link}}here{{/link}}',
-					{
-						components: {
-							link: <a href={ editContactInfoInBulkUrl } />,
-						},
-					}
-				) }
-			></Notice>
 		);
 	}
 
@@ -807,7 +797,6 @@ class Account extends React.Component {
 						{ translate( 'Will not be publicly displayed' ) }
 					</FormSettingExplanation>
 					{ this.renderPendingEmailChange() }
-					{ this.renderUpdateEmailInBulkNotice() }
 				</FormFieldset>
 
 				<FormFieldset>
