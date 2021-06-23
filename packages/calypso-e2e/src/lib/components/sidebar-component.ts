@@ -101,6 +101,9 @@ export class SidebarComponent extends BaseContainer {
 			selector = `${ selectors.subheading } >> text="${ subitem }"`;
 			await this._click( selector );
 		}
+
+		// Confirm the focus is now back to the content, not the sidebar.
+		await this.page.waitForSelector( `${ selectors.layout }.focus-content` );
 	}
 
 	/**
