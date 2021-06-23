@@ -1,0 +1,50 @@
+{
+	"publicPath": "/calypso/evergreen/",
+	"manifests": [
+		"/*\n * ATTENTION: The \"eval\" devtool has been used (maybe by default in mode: \"development\").\n * This devtool is neither made for production nor for readable output files.\n * It uses \"eval()\" calls to create a separate source file in the browser devtools.\n * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)\n * or disable the default devtool with \"devtool: false\".\n * If you are looking for production-ready output files, see mode: \"production\" (https://webpack.js.org/configuration/mode/).\n */\n/******/ (() => { // webpackBootstrap\n/******/ \t\"use strict\";\n/******/ \t/* webpack/runtime/compat */\n/******/ \t\n/******/ \t\n/******/ \t\n/******/ \t\t\t\t\t\t\t// Array to store all loading or loaded chunks\n/******/ \t\t\t\t\t\t\tvar _installedChunks = [];\n/******/ \t\n/******/ \t\t\t\t\t\t\tfunction RequireChunkCallback() {\n/******/ \t\t\t\t\t\t\t\tthis.callbacks = [];\n/******/ \t\t\t\t\t\t\t}\n/******/ \t\n/******/ \t\t\t\t\t\t\tRequireChunkCallback.prototype.add = function( callback ) {\n/******/ \t\t\t\t\t\t\t\tthis.callbacks.push( callback );\n/******/ \t\n/******/ \t\t\t\t\t\t\t\treturn this;\n/******/ \t\t\t\t\t\t\t};\n/******/ \t\n/******/ \t\t\t\t\t\t\tRequireChunkCallback.prototype.remove = function( callback ) {\n/******/ \t\t\t\t\t\t\t\tthis.callbacks = this.callbacks.filter( function( _callback ) {\n/******/ \t\t\t\t\t\t\t\t\treturn callback !== _callback;\n/******/ \t\t\t\t\t\t\t\t} );\n/******/ \t\n/******/ \t\t\t\t\t\t\t\treturn this;\n/******/ \t\t\t\t\t\t\t};\n/******/ \t\n/******/ \t\t\t\t\t\t\tRequireChunkCallback.prototype.trigger = function( chunk, promises, publicPath ) {\n/******/ \t\t\t\t\t\t\t\tfor ( var i = 0; i < this.callbacks.length; i++ ) {\n/******/ \t\t\t\t\t\t\t\t\tthis.callbacks[ i ]( chunk, promises, publicPath );\n/******/ \t\t\t\t\t\t\t\t}\n/******/ \t\n/******/ \t\t\t\t\t\t\t\treturn this;\n/******/ \t\t\t\t\t\t\t};\n/******/ \t\n/******/ \t\t\t\t\t\t\tRequireChunkCallback.prototype.getInstalledChunks = function() {\n/******/ \t\t\t\t\t\t\t\treturn _installedChunks.map( function( chunkId ) {\n/******/ \t\t\t\t\t\t\t\t\treturn __webpack_require__.u( chunkId )\n/******/ \t\t\t\t\t\t\t\t\t\t.replace( __webpack_require__.p, '' )\n/******/ \t\t\t\t\t\t\t\t\t\t.replace( /\\.js$/, '' );\n/******/ \t\t\t\t\t\t\t\t} );\n/******/ \t\t\t\t\t\t\t};\n/******/ \t\n/******/ \t\t\t\t\t\t\tRequireChunkCallback.prototype.getPublicPath = function() {\n/******/ \t\t\t\t\t\t\t\treturn __webpack_require__.p;\n/******/ \t\t\t\t\t\t\t};\n/******/ \t\n/******/ \t\t\t\t\t\t\tvar requireChunkCallback = new RequireChunkCallback();\n/******/ \t\n/******/ \t\t\t\t\t\t\twindow.__requireChunkCallback__ = requireChunkCallback;\n/******/ \t\t\t\t\t\t/************************************************************************/\n/******/ \t\n/******/ \t\n/******/ })()\n;"
+	],
+	"entrypoints": {
+		"entry-main": {
+			"chunks": [ "runtime" ],
+			"assets": []
+		},
+		"entry-domains-landing": {
+			"chunks": [ "runtime" ],
+			"assets": []
+		},
+		"entry-login": {
+			"chunks": [ "runtime" ],
+			"assets": []
+		},
+		"entry-gutenboarding": {
+			"chunks": [ "runtime" ],
+			"assets": []
+		}
+	},
+	"assetsByChunkName": {
+		"runtime": [ "/calypso/evergreen/runtime.js" ]
+	},
+	"chunks": [
+		{
+			"rendered": false,
+			"initial": true,
+			"entry": true,
+			"recorded": false,
+			"size": 1296,
+			"sizes": {
+				"runtime": 1296
+			},
+			"names": [ "runtime" ],
+			"idHints": [],
+			"runtime": [ "runtime" ],
+			"files": [ "/calypso/evergreen/runtime.js" ],
+			"auxiliaryFiles": [],
+			"hash": "82c001198dbe46df34e3",
+			"childrenByOrder": {},
+			"id": "runtime",
+			"siblings": [],
+			"parents": [],
+			"children": []
+		}
+	]
+}

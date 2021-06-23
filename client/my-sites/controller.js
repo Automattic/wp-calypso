@@ -243,6 +243,7 @@ function onSelectedSiteAvailable( context, basePath ) {
 		return false;
 	}
 
+	// Issue of calypso linking to wp-admin here.
 	if ( userCanManagePlugins && calypsoify && /^\/plugins/.test( basePath ) ) {
 		const plugin = get( context, 'params.plugin' );
 		let pluginString = '';
