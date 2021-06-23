@@ -806,11 +806,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 
 	.signup__step.is-domains {
 		.is-wide-layout {
-			max-width: 1200px;
-
-			@include break-huge {
-				max-width: 1280px;
-			}
+			max-width: 1280px;
 		}
 
 		.formatted-header__subtitle {
