@@ -361,7 +361,6 @@ class EmailPlan extends React.Component {
 					domain={ domain }
 					mailboxes={ this.getMailboxes() }
 					isLoadingEmails={ isLoadingEmailAccounts }
-					selectedSite={ selectedSite }
 				/>
 
 				<div className="email-plan__actions">

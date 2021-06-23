@@ -77,7 +77,7 @@ const getSecondaryContentForMailbox = ( mailbox ) => {
 	return null;
 };
 
-function EmailPlanMailboxesList( { account, domain, isLoadingEmails, mailboxes, selectedSite } ) {
+function EmailPlanMailboxesList( { account, domain, isLoadingEmails, mailboxes } ) {
 	const translate = useTranslate();
 	const accountType = account?.account_type;
 
@@ -123,13 +123,10 @@ function EmailPlanMailboxesList( { account, domain, isLoadingEmails, mailboxes, 
 						} ) }
 					</Badge>
 				) }
+
 				<EmailMailboxWarnings account={ account } mailbox={ mailbox } />
-				<EmailMailboxActionMenu
-					account={ account }
-					domain={ domain }
-					mailbox={ mailbox }
-					selectedSite={ selectedSite }
-				/>
+
+				<EmailMailboxActionMenu account={ account } domain={ domain } mailbox={ mailbox } />
 			</MailboxListItem>
 		);
 	} );
@@ -142,7 +139,6 @@ EmailPlanMailboxesList.propTypes = {
 	domain: PropTypes.object,
 	isLoadingEmails: PropTypes.bool,
 	mailboxes: PropTypes.array,
-	selectedSite: PropTypes.object,
 };
 
 export default EmailPlanMailboxesList;
