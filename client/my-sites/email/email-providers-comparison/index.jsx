@@ -25,12 +25,14 @@ import {
 	getSelectedDomain,
 } from 'calypso/lib/domains';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
-import PromoCard from 'calypso/components/promo-section/promo-card';
 import EmailProviderCard from './email-provider-card';
+import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
 import {
 	getEmailForwardingFeatures,
 	getGoogleFeatures,
@@ -49,7 +51,6 @@ import {
 	hasGSuiteSupportedDomain,
 } from 'calypso/lib/gsuite';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getTitanProductName } from 'calypso/lib/titan';
 import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
@@ -57,6 +58,7 @@ import { emailManagementForwarding, emailManagement } from 'calypso/my-sites/ema
 import { errorNotice } from 'calypso/state/notices/actions';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
+import PromoCard from 'calypso/components/promo-section/promo-card';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import Gridicon from 'calypso/components/gridicon';
@@ -66,6 +68,7 @@ import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powe
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import gSuiteLogo from 'calypso/assets/images/email-providers/gsuite.svg';
 import forwardingIcon from 'calypso/assets/images/email-providers/forwarding.svg';
+import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-add-mailboxes/titan-new-mailbox-list';
@@ -552,15 +555,27 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	render() {
-		const { isGSuiteSupported, selectedSiteId } = this.props;
+		const {
+			domainsWithForwards,
+			isGSuiteSupported,
+			selectedDomainName,
+			selectedSiteId,
+		} = this.props;
 
 		return (
 			<Main wideLayout>
 				{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
+				<QueryEmailForwards domainName={ selectedDomainName } />
+
 				{ this.renderHeaderSection() }
 
 				{ this.renderDomainEligibilityNotice() }
+
+				<EmailExistingForwardsNotice
+					domainsWithForwards={ domainsWithForwards }
+					selectedDomainName={ selectedDomainName }
+				/>
 
 				{ this.renderTitanCard() }
 
@@ -601,6 +616,7 @@ export default connect(
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			currentRoute: getCurrentRoute( state ),
 			domain,
+			domainsWithForwards: getDomainsWithForwards( state, domains ),
 			gSuiteProduct: getProductBySlug( state, productSlug ),
 			isGSuiteSupported,
 			productsList: getProductsList( state ),
