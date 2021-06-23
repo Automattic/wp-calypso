@@ -123,9 +123,7 @@ export function createTransactionEndpointCartFromResponseCart( {
 		blog_id: siteId || '0',
 		cart_key: siteId || 'no-site',
 		create_new_blog: siteId ? false : true,
-		is_jetpack_checkout: responseCart.products.some(
-			( product ) => product.extra.isJetpackCheckout
-		),
+		is_jetpack_checkout: false,
 		coupon: responseCart.coupon || '',
 		currency: responseCart.currency,
 		temporary: false,
