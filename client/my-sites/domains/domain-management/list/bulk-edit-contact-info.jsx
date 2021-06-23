@@ -41,6 +41,7 @@ class BulkEditContactInfo extends React.Component {
 		isSubmitting: PropTypes.bool,
 		onTransferLockOptOutChange: PropTypes.func.isRequired,
 		emailOnly: PropTypes.bool,
+		domainNamesList: PropTypes.array,
 	};
 
 	static defaultProps = {
@@ -114,19 +115,23 @@ class BulkEditContactInfo extends React.Component {
 			return;
 		}
 
-		wpcom.validateDomainContactInformation( contactDetails, [], ( error, data ) => {
-			let errorMessages = ( data && data.messages ) || {};
-			if ( ! isEmpty( errorMessages ) ) {
-				errorMessages = Object.entries( errorMessages ).reduce( ( result, [ field, errors ] ) => {
-					result[ field ] = Array.isArray( errors ) ? errors.join( ' ' ) : errors;
-					return result;
-				}, {} );
-			}
+		wpcom.validateDomainContactInformation(
+			contactDetails,
+			this.props.domainNamesList,
+			( error, data ) => {
+				let errorMessages = ( data && data.messages ) || {};
+				if ( ! isEmpty( errorMessages ) ) {
+					errorMessages = Object.entries( errorMessages ).reduce( ( result, [ field, errors ] ) => {
+						result[ field ] = Array.isArray( errors ) ? errors.join( ' ' ) : errors;
+						return result;
+					}, {} );
+				}
 
-			this.setState( {
-				errorMessages,
-			} );
-		} );
+				this.setState( {
+					errorMessages,
+				} );
+			}
+		);
 	};
 
 	handleSaveContactInfo = () => this.props.handleSaveContactInfo( this.state.contactDetails );

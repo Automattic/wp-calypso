@@ -413,6 +413,17 @@ class ListAll extends Component {
 
 	renderActionForm() {
 		if ( ! this.isLoading() && this.props.isContactEmailEditContext ) {
+			const selectedDomainNamesList = Object.entries( this.state.selectedDomains ).reduce(
+				( result, [ domain, selected ] ) => {
+					if ( selected ) {
+						result.push( domain );
+					}
+
+					return result;
+				},
+				[]
+			);
+
 			return (
 				<Card>
 					<CardHeading>
@@ -424,6 +435,7 @@ class ListAll extends Component {
 						onTransferLockOptOutChange={ this.handleContactInfoTransferLockOptOutChange }
 						handleSaveContactInfo={ this.handleSaveContactInfo }
 						emailOnly={ ListAllActions.editContactEmail === this.props?.action }
+						domainNamesList={ selectedDomainNamesList }
 					/>
 				</Card>
 			);
