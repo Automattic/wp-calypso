@@ -9,7 +9,7 @@
 // Rule Definition
 //------------------------------------------------------------------------------
 
-const ERROR_MESSAGE = 'Missing external, internal, WordPress dependencies docblocks';
+const ERROR_MESSAGE = 'Missing external, internal, WordPress, type dependencies docblocks';
 const RX_DOCBLOCK = /\/\*\*\n \* ((Ex|In)ternal|WordPress|Type) dependencies\s*\n \*\//i;
 
 module.exports = {
