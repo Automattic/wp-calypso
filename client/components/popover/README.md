@@ -121,6 +121,14 @@ in a popover. It is fully keyboard accessible.
 If set, `PopoverMenuItem` will be rendered as a link; otherwise, it will be
 rendered as a button.
 
+#### `isExternalLink { bool } - default: false`
+
+If set to `true`, renders the component using the `ExternalLink` component, which includes an external indicator. Note that `href` **must** be specified to ensure the component remains keyboard accessible.
+
+#### `onClick { func } - optional`
+
+If set, this function will be called when the item is clicked.
+
 #### `className { string } - optional`
 
 Sets a custom className on the button or link.
