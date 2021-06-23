@@ -5,8 +5,8 @@ import {
 	DataHelper,
 	BrowserManager,
 	LoginFlow,
+	NewPostFlow,
 	PublishedPostPage,
-	PublishedPostsListPage,
 } from '@automattic/calypso-e2e';
 
 /**
@@ -18,27 +18,30 @@ describe( DataHelper.createSuiteTitle( 'Likes (Logged Out)' ), function () {
 	describe( 'Like an existing post as logged out user', function () {
 		let loginFlow;
 		let publishedPostPage;
-		let publishedPostsListPage;
-		let url;
+		let postUrl;
 
-		it( 'Set up', async function () {
-			url = DataHelper.getAccountSiteURL( user );
+		before( 'Set up', async function () {
+			// Log In, write then publish a new post and save the post URL.
+			// This is done as the default user.
+			loginFlow = new LoginFlow( this.page );
+			await loginFlow.logIn();
+			const newPostFlow = new NewPostFlow( this.page );
+			postUrl = await newPostFlow.getNewTestPost();
+			// Clear the cookies for user.
 			await BrowserManager.clearCookies( this.page );
 		} );
 
-		it( 'Visit site', async function () {
+		it( 'Visit post', async function () {
 			// This is a raw call to the underlying page as it does not warrant creating
 			// an entire flow or page for this one action.
-			await this.page.goto( url );
-		} );
-
-		it( 'Click on first post', async function () {
-			publishedPostsListPage = await PublishedPostsListPage.Expect( this.page, user );
-			await publishedPostsListPage.visitPost( 1 );
+			await this.page.goto( postUrl );
 		} );
 
 		it( 'Like post', async function () {
+			// Upon navigation conclusion, the published post should be on screen.
 			publishedPostPage = await PublishedPostPage.Expect( this.page );
+
+			// Prepare to execute a new log in flow as the specified user.
 			loginFlow = new LoginFlow( this.page, user );
 
 			// Clicking the Like button will bring up a new popup, so

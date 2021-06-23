@@ -169,17 +169,35 @@ export class GutenbergEditorPage extends BaseContainer {
 	/**
 	 * Publishes the post or page.
 	 *
-	 * @param {boolean} visit Whether to then visit the page.
-	 * @returns {Promise<void} No return value.
+	 * @param {Object} param0 Object.
+	 * @param {boolean} param0.visit Whether to then visit the page.
+	 * @param {boolean} param0.getUrl Whether to return the published item's URL.
+	 * @returns {Promise<string|void>} String if getUrl parameter is set. Otherwise, no return value.
 	 */
-	async publish( { visit = false }: { visit?: boolean } ): Promise< void > {
+	async publish( {
+		visit = false,
+		getUrl = false,
+	}: {
+		visit: boolean;
+		getUrl: boolean;
+	} ): Promise< string | void > {
 		await this.frame.click( selectors.publishPanelToggle );
 		await this.frame.waitForSelector( selectors.publishPanel );
 		await this.frame.click( selectors.publishButton );
 		await this.frame.waitForSelector( selectors.viewPostButton );
 
+		// Generic term 'article' is used here as this page should handle both
+		// posts and pages.
+		const articleUrl = getUrl ? await this._getPublishedURL() : '';
+
+		// If visit, wait until navigation finishes.
 		if ( visit ) {
 			await this._visitPublishedEntryFromPublishPane();
+		}
+
+		// Return the published post's URL to the caller.
+		if ( articleUrl ) {
+			return articleUrl;
 		}
 	}
 
@@ -194,5 +212,19 @@ export class GutenbergEditorPage extends BaseContainer {
 			this.page.waitForNavigation(),
 			this.page.waitForLoadState( 'networkidle' ),
 		] );
+	}
+
+	/**
+	 * Returns the published article's URL from the post-publish sidebar.
+	 *
+	 * @returns {Promise<string>} URl of the published entry.
+	 */
+	async _getPublishedURL(): Promise< string > {
+		console.log( 'get publish url hit!' );
+		const title = await this.getTitle();
+		return await this.frame.$eval(
+			`${ selectors.publishPanel } :text("${ title }")`,
+			( el: HTMLLinkElement ) => el.href
+		);
 	}
 }

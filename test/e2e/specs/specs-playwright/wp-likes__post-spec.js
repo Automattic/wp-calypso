@@ -6,8 +6,6 @@ import {
 	LoginFlow,
 	NewPostFlow,
 	GutenbergEditorPage,
-	MyHomePage,
-	PublishedPostsListPage,
 	PublishedPostPage,
 } from '@automattic/calypso-e2e';
 
@@ -18,7 +16,9 @@ const quote =
 	'The foolish man seeks happiness in the distance. The wise grows it under his feet.\n— James Oppenheim';
 
 describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
-	describe( 'Like a new post', function () {
+	let postUrl;
+
+	describe( 'Create and like a new post', function () {
 		let publishedPostPage;
 		let gutenbergEditorPage;
 
@@ -43,7 +43,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 		} );
 
 		it( 'Publish and visit post', async function () {
-			await gutenbergEditorPage.publish( { visit: true } );
+			postUrl = await gutenbergEditorPage.publish( { visit: true, getUrl: true } );
 		} );
 
 		it( 'Like post', async function () {
@@ -56,22 +56,17 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 		} );
 	} );
 
-	describe( 'Like an existing post', function () {
+	describe( 'Like an existing post as non-author', function () {
 		let publishedPostPage;
 
 		it( 'Log in', async function () {
-			const loginFlow = new LoginFlow( this.page, 'gutenbergSimpleSiteUser' );
+			const loginFlow = new LoginFlow( this.page );
 			await loginFlow.logIn();
 		} );
 
-		it( 'Visit site', async function () {
-			const myHomePage = await MyHomePage.Expect( this.page );
-			await myHomePage.visitSite();
-		} );
-
-		it( 'Click on first post', async function () {
-			const publishedPostsListPage = await PublishedPostsListPage.Expect( this.page );
-			await publishedPostsListPage.visitPost( 1 );
+		it( 'Visit post', async function () {
+			// Raw call to the Page object.
+			await this.page.goto( postUrl );
 		} );
 
 		it( 'Like post', async function () {
