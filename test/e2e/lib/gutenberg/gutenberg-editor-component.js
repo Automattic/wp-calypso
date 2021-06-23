@@ -678,15 +678,13 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async toggleNavigationSidebar() {
-		// We exclude .is-hidden to make sure the dimiss button
-		// is clicked when the navigation sidebar is open.
-		const sidebarToggleSelector =
-			'.wpcom-block-editor-nav-sidebar-toggle-sidebar-button__button:not(.is-hidden)';
-		const sidebarDismissSelector =
-			'.wpcom-block-editor-nav-sidebar-nav-sidebar__dismiss-sidebar-button';
+		const dismissSidebarButtonSelector =
+			'button[aria-label="Block editor sidebar"][aria-expanded="false"]';
+		const toggleSidebarButtonSelector = 'button[aria-label="Close block editor sidebar"]';
+
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( `${ sidebarToggleSelector }, ${ sidebarDismissSelector }` )
+			By.css( `${ toggleSidebarButtonSelector }, ${ dismissSidebarButtonSelector }` )
 		);
 	}
 }
