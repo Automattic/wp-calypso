@@ -812,7 +812,6 @@ class DomainsStep extends React.Component {
 				goToNextStep={ this.handleSkip }
 				skipHeadingText={ translate( 'Not sure yet?' ) }
 				skipLabelText={ translate( 'Choose a domain later' ) }
-				align={ isReskinned ? 'left' : 'center' }
 				isWideLayout={ isReskinned }
 			/>
 		);

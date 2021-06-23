@@ -811,10 +811,18 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 
 		.formatted-header__subtitle {
 			text-align: left;
+
+			@include break-large {
+				text-align: center;
+			}
 		}
 
 		.formatted-header__title {
 			text-align: left;
+
+			@include break-large {
+				text-align: center;
+			}
 		}
 	}
 
