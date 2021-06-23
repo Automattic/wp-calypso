@@ -68,19 +68,22 @@ class VerticalNavItem extends Component {
 
 		const linkProps = external ? { target: '_blank', rel: 'noreferrer' } : {};
 
-		const pathObj = disabled
-			? {}
-			: {
-					href: path,
-			  };
+		const navItemCard = (
+			<CompactCard className={ compactCardClassNames }>
+				{ this.getIcon() }
+
+				<span>{ children }</span>
+			</CompactCard>
+		);
+
+		if ( disabled ) {
+			return navItemCard;
+		}
+
 		return (
 			// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-			<a onClick={ onClick } { ...pathObj } { ...linkProps }>
-				<CompactCard className={ compactCardClassNames }>
-					{ this.getIcon() }
-
-					<span>{ children }</span>
-				</CompactCard>
+			<a href={ path } onClick={ onClick } { ...linkProps }>
+				{ navItemCard }
 			</a>
 		);
 	}
