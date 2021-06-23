@@ -40,7 +40,7 @@ class Preference extends Component {
 
 		return (
 			<tr>
-				<td className="preferences-helper__preference-unset">
+				<td className="preference__unset">
 					<button
 						onClick={ partial( unsetPreference, name, null ) }
 						title={ translate( 'Unset Preference' ) }
@@ -50,8 +50,8 @@ class Preference extends Component {
 						</span>
 					</button>
 				</td>
-				<td className="preferences-helper__preference-name">{ name }</td>
-				<td className="preferences-helper__preference-value">{ preferenceHandler }</td>
+				<td className="preference__name">{ name }</td>
+				<td className="preference__value">{ preferenceHandler }</td>
 			</tr>
 		);
 	}

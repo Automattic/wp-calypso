@@ -16,7 +16,7 @@ class ArrayPreference extends Component {
 		const { value } = this.props;
 
 		return (
-			<ul className="preferences-helper__array-preference">
+			<ul className="array-preference">
 				{ value.map( ( preference, index ) => (
 					<li key={ index }>{ JSON.stringify( preference ) }</li>
 				) ) }

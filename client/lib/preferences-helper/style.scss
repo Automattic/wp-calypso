@@ -41,12 +41,12 @@
 	overflow: hidden;
 }
 
-.preferences-helper__boolean-preference input {
+.preferences-helper__preferences-table .boolean-preference input {
 	margin: initial;
 }
 
-.preferences-helper__array-preference,
-.preferences-helper__object-preference {
+.preferences-helper__preferences-table .array-preference,
+.preferences-helper__preferences-table .object-preference {
 	margin: initial;
 	list-style: none;
 
@@ -55,21 +55,21 @@
 	}
 }
 
-.preferences-helper__object-preference li {
+.preferences-helper__preferences-table .object-preference li {
 	margin-bottom: 8px;
 }
 
-.preferences-helper__object-preference-property {
+.preferences-helper__preferences-table .object-preference__property {
 	display: block;
 	margin-bottom: 4px;
 	font-family: monospace;
 }
 
-.preferences-helper__array-preference {
+.preferences-helper__preferences-table .array-preference {
 	font-family: monospace;
 }
 
-.preferences-helper__preference-unset {
+.preferences-helper__preferences-table .preference__unset {
 	text-align: center;
 	color: var( --color-accent );
 
@@ -78,13 +78,15 @@
 	}
 }
 
-.preferences-helper__preference-name {
+.preferences-helper__preferences-table .preference__name {
 	text-align: right;
 	font-family: monospace;
 	font-weight: 600;
 }
 
-.preferences-helper__preference-save {
+.preferences-helper__preferences-table .boolean-preference__save,
+.preferences-helper__preferences-table .number-preference__save,
+.preferences-helper__preferences-table .string-preference__save {
 	margin: 0 4px;
 	padding: 4px 8px;
 
@@ -99,7 +101,9 @@
 	}
 }
 
-.preferences-helper__preference-reset {
+.preferences-helper__preferences-table .boolean-preference__reset,
+.preferences-helper__preferences-table .number-preference__reset,
+.preferences-helper__preferences-table .string-preference__reset {
 	margin: 0 4px;
 	padding: 4px 8px;
 
@@ -115,20 +119,21 @@
 	}
 }
 
-.number-preference input,
-.string-preference input {
+.preferences-helper__preferences-table .number-preference input,
+.preferences-helper__preferences-table .string-preference input {
 	margin: 4px 1rem 4px 0;
 }
 
-.boolean-preference input {
+.preferences-helper__preferences-table .boolean-preference input {
 	margin: 8px 1rem 8px 0;
 	appearance: checkbox;
 }
 
 .environment.is-prefs:hover .preferences-helper__current-preferences.card {
 	display: block;
+	max-width: 40vw;
 	max-height: 80vh;
-	overflow-y: scroll;
+	overflow: auto;
 	position: absolute;
 	bottom: 100%;
 	right: 0;

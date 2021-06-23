@@ -45,14 +45,14 @@ const BooleanPreference: FunctionComponent< Props > = ( { name, value } ) => {
 			{ value !== localValue && (
 				<>
 					<button
-						className="preferences-helper__preference-save"
+						className="boolean-preference__save"
 						onClick={ savePreferenceChange }
 						disabled={ value === localValue }
 					>
 						{ 'save' }
 					</button>{ ' ' }
 					<button
-						className="preferences-helper__preference-reset"
+						className="boolean-preference__reset"
 						onClick={ resetPreferenceChange }
 						disabled={ value === localValue }
 					>

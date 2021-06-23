@@ -35,7 +35,7 @@ class PreferenceList extends Component {
 				<a href={ '/devdocs/client/state/preferences/README.md' }>{ translate( 'Preferences' ) }</a>
 				<Card className="preferences-helper__current-preferences">
 					{ sortedPreferenceItems.length > 0 ? (
-						<table className="preferences-helper__preferences-table">
+						<table className={ 'preferences-helper__preferences-table' }>
 							<thead>
 								<tr>
 									<th className="preferences-helper__header-unset">{ translate( 'Delete' ) }</th>
