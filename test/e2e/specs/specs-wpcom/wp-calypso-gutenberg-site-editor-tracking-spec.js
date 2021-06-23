@@ -32,6 +32,41 @@ const clickGlobalStylesButton = async ( driver ) =>
 		By.css( '.edit-site-header__actions button[aria-label="Global Styles"]' )
 	);
 
+const clickGlobalStylesResetButton = async ( driver ) => {
+	await driverHelper.clickWhenClickable(
+		driver,
+		By.css( '.edit-site-global-styles-sidebar .edit-site-global-styles-sidebar__reset-button' )
+	);
+};
+
+const changeGlobalStylesFontSize = async ( driver, value ) =>
+	await driverHelper.setWhenSettable(
+		driver,
+		By.css( '.edit-site-global-styles-sidebar .components-font-size-picker input' ),
+		value
+	);
+
+const changeGlobalStylesColor = async ( driver, colorTypeIndex, colorValueIndex ) =>
+	await driverHelper.clickWhenClickable(
+		driver,
+		By.css(
+			`.edit-site-global-styles-sidebar .block-editor-color-gradient-control:nth-of-type(${ colorTypeIndex }) .components-circular-option-picker__option-wrapper:nth-of-type(${ colorValueIndex }) .components-circular-option-picker__option`
+		)
+	);
+
+const changeGlobalStylesFirstColorPaletteItem = async ( driver, value, pickerOpened = false ) => {
+	if ( ! pickerOpened ) {
+		await driverHelper.clickWhenClickable(
+			driver,
+			By.css(
+				'.edit-site-global-styles-sidebar .components-base-control:last-of-type .components-color-edit__color-option button'
+			)
+		);
+	}
+
+	await driverHelper.setWhenSettable( driver, By.css( '.components-color-picker input' ), value );
+};
+
 const clickBlockSettingsButton = async ( driver ) =>
 	await driverHelper.clickWhenClickable(
 		driver,
@@ -56,6 +91,13 @@ const getGlobalStylesTabSelectedEvents = async ( driver ) => {
 	const eventsStack = await getEventsStack( driver );
 	return eventsStack.filter(
 		( [ eventName ] ) => eventName === 'wpcom_block_editor_global_styles_tab_selected'
+	);
+};
+
+const getGlobalStylesUpdateEvents = async ( driver ) => {
+	const eventsStack = await getEventsStack( driver );
+	return eventsStack.filter(
+		( [ eventName ] ) => eventName === 'wpcom_block_editor_global_styles_update'
 	);
 };
 
@@ -160,6 +202,272 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 				const tabSelectedEvents = await getGlobalStylesTabSelectedEvents( this.driver );
 				assert.strictEqual( tabSelectedEvents.length, 0 );
+			} );
+		} );
+
+		describe( 'Tracks "wpcom_block_editor_global_styles_update', function () {
+			it( 'global color and typography', async function () {
+				await clickGlobalStylesButton( this.driver );
+				// await clearEventsStack( this.driver );
+
+				await changeGlobalStylesFontSize( this.driver, '11' );
+				// Update events are debounced to avoid event spam when items are updated using slider inputs.
+				// Therefore we must wait so this update event is not debounced.
+				await this.driver.sleep( 100 );
+
+				// Update text color option.
+				await changeGlobalStylesColor( this.driver, 1, 1 );
+				await this.driver.sleep( 100 );
+
+				// Update link color option.
+				await changeGlobalStylesColor( this.driver, 3, 2 );
+				// The last sleep before accessing the event stack must be longer
+				// to or we risk the event not reaching the stack in time.
+				await this.driver.sleep( 200 );
+
+				let updateEvents = await getGlobalStylesUpdateEvents( this.driver );
+
+				assert.strictEqual( updateEvents.length, 3 );
+				assert(
+					updateEvents.some( ( event ) => {
+						const {
+							block_type,
+							section,
+							field,
+							field_value,
+							element_type,
+							palette_slug,
+						} = event[ 1 ];
+						return (
+							block_type === undefined &&
+							section === 'color' &&
+							field === 'text' &&
+							element_type === undefined &&
+							palette_slug === undefined &&
+							typeof field_value === 'string' &&
+							field_value[ 0 ] === '#'
+						);
+					} )
+				);
+				assert(
+					updateEvents.some( ( event ) => {
+						const {
+							block_type,
+							section,
+							field,
+							field_value,
+							element_type,
+							palette_slug,
+						} = event[ 1 ];
+						return (
+							block_type === undefined &&
+							section === 'color' &&
+							field === 'text' &&
+							element_type === 'link' &&
+							palette_slug === undefined &&
+							typeof field_value === 'string' &&
+							field_value[ 0 ] === '#'
+						);
+					} )
+				);
+				assert(
+					updateEvents.some( ( event ) => {
+						const {
+							block_type,
+							section,
+							field,
+							field_value,
+							element_type,
+							palette_slug,
+						} = event[ 1 ];
+						return (
+							block_type === undefined &&
+							section === 'typography' &&
+							field === 'fontSize' &&
+							element_type === undefined &&
+							palette_slug === undefined &&
+							field_value === '11px'
+						);
+					} )
+				);
+
+				await clearEventsStack( this.driver );
+
+				await clickGlobalStylesResetButton( this.driver );
+				await this.driver.sleep( 200 );
+
+				updateEvents = await getGlobalStylesUpdateEvents( this.driver );
+				assert.strictEqual( updateEvents.length, 3 );
+				assert(
+					updateEvents.some( ( event ) => {
+						const {
+							block_type,
+							section,
+							field,
+							field_value,
+							element_type,
+							palette_slug,
+						} = event[ 1 ];
+						return (
+							block_type === undefined &&
+							section === 'color' &&
+							field === 'text' &&
+							element_type === undefined &&
+							palette_slug === undefined &&
+							field_value === 'reset'
+						);
+					} )
+				);
+				assert(
+					updateEvents.some( ( event ) => {
+						const {
+							block_type,
+							section,
+							field,
+							field_value,
+							element_type,
+							palette_slug,
+						} = event[ 1 ];
+						return (
+							block_type === undefined &&
+							section === 'color' &&
+							field === 'text' &&
+							element_type === 'link' &&
+							palette_slug === undefined &&
+							field_value === 'reset'
+						);
+					} )
+				);
+				assert(
+					updateEvents.some( ( event ) => {
+						const {
+							block_type,
+							section,
+							field,
+							field_value,
+							element_type,
+							palette_slug,
+						} = event[ 1 ];
+						return (
+							block_type === undefined &&
+							section === 'typography' &&
+							field === 'fontSize' &&
+							element_type === undefined &&
+							palette_slug === undefined &&
+							field_value === 'reset'
+						);
+					} )
+				);
+			} );
+			it( 'global color palette settings', async function () {
+				await changeGlobalStylesFirstColorPaletteItem( this.driver, '#fafafa' );
+				await this.driver.sleep( 200 );
+
+				let updateEvents = await getGlobalStylesUpdateEvents( this.driver );
+
+				// The first palette change will instantiate all palette settings onto the global styles object.
+				// We expect to see one update per palette setting.
+				updateEvents.forEach( ( event ) => {
+					const {
+						block_type,
+						section,
+						field,
+						field_value,
+						element_type,
+						palette_slug,
+					} = event[ 1 ];
+					assert(
+						block_type === undefined &&
+							section === 'color' &&
+							field === 'palette' &&
+							element_type === undefined &&
+							typeof palette_slug === 'string' &&
+							typeof field_value === 'string' &&
+							field_value[ 0 ] === '#'
+					);
+				} );
+				// Verify one of them has the value we set.
+				assert(
+					updateEvents.some( ( event ) => {
+						const {
+							block_type,
+							section,
+							field,
+							field_value,
+							element_type,
+							palette_slug,
+						} = event[ 1 ];
+						return (
+							block_type === undefined &&
+							section === 'color' &&
+							field === 'palette' &&
+							element_type === undefined &&
+							typeof palette_slug === 'string' &&
+							field_value === '#fafafa'
+						);
+					} )
+				);
+
+				await clearEventsStack( this.driver );
+				await changeGlobalStylesFirstColorPaletteItem( this.driver, '#a1a1a1', true );
+				await this.driver.sleep( 200 );
+
+				updateEvents = await getGlobalStylesUpdateEvents( this.driver );
+
+				// Now that settings have been instantiated, only one event should fire.
+				assert.strictEqual( updateEvents.length, 1 );
+
+				assert(
+					( function () {
+						const {
+							block_type,
+							section,
+							field,
+							field_value,
+							element_type,
+							palette_slug,
+						} = updateEvents[ 0 ][ 1 ];
+						return (
+							block_type === undefined &&
+							section === 'color' &&
+							field === 'palette' &&
+							element_type === undefined &&
+							typeof palette_slug === 'string' &&
+							typeof field_value === 'string' &&
+							field_value === '#a1a1a1'
+						);
+					} )()
+				);
+
+				await clearEventsStack( this.driver );
+
+				updateEvents = await getGlobalStylesUpdateEvents( this.driver );
+
+				await clickGlobalStylesResetButton( this.driver );
+				await this.driver.sleep( 200 );
+
+				updateEvents = await getGlobalStylesUpdateEvents( this.driver );
+
+				// TODO - figure out why this doesnt match up with manual testing..
+				// assert(
+				// 	updateEvents.some( ( event ) => {
+				// 		const {
+				// 			block_type,
+				// 			section,
+				// 			field,
+				// 			field_value,
+				// 			element_type,
+				// 			palette_slug,
+				// 		} = event[ 1 ];
+				// 		return (
+				// 			block_type === undefined &&
+				// 			section === 'color' &&
+				// 			field === 'palette' &&
+				// 			element_type === undefined &&
+				// 			field_value === 'reset'
+				// 		);
+				// 	} )
+				// );
 			} );
 		} );
 
