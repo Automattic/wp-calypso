@@ -1,3 +1,5 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 @import '../../../grid-mixins.scss';
 
 .site-setup-list {
@@ -24,12 +26,18 @@
 		}
 
 		.site-setup-list__task {
-			padding: 0 24px 16px;
+			padding: 0 16px 16px;
 			border-bottom: 1px solid var( --color-border-subtle );
 			transition: all 0.1s;
+
+			@include break-mobile {
+				padding: 0 24px 16px;
+			}
+
 			&:last-child {
 				border-bottom: none;
 			}
+
 			.task__text {
 				padding: 0;
 			}
@@ -51,21 +59,29 @@
 	}
 
 	.card-heading {
-		padding: 16px 24px;
+		padding: 16px;
 		border-bottom: 1px solid var( --color-border-subtle );
 		display: flex;
 		align-items: center;
+
+		@include break-mobile {
+			padding: 16px 24px;
+		}
 	}
 
 	button.nav-item {
 		display: flex;
 		align-items: center;
-		padding: 16px 24px;
+		padding: 16px;
 		transition: all 0.1s;
 		cursor: pointer;
 		width: 100%;
 		margin: 0;
 		color: var( --color-text );
+
+		@include break-mobile {
+			padding: 16px 24px;
+		}
 
 		&:hover {
 			background-color: var( --color-neutral-0 );
