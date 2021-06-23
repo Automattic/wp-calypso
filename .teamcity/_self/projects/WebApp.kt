@@ -801,6 +801,10 @@ object RunCalypsoPlaywrightE2eDesktopTests : BuildType({
 						continue
 					fi
 
+					// Wait some seconds to alleviate simulateneous traffic to the serving container
+					// to avoid incurring HTTP 304.
+					sleep 10
+
 					break
 				done
 
