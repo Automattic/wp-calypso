@@ -42,7 +42,6 @@ import {
 } from 'calypso/lib/gsuite';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getTitanProductName, getTitanSubscriptionId, hasTitanMailWithUs } from 'calypso/lib/titan';
-import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import {
 	hasLoadedSitePurchasesFromServer,
 	isFetchingSitePurchases,
@@ -58,7 +57,7 @@ import VerticalNavItem from 'calypso/components/vertical-nav/item';
 const UpgradeNavItem = ( { currentRoute, domain, selectedSiteSlug } ) => {
 	const translate = useTranslate();
 
-	if ( ! hasEmailForwards( domain ) ) {
+	if ( hasGSuiteWithUs( domain ) || hasTitanMailWithUs( domain ) ) {
 		return null;
 	}
 
