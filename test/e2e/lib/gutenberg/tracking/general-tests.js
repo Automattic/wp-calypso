@@ -221,6 +221,51 @@ export function createGeneralTests( { it, editorType, postType } ) {
 		);
 	} );
 
+	it( 'Tracks "wpcom_pattern_inserted"', async function () {
+		const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
+
+		await editor.insertBlockOrPatternViaBlockAppender( 'List with Image' );
+		const eventsStackList = await getEventsStack( this.driver );
+		await clearEventsStack( this.driver );
+
+		await editor.insertBlockOrPatternViaBlockAppender( 'Heading and Three Images' );
+		// We need to save the eventsStack after each insertion to make sure we
+		// aren't running out of the E2E queue size.
+		const eventsStackGallery = await getEventsStack( this.driver );
+		await editor.dismissNotices();
+
+		const patternInsertedEvents = [ ...eventsStackGallery, ...eventsStackList ].filter(
+			( [ eventName ] ) => eventName === 'wpcom_pattern_inserted'
+		);
+		assert.strictEqual(
+			patternInsertedEvents.length,
+			2,
+			'"wpcom_pattern_inserted" editor tracking event failed to fire for both patterns'
+		);
+		const [ , eventDataGallery ] = patternInsertedEvents[ 0 ];
+		const [ , eventDataList ] = patternInsertedEvents[ 1 ];
+		assert.strictEqual(
+			eventDataGallery.pattern_name,
+			'a8c/heading-and-three-images',
+			'"wpcom_pattern_inserted" editor tracking event pattern name property is incorrect'
+		);
+		assert.strictEqual(
+			typeof eventDataGallery.pattern_category,
+			'undefined',
+			'"wpcom_pattern_inserted" editor tracking event pattern category property should not be present'
+		);
+		assert.strictEqual(
+			eventDataList.pattern_name,
+			'a8c/list-with-image',
+			'"wpcom_pattern_inserted" editor tracking event pattern name property is incorrect'
+		);
+		assert.strictEqual(
+			typeof eventDataGallery.pattern_category,
+			'undefined',
+			'"wpcom_pattern_inserted" editor tracking event pattern category property should not be present'
+		);
+	} );
+
 	if ( editorType === 'post' ) {
 		it( 'Tracks "wpcom_block_editor_details_open" event', async function () {
 			const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );

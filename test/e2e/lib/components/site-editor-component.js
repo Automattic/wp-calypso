@@ -226,4 +226,25 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 		await Promise.all( notices.map( ( notice ) => notice.click() ) );
 		await driverHelper.waitUntilElementNotLocated( this.driver, locator );
 	}
+
+	async insertBlockOrPatternViaBlockAppender( name, container = 'Group' ) {
+		const containerBlockId = await this.addBlock( container );
+		await this.runInCanvas( async () => {
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( `#${ containerBlockId } .block-editor-button-block-appender` )
+			);
+		} );
+		await driverHelper.setWhenSettable(
+			this.driver,
+			By.css( '.block-editor-inserter__quick-inserter .block-editor-inserter__search-input' ),
+			name
+		);
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css(
+				'.block-editor-inserter__quick-inserter .block-editor-block-types-list__item, .block-editor-inserter__quick-inserter .block-editor-block-patterns-list__item'
+			)
+		);
+	}
 }
