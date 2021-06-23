@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import assert from 'assert';
+
+/**
  * Internal dependencies
  */
 import { BaseContainer } from '../../base-container';
@@ -6,17 +11,15 @@ import { BaseContainer } from '../../base-container';
 /**
  * Type dependencies
  */
-import { Page, Frame } from 'playwright';
+import { Page, Frame, ElementHandle } from 'playwright';
 
 const selectors = {
-	page: '#main',
-
 	// Like Widget
+	likeWidgetWrapper: '.sharedaddy .sd-block',
 	likeWidget: 'iframe.post-likes-widget',
-	likeButton: 'a.like',
-	unlikeButton: 'a.liked',
-	likedText: 'text=Liked',
-	notLikedText: 'text=Like',
+	likeButton: '.sd-button',
+	likedText: 'a span:text("Liked")',
+	notLikedText: 'a span:text("Like")',
 };
 
 /**
@@ -33,12 +36,12 @@ export class PublishedPostPage extends BaseContainer {
 	 * @param {Page} page Underlying page on which interactions take place.
 	 */
 	constructor( page: Page ) {
-		super( page, selectors.page );
+		super( page );
 	}
 
 	/**
 	 * Overrides the parent method for post-initialization steps.
-	 * This ensures the iframe is enabled and interactable.
+	 * This ensures the ifram e is enabled and interactable.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
@@ -61,11 +64,11 @@ export class PublishedPostPage extends BaseContainer {
 	 * @param {string} selector Element to click on the frame.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async _click( selector: string ): Promise< void > {
+	async _click( selector: string ): Promise< ElementHandle > {
 		const button = await this.frame.waitForSelector( selector );
-		await button.waitForElementState( 'stable' );
 		await button.click();
-		await button.waitForElementState( 'stable' );
+		await button.waitForElementState( 'enabled' );
+		return button;
 	}
 
 	/**
@@ -79,6 +82,9 @@ export class PublishedPostPage extends BaseContainer {
 	async likePost(): Promise< void > {
 		await this._click( selectors.likeButton );
 		await this.frame.waitForSelector( selectors.likedText, { state: 'visible' } );
+		const attributes = await this.frame.getAttribute( selectors.likeButton, 'class' );
+		const isLiked = attributes?.includes( 'liked' );
+		assert.strictEqual( isLiked, true );
 	}
 
 	/**
@@ -90,7 +96,10 @@ export class PublishedPostPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async unlikePost(): Promise< void > {
-		await this._click( selectors.unlikeButton );
+		await this._click( selectors.likeButton );
 		await this.frame.waitForSelector( selectors.notLikedText, { state: 'visible' } );
+		const attributes = await this.frame.getAttribute( selectors.likeButton, 'class' );
+		const isNotLiked = ! attributes?.includes( 'liked' );
+		assert.strictEqual( isNotLiked, true );
 	}
 }
