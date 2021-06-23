@@ -22,6 +22,7 @@ import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
+import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
 import { shouldDisplayJetpackCredentialsBanner } from 'calypso/state/site-settings/jetpack-credentials-banner/selectors';
 import { siteHasScanProductPurchase } from 'calypso/state/purchases/selectors';
 import isRewindActive from 'calypso/state/selectors/is-rewind-active';
@@ -72,6 +73,7 @@ const SiteSettingsSecurity = ( {
 				subHeaderText={ translate( "Manage your site's security settings." ) }
 				align="left"
 			/>
+			<SiteSettingsNavigation site={ site } section="security" />
 			{ showCredentials && <JetpackCredentials /> }
 			{ showJetpackBanner && <JetpackCredentialsBanner siteSlug={ site.slug } /> }
 			<JetpackMonitor />

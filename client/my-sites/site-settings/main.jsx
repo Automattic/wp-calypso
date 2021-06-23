@@ -18,6 +18,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
+import SiteSettingsNavigation from './navigation';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import config from '@automattic/calypso-config';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
@@ -47,6 +48,7 @@ const SiteSettingsComponent = ( { siteId, translate } ) => {
 				align="left"
 				hasScreenOptions={ config.isEnabled( 'nav-unification/switcher' ) }
 			/>
+			<SiteSettingsNavigation section={ 'general' } />
 			<GeneralSettings />
 		</Main>
 	);

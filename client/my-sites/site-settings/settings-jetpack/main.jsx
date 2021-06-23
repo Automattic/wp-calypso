@@ -18,6 +18,7 @@ import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
+import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
 import { siteHasScanProductPurchase } from 'calypso/state/purchases/selectors';
 import isRewindActive from 'calypso/state/selectors/is-rewind-active';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -53,6 +54,7 @@ const SiteSettingsJetpack = ( { site, siteId, siteIsJetpack, showCredentials, tr
 				headerText={ translate( 'Jetpack Settings' ) }
 				align="left"
 			/>
+			<SiteSettingsNavigation site={ site } section="jetpack" />
 			{ showCredentials && <JetpackCredentials /> }
 		</Main>
 	);
