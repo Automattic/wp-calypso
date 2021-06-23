@@ -170,7 +170,5 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 	 * this and gutenberg editor component to
 	 * make sure general tests are working as expected.
 	 */
-	async toggleBlockEditorSidebar() {
-		await this.toggleNavigationSidebar();
-	}
+	toggleBlockEditorSidebar = this.toggleNavigationSidebar;
 }
