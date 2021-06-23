@@ -13,12 +13,9 @@ references:
       CIRCLE_ARTIFACTS: /tmp/artifacts
       CIRCLE_TEST_REPORTS: /tmp/test_results
       PUPPETEER_SKIP_DOWNLOAD: 'true'
-      DETECT_CHROMEDRIVER_VERSION: 'false'
-      CHROMEDRIVER_FILEPATH: /usr/local/bin/chromedriver
       NODE_OPTIONS: --max-old-space-size=3072
       npm_config_cache: /home/circleci/.cache/yarn
       YARN_CACHE_FOLDER: /home/circleci/.cache/yarn
-      CHROME_VERSION: 84.0.4147.135-1
   desktop_defaults: &desktop_defaults
     working_directory: ~/wp-calypso
 
@@ -102,32 +99,11 @@ references:
       nvm install
       nvm use
 
-  # This is used later to send a custom UA string. `google-chrome` is in the PATH in all circleci-browser images
-  save-chrome-version: &save-chrome-version
-    name: Save chrome version
-    command: |
-      google-chrome --version > .chromedriver_version
-      echo -n "Google Chrome version: " && cat .chromedriver_version
-
   save-yarn-cache: &save-yarn-cache
     name: 'Save yarn cache'
     key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }}
     paths:
       - ~/.cache/yarn
-
-  set-e2e-variables: &set-e2e-variables
-    name: Set e2e environment variables
-    command: |
-      echo 'export NODE_CONFIG_ENV=test' >> $BASH_ENV &&
-      echo 'export BRANCHNAME=$CIRCLE_BRANCH' >> $BASH_ENV &&
-      echo 'export HIGHLIGHT_ELEMENT=true' >> $BASH_ENV
-
-  move-e2e-artifacts: &move-e2e-artifacts
-    name: Move report and screenshots
-    when: always
-    command: |
-      cp -r ./reports $CIRCLE_TEST_REPORTS/e2ereports &&
-      cp -r ./screenshots $CIRCLE_ARTIFACTS/screenshots
 
   desktop-install-app-deps: &desktop-install-app-deps
     name: Install Desktop Dependencies
@@ -189,23 +165,6 @@ references:
     fail_only: true
     mentions: '$CIRCLE_USERNAME'
     failure_message: ':red_circle: wp-desktop tests for $CIRCLE_BRANCH have failed.\n\nCalypso PR: $CIRCLE_PULL_REQUEST'
-  install-specific-chrome-browser: &install-specific-chrome-browser
-    name: Install Chrome
-    command: |
-      sudo apt-get update
-      cd /tmp
-      wget --no-check-certificate https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb
-      sudo dpkg -i google-chrome-stable_${CHROME_VERSION}_amd64.deb || sudo apt-get -y -f install
-      rm google-chrome-stable_${CHROME_VERSION}_amd64.deb;
-      sudo sed -i 's|HERE/chrome"|HERE/chrome" --disable-setuid-sandbox --no-sandbox|g' "/opt/google/chrome/google-chrome"
-      CHROME_VERSION="$(google-chrome --version)"
-      CHROMEDRIVER_RELEASE="$(echo $CHROME_VERSION | sed 's/^Google Chrome //')"
-      CHROMEDRIVER_RELEASE=${CHROMEDRIVER_RELEASE%%.*}
-      CHROMEDRIVER_VERSION=$(curl --silent --show-error --location --fail --retry 4 --retry-delay 5 http://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROMEDRIVER_RELEASE})
-      curl --silent --show-error --location --fail --retry 4 --retry-delay 5 --output /tmp/chromedriver_linux64.zip "http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip"
-      cd /tmp && unzip chromedriver_linux64.zip && rm -rf chromedriver_linux64.zip && sudo mv chromedriver /usr/local/bin/chromedriver && sudo chmod +x /usr/local/bin/chromedriver
-      google-chrome --version
-      chromedriver --version
 
 commands:
   prepare:
@@ -236,7 +195,6 @@ jobs:
       - run: *update-git
       - save_cache: *save-git-cache
       - run: *update-node
-      - run: *install-specific-chrome-browser
       # npm dependencies
       - restore_cache: *restore-yarn-cache
       - run: *yarn-install
@@ -285,77 +243,6 @@ jobs:
                       "vcs_type": "github"
                     }
                   }'
-
-  test-e2e-canary:
-    <<: *defaults
-    working_directory: ~/wp-calypso/test/e2e
-    parameters:
-      test-flags:
-        type: string
-        default: '-C'
-      test-target:
-        type: string
-        default: ''
-      jetpack-host:
-        type: string
-        default: ''
-      slack-webhook:
-        type: string
-        default: $SLACK_E2E
-      env-vars:
-        type: string
-        default: ''
-    steps:
-      - prepare
-      - run: *set-e2e-variables
-      - run: *install-specific-chrome-browser
-      - run: *save-chrome-version
-      - run: sudo apt-get install -y fonts-ipafont-gothic xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic fonts-wqy-zenhei xvfb
-      - run:
-          name: Skip Jetpack Tests if needed
-          command: |
-            # If the skip jetpack env var is set, notify slack channel and skip the rest of the steps
-            if [[ "$SKIP_JETPACK" == "true" && "<< parameters.test-target >>" == "JETPACK" ]]; then
-              curl -X POST -H 'Content-type: application/json' \
-                  --data \
-                  "{ \
-                    \"attachments\": [ \
-                      { \
-                        \"text\": \"Jetpack tests were skipped\", \
-                        \"fields\": [ \
-                          { \
-                            \"title\": \"Project\", \
-                            \"value\": \"$CIRCLE_PROJECT_REPONAME\", \
-                            \"short\": true \
-                          }, \
-                          { \
-                            \"title\": \"Job Number\", \
-                            \"value\": \"$CIRCLE_BUILD_NUM\", \
-                            \"short\": true \
-                          } \
-                        ], \
-                        \"actions\": [ \
-                          { \
-                            \"type\": \"button\", \
-                            \"text\": \"Visit Job\", \
-                            \"url\": \"$CIRCLE_BUILD_URL\" \
-                          } \
-                        ], \
-                        \"color\": \"#FF0000\" \
-                      } \
-                    ] \
-                  }" << parameters.slack-webhook >>
-              circleci-agent step halt
-            fi
-      - run: yarn run decryptconfig
-      - run:
-          name: Run Canary Tests
-          command: |
-            env TARGET=<< parameters.test-target >> JETPACKHOST=<< parameters.jetpack-host >> << parameters.env-vars >> ./run.sh -R << parameters.test-flags >>
-      - run: *move-e2e-artifacts
-      - store-artifacts-and-test-results
-      - slack/status:
-          webhook: << parameters.slack-webhook >>
 
   wp-desktop-assets:
     docker:
@@ -745,23 +632,3 @@ workflows:
           filters:
             tags:
               only: /desktop-v.*/
-
-  e2e-canary-i18n-monthly:
-    jobs:
-      - setup
-      - test-e2e-canary:
-          name: test-e2e-i18n-monthly
-          requires:
-            - setup
-          test-target: 'I18N'
-          test-flags: '-i'
-          filters:
-            branches:
-              only: trunk
-    triggers:
-      - schedule:
-          cron: '40 15 19 * *'
-          filters:
-            branches:
-              only: trunk
-# vi: sts=2 ts=2 sw=2 et
