@@ -54,6 +54,10 @@ body.is-section-signup.is-white-signup {
 	.domains__step-content {
 		display: flex;
 
+		@include break-small {
+			justify-content: center;
+		}
+
 		.search-component.is-open {
 			border: 1px solid #a7aaad;
 			border-radius: 4px; /* stylelint-disable-line */
