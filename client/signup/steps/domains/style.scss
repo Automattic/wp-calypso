@@ -83,7 +83,7 @@ body.is-section-signup.is-white-signup {
 				display: flex;
 			}
 
-			@include break-xlarge {
+			@include break-wide {
 				width: 20vw;
 			}
 		}
@@ -103,6 +103,8 @@ body.is-section-signup.is-white-signup {
 			@include break-large {
 				display: none;
 			}
+
+
 		}
 
 		.domains__domain-side-content {
