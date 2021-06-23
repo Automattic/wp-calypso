@@ -166,6 +166,25 @@
 	display: block;
 	flex-basis: 50%;
 	width: 100%;
+
+	&.detail-file-info__shortcode {
+		flex-basis: 100%;
+
+		th {
+			color: inherit;
+			font-size: 14px;
+			width: 100%;
+			text-transform: none;
+		}
+
+		td {
+			width: 100%;
+
+			&::after {
+				display: none;
+			}
+		}
+	}
 }
 
 .editor-media-modal-detail__file-info th,

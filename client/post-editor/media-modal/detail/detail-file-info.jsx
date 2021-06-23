@@ -108,7 +108,7 @@ class EditorMediaModalDetailFileInfo extends React.Component {
 		}
 
 		return (
-			<tr>
+			<tr className="detail-file-info__shortcode">
 				<th>{ this.props.translate( 'Shortcode' ) }</th>
 				<td>
 					<ClipboardButtonInput value={ '[wpvideo ' + videopressGuid + ']' } />
@@ -125,6 +125,7 @@ class EditorMediaModalDetailFileInfo extends React.Component {
 		return (
 			<table className={ classes }>
 				<tbody>
+					{ this.renderVideoPressShortcode() }
 					<tr>
 						<th>{ this.props.translate( 'File Name' ) }</th>
 						<td title={ this.getItemValue( 'file' ) }>
@@ -138,7 +139,6 @@ class EditorMediaModalDetailFileInfo extends React.Component {
 					{ this.renderFileSize() }
 					{ this.renderDimensions() }
 					{ this.renderDuration() }
-					{ this.renderVideoPressShortcode() }
 					<tr>
 						<th>{ this.props.translate( 'Upload Date' ) }</th>
 						<td>{ this.getItemValue( 'date' ) }</td>
