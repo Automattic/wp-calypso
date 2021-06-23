@@ -3,7 +3,7 @@
  */
 import { CompactCard } from '@automattic/components';
 import { connect } from 'react-redux';
-import { isMobile } from '@automattic/viewport';
+import { isDesktop as isDesktopViewport } from '@automattic/viewport';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -89,11 +89,11 @@ class TitanManageMailboxes extends Component {
 	};
 
 	getTitanItems = () => {
-		const { translate } = this.props;
+		const { isDesktop, translate } = this.props;
 		return [
 			{
 				className: 'titan-manage-mailboxes__manage-titan-link',
-				disabled: isMobile(),
+				disabled: ! isDesktop,
 				external: true,
 				materialIcon: 'dvr',
 				text: translate( 'Configure desktop app' ),
@@ -112,7 +112,7 @@ class TitanManageMailboxes extends Component {
 			},
 			{
 				className: 'titan-manage-mailboxes__manage-titan-link',
-				disabled: isMobile(),
+				disabled: ! isDesktop,
 				external: true,
 				materialIcon: 'move_to_inbox',
 				text: translate( 'Import email data' ),
@@ -121,7 +121,7 @@ class TitanManageMailboxes extends Component {
 			},
 			{
 				className: 'titan-manage-mailboxes__manage-titan-link',
-				disabled: isMobile(),
+				disabled: ! isDesktop,
 				external: true,
 				materialIcon: 'mediation',
 				text: translate( 'Configure catch-all email' ),
@@ -132,7 +132,7 @@ class TitanManageMailboxes extends Component {
 			},
 			{
 				className: 'titan-manage-mailboxes__manage-titan-link',
-				disabled: isMobile(),
+				disabled: ! isDesktop,
 				external: true,
 				materialIcon: 'forward_to_inbox',
 				text: translate( 'Set up internal forwarding' ),
@@ -149,6 +149,7 @@ class TitanManageMailboxes extends Component {
 			currentRoute,
 			domain,
 			hasSubscription,
+			isDesktop,
 			isLoadingPurchase,
 			purchase,
 			selectedSite,
@@ -186,7 +187,7 @@ class TitanManageMailboxes extends Component {
 						selectedSite={ selectedSite }
 					/>
 
-					{ isMobile() ? (
+					{ isDesktop ? (
 						<CompactCard>
 							<Notice
 								className="titan-manage-mailboxes__mobile-warning"
@@ -224,6 +225,7 @@ export default connect( ( state, ownProps ) => {
 		currentRoute: getCurrentRoute( state ),
 		domain,
 		hasSubscription: hasEmailSubscription( domain ),
+		isDesktop: isDesktopViewport(),
 		isLoadingPurchase:
 			isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 		purchase: getEmailPurchaseByDomain( state, domain ),
