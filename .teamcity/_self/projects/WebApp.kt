@@ -66,6 +66,7 @@ object RunCalypsoE2eDesktopTests : BuildType({
 				export NODE_CONFIG_ENV=test
 				export TEST_VIDEO=true
 				export HIGHLIGHT_ELEMENT=true
+				export TEAMCITY_VERSION=2020
 
 				# Instructs Magellan to not hide the output from individual `mocha` processes. This is required for
 				# mocha-teamcity-reporter to work.
@@ -229,6 +230,7 @@ object RunCalypsoE2eMobileTests : BuildType({
 				export NODE_CONFIG_ENV=test
 				export TEST_VIDEO=true
 				export HIGHLIGHT_ELEMENT=true
+				export TEAMCITY_VERSION=2020
 
 				# Instructs Magellan to not hide the output from individual `mocha` processes. This is required for
 				# mocha-teamcity-reporter to work.
