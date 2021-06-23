@@ -4,73 +4,90 @@
 import React, { useEffect, useState } from 'react';
 import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
+import MaterialIcon from 'calypso/components/material-icon';
+import Gridicon from 'calypso/components/gridicon';
 import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
 import { getRenewalPrice } from 'calypso/lib/purchases';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
 
 const ParentDiv = styled.div`
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	justify-content: space-between;
 	width: 100%;
+
+	@media ( min-width: 550px ) {
+		flex-direction: row;
+	}
+`;
+
+const Section = styled.div`
+	flex: 1;
+	margin: 10px;
 `;
 
 const Header = styled.div`
 	text-transform: uppercase;
+	font-size: 12px;
+	color: var( --color-neutral-50 );
 `;
 
-const BodyText = styled.p``;
+const BodyText = styled.div`
+	display: flex;
+	align-items: center;
+	margin: 10px 0;
 
-const RenewalPrice = styled.div`
-	flex-grow: 1;
+	& > svg {
+		padding-right: 5px;
+	}
+
+	& > span {
+		font-size: 12px;
+	}
 `;
 
-const AutoRenewal = styled.div`
-	flex-grow: 1;
+const AutoRenew = styled( BodyText )`
+	color: var( --color-success );
+
+	& > svg {
+		fill: var( --color-success );
+	}
 `;
 
-const Expiration = styled.div`
-	flex-grow: 1;
+const ManualRenew = styled( BodyText )`
+	font-weight: 600;
+
+	& > svg {
+		fill: var( --color-warning-30 );
+	}
 `;
 
-function RenewOptionsRow( {
-	domain,
-	isLoadingPurchase,
-	moment,
-	purchase,
-	selectedSite,
-	translate,
-} ) {
+function RenewOptionsRow( { domain, isLoadingPurchase, moment, purchase, selectedSite } ) {
 	const [ renewalText, setRenewalText ] = useState( null );
+	const [ autoRenewStatus, setAutoRenewStatus ] = useState( null );
+	const translate = useTranslate();
 
 	useEffect( () => {
 		if ( ! purchase ) return;
 
 		if ( 'manualRenew' !== purchase.expiryStatus ) {
-			if ( domain.type === domainTypes.MAPPED && domain.bundledPlanSubscriptionId ) {
-				setRenewalText(
-					translate( 'Renews with your plan on %(renewal_date)s', {
-						args: {
-							renewal_date: moment.utc( purchase.renewDate ).format( 'LL' ),
-						},
-					} )
-				);
-			} else {
-				setRenewalText(
-					translate( 'Renews: %(renewal_date)s', {
-						args: {
-							renewal_date: moment.utc( purchase.renewDate ).format( 'LL' ),
-						},
-					} )
-				);
-			}
+			setAutoRenewStatus( 'Enabled' );
+			setRenewalText(
+				translate( 'This domain will automatically renew on %(renewal_date)s.', {
+					args: {
+						renewal_date: moment.utc( purchase.renewDate ).format( 'LL' ),
+					},
+				} )
+			);
 		} else {
-			setRenewalText( 'Disabled' );
+			setAutoRenewStatus( 'Disabled' );
+			setRenewalText( null );
 		}
 	}, [ domain, purchase ] );
 
@@ -88,31 +105,34 @@ function RenewOptionsRow( {
 	const formattedPrice = formatCurrency( renewalPrice, currencyCode, { stripZeros: true } );
 
 	if ( domain.type === domainTypes.MAPPED && ! domain.expiry ) {
-		expirationText = translate( 'Expires: Never' );
-	} else if ( domain.expired ) {
-		expirationText = translate( 'Expired: %(expiry_date)s', {
-			args: {
-				expiry_date: moment.utc( domain.expiry ).format( 'LL' ),
-			},
-		} );
+		expirationText = translate( 'Never' );
 	} else {
-		expirationText = translate( 'Expires: %(expiry_date)s', {
-			args: {
-				expiry_date: moment.utc( domain.expiry ).format( 'LL' ),
-			},
-		} );
+		expirationText = moment.utc( domain.expiry ).format( 'LL' );
 	}
 
 	return (
 		<ParentDiv>
-			<RenewalPrice>
-				<Header>Renewal price</Header>
+			<Section>
+				<Header>{ translate( 'Renewal price' ) }</Header>
 				<BodyText>{ formattedPrice }/year</BodyText>
-			</RenewalPrice>
-			<AutoRenewal>
-				<Header>Auto renewal</Header>
-				<BodyText>{ renewalText }</BodyText>
-				{ domain.currentUserCanManage && selectedSite.ID && (
+			</Section>
+			<Section>
+				<Header>{ translate( 'Auto renewal' ) }</Header>
+				{ 'Enabled' === autoRenewStatus ? (
+					<AutoRenew>
+						<MaterialIcon icon="check_circle" />
+						{ autoRenewStatus }
+					</AutoRenew>
+				) : (
+					<ManualRenew>
+						<Gridicon icon="notice" />
+						{ autoRenewStatus }
+					</ManualRenew>
+				) }
+				<BodyText>
+					<span>{ renewalText }</span>
+				</BodyText>
+				{ domain.currentUserCanManage && (
 					<AutoRenewToggle
 						planName={ selectedSite.plan.product_name_short }
 						purchase={ purchase }
@@ -121,9 +141,9 @@ function RenewOptionsRow( {
 						withTextStatus={ true }
 					/>
 				) }
-			</AutoRenewal>
-			<Expiration>
-				<Header>Expiration date</Header>
+			</Section>
+			<Section>
+				<Header>{ translate( 'Expiration date' ) }</Header>
 				<BodyText>{ expirationText }</BodyText>
 				<RenewButton
 					compact={ true }
@@ -132,7 +152,7 @@ function RenewOptionsRow( {
 					subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
 					tracksProps={ { source: 'registered-domain-status', domain_status: 'active' } }
 				/>
-			</Expiration>
+			</Section>
 		</ParentDiv>
 	);
 }

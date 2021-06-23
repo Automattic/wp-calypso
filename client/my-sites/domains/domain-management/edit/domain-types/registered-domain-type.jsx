@@ -351,7 +351,6 @@ class RegisteredDomainType extends React.Component {
 						domain={ domain }
 						isLoadingPurchase={ isLoadingPurchase }
 						moment={ this.props.moment }
-						translate={ this.props.translate }
 						selectedSite={ selectedSite }
 					/>
 				</Card>
