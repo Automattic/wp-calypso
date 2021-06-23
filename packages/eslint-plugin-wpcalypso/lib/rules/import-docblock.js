@@ -15,7 +15,7 @@ const RX_DOCBLOCK = /\/\*\*\n \* ((Ex|In)ternal|WordPress|Type) dependencies\s*\
 module.exports = {
 	meta: {
 		docs: {
-			description: 'Enforce external, internal, WordPress dependencies docblocks',
+			description: 'Enforce external, internal, WordPress, type dependencies docblocks',
 			category: 'Stylistic Issues',
 		},
 	},
