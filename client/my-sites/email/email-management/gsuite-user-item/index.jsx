@@ -2,7 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -69,7 +69,7 @@ function GSuiteUserItem( props ) {
 		const { siteSlug, user } = props;
 
 		return (
-			<Fragment>
+			<>
 				<Button compact={ true } onClick={ onFixClickHandler }>
 					{ translate( 'Finish Setup' ) }
 				</Button>
@@ -84,7 +84,7 @@ function GSuiteUserItem( props ) {
 						visible={ dialogVisible }
 					/>
 				) }
-			</Fragment>
+			</>
 		);
 	};
 
