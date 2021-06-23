@@ -234,10 +234,12 @@ class AutoLoadingHomepageModal extends Component {
 						</div>
 						<div className="themes__theme-preview-item">
 							<FormLabel>
-								<img
-									src={ themeScreenshot }
-									alt={ translate( "Preview of new theme's default homepage" ) }
-								/>
+								<div className="themes__theme-preview-image-wrapper">
+									<img
+										src={ themeScreenshot }
+										alt={ translate( "Preview of new theme's default homepage" ) }
+									/>
+								</div>
 								<FormRadio
 									value="use_new_homepage"
 									checked={ 'use_new_homepage' === this.state.homepageAction }
