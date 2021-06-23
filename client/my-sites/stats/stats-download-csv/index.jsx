@@ -7,7 +7,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { saveAs } from 'browser-filesaver';
 import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 
 /**
@@ -101,9 +100,7 @@ const connectComponent = connect(
 
 		return { data, siteSlug, siteId, isLoading };
 	},
-	{ recordGoogleEvent },
-	null,
-	{ pure: false }
+	{ recordGoogleEvent }
 );
 
-export default flowRight( connectComponent, localize )( StatsDownloadCsv );
+export default connectComponent( localize( StatsDownloadCsv ) );

@@ -201,7 +201,5 @@ export default connect(
 	{
 		successNotice,
 		recordGoogleEvent,
-	},
-	null,
-	{ pure: false }
+	}
 )( localize( Security2faDisable ) );

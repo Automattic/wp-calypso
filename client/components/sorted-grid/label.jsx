@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 
-const Label = ( { itemsCount, itemsPerRow, lastInRow, scale, text } ) => {
+const Label = ( { itemsCount, itemsPerRow, lastInRow, scale, text = '' } ) => {
 	const margin = ( ( 1 % scale ) / ( itemsPerRow - 1 ) ) * 100 || 0;
 	const style = {
 		marginRight: `${ lastInRow ? 0 : margin }%`,
@@ -29,10 +29,6 @@ Label.propTypes = {
 	lastInRow: PropTypes.bool,
 	scale: PropTypes.number.isRequired,
 	text: PropTypes.string,
-};
-
-Label.defaultProps = {
-	text: '',
 };
 
 export default Label;
