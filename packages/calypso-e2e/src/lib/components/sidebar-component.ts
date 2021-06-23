@@ -1,9 +1,4 @@
 /**
- * External dependencieds
- */
-import assert from 'assert';
-
-/**
  * Internal dependencies
  */
 import { BaseContainer } from '../base-container';
@@ -78,11 +73,11 @@ export class SidebarComponent extends BaseContainer {
 	 */
 	async gotoMenu( { item, subitem }: { item?: string; subitem?: string } ): Promise< void > {
 		let selector;
-		const viewport_name = getViewportName();
+		const viewportName = getViewportName();
 
 		// If mobile, sidebar is hidden by default and focus is on the content.
 		// The sidebar must be first brought into view.
-		if ( viewport_name === 'mobile' ) {
+		if ( viewportName === 'mobile' ) {
 			await this._openSidebar();
 		}
 
@@ -109,19 +104,16 @@ export class SidebarComponent extends BaseContainer {
 	}
 
 	/**
-	 * Opens the sidebar into view.
+	 * Opens the sidebar into view for mobile viewports.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
 	async _openSidebar(): Promise< void > {
 		const navbarComponent = await NavbarComponent.Expect( this.page );
-		await navbarComponent.clickMySite();
-		// Layout specifies whether sidebar or main content is being focused at this time.
-		const elementHandle = await this.page.waitForSelector( selectors.layout );
-		await elementHandle.waitForElementState( 'stable' );
-		const classAttributes = ( await elementHandle.getAttribute( 'class' ) ) as string;
-		const isSidebarOpen = classAttributes.includes( 'focus-sidebar' );
-		assert.strictEqual( isSidebarOpen, true );
+		await navbarComponent.clickMySites();
+		// `focus-sidebar` attribute is added once the sidebar is opened and focused in mobile view.
+		const layoutElement = await this.page.waitForSelector( `${ selectors.layout }.focus-sidebar` );
+		await layoutElement.waitForElementState( 'stable' );
 	}
 
 	/**
@@ -133,7 +125,6 @@ export class SidebarComponent extends BaseContainer {
 	 *
 	 * @param {string} selector Any selector supported by Playwright.
 	 * @returns {Promise<void>} No return value.
-	 * @throws {assert.AssertionError} If on mobile the sidebar could not be toggled into view.
 	 */
 	async _click( selector: string ): Promise< void > {
 		// Wait for these promises in no particular order. We simply want to ensure the sidebar

@@ -11,7 +11,7 @@ import { Page } from 'playwright';
 const selectors = {
 	navbar: '.masterbar',
 	newPostButton: '.masterbar__item-new',
-	mySite: 'text=My Site',
+	mySiteButton: 'text=My Site',
 };
 /**
  * Component representing the navbar/masterbar at top of WPCOM.
@@ -35,7 +35,6 @@ export class NavbarComponent extends BaseContainer {
 	 */
 	async _click( selector: string ): Promise< void > {
 		const elementHandle = await this.page.waitForSelector( selector );
-		await elementHandle.waitForElementState( 'stable' );
 		await elementHandle.click();
 	}
 
@@ -49,11 +48,11 @@ export class NavbarComponent extends BaseContainer {
 	}
 
 	/**
-	 * Clicks on `My Sites`.
+	 * Clicks on `My Sites` on the top left of WPCOM dashboard.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
-	async clickMySite(): Promise< void > {
-		await this._click( selectors.mySite );
+	async clickMySites(): Promise< void > {
+		await this._click( selectors.mySiteButton );
 	}
 }
