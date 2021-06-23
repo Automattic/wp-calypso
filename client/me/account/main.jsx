@@ -543,7 +543,7 @@ class Account extends React.Component {
 		}
 
 		let text = translate(
-			'Your e-mail change is pending. Please take a moment to check %(email)s for an e-mail with the subject "[WordPress.com] New Email Address" to confirm your change.',
+			'Your email change is pending. Please take a moment to check %(email)s for an email with the subject "[WordPress.com] New Email Address" to confirm your change.',
 			{
 				args: {
 					email: this.getUserSetting( 'new_user_email' ),
@@ -553,7 +553,7 @@ class Account extends React.Component {
 
 		if ( this.hasCustomDomains() ) {
 			text = translate(
-				'Your e-mail change is pending. Please take a moment to:{{br/}}1. Check %(email)s for an e-mail with the subject "[WordPress.com] New Email Address" to confirm your change.{{br/}}2. Update contact information on your domain names if necessary {{link}}here{{/link}}.',
+				'Your email change is pending. Please take a moment to:{{br/}}1. Check %(email)s for an email with the subject "[WordPress.com] New Email Address" to confirm your change.{{br/}}2. Update contact information on your domain names if necessary {{link}}here{{/link}}.',
 				{
 					args: {
 						email: this.getUserSetting( 'new_user_email' ),
