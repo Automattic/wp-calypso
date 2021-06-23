@@ -1,17 +1,16 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import { emailManagementForwarding } from 'calypso/my-sites/email/paths';
 import {
 	getEmailForwardAddress,
 	hasGoogleAccountTOSWarning,
@@ -160,23 +159,8 @@ const getGSuiteMenuItems = ( { account, email, mailbox, translate } ) => {
 	];
 };
 
-const getEmailForwardMenuItems = ( {
-	currentRoute,
-	dispatch,
-	domain,
-	mailbox,
-	selectedSite,
-	translate,
-} ) => {
+const getEmailForwardMenuItems = ( { dispatch, mailbox, translate } ) => {
 	return [
-		{
-			href: emailManagementForwarding( selectedSite.slug, domain.name, currentRoute ),
-			isInternalLink: true,
-			materialIcon: 'create',
-			title: translate( 'Edit', {
-				comment: 'Edit an email forward',
-			} ),
-		},
 		{
 			isInternalLink: true,
 			materialIcon: 'delete',
@@ -191,8 +175,7 @@ const getEmailForwardMenuItems = ( {
 	];
 };
 
-const EmailMailboxActionMenu = ( { account, domain, mailbox, selectedSite } ) => {
-	const currentRoute = useSelector( getCurrentRoute );
+const EmailMailboxActionMenu = ( { account, domain, mailbox } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -209,11 +192,8 @@ const EmailMailboxActionMenu = ( { account, domain, mailbox, selectedSite } ) =>
 
 		if ( hasEmailForwards( domain ) ) {
 			return getEmailForwardMenuItems( {
-				currentRoute,
 				dispatch,
-				domain,
 				mailbox,
-				selectedSite,
 				translate,
 			} );
 		}
@@ -255,6 +235,12 @@ const EmailMailboxActionMenu = ( { account, domain, mailbox, selectedSite } ) =>
 			) }
 		</EllipsisMenu>
 	);
+};
+
+EmailMailboxActionMenu.propTypes = {
+	account: PropTypes.object.isRequired,
+	domain: PropTypes.object.isRequired,
+	mailbox: PropTypes.object.isRequired,
 };
 
 export default EmailMailboxActionMenu;
