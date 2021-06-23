@@ -3,7 +3,6 @@
  */
 import { BaseContainer } from '../base-container';
 import { waitForElementEnabled } from '../../element-helper';
-// import { getViewportName } from '../../browser-helper';
 
 /**
  * Type dependencies
@@ -59,7 +58,7 @@ export class MediaPage extends BaseContainer {
 	}
 
 	/**
-	 * Given a 1-indexed number `n`, click on the nth item in the media gallery.
+	 * Given a 1-indexed number `n`, click and select the nth item in the media gallery.
 	 *
 	 * Note that if the media gallery has been filtered (eg. Images only), this method
 	 * will select the `nth` item in the filtered gallery as shown.
@@ -69,7 +68,7 @@ export class MediaPage extends BaseContainer {
 	 * @throws {Error} If requested item could not be located in the gallery, or if the click action
 	 * failed to select the gallery item.
 	 */
-	async clickItem( index: number ): Promise< void > {
+	async selectItem( index: number ): Promise< void > {
 		// Playwright is able to select the nth matching item given a selector.
 		// See https://playwright.dev/docs/selectors#pick-n-th-match-from-the-query-result.
 		const element = await this.page.waitForSelector(

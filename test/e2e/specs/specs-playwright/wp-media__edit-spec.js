@@ -31,7 +31,7 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 			} );
 
 			it( 'Select the first image item', async function () {
-				await mediaPage.clickItem( 1 );
+				await mediaPage.selectItem( 1 );
 			} );
 
 			it( 'Click to edit selected image', async function () {

@@ -1,19 +1,14 @@
 /**
- * External dependencies
- */
-import config from 'config';
-
-/**
  * Internal dependencies
  */
 
 /**
  * Type dependencies
  */
-import { ElementHandle, Page } from 'playwright';
+import { Page } from 'playwright';
 
 /**
- * Returns a boolean value on whether the element is considered 'disabled'.
+ * Waits for the element specified by the selector to become enabled.
  *
  * There are two definitions of disabled on wp-calypso:
  * 		- traditional: set the `disabled` property on element.
@@ -23,28 +18,7 @@ import { ElementHandle, Page } from 'playwright';
  * actionability. This means test steps may fail if it depends on the built-in `isEnabled` to
  * assert actionability.
  *
- * @param {ElementHandle} elementHandle Element on page.
- * @returns {Promise<boolean} True if ElementHandle is considered disabled, false otherwise.
- */
-export async function isElementEnabled( elementHandle: ElementHandle ): Promise< boolean > {
-	const isEnabled = await elementHandle.isEnabled();
-	const isAriaEnabled = await elementHandle.getAttribute( 'aria-disabled' );
-
-	// If there is no `aria-disabled` attribute, then only take into account whether the element
-	// contains a `disabled` property set. For more information, see
-	// https://playwright.dev/docs/actionability#enabled.
-	if ( ! isAriaEnabled ) {
-		return isEnabled;
-	}
-
-	// Otherwise, check both the property set and aria for whether the element is considered 'disabled'.
-	return isEnabled && isAriaEnabled === 'true';
-}
-
-/**
- * Waits for the element specified by the selector to become enabled.
- *
- * This function takes into account both `disabled` property and `aria-disabled="false"` attributes
+ * This function will check for both the`disabled` property and `aria-disabled="false"` attributes
  * to determine whether the element is enabled.
  *
  * @param {Page} page Page object.
@@ -57,18 +31,10 @@ export async function waitForElementEnabled(
 	page: Page,
 	selector: string,
 	options?: { timeout?: number }
-): Promise< ElementHandle > {
-	const timeout = ( options?.timeout
-		? options?.timeout
-		: config.get( 'playwrightTimeoutMS' ) ) as number;
-	const elementHandle = await page.waitForSelector( selector );
-
-	for ( let i = 0; i <= timeout; i + 1000 ) {
-		const isEnabled = await isElementEnabled( elementHandle );
-		if ( isEnabled ) {
-			return elementHandle;
-		}
-	}
-
-	throw new Error( `Failed to wait for requested selector ${ selector } to be enabled.` );
+): Promise< void > {
+	const elementHandle = await page.waitForSelector( selector, options );
+	await Promise.all( [
+		elementHandle.waitForElementState( 'enabled', options ),
+		page.evaluate( ( element: any ) => element.ariaDisabled !== 'true', elementHandle ),
+	] );
 }
