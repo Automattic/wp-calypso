@@ -46,7 +46,7 @@ export default class PopoverMenuItem extends Component {
 	};
 
 	render() {
-		const { children, className, href, icon, isExternalLink, isSelected, onClick } = this.props;
+		const { children, className, href, icon, isExternalLink, isSelected } = this.props;
 		const itemProps = omit(
 			this.props,
 			'icon',
@@ -61,10 +61,10 @@ export default class PopoverMenuItem extends Component {
 		} );
 
 		let ItemComponent = this.props.itemComponent;
-		if ( isExternalLink && ( href || onClick ) ) {
+		if ( isExternalLink && href ) {
 			ItemComponent = ExternalLink;
 			itemProps.icon = true;
-		} else if ( href || onClick ) {
+		} else if ( href ) {
 			ItemComponent = 'a';
 		}
 
