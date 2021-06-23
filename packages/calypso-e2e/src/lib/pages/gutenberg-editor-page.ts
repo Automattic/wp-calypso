@@ -30,7 +30,6 @@ const selectors = {
 	publishPanel: '.editor-post-publish-panel',
 	publishButton:
 		'.editor-post-publish-panel__header-publish-button button.editor-post-publish-button',
-	publishSpinner: '.components-spinner',
 	viewPostButton: 'text=View Post',
 };
 
@@ -177,7 +176,6 @@ export class GutenbergEditorPage extends BaseContainer {
 		await this.frame.click( selectors.publishPanelToggle );
 		await this.frame.waitForSelector( selectors.publishPanel );
 		await this.frame.click( selectors.publishButton );
-		await this.frame.waitForSelector( selectors.publishSpinner, { state: 'hidden' } );
 
 		if ( visit ) {
 			await this._visitPublishedEntryFromPublishPane();
