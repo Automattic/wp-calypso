@@ -32,11 +32,6 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 		}
 		await this.driver.switchTo().defaultContent();
 		await driverHelper.waitUntilAbleToSwitchToFrame( this.driver, this.editoriFrameLocator );
-		await this.driver.sleep( 2000 );
-	}
-
-	async _postInit() {
-		await this.driver.sleep( 2000 );
 	}
 
 	async runInCanvas( fn ) {
@@ -148,7 +143,6 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 			By.css( '.components-menu-group' ),
 			this.explicitWaitMS / 5
 		);
-		await this.driver.sleep( 1000 );
 		return await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css(
