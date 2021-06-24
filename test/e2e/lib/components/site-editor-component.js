@@ -156,4 +156,33 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 			)
 		);
 	}
+
+	async toggleGlobalStyles() {
+		if ( this.screenSize === 'mobile' ) {
+			const closed = await driverHelper.clickIfPresent(
+				this.driver,
+				By.css( 'button[aria-label="Close global styles sidebar"]' )
+			);
+
+			if ( ! closed ) {
+				await driverHelper.clickIfPresent(
+					this.driver,
+					By.css( 'button[aria-label="More tools & options"]' )
+				);
+
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					driverHelper.createTextLocator(
+						By.css( 'button[role="menuitemcheckbox"]' ),
+						'Global Styles'
+					)
+				);
+			}
+		} else {
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( 'button[aria-label="Global Styles"]' )
+			);
+		}
+	}
 }
