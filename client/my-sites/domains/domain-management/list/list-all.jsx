@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { get, isEmpty, keyBy, keys, map, times } from 'lodash';
+import { isEmpty, keyBy, keys, map, times } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import React, { Component } from 'react';
@@ -238,7 +238,7 @@ class ListAll extends Component {
 
 	getActionResult( domain ) {
 		if ( this.props.isContactEmailEditContext ) {
-			return get( this.state.contactInfoSaveResults, domain, null );
+			return this.state.contactInfoSaveResults[ domain ] ?? null;
 		}
 
 		return null;
@@ -325,18 +325,18 @@ class ListAll extends Component {
 		}
 
 		return {
-			firstName: get( updatedContactInfo, 'fname' ),
-			lastName: get( updatedContactInfo, 'lname' ),
-			organization: get( updatedContactInfo, 'org' ),
-			email: get( updatedContactInfo, 'email' ),
-			phone: get( updatedContactInfo, 'phone' ),
-			address1: get( updatedContactInfo, 'sa1' ),
-			address2: get( updatedContactInfo, 'sa2' ),
-			city: get( updatedContactInfo, 'city' ),
-			state: get( updatedContactInfo, 'state' ),
-			countryCode: get( updatedContactInfo, 'country_code' ),
-			postalCode: get( updatedContactInfo, 'pc' ),
-			fax: get( updatedContactInfo, 'fax' ),
+			firstName: updatedContactInfo?.fname,
+			lastName: updatedContactInfo?.lname,
+			organization: updatedContactInfo?.org,
+			email: updatedContactInfo?.email,
+			phone: updatedContactInfo?.phone,
+			address1: updatedContactInfo?.sa1,
+			address2: updatedContactInfo?.sa2,
+			city: updatedContactInfo?.city,
+			state: updatedContactInfo?.state,
+			countryCode: updatedContactInfo?.country_code,
+			postalCode: updatedContactInfo?.pc,
+			fax: updatedContactInfo?.fax,
 		};
 	};
 
