@@ -33,9 +33,11 @@ const clickGlobalStylesButton = async ( driver ) =>
 	);
 
 const clickGlobalStylesResetButton = async ( driver ) => {
-	await driverHelper.clickWhenClickable(
+	await driverHelper.clickIfPresent(
 		driver,
-		By.css( '.edit-site-global-styles-sidebar .edit-site-global-styles-sidebar__reset-button' )
+		By.css(
+			'.edit-site-global-styles-sidebar .edit-site-global-styles-sidebar__reset-button:enabled'
+		)
 	);
 };
 
@@ -425,20 +427,74 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 		} );
 
 		describe( 'Tracks "wpcom_block_editor_global_styles_update"', function () {
+			// Since these events are tracked via redux actions in updateEntityRecord and
+			// saveEditedEntityRecord, they are independent of UI.  If the desktop flow populates
+			// these events properly, the mobile flow will as well.  There is no added benefit to
+			// maintaining these interactions in e2e for both viewport sizes.
 			it( 'global color and typography', async function () {
+				const editor = await SiteEditorComponent.Expect( this.driver );
+				if ( editor.screenSize === 'mobile' ) {
+					return this.skip();
+				}
 				await testGlobalStylesColorAndTypography( this.driver );
 			} );
 
 			it( 'global color palette settings', async function () {
+				const editor = await SiteEditorComponent.Expect( this.driver );
+				if ( editor.screenSize === 'mobile' ) {
+					return this.skip();
+				}
 				await testGlobalStylesColorPalette( this.driver );
 			} );
 
 			it( 'block level typography and color', async function () {
+				const editor = await SiteEditorComponent.Expect( this.driver );
+				if ( editor.screenSize === 'mobile' ) {
+					return this.skip();
+				}
 				await testGlobalStylesColorAndTypography( this.driver, true );
 			} );
 
 			it( 'block level color palette settings', async function () {
+				const editor = await SiteEditorComponent.Expect( this.driver );
+				if ( editor.screenSize === 'mobile' ) {
+					return this.skip();
+				}
 				await testGlobalStylesColorPalette( this.driver, 'core/column' );
+			} );
+		} );
+
+		describe( 'Tracks "wpcom_block_editor_global_styles_save"', function () {
+			// This test can be less intensive than our global styles update tests since they share
+			// the same code to build event structure from global styles objects.  So we mainly need
+			// to verify that the expected number of events are triggered.
+			it( 'sends the expected amount of tracks events', async function () {
+				const editor = await SiteEditorComponent.Expect( this.driver );
+				if ( editor.screenSize === 'mobile' ) {
+					return this.skip();
+				}
+
+				// First reset and save so we know test changes will trigger save updates.
+				await clickGlobalStylesResetButton( this.driver );
+				await editor.saveAll();
+				// Wait for debounce and entity fetching before clearing events.
+				await this.driver.sleep( 500 );
+				await clearEventsStack( this.driver );
+
+				await changeGlobalStylesFontSize( this.driver, '11' );
+				await changeGlobalStylesColor( this.driver, 1, 1 );
+				await changeGlobalStylesColor( this.driver, 3, 1 );
+				await editor.saveAll();
+				// Wait for debounce and entity fetching before accessing events stack.
+				await this.driver.sleep( 500 );
+				const saveEvents = ( await getEventsStack( this.driver ) ).filter(
+					( event ) => event[ 0 ] === 'wpcom_block_editor_global_styles_save'
+				);
+				assert.strictEqual( saveEvents.length, 3 );
+
+				// Clean up by resetting to be safe.
+				await clickGlobalStylesResetButton( this.driver );
+				await editor.saveAll();
 			} );
 		} );
 
