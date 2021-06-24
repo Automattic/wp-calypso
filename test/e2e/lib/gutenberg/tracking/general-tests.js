@@ -125,7 +125,7 @@ export function createGeneralTests( { it, editorType, postType } ) {
 	it( 'Tracks "wpcom_block_editor_undo_performed" event', async function () {
 		const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
 
-		// The undo button doesn't seem to be available on mobile
+		// The undo button is not available on mobile
 		if ( editor.screenSize === 'mobile' ) {
 			return this.skip();
 		}
@@ -150,7 +150,7 @@ export function createGeneralTests( { it, editorType, postType } ) {
 	it( 'Tracks "wpcom_block_editor_redo_performed" event', async function () {
 		const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
 
-		// The redo button doesn't seem to be available on mobile
+		// The redo button is not available on mobile
 		if ( editor.screenSize === 'mobile' ) {
 			return this.skip();
 		}
@@ -177,6 +177,7 @@ export function createGeneralTests( { it, editorType, postType } ) {
 		it( 'Tracks "wpcom_block_editor_details_open" event', async function () {
 			const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
 
+			// The details button is not available on mobile
 			if ( editor.screenSize === 'mobile' ) {
 				return this.skip();
 			}
