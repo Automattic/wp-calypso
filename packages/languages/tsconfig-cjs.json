@@ -2,6 +2,10 @@
 	"extends": "./tsconfig",
 	"compilerOptions": {
 		"module": "commonjs",
-		"outDir": "dist/cjs"
+		"declaration": false,
+		"declarationDir": null,
+		"outDir": "dist/cjs",
+		"composite": false,
+		"incremental": true
 	}
 }
