@@ -24,7 +24,6 @@ class StatsTabs extends React.Component {
 	static propTypes = {
 		activeKey: PropTypes.string,
 		activeIndex: PropTypes.string,
-		dataList: PropTypes.object,
 		selectedTab: PropTypes.string,
 		switchTab: PropTypes.func,
 		tabs: PropTypes.array,

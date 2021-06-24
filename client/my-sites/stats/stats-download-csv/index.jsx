@@ -29,7 +29,6 @@ class StatsDownloadCsv extends Component {
 		siteSlug: PropTypes.string,
 		path: PropTypes.string.isRequired,
 		period: PropTypes.object.isRequired,
-		dataList: PropTypes.object,
 		data: PropTypes.array,
 		query: PropTypes.object,
 		statType: PropTypes.string,
@@ -94,20 +93,11 @@ class StatsDownloadCsv extends Component {
 
 const connectComponent = connect(
 	( state, ownProps ) => {
-		const { dataList, statType, query } = ownProps;
+		const { statType, query } = ownProps;
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSiteSlug( state, siteId );
-		let data;
-		let isLoading;
-
-		// TODO: When `stats-list` is no longer, this can be removed
-		if ( dataList ) {
-			data = dataList.csvData();
-			isLoading = dataList.isLoading();
-		} else {
-			data = getSiteStatsCSVData( state, siteId, statType, query );
-			isLoading = isRequestingSiteStatsForQuery( state, siteId, statType, query );
-		}
+		const data = getSiteStatsCSVData( state, siteId, statType, query );
+		const isLoading = isRequestingSiteStatsForQuery( state, siteId, statType, query );
 
 		return { data, siteSlug, siteId, isLoading };
 	},
