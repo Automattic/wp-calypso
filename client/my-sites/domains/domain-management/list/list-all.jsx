@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { isEmpty, keyBy, keys, map, times } from 'lodash';
+import { keys, map, times } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import React, { Component } from 'react';
@@ -86,7 +86,7 @@ class ListAll extends Component {
 		if (
 			this.props.isContactEmailEditContext &&
 			! this.isLoadingDomainDetails() &&
-			! isEmpty( this.props.filteredDomainsList ) &&
+			( this.props.filteredDomainsList ?? [] ).length !== 0 &&
 			! this.state.selectedDomainsSet
 		) {
 			this.setSelectedDomains();
@@ -181,7 +181,7 @@ class ListAll extends Component {
 			return true;
 		}
 
-		if ( isEmpty( whoisData ) ) {
+		if ( Object.keys( whoisData ?? {} ).length === 0 ) {
 			return true;
 		}
 
@@ -210,7 +210,7 @@ class ListAll extends Component {
 	shouldRenderDomainItem( domain, domainDetails ) {
 		if ( this.props.isContactEmailEditContext ) {
 			return (
-				! isEmpty( domainDetails ) &&
+				Object.keys( domainDetails ?? {} ).length !== 0 &&
 				domainTypes.REGISTERED === domain.type &&
 				domainDetails?.currentUserCanManage &&
 				isDomainUpdateable( domainDetails ) &&
@@ -503,9 +503,24 @@ const saveContactEmailClick = () =>
 		recordTracksEvent( 'calypso_domain_management_list_all_save_contact_email_click' )
 	);
 
+const getPurchasesByCurrentUserId = ( state ) => {
+	const user = getCurrentUser( state );
+	return ( getUserPurchases( state, user?.ID ) || [] ).reduce( ( result, purchase ) => {
+		result[ purchase.id ] = purchase;
+		return result;
+	}, {} );
+};
+
+const getSitesById = ( state ) => {
+	return ( getSites( state ) ?? [] ).reduce( ( result, site ) => {
+		result[ site.ID ] = site;
+		return result;
+	}, {} );
+};
+
 const getFilteredDomainsList = ( state, context ) => {
 	const action = parse( context.querystring )?.action;
-	const sites = keyBy( getSites( state ), 'ID' );
+	const sites = getSitesById( state );
 	const canManageSitesMap = canCurrentUserForSites( state, keys( sites ), 'manage_options' );
 	const domainsList = getFlatDomainsList( state );
 	const domainsDetails = getAllDomains( state );
@@ -523,7 +538,7 @@ const getFilteredDomainsList = ( state, context ) => {
 				);
 
 				return (
-					! isEmpty( domainDetails ) &&
+					Object.keys( domainDetails ?? {} ).length !== 0 &&
 					domainTypes.REGISTERED === domain.type &&
 					domainDetails?.currentUserCanManage &&
 					isDomainUpdateable( domainDetails ) &&
@@ -541,9 +556,9 @@ const getFilteredDomainsList = ( state, context ) => {
 
 export default connect(
 	( state, { context } ) => {
-		const sites = keyBy( getSites( state ), 'ID' );
+		const sites = getSitesById( state );
 		const user = getCurrentUser( state );
-		const purchases = keyBy( getUserPurchases( state, user?.ID ) || [], 'id' );
+		const purchases = getPurchasesByCurrentUserId( state );
 		const action = parse( context.querystring )?.action;
 
 		return {
