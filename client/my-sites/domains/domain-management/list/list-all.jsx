@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { forEach, get, isEmpty, keyBy, keys, map, reduce, times } from 'lodash';
+import { get, isEmpty, keyBy, keys, map, reduce, times } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import React, { Component } from 'react';
@@ -95,7 +95,7 @@ class ListAll extends Component {
 
 	setSelectedDomains = () => {
 		this.setState( { selectedDomainsSet: true }, () =>
-			forEach( this.props.filteredDomainsList, ( { domain } ) =>
+			this.props.filteredDomainsList.forEach( ( { domain } ) =>
 				this.handleDomainItemToggle( domain, true )
 			)
 		);
