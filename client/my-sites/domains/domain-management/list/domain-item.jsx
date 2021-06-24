@@ -8,7 +8,6 @@ import page from 'page';
 import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -457,7 +456,7 @@ class DomainItem extends PureComponent {
 	renderActionResult() {
 		const { actionResult } = this.props;
 
-		if ( isEmpty( actionResult ) ) {
+		if ( ! actionResult?.type || ! actionResult?.message ) {
 			return;
 		}
 
