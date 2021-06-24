@@ -30,6 +30,11 @@ export function logmeinUrl( url: string ): string {
 		return url;
 	}
 
+	// reduxStore must configured
+	if ( ! reduxStore ) {
+		return url;
+	}
+
 	// logmein=direct only works for logged into wordpress.com users
 	if ( ! isUserLoggedIn( reduxStore.getState() ) ) {
 		return url;
