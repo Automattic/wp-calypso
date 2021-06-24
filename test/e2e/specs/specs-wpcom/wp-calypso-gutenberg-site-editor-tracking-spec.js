@@ -426,8 +426,6 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 		describe( 'Tracks "wpcom_block_editor_global_styles_update"', function () {
 			it( 'global color and typography', async function () {
-				await clickGlobalStylesButton( this.driver );
-
 				await testGlobalStylesColorAndTypography( this.driver );
 			} );
 
