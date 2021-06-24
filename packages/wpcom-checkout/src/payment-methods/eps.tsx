@@ -45,20 +45,20 @@ declare module '@wordpress/data' {
 	function dispatch( key: StoreKey ): StoreActions< NounsInStore >;
 }
 
+const actions: StoreActions< NounsInStore > = {
+	changeCustomerName( payload ) {
+		return { type: 'CUSTOMER_NAME_SET', payload };
+	},
+};
+
+const selectors: StoreSelectorsWithState< NounsInStore > = {
+	getCustomerName( state ) {
+		return state.customerName || '';
+	},
+};
+
 export function createEpsPaymentMethodStore(): EpsStore {
 	debug( 'creating a new eps payment method store' );
-	const actions: StoreActions< NounsInStore > = {
-		changeCustomerName( payload ) {
-			return { type: 'CUSTOMER_NAME_SET', payload };
-		},
-	};
-
-	const selectors: StoreSelectorsWithState< NounsInStore > = {
-		getCustomerName( state ) {
-			return state.customerName || '';
-		},
-	};
-
 	const store = registerStore( 'eps', {
 		reducer(
 			state: StoreState< NounsInStore > = {
@@ -75,8 +75,7 @@ export function createEpsPaymentMethodStore(): EpsStore {
 		actions,
 		selectors,
 	} );
-
-	return { ...store, actions, selectors };
+	return store;
 }
 
 export function createEpsMethod( { store }: { store: EpsStore } ): PaymentMethod {
@@ -209,11 +208,11 @@ function EpsSummary() {
 }
 
 function isFormValid( store: EpsStore ): boolean {
-	const customerName = store.selectors.getCustomerName( store.getState() );
+	const customerName = selectors.getCustomerName( store.getState() );
 
 	if ( ! customerName?.value.length ) {
 		// Touch the field so it displays a validation error
-		store.dispatch( store.actions.changeCustomerName( '' ) );
+		store.dispatch( actions.changeCustomerName( '' ) );
 		return false;
 	}
 
