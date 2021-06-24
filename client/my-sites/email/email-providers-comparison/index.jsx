@@ -283,7 +283,7 @@ class EmailProvidersComparison extends React.Component {
 	renderEmailForwardingCard() {
 		const { domain, translate } = this.props;
 
-		if ( this.isUpgrading( domain ) ) {
+		if ( this.isUpgrading() ) {
 			return null;
 		}
 
@@ -350,7 +350,7 @@ class EmailProvidersComparison extends React.Component {
 				? newUsers( selectedDomainName )
 				: this.state.googleUsers;
 
-		const buttonLabel = this.isUpgrading( domain )
+		const buttonLabel = this.isUpgrading()
 			? translate( 'Upgrade to %(googleMailService)s', {
 					args: {
 						googleMailService: getGoogleMailServiceFamily(),
@@ -433,7 +433,7 @@ class EmailProvidersComparison extends React.Component {
 			<img src={ poweredByTitanLogo } alt={ translate( 'Powered by Titan' ) } />
 		);
 
-		const buttonLabel = this.isUpgrading( domain )
+		const buttonLabel = this.isUpgrading()
 			? translate( 'Upgrade to %(titanProductName)s', {
 					args: {
 						titanProductName: getTitanProductName(),
@@ -497,7 +497,7 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	renderHeader() {
-		const { currentRoute, domain, selectedDomainName, selectedSite, translate } = this.props;
+		const { currentRoute, selectedDomainName, selectedSite, translate } = this.props;
 
 		const image = {
 			path: emailIllustration,
@@ -511,7 +511,7 @@ class EmailProvidersComparison extends React.Component {
 			comment: '%(domainName)s is the domain name, e.g example.com',
 		};
 
-		const title = this.isUpgrading( domain )
+		const title = this.isUpgrading()
 			? translate( 'Upgrade to a hosted email' )
 			: translate( 'Add email' );
 
@@ -526,7 +526,7 @@ class EmailProvidersComparison extends React.Component {
 				<PromoCard
 					isPrimary
 					title={
-						this.isUpgrading( domain )
+						this.isUpgrading()
 							? translate( 'Upgrade to start sending emails from %(domainName)s', translateArgs )
 							: translate( 'Get your own @%(domainName)s email address', translateArgs )
 					}
@@ -534,7 +534,7 @@ class EmailProvidersComparison extends React.Component {
 					className="email-providers-comparison__action-panel"
 				>
 					<p>
-						{ this.isUpgrading( domain )
+						{ this.isUpgrading()
 							? translate( 'Pick from one of our flexible options to unlock full email features.' )
 							: translate(
 									'Pick one of our flexible options to connect your domain with email ' +
