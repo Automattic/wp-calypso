@@ -247,16 +247,22 @@ class ListAll extends Component {
 	}
 
 	renderDomainItem( domain, index ) {
-		const { currentRoute, domainsDetails, sites, requestingSiteDomains } = this.props;
+		const {
+			currentRoute,
+			domainsDetails,
+			sites,
+			requestingSiteDomains,
+			isContactEmailEditContext,
+		} = this.props;
+		const { selectedDomains, isSavingContactInfo } = this.state;
 		const domainDetails = this.findDomainDetails( domainsDetails, domain );
 		const isLoadingDomainDetails = this.isLoadingDomainDetails();
-
-		const { selectedDomains } = this.state;
 		const isChecked = ( selectedDomains[ domain.domain ] ?? false ) || isLoadingDomainDetails;
+		const actionResult = this.getActionResult( domain.name );
 
 		return (
 			<React.Fragment key={ `domain-item-${ index }-${ domain.name }` }>
-				{ domain?.blogId && ! this.props.isContactEmailEditContext ? (
+				{ domain?.blogId && ! isContactEmailEditContext ? (
 					<LazyRender>
 						{ ( render ) => ( render ? this.renderQuerySiteDomainsOnce( domain.blogId ) : null ) }
 					</LazyRender>
@@ -267,9 +273,9 @@ class ListAll extends Component {
 					<DomainItem
 						currentRoute={ currentRoute }
 						domain={ domain }
-						showDomainDetails={ ! this.props.isContactEmailEditContext }
+						showDomainDetails={ ! isContactEmailEditContext }
 						domainDetails={ domainDetails }
-						showCheckbox={ this.props.isContactEmailEditContext }
+						showCheckbox={ isContactEmailEditContext }
 						site={ sites[ domain?.blogId ] }
 						isManagingAllSites={ true }
 						isLoadingDomainDetails={
@@ -278,9 +284,9 @@ class ListAll extends Component {
 						onClick={ this.handleDomainItemClick }
 						onToggle={ this.handleDomainItemToggle }
 						isChecked={ isChecked }
-						disabeld={ isLoadingDomainDetails }
-						actionResult={ this.getActionResult( domain.name ) }
-						isBusy={ this.state.isSavingContactInfo }
+						disabled={ isLoadingDomainDetails || isSavingContactInfo }
+						actionResult={ actionResult }
+						isBusy={ isChecked && isSavingContactInfo && null === actionResult }
 					/>
 				) }
 			</React.Fragment>
@@ -550,7 +556,7 @@ const getFilteredDomainsList = ( state, context ) => {
 				);
 
 				return (
-					Object.keys( domainDetails ?? {} ).length !== 0 &&
+					Object.keys( domainDetails ?? {} ).length > 0 &&
 					domainTypes.REGISTERED === domain.type &&
 					domainDetails?.currentUserCanManage &&
 					isDomainUpdateable( domainDetails ) &&

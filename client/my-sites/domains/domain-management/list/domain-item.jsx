@@ -470,6 +470,8 @@ class DomainItem extends PureComponent {
 		const {
 			domain,
 			domainDetails,
+			disabled,
+			isBusy,
 			isChecked,
 			isEnabled,
 			isManagingAllSites,
@@ -493,7 +495,7 @@ class DomainItem extends PureComponent {
 						onChange={ this.onToggle }
 						onClick={ this.stopPropagation }
 						checked={ isChecked }
-						disabled={ this.props.disabled || this.props.isBusy }
+						disabled={ disabled || isBusy }
 					/>
 				) }
 				{ enableSelection && (
