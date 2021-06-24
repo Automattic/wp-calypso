@@ -12,7 +12,7 @@
 		min-height: auto;
 
 		@include breakpoint-deprecated( '>480px' ) {
-			padding: 16px 24px;
+			padding: 14px 24px;
 		}
 	}
 
@@ -36,8 +36,8 @@
 	display: flex;
 	align-items: center;
 	transition: all 0.1s;
-	padding-top: 12px;
-	padding-bottom: 12px;
+	padding-top: 8px;
+	padding-bottom: 8px;
 	box-shadow: none;
 
 	.quick-links__action-box-image {
