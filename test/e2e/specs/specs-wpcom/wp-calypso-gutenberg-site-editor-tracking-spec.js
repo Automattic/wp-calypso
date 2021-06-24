@@ -439,6 +439,12 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 					} )()
 				);
 
+				// Toggle the menu to ensure the color picker closes.
+				// Otherwise clicking 'reset' will close the color picker after the reset
+				// takes place, causing an unwanted update to that value.
+				await clickGlobalStylesButton( this.driver );
+				await clickGlobalStylesButton( this.driver );
+
 				await clearEventsStack( this.driver );
 
 				updateEvents = await getGlobalStylesUpdateEvents( this.driver );
@@ -448,26 +454,24 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 				updateEvents = await getGlobalStylesUpdateEvents( this.driver );
 
-				// TODO - figure out why this doesnt match up with manual testing..
-				// assert(
-				// 	updateEvents.some( ( event ) => {
-				// 		const {
-				// 			block_type,
-				// 			section,
-				// 			field,
-				// 			field_value,
-				// 			element_type,
-				// 			palette_slug,
-				// 		} = event[ 1 ];
-				// 		return (
-				// 			block_type === undefined &&
-				// 			section === 'color' &&
-				// 			field === 'palette' &&
-				// 			element_type === undefined &&
-				// 			field_value === 'reset'
-				// 		);
-				// 	} )
-				// );
+				updateEvents.forEach( ( event ) => {
+					const {
+						block_type,
+						section,
+						field,
+						field_value,
+						element_type,
+						palette_slug,
+					} = event[ 1 ];
+					assert(
+						block_type === undefined &&
+							section === 'color' &&
+							field === 'palette' &&
+							element_type === undefined &&
+							typeof palette_slug === 'string' &&
+							field_value === 'reset'
+					);
+				} );
 			} );
 		} );
 
