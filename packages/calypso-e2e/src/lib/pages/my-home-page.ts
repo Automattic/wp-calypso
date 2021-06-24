@@ -9,9 +9,7 @@ import { BaseContainer } from '../base-container';
 import { Page } from 'playwright';
 
 const selectors = {
-	dashboard: '.customer-home__main',
-	statsCard: '.stats',
-	visitSiteButton: '.customer-home__view-site-button >> text=Visit site',
+	visitSiteButton: '.button >> text=Visit site',
 };
 
 /**
@@ -26,7 +24,7 @@ export class MyHomePage extends BaseContainer {
 	 * @param {Page} page Underlying page on which interactions take place.
 	 */
 	constructor( page: Page ) {
-		super( page, selectors.dashboard );
+		super( page );
 	}
 
 	/**

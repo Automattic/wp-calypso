@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import assert from 'assert';
-
-/**
  * Internal dependencies
  */
 import { BaseContainer } from '../base-container';
@@ -57,6 +52,7 @@ export class ThemesPage extends BaseContainer {
 	 *
 	 * @param {string} type Pre-defined types of themes.
 	 * @returns {Promise<void>} No return value.
+	 * @throws {Error} If selected state of the theme filter button could not be confirmed.
 	 */
 	async filterThemes( type: 'All' | 'Free' | 'Premium' ): Promise< void > {
 		const selector = `a[data-e2e-value=${ type.toLowerCase() }]`;

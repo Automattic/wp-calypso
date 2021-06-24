@@ -10,7 +10,6 @@ import { PreviewComponent } from '../components';
 import { Page } from 'playwright';
 
 const selectors = {
-	main: '.theme__sheet',
 	demoPane: '.theme__sheet-screenshot',
 };
 
@@ -26,7 +25,7 @@ export class ThemesDetailPage extends BaseContainer {
 	 * @param {Page} page The underlying page.
 	 */
 	constructor( page: Page ) {
-		super( page, selectors.main );
+		super( page );
 	}
 
 	/**
