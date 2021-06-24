@@ -51,12 +51,12 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 	}
 
 	async waitForTemplateToLoad() {
-		await this.runInCanvas( () =>
-			driverHelper.waitUntilElementLocatedAndVisible(
+		await this.runInCanvas( async () => {
+			await driverHelper.waitUntilElementLocatedAndVisible(
 				this.driver,
 				By.css( '.edit-site-block-editor__block-list' )
-			)
-		);
+			);
+		} );
 	}
 
 	async openBlockInserterAndSearch( searchTerm ) {
