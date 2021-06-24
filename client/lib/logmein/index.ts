@@ -42,29 +42,37 @@ export function logmeinUrl( url: string ): string {
 
 	const newurl = new URL( String( url ), INVALID_URL );
 
-	// Ignore and passthrough invalid or /relative/urls that have no host specified
+	// Ignore and passthrough invalid or /relative/urls that have no host or protocol specified
 	if ( newurl.origin === INVALID_URL ) {
 		return url;
 	}
 
+	// Replace unmapped urls with their mapped url counterparts (*.wordpress.com => mapped.example.com)
 	const sites = Object.values( getSitesItems( reduxStore.getState() ) );
 	const mappedlinksite = sites.find(
+		// using INVALID_URL here to prevent the possibility of exceptions,
+		// if unmapped_url ever shows up in a dirty state this will fail silently
 		( site ) => new URL( site.options.unmapped_url, INVALID_URL ).host === newurl.host
 	);
 	if ( mappedlinksite ) {
 		newurl.host = new URL( mappedlinksite.URL ).host;
 	}
-
+	// We only want to logmein into valid sites that belong to the user (for now that is mapped simple sites)
+	// using INVALID_URL here to prevent the possibility of exceptions, if site.URL ever contains an invalid url
+	// the filtering will fail
 	const allowedHosts = sites
-		.map( ( site: any ) => ( isValidLogmeinSite( site ) ? new URL( site.URL ).host : false ) )
+		.map( ( site: any ) =>
+			isValidLogmeinSite( site ) ? new URL( site.URL, INVALID_URL ).host : false
+		)
 		.filter( Boolean );
-
 	if ( allowedHosts.indexOf( newurl.host ) === -1 ) {
 		return url;
 	}
 
 	// logmein doesn't work with http.
 	newurl.protocol = 'https:';
+
+	// Set the param
 	newurl.searchParams.set( 'logmein', 'direct' );
 
 	return newurl.toString();

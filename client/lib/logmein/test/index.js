@@ -115,7 +115,7 @@ describe( 'logmein', () => {
 			expect( logmeinUrl( 'https://test.blog' ) ).toBe( 'https://test.blog' );
 		} );
 
-		it( 'fallsback on url input when given relative urls', () => {
+		it( 'fallsback on url input when given invalid urls', () => {
 			expect( logmeinUrl( undefined ) ).toBe( undefined );
 		} );
 
@@ -196,8 +196,16 @@ describe( 'logmein', () => {
 			expect( logmeinUrl( 'http://test.blog' ) ).toBe( 'https://test.blog/?logmein=direct' );
 		} );
 
+		it( 'fallsback on url input when given relative urls', () => {
+			expect( logmeinUrl( '/relative' ) ).toBe( '/relative' );
+
+			// Making a trade off here, protocol-less urls are treated as relative.
+			// Relatively safely support can be added for these if they're are prevelant but I don't think they are.
+			expect( logmeinUrl( 'test.blog' ) ).toBe( 'test.blog' );
+		} );
+
 		it( 'sets logmein=direct param', () => {
-			expect( logmeinUrl( 'http://test.blog' ) ).toBe( 'https://test.blog/?logmein=direct' );
+			expect( logmeinUrl( 'https://test.blog' ) ).toBe( 'https://test.blog/?logmein=direct' );
 		} );
 	} );
 
