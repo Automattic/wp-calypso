@@ -20,6 +20,7 @@ const FAILED_FILE = 'file://' + assets.getPath( FAIL_TO_LOAD_FILE );
 // Full list of error codes here: https://code.google.com/p/chromium/codesearch#chromium/src/net/base/net_error_list.h
 const ERRORS_TO_IGNORE = [
 	-3, // ABORTED
+	-30, // ERR_BLOCKED_BY_CSP
 	-102, // CONNECTION_REFUSED
 	-109, // ADDRESS_UNREACHABLE
 	-502, // NO_PRIVATE_KEY_FOR_CERT
@@ -47,7 +48,7 @@ function isErrorPage( sender ) {
 function failedToLoadError( view ) {
 	// We had an error loading the error page. Try a final time to load it via the server now the proxy has been disabled
 	if ( finalTry === false ) {
-		view.webContents.loadURL( 'http://127.0.0.1:41050/desktop/failed-to-start.html#-666' );
+		view.webContents.loadURL( `file://${ assets.getPath( 'failed-to-start.html' ) }#-666` );
 		finalTry = true;
 	} else {
 		// Last resort. We don't want to get in a loop trying to load the error page. Disable the proxy, show a dialog, and quit
