@@ -23,21 +23,21 @@ describe( `[${ host }] Site Editor (${ screenSize }) @parallel`, function () {
 
 	it( 'Can log in', async function () {
 		this.loginFlow = new LoginFlow( this.driver, gutenbergUser );
-		return await this.loginFlow.loginAndSelectMySite();
+		await this.loginFlow.loginAndSelectMySite();
 	} );
 
 	it( 'Can open site editor', async function () {
 		const sidebarComponent = await SidebarComponent.Expect( this.driver );
-		return await sidebarComponent.selectSiteEditor();
+		await sidebarComponent.selectSiteEditor();
 	} );
 
 	it( 'Site editor opens', async function () {
-		return await SiteEditorPage.Expect( this.driver );
+		await SiteEditorPage.Expect( this.driver );
 	} );
 
 	it( 'Template loads', async function () {
 		const editor = await SiteEditorComponent.Expect( this.driver );
-		return await editor.waitForTemplateToLoad();
+		await editor.waitForTemplateToLoad();
 	} );
 
 	it( 'Template parts load', async function () {
