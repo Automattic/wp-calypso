@@ -49,14 +49,7 @@ export function logmeinUrl( url: string ): string {
 
 	// Replace unmapped urls with their mapped url counterparts (*.wordpress.com => mapped.example.com)
 	const sites = Object.values( getSitesItems( reduxStore.getState() ) );
-	const mappedlinksite = sites.find(
-		// using INVALID_URL here to prevent the possibility of exceptions,
-		// if unmapped_url ever shows up in a dirty state this will fail silently
-		( site ) => new URL( site.options.unmapped_url, INVALID_URL ).host === newurl.host
-	);
-	if ( mappedlinksite ) {
-		newurl.host = new URL( mappedlinksite.URL ).host;
-	}
+
 	// We only want to logmein into valid sites that belong to the user (for now that is mapped simple sites)
 	// using INVALID_URL here to prevent the possibility of exceptions, if site.URL ever contains an invalid url
 	// the filtering will fail

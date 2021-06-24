@@ -119,9 +119,12 @@ describe( 'logmein', () => {
 			expect( logmeinUrl( undefined ) ).toBe( undefined );
 		} );
 
-		it( 'unmapped url usage is replaced with mapped urls when possible', () => {
-			expect( logmeinUrl( 'https://example.wordpress.com' ) ).toBe(
+		it( 'unmapped url usage is not replaced with mapped urls when possible', () => {
+			expect( logmeinUrl( 'https://example.wordpress.com' ) ).not.toBe(
 				'https://test.blog/?logmein=direct'
+			);
+			expect( logmeinUrl( 'https://example.wordpress.com' ) ).toBe(
+				'https://example.wordpress.com'
 			);
 		} );
 
