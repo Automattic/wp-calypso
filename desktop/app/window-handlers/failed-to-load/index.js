@@ -15,6 +15,7 @@ const log = require( '../../lib/logger' )( 'desktop:failed-to-load' );
  */
 const FAIL_TO_LOAD_FILE = 'failed-to-start.html';
 const FAILED_FILE = 'file://' + assets.getPath( FAIL_TO_LOAD_FILE );
+const NETWORK_FAILED_FILE = 'file://' + assets.getPath( 'network-failed.html' );
 
 // Error codes we might get in the course of using the app and should not result in an error page
 // Full list of error codes here: https://code.google.com/p/chromium/codesearch#chromium/src/net/base/net_error_list.h
@@ -89,7 +90,8 @@ module.exports = function ( { view } ) {
 					);
 
 					await view.webContents.session.setProxy( { proxyRules: 'direct://' } );
-					view.webContents.loadURL( FAILED_FILE + '#' + errorCode );
+					const file = errorCode === -106 ? NETWORK_FAILED_FILE : FAILED_FILE;
+					view.webContents.loadURL( file + '#' + errorCode );
 				}
 			}
 		}
