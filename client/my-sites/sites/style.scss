@@ -53,3 +53,41 @@
 		padding-right: 0;
 	}
 }
+
+.is-wide-layout {
+	.sites__select-wrapper {
+		background: transparent;
+		box-shadow: none;
+	}
+
+	.site-selector.is-large .site-selector__sites {
+		border-top: none;
+		background: transparent;
+	}
+
+	.site {
+		float: left;
+		width: 25%;
+		box-sizing: border-box;
+	}
+
+	.site__content {
+		background: var( --color-surface );
+		border: 1px solid var( --color-neutral-10 );
+		display: block;
+		height: 150px;
+		margin: 8px;
+	}
+
+	.site .site-icon {
+		flex: none;
+		width: 60px !important;
+		height: 60px !important;
+		margin: 0 auto;
+	}
+
+	.site__info {
+		width: 100%;
+		flex: none;
+	}
+}
