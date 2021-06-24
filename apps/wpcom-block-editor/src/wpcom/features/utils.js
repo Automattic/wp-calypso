@@ -88,7 +88,17 @@ const findUpdates = ( newContent, oldContent ) => {
 		( update ) => ! some( newItems, ( { keyMap } ) => isEqual( update.keyMap, keyMap ) )
 	);
 	removedItems.forEach( ( item ) => {
-		item.value = 'reset';
+		if ( item.value?.color ) {
+			// So we don't override information about which color palette item was reset.
+			item.value.color = 'reset';
+		} else if ( typeof item.value === 'object' && item.value !== null ) {
+			// A safety - in case there happen to be any other objects in the future
+			// that slip by our mapping process, add an 'is_reset' prop to the object
+			// so the data about what was reset is not lost/overwritten.
+			item.value.is_reset = true;
+		} else {
+			item.value = 'reset';
+		}
 	} );
 
 	return [ ...newItems, ...removedItems ];
