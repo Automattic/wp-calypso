@@ -4,7 +4,7 @@ import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import home, { maybeRedirect } from './controller';
 
 export default function () {
-	page( '/home', siteSelection, sites, makeLayout, clientRender );
+	page( '/home', siteSelection, navigation, sites, makeLayout, clientRender );
 
 	page( '/home/:siteId', siteSelection, maybeRedirect, navigation, home, makeLayout, clientRender );
 }
