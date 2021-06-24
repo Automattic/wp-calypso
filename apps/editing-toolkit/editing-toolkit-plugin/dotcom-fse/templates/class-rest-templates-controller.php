@@ -26,9 +26,7 @@ class REST_Templates_Controller extends \WP_REST_Posts_Controller {
 		$template_id = $request['wp_id'];
 
 		if ( $template_id ) {
-			$request->set_param( 'id', $template_id );
-			$template_part = self::get_item( $request )->data;
-			return \rest_ensure_response( array( $template_part ) );
+			$request->set_param( 'include', array( $template_id ) );
 		}
 
 		return parent::get_items( $request );
