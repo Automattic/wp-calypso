@@ -25,20 +25,3 @@ export const ListAllActions = {
 	editContactInfo: 'edit-contact-info',
 	editContactEmail: 'edit-contact-email',
 };
-
-export const isEmpty = ( value ) => {
-	return Object.keys( value ?? {} ).length === 0;
-};
-
-export const debounce = ( func, delay, { leading } = {} ) => {
-	let timerId;
-
-	return ( ...args ) => {
-		if ( ! timerId && leading ) {
-			func( ...args );
-		}
-		clearTimeout( timerId );
-
-		timerId = setTimeout( () => func( ...args ), delay );
-	};
-};

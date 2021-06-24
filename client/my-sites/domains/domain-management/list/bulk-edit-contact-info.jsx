@@ -21,7 +21,6 @@ import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import TransferLockOptOut from 'calypso/my-sites/domains/domain-management/list/transfer-lock-opt-out';
-import { debounce, isEmpty } from './utils';
 import wp from 'calypso/lib/wp';
 
 const wpcom = wp.undocumented();
@@ -49,32 +48,37 @@ class BulkEditContactInfo extends React.Component {
 
 	state = {
 		hasSetContactDetailsFromCache: false,
+		hasSetInitialContactEmail: false,
 		contactDetails: {},
 		errorMessages: {},
 	};
 
 	componentDidMount() {
-		if ( isEmpty( this.props.userSettings ) ) {
+		if ( Object.keys( this.props.userSettings ?? {} ).length === 0 ) {
 			this.props.fetchUserSettings();
 		}
 
-		if ( isEmpty( this.props.contactDetailsCache ) ) {
+		if ( Object.keys( this.props.contactDetailsCache ?? {} ).length === 0 ) {
 			this.props.requestContactDetailsCache();
 		}
 
-		this.debouncedValidateContactDetails = debounce( this.validateContactDetails, 500 );
+		this.debouncedValidateContactDetails = this.debounce( this.validateContactDetails, 500 );
 	}
 
 	componentDidUpdate() {
 		const { new_user_email, user_email } = this.props.userSettings ?? {};
 		const email = new_user_email?.length > 0 ? new_user_email : user_email;
 
-		if ( ! isEmpty( email ) && isEmpty( this.state.contactDetails?.email ) ) {
-			this.updateDomainContactFields( { email: email } );
+		if (
+			( email ?? '' ).length > 0 &&
+			( this.state.contactDetails?.email ?? '' ).length === 0 &&
+			false === this.state.hasSetInitialContactEmail
+		) {
+			this.setInitialContactEmail( email );
 		}
 
 		if (
-			! isEmpty( this.props.contactDetailsCache ) &&
+			Object.keys( this.props.contactDetailsCache ?? {} ).length > 0 &&
 			false === this.state.hasSetContactDetailsFromCache
 		) {
 			const contactDetailsCopy = JSON.parse( JSON.stringify( this.props.contactDetailsCache ) );
@@ -82,13 +86,32 @@ class BulkEditContactInfo extends React.Component {
 		}
 	}
 
+	debounce = ( func, delay, { leading } = {} ) => {
+		let timerId;
+
+		return ( ...args ) => {
+			if ( ! timerId && leading ) {
+				func( ...args );
+			}
+			clearTimeout( timerId );
+
+			timerId = setTimeout( () => func( ...args ), delay );
+		};
+	};
+
 	isLoading() {
 		return (
-			isEmpty( this.props.contactDetailsCache ) ||
+			Object.keys( this.props.contactDetailsCache ?? {} ).length === 0 ||
 			this.props.isRequestingContactDetailsCache ||
 			this.props.isFetchingUserSettings
 		);
 	}
+
+	setInitialContactEmail = ( email ) => {
+		this.setState( { hasSetInitialContactEmail: true }, () => {
+			this.updateDomainContactFields( { email } );
+		} );
+	};
 
 	setContactDetailsFromCache = ( data ) => {
 		delete data.email;
@@ -100,7 +123,8 @@ class BulkEditContactInfo extends React.Component {
 	updateDomainContactFields = ( data ) => {
 		const newContactDetails = Object.assign( {}, this.state.contactDetails, data );
 		this.setState( { contactDetails: newContactDetails } );
-		! isEmpty( newContactDetails ) && this.debouncedValidateContactDetails( newContactDetails );
+		Object.keys( newContactDetails ).length > 0 &&
+			this.debouncedValidateContactDetails( newContactDetails );
 	};
 
 	onTransferLockOptOutChange = ( event ) => {
@@ -117,7 +141,7 @@ class BulkEditContactInfo extends React.Component {
 			this.props.domainNamesList,
 			( error, data ) => {
 				let errorMessages = ( data && data.messages ) || {};
-				if ( ! isEmpty( errorMessages ) ) {
+				if ( Object.keys( errorMessages ).length > 0 ) {
 					errorMessages = Object.entries( errorMessages ).reduce( ( result, [ field, errors ] ) => {
 						result[ field ] = Array.isArray( errors ) ? errors.join( ' ' ) : errors;
 						return result;
