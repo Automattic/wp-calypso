@@ -39,6 +39,14 @@ const clickGlobalStylesResetButton = async ( driver ) => {
 	);
 };
 
+const clickGlobalStylesBlockPanel = async ( driver, name ) => {
+	const locator = driverHelper.createTextLocator(
+		By.css( '.edit-site-global-styles-sidebar .components-panel__body button' ),
+		name
+	);
+	await driverHelper.clickWhenClickable( driver, locator );
+};
+
 const changeGlobalStylesFontSize = async ( driver, value ) =>
 	await driverHelper.setWhenSettable(
 		driver,
@@ -205,7 +213,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			} );
 		} );
 
-		describe( 'Tracks "wpcom_block_editor_global_styles_update', function () {
+		describe( 'Tracks "wpcom_block_editor_global_styles_update"', function () {
 			it( 'global color and typography', async function () {
 				await clickGlobalStylesButton( this.driver );
 				// await clearEventsStack( this.driver );
@@ -447,8 +455,6 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 				await clearEventsStack( this.driver );
 
-				updateEvents = await getGlobalStylesUpdateEvents( this.driver );
-
 				await clickGlobalStylesResetButton( this.driver );
 				await this.driver.sleep( 200 );
 
@@ -472,6 +478,266 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 							field_value === 'reset'
 					);
 				} );
+			} );
+
+			it( 'block level typography and color', async function () {
+				await clickGlobalStylesBlockTypeTab( this.driver );
+
+				await clickGlobalStylesBlockPanel( this.driver, 'Button' );
+
+				await changeGlobalStylesFontSize( this.driver, '13' );
+				await this.driver.sleep( 100 );
+				await changeGlobalStylesColor( this.driver, 1, 1 );
+				await this.driver.sleep( 100 );
+
+				await clickGlobalStylesBlockPanel( this.driver, 'Button' );
+				await clickGlobalStylesBlockPanel( this.driver, 'Column' );
+
+				await changeGlobalStylesColor( this.driver, 3, 1 );
+				await this.driver.sleep( 200 );
+
+				let updateEvents = await getGlobalStylesUpdateEvents( this.driver );
+
+				assert.strictEqual( updateEvents.length, 3 );
+				assert(
+					updateEvents.some( ( event ) => {
+						const {
+							block_type,
+							section,
+							field,
+							field_value,
+							element_type,
+							palette_slug,
+						} = event[ 1 ];
+						return (
+							block_type === 'core/button' &&
+							section === 'color' &&
+							field === 'text' &&
+							element_type === undefined &&
+							palette_slug === undefined &&
+							typeof field_value === 'string' &&
+							field_value[ 0 ] === '#'
+						);
+					} )
+				);
+				assert(
+					updateEvents.some( ( event ) => {
+						const {
+							block_type,
+							section,
+							field,
+							field_value,
+							element_type,
+							palette_slug,
+						} = event[ 1 ];
+						return (
+							block_type === 'core/button' &&
+							section === 'typography' &&
+							field === 'fontSize' &&
+							element_type === undefined &&
+							palette_slug === undefined &&
+							field_value === '13px'
+						);
+					} )
+				);
+				assert(
+					updateEvents.some( ( event ) => {
+						const {
+							block_type,
+							section,
+							field,
+							field_value,
+							element_type,
+							palette_slug,
+						} = event[ 1 ];
+						return (
+							block_type === 'core/column' &&
+							section === 'color' &&
+							field === 'text' &&
+							element_type === 'link' &&
+							palette_slug === undefined &&
+							typeof field_value === 'string' &&
+							field_value[ 0 ] === '#'
+						);
+					} )
+				);
+
+				await clearEventsStack( this.driver );
+				await clickGlobalStylesResetButton( this.driver );
+				await this.driver.sleep( 200 );
+				updateEvents = await getGlobalStylesUpdateEvents( this.driver );
+
+				assert.strictEqual( updateEvents.length, 3 );
+				assert(
+					updateEvents.some( ( event ) => {
+						const {
+							block_type,
+							section,
+							field,
+							field_value,
+							element_type,
+							palette_slug,
+						} = event[ 1 ];
+						return (
+							block_type === 'core/button' &&
+							section === 'color' &&
+							field === 'text' &&
+							element_type === undefined &&
+							palette_slug === undefined &&
+							field_value === 'reset'
+						);
+					} )
+				);
+				assert(
+					updateEvents.some( ( event ) => {
+						const {
+							block_type,
+							section,
+							field,
+							field_value,
+							element_type,
+							palette_slug,
+						} = event[ 1 ];
+						return (
+							block_type === 'core/button' &&
+							section === 'typography' &&
+							field === 'fontSize' &&
+							element_type === undefined &&
+							palette_slug === undefined &&
+							field_value === 'reset'
+						);
+					} )
+				);
+				assert(
+					updateEvents.some( ( event ) => {
+						const {
+							block_type,
+							section,
+							field,
+							field_value,
+							element_type,
+							palette_slug,
+						} = event[ 1 ];
+						return (
+							block_type === 'core/column' &&
+							section === 'color' &&
+							field === 'text' &&
+							element_type === 'link' &&
+							palette_slug === undefined &&
+							field_value === 'reset'
+						);
+					} )
+				);
+			} );
+
+			it( 'block level color palette settings', async function () {
+				// await clickGlobalStylesBlockTypeTab( this.driver );
+
+				// await clickGlobalStylesBlockPanel( this.driver, 'Button' );
+
+				// Near exact to above from --here
+				await changeGlobalStylesFirstColorPaletteItem( this.driver, '#ff0ff0' );
+				this.driver.sleep( 200 );
+
+				let updateEvents = await getEventsStack( this.driver );
+
+				updateEvents.forEach( ( event ) => {
+					const {
+						block_type,
+						section,
+						field,
+						field_value,
+						element_type,
+						palette_slug,
+					} = event[ 1 ];
+					assert(
+						block_type === 'core/column' &&
+							section === 'color' &&
+							field === 'palette' &&
+							element_type === undefined &&
+							typeof palette_slug === 'string' &&
+							typeof field_value === 'string' &&
+							field_value[ 0 ] === '#'
+					);
+				} );
+				assert(
+					updateEvents.some( ( event ) => {
+						const {
+							block_type,
+							section,
+							field,
+							field_value,
+							element_type,
+							palette_slug,
+						} = event[ 1 ];
+						return (
+							block_type === 'core/column' &&
+							section === 'color' &&
+							field === 'palette' &&
+							element_type === undefined &&
+							typeof palette_slug === 'string' &&
+							field_value === '#ff0ff0'
+						);
+					} )
+				);
+				await clearEventsStack( this.driver );
+				await changeGlobalStylesFirstColorPaletteItem( this.driver, '#a1a1a1', true );
+				await this.driver.sleep( 200 );
+				updateEvents = await getGlobalStylesUpdateEvents( this.driver );
+
+				assert.strictEqual( updateEvents.length, 1 );
+
+				assert(
+					( function () {
+						const {
+							block_type,
+							section,
+							field,
+							field_value,
+							element_type,
+							palette_slug,
+						} = updateEvents[ 0 ][ 1 ];
+						return (
+							block_type === 'core/column' &&
+							section === 'color' &&
+							field === 'palette' &&
+							element_type === undefined &&
+							typeof palette_slug === 'string' &&
+							typeof field_value === 'string' &&
+							field_value === '#a1a1a1'
+						);
+					} )()
+				);
+
+				await clickGlobalStylesButton( this.driver );
+				await clickGlobalStylesButton( this.driver );
+
+				await clearEventsStack( this.driver );
+
+				await clickGlobalStylesResetButton( this.driver );
+				await this.driver.sleep( 200 );
+
+				updateEvents = await getGlobalStylesUpdateEvents( this.driver );
+
+				updateEvents.forEach( ( event ) => {
+					const {
+						block_type,
+						section,
+						field,
+						field_value,
+						element_type,
+						palette_slug,
+					} = event[ 1 ];
+					assert(
+						block_type === 'core/column' &&
+							section === 'color' &&
+							field === 'palette' &&
+							element_type === undefined &&
+							typeof palette_slug === 'string' &&
+							field_value === 'reset'
+					);
+				} );
+				// -to here
 			} );
 		} );
 
