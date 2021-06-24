@@ -2,7 +2,7 @@
 	"name": "@automattic/calypso-e2e",
 	"version": "0.1.0",
 	"description": "Tools for e2e tests",
-	"main": "dist/cjs/src/index.js",
+	"main": "dist/cjs/index.js",
 	"author": "Automattic Inc.",
 	"repository": {
 		"type": "git",

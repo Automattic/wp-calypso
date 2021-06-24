@@ -1,11 +1,32 @@
 {
-	"extends": "@automattic/calypso-build/typescript/ts-package.json",
 	"compilerOptions": {
-		"module": "CommonJS",
+		"target": "es2020",
+		"lib": [ "DOM", "es2020" ],
+		"baseUrl": ".",
+		"module": "commonjs",
+		"allowJs": true,
+		"declaration": true,
 		"declarationDir": "dist/types",
 		"outDir": "dist/cjs",
-		"rootDir": "src"
+		"rootDir": "src",
+
+		"strict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+
+		"moduleResolution": "node",
+		"esModuleInterop": true,
+
+		"forceConsistentCasingInFileNames": true,
+
+		"types": [ "node" ],
+
+		"noEmitHelpers": true,
+		"importHelpers": true,
+
+		"composite": true
 	},
-	"include": [ "src" ],
-	"exclude": [ "**/test/*" ]
+	"include": [ "src", "src/cjs.js" ]
 }
