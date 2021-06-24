@@ -25,6 +25,7 @@ class Sites extends Component {
 	static propTypes = {
 		siteBasePath: PropTypes.string.isRequired,
 		clearPageTitle: PropTypes.bool,
+		isWideLayout: PropTypes.bool,
 	};
 
 	componentDidMount() {
@@ -141,12 +142,12 @@ class Sites extends Component {
 	}
 
 	render() {
-		const { clearPageTitle, fromSite, siteBasePath } = this.props;
+		const { clearPageTitle, fromSite, siteBasePath, isWideLayout } = this.props;
 
 		return (
 			<>
 				{ clearPageTitle && <DocumentHead title="" /> }
-				<Main className="sites">
+				<Main className={ isWideLayout ? 'sites is-wide-layout' : 'sites' }>
 					<div className="sites__select-header">
 						<h2 className="sites__select-heading">{ this.getHeaderText() }</h2>
 						{ fromSite && <VisitSite siteSlug={ fromSite } /> }

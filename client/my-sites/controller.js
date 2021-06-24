@@ -323,6 +323,7 @@ function createSitesComponent( context ) {
 			getSiteSelectionHeaderText={ context.getSiteSelectionHeaderText }
 			fromSite={ context.query.site }
 			clearPageTitle={ context.clearPageTitle }
+			isWideLayout={ true }
 		/>
 	);
 }

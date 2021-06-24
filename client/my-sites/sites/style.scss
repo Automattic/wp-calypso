@@ -1,5 +1,9 @@
 .main.sites {
 	max-width: 320px;
+
+	&.is-wide-layout {
+		max-width: 1040px;
+	}
 }
 
 .sites__select-header {
@@ -7,6 +11,10 @@
 
 	.visit-site {
 		margin: -12px 0 24px;
+	}
+
+	.is-wide-layout & {
+		text-align: left;
 	}
 }
 
@@ -19,6 +27,11 @@
 
 	strong {
 		text-transform: capitalize;
+	}
+
+	.is-wide-layout & {
+		font-family: 'Recoleta', 'Noto Serif', Georgia, 'Times New Roman', Times, serif;
+		font-size: $font-title-medium;
 	}
 }
 
