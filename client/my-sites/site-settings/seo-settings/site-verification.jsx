@@ -397,7 +397,5 @@ export default connect(
 				path,
 			} ),
 		trackFormSubmitted: partial( recordTracksEvent, 'calypso_seo_settings_form_submit' ),
-	},
-	undefined,
-	{ pure: false } // defaults to true, but this component has internal state
+	}
 )( protectForm( localize( SiteVerification ) ) );

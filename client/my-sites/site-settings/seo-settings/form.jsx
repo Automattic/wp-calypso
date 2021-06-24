@@ -529,9 +529,4 @@ const mapDispatchToProps = {
 	),
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps,
-	undefined,
-	{ pure: false } // defaults to true, but this component has internal state
-)( protectForm( localize( SeoForm ) ) );
+export default connect( mapStateToProps, mapDispatchToProps )( protectForm( localize( SeoForm ) ) );

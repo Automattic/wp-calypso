@@ -217,9 +217,7 @@ const connectComponent = connect(
 			siteIsAutomatedTransfer,
 		};
 	},
-	{ requestPostTypes },
-	null,
-	{ pure: false }
+	{ requestPostTypes }
 );
 
 const getFormSettings = ( settings ) => {
