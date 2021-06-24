@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { get, isEmpty, keyBy, keys, map, reduce, times } from 'lodash';
+import { get, isEmpty, keyBy, keys, map, times } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import React, { Component } from 'react';
@@ -130,7 +130,7 @@ class ListAll extends Component {
 	};
 
 	handleDomainItemToggle = ( domain, selected ) => {
-		if ( selected && isEmpty( get( this.state.whoisData, domain, null ) ) ) {
+		if ( selected && Object.keys( this.state.whoisData[ domain ] ?? {} ).length === 0 ) {
 			this.fetchWhoisData( domain );
 		}
 
@@ -160,14 +160,8 @@ class ListAll extends Component {
 		const { requestingSiteDomains } = this.props;
 
 		return (
-			isEmpty( requestingSiteDomains ) ||
-			reduce(
-				requestingSiteDomains,
-				( result, value ) => {
-					return result || value;
-				},
-				false
-			)
+			Object.keys( requestingSiteDomains ?? {} ).length === 0 ||
+			Object.values( requestingSiteDomains ).reduce( ( result, value ) => result || value, false )
 		);
 	}
 
@@ -191,16 +185,13 @@ class ListAll extends Component {
 			return true;
 		}
 
-		const allWhoisLoaded = reduce(
-			selectedDomains,
-			( whoisLoaded, selected, domain ) => {
+		const allWhoisLoaded = Object.entries( selectedDomains ).reduce(
+			( whoisLoaded, [ domain, selected ] ) => {
 				if ( ! selected ) {
 					return whoisLoaded;
 				}
 
-				const whoisForDomain = get( whoisData, domain, null );
-
-				if ( isEmpty( whoisForDomain ) ) {
+				if ( Object.keys( whoisData[ domain ] ?? {} ).length === 0 ) {
 					return false;
 				}
 
@@ -356,11 +347,10 @@ class ListAll extends Component {
 	};
 
 	saveContactInfo = ( contactInfo ) => {
-		const selectedDomainNamesList = reduce(
-			this.state.selectedDomains,
-			( list, isSelected, domainName ) => {
-				if ( isSelected ) {
-					list.push( domainName );
+		const selectedDomainNamesList = Object.entries( this.state.selectedDomains ).reduce(
+			( list, [ domain, selected ] ) => {
+				if ( selected ) {
+					list.push( domain );
 				}
 				return list;
 			},
