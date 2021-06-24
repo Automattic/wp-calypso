@@ -34,16 +34,7 @@ export class CommentsComponent extends BaseContainer {
 	 * @param {Page} page Underlying page on which interactions take place.
 	 */
 	constructor( page: Page ) {
-		super( page, selectors.commentArea );
-	}
-
-	/**
-	 * Overrides the parent method for post-initialization steps.
-	 *
-	 * @returns {Promise<void>} No return value.
-	 */
-	async _postInit(): Promise< void > {
-		await this.page.waitForLoadState( 'domcontentloaded' );
+		super( page );
 	}
 
 	/**
@@ -77,12 +68,14 @@ export class CommentsComponent extends BaseContainer {
 
 		await this.page.waitForSelector( selectors.commentsList, { state: 'visible' } );
 
+		// Retrieve the nth comment on the page.
 		if ( typeof selector === 'number' ) {
 			commentToLike = await this.page.waitForSelector(
 				`:nth-match(${ selectors.comments }, ${ selector })`
 			);
 		}
 
+		// Retrieve the comment by the body.
 		if ( typeof selector === 'string' ) {
 			selector = selector.trim();
 			commentToLike = await this.page.waitForSelector(
@@ -95,11 +88,9 @@ export class CommentsComponent extends BaseContainer {
 			throw new Error( `Failed to select a comment. Please check the comment number or selector.` );
 		}
 
-		await commentToLike.waitForElementState( 'stable' );
-
-		const likeButton = ( await commentToLike.$( selectors.likeButton ) ) as ElementHandle;
 		// Click the like button and wait until the animations are done.
-		await Promise.all( [ likeButton.click(), likeButton.waitForElementState( 'enabled' ) ] );
+		const likeButton = await commentToLike.waitForSelector( selectors.likeButton );
+		await Promise.all( [ likeButton.click(), likeButton.waitForElementState( 'stable' ) ] );
 
 		// Return the comment to the caller for further processing.
 		return commentToLike;
