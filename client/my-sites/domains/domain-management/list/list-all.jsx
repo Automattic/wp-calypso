@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { keys, map, times } from 'lodash';
+import { map, times } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import React, { Component } from 'react';
@@ -521,7 +521,7 @@ const getSitesById = ( state ) => {
 const getFilteredDomainsList = ( state, context ) => {
 	const action = parse( context.querystring )?.action;
 	const sites = getSitesById( state );
-	const canManageSitesMap = canCurrentUserForSites( state, keys( sites ), 'manage_options' );
+	const canManageSitesMap = canCurrentUserForSites( state, Object.keys( sites ), 'manage_options' );
 	const domainsList = getFlatDomainsList( state );
 	const domainsDetails = getAllDomains( state );
 
@@ -563,7 +563,7 @@ export default connect(
 
 		return {
 			action,
-			canManageSitesMap: canCurrentUserForSites( state, keys( sites ), 'manage_options' ),
+			canManageSitesMap: canCurrentUserForSites( state, Object.keys( sites ), 'manage_options' ),
 			currentRoute: getCurrentRoute( state ),
 			domainsList: getFlatDomainsList( state ),
 			domainsDetails: getAllDomains( state ),
