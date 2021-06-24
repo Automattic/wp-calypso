@@ -188,8 +188,10 @@ export class GutenbergEditorPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async _visitPublishedEntryFromPublishPane(): Promise< void > {
-		const viewPostButton = await this.frame.waitForSelector( selectors.viewPostButton );
-		await Promise.all( [ this.page.waitForNavigation(), viewPostButton.click() ] );
+		await Promise.all( [
+			this.page.waitForNavigation(),
+			this.frame.click( selectors.viewPostButton ),
+		] );
 		await this.page.waitForLoadState( 'networkidle' );
 	}
 }
