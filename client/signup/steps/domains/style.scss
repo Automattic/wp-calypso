@@ -84,7 +84,7 @@ body.is-section-signup.is-white-signup {
 			}
 
 			@include break-wide {
-				width: 20vw;
+				width: 350px;
 			}
 		}
 
@@ -103,8 +103,6 @@ body.is-section-signup.is-white-signup {
 			@include break-large {
 				display: none;
 			}
-
-
 		}
 
 		.domains__domain-side-content {
@@ -118,7 +116,7 @@ body.is-section-signup.is-white-signup {
 				padding: 40px 0;
 			}
 
-			@include break-huge {
+			@include break-wide {
 				margin: 0 0 0 80px;
 			}
 		}
