@@ -3,7 +3,12 @@
  */
 import wpcom from 'calypso/lib/wp';
 import userFactory from 'calypso/lib/user';
-import { clearStore, getStoredUserId, setStoredUserId } from 'calypso/lib/user/store';
+import {
+	clearStore,
+	disablePersistence,
+	getStoredUserId,
+	setStoredUserId,
+} from 'calypso/lib/user/store';
 import { CURRENT_USER_FETCH, CURRENT_USER_RECEIVE } from 'calypso/state/action-types';
 import { filterUserObject, getLogoutUrl } from 'calypso/lib/user/shared-utils';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -76,6 +81,7 @@ export function redirectToLogout( postLogoutRedirectUrl ) {
 		const logoutUrl = getLogoutUrl( userData, postLogoutRedirectUrl );
 
 		// Clear any data stored locally within the user data module or localStorage
+		disablePersistence();
 		await clearStore();
 
 		window.location.href = logoutUrl;

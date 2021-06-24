@@ -709,20 +709,6 @@ describe( 'initial-state', () => {
 			expect( setStoredItemSpy ).toHaveBeenCalledTimes( 1 );
 		} );
 
-		test( 'should not persist invalid state', () => {
-			// Create an invalid state by forcing the user ID stored in the
-			// state to differ from the current mocked user ID.
-			store.dispatch( {
-				type: 'foo',
-				data: 1,
-				userId: userFactory().get().ID + 1,
-			} );
-
-			clock.tick( SERIALIZE_THROTTLE );
-
-			expect( setStoredItemSpy ).toHaveBeenCalledTimes( 0 );
-		} );
-
 		test( 'should persist state for changed state', () => {
 			store.dispatch( {
 				type: 'foo',

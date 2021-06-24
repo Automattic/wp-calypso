@@ -46,6 +46,7 @@ import initialReducer from 'calypso/state/reducer';
 import { getInitialState, persistOnChange, loadAllState } from 'calypso/state/initial-state';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import userFactory from 'calypso/lib/user';
+import { onDisablePersistence } from 'calypso/lib/user/store';
 import { isOutsideCalypso } from 'calypso/lib/url';
 import { getUrlParts } from '@automattic/calypso-url';
 import { setStore } from 'calypso/state/redux-store';
@@ -429,7 +430,7 @@ const boot = ( currentUser, registerRoutes ) => {
 		const initialState = getInitialState( initialReducer );
 		const reduxStore = createReduxStore( initialState, initialReducer );
 		setStore( reduxStore );
-		persistOnChange( reduxStore );
+		onDisablePersistence( persistOnChange( reduxStore ) );
 		setupLocale( currentUser.get(), reduxStore );
 		configureReduxStore( currentUser, reduxStore );
 		setupMiddlewares( currentUser, reduxStore );
