@@ -89,8 +89,3 @@
 		}
 	}
 }
-
-// hide the core inserter when editing a page that has our custom inserter
-.post-type-page .edit-post-header-toolbar .edit-post-header-toolbar__left > .edit-post-header-toolbar__inserter-toggle {
-	display: none;
-}
