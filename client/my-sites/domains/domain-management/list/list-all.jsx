@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { times } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import React, { Component } from 'react';
@@ -290,7 +289,9 @@ class ListAll extends Component {
 
 	renderDomainsList() {
 		if ( this.isLoading() ) {
-			return times( 3, ( n ) => <ListItemPlaceholder key={ `item-${ n }` } /> );
+			return Array.from( { length: 3 } ).map( ( _, n ) => (
+				<ListItemPlaceholder key={ `item-${ n }` } />
+			) );
 		}
 
 		let domainListItems = this.filteredDomains().map( ( domain, index ) => {
