@@ -156,15 +156,4 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 			)
 		);
 	}
-
-	async saveAll() {
-		await driverHelper.clickWhenClickable(
-			this.driver,
-			By.css( '.edit-site-save-button__button' )
-		);
-		await driverHelper.clickWhenClickable(
-			this.driver,
-			By.css( '.editor-entities-saved-states__save-button' )
-		);
-	}
 }

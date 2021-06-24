@@ -110,6 +110,26 @@ const getGlobalStylesUpdateEvents = async ( driver ) => {
 		( [ eventName ] ) => eventName === 'wpcom_block_editor_global_styles_update'
 	);
 };
+
+const saveGlobalStyles = async ( driver ) => {
+	await driverHelper.clickWhenClickable( driver, By.css( '.edit-site-save-button__button' ) );
+	const allCheckboxes = await driver.findElements(
+		By.css( '.entities-saved-states__panel .components-checkbox-control__input' )
+	);
+	allCheckboxes.forEach( async function ( element ) {
+		await element.click();
+	} );
+	const locator = driverHelper.createTextLocator(
+		By.css( '.entities-saved-states__panel .components-checkbox-control__label' ),
+		'Custom Styles'
+	);
+	await driverHelper.clickWhenClickable( driver, locator );
+	await driverHelper.clickWhenClickable(
+		driver,
+		By.css( '.editor-entities-saved-states__save-button' )
+	);
+};
+
 const testGlobalStylesColorAndTypography = async ( driver, blocksLevel = false ) => {
 	if ( blocksLevel ) {
 		await clickGlobalStylesBlockTypeTab( driver );
@@ -436,6 +456,13 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				if ( editor.screenSize === 'mobile' ) {
 					return this.skip();
 				}
+				// Reset Global Styles before testing.
+				await clickGlobalStylesResetButton( this.driver );
+				await saveGlobalStyles( this.driver );
+				// Wait for debounce and entity retreival before clearing stack.
+				await this.driver.sleep( 500 );
+				await clearEventsStack( this.driver );
+
 				await testGlobalStylesColorAndTypography( this.driver );
 			} );
 
@@ -474,9 +501,9 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 					return this.skip();
 				}
 
-				// First reset and save so we know test changes will trigger save updates.
+				// Reset global styles before testing.
 				await clickGlobalStylesResetButton( this.driver );
-				await editor.saveAll();
+				await saveGlobalStyles( this.driver );
 				// Wait for debounce and entity fetching before clearing events.
 				await this.driver.sleep( 500 );
 				await clearEventsStack( this.driver );
@@ -484,7 +511,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				await changeGlobalStylesFontSize( this.driver, '11' );
 				await changeGlobalStylesColor( this.driver, 1, 1 );
 				await changeGlobalStylesColor( this.driver, 3, 1 );
-				await editor.saveAll();
+				await saveGlobalStyles( this.driver );
 				// Wait for debounce and entity fetching before accessing events stack.
 				await this.driver.sleep( 500 );
 				const saveEvents = ( await getEventsStack( this.driver ) ).filter(
@@ -494,7 +521,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 				// Clean up by resetting to be safe.
 				await clickGlobalStylesResetButton( this.driver );
-				await editor.saveAll();
+				await saveGlobalStyles( this.driver );
 			} );
 		} );
 
