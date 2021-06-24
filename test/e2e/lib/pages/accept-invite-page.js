@@ -18,9 +18,13 @@ export default class AcceptInvitePage extends AsyncBaseContainer {
 		return await this.driver.findElement( By.css( '#email' ) ).getAttribute( 'value' );
 	}
 
-	async enterEmailAndPasswordAndSignUp( email, password ) {
+	async enterCredentialsAndSignUp( username, email, password ) {
 		await driverHelper.setWhenSettable( this.driver, By.css( '#email' ), email );
 		await driverHelper.setWhenSettable( this.driver, By.css( '#password' ), password, true );
+		// set the username field if present.
+		if ( await driverHelper.isElementLocated( this.driver, By.css( '#username' ) ) ) {
+			await driverHelper.setWhenSettable( this.driver, By.css( '#username' ), username );
+		}
 		return await driverHelper.clickWhenClickable( this.driver, By.css( '.signup-form__submit' ) );
 	}
 

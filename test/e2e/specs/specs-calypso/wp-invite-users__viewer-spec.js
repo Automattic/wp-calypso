@@ -96,7 +96,11 @@ describe.skip( `[${ host }] Invites - New user as Viewer: (${ screenSize }) @par
 		assert.strictEqual( actualEmailAddress, newInviteEmailAddress );
 		assert( headerInviteText.includes( 'view' ) );
 
-		await acceptInvitePage.enterEmailAndPasswordAndSignUp( newInviteEmailAddress, password );
+		await acceptInvitePage.enterCredentialsAndSignUp(
+			newUserName,
+			newInviteEmailAddress,
+			password
+		);
 		removedViewerFlag = false;
 		return await acceptInvitePage.waitUntilNotVisible();
 	} );

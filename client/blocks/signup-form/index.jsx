@@ -113,7 +113,7 @@ class SignupForm extends Component {
 
 	static defaultProps = {
 		displayNameInput: false,
-		displayUsernameInput: false,
+		displayUsernameInput: true,
 		flowName: '',
 		isSocialSignupEnabled: false,
 		showRecaptchaToS: false,
