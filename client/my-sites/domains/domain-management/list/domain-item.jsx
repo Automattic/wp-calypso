@@ -493,6 +493,7 @@ class DomainItem extends PureComponent {
 						onChange={ this.onToggle }
 						onClick={ this.stopPropagation }
 						checked={ isChecked }
+						disabled={ this.props.disabled || this.props.isBusy }
 					/>
 				) }
 				{ enableSelection && (

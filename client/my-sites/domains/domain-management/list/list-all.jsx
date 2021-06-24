@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { map, times } from 'lodash';
+import { times } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import React, { Component } from 'react';
@@ -135,7 +135,10 @@ class ListAll extends Component {
 		}
 
 		this.setState( ( { selectedDomains } ) => {
-			return { selectedDomains: { ...selectedDomains, [ domain ]: selected } };
+			return {
+				selectedDomains: { ...selectedDomains, [ domain ]: selected },
+				contactInfoSaveResults: {},
+			};
 		} );
 	};
 
@@ -278,6 +281,7 @@ class ListAll extends Component {
 						isChecked={ isChecked }
 						disabeld={ isLoadingDomainDetails }
 						actionResult={ this.getActionResult( domain.name ) }
+						isBusy={ this.state.isSavingContactInfo }
 					/>
 				) }
 			</React.Fragment>
@@ -357,11 +361,18 @@ class ListAll extends Component {
 			[]
 		);
 
+		if ( selectedDomainNamesList.length === 0 ) {
+			this.setState( { isSavingContactInfo: false }, () =>
+				this.props.infoNotice( this.props.translate( 'No domains selected.' ) )
+			);
+			return;
+		}
+
 		if ( this.props.isContactEmailEditContext ) {
 			this.props.saveContactEmailClick();
 		}
 
-		const saveWhoisPromises = map( selectedDomainNamesList, ( domainName ) => {
+		const saveWhoisPromises = selectedDomainNamesList.map( ( domainName ) => {
 			const updatedContactInfo = this.getUpdatedContactInfo( domainName, contactInfo );
 			return wpcom
 				.undocumented()
