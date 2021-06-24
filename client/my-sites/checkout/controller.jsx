@@ -129,6 +129,7 @@ export function checkout( context, next ) {
 			isJetpackCheckout={ isJetpackCheckout }
 			jetpackSiteSlug={ jetpackSiteSlug }
 			jetpackPurchaseToken={ jetpackPurchaseToken || jetpackPurchaseNonce }
+			isUserComingFromLoginForm={ isUserComingFromLoginForm }
 		/>
 	);
 
