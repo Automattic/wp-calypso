@@ -42,10 +42,6 @@ describe( `[${ host }] Site Editor (${ screenSize }) @parallel`, function () {
 
 	it( 'Template parts load', async function () {
 		const editor = await SiteEditorComponent.Expect( this.driver );
-		return await editor.waitForTemplatePartsToLoad();
-	} );
-
-	after( async () => {
-		return await this.driver.switchTo().defaultContent();
+		await editor.waitForTemplatePartsToLoad();
 	} );
 } );
