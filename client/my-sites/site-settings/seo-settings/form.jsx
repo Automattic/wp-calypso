@@ -487,7 +487,7 @@ const mapStateToProps = ( state ) => {
 	// will soon be available on all Jetpack sites, so we're checking
 	// the availability of the module.
 	const isAdvancedSeoEligible =
-		hasSiteSeoFeature( state, selectedSite, siteId ) &&
+		hasSiteSeoFeature( state, siteId ) &&
 		( ! siteIsJetpack || get( getJetpackModules( state, siteId ), 'seo-tools.available', false ) );
 
 	const activePlugins = getPlugins( state, [ siteId ], 'active' );
@@ -502,7 +502,7 @@ const mapStateToProps = ( state ) => {
 		selectedSite,
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
 		showAdvancedSeo: isAdvancedSeoEligible,
-		isFreeWPCOM: isSiteWPCOMOnFreePlan( state, selectedSite, siteId ),
+		isFreeWPCOM: isSiteWPCOMOnFreePlan( state, siteId ),
 		isAtomic: isAtomicSite( state, siteId ),
 		showWebsiteMeta: !! get( selectedSite, 'options.advanced_seo_front_page_description', '' ),
 		isSeoToolsActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),

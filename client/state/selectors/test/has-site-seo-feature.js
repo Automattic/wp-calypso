@@ -23,6 +23,10 @@ import {
 	PLAN_JETPACK_COMPLETE,
 } from '@automattic/calypso-products';
 import hasSiteSeoFeature from '../has-site-seo-feature';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+jest.mock( 'calypso/state/ui/selectors', () => ( {
+	getSelectedSite: require( 'sinon' ).stub(),
+} ) );
 
 describe( 'hasSiteSeoFeature', () => {
 	const wpcomSite = {
@@ -45,136 +49,86 @@ describe( 'hasSiteSeoFeature', () => {
 		},
 	} );
 
-	it( 'returns undefined if the site is not defined', () => {
-		expect( hasSiteSeoFeature() ).toBeUndefined();
-	} );
-
 	it( 'returns undefined if the site has no plan', () => {
-		expect( hasSiteSeoFeature( state, wpcomSite, wpcomSite.ID ) ).toBeUndefined();
+		getSelectedSite.returns( null );
+		expect( hasSiteSeoFeature( state, wpcomSite.ID ) ).toBeUndefined();
 	} );
 
 	// WPCOM plans
 
 	it( 'returns false when on a wpcom free plan', () => {
-		expect(
-			hasSiteSeoFeature( state, { wpcomSite, plan: { product_slug: PLAN_FREE } }, wpcomSite.ID )
-		).toEqual( false );
+		getSelectedSite.returns( { wpcomSite, plan: { product_slug: PLAN_FREE } } );
+		expect( hasSiteSeoFeature( state, wpcomSite.ID ) ).toEqual( false );
 	} );
 
 	it( 'returns false when on a wpcom personal plan', () => {
-		expect(
-			hasSiteSeoFeature( state, { wpcomSite, plan: { product_slug: PLAN_PERSONAL } }, wpcomSite.ID )
-		).toEqual( false );
+		getSelectedSite.returns( { wpcomSite, plan: { product_slug: PLAN_PERSONAL } } );
+		expect( hasSiteSeoFeature( state, wpcomSite.ID ) ).toEqual( false );
 	} );
 
 	it( 'returns false when on a wpcom premium plan', () => {
-		expect(
-			hasSiteSeoFeature( state, { wpcomSite, plan: { product_slug: PLAN_PREMIUM } }, wpcomSite.ID )
-		).toEqual( false );
+		getSelectedSite.returns( { wpcomSite, plan: { product_slug: PLAN_PREMIUM } } );
+		expect( hasSiteSeoFeature( state, wpcomSite.ID ) ).toEqual( false );
 	} );
 
 	it( 'returns true when on a wpcom business plan', () => {
-		expect(
-			hasSiteSeoFeature( state, { wpcomSite, plan: { product_slug: PLAN_BUSINESS } }, wpcomSite.ID )
-		).toEqual( true );
+		getSelectedSite.returns( { wpcomSite, plan: { product_slug: PLAN_BUSINESS } } );
+		expect( hasSiteSeoFeature( state, wpcomSite.ID ) ).toEqual( true );
 	} );
 
 	it( 'returns true when on a wpcom ecommerce plan', () => {
-		expect(
-			hasSiteSeoFeature(
-				state,
-				{ wpcomSite, plan: { product_slug: PLAN_ECOMMERCE } },
-				wpcomSite.ID
-			)
-		).toEqual( true );
+		getSelectedSite.returns( { wpcomSite, plan: { product_slug: PLAN_ECOMMERCE } } );
+		expect( hasSiteSeoFeature( state, wpcomSite.ID ) ).toEqual( true );
 	} );
 
 	it( 'returns true when on a wpcom enterprise plan', () => {
-		expect(
-			hasSiteSeoFeature(
-				state,
-				{ wpcomSite, plan: { product_slug: PLAN_WPCOM_ENTERPRISE } },
-				wpcomSite.ID
-			)
-		).toEqual( true );
+		getSelectedSite.returns( { wpcomSite, plan: { product_slug: PLAN_WPCOM_ENTERPRISE } } );
+		expect( hasSiteSeoFeature( state, wpcomSite.ID ) ).toEqual( true );
 	} );
 
 	// VIP sites use conflicting SEO plugins.
 	it( 'returns false when on a wpcom VIP plan', () => {
-		expect(
-			hasSiteSeoFeature( state, { wpcomSite, plan: { product_slug: PLAN_VIP } }, wpcomSite.ID )
-		).toEqual( false );
+		getSelectedSite.returns( { wpcomSite, plan: { product_slug: PLAN_VIP } } );
+		expect( hasSiteSeoFeature( state, wpcomSite.ID ) ).toEqual( false );
 	} );
 
 	// Jetpack plans
 
 	it( 'returns true when on a jetpack free plan', () => {
-		expect(
-			hasSiteSeoFeature(
-				state,
-				{ jetpackSite, plan: { product_slug: PLAN_JETPACK_FREE } },
-				jetpackSite.ID
-			)
-		).toEqual( true );
+		getSelectedSite.returns( { jetpackSite, plan: { product_slug: PLAN_JETPACK_FREE } } );
+		expect( hasSiteSeoFeature( state, jetpackSite.ID ) ).toEqual( true );
 	} );
 
 	it( 'returns true when on a jetpack personal plan', () => {
-		expect(
-			hasSiteSeoFeature(
-				state,
-				{ jetpackSite, plan: { product_slug: PLAN_JETPACK_PERSONAL } },
-				jetpackSite.ID
-			)
-		).toEqual( true );
+		getSelectedSite.returns( { jetpackSite, plan: { product_slug: PLAN_JETPACK_PERSONAL } } );
+		expect( hasSiteSeoFeature( state, jetpackSite.ID ) ).toEqual( true );
 	} );
 
 	it( 'returns true when on a jetpack premium plan', () => {
-		expect(
-			hasSiteSeoFeature(
-				state,
-				{ jetpackSite, plan: { product_slug: PLAN_JETPACK_PREMIUM } },
-				jetpackSite.ID
-			)
-		).toEqual( true );
+		getSelectedSite.returns( { jetpackSite, plan: { product_slug: PLAN_JETPACK_PREMIUM } } );
+		expect( hasSiteSeoFeature( state, jetpackSite.ID ) ).toEqual( true );
 	} );
 
 	it( 'returns true when on a jetpack business plan', () => {
-		expect(
-			hasSiteSeoFeature(
-				state,
-				{ jetpackSite, plan: { product_slug: PLAN_JETPACK_BUSINESS } },
-				jetpackSite.ID
-			)
-		).toEqual( true );
+		getSelectedSite.returns( { jetpackSite, plan: { product_slug: PLAN_JETPACK_BUSINESS } } );
+		expect( hasSiteSeoFeature( state, jetpackSite.ID ) ).toEqual( true );
 	} );
 
 	it( 'returns true when on a jetpack security daily plan', () => {
-		expect(
-			hasSiteSeoFeature(
-				state,
-				{ jetpackSite, plan: { product_slug: PLAN_JETPACK_SECURITY_DAILY } },
-				jetpackSite.ID
-			)
-		).toEqual( true );
+		getSelectedSite.returns( { jetpackSite, plan: { product_slug: PLAN_JETPACK_SECURITY_DAILY } } );
+		expect( hasSiteSeoFeature( state, jetpackSite.ID ) ).toEqual( true );
 	} );
 
 	it( 'returns true when on a jetpack security realtime plan', () => {
-		expect(
-			hasSiteSeoFeature(
-				state,
-				{ jetpackSite, plan: { product_slug: PLAN_JETPACK_SECURITY_REALTIME } },
-				jetpackSite.ID
-			)
-		).toEqual( true );
+		getSelectedSite.returns( {
+			jetpackSite,
+			plan: { product_slug: PLAN_JETPACK_SECURITY_REALTIME },
+		} );
+		expect( hasSiteSeoFeature( state, jetpackSite.ID ) ).toEqual( true );
 	} );
 
 	it( 'returns true when on a jetpack complete plan', () => {
-		expect(
-			hasSiteSeoFeature(
-				state,
-				{ jetpackSite, plan: { product_slug: PLAN_JETPACK_COMPLETE } },
-				jetpackSite.ID
-			)
-		).toEqual( true );
+		getSelectedSite.returns( { jetpackSite, plan: { product_slug: PLAN_JETPACK_COMPLETE } } );
+		expect( hasSiteSeoFeature( state, jetpackSite.ID ) ).toEqual( true );
 	} );
 } );

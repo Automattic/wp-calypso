@@ -8,6 +8,10 @@ import deepFreeze from 'deep-freeze';
  */
 import isSiteWPCOMOnFreePlan from '../is-site-wpcom-on-free-plan';
 import { PLAN_BUSINESS, PLAN_FREE, PLAN_JETPACK_FREE } from '@automattic/calypso-products';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+jest.mock( 'calypso/state/ui/selectors', () => ( {
+	getSelectedSite: require( 'sinon' ).stub(),
+} ) );
 
 describe( 'isSiteWPCOMOnFreePlan', () => {
 	const wpcomSite = {
@@ -38,42 +42,27 @@ describe( 'isSiteWPCOMOnFreePlan', () => {
 	} );
 
 	test( 'should return false when plan is not known', () => {
-		expect( isSiteWPCOMOnFreePlan( state, wpcomSite, wpcomSite.ID ) ).toEqual( false );
+		getSelectedSite.returns( null );
+		expect( isSiteWPCOMOnFreePlan( state, wpcomSite.ID ) ).toEqual( false );
 	} );
 
 	test( 'should return false when wpcom site and on business wpcom plan', () => {
-		expect(
-			isSiteWPCOMOnFreePlan(
-				state,
-				{ wpcomSite, plan: { product_slug: PLAN_BUSINESS } },
-				wpcomSite.ID
-			)
-		).toEqual( false );
+		getSelectedSite.returns( { wpcomSite, plan: { product_slug: PLAN_BUSINESS } } );
+		expect( isSiteWPCOMOnFreePlan( state, wpcomSite.ID ) ).toEqual( false );
 	} );
 
 	test( 'should return true when wpcom site and on free wpcom plan', () => {
-		expect(
-			isSiteWPCOMOnFreePlan( state, { wpcomSite, plan: { product_slug: PLAN_FREE } }, wpcomSite.ID )
-		).toEqual( true );
+		getSelectedSite.returns( { wpcomSite, plan: { product_slug: PLAN_FREE } } );
+		expect( isSiteWPCOMOnFreePlan( state, state, wpcomSite.ID ) ).toEqual( true );
 	} );
 
 	test( 'should return true when wpcom site, atomic, and on free jetpack plan', () => {
-		expect(
-			isSiteWPCOMOnFreePlan(
-				state,
-				{ atomicSite, plan: { product_slug: PLAN_JETPACK_FREE } },
-				atomicSite.ID
-			)
-		).toEqual( true );
+		getSelectedSite.returns( { atomicSite, plan: { product_slug: PLAN_JETPACK_FREE } } );
+		expect( isSiteWPCOMOnFreePlan( state, atomicSite.ID ) ).toEqual( true );
 	} );
 
 	test( 'should return false when jetpack site and on free jetpack plan', () => {
-		expect(
-			isSiteWPCOMOnFreePlan(
-				state,
-				{ jetpackSite, plan: { product_slug: PLAN_JETPACK_FREE } },
-				jetpackSite.ID
-			)
-		).toEqual( false );
+		getSelectedSite.returns( { jetpackSite, plan: { product_slug: PLAN_JETPACK_FREE } } );
+		expect( isSiteWPCOMOnFreePlan( state, jetpackSite.ID ) ).toEqual( false );
 	} );
 } );

@@ -23,6 +23,10 @@ import {
 	PLAN_JETPACK_COMPLETE,
 } from '@automattic/calypso-products';
 import hasSiteAnalyticsFeature from '../has-site-analytics-feature';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+jest.mock( 'calypso/state/ui/selectors', () => ( {
+	getSelectedSite: require( 'sinon' ).stub(),
+} ) );
 
 describe( 'hasSiteAnalyticsFeature', () => {
 	const wpcomSite = {
@@ -45,155 +49,85 @@ describe( 'hasSiteAnalyticsFeature', () => {
 		},
 	} );
 
-	it( 'returns undefined if the state and siteId are not defined', () => {
-		expect( hasSiteAnalyticsFeature() ).toBeUndefined();
-	} );
-
 	it( 'returns undefined if the site has no plan', () => {
-		expect( hasSiteAnalyticsFeature( state, wpcomSite, wpcomSite.ID ) ).toBeUndefined();
+		getSelectedSite.returns( null );
+		expect( hasSiteAnalyticsFeature( state, wpcomSite.ID ) ).toBeUndefined();
 	} );
 
 	// WPCOM plans
 
 	it( 'returns false when on a wpcom free plan', () => {
-		expect(
-			hasSiteAnalyticsFeature(
-				state,
-				{ wpcomSite, plan: { product_slug: PLAN_FREE } },
-				wpcomSite.ID
-			)
-		).toEqual( false );
+		getSelectedSite.returns( { wpcomSite, plan: { product_slug: PLAN_FREE } } );
+		expect( hasSiteAnalyticsFeature( state, wpcomSite.ID ) ).toEqual( false );
 	} );
 
 	it( 'returns false when on a wpcom personal plan', () => {
-		expect(
-			hasSiteAnalyticsFeature(
-				state,
-				{ wpcomSite, plan: { product_slug: PLAN_PERSONAL } },
-				wpcomSite.ID
-			)
-		).toEqual( false );
+		getSelectedSite.returns( { wpcomSite, plan: { product_slug: PLAN_PERSONAL } } );
+		expect( hasSiteAnalyticsFeature( state, wpcomSite.ID ) ).toEqual( false );
 	} );
 
 	it( 'returns true when on a wpcom premium plan', () => {
-		expect(
-			hasSiteAnalyticsFeature(
-				state,
-				{ wpcomSite, plan: { product_slug: PLAN_PREMIUM } },
-				wpcomSite.ID
-			)
-		).toEqual( true );
+		getSelectedSite.returns( { wpcomSite, plan: { product_slug: PLAN_PREMIUM } } );
+		expect( hasSiteAnalyticsFeature( state, wpcomSite.ID ) ).toEqual( true );
 	} );
 
 	it( 'returns true when on a wpcom business plan', () => {
-		expect(
-			hasSiteAnalyticsFeature(
-				state,
-				{ wpcomSite, plan: { product_slug: PLAN_BUSINESS } },
-				wpcomSite.ID
-			)
-		).toEqual( true );
+		getSelectedSite.returns( { wpcomSite, plan: { product_slug: PLAN_BUSINESS } } );
+		expect( hasSiteAnalyticsFeature( state, wpcomSite.ID ) ).toEqual( true );
 	} );
 
 	it( 'returns true when on a wpcom ecommerce plan', () => {
-		expect(
-			hasSiteAnalyticsFeature(
-				state,
-				{ wpcomSite, plan: { product_slug: PLAN_ECOMMERCE } },
-				wpcomSite.ID
-			)
-		).toEqual( true );
+		getSelectedSite.returns( { wpcomSite, plan: { product_slug: PLAN_ECOMMERCE } } );
+		expect( hasSiteAnalyticsFeature( state, wpcomSite.ID ) ).toEqual( true );
 	} );
 
 	it( 'returns true when on a wpcom enterprise plan', () => {
-		expect(
-			hasSiteAnalyticsFeature(
-				state,
-				{ wpcomSite, plan: { product_slug: PLAN_WPCOM_ENTERPRISE } },
-				wpcomSite.ID
-			)
-		).toEqual( true );
+		getSelectedSite.returns( { wpcomSite, plan: { product_slug: PLAN_WPCOM_ENTERPRISE } } );
+		expect( hasSiteAnalyticsFeature( state, wpcomSite.ID ) ).toEqual( true );
 	} );
 
 	it( 'returns true when on a wpcom VIP plan', () => {
-		expect(
-			hasSiteAnalyticsFeature(
-				state,
-				{ wpcomSite, plan: { product_slug: PLAN_VIP } },
-				wpcomSite.ID
-			)
-		).toEqual( true );
+		getSelectedSite.returns( { wpcomSite, plan: { product_slug: PLAN_VIP } } );
+		expect( hasSiteAnalyticsFeature( state, wpcomSite.ID ) ).toEqual( true );
 	} );
 
-	// Jetpack plans
+	// // Jetpack plans
 
 	it( 'returns false when on a jetpack free plan', () => {
-		expect(
-			hasSiteAnalyticsFeature(
-				state,
-				{ jetpackSite, plan: { product_slug: PLAN_JETPACK_FREE } },
-				jetpackSite.ID
-			)
-		).toEqual( false );
+		getSelectedSite.returns( { jetpackSite, plan: { product_slug: PLAN_JETPACK_FREE } } );
+		expect( hasSiteAnalyticsFeature( state, jetpackSite.ID ) ).toEqual( false );
 	} );
 
 	it( 'returns false when on a jetpack personal plan', () => {
-		expect(
-			hasSiteAnalyticsFeature(
-				state,
-				{ jetpackSite, plan: { product_slug: PLAN_JETPACK_PERSONAL } },
-				jetpackSite.ID
-			)
-		).toEqual( false );
+		getSelectedSite.returns( { jetpackSite, plan: { product_slug: PLAN_JETPACK_PERSONAL } } );
+		expect( hasSiteAnalyticsFeature( state, jetpackSite.ID ) ).toEqual( false );
 	} );
 
 	it( 'returns true when on a jetpack premium plan', () => {
-		expect(
-			hasSiteAnalyticsFeature(
-				state,
-				{ jetpackSite, plan: { product_slug: PLAN_JETPACK_PREMIUM } },
-				jetpackSite.ID
-			)
-		).toEqual( true );
+		getSelectedSite.returns( { jetpackSite, plan: { product_slug: PLAN_JETPACK_PREMIUM } } );
+		expect( hasSiteAnalyticsFeature( state, jetpackSite.ID ) ).toEqual( true );
 	} );
 
 	it( 'returns true when on a jetpack business plan', () => {
-		expect(
-			hasSiteAnalyticsFeature(
-				state,
-				{ jetpackSite, plan: { product_slug: PLAN_JETPACK_BUSINESS } },
-				jetpackSite.ID
-			)
-		).toEqual( true );
+		getSelectedSite.returns( { jetpackSite, plan: { product_slug: PLAN_JETPACK_BUSINESS } } );
+		expect( hasSiteAnalyticsFeature( state, jetpackSite.ID ) ).toEqual( true );
 	} );
 
 	it( 'returns true when on a jetpack security daily plan', () => {
-		expect(
-			hasSiteAnalyticsFeature(
-				state,
-				{ jetpackSite, plan: { product_slug: PLAN_JETPACK_SECURITY_DAILY } },
-				jetpackSite.ID
-			)
-		).toEqual( true );
+		getSelectedSite.returns( { jetpackSite, plan: { product_slug: PLAN_JETPACK_SECURITY_DAILY } } );
+		expect( hasSiteAnalyticsFeature( state, jetpackSite.ID ) ).toEqual( true );
 	} );
 
 	it( 'returns true when on a jetpack security realtime plan', () => {
-		expect(
-			hasSiteAnalyticsFeature(
-				state,
-				{ jetpackSite, plan: { product_slug: PLAN_JETPACK_SECURITY_REALTIME } },
-				jetpackSite.ID
-			)
-		).toEqual( true );
+		getSelectedSite.returns( {
+			jetpackSite,
+			plan: { product_slug: PLAN_JETPACK_SECURITY_REALTIME },
+		} );
+		expect( hasSiteAnalyticsFeature( state, jetpackSite.ID ) ).toEqual( true );
 	} );
 
 	it( 'returns true when on a jetpack complete plan', () => {
-		expect(
-			hasSiteAnalyticsFeature(
-				state,
-				{ jetpackSite, plan: { product_slug: PLAN_JETPACK_COMPLETE } },
-				jetpackSite.ID
-			)
-		).toEqual( true );
+		getSelectedSite.returns( { jetpackSite, plan: { product_slug: PLAN_JETPACK_COMPLETE } } );
+		expect( hasSiteAnalyticsFeature( state, jetpackSite.ID ) ).toEqual( true );
 	} );
 } );
