@@ -165,10 +165,9 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 	}
 
 	/**
-	 * Alias for `toggleNavigationSidebar`.
-	 * We need to have the same function names in both
-	 * this and gutenberg editor component to
-	 * make sure general tests are working as expected.
+	 * Alias for `toggleNavigationSidebar`. We need to have the same function
+	 * name in both this and gutenberg editor component to make sure general
+	 * tests are working as expected.
 	 */
 	toggleBlockEditorSidebar = this.toggleNavigationSidebar;
 }
