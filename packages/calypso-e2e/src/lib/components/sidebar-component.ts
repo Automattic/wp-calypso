@@ -78,7 +78,7 @@ export class SidebarComponent extends BaseContainer {
 		// If mobile, sidebar is hidden by default and focus is on the content.
 		// The sidebar must be first brought into view.
 		if ( viewportName === 'mobile' ) {
-			await this._openSidebar();
+			await this._openMobileSidebar();
 		}
 
 		if ( item ) {
@@ -111,7 +111,7 @@ export class SidebarComponent extends BaseContainer {
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
-	async _openSidebar(): Promise< void > {
+	async _openMobileSidebar(): Promise< void > {
 		const navbarComponent = await NavbarComponent.Expect( this.page );
 		await navbarComponent.clickMySites();
 		// `focus-sidebar` attribute is added once the sidebar is opened and focused in mobile view.
