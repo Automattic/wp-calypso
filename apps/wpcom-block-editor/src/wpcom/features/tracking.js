@@ -223,9 +223,20 @@ const getBlocksTracker = ( eventName ) => ( blockIds ) => {
  */
 const maybeTrackPatternInsertion = ( actionData ) => {
 	const meta = find( actionData, ( item ) => item?.patternName );
+	let patternName = meta?.patternName;
+
 	// Quick block inserter doesn't use an object to store the patternName
 	// in the metadata. The pattern name is just directly used as a string.
-	const patternName = meta?.patternName || actionData?.[ 4 ];
+	if ( ! patternName ) {
+		const patterns = select( 'core/block-editor' ).getSettings().__experimentalBlockPatterns;
+		const actionDataToCheck = Object.values( actionData ).filter(
+			( data ) => typeof data === 'string'
+		);
+		const foundPattern = patterns.find( ( pattern ) => actionDataToCheck.includes( pattern.name ) );
+		if ( foundPattern ) {
+			patternName = foundPattern.name;
+		}
+	}
 
 	if ( patternName ) {
 		const patternCategory =
