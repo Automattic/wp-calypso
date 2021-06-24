@@ -22,15 +22,7 @@ export default class AcceptInvitePage extends AsyncBaseContainer {
 		await driverHelper.setWhenSettable( this.driver, By.css( '#email' ), email );
 		await driverHelper.setWhenSettable( this.driver, By.css( '#password' ), password, true );
 		// set the username field if present.
-		// in this particular case, 50ms is enough.
-		// because we know the page is fully rendered if the password field above was settable
-		if (
-			await driverHelper.isElementEventuallyLocatedAndVisible(
-				this.driver,
-				By.css( '#username' ),
-				50
-			)
-		) {
+		if ( await driverHelper.isElementLocated( this.driver, By.css( '#username' ) ) ) {
 			await driverHelper.setWhenSettable( this.driver, By.css( '#username' ), username );
 		}
 		return await driverHelper.clickWhenClickable( this.driver, By.css( '.signup-form__submit' ) );
