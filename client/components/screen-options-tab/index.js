@@ -12,8 +12,9 @@ import config from '@automattic/calypso-config';
  */
 import ScreenSwitcher, { DEFAULT_VIEW } from './screen-switcher';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite, getSiteOption } from 'calypso/state/sites/selectors';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import versionCompare from 'calypso/lib/version-compare';
 
 /**
  * Style dependencies
@@ -30,6 +31,9 @@ const ScreenOptionsTab = ( { wpAdminPath } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId ) );
+	const jetpackVersion = useSelector( ( state ) =>
+		getSiteOption( state, siteId, 'jetpack_version' )
+	);
 
 	const handleToggle = ( bool ) => {
 		if ( isBoolean( bool ) ) {
@@ -70,6 +74,11 @@ const ScreenOptionsTab = ( { wpAdminPath } ) => {
 
 	// Only visible on single-site screens of WordPress.com Simple and Atomic sites.
 	if ( ! wpAdminPath || ! siteId || ( isJetpack && ! isAtomic ) ) {
+		return null;
+	}
+
+	// Disable for Atomic sites that are running below Jetpack 9.9
+	if ( isAtomic && jetpackVersion && versionCompare( jetpackVersion, '9.9-alpha', '<' ) ) {
 		return null;
 	}
 
