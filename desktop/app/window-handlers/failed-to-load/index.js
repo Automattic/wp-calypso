@@ -83,10 +83,7 @@ module.exports = function ( { view } ) {
 					failedToLoadError( view );
 				} else {
 					log.error(
-						'Failed to load from server, showing fallback page: code=' +
-							errorCode +
-							' ' +
-							errorDescription
+						'Failed to load URL, showing fallback page: code=' + errorCode + ' ' + errorDescription
 					);
 
 					await view.webContents.session.setProxy( { proxyRules: 'direct://' } );
