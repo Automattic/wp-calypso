@@ -12,7 +12,6 @@ const selectors = {
 	// Traffic tab
 	websiteMetaTextArea: '#advanced_seo_front_page_description',
 	seoPreviewButton: '.seo-settings__preview-button',
-	seoPreviewPane: '.web-preview.is-seo',
 	seoPreviewPaneCloseButton: '.web-preview__close',
 };
 
@@ -72,6 +71,6 @@ export class MarketingPage extends BaseContainer {
 	 */
 	async closeSEOPreview(): Promise< void > {
 		await this.page.click( selectors.seoPreviewPaneCloseButton );
-		await this.page.waitForSelector( selectors.content );
+		await this.page.waitForSelector( selectors.seoPreviewButton );
 	}
 }
