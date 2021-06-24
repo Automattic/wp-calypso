@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { useEffect } from 'react';
-import { connect, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -31,14 +31,15 @@ const cardComponents = {
 	[ ACTION_WP_FOR_TEAMS_QUICK_LINKS ]: WpForTeamsQuickLinks,
 };
 
-const ManageSite = ( { trackCards } ) => {
+const ManageSite = () => {
 	const cards = useManageSiteCards();
+	const dispatch = useDispatch();
 
 	useEffect( () => {
 		if ( cards && cards.length ) {
-			trackCards( cards );
+			dispatch( trackCardImpressions( cards ) );
 		}
-	}, [ cards, trackCards ] );
+	}, [ cards, dispatch ] );
 
 	if ( ! cards || ! cards.length ) {
 		return null;
@@ -64,7 +65,7 @@ function useManageSiteCards() {
 	return layout?.[ 'tertiary.manage-site' ] ?? [];
 }
 
-const trackCardImpressions = ( cards ) => {
+function trackCardImpressions( cards ) {
 	const analyticsEvents = cards.reduce( ( events, card ) => {
 		return [
 			...events,
@@ -73,6 +74,6 @@ const trackCardImpressions = ( cards ) => {
 		];
 	}, [] );
 	return composeAnalytics( ...analyticsEvents );
-};
+}
 
-export default connect( null, { trackCards: trackCardImpressions } )( ManageSite );
+export default ManageSite;

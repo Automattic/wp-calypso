@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { useEffect } from 'react';
-import { connect, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Card } from '@automattic/components';
 
 /**
@@ -35,14 +35,15 @@ const cardComponents = {
 	[ EDUCATION_WPCOURSES ]: WpCourses,
 };
 
-const LearnGrow = ( { trackCards } ) => {
+const LearnGrow = () => {
 	const cards = useLearnGrowCards();
+	const dispatch = useDispatch();
 
 	useEffect( () => {
 		if ( cards && cards.length ) {
-			trackCards( cards );
+			dispatch( trackCardImpressions( cards ) );
 		}
-	}, [ cards, trackCards ] );
+	}, [ cards, dispatch ] );
 
 	if ( ! cards || ! cards.length ) {
 		return null;
@@ -70,7 +71,7 @@ function useLearnGrowCards() {
 	return layout?.[ 'secondary.learn-grow' ] ?? [];
 }
 
-const trackCardImpressions = ( cards ) => {
+function trackCardImpressions( cards ) {
 	const analyticsEvents = cards.reduce( ( events, card ) => {
 		return [
 			...events,
@@ -79,6 +80,6 @@ const trackCardImpressions = ( cards ) => {
 		];
 	}, [] );
 	return composeAnalytics( ...analyticsEvents );
-};
+}
 
-export default connect( null, { trackCards: trackCardImpressions } )( LearnGrow );
+export default LearnGrow;
