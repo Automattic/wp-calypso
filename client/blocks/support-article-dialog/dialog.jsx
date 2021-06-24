@@ -22,8 +22,8 @@ import QuerySupportArticleAlternates from 'calypso/components/data/query-support
 import { isDefaultLocale } from 'calypso/lib/i18n-utils';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
-import { SUPPORT_BLOG_ID } from 'calypso/blocks/inline-help/constants';
 import getInlineSupportArticlePostId from 'calypso/state/selectors/get-inline-support-article-post-id';
+import getInlineSupportArticleBlogId from 'calypso/state/selectors/get-inline-support-article-blog-id';
 import getInlineSupportArticleActionUrl from 'calypso/state/selectors/get-inline-support-article-action-url';
 import getInlineSupportArticleActionLabel from 'calypso/state/selectors/get-inline-support-article-action-label';
 import getInlineSupportArticleActionIsExternal from 'calypso/state/selectors/get-inline-support-article-action-is-external';
@@ -39,6 +39,7 @@ import {
  */
 import './style.scss';
 import './content.scss';
+import { SUPPORT_BLOG_ID } from 'calypso/blocks/inline-help/constants';
 
 const noop = () => {};
 
@@ -136,14 +137,21 @@ const getPostKey = memoize(
 
 const mapStateToProps = ( state ) => {
 	const postId = getInlineSupportArticlePostId( state );
+	const requestBlogId = getInlineSupportArticleBlogId( state );
+	const blogId = requestBlogId ?? SUPPORT_BLOG_ID;
 	const actionUrl = getInlineSupportArticleActionUrl( state );
 	const actionLabel = getInlineSupportArticleActionLabel( state );
 	const actionIsExternal = getInlineSupportArticleActionIsExternal( state );
 
-	let postKey = getPostKey( SUPPORT_BLOG_ID, postId );
+	let postKey = getPostKey( blogId, postId );
 	const locale = getCurrentLocaleSlug( state );
-	const shouldRequestAlternates =
+	let shouldRequestAlternates =
 		! isDefaultLocale( locale ) && shouldRequestSupportArticleAlternates( state, postKey );
+	// disable alternates for posts that have a blog ID set
+	if ( requestBlogId ) {
+		shouldRequestAlternates = false;
+	}
+
 	const isRequestingAlternates = isRequestingSupportArticleAlternates( state, postKey );
 	const supportArticleAlternates = getSupportArticleAlternatesForLocale( state, postKey, locale );
 
