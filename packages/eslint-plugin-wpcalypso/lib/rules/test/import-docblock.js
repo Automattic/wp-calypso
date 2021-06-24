@@ -48,7 +48,7 @@ import eslint from 'eslint';`,
 			code: "import eslint from 'eslint';",
 			errors: [
 				{
-					message: 'Missing external, internal, WordPress dependencies docblocks',
+					message: 'Missing external, internal, WordPress, type dependencies docblocks',
 				},
 			],
 		},
