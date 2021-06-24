@@ -15,18 +15,23 @@ import { SupportArticleComponent } from './support-article-component';
 import { ElementHandle, Page } from 'playwright';
 
 const selectors = {
+	// Components
 	supportButton: '.inline-help__button',
 	supportPopover: '.inline-help__popover',
 	searchInput: '.form-text-input.search__input',
 	spinner: '.spinner',
 	clearSearch: '[aria-label="Close Search"]',
 
+	// Results
 	resultsList: '.inline-help__results',
 	results: '.inline-help__results-item',
+
+	// Result types
 	supportItems: '[aria-labelledby="inline-search--api_help"] li',
 	adminItems: '[aria-labelledby="inline-search--admin_section"] li',
 	emptyResults: '.inline-help__empty-results',
 
+	// Article
 	readMoreButton: 'text=Read more',
 };
 
@@ -42,7 +47,7 @@ export class SupportComponent extends BaseContainer {
 	 * @param {Page} page Underlying page with which the component will interact.
 	 */
 	constructor( page: Page ) {
-		super( page, selectors.supportButton );
+		super( page );
 	}
 
 	/**
@@ -201,7 +206,8 @@ export class SupportComponent extends BaseContainer {
 
 		await items[ target ].click();
 		await this.page.click( selectors.readMoreButton );
-		await SupportArticleComponent.Expect( this.page );
+		const supportArticleComponent = await SupportArticleComponent.Expect( this.page );
+		await supportArticleComponent.articleDisplayed();
 	}
 
 	/**

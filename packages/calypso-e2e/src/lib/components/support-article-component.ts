@@ -24,6 +24,16 @@ export class SupportArticleComponent extends BaseContainer {
 	 * @param {Page} page Underlying page with which the component will interact.
 	 */
 	constructor( page: Page ) {
-		super( page, selectors.main );
+		super( page );
+	}
+
+	/**
+	 * Confirms the support article is displayed on screen.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 *
+	 */
+	async articleDisplayed(): Promise< void > {
+		await this.page.waitForSelector( selectors.main );
 	}
 }

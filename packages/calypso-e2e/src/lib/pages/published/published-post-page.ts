@@ -9,8 +9,6 @@ import { BaseContainer } from '../../base-container';
 import { Page, Frame } from 'playwright';
 
 const selectors = {
-	page: '#main',
-
 	// Like Widget
 	likeWidget: 'iframe.post-likes-widget',
 	likeButton: 'a.like',
@@ -33,22 +31,7 @@ export class PublishedPostPage extends BaseContainer {
 	 * @param {Page} page Underlying page on which interactions take place.
 	 */
 	constructor( page: Page ) {
-		super( page, selectors.page );
-	}
-
-	/**
-	 * Overrides the parent method for post-initialization steps.
-	 * This ensures the iframe is enabled and interactable.
-	 *
-	 * @returns {Promise<void>} No return value.
-	 */
-	async _postInit(): Promise< void > {
-		// Obtain the ElementHandle for the widget containing the like/unlike button.
-		const element = await this.page.waitForSelector( selectors.likeWidget );
-		// Obtain the Frame object from the ElementHandle. This represents the widget iframe.
-		this.frame = ( await element.contentFrame() ) as Frame;
-		// Wait until the widget element is stable in the DOM.
-		await element.waitForElementState( 'stable' );
+		super( page );
 	}
 
 	/**
@@ -62,6 +45,15 @@ export class PublishedPostPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async _click( selector: string ): Promise< void > {
+		if ( ! this.frame ) {
+			// Obtain the ElementHandle for the widget containing the like/unlike button.
+			const elementHandle = await this.page.waitForSelector( selectors.likeWidget );
+			// Obtain the Frame object from the elementHandleHandle. This represents the widget iframe.
+			this.frame = ( await elementHandle.contentFrame() ) as Frame;
+			// Wait until the widget element is stable in the DOM.
+			await elementHandle.waitForElementState( 'stable' );
+		}
+
 		const button = await this.frame.waitForSelector( selector );
 		await button.click();
 	}
