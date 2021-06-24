@@ -22,14 +22,16 @@ const INVALID_URL = `https://__domain__.invalid`;
 
 type Host = string;
 
-export function logmeinUrl( url: string, store: Store ): string {
+let reduxStore: Store;
+
+export function logmeinUrl( url: string ): string {
 	// Disable feature if not enabled
 	if ( ! isEnabled( 'logmein' ) ) {
 		return url;
 	}
 
 	// logmein=direct only works for logged into wordpress.com users
-	if ( ! isUserLoggedIn( store.getState() ) ) {
+	if ( ! isUserLoggedIn( reduxStore.getState() ) ) {
 		return url;
 	}
 
@@ -40,7 +42,7 @@ export function logmeinUrl( url: string, store: Store ): string {
 		return url;
 	}
 
-	const sites = Object.values( getSitesItems( store.getState() ) );
+	const sites = Object.values( getSitesItems( reduxStore.getState() ) );
 	const mappedlinksite = sites.find(
 		( site ) => new URL( site.options.unmapped_url, INVALID_URL ).host === newurl.host
 	);
@@ -48,9 +50,11 @@ export function logmeinUrl( url: string, store: Store ): string {
 		newurl.host = new URL( mappedlinksite.URL ).host;
 	}
 
-	const allowed = allowedHosts( sites );
+	const allowedHosts = sites
+		.map( ( site: any ) => ( isValidLogmeinSite( site ) ? new URL( site.URL ).host : false ) )
+		.filter( Boolean );
 
-	if ( allowed.indexOf( newurl.host ) === -1 ) {
+	if ( allowedHosts.indexOf( newurl.host ) === -1 ) {
 		return url;
 	}
 
@@ -73,43 +77,34 @@ function isValidLogmeinSite( site: any ): boolean {
 	);
 }
 
-function allowedHosts( sites: any ): Host[] {
-	return sites
-		.map( ( site: any ) => ( isValidLogmeinSite( site ) ? new URL( site.URL ).host : false ) )
-		.filter( Boolean );
+export function setLogmeinReduxStore( store: Store ): void {
+	reduxStore = store;
 }
 
 export function attachLogmein( store: Store ): void {
-	document.addEventListener(
-		'click',
-		( event: MouseEvent ) => logmeinOnClick( event, store ),
-		false
-	);
-	document.addEventListener(
-		'contextmenu',
-		( event: MouseEvent ) => logmeinOnRightClick( event, store ),
-		false
-	);
+	setLogmeinReduxStore( store );
+	document.addEventListener( 'click', logmeinOnClick, false );
+	document.addEventListener( 'contextmenu', logmeinOnRightClick, false );
 }
 
 const seen: Record< Host, boolean > = {};
-export function logmeinOnClick( event: MouseEvent, store: Store ) {
+export function logmeinOnClick( event: MouseEvent ): void {
 	const link = ( event.target as HTMLElement ).closest( 'a' );
 
 	if ( link && link.href ) {
 		// Only apply logmein to each host once
 		const host = new URL( String( link.href ), INVALID_URL ).host;
 		if ( ! seen[ host ] ) {
-			link.href = logmeinUrl( link.href, store );
+			link.href = logmeinUrl( link.href );
 			seen[ host ] = true;
 		}
 	}
 }
 
-export function logmeinOnRightClick( event: MouseEvent, store: Store ) {
+export function logmeinOnRightClick( event: MouseEvent ): void {
 	const link = ( event.target as HTMLElement ).closest( 'a' );
 
 	if ( link && link.href ) {
-		link.href = logmeinUrl( link.href, store );
+		link.href = logmeinUrl( link.href );
 	}
 }
