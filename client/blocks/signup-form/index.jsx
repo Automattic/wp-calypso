@@ -987,7 +987,7 @@ class SignupForm extends Component {
 					{ this.props.formFooter || this.formFooter() }
 				</LoggedOutForm>
 
-				{ this.props.horizontal && (
+				{ this.props.horizontal && ! this.userCreationComplete() && (
 					<div className="signup-form__separator">
 						<div className="signup-form__separator-text">{ this.props.translate( 'or' ) }</div>
 					</div>
