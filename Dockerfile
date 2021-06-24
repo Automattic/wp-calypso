@@ -23,7 +23,6 @@ ENV CONTAINER 'docker'
 ENV WEBPACK_OPTIONS '--progress=profile'
 ENV COMMIT_SHA $commit_sha
 ENV CALYPSO_ENV production
-ENV NODE_ENV production
 ENV WORKERS $workers
 ENV BUILD_TRANSLATION_CHUNKS true
 ENV CHROMEDRIVER_SKIP_DOWNLOAD true
@@ -63,6 +62,7 @@ RUN rm -fr /calypso/apps/editing-toolkit /calypso/apps/o2-blocks /calypso/apps/w
 #
 # This contains built environments of Calypso. It will
 # change any time any of the Calypso source-code changes.
+ENV NODE_ENV production
 RUN yarn run build && rm -fr .cache
 
 
