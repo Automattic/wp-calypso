@@ -6,7 +6,7 @@ import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import React from 'react';
 import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
@@ -15,17 +15,11 @@ import { withShoppingCart } from '@automattic/shopping-cart';
 import AddEmailAddressesCardPlaceholder from './add-users-placeholder';
 import { Button, Card } from '@automattic/components';
 import DocumentHead from 'calypso/components/data/document-head';
-import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
-import {
-	emailManagementAddGSuiteUsers,
-	emailManagementNewGSuiteAccount,
-	emailManagement,
-} from 'calypso/my-sites/email/paths';
+import { emailManagementAddGSuiteUsers, emailManagement } from 'calypso/my-sites/email/paths';
 import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
-import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
 import {
 	getEligibleGSuiteDomain,
 	getGoogleMailServiceFamily,
@@ -46,7 +40,6 @@ import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import SectionHeader from 'calypso/components/section-header';
-import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
 import QueryGSuiteUsers from 'calypso/components/data/query-gsuite-users';
 import getGSuiteUsers from 'calypso/state/selectors/get-gsuite-users';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
@@ -72,12 +65,14 @@ class GSuiteAddUsers extends React.Component {
 	) {
 		if ( ! isRequestingDomains && 0 === users.length && userCanPurchaseGSuite ) {
 			const domainName = getEligibleGSuiteDomain( selectedDomainName, domains );
+
 			if ( '' !== domainName ) {
 				return {
 					users: newUsers( domainName ),
 				};
 			}
 		}
+
 		return null;
 	}
 
@@ -126,6 +121,7 @@ class GSuiteAddUsers extends React.Component {
 	recordClickEvent = ( eventName ) => {
 		const { recordTracksEvent, selectedDomainName } = this.props;
 		const { users } = this.state;
+
 		recordTracksEvent( eventName, {
 			domain_name: selectedDomainName,
 			user_count: users.length,
@@ -146,6 +142,7 @@ class GSuiteAddUsers extends React.Component {
 
 	componentDidMount() {
 		const { domains, isRequestingDomains, selectedDomainName } = this.props;
+
 		this.redirectIfCannotAddEmail( domains, isRequestingDomains, selectedDomainName );
 		this.isMounted = true;
 	}
@@ -156,10 +153,13 @@ class GSuiteAddUsers extends React.Component {
 
 	shouldComponentUpdate( nextProps ) {
 		const { domains, isRequestingDomains, selectedDomainName } = nextProps;
+
 		this.redirectIfCannotAddEmail( domains, isRequestingDomains, selectedDomainName );
+
 		if ( isRequestingDomains || ! domains.length ) {
 			return false;
 		}
+
 		return true;
 	}
 
@@ -183,9 +183,7 @@ class GSuiteAddUsers extends React.Component {
 	renderAddGSuite() {
 		const {
 			domains,
-			domainsWithForwards,
 			gsuiteUsers,
-			isNewAccount,
 			isRequestingDomains,
 			selectedDomainName,
 			translate,
@@ -197,21 +195,11 @@ class GSuiteAddUsers extends React.Component {
 		const selectedDomainInfo = getGSuiteSupportedDomains( domains ).filter(
 			( { domainName } ) => selectedDomainName === domainName
 		);
+
 		const canContinue = areAllUsersValid( users );
 
 		return (
-			<Fragment>
-				{ userCanPurchaseGSuite && isNewAccount && (
-					<Fragment>
-						<EmailExistingForwardsNotice
-							domainsWithForwards={ domainsWithForwards }
-							selectedDomainName={ selectedDomainName }
-						/>
-
-						<QueryEmailForwards domainName={ selectedDomainName } />
-					</Fragment>
-				) }
-
+			<>
 				<SectionHeader
 					label={ translate( 'Add New Mailboxes', {
 						comment: 'This refers to Google Workspace user accounts',
@@ -240,28 +228,19 @@ class GSuiteAddUsers extends React.Component {
 				) : (
 					<AddEmailAddressesCardPlaceholder />
 				) }
-			</Fragment>
+			</>
 		);
 	}
 
 	render() {
-		const {
-			currentRoute,
-			isNewAccount,
-			productType,
-			translate,
-			selectedDomainName,
-			selectedSite,
-		} = this.props;
+		const { currentRoute, productType, translate, selectedDomainName, selectedSite } = this.props;
 
-		const analyticsPath = isNewAccount
-			? emailManagementNewGSuiteAccount( ':site', ':domain', ':productType', currentRoute )
-			: emailManagementAddGSuiteUsers(
-					':site',
-					selectedDomainName ? ':domain' : undefined,
-					':productType',
-					currentRoute
-			  );
+		const analyticsPath = emailManagementAddGSuiteUsers(
+			':site',
+			selectedDomainName ? ':domain' : undefined,
+			':productType',
+			currentRoute
+		);
 
 		const googleMailServiceFamily = getGoogleMailServiceFamily( getProductSlug( productType ) );
 
@@ -301,7 +280,6 @@ GSuiteAddUsers.propTypes = {
 	currentRoute: PropTypes.string,
 	domains: PropTypes.array.isRequired,
 	gsuiteUsers: PropTypes.array,
-	isNewAccount: PropTypes.bool,
 	isRequestingDomains: PropTypes.bool.isRequired,
 	productType: PropTypes.oneOf( [ GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE ] ),
 	selectedDomainName: PropTypes.string.isRequired,
@@ -316,10 +294,10 @@ export default connect(
 		const selectedSite = getSelectedSite( state );
 		const siteId = get( selectedSite, 'ID', null );
 		const domains = getDomainsBySiteId( state, siteId );
+
 		return {
 			currentRoute: getCurrentRoute( state ),
 			domains,
-			domainsWithForwards: getDomainsWithForwards( state, domains ),
 			gsuiteUsers: getGSuiteUsers( state, siteId ),
 			isRequestingDomains: isRequestingSiteDomains( state, siteId ),
 			productsList: getProductsList( state ),

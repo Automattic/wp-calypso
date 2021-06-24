@@ -32,20 +32,6 @@ export default {
 		next();
 	},
 
-	emailManagementNewGSuiteAccount( pageContext, next ) {
-		pageContext.primary = (
-			<CalypsoShoppingCartProvider>
-				<GSuiteAddUsers
-					isNewAccount
-					productType={ pageContext.params.productType }
-					selectedDomainName={ pageContext.params.domain }
-				/>
-			</CalypsoShoppingCartProvider>
-		);
-
-		next();
-	},
-
 	emailManagementManageTitanAccount( pageContext, next ) {
 		pageContext.primary = (
 			<TitanManagementIframe
