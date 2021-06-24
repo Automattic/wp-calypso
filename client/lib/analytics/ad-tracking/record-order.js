@@ -14,6 +14,7 @@ import {
 	isBingEnabled,
 	isQuantcastEnabled,
 	isWpcomGoogleAdsGtagEnabled,
+	isJetpackGoogleAnalyticsEnabled,
 	isFloodlightEnabled,
 	isTwitterEnabled,
 	isPinterestEnabled,
@@ -76,7 +77,7 @@ export async function recordOrder( cart, orderId ) {
 	const wpcomJetpackCartInfo = splitWpcomJetpackCartInfo( cart );
 	debug( 'recordOrder: wpcomJetpackCartInfo:', wpcomJetpackCartInfo );
 
-	recordOrderInGoogleAds( cart, orderId );
+	recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInFacebook( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInBing( cart, orderId, wpcomJetpackCartInfo );
@@ -425,29 +426,42 @@ function recordOrderInBing( cart, orderId, wpcomJetpackCartInfo ) {
  *
  * @param {object} cart - cart as `ResponseCart` object
  * @param {number} orderId - the order id
+ * @param {object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
  * @returns {void}
  */
-function recordOrderInGoogleAds( cart, orderId ) {
+function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
 	if ( ! isAdTrackingAllowed() ) {
 		debug( 'recordOrderInGoogleAds: skipping as ad tracking is disallowed' );
 		return;
 	}
 
-	// MCC-level event.
-	// @TODO Separate WPCOM from Jetpack events.
-	if ( isWpcomGoogleAdsGtagEnabled ) {
-		const params = [
+	if ( isWpcomGoogleAdsGtagEnabled && wpcomJetpackCartInfo.containsWpcomProducts ) {
+		const wpcomParams = [
 			'event',
 			'conversion',
 			{
 				send_to: TRACKING_IDS.wpcomGoogleAdsGtagPurchase,
-				value: cart.total_cost,
+				value: cart.wpcomCost,
 				currency: cart.currency,
 				transaction_id: orderId,
 			},
 		];
-		debug( 'recordOrderInGoogleAds: Record WPCom Purchase', params );
-		window.gtag( ...params );
+		debug( 'recordOrderInGoogleAds: Record WPCom Purchase', wpcomParams );
+		window.gtag( ...wpcomParams );
+	}
+	if ( isJetpackGoogleAnalyticsEnabled && wpcomJetpackCartInfo.containsJetpackProducts ) {
+		const jetpackParams = [
+			'event',
+			'purchase',
+			{
+				send_to: TRACKING_IDS.jetpackGoogleAdsGtag,
+				value: cart.jetpackCost,
+				currency: cart.currency,
+				transaction_id: orderId,
+			},
+		];
+		debug( 'recordOrderInGoogleAds: Record WPCom Jetpack Purchase', jetpackParams );
+		window.gtag( ...jetpackParams );
 	}
 }
 

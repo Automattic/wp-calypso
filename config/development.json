@@ -29,7 +29,7 @@
 	"rebrand_cities_prefix": "rebrandcitiesdevelopmentsite",
 	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"features": {
-		"ad-tracking": false,
+		"ad-tracking": true,
 		"async-payments": false,
 		"automated-transfer": true,
 		"blogger-plan": true,
