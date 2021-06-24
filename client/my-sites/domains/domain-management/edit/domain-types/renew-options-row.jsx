@@ -129,11 +129,14 @@ function RenewOptionsRow( { domain, isLoadingPurchase, moment, purchase, selecte
 						{ autoRenewStatus }
 					</ManualRenew>
 				) }
-				<BodyText>
-					<span>{ renewalText }</span>
-				</BodyText>
+				{ renewalText && (
+					<BodyText>
+						<span>{ renewalText }</span>
+					</BodyText>
+				) }
 				{ domain.currentUserCanManage && (
 					<AutoRenewToggle
+						displayButton={ true }
 						planName={ selectedSite.plan.product_name_short }
 						purchase={ purchase }
 						siteDomain={ selectedSite.domain }
