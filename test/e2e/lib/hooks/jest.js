@@ -12,22 +12,24 @@ import { buildHooks as buildBrowserHooks } from './browser';
 
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 
-// const tempDir =
-// 	process.env.TEMP_ASSET_PATH || ( await mkdtemp( path.resolve( __dirname, '../../test-' ) ) );
+let tempDir;
+beforeAll(async () => {
+	tempDir = process.env.TEMP_ASSET_PATH || ( await mkdtemp( path.resolve( __dirname, '../../test-' ) ) );
+});
 
 if ( isVideoEnabled() ) {
 	const {
 		startFramebuffer,
 		stopFramebuffer,
 		// takeScreenshot,
-		// startVideoRecording,
+		startVideoRecording,
 		// saveVideoRecording,
 		stopVideoRecording,
 	} = buildVideoHooks();
 
 	beforeAll( async () => {
 		await startFramebuffer();
-		// await startVideoRecording( { tempDir } );
+		await startVideoRecording( { tempDir } );
 	} );
 
 	// afterEach( async () => {
@@ -41,20 +43,19 @@ if ( isVideoEnabled() ) {
 	// 	}
 	// } );
 
-	afterAll.push( async () => {
+	afterAll( async () => {
 		await stopFramebuffer();
 		await stopVideoRecording();
 	} );
 }
 
 const browserHooks = buildBrowserHooks();
-
 beforeAll( async () => {
 	const driver = await browserHooks.createBrowser();
 	global.__BROWSER__ = driver;
 }, startBrowserTimeoutMS );
 
 afterAll( async () => {
-	// await browserHooks.saveBrowserLogs( { tempDir } );
+	await browserHooks.saveBrowserLogs( { tempDir } );
 	await browserHooks.closeBrowser();
 } );
