@@ -20,7 +20,7 @@ const selectors = {
 	// Search
 	showAllThemesButton: 'text=Show all themes',
 	searchToolbar: '.themes-magic-search',
-	searchInput: '.themes-magic-search-card input.search__input',
+	searchInput: `[placeholder="I'm creating a site for a: portfolio, magazine, business, wedding, blog, or…"]`,
 };
 
 /**
@@ -44,7 +44,10 @@ export class ThemesPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async _postInit(): Promise< void > {
-		await this.page.waitForSelector( selectors.spinner, { state: 'hidden' } );
+		await Promise.all( [
+			this.page.waitForSelector( selectors.spinner, { state: 'hidden' } ),
+			this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } ),
+		] );
 	}
 
 	/**
