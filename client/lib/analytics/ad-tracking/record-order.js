@@ -524,7 +524,7 @@ function recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo ) {
 			'event',
 			'purchase',
 			{
-				send_to: TRACKING_IDS.jetpackGoogleGtag,
+				send_to: TRACKING_IDS.jetpackGoogleAnalyticsGtag,
 				value: wpcomJetpackCartInfo.jetpackCost,
 				currency: cart.currency,
 				transaction_id: orderId,
