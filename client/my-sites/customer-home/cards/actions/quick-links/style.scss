@@ -2,7 +2,6 @@
 @import '@wordpress/base-styles/mixins';
 
 .quick-links.foldable-card.card {
-
 	@include break-large {
 		box-shadow: none;
 	}
