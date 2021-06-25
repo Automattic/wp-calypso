@@ -206,10 +206,21 @@ export class HelpContactForm extends React.PureComponent {
 				? new URL( this.state.userDeclaredUrl ).hostname
 				: new URL( 'http://' + this.state.userDeclaredUrl ).hostname;
 
-			this.props
-				.requestSite( query )
-				.then( ( siteData ) => this.setState( { siteData, errorData: null } ) )
-				.catch( ( error ) => this.setState( { errorData: error.error, siteData: null } ) );
+			const request = ( query ) =>
+				this.props
+					.requestSite( query )
+					.then( ( siteData ) =>
+						this.setState( { siteData, errorData: null, hasRetriedRequest: false } )
+					)
+					.catch( ( error ) => {
+						if ( url.includes( 'www.' ) && ! this.state.hasRetriedRequest ) {
+							this.setState( { hasRetriedRequest: true } );
+							return request( query.replace( 'www.', '' ) );
+						}
+						this.setState( { errorData: error.error, siteData: null, hasRetriedRequest: false } );
+					} );
+
+			return request( query );
 		}
 	};
 
