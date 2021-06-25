@@ -540,7 +540,7 @@
 			border-left: 1px solid var( --color-neutral-0 );
 		}
 
-		background-color: var( --color-neutral-0 );
+		background-color: var( --color-surface );
 		ol {
 			height: 100%;
 			overflow-y: auto;
@@ -767,12 +767,12 @@
 	}
 
 	.wpnc__single-view img {
-		max-width: 128px;
+		max-height: 128px;
 		height: auto;
+		width: auto;
 	}
 
 	.wpnc__single-view .wpnc__badge .wpnc__body .wpnc__body-content .wpnc__paragraph {
-		text-align: center;
 		font-family: $sans;
 	}
 
@@ -784,12 +784,12 @@
 
 	.wpnc__body .wpnc__body-content .wpnc__paragraph {
 		font-family: $sans;
-		padding: 0 $wpnc__padding-large;
+		padding: 0 $wpnc__padding-extra-large;
 		text-align: left;
 	}
 
 	.wpnc__body .wpnc__body-content .wpnc__paragraph:last-child {
-		padding: 0 $wpnc__padding-large $wpnc__padding-medium;
+		padding: 0 $wpnc__padding-extra-large $wpnc__padding-medium;
 	}
 
 	.wpnc__comment .wpnc__body .wpnc__body-content,
