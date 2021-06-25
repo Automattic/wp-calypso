@@ -30,7 +30,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 	beforeAll( () => ( driver = global.__BROWSER__ ) );
 
 	describe( 'Logging In and Out: @jetpack', function () {
-		before( async function () {
+		beforeAll( async function () {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
