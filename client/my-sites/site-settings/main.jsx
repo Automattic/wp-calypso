@@ -20,6 +20,8 @@ import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
 import SiteSettingsNavigation from './navigation';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import config from '@automattic/calypso-config';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 
 /**
  * Style dependencies
@@ -29,7 +31,8 @@ import './style.scss';
 const SiteSettingsComponent = ( { siteId, translate } ) => {
 	return (
 		<Main className="site-settings">
-			<DocumentHead title={ translate( 'Site Settings' ) } />
+			<ScreenOptionsTab wpAdminPath="options-general.php" />
+			<DocumentHead title={ translate( 'General Settings' ) } />
 			<QueryProductsList />
 			<QuerySitePurchases siteId={ siteId } />
 			<JetpackDevModeNotice />
@@ -38,11 +41,12 @@ const SiteSettingsComponent = ( { siteId, translate } ) => {
 			<FormattedHeader
 				brandFont
 				className="site-settings__page-heading"
-				headerText={ translate( 'Settings' ) }
+				headerText={ translate( 'General Settings' ) }
 				subHeaderText={ translate(
 					'Manage your site settings, including language, time zone, site visibility, and more.'
 				) }
 				align="left"
+				hasScreenOptions={ config.isEnabled( 'nav-unification/switcher' ) }
 			/>
 			<SiteSettingsNavigation section={ 'general' } />
 			<GeneralSettings />

@@ -20,8 +20,9 @@ import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { preventWidows } from 'calypso/lib/formatting';
-import { isEnabled } from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import { NEWEST_FIRST } from './constants';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 
 /**
  * Style dependencies
@@ -70,6 +71,7 @@ export class CommentsManagement extends Component {
 
 		return (
 			<Main className="comments" wideLayout>
+				<ScreenOptionsTab wpAdminPath="edit-comments.php" />
 				<PageViewTracker path={ analyticsPath } title="Comments" />
 				<DocumentHead title={ translate( 'Comments' ) } />
 				<SidebarNavigation />
@@ -82,6 +84,7 @@ export class CommentsManagement extends Component {
 							'View, reply to, and manage all the comments across your site.'
 						) }
 						align="left"
+						hasScreenOptions={ config.isEnabled( 'nav-unification/switcher' ) }
 					/>
 				) }
 				{ showPermissionError && (

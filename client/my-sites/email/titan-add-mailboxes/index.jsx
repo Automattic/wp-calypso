@@ -40,7 +40,6 @@ import {
 	hasLoadedSiteDomains,
 	isRequestingSiteDomains,
 } from 'calypso/state/sites/domains/selectors';
-import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -55,7 +54,6 @@ import {
 	TITAN_MAIL_MONTHLY_SLUG,
 } from 'calypso/lib/titan/constants';
 import SectionHeader from 'calypso/components/section-header';
-import TitanExistingForwardsNotice from 'calypso/my-sites/email/titan-add-mailboxes/titan-existing-forwards-notice';
 import TitanMailboxPricingNotice from 'calypso/my-sites/email/titan-add-mailboxes/titan-mailbox-pricing-notice';
 import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-add-mailboxes/titan-new-mailbox-list';
@@ -258,7 +256,6 @@ class TitanAddMailboxes extends React.Component {
 	render() {
 		const {
 			currentRoute,
-			domainsWithForwards,
 			isLoadingDomains,
 			isSelectedDomainNameValid,
 			maxTitanMailboxCount,
@@ -294,7 +291,6 @@ class TitanAddMailboxes extends React.Component {
 						{ getTitanProductName() + ': ' + selectedDomainName }
 					</HeaderCake>
 
-					<TitanExistingForwardsNotice domainsWithForwards={ domainsWithForwards } />
 					{ selectedDomain && (
 						<TitanUnusedMailboxesNotice
 							domain={ selectedDomain }
@@ -332,7 +328,6 @@ export default connect(
 			selectedSite,
 			isLoadingDomains,
 			currentRoute: getCurrentRoute( state ),
-			domainsWithForwards: getDomainsWithForwards( state, domains ),
 			productsList: getProductsList( state ),
 			maxTitanMailboxCount: hasTitanMailWithUs( selectedDomain )
 				? getMaxTitanMailboxCount( selectedDomain )

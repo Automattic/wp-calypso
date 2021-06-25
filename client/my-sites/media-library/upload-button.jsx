@@ -19,6 +19,7 @@ import { VideoPressFileTypes } from 'calypso/lib/media/constants';
 import { clearMediaItemErrors } from 'calypso/state/media/actions';
 import { addMedia } from 'calypso/state/media/thunks';
 import { getSectionName } from 'calypso/state/ui/selectors';
+import { getEditorPostId } from 'calypso/state/editor/selectors';
 
 /**
  * Style dependencies
@@ -55,7 +56,7 @@ class MediaLibraryUploadButton extends React.Component {
 	uploadFiles = ( event ) => {
 		if ( event.target.files && this.props.site ) {
 			this.props.clearMediaItemErrors( this.props.site.ID );
-			this.props.addMedia( event.target.files, this.props.site );
+			this.props.addMedia( event.target.files, this.props.site, this.props.postId );
 		}
 
 		this.formRef.current.reset();
@@ -106,6 +107,7 @@ class MediaLibraryUploadButton extends React.Component {
 
 const mapStateToProps = ( state ) => {
 	return {
+		postId: getEditorPostId( state ),
 		sectionName: getSectionName( state ),
 	};
 };

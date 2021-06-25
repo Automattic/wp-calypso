@@ -69,26 +69,26 @@ The local environment is now ready for testing. When a test is run, it will hit 
 ### All tests
 
 ```
-./run.sh -g
+yarn magellan --config=magellan-calypso.json
 ```
 
-Configuration values for this command is read from `magellan.json`.
+Configuration values for this command is read from `magellan-calypso.json`. This command will run all tests in the `test/e2e/specs/specs-calypso` directory using `magellan` with retries enabled.
 
-This command will run all tests in the `test/e2e/spec` directory using `magellan` with retries enabled.
+You can use other config files in `test/e2e/magellan-*.json` to run a different set of tests.
 
 ### Individual spec file(s)
 
 Specify spec file(s) directly to mocha:
 
 ```
-./node_modules/.bin/mocha <path_to_e2e_spec>
+yarn mocha <path_to_e2e_spec>
 ```
 
 <details>
 <summary>Example (mocha)</summary>
 
 ```
-./node_modules/.bin/mocha specs/wp-calypso-gutenberg-coblocks-spec.js
+yarn mocha specs/specs-wpcom/wp-calypso-gutenberg-coblocks-spec.js
 ```
 
 </details>
@@ -97,7 +97,7 @@ Specify spec file(s) directly to mocha:
 <summary>Example (magellan)</summary>
 
 ```
-yarn magellan --test=specs/wp-log-in-out-spec.js
+yarn magellan --test=specs/specs-wpcom/wp-log-in-out-spec.js
 ```
 
 </details>
@@ -119,13 +119,13 @@ There is an ESLint rule that checks for `.only` syntax, but please also exercise
 ### Individual suite
 
 ```
-./node_modules/.bin/mocha <path_to_e2e_spec> -g "<test_case_name>"
+yarn mocha <path_to_e2e_spec> -g "<test_case_name>"
 ```
 
 eg.
 
 ```
-./node_modules/.bin/mocha specs/wp-calypso-gutenberg-coblocks-spec.js -g 'Insert a Pricing Table block'
+yarn mocha specs/specs-wpcom/wp-calypso-gutenberg-coblocks-spec.js -g 'Insert a Pricing Table block'
 ```
 
 ## Running tests (Playwright)
@@ -207,36 +207,7 @@ To run tests in headful mode, either approach can be taken:
 <summary>Using environment variables</summary>
 
 ```
-BROWSERSIZE=<viewport> ./node_modules/.bin/mocha <path_to_e2e_spec>
-```
-
-</details>
-
-<details>
-<summary>Using run.sh</summary>
-
-```
-./run.sh -g -s <viewport>
-```
-
-</details>
-
-Multiple viewport sizes can be specified in a similar manner:
-
-<details>
-<summary>Using environment variables</summary>
-
-```
-./run.sh -g -s <viewport1>,<viewport2>
-```
-
-</details>
-
-<details>
-<summary>Using run.sh</summary>
-
-```
-./run.sh -g -s mobile,desktop
+BROWSERSIZE=<viewport> yarn mocha <path_to_e2e_spec>
 ```
 
 </details>
@@ -245,17 +216,11 @@ Multiple viewport sizes can be specified in a similar manner:
 
 By default the tests start their own Selenium server in the background, which in turn launches a Chrome browser on your desktop where you can watch the tests execute. This can be a bit of a headache if you're trying to do other work while the tests are running, as the browser may occasionally steal focus back.
 
-If using `run.sh`, add the `-x` flag:
-
-```shell
-./run.sh -g -x
-```
-
 If using `mocha` or `magellan`, export an environment variable:
 
 ```shell
 export HEADLESS=1
-./node_modules/.bin/mocha <path_to_e2e_spec>
+yarn mocha <path_to_e2e_spec>
 ```
 
 ## TeamCity

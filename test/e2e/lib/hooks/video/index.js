@@ -17,13 +17,6 @@ export const isVideoEnabled = () => {
 };
 
 export const buildHooks = () => {
-	if ( ! isVideoEnabled() ) {
-		return {
-			afterAll: [],
-			beforeAll: [],
-			afterEach: [],
-		};
-	}
 	const displayNum = getFreeDisplay();
 
 	const { startFramebuffer, stopFramebuffer, takeScreenshot } = buildFramebufferHooks( displayNum );
@@ -31,13 +24,15 @@ export const buildHooks = () => {
 		displayNum
 	);
 
-	// Used by driver-manager and video hooks
+	// Used by driver-manager
 	global.displayNum = displayNum;
 
-	// startVideoRecording must come after startFramebuffer, as it depends on the framebuffer being up
 	return {
-		afterAll: [ stopFramebuffer, stopVideoRecording ],
-		beforeAll: [ startFramebuffer, startVideoRecording ],
-		afterEach: [ takeScreenshot, saveVideoRecording ],
+		startFramebuffer,
+		stopFramebuffer,
+		takeScreenshot,
+		startVideoRecording,
+		saveVideoRecording,
+		stopVideoRecording,
 	};
 };

@@ -77,4 +77,22 @@ describe( 'selectors', () => {
 			expect( getLicenseCounts( state ) ).toEqual( expected );
 		} );
 	} );
+
+	describe( '#hasFetchedLicenseCounts()', () => {
+		test( 'should return the value of hasFetchedLicenseCounts', () => {
+			const { hasFetchedLicenseCounts } = selectors;
+			const state = {
+				partnerPortal: {
+					licenses: {
+						hasFetchedLicenseCounts: false,
+					},
+				},
+			};
+
+			expect( hasFetchedLicenseCounts( state ) ).toEqual( false );
+
+			state.partnerPortal.licenses.hasFetchedLicenseCounts = true;
+			expect( hasFetchedLicenseCounts( state ) ).toEqual( true );
+		} );
+	} );
 } );

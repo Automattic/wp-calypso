@@ -166,6 +166,7 @@
 
 		.email-providers-comparison__provider-form {
 			flex-grow: 1;
+			margin-bottom: 20px;
 
 			@include breakpoint-deprecated( '>1040px' ) {
 				margin-top: 0;
@@ -192,7 +193,7 @@
 			margin-bottom: 2.5em;
 
 			@include breakpoint-deprecated( '>1040px' ) {
-				margin-bottom: 0;
+				margin-bottom: 14px;
 				margin-left: 2em;
 				margin-top: 0;
 			}

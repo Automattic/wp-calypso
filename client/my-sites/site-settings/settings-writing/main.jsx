@@ -16,20 +16,24 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
 import WritingForm from 'calypso/my-sites/site-settings/form-writing';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import config from '@automattic/calypso-config';
 
 const SiteSettingsWriting = ( { site, translate } ) => (
 	<Main className="settings-writing site-settings">
-		<DocumentHead title={ translate( 'Site Settings' ) } />
+		<ScreenOptionsTab wpAdminPath="options-writing.php" />
+		<DocumentHead title={ translate( 'Writing Settings' ) } />
 		<JetpackDevModeNotice />
 		<SidebarNavigation />
 		<FormattedHeader
 			brandFont
 			className="settings-writing__page-heading"
-			headerText={ translate( 'Settings' ) }
+			headerText={ translate( 'Writing Settings' ) }
 			subHeaderText={ translate(
 				"Manage categories, tags, and other settings related to your site's content."
 			) }
 			align="left"
+			hasScreenOptions={ config.isEnabled( 'nav-unification/switcher' ) }
 		/>
 		<SiteSettingsNavigation site={ site } section="writing" />
 		<WritingForm />

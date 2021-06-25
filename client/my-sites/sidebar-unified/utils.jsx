@@ -28,6 +28,10 @@ export const itemLinkMatches = ( path, currentPath ) => {
 	if ( pathIncludes( currentPath, 'settings', 1 ) && pathIncludes( path, 'taxonomies', 2 ) ) {
 		return false;
 	}
+	// Account for rest of settings pages.
+	if ( pathIncludes( currentPath, 'settings', 1 ) ) {
+		return fragmentIsEqual( path, currentPath, 2 );
+	}
 
 	return fragmentIsEqual( path, currentPath, 1 );
 };

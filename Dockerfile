@@ -1,5 +1,6 @@
 ARG use_cache=false
 ARG node_version=14.16.1
+ARG base_image=registry.a8c.com/calypso/base:latest
 
 ###################
 FROM node:${node_version}-buster as builder-cache-false
@@ -8,10 +9,11 @@ FROM node:${node_version}-buster as builder-cache-false
 ###################
 # This image contains a directory /calypso/.cache which includes caches
 # for yarn, terser, css-loader and babel.
-FROM registry.a8c.com/calypso/base:latest as builder-cache-true
+FROM ${base_image} as builder-cache-true
 
 ENV YARN_CACHE_FOLDER=/calypso/.cache/yarn
 ENV NPM_CONFIG_CACHE=/calypso/.cache
+ENV PERSISTENT_CACHE=true
 
 ###################
 FROM builder-cache-${use_cache} as builder
@@ -20,15 +22,15 @@ ARG commit_sha="(unknown)"
 ARG workers=4
 ARG node_memory=8192
 ENV CONTAINER 'docker'
-ENV WEBPACK_OPTIONS '--progress=profile'
+ENV PROFILE=true
 ENV COMMIT_SHA $commit_sha
 ENV CALYPSO_ENV production
-ENV NODE_ENV production
 ENV WORKERS $workers
 ENV BUILD_TRANSLATION_CHUNKS true
 ENV CHROMEDRIVER_SKIP_DOWNLOAD true
 ENV PUPPETEER_SKIP_DOWNLOAD true
 ENV PLAYWRIGHT_SKIP_DOWNLOAD true
+ENV SKIP_TSC true
 ENV NODE_OPTIONS --max-old-space-size=$node_memory
 WORKDIR /calypso
 
@@ -55,14 +57,14 @@ RUN bash /tmp/env-config.sh
 # dependencies which end up bloating the image.
 # /apps/notifications is not removed because it is required by Calypso
 COPY . /calypso/
-RUN rm -fr /calypso/apps/editing-toolkit /calypso/apps/o2-blocks /calypso/apps/wpcom-block-editor /calypso/test /calypso/desktop \
-	&& yarn install --frozen-lockfile
+RUN yarn install --frozen-lockfile
 
 # Build the final layer
 #
 # This contains built environments of Calypso. It will
 # change any time any of the Calypso source-code changes.
-RUN yarn run build && rm -fr .cache
+ENV NODE_ENV production
+RUN yarn run build
 
 
 ###################

@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { isEqual } from 'lodash';
-import store from 'store';
 import debugFactory from 'debug';
 import config from '@automattic/calypso-config';
 
@@ -17,7 +16,7 @@ import {
 } from 'calypso/lib/user/support-user-interop';
 import wpcom from 'calypso/lib/wp';
 import Emitter from 'calypso/lib/mixins/emitter';
-import { clearStore } from './store';
+import { clearStore, getStoredUserId, setStoredUserId } from './store';
 import { getComputedAttributes, filterUserObject } from './shared-utils';
 
 const debug = debugFactory( 'calypso:user' );
@@ -88,11 +87,11 @@ User.prototype.initialize = async function () {
  * @param {number} userId The new user ID.
  **/
 User.prototype.clearStoreIfChanged = function ( userId ) {
-	const storedUserId = store.get( 'wpcom_user_id' );
+	const storedUserId = getStoredUserId();
 
 	if ( storedUserId != null && storedUserId !== userId ) {
 		debug( 'Clearing localStorage because user changed' );
-		store.clearAll();
+		clearStore();
 	}
 };
 
@@ -168,23 +167,11 @@ User.prototype.handleFetchSuccess = function ( userData ) {
 	this.clearStoreIfChanged( userData.ID );
 
 	// Store user ID in local storage so that we can detect a change and clear the storage
-	store.set( 'wpcom_user_id', userData.ID );
+	setStoredUserId( userData.ID );
 
 	this.data = userData;
 
 	this.emit( 'change' );
-};
-
-/**
- * Clear any user data.
- */
-User.prototype.clear = async function () {
-	/**
-	 * Clear internal user data and empty localStorage cache
-	 * to discard any user reference that the application may hold
-	 */
-	this.data = false;
-	await clearStore();
 };
 
 User.prototype.set = function ( attributes ) {

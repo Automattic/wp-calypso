@@ -1,15 +1,9 @@
 /**
  * External dependencies
  */
-
 import WPCOM from 'wpcom';
 import inherits from 'inherits';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import MePreferences from './me-preferences.js';
 
 const debug = debugFactory( 'calypso:wpcom-undocumented:me' );
 
@@ -348,7 +342,5 @@ UndocumentedMe.prototype.socialDisconnect = function ( service, fn ) {
 
 	return this.wpcom.req.post( args, fn );
 };
-
-UndocumentedMe.prototype.preferences = MePreferences;
 
 export default UndocumentedMe;

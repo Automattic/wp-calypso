@@ -21,6 +21,7 @@ export default function useRecordCheckoutLoaded( {
 	responseCart,
 	storedCards,
 	productAliasFromUrl,
+	checkoutFlow,
 }: {
 	recordEvent: ( action: ReactStandardAction ) => void;
 	isLoading: boolean;
@@ -28,6 +29,7 @@ export default function useRecordCheckoutLoaded( {
 	responseCart: ResponseCart;
 	storedCards: StoredCard[];
 	productAliasFromUrl: string | undefined | null;
+	checkoutFlow: string;
 } ): void {
 	const hasRecordedCheckoutLoad = useRef( false );
 	if ( ! isLoading && ! hasRecordedCheckoutLoad.current ) {
@@ -39,6 +41,7 @@ export default function useRecordCheckoutLoaded( {
 				apple_pay_available: isApplePayAvailable,
 				product_slug: productAliasFromUrl,
 				is_renewal: hasRenewalItem( responseCart ),
+				checkout_flow: checkoutFlow,
 			},
 		} );
 		hasRecordedCheckoutLoad.current = true;

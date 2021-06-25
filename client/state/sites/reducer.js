@@ -8,6 +8,7 @@ import { omit, merge, get, includes, reduce, isEqual } from 'lodash';
  */
 import { plans } from './plans/reducer';
 import { products } from './products/reducer';
+import { featuresReducer as features } from './features/reducer';
 import connection from './connection/reducer';
 import domains from './domains/reducer';
 import guidedTransfer from './guided-transfer/reducer';
@@ -354,6 +355,7 @@ export default combineReducers( {
 	mediaStorage,
 	plans,
 	products,
+	features,
 	guidedTransfer,
 	monitor,
 	requesting,

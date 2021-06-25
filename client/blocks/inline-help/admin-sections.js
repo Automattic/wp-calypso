@@ -95,7 +95,7 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 	},
 	{
 		title: translate( 'Cancel my plan' ),
-		link: `/me/purchases/${ siteSlug }`,
+		link: `/me/purchases`,
 		synonyms: [ 'upgrade', 'business', 'professional', 'personal' ],
 		icon: 'plans',
 	},
@@ -112,7 +112,7 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 			},
 			comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
 		} ),
-		link: `/me/purchases/${ siteSlug }`,
+		link: `/me/purchases`,
 		synonyms: [ 'upgrade', 'business', 'professional', 'personal', 'google' ],
 		icon: 'plans',
 	},

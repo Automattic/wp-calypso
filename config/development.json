@@ -110,12 +110,6 @@
 		"manage/export/guided-transfer": true,
 		"manage/import/site-importer-endpoints": true,
 		"manage/plugins/compatibility-warning": false,
-		"manage/plugins/setup": true,
-		"manage/plugins/upload": true,
-		"manage/posts": true,
-		"manage/security": true,
-		"manage/site-settings/analytics": true,
-		"manage/site-settings/categories": true,
 		"marketplace-test": true,
 		"marketplace-yoast": true,
 		"me/account-close": true,
@@ -154,6 +148,7 @@
 		"settings/theme-setup": true,
 		"sign-in-with-apple": true,
 		"sign-in-with-apple/redirect": true,
+		"signup/reskin": true,
 		"signup/social": true,
 		"site-indicator": true,
 		"memberships": true,
@@ -176,6 +171,7 @@
 		"woocommerce/extension-referrers": true,
 		"woocommerce/store-on-non-atomic-sites": true,
 		"wpcom-user-bootstrap": false,
-		"wordpress-action-search": false
+		"wordpress-action-search": false,
+		"nav-unification/switcher": false
 	}
 }

@@ -100,6 +100,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	onSelectProduct,
 	onDurationChange,
 	scrollCardIntoView,
+	createButtonURL,
 } ) => {
 	const translate = useTranslate();
 
@@ -201,6 +202,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 									PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 								] }
 								scrollCardIntoView={ scrollCardIntoView }
+								createButtonURL={ createButtonURL }
 							/>
 						</li>
 					) ) }
@@ -239,6 +241,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 								currencyCode={ currencyCode }
 								selectedTerm={ duration }
 								scrollCardIntoView={ scrollCardIntoView }
+								createButtonURL={ createButtonURL }
 							/>
 						</li>
 					) ) }

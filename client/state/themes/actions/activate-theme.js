@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -10,6 +11,7 @@ import wpcom from 'calypso/lib/wp';
 import { THEME_ACTIVATE, THEME_ACTIVATE_FAILURE } from 'calypso/state/themes/action-types';
 import { themeActivated } from 'calypso/state/themes/actions/theme-activated';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 
 import 'calypso/state/themes/init';
 
@@ -56,7 +58,20 @@ export function activateTheme(
 				if ( error.error === 'theme_not_found' ) {
 					dispatch( errorNotice( translate( 'Theme not yet available for this site' ) ) );
 				} else {
-					dispatch( errorNotice( translate( 'Unable to activate theme. Contact support.' ) ) );
+					dispatch(
+						errorNotice(
+							translate(
+								'Unable to activate theme. {{contactSupportLink}}Contact support{{/contactSupportLink}}.',
+								{
+									components: {
+										contactSupportLink: (
+											<a target="_blank" href={ CALYPSO_CONTACT } rel="noreferrer" />
+										),
+									},
+								}
+							)
+						)
+					);
 				}
 			} );
 	};

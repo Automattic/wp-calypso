@@ -102,15 +102,19 @@ export default {
 		const isLoggedIn = isUserLoggedIn( context.store.getState() );
 		const currentFlowName = getFlowName( context.params, isLoggedIn );
 		if ( context.pathname.indexOf( 'new-launch' ) >= 0 ) {
+			// For 'new-launch' flow, 'is-white-signup' class name is being removed in client/signup/main.jsx
+			// Don't remove it here to prevent the flash of blue while the component is mounted
 			next();
-		} else if ( currentFlowName === 'onboarding' && config.isEnabled( 'signup/reskin' ) ) {
+		} else if (
+			config( 'reskinned_flows' ).includes( currentFlowName ) &&
+			config.isEnabled( 'signup/reskin' )
+		) {
 			next();
 		} else if (
 			context.pathname.indexOf( 'domain' ) >= 0 ||
 			context.pathname.indexOf( 'plan' ) >= 0 ||
 			context.pathname.indexOf( 'onboarding-registrationless' ) >= 0 ||
 			context.pathname.indexOf( 'wpcc' ) >= 0 ||
-			context.pathname.indexOf( 'launch-site' ) >= 0 ||
 			context.pathname.indexOf( 'launch-only' ) >= 0 ||
 			context.params.flowName === 'account' ||
 			context.params.flowName === 'crowdsignal' ||

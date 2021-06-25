@@ -120,4 +120,69 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 			return await this.driver.findElement( insertedBlockLocator ).getAttribute( 'id' );
 		} );
 	}
+
+	async toggleListView() {
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.edit-site-header-toolbar__list-view-toggle' )
+		);
+	}
+
+	async removeBlock( blockID ) {
+		await this.runInCanvas( async () => {
+			const blockLocator = By.css( `.wp-block[id="${ blockID }"]` );
+			await driverHelper.waitUntilElementLocatedAndVisible(
+				this.driver,
+				blockLocator,
+				this.explicitWaitMS / 5
+			);
+			await this.driver.findElement( blockLocator ).click();
+		} );
+
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.block-editor-block-settings-menu' )
+		);
+		await driverHelper.waitUntilElementLocatedAndVisible(
+			this.driver,
+			By.css( '.components-menu-group' ),
+			this.explicitWaitMS / 5
+		);
+		await this.driver.sleep( 1000 );
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css(
+				'.components-menu-group:last-of-type button.components-menu-item__button:last-of-type'
+			)
+		);
+	}
+
+	async toggleGlobalStyles() {
+		if ( this.screenSize === 'mobile' ) {
+			const closed = await driverHelper.clickIfPresent(
+				this.driver,
+				By.css( 'button[aria-label="Close global styles sidebar"]' )
+			);
+
+			if ( ! closed ) {
+				await driverHelper.clickIfPresent(
+					this.driver,
+					By.css( 'button[aria-label="More tools & options"]' )
+				);
+
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					driverHelper.createTextLocator(
+						By.css( 'button[role="menuitemcheckbox"]' ),
+						'Global Styles'
+					)
+				);
+			}
+		} else {
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( 'button[aria-label="Global Styles"]' )
+			);
+		}
+	}
 }

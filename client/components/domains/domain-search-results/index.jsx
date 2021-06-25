@@ -329,7 +329,7 @@ class DomainSearchResults extends React.Component {
 			domainSkipSuggestion = (
 				<DomainSkipSuggestion
 					selectedSiteSlug={ this.props.selectedSite?.slug }
-					onButtonClick={ this.props.onSkip }
+					onButtonClick={ () => this.props.onSkip() }
 				/>
 			);
 		} else {

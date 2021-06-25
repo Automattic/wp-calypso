@@ -2,7 +2,6 @@
  * External Dependencies
  */
 import { EventEmitter } from 'events';
-import { Language } from '@automattic/languages';
 import { URL, JSONSerializable } from '../../types';
 
 type WPCOMError = { message: string };
@@ -30,8 +29,6 @@ export interface User extends EventEmitter {
 	fetch: () => Promise< void >;
 	handleFetchFailure: ( error: Error ) => void;
 	handleFetchSuccess: ( userdata: UserData ) => void;
-	getLanguage: () => Language | undefined;
-	clear: () => Promise< void > | void;
 	set: ( attributes: UserData ) => boolean;
 	verificationPollerCallback: ( signal?: true ) => void;
 	checkVerification: () => void;
