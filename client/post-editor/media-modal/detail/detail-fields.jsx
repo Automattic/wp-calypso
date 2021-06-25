@@ -20,6 +20,10 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import TrackInputChanges from 'calypso/components/track-input-changes';
 import EditorMediaModalFieldset from '../fieldset';
 import { updateMedia } from 'calypso/state/media/thunks';
+import FormLabel from 'calypso/components/forms/form-label';
+import { FormCheckbox } from 'calypso/devdocs/design/playground-scope';
+import classnames from 'classnames';
+import FormRadio from 'calypso/components/forms/form-radio';
 
 class EditorMediaModalDetailFields extends Component {
 	static propTypes = {
@@ -82,14 +86,28 @@ class EditorMediaModalDetailFields extends Component {
 		this.props.onUpdate( this.props.item.ID, this.state.modifiedItem );
 	}
 
-	setFieldValue = ( { target } ) => {
+	setFieldByName = ( name, value ) => {
 		const modifiedItem = Object.assign(
 			{ ID: this.props.item.ID },
 			get( this.state, 'modifiedItem', {} ),
-			{ [ target.name ]: target.value }
+			{ [ name ]: value }
 		);
 
 		this.setState( { modifiedItem }, this.persistChange );
+	};
+
+	setFieldValue = ( { target } ) => {
+		this.setFieldByName( target.name, target.value );
+	};
+
+	handleRatingChange = ( { currentTarget } ) => {
+		this.setFieldByName( 'rating', currentTarget.value );
+	};
+
+	handleDisplayEmbed = () => {
+		const inputValue = '1' === this.getItemValue( 'display_embed' ) ? '0' : '1';
+
+		this.setFieldByName( 'display_embed', inputValue );
 	};
 
 	getItemValue( attribute ) {
@@ -128,6 +146,86 @@ class EditorMediaModalDetailFields extends Component {
 			</EditorMediaModalFieldset>
 		);
 	}
+
+	renderVideoPressShortcode = () => {
+		const videopressGuid = this.getItemValue( 'videopress_guid' );
+
+		if ( ! videopressGuid ) {
+			return;
+		}
+
+		return (
+			<EditorMediaModalFieldset legend={ this.props.translate( 'Shortcode' ) }>
+				<ClipboardButtonInput value={ '[wpvideo ' + videopressGuid + ']' } />
+			</EditorMediaModalFieldset>
+		);
+	};
+
+	renderRating = () => {
+		const items = [
+			{
+				label: 'G',
+				value: 'G',
+			},
+			{
+				label: 'PG-13',
+				value: 'PG-13',
+			},
+			{
+				label: 'R',
+				value: 'R-17',
+			},
+			{
+				label: 'X',
+				value: 'X-18',
+			},
+		];
+		const rating = this.getItemValue( 'rating' );
+		if ( ! rating ) {
+			return;
+		}
+
+		return (
+			<EditorMediaModalFieldset legend={ this.props.translate( 'Rating' ) }>
+				<div className={ classnames( 'form-radios-bar' ) } style={ { display: 'flex' } }>
+					{ items.map( ( item, i ) => (
+						<FormLabel key={ item.value + i } style={ { paddingRight: '15px' } }>
+							<FormRadio
+								checked={ rating === item.value }
+								onChange={ this.handleRatingChange }
+								{ ...item }
+							/>
+						</FormLabel>
+					) ) }
+				</div>
+			</EditorMediaModalFieldset>
+		);
+	};
+
+	renderShareEmbed = () => {
+		const share = this.getItemValue( 'display_embed' );
+		if ( share === undefined ) {
+			return;
+		}
+
+		return (
+			<EditorMediaModalFieldset legend={ this.props.translate( 'Share' ) }>
+				<FormLabel>
+					<FormCheckbox
+						id="display_embed"
+						name="display_embed"
+						checked={ share === '1' }
+						onChange={ this.handleDisplayEmbed }
+					/>
+					<span>
+						{ this.props.translate(
+							'Display share menu and allow viewers to embed or download this video'
+						) }
+					</span>
+				</FormLabel>
+			</EditorMediaModalFieldset>
+		);
+	};
 
 	render() {
 		const { translate } = this.props;
@@ -168,6 +266,10 @@ class EditorMediaModalDetailFields extends Component {
 				<EditorMediaModalFieldset className="detail__url-field" legend={ translate( 'URL' ) }>
 					<ClipboardButtonInput value={ url( this.props.item ) } />
 				</EditorMediaModalFieldset>
+
+				{ this.renderShareEmbed() }
+				{ this.renderRating() }
+				{ this.renderVideoPressShortcode() }
 			</div>
 		);
 	}
