@@ -18,9 +18,16 @@ import {
 	resolveEmailPlanStatus,
 } from 'calypso/my-sites/email/email-management/home/utils';
 import MaterialIcon from 'calypso/components/material-icon';
+import { useEmailsQuery } from 'calypso/data/emails/use-emails-query'
 
-const EmailListActiveWarning = ( { domain } ) => {
-	const { icon, statusClass, text } = resolveEmailPlanStatus( domain );
+const EmailListActiveWarning = ( { domain, siteId } ) => {
+	const { data, error, isLoading } = useEmailsQuery( siteId, domain.name, { retry: false } );
+	var emailAccounts = null;
+	if(!isLoading && !error) {
+		emailAccounts = data?.accounts[0] ?? [];
+	}
+	const { icon, statusClass, text } = resolveEmailPlanStatus( domain, emailAccounts, isLoading );
+
 
 	if ( statusClass === 'success' ) {
 		return null;
@@ -37,11 +44,12 @@ const EmailListActiveWarning = ( { domain } ) => {
 
 EmailListActiveWarning.propTypes = {
 	domain: PropTypes.object.isRequired,
+	siteId: PropTypes.number.isRequired
 };
 
 class EmailListActive extends React.Component {
 	render() {
-		const { currentRoute, domains, selectedSiteSlug, translate } = this.props;
+		const { currentRoute, domains, selectedSiteSlug, translate, siteId } = this.props;
 
 		if ( domains.length < 1 ) {
 			return null;
@@ -63,7 +71,7 @@ class EmailListActive extends React.Component {
 						<span>{ getNumberOfMailboxesText( domain ) }</span>
 					</div>
 
-					<EmailListActiveWarning domain={ domain } />
+					<EmailListActiveWarning domain={ domain } siteId={ siteId }/>
 				</CompactCard>
 			);
 		} );
