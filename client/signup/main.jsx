@@ -230,7 +230,10 @@ class Signup extends React.Component {
 			this.updateShouldShowLoadingScreen( progress );
 		}
 
-		if ( ! isReskinnedFlow( flowName ) ) {
+		if ( isReskinnedFlow( flowName ) ) {
+			document.body.classList.add( 'is-white-signup' );
+			debug( 'In componentWillReceiveProps, addded is-white-signup class' );
+		} else {
 			document.body.classList.remove( 'is-white-signup' );
 			debug( 'In componentWillReceiveProps, removed is-white-signup class' );
 		}
