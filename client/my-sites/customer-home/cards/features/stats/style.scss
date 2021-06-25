@@ -1,6 +1,7 @@
 .stats .card {
 	@include breakpoint-deprecated( '>480px' ) {
-		padding: 16px 24px;
+		box-shadow: none;
+		padding: 16px 24px 0;
 	}
 }
 
@@ -55,12 +56,12 @@
 .stats__data {
 	display: flex;
 	flex-wrap: wrap;
-	margin: 8px -24px 16px;
+	margin: 8px -24px 0;
 }
 
 .stats__data-item {
 	border: 1px solid var( --color-neutral-5 );
-	border-left: none;
+	border-right: none;
 	width: 25%;
 	box-sizing: border-box;
 	text-align: center;
@@ -74,7 +75,7 @@
 
 	&:last-child {
 		padding-right: 24px;
-		border-right: none;
+		border-right: 1px solid var( --color-neutral-5 );
 
 		@include breakpoint-deprecated( '<480px' ) {
 			padding: 16px;
@@ -90,7 +91,7 @@
 		}
 
 		&:nth-child( 2 ) {
-			border-right: none;
+			border-right: 1px solid var( --color-neutral-5 );
 		}
 	}
 }
@@ -108,5 +109,22 @@
 }
 
 .stats__all {
+    margin: 0 -24px;
+	border: 1px solid var( --color-neutral-5 );
+	border-top: none;
+}
+
+.stats__all-link {
+	display: block;
+    padding: 12px 24px;
 	font-size: $font-body-small;
+
+	&:hover {
+		background: var( --color-neutral-0 );
+	}
+
+	&:focus {
+		background: var( --color-primary );
+    	color: var( --color-text-inverted );
+	}
 }

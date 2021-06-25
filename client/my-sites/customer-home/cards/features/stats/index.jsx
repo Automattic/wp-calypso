@@ -173,9 +173,11 @@ export const StatsV2 = ( {
 								</div>
 							) }
 						</div>
-						<a href={ `/stats/day/${ siteSlug }` } className="stats__all">
-							{ translate( 'See all stats' ) }
-						</a>
+						<div className="stats__all">
+							<a href={ `/stats/day/${ siteSlug }` } className="stats__all-link">
+								{ translate( 'See all stats' ) }
+							</a>
+						</div>
 					</>
 				) }
 			</Card>
