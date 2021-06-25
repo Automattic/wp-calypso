@@ -14,8 +14,8 @@ import DocumentHead from 'calypso/components/data/document-head';
 import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
 import { getAllStoredCards } from 'calypso/state/stored-cards/selectors';
 import QueryStoredCards from 'calypso/components/data/query-stored-cards';
-import AddStoredCreditCard from 'calypso/components/jetpack/add-stored-credit-card';
-import StoredCreditCard from 'calypso/components/jetpack/stored-credit-card';
+import AddStoredCreditCard from 'calypso/jetpack-cloud/sections/partner-portal/add-stored-credit-card';
+import StoredCreditCard from 'calypso/jetpack-cloud/sections/partner-portal/stored-credit-card';
 
 /**
  * Style dependencies

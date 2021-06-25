@@ -4,11 +4,11 @@
 import React, { ReactElement } from 'react';
 import { useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import CardHeading from 'calypso/components/card-heading';
 import Gridicon from 'calypso/components/gridicon';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -26,24 +26,22 @@ export default function AddStoredCreditCard(): ReactElement {
 		dispatch(
 			recordTracksEvent( 'calypso_partner_portal_license_list_empty_issue_license_click' )
 		);
-
-		page( '/partner-portal/payment-method/add' );
 	};
 
 	return (
-		<div
+		<a
 			className="add-stored-credit-card"
+			href="/partner-portal/payment-method/add"
 			onClick={ navigateToCreateMethod }
-			onKeyDown={ navigateToCreateMethod }
-			role="button"
-			tabIndex={ 0 }
 		>
 			<div className="add-stored-credit-card__content">
-				<CardHeading className="add-stored-credit-card__text" size={ 18 }>
-					{ translate( 'Add new credit card' ) }
+				<CardHeading className="add-stored-credit-card__title" tagName="h3">
+					<Gridicon icon="add-outline" size={ 24 } />
+					<span>{ translate( 'New credit card' ) }</span>
 				</CardHeading>
-				<Gridicon className="add-stored-credit-card__icon" icon="add-outline" size={ 48 } />
+
+				<Button>{ translate( 'Add new credit card' ) }</Button>
 			</div>
-		</div>
+		</a>
 	);
 }
