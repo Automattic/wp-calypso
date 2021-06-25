@@ -4,12 +4,7 @@
 import 'calypso/state/inline-support-article/init';
 
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * @param {object} state Global app state
  * @returns {object} ...
  */
-export default ( state ) => get( state, 'inlineSupportArticle.blogId' );
+export default ( state ) => state.inlineSupportArticle?.blogId;
