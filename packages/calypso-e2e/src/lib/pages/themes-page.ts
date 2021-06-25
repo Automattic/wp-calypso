@@ -72,10 +72,10 @@ export class ThemesPage extends BaseContainer {
 	 * @param {string} [name] Theme name to select.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async select( name: string, { random = false }: { random: boolean } ): Promise< void > {
+	async select( name: string, options: { random?: boolean } = { random: false } ): Promise< void > {
 		let selectedTheme;
 
-		if ( random ) {
+		if ( options.random ) {
 			const selector = `${ selectors.items }.is-actionable${ selectors.excludeActiveTheme }`;
 			selectedTheme = await this.page.waitForSelector( `:nth-match(${ selector }, 1)`, {
 				state: 'visible',
