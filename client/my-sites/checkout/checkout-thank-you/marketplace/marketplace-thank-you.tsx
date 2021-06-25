@@ -167,7 +167,7 @@ const MarketplaceThankYou = () => {
 							<div>
 								<MarketplaceThankyouSection>
 									<MarketplaceHeaderTitle className="marketplace-thank-you__body-header wp-brand-font">
-										// TODO: Change thank you message to be dynamic according to product
+										{ /* TODO: Change thank you message to be dynamic according to product */ }
 										{ translate( 'Yoast SEO Premium is installed' ) }
 									</MarketplaceHeaderTitle>
 								</MarketplaceThankyouSection>
