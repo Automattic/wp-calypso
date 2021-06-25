@@ -34,7 +34,7 @@ describe( DataHelper.createSuiteTitle( 'Theme: Activate' ), function () {
 		} );
 
 		it( `Select a theme starting with ${ themeName }`, async function () {
-			await themesPage.select( themeName, { random: true } );
+			await themesPage.select( themeName );
 		} );
 
 		it( 'Activate theme', async function () {

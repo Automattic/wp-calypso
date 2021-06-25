@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import { BaseContainer } from '../base-container';
+import { getRandomInteger } from '../../data-helper';
 
 const selectors = {
 	// Main themes listing
@@ -65,28 +66,28 @@ export class ThemesPage extends BaseContainer {
 	}
 
 	/**
-	 * Select a theme by name.
+	 * Selects a theme from the gallery.
 	 *
-	 * If the theme is not shown, this will throw an Error.
+	 * This method can perform either exact name match or a fuzzy (partial) name match.
+	 * To match exactly, supply the full name of the theme as it appears to the user.
+	 * For a fuzzy match, supply partially the name of the them that should be matched.
+	 *
+	 * Example:
+	 * 		partial match: `Twenty Twen` -> [Twenty Twenty, Twenty Twenty-One]
+	 * 		exact match: `Twenty Seventeen` -> Twenty Seventeen
 	 *
 	 * @param {string} [name] Theme name to select.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async select( name: string, options: { random?: boolean } = { random: false } ): Promise< void > {
-		let selectedTheme;
-
-		if ( options.random ) {
-			const selector = `${ selectors.items }.is-actionable${ selectors.excludeActiveTheme }`;
-			selectedTheme = await this.page.waitForSelector( `:nth-match(${ selector }, 1)`, {
-				state: 'visible',
-			} );
-		} else {
-			selectedTheme = await this.page.waitForSelector(
-				`[data-e2e-theme="${ name.replace( /\s/g, '-' ).toLowerCase() }"]${
-					selectors.excludeActiveTheme
-				}`
-			);
-		}
+	async select( name: string ): Promise< void > {
+		const selector = `${ selectors.items }:has-text("${ name }")${ selectors.excludeActiveTheme }`;
+		const numThemes = await this.page.$$( selector ).then( ( themes ) => themes.length );
+		// If the themes matching the selector is 1, we know there is an exact match.
+		// Otherwise, select a random theme matching the requirement.
+		const index = numThemes === 1 ? 1 : getRandomInteger( 0, numThemes );
+		const selectedTheme = await this.page.waitForSelector(
+			`:nth-match(${ selector }, ${ index })`
+		);
 
 		await selectedTheme.hover();
 		await selectedTheme.waitForElementState( 'stable' );

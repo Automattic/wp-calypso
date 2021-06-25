@@ -10,6 +10,17 @@ import config from 'config';
 import { getViewportName } from './browser-helper';
 
 /**
+ * Generate a pseudo-random integer.
+ *
+ * @param {number} min Minimum value. Defaults to 0.
+ * @param {number} max Maximum value.
+ * @returns {number} Generated pseudo-random integer.
+ */
+export function getRandomInteger( min = 0, max: number ): number {
+	return Math.floor( Math.random() * ( max - min + 1 ) ) + min;
+}
+
+/**
  * Assembles and returns the URL to a specific route/asset/query in Calypso.
  *
  * @param {string} route Additional state or page to build into the returned URL.
