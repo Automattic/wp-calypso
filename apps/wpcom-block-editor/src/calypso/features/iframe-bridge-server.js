@@ -20,6 +20,7 @@ import { wordpress } from '@wordpress/icons';
 import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
 import debugFactory from 'debug';
+import { store as coreStore } from '@wordpress/core-data';
 import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../editing-toolkit/editing-toolkit-plugin/wpcom-block-editor-nav-sidebar/src/constants';
 
 /**
@@ -587,7 +588,24 @@ function handleCloseEditor( calypsoPort ) {
 							// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 							className="edit-site-navigation-panel__back-to-dashboard"
 							href={ calypsoifyGutenberg.closeUrl }
-							onClick={ dispatchAction }
+							onClick={ ( e ) => {
+								e.preventDefault();
+
+								const dirtyEntityRecords = select(
+									coreStore
+								).__experimentalGetDirtyEntityRecords();
+								const isDirty = dirtyEntityRecords.length > 0;
+
+								if (
+									! isDirty ||
+									( isDirty &&
+										window.confirm(
+											__( 'You have unsaved changes. If you proceed, they will be lost.' )
+										) )
+								) {
+									dispatchAction( e );
+								}
+							} }
 						/>
 					</SiteEditorDashboardFill>
 				);
