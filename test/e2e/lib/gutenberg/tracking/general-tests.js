@@ -158,7 +158,7 @@ export function createGeneralTests( { it, editorType, postType } ) {
 		);
 	} );
 
-	it( `W button should not trigger the "wpcom_block_editor_close_click" event when it's connected to a sidebar`, async function () {
+	it( `Block editor sidebar toggle hould not trigger the "wpcom_block_editor_close_click" event`, async function () {
 		const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
 
 		await editor.toggleBlockEditorSidebar();
