@@ -17,7 +17,6 @@ export const isFacebookEnabled = true;
 export const isBingEnabled = true;
 export const isGeminiEnabled = false;
 export const isWpcomGoogleAdsGtagEnabled = true;
-export const isJetpackGoogleAnalyticsEnabled = true;
 export const isQuantcastEnabled = false;
 export const isExperianEnabled = true;
 export const isOutbrainEnabled = true;

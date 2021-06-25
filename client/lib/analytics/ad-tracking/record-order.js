@@ -14,7 +14,6 @@ import {
 	isBingEnabled,
 	isQuantcastEnabled,
 	isWpcomGoogleAdsGtagEnabled,
-	isJetpackGoogleAnalyticsEnabled,
 	isFloodlightEnabled,
 	isTwitterEnabled,
 	isPinterestEnabled,
@@ -77,13 +76,14 @@ export async function recordOrder( cart, orderId ) {
 	const wpcomJetpackCartInfo = splitWpcomJetpackCartInfo( cart );
 	debug( 'recordOrder: wpcomJetpackCartInfo:', wpcomJetpackCartInfo );
 
-	recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo );
+	recordOrderInGoogleAds( cart, orderId );
 	recordOrderInFacebook( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInBing( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInQuantcast( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInCriteo( cart, orderId );
 	recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo );
+	recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo );
 
 	// Fire a single tracking event without any details about what was purchased
 
@@ -426,52 +426,29 @@ function recordOrderInBing( cart, orderId, wpcomJetpackCartInfo ) {
  *
  * @param {object} cart - cart as `ResponseCart` object
  * @param {number} orderId - the order id
- * @param {object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
  * @returns {void}
  */
-function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
+function recordOrderInGoogleAds( cart, orderId ) {
 	if ( ! isAdTrackingAllowed() ) {
 		debug( 'recordOrderInGoogleAds: skipping as ad tracking is disallowed' );
 		return;
 	}
 
-	if ( isWpcomGoogleAdsGtagEnabled && wpcomJetpackCartInfo.containsWpcomProducts ) {
-		const wpcomParams = [
+	// MCC-level event.
+	// @TODO Separate WPCOM from Jetpack events.
+	if ( isWpcomGoogleAdsGtagEnabled ) {
+		const params = [
 			'event',
 			'conversion',
 			{
 				send_to: TRACKING_IDS.wpcomGoogleAdsGtagPurchase,
-				value: cart.wpcomCost,
+				value: cart.total_cost,
 				currency: cart.currency,
 				transaction_id: orderId,
 			},
 		];
-		debug( 'recordOrderInGoogleAds: Record WPCom Purchase', wpcomParams );
-		window.gtag( ...wpcomParams );
-	}
-	if ( isJetpackGoogleAnalyticsEnabled && wpcomJetpackCartInfo.containsJetpackProducts ) {
-		const jetpackParams = [
-			'event',
-			'purchase',
-			{
-				send_to: TRACKING_IDS.jetpackGoogleGtag,
-				value: wpcomJetpackCartInfo.jetpackCost,
-				currency: cart.currency,
-				transaction_id: orderId,
-				coupon: cart.coupon_code?.toString() ?? '',
-				items: wpcomJetpackCartInfo.jetpackProducts.map(
-					( { product_id, product_name_en, cost, volume } ) => ( {
-						id: product_id.toString(),
-						name: product_name_en.toString(),
-						quantity: parseInt( volume ),
-						price: cost,
-						brand: GA_PRODUCT_BRAND_JETPACK,
-					} )
-				),
-			},
-		];
-		debug( 'recordOrderInGoogleAds: Record WPCom Jetpack Purchase', jetpackParams );
-		window.gtag( ...jetpackParams );
+		debug( 'recordOrderInGoogleAds: Record WPCom Purchase', params );
+		window.gtag( ...params );
 	}
 }
 
@@ -531,6 +508,41 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo )
 	window.gtag( ...params );
 
 	debug( 'recordOrderInGAEnhancedEcommerce: Record WPCom Purchase', params );
+}
+
+/**
+ * Records an order in the Jetpack.com GA4 Property
+ *
+ * @param {object} cart - cart as `ResponseCart` object
+ * @param {number} orderId - the order id
+ * @param {object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
+ * @returns {void}
+ */
+function recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo ) {
+	if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
+		const jetpackParams = [
+			'event',
+			'purchase',
+			{
+				send_to: TRACKING_IDS.jetpackGoogleGtag,
+				value: wpcomJetpackCartInfo.jetpackCost,
+				currency: cart.currency,
+				transaction_id: orderId,
+				coupon: cart.coupon_code?.toString() ?? '',
+				items: wpcomJetpackCartInfo.jetpackProducts.map(
+					( { product_id, product_name_en, cost, volume } ) => ( {
+						id: product_id.toString(),
+						name: product_name_en.toString(),
+						quantity: parseInt( volume ),
+						price: cost,
+						brand: GA_PRODUCT_BRAND_JETPACK,
+					} )
+				),
+			},
+		];
+		debug( 'recordOrderInJetpackGA: Record Jetpack Purchase', jetpackParams );
+		window.gtag( ...jetpackParams );
+	}
 }
 
 /**
