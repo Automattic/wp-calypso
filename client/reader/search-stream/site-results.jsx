@@ -48,7 +48,7 @@ class SiteResults extends React.Component {
 
 	render() {
 		const { query, searchResults, width, sort, showLastUpdatedDate } = this.props;
-		const isEmpty = query && query.length > 0 && searchResults && searchResults.length === 0;
+		const isEmpty = query?.length > 0 && searchResults?.length === 0;
 
 		if ( isEmpty ) {
 			return (
