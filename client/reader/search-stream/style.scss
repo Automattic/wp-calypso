@@ -403,3 +403,31 @@
 		}
 	}
 }
+
+.search-stream__site-results-none {
+	text-align: center;
+	margin-top: 1rem;
+}
+
+// Quick fixes for too-much-whitespace regression. The errant 'SpacerDiv' is likely the real culprit.
+.search-stream__single-column-results {
+	margin-top: -15px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-top: -40px;
+	}
+
+	@include breakpoint-deprecated( '>960px' ) {
+		margin-top: -45px;
+	}
+}
+
+.search-stream__results {
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-top: -30px;
+	}
+
+	@include breakpoint-deprecated( '>960px' ) {
+		margin-top: -45px;
+	}
+}

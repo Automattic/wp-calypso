@@ -1,5 +1,5 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -7,7 +7,7 @@ import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import {
 	getReaderFeedsForQuery,
@@ -48,6 +48,15 @@ class SiteResults extends React.Component {
 
 	render() {
 		const { query, searchResults, width, sort, showLastUpdatedDate } = this.props;
+		const isEmpty = query && query.length > 0 && searchResults && searchResults.length === 0;
+
+		if ( isEmpty ) {
+			return (
+				<div className="search-stream__site-results-none">
+					{ this.props.translate( 'No sites found.' ) }
+				</div>
+			);
+		}
 
 		return (
 			<div>
