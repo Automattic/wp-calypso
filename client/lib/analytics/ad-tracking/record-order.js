@@ -454,7 +454,7 @@ function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
 			'event',
 			'purchase',
 			{
-				send_to: TRACKING_IDS.jetpackGoogleAdsGtag,
+				send_to: TRACKING_IDS.jetpackGoogleGtag,
 				value: wpcomJetpackCartInfo.jetpackCost,
 				currency: cart.currency,
 				transaction_id: orderId,
