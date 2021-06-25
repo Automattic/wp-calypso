@@ -18,7 +18,7 @@ import {
 } from '../plans/jetpack-plans/plan-upgrade/constants';
 import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
 import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
-import { getSiteBySlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import GSuiteNudge from './gsuite-nudge';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
@@ -44,8 +44,6 @@ import UpsellNudge, {
 } from './upsell-nudge';
 import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
 import { TRUENAME_COUPONS } from 'calypso/lib/domains';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { gaRecordPageView } from 'calypso/lib/analytics/ga';
 
 const debug = debugFactory( 'calypso:checkout-controller' );
 
@@ -55,10 +53,6 @@ export function checkout( context, next ) {
 	const state = context.store.getState();
 	const isLoggedOut = ! isUserLoggedIn( state );
 	const selectedSite = getSelectedSite( state );
-	// TODO replicates logic from Jetpack secure checkout - conslidate?
-	const isJetpackNotAtomic = selectedSite?.ID
-		? isJetpackSite( state, selectedSite.ID ) && ! isAtomicSite( state, selectedSite.ID )
-		: false;
 	const hasSite = getCurrentUserVisibleSiteCount( state ) >= 1;
 	const isDomainOnlyFlow = context.query?.isDomainOnly === '1';
 	const isDisallowedForSitePicker =
@@ -96,11 +90,6 @@ export function checkout( context, next ) {
 	context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
 
 	setSectionMiddleware( { name: 'checkout' } )( context );
-
-	// log Jetpack.com x WordPress.com gtag page
-	if ( isJetpackCheckout || isJetpackNotAtomic ) {
-		gaRecordPageView( context.path, i18n.translate( 'Checkout' ), true );
-	}
 
 	// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
 	const couponCode = context.query.coupon || context.query.code || getRememberedCoupon();
