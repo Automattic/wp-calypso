@@ -32,7 +32,7 @@ export class NewPostFlow {
 	async newPostFromNavbar(): Promise< void > {
 		await SidebarComponent.Expect( this.page );
 		const navbarComponent = await NavbarComponent.Expect( this.page );
-		await navbarComponent.clickNewPost();
+		await navbarComponent.clickWriteButton();
 		await GutenbergEditorPage.Expect( this.page );
 	}
 }

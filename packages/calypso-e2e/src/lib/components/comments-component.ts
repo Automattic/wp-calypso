@@ -10,12 +10,10 @@ import { Page, ElementHandle } from 'playwright';
 
 const selectors = {
 	// Comment
-	commentArea: '.comments-area',
 	commentTextArea: '#comment',
-	submitButton: '.form-submit #comment-submit',
+	submitButton: 'input:has-text("Post Comment")',
 
 	// Comment like
-	commentsList: '.comment-list',
 	comments: '.comment-content',
 	likeButton: '.comment-like-link',
 	notLiked: '.comment-not-liked',
@@ -66,8 +64,6 @@ export class CommentsComponent extends BaseContainer {
 	async _click( selector: string | number ): Promise< ElementHandle > {
 		let commentToLike;
 
-		await this.page.waitForSelector( selectors.commentsList, { state: 'visible' } );
-
 		// Retrieve the nth comment on the page.
 		if ( typeof selector === 'number' ) {
 			commentToLike = await this.page.waitForSelector(
@@ -90,7 +86,12 @@ export class CommentsComponent extends BaseContainer {
 
 		// Click the like button and wait until the animations are done.
 		const likeButton = await commentToLike.waitForSelector( selectors.likeButton );
-		await Promise.all( [ likeButton.click(), likeButton.waitForElementState( 'stable' ) ] );
+		await Promise.all( [
+			likeButton.waitForElementState( 'stable' ),
+			// The loading attribute is added to the class temporarily while the animation is processing.
+			likeButton.waitForSelector( `${ selectors.likeButton }.loading`, { state: 'hidden' } ),
+			likeButton.click(),
+		] );
 
 		// Return the comment to the caller for further processing.
 		return commentToLike;
