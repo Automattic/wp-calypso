@@ -3,6 +3,8 @@
  * External dependencies
  */
 import config from 'config';
+import path from 'path';
+import { mkdtemp } from 'fs/promises';
 
 /**
  * Internal dependencies
