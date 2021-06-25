@@ -9,7 +9,7 @@ import { BaseContainer } from '../base-container';
 import { Page } from 'playwright';
 
 const selectors = {
-	main: '.support-article-dialog__base .dialog__content',
+	visitArticleButton: 'text="Visit article"',
 };
 
 /**
@@ -34,6 +34,6 @@ export class SupportArticleComponent extends BaseContainer {
 	 *
 	 */
 	async articleDisplayed(): Promise< void > {
-		await this.page.waitForSelector( selectors.main );
+		await this.page.waitForSelector( selectors.visitArticleButton );
 	}
 }

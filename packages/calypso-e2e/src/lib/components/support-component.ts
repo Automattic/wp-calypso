@@ -18,7 +18,7 @@ const selectors = {
 	// Components
 	supportButton: '.inline-help__button',
 	supportPopover: '.inline-help__popover',
-	searchInput: '.form-text-input.search__input',
+	searchInput: '[placeholder="Search for help…"]',
 	spinner: '.spinner',
 	clearSearch: '[aria-label="Close Search"]',
 
@@ -29,7 +29,7 @@ const selectors = {
 	// Result types
 	supportItems: '[aria-labelledby="inline-search--api_help"] li',
 	adminItems: '[aria-labelledby="inline-search--admin_section"] li',
-	emptyResults: '.inline-help__empty-results',
+	emptyResults: 'text="Sorry, there were no matches."',
 
 	// Article
 	readMoreButton: 'text=Read more',
