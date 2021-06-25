@@ -455,9 +455,19 @@ function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
 			'purchase',
 			{
 				send_to: TRACKING_IDS.jetpackGoogleAdsGtag,
-				value: cart.jetpackCost,
+				value: wpcomJetpackCartInfo.jetpackCost,
 				currency: cart.currency,
 				transaction_id: orderId,
+				coupon: cart.coupon_code?.toString() ?? '',
+				items: wpcomJetpackCartInfo.jetpackProducts.map(
+					( { product_id, product_name_en, cost, volume } ) => ( {
+						id: product_id.toString(),
+						name: product_name_en.toString(),
+						quantity: parseInt( volume ),
+						price: cost,
+						brand: GA_PRODUCT_BRAND_JETPACK,
+					} )
+				),
 			},
 		];
 		debug( 'recordOrderInGoogleAds: Record WPCom Jetpack Purchase', jetpackParams );
