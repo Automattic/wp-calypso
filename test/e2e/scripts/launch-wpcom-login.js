@@ -2,10 +2,11 @@
  * Internal dependencies
  */
 import * as driverManager from '../lib/driver-manager.js';
+import path from 'path';
 
 import LoginFlow from '../lib/flows/login-flow.js';
 
-const driver = driverManager.startBrowser();
+const driver = driverManager.startBrowser( { tempDir: path.join( __dirname, '..' ) } );
 let accountName = 'defaultUser';
 
 // Look for command line arguments

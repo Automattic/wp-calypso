@@ -53,7 +53,7 @@ if ( isVideoEnabled() ) {
 
 const browserHooks = buildBrowserHooks();
 beforeAll( async () => {
-	const driver = await browserHooks.createBrowser();
+	const driver = await browserHooks.createBrowser({ tempDir });
 	global.__BROWSER__ = driver;
 }, startBrowserTimeoutMS );
 

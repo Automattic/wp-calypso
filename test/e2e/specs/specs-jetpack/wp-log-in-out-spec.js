@@ -20,7 +20,6 @@ import LoginFlow from '../../lib/flows/login-flow';
 import WPAdminLogonPage from '../../lib/pages/wp-admin/wp-admin-logon-page.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
@@ -28,10 +27,7 @@ describe( `[${ host }] Authentication: (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
 	let driver;
 
-	before( 'Start browser', async function () {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-	} );
+	beforeAll( () => ( driver = global.__BROWSER__ ) );
 
 	describe( 'Logging In and Out: @jetpack', function () {
 		before( async function () {
