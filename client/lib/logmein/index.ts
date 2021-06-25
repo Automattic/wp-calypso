@@ -47,7 +47,6 @@ export function logmeinUrl( url: string ): string {
 		return url;
 	}
 
-	// Replace unmapped urls with their mapped url counterparts (*.wordpress.com => mapped.example.com)
 	const sites = Object.values( getSitesItems( reduxStore.getState() ) );
 
 	// We only want to logmein into valid sites that belong to the user (for now that is mapped simple sites)
@@ -71,6 +70,15 @@ export function logmeinUrl( url: string ): string {
 	return newurl.toString();
 }
 
+/**
+ * This function attempts to figure out if a site is a mapped simple site.
+ *
+ * There are some redundant checks here, for example, vip and atomic sites are all
+ * jetpack sites. We eventually want to support atomic sites with logmein so I'm erring
+ * on being specific about the exclusions.
+ *
+ * @param site Site object from redux state
+ */
 function isValidLogmeinSite( site: any ): boolean {
 	return (
 		! site.is_vip &&
@@ -89,8 +97,9 @@ export function setLogmeinReduxStore( store: Store ): void {
 
 export function attachLogmein( store: Store ): void {
 	setLogmeinReduxStore( store );
-	document.addEventListener( 'click', logmeinOnClick, false );
-	document.addEventListener( 'contextmenu', logmeinOnRightClick, false );
+	document.addEventListener( 'click', logmeinOnClick, false ); // left click, ctrl+click, focus+enter, touch click
+	document.addEventListener( 'auxclick', logmeinOnAuxClick, false ); // mouse middle
+	document.addEventListener( 'contextmenu', logmeinOnRightClick, false ); // right click
 }
 
 const seen: Record< Host, boolean > = {};
@@ -98,7 +107,7 @@ export function logmeinOnClick( event: MouseEvent ): void {
 	const link = ( event.target as HTMLElement ).closest( 'a' );
 
 	if ( link && link.href ) {
-		// Only apply logmein to each host once
+		// Only apply logmein to each host once to reduce excessive redirect flows, weak persistence is intended
 		const host = new URL( String( link.href ), INVALID_URL ).host;
 		if ( ! seen[ host ] ) {
 			link.href = logmeinUrl( link.href );
@@ -110,7 +119,20 @@ export function logmeinOnClick( event: MouseEvent ): void {
 export function logmeinOnRightClick( event: MouseEvent ): void {
 	const link = ( event.target as HTMLElement ).closest( 'a' );
 
+	// Always apply logmein on right click, we can't use the `seen` cache here because right clicks
+	// won't always result in visiting the redirect url
 	if ( link && link.href ) {
 		link.href = logmeinUrl( link.href );
 	}
+}
+
+export function logmeinOnAuxClick( event: MouseEvent ): void {
+	// auxclick fires on right click but fires too late to apply the redirect to the new window/tab
+	// for right click, rely on contextmenu events which fire early enough
+	if ( event.button === 2 ) {
+		return;
+	}
+
+	// Middle click (auxclick) events should follow the same behavior as left click
+	logmeinOnClick( event );
 }
