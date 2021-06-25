@@ -67,22 +67,22 @@ class BulkEditContactInfo extends React.Component {
 
 	componentDidUpdate() {
 		const { new_user_email, user_email } = this.props.userSettings ?? {};
-		const email = new_user_email?.length > 0 ? new_user_email : user_email;
+		const accountEmail = new_user_email?.length > 0 ? new_user_email : user_email;
 
 		if (
-			( email ?? '' ).length > 0 &&
+			( accountEmail ?? '' ).length > 0 &&
 			( this.state.contactDetails?.email ?? '' ).length === 0 &&
 			false === this.state.hasSetInitialContactEmail
 		) {
-			this.setInitialContactEmail( email );
+			this.setInitialContactEmail( accountEmail );
 		}
 
 		if (
 			Object.keys( this.props.contactDetailsCache ?? {} ).length > 0 &&
 			false === this.state.hasSetContactDetailsFromCache
 		) {
-			const contactDetailsCopy = JSON.parse( JSON.stringify( this.props.contactDetailsCache ) );
-			this.setContactDetailsFromCache( contactDetailsCopy );
+			const { email, ...contactDetailsCache } = this.props.contactDetailsCache;
+			this.setContactDetailsFromCache( contactDetailsCache );
 		}
 	}
 
@@ -114,7 +114,6 @@ class BulkEditContactInfo extends React.Component {
 	};
 
 	setContactDetailsFromCache = ( data ) => {
-		delete data.email;
 		this.setState( { hasSetContactDetailsFromCache: true }, () => {
 			this.updateDomainContactFields( data );
 		} );
