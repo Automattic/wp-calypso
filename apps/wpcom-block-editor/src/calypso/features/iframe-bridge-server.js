@@ -594,11 +594,11 @@ function handleCloseEditor( calypsoPort ) {
 								const dirtyEntityRecords = select(
 									coreStore
 								).__experimentalGetDirtyEntityRecords();
-								const isDirty = dirtyEntityRecords.length > 0;
+								const hasUnsavedChanges = dirtyEntityRecords.length > 0;
 
 								if (
-									! isDirty ||
-									( isDirty &&
+									! hasUnsavedChanges ||
+									( hasUnsavedChanges &&
 										window.confirm(
 											__( 'You have unsaved changes. If you proceed, they will be lost.' )
 										) )
