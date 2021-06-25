@@ -5,8 +5,8 @@ import { BaseContainer } from '../base-container';
 
 const selectors = {
 	// Main themes listing
-	themes: '.themes__content',
 	items: '.card.theme',
+	excludeActiveTheme: ':not(.is-active)',
 
 	// Transitions
 	spinner: '.themes__content > .spinner',
@@ -33,7 +33,6 @@ export class ThemesPage extends BaseContainer {
 		await Promise.all( [
 			this.page.waitForSelector( selectors.spinner, { state: 'hidden' } ),
 			this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } ),
-			this.page.waitForLoadState( 'domcontentloaded' ),
 		] );
 	}
 
@@ -61,7 +60,7 @@ export class ThemesPage extends BaseContainer {
 	 */
 	async search( keyword: string ): Promise< void > {
 		const searchInput = await this.page.waitForSelector( selectors.searchInput );
-		await searchInput.fill( keyword );
+		await Promise.all( [ this.page.waitForNavigation(), searchInput.fill( keyword ) ] );
 		await this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } );
 	}
 
@@ -70,19 +69,28 @@ export class ThemesPage extends BaseContainer {
 	 *
 	 * If the theme is not shown, this will throw an Error.
 	 *
-	 * @param {string} name Theme name to select.
+	 * @param {string} [name] Theme name to select.
 	 * @returns {Promise<void>} No return value.
-	 * @throws {Error} If theme is not shown on page.
 	 */
-	async select( name: string ): Promise< void > {
-		const selectedTheme = await this.page.waitForSelector(
-			`${ selectors.items }:has-text("${ name }")`,
-			{ state: 'visible' }
-		);
+	async select( name: string, { random = false }: { random: boolean } ): Promise< void > {
+		let selectedTheme;
 
-		if ( ! selectedTheme ) {
-			throw new Error( `Requested theme ${ name } is not shown on page.` );
+		if ( random ) {
+			const selector = `${ selectors.items }.is-actionable${ selectors.excludeActiveTheme }`;
+			selectedTheme = await this.page.waitForSelector( `:nth-match(${ selector }, 1)`, {
+				state: 'visible',
+			} );
+		} else {
+			selectedTheme = await this.page.waitForSelector(
+				`[data-e2e-theme="${ name.replace( /\s/g, '-' ).toLowerCase() }"]${
+					selectors.excludeActiveTheme
+				}`
+			);
 		}
-		await selectedTheme.click();
+
+		await selectedTheme.hover();
+		await selectedTheme.waitForElementState( 'stable' );
+
+		await Promise.all( [ this.page.waitForNavigation(), selectedTheme.click() ] );
 	}
 }

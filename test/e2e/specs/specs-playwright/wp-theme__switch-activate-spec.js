@@ -14,7 +14,7 @@ describe( DataHelper.createSuiteTitle( 'Theme: Activate' ), function () {
 		let sidebarComponent;
 		let themesPage;
 		let themesDetailPage;
-		const themeName = 'Twenty Twenty';
+		const themeName = 'Twenty Twen';
 		const user = 'defaultUser';
 
 		it( 'Log In', async function () {
@@ -33,17 +33,17 @@ describe( DataHelper.createSuiteTitle( 'Theme: Activate' ), function () {
 			await themesPage.search( themeName );
 		} );
 
-		it( `Select ${ themeName }`, async function () {
-			await themesPage.select( themeName );
-		} );
-
-		it( 'See theme detail page', async function () {
-			themesDetailPage = await ThemesDetailPage.Expect( this.page );
+		it( `Select a theme starting with ${ themeName }`, async function () {
+			await themesPage.select( themeName, { random: true } );
 		} );
 
 		it( 'Activate theme', async function () {
-			await this.page.pause();
+			themesDetailPage = await ThemesDetailPage.Expect( this.page );
 			await themesDetailPage.activate();
+		} );
+
+		it( 'Load theme customizer', async function () {
+			await themesDetailPage.customizeSite();
 		} );
 	} );
 } );
