@@ -6,6 +6,11 @@ import { PreviewComponent } from '../components';
 
 const selectors = {
 	demoPane: '.theme__sheet-screenshot',
+	activateDesignButton: 'button >> text="Activate this design"',
+
+	// Activate modal
+	activateModal: '.themes__auto-loading-homepage-modal',
+	activateModalButton: '.dialog__action-buttons button:has-text("Activate")',
 };
 
 /**
@@ -22,5 +27,12 @@ export class ThemesDetailPage extends BaseContainer {
 	async preview(): Promise< void > {
 		await this.page.click( selectors.demoPane );
 		await PreviewComponent.Expect( this.page );
+	}
+
+	async activate(): Promise< void > {
+		await this.page.pause();
+		await this.page.click( selectors.activateDesignButton );
+		await this.page.waitForSelector( selectors.activateModal );
+		await this.page.click( selectors.activateModalButton );
 	}
 }
