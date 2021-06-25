@@ -29,7 +29,8 @@ const selectors = {
 	// Result types
 	supportItems: '[aria-labelledby="inline-search--api_help"] li',
 	adminItems: '[aria-labelledby="inline-search--admin_section"] li',
-	emptyResults: 'text="Sorry, there were no matches."',
+	emptyResults:
+		'text="Sorry, there were no matches. Here are some of the most searched for help pages for this section:"',
 
 	// Article
 	readMoreButton: 'text=Read more',
@@ -169,20 +170,15 @@ export class SupportComponent extends BaseContainer {
 	 * Checks whether popover search shows no results as expected.
 	 *
 	 * @returns {Promise<void>} No return value.
-	 * @throws {Error} If any search results are shown unexpectedly.
 	 */
 	async noResults(): Promise< void > {
 		// Note that even for a search query like ;;;ppp;;; that produces no search results,
 		// some links are shown in the popover under the heading `Helpful resources for this section`.
-		try {
-			const adminResults = await this.getAdminResults();
-			assert.deepStrictEqual( [], adminResults );
-			const supportResults = await this.getSupportResults();
-			assert.deepStrictEqual( [], supportResults );
-			await this.page.waitForSelector( selectors.emptyResults );
-		} catch ( err ) {
-			throw new Error( `Support search results are shown unexpectedly.` );
-		}
+		const adminResults = await this.getAdminResults();
+		assert.deepStrictEqual( [], adminResults );
+		const supportResults = await this.getSupportResults();
+		assert.deepStrictEqual( [], supportResults );
+		await this.page.waitForSelector( selectors.emptyResults );
 	}
 
 	/**
