@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { allDomains } from 'state/all-domains/init';
+import { allDomains } from 'calypso/state/all-domains/init';
 
 /**
  * Determines whether the list of domains is being requested.

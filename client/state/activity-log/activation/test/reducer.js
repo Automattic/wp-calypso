@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -12,7 +11,7 @@ import {
 	REWIND_ACTIVATE_FAILURE,
 	REWIND_ACTIVATE_REQUEST,
 	REWIND_ACTIVATE_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 /**
  * Constants
@@ -23,22 +22,22 @@ const OTHER_SITE_ID = 987654;
 describe( '#activationRequesting()', () => {
 	test( 'should be true on request', () => {
 		const state = activationRequesting( undefined, createSiteAction( REWIND_ACTIVATE_REQUEST ) );
-		expect( state[ SITE_ID ] ).to.be.true;
+		expect( isRewindActivating( state, SITE_ID ) ).toBe( true );
 	} );
 
 	test( 'should be false on success', () => {
 		const state = activationRequesting( undefined, createSiteAction( REWIND_ACTIVATE_SUCCESS ) );
-		expect( state[ SITE_ID ] ).to.be.false;
+		expect( isRewindActivating( state, SITE_ID ) ).toBe( false );
 	} );
 
 	test( 'should be false on failure', () => {
 		const state = activationRequesting( undefined, createSiteAction( REWIND_ACTIVATE_FAILURE ) );
-		expect( state[ SITE_ID ] ).to.be.false;
+		expect( isRewindActivating( state, SITE_ID ) ).toBe( false );
 	} );
 
 	test( 'should preserve other sites', () => {
 		const prevState = deepFreeze( {
-			[ OTHER_SITE_ID ]: false,
+			[ OTHER_SITE_ID ]: true,
 		} );
 
 		let state = prevState;
@@ -49,10 +48,15 @@ describe( '#activationRequesting()', () => {
 			REWIND_ACTIVATE_SUCCESS,
 		].forEach( ( type ) => {
 			state = activationRequesting( state, createSiteAction( type ) );
-			expect( state[ OTHER_SITE_ID ] ).to.be.false;
+			expect( isRewindActivating( state, OTHER_SITE_ID ) ).toBe( true );
 		} );
 	} );
 } );
+
+// mock the real isRewindActivating selector
+function isRewindActivating( state, siteId ) {
+	return state[ siteId ] ?? false;
+}
 
 function createSiteAction( type ) {
 	return {

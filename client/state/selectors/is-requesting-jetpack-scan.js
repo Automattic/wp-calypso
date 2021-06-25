@@ -7,7 +7,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/data-layer/wpcom/sites/scan';
+import 'calypso/state/data-layer/wpcom/sites/scan';
 
 /**
  * Returns true if we are currently making a request to retrieve Jetpack Scan status. False otherwise.

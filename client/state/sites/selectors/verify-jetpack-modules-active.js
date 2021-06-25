@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { every } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import isJetpackModuleActive from './is-jetpack-module-active';
@@ -27,5 +22,5 @@ export default function verifyJetpackModulesActive( state, siteId, moduleIds ) {
 		moduleIds = [ moduleIds ];
 	}
 
-	return every( moduleIds, ( moduleId ) => isJetpackModuleActive( state, siteId, moduleId ) );
+	return moduleIds.every( ( moduleId ) => isJetpackModuleActive( state, siteId, moduleId ) );
 }

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useTranslate } from 'i18n-calypso';
@@ -9,14 +8,17 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { ADDING_GOOGLE_APPS_TO_YOUR_SITE } from 'lib/url/support';
+import { ADDING_GSUITE_TO_YOUR_SITE } from 'calypso/lib/url/support';
+import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const GSuiteLearnMore = ( { onLearnMoreClick } ) => {
+const noop = () => {};
+
+const GSuiteLearnMore = ( { onLearnMoreClick, productSlug } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -24,14 +26,18 @@ const GSuiteLearnMore = ( { onLearnMoreClick } ) => {
 			<p>
 				{ translate(
 					'{{strong}}No setup or software required.{{/strong}} ' +
-						'{{a}}Learn more about integrating G Suite with your site.{{/a}}',
+						'{{a}}Learn more about integrating %(googleMailService)s with your site.{{/a}}',
 					{
+						args: {
+							googleMailService: getGoogleMailServiceFamily( productSlug ),
+						},
+						comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
 						components: {
 							strong: <strong />,
 							a: (
 								<a
 									className="gsuite-learn-more__link"
-									href={ ADDING_GOOGLE_APPS_TO_YOUR_SITE }
+									href={ ADDING_GSUITE_TO_YOUR_SITE }
 									target="_blank"
 									rel="noopener noreferrer"
 									onClick={ onLearnMoreClick }

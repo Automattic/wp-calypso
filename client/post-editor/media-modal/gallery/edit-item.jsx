@@ -9,10 +9,10 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import MediaLibraryListItem from 'my-sites/media-library/list-item';
+import MediaLibraryListItem from 'calypso/my-sites/media-library/list-item';
 import EditorMediaModalGalleryCaption from './caption';
 import EditorMediaModalGalleryRemoveButton from './remove-button';
-import canCurrentUser from 'state/selectors/can-current-user';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
 
 class EditorMediaModalGalleryEditItem extends Component {
 	static propTypes = {

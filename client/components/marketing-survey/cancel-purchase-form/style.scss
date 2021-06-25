@@ -1,6 +1,18 @@
-.dialog__content .cancel-purchase-form__reason-input {
+.dialog__content input[type='text'].cancel-purchase-form__reason-input.form-text-input {
 	margin: 4px 0 0 24px;
 	width: calc( 100% - 24px );
+}
+
+.dialog__content .cancel-purchase-form__reason-select {
+	margin: 6px 0 0 24px;
+	&.form-label {
+		font-weight: 600;
+		font-size: 0.75rem;
+	}
+
+	.select-dropdown {
+		margin: 6px 0;
+	}
 }
 
 .cancel-purchase-form__dialog {
@@ -14,3 +26,7 @@
 	}
 }
 
+.dialog__action-buttons {
+	display: flex;
+	justify-content: flex-end;
+}

@@ -8,7 +8,8 @@ const REGEXP_SERIALIZED_QUERY = /^((\d+):)?(.*)$/;
  * @returns {object}                 Deserialized posts query details
  */
 export function getDeserializedPostsQueryDetails( serializedQuery ) {
-	let siteId, query;
+	let siteId;
+	let query;
 
 	const matches = serializedQuery.match( REGEXP_SERIALIZED_QUERY );
 	if ( matches ) {

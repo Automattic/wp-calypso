@@ -9,8 +9,8 @@
 // Helper Functions
 //------------------------------------------------------------------------------
 
-const getCallee = require( '../util/get-callee' ),
-	getTextContentFromNode = require( '../util/get-text-content-from-node' );
+const getCallee = require( '../util/get-callee' );
+const getTextContentFromNode = require( '../util/get-text-content-from-node' );
 
 //------------------------------------------------------------------------------
 // Rule Definition
@@ -25,7 +25,9 @@ const rule = ( module.exports = function ( context ) {
 
 			node.arguments.forEach( function ( arg ) {
 				const string = getTextContentFromNode( arg );
-				let problem, problemString, problemsByCharCode;
+				let problem;
+				let problemString;
+				let problemsByCharCode;
 
 				if ( ! string ) {
 					return;

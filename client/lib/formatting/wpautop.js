@@ -24,8 +24,8 @@ export function wpautop( pee ) {
 		'|form|map|area|blockquote|address|math|style|p|h[1-6]|hr|fieldset|legend|section' +
 		'|article|aside|hgroup|header|footer|nav|figure|figcaption|details|menu|summary';
 
-	let preserve_linebreaks = false,
-		preserve_br = false;
+	let preserve_linebreaks = false;
+	let preserve_br = false;
 
 	if ( pee.indexOf( '<object' ) !== -1 ) {
 		pee = pee.replace( /<object[\s\S]+?<\/object>/g, function ( a ) {

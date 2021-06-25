@@ -12,32 +12,26 @@
 	flex-direction: column;
 	box-sizing: border-box;
 	top: 0;
-	margin-top: 47px;
+	margin-top: var( --masterbar-height );
 	left: 273px;
 	right: 0;
 	bottom: 0;
 }
 
 @include breakpoint-deprecated( '>1040px' ) {
-
 	.happychat__page .happychat__timeline-message {
 		max-width: 80%;
 	}
-
 }
 
 @include breakpoint-deprecated( '<960px' ) {
-
 	.happychat__page {
 		left: 229px;
 	}
-
 }
 
 @include breakpoint-deprecated( '<660px' ) {
-
 	.happychat__page {
-			left: 0;
+		left: 0;
 	}
-
 }

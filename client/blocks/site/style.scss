@@ -15,13 +15,14 @@
 		pointer-events: none;
 
 		.site-icon {
-			animation: pulse-light 0.8s ease-in-out infinite;
+			animation: pulse-light 1.8s ease-in-out infinite;
+			background-color: var( --color-neutral-10 );
 		}
 
 		.site__title,
 		.site__domain {
-			animation: pulse-light 0.8s ease-in-out infinite;
-			background-color: var( --color-neutral-0 );
+			animation: pulse-light 1.8s ease-in-out infinite;
+			background-color: var( --color-neutral-10 );
 			color: transparent;
 			width: 95%;
 
@@ -137,8 +138,6 @@
 }
 
 .site__home {
-	background: var( --color-sidebar-menu-selected-background );
-	color: var( --color-sidebar-menu-selected-text );
 	display: block;
 	width: 32px;
 	height: 32px;
@@ -167,8 +166,8 @@
 }
 
 .site__badge {
-	background: var( --color-sidebar-menu-hover-background );
-	color: var( --color-sidebar-menu-hover-text );
+	color: var( --color-neutral-60 );
+	background-color: var( --color-neutral-5 );
 	font-size: $font-body-extra-small;
 	border-radius: 12px;
 	clear: both;
@@ -178,13 +177,20 @@
 	padding: 1px 10px;
 }
 
-.notouch .site-selector.is-hover-enabled .site:hover .site__badge {
-	background: var( --color-sidebar-background );
-	color: var( --color-sidebar-text );
-}
-
 .current-site .site:hover .site__badge,
 .purchases-site .site:hover .site__badge {
 	background: var( --color-sidebar-menu-hover-background );
 	color: var( --color-sidebar-menu-hover-text );
+}
+
+.layout__secondary {
+	.site__home {
+		background: var( --color-sidebar-menu-selected-background );
+		color: var( --color-sidebar-menu-selected-text );
+	}
+
+	.site__badge {
+		background: var(--color-sidebar-menu-hover-background);
+    	color: var(--color-sidebar-menu-hover-text);
+	}
 }

@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 /**
  * External dependencies
  */
@@ -9,14 +8,22 @@ import { debounce } from 'lodash';
  */
 import { useState } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
-import { __experimentalInserterMenuExtension as InserterMenuExtension } from '@wordpress/block-editor';
-
-/* eslint-enable import/no-extraneous-dependencies */
+import {
+	__unstableInserterMenuExtension,
+	__experimentalInserterMenuExtension,
+} from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
  */
 import tracksRecordEvent from './track-record-event';
+
+// InserterMenuExtension has been made unstable in this PR: https://github.com/WordPress/gutenberg/pull/31417 / Gutenberg v10.7.0-rc.1.
+// We need to support both symbols until we're sure Gutenberg < v10.7.x is not used anymore in WPCOM.
+const InserterMenuExtension =
+	typeof __unstableInserterMenuExtension !== 'undefined'
+		? __unstableInserterMenuExtension
+		: __experimentalInserterMenuExtension;
 
 const InserterMenuTrackingEvent = function () {
 	const [ searchTerm, setSearchTerm ] = useState( '' );

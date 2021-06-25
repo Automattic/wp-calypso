@@ -9,18 +9,10 @@ import 'moment-timezone'; // monkey patches the existing moment.js
 /**
  * Internal dependencies
  */
-import ContactFormNotice from 'me/help/contact-form-notice/index';
-import { useLocalizedMoment } from 'components/localized-moment';
+import ContactFormNotice from 'calypso/me/help/contact-form-notice/index';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 
 const DATE_FORMAT = 'LLL';
-
-export const easterHolidayName = translate( 'Easter', {
-	context: 'Holiday name',
-} );
-
-export const xmasHolidayName = translate( 'Christmas', {
-	context: 'Holiday name',
-} );
 
 const ChatHolidayClosureNotice = ( { closesAt, compact, displayAt, holidayName, reopensAt } ) => {
 	const moment = useLocalizedMoment();
@@ -28,7 +20,8 @@ const ChatHolidayClosureNotice = ( { closesAt, compact, displayAt, holidayName, 
 	const currentDate = moment();
 	const guessedTimezone = moment.tz.guess();
 
-	let heading, message;
+	let heading;
+	let message;
 
 	if ( currentDate.isBefore( closesAt ) ) {
 		heading = translate( 'Live chat will be closed for %(holidayName)s', {

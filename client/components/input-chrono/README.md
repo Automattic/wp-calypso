@@ -1,31 +1,26 @@
-InputChrono
-============
+# InputChrono
 
 React component that creates a Date object from a user-entered textual date description.
 
 ## Example Usage
 
 ```js
-import InputChrono from 'components/input-chrono';
+import InputChrono from 'calypso/components/input-chrono';
 
 export default class extends React.Component {
 	// ...
 
 	onSet( date ) {
 		console.log( `date %s`, date );
-	},
+	}
 
 	render() {
-		return <InputChrono onSet={ this.onSet }/>;
-	} 
+		return <InputChrono onSet={ this.onSet } />;
+	}
 }
 ```
 
----
-
-## InputChrono
-
-#### Props
+### Props
 
 `value` - **optional** initial input value
 

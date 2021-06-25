@@ -9,21 +9,22 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
+import HeaderCake from 'calypso/components/header-cake';
 import { CompactCard } from '@automattic/components';
-import getConciergeSignupForm from 'state/selectors/get-concierge-signup-form';
-import getConciergeScheduleId from 'state/selectors/get-concierge-schedule-id';
-import getConciergeAppointmentTimespan from 'state/selectors/get-concierge-appointment-timespan';
-import { getCurrentUserId, getCurrentUserLocale } from 'state/current-user/selectors';
-import { bookConciergeAppointment, requestConciergeInitial } from 'state/concierge/actions';
+import getConciergeSignupForm from 'calypso/state/selectors/get-concierge-signup-form';
+import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
+import getConciergeAppointmentTimespan from 'calypso/state/selectors/get-concierge-appointment-timespan';
+import { getCurrentUserId, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { bookConciergeAppointment, requestConciergeInitial } from 'calypso/state/concierge/actions';
 import AvailableTimePicker from '../shared/available-time-picker';
 import {
 	CONCIERGE_STATUS_BOOKED,
 	CONCIERGE_STATUS_BOOKING,
 	CONCIERGE_STATUS_BOOKING_ERROR,
 } from '../constants';
-import { recordTracksEvent } from 'state/analytics/actions';
-import ExternalLinkWithTracking from 'components/external-link/with-tracking';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 class CalendarStep extends Component {
 	static propTypes = {
@@ -81,27 +82,37 @@ class CalendarStep extends Component {
 			<div>
 				<HeaderCake onClick={ onBack }>{ translate( 'Choose Session' ) }</HeaderCake>
 				<CompactCard>
-					<p>
-						<strong>{ translate( 'Please select from the available sessions below.' ) }</strong>
-					</p>
-					<p>
-						<em>
+					<FormattedHeader
+						headerText={ translate( 'Select a time that works for you' ) }
+						align="left"
+						isSecondary={ true }
+					/>
+					<div class="calendar-step__explanation">
+						<div>
 							{ translate(
-								'If you don’t see a day or time that works for you, please check back soon for more options! In the meantime, consider attending one of our expert webinars on a wide variety of topics designed to help you build and grow your site. {{externalLink}}View webinars{{/externalLink}}.',
+								'Our sessions are available 24 hours a day. If you don’t see a day or time that works for you, please check back soon for more options! '
+							) }
+						</div>
+
+						<div class="calendar-step__webinars">
+							{ translate(
+								'In the meantime, consider attending one of our expert webinars on a wide variety of topics designed to help you build and grow your site. {{u}}{{externalLink}}View webinars{{/externalLink}}{{/u}}.',
 								{
 									components: {
+										u: <u />,
 										externalLink: (
 											<ExternalLinkWithTracking
 												icon={ false }
 												href="/webinars"
+												target="_blank"
 												tracksEventName="calypso_concierge_book_view_webinars"
 											/>
 										),
 									},
 								}
 							) }
-						</em>
-					</p>
+						</div>
+					</div>
 				</CompactCard>
 
 				<AvailableTimePicker

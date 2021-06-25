@@ -1,0 +1,76 @@
+export default [
+	{
+		icon: 'dashicons-feedback',
+		slug: 'feedback',
+		title: 'Feedback',
+		type: 'menu-item',
+		url: 'https://examplewebsite.wordpress.com/wp-admin/admin.php?page=feedback',
+		children: [
+			{
+				parent: 'feedback',
+				slug: 'edit-phppost_typefeedback',
+				title: 'Feedback',
+				type: 'submenu-item',
+				url: 'https://examplewebsite.wordpress.com/wp-admin/edit.php?post_type=feedback',
+			},
+			{
+				parent: 'feedback',
+				slug: 'polls',
+				title: 'Polls',
+				type: 'submenu-item',
+				url: 'http://feedback?page=polls',
+			},
+			{
+				parent: 'feedback',
+				slug: 'ratings',
+				title: 'Ratings',
+				type: 'submenu-item',
+				url: 'http://feedback?page=ratings',
+			},
+		],
+	},
+	{
+		icon: 'dashicons-dashboard',
+		slug: 'index-php',
+		title: 'Dashboard',
+		type: 'menu-item',
+		url: 'https://examplewebsite.wordpress.com/wp-admin/index.php',
+		children: [
+			{
+				parent: 'index.php',
+				slug: 'index-php',
+				title: 'Home',
+				type: 'submenu-item',
+				url: 'https://examplewebsite.wordpress.com/wp-admin/index.php',
+			},
+			{
+				parent: 'index.php',
+				slug: 'my-comments',
+				title: 'Comments I&#8217;ve Made',
+				type: 'submenu-item',
+				url: 'index.php?page=my-comments',
+			},
+			{
+				parent: 'index.php',
+				slug: 'stats',
+				title: 'Site Stats',
+				type: 'submenu-item',
+				url: 'index.php?page=stats',
+			},
+			{
+				parent: 'index.php',
+				slug: 'my-blogs',
+				title: 'My Blogs',
+				type: 'submenu-item',
+				url: 'index.php?page=my-blogs',
+			},
+			{
+				parent: 'index.php',
+				slug: 'subscriptions',
+				title: 'Blogs I Follow',
+				type: 'submenu-item',
+				url: 'index.php?page=subscriptions',
+			},
+		],
+	},
+];

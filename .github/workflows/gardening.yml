@@ -1,0 +1,39 @@
+name: Repo gardening
+
+on:
+  # Listen to this event for PRs from forks (see Flag OSS and Notify tasks).
+  pull_request_target:
+    types: [opened, labeled]
+  # We need to listen to all these events to catch all scenarios
+  pull_request:
+    types: ['opened', 'synchronize', 'edited', 'closed', 'labeled']
+
+jobs:
+  repo-gardening:
+    name: 'Assign issues, Clean up labels, and notify Design and Editorial when necessary'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+     - name: Checkout
+       uses: actions/checkout@v2
+
+     - name: Setup Node
+       uses: actions/setup-node@v2
+       with:
+         node-version: 12
+
+     - name: Wait for prior instances of the workflow to finish
+       uses: softprops/turnstyle@v1
+       env:
+         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+     - name: 'Run gardening action'
+       uses: automattic/action-repo-gardening@v1.3.0
+       with:
+         github_token: ${{ secrets.GITHUB_TOKEN }}
+         slack_token: ${{ secrets.SLACK_TOKEN }}
+         slack_design_channel: ${{ secrets.SLACK_DESIGN_CHANNEL }}
+         slack_editorial_channel: ${{ secrets.SLACK_EDITORIAL_CHANNEL }}
+         slack_team_channel: ${{ secrets.SLACK_TEAM_CHANNEL }}
+         tasks: 'assignIssues,cleanLabels,notifyDesign,notifyEditorial,flagOss'

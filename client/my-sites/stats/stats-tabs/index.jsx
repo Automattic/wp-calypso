@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 import { find } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -17,13 +18,12 @@ import StatTab from './tab';
  */
 import './style.scss';
 
-export default class extends React.Component {
+class StatsTabs extends React.Component {
 	static displayName = 'StatsTabs';
 
 	static propTypes = {
 		activeKey: PropTypes.string,
 		activeIndex: PropTypes.string,
-		dataList: PropTypes.object,
 		selectedTab: PropTypes.string,
 		switchTab: PropTypes.func,
 		tabs: PropTypes.array,
@@ -79,3 +79,5 @@ export default class extends React.Component {
 		);
 	}
 }
+
+export default localize( StatsTabs );

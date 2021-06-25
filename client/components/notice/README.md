@@ -1,11 +1,13 @@
-# Notice (JSX)
+# Notice
+
+## Notice (JSX)
 
 This component is used to display inline notices, rather than Global ones
 
-## Usage
+### Usage
 
 ```js
-import Notice from 'components/notice';
+import Notice from 'calypso/components/notice';
 
 function MyNotice() {
 	return (
@@ -30,14 +32,14 @@ function MyNotice() {
 | `onDismissClick` | `function` | null    | A function to call when the notice is dismissed.                                      |
 | `children`       | `string`   | null    | You can also pass the content on the notice within children.                          |
 
-# NoticeAction (JSX)
+## NoticeAction (JSX)
 
 This component is used to display an action inside a notice
 
-## Usage
+### Usage
 
 ```js
-import NoticeAction from 'components/notice/notice-action';
+import NoticeAction from 'calypso/components/notice/notice-action';
 
 function MyNotice() {
 	return (

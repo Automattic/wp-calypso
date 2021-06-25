@@ -7,7 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { receiveHelpCourses } from '../actions';
-import { HELP_COURSES_RECEIVE } from 'state/action-types';
+import { HELP_COURSES_RECEIVE } from 'calypso/state/action-types';
 
 describe( 'actions', () => {
 	const sampleCourseList = [

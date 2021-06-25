@@ -3,12 +3,42 @@
 		margin: 16px 0;
 	}
 
-	&__error, &__rerun {
+	&__error {
 		text-align: center;
 		font-size: $font-body-small;
 		line-height: 20px;
 		color: var( --studio-gray-40 );
 		margin-top: 24px;
+	}
+
+	&__rerun {
+		margin-top: 32px;
+		display: flex;
+		flex-direction: column;
+
+		@include breakpoint-deprecated( '>800px' ) {
+			flex-direction: row;
+		}
+
+		.scan-threats__rerun-help {
+			font-size: $font-body-small;
+			line-height: 20px;
+			color: var( --studio-gray-40 );
+
+			@include breakpoint-deprecated( '>800px' ) {
+				margin-bottom: 0;
+			}
+		}
+
+		.scan-threats__run-scan-main-button {
+			flex: 1 1 40%;
+			padding: 10px 30px;
+
+			@include breakpoint-deprecated( '>800px' ) {
+				flex: 0 0 170px;
+				margin-left: 8px;
+			}
+		}
 	}
 
 	&__run-scan-button.scan-threats__run-scan-button {
@@ -40,16 +70,29 @@
 
 	&__buttons {
 		display: flex;
-		justify-content: space-between;
 		margin-bottom: 16px;
+		border-top: 1px solid var( --studio-gray-5 );
+		padding-top: 16px;
+		flex-direction: column;
 
 		@include breakpoint-deprecated( '>800px' ) {
-			justify-content: flex-end;
+			flex-direction: row;
+		}
+
+		> p {
+			padding-top: 8px;
+			font-weight: bold;
+
+			@include breakpoint-deprecated( '>800px' ) {
+				flex-grow: 1;
+				padding-top: 10px;
+				margin: 0 !important;
+			}
 		}
 	}
 
 	&__fix-all-threats-button {
-		flex: 1 1 75%;
+		flex: 1 1 40%;
 		padding: 10px 30px;
 
 		@include breakpoint-deprecated( '>800px' ) {

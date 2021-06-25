@@ -16,9 +16,15 @@ exports.highlightElement = async function ( driver, element, color = 'gold' ) {
 	}
 };
 
-exports.clickWhenClickable = async function ( driver, selector, waitOverride ) {
+exports.clickWhenClickable = async function (
+	driver,
+	selector,
+	waitOverride = null,
+	extraErrorString = null
+) {
 	const self = this;
 	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
+	const extraErrorStringAppend = extraErrorString ? ' ' + extraErrorString : '';
 
 	return driver.wait(
 		function () {
@@ -36,7 +42,7 @@ exports.clickWhenClickable = async function ( driver, selector, waitOverride ) {
 			);
 		},
 		timeoutWait,
-		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be clickable`
+		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be clickable${ extraErrorStringAppend }`
 	);
 };
 
@@ -52,6 +58,35 @@ exports.waitTillNotPresent = function ( driver, selector, waitOverride ) {
 		},
 		timeoutWait,
 		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to NOT be present`
+	);
+};
+
+exports.waitTillFocused = function ( driver, selector, pollingOverride, waitOverride ) {
+	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
+	const timeoutPolling = pollingOverride ? pollingOverride : explicitWaitMS;
+
+	return driver.wait(
+		function () {
+			return driver.findElement( selector ).then(
+				async function ( element ) {
+					// Poll if element is active every 100 ms until focused or until timeoutPolling is reached
+					for ( let i = 0; i < timeoutPolling / 100; i++ ) {
+						const isFocused =
+							( await driver.switchTo().activeElement().getId() ) === ( await element.getId() );
+						if ( isFocused ) {
+							return true;
+						}
+						await driver.sleep( 100 );
+					}
+					return false;
+				},
+				function () {
+					return false;
+				}
+			);
+		},
+		timeoutWait,
+		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be focused`
 	);
 };
 
@@ -291,7 +326,7 @@ exports.selectElementByText = async function ( driver, selector, text ) {
 			async ( e ) => ( await e.getText() ) === text
 		);
 	};
-	return await this.clickWhenClickable( driver, element );
+	return await this.clickWhenClickable( driver, element, `while looking for '${ text }'` );
 };
 
 exports.clearTextArea = async function ( driver, selector ) {

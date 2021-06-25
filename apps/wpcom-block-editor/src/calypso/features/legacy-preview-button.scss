@@ -6,11 +6,17 @@
  * This can be removed once we support scaling down CSS to the new preview
  * @link https://github.com/Automattic/wp-calypso/issues/40401
  */
-@media ( min-width: 600px ) {
-	// Normally visible on mobile only, make it always visible
-	.editor-post-preview {
-		display: inline-flex;
+.edit-post-header__settings,
+.edit-site-header__actions {
+	@media ( min-width: 600px ) {
+		// Normally visible on mobile only, make it always visible
+		.editor-post-preview {
+			display: inline-flex;
+		}
 	}
+}
+
+@media ( min-width: 600px ) {
 	// Normally visible on desktops, make it always hidden
 	// .block-editor-post-preview__dropdown is the class name in versions >= 8.0
 	.editor-post-preview__dropdown,

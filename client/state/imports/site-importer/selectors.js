@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/imports/init';
+import 'calypso/state/imports/init';
 
 export function isLoading( state ) {
 	return state.imports.siteImporter?.isLoading;

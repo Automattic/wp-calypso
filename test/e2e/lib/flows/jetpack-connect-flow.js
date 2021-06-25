@@ -8,7 +8,6 @@ import config from 'config';
  */
 import LoginFlow from './login-flow';
 import SidebarComponent from '../components/sidebar-component';
-import AddNewSitePage from '../pages/add-new-site-page';
 import PickAPlanPage from '../pages/signup/pick-a-plan-page';
 import WporgCreatorPage from '../pages/wporg-creator-page';
 import JetpackAuthorizePage from '../pages/jetpack-authorize-page';
@@ -20,7 +19,6 @@ import WPAdminInPlacePlansPage from '../pages/wp-admin/wp-admin-in-place-plans-p
 import * as driverManager from '../driver-manager';
 import * as driverHelper from '../driver-helper';
 import * as dataHelper from '../data-helper';
-import JetpackConnectPage from '../pages/jetpack/jetpack-connect-page';
 // import NoticesComponent from '../components/notices-component';
 
 export default class JetpackConnectFlow {
@@ -44,30 +42,10 @@ export default class JetpackConnectFlow {
 		this.username = await wporgCreator.getUsername();
 	}
 
-	async connectFromCalypso() {
-		await driverManager.ensureNotLoggedIn( this.driver );
-		await this.createJNSite();
-		const loginFlow = new LoginFlow( this.driver, this.account );
-		await loginFlow.loginAndSelectMySite();
-		const sidebarComponent = await SidebarComponent.Expect( this.driver );
-		await sidebarComponent.addNewSite( this.driver );
-		const addNewSitePage = await AddNewSitePage.Expect( this.driver );
-		await addNewSitePage.addSiteUrl( this.url );
-
-		const connectPage = await JetpackConnectPage.Expect( this.driver );
-		await connectPage.waitToDisappear();
-
-		const jetpackAuthorizePage = await JetpackAuthorizePage.Expect( this.driver );
-		await jetpackAuthorizePage.waitToDisappear();
-
-		const pickAPlanPage = await PickAPlanPage.Expect( this.driver );
-		return await pickAPlanPage.selectFreePlanJetpack();
-	}
-
 	async connectFromWPAdmin() {
 		await driverManager.ensureNotLoggedIn( this.driver );
 		await this.createJNSite();
-		await WPAdminSidebar.refreshIfJNError( this.driver );
+		await driverHelper.refreshIfJNError( this.driver );
 		const wpAdminSidebar = await WPAdminSidebar.Expect( this.driver );
 		await wpAdminSidebar.selectJetpack();
 		await driverHelper.refreshIfJNError( this.driver );
@@ -87,7 +65,7 @@ export default class JetpackConnectFlow {
 		const loginFlow = new LoginFlow( this.driver, 'jetpackConnectUser' );
 		await loginFlow.login();
 		await this.createJNSite();
-		await WPAdminSidebar.refreshIfJNError( this.driver );
+		await driverHelper.refreshIfJNError( this.driver );
 		await ( await WPAdminSidebar.Expect( this.driver ) ).selectJetpack();
 		await driverHelper.refreshIfJNError( this.driver );
 		await ( await WPAdminJetpackPage.Expect( this.driver ) ).inPlaceConnect();

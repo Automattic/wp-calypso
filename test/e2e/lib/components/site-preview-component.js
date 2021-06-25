@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import { By, until } from 'selenium-webdriver';
-import config from 'config';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -24,23 +23,18 @@ class SitePreviewComponent extends AsyncBaseContainer {
 	}
 
 	async enterSitePreview() {
-		const iFrameSelector = By.css( '.web-preview__frame' );
-		const explicitWaitMS = config.get( 'explicitWaitMS' );
+		const iFrameLocator = By.css( '.web-preview__frame' );
 
 		await this.driver.switchTo().defaultContent();
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.web-preview__inner.is-visible.is-loaded' )
 		);
-		return this.driver.wait(
-			until.ableToSwitchToFrame( iFrameSelector ),
-			explicitWaitMS,
-			'Could not switch to web preview iFrame'
-		);
+		return await driverHelper.waitUntilAbleToSwitchToFrame( this.driver, iFrameLocator );
 	}
 
 	async leaveSitePreview() {
-		if ( this.screenSize === 'MOBILE' ) {
+		if ( this.screenSize === 'mobile' ) {
 			await this.driver.switchTo().defaultContent();
 			return await driverHelper.clickWhenClickable(
 				this.driver,

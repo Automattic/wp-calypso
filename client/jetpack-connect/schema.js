@@ -21,6 +21,7 @@ export const authorizeQueryDataSchema = {
 		blogname: { type: 'string' },
 		client_id: { pattern: '^\\d+$', type: 'string' },
 		close_window_after_login: { type: 'string' }, // '1' if true
+		close_window_after_auth: { type: 'string' }, // '1' if true
 		from: { type: 'string' },
 		home_url: { type: 'string' },
 		is_popup: { type: 'string' }, // '1' if true
@@ -38,5 +39,7 @@ export const authorizeQueryDataSchema = {
 		user_email: { type: 'string' },
 		woodna_service_name: { type: 'string' },
 		woodna_help_url: { type: 'string' },
+		skip_user: { type: 'string' }, // deprecated, to be removed soon
+		allow_site_connection: { type: 'string' }, // '1' if true
 	},
 };

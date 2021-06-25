@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 import { CompactCard } from '@automattic/components';
 
@@ -11,6 +10,8 @@ import { CompactCard } from '@automattic/components';
  * Style dependencies
  */
 import './close-link.scss';
+
+const noop = () => {};
 
 class AccountSettingsCloseLink extends React.Component {
 	render() {

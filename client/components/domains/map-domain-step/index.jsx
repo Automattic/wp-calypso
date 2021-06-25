@@ -6,40 +6,45 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { includes, noop, get } from 'lodash';
+import { includes, get } from 'lodash';
+import { withShoppingCart } from '@automattic/shopping-cart';
+import { Button } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
-import { getDomainPriceRule } from 'lib/cart-values/cart-items';
-import { getFixedDomainSearch, getTld, checkDomainAvailability } from 'lib/domains';
-import { domainAvailability } from 'lib/domains/constants';
-import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
-import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
-import DomainProductPrice from 'components/domains/domain-product-price';
-import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
-import { MAP_EXISTING_DOMAIN, INCOMING_DOMAIN_TRANSFER } from 'lib/url/support';
-import FormTextInput from 'components/forms/form-text-input';
+import { getDomainPriceRule } from 'calypso/lib/cart-values/cart-items';
+import { getFixedDomainSearch, getTld, checkDomainAvailability } from 'calypso/lib/domains';
+import { domainAvailability } from 'calypso/lib/domains/constants';
+import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
+import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
+import DomainProductPrice from 'calypso/components/domains/domain-product-price';
+import { getCurrentUser, currentUserHasFlag } from 'calypso/state/current-user/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { MAP_EXISTING_DOMAIN, INCOMING_DOMAIN_TRANSFER } from 'calypso/lib/url/support';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import {
 	recordAddDomainButtonClickInMapDomain,
 	recordFormSubmitInMapDomain,
 	recordInputFocusInMapDomain,
 	recordGoButtonClickInMapDomain,
-} from 'state/domains/actions';
-import Notice from 'components/notice';
-import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
+} from 'calypso/state/domains/actions';
+import Notice from 'calypso/components/notice';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
+const noop = () => {};
+
 class MapDomainStep extends React.Component {
 	static propTypes = {
 		products: PropTypes.object,
 		cart: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		isBusyMapping: PropTypes.bool,
 		initialQuery: PropTypes.string,
 		analyticsSection: PropTypes.string.isRequired,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
@@ -50,6 +55,7 @@ class MapDomainStep extends React.Component {
 	};
 
 	static defaultProps = {
+		isBusyMapping: false,
 		onSave: noop,
 		initialQuery: '',
 	};
@@ -57,6 +63,7 @@ class MapDomainStep extends React.Component {
 	state = {
 		...this.props.initialState,
 		searchQuery: this.props.initialQuery,
+		isPendingSubmit: false,
 	};
 
 	componentWillUnmount() {
@@ -111,7 +118,6 @@ class MapDomainStep extends React.Component {
 					<div className="map-domain-step__add-domain" role="group">
 						<FormTextInput
 							className="map-domain-step__external-domain"
-							type="text"
 							value={ this.state.searchQuery }
 							placeholder={ translate( 'example.com' ) }
 							onBlur={ this.save }
@@ -119,15 +125,16 @@ class MapDomainStep extends React.Component {
 							onClick={ this.recordInputFocus }
 							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 						/>
-						<button
-							disabled={ ! getTld( searchQuery ) }
+						<Button
+							busy={ this.state.isPendingSubmit || this.props.isBusyMapping }
+							disabled={ ! getTld( searchQuery ) || this.state.isPendingSubmit }
 							className="map-domain-step__go button is-primary"
-							onClick={ this.recordGoButtonClick }
+							onClick={ this.handleAddButtonClick }
 						>
 							{ translate( 'Add', {
 								context: 'Upgrades: Label for mapping an existing domain',
 							} ) }
-						</button>
+						</Button>
 					</div>
 
 					{ this.domainRegistrationUpsell() }
@@ -177,6 +184,7 @@ class MapDomainStep extends React.Component {
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					key={ suggestion.domain_name }
 					cart={ this.props.cart }
+					isCartPendingUpdate={ this.props.shoppingCartManager.isPendingUpdate }
 					onButtonClick={ this.registerSuggestedDomain }
 				/>
 			</div>
@@ -207,12 +215,17 @@ class MapDomainStep extends React.Component {
 		this.setState( { searchQuery: event.target.value } );
 	};
 
+	handleAddButtonClick = ( event ) => {
+		this.recordGoButtonClick();
+		this.handleFormSubmit( event );
+	};
+
 	handleFormSubmit = ( event ) => {
 		event.preventDefault();
 
 		const domain = getFixedDomainSearch( this.state.searchQuery );
 		this.props.recordFormSubmitInMapDomain( this.state.searchQuery );
-		this.setState( { suggestion: null, notice: null } );
+		this.setState( { suggestion: null, notice: null, isPendingSubmit: true } );
 
 		checkDomainAvailability(
 			{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
@@ -229,7 +242,7 @@ class MapDomainStep extends React.Component {
 				} = domainAvailability;
 
 				if ( status === AVAILABLE ) {
-					this.setState( { suggestion: result } );
+					this.setState( { suggestion: result, isPendingSubmit: false } );
 					return;
 				}
 
@@ -238,6 +251,7 @@ class MapDomainStep extends React.Component {
 					includes( [ MAPPABLE, UNKNOWN ], mappableStatus )
 				) {
 					this.props.onMapDomain( domain );
+					this.setState( { isPendingSubmit: false } );
 					return;
 				}
 
@@ -253,7 +267,7 @@ class MapDomainStep extends React.Component {
 					site,
 					maintenanceEndTime,
 				} );
-				this.setState( { notice: message, noticeSeverity: severity } );
+				this.setState( { notice: message, noticeSeverity: severity, isPendingSubmit: false } );
 			}
 		);
 	};
@@ -273,4 +287,4 @@ export default connect(
 		recordInputFocusInMapDomain,
 		recordGoButtonClickInMapDomain,
 	}
-)( localize( MapDomainStep ) );
+)( withShoppingCart( localize( MapDomainStep ) ) );

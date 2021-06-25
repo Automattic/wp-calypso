@@ -8,25 +8,22 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 
 /**
- * Internal dependencies
- */
-import SectionHeader from 'components/section-header';
-
-/**
  * Style dependencies
  */
 import './style.scss';
 
-const ThemesSelectionHeader = ( { label, count } ) => {
+const ThemesSelectionHeader = ( { label, noMarginBeforeHeader } ) => {
 	const translate = useTranslate();
 
-	const selectionHeaderClassName = classNames( 'themes-selection-header', {
-		'is-placeholder': count === null,
+	const classes = classNames( 'themes__themes-selection-header', {
+		'margin-before-header': ! noMarginBeforeHeader,
 	} );
 
 	return (
-		<div className={ selectionHeaderClassName }>
-			<SectionHeader label={ label || translate( 'WordPress.com themes' ) } count={ count } />
+		<div className={ classes }>
+			<h2>
+				<strong>{ label || translate( 'WordPress.com themes' ) }</strong>
+			</h2>
 		</div>
 	);
 };

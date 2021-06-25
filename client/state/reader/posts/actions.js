@@ -7,23 +7,23 @@ import { filter, forEach, compact, partition, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'state/reader/action-types';
+import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'calypso/state/reader/action-types';
 import { runFastRules, runSlowRules } from './normalization-rules';
-import wpcom from 'lib/wp';
-import { keyForPost, keyToString } from 'reader/post-key';
+import wpcom from 'calypso/lib/wp';
+import { keyForPost, keyToString } from 'calypso/reader/post-key';
 import { hasPostBeenSeen } from './selectors';
-import { receiveLikes } from 'state/posts/likes/actions';
-import { bumpStat } from 'lib/analytics/mc';
+import { receiveLikes } from 'calypso/state/posts/likes/actions';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 
-import 'state/reader/init';
+import 'calypso/state/reader/init';
 
 // TODO: make underlying lib/analytics/tracks and reader/stats capable of existing in test code without mocks
 // OR switch to analytics middleware
 let tracks = { recordEvent: () => {} };
 let pageViewForPost = () => {};
 if ( process.env.NODE_ENV !== 'test' ) {
-	pageViewForPost = require( 'reader/stats' ).pageViewForPost;
-	tracks = require( 'lib/analytics/tracks' );
+	pageViewForPost = require( 'calypso/reader/stats' ).pageViewForPost;
+	tracks = require( 'calypso/lib/analytics/tracks' );
 }
 
 function trackRailcarRender( post ) {

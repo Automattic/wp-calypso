@@ -23,7 +23,7 @@ import {
 	CONCIERGE_INITIAL_UPDATE,
 	CONCIERGE_SIGNUP_FORM_UPDATE,
 	CONCIERGE_UPDATE_BOOKING_STATUS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( 'state/concierge', () => {
 	describe( 'actions', () => {

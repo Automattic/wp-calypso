@@ -45,94 +45,104 @@ describe( 'wpcom.site.media', function () {
 	} );
 
 	describe( 'wpcom.site.media.get', function () {
-		it( 'should get added media', ( done ) => {
-			const media = site.media( testing_media.ID );
-			media
-				.get()
-				.then( ( data ) => {
-					assert.equal( testing_media.ID, data.ID );
-					done();
-				} )
-				.catch( done );
+		it( 'should get added media', () => {
+			return new Promise( ( done ) => {
+				const media = site.media( testing_media.ID );
+				media
+					.get()
+					.then( ( data ) => {
+						assert.equal( testing_media.ID, data.ID );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 	} );
 
 	describe( 'wpcom.site.media.update', function () {
-		it( 'should edit the media title', ( done ) => {
-			const edited_title = 'This is the new title';
+		it( 'should edit the media title', () => {
+			return new Promise( ( done ) => {
+				const edited_title = 'This is the new title';
 
-			site
-				.media( testing_media.ID )
-				.update( { apiVersion: '1.1' }, { title: edited_title } )
-				.then( ( data ) => {
-					assert.ok( data );
-					assert.equal( edited_title, data.title );
+				site
+					.media( testing_media.ID )
+					.update( { apiVersion: '1.1' }, { title: edited_title } )
+					.then( ( data ) => {
+						assert.ok( data );
+						assert.equal( edited_title, data.title );
 
-					done();
-				} )
-				.catch( done );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 	} );
 
 	describe( 'wpcom.site.media.addFiles', function () {
-		it( 'should create a new media from a file', ( done ) => {
-			site
-				.media()
-				.addFiles( fixture.media.files )
-				.then( ( data ) => {
-					assert.ok( data );
-					assert.ok( data.media instanceof Array );
-					assert.equal( fixture.media.files.length, data.media.length );
-					done();
-				} )
-				.catch( done );
+		it( 'should create a new media from a file', () => {
+			return new Promise( ( done ) => {
+				site
+					.media()
+					.addFiles( fixture.media.files )
+					.then( ( data ) => {
+						assert.ok( data );
+						assert.ok( data.media instanceof Array );
+						assert.equal( fixture.media.files.length, data.media.length );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 	} );
 
 	describe( 'wpcom.site.media.addUrls', function () {
-		it( 'should create a new media from an object', ( done ) => {
-			const media_object = fixture.media.urls[ 1 ];
+		it( 'should create a new media from an object', () => {
+			return new Promise( ( done ) => {
+				const media_object = fixture.media.urls[ 1 ];
 
-			site
-				.media()
-				.addUrls( media_object )
-				.then( ( data ) => {
-					assert.ok( data );
-					add_urls_object = data;
-					done();
-				} )
-				.catch( done );
+				site
+					.media()
+					.addUrls( media_object )
+					.then( ( data ) => {
+						assert.ok( data );
+						add_urls_object = data;
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
-	} );
 
-	describe( 'wpcom.site.media.addUrls', function () {
-		it( 'should create a new media', ( done ) => {
-			site
-				.media()
-				.addUrls( fixture.media.urls )
-				.then( ( data ) => {
-					assert.ok( data );
-					assert.ok( data.media instanceof Array );
-					assert.equal( fixture.media.urls.length, data.media.length );
+		it( 'should create a new media', () => {
+			return new Promise( ( done ) => {
+				site
+					.media()
+					.addUrls( fixture.media.urls )
+					.then( ( data ) => {
+						assert.ok( data );
+						assert.ok( data.media instanceof Array );
+						assert.equal( fixture.media.urls.length, data.media.length );
 
-					add_urls_array = data;
+						add_urls_array = data;
 
-					done();
-				} )
-				.catch( done );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 	} );
 
 	describe( 'wpcom.site.media.delete', function () {
-		it( 'should delete a media', ( done ) => {
-			site
-				.media( testing_media.ID )
-				.del()
-				.then( ( data ) => {
-					assert.equal( testing_media.ID, data.ID );
-					done();
-				} )
-				.catch( done );
+		it( 'should delete a media', () => {
+			return new Promise( ( done ) => {
+				site
+					.media( testing_media.ID )
+					.del()
+					.then( ( data ) => {
+						assert.equal( testing_media.ID, data.ID );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 	} );
 } );

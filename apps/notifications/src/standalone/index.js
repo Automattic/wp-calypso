@@ -78,7 +78,6 @@ const customMiddleware = {
 const render = () => {
 	ReactDOM.render(
 		React.createElement( AuthWrapper( Notifications ), {
-			clientId: 56641,
 			customEnhancer,
 			customMiddleware,
 			isShowing,
@@ -86,6 +85,7 @@ const render = () => {
 			locale,
 			receiveMessage: sendMessage,
 			redirectPath: '/',
+			isStandalone: true,
 		} ),
 		document.getElementsByClassName( 'wpnc__main' )[ 0 ]
 	);

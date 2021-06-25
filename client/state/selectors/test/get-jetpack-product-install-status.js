@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getJetpackProductInstallStatus from 'state/selectors/get-jetpack-product-install-status';
+import getJetpackProductInstallStatus from 'calypso/state/selectors/get-jetpack-product-install-status';
 
 describe( '#getJetpackProductInstallStatus', () => {
 	const siteId = 12345678;

@@ -2,14 +2,14 @@
  * External dependencies
  */
 import { useEffect, useRef, useState } from 'react';
-import { useFormStatus } from '@automattic/composite-checkout';
+import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useSelector } from 'react-redux';
 import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
+import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-is-cached-contact-form-valid' );
 
@@ -27,7 +27,7 @@ export default function useIsCachedContactFormValid( contactValidationCallback )
 		}
 		if ( ! hasValidated.current && cachedContactDetails ) {
 			hasValidated.current = true;
-			if ( formStatus === 'ready' ) {
+			if ( formStatus === FormStatus.READY ) {
 				setFormValidating();
 				shouldResetFormStatus.current = true;
 			}

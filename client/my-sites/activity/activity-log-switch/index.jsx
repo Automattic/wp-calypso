@@ -10,9 +10,9 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card, Button } from '@automattic/components';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
-import getRewindState from 'state/selectors/get-rewind-state';
-import { getSiteUrl } from 'state/sites/selectors';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import { getSiteUrl } from 'calypso/state/sites/selectors';
 
 /**
  * Style dependencies

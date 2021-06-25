@@ -9,8 +9,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import FormattedHeader from 'components/formatted-header';
-import NavigationLink from 'signup/navigation-link';
+import FormattedHeader from 'calypso/components/formatted-header';
+import NavigationLink from 'calypso/signup/navigation-link';
 
 /**
  * Style dependencies
@@ -32,6 +32,7 @@ class StepWrapper extends Component {
 		// Displays an <hr> above the skip button and adds more white space
 		isLargeSkipLayout: PropTypes.bool,
 		isTopButtons: PropTypes.bool,
+		isExternalBackUrl: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -51,6 +52,7 @@ class StepWrapper extends Component {
 				stepName={ this.props.stepName }
 				stepSectionName={ this.props.stepSectionName }
 				backUrl={ this.props.backUrl }
+				rel={ this.props.isExternalBackUrl ? 'external' : '' }
 				labelText={ this.props.backLabelText }
 				allowBackFirstStep={ this.props.allowBackFirstStep }
 			/>
@@ -116,6 +118,7 @@ class StepWrapper extends Component {
 			isLargeSkipLayout,
 			isWideLayout,
 			isTopButtons,
+			align,
 		} = this.props;
 		const classes = classNames( 'step-wrapper', this.props.className, {
 			'is-wide-layout': isWideLayout,
@@ -132,6 +135,7 @@ class StepWrapper extends Component {
 							id={ 'step-header' }
 							headerText={ this.headerText() }
 							subHeaderText={ this.subHeaderText() }
+							align={ align }
 						>
 							{ headerButton }
 						</FormattedHeader>

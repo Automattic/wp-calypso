@@ -5,17 +5,17 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { findIndex, findLastIndex, flatten, flowRight, get, range } from 'lodash';
+import { flatten, flowRight, get, range } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import SummaryChart from '../stats-summary';
-import SectionNav from 'components/section-nav';
-import SegmentedControl from 'components/segmented-control';
-import QueryPostStats from 'components/data/query-post-stats';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { getPostStats, isRequestingPostStats } from 'state/stats/posts/selectors';
+import SectionNav from 'calypso/components/section-nav';
+import SegmentedControl from 'calypso/components/segmented-control';
+import QueryPostStats from 'calypso/components/data/query-post-stats';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { getPostStats, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 
 /**
  * Style dependencies
@@ -96,8 +96,14 @@ class StatsPostSummary extends Component {
 						} );
 					} )
 				);
-				const firstNotEmpty = findIndex( months, ( item ) => item.value !== 0 );
-				const lastNotEmpty = findLastIndex( months, ( item ) => item.value !== 0 );
+				const firstNotEmpty = months.findIndex( ( item ) => item.value !== 0 );
+				const reverseLastNotEmpty = [ ...months ]
+					.reverse()
+					.findIndex( ( item ) => item.value !== 0 );
+				const lastNotEmpty =
+					reverseLastNotEmpty === -1
+						? reverseLastNotEmpty
+						: months.length - ( reverseLastNotEmpty + 1 );
 
 				return months.slice( firstNotEmpty, lastNotEmpty + 1 );
 			}

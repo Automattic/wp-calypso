@@ -14,7 +14,7 @@ export type CouponFieldStateProps = {
 };
 
 export default function useCouponFieldState(
-	submitCoupon: ( arg0: string ) => void
+	applyCoupon: ( couponId: string ) => void
 ): CouponFieldStateProps {
 	const onEvent = useEvents();
 	const [ couponFieldValue, setCouponFieldValue ] = useState< string >( '' );
@@ -42,7 +42,7 @@ export default function useCouponFieldState(
 				payload: { coupon: trimmedValue },
 			} );
 
-			submitCoupon( trimmedValue );
+			applyCoupon( trimmedValue );
 
 			return;
 		}
@@ -51,7 +51,7 @@ export default function useCouponFieldState(
 			type: 'a8c_checkout_add_coupon_error',
 			payload: { type: 'Invalid code' },
 		} );
-	}, [ couponFieldValue, onEvent, submitCoupon ] );
+	}, [ couponFieldValue, onEvent, applyCoupon ] );
 
 	return {
 		couponFieldValue,
@@ -64,6 +64,8 @@ export default function useCouponFieldState(
 }
 
 function isCouponValid( coupon: string ) {
-	// TODO: figure out some basic validation here
-	return coupon.match( /^[a-zA-Z0-9_-]+$/ );
+	// Coupon code is case-insensitive and started with an alphabet.
+	// Underscores and hyphens can be included in the coupon code.
+	// Per-user coupons can have a dot followed by 5-6 letter checksum for verification.
+	return coupon.match( /^[a-z][a-z\d_-]+(\.[a-z\d]+)?$/i );
 }

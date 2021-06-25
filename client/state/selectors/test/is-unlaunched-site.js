@@ -4,7 +4,7 @@
 import isUnlaunchedSite from '../is-unlaunched-site';
 
 describe( 'isUnlaunchedSite()', () => {
-	test( 'should be falsy when there is no such site', () => {
+	test( 'should return false when there is no such site', () => {
 		expect(
 			isUnlaunchedSite(
 				{
@@ -14,10 +14,10 @@ describe( 'isUnlaunchedSite()', () => {
 				},
 				222
 			)
-		).toBeFalsy();
+		).toBe( false );
 	} );
 
-	test( 'should be falsy when site has no launch status', () => {
+	test( 'should return false when site has no launch status', () => {
 		expect(
 			isUnlaunchedSite(
 				{
@@ -29,7 +29,7 @@ describe( 'isUnlaunchedSite()', () => {
 				},
 				222
 			)
-		).toBeFalsy();
+		).toBe( false );
 	} );
 
 	test( 'should return false when site has non "launched" launch status', () => {

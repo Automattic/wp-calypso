@@ -1,0 +1,44 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+@import '@automattic/calypso-color-schemes/src/calypso-color-schemes';
+@import '../../mixins';
+
+.anchor-error__flex-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	height: 80vh;
+}
+.anchor-error__center {
+	margin-top: 4em;
+	max-width: 640px;
+	text-align: center;
+}
+
+.anchor-error__text-container {
+	color: var( --studio-gray-60 );
+}
+
+.anchor-error__button-container {
+	margin-top: 2rem;
+	text-align: center;
+}
+.anchor-error__button {
+	min-width: 150px;
+	& span {
+		margin: 0 auto;
+	}
+}
+
+.anchor-error__link-container {
+	margin-top: 1rem;
+}
+
+.anchor-error__link {
+	&.components-button.is-link:not( :disabled ), &.components-button.is-link:not( :disabled ) {
+		color: var( --studio-gray-40 );
+	}
+	&.components-button.is-link:hover:not( :disabled ), &.components-button.is-link:active:not( :disabled ) {
+		color: var( --studio-gray-60 );
+	}
+}

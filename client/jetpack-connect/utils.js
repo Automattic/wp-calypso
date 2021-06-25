@@ -1,30 +1,31 @@
 /**
  * External dependencies
  */
-import config, { isCalypsoLive } from 'config';
-import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import PropTypes from 'prop-types';
-import { authorizeQueryDataSchema } from './schema';
-import { head, includes, isEmpty, split } from 'lodash';
+import { includes, isEmpty } from 'lodash';
 import page from 'page';
-import { urlToSlug } from 'lib/url';
 
 /**
  * Internal dependencies
  */
-import { addQueryArgs, externalRedirect, untrailingslashit } from 'lib/route';
+import config, { isCalypsoLive } from '@automattic/calypso-config';
+import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
+import { addQueryArgs, externalRedirect, untrailingslashit } from 'calypso/lib/route';
+import { urlToSlug } from 'calypso/lib/url';
 import {
 	JPC_PATH_PLANS,
 	JPC_PATH_REMOTE_INSTALL,
 	REMOTE_PATH_AUTH,
 	JPC_PATH_CHECKOUT,
 } from './constants';
+import { authorizeQueryDataSchema } from './schema';
 
 export function authQueryTransformer( queryObject ) {
 	return {
 		// Required
 		clientId: parseInt( queryObject.client_id, 10 ),
 		closeWindowAfterLogin: '1' === queryObject.close_window_after_login,
+		closeWindowAfterAuthorize: '1' === queryObject.close_window_after_auth,
 		homeUrl: queryObject.home_url,
 		isPopup: '1' === queryObject.is_popup,
 		nonce: queryObject._wp_nonce,
@@ -47,6 +48,7 @@ export function authQueryTransformer( queryObject ) {
 		userEmail: queryObject.user_email || null,
 		woodna_service_name: queryObject.woodna_service_name || null,
 		woodna_help_url: queryObject.woodna_help_url || null,
+		allowSiteConnection: queryObject.skip_user || queryObject.allow_site_connection || null,
 	};
 }
 
@@ -106,7 +108,7 @@ export function getRoleFromScope( scope ) {
 	if ( ! includes( scope, ':' ) ) {
 		return null;
 	}
-	const role = head( split( scope, ':', 1 ) );
+	const role = scope.split( ':', 1 )[ 0 ];
 	if ( ! isEmpty( role ) ) {
 		return role;
 	}
@@ -141,9 +143,10 @@ export function parseAuthorizationQuery( query ) {
  * @param  {string}     type Redirect type
  * @param  {string}     url Site url
  * @param  {?string}    product Product slug
+ * @param  {?object}    queryArgs Query parameters
  * @returns {string}        Redirect url
  */
-export function redirect( type, url, product = null ) {
+export function redirect( type, url, product = null, queryArgs = {} ) {
 	let urlRedirect = '';
 	const instr = '/jetpack/connect/instructions';
 
@@ -169,7 +172,7 @@ export function redirect( type, url, product = null ) {
 
 	if ( type === 'checkout' ) {
 		urlRedirect = `${ JPC_PATH_CHECKOUT }/${ urlToSlug( url ) }/${ product }`;
-		page.redirect( urlRedirect );
+		page.redirect( addQueryArgs( queryArgs, urlRedirect ) );
 	}
 
 	return urlRedirect;

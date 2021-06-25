@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
+import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 
 class DnsTemplateSelector extends React.PureComponent {
 	handleOnSelect = ( option ) => {

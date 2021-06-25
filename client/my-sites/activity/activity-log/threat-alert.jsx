@@ -4,8 +4,8 @@
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import Spinner from 'components/spinner';
-import { Interval, EVERY_TEN_SECONDS } from 'lib/interval';
+import Spinner from 'calypso/components/spinner';
+import { Interval, EVERY_TEN_SECONDS } from 'calypso/lib/interval';
 import classNames from 'classnames';
 
 /**
@@ -13,18 +13,18 @@ import classNames from 'classnames';
  */
 import ActivityIcon from '../activity-log-item/activity-icon';
 import { Button, Card } from '@automattic/components';
-import DiffViewer from 'components/diff-viewer';
-import FoldableCard from 'components/foldable-card';
-import { JETPACK_CONTACT_SUPPORT } from 'lib/url/support';
-import InfoPopover from 'components/info-popover';
-import MarkedLines from 'components/marked-lines';
-import TimeSince from 'components/time-since';
-import PopoverMenuItem from 'components/popover/menu-item';
-import SplitButton from 'components/split-button';
-import { fixThreatAlert, ignoreThreatAlert } from 'state/jetpack/site-alerts/actions';
-import { requestRewindState } from 'state/rewind/state/actions';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import DiffViewer from 'calypso/components/diff-viewer';
+import FoldableCard from 'calypso/components/foldable-card';
+import { JETPACK_CONTACT_SUPPORT } from 'calypso/lib/url/support';
+import InfoPopover from 'calypso/components/info-popover';
+import MarkedLines from 'calypso/components/marked-lines';
+import TimeSince from 'calypso/components/time-since';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import SplitButton from 'calypso/components/split-button';
+import { fixThreatAlert, ignoreThreatAlert } from 'calypso/state/jetpack/site-alerts/actions';
+import { requestRewindState } from 'calypso/state/rewind/state/actions';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies

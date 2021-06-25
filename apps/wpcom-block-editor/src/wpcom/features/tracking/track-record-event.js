@@ -1,14 +1,15 @@
-/* eslint-disable import/no-extraneous-dependencies */
 /**
  * External dependencies
  */
-import { isObjectLike, isUndefined, omit } from 'lodash';
+import { omitBy } from 'lodash';
 import debug from 'debug';
+import { select } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import { isE2ETest } from '../../../utils';
+import { getEditorType } from '../utils';
 
 const tracksDebug = debug( 'wpcom-block-editor:analytics:tracks' );
 const e2ETracksDebug = debug( 'wpcom-block-editor:e2e' );
@@ -33,20 +34,33 @@ if ( isE2ETest() ) {
 
 export default ( eventName, eventProperties ) => {
 	/*
-	 * Custom Properties.
+	 * Required Properties.
 	 * Required by Tracks when added manually.
 	 */
-	const customProperties = {
+	const requiredProperties = {
 		blog_id: window._currentSiteId,
 		site_type: window._currentSiteType,
 		user_locale: window._currentUserLocale,
+	};
+
+	/**
+	 * Custom Properties we add to each event by default.
+	 * - `editor_type` is used to indicate in which editor the event occurs.
+	 * - `post_type` is used to indicate what kind of entity is being edited when the event occurs.
+	 *   We only do this in `post` editor, because it doesn't make sense in `site` editor.
+	 */
+	const editorType = getEditorType();
+	const postType = editorType === 'post' ? select( 'core/editor' ).getCurrentPostType() : undefined;
+	const customProperties = {
+		editor_type: editorType,
+		post_type: postType,
 	};
 
 	eventProperties = eventProperties || {};
 
 	if ( process.env.NODE_ENV !== 'production' && typeof console !== 'undefined' ) {
 		for ( const key in eventProperties ) {
-			if ( isObjectLike( eventProperties[ key ] ) ) {
+			if ( eventProperties[ key ] !== null && typeof eventProperties[ key ] === 'object' ) {
 				const errorMessage =
 					`Tracks: Unable to record event "${ eventName }" because nested ` +
 					`properties are not supported by Tracks. Check '${ key }' on`;
@@ -66,12 +80,17 @@ export default ( eventName, eventProperties ) => {
 		}
 	}
 
+	// Populate custom properties. We want to remove undefined values
+	// so we populate these separately from `requiredProperties`.
+	// We also want to allow these to be overriden by given `eventProperties`.
+	eventProperties = { ...customProperties, ...eventProperties };
+
 	// Remove properties that have an undefined value
 	// This allows a caller to easily remove properties from the recorded set by setting them to undefined
-	eventProperties = omit( eventProperties, isUndefined );
+	eventProperties = omitBy( eventProperties, ( prop ) => typeof prop === 'undefined' );
 
-	// Populate custom properties.
-	eventProperties = { ...eventProperties, ...customProperties };
+	// Populate required properties.
+	eventProperties = { ...eventProperties, ...requiredProperties };
 
 	tracksDebug( 'Recording event %o with actual props %o', eventName, eventProperties );
 

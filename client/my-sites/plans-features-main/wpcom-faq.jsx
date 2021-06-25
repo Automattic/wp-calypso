@@ -8,14 +8,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FAQ from 'components/faq';
-import FAQItem from 'components/faq/faq-item';
-import HappychatButton from 'components/happychat/button';
-import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
-import { isEnabled } from 'config';
-import { purchasesRoot } from 'me/purchases/paths';
-import { localizeUrl } from 'lib/i18n-utils';
+import FAQ from 'calypso/components/faq';
+import FAQItem from 'calypso/components/faq/faq-item';
+import HappychatButton from 'calypso/components/happychat/button';
+import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { isEnabled } from '@automattic/calypso-config';
+import { purchasesRoot } from 'calypso/me/purchases/paths';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 	const helpLink =
@@ -93,9 +93,9 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 			<FAQItem
 				question={ translate( 'Do you offer email accounts?' ) }
 				answer={ translate(
-					'Yes. If you register a new domain with our Personal, Premium, Business, or eCommerce plans, you can' +
-						' add Google-powered G Suite. You can also set up email forwarding for any custom domain' +
-						' registered through WordPress.com. {{a}}Find out more about email{{/a}}.',
+					'Yes. We offer Professional Email which is a robust hosted email solution for any custom domain ' +
+						'registered through WordPress.com. You can also set up free email forwarding, or use our Google ' +
+						'Workspace integration to power your emails. {{a}}Learn more about our email solutions{{/a}}.',
 					{
 						components: {
 							a: (
@@ -142,9 +142,9 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 			<FAQItem
 				question={ translate( 'Can I cancel my subscription?' ) }
 				answer={ translate(
-					'Yes. We want you to love everything you do at WordPress.com, so we provide a 30-day' +
-						' refund on all of our plans. {{a}}Manage purchases{{/a}}.',
+					'Yes. We want you to love everything you do at WordPress.com, so we provide a %(annualDays)d-day refund on all of our annual plans and a %(monthlyDays)d-day refund on all of our monthly plans. {{a}}Manage purchases{{/a}}.',
 					{
+						args: { annualDays: 14, monthlyDays: 7 },
 						components: { a: <a href={ purchasesRoot } /> },
 					}
 				) }

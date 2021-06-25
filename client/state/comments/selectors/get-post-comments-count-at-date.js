@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import { filter, isDate, size } from 'lodash';
+import { filter, size } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getStateKey } from 'state/comments/utils';
+import { getStateKey } from 'calypso/state/comments/utils';
 
-import 'state/comments/init';
+import 'calypso/state/comments/init';
 
 /**
  * Get total number of comments in state at a given date and time
@@ -21,7 +21,7 @@ import 'state/comments/init';
  */
 export function getPostCommentsCountAtDate( state, siteId, postId, date ) {
 	// Check the provided date
-	if ( ! isDate( date ) ) {
+	if ( ! ( date instanceof Date && ! isNaN( date ) ) ) {
 		return 0;
 	}
 

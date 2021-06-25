@@ -7,20 +7,16 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	navigate,
 	setAllSitesSelected,
-	setPreviewShowing,
 	setSection,
 	setSelectedSiteId,
 	toggleNotificationsPanel,
 } from '../actions';
 import {
-	NAVIGATE,
 	NOTIFICATIONS_PANEL_TOGGLE,
-	PREVIEW_IS_SHOWING,
 	SECTION_SET,
 	SELECTED_SITE_SET,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( 'actions', () => {
 	describe( 'setAllSitesSelected()', () => {
@@ -34,52 +30,13 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( 'setPreviewShowing()', () => {
-		test( 'should return an action object where isShowing is true', () => {
-			const action = setPreviewShowing( true );
-
-			expect( action ).to.eql( {
-				type: PREVIEW_IS_SHOWING,
-				isShowing: true,
-			} );
-		} );
-
-		test( 'should return an action object where isShowing is false', () => {
-			const action = setPreviewShowing( false );
-
-			expect( action ).to.eql( {
-				type: PREVIEW_IS_SHOWING,
-				isShowing: false,
-			} );
-		} );
-	} );
-
 	describe( 'setSection()', () => {
-		test( 'should return an action object where hasSidebar is true by default', () => {
-			expect( setSection() ).to.eql( {
-				type: SECTION_SET,
-				hasSidebar: true,
-			} );
-		} );
-
 		test( 'should return an action object with the section specified', () => {
 			const section = { name: 'me' };
 
 			expect( setSection( section ) ).to.eql( {
 				type: SECTION_SET,
 				section,
-				hasSidebar: true,
-			} );
-		} );
-
-		test( 'should return an action object with the section and hasSidebar specified', () => {
-			const section = { name: 'me' };
-			const options = { hasSidebar: false };
-
-			expect( setSection( section, options ) ).to.eql( {
-				type: SECTION_SET,
-				section,
-				hasSidebar: false,
 			} );
 		} );
 	} );
@@ -100,18 +57,6 @@ describe( 'actions', () => {
 		test( 'should return an action object with just the action type', () => {
 			expect( toggleNotificationsPanel() ).to.eql( {
 				type: NOTIFICATIONS_PANEL_TOGGLE,
-			} );
-		} );
-	} );
-
-	describe( 'navigate()', () => {
-		test( 'should return an action object with the path specified', () => {
-			const path = '/test/path';
-			const action = navigate( path );
-
-			expect( action ).to.eql( {
-				type: NAVIGATE,
-				path,
 			} );
 		} );
 	} );

@@ -9,8 +9,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import isRequestingSiteMonitorSettings from 'state/selectors/is-requesting-site-monitor-settings';
-import { requestSiteMonitorSettings } from 'state/sites/monitor/actions';
+import isRequestingSiteMonitorSettings from 'calypso/state/selectors/is-requesting-site-monitor-settings';
+import { requestSiteMonitorSettings } from 'calypso/state/sites/monitor/actions';
 
 class QuerySiteMonitorSettings extends Component {
 	static propTypes = {

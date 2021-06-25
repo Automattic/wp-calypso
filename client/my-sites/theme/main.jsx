@@ -4,44 +4,43 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import config from 'config';
+import config from '@automattic/calypso-config';
 import titlecase from 'to-title-case';
-import Gridicon from 'components/gridicon';
-import { head, split } from 'lodash';
+import Gridicon from 'calypso/components/gridicon';
 import photon from 'photon';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
-import AsyncLoad from 'components/async-load';
-import QueryCanonicalTheme from 'components/data/query-canonical-theme';
-import Main from 'components/main';
-import HeaderCake from 'components/header-cake';
-import SectionHeader from 'components/section-header';
+import AsyncLoad from 'calypso/components/async-load';
+import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
+import Main from 'calypso/components/main';
+import HeaderCake from 'calypso/components/header-cake';
+import SectionHeader from 'calypso/components/section-header';
 import ThemeDownloadCard from './theme-download-card';
-import ThemePreview from 'my-sites/themes/theme-preview';
-import UpsellNudge from 'blocks/upsell-nudge';
+import ThemePreview from 'calypso/my-sites/themes/theme-preview';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { Button, Card } from '@automattic/components';
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
-import isVipSite from 'state/selectors/is-vip-site';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { isUserPaid } from 'state/purchases/selectors';
-import ThanksModal from 'my-sites/themes/thanks-modal';
-import AutoLoadingHomepageModal from 'my-sites/themes/auto-loading-homepage-modal';
+import SectionNav from 'calypso/components/section-nav';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import NavItem from 'calypso/components/section-nav/item';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { isUserPaid } from 'calypso/state/purchases/selectors';
+import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
+import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 
-import QueryActiveTheme from 'components/data/query-active-theme';
-import QuerySitePlans from 'components/data/query-site-plans';
-import QueryUserPurchases from 'components/data/query-user-purchases';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import ThemesSiteSelectorModal from 'my-sites/themes/themes-site-selector-modal';
-import { connectOptions } from 'my-sites/themes/theme-options';
+import QueryActiveTheme from 'calypso/components/data/query-active-theme';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import { connectOptions } from 'calypso/my-sites/themes/theme-options';
+import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
 import {
 	isThemeActive,
 	isThemePremium,
@@ -52,18 +51,25 @@ import {
 	getThemeDetailsUrl,
 	getThemeRequestErrors,
 	getThemeForumUrl,
-} from 'state/themes/selectors';
-import { getBackPath } from 'state/themes/themes-ui/selectors';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import DocumentHead from 'components/data/document-head';
-import { decodeEntities, preventWidows } from 'lib/formatting';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { setThemePreviewOptions } from 'state/themes/actions';
+	getThemeDemoUrl,
+} from 'calypso/state/themes/selectors';
+import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import DocumentHead from 'calypso/components/data/document-head';
+import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { setThemePreviewOptions } from 'calypso/state/themes/actions';
 import ThemeNotFoundError from './theme-not-found-error';
 import ThemeFeaturesCard from './theme-features-card';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_PREMIUM } from 'lib/plans/constants';
-import { hasFeature } from 'state/sites/plans/selectors';
-import getPreviousRoute from 'state/selectors/get-previous-route';
+import {
+	FEATURE_UNLIMITED_PREMIUM_THEMES,
+	FEATURE_UPLOAD_THEMES,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+} from '@automattic/calypso-products';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 
 /**
  * Style dependencies
@@ -188,7 +194,7 @@ class ThemeSheet extends React.Component {
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = this.props.name || placeholder;
 		const tag = this.props.author
-			? i18n.translate( 'by %(author)s', { args: { author: this.props.author } } )
+			? this.props.translate( 'by %(author)s', { args: { author: this.props.author } } )
 			: placeholder;
 
 		return (
@@ -203,16 +209,18 @@ class ThemeSheet extends React.Component {
 		if ( this.isLoaded() ) {
 			// Results are being returned with photon params like `?w=…`. This makes the photon
 			// module abort and return null. Strip query string.
-			return head( split( head( this.props.screenshots ), '?', 1 ) );
+			return this.props.screenshots[ 0 ]?.replace( /\?.*/, '' );
 		}
 		return null;
 	}
 
-	previewAction = ( event ) => {
+	previewAction = ( event, type ) => {
 		if ( event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ) {
 			return;
 		}
 		event.preventDefault();
+
+		this.props.recordTracksEvent( 'calypso_theme_live_demo_preview_click', { type } );
 
 		const { preview } = this.props.options;
 		this.props.setThemePreviewOptions( this.props.defaultOption, this.props.secondaryOption );
@@ -228,8 +236,8 @@ class ThemeSheet extends React.Component {
 	}
 
 	isThemeAvailable() {
-		const { demo_uri, retired } = this.props;
-		return demo_uri && ! retired;
+		const { demoUrl, retired } = this.props;
+		return demoUrl && ! retired;
 	}
 
 	// Render "Open Live Demo" pseudo-button for mobiles.
@@ -239,7 +247,7 @@ class ThemeSheet extends React.Component {
 		return (
 			<div className="theme__sheet-preview-link">
 				<span className="theme__sheet-preview-link-text">
-					{ i18n.translate( 'Open Live Demo', {
+					{ this.props.translate( 'Open live demo', {
 						context: 'Individual theme live preview button',
 					} ) }
 				</span>
@@ -248,7 +256,7 @@ class ThemeSheet extends React.Component {
 	}
 
 	renderScreenshot() {
-		const { isWpcomTheme, name: themeName } = this.props;
+		const { isWpcomTheme, name: themeName, demoUrl, translate } = this.props;
 		const screenshotFull = isWpcomTheme ? this.getFullLengthScreenshot() : this.props.screenshot;
 		const width = 735;
 		// Photon may return null, allow fallbacks
@@ -257,7 +265,7 @@ class ThemeSheet extends React.Component {
 			<img
 				alt={
 					// translators: %s is the theme name. Eg Twenty Twenty.
-					i18n.translate( 'Screenshot of the %(themeName)s theme', {
+					translate( 'Screenshot of the %(themeName)s theme', {
 						args: { themeName },
 					} )
 				}
@@ -271,8 +279,10 @@ class ThemeSheet extends React.Component {
 			return (
 				<a
 					className="theme__sheet-screenshot is-active"
-					href={ this.props.demo_uri }
-					onClick={ this.previewAction }
+					href={ demoUrl }
+					onClick={ ( e ) => {
+						this.previewAction( e, 'screenshot' );
+					} }
 					rel="noopener noreferrer"
 				>
 					{ this.shouldRenderPreviewButton() && this.renderPreviewButton() }
@@ -285,13 +295,12 @@ class ThemeSheet extends React.Component {
 	}
 
 	renderSectionNav = ( currentSection ) => {
+		const { siteSlug, id, demoUrl, translate, locale, isLoggedIn } = this.props;
 		const filterStrings = {
-			'': i18n.translate( 'Overview', { context: 'Filter label for theme content' } ),
-			setup: i18n.translate( 'Setup', { context: 'Filter label for theme content' } ),
-			support: i18n.translate( 'Support', { context: 'Filter label for theme content' } ),
+			'': translate( 'Overview', { context: 'Filter label for theme content' } ),
+			setup: translate( 'Setup', { context: 'Filter label for theme content' } ),
+			support: translate( 'Support', { context: 'Filter label for theme content' } ),
 		};
-
-		const { siteSlug, id } = this.props;
 		const sitePart = siteSlug ? `/${ siteSlug }` : '';
 
 		const nav = (
@@ -299,7 +308,11 @@ class ThemeSheet extends React.Component {
 				{ this.getValidSections().map( ( section ) => (
 					<NavItem
 						key={ section }
-						path={ `/theme/${ id }${ section ? '/' + section : '' }${ sitePart }` }
+						path={ localizeThemesPath(
+							`/theme/${ id }${ section ? '/' + section : '' }${ sitePart }`,
+							locale,
+							! isLoggedIn
+						) }
 						selected={ section === currentSection }
 					>
 						{ filterStrings[ section ] }
@@ -307,11 +320,13 @@ class ThemeSheet extends React.Component {
 				) ) }
 				{ this.shouldRenderPreviewButton() ? (
 					<NavItem
-						path={ this.props.demo_uri }
-						onClick={ this.previewAction }
+						path={ demoUrl }
+						onClick={ ( e ) => {
+							this.previewAction( e, 'link' );
+						} }
 						className="theme__sheet-preview-nav-item"
 					>
-						{ i18n.translate( 'Open Live Demo', {
+						{ translate( 'Open live demo', {
 							context: 'Individual theme live preview button',
 						} ) }
 					</NavItem>
@@ -339,7 +354,11 @@ class ThemeSheet extends React.Component {
 		return (
 			<div className="theme__sheet-content">
 				{ config.isEnabled( 'jitms' ) && this.props.siteSlug && (
-					<AsyncLoad require="blocks/jitm" messagePath={ 'calypso:theme:admin_notices' } />
+					<AsyncLoad
+						require="calypso/blocks/jitm"
+						placeholder={ null }
+						messagePath="calypso:theme:admin_notices"
+					/>
 				) }
 				{ this.renderSectionNav( section ) }
 				{ activeSection }
@@ -360,11 +379,15 @@ class ThemeSheet extends React.Component {
 	};
 
 	renderNextTheme = () => {
-		const { next, siteSlug } = this.props;
+		const { next, siteSlug, translate, locale, isLoggedIn } = this.props;
 		const sitePart = siteSlug ? `/${ siteSlug }` : '';
 
-		const nextThemeHref = `/theme/${ next }${ sitePart }`;
-		return <SectionHeader href={ nextThemeHref } label={ i18n.translate( 'Next theme' ) } />;
+		const nextThemeHref = localizeThemesPath(
+			`/theme/${ next }${ sitePart }`,
+			locale,
+			! isLoggedIn
+		);
+		return <SectionHeader href={ nextThemeHref } label={ translate( 'Next theme' ) } />;
 	};
 
 	renderOverviewTab = () => {
@@ -401,15 +424,15 @@ class ThemeSheet extends React.Component {
 			<Card className="theme__sheet-card-support">
 				<Gridicon icon="help-outline" size={ 48 } />
 				<div className="theme__sheet-card-support-details">
-					{ i18n.translate( 'Need extra help?' ) }
-					<small>{ i18n.translate( 'Get in touch with our support team' ) }</small>
+					{ this.props.translate( 'Need extra help?' ) }
+					<small>{ this.props.translate( 'Get in touch with our support team' ) }</small>
 				</div>
 				<Button
 					primary={ buttonCount === 1 }
 					href={ '/help/contact/' }
 					onClick={ this.trackContactUsClick }
 				>
-					{ i18n.translate( 'Contact us' ) }
+					{ this.props.translate( 'Contact us' ) }
 				</Button>
 			</Card>
 		);
@@ -421,14 +444,14 @@ class ThemeSheet extends React.Component {
 		}
 
 		const description = this.props.isPremium
-			? i18n.translate( 'Get in touch with the theme author' )
-			: i18n.translate( 'Get help from volunteers and staff' );
+			? this.props.translate( 'Get in touch with the theme author' )
+			: this.props.translate( 'Get help from volunteers and staff' );
 
 		return (
 			<Card className="theme__sheet-card-support">
 				<Gridicon icon="comment" size={ 48 } />
 				<div className="theme__sheet-card-support-details">
-					{ i18n.translate( 'Have a question about this theme?' ) }
+					{ this.props.translate( 'Have a question about this theme?' ) }
 					<small>{ description }</small>
 				</div>
 				<Button
@@ -436,7 +459,7 @@ class ThemeSheet extends React.Component {
 					href={ this.props.forumUrl }
 					onClick={ this.trackThemeForumClick }
 				>
-					{ i18n.translate( 'Visit forum' ) }
+					{ this.props.translate( 'Visit forum' ) }
 				</Button>
 			</Card>
 		);
@@ -447,22 +470,29 @@ class ThemeSheet extends React.Component {
 			<Card className="theme__sheet-card-support">
 				<Gridicon icon="briefcase" size={ 48 } />
 				<div className="theme__sheet-card-support-details">
-					{ i18n.translate( 'Need CSS help? ' ) }
-					<small>{ i18n.translate( 'Get help from the experts in our CSS forum' ) }</small>
+					{ this.props.translate( 'Need CSS help? ' ) }
+					<small>{ this.props.translate( 'Get help from the experts in our CSS forum' ) }</small>
 				</div>
 				<Button
 					primary={ buttonCount === 1 }
 					href="//en.forums.wordpress.com/forum/css-customization"
 					onClick={ this.trackCssClick }
 				>
-					{ i18n.translate( 'Visit forum' ) }
+					{ this.props.translate( 'Visit forum' ) }
 				</Button>
 			</Card>
 		);
 	};
 
 	renderSupportTab = () => {
-		const { isCurrentUserPaid, isJetpack, forumUrl, isWpcomTheme, isLoggedIn } = this.props;
+		const {
+			isCurrentUserPaid,
+			isJetpack,
+			forumUrl,
+			isWpcomTheme,
+			isLoggedIn,
+			translate,
+		} = this.props;
 		let buttonCount = 1;
 		let renderedTab = null;
 
@@ -481,9 +511,9 @@ class ThemeSheet extends React.Component {
 					<Card className="theme__sheet-card-support">
 						<Gridicon icon="notice-outline" size={ 48 } />
 						<div className="theme__sheet-card-support-details">
-							{ i18n.translate( 'This theme is unsupported' ) }
+							{ translate( 'This theme is unsupported' ) }
 							<small>
-								{ i18n.translate( "Maybe it's a custom theme? Sorry about that.", {
+								{ translate( "Maybe it's a custom theme? Sorry about that.", {
 									context: 'Support message when we no support links are available',
 								} ) }
 							</small>
@@ -497,9 +527,9 @@ class ThemeSheet extends React.Component {
 				<Card className="theme__sheet-card-support">
 					<Gridicon icon="help" size={ 48 } />
 					<div className="theme__sheet-card-support-details">
-						{ i18n.translate( 'Have a question about this theme?' ) }
+						{ translate( 'Have a question about this theme?' ) }
 						<small>
-							{ i18n.translate( 'Pick this design and start a site with us, we can help!', {
+							{ translate( 'Pick this design and start a site with us, we can help!', {
 								context: 'Logged out theme support message',
 							} ) }
 						</small>
@@ -512,42 +542,43 @@ class ThemeSheet extends React.Component {
 	};
 
 	getDefaultOptionLabel = () => {
-		const { defaultOption, isActive, isLoggedIn, isPremium, isPurchased } = this.props;
+		const { defaultOption, isActive, isLoggedIn, isPremium, isPurchased, translate } = this.props;
 		if ( isActive ) {
 			// Customize site
 			return (
 				<span className="theme__sheet-customize-button">
 					<Gridicon icon="external" />
-					{ i18n.translate( 'Customize site' ) }
+					{ translate( 'Customize site' ) }
 				</span>
 			);
 		} else if ( isLoggedIn ) {
 			if ( isPremium && ! isPurchased ) {
 				// purchase
-				return i18n.translate( 'Pick this design' );
+				return translate( 'Pick this design' );
 			} // else: activate
-			return i18n.translate( 'Activate this design' );
+			return translate( 'Activate this design' );
 		}
 		return defaultOption.label;
 	};
 
 	renderRetired = () => {
+		const { translate, locale, isLoggedIn } = this.props;
 		return (
 			<div className="theme__sheet-content">
 				<Card className="theme__retired-theme-message">
 					<Gridicon icon="cross-circle" size={ 48 } />
 					<div className="theme__retired-theme-message-details">
 						<div className="theme__retired-theme-message-details-title">
-							{ i18n.translate( 'This theme is retired' ) }
+							{ this.props.translate( 'This theme is retired' ) }
 						</div>
 						<div>
-							{ i18n.translate(
+							{ this.props.translate(
 								'We invite you to try out a newer theme; start by browsing our WordPress theme directory.'
 							) }
 						</div>
 					</div>
-					<Button primary={ true } href={ '/themes/' }>
-						{ i18n.translate( 'See All Themes' ) }
+					<Button primary={ true } href={ localizeThemesPath( '/themes/', locale, ! isLoggedIn ) }>
+						{ translate( 'See all themes' ) }
 					</Button>
 				</Card>
 
@@ -563,7 +594,7 @@ class ThemeSheet extends React.Component {
 		if ( ! this.isLoaded() || this.props.isActive ) {
 			price = '';
 		} else if ( ! this.props.isPremium ) {
-			price = i18n.translate( 'Free' );
+			price = this.props.translate( 'Free' );
 		}
 
 		const className = classNames( 'theme__sheet-action-bar-cost', {
@@ -594,11 +625,11 @@ class ThemeSheet extends React.Component {
 	};
 
 	goBack = () => {
-		const { previousRoute, backPath } = this.props;
+		const { previousRoute, backPath, locale, isLoggedIn } = this.props;
 		if ( previousRoute ) {
 			page.back( previousRoute );
 		} else {
-			page( backPath );
+			page( localizeThemesPath( backPath, locale, ! isLoggedIn ) );
 		}
 	};
 
@@ -611,9 +642,11 @@ class ThemeSheet extends React.Component {
 			retired,
 			isPremium,
 			isJetpack,
+			isWpcomTheme,
 			isVip,
 			translate,
 			hasUnlimitedPremiumThemes,
+			canUserUploadThemes,
 			previousRoute,
 		} = this.props;
 
@@ -629,7 +662,7 @@ class ThemeSheet extends React.Component {
 		const { canonicalUrl, currentUserId, description, name: themeName } = this.props;
 		const title =
 			themeName &&
-			i18n.translate( '%(themeName)s Theme', {
+			translate( '%(themeName)s Theme', {
 				args: { themeName },
 			} );
 
@@ -656,10 +689,15 @@ class ThemeSheet extends React.Component {
 			} );
 		}
 
-		let pageUpsellBanner, previewUpsellBanner;
-		const hasUpsellBanner =
+		let pageUpsellBanner;
+		let previewUpsellBanner;
+		const hasWpComThemeUpsellBanner =
 			! isJetpack && isPremium && ! hasUnlimitedPremiumThemes && ! isVip && ! retired;
-		if ( hasUpsellBanner ) {
+		const hasWpOrgThemeUpsellBanner =
+			! isWpcomTheme && ( ! siteId || ( ! isJetpack && ! canUserUploadThemes ) );
+		const hasUpsellBanner = hasWpComThemeUpsellBanner || hasWpOrgThemeUpsellBanner;
+
+		if ( hasWpComThemeUpsellBanner ) {
 			pageUpsellBanner = (
 				<UpsellNudge
 					plan={ PLAN_PREMIUM }
@@ -676,10 +714,34 @@ class ThemeSheet extends React.Component {
 					showIcon={ true }
 				/>
 			);
+		}
+
+		if ( hasWpOrgThemeUpsellBanner ) {
+			pageUpsellBanner = (
+				<UpsellNudge
+					plan={ PLAN_BUSINESS }
+					className="theme__page-upsell-banner"
+					title={ translate( 'Access this theme for FREE with a Business plan!' ) }
+					description={ preventWidows(
+						translate(
+							'Instantly unlock thousands of different themes and install your own when you upgrade.'
+						)
+					) }
+					forceHref
+					feature={ FEATURE_UPLOAD_THEMES }
+					forceDisplay
+					href={ ! siteId ? '/plans' : null }
+					showIcon
+				/>
+			);
+		}
+
+		if ( hasUpsellBanner ) {
 			previewUpsellBanner = React.cloneElement( pageUpsellBanner, {
 				className: 'theme__preview-upsell-banner',
 			} );
 		}
+
 		const className = classNames( 'theme__sheet', { 'is-with-upsell-banner': hasUpsellBanner } );
 
 		const links = [ { rel: 'canonical', href: canonicalUrl } ];
@@ -703,10 +765,10 @@ class ThemeSheet extends React.Component {
 				{ pageUpsellBanner }
 				<HeaderCake
 					className="theme__sheet-action-bar"
-					backText={ previousRoute ? i18n.translate( 'Back' ) : i18n.translate( 'All Themes' ) }
+					backText={ previousRoute ? translate( 'Back' ) : translate( 'All Themes' ) }
 					onClick={ this.goBack }
 				>
-					{ ! retired && this.renderButton() }
+					{ ! retired && ! hasWpOrgThemeUpsellBanner && this.renderButton() }
 				</HeaderCake>
 				<div className="theme__sheet-columns">
 					<div className="theme__sheet-column-left">
@@ -716,6 +778,7 @@ class ThemeSheet extends React.Component {
 					<div className="theme__sheet-column-right">{ this.renderScreenshot() }</div>
 				</div>
 				<ThemePreview belowToolbar={ previewUpsellBanner } />
+				<PerformanceTrackerStop />
 			</Main>
 		);
 	};
@@ -728,20 +791,10 @@ class ThemeSheet extends React.Component {
 	}
 }
 
-const ConnectedThemeSheet = connectOptions( ( props ) => {
-	if ( ! props.isLoggedIn || props.siteId ) {
-		return <ThemeSheet { ...props } />;
-	}
-
-	return (
-		<ThemesSiteSelectorModal { ...props }>
-			<ThemeSheet />
-		</ThemesSiteSelectorModal>
-	);
-} );
+const ConnectedThemeSheet = connectOptions( ThemeSheet );
 
 const ThemeSheetWithOptions = ( props ) => {
-	const { siteId, isActive, isLoggedIn, isPremium, isPurchased, isJetpack } = props;
+	const { siteId, isActive, isLoggedIn, isPremium, isPurchased, isJetpack, demoUrl } = props;
 
 	let defaultOption;
 	let secondaryOption = 'tryandcustomize';
@@ -767,6 +820,7 @@ const ThemeSheetWithOptions = ( props ) => {
 	return (
 		<ConnectedThemeSheet
 			{ ...props }
+			demo_uri={ demoUrl }
 			siteId={ siteId }
 			defaultOption={ defaultOption }
 			secondaryOption={ secondaryOption }
@@ -806,8 +860,10 @@ export default connect(
 			isPurchased: isPremiumThemeAvailable( state, id, siteId ),
 			forumUrl: getThemeForumUrl( state, id, siteId ),
 			hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
+			canUserUploadThemes: hasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),
 			// No siteId specified since we want the *canonical* URL :-)
 			canonicalUrl: 'https://wordpress.com' + getThemeDetailsUrl( state, id ),
+			demoUrl: getThemeDemoUrl( state, id, siteId ),
 			previousRoute: getPreviousRoute( state ),
 		};
 	},

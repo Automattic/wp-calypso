@@ -8,8 +8,8 @@ import {
 	REWIND_BACKUP_DISMISS_PROGRESS,
 	REWIND_BACKUP_UPDATE_PROGRESS,
 	REWIND_BACKUP_UPDATE_ERROR,
-} from 'state/action-types';
-import { keyedReducer } from 'state/utils';
+} from 'calypso/state/action-types';
+import { keyedReducer } from 'calypso/state/utils';
 
 export const backupRequest = keyedReducer( 'siteId', ( state = undefined, { type, rewindId } ) => {
 	switch ( type ) {

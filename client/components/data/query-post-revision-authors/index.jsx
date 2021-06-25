@@ -9,7 +9,7 @@ import isShallowEqual from '@wordpress/is-shallow-equal';
 /**
  * Internal dependencies
  */
-import { requestPostRevisionAuthors } from 'state/posts/revisions/authors/actions';
+import { requestPostRevisionAuthors } from 'calypso/state/posts/revisions/authors/actions';
 
 class QueryPostRevisionAuthors extends Component {
 	static propTypes = {

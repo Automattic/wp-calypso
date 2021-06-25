@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ImagePreloader from 'components/image-preloader';
+import ImagePreloader from 'calypso/components/image-preloader';
 
 const ImagePreloaderExample = () => (
 	<ImagePreloader

@@ -1,12 +1,10 @@
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { getSiteSlug } from 'state/sites/selectors';
-import { isThemePremium } from 'state/themes/selectors/is-theme-premium';
-import { oldShowcaseUrl } from 'state/themes/utils';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { isThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Returns the URL for a given theme's setup instructions
@@ -22,10 +20,5 @@ export function getThemeSupportUrl( state, themeId, siteId ) {
 	}
 
 	const sitePart = siteId ? `/${ getSiteSlug( state, siteId ) }` : '';
-
-	if ( config.isEnabled( 'manage/themes/details' ) ) {
-		return `/theme/${ themeId }/setup${ sitePart }`;
-	}
-
-	return `${ oldShowcaseUrl }${ sitePart }${ themeId }/support`;
+	return `/theme/${ themeId }/setup${ sitePart }`;
 }

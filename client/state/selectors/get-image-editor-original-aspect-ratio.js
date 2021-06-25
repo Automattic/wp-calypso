@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/editor/init';
+import 'calypso/state/editor/init';
 
 /**
  * Returns the original aspect ratio of the image loaded in the image editor.

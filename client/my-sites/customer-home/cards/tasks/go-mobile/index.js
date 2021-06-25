@@ -8,10 +8,13 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import Task from 'my-sites/customer-home/cards/tasks/task';
-import { preventWidows } from 'lib/formatting';
-import AppsBadge from 'blocks/get-apps/apps-badge';
-import { TASK_GO_MOBILE_ANDROID, TASK_GO_MOBILE_IOS } from 'my-sites/customer-home/cards/constants';
+import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
+import { preventWidows } from 'calypso/lib/formatting';
+import AppsBadge from 'calypso/blocks/get-apps/apps-badge';
+import {
+	TASK_GO_MOBILE_ANDROID,
+	TASK_GO_MOBILE_IOS,
+} from 'calypso/my-sites/customer-home/cards/constants';
 
 const GoMobile = ( { isIos } ) => {
 	const translate = useTranslate();

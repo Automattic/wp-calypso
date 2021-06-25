@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AdvancedCredentialsLoadingPlaceholder should render correctly 1`] = `
+<div>
+  <div
+    class="loading"
+  >
+    <div
+      class="loading__placeholder"
+    />
+  </div>
+</div>
+`;

@@ -7,21 +7,20 @@ Cards are used as containers to group similar information and tasks together to 
 ## Usage
 
 ```jsx
-import { Card } from '@automattic/components';
-import { CompactCard } from '@automattic/components';
+import { Card, CompactCard } from '@automattic/components';
 
-render: function() {
-  return (
-    <div className="your-stuff">
-      <Card>
-        <span>Your stuff in a Card</span>
-      </Card>
+function render() {
+	return (
+		<div className="your-stuff">
+			<Card>
+				<span>Your stuff in a Card</span>
+			</Card>
 
-      <CompactCard>
-        <span>Your stuff in a CompactCard</span>
-      </CompactCard>
-    </div>
-  );
+			<CompactCard>
+				<span>Your stuff in a CompactCard</span>
+			</CompactCard>
+		</div>
+	);
 }
 ```
 

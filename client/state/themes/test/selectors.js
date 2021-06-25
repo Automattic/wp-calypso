@@ -38,14 +38,18 @@ import {
 	isThemePremium,
 	isThemePurchased,
 	isPremiumThemeAvailable,
-	isThemeAvailableOnJetpackSite,
 	getWpcomParentThemeId,
+	getRecommendedThemes,
+	getRecommendedThemesFilter,
+	areRecommendedThemesLoading,
 } from '../selectors';
-import { PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE } from 'lib/plans/constants';
-import ThemeQueryManager from 'lib/query-manager/theme';
-
-// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+import {
+	PLAN_FREE,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
+} from '@automattic/calypso-products';
+import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 
 const twentyfifteen = {
 	id: 'twentyfifteen',
@@ -1009,62 +1013,6 @@ describe( 'themes selectors', () => {
 				2916284
 			);
 			expect( detailsUrl ).to.equal( '/theme/twentysixteen/example.wordpress.com' );
-		} );
-
-		describe( 'given a theme and a Jetpack site ID', () => {
-			describe( 'with JP version < 4.7', () => {
-				test( "should return the site's wp-admin theme details URL", () => {
-					const detailsUrl = getThemeDetailsUrl(
-						{
-							sites: {
-								items: {
-									77203074: {
-										ID: 77203074,
-										URL: 'https://example.net',
-										jetpack: true,
-										options: {
-											admin_url: 'https://example.net/wp-admin/',
-											jetpack_version: '4.4.1',
-										},
-									},
-								},
-							},
-						},
-						'twentysixteen',
-						77203074
-					);
-					expect( detailsUrl ).to.equal(
-						'https://example.net/wp-admin/themes.php?theme=twentysixteen'
-					);
-				} );
-			} );
-
-			describe( 'with JP version >= 4.7', () => {
-				describe( 'with Jetpack Manage not explicitly turned off', () => {
-					test( 'should return the Calypso theme sheet URL', () => {
-						const detailsUrl = getThemeDetailsUrl(
-							{
-								sites: {
-									items: {
-										77203074: {
-											ID: 77203074,
-											URL: 'https://example.net',
-											jetpack: true,
-											options: {
-												admin_url: 'https://example.net/wp-admin/',
-												jetpack_version: '4.7',
-											},
-										},
-									},
-								},
-							},
-							'twentysixteen',
-							77203074
-						);
-						expect( detailsUrl ).to.equal( '/theme/twentysixteen/example.net' );
-					} );
-				} );
-			} );
 		} );
 	} );
 
@@ -2473,92 +2421,6 @@ describe( 'themes selectors', () => {
 		} );
 	} );
 
-	describe( '#isThemeAvailableOnJetpackSite', () => {
-		test( 'should return true if theme is already installed on Jetpack site', () => {
-			const isAvailable = isThemeAvailableOnJetpackSite(
-				{
-					sites: {
-						items: {
-							77203074: {
-								ID: 77203074,
-								URL: 'https://example.net',
-								jetpack: true,
-							},
-						},
-					},
-					themes: {
-						queries: {
-							77203074: new ThemeQueryManager( {
-								items: { twentyfifteen },
-							} ),
-						},
-					},
-				},
-				'twentyfifteen',
-				77203074
-			);
-			expect( isAvailable ).to.be.true;
-		} );
-
-		test( "should return false if theme is a WP.com theme but Jetpack site doesn't support WP.com theme installation", () => {
-			const isAvailable = isThemeAvailableOnJetpackSite(
-				{
-					sites: {
-						items: {
-							77203074: {
-								ID: 77203074,
-								URL: 'https://example.net',
-								jetpack: true,
-								options: {
-									jetpack_version: '4.0',
-								},
-							},
-						},
-					},
-					themes: {
-						queries: {
-							wpcom: new ThemeQueryManager( {
-								items: { twentyfifteen },
-							} ),
-						},
-					},
-				},
-				'twentyfifteen',
-				77203074
-			);
-			expect( isAvailable ).to.be.false;
-		} );
-
-		test( 'should return true if theme is a WP.com theme and Jetpack site supports WP.com theme installation', () => {
-			const isAvailable = isThemeAvailableOnJetpackSite(
-				{
-					sites: {
-						items: {
-							77203074: {
-								ID: 77203074,
-								URL: 'https://example.net',
-								jetpack: true,
-								options: {
-									jetpack_version: '4.8',
-								},
-							},
-						},
-					},
-					themes: {
-						queries: {
-							wpcom: new ThemeQueryManager( {
-								items: { twentyfifteen },
-							} ),
-						},
-					},
-				},
-				'twentyfifteen',
-				77203074
-			);
-			expect( isAvailable ).to.be.true;
-		} );
-	} );
-
 	describe( 'getWpcomParentThemeId', () => {
 		test( 'should return null for non-existent theme', () => {
 			const parentId = getWpcomParentThemeId(
@@ -2603,5 +2465,72 @@ describe( 'themes selectors', () => {
 			);
 			expect( parentId ).to.equal( 'superhero' );
 		} );
+	} );
+} );
+
+describe( '#getRecommendedThemes', () => {
+	const themes = [ 'a', 'b', 'c' ];
+	const filter = 'foobar';
+	const state = {
+		themes: {
+			recommendedThemes: {
+				[ filter ]: {
+					isLoading: false,
+					themes,
+				},
+			},
+		},
+	};
+	test( 'should return correct themes list for filter', () => {
+		const recommended = getRecommendedThemes( state, filter );
+		expect( recommended ).to.equal( themes );
+	} );
+
+	test( 'should return empty themes list for unfetched filter', () => {
+		const recommended = getRecommendedThemes( state, 'bazbazbaz' );
+		expect( recommended ).to.be.empty;
+	} );
+} );
+
+describe( '#getRecommendedThemesFilter', () => {
+	const state = {
+		sites: {
+			items: {
+				[ 123 ]: { is_core_site_editor_enabled: true },
+				[ 321 ]: { is_core_site_editor_enabled: false },
+			},
+		},
+	};
+
+	test( 'should return `auto-loading-homepage` for non-FSE site', () => {
+		expect( getRecommendedThemesFilter( state, 321 ) ).to.equal( 'auto-loading-homepage' );
+	} );
+
+	test( 'should return `block-templates` for FSE site', () => {
+		expect( getRecommendedThemesFilter( state, 123 ) ).to.equal( 'block-templates' );
+	} );
+} );
+
+describe( '#areRecommendedThemesLoading', () => {
+	const filterForIsLoading = 'foo';
+	const filterForNotLoading = 'bar';
+	const state = {
+		themes: {
+			recommendedThemes: {
+				[ filterForNotLoading ]: { isLoading: false },
+				[ filterForIsLoading ]: { isLoading: true },
+			},
+		},
+	};
+	test( 'should return true when loading', () => {
+		expect( areRecommendedThemesLoading( state, filterForIsLoading ) ).to.be.true;
+	} );
+
+	test( 'should return false when not loading', () => {
+		expect( areRecommendedThemesLoading( state, filterForNotLoading ) ).to.be.false;
+	} );
+
+	test( 'should return false when filter request not initiated', () => {
+		expect( areRecommendedThemesLoading( state, 'lolol' ) ).to.be.false;
 	} );
 } );

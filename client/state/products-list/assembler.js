@@ -1,4 +1,11 @@
-export const createProductObject = ( product ) => {
-	product.cost = Number( product.cost );
-	return product;
-};
+/**
+ * Converts the `cost` of a product to a Number, if it isn't already.
+ *
+ * @param {object} product A product object.
+ * @returns A shallow copy of the original product, but with `cost` set to the
+ * 	 equivalent numeric value.
+ */
+export const ensureNumericCost = ( product ) => ( {
+	...product,
+	cost: Number( product.cost ),
+} );

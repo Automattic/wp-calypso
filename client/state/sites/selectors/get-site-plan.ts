@@ -1,12 +1,7 @@
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
-import getRawSite from 'state/selectors/get-raw-site';
+import getRawSite from 'calypso/state/selectors/get-raw-site';
 
 export interface SitePlan {
 	expired: boolean;
@@ -39,7 +34,7 @@ export default function getSitePlan( state, siteId: number | null ): SitePlan | 
 		return null;
 	}
 
-	if ( get( site.plan, 'expired', false ) ) {
+	if ( site.plan?.expired ) {
 		if ( site.jetpack ) {
 			return {
 				product_id: 2002,

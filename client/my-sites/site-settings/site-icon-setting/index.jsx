@@ -5,35 +5,38 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { head, partial, partialRight, isEqual, flow, compact, includes } from 'lodash';
+import { isEqual, flow, compact, includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import SiteIcon from 'blocks/site-icon';
+import SiteIcon from 'calypso/blocks/site-icon';
 import { Button } from '@automattic/components';
-import AsyncLoad from 'components/async-load';
-import EditorMediaModalDialog from 'post-editor/media-modal/dialog';
-import accept from 'lib/accept';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { saveSiteSettings } from 'state/site-settings/actions';
-import { isSavingSiteSettings } from 'state/site-settings/selectors';
-import { setEditorMediaModalView } from 'state/editor/actions';
-import { resetAllImageEditorState } from 'state/editor/image-editor/actions';
-import { getCustomizerUrl, getSiteAdminUrl, isJetpackSite } from 'state/sites/selectors';
-import { ModalViews } from 'state/ui/media-modal/constants';
-import { AspectRatios } from 'state/editor/image-editor/constants';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
-import InfoPopover from 'components/info-popover';
-import { getImageEditorCrop, getImageEditorTransform } from 'state/editor/image-editor/selectors';
-import getSiteIconId from 'state/selectors/get-site-icon-id';
-import getSiteIconUrl from 'state/selectors/get-site-icon-url';
-import isPrivateSite from 'state/selectors/is-private-site';
-import isSiteSupportingImageEditor from 'state/selectors/is-site-supporting-image-editor';
-import { uploadSiteIcon } from 'state/media/thunks';
+import AsyncLoad from 'calypso/components/async-load';
+import EditorMediaModalDialog from 'calypso/post-editor/media-modal/dialog';
+import accept from 'calypso/lib/accept';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { saveSiteSettings } from 'calypso/state/site-settings/actions';
+import { isSavingSiteSettings } from 'calypso/state/site-settings/selectors';
+import { setEditorMediaModalView } from 'calypso/state/editor/actions';
+import { resetAllImageEditorState } from 'calypso/state/editor/image-editor/actions';
+import { getCustomizerUrl, getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
+import { ModalViews } from 'calypso/state/ui/media-modal/constants';
+import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
+import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
+import InfoPopover from 'calypso/components/info-popover';
+import {
+	getImageEditorCrop,
+	getImageEditorTransform,
+} from 'calypso/state/editor/image-editor/selectors';
+import getSiteIconId from 'calypso/state/selectors/get-site-icon-id';
+import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import isSiteSupportingImageEditor from 'calypso/state/selectors/is-site-supporting-image-editor';
+import { uploadSiteIcon } from 'calypso/state/media/thunks';
 
 /**
  * Style dependencies
@@ -52,8 +55,7 @@ class SiteIconSetting extends Component {
 		siteSupportsImageEditor: PropTypes.bool,
 		customizerUrl: PropTypes.string,
 		generalOptionsUrl: PropTypes.string,
-		onEditSelectedMedia: PropTypes.func,
-		onCancelEditingIcon: PropTypes.func,
+		setEditorMediaModalView: PropTypes.func,
 		resetAllImageEditorState: PropTypes.func,
 		crop: PropTypes.object,
 	};
@@ -81,7 +83,7 @@ class SiteIconSetting extends Component {
 	editSelectedMedia = ( value ) => {
 		if ( value ) {
 			this.setState( { isEditingSiteIcon: true } );
-			this.props.onEditSelectedMedia();
+			this.props.setEditorMediaModalView( ModalViews.IMAGE_EDITOR );
 		} else {
 			this.hideModal();
 		}
@@ -102,7 +104,7 @@ class SiteIconSetting extends Component {
 		}
 
 		const { siteId, selectedItems } = this.props;
-		const selectedItem = head( selectedItems );
+		const selectedItem = selectedItems[ 0 ];
 		if ( ! selectedItem ) {
 			return;
 		}
@@ -137,27 +139,27 @@ class SiteIconSetting extends Component {
 	};
 
 	confirmRemoval = () => {
-		const { translate, siteId, removeSiteIcon, recordEvent } = this.props;
+		const { translate, siteId, recordEvent } = this.props;
 		const message = translate( 'Are you sure you want to remove the site icon?' );
 
 		recordEvent( 'Clicked Remove Site Icon' );
 
 		accept( message, ( accepted ) => {
 			if ( accepted ) {
-				removeSiteIcon( siteId );
+				this.props.saveSiteSettings( siteId, { site_icon: '' } );
 				recordEvent( 'Confirmed Remove Site Icon' );
 			}
 		} );
 	};
 
 	cancelEditingSiteIcon = () => {
-		this.props.onCancelEditingIcon();
+		this.props.setEditorMediaModalView( ModalViews.LIST );
 		this.props.resetAllImageEditorState();
 		this.setState( { isEditingSiteIcon: false } );
 	};
 
 	preloadModal() {
-		asyncRequire( 'post-editor/media-modal' );
+		asyncRequire( 'calypso/post-editor/media-modal' );
 	}
 
 	isParentReady( selectedMedia ) {
@@ -246,7 +248,7 @@ class SiteIconSetting extends Component {
 				) }
 				{ hasToggledModal && (
 					<AsyncLoad
-						require="post-editor/media-modal"
+						require="calypso/post-editor/media-modal"
 						placeholder={ <EditorMediaModalDialog isVisible /> }
 						siteId={ siteId }
 						onClose={ this.editSelectedMedia }
@@ -297,11 +299,9 @@ export default connect(
 	},
 	{
 		recordEvent: ( action ) => recordGoogleEvent( 'Site Settings', action ),
-		onEditSelectedMedia: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
-		onCancelEditingIcon: partial( setEditorMediaModalView, ModalViews.LIST ),
+		setEditorMediaModalView,
 		resetAllImageEditorState,
 		saveSiteSettings,
-		removeSiteIcon: partialRight( saveSiteSettings, { site_icon: '' } ),
 		uploadSiteIcon,
 	}
 )( localize( SiteIconSetting ) );

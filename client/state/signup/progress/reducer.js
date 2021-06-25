@@ -7,7 +7,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import stepsConfig from 'signup/config/steps-pure';
+import stepsConfig from 'calypso/signup/config/steps-pure';
 import {
 	SIGNUP_COMPLETE_RESET,
 	SIGNUP_PROGRESS_COMPLETE_STEP,
@@ -18,8 +18,8 @@ import {
 	SIGNUP_STEPS_SITE_TYPE_SET,
 	SIGNUP_PROGRESS_REMOVE_STEP,
 	SIGNUP_PROGRESS_ADD_STEP,
-} from 'state/action-types';
-import { withSchemaValidation } from 'state/utils';
+} from 'calypso/state/action-types';
+import { withSchemaValidation } from 'calypso/state/utils';
 import { schema } from './schema';
 
 const debug = debugFactory( 'calypso:state:signup:progress:reducer' );

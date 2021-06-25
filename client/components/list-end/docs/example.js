@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ListEnd from 'components/list-end';
+import ListEnd from 'calypso/components/list-end';
 
 export default function ListEndExample() {
 	return <ListEnd />;

@@ -1,36 +1,31 @@
 /**
  * Internal dependencies
  */
-import getActiveDiscount, { isDiscountActive } from 'state/selectors/get-active-discount';
-import { hasActivePromotion } from 'state/active-promotions/selectors';
-import { getSitePlanSlug } from 'state/sites/selectors';
-import { abtest } from 'lib/abtest';
-import discounts from 'lib/discounts';
+import getActiveDiscount, { isDiscountActive } from 'calypso/state/selectors/get-active-discount';
+import { hasActivePromotion } from 'calypso/state/active-promotions/selectors';
+import { getSitePlanSlug } from 'calypso/state/sites/selectors';
+import { activeDiscounts } from 'calypso/lib/discounts';
 import {
 	PLAN_PREMIUM_2_YEARS,
 	TYPE_FREE,
 	TYPE_PREMIUM,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
-} from 'lib/plans/constants';
+} from '@automattic/calypso-products';
 
-jest.mock( 'state/active-promotions/selectors', () => ( {
+jest.mock( 'calypso/state/active-promotions/selectors', () => ( {
 	hasActivePromotion: jest.fn( () => null ),
 } ) );
 
-jest.mock( 'lib/abtest', () => ( {
-	abtest: jest.fn( () => null ),
-} ) );
-
-jest.mock( 'lib/discounts', () => ( {
+jest.mock( 'calypso/lib/discounts', () => ( {
 	activeDiscounts: [],
 } ) );
 
-jest.mock( 'state/sites/selectors', () => ( {
+jest.mock( 'calypso/state/sites/selectors', () => ( {
 	getSitePlanSlug: jest.fn( () => null ),
 } ) );
 
-jest.mock( 'state/ui/selectors', () => ( {
+jest.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSiteId: jest.fn( () => 1 ),
 } ) );
 
@@ -44,7 +39,6 @@ describe( 'isDiscountActive()', () => {
 	describe( 'General', () => {
 		beforeEach( () => {
 			hasActivePromotion.mockImplementation( () => true );
-			abtest.mockImplementation( () => 'upsell' );
 		} );
 
 		test( 'should return false for an empty discount', () => {
@@ -55,7 +49,6 @@ describe( 'isDiscountActive()', () => {
 	describe( 'Date ranges', () => {
 		beforeEach( () => {
 			hasActivePromotion.mockImplementation( () => true );
-			abtest.mockImplementation( () => 'upsell' );
 		} );
 
 		test( 'should return null if available discounts did not start yet', () => {
@@ -89,7 +82,6 @@ describe( 'isDiscountActive()', () => {
 	describe( 'State checks', () => {
 		beforeEach( () => {
 			hasActivePromotion.mockImplementation( () => true );
-			abtest.mockImplementation( () => 'upsell' );
 		} );
 
 		test( 'should return false if hasActivePromotion returns false', () => {
@@ -113,47 +105,9 @@ describe( 'isDiscountActive()', () => {
 		} );
 	} );
 
-	describe( 'AB test checks', () => {
-		beforeEach( () => {
-			hasActivePromotion.mockImplementation( () => true );
-		} );
-
-		test( 'should return true if there is no ab test', () => {
-			expect(
-				isDiscountActive( {
-					startsAt: DatePlusTime( -10 ),
-					endsAt: DatePlusTime( 100 ),
-				} )
-			).toBe( true );
-		} );
-
-		test( 'should return false if hasActivePromotion returns control', () => {
-			abtest.mockImplementation( () => 'control' );
-			expect(
-				isDiscountActive( {
-					abTestName: 'abtest_one',
-					startsAt: DatePlusTime( -10 ),
-					endsAt: DatePlusTime( 100 ),
-				} )
-			).toBe( false );
-		} );
-
-		test( 'should return true if hasActivePromotion returns upsell', () => {
-			abtest.mockImplementation( () => 'upsell' );
-			expect(
-				isDiscountActive( {
-					abTestName: 'abtest_one',
-					startsAt: DatePlusTime( -10 ),
-					endsAt: DatePlusTime( 100 ),
-				} )
-			).toBe( true );
-		} );
-	} );
-
 	describe( 'Target plans check', () => {
 		beforeEach( () => {
 			hasActivePromotion.mockImplementation( () => true );
-			abtest.mockImplementation( () => 'upsell' );
 		} );
 
 		test( 'should return true if there are no target plans', () => {
@@ -210,11 +164,12 @@ describe( 'isDiscountActive()', () => {
 describe( 'getActiveDiscount()', () => {
 	beforeEach( () => {
 		hasActivePromotion.mockImplementation( () => true );
-		abtest.mockImplementation( () => 'upsell' );
+	} );
+	afterEach( () => {
+		activeDiscounts.length = 0;
 	} );
 
 	test( 'should return null when there are no discounts', () => {
-		discounts.activeDiscounts = [];
 		expect( getActiveDiscount( {} ) ).toBe( null );
 	} );
 
@@ -223,25 +178,7 @@ describe( 'getActiveDiscount()', () => {
 			startsAt: DatePlusTime( -10 ),
 			endsAt: DatePlusTime( 100 ),
 		};
-		discounts.activeDiscounts = [ promo ];
+		activeDiscounts.push( promo );
 		expect( getActiveDiscount( {} ) ).toEqual( promo );
-	} );
-
-	test( 'should return an active discount with merged variant when there is a variant', () => {
-		abtest.mockImplementation( () => 'upsell10' );
-		const promo = {
-			startsAt: DatePlusTime( -10 ),
-			endsAt: DatePlusTime( 100 ),
-			variations: {
-				upsell10: {
-					name: 'upsell10 name',
-				},
-			},
-		};
-		discounts.activeDiscounts = [ promo ];
-		expect( getActiveDiscount( {} ) ).toEqual( {
-			...promo,
-			name: 'upsell10 name',
-		} );
 	} );
 } );

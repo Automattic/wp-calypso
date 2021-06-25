@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getGoogleMyBusinessStats from 'state/selectors/get-google-my-business-stats';
+import getGoogleMyBusinessStats from 'calypso/state/selectors/get-google-my-business-stats';
 
 describe( 'getGoogleMyBusinessStats', () => {
 	test( 'should return null if data not available', () => {

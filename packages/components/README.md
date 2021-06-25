@@ -21,10 +21,11 @@ import { Button } from '@automattic/components';
 
 const CallToAction = () => (
 	<>
-		<Button primary onClick={() => alert('Thank you for taking action!')}>Take action now!</Button>
+		<Button primary onClick={ () => alert( 'Thank you for taking action!' ) }>
+			Take action now!
+		</Button>
 	</>
 );
-
 ```
 
 ## Development Workflow
@@ -34,10 +35,10 @@ in the root of the repository to get the required `devDependencies`.
 
 ### Tests
 
-```yarn run test-packages```
+`yarn run test-packages`
 
-```yarn run test-packages:watch```
+`yarn run test-packages:watch`
 
 ### Using [Storybook](https://storybook.js.org/)
 
-```yarn run components:storybook:start```
+`yarn run components:storybook:start`

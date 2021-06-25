@@ -1,9 +1,9 @@
-Form Components
-===============
+# Form Components
 
 This is a directory of shared form components.
 
-### Settings Form Fields
+## Settings Form Fields
+
 The following form components were created as an effort to minimize duplication between site settings and me settings.
 
 - clipboard-button
@@ -38,14 +38,21 @@ The following form components were created as an effort to minimize duplication 
 The component jsx files are wrappers that ensure our classes are added to each form field. Each form field component also contains a `style.scss` file in its directory for styling. These stylesheets are included in `/assets/stylesheets/_components.scss`.
 
 ### FormSectionHeading
+
 The `FormSectionHeading` component allows you to add a section header to your settings form.
 
 ### FormInputValidation
+
 The `FormInputValidation` component is used to display a validation notice to the user. You can use it like this:
 
 ```jsx
-<FormInputValidation isError={ true } text="Usernames can only contain lowercase letters (a-z) and numbers." />
-<FormInputValidation text="That username is valid." />
+<>
+	<FormInputValidation
+		isError
+		text="Usernames can only contain lowercase letters (a-z) and numbers."
+	/>
+	<FormInputValidation text="That username is valid." />
+</>;
 ```
 
 ### MultiCheckbox
@@ -53,6 +60,7 @@ The `FormInputValidation` component is used to display a validation notice to th
 [See README.md for MultiCheckbox](./multi-checkbox/README.md)
 
 ### SelectOptGroups
+
 `SelectOptGroups` allows you to pass structured data to render a select element with `<option>` elements nested inside `<optgroup>` separators. You can use it like this:
 
 ```jsx
@@ -62,31 +70,31 @@ const options = [
 		options: [
 			{
 				label: 'Option 1',
-				value: 1
+				value: 1,
 			},
 			{
 				label: 'Option 2',
-				value: 2
-			}
-		]
+				value: 2,
+			},
+		],
 	},
 	{
 		label: 'Group 2',
 		options: [
 			{
 				label: 'Option 3',
-				value: 3
+				value: 3,
 			},
 			{
 				label: 'Option 4',
-				value: 4
-			}
-		]
-	}
-],
-initialSelected = 3;
+				value: 4,
+			},
+		],
+	},
+];
+const initialSelected = 3;
 
-<SelectOptGroups name="example" value={ initialSelected } options={ options } />
+<SelectOptGroups name="example" value={ initialSelected } options={ options } />;
 ```
 
 And this would render:

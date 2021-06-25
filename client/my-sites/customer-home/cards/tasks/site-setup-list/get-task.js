@@ -7,15 +7,15 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import InlineSupportLink from 'components/inline-support-link';
-import { domainManagementEdit, domainManagementList } from 'my-sites/domains/paths';
-import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
-import { launchSiteOrRedirectToLaunchSignupFlow } from 'state/sites/launch/actions';
-import { localizeUrl } from 'lib/i18n-utils';
-import { verifyEmail } from 'state/current-user/email-verification/actions';
-import { CHECKLIST_KNOWN_TASKS } from 'state/data-layer/wpcom/checklist/index.js';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
+import { requestSiteChecklistTaskUpdate } from 'calypso/state/checklist/actions';
+import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { verifyEmail } from 'calypso/state/current-user/email-verification/actions';
+import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 
-const getTaskDescription = ( task, { isDomainUnverified, isEmailUnverified } ) => {
+const getTaskDescription = ( task, { isDomainUnverified } ) => {
 	switch ( task.id ) {
 		case CHECKLIST_KNOWN_TASKS.SITE_LAUNCHED:
 			if ( isDomainUnverified ) {
@@ -25,16 +25,6 @@ const getTaskDescription = ( task, { isDomainUnverified, isEmailUnverified } ) =
 						<br />
 						<br />
 						{ translate( 'Verify the email address for your domain before launching your site.' ) }
-					</>
-				);
-			}
-			if ( isEmailUnverified ) {
-				return (
-					<>
-						{ task.description }
-						<br />
-						<br />
-						{ translate( 'Confirm your email address before launching your site.' ) }
 					</>
 				);
 			}
@@ -52,7 +42,7 @@ const isTaskDisabled = (
 		case CHECKLIST_KNOWN_TASKS.EMAIL_VERIFIED:
 			return 'requesting' === emailVerificationStatus || ! isEmailUnverified;
 		case CHECKLIST_KNOWN_TASKS.SITE_LAUNCHED:
-			return isDomainUnverified || isEmailUnverified;
+			return isDomainUnverified;
 		default:
 			return false;
 	}
@@ -73,23 +63,6 @@ export const getTask = (
 ) => {
 	let taskData = {};
 	switch ( task.id ) {
-		case CHECKLIST_KNOWN_TASKS.START_SITE_SETUP:
-			taskData = {
-				timing: 1,
-				label: translate( 'Site created' ),
-				title: translate( 'Your site has been created!' ),
-				description: translate(
-					"Next, we'll guide you through setting up and launching your site."
-				),
-				actionText: 'Get started',
-				...( ! task.isCompleted && {
-					actionDispatch: requestSiteChecklistTaskUpdate,
-					actionDispatchArgs: [ siteId, task.id ],
-				} ),
-				actionAdvanceToNext: true,
-				completeOnView: true,
-			};
-			break;
 		case CHECKLIST_KNOWN_TASKS.DOMAIN_VERIFIED:
 			taskData = {
 				timing: 2,
@@ -175,7 +148,7 @@ export const getTask = (
 		case CHECKLIST_KNOWN_TASKS.FRONT_PAGE_UPDATED:
 			taskData = {
 				timing: 20,
-				title: translate( 'Update your Home page' ),
+				title: translate( 'Update your homepage' ),
 				description: translate(
 					"We've created the basics, now it's time for you to update the images and text. Make a great first impression. Everything you do can be changed anytime."
 				),
@@ -186,27 +159,41 @@ export const getTask = (
 		case CHECKLIST_KNOWN_TASKS.SITE_MENU_UPDATED:
 			taskData = {
 				timing: 10,
-				title: translate( 'Create a site menu' ),
-				description: (
-					<>
-						{ translate(
-							"Building an effective navigation menu makes it easier for someone to find what they're looking for and improve search engine rankings."
-						) }{ ' ' }
-						<InlineSupportLink
-							supportPostId={ 59580 }
-							supportLink={ localizeUrl( 'https://wordpress.com/support/menus/' ) }
-							showIcon={ false }
-							tracksEvent="calypso_customer_home_menus_support_page_view"
-							statsGroup="calypso_customer_home"
-							statsName="menus_view_tutorial"
-						>
-							{ translate( 'View tutorial.' ) }
-						</InlineSupportLink>
-					</>
+				title: translate( 'Edit the site menu' ),
+				description: translate(
+					"Building an effective navigation menu makes it easier for someone to find what they're looking for and improve search engine rankings."
 				),
 				actionText: translate( 'Add a menu' ),
-				isSkippable: true,
 				actionUrl: menusUrl,
+				actionIsLink: true,
+				customFirstButton: (
+					<InlineSupportLink
+						// The following classes are globally shared
+						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+						className="button is-primary task__action"
+						supportPostId={ 59580 }
+						supportLink={ localizeUrl( 'https://wordpress.com/support/menus/' ) }
+						showIcon={ false }
+						tracksEvent="calypso_customer_home_menus_support_page_view"
+						statsGroup="calypso_customer_home"
+						statsName="menus_view_tutorial"
+					>
+						{ translate( 'View tutorial' ) }
+					</InlineSupportLink>
+				),
+			};
+			break;
+		case CHECKLIST_KNOWN_TASKS.SITE_THEME_SELECTED:
+			taskData = {
+				timing: 5,
+				title: translate( 'Choose a theme' ),
+				description: translate(
+					'Make your site uniquely yours! ' +
+						'Themes don’t just change the look and feel of your site, they can also add new features such as a unique homepage layout, interactive post sliders, and more!'
+				),
+				actionText: translate( 'Choose a theme' ),
+				isSkippable: false,
+				actionUrl: `/themes/${ siteSlug }`,
 			};
 			break;
 	}

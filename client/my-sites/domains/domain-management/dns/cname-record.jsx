@@ -10,11 +10,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 
 class CnameRecord extends React.Component {
 	static propTypes = {
@@ -33,7 +33,7 @@ class CnameRecord extends React.Component {
 		return (
 			<div className={ classes }>
 				<FormFieldset>
-					<FormLabel>{ translate( 'Name', { context: 'Dns Record' } ) }</FormLabel>
+					<FormLabel>{ translate( 'Name (Host)', { context: 'Dns Record' } ) }</FormLabel>
 					<FormTextInputWithAffixes
 						name="name"
 						placeholder={ translate( 'Enter subdomain (required)', {
@@ -49,7 +49,7 @@ class CnameRecord extends React.Component {
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel>{ translate( 'Alias Of' ) }</FormLabel>
+					<FormLabel>{ translate( 'Alias Of (Points To)' ) }</FormLabel>
 					<FormTextInput
 						name="data"
 						isError={ ! isDataValid }

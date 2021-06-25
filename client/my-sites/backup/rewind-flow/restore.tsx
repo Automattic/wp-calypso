@@ -8,34 +8,35 @@ import React, { FunctionComponent, useCallback, useState } from 'react';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { defaultRewindConfig, RewindConfig } from './types';
-import { rewindRestore } from 'state/activity-log/actions';
+import { rewindRestore } from 'calypso/state/activity-log/actions';
+import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
 import Error from './error';
-import getInProgressRewindPercentComplete from 'state/selectors/get-in-progress-rewind-percent-complete';
-import getInProgressRewindStatus from 'state/selectors/get-in-progress-rewind-status';
-import getRewindState from 'state/selectors/get-rewind-state';
-import Gridicon from 'components/gridicon';
+import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
+import getRestoreProgress from 'calypso/state/selectors/get-restore-progress';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import Gridicon from 'calypso/components/gridicon';
+import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
 import Loading from './loading';
 import ProgressBar from './progress-bar';
-import QueryRewindState from 'components/data/query-rewind-state';
+import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-restore-status';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import RewindConfigEditor from './rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
+
+/**
+ * Type dependencies
+ */
+import type { RewindState } from 'calypso/state/data-layer/wpcom/sites/rewind/type';
+import type { RestoreProgress } from 'calypso/state/data-layer/wpcom/activity-log/rewind/restore-status/type';
 
 interface Props {
 	backupDisplayDate: string;
 	rewindId: string;
 	siteId: number;
 	siteUrl: string;
-}
-
-//todo: move to dedicated types file
-interface RewindState {
-	state: string;
-	rewind?: {
-		status: 'queued' | 'running' | 'finished' | 'fail';
-	};
 }
 
 const BackupRestoreFlow: FunctionComponent< Props > = ( {
@@ -51,25 +52,25 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	const [ userHasRequestedRestore, setUserHasRequestedRestore ] = useState< boolean >( false );
 
 	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) ) as RewindState;
-
-	const loading = rewindState.state === 'uninitialized';
-
 	const inProgressRewindStatus = useSelector( ( state ) =>
 		getInProgressRewindStatus( state, siteId, rewindId )
 	);
-	const inProgressRewindPercentComplete = useSelector( ( state ) =>
-		getInProgressRewindPercentComplete( state, siteId, rewindId )
+	const { message, percent, currentEntry, status } = useSelector(
+		( state ) => getRestoreProgress( state, siteId ) || ( {} as RestoreProgress )
 	);
 
 	const requestRestore = useCallback(
 		() => dispatch( rewindRestore( siteId, rewindId, rewindConfig ) ),
 		[ dispatch, rewindConfig, rewindId, siteId ]
 	);
-
-	const onConfirm = () => {
+	const onConfirm = useCallback( () => {
+		dispatch( setValidFrom( 'restore', Date.now() ) );
 		setUserHasRequestedRestore( true );
 		requestRestore();
-	};
+	}, [ dispatch, setUserHasRequestedRestore, requestRestore ] );
+
+	const loading = rewindState.state === 'uninitialized';
+	const { restoreId } = rewindState.rewind || {};
 
 	const renderConfirm = () => (
 		<>
@@ -114,7 +115,13 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 				<Gridicon icon="history" size={ 48 } />
 			</div>
 			<h3 className="rewind-flow__title">{ translate( 'Currently restoring your site' ) }</h3>
-			<ProgressBar percent={ inProgressRewindPercentComplete } />
+			<ProgressBar
+				isReady={ 'running' === status }
+				initializationMessage={ translate( 'Initializing the restore process' ) }
+				message={ message }
+				entry={ currentEntry }
+				percent={ percent }
+			/>
 			<p className="rewind-flow__info">
 				{ translate(
 					'We are restoring your site back to {{strong}}%(backupDisplayDate)s{{/strong}}.',
@@ -187,17 +194,19 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		</Error>
 	);
 
+	const isInProgress =
+		( ! inProgressRewindStatus && userHasRequestedRestore ) ||
+		( inProgressRewindStatus && [ 'queued', 'running' ].includes( inProgressRewindStatus ) );
+	const isFinished = inProgressRewindStatus !== null && inProgressRewindStatus === 'finished';
+
 	const render = () => {
 		if ( loading ) {
 			return <Loading />;
 		} else if ( ! inProgressRewindStatus && ! userHasRequestedRestore ) {
 			return renderConfirm();
-		} else if (
-			( ! inProgressRewindStatus && userHasRequestedRestore ) ||
-			( inProgressRewindStatus && [ 'queued', 'running' ].includes( inProgressRewindStatus ) )
-		) {
+		} else if ( isInProgress ) {
 			return renderInProgress();
-		} else if ( inProgressRewindStatus !== null && inProgressRewindStatus === 'finished' ) {
+		} else if ( isFinished ) {
 			return renderFinished();
 		}
 		return renderError();
@@ -206,7 +215,11 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	return (
 		<>
 			<QueryRewindState siteId={ siteId } />
-			{ render() }
+			{ restoreId && 'running' === inProgressRewindStatus && (
+				<QueryRewindRestoreStatus siteId={ siteId } restoreId={ restoreId } />
+			) }
+			<Card>{ render() }</Card>
+			{ ( isInProgress || isFinished ) && <JetpackReviewPrompt align="center" type="restore" /> }
 		</>
 	);
 };

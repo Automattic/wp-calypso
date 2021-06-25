@@ -1,16 +1,15 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
-import cssSafeUrl from 'lib/css-safe-url';
+import classNames from 'classnames';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
-import FormToggle from 'components/forms/form-toggle/compact';
-import classNames from 'classnames';
-import SocialLogo from 'components/social-logo';
+import cssSafeUrl from 'calypso/lib/css-safe-url';
+import SocialLogo from 'calypso/components/social-logo';
 
 const PostShareConnection = ( { connection, isActive, onToggle } ) => {
 	const {
@@ -50,7 +49,7 @@ const PostShareConnection = ( { connection, isActive, onToggle } ) => {
 			<div className="post-share__service-account-name">
 				<span>{ external_display }</span>
 			</div>
-			<FormToggle checked={ isActive } />
+			<ToggleControl checked={ isActive } />
 		</div>
 	);
 };

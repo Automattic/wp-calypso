@@ -1,0 +1,51 @@
+.jetpack-review-prompt {
+	&__left {
+		.jetpack-review-prompt__header {
+			align-items: flex-start;
+			padding-bottom: 16px;
+		}
+	}
+
+	&__center {
+		.jetpack-review-prompt__header {
+			align-items: center;
+			padding-bottom: 32px;
+		}
+	}
+
+	&__title {
+		font-size: $font-title-small;
+		font-weight: 600;
+	}
+
+	&__header {
+		display: flex;
+		flex-direction: column;
+		padding-bottom: 16px;
+		padding-top: 32px;
+
+		.gridicon {
+			margin-bottom: 4px;
+		}
+	}
+
+	&__close-icon {
+		position: absolute;
+		top: 16px;
+		right: 16px;
+		color: var( --color-text-subtle );
+		cursor: pointer;
+	}
+	&__review-link,
+	&__review-link:visited {
+		color: var( --color-link );
+
+		.gridicon {
+			margin-left: 4px;
+		}
+
+		&:hover {
+			color: var( --color-link-dark );
+		}
+	}
+}

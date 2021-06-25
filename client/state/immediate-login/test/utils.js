@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { first, last } from 'lodash';
+import { last } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,6 +11,7 @@ import { REASONS_FOR_MANUAL_RENEWAL } from '../constants';
 
 describe( 'immediate-login/utils', () => {
 	describe( 'createPathWithoutImmediateLoginInformation', () => {
+		// eslint-disable-next-line jest/expect-expect
 		test( 'should be possible to call', () => {
 			createPathWithoutImmediateLoginInformation( '', {} );
 		} );
@@ -109,6 +110,7 @@ describe( 'immediate-login/utils', () => {
 	} );
 
 	describe( 'createImmediateLoginMessage', () => {
+		// eslint-disable-next-line jest/expect-expect
 		test( 'should be possible to call', () => {
 			createImmediateLoginMessage( '', '' );
 		} );
@@ -118,7 +120,7 @@ describe( 'immediate-login/utils', () => {
 
 		const messages = [
 			createImmediateLoginMessage( '', 'test@wordpress.com' ),
-			createImmediateLoginMessage( first( REASONS_FOR_MANUAL_RENEWAL ), 'test@wordpress.com' ),
+			createImmediateLoginMessage( REASONS_FOR_MANUAL_RENEWAL[ 0 ], 'test@wordpress.com' ),
 			createImmediateLoginMessage( last( REASONS_FOR_MANUAL_RENEWAL ), 'test@wordpress.com' ),
 		];
 		test( 'should put an email in every message', () => {

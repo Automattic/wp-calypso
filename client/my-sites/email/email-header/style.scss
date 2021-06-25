@@ -1,0 +1,30 @@
+.email-header {
+	align-items: flex-start;
+	display: flex;
+	justify-content: space-between;
+}
+
+.email-header__cart {
+	display: flex;
+
+	> div {
+		margin-bottom: auto;
+		margin-top: auto;
+	}
+
+	.popover-cart {
+		margin-right: 8px;
+	}
+
+	.popover-cart .header-button,
+	.popover-cart .header-button:hover {
+		background: none;
+		color: var( --color-text );
+		min-height: initial;
+	}
+
+	.cart__count-badge .count {
+		right: -3px;
+		top: -7px;
+	}
+}

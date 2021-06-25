@@ -1,23 +1,11 @@
 .importer-action-buttons__action-button {
-	width: 100%;
-	margin-bottom: 0.5em;
-
-	@include breakpoint-deprecated( '>660px' ) {
-		width: auto;
-		margin-left: 0.75em;
-		margin-bottom: 0;
-	}
+	margin-right: 0.75em;
 }
 
 .importer-action-buttons__container {
 	clear: both;
 	display: flex;
-	flex-direction: column-reverse;
 	margin-top: 1.5em;
 	margin-bottom: 1em;
-
-	@include breakpoint-deprecated( '>660px' ) {
-		flex-direction: row;
-		justify-content: flex-end;
-	}
+	flex-direction: row;
 }

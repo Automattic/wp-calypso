@@ -6,8 +6,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { get, isEmpty, isEqual, noop, some } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { get, isEmpty, isEqual, some } from 'lodash';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import photon from 'photon';
 
@@ -16,16 +16,19 @@ import photon from 'photon';
  */
 import { Card, Ribbon, Button } from '@automattic/components';
 import ThemeMoreButton from './more-button';
-import PulsingDot from 'components/pulsing-dot';
-import InfoPopover from 'components/info-popover';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { setThemesBookmark } from 'state/themes/themes-ui/actions';
+import PulsingDot from 'calypso/components/pulsing-dot';
+import InfoPopover from 'calypso/components/info-popover';
+import { decodeEntities } from 'calypso/lib/formatting';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 export class Theme extends Component {
 	static propTypes = {
@@ -163,6 +166,8 @@ export class Theme extends Component {
 			'theme__badge-price-test': showUpsell,
 		} );
 
+		const themeDescription = decodeEntities( description );
+
 		// for performance testing
 		const screenshotID = this.props.index === 0 ? 'theme__firstscreenshot' : null;
 
@@ -221,7 +226,7 @@ export class Theme extends Component {
 						className="theme__thumbnail"
 						href={ this.props.screenshotClickUrl || 'javascript:;' /* fallback for a11y */ }
 						onClick={ this.onScreenshotClick }
-						title={ description }
+						title={ themeDescription }
 					>
 						{ isActionable && (
 							<div className="theme__thumbnail-label">{ this.props.actionLabel }</div>
@@ -229,7 +234,7 @@ export class Theme extends Component {
 						{ this.renderInstalling() }
 						{ screenshot ? (
 							<img
-								alt={ description }
+								alt={ themeDescription }
 								className="theme__img"
 								src={ themeImgSrc }
 								srcSet={ `${ themeImgSrcDoubleDpi } 2x` }

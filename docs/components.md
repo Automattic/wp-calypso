@@ -8,16 +8,16 @@ Our use of composition is one that embraces CSS reusability, with the cascade as
 
 You will encounter the following types of components in Calypso:
 
-* [UI components](../client/components/README.md) (UI primitives)
-* [Blocks](../client/blocks/README.md) (components which are connected to state, or otherwise directly represent application entities)
-* [Query components](./our-approach-to-data.md#query-components) (which handle data querying but don’t render anything)
-* Higher-order components (which encapsulate and provide functionality)
-* Section components (which are domain specific and not meant to be reused)
+- [UI components](../client/components/README.md) (UI primitives)
+- [Blocks](../client/blocks/README.md) (components which are connected to state, or otherwise directly represent application entities)
+- [Query components](./our-approach-to-data.md#query-components) (which handle data querying but don’t render anything)
+- Higher-order components (which encapsulate and provide functionality)
+- Section components (which are domain specific and not meant to be reused)
 
 This document only focuses on UI components, i.e. React components that directly render HTML elements and require the addition of class attributes for styling. We have essentially two kinds of these:
 
-* `component/index.jsx`
-* `component/sub-component.jsx`
+- `component/index.jsx`
+- `component/sub-component.jsx`
 
 We'd call one "component" and the other "sub-component".
 
@@ -27,9 +27,9 @@ A component is represented by the folder holding the main `index.jsx` file, and 
 
 There are three resulting aspects of this distinction:
 
-* There's only one `style.scss` per component.
-* Classes (both in components and sub-components) are always prefixed to the `component` name.
-* Sub-folders do not care about their parent folder for any functional purposes.
+- There's only one `style.scss` per component.
+- Classes (both in components and sub-components) are always prefixed to the `component` name.
+- Sub-folders do not care about their parent folder for any functional purposes.
 
 That means a sub-component needs to write its HTML classes using the folder name (the component), and its styles will go to the folder's `style.scss` file. The decision to turn a sub-component into a component should take this into account, because once you do so its scope and prefix becomes global and independent.
 
@@ -63,9 +63,9 @@ Components are reusable in nature, regardless of where they are placed in the di
 
 ## Expressiveness
 
-One advantage of avoiding inline JS styles as props are the times modifications of a child in the context of a remote parent are needed.
+One advantage of avoiding inline JS styles as props are the times modifications of a child in the context of a remote parent are needed.
 
-Imagine you want to change the border color of a `SiteIcon` component when it is displayed in the sidebar of `my-sites`. That `SiteIcon` component happens to be rendered within a `Site`, within a `SiteSelector`, and finally in a `Sidebar`.
+Imagine you want to change the border color of a `SiteIcon` component when it is displayed in the sidebar of `my-sites`. That `SiteIcon` component happens to be rendered within a `Site`, within a `SiteSelector`, and finally in a `Sidebar`.
 
 If we were doing inline styles it would mean we need to pass down a style prop from `sidebar` (the component that wants to make the modification) all the way down to `site-icon` to modify that specific border style value. Which is messy, obscure, and requires passing down a meaningless attribute through components that don't care about it, coupling them with a design intent you want to express in the "Sidebar". Now, with CSS and our naming guidelines it becomes just an old `.sidebar .site-icon {}` on the sidebar's `style.scss` file.
 

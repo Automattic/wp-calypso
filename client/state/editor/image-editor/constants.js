@@ -1,8 +1,3 @@
-/**
- * External dependencies
- */
-import { values as objectValues } from 'lodash';
-
 export const AspectRatios = {
 	FREE: 'FREE',
 	ORIGINAL: 'ORIGINAL',
@@ -17,4 +12,4 @@ export const MinimumImageDimensions = {
 	HEIGHT: 50,
 };
 
-export const AspectRatiosValues = objectValues( AspectRatios );
+export const AspectRatiosValues = Object.values( AspectRatios );

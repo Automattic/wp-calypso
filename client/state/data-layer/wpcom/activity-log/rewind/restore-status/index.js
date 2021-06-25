@@ -6,13 +6,13 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { errorNotice } from 'state/notices/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { REWIND_RESTORE_PROGRESS_REQUEST } from 'state/action-types';
-import { updateRewindRestoreProgress } from 'state/activity-log/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { REWIND_RESTORE_PROGRESS_REQUEST } from 'calypso/state/action-types';
+import { updateRewindRestoreProgress } from 'calypso/state/activity-log/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 /** @type {number} how many ms between polls for same data */
 const POLL_INTERVAL = 1500;
@@ -65,6 +65,7 @@ export const fromApi = ( {
 		status = '',
 		rewind_id = '',
 		context = '',
+		current_entry = '',
 	} = {},
 } ) => ( {
 	errorCode: error_code,
@@ -74,6 +75,7 @@ export const fromApi = ( {
 	status,
 	rewindId: rewind_id,
 	context,
+	currentEntry: current_entry,
 } );
 
 export const updateProgress = ( { siteId, restoreId, timestamp }, data ) =>

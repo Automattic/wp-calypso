@@ -77,7 +77,7 @@ describe( 'submitPassword', () => {
 
 		// Implementation detail; needs to select username from store
 		expect( generator.next().value ).toMatchObject( {
-			type: 'SELECT',
+			type: '@@data/RESOLVE_SELECT',
 			storeKey: STORE_KEY,
 		} );
 
@@ -116,7 +116,7 @@ describe( 'submitPassword', () => {
 
 		// Implementation detail; needs to select username from store
 		expect( generator.next().value ).toMatchObject( {
-			type: 'SELECT',
+			type: '@@data/RESOLVE_SELECT',
 			storeKey: STORE_KEY,
 		} );
 
@@ -157,7 +157,7 @@ describe( 'submitPassword', () => {
 
 		// Implementation detail; needs to select username from store
 		expect( generator.next().value ).toMatchObject( {
-			type: 'SELECT',
+			type: '@@data/RESOLVE_SELECT',
 			storeKey: STORE_KEY,
 		} );
 
@@ -201,7 +201,7 @@ describe( 'submitPassword', () => {
 
 		// Checking that the polling hasn't been canceled
 		expect( generator.next().value ).toMatchObject( {
-			type: 'SELECT',
+			type: '@@data/RESOLVE_SELECT',
 			storeKey: STORE_KEY,
 		} );
 

@@ -1,9 +1,9 @@
 {
 	"build": "local",
 	"calypso_config": "desktop",
-	"server_port": 41050,
-	"server_url": "http://127.0.0.1",
-	"server_host": "127.0.0.1",
+	"server_port": 3000,
+	"server_url": "http://calypso.localhost",
+	"server_host": "calypso.localhost",
 	"wordpress_host": "wordpress.com",
 	"debug": false,
 	"appName": "WordPress.com",
@@ -18,9 +18,10 @@
 		"useContentSize": true,
 		"width": 900,
 		"webPreferences": {
-			"overlayScrollbars": false,
+			"contextIsolation": true,
+			"enableRemoteModule": false,
 			"nodeIntegration": false,
-			"contextIsolation": false
+			"overlayScrollbars": false
 		}
 	},
 	"preferencesWindow": {
@@ -58,6 +59,8 @@
 		"transparent": true,
 		"width": "full",
 		"webPreferences": {
+			"contextIsolation": true,
+			"enableRemoteModule": false,
 			"nodeIntegration": false
 		},
 		"wpDragAndDropDisabled": true

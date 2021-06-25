@@ -9,9 +9,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { localizeUrl } from 'lib/i18n-utils';
-import safeProtocolUrl from 'lib/safe-protocol-url';
-import Gridicon from 'components/gridicon';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Style dependencies

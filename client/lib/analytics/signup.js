@@ -2,19 +2,21 @@
  * External dependencies
  */
 import debug from 'debug';
+import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { identifyUser } from 'lib/analytics/identify-user';
-import { gaRecordEvent } from 'lib/analytics/ga';
-import { addToQueue } from 'lib/analytics/queue';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { identifyUser } from 'calypso/lib/analytics/identify-user';
+import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { addToQueue } from 'calypso/lib/analytics/queue';
 import {
 	adTrackSignupStart,
 	adTrackSignupComplete,
 	adTrackRegistration,
-} from 'lib/analytics/ad-tracking';
+} from 'calypso/lib/analytics/ad-tracking';
 
 const signupDebug = debug( 'calypso:analytics:signup' );
 
@@ -25,6 +27,8 @@ export function recordSignupStart( flow, ref ) {
 	gaRecordEvent( 'Signup', 'calypso_signup_start' );
 	// Marketing
 	adTrackSignupStart( flow );
+	// FullStory
+	recordFullStoryEvent( 'calypso_signup_start', { flow, ref } );
 }
 
 export function recordSignupComplete(
@@ -62,21 +66,43 @@ export function recordSignupComplete(
 		hasCartItems && 'has_cart_items',
 	].filter( Boolean );
 
+	// Google Analytics
 	gaRecordEvent( 'Signup', 'calypso_signup_complete:' + flags.join( ',' ) );
 
+	// Tracks, Google Analytics, FullStory
 	if ( isNew7DUserSite ) {
-		// Tracks
-		recordTracksEvent( 'calypso_new_user_site_creation', { flow } );
+		const device = resolveDeviceTypeByViewPort();
 
+		// Tracks
+		recordTracksEvent( 'calypso_new_user_site_creation', { flow, device } );
 		// Google Analytics
 		gaRecordEvent( 'Signup', 'calypso_new_user_site_creation' );
+		// FullStory
+		recordFullStoryEvent( 'calypso_new_user_site_creation', { flow, device } );
 	}
 
+	// Marketing
 	adTrackSignupComplete( { isNewUserSite: isNewUser && isNewSite } );
+
+	// FullStory
+	recordFullStoryEvent( 'calypso_signup_complete', {
+		flow,
+		blog_id: siteId,
+		is_new_user: isNewUser,
+		is_new_site: isNewSite,
+		has_cart_items: hasCartItems,
+	} );
 }
 
 export function recordSignupStep( flow, step ) {
-	recordTracksEvent( 'calypso_signup_step_start', { flow, step } );
+	const device = resolveDeviceTypeByViewPort();
+
+	signupDebug( 'recordSignupStep:', { flow, step, device } );
+
+	// Tracks
+	recordTracksEvent( 'calypso_signup_step_start', { flow, step, device } );
+	// FullStory
+	recordFullStoryEvent( 'calypso_signup_step_start', { flow, step, device } );
 }
 
 export function recordSignupInvalidStep( flow, step ) {
@@ -88,21 +114,22 @@ export function recordSignupInvalidStep( flow, step ) {
  *
  * @param {object} param {}
  * @param {object} param.userData User data
- * @param {string} param.userData.ID User id
- * @param {string} param.userData.username Username
- * @param {string} param.userData.email Email
  * @param {string} param.flow Registration flow
  * @param {string} param.type Registration type
  */
 export function recordRegistration( { userData, flow, type } ) {
+	const device = resolveDeviceTypeByViewPort();
+
 	signupDebug( 'recordRegistration:', { userData, flow, type } );
 
 	// Tracks user identification
 	identifyUser( userData );
 	// Tracks
-	recordTracksEvent( 'calypso_user_registration_complete', { flow, type } );
+	recordTracksEvent( 'calypso_user_registration_complete', { flow, type, device } );
 	// Google Analytics
 	gaRecordEvent( 'Signup', 'calypso_user_registration_complete' );
 	// Marketing
 	adTrackRegistration();
+	// FullStory
+	recordFullStoryEvent( 'calypso_user_registration_complete', { flow, type, device } );
 }

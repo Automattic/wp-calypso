@@ -104,7 +104,6 @@ If your package requires compilation, the `package.json` `prepare` script should
 
 Running `yarn run lint:package-json` will lint all `package.json`'s under `./packages|apps/**` based on [`npmpackagejsonlint.config.js`](../npmpackagejsonlint.config.js).
 
-
 ## Running Tests
 
 To run all of the package tests:
@@ -159,7 +158,7 @@ Note that if you're building with Webpack, you may need to turn off [`resolve.sy
 
 ## Publishing
 
-We use [Lerna](https://lernajs.io/) and its `publish` command to publish the monorepo packages to NPM registry. Please do not use regular [`yarn publish`](https://docs.npmjs.com/cli/publish) within a package to publish an individual package; `npx` has issues using this flow.
+We use [Lerna](https://lerna.js.org/) and its `publish` command to publish the monorepo packages to NPM registry. Please do not use regular [`yarn publish`](https://docs.npmjs.com/cli/publish) within a package to publish an individual package; `npx` has issues using this flow.
 
 ### Make sure changelogs and `package.json` versions are up to date
 
@@ -167,16 +166,16 @@ For all packages that you want to publish, make sure that their `package.json` v
 
 Make sure that the `CHANGELOG.md` document contains up-to-date information, with the `next` heading replaced with the version number that you are about to publish.
 
-Create PRs with the necessary changes and merge them to `master` before publishing. Lerna will add a `gitHead` field to each published package's `package.json`. That field contains the hash of the Git commit that the package was published from. It's better if this commit hash is a permanent one from the `master` branch, rather than an ephemeral commit from a local branch.
+Create PRs with the necessary changes and merge them to `trunk` before publishing. Lerna will add a `gitHead` field to each published package's `package.json`. That field contains the hash of the Git commit that the package was published from. It's better if this commit hash is a permanent one from the `trunk` branch, rather than an ephemeral commit from a local branch.
 
-### Checkout the latest master locally and build the packages
+### Checkout the latest trunk locally and build the packages
 
-Always publish from the latest `master` branch, so that the package contents come from a verified source that everyone has access to. It's too easy to publish a NPM package from a local branch, or even uncommitted local modifications that are invisible to anyone but you.
+Always publish from the latest `trunk` branch, so that the package contents come from a verified source that everyone has access to. It's too easy to publish a NPM package from a local branch, or even uncommitted local modifications that are invisible to anyone but you.
 
 Build the `dist/` directories (the transpiled package content that will be published) from scratch.
 
 ```
-git checkout master
+git checkout trunk
 git pull
 git status (should be clean!)
 yarn run distclean
@@ -186,7 +185,7 @@ yarn run build-packages
 
 ### Getting NPM permissions to publish in the `@automattic` scope
 
-To publish packages in the `@automattic` scope, and to update packages owned by the `automattic` organization, you need to be a member of this organization on npmjs.com. If you're an Automattician, ask around to find an organization owner or admin who will add you as a member. Publish packages under your own name, so that people can find you and ping you in case anything goes wrong with the published package.
+To publish packages in the `@automattic` scope, and to update packages owned by the `automattic` organization, you need to be a member of this organization on npmjs.com. If you're an Automattician, you can add yourself to the organization, using the credentials found in the secret store.
 
 ### Publishing all outdated packages
 

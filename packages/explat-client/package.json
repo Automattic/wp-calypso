@@ -1,0 +1,29 @@
+{
+	"name": "@automattic/explat-client",
+	"version": "0.0.2",
+	"description": "Standalone ExPlat Client",
+	"author": "Automattic Inc.",
+	"license": "GPL-2.0-or-later",
+	"main": "dist/cjs/index.js",
+	"browser": "dist/esm/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.ts",
+	"types": "dist/types/index.d.ts",
+	"sideEffects": false,
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/explat-client"
+	},
+	"scripts": {
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"watch": "tsc --build ./tsconfig.json --watch",
+		"prepack": "yarn run clean && yarn run build",
+		"test": "yarn jest"
+	},
+	"devDependencies": {
+		"@automattic/calypso-polyfills": "^1.0.0",
+		"tslib": "^2.2.0"
+	}
+}

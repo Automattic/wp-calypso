@@ -1,17 +1,15 @@
 /**
  * External dependencies
  */
-import { assign, get, includes, indexOf, reject } from 'lodash';
+import { get, includes, reject } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
 import stepConfig from './steps';
-import user from 'lib/user';
-import { isEcommercePlan } from 'lib/plans';
-import { generateFlows } from 'signup/config/flows-pure';
-import { addQueryArgs } from 'lib/url';
+import { isEcommercePlan } from '@automattic/calypso-products';
+import { generateFlows } from 'calypso/signup/config/flows-pure';
+import { addQueryArgs } from 'calypso/lib/url';
 
 function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 	let checkoutURL = `/checkout/${ dependencies.siteSlug }`;
@@ -32,7 +30,7 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 					redirect_to: `/home/${ dependencies.siteSlug }`,
 				} ),
 			...( dependencies.isGutenboardingCreate && { isGutenboardingCreate: 1 } ),
-			...( 'domain' === flowName && { isDomainOnly: 1 } ),
+			...( [ 'domain', 'add-domain' ].includes( flowName ) && { isDomainOnly: 1 } ),
 		},
 		checkoutURL
 	);
@@ -58,11 +56,15 @@ function getSiteDestination( dependencies ) {
 }
 
 function getRedirectDestination( dependencies ) {
-	if (
-		dependencies.oauth2_redirect &&
-		dependencies.oauth2_redirect.startsWith( 'https://public-api.wordpress.com' )
-	) {
-		return dependencies.oauth2_redirect;
+	try {
+		if (
+			dependencies.oauth2_redirect &&
+			new URL( dependencies.oauth2_redirect ).host === 'public-api.wordpress.com'
+		) {
+			return dependencies.oauth2_redirect;
+		}
+	} catch {
+		return '/';
 	}
 
 	return '/';
@@ -89,7 +91,7 @@ function getChecklistThemeDestination( dependencies ) {
 }
 
 function getEditorDestination( dependencies ) {
-	return `/block-editor/page/${ dependencies.siteSlug }/home`;
+	return `/page/${ dependencies.siteSlug }/home`;
 }
 
 const flows = generateFlows( {
@@ -107,9 +109,10 @@ function removeUserStepFromFlow( flow ) {
 		return;
 	}
 
-	return assign( {}, flow, {
+	return {
+		...flow,
 		steps: reject( flow.steps, ( stepName ) => stepConfig[ stepName ].providesToken ),
-	} );
+	};
 }
 
 function removeP2DetailsStepFromFlow( flow ) {
@@ -117,9 +120,10 @@ function removeP2DetailsStepFromFlow( flow ) {
 		return;
 	}
 
-	return assign( {}, flow, {
+	return {
+		...flow,
 		steps: reject( flow.steps, ( stepName ) => stepName === 'p2-details' ),
-	} );
+	};
 }
 
 function filterDestination( destination, dependencies, flowName, localeSlug ) {
@@ -131,7 +135,7 @@ function filterDestination( destination, dependencies, flowName, localeSlug ) {
 }
 
 function getDefaultFlowName() {
-	return config.isEnabled( 'signup/onboarding-flow' ) ? 'onboarding' : 'main';
+	return 'onboarding';
 }
 
 const Flows = {
@@ -146,9 +150,10 @@ const Flows = {
 	 * The returned flow is modified according to several filters.
 	 *
 	 * @param {string} flowName The name of the flow to return
+	 * @param {boolean} isUserLoggedIn Whether the user is logged in
 	 * @returns {object} A flow object
 	 */
-	getFlow( flowName ) {
+	getFlow( flowName, isUserLoggedIn ) {
 		let flow = Flows.getFlows()[ flowName ];
 
 		// if the flow couldn't be found, return early
@@ -156,11 +161,11 @@ const Flows = {
 			return flow;
 		}
 
-		if ( user() && user().get() ) {
+		if ( isUserLoggedIn ) {
 			flow = removeUserStepFromFlow( flow );
 		}
 
-		if ( flowName === 'p2' && user() && user().get() ) {
+		if ( flowName === 'p2' && isUserLoggedIn ) {
 			flow = removeP2DetailsStepFromFlow( flow );
 		}
 
@@ -174,7 +179,7 @@ const Flows = {
 			return false;
 		}
 		const flowSteps = flow.steps;
-		const currentStepIndex = indexOf( flowSteps, currentStepName );
+		const currentStepIndex = flowSteps.indexOf( currentStepName );
 		const nextIndex = currentStepIndex + 1;
 		const nextStepName = get( flowSteps, nextIndex );
 
@@ -197,9 +202,10 @@ const Flows = {
 			return;
 		}
 
-		return assign( {}, flow, {
+		return {
+			...flow,
 			steps: reject( flow.steps, ( stepName ) => includes( Flows.excludedSteps, stepName ) ),
-		} );
+		};
 	},
 
 	resetExcludedSteps() {

@@ -4,23 +4,23 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { get, isUndefined } from 'lodash';
+import { get } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
-import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
-import { countFoundTermsForQuery, getTerm } from 'state/terms/selectors';
-import { getSiteSettings } from 'state/site-settings/selectors';
-import { decodeEntities } from 'lib/formatting';
-import { recordGoogleEvent, bumpStat } from 'state/analytics/actions';
+import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
+import { getPostTypeTaxonomy } from 'calypso/state/post-types/taxonomies/selectors';
+import { countFoundTermsForQuery, getTerm } from 'calypso/state/terms/selectors';
+import { getSiteSettings } from 'calypso/state/site-settings/selectors';
+import { decodeEntities } from 'calypso/lib/formatting';
+import { recordGoogleEvent, bumpStat } from 'calypso/state/analytics/actions';
 import { CompactCard } from '@automattic/components';
-import QueryTerms from 'components/data/query-terms';
-import QuerySiteSettings from 'components/data/query-site-settings';
+import QueryTerms from 'calypso/components/data/query-terms';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 
 const TaxonomyCard = ( {
 	count,
@@ -33,7 +33,7 @@ const TaxonomyCard = ( {
 	bumpStat: recordMCStat,
 } ) => {
 	const settingsLink = site ? `/settings/taxonomies/${ taxonomy }/${ site.slug }` : null;
-	const isLoading = ! labels.name || isUndefined( count );
+	const isLoading = ! labels.name || typeof count === 'undefined';
 	const classes = classNames( 'taxonomies__card-title', {
 		'is-loading': isLoading,
 	} );
@@ -43,6 +43,11 @@ const TaxonomyCard = ( {
 		recordMCStat( 'taxonomy_manager', `manage_${ taxonomy }` );
 	};
 
+	let label;
+	if ( ! isLoading ) {
+		label = count === 1 ? labels.singular_name : labels.name;
+	}
+
 	return (
 		<CompactCard onClick={ recordAnalytics } href={ settingsLink }>
 			{ site && <QuerySiteSettings siteId={ site.ID } /> }
@@ -50,7 +55,7 @@ const TaxonomyCard = ( {
 			<h2 className={ classes }>{ labels.name }</h2>
 			{ ! isLoading && (
 				<div className="taxonomies__card-content">
-					<Gridicon icon="tag" size={ 18 } /> { count } { labels.name }
+					<Gridicon icon="tag" size={ 18 } /> { count } { label }
 					{ defaultTerm && (
 						<span>
 							, { translate( 'default category:' ) } { decodeEntities( defaultTerm.name ) }

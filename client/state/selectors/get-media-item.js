@@ -1,14 +1,9 @@
 /**
- * External dependencies
- */
-import isNil from 'lodash/isNil';
-
-/**
  * Internal dependencies
  */
-import getTransientMediaItem from 'state/selectors/get-transient-media-item';
-import getMediaItemServerIdFromTransientId from 'state/selectors/get-media-item-server-id-from-transient-id';
-import getMediaQueryManager from 'state/selectors/get-media-query-manager';
+import getTransientMediaItem from 'calypso/state/selectors/get-transient-media-item';
+import getMediaItemServerIdFromTransientId from 'calypso/state/selectors/get-media-item-server-id-from-transient-id';
+import getMediaQueryManager from 'calypso/state/selectors/get-media-query-manager';
 
 /**
  * Returns a media object by site ID, media ID, or null if not known.
@@ -22,7 +17,7 @@ import getMediaQueryManager from 'state/selectors/get-media-query-manager';
 
 export default function getMediaItem( state, siteId, mediaId ) {
 	const transientMediaItem = getTransientMediaItem( state, siteId, mediaId );
-	if ( ! isNil( transientMediaItem ) ) {
+	if ( transientMediaItem != null ) {
 		// if a transient media item existed by this ID then that means the item isn't saved yet
 		// so we should continue to use the transient item
 		return transientMediaItem;

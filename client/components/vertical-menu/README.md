@@ -6,36 +6,35 @@ It is designed to take a list of React components using the `vertical-menu__item
 
 The following predefined item types exist:
 
- - `<SocialItem />` - provides an icon and label for one of many social platforms.
+- `<SocialItem />` - provides an icon and label for one of many social platforms.
 
 ## Usage
 
 ```js
-import VerticalMenu from 'components/vertical-menu';
-import { SocialItem } from 'components/vertical-menu/items';
+import VerticalMenu from 'calypso/components/vertical-menu';
+import { SocialItem } from 'calypso/components/vertical-menu/items';
 
-const announceIt = service =>
-	console.log( `Clicked on ${ service }` );
+const announceIt = ( service ) => console.log( `Clicked on ${ service }` );
 
 <VerticalMenu onClick={ announceIt }>
 	<SocialItem service="google" />
 	<SocialItem service="facebook" />
 	<SocialItem service="twitter" />
-</VerticalMenu>
+</VerticalMenu>;
 ```
 
 ## Props
 
- - **onClick** - Function - click handler. Transparently passes data from list items into handler.
- - **initalItemIndex** - Number - The index of the item to initially activate. defaults to 0
+- **onClick** - Function - click handler. Transparently passes data from list items into handler.
+- **initalItemIndex** - Number - The index of the item to initially activate. defaults to 0
 
 ### SocialItem
 
- - **onClick** - Function - passes string name of corresponding service
+- **onClick** - Function - passes string name of corresponding service
 
- - **service** - String - which social media service to display. Must be one of the following.
-  - `"google"`
-  - `"facebook"`
-  - `"wordpress"`
-  - `"linkedin"`
-  - `"twitter"`
+- **service** - String - which social media service to display. Must be one of the following.
+- `"google"`
+- `"facebook"`
+- `"wordpress"`
+- `"linkedin"`
+- `"twitter"`

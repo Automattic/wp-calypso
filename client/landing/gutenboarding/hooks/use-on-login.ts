@@ -3,7 +3,7 @@
  */
 import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useI18n } from '@automattic/react-i18n';
+import { useLocale } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -11,34 +11,50 @@ import { useI18n } from '@automattic/react-i18n';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
 import { SITE_STORE } from '../stores/site';
-import { useShouldSiteBePublic } from './use-selected-plan';
-import { useNewQueryParam } from '../path';
+import { useNewSiteVisibility } from './use-selected-plan';
+import { useNewQueryParam, useIsAnchorFm } from '../path';
 
 /**
  * After signup a site is automatically created using the username and bearerToken
  **/
 
-export default function useOnSignup() {
-	const { i18nLocale } = useI18n();
+export default function useOnLogin(): void {
+	const locale = useLocale();
 	const { createSite } = useDispatch( ONBOARD_STORE );
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const isCreatingSite = useSelect( ( select ) => select( SITE_STORE ).isFetchingSite() );
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
 
 	const shouldTriggerCreate = useNewQueryParam();
-	const shouldSiteBePublic = useShouldSiteBePublic();
+	const visibility = useNewSiteVisibility();
+	const isAnchorFmSignup = useIsAnchorFm();
 
 	React.useEffect( () => {
-		if ( ! isCreatingSite && ! newSite && currentUser && shouldTriggerCreate ) {
-			createSite( currentUser.username, i18nLocale, undefined, shouldSiteBePublic );
+		if (
+			! isCreatingSite &&
+			! newSite &&
+			currentUser &&
+			shouldTriggerCreate &&
+			! isAnchorFmSignup
+		) {
+			createSite( {
+				username: currentUser.username,
+				languageSlug: locale,
+				bearerToken: undefined,
+				visibility,
+				anchorFmPodcastId: null,
+				anchorFmEpisodeId: null,
+				anchorFmSpotifyUrl: null,
+			} );
 		}
 	}, [
 		createSite,
 		currentUser,
 		isCreatingSite,
 		newSite,
-		i18nLocale,
+		locale,
 		shouldTriggerCreate,
-		shouldSiteBePublic,
+		visibility,
+		isAnchorFmSignup,
 	] );
 }

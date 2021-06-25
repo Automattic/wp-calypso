@@ -2,8 +2,8 @@
  * Internal dependencies
  */
 
-import { withoutPersistence } from 'state/utils';
-import { IMMEDIATE_LOGIN_SAVE_INFO } from 'state/action-types';
+import { withStorageKey } from '@automattic/state-utils';
+import { IMMEDIATE_LOGIN_SAVE_INFO } from 'calypso/state/action-types';
 
 const initialState = {
 	attempt: false,
@@ -13,7 +13,7 @@ const initialState = {
 	locale: null,
 };
 
-export default withoutPersistence( ( state = initialState, action ) => {
+const reducer = ( state = initialState, action ) => {
 	switch ( action.type ) {
 		case IMMEDIATE_LOGIN_SAVE_INFO: {
 			const { success, reason, email, locale } = action;
@@ -29,4 +29,6 @@ export default withoutPersistence( ( state = initialState, action ) => {
 	}
 
 	return state;
-} );
+};
+
+export default withStorageKey( 'immediateLogin', reducer );

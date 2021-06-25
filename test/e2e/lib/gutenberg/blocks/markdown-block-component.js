@@ -10,54 +10,52 @@ import * as driverHelper from '../../driver-helper';
 import GutenbergBlockComponent from './gutenberg-block-component';
 
 export default class MarkdownBlockComponent extends GutenbergBlockComponent {
-	constructor( driver, blockID ) {
-		super( driver, blockID );
-	}
-
 	async setContent( content ) {
-		const inputSelector = By.css( `${ this.blockID } textarea.wp-block-jetpack-markdown__editor` );
+		const inputLocator = By.css( `${ this.blockID } textarea.wp-block-jetpack-markdown__editor` );
 
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, inputSelector );
-		return await driverHelper.setWhenSettable( this.driver, inputSelector, content );
+		return await driverHelper.setWhenSettable( this.driver, inputLocator, content );
 	}
 
 	async revealToolbar() {
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.expectedElementSelector );
+		await driverHelper.waitUntilElementLocatedAndVisible(
+			this.driver,
+			this.expectedElementLocator
+		);
 		await driverHelper.clickWhenClickable( this.driver, By.css( '.editor-post-title' ) );
-		return await driverHelper.clickWhenClickable( this.driver, this.expectedElementSelector );
+		return await driverHelper.clickWhenClickable( this.driver, this.expectedElementLocator );
 	}
 
 	async switchMarkdown() {
-		const inputSelector = By.css( `${ this.blockID } textarea.wp-block-jetpack-markdown__editor` );
-		return await this._switchMode( inputSelector );
+		const inputLocator = By.css( `${ this.blockID } textarea.wp-block-jetpack-markdown__editor` );
+		return await this._switchMode( inputLocator );
 	}
 
 	async switchPreview() {
-		const previewSelector = By.css( `${ this.blockID } .wp-block-jetpack-markdown__preview` );
-		return await this._switchMode( previewSelector );
+		const previewLocator = By.css( `${ this.blockID } .wp-block-jetpack-markdown__preview` );
+		return await this._switchMode( previewLocator );
 	}
 
 	// Caution! make sure you in preview mode before calling this.
 	async getPreviewHTML() {
-		const previewSelector = By.css( `${ this.blockID } .wp-block-jetpack-markdown__preview` );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, previewSelector );
-		return await this.driver.findElement( previewSelector ).getAttribute( 'innerHTML' );
+		const previewLocator = By.css( `${ this.blockID } .wp-block-jetpack-markdown__preview` );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, previewLocator );
+		return await this.driver.findElement( previewLocator ).getAttribute( 'innerHTML' );
 	}
 
-	async _switchMode( expectedSelector ) {
+	async _switchMode( expectedLocator ) {
 		await this.revealToolbar();
-		const isVisible = await driverHelper.isEventuallyPresentAndDisplayed(
+		const isVisible = await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
-			expectedSelector,
+			expectedLocator,
 			1000
 		);
 		if ( isVisible ) {
 			return true;
 		}
-		const switchSelector = By.css(
+		const switchLocator = By.css(
 			`${ this.blockID } button.components-tab-button:not(.is-active)`
 		);
-		await driverHelper.clickWhenClickable( this.driver, switchSelector );
-		return await driverHelper.waitTillPresentAndDisplayed( this.driver, expectedSelector );
+		await driverHelper.clickWhenClickable( this.driver, switchLocator );
+		return await driverHelper.waitUntilElementLocatedAndVisible( this.driver, expectedLocator );
 	}
 }

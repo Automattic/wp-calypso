@@ -3,9 +3,9 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { filter, find, get, noop } from 'lodash';
+import { filter, find, get } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
@@ -13,13 +13,15 @@ import Gridicon from 'components/gridicon';
 import DropdownItem from './item';
 import DropdownSeparator from './separator';
 import DropdownLabel from './label';
-import Count from 'components/count';
-import TranslatableString from 'components/translatable/proptype';
+import Count from 'calypso/components/count';
+import TranslatableString from 'calypso/components/translatable/proptype';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class SelectDropdown extends Component {
 	static Item = DropdownItem;
@@ -41,7 +43,7 @@ class SelectDropdown extends Component {
 		options: PropTypes.arrayOf(
 			PropTypes.shape( {
 				value: PropTypes.string.isRequired,
-				label: TranslatableString.isRequired,
+				label: PropTypes.oneOfType( [ TranslatableString, PropTypes.node ] ).isRequired,
 				path: PropTypes.string,
 				icon: PropTypes.element,
 			} )
@@ -223,7 +225,7 @@ class SelectDropdown extends Component {
 					<ul
 						id={ 'select-submenu-' + this.instanceId }
 						className="select-dropdown__options"
-						role="menu"
+						role="listbox"
 						aria-labelledby={ 'select-dropdown-' + this.instanceId }
 						aria-expanded={ this.state.isOpen }
 					>
@@ -334,7 +336,8 @@ class SelectDropdown extends Component {
 			return;
 		}
 
-		let items, focusedIndex;
+		let items;
+		let focusedIndex;
 
 		if ( this.props.options.length ) {
 			items = filter( this.props.options, ( item ) => item && ! item.isLabel );

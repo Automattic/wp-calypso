@@ -9,13 +9,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { isRequesting } from 'state/login/selectors';
-import { connectSocialUser, disconnectSocialUser } from 'state/login/actions';
-import FormButton from 'components/forms/form-button';
-import GoogleLoginButton from 'components/social-buttons/google';
-import AppleLoginButton from 'components/social-buttons/apple';
-import user from 'lib/user';
+import config from '@automattic/calypso-config';
+import { isRequesting } from 'calypso/state/login/selectors';
+import { connectSocialUser, disconnectSocialUser } from 'calypso/state/login/actions';
+import FormButton from 'calypso/components/forms/form-button';
+import GoogleLoginButton from 'calypso/components/social-buttons/google';
+import AppleLoginButton from 'calypso/components/social-buttons/apple';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 
 class SocialLoginActionButton extends Component {
 	static propTypes = {
@@ -33,12 +33,12 @@ class SocialLoginActionButton extends Component {
 		fetchingUser: false,
 	};
 
-	refreshUser = () => {
-		user().fetch();
-
+	refreshUser = async () => {
 		this.setState( { fetchingUser: true } );
 
-		user().once( 'change', () => this.setState( { fetchingUser: false } ) );
+		await this.props.fetchCurrentUser();
+
+		this.setState( { fetchingUser: false } );
 	};
 
 	handleSocialServiceResponse = ( response ) => {
@@ -150,5 +150,6 @@ export default connect(
 	{
 		connectSocialUser,
 		disconnectSocialUser,
+		fetchCurrentUser,
 	}
 )( localize( SocialLoginActionButton ) );

@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { POST_EDIT } from 'state/action-types';
+import { POST_EDIT } from 'calypso/state/action-types';
 
-import 'state/posts/init';
+import 'calypso/state/posts/init';
 
 /**
  * Returns an action object to be used in signalling that the specified

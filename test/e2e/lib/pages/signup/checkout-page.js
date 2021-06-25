@@ -34,22 +34,17 @@ export default class CheckOutPage extends AsyncBaseContainer {
 	} ) {
 		const isCompositeCheckout = await this.isCompositeCheckout();
 		if ( isCompositeCheckout ) {
-			await driverHelper.waitTillPresentAndDisplayed(
+			await driverHelper.waitUntilElementLocatedAndVisible(
 				this.driver,
-				By.css( '.checkout-line-item' )
+				By.css( '.checkout-review-order.is-summary' )
 			);
-			const contactDetailsEditButtons = await this.driver.findElements(
+			// If the contact details are already pre-filled and valid, the contact
+			// details step will be skipped in composite checkout. Therefore we'll
+			// need to click to edit that step before being able to modify it.
+			await driverHelper.clickIfPresent(
+				this.driver,
 				By.css( 'button[aria-label="Edit the contact details"]' )
 			);
-			if ( contactDetailsEditButtons.length === 1 ) {
-				// If the contact details are already pre-filled and valid, the contact
-				// details step will be skipped in composite checkout. Therefore we'll
-				// need to click to edit that step before being able to modify it.
-				await driverHelper.clickWhenClickable(
-					this.driver,
-					By.css( 'button[aria-label="Edit the contact details"]' )
-				);
-			}
 		}
 
 		await driverHelper.setWhenSettable( this.driver, By.id( 'first-name' ), firstName );
@@ -80,7 +75,7 @@ export default class CheckOutPage extends AsyncBaseContainer {
 	}
 
 	async isCompositeCheckout() {
-		return driverHelper.isElementPresent( this.driver, By.css( '.composite-checkout' ) );
+		return await driverHelper.isElementLocated( this.driver, By.css( '.composite-checkout' ) );
 	}
 
 	async submitForm() {
@@ -92,5 +87,10 @@ export default class CheckOutPage extends AsyncBaseContainer {
 			);
 		}
 		return await driverHelper.clickWhenClickable( this.driver, By.css( 'button[type="submit"]' ) );
+	}
+
+	async close() {
+		const closeButtonLocator = By.css( '.masterbar__secure-checkout .masterbar__close-button' );
+		await driverHelper.clickIfPresent( this.driver, closeButtonLocator );
 	}
 }

@@ -1,5 +1,4 @@
-Query Canonical Theme
-=====================
+# Query Canonical Theme
 
 Query Canonical Theme is a React component used in managing the fetching of individual theme objects from what is considered their 'canonical' source, i.e. the one with richest information. It checks WP.com (which has a long description and multiple screenshots, and a preview URL) first, then WP.org (which has a preview URL), then the given fallback JP site.
 
@@ -10,27 +9,22 @@ Render the component, passing `siteId` and `themeId`. It does not accept any chi
 ```jsx
 import React from 'react';
 import { connect } from 'react-redux';
-import QueryCanonicalTheme from 'components/data/query-canonical-theme';
-import Theme from 'components/theme';
-import { getCanonicalTheme } from 'state/themes/selectors';
+import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
+import Theme from 'calypso/components/theme';
+import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 
 function MyTheme( { theme } ) {
 	return (
 		<div>
-			<QueryCanonicalTheme
-				siteId={ 3584907 }
-				themeId={ 'twentysixteen' } />
-				<Theme theme={ theme } />
-			} }
+			<QueryCanonicalTheme siteId={ 3584907 } themeId={ 'twentysixteen' } />
+			<Theme theme={ theme } />} }
 		</div>
 	);
 }
 
-export default connect(
-	( state ) => ( {
-		theme: getCanonicalTheme( state, 3584907, 'twentysixteen' )
-	} )
-)( MyTheme );
+export default connect( ( state ) => ( {
+	theme: getCanonicalTheme( state, 3584907, 'twentysixteen' ),
+} ) )( MyTheme );
 ```
 
 ## Props

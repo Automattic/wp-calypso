@@ -6,8 +6,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import classNames from 'classnames';
-import { get, isUndefined, omitBy } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { get, omitBy } from 'lodash';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal Dependencies
@@ -22,14 +22,11 @@ import {
 	RESULT_VIDEO,
 } from './constants';
 import { Button } from '@automattic/components';
-import { decodeEntities, preventWidows } from 'lib/formatting';
-import { recordTracksEvent } from 'state/analytics/actions';
-import getSearchQuery from 'state/inline-help/selectors/get-search-query';
-import { requestGuidedTour } from 'state/guided-tours/actions';
-import { openSupportArticleDialog } from 'state/inline-support-article/actions';
-
-const amendYouTubeLink = ( link = '' ) =>
-	link.replace( 'youtube.com/embed/', 'youtube.com/watch?v=' );
+import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
+import { requestGuidedTour } from 'calypso/state/guided-tours/actions';
+import { openSupportArticleDialog } from 'calypso/state/inline-support-article/actions';
 
 class InlineHelpRichResult extends Component {
 	static propTypes = {
@@ -71,7 +68,7 @@ class InlineHelpRichResult extends Component {
 				result_url: link,
 				location: 'inline-help-popover',
 			},
-			isUndefined
+			( data ) => typeof data === 'undefined'
 		);
 
 		this.props.recordTracksEvent( `calypso_inlinehelp_${ type }_open`, tracksData );
@@ -121,7 +118,7 @@ const mapStateToProps = ( state, { result } ) => ( {
 	searchQuery: getSearchQuery( state ),
 	type: get( result, RESULT_TYPE, RESULT_ARTICLE ),
 	title: get( result, RESULT_TITLE ),
-	link: amendYouTubeLink( get( result, RESULT_LINK ) ),
+	link: get( result, RESULT_LINK ),
 	description: get( result, RESULT_DESCRIPTION ),
 	tour: get( result, RESULT_TOUR ),
 	postId: get( result, 'post_id' ),

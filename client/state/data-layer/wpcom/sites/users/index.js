@@ -2,17 +2,19 @@
  * External dependencies
  */
 
-import { get, isUndefined, map, noop, omit, omitBy } from 'lodash';
+import { get, map, omit, omitBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { POST_REVISIONS_AUTHORS_REQUEST } from 'state/action-types';
-import { dispatchRequest, getHeaders } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { receivePostRevisionAuthors } from 'state/posts/revisions/authors/actions';
+import { POST_REVISIONS_AUTHORS_REQUEST } from 'calypso/state/action-types';
+import { dispatchRequest, getHeaders } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { receivePostRevisionAuthors } from 'calypso/state/posts/revisions/authors/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+
+const noop = () => {};
 
 export const DEFAULT_PER_PAGE = 10;
 
@@ -30,7 +32,7 @@ export const normalizeUser = ( user ) =>
 			display_name: user.name,
 			username: user.slug,
 		},
-		isUndefined
+		( prop ) => typeof prop === 'undefined'
 	);
 
 /**

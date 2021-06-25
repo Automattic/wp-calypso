@@ -8,11 +8,11 @@ The source of the documentation are all the markdown files in the Calypso reposi
 
 ## Glossary
 
-* **Result** – a single markdown file in a list, represented in the code as a structure with fields: `path` (relative path from project’s root), `title` (title extracted from the text), and `snippet` (snippet extracted according to query terms)
+- **Result** – a single markdown file in a list, represented in the code as a structure with fields: `path` (relative path from project’s root), `title` (title extracted from the text), and `snippet` (snippet extracted according to query terms)
 
 ## Modules
 
-* **service** – a "documentation service" allowing searching, listing, and fetching the contents of documents. See server/devdocs/index.js for the service implementation.
+- **service** – a "documentation service" allowing searching, listing, and fetching the contents of documents. See server/devdocs/index.js for the service implementation.
 
 ## Design
 

@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getSharingButtons from 'state/selectors/get-sharing-buttons';
+import getSharingButtons from 'calypso/state/selectors/get-sharing-buttons';
 
 describe( 'getSharingButtons()', () => {
 	test( 'should return null if the site is not tracked', () => {

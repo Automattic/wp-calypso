@@ -1,0 +1,110 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.product-grid__section {
+	margin-bottom: 70px;
+	padding-left: 20px;
+	padding-right: 20px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		padding-left: 0;
+		padding-right: 0;
+	}
+}
+
+.product-grid__section:first-of-type > .product-grid__section-title {
+	margin-bottom: 15px;
+}
+
+.product-grid__section-title {
+	margin-top: 36px;
+	margin-bottom: 20px;
+
+	font-size: 2rem;
+	font-weight: 700;
+	letter-spacing: -1px;
+	text-align: center;
+
+	@include break-small {
+		margin-top: 40px;
+		margin-bottom: 40px;
+
+		font-size: 2.25rem;
+	}
+}
+
+.product-grid__plan-grid,
+.product-grid__product-grid {
+	margin: 0;
+
+	list-style-type: none;
+
+	display: grid;
+	grid-template-columns: repeat( auto-fit, minmax( 300px, 1fr ) );
+	grid-gap: 24px 16px;
+}
+
+.product-grid__plan-grid:not( .is-wrapping ) {
+	margin-top: 72px;
+	grid-gap: 24px 0;
+
+	// Considering there are 3 plans
+	> li {
+		&:first-child {
+			position: relative;
+			left: 8px;
+		}
+
+		&:last-child {
+			position: relative;
+			left: -8px;
+		}
+	}
+}
+
+.product-grid__product-grid {
+	> li {
+		height: 100%;
+	}
+}
+
+.product-grid__filter-bar {
+	height: 63px;
+	margin-bottom: 70px;
+
+	@include break-small {
+		margin-bottom: 50px;
+	}
+}
+
+.product-grid__free {
+	margin-top: 32px;
+}
+
+.product-grid__asterisk-items {
+	margin-top: initial;
+	margin-bottom: initial;
+}
+
+.product-grid__asterisk-list {
+	margin: 76px;
+	padding: 0;
+
+	list-style-type: none;
+}
+
+.product-grid__asterisk-item {
+	&::before {
+		content: '*';
+	}
+
+	color: var( --color-neutral-light );
+
+	font-size: $font-body;
+	line-height: 2;
+	text-align: center;
+}
+
+.product-grid__more.is-detached {
+	margin-top: 48px;
+}

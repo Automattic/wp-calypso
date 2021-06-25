@@ -1,0 +1,131 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
+.billing-summary {
+	display: flex;
+	flex-wrap: wrap;
+
+	@include break-xlarge() {
+		flex-wrap: nowrap;
+	}
+
+	&__stat {
+		flex: 0 1 0;
+		margin-bottom: 18px;
+	}
+
+	&__stat:nth-child( odd ) {
+		flex-basis: calc( 50% - 18px );
+	}
+
+	&__stat:nth-child( even ) {
+		flex-basis: calc( 50% - 1px - 18px );
+		margin-left: 18px;
+		padding-left: 18px;
+		border-left: 1px solid var( --studio-gray-5 );
+	}
+
+	&__stat:nth-last-child( -n + 2 ) {
+		margin-bottom: 0;
+	}
+
+	@include break-xlarge() {
+		&__stat {
+			&.billing-summary__stat {
+				flex: 1 1 0;
+				margin-bottom: 0;
+			}
+
+			& + & {
+				margin-left: 36px;
+				padding-left: 36px;
+				border-left: 1px solid var( --studio-gray-5 );
+			}
+		}
+
+		&__cost.billing-summary__stat {
+			flex-grow: 1.25;
+			margin-left: auto;
+			border-left: 0;
+			text-align: right;
+		}
+	}
+
+	&__label {
+		display: block;
+		margin-bottom: 8px;
+		font-size: 1.25rem;
+		line-height: 28px;
+		color: var( --studio-gray-80 );
+
+		@include break-wide() {
+			white-space: nowrap;
+		}
+	}
+
+	&__value {
+		display: block;
+		font-weight: 700;
+		font-size: 1.75rem;
+		line-height: 36px;
+
+		@media ( min-width: 661px ) and ( max-width: 781px ) {
+			// Accounts for unbreakable long cost numbers breaking the layout due to the sidebar taking up
+			// a lot of the available space.
+			font-size: 1.25rem;
+		}
+	}
+
+	&__cost-tooltip.popover {
+		&.is-bottom .popover__arrow {
+			border-bottom-color: #ffffff;
+		}
+
+		.popover__inner {
+			padding: 16px 58px 16px 16px;
+			color: var( --studio-gray-70 );
+			background: #ffffff;
+			border-radius: 2px;
+			box-shadow: 0 0 40px rgba( 0, 0, 0, 0.08 );
+
+			p {
+				font-size: 1rem;
+				margin: 0;
+			}
+		}
+
+		@include break-mobile() {
+			max-width: 312px;
+		}
+	}
+
+	&__open-cost-tooltip {
+		margin-right: 8px;
+
+		&.button {
+			padding: 0;
+
+			.gridicon {
+				top: 4px;
+			}
+		}
+	}
+
+	&__close-cost-tooltip {
+		position: absolute;
+		right: 16px;
+		top: 16px;
+		color: var( --studio-gray-40 );
+
+		&.button {
+			height: 18px;
+			padding: 0;
+		}
+	}
+
+	&__placeholder {
+		@include placeholder( --color-neutral-10 );
+
+		display: block;
+	}
+}

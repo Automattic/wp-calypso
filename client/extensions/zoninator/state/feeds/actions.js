@@ -7,6 +7,7 @@ import {
 	ZONINATOR_REQUEST_FEED_ERROR,
 	ZONINATOR_SAVE_FEED,
 	ZONINATOR_UPDATE_FEED,
+	ZONINATOR_UPDATE_FEED_ERROR,
 } from '../action-types';
 
 /**
@@ -14,7 +15,7 @@ import {
  *
  * @param  {number} siteId Site ID
  * @param  {number} zoneId Zone ID
- * @returns {Action}        Action object
+ * @returns {object}        Action object
  */
 export const requestFeed = ( siteId, zoneId ) => ( {
 	type: ZONINATOR_REQUEST_FEED,
@@ -27,7 +28,7 @@ export const requestFeed = ( siteId, zoneId ) => ( {
  *
  * @param  {number} siteId Site ID
  * @param  {number} zoneId Zone ID
- * @returns {Action}        Action object
+ * @returns {object}        Action object
  */
 export const requestFeedError = ( siteId, zoneId ) => ( {
 	type: ZONINATOR_REQUEST_FEED_ERROR,
@@ -40,15 +41,13 @@ export const requestFeedError = ( siteId, zoneId ) => ( {
  *
  * @param  {number} siteId  Site ID
  * @param  {number} zoneId  Zone ID
- * @param  {string} form    Form name
  * @param  {Array}  posts   Feed posts
  * @returns {object}         Action object
  */
-export const saveFeed = ( siteId, zoneId, form, posts ) => ( {
+export const saveFeed = ( siteId, zoneId, posts ) => ( {
 	type: ZONINATOR_SAVE_FEED,
 	siteId,
 	zoneId,
-	form,
 	posts,
 } );
 
@@ -65,4 +64,17 @@ export const updateFeed = ( siteId, zoneId, posts ) => ( {
 	siteId,
 	zoneId,
 	posts,
+} );
+
+/**
+ * Returns an action object to indicate that a feed update has failed.
+ *
+ * @param  {number} siteId  Site ID
+ * @param  {number} zoneId  Zone ID
+ * @returns {object}         Action object
+ */
+export const updateFeedError = ( siteId, zoneId ) => ( {
+	type: ZONINATOR_UPDATE_FEED_ERROR,
+	siteId,
+	zoneId,
 } );

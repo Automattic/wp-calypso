@@ -1,5 +1,4 @@
-Query Reader List
-==================
+# Query Reader List
 
 `<QueryReaderList />` is a React component used in managing network requests for single Reader lists.
 
@@ -9,7 +8,7 @@ Render the component. It does not accept any children, nor does it render any el
 
 ```jsx
 import React from 'react';
-import QueryReaderList from 'components/data/query-reader-list';
+import QueryReaderList from 'calypso/components/data/query-reader-list';
 import MyListItem from './list-item';
 
 export default function MyReaderList( { list } ) {

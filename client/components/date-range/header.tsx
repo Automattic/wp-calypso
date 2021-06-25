@@ -2,13 +2,15 @@
  * External dependencies
  */
 import React, { FunctionComponent } from 'react';
-import { noop } from 'lodash';
 import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
 
 interface Props {
 	onApplyClick: () => void;

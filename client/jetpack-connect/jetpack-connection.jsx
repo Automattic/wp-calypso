@@ -2,8 +2,8 @@
  * External dependencies
  */
 import debugModule from 'debug';
-import config from 'config';
 import React, { Component } from 'react';
+import page from 'page';
 import { connect } from 'react-redux';
 import { flowRight, get, includes, omit } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -11,24 +11,23 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
+import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
+import { JETPACK_ADMIN_PATH } from 'calypso/jetpack-connect/constants';
+import { PLAN_JETPACK_FREE } from '@automattic/calypso-products';
+import versionCompare from 'calypso/lib/version-compare';
+import { addQueryArgs, externalRedirect } from 'calypso/lib/route';
+import { checkUrl, dismissUrl } from 'calypso/state/jetpack-connect/actions';
+import { getConnectingSite, getJetpackSiteByUrl } from 'calypso/state/jetpack-connect/selectors';
+import { isRequestingSites } from 'calypso/state/sites/selectors';
+import { clearPlan, retrieveMobileRedirect, retrievePlan, storePlan } from './persistence-utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import HelpButton from './help-button';
 import JetpackConnectNotices from './jetpack-connect-notices';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
-import page from 'page';
-import versionCompare from 'lib/version-compare';
 import { redirect } from './utils';
-import { addQueryArgs, externalRedirect } from 'lib/route';
-import { checkUrl, dismissUrl } from 'state/jetpack-connect/actions';
-import { getConnectingSite, getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
-import { isRequestingSites } from 'state/sites/selectors';
-import { clearPlan, retrieveMobileRedirect, retrievePlan } from './persistence-utils';
-import { recordTracksEvent } from 'state/analytics/actions';
-
 import { IS_DOT_COM_GET_SEARCH, MINIMUM_JETPACK_VERSION } from './constants';
 import {
 	ALREADY_CONNECTED,
-	ALREADY_OWNED,
 	IS_DOT_COM,
 	NOT_ACTIVE_JETPACK,
 	NOT_CONNECTED_JETPACK,
@@ -51,6 +50,14 @@ const jetpackConnection = ( WrappedComponent ) => {
 			waitingForSites: true,
 		};
 
+		componentDidMount() {
+			const { queryArgs } = this.props;
+			// If a plan was passed as a query parameter, store it in local storage
+			if ( queryArgs && queryArgs.plan ) {
+				storePlan( queryArgs.plan );
+			}
+		}
+
 		renderFooter = () => {
 			const { translate } = this.props;
 			return (
@@ -68,7 +75,7 @@ const jetpackConnection = ( WrappedComponent ) => {
 		goBack = () => page.back();
 
 		processJpSite = ( url ) => {
-			const { isMobileAppFlow, skipRemoteInstall, forceRemoteInstall } = this.props;
+			const { forceRemoteInstall, isMobileAppFlow, queryArgs, skipRemoteInstall } = this.props;
 
 			const status = this.getStatus( url );
 
@@ -80,22 +87,22 @@ const jetpackConnection = ( WrappedComponent ) => {
 				! forceRemoteInstall &&
 				! this.state.redirecting
 			) {
+				debug( `Redirecting to remote_auth ${ this.props.siteHomeUrl }` );
 				this.redirect( 'remote_auth', this.props.siteHomeUrl );
-			}
-
-			if ( status === ALREADY_OWNED && ! this.state.redirecting ) {
-				if ( isMobileAppFlow ) {
-					this.redirectToMobileApp( 'already-connected' );
-				}
-				this.redirect( 'plans_selection', url );
 			}
 
 			if ( status === ALREADY_CONNECTED && ! this.state.redirecting ) {
 				const currentPlan = retrievePlan();
 				clearPlan();
 				if ( currentPlan ) {
-					this.redirect( 'checkout', url, currentPlan );
+					if ( currentPlan === PLAN_JETPACK_FREE ) {
+						debug( `Redirecting to wpadmin` );
+						return externalRedirect( this.props.siteHomeUrl + JETPACK_ADMIN_PATH );
+					}
+					debug( `Redirecting to checkout with ${ currentPlan } plan retrieved from cookies` );
+					this.redirect( 'checkout', url, currentPlan, queryArgs );
 				} else {
+					debug( 'Redirecting to plans_selection' );
 					this.redirect( 'plans_selection', url );
 				}
 			}
@@ -110,13 +117,11 @@ const jetpackConnection = ( WrappedComponent ) => {
 				includes( [ NOT_JETPACK, NOT_ACTIVE_JETPACK ], status ) ||
 				( status === NOT_CONNECTED_JETPACK && forceRemoteInstall )
 			) {
-				if (
-					config.isEnabled( 'jetpack/connect/remote-install' ) &&
-					! isMobileAppFlow &&
-					! skipRemoteInstall
-				) {
+				if ( ! isMobileAppFlow && ! skipRemoteInstall ) {
+					debug( 'Redirecting to remote_install' );
 					this.redirect( 'remote_install' );
 				} else {
+					debug( 'Redirecting to install_instructions' );
 					this.redirect( 'install_instructions', url );
 				}
 			}
@@ -129,11 +134,11 @@ const jetpackConnection = ( WrappedComponent ) => {
 			} );
 		};
 
-		redirect = ( type, url, product ) => {
+		redirect = ( type, url, product, queryArgs ) => {
 			if ( ! this.state.redirecting ) {
 				this.setState( { redirecting: true } );
 
-				redirect( type, url, product );
+				redirect( type, url, product, queryArgs );
 			}
 		};
 
@@ -252,21 +257,12 @@ const jetpackConnection = ( WrappedComponent ) => {
 			if ( ! this.checkProperty( 'isJetpackActive' ) ) {
 				return NOT_ACTIVE_JETPACK;
 			}
-			if (
-				! this.checkProperty( 'isJetpackConnected' ) ||
-				( this.checkProperty( 'isJetpackConnected' ) && ! this.checkProperty( 'userOwnsSite' ) )
-			) {
+
+			if ( ! this.checkProperty( 'isJetpackConnected' ) ) {
 				return NOT_CONNECTED_JETPACK;
 			}
-			if ( this.checkProperty( 'isJetpackConnected' ) && this.checkProperty( 'userOwnsSite' ) ) {
-				return ALREADY_CONNECTED;
-			}
 
-			if ( this.checkProperty( 'userOwnsSite' ) ) {
-				return ALREADY_OWNED;
-			}
-
-			return false;
+			return ALREADY_CONNECTED;
 		};
 
 		handleOnClickTos = () => this.props.recordTracksEvent( 'calypso_jpc_tos_link_click' );

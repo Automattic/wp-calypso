@@ -1,5 +1,5 @@
 .missing-credentials {
-	border-radius: 4px;
+	border-radius: 2px;
 	border: 1px solid var( --color-neutral-5 );
 	padding: 17px 21px;
 
@@ -25,7 +25,7 @@
 
 .missing-credentials__button {
 	background: var( --studio-white );
-	border-radius: 3px;
+	border-radius: 2px;
 	border: 1px solid var( --color-neutral-10 );
 	color: var( --color-neutral-40 );
 	font-size: $font-body;

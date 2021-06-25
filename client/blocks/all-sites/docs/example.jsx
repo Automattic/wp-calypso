@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import AllSites from 'blocks/all-sites';
+import AllSites from 'calypso/blocks/all-sites';
 import { Card } from '@automattic/components';
 
 const AllSitesExample = () => (

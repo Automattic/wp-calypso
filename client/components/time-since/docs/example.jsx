@@ -2,13 +2,13 @@
  * External dependencies
  */
 
-import React, { PureComponent } from 'react';
+import React from 'react';
 import moment from 'moment';
 
 /**
  * Internal dependencies
  */
-import TimeSince from 'components/time-since';
+import TimeSince from 'calypso/components/time-since';
 
 const TimeSinceExample = () => {
 	return (

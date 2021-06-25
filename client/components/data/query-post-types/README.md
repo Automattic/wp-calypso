@@ -1,5 +1,4 @@
-Query Post Types
-================
+# Query Post Types
 
 `<QueryPostTypes />` is a React component used in managing network requests for post types.
 
@@ -9,7 +8,7 @@ Render the component, passing `siteId`. It does not accept any children, nor doe
 
 ```jsx
 import React from 'react';
-import QueryPostTypes from 'components/data/query-post-types';
+import QueryPostTypes from 'calypso/components/data/query-post-types';
 import MyPostTypesListItem from './list-item';
 
 export default function MyPostTypesList( { postTypes } ) {
@@ -17,12 +16,8 @@ export default function MyPostTypesList( { postTypes } ) {
 		<div>
 			<QueryPostTypes siteId={ 3584907 } />
 			{ postTypes.map( ( postType ) => {
-				return (
-					<MyPostTypesListItem
-						key={ postType.name }
-						postType={ postType } />
-				);
-			} }
+				return <MyPostTypesListItem key={ postType.name } postType={ postType } />;
+			} ) }
 		</div>
 	);
 }

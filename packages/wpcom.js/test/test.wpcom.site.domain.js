@@ -1,27 +1,29 @@
 /**
  * Module dependencies
  */
-var util = require( './util' );
-var assert = require( 'assert' );
+const util = require( './util' );
+const assert = require( 'assert' );
 
 /**
  * site.domain
  */
 describe( 'wpcom.site.domain', function () {
 	// Global instances
-	var wpcom = util.wpcom();
-	var site = wpcom.site( util.site() );
-	var domain = site.domain();
+	const wpcom = util.wpcom();
+	const site = wpcom.site( util.site() );
+	const domain = site.domain();
 
 	describe( 'wpcom.site.domain', function () {
-		it( 'should get primary domain of the site', ( done ) => {
-			domain
-				.getPrimary()
-				.then( ( data ) => {
-					assert.ok( data );
-					done();
-				} )
-				.catch( done );
+		it( 'should get primary domain of the site', () => {
+			return new Promise( ( done ) => {
+				domain
+					.getPrimary()
+					.then( ( data ) => {
+						assert.ok( data );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 	} );
 } );

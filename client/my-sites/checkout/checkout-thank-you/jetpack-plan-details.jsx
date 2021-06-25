@@ -2,33 +2,16 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import PurchaseDetail from 'components/purchase-detail';
-import { getSiteFileModDisableReason } from 'lib/site/utils';
-import { recordTracksEvent } from 'state/analytics/actions';
-import config from 'config';
-import { localizeUrl } from 'lib/i18n-utils';
-import { getCurrentUserEmail } from 'state/current-user/selectors';
-
-const BasicDetails = ( { translate } ) => {
-	const email = useSelector( getCurrentUserEmail );
-	return (
-		<PurchaseDetail
-			icon="cog"
-			title={ translate( 'Set up your VaultPress and Akismet accounts' ) }
-			description={ translate(
-				'We emailed you at %(email)s with information for setting up Akismet and VaultPress on your site. ' +
-					'Follow the instructions in the email to get started.',
-				{ args: { email } }
-			) }
-		/>
-	);
-};
+import PurchaseDetail from 'calypso/components/purchase-detail';
+import { getSiteFileModDisableReason } from 'calypso/lib/site/utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 class EnhancedDetails extends Component {
 	componentDidMount() {
@@ -125,8 +108,4 @@ const mapDispatchToProps = ( dispatch, { selectedSite } ) => ( {
 	},
 } );
 
-const JetpackPlanDetails = config.isEnabled( 'manage/plugins/setup' )
-	? connect( null, mapDispatchToProps )( EnhancedDetails )
-	: BasicDetails;
-
-export default localize( JetpackPlanDetails );
+export default localize( connect( null, mapDispatchToProps )( EnhancedDetails ) );

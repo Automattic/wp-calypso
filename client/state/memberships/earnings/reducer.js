@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { MEMBERSHIPS_EARNINGS_RECEIVE } from 'state/action-types';
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { MEMBERSHIPS_EARNINGS_RECEIVE } from 'calypso/state/action-types';
+import { combineReducers } from 'calypso/state/utils';
 
-const summary = withoutPersistence( ( state = {}, action ) => {
+const summary = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case MEMBERSHIPS_EARNINGS_RECEIVE:
 			return {
@@ -14,7 +14,7 @@ const summary = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 export default combineReducers( {
 	summary,

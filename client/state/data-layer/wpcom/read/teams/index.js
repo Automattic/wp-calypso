@@ -1,11 +1,11 @@
 /**
  * Internal dependencies
  */
-import { READER_TEAMS_REQUEST, READER_TEAMS_RECEIVE } from 'state/reader/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { TEAMS_REQUEST, TEAMS_RECEIVE } from 'calypso/state/teams/action-types';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export const handleTeamsRequest = ( action ) =>
 	http(
@@ -18,18 +18,18 @@ export const handleTeamsRequest = ( action ) =>
 	);
 
 export const teamRequestReceived = ( action, apiResponse ) => ( {
-	type: READER_TEAMS_RECEIVE,
+	type: TEAMS_RECEIVE,
 	payload: apiResponse,
 } );
 
 export const teamRequestFailure = ( error ) => ( {
-	type: READER_TEAMS_RECEIVE,
+	type: TEAMS_RECEIVE,
 	payload: error,
 	error: true,
 } );
 
 registerHandlers( 'state/data-layer/wpcom/read/teams/index.js', {
-	[ READER_TEAMS_REQUEST ]: [
+	[ TEAMS_REQUEST ]: [
 		dispatchRequest( {
 			fetch: handleTeamsRequest,
 			onSuccess: teamRequestReceived,

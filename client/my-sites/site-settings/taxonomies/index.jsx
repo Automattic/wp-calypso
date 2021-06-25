@@ -11,11 +11,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-import TaxonomyManager from 'blocks/taxonomy-manager';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
-import DocumentHead from 'components/data/document-head';
+import HeaderCake from 'calypso/components/header-cake';
+import TaxonomyManager from 'calypso/blocks/taxonomy-manager';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getPostTypeTaxonomy } from 'calypso/state/post-types/taxonomies/selectors';
+import DocumentHead from 'calypso/components/data/document-head';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import config from '@automattic/calypso-config';
 
 /**
  * Style dependencies
@@ -28,11 +30,18 @@ const Taxonomies = ( { translate, labels, postType, site, taxonomy } ) => {
 	};
 
 	return (
+		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<div className="main main-column" role="main">
+			<ScreenOptionsTab wpAdminPath={ `edit-tags.php?taxonomy=${ taxonomy }` } />
 			<DocumentHead
 				title={ translate( 'Manage %(taxonomy)s', { args: { taxonomy: labels.name } } ) }
 			/>
-			<HeaderCake onClick={ goBack }>
+			<HeaderCake
+				onClick={ goBack }
+				className={
+					config.isEnabled( 'nav-unification/switcher' ) && 'header-cake--has-screen-options'
+				}
+			>
 				<h1>{ labels.name }</h1>
 			</HeaderCake>
 			<TaxonomyManager taxonomy={ taxonomy } postType={ postType } />

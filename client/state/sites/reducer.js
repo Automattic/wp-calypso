@@ -1,26 +1,23 @@
 /**
  * External dependencies
  */
-import { omit, merge, get, includes, reduce, isEqual, stubFalse, stubTrue } from 'lodash';
+import { omit, merge, get, includes, reduce, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { plans } from './plans/reducer';
 import { products } from './products/reducer';
+import { featuresReducer as features } from './features/reducer';
 import connection from './connection/reducer';
 import domains from './domains/reducer';
 import guidedTransfer from './guided-transfer/reducer';
 import monitor from './monitor/reducer';
-import vouchers from './vouchers/reducer';
 import sharingButtons from './sharing-buttons/reducer';
 import mediaStorage from './media-storage/reducer';
 import blogStickers from './blog-stickers/reducer';
 import {
 	MEDIA_DELETE,
-	SITE_DELETE,
-	SITE_DELETE_FAILURE,
-	SITE_DELETE_SUCCESS,
 	SITE_DELETE_RECEIVE,
 	JETPACK_DISCONNECT_RECEIVE,
 	SITE_RECEIVE,
@@ -37,15 +34,10 @@ import {
 	SITE_PLUGIN_UPDATED,
 	SITE_FRONT_PAGE_UPDATE,
 	SITE_MIGRATION_STATUS_UPDATE,
-} from 'state/action-types';
-import { THEME_ACTIVATE_SUCCESS } from 'state/themes/action-types';
+} from 'calypso/state/action-types';
+import { THEME_ACTIVATE_SUCCESS } from 'calypso/state/themes/action-types';
 import { sitesSchema, hasAllSitesListSchema } from './schema';
-import {
-	combineReducers,
-	keyedReducer,
-	withSchemaValidation,
-	withoutPersistence,
-} from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 
 /**
  * Tracks all known site objects, indexed by site ID.
@@ -133,7 +125,7 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 			let nextSite = site;
 
 			return reduce(
-				[ 'blog_public', 'wpcom_coming_soon', 'site_icon' ],
+				[ 'blog_public', 'wpcom_public_coming_soon', 'wpcom_coming_soon', 'site_icon' ],
 				( memo, key ) => {
 					// A site settings update may or may not include the icon or blog_public property.
 					// If not, we should simply return state unchanged.
@@ -155,8 +147,11 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 							};
 							break;
 						}
-						case 'wpcom_coming_soon': {
-							const isComingSoon = parseInt( settings.wpcom_coming_soon, 10 ) === 1;
+						case 'wpcom_coming_soon':
+						case 'wpcom_public_coming_soon': {
+							const isComingSoon =
+								parseInt( settings.wpcom_public_coming_soon, 10 ) === 1 ||
+								parseInt( settings.wpcom_coming_soon, 10 ) === 1;
 
 							if ( site.is_coming_soon === isComingSoon ) {
 								return memo;
@@ -293,7 +288,7 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
  * @param  {object} action Action object
  * @returns {object}        Updated state
  */
-export const requestingAll = withoutPersistence( ( state = false, action ) => {
+export const requestingAll = ( state = false, action ) => {
 	switch ( action.type ) {
 		case SITES_REQUEST:
 			return true;
@@ -304,7 +299,7 @@ export const requestingAll = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated requesting state after an action has been dispatched.
@@ -314,7 +309,7 @@ export const requestingAll = withoutPersistence( ( state = false, action ) => {
  * @param  {object} action Action object
  * @returns {object}        Updated state
  */
-export const requesting = withoutPersistence( ( state = {}, action ) => {
+export const requesting = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case SITE_REQUEST: {
 			const { siteId } = action;
@@ -331,31 +326,7 @@ export const requesting = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
-
-/**
- * Returns the updated deleting state after an action has been dispatched.
- * Deleting state tracks whether a network request is in progress for a site.
- *
- * @param  {object} state  Current state
- * @param  {object} action Action object
- * @returns {object}        Updated state
- */
-export const deleting = keyedReducer(
-	'siteId',
-	withoutPersistence( ( state = {}, action ) => {
-		switch ( action.type ) {
-			case SITE_DELETE:
-				return stubTrue( state, action );
-			case SITE_DELETE_FAILURE:
-				return stubFalse( state, action );
-			case SITE_DELETE_SUCCESS:
-				return stubFalse( state, action );
-		}
-
-		return state;
-	} )
-);
+};
 
 /**
  * Tracks whether all sites have been fetched.
@@ -378,16 +349,15 @@ export const hasAllSitesList = withSchemaValidation(
 
 export default combineReducers( {
 	connection,
-	deleting,
 	domains,
 	requestingAll,
 	items,
 	mediaStorage,
 	plans,
 	products,
+	features,
 	guidedTransfer,
 	monitor,
-	vouchers,
 	requesting,
 	sharingButtons,
 	blogStickers,

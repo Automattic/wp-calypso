@@ -18,7 +18,7 @@ export default class JetpackComSearchLandingPage extends AsyncBaseContainer {
 	}
 
 	async upgrade() {
-		const buyPremiumSelector = By.css( '#landing-page-search-primary-cta' );
-		return await driverHelper.clickWhenClickable( this.driver, buyPremiumSelector );
+		const buyPremiumLocator = By.css( '#landing-page-search-primary-cta' );
+		return await driverHelper.clickWhenClickable( this.driver, buyPremiumLocator );
 	}
 }

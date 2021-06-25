@@ -6,8 +6,8 @@ import {
 	READER_THUMBNAIL_REQUEST_SUCCESS,
 	READER_THUMBNAIL_REQUEST_FAILURE,
 	READER_THUMBNAIL_RECEIVE,
-} from 'state/reader/action-types';
-import { combineReducers } from 'state/utils';
+} from 'calypso/state/reader/action-types';
+import { combineReducers } from 'calypso/state/utils';
 
 /**
  * Tracks mappings between embedUrls (iframe.src) --> thumbnails

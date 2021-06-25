@@ -11,14 +11,14 @@ import { find, includes } from 'lodash';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import SectionHeader from 'components/section-header';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import StatsModulePlaceholder from 'my-sites/stats/stats-module/placeholder';
-import ErrorPanel from 'my-sites/stats/stats-error';
-import QuerySiteStats from 'components/data/query-site-stats';
-import { withLocalizedMoment } from 'components/localized-moment';
+import SectionHeader from 'calypso/components/section-header';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
+import ErrorPanel from 'calypso/my-sites/stats/stats-error';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 /**
  * Style dependencies

@@ -1,5 +1,7 @@
 # Gutenberg extensions for o2 theme
 
+This code is developed in the calypso monorepo at <https://github.com/Automattic/wp-calypso/tree/trunk/apps/o2-blocks>.
+
 Your extension should follow this structure:
 
 ```
@@ -24,7 +26,9 @@ If your block depends on another block, place them all in extensions folder:
 Blocks are registered by providing a `name` and `settings` like this:
 
 ```js
-registerBlockType( 'prefix/name', { /* settings */ } );
+registerBlockType( 'prefix/name', {
+	/* settings */
+} );
 ```
 
 ## Building

@@ -9,8 +9,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import QueryTheme from 'components/data/query-theme';
-import { isWpcomTheme, isWporgTheme } from 'state/themes/selectors';
+import QueryTheme from 'calypso/components/data/query-theme';
+import { isWpcomTheme, isWporgTheme } from 'calypso/state/themes/selectors';
 
 const QueryCanonicalTheme = ( { siteId, themeId, isWpcom, isWporg } ) => (
 	<Fragment>

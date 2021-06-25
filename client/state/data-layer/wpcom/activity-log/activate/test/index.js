@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { activateSucceeded, activateFailed } from '../';
-import { rewindActivateSuccess, rewindActivateFailure } from 'state/activity-log/actions';
+import { rewindActivateSuccess, rewindActivateFailure } from 'calypso/state/activity-log/actions';
 
 const siteId = 77203074;
 

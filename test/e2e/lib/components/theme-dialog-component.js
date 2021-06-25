@@ -15,7 +15,7 @@ export default class ThemeDialogComponent extends AsyncBaseContainer {
 	}
 
 	async _postInit() {
-		return await driverHelper.waitTillPresentAndDisplayed(
+		return await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css( '.themes__thanks-modal h1' ),
 			this.explicitWaitMS * 2
@@ -25,15 +25,15 @@ export default class ThemeDialogComponent extends AsyncBaseContainer {
 	async goToThemeDetail() {
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( '.dialog button[data-e2e-button="learn"]' )
+			By.css( '.dialog a[data-e2e-button="learn"]' )
 		);
 	}
 
 	async customizeSite() {
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( '.dialog button[data-e2e-button="customizeSite"]' )
+			By.css( '.dialog a[data-e2e-button="customizeSite"]' )
 		);
-		return await driverHelper.switchToWindowByIndex( this.driver, 1 );
+		return await driverHelper.waitUntilAbleToSwitchToWindow( this.driver, 1 );
 	}
 }

@@ -1,7 +1,7 @@
-People Profile
-=========
+# People Profile
 
 This component is used to display information about a user including:
+
 - Gravatar
 - Display name
 - Username

@@ -1,19 +1,21 @@
 /**
  * External dependencies
  */
-import { castArray, noop, zip } from 'lodash';
+import { zip } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import {
-	dispatchFluxReceiveMediaItemError,
-	dispatchFluxReceiveMediaItemSuccess,
-} from 'state/media/utils/flux-adapter';
-import { receiveMedia, successMediaItemRequest, failMediaItemRequest } from 'state/media/actions';
-import { requestMediaStorage } from 'state/sites/media-storage/actions';
-import { createTransientMediaItems } from 'state/media/thunks/create-transient-media-items';
-import { isFileList } from 'state/media/utils/is-file-list';
+	receiveMedia,
+	successMediaItemRequest,
+	failMediaItemRequest,
+} from 'calypso/state/media/actions';
+import { requestMediaStorage } from 'calypso/state/sites/media-storage/actions';
+import { createTransientMediaItems } from 'calypso/state/media/thunks/create-transient-media-items';
+import { isFileList } from 'calypso/state/media/utils/is-file-list';
+
+const noop = () => {};
 
 /**
  * Add media items serially (one at a time) but dispatch creation
@@ -25,11 +27,9 @@ import { isFileList } from 'state/media/utils/is-file-list';
  * swallows all errors and depends on the `onItemFailure` and redux store's
  * handling of errors. It then returns only the list of successful uploads.
  *
- * Note: Temporarily this action will dispatch to the flux store, until
- * the flux store is removed.
- *
  * @param {object|object[]} files The file to upload
  * @param {object} site The site to add the media to
+ * @param {number} postId - ID of the post to attach the media item to
  * @param {Function} uploader The file uploader to use
  * @param {Function?} onItemUploaded Optional function to call when upload for an individual item succeeds
  * @param {Function?} onItemFailure Optional function to be called when upload for an individual item fails
@@ -39,12 +39,17 @@ import { isFileList } from 'state/media/utils/is-file-list';
 export const uploadMedia = (
 	files,
 	site,
+	postId = 0,
 	uploader,
 	onItemUploaded = noop,
 	onItemFailure = noop
 ) => async ( dispatch ) => {
 	// https://stackoverflow.com/questions/25333488/why-isnt-the-filelist-object-an-array
-	files = isFileList( files ) ? Array.from( files ) : castArray( files );
+	if ( isFileList( files ) ) {
+		files = Array.from( files );
+	} else if ( ! Array.isArray( files ) ) {
+		files = [ files ];
+	}
 	const uploadedItems = [];
 
 	const transientItems = dispatch( createTransientMediaItems( files, site ) );
@@ -62,13 +67,11 @@ export const uploadMedia = (
 			const {
 				media: [ uploadedMedia ],
 				found,
-			} = await uploader( file, siteId );
+			} = await uploader( file, siteId, postId );
 			const uploadedMediaWithTransientId = {
 				...uploadedMedia,
 				transientId: transientMedia.ID,
 			};
-
-			dispatchFluxReceiveMediaItemSuccess( transientMedia.ID, siteId, uploadedMedia );
 
 			dispatch( successMediaItemRequest( siteId, transientMedia.ID ) );
 			dispatch( receiveMedia( siteId, uploadedMediaWithTransientId, found ) );
@@ -78,8 +81,6 @@ export const uploadMedia = (
 			onItemUploaded( uploadedMediaWithTransientId, file );
 			uploadedItems.push( uploadedMediaWithTransientId );
 		} catch ( error ) {
-			dispatchFluxReceiveMediaItemError( transientMedia.ID, siteId, error );
-
 			dispatch( failMediaItemRequest( siteId, transientMedia.ID, error ) );
 			onItemFailure( file );
 		}

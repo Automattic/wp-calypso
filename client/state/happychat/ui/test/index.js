@@ -7,15 +7,14 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	SERIALIZE,
-	DESERIALIZE,
 	HAPPYCHAT_BLUR,
 	HAPPYCHAT_FOCUS,
 	HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE,
 	HAPPYCHAT_SET_CURRENT_MESSAGE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 import { lostFocusAt, currentMessage } from '../reducer';
-jest.mock( 'lib/warn', () => () => {} );
+jest.mock( '@wordpress/warning', () => () => {} );
 
 // Simulate the time Feb 27, 2017 05:25 UTC
 const NOW = 1488173100125;
@@ -29,17 +28,17 @@ describe( 'reducers', () => {
 			expect( lostFocusAt( undefined, {} ) ).to.be.null;
 		} );
 
-		test( 'SERIALIZEs to Date.now() if state is null', () => {
-			expect( lostFocusAt( null, { type: SERIALIZE } ) ).to.eql( NOW );
+		test( 'serializes to Date.now() if state is null', () => {
+			expect( serialize( lostFocusAt, null ) ).to.eql( NOW );
 		} );
 
-		test( 'DESERIALIZEs a valid value', () => {
-			expect( lostFocusAt( 1, { type: DESERIALIZE } ) ).eql( 1 );
+		test( 'deserializes a valid value', () => {
+			expect( deserialize( lostFocusAt, 1 ) ).eql( 1 );
 		} );
 
-		test( 'does not DESERIALIZEs invalid values', () => {
-			expect( lostFocusAt( {}, { type: DESERIALIZE } ) ).eql( null );
-			expect( lostFocusAt( '1', { type: DESERIALIZE } ) ).eql( null );
+		test( 'does not deserializes invalid values', () => {
+			expect( deserialize( lostFocusAt, {} ) ).eql( null );
+			expect( deserialize( lostFocusAt, '1' ) ).eql( null );
 		} );
 
 		test( 'returns Date.now() on HAPPYCHAT_BLUR actions', () => {

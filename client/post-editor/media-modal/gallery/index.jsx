@@ -5,26 +5,28 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { noop, assign, omitBy, some, isEqual, partial } from 'lodash';
+import { omitBy, some, isEqual, partial } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
+import HeaderCake from 'calypso/components/header-cake';
 import EditorMediaModalContent from '../content';
 import EditorMediaModalGalleryDropZone from './drop-zone';
 import EditorMediaModalGalleryFields from './fields';
 import EditorMediaModalGalleryPreview from './preview';
-import { GalleryDefaultAttrs } from 'lib/media/constants';
-import { ModalViews } from 'state/ui/media-modal/constants';
-import { setEditorMediaModalView } from 'state/editor/actions';
-import { isModuleActive } from 'lib/site/utils';
-import getMediaItem from 'state/media/thunks/get-media-item';
+import { GalleryDefaultAttrs } from 'calypso/lib/media/constants';
+import { ModalViews } from 'calypso/state/ui/media-modal/constants';
+import { setEditorMediaModalView } from 'calypso/state/editor/actions';
+import { isModuleActive } from 'calypso/lib/site/utils';
+import getMediaItem from 'calypso/state/media/thunks/get-media-item';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class EditorMediaModalGallery extends React.Component {
 	static propTypes = {
@@ -103,7 +105,7 @@ class EditorMediaModalGallery extends React.Component {
 			return;
 		}
 
-		const defaultSettings = assign( {}, GalleryDefaultAttrs, { items } );
+		const defaultSettings = { ...GalleryDefaultAttrs, items };
 
 		if ( site && ( ! site.jetpack || isModuleActive( site, 'tiled-gallery' ) ) ) {
 			defaultSettings.type = 'rectangular';
@@ -119,7 +121,7 @@ class EditorMediaModalGallery extends React.Component {
 		}
 
 		// Merge object of settings with existing set
-		let updatedSettings = assign( {}, this.props.settings, setting );
+		let updatedSettings = { ...this.props.settings, ...setting };
 		updatedSettings = omitBy( updatedSettings, ( updatedValue ) => null === updatedValue );
 		this.props.onUpdateSettings( updatedSettings );
 	};

@@ -1,17 +1,14 @@
-Site Indicator
-==============
+# Site Indicator
 
 This component is used to display a round badge next to a site with information about updates available, connection issues with Jetpack, whether a site is Jetpack, upgrades expiring soon, etc. It takes `site` object as property.
 
-#### How to use
+## How to use
 
 ```js
-import SiteIndicator from 'my-sites/site-indicator';
+import SiteIndicator from 'calypso/my-sites/site-indicator';
 
-render() {
-	return(
-		<SiteIndicator site={ siteObject } />
-	);
+function render() {
+	return <SiteIndicator site={ siteObject } />;
 }
 ```
 
@@ -24,7 +21,7 @@ render() {
 	<tr><th>Required</th><td>Yes</td></tr>
 </table>
 
-The site object. 
+The site object.
 
 ### `onSelect`
 

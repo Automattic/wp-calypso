@@ -1,0 +1,35 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.reskin-side-explainer {
+    width: 100%;
+
+    .reskin-side-explainer__title {
+        font-size: 1.25rem;
+        letter-spacing: 0.2px;
+        line-height: 1.625rem;
+        color: var( --studio-gray-90 );
+    }
+
+    .reskin-side-explainer__subtitle {
+        color: var( --studio-gray-60 );
+        line-height: 1.25rem;
+        letter-spacing: -0.16px;
+        padding-top: 12px;
+        font-size: 0.875rem;
+    }
+
+    .reskin-side-explainer__cta {
+        font-size: 0.875rem;
+        line-height: 20px;
+        padding-top: 12px;
+        color: #1d2327;
+        letter-spacing: -0.16px;
+
+        .reskin-side-explainer__cta-text {
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: 500; /* stylelint-disable-line */
+        }
+    }
+}

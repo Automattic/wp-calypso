@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
+import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
 import canJetpackSiteAutoUpdateFiles from './can-jetpack-site-auto-update-files';
 import canJetpackSiteUpdateFiles from './can-jetpack-site-update-files';
 import isJetpackSite from './is-jetpack-site';

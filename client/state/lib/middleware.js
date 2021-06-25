@@ -2,36 +2,33 @@
  * External dependencies
  */
 import { once, defer } from 'lodash';
-import notices from 'notices';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from '@automattic/calypso-config';
 import {
-	JETPACK_DISCONNECT_RECEIVE,
 	NOTIFICATIONS_PANEL_TOGGLE,
 	ROUTE_SET,
 	SELECTED_SITE_SET,
-	SITE_DELETE_RECEIVE,
 	SITE_RECEIVE,
 	SITES_RECEIVE,
-} from 'state/action-types';
-import user from 'lib/user';
-import hasSitePendingAutomatedTransfer from 'state/selectors/has-site-pending-automated-transfer';
-import { isFetchingAutomatedTransferStatus } from 'state/automated-transfer/selectors';
-import isNotificationsOpen from 'state/selectors/is-notifications-open';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getCurrentUserEmail } from 'state/current-user/selectors';
-import keyboardShortcuts from 'lib/keyboard-shortcuts';
-import getGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
-import { fetchAutomatedTransferStatus } from 'state/automated-transfer/actions';
+} from 'calypso/state/action-types';
+import hasSitePendingAutomatedTransfer from 'calypso/state/selectors/has-site-pending-automated-transfer';
+import { isFetchingAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
+import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
+import keyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
+import getGlobalKeyboardShortcuts from 'calypso/lib/keyboard-shortcuts/global';
+import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import {
 	createImmediateLoginMessage,
 	createPathWithoutImmediateLoginInformation,
-} from 'state/immediate-login/utils';
-import { saveImmediateLoginInformation } from 'state/immediate-login/actions';
+} from 'calypso/state/immediate-login/utils';
+import { saveImmediateLoginInformation } from 'calypso/state/immediate-login/actions';
+import { successNotice } from 'calypso/state/notices/actions';
 
 /**
  * Module variables
@@ -42,8 +39,6 @@ let globalKeyboardShortcuts;
 if ( globalKeyBoardShortcutsEnabled ) {
 	globalKeyboardShortcuts = getGlobalKeyboardShortcuts();
 }
-
-const desktop = config.isEnabled( 'desktop' ) ? require( 'lib/desktop' ).default : null;
 
 /**
  * Notifies user about the fact that they were automatically logged in
@@ -83,7 +78,7 @@ const notifyAboutImmediateLoginLinkEffects = once( ( dispatch, action, getState 
 
 	// Let redux process all dispatches that are currently queued and show the message
 	defer( () => {
-		notices.success( createImmediateLoginMessage( action.query.login_reason, email ) );
+		dispatch( successNotice( createImmediateLoginMessage( action.query.login_reason, email ) ) );
 	} );
 } );
 
@@ -113,19 +108,6 @@ const updateNotificationsOpenForKeyboardShortcuts = ( dispatch, action, getState
 	keyboardShortcuts.setNotificationsOpen( toggledState );
 };
 
-/**
- * Sets the selected site for lib/desktop
- *
- * @param {Function} dispatch - redux dispatch function
- * @param {object}   action   - the dispatched action
- * @param {Function} getState - redux getState function
- */
-const updateSelectedSiteForDesktop = ( dispatch, action, getState ) => {
-	const state = getState();
-	const selectedSite = getSelectedSite( state );
-	desktop.setSelectedSite( selectedSite );
-};
-
 const fetchAutomatedTransferStatusForSelectedSite = ( dispatch, getState ) => {
 	const state = getState();
 	const siteId = getSelectedSiteId( state );
@@ -153,17 +135,9 @@ const handler = ( dispatch, action, getState ) => {
 				if ( globalKeyBoardShortcutsEnabled ) {
 					updatedSelectedSiteForKeyboardShortcuts( dispatch, action, getState );
 				}
-				if ( config.isEnabled( 'desktop' ) ) {
-					updateSelectedSiteForDesktop( dispatch, action, getState );
-				}
 
 				fetchAutomatedTransferStatusForSelectedSite( dispatch, getState );
 			}, 0 );
-			return;
-
-		case SITE_DELETE_RECEIVE:
-		case JETPACK_DISCONNECT_RECEIVE:
-			user().decrementSiteCount();
 			return;
 	}
 };

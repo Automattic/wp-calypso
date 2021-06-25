@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { type as domainTypes } from 'lib/domains/constants';
+import { type as domainTypes } from 'calypso/lib/domains/constants';
 
 export function getDomainType( domainFromApi ) {
 	if ( domainFromApi.type === 'redirect' ) {

@@ -16,7 +16,7 @@ import {
 	setStoredItem,
 	getStoredItem,
 	getAllStoredItems,
-} from 'lib/browser-storage';
+} from 'calypso/lib/browser-storage';
 
 describe( 'lib/browser-storage', () => {
 	describe( 'when indexedDB is supported', () => {

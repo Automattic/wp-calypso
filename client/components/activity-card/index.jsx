@@ -6,36 +6,41 @@ import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
  */
-import { backupDownloadPath, backupRestorePath } from 'my-sites/backup/paths';
+import { backupDownloadPath, backupRestorePath } from 'calypso/my-sites/backup/paths';
 import { Card } from '@automattic/components';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isSuccessfulRealtimeBackup } from 'lib/jetpack/backup-utils';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { settingsPath } from 'lib/jetpack/paths';
-import { withApplySiteOffset } from 'components/site-offset';
-import { withLocalizedMoment } from 'components/localized-moment';
-import ActivityActor from 'components/activity-card/activity-actor';
-import ActivityDescription from 'components/activity-card/activity-description';
-import ActivityMedia from 'components/activity-card/activity-media';
-import Button from 'components/forms/form-button';
-import ExternalLink from 'components/external-link';
-import getAllowRestore from 'state/selectors/get-allow-restore';
-import getDoesRewindNeedCredentials from 'state/selectors/get-does-rewind-need-credentials';
-import Gridicon from 'components/gridicon';
-import PopoverMenu from 'components/popover/menu';
-import QueryRewindState from 'components/data/query-rewind-state';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { isSuccessfulRealtimeBackup } from 'calypso/lib/jetpack/backup-utils';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import { settingsPath } from 'calypso/lib/jetpack/paths';
+import { withApplySiteOffset } from 'calypso/components/site-offset';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import ActivityActor from 'calypso/components/activity-card/activity-actor';
+import ActivityDescription from 'calypso/components/activity-card/activity-description';
+import ActivityMedia from 'calypso/components/activity-card/activity-media';
+import Button from 'calypso/components/forms/form-button';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import ExternalLink from 'calypso/components/external-link';
+import getAllowRestore from 'calypso/state/selectors/get-allow-restore';
+import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
+import { getActionableRewindId } from 'calypso/lib/jetpack/actionable-rewind-id';
+import Gridicon from 'calypso/components/gridicon';
+import PopoverMenu from 'calypso/components/popover/menu';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import StreamsMediaPreview from './activity-card-streams-media-preview';
+import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
+import { rewindShareRequest } from 'calypso/state/activity-log/actions';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 import downloadIcon from './download-icon.svg';
-import missingCredentialsIcon from 'components/jetpack/daily-backup-status/missing-credentials.svg';
+import missingCredentialsIcon from 'calypso/components/jetpack/daily-backup-status/missing-credentials.svg';
 
 class ActivityCard extends Component {
 	static propTypes = {
@@ -57,11 +62,38 @@ class ActivityCard extends Component {
 
 	topPopoverContext = React.createRef();
 	bottomPopoverContext = React.createRef();
+	sharePopoverContext = React.createRef();
 
-	state = {
-		showTopPopoverMenu: false,
-		showBottomPopoverMenu: false,
-		showContent: false,
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			showTopPopoverMenu: false,
+			showBottomPopoverMenu: false,
+			showContent: false,
+			showSharePopover: false,
+			shareEmail: '',
+			showShareEmailError: false,
+		};
+
+		this.handleShareEmailChange = this.handleShareEmailChange.bind( this );
+	}
+
+	handleShareEmailChange = ( event ) =>
+		this.setState( { shareEmail: event.target.value, showShareEmailError: false } );
+
+	handleShare = () => {
+		const email = this.state.shareEmail;
+		if ( ! email.includes( '@' ) || ! email.includes( '.' ) ) {
+			this.setState( { showShareEmailError: true } );
+		} else {
+			this.props.shareActivity(
+				this.props.siteId,
+				this.props.activity.rewindId,
+				this.state.shareEmail
+			);
+			this.setState( { showSharePopover: false } );
+		}
 	};
 
 	togglePopoverMenu = ( topPopoverMenu = true ) => {
@@ -76,6 +108,26 @@ class ActivityCard extends Component {
 
 	closePopoverMenu = () =>
 		this.setState( { showTopPopoverMenu: false, showBottomPopoverMenu: false } );
+
+	toggleSharePopover = () => {
+		const {
+			activity: { siteId, rewindId },
+			dispatchShareActivityPopoverTracksEvent,
+		} = this.props;
+
+		if ( ! this.state.showSharePopover ) {
+			dispatchShareActivityPopoverTracksEvent( siteId, rewindId );
+		}
+
+		this.setState( { showSharePopover: ! this.state.showSharePopover } );
+	};
+
+	closeSharePopover = ( event ) => {
+		// bit of a hack here, but it works
+		if ( false === event ) {
+			this.setState( { showSharePopover: false } );
+		}
+	};
 
 	toggleSeeContent = () => {
 		this.props.dispatchRecordTracksEvent( 'calypso_jetpack_backup_content_expand' );
@@ -162,13 +214,31 @@ class ActivityCard extends Component {
 	}
 
 	renderActionButton( isTopToolbar = true ) {
-		const { activity, doesRewindNeedCredentials, siteSlug, translate } = this.props;
+		const { activity, isMultiSite, doesRewindNeedCredentials, siteSlug, translate } = this.props;
 
 		const context = isTopToolbar ? this.topPopoverContext : this.bottomPopoverContext;
 
 		const showPopoverMenu = isTopToolbar
 			? this.state.showTopPopoverMenu
 			: this.state.showBottomPopoverMenu;
+
+		// The activity itself may not be rewindable, but at least one of the
+		// streams should be; if this is the case, make sure we send the user
+		// to a valid restore/download point when they click an action button
+		const actionableRewindId = getActionableRewindId( activity );
+
+		if ( isMultiSite ) {
+			return (
+				<Button
+					compact
+					isPrimary={ true }
+					href={ backupDownloadPath( siteSlug, actionableRewindId ) }
+					className="activity-card__download-button-multisite"
+				>
+					{ translate( 'Download backup' ) }
+				</Button>
+			);
+		}
 
 		return (
 			<>
@@ -191,7 +261,9 @@ class ActivityCard extends Component {
 					className="activity-card__popover"
 				>
 					<Button
-						href={ ! doesRewindNeedCredentials && backupRestorePath( siteSlug, activity.rewindId ) }
+						href={
+							! doesRewindNeedCredentials && backupRestorePath( siteSlug, actionableRewindId )
+						}
 						className="activity-card__restore-button"
 						disabled={ doesRewindNeedCredentials }
 					>
@@ -216,7 +288,7 @@ class ActivityCard extends Component {
 						borderless
 						compact
 						isPrimary={ false }
-						href={ backupDownloadPath( siteSlug, activity.rewindId ) }
+						href={ backupDownloadPath( siteSlug, actionableRewindId ) }
 						className="activity-card__download-button"
 					>
 						<img
@@ -227,6 +299,64 @@ class ActivityCard extends Component {
 						/>
 						{ translate( 'Download backup' ) }
 					</Button>
+				</PopoverMenu>
+			</>
+		);
+	}
+
+	renderShareButton() {
+		const { translate } = this.props;
+
+		return (
+			<>
+				<div className="activity-card__share-button-wrap">
+					<Button
+						compact
+						borderless
+						onClick={ this.toggleSharePopover }
+						ref={ this.sharePopoverContext }
+						className="activity-card__share-button"
+					>
+						<Gridicon icon="mail" />
+						{ translate( 'Share this event' ) }
+					</Button>
+				</div>
+				<PopoverMenu
+					context={ this.sharePopoverContext.current }
+					isVisible={ this.state.showSharePopover }
+					onClose={ this.closeSharePopover }
+					position="top"
+					className="activity-card__share-popover"
+				>
+					<div className="activity-card__share-heading">
+						{ translate( 'Share this event via email' ) }
+					</div>
+					<div className="activity-card__share-description">
+						{ translate(
+							'Share what is happening with your site with your clients or business partners.'
+						) }
+					</div>
+					<div className="activity-card__share-form">
+						<FormTextInput
+							className="activity-card__share-email"
+							placeholder="Email address"
+							value={ this.state.shareEmail }
+							onChange={ this.handleShareEmailChange }
+							isError={ this.state.showShareEmailError }
+						/>
+						<Button
+							className="activity-card__share-submit"
+							disabled={ ! this.state.shareEmail }
+							onClick={ this.handleShare }
+						>
+							{ translate( 'Share' ) }
+						</Button>
+					</div>
+					{ this.state.showShareEmailError && (
+						<div className="activity-card__share-error">
+							{ translate( 'Please enter a valid email address' ) }
+						</div>
+					) }
 				</PopoverMenu>
 			</>
 		);
@@ -287,11 +417,15 @@ class ActivityCard extends Component {
 		const backupTimeDisplay = applySiteOffset
 			? applySiteOffset( activity.activityTs ).format( 'LT' )
 			: '';
-
 		const showActivityContent = this.state.showContent;
+		const hasActivityFailed = activity.activityStatus === 'error';
 
 		return (
-			<div className={ classnames( className, 'activity-card' ) }>
+			<div
+				className={ classnames( className, 'activity-card', {
+					'with-error': hasActivityFailed,
+				} ) }
+			>
 				<QueryRewindState siteId={ siteId } />
 				{ ! summarize && (
 					<div className="activity-card__time">
@@ -299,6 +433,7 @@ class ActivityCard extends Component {
 						<div className="activity-card__time-text">{ backupTimeDisplay }</div>
 					</div>
 				) }
+				{ ! summarize && isEnabled( 'jetpack/activity-log-sharing' ) && this.renderShareButton() }
 				<Card>
 					<ActivityActor
 						actorAvatarUrl={ activity.actorAvatarUrl }
@@ -324,17 +459,29 @@ class ActivityCard extends Component {
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
+	const isMultiSite = isJetpackSiteMultiSite( state, siteId );
 
 	return {
 		allowRestore: getAllowRestore( state, siteId ),
 		doesRewindNeedCredentials: getDoesRewindNeedCredentials( state, siteId ),
 		siteId,
 		siteSlug,
+		isMultiSite,
 	};
 };
 
-const mapDispatchToProps = () => ( {
+const mapDispatchToProps = ( dispatch ) => ( {
 	dispatchRecordTracksEvent: recordTracksEvent,
+	shareActivity: ( siteId, rewindId, email ) => {
+		dispatch(
+			withAnalytics(
+				recordTracksEvent( 'calypso_activity_share_request' ),
+				rewindShareRequest( siteId, rewindId, email )
+			)
+		);
+	},
+	dispatchShareActivityPopoverTracksEvent: ( siteId, rewindId ) =>
+		dispatch( recordTracksEvent( 'calypso_activity_share_popup', { siteId, rewindId } ) ),
 } );
 
 export default connect(

@@ -2,20 +2,25 @@
  * External dependencies
  */
 import React, { PureComponent } from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
 import { CompactCard, Button } from '@automattic/components';
-import DocumentHead from 'components/data/document-head';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import DocumentHead from 'calypso/components/data/document-head';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+/**
+ * Image dependencies
+ */
+import supportIllustration from 'calypso/assets/images/illustrations/happiness-support.svg';
 
 export class ConciergeSupportSession extends PureComponent {
 	render() {
@@ -76,7 +81,10 @@ export class ConciergeSupportSession extends PureComponent {
 						<p>
 							<b>
 								{ translate(
-									'Reserve a 45-minute one-on-one call with a website expert to help you get started on the right foot.'
+									'Reserve a %(durationInMinutes)d-minute one-on-one call with a website expert to help you get started on the right foot.',
+									{
+										args: { durationInMinutes: 30 },
+									}
 								) }
 							</b>
 						</p>
@@ -157,10 +165,11 @@ export class ConciergeSupportSession extends PureComponent {
 
 						<h4 className="concierge-support-session__sub-header">
 							{ translate(
-								'Reserve a 45-minute "Quick Start" appointment, and save %(saveAmount)s if you sign up today.',
+								'Reserve a %(durationInMinutes)d-minute "Quick Start" appointment, and save %(saveAmount)s if you sign up today.',
 								{
 									args: {
 										saveAmount: formatCurrency( savings, currencyCode, { stripZeros: true } ),
+										durationInMinutes: 30,
 									},
 								}
 							) }
@@ -187,8 +196,8 @@ export class ConciergeSupportSession extends PureComponent {
 					<div className="concierge-support-session__column-doodle">
 						<img
 							className="concierge-support-session__doodle"
-							alt="Website expert offering a support session"
-							src="/calypso/images/illustrations/support.svg"
+							alt={ translate( 'Website expert offering a support session' ) }
+							src={ supportIllustration }
 						/>
 					</div>
 				</div>
@@ -201,6 +210,7 @@ export class ConciergeSupportSession extends PureComponent {
 		return (
 			<footer className="concierge-support-session__footer">
 				<Button
+					data-e2e-button="decline"
 					className="concierge-support-session__decline-offer-button"
 					onClick={ handleClickDecline }
 				>

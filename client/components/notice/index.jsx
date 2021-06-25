@@ -5,14 +5,13 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 // @todo: Convert to import from `components/gridicon`
 // which makes Calypso mysteriously crash at the moment.
 //
 // eslint-disable-next-line no-restricted-imports
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Style dependencies
@@ -33,6 +32,7 @@ const GRIDICONS_WITH_DROP = [
 	'play',
 	'spam',
 ];
+const noop = () => {};
 
 export class Notice extends Component {
 	static defaultProps = {

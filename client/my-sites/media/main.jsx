@@ -11,26 +11,28 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
-import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
-import MediaLibrary from 'my-sites/media-library';
-import QueryMedia from 'components/data/query-media';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
-import EditorMediaModalDialog from 'post-editor/media-modal/dialog';
-import { EditorMediaModalDetail } from 'post-editor/media-modal/detail';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import getMediaItem from 'state/selectors/get-media-item';
-import getPreviousRoute from 'state/selectors/get-previous-route';
-import getCurrentRoute from 'state/selectors/get-current-route';
-import ImageEditor from 'blocks/image-editor';
-import VideoEditor from 'blocks/video-editor';
-import { getMimeType } from 'lib/media/utils';
-import accept from 'lib/accept';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import searchUrl from 'lib/search-url';
-import { editMedia, deleteMedia } from 'state/media/thunks';
-import { setMediaLibrarySelectedItems, changeMediaSource, clearSite } from 'state/media/actions';
+import DocumentHead from 'calypso/components/data/document-head';
+import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
+import MediaLibrary from 'calypso/my-sites/media-library';
+import QueryMedia from 'calypso/components/data/query-media';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
+import EditorMediaModalDialog from 'calypso/post-editor/media-modal/dialog';
+import { EditorMediaModalDetail } from 'calypso/post-editor/media-modal/detail';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import getMediaItem from 'calypso/state/selectors/get-media-item';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import ImageEditor from 'calypso/blocks/image-editor';
+import VideoEditor from 'calypso/blocks/video-editor';
+import { getMimeType } from 'calypso/lib/media/utils';
+import accept from 'calypso/lib/accept';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import searchUrl from 'calypso/lib/search-url';
+import { editMedia, deleteMedia } from 'calypso/state/media/thunks';
+import { selectMediaItems, changeMediaSource, clearSite } from 'calypso/state/media/actions';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import config from '@automattic/calypso-config';
 
 /**
  * Style dependencies
@@ -77,7 +79,7 @@ class Media extends Component {
 		}
 
 		if ( this.props.selectedSite ) {
-			this.props.setMediaLibrarySelectedItems( this.props.selectedSite.ID, [] );
+			this.props.selectMediaItems( this.props.selectedSite.ID, [] );
 		}
 
 		if ( this.props.currentRoute !== redirect ) {
@@ -85,13 +87,6 @@ class Media extends Component {
 		}
 
 		page( redirect );
-	};
-
-	openDetailsModalForASingleImage = ( image ) => {
-		this.setState( {
-			currentDetail: 0,
-			selectedItems: [ image ],
-		} );
 	};
 
 	openDetailsModalForAllSelected = () => {
@@ -209,6 +204,25 @@ class Media extends Component {
 		this.props.editMedia( siteId, { ID: item.ID, media_url: item.guid } );
 		this.setState( { currentDetail: null, editedImageItem: null, selectedItems: [] } );
 		this.maybeRedirectToAll();
+	};
+
+	updateItem = ( itemId, detail ) => {
+		const { selectedItems } = this.state;
+		const index = selectedItems.findIndex( ( item ) => item.ID === itemId );
+
+		if ( index === -1 ) {
+			return;
+		}
+
+		selectedItems.splice( index, 1, {
+			...selectedItems[ index ],
+			...detail,
+		} );
+
+		this.setState( {
+			...this.state,
+			selectedItems,
+		} );
 	};
 
 	setDetailSelectedIndex = ( index ) => {
@@ -352,6 +366,7 @@ class Media extends Component {
 
 		return (
 			<div ref={ this.containerRef } className="main main-column media" role="main">
+				<ScreenOptionsTab wpAdminPath="upload.php" />
 				{ mediaId && site && site.ID && <QueryMedia siteId={ site.ID } mediaId={ mediaId } /> }
 				<PageViewTracker path={ this.getAnalyticsPath() } title="Media" />
 				<DocumentHead title={ translate( 'Media' ) } />
@@ -360,7 +375,11 @@ class Media extends Component {
 					brandFont
 					className="media__page-heading"
 					headerText={ translate( 'Media' ) }
+					subHeaderText={ translate(
+						'Manage all the media on your site, including images, video, and more.'
+					) }
 					align="left"
+					hasScreenOptions={ config.isEnabled( 'nav-unification/switcher' ) }
 				/>
 				{ this.showDialog() && (
 					<EditorMediaModalDialog
@@ -381,6 +400,7 @@ class Media extends Component {
 								onEditImageItem={ this.editImage }
 								onEditVideoItem={ this.editVideo }
 								onRestoreItem={ this.restoreOriginalMedia }
+								onUpdateItem={ this.updateItem }
 								onSelectedIndexChange={ this.setDetailSelectedIndex }
 							/>
 						) }
@@ -410,7 +430,6 @@ class Media extends Component {
 						single={ false }
 						filter={ this.props.filter }
 						source={ this.state.source }
-						onEditItem={ this.openDetailsModalForASingleImage }
 						onViewDetails={ this.openDetailsModalForAllSelected }
 						onDeleteItem={ this.handleDeleteMediaEvent }
 						onSourceChange={ this.handleSourceChange }
@@ -423,8 +442,8 @@ class Media extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { mediaId, site } ) => {
-	const siteId = getSelectedSiteId( state ) || site.ID;
+const mapStateToProps = ( state, { mediaId } ) => {
+	const siteId = getSelectedSiteId( state );
 
 	return {
 		selectedSite: getSelectedSite( state ),
@@ -438,7 +457,7 @@ const mapStateToProps = ( state, { mediaId, site } ) => {
 export default connect( mapStateToProps, {
 	editMedia,
 	deleteMedia,
-	setMediaLibrarySelectedItems,
+	selectMediaItems,
 	changeMediaSource,
 	clearSite,
 } )( localize( Media ) );

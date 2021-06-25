@@ -1,17 +1,19 @@
 /**
  * External dependencies
  */
-import { fromPairs, map, mapValues, noop } from 'lodash';
+import { map, mapValues } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { TIMEZONES_REQUEST } from 'state/action-types';
-import { timezonesReceive } from 'state/timezones/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { TIMEZONES_REQUEST } from 'calypso/state/action-types';
+import { timezonesReceive } from 'calypso/state/timezones/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+
+const noop = () => {};
 
 /**
  * Converts an value/label pairs from API into object whose
@@ -25,7 +27,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @returns {ValueLabelMap} object whose keys are timezone values, values are timezone labels
  */
 const timezonePairsToMap = ( pairs ) =>
-	fromPairs( map( pairs, ( { label, value } ) => [ value, label ] ) );
+	Object.fromEntries( map( pairs, ( { label, value } ) => [ value, label ] ) );
 
 /**
  * Normalize data gotten from the REST API making them more Calypso friendly.

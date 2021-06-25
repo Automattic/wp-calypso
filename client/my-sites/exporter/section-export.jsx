@@ -8,15 +8,21 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
-import ExporterContainer from 'my-sites/exporter/container';
-import Main from 'components/main';
-import DocumentHead from 'components/data/document-head';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { isJetpackSite } from 'state/sites/selectors';
-import FormattedHeader from 'components/formatted-header';
+import EmptyContent from 'calypso/components/empty-content';
+import ExporterContainer from 'calypso/my-sites/exporter/container';
+import Main from 'calypso/components/main';
+import DocumentHead from 'calypso/components/data/document-head';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import FormattedHeader from 'calypso/components/formatted-header';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import config from '@automattic/calypso-config';
 
 /**
  * Style dependencies
@@ -51,8 +57,9 @@ const SectionExport = ( { isJetpack, canUserExport, site, translate } ) => {
 					brandFont
 					className="exporter__section-header"
 					headerText={ translate( 'Export Content' ) }
-					subHeaderText={ translate( 'Your content on WordPress.com is always yours.' ) }
+					subHeaderText={ translate( 'Back up or move your content to another site or platform.' ) }
 					align="left"
+					hasScreenOptions={ config.isEnabled( 'nav-unification/switcher' ) }
 				/>
 				<ExporterContainer />
 			</Fragment>
@@ -61,6 +68,7 @@ const SectionExport = ( { isJetpack, canUserExport, site, translate } ) => {
 
 	return (
 		<Main>
+			<ScreenOptionsTab wpAdminPath="export.php" />
 			<DocumentHead title={ translate( 'Export' ) } />
 			<SidebarNavigation />
 			{ sectionContent }

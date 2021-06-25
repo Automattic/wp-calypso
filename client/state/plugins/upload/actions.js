@@ -1,22 +1,22 @@
 /**
  * Internal dependencies
  */
-
 import {
 	PLUGIN_UPLOAD,
 	PLUGIN_UPLOAD_CLEAR,
 	PLUGIN_UPLOAD_COMPLETE,
 	PLUGIN_UPLOAD_ERROR,
 	PLUGIN_UPLOAD_PROGRESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/sites/plugins/new';
+import 'calypso/state/data-layer/wpcom/sites/plugins/new';
+import 'calypso/state/plugins/init';
 
 /**
  * Upload a plugin to a site.
  *
  * @param {number} siteId site ID
- * @param {File} file the plugin zip to upload
+ * @param {window.File} file the plugin zip to upload
  * @returns {object} action object
  */
 export function uploadPlugin( siteId, file ) {

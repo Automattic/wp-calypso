@@ -2,13 +2,12 @@
  * External dependencies
  */
 import React from 'react';
-import { repeat } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import PostComment from 'blocks/comments/post-comment';
-import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
+import PostComment from 'calypso/blocks/comments/post-comment';
+import { POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/comments/constants';
 import { Card } from '@automattic/components';
 
 const mockComment = {
@@ -49,30 +48,30 @@ const mockMultipleShortLineComment = {
 
 const mockComments = [
 	{ ...mockComment, ID: 0 },
-	{ ...mockComment, ID: 1, content: repeat( mockComment.content, 5 ) },
-	{ ...mockComment, ID: 2, content: repeat( mockComment.content, 5 ) },
+	{ ...mockComment, ID: 1, content: mockComment.content.repeat( 5 ) },
+	{ ...mockComment, ID: 2, content: mockComment.content.repeat( 5 ) },
 	{ ...mockShortComment, ID: 3 },
 	{ ...mockMultipleShortLineComment, ID: 4 },
 ];
 
 const commentsTree = {
-	'0': {
+	0: {
 		children: [ 1 ],
 		data: mockComments[ 0 ],
 	},
-	'1': {
+	1: {
 		children: [],
 		data: mockComments[ 1 ],
 	},
-	'2': {
+	2: {
 		children: [],
 		data: mockComments[ 2 ],
 	},
-	'3': {
+	3: {
 		children: [ 1 ],
 		data: mockComments[ 3 ],
 	},
-	'4': {
+	4: {
 		children: [ 1 ],
 		data: mockComments[ 4 ],
 	},

@@ -10,29 +10,29 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import accept from 'lib/accept';
-import AuthorSelector from 'blocks/author-selector';
-import canCurrentUser from 'state/selectors/can-current-user';
+import accept from 'calypso/lib/accept';
+import AuthorSelector from 'calypso/blocks/author-selector';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { Card } from '@automattic/components';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import Gravatar from 'components/gravatar';
-import isJetpackSiteConnected from 'state/selectors/is-jetpack-site-connected';
-import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
-import isJetpackUserConnectionOwner from 'state/selectors/is-jetpack-user-connection-owner';
-import getJetpackConnectionOwner from 'state/selectors/get-jetpack-connection-owner';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import Gravatar from 'calypso/components/gravatar';
+import isJetpackSiteConnected from 'calypso/state/selectors/is-jetpack-site-connected';
+import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
+import isJetpackUserConnectionOwner from 'calypso/state/selectors/is-jetpack-user-connection-owner';
+import getJetpackConnectionOwner from 'calypso/state/selectors/get-jetpack-connection-owner';
 import OwnershipInformation from './ownership-information';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
-import QueryJetpackUserConnection from 'components/data/query-jetpack-user-connection';
-import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
-import { changeOwner } from 'state/jetpack/connection/actions';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isCurrentUserCurrentPlanOwner } from 'state/sites/plans/selectors';
-import { isCurrentPlanPaid, isJetpackSite } from 'state/sites/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { transferPlanOwnership } from 'state/sites/plans/actions';
+import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
+import QueryJetpackUserConnection from 'calypso/components/data/query-jetpack-user-connection';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { changeOwner } from 'calypso/state/jetpack/connection/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
+import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { transferPlanOwnership } from 'calypso/state/sites/plans/actions';
 
 class SiteOwnership extends Component {
 	renderPlaceholder() {

@@ -3,26 +3,25 @@
  */
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import GoMobile from 'my-sites/customer-home/cards/features/go-mobile';
-import QuickStart from 'my-sites/customer-home/cards/features/quick-start';
-import QuickLinks from 'my-sites/customer-home/cards/actions/quick-links';
-import HelpSearch from 'my-sites/customer-home/cards/features/help-search';
-import WpForTeamsQuickLinks from 'my-sites/customer-home/cards/actions/wp-for-teams-quick-links';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getHomeLayout } from 'state/selectors/get-home-layout';
+import GoMobile from 'calypso/my-sites/customer-home/cards/features/go-mobile';
+import QuickStart from 'calypso/my-sites/customer-home/cards/features/quick-start';
+import QuickLinks from 'calypso/my-sites/customer-home/cards/actions/quick-links';
+import HelpSearch from 'calypso/my-sites/customer-home/cards/features/help-search';
+import WpForTeamsQuickLinks from 'calypso/my-sites/customer-home/cards/actions/wp-for-teams-quick-links';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getHomeLayout } from 'calypso/state/selectors/get-home-layout';
 import {
 	ACTION_QUICK_LINKS,
 	ACTION_WP_FOR_TEAMS_QUICK_LINKS,
 	FEATURE_GO_MOBILE,
 	FEATURE_QUICK_START,
 	FEATURE_SUPPORT,
-} from 'my-sites/customer-home/cards/constants';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
+} from 'calypso/my-sites/customer-home/cards/constants';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 
 const cardComponents = {
 	[ FEATURE_GO_MOBILE ]: GoMobile,
@@ -33,8 +32,6 @@ const cardComponents = {
 };
 
 const ManageSite = ( { cards, trackCards } ) => {
-	const translate = useTranslate();
-
 	useEffect( () => {
 		if ( cards && cards.length ) {
 			trackCards( cards );
@@ -47,9 +44,6 @@ const ManageSite = ( { cards, trackCards } ) => {
 
 	return (
 		<>
-			<h2 className="manage-site__heading customer-home__section-heading">
-				{ translate( 'Manage your site' ) }
-			</h2>
 			{ cards.map(
 				( card, index ) =>
 					cardComponents[ card ] &&

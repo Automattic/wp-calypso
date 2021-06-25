@@ -25,27 +25,13 @@ let mockReturnValues = {};
 function remock( newReturnValues ) {
 	mockReturnValues = Object.assign(
 		{
-			isDefaultLocale: true,
-			isSectionIsomorphic: true,
 			configServerSideRender: true,
 		},
 		newReturnValues
 	);
 }
 
-jest.mock( 'lib/i18n-utils', () => {
-	return {
-		isDefaultLocale: () => mockReturnValues.isDefaultLocale,
-	};
-} );
-
-jest.mock( 'state/ui/selectors', () => {
-	return {
-		isSectionIsomorphic: () => mockReturnValues.isSectionIsomorphic,
-	};
-} );
-
-jest.mock( 'config', () => {
+jest.mock( '@automattic/calypso-config', () => {
 	const fn = () => {};
 	fn.isEnabled = ( feature_key ) =>
 		feature_key === 'server-side-rendering' ? mockReturnValues.configServerSideRender : false;
@@ -53,11 +39,11 @@ jest.mock( 'config', () => {
 } );
 
 const ssrCompatibleContext = {
+	section: {
+		isomorphic: true,
+	},
 	layout: 'hello',
 	user: null,
-	store: {
-		getState: () => {},
-	},
 	lang: 'en',
 };
 
@@ -111,18 +97,12 @@ describe( 'shouldServerSideRender', () => {
 		expect( shouldServerSideRender( ssrEnabledContextWithUser ) ).toBe( false );
 	} );
 
-	test( 'isSectionIsomorphic should alter the result', () => {
-		expect( shouldServerSideRender( ssrEnabledContext ) ).toBe( true );
-
-		remock( { isSectionIsomorphic: false } );
-		expect( shouldServerSideRender( ssrEnabledContext ) ).toBe( false );
-	} );
-
-	test( 'isDefaultLocale should alter the result', () => {
-		expect( shouldServerSideRender( ssrEnabledContext ) ).toBe( true );
-
-		remock( { isDefaultLocale: false } );
-		expect( shouldServerSideRender( ssrEnabledContext ) ).toBe( false );
+	test( 'non-isomorphic section should disable SSR', () => {
+		const ssrNonIsomorphicSectionContext = {
+			...ssrEnabledContext,
+			section: { isomorphic: false },
+		};
+		expect( shouldServerSideRender( ssrNonIsomorphicSectionContext ) ).toBe( false );
 	} );
 } );
 

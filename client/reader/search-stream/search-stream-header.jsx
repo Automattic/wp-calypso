@@ -4,15 +4,16 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { noop, values } from 'lodash';
+import { values } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-import NavTabs from 'components/section-nav/tabs';
-import SectionNav from 'components/section-nav';
-import NavItem from 'components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import SectionNav from 'calypso/components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
 
+const noop = () => {};
 export const SEARCH_TYPES = { POSTS: 'posts', SITES: 'sites' };
 
 class SearchStreamHeader extends Component {

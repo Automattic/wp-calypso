@@ -1,12 +1,7 @@
 /**
- * External dependencies
- */
-import { get, toNumber, isInteger } from 'lodash';
-
-/**
  * Internal dependencies
  */
-import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 
 /**
  * Returns the partner_id query param if present or null.
@@ -15,8 +10,9 @@ import getCurrentQueryArguments from 'state/selectors/get-current-query-argument
  * @returns {?number}       The partner ID as an integer or null
  */
 export const getPartnerIdFromQuery = function ( state ) {
-	const partnerId = toNumber( get( getCurrentQueryArguments( state ), 'partner_id' ) );
-	return isInteger( partnerId ) ? partnerId : null;
+	const queryArgs = getCurrentQueryArguments( state );
+	const partnerId = Number( queryArgs?.partner_id );
+	return Number.isInteger( partnerId ) ? partnerId : null;
 };
 
 export default getPartnerIdFromQuery;

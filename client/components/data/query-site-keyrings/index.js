@@ -9,8 +9,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingSiteKeyrings } from 'state/site-keyrings/selectors';
-import { requestSiteKeyrings } from 'state/site-keyrings/actions';
+import { isRequestingSiteKeyrings } from 'calypso/state/site-keyrings/selectors';
+import { requestSiteKeyrings } from 'calypso/state/site-keyrings/actions';
 
 class QuerySiteKeyrings extends Component {
 	static propTypes = {

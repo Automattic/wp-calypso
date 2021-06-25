@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { endsWith, filter, includes, mapValues, trimStart } from 'lodash';
+import { filter, includes, mapValues } from 'lodash';
 
 function validateAllFields( fieldValues, domainName ) {
 	return mapValues( fieldValues, ( value, fieldName ) => {
@@ -21,7 +21,7 @@ function validateField( { name, value, type, domainName } ) {
 		case 'name':
 			return isValidName( value, type, domainName );
 		case 'target':
-			return isValidDomain( value );
+			return isValidDomain( value, type );
 		case 'data':
 			return isValidData( value, type );
 		case 'protocol':
@@ -39,10 +39,15 @@ function validateField( { name, value, type, domainName } ) {
 	}
 }
 
-function isValidDomain( name ) {
+function isValidDomain( name, type ) {
 	if ( name.length > 253 ) {
 		return false;
 	}
+
+	if ( type === 'SRV' && name === '.' ) {
+		return true;
+	}
+
 	return /^([a-z0-9-_]{1,63}\.)*[a-z0-9-]{1,63}\.[a-z]{2,63}$/i.test( name );
 }
 
@@ -84,14 +89,14 @@ function getNormalizedData( record, selectedDomainName ) {
 	// The leading '_' in SRV's service field is a convention
 	// The record itself should not contain it
 	if ( record.service ) {
-		normalizedRecord.service = trimStart( record.service, '_' );
+		normalizedRecord.service = record.service.replace( /^_+/, '' );
 	}
 
 	return normalizedRecord;
 }
 
 function getNormalizedName( name, type, selectedDomainName ) {
-	const endsWithDomain = endsWith( name, '.' + selectedDomainName );
+	const endsWithDomain = name.endsWith( '.' + selectedDomainName );
 
 	if ( isRootDomain( name, selectedDomainName ) && canBeRootDomain( type ) ) {
 		return selectedDomainName + '.';

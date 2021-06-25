@@ -1,24 +1,27 @@
 /**
  * External dependencies
  */
-import { noop } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { WORDADS_SETTINGS_REQUEST, WORDADS_SETTINGS_SAVE } from 'state/action-types';
-import getWordadsSettings from 'state/selectors/get-wordads-settings';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { WORDADS_SETTINGS_REQUEST, WORDADS_SETTINGS_SAVE } from 'calypso/state/action-types';
+import getWordadsSettings from 'calypso/state/selectors/get-wordads-settings';
 import {
 	saveWordadsSettingsFailure,
 	saveWordadsSettingsSuccess,
 	updateWordadsSettings,
-} from 'state/wordads/settings/actions';
+} from 'calypso/state/wordads/settings/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { saveJetpackSettings } from 'calypso/state/jetpack/settings/actions';
+
+const noop = () => {};
 
 const fromApi = ( data ) => {
 	if ( ! data.hasOwnProperty( 'settings' ) ) {
@@ -58,7 +61,33 @@ export const requestWordadsSettings = ( action ) => {
  */
 export const saveWordadsSettings = ( action ) => ( dispatch, getState ) => {
 	const { settings, siteId } = action;
-	const previousSettings = getWordadsSettings( getState(), siteId );
+	const state = getState();
+	const previousSettings = getWordadsSettings( state, siteId );
+
+	// WordAds settings on Jetpack sites are not updatable on the WordAds API endpoint, so we
+	// update them from the site settings endpoints.
+	const isJetpack = isJetpackSite( state, siteId );
+	if ( isJetpack ) {
+		let jetpackSettings = {
+			wordads: settings.jetpack_module_enabled,
+		};
+		if ( settings.jetpack_module_enabled ) {
+			jetpackSettings = {
+				...jetpackSettings,
+				wordads_display_front_page: settings.display_options.display_front_page,
+				wordads_display_post: settings.display_options.display_post,
+				wordads_display_page: settings.display_options.display_page,
+				wordads_display_archive: settings.display_options.display_archive,
+				enable_header_ad: settings.display_options.enable_header_ad,
+				wordads_second_belowpost: settings.display_options.second_belowpost,
+				wordads_ccpa_enabled: settings.ccpa_enabled,
+				wordads_ccpa_privacy_policy_url: settings.ccpa_privacy_policy_url,
+				wordads_custom_adstxt_enabled: settings.custom_adstxt_enabled,
+				wordads_custom_adstxt: settings.custom_adstxt,
+			};
+		}
+		dispatch( saveJetpackSettings( siteId, jetpackSettings ) );
+	}
 
 	// Optimistically update settings to the new ones
 	dispatch( updateWordadsSettings( siteId, settings ) );

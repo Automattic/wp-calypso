@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import isMappedDomainSite from 'state/selectors/is-mapped-domain-site';
+import isMappedDomainSite from 'calypso/state/selectors/is-mapped-domain-site';
 
 describe( '#isMappedDomainSite()', () => {
 	const siteId = 77203074;
@@ -22,9 +22,11 @@ describe( '#isMappedDomainSite()', () => {
 		},
 		domains: {
 			items: {
-				[ siteId ]: {
-					isWPCOMDomain: true,
-				},
+				[ siteId ]: [
+					{
+						isWPCOMDomain: false,
+					},
+				],
 			},
 		},
 	};

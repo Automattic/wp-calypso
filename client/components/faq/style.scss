@@ -14,8 +14,8 @@ $faq-gutter-width: 24px;
 
 .faq__heading {
 	margin-bottom: 32px;
+	color: var( --color-text-subtle );
 	font-size: $font-title-medium;
-	color: var( --color-neutral-40 );
 }
 
 .faq__list {
@@ -50,7 +50,7 @@ $faq-gutter-width: 24px;
 .faq__question {
 	margin-bottom: 12px;
 	font-weight: 600;
-	color: var( --color-neutral-40 );
+	color: var( --color-text-subtle );
 }
 
 .faq__answer {

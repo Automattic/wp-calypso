@@ -6,16 +6,16 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	jetpackRemoteInstallComplete,
 	jetpackRemoteInstallUpdateError,
-} from 'state/jetpack-remote-install/actions';
-import { JETPACK_REMOTE_INSTALL } from 'state/action-types';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+} from 'calypso/state/jetpack-remote-install/actions';
+import { JETPACK_REMOTE_INSTALL } from 'calypso/state/action-types';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export const JETPACK_REMOTE_INSTALL_RETRIES = 3;
 

@@ -4,11 +4,6 @@
 import { get } from 'lodash';
 
 /**
- * Internal dependencies
- */
-import { getUser } from 'state/users/selectors';
-
-/**
  * Returns the current user ID
  *
  * @param  {object}  state  Global state tree
@@ -35,20 +30,16 @@ export function isUserLoggedIn( state ) {
  * @returns {?object}        Current user
  */
 export function getCurrentUser( state ) {
-	const userId = getCurrentUserId( state );
-	if ( ! userId ) {
-		return null;
-	}
-
-	return getUser( state, userId );
+	return get( state, [ 'currentUser', 'user' ], null );
 }
 
 /**
  * Returns a selector that fetches a property from the current user object
  *
+ * @template S,T
  * @param {string} path Path to the property in the user object
- * @param {?any} otherwise A default value that is returned if no user or property is found
- * @returns {Function} A selector which takes the state as a parameter
+ * @param {?T} otherwise A default value that is returned if no user or property is found
+ * @returns {(state: S) => T} A selector which takes the state as a parameter
  */
 export const createCurrentUserSelector = ( path, otherwise = null ) => ( state ) => {
 	const user = getCurrentUser( state );
@@ -198,3 +189,11 @@ export const isCurrentUserEmailVerified = createCurrentUserSelector( 'email_veri
 export function getCurrentUserLasagnaJwt( state ) {
 	return state.currentUser.lasagnaJwt;
 }
+
+/**
+ * Returns true if the user was bootstrapped (i.e. user data was fetched by the server
+ * and hydrated using window.currentUser)
+ *
+ * @returns {boolean} Whether the current user is bootstrapped
+ */
+export const isCurrentUserBootstrapped = createCurrentUserSelector( 'bootstrapped', false );

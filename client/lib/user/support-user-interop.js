@@ -1,18 +1,16 @@
 /**
  * External dependencies
  */
-
 import debugModule from 'debug';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import config from 'config';
-import { bypassPersistentStorage } from 'lib/browser-storage';
-import { supportSessionActivate } from 'state/support/actions';
-import localStorageBypass from 'lib/local-storage-bypass';
+import wpcom from 'calypso/lib/wp';
+import config from '@automattic/calypso-config';
+import { bypassPersistentStorage } from 'calypso/lib/browser-storage';
+import { supportSessionActivate } from 'calypso/state/support/actions';
+import localStorageBypass from 'calypso/lib/local-storage-bypass';
 
 /**
  * Connects the Redux store and the low-level support user functions
@@ -25,7 +23,7 @@ import localStorageBypass from 'lib/local-storage-bypass';
 
 const debug = debugModule( 'calypso:support-user' );
 const STORAGE_KEY = 'boot_support_user';
-
+const noop = () => {};
 const isEnabled = () => config.isEnabled( 'support-user' );
 
 let _setReduxStore = noop;

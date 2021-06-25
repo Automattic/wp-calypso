@@ -1,12 +1,12 @@
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { registerHandlers } from 'state/data-layer/handler-registry';
-import { HOME_LAYOUT_REQUEST, HOME_LAYOUT_SKIP_CURRENT_VIEW } from 'state/action-types';
-import { setHomeLayout } from 'state/home/actions';
-import config from 'config';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { HOME_LAYOUT_REQUEST, HOME_LAYOUT_SKIP_VIEW } from 'calypso/state/action-types';
+import { setHomeLayout } from 'calypso/state/home/actions';
+import config from '@automattic/calypso-config';
 
 const requestLayout = ( action ) => {
 	const isDev = config.isEnabled( 'home/layout-dev' ) || action.isDev;
@@ -24,7 +24,7 @@ const requestLayout = ( action ) => {
 	);
 };
 
-const skipCurrentView = ( action ) => {
+const skipView = ( action ) => {
 	return http(
 		{
 			method: 'POST',
@@ -32,6 +32,7 @@ const skipCurrentView = ( action ) => {
 			apiNamespace: 'wpcom/v2',
 			...( config.isEnabled( 'home/layout-dev' ) && { query: { dev: true } } ),
 			body: {
+				view: action.viewName,
 				...( action.reminder && { reminder: action.reminder } ),
 			},
 		},
@@ -48,9 +49,9 @@ registerHandlers( 'state/data-layer/wpcom/sites/home/layout/index.js', {
 			onSuccess: setLayout,
 		} ),
 	],
-	[ HOME_LAYOUT_SKIP_CURRENT_VIEW ]: [
+	[ HOME_LAYOUT_SKIP_VIEW ]: [
 		dispatchRequest( {
-			fetch: skipCurrentView,
+			fetch: skipView,
 			onSuccess: setLayout,
 		} ),
 	],

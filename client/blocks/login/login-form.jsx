@@ -1,39 +1,42 @@
 /**
  * External dependencies
  */
-import classNames from 'classnames';
-import { capitalize, defer, includes, get, startsWith } from 'lodash';
-import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
+import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import ReactDom from 'react-dom';
+import { capitalize, defer, includes, get } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-import { Button, Card } from '@automattic/components';
-import config from 'config';
-import FormsButton from 'components/forms/form-button';
-import FormInputValidation from 'components/forms/form-input-validation';
+import config from '@automattic/calypso-config';
 import Divider from './divider';
-import FormPasswordInput from 'components/forms/form-password-input';
-import FormTextInput from 'components/forms/form-text-input';
-import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
-import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
-import getCurrentRoute from 'state/selectors/get-current-route';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getCurrentOAuth2Client } from 'state/oauth2-clients/ui/selectors';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormPasswordInput from 'calypso/components/forms/form-password-input';
+import FormsButton from 'calypso/components/forms/form-button';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import Gridicon from 'calypso/components/gridicon';
+import Notice from 'calypso/components/notice';
+import SocialLoginForm from './social';
+import TextControl from 'calypso/extensions/woocommerce/components/text-control';
+import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
+import { Button, Card } from '@automattic/components';
+import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
 	formUpdate,
 	getAuthAccountType,
 	loginUser,
 	resetAuthAccountType,
-} from 'state/login/actions';
-import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
-import { preventWidows } from 'lib/formatting';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
+} from 'calypso/state/login/actions';
 import {
 	getAuthAccountType as getAuthAccountTypeSelector,
 	getRedirectToOriginal,
@@ -42,14 +45,16 @@ import {
 	getSocialAccountLinkEmail,
 	getSocialAccountLinkService,
 	isFormDisabled as isFormDisabledSelector,
-} from 'state/login/selectors';
-import { isRegularAccount } from 'state/login/utils';
-import Notice from 'components/notice';
-import SocialLoginForm from './social';
-import { localizeUrl } from 'lib/i18n-utils';
-import TextControl from 'extensions/woocommerce/components/text-control';
-import { sendEmailLogin } from 'state/auth/actions';
-import wooDnaConfig from 'jetpack-connect/woo-dna-config';
+} from 'calypso/state/login/selectors';
+import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { getSignupUrl } from 'calypso/lib/login';
+import { isRegularAccount } from 'calypso/state/login/utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { preventWidows } from 'calypso/lib/formatting';
+import { addQueryArgs } from 'calypso/lib/url';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
+import { sendEmailLogin } from 'calypso/state/auth/actions';
+import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
 
 export class LoginForm extends Component {
 	static propTypes = {
@@ -62,6 +67,7 @@ export class LoginForm extends Component {
 		isFormDisabled: PropTypes.bool,
 		isLoggedIn: PropTypes.bool.isRequired,
 		loginUser: PropTypes.func.isRequired,
+		handleUsernameChange: PropTypes.func,
 		oauth2Client: PropTypes.object,
 		onSuccess: PropTypes.func.isRequired,
 		privateSite: PropTypes.bool,
@@ -93,8 +99,12 @@ export class LoginForm extends Component {
 		} );
 	}
 
-	componentDidUpdate( prevProps ) {
-		const { disableAutoFocus, requestError } = this.props;
+	componentDidUpdate( prevProps, prevState ) {
+		const { currentRoute, disableAutoFocus, requestError, handleUsernameChange } = this.props;
+
+		if ( handleUsernameChange && prevState.usernameOrEmail !== this.state.usernameOrEmail ) {
+			handleUsernameChange( this.state.usernameOrEmail );
+		}
 
 		if ( prevProps.requestError || ! requestError ) {
 			return;
@@ -106,6 +116,17 @@ export class LoginForm extends Component {
 
 		if ( requestError.field === 'usernameOrEmail' ) {
 			! disableAutoFocus && defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
+		}
+
+		// User entered an email address or username that doesn't have a corresponding WPCOM account
+		// and sign-up with magic links is enabled.
+		if (
+			currentRoute &&
+			currentRoute.includes( '/log-in/jetpack' ) &&
+			config.isEnabled( 'jetpack/magic-link-signup' ) &&
+			requestError.code === 'unknown_user'
+		) {
+			this.jetpackCreateAccountWithMagicLink();
 		}
 	}
 
@@ -230,6 +251,36 @@ export class LoginForm extends Component {
 		this.usernameOrEmail = input;
 	};
 
+	jetpackCreateAccountWithMagicLink() {
+		// When a user enters a username or an email address that doesn't have a corresponding
+		// WPCOM account, we need to figure out whether the user entered a username or an email
+		// address. If the user entered an email address, we can safely attempt to create a WPCOM
+		// account for this user with the help of magic links. On the other hand, if the user entered
+		// a username, we need to prompt the user specifically for an email address to proceed with
+		// the WPCOM account creation with magic links.
+
+		const isEmailAddress = includes( this.state.usernameOrEmail, '@' );
+		if ( isEmailAddress ) {
+			// With Magic Links, create the user a WPCOM account linked to the entered email address
+			this.props.sendEmailLogin( this.state.usernameOrEmail, {
+				redirectTo: this.props.redirectTo,
+				requestLoginEmailFormFlow: true,
+				createAccount: true,
+				flow: 'jetpack',
+			} );
+		}
+
+		// Redirect user to the Magic Link form page
+		page(
+			addQueryArgs(
+				{
+					email_address: this.state.usernameOrEmail,
+				},
+				'/log-in/jetpack/link'
+			)
+		);
+	}
+
 	renderPrivateSiteNotice() {
 		if ( this.props.privateSite && ! this.props.isLoggedIn ) {
 			return (
@@ -251,15 +302,11 @@ export class LoginForm extends Component {
 
 	recordWooCommerceLoginTracks( method ) {
 		const { isJetpackWooCommerceFlow, oauth2Client, wccomFrom } = this.props;
-		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {
+		if ( isJetpackWooCommerceFlow ) {
 			this.props.recordTracksEvent( 'wcadmin_storeprofiler_login_jetpack_account', {
 				login_method: method,
 			} );
-		} else if (
-			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-			isWooOAuth2Client( oauth2Client ) &&
-			'cart' === wccomFrom
-		) {
+		} else if ( isWooOAuth2Client( oauth2Client ) && 'cart' === wccomFrom ) {
 			this.props.recordTracksEvent( 'wcadmin_storeprofiler_payment_login', {
 				login_method: method,
 			} );
@@ -302,7 +349,7 @@ export class LoginForm extends Component {
 							</p>
 						) }
 
-						<label htmlFor="usernameOrEmail">
+						<FormLabel htmlFor="usernameOrEmail">
 							{ this.isPasswordView() ? (
 								<Button
 									borderless
@@ -316,7 +363,7 @@ export class LoginForm extends Component {
 										: this.props.translate( 'Change Username' ) }
 								</Button>
 							) : null }
-						</label>
+						</FormLabel>
 
 						<TextControl
 							autoCapitalize="off"
@@ -407,7 +454,6 @@ export class LoginForm extends Component {
 		const {
 			accountType,
 			oauth2Client,
-			redirectTo,
 			requestError,
 			socialAccountIsLinking: linkingSocialUser,
 			isJetpackWooCommerceFlow,
@@ -422,51 +468,16 @@ export class LoginForm extends Component {
 		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
 
-		const langFragment = locale && locale !== 'en' ? `/${ locale }` : '';
+		const signupUrl = getSignupUrl(
+			currentQuery,
+			currentRoute,
+			oauth2Client,
+			locale,
+			pathname,
+			isGutenboarding
+		);
 
-		let signupUrl = config( 'signup_url' );
-		const signupFlow = get( currentQuery, 'signup_flow' );
-
-		// copied from login-links.jsx
-		if (
-			// Match locales like `/log-in/jetpack/es`
-			startsWith( currentRoute, '/log-in/jetpack' )
-		) {
-			// Basic validation that we're in a valid Jetpack Authorization flow
-			if (
-				includes( get( currentQuery, 'redirect_to' ), '/jetpack/connect/authorize' ) &&
-				includes( get( currentQuery, 'redirect_to' ), '_wp_nonce' )
-			) {
-				/**
-				 * `log-in/jetpack/:locale` is reached as part of the Jetpack connection flow. In
-				 * this case, the redirect_to will handle signups as part of the flow. Use the
-				 * `redirect_to` parameter directly for signup.
-				 */
-				signupUrl = currentQuery.redirect_to;
-			} else {
-				signupUrl = '/jetpack/new';
-			}
-		} else if ( '/jetpack-connect' === pathname ) {
-			signupUrl = '/jetpack/new';
-		} else if ( signupFlow ) {
-			signupUrl += '/' + signupFlow;
-		}
-
-		if ( isOauthLogin && config.isEnabled( 'signup/wpcc' ) ) {
-			const oauth2Flow = isCrowdsignalOAuth2Client( oauth2Client ) ? 'crowdsignal' : 'wpcc';
-			const oauth2Params = new globalThis.URLSearchParams( {
-				oauth2_client_id: oauth2Client.id,
-				oauth2_redirect: redirectTo || '',
-			} );
-
-			signupUrl = `/start/${ oauth2Flow }?${ oauth2Params.toString() }`;
-		}
-
-		if ( isGutenboarding ) {
-			signupUrl = '/new' + langFragment;
-		}
-
-		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {
+		if ( isJetpackWooCommerceFlow ) {
 			return this.renderWooCommerce();
 		}
 
@@ -474,11 +485,7 @@ export class LoginForm extends Component {
 			return this.renderWooCommerce( !! accountType ); // Only show the social buttons after the user entered an email.
 		}
 
-		if (
-			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-			isWooOAuth2Client( oauth2Client ) &&
-			wccomFrom
-		) {
+		if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
 			return this.renderWooCommerce();
 		}
 
@@ -509,8 +516,7 @@ export class LoginForm extends Component {
 								) }
 							</p>
 						) }
-
-						<label htmlFor="usernameOrEmail">
+						<FormLabel htmlFor="usernameOrEmail">
 							{ this.isPasswordView() ? (
 								<button
 									type="button"
@@ -525,12 +531,13 @@ export class LoginForm extends Component {
 							) : (
 								this.props.translate( 'Email Address or Username' )
 							) }
-						</label>
+						</FormLabel>
 
 						<FormTextInput
 							autoCapitalize="off"
 							autoCorrect="off"
 							spellCheck="false"
+							autoComplete="username"
 							className={ classNames( {
 								'is-error': requestError && requestError.field === 'usernameOrEmail',
 							} ) }
@@ -549,7 +556,16 @@ export class LoginForm extends Component {
 										' Would you like to {{newAccountLink}}create a new account{{/newAccountLink}}?',
 										{
 											components: {
-												newAccountLink: <a href={ signupUrl } />,
+												newAccountLink: (
+													<a
+														href={ addQueryArgs(
+															{
+																user_email: this.state.usernameOrEmail,
+															},
+															signupUrl
+														) }
+													/>
+												),
 											},
 										}
 									) }
@@ -561,11 +577,11 @@ export class LoginForm extends Component {
 								'is-hidden': isPasswordHidden,
 							} ) }
 						>
-							<label htmlFor="password">{ this.props.translate( 'Password' ) }</label>
+							<FormLabel htmlFor="password">{ this.props.translate( 'Password' ) }</FormLabel>
 
 							<FormPasswordInput
 								autoCapitalize="off"
-								autoComplete="off"
+								autoComplete="current-password"
 								className={ classNames( {
 									'is-error': requestError && requestError.field === 'password',
 								} ) }
@@ -584,28 +600,26 @@ export class LoginForm extends Component {
 						</div>
 					</div>
 
-					{ config.isEnabled( 'signup/social' ) && (
-						<p className="login__form-terms">
-							{ preventWidows(
-								this.props.translate(
-									// To make any changes to this copy please speak to the legal team
-									'By continuing, ' + 'you agree to our {{tosLink}}Terms of Service{{/tosLink}}.',
-									{
-										components: {
-											tosLink: (
-												<a
-													href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-													target="_blank"
-													rel="noopener noreferrer"
-												/>
-											),
-										},
-									}
-								),
-								5
-							) }
-						</p>
-					) }
+					<p className="login__form-terms">
+						{ preventWidows(
+							this.props.translate(
+								// To make any changes to this copy please speak to the legal team
+								'By continuing, ' + 'you agree to our {{tosLink}}Terms of Service{{/tosLink}}.',
+								{
+									components: {
+										tosLink: (
+											<a
+												href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
+									},
+								}
+							),
+							5
+						) }
+					</p>
 
 					<div className="login__form-action">
 						<FormsButton primary disabled={ isFormDisabled }>
@@ -642,6 +656,14 @@ export class LoginForm extends Component {
 							uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
 						/>
 					</Fragment>
+				) }
+
+				{ ( currentQuery?.skip_user || currentQuery?.allow_site_connection ) && (
+					<JetpackConnectSiteOnly
+						homeUrl={ currentQuery?.site }
+						redirectAfterAuth={ currentQuery?.redirect_after_auth }
+						source="login"
+					/>
 				) }
 			</form>
 		);

@@ -31,8 +31,7 @@
 		"noEmitHelpers": true,
 		"importHelpers": true,
 
-		"composite": true,
-		"tsBuildInfoFile": "../../.tsc-cache/packages__data-stores"
+		"composite": true
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/docs/*", "**/test/*" ]

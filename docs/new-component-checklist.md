@@ -9,7 +9,7 @@ Credit: [original flowchart](https://coggle.it/diagram/V0hkiP976OIbGpy8/t/vanill
 
 ## Visual Quality
 
-Does the component apply visual style — color, typography, icons, space, borders, and more — using appropriate variables, and does it meet our visual guidelines?
+Does the component apply visual style —color, typography, icons, space, borders, and more— using appropriate variables, and does it meet our visual guidelines?
 
 ## Accessibility
 
@@ -69,6 +69,7 @@ class PopoverExample extends PureComponent {
 ## Playground
 
 Components will appear in the [Playground](/devdocs/playground) if they have the following requirements satisfied:
+
 - An example Component in /components/component-name/docs/example.jsx
 - An exampleCode property on the example Component
 - An `export ComponentName from components/component-name` statement in `playground-scope.js`

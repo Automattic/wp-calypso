@@ -3,17 +3,17 @@
  *
  */
 
-import React, { Fragment } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import EnvironmentBadge, { Branch, DevDocsLink, TestHelper } from 'components/environment-badge';
-import Head from 'components/head';
+import EnvironmentBadge, { Branch, DevDocsLink } from 'calypso/components/environment-badge';
+import Head from 'calypso/components/head';
 import { chunkCssLinks } from './utils';
-import WordPressLogo from 'components/wordpress-logo';
-import { jsonStringifyForHtml } from 'server/sanitize';
+import WordPressLogo from 'calypso/components/wordpress-logo';
+import { jsonStringifyForHtml } from 'calypso/server/sanitize';
 
 class Desktop extends React.Component {
 	render() {
@@ -23,10 +23,8 @@ class Desktop extends React.Component {
 			i18nLocaleScript,
 			isRTL,
 			lang,
-			hasSecondary,
 			clientData,
 			badge,
-			abTestHelper,
 			branchName,
 			commitChecksum,
 			devDocs,
@@ -47,18 +45,11 @@ class Desktop extends React.Component {
 							<div className="masterbar" />
 							<div className="layout__content">
 								<WordPressLogo size={ 72 } className="wpcom-site__logo" />
-								{ hasSecondary && (
-									<Fragment>
-										<div className="layout__secondary" />
-										<ul className="sidebar" />
-									</Fragment>
-								) }
 							</div>
 						</div>
 					</div>
 					{ badge && (
 						<EnvironmentBadge badge={ badge } feedbackURL={ feedbackURL }>
-							{ abTestHelper && <TestHelper /> }
 							{ branchName && (
 								<Branch branchName={ branchName } commitChecksum={ commitChecksum } />
 							) }

@@ -12,12 +12,12 @@ future. They're used in all types of scenarios:
 - Inform them about theme specific things
 - Much, much, more
 
-# Props
+## Props
 
-## currentSite (number)
+### currentSite (number)
 
 The user's current selected site
 
-## data (object)
+### data (object)
 
 The jitm information from the API

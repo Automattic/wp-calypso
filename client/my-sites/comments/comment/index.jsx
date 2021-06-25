@@ -7,24 +7,24 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import ReactDom from 'react-dom';
-import { debounce, get, isEqual, isUndefined } from 'lodash';
+import { debounce, get, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
+import { isEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
-import CommentActions from 'my-sites/comments/comment/comment-actions';
-import CommentContent from 'my-sites/comments/comment/comment-content';
-import CommentEdit from 'my-sites/comments/comment/comment-edit';
-import CommentHeader from 'my-sites/comments/comment/comment-header';
-import CommentReply from 'my-sites/comments/comment/comment-reply';
-import CommentRepliesList from 'my-sites/comments/comment-replies-list';
-import QueryComment from 'components/data/query-comment';
-import scrollTo from 'lib/scroll-to';
-import { getMinimumComment } from 'my-sites/comments/comment/utils';
-import { getSiteComment } from 'state/comments/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import CommentActions from 'calypso/my-sites/comments/comment/comment-actions';
+import CommentContent from 'calypso/my-sites/comments/comment/comment-content';
+import CommentEdit from 'calypso/my-sites/comments/comment/comment-edit';
+import CommentHeader from 'calypso/my-sites/comments/comment/comment-header';
+import CommentReply from 'calypso/my-sites/comments/comment/comment-reply';
+import CommentRepliesList from 'calypso/my-sites/comments/comment-replies-list';
+import QueryComment from 'calypso/components/data/query-comment';
+import scrollTo from 'calypso/lib/scroll-to';
+import { getMinimumComment } from 'calypso/my-sites/comments/comment/utils';
+import { getSiteComment } from 'calypso/state/comments/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * Style dependencies
@@ -229,7 +229,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 		siteId,
 		postId: get( comment, 'post.ID' ),
 		commentIsPending: 'unapproved' === commentStatus,
-		isLoading: isUndefined( comment ),
+		isLoading: typeof comment === 'undefined',
 		minimumComment: getMinimumComment( comment ),
 	};
 };

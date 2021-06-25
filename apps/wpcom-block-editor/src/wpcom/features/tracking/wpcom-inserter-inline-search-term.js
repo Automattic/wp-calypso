@@ -1,5 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
-
 /**
  * External dependencies
  */
@@ -117,9 +115,10 @@ function selectorHandler() {
  * adding the context event property with the `inserter_inline` value.
  * It also tracks `wpcom_block_picker_no_results` if the search term doesn't return any results.
  *
- * @returns {{handler: Function, selector: string|Function, type: string}} event object definition.
+ * @returns {import('./types').DelegateEventHandler} event object definition.
  */
 export default () => ( {
+	id: 'wpcom-inserter-inline-search-term',
 	selector: selectorHandler,
 	type: 'keyup',
 	handler: debounce( trackInserterInlineSearchTerm, 500 ),

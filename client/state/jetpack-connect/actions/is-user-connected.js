@@ -7,13 +7,16 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import { receiveDeletedSite, receiveSite } from 'state/sites/actions';
-import { withoutNotice } from 'state/notices/actions';
-import { JETPACK_CONNECT_USER_ALREADY_CONNECTED } from 'state/jetpack-connect/action-types';
-import { SITE_REQUEST, SITE_REQUEST_FAILURE, SITE_REQUEST_SUCCESS } from 'state/action-types';
+import wpcom from 'calypso/lib/wp';
+import { receiveDeletedSite, receiveSite } from 'calypso/state/sites/actions';
+import { JETPACK_CONNECT_USER_ALREADY_CONNECTED } from 'calypso/state/jetpack-connect/action-types';
+import {
+	SITE_REQUEST,
+	SITE_REQUEST_FAILURE,
+	SITE_REQUEST_SUCCESS,
+} from 'calypso/state/action-types';
 
-import 'state/jetpack-connect/init';
+import 'calypso/state/jetpack-connect/init';
 
 /**
  * Module constants
@@ -61,7 +64,7 @@ export function isUserConnected( siteId, siteIsOnSitesList ) {
 				debug( 'user is not connected from', error );
 				if ( siteIsOnSitesList ) {
 					debug( 'removing site from sites list', siteId );
-					dispatch( withoutNotice( receiveDeletedSite )( siteId ) );
+					dispatch( receiveDeletedSite( siteId ) );
 				}
 			} );
 	};

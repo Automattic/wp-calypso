@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import TraceKit from 'tracekit';
 import debug from 'debug';
 
@@ -120,12 +119,17 @@ export default class ErrorLogger {
 	}
 
 	sendToApi( error ) {
-		const xhr = new XMLHttpRequest();
-		xhr.open( 'POST', 'https://public-api.wordpress.com/rest/v1.1/js-error?http_envelope=1', true );
-		xhr.setRequestHeader( 'Content-type', 'application/x-www-form-urlencoded' );
-		let params =
-			'client_id=39911&client_secret=cOaYKdrkgXz8xY7aysv4fU6wL6sK5J8a6ojReEIAPwggsznj4Cb6mW0nffTxtYT8&error=';
-		params += encodeURIComponent( JSON.stringify( error ) );
-		xhr.send( params );
+		const body = new window.FormData();
+		body.append( 'error', JSON.stringify( error ) );
+
+		try {
+			window.fetch( 'https://public-api.wordpress.com/rest/v1.1/js-error', {
+				method: 'POST',
+				body,
+			} );
+		} catch {
+			// eslint-disable-next-line no-console
+			console.error( 'Error: Unable to record the error in Logstash.' );
+		}
 	}
 }

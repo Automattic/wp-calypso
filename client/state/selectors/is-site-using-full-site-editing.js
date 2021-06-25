@@ -1,13 +1,8 @@
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
-import getRawSite from 'state/selectors/get-raw-site';
-import { hasStaticFrontPage } from 'state/sites/selectors';
+import getRawSite from 'calypso/state/selectors/get-raw-site';
+import { hasStaticFrontPage } from 'calypso/state/sites/selectors';
 
 /**
  * Checks if a site is using the new Full Site Editing experience
@@ -18,6 +13,6 @@ import { hasStaticFrontPage } from 'state/sites/selectors';
  */
 export default function isSiteUsingFullSiteEditing( state, siteId ) {
 	const site = getRawSite( state, siteId );
-	const isActive = get( site, 'is_fse_active', false );
+	const isActive = site?.is_fse_active ?? false;
 	return isActive && hasStaticFrontPage( state, siteId );
 }

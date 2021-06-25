@@ -2,8 +2,8 @@
  * Internal dependencies
  */
 import { requestBlogStickerList, receiveBlogStickerListError } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { listBlogStickers } from 'state/sites/blog-stickers/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { listBlogStickers } from 'calypso/state/sites/blog-stickers/actions';
 
 describe( 'blog-sticker-list', () => {
 	describe( 'requestBlogStickerList', () => {

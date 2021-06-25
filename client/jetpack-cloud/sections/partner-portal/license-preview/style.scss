@@ -1,0 +1,150 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
+.license-preview {
+	margin: 0;
+	font-size: 0.875rem;
+	line-height: 1.25rem;
+	color: var( --studio-gray-70 );
+	transition: margin 0.2s ease;
+
+	// Matching bottom margin of Card component.
+	&--is-open {
+		margin-top: 10px;
+		margin-bottom: 10px;
+
+		@include breakpoint-deprecated( '>480px' ) {
+			margin-top: 16px;
+			margin-bottom: 16px;
+		}
+	}
+
+	&__card {
+		// Increased specificity to override card styles.
+		&--is-detached.card.is-compact,
+		&--is-revoked.card.is-compact {
+			// Reduce padding to fit the extra border width on the left so columns are still aligned perfectly.
+			padding-left: 13px;
+
+			@include break-mobile {
+				padding-left: 21px;
+			}
+		}
+
+		&--is-detached.card.is-compact {
+			border-left: 3px solid var( --studio-orange-40 );
+		}
+
+		&--is-revoked.card.is-compact {
+			border-left: 3px solid var( --studio-red-60 );
+		}
+	}
+
+	&__no-value {
+		position: relative;
+		top: 3px;
+	}
+
+	&__domain {
+		padding: 0;
+		margin: 0 0 4px;
+		font-size: 1.25rem;
+		font-weight: normal;
+		line-height: 1.75rem;
+		color: var( --studio-gray-100 );
+		overflow: hidden;
+		word-break: break-all;
+
+		span + span {
+			margin-left: 12px;
+
+			@include break-xlarge() {
+				display: block;
+				margin-left: 0;
+			}
+
+			@include break-wide() {
+				display: inline;
+				margin-left: 12px;
+			}
+		}
+	}
+
+	&__tag {
+		white-space: nowrap;
+		font-size: 0.875rem;
+		line-height: 1rem;
+
+		&--is-just-issued {
+			color: var( --studio-green-50 );
+			opacity: 0;
+			animation: hide-just-issued-tag 5s linear;
+		}
+
+		&--is-detached {
+			color: var( --studio-orange-40 );
+		}
+
+		&--is-revoked {
+			color: var( --studio-red-60 );
+		}
+
+		svg {
+			position: relative;
+			top: 3px;
+			margin-right: 4px;
+		}
+	}
+
+	&__product {
+		span {
+			display: none;
+
+			@include break-wide() {
+				display: inline;
+			}
+		}
+	}
+
+	&__label {
+		font-weight: 600;
+		white-space: nowrap;
+
+		@include break-xlarge() {
+			display: none;
+		}
+	}
+
+	&__copy-license-key {
+		&.button {
+			font-weight: 600;
+			color: var( --studio-gray-80 );
+			border-color: var( --color-text-subtle );
+		}
+	}
+
+	&__toggle {
+		padding: 0;
+	}
+
+	&--placeholder &__domain,
+	&--placeholder &__product,
+	&--placeholder &__label + div,
+	&--placeholder &__copy-license-key {
+		@include placeholder( --color-neutral-10 );
+	}
+}
+
+@keyframes hide-just-issued-tag {
+	0% {
+		display: inline;
+		opacity: 1;
+	}
+	50% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
+}

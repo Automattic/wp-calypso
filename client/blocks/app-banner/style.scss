@@ -2,52 +2,78 @@
 	position: fixed;
 	bottom: 0;
 	width: 100%;
-	background-color: var( --color-primary-light );
-	color: var( --color-text-inverted );
+	background-color: var( --color-surface );
+	color: var( --color-primary-80 );
+	padding: 20px;
+	margin-bottom: 0;
+	box-shadow: 3px -2px 24px 4px rgba( 0, 0, 0, 0.29 );
+	overflow: hidden;
 	/* Needed for banner to appear in front of notifications panel. */
 	z-index: z-index( 'root', '.app-banner' );
 }
 
-.app-banner__illustration {
-	height: 140px;
+.app-banner__circle {
 	position: absolute;
-	right: 0;
-	z-index: z-index( 'root', '.app-banner__illustration' );
+	border: 2px solid;
+	border-radius: 50%; /* stylelint-disable-line */
+	z-index: z-index( 'root', '.app-banner__circle' );
+
+	&.is-blue {
+		border-color: var( --studio-blue-10 );
+		height: 102px;
+		width: 102px;
+		right: -60px;
+		top: -40px;
+	}
+
+	&.is-red {
+		border-color: var( --studio-red-10 );
+		height: 91px;
+		width: 91px;
+		right: 25px;
+		bottom: -30px;
+	}
+
+	&.is-yellow {
+		border-color: var( --studio-yellow-10 );
+		height: 48px;
+		width: 48px;
+		left: -24px;
+		top: -24px;
+	}
 }
 
 .app-banner__text-content {
-	width: calc( 100% - 124px );
-	min-height: 66px;
+	width: 100%;
 }
 
 .app-banner__title {
-	font-size: 17px;
-	font-weight: 600;
-	line-height: 1.4;
+	/* stylelint-disable-next-line */
+	font-size: rem( 22px ); //typography-exception
+	font-family: $brand-serif;
+	line-height: 30px;
 }
 
 .app-banner__copy {
-	font-size: $font-body-extra-small;
-	font-weight: 400;
+	margin-top: 12px;
+	/* stylelint-disable-next-line */
+	font-size: rem( 15px ); //typography-exception
 }
 
 .app-banner__buttons {
-	width: calc( 100% - 84px );
+	width: 100%;
+	margin-top: 20px;
 }
 
 .button.app-banner__open-button {
-	margin-top: 8px;
+	background-color: var( --color-accent-40 );
+	border: 0;
+	border-radius: 4px; /* stylelint-disable-line */
+	margin-right: 10px;
 }
 
 .button.app-banner__no-thanks-button {
 	background: none;
 	border: 0;
-	color: var( --color-text-inverted );
-	display: inline-block;
-	margin-top: 8px;
-	padding: 7px 0 9px 14px;
-	text-decoration: none;
-	font-weight: 600;
-	font-size: $font-body-small;
-	line-height: 24px;
+	color: var( --color-text-subtle );
 }

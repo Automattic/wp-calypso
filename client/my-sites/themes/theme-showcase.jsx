@@ -7,31 +7,29 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import { compact, pickBy } from 'lodash';
-import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import { Button } from '@automattic/components';
 import ThemesSelection from './themes-selection';
-import SubMasterbarNav from 'components/sub-masterbar-nav';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { addTracking, trackClick } from './helpers';
-import DocumentHead from 'components/data/document-head';
-import { buildRelativeSearchUrl } from 'lib/build-url';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import SubMasterbarNav from 'calypso/components/sub-masterbar-nav';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { addTracking, trackClick, localizeThemesPath } from './helpers';
+import DocumentHead from 'calypso/components/data/document-head';
+import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import ThemePreview from './theme-preview';
-import config from 'config';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { openThemesShowcase } from 'state/themes/themes-ui/actions';
+import config from '@automattic/calypso-config';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { openThemesShowcase } from 'calypso/state/themes/themes-ui/actions';
 import {
 	getThemesBookmark,
 	hasShowcaseOpened as hasShowcaseOpenedSelector,
-} from 'state/themes/themes-ui/selectors';
+} from 'calypso/state/themes/themes-ui/selectors';
 import ThemesSearchCard from './themes-magic-search-card';
-import QueryThemeFilters from 'components/data/query-theme-filters';
+import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
 import {
 	getActiveTheme,
 	getThemeFilterTerms,
@@ -39,8 +37,8 @@ import {
 	getThemeShowcaseDescription,
 	getThemeShowcaseTitle,
 	prependThemeFilterKeys,
-} from 'state/themes/selectors';
-import UpworkBanner from 'blocks/upwork-banner';
+} from 'calypso/state/themes/selectors';
+import UpworkBanner from 'calypso/blocks/upwork-banner';
 import RecommendedThemes from './recommended-themes';
 
 /**
@@ -99,8 +97,6 @@ class ThemeShowcase extends React.Component {
 		getScreenshotOption: PropTypes.func,
 		siteSlug: PropTypes.string,
 		upsellBanner: PropTypes.any,
-		trackUploadClick: PropTypes.func,
-		trackATUploadClick: PropTypes.func,
 		trackMoreThemesClick: PropTypes.func,
 		loggedOutComponent: PropTypes.bool,
 	};
@@ -186,7 +182,10 @@ class ThemeShowcase extends React.Component {
 	 * @returns {string} Theme showcase url
 	 */
 	constructUrl = ( sections ) => {
-		const { vertical, tier, filter, siteSlug, searchString } = { ...this.props, ...sections };
+		const { vertical, tier, filter, siteSlug, searchString, locale, isLoggedIn } = {
+			...this.props,
+			...sections,
+		};
 
 		const siteIdSection = siteSlug ? `/${ siteSlug }` : '';
 		const verticalSection = vertical ? `/${ vertical }` : '';
@@ -194,8 +193,11 @@ class ThemeShowcase extends React.Component {
 
 		let filterSection = filter ? `/filter/${ filter }` : '';
 		filterSection = filterSection.replace( /\s/g, '+' );
-
-		const url = `/themes${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`;
+		const url = localizeThemesPath(
+			`/themes${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`,
+			locale,
+			! isLoggedIn
+		);
 		return buildRelativeSearchUrl( url, searchString );
 	};
 
@@ -204,20 +206,6 @@ class ThemeShowcase extends React.Component {
 		const url = this.constructUrl( { tier } );
 		page( url );
 		this.scrollToSearchInput();
-	};
-
-	onUploadClick = () => {
-		trackClick( 'upload theme' );
-		this.props.trackUploadClick();
-		if ( this.props.atEnabled ) {
-			this.props.trackATUploadClick();
-		}
-	};
-
-	showUploadButton = () => {
-		const { isMultisite, isLoggedIn } = this.props;
-
-		return isLoggedIn && ! isMultisite;
 	};
 
 	render() {
@@ -229,12 +217,12 @@ class ThemeShowcase extends React.Component {
 			search,
 			filter,
 			translate,
-			siteSlug,
 			isLoggedIn,
 			pathName,
 			title,
 			filterString,
 			isMultisite,
+			locale,
 		} = this.props;
 		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
 
@@ -252,7 +240,7 @@ class ThemeShowcase extends React.Component {
 
 		const headerIcons = [
 			{
-				label: 'new',
+				label: translate( 'New' ),
 				uri: this.constructUrl( { vertical: '' } ),
 				icon: 'star',
 			},
@@ -261,7 +249,7 @@ class ThemeShowcase extends React.Component {
 				.map(
 					( subject ) =>
 						subjectsMeta[ subject ] && {
-							label: subject,
+							label: this.props.subjects?.[ subject ]?.name || subject,
 							uri: this.constructUrl( { vertical: subject } ),
 							icon: subjectsMeta[ subject ].icon,
 							order: subjectsMeta[ subject ].order,
@@ -291,17 +279,6 @@ class ThemeShowcase extends React.Component {
 					/>
 				) }
 				<div className="themes__content">
-					{ this.showUploadButton() && (
-						<Button
-							className="themes__upload-button"
-							compact
-							onClick={ this.onUploadClick }
-							href={ siteSlug ? `/themes/upload/${ siteSlug }` : '/themes/upload' }
-						>
-							<Gridicon icon="cloud-upload" />
-							{ translate( 'Install theme' ) }
-						</Button>
-					) }
 					{ ! this.props.loggedOutComponent && ! isQueried && (
 						<>
 							<RecommendedThemes
@@ -319,7 +296,12 @@ class ThemeShowcase extends React.Component {
 									if ( ! getScreenshotOption( theme ).getUrl ) {
 										return null;
 									}
-									return getScreenshotOption( theme ).getUrl( theme );
+
+									return localizeThemesPath(
+										getScreenshotOption( theme ).getUrl( theme ),
+										locale,
+										! isLoggedIn
+									);
 								} }
 								onScreenshotClick={ function ( themeId ) {
 									if ( ! getScreenshotOption( themeId ).action ) {
@@ -353,7 +335,6 @@ class ThemeShowcase extends React.Component {
 							</div>
 						</>
 					) }
-
 					<div
 						ref={ this.scrollRef }
 						className={
@@ -372,11 +353,7 @@ class ThemeShowcase extends React.Component {
 										'These themes offer more power and flexibility, but can be harder to setup and customize.'
 									) }
 								</p>
-								{ showBanners &&
-									abtest &&
-									abtest( 'builderReferralThemesBanner' ) === 'builderReferralBanner' && (
-										<UpworkBanner location={ 'theme-banner' } />
-									) }
+								{ showBanners && <UpworkBanner location={ 'theme-banner' } /> }
 							</>
 						) }
 						<QueryThemeFilters />
@@ -405,7 +382,12 @@ class ThemeShowcase extends React.Component {
 								if ( ! getScreenshotOption( theme ).getUrl ) {
 									return null;
 								}
-								return getScreenshotOption( theme ).getUrl( theme );
+
+								return localizeThemesPath(
+									getScreenshotOption( theme ).getUrl( theme ),
+									locale,
+									! isLoggedIn
+								);
 							} }
 							onScreenshotClick={ function ( themeId ) {
 								if ( ! getScreenshotOption( themeId ).action ) {
@@ -449,8 +431,6 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 } );
 
 const mapDispatchToProps = {
-	trackUploadClick: () => recordTracksEvent( 'calypso_click_theme_upload' ),
-	trackATUploadClick: () => recordTracksEvent( 'calypso_automated_transfer_click_theme_upload' ),
 	trackMoreThemesClick: () => recordTracksEvent( 'calypso_themeshowcase_more_themes_clicked' ),
 	openThemesShowcase: () => openThemesShowcase(),
 };

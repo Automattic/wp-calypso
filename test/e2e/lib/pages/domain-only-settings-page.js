@@ -6,7 +6,7 @@ import { By } from 'selenium-webdriver';
 /**
  * Internal dependencies
  */
-import * as DriverHelper from '../driver-helper.js';
+import * as driverHelper from '../driver-helper.js';
 import AsyncBaseContainer from '../async-base-container';
 
 export default class DomainOnlySettingsPage extends AsyncBaseContainer {
@@ -15,7 +15,7 @@ export default class DomainOnlySettingsPage extends AsyncBaseContainer {
 	}
 
 	async manageDomain() {
-		return await DriverHelper.clickWhenClickable(
+		return await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( 'main .button[href^="/domains/manage/"]' )
 		);

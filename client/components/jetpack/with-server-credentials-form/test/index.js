@@ -9,41 +9,43 @@ import React from 'react';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { render, fireEvent } from '@testing-library/react';
-import * as actions from 'state/jetpack/credentials/actions';
+import * as actions from 'calypso/state/jetpack/credentials/actions';
 
 /**
  * Internal dependencies
  */
-import withServerCredentialsForm from 'components/jetpack/with-server-credentials-form';
+import withServerCredentialsForm from 'calypso/components/jetpack/with-server-credentials-form';
 
 /**
  * Mocks
  */
-jest.doMock( 'components/data/query-rewind-state', () => {
-	const QueryRewindState = () => <div />;
-	return QueryRewindState;
+jest.mock( 'calypso/components/data/query-site-credentials', () => {
+	const QuerySiteCredentials = () => <div />;
+	return QuerySiteCredentials;
 } );
 
-jest.mock( 'state/selectors/get-rewind-state', () => ( {
+jest.mock( 'calypso/state/selectors/get-jetpack-credentials', () => ( {
 	__esModule: true,
 	default: () => ( {
-		credentials: [
-			{
-				role: 'main',
-				user: 'rewindUser',
-				host: 'rewindHost',
-				port: 33,
-				path: 'rewindPath',
-			},
-		],
+		user: 'jetpackUser',
+		host: 'jetpackHost',
+		port: 33,
+		abspath: '/jetpack/path',
 	} ),
 } ) );
 
-jest.mock( 'state/sites/selectors', () => ( {
+jest.mock( 'calypso/state/sites/selectors', () => ( {
 	getSiteSlug: () => 'site-slug',
 } ) );
 
-jest.mock( 'state/selectors/get-jetpack-credentials-update-status', () => () => 'unsubmitted' );
+jest.mock( 'calypso/state/selectors/get-jetpack-credentials-update-status', () => () =>
+	'unsubmitted'
+);
+
+jest.mock( 'calypso/state/jetpack/credentials/actions', () => ( {
+	updateCredentials: jest.fn( () => ( { type: 'update-credentials' } ) ),
+	deleteCredentials: jest.fn( () => ( { type: 'delete-credentials' } ) ),
+} ) );
 
 /**
  * Helper functions
@@ -62,17 +64,6 @@ function renderInput( name, onChange, values, type = 'text' ) {
 }
 
 function setup( { role = 'main', siteId = 9999, siteUrl = 'siteUrl' } = {} ) {
-	// Mutate action creators to make assertions on them
-	/* eslint-disable no-import-assign */
-	actions.updateCredentials = jest.fn( () => ( {
-		type: 'update-credentials',
-	} ) );
-	// eslint-disable-line
-	actions.deleteCredentials = jest.fn( () => ( {
-		type: 'delete-credentials',
-	} ) );
-	/* eslint-enable no-import-assign */
-
 	// We create a simple form to test the utilities and data provided by
 	// the withServerCredentials HOC.
 	const WrappedForm = ( {
@@ -132,6 +123,10 @@ function setup( { role = 'main', siteId = 9999, siteUrl = 'siteUrl' } = {} ) {
 }
 
 describe( 'useWithServerCredentials HOC', () => {
+	afterEach( () => {
+		jest.clearAllMocks();
+	} );
+
 	it( 'should not update credentials (should display error messages)', async () => {
 		const { utils } = setup( {} );
 		const submitButton = utils.getByText( 'Submit' );
@@ -162,7 +157,7 @@ describe( 'useWithServerCredentials HOC', () => {
 				pass: 'pass',
 				host: 'host',
 				kpri: '',
-				path: 'rewindPath',
+				path: '/jetpack/path',
 				port: 33,
 				protocol: 'ssh',
 			} )
@@ -187,17 +182,17 @@ describe( 'useWithServerCredentials HOC', () => {
 		expect( advancedSection.innerHTML ).toContain( 'Hidden content!' );
 	} );
 
-	it( 'should use rewindState to prefill the form', async () => {
+	it( 'should use state to prefill the form', async () => {
 		const { utils } = setup();
 		const submitButton = utils.getByText( 'Submit' );
 		const errorMessagesContainer = utils.getByTestId( 'error-messages' );
 		const formDataContainer = utils.getByTestId( 'form-content' );
 
-		// Verify the form was pre-filled with the current store rewind state
-		expect( formDataContainer.innerHTML ).toContain( 'rewindUser' );
-		expect( formDataContainer.innerHTML ).toContain( 'rewindHost' );
+		// Verify the form was pre-filled with the current store
+		expect( formDataContainer.innerHTML ).toContain( 'jetpackUser' );
+		expect( formDataContainer.innerHTML ).toContain( 'jetpackHost' );
 		expect( formDataContainer.innerHTML ).toContain( 33 );
-		expect( formDataContainer.innerHTML ).toContain( 'rewindPath' );
+		expect( formDataContainer.innerHTML ).toContain( '/jetpack/path' );
 
 		fireEvent.click( submitButton );
 		expect( errorMessagesContainer.innerHTML ).not.toContain(

@@ -4,7 +4,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,6 +14,8 @@ import { Button, CompactCard, ProgressBar } from '@automattic/components';
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class WizardProgressBar extends Component {
 	static propTypes = {

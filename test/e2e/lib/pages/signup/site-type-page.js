@@ -16,8 +16,8 @@ export default class SiteTypePage extends AsyncBaseContainer {
 	}
 
 	async _selectType( type ) {
-		const typeButtonSelector = By.css( `button.site-type__option[data-e2e-title='${ type }']` );
-		return await driverHelper.clickWhenClickable( this.driver, typeButtonSelector );
+		const typeButtonLocator = By.css( `button.site-type__option[data-e2e-title='${ type }']` );
+		return await driverHelper.clickWhenClickable( this.driver, typeButtonLocator );
 	}
 
 	async selectBlogType() {

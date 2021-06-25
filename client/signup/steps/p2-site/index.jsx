@@ -4,24 +4,23 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { includes, isEmpty, map, deburr } from 'lodash';
+import { includes, isEmpty, map, deburr, get } from 'lodash';
 import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import wpcom from 'lib/wp';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import formState from 'lib/form-state';
-import { login } from 'lib/paths';
-import ValidationFieldset from 'signup/validation-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormButton from 'components/forms/form-button';
-import FormTextInput from 'components/forms/form-text-input';
-import P2StepWrapper from 'signup/p2-step-wrapper';
-import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
-import { logToLogstash } from 'state/logstash/actions';
+import wpcom from 'calypso/lib/wp';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import formState from 'calypso/lib/form-state';
+import { login } from 'calypso/lib/paths';
+import ValidationFieldset from 'calypso/signup/validation-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormButton from 'calypso/components/forms/form-button';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { logToLogstash } from 'calypso/state/logstash/actions';
 
 /**
  * Style dependencies
@@ -36,12 +35,23 @@ const debug = debugFactory( 'calypso:steps:p2-site' );
 const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500;
 const ERROR_CODE_MISSING_SITE_TITLE = 123; // Random number, we don't need it.
 const ERROR_CODE_MISSING_SITE = 321; // Random number, we don't need it.
+const ERROR_CODE_TAKEN_SITE = 1337; // Random number, we don't need it.
+const ERROR_CODE_FROM_LOCAL_STORAGE = 7331; // Random number, we don't need it.
+
+const SITE_TAKEN_ERROR_CODES = [
+	'blog_name_exists',
+	'blog_name_reserved',
+	'blog_name_reserved_but_may_be_available',
+	'dotblog_subdomain_not_available',
+];
+
+const WPCOM_SUBDOMAIN_SUFFIX_SUGGESTIONS = [ 'p2', 'team', 'work' ];
 
 /**
  * Module variables
  */
-let siteUrlsSearched = [],
-	timesValidationFailed = 0;
+let siteUrlsSearched = [];
+let timesValidationFailed = 0;
 
 class P2Site extends React.Component {
 	static displayName = 'P2Site';
@@ -55,10 +65,16 @@ class P2Site extends React.Component {
 			initialState = props.step.form;
 
 			if ( ! isEmpty( props.step.errors ) ) {
+				const errorMessage = props.step.errors[ 0 ].message;
+
+				this.logValidationErrorToLogstash( ERROR_CODE_FROM_LOCAL_STORAGE, errorMessage );
+
 				initialState = formState.setFieldErrors(
 					formState.setFieldsValidating( initialState ),
 					{
-						site: props.step.errors[ 0 ].message,
+						site: {
+							[ ERROR_CODE_FROM_LOCAL_STORAGE ]: errorMessage,
+						},
 					},
 					true
 				);
@@ -80,6 +96,8 @@ class P2Site extends React.Component {
 		this.state = {
 			form: this.formStateController.getInitialState(),
 			submitting: false,
+			suggestedSubdomains: [],
+			lastInvalidSite: '',
 		};
 	}
 
@@ -142,6 +160,12 @@ class P2Site extends React.Component {
 				( error, response ) => {
 					debug( error, response );
 
+					if ( this.state.lastInvalidSite !== fields.site ) {
+						this.setState( { suggestedSubdomains: [] } );
+					}
+
+					this.setState( { lastInvalidSite: fields.site } );
+
 					if ( error && error.message ) {
 						if ( fields.site && ! includes( siteUrlsSearched, fields.site ) ) {
 							siteUrlsSearched.push( fields.site );
@@ -165,11 +189,44 @@ class P2Site extends React.Component {
 
 							this.logValidationErrorToLogstash( error.error, errorMessage );
 						} else {
-							messages.site = {
-								[ error.error ]: error.message,
-							};
+							if ( SITE_TAKEN_ERROR_CODES.includes( error.error ) ) {
+								messages.site = {
+									[ ERROR_CODE_TAKEN_SITE ]: this.props.translate(
+										'Sorry, that site already exists! Here are some available alternatives:'
+									),
+								};
+							} else {
+								messages.site = {
+									[ error.error ]: error.message,
+								};
+							}
 
+							// We want to log the real error code and message. The above is formatted for the end user
+							// only.
 							this.logValidationErrorToLogstash( error.error, error.message );
+						}
+
+						if ( error.error && SITE_TAKEN_ERROR_CODES.includes( error.error ) ) {
+							WPCOM_SUBDOMAIN_SUFFIX_SUGGESTIONS.forEach( ( suffix ) => {
+								const suggestedSubdomain = `${ fields.site }${ suffix }`;
+
+								wpcom
+									.domains()
+									.suggestions( {
+										quantity: 1,
+										query: suggestedSubdomain,
+										only_wordpressdotcom: true,
+									} )
+									.then( ( suggestionObjects ) => {
+										this.setState( {
+											suggestedSubdomains: [
+												...this.state.suggestedSubdomains,
+												get( suggestionObjects, '0.domain_name', null ),
+											],
+										} );
+									} )
+									.catch( () => {} );
+							} );
 						}
 					}
 
@@ -254,6 +311,10 @@ class P2Site extends React.Component {
 			name: event.target.name,
 			value: event.target.value,
 		} );
+
+		if ( event.target.name === 'site' ) {
+			this.setState( { suggestedSubdomains: [] } );
+		}
 	};
 
 	handleFormControllerError = ( error ) => {
@@ -263,11 +324,8 @@ class P2Site extends React.Component {
 	};
 
 	getErrorMessagesWithLogin = ( fieldName ) => {
-		const link = login( {
-				isNative: config.isEnabled( 'login/native-login-links' ),
-				redirectTo: window.location.href,
-			} ),
-			messages = formState.getFieldErrorMessages( this.state.form, fieldName );
+		const link = login( { redirectTo: window.location.href } );
+		const messages = formState.getFieldErrorMessages( this.state.form, fieldName );
 
 		if ( ! messages ) {
 			return;
@@ -296,6 +354,19 @@ class P2Site extends React.Component {
 		} );
 	};
 
+	handleSubdomainSuggestionClick = ( suggestedSubdomain ) => {
+		const site = suggestedSubdomain.substring( 0, suggestedSubdomain.indexOf( '.' ) );
+
+		this.formStateController.handleFieldChange( {
+			name: 'site',
+			value: site,
+		} );
+
+		this.setState( {
+			suggestedSubdomains: [],
+		} );
+	};
+
 	formFields = () => {
 		const fieldDisabled = this.state.submitting;
 
@@ -306,7 +377,7 @@ class P2Site extends React.Component {
 					className="p2-site__validation-site-title"
 				>
 					<FormLabel htmlFor="site-title-input">
-						{ this.props.translate( 'Name your team or project' ) }
+						{ this.props.translate( 'Name your team' ) }
 					</FormLabel>
 					<FormTextInput
 						id="site-title-input"
@@ -314,7 +385,6 @@ class P2Site extends React.Component {
 						autoCapitalize={ 'off' }
 						className="p2-site__site-title"
 						disabled={ fieldDisabled }
-						type="text"
 						name="site-title"
 						value={ formState.getFieldValue( this.state.form, 'siteTitle' ) }
 						isError={ formState.isFieldInvalid( this.state.form, 'siteTitle' ) }
@@ -328,14 +398,13 @@ class P2Site extends React.Component {
 					className="p2-site__validation-site"
 				>
 					<FormLabel htmlFor="site-address-input">
-						{ this.props.translate( 'Choose a site address' ) }
+						{ this.props.translate( 'Choose an address for your P2' ) }
 					</FormLabel>
 					<FormTextInput
 						id="site-address-input"
 						autoCapitalize={ 'off' }
 						className="p2-site__site-url"
 						disabled={ fieldDisabled }
-						type="text"
 						name="site"
 						value={ formState.getFieldValue( this.state.form, 'site' ) }
 						isError={ formState.isFieldInvalid( this.state.form, 'site' ) }
@@ -357,6 +426,30 @@ class P2Site extends React.Component {
 		return this.props.translate( 'Continue' );
 	};
 
+	renderSubdomainSuggestions() {
+		const { suggestedSubdomains } = this.state;
+
+		if ( isEmpty( suggestedSubdomains ) ) {
+			return null;
+		}
+
+		return (
+			<div className="p2-site__subdomain-suggestions">
+				{ map( suggestedSubdomains, ( suggestion, index ) => {
+					return (
+						<button
+							key={ index }
+							className="p2-site__subdomain-suggestions-item"
+							onClick={ () => this.handleSubdomainSuggestionClick( suggestion ) }
+						>
+							{ suggestion }
+						</button>
+					);
+				} ) }
+			</div>
+		);
+	}
+
 	render() {
 		return (
 			<P2StepWrapper
@@ -369,6 +462,7 @@ class P2Site extends React.Component {
 			>
 				<form className="p2-site__form" onSubmit={ this.handleSubmit } noValidate>
 					{ this.formFields() }
+					{ this.renderSubdomainSuggestions() }
 					<div className="p2-site__form-footer">
 						<FormButton disabled={ this.state.submitting } className="p2-site__form-submit-btn">
 							{ this.buttonText() }

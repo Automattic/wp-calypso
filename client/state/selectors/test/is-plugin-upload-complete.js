@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import isPluginUploadComplete from 'state/selectors/is-plugin-upload-complete';
+import isPluginUploadComplete from 'calypso/state/selectors/is-plugin-upload-complete';
 
 const siteId = 77203074;
 

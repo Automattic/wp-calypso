@@ -6,8 +6,8 @@ import { set } from 'lodash';
 /**
  * Internal dependencies
  */
-import { ANALYTICS_EVENT_RECORD } from 'state/action-types';
-import { getSelectedSite } from 'state/ui/selectors';
+import { ANALYTICS_EVENT_RECORD } from 'calypso/state/action-types';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 /**
  * Enhances any Redux action that denotes the recording of an analytics event with an additional property which
@@ -15,7 +15,7 @@ import { getSelectedSite } from 'state/ui/selectors';
  *
  * @param {object} action - Redux action as a plain object
  * @param {Function} getState - Redux function that can be used to retrieve the current state tree
- * @returns {object} the new Redux action
+ * @returns {import('redux').AnyAction} the new Redux action
  * @see client/state/utils/withEnhancers
  */
 export function enhanceWithSiteType( action, getState ) {

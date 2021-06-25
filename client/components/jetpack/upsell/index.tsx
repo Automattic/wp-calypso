@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent, ReactChild } from 'react';
+import React, { FunctionComponent, ReactNode } from 'react';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 
 /**
@@ -15,38 +15,56 @@ import { Button } from '@automattic/components';
 import './style.scss';
 
 interface Props {
-	bodyText: TranslateResult;
+	bodyText: TranslateResult | ReactNode;
 	buttonLink?: TranslateResult;
 	buttonText?: TranslateResult;
 	headerText: TranslateResult;
-	iconComponent?: ReactChild;
+	iconComponent?: ReactNode;
 	onClick?: () => void;
+	openButtonLinkOnNewTab?: boolean;
+	secondaryButtonLink?: TranslateResult;
+	secondaryButtonText?: TranslateResult;
+	secondaryOnClick?: () => void;
 }
 
 const JetpackCloudUpsell: FunctionComponent< Props > = ( {
 	bodyText,
 	buttonLink,
 	buttonText,
+	openButtonLinkOnNewTab = true,
 	headerText,
 	iconComponent,
 	onClick,
+	secondaryButtonLink,
+	secondaryButtonText,
+	secondaryOnClick,
 } ) => {
 	const translate = useTranslate();
 
 	return (
 		<div className="upsell">
 			{ iconComponent }
-			<h2>{ headerText }</h2>
-			<p>{ bodyText }</p>
+			<h2 className="upsell__header-text">{ headerText }</h2>
+			<p className="upsell__body-text">{ bodyText }</p>
 			{ buttonLink && (
 				<Button
 					className="upsell__button"
 					href={ buttonLink }
 					onClick={ onClick }
 					primary
-					target="_blank"
+					target={ openButtonLinkOnNewTab ? '_blank' : '_self' }
 				>
 					{ buttonText || translate( 'Upgrade now' ) }
+				</Button>
+			) }
+			{ secondaryButtonLink && (
+				<Button
+					className="upsell__button"
+					href={ secondaryButtonLink }
+					onClick={ secondaryOnClick }
+					target="_blank"
+				>
+					{ secondaryButtonText }
 				</Button>
 			) }
 		</div>

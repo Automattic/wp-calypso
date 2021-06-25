@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
+import EmptyContent from 'calypso/components/empty-content';
 import { settingsPath } from '../../../app/util';
 
 const ZoneNotFound = ( { siteSlug, translate } ) => (

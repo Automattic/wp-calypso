@@ -1,0 +1,125 @@
+.credentials-form {
+	margin-top: 24px;
+	margin-bottom: -24px;
+
+	.form-fieldset {
+		width: 100%;
+	}
+
+	.form-select {
+		width: 100%;
+	}
+
+	.dialog__action-buttons::before {
+		background: initial;
+	}
+
+	h3 {
+		margin-bottom: 4px;
+	}
+
+	.credentials-form__intro-text {
+		color: var( --color-text-subtle );
+		font-size: $font-body-small;
+	}
+
+	@include breakpoint-deprecated( '>660px' ) {
+		.credentials-form__intro-text {
+			font-size: $font-body;
+		}
+	}
+
+	&__buttons .credentials-form__buttons-flex {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	&__btn {
+		width: 100%;
+		@include breakpoint-deprecated( '>480px' ) {
+			width: 200px;
+		}
+	}
+
+	&__btn--cancel {
+		margin-right: 16px;
+	}
+
+	&__mode-control {
+		display: flex;
+		justify-content: center;
+		margin-bottom: 16px;
+
+		.segmented-control {
+			max-width: 244px;
+			margin-right: 5px;
+
+			.is-selected {
+				a {
+					background-color: var( --color-neutral-70 );
+					color: var( --color-text-inverted );
+					&:hover,
+					&:focus {
+						background-color: var( --color-neutral-60 );
+						color: var( --color-text-inverted );
+					}
+				}
+			}
+		}
+	}
+}
+
+.credentials-form__row {
+	display: flex;
+	flex-wrap: wrap;
+
+	.form-fieldset:last-child {
+		margin-bottom: 24px;
+	}
+}
+
+@include breakpoint-deprecated( '>960px' ) {
+	.credentials-form__server-address,
+	.credentials-form__username,
+	.credentials-form__password {
+		flex: 1 0 240px;
+	}
+
+	.credentials-form__server-address,
+	.credentials-form__username {
+		margin-right: 16px;
+	}
+
+	.credentials-form__port-number {
+		flex: 0 0 160px;
+	}
+}
+
+.credentials-form__support-info {
+	align-items: center;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+
+	.form-label {
+		margin-bottom: 0;
+		margin-right: 5px;
+	}
+}
+
+.inline-info {
+	p {
+		font-size: $font-body-small;
+	}
+	ul,
+	ol {
+		margin-left: 16px;
+	}
+}
+
+.credentials-form__credentials-guide-link {
+	width: 100%;
+	margin-bottom: 35px;
+}

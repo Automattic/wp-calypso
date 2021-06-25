@@ -1,5 +1,11 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
 
+/**
+ * Internal dependencies
+ */
 import { html } from '../indices-to-html';
 import { linkProps } from './functions';
 
@@ -11,29 +17,28 @@ const Snippet = ( { note, snippet, url } ) => (
 
 class UserHeader extends React.Component {
 	render() {
-		var grav = this.props.user.media[ 0 ];
-		var grav_tag = <img src={ grav.url } height={ grav.height } width={ grav.width } />;
-		var home_url = this.props.user.ranges[ 0 ].url;
+		const grav = this.props.user.media[ 0 ];
+		const grav_tag = <img src={ grav.url } height={ grav.height } width={ grav.width } />;
+		const home_url = this.props.user.ranges[ 0 ].url;
 		const note = this.props.note;
 
-		var get_home_link = function ( classNames, children ) {
+		const get_home_link = function ( classNames, children ) {
 			if ( home_url ) {
 				return (
 					<a className={ classNames } href={ home_url } target="_blank" rel="noopener noreferrer">
 						{ children }
 					</a>
 				);
-			} else {
-				return (
-					<a className={ classNames + ' disabled' } disabled="disabled">
-						{ children }
-					</a>
-				);
 			}
+			return (
+				<a className={ classNames + ' disabled' } disabled="disabled">
+					{ children }
+				</a>
+			);
 		};
 
 		if ( this.props.user.ranges.length > 1 ) {
-			var usercopy = {};
+			const usercopy = {};
 			usercopy.ranges = this.props.user.ranges;
 			usercopy.text = this.props.user.text;
 			return (
@@ -48,26 +53,25 @@ class UserHeader extends React.Component {
 					<Snippet note={ note } snippet={ this.props.snippet } url={ this.props.url } />
 				</div>
 			);
-		} else {
-			return (
-				<div className="wpnc__user wpnc__header">
-					{ get_home_link( 'wpnc__user__site', grav_tag ) }
-					<div>
-						<span className="wpnc__user__username">
-							{ get_home_link( 'wpnc__user__home', this.props.user.text ) }
-						</span>
-					</div>
-					<Snippet note={ note } snippet={ this.props.snippet } url={ this.props.url } />
-				</div>
-			);
 		}
+		return (
+			<div className="wpnc__user wpnc__header">
+				{ get_home_link( 'wpnc__user__site', grav_tag ) }
+				<div>
+					<span className="wpnc__user__username">
+						{ get_home_link( 'wpnc__user__home', this.props.user.text ) }
+					</span>
+				</div>
+				<Snippet note={ note } snippet={ this.props.snippet } url={ this.props.url } />
+			</div>
+		);
 	}
 }
 
-var Header = React.createFactory(
+const Header = React.createFactory(
 	class extends React.Component {
 		render() {
-			var subject = (
+			const subject = (
 				<div
 					className="wpnc__subject"
 					dangerouslySetInnerHTML={ {
@@ -88,7 +92,8 @@ var Header = React.createFactory(
 
 class SummaryInSingle extends React.Component {
 	render() {
-		var header_url, parser;
+		let header_url;
+		let parser;
 		if ( ! this.props.note.header || 0 === this.props.note.header.length ) {
 			return <span />;
 		}
@@ -121,16 +126,15 @@ class SummaryInSingle extends React.Component {
 					url={ this.props.note.url }
 				/>
 			);
-		} else {
-			return (
-				<Header
-					note={ this.props.note }
-					snippet={ '' }
-					subject={ this.props.note.header[ 0 ] }
-					url={ this.props.note.url }
-				/>
-			);
 		}
+		return (
+			<Header
+				note={ this.props.note }
+				snippet={ '' }
+				subject={ this.props.note.header[ 0 ] }
+				url={ this.props.note.url }
+			/>
+		);
 	}
 }
 

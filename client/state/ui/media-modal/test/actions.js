@@ -8,7 +8,7 @@ import { expect } from 'chai';
  */
 import { setMediaModalView, resetMediaModalView } from '../actions';
 import { ModalViews } from '../constants';
-import { MEDIA_MODAL_VIEW_SET } from 'state/action-types';
+import { MEDIA_MODAL_VIEW_SET } from 'calypso/state/action-types';
 
 describe( 'actions', () => {
 	describe( 'setMediaModalView()', () => {

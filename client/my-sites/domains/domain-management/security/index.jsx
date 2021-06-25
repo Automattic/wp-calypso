@@ -10,28 +10,28 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import Header from 'my-sites/domains/domain-management/components/header';
-import { domainManagementEdit } from 'my-sites/domains/paths';
+import Main from 'calypso/components/main';
+import Header from 'calypso/my-sites/domains/domain-management/components/header';
+import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import { CompactCard, Button } from '@automattic/components';
-import MaterialIcon from 'components/material-icon';
-import { getSelectedDomain } from 'lib/domains';
-import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-button';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import { getProductBySlug } from 'state/products-list/selectors';
+import MaterialIcon from 'calypso/components/material-icon';
+import { getSelectedDomain } from 'calypso/lib/domains';
+import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import {
 	getByPurchaseId,
 	isFetchingSitePurchases,
 	hasLoadedSitePurchasesFromServer,
-} from 'state/purchases/selectors';
-import { sslStatuses } from 'lib/domains/constants';
-import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
-import VerticalNavItem from 'components/vertical-nav/item';
-import VerticalNav from 'components/vertical-nav';
-import { ECOMMERCE, FORMS } from 'lib/url/support';
-import { showInlineHelpPopover } from 'state/inline-help/actions';
+} from 'calypso/state/purchases/selectors';
+import { sslStatuses } from 'calypso/lib/domains/constants';
+import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
+import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import VerticalNav from 'calypso/components/vertical-nav';
+import { ECOMMERCE, FORMS } from 'calypso/lib/url/support';
+import { showInlineHelpPopover } from 'calypso/state/inline-help/actions';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import getCurrentRoute from 'state/selectors/get-current-route';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 import './style.scss';
 
@@ -58,7 +58,8 @@ class Security extends React.Component {
 		const { translate } = this.props;
 
 		const { sslStatus } = domain;
-		let icon, text;
+		let icon;
+		let text;
 
 		switch ( sslStatus ) {
 			case sslStatuses.SSL_PENDING:

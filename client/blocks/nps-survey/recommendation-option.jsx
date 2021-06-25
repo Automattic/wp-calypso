@@ -6,6 +6,12 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
 
+/**
+ * Internal dependencies
+ */
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormLabel from 'calypso/components/forms/form-label';
+
 class RecommendationOption extends Component {
 	constructor( props ) {
 		super( props );
@@ -28,17 +34,16 @@ class RecommendationOption extends Component {
 		} );
 
 		return (
-			<label className={ className }>
-				<input
-					type="radio"
+			<FormLabel className={ className }>
+				<FormRadio
 					name="nps-survey-recommendation-option"
 					value={ this.props.value }
 					checked={ this.props.selected }
 					disabled={ this.props.disabled }
 					onChange={ this.handleChange }
+					label={ this.props.value }
 				/>
-				<span>{ this.props.value }</span>
-			</label>
+			</FormLabel>
 		);
 	}
 }

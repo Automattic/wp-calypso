@@ -6,7 +6,7 @@ import { find, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import { domainAvailability } from 'lib/domains/constants';
+import { domainAvailability } from 'calypso/lib/domains/constants';
 
 function moveArrayElement( array, from, to ) {
 	if ( from !== to && from < array.length && to < array.length ) {
@@ -66,6 +66,14 @@ export function filterOutDomainsWithTlds( suggestions, disallowedTlds ) {
 
 export function isUnknownSuggestion( suggestion ) {
 	return suggestion.status === domainAvailability.UNKNOWN;
+}
+
+export function isUnsupportedPremiumSuggestion( suggestion ) {
+	return (
+		domainAvailability.AVAILABLE_PREMIUM === suggestion.status &&
+		suggestion.hasOwnProperty( 'is_supported_premium_domain' ) &&
+		suggestion?.is_supported_premium_domain === false
+	);
 }
 
 export function isMissingVendor( suggestion ) {

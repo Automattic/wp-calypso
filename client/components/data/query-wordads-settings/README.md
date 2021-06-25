@@ -1,5 +1,4 @@
-Query WordAds Settings
-================
+# Query WordAds Settings
 
 `<QueryWordadsSettings />` is a React component used in managing network requests for retrieving and storing WordAds settings.
 
@@ -9,14 +8,14 @@ Render the component, passing `siteId`. It does not accept any children, nor doe
 
 ```jsx
 import React from 'react';
-import QueryWordadsSettings from 'components/data/query-wordads-settings';
+import QueryWordadsSettings from 'calypso/components/data/query-wordads-settings';
 
 export default function MySettings( { settings } ) {
 	return (
 		<div>
 			<QueryWordadsSettings siteId={ 3584907 } />
-			
-			{ settings.map( setting => (
+
+			{ settings.map( ( setting ) => (
 				<div key={ setting.key }>
 					{ setting.key }: { setting.value }
 				</div>

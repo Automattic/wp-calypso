@@ -1,20 +1,19 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { identity, includes } from 'lodash';
+import { includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ServiceExample from './service-example';
 import GooglePlusDeprication from './google-plus-deprecation';
-import { localizeUrl } from 'lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 /**
  * Module constants
@@ -49,7 +48,6 @@ class SharingServiceExamples extends Component {
 
 	static defaultProps = {
 		site: Object.freeze( {} ),
-		translate: identity,
 	};
 
 	getSharingButtonsLink() {

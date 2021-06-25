@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { READER_ORGANIZATIONS_REQUEST } from 'state/reader/action-types';
+import { READER_ORGANIZATIONS_REQUEST } from 'calypso/state/reader/action-types';
 
-import 'state/data-layer/wpcom/read/organizations';
-import 'state/reader/init';
+import 'calypso/state/data-layer/wpcom/read/organizations';
+import 'calypso/state/reader/init';
 
 export function requestOrganizations() {
 	return {

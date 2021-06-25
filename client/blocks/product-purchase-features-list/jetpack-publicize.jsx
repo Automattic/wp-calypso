@@ -8,12 +8,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PurchaseDetail from 'components/purchase-detail';
+import PurchaseDetail from 'calypso/components/purchase-detail';
 
 /**
  * Image dependencies
  */
-import marketingImage from 'assets/images/illustrations/marketing.svg';
+import marketingImage from 'calypso/assets/images/illustrations/marketing.svg';
 
 export default localize( ( { selectedSite, translate } ) => {
 	return (

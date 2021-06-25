@@ -1,0 +1,212 @@
+@import '@automattic/onboarding/styles/mixins';
+@import '@automattic/onboarding/styles/variables';
+
+.design-picker {
+	.design-picker__header {
+		@include onboarding-heading-padding;
+
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.design-picker__heading {
+		flex-grow: 1;
+	}
+
+	.design-picker__grid {
+		margin: 0 -24px 30px;
+	}
+
+	.design-picker__grid-minimal {
+		margin: 0 -24px 30px;
+	}
+
+	.design-picker__design-option {
+		cursor: pointer;
+		font-family: inherit;
+		float: left;
+		width: 100%;
+		margin: 24px; // only applies in IE
+
+		@include break-mobile {
+			width: calc( 50% - 24px );
+		}
+
+		@include break-xlarge {
+			width: calc( 33.33% - 32px );
+		}
+
+		@include onboarding-break-gigantic {
+			width: calc( 25% - 32px );
+		}
+	}
+
+	@supports ( display: grid ) {
+		.design-picker__grid {
+			display: grid;
+			grid-template-columns: 1fr;
+			row-gap: 48px;
+			margin: 0 0 30px;
+
+			@include break-mobile {
+				grid-template-columns: repeat( auto-fill, minmax( 295px, auto ) );
+				column-gap: 24px;
+			}
+
+			@include onboarding-break-gigantic {
+				column-gap: 32px;
+			}
+		}
+
+		.design-picker__grid-minimal {
+			display: grid;
+			grid-template-columns: 1fr;
+			row-gap: 48px;
+			margin: 0 0 30px;
+
+			@include break-mobile {
+				grid-template-columns: 1fr 1fr;
+				column-gap: 24px;
+			}
+
+			@include break-xlarge {
+				grid-template-columns: 1fr 1fr 1fr;
+				column-gap: 32px;
+			}
+		}
+
+		.design-picker__design-option {
+			width: auto;
+			margin: 0;
+
+			@include break-xlarge {
+				width: auto;
+			}
+
+			@include onboarding-break-gigantic {
+				width: auto;
+			}
+		}
+	}
+
+	.design-picker__image-frame {
+		display: block;
+		width: 100%;
+		height: 0;
+		border: 1px solid;
+		position: relative;
+		overflow: hidden;
+
+		img {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			margin: 0 auto;
+			width: 100%;
+			height: auto;
+		}
+	}
+
+	// The Aspect ratio trick: padding % is relative to width, so we use
+	// padding-top to set the size of the element and then reposition content
+	// over the padding
+	.design-picker__image-frame-landscape {
+		padding-top: 65%; // Aspect ratio for the picker
+	}
+
+	.design-picker__image-frame-portrait {
+		padding-top: 360px / 480px * 200%; // Aspect ratio for the picker
+	}
+
+	.design-picker__image-frame-blank {
+		background: var( --studio-white );
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding-top: 32.5%; // 65% Aspect ratio for the picker divided by two
+		padding-bottom: 32.5%; // 65% Aspect ratio for the picker divided by two
+	}
+
+	.design-picker__image-frame-blank-canvas__title {
+		color: var( --studio-gray-40 );
+		font-weight: 600;
+	}
+
+	.design-picker__image-frame-inside {
+		// Reposition frame content over padding used to maintain aspect ratio
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	}
+
+	.design-picker__option-meta {
+		align-items: center;
+		display: inline-flex;
+		flex-wrap: wrap; // If theme name and premium badge don't fit on one line
+		justify-content: center;
+		margin-top: 8px;
+		width: 100%;
+
+		> * {
+			// This is to create space between Tooltip component and other elements
+			min-height: 2em;
+		}
+	}
+
+	.design-picker__option-name {
+		align-items: center;
+		display: inline-flex;
+		font-size: $font-body-small;
+		margin-top: -0.1em;
+	}
+
+	.design-picker__premium-container {
+		margin-left: 6px;
+		/* stylelint-disable-next-line */
+		font-size: rem( 10px ); //typography-exception
+
+		.components-popover__content {
+			background-color: var( --studio-gray-80 );
+		}
+	}
+}
+
+// dark theme styles
+.design-picker.design-picker--theme-dark {
+	.design-picker__option-name {
+		color: var( --studio-white );
+	}
+	.design-picker__design-option {
+		.design-picker__image-frame {
+			border-color: var( --studio-gray-40 );
+		}
+		&:hover,
+		&:focus {
+			.design-picker__image-frame {
+				border-color: var( --studio-white );
+			}
+		}
+	}
+}
+
+// light theme styles
+.design-picker.design-picker--theme-light {
+	.design-picker__option-name {
+		color: var( --studio-gray-40 );
+	}
+	.design-picker__design-option {
+		.design-picker__image-frame {
+			border-color: var( --studio-gray-5 );
+		}
+		&:hover,
+		&:focus {
+			.design-picker__image-frame {
+				border-color: var( --studio-blue-20 );
+			}
+		}
+	}
+}

@@ -1,16 +1,11 @@
 /**
- * External dependencies
- */
-import { has } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import getSeoTitleFormats from './get-seo-title-formats';
 import buildSeoTitle from './build-seo-title';
 
 export default ( state, type, data ) => {
-	if ( ! has( data, 'site.ID' ) ) {
+	if ( ! data?.site?.ID ) {
 		return '';
 	}
 

@@ -6,9 +6,9 @@ import { filter, sortBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import { createSelector } from '@automattic/state-utils';
 
-import 'state/reader/init';
+import 'calypso/state/reader/init';
 
 /**
  * Selector for all of the reader tags a user is following. Sorted by tag slug

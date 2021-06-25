@@ -1,0 +1,27 @@
+.jetpack-connect-site-only__form {
+	text-align: center;
+	margin-top: 64px;
+	margin-bottom: 30px;
+
+	.jetpack-connect__authorize-form & {
+		margin-top: 36px;
+	}
+
+	h2 {
+		font-size: $font-title-small;
+		margin-bottom: 24px;
+	}
+
+	p, a {
+		font-size: $font-body-small;
+	}
+
+	a {
+		color: var( --color-accent );
+	}
+
+	a.jetpack-connect-site-only__continue-link {
+		text-decoration: underline;
+		margin-top: 16px;
+	}
+}

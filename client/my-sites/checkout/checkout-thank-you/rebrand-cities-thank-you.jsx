@@ -9,8 +9,8 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import ThankYouCard from 'components/thank-you-card';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import ThankYouCard from 'calypso/components/thank-you-card';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
 class RebrandCitiesThankYou extends Component {
 	renderLogo() {

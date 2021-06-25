@@ -5,15 +5,14 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { isOutsideCalypso } from 'lib/url';
+import config from '@automattic/calypso-config';
+import { isOutsideCalypso } from 'calypso/lib/url';
 // actions
-import { sendMessage, sendNotTyping, sendTyping } from 'state/happychat/connection/actions';
+import { sendMessage, sendNotTyping, sendTyping } from 'calypso/state/happychat/connection/actions';
 import {
 	blur,
 	focus,
@@ -21,23 +20,23 @@ import {
 	minimizeChat,
 	minimizedChat,
 	setCurrentMessage,
-} from 'state/happychat/ui/actions';
+} from 'calypso/state/happychat/ui/actions';
 // selectors
-import canUserSendMessages from 'state/happychat/selectors/can-user-send-messages';
-import { getCurrentUser } from 'state/current-user/selectors';
-import getCurrentMessage from 'state/happychat/selectors/get-happychat-current-message';
-import getHappychatChatStatus from 'state/happychat/selectors/get-happychat-chat-status';
-import getHappychatConnectionStatus from 'state/happychat/selectors/get-happychat-connection-status';
-import getHappychatTimeline from 'state/happychat/selectors/get-happychat-timeline';
-import isHappychatMinimizing from 'state/happychat/selectors/is-happychat-minimizing';
-import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
-import isHappychatServerReachable from 'state/happychat/selectors/is-happychat-server-reachable';
+import canUserSendMessages from 'calypso/state/happychat/selectors/can-user-send-messages';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import getCurrentMessage from 'calypso/state/happychat/selectors/get-happychat-current-message';
+import getHappychatChatStatus from 'calypso/state/happychat/selectors/get-happychat-chat-status';
+import getHappychatConnectionStatus from 'calypso/state/happychat/selectors/get-happychat-connection-status';
+import getHappychatTimeline from 'calypso/state/happychat/selectors/get-happychat-timeline';
+import isHappychatMinimizing from 'calypso/state/happychat/selectors/is-happychat-minimizing';
+import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
+import isHappychatServerReachable from 'calypso/state/happychat/selectors/is-happychat-server-reachable';
 // UI components
 import HappychatConnection from './connection-connected';
-import { Title } from './title';
-import { Composer } from './composer';
-import { Notices } from './notices';
-import { Timeline } from './timeline';
+import Title from './title';
+import Composer from './composer';
+import Notices from './notices';
+import Timeline from './timeline';
 
 /**
  * Style dependencies
@@ -82,7 +81,6 @@ export class Happychat extends Component {
 			onSendTyping,
 			onSetCurrentMessage,
 			timeline,
-			translate,
 			twemojiUrl,
 		} = this.props;
 
@@ -95,20 +93,18 @@ export class Happychat extends Component {
 						'is-minimizing': isMinimizing,
 					} ) }
 				>
-					<Title onCloseChat={ this.onCloseChatTitle } translate={ translate } />
+					<Title onCloseChat={ this.onCloseChatTitle } />
 					<Timeline
 						currentUserEmail={ currentUserEmail }
 						isCurrentUser={ isCurrentUser }
 						isExternalUrl={ isExternalUrl }
 						timeline={ timeline }
-						translate={ translate }
 						twemojiUrl={ twemojiUrl }
 					/>
 					<Notices
 						chatStatus={ chatStatus }
 						connectionStatus={ connectionStatus }
 						isServerReachable={ isServerReachable }
-						translate={ translate }
 					/>
 					<Composer
 						disabled={ disabled }
@@ -117,7 +113,6 @@ export class Happychat extends Component {
 						onSendNotTyping={ onSendNotTyping }
 						onSendTyping={ onSendTyping }
 						onSetCurrentMessage={ onSetCurrentMessage }
-						translate={ translate }
 					/>
 				</div>
 			</div>
@@ -146,7 +141,6 @@ Happychat.propTypes = {
 	setBlurred: PropTypes.func,
 	setFocused: PropTypes.func,
 	timeline: PropTypes.array,
-	translate: PropTypes.func,
 	twemojiUrl: PropTypes.string,
 };
 
@@ -184,4 +178,4 @@ const mapDispatch = {
 	setFocused: focus,
 };
 
-export default connect( mapState, mapDispatch )( localize( Happychat ) );
+export default connect( mapState, mapDispatch )( Happychat );

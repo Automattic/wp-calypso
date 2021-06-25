@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { isHttps } from 'lib/url';
-import getRawSite from 'state/selectors/get-raw-site';
+import { isHttps } from 'calypso/lib/url';
+import getRawSite from 'calypso/state/selectors/get-raw-site';
 import getSiteOption from './get-site-option';
-import { isSectionNameEnabled } from 'sections-filter';
+import { isSectionNameEnabled } from 'calypso/sections-filter';
 
 /**
  * Returns true if the site can be previewed, false if the site cannot be

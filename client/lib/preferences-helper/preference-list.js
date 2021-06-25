@@ -10,8 +10,8 @@ import { isEmpty } from 'lodash';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import { getAllRemotePreferences } from 'state/preferences/selectors';
-import QueryPreferences from 'components/data/query-preferences';
+import { getAllRemotePreferences } from 'calypso/state/preferences/selectors';
+import QueryPreferences from 'calypso/components/data/query-preferences';
 import Preference from './preference';
 
 class PreferenceList extends Component {

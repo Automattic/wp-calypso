@@ -6,7 +6,7 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import canUpgradeToPlan from 'state/selectors/can-upgrade-to-plan';
+import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import {
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
@@ -27,7 +27,7 @@ import {
 	PLAN_BLOGGER_2_YEARS,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
-} from 'lib/plans/constants';
+} from '@automattic/calypso-products';
 
 describe( 'canUpgradeToPlan', () => {
 	const siteId = 1234567;
@@ -109,9 +109,6 @@ describe( 'canUpgradeToPlan', () => {
 		[
 			[ PLAN_BUSINESS_MONTHLY, PLAN_BUSINESS ],
 			[ PLAN_BUSINESS_MONTHLY, PLAN_BUSINESS_2_YEARS ],
-			[ PLAN_JETPACK_PERSONAL_MONTHLY, PLAN_JETPACK_PERSONAL ],
-			[ PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_PREMIUM ],
-			[ PLAN_JETPACK_BUSINESS_MONTHLY, PLAN_JETPACK_BUSINESS ],
 		].forEach( ( [ planOwned, planToPurchase ] ) =>
 			expect( canUpgradeToPlan( makeState( siteId, planOwned ), siteId, planToPurchase ) ).toBe(
 				true

@@ -8,8 +8,8 @@ function getCurrentScroll( container ) {
 		};
 	}
 
-	const x = window.pageXOffset || document.documentElement.scrollLeft,
-		y = window.pageYOffset || document.documentElement.scrollTop;
+	const x = window.pageXOffset || document.documentElement.scrollLeft;
+	const y = window.pageYOffset || document.documentElement.scrollTop;
 	return { x, y };
 }
 

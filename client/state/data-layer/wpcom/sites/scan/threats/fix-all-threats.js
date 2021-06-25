@@ -6,18 +6,17 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { JETPACK_SCAN_THREATS_FIX_ALL } from 'state/action-types';
-import { registerHandlers } from 'state/data-layer/handler-registry';
-import { requestScanStatus } from 'state/jetpack-scan/actions';
-import { updateThreat, updateThreatCompleted } from 'state/jetpack-scan/threats/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { errorNotice, successNotice } from 'state/notices/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { JETPACK_SCAN_THREATS_FIX_ALL } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import {
+	updateThreat,
+	updateThreatCompleted,
+	getFixThreatsStatus,
+} from 'calypso/state/jetpack-scan/threats/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { errorNotice, successNotice, infoNotice } from 'calypso/state/notices/actions';
 
-// This approach is not optimal. Some of the request could fail silently and we
-// wouldn't know. The API could provide an endpoint to fix multiple threats at
-// once, and the endpoint could confirm which threats were enqueued and which
-// were not.
 export const request = ( action ) => {
 	const notice = successNotice( i18n.translate( 'Fixing all threats…' ), { duration: 30000 } );
 	const {
@@ -26,16 +25,14 @@ export const request = ( action ) => {
 
 	return [
 		notice,
-		...action.threatIds.map( ( threatId ) =>
-			http(
-				{
-					apiNamespace: 'wpcom/v2',
-					method: 'POST',
-					path: `/sites/${ action.siteId }/alerts/${ threatId }?fix=true`,
-					body: {},
-				},
-				{ ...action, noticeId }
-			)
+		http(
+			{
+				apiNamespace: 'wpcom/v2',
+				method: 'POST',
+				path: `/sites/${ action.siteId }/alerts/fix`,
+				body: { threat_ids: action.threatIds },
+			},
+			{ ...action, noticeId }
 		),
 		...action.threatIds.map( ( threatId ) => updateThreat( action.siteId, threatId ) ),
 	];
@@ -43,7 +40,7 @@ export const request = ( action ) => {
 
 // We don't have a wait to only execute this path if all request succeeded.
 export const success = ( action ) => [
-	successNotice(
+	infoNotice(
 		i18n.translate(
 			"We're hard at work fixing these threats in the background. Please check back shortly."
 		),
@@ -52,7 +49,7 @@ export const success = ( action ) => [
 			id: action.noticeId,
 		}
 	),
-	requestScanStatus( action.siteId, true ),
+	getFixThreatsStatus( action.siteId, action.threatIds ),
 ];
 
 // Not sure if this is even going to happen. Maybe if all of them fail.

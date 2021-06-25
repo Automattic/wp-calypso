@@ -3,21 +3,26 @@
  */
 import { isEmpty } from 'lodash';
 import { translate } from 'i18n-calypso';
+import {
+	getDomain,
+	isDomainTransfer,
+	isDomainProduct,
+	isDomainMapping,
+} from '@automattic/calypso-products';
 
 /**
  * Internal dependencies
  */
-import { isLineItemADomain } from 'my-sites/checkout/composite-checkout/hooks/has-domains';
-import { isGSuiteProductSlug } from 'lib/gsuite';
+import { isGSuiteOrGoogleWorkspaceProductSlug } from 'calypso/lib/gsuite';
 import {
 	prepareDomainContactValidationRequest,
 	prepareGSuiteContactValidationRequest,
 	formatDomainContactValidationResponse,
 	getSignupValidationErrorResponse,
 	areRequiredFieldsNotEmpty,
-} from 'my-sites/checkout/composite-checkout/types/wpcom-store-state';
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'my-sites/checkout/composite-checkout/types/backend/payment-method';
-import wp from 'lib/wp';
+} from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
+import wp from 'calypso/lib/wp';
 
 const wpcom = wp.undocumented();
 
@@ -35,6 +40,7 @@ const wpcomValidateDomainContactInformation = ( ...args ) =>
 			{ apiVersion: '1.2' }
 		);
 	} );
+
 async function wpcomValidateSignupEmail( ...args ) {
 	return wpcom.validateNewUser( ...args, null );
 }
@@ -43,6 +49,11 @@ async function wpcomValidateSignupEmail( ...args ) {
 // otherwise we get `this is not defined` errors.
 const wpcomValidateGSuiteContactInformation = ( ...args ) =>
 	wpcom.validateGoogleAppsContactInformation( ...args );
+
+// Aliasing wpcom functions explicitly bound to wpcom is required here;
+// otherwise we get `this is not defined` errors.
+const wpcomValidateTaxContactInformation = ( ...args ) =>
+	wpcom.validateTaxContactInformation( ...args );
 
 export function handleContactValidationResult( {
 	recordEvent,
@@ -81,7 +92,7 @@ export function isContactValidationResponseValid( data, contactDetails ) {
 }
 
 export function prepareContactDetailsForValidation( type, contactDetails ) {
-	if ( type === 'domains' ) {
+	if ( type === 'domains' || type === 'tax' ) {
 		const { contact_information } = prepareDomainContactValidationRequest( contactDetails );
 		return contact_information;
 	}
@@ -92,10 +103,16 @@ export function prepareContactDetailsForValidation( type, contactDetails ) {
 	throw new Error( `Unknown validation type: ${ type }` );
 }
 
-export async function getDomainValidationResult( items, contactInfo ) {
-	const domainNames = items
-		.filter( isLineItemADomain )
-		.map( ( domainItem ) => domainItem.wpcom_meta?.meta ?? '' );
+export async function getTaxValidationResult( contactInfo ) {
+	const formattedContactDetails = prepareContactDetailsForValidation( 'tax', contactInfo );
+	return wpcomValidateTaxContactInformation( formattedContactDetails );
+}
+
+export async function getDomainValidationResult( products, contactInfo ) {
+	const domainNames = products
+		.filter( ( product ) => isDomainProduct( product ) || isDomainTransfer( product ) )
+		.filter( ( product ) => ! isDomainMapping( product ) )
+		.map( getDomain );
 	const formattedContactDetails = prepareContactDetailsForValidation( 'domains', contactInfo );
 	return wpcomValidateDomainContactInformation( formattedContactDetails, domainNames );
 }
@@ -121,10 +138,10 @@ export async function getSignupEmailValidationResult( email, emailTakenLoginRedi
 	return validationResponse;
 }
 
-export async function getGSuiteValidationResult( items, contactInfo ) {
-	const domainNames = items
-		.filter( ( item ) => isGSuiteProductSlug( item.wpcom_meta?.product_slug ) )
-		.map( ( item ) => item.wpcom_meta?.meta ?? '' );
+export async function getGSuiteValidationResult( products, contactInfo ) {
+	const domainNames = products
+		.filter( ( item ) => isGSuiteOrGoogleWorkspaceProductSlug( item.product_slug ) )
+		.map( getDomain );
 	const formattedContactDetails = prepareContactDetailsForValidation( 'gsuite', contactInfo );
 	return wpcomValidateGSuiteContactInformation( formattedContactDetails, domainNames );
 }

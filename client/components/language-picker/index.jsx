@@ -4,23 +4,23 @@
 
 import PropTypes from 'prop-types';
 import React, { Fragment, PureComponent } from 'react';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { find, isString, noop } from 'lodash';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from '@automattic/calypso-config';
 import LanguagePickerModal from './modal';
-import { requestGeoLocation } from 'state/data-getters';
 import { getLanguageCodeLabels } from './utils';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 export class LanguagePicker extends PureComponent {
 	static propTypes = {
@@ -29,7 +29,6 @@ export class LanguagePicker extends PureComponent {
 		value: PropTypes.any,
 		onChange: PropTypes.func,
 		onClick: PropTypes.func,
-		countryCode: PropTypes.string,
 		showEmpathyModeControl: PropTypes.bool,
 		empathyMode: PropTypes.bool,
 		getIncompleteLocaleNoticeMessage: PropTypes.func,
@@ -40,7 +39,6 @@ export class LanguagePicker extends PureComponent {
 		valueKey: 'value',
 		onChange: noop,
 		onClick: noop,
-		countryCode: '',
 		showEmpathyModeControl: config.isEnabled( 'i18n/empathy-mode' ),
 		empathyMode: false,
 		useFallbackForIncompleteLanguages: false,
@@ -86,7 +84,7 @@ export class LanguagePicker extends PureComponent {
 			return lang[ valueKey ] == value; // eslint-disable-line eqeqeq
 		} );
 		//if an unsupported language is provided return it without a display name
-		if ( isString( value ) && ! language ) {
+		if ( typeof value === 'string' && ! language ) {
 			return {
 				langSlug: value,
 				name: translate( 'Unsupported language' ),
@@ -96,13 +94,7 @@ export class LanguagePicker extends PureComponent {
 		return language;
 	}
 
-	selectLanguage = ( languageSlug, { empathyMode, useFallbackForIncompleteLanguages } ) => {
-		// Find the language by the slug
-		const language = this.findLanguage( 'langSlug', languageSlug );
-		if ( ! language ) {
-			return;
-		}
-
+	handleSelectLanguage = ( language, { empathyMode, useFallbackForIncompleteLanguages } ) => {
 		// onChange takes an object in shape of a DOM event as argument
 		const value = language[ this.props.valueKey ] || language.langSlug;
 		const event = { target: { value, empathyMode, useFallbackForIncompleteLanguages } };
@@ -147,21 +139,14 @@ export class LanguagePicker extends PureComponent {
 			return null;
 		}
 
-		const {
-			countryCode,
-			languages,
-			showEmpathyModeControl,
-			getIncompleteLocaleNoticeMessage,
-		} = this.props;
+		const { languages, showEmpathyModeControl, getIncompleteLocaleNoticeMessage } = this.props;
 
 		return (
 			<LanguagePickerModal
-				isVisible
 				languages={ languages }
 				onClose={ this.handleClose }
-				onSelected={ this.selectLanguage }
-				selected={ selectedLanguageSlug }
-				countryCode={ countryCode }
+				onSelectLanguage={ this.handleSelectLanguage }
+				selectedLanguageSlug={ selectedLanguageSlug }
 				showEmpathyModeControl={ showEmpathyModeControl }
 				empathyMode={ this.state.empathyMode }
 				useFallbackForIncompleteLanguages={ this.state.useFallbackForIncompleteLanguages }
@@ -205,6 +190,4 @@ export class LanguagePicker extends PureComponent {
 	}
 }
 
-export default connect( () => ( { countryCode: requestGeoLocation().data } ) )(
-	localize( LanguagePicker )
-);
+export default localize( LanguagePicker );

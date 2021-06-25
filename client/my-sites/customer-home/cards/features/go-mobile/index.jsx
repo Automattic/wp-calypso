@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { isDesktop } from '@automattic/viewport';
 import React from 'react';
 import classnames from 'classnames';
 import { Card, Button } from '@automattic/components';
@@ -11,13 +10,13 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import AppsBadge from 'blocks/get-apps/apps-badge';
-import userAgent from 'lib/user-agent';
-import CardHeading from 'components/card-heading';
-import { sendEmailLogin } from 'state/auth/actions';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import { getCurrentUserEmail } from 'state/current-user/selectors';
+import config from '@automattic/calypso-config';
+import AppsBadge from 'calypso/blocks/get-apps/apps-badge';
+import userAgent from 'calypso/lib/user-agent';
+import CardHeading from 'calypso/components/card-heading';
+import { sendEmailLogin } from 'calypso/state/auth/actions';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 
 /**
  * Style dependencies
@@ -26,11 +25,10 @@ import './style.scss';
 
 export const GoMobile = ( { email, sendMobileLoginEmail } ) => {
 	const translate = useTranslate();
-	const isDesktopView = isDesktop();
 	const { isiPad, isiPod, isiPhone, isAndroid } = userAgent;
 	const isIos = isiPad || isiPod || isiPhone;
-	const showIosBadge = isDesktopView || isIos || ! isAndroid;
-	const showAndroidBadge = isDesktopView || isAndroid || ! isIos;
+	const showIosBadge = ! isAndroid;
+	const showAndroidBadge = ! isIos;
 	const showOnlyOneBadge = showIosBadge !== showAndroidBadge;
 	const isDesktopApp = config.isEnabled( 'desktop' );
 
@@ -56,7 +54,7 @@ export const GoMobile = ( { email, sendMobileLoginEmail } ) => {
 					) }
 				</div>
 			</div>
-			{ isDesktopView && ! isDesktopApp && (
+			{ ! isDesktopApp && (
 				<div className="go-mobile__email-link">
 					{ translate( 'Get a download link via email — click it on your phone to get the app.' ) }
 					<Button className="go-mobile__email-link-button is-link" onClick={ emailLogin }>

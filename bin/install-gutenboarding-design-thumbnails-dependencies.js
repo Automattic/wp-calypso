@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /*
- * This file installs dependendcies we require to generate the gutenboarding design thumbnails.
+ * This file installs dependencies we require to generate the gutenboarding design thumbnails.
  * It is not used for any other purpose.
  * See: bin/generate-gutenboarding-design-thumbnails.js
  * @Automattic/create

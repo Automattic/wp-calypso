@@ -13,8 +13,8 @@ import {
 	READER_SEEN_MARK_AS_SEEN_RECEIVE,
 	READER_SEEN_MARK_AS_UNSEEN_RECEIVE,
 	READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE,
-} from 'state/reader/action-types';
-import { combineReducers } from 'state/utils';
+} from 'calypso/state/reader/action-types';
+import { combineReducers } from 'calypso/state/utils';
 
 /**
  * Tracks all known post objects, indexed by post ID.

@@ -8,7 +8,7 @@ import moment from 'moment';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import CalendarPopover from 'blocks/calendar-popover';
+import CalendarPopover from 'calypso/blocks/calendar-popover';
 
 const tomorrow = ( date ) => date.date( date.date() + 1 );
 

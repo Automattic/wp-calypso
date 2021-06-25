@@ -1,0 +1,34 @@
+@import '@automattic/onboarding/styles/mixins';
+
+.mshots-image__loader {
+	@include onboarding-placeholder();
+}
+
+.mshots-image__container {
+    height: 100%;
+}
+
+.hover-scroll {
+    background-size: 100%;
+    background-position: top;
+    background-repeat: no-repeat;
+    margin-left: auto;
+    margin-right: auto;
+
+    &:hover {
+        background-position: bottom;
+    }
+}
+
+.mshots-image-visible {
+    animation: fadein 1.5s;
+}
+
+@keyframes fadein {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}

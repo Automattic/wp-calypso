@@ -4,27 +4,27 @@
 
 	z-index: z-index( 'root', '.global-notices' );
 	position: fixed;
-		top: auto;
-		right: 0;
-		bottom: 0;
-		left: 0;
+	top: auto;
+	right: 0;
+	bottom: 0;
+	left: 0;
 
 	@include breakpoint-deprecated( '>660px' ) {
-			top: 47px + 16px;
-			right: 16px;
-			bottom: auto;
-			left: auto;
+		top: calc( var( --masterbar-height ) + 16px );
+		right: 16px;
+		bottom: auto;
+		left: auto;
 		max-width: calc( 100% - 32px );
 	}
 
 	@include breakpoint-deprecated( '>960px' ) {
-			top: 47px + 24px;
-			right: 24px;
+		top: calc( var( --masterbar-height ) + 24px );
+		right: 24px;
 		max-width: calc( 100% - 48px );
 	}
 
 	@include breakpoint-deprecated( '>1040px' ) {
-			right: 32px;
+		right: 32px;
 		max-width: calc( 100% - 64px );
 	}
 }
@@ -45,10 +45,11 @@
 		display: flex;
 		overflow: hidden;
 		margin-bottom: 24px;
-		border-radius: 3px;
+		border-radius: 2px;
 
 		.notice__icon-wrapper {
-			border-radius: 3px 0 0 3px;
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 2px 0 0 3px;
 		}
 	}
 }

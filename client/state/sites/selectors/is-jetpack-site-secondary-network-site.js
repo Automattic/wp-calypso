@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { withoutHttp } from 'lib/url';
-import getRawSite from 'state/selectors/get-raw-site';
+import { withoutHttp } from 'calypso/lib/url';
+import getRawSite from 'calypso/state/selectors/get-raw-site';
 import getSiteOption from './get-site-option';
 import isJetpackSite from './is-jetpack-site';
 
@@ -25,8 +25,8 @@ export default function isJetpackSiteSecondaryNetworkSite( state, siteId ) {
 		return false;
 	}
 
-	const unmappedUrl = getSiteOption( state, siteId, 'unmapped_url' ),
-		mainNetworkSite = getSiteOption( state, siteId, 'main_network_site' );
+	const unmappedUrl = getSiteOption( state, siteId, 'unmapped_url' );
+	const mainNetworkSite = getSiteOption( state, siteId, 'main_network_site' );
 
 	if ( ! unmappedUrl || ! mainNetworkSite ) {
 		return false;

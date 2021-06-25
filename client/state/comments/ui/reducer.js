@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, includes, isUndefined, map, without, has } from 'lodash';
+import { get, includes, map, without, has } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,10 +12,10 @@ import {
 	COMMENTS_LIST_REQUEST,
 	COMMENTS_QUERY_UPDATE,
 	COMMENTS_TREE_SITE_REQUEST,
-} from 'state/action-types';
-import { combineReducers, keyedReducer } from 'state/utils';
-import { getFiltersKey } from 'state/comments/ui/utils';
-import { getRequestKey } from 'state/data-layer/wpcom-http/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, keyedReducer } from 'calypso/state/utils';
+import { getFiltersKey } from 'calypso/state/comments/ui/utils';
+import { getRequestKey } from 'calypso/state/data-layer/wpcom-http/utils';
 
 const deepUpdateComments = ( state, comments, query ) => {
 	const { page = 1, postId } = query;
@@ -61,9 +61,7 @@ export const queries = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case COMMENTS_CHANGE_STATUS:
 		case COMMENTS_DELETE: {
-			const query = action.refreshCommentListQuery
-				? action.refreshCommentListQuery
-				: get( action, 'meta.comment.commentsListQuery' );
+			const query = action.refreshCommentListQuery;
 			if ( ! query ) {
 				return state;
 			}
@@ -95,7 +93,7 @@ export const queries = ( state = {}, action ) => {
 			return deepUpdateComments( state, without( comments, action.commentId ), query );
 		}
 		case COMMENTS_QUERY_UPDATE:
-			return isUndefined( get( action, 'query.page' ) )
+			return typeof get( action, 'query.page' ) === 'undefined'
 				? state
 				: deepUpdateComments( state, map( action.comments, 'ID' ), action.query );
 		default:

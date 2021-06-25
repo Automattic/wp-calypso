@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import { flatMap, last, clamp } from 'lodash';
+import { flatMap, last } from 'lodash';
 import moment from 'moment';
 
 /**
  * Internal dependencies
  */
-import { isDiscoverBlog, isDiscoverFeed } from 'reader/discover/helper';
+import { isDiscoverBlog, isDiscoverFeed } from 'calypso/reader/discover/helper';
 
 export function isDiscoverPostKey( postKey ) {
 	return isDiscoverBlog( postKey.blogId ) || isDiscoverFeed( postKey.feedId );
@@ -135,10 +135,9 @@ export function getDistanceBetweenRecs( totalSubs ) {
 		// push recs to the max.
 		return MAX_DISTANCE_BETWEEN_RECS;
 	}
-	const distance = clamp(
-		Math.floor( Math.log( totalSubs ) * Math.LOG2E * 5 - 6 ),
-		MIN_DISTANCE_BETWEEN_RECS,
+
+	return Math.min(
+		Math.max( Math.floor( Math.log( totalSubs ) * Math.LOG2E * 5 - 6 ), MIN_DISTANCE_BETWEEN_RECS ),
 		MAX_DISTANCE_BETWEEN_RECS
 	);
-	return distance;
 }

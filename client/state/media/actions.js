@@ -1,10 +1,4 @@
 /**
- * External dependencies
- */
-
-import { castArray } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import {
@@ -28,9 +22,10 @@ import {
 	MEDIA_ITEM_DELETE,
 	MEDIA_SET_QUERY,
 	MEDIA_CLEAR_SITE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/sites/media';
+import 'calypso/state/data-layer/wpcom/sites/media';
+import 'calypso/state/media/init';
 
 /**
  * Returns an action object used in signalling that media item(s) for the site
@@ -49,7 +44,7 @@ export function receiveMedia( siteId, media, found, query ) {
 	return {
 		type: MEDIA_RECEIVE,
 		siteId,
-		media: castArray( media ),
+		media: Array.isArray( media ) ? media : [ media ],
 		found,
 		query,
 	};
@@ -178,12 +173,14 @@ export function createMediaItem( site, transientMedia ) {
  * @param {number} siteId site identifier
  * @param {object} mediaItem media item with updated properties
  * @param {object} data binary updated item data (to be sent to the server)
+ * @param {object} originalMediaItem original media item without updated properties
  */
-export const editMediaItem = ( siteId, mediaItem, data ) => ( {
+export const editMediaItem = ( siteId, mediaItem, data, originalMediaItem ) => ( {
 	type: MEDIA_ITEM_EDIT,
 	siteId,
 	mediaItem,
 	data,
+	originalMediaItem,
 } );
 
 /**
@@ -192,11 +189,13 @@ export const editMediaItem = ( siteId, mediaItem, data ) => ( {
  *
  * @param {number} siteId site identifier
  * @param {object} item media item
+ * @param {object} originalMediaItem media item without updated properties
  */
-export const updateMediaItem = ( siteId, item ) => ( {
+export const updateMediaItem = ( siteId, item, originalMediaItem ) => ( {
 	type: MEDIA_ITEM_UPDATE,
 	siteId,
 	item,
+	originalMediaItem,
 } );
 
 /**
@@ -214,7 +213,7 @@ export const updateMediaItem = ( siteId, item ) => ( {
 export function deleteMedia( siteId, mediaIds ) {
 	return {
 		type: MEDIA_DELETE,
-		mediaIds: castArray( mediaIds ),
+		mediaIds: Array.isArray( mediaIds ) ? mediaIds : [ mediaIds ],
 		siteId,
 	};
 }
@@ -292,7 +291,7 @@ export function setMediaItemErrors( siteId, mediaId, errors ) {
  * @param  {Array}   media  Array of media objects
  * @returns {object}        Action object
  */
-export function setMediaLibrarySelectedItems( siteId, media ) {
+export function selectMediaItems( siteId, media ) {
 	return {
 		type: MEDIA_LIBRARY_SELECTED_ITEMS_UPDATE,
 		media,

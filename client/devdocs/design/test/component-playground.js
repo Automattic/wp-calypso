@@ -14,7 +14,7 @@ import { LiveProvider } from 'react-live';
  */
 import ComponentPlayground from '../component-playground';
 
-jest.mock( 'devdocs/design/playground-scope', () => 'PlaygroundScope' );
+jest.mock( 'calypso/devdocs/design/playground-scope', () => 'PlaygroundScope' );
 
 describe( 'ComponentPlayground', () => {
 	test( 'LiveProvider should use the components scope by default', () => {

@@ -15,8 +15,8 @@ import {
 	ButtonRow,
 	Quit,
 	Continue,
-} from 'layout/guided-tours/config-elements';
-import { ViewSiteButton } from 'layout/guided-tours/button-labels';
+} from 'calypso/layout/guided-tours/config-elements';
+import { ViewSiteButton } from 'calypso/layout/guided-tours/button-labels';
 
 export const TutorialSitePreviewTour = makeTour(
 	<Tour { ...meta }>

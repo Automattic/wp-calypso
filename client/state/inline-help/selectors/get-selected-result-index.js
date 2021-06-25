@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/inline-help/init';
+import 'calypso/state/inline-help/init';
 
 /**
  * Returns the index of the currently selected search result.

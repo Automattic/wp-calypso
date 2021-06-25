@@ -10,26 +10,26 @@ You can use it adjacent to other sibling components which make use of the fetche
 ```js
 import React from 'react';
 import { connect } from 'react-redux';
-import QueryEligibility from 'components/data/query-atat-eligibility';
+import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 
 export function MyTransferView( { eligibility, siteId } ) {
-    return (
-        <div>
-            <QueryEligibility siteId={ siteId } />
-            <div>{ JSON.stringify( eligibility ) }</div>
-        </div>
-    );
+	return (
+		<div>
+			<QueryEligibility siteId={ siteId } />
+			<div>{ JSON.stringify( eligibility ) }</div>
+		</div>
+	);
 }
 
 const mapStateToProps = ( state, { siteId } ) => ( {
-  eligibility: getEligibilityData( state, siteId ),
-} )
+	eligibility: getEligibilityData( state, siteId ),
+} );
 
 export default connect( mapStateToProps )( MyTransferView );
 ```
 
 ### Props
 
-| Name | Type | Required? | Note |
-|---|---|---|---|
-| `siteId` | number | yes | References the intended site |
+| Name     | Type   | Required? | Note                         |
+| -------- | ------ | --------- | ---------------------------- |
+| `siteId` | number | yes       | References the intended site |

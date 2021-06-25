@@ -6,8 +6,8 @@ import {
 	getSiteOption,
 	isJetpackSiteMainNetworkSite,
 	isJetpackSiteSecondaryNetworkSite,
-} from 'state/sites/selectors';
-import { withoutHttp } from 'lib/url';
+} from 'calypso/state/sites/selectors';
+import { withoutHttp } from 'calypso/lib/url';
 
 /**
  * Returns true if site mainSiteId is the main site of site secondarySiteId and false otherwise.

@@ -16,18 +16,20 @@ A flow is defined by two properties, `steps` and `destination`:
 - `destination` is a `string` or `function` that determines which page users should be redirected to once they complete the last step in the flow. If provided as a `function`, it is called with all of the dependencies provided in the signup flow, and the user is redirected to whatever it returns.
 
 There are also three optional properties:
+
 - `description` is a brief description of what the flow is for.
 - `lastModified` is a date stamp for when the flow was last updated.
 - `disallowResume` is a boolean that, when true, will send you back to step 1 if you refreshed the page
 
 Example:
+
 ```javascript
-account: { steps: [ 'site', 'user' ], destination: '/' }
+const account = { steps: [ 'site', 'user' ], destination: '/' };
 ```
 
 Once you've added the flow to `flows-pure.js`, it'll be available for users at `/start/flow-name` where `flow-name` is the key of your flow in `flows`.
 
-*Note:* flows must include at least one step that creates a user and is able to provide a bearer token. See the `providesToken` property in "Creating a new step".
+_Note:_ flows must include at least one step that creates a user and is able to provide a bearer token. See the `providesToken` property in "Creating a new step".
 
 ## Creating a new step
 
@@ -50,7 +52,7 @@ The React component for a step should be implemented in `/signup/steps/`, in its
 Steps must use the `SignupActions` module, by requiring it as an internal dependency:
 
 ```javascript
-import SignupActions from 'lib/signup/actions';
+import SignupActions from 'calypso/lib/signup/actions';
 ```
 
 `SignupActions` allows the Modular Framework to handle the data collected by a step. This means your step must include a UI element that allows users to move to the next step in the flow, and that the function handling this element must use the method `submitSignupStep` from `SignupActions`.
@@ -60,11 +62,11 @@ In addition to `submitSignupStep`, make sure to also call `this.props.goToNextSt
 Example:
 
 ```javascript
-handleSubmit: function( event ) {
+function handleSubmit( event ) {
 	event.preventDefault();
 
 	SignupActions.submitSignupStep( {
-		stepName: this.props.stepName
+		stepName: this.props.stepName,
 	} );
 
 	this.props.goToNextStep();
@@ -84,15 +86,15 @@ Some background on `providedDependencies` and the Dependency Store: submitted st
 If your step requires certain data from other steps before it can submit to the API, you can configure its `apiRequestFunction` in `signup/config/steps-pure.js`. This is a function that is called once the data the step requires is available.
 
 ```javascript
-{
+const object = {
 	stepName: 'theme-selection',
 	dependencies: [ 'siteSlug' ],
-	apiRequestFunction: function( callback, dependencies ) {
-		wpcom.undocumented().someRequest( dependencies.siteSlug, function( errors, response ) {
+	apiRequestFunction: function ( callback, dependencies ) {
+		wpcom.undocumented().someRequest( dependencies.siteSlug, function ( errors, response ) {
 			callback( errors, { userId: response.userId } );
 		} );
-	}
-}
+	},
+};
 ```
 
 Note that here `apiRequestFunction` calls an API endpoint (`someRequest` in this example), from which they expect to get `userId`. If the API request is successful, `response.userId` is added to the Dependency Store via the callback. This is why you don't need to specify dependencies provided by API requests in `providedDependencies`.
@@ -101,8 +103,10 @@ Note that here `apiRequestFunction` calls an API endpoint (`someRequest` in this
 
 The above example includes an inline function definition, but we should keep the `apiRequestFunction` values in `StepActions` (`signup/config/step-actions.js`) and include them like:
 
-```js
-apiRequestFunction: stepActions.createSite
+```javascript
+const step = {
+	apiRequestFunction: stepActions.createSite,
+};
 ```
 
 ## Hello World
@@ -124,55 +128,61 @@ export default class extends React.Component {
 	render() {
 		return <span>Hello world</span>;
 	}
-} );
+}
 ```
 
 4 - add the new step to `/client/signup/config/step-components.js`. Include a reference to the component module:
+
 ```javascript
 const stepNameToModuleName = {
-	...
-	'hello-world' : 'hello-world-module-name'; // Referencing signup/steps/hello-world-module-name/index.js
+	'hello-world': 'hello-world-module-name', // Referencing signup/steps/hello-world-module-name/index.js
 };
-
-...
 ```
 
 5 - add the new step to `/client/signup/config/steps-pure.js`. Include the component in the object returned from `generateSteps`:
 
 ```javascript
-'hello-world': {
-	stepName: 'hello-world' // has to match the property name
-},
+const steps = {
+	'hello-world': {
+		stepName: 'hello-world', // has to match the property name
+	},
+};
 ```
 
 6 - add a new flow to `/client/signup/config/flow.js`:
 
 ```javascript
-hello: { // This will be the slug for the flow, i.e.: wordpress.com/start/hello
-	steps: [ 'hello-world', 'user' ], // These are the steps that the user will be shown
-	destination: '/' // This is where the user will be taken once the flow is complete
-}
+const flow = {
+	hello: {
+		// This will be the slug for the flow, i.e.: wordpress.com/start/hello
+		steps: [ 'hello-world', 'user' ], // These are the steps that the user will be shown
+		destination: '/', // This is where the user will be taken once the flow is complete
+	},
+};
 ```
 
-7 - open https://calypso.localhost:3000/start/hello in an incognito window. You will be redirected to
+7 - open <https://calypso.localhost:3000/start/hello> in an incognito window. You will be redirected to
 the first step of the flow at `/start/hello/hello-world`, where you should see your new React component.
 
 8 - now we need a way for users to move to the next step of the flow. Let's add a button and a form to the step's `render` method:
 
 ```javascript
-render() {
+function render() {
 	return (
 		<form onSubmit={ this.handleSubmit }>
 			<p>This is the step named { this.props.stepName }</p>
-			<button className="button" type="submit">Get started</button>
+			<button className="button" type="submit">
+				Get started
+			</button>
 		</form>
 	);
 }
 ```
 
 Make sure to require `SignupActions`:
+
 ```javascript
-import SignupActions from 'lib/signup/actions';
+import SignupActions from 'calypso/lib/signup/actions';
 ```
 
 ... and to create a function to handle what happens when the form is submitted:
@@ -182,12 +192,11 @@ handleSubmit = ( event ) => {
 	event.preventDefault();
 
 	SignupActions.submitSignupStep( {
-		stepName: this.props.stepName
+		stepName: this.props.stepName,
 	} );
 
 	this.props.goToNextStep();
-}
+};
 ```
 
-9 - open https://calypso.localhost:3000/start/hello in an incognito window. On opening you should be redirected to the first step showing your updated React component, and when you click the "Get started" button you should be taken to the next step.
-
+9 - open <https://calypso.localhost:3000/start/hello> in an incognito window. On opening you should be redirected to the first step showing your updated React component, and when you click the "Get started" button you should be taken to the next step.

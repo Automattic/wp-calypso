@@ -1,5 +1,10 @@
 module.exports = {
-	rules: {
-		'import/no-extraneous-dependencies': [ 'error', { packageDir: __dirname } ],
-	},
+	overrides: [
+		{
+			files: [ '**/__tests__/**/*', '**/__mocks__/**/*' ],
+			rules: {
+				'jest/no-mocks-import': 'off',
+			},
+		},
+	],
 };

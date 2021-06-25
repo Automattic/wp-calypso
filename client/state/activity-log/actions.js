@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import page from 'page';
+
+/**
  * Internal dependencies
  */
 import {
@@ -7,6 +12,7 @@ import {
 	REWIND_ACTIVATE_FAILURE,
 	REWIND_ACTIVATE_REQUEST,
 	REWIND_ACTIVATE_SUCCESS,
+	REWIND_ACTIVITY_SHARE_REQUEST,
 	REWIND_CLONE,
 	REWIND_DEACTIVATE_FAILURE,
 	REWIND_DEACTIVATE_REQUEST,
@@ -24,15 +30,20 @@ import {
 	REWIND_BACKUP_UPDATE_ERROR,
 	REWIND_BACKUP_UPDATE_PROGRESS,
 	REWIND_BACKUP_DISMISS_PROGRESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
+import { addQueryArgs } from 'calypso/lib/url';
+import { filterStateToQuery } from './utils';
+import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 
-import 'state/data-layer/wpcom/activity-log/activate';
-import 'state/data-layer/wpcom/activity-log/deactivate';
-import 'state/data-layer/wpcom/activity-log/rewind/downloads';
-import 'state/data-layer/wpcom/activity-log/rewind/restore-status';
-import 'state/data-layer/wpcom/activity-log/rewind/to';
-import 'state/data-layer/wpcom/sites/rewind/downloads';
-import 'state/data-layer/wpcom/sites/rewind/restores';
+import 'calypso/state/data-layer/wpcom/activity-log/activate';
+import 'calypso/state/data-layer/wpcom/activity-log/deactivate';
+import 'calypso/state/data-layer/wpcom/activity-log/rewind/downloads';
+import 'calypso/state/data-layer/wpcom/activity-log/rewind/restore-status';
+import 'calypso/state/data-layer/wpcom/activity-log/rewind/to';
+import 'calypso/state/data-layer/wpcom/activity-log/share';
+import 'calypso/state/data-layer/wpcom/sites/rewind/downloads';
+import 'calypso/state/data-layer/wpcom/sites/rewind/restores';
+import 'calypso/state/activity-log/init';
 
 /**
  * Turn the 'rewind' feature on for a site.
@@ -60,6 +71,23 @@ export function rewindActivateFailure( siteId ) {
 	return {
 		type: REWIND_ACTIVATE_FAILURE,
 		siteId,
+	};
+}
+
+/**
+ * Share a rewind/activity-log event via email.
+ *
+ * @param {string|number} siteId Site ID
+ * @param {number} rewindId Activity ID
+ * @param {string} email Email address to send to
+ * @returns {object} action object
+ */
+export function rewindShareRequest( siteId, rewindId, email ) {
+	return {
+		type: REWIND_ACTIVITY_SHARE_REQUEST,
+		siteId,
+		rewindId,
+		email,
 	};
 }
 
@@ -282,14 +310,26 @@ export function dismissRewindBackupProgress( siteId, downloadId ) {
 	};
 }
 
-export const setFilter = ( siteId, filter ) => ( {
-	type: ACTIVITY_LOG_FILTER_SET,
-	siteId,
-	filter,
-} );
+function navigateToFilter( filter ) {
+	const { pathname, hash } = window.location;
 
-export const updateFilter = ( siteId, filter ) => ( {
-	type: ACTIVITY_LOG_FILTER_UPDATE,
-	siteId,
-	filter,
-} );
+	if ( ! pathname.startsWith( '/activity-log/' ) && ! pathname.startsWith( '/backup/activity/' ) ) {
+		return;
+	}
+
+	page( addQueryArgs( filterStateToQuery( filter ), pathname + hash ) );
+}
+
+export const setFilter = ( siteId, filter, skipUrlUpdate = false ) => ( dispatch, getState ) => {
+	dispatch( { type: ACTIVITY_LOG_FILTER_SET, siteId, filter } );
+	if ( ! skipUrlUpdate ) {
+		navigateToFilter( getActivityLogFilter( getState(), siteId ) );
+	}
+};
+
+export const updateFilter = ( siteId, filter, skipUrlUpdate = false ) => ( dispatch, getState ) => {
+	dispatch( { type: ACTIVITY_LOG_FILTER_UPDATE, siteId, filter } );
+	if ( ! skipUrlUpdate ) {
+		navigateToFilter( getActivityLogFilter( getState(), siteId ) );
+	}
+};

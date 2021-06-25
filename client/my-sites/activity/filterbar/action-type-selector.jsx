@@ -7,18 +7,18 @@ import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { concat, without, isEmpty, find } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormLabel from 'components/forms/form-label';
-import Popover from 'components/popover';
-import { requestActivityActionTypeCounts } from 'state/data-getters';
-import { updateFilter } from 'state/activity-log/actions';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+import Popover from 'calypso/components/popover';
+import { requestActivityActionTypeCounts } from 'calypso/state/data-getters';
+import { updateFilter } from 'calypso/state/activity-log/actions';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import MobileSelectPortal from './mobile-select-portal';
 
 export class ActionTypeSelector extends Component {

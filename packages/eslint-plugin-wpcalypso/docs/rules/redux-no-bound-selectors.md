@@ -10,13 +10,13 @@ Any function, whether anonymous or referred to using a variable, that is passed 
 
 ```js
 connect( ( state ) => ( {
-  getSite: getSite.bind( null, state ),
+	getSite: getSite.bind( null, state ),
 } ) )( MyComponent );
 
 // or
 
 const mapState = ( state ) => ( {
-  getSite: ( id ) => getSite( state, id ),
+	getSite: ( id ) => getSite( state, id ),
 } );
 connect( mapState )( MyComponent );
 ```
@@ -25,22 +25,19 @@ connect( mapState )( MyComponent );
 
 ```js
 const getFavoriteSites = ( state ) =>
-  state.favoriteSiteIds.map( siteId =>
-    getSite( state, siteId ) );
+	state.favoriteSiteIds.map( ( siteId ) => getSite( state, siteId ) );
 ```
 
 ```js
-class extends Component {
-  setFoo( foo ) {
-    this.setState( { foo }, ( state ) => {
-      this.markDone( state.bar );
-    } );
-  }
+class MyComponent extends Component {
+	setFoo( foo ) {
+		this.setState( { foo }, ( state ) => {
+			this.markDone( state.bar );
+		} );
+	}
 }
 ```
 
 ```js
-export default connect(
-  partialRight( mapState, 'foo' )
-)( MyComponent );
+export default connect( partialRight( mapState, 'foo' ) )( MyComponent );
 ```

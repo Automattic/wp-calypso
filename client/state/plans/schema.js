@@ -28,7 +28,6 @@ export const itemsSchema = {
 			multi: { type: 'number' },
 			original: { type: 'number' },
 			price: { type: 'string' },
-			prices: { type: 'object' },
 			product_id: { type: 'number' },
 			product_name: { type: 'string' },
 			product_name_en: { type: 'string' },

@@ -6,17 +6,17 @@ import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { get } from 'lodash';
-import { recordTrack } from 'reader/stats';
+import { recordTrack } from 'calypso/reader/stats';
 import page from 'page';
-import { decodeEntities } from 'lib/formatting';
+import { decodeEntities } from 'calypso/lib/formatting';
 
 /**
  * Internal dependencies
  */
-import Gravatar from 'components/gravatar';
-import InfoPopover from 'components/info-popover';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { requestExternalContributors } from 'state/data-getters';
+import Gravatar from 'calypso/components/gravatar';
+import InfoPopover from 'calypso/components/info-popover';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { requestExternalContributors } from 'calypso/state/data-getters';
 /**
  * Style dependencies
  */
@@ -181,7 +181,9 @@ class PeopleProfile extends Component {
 	renderRole = () => {
 		const { isExternalContributor, translate, user } = this.props;
 
-		let contractorBadge, superAdminBadge, roleBadge;
+		let contractorBadge;
+		let superAdminBadge;
+		let roleBadge;
 
 		if ( user && user.is_super_admin ) {
 			superAdminBadge = (
@@ -273,12 +275,8 @@ class PeopleProfile extends Component {
 }
 
 export default connect( ( _state, { siteId, user } ) => {
-	const userId = user && user.ID;
-	const linkedUserId = user && user.linked_user_ID;
 	const externalContributors = ( siteId && requestExternalContributors( siteId ).data ) || [];
 	return {
-		isExternalContributor: externalContributors.includes(
-			undefined !== linkedUserId ? linkedUserId : userId
-		),
+		isExternalContributor: externalContributors.includes( user?.linked_user_ID ?? user?.ID ),
 	};
 } )( localize( withLocalizedMoment( PeopleProfile ) ) );

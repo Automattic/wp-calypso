@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/help/init';
+import 'calypso/state/help/init';
 
 /**
  * Tells whether the user has asked a question through the Directly RTM widget.

@@ -1,20 +1,25 @@
+/**
+ * External dependencies
+ */
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { Provider } from 'react-redux';
-import { noop } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
 import { init as initStore, store } from './state';
 import { mergeHandlers } from './state/action-middleware/utils';
 import { SET_IS_SHOWING } from './state/action-types';
 import actions from './state/actions';
 
 import RestClient from './rest-client';
-import { setGlobalData } from './flux/app-actions';
 import repliesCache from './comment-replies-cache';
 
 import { init as initAPI } from './rest-client/wpcom';
 
 import Layout from './templates';
+import FontSmoothing from './utils/font-smoothing';
 
 /**
  * Style dependencies
@@ -23,9 +28,8 @@ import './boot/stylesheets/style.scss';
 
 let client;
 
+const noop = () => {};
 const globalData = {};
-
-setGlobalData( globalData );
 
 repliesCache.cleanup();
 
@@ -33,6 +37,8 @@ repliesCache.cleanup();
  * Force a manual refresh of the notes data
  */
 export const refreshNotes = () => client && client.refreshNotes.call( client );
+
+export const RestClientContext = React.createContext( client );
 
 export class Notifications extends PureComponent {
 	static propTypes = {
@@ -43,6 +49,7 @@ export class Notifications extends PureComponent {
 		locale: PropTypes.string,
 		receiveMessage: PropTypes.func,
 		wpcom: PropTypes.object.isRequired,
+		isStandalone: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -68,7 +75,7 @@ export class Notifications extends PureComponent {
 			customEnhancer,
 			customMiddleware: mergeHandlers( customMiddleware, {
 				APP_REFRESH_NOTES: [
-					( store, action ) => {
+					( _store, action ) => {
 						if ( ! client ) {
 							return;
 						}
@@ -93,7 +100,7 @@ export class Notifications extends PureComponent {
 		 * Initialize store with actions that need to occur on
 		 * transitions from open to close or close to open
 		 *
-		 * @TODO: Pass this information directly into the Redux initial state
+		 * @todo Pass this information directly into the Redux initial state
 		 */
 		store.dispatch( { type: SET_IS_SHOWING, isShowing } );
 
@@ -126,15 +133,16 @@ export class Notifications extends PureComponent {
 	render() {
 		return (
 			<Provider store={ store }>
-				<Layout
-					{ ...{
-						client,
-						data: globalData,
-						global: globalData,
-						isShowing: this.props.isShowing,
-						locale: this.props.locale,
-					} }
-				/>
+				{ this.props.isStandalone && <FontSmoothing /> }
+				<RestClientContext.Provider value={ client }>
+					<Layout
+						client={ client }
+						data={ globalData }
+						global={ globalData }
+						isShowing={ this.props.isShowing }
+						locale={ this.props.local }
+					/>
+				</RestClientContext.Provider>
 			</Provider>
 		);
 	}

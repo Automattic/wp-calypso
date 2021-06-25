@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { assign } from 'lodash';
 import ReactDomServer from 'react-dom/server';
 import React from 'react';
 import classNames from 'classnames';
@@ -9,9 +8,9 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { parse, stringify } from 'lib/shortcode';
-import * as MediaUtils from 'lib/media/utils';
-import { deserialize } from 'lib/media-serialization';
+import { parse, stringify } from 'calypso/lib/shortcode';
+import * as MediaUtils from 'calypso/lib/media/utils';
+import { deserialize } from 'calypso/lib/media-serialization';
 
 /**
  * Module variables
@@ -77,7 +76,9 @@ const Markup = {
 	 *                                 a captioned item.
 	 */
 	caption: function ( site, media ) {
-		let img, caption, width;
+		let img;
+		let caption;
+		let width;
 
 		if ( 'string' !== typeof media ) {
 			media = Markup.get( site, media );
@@ -127,16 +128,15 @@ const Markup = {
 		 * @returns {string}         An image markup string
 		 */
 		image: function ( site, media, options ) {
-			options = assign(
-				{
-					size: 'full',
-					align: 'none',
-					forceResize: false,
-				},
-				options
-			);
+			options = {
+				size: 'full',
+				align: 'none',
+				forceResize: false,
+				...options,
+			};
 
-			let width, height;
+			let width;
+			let height;
 			if ( 'full' === options.size ) {
 				width = media.width;
 				height = media.height;

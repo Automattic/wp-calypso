@@ -1,0 +1,572 @@
+/**
+ * Internal dependencies
+ */
+import {
+	format as formatUrl,
+	getUrlParts,
+	getUrlFromParts,
+	determineUrlType,
+} from '@automattic/calypso-url';
+import {
+	TERM_MONTHLY,
+	TERM_ANNUALLY,
+	TERM_BIENNIALLY,
+	TYPE_BUSINESS,
+	TYPE_ECOMMERCE,
+	TYPE_FREE,
+	TYPE_BLOGGER,
+	TYPE_PERSONAL,
+	TYPE_PREMIUM,
+	TYPE_SECURITY_DAILY,
+	TYPE_SECURITY_REALTIME,
+	TYPE_ALL,
+	GROUP_WPCOM,
+	GROUP_JETPACK,
+	JETPACK_RESET_PLANS,
+	FEATURE_JETPACK_SEARCH,
+	FEATURE_JETPACK_SEARCH_MONTHLY,
+	TYPE_P2_PLUS,
+} from './constants';
+import { PLANS_LIST } from './plans-list';
+import { isJetpackBusiness, isBusiness, isEnterprise, isEcommerce, isVipPlan } from '.';
+
+export function getPlans() {
+	return PLANS_LIST;
+}
+
+export function getPlansSlugs() {
+	return Object.keys( getPlans() );
+}
+
+export function getPlan( planKey ) {
+	if ( Object.prototype.toString.apply( planKey ) === '[object Object]' ) {
+		if ( Object.values( PLANS_LIST ).includes( planKey ) ) {
+			return planKey;
+		}
+	}
+	return PLANS_LIST[ planKey ];
+}
+
+/**
+ * Find a plan by its path slug
+ *
+ * @param {string} pathSlug Path slug
+ * @param {string} [group] Group to search in
+ * @returns {import('./types').Plan|undefined} The plan
+ */
+export function getPlanByPathSlug( pathSlug, group ) {
+	/** @type {import('./types').Plan[]} */
+	let plans = Object.values( PLANS_LIST );
+	plans = plans.filter( ( p ) => ( group ? p.group === group : true ) );
+	return plans.find( ( p ) => typeof p.getPathSlug === 'function' && p.getPathSlug() === pathSlug );
+}
+
+export function getPlanPath( plan ) {
+	const retrievedPlan = getPlan( plan );
+	const slug = retrievedPlan.getPathSlug || ( () => undefined );
+	return slug();
+}
+
+export function getPlanClass( planKey ) {
+	if ( isFreePlan( planKey ) ) {
+		return 'is-free-plan';
+	}
+
+	if ( isBloggerPlan( planKey ) ) {
+		return 'is-blogger-plan';
+	}
+
+	if ( isPersonalPlan( planKey ) ) {
+		return 'is-personal-plan';
+	}
+
+	if ( isPremiumPlan( planKey ) ) {
+		return 'is-premium-plan';
+	}
+
+	if ( isBusinessPlan( planKey ) ) {
+		return 'is-business-plan';
+	}
+
+	if ( isEcommercePlan( planKey ) ) {
+		return 'is-ecommerce-plan';
+	}
+
+	if ( isSecurityDailyPlan( planKey ) ) {
+		return 'is-daily-security-plan';
+	}
+
+	if ( isSecurityRealTimePlan( planKey ) ) {
+		return 'is-realtime-security-plan';
+	}
+
+	if ( isCompletePlan( planKey ) ) {
+		return 'is-complete-plan';
+	}
+
+	return '';
+}
+
+/**
+ * Determines if a plan has a specific feature.
+ *
+ * Collects features for a plan by calling all possible feature methods for the plan.
+ *
+ * @param   {object|string} plan    Plan object or plan name.
+ * @param   {string}        feature Feature name.
+ * @returns {boolean}               Whether the specified plan has the specified feature.
+ */
+export function planHasFeature( plan, feature ) {
+	const planConstantObj = getPlan( plan );
+
+	// Collect features from all plan methods (may have duplicates)
+	const allFeatures = [
+		'getPlanCompareFeatures',
+		'getPromotedFeatures',
+		'getSignupFeatures',
+		'getBlogSignupFeatures',
+		'getPortfolioSignupFeatures',
+		'getHiddenFeatures',
+	].reduce(
+		( featuresArray, featureMethodName ) => [
+			...( planConstantObj?.[ featureMethodName ]?.() ?? [] ),
+			...featuresArray,
+		],
+		[]
+	);
+
+	return allFeatures.includes( feature );
+}
+
+/**
+ * Determines if a plan has a superior version of a specific feature.
+ *
+ * @param   {object|string} plan    Plan object or plan name.
+ * @param   {string}        feature Feature name.
+ * @returns {boolean}               Whether the specified plan has a superior version of a feature.
+ */
+export function planHasSuperiorFeature( plan, feature ) {
+	const planConstantObj = getPlan( plan );
+	const features = planConstantObj.getInferiorHiddenFeatures?.() ?? [];
+
+	return features.includes( feature );
+}
+
+export function shouldFetchSitePlans( sitePlans, selectedSite ) {
+	return ! sitePlans.hasLoadedFromServer && ! sitePlans.isRequesting && selectedSite;
+}
+
+/**
+ * Returns the monthly slug which corresponds to the provided yearly slug or "" if the slug is
+ * not a recognized or cannot be converted.
+ *
+ * @param  {string} planSlug Slug to convert to monthly.
+ * @returns {string}          Monthly version slug or "" if the slug could not be converted.
+ */
+export function getMonthlyPlanByYearly( planSlug ) {
+	const plan = getPlan( planSlug );
+	if ( plan?.getMonthlySlug ) {
+		return plan.getMonthlySlug();
+	}
+	return findFirstSimilarPlanKey( planSlug, { term: TERM_MONTHLY } ) || '';
+}
+
+/**
+ * Returns the yearly slug which corresponds to the provided monthly slug or "" if the slug is
+ * not a recognized or cannot be converted.
+ *
+ * @param  {string} planSlug Slug to convert to yearly.
+ * @returns {string}          Yearly version slug or "" if the slug could not be converted.
+ */
+export function getYearlyPlanByMonthly( planSlug ) {
+	const plan = getPlan( planSlug );
+	if ( plan?.getAnnualSlug ) {
+		return plan.getAnnualSlug();
+	}
+	return findFirstSimilarPlanKey( planSlug, { term: TERM_ANNUALLY } ) || '';
+}
+
+/**
+ * Returns the biennial slug which corresponds to the provided slug or "" if the slug is
+ * not a recognized or cannot be converted.
+ *
+ * @param  {string} planSlug Slug to convert to biennial.
+ * @returns {string}          Biennial version slug or "" if the slug could not be converted.
+ */
+export function getBiennialPlan( planSlug ) {
+	return findFirstSimilarPlanKey( planSlug, { term: TERM_BIENNIALLY } ) || '';
+}
+
+/**
+ * Returns true if plan "types" match regardless of their interval.
+ *
+ * For example (fake plans):
+ *     planLevelsMatch( PRO_YEARLY, PRO_YEARLY ) => true
+ *     planLevelsMatch( PRO_YEARLY, PRO_MONTHLY ) => true
+ *     planLevelsMatch( PRO_YEARLY, PERSONAL_YEARLY ) => false
+ *
+ * @param  {string}  planSlugA One of the plan slugs to compare
+ * @param  {string}  planSlugB One of the plan slugs to compare
+ * @returns {boolean}           Whether the plan "types" match regardless of interval
+ */
+export function planLevelsMatch( planSlugA, planSlugB ) {
+	const planA = getPlan( planSlugA );
+	const planB = getPlan( planSlugB );
+	return planA && planB && planA.type === planB.type && planA.group === planB.group;
+}
+
+export function isEcommercePlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_ECOMMERCE } );
+}
+
+export function isBusinessPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_BUSINESS } );
+}
+
+export function isPremiumPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_PREMIUM } );
+}
+
+export function isPersonalPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_PERSONAL } );
+}
+
+export function isBloggerPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_BLOGGER } );
+}
+
+export function isFreePlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_FREE } );
+}
+
+export function isSecurityDailyPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_SECURITY_DAILY } );
+}
+
+export function isSecurityRealTimePlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_SECURITY_REALTIME } );
+}
+
+export function isCompletePlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_ALL } );
+}
+
+export function isWpComPlan( planSlug ) {
+	return planMatches( planSlug, { group: GROUP_WPCOM } );
+}
+
+export function isWpComBusinessPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_BUSINESS, group: GROUP_WPCOM } );
+}
+
+export function isWpComEcommercePlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_ECOMMERCE, group: GROUP_WPCOM } );
+}
+
+export function isWpComPremiumPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_PREMIUM, group: GROUP_WPCOM } );
+}
+
+export function isWpComPersonalPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_PERSONAL, group: GROUP_WPCOM } );
+}
+
+export function isWpComBloggerPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_BLOGGER, group: GROUP_WPCOM } );
+}
+
+export function isWpComFreePlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_FREE, group: GROUP_WPCOM } );
+}
+
+export function isWpComMonthlyPlan( planSlug ) {
+	return planMatches( planSlug, { term: TERM_MONTHLY, group: GROUP_WPCOM } );
+}
+
+export function isJetpackBusinessPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_BUSINESS, group: GROUP_JETPACK } );
+}
+
+export function isJetpackPremiumPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_PREMIUM, group: GROUP_JETPACK } );
+}
+
+export function isJetpackPersonalPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_PERSONAL, group: GROUP_JETPACK } );
+}
+
+export function isJetpackFreePlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_FREE, group: GROUP_JETPACK } );
+}
+
+export function isJetpackOfferResetPlan( planSlug ) {
+	return JETPACK_RESET_PLANS.includes( planSlug );
+}
+
+export function isP2PlusPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_P2_PLUS } );
+}
+
+/**
+ * @see findSimilarPlansKeys
+ *
+ * @param {string|object} planKey Source plan to compare to
+ * @param {object} diff Properties that should differ in matched plan. @see planMatches
+ * @returns {string|undefined} Matched plan
+ */
+export function findFirstSimilarPlanKey( planKey, diff ) {
+	return findSimilarPlansKeys( planKey, diff )[ 0 ];
+}
+
+/**
+ * A similar plan is one that has the same `type`, `group`, and `term` as first
+ * argument, except for differences specified in the second argument.
+ *
+ * For example:
+ *
+ * > findSimilarPlansKeys( TYPE_BUSINESS, { term: TERM_BIENNIALLY } );
+ * [PLAN_BUSINESS_2_YEARS]
+ * > findSimilarPlansKeys( TYPE_JETPACK_BUSINESS_MONTHLY, { type: TYPE_ANNUALLY } );
+ * [TYPE_JETPACK_BUSINESS]
+ *
+ * @param {string|object} planKey Source plan to compare to
+ * @param {object} diff Properties that should differ in matched plan. @see planMatches
+ * @returns {string[]} Matched plans keys
+ */
+export function findSimilarPlansKeys( planKey, diff = {} ) {
+	const plan = getPlan( planKey );
+	// @TODO: make getPlan() throw an error on failure. This is going to be a larger change with a separate PR.
+	if ( ! plan ) {
+		return [];
+	}
+	return findPlansKeys( {
+		type: plan.type,
+		group: plan.group,
+		term: plan.term,
+		...diff,
+	} );
+}
+
+/**
+ * Finds all keys of plans matching a query
+ *
+ * For example:
+ *
+ * > findPlansKeys( { term: TERM_BIENNIALLY } );
+ * [PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS, PLAN_BUSINESS_2_YEARS]
+ *
+ * @param {object} query @see planMatches
+ * @returns {string[]} Matched plans keys
+ */
+export function findPlansKeys( query = {} ) {
+	const plans = getPlans();
+	return Object.keys( plans ).filter( ( k ) => planMatches( plans[ k ], query ) );
+}
+
+/**
+ * Matches plan specified by `planKey` against `query`.
+ * Only compares `type`, `group`, and `term` properties.
+ *
+ * For example:
+ *
+ * > planMatches( TYPE_BUSINESS, { term: TERM_ANNUALLY, group: GROUP_WPCOM, type: TYPE_BUSINESS } );
+ * true
+ *
+ * > planMatches( TYPE_BUSINESS, { term: TERM_BIENNIALLY } );
+ * false
+ *
+ * @param {string|object} planKey Plan to match
+ * @param {object} query Properties that should match
+ * @returns {boolean} Does `planKey` match?
+ */
+export function planMatches( planKey, query = {} ) {
+	const acceptedKeys = [ 'type', 'group', 'term' ];
+	const unknownKeys = Object.keys( query ).filter( ( key ) => ! acceptedKeys.includes( key ) );
+	if ( unknownKeys.length ) {
+		throw new Error(
+			`planMatches can only match against ${ acceptedKeys.join( ',' ) }, ` +
+				`but unknown keys ${ unknownKeys.join( ',' ) } were passed.`
+		);
+	}
+
+	// @TODO: make getPlan() throw an error on failure. This is going to be a larger change with a separate PR.
+	const plan = getPlan( planKey ) || {};
+	const match = ( key ) => ! ( key in query ) || plan[ key ] === query[ key ];
+	return match( 'type' ) && match( 'group' ) && match( 'term' );
+}
+
+export function calculateMonthlyPriceForPlan( planSlug, termPrice ) {
+	return calculateMonthlyPrice( getPlan( planSlug ).term, termPrice );
+}
+
+export function calculateMonthlyPrice( term, termPrice ) {
+	const divisor = getBillingMonthsForTerm( term );
+	return parseFloat( ( termPrice / divisor ).toFixed( 2 ) );
+}
+
+export function getBillingMonthsForPlan( planSlug ) {
+	return getBillingMonthsForTerm( getPlan( planSlug ).term );
+}
+
+export function getBillingMonthsForTerm( term ) {
+	if ( term === TERM_MONTHLY ) {
+		return 1;
+	} else if ( term === TERM_ANNUALLY ) {
+		return 12;
+	} else if ( term === TERM_BIENNIALLY ) {
+		return 24;
+	}
+
+	throw new Error( `Unknown term: ${ term }` );
+}
+
+export function plansLink( url, siteSlug, intervalType, forceIntervalType = false ) {
+	const originalUrlType = determineUrlType( url );
+	const resultUrl = getUrlParts( url );
+
+	if ( 'monthly' === intervalType || forceIntervalType ) {
+		resultUrl.pathname += '/' + intervalType;
+	}
+
+	if ( siteSlug ) {
+		resultUrl.pathname += '/' + siteSlug;
+	}
+
+	// getUrlFromParts only works with absolute URLs, so add some dummy data if
+	// needed, and format down to the type of the original url.
+	resultUrl.protocol = resultUrl.protocol || 'https:';
+	resultUrl.hostname = resultUrl.hostname || '__hostname__.invalid';
+	return formatUrl( getUrlFromParts( resultUrl ), originalUrlType );
+}
+
+export function applyTestFiltersToPlansList( planName, abtest, extraArgs = {} ) {
+	const filteredPlanConstantObj = { ...getPlan( planName ) };
+	const filteredPlanFeaturesConstantList =
+		getPlan( planName ).getPlanCompareFeatures?.( abtest, extraArgs ) ?? [];
+
+	// these becomes no-ops when we removed some of the abtest overrides, but
+	// we're leaving the code in place for future tests
+	const removeDisabledFeatures = () => {};
+
+	const updatePlanDescriptions = () => {};
+
+	const updatePlanFeatures = () => {};
+
+	removeDisabledFeatures();
+	updatePlanDescriptions();
+	updatePlanFeatures();
+
+	filteredPlanConstantObj.getPlanCompareFeatures = () => filteredPlanFeaturesConstantList;
+
+	return filteredPlanConstantObj;
+}
+
+export function getPlanTermLabel( planName, translate ) {
+	const plan = getPlan( planName );
+	if ( ! plan || ! plan.term ) {
+		return;
+	}
+
+	switch ( plan.term ) {
+		case TERM_MONTHLY:
+			return translate( 'Monthly subscription' );
+		case TERM_ANNUALLY:
+			return translate( 'Annual subscription' );
+		case TERM_BIENNIALLY:
+			return translate( 'Two year subscription' );
+	}
+}
+
+export const getPopularPlanSpec = ( { customerType, isJetpack, availablePlans } ) => {
+	// Jetpack doesn't currently highlight "Popular" plans
+	if ( isJetpack ) {
+		return false;
+	}
+
+	if ( availablePlans.length === 0 ) {
+		return false;
+	}
+
+	const defaultPlan = getPlan( availablePlans[ 0 ] );
+
+	if ( ! defaultPlan ) {
+		return false;
+	}
+
+	const group = GROUP_WPCOM;
+
+	if ( customerType === 'personal' ) {
+		if ( availablePlans.findIndex( isPremiumPlan ) !== -1 ) {
+			return {
+				type: TYPE_PREMIUM,
+				group,
+			};
+		}
+		// when customerType is not personal, default to business
+	} else if ( availablePlans.findIndex( isBusinessPlan ) !== -1 ) {
+		return {
+			type: TYPE_BUSINESS,
+			group,
+		};
+	}
+
+	// finally, just return the default one.
+	return {
+		type: defaultPlan.type,
+		group,
+	};
+};
+
+export const chooseDefaultCustomerType = ( { currentCustomerType, selectedPlan, currentPlan } ) => {
+	if ( currentCustomerType ) {
+		return currentCustomerType;
+	}
+
+	const group = GROUP_WPCOM;
+	const businessPlanSlugs = [
+		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_PREMIUM } )[ 0 ],
+		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_PREMIUM } )[ 0 ],
+		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_BUSINESS } )[ 0 ],
+		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_BUSINESS } )[ 0 ],
+		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_ECOMMERCE } )[ 0 ],
+		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_ECOMMERCE } )[ 0 ],
+	]
+		.map( ( planKey ) => getPlan( planKey ) )
+		.map( ( plan ) => plan.getStoreSlug() );
+
+	if ( selectedPlan ) {
+		return businessPlanSlugs.includes( selectedPlan ) ? 'business' : 'personal';
+	} else if ( currentPlan ) {
+		const isPlanInBusinessGroup = businessPlanSlugs.indexOf( currentPlan.product_slug ) !== -1;
+		return isPlanInBusinessGroup ? 'business' : 'personal';
+	}
+
+	return 'personal';
+};
+
+/**
+ * Determines if a plan includes Jetpack Search by looking at the plan's features.
+ *
+ * @param   {string}  planSlug  Slug of the plan.
+ * @returns {boolean}           Whether the specified plan includes Jetpack Search.
+ */
+export const planHasJetpackSearch = ( planSlug ) =>
+	planHasFeature( planSlug, FEATURE_JETPACK_SEARCH ) ||
+	planHasFeature( planSlug, FEATURE_JETPACK_SEARCH_MONTHLY );
+
+/**
+ * Determines if a plan includes Jetpack Search Classic by checking available plans.
+ *
+ * @param   {object}  plan  Plan object.
+ * @returns {boolean}           Whether the specified plan includes Jetpack Search Classic.
+ */
+export function planHasJetpackClassicSearch( plan ) {
+	return (
+		plan &&
+		( isJetpackBusiness( plan ) ||
+			isBusiness( plan ) ||
+			isEnterprise( plan ) ||
+			isEcommerce( plan ) ||
+			isVipPlan( plan ) )
+	);
+}

@@ -8,23 +8,24 @@ import { compact } from 'lodash';
 /**
  * Internal dependencies
  */
-import wp from 'lib/wp';
-import { SiteSlug } from 'types';
+import wp from 'calypso/lib/wp';
+import { SiteSlug } from 'calypso/types';
 import { useTranslate } from 'i18n-calypso';
-import { isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
-import getSiteBySlug from 'state/sites/selectors/get-site-by-slug';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import PromoSection, { Props as PromoSectionProps } from 'components/promo-section';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
-import ClipboardButtonInput from 'components/clipboard-button-input';
-import { CtaButton } from 'components/promo-section/promo-card/cta';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import getSiteBySlug from 'calypso/state/sites/selectors/get-site-by-slug';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
+import { CtaButton } from 'calypso/components/promo-section/promo-card/cta';
 
 /**
  * Image dependencies
  */
-import earnSectionImage from 'assets/images/earn/earn-section.svg';
-import referralImage from 'assets/images/earn/referral.svg';
+import earnSectionImage from 'calypso/assets/images/earn/earn-section.svg';
+import referralImage from 'calypso/assets/images/earn/referral.svg';
 
 /**
  * Style dependencies
@@ -79,7 +80,7 @@ const ReferAFriendSection: FunctionComponent< ConnectedProps > = ( {
 		};
 
 		if ( peerReferralLink ) {
-			cta.component = <ClipboardButtonInput value={ peerReferralLink } />;
+			cta.component = <ClipboardButtonInput value={ localizeUrl( peerReferralLink ) } />;
 		}
 
 		return {

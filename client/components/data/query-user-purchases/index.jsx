@@ -12,13 +12,13 @@ import { connect } from 'react-redux';
 import {
 	hasLoadedUserPurchasesFromServer,
 	isFetchingUserPurchases,
-} from 'state/purchases/selectors';
-import { fetchUserPurchases } from 'state/purchases/actions';
+} from 'calypso/state/purchases/selectors';
+import { fetchUserPurchases } from 'calypso/state/purchases/actions';
 
 class QueryUserPurchases extends Component {
 	requestUserPurchases( nextProps ) {
-		const userChanged = nextProps && this.props.userId !== nextProps.userId,
-			props = nextProps || this.props;
+		const userChanged = nextProps && this.props.userId !== nextProps.userId;
+		const props = nextProps || this.props;
 
 		if (
 			( ! props.isFetchingUserPurchases && ! props.hasLoadedUserPurchasesFromServer ) ||

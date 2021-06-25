@@ -9,11 +9,11 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import { CALYPSO_CONTACT } from 'lib/url/support';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getGuidedTransferError } from 'state/sites/guided-transfer/selectors';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getGuidedTransferError } from 'calypso/state/sites/guided-transfer/selectors';
 
 const getErrorText = ( { translate, errorCode } ) => {
 	switch ( errorCode ) {

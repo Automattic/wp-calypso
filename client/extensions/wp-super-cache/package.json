@@ -17,7 +17,6 @@
 		],
 		"settings_path": "/extensions/wp-super-cache",
 		"module": "wp-super-cache",
-		"group": "sites",
-		"secondary": true
+		"group": "sites"
 	}
 }

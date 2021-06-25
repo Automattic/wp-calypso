@@ -1,4 +1,3 @@
-/* global requestAnimationFrame:false */
 /**
  * External dependencies
  */
@@ -9,7 +8,7 @@ import { useSelector, useStore } from 'react-redux';
  * Internal dependencies
  */
 import { stopPerformanceTracking } from './lib';
-import { getSectionName } from 'state/ui/selectors';
+import { getSectionName } from 'calypso/state/ui/selectors';
 
 export function usePerformanceTrackerStop() {
 	const sectionName = useSelector( getSectionName );

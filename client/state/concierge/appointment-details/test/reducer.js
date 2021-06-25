@@ -5,7 +5,7 @@ import { appointmentDetails } from '../reducer';
 import {
 	CONCIERGE_APPOINTMENT_DETAILS_REQUEST,
 	CONCIERGE_APPOINTMENT_DETAILS_UPDATE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( 'concierge/availableTimes/reducer', () => {
 	const mockAppointmentDetails = { id: 1, begin_timestamp: 2, end_timestamp: 3 };

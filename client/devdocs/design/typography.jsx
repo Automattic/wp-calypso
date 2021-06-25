@@ -8,8 +8,8 @@ import React from 'react';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import DocumentHead from 'components/data/document-head';
-import Main from 'components/main';
+import DocumentHead from 'calypso/components/data/document-head';
+import Main from 'calypso/components/main';
 
 export default class Typography extends React.PureComponent {
 	static displayName = 'Typography';
@@ -178,7 +178,7 @@ export default class Typography extends React.PureComponent {
 
 					<p>
 						A harmonic ratio helps in creating a more harmonious design. If we use the same scale
-						across WordPress.com, things feel more cohesive — it’s as much about consistency as it
+						across WordPress.com, things feel more cohesive — it’s as much about consistency as it
 						is about harmony. Instead of using arbitrary numbers, we conform to the WordPress core
 						typescale.
 					</p>

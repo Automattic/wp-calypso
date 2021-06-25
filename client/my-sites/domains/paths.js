@@ -3,7 +3,7 @@
  */
 import { filter } from 'lodash';
 import { stringify } from 'qs';
-import { isUnderEmailManagementAll } from 'my-sites/email/paths';
+import { isUnderEmailManagementAll } from 'calypso/my-sites/email/paths';
 
 function resolveRootPath( relativeTo = null ) {
 	if ( relativeTo ) {
@@ -47,7 +47,7 @@ function domainManagementTransferBase(
 }
 
 export function isUnderDomainManagementAll( path ) {
-	return path?.startsWith( domainManagementAllRoot() + '/' );
+	return path?.startsWith( domainManagementAllRoot() + '/' ) || path === domainManagementRoot();
 }
 
 export function domainAddNew( siteName, searchTerm ) {
@@ -69,7 +69,7 @@ export function domainManagementRoot() {
 }
 
 export function domainManagementList( siteName, relativeTo = null ) {
-	if ( isUnderDomainManagementAll( relativeTo ) ) {
+	if ( isUnderDomainManagementAll( relativeTo ) || isUnderEmailManagementAll( relativeTo ) ) {
 		return domainManagementRoot();
 	}
 	return domainManagementRoot() + '/' + siteName;
@@ -77,18 +77,6 @@ export function domainManagementList( siteName, relativeTo = null ) {
 
 export function domainManagementEdit( siteName, domainName, relativeTo ) {
 	return domainManagementEditBase( siteName, domainName, 'edit', relativeTo );
-}
-
-export function domainManagementAddGSuiteUsers( siteName, domainName ) {
-	let path;
-
-	if ( domainName ) {
-		path = domainManagementEditBase( siteName, domainName, 'add-gsuite-users' );
-	} else {
-		path = domainManagementRoot() + '/add-gsuite-users/' + siteName;
-	}
-
-	return path;
 }
 
 export function domainManagementContactsPrivacy( siteName, domainName, relativeTo = null ) {
@@ -149,12 +137,12 @@ export function domainManagementTransfer( siteName, domainName, relativeTo = nul
 	return domainManagementTransferBase( siteName, domainName, '', relativeTo );
 }
 
-export function domainManagementTransferIn( siteName, domainName ) {
-	return domainManagementTransferBase( siteName, domainName, 'in' );
+export function domainManagementTransferIn( siteName, domainName, relativeTo = null ) {
+	return domainManagementTransferBase( siteName, domainName, 'in', relativeTo );
 }
 
-export function domainManagementTransferInPrecheck( siteName, domainName ) {
-	return domainManagementTransferBase( siteName, domainName, 'precheck' );
+export function domainManagementTransferInPrecheck( siteName, domainName, relativeTo = null ) {
+	return domainManagementTransferBase( siteName, domainName, 'precheck', relativeTo );
 }
 
 export function domainManagementTransferOut( siteName, domainName, relativeTo = null ) {

@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/memberships/init';
+import 'calypso/state/memberships/init';
 
 const emptyObject = {};
 

@@ -2,16 +2,7 @@
 @import '../mixins';
 
 .gutenboarding-title {
-	@include onboarding-heading-text-mobile;
-	color: var( --mainColor );
-
-	@include break-mobile {
-		@include onboarding-heading-text-tablet;
-	}
-
-	@include break-xlarge {
-		@include onboarding-heading-text;
-	}
+	@include onboarding-heading-title;
 }
 
 .gutenboarding-subtitle {

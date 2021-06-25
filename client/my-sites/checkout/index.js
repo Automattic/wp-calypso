@@ -13,20 +13,33 @@ import {
 	gsuiteNudge,
 	upsellNudge,
 	redirectToSupportSession,
+	redirectJetpackLegacyPlans,
+	jetpackCheckoutThankYou,
 } from './controller';
-import SiftScience from 'lib/siftscience';
-import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
-import { noSite, siteSelection } from 'my-sites/controller';
-import config from 'config';
-import userFactory from 'lib/user';
+import { noop } from './utils';
+import { recordSiftScienceUser } from 'calypso/lib/siftscience';
+import { makeLayout, redirectLoggedOut, render as clientRender } from 'calypso/controller';
+import { noSite, siteSelection } from 'calypso/my-sites/controller';
+import { isEnabled } from '@automattic/calypso-config';
+import userFactory from 'calypso/lib/user';
 
 export default function () {
-	SiftScience.recordUser();
+	page( '/checkout*', recordSiftScienceUser );
 
 	const user = userFactory();
 	const isLoggedOut = ! user.get();
 
 	if ( isLoggedOut ) {
+		if ( isEnabled( 'jetpack/userless-checkout' ) ) {
+			page( '/checkout/jetpack/:siteSlug/:productSlug', checkout, makeLayout, clientRender );
+			page(
+				'/checkout/jetpack/thank-you/:site/:product',
+				jetpackCheckoutThankYou,
+				makeLayout,
+				clientRender
+			);
+		}
+
 		page( '/checkout/offer-quickstart-session', upsellNudge, makeLayout, clientRender );
 
 		page( '/checkout/no-site/:lang?', noSite, checkout, makeLayout, clientRender );
@@ -34,6 +47,18 @@ export default function () {
 		page( '/checkout*', redirectLoggedOut );
 
 		return;
+	}
+
+	// Handle logged-in user visiting Jetpack checkout
+	if ( isEnabled( 'jetpack/userless-checkout' ) ) {
+		page( '/checkout/jetpack/:siteSlug/:productSlug', checkout, makeLayout, clientRender );
+		page(
+			'/checkout/jetpack/thank-you/:site/:product',
+			siteSelection,
+			jetpackCheckoutThankYou,
+			makeLayout,
+			clientRender
+		);
 	}
 
 	// Show these paths only for logged in users
@@ -95,7 +120,7 @@ export default function () {
 		clientRender
 	);
 
-	if ( config.isEnabled( 'upsell/concierge-session' ) ) {
+	if ( isEnabled( 'upsell/concierge-session' ) ) {
 		// For backwards compatibility, retaining the old URL structure.
 		page( '/checkout/:site/add-support-session/:receiptId?', redirectToSupportSession );
 
@@ -132,9 +157,23 @@ export default function () {
 		);
 	}
 
-	page( '/checkout/:domainOrProduct', siteSelection, checkout, makeLayout, clientRender );
+	page(
+		'/checkout/:domainOrProduct',
+		siteSelection,
+		isEnabled( 'jetpack/redirect-legacy-plans' ) ? redirectJetpackLegacyPlans : noop,
+		checkout,
+		makeLayout,
+		clientRender
+	);
 
-	page( '/checkout/:product/:domainOrProduct', siteSelection, checkout, makeLayout, clientRender );
+	page(
+		'/checkout/:product/:domainOrProduct',
+		siteSelection,
+		isEnabled( 'jetpack/redirect-legacy-plans' ) ? redirectJetpackLegacyPlans : noop,
+		checkout,
+		makeLayout,
+		clientRender
+	);
 
 	// Visiting /renew without a domain is invalid and should be redirected to /me/purchases
 	page( '/checkout/:product/renew/:purchaseId', '/me/purchases' );
@@ -156,7 +195,7 @@ export default function () {
 	);
 
 	// Visiting /checkout without a plan or product should be redirected to /plans
-	page( '/checkout', '/plans' );
+	page( '/checkout', isEnabled( 'jetpack-cloud/connect' ) ? '/plans' : '/pricing' );
 
 	page(
 		'/checkout/:site/offer-plan-upgrade/:upgradeItem/:receiptId?',

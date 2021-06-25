@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/google-my-business/init';
+import 'calypso/state/google-my-business/init';
 
 /**
  * Returns the current interval of a Google My Business stats chart or the

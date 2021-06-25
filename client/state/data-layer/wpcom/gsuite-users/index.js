@@ -6,16 +6,17 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { GSUITE_USERS_REQUEST } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { errorNotice } from 'state/notices/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { GSUITE_USERS_REQUEST } from 'calypso/state/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import {
 	receiveGetGSuiteUsersSuccess,
 	receiveGetGSuiteUsersFailure,
-} from 'state/gsuite-users/actions';
+} from 'calypso/state/gsuite-users/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 
 export const getGSuiteUsers = ( action ) => {
 	return http(
@@ -29,7 +30,14 @@ export const getGSuiteUsers = ( action ) => {
 
 export const getGSuiteUsersFailure = ( action, error ) => {
 	return [
-		errorNotice( translate( 'Failed to retrieve G Suite Users' ) ),
+		errorNotice(
+			translate( 'Failed to retrieve %(googleMailService)s users', {
+				args: {
+					googleMailService: getGoogleMailServiceFamily(),
+				},
+				comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
+			} )
+		),
 		receiveGetGSuiteUsersFailure( action.siteId, error ),
 	];
 };

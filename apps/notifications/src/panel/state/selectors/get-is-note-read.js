@@ -1,3 +1,7 @@
+/* global localStorage */
+/**
+ * Internal dependencies
+ */
 import getNotes from './get-notes';
 
 export const getIsNoteRead = ( notesState, note ) => {

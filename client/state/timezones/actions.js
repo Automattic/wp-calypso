@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { TIMEZONES_RECEIVE, TIMEZONES_REQUEST } from 'state/action-types';
+import { TIMEZONES_RECEIVE, TIMEZONES_REQUEST } from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/timezones';
-import 'state/timezones/init';
+import 'calypso/state/data-layer/wpcom/timezones';
+import 'calypso/state/timezones/init';
 
 export const requestTimezones = () => ( {
 	type: TIMEZONES_REQUEST,

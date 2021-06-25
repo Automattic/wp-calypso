@@ -1,5 +1,4 @@
-Sites
-=====
+# Sites
 
 A module for managing site data.
 
@@ -12,7 +11,7 @@ Used in combination with the Redux store instance `dispatch` function, actions c
 Adds a site object to the set of known sites.
 
 ```js
-import { receiveSite } from 'state/sites/actions';
+import { receiveSite } from 'calypso/state/sites/actions';
 
 dispatch( receiveSite( { ID: 2916284, name: 'WordPress.com Example Blog' } ) );
 ```
@@ -21,7 +20,7 @@ dispatch( receiveSite( { ID: 2916284, name: 'WordPress.com Example Blog' } ) );
 
 The included reducers add the following keys to the global state tree, under `sites`:
 
-#### `items`
+### `items`
 
 All known sites, indexed by site ID.
 

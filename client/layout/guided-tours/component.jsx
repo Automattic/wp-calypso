@@ -8,19 +8,19 @@ import { defer } from 'lodash';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'lib/analytics/tracks';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import AllTours from './all-tours';
-import QueryPreferences from 'components/data/query-preferences';
+import QueryPreferences from 'calypso/components/data/query-preferences';
 import { RootChild } from '@automattic/components';
-import { getGuidedTourState } from 'state/guided-tours/selectors';
-import { getLastAction } from 'state/ui/action-log/selectors';
-import { getSectionName, isSectionLoading } from 'state/ui/selectors';
-import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
+import { getGuidedTourState } from 'calypso/state/guided-tours/selectors';
+import { getLastAction } from 'calypso/state/ui/action-log/selectors';
+import { getSectionName, isSectionLoading } from 'calypso/state/ui/selectors';
+import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import {
 	nextGuidedTourStep,
 	quitGuidedTour,
 	resetGuidedToursHistory,
-} from 'state/guided-tours/actions';
+} from 'calypso/state/guided-tours/actions';
 
 /**
  * Style dependencies

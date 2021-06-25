@@ -1,8 +1,7 @@
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
-import { getPlan, applyTestFiltersToPlansList } from 'lib/plans';
+import { getPlan, applyTestFiltersToPlansList } from '@automattic/calypso-products';
 
 /**
  * Computes a plan object and a related product object based on plan slug/constant
@@ -13,7 +12,7 @@ import { getPlan, applyTestFiltersToPlansList } from 'lib/plans';
  */
 export const planSlugToPlanProduct = ( products, planSlug ) => {
 	const plan = getPlan( planSlug );
-	const planConstantObj = applyTestFiltersToPlansList( plan, abtest );
+	const planConstantObj = applyTestFiltersToPlansList( plan, undefined );
 	return {
 		planSlug,
 		plan: planConstantObj,

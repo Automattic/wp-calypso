@@ -7,20 +7,21 @@ import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
 import { find, get } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper';
-import { recordTracksEvent } from 'lib/analytics/tracks';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import verticals from './verticals';
 import { Button } from '@automattic/components';
-import { getStepUrl } from 'signup/utils';
-import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
-import { setSurvey } from 'state/signup/steps/survey/actions';
-import { submitSignupStep } from 'state/signup/progress/actions';
-import { getSignupProgress } from 'state/signup/progress/selectors';
+import { getStepUrl } from 'calypso/signup/utils';
+import FormTextInputWithAction from 'calypso/components/forms/form-text-input-with-action';
+import { setSurvey } from 'calypso/state/signup/steps/survey/actions';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 /**
  * Style dependencies
@@ -114,8 +115,9 @@ class SurveyStep extends React.Component {
 			'To get started, tell us what your blog or website is about.'
 		);
 
+		const locale = ! this.props.userLoggedIn ? this.props.locale : '';
 		const backUrl = this.props.stepSectionName
-			? getStepUrl( this.props.flowName, this.props.stepName, undefined, this.props.locale )
+			? getStepUrl( this.props.flowName, this.props.stepName, undefined, locale )
 			: undefined;
 
 		return (
@@ -142,7 +144,8 @@ class SurveyStep extends React.Component {
 	};
 
 	handleOther = () => {
-		page( getStepUrl( this.props.flowName, this.props.stepName, 'other', this.props.locale ) );
+		const locale = ! this.props.userLoggedIn ? this.props.locale : '';
+		page( getStepUrl( this.props.flowName, this.props.stepName, 'other', locale ) );
 	};
 
 	handleVerticalOther = ( otherTextValue ) => {
@@ -188,6 +191,7 @@ class SurveyStep extends React.Component {
 
 export default connect(
 	( state ) => ( {
+		userLoggedIn: isUserLoggedIn( state ),
 		signupProgress: getSignupProgress( state ),
 	} ),
 	{ setSurvey, submitSignupStep }

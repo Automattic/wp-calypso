@@ -1,0 +1,25 @@
+.themes__header {
+    display: flex;
+
+	.themes__page-heading {
+		width: 100%;
+	}
+}
+
+.themes__install-theme-button-container {
+	margin: auto;
+	margin-right: 15px;
+
+	@include breakpoint-deprecated( '>480px' ) {
+		margin-right: 0;
+		margin-bottom: 17px;
+	}
+
+	.themes__upload-button {
+		white-space: nowrap;
+	}
+}
+
+.themes__page-heading .formatted-header__subtitle {
+    margin: 0;
+}

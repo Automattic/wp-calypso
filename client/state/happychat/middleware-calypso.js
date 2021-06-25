@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { has, noop } from 'lodash';
+import { has } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,21 +24,31 @@ import {
 	PUBLICIZE_CONNECTION_DELETE,
 	PURCHASE_REMOVE_COMPLETED,
 	SITE_SETTINGS_SAVE_SUCCESS,
-} from 'state/action-types';
-import { JETPACK_CONNECT_AUTHORIZE } from 'state/jetpack-connect/action-types';
+} from 'calypso/state/action-types';
+import { JETPACK_CONNECT_AUTHORIZE } from 'calypso/state/jetpack-connect/action-types';
 import {
 	HAPPYCHAT_CHAT_STATUS_ASSIGNED,
 	HAPPYCHAT_CHAT_STATUS_PENDING,
-} from 'state/happychat/constants';
-import { sendEvent, sendLog, sendPreferences } from 'state/happychat/connection/actions';
-import getHappychatChatStatus from 'state/happychat/selectors/get-happychat-chat-status';
-import getGroups from 'state/happychat/selectors/get-groups';
-import getSkills from 'state/happychat/selectors/get-skills';
-import isHappychatChatAssigned from 'state/happychat/selectors/is-happychat-chat-assigned';
-import isHappychatClientConnected from 'state/happychat/selectors/is-happychat-client-connected';
-import { getCurrentUserLocale } from 'state/current-user/selectors';
-import getCurrentRoute from 'state/selectors/get-current-route';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+} from 'calypso/state/happychat/constants';
+import {
+	sendEvent,
+	sendLog,
+	sendPreferences,
+	setChatCustomFields,
+} from 'calypso/state/happychat/connection/actions';
+import getHappychatChatStatus from 'calypso/state/happychat/selectors/get-happychat-chat-status';
+import getGroups from 'calypso/state/happychat/selectors/get-groups';
+import getSkills from 'calypso/state/happychat/selectors/get-skills';
+import isHappychatChatAssigned from 'calypso/state/happychat/selectors/is-happychat-chat-assigned';
+import isHappychatClientConnected from 'calypso/state/happychat/selectors/is-happychat-client-connected';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import { getHelpSelectedSiteId } from 'calypso/state/help/selectors';
+import getSectionName from 'calypso/state/ui/selectors/get-section-name';
+import getSitePlanSlug from 'calypso/state/sites/selectors/get-site-plan-slug';
+
+const noop = () => {};
 
 const getRouteSetMessage = ( state, path ) => {
 	return `Looking at https://wordpress.com${ path }`;
@@ -158,6 +168,14 @@ export default ( store ) => ( next ) => ( action ) => {
 						recordTracksEvent( 'calypso_happychat_start' ),
 						sendEvent( getRouteSetMessage( state, getCurrentRoute( state ) ) )
 					)
+				);
+				const siteId = getHelpSelectedSiteId( state );
+				dispatch(
+					setChatCustomFields( {
+						calypsoSectionName: getSectionName( state ) || '__unknown__',
+						wpcomSiteId: '' + siteId, // Convert to string for Custom Fields
+						wpcomSitePlan: getSitePlanSlug( state, siteId ),
+					} )
 				);
 			}
 			break;

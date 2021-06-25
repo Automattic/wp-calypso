@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { Threat } from 'components/jetpack/threat-item/types';
+import { Threat } from 'calypso/components/jetpack/threat-item/types';
 
 type ScanState = 'unavailable' | 'provisioning' | 'idle' | 'scanning';
 
@@ -13,7 +13,7 @@ type ScanState = 'unavailable' | 'provisioning' | 'idle' | 'scanning';
 export type Scan = {
 	state: ScanState;
 	threats: [ Threat ];
-	credentials: [ object ];
+	credentials: [ Record< string, unknown > ];
 	reason?: string;
 	mostRecent?: {
 		timestamp: string;

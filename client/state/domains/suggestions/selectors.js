@@ -3,7 +3,7 @@
  */
 import { getSerializedDomainsSuggestionsQuery } from './utils';
 
-import 'state/domains/init';
+import 'calypso/state/domains/init';
 
 /**
  * Returns domains suggestions information for a query.

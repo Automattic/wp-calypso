@@ -100,7 +100,6 @@ export const filterSettingsByActiveModules = ( settings ) => {
 			'social_notifications_reblog',
 			'social_notifications_subscribe',
 		],
-		markdown: [ 'wpcom_publish_comments_with_markdown' ],
 		protect: [ 'jetpack_protect_global_whitelist' ],
 		sso: [ 'jetpack_sso_match_by_email', 'jetpack_sso_require_two_step' ],
 		comments: [ 'highlander_comment_form_prompt', 'jetpack_comment_form_color_scheme' ],

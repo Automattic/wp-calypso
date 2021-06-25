@@ -1,13 +1,3 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-/**
- * Internal dependencies
- */
-import Count from 'components/count';
-
 const count = () => {
 	/* Because Count is wrapped in Localize we have to store the example in a string */
 };

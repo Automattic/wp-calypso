@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/domains/init';
+import 'calypso/state/domains/init';
 
 /**
  * Returns an object with domain validation schemas keyed by tld

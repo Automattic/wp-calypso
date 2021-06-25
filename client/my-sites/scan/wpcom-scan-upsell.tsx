@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { ReactElement, FunctionComponent } from 'react';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { Button } from '@automattic/components';
 
@@ -10,48 +10,54 @@ import { Button } from '@automattic/components';
  * Internal dependencies
  */
 import { addQueryArgs } from '@wordpress/url';
-import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
-import DocumentHead from 'components/data/document-head';
-import FormattedHeader from 'components/formatted-header';
-import Main from 'components/main';
-import Notice from 'components/notice';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import PromoCard from 'components/promo-section/promo-card';
-import PromoCardCTA from 'components/promo-section/promo-card/cta';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import useTrackCallback from 'lib/jetpack/use-track-callback';
-import { preventWidows } from 'lib/formatting';
-import SecurityIcon from 'components/jetpack/security-icon';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import DocumentHead from 'calypso/components/data/document-head';
+import FormattedHeader from 'calypso/components/formatted-header';
+import JetpackDisconnectedWPCOM from 'calypso/components/jetpack/jetpack-disconnected-wpcom';
+import Main from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import PromoCard from 'calypso/components/promo-section/promo-card';
+import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import { preventWidows } from 'calypso/lib/formatting';
+import SecurityIcon from 'calypso/components/jetpack/security-icon';
 
 /**
  * Asset dependencies
  */
-import JetpackScanSVG from 'assets/images/illustrations/jetpack-scan.svg';
+import JetpackScanSVG from 'calypso/assets/images/illustrations/jetpack-scan.svg';
+import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
 import './style.scss';
 
-const ScanMultisiteBody: FunctionComponent = () => (
-	<PromoCard
-		title={ preventWidows( translate( 'WordPress multi-sites are not supported' ) ) }
-		image={ <SecurityIcon icon="info" /> }
-		isPrimary
-	>
-		<p>
-			{ preventWidows(
-				translate(
-					"We're sorry, Jetpack Scan is not compatible with multisite WordPress installations at this time."
-				)
-			) }
-		</p>
-	</PromoCard>
-);
+const ScanMultisiteBody: FunctionComponent = () => {
+	const translate = useTranslate();
+	return (
+		<PromoCard
+			title={ preventWidows( translate( 'WordPress multi-sites are not supported' ) ) }
+			image={ <SecurityIcon icon="info" /> }
+			isPrimary
+		>
+			<p>
+				{ preventWidows(
+					translate(
+						"We're sorry, Jetpack Scan is not compatible with multisite WordPress installations at this time."
+					)
+				) }
+			</p>
+		</PromoCard>
+	);
+};
 
 const ScanVPActiveBody: FunctionComponent = () => {
 	const onUpgradeClick = useTrackCallback( undefined, 'calypso_jetpack_scan_vaultpress_click' );
+	const translate = useTranslate();
 	return (
 		<PromoCard
 			title={ preventWidows( translate( 'Your site has VaultPress' ) ) }
-			image={ <SecurityIcon icon="info" /> }
+			image={ { path: VaultPressLogo } }
 			isPrimary
 		>
 			<p>
@@ -63,7 +69,7 @@ const ScanVPActiveBody: FunctionComponent = () => {
 			</p>
 			<div className="scan__wpcom-ctas">
 				<Button
-					className="scan__wpcom-cta backup__wpcom-realtime-cta"
+					className="scan__wpcom-cta"
 					href="https://dashboard.vaultpress.com"
 					onClick={ onUpgradeClick }
 					selfTarget={ true }
@@ -83,6 +89,7 @@ const ScanUpsellBody: FunctionComponent = () => {
 	const isAdmin = useSelector(
 		( state ) => siteId && canCurrentUser( state, siteId, 'manage_options' )
 	);
+	const translate = useTranslate();
 
 	return (
 		<PromoCard
@@ -124,6 +131,7 @@ const ScanUpsellBody: FunctionComponent = () => {
 };
 
 export default function WPCOMScanUpsellPage( { reason }: { reason?: string } ): ReactElement {
+	const translate = useTranslate();
 	let body;
 	switch ( reason ) {
 		case 'multisite_not_supported':
@@ -131,6 +139,9 @@ export default function WPCOMScanUpsellPage( { reason }: { reason?: string } ): 
 			break;
 		case 'vp_active_on_site':
 			body = <ScanVPActiveBody />;
+			break;
+		case 'no_connected_jetpack':
+			body = <JetpackDisconnectedWPCOM />;
 			break;
 		default:
 			body = <ScanUpsellBody />;

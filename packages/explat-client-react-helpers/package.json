@@ -1,0 +1,36 @@
+{
+	"name": "@automattic/explat-client-react-helpers",
+	"version": "0.0.2",
+	"description": "Standalone ExPlat Client: React Helpers",
+	"author": "Automattic Inc.",
+	"license": "GPL-2.0-or-later",
+	"main": "dist/cjs/index.js",
+	"browser": "dist/esm/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.tsx",
+	"types": "dist/types/index.d.ts",
+	"sideEffects": false,
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/explat-client-react-helpers"
+	},
+	"scripts": {
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"watch": "tsc --build ./tsconfig.json --watch",
+		"prepack": "yarn run clean && yarn run build",
+		"test": "yarn jest"
+	},
+	"dependencies": {
+		"@automattic/explat-client": "^0.0.2",
+		"react": "^16.12.0",
+		"tslib": "^2.2.0"
+	},
+	"devDependencies": {
+		"@automattic/calypso-polyfills": "^1.0.0",
+		"@testing-library/react": "^11.2.6",
+		"@testing-library/react-hooks": "5.1.3",
+		"react-dom": "^16.12.0"
+	}
+}

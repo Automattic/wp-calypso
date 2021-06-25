@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { ROUTE_CLEAR_LAST_NON_EDITOR, ROUTE_SET } from 'state/action-types';
+import { ROUTE_CLEAR_LAST_NON_EDITOR, ROUTE_SET } from 'calypso/state/action-types';
 
 /**
  * Include paths which start in the classic editor because it is common

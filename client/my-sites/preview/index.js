@@ -2,8 +2,8 @@
  * Internal dependencies
  */
 
-import { makeLayout } from 'controller';
-import { siteSelection, sites, navigation } from 'my-sites/controller';
+import { makeLayout } from 'calypso/controller';
+import { siteSelection, sites, navigation } from 'calypso/my-sites/controller';
 import { preview } from './controller';
 
 export default function ( router ) {

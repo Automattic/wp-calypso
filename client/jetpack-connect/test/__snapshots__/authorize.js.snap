@@ -19,6 +19,9 @@ exports[`JetpackAuthorize renders as expected 1`] = `
     <div
       className="jetpack-connect__logged-in-form"
     >
+      <QuerySitePurchases
+        siteId={98765}
+      />
       <Connect(QueryUserConnection)
         siteId={98765}
         siteIsOnSitesList={false}
@@ -29,6 +32,7 @@ exports[`JetpackAuthorize renders as expected 1`] = `
             "authApproved": false,
             "blogname": "Example Blog",
             "clientId": 98765,
+            "closeWindowAfterAuthorize": false,
             "closeWindowAfterLogin": false,
             "from": "banner-44-slide-1-dashboard",
             "homeUrl": "http://an.example.site",
@@ -55,7 +59,7 @@ exports[`JetpackAuthorize renders as expected 1`] = `
           }
         }
       />
-      <Card
+      <Memo(Card)
         className="jetpack-connect__logged-in-card"
       >
         <Connect(Gravatar)
@@ -69,7 +73,7 @@ exports[`JetpackAuthorize renders as expected 1`] = `
         <p
           className="jetpack-connect__logged-in-form-user-text"
         >
-          Connecting as {{strong}}%(user)s{{/strong}}
+          Connecting as {{strong}}%(user)s{{/strong}} ({{strong}}%(email)s{{/strong}})
         </p>
         <LoggedOutFormFooter
           className="jetpack-connect__action-disclaimer"
@@ -77,16 +81,16 @@ exports[`JetpackAuthorize renders as expected 1`] = `
           <Connect(Localized(JetpackConnectDisclaimer))
             siteName="Example Blog"
           />
-          <Button
+          <ForwardRef(Button)
             disabled={false}
             onClick={[Function]}
             primary={true}
             type="button"
           >
             Approve
-          </Button>
+          </ForwardRef(Button)>
         </LoggedOutFormFooter>
-      </Card>
+      </Memo(Card)>
       <LoggedOutFormLinks>
         <LoggedOutFormLinkItem
           href="http://an.example.site/wp-admin/admin.php?page=jetpack"

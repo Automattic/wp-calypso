@@ -6,8 +6,8 @@ import { isDesktop } from '@automattic/viewport';
 /**
  * Internal dependencies
  */
-import { and } from 'layout/guided-tours/utils';
-import { isNewUser } from 'state/guided-tours/contexts';
+import { and } from 'calypso/layout/guided-tours/utils';
+import { isNewUser } from 'calypso/state/guided-tours/contexts';
 
 export default {
 	name: 'mediaBasicsTour',

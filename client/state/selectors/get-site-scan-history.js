@@ -6,8 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { Threat } from 'components/jetpack/threat-item/types';
-import 'state/data-layer/wpcom/sites/scan';
+import 'calypso/state/data-layer/wpcom/sites/scan';
 
 /**
  * Returns an array found threats in the current scan process of Jetpack Scan.
@@ -15,7 +14,7 @@ import 'state/data-layer/wpcom/sites/scan';
  *
  * @param  {object}   state    Global state tree
  * @param  {number}   siteId   The ID of the site we're querying
- * @returns {Threat[]}         Array of threats found
+ * @returns {import('calypso/components/jetpack/threat-item/types').Threat[]} Array of threats found
  */
 export default function getSiteScanHistory( state, siteId ) {
 	return get( state, [ 'jetpackScan', 'history', 'data', siteId, 'threats' ], [] );

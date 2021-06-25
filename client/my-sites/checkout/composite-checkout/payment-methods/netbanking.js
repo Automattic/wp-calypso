@@ -5,34 +5,33 @@ import React from 'react';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import { sprintf } from '@wordpress/i18n';
-import { useI18n } from '@automattic/react-i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import {
 	Button,
-	usePaymentProcessor,
-	useTransactionStatus,
+	FormStatus,
 	useLineItems,
-	useEvents,
 	useFormStatus,
 	registerStore,
 	useSelect,
 	useDispatch,
 } from '@automattic/composite-checkout';
 import { camelCase } from 'lodash';
+import { useDispatch as useReduxDispatch } from 'react-redux';
+import { Field } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
  */
-import notices from 'notices';
-import { validatePaymentDetails } from 'lib/checkout/validation';
-import useCountryList from 'my-sites/checkout/composite-checkout/hooks/use-country-list';
-import Field from 'my-sites/checkout/composite-checkout/components/field';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
+import useCountryList from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
 import {
 	SummaryLine,
 	SummaryDetails,
-} from 'my-sites/checkout/composite-checkout/components/summary-details';
-import { PaymentMethodLogos } from 'my-sites/checkout/composite-checkout/components/payment-method-logos';
-import { maskField } from 'lib/checkout';
-import CountrySpecificPaymentFieldsUI from '../components/country-specific-payment-fields-ui';
+} from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
+import { PaymentMethodLogos } from 'calypso/my-sites/checkout/composite-checkout/components/payment-method-logos';
+import { maskField } from 'calypso/lib/checkout';
+import CountrySpecificPaymentFields from '../components/country-specific-payment-fields';
 
 const debug = debugFactory( 'composite-checkout:netbanking-payment-method' );
 
@@ -124,20 +123,12 @@ export function createNetBankingPaymentMethodStore() {
 	return { ...store, actions, selectors };
 }
 
-export function createNetBankingMethod( { store, stripe, stripeConfiguration } ) {
+export function createNetBankingMethod( { store } ) {
 	return {
 		id: 'netbanking',
 		label: <NetBankingLabel />,
-		activeContent: (
-			<NetBankingFields stripe={ stripe } stripeConfiguration={ stripeConfiguration } />
-		),
-		submitButton: (
-			<NetBankingPayButton
-				store={ store }
-				stripe={ stripe }
-				stripeConfiguration={ stripeConfiguration }
-			/>
-		),
+		activeContent: <NetBankingFields />,
+		submitButton: <NetBankingPayButton store={ store } />,
 		inactiveContent: <NetBankingSummary />,
 		getAriaLabel: () => 'Transferência bancária',
 	};
@@ -161,7 +152,7 @@ function NetBankingFields() {
 	const customerName = useSelect( ( select ) => select( 'netbanking' ).getCustomerName() );
 	const { changeCustomerName } = useDispatch( 'netbanking' );
 	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== 'ready';
+	const isDisabled = formStatus !== FormStatus.READY;
 	const countriesList = useCountryList( [] );
 
 	return (
@@ -178,7 +169,7 @@ function NetBankingFields() {
 				disabled={ isDisabled }
 			/>
 			<div className="netbanking__contact-fields">
-				<CountrySpecificPaymentFieldsUI
+				<CountrySpecificPaymentFields
 					countryCode={ 'IN' } // If this payment method is available and the country is not India, we have other problems
 					countriesList={ countriesList }
 					getErrorMessage={ getErrorMessagesForField }
@@ -220,17 +211,10 @@ const NetBankingField = styled( Field )`
 	}
 `;
 
-function NetBankingPayButton( { disabled, store } ) {
+function NetBankingPayButton( { disabled, onClick, store } ) {
 	const { __ } = useI18n();
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
-	const {
-		setTransactionRedirecting,
-		setTransactionError,
-		setTransactionPending,
-	} = useTransactionStatus();
-	const submitTransaction = usePaymentProcessor( 'netbanking' );
-	const onEvent = useEvents();
 	const customerName = useSelect( ( select ) => select( 'netbanking' ).getCustomerName() );
 	const fields = useSelect( ( select ) => select( 'netbanking' ).getFields() );
 	const massagedFields = Object.entries( fields ).reduce(
@@ -240,44 +224,25 @@ function NetBankingPayButton( { disabled, store } ) {
 	const contactCountryCode = useSelect(
 		( select ) => select( 'wpcom' )?.getContactInfo().countryCode?.value
 	);
+	const reduxDispatch = useReduxDispatch();
 
 	return (
 		<Button
 			disabled={ disabled }
 			onClick={ () => {
-				if ( isFormValid( store, contactCountryCode, __ ) ) {
+				if ( isFormValid( store, contactCountryCode, __, reduxDispatch ) ) {
 					debug( 'submitting netbanking payment' );
-					setTransactionPending();
-					onEvent( {
-						type: 'REDIRECT_TRANSACTION_BEGIN',
-						payload: { paymentMethodId: 'netbanking' },
-					} );
-					submitTransaction( {
-						name: customerName?.value,
+					onClick( 'netbanking', {
 						...massagedFields,
+						name: customerName?.value,
 						address: massagedFields?.address1,
 						items,
 						total,
-					} )
-						.then( ( transactionResponse ) => {
-							if ( ! transactionResponse?.redirect_url ) {
-								setTransactionError(
-									__(
-										'There was an error processing your payment. Please try again or contact support.'
-									)
-								);
-								return;
-							}
-							debug( 'netbanking transaction requires redirect', transactionResponse.redirect_url );
-							setTransactionRedirecting( transactionResponse.redirect_url );
-						} )
-						.catch( ( error ) => {
-							setTransactionError( error.message );
-						} );
+					} );
 				}
 			} }
 			buttonType="primary"
-			isBusy={ 'submitting' === formStatus }
+			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
 			<ButtonContents formStatus={ formStatus } total={ total } />
@@ -287,10 +252,11 @@ function NetBankingPayButton( { disabled, store } ) {
 
 function ButtonContents( { formStatus, total } ) {
 	const { __ } = useI18n();
-	if ( formStatus === 'submitting' ) {
+	if ( formStatus === FormStatus.SUBMITTING ) {
 		return __( 'Processing…' );
 	}
-	if ( formStatus === 'ready' ) {
+	if ( formStatus === FormStatus.READY ) {
+		/* translators: %s is the total to be paid in localized currency */
 		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );
@@ -306,7 +272,7 @@ function NetBankingSummary() {
 	);
 }
 
-function isFormValid( store, contactCountryCode, __ ) {
+function isFormValid( store, contactCountryCode, __, reduxDispatch ) {
 	// Touch fields so that we show errors
 	store.dispatch( store.actions.touchAllFields() );
 	let isValid = true;
@@ -343,7 +309,9 @@ function isFormValid( store, contactCountryCode, __ ) {
 
 	if ( validationResults.errors?.country?.length > 0 ) {
 		const countryErrorMessage = validationResults.errors.country[ 0 ];
-		notices.error( countryErrorMessage || __( 'An error occurred during your purchase.' ) );
+		reduxDispatch(
+			errorNotice( countryErrorMessage || __( 'An error occurred during your purchase.' ) )
+		);
 	}
 	return isValid;
 }
@@ -353,17 +321,17 @@ function NetBankingLabel() {
 		<React.Fragment>
 			<span>Net Banking</span>
 			<PaymentMethodLogos className="netbanking__logo payment-logos">
-				<NetBankingLogoUI />
+				<NetbankingLogo />
 			</PaymentMethodLogos>
 		</React.Fragment>
 	);
 }
 
-const NetBankingLogoUI = styled( NetBankingLogo )`
+const NetbankingLogo = styled( NetbankingLogoImg )`
 	width: 76px;
 `;
 
-function NetBankingLogo( { className } ) {
+function NetbankingLogoImg( { className } ) {
 	return (
 		<img src="/calypso/images/upgrades/netbanking.svg" alt="NetBanking" className={ className } />
 	);

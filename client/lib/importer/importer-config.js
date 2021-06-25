@@ -3,12 +3,12 @@
  */
 import React from 'react';
 import { translate } from 'i18n-calypso';
-import { filter, head, orderBy, values } from 'lodash';
+import { filter, orderBy, values } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import InlineSupportLink from 'components/inline-support-link';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 
 function getConfig( { siteTitle = '' } = {} ) {
 	const importerConfig = {};
@@ -92,39 +92,6 @@ function getConfig( { siteTitle = '' } = {} ) {
 				},
 			}
 		),
-		weight: 0,
-	};
-
-	importerConfig[ 'godaddy-gocentral' ] = {
-		engine: 'godaddy-gocentral',
-		key: 'importer-type-godaddy-gocentral',
-		type: 'url',
-		title: 'GoDaddy',
-		icon: 'godaddy-gocentral',
-		description: translate(
-			'Import posts, pages, and media from sites made with the GoDaddy GoCentral website builder to {{b}}%(siteTitle)s{{/b}}.',
-			{
-				args: {
-					siteTitle,
-				},
-				components: {
-					b: <strong />,
-				},
-			}
-		),
-		uploadDescription: translate( 'Enter the URL of your existing site. ' + '{{supportLink/}}', {
-			components: {
-				supportLink: (
-					<InlineSupportLink
-						supportPostId={ 154436 }
-						supportLink="https://wordpress.com/support/import/import-from-godaddy/"
-						showIcon={ false }
-					>
-						{ translate( 'Need help?' ) }
-					</InlineSupportLink>
-				),
-			},
-		} ),
 		weight: 0,
 	};
 
@@ -263,7 +230,7 @@ export function getFileImporters( params = {} ) {
 }
 
 export function getImporterByKey( key, params = {} ) {
-	return head( filter( getImporters( params ), ( importer ) => importer.key === key ) );
+	return filter( getImporters( params ), ( importer ) => importer.key === key )[ 0 ];
 }
 
 export default getConfig;

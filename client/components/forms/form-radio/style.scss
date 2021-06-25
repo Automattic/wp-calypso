@@ -1,0 +1,40 @@
+.form-radio {
+	@extend %form-field;
+
+	clear: none;
+	cursor: pointer;
+	height: 16px;
+	margin: 2px 0 0;
+	float: left;
+	outline: 0;
+	padding: 0;
+	text-align: center;
+	width: 16px;
+	min-width: 16px;
+	appearance: none;
+
+	border-radius: 50%;
+	margin-right: 4px;
+	line-height: 10px;
+
+	&:checked::before {
+		float: left;
+		content: '\2022';
+		margin: 3px;
+		width: 8px;
+		height: 8px;
+		text-indent: -9999px;
+		background: var( --color-primary );
+		border-radius: 50%;
+		animation: grow 0.2s ease-in-out;
+	}
+
+	&:disabled:checked::before {
+		background: var( --color-neutral-0 );
+	}
+}
+
+.form-radio__label {
+	display: block;
+	margin-left: 24px;
+}

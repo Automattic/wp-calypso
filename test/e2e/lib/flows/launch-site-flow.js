@@ -19,6 +19,6 @@ export default class LaunchSiteFlow {
 		const pickAPlanPage = await PickAPlanPage.Expect( this.driver );
 		await pickAPlanPage.selectFreePlan();
 
-		return await myHomePage.isSiteLaunched();
+		return await myHomePage.waitForSiteLaunchComplete();
 	}
 }

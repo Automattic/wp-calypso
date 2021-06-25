@@ -1,5 +1,5 @@
-@import '~@wordpress/base-styles/breakpoints';
-@import '~@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .layout:not( .is-jetpack-woocommerce-flow ):not( .is-jetpack-woo-dna-flow ):not( .is-wccom-oauth-flow ) {
 	.login.is-jetpack {
@@ -154,6 +154,10 @@
 	.gridicon {
 		margin-right: 3px;
 		vertical-align: text-bottom;
+	}
+
+	&.button.is-borderless .gridicon {
+		top: 3px;
 	}
 }
 

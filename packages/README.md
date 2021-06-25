@@ -19,6 +19,7 @@ yarn workspace @automattic/package-name run prepare
 ```
 
 ## Validating package.json
+
 Running `yarn run lint:package-json` will lint all `package.json`'s under `./packages/**` based on [`npmpackagejsonlint.config.js`](../npmpackagejsonlint.config.js).
 
 If you need exceptions to linting rules, add them to overrides section in the config file.

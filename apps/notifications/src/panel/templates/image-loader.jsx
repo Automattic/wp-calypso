@@ -3,7 +3,6 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { noop } from 'lodash';
 
 /**
  * Module variables
@@ -14,6 +13,7 @@ const LoadStatus = {
 	LOADED: 'LOADED',
 	FAILED: 'FAILED',
 };
+const noop = () => {};
 
 export class ImageLoader extends Component {
 	static propTypes = {

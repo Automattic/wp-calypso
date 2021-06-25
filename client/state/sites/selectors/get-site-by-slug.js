@@ -1,13 +1,8 @@
 /**
- * External dependencies
- */
-import { find } from 'lodash';
-
-/**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import getSitesItems from 'state/selectors/get-sites-items';
+import { createSelector } from '@automattic/state-utils';
+import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import getSiteSlug from './get-site-slug';
 
 /**
@@ -18,7 +13,9 @@ import getSiteSlug from './get-site-slug';
  * @returns {?object}           Site object
  */
 export default createSelector(
-	( state, siteSlug ) =>
-		find( getSitesItems( state ), ( site ) => getSiteSlug( state, site.ID ) === siteSlug ) || null,
-	getSitesItems
+	( state, siteSlug ) => {
+		const sites = Object.values( getSitesItems( state ) );
+		return sites.find( ( site ) => getSiteSlug( state, site.ID ) === siteSlug ) ?? null;
+	},
+	( state ) => [ getSitesItems( state ) ]
 );

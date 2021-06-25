@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSitePlan } from 'state/sites/plans/selectors/get-site-plan';
+import { getSitePlan } from 'calypso/state/sites/plans/selectors/get-site-plan';
 
 /**
  * Returns true if a plan is discounted

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import versionCompare from 'lib/version-compare';
+import versionCompare from 'calypso/lib/version-compare';
 import isJetpackSite from './is-jetpack-site';
 import getSiteOption from './get-site-option';
 

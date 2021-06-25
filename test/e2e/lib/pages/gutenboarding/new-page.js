@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { By as by } from 'selenium-webdriver';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -16,17 +16,28 @@ export default class NewPage extends AsyncBaseContainer {
 		if ( ! url ) {
 			url = NewPage.getGutenboardingURL();
 		}
-		super( driver, by.css( '.is-section-gutenboarding' ), url );
+		super( driver, By.css( '.is-section-gutenboarding' ), url );
 	}
 
-	static getGutenboardingURL() {
-		return dataHelper.getCalypsoURL( 'new' );
+	static getGutenboardingURL( { locale = 'en', query = '' } = {} ) {
+		let route = 'new';
+		const queryStrings = [];
+
+		if ( locale !== 'en' ) {
+			route += '/' + locale;
+		}
+
+		if ( query !== '' ) {
+			queryStrings.push( query );
+		}
+
+		return dataHelper.getCalypsoURL( route, queryStrings );
 	}
 
-	async waitForBlock() {
-		return driverHelper.isEventuallyPresentAndDisplayed(
+	async isOnboardingBlockDisplayed() {
+		return await driverHelper.isElementEventuallyLocatedAndVisible(
 			this.driver,
-			by.css( '[data-type="automattic/onboarding"]' )
+			By.css( '[data-type="automattic/onboarding"]' )
 		);
 	}
 }

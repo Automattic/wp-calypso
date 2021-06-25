@@ -7,8 +7,8 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Threat } from 'components/jetpack/threat-item/types';
-import { getThreatType } from 'components/jetpack/threat-item/utils';
+import { Threat } from 'calypso/components/jetpack/threat-item/types';
+import { getThreatType } from 'calypso/components/jetpack/threat-item/utils';
 
 interface Props {
 	threat: Threat;
@@ -110,12 +110,17 @@ const ThreatItemHeader: React.FC< Props > = ( { threat, isStyled = true } ) => {
 			}
 			return (
 				<>
-					{ translate( 'Database %(threatCount)d threat', 'Database %(threatCount)d threats', {
-						count: Object.keys( threat.rows ).length,
-						args: {
-							threatCount: Object.keys( threat.rows ).length,
-						},
-					} ) }
+					{ translate(
+						'Database threat on table %(threatTable)s affecting %(threatCount)d row ',
+						'Database threat on %(threatTable)s affecting %(threatCount)d rows',
+						{
+							count: Object.keys( threat.rows ).length,
+							args: {
+								threatCount: Object.keys( threat.rows ).length,
+								threatTable: threat.table,
+							},
+						}
+					) }
 				</>
 			);
 

@@ -11,7 +11,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import afterLayoutFlush from 'lib/after-layout-flush';
+import afterLayoutFlush from 'calypso/lib/after-layout-flush';
 
 /**
  * Style dependencies
@@ -31,8 +31,9 @@ const commonDefaultProps = {
 };
 
 export function calculateOffset() {
-	// Offset to account for Master Bar
-	return document.getElementById( 'header' ).getBoundingClientRect().height;
+	// Offset to account for Masterbar
+	const headerEl = document.getElementById( 'header' );
+	return headerEl ? headerEl.getBoundingClientRect().height : 0;
 }
 
 export function getBlockStyle( state ) {

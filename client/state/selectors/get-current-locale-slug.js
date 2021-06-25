@@ -4,6 +4,11 @@
 import { get } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/ui/init';
+
+/**
  * Gets the current ui locale slug
  *
  * @param {object} state - global redux state

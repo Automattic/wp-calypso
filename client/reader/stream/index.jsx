@@ -5,14 +5,14 @@ import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
-import { findLast, noop, times } from 'lodash';
+import { findLast, times } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import ReaderMain from 'reader/components/reader-main';
+import ReaderMain from 'calypso/reader/components/reader-main';
 import EmptyContent from './empty';
 import {
 	requestPage,
@@ -20,35 +20,35 @@ import {
 	selectNextItem,
 	selectPrevItem,
 	showUpdates,
-} from 'state/reader/streams/actions';
+} from 'calypso/state/reader/streams/actions';
 import {
 	getStream,
 	getTransformedStreamItems,
 	shouldRequestRecs,
-} from 'state/reader/streams/selectors';
+} from 'calypso/state/reader/streams/selectors';
 
-import { shouldShowLikes } from 'reader/like-helper';
-import { like as likePost, unlike as unlikePost } from 'state/posts/likes/actions';
-import { isLikedPost } from 'state/posts/selectors/is-liked-post';
-import ListEnd from 'components/list-end';
-import InfiniteList from 'components/infinite-list';
-import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
+import { shouldShowLikes } from 'calypso/reader/like-helper';
+import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
+import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
+import ListEnd from 'calypso/components/list-end';
+import InfiniteList from 'calypso/components/infinite-list';
+import MobileBackToSidebar from 'calypso/components/mobile-back-to-sidebar';
 import PostPlaceholder from './post-placeholder';
-import UpdateNotice from 'reader/update-notice';
-import KeyboardShortcuts from 'lib/keyboard-shortcuts';
-import scrollTo from 'lib/scroll-to';
-import XPostHelper from 'reader/xpost-helper';
+import UpdateNotice from 'calypso/reader/update-notice';
+import KeyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
+import scrollTo from 'calypso/lib/scroll-to';
+import XPostHelper from 'calypso/reader/xpost-helper';
 import PostLifecycle from './post-lifecycle';
-import { showSelectedPost, getStreamType } from 'reader/utils';
-import { getBlockedSites } from 'state/reader/site-blocks/selectors';
-import { keysAreEqual, keyToString, keyForPost } from 'reader/post-key';
-import { resetCardExpansions } from 'state/reader-ui/card-expansions/actions';
-import { reduxGetState } from 'lib/redux-bridge';
-import { getPostByKey } from 'state/reader/posts/selectors';
-import { viewStream } from 'state/reader/watermarks/actions';
-import { Interval, EVERY_MINUTE } from 'lib/interval';
-import { PER_FETCH, INITIAL_FETCH } from 'state/data-layer/wpcom/read/streams';
-import { PerformanceTrackerStop } from 'lib/performance-tracking';
+import { showSelectedPost, getStreamType } from 'calypso/reader/utils';
+import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
+import { keysAreEqual, keyToString, keyForPost } from 'calypso/reader/post-key';
+import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
+import { reduxGetState } from 'calypso/lib/redux-bridge';
+import { getPostByKey } from 'calypso/state/reader/posts/selectors';
+import { viewStream } from 'calypso/state/reader-ui/actions';
+import { Interval, EVERY_MINUTE } from 'calypso/lib/interval';
+import { PER_FETCH, INITIAL_FETCH } from 'calypso/state/data-layer/wpcom/read/streams';
+import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 
 /**
  * Style dependencies
@@ -57,7 +57,7 @@ import './style.scss';
 
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
-
+const noop = () => {};
 const pagesByKey = new Map();
 
 class ReaderStream extends React.Component {
@@ -105,7 +105,7 @@ class ReaderStream extends React.Component {
 	componentDidUpdate( { selectedPostKey, streamKey } ) {
 		if ( streamKey !== this.props.streamKey ) {
 			this.props.resetCardExpansions();
-			this.props.viewStream( { streamKey, path: window.location.pathname } );
+			this.props.viewStream( streamKey, window.location.pathname );
 			this.fetchNextPage( {} );
 		}
 
@@ -152,7 +152,7 @@ class ReaderStream extends React.Component {
 	componentDidMount() {
 		const { streamKey } = this.props;
 		this.props.resetCardExpansions();
-		this.props.viewStream( { streamKey, path: window.location.pathname } );
+		this.props.viewStream( streamKey, window.location.pathname );
 		this.fetchNextPage( {} );
 
 		KeyboardShortcuts.on( 'move-selection-down', this.selectNextItem );
@@ -401,7 +401,8 @@ class ReaderStream extends React.Component {
 		let { items, isRequesting } = this.props;
 
 		const hasNoPosts = items.length === 0 && ! isRequesting;
-		let body, showingStream;
+		let body;
+		let showingStream;
 
 		// trick an infinite list to showing placeholders
 		if ( forcePlaceholders ) {

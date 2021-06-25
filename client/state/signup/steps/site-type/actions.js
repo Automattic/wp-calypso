@@ -1,11 +1,11 @@
 /**
  * Internal dependencies
  */
-import { SIGNUP_STEPS_SITE_TYPE_SET } from 'state/action-types';
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
-import { submitSignupStep } from 'state/signup/progress/actions';
+import { SIGNUP_STEPS_SITE_TYPE_SET } from 'calypso/state/action-types';
+import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 
-import 'state/signup/init';
+import 'calypso/state/signup/init';
 
 export function setSiteType( siteType ) {
 	return {

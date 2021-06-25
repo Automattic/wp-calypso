@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE } from 'state/action-types';
+import { TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE } from 'calypso/state/action-types';
 
-import 'state/login/init';
+import 'calypso/state/login/init';
 
 export function updateNonce( nonceType, twoStepNonce ) {
 	return {

@@ -5,14 +5,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-import Notice from 'components/notice';
+import Notice from 'calypso/components/notice';
 
 /**
  * Internal dependencies
  */
 import { Dialog } from '@automattic/components';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { requestDeleteProduct } from 'state/memberships/product-list/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { requestDeleteProduct } from 'calypso/state/memberships/product-list/actions';
 
 const RecurringPaymentsPlanDeleteModal = ( { closeDialog, deleteProduct, product, siteId } ) => {
 	const translate = useTranslate();

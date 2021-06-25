@@ -3,12 +3,12 @@
  */
 
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import SelectDropdown from 'components/select-dropdown';
+import SelectDropdown from 'calypso/components/select-dropdown';
 
 class SelectDropdownExample extends React.PureComponent {
 	static displayName = 'SelectDropdownExample';

@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { assign, includes, find, flatMap } from 'lodash';
+import { includes, find, flatMap } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -12,18 +12,17 @@ import { localize } from 'i18n-calypso';
  */
 import ARecord from './a-record';
 import CnameRecord from './cname-record';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
+import FormButton from 'calypso/components/forms/form-button';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSelect from 'calypso/components/forms/form-select';
 import MxRecord from './mx-record';
 import TxtRecord from './txt-record';
 import SrvRecord from './srv-record';
-import formState from 'lib/form-state';
-import { errorNotice, successNotice } from 'state/notices/actions';
-import { addDns } from 'state/domains/dns/actions';
-import { validateAllFields, getNormalizedData } from 'state/domains/dns/utils';
+import formState from 'calypso/lib/form-state';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { addDns } from 'calypso/state/domains/dns/actions';
+import { validateAllFields, getNormalizedData } from 'calypso/state/domains/dns/utils';
 
 class DnsAddNew extends React.Component {
 	static propTypes = {
@@ -90,7 +89,10 @@ class DnsAddNew extends React.Component {
 			return includes( record.types, type );
 		} );
 
-		return assign( {}, dnsRecord.initialFields, { type } );
+		return {
+			...dnsRecord.initialFields,
+			type,
+		};
 	}
 
 	UNSAFE_componentWillMount() {
@@ -202,11 +204,11 @@ class DnsAddNew extends React.Component {
 					</FormSelect>
 				</FormFieldset>
 				{ this.recordFields() }
-				<FormFooter>
+				<div>
 					<FormButton disabled={ isSubmitDisabled } onClick={ this.onAddDnsRecord }>
 						{ translate( 'Add new DNS record' ) }
 					</FormButton>
-				</FormFooter>
+				</div>
 			</form>
 		);
 	}

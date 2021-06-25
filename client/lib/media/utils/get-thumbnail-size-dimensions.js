@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { ThumbnailSizeDimensions } from 'lib/media/constants';
+import { ThumbnailSizeDimensions } from 'calypso/lib/media/constants';
 
 /**
  * Returns an object containing width and height dimenions in pixels for
@@ -13,7 +13,8 @@ import { ThumbnailSizeDimensions } from 'lib/media/constants';
  * @returns {object}      Width and height dimensions
  */
 export function getThumbnailSizeDimensions( size, site ) {
-	let width, height;
+	let width;
+	let height;
 
 	if ( site && site.options ) {
 		width = site.options[ 'image_' + size + '_width' ];

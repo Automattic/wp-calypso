@@ -3,16 +3,16 @@
  */
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import { map, range, flatten, max, keys, zipObject, times, size, concat, merge } from 'lodash';
+import { map, range, flatten, keys, zipObject, times, size, concat, merge } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
-import { formatNumberMetric } from 'lib/format-number-compact';
-import Popover from 'components/popover';
-import { withLocalizedMoment } from 'components/localized-moment';
+import { formatNumberMetric } from 'calypso/lib/format-number-compact';
+import Popover from 'calypso/components/popover';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 class Month extends PureComponent {
 	static propTypes = {
@@ -107,7 +107,7 @@ const StatsViewsMonths = ( props ) => {
 		} )
 	);
 
-	const highestMonth = max( allMonths );
+	const highestMonth = Math.max( ...allMonths );
 	const yearsObject = zipObject(
 		keys( data ),
 		times( size( data ), () => {

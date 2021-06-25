@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`HelpSearch should render  1`] = `
+exports[`HelpSearch should render 1`] = `
 <div
   className="help-search"
 >

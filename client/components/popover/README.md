@@ -1,8 +1,9 @@
-Popover
-=======
+# Popover
 
 `Popover` is a react component that can be used to show any content in a
 popover.
+
+## `Popover`
 
 ### Properties
 
@@ -100,18 +101,15 @@ This function will be executed when the popover is shown.
 When using a popover within a modal applying the class `is-dialog-visible` to the `Popover` component will cause it to gain the correct `z-index` to allow it to display correctly within the modal.
 
 ```jsx
-<Popover className="is-dialog-visible" />
+<Popover className="is-dialog-visible" />;
 ```
 
-PopoverMenu
-===========
+## `PopoverMenu`
 
 `PopoverMenu` is a component based on `Popover` used to show a menu of actions
 in a popover. It is fully keyboard accessible.
 
-
-PopoverMenuItem
-===============
+## `PopoverMenuItem`
 
 `PopoverMenuItem` is a component used to represent a single item in a
 `PopoverMenu`.
@@ -122,6 +120,14 @@ PopoverMenuItem
 
 If set, `PopoverMenuItem` will be rendered as a link; otherwise, it will be
 rendered as a button.
+
+#### `isExternalLink { bool } - default: false`
+
+If set to `true`, renders the component using the `ExternalLink` component, which includes an external indicator. Note that `href` **must** be specified to ensure the component remains keyboard accessible.
+
+#### `onClick { func } - optional`
+
+If set, this function will be called when the item is clicked.
 
 #### `className { string } - optional`
 
@@ -144,55 +150,59 @@ is hovered over.
 
 The children to render inside of the `PopoverMenuItem`.
 
-
 ### `Popover` Usage
 
 ```jsx
-<button
-	ref="popoverButton" className="button"
-	onClick={ this.TogglePopover }
->
-	Show Popover
-</button>
+let popoverButtonRef;
+<>
+	<button
+		ref={ ( ref ) => ( popoverButtonRef = ref ) }
+		className="button"
+		onClick={ this.TogglePopover }
+	>
+		Show Popover
+	</button>
 
-<Popover
-	context={ this.refs && this.refs.popoverButton }
-	isVisible={ this.state.showPopover }
-	onClose={ this.closePopover }
-	className='component__popover'
-	position="top"
->
-	Lorem ipsum dolor sit amet.
-</Popover>
+	<Popover
+		context={ popoverButtonRef }
+		isVisible={ this.state.showPopover }
+		onClose={ this.closePopover }
+		className="component__popover"
+		position="top"
+	>
+		Lorem ipsum dolor sit amet.
+	</Popover>
+</>;
 ```
 
 ### `PopoverMenu` Usage
 
 ```jsx
-<button
-	ref="popoverMenuButton" className="button"
-	onClick={ this._onTogglePopoverMenu }
->
-	Show Popover Menu
-</button>
-
-<PopoverMenu
-	context={ this.refs && this.refs.popoverMenuButton }
- 	isVisible={ this.state.showPopoverMenu }
-	onClose={ this._closePopoverMenu }
-	position={ this.state.popoverPosition }
->
-	<PopoverMenuItem action="A">Item A</PopoverMenuItem>
-
-	<PopoverMenuItem
-		action="B"
-		onClick={ this._onPopoverMenuItemBClick }
+let popoverButtonRef;
+<>
+	<button
+		ref={ ( ref ) => ( popoverButtonRef = ref ) }
+		className="button"
+		onClick={ this._onTogglePopoverMenu }
 	>
-		Item B
-	</PopoverMenuItem>
+		Show Popover Menu
+	</button>
 
-	<PopoverMenuSeparator />
+	<PopoverMenu
+		context={ popoverButtonRef }
+		isVisible={ this.state.showPopoverMenu }
+		onClose={ this._closePopoverMenu }
+		position={ this.state.popoverPosition }
+	>
+		<PopoverMenuItem action="A">Item A</PopoverMenuItem>
 
-	<PopoverMenuItem action="C">Item C</PopoverMenuItem>
-</PopoverMenu>
+		<PopoverMenuItem action="B" onClick={ this._onPopoverMenuItemBClick }>
+			Item B
+		</PopoverMenuItem>
+
+		<PopoverMenuSeparator />
+
+		<PopoverMenuItem action="C">Item C</PopoverMenuItem>
+	</PopoverMenu>
+</>;
 ```

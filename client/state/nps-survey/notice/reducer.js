@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { NPS_SURVEY_DIALOG_IS_SHOWING } from 'state/action-types';
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { NPS_SURVEY_DIALOG_IS_SHOWING } from 'calypso/state/action-types';
+import { combineReducers } from 'calypso/state/utils';
 
-export const isNpsSurveyDialogShowing = withoutPersistence( ( state = false, action ) => {
+export const isNpsSurveyDialogShowing = ( state = false, action ) => {
 	switch ( action.type ) {
 		case NPS_SURVEY_DIALOG_IS_SHOWING: {
 			const { isShowing } = action;
@@ -13,7 +13,7 @@ export const isNpsSurveyDialogShowing = withoutPersistence( ( state = false, act
 	}
 
 	return state;
-} );
+};
 
 export default combineReducers( {
 	isNpsSurveyDialogShowing,

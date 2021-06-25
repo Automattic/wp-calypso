@@ -4,12 +4,13 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-import SearchCard from 'components/search-card';
+import SearchCard from 'calypso/components/search-card';
+
+const noop = () => {};
 
 class FollowingManageSearchFollowed extends Component {
 	static propTypes = {

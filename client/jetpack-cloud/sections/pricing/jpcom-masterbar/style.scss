@@ -1,0 +1,249 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.jpcom-masterbar {
+	background-color: var( --color-surface );
+
+	padding: 1em 16px;
+
+	// Undo the padding-top set by .layout__content for each
+	// screen size.
+	margin-top: -47px;
+
+	// We need to use this deprecated breakpoint because we need
+	// to match Calypso's layout breakpoint also.
+	@include breakpoint-deprecated( '>660px' ) {
+		padding: 20px 0 22px;
+
+		margin-top: -71px;
+	}
+
+	@include break-large {
+		padding-bottom: 40px;
+
+		margin-top: -79px;
+	}
+}
+
+.jpcom-masterbar__inner {
+	position: relative;
+
+	// Breakpoint taken from jetpack.com, not standard in Calypso
+	@media ( min-width: 375px ) {
+		display: flex;
+		justify-content: space-between;
+		flex-wrap: wrap;
+
+		text-align: left;
+	}
+
+	@include break-large {
+		flex-wrap: nowrap;
+
+		max-width: 1040px;
+
+		margin: 0 auto;
+		padding: 0 32px;
+	}
+}
+
+.jpcom-masterbar__logo {
+	padding-top: 0.25em;
+
+	svg {
+		width: 160px;
+		height: 49px;
+	}
+
+	.jetpack-logo__icon-circle {
+		fill: var( --studio-jetpack-green-40 );
+	}
+}
+
+.jpcom-masterbar__nav {
+	flex: 1 1 100%;
+
+	display: none;
+	flex-direction: column;
+
+	list-style: none none;
+
+	line-height: 150%;
+
+	margin: 0 auto;
+	padding: 16px 0;
+
+	&.is-open {
+		display: flex;
+	}
+
+	@include break-large {
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-end;
+
+		padding: 0;
+		margin: 0.5em 0;
+
+		background: var( --color-surface );
+	}
+}
+
+.jpcom-masterbar__nav-item {
+	padding: 0 38px;
+
+	@include break-large {
+		padding: 0 4px;
+	}
+
+	a {
+		color: var( --studio-gray-60 );
+
+		display: inline-block;
+
+		padding: 10px 16px;
+
+		font-size: 1.1rem;
+
+		border-bottom: 1px transparent solid;
+		border-radius: 0;
+
+		transition: all 0.5s ease-in-out;
+
+		@include break-large {
+			width: inherit;
+
+			margin-left: 0;
+		}
+
+	}
+
+	a.current,
+	a:hover {
+		color: black;
+
+		border-bottom: none;
+		border-left: 1px var( --studio-gray-60 ) solid;
+
+		@include break-large {
+			border-bottom: 1px var( --studio-gray-60 ) solid;
+			border-left: none;
+		}
+	}
+
+	a:focus {
+		outline: none;
+		box-shadow: 0 0 0 2px black;
+		border-radius: 3px;
+		border-color: transparent;
+		transition: none;
+	}
+}
+
+.jpcom-masterbar__navbutton.mobilenav {
+	position: absolute;
+	top: 0;
+	right: 0;
+
+	display: flex;
+	flex-basis: 3em;
+	flex-grow: 0;
+	flex-shrink: 0;
+
+	padding: 14px;
+
+	color: black;
+	text-transform: uppercase;
+
+	border: none;
+
+	overflow: visible;
+
+	transition-property: opacity, filter;
+	transition-duration: 0.15s;
+	transition-timing-function: linear;
+	transition: all 0.5s ease-in-out;
+
+	@include break-large {
+		display: none;
+	}
+
+	.jpcom-masterbar__navbox {
+		width: 30px;
+		height: 20px;
+		display: inline-block;
+		position: relative;
+	}
+
+	.jpcom-masterbar__navinner {
+		display: block;
+		top: 50%;
+		margin-top: -2px;
+	}
+
+	.jpcom-masterbar__navinner,
+	.jpcom-masterbar__navinner::before,
+	.jpcom-masterbar__navinner::after {
+		width: 30px;
+		height: 3px;
+		background-color: black;
+
+		border-radius: 4px;
+		position: absolute;
+		transition-property: transform;
+		transition-duration: 0.15s;
+		transition-timing-function: ease;
+	}
+
+	.jpcom-masterbar__navinner::before,
+	.jpcom-masterbar__navinner::after {
+		content: '';
+		display: block;
+	}
+
+	.jpcom-masterbar__navinner::before {
+		top: -8px;
+	}
+
+	.jpcom-masterbar__navinner::after {
+		bottom: -8px;
+	}
+
+	.jpcom-masterbar__navlabel {
+		display: inline-block;
+
+		line-height: 1.5;
+
+		margin-left: 1em;
+
+		@media ( max-width: 375px ) {
+			display: none;
+		}
+	}
+}
+
+.jpcom-masterbar__navbutton.mobilenav .jpcom-masterbar__navinner::before {
+	transition: top 0.1s 0.14s ease, opacity 0.1s ease;
+}
+
+.jpcom-masterbar__navbutton.mobilenav .jpcom-masterbar__navinner::after {
+	transition: bottom 0.1s 0.14s ease, transform 0.1s cubic-bezier( 0.55, 0.055, 0.675, 0.19 );
+}
+
+.jpcom-masterbar__navbutton.mobilenav.is-active .jpcom-masterbar__navinner {
+	transform: rotate( 45deg );
+	transition-delay: 0.14s;
+	transition-timing-function: cubic-bezier( 0.215, 0.61, 0.355, 1 );
+}
+
+.jpcom-masterbar__navbutton.mobilenav.is-active .jpcom-masterbar__navinner::before {
+	top: 0;
+	opacity: 0;
+	transition: top 0.1s ease, opacity 0.1s 0.14s ease;
+}
+
+.jpcom-masterbar__navbutton.mobilenav.is-active .jpcom-masterbar__navinner::after {
+	bottom: 0;
+	transform: rotate( -90deg );
+	transition: bottom 0.1s ease, transform 0.1s 0.14s cubic-bezier( 0.215, 0.61, 0.355, 1 );
+}

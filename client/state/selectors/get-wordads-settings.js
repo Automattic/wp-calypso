@@ -1,10 +1,11 @@
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { isJetpackSite } from 'state/sites/selectors';
+import { createSelector } from '@automattic/state-utils';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import getJetpackSettings from 'calypso/state/selectors/get-jetpack-settings';
 
-import 'state/wordads/init';
+import 'calypso/state/wordads/init';
 
 /**
  * Returns the WordAds settings on a certain site.
@@ -21,19 +22,48 @@ export const getWordadsSettings = createSelector(
 			return null;
 		}
 
-		const siteIsJetpack = isJetpackSite( state, siteId );
 		const normalizedSettings = {
 			us_checked: 'yes' === settings.us_resident,
-			// JP doesn't matter, force yes to make things easier
-			show_to_logged_in: siteIsJetpack ? 'yes' : settings.show_to_logged_in,
 		};
+
+		const isJetpack = isJetpackSite( state, siteId );
+
+		// WordAds settings on Jetpack sites are not available on the WordAds state, so we get
+		// them from the site settings.
+		let jetpackSettings = {};
+		if ( isJetpack ) {
+			const siteSettings = getJetpackSettings( state, siteId );
+			if ( ! siteSettings ) {
+				return null;
+			}
+			jetpackSettings = {
+				jetpack_module_enabled: siteSettings.wordads,
+				display_options: {
+					display_front_page: siteSettings.wordads_display_front_page,
+					display_post: siteSettings.wordads_display_post,
+					display_page: siteSettings.wordads_display_page,
+					display_archive: siteSettings.wordads_display_archive,
+					enable_header_ad: siteSettings.enable_header_ad,
+					second_belowpost: siteSettings.wordads_second_belowpost,
+				},
+				ccpa_enabled: siteSettings.wordads_ccpa_enabled,
+				ccpa_privacy_policy_url: siteSettings.wordads_ccpa_privacy_policy_url,
+				custom_adstxt_enabled: siteSettings.wordads_custom_adstxt_enabled,
+				custom_adstxt: siteSettings.wordads_custom_adstxt,
+			};
+		}
 
 		return {
 			...settings,
 			...normalizedSettings,
+			...jetpackSettings,
 		};
 	},
-	( state, siteId ) => [ state.wordads.settings.items[ siteId ] ]
+	( state, siteId ) => [
+		state.wordads.settings.items[ siteId ],
+		isJetpackSite( state, siteId ),
+		getJetpackSettings( state, siteId ),
+	]
 );
 
 export default getWordadsSettings;

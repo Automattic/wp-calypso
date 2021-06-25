@@ -209,7 +209,7 @@ describe( 'index', () => {
 			dropdown.unmount();
 		} );
 
-		describe( "permits to open the dropdown, and navigate through the dropdown's options by ", () => {
+		describe( "permits to open the dropdown, and navigate through the dropdown's options by", () => {
 			function runNavigateItemTest( { keyCode, nextFocused } ) {
 				const keyEvent = createKeyEvent( keyCode );
 				const dropdown = mountDropdown();

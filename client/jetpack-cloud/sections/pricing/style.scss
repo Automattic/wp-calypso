@@ -1,0 +1,88 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@automattic/typography/styles/fonts';
+
+.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing {
+	--color-accent: var( --studio-jetpack-green-40 );
+	--color-primary: var( --studio-jetpack-green-40 );
+
+	background-color: var( --color-surface );
+
+	font-family: 'Noto Sans', $sans;
+
+	h2 {
+		line-height: inherit;
+	}
+
+	.header {
+		margin-bottom: 24px;
+		padding: 0 5%;
+
+		color: #4f748e;
+
+		@include break-medium {
+			margin-top: 48px;
+			margin-bottom: 40px;
+			padding: 0;
+		}
+
+		.formatted-header__title {
+			margin: 0 0 36px;
+
+			color: var( --color-text );
+
+			font-size: rem( 21px );
+
+			@include break-medium {
+				margin: 1.5rem 0 40px;
+
+				font-size: rem( 35px );
+			}
+		}
+	}
+
+	.main {
+		padding-left: 0;
+		padding-right: 0;
+	}
+
+	.foldable-card {
+		font-size: rem( 13px );
+	}
+
+	.faq {
+		margin-bottom: 16px;
+
+		@include break-medium {
+			margin-bottom: 48px;
+		}
+
+		.faq__heading {
+			margin: 56px 0 24px;
+
+			color: #2e4453;
+
+			font-size: rem( 26px );
+			font-weight: 400;
+			text-align: center;
+
+			@include break-medium {
+				margin: 64px 0;
+
+				font-size: rem( 35px );
+			}
+		}
+	}
+
+	// On cloud.jetpack.com, we want to override the primary color, used on
+	// the featured product card, with --studio-pink-50.
+	.jetpack-product-card.is-featured {
+		.jetpack-product-card__header {
+			background-color: var( --studio-pink-50 );
+		}
+
+		.jetpack-product-card__body {
+			border: solid 2px var( --studio-pink-50 );
+		}
+	}
+}

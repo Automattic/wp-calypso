@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import { get, find, indexOf, values } from 'lodash';
+import { get, find } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import treeSelect from '@automattic/tree-select';
 
-import 'state/invites/init';
+import 'calypso/state/invites/init';
 
 /**
  * Returns true if currently requesting invites for the given site, or false
@@ -167,6 +167,7 @@ export function didInviteDeletionSucceed( state, siteId, inviteId ) {
  */
 export function isDeletingAnyInvite( state, siteId ) {
 	return (
-		-1 !== indexOf( values( get( state, [ 'invites', 'deleting', siteId ], {} ) ), 'requesting' )
+		-1 !==
+		Object.values( get( state, [ 'invites', 'deleting', siteId ], {} ) ).indexOf( 'requesting' )
 	);
 }

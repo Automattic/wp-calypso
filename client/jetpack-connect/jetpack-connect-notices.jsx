@@ -11,7 +11,6 @@ import { localize } from 'i18n-calypso';
 import {
 	ALREADY_CONNECTED,
 	ALREADY_CONNECTED_BY_OTHER_USER,
-	ALREADY_OWNED,
 	DEFAULT_AUTHORIZE_ERROR,
 	INSTALL_RESPONSE_ERROR,
 	INVALID_CREDENTIALS,
@@ -32,8 +31,8 @@ import {
 	WORDPRESS_DOT_COM,
 	XMLRPC_ERROR,
 } from './connection-notice-types';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 
 export class JetpackConnectNotices extends Component {
 	static propTypes = {
@@ -44,7 +43,6 @@ export class JetpackConnectNotices extends Component {
 		noticeType: PropTypes.oneOf( [
 			ALREADY_CONNECTED,
 			ALREADY_CONNECTED_BY_OTHER_USER,
-			ALREADY_OWNED,
 			DEFAULT_AUTHORIZE_ERROR,
 			INSTALL_RESPONSE_ERROR,
 			INVALID_CREDENTIALS,

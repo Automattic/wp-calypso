@@ -4,39 +4,49 @@
 import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { debounce, get } from 'lodash';
+import { debounce, get, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { gaRecordEvent } from 'lib/analytics/ga';
-import { bumpStat } from 'lib/analytics/mc';
-import { getMimePrefix, url } from 'lib/media/utils';
-import ClipboardButtonInput from 'components/clipboard-button-input';
-import FormTextarea from 'components/forms/form-textarea';
-import FormTextInput from 'components/forms/form-text-input';
-import TrackInputChanges from 'components/track-input-changes';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import { getMimePrefix, url } from 'calypso/lib/media/utils';
+import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import TrackInputChanges from 'calypso/components/track-input-changes';
 import EditorMediaModalFieldset from '../fieldset';
-import { updateMedia } from 'state/media/thunks';
+import { updateMedia } from 'calypso/state/media/thunks';
 
 class EditorMediaModalDetailFields extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 		item: PropTypes.object,
+		onUpdate: PropTypes.func,
+	};
+
+	static defaultProps = {
+		onUpdate: noop,
 	};
 
 	constructor() {
 		super( ...arguments );
-		this.persistChange = debounce( this.persistChange, 1000 );
+		this.persistChange = debounce( this._persistChange, 1000 );
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.item && nextProps.item && nextProps.item.ID !== this.props.item.ID ) {
-			this.setState( { modifiedItem: null } );
+		if ( nextProps.item && nextProps.item.ID !== this.props.item?.ID ) {
 			this.persistChange.cancel();
+			this._persistChange();
+			this.setState( { modifiedItem: null } );
 		}
+	}
+
+	componentWillUnmount() {
+		this._persistChange();
 	}
 
 	bumpTitleStat = () => {
@@ -63,12 +73,13 @@ class EditorMediaModalDetailFields extends Component {
 		return getMimePrefix( this.props.item ) === prefix;
 	}
 
-	persistChange() {
-		if ( ! this.props.site || ! this.state.modifiedItem ) {
+	_persistChange() {
+		if ( ! this.props.site || ! this.state?.modifiedItem ) {
 			return;
 		}
 
 		this.props.updateMedia( this.props.site.ID, this.state.modifiedItem );
+		this.props.onUpdate( this.props.item.ID, this.state.modifiedItem );
 	}
 
 	setFieldValue = ( { target } ) => {
@@ -78,8 +89,7 @@ class EditorMediaModalDetailFields extends Component {
 			{ [ target.name ]: target.value }
 		);
 
-		this.setState( { modifiedItem } );
-		this.persistChange();
+		this.setState( { modifiedItem }, this.persistChange );
 	};
 
 	getItemValue( attribute ) {
@@ -122,8 +132,7 @@ class EditorMediaModalDetailFields extends Component {
 	render() {
 		const { translate } = this.props;
 		return (
-			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-			<div className="editor-media-modal-detail__fields">
+			<div className="detail__fields editor-media-modal-detail__fields">
 				<EditorMediaModalFieldset legend={ translate( 'Title' ) }>
 					<TrackInputChanges onNewValue={ this.bumpTitleStat }>
 						<FormTextInput
@@ -156,7 +165,7 @@ class EditorMediaModalDetailFields extends Component {
 					</TrackInputChanges>
 				</EditorMediaModalFieldset>
 
-				<EditorMediaModalFieldset legend={ translate( 'URL' ) }>
+				<EditorMediaModalFieldset className="detail__url-field" legend={ translate( 'URL' ) }>
 					<ClipboardButtonInput value={ url( this.props.item ) } />
 				</EditorMediaModalFieldset>
 			</div>

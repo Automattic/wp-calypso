@@ -3,8 +3,9 @@
 .site-redirect-step {
 	padding: 0;
 
-	fieldset {
+	.form-fieldset {
 		clear: left;
+		margin-bottom: 0;
 	}
 
 	form.map-domain-step__form {
@@ -43,7 +44,7 @@
 	}
 }
 
-input.site-redirect-step__external-domain {
+input[type='text'].form-text-input.site-redirect-step__external-domain {
 	@include breakpoint-deprecated( '>660px' ) {
 		float: left;
 		width: calc( 100% - 90px );

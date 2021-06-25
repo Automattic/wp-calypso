@@ -1,0 +1,52 @@
+@import 'assets/stylesheets/gutenberg-base-styles';
+@import '@wordpress/base-styles/colors';
+@import '../../mixins';
+@import '../../variables.scss';
+
+.designs {
+	background-color: var( --contrastColor );
+	color: var( --mainColor );
+	padding-bottom: $onboarding-footer-height;
+
+	.designs__header {
+		@include onboarding-heading-padding;
+
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.designs__heading {
+		flex-grow: 1;
+	}
+
+	.designs__premium-badge {
+		background-color: var( --studio-gray-80 );
+		/* stylelint-disable-next-line */
+		border-radius: 1em;
+		color: var( --studio-white );
+		margin: 0;
+		padding: 2px 8px;
+		white-space: nowrap;
+	}
+
+	.designs__premium-badge-logo {
+		height: auto;
+		margin-left: -4px;
+		width: 14px;
+
+		.jetpack-logo__icon-circle {
+			fill: transparent;
+		}
+
+		.jetpack-logo__icon-triangle {
+			fill: var( --studio-white );
+		}
+	}
+
+	.designs__premium-badge-text {
+		display: inline-block;
+		margin-top: -0.05em;
+		text-transform: uppercase;
+	}
+}

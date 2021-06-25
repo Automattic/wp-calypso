@@ -10,11 +10,12 @@ import { connect } from 'react-redux';
  */
 import ActivityIcon from '../activity-log-item/activity-icon';
 import { Button, Card } from '@automattic/components';
-import FormLabel from 'components/forms/form-label';
-import FormCheckbox from 'components/forms/form-checkbox';
-import Gridicon from 'components/gridicon';
-import HappychatButton from 'components/happychat/button';
-import { recordTracksEvent } from 'state/analytics/actions';
+import ExternalLink from 'calypso/components/external-link';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import Gridicon from 'calypso/components/gridicon';
+import HappychatButton from 'calypso/components/happychat/button';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -92,14 +93,9 @@ const ActivityLogConfirmDialog = ( {
 					</Button>
 				</div>
 				<div className="activity-log-confirm-dialog__secondary-actions">
-					<Button
-						borderless
-						className="activity-log-confirm-dialog__more-info-link"
-						href={ supportLink }
-					>
-						<Gridicon icon="notice" />
-						<span>{ translate( 'More info' ) }</span>
-					</Button>
+					<ExternalLink icon href={ supportLink } onClick={ () => {} }>
+						{ translate( 'More info' ) }
+					</ExternalLink>
 					<HappychatButton
 						className="activity-log-confirm-dialog__more-info-link"
 						onClick={ happychatEvent }

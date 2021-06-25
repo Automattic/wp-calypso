@@ -1,21 +1,19 @@
 This component is used to display an install bar for automated transfers.
 
-#### How to use:
+#### How to use
 
 ```js
-import PluginAutomatedTransfer from 'my-sites/plugins/plugin-automated-transfer';
+import PluginAutomatedTransfer from 'calypso/my-sites/plugins/plugin-automated-transfer';
 
-render: function() {
+function render() {
 	return (
 		<div className="plugin-meta">
-			<PluginAutomatedTransfer
-				plugin={ plugin }
-			/>
+			<PluginAutomatedTransfer plugin={ plugin } />
 		</div>
 	);
 }
 ```
 
-#### Props:
+#### Props
 
-* `plugin`: a plugin object.
+- `plugin`: a plugin object.

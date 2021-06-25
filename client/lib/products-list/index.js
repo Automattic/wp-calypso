@@ -9,8 +9,8 @@ const debug = debugFactory( 'calypso:ProductsList' );
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import Emitter from 'lib/mixins/emitter';
+import wpcom from 'calypso/lib/wp';
+import Emitter from 'calypso/lib/mixins/emitter';
 
 /**
  * Initialize a new list of products.
@@ -73,37 +73,35 @@ ProductsList.prototype.fetch = function () {
 
 	this.isFetching = true;
 
-	wpcom.undocumented().getProducts(
-		function ( error, data ) {
-			if ( error ) {
-				debug( 'error fetching ProductsList from api', error );
+	wpcom.req.get( '/products', ( error, data ) => {
+		if ( error ) {
+			debug( 'error fetching ProductsList from api', error );
 
-				return;
+			return;
+		}
+
+		const productsList = data;
+
+		debug( 'ProductsList fetched from api:', productsList );
+
+		if ( ! this.initialized ) {
+			this.initialize( productsList );
+		} else {
+			this.data = productsList;
+		}
+
+		this.isFetching = false;
+
+		this.emit( 'change' );
+
+		if ( typeof localStorage !== 'undefined' ) {
+			try {
+				localStorage.setItem( 'ProductsList', JSON.stringify( productsList ) );
+			} catch ( e ) {
+				// ignore problems storing the list into local storage
 			}
-
-			const productsList = data;
-
-			debug( 'ProductsList fetched from api:', productsList );
-
-			if ( ! this.initialized ) {
-				this.initialize( productsList );
-			} else {
-				this.data = productsList;
-			}
-
-			this.isFetching = false;
-
-			this.emit( 'change' );
-
-			if ( typeof localStorage !== 'undefined' ) {
-				try {
-					localStorage.setItem( 'ProductsList', JSON.stringify( productsList ) );
-				} catch ( e ) {
-					// ignore problems storing the list into local storage
-				}
-			}
-		}.bind( this )
-	);
+		}
+	} );
 };
 
 /**

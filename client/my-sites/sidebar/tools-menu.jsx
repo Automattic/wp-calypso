@@ -11,18 +11,18 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import SidebarItem from 'layout/sidebar/item';
-import config from 'config';
-import { bumpStat } from 'lib/analytics/mc';
-import compareProps from 'lib/compare-props';
-import { getSiteAdminUrl, getSiteSlug, isJetpackSite } from 'state/sites/selectors';
-import { canCurrentUser as canCurrentUserStateSelector } from 'state/selectors/can-current-user';
-import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
+import SidebarItem from 'calypso/layout/sidebar/item';
+import config from '@automattic/calypso-config';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import compareProps from 'calypso/lib/compare-props';
+import { getSiteAdminUrl, getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { canCurrentUser as canCurrentUserStateSelector } from 'calypso/state/selectors/can-current-user';
+import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
 import { itemLinkMatches } from './utils';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
-import { SIDEBAR_SECTION_TOOLS } from 'my-sites/sidebar/constants';
-import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { expandMySitesSidebarSection as expandSection } from 'calypso/state/my-sites/sidebar/actions';
+import { SIDEBAR_SECTION_TOOLS } from 'calypso/my-sites/sidebar/constants';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
 class ToolsMenu extends PureComponent {
 	static propTypes = {
@@ -40,7 +40,7 @@ class ToolsMenu extends PureComponent {
 	getPluginItem() {
 		const { canManagePlugins, isAtomicSite, translate } = this.props;
 
-		if ( config.isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+		if ( this.props.isSiteWPForTeams ) {
 			return {};
 		}
 
@@ -49,7 +49,6 @@ class ToolsMenu extends PureComponent {
 			label: translate( 'Plugins' ),
 			capability: 'manage_options',
 			queryable: ! config.isEnabled( 'calypsoify/plugins' ) || ! isAtomicSite,
-			config: 'manage/plugins',
 			link: '/plugins',
 			paths: [ '/extensions', '/plugins' ],
 			wpAdminLink: 'plugin-install.php?calypsoify=1',
@@ -137,7 +136,7 @@ class ToolsMenu extends PureComponent {
 	render() {
 		const menuItems = [ this.getPluginItem(), this.getImportItem(), this.getExportItem() ];
 
-		return <ul>{ menuItems.map( this.renderMenuItem, this ) }</ul>;
+		return menuItems.map( this.renderMenuItem, this );
 	}
 }
 

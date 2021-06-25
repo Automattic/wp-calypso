@@ -28,14 +28,9 @@
 
 		"importsNotUsedAsValues": "error",
 		"importHelpers": true,
-		"composite": true,
-		"tsBuildInfoFile": "../../.tsc-cache/packages__plans-grid"
+		"composite": true
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/test/*" ],
-	"references": [
-		{
-			"path": "../data-stores"
-		}
-	]
+	"references": [ { "path": "../data-stores" }, { "path": "../onboarding" } ]
 }

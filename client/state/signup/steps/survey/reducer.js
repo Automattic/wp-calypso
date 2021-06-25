@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { SIGNUP_STEPS_SURVEY_SET, SIGNUP_COMPLETE_RESET } from 'state/action-types';
+import { SIGNUP_STEPS_SURVEY_SET, SIGNUP_COMPLETE_RESET } from 'calypso/state/action-types';
 
-import { withSchemaValidation } from 'state/utils';
+import { withSchemaValidation } from 'calypso/state/utils';
 import { surveyStepSchema } from './schema';
 
 export default withSchemaValidation( surveyStepSchema, ( state = {}, action ) => {

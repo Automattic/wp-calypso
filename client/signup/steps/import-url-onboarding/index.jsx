@@ -4,27 +4,30 @@
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { flow, get, includes, invoke, isEmpty } from 'lodash';
+import { get, includes, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { Button, Card, ScreenReaderText } from '@automattic/components';
-import StepWrapper from 'signup/step-wrapper';
-import FormButton from 'components/forms/form-button';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import { setImportOriginSiteDetails, setNuxUrlInputValue } from 'state/importer-nux/actions';
-import { setSiteTitle } from 'state/signup/steps/site-title/actions';
-import { getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
-import { validateImportUrl } from 'lib/importer/url-validation';
-import { recordTracksEvent } from 'state/analytics/actions';
-import Notice from 'components/notice';
-import wpcom from 'lib/wp';
-import { saveSignupStep } from 'state/signup/progress/actions';
-import { suggestDomainFromImportUrl } from 'lib/importer/utils';
-import { getFileImporters } from 'lib/importer/importer-config';
-import ImporterLogo from 'my-sites/importer/importer-logo';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import FormButton from 'calypso/components/forms/form-button';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import {
+	setImportOriginSiteDetails,
+	setNuxUrlInputValue,
+} from 'calypso/state/importer-nux/actions';
+import { setSiteTitle } from 'calypso/state/signup/steps/site-title/actions';
+import { getNuxUrlInputValue } from 'calypso/state/importer-nux/temp-selectors';
+import { validateImportUrl } from 'calypso/lib/importer/url-validation';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import Notice from 'calypso/components/notice';
+import wpcom from 'calypso/lib/wp';
+import { saveSignupStep } from 'calypso/state/signup/progress/actions';
+import { suggestDomainFromImportUrl } from 'calypso/lib/importer/utils';
+import { getFileImporters } from 'calypso/lib/importer/importer-config';
+import ImporterLogo from 'calypso/my-sites/importer/importer-logo';
 
 /**
  * Style dependencies
@@ -104,7 +107,7 @@ class ImportURLOnboardingStepComponent extends Component {
 
 	handleInputRef = ( el ) => ( this.inputRef = el );
 
-	focusInput = () => invoke( this.inputRef, 'focus' );
+	focusInput = () => this.inputRef?.focus();
 
 	setUrlError = ( urlValidationMessage ) =>
 		this.setState( { urlValidationMessage }, this.focusInput );
@@ -370,18 +373,15 @@ class ImportURLOnboardingStepComponent extends Component {
 	}
 }
 
-export default flow(
-	connect(
-		( state ) => ( {
-			urlInputValue: getNuxUrlInputValue( state ),
-		} ),
-		{
-			recordTracksEvent,
-			saveSignupStep,
-			setImportOriginSiteDetails,
-			setNuxUrlInputValue,
-			setSiteTitle,
-		}
-	),
-	localize
-)( ImportURLOnboardingStepComponent );
+export default connect(
+	( state ) => ( {
+		urlInputValue: getNuxUrlInputValue( state ),
+	} ),
+	{
+		recordTracksEvent,
+		saveSignupStep,
+		setImportOriginSiteDetails,
+		setNuxUrlInputValue,
+		setSiteTitle,
+	}
+)( localize( ImportURLOnboardingStepComponent ) );

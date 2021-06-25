@@ -23,7 +23,7 @@ const MyPlanCard = ( { action, isError, isPlaceholder, details, product, tagline
 	const detailsClassNames = classNames( 'my-plan-card__details', { 'is-error': isError } );
 
 	return (
-		<Card className={ cardClassNames } compact>
+		<Card className={ cardClassNames } compact data-e2e-product-slug={ product }>
 			<div className="my-plan-card__primary">
 				<div className="my-plan-card__icon">
 					{ ! isPlaceholder && product && <ProductIcon slug={ product } /> }

@@ -7,8 +7,8 @@ import { reduce } from 'lodash';
  * Internal dependencies
  */
 
-import { combineReducers } from 'state/utils';
-import { POST_REVISION_AUTHORS_RECEIVE } from 'state/action-types';
+import { combineReducers } from 'calypso/state/utils';
+import { POST_REVISION_AUTHORS_RECEIVE } from 'calypso/state/action-types';
 
 /**
  * Tracks all known user objects, indexed by user ID.

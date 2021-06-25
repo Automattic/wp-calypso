@@ -3,6 +3,8 @@
  */
 import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { createRequestCartProduct } from '@automattic/shopping-cart';
+import type { RequestCartProduct, ResponseCart } from '@automattic/shopping-cart';
 import wp from '../../../lib/wp';
 
 /**
@@ -11,42 +13,13 @@ import wp from '../../../lib/wp';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
 import { SITE_STORE } from '../stores/site';
+import { PLANS_STORE } from '../stores/plans';
 import { recordOnboardingComplete } from '../lib/analytics';
-import { useSelectedPlan, useShouldSiteBePublic } from './use-selected-plan';
+import { useSelectedPlan, useShouldRedirectToEditorAfterCheckout } from './use-selected-plan';
 import { clearLastNonEditorRoute } from '../lib/clear-last-non-editor-route';
+import { useOnboardingFlow } from '../path';
 
 const wpcom = wp.undocumented();
-
-interface Cart {
-	blog_id: number;
-	cart_key: number;
-	coupon: string;
-	coupon_discounts: unknown[];
-	coupon_discounts_integer: unknown[];
-	is_coupon_applied: boolean;
-	has_bundle_credit: boolean;
-	next_domain_is_free: boolean;
-	next_domain_condition: string;
-	products: unknown[];
-	total_cost: number;
-	currency: string;
-	total_cost_display: string;
-	total_cost_integer: number;
-	temporary: boolean;
-	tax: unknown;
-	sub_total: number;
-	sub_total_display: string;
-	sub_total_integer: number;
-	total_tax: number;
-	total_tax_display: string;
-	total_tax_integer: number;
-	credits: number;
-	credits_display: string;
-	credits_integer: number;
-	allowed_payment_methods: unknown[];
-	create_new_blog: boolean;
-	messages: Record< 'errors' | 'success', unknown >;
-}
 
 /**
  * After a new site has been created there are 3 scenarios to cover:
@@ -55,52 +28,69 @@ interface Cart {
  * 3. The user is still seeing 'Free Plan' label on PlansButton => redirect to editor
  **/
 
-export default function useOnSiteCreation() {
+export default function useOnSiteCreation(): void {
 	const { domain } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
-	const hasPaidDomain = useSelect( ( select ) => select( ONBOARD_STORE ).hasPaidDomain() );
 	const isRedirecting = useSelect( ( select ) => select( ONBOARD_STORE ).getIsRedirecting() );
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
 	const selectedPlan = useSelectedPlan();
-	const shouldSiteBePublic = useShouldSiteBePublic();
+	const shouldRedirectToEditorAfterCheckout = useShouldRedirectToEditorAfterCheckout();
 	const design = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
+	const selectedPlanProductId = useSelect( ( select ) =>
+		select( ONBOARD_STORE ).getPlanProductId()
+	);
+	const planProductSource = useSelect( ( select ) =>
+		select( PLANS_STORE ).getPlanProductById( selectedPlanProductId )
+	);
+
+	const flow = useOnboardingFlow();
 
 	const { resetOnboardStore, setIsRedirecting, setSelectedSite } = useDispatch( ONBOARD_STORE );
-	const flowCompleteTrackingParams = {
-		isNewSite: !! newSite,
-		isNewUser: !! newUser,
-		blogId: newSite?.blogid,
-		hasCartItems: false,
-	};
+	const flowCompleteTrackingParams = React.useMemo(
+		() => ( {
+			isNewSite: !! newSite,
+			isNewUser: !! newUser,
+			blogId: newSite?.blogid,
+			hasCartItems: false,
+		} ),
+		[ newSite, newUser ]
+	);
 
 	React.useEffect( () => {
 		// isRedirecting check this is needed to make sure we don't overwrite the first window.location.replace() call
 		if ( newSite && ! isRedirecting ) {
 			setIsRedirecting( true );
 
-			if ( selectedPlan && ! selectedPlan?.isFree ) {
-				const planProduct = {
-					product_id: selectedPlan.productId,
-					product_slug: selectedPlan.storeSlug,
+			if ( selectedPlan && ! selectedPlan?.isFree && planProductSource ) {
+				const planProduct: RequestCartProduct = createRequestCartProduct( {
+					product_id: planProductSource.productId,
+					product_slug: planProductSource.storeSlug,
 					extra: {
 						source: 'gutenboarding',
 					},
-				};
-				const domainProduct = {
-					meta: domain?.domain_name,
-					product_id: domain?.product_id,
-					extra: {
-						privacy_available: domain?.supports_privacy,
-						privacy: domain?.supports_privacy,
-						source: 'gutenboarding',
-					},
-				};
-				const go = async () => {
-					const cart: Cart = await wpcom.getCart( newSite.site_slug );
-					await wpcom.setCart( newSite.blogid, {
-						...cart,
-						products: [ ...cart.products, planProduct, domainProduct ],
+				} );
+
+				let domainProduct: RequestCartProduct | null = null;
+				if ( domain?.product_id && domain?.product_slug ) {
+					domainProduct = createRequestCartProduct( {
+						meta: domain.domain_name,
+						product_id: domain.product_id,
+						product_slug: domain.product_slug,
+						extra: {
+							privacy: domain.supports_privacy,
+							source: 'gutenboarding',
+						},
 					} );
+				}
+
+				const go = async () => {
+					if ( planProduct || domainProduct ) {
+						const cart: ResponseCart = await wpcom.getCart( newSite.site_slug );
+						await wpcom.setCart( newSite.blogid, {
+							...cart,
+							products: [ ...cart.products, planProduct, domainProduct ].filter( Boolean ),
+						} );
+					}
 					resetOnboardStore();
 					clearLastNonEditorRoute();
 					setSelectedSite( newSite.blogid );
@@ -109,31 +99,39 @@ export default function useOnSiteCreation() {
 						? `site-editor%2F${ newSite.site_slug }`
 						: `block-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`;
 
-					const redirectionUrl = shouldSiteBePublic
-						? `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1`
-						: `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1&redirect_to=%2F${ editorUrl }`;
+					const redirectionUrl = shouldRedirectToEditorAfterCheckout
+						? `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1&redirect_to=%2F${ editorUrl }`
+						: `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1`;
 					window.location.href = redirectionUrl;
 				};
 				recordOnboardingComplete( {
 					...flowCompleteTrackingParams,
 					hasCartItems: true,
+					flow,
 				} );
 				go();
 				return;
 			}
-
-			recordOnboardingComplete( flowCompleteTrackingParams );
+			recordOnboardingComplete( {
+				...flowCompleteTrackingParams,
+				flow,
+			} );
 			resetOnboardStore();
 			clearLastNonEditorRoute();
 			setSelectedSite( newSite.blogid );
 
-			window.location.href = design?.is_fse
-				? `/site-editor/${ newSite.site_slug }/`
-				: `/block-editor/page/${ newSite.site_slug }/home`;
+			let destination;
+			if ( design?.is_fse ) {
+				destination = `/site-editor/${ newSite.site_slug }/`;
+			} else {
+				destination = `/page/${ newSite.site_slug }/home`;
+			}
+			window.location.href = destination;
 		}
 	}, [
+		flow,
+		planProductSource,
 		domain,
-		hasPaidDomain,
 		selectedPlan,
 		isRedirecting,
 		newSite,
@@ -142,7 +140,7 @@ export default function useOnSiteCreation() {
 		setIsRedirecting,
 		setSelectedSite,
 		flowCompleteTrackingParams,
-		shouldSiteBePublic,
+		shouldRedirectToEditorAfterCheckout,
 		design,
 	] );
 }

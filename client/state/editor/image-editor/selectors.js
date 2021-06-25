@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/editor/init';
+import 'calypso/state/editor/init';
 
 /**
  * Returns an object representing the image editor transform

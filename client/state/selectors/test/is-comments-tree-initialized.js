@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isCommentsTreeInitialized } from 'state/comments/selectors';
+import { isCommentsTreeInitialized } from 'calypso/state/comments/selectors';
 
 describe( 'isCommentsTreeInitialized()', () => {
 	test( 'should return false if no data is available', () => {

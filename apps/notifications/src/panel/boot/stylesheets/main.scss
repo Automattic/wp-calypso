@@ -14,6 +14,12 @@
 	// Fixes font anti-aliasing in iframes: andrewmoreton.co.uk/typekit-iframes-safari-weird-antialiasing/
 	-webkit-font-smoothing: subpixel-antialiased;
 
+	body.font-smoothing-antialiased & {
+		text-rendering: optimizeLegibility;
+		-moz-osx-font-smoothing: grayscale;
+		-webkit-font-smoothing: antialiased;
+	}
+
 	@media only screen and ( max-width: 799px ) {
 		background-color: var( --color-neutral-0 );
 	}
@@ -384,7 +390,10 @@
 		}
 
 		.unread {
-			background: rgba( var( --color-primary-rgb ), 0.1 ); // rgba is used to meet AA contrast standard
+			background: rgba(
+				var( --color-primary-rgb ),
+				0.1
+			); // rgba is used to meet AA contrast standard
 		}
 
 		.wpnc__traffic_surge .wpnc__note-icon img {
@@ -512,7 +521,6 @@
 		user-select: none;
 	}
 
-	.wpnc__single-view,
 	.error-view {
 		h1 {
 			text-align: center;

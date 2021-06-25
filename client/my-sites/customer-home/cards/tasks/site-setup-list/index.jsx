@@ -6,38 +6,39 @@ import { isDesktop, isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@aut
 import { translate } from 'i18n-calypso';
 import React, { useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
-import page from 'page';
 import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import CardHeading from 'components/card-heading';
-import Spinner from 'components/spinner';
-import { getTaskList } from 'lib/checklist';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
-import { resetVerifyEmailState } from 'state/current-user/email-verification/actions';
-import { getCurrentUser, isCurrentUserEmailVerified } from 'state/current-user/selectors';
-import getChecklistTaskUrls from 'state/selectors/get-checklist-task-urls';
-import getSiteChecklist from 'state/selectors/get-site-checklist';
-import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
-import getMenusUrl from 'state/selectors/get-menus-url';
-import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
-import { requestGuidedTour } from 'state/guided-tours/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { skipCurrentViewHomeLayout } from 'state/home/actions';
+import CardHeading from 'calypso/components/card-heading';
+import Spinner from 'calypso/components/spinner';
+import { getTaskList } from 'calypso/lib/checklist';
+import { navigate } from 'calypso/lib/navigate';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { requestSiteChecklistTaskUpdate } from 'calypso/state/checklist/actions';
+import { resetVerifyEmailState } from 'calypso/state/current-user/email-verification/actions';
+import { getCurrentUser, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import getChecklistTaskUrls from 'calypso/state/selectors/get-checklist-task-urls';
+import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
+import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import getMenusUrl from 'calypso/state/selectors/get-menus-url';
+import { getSiteOption, getSiteSlug } from 'calypso/state/sites/selectors';
+import { requestGuidedTour } from 'calypso/state/guided-tours/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { skipViewHomeLayout } from 'calypso/state/home/actions';
 import NavItem from './nav-item';
 import CurrentTaskItem from './current-task-item';
-import { CHECKLIST_KNOWN_TASKS } from 'state/data-layer/wpcom/checklist/index.js';
+import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 import { getTask } from './get-task';
+import { getHomeLayout } from 'calypso/state/selectors/get-home-layout';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const startTask = ( dispatch, task, siteId, advanceToNextIncompleteTask ) => {
+const startTask = ( dispatch, task, siteId, advanceToNextIncompleteTask, isPodcastingSite ) => {
 	dispatch(
 		recordTracksEvent( 'calypso_checklist_task_start', {
 			checklist_name: 'new_blog',
@@ -45,6 +46,7 @@ const startTask = ( dispatch, task, siteId, advanceToNextIncompleteTask ) => {
 			location: 'checklist_show',
 			step_name: task.id,
 			completed: task.isCompleted,
+			is_podcasting_site: isPodcastingSite,
 		} )
 	);
 
@@ -53,7 +55,7 @@ const startTask = ( dispatch, task, siteId, advanceToNextIncompleteTask ) => {
 	}
 
 	if ( task.actionUrl ) {
-		page.show( task.actionUrl );
+		navigate( task.actionUrl );
 	}
 
 	if ( task.actionDispatch ) {
@@ -65,14 +67,14 @@ const startTask = ( dispatch, task, siteId, advanceToNextIncompleteTask ) => {
 	}
 };
 
-const skipTask = ( dispatch, task, tasks, siteId, setIsLoading ) => {
+const skipTask = ( dispatch, task, tasks, siteId, currentView, setIsLoading, isPodcastingSite ) => {
 	const isLastTask = tasks.filter( ( t ) => ! t.isCompleted ).length === 1;
 
 	if ( isLastTask ) {
 		// When skipping the last task, we request skipping the current layout view so it's refreshed afterwards.
 		// Task will be dismissed server-side to avoid race conditions.
 		setIsLoading( true );
-		dispatch( skipCurrentViewHomeLayout( siteId ) );
+		dispatch( skipViewHomeLayout( siteId, currentView ) );
 	} else {
 		// Otherwise we simply skip the given task.
 		dispatch( requestSiteChecklistTaskUpdate( siteId, task.id ) );
@@ -82,11 +84,12 @@ const skipTask = ( dispatch, task, tasks, siteId, setIsLoading ) => {
 			checklist_name: 'new_blog',
 			site_id: siteId,
 			step_name: task.id,
+			is_podcasting_site: isPodcastingSite,
 		} )
 	);
 };
 
-const trackTaskDisplay = ( dispatch, task, siteId ) => {
+const trackTaskDisplay = ( dispatch, task, siteId, isPodcastingSite ) => {
 	dispatch(
 		recordTracksEvent( 'calypso_checklist_task_display', {
 			checklist_name: 'new_blog',
@@ -94,20 +97,23 @@ const trackTaskDisplay = ( dispatch, task, siteId ) => {
 			step_name: task.id,
 			completed: task.isCompleted,
 			location: 'home',
+			is_podcasting_site: isPodcastingSite,
 		} )
 	);
 };
 
 const SiteSetupList = ( {
 	emailVerificationStatus,
+	firstIncompleteTask,
 	isEmailUnverified,
+	isPodcastingSite,
 	menusUrl,
 	siteId,
 	siteSlug,
 	tasks,
 	taskUrls,
 	userEmail,
-	firstIncompleteTask,
+	currentView,
 } ) => {
 	const [ currentTaskId, setCurrentTaskId ] = useState( null );
 	const [ currentTask, setCurrentTask ] = useState( null );
@@ -178,7 +184,7 @@ const SiteSetupList = ( {
 				userEmail,
 			} );
 			setCurrentTask( newCurrentTask );
-			trackTaskDisplay( dispatch, newCurrentTask, siteId );
+			trackTaskDisplay( dispatch, newCurrentTask, siteId, isPodcastingSite );
 		}
 	}, [
 		currentTaskId,
@@ -186,6 +192,7 @@ const SiteSetupList = ( {
 		emailVerificationStatus,
 		isDomainUnverified,
 		isEmailUnverified,
+		isPodcastingSite,
 		menusUrl,
 		siteId,
 		siteSlug,
@@ -206,7 +213,9 @@ const SiteSetupList = ( {
 	}
 
 	const advanceToNextIncompleteTask = () => {
-		setCurrentTaskId( firstIncompleteTask.id );
+		if ( firstIncompleteTask ) {
+			setCurrentTaskId( firstIncompleteTask.id );
+		}
 	};
 
 	return (
@@ -217,60 +226,90 @@ const SiteSetupList = ( {
 					currentTask={ currentTask }
 					skipTask={ () => {
 						setTaskIsManuallySelected( false );
-						skipTask( dispatch, currentTask, tasks, siteId, setIsLoading );
+						skipTask(
+							dispatch,
+							currentTask,
+							tasks,
+							siteId,
+							currentView,
+							setIsLoading,
+							isPodcastingSite
+						);
 					} }
 					startTask={ () =>
-						startTask( dispatch, currentTask, siteId, advanceToNextIncompleteTask )
+						startTask(
+							dispatch,
+							currentTask,
+							siteId,
+							advanceToNextIncompleteTask,
+							isPodcastingSite
+						)
 					}
 				/>
 			) }
 
 			<div className="site-setup-list__nav">
 				<CardHeading>{ translate( 'Site setup' ) }</CardHeading>
-				{ tasks.map( ( task ) => {
-					const enhancedTask = getTask( task );
-					const isCurrent = task.id === currentTask.id;
-					const isCompleted = task.isCompleted;
+				<ul className="site-setup-list__list">
+					{ tasks.map( ( task ) => {
+						const enhancedTask = getTask( task );
+						const isCurrent = task.id === currentTask.id;
+						const isCompleted = task.isCompleted;
 
-					return (
-						<>
-							<NavItem
-								key={ task.id }
-								taskId={ task.id }
-								text={ enhancedTask.label || enhancedTask.title }
-								isCompleted={ isCompleted }
-								isCurrent={
-									useAccordionLayout ? isCurrent && showAccordionSelectedTask : isCurrent
-								}
-								onClick={
-									useAccordionLayout && isCurrent && showAccordionSelectedTask
-										? () => {
-												setShowAccordionSelectedTask( false );
-										  }
-										: () => {
-												setShowAccordionSelectedTask( true );
-												setTaskIsManuallySelected( true );
-												setCurrentTaskId( task.id );
-										  }
-								}
-								useAccordionLayout={ useAccordionLayout }
-							/>
-							{ useAccordionLayout && isCurrent && showAccordionSelectedTask ? (
-								<CurrentTaskItem
-									currentTask={ currentTask }
-									skipTask={ () => {
-										setTaskIsManuallySelected( false );
-										skipTask( dispatch, currentTask, tasks, siteId, setIsLoading );
-									} }
-									startTask={ () =>
-										startTask( dispatch, currentTask, siteId, advanceToNextIncompleteTask )
+						return (
+							<li key={ task.id }>
+								<NavItem
+									key={ task.id }
+									taskId={ task.id }
+									text={ enhancedTask.label || enhancedTask.title }
+									isCompleted={ isCompleted }
+									isCurrent={
+										useAccordionLayout ? isCurrent && showAccordionSelectedTask : isCurrent
+									}
+									onClick={
+										useAccordionLayout && isCurrent && showAccordionSelectedTask
+											? () => {
+													setShowAccordionSelectedTask( false );
+											  }
+											: () => {
+													setShowAccordionSelectedTask( true );
+													setTaskIsManuallySelected( true );
+													setCurrentTaskId( task.id );
+											  }
 									}
 									useAccordionLayout={ useAccordionLayout }
 								/>
-							) : null }
-						</>
-					);
-				} ) }
+								{ useAccordionLayout && isCurrent && showAccordionSelectedTask ? (
+									<CurrentTaskItem
+										currentTask={ currentTask }
+										skipTask={ () => {
+											setTaskIsManuallySelected( false );
+											skipTask(
+												dispatch,
+												currentTask,
+												tasks,
+												siteId,
+												currentView,
+												setIsLoading,
+												isPodcastingSite
+											);
+										} }
+										startTask={ () =>
+											startTask(
+												dispatch,
+												currentTask,
+												siteId,
+												advanceToNextIncompleteTask,
+												isPodcastingSite
+											)
+										}
+										useAccordionLayout={ useAccordionLayout }
+									/>
+								) : null }
+							</li>
+						);
+					} ) }
+				</ul>
 			</div>
 		</Card>
 	);
@@ -298,13 +337,15 @@ export default connect( ( state ) => {
 
 	return {
 		emailVerificationStatus,
+		firstIncompleteTask: taskList.getFirstIncompleteTask(),
 		isEmailUnverified: ! isCurrentUserEmailVerified( state ),
+		isPodcastingSite: !! getSiteOption( state, siteId, 'anchor_podcast' ),
 		menusUrl: getMenusUrl( state, siteId ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
 		tasks: taskList.getAll(),
 		taskUrls: getChecklistTaskUrls( state, siteId ),
 		userEmail: user?.email,
-		firstIncompleteTask: taskList.getFirstIncompleteTask(),
+		currentView: getHomeLayout( state, siteId )?.view_name,
 	};
 } )( SiteSetupList );

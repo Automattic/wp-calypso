@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { stopPerformanceTracking } from './lib';
-import { getSectionName } from 'state/ui/selectors';
+import { getSectionName } from 'calypso/state/ui/selectors';
 
 export const withStopPerformanceTrackingProp = ( () => {
 	return connect( null, {

@@ -8,15 +8,15 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ActionPanel from 'components/action-panel';
-import ActionPanelTitle from 'components/action-panel/title';
-import ActionPanelBody from 'components/action-panel/body';
-import ActionPanelFooter from 'components/action-panel/footer';
-import ActionPanelFigure from 'components/action-panel/figure';
-import Notice from 'components/notice';
+import ActionPanel from 'calypso/components/action-panel';
+import ActionPanelTitle from 'calypso/components/action-panel/title';
+import ActionPanelBody from 'calypso/components/action-panel/body';
+import ActionPanelFooter from 'calypso/components/action-panel/footer';
+import ActionPanelFigure from 'calypso/components/action-panel/figure';
+import Notice from 'calypso/components/notice';
 import { Button } from '@automattic/components';
 import ActiveThemeScreenshot from './active-theme-screenshot';
-import ThemeSetupDialog from 'my-sites/site-settings/theme-setup-dialog';
+import ThemeSetupDialog from 'calypso/my-sites/site-settings/theme-setup-dialog';
 
 const ThemeSetupCard = ( { theme, translate, onClick } ) => (
 	<ActionPanel>

@@ -1,14 +1,13 @@
 /**
  * External dependencies
  */
-import { fromPairs, identity, toPairs } from 'lodash';
+import { extendAction } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
  */
-import { extendAction } from 'state/utils';
-import { HTTP_REQUEST } from 'state/action-types';
-import { failureMeta, successMeta } from 'state/data-layer/wpcom-http';
+import { HTTP_REQUEST } from 'calypso/state/action-types';
+import { failureMeta, successMeta } from 'calypso/state/data-layer/wpcom-http';
 
 const encodeQueryParameters = ( queryParams ) => {
 	return queryParams
@@ -60,7 +59,7 @@ export const httpHandler = async ( { dispatch }, action ) => {
 		return;
 	}
 
-	const fetchHeaders = fromPairs( headers );
+	const fetchHeaders = Object.fromEntries( headers );
 	fetchHeaders.Accept = 'application/json';
 
 	const contentType = ( fetchHeaders[ 'Content-Type' ] || '' ).split( ';' )[ 0 ];
@@ -68,17 +67,18 @@ export const httpHandler = async ( { dispatch }, action ) => {
 	let serialize;
 
 	if ( contentType === 'application/x-www-form-urlencoded' ) {
-		serialize = ( data ) => encodeQueryParameters( toPairs( data ) );
+		serialize = ( data ) => encodeQueryParameters( Object.entries( data ) );
 	} else if ( typeof body !== 'string' ) {
 		serialize = JSON.stringify.bind( JSON );
 	} else {
 		// assume body is already serialized
-		serialize = identity;
+		serialize = ( serializedBody ) => serializedBody;
 	}
 
 	const queryString = encodeQueryParameters( queryParams );
 
-	let response, json;
+	let response;
+	let json;
 	try {
 		response = await fetch( queryString.length ? `${ url }?${ queryString }` : url, {
 			method,

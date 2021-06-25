@@ -6,8 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getMediaUrl from 'state/selectors/get-media-url';
-import MediaQueryManager from 'lib/query-manager/media';
+import getMediaUrl from 'calypso/state/selectors/get-media-url';
+import MediaQueryManager from 'calypso/lib/query-manager/media';
 
 describe( 'getMediaUrl()', () => {
 	const url = 'https://example.files.wordpress.com/2014/06/flower.gif';

@@ -1,0 +1,34 @@
+body.hide-homepage-title {
+	// Allow homepage title to be edited even when hidden
+	// Lighter color to signify not visible from front page
+	.editor-post-title {
+		opacity: 0.4;
+	}
+}
+
+body.slider-width-workaround {
+	.interface-interface-skeleton__editor {
+		max-width: 100%;
+	}
+}
+
+%font-smoothing-antialiased {
+	text-rendering: optimizeLegibility;
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-font-smoothing: antialiased;
+}
+
+body.font-smoothing-antialiased {
+	@extend %font-smoothing-antialiased;
+
+	// Overriding an existing core WP rule so the ID selector is necessary
+	// stylelint-disable-next-line selector-max-id
+	#wpwrap {
+		@extend %font-smoothing-antialiased;
+	}
+
+	// stylelint-disable-next-line selector-max-id
+	#wpadminbar * {
+		@extend %font-smoothing-antialiased;
+	}
+}

@@ -8,14 +8,14 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
-import { difference, identity, set } from 'lodash';
+import { difference, set } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { ValidatedRegistrantExtraInfoUkForm, RegistrantExtraInfoUkForm } from '../uk-form';
 
-jest.mock( 'state/selectors/get-validation-schemas', () => () => ( {
+jest.mock( 'calypso/state/selectors/get-validation-schemas', () => () => ( {
 	uk: require( './uk-schema.json' ),
 } ) );
 
@@ -28,8 +28,8 @@ const mockStore = {
 const MockReduxProvider = ( { children } ) => <Provider store={ mockStore }>{ children }</Provider>;
 
 const mockProps = {
-	translate: identity,
-	updateContactDetailsCache: identity,
+	translate: ( string ) => string,
+	updateContactDetailsCache: () => {},
 	tld: 'uk',
 };
 

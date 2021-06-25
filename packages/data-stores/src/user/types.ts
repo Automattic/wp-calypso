@@ -28,6 +28,11 @@ export interface CurrentUser {
 	 * The bootstrapped user's locale variant, e.g. `es-mx`.
 	 */
 	localeVariant: string;
+
+	/**
+	 * The user's existing sites count.
+	 */
+	site_count: number;
 }
 
 export interface NewUser {
@@ -68,6 +73,7 @@ export interface CreateAccountParams {
 		first_name?: string;
 		last_name?: string;
 		username_hint: string | null | undefined;
+		is_anchor_fm_signup?: boolean | undefined;
 	};
 }
 

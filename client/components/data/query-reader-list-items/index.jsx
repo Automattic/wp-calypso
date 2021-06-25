@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestReaderListItems } from 'state/reader/lists/actions';
+import { requestReaderListItems } from 'calypso/state/reader/lists/actions';
 
 export default function QueryReaderListItems( { owner, slug } ) {
 	const dispatch = useDispatch();

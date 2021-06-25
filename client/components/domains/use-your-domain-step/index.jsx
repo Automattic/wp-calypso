@@ -5,8 +5,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { endsWith, get, isEmpty, noop } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { get, isEmpty } from 'lodash';
+import Gridicon from 'calypso/components/gridicon';
 import page from 'page';
 import { stringify } from 'qs';
 import formatCurrency from '@automattic/format-currency';
@@ -14,30 +14,39 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import { getProductsList } from 'state/products-list/selectors';
+import { getProductsList } from 'calypso/state/products-list/selectors';
 import {
 	currentUserHasFlag,
 	getCurrentUser,
 	getCurrentUserCurrencyCode,
-} from 'state/current-user/selectors';
+} from 'calypso/state/current-user/selectors';
 import { Card, Button } from '@automattic/components';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSite } from 'state/ui/selectors';
-import { CALYPSO_CONTACT, INCOMING_DOMAIN_TRANSFER, MAP_EXISTING_DOMAIN } from 'lib/url/support';
-import HeaderCake from 'components/header-cake';
-import { errorNotice } from 'state/notices/actions';
-import QueryProducts from 'components/data/query-products-list';
-import { getDomainPrice, getDomainProductSlug, getDomainTransferSalePrice } from 'lib/domains';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import {
+	CALYPSO_CONTACT,
+	INCOMING_DOMAIN_TRANSFER,
+	MAP_EXISTING_DOMAIN,
+} from 'calypso/lib/url/support';
+import HeaderCake from 'calypso/components/header-cake';
+import { errorNotice } from 'calypso/state/notices/actions';
+import QueryProducts from 'calypso/components/data/query-products-list';
+import {
+	getDomainPrice,
+	getDomainProductSlug,
+	getDomainTransferSalePrice,
+} from 'calypso/lib/domains';
 import {
 	isDomainBundledWithPlan,
 	isDomainMappingFree,
 	isNextDomainFree,
-} from 'lib/cart-values/cart-items';
-import { isPlan } from 'lib/products-values';
+} from 'calypso/lib/cart-values/cart-items';
+import { isPlan } from '@automattic/calypso-products';
 import {
 	DOMAINS_WITH_PLANS_ONLY,
 	NON_PRIMARY_DOMAINS_TO_FREE_USERS,
-} from 'state/current-user/constants';
+} from 'calypso/state/current-user/constants';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Style dependencies
@@ -47,8 +56,10 @@ import './style.scss';
 /**
  * Image dependencies
  */
-import themesImage from 'assets/images/illustrations/themes.svg';
-import migratingHostImage from 'assets/images/illustrations/migrating-host-diy.svg';
+import themesImage from 'calypso/assets/images/illustrations/themes.svg';
+import migratingHostImage from 'calypso/assets/images/illustrations/migrating-host-diy.svg';
+
+const noop = () => {};
 
 class UseYourDomainStep extends React.Component {
 	static propTypes = {
@@ -98,7 +109,7 @@ class UseYourDomainStep extends React.Component {
 		}
 
 		let buildMapDomainUrl;
-		const basePathForMapping = endsWith( basePath, '/use-your-domain' )
+		const basePathForMapping = basePath?.endsWith( '/use-your-domain' )
 			? basePath.substring( 0, basePath.length - 16 )
 			: basePath;
 
@@ -127,7 +138,7 @@ class UseYourDomainStep extends React.Component {
 		}
 
 		let buildTransferDomainUrl;
-		const basePathForTransfer = endsWith( basePath, '/use-your-domain' )
+		const basePathForTransfer = basePath?.endsWith( '/use-your-domain' )
 			? basePath.substring( 0, basePath.length - 16 )
 			: basePath;
 
@@ -270,7 +281,7 @@ class UseYourDomainStep extends React.Component {
 			);
 		} else if ( domainsWithPlansOnly || primaryWithPlansOnly ) {
 			mappingProductPrice = translate(
-				'Included in paid plans, but registration costs at your current provider still apply'
+				'Included in annual paid plans, but registration costs at your current provider still apply'
 			);
 		}
 
@@ -454,4 +465,4 @@ export default connect(
 		recordTransferButtonClickInUseYourDomain,
 		recordMappingButtonClickInUseYourDomain,
 	}
-)( localize( UseYourDomainStep ) );
+)( withShoppingCart( localize( UseYourDomainStep ) ) );

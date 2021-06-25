@@ -12,32 +12,39 @@ import { getCurrencyDefaults } from '@automattic/format-currency';
  * Internal Dependencies
  */
 import { Button } from '@automattic/components';
-import { cancelAndRefundPurchase, cancelPurchase } from 'lib/purchases/actions';
-import { clearPurchases } from 'state/purchases/actions';
-import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
-import { CANCEL_FLOW_TYPE } from 'components/marketing-survey/cancel-purchase-form/constants';
+import { cancelAndRefundPurchase, cancelPurchase } from 'calypso/lib/purchases/actions';
+import { clearPurchases } from 'calypso/state/purchases/actions';
+import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
+import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
 import {
 	getName,
 	getSubscriptionEndDate,
 	hasAmountAvailableToRefund,
 	isOneTimePurchase,
 	isSubscription,
-} from 'lib/purchases';
-import { isDomainRegistration } from 'lib/products-values';
-import notices from 'notices';
-import { confirmCancelDomain, purchasesRoot } from 'me/purchases/paths';
-import { refreshSitePlans } from 'state/sites/plans/actions';
+} from 'calypso/lib/purchases';
+import { isDomainRegistration } from '@automattic/calypso-products';
+import { confirmCancelDomain, purchasesRoot } from 'calypso/me/purchases/paths';
+import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { cancellationEffectDetail, cancellationEffectHeadline } from './cancellation-effect';
-import { getDowngradePlanFromPurchase } from 'state/purchases/selectors';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { getDowngradePlanFromPurchase } from 'calypso/state/purchases/selectors';
 
 class CancelPurchaseButton extends Component {
 	static propTypes = {
 		purchase: PropTypes.object.isRequired,
+		purchaseListUrl: PropTypes.string,
+		getConfirmCancelDomainUrlFor: PropTypes.func,
 		selectedSite: PropTypes.object,
 		siteSlug: PropTypes.string.isRequired,
 		cancelBundledDomain: PropTypes.bool.isRequired,
 		includedDomainPurchase: PropTypes.object,
 		disabled: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		purchaseListUrl: purchasesRoot,
+		getConfirmCancelDomainUrlFor: confirmCancelDomain,
 	};
 
 	state = {
@@ -75,10 +82,10 @@ class CancelPurchaseButton extends Component {
 	};
 
 	goToCancelConfirmation = () => {
-		const { id } = this.props.purchase,
-			slug = this.props.siteSlug;
+		const { id } = this.props.purchase;
+		const slug = this.props.siteSlug;
 
-		page( confirmCancelDomain( slug, id ) );
+		page( this.props.getConfirmCancelDomainUrlFor( slug, id ) );
 	};
 
 	cancelPurchase = () => {
@@ -87,15 +94,15 @@ class CancelPurchaseButton extends Component {
 		this.setDisabled( true );
 
 		cancelPurchase( purchase.id, ( success ) => {
-			const purchaseName = getName( purchase ),
-				subscriptionEndDate = getSubscriptionEndDate( purchase );
+			const purchaseName = getName( purchase );
+			const subscriptionEndDate = getSubscriptionEndDate( purchase );
 
 			this.props.refreshSitePlans( purchase.siteId );
 
 			this.props.clearPurchases();
 
 			if ( success ) {
-				notices.success(
+				this.props.successNotice(
 					translate(
 						'%(purchaseName)s was successfully cancelled. It will be available ' +
 							'for use until it expires on %(subscriptionEndDate)s.',
@@ -106,12 +113,12 @@ class CancelPurchaseButton extends Component {
 							},
 						}
 					),
-					{ persistent: true }
+					{ displayOnNextPage: true }
 				);
 
-				page( purchasesRoot );
+				page( this.props.purchaseListUrl );
 			} else {
-				notices.error(
+				this.props.errorNotice(
 					translate(
 						'There was a problem canceling %(purchaseName)s. ' +
 							'Please try again later or contact support.',
@@ -136,20 +143,20 @@ class CancelPurchaseButton extends Component {
 
 	handleSubmit = ( error, response ) => {
 		if ( error ) {
-			notices.error( error.message );
+			this.props.errorNotice( error.message );
 
 			this.cancellationFailed();
 
 			return;
 		}
 
-		notices.success( response.message, { persistent: true } );
+		this.props.successNotice( response.message, { displayOnNextPage: true } );
 
 		this.props.refreshSitePlans( this.props.purchase.siteId );
 
 		this.props.clearPurchases();
 
-		page.redirect( purchasesRoot );
+		page.redirect( this.props.purchaseListUrl );
 	};
 
 	cancelAndRefund = () => {
@@ -164,20 +171,20 @@ class CancelPurchaseButton extends Component {
 				this.setDisabled( false );
 
 				if ( error ) {
-					notices.error( error.message );
+					this.props.errorNotice( error.message );
 
 					this.cancellationFailed();
 
 					return;
 				}
 
-				notices.success( response.message, { persistent: true } );
+				this.props.successNotice( response.message, { displayOnNextPage: true } );
 
 				this.props.refreshSitePlans( purchase.siteId );
 
 				this.props.clearPurchases();
 
-				page.redirect( purchasesRoot );
+				page.redirect( this.props.purchaseListUrl );
 			}
 		);
 	};
@@ -199,20 +206,20 @@ class CancelPurchaseButton extends Component {
 				this.setDisabled( false );
 
 				if ( error ) {
-					notices.error( error.message );
+					this.props.errorNotice( error.message );
 
 					this.cancellationFailed();
 
 					return;
 				}
 
-				notices.success( response.message, { persistent: true } );
+				this.props.successNotice( response.message, { displayOnNextPage: true } );
 
 				this.props.refreshSitePlans( purchase.siteId );
 
 				this.props.clearPurchases();
 
-				page.redirect( purchasesRoot );
+				page.redirect( this.props.purchaseListUrl );
 			}
 		);
 	};
@@ -252,7 +259,8 @@ class CancelPurchaseButton extends Component {
 
 	render() {
 		const { purchase, selectedSite, translate } = this.props;
-		let text, onClick;
+		let text;
+		let onClick;
 
 		if ( hasAmountAvailableToRefund( purchase ) ) {
 			onClick = this.handleCancelPurchaseClick;
@@ -312,5 +320,7 @@ class CancelPurchaseButton extends Component {
 
 export default connect( null, {
 	clearPurchases,
+	errorNotice,
+	successNotice,
 	refreshSitePlans,
 } )( localize( CancelPurchaseButton ) );

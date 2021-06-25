@@ -5,20 +5,31 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal Dependencies
  */
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import TranslatableString from 'components/translatable/proptype';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import TranslatableString from 'calypso/components/translatable/proptype';
+import config from '@automattic/calypso-config';
+import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-function SidebarNavigation( { sectionTitle, children, toggleSidebar } ) {
+function SidebarNavigation( {
+	sectionTitle,
+	children,
+	toggleSidebar,
+	isNavUnificationEnabled: isUnifiedNavEnabled,
+} ) {
+	if ( isUnifiedNavEnabled && ! config.isEnabled( 'jetpack-cloud' ) ) {
+		return null;
+	}
+
 	return (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		<header className="current-section">
@@ -37,6 +48,11 @@ SidebarNavigation.propTypes = {
 	toggleSidebar: PropTypes.func.isRequired,
 };
 
-export default connect( null, {
-	toggleSidebar: () => setLayoutFocus( 'sidebar' ),
-} )( SidebarNavigation );
+export default connect(
+	( state ) => ( {
+		isNavUnificationEnabled: isNavUnificationEnabled( state ),
+	} ),
+	{
+		toggleSidebar: () => setLayoutFocus( 'sidebar' ),
+	}
+)( SidebarNavigation );

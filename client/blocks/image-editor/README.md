@@ -1,6 +1,7 @@
 # Image Editor
 
 `ImageEditor` is a block component which enables basic image editing functionality such as:
+
 - cropping, resizing
 - rotating,
 - changing aspect ratio
@@ -39,6 +40,7 @@ or
 the image to be edited. Use this approach if you want to edit a local image file (e.g. uploaded file or blob).
 
 It can also contain these optional properties (with defaults if not set):
+
 - `media.file` `{string}`: the base name of the edited image file (e.g. `full-width1-e1.jpg`), defaults to `default`
 - `media.ID` `{number}`: An ID of the media item.
 - `media.mime_type` `{string}`: the MIME of the edited image (e.g. `image/jpeg`), defaults to `image/png`
@@ -77,10 +79,11 @@ For the list of all possible aspect ratios, see `client/state/editor/image-edito
 
 A function which will get called on extracting an edited image after clicking the "Done" button.
 It receives three arguments:
+
 - a JS `Error` object if image is not loaded/present, otherwise `null`
 - the extracted image in form of `Blob` object or `null` if image is not loaded/present
 - the props of the image editor which include image meta and functions to reset image editor state (for the full list,
-have a look into the `image-editor/index` file)
+  have a look into the `image-editor/index` file)
 
 ### `onCancel`
 
@@ -100,7 +103,7 @@ button won't be rendered. The function receives one argument: the props of the i
 </table>
 
 A function which will get called on clicking the "Reset" image editor button. The function is called after image editor's
- state is reset. The function receives one argument: the props of the image editor.
+state is reset. The function receives one argument: the props of the image editor.
 
 ### `className`
 
@@ -123,14 +126,9 @@ Already-translated string which will be used on the 'Done' button. If not used, 
 ## Example
 
 ```js
-import ImageEditor from 'blocks/image-editor';
+import ImageEditor from 'calypso/blocks/image-editor';
 
-render() {
-	return (
-		<ImageEditor
-			siteId={ siteId }
-			media={ { URL: 'http://example.com/image.jpg' } }
-		/>
-	);
+function render() {
+	return <ImageEditor siteId={ siteId } media={ { URL: 'http://example.com/image.jpg' } } />;
 }
 ```

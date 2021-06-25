@@ -1,12 +1,13 @@
 /**
  * External dependencies
  */
-import { combineReducers, withStorageKey } from 'state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers } from 'calypso/state/utils';
 import {
 	COUNTRIES_DOMAINS_UPDATED,
 	COUNTRIES_PAYMENTS_UPDATED,
 	COUNTRIES_SMS_UPDATED,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 const createListReducer = ( updatedActionType ) => ( state = [], action ) => {
 	switch ( action.type ) {

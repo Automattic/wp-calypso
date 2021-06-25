@@ -3,13 +3,13 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import ButtonGroup from 'components/button-group';
+import ButtonGroup from 'calypso/components/button-group';
 
 const EditorRevisionsListNavigation = ( {
 	nextIsDisabled,

@@ -11,7 +11,9 @@ import {
 	getThemeFilterTerm,
 	getThemeFilterTermFromString,
 	isValidThemeFilterTerm,
-} from 'state/themes/selectors';
+} from 'calypso/state/themes/selectors';
+import { fetchThemeFilters } from './controller';
+import { composeHandlers } from 'calypso/controller/shared';
 
 // Reorder and remove invalid filters to redirect to canonical URL
 export function validateFilters( context, next ) {
@@ -81,3 +83,9 @@ export function sortFilterTerms( context, terms ) {
 		.sort()
 		.map( ( filter ) => getThemeFilterTermFromString( context.store.getState(), filter ) );
 }
+
+export const fetchAndValidateVerticalsAndFilters = composeHandlers(
+	fetchThemeFilters,
+	validateVertical,
+	validateFilters
+);

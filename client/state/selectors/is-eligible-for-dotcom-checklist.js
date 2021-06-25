@@ -1,15 +1,9 @@
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
-import getSiteOptions from 'state/selectors/get-site-options';
-import isJetpackSite from 'state/sites/selectors/is-jetpack-site';
-import isAtomicSite from 'state/selectors/is-site-automated-transfer';
-import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
+import { getSiteOptions, isJetpackSite } from 'calypso/state/sites/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
 /**
  * @param {object} state Global state tree
@@ -33,7 +27,7 @@ export default function isEligibleForDotcomChecklist( state, siteId ) {
 	const siteOptions = getSiteOptions( state, siteId );
 
 	// Checklist should not show up if the site is created before the feature was launched.
-	if ( get( siteOptions, 'created_at', '' ) < '2018-02-01' ) {
+	if ( ( siteOptions?.created_at ?? '' ) < '2018-02-01' ) {
 		return false;
 	}
 

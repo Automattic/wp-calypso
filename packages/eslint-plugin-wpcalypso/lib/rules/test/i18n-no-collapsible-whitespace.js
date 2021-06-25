@@ -9,10 +9,10 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const rule = require( '../i18n-no-collapsible-whitespace' ),
-	config = { env: { es6: true } }, // support for string templates
-	formatMessage = require( '../../../test-utils/format-message' ),
-	RuleTester = require( 'eslint' ).RuleTester;
+const rule = require( '../i18n-no-collapsible-whitespace' );
+const config = { env: { es6: true } }; // support for string templates
+const formatMessage = require( '../../../test-utils/format-message' );
+const RuleTester = require( 'eslint' ).RuleTester;
 
 //------------------------------------------------------------------------------
 // Constants

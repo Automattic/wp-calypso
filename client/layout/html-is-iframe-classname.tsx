@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import isIframeForHtmlElement from 'state/selectors/is-iframe-for-html-element';
+import isIframeForHtmlElement from 'calypso/state/selectors/is-iframe-for-html-element';
 
 const HtmlIsIframeClassname = () => {
 	const isIframe = useSelector( isIframeForHtmlElement );

@@ -4,16 +4,21 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { get, unionBy } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getPluginsWithUpdates } from 'state/plugins/installed/selectors';
-import { isJetpackSiteSecondaryNetworkSite } from 'state/sites/selectors';
-import { requestSiteAlerts } from 'state/data-getters';
+import { getPluginsWithUpdates } from 'calypso/state/plugins/installed/selectors';
+import { isJetpackSiteSecondaryNetworkSite } from 'calypso/state/sites/selectors';
+import { requestSiteAlerts } from 'calypso/state/data-getters';
 
 const emptyList = [];
+
+const unionBySlug = ( a = [], b = [] ) => [
+	...a,
+	...b.filter( ( be ) => ! a.some( ( ae ) => ae.slug === be.slug ) ),
+];
 
 export default ( WrappedComponent ) => {
 	class ToUpdate extends Component {
@@ -36,7 +41,7 @@ export default ( WrappedComponent ) => {
 			return {
 				plugins:
 					nextProps.siteId === prevState.siteId
-						? unionBy( nextProps.plugins, prevState.plugins, 'slug' )
+						? unionBySlug( nextProps.plugins, prevState.plugins )
 						: emptyList,
 				siteId: nextProps.siteId,
 			};

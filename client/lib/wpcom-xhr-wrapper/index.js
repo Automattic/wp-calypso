@@ -1,26 +1,17 @@
 /**
- * External dependencies
- */
-import debugModule from 'debug';
-
-/**
  * Internal dependencies
  */
-import userUtils from 'lib/user/utils';
-
-/**
- * Module variables
- */
-const debug = debugModule( 'calypso:wpcom-xhr-wrapper' );
+import { clearStore } from 'calypso/lib/user/store';
+import { getLogoutUrl } from 'calypso/lib/user/shared-utils';
 
 export default async function ( params, callback ) {
 	const xhr = ( await import( /* webpackChunkName: "wpcom-xhr-request" */ 'wpcom-xhr-request' ) )
 		.default;
 
-	return xhr( params, function ( error, response, headers ) {
+	return xhr( params, async function ( error, response, headers ) {
 		if ( error && error.name === 'InvalidTokenError' ) {
-			debug( 'Invalid token error detected, authorisation probably revoked - logging out' );
-			userUtils.logout();
+			await clearStore();
+			window.location.href = getLogoutUrl();
 		}
 
 		callback( error, response, headers );

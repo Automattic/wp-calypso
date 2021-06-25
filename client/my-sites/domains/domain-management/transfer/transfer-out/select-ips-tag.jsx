@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { find, isEmpty, startsWith, toUpper } from 'lodash';
+import { find, isEmpty, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 
@@ -11,13 +11,13 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import { Card, Dialog, Suggestions } from '@automattic/components';
-import SearchCard from 'components/search-card';
-import FormButton from 'components/forms/form-button';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import { saveDomainIpsTag } from 'state/domains/transfer/actions';
-import getGainingRegistrar from 'state/selectors/get-gaining-registrar';
-import getIpsTagSaveStatus from 'state/selectors/get-ips-tag-save-status';
+import SearchCard from 'calypso/components/search-card';
+import FormButton from 'calypso/components/forms/form-button';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import { saveDomainIpsTag } from 'calypso/state/domains/transfer/actions';
+import getGainingRegistrar from 'calypso/state/selectors/get-gaining-registrar';
+import getIpsTagSaveStatus from 'calypso/state/selectors/get-ips-tag-save-status';
 
 const debug = debugFactory( 'calypso:domains:select-ips-tag' );
 
@@ -75,7 +75,7 @@ class SelectIpsTag extends Component {
 		return this.state.ipsTagList
 			.filter(
 				( hint ) =>
-					this.state.currentQuery && startsWith( hint.tag, toUpper( this.state.currentQuery ) )
+					this.state.currentQuery && startsWith( hint.tag, this.state.currentQuery.toUpperCase() )
 			)
 			.map( ( hint ) => ( { label: hint.tag + '  (' + hint.registrarName + ')' } ) );
 	}
@@ -89,7 +89,7 @@ class SelectIpsTag extends Component {
 		let selectedRegistrar = this.getRegistrarInfo( ipsTagInput, ipsTagList );
 
 		if ( isEmpty( selectedRegistrar ) ) {
-			selectedRegistrar = { tag: toUpper( ipsTagInput ), registrarName: '', registrarUrl: '' };
+			selectedRegistrar = { tag: ipsTagInput.toUpperCase(), registrarName: '', registrarUrl: '' };
 		}
 
 		this.setState( {

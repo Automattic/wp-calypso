@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { getStateKey } from 'state/comments/utils';
+import { getStateKey } from 'calypso/state/comments/utils';
 
-import 'state/comments/init';
+import 'calypso/state/comments/init';
 
 /**
  * Returns the active reply comment for a given site and post.

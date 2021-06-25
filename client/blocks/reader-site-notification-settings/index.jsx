@@ -5,16 +5,16 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { find, get } from 'lodash';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
-import ReaderPopover from 'reader/components/reader-popover';
-import SegmentedControl from 'components/segmented-control';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import { getReaderFollows } from 'state/reader/follows/selectors';
+import Gridicon from 'calypso/components/gridicon';
+import ReaderPopover from 'calypso/reader/components/reader-popover';
+import SegmentedControl from 'calypso/components/segmented-control';
+import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import {
 	subscribeToNewPostEmail,
 	updateNewPostEmailSubscription,
@@ -23,10 +23,10 @@ import {
 	unsubscribeToNewCommentEmail,
 	subscribeToNewPostNotifications,
 	unsubscribeToNewPostNotifications,
-} from 'state/reader/follows/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
-import QueryUserSettings from 'components/data/query-user-settings';
-import getUserSetting from 'state/selectors/get-user-setting';
+} from 'calypso/state/reader/follows/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import QueryUserSettings from 'calypso/components/data/query-user-settings';
+import getUserSetting from 'calypso/state/selectors/get-user-setting';
 
 /**
  * Style dependencies
@@ -154,14 +154,12 @@ class ReaderSiteNotificationSettings extends Component {
 					className="reader-site-notification-settings__popout"
 				>
 					<div className="reader-site-notification-settings__popout-toggle">
-						<CompactFormToggle
+						<ToggleControl
 							onChange={ this.toggleNewPostNotification }
 							checked={ sendNewPostsByNotification }
-							wrapperClassName="reader-site-notification-settings__popout-form-toggle"
 							id="reader-site-notification-settings__notifications"
-						>
-							{ translate( 'Notify me of new posts' ) }
-						</CompactFormToggle>
+							label={ translate( 'Notify me of new posts' ) }
+						/>
 						<p className="reader-site-notification-settings__popout-hint">
 							{ translate( 'Receive web and mobile notifications for new posts from this site.' ) }
 						</p>
@@ -174,13 +172,12 @@ class ReaderSiteNotificationSettings extends Component {
 						}
 					>
 						{ ! isEmailBlocked && (
-							<CompactFormToggle
+							<ToggleControl
 								onChange={ this.toggleNewPostEmail }
 								checked={ sendNewPostsByEmail }
 								id={ 'reader-site-notification-settings__email-posts' }
-							>
-								{ translate( 'Email me new posts' ) }
-							</CompactFormToggle>
+								label={ translate( 'Email me new posts' ) }
+							/>
 						) }
 
 						{ isEmailBlocked && (
@@ -224,13 +221,12 @@ class ReaderSiteNotificationSettings extends Component {
 					) }
 					{ ! isEmailBlocked && (
 						<div className="reader-site-notification-settings__popout-toggle">
-							<CompactFormToggle
+							<ToggleControl
 								onChange={ this.toggleNewCommentEmail }
 								checked={ sendNewCommentsByEmail }
 								id="reader-site-notification-settings__email-comments"
-							>
-								{ translate( 'Email me new comments' ) }
-							</CompactFormToggle>
+								label={ translate( 'Email me new comments' ) }
+							/>
 						</div>
 					) }
 				</ReaderPopover>

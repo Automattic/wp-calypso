@@ -1,22 +1,27 @@
 /**
  * External dependencies
  */
-import type { DomainSuggestions, Site, VerticalsTemplates, Plans } from '@automattic/data-stores';
+import {
+	DomainSuggestions,
+	Site,
+	VerticalsTemplates,
+	WPCOMFeatures,
+} from '@automattic/data-stores';
 import { dispatch, select } from '@wordpress/data-controls';
 import guessTimezone from '../../../../lib/i18n-utils/guess-timezone';
-import { getLanguage } from 'lib/i18n-utils';
+import { getLanguage } from 'calypso/lib/i18n-utils';
+import { __ } from '@wordpress/i18n';
+import { isBlankCanvasDesign } from '@automattic/design-picker';
+import type { Design, FontPair } from '@automattic/design-picker';
 
 /**
  * Internal dependencies
  */
-import type { Design, SiteVertical } from './types';
+
 import { STORE_KEY as ONBOARD_STORE } from './constants';
 import { SITE_STORE } from '../site';
-import { PLANS_STORE } from '../plans';
 import type { State } from '.';
-import type { FontPair } from '../../constants';
-import type { FeatureId } from '../../onboarding-block/features/data';
-import { isEnabled } from 'config';
+import type { SiteVertical } from './types';
 
 type CreateSiteParams = Site.CreateSiteParams;
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
@@ -24,34 +29,51 @@ type Template = VerticalsTemplates.Template;
 type Language = {
 	value: number;
 };
+type FeatureId = WPCOMFeatures.FeatureId;
 
 export const addFeature = ( featureId: FeatureId ) => ( {
 	type: 'ADD_FEATURE' as const,
 	featureId,
 } );
 
-export function* createSite(
-	username: string,
-	languageSlug: string,
-	bearerToken?: string,
-	isPublicSite = false
-) {
-	const { domain, selectedDesign, selectedFonts, siteTitle, siteVertical }: State = yield select(
-		ONBOARD_STORE,
-		'getState'
-	);
+export interface CreateSiteActionParameters {
+	username: string;
+	languageSlug: string;
+	bearerToken?: string;
+	visibility: number;
+	anchorFmPodcastId: string | null;
+	anchorFmEpisodeId: string | null;
+	anchorFmSpotifyUrl: string | null;
+}
+
+export function* createSite( {
+	username,
+	languageSlug,
+	bearerToken = undefined,
+	visibility = Site.Visibility.PublicNotIndexed,
+	anchorFmPodcastId = null,
+	anchorFmEpisodeId = null,
+	anchorFmSpotifyUrl = null,
+}: CreateSiteActionParameters ) {
+	const {
+		domain,
+		selectedDesign,
+		selectedFonts,
+		siteTitle,
+		siteVertical,
+		selectedFeatures,
+	}: State = yield select( ONBOARD_STORE, 'getState' );
 
 	const shouldEnableFse = !! selectedDesign?.is_fse;
-
 	const siteUrl = domain?.domain_name || siteTitle || username;
 	const lang_id = ( getLanguage( languageSlug ) as Language )?.value;
-
 	const defaultTheme = shouldEnableFse ? 'seedlet-blocks' : 'twentytwenty';
+	const blogTitle = siteTitle.trim() === '' ? __( 'Site Title' ) : siteTitle;
 
 	const params: CreateSiteParams = {
 		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
-		blog_title: siteTitle,
-		public: isPublicSite ? 1 : -1,
+		blog_title: blogTitle,
+		public: visibility,
 		options: {
 			site_vertical: siteVertical?.id,
 			site_vertical_name: siteVertical?.label,
@@ -59,9 +81,9 @@ export function* createSite(
 			// so we can match directories in
 			// https://github.com/Automattic/wp-calypso/tree/HEAD/static/page-templates/verticals
 			// TODO: determine default vertical should user input match no official vertical
-			site_vertical_slug: siteVertical?.slug || 'football',
+			site_vertical_slug: siteVertical?.slug,
 			site_information: {
-				title: siteTitle,
+				title: blogTitle,
 			},
 			lang_id: lang_id,
 			site_creation_flow: 'gutenboarding',
@@ -73,18 +95,30 @@ export function* createSite(
 				font_base: selectedFonts.base,
 				font_headings: selectedFonts.headings,
 			} ),
-			use_patterns: isEnabled( 'gutenboarding/use-patterns' ),
+			use_patterns: true,
+			selected_features: selectedFeatures,
+			wpcom_public_coming_soon: 1,
+			...( anchorFmPodcastId && {
+				anchor_fm_podcast_id: anchorFmPodcastId,
+			} ),
+			...( anchorFmEpisodeId && {
+				anchor_fm_episode_id: anchorFmEpisodeId,
+			} ),
+			...( anchorFmSpotifyUrl && {
+				anchor_fm_spotify_url: anchorFmSpotifyUrl,
+			} ),
+			...( selectedDesign && { is_blank_canvas: isBlankCanvasDesign( selectedDesign ) } ),
 		},
 		...( bearerToken && { authToken: bearerToken } ),
 	};
-	const success = yield dispatch( SITE_STORE, 'createSite', params );
+	const success: Site.NewSiteBlogDetails | undefined = yield dispatch(
+		SITE_STORE,
+		'createSite',
+		params
+	);
 
 	return success;
 }
-
-export const enableExperimental = () => ( {
-	type: 'SET_ENABLE_EXPERIMENTAL' as const,
-} );
 
 export const removeFeature = ( featureId: FeatureId ) => ( {
 	type: 'REMOVE_FEATURE' as const,
@@ -140,9 +174,14 @@ export const setIsRedirecting = ( isRedirecting: boolean ) => ( {
 	isRedirecting,
 } );
 
-export const setPlan = ( plan: Plans.Plan ) => ( {
-	type: 'SET_PLAN' as const,
-	plan,
+export const setLastLocation = ( path: string ) => ( {
+	type: 'SET_LAST_LOCATION' as const,
+	path,
+} );
+
+export const setPlanProductId = ( planProductId: number | undefined ) => ( {
+	type: 'SET_PLAN_PRODUCT_ID' as const,
+	planProductId,
 } );
 
 export const setRandomizedDesigns = ( randomizedDesigns: { featured: Design[] } ) => ( {
@@ -184,14 +223,17 @@ export const togglePageLayout = ( pageLayout: Template ) => ( {
 	pageLayout,
 } );
 
-export function* updatePlan( planSlug: Plans.PlanSlug ) {
-	const plan: Plans.Plan = yield select( PLANS_STORE, 'getPlanBySlug', planSlug );
-	yield setPlan( plan );
+export function updatePlan( planProductId: number ) {
+	// keep updatePlan for backwards compat
+	return setPlanProductId( planProductId );
 }
+
+export const startOnboarding = () => ( {
+	type: 'ONBOARDING_START' as const,
+} );
 
 export type OnboardAction = ReturnType<
 	| typeof addFeature
-	| typeof enableExperimental
 	| typeof removeFeature
 	| typeof resetFonts
 	| typeof resetOnboardStore
@@ -203,7 +245,8 @@ export type OnboardAction = ReturnType<
 	| typeof setHasUsedDomainsStep
 	| typeof setHasUsedPlansStep
 	| typeof setIsRedirecting
-	| typeof setPlan
+	| typeof setLastLocation
+	| typeof setPlanProductId
 	| typeof setRandomizedDesigns
 	| typeof setSelectedDesign
 	| typeof setSelectedSite
@@ -212,4 +255,5 @@ export type OnboardAction = ReturnType<
 	| typeof setSiteVertical
 	| typeof skipSiteVertical
 	| typeof togglePageLayout
+	| typeof startOnboarding
 >;

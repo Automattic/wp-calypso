@@ -1,18 +1,17 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import ExternalLink from 'components/external-link';
-import FormLegend from 'components/forms/form-legend';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import ExternalLink from 'calypso/components/external-link';
+import FormLegend from 'calypso/components/forms/form-legend';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 
 class FormAnalyticsStores extends Component {
 	handleToggleChange = ( name ) => () => {
@@ -48,13 +47,12 @@ class FormAnalyticsStores extends Component {
 					const checked = fields.wga ? Boolean( fields.wga[ setting.key ] ) : false;
 					return (
 						<div key={ setting.key }>
-							<CompactFormToggle
+							<ToggleControl
 								checked={ checked }
 								disabled={ disableAll }
 								onChange={ this.handleToggleChange( setting.key ) }
-							>
-								{ setting.label }
-							</CompactFormToggle>
+								label={ setting.label }
+							/>
 							{ setting.explanation && this.renderExplanation( setting ) }
 							{ setting.children &&
 								this.renderSettings( setting.children, disableAll || ! checked, true ) }

@@ -12,13 +12,13 @@ to replace them with, in the `flags` parameter.
 Example Babel config file:
 
 ```js
-{
+const babelConfig = {
 	plugins: [
 		new ConfigFlagPlugin( {
 			flags: { flagName: config.isEnabled( flagName ) },
 		} ),
-	];
-}
+	],
+};
 ```
 
 The above example will replace any `isEnabled( 'flagName' )` calls with the

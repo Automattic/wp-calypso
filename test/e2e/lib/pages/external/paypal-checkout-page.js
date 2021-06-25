@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { By as by } from 'selenium-webdriver';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -11,13 +11,13 @@ import AsyncBaseContainer from '../../async-base-container';
 
 export default class PaypalCheckoutPage extends AsyncBaseContainer {
 	constructor( driver ) {
-		const priceSelector = by.css( '.paypal-checkout-sandbox-iframe' );
-		super( driver, priceSelector );
-		this.priceSelector = priceSelector;
+		const priceLocator = By.css( '.paypal-checkout-sandbox-iframe' );
+		super( driver, priceLocator );
+		this.priceLocator = priceLocator;
 	}
 
 	async priceDisplayed() {
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.priceSelector );
-		return await this.driver.findElement( this.priceSelector ).getText();
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, this.priceLocator );
+		return await this.driver.findElement( this.priceLocator ).getText();
 	}
 }

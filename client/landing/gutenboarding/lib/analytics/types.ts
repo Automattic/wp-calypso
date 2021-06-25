@@ -36,6 +36,11 @@ export interface OnboardingCompleteParameters {
 	 * Whether the user has a paid plan or other checkout item
 	 */
 	hasCartItems?: boolean;
+
+	/**
+	 * Type of onboarding flow
+	 */
+	flow?: string;
 }
 
 export type TracksAcquireIntentEventProperties = {
@@ -88,9 +93,21 @@ type TracksDomainSelectEventProperties = {
 
 type TracksPlanSelectEventProperties = {
 	/**
-	 * The selected level domain name
+	 * The selected plan slug
 	 */
 	selected_plan: string | undefined;
+};
+
+type TracksFeaturesSelectEventProperties = {
+	/**
+	 * If the user selected features
+	 */
+	has_selected_features: boolean | undefined;
+
+	/**
+	 * If the user seleceted the "Video storage" feature
+	 */
+	has_selected_video_storage: boolean | undefined;
 };
 
 export type TracksEventProperties =
@@ -98,4 +115,5 @@ export type TracksEventProperties =
 	| TracksStyleSelectEventProperties
 	| TracksDesignSelectEventProperties
 	| TracksDomainSelectEventProperties
-	| TracksPlanSelectEventProperties;
+	| TracksPlanSelectEventProperties
+	| TracksFeaturesSelectEventProperties;

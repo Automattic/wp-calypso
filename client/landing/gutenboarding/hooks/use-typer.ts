@@ -6,7 +6,7 @@ import { useState } from 'react';
 /**
  * Internal dependencies
  */
-import { useInterval } from 'lib/interval/use-interval';
+import { useInterval } from 'calypso/lib/interval/use-interval';
 
 type TyperMode = 'TYPING' | 'DELETING';
 

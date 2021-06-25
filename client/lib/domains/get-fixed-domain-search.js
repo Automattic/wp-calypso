@@ -1,5 +1,6 @@
 export function getFixedDomainSearch( domainName ) {
-	return domainName
+	const domain = domainName ?? '';
+	return domain
 		.trim()
 		.toLowerCase()
 		.replace( /^(https?:\/\/)?(www[0-9]?\.)?/, '' )

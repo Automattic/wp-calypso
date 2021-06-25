@@ -1,17 +1,13 @@
 /**
  * Internal dependencies
  */
-import {
-	combineReducers,
-	keyedReducer,
-	withSchemaValidation,
-	withoutPersistence,
-} from 'state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
 import {
 	GSUITE_USERS_REQUEST,
 	GSUITE_USERS_REQUEST_FAILURE,
 	GSUITE_USERS_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import { usersSchema } from './schema';
 
 export const usersReducer = withSchemaValidation( usersSchema, ( state = null, action ) => {
@@ -31,7 +27,7 @@ export const usersReducer = withSchemaValidation( usersSchema, ( state = null, a
 	return state;
 } );
 
-export const requestErrorReducer = withoutPersistence( ( state = false, action ) => {
+export const requestErrorReducer = ( state = false, action ) => {
 	switch ( action.type ) {
 		case GSUITE_USERS_REQUEST:
 			return false;
@@ -44,9 +40,9 @@ export const requestErrorReducer = withoutPersistence( ( state = false, action )
 	}
 
 	return state;
-} );
+};
 
-export const requestingReducer = withoutPersistence( ( state = false, action ) => {
+export const requestingReducer = ( state = false, action ) => {
 	switch ( action.type ) {
 		case GSUITE_USERS_REQUEST:
 			return true;
@@ -59,9 +55,9 @@ export const requestingReducer = withoutPersistence( ( state = false, action ) =
 	}
 
 	return state;
-} );
+};
 
-export default keyedReducer(
+const combinedReducer = keyedReducer(
 	'siteId',
 	combineReducers( {
 		users: usersReducer,
@@ -69,3 +65,5 @@ export default keyedReducer(
 		requestError: requestErrorReducer,
 	} )
 );
+
+export default withStorageKey( 'gsuiteUsers', combinedReducer );

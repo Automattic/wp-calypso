@@ -91,14 +91,4 @@
 	display: flex;
 	height: 40px;
 	justify-content: center;
-
-	.form-toggle__switch {
-		width: 32px;
-		height: 16px;
-
-		&::after {
-			width: 12px;
-			height: 12px;
-		}
-	}
 }

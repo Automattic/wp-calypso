@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import { isServiceWorkerSupported } from 'lib/service-worker';
+import { isServiceWorkerSupported } from 'calypso/lib/service-worker';
 
 export function isUnsupportedChromeVersion() {
 	if ( window && window.chrome && window.navigator.appVersion ) {
@@ -43,7 +43,7 @@ export function getOperaVersion() {
 // From https://github.com/GoogleChromeLabs/web-push-codelab/issues/46
 export function urlBase64ToUint8Array( base64String ) {
 	const padding = '='.repeat( ( 4 - ( base64String.length % 4 ) ) % 4 );
-	const base64 = ( base64String + padding ).replace( /\-/g, '+' ).replace( /_/g, '/' );
+	const base64 = ( base64String + padding ).replace( /-/g, '+' ).replace( /_/g, '/' );
 	const rawData = atob( base64 );
 	const outputArray = new Uint8Array( rawData.length );
 

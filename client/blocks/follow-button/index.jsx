@@ -3,15 +3,17 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { noop, omitBy, isUndefined } from 'lodash';
+import { omitBy } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import FollowButton from './button';
-import { isFollowing } from 'state/reader/follows/selectors';
-import { follow, unfollow } from 'state/reader/follows/actions';
+import { isFollowing } from 'calypso/state/reader/follows/selectors';
+import { follow, unfollow } from 'calypso/state/reader/follows/actions';
+
+const noop = () => {};
 
 class FollowButtonContainer extends Component {
 	static propTypes = {
@@ -35,7 +37,7 @@ class FollowButtonContainer extends Component {
 					feed_ID: this.props.feedId,
 					blog_ID: this.props.siteId,
 				},
-				isUndefined
+				( data ) => typeof data === 'undefined'
 			);
 
 			this.props.follow( this.props.siteUrl, followData );

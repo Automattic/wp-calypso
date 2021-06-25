@@ -9,7 +9,7 @@ import { spy, stub } from 'sinon';
  */
 import { bypassDataLayer } from '../utils';
 import { middleware } from '../wpcom-api-middleware';
-import { mergeHandlers } from 'state/action-watchers/utils';
+import { mergeHandlers } from 'calypso/state/action-watchers/utils';
 
 describe( 'WordPress.com API Middleware', () => {
 	let next;

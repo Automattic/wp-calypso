@@ -6,46 +6,55 @@ import { start, stop } from '@automattic/browser-data-collector';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from '@automattic/calypso-config';
 import { startPerformanceTracking, stopPerformanceTracking } from '../lib';
-import { abtest } from 'lib/abtest';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
-import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isJetpackSite, isSingleUserSite } from 'calypso/state/sites/selectors';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import {
+	getCurrentUserCountryCode,
+	getCurrentUserSiteCount,
+	getCurrentUserVisibleSiteCount,
+	isCurrentUserBootstrapped,
+	getCurrentUserLocale,
+} from 'calypso/state/current-user/selectors';
+import { collectTranslationTimings, clearTranslationTimings } from '../collectors/translations';
 
-jest.mock( 'config', () => ( {
+jest.mock( '@automattic/calypso-config', () => ( {
 	isEnabled: jest.fn(),
 } ) );
 jest.mock( '@automattic/browser-data-collector', () => ( {
 	start: jest.fn(),
 	stop: jest.fn(),
 } ) );
-jest.mock( 'lib/abtest', () => ( {
-	abtest: jest.fn(),
-} ) );
-jest.mock( 'state/ui/selectors', () => ( {
+jest.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSiteId: jest.fn(),
 } ) );
-jest.mock( 'state/sites/selectors', () => ( {
+jest.mock( 'calypso/state/sites/selectors', () => ( {
 	isJetpackSite: jest.fn(),
 	isSingleUserSite: jest.fn(),
 } ) );
-jest.mock( 'state/selectors/is-site-wpcom-atomic', () => jest.fn() );
+jest.mock( 'calypso/state/current-user/selectors', () => ( {
+	getCurrentUserCountryCode: jest.fn(),
+	getCurrentUserSiteCount: jest.fn(),
+	getCurrentUserVisibleSiteCount: jest.fn(),
+	isCurrentUserBootstrapped: jest.fn(),
+	getCurrentUserLocale: jest.fn(),
+} ) );
+jest.mock( 'calypso/state/selectors/is-site-wpcom-atomic', () => jest.fn() );
+jest.mock( '../collectors/translations', () => ( {
+	collectTranslationTimings: jest.fn(),
+	clearTranslationTimings: jest.fn(),
+} ) );
 
 const withFeatureEnabled = () =>
 	config.isEnabled.mockImplementation( ( key ) => key === 'rum-tracking/logstash' );
 const withFeatureDisabled = () =>
 	config.isEnabled.mockImplementation( ( key ) => key !== 'rum-tracking/logstash' );
-const withABTestEnabled = () =>
-	abtest.mockImplementation( ( test ) =>
-		test === 'rumDataCollection' ? 'collectData' : 'noData'
-	);
-const withABTestDisabled = () => abtest.mockImplementation( () => 'noData' );
 
 describe( 'startPerformanceTracking', () => {
 	beforeEach( () => {
 		withFeatureEnabled();
-		withABTestEnabled();
 	} );
 
 	afterEach( () => {
@@ -60,14 +69,6 @@ describe( 'startPerformanceTracking', () => {
 
 	it( 'do not start measuring when the config flag is off', () => {
 		withFeatureDisabled();
-
-		startPerformanceTracking( 'pageName' );
-
-		expect( start ).not.toHaveBeenCalled();
-	} );
-
-	it( 'do not start measuring when the abtest is disabled', () => {
-		withABTestDisabled();
 
 		startPerformanceTracking( 'pageName' );
 
@@ -111,7 +112,7 @@ describe( 'startPerformanceTracking', () => {
 describe( 'stopPerformanceTracking', () => {
 	beforeEach( () => {
 		withFeatureEnabled();
-		withABTestEnabled();
+		collectTranslationTimings.mockImplementation( () => ( {} ) );
 	} );
 
 	afterEach( () => {
@@ -126,14 +127,6 @@ describe( 'stopPerformanceTracking', () => {
 
 	it( 'do not stop measuring when the config flag is off', () => {
 		withFeatureDisabled();
-
-		stopPerformanceTracking( 'pageName' );
-
-		expect( stop ).not.toHaveBeenCalled();
-	} );
-
-	it( 'do not stop measuring when the abtest is disabled', () => {
-		withABTestDisabled();
 
 		stopPerformanceTracking( 'pageName' );
 
@@ -155,6 +148,11 @@ describe( 'stopPerformanceTracking', () => {
 		isSingleUserSite.mockImplementation( () => false );
 		isSiteWpcomAtomic.mockImplementation( () => false );
 		getSelectedSiteId.mockImplementation( () => 42 );
+		getCurrentUserSiteCount.mockImplementation( () => 2 );
+		getCurrentUserVisibleSiteCount.mockImplementation( () => 1 );
+		getCurrentUserCountryCode.mockImplementation( () => 'es' );
+		isCurrentUserBootstrapped.mockImplementation( () => true );
+		getCurrentUserLocale.mockImplementation( () => 'es' );
 
 		// Run the default collector
 		stopPerformanceTracking( 'pageName', { state } );
@@ -167,6 +165,11 @@ describe( 'stopPerformanceTracking', () => {
 		expect( report.data.get( 'siteIsJetpack' ) ).toBe( false );
 		expect( report.data.get( 'siteIsSingleUser' ) ).toBe( false );
 		expect( report.data.get( 'siteIsAtomic' ) ).toBe( false );
+		expect( report.data.get( 'sitesCount' ) ).toBe( 2 );
+		expect( report.data.get( 'sitesVisibleCount' ) ).toBe( 1 );
+		expect( report.data.get( 'userCountryCode' ) ).toBe( 'es' );
+		expect( report.data.get( 'userBootstrapped' ) ).toBe( true );
+		expect( report.data.get( 'userLocale' ) ).toBe( 'es' );
 	} );
 
 	it( 'uses metdata to generate a collector', () => {
@@ -185,5 +188,23 @@ describe( 'stopPerformanceTracking', () => {
 		metadataCollector( report );
 
 		expect( report.data.get( 'foo' ) ).toBe( 42 );
+	} );
+
+	it( 'detects performance of translation chunks', () => {
+		collectTranslationTimings.mockImplementation( () => ( {
+			count: 1,
+			total: 10,
+		} ) );
+		const report = {
+			data: new Map(),
+		};
+
+		stopPerformanceTracking( 'pageName' );
+		const defaultCollector = stop.mock.calls[ 0 ][ 1 ].collectors[ 0 ];
+		defaultCollector( report );
+
+		expect( report.data.get( 'translationsChunksDuration' ) ).toBe( 10 );
+		expect( report.data.get( 'translationsChunksCount' ) ).toBe( 1 );
+		expect( clearTranslationTimings ).toHaveBeenCalled();
 	} );
 } );

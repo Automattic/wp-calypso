@@ -6,10 +6,11 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { navigation, siteSelection, sites } from 'my-sites/controller';
+import { GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
+import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import controller from './controller';
 import * as paths from './paths';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
 
 function registerMultiPage( { paths: givenPaths, handlers } ) {
 	givenPaths.forEach( ( path ) => page( path, ...handlers ) );
@@ -29,15 +30,17 @@ export default function () {
 		handlers: [ ...commonHandlers, controller.emailManagement, makeLayout, clientRender ],
 	} );
 
+	const productType = `:productType(${ GOOGLE_WORKSPACE_PRODUCT_TYPE }|${ GSUITE_PRODUCT_TYPE })`;
+
 	registerMultiPage( {
 		paths: [
 			paths.emailManagementAddGSuiteUsers(
 				':site',
 				':domain',
+				productType,
 				paths.emailManagementAllSitesPrefix
 			),
-			paths.emailManagementAddGSuiteUsers( ':site', ':domain' ),
-			paths.emailManagementAddGSuiteUsers( ':site' ),
+			paths.emailManagementAddGSuiteUsers( ':site', ':domain', productType ),
 		],
 		handlers: [
 			...commonHandlers,
@@ -49,28 +52,83 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagementAddGSuiteUsersLegacy( ':site', ':domain' ),
-			paths.emailManagementAddGSuiteUsersLegacy( ':site' ),
+			paths.emailManagementManageTitanAccount(
+				':site',
+				':domain',
+				paths.emailManagementAllSitesPrefix
+			),
+			paths.emailManagementManageTitanAccount( ':site', ':domain' ),
 		],
-		handlers: [ controller.emailManagementAddGSuiteUsersLegacyRedirect ],
+		handlers: [
+			...commonHandlers,
+			controller.emailManagementManageTitanAccount,
+			makeLayout,
+			clientRender,
+		],
 	} );
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagementNewGSuiteAccount(
+			paths.emailManagementManageTitanMailboxes(
 				':site',
 				':domain',
-				':planType',
 				paths.emailManagementAllSitesPrefix
 			),
-			paths.emailManagementNewGSuiteAccount( ':site', ':domain', ':planType' ),
+			paths.emailManagementManageTitanMailboxes( ':site', ':domain' ),
 		],
 		handlers: [
 			...commonHandlers,
-			controller.emailManagementNewGSuiteAccount,
+			controller.emailManagementManageTitanMailboxes,
 			makeLayout,
 			clientRender,
 		],
+	} );
+
+	registerMultiPage( {
+		paths: [
+			paths.emailManagementPurchaseNewEmailAccount(
+				':site',
+				':domain',
+				paths.emailManagementAllSitesPrefix
+			),
+			paths.emailManagementPurchaseNewEmailAccount( ':site', ':domain' ),
+		],
+		handlers: [
+			...commonHandlers,
+			controller.emailManagementPurchaseNewEmailAccount,
+			makeLayout,
+			clientRender,
+		],
+	} );
+
+	registerMultiPage( {
+		paths: [
+			paths.emailManagementNewTitanAccount(
+				':site',
+				':domain',
+				paths.emailManagementAllSitesPrefix
+			),
+			paths.emailManagementNewTitanAccount( ':site', ':domain' ),
+		],
+		handlers: [
+			...commonHandlers,
+			controller.emailManagementNewTitanAccount,
+			makeLayout,
+			clientRender,
+		],
+	} );
+
+	registerMultiPage( {
+		paths: [
+			paths.emailManagementTitanControlPanelRedirect(
+				':site',
+				':domain',
+				paths.emailManagementAllSitesPrefix
+			),
+			paths.emailManagementTitanControlPanelRedirect( ':site', ':domain' ),
+		],
+		// Note that we don't have the commonHandlers here, as we want to avoid the nav bar etc
+		handlers: [ controller.emailManagementTitanControlPanelRedirect, makeLayout, clientRender ],
 	} );
 
 	registerMultiPage( {

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { By as by } from 'selenium-webdriver';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -12,33 +12,33 @@ import * as driverHelper from '../driver-helper';
 
 export default class JetpackAuthorizePage extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, by.css( '.is-section-jetpack-connect' ) );
+		super( driver, By.css( '.is-section-jetpack-connect' ) );
 	}
 
 	async chooseSignIn() {
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( '.logged-out-form__link-item' )
+			By.css( '.logged-out-form__link-item' )
 		);
 	}
 
 	async approveConnection() {
-		const authorizeButtonSelector = by.css( '.jetpack-connect__authorize-form button' );
-		await driverHelper.clickWhenClickable( this.driver, authorizeButtonSelector );
+		const authorizeButtonLocator = By.css( '.jetpack-connect__authorize-form button' );
+		await driverHelper.clickWhenClickable( this.driver, authorizeButtonLocator );
 		return await this.waitToDisappear();
 	}
 
 	async approveSSOConnection() {
-		const SSOAprroveSelector = by.css( '.jetpack-connect__sso-actions button' );
-		const loadingSelector = by.css( '.site.is-loading' );
-		await driverHelper.waitTillNotPresent( this.driver, loadingSelector );
-		return await driverHelper.clickWhenClickable( this.driver, SSOAprroveSelector );
+		const SSOAprroveLocator = By.css( '.jetpack-connect__sso-actions button' );
+		const loadingLocator = By.css( '.site.is-loading' );
+		await driverHelper.waitUntilElementNotLocated( this.driver, loadingLocator );
+		return await driverHelper.clickWhenClickable( this.driver, SSOAprroveLocator );
 	}
 
 	async waitToDisappear() {
-		return await driverHelper.waitTillNotPresent(
+		return await driverHelper.waitUntilElementNotLocated(
 			this.driver,
-			by.css( '.jetpack-connect__logged-in-form-loading' ),
+			By.css( '.jetpack-connect__logged-in-form-loading' ),
 			this.explicitWaitMS * 2
 		);
 	}

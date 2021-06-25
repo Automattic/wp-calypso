@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { makeLayout } from 'controller';
+import { makeLayout, ssrSetupLocale, setHrefLangLinks } from 'calypso/controller';
 import {
 	fetchThemeData,
 	fetchThemeFilters,
@@ -11,6 +11,7 @@ import {
 	redirectToThemeDetails,
 } from './controller';
 import { validateFilters, validateVertical } from './validate-filters';
+import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
 
 export default function ( router ) {
 	// Redirect interim showcase route to permanent one
@@ -18,14 +19,18 @@ export default function ( router ) {
 		res.redirect( 301, '/themes' + originalUrl.slice( '/design'.length ) );
 	} );
 
+	const langParam = getLanguageRouteParam();
+
 	const showcaseRoutes = [
-		'/themes/:tier(free|premium)?',
-		'/themes/:tier(free|premium)?/filter/:filter',
-		'/themes/:vertical?/:tier(free|premium)?',
-		'/themes/:vertical?/:tier(free|premium)?/filter/:filter',
+		`/${ langParam }/themes/:tier(free|premium)?`,
+		`/${ langParam }/themes/:tier(free|premium)?/filter/:filter`,
+		`/${ langParam }/themes/:vertical?/:tier(free|premium)?`,
+		`/${ langParam }/themes/:vertical?/:tier(free|premium)?/filter/:filter`,
 	];
 	router(
 		showcaseRoutes,
+		setHrefLangLinks,
+		ssrSetupLocale,
 		fetchThemeFilters,
 		validateVertical,
 		validateFilters,

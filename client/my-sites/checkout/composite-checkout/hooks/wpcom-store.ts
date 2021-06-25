@@ -2,21 +2,22 @@
  * External dependencies
  */
 import { useRef } from 'react';
+import type { StoreConfig } from '@wordpress/data';
+import type { DomainContactDetails } from '@automattic/shopping-cart';
+import type {
+	PossiblyCompleteDomainContactDetails,
+	WpcomStoreState,
+	ManagedContactDetails,
+	ManagedContactDetailsErrors,
+} from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
  */
 import {
-	WpcomStoreState,
 	getInitialWpcomStoreState,
-	ManagedContactDetails,
-	ManagedContactDetailsErrors,
 	managedContactDetailsUpdaters as updaters,
 } from '../types/wpcom-store-state';
-import {
-	PossiblyCompleteDomainContactDetails,
-	DomainContactDetails,
-} from '../types/backend/domain-contact-details-components';
 
 type WpcomStoreAction =
 	| {
@@ -26,7 +27,6 @@ type WpcomStoreAction =
 	| { type: 'UPDATE_DOMAIN_CONTACT_FIELDS'; payload: DomainContactDetails }
 	| { type: 'SET_SITE_ID'; payload: string }
 	| { type: 'SET_SITE_SLUG'; payload: string }
-	| { type: 'TRANSACTION_COMPLETE'; payload: object }
 	| { type: 'SET_RECAPTCHA_CLIENT_ID'; payload: number }
 	| { type: 'UPDATE_VAT_ID'; payload: string }
 	| { type: 'UPDATE_EMAIL'; payload: string }
@@ -41,19 +41,11 @@ type WpcomStoreAction =
 			payload: PossiblyCompleteDomainContactDetails;
 	  };
 
-type ReactStandardAction = { type: string; payload?: any }; // eslint-disable-line @typescript-eslint/no-explicit-any
-type WordPressDataStore = {
-	getState: () => object;
-	subscribe: ( listener: Function ) => void;
-	dispatch: ( action: object ) => void;
-};
-
 export function useWpcomStore(
-	registerStore: ( key: string, storeOptions: object ) => WordPressDataStore,
-	onEvent: ( action: ReactStandardAction ) => void,
+	registerStore: < T >( key: string, storeOptions: StoreConfig< T > ) => void, // FIXME: this actually returns Store but will fail TS checks until we include https://github.com/DefinitelyTyped/DefinitelyTyped/pull/46969
 	managedContactDetails: ManagedContactDetails,
 	updateContactDetailsCache: ( _: DomainContactDetails ) => void
-) {
+): void {
 	// Only register once
 	const registerIsComplete = useRef< boolean >( false );
 	if ( registerIsComplete.current ) {
@@ -122,15 +114,6 @@ export function useWpcomStore(
 		}
 	}
 
-	function transactionResultReducer( state: object, action: WpcomStoreAction ): object {
-		switch ( action.type ) {
-			case 'TRANSACTION_COMPLETE':
-				return action.payload;
-			default:
-				return state;
-		}
-	}
-
 	registerStore( 'wpcom', {
 		reducer( state: WpcomStoreState | undefined, action: WpcomStoreAction ): WpcomStoreState {
 			const checkedState =
@@ -140,7 +123,6 @@ export function useWpcomStore(
 				siteId: siteIdReducer( checkedState.siteId, action ),
 				siteSlug: siteSlugReducer( checkedState.siteSlug, action ),
 				recaptchaClientId: recaptchaClientIdReducer( checkedState.recaptchaClientId, action ),
-				transactionResult: transactionResultReducer( checkedState.transactionResult, action ),
 			};
 		},
 
@@ -157,10 +139,6 @@ export function useWpcomStore(
 
 			setSiteSlug( payload: string ): WpcomStoreAction {
 				return { type: 'SET_SITE_SLUG', payload };
-			},
-
-			setTransactionResponse( payload: object ): WpcomStoreAction {
-				return { type: 'TRANSACTION_COMPLETE', payload };
 			},
 
 			setRecaptchaClientId( payload: number ): WpcomStoreAction {
@@ -217,10 +195,6 @@ export function useWpcomStore(
 
 			getSiteSlug( state: WpcomStoreState ): string {
 				return state.siteSlug;
-			},
-
-			getTransactionResult( state: WpcomStoreState ): object {
-				return state.transactionResult;
 			},
 
 			getContactInfo( state: WpcomStoreState ): ManagedContactDetails {

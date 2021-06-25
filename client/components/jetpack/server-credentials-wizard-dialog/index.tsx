@@ -5,17 +5,16 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import classnames from 'classnames';
-import { isEmpty } from 'lodash';
 import { Dialog } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
-import Gridicon from 'components/gridicon';
-import ServerCredentialsForm from 'components/jetpack/server-credentials-form';
-import getJetpackCredentials from 'state/selectors/get-jetpack-credentials';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import ExternalLink from 'calypso/components/external-link';
+import Gridicon from 'calypso/components/gridicon';
+import ServerCredentialsForm from 'calypso/components/jetpack/server-credentials-form';
+import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * Style dependencies
@@ -46,9 +45,10 @@ const ServerCredentialsWizardDialog = ( {
 	children,
 }: Props ) => {
 	const siteId = useSelector( getSelectedSiteId );
-	const userNeedsCredentials = useSelector( ( state ) =>
-		isEmpty( getJetpackCredentials( state, siteId, 'main' ) )
-	);
+	const userNeedsCredentials = useSelector( ( state ) => {
+		const creds = getJetpackCredentials( state, siteId, 'main' );
+		return ! creds || Object.keys( creds ).length === 0;
+	} );
 
 	const showServerCredentialsForm = React.useMemo(
 		() => userNeedsCredentials && ! skipServerCredentials,

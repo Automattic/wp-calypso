@@ -7,26 +7,27 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { saveAs } from 'browser-filesaver';
 import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
 import titlecase from 'to-title-case';
 import { Button } from '@automattic/components';
-import { getSiteStatsCSVData, isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import QuerySiteStats from 'components/data/query-site-stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import {
+	getSiteStatsCSVData,
+	isRequestingSiteStatsForQuery,
+} from 'calypso/state/stats/lists/selectors';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 class StatsDownloadCsv extends Component {
 	static propTypes = {
 		siteSlug: PropTypes.string,
 		path: PropTypes.string.isRequired,
 		period: PropTypes.object.isRequired,
-		dataList: PropTypes.object,
 		data: PropTypes.array,
 		query: PropTypes.object,
 		statType: PropTypes.string,
@@ -91,26 +92,15 @@ class StatsDownloadCsv extends Component {
 
 const connectComponent = connect(
 	( state, ownProps ) => {
-		const { dataList, statType, query } = ownProps;
+		const { statType, query } = ownProps;
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSiteSlug( state, siteId );
-		let data;
-		let isLoading;
-
-		// TODO: When `stats-list` is no longer, this can be removed
-		if ( dataList ) {
-			data = dataList.csvData();
-			isLoading = dataList.isLoading();
-		} else {
-			data = getSiteStatsCSVData( state, siteId, statType, query );
-			isLoading = isRequestingSiteStatsForQuery( state, siteId, statType, query );
-		}
+		const data = getSiteStatsCSVData( state, siteId, statType, query );
+		const isLoading = isRequestingSiteStatsForQuery( state, siteId, statType, query );
 
 		return { data, siteSlug, siteId, isLoading };
 	},
-	{ recordGoogleEvent },
-	null,
-	{ pure: false }
+	{ recordGoogleEvent }
 );
 
-export default flowRight( connectComponent, localize )( StatsDownloadCsv );
+export default connectComponent( localize( StatsDownloadCsv ) );

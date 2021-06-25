@@ -6,17 +6,19 @@ import React from 'react';
 import { saveAs } from 'browser-filesaver';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import { errorNotice } from 'state/notices/actions';
-import Gridicon from 'components/gridicon';
+import { Button } from '@automattic/components';
+import wpcom from 'calypso/lib/wp';
+import { errorNotice } from 'calypso/state/notices/actions';
+import Gridicon from 'calypso/components/gridicon';
 import {
 	READER_EXPORT_TYPE_SUBSCRIPTIONS,
 	READER_EXPORT_TYPE_LIST,
-} from 'blocks/reader-export-button/constants';
+} from 'calypso/blocks/reader-export-button/constants';
 
 /**
  * Style dependencies
@@ -25,21 +27,25 @@ import './style.scss';
 
 class ReaderExportButton extends React.Component {
 	static propTypes = {
+		borderless: PropTypes.bool,
+		disabled: PropTypes.bool,
 		exportType: PropTypes.oneOf( [ READER_EXPORT_TYPE_SUBSCRIPTIONS, READER_EXPORT_TYPE_LIST ] ),
 		filename: PropTypes.string,
 		listId: PropTypes.number, // only when exporting a list
 	};
 
 	static defaultProps = {
+		borderless: false,
 		filename: 'reader-export.opml',
 		exportType: READER_EXPORT_TYPE_SUBSCRIPTIONS,
+		disabled: false,
 	};
 
 	state = { disabled: false };
 
 	onClick = () => {
 		// Don't kick off a new export request if there's one in progress
-		if ( this.state.disabled ) {
+		if ( this.props.disabled || this.state.disabled ) {
 			return;
 		}
 
@@ -72,10 +78,19 @@ class ReaderExportButton extends React.Component {
 
 	render() {
 		return (
-			<button className="reader-export-button" onClick={ this.onClick }>
+			<Button
+				borderless={ this.props.borderless }
+				className={ classnames( {
+					'reader-export-button': true,
+					'is-disabled': this.props.disabled || this.state.disabled,
+				} ) }
+				disabled={ this.props.disabled || this.state.disabled }
+				onClick={ this.onClick }
+				primary={ ! this.props.borderless }
+			>
 				<Gridicon icon="cloud-download" className="reader-export-button__icon" />
 				<span className="reader-export-button__label">{ this.props.translate( 'Export' ) }</span>
-			</button>
+			</Button>
 		);
 	}
 }

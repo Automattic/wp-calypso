@@ -8,7 +8,7 @@ import { CSSProperties } from 'react';
 /**
  * Internal dependencies
  */
-import scrollTo from 'lib/scroll-to';
+import scrollTo from 'calypso/lib/scroll-to';
 import { Coordinate, DialogPosition, ArrowPosition } from './types';
 
 const DIALOG_WIDTH = 410;

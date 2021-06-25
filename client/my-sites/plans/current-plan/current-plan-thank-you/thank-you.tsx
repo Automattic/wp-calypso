@@ -5,22 +5,21 @@ import React, { FC, ReactElement, useCallback, useMemo } from 'react';
 import { connect, DefaultRootState } from 'react-redux';
 import { isDesktop } from '@automattic/viewport';
 import { localize, LocalizeProps, TranslateResult } from 'i18n-calypso';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { preventWidows } from 'lib/formatting';
-import { requestGuidedTour } from 'state/guided-tours/actions';
+import { preventWidows } from 'calypso/lib/formatting';
+import { requestGuidedTour } from 'calypso/state/guided-tours/actions';
 import { Button } from '@automattic/components';
-import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
-import getCurrentRoute from 'state/selectors/get-current-route';
-import { addQueryArgs } from 'lib/url';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteAdminUrl } from 'state/sites/selectors';
-import getPrimarySiteId from 'state/selectors/get-primary-site-id';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { addQueryArgs } from 'calypso/lib/url';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './style.scss';
 
@@ -105,7 +104,7 @@ export const ThankYouCard: FC< Props > = ( {
 		[ dispatchRecordTracksEvent ]
 	);
 
-	const jetpackVersion = useMemo( () => get( selectedSite, 'options.jetpack_version', 0 ), [
+	const jetpackVersion = useMemo( () => selectedSite?.options?.jetpack_version ?? 0, [
 		selectedSite,
 	] );
 

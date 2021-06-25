@@ -5,7 +5,7 @@ import { cloneDeep } from 'lodash';
 /**
  * Internal dependencies
  */
-import isRequestingBillingTransaction from 'state/selectors/is-requesting-billing-transaction';
+import isRequestingBillingTransaction from 'calypso/state/selectors/is-requesting-billing-transaction';
 
 describe( 'isRequestingBillingTransaction()', () => {
 	const state = {

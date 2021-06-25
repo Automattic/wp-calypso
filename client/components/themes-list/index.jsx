@@ -4,22 +4,24 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { isEqual, isEmpty, noop, times } from 'lodash';
+import { isEqual, isEmpty, times } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Theme from 'components/theme';
-import EmptyContent from 'components/empty-content';
-import InfiniteScroll from 'components/infinite-scroll';
-import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
-import { getThemesBookmark } from 'state/themes/themes-ui/selectors';
+import Theme from 'calypso/components/theme';
+import EmptyContent from 'calypso/components/empty-content';
+import InfiniteScroll from 'calypso/components/infinite-scroll';
+import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
+import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 export class ThemesList extends React.Component {
 	static propTypes = {
@@ -124,7 +126,6 @@ export class ThemesList extends React.Component {
 		return (
 			this.props.emptyContent || (
 				<EmptyContent
-					illustration="/calypso/images/illustrations/no-themes-drake.svg"
 					title={ this.props.translate( 'Sorry, no themes found.' ) }
 					line={ this.props.translate( 'Try a different search or more filters?' ) }
 				/>

@@ -5,15 +5,18 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { map, noop } from 'lodash';
+import { map } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import QueryTimezones from 'components/data/query-timezones';
-import getRawOffsets from 'state/selectors/get-raw-offsets';
-import getTimezones from 'state/selectors/get-timezones';
+import FormSelect from 'calypso/components/forms/form-select';
+import QueryTimezones from 'calypso/components/data/query-timezones';
+import getRawOffsets from 'calypso/state/selectors/get-raw-offsets';
+import getTimezones from 'calypso/state/selectors/get-timezones';
+
+const noop = () => {};
 
 class Timezone extends Component {
 	onSelect = ( event ) => {
@@ -61,14 +64,14 @@ class Timezone extends Component {
 	render() {
 		const { selectedZone } = this.props;
 		return (
-			<select onChange={ this.onSelect } value={ selectedZone || '' }>
+			<FormSelect onChange={ this.onSelect } value={ selectedZone || '' }>
 				<QueryTimezones />
 				{ this.renderOptionsByContinent() }
 				<optgroup label="UTC">
 					<option value="UTC">UTC</option>
 				</optgroup>
 				{ this.props.includeManualOffsets && this.renderManualUtcOffsets() }
-			</select>
+			</FormSelect>
 		);
 	}
 }

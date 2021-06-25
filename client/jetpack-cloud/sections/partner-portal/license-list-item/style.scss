@@ -1,0 +1,137 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
+$column-domain: 1;
+$column-actions: 4;
+$column-toggle: 5;
+
+$grid-xlarge: 1fr 114px 114px 128px 30px;
+$grid-wide: 1fr 128px 128px 128px 36px;
+
+.license-list-item {
+	display: grid;
+	grid-template-columns: 1fr 36px;
+
+	> * {
+		display: none;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	> *:nth-child(#{$column-domain}) {
+		grid-column-end: auto;
+		display: block;
+	}
+
+	> *:nth-child(#{$column-actions}) {
+		display: none;
+	}
+
+	> *:nth-child(#{$column-toggle}) {
+		grid-column-end: -1;
+		display: inherit;
+		padding: 0;
+	}
+
+	@include break-xlarge() {
+		grid-template-columns: $grid-xlarge;
+		grid-column-gap: 0;
+		grid-row-gap: 0;
+		align-items: center;
+
+		> * {
+			display: block;
+		}
+
+		> * + * {
+			margin-left: 0;
+			padding-right: 7px;
+			padding-left: 7px;
+			text-align: center;
+		}
+
+		> *:last-child {
+			margin-left: auto;
+		}
+
+		> *:nth-child(#{$column-actions}) {
+			display: block;
+		}
+
+		> *:nth-child(#{$column-domain}) {
+			grid-column-end: auto;
+		}
+
+		> *:nth-child(#{$column-toggle}) {
+			grid-column-end: auto;
+		}
+	}
+
+	@include break-wide() {
+		grid-template-columns: $grid-wide;
+
+		> *:last-child {
+			margin-left: 12px;
+		}
+	}
+
+	&--header {
+		grid-template-columns: repeat( 4, 1fr );
+
+		> *:nth-child(#{$column-domain}) {
+			grid-column-end: auto;
+			justify-self: start;
+			padding: 16px 0;
+		}
+
+		> *:nth-child(#{$column-actions}),
+		> *:nth-child(#{$column-toggle}) {
+			display: none;
+		}
+
+		@include break-xlarge() {
+			grid-template-columns: $grid-xlarge;
+		}
+
+		@include break-wide() {
+			grid-template-columns: $grid-wide;
+		}
+
+		h2, h2 button {
+			justify-self: center;
+			font-size: 0.875rem;
+			line-height: 1.25rem;
+			white-space: nowrap;
+			color: var( --studio-gray-70 );
+		}
+
+		h2 {
+			font-weight: 400;
+		}
+
+		h2.is-selected {
+			font-weight: 600;
+		}
+
+		button {
+			display: flex;
+			align-items: center;
+			padding: 16px 0;
+			font-weight: inherit;
+			cursor: pointer;
+		}
+	}
+
+	.is-selected &__sort-indicator {
+		opacity: 1;
+	}
+
+	&__sort-indicator {
+		transition: transform 0.2s ease;
+		opacity: 0;
+
+		&.is-sort-asc {
+			transform: rotateZ( 180deg );
+		}
+	}
+}

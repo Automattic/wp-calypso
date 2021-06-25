@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/post-types/init';
+import 'calypso/state/post-types/init';
 
 /**
  * Returns the known post types for a site.
@@ -103,18 +103,18 @@ export function postTypeSupports( state, siteId, slug, feature ) {
 
 /**
  * Returns true if the site supported the post type, false if the site does not
- * support the post type, or null if support cannot be determined (if site is
+ * support the post type, or if support cannot be determined (if site is
  * not currently known).
  *
  * @param  {object}   state  Global state tree
  * @param  {number}   siteId Site ID
  * @param  {string}   slug   Post type slug
- * @returns {?boolean}        Whether site supports post type
+ * @returns {boolean}        Whether site supports post type
  */
 export function isPostTypeSupported( state, siteId, slug ) {
 	const postTypes = getPostTypes( state, siteId );
 	if ( ! postTypes ) {
-		return null;
+		return false;
 	}
 
 	return !! postTypes[ slug ];

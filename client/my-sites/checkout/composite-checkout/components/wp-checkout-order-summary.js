@@ -2,52 +2,56 @@
  * External dependencies
  */
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/core';
 import {
 	CheckoutCheckIcon,
-	CheckoutSummaryCard,
-	useEvents,
+	CheckoutSummaryCard as CheckoutSummaryCardUnstyled,
+	FormStatus,
 	useFormStatus,
-	useLineItemsOfType,
-	useTotal,
-	useSelect,
 } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
+import { useShoppingCart } from '@automattic/shopping-cart';
+import {
+	getCouponLineItemFromCart,
+	getTaxBreakdownLineItemsFromCart,
+	getTotalLineItemFromCart,
+} from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
  */
-import { showInlineHelpPopover } from 'state/inline-help/actions';
-import PaymentChatButton from 'my-sites/checkout/checkout/payment-chat-button';
-import getSupportVariation, {
-	SUPPORT_FORUM,
-	SUPPORT_DIRECTLY,
-} from 'state/selectors/get-inline-help-support-variation';
-import { useHasDomainsInCart, useDomainsInCart } from '../hooks/has-domains';
-import { useHasPlanInCart, usePlanInCart } from '../hooks/has-plan';
-import { useHasRenewalInCart } from '../hooks/has-renewal';
-import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
-import isPresalesChatAvailable from 'state/happychat/selectors/is-presales-chat-available';
-import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
-import QuerySupportTypes from 'blocks/inline-help/inline-help-query-support-types';
-import isSupportVariationDetermined from 'state/selectors/is-support-variation-determined';
-import { isEnabled } from 'config';
-import { isJetpackSite } from 'state/sites/selectors';
-import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import { isPlan, isMonthly, getYearlyPlanByMonthly, getPlan } from '@automattic/calypso-products';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import Gridicon from 'calypso/components/gridicon';
+import getPlanFeatures from '../lib/get-plan-features';
+import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
 
-export default function WPCheckoutOrderSummary() {
+export default function WPCheckoutOrderSummary( {
+	siteId,
+	onChangePlanLength,
+	nextDomainIsFree = false,
+} = {} ) {
 	const translate = useTranslate();
-	const taxes = useLineItemsOfType( 'tax' );
-	const coupons = useLineItemsOfType( 'coupon' );
-	const total = useTotal();
 	const { formStatus } = useFormStatus();
+	const { responseCart } = useShoppingCart();
+	const couponLineItem = getCouponLineItemFromCart( responseCart );
+	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
+	const totalLineItem = getTotalLineItemFromCart( responseCart );
 
-	const isCartUpdating = 'validating' === formStatus;
+	const hasRenewalInCart = responseCart.products.some(
+		( product ) => product.extra.purchaseType === 'renewal'
+	);
+
+	const isCartUpdating = FormStatus.VALIDATING === formStatus;
+
+	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
+	const hasMonthlyPlan = Boolean( plan && isMonthly( plan?.product_slug ) );
 
 	return (
-		<CheckoutSummaryCardUI
+		<CheckoutSummaryCard
 			className={ isCartUpdating ? 'is-loading' : '' }
 			data-e2e-cart-is-loading={ isCartUpdating }
 		>
@@ -58,31 +62,37 @@ export default function WPCheckoutOrderSummary() {
 				{ isCartUpdating ? (
 					<LoadingCheckoutSummaryFeaturesList />
 				) : (
-					<CheckoutSummaryFeaturesList />
+					<CheckoutSummaryFeaturesList
+						siteId={ siteId }
+						hasMonthlyPlan={ hasMonthlyPlan }
+						nextDomainIsFree={ nextDomainIsFree }
+					/>
 				) }
-				<CheckoutSummaryHelp />
+				{ ! isCartUpdating && hasMonthlyPlan && ! hasRenewalInCart && (
+					<SwitchToAnnualPlan plan={ plan } onChangePlanLength={ onChangePlanLength } />
+				) }
 			</CheckoutSummaryFeatures>
 			<CheckoutSummaryAmountWrapper>
-				{ coupons.map( ( coupon ) => (
-					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + coupon.id }>
-						<span>{ coupon.label }</span>
-						<span>{ coupon.amount.displayValue }</span>
+				{ couponLineItem && (
+					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + couponLineItem.id }>
+						<span>{ couponLineItem.label }</span>
+						<span>{ couponLineItem.amount.displayValue }</span>
 					</CheckoutSummaryLineItem>
-				) ) }
-				{ taxes.map( ( tax ) => (
-					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + tax.id }>
-						<span>{ tax.label }</span>
-						<span>{ tax.amount.displayValue }</span>
+				) }
+				{ taxLineItems.map( ( taxLineItem ) => (
+					<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + taxLineItem.id }>
+						<span>{ taxLineItem.label }</span>
+						<span>{ taxLineItem.amount.displayValue }</span>
 					</CheckoutSummaryLineItem>
 				) ) }
 				<CheckoutSummaryTotal>
 					<span>{ translate( 'Total' ) }</span>
 					<span className="wp-checkout-order-summary__total-price">
-						{ total.amount.displayValue }
+						{ totalLineItem.amount.displayValue }
 					</span>
 				</CheckoutSummaryTotal>
 			</CheckoutSummaryAmountWrapper>
-		</CheckoutSummaryCardUI>
+		</CheckoutSummaryCard>
 	);
 }
 
@@ -96,86 +106,171 @@ function LoadingCheckoutSummaryFeaturesList() {
 	);
 }
 
-function CheckoutSummaryFeaturesList() {
-	const hasDomainsInCart = useHasDomainsInCart();
-	const domains = useDomainsInCart();
-	const hasPlanInCart = useHasPlanInCart();
+function SwitchToAnnualPlan( { plan, onChangePlanLength } ) {
 	const translate = useTranslate();
-	const siteId = useSelect( ( select ) => select( 'wpcom' )?.getSiteId?.() );
+	const handleClick = () => {
+		const annualPlan = getPlan( getYearlyPlanByMonthly( plan.product_slug ) );
+		if ( annualPlan ) {
+			onChangePlanLength?.( plan.uuid, annualPlan.getStoreSlug(), annualPlan.getProductId() );
+		}
+	};
+
+	return (
+		<SwitchToAnnualPlanButton onClick={ handleClick }>
+			{ translate( 'Switch to annual plan' ) }
+		</SwitchToAnnualPlanButton>
+	);
+}
+
+function CheckoutSummaryFeaturesList( props ) {
+	const { responseCart } = useShoppingCart();
+	const hasDomainsInCart = responseCart.products.some(
+		( product ) => product.is_domain_registration || product.product_slug === 'domain_transfer'
+	);
+	const domains = responseCart.products.filter(
+		( product ) => product.is_domain_registration || product.product_slug === 'domain_transfer'
+	);
+	const hasPlanInCart = responseCart.products.some( ( product ) => isPlan( product ) );
+	const translate = useTranslate();
+	const siteId = props.siteId;
 	const isJetpackNotAtomic = useSelector(
 		( state ) => isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
 	);
+	const { hasMonthlyPlan = false } = props;
 
+	const showRefundText = responseCart.total_cost > 0;
 	let refundText = translate( 'Money back guarantee' );
+
+	let refundDays = 0;
 	if ( hasDomainsInCart && ! hasPlanInCart ) {
-		refundText = translate( '4 day money back guarantee' );
+		refundDays = 4;
 	} else if ( hasPlanInCart && ! hasDomainsInCart ) {
-		refundText = translate( '30 day money back guarantee' );
+		refundDays = hasMonthlyPlan ? 7 : 14;
+	}
+
+	if ( refundDays !== 0 ) {
+		// Using plural translation because some languages have multiple plural forms and no plural-agnostic.
+		refundText = translate(
+			'%(days)d-day money back guarantee',
+			'%(days)d-day money back guarantee',
+			{
+				count: refundDays,
+				args: { days: refundDays },
+			}
+		);
 	}
 
 	return (
-		<CheckoutSummaryFeaturesListUI>
+		<CheckoutSummaryFeaturesListWrapper>
 			{ hasDomainsInCart &&
 				domains.map( ( domain ) => {
-					return <CheckoutSummaryFeaturesListDomainItem domain={ domain } key={ domain.id } />;
+					return (
+						<CheckoutSummaryFeaturesListDomainItem
+							domain={ domain }
+							key={ domain.uuid }
+							{ ...props }
+						/>
+					);
 				} ) }
-			{ hasPlanInCart && <CheckoutSummaryPlanFeatures /> }
+			{ hasPlanInCart && <CheckoutSummaryPlanFeatures { ...props } /> }
 			<CheckoutSummaryFeaturesListItem>
 				<WPCheckoutCheckIcon />
-				<SupportText hasPlanInCart={ hasPlanInCart } isJetpackNotAtomic={ isJetpackNotAtomic } />
+				<SupportText
+					hasPlanInCart={ hasPlanInCart }
+					isJetpackNotAtomic={ isJetpackNotAtomic }
+					{ ...props }
+				/>
 			</CheckoutSummaryFeaturesListItem>
-			<CheckoutSummaryFeaturesListItem>
-				<WPCheckoutCheckIcon />
-				{ refundText }
-			</CheckoutSummaryFeaturesListItem>
-		</CheckoutSummaryFeaturesListUI>
+			{ showRefundText && (
+				<CheckoutSummaryFeaturesListItem>
+					<WPCheckoutCheckIcon />
+					{ refundText }
+				</CheckoutSummaryFeaturesListItem>
+			) }
+		</CheckoutSummaryFeaturesListWrapper>
 	);
 }
 
 function SupportText( { hasPlanInCart, isJetpackNotAtomic } ) {
 	const translate = useTranslate();
+
 	if ( hasPlanInCart && ! isJetpackNotAtomic ) {
-		return <span>{ translate( 'Email and live chat support' ) }</span>;
+		return <span>{ translate( 'Unlimited email support' ) }</span>;
 	}
+
 	return <span>{ translate( 'Email support' ) }</span>;
 }
 
-function CheckoutSummaryFeaturesListDomainItem( { domain } ) {
+function CheckoutSummaryFeaturesListDomainItem( { domain, hasMonthlyPlan, nextDomainIsFree } ) {
 	const translate = useTranslate();
+	const bundledText = translate( 'free for one year' );
+	const bundledDomain = translate( '{{strong}}%(domain)s{{/strong}} - %(bundled)s', {
+		components: {
+			strong: <strong />,
+		},
+		args: {
+			domain: domain.meta,
+			bundled: bundledText,
+		},
+		comment: 'domain name and bundling message, separated by a dash',
+	} );
+	const annualPlanOnly = translate( '(annual plans only)', {
+		comment: 'Label attached to a feature',
+	} );
+
+	const isSupported = ! ( hasMonthlyPlan && nextDomainIsFree );
+	let label = <strong>{ domain.meta }</strong>;
+
+	if ( domain.is_bundled ) {
+		label = bundledDomain;
+	} else if ( hasMonthlyPlan && nextDomainIsFree ) {
+		label = (
+			<>
+				{ bundledDomain }
+				{ ` ` }
+				{ annualPlanOnly }
+			</>
+		);
+	}
+
 	return (
-		<CheckoutSummaryFeaturesListItem>
-			<WPCheckoutCheckIcon />
-			{ domain.wpcom_meta.is_bundled ? (
-				translate( '{{strong}}%(domain)s{{/strong}} - %(bundled)s', {
-					components: {
-						strong: <strong />,
-					},
-					args: {
-						domain: domain.wpcom_meta.meta,
-						bundled: translate( 'free for a year with your plan' ),
-					},
-					comment: 'domain name and bundling message, separated by a dash',
-				} )
-			) : (
-				<strong>{ domain.wpcom_meta.meta }</strong>
-			) }
+		<CheckoutSummaryFeaturesListItem isSupported={ isSupported }>
+			{ isSupported ? <WPCheckoutCheckIcon /> : <WPCheckoutCrossIcon /> }
+			{ label }
 		</CheckoutSummaryFeaturesListItem>
 	);
 }
 
-function CheckoutSummaryPlanFeatures() {
+function CheckoutSummaryPlanFeatures( { siteId } ) {
 	const translate = useTranslate();
-	const hasDomainsInCart = useHasDomainsInCart();
-	const planInCart = usePlanInCart();
-	const hasRenewalInCart = useHasRenewalInCart();
-	const planFeatures = getPlanFeatures( planInCart, translate, hasDomainsInCart, hasRenewalInCart );
+	const { responseCart } = useShoppingCart();
+	const hasDomainsInCart = responseCart.products.some(
+		( product ) => product.is_domain_registration || product.product_slug === 'domain_transfer'
+	);
+	const planInCart = responseCart.products.find( ( product ) => isPlan( product ) );
+	const hasRenewalInCart = responseCart.products.some(
+		( product ) => product.extra.purchaseType === 'renewal'
+	);
+	const planHasDomainCredit = useSelector( ( state ) => hasDomainCredit( state, siteId ) );
+	const planFeatures = getPlanFeatures(
+		planInCart,
+		translate,
+		hasDomainsInCart,
+		hasRenewalInCart,
+		planHasDomainCredit
+	);
 
 	return (
 		<>
-			{ planFeatures.filter( Boolean ).map( ( feature ) => {
+			{ planFeatures.map( ( feature ) => {
+				const isSupported = ! feature.startsWith( '~~' );
+				if ( ! isSupported ) {
+					feature = feature.substr( 2 );
+				}
+
 				return (
-					<CheckoutSummaryFeaturesListItem key={ String( feature ) }>
-						<WPCheckoutCheckIcon />
+					<CheckoutSummaryFeaturesListItem key={ String( feature ) } isSupported={ isSupported }>
+						{ isSupported ? <WPCheckoutCheckIcon /> : <WPCheckoutCrossIcon /> }
 						{ feature }
 					</CheckoutSummaryFeaturesListItem>
 				);
@@ -184,136 +279,15 @@ function CheckoutSummaryPlanFeatures() {
 	);
 }
 
-function getPlanFeatures( plan, translate, hasDomainsInCart, hasRenewalInCart ) {
-	const showFreeDomainFeature = ! hasDomainsInCart && ! hasRenewalInCart;
-	if (
-		'personal-bundle' === plan.wpcom_meta?.product_slug ||
-		'personal-bundle-2y' === plan.wpcom_meta?.product_slug
-	) {
-		return [
-			showFreeDomainFeature && translate( 'Free domain for one year' ),
-			translate( 'Remove WordPress.com ads' ),
-			translate( 'Limit your content to paying subscribers.' ),
-		];
-	} else if (
-		'value_bundle' === plan.wpcom_meta?.product_slug ||
-		'value_bundle-2y' === plan.wpcom_meta?.product_slug
-	) {
-		return [
-			showFreeDomainFeature && translate( 'Free domain for one year' ),
-			translate( 'Unlimited access to our library of Premium Themes' ),
-			isEnabled( 'earn/pay-with-paypal' )
-				? translate( 'Subscriber-only content and Pay with PayPal buttons' )
-				: translate( 'Subscriber-only content and payment buttons' ),
-			translate( 'Track your stats with Google Analytics' ),
-		];
-	} else if (
-		'business-bundle' === plan.wpcom_meta?.product_slug ||
-		'business-bundle-2y' === plan.wpcom_meta?.product_slug
-	) {
-		return [
-			showFreeDomainFeature && translate( 'Free domain for one year' ),
-			translate( 'Install custom plugins and themes' ),
-			translate( 'Drive traffic to your site with our advanced SEO tools' ),
-			translate( 'Track your stats with Google Analytics' ),
-			translate( 'Real-time backups and activity logs' ),
-		];
-	} else if (
-		'ecommerce-bundle' === plan.wpcom_meta?.product_slug ||
-		'ecommerce-bundle-2y' === plan.wpcom_meta?.product_slug
-	) {
-		return [
-			showFreeDomainFeature && translate( 'Free domain for one year' ),
-			translate( 'Install custom plugins and themes' ),
-			translate( 'Accept payments in 60+ countries' ),
-			translate( 'Integrations with top shipping carriers' ),
-			translate( 'Unlimited products or services for your online store' ),
-			translate( 'eCommerce marketing tools for emails and social networks' ),
-		];
-	}
-	return [];
-}
-
-function CheckoutSummaryHelp() {
-	const reduxDispatch = useDispatch();
-	const translate = useTranslate();
-	const plans = useLineItemsOfType( 'plan' );
-
-	const supportVariationDetermined = useSelector( isSupportVariationDetermined );
-
-	const happyChatAvailable = useSelector( isHappychatAvailable );
-	const presalesChatAvailable = useSelector( isPresalesChatAvailable );
-	const hasPresalesPlanInCart = plans.some(
-		( { wpcom_meta } ) =>
-			isWpComBusinessPlan( wpcom_meta.product_slug ) ||
-			isWpComEcommercePlan( wpcom_meta.product_slug )
-	);
-	const isPresalesChatEligible = presalesChatAvailable && hasPresalesPlanInCart;
-
-	const isSupportChatUser = useSelector( ( state ) => {
-		return (
-			SUPPORT_FORUM !== getSupportVariation( state ) &&
-			SUPPORT_DIRECTLY !== getSupportVariation( state )
-		);
-	} );
-
-	const onEvent = useEvents();
-	const handleHelpButtonClicked = () => {
-		onEvent( { type: 'calypso_checkout_composite_summary_help_click' } );
-		reduxDispatch( showInlineHelpPopover() );
-	};
-
-	// If chat is available and the cart has a pre-sales plan or is already eligible for chat.
-	const shouldRenderPaymentChatButton =
-		happyChatAvailable &&
-		( isPresalesChatEligible || ( supportVariationDetermined && isSupportChatUser ) );
-
-	// If chat isn't available, use the inline help button instead.
-	return (
-		<>
-			<QuerySupportTypes />
-			{ ! shouldRenderPaymentChatButton && ! supportVariationDetermined && <LoadingButton /> }
-			{ shouldRenderPaymentChatButton ? (
-				<PaymentChatButton />
-			) : (
-				supportVariationDetermined && (
-					<CheckoutSummaryHelpButton onClick={ handleHelpButtonClicked }>
-						{ isSupportChatUser
-							? translate( 'Questions? {{underline}}Ask a Happiness Engineer{{/underline}}', {
-									components: {
-										underline: <span />,
-									},
-							  } )
-							: translate(
-									'Questions? {{underline}}Read more about plans and purchases{{/underline}}',
-									{
-										components: {
-											underline: <span />,
-										},
-									}
-							  ) }
-					</CheckoutSummaryHelpButton>
-				)
-			) }
-		</>
-	);
-}
-
 const pulse = keyframes`
-	0% {
-		opacity: 1;
-	}
+	0% { opacity: 1; }
 
-	70% {
-		opacity: 0.25;
-	}
+	70% { opacity: 0.25; }
 
-	100% {
-		opacity: 1;
-	}
+	100% { opacity: 1; }
 `;
 
-const CheckoutSummaryCardUI = styled( CheckoutSummaryCard )`
+const CheckoutSummaryCard = styled( CheckoutSummaryCardUnstyled )`
 	border-bottom: none 0;
 `;
 
@@ -323,15 +297,6 @@ const CheckoutSummaryFeatures = styled.div`
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		padding: 20px;
 	}
-
-	.checkout__payment-chat-button.is-borderless {
-		color: ${ ( props ) => props.theme.colors.textColor };
-		padding: 0;
-
-		svg {
-			width: 20px;
-		}
-	}
 `;
 
 const CheckoutSummaryFeaturesTitle = styled.h3`
@@ -340,28 +305,10 @@ const CheckoutSummaryFeaturesTitle = styled.h3`
 	margin-bottom: 6px;
 `;
 
-const CheckoutSummaryFeaturesListUI = styled.ul`
+const CheckoutSummaryFeaturesListWrapper = styled.ul`
 	margin: 0;
 	list-style: none;
 	font-size: 14px;
-`;
-
-const CheckoutSummaryHelpButton = styled.button`
-	margin-top: 16px;
-	text-align: left;
-
-	.rtl & {
-		text-align: right;
-	}
-
-	span {
-		cursor: pointer;
-		text-decoration: underline;
-
-		&:hover {
-			text-decoration: none;
-		}
-	}
 `;
 
 const WPCheckoutCheckIcon = styled( CheckoutCheckIcon )`
@@ -379,17 +326,37 @@ const WPCheckoutCheckIcon = styled( CheckoutCheckIcon )`
 	}
 `;
 
+const StyledGridicon = styled( Gridicon )`
+	margin-right: 4px;
+	position: absolute;
+	top: 2px;
+	left: 0;
+
+	.rtl & {
+		margin-right: 0;
+		margin-left: 4px;
+		right: 0;
+		left: auto;
+	}
+`;
+
+const WPCheckoutCrossIcon = () => <StyledGridicon icon="cross" size={ 20 } />;
+
 const CheckoutSummaryFeaturesListItem = styled.li`
 	margin-bottom: 4px;
 	padding-left: 24px;
 	position: relative;
 	overflow-wrap: break-word;
+	color: ${ ( props ) => ( props.isSupported ? 'inherit' : 'var( --color-neutral-30 )' ) };
 
 	.rtl & {
 		padding-right: 24px;
 		padding-left: 0;
 	}
 `;
+CheckoutSummaryFeaturesListItem.defaultProps = {
+	isSupported: true,
+};
 
 const CheckoutSummaryAmountWrapper = styled.div`
 	padding: 20px;
@@ -448,10 +415,18 @@ const LoadingCopy = styled.p`
 	}
 `;
 
-const LoadingButton = styled( LoadingCopy )`
-	margin: 16px 8px 0;
+const SwitchToAnnualPlanButton = styled.button`
+	margin-top: 16px;
+	text-align: left;
+	text-decoration: underline;
+	color: var( --color-link );
+	cursor: pointer;
 
-	::before {
-		display: none;
+	.rtl & {
+		text-align: right;
+	}
+
+	&:hover {
+		text-decoration: none;
 	}
 `;

@@ -1,0 +1,17 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@automattic/typography/styles/fonts';
+
+.layout__content--partner-portal-issue-license {
+	// Make sure the layout container is high enough so select dropdowns do not get cut off.
+	// Important since there's some imperative code that applies an inline min-height style to do some scroll hacks.
+	min-height: 100vh !important;
+}
+
+.current-section + .card-heading,
+.billing-dashboard__header .card-heading,
+.licenses__header .card-heading {
+	@include breakpoint-deprecated( '<660px' ) {
+		display: none;
+	}
+}

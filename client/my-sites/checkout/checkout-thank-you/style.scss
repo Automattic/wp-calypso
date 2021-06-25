@@ -1,3 +1,7 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+
 .checkout-thank-you {
 	box-sizing: border-box;
 	position: static;
@@ -28,7 +32,7 @@
 
 	&:first-child {
 		border-bottom: none;
-		border-radius: 3px 3px 0 0;
+		border-radius: 2px 2px 0 0;
 		margin-top: 16px;
 
 		.purchase-detail__required-notice {
@@ -38,7 +42,7 @@
 
 	&:last-child {
 		border-bottom: 1px solid var( --color-neutral-0 );
-		border-radius: 0 0 3px 3px;
+		border-radius: 0 0 2px 2px;
 	}
 }
 
@@ -50,6 +54,25 @@
 
 	.purchase-detail__text {
 		text-align: left;
+	}
+}
+
+.checkout-thank-you__domain-mapping-details {
+	.purchase-detail__description {
+		margin: 0;
+	}
+	.purchase-detail__image {
+		@include break-mobile {
+			width: auto;
+			margin-right: 1em;
+		}
+	}
+	.purchase-detail__content {
+		padding: 32px 0 0;
+
+		@include break-mobile {
+			padding: 32px;
+		}
 	}
 }
 
@@ -166,6 +189,10 @@
 	button:nth-child( 2 ) {
 		margin-left: 10px;
 	}
+
+	.button > .gridicon.gridicons-external {
+		margin-left: 6px;
+	}
 }
 
 .checkout-thank-you__header-heading {
@@ -179,6 +206,7 @@
 	font-size: $font-title-small;
 	font-weight: 400;
 	margin-top: 15px;
+	word-break: break-word;
 }
 
 .checkout-thank-you__header.is-placeholder {
@@ -322,7 +350,8 @@
 			.thank-you-card {
 				color: var( --color-text );
 				background-color: var( --color-surface );
-				box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
+				box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
+					0 1px 2px var( --color-neutral-0 );
 			}
 		}
 	}
@@ -643,5 +672,76 @@
 
 	&.is-large {
 		transform: scale( 1 );
+	}
+}
+
+.jetpack-checkout-thank-you {
+	.jetpack-checkout-thank-you__card,
+	.jetpack-checkout-thank-you__card-loading {
+		box-shadow: 0 0 40px 0 #00000014;
+
+		width: 100%;
+		max-width: none;
+		padding: 16px;
+
+		@include break-mobile {
+			width: auto;
+			max-width: 650px;
+			padding: 96px;
+		}
+
+		// TODO min width
+		// TODO primary button color
+		.jetpack-checkout-thank-you__main-message {
+			font-size: 36px;
+			font-weight: 700;
+			margin-bottom: 24px;
+
+			@include break-mobile {
+				font-size: 48px;
+			}
+		}
+
+		.jetpack-checkout-thank-you__sub-message-loading,
+		.jetpack-checkout-thank-you__sub-message {
+			font-size: 24px;
+			font-weight: 500;
+			margin-bottom: 64px;
+		}
+
+		.jetpack-checkout-thank-you__email-message-loading,
+		.jetpack-checkout-thank-you__email-message {
+			margin-top: -32px;
+			margin-bottom: 64px;
+		}
+
+		.jetpack-checkout-thank-you__button,
+		.jetpack-checkout-thank-you__button:visited {
+			border-radius: 4px;
+			// button colors imported from packages/calypso-color-schemes/src/shared/color-schemes/_jetpack-cloud.scss
+			background-color: var( --studio-jetpack-green-50 );
+			border-color: var( --studio-jetpack-green-50 );
+			color: var( --color-text-inverted );
+
+			&:hover,
+			&:focus {
+				background-color: var( --studio-jetpack-green-60 );
+				border-color: var( --studio-jetpack-green-60 );
+				color: var( --color-text-inverted );
+			}
+
+			&[disabled],
+			&:disabled,
+			&.disabled {
+				color: var( --color-neutral-20 );
+				background-color: var( --color-surface );
+				border-color: var( --color-neutral-5 );
+			}
+		}
+	}
+
+	.jetpack-checkout-thank-you__sub-message-loading,
+	.jetpack-checkout-thank-you__email-message-loading {
+		@include placeholder( --color-neutral-30 );
 	}
 }

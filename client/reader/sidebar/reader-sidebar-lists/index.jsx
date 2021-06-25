@@ -2,15 +2,19 @@
  * External dependencies
  */
 import { localize } from 'i18n-calypso';
-import { identity } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import ExpandableSidebarMenu from 'layout/sidebar/expandable';
+import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ReaderSidebarListsList from './list';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export class ReaderSidebarLists extends Component {
 	static propTypes = {
@@ -23,24 +27,23 @@ export class ReaderSidebarLists extends Component {
 		translate: PropTypes.func,
 	};
 
-	static defaultProps = {
-		translate: identity,
-	};
-
 	render() {
-		const { translate, isOpen, onClick, ...passedProps } = this.props;
+		const { translate, isOpen, onClick, path, ...passedProps } = this.props;
 		return (
-			<div>
+			<li>
 				<ExpandableSidebarMenu
 					expanded={ isOpen }
 					title={ translate( 'Lists' ) }
 					onClick={ onClick }
 					materialIcon={ 'list' }
-					hideAddButton
+					disableFlyout={ true }
+					className={ path.startsWith( '/read/list' ) && 'sidebar__menu--selected' }
 				>
-					<ReaderSidebarListsList { ...passedProps } />
+					<li>
+						<ReaderSidebarListsList path={ path } { ...passedProps } />
+					</li>
 				</ExpandableSidebarMenu>
-			</div>
+			</li>
 		);
 	}
 }

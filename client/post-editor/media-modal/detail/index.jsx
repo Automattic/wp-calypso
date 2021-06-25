@@ -5,22 +5,24 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { noop, partial } from 'lodash';
+import { partial } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import DetailItem from './detail-item';
-import { getMimePrefix, filterItemsByMimePrefix, url } from 'lib/media/utils';
-import HeaderCake from 'components/header-cake';
+import { getMimePrefix, filterItemsByMimePrefix, url } from 'calypso/lib/media/utils';
+import HeaderCake from 'calypso/components/header-cake';
 import preloadImage from '../preload-image';
-import { ModalViews } from 'state/ui/media-modal/constants';
-import { setEditorMediaModalView } from 'state/editor/actions';
+import { ModalViews } from 'calypso/state/ui/media-modal/constants';
+import { setEditorMediaModalView } from 'calypso/state/editor/actions';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class EditorMediaModalDetailBase extends React.Component {
 	static propTypes = {
@@ -30,12 +32,14 @@ class EditorMediaModalDetailBase extends React.Component {
 		onSelectedIndexChange: PropTypes.func,
 		onReturnToList: PropTypes.func,
 		onEdit: PropTypes.func,
-		onRestore: PropTypes.func,
+		onRestoreItem: PropTypes.func,
+		onUpdateItem: PropTypes.func,
 	};
 
 	static defaultProps = {
 		selectedIndex: 0,
 		onSelectedIndexChange: noop,
+		onUpdateItem: noop,
 	};
 
 	componentDidMount() {
@@ -69,6 +73,7 @@ class EditorMediaModalDetailBase extends React.Component {
 			onEditImageItem,
 			onEditVideoItem,
 			onRestoreItem,
+			onUpdateItem,
 			onReturnToList,
 			translate,
 		} = this.props;
@@ -76,6 +81,7 @@ class EditorMediaModalDetailBase extends React.Component {
 		const item = items[ selectedIndex ];
 		const mimePrefix = getMimePrefix( item );
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="editor-media-modal-detail">
 				<HeaderCake
@@ -91,9 +97,11 @@ class EditorMediaModalDetailBase extends React.Component {
 					onShowNextItem={ this.incrementIndex.bind( this, 1 ) }
 					onRestore={ onRestoreItem }
 					onEdit={ 'video' === mimePrefix ? onEditVideoItem : onEditImageItem }
+					onUpdate={ onUpdateItem }
 				/>
 			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 

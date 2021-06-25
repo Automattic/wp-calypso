@@ -8,8 +8,8 @@ import { useDispatch } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getEmailAccounts } from 'state/email-accounts/actions';
-import isRequestingEmailAccounts from 'state/selectors/is-requesting-email-accounts';
+import { getEmailAccounts } from 'calypso/state/email-accounts/actions';
+import isRequestingEmailAccounts from 'calypso/state/selectors/is-requesting-email-accounts';
 
 const request = ( siteId ) => ( dispatch, getState ) => {
 	if ( ! isRequestingEmailAccounts( getState(), siteId ) ) {

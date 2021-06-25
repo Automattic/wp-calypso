@@ -13,7 +13,7 @@ import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { flowRight, get, includes, noop } from 'lodash';
+import { flowRight, get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { Button, Card } from '@wordpress/components';
 
@@ -22,40 +22,42 @@ import { Button, Card } from '@wordpress/components';
  */
 import AuthFormHeader from './auth-form-header';
 import HelpButton from './help-button';
-import LocaleSuggestions from 'components/locale-suggestions';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
+import LocaleSuggestions from 'calypso/components/locale-suggestions';
+import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
+import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import MainWrapper from './main-wrapper';
-import SignupForm from 'blocks/signup-form';
-import WpcomLoginForm from 'signup/wpcom-login-form';
-import { addQueryArgs } from 'lib/route';
+import SignupForm from 'calypso/blocks/signup-form';
+import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
+import { addQueryArgs } from 'calypso/lib/route';
 import { authQueryPropTypes } from './utils';
 import {
 	errorNotice as errorNoticeAction,
 	warningNotice as warningNoticeAction,
-} from 'state/notices/actions';
-import { isEnabled } from 'config';
-import { login } from 'lib/paths';
-import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
-import { sendEmailLogin as sendEmailLoginAction } from 'state/auth/actions';
+} from 'calypso/state/notices/actions';
+import { isEnabled } from '@automattic/calypso-config';
+import { login, lostPassword } from 'calypso/lib/paths';
+import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import { sendEmailLogin as sendEmailLoginAction } from 'calypso/state/auth/actions';
 import {
 	createAccount as createAccountAction,
 	createSocialAccount as createSocialAccountAction,
-} from 'state/jetpack-connect/actions';
-import LoginBlock from 'blocks/login';
-import Gridicon from 'components/gridicon';
-import { decodeEntities } from 'lib/formatting';
+} from 'calypso/state/jetpack-connect/actions';
+import LoginBlock from 'calypso/blocks/login';
+import Gridicon from 'calypso/components/gridicon';
+import { decodeEntities } from 'calypso/lib/formatting';
 import {
 	getRequestError,
 	getLastCheckedUsernameOrEmail,
 	getAuthAccountType,
 	getRedirectToOriginal,
-} from 'state/login/selectors';
-import { resetAuthAccountType as resetAuthAccountTypeAction } from 'state/login/actions';
-import FormattedHeader from 'components/formatted-header';
+} from 'calypso/state/login/selectors';
+import { resetAuthAccountType as resetAuthAccountTypeAction } from 'calypso/state/login/actions';
+import FormattedHeader from 'calypso/components/formatted-header';
 import wooDnaConfig from './woo-dna-config';
+import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
 
 const debug = debugFactory( 'calypso:jetpack-connect:authorize-form' );
+const noop = () => {};
 
 export class JetpackSignup extends Component {
 	static propTypes = {
@@ -147,9 +149,10 @@ export class JetpackSignup extends Component {
 			emailAddress,
 			from: this.props.authQuery.from,
 			isJetpack: true,
-			isNative: isEnabled( 'login/native-login-links' ),
 			locale: this.props.locale,
 			redirectTo: window.location.href,
+			allowSiteConnection: this.props.authQuery?.allowSiteConnection,
+			site: this.props.authQuery?.site,
 		} );
 	}
 
@@ -267,11 +270,22 @@ export class JetpackSignup extends Component {
 	}
 
 	renderFooterLink() {
+		const { authQuery } = this.props;
+
 		return (
 			<LoggedOutFormLinks>
 				<LoggedOutFormLinkItem href={ this.getLoginRoute() }>
 					{ this.props.translate( 'Already have an account? Sign in' ) }
 				</LoggedOutFormLinkItem>
+
+				{ authQuery.allowSiteConnection && (
+					<JetpackConnectSiteOnly
+						homeUrl={ authQuery.homeUrl }
+						redirectAfterAuth={ authQuery.redirectAfterAuth }
+						source="signup"
+					/>
+				) }
+
 				<HelpButton />
 			</LoggedOutFormLinks>
 		);
@@ -329,14 +343,16 @@ export class JetpackSignup extends Component {
 	}
 
 	renderWooDna() {
-		const { authQuery, isFullLoginFormVisible, translate, usernameOrEmail } = this.props;
+		const { authQuery, isFullLoginFormVisible, locale, translate, usernameOrEmail } = this.props;
 		const {
 			isCreatingAccount,
 			signUpUsernameOrEmail,
 			loginSocialConnect,
 			loginTwoFactorAuthType,
 		} = this.state;
-		let header, subHeader, content;
+		let header;
+		let subHeader;
+		let content;
 		const footerLinks = [];
 		const email = signUpUsernameOrEmail || usernameOrEmail || authQuery.userEmail;
 		const wooDna = this.getWooDnaConfig();
@@ -363,23 +379,23 @@ export class JetpackSignup extends Component {
 				pageTitle = translate( 'Login to WordPress.com' );
 				footerLinks.push(
 					<LoggedOutFormLinkItem key="signup" onClick={ this.showWooDnaSignupView }>
-						{ this.props.translate( 'Create a new account' ) }
+						{ translate( 'Create a new account' ) }
 					</LoggedOutFormLinkItem>
 				);
 				footerLinks.push(
-					<LoggedOutFormLinkItem
-						key="lostpassword"
-						href={ addQueryArgs(
-							{ action: 'lostpassword' },
-							login( { locale: this.props.locale } )
-						) }
-					>
-						{ this.props.translate( 'Lost your password?' ) }
+					<LoggedOutFormLinkItem key="lostpassword" href={ lostPassword( { locale } ) }>
+						{ translate( 'Lost your password?' ) }
 					</LoggedOutFormLinkItem>
 				);
 			} else {
 				header = wooDna.getServiceName();
-				subHeader = translate( 'Enter your email address to get started' );
+				if ( wooDna.getFlowName() === 'woodna:woocommerce-payments' ) {
+					subHeader = translate(
+						'Enter your email address to get started. Your account will enable you to start using the features and benefits offered by WooCommerce Payments'
+					);
+				} else {
+					subHeader = translate( 'Enter your email address to get started' );
+				}
 				pageTitle = translate( 'Connect' );
 			}
 			content = (
@@ -465,6 +481,7 @@ export class JetpackSignup extends Component {
 						submitting={ isCreatingAccount }
 						suggestedUsername=""
 					/>
+
 					{ this.renderLoginUser() }
 				</div>
 			</MainWrapper>

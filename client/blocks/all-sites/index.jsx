@@ -6,22 +6,23 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import AllSitesIcon from './all-sites-icon';
-import config from 'config';
-import Count from 'components/count';
-import getSites from 'state/selectors/get-sites';
-import { getCurrentUserVisibleSiteCount } from 'state/current-user/selectors';
+import config from '@automattic/calypso-config';
+import Count from 'calypso/components/count';
+import getSites from 'calypso/state/selectors/get-sites';
+import { getCurrentUserVisibleSiteCount } from 'calypso/state/current-user/selectors';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class AllSites extends Component {
 	static defaultProps = {

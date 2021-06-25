@@ -1,0 +1,157 @@
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
+
+.plan-upgrade__product {
+	border-bottom: solid 2px var( --color-primary );
+
+	em {
+		font-style: normal;
+	}
+}
+
+.plan-upgrade__description {
+	max-width: 400px;
+	margin: 2rem auto;
+
+	font-size: 1rem;
+	text-align: center;
+
+	@include break-medium {
+		max-width: 650px;
+
+		font-size: 1.25rem;
+	}
+}
+
+.plan-upgrade__list {
+	display: flex;
+	flex-direction: column;
+
+	margin: 72px auto 132px;
+
+	list-style-type: none;
+
+	@include break-wide {
+		flex-direction: row;
+		justify-content: center;
+		align-items: flex-start;
+	}
+
+	.with-single-reco & {
+		@include break-xlarge {
+			flex-direction: row;
+			justify-content: center;
+		}
+	}
+}
+
+.plan-upgrade__legacy-item {
+	@include break-medium {
+		max-width: 350px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	@include break-wide {
+		align-self: stretch;
+
+		margin: 0;
+	}
+
+	.with-single-reco & {
+		@include break-xlarge {
+			align-self: stretch;
+
+			margin: 0;
+		}
+	}
+}
+
+.plan-upgrade__separator {
+	display: flex;
+	align-self: center;
+
+	margin: 24px auto;
+
+	@include break-wide {
+		justify-content: center;
+
+		width: 108px;
+		margin: 0;
+	}
+
+	.with-single-reco & {
+		@include break-xlarge {
+			justify-content: center;
+
+			width: 108px;
+			margin: 0;
+		}
+	}
+}
+
+.plan-upgrade__arrow {
+	color: var( --studio-gray-40 );
+
+	font-size: 3rem;
+
+	transform: rotate( 90deg );
+	transform-origin: center center;
+
+	@include break-wide {
+		transform: none;
+	}
+
+	.with-single-reco & {
+		@include break-xlarge {
+			transform: none;
+		}
+	}
+}
+
+.plan-upgrade__new-items-list {
+	margin: 0;
+
+	list-style-type: none;
+
+	> li {
+		margin-top: 60px;
+	}
+
+	@include break-large {
+		display: flex;
+		justify-content: center;
+
+		> li {
+			flex: 1;
+
+			max-width: 350px;
+
+			& + li {
+				margin-left: 16px;
+			}
+		}
+	}
+
+	@include break-wide {
+		> li {
+			margin-top: 0;
+		}
+	}
+
+	.with-single-reco & {
+		@include break-xlarge {
+			> li {
+				margin-top: 0;
+			}
+		}
+	}
+
+	.jetpack-product-card.is-featured.is-aligned {
+		margin-left: 0;
+	}
+}
+
+.jetpack-product-card.is-deprecated {
+	box-shadow: none;
+}

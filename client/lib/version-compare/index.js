@@ -25,42 +25,42 @@ function version_compare( v1, v2, operator ) {
 	//        returns 4: 1
 
 	// Important: compare must be initialized at 0.
-	let i = 0,
-		x = 0,
-		compare = 0,
-		// vm maps textual PHP versions to negatives so they're less than 0.
-		// PHP currently defines these as CASE-SENSITIVE. It is important to
-		// leave these as negatives so that they can come before numerical versions
-		// and as if no letters were there to begin with.
-		// (1alpha is < 1 and < 1.1 but > 1dev1)
-		// If a non-numerical value can't be mapped to this table, it receives
-		// -7 as its value.
-		vm = {
-			dev: -6,
-			alpha: -5,
-			a: -5,
-			beta: -4,
-			b: -4,
-			RC: -3,
-			rc: -3,
-			'#': -2,
-			p: 1,
-			pl: 1,
-		},
-		// This function will be called to prepare each version argument.
-		// It replaces every _, -, and + with a dot.
-		// It surrounds any nonsequence of numbers/dots with dots.
-		// It replaces sequences of dots with a single dot.
-		//    version_compare('4..0', '4.0') == 0
-		// Important: A string of 0 length needs to be converted into a value
-		// even less than an unexisting value in vm (-7), hence [-8].
-		// It's also important to not strip spaces because of this.
-		//   version_compare('', ' ') == 1
-		prepVersion = function ( v ) {
-			v = ( '' + v ).replace( /[_\-+]/g, '.' );
-			v = v.replace( /([^.\d]+)/g, '.$1.' ).replace( /\.{2,}/g, '.' );
-			return ! v.length ? [ -8 ] : v.split( '.' );
-		};
+	let i = 0;
+	let x = 0;
+	let compare = 0;
+	// vm maps textual PHP versions to negatives so they're less than 0.
+	// PHP currently defines these as CASE-SENSITIVE. It is important to
+	// leave these as negatives so that they can come before numerical versions
+	// and as if no letters were there to begin with.
+	// (1alpha is < 1 and < 1.1 but > 1dev1)
+	// If a non-numerical value can't be mapped to this table, it receives
+	// -7 as its value.
+	const vm = {
+		dev: -6,
+		alpha: -5,
+		a: -5,
+		beta: -4,
+		b: -4,
+		RC: -3,
+		rc: -3,
+		'#': -2,
+		p: 1,
+		pl: 1,
+	};
+	// This function will be called to prepare each version argument.
+	// It replaces every _, -, and + with a dot.
+	// It surrounds any nonsequence of numbers/dots with dots.
+	// It replaces sequences of dots with a single dot.
+	//    version_compare('4..0', '4.0') == 0
+	// Important: A string of 0 length needs to be converted into a value
+	// even less than an unexisting value in vm (-7), hence [-8].
+	// It's also important to not strip spaces because of this.
+	//   version_compare('', ' ') == 1
+	const prepVersion = function ( v ) {
+		v = ( '' + v ).replace( /[_\-+]/g, '.' );
+		v = v.replace( /([^.\d]+)/g, '.$1.' ).replace( /\.{2,}/g, '.' );
+		return ! v.length ? [ -8 ] : v.split( '.' );
+	};
 	// This converts a version component to a number.
 	// Empty component becomes 0.
 	// Non-numerical component becomes a negative number.

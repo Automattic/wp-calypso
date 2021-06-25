@@ -1,13 +1,13 @@
 /**
  * Internal Dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { registerHandlers } from 'state/data-layer/handler-registry';
-import { receiveMarkAsUnseen } from 'state/reader/seen-posts/actions';
-import { READER_SEEN_MARK_AS_UNSEEN_REQUEST } from 'state/reader/action-types';
-import { requestUnseenStatus } from 'state/reader-ui/seen-posts/actions';
-import { requestFollows } from 'state/reader/follows/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { receiveMarkAsUnseen } from 'calypso/state/reader/seen-posts/actions';
+import { READER_SEEN_MARK_AS_UNSEEN_REQUEST } from 'calypso/state/reader/action-types';
+import { requestUnseenStatus } from 'calypso/state/reader-ui/seen-posts/actions';
+import { requestFollows } from 'calypso/state/reader/follows/actions';
 
 const toApi = ( action ) => {
 	return {
@@ -45,7 +45,7 @@ export function onError() {
 	return [];
 }
 
-registerHandlers( 'state/data-layer/wpcom/unseen-posts/seen/new/index.js', {
+registerHandlers( 'state/data-layer/wpcom/unseen-posts/seen/delete/index.js', {
 	[ READER_SEEN_MARK_AS_UNSEEN_REQUEST ]: [
 		dispatchRequest( {
 			fetch,

@@ -3,14 +3,15 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { identity, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { StateSelect, Input } from 'my-sites/domains/components/form';
+import { StateSelect, Input } from 'calypso/my-sites/domains/components/form';
 import { getStateLabelText, getPostCodeLabelText, STATE_SELECT_TEXT } from './utils.js';
+
+const noop = () => {};
 
 const UsAddressFieldset = ( props ) => {
 	const { getFieldProps, translate, countryCode, contactDetailsErrors } = props;
@@ -49,7 +50,6 @@ UsAddressFieldset.propTypes = {
 UsAddressFieldset.defaultProps = {
 	countryCode: 'US',
 	getFieldProps: noop,
-	translate: identity,
 };
 
 export default localize( UsAddressFieldset );

@@ -9,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import NoResults from 'my-sites/no-results';
+import NoResults from 'calypso/my-sites/no-results';
 
 class MediaLibraryListNoResults extends React.Component {
 	static displayName = 'MediaLibraryListNoResults';

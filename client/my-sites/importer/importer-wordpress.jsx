@@ -10,19 +10,19 @@ import React from 'react';
  * Internal dependencies
  */
 import FileImporter from './file-importer';
-import importerConfig from 'lib/importer/importer-config';
+import importerConfig from 'calypso/lib/importer/importer-config';
 
 class ImporterWordPress extends React.PureComponent {
 	static displayName = 'ImporterWordPress';
 
 	static propTypes = {
+		siteTitle: PropTypes.string.isRequired,
 		importerStatus: PropTypes.shape( {
 			importerState: PropTypes.string.isRequired,
 			errorData: PropTypes.shape( {
 				type: PropTypes.string.isRequired,
 				description: PropTypes.string.isRequired,
 			} ),
-			siteTitle: PropTypes.string.isRequired,
 			statusMessage: PropTypes.string,
 		} ),
 	};

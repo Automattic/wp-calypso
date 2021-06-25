@@ -4,7 +4,6 @@
 import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import config from 'config';
 
 /**
  * Internal dependencies
@@ -16,17 +15,20 @@ import {
 	isPremiumPlan,
 	isBusinessPlan,
 	isEcommercePlan,
-} from 'lib/plans';
-import Banner from 'components/banner';
-import { GROUP_JETPACK, GROUP_WPCOM, FEATURE_NO_ADS } from 'lib/plans/constants';
-import { addQueryArgs } from 'lib/url';
-import { hasFeature } from 'state/sites/plans/selectors';
-import { isFreePlan } from 'lib/products-values';
-import canCurrentUser from 'state/selectors/can-current-user';
-import isVipSite from 'state/selectors/is-vip-site';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getSite, isJetpackSite } from 'state/sites/selectors';
-import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
+	GROUP_JETPACK,
+	GROUP_WPCOM,
+	FEATURE_NO_ADS,
+	isFreePlanProduct,
+} from '@automattic/calypso-products';
+import Banner from 'calypso/components/banner';
+import { addQueryArgs } from 'calypso/lib/url';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 
 /**
  * Style dependencies
@@ -50,7 +52,8 @@ export const UpsellNudge = ( {
 	horizontal,
 	href,
 	isJetpackDevDocs,
-	jetpack,
+	isJetpack,
+	isAtomic,
 	isVip,
 	siteIsWPForTeams,
 	list,
@@ -79,17 +82,17 @@ export const UpsellNudge = ( {
 		typeof site !== 'object' ||
 		typeof site.jetpack !== 'boolean' ||
 		( feature && planHasFeature ) ||
-		( ! feature && ! isFreePlan( site.plan ) ) ||
+		( ! feature && ! isFreePlanProduct( site.plan ) ) ||
 		( feature === FEATURE_NO_ADS && site.options.wordads ) ||
-		( ! jetpack && site.jetpack ) ||
-		( jetpack && ! site.jetpack );
+		( ! isJetpack && site.jetpack ) ||
+		( isJetpack && ! site.jetpack );
 
 	if ( shouldNotDisplay && ! forceDisplay ) {
 		return null;
 	}
 
 	// No upsells for WP for Teams sites
-	if ( config.isEnabled( 'signup/wpforteams' ) && siteIsWPForTeams ) {
+	if ( siteIsWPForTeams ) {
 		return null;
 	}
 
@@ -126,7 +129,8 @@ export const UpsellNudge = ( {
 			horizontal={ horizontal }
 			href={ href }
 			icon="star"
-			jetpack={ jetpack || isJetpackDevDocs } //Force show Jetpack example in Devdocs
+			jetpack={ isJetpack || isJetpackDevDocs } //Force show Jetpack example in Devdocs
+			isAtomic={ isAtomic }
 			list={ list }
 			onClick={ onClick }
 			onDismissClick={ onDismissClick }
@@ -157,7 +161,8 @@ export default connect( ( state, ownProps ) => {
 		site: getSite( state, siteId ),
 		planHasFeature: hasFeature( state, siteId, ownProps.feature ),
 		canManageSite: canCurrentUser( state, siteId, 'manage_options' ),
-		jetpack: isJetpackSite( state, siteId ),
+		isJetpack: isJetpackSite( state, siteId ),
+		isAtomic: isSiteAutomatedTransfer( state, siteId ),
 		isVip: isVipSite( state, siteId ),
 		siteSlug: ownProps.disableHref ? null : getSelectedSiteSlug( state ),
 		canUserUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),

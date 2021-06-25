@@ -18,10 +18,10 @@ import {
 	redirectToTraffic,
 	startOver,
 	themeSetup,
-} from 'my-sites/site-settings/controller';
-import { makeLayout, render as clientRender } from 'controller';
-import { navigation, siteSelection, sites } from 'my-sites/controller';
-import { setScroll, siteSettings } from 'my-sites/site-settings/settings-controller';
+} from 'calypso/my-sites/site-settings/controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
+import { setScroll, siteSettings } from 'calypso/my-sites/site-settings/settings-controller';
 
 export default function () {
 	page( '/settings', '/settings/general' );

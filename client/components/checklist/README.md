@@ -86,5 +86,5 @@ A Checklist expects its children to be a flat list of Task:
 		duration="10,000 minutes"
 	/>
 	<Task title="Overwaxing banisters!" inProgress={ ! this.state.overwaxBanisters } />
-</Checklist>
+</Checklist>;
 ```

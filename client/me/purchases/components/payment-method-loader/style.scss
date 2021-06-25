@@ -1,0 +1,8 @@
+.payment-method-loader__top-card {
+	margin-top: 16px;
+
+	@include breakpoint-deprecated( '>1280px' ) {
+		margin-top: 0;
+	
+	}
+}

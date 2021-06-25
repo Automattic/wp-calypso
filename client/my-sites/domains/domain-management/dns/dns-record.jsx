@@ -1,11 +1,8 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
-import { endsWith } from 'lodash';
-import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -13,6 +10,7 @@ import { localize } from 'i18n-calypso';
  */
 import { Button } from '@automattic/components';
 import DnsRecordsListItem from '../dns-records/item';
+import Gridicon from 'calypso/components/gridicon';
 
 class DnsRecord extends React.Component {
 	static propTypes = {
@@ -92,7 +90,7 @@ class DnsRecord extends React.Component {
 			return `_${ service }._${ protocol }.${ isRoot ? '' : name + '.' }${ domain }`;
 		}
 
-		if ( endsWith( name, '.' ) ) {
+		if ( name.endsWith( '.' ) ) {
 			return name.slice( 0, -1 );
 		}
 

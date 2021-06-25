@@ -3,39 +3,39 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { compact, includes, omit, reduce, get, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
-import config from 'config';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
  */
-import SidebarItem from 'layout/sidebar/item';
-import { getPostTypes } from 'state/post-types/selectors';
-import QueryPostTypes from 'components/data/query-post-types';
-import { getSiteCommentCounts } from 'state/comments/selectors';
-import QuerySiteCommentCounts from 'components/data/query-site-comment-counts';
-import { bumpStat } from 'lib/analytics/mc';
-import { decodeEntities } from 'lib/formatting';
-import compareProps from 'lib/compare-props';
+import SidebarItem from 'calypso/layout/sidebar/item';
+import { getPostTypes } from 'calypso/state/post-types/selectors';
+import QueryPostTypes from 'calypso/components/data/query-post-types';
+import { getSiteCommentCounts } from 'calypso/state/comments/selectors';
+import QuerySiteCommentCounts from 'calypso/components/data/query-site-comment-counts';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import { decodeEntities } from 'calypso/lib/formatting';
+import compareProps from 'calypso/lib/compare-props';
 import {
 	getSite,
 	getSiteAdminUrl,
 	getSiteSlug,
 	isJetpackSite,
 	isSingleUserSite,
-} from 'state/sites/selectors';
-import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
-import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
-import { canCurrentUser as canCurrentUserStateSelector } from 'state/selectors/can-current-user';
+} from 'calypso/state/sites/selectors';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
+import { canCurrentUser as canCurrentUserStateSelector } from 'calypso/state/selectors/can-current-user';
 import { itemLinkMatches } from './utils';
-import { recordTracksEvent } from 'state/analytics/actions';
-import isVipSite from 'state/selectors/is-vip-site';
-import { SIDEBAR_SECTION_SITE } from 'my-sites/sidebar/constants';
-import { expandMySitesSidebarSection as expandSection } from 'state/my-sites/sidebar/actions';
-import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { SIDEBAR_SECTION_SITE } from 'calypso/my-sites/sidebar/constants';
+import { expandMySitesSidebarSection as expandSection } from 'calypso/state/my-sites/sidebar/actions';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
 class SiteMenu extends PureComponent {
 	static propTypes = {
@@ -90,7 +90,6 @@ class SiteMenu extends PureComponent {
 				name: 'post',
 				label: translate( 'Posts' ),
 				capability: 'edit_posts',
-				config: 'manage/posts',
 				queryable: true,
 				link: '/posts' + this.getMyParameter(),
 				paths: [ '/posts', '/posts/my' ],
@@ -112,7 +111,6 @@ class SiteMenu extends PureComponent {
 				count: get( this.props.commentCounts, 'pending' ),
 				capability: 'edit_posts',
 				queryable: true,
-				config: 'manage/comments',
 				link: '/comments',
 				paths: [ '/comment', '/comments' ],
 				wpAdminLink: 'edit-comments.php',
@@ -206,11 +204,7 @@ class SiteMenu extends PureComponent {
 				}
 
 				// Hide "Feedback" for WP for Teams sites.
-				if (
-					config.isEnabled( 'signup/wpforteams' ) &&
-					this.props.isSiteWPForTeams &&
-					postTypeSlug === 'feedback'
-				) {
+				if ( this.props.isSiteWPForTeams && postTypeSlug === 'feedback' ) {
 					return memo;
 				} else if ( postTypeSlug === 'feedback' ) {
 					//Special handling for feedback (contact form entries), let's calypsoify except for VIP
@@ -219,7 +213,6 @@ class SiteMenu extends PureComponent {
 					return memo.concat( {
 						name: postType.name,
 						label: decodeEntities( get( postType.labels, 'menu_name', postType.label ) ),
-						config: 'manage/custom-post-types',
 						//controls if we show the wp-admin link. It feels like this is coupling two different meanings (api_queryable)
 						queryable: false,
 
@@ -242,7 +235,6 @@ class SiteMenu extends PureComponent {
 				return memo.concat( {
 					name: postType.name,
 					label: decodeEntities( get( postType.labels, 'menu_name', postType.label ) ),
-					config: 'manage/custom-post-types',
 					queryable: postType.api_queryable,
 
 					//If the API endpoint doesn't send the .capabilities property (e.g. because the site's Jetpack
@@ -265,11 +257,11 @@ class SiteMenu extends PureComponent {
 		const menuItems = [ ...this.getDefaultMenuItems(), ...this.getCustomMenuItems() ];
 
 		return (
-			<ul>
+			<Fragment>
 				{ siteId && <QueryPostTypes siteId={ siteId } /> }
 				{ siteId && canCurrentUser( 'edit_posts' ) && <QuerySiteCommentCounts siteId={ siteId } /> }
 				{ menuItems.map( this.renderMenuItem, this ) }
-			</ul>
+			</Fragment>
 		);
 	}
 }

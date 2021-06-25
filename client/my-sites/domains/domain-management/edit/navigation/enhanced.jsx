@@ -4,23 +4,21 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
 import { addQueryArgs } from '@wordpress/url';
-import { withLocalizedMoment } from 'components/localized-moment';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	getDomainTypeText,
 	isSubdomain,
 	isDomainUpdateable,
 	isDomainInGracePeriod,
-} from 'lib/domains';
-import VerticalNav from 'components/vertical-nav';
-import VerticalNavItem from 'components/vertical-nav/item';
-import MaterialIcon from 'components/material-icon';
+} from 'calypso/lib/domains';
+import VerticalNav from 'calypso/components/vertical-nav';
+import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import MaterialIcon from 'calypso/components/material-icon';
 import {
 	domainAddNew,
 	domainManagementNameServers,
@@ -33,54 +31,27 @@ import {
 	domainTransferIn,
 	domainManagementSecurity,
 	isUnderDomainManagementAll,
-} from 'my-sites/domains/paths';
-import { emailManagement } from 'my-sites/email/paths';
-import { type as domainTypes, transferStatus, sslStatuses } from 'lib/domains/constants';
-import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
-import { isCancelable } from 'lib/purchases';
-import { cancelPurchase } from 'me/purchases/paths';
-import { getUnmappedUrl } from 'lib/site/utils';
-import { withoutHttp } from 'lib/url';
-import RemovePurchase from 'me/purchases/remove-purchase';
-import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'lib/gsuite';
-import getCurrentRoute from 'state/selectors/get-current-route';
-import { isRecentlyRegistered } from 'lib/domains/utils';
+} from 'calypso/my-sites/domains/paths';
+import { emailManagement } from 'calypso/my-sites/email/paths';
+import { type as domainTypes, transferStatus, sslStatuses } from 'calypso/lib/domains/constants';
+import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { isCancelable } from 'calypso/lib/purchases';
+import { cancelPurchase } from 'calypso/me/purchases/paths';
+import { getUnmappedUrl } from 'calypso/lib/site/utils';
+import { withoutHttp } from 'calypso/lib/url';
+import RemovePurchase from 'calypso/me/purchases/remove-purchase';
+import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'calypso/lib/gsuite';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
+import { isRecentlyRegistered } from 'calypso/lib/domains/utils';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import VerticalNavItemEnhanced from 'calypso/components/vertical-nav/item/enhanced';
 
+/**
+ * Style dependencies
+ */
 import './style.scss';
-
-const DomainManagementNavigationItemContents = function ( props ) {
-	const { gridicon, materialIcon, text, description } = props;
-	return (
-		<React.Fragment>
-			{ gridicon && <Gridicon className="navigation__icon" icon={ gridicon } /> }
-			{ ! gridicon && <MaterialIcon icon={ materialIcon } className="navigation__icon" /> }
-			<div>
-				<div>{ text }</div>
-				<small>{ description }</small>
-			</div>
-		</React.Fragment>
-	);
-};
-
-const DomainManagementNavigationItem = function ( props ) {
-	const { path, onClick, external, gridicon, materialIcon, text, description } = props;
-
-	return (
-		<VerticalNavItem
-			path={ path }
-			onClick={ onClick }
-			external={ external }
-			className="navigation__nav-item"
-		>
-			<DomainManagementNavigationItemContents
-				materialIcon={ materialIcon }
-				gridicon={ gridicon }
-				text={ text }
-				description={ description }
-			/>
-		</VerticalNavItem>
-	);
-};
 
 class DomainManagementNavigationEnhanced extends React.Component {
 	getEmail() {
@@ -109,6 +80,19 @@ class DomainManagementNavigationEnhanced extends React.Component {
 					comment: 'The number of GSuite mailboxes active for the current domain',
 				}
 			);
+		} else if ( hasTitanMailWithUs( domain ) ) {
+			const titanMailboxCount = getMaxTitanMailboxCount( domain );
+			navigationDescription = translate(
+				'%(titanMailboxCount)d mailbox',
+				'%(titanMailboxCount)d mailboxes',
+				{
+					args: {
+						titanMailboxCount,
+					},
+					count: titanMailboxCount,
+					comment: '%(titanMailboxCount)d is the number of mailboxes for the current domain',
+				}
+			);
 		} else if ( emailForwardsCount > 0 ) {
 			navigationDescription = translate(
 				'%(emailForwardsCount)d forward',
@@ -129,7 +113,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		}
 
 		return (
-			<DomainManagementNavigationItem
+			<VerticalNavItemEnhanced
 				path={ emailManagement( selectedSite.slug, domain.name, currentRoute ) }
 				materialIcon="email"
 				text={ navigationText }
@@ -173,7 +157,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		const description = this.getDestinationText();
 
 		return (
-			<DomainManagementNavigationItem
+			<VerticalNavItemEnhanced
 				path={ domainManagementNameServers( selectedSite.slug, domain.name, currentRoute ) }
 				materialIcon="language"
 				text={ translate( 'Change your name servers & DNS records' ) }
@@ -188,7 +172,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		const description = this.getDestinationText();
 
 		return (
-			<DomainManagementNavigationItem
+			<VerticalNavItemEnhanced
 				path={ domainManagementDns( selectedSite.slug, domain.name, currentRoute ) }
 				materialIcon="language"
 				text={ translate( 'Update your DNS records' ) }
@@ -215,7 +199,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		}
 
 		return (
-			<DomainManagementNavigationItem
+			<VerticalNavItemEnhanced
 				path={ domainManagementContactsPrivacy( selectedSite.slug, domain.name, currentRoute ) }
 				materialIcon="chrome_reader_mode"
 				text={ translate( 'Update your contact information' ) }
@@ -248,16 +232,32 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		}
 
 		return (
-			<DomainManagementNavigationItem
+			<VerticalNavItemEnhanced
 				path={ domainManagementTransfer( selectedSite.slug, domain.name, currentRoute ) }
 				materialIcon="sync_alt"
-				text={ translate( 'Transfer domain' ) }
+				text={ translate( 'Transfer your domain' ) }
 				description={ description }
 			/>
 		);
 	}
 
 	getTransferMappedDomain() {
+		const { selectedSite, translate, domain, currentRoute, isVip } = this.props;
+
+		if ( isVip ) {
+			return null;
+		}
+
+		return (
+			<VerticalNavItemEnhanced
+				path={ domainManagementTransfer( selectedSite.slug, domain.name, currentRoute ) }
+				materialIcon="sync_alt"
+				text={ translate( 'Transfer mapping' ) }
+			/>
+		);
+	}
+
+	getTransferInMappedDomain() {
 		const { selectedSite, domain, translate } = this.props;
 
 		const { isEligibleForInboundTransfer } = domain;
@@ -267,7 +267,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		}
 
 		return (
-			<DomainManagementNavigationItem
+			<VerticalNavItemEnhanced
 				onClick={ this.handleTransferDomainClick }
 				path={ domainTransferIn( selectedSite.slug, domain.name, true ) }
 				materialIcon="sync_alt"
@@ -289,7 +289,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		const path = domainManagementDomainConnectMapping( selectedSite.slug, domain.name );
 
 		return (
-			<DomainManagementNavigationItem
+			<VerticalNavItemEnhanced
 				path={ path }
 				materialIcon="double_arrow"
 				text={ translate( 'Connect your domain' ) }
@@ -301,14 +301,14 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	getManageSite() {
 		const { isManagingAllSites, selectedSite, translate } = this.props;
 
-		if ( ! config.isEnabled( 'manage/all-domains' ) || ! isManagingAllSites ) {
+		if ( ! isManagingAllSites ) {
 			return null;
 		}
 
 		const wpcomUrl = withoutHttp( getUnmappedUrl( selectedSite ) );
 
 		return (
-			<DomainManagementNavigationItem
+			<VerticalNavItemEnhanced
 				path={ `/home/${ selectedSite.slug }` }
 				gridicon="my-sites"
 				text={ translate( 'Manage your site' ) }
@@ -381,7 +381,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		const { selectedSite, translate } = this.props;
 
 		return (
-			<DomainManagementNavigationItem
+			<VerticalNavItemEnhanced
 				path={ domainAddNew( selectedSite.slug ) }
 				onClick={ this.handlePickCustomDomainClick }
 				materialIcon="search"
@@ -400,7 +400,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		}
 
 		return (
-			<DomainManagementNavigationItem
+			<VerticalNavItemEnhanced
 				path={ domainManagementChangeSiteAddress( selectedSite.slug, domain.name, currentRoute ) }
 				onClick={ this.handleChangeSiteAddressClick }
 				materialIcon="create"
@@ -432,7 +432,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		}
 
 		return (
-			<DomainManagementNavigationItem
+			<VerticalNavItemEnhanced
 				path={ path }
 				onClick={ this.handlePickCustomDomainClick }
 				materialIcon="search"
@@ -444,14 +444,6 @@ class DomainManagementNavigationEnhanced extends React.Component {
 
 	getSecurity() {
 		const { selectedSite, domain, currentRoute, translate } = this.props;
-
-		const shouldRenderDomainSecurity = config.isEnabled(
-			'domains/new-status-design/security-option'
-		);
-
-		if ( ! shouldRenderDomainSecurity ) {
-			return null;
-		}
 
 		const { pointsToWpcom, sslStatus } = domain;
 
@@ -479,7 +471,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		}
 
 		return (
-			<DomainManagementNavigationItem
+			<VerticalNavItemEnhanced
 				path={ domainManagementSecurity( selectedSite.slug, domain.name, currentRoute ) }
 				onClick={ this.handleDomainSecurityClick }
 				materialIcon="security"
@@ -533,7 +525,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 			const link = cancelPurchase( selectedSite.slug, purchase.id );
 
 			return (
-				<DomainManagementNavigationItem
+				<VerticalNavItemEnhanced
 					path={ link }
 					onClick={ this.handleDomainDeleteClick }
 					materialIcon="delete"
@@ -549,12 +541,13 @@ class DomainManagementNavigationEnhanced extends React.Component {
 				site={ selectedSite }
 				purchase={ purchase }
 				useVerticalNavItem={ true }
-				className="navigation__nav-item is-clickable"
+				// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+				className="navigation-enhanced__delete-domain is-clickable"
 				onClickTracks={ this.handleDomainDeleteClick }
 			>
-				<span>
-					<DomainManagementNavigationItemContents materialIcon="delete" text={ title } />
-				</span>
+				<MaterialIcon icon="delete" />
+
+				<strong>{ title }</strong>
 			</RemovePurchase>
 		);
 	}
@@ -563,7 +556,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		const { domain, selectedSite, currentRoute, translate } = this.props;
 
 		return (
-			<DomainManagementNavigationItem
+			<VerticalNavItemEnhanced
 				path={ domainManagementRedirectSettings( selectedSite.slug, domain.name, currentRoute ) }
 				materialIcon="language"
 				text={ translate( 'Redirect settings' ) }
@@ -605,6 +598,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 				{ this.getEmail() }
 				{ this.getDomainConnectMapping() }
 				{ this.getTransferMappedDomain() }
+				{ this.getTransferInMappedDomain() }
 				{ this.getSecurity() }
 				{ this.getSimilarDomains() }
 				{ this.getDeleteDomain() }
@@ -616,6 +610,8 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		return (
 			<React.Fragment>
 				{ this.getManageSite() }
+				{ this.getDnsRecords() }
+				{ this.getSecurity() }
 				{ this.getDeleteDomain() }
 			</React.Fragment>
 		);
@@ -650,9 +646,11 @@ class DomainManagementNavigationEnhanced extends React.Component {
 export default connect(
 	( state ) => {
 		const currentRoute = getCurrentRoute( state );
+		const siteId = getSelectedSiteId( state );
 		return {
 			currentRoute,
 			isManagingAllSites: isUnderDomainManagementAll( currentRoute ),
+			isVip: isVipSite( state, siteId ),
 		};
 	},
 	{ recordTracksEvent, recordGoogleEvent }

@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Theme from 'components/theme';
+import Theme from 'calypso/components/theme';
 
 const ThemeExample = () => {
 	const theme = {

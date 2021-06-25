@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/home/init';
+
+/**
  * Returns the Home layout for a given site.
  *
  * @param  {object}  state   Global state tree

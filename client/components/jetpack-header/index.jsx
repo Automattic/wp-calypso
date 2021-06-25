@@ -8,9 +8,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import AsyncLoad from 'components/async-load';
+import AsyncLoad from 'calypso/components/async-load';
 
-import JetpackLogo from 'components/jetpack-logo';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 import JetpackPartnerLogoGroup from './partner-logo-group';
 
 /**
@@ -41,7 +41,7 @@ export class JetpackHeader extends PureComponent {
 					partnerName="WooCommerce"
 				>
 					<AsyncLoad
-						require="components/jetpack-header/woocommerce"
+						require="calypso/components/jetpack-header/woocommerce"
 						darkColorScheme={ darkColorScheme }
 						placeholder={ null }
 					/>
@@ -56,7 +56,7 @@ export class JetpackHeader extends PureComponent {
 					<g fill="none" fillRule="evenodd">
 						<g transform="translate(-120)">
 							<AsyncLoad
-								require="components/jetpack-header/woocommerce"
+								require="calypso/components/jetpack-header/woocommerce"
 								darkColorScheme={ darkColorScheme }
 								placeholder={ null }
 							/>
@@ -75,7 +75,7 @@ export class JetpackHeader extends PureComponent {
 						partnerName="DreamHost"
 					>
 						<AsyncLoad
-							require="components/jetpack-header/dreamhost"
+							require="calypso/components/jetpack-header/dreamhost"
 							darkColorScheme={ darkColorScheme }
 							placeholder={ null }
 						/>
@@ -90,7 +90,7 @@ export class JetpackHeader extends PureComponent {
 						partnerName="Pressable"
 					>
 						<AsyncLoad
-							require="components/jetpack-header/pressable"
+							require="calypso/components/jetpack-header/pressable"
 							darkColorScheme={ darkColorScheme }
 							placeholder={ null }
 						/>
@@ -105,7 +105,7 @@ export class JetpackHeader extends PureComponent {
 						partnerName="Bluehost"
 					>
 						<AsyncLoad
-							require="components/jetpack-header/bluehost"
+							require="calypso/components/jetpack-header/bluehost"
 							darkColorScheme={ darkColorScheme }
 							placeholder={ null }
 						/>
@@ -120,7 +120,7 @@ export class JetpackHeader extends PureComponent {
 						partnerName="InMotion"
 					>
 						<AsyncLoad
-							require="components/jetpack-header/inmotion"
+							require="calypso/components/jetpack-header/inmotion"
 							darkColorScheme={ darkColorScheme }
 							placeholder={ null }
 						/>
@@ -131,7 +131,7 @@ export class JetpackHeader extends PureComponent {
 				// This is a raster logo that contains the Jetpack logo already.
 				return (
 					<AsyncLoad
-						require="components/jetpack-header/milesweb"
+						require="calypso/components/jetpack-header/milesweb"
 						darkColorScheme={ darkColorScheme }
 						placeholder={ null }
 					/>
@@ -145,7 +145,7 @@ export class JetpackHeader extends PureComponent {
 						partnerName="Liquid Web"
 					>
 						<AsyncLoad
-							require="components/jetpack-header/liquidweb"
+							require="calypso/components/jetpack-header/liquidweb"
 							darkColorScheme={ darkColorScheme }
 							placeholder={ null }
 						/>
@@ -159,7 +159,7 @@ export class JetpackHeader extends PureComponent {
 						partnerName="EuroDNS"
 					>
 						<AsyncLoad
-							require="components/jetpack-header/eurodns"
+							require="calypso/components/jetpack-header/eurodns"
 							darkColorScheme={ darkColorScheme }
 							placeholder={ null }
 						/>

@@ -4,14 +4,17 @@
 import { Component } from 'react';
 import isShallowEqual from '@wordpress/is-shallow-equal';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import debug from 'debug';
 
 /**
  * Internal dependencies
  */
-import { isRequestingPostsForQuery, isRequestingSitePost } from 'state/posts/selectors';
-import { requestSitePosts, requestSitePost, requestAllSitesPosts } from 'state/posts/actions';
+import { isRequestingPostsForQuery, isRequestingSitePost } from 'calypso/state/posts/selectors';
+import {
+	requestSitePosts,
+	requestSitePost,
+	requestAllSitesPosts,
+} from 'calypso/state/posts/actions';
 
 /**
  * Module variables
@@ -68,14 +71,9 @@ export default connect(
 			requestingPosts: isRequestingPostsForQuery( state, siteId, query ),
 		};
 	},
-	( dispatch ) => {
-		return bindActionCreators(
-			{
-				requestSitePosts,
-				requestAllSitesPosts,
-				requestSitePost,
-			},
-			dispatch
-		);
+	{
+		requestSitePosts,
+		requestAllSitesPosts,
+		requestSitePost,
 	}
 )( QueryPosts );

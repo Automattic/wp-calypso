@@ -1,5 +1,4 @@
-Query Reader Lists
-==================
+# Query Reader Lists
 
 `<QueryReaderLists />` is a React component used in managing network requests for Reader lists.
 
@@ -9,7 +8,7 @@ Render the component. It does not accept any children, nor does it render any el
 
 ```jsx
 import React from 'react';
-import QueryReaderLists from 'components/data/query-reader-lists';
+import QueryReaderLists from 'calypso/components/data/query-reader-lists';
 import MyListItem from './list-item';
 
 export default function MyReaderLists( { subscribedLists } ) {
@@ -17,12 +16,8 @@ export default function MyReaderLists( { subscribedLists } ) {
 		<div>
 			<QueryReaderLists />
 			{ subscribedLists.map( ( subscribedList ) => {
-				return (
-					<MyListItem
-						key={ subscribedList.slug }
-						list={ subscribedList } />
-				);
-			} }
+				return <MyListItem key={ subscribedList.slug } list={ subscribedList } />;
+			} ) }
 		</div>
 	);
 }

@@ -4,6 +4,11 @@
 import { get } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/profile-links/init';
+
+/**
  * Returns the type of the last profile links request error, or null if there's no error.
  * Can be one of 'duplicate', 'malformed', 'other' or `null`.
  *

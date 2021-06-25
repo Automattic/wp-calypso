@@ -36,7 +36,7 @@ $devdocs-max-width: 720px;
 		mark {
 			background: rgba( var( --color-primary-light-rgb ), 0.4 );
 			padding: 2px;
-			border-radius: 3px;
+			border-radius: 2px;
 		}
 
 		text-overflow: ellipsis;
@@ -86,11 +86,28 @@ $devdocs-max-width: 720px;
 	display: inline-block;
 	background: var( --color-surface );
 	text-decoration: underline;
-	border-radius: 3px;
+	border-radius: 2px;
 	padding: 3px 6px;
 	margin: 0 6px 4px 0;
 	font-family: $code;
 	box-shadow: 0 1px 2px rgba( var( --color-neutral-70-rgb ), 0.05 );
+}
+
+.design__illustrations-illustrations {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	grid-gap: 24px;
+
+	.design__illustrations-illustration {
+		background: white;
+		border: 1px solid var( --color-border-subtle );
+		padding: 24px;
+
+		img {
+			width: 100%;
+			height: auto;
+		}
+	}
 }
 
 // The wrapper containing the actual examples
@@ -278,7 +295,7 @@ $devdocs-max-width: 720px;
 		.docs-selectors__result-return {
 			color: var( --color-neutral-70 );
 			background: var( --color-neutral-0 );
-			border-radius: 4px;
+			border-radius: 2px;
 			padding: 16px 24px;
 		}
 
@@ -311,7 +328,7 @@ $devdocs-max-width: 720px;
 		.docs-selectors__result-arguments-name strong {
 			color: var( --color-neutral-70 );
 			background: var( --color-surface );
-			border-radius: 3px;
+			border-radius: 2px;
 			display: inline-block;
 			padding: 2px 8px;
 			margin-left: -8px;
@@ -404,7 +421,7 @@ $devdocs-max-width: 720px;
 
 	code {
 		background-color: var( --color-surface );
-		border-radius: 3px;
+		border-radius: 2px;
 		color: var( --color-primary-dark );
 		font-size: $font-body;
 		padding: 2px 6px;
@@ -424,7 +441,7 @@ $devdocs-max-width: 720px;
 		font-weight: 600;
 		font-size: $font-body;
 		padding: 1px 5px 2px;
-		border-radius: 3px;
+		border-radius: 2px;
 
 		&.status-needs-author-reply {
 			background: #ea652d;

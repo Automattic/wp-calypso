@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { LOGSTASH } from 'state/action-types';
-import 'state/data-layer/wpcom/logstash';
+import { LOGSTASH } from 'calypso/state/action-types';
+import 'calypso/state/data-layer/wpcom/logstash';
 
 /**
  * Parameters sent to logstash endpoint.

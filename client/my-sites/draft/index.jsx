@@ -8,22 +8,24 @@ import classnames from 'classnames';
 import url from 'url';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop, get } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
 import photon from 'photon';
-import { hasTouch } from 'lib/touch-detect';
-import * as utils from 'state/posts/utils';
-import TimeSince from 'components/time-since';
-import { getEditorUrl } from 'state/selectors/get-editor-url';
+import { hasTouch } from 'calypso/lib/touch-detect';
+import * as utils from 'calypso/state/posts/utils';
+import TimeSince from 'calypso/components/time-since';
+import { getEditorUrl } from 'calypso/state/selectors/get-editor-url';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class Draft extends Component {
 	static propTypes = {
@@ -47,7 +49,8 @@ class Draft extends Component {
 	render() {
 		const { post } = this.props;
 		let image = null;
-		let imageUrl, editPostURL;
+		let imageUrl;
+		let editPostURL;
 
 		if ( this.props.isPlaceholder ) {
 			return this.postPlaceholder();

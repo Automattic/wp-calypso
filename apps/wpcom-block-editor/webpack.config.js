@@ -6,7 +6,6 @@
 /**
  * External dependencies
  */
-// eslint-disable-next-line import/no-extraneous-dependencies
 const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const path = require( 'path' );
@@ -20,7 +19,8 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
  * Return a webpack config object
  *
  * Arguments to this function replicate webpack's so this config can be used on the command line,
- * with individual options overridden by command line args.
+ * with individual options overridden by command line args. Note that webpack-cli seems to convert
+ * kebab-case (like `--ouput-path`) to camelCase (`outputPath`)
  *
  * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
  * @see {@link https://webpack.js.org/api/cli/}
@@ -28,9 +28,8 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
  * @param   {object}  env                           environment options
  * @param   {object}  argv                          options map
  * @param   {object}  argv.entry                    Entry point(s)
- * @param   {string}  argv.'output-path'            Output path
- * @param   {string}  argv.'output-filename'        Output filename pattern
- * @param   {string}  argv.'output-library-target'  Output library target
+ * @param   {string}  argv.outputPath               Output path
+ * @param   {string}  argv.outputFilename           Output filename pattern
  * @returns {object}                                webpack config
  */
 function getWebpackConfig(
@@ -43,8 +42,8 @@ function getWebpackConfig(
 			'calypso.editor': path.join( __dirname, 'src', 'calypso', 'editor' ),
 			'calypso.tinymce': path.join( __dirname, 'src', 'calypso', 'tinymce' ),
 		},
-		'output-path': outputPath = path.join( __dirname, 'dist' ),
-		'output-filename': outputFilename = isDevelopment ? '[name].js' : '[name].min.js',
+		outputPath = path.join( __dirname, 'dist' ),
+		outputFilename = isDevelopment ? '[name].js' : '[name].min.js',
 	}
 ) {
 	const webpackConfig = getBaseWebpackConfig( env, {
@@ -56,6 +55,11 @@ function getWebpackConfig(
 	return {
 		...webpackConfig,
 		devtool: isDevelopment ? 'inline-cheap-source-map' : false,
+		optimization: {
+			...webpackConfig.optimization,
+			// disable module concatenation so that instances of `__()` are not renamed
+			concatenateModules: false,
+		},
 		plugins: [
 			...webpackConfig.plugins.filter(
 				( plugin ) => plugin.constructor.name !== 'DependencyExtractionWebpackPlugin'

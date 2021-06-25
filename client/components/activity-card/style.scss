@@ -1,7 +1,7 @@
 .activity-card {
 	.card {
-		border-radius: 3px;
 		padding: 16px;
+		border-radius: var( --jetpack-corners-sharp );
 	}
 
 	.activity-card__actor {
@@ -14,27 +14,40 @@
 			flex-direction: row;
 			flex-wrap: wrap;
 			margin-left: 8px;
+
+			&:first-child {
+				margin-left: 0;
+			}
 			> *:not( :last-child ) {
 				margin-right: 8px;
 			}
-		}
-		> img.gravatar,
-		> svg {
-			max-height: 24px;
-			max-width: 24px;
 		}
 	}
 
 	.activity-card__actor-info,
 	.activity-card__actor-role,
 	.activity-card__activity-title {
-		font-size: 0.8rem;
+		font-size: 0.75rem;
 		color: rgb( 100, 105, 112 );
 	}
 
 	.activity-card__activity-title {
 		margin: 8px 0;
 		font-style: italic;
+	}
+
+	&.with-error {
+		.activity-card__time-icon {
+			fill: var( --color-error );
+		}
+
+		.activity-card__time-text {
+			color: var( --color-error );
+		}
+
+		.card {
+			border: solid 1px var( --color-error );
+		}
 	}
 }
 
@@ -111,11 +124,6 @@
 	float: right;
 }
 
-.button.activity-card__see-content-link {
-	margin-left: 0;
-	color: var( --studio-jetpack-green-40 );
-}
-
 .button.is-borderless.is-primary:focus {
 	box-shadow: none;
 }
@@ -123,6 +131,16 @@
 .activity-card__restore-button {
 	margin: 0.8rem;
 	margin-bottom: 0;
+}
+
+.activity-card__download-button-multisite {
+	margin: 0.8rem;
+	margin-right: 0;
+	margin-bottom: 0.5rem;
+	padding-top: 0.8rem;
+	display: flex;
+	justify-content: left;
+	font-size: 0.875rem;
 }
 
 .activity-card__download-button.is-borderless {
@@ -133,7 +151,7 @@
 	padding-top: 0.8rem;
 	display: flex;
 	justify-content: left;
-	font-size: 0.9rem;
+	font-size: 0.875rem;
 }
 
 .activity-card__download-icon {
@@ -206,4 +224,69 @@
 			margin-left: 16px;
 		}
 	}
+}
+
+.activity-card__share-button svg {
+	margin-right: 5px;
+}
+
+.activity-card__share-button-wrap {
+	position: absolute;
+	top: -6px; // Offset the button's inherit padding
+	right: 0;
+	text-align: right;
+
+	.activity-card-list__secondary-card & {
+		right: -32px;
+	}
+}
+
+.activity-card__share-button.button.is-borderless.is-primary {
+	margin: 0;
+	color: var( --color-neutral-40 );
+	font-size: $font-body-extra-small;
+	line-height: $font-body;
+}
+
+.activity-card__share-heading {
+	font-size: 1rem;
+	font-weight: 600;
+	text-align: left;
+	margin-bottom: 0.25rem;
+}
+
+.activity-card__share-description {
+	font-size: 0.875rem;
+	margin-bottom: 0.75rem;
+	text-align: left;
+}
+
+.activity-card__share-popover {
+	width: 340px;
+}
+
+.activity-card__share-popover .popover__inner {
+	padding: 1rem;
+}
+
+.activity-card__share-form {
+	display: flex;
+}
+
+input[type=text].form-text-input.activity-card__share-email {
+	margin-right: 0.5rem;
+}
+
+.activity-card__share-submit {
+	width: 32%;
+
+	&.form-button {
+		margin: 0;
+	}
+}
+
+.activity-card__share-error {
+	color: var( --color-error );
+	text-align: left;
+	margin-top: 0.25rem;
 }

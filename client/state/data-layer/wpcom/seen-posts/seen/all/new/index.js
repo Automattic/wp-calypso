@@ -1,15 +1,15 @@
 /**
  * Internal Dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { registerHandlers } from 'state/data-layer/handler-registry';
-import { receiveMarkAllAsSeen } from 'state/reader/seen-posts/actions';
-import { READER_SEEN_MARK_ALL_AS_SEEN_REQUEST } from 'state/reader/action-types';
-import { getStream } from 'state/reader/streams/selectors';
-import { getPostsByKeys } from 'state/reader/posts/selectors';
-import { requestUnseenStatus } from 'state/reader-ui/seen-posts/actions';
-import { requestFollows } from 'state/reader/follows/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { receiveMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
+import { READER_SEEN_MARK_ALL_AS_SEEN_REQUEST } from 'calypso/state/reader/action-types';
+import { getStream } from 'calypso/state/reader/streams/selectors';
+import { getPostsByKeys } from 'calypso/state/reader/posts/selectors';
+import { requestUnseenStatus } from 'calypso/state/reader-ui/seen-posts/actions';
+import { requestFollows } from 'calypso/state/reader/follows/actions';
 
 const toApi = ( action ) => {
 	return {

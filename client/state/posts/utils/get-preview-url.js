@@ -1,18 +1,17 @@
 /**
  * Internal dependencies
  */
-import { getUrlParts, getUrlFromParts } from 'lib/url';
+import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
 
-export function getPreviewURL( site, post, autosavePreviewUrl ) {
-	let urlParts, previewUrl;
+export function getPreviewURL( site, post ) {
+	let urlParts;
+	let previewUrl;
 
 	if ( ! post || ! post.URL || post.status === 'trash' ) {
 		return '';
 	}
 
-	if ( autosavePreviewUrl ) {
-		previewUrl = autosavePreviewUrl;
-	} else if ( post.status === 'publish' ) {
+	if ( post.status === 'publish' ) {
 		previewUrl = post.URL;
 	} else {
 		urlParts = getUrlParts( post.URL );

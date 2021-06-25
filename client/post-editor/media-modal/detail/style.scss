@@ -194,6 +194,10 @@
 
 	span {
 		display: block;
+
+		&.clipboard-button-input {
+			width: inherit;
+		}
 	}
 }
 

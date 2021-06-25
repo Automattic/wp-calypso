@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getBillingTransactionsByType from 'state/selectors/get-billing-transactions-by-type';
+import getBillingTransactionsByType from 'calypso/state/selectors/get-billing-transactions-by-type';
 
 describe( 'getBillingTransactionsByType()', () => {
 	const state = {

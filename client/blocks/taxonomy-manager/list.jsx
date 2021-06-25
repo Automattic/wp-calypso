@@ -7,23 +7,23 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { includes, filter, map, noop, reduce, union } from 'lodash';
+import { includes, filter, map, reduce } from 'lodash';
 import { WindowScroller } from '@automattic/react-virtualized';
 
 /**
  * Internal dependencies
  */
-import VirtualList from 'components/virtual-list';
+import VirtualList from 'calypso/components/virtual-list';
 import ListItem from './list-item';
 import { CompactCard } from '@automattic/components';
-import QueryTerms from 'components/data/query-terms';
-import QuerySiteSettings from 'components/data/query-site-settings';
+import QueryTerms from 'calypso/components/data/query-terms';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import {
 	isRequestingTermsForQueryIgnoringPage,
 	getTermsLastPageForQuery,
 	getTermsForQueryIgnoringPage,
-} from 'state/terms/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+} from 'calypso/state/terms/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * Constants
@@ -31,6 +31,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 const DEFAULT_TERMS_PER_PAGE = 100;
 const LOAD_OFFSET = 10;
 const ITEM_HEIGHT = 55;
+const noop = () => {};
 
 export class TaxonomyManagerList extends Component {
 	static propTypes = {
@@ -137,7 +138,7 @@ export class TaxonomyManagerList extends Component {
 
 	requestPages = ( pages ) => {
 		this.setState( {
-			requestedPages: union( this.state.requestedPages, pages ),
+			requestedPages: [ ...new Set( [].concat( this.state.requestedPages, pages ) ) ],
 		} );
 	};
 

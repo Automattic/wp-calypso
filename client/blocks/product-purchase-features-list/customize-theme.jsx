@@ -8,24 +8,15 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PurchaseDetail from 'components/purchase-detail';
-import { isEnabled } from 'config';
+import PurchaseDetail from 'calypso/components/purchase-detail';
 
 /**
  * Image dependencies
  */
-import customizeImage from 'assets/images/illustrations/dashboard.svg';
-
-function isCustomizeEnabled() {
-	return isEnabled( 'manage/customize' );
-}
+import customizeImage from 'calypso/assets/images/illustrations/dashboard.svg';
 
 function getCustomizeLink( selectedSite ) {
-	const adminUrl = selectedSite.URL + '/wp-admin/',
-		customizerInAdmin =
-			adminUrl + 'customize.php?return=' + encodeURIComponent( window.location.href );
-
-	return isCustomizeEnabled() ? '/customize/' + selectedSite.slug : customizerInAdmin;
+	return '/customize/' + selectedSite.slug;
 }
 
 export default localize( ( { selectedSite, translate } ) => {
@@ -40,7 +31,6 @@ export default localize( ( { selectedSite, translate } ) => {
 				) }
 				buttonText={ translate( 'Start customizing' ) }
 				href={ getCustomizeLink( selectedSite ) }
-				target={ isCustomizeEnabled() ? undefined : '_blank' }
 			/>
 		</div>
 	);

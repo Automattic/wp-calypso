@@ -1,0 +1,28 @@
+.jetpack-search__placeholder {
+	.action-panel__title, .jetpack-search__content-body-text, .promo-card__cta-button, .upsell__header-text, .upsell__body-text {
+		@include placeholder( --color-neutral-10 );
+	}
+
+	.promo-card__cta-button {
+		border: 0;
+
+		&:hover {
+			@include placeholder( --color-neutral-10 );
+		}
+	}
+}
+
+.theme-jetpack-cloud {
+	.jetpack-search__disconnected {
+		padding-top: 40px;
+	}
+
+	.jetpack-search__logo {
+		padding-top: 40px; // to match Backup and Scan
+	}
+}
+
+.jetpack-search__logo img {
+	height: 72px;
+	width: auto;
+}

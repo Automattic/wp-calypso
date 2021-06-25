@@ -9,15 +9,15 @@ import { isMobile } from '@automattic/viewport';
 /**
  * Internal dependencies
  */
-import QueryPublicizeConnections from 'components/data/query-publicize-connections';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
-import Task from 'my-sites/customer-home/cards/tasks/task';
-import { TASK_CONNECT_ACCOUNTS } from 'my-sites/customer-home/cards/constants';
+import QueryPublicizeConnections from 'calypso/components/data/query-publicize-connections';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
+import { TASK_CONNECT_ACCOUNTS } from 'calypso/my-sites/customer-home/cards/constants';
 
 /**
  * Image dependencies
  */
-import connectSocialAccountsIllustration from 'assets/images/customer-home/illustration--task-connect-social-accounts.svg';
+import connectSocialAccountsIllustration from 'calypso/assets/images/customer-home/illustration--task-connect-social-accounts.svg';
 
 const ConnectAccountsTask = ( { siteSlug } ) => {
 	const translate = useTranslate();

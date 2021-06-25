@@ -1,12 +1,8 @@
 /**
  * Internal dependencies
  */
-import { ACCOUNT_CLOSE, ACCOUNT_CLOSE_SUCCESS } from 'state/action-types';
-import { closeAccount, closeAccountSuccess } from 'state/account/actions';
-
-jest.mock( 'lib/user', () => () => {
-	return { clear: jest.fn() };
-} );
+import { ACCOUNT_CLOSE, ACCOUNT_CLOSE_SUCCESS } from 'calypso/state/action-types';
+import { closeAccount, closeAccountSuccess } from 'calypso/state/account/actions';
 
 describe( 'actions', () => {
 	describe( '#closeAccount', () => {
@@ -19,10 +15,8 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#closeAccountSuccess', () => {
-		test( 'should dispatch an action when an account is closed successfully', async () => {
-			const spy = jest.fn();
-			await closeAccountSuccess()( spy );
-			expect( spy ).toHaveBeenCalledWith( {
+		test( 'should dispatch an action when an account is closed successfully', () => {
+			expect( closeAccountSuccess() ).toEqual( {
 				type: ACCOUNT_CLOSE_SUCCESS,
 			} );
 		} );

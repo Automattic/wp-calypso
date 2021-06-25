@@ -1,12 +1,7 @@
 /**
- * External dependencies
- */
-import { includes, split } from 'lodash';
-
-/**
  * Internal dependencies
  */
-import getRawSite from 'state/selectors/get-raw-site';
+import getRawSite from 'calypso/state/selectors/get-raw-site';
 import getSiteOption from './get-site-option';
 import getSiteSlug from './get-site-slug';
 
@@ -23,10 +18,10 @@ export default function getSiteThemeShowcasePath( state, siteId ) {
 		return null;
 	}
 
-	const [ type, slug ] = split( getSiteOption( state, siteId, 'theme_slug' ), '/', 2 );
+	const [ type, slug ] = getSiteOption( state, siteId, 'theme_slug' )?.split( '/', 2 ) ?? [];
 
 	// to accomodate a8c and other theme types
-	if ( ! includes( [ 'pub', 'premium' ], type ) ) {
+	if ( ! [ 'pub', 'premium' ].includes( type ) ) {
 		return null;
 	}
 

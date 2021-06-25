@@ -1,0 +1,28 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.mapping-instructions__placeholder {
+	padding: 16px;
+
+	@include break-mobile {
+		padding: 0;
+	}
+
+	p {
+		@include placeholder( --color-neutral-10 );
+		margin-bottom: 0.5em;
+
+		&:first-child,
+		&:nth-child( 5 ) {
+			width: 40%;
+		}
+		&:nth-child( 4 ) {
+			margin-bottom: 1.5em;
+		}
+	}
+}
+
+/* Remove bottom border of last FAQ element */
+.mapping-instructions > div:last-of-type .foldable-faq__answer {
+	border-bottom: 0;
+}

@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import {
 	CHECK_YOUR_EMAIL_PAGE,
 	INTERSTITIAL_PAGE,
@@ -23,9 +23,9 @@ import {
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH,
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS,
 	MAGIC_LOGIN_RESET_REQUEST_FORM,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-export const currentView = withoutPersistence( ( state = null, action ) => {
+export const currentView = ( state = null, action ) => {
 	switch ( action.type ) {
 		case MAGIC_LOGIN_HIDE_REQUEST_FORM:
 			return null;
@@ -40,9 +40,9 @@ export const currentView = withoutPersistence( ( state = null, action ) => {
 	}
 
 	return state;
-} );
+};
 
-export const isFetchingEmail = withoutPersistence( ( state = false, action ) => {
+export const isFetchingEmail = ( state = false, action ) => {
 	switch ( action.type ) {
 		case MAGIC_LOGIN_HIDE_REQUEST_FORM:
 			return false;
@@ -57,9 +57,9 @@ export const isFetchingEmail = withoutPersistence( ( state = false, action ) => 
 	}
 
 	return state;
-} );
+};
 
-export const isFetchingAuth = withoutPersistence( ( state = false, action ) => {
+export const isFetchingAuth = ( state = false, action ) => {
 	switch ( action.type ) {
 		case MAGIC_LOGIN_REQUEST_AUTH_ERROR:
 			return false;
@@ -72,9 +72,9 @@ export const isFetchingAuth = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+};
 
-export const requestAuthSuccess = withoutPersistence( ( state = false, action ) => {
+export const requestAuthSuccess = ( state = false, action ) => {
 	switch ( action.type ) {
 		case MAGIC_LOGIN_REQUEST_AUTH_ERROR:
 			return false;
@@ -85,9 +85,9 @@ export const requestAuthSuccess = withoutPersistence( ( state = false, action ) 
 	}
 
 	return state;
-} );
+};
 
-export const requestAuthError = withoutPersistence( ( state = null, action ) => {
+export const requestAuthError = ( state = null, action ) => {
 	switch ( action.type ) {
 		case MAGIC_LOGIN_REQUEST_AUTH_ERROR: {
 			const { error } = action;
@@ -100,9 +100,9 @@ export const requestAuthError = withoutPersistence( ( state = null, action ) => 
 	}
 
 	return state;
-} );
+};
 
-export const requestEmailError = withoutPersistence( ( state = null, action ) => {
+export const requestEmailError = ( state = null, action ) => {
 	switch ( action.type ) {
 		case MAGIC_LOGIN_HIDE_REQUEST_NOTICE:
 			return null;
@@ -119,9 +119,9 @@ export const requestEmailError = withoutPersistence( ( state = null, action ) =>
 	}
 
 	return state;
-} );
+};
 
-export const requestEmailSuccess = withoutPersistence( ( state = false, action ) => {
+export const requestEmailSuccess = ( state = false, action ) => {
 	switch ( action.type ) {
 		case MAGIC_LOGIN_HIDE_REQUEST_NOTICE:
 			return false;
@@ -136,7 +136,7 @@ export const requestEmailSuccess = withoutPersistence( ( state = false, action )
 	}
 
 	return state;
-} );
+};
 
 export default combineReducers( {
 	isFetchingAuth,

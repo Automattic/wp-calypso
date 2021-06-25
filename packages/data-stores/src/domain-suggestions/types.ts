@@ -1,3 +1,8 @@
+/**
+ * Internal dependencies
+ */
+import type { DataStatus } from './constants';
+
 export interface DomainSuggestionQuery {
 	/**
 	 * True to include .blog subdomain suggestions
@@ -72,21 +77,42 @@ export interface DomainSuggestion {
 	domain_name: DomainName;
 
 	/**
+	 * Rendered formatted cost
+	 *
+	 * @example "Free" or "€15.00"
+	 */
+	cost: string;
+
+	/**
+	 * Raw price
+	 *
+	 * @example 40
+	 */
+	raw_price: number;
+
+	/**
+	 * Currency code
+	 *
+	 * @example USD
+	 */
+	currency_code: string;
+
+	/**
 	 * Relevance as a percent: 0 <= relevance <= 1
 	 *
 	 * @example 0.9
 	 */
-	relevance: number;
+	relevance?: number;
 
 	/**
 	 * Whether the domain supports privacy
 	 */
-	supports_privacy: boolean;
+	supports_privacy?: boolean;
 
 	/**
 	 * The domain vendor
 	 */
-	vendor: string;
+	vendor?: string;
 
 	/**
 	 * Reasons for suggestion the domain
@@ -96,28 +122,30 @@ export interface DomainSuggestion {
 	match_reasons?: readonly string[];
 
 	/**
-	 * Rendered cost with currency
-	 *
-	 * @example "€15.00"
-	 */
-	cost: string;
-
-	/**
 	 * The product ID
 	 */
-	product_id: number;
+	product_id?: number;
 
 	/**
 	 * The product slug
 	 */
-	product_slug: string;
+	product_slug?: string;
 
 	/**
 	 * Whether the domain is free
 	 */
-	is_free?: true;
-}
+	is_free?: boolean;
 
+	/**
+	 * Whether the domain requires HSTS
+	 */
+	hsts_required?: boolean;
+
+	/**
+	 * Whether the domain is unavailable
+	 */
+	unavailable: boolean;
+}
 export interface DomainCategory {
 	/**
 	 * The domain category title
@@ -134,3 +162,87 @@ export interface DomainCategory {
 	 */
 	tier: number | null;
 }
+
+export interface DomainAvailability {
+	/**
+	 * The domain name the availability was checked for.
+	 */
+	domain_name: string;
+
+	/**
+	 * The mappability status of the domain.
+	 */
+	mappable: string;
+
+	/**
+	 * The availability status of the domain.
+	 */
+	status: string;
+
+	/**
+	 * Whether the domain supports privacy.
+	 */
+	supports_privacy: boolean;
+
+	/**
+	 * ID of the product
+	 */
+	product_id?: number;
+
+	/**
+	 * The product slug
+	 */
+	product_slug?: string;
+
+	/**
+	 * Rendered cost with currency
+	 *
+	 * @example "€15.00"
+	 */
+	cost?: string;
+
+	/**
+	 * Vendor
+	 */
+	vendor?: string;
+
+	/**
+	 * Whether the domain requires HSTS
+	 */
+	hsts_required?: boolean;
+}
+
+export type TimestampMS = ReturnType< typeof Date.now >;
+
+export type DomainSuggestions = Record< string, DomainSuggestion[] | undefined >;
+
+export interface DomainSuggestionState {
+	/**
+	 * The state of the DomainSuggestions e.g. pending, failure etc
+	 */
+	state: DataStatus;
+
+	/**
+	 * Domain suggestion data typically returned from the API
+	 */
+	data: DomainSuggestions;
+
+	/**
+	 * Error message
+	 */
+	errorMessage: string | null;
+
+	/**
+	 * Timestamp from last updated attempt
+	 */
+	lastUpdated: TimestampMS;
+
+	/**
+	 * Pending timestamp
+	 */
+	pendingSince: TimestampMS | undefined;
+}
+
+export type DomainAvailabilities = Record< string, DomainAvailability | undefined >;
+
+export type DomainSuggestionSelectorOptions = Partial< Exclude< DomainSuggestionQuery, 'query' > >;

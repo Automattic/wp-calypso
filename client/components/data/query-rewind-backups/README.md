@@ -1,5 +1,4 @@
-Query Rewind Backups
-====================
+# Query Rewind Backups
 
 `QueryRewindBackups` is a React component which dispatches actions for querying the details of a site's most recent Rewind backups.
 
@@ -10,8 +9,8 @@ Render the component, passing `siteId`. It does not accept any children, nor doe
 ```jsx
 import React from 'react';
 import { useSelector } from 'react-redux';
-import getRewindBackups from 'state/selectors/get-rewind-backups';
-import QueryRewindBackups from 'components/data/query-rewind-backups';
+import getRewindBackups from 'calypso/state/selectors/get-rewind-backups';
+import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 
 export default function MyComponent( { siteId } ) {
 	const rewindBackups = useSelector( getRewindBackups( siteId ) );

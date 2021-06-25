@@ -13,7 +13,6 @@ const incompatiblePlugins = new Set( [
 	'advanced-database-cleaner',
 	'advanced-reset-wp',
 	'advanced-wp-reset',
-	'autoptimize',
 	'backup',
 	'better-wp-security',
 	'cf7-pipedrive-integration',
@@ -61,7 +60,6 @@ const incompatiblePlugins = new Set( [
 	'w3-total-cache',
 	'wp-cache',
 	'wp-fastest-cache',
-	'wp-rocket',
 	'wp-speed-of-light',
 	'wp-super-cache',
 

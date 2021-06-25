@@ -4,13 +4,13 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { useSelect } from '@automattic/composite-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
 import { SummaryLine, SummaryDetails } from './summary-details';
-import { useCart } from 'my-sites/checkout/composite-checkout/cart-provider';
-import { hasOnlyRenewalItems } from 'lib/cart-values/cart-items';
+import { hasOnlyRenewalItems } from 'calypso/lib/cart-values/cart-items';
 
 export default function WPContactFormSummary( {
 	areThereDomainProductsInCart,
@@ -18,7 +18,7 @@ export default function WPContactFormSummary( {
 	isLoggedOutCart,
 } ) {
 	const contactInfo = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
-	const cart = useCart();
+	const { responseCart: cart } = useShoppingCart();
 	const isRenewal = cart && hasOnlyRenewalItems( cart );
 
 	// Check if paymentData is empty
@@ -83,6 +83,7 @@ function joinNonEmptyValues( joinString, ...values ) {
 	return values.filter( ( value ) => value?.length > 0 ).join( joinString );
 }
 
+// The point of this component is to make sure we show at most one email address in the summary, and that the one we show is editable.
 function EmailSummary( {
 	isRenewal,
 	contactInfo,
@@ -101,8 +102,10 @@ function EmailSummary( {
 		return null;
 	}
 
-	if ( isGSuiteInCart && contactInfo.alternateEmail.value ) {
-		return <SummaryLine>{ contactInfo.alternateEmail.value }</SummaryLine>;
+	if ( isGSuiteInCart && ! areThereDomainProductsInCart ) {
+		return contactInfo.alternateEmail.value ? (
+			<SummaryLine>{ contactInfo.alternateEmail.value }</SummaryLine>
+		) : null;
 	}
 
 	if ( ! contactInfo.email.value ) {

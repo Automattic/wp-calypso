@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { By as by } from 'selenium-webdriver';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -12,47 +12,39 @@ import AsyncBaseContainer from '../async-base-container';
 
 export default class NavBarComponent extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, by.css( '.masterbar' ) );
+		super( driver, By.css( '.masterbar' ) );
 	}
 	async clickCreateNewPost( { siteURL = null } = {} ) {
-		const postButtonSelector = by.css( 'a.masterbar__item-new' );
-		await driverHelper.clickWhenClickable( this.driver, postButtonSelector );
+		const postButtonLocator = By.css( 'a.masterbar__item-new' );
+		await driverHelper.clickWhenClickable( this.driver, postButtonLocator );
 		await this.dismissComponentPopover();
 		if ( siteURL !== null ) {
-			return await driverHelper.selectElementByText(
-				this.driver,
-				by.css( '.site__domain' ),
+			const siteDomainLocator = driverHelper.createTextLocator(
+				By.css( '.site__domain' ),
 				siteURL
 			);
+			await driverHelper.clickWhenClickable( this.driver, siteDomainLocator );
 		}
 	}
 	async dismissComponentPopover() {
-		const popoverSelector = by.css( '.components-popover__content' );
-		const dismissPopoverSelector = by.css( '.nux-dot-tip__disable' );
+		const popoverLocator = By.css( '.components-popover__content' );
+		const dismissPopoverLocator = By.css( '.nux-dot-tip__disable' );
 
-		if ( await driverHelper.isElementPresent( this.driver, popoverSelector ) ) {
-			await driverHelper.clickWhenClickable( dismissPopoverSelector );
+		if ( await driverHelper.isElementLocated( this.driver, popoverLocator ) ) {
+			await driverHelper.clickWhenClickable( dismissPopoverLocator );
 		}
 	}
 	async clickProfileLink() {
-		const profileSelector = by.css( 'a.masterbar__item-me' );
-		return await driverHelper.clickWhenClickable( this.driver, profileSelector );
+		const profileLocator = By.css( 'a.masterbar__item-me' );
+		return await driverHelper.clickWhenClickable( this.driver, profileLocator );
 	}
 	async clickMySites() {
-		const mySitesSelector = by.css( 'header.masterbar a.masterbar__item' );
-		await driverHelper.clickWhenClickable( this.driver, mySitesSelector );
-		await driverHelper.isEventuallyPresentAndDisplayed(
-			this.driver,
-			by.css( '.sidebar__menu-wrapper' )
-		);
-		return await driverHelper.isEventuallyPresentAndDisplayed(
-			this.driver,
-			by.css( '.is-group-sites' )
-		);
+		const mySitesLocator = By.css( 'header.masterbar a.masterbar__item' );
+		await driverHelper.clickWhenClickable( this.driver, mySitesLocator );
 	}
-	hasUnreadNotifications() {
-		return this.driver
-			.findElement( by.css( '.masterbar__item-notifications' ) )
+	async hasUnreadNotifications() {
+		return await this.driver
+			.findElement( By.css( '.masterbar__item-notifications' ) )
 			.getAttribute( 'class' )
 			.then( ( classNames ) => {
 				return classNames.includes( 'has-unread' );
@@ -60,32 +52,33 @@ export default class NavBarComponent extends AsyncBaseContainer {
 	}
 	async openNotifications() {
 		const driver = this.driver;
-		const notificationsSelector = by.css( '.masterbar__item-notifications' );
-		const classNames = await driver.findElement( notificationsSelector ).getAttribute( 'class' );
+		const notificationsLocator = By.css( '.masterbar__item-notifications' );
+		const classNames = await driver.findElement( notificationsLocator ).getAttribute( 'class' );
 		if ( classNames.includes( 'is-active' ) === false ) {
-			return driverHelper.clickWhenClickable( driver, notificationsSelector );
+			return await driverHelper.clickWhenClickable( driver, notificationsLocator );
 		}
+		await driver.sleep( 400 ); // Wait for menu animation to complete
 	}
 	async openNotificationsShortcut() {
-		await driverHelper.waitTillPresentAndDisplayed(
+		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
-			by.css( '.masterbar__notifications' )
+			By.css( '.masterbar__notifications' )
 		);
-		return await this.driver.findElement( by.css( 'body' ) ).sendKeys( 'n' );
+		return await this.driver.findElement( By.css( 'body' ) ).sendKeys( 'n' );
 	}
-	async confirmNotificationsOpen() {
-		const selector = by.css( '.wpnt-open' );
-		return await driverHelper.isEventuallyPresentAndDisplayed( this.driver, selector );
+	async isNotificationsTabOpen() {
+		const locator = By.css( '.wpnt-open' );
+		return await driverHelper.isElementEventuallyLocatedAndVisible( this.driver, locator );
 	}
 	async dismissGuidedTours() {
 		const self = this;
-		const guidedToursDialogSelector = by.css( 'div.guided-tours__step-first' );
-		const guidedToursDismissButtonSelector = by.css(
+		const guidedToursDialogLocator = By.css( 'div.guided-tours__step-first' );
+		const guidedToursDismissButtonLocator = By.css(
 			'div.guided-tours__step-first button:not(.is-primary)'
 		);
-		const present = await driverHelper.isElementPresent( self.driver, guidedToursDialogSelector );
+		const present = await driverHelper.isElementLocated( self.driver, guidedToursDialogLocator );
 		if ( present === true ) {
-			return await driverHelper.clickWhenClickable( self.driver, guidedToursDismissButtonSelector );
+			return await driverHelper.clickWhenClickable( self.driver, guidedToursDismissButtonLocator );
 		}
 	}
 }

@@ -30,19 +30,4 @@ describe( 'ButtonGroup', () => {
 		const buttonGroup = shallow( <ButtonGroup busy /> );
 		expect( buttonGroup.find( '.is-busy' ) ).toHaveLength( 1 );
 	} );
-
-	test( 'should throw an error if any of the children is not a <Button>', () => {
-		const consoleErrorSpy = jest.spyOn( global.console, 'error' ).mockImplementation();
-
-		shallow(
-			<ButtonGroup>
-				<div id="test">test</div>
-			</ButtonGroup>
-		);
-
-		expect( consoleErrorSpy ).toHaveBeenCalledWith(
-			expect.stringContaining( 'All children elements should be a Button.' )
-		);
-		consoleErrorSpy.mockRestore();
-	} );
 } );

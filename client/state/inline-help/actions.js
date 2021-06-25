@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	INLINE_HELP_SEARCH_REQUEST,
 	INLINE_HELP_SEARCH_REQUEST_FAILURE,
@@ -13,14 +13,12 @@ import {
 	INLINE_HELP_CONTACT_FORM_SHOW_QANDA,
 	INLINE_HELP_POPOVER_SHOW,
 	INLINE_HELP_POPOVER_HIDE,
-	INLINE_HELP_SHOW,
-	INLINE_HELP_HIDE,
 	INLINE_HELP_SEARCH_RESET,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import getContextualHelpResults from 'state/inline-help/selectors/get-contextual-help-results';
-import getAdminHelpResults from 'state/inline-help/selectors/get-admin-help-results';
-import 'state/inline-help/init';
+import getContextualHelpResults from 'calypso/state/inline-help/selectors/get-contextual-help-results';
+import getAdminHelpResults from 'calypso/state/inline-help/selectors/get-admin-help-results';
+import 'calypso/state/inline-help/init';
 import {
 	SUPPORT_TYPE_API_HELP,
 	SUPPORT_TYPE_CONTEXTUAL_HELP,
@@ -67,7 +65,14 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 			getContextualHelpResults( state ),
 			SUPPORT_TYPE_CONTEXTUAL_HELP
 		);
-		const helpAdminResults = getAdminHelpResults( state, searchQuery, 3 );
+
+		//Return help_admin results immediately to be shown in action search
+		const helpAdminResults = getAdminHelpResults( state, searchQuery, 25 );
+		dispatch( {
+			type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
+			searchQuery,
+			searchResults: helpAdminResults,
+		} );
 
 		// Ensure empty strings are removed as valid searches.
 		searchQuery = searchQuery.trim();
@@ -200,22 +205,6 @@ export function hideInlineHelpPopover() {
 	return ( dispatch ) => {
 		dispatch( {
 			type: INLINE_HELP_POPOVER_HIDE,
-		} );
-	};
-}
-
-export function showInlineHelp() {
-	return ( dispatch ) => {
-		dispatch( {
-			type: INLINE_HELP_SHOW,
-		} );
-	};
-}
-
-export function hideInlineHelp() {
-	return ( dispatch ) => {
-		dispatch( {
-			type: INLINE_HELP_HIDE,
 		} );
 	};
 }

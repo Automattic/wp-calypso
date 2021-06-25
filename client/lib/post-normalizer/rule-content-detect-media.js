@@ -11,7 +11,7 @@ import getEmbedMetadata from 'get-video-id';
  * Internal Dependencies
  */
 import { iframeIsAllowed, maxWidthPhotonishURL, deduceImageWidthAndHeight } from './utils';
-import { READER_CONTENT_WIDTH } from 'state/reader/posts/sizes';
+import { READER_CONTENT_WIDTH } from 'calypso/state/reader/posts/sizes';
 
 /** Checks whether or not an image is a tracking pixel
  *

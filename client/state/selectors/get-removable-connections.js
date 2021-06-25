@@ -7,9 +7,9 @@ import { filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getKeyringConnectionsByName } from 'state/sharing/keyring/selectors';
-import { getRemovableConnections as getRemovablePublicizeConnections } from 'state/sharing/publicize/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getKeyringConnectionsByName } from 'calypso/state/sharing/keyring/selectors';
+import { getRemovableConnections as getRemovablePublicizeConnections } from 'calypso/state/sharing/publicize/selectors';
 
 /**
  * Given a Keyring service name, returns the connections that the current user is

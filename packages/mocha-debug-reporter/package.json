@@ -1,0 +1,28 @@
+{
+	"name": "@automattic/mocha-debug-reporter",
+	"version": "0.1.0",
+	"description": "Mocha reporter that dumps all info about the test execution",
+	"main": "dist/cjs/cjs.js",
+	"author": "Automattic Inc.",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/mocha-debug-reporter"
+	},
+	"keywords": [
+		"test",
+		"mocha",
+		"reporter"
+	],
+	"license": "GPL-2.0-or-later",
+	"dependencies": {
+		"@types/mocha": "^8.2.2"
+	},
+	"peerDependencies": {
+		"mocha": ">=8.0.0"
+	},
+	"scripts": {
+		"clean": "yarn build --clean && npx rimraf dist",
+		"build": "tsc --build ./tsconfig.json"
+	}
+}

@@ -7,13 +7,13 @@
 Render the component. It does not accept any properties and/or children, nor does it render any elements to the page.
 
 ```jsx
-import QueryAllDomains from 'components/data/query-all-domains';
+import QueryAllDomains from 'calypso/components/data/query-all-domains';
 
 export default function listAllDomains( { domains } ) {
 	return (
 		<div>
 			<QueryAllDomains />
-			{ domains.map( domain => (
+			{ domains.map( ( domain ) => (
 				<li>{ domain.domain }</li>
 			) ) }
 		</div>

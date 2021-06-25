@@ -13,9 +13,9 @@ export function canvasToBlob( canvas, callback, type, quality ) {
 	if ( ! HTMLCanvasElement.prototype.toBlob ) {
 		Object.defineProperty( HTMLCanvasElement.prototype, 'toBlob', {
 			value: function ( polyfillCallback, polyfillType, polyfillQuality ) {
-				const binStr = atob( this.toDataURL( polyfillType, polyfillQuality ).split( ',' )[ 1 ] ),
-					len = binStr.length,
-					arr = new Uint8Array( len );
+				const binStr = atob( this.toDataURL( polyfillType, polyfillQuality ).split( ',' )[ 1 ] );
+				const len = binStr.length;
+				const arr = new Uint8Array( len );
 
 				for ( let i = 0; i < len; i++ ) {
 					arr[ i ] = binStr.charCodeAt( i );

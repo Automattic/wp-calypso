@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import WpcomColophon from 'components/wpcom-colophon';
+import WpcomColophon from 'calypso/components/wpcom-colophon';
 
 export default function WpcomColophonExample() {
 	return (

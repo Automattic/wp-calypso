@@ -1,11 +1,10 @@
 /**
  * Internal dependencies
  */
-import user from 'lib/user';
-import { ACCOUNT_CLOSE, ACCOUNT_CLOSE_SUCCESS } from 'state/action-types';
+import { ACCOUNT_CLOSE, ACCOUNT_CLOSE_SUCCESS } from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/me/account/close';
-import 'state/account/init';
+import 'calypso/state/data-layer/wpcom/me/account/close';
+import 'calypso/state/account/init';
 
 export function closeAccount() {
 	return {
@@ -14,10 +13,7 @@ export function closeAccount() {
 }
 
 export function closeAccountSuccess() {
-	return async ( dispatch ) => {
-		await user().clear();
-		dispatch( {
-			type: ACCOUNT_CLOSE_SUCCESS,
-		} );
+	return {
+		type: ACCOUNT_CLOSE_SUCCESS,
 	};
 }

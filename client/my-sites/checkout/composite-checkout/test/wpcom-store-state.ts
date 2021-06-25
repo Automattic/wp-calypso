@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import {
-	ManagedContactDetailsShape,
 	updateManagedContactDetailsShape,
 	mapManagedContactDetailsShape,
 	flattenManagedContactDetailsShape,
@@ -12,6 +11,7 @@ import {
  *  External dependencies
  */
 import { get } from 'lodash';
+import type { ManagedContactDetailsShape } from '@automattic/wpcom-checkout';
 
 describe( 'updateManagedContactDetailsShape', function () {
 	const testPropertyWithAccessor = ( merge, construct, update, data ) => ( accessor ) => {

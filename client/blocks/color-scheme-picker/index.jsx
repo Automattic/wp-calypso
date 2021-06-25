@@ -10,11 +10,11 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import QueryPreferences from 'components/data/query-preferences';
-import { savePreference, setPreference } from 'state/preferences/actions';
-import { getPreference } from 'state/preferences/selectors';
+import QueryPreferences from 'calypso/components/data/query-preferences';
+import { savePreference, setPreference } from 'calypso/state/preferences/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import getColorSchemesData from './constants';
-import FormRadiosBar from 'components/forms/form-radios-bar';
+import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 
 /**
  * Style dependencies
@@ -23,8 +23,10 @@ import './style.scss';
 
 class ColorSchemePicker extends PureComponent {
 	static propTypes = {
+		defaultSelection: PropTypes.string,
 		temporarySelection: PropTypes.bool,
 		onSelection: PropTypes.func,
+		disabled: PropTypes.bool,
 		// Connected props
 		colorSchemePreference: PropTypes.string,
 		saveColorSchemePreference: PropTypes.func,
@@ -41,12 +43,13 @@ class ColorSchemePicker extends PureComponent {
 
 	render() {
 		const colorSchemesData = getColorSchemesData( translate );
+		const defaultColorScheme = this.props.defaultSelection || colorSchemesData[ 0 ].value;
 		const checkedColorScheme = find( colorSchemesData, [
 			'value',
 			this.props.colorSchemePreference,
 		] )
 			? this.props.colorSchemePreference
-			: colorSchemesData[ 0 ].value;
+			: defaultColorScheme;
 		return (
 			<div className="color-scheme-picker">
 				<QueryPreferences />
@@ -55,6 +58,7 @@ class ColorSchemePicker extends PureComponent {
 					checked={ checkedColorScheme }
 					onChange={ this.handleColorSchemeSelection }
 					items={ colorSchemesData }
+					disabled={ this.props.disabled }
 				/>
 			</div>
 		);

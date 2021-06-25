@@ -13,28 +13,31 @@ import { localize } from 'i18n-calypso';
  */
 import ButtonsAppearance from './appearance';
 import ButtonsOptions from './options';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import QuerySiteSettings from 'components/data/query-site-settings';
-import QuerySharingButtons from 'components/data/query-sharing-buttons';
-import { saveSiteSettings } from 'state/site-settings/actions';
-import { saveSharingButtons } from 'state/sites/sharing-buttons/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import QuerySharingButtons from 'calypso/components/data/query-sharing-buttons';
+import { saveSiteSettings } from 'calypso/state/site-settings/actions';
+import { saveSharingButtons } from 'calypso/state/sites/sharing-buttons/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	getSiteSettings,
 	isSavingSiteSettings,
 	isSiteSettingsSaveSuccessful,
-} from 'state/site-settings/selectors';
-import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
-import getSharingButtons from 'state/selectors/get-sharing-buttons';
-import isSavingSharingButtons from 'state/selectors/is-saving-sharing-buttons';
-import isSharingButtonsSaveSuccessful from 'state/selectors/is-sharing-buttons-save-successful';
-import { isJetpackSite } from 'state/sites/selectors';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { successNotice, errorNotice } from 'state/notices/actions';
-import { activateModule } from 'state/jetpack/modules/actions';
-import { protectForm } from 'lib/protect-form';
+} from 'calypso/state/site-settings/selectors';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import getSharingButtons from 'calypso/state/selectors/get-sharing-buttons';
+import isSavingSharingButtons from 'calypso/state/selectors/is-saving-sharing-buttons';
+import isSharingButtonsSaveSuccessful from 'calypso/state/selectors/is-sharing-buttons-save-successful';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { activateModule } from 'calypso/state/jetpack/modules/actions';
+import { protectForm } from 'calypso/lib/protect-form';
+import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 
 class SharingButtons extends Component {
 	state = {
@@ -126,7 +129,16 @@ class SharingButtons extends Component {
 	}
 
 	render() {
-		const { buttons, isJetpack, isSaving, settings, siteId } = this.props;
+		const {
+			buttons,
+			isJetpack,
+			isSaving,
+			settings,
+			siteId,
+			isSharingButtonsModuleActive,
+			isFetchingModules,
+			translate,
+		} = this.props;
 		const updatedSettings = this.getUpdatedSettings();
 		const updatedButtons = this.state.buttonsPendingSave || buttons;
 
@@ -143,17 +155,30 @@ class SharingButtons extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<QuerySharingButtons siteId={ siteId } />
 				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
+				{ isJetpack && ! isFetchingModules && ! isSharingButtonsModuleActive && (
+					<Notice
+						status="is-warning"
+						showDismiss={ false }
+						text={ translate(
+							'Adding sharing buttons need the Sharing Buttons module from Jetpack to be enabled'
+						) }
+					>
+						<NoticeAction onClick={ () => this.props.activateModule( siteId, 'sharedaddy' ) }>
+							{ translate( 'Enable' ) }
+						</NoticeAction>
+					</Notice>
+				) }
+				<ButtonsOptions
+					settings={ updatedSettings }
+					onChange={ this.handleChange }
+					saving={ isSaving }
+				/>
 				<ButtonsAppearance
 					buttons={ updatedButtons }
 					values={ updatedSettings }
 					onChange={ this.handleChange }
 					onButtonsChange={ this.handleButtonsChange }
 					initialized={ !! buttons && !! settings }
-					saving={ isSaving }
-				/>
-				<ButtonsOptions
-					settings={ updatedSettings }
-					onChange={ this.handleChange }
 					saving={ isSaving }
 				/>
 			</form>
@@ -167,7 +192,9 @@ const connectComponent = connect(
 		const settings = getSiteSettings( state, siteId );
 		const buttons = getSharingButtons( state, siteId );
 		const isJetpack = isJetpackSite( state, siteId );
+		const isSharingButtonsModuleActive = isJetpackModuleActive( state, siteId, 'sharedaddy' );
 		const isLikesModuleActive = isJetpackModuleActive( state, siteId, 'likes' );
+		const isFetchingModules = isFetchingJetpackModules( state, siteId );
 		const isSavingSettings = isSavingSiteSettings( state, siteId );
 		const isSavingButtons = isSavingSharingButtons( state, siteId );
 		const isSaveSettingsSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
@@ -176,7 +203,9 @@ const connectComponent = connect(
 
 		return {
 			isJetpack,
+			isSharingButtonsModuleActive,
 			isLikesModuleActive,
+			isFetchingModules,
 			isSaving: isSavingSettings || isSavingButtons,
 			isSaveSettingsSuccessful,
 			isSaveButtonsSuccessful,

@@ -21,12 +21,12 @@ import {
 	PUBLICIZE_SHARE_SUCCESS,
 	PUBLICIZE_SHARE_FAILURE,
 	PUBLICIZE_SHARE_DISMISS,
-} from 'state/action-types';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { connectionsSchema } from './schema';
 import sharePostActions from './publicize-actions/reducer';
 
-export const sharePostStatus = withoutPersistence( ( state = {}, action ) => {
+export const sharePostStatus = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case PUBLICIZE_SHARE: {
 			const { siteId, postId } = action;
@@ -84,9 +84,9 @@ export const sharePostStatus = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
-export const fetchingConnection = withoutPersistence( ( state = {}, action ) => {
+export const fetchingConnection = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case PUBLICIZE_CONNECTION_REQUEST: {
 			const { connectionId } = action;
@@ -115,15 +115,18 @@ export const fetchingConnection = withoutPersistence( ( state = {}, action ) => 
 	}
 
 	return state;
-} );
+};
 
 /**
  * Track the current status for fetching connections. Maps site ID to the
  * fetching status for that site. Assigns `true` for currently fetching,
  * `false` for done or failed fetching, or `undefined` if no fetch attempt
  * has been made for the site.
+ *
+ * @param {object} state Redux state
+ * @param {object} action Redux action
  */
-export const fetchingConnections = withoutPersistence( ( state = {}, action ) => {
+export const fetchingConnections = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case PUBLICIZE_CONNECTIONS_REQUEST: {
 			const { siteId } = action;
@@ -144,9 +147,9 @@ export const fetchingConnections = withoutPersistence( ( state = {}, action ) =>
 	}
 
 	return state;
-} );
+};
 
-export const fetchedConnections = withoutPersistence( ( state = {}, action ) => {
+export const fetchedConnections = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case PUBLICIZE_CONNECTIONS_RECEIVE: {
 			const { siteId } = action;
@@ -155,7 +158,7 @@ export const fetchedConnections = withoutPersistence( ( state = {}, action ) => 
 	}
 
 	return state;
-} );
+};
 
 // Tracks all known connection objects, indexed by connection ID.
 export const connections = withSchemaValidation( connectionsSchema, ( state = {}, action ) => {

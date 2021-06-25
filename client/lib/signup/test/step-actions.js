@@ -1,4 +1,7 @@
 /**
+ * @jest-environment jsdom
+ */
+/**
  * Internal dependencies
  */
 import {
@@ -8,27 +11,15 @@ import {
 	isSiteTopicFulfilled,
 	isSiteTypeFulfilled,
 } from '../step-actions';
-import { useNock } from 'test-helpers/use-nock';
-import flows from 'signup/config/flows';
-import { isDomainStepSkippable } from 'signup/config/steps';
-import { getUserStub } from 'lib/user';
+import { useNock } from 'calypso/test-helpers/use-nock';
+import flows from 'calypso/signup/config/flows';
+import { isDomainStepSkippable } from 'calypso/signup/config/steps';
 
-jest.mock( 'lib/abtest', () => ( { abtest: () => '' } ) );
-
-jest.mock( 'lib/user', () => {
-	const getStub = jest.fn();
-
-	const user = () => ( {
-		get: getStub,
-	} );
-	user.getUserStub = getStub;
-
-	return user;
-} );
-
-jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
-jest.mock( 'signup/config/flows', () => require( './mocks/signup/config/flows' ) );
-jest.mock( 'signup/config/flows-pure', () => require( './mocks/signup/config/flows-pure' ) );
+jest.mock( 'calypso/signup/config/steps', () => require( './mocks/signup/config/steps' ) );
+jest.mock( 'calypso/signup/config/flows', () => require( './mocks/signup/config/flows' ) );
+jest.mock( 'calypso/signup/config/flows-pure', () =>
+	require( './mocks/signup/config/flows-pure' )
+);
 
 describe( 'createSiteWithCart()', () => {
 	// createSiteWithCart() function is not designed to be easy for test at the moment.
@@ -49,7 +40,6 @@ describe( 'createSiteWithCart()', () => {
 
 	beforeEach( () => {
 		isDomainStepSkippable.mockReset();
-		getUserStub.mockReset();
 	} );
 
 	test( 'should use the vertical field in the survey tree if the site topic one is empty.', () => {
@@ -142,10 +132,15 @@ describe( 'createSiteWithCart()', () => {
 
 	test( 'use username for blog_name if user data available', () => {
 		isDomainStepSkippable.mockReturnValue( true );
-		getUserStub.mockReturnValue( { username: 'alex' } );
 
 		const fakeStore = {
-			getState: () => ( {} ),
+			getState: () => ( {
+				currentUser: {
+					user: {
+						username: 'alex',
+					},
+				},
+			} ),
 		};
 
 		createSiteWithCart(
@@ -320,7 +315,7 @@ describe( 'isPlanFulfilled()', () => {
 			submitSignupStep,
 		};
 		const defaultDependencies = { cartItem: 'testPlan' };
-		const cartItem = { free_trial: false, product_slug: defaultDependencies.cartItem };
+		const cartItem = { product_slug: defaultDependencies.cartItem };
 
 		expect( flows.excludeStep ).not.toHaveBeenCalled();
 		expect( submitSignupStep ).not.toHaveBeenCalled();

@@ -2,16 +2,16 @@
 
 The SocketIO API models the SocketIO event flow purely as Redux actions. By making the SocketIO API Redux-driven, we have several advantages:
 
-* the API surface is minimal and simpler to reason about: the Redux action becomes the single point of truth, no need to modify anything else.
-* testability and real-time inspection of the system behavior is a matter of taking a look at the Redux flow and state.
+- the API surface is minimal and simpler to reason about: the Redux action becomes the single point of truth, no need to modify anything else.
+- testability and real-time inspection of the system behavior is a matter of taking a look at the Redux flow and state.
 
 ## API
 
 The connection has the following methods:
 
-* `init( ... )`: configure the connection.
-* `send( action )`: receives a send Redux action and emits the corresponding SocketIO event.
-* `request( action, timeout )`: receives a request Redux action and emits the corresponding SocketIO event. Unlike send, the event fired takes a callback to be called upon ACK, or a timeout callback to be called if the event didn't respond after timeout milliseconds.
+- `init( ... )`: configure the connection.
+- `send( action )`: receives a send Redux action and emits the corresponding SocketIO event.
+- `request( action, timeout )`: receives a request Redux action and emits the corresponding SocketIO event. Unlike send, the event fired takes a callback to be called upon ACK, or a timeout callback to be called if the event didn't respond after timeout milliseconds.
 
 ### Inbound SocketIO events
 

@@ -23,7 +23,7 @@ export function createResolvers( clientCreds: WpcomClientCredentials ) {
 			return receiveCurrentUser( window.currentUser );
 		}
 		try {
-			const currentUser = yield wpcomRequest( {
+			const currentUser: CurrentUser = yield wpcomRequest( {
 				path: '/me',
 				apiVersion: '1.1',
 			} );

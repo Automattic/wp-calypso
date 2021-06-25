@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/legal/init';
+import 'calypso/state/legal/init';
 
 /**
  * Indicates if a Terms or Service update banner should be displayed.

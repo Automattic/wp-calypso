@@ -1,5 +1,4 @@
-Query Country States
-====================
+# Query Country States
 
 `<QueryCountryStates />` is a React component used in managing network requests for states of a specific country.
 
@@ -9,13 +8,15 @@ Render the component, passing `countryCode`. It does not accept any children, no
 
 ```jsx
 import React from 'react';
-import QueryCountryStates from 'components/data/query-country-states';
+import QueryCountryStates from 'calypso/components/data/query-country-states';
 
 export default function MyStatesList( { countryStates } ) {
 	return (
 		<ul>
 			<QueryCountryStates countryCode="us" />
-			{ countryStates.map( ( state ) => <li>{ state.name }</li> ) }
+			{ countryStates.map( ( state ) => (
+				<li>{ state.name }</li>
+			) ) }
 		</ul>
 	);
 }

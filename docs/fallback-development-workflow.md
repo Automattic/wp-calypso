@@ -1,5 +1,4 @@
-Fallback Development Workflow
-=============================
+# Fallback Development Workflow
 
 The Calypso build has two outputs: **evergreen**, for browsers that are always kept up to date aka "evergreen"; and **fallback**, for all other browsers.
 

@@ -2,30 +2,6 @@
 	.filterbar {
 		margin-bottom: 2rem;
 	}
-
-	.pagination__list-item {
-		.pagination__list-item:last-child .pagination__list-button.button.is-borderless,
-		.button.pagination__list-button.is-borderless,
-		&.pagination__ellipsis > span {
-			color: var( --color-text );
-			border: none;
-			border-radius: 8px;
-
-			&:disabled {
-				color: var( --studio-gray-10 );
-			}
-		}
-
-		&:not( .is-selected ) .button.pagination__list-button.is-borderless,
-		&.pagination__ellipsis > span {
-			background-color: var( --color-surface-backdrop );
-		}
-
-		&.is-selected .button.pagination__list-button.is-borderless {
-			background-color: var( --color-primary );
-			color: var( --color-text-inverted );
-		}
-	}
 }
 
 .activity-card-list__pagination-bottom {
@@ -70,6 +46,7 @@
 // make sure the vertical lines don't appear through the transparent backgrounds of the icons
 .activity-card-list {
 	.activity-card {
+		position: relative;
 		margin-bottom: 32px;
 		.activity-card__time {
 			background: var( --color-surface-backdrop );
@@ -112,7 +89,7 @@
 		top: calc( 100% + 16px );
 		visibility: visible;
 		z-index: -1;
-		border-radius: 50%;
+		border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 	}
 }
 
@@ -182,7 +159,7 @@
 				top: calc( 100% - 9px );
 				visibility: visible;
 				z-index: -1;
-				border-radius: 50%;
+				border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 			}
 		}
 	}

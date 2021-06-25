@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { SECTION_SET } from 'state/action-types';
+import { SECTION_SET } from 'calypso/state/action-types';
 
 //TODO: do we really want to mix strings and booleans?
 export default function section( state = false, action ) {

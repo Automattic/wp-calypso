@@ -1,10 +1,8 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
-import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -34,7 +32,6 @@ SharingServiceConnectedAccounts.propTypes = {
 
 SharingServiceConnectedAccounts.defaultProps = {
 	connect: () => {},
-	translate: identity,
 };
 
 export default localize( SharingServiceConnectedAccounts );

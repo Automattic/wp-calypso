@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import debugModule from 'debug';
 import React from 'react';
 import page from 'page';
 import { isEmpty } from 'lodash';
@@ -8,9 +9,9 @@ import { isEmpty } from 'lodash';
 /**
  * Internal Dependencies
  */
-import config from 'config';
-import { sectionify } from 'lib/route';
-import { recordPageView } from 'lib/analytics/page-view';
+import config from '@automattic/calypso-config';
+import { sectionify } from 'calypso/lib/route';
+import { recordPageView } from 'calypso/lib/analytics/page-view';
 import SignupComponent from './main';
 import { getStepComponent } from './config/step-components';
 import {
@@ -23,27 +24,28 @@ import {
 	getFlowPageTitle,
 	shouldForceLogin,
 } from './utils';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import store from 'store';
-import { setCurrentFlowName } from 'state/signup/flow/actions';
-import { setSelectedSiteId } from 'state/ui/actions';
-import { isUserLoggedIn } from 'state/current-user/selectors';
-import { getSignupProgress } from 'state/signup/progress/selectors';
-import { getCurrentFlowName } from 'state/signup/flow/selectors';
+import { setCurrentFlowName, setPreviousFlowName } from 'calypso/state/signup/flow/actions';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
+import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import {
 	getSiteVerticalId,
 	getSiteVerticalIsUserInput,
-} from 'state/signup/steps/site-vertical/selectors';
-import { setSiteVertical } from 'state/signup/steps/site-vertical/actions';
-import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { setSiteType } from 'state/signup/steps/site-type/actions';
-import { login } from 'lib/paths';
-import { waitForData } from 'state/data-layer/http-data';
-import { requestGeoLocation } from 'state/data-getters';
+} from 'calypso/state/signup/steps/site-vertical/selectors';
+import { setSiteVertical } from 'calypso/state/signup/steps/site-vertical/actions';
+import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
+import { setSiteType } from 'calypso/state/signup/steps/site-type/actions';
+import { login } from 'calypso/lib/paths';
 import { getDotBlogVerticalId } from './config/dotblog-verticals';
-import { abtest } from 'lib/abtest';
-import Experiment, { DefaultVariation, Variation } from 'components/experiment';
-import user from 'lib/user';
+import { getSiteId } from 'calypso/state/sites/selectors';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
+import { requestSite } from 'calypso/state/sites/actions';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
+
+const debug = debugModule( 'calypso:signup' );
 
 /**
  * Constants
@@ -54,6 +56,7 @@ const basePageTitle = 'Signup'; // used for analytics, doesn't require translati
  * Module variables
  */
 let initialContext;
+let previousFlowName;
 
 const removeWhiteBackground = function () {
 	if ( ! document ) {
@@ -63,10 +66,18 @@ const removeWhiteBackground = function () {
 	document.body.classList.remove( 'is-white-signup' );
 };
 
-const gutenbergRedirect = function () {
+// eslint-disable-next-line no-unused-vars -- Used for a planned experiment rerun, see newUsersWithFreePlan below.
+const gutenbergRedirect = function ( flowName, locale ) {
 	const url = new URL( window.location );
-	url.pathname = '/new';
+	let path = '/new';
+	if ( [ 'free', 'personal', 'premium', 'business', 'ecommerce' ].includes( flowName ) ) {
+		path += `/${ flowName }`;
+	}
+	if ( locale ) {
+		path += `/${ locale }`;
+	}
 
+	url.pathname = path;
 	window.location.replace( url.toString() );
 };
 
@@ -88,19 +99,27 @@ export const removeP2SignupClassName = function () {
 
 export default {
 	redirectTests( context, next ) {
+		const isLoggedIn = isUserLoggedIn( context.store.getState() );
+		const currentFlowName = getFlowName( context.params, isLoggedIn );
 		if ( context.pathname.indexOf( 'new-launch' ) >= 0 ) {
+			// For 'new-launch' flow, 'is-white-signup' class name is being removed in client/signup/main.jsx
+			// Don't remove it here to prevent the flash of blue while the component is mounted
+			next();
+		} else if (
+			config( 'reskinned_flows' ).includes( currentFlowName ) &&
+			config.isEnabled( 'signup/reskin' )
+		) {
 			next();
 		} else if (
 			context.pathname.indexOf( 'domain' ) >= 0 ||
 			context.pathname.indexOf( 'plan' ) >= 0 ||
-			context.pathname.indexOf( 'onboarding-plan-first' ) >= 0 ||
 			context.pathname.indexOf( 'onboarding-registrationless' ) >= 0 ||
 			context.pathname.indexOf( 'wpcc' ) >= 0 ||
-			context.pathname.indexOf( 'launch-site' ) >= 0 ||
-			context.params.flowName === 'user' ||
+			context.pathname.indexOf( 'launch-only' ) >= 0 ||
 			context.params.flowName === 'account' ||
 			context.params.flowName === 'crowdsignal' ||
-			context.params.flowName === 'pressable-nux'
+			context.params.flowName === 'pressable-nux' ||
+			context.params.flowName === 'clone-site'
 		) {
 			removeWhiteBackground();
 			next();
@@ -117,56 +136,56 @@ export default {
 
 			next();
 		} else {
-			const userLoggedIn = isUserLoggedIn( context.store.getState() );
+			next();
+			return;
 
-			waitForData( {
-				geo: () => requestGeoLocation(),
-			} )
-				.then( ( { geo } ) => {
-					const countryCode = geo.data.body.country_short;
-					if (
-						userLoggedIn &&
-						'gutenberg' === abtest( 'existingUsersGutenbergOnboard', countryCode )
-					) {
-						gutenbergRedirect();
-					} else if ( 'gutenberg' === abtest( 'newSiteGutenbergOnboarding', countryCode ) ) {
-						gutenbergRedirect();
-					} else if (
-						( ! user() || ! user().get() ) &&
-						-1 === context.pathname.indexOf( 'free' ) &&
-						-1 === context.pathname.indexOf( 'personal' ) &&
-						-1 === context.pathname.indexOf( 'premium' ) &&
-						-1 === context.pathname.indexOf( 'business' ) &&
-						-1 === context.pathname.indexOf( 'ecommerce' ) &&
-						-1 === context.pathname.indexOf( 'with-theme' ) &&
-						'variantUserless' === abtest( 'userlessCheckout', countryCode )
-					) {
-						removeWhiteBackground();
-						const stepName = getStepName( context.params );
-						const stepSectionName = getStepSectionName( context.params );
-						const localeFromParams = context.params.lang;
-						const urlWithLocale = getStepUrl(
-							'onboarding-registrationless',
-							stepName,
-							stepSectionName,
-							localeFromParams
-						);
-						window.location = urlWithLocale;
-					} else {
-						removeWhiteBackground();
-						next();
-					}
-				} )
-				.catch( () => {
-					removeWhiteBackground();
-					next();
-				} );
+			// Code for the newUsersWithFreePlan experiment, previously implemented in calypso-abtest.
+			// Planned to be rerun see pbxNRc-xd-p2#comment-1949
+			// Commented out for eslint, to rerun next() has to be placed below this.
+			// const localeFromParams = context.params.lang;
+			// const flowName = getFlowName( context.params, isLoggedIn );
+			// if (
+			// 	flowName === 'free' &&
+			//  	// Checking for treatment variation previously happened here:
+			// 	false
+			// ) {
+			// 	gutenbergRedirect( flowName, localeFromParams );
+			// 	return;
+			// }
+
+			// Code for the variantUserless experiment, previously implemented in calypso-abtest.
+			// Planned to be rerun, see pbmo2S-Bv-p2#comment-1382
+			// Commented out for eslint, to rerun next() has to be placed below this.
+			// if (
+			// 	! isLoggedIn &&
+			// 	-1 === context.pathname.indexOf( 'free' ) &&
+			// 	-1 === context.pathname.indexOf( 'personal' ) &&
+			// 	-1 === context.pathname.indexOf( 'premium' ) &&
+			// 	-1 === context.pathname.indexOf( 'business' ) &&
+			// 	-1 === context.pathname.indexOf( 'ecommerce' ) &&
+			// 	-1 === context.pathname.indexOf( 'with-theme' ) &&
+			// 	// Checking for treatment variation previously happened here:
+			// 	false
+			// ) {
+			// 	removeWhiteBackground();
+			// 	const stepName = getStepName( context.params );
+			// 	const stepSectionName = getStepSectionName( context.params );
+			// 	const urlWithLocale = getStepUrl(
+			// 		'onboarding-registrationless',
+			// 		stepName,
+			// 		stepSectionName,
+			// 		localeFromParams
+			// 	);
+			// 	window.location = urlWithLocale;
+			// } else {
+			// 	next();
+			// }
 		}
 	},
 	redirectWithoutLocaleIfLoggedIn( context, next ) {
 		const userLoggedIn = isUserLoggedIn( context.store.getState() );
 		if ( userLoggedIn && context.params.lang ) {
-			const flowName = getFlowName( context.params );
+			const flowName = getFlowName( context.params, userLoggedIn );
 			const stepName = getStepName( context.params );
 			const stepSectionName = getStepSectionName( context.params );
 			let urlWithoutLocale = getStepUrl( flowName, stepName, stepSectionName );
@@ -199,10 +218,10 @@ export default {
 	},
 
 	redirectToFlow( context, next ) {
-		const flowName = getFlowName( context.params );
-		const localeFromParams = context.params.lang;
-		const localeFromStore = store.get( 'signup-locale' );
 		const userLoggedIn = isUserLoggedIn( context.store.getState() );
+		const flowName = getFlowName( context.params, userLoggedIn );
+		const localeFromParams = context.params.lang;
+		const localeFromStore = ! userLoggedIn ? store.get( 'signup-locale' ) : '';
 		const signupProgress = getSignupProgress( context.store.getState() );
 
 		// Special case for the user step which may use oauth2 redirect flow
@@ -213,7 +232,7 @@ export default {
 			if (
 				alternativeFlowName &&
 				alternativeFlowName !== flowName &&
-				canResumeFlow( alternativeFlowName, signupProgress )
+				canResumeFlow( alternativeFlowName, signupProgress, userLoggedIn )
 			) {
 				window.location =
 					getStepUrl(
@@ -228,10 +247,19 @@ export default {
 			}
 		}
 
+		// Store the previous flow name (so we know from what flow we transitioned from).
+		if ( ! previousFlowName ) {
+			const persistedFlowName = getCurrentFlowName( context.store.getState() );
+			if ( persistedFlowName ) {
+				previousFlowName = persistedFlowName;
+				context.store.dispatch( setPreviousFlowName( previousFlowName ) );
+			}
+		}
+
 		context.store.dispatch( setCurrentFlowName( flowName ) );
 
-		if ( ! userLoggedIn && shouldForceLogin( flowName ) ) {
-			return page.redirect( login( { isNative: true, redirectTo: context.path } ) );
+		if ( ! userLoggedIn && shouldForceLogin( flowName, userLoggedIn ) ) {
+			return page.redirect( login( { redirectTo: context.path } ) );
 		}
 
 		// if flow can be resumed, use saved locale
@@ -239,7 +267,7 @@ export default {
 			! userLoggedIn &&
 			! localeFromParams &&
 			localeFromStore &&
-			canResumeFlow( flowName, signupProgress )
+			canResumeFlow( flowName, signupProgress, userLoggedIn )
 		) {
 			window.location =
 				getStepUrl(
@@ -253,9 +281,10 @@ export default {
 			return;
 		}
 
-		if ( context.pathname !== getValidPath( context.params ) ) {
+		if ( context.pathname !== getValidPath( context.params, userLoggedIn ) ) {
 			return page.redirect(
-				getValidPath( context.params ) + ( context.querystring ? '?' + context.querystring : '' )
+				getValidPath( context.params, userLoggedIn ) +
+					( context.querystring ? '?' + context.querystring : '' )
 			);
 		}
 
@@ -265,8 +294,9 @@ export default {
 	},
 
 	async start( context, next ) {
+		const userLoggedIn = isUserLoggedIn( context.store.getState() );
 		const basePath = sectionify( context.path );
-		const flowName = getFlowName( context.params );
+		const flowName = getFlowName( context.params, userLoggedIn );
 		const stepName = getStepName( context.params );
 		const stepSectionName = getStepSectionName( context.params );
 
@@ -282,47 +312,21 @@ export default {
 		context.store.dispatch( setLayoutFocus( 'content' ) );
 		context.store.dispatch( setCurrentFlowName( flowName ) );
 
-		if ( flowName !== 'launch-site' ) {
+		if ( ! [ 'launch-site', 'new-launch' ].includes( flowName ) ) {
 			context.store.dispatch( setSelectedSiteId( null ) );
 		}
 
-		if ( flowName === 'onboarding' || flowName === 'onboarding-plan-first' ) {
-			context.primary = (
-				<Experiment name="signup_domain_plan_step_swap">
-					<DefaultVariation>
-						<SignupComponent
-							store={ context.store }
-							path={ context.path }
-							initialContext={ initialContext }
-							locale={ context.params.lang }
-							flowName={ flowName }
-							queryObject={ query }
-							refParameter={ query && query.ref }
-							stepName={ stepName }
-							stepSectionName={ stepSectionName }
-							stepComponent={ stepComponent }
-							pageTitle={ getFlowPageTitle( flowName ) }
-						/>
-					</DefaultVariation>
-					<Variation name="variant_plans_first">
-						<SignupComponent
-							store={ context.store }
-							path={ context.path }
-							initialContext={ initialContext }
-							locale={ context.params.lang }
-							flowName="onboarding-plan-first"
-							queryObject={ query }
-							refParameter={ query && query.ref }
-							stepName={ stepName }
-							stepSectionName={ stepSectionName }
-							stepComponent={ stepComponent }
-							pageTitle={ getFlowPageTitle( flowName ) }
-						/>
-					</Variation>
-				</Experiment>
+		let actualFlowName = flowName;
+		if ( flowName === 'onboarding' || flowName === 'with-design-picker' ) {
+			const experimentAssignment = await loadExperimentAssignment(
+				'design_picker_after_onboarding'
 			);
-
-			next();
+			debug(
+				`design_picker_after_onboarding experiment variation: ${ experimentAssignment?.variationName }`
+			);
+			if ( 'treatment' === experimentAssignment?.variationName ) {
+				actualFlowName = 'with-design-picker';
+			}
 		}
 
 		context.primary = React.createElement( SignupComponent, {
@@ -330,16 +334,52 @@ export default {
 			path: context.path,
 			initialContext,
 			locale: context.params.lang,
-			flowName: flowName,
+			flowName: actualFlowName,
 			queryObject: query,
 			refParameter: query && query.ref,
 			stepName,
 			stepSectionName,
 			stepComponent,
-			pageTitle: getFlowPageTitle( flowName ),
+			pageTitle: getFlowPageTitle( actualFlowName, userLoggedIn ),
 		} );
 
 		next();
+	},
+	setSelectedSiteForSignup( { store: signupStore, query }, next ) {
+		const { getState, dispatch } = signupStore;
+		const signupDependencies = getSignupDependencyStore( getState() );
+
+		const siteSlug = signupDependencies?.siteSlug || query?.siteSlug;
+		if ( ! siteSlug ) {
+			next();
+			return;
+		}
+		const siteId = getSiteId( getState(), siteSlug );
+		if ( siteId ) {
+			dispatch( setSelectedSiteId( siteId ) );
+			next();
+		} else {
+			// Fetch the site by siteSlug and then try to select again
+			dispatch( requestSite( siteSlug ) )
+				.catch( () => null )
+				.then( () => {
+					let freshSiteId = getSiteId( getState(), siteSlug );
+
+					if ( ! freshSiteId ) {
+						const wpcomStagingFragment = siteSlug.replace(
+							/\.wordpress\.com$/,
+							'.wpcomstaging.com'
+						);
+						freshSiteId = getSiteId( getState(), wpcomStagingFragment );
+					}
+
+					if ( freshSiteId ) {
+						dispatch( setSelectedSiteId( freshSiteId ) );
+						next();
+					}
+				} );
+			next();
+		}
 	},
 	importSiteInfoFromQuery( { store: signupStore, query }, next ) {
 		const state = signupStore.getState();

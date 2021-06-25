@@ -1,0 +1,47 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
+.signup__step.is-design {
+	.step-wrapper {
+		padding-left: 24px;
+		padding-right: 24px;
+
+		// Ugly, but necessary to override the default max-width of the step wrapper
+		// without causing regressions to other parts of `/start`
+		body.is-section-signup .layout:not( .dops ) & {
+			max-width: 1440px;
+		}
+
+		@include break-small {
+			padding-left: 48px;
+			padding-right: 48px;
+		}
+
+		@include break-medium {
+			padding-left: 96px;
+			padding-right: 96px;
+		}
+	}
+
+	.step-wrapper__content {
+		margin-top: 24px;
+
+		@include break-mobile {
+			margin-top: 32px;
+		}
+
+		@include break-medium {
+			margin-top: 48px;
+		}
+	}
+
+	// Ugly, but necessary to cancel out some signup styles
+	// without causing regressions to other parts of `/start`
+	button {
+		body.is-section-signup .layout:not( .dops ) & {
+			font-size: inherit;
+			padding-top: 0;
+			padding-bottom: 0;
+		}
+	}
+}

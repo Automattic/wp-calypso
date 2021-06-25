@@ -13,7 +13,7 @@ import { find, get } from 'lodash';
 import Labels from './labels';
 import Stream from './stream';
 import StreamSelector from './stream-selector';
-import getUserDevices from 'state/selectors/get-user-devices';
+import getUserDevices from 'calypso/state/selectors/get-user-devices';
 
 /**
  * Module variables

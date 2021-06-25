@@ -3,7 +3,7 @@
  */
 import React, { Fragment } from 'react';
 import getCaretCoordinates from 'textarea-caret';
-import { escapeRegExp, findIndex, get, head, includes, throttle, pick } from 'lodash';
+import { escapeRegExp, findIndex, get, includes, throttle, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -288,7 +288,7 @@ export default ( WrappedComponent ) =>
 
 			this.matchingSuggestions = this.getMatchingSuggestions( suggestions, query );
 			const selectedSuggestionId =
-				this.state.selectedSuggestionId || get( head( this.matchingSuggestions ), 'ID' );
+				this.state.selectedSuggestionId || get( this.matchingSuggestions[ 0 ], 'ID' );
 
 			const popoverPosition = pick( this.state.popoverPosition, [ 'top', 'left' ] );
 

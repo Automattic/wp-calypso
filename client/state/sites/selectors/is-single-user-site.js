@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import getSite from './get-site';
@@ -17,5 +12,6 @@ import getSite from './get-site';
  * @returns {?boolean}        Whether site is a single user site
  */
 export default function isSingleUserSite( state, siteId ) {
-	return get( getSite( state, siteId ), 'single_user_site', null );
+	const site = getSite( state, siteId );
+	return site?.single_user_site ?? null;
 }

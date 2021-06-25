@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { fetchRecommendedPlugins } from 'state/plugins/recommended/actions';
+import { fetchRecommendedPlugins } from 'calypso/state/plugins/recommended/actions';
 
 class QuerySiteRecommendedPlugins extends Component {
 	static propTypes = {

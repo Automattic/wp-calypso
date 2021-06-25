@@ -2,30 +2,29 @@
  * External dependencies
  */
 import { Card } from '@automattic/components';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { get, isUndefined, omitBy } from 'lodash';
+import { get, omitBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import CardHeading from 'components/card-heading';
-import Gridicon from 'components/gridicon';
-import { recordTracksEvent } from 'state/analytics/actions';
-import getSearchQuery from 'state/inline-help/selectors/get-search-query';
-import { hideInlineHelp, showInlineHelp } from 'state/inline-help/actions';
-import { openSupportArticleDialog } from 'state/inline-support-article/actions';
-import HelpSearchCard from 'blocks/inline-help/inline-help-search-card';
-import HelpSearchResults from 'blocks/inline-help/inline-help-search-results';
-import getInlineHelpCurrentlySelectedResult from 'state/inline-help/selectors/get-inline-help-currently-selected-result';
+import CardHeading from 'calypso/components/card-heading';
+import Gridicon from 'calypso/components/gridicon';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
+import { openSupportArticleDialog } from 'calypso/state/inline-support-article/actions';
+import HelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
+import HelpSearchResults from 'calypso/blocks/inline-help/inline-help-search-results';
+import getInlineHelpCurrentlySelectedResult from 'calypso/state/inline-help/selectors/get-inline-help-currently-selected-result';
 import {
 	RESULT_POST_ID,
 	RESULT_ARTICLE,
 	RESULT_LINK,
 	RESULT_TOUR,
 	RESULT_TYPE,
-} from 'blocks/inline-help/constants';
+} from 'calypso/blocks/inline-help/constants';
 
 /**
  * Style dependencies
@@ -39,17 +38,8 @@ const amendYouTubeLink = ( link = '' ) =>
 
 const getResultLink = ( result ) => amendYouTubeLink( get( result, RESULT_LINK ) );
 
-const HelpSearch = ( { searchQuery, hideInlineHelpUI, showInlineHelpUI, openDialog, track } ) => {
+const HelpSearch = ( { searchQuery, openDialog, track } ) => {
 	const translate = useTranslate();
-
-	// When the Customer Home Support is shown we must hide the
-	// Inline Help FAB
-	// see https://github.com/Automattic/wp-calypso/issues/38860
-	useEffect( () => {
-		hideInlineHelpUI();
-
-		return () => showInlineHelpUI();
-	}, [ hideInlineHelpUI, showInlineHelpUI ] );
 
 	// trackResultView: Given a result, send an "_open" tracking event indicating that result is opened.
 	const trackResultView = ( result ) => {
@@ -64,7 +54,7 @@ const HelpSearch = ( { searchQuery, hideInlineHelpUI, showInlineHelpUI, openDial
 				result_url: resultLink,
 				location: HELP_COMPONENT_LOCATION,
 			},
-			isUndefined
+			( prop ) => typeof prop === 'undefined'
 		);
 		track( `calypso_inlinehelp_${ type }_open`, tracksData );
 	};
@@ -105,12 +95,11 @@ const HelpSearch = ( { searchQuery, hideInlineHelpUI, showInlineHelpUI, openDial
 					</div>
 				</div>
 				<div className="help-search__footer">
-					<a className="help-search__cta" href="/help">
+					<a className="help-search__cta" href="/help/contact">
 						<span className="help-search__help-icon">
-							<Gridicon icon="help-outline" size={ 24 } />
+							<Gridicon icon="help" size={ 36 } />
 						</span>
-						{ translate( 'More help' ) }
-						<Gridicon className="help-search__go-icon" icon="chevron-right" size={ 24 } />
+						{ translate( 'Contact support' ) }
 					</a>
 				</div>
 			</Card>
@@ -124,8 +113,6 @@ const mapStateToProps = ( state ) => ( {
 } );
 
 const mapDispatchToProps = {
-	hideInlineHelpUI: hideInlineHelp,
-	showInlineHelpUI: showInlineHelp,
 	openDialog: openSupportArticleDialog,
 	track: recordTracksEvent,
 };

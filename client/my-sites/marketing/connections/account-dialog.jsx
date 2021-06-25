@@ -6,16 +6,16 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { filter, find, identity, isEqual } from 'lodash';
+import { filter, find, isEqual } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Notice from 'components/notice';
+import Notice from 'calypso/components/notice';
 
 /**
  * Internal dependencies
  */
 import AccountDialogAccount from './account-dialog-account';
 import { Dialog } from '@automattic/components';
-import { warningNotice } from 'state/notices/actions';
+import { warningNotice } from 'calypso/state/notices/actions';
 
 /**
  * Style dependencies
@@ -38,7 +38,6 @@ class AccountDialog extends Component {
 		isVisible: true,
 		onAccountSelected: () => {},
 		service: Object.freeze( {} ),
-		translate: identity,
 		warningNotice: () => {},
 	};
 
@@ -203,12 +202,12 @@ class AccountDialog extends Component {
 
 	render() {
 		const classes = classNames( 'account-dialog', {
-				'single-account': 1 === this.props.accounts.length,
-			} ),
-			buttons = [
-				{ action: 'cancel', label: this.props.translate( 'Cancel' ) },
-				{ action: 'connect', label: this.props.translate( 'Connect' ), isPrimary: true },
-			];
+			'single-account': 1 === this.props.accounts.length,
+		} );
+		const buttons = [
+			{ action: 'cancel', label: this.props.translate( 'Cancel' ) },
+			{ action: 'connect', label: this.props.translate( 'Connect' ), isPrimary: true },
+		];
 
 		return (
 			<Dialog

@@ -34,7 +34,7 @@ Reporter.prototype.listenTo = function ( testRun, test, source ) {
 	fs.mkdir( finalScreenshotDir, () => {} );
 	fs.mkdir( './reports', () => {} );
 
-	// Only enable Slack messages on the master branch
+	// Only enable Slack messages on the trunk branch
 	const slackClient = getSlackClient();
 
 	source.on( 'message', ( msg ) => {
@@ -61,10 +61,10 @@ Reporter.prototype.listenTo = function ( testRun, test, source ) {
 					files
 						.filter( ( file ) => file.match( /png$/i ) )
 						.forEach( ( screenshotPath ) => {
-							// Send screenshot to Slack on master branch only
+							// Send screenshot to Slack on trunk branch only
 							if (
 								config.has( 'slackTokenForScreenshots' ) &&
-								process.env.CIRCLE_BRANCH === 'master' &&
+								process.env.CIRCLE_BRANCH === 'trunk' &&
 								! process.env.LIVEBRANCHES
 							) {
 								const SlackUpload = require( 'node-slack-upload' );
@@ -113,6 +113,11 @@ Reporter.prototype.listenTo = function ( testRun, test, source ) {
 						text: `FYI - The following test failed, retried, and passed: (${ process.env.BROWSERSIZE }) ${ testObject.title } - Build <https://circleci.com/gh/${ process.env.CIRCLE_PROJECT_USERNAME }/${ process.env.CIRCLE_PROJECT_REPONAME }/${ process.env.CIRCLE_BUILD_NUM }|#${ process.env.CIRCLE_BUILD_NUM }>`,
 						username: 'e2e Test Runner',
 					} );
+				}
+
+				// Print skipped tests
+				if ( test.locator.pending === true ) {
+					console.log( '\x1b[35m', 'TEST SKIPPED: ' + test.locator.name );
 				}
 
 				// Reports
@@ -197,9 +202,9 @@ function copyScreenshots( slackClient, dir, path, finalScreenshotDir ) {
 	}
 }
 
-// Only enable Slack messages on the master branch & not for live branches
+// Only enable Slack messages on the trunk branch & not for live branches
 function getSlackClient() {
-	if ( process.env.CIRCLE_BRANCH === 'master' && ! process.env.LIVEBRANCHES ) {
+	if ( process.env.CIRCLE_BRANCH === 'trunk' && ! process.env.LIVEBRANCHES ) {
 		const slackHook = configGet( 'slackHook' );
 		return slack( slackHook );
 	}

@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { SIGNUP_STEPS_USER_EXPERIENCE_SET } from 'state/action-types';
+import { SIGNUP_STEPS_USER_EXPERIENCE_SET } from 'calypso/state/action-types';
 
-import 'state/signup/init';
+import 'calypso/state/signup/init';
 
 export function setUserExperience( userExperience ) {
 	return {

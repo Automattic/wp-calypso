@@ -7,13 +7,13 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import CelebrateNotice from 'my-sites/customer-home/cards/notices/celebrate-notice';
-import { NOTICE_CELEBRATE_SITE_SETUP_COMPLETE } from 'my-sites/customer-home/cards/constants';
+import CelebrateNotice from 'calypso/my-sites/customer-home/cards/notices/celebrate-notice';
+import { NOTICE_CELEBRATE_SITE_SETUP_COMPLETE } from 'calypso/my-sites/customer-home/cards/constants';
 
 /**
  * Image dependencies
  */
-import checklistIllustration from 'assets/images/customer-home/illustration--checklist-complete.svg';
+import checklistIllustration from 'calypso/assets/images/customer-home/illustration--checklist-complete.svg';
 
 const CelebrateSiteSetupComplete = () => {
 	const translate = useTranslate();

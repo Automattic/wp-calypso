@@ -10,10 +10,10 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import Spinner from 'components/spinner';
-import user from 'lib/user';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import Spinner from 'calypso/components/spinner';
+import wpcom from 'calypso/lib/wp';
 
 class EmailUnverifiedNotice extends React.Component {
 	state = {
@@ -48,13 +48,16 @@ class EmailUnverifiedNotice extends React.Component {
 			pendingRequest: true,
 		} );
 
-		user().sendVerificationEmail( ( error, response ) => {
-			this.setState( {
-				emailSent: response && response.success,
-				error: error,
-				pendingRequest: false,
+		wpcom
+			.undocumented()
+			.me()
+			.sendVerificationEmail( ( error, response ) => {
+				this.setState( {
+					emailSent: response && response.success,
+					error: error,
+					pendingRequest: false,
+				} );
 			} );
-		} );
 	};
 
 	renderEmailSendPending() {

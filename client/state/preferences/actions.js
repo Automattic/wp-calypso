@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	PREFERENCES_SET,
 	PREFERENCES_RECEIVE,
@@ -11,10 +11,10 @@ import {
 	PREFERENCES_SAVE,
 	PREFERENCES_SAVE_FAILURE,
 	PREFERENCES_SAVE_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import { USER_SETTING_KEY } from './constants';
 
-import 'state/preferences/init';
+import 'calypso/state/preferences/init';
 
 /**
  * Returns an action object signalling the remote preferences have been
@@ -39,11 +39,8 @@ export function fetchPreferences() {
 	return ( dispatch ) => {
 		dispatch( { type: PREFERENCES_FETCH } );
 
-		return wpcom
-			.undocumented()
-			.me()
-			.preferences()
-			.get()
+		return wpcom.req
+			.get( '/me/preferences' )
 			.then( ( data ) => {
 				dispatch( receivePreferences( data[ USER_SETTING_KEY ] ) );
 				dispatch( { type: PREFERENCES_FETCH_SUCCESS } );
@@ -93,11 +90,8 @@ export const savePreference = ( key, value ) => ( dispatch ) => {
 		},
 	};
 
-	return wpcom
-		.undocumented()
-		.me()
-		.preferences()
-		.update( payload )
+	return wpcom.req
+		.put( '/me/preferences', payload )
 		.then( ( data ) => {
 			dispatch( receivePreferences( data[ USER_SETTING_KEY ] ) );
 			dispatch( {

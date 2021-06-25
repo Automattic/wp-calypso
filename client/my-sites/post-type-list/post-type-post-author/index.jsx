@@ -10,7 +10,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getPost } from 'state/posts/selectors';
+import { getPost } from 'calypso/state/posts/selectors';
 
 /**
  * Style dependencies

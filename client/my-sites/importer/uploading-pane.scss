@@ -1,13 +1,15 @@
 .importer__uploading-pane {
+	cursor: pointer;
 	position: relative;
-	height: 150px;
+	height: 180px;
 	margin-bottom: 1.5em;
 
-	border: 5px solid var( --color-neutral-0 );
+	background-color: var( --color-neutral-0 );
+	border: 2px dashed var( --color-neutral-light );
+	transition: all 200ms ease-out, color 100ms ease-out;
 	fill: var( --color-neutral-20 );
-	font-size: $font-body-small;
-	font-weight: 600;
-	color: var( --color-neutral-light );
+	font-size: $font-body;
+	color: var( --color-neutral-70 );
 	text-align: center;
 
 	input {
@@ -17,6 +19,24 @@
 	.accessible-focus &:focus {
 		border-color: var( --color-neutral-20 );
 	}
+
+	&:hover {
+		border-color: var( --color-neutral-70 );
+		transform: translate3d( 0, -1px, 0 );
+		box-shadow: 0 2px 4px var( --color-neutral-10 );
+	}
+
+	p {
+		margin-top: -0.5em;
+	}
+
+	.importer__upload-icon {
+		color: var( --color-neutral-light );
+	}
+}
+
+.importer__uploading-pane:hover .importer__upload-content .importer__upload-icon {
+	color: var( --color-neutral-70 );
 }
 
 .importer__uploading-pane-description {

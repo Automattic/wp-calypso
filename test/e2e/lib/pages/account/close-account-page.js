@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { By as by } from 'selenium-webdriver';
+import { By } from 'selenium-webdriver';
 import config from 'config';
 
 /**
@@ -15,23 +15,21 @@ const explicitWaitMS = config.get( 'explicitWaitMS' );
 
 export default class CloseAccountPage extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, by.css( '.account-close' ) );
+		super( driver, By.css( '.account-close' ) );
 	}
 
 	async chooseCloseAccount() {
-		const buttonSelector = by.css( '.account-close button.is-scary' );
-		const confirmButtonSelector = by.css( '.dialog__action-buttons button.is-primary');
-		const confirmDialogSelector = by.css( '.account-close__confirm-dialog' );
+		const buttonLocator = By.css( '.account-close button.is-scary' );
+		const confirmButtonLocator = By.css( '.dialog__action-buttons button.is-primary' );
+		const confirmDialogLocator = By.css( '.account-close__confirm-dialog' );
 		const pauseBetweenClickAttemptsMS = 100;
-
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, buttonSelector );
 
 		// Click doesn't always fire even if the button is already displayed.
 		// We can safely attempt to click the button until the confirmation dialog pop-up window is present.
 		for ( let i = 0; i < explicitWaitMS / pauseBetweenClickAttemptsMS; i++ ) {
-			await driverHelper.clickWhenClickable( this.driver, buttonSelector );
-			if ( await driverHelper.isElementPresent( this.driver, confirmDialogSelector ) ) {
-				await driverHelper.clickWhenClickable( this.driver, confirmButtonSelector );
+			await driverHelper.clickWhenClickable( this.driver, buttonLocator );
+			if ( await driverHelper.isElementLocated( this.driver, confirmDialogLocator ) ) {
+				await driverHelper.clickWhenClickable( this.driver, confirmButtonLocator );
 				return true;
 			}
 			await this.driver.sleep( pauseBetweenClickAttemptsMS );
@@ -42,25 +40,28 @@ export default class CloseAccountPage extends AsyncBaseContainer {
 	async enterAccountNameAndClose( accountName ) {
 		await driverHelper.setWhenSettable(
 			this.driver,
-			by.css( '.account-close__confirm-dialog-confirm-input' ),
+			By.css( '.account-close__confirm-dialog-confirm-input' ),
 			accountName
 		);
-		await driverHelper.waitTillNotPresent(
+		await driverHelper.waitUntilElementNotLocated(
 			this.driver,
-			by.css( '.dialog button.is-scary[disabled]' )
+			By.css( '.dialog button.is-scary[disabled]' )
 		);
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( '.dialog button.is-scary' )
+			By.css( '.dialog button.is-scary' )
 		);
 	}
 
-	async ConfirmAccountHasBeenClosed() {
-		await driverHelper.verifyTextPresent(
-			this.driver,
-			by.css( '.empty-content__title' ),
+	async confirmAccountHasBeenClosed() {
+		const messageLocator = driverHelper.createTextLocator(
+			By.css( '.empty-content__title' ),
 			'Your account has been closed'
 		);
-		return driverHelper.clickWhenClickable( this.driver, by.css( 'button.empty-content__action' ) );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, messageLocator );
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( 'button.empty-content__action' )
+		);
 	}
 }

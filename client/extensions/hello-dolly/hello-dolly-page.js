@@ -1,20 +1,18 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 /**
  * Internal Dependencies
  */
-import Main from 'components/main';
+import Main from 'calypso/components/main';
 import { Button, Card } from '@automattic/components';
-import SectionHeader from 'components/section-header';
-import FAQ from 'components/faq';
-import FAQItem from 'components/faq/faq-item';
+import SectionHeader from 'calypso/components/section-header';
+import FAQ from 'calypso/components/faq';
+import FAQItem from 'calypso/components/faq/faq-item';
 import getLyric from './state/selectors';
 import { nextLyric } from './state/actions';
 
@@ -106,13 +104,4 @@ function mapStateToProps( state ) {
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
-	return bindActionCreators(
-		{
-			nextLyric,
-		},
-		dispatch
-	);
-}
-
-export default connect( mapStateToProps, mapDispatchToProps )( HelloDollyPage );
+export default connect( mapStateToProps, { nextLyric } )( HelloDollyPage );

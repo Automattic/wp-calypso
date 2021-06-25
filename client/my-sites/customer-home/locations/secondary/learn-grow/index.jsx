@@ -3,24 +3,25 @@
  */
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
 import { Card } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
-import FreePhotoLibrary from 'my-sites/customer-home/cards/education/free-photo-library';
+import FreePhotoLibrary from 'calypso/my-sites/customer-home/cards/education/free-photo-library';
 // eslint-disable-next-line inclusive-language/use-inclusive-words
-import MasteringGutenberg from 'my-sites/customer-home/cards/education/mastering-gutenberg';
-import EducationEarn from 'my-sites/customer-home/cards/education/earn';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getHomeLayout } from 'state/selectors/get-home-layout';
+import MasteringGutenberg from 'calypso/my-sites/customer-home/cards/education/mastering-gutenberg';
+import EducationEarn from 'calypso/my-sites/customer-home/cards/education/earn';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getHomeLayout } from 'calypso/state/selectors/get-home-layout';
 import {
 	EDUCATION_FREE_PHOTO_LIBRARY,
 	EDUCATION_GUTENBERG,
 	EDUCATION_EARN,
-} from 'my-sites/customer-home/cards/constants';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
+	EDUCATION_WPCOURSES,
+} from 'calypso/my-sites/customer-home/cards/constants';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import WpCourses from 'calypso/my-sites/customer-home/cards/education/wpcourses';
 
 /**
  * Style dependencies
@@ -31,11 +32,10 @@ const cardComponents = {
 	[ EDUCATION_FREE_PHOTO_LIBRARY ]: FreePhotoLibrary,
 	[ EDUCATION_GUTENBERG ]: MasteringGutenberg,
 	[ EDUCATION_EARN ]: EducationEarn,
+	[ EDUCATION_WPCOURSES ]: WpCourses,
 };
 
 const LearnGrow = ( { cards, trackCards } ) => {
-	const translate = useTranslate();
-
 	useEffect( () => {
 		if ( cards && cards.length ) {
 			trackCards( cards );
@@ -48,9 +48,6 @@ const LearnGrow = ( { cards, trackCards } ) => {
 
 	return (
 		<>
-			<h2 className="learn-grow__heading customer-home__section-heading">
-				{ translate( 'Learn and grow' ) }
-			</h2>
 			<Card className="learn-grow__content">
 				{ cards.map(
 					( card, index ) =>

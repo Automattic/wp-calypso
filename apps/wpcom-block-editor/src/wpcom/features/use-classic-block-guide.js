@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 /**
  * External dependencies
  */
@@ -9,7 +8,6 @@ import { useDispatch } from '@wordpress/data';
 import url from 'url'; // eslint-disable-line no-restricted-imports
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
-/* eslint-enable import/no-extraneous-dependencies */
 
 /**
  * Internal dependencies

@@ -6,7 +6,7 @@ import {
 	BILLING_TRANSACTIONS_FILTER_SET_MONTH,
 	BILLING_TRANSACTIONS_FILTER_SET_PAGE,
 	BILLING_TRANSACTIONS_FILTER_SET_QUERY,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import { setApp, setDate, setPage, setQuery } from '../actions';
 
 describe( 'transaction filter actions', () => {

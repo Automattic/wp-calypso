@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { POST_TYPES_RECEIVE, POST_TYPES_REQUEST } from 'state/action-types';
+import { POST_TYPES_RECEIVE, POST_TYPES_REQUEST } from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/sites/post-types';
-import 'state/post-types/init';
+import 'calypso/state/data-layer/wpcom/sites/post-types';
+import 'calypso/state/post-types/init';
 
 /**
  * Returns an action object to be used in signalling that post types for a site

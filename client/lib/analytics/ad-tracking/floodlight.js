@@ -2,13 +2,12 @@
  * External dependencies
  */
 import cookie from 'cookie';
-import { assign } from 'lodash';
 import { v4 as uuid } from 'uuid';
 
 /**
  * Internal dependencies
  */
-import { isAdTrackingAllowed } from 'lib/analytics/utils';
+import { isAdTrackingAllowed } from 'calypso/lib/analytics/utils';
 
 import { getTracksAnonymousUserId, getCurrentUser } from '@automattic/calypso-analytics';
 import {
@@ -32,12 +31,13 @@ export function recordParamsInFloodlightGtag( params ) {
 	}
 
 	// Adds u4 (user id) and u5 (anonymous user id) parameters
-	const defaults = assign( floodlightUserParams(), {
+	const defaults = {
+		...floodlightUserParams(),
 		// See: https://support.google.com/searchads/answer/7566546?hl=en
 		allow_custom_scripts: true,
-	} );
+	};
 
-	const finalParams = [ 'event', 'conversion', assign( {}, defaults, params ) ];
+	const finalParams = [ 'event', 'conversion', { ...defaults, ...params } ];
 
 	debug( 'recordParamsInFloodlightGtag:', finalParams );
 

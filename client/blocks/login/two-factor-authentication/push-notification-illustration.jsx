@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { colors as PALETTE } from '@automattic/color-studio';
+import colorStudio from '@automattic/color-studio';
 
 /**
  * Style dependencies
@@ -12,6 +12,7 @@ import './push-notification-illustration.scss';
 /**
  * Module constants
  */
+const PALETTE = colorStudio.colors;
 const COLOR_BLUE_10 = PALETTE[ 'WordPress Blue 10' ];
 const COLOR_BLUE_20 = PALETTE[ 'WordPress Blue 20' ];
 const COLOR_BLUE_40 = PALETTE[ 'WordPress Blue 40' ];

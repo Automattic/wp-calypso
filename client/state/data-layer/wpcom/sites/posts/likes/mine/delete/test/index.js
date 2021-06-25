@@ -6,8 +6,8 @@
  * Internal Dependencies
  */
 import { fetch, fromApi, onError, onSuccess } from '../';
-import { like, removeLiker } from 'state/posts/likes/actions';
-import { bypassDataLayer } from 'state/data-layer/utils';
+import { like, removeLiker } from 'calypso/state/posts/likes/actions';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 
 const LIKER = Object.freeze( {} );
 

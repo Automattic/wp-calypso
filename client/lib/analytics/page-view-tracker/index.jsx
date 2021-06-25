@@ -5,25 +5,27 @@
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { get, isNumber, noop } from 'lodash';
+import { get } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { getSiteFragment } from 'lib/route';
+import { getSiteFragment } from 'calypso/lib/route';
 import {
 	recordPageViewWithClientId as recordPageView,
 	enhanceWithSiteType,
-} from 'state/analytics/actions';
-import { withEnhancers } from 'state/utils';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+} from 'calypso/state/analytics/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { withEnhancers } from 'calypso/state/utils';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 /**
  * Module variables
  */
 const debug = debugFactory( 'calypso:analytics:PageViewTracker' );
+const noop = () => {};
 
 export class PageViewTracker extends React.Component {
 	static displayName = 'PageViewTracker';
@@ -67,24 +69,32 @@ export class PageViewTracker extends React.Component {
 			path,
 			recorder = noop,
 			hasSelectedSiteLoaded,
+			isUserAuthenticated,
 			title,
-			properties,
 		} = this.props;
 
 		debug( `Queuing Page View: "${ title }" at "${ path }" with ${ delay }ms delay` );
 
-		if ( ! hasSelectedSiteLoaded || this.state.timer ) {
+		// When the user is not authenticated, their site data isn't requested and we still want
+		// to record the page view.
+		if ( ( ! hasSelectedSiteLoaded && isUserAuthenticated ) || this.state.timer ) {
 			return;
 		}
 
 		if ( ! delay ) {
-			return recorder( path, title, 'default', properties );
+			return this.recordViewWithProperties();
 		}
 
 		this.setState( {
 			timer: setTimeout( () => recorder( path, title ), delay ),
 		} );
 	};
+
+	recordViewWithProperties() {
+		const { path, recorder = noop, title, properties } = this.props;
+
+		return recorder( path, title, 'default', properties );
+	}
 
 	render() {
 		return null;
@@ -99,12 +109,13 @@ const mapStateToProps = ( state ) => {
 
 	const hasSelectedSiteLoaded =
 		! currentSlug ||
-		( isNumber( currentSlug ) && currentSlug === selectedSiteId ) ||
+		( typeof currentSlug === 'number' && currentSlug === selectedSiteId ) ||
 		currentSlug === selectedSiteSlug;
 
 	return {
 		hasSelectedSiteLoaded,
 		selectedSiteId,
+		isUserAuthenticated: getCurrentUserId( state ),
 	};
 };
 

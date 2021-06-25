@@ -7,8 +7,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormSectionHeading from 'components/forms/form-section-heading';
-import HappinessEngineersTray from 'components/happiness-engineers-tray';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import HappinessEngineersTray from 'calypso/components/happiness-engineers-tray';
 
 /**
  * Style dependencies

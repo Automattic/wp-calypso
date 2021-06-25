@@ -6,8 +6,8 @@ import { camelCase } from 'lodash';
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { requestRewindState } from 'state/rewind/state/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { requestRewindState } from 'calypso/state/rewind/state/actions';
 
 const transformCredential = ( data ) =>
 	Object.assign(
@@ -50,6 +50,8 @@ const transformRewind = ( data ) =>
 			startedAt: new Date( data.started_at ),
 			status: data.status,
 		},
+		data.message && { message: data.message },
+		data.current_entry && { currentEntry: data.current_entry },
 		data.progress && { progress: data.progress },
 		data.reason && { reason: data.reason },
 		data.links && data.links.dismiss && { dismiss: makeRewindDismisser( data.links.dismiss ) }

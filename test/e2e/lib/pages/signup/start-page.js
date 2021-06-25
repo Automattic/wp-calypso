@@ -19,13 +19,16 @@ export default class StartPage extends AsyncBaseContainer {
 
 	async _postInit() {
 		if ( this.visiting ) {
-			await this.setABTestControlGroupsInLocalStorage();
+			await this.waitForPage();
 			await this.driver.get( this.startURL ); // this is the actual calculated start URL
 		}
-		return await driverHelper.waitTillPresentAndDisplayed( this.driver, By.css( '.step-wrapper' ) );
+		return await driverHelper.waitUntilElementLocatedAndVisible(
+			this.driver,
+			By.css( '.step-wrapper' )
+		);
 	}
 
-	static getStartURL( { culture = 'en', flow = '', query = '' } = {} ) {
+	static getStartURL( { culture = 'en', flow = 'domains', query = '' } = {} ) {
 		let route = 'start';
 		const queryStrings = [];
 		queryStrings.push( 'ref=e2e' );

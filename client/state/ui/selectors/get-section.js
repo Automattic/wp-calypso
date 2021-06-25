@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/ui/init';
+
+/**
  * Returns the current section.
  *
  * @param  {object}  state Global state tree

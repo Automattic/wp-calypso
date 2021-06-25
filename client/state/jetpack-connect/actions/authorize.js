@@ -7,19 +7,19 @@ import { pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import userFactory from 'lib/user';
-import wpcom from 'lib/wp';
-import { receiveSite } from 'state/sites/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'state/sites/constants';
+import wpcom from 'calypso/lib/wp';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
+import { receiveSite } from 'calypso/state/sites/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'calypso/state/sites/constants';
 import {
 	JETPACK_CONNECT_AUTHORIZE,
 	JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
-} from 'state/jetpack-connect/action-types';
+} from 'calypso/state/jetpack-connect/action-types';
 
-import 'state/jetpack-connect/init';
+import 'calypso/state/jetpack-connect/init';
 
 /**
  * Module constants
@@ -67,23 +67,7 @@ export function authorize( queryObject ) {
 				} );
 
 				// Update the user now that we are fully connected.
-				const user = userFactory();
-				user.fetching = false;
-				user.fetch();
-
-				// @TODO: When user fetching is reduxified, let's get rid of this hack.
-				// Currently, we need it to make sure user has been refetched before we continue.
-				// Otherwise the user might see a confusing message that they have no sites.
-				// See p8oabR-j3-p2/#comment-2399 for more information.
-				return new Promise( ( resolve ) => {
-					const userFetched = setInterval( () => {
-						const loadedUser = user.get();
-						if ( loadedUser ) {
-							clearInterval( userFetched );
-							resolve( loadedUser );
-						}
-					}, 100 );
-				} );
+				return dispatch( fetchCurrentUser() );
 			} )
 			.then( () => {
 				// Site may not be accessible yet, so force fetch from wpcom

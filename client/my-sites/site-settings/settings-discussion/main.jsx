@@ -8,25 +8,30 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import DiscussionForm from 'my-sites/site-settings/form-discussion';
-import DocumentHead from 'components/data/document-head';
-import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
-import Main from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
-import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
-import { getSelectedSite } from 'state/ui/selectors';
+import DiscussionForm from 'calypso/my-sites/site-settings/form-discussion';
+import DocumentHead from 'calypso/components/data/document-head';
+import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
+import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
+import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import config from '@automattic/calypso-config';
 
 const SiteSettingsDiscussion = ( { site, translate } ) => (
 	<Main className="settings-discussion site-settings">
-		<DocumentHead title={ translate( 'Site Settings' ) } />
+		<ScreenOptionsTab wpAdminPath="options-discussion.php" />
+		<DocumentHead title={ translate( 'Discussion Settings' ) } />
 		<JetpackDevModeNotice />
 		<SidebarNavigation />
 		<FormattedHeader
 			brandFont
 			className="settings-discussion__page-heading"
-			headerText={ translate( 'Settings' ) }
+			headerText={ translate( 'Discussion Settings' ) }
+			subHeaderText={ translate( 'Control how people interact with your site through comments.' ) }
 			align="left"
+			hasScreenOptions={ config.isEnabled( 'nav-unification/switcher' ) }
 		/>
 		<SiteSettingsNavigation site={ site } section="discussion" />
 		<DiscussionForm />

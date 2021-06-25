@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getPastBillingTransactions from 'state/selectors/get-past-billing-transactions';
+import getPastBillingTransactions from 'calypso/state/selectors/get-past-billing-transactions';
 
 describe( 'getPastBillingTransactions()', () => {
 	test( 'should return the past billing transactions', () => {

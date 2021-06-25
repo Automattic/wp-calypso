@@ -6,7 +6,7 @@
  * Internal dependencies
  */
 import { getAvailabilityNotice } from '../availability-messages';
-import { domainAvailability } from 'lib/domains/constants';
+import { domainAvailability } from 'calypso/lib/domains/constants';
 
 jest.mock( 'i18n-calypso', () => ( {
 	translate: jest.fn( () => 'default' ),

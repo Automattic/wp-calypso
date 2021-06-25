@@ -3,34 +3,39 @@
  */
 import PropTypes from 'prop-types';
 import React, { PureComponent, Fragment } from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
-import { isNumber, noop, trim } from 'lodash';
+import { trim } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { Button, Card, ScreenReaderText } from '@automattic/components';
-import FormTextArea from 'components/forms/form-textarea';
+import FormTextArea from 'calypso/components/forms/form-textarea';
 import {
 	submitNpsSurvey,
 	submitNpsSurveyWithNoScore,
 	sendNpsSurveyFeedback,
-} from 'state/nps-survey/actions';
-import { successNotice } from 'state/notices/actions';
-import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
-import { hasAnsweredNpsSurvey, isAvailableForConciergeSession } from 'state/nps-survey/selectors';
-import { CALYPSO_CONTACT } from 'lib/url/support';
-import { bumpStat } from 'lib/analytics/mc';
-import { recordTracksEvent } from 'lib/analytics/tracks';
+} from 'calypso/state/nps-survey/actions';
+import { successNotice } from 'calypso/state/notices/actions';
+import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import {
+	hasAnsweredNpsSurvey,
+	isAvailableForConciergeSession,
+} from 'calypso/state/nps-survey/selectors';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import RecommendationSelect from './recommendation-select';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 export class NpsSurvey extends PureComponent {
 	static propTypes = {
@@ -137,7 +142,7 @@ export class NpsSurvey extends PureComponent {
 		return (
 			[ 'en', 'en-gb' ].indexOf( getLocaleSlug() ) >= 0 &&
 			this.props.isBusinessUser &&
-			isNumber( this.state.score ) &&
+			typeof this.state.score === 'number' &&
 			this.state.score < 7
 		);
 	}

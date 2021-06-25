@@ -9,8 +9,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isKeyringConnectionsFetching } from 'state/sharing/keyring/selectors';
-import { requestKeyringConnections } from 'state/sharing/keyring/actions';
+import { isKeyringConnectionsFetching } from 'calypso/state/sharing/keyring/selectors';
+import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
 
 class QueryKeyringConnections extends Component {
 	static propTypes = {

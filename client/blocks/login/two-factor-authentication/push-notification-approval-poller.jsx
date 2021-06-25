@@ -9,8 +9,8 @@ import { Component } from 'react';
 /**
  * Internal dependencies
  */
-import { startPollAppPushAuth, stopPollAppPushAuth } from 'state/login/actions';
-import { getTwoFactorPushPollSuccess } from 'state/login/selectors';
+import { startPollAppPushAuth, stopPollAppPushAuth } from 'calypso/state/login/actions';
+import { getTwoFactorPushPollSuccess } from 'calypso/state/login/selectors';
 
 class PushNotificationApprovalPoller extends Component {
 	static propTypes = {

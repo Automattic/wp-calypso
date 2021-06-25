@@ -5,13 +5,13 @@
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { isEmpty, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { requestThemes } from 'state/themes/actions';
-import { getThemesForQuery, isRequestingThemesForQuery } from 'state/themes/selectors';
+import { requestThemes } from 'calypso/state/themes/actions';
+import { getThemesForQuery, isRequestingThemesForQuery } from 'calypso/state/themes/selectors';
 
 class QueryThemes extends Component {
 	static propTypes = {
@@ -61,7 +61,7 @@ class QueryThemes extends Component {
 
 export default connect(
 	( state, { query, siteId } ) => ( {
-		hasThemes: ! isEmpty( getThemesForQuery( state, siteId, query ) ),
+		hasThemes: getThemesForQuery( state, siteId, query ) !== null,
 		isRequesting: isRequestingThemesForQuery( state, siteId, query ),
 	} ),
 	{ requestThemes }

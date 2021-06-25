@@ -1,0 +1,59 @@
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/z-index';
+@import '@automattic/onboarding/styles/variables';
+
+body.is-focused-launch-complete .editor-gutenberg-launch__launch-button {
+	display: none;
+}
+
+.focused-launch-container {
+	width: 100%;
+	max-width: 980px;
+	margin: 0 auto;
+}
+
+.focused-launch-container.focused-launch-container--wide {
+	max-width: 1280px;
+}
+
+.focused-launch-details__back-button-wrapper {
+	// The result of padding + marging:
+	// - the wrapper adds 12px of white space above and below the button text
+	// - negative margin top makes up for the padding (12px - 12px = 0px)
+	// - on the bottom, margin and padding sum together (12px + 12px = 24px)
+	padding: 12px 0;
+	margin: -12px 0 12px;
+
+	@supports ( position: sticky ) {
+		// Position sticky with a z-index high enough to stay on top of the header
+		position: sticky;
+		z-index: z-index( '.components-modal__header' ) + 1;
+
+		background: #fff;
+		top: $onboarding-header-height;
+
+		@include break-medium {
+			// top + translateY to vertically center the button in the modal header
+			top: $onboarding-header-height / 2;
+			transform: translateY( -50% );
+			// Necessary to avoid the button to overlap the WP logo in the modal header
+			background: none;
+			padding-left: 24px;
+		}
+
+		@include break-large {
+			// Padding left not needed anymore for large screens
+			padding-left: 0;
+		}
+	}
+}
+
+.focused-launch-details__header {
+	margin-bottom: 30px;
+
+	@include break-medium {
+		margin-bottom: 55px;
+	}
+}

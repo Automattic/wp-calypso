@@ -6,9 +6,9 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import getBillingTransactions from 'state/selectors/get-billing-transactions';
+import getBillingTransactions from 'calypso/state/selectors/get-billing-transactions';
 
-import 'state/billing-transactions/init';
+import 'calypso/state/billing-transactions/init';
 
 /**
  * Returns all upcoming billing transactions.

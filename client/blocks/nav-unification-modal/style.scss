@@ -1,0 +1,245 @@
+// @TODO: remove the ignore rule and replace font sizes accordingly
+/* stylelint-disable scales/font-size */
+
+@import '@automattic/typography/styles/fonts';
+@import '@automattic/onboarding/styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
+
+$modal-breakpoint: 600px;
+$modal-padding-v: 40px;
+$modal-padding-h: 50px;
+$modal-content-min-height: 350px;
+$modal-footer-padding-v: 20px;
+$modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
+
+// Core modal style overrides
+.nav-unification-modal {
+	&.components-modal__frame {
+		overflow: visible;
+		height: 65vh;
+		top: calc( 17.5vh - #{$modal-footer-height / 2} );
+
+		@media ( max-width: $modal-breakpoint ) {
+			width: 90vw;
+			min-width: 90vw;
+			left: 5vw;
+			right: 5vw;
+		}
+
+		@media ( min-width: $modal-breakpoint ) {
+			width: 740px;
+			height: $modal-content-min-height;
+			top: calc( 50% - #{$modal-footer-height / 2} );
+		}
+	}
+
+	* {
+		box-sizing: border-box;
+	}
+
+	.components-modal__header {
+		display: none;
+	}
+
+	.components-guide__container {
+		margin-top: 0;
+	}
+
+	.components-guide__footer {
+		position: absolute;
+		width: 100%;
+		height: $modal-footer-height;
+		bottom: $modal-footer-height * -1;
+		left: 0;
+		padding: $modal-footer-padding-v 0;
+		margin: 0;
+		display: flex;
+		justify-content: center;
+		background: white;
+		border-top: 1px solid #dcdcde;
+
+		@media ( min-width: $modal-breakpoint ) {
+			border-top: none;
+		}
+	}
+
+	.components-guide__page {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		justify-content: start;
+	}
+
+	.components-guide__page-control {
+		position: relative;
+		height: 0;
+		top: 100%;
+		overflow: visible;
+		margin: 0 auto;
+		z-index: 2;
+
+		&::before {
+			display: inline-block;
+			content: '';
+			height: $modal-footer-height;
+			vertical-align: middle;
+		}
+
+		li {
+			vertical-align: middle;
+			margin-bottom: 0;
+		}
+
+		// Temporarily disable dots on mobile as alignment is wonky.
+		display: none;
+		@media ( min-width: $modal-breakpoint ) {
+			display: block;
+		}
+	}
+
+	.components-guide__finish-button {
+		background-color: var( --studio-pink-50 );
+		color: #ffffff;
+		border-radius: 3px;
+
+		&:hover {
+			color: #ffffff;
+		}
+	}
+}
+
+.nav-unification-modal__page {
+	display: flex;
+	flex-direction: column-reverse;
+	justify-content: flex-end;
+	background: white;
+	width: 100%;
+	overflow: hidden;
+
+	@media ( min-width: $modal-breakpoint ) {
+		flex-direction: row;
+		justify-content: flex-start;
+		position: absolute;
+		min-height: $modal-content-min-height;
+		bottom: 0;
+	}
+}
+
+.nav-unification-modal__text,
+.nav-unification-modal__visual {
+	@media ( min-width: $modal-breakpoint ) {
+		flex: 1 auto;
+		min-width: 360px;
+	}
+}
+
+.nav-unification-modal__text {
+	padding: 25px;
+	height: 60%;
+
+	@media ( min-width: $modal-breakpoint ) {
+		height: auto;
+		padding: $modal-padding-v $modal-padding-h;
+	}
+}
+.nav-unification-modal__visual {
+	height: 95%;
+	align-items: flex-end;
+	background: var( --studio-blue-5 );
+	display: flex;
+	text-align: center;
+	overflow: hidden;
+	position: relative;
+
+	@include break-mobile {
+		// For smaller screens, ensure the top of the images are displayed.
+		align-items: flex-start;
+	}
+
+	@media ( min-width: $modal-breakpoint ) {
+		height: auto;
+	}
+}
+
+.nav-unification-modal__picture {
+	max-height: 100%;
+
+	@media ( min-width: $modal-breakpoint ) {
+		margin-top: 0;
+	}
+
+	&--center {
+		display: flex;
+		align-items: center;
+
+		@media ( min-width: $modal-breakpoint ) {
+			align-self: center;
+		}
+	}
+
+	&--bottom-right {
+		align-self: flex-end;
+		margin-bottom: -10px;
+
+		@media ( min-width: $modal-breakpoint ) {
+			position: absolute;
+			bottom: 0;
+			align-self: auto;
+		}
+	}
+
+	&--bottom-center-small {
+		@media ( max-width: $modal-breakpoint ) {
+			align-self: flex-end;
+			margin-bottom: -10px;
+		}
+	}
+}
+
+.nav-unification-modal__heading {
+	@include onboarding-font-recoleta;
+	/* Gray / Gray 90 */
+	color: #1d2327;
+	font-size: 24px;
+
+	h2 {
+		line-height: 1.19;
+	}
+
+	@media ( min-width: $modal-breakpoint ) {
+		font-size: 24px;
+
+		h2 {
+			margin: 26px 0;
+		}
+	}
+}
+
+.nav-unification-modal__description p {
+	font-size: 15px;
+	line-height: 22px;
+
+	/* Gray / Gray 60 */
+	color: #50575e;
+
+	@media ( min-width: $modal-breakpoint ) {
+		font-size: 17px;
+		line-height: 26px;
+	}
+}
+
+.nav-unification-modal__image {
+	height: auto;
+	max-height: 100%;
+	max-width: 100%;
+	flex: 1;
+	align-self: center;
+
+	&.align-bottom {
+		align-self: flex-end;
+	}
+
+	@media ( min-width: $modal-breakpoint ) {
+		max-height: none;
+	}
+}

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { isMappedDomainWithWpcomNameservers, isRegisteredDomain } from 'lib/domains';
+import { isMappedDomainWithWpcomNameservers, isRegisteredDomain } from 'calypso/lib/domains';
 import { canDomainAddGSuite } from './can-domain-add-gsuite';
 import { hasGSuiteWithUs } from './has-gsuite-with-us';
 import { hasGSuiteWithAnotherProvider } from './has-gsuite-with-another-provider';

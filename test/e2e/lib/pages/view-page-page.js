@@ -25,11 +25,11 @@ export default class ViewPagePage extends AsyncBaseContainer {
 	}
 
 	async sharingButtonsVisible() {
-		return await driverHelper.isElementPresent( this.driver, By.css( 'div.sd-sharing' ) );
+		return await driverHelper.isElementLocated( this.driver, By.css( 'div.sd-sharing' ) );
 	}
 
 	async isPasswordProtected() {
-		return await driverHelper.isElementPresent( this.driver, By.css( 'form.post-password-form' ) );
+		return await driverHelper.isElementLocated( this.driver, By.css( 'form.post-password-form' ) );
 	}
 
 	async categoryDisplayed() {
@@ -57,10 +57,8 @@ export default class ViewPagePage extends AsyncBaseContainer {
 	}
 
 	async imageDisplayed( fileDetails ) {
-		const imageElement = await this.driver.findElement(
-			By.css( `img[alt='${ fileDetails.imageName }']` )
-		);
-		return await driverHelper.imageVisible( this.driver, imageElement );
+		const imageLocator = By.css( `img[alt='${ fileDetails.imageName }']` );
+		return await driverHelper.isImageVisible( this.driver, imageLocator );
 	}
 
 	async paymentButtonDisplayed( retries = 3 ) {

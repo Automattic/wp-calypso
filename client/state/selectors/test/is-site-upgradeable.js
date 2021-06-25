@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
+import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
 
 describe( 'isSiteUpgradeable()', () => {
 	test( 'should return null if no siteId is given', () => {
@@ -77,7 +77,7 @@ describe( 'isSiteUpgradeable()', () => {
 		expect( isUpgradeable ).to.be.null;
 	} );
 
-	test( 'should return false if the user cannot manage the site ', () => {
+	test( 'should return false if the user cannot manage the site', () => {
 		const isUpgradeable = isSiteUpgradeable(
 			{
 				sites: {
@@ -106,7 +106,7 @@ describe( 'isSiteUpgradeable()', () => {
 		expect( isUpgradeable ).to.be.false;
 	} );
 
-	test( 'should return true if the user can manage the site ', () => {
+	test( 'should return true if the user can manage the site', () => {
 		const isUpgradeable = isSiteUpgradeable(
 			{
 				sites: {

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getCurrentUserMarketingPriceGroup from 'state/selectors/get-current-user-marketing-price-group';
+import getCurrentUserMarketingPriceGroup from 'calypso/state/selectors/get-current-user-marketing-price-group';
 
 describe( 'getCurrentUserMarketingPriceGroup()', () => {
 	test( 'should return null as default', () => {
@@ -15,13 +15,9 @@ describe( 'getCurrentUserMarketingPriceGroup()', () => {
 			getCurrentUserMarketingPriceGroup( {
 				currentUser: {
 					id: 12345,
-				},
-				users: {
-					items: {
-						[ 12345 ]: {
-							meta: {
-								marketing_price_group: marketingPriceGroup,
-							},
+					user: {
+						meta: {
+							marketing_price_group: marketingPriceGroup,
 						},
 					},
 				},

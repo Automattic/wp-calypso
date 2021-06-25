@@ -1,19 +1,17 @@
-Request External Access
-=======================
+# Request External Access
 
 Utility for requesting authorization of sharing services.
 
-
 ## Usage
 
-```es6
+```js
 import requestExternalAccess from '@automattic/request-external-access';
 
 requestExternalAccess( serviceURL, ( { keyring_id } ) => {
-  if ( ! keyring_id ) {
-    return;
-  }
+	if ( ! keyring_id ) {
+		return;
+	}
 
-  newKeyringConnection( keyring_id );
+	newKeyringConnection( keyring_id );
 } );
 ```

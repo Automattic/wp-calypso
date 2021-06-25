@@ -5,13 +5,16 @@
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { setOrderTransaction, setOrderTransactionError } from 'state/order-transactions/actions';
-import { ORDER_TRANSACTION_FETCH } from 'state/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import {
+	setOrderTransaction,
+	setOrderTransactionError,
+} from 'calypso/state/order-transactions/actions';
+import { ORDER_TRANSACTION_FETCH } from 'calypso/state/action-types';
 import fromApi from './from-api';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export const fetchOrderTransaction = ( action ) =>
 	http(

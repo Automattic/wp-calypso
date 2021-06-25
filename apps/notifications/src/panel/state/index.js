@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { applyMiddleware, combineReducers, compose, createStore } from 'redux'; //eslint-disable-line no-restricted-imports
+import thunkMiddleware from 'redux-thunk';
 
 /**
  * Internal dependencies
@@ -20,7 +21,9 @@ const reducer = combineReducers( {
 /** @see https://github.com/zalmoxisus/redux-devtools-extension */
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const withMiddleware = ( customMiddleware ) =>
-	composeEnhancers( applyMiddleware( actionMiddleware( customMiddleware ) ) )( createStore );
+	composeEnhancers( applyMiddleware( thunkMiddleware, actionMiddleware( customMiddleware ) ) )(
+		createStore
+	);
 
 let store = null;
 init();

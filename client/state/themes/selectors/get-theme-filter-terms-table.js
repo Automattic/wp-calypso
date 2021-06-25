@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import { forIn, keys, mapValues } from 'lodash';
+import { keys, mapValues } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getThemeFilters } from 'state/themes/selectors/get-theme-filters';
-import { isAmbiguousThemeFilterTerm } from 'state/themes/selectors/is-ambiguous-theme-filter-term';
+import { createSelector } from '@automattic/state-utils';
+import { getThemeFilters } from 'calypso/state/themes/selectors/get-theme-filters';
+import { isAmbiguousThemeFilterTerm } from 'calypso/state/themes/selectors/is-ambiguous-theme-filter-term';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Return a table of theme filter terms to taxonomies, with
@@ -23,7 +23,7 @@ export const getThemeFilterTermsTable = createSelector(
 	( state ) => {
 		const termTable = {};
 		const taxonomies = mapValues( getThemeFilters( state ), keys );
-		forIn( taxonomies, ( terms, taxonomy ) => {
+		Object.entries( taxonomies ).map( ( [ taxonomy, terms ] ) => {
 			terms.forEach( ( term ) => {
 				const key = isAmbiguousThemeFilterTerm( state, term ) ? `${ taxonomy }:${ term }` : term;
 				termTable[ key ] = taxonomy;

@@ -1,0 +1,22 @@
+.go-back-button__focused-launch {
+	text-decoration: underline;
+	background: transparent;
+	border: none;
+	padding: 0;
+	margin: 0;
+	margin-bottom: 24px;
+	cursor: pointer;
+
+	& > * {
+		vertical-align: middle;
+	}
+
+	svg {
+		// the svg has 5 empty pixels on the left
+		margin-left: -5px;
+	}
+}
+
+.go-back-button__focused-launch:hover {
+	opacity: 0.7;
+}

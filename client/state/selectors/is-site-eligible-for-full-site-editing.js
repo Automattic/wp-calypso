@@ -1,12 +1,7 @@
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
-import getRawSite from 'state/selectors/get-raw-site';
+import getRawSite from 'calypso/state/selectors/get-raw-site';
 
 /**
  * Checks if a site is eligible for the Full Site Editing experience
@@ -17,5 +12,5 @@ import getRawSite from 'state/selectors/get-raw-site';
  */
 export default function isSiteEligibleForFullSiteEditing( state, siteId ) {
 	const site = getRawSite( state, siteId );
-	return get( site, 'is_fse_eligible', false );
+	return site?.is_fse_eligible ?? false;
 }

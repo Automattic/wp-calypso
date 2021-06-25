@@ -6,16 +6,17 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSite } from 'state/ui/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import FormFieldset from 'components/forms/form-fieldset';
-import userUtils from 'lib/user/utils';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+
+const noop = () => {};
 
 export class DowngradeStep extends Component {
 	static propTypes = {
@@ -34,21 +35,22 @@ export class DowngradeStep extends Component {
 	};
 
 	render() {
-		const { translate, refundAmount, planCost, currencySymbol } = this.props;
+		const { locale, translate, refundAmount, planCost, currencySymbol } = this.props;
 		const canRefund = !! parseFloat( refundAmount );
 		const amount = currencySymbol + ( canRefund ? refundAmount : planCost );
-		const isEnglishLocale = [ 'en', 'en-gb' ].indexOf( userUtils.getLocaleSlug() ) >= 0;
+		const isEnglishLocale = [ 'en', 'en-gb' ].indexOf( locale ) >= 0;
 		const downgradeWarning = translate(
 			'If you choose to downgrade, your plan will be downgraded immediately.'
 		);
-		let refundDetails, refundTitle, refundReason;
+		let refundDetails;
+		let refundTitle;
+		let refundReason;
 		if ( isEnglishLocale ) {
 			refundTitle = translate( 'Would you rather switch to a more affordable plan?' );
 			refundReason = (
 				<p>
 					{ translate(
-						'WordPress.com Personal still gives you access to email and chat support, ' +
-							'removal of ads, and more — and for 50% of the cost of your current plan.'
+						'WordPress.com Personal still gives you access to email support, removal of ads, and more — and for 50% of the cost of your current plan.'
 					) }
 				</p>
 			);
@@ -89,6 +91,7 @@ export class DowngradeStep extends Component {
 }
 
 const mapStateToProps = ( state ) => ( {
+	locale: getCurrentLocaleSlug( state ),
 	selectedSite: getSelectedSite( state ),
 } );
 const mapDispatchToProps = { recordTracksEvent };

@@ -36,13 +36,12 @@
  * The customizer should behave like a normal page. This excludes the header and sidebar from being in the
  * focus order, while still allowing access to the chat and notices.
  */
- .is-section-customize {
+.is-section-customize {
 	.masterbar,
 	.layout__secondary {
 		display: none !important;
 	}
 }
-
 
 .customizer-loading-panel__notice {
 	&.is-iframe-loaded {

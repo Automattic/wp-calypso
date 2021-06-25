@@ -1,6 +1,6 @@
 @import url( 'https://fonts.googleapis.com/css2?family=Inter:wght@400;900&display=swap' );
-@import '~@wordpress/base-styles/breakpoints';
-@import '~@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .p2-step-wrapper {
 	box-sizing: border-box;
@@ -10,10 +10,19 @@
 	flex-direction: column;
 	padding: 32px 32px 0;
 	font-family: var( --p2-font-inter );
+	line-height: 1.8;
 
 	@include break-mobile {
-		padding: 80px 20px 0;
+		padding: 48px 20px 0;
 		max-width: 400px;
+	}
+
+	@include break-medium {
+		padding: 64px 20px 0;
+	}
+
+	@include break-huge {
+		padding: 80px 20px 0;
 	}
 
 	input,
@@ -36,14 +45,14 @@
 
 .p2-step-wrapper__header {
 	margin-bottom: 40px;
-	@include break-mobile {
-		margin-bottom: 80px;
+
+	@include break-huge {
+		margin-bottom: 56px;
 	}
 }
 
 .p2-step-wrapper__header-text {
-	font-size: 16px;
-	line-height: 28px;
+	font-size: var( --p2-font-size-form-s );
 }
 
 .p2-step-wrapper__header-logo {
@@ -69,7 +78,7 @@
 }
 
 .p2-step-wrapper__footer-text {
-	font-size: 14px;
+	font-size: var( --p2-font-size-form-xs );
 	line-height: 17px;
 }
 
@@ -81,9 +90,9 @@
 	background-color: var( --p2-color-button );
 	color: var( --p2-color-text );
 	border: none;
-	border-radius: 40px;
+	border-radius: 40px; /* stylelint-disable-line scales/radii */
 	font-weight: normal;
-	font-size: 18px;
+	font-size: var( --p2-font-size-form );
 	transition: background 0.2s ease;
 
 	&.is-primary {

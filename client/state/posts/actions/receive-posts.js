@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { POSTS_RECEIVE } from 'state/action-types';
+import { POSTS_RECEIVE } from 'calypso/state/action-types';
 
-import 'state/posts/init';
+import 'calypso/state/posts/init';
 
 /**
  * Returns an action object to be used in signalling that post objects have

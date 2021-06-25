@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { THEME_CLEAR_ACTIVATED } from 'state/themes/action-types';
+import { THEME_CLEAR_ACTIVATED } from 'calypso/state/themes/action-types';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Returns an action object to be used in signalling that theme activated status

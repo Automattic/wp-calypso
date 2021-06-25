@@ -1,5 +1,5 @@
-jest.mock( 'signup/step-wrapper', () => 'step-wrapper' );
-jest.mock( 'my-sites/plan-features', () => 'plan-features' );
+jest.mock( 'calypso/signup/step-wrapper', () => 'step-wrapper' );
+jest.mock( 'calypso/my-sites/plan-features', () => 'plan-features' );
 
 jest.mock( 'i18n-calypso', () => ( {
 	localize: ( c ) => c,
@@ -11,7 +11,6 @@ jest.mock( 'i18n-calypso', () => ( {
  */
 import { shallow } from 'enzyme';
 import React from 'react';
-import { identity, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,10 +35,11 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
-} from 'lib/plans/constants';
+} from '@automattic/calypso-products';
 
+const noop = () => {};
 const props = {
-	translate: identity,
+	translate: ( string ) => string,
 	stepName: 'Step name',
 	stepSectionName: 'Step section name',
 	signupDependencies: { domainItem: null },

@@ -1,15 +1,15 @@
 /**
  * Internal dependencies
  */
-import { SIGNUP_STEPS_SURVEY_SET } from 'state/action-types';
+import { SIGNUP_STEPS_SURVEY_SET } from 'calypso/state/action-types';
 import {
 	composeAnalytics,
 	recordCustomAdWordsRemarketingEvent,
 	recordCustomFacebookConversionEvent,
 	withAnalytics,
-} from 'state/analytics/actions';
+} from 'calypso/state/analytics/actions';
 
-import 'state/signup/init';
+import 'calypso/state/signup/init';
 
 export function setSurvey( survey ) {
 	const vertical = survey.vertical;

@@ -8,7 +8,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import reducer, { items } from '../reducer';
-import { HELP_COURSES_RECEIVE } from 'state/action-types';
+import { HELP_COURSES_RECEIVE } from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {

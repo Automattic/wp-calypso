@@ -6,8 +6,8 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import getRequest from 'state/selectors/get-request';
-import { requestJetpackSettings } from 'state/jetpack/settings/actions';
+import getRequest from 'calypso/state/selectors/get-request';
+import { requestJetpackSettings } from 'calypso/state/jetpack/settings/actions';
 
 /**
  * Returns true if we are currently making a request to fetch the Jetpack settings. False otherwise

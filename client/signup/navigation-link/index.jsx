@@ -5,20 +5,20 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize, getLocaleSlug } from 'i18n-calypso';
-import { get, findLast, findIndex } from 'lodash';
-import Gridicon from 'components/gridicon';
+import { get } from 'lodash';
+import Gridicon from 'calypso/components/gridicon';
 import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import { getStepUrl } from 'signup/utils';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { submitSignupStep } from 'state/signup/progress/actions';
-import { getSignupProgress } from 'state/signup/progress/selectors';
+import { getStepUrl, isFirstStepInFlow } from 'calypso/signup/utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import { getFilteredSteps } from '../utils';
-import { getABTestVariation } from 'lib/abtest';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 /**
  * Style dependencies
@@ -38,6 +38,7 @@ export class NavigationLink extends Component {
 		stepName: PropTypes.string.isRequired,
 		// Allows to force a back button in the first step for example.
 		allowBackFirstStep: PropTypes.bool,
+		rel: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -45,23 +46,35 @@ export class NavigationLink extends Component {
 		allowBackFirstStep: false,
 	};
 
-	/**
-	 * Returns the previous step , skipping over steps with the
-	 * `wasSkipped` property.
-	 *
-	 * @returns {object} The previous step object
-	 */
-	getPreviousStep() {
-		const { flowName, signupProgress, stepName } = this.props;
+	getPreviousStep( flowName, signupProgress, currentStepName ) {
+		const previousStep = { stepName: null };
 
-		let steps = getFilteredSteps( flowName, signupProgress );
-		steps = steps.slice(
-			0,
-			findIndex( steps, ( step ) => step.stepName === stepName )
+		if ( isFirstStepInFlow( flowName, currentStepName, this.props.userLoggedIn ) ) {
+			return previousStep;
+		}
+
+		//Progressed steps will be filtered and sorted in relation to the steps definition of the current flow
+		//Skipped steps are also filtered out
+		const filteredProgressedSteps = getFilteredSteps(
+			flowName,
+			signupProgress,
+			this.props.userLoggedIn
+		).filter( ( step ) => ! step.wasSkipped );
+		if ( filteredProgressedSteps.length === 0 ) {
+			return previousStep;
+		}
+
+		//Find previous step in current relevant filtered progress
+		const currentStepIndexInProgress = filteredProgressedSteps.findIndex(
+			( step ) => step.stepName === currentStepName
 		);
-		const previousStep = findLast( steps, ( step ) => ! step.wasSkipped );
 
-		return previousStep || { stepName: null };
+		// Current step isn't finished, so isn't part of the progress array yet, go to the top of the progress array.
+		if ( currentStepIndexInProgress === -1 ) {
+			return filteredProgressedSteps.pop();
+		}
+
+		return filteredProgressedSteps[ currentStepIndexInProgress - 1 ] || previousStep;
 	}
 
 	getBackUrl() {
@@ -73,7 +86,8 @@ export class NavigationLink extends Component {
 			return this.props.backUrl;
 		}
 
-		const previousStep = this.getPreviousStep();
+		const { flowName, signupProgress, stepName, userLoggedIn } = this.props;
+		const previousStep = this.getPreviousStep( flowName, signupProgress, stepName );
 
 		const stepSectionName = get(
 			this.props.signupProgress,
@@ -81,11 +95,13 @@ export class NavigationLink extends Component {
 			''
 		);
 
+		const locale = ! userLoggedIn ? getLocaleSlug() : '';
+
 		return getStepUrl(
 			previousStep.lastKnownFlow || this.props.flowName,
 			previousStep.stepName,
 			stepSectionName,
-			getLocaleSlug()
+			locale
 		);
 	}
 
@@ -129,14 +145,14 @@ export class NavigationLink extends Component {
 			return null;
 		}
 
-		let backGridicon, forwardGridicon, text;
+		let backGridicon;
+		let forwardGridicon;
+		let text;
 
 		if ( this.props.direction === 'back' ) {
 			backGridicon = <Gridicon icon="arrow-left" size={ 18 } />;
 			if ( labelText ) {
 				text = labelText;
-			} else if ( 'reskinned' === getABTestVariation( 'reskinSignupFlow' ) ) {
-				text = translate( 'Go Back' );
 			} else {
 				text = translate( 'Back' );
 			}
@@ -159,6 +175,7 @@ export class NavigationLink extends Component {
 				className={ buttonClasses }
 				href={ this.getBackUrl() }
 				onClick={ this.handleClick }
+				rel={ this.props.rel }
 			>
 				{ backGridicon }
 				{ text }
@@ -170,6 +187,7 @@ export class NavigationLink extends Component {
 
 export default connect(
 	( state ) => ( {
+		userLoggedIn: isUserLoggedIn( state ),
 		signupProgress: getSignupProgress( state ),
 	} ),
 	{ recordTracksEvent, submitSignupStep }

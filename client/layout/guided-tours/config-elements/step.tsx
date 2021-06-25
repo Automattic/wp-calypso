@@ -3,7 +3,7 @@
  */
 import React, { Component, CSSProperties, FunctionComponent } from 'react';
 import classNames from 'classnames';
-import { defer, isFunction } from 'lodash';
+import { defer } from 'lodash';
 import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
 
@@ -11,8 +11,8 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import pathToSection from 'lib/path-to-section';
-import { ROUTE_SET } from 'state/action-types';
+import pathToSection from 'calypso/lib/path-to-section';
+import { ROUTE_SET } from 'calypso/state/action-types';
 import {
 	posToCss,
 	getStepPosition,
@@ -22,7 +22,7 @@ import {
 } from '../positioning';
 import { contextTypes } from '../context-types';
 import { ArrowPosition, DialogPosition, Coordinate } from '../types';
-import { TimestampMS } from 'wp-calypso-client/types';
+import { TimestampMS } from 'calypso/types';
 
 const debug = debugFactory( 'calypso:guided-tours' );
 
@@ -163,7 +163,7 @@ export default class Step extends Component< Props, State > {
 	}
 
 	async wait( props: Props, context ) {
-		if ( isFunction( props.wait ) ) {
+		if ( typeof props.wait === 'function' ) {
 			await context.dispatch( props.wait() );
 		}
 	}

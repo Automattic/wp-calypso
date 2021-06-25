@@ -60,6 +60,12 @@ body {
 	@include breakpoint-deprecated( '<660px' ) {
 		cursor: pointer;
 	}
+
+	&.font-smoothing-antialiased {
+		text-rendering: optimizeLegibility;
+		-moz-osx-font-smoothing: grayscale;
+		-webkit-font-smoothing: antialiased;
+	}
 }
 
 ::selection {
@@ -206,6 +212,7 @@ code,
 kbd,
 tt,
 var {
+	/* stylelint-disable-next-line scales/font-size */
 	font: 15px $code;
 }
 abbr,

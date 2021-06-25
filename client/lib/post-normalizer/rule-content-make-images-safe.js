@@ -6,9 +6,10 @@ import { forEach, startsWith, some, includes, filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import safeImageURL from 'lib/safe-image-url';
+import safeImageURL from 'calypso/lib/safe-image-url';
 import { maxWidthPhotonishURL } from './utils';
-import { getUrlParts, getUrlFromParts, resolveRelativePath } from 'lib/url';
+import { resolveRelativePath } from 'calypso/lib/url';
+import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
 
 const TRANSPARENT_GIF =
 	'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
@@ -54,6 +55,17 @@ const imageShouldBeRemovedFromContent = ( imageUrl ) => {
 	return some( bannedUrlParts, ( part ) => includes( imageUrl.toLowerCase(), part ) );
 };
 
+function provideProtocol( post, url ) {
+	const postUrlParts = getUrlParts( post.URL );
+
+	// The image on the relative-protocol URL will have the same protocol with the post
+	if ( url.startsWith( '//' ) ) {
+		return `${ postUrlParts.protocol || 'https:' }${ url }`;
+	}
+
+	return url;
+}
+
 function makeImageSafe( post, image, maxWidth ) {
 	let imgSource = image.getAttribute( 'src' );
 	const imgSourceParts = getUrlParts( imgSource );
@@ -72,6 +84,11 @@ function makeImageSafe( post, image, maxWidth ) {
 	let safeSource = maxWidth
 		? maxWidthPhotonishURL( safeImageURL( imgSource ), maxWidth )
 		: safeImageURL( imgSource );
+
+	// When the image URL is not photoned, try providing protocol
+	if ( ! safeSource ) {
+		imgSource = provideProtocol( post, imgSource );
+	}
 
 	// allow https sources through even if we can't make them 'safe'
 	// helps images that use querystring params and are from secure sources

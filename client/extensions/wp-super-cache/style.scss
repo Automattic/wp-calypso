@@ -1,13 +1,8 @@
-.wp-super-cache__main .form-toggle__label {
+.wp-super-cache__main .components-toggle-control__label {
 	display: flex;
 	align-items: center;
-	margin-bottom: 5px;
+	margin-bottom: 1px;
 	font-size: $font-body-small;
-}
-
-.wp-super-cache__main .form-toggle__switch {
-	flex: 1 0 auto;
-	margin-top: 3px;
 }
 
 .wp-super-cache__main .button {
@@ -76,7 +71,7 @@
 }
 
 .wp-super-cache__nested-page-types {
-	margin-left: 36px;
+	margin-left: 48px;
 }
 
 .wp-super-cache__directly-cached-files .form-text-input,
@@ -196,8 +191,8 @@
 	margin-top: -10px;
 }
 
-.wp-super-cache__toggle-notice.is-compact {
-	margin-left: 36px;
+.wp-super-cache__toggle-notice.notice.is-compact {
+	margin-left: 49px;
 	margin-bottom: 5px;
 }
 

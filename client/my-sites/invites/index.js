@@ -8,8 +8,8 @@ import page from 'page';
  * Internal dependencies
  */
 import { acceptInvite, redirectWithoutLocaleifLoggedIn } from './controller';
-import { makeLayout, render as clientRender } from 'controller';
-import { getLanguageRouteParam } from 'lib/i18n-utils';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
 
 export default () => {
 	const locale = getLanguageRouteParam( 'locale' );

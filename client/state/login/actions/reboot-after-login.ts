@@ -6,13 +6,13 @@ import type { Dispatch } from 'redux';
 /**
  * Internal dependencies
  */
-import user from 'lib/user';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
-import { getRedirectToSanitized, isTwoFactorEnabled } from 'state/login/selectors';
+import { clearStore, getStoredUserId } from 'calypso/lib/user/store';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getRedirectToSanitized, isTwoFactorEnabled } from 'calypso/state/login/selectors';
 
-export const rebootAfterLogin = ( tracksEventArgs: object ) => async (
+export const rebootAfterLogin = ( tracksEventArgs: Record< string, unknown > ) => async (
 	dispatch: Dispatch,
-	getState: () => object
+	getState: () => Record< string, unknown >
 ) => {
 	dispatch(
 		recordTracksEvent( 'calypso_login_success', {
@@ -24,11 +24,11 @@ export const rebootAfterLogin = ( tracksEventArgs: object ) => async (
 	// Redirects to / if no redirect url is available
 	const url = getRedirectToSanitized( getState() ) || '/';
 
-	// user data is persisted in localstorage at `lib/user/user` line 157
+	// user ID is persisted in localstorage
 	// therefore we need to reset it before we redirect, otherwise we'll get
 	// mixed data from old and new user
-	if ( user().get() ) {
-		await user().clear();
+	if ( getStoredUserId() ) {
+		await clearStore();
 	}
 
 	// We want to differentiate users going to `/oauth2/authorize` that are coming from

@@ -10,7 +10,7 @@ import {
 	READER_FEED_REQUEST,
 	READER_FEED_REQUEST_SUCCESS,
 	READER_FEED_REQUEST_FAILURE,
-} from 'state/reader/action-types';
+} from 'calypso/state/reader/action-types';
 
 describe( 'actions', () => {
 	describe( '#requestFeed', () => {

@@ -6,9 +6,9 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getEditedPost } from 'state/posts/selectors/get-edited-post';
+import { getEditedPost } from 'calypso/state/posts/selectors/get-edited-post';
 
-import 'state/posts/init';
+import 'calypso/state/posts/init';
 
 /**
  * Returns the assigned value for the edited post by field key.

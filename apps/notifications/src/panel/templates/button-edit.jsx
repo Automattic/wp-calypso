@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,7 +15,7 @@ import { getEditCommentLink } from '../helpers/notes';
 import { editComment } from '../state/ui/actions';
 
 const EditButton = ( { editComment, note, translate } ) => {
-	const { site: siteId, post: postId, comment: commentId } = get( note, 'meta.ids', {} );
+	const { site: siteId, post: postId, comment: commentId } = note?.meta?.ids ?? {};
 	return (
 		<ActionButton
 			{ ...{

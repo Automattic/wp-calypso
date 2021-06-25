@@ -14,9 +14,9 @@ import {
 	READER_FOLLOW_ERROR,
 	READER_SUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
 	READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
-} from 'state/reader/action-types';
+} from 'calypso/state/reader/action-types';
 
-jest.mock( 'state/reader/posts/actions', () => ( {
+jest.mock( 'calypso/state/reader/posts/actions', () => ( {
 	receivePosts: ( posts ) => Promise.resolve( posts ),
 } ) );
 

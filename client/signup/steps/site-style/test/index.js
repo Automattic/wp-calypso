@@ -7,12 +7,13 @@
  */
 import React from 'react';
 import { shallow } from 'enzyme';
-import { identity, noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { SiteStyleStep } from '../';
+
+const noop = () => {};
 
 describe( '<SiteStyleStep />', () => {
 	const defaultProps = {
@@ -36,7 +37,7 @@ describe( '<SiteStyleStep />', () => {
 		saveSignupStep: noop,
 		goToNextStep: noop,
 		recordTracksEvent: noop,
-		translate: identity,
+		translate: ( string ) => string,
 	};
 
 	test( 'should render', () => {

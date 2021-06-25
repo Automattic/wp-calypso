@@ -8,11 +8,12 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { newPost } from 'lib/paths';
+import { newPost } from 'calypso/lib/paths';
 
 /**
  * Retrieves selection, title, and URL from current page and pops
  * open new editor window with contents
+ *
  * @param  {string} postURL Editor URL for selected site
  */
 const pressThis = function ( postURL ) {
@@ -65,18 +66,13 @@ class PressThisLink extends React.Component {
 
 	/**
 	 * generate press-this link pointing to current environment
+	 *
 	 * @returns {string} javascript pseudo-protocol link
 	 */
 	buildPressThisLink() {
 		const functionText = pressThis.toString();
-		// IE does not reliably support window.location.origin
-		let postDomain =
-			typeof window !== 'undefined' && window.location
-				? `${ window.location.protocol }//${ window.location.hostname }`
-				: 'https://wordpress.com';
-		if ( window.location.port ) {
-			postDomain += `:${ window.location.port }`;
-		}
+		const postDomain =
+			typeof window !== 'undefined' ? window.location.origin : 'https://wordpress.com';
 		const postURL = postDomain + newPost( this.props.site );
 		return `javascript:( ${ functionText } )( '${ postURL }' )`;
 	}

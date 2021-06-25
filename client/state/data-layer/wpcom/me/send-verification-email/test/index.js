@@ -2,9 +2,17 @@
  * Internal dependencies
  */
 import { requestEmailVerification, handleSuccess, handleError } from '../';
-import { EMAIL_VERIFY_REQUEST_SUCCESS, EMAIL_VERIFY_REQUEST_FAILURE } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { infoNotice, errorNotice, successNotice, removeNotice } from 'state/notices/actions';
+import {
+	EMAIL_VERIFY_REQUEST_SUCCESS,
+	EMAIL_VERIFY_REQUEST_FAILURE,
+} from 'calypso/state/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import {
+	infoNotice,
+	errorNotice,
+	successNotice,
+	removeNotice,
+} from 'calypso/state/notices/actions';
 import { translate } from 'i18n-calypso';
 
 describe( 'send-email-verification', () => {

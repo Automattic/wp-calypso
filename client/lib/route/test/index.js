@@ -5,7 +5,6 @@
 /**
  * External dependencies
  */
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { expect } from 'chai';
 
 /**

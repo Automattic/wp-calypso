@@ -48,12 +48,13 @@
 }
 
 // Checkbox for multiselect purposes
-.plugin-item__checkbox[type=checkbox] {
+.plugin-item__checkbox[type='checkbox'] {
 	position: absolute;
 	top: 50%;
 	margin-top: -8px;
 
-	&::after { // Making tap area larger
+	&::after {
+		// Making tap area larger
 		content: '';
 		position: absolute;
 		top: -20px;
@@ -173,31 +174,21 @@
 	}
 }
 
-.plugin-item .plugin-action .form-toggle__label {
-	@include breakpoint-deprecated( '>1040px' ) {
-		flex-direction: row;
-	}
-}
-
-.plugin-item .form-toggle__label .form-toggle__label-content {
-	@include breakpoint-deprecated( '>1040px' ) {
-		margin-right: 12px;
-		margin-left: 0;
-	}
-}
-
-.plugin-item .plugin-activate-toggle__link,
 .plugin-item .plugin-activate-toggle__disabled {
 	@include breakpoint-deprecated( '>1040px' ) {
 		flex-direction: row;
-		margin-right: 12px;
+	}
+}
+
+.plugin-item .plugin-activate-toggle__link {
+	@include breakpoint-deprecated( '>1040px' ) {
+		flex-direction: row-reverse;
 	}
 }
 
 .plugin-item .plugin-activate-toggle__label {
 	@include breakpoint-deprecated( '>1040px' ) {
-		margin-left: 8px;
-		margin-right: 0;
+		margin-right: 8px;
 	}
 }
 

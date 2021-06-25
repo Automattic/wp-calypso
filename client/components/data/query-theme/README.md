@@ -1,5 +1,4 @@
-Query Theme
-============
+# Query Theme
 
 Query Theme is a React component used in managing the fetching of individual theme objects.
 
@@ -10,27 +9,22 @@ Render the component, passing `siteId` and `themeId`. It does not accept any chi
 ```jsx
 import React from 'react';
 import { connect } from 'react-redux';
-import QueryTheme from 'components/data/query-theme';
-import Theme from 'components/theme';
-import { getTheme } from 'state/themes/selectors';
+import QueryTheme from 'calypso/components/data/query-theme';
+import Theme from 'calypso/components/theme';
+import { getTheme } from 'calypso/state/themes/selectors';
 
 function MyTheme( { theme } ) {
 	return (
 		<div>
-			<QueryTheme
-				siteId={ 3584907 }
-				themeId={ 'twentysixteen' } />
-				<Theme theme={ theme } />
-			} }
+			<QueryTheme siteId={ 3584907 } themeId={ 'twentysixteen' } />
+			<Theme theme={ theme } />} }
 		</div>
 	);
 }
 
-export default connect(
-	( state ) => ( {
-		theme: getTheme( state, 3584907, 'twentysixteen' )
-	} )
-)( MyTheme );
+export default connect( ( state ) => ( {
+	theme: getTheme( state, 3584907, 'twentysixteen' ),
+} ) )( MyTheme );
 ```
 
 ## Props

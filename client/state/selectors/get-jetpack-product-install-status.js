@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/jetpack-product-install/init';
+import 'calypso/state/jetpack-product-install/init';
 
 /**
  * @param {object} state  Global app state.

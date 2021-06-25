@@ -1,41 +1,43 @@
 /**
  * External dependencies
  */
-
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import page from 'page';
+import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
-import Main from 'components/main';
-import EmptyContent from 'components/empty-content';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import PlansFeaturesMain from 'my-sites/plans-features-main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import PlansNavigation from 'my-sites/plans/navigation';
-import isSiteAutomatedTransferSelector from 'state/selectors/is-site-automated-transfer';
-import { isJetpackSite } from 'state/sites/selectors';
-import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
-import withTrackingTool from 'lib/analytics/with-tracking-tool';
-import { getByPurchaseId } from 'state/purchases/selectors';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
-import CartData from 'components/data/cart';
-import { PerformanceTrackerStop } from 'lib/performance-tracking';
+import DocumentHead from 'calypso/components/data/document-head';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import Main from 'calypso/components/main';
+import EmptyContent from 'calypso/components/empty-content';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
+import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import PlansNavigation from 'calypso/my-sites/plans/navigation';
+import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
+import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
+import { getByPurchaseId } from 'calypso/state/purchases/selectors';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import { getPlan, getIntervalTypeForTerm } from '@automattic/calypso-products';
+import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 
 class Plans extends React.Component {
 	static propTypes = {
 		context: PropTypes.object.isRequired,
-		displayJetpackPlans: PropTypes.bool,
+		redirectToAddDomainFlow: PropTypes.bool,
 		intervalType: PropTypes.string,
 		customerType: PropTypes.string,
 		selectedFeature: PropTypes.string,
@@ -44,7 +46,6 @@ class Plans extends React.Component {
 	};
 
 	static defaultProps = {
-		displayJetpackPlans: false,
 		intervalType: 'yearly',
 	};
 
@@ -62,11 +63,10 @@ class Plans extends React.Component {
 	}
 
 	isInvalidPlanInterval() {
-		const { displayJetpackPlans, intervalType, selectedSite } = this.props;
-		const isJetpack2Yearly = displayJetpackPlans && intervalType === '2yearly';
-		const isWpcomMonthly = ! displayJetpackPlans && intervalType === 'monthly';
+		const { isSiteEligibleForMonthlyPlan, intervalType, selectedSite } = this.props;
+		const isWpcomMonthly = intervalType === 'monthly';
 
-		return selectedSite && ( isJetpack2Yearly || isWpcomMonthly );
+		return selectedSite && isWpcomMonthly && ! isSiteEligibleForMonthlyPlan;
 	}
 
 	redirectIfInvalidPlanInterval() {
@@ -81,7 +81,7 @@ class Plans extends React.Component {
 		return (
 			<div>
 				<DocumentHead title={ this.props.translate( 'Plans', { textOnly: true } ) } />
-				<Main wideLayout={ true }>
+				<Main wideLayout>
 					<SidebarNavigation />
 
 					<div id="plans" className="plans plans__has-sidebar" />
@@ -94,9 +94,10 @@ class Plans extends React.Component {
 		const {
 			selectedSite,
 			translate,
-			displayJetpackPlans,
 			canAccessPlans,
 			customerType,
+			isWPForTeamsSite,
+			showTreatmentPlansReorderTest,
 		} = this.props;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() ) {
@@ -110,7 +111,7 @@ class Plans extends React.Component {
 				<PageViewTracker path="/plans/:site" title="Plans" />
 				<QueryContactDetailsCache />
 				<TrackComponentView eventName="calypso_plans_view" />
-				<Main wideLayout={ true }>
+				<Main wideLayout>
 					<SidebarNavigation />
 					{ ! canAccessPlans && (
 						<EmptyContent
@@ -120,24 +121,40 @@ class Plans extends React.Component {
 					) }
 					{ canAccessPlans && (
 						<>
-							<FormattedHeader brandFont headerText={ translate( 'Plans' ) } align="left" />
+							<FormattedHeader
+								brandFont
+								headerText={ translate( 'Plans' ) }
+								subHeaderText={ translate(
+									'See and compare the features available on each WordPress.com plan.'
+								) }
+								align="left"
+							/>
 							<div id="plans" className="plans plans__has-sidebar">
-								<CartData>
-									<PlansNavigation path={ this.props.context.path } />
-								</CartData>
-								<PlansFeaturesMain
-									displayJetpackPlans={ displayJetpackPlans }
-									hideFreePlan={ true }
-									customerType={ customerType }
-									intervalType={ this.props.intervalType }
-									selectedFeature={ this.props.selectedFeature }
-									selectedPlan={ this.props.selectedPlan }
-									redirectTo={ this.props.redirectTo }
-									withDiscount={ this.props.withDiscount }
-									discountEndDate={ this.props.discountEndDate }
-									site={ selectedSite }
-									plansWithScroll={ false }
-								/>
+								<PlansNavigation path={ this.props.context.path } />
+								{ isEnabled( 'p2/p2-plus' ) && isWPForTeamsSite ? (
+									<P2PlansMain
+										selectedPlan={ this.props.selectedPlan }
+										redirectTo={ this.props.redirectTo }
+										site={ selectedSite }
+										withDiscount={ this.props.withDiscount }
+										discountEndDate={ this.props.discountEndDate }
+									/>
+								) : (
+									<PlansFeaturesMain
+										redirectToAddDomainFlow={ this.props.redirectToAddDomainFlow }
+										hideFreePlan={ true }
+										customerType={ customerType }
+										intervalType={ this.props.intervalType }
+										selectedFeature={ this.props.selectedFeature }
+										selectedPlan={ this.props.selectedPlan }
+										redirectTo={ this.props.redirectTo }
+										withDiscount={ this.props.withDiscount }
+										discountEndDate={ this.props.discountEndDate }
+										site={ selectedSite }
+										plansWithScroll={ false }
+										showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
+									/>
+								) }
 								<PerformanceTrackerStop />
 							</div>
 						</>
@@ -151,14 +168,18 @@ class Plans extends React.Component {
 export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 
-	const jetpackSite = isJetpackSite( state, selectedSiteId );
-	const isSiteAutomatedTransfer = isSiteAutomatedTransferSelector( state, selectedSiteId );
 	const currentPlan = getCurrentPlan( state, selectedSiteId );
+	const currentPlanIntervalType = getIntervalTypeForTerm(
+		getPlan( currentPlan?.productSlug )?.term
+	);
 
 	return {
+		currentPlanIntervalType,
 		purchase: currentPlan ? getByPurchaseId( state, currentPlan.id ) : null,
 		selectedSite: getSelectedSite( state ),
-		displayJetpackPlans: ! isSiteAutomatedTransfer && jetpackSite,
 		canAccessPlans: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
+		isWPForTeamsSite: isSiteWPForTeams( state, selectedSiteId ),
+		isSiteEligibleForMonthlyPlan: isEligibleForWpComMonthlyPlan( state, selectedSiteId ),
+		showTreatmentPlansReorderTest: isTreatmentPlansReorderTest( state ),
 	};
 } )( localize( withTrackingTool( 'HotJar' )( Plans ) ) );

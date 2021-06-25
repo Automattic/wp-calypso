@@ -7,15 +7,15 @@
 .import-url__wrapper {
 	padding: 0;
 	@include elevation ( 0 );
-	border-radius: 3px;
+	border-radius: 2px;
 	max-width: 640px;
 	margin: auto;
 }
 
 // Actual form input for typing the URL
-.import-url__wrapper .import-url__url-input {
+.import-url__wrapper input[type='text'].form-text-input.import-url__url-input {
 	border: none;
-	border-radius: 3px;
+	border-radius: 2px;
 	padding: 10px 14px;
 
 	@include breakpoint-deprecated( '<660px' ) {

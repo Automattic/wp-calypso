@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import getCurrentRoute from 'state/selectors/get-current-route';
-import { getSiteSlug } from 'state/sites/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 /**
  * Returns the current route with site slug replaced by :site and site Id

@@ -1,9 +1,4 @@
-/**
- * External dependencies
- */
-
-import { noop } from 'lodash';
-
+const noop = () => {};
 const WAIT_INITIAL = 1; // initial wait in milliseconds
 const WAIT_MULTIPLIER = 2;
 const WAIT_MAX = 2048; // give up waiting when delay has grown to ~4 seconds

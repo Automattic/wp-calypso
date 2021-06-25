@@ -1,21 +1,22 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { get, identity, noop } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import TitleFormatEditor from 'components/title-format-editor';
+import TitleFormatEditor from 'calypso/components/title-format-editor';
 import { localize } from 'i18n-calypso';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 const titleTypes = ( translate ) => [
 	{ value: 'frontPage', label: translate( 'Front Page' ) },
@@ -62,7 +63,6 @@ export class MetaTitleEditor extends Component {
 	static defaultProps = {
 		disabled: false,
 		onChange: noop,
-		translate: identity,
 	};
 
 	constructor( props ) {

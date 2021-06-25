@@ -10,9 +10,9 @@ import { localize } from 'i18n-calypso';
  */
 import ActivityIcon from '../activity-log-item/activity-icon';
 import { Card } from '@automattic/components';
-import PopoverMenuItem from 'components/popover/menu-item';
-import SplitButton from 'components/split-button';
-import { decodeEntities } from 'lib/formatting';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import SplitButton from 'calypso/components/split-button';
+import { decodeEntities } from 'calypso/lib/formatting';
 
 class ActivityLogTaskUpdate extends Component {
 	static propTypes = {

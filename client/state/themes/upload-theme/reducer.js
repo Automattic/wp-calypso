@@ -7,7 +7,7 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import {
 	THEME_UPLOAD_START,
 	THEME_UPLOAD_SUCCESS,
@@ -19,9 +19,9 @@ import {
 	THEME_TRANSFER_INITIATE_REQUEST,
 	THEME_TRANSFER_STATUS_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE,
-} from 'state/themes/action-types';
+} from 'calypso/state/themes/action-types';
 
-export const uploadedThemeId = withoutPersistence( ( state = {}, action ) => {
+export const uploadedThemeId = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case THEME_UPLOAD_SUCCESS: {
 			const { siteId, themeId } = action;
@@ -54,9 +54,9 @@ export const uploadedThemeId = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
-export const uploadError = withoutPersistence( ( state = {}, action ) => {
+export const uploadError = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case THEME_UPLOAD_FAILURE: {
 			const { siteId, error } = action;
@@ -97,9 +97,9 @@ export const uploadError = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
-export const progressLoaded = withoutPersistence( ( state = {}, action ) => {
+export const progressLoaded = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case THEME_UPLOAD_PROGRESS: {
 			const { siteId, loaded } = action;
@@ -132,9 +132,9 @@ export const progressLoaded = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
-export const progressTotal = withoutPersistence( ( state = {}, action ) => {
+export const progressTotal = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case THEME_UPLOAD_PROGRESS: {
 			const { siteId, total } = action;
@@ -167,9 +167,9 @@ export const progressTotal = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
-export const inProgress = withoutPersistence( ( state = {}, action ) => {
+export const inProgress = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case THEME_UPLOAD_START: {
 			const { siteId } = action;
@@ -238,7 +238,7 @@ export const inProgress = withoutPersistence( ( state = {}, action ) => {
 	}
 
 	return state;
-} );
+};
 
 export default combineReducers( {
 	uploadedThemeId,

@@ -4,16 +4,18 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { map, noop, reverse, sortBy } from 'lodash';
+import { map, sortBy } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import EllipsisMenu from 'components/ellipsis-menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import SortableList from 'components/forms/sortable-list';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import SortableList from 'calypso/components/forms/sortable-list';
 import EditorMediaModalGalleryEditItem from './edit-item';
+
+const noop = () => {};
 
 class EditorMediaModalGalleryEdit extends React.Component {
 	static propTypes = {
@@ -48,7 +50,7 @@ class EditorMediaModalGalleryEdit extends React.Component {
 		}
 
 		const orders = {
-			[ translate( 'Reverse order' ) ]: reverse( [ ...settings.items ] ),
+			[ translate( 'Reverse order' ) ]: [ ...settings.items ].reverse(),
 			[ translate( 'Order alphabetically' ) ]: sortBy( settings.items, 'title' ),
 			[ translate( 'Order chronologically' ) ]: sortBy( settings.items, 'date' ),
 		};

@@ -2,20 +2,25 @@
  * External dependencies
  */
 import React, { PureComponent } from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
 import { CompactCard, Button } from '@automattic/components';
-import DocumentHead from 'components/data/document-head';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import DocumentHead from 'calypso/components/data/document-head';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+/**
+ * Image dependencies
+ */
+import supportIllustration from 'calypso/assets/images/illustrations/happiness-support.svg';
 
 export class ConciergeQuickstartSession extends PureComponent {
 	render() {
@@ -95,9 +100,10 @@ export class ConciergeQuickstartSession extends PureComponent {
 						</p>
 						<p>
 							{ translate(
-								"{{em}}Quick Start{{/em}} sessions are 45-minute one-on-one conversations between you and one of our website building experts. They know WordPress inside out and will help you achieve your goals with a smile. That's why we call them Happiness Engineers.",
+								"{{em}}Quick Start{{/em}} sessions are %(durationInMinutes)d-minute one-on-one conversations between you and one of our website building experts. They know WordPress inside out and will help you achieve your goals with a smile. That's why we call them Happiness Engineers.",
 								{
 									components: { em: <em /> },
+									args: { durationInMinutes: 30 },
 								}
 							) }
 						</p>
@@ -225,8 +231,8 @@ export class ConciergeQuickstartSession extends PureComponent {
 					<div className="concierge-quickstart-session__column-doodle">
 						<img
 							className="concierge-quickstart-session__doodle"
-							alt="Website expert offering a support session"
-							src="/calypso/images/illustrations/support.svg"
+							alt={ translate( 'Website expert offering a support session' ) }
+							src={ supportIllustration }
 						/>
 					</div>
 				</div>
@@ -256,6 +262,7 @@ export class ConciergeQuickstartSession extends PureComponent {
 				{ isLoggedIn && (
 					<>
 						<Button
+							data-e2e-button="decline"
 							className="concierge-quickstart-session__decline-offer-button"
 							onClick={ handleClickDecline }
 						>

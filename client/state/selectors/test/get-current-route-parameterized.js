@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 
 describe( 'getCurrentRouteParameterized()', () => {
 	const route = {
@@ -16,7 +16,7 @@ describe( 'getCurrentRouteParameterized()', () => {
 	};
 
 	const sites = {
-		items: { '12345': { URL: 'http://testsite.blog' } },
+		items: { 12345: { URL: 'http://testsite.blog' } },
 	};
 
 	test( 'it returns null when state is missing the path', () => {

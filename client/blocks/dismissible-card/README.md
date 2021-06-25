@@ -1,21 +1,21 @@
-Dismissible Card
-=========
+# Dismissible Card
+
 This is a card component that can be dismissed for a single page load or be hidden
 via user preference.
 
-#### How to use:
+## How to use
 
 ```js
-import DismissibleCard from 'blocks/dismissible-card';
+import DismissibleCard from 'calypso/blocks/dismissible-card';
 
-render: function() {
-  return (
-    <div className="your-stuff">
-      <DismissibleCard preferenceName="my-unique-preference-name">
-        <span>Your stuff in a Card</span>
-      </DismissibleCard>
-    </div>
-  );
+function render() {
+	return (
+		<div className="your-stuff">
+			<DismissibleCard preferenceName="my-unique-preference-name">
+				<span>Your stuff in a Card</span>
+			</DismissibleCard>
+		</div>
+	);
 }
 ```
 
@@ -51,7 +51,7 @@ This function will fire when a user clicks on the cross icon
 	<tr><td>Default</td><td><code>n/a</code></td></tr>
 </table>
 
-The user preference name that we store a boolean against. 
+The user preference name that we store a boolean against.
 Note that we prefix this value with 'dismissible-card-' to avoid namespace collisions.
 
 ### `temporary`

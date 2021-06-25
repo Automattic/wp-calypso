@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { getNormalizedPostsQuery } from 'state/posts/utils/get-normalized-posts-query';
+import { getNormalizedPostsQuery } from 'calypso/state/posts/utils/get-normalized-posts-query';
 
 /**
  * Returns a serialized posts query

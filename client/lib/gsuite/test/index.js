@@ -3,7 +3,6 @@
  */
 import {
 	canDomainAddGSuite,
-	canUserPurchaseGSuite,
 	getAnnualPrice,
 	getEligibleGSuiteDomain,
 	getGSuiteSupportedDomains,
@@ -11,17 +10,7 @@ import {
 	hasGSuiteSupportedDomain,
 	hasGSuiteWithUs,
 	hasPendingGSuiteUsers,
-} from 'lib/gsuite';
-
-jest.mock( 'lib/user/', () => {
-	return () => {
-		return {
-			get: () => {
-				return { is_valid_google_apps_country: true };
-			},
-		};
-	};
-} );
+} from 'calypso/lib/gsuite';
 
 describe( 'index', () => {
 	describe( '#canDomainAddGSuite', () => {
@@ -257,12 +246,6 @@ describe( 'index', () => {
 			expect(
 				hasPendingGSuiteUsers( { googleAppsSubscription: { pendingUsers: [ 'foo' ] } } )
 			).toEqual( true );
-		} );
-	} );
-
-	describe( '#canUserPurchaseGSuite', () => {
-		test( 'returns true if the user is allowed to purchase G Suite', () => {
-			expect( canUserPurchaseGSuite() ).toEqual( true );
 		} );
 	} );
 } );

@@ -25,21 +25,20 @@ export default class WPAdminLogonPage extends AsyncBaseContainer {
 
 	async login( username, password ) {
 		const ssoButton = By.css( '.jetpack-sso.button' );
-		const userNameSelector = By.css( '#user_login' );
-		const passwordSelector = By.css( '#user_pass' );
-		const submitSelector = By.css( '#wp-submit' );
+		const userNameLocator = By.css( '#user_login' );
+		const passwordLocator = By.css( '#user_pass' );
+		const submitLocator = By.css( '#wp-submit' );
 
-		if ( await driverHelper.isEventuallyPresentAndDisplayed( this.driver, ssoButton, 2000 ) ) {
+		if ( await driverHelper.isElementEventuallyLocatedAndVisible( this.driver, ssoButton, 2000 ) ) {
 			await this.toggleSSOLogin();
 		}
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, userNameSelector );
-		await driverHelper.setWhenSettable( this.driver, userNameSelector, username );
-		await driverHelper.setWhenSettable( this.driver, passwordSelector, password, {
+		await driverHelper.setWhenSettable( this.driver, userNameLocator, username );
+		await driverHelper.setWhenSettable( this.driver, passwordLocator, password, {
 			secureValue: true,
 		} );
-		await driverHelper.clickWhenClickable( this.driver, submitSelector );
+		await driverHelper.clickWhenClickable( this.driver, submitLocator );
 
-		return await driverHelper.waitTillNotPresent( this.driver, userNameSelector );
+		return await driverHelper.waitUntilElementNotLocated( this.driver, userNameLocator );
 	}
 
 	async toggleSSOLogin() {

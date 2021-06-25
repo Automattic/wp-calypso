@@ -5,6 +5,7 @@
 	}
 
 	.form-button {
+		display: block;
 		margin-top: 11px;
 	}
 }
@@ -59,4 +60,22 @@
 	font-size: $font-body-small;
 	font-weight: 600;
 	margin-bottom: 5px;
+}
+
+.help-contact-form__site-notice {
+	margin: 8px auto 0;
+}
+
+.help-contact-form__site-alternatives {
+	margin-top: 16px;
+
+	.help-contact-form__site-alternatives-url {
+		margin-top: 12px;
+	}
+}
+
+.help-contact-form__public-url-checkbox-text {
+	margin: 4px auto 20px 24px;
+	font-size: $font-body-extra-small;
+	font-weight: normal;
 }

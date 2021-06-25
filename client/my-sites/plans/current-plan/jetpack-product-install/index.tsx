@@ -8,22 +8,25 @@ import { localize, LocalizeProps } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
-import getJetpackProductInstallProgress from 'state/selectors/get-jetpack-product-install-progress';
-import getJetpackProductInstallStatus from 'state/selectors/get-jetpack-product-install-status';
-import { Interval, EVERY_SECOND, EVERY_FIVE_SECONDS } from 'lib/interval';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import { JETPACK_CONTACT_SUPPORT } from 'lib/url/support';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getJetpackProductInstallProgress from 'calypso/state/selectors/get-jetpack-product-install-progress';
+import getJetpackProductInstallStatus from 'calypso/state/selectors/get-jetpack-product-install-status';
+import { Interval, EVERY_SECOND, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import { JETPACK_CONTACT_SUPPORT } from 'calypso/lib/url/support';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	requestJetpackProductInstallStatus,
 	startJetpackProductInstall,
-} from 'state/jetpack-product-install/actions';
-import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
-import { getPluginKeys, requestPluginKeys } from 'state/data-getters/wpcom/jetpack-blogs/keys';
-import { SiteId, TimeoutMS } from 'wp-calypso-client/types';
-import { logToLogstash } from 'state/logstash/actions';
+} from 'calypso/state/jetpack-product-install/actions';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import {
+	getPluginKeys,
+	requestPluginKeys,
+} from 'calypso/state/data-getters/wpcom/jetpack-blogs/keys';
+import { SiteId, TimeoutMS } from 'calypso/types';
+import { logToLogstash } from 'calypso/state/logstash/actions';
 
 type PluginStateDescriptor = string;
 type PluginSlug = 'akismet' | 'vaultpress';
@@ -84,9 +87,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 
 	fetchPluginKeys = (): void => {
 		if ( this.shouldRequestKeys() ) {
-			requestPluginKeys( this.props.siteId as SiteId, {
-				freshness: PLUGIN_KEY_REFETCH_INTERVAL - 1,
-			} );
+			requestPluginKeys( this.props.siteId as SiteId );
 		}
 	};
 

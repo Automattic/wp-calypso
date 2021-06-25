@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import getJetpackUserConnection from 'state/selectors/get-jetpack-user-connection';
+import getJetpackUserConnection from 'calypso/state/selectors/get-jetpack-user-connection';
 
 /**
  * Returns the display name of the Jetpack connection's owner.

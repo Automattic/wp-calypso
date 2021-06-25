@@ -1,14 +1,9 @@
 /**
- * External dependencies
- */
-import { get, includes, some } from 'lodash';
-
-/**
  * Internal dependencies
  */
-import { getCurrentUserLocale } from 'state/current-user/selectors';
-import getSitesItems from 'state/selectors/get-sites-items';
-import { isBusinessPlan, isEcommercePlan } from 'lib/plans';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import getSitesItems from 'calypso/state/selectors/get-sites-items';
+import { isBusinessPlan, isEcommercePlan } from '@automattic/calypso-products';
 
 export const UPWORK_LOCALES = [
 	'de',
@@ -42,12 +37,12 @@ export const UPWORK_LOCALES = [
  * @returns Whether or not this customer should receive Upwork support
  */
 export default function isEligibleForUpworkSupport( state ): boolean {
-	if ( ! includes( UPWORK_LOCALES, getCurrentUserLocale( state ) ) ) {
+	if ( ! UPWORK_LOCALES.includes( getCurrentUserLocale( state ) ) ) {
 		return false;
 	}
 
-	const hasBusinessOrEcommercePlan = some( getSitesItems( state ), ( site ) => {
-		const planSlug = get( site, 'plan.product_slug' );
+	const hasBusinessOrEcommercePlan = Object.values( getSitesItems( state ) ).some( ( site ) => {
+		const planSlug = site.plan?.product_slug;
 		return isBusinessPlan( planSlug ) || isEcommercePlan( planSlug );
 	} );
 

@@ -4,12 +4,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { intervals } from './constants';
-import SegmentedControl from 'components/segmented-control';
+import SegmentedControl from 'calypso/components/segmented-control';
 
 /**
  * Style dependencies
@@ -46,4 +47,4 @@ Intervals.defaultProps = {
 	standalone: false,
 };
 
-export default Intervals;
+export default localize( Intervals );

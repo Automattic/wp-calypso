@@ -8,7 +8,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { Card, Button } from '@automattic/components';
-import FilePicker from 'components/file-picker';
+import FilePicker from 'calypso/components/file-picker';
 
 export default class FilePickers extends React.Component {
 	constructor( props ) {

@@ -6,7 +6,7 @@ import { DefaultRootState } from 'react-redux';
 /**
  * Internal dependencies
  */
-import getRawSite from 'state/selectors/get-raw-site';
+import getRawSite from 'calypso/state/selectors/get-raw-site';
 
 export interface SiteProduct {
 	productId: number;
@@ -30,7 +30,7 @@ interface SiteWithProducts {
 	products: RawSiteProduct[];
 }
 
-function isSiteWithProducts( site: null | object ): site is SiteWithProducts {
+function isSiteWithProducts( site: null | Record< string, unknown > ): site is SiteWithProducts {
 	return ( site as SiteWithProducts ).products !== undefined;
 }
 

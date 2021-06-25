@@ -1,17 +1,18 @@
 /**
  * Internal dependencies
  */
-import { addMedia as addMediaThunk } from 'state/media/thunks/add-media';
-import { uploadMedia } from 'state/media/thunks/upload-media';
-import { getFileUploader } from 'lib/media/utils';
+import { addMedia as addMediaThunk } from 'calypso/state/media/thunks/add-media';
+import { uploadMedia } from 'calypso/state/media/thunks/upload-media';
+import { getFileUploader } from 'calypso/lib/media/utils';
 
-jest.mock( 'lib/media/utils', () => ( { getFileUploader: jest.fn() } ) );
-jest.mock( 'state/media/thunks/upload-media', () => ( {
+jest.mock( 'calypso/lib/media/utils', () => ( { getFileUploader: jest.fn() } ) );
+jest.mock( 'calypso/state/media/thunks/upload-media', () => ( {
 	uploadMedia: jest.fn(),
 	uploadSingleMedia: jest.fn(),
 } ) );
 
 describe( 'media - thunks - addMedia', () => {
+	const postId = 0;
 	const site = Symbol( 'site' );
 	const file = Symbol( 'file' );
 	const dispatch = jest.fn();
@@ -21,21 +22,17 @@ describe( 'media - thunks - addMedia', () => {
 
 	describe( 'single file', () => {
 		it( 'should dispatch to uploadMedia with the file uploader', async () => {
-			const uploader = jest.fn();
-			getFileUploader.mockReturnValueOnce( uploader );
-			await addMedia( file, site );
+			await addMedia( file, site, postId );
 
-			expect( uploadMedia ).toHaveBeenCalledWith( file, site, uploader );
+			expect( uploadMedia ).toHaveBeenCalledWith( file, site, postId, getFileUploader );
 		} );
 	} );
 
 	describe( 'multiple files', () => {
 		it( 'should dispatch to uploadMedia with the file uploader', async () => {
-			const uploader = jest.fn();
-			getFileUploader.mockReturnValueOnce( uploader );
-			await addMedia( [ file, file ], site );
+			await addMedia( [ file, file ], site, postId );
 
-			expect( uploadMedia ).toHaveBeenCalledWith( [ file, file ], site, uploader );
+			expect( uploadMedia ).toHaveBeenCalledWith( [ file, file ], site, postId, getFileUploader );
 		} );
 	} );
 } );

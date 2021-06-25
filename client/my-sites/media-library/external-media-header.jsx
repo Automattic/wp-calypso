@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { debounce } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -13,10 +13,10 @@ import PropTypes from 'prop-types';
  */
 import MediaLibraryScale from './scale';
 import { Card, Button } from '@automattic/components';
-import StickyPanel from 'components/sticky-panel';
-import { addExternalMedia, fetchNextMediaPage } from 'state/media/thunks';
-import { changeMediaSource } from 'state/media/actions';
-import isFetchingNextPage from 'state/selectors/is-fetching-next-page';
+import StickyPanel from 'calypso/components/sticky-panel';
+import { addExternalMedia, fetchNextMediaPage } from 'calypso/state/media/thunks';
+import { changeMediaSource } from 'calypso/state/media/actions';
+import isFetchingNextPage from 'calypso/state/selectors/is-fetching-next-page';
 
 const DEBOUNCE_TIME = 250;
 
@@ -26,12 +26,14 @@ class MediaLibraryExternalHeader extends React.Component {
 		site: PropTypes.object.isRequired,
 		visible: PropTypes.bool.isRequired,
 		canCopy: PropTypes.bool,
+		postId: PropTypes.number,
 		selectedItems: PropTypes.array,
 		onSourceChange: PropTypes.func,
 		sticky: PropTypes.bool,
 		hasAttribution: PropTypes.bool,
 		hasRefreshButton: PropTypes.bool,
 		isFetchingNextPage: PropTypes.bool,
+		mediaScale: PropTypes.number,
 	};
 
 	constructor( props ) {
@@ -88,10 +90,10 @@ class MediaLibraryExternalHeader extends React.Component {
 	}
 
 	onCopy = () => {
-		const { site, selectedItems, source, onSourceChange } = this.props;
+		const { postId, site, selectedItems, source, onSourceChange } = this.props;
 
 		onSourceChange( '', () => {
-			this.props.addExternalMedia( selectedItems, site, source );
+			this.props.addExternalMedia( selectedItems, site, postId, source );
 		} );
 	};
 
@@ -132,7 +134,7 @@ class MediaLibraryExternalHeader extends React.Component {
 
 				{ canCopy && this.renderCopyButton() }
 
-				<MediaLibraryScale onChange={ onMediaScaleChange } />
+				<MediaLibraryScale onChange={ onMediaScaleChange } mediaScale={ this.props.mediaScale } />
 			</Card>
 		);
 	}
@@ -156,6 +158,8 @@ const mapStateToProps = ( state, { site } ) => ( {
 	isFetchingNextPage: isFetchingNextPage( state, site?.ID ),
 } );
 
-export default connect( mapStateToProps, { addExternalMedia, changeMediaSource, fetchNextMediaPage } )(
-	localize( MediaLibraryExternalHeader )
-);
+export default connect( mapStateToProps, {
+	addExternalMedia,
+	changeMediaSource,
+	fetchNextMediaPage,
+} )( localize( MediaLibraryExternalHeader ) );

@@ -1,22 +1,22 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { identity, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import getThemes from 'lib/signup/themes';
-import ThemesList from 'components/themes-list';
+import getThemes from 'calypso/lib/signup/themes';
+import ThemesList from 'calypso/components/themes-list';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const noop = () => {};
 
 class SignupThemesList extends Component {
 	static propTypes = {
@@ -32,7 +32,6 @@ class SignupThemesList extends Component {
 		designType: null,
 		quantity: 3,
 		handleScreenshotClick: noop,
-		translate: identity,
 	};
 
 	shouldComponentUpdate( nextProps ) {

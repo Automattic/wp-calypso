@@ -1,0 +1,34 @@
+
+name: 'Mark stale issues'
+on:
+  schedule:
+    # Run every 6 hours at xx:30.
+    - cron: '30 */6 * * *'
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v3
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          # Message to be added to stale issues.
+          stale-issue-message: 'This issue is stale because it has been 180 days with no activity. You can keep the issue open by adding a comment. If you do, please provide additional context and explain why you’d like it to remain open. You can also close the issue yourself — if you do, please add a brief explanation and apply one of relevant issue close labels.'
+          # Days before issue is considered stale.
+          days-before-issue-stale: 180
+          # Exempted issue labels.
+          exempt-issue-labels: '[Pri] High,[Pri] BLOCKER,[Status] Keep Open,[Status] Blocked / Hold'
+          # Message to be added to stale PRs.
+          stale-pr-message: 'This PR has been marked as stale due to lack of activity within the last 30 days.'
+          # Exempted PR labels.
+          exempt-pr-labels: '[Pri] High,[Pri] BLOCKER,[Status] Keep Open,[Status] Blocked / Hold'
+          # Disable auto-close of both issues and PRs.
+          days-before-close: -1
+          # Get issues in ascending (oldest first) order.
+          ascending: true
+          # Label to apply when issue is marked stale.
+          stale-issue-label: '[Status] Stale'
+          # Label to apply when PR is marked as stale.
+          stale-pr-label: '[Status] Stale'
+          # Increase number of operations executed per run.
+          operations-per-run: 525

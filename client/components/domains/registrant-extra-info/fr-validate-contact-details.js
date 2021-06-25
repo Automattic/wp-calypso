@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { isEmpty, isString, reduce, update } from 'lodash';
+import { isEmpty, reduce, update } from 'lodash';
 import validatorFactory from 'is-my-json-valid';
 import debugFactory from 'debug';
 
@@ -51,7 +51,7 @@ const reverseMessageMap = {
 function ruleNameFromMessage( message ) {
 	return (
 		reverseMessageMap[ message ] ||
-		( isString( message ) && message.match( /^must be (.*) format$/ ) && 'format' ) ||
+		( typeof message === 'string' && message.match( /^must be (.*) format$/ ) && 'format' ) ||
 		message
 	);
 }

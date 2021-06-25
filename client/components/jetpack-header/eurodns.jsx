@@ -7,7 +7,7 @@ import React from 'react';
  * Module variables
  */
 
-const lightColorSchemeLogo = (
+const darkColorSchemeLogo = (
 	<g transform="translate(360.000000, 0.000000) scale(6.5)" fillRule="nonzero">
 		<g fill="#FFF">
 			<path
@@ -72,7 +72,7 @@ const lightColorSchemeLogo = (
 	</g>
 );
 
-const darkColorSchemeLogo = (
+const lightColorSchemeLogo = (
 	<g transform="translate(360.000000, 0.000000) scale(6.5)" fillRule="nonzero">
 		<g fill="#3EC1E6">
 			<path

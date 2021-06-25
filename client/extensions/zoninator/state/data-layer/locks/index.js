@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { fromApi } from './utils';
 import { requestLockError, updateLock } from '../../locks/actions';
 import { ZONINATOR_REQUEST_LOCK } from 'zoninator/state/action-types';

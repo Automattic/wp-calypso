@@ -1,15 +1,12 @@
-The GNU General Public License, Version 2, June 1991 (GPLv2)
-============================================================
+# The GNU General Public License, Version 2, June 1991 (GPLv2)
 
 > Copyright (C) 1989, 1991 Free Software Foundation, Inc.
-> 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
+> 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 
 Everyone is permitted to copy and distribute verbatim copies of this license
 document, but changing it is not allowed.
 
-
-Preamble
---------
+## Preamble
 
 The licenses for most software are designed to take away your freedom to share
 and change it. By contrast, the GNU General Public License is intended to
@@ -56,9 +53,7 @@ use or not licensed at all.
 The precise terms and conditions for copying, distribution and modification
 follow.
 
-
-Terms And Conditions For Copying, Distribution And Modification
----------------------------------------------------------------
+## Terms And Conditions For Copying, Distribution And Modification
 
 **0.** This License applies to any program or other work which contains a notice
 placed by the copyright holder saying it may be distributed under the terms of
@@ -90,23 +85,23 @@ thus forming a work based on the Program, and copy and distribute such
 modifications or work under the terms of Section 1 above, provided that you also
 meet all of these conditions:
 
-*   **a)** You must cause the modified files to carry prominent notices stating
-    that you changed the files and the date of any change.
+- **a)** You must cause the modified files to carry prominent notices stating
+  that you changed the files and the date of any change.
 
-*   **b)** You must cause any work that you distribute or publish, that in whole
-    or in part contains or is derived from the Program or any part thereof, to
-    be licensed as a whole at no charge to all third parties under the terms of
-    this License.
+- **b)** You must cause any work that you distribute or publish, that in whole
+  or in part contains or is derived from the Program or any part thereof, to
+  be licensed as a whole at no charge to all third parties under the terms of
+  this License.
 
-*   **c)** If the modified program normally reads commands interactively when
-    run, you must cause it, when started running for such interactive use in the
-    most ordinary way, to print or display an announcement including an
-    appropriate copyright notice and a notice that there is no warranty (or
-    else, saying that you provide a warranty) and that users may redistribute
-    the program under these conditions, and telling the user how to view a copy
-    of this License. (Exception: if the Program itself is interactive but does
-    not normally print such an announcement, your work based on the Program is
-    not required to print an announcement.)
+- **c)** If the modified program normally reads commands interactively when
+  run, you must cause it, when started running for such interactive use in the
+  most ordinary way, to print or display an announcement including an
+  appropriate copyright notice and a notice that there is no warranty (or
+  else, saying that you provide a warranty) and that users may redistribute
+  the program under these conditions, and telling the user how to view a copy
+  of this License. (Exception: if the Program itself is interactive but does
+  not normally print such an announcement, your work based on the Program is
+  not required to print an announcement.)
 
 These requirements apply to the modified work as a whole. If identifiable
 sections of that work are not derived from the Program, and can be reasonably
@@ -131,21 +126,21 @@ License.
 Section 2) in object code or executable form under the terms of Sections 1 and 2
 above provided that you also do one of the following:
 
-*   **a)** Accompany it with the complete corresponding machine-readable source
-    code, which must be distributed under the terms of Sections 1 and 2 above on
-    a medium customarily used for software interchange; or,
+- **a)** Accompany it with the complete corresponding machine-readable source
+  code, which must be distributed under the terms of Sections 1 and 2 above on
+  a medium customarily used for software interchange; or,
 
-*   **b)** Accompany it with a written offer, valid for at least three years, to
-    give any third party, for a charge no more than your cost of physically
-    performing source distribution, a complete machine-readable copy of the
-    corresponding source code, to be distributed under the terms of Sections 1
-    and 2 above on a medium customarily used for software interchange; or,
+- **b)** Accompany it with a written offer, valid for at least three years, to
+  give any third party, for a charge no more than your cost of physically
+  performing source distribution, a complete machine-readable copy of the
+  corresponding source code, to be distributed under the terms of Sections 1
+  and 2 above on a medium customarily used for software interchange; or,
 
-*   **c)** Accompany it with the information you received as to the offer to
-    distribute corresponding source code. (This alternative is allowed only for
-    noncommercial distribution and only if you received the program in object
-    code or executable form with such an offer, in accord with Subsection b
-    above.)
+- **c)** Accompany it with the information you received as to the offer to
+  distribute corresponding source code. (This alternative is allowed only for
+  noncommercial distribution and only if you received the program in object
+  code or executable form with such an offer, in accord with Subsection b
+  above.)
 
 The source code for a work means the preferred form of the work for making
 modifications to it. For an executable work, complete source code means all the
@@ -241,9 +236,7 @@ Our decision will be guided by the two goals of preserving the free status of
 all derivatives of our free software and of promoting the sharing and reuse of
 software generally.
 
-
-No Warranty
------------
+## No Warranty
 
 **11.** BECAUSE THE PROGRAM IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY FOR
 THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN OTHERWISE

@@ -6,34 +6,27 @@ import { localize } from 'i18n-calypso';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { identity } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
 
-import { errorNotice } from 'state/notices/actions';
-import EmptyContent from 'components/empty-content';
-import Main from 'components/main';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { getSiteSlug } from 'state/sites/selectors';
-import getAtomicTransfer from 'state/selectors/get-atomic-transfer';
-import { transferStates } from 'state/atomic-transfer/constants';
-import WordPressLogo from 'components/wordpress-logo';
+import { errorNotice } from 'calypso/state/notices/actions';
+import EmptyContent from 'calypso/components/empty-content';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
+import { transferStates } from 'calypso/state/atomic-transfer/constants';
+import WordPressLogo from 'calypso/components/wordpress-logo';
 
 class TransferPending extends PureComponent {
 	static propTypes = {
 		error: PropTypes.object,
-		localize: PropTypes.func,
 		showErrorNotice: PropTypes.func,
 		siteId: PropTypes.number.isRequired,
 		transfer: PropTypes.object,
-	};
-
-	static defaultProps = {
-		localize: identity,
-		errorNotice: identity,
 	};
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {

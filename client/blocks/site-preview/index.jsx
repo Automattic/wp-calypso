@@ -9,13 +9,17 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { closePreview } from 'state/ui/preview/actions';
-import { getPreviewSite, getPreviewSiteId, getPreviewUrl } from 'state/ui/preview/selectors';
-import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
-import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
-import { addQueryArgs } from 'lib/route';
-import isDomainOnlySite from 'state/selectors/is-domain-only-site';
-import WebPreview from 'components/web-preview';
+import { closePreview } from 'calypso/state/ui/preview/actions';
+import {
+	getPreviewSite,
+	getPreviewSiteId,
+	getPreviewUrl,
+} from 'calypso/state/ui/preview/selectors';
+import { getSiteOption, getSiteSlug } from 'calypso/state/sites/selectors';
+import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
+import { addQueryArgs } from 'calypso/lib/route';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
+import WebPreview from 'calypso/components/web-preview';
 
 const debug = debugFactory( 'calypso:site-preview' );
 

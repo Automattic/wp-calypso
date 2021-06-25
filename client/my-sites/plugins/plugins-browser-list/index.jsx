@@ -9,10 +9,10 @@ import { times } from 'lodash';
 /**
  * Internal dependencies
  */
-import PluginBrowserItem from 'my-sites/plugins/plugins-browser-item';
+import PluginBrowserItem from 'calypso/my-sites/plugins/plugins-browser-item';
 import { Card } from '@automattic/components';
-import Gridicon from 'components/gridicon';
-import SectionHeader from 'components/section-header';
+import Gridicon from 'calypso/components/gridicon';
+import SectionHeader from 'calypso/components/section-header';
 
 /**
  * Style dependencies

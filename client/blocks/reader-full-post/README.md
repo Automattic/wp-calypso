@@ -4,12 +4,14 @@ The "new" reader full post component
 
 ## Props
 
-*required*
+_required_
+
 - `blogId`: The blog id for the post
 - `postId`: The post id
 - `onClose`: An onClose event handler function
 
-*optional*
+_optional_
+
 - `referral`: An object containing a `blogId` and `postId`
 
 ### Referral

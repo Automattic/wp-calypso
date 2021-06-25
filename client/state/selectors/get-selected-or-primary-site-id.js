@@ -2,8 +2,8 @@
  * Internal dependencies
  */
 
-import { getSelectedSiteId } from 'state/ui/selectors';
-import getPrimarySiteId from 'state/selectors/get-primary-site-id';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 
 /**
  * Returns the currently selected ID, or the primary Site ID, if none is selected.

@@ -3,22 +3,21 @@
  */
 import debug from 'debug';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import { bumpStat } from 'lib/analytics/mc';
-import EmptyContent from 'components/empty-content';
-import { makeLayout, render as clientRender } from 'controller';
-import { SECTION_SET } from 'state/action-types';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import EmptyContent from 'calypso/components/empty-content';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { setSection } from 'calypso/state/ui/section/actions';
 
 /**
  * Module variables
  */
 const log = debug( 'calypso:layout' );
-
+const noop = () => {};
 const LoadingErrorMessage = localize( ( { translate } ) => (
 	<EmptyContent
 		illustration="/calypso/images/illustrations/error.svg"
@@ -46,11 +45,7 @@ export function retry( chunkName ) {
 export function show( context, chunkName ) {
 	log( 'Chunk %s could not be loaded', chunkName );
 	bumpStat( 'calypso_chunk_error', chunkName );
-	context.store.dispatch( {
-		type: SECTION_SET,
-		section: false,
-		hasSidebar: false,
-	} );
+	context.store.dispatch( setSection( false, { section: false } ) );
 	context.primary = <LoadingErrorMessage />;
 	makeLayout( context, noop );
 	clientRender( context );

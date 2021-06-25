@@ -9,7 +9,15 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { Dialog } from '@automattic/components';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import ExternalLink from 'calypso/components/external-link';
+import Gridicon from 'calypso/components/gridicon';
+import Spinner from 'calypso/components/spinner';
 import {
 	getCanonicalTheme,
 	hasActivatedTheme,
@@ -18,13 +26,16 @@ import {
 	isThemeActive,
 	shouldShowHomepageWarning,
 	getPreActivateThemeId,
-} from 'state/themes/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+} from 'calypso/state/themes/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteDomain } from 'calypso/state/sites/selectors';
 import {
 	acceptAutoLoadingHomepageWarning,
 	hideAutoLoadingHomepageWarning,
 	activate as activateTheme,
-} from 'state/themes/actions';
+} from 'calypso/state/themes/actions';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { preventWidows } from 'calypso/lib/formatting';
 
 /**
  * Style dependencies
@@ -46,16 +57,79 @@ class AutoLoadingHomepageModal extends Component {
 		siteId: PropTypes.number,
 		isVisible: PropTypes.bool,
 		onClose: PropTypes.func,
-		installingThemeId: PropTypes.string.isRequired,
+		installingThemeId: PropTypes.string,
 	};
 
-	closeModalHandler = ( activate = false ) => () => {
-		if ( activate ) {
-			const { installingThemeId, siteId, source } = this.props;
-			this.props.acceptAutoLoadingHomepageWarning( installingThemeId );
-			return this.props.activateTheme( installingThemeId, siteId, source );
+	constructor( props ) {
+		super( props );
+		this.state = {
+			homepageAction: 'keep_current_homepage',
+			// Used to reset state when dialog re-opens, see `getDerivedStateFromProps`
+			wasVisible: props.isVisible,
+			// Don't render the iframe on mobile; Doing it here prevents unnecessary data fetching vs. CSS.
+			isNarrow: isWithinBreakpoint( '<782px' ),
+		};
+	}
+
+	componentDidMount() {
+		// Change the isNarrow state when the size of the browser changes.
+		// (Putting this on an attribute instead of state because of react/no-did-mount-set-state)
+		this.unsubscribe = subscribeIsWithinBreakpoint( '<782px', ( isNarrow ) =>
+			this.setState( { isNarrow } )
+		);
+	}
+
+	componentWillUnmount() {
+		if ( typeof this.unsubscribe === 'function' ) {
+			this.unsubscribe();
 		}
-		this.props.hideAutoLoadingHomepageWarning();
+	}
+
+	static getDerivedStateFromProps( nextProps, prevState ) {
+		// This component doesn't unmount when the dialog closes, so the state
+		// needs to be reset back to defaults each time it opens.
+		// Reseting `homepageAction` ensures the default option will be selected.
+		if ( nextProps.isVisible && ! prevState.wasVisible ) {
+			return { homepageAction: 'keep_current_homepage', wasVisible: true };
+		} else if ( ! nextProps.isVisible && prevState.wasVisible ) {
+			return { wasVisible: false };
+		}
+		return null;
+	}
+
+	handleHomepageAction = ( event ) => {
+		this.setState( { homepageAction: event.currentTarget.value } );
+	};
+
+	closeModalHandler = ( action = 'dismiss' ) => () => {
+		const { installingThemeId, siteId, source } = this.props;
+		if ( 'activeTheme' === action ) {
+			this.props.acceptAutoLoadingHomepageWarning( installingThemeId );
+			const keepCurrentHomepage = this.state.homepageAction === 'keep_current_homepage';
+			recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_activate_click', {
+				theme: installingThemeId,
+				keep_current_homepage: keepCurrentHomepage,
+			} );
+			return this.props.activateTheme(
+				installingThemeId,
+				siteId,
+				source,
+				false,
+				keepCurrentHomepage
+			);
+		} else if ( 'keepCurrentTheme' === action ) {
+			recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_dismiss', {
+				action: 'button',
+				theme: installingThemeId,
+			} );
+			return this.props.hideAutoLoadingHomepageWarning();
+		} else if ( 'dismiss' === action ) {
+			recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_dismiss', {
+				action: 'escape',
+				theme: installingThemeId,
+			} );
+			return this.props.hideAutoLoadingHomepageWarning();
+		}
 	};
 
 	render() {
@@ -67,6 +141,7 @@ class AutoLoadingHomepageModal extends Component {
 			isCurrentTheme,
 			isVisible = false,
 		} = this.props;
+		const { isNarrow } = this.state;
 
 		// Nothing to do when it's the current theme.
 		if ( isCurrentTheme ) {
@@ -87,7 +162,16 @@ class AutoLoadingHomepageModal extends Component {
 			return null;
 		}
 
-		const { name: themeName } = this.props.theme;
+		const {
+			name: themeName,
+			id: themeId,
+			stylesheet,
+			screenshot: themeScreenshot,
+		} = this.props.theme;
+
+		const iframeSrcKeepHomepage = `//${ this.props.siteDomain }?theme=${ encodeURIComponent(
+			stylesheet
+		) }&hide_banners=true&preview_overlay=true`;
 
 		return (
 			<Dialog
@@ -96,32 +180,118 @@ class AutoLoadingHomepageModal extends Component {
 				buttons={ [
 					{
 						action: 'keepCurrentTheme',
-						label: translate( 'No, keep my current theme' ),
+						label: translate( 'Keep my current theme' ),
 						isPrimary: false,
-						onClick: this.closeModalHandler( false ),
+						onClick: this.closeModalHandler( 'keepCurrentTheme' ),
 					},
 					{
 						action: 'activeTheme',
-						label: translate( 'Yes, activate %(themeName)s', {
-							args: { themeName },
-						} ),
+						label: translate( 'Activate %(themeName)s', { args: { themeName } } ),
 						isPrimary: true,
-						onClick: this.closeModalHandler( true ),
+						onClick: this.closeModalHandler( 'activeTheme' ),
 					},
 				] }
-				onClose={ this.closeModalHandler( false ) }
+				onClose={ this.closeModalHandler( 'dismiss' ) }
 			>
-				<div>
-					<h1 className="themes__auto-loading-homepage-modal-title">
-						{ translate(
-							'{{strong}}%(themeName)s{{/strong}} will automatically change your homepage layout. ' +
-								'Your current homepage will become a draft. Would you like to continue?',
-							{
-								args: { themeName },
-								components: { strong: <strong /> },
-							}
-						) }
+				<Gridicon
+					icon="cross"
+					className="themes__auto-loading-homepage-modal-close-icon"
+					onClick={ this.closeModalHandler( 'dismiss' ) }
+				/>
+				<TrackComponentView
+					eventName={ 'calypso_theme_autoloading_homepage_modal_view' }
+					eventProperties={ { theme: themeId } }
+				/>
+				<div className="themes__theme-preview-wrapper">
+					<h1>
+						{ translate( 'How would you like to use %(themeName)s?', {
+							args: { themeName },
+						} ) }
 					</h1>
+					<div className="themes__theme-preview-items">
+						<div className="themes__theme-preview-item themes__theme-preview-item-iframe-container">
+							<FormLabel>
+								<div className="themes__iframe-wrapper">
+									<Spinner />
+									{ ! isNarrow && (
+										<iframe
+											scrolling="no"
+											loading="lazy"
+											title={ translate( 'Preview of current homepage with new theme applied' ) }
+											src={ iframeSrcKeepHomepage }
+										/>
+									) }
+								</div>
+								<FormRadio
+									value="keep_current_homepage"
+									checked={ 'keep_current_homepage' === this.state.homepageAction }
+									onChange={ this.handleHomepageAction }
+									label={ preventWidows(
+										translate( 'Switch theme, preserving my homepage content.' )
+									) }
+								/>
+							</FormLabel>
+						</div>
+						<div className="themes__theme-preview-item">
+							<FormLabel>
+								<div className="themes__theme-preview-image-wrapper">
+									<img
+										src={ themeScreenshot }
+										alt={ translate( "Preview of new theme's default homepage" ) }
+									/>
+								</div>
+								<FormRadio
+									value="use_new_homepage"
+									checked={ 'use_new_homepage' === this.state.homepageAction }
+									onChange={ this.handleHomepageAction }
+									label={ preventWidows(
+										translate( 'Replace my homepage content with the %(themeName)s homepage.', {
+											args: { themeName },
+										} )
+									) }
+								/>
+							</FormLabel>
+						</div>
+					</div>
+					<div className="themes__autoloading-homepage-option-description">
+						{ this.state.homepageAction === 'keep_current_homepage' && (
+							<p>
+								{ preventWidows(
+									translate(
+										'Your new theme design will be applied without changing your homepage content.'
+									)
+								) }{ ' ' }
+								<ExternalLink
+									href={ localizeUrl( 'https://wordpress.com/support/changing-themes/' ) }
+									icon
+									target="__blank"
+								>
+									{ translate( 'Learn more.' ) }
+								</ExternalLink>
+							</p>
+						) }
+						{ this.state.homepageAction === 'use_new_homepage' && (
+							<p>
+								<span
+									// eslint-disable-next-line react/no-danger
+									dangerouslySetInnerHTML={ {
+										__html: preventWidows(
+											translate(
+												'After activation, you can still access your old homepage content under Pages &rarr; Drafts.'
+											)
+										),
+									} }
+								/>{ ' ' }
+								<ExternalLink
+									href={ localizeUrl( 'https://wordpress.com/support/changing-themes/' ) }
+									icon
+									target="__blank"
+								>
+									{ translate( 'Learn more.' ) }
+								</ExternalLink>
+							</p>
+						) }
+					</div>
 				</div>
 			</Dialog>
 		);
@@ -135,6 +305,7 @@ export default connect(
 
 		return {
 			siteId,
+			siteDomain: getSiteDomain( state, siteId ),
 			installingThemeId,
 			theme: installingThemeId && getCanonicalTheme( state, siteId, installingThemeId ),
 			isActivating: !! isActivatingTheme( state, siteId ),
@@ -148,5 +319,6 @@ export default connect(
 		acceptAutoLoadingHomepageWarning,
 		hideAutoLoadingHomepageWarning,
 		activateTheme,
+		recordTracksEvent,
 	}
 )( AutoLoadingHomepageModal );

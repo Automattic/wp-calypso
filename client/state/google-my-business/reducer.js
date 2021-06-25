@@ -1,15 +1,16 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, keyedReducer, withoutPersistence, withStorageKey } from 'state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers, keyedReducer } from 'calypso/state/utils';
 import {
 	GOOGLE_MY_BUSINESS_STATS_FAILURE,
 	GOOGLE_MY_BUSINESS_STATS_RECEIVE,
 	GOOGLE_MY_BUSINESS_STATS_REQUEST,
-} from 'state/action-types';
-import { statsInterval } from 'state/google-my-business/ui/reducer';
+} from 'calypso/state/action-types';
+import { statsInterval } from 'calypso/state/google-my-business/ui/reducer';
 
-const stats = withoutPersistence( ( state = null, action ) => {
+const stats = ( state = null, action ) => {
 	switch ( action.type ) {
 		case GOOGLE_MY_BUSINESS_STATS_RECEIVE: {
 			const { data } = action;
@@ -22,9 +23,9 @@ const stats = withoutPersistence( ( state = null, action ) => {
 	}
 
 	return state;
-} );
+};
 
-const statsError = withoutPersistence( ( state = null, action ) => {
+const statsError = ( state = null, action ) => {
 	switch ( action.type ) {
 		case GOOGLE_MY_BUSINESS_STATS_RECEIVE:
 			return null;
@@ -37,7 +38,7 @@ const statsError = withoutPersistence( ( state = null, action ) => {
 	}
 
 	return state;
-} );
+};
 
 const combinedReducer = keyedReducer(
 	'siteId',

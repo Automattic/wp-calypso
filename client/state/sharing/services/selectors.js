@@ -6,12 +6,13 @@ import { filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { isJetpackSite, isJetpackModuleActive } from 'state/sites/selectors';
-import isSiteGoogleMyBusinessEligible from 'state/selectors/is-site-google-my-business-eligible';
+import config from '@automattic/calypso-config';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isSiteGoogleMyBusinessEligible from 'calypso/state/selectors/is-site-google-my-business-eligible';
 
-import 'state/sharing/init';
+import 'calypso/state/sharing/init';
 
 /**
  * Returns an object of service objects.

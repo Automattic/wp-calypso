@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from '@automattic/calypso-config';
 
 /**
  * Returns a selector that tests if a feature is enabled in config

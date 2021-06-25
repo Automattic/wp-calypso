@@ -1,12 +1,7 @@
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
-import getSiteOptions from 'state/selectors/get-site-options';
+import getSiteOptions from './get-site-options';
 
 /**
  * Returns a site option for a site
@@ -17,5 +12,6 @@ import getSiteOptions from 'state/selectors/get-site-options';
  * @returns {*}  The value of that option or null
  */
 export default function getSiteOption( state, siteId, optionName ) {
-	return get( getSiteOptions( state, siteId ), optionName, null );
+	const options = getSiteOptions( state, siteId );
+	return options?.[ optionName ] ?? null;
 }

@@ -4,7 +4,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
-import { find, findIndex, matchesProperty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,6 +21,8 @@ import getAllNotes from '../state/selectors/get-all-notes';
 import getIsNoteHidden from '../state/selectors/get-is-note-hidden';
 import getIsPanelOpen from '../state/selectors/get-is-panel-open';
 import getSelectedNoteId from '../state/selectors/get-selected-note-id';
+import getKeyboardShortcutsEnabled from '../state/selectors/get-keyboard-shortcuts-enabled';
+import { modifierKeyIsActive } from '../helpers/input';
 
 const KEY_ENTER = 13;
 const KEY_ESC = 27;
@@ -56,7 +57,7 @@ export const findNextNoteId = ( noteId, notes ) => {
 		return null;
 	}
 
-	const index = findIndex( notes, noteId );
+	const index = notes.indexOf( noteId );
 	if ( -1 === index ) {
 		return null;
 	}
@@ -87,9 +88,8 @@ class Layout extends React.Component {
 			this.props.global.navigation = {};
 
 			/* Keyboard shortcutes */
-			this.props.global.keyboardShortcutsAreEnabled = true;
+			this.props.enableKeyboardShortcuts();
 			this.props.global.input = {
-				modifierKeyIsActive: this.modifierKeyIsActive,
 				lastInputWasKeyboard: false,
 			};
 		}
@@ -120,7 +120,7 @@ class Layout extends React.Component {
 			return;
 		}
 
-		const index = findIndex( nextProps.notes, matchesProperty( 'id', nextProps.selectedNoteId ) );
+		const index = nextProps.notes.findIndex( ( n ) => n.id === nextProps.selectedNoteId );
 		this.setState( {
 			index: index >= 0 ? index : null,
 			lastSelectedIndex: index === null ? 0 : index,
@@ -154,7 +154,7 @@ class Layout extends React.Component {
 			return;
 		}
 
-		if ( ! find( nextProps.notes, matchesProperty( 'id', nextProps.selectedNoteId ) ) ) {
+		if ( ! nextProps.notes.find( ( n ) => n.id === nextProps.selectedNoteId ) ) {
 			this.props.unselectNote();
 		}
 	}
@@ -176,7 +176,7 @@ class Layout extends React.Component {
 	navigateByDirection = ( direction ) => {
 		const filteredNotes = this.filterController.getFilteredNotes( this.props.notes );
 
-		if ( ! this.props.global.keyboardShortcutsAreEnabled ) {
+		if ( ! this.props.keyboardShortcutsAreEnabled ) {
 			return;
 		}
 
@@ -212,7 +212,7 @@ class Layout extends React.Component {
 		};
 
 		/* Find the currently selected note */
-		let currentIndex = findIndex( filteredNotes, matchesProperty( 'id', this.state.selectedNote ) );
+		let currentIndex = filteredNotes.findIndex( ( n ) => n.id === this.state.selectedNote );
 
 		/*
 		 * Sometimes it can occur that a note disappears
@@ -315,10 +315,6 @@ class Layout extends React.Component {
 		this.forceUpdate();
 	};
 
-	modifierKeyIsActive = ( e ) => {
-		return e.altKey || e.ctrlKey || e.metaKey;
-	};
-
 	handleKeyDown = ( event ) => {
 		if ( ! this.props.isShowing ) {
 			return;
@@ -342,7 +338,7 @@ class Layout extends React.Component {
 		}
 
 		/* otherwise bypass if shortcuts are disabled */
-		if ( ! this.props.global.keyboardShortcutsAreEnabled ) {
+		if ( ! this.props.keyboardShortcutsAreEnabled ) {
 			return;
 		}
 
@@ -352,7 +348,7 @@ class Layout extends React.Component {
 		 * that require a modifier key should be
 		 * captured above.
 		 */
-		if ( this.props.global.input.modifierKeyIsActive( event ) ) {
+		if ( modifierKeyIsActive( event ) ) {
 			return;
 		}
 
@@ -424,7 +420,7 @@ class Layout extends React.Component {
 		const notes = this.filterController.getFilteredNotes( allNotes );
 		if (
 			this.state.selectedNote &&
-			find( notes, matchesProperty( 'id', this.state.selectedNoteId ) ) === null
+			notes.find( ( n ) => n.id === this.state.selectedNoteId ) === undefined
 		) {
 			this.props.unselectNote();
 		}
@@ -445,10 +441,7 @@ class Layout extends React.Component {
 	};
 
 	render() {
-		const currentNote = find(
-			this.props.notes,
-			matchesProperty( 'id', this.props.selectedNoteId )
-		);
+		const currentNote = this.props.notes.find( ( n ) => n.id === this.props.selectedNoteId );
 		const filteredNotes = this.filterController.getFilteredNotes( this.props.notes );
 
 		return (
@@ -529,12 +522,14 @@ const mapStateToProps = ( state ) => ( {
 	isPanelOpen: getIsPanelOpen( state ),
 	notes: getAllNotes( state ),
 	selectedNoteId: getSelectedNoteId( state ),
+	keyboardShortcutsAreEnabled: getKeyboardShortcutsEnabled( state ),
 } );
 
 const mapDispatchToProps = {
 	closePanel: actions.ui.closePanel,
 	selectNote: actions.ui.selectNote,
 	unselectNote: actions.ui.unselectNote,
+	enableKeyboardShortcuts: actions.ui.enableKeyboardShortcuts,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( Layout );

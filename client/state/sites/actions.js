@@ -1,20 +1,20 @@
 /**
  * External dependencies
  */
-
 import { omit } from 'lodash';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import config from 'config';
+import wpcom from 'calypso/lib/wp';
+import config from '@automattic/calypso-config';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
+import { getSiteDomain } from 'calypso/state/sites/selectors';
+import { purchasesRoot } from 'calypso/me/purchases/paths';
 import {
-	SITE_DELETE,
-	SITE_DELETE_FAILURE,
 	SITE_DELETE_RECEIVE,
-	SITE_DELETE_SUCCESS,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -26,20 +26,25 @@ import {
 	SITE_PLUGIN_UPDATED,
 	SITE_FRONT_PAGE_UPDATE,
 	SITE_MIGRATION_STATUS_UPDATE,
-} from 'state/action-types';
-import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'state/sites/constants';
+} from 'calypso/state/action-types';
+import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'calypso/state/sites/constants';
+
+import 'calypso/state/data-layer/wpcom/sites/homepage';
 
 /**
- * Returns an action object to be used in signalling that a site has been
- * deleted.
+ * Returns a thunk that dispatches an action object to be used in signalling that a site has been
+ * deleted. It also re-fetches the current user.
  *
  * @param  {number} siteId  ID of deleted site
- * @returns {object}         Action object
+ * @returns {Function}        Action thunk
  */
 export function receiveDeletedSite( siteId ) {
-	return {
-		type: SITE_DELETE_RECEIVE,
-		siteId,
+	return ( dispatch ) => {
+		dispatch( {
+			type: SITE_DELETE_RECEIVE,
+			siteId,
+		} );
+		dispatch( fetchCurrentUser() );
 	};
 }
 
@@ -113,57 +118,61 @@ export function requestSites() {
  * Returns a function which, when invoked, triggers a network request to fetch
  * a site.
  *
- * @param {number} siteFragment Site ID or slug
- * @param {boolean} forceWpcom explicitly get info from WPCOM vs Jetpack site
+ * @param {number|string} siteFragment Site ID or slug
  * @returns {Function}              Action thunk
  */
-export function requestSite( siteFragment, forceWpcom = false ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: SITE_REQUEST,
-			siteId: siteFragment,
-		} );
+export function requestSite( siteFragment ) {
+	function doRequest( forceWpcom ) {
+		const query = { apiVersion: '1.2' };
+		if ( forceWpcom ) {
+			query.force = 'wpcom';
+		}
+
 		const siteFilter = config( 'site_filter' );
-		return wpcom
-			.site( siteFragment )
-			.get( {
-				apiVersion: '1.2',
-				filters: siteFilter.length > 0 ? siteFilter.join( ',' ) : undefined,
-				force: forceWpcom ? 'wpcom' : undefined,
-			} )
+		if ( siteFilter.length > 0 ) {
+			query.filters = siteFilter.join( ',' );
+		}
+
+		return wpcom.site( siteFragment ).get( query );
+	}
+
+	return ( dispatch ) => {
+		dispatch( { type: SITE_REQUEST, siteId: siteFragment } );
+
+		const result = doRequest( false ).catch( ( error ) => {
+			// if there is Jetpack JSON API module error, retry with force: 'wpcom'
+			if (
+				error?.status === 403 &&
+				error?.message === 'API calls to this blog have been disabled.'
+			) {
+				return doRequest( true );
+			}
+
+			return Promise.reject( error );
+		} );
+
+		result
 			.then( ( site ) => {
 				// If we can't manage the site, don't add it to state.
-				if ( ! ( site && site.capabilities ) ) {
-					return dispatch( {
-						type: SITE_REQUEST_FAILURE,
-						siteId: siteFragment,
-						error: i18n.translate( 'No access to manage the site' ),
-					} );
+				if ( site && site.capabilities ) {
+					dispatch( receiveSite( omit( site, '_headers' ) ) );
 				}
 
-				dispatch( receiveSite( omit( site, '_headers' ) ) );
-
-				dispatch( {
-					type: SITE_REQUEST_SUCCESS,
-					siteId: siteFragment,
-				} );
+				dispatch( { type: SITE_REQUEST_SUCCESS, siteId: siteFragment } );
 			} )
-			.catch( ( error ) => {
-				if (
-					error?.status === 403 &&
-					error?.message === 'API calls to this blog have been disabled.' &&
-					! forceWpcom
-				) {
-					return dispatch( requestSite( siteFragment, true ) );
-				}
-				dispatch( {
-					type: SITE_REQUEST_FAILURE,
-					siteId: siteFragment,
-					error,
-				} );
+			.catch( () => {
+				dispatch( { type: SITE_REQUEST_FAILURE, siteId: siteFragment } );
 			} );
+
+		return result;
 	};
 }
+
+const siteDeletionNoticeId = 'site-delete';
+const siteDeletionNoticeOptions = {
+	duration: 5000,
+	id: siteDeletionNoticeId,
+};
 
 /**
  * Returns a function which, when invoked, triggers a network request to delete
@@ -173,27 +182,45 @@ export function requestSite( siteFragment, forceWpcom = false ) {
  * @returns {Function}        Action thunk
  */
 export function deleteSite( siteId ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: SITE_DELETE,
-			siteId,
-		} );
+	return ( dispatch, getState ) => {
+		const siteDomain = getSiteDomain( getState(), siteId );
+
+		dispatch(
+			successNotice(
+				translate( '%(siteDomain)s is being deleted.', { args: { siteDomain } } ),
+				siteDeletionNoticeOptions
+			)
+		);
+
 		return wpcom
 			.undocumented()
 			.deleteSite( siteId )
 			.then( () => {
 				dispatch( receiveDeletedSite( siteId ) );
-				dispatch( {
-					type: SITE_DELETE_SUCCESS,
-					siteId,
-				} );
+				dispatch(
+					successNotice(
+						translate( '%(siteDomain)s has been deleted.', { args: { siteDomain } } ),
+						siteDeletionNoticeOptions
+					)
+				);
 			} )
 			.catch( ( error ) => {
-				dispatch( {
-					type: SITE_DELETE_FAILURE,
-					siteId,
-					error,
-				} );
+				if ( error.error === 'active-subscriptions' ) {
+					dispatch(
+						errorNotice(
+							translate( 'You must cancel any active subscriptions prior to deleting your site.' ),
+							{
+								id: siteDeletionNoticeId,
+								showDismiss: false,
+								button: translate( 'Manage Purchases' ),
+								href: purchasesRoot,
+							}
+						)
+					);
+					return;
+				}
+
+				dispatch( errorNotice( error.message, siteDeletionNoticeOptions ) );
 			} );
 	};
 }

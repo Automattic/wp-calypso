@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 
 /**
  * Creates a user account and sends the user a verification code via email to confirm the account.

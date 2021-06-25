@@ -1,4 +1,5 @@
 /**
  * Internal dependencies
  */
-export { default, Props } from './plans-grid';
+export { default } from './plans-grid';
+export type { Props } from './plans-grid';

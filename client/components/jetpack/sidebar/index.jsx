@@ -2,34 +2,29 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { format as formatUrl, parse as parseUrl } from 'url';
+import { format as formatUrl, getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
 import { localize } from 'i18n-calypso';
-import { memoize } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import CurrentSite from 'my-sites/current-site';
-import getSiteAdminUrl from 'state/sites/selectors/get-site-admin-url';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import CurrentSite from 'calypso/my-sites/current-site';
+import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import JetpackCloudSidebarMenuItems from './menu-items/jetpack-cloud';
-import Sidebar from 'layout/sidebar';
-import SidebarFooter from 'layout/sidebar/footer';
-import SidebarItem from 'layout/sidebar/item';
-import SidebarMenu from 'layout/sidebar/menu';
-import SidebarRegion from 'layout/sidebar/region';
+import Sidebar from 'calypso/layout/sidebar';
+import SidebarFooter from 'calypso/layout/sidebar/footer';
+import SidebarItem from 'calypso/layout/sidebar/item';
+import SidebarMenu from 'calypso/layout/sidebar/menu';
+import SidebarRegion from 'calypso/layout/sidebar/region';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-// We import these styles from here because this is the only section that gets always
-// loaded when a user visits Jetpack Cloud. We might have to find a better place for
-// this in the future.
-import 'landing/jetpack-cloud/style.scss';
 
 class JetpackCloudSidebar extends Component {
 	static propTypes = {
@@ -38,13 +33,13 @@ class JetpackCloudSidebar extends Component {
 		threats: PropTypes.array,
 	};
 
-	onNavigate = memoize( ( menuItem ) => () => {
+	onGetHelp = () => {
 		this.props.dispatchRecordTracksEvent( 'calypso_jetpack_sidebar_menu_click', {
-			menu_item: menuItem,
+			menu_item: 'Jetpack Cloud / Support',
 		} );
 
 		window.scrollTo( 0, 0 );
-	} );
+	};
 
 	render() {
 		const { translate, jetpackAdminUrl, path } = this.props;
@@ -66,7 +61,7 @@ class JetpackCloudSidebar extends Component {
 							link="https://jetpack.com/support"
 							materialIcon="help"
 							materialIconStyle="filled"
-							onNavigate={ this.onNavigate( 'Jetpack Cloud / Support' ) }
+							onNavigate={ this.onGetHelp }
 						/>
 						<SidebarItem
 							label={ translate( 'WP Admin', {
@@ -82,12 +77,17 @@ class JetpackCloudSidebar extends Component {
 	}
 }
 
-// Borrowed from Calypso: /client/my-sites/sidebar/index.jsx:683
-const getJetpackAdminUrl = ( state, siteId ) =>
-	formatUrl( {
-		...parseUrl( getSiteAdminUrl( state, siteId ) + 'admin.php' ),
-		query: { page: 'jetpack' },
-	} );
+const getJetpackAdminUrl = ( state, siteId ) => {
+	const siteAdminUrl = getSiteAdminUrl( state, siteId );
+	if ( null === siteAdminUrl ) {
+		return undefined;
+	}
+
+	const parts = getUrlParts( siteAdminUrl + 'admin.php' );
+	parts.searchParams.set( 'page', 'jetpack' );
+
+	return formatUrl( getUrlFromParts( parts ) );
+};
 
 export default connect(
 	( state ) => {

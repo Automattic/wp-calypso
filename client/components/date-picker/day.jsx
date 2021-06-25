@@ -3,7 +3,8 @@
  */
 
 import React from 'react';
-import { noop } from 'lodash';
+
+const noop = () => {};
 
 const handleDayMouseEnter = ( date, modifiers, onMouseEnter = noop ) => ( event ) => {
 	onMouseEnter( date, modifiers, event );

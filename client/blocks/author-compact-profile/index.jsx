@@ -11,12 +11,12 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import ReaderAvatar from 'blocks/reader-avatar';
-import ReaderAuthorLink from 'blocks/reader-author-link';
-import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
-import ReaderFollowButton from 'reader/follow-button';
-import { getStreamUrl } from 'reader/route';
-import { areEqualIgnoringWhitespaceAndCase } from 'lib/string';
+import ReaderAvatar from 'calypso/blocks/reader-avatar';
+import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
+import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
+import ReaderFollowButton from 'calypso/reader/follow-button';
+import { getStreamUrl } from 'calypso/reader/route';
+import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
 import AuthorCompactProfilePlaceholder from './placeholder';
 
 /**

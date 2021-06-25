@@ -5,9 +5,10 @@ import {
 	ORDER_TRANSACTION_FETCH,
 	ORDER_TRANSACTION_FETCH_ERROR,
 	ORDER_TRANSACTION_SET,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/me/transactions/order';
+import 'calypso/state/data-layer/wpcom/me/transactions/order';
+import 'calypso/state/order-transactions/init';
 
 export const fetchOrderTransaction = ( orderId ) => ( {
 	type: ORDER_TRANSACTION_FETCH,

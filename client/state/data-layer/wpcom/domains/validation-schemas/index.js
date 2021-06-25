@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-import { get, join, flatMap } from 'lodash';
+import { get, flatMap } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_REQUEST } from 'state/action-types';
-import { addValidationSchemas } from 'state/domains/management/validation-schemas/actions';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_REQUEST } from 'calypso/state/action-types';
+import { addValidationSchemas } from 'calypso/state/domains/management/validation-schemas/actions';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 /**
  * Convert an application level request action for domain contact information
@@ -27,7 +27,7 @@ export const fetch = ( action ) =>
 		{
 			apiVersion: '1',
 			method: 'GET',
-			path: `/domains/validation-schemas/${ join( get( action, 'tlds', [] ), ',' ) }`,
+			path: `/domains/validation-schemas/${ get( action, 'tlds', [] ).join( ',' ) }`,
 		},
 		action
 	);
@@ -44,9 +44,10 @@ export const onSuccess = ( action, schemas ) => addValidationSchemas( schemas );
 /**
  * Create an error notice action when the request fails
  *
- * @param   {object} tlds   Originating action with the original list of requested tlds
- * @param   {object} error  Error information (query path, error message etc).
- * @returns {[Action]}      An array of mc and tracks analytics events, one each per tld
+ * @param   {object}      action Action object
+ * @param   {Array}  action.tlds Originating action with the original list of requested tlds
+ * @param   {object}       error Error information (query path, error message etc).
+ * @returns {[object]}             An array of mc and tracks analytics events, one each per tld
  */
 export const onError = ( { tlds }, error ) =>
 	composeAnalytics(

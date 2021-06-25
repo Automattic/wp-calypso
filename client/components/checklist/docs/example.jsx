@@ -6,7 +6,7 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import accept from 'lib/accept';
+import accept from 'calypso/lib/accept';
 import { Button } from '@automattic/components';
 import { Checklist, Task } from '../';
 

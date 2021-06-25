@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
+import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
 
 describe( '#getPartnerSlugFromQuery', () => {
 	test( 'should return null when no argument', () => {

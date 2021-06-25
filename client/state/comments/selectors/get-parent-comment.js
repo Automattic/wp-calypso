@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { getPostCommentsTree } from 'state/comments/selectors/get-post-comments-tree';
+import { getPostCommentsTree } from 'calypso/state/comments/selectors/get-post-comments-tree';
 
-import 'state/comments/init';
+import 'calypso/state/comments/init';
 
 /**
  * Returns the parent comment of a given comment

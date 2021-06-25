@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getPreviousPath from 'state/selectors/get-previous-path';
+import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 
 describe( 'getPreviousPath()', () => {
 	test( 'should return empty if the previous path is not set', () => {

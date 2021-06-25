@@ -5,21 +5,22 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
-import { Card } from '@automattic/components';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
-import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import SupportInfo from 'components/support-info';
+import { Card, CompactCard } from '@automattic/components';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isJetpackSite, getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
+import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import SupportInfo from 'calypso/components/support-info';
+import isPluginActive from 'calypso/state/selectors/is-plugin-active';
 
 class SpeedUpSiteSettings extends Component {
 	static propTypes = {
@@ -49,8 +50,10 @@ class SpeedUpSiteSettings extends Component {
 
 	render() {
 		const {
+			isPageOptimizeActive,
 			isRequestingSettings,
 			isSavingSettings,
+			pageOptimizeUrl,
 			photonModuleUnavailable,
 			selectedSiteId,
 			siteAcceleratorStatus,
@@ -78,13 +81,12 @@ class SpeedUpSiteSettings extends Component {
 									'and static files (like CSS and JavaScript) from our global network of servers.'
 							) }
 						</FormSettingExplanation>
-						<CompactFormToggle
+						<ToggleControl
 							checked={ siteAcceleratorStatus }
 							disabled={ isRequestingOrSaving || photonModuleUnavailable }
 							onChange={ this.handleCdnChange }
-						>
-							{ translate( 'Enable site accelerator' ) }
-						</CompactFormToggle>
+							label={ translate( 'Enable site accelerator' ) }
+						/>
 						<div className="site-settings__child-settings">
 							<JetpackModuleToggle
 								siteId={ selectedSiteId }
@@ -123,6 +125,13 @@ class SpeedUpSiteSettings extends Component {
 						</FormFieldset>
 					) }
 				</Card>
+				{ isPageOptimizeActive && (
+					<div className="site-settings__page-optimize">
+						<CompactCard href={ pageOptimizeUrl }>
+							{ translate( 'Optimize JS and CSS for faster page load and render in the browser.' ) }
+						</CompactCard>
+					</div>
+				) }
 			</div>
 		);
 	}
@@ -147,5 +156,7 @@ export default connect( ( state ) => {
 		selectedSiteId,
 		siteAcceleratorStatus,
 		siteIsJetpack: isJetpackSite( state, selectedSiteId ),
+		isPageOptimizeActive: isPluginActive( state, selectedSiteId, 'page-optimize' ),
+		pageOptimizeUrl: getSiteAdminUrl( state, selectedSiteId, 'admin.php?page=page-optimize' ),
 	};
 } )( localize( SpeedUpSiteSettings ) );

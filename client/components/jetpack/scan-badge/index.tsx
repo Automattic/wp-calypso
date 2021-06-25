@@ -3,13 +3,12 @@
  */
 import React, { FunctionComponent } from 'react';
 import { useTranslate } from 'i18n-calypso';
-import { isNumber } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { ScreenReaderText } from '@automattic/components';
-import Badge from 'components/badge';
+import Badge from 'calypso/components/badge';
 import './style.scss';
 
 interface Props {
@@ -19,11 +18,13 @@ interface Props {
 
 const ScanBadge: FunctionComponent< Props > = ( { numberOfThreatsFound, progress } ) => {
 	const translate = useTranslate();
-	if ( ! numberOfThreatsFound && ! isNumber( progress ) ) {
+	const hasProgressPercentage = Number.isFinite( progress );
+
+	if ( ! numberOfThreatsFound && ! hasProgressPercentage ) {
 		return null;
 	}
 
-	if ( isNumber( progress ) ) {
+	if ( hasProgressPercentage ) {
 		return (
 			<Badge type="success">
 				{ translate( '%(number)d %', {

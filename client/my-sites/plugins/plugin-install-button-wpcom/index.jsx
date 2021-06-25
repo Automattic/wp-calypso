@@ -12,11 +12,14 @@ import page from 'page';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import { getAutomatedTransferStatus, getEligibility } from 'state/automated-transfer/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
-import { initiateThemeTransfer } from 'state/themes/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { transferStates } from 'state/automated-transfer/constants';
+import {
+	getAutomatedTransferStatus,
+	getEligibility,
+} from 'calypso/state/automated-transfer/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { initiateThemeTransfer } from 'calypso/state/themes/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
 
 export const WpcomPluginInstallButton = ( props ) => {
 	const {
@@ -30,6 +33,7 @@ export const WpcomPluginInstallButton = ( props ) => {
 		initiateTransfer,
 		transferState,
 		trackButtonAction,
+		isTransferring,
 	} = props;
 
 	if ( transferStates.COMPLETE === transferState ) {
@@ -53,9 +57,11 @@ export const WpcomPluginInstallButton = ( props ) => {
 		}
 	}
 
+	const label = isTransferring ? translate( 'Installing…' ) : translate( 'Install' );
+
 	return (
 		<Button onClick={ installButtonAction } primary={ true } disabled={ disabled }>
-			{ translate( 'Install' ) }
+			{ label }
 		</Button>
 	);
 };

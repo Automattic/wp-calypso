@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -18,7 +19,7 @@ import {
 	HAPPYCHAT_CONNECTION_STATUS_RECONNECTING,
 	HAPPYCHAT_CONNECTION_STATUS_UNAUTHORIZED,
 	HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED,
-} from 'state/happychat/constants';
+} from 'calypso/state/happychat/constants';
 
 /**
  * Style dependencies
@@ -28,7 +29,14 @@ import './notices.scss';
 /*
  * Renders any notices about the chat session to the user
  */
-export class Notices extends Component {
+class Notices extends Component {
+	static propTypes = {
+		chatStatus: PropTypes.string,
+		connectionStatus: PropTypes.string,
+		isServerReachable: PropTypes.bool,
+		translate: PropTypes.func,
+	};
+
 	statusNotice() {
 		const { isServerReachable, connectionStatus, chatStatus, translate } = this.props;
 
@@ -86,9 +94,4 @@ export class Notices extends Component {
 	}
 }
 
-Notices.propTypes = {
-	chatStatus: PropTypes.string,
-	connectionStatus: PropTypes.string,
-	isServerReachable: PropTypes.bool,
-	translate: PropTypes.func,
-};
+export default localize( Notices );

@@ -6,13 +6,13 @@
  * External dependencies
  */
 const fetch = require( 'jest-fetch-mock' );
+import { extendAction } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
  */
 import { httpHandler } from '../';
-import { failureMeta, successMeta } from 'state/data-layer/wpcom-http';
-import { extendAction } from 'state/utils';
+import { failureMeta, successMeta } from 'calypso/state/data-layer/wpcom-http';
 
 const succeeder = { type: 'SUCCESS' };
 const failer = { type: 'FAIL' };

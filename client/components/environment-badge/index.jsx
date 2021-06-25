@@ -5,12 +5,12 @@
 
 import React from 'react';
 import { string, node } from 'prop-types';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
+import ExternalLink from 'calypso/components/external-link';
 
 /**
  * Style dependencies
@@ -23,14 +23,20 @@ export function PreferencesHelper() {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
-export function TestHelper() {
+export function FeaturesHelper() {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
-	return <div className="environment is-tests" />;
+	return <div className="environment is-features" />;
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
+}
+
+export function AuthHelper() {
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	return <div className="environment is-auth" />;
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
 export function Branch( { branchName, commitChecksum } ) {
-	return branchName === 'master' ? null : (
+	return branchName === 'trunk' ? null : (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		<span className="environment branch-name" title={ 'Commit ' + commitChecksum }>
 			{ branchName }

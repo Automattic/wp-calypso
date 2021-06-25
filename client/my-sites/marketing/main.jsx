@@ -10,21 +10,21 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import canCurrentUser from 'state/selectors/can-current-user';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import isVipSite from 'state/selectors/is-vip-site';
-import DocumentHead from 'components/data/document-head';
-import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import Main from 'components/main';
-import NavItem from 'components/section-nav/item';
-import NavTabs from 'components/section-nav/tabs';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import SectionNav from 'components/section-nav';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
-import UpsellNudge from 'blocks/upsell-nudge';
-import { FEATURE_NO_ADS } from 'lib/plans/constants';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import DocumentHead from 'calypso/components/data/document-head';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import Main from 'calypso/components/main';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import SectionNav from 'calypso/components/section-nav';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import { FEATURE_NO_ADS } from '@automattic/calypso-products';
 
 /**
  * Style Dependencies
@@ -37,6 +37,7 @@ export const Sharing = ( {
 	showButtons,
 	showConnections,
 	showTraffic,
+	showBusinessTools,
 	siteId,
 	isJetpack,
 	isVip,
@@ -82,6 +83,16 @@ export const Sharing = ( {
 		} );
 	}
 
+	// Include Business Tools link if a site is selected and the
+	// site is not VIP
+	if ( ! isVip && showBusinessTools ) {
+		filters.push( {
+			id: 'business-buttons',
+			route: '/marketing/business-tools' + pathSuffix,
+			title: translate( 'Business Tools' ),
+		} );
+	}
+
 	const selected = find( filters, { route: pathname } );
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
@@ -93,6 +104,9 @@ export const Sharing = ( {
 				brandFont
 				className="marketing__page-heading"
 				headerText={ translate( 'Marketing and Integrations' ) }
+				subHeaderText={ translate(
+					'Explore tools to build your audience, market your site, and engage your visitors.'
+				) }
 				align="left"
 			/>
 			{ filters.length > 0 && (
@@ -129,6 +143,7 @@ Sharing.propTypes = {
 	path: PropTypes.string,
 	showButtons: PropTypes.bool,
 	showConnections: PropTypes.bool,
+	showBusinessTools: PropTypes.bool,
 	siteId: PropTypes.number,
 	siteSlug: PropTypes.string,
 	translate: PropTypes.func,
@@ -137,13 +152,14 @@ Sharing.propTypes = {
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isJetpack = isJetpackSite( state, siteId );
+	const isAtomic = isSiteWpcomAtomic( state, siteId );
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
-	const hasSharedaddy = isJetpackModuleActive( state, siteId, 'sharedaddy' );
 
 	return {
-		showButtons: siteId && canManageOptions && ( ! isJetpack || hasSharedaddy ),
+		showButtons: siteId && canManageOptions,
 		showConnections: !! siteId,
 		showTraffic: canManageOptions && !! siteId,
+		showBusinessTools: ( !! siteId && canManageOptions && ! isJetpack ) || isAtomic,
 		isVip: isVipSite( state, siteId ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),

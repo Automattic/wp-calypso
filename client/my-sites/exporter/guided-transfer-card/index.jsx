@@ -5,23 +5,23 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
-import Button from 'components/forms/form-button';
+import QuerySiteGuidedTransfer from 'calypso/components/data/query-site-guided-transfer';
+import Button from 'calypso/components/forms/form-button';
 import {
 	isGuidedTransferAvailableForAllSites,
 	isRequestingGuidedTransferStatus,
-} from 'state/sites/guided-transfer/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getProductDisplayCost } from 'state/products-list/selectors';
-import InfoPopover from 'components/info-popover';
-import { GUIDED_TRANSFER } from 'lib/url/support';
+} from 'calypso/state/sites/guided-transfer/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
+import InfoPopover from 'calypso/components/info-popover';
+import { GUIDED_TRANSFER } from 'calypso/lib/url/support';
 
 /**
  * Style dependencies

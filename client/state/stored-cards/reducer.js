@@ -2,6 +2,7 @@
 /**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	STORED_CARDS_ADD_COMPLETED,
 	STORED_CARDS_FETCH,
@@ -10,8 +11,8 @@ import {
 	STORED_CARDS_DELETE,
 	STORED_CARDS_DELETE_COMPLETED,
 	STORED_CARDS_DELETE_FAILED,
-} from 'state/action-types';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { storedCardsSchema } from './schema';
 
 /**
@@ -106,9 +107,11 @@ export const isDeleting = ( state = {}, action ) => {
 	return state;
 };
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	hasLoadedFromServer,
 	isDeleting,
 	isFetching,
 	items,
 } );
+
+export default withStorageKey( 'storedCards', combinedReducer );

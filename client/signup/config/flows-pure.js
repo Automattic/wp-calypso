@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import { noop } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
-import { addQueryArgs } from 'lib/route';
+import { addQueryArgs } from 'calypso/lib/route';
+
+const noop = () => {};
 
 export function generateFlows( {
 	getSiteDestination = noop,
@@ -118,16 +118,7 @@ export function generateFlows( {
 			steps: [ 'user', 'domains', 'plans' ],
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
-			lastModified: '2020-03-03',
-			showRecaptcha: true,
-		},
-
-		'onboarding-plan-first': {
-			steps: [ 'user', 'plans', 'domains' ],
-			destination: getSignupDestination,
-			description:
-				'Shows the plan step before the domains step. Read more in https://wp.me/pbxNRc-cj.',
-			lastModified: '2020-04-22',
+			lastModified: '2020-12-10',
 			showRecaptcha: true,
 		},
 
@@ -140,10 +131,10 @@ export function generateFlows( {
 		},
 
 		desktop: {
-			steps: [ 'about', 'themes', 'domains', 'plans', 'user' ],
+			steps: [ 'user' ],
 			destination: getSignupDestination,
 			description: 'Signup flow for desktop app',
-			lastModified: '2020-08-11',
+			lastModified: '2021-03-26',
 			showRecaptcha: true,
 		},
 
@@ -221,64 +212,61 @@ export function generateFlows( {
 		allowContinue: false,
 	};
 
-	if ( isEnabled( 'signup/atomic-store-flow' ) ) {
-		// Important: For any changes done to the ecommerce flow,
-		// please copy the same changes to ecommerce-onboarding flow too
-		flows.ecommerce = {
-			steps: [ 'user', 'domains', 'plans-ecommerce-fulfilled' ],
-			destination: getSignupDestination,
-			description: 'Signup flow for creating an online store with an Atomic site',
-			lastModified: '2020-08-11',
-			showRecaptcha: true,
-		};
+	// Important: For any changes done to the ecommerce flow,
+	// please copy the same changes to ecommerce-onboarding flow too
+	flows.ecommerce = {
+		steps: [ 'user', 'domains', 'plans-ecommerce-fulfilled' ],
+		destination: getSignupDestination,
+		description: 'Signup flow for creating an online store with an Atomic site',
+		lastModified: '2020-08-11',
+		showRecaptcha: true,
+	};
 
-		flows[ 'ecommerce-onboarding' ] = {
-			steps: [ 'user', 'domains', 'plans-ecommerce' ],
-			destination: getSignupDestination,
-			description: 'Signup flow for creating an online store with an Atomic site',
-			lastModified: '2020-03-04',
-		};
+	flows[ 'ecommerce-onboarding' ] = {
+		steps: [ 'user', 'domains', 'plans-ecommerce' ],
+		destination: getSignupDestination,
+		description: 'Signup flow for creating an online store with an Atomic site',
+		lastModified: '2020-03-04',
+	};
 
-		flows[ 'ecommerce-design-first' ] = {
-			steps: [
-				'template-first-themes',
-				'user',
-				'site-type-with-theme',
-				'domains',
-				'plans-ecommerce',
-			],
-			destination: getSignupDestination,
-			description:
-				'Signup flow for creating an online store with an Atomic site, forked from the design-first flow',
-			lastModified: '2019-11-27',
-		};
-	}
+	flows[ 'ecommerce-design-first' ] = {
+		steps: [
+			'template-first-themes',
+			'user',
+			'site-type-with-theme',
+			'domains',
+			'plans-ecommerce',
+		],
+		destination: getSignupDestination,
+		description:
+			'Signup flow for creating an online store with an Atomic site, forked from the design-first flow',
+		lastModified: '2019-11-27',
+	};
 
-	if ( isEnabled( 'signup/wpcc' ) ) {
-		flows.wpcc = {
-			steps: [ 'oauth2-user' ],
-			destination: getRedirectDestination,
-			description: 'WordPress.com Connect signup flow',
-			lastModified: '2017-08-24',
-			disallowResume: true, // don't allow resume so we don't clear query params when we go back in the history
-		};
-	}
+	flows[ 'ecommerce-monthly' ] = {
+		steps: [ 'user', 'domains', 'plans-ecommerce-monthly' ],
+		destination: getSignupDestination,
+		description: 'Signup flow for creating an online store with an Atomic site',
+		lastModified: '2021-02-02',
+		showRecaptcha: true,
+	};
 
-	if ( isEnabled( 'signup/wpforteams' ) ) {
-		flows[ 'wp-for-teams' ] = {
-			steps: [ 'p2-site', 'p2-details', 'user' ],
-			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
-			description: 'P2 signup flow',
-			lastModified: '2020-08-11',
-			showRecaptcha: true,
-		};
+	flows.wpcc = {
+		steps: [ 'oauth2-user' ],
+		destination: getRedirectDestination,
+		description: 'WordPress.com Connect signup flow',
+		lastModified: '2017-08-24',
+		disallowResume: true, // don't allow resume so we don't clear query params when we go back in the history
+		showRecaptcha: true,
+	};
 
-		// Original name for the project was "WP for Teams". Since then, we've renamed it to "P2".
-		// However, backend and Marketing is expecting `wp-for-teams` as the `signup_flow_name` var
-		// so we force it in client/lib/signup/step-actions/index.js `createAccount` function.
-		// Keeping both flows for clarity.
-		flows.p2 = { ...flows[ 'wp-for-teams' ] };
-	}
+	flows.p2 = {
+		steps: [ 'p2-site', 'p2-details', 'user' ],
+		destination: ( dependencies ) => `https://${ dependencies.siteSlug }?p2-site`,
+		description: 'P2 signup flow',
+		lastModified: '2020-09-01',
+		showRecaptcha: true,
+	};
 
 	flows.domain = {
 		steps: [
@@ -376,6 +364,7 @@ export function generateFlows( {
 		lastModified: '2018-11-14',
 		disallowResume: true,
 		autoContinue: true,
+		showRecaptcha: true,
 	};
 
 	flows[ 'plan-no-domain' ] = {
@@ -386,15 +375,6 @@ export function generateFlows( {
 		showRecaptcha: true,
 	};
 
-	if ( isEnabled( 'signup/full-site-editing' ) ) {
-		flows[ 'test-fse' ] = {
-			steps: [ 'user', 'fse-themes', 'domains', 'plans' ],
-			destination: getSignupDestination,
-			description: 'User testing Signup flow for Full Site Editing',
-			lastModified: '2019-12-02',
-		};
-	}
-
 	flows[ 'new-launch' ] = {
 		steps: [ 'domains-launch', 'plans-launch', 'launch' ],
 		destination: getLaunchDestination,
@@ -402,6 +382,51 @@ export function generateFlows( {
 		lastModified: '2020-04-28',
 		pageTitle: translate( 'Launch your site' ),
 		providesDependenciesInQuery: [ 'siteSlug', 'source' ],
+	};
+
+	flows[ 'launch-only' ] = {
+		steps: [ 'launch' ],
+		destination: getLaunchDestination,
+		description:
+			'Launch flow without domain or plan selected, used for sites that already have a paid plan and domain (e.g. via the launch banner in the site preview)',
+		lastModified: '2020-11-30',
+		pageTitle: translate( 'Launch your site' ),
+		providesDependenciesInQuery: [ 'siteSlug' ],
+	};
+
+	flows[ 'business-monthly' ] = {
+		steps: [ 'user', 'domains', 'plans-business-monthly' ],
+		destination: getSignupDestination,
+		description:
+			'Create an account and a blog and then add the business monthly plan to the users cart.',
+		lastModified: '2021-02-02',
+		showRecaptcha: true,
+	};
+
+	flows[ 'premium-monthly' ] = {
+		steps: [ 'user', 'domains', 'plans-premium-monthly' ],
+		destination: getSignupDestination,
+		description:
+			'Create an account and a blog and then add the premium monthly plan to the users cart.',
+		lastModified: '2021-02-02',
+		showRecaptcha: true,
+	};
+
+	flows[ 'personal-monthly' ] = {
+		steps: [ 'user', 'domains', 'plans-personal-monthly' ],
+		destination: getSignupDestination,
+		description:
+			'Create an account and a blog and then add the personal monthly plan to the users cart.',
+		lastModified: '2021-02-02',
+		showRecaptcha: true,
+	};
+
+	flows[ 'with-design-picker' ] = {
+		steps: [ 'user', 'domains', 'plans', 'design' ],
+		destination: getSignupDestination,
+		description: 'Default onboarding experience with design picker as the last step',
+		lastModified: '2021-03-29',
+		showRecaptcha: true,
 	};
 
 	return flows;

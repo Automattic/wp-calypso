@@ -10,16 +10,16 @@ import { isDesktop } from '@automattic/viewport';
 /**
  * Internal dependencies
  */
-import InlineSupportLink from 'components/inline-support-link';
-import { localizeUrl } from 'lib/i18n-utils';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
-import { FEATURE_QUICK_START_VIDEO } from 'my-sites/customer-home/cards/constants';
-import MaterialIcon from 'components/material-icon';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { FEATURE_QUICK_START_VIDEO } from 'calypso/my-sites/customer-home/cards/constants';
+import MaterialIcon from 'calypso/components/material-icon';
 
 /**
  * Style dependencies
  */
-import quickStartVideoImage from 'assets/images/customer-home/quick-start-video-ss.png';
+import quickStartVideoImage from 'calypso/assets/images/customer-home/quick-start-video-ss.png';
 
 export const QuickStartVideo = ( { trackQuickStartImpression } ) => {
 	const translate = useTranslate();
@@ -30,9 +30,6 @@ export const QuickStartVideo = ( { trackQuickStartImpression } ) => {
 
 	return (
 		<div className="quick-start-video">
-			<h2 className="quick-start-video__heading customer-home__section-heading">
-				{ translate( 'Watch this video to get started' ) }
-			</h2>
 			<Card>
 				<div className="quick-start-video__content educational-content">
 					<div className="quick-start-video__content-wrapper educational-content__wrapper">

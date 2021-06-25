@@ -10,12 +10,15 @@
 		line-height: 1.3; /* 24/18 */
 	}
 
+	&__section-title-fix {
+		margin-top: 20px;
+	}
+
 	&__section-text {
 		margin-bottom: 16px;
 
 		color: var( --color-text-subtle );
 		font-size: $font-body-small;
-		line-height: 1.3; /* 21/16 */
 
 		@include breakpoint-deprecated( '>660px' ) {
 			margin-bottom: 24px;

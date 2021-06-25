@@ -190,7 +190,7 @@
 	// be more specific in scope to override the panel mode
 	.layout.has-chat:not( .is-group-editor ):not( .is-section-theme ):not( .is-group-reader ):not( .has-no-sidebar ) .happychat__container.is-open {
 		position: fixed;
-		height: calc( 100% - 47px );
+		height: calc( 100% - var( --masterbar-height ) );
 		bottom: 0;
 		right: 0;
 		width: 272px;

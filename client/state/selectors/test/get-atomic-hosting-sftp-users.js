@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { getAtomicHostingSftpUsers } from 'state/selectors/get-atomic-hosting-sftp-users';
+import { getAtomicHostingSftpUsers } from 'calypso/state/selectors/get-atomic-hosting-sftp-users';
 
 describe( 'getAtomicHostingSftpUsers()', () => {
 	test( 'should return null if there is no hosting data', () => {

@@ -5,16 +5,11 @@ import fs from 'fs';
 import path from 'path';
 import { defaults, groupBy, flatten } from 'lodash';
 
-const ASSETS_PATH = path.join( __dirname, '../', 'bundler' );
+const ASSETS_PATH = path.resolve( __dirname, '../../../build' );
 const EMPTY_ASSETS = { js: [], 'css.ltr': [], 'css.rtl': [] };
 
-const getAssetsPath = ( target ) => {
-	const result = path.join(
-		ASSETS_PATH,
-		target ? `assets-${ target }.json` : 'assets-fallback.json'
-	);
-	return result;
-};
+const getAssetsPath = ( target ) =>
+	path.join( ASSETS_PATH, `assets-${ target || 'fallback' }.json` );
 
 const getAssetType = ( asset ) => {
 	if ( asset.endsWith( '.rtl.css' ) ) {
@@ -35,15 +30,10 @@ const getChunkById = ( assets, chunkId ) => assets.chunks.find( ( chunk ) => chu
 const groupAssetsByType = ( assets ) => defaults( groupBy( assets, getAssetType ), EMPTY_ASSETS );
 
 export default () => {
-	const cachedAssets = {};
-
 	return ( req, res, next ) => {
 		req.getAssets = () => {
 			const target = req.getTarget();
-			if ( ! cachedAssets[ target ] ) {
-				cachedAssets[ target ] = JSON.parse( fs.readFileSync( getAssetsPath( target ), 'utf8' ) );
-			}
-			return cachedAssets[ target ];
+			return JSON.parse( fs.readFileSync( getAssetsPath( target ), 'utf8' ) );
 		};
 
 		req.getFilesForEntrypoint = ( name ) => {

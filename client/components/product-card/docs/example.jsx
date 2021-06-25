@@ -85,7 +85,7 @@ function ProductCardExample() {
 							billingTimeFrame: isPlaceholder ? null : 'per year',
 							fullPrice: isPlaceholder ? null : 25,
 							slug: 'jetpack_backup_realtime_monthly',
-							title: 'Real-Time Backups',
+							title: 'Real-time Backups',
 						},
 					] }
 					selectedSlug={ selectedProductOption }
@@ -112,8 +112,8 @@ function ProductCardExample() {
 				purchase={ purchase }
 			>
 				<ProductCardAction
-					intro="Get Real-Time Backups $16 /year"
-					label="Upgrade to Real-Time Backups"
+					intro="Get Real-time Backups $16 /year"
+					label="Upgrade to Real-time Backups"
 				/>
 			</ProductCard>
 
@@ -121,7 +121,7 @@ function ProductCardExample() {
 			<ProductCard
 				title={
 					<Fragment>
-						Jetpack Backup <em>Real-Time</em>
+						Jetpack Backup <em>Real-time</em>
 					</Fragment>
 				}
 				subtitle={
@@ -134,7 +134,7 @@ function ProductCardExample() {
 				purchase={ purchase }
 			>
 				<ProductCardAction
-					intro="Get Real-Time backups"
+					intro="Get Real-time backups"
 					label="Upgrade to Professional $299/year"
 				/>
 			</ProductCard>

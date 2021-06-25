@@ -1,16 +1,10 @@
 /**
- * External Dependencies
- */
-import { flow } from 'lodash';
-
-/**
  * Internal Dependencies
  */
-import { getLastRouteAction } from 'state/ui/action-log/selectors';
-import pathToSection from 'lib/path-to-section';
-import { getContextResults } from 'blocks/inline-help/contextual-help';
+import { getSectionName } from 'calypso/state/ui/selectors';
+import { getContextResults } from 'calypso/blocks/inline-help/contextual-help';
 
-import 'state/inline-help/init';
+import 'calypso/state/inline-help/init';
 
 /**
  * Returns an array of contextual results
@@ -18,10 +12,4 @@ import 'state/inline-help/init';
  * @param  {object}  state  Global state tree
  * @returns {Array}         List of contextual results based on route
  */
-export default flow(
-	getLastRouteAction,
-	( x ) => x.path,
-	pathToSection,
-	getContextResults,
-	( x = [] ) => x
-);
+export default ( state ) => getContextResults( getSectionName( state ) );

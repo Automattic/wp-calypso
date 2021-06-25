@@ -7,9 +7,8 @@ import { size } from 'lodash';
 /**
  * Internal dependencies
  */
-import { ConversationCaterpillar } from 'blocks/conversation-caterpillar';
-import { posts } from 'blocks/reader-post-card/docs/fixtures';
-import { comments, commentsTree } from 'blocks/conversation-caterpillar/docs/fixtures';
+import { ConversationCaterpillar } from 'calypso/blocks/conversation-caterpillar';
+import { comments, commentsTree } from 'calypso/blocks/conversation-caterpillar/docs/fixtures';
 import { Card } from '@automattic/components';
 
 const ConversationCaterpillarExample = () => {

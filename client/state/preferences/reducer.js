@@ -1,25 +1,18 @@
 /**
- * External dependencies
- */
-import { omit } from 'lodash';
-
-/**
  * Internal dependencies
  */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	PREFERENCES_SET,
+	PREFERENCES_SAVE,
 	PREFERENCES_RECEIVE,
 	PREFERENCES_FETCH,
 	PREFERENCES_FETCH_SUCCESS,
 	PREFERENCES_FETCH_FAILURE,
 	PREFERENCES_SAVE_SUCCESS,
-} from 'state/action-types';
-import {
-	combineReducers,
-	withoutPersistence,
-	withSchemaValidation,
-	withStorageKey,
-} from 'state/utils';
+	PREFERENCES_SAVE_FAILURE,
+} from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { remoteValuesSchema } from './schema';
 
 /**
@@ -32,7 +25,7 @@ import { remoteValuesSchema } from './schema';
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const localValues = withoutPersistence( ( state = {}, action ) => {
+export const localValues = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case PREFERENCES_SET: {
 			const { key, value } = action;
@@ -43,13 +36,13 @@ export const localValues = withoutPersistence( ( state = {}, action ) => {
 			return { ...state, [ key ]: value };
 		}
 		case PREFERENCES_SAVE_SUCCESS: {
-			const { key } = action;
-			return omit( state, key );
+			const { [ action.key ]: removed, ...rest } = state;
+			return rest;
 		}
 	}
 
 	return state;
-} );
+};
 
 /**
  * Returns the updated remote values state after an action has been dispatched.
@@ -71,7 +64,7 @@ export const remoteValues = withSchemaValidation( remoteValuesSchema, ( state = 
 	return state;
 } );
 
-export const fetching = withoutPersistence( ( state = false, action ) => {
+export const fetching = ( state = false, action ) => {
 	switch ( action.type ) {
 		case PREFERENCES_FETCH_SUCCESS:
 			return false;
@@ -82,21 +75,36 @@ export const fetching = withoutPersistence( ( state = false, action ) => {
 	}
 
 	return state;
-} );
+};
 
-const lastFetchedTimestamp = withoutPersistence( ( state = false, action ) => {
+export const failed = ( state = false, action ) => {
+	switch ( action.type ) {
+		case PREFERENCES_SAVE:
+		case PREFERENCES_FETCH:
+		case PREFERENCES_SAVE_SUCCESS:
+		case PREFERENCES_FETCH_SUCCESS:
+			return false;
+		case PREFERENCES_SAVE_FAILURE:
+		case PREFERENCES_FETCH_FAILURE:
+			return true;
+	}
+	return state;
+};
+
+const lastFetchedTimestamp = ( state = false, action ) => {
 	switch ( action.type ) {
 		case PREFERENCES_FETCH_SUCCESS:
 			return Date.now();
 	}
 
 	return state;
-} );
+};
 
 const combinedReducer = combineReducers( {
 	localValues,
 	remoteValues,
 	fetching,
+	failed,
 	lastFetchedTimestamp,
 } );
 const preferencesReducer = withStorageKey( 'preferences', combinedReducer );

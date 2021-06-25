@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isPlainObject, values } from 'lodash';
+import { isPlainObject } from 'lodash';
 
 /**
  * Normalize API Settings
@@ -18,7 +18,7 @@ export function normalizeSettings( settings ) {
 				break;
 			case 'sharing_show':
 				if ( isPlainObject( settings[ key ] ) ) {
-					memo[ key ] = values( settings[ key ] );
+					memo[ key ] = Object.values( settings[ key ] );
 				} else {
 					memo[ key ] = settings[ key ];
 				}

@@ -19,11 +19,11 @@ export default class ActivityPage extends AsyncBaseContainer {
 		return await driver.wait( async () => {
 			await driver.navigate().refresh();
 			// Sometimes activity log take a long time to load it's content. lets wait for it.
-			await driverHelper.waitTillPresentAndDisplayed(
+			await driverHelper.waitUntilElementLocatedAndVisible(
 				driver,
 				By.css( '.activity-log-item:not(.is-loading)' )
 			);
-			return await driverHelper.isElementPresent(
+			return await driverHelper.isElementLocated(
 				driver,
 				// data-e2e-activity won't work since activity log has changed.
 				// By.css( `.activity-log-item__description-content[data-e2e-activity="${ postTitle }"]` )

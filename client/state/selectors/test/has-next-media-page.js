@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import hasNextMediaPage from 'state/selectors/has-next-media-page';
+import hasNextMediaPage from 'calypso/state/selectors/has-next-media-page';
 
 describe( 'hasNextMediaPage', () => {
 	const siteId = 23478323;

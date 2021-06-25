@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getConciergeAvailableTimes from 'state/selectors/get-concierge-available-times';
+import getConciergeAvailableTimes from 'calypso/state/selectors/get-concierge-available-times';
 
 describe( 'getConciergeAvailableTimes()', () => {
 	test( 'should be defaulted to null.', () => {

@@ -13,7 +13,7 @@ import { shallow } from 'enzyme';
  */
 import SingleDocClass from '../doc';
 
-jest.mock( 'devdocs/service', () => ( {
+jest.mock( 'calypso/devdocs/service', () => ( {
 	fetch: () => {},
 } ) );
 

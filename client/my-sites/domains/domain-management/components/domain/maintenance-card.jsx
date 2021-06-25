@@ -9,13 +9,13 @@ import moment from 'moment';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import { getTld } from 'lib/domains';
-import EmptyContent from 'components/empty-content';
+import { getTld } from 'calypso/lib/domains';
+import EmptyContent from 'calypso/components/empty-content';
 
 /**
  * Image dependencies
  */
-import whoopsImage from 'assets/images/illustrations/whoops.svg';
+import whoopsImage from 'calypso/assets/images/illustrations/whoops.svg';
 
 const MaintenanceCard = ( { selectedDomainName, translate, tldMaintenanceEndTime } ) => {
 	const tld = getTld( selectedDomainName );

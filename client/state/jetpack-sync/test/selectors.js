@@ -6,14 +6,16 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import {
+import selectors from '../selectors';
+
+const {
 	getSyncStatus,
 	getFullSyncRequest,
 	isPendingSyncStart,
 	isFullSyncing,
 	getSyncProgressPercentage,
 	isImmediateFullSync,
-} from '../selectors';
+} = selectors;
 
 const nonExistentId = '111111';
 const requestedSiteId = '123456';

@@ -1,0 +1,35 @@
+{
+	"files": [],
+
+	// Reference all TS packages
+	"references": [
+		{ "path": "./accessible-focus" },
+		{ "path": "./browser-data-collector" },
+		{ "path": "./calypso-analytics" },
+		{ "path": "./calypso-config" },
+		{ "path": "./calypso-products" },
+		{ "path": "./calypso-stripe" },
+		{ "path": "./calypso-url" },
+		{ "path": "./components" },
+		{ "path": "./composite-checkout" },
+		{ "path": "./create-calypso-config" },
+		{ "path": "./explat-client" },
+		{ "path": "./explat-client-react-helpers" },
+		{ "path": "./state-utils" },
+		{ "path": "./data-stores" },
+		{ "path": "./design-picker" },
+		{ "path": "./domain-picker" },
+		{ "path": "./i18n-utils" },
+		{ "path": "./js-utils" },
+		{ "path": "./language-picker" },
+		{ "path": "./languages" },
+		{ "path": "./launch" },
+		{ "path": "./onboarding" },
+		{ "path": "./page-pattern-modal" },
+		{ "path": "./plans-grid" },
+		{ "path": "./search" },
+		{ "path": "./shopping-cart" },
+		{ "path": "./tree-select" },
+		{ "path": "./wpcom-checkout" }
+	]
+}

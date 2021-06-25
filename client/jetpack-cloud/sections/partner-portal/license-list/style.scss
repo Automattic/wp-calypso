@@ -1,0 +1,77 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
+.license-list {
+	&__header {
+		&.card.is-compact {
+			display: none;
+
+			@include break-xlarge() {
+				display: block;
+				padding-top: 0;
+				padding-bottom: 0;
+			}
+		}
+	}
+
+	&__empty-list {
+		text-align: center;
+
+		h2 {
+			margin-top: 3rem;
+			margin-bottom: 1rem;
+			font-size: $font-title-medium;
+		}
+		p {
+			margin-bottom: 1rem;
+			font-size: $font-body;
+		}
+
+		.button {
+			margin-top: 1.75rem;
+			margin-bottom: 1.75rem;
+			color: var( --color-accent );
+		}
+	}
+
+	&__license-transition {
+		&-enter {
+			display: none;
+
+			&-active {
+				animation: license-list__transition-enter 0.15s linear;
+			}
+		}
+
+		&-exit {
+			opacity: 1;
+
+			&-active {
+				opacity: 0.01;
+				transition: opacity 0.15s linear;
+			}
+		}
+	}
+
+	&__pagination {
+		margin: 64px 0;
+	}
+}
+
+@keyframes license-list__transition-enter {
+	0% {
+		display: none;
+		opacity: 0;
+	}
+	50% {
+		display: none;
+		opacity: 0;
+	}
+	51% {
+		display: block;
+		opacity: 0.01;
+	}
+	100% {
+		opacity: 1;
+	}
+}

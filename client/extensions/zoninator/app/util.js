@@ -7,7 +7,7 @@ import { find, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSections } from 'sections-helper';
+import { getSections } from 'calypso/sections-helper';
 
 const getSettingsPath = () => {
 	const sections = getSections();

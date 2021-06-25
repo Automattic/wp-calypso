@@ -9,14 +9,17 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
-import { siteHasScanProductPurchase } from 'state/purchases/selectors';
-import isJetpackSectionEnabledForSite from 'state/selectors/is-jetpack-section-enabled-for-site';
-import isRewindActive from 'state/selectors/is-rewind-active';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import SectionNav from 'calypso/components/section-nav';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import NavItem from 'calypso/components/section-nav/item';
+import { siteHasScanProductPurchase } from 'calypso/state/purchases/selectors';
+import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
+import isSiteFailedMigrationSource from 'calypso/state/selectors/is-site-failed-migration-source';
+import isRewindActive from 'calypso/state/selectors/is-rewind-active';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteOption, isJetpackSite } from 'calypso/state/sites/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import versionCompare from 'calypso/lib/version-compare';
 
 export class SiteSettingsNavigation extends Component {
 	static propTypes = {
@@ -39,9 +42,13 @@ export class SiteSettingsNavigation extends Component {
 	}
 
 	render() {
-		const { section, site, shouldShowJetpackSettings } = this.props;
+		const { section, site, shouldShowSettings, shouldShowJetpackSettings } = this.props;
 		const strings = this.getStrings();
 		const selectedText = strings[ section ];
+
+		if ( ! shouldShowSettings ) {
+			return null;
+		}
 
 		if ( ! site ) {
 			return <SectionNav />;
@@ -59,7 +66,7 @@ export class SiteSettingsNavigation extends Component {
 						{ strings.general }
 					</NavItem>
 
-					{ config.isEnabled( 'manage/security' ) && site.jetpack && (
+					{ site.jetpack && (
 						<NavItem
 							path={ `/settings/security/${ site.slug }` }
 							preloadSectionName="settings-security"
@@ -112,11 +119,23 @@ export default connect( ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 
+	// Do not render if the settings pages can be accessed directly from the sidebar menu (requires https://github.com/Automattic/jetpack/pull/20100).
+	let shouldShowSettings = false;
+	if ( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) {
+		const jetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
+		if ( jetpackVersion && versionCompare( jetpackVersion, '9.9-alpha', '<' ) ) {
+			shouldShowSettings = true;
+		}
+	}
+
 	return {
 		site,
+		shouldShowSettings,
 		shouldShowJetpackSettings:
 			siteId &&
 			isJetpackSectionEnabledForSite( state, siteId ) &&
-			( siteHasScanProductPurchase( state, siteId ) || isRewindActive( state, siteId ) ),
+			( siteHasScanProductPurchase( state, siteId ) ||
+				isRewindActive( state, siteId ) ||
+				isSiteFailedMigrationSource( state, siteId ) ),
 	};
 } )( localize( SiteSettingsNavigation ) );

@@ -31,7 +31,7 @@ import {
 	getRecommendedThemes,
 	receiveRecommendedThemes,
 } from '../actions';
-import ThemeQueryManager from 'lib/query-manager/theme';
+import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
@@ -59,11 +59,8 @@ import {
 	THEMES_REQUEST,
 	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
-} from 'state/themes/action-types';
-import useNock from 'test-helpers/use-nock';
-
-// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+} from 'calypso/state/themes/action-types';
+import useNock from 'calypso/test-helpers/use-nock';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
@@ -1170,19 +1167,22 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#getRecommendedThemes()', () => {
+		const filter = 'nonsense-test-filter';
 		test( 'should dispatch fetch action', () => {
-			getRecommendedThemes()( spy );
-			expect( spy ).to.have.been.calledWith( { type: RECOMMENDED_THEMES_FETCH } );
+			getRecommendedThemes( filter )( spy );
+			expect( spy ).to.have.been.calledWith( { type: RECOMMENDED_THEMES_FETCH, filter } );
 		} );
 	} );
 
 	describe( '#receiveRecommendedThemes()', () => {
-		const themes = [];
+		const themes = [ 'a', 'b', 'c' ];
+		const filter = 'test-filter-nonsense';
 		test( 'should dispatch success action with themes as payload', () => {
-			receiveRecommendedThemes( themes )( spy );
+			receiveRecommendedThemes( themes, filter )( spy );
 			expect( spy ).to.have.been.calledWith( {
 				type: RECOMMENDED_THEMES_SUCCESS,
 				payload: themes,
+				filter,
 			} );
 		} );
 	} );

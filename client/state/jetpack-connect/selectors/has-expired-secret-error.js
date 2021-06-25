@@ -6,9 +6,9 @@ import { get, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getAuthorizationData } from 'state/jetpack-connect/selectors/get-authorization-data';
+import { getAuthorizationData } from 'calypso/state/jetpack-connect/selectors/get-authorization-data';
 
-import 'state/jetpack-connect/init';
+import 'calypso/state/jetpack-connect/init';
 
 /**
  * Returns true if there is an expired secret error.

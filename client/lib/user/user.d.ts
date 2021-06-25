@@ -2,8 +2,6 @@
  * External Dependencies
  */
 import { EventEmitter } from 'events';
-import { Language } from '../../languages';
-import { GravatarOptions } from '../../gravatar/types';
 import { URL, JSONSerializable } from '../../types';
 
 type WPCOMError = { message: string };
@@ -31,14 +29,7 @@ export interface User extends EventEmitter {
 	fetch: () => Promise< void >;
 	handleFetchFailure: ( error: Error ) => void;
 	handleFetchSuccess: ( userdata: UserData ) => void;
-	getLanguage: () => Language | undefined;
-	getAvatarUrl: ( options: GravatarOptions ) => URL;
-	clear: () => Promise< void > | void;
-	sendVerificationEmail< Callback extends WPCOMCallback >( callback: Callback ): XMLHttpRequest;
-	sendVerificationEmail(): Promise< void >;
 	set: ( attributes: UserData ) => boolean;
-	decrementSiteCount: () => void;
-	incrementSiteCount: () => void;
 	verificationPollerCallback: ( signal?: true ) => void;
 	checkVerification: () => void;
 	signalVerification: () => void;
@@ -70,9 +61,11 @@ export type OptionalUserData = {
 	primary_blog_is_jetpack: boolean;
 	primary_blog_url: string;
 	site_count: number;
+	jetpack_site_count?: number;
 	social_login_connections: unknown;
 	user_ip_country_code: string;
 	user_URL: string;
 	username: string;
 	visible_site_count: number;
+	jetpack_visible_site_count?: number;
 };

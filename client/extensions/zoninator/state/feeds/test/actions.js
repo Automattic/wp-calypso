@@ -49,11 +49,10 @@ describe( 'actions', () => {
 
 	describe( 'saveFeed()', () => {
 		test( 'should return an action object', () => {
-			const action = saveFeed( siteId, zoneId, 'test-form', posts );
+			const action = saveFeed( siteId, zoneId, posts );
 
 			expect( action ).to.deep.equal( {
 				type: ZONINATOR_SAVE_FEED,
-				form: 'test-form',
 				posts,
 				siteId,
 				zoneId,

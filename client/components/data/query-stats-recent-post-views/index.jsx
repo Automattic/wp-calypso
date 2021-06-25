@@ -10,7 +10,7 @@ import { chunk, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import { requestRecentPostViews } from 'state/stats/recent-post-views/actions';
+import { requestRecentPostViews } from 'calypso/state/stats/recent-post-views/actions';
 
 class QueryRecentPostViews extends Component {
 	static propTypes = {

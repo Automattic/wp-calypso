@@ -1,14 +1,13 @@
-ShareButton (JSX)
-====================
+# ShareButton (JSX)
 
 ShareButton is a component which allows you to open a popup window to share content on various services. Supported services are WordPress, Facebook, Twitter, LinkedIn, Tumblr, Pinterest and Telegram.
 
--------
+---
 
-#### How to use:
+## How to use
 
 ```js
-import ShareButton from 'components/share-button';
+import ShareButton from 'calypso/components/share-button';
 
 function MyButton() {
 	const service = {
@@ -27,13 +26,13 @@ function MyButton() {
 }
 ```
 
---------
+---
 
-#### Props
+## Props
 
-* `size`: (string) The size of the button
-* `url`: (string) The URL of the content to share
-* `title`: (string) The title of the content to share
-* `service`: (object) The serice to share on - contains a `url` and `windowArg` to append to the URL
+- `size`: (string) The size of the button
+- `url`: (string) The URL of the content to share
+- `title`: (string) The title of the content to share
+- `service`: (object) The serice to share on - contains a `url` and `windowArg` to append to the URL
 
 A full list of supported services and associated URLs and windowArgs are at `components/share-button/servicesjs`.

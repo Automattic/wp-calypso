@@ -4,13 +4,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { find, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 
 /**
  * Style dependencies
@@ -37,12 +38,12 @@ function renderAffix( currencyValue, onCurrencyChange, currencyList ) {
 		currencyValue
 	);
 
-	// For an editable currency, display a <select> overlay
+	// For an editable currency, display a <FormSelect> overlay
 	return (
 		<span className="form-currency-input__affix">
 			{ currencyLabel }
 			<Gridicon icon="chevron-down" size={ 18 } className="form-currency-input__select-icon" />
-			<select
+			<FormSelect
 				className="form-currency-input__select"
 				value={ currencyValue }
 				onChange={ onCurrencyChange }
@@ -53,7 +54,7 @@ function renderAffix( currencyValue, onCurrencyChange, currencyList ) {
 						{ label }
 					</option>
 				) ) }
-			</select>
+			</FormSelect>
 		</span>
 	);
 }

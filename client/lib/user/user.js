@@ -1,10 +1,9 @@
 /**
  * External dependencies
  */
-import { entries, isEqual } from 'lodash';
-import store from 'store';
+import { isEqual } from 'lodash';
 import debugFactory from 'debug';
-import config from 'config';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -14,14 +13,11 @@ import {
 	isSupportNextSession,
 	supportUserBoot,
 	supportNextBoot,
-} from 'lib/user/support-user-interop';
-import wpcom from 'lib/wp';
-import Emitter from 'lib/mixins/emitter';
-import { isE2ETest } from 'lib/e2e';
+} from 'calypso/lib/user/support-user-interop';
+import wpcom from 'calypso/lib/wp';
+import Emitter from 'calypso/lib/mixins/emitter';
+import { clearStore, getStoredUserId, setStoredUserId } from './store';
 import { getComputedAttributes, filterUserObject } from './shared-utils';
-import { getLanguage } from 'lib/i18n-utils/utils';
-import { clearStorage } from 'lib/browser-storage';
-import { getActiveTestNames, ABTEST_LOCALSTORAGE_KEY } from 'lib/abtest/utility';
 
 const debug = debugFactory( 'calypso:user' );
 
@@ -91,11 +87,11 @@ User.prototype.initialize = async function () {
  * @param {number} userId The new user ID.
  **/
 User.prototype.clearStoreIfChanged = function ( userId ) {
-	const storedUserId = store.get( 'wpcom_user_id' );
+	const storedUserId = getStoredUserId();
 
 	if ( storedUserId != null && storedUserId !== userId ) {
 		debug( 'Clearing localStorage because user changed' );
-		store.clearAll();
+		clearStore();
 	}
 };
 
@@ -126,7 +122,6 @@ User.prototype.fetch = function () {
 		.me()
 		.get( {
 			meta: 'flags',
-			abtests: getActiveTestNames( { appendDatestamp: true, asCSV: true } ),
 		} )
 		.then( ( data ) => {
 			debug( 'User successfully retrieved from api:', data );
@@ -172,85 +167,17 @@ User.prototype.handleFetchSuccess = function ( userData ) {
 	this.clearStoreIfChanged( userData.ID );
 
 	// Store user ID in local storage so that we can detect a change and clear the storage
-	store.set( 'wpcom_user_id', userData.ID );
+	setStoredUserId( userData.ID );
 
-	if ( userData.abtests ) {
-		if ( config.isEnabled( 'dev/test-helper' ) || isE2ETest() ) {
-			// This section will preserve the existing localStorage A/B variation values,
-			// This is necessary for the A/B test helper component and e2e tests..
-			const initialVariationsFromStore = store.get( ABTEST_LOCALSTORAGE_KEY );
-			const initialVariations =
-				typeof initialVariationsFromStore === 'object' ? initialVariationsFromStore : undefined;
-			store.set( ABTEST_LOCALSTORAGE_KEY, {
-				...userData.abtests,
-				...initialVariations,
-			} );
-		} else {
-			store.set( ABTEST_LOCALSTORAGE_KEY, userData.abtests );
-		}
-	}
 	this.data = userData;
+
 	this.emit( 'change' );
-};
-
-User.prototype.getLanguage = function () {
-	return getLanguage( this.data.localeSlug );
-};
-
-/**
- * Get the URL for a user's avatar (from Gravatar). Uses
- * the short-form query string parameters as options,
- * sets some sane defaults.
- *
- * @param {object} options Options per https://secure.gravatar.com/site/implement/images/
- *
- * @returns {string} The user's avatar URL based on the options parameter.
- */
-User.prototype.getAvatarUrl = function ( options = {} ) {
-	const defaultOptions = {
-		s: 80,
-		d: 'mm',
-		r: 'G',
-	};
-	const avatarURL = this.get().avatar_URL;
-	const avatar = typeof avatarURL === 'string' ? avatarURL.split( '?' )[ 0 ] : '';
-
-	options = { ...options, ...defaultOptions };
-	return avatar + '?' + new URLSearchParams( options ).toString();
-};
-
-/**
- * Clear any user data.
- */
-User.prototype.clear = async function () {
-	/**
-	 * Clear internal user data and empty localStorage cache
-	 * to discard any user reference that the application may hold
-	 */
-	this.data = false;
-	store.clearAll();
-	if ( config.isEnabled( 'persist-redux' ) ) {
-		await clearStorage();
-	}
-};
-
-/**
- * Sends the user an email with a link to verify their account if they
- * are unverified.
- *
- * @param {Function} [fn] A callback to receive the HTTP response from the send-verification-email endpoint.
- *
- * @returns {(Promise|object)} If a callback is provided, this is an object representing an XMLHttpRequest.
- *                             If no callback is provided, this is a Promise.
- */
-User.prototype.sendVerificationEmail = function ( fn ) {
-	return wpcom.undocumented().me().sendVerificationEmail( fn );
 };
 
 User.prototype.set = function ( attributes ) {
 	let changed = false;
 
-	for ( const [ attrName, attrValue ] of entries( attributes ) ) {
+	for ( const [ attrName, attrValue ] of Object.entries( attributes ) ) {
 		if ( ! isEqual( attrValue, this.data[ attrName ] ) ) {
 			this.data[ attrName ] = attrValue;
 			changed = true;
@@ -263,28 +190,6 @@ User.prototype.set = function ( attributes ) {
 	}
 
 	return changed;
-};
-
-User.prototype.decrementSiteCount = function () {
-	const user = this.get();
-	if ( user ) {
-		this.set( {
-			visible_site_count: user.visible_site_count - 1,
-			site_count: user.site_count - 1,
-		} );
-	}
-	this.fetch();
-};
-
-User.prototype.incrementSiteCount = function () {
-	const user = this.get();
-	if ( user ) {
-		return this.set( {
-			visible_site_count: user.visible_site_count + 1,
-			site_count: user.site_count + 1,
-		} );
-	}
-	this.fetch();
 };
 
 /**

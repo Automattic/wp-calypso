@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { connect, useDispatch } from 'react-redux';
 import { Button } from '@automattic/components';
@@ -11,19 +11,20 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Badge from 'components/badge';
-import Gridicon from 'components/gridicon';
-import PopoverMenu from 'components/popover/menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import Spinner from 'components/spinner';
+import Badge from 'calypso/components/badge';
+import Gridicon from 'calypso/components/gridicon';
+import PopoverMenu from 'calypso/components/popover/menu';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import Spinner from 'calypso/components/spinner';
 import {
 	bumpStat,
 	composeAnalytics,
 	recordTracksEvent,
 	withAnalytics,
-} from 'state/analytics/actions';
-import { skipCurrentViewHomeLayout } from 'state/home/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+} from 'calypso/state/analytics/actions';
+import { skipViewHomeLayout } from 'calypso/state/home/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getHomeLayout } from 'calypso/state/selectors/get-home-layout';
 
 /**
  * Style dependencies
@@ -31,6 +32,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import './style.scss';
 
 const Task = ( {
+	actionButton,
 	actionOnClick,
 	actionTarget,
 	actionText,
@@ -38,19 +40,26 @@ const Task = ( {
 	badgeText,
 	completeOnStart = false,
 	description,
+	hasAction = true,
 	illustration,
+	isLoading: forceIsLoading = false,
+	isUrgent = false,
+	showSkip = true,
 	enableSkipOptions = true,
+	scary,
 	siteId,
 	taskId,
 	timing,
 	title,
-	actionButton,
+	currentView,
 } ) => {
-	const [ isLoading, setIsLoading ] = useState( false );
+	const [ isLoading, setIsLoading ] = useState( forceIsLoading );
 	const [ areSkipOptionsVisible, setSkipOptionsVisible ] = useState( false );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const skipButtonRef = useRef( null );
+
+	useEffect( () => setIsLoading( forceIsLoading ), [ forceIsLoading ] );
 
 	const startTask = () => {
 		if ( actionOnClick instanceof Function ) {
@@ -59,7 +68,7 @@ const Task = ( {
 
 		if ( completeOnStart ) {
 			setIsLoading( true );
-			dispatch( skipCurrentViewHomeLayout( siteId ) );
+			dispatch( skipViewHomeLayout( siteId, currentView ) );
 		}
 
 		dispatch(
@@ -85,21 +94,44 @@ const Task = ( {
 					} ),
 					bumpStat( 'calypso_customer_home', 'task_skip' )
 				),
-				skipCurrentViewHomeLayout( siteId, reminder )
+				skipViewHomeLayout( siteId, currentView, reminder )
 			)
 		);
 	};
 
 	const ActionButtonWithStats = ( { children } ) => {
 		return (
-			<div onClick={ startTask } role="presentation">
+			<div onClick={ startTask } role="presentation" className="task__action">
 				{ children }
 			</div>
 		);
 	};
 
+	const renderAction = () => {
+		if ( ! hasAction ) {
+			return null;
+		}
+
+		if ( actionButton ) {
+			return <ActionButtonWithStats>{ actionButton }</ActionButtonWithStats>;
+		}
+
+		return (
+			<Button
+				className="task__action"
+				primary
+				scary={ scary }
+				onClick={ startTask }
+				href={ actionUrl }
+				target={ actionTarget }
+			>
+				{ actionText }
+			</Button>
+		);
+	};
+
 	return (
-		<div className={ classnames( 'task', { 'is-loading': isLoading } ) }>
+		<div className={ classnames( 'task', { 'is-loading': isLoading, 'is-urgent': isUrgent } ) }>
 			{ isLoading && <Spinner /> }
 			<div className="task__text">
 				{ timing && (
@@ -116,28 +148,18 @@ const Task = ( {
 				<h2 className="task__title">{ title }</h2>
 				<p className="task__description">{ description }</p>
 				<div className="task__actions">
-					{ actionButton ? (
-						<ActionButtonWithStats>{ actionButton }</ActionButtonWithStats>
-					) : (
+					{ renderAction() }
+					{ showSkip && (
 						<Button
-							className="task__action"
-							primary
-							onClick={ startTask }
-							href={ actionUrl }
-							target={ actionTarget }
+							className="task__skip is-link"
+							ref={ skipButtonRef }
+							onClick={ () => ( enableSkipOptions ? setSkipOptionsVisible( true ) : skipTask() ) }
 						>
-							{ actionText }
+							{ enableSkipOptions ? translate( 'Hide this' ) : translate( 'Dismiss' ) }
+							{ enableSkipOptions && <Gridicon icon="dropdown" size={ 18 } /> }
 						</Button>
 					) }
-					<Button
-						className="task__skip is-link"
-						ref={ skipButtonRef }
-						onClick={ () => ( enableSkipOptions ? setSkipOptionsVisible( true ) : skipTask() ) }
-					>
-						{ enableSkipOptions ? translate( 'Hide this' ) : translate( 'Dismiss' ) }
-						{ enableSkipOptions && <Gridicon icon="dropdown" size={ 18 } /> }
-					</Button>
-					{ enableSkipOptions && areSkipOptionsVisible && (
+					{ showSkip && enableSkipOptions && areSkipOptionsVisible && (
 						<PopoverMenu
 							context={ skipButtonRef.current }
 							isVisible={ areSkipOptionsVisible }
@@ -167,8 +189,12 @@ const Task = ( {
 	);
 };
 
-const mapStateToProps = ( state ) => ( {
-	siteId: getSelectedSiteId( state ),
-} );
+const mapStateToProps = ( state ) => {
+	const siteId = getSelectedSiteId( state );
+	return {
+		siteId,
+		currentView: getHomeLayout( state, siteId )?.view_name,
+	};
+};
 
 export default connect( mapStateToProps )( Task );
