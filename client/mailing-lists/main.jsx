@@ -161,8 +161,10 @@ class MainComponent extends React.Component {
 			return this.props.translate( 'Jetpack news, announcements, and product spotlights.' );
 		} else if ( 'jetpack_reports' === category ) {
 			return this.props.translate( 'Jetpack security and performance reports.' );
-		} else if ( 'akismet_reports' === category ) {
-			return this.props.translate( 'Tips for getting the most out of Akismet' );
+		} else if ( 'akismet_marketing' === category ) {
+			return this.props.translate(
+				'Relevant tips and new features to get the most out of Akismet'
+			);
 		}
 
 		return null;
