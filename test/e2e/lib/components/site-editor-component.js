@@ -32,11 +32,6 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 		}
 		await this.driver.switchTo().defaultContent();
 		await driverHelper.waitUntilAbleToSwitchToFrame( this.driver, this.editoriFrameLocator );
-		await this.driver.sleep( 2000 );
-	}
-
-	async _postInit() {
-		await this.driver.sleep( 2000 );
 	}
 
 	async runInCanvas( fn ) {
@@ -56,12 +51,12 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 	}
 
 	async waitForTemplateToLoad() {
-		await this.runInCanvas( () =>
-			driverHelper.waitUntilElementLocatedAndVisible(
+		await this.runInCanvas( async () => {
+			await driverHelper.waitUntilElementLocatedAndVisible(
 				this.driver,
 				By.css( '.edit-site-block-editor__block-list' )
-			)
-		);
+			);
+		} );
 	}
 
 	async openBlockInserterAndSearch( searchTerm ) {
@@ -148,12 +143,40 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 			By.css( '.components-menu-group' ),
 			this.explicitWaitMS / 5
 		);
-		await this.driver.sleep( 1000 );
 		return await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css(
 				'.components-menu-group:last-of-type button.components-menu-item__button:last-of-type'
 			)
 		);
+	}
+
+	async toggleGlobalStyles() {
+		if ( this.screenSize === 'mobile' ) {
+			const closed = await driverHelper.clickIfPresent(
+				this.driver,
+				By.css( 'button[aria-label="Close global styles sidebar"]' )
+			);
+
+			if ( ! closed ) {
+				await driverHelper.clickIfPresent(
+					this.driver,
+					By.css( 'button[aria-label="More tools & options"]' )
+				);
+
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					driverHelper.createTextLocator(
+						By.css( 'button[role="menuitemcheckbox"]' ),
+						'Global Styles'
+					)
+				);
+			}
+		} else {
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( 'button[aria-label="Global Styles"]' )
+			);
+		}
 	}
 }

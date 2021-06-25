@@ -375,7 +375,9 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 		describe( 'Tracks "wpcom_block_editor_global_styles_tab_selected', function () {
 			it( 'when Global Styles sidebar is opened', async function () {
-				await clickGlobalStylesButton( this.driver );
+				const editor = await SiteEditorComponent.Expect( this.driver );
+
+				await editor.toggleGlobalStyles();
 
 				const eventsStack = await getEventsStack( this.driver );
 				const tabSelectedEvents = eventsStack.filter(
@@ -388,8 +390,10 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			} );
 
 			it( 'when Global Styles sidebar is closed', async function () {
+				const editor = await SiteEditorComponent.Expect( this.driver );
+
 				// Note the sidebar is already open here because of the previous test.
-				await clickGlobalStylesButton( this.driver );
+				await editor.toggleGlobalStyles();
 
 				const tabSelectedEvents = await getGlobalStylesTabSelectedEvents( this.driver );
 				assert.strictEqual( tabSelectedEvents.length, 1 );
@@ -399,7 +403,14 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			} );
 
 			it( `when Global Styles sidebar is closed by opening another sidebar (tab = ${ GLOBAL_STYLES_ROOT_TAB_NAME })`, async function () {
-				await clickGlobalStylesButton( this.driver );
+				const editor = await SiteEditorComponent.Expect( this.driver );
+
+				// It is not possible to open multiple sidebars on mobile.
+				if ( editor.screenSize === 'mobile' ) {
+					return this.skip();
+				}
+
+				await editor.toggleGlobalStyles();
 				await clickBlockSettingsButton( this.driver );
 
 				const tabSelectedEvents = await getGlobalStylesTabSelectedEvents( this.driver );
@@ -410,7 +421,14 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			} );
 
 			it( `when Global Styles sidebar is closed by opening another sidebar (tab = ${ GLOBAL_STYLES_BLOCK_TYPE_TAB_NAME })`, async function () {
-				await clickGlobalStylesButton( this.driver );
+				const editor = await SiteEditorComponent.Expect( this.driver );
+
+				// It is not possible to open multiple sidebars on mobile.
+				if ( editor.screenSize === 'mobile' ) {
+					return this.skip();
+				}
+
+				await editor.toggleGlobalStyles();
 				await clickGlobalStylesBlockTypeTab( this.driver );
 				await clickBlockSettingsButton( this.driver );
 
@@ -422,7 +440,9 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			} );
 
 			it( 'when tab is changed in Global Styles sidebar', async function () {
-				await clickGlobalStylesButton( this.driver );
+				const editor = await SiteEditorComponent.Expect( this.driver );
+
+				await editor.toggleGlobalStyles();
 				await clickGlobalStylesBlockTypeTab( this.driver );
 				await clickGlobalStylesRootTab( this.driver );
 
@@ -556,6 +576,11 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 		it( "Shouldn't track replaceInnerBlocks after undoing or redoing a template part edit", async function () {
 			const editor = await SiteEditorComponent.Expect( this.driver );
+
+			// This test relies on undo and redo which isn't available on mobile.
+			if ( editor.screenSize === 'mobile' ) {
+				return this.skip();
+			}
 
 			// Insert a template part block and clear the events stack
 			// so the insert event won't intefere with our asserts.

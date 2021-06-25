@@ -84,7 +84,7 @@ body.is-section-signup.is-white-signup {
 			}
 
 			@include break-wide {
-				width: 20vw;
+				width: 350px;
 			}
 		}
 
@@ -103,8 +103,6 @@ body.is-section-signup.is-white-signup {
 			@include break-large {
 				display: none;
 			}
-
-
 		}
 
 		.domains__domain-side-content {
@@ -114,8 +112,12 @@ body.is-section-signup.is-white-signup {
 			margin: 0 20px;
 
 			@include break-large {
-				margin: 0 0 0 80px;
+				margin: 0 20px 0 40px;
 				padding: 40px 0;
+			}
+
+			@include break-wide {
+				margin: 0 0 0 80px;
 			}
 		}
 
@@ -128,15 +130,7 @@ body.is-section-signup.is-white-signup {
 		}
 
 		.register-domain-step {
-			width: 100vw;
-
-			@include break-large {
-				width: 62vw;
-			}
-
-			@include break-wide {
-				width: 48vw;
-			}
+			flex: 1;
 		}
 
 		.register-domain-step__search-card {
@@ -146,7 +140,7 @@ body.is-section-signup.is-white-signup {
 			margin: 20px 20px 0;
 
 			@include break-large {
-				margin: 20px 0 0 20px;
+				margin: 0 0 0 20px;
 			}
 
 			@include break-wide {

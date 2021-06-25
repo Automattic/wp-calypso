@@ -45,17 +45,16 @@ const SiteSettingsJetpack = ( { site, siteId, siteIsJetpack, showCredentials, tr
 		<Main className="settings-jetpack site-settings">
 			<QueryRewindState siteId={ siteId } />
 			<QuerySitePurchases siteId={ siteId } />
-			<DocumentHead title={ translate( 'Site Settings' ) } />
+			<DocumentHead title={ translate( 'Jetpack Settings' ) } />
 			<JetpackDevModeNotice />
 			<SidebarNavigation />
 			<FormattedHeader
 				brandFont
 				className="settings-jetpack__page-heading"
-				headerText={ translate( 'Settings' ) }
+				headerText={ translate( 'Jetpack Settings' ) }
 				align="left"
 			/>
 			<SiteSettingsNavigation site={ site } section="jetpack" />
-
 			{ showCredentials && <JetpackCredentials /> }
 		</Main>
 	);

@@ -41,6 +41,7 @@ export default function CheckoutSystemDecider( {
 	isJetpackCheckout,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
+	isUserComingFromLoginForm,
 } ) {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
@@ -133,6 +134,7 @@ export default function CheckoutSystemDecider( {
 							isJetpackCheckout={ isJetpackCheckout }
 							jetpackSiteSlug={ jetpackSiteSlug }
 							jetpackPurchaseToken={ jetpackPurchaseToken }
+							isUserComingFromLoginForm={ isUserComingFromLoginForm }
 						/>
 					</StripeHookProvider>
 				</CalypsoShoppingCartProvider>

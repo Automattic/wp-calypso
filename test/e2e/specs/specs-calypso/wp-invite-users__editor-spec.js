@@ -87,7 +87,11 @@ describe( `[${ host }] Invites - New user as Editor: (${ screenSize }) @parallel
 		assert.strictEqual( actualEmailAddress, newInviteEmailAddress );
 		assert( headerInviteText.includes( 'editor' ) );
 
-		await acceptInvitePage.enterEmailAndPasswordAndSignUp( newInviteEmailAddress, password );
+		await acceptInvitePage.enterCredentialsAndSignUp(
+			newUserName,
+			newInviteEmailAddress,
+			password
+		);
 		return await acceptInvitePage.waitUntilNotVisible();
 	} );
 

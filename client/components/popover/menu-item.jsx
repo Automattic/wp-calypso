@@ -22,6 +22,7 @@ export default class PopoverMenuItem extends Component {
 		isSelected: PropTypes.bool,
 		icon: PropTypes.string,
 		focusOnHover: PropTypes.bool,
+		onClick: PropTypes.func,
 		onMouseOver: PropTypes.func,
 		isExternalLink: PropTypes.bool,
 		itemComponent: PropTypes.oneOfType( [ PropTypes.func, PropTypes.string ] ),
@@ -45,7 +46,7 @@ export default class PopoverMenuItem extends Component {
 	};
 
 	render() {
-		const { children, className, href, icon, isSelected, isExternalLink } = this.props;
+		const { children, className, href, icon, isExternalLink, isSelected } = this.props;
 		const itemProps = omit(
 			this.props,
 			'icon',
