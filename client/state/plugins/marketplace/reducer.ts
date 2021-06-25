@@ -62,7 +62,6 @@ export function purchaseFlow(
 				siteTransferStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
 				pluginInstallationStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
 				isPluginInstalledDuringPurchase: action.isPluginInstalledDuringPurchase,
-				pluginSlugToBeInstalled: action.pluginSlugToBeInstalled,
 			};
 		case THEME_TRANSFER_INITIATE_REQUEST:
 			return {
