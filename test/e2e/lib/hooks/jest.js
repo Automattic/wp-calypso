@@ -15,9 +15,10 @@ import { buildHooks as buildBrowserHooks } from './browser';
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 
 let tempDir;
-beforeAll(async () => {
-	tempDir = process.env.TEMP_ASSET_PATH || ( await mkdtemp( path.resolve( __dirname, '../../test-' ) ) );
-});
+beforeAll( async () => {
+	tempDir =
+		process.env.TEMP_ASSET_PATH || ( await mkdtemp( path.resolve( __dirname, '../../test-' ) ) );
+} );
 
 if ( isVideoEnabled() ) {
 	const {
@@ -53,7 +54,7 @@ if ( isVideoEnabled() ) {
 
 const browserHooks = buildBrowserHooks();
 beforeAll( async () => {
-	const driver = await browserHooks.createBrowser({ tempDir });
+	const driver = await browserHooks.createBrowser( { tempDir } );
 	global.__BROWSER__ = driver;
 }, startBrowserTimeoutMS );
 
