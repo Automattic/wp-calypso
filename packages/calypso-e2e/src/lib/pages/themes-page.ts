@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import assert from 'assert';
+
+/**
  * Internal dependencies
  */
 import { BaseContainer } from '../base-container';
@@ -47,6 +52,7 @@ export class ThemesPage extends BaseContainer {
 		await Promise.all( [
 			this.page.waitForSelector( selectors.spinner, { state: 'hidden' } ),
 			this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } ),
+			this.page.waitForLoadState( 'domcontentloaded' ),
 		] );
 	}
 
