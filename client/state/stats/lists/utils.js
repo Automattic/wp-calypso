@@ -101,12 +101,17 @@ function parseAvatar( avatarUrl ) {
  * @returns {Array}         CSV Row
  */
 export function buildExportArray( data, parent = null ) {
-	if ( ! data || ! data.label || ! data.value || ! data.actions || ! data.actions.length ) {
+	if ( ! data || ! data.label || ! data.value ) {
 		return [];
 	}
 	const label = parent ? parent + ' > ' + data.label : data.label;
 	const escapedLabel = label.replace( /\"/, '""' ); // eslint-disable-line no-useless-escape
-	let exportData = [ [ '"' + escapedLabel + '"', data.value, data.actions[ 0 ].data ] ];
+	let exportData = [ [ '"' + escapedLabel + '"', data.value ] ];
+
+	// Includes the URL for content data, but not for "Countries" data where it doesn't exist.
+	if ( data.actions && data.actions.length ) {
+		exportData = [ [ '"' + escapedLabel + '"', data.value, data.actions[ 0 ].data ] ];
+	}
 
 	if ( data.children ) {
 		const childData = map( data.children, ( child ) => {
