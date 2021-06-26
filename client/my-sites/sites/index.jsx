@@ -9,11 +9,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Card } from '@automattic/components';
-import Main from 'calypso/components/main';
-import SiteSelector from 'calypso/components/site-selector';
-import VisitSite from 'calypso/blocks/visit-site';
 import DocumentHead from 'calypso/components/data/document-head';
+import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import VisitSite from 'calypso/blocks/visit-site';
+import Main from 'calypso/components/main';
+import { Card } from '@automattic/components';
+import SiteSelector from 'calypso/components/site-selector';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 /**
@@ -82,7 +84,7 @@ class Sites extends Component {
 		return path;
 	}
 
-	getHeaderText() {
+	getSubHeaderText() {
 		if ( this.props.getSiteSelectionHeaderText ) {
 			return this.props.getSiteSelectionHeaderText();
 		}
@@ -133,23 +135,39 @@ class Sites extends Component {
 				break;
 		}
 
-		return translate( 'Select a site to open {{strong}}%(path)s{{/strong}}', {
-			args: { path },
-			components: {
-				strong: <strong />,
-			},
-		} );
+		return translate(
+			'Select a site to open {{strong}}%(path)s{{/strong}}. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+			{
+				args: { path },
+				components: {
+					strong: <strong />,
+					learnMoreLink: (
+						<InlineSupportLink
+							supportLink="https://wordpress.com/support/admin-bar/#switch-site"
+							supportPostId={ 20787 }
+							showIcon={ false }
+						/>
+					),
+				},
+			}
+		);
 	}
 
 	render() {
-		const { clearPageTitle, fromSite, siteBasePath, isWideLayout } = this.props;
+		const { clearPageTitle, fromSite, isWideLayout, siteBasePath, translate } = this.props;
 
 		return (
 			<>
 				{ clearPageTitle && <DocumentHead title="" /> }
 				<Main className={ isWideLayout ? 'sites is-wide-layout' : 'sites' }>
 					<div className="sites__select-header">
-						<h2 className="sites__select-heading">{ this.getHeaderText() }</h2>
+						<FormattedHeader
+							brandFont
+							className="sites__select-heading"
+							headerText={ translate( 'My Sites' ) }
+							subHeaderText={ this.getSubHeaderText() }
+							align="left"
+						/>
 						{ fromSite && <VisitSite siteSlug={ fromSite } /> }
 					</div>
 					<Card className="sites__select-wrapper">

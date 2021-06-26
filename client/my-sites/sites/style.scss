@@ -6,35 +6,6 @@
 	}
 }
 
-.sites__select-header {
-	text-align: center;
-
-	.visit-site {
-		margin: -12px 0 24px;
-	}
-
-	.is-wide-layout & {
-		text-align: left;
-	}
-}
-
-.sites__select-heading {
-	font-size: $font-title-small;
-	font-weight: 400;
-	line-height: inherit;
-	margin-top: 16px;
-	margin-bottom: 24px;
-
-	strong {
-		text-transform: capitalize;
-	}
-
-	.is-wide-layout & {
-		font-family: 'Recoleta', 'Noto Serif', Georgia, 'Times New Roman', Times, serif;
-		font-size: $font-title-medium;
-	}
-}
-
 .sites__select-wrapper.card {
 	padding: 0;
 
