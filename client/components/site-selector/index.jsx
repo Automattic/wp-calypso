@@ -82,7 +82,7 @@ class SiteSelector extends Component {
 	};
 
 	state = {
-		displayMode: this.props.isWideLayout ? 'grid' : 'list',
+		displayMode: 'list',
 		highlightedIndex: -1,
 		showSearch: false,
 		isKeyboardEngaged: false,
@@ -429,14 +429,18 @@ class SiteSelector extends Component {
 
 		const showDisplayToggle = this.props.isWideLayout;
 
-		const selectorClass = classNames( 'site-selector', 'sites-list', this.props.className, {
-			'is-large': this.props.siteCount > 6 || hiddenSitesCount > 0 || this.state.showSearch,
-			'is-single': this.props.visibleSiteCount === 1,
-			'is-wide-layout': this.props.isWideLayout,
-			'is-grid': this.state.displayMode === 'grid',
-			'is-list': this.state.displayMode !== 'grid',
-			'is-hover-enabled': ! this.state.isKeyboardEngaged,
-		} );
+		const selectorClass = classNames(
+			'site-selector',
+			'sites-list',
+			this.props.className,
+			'is-' + this.state.displayMode,
+			{
+				'is-large': this.props.siteCount > 6 || hiddenSitesCount > 0 || this.state.showSearch,
+				'is-single': this.props.visibleSiteCount === 1,
+				'is-wide-layout': this.props.isWideLayout,
+				'is-hover-enabled': ! this.state.isKeyboardEngaged,
+			}
+		);
 
 		this.visibleSites = [];
 
