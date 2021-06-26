@@ -85,10 +85,21 @@ class DomainItem extends PureComponent {
 	};
 
 	handleClick = ( e ) => {
-		if ( this.props.enableSelection ) {
+		const {
+			enableSelection,
+			onClick,
+			domainDetails,
+			showCheckbox,
+			domain,
+			isChecked,
+			onToggle,
+		} = this.props;
+
+		if ( enableSelection ) {
 			this.onSelect( e );
 		} else {
-			this.props.onClick( this.props.domainDetails );
+			onClick( domainDetails );
+			showCheckbox && onToggle( domain.domain, ! isChecked );
 		}
 	};
 

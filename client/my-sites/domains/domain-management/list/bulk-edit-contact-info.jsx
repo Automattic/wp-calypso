@@ -160,6 +160,8 @@ class BulkEditContactInfo extends React.Component {
 		const { emailOnly, isDisabled, isSubmitting, translate } = this.props;
 		const { contactDetails, errorMessages } = this.state;
 
+		const hasValidationErrors = Object.keys( errorMessages ?? {} ).length > 0;
+
 		return (
 			<>
 				<DomainContactDetails
@@ -181,7 +183,7 @@ class BulkEditContactInfo extends React.Component {
 					<Button
 						primary
 						onClick={ this.handleSaveContactInfo }
-						disabled={ isDisabled }
+						disabled={ isDisabled || hasValidationErrors }
 						busy={ isSubmitting }
 					>
 						{ this.props.translate( 'Save contact info' ) }

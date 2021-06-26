@@ -191,7 +191,7 @@ class ListAll extends Component {
 			if ( ! selected ) {
 				return true;
 			}
-			return Object.keys( whoisData[ domain ] ?? {} ).length !== 0;
+			return Object.keys( whoisData[ domain ] ?? {} ).length > 0;
 		} );
 
 		if ( ! allWhoisLoaded ) {
@@ -278,7 +278,11 @@ class ListAll extends Component {
 						isChecked={ isChecked }
 						disabled={ isLoadingDomainDetails || isSavingContactInfo }
 						actionResult={ actionResult }
-						isBusy={ isChecked && isSavingContactInfo && null === actionResult }
+						isBusy={
+							isContactEmailEditContext &&
+							( ( isChecked && isSavingContactInfo && null === actionResult ) ||
+								isLoadingDomainDetails )
+						}
 					/>
 				) }
 			</React.Fragment>
