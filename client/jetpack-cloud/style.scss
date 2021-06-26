@@ -49,10 +49,15 @@
 	background: var( --studio-white );
 	border: 1px solid var( --color-accent );
 	border-radius: var( --jetpack-corners-soft );
+	box-sizing: border-box;
 
-	&:hover,
-	&:focus {
+	&:hover {
 		background-color: var( --color-accent-0 );
+		border-color: var( --color-accent-80 );
+	}
+
+	&:focus {
+		border-width: 1.5px;
 	}
 
 	&:active {
@@ -61,23 +66,24 @@
 		border-width: 1px;
 	}
 
-	&[disabled]:active {
-		border-width: 1px;
-	}
-
 	&[disabled],
 	&:disabled {
-		color: var( --studio-gray-10 );
-		border-color: var( --color-gray-10 );
-		background: var( --studio-white );
+		background: var( --color-accent-5 );
+		color: var( --color-accent-20 );
+		border-color: var( --color-accent-5 );
 	}
 }
 
 .button.is-primary {
-	&:hover,
+	&:hover {
+		background-color: var( --color-accent-80 );
+		border-color: var( --color-accent-80 );
+	}
+
 	&:focus {
-		background-color: var( --color-accent-light );
-		border-color: var( --color-accent-light );
+		background-color: var( --color-accent );
+		border-color: var( --studio-white );
+		box-shadow: 0 0 0 1px var( --color-accent );
 	}
 
 	&:active {
@@ -87,19 +93,26 @@
 
 	&[disabled],
 	&:disabled {
-		color: var( --studio-white );
-		background: var( --studio-gray-10 );
-		border-color: var( --studio-gray-10 );
+		background: var( --color-accent-5 );
+		color: var( --color-accent-20 );
+		border-color: var( --color-accent-5 );
 	}
 }
 
 .button.is-scary {
-	color: var( --color-scary-60 );
+	color: var( --color-scary-50 );
 	border-color: var( --color-scary-50 );
 
-	&:hover,
-	&:focus {
+	&:hover {
 		background-color: var( --color-scary-0 );
+		border-color: var( --color-scary-60 );
+		color: var( --color-scary-60 );
+	}
+
+	&:focus {
+		background-color: var( --studio-white );
+		border-color: var( --color-scary-70 );
+		color: var( --color-scary-70 );
 	}
 
 	&:active {
@@ -109,9 +122,9 @@
 
 	&[disabled],
 	&:disabled {
-		color: var( --studio-gray-10 );
-		background: none;
-		border-color: var( --color-gray-10 );
+		background: var( --color-accent-5 );
+		color: var( --color-accent-20 );
+		border-color: var( --color-accent-5 );
 	}
 }
 
@@ -120,10 +133,15 @@
 	background: var( --color-scary-50 );
 	border-color: var( --color-scary-50 );
 
-	&:hover,
+	&:hover {
+		background-color: var( --color-scary-60 );
+		border-color: var( --color-scary-60 );
+	}
+
 	&:focus {
-		background-color: var( --color-scary-40 );
-		border-color: var( --color-scary-40 );
+		background-color: var( --color-scary-70 );
+		border-color: var( --studio-white );
+		box-shadow: 0 0 0 1px var( --color-scary-70 );
 	}
 
 	&:active {
@@ -133,8 +151,9 @@
 
 	&[disabled],
 	&:disabled {
-		background: var( --studio-gray-10 );
-		border-color: var( --studio-gray-10 );
+		background: var( --color-accent-5 );
+		color: var( --color-accent-20 );
+		border-color: var( --color-accent-5 );
 	}
 }
 
