@@ -195,7 +195,7 @@ export class SiteSettingsFormGeneral extends Component {
 					&nbsp;
 					{ site.domain.endsWith( '.wordpress.com' ) && (
 						<a href={ domainManagementChangeSiteAddress( siteSlug, site.domain ) }>
-							{ translate( "You can also change your site's address in your Domain Settings." ) }
+							{ translate( 'You can change your site address in Domain Settings.' ) }
 						</a>
 					) }
 				</FormSettingExplanation>
