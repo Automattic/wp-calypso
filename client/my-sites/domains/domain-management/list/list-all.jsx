@@ -163,7 +163,7 @@ class ListAll extends Component {
 
 		return (
 			Object.keys( requestingSiteDomains ?? {} ).length === 0 ||
-			Object.values( requestingSiteDomains ).reduce( ( result, value ) => result || value, false )
+			Object.values( requestingSiteDomains ).some( ( value ) => value )
 		);
 	}
 
@@ -187,20 +187,12 @@ class ListAll extends Component {
 			return true;
 		}
 
-		const allWhoisLoaded = Object.entries( selectedDomains ).reduce(
-			( whoisLoaded, [ domain, selected ] ) => {
-				if ( ! selected ) {
-					return whoisLoaded;
-				}
-
-				if ( Object.keys( whoisData[ domain ] ?? {} ).length === 0 ) {
-					return false;
-				}
-
-				return whoisLoaded;
-			},
-			true
-		);
+		const allWhoisLoaded = Object.entries( selectedDomains ).every( ( [ domain, selected ] ) => {
+			if ( ! selected ) {
+				return true;
+			}
+			return Object.keys( whoisData[ domain ] ?? {} ).length !== 0;
+		} );
 
 		if ( ! allWhoisLoaded ) {
 			return true;

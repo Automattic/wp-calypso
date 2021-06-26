@@ -84,11 +84,17 @@ class ListHeader extends React.PureComponent {
 	}
 
 	renderHeaderContent() {
+		const { translate } = this.props;
+
 		if (
 			ListAllActions.editContactInfo === this.props?.action ||
 			ListAllActions.editContactEmail === this.props?.action
 		) {
-			return <strong>Update the selected domains with the contact information above.</strong>;
+			return (
+				<strong>
+					{ translate( 'Update the selected domains with the contact information above.' ) }
+				</strong>
+			);
 		}
 
 		return this.renderDefaultHeaderContent();

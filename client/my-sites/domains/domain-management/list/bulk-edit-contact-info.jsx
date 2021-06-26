@@ -137,7 +137,7 @@ class BulkEditContactInfo extends React.Component {
 
 		wpcom.validateDomainContactInformation(
 			contactDetails,
-			this.props.domainNamesList,
+			this.props.domainNamesList ?? [],
 			( error, data ) => {
 				let errorMessages = ( data && data.messages ) || {};
 				if ( Object.keys( errorMessages ).length > 0 ) {
