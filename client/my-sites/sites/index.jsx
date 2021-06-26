@@ -153,7 +153,12 @@ class Sites extends Component {
 						{ fromSite && <VisitSite siteSlug={ fromSite } /> }
 					</div>
 					<Card className="sites__select-wrapper">
-						<SiteSelector filter={ this.filterSites } siteBasePath={ siteBasePath } groups />
+						<SiteSelector
+							filter={ this.filterSites }
+							siteBasePath={ siteBasePath }
+							groups
+							isWideLayout={ isWideLayout }
+						/>
 					</Card>
 				</Main>
 			</>

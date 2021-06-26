@@ -23,6 +23,22 @@
 	&.is-large .site-selector__sites {
 		border-top: 1px solid var( --color-neutral-10 );
 	}
+
+	.is-wide-layout & {
+		.site-selector__search-filter {
+			display: flex;
+			margin-right: 16px;
+
+			.search {
+				margin: 0 16px 0 0;
+				width: 80%;
+			}
+
+			.segmented-control {
+				width: 20%;
+			}
+		}
+	}
 }
 
 // Styles for Site elements within the Selector

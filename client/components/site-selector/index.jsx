@@ -27,6 +27,7 @@ import AllSites from 'calypso/blocks/all-sites';
 import Site from 'calypso/blocks/site';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import Search from 'calypso/components/search';
+import SegmentedControl from 'calypso/components/segmented-control';
 import SiteSelectorAddSite from './add-site';
 import searchSites from 'calypso/components/search-sites';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
@@ -44,6 +45,7 @@ const debug = debugFactory( 'calypso:site-selector' );
 class SiteSelector extends Component {
 	static propTypes = {
 		isPlaceholder: PropTypes.bool,
+		isWideLayout: PropTypes.bool,
 		sites: PropTypes.array,
 		siteBasePath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		showAddNewSite: PropTypes.bool,
@@ -70,6 +72,7 @@ class SiteSelector extends Component {
 		showAllSites: false,
 		siteBasePath: false,
 		indicator: false,
+		isWideLayout: false,
 		hideSelected: false,
 		selected: null,
 		onClose: noop,
@@ -79,6 +82,7 @@ class SiteSelector extends Component {
 	};
 
 	state = {
+		displayMode: this.props.isWideLayout ? 'grid' : 'list',
 		highlightedIndex: -1,
 		showSearch: false,
 		isKeyboardEngaged: false,
@@ -92,6 +96,10 @@ class SiteSelector extends Component {
 			showSearch: terms ? true : this.state.showSearch,
 			isKeyboardEngaged: true,
 		} );
+	};
+
+	onDisplayToggleClick = ( mode ) => {
+		this.setState( { displayMode: mode } );
 	};
 
 	componentDidUpdate( prevProps, prevState ) {
@@ -391,6 +399,25 @@ class SiteSelector extends Component {
 		);
 	}
 
+	renderDisplayToggle() {
+		return (
+			<SegmentedControl>
+				<SegmentedControl.Item
+					selected={ this.state.displayMode === 'grid' }
+					onClick={ () => this.onDisplayToggleClick( 'grid' ) }
+				>
+					{ this.props.translate( 'Grid' ) }
+				</SegmentedControl.Item>
+				<SegmentedControl.Item
+					selected={ this.state.displayMode === 'list' }
+					onClick={ () => this.onDisplayToggleClick( 'list' ) }
+				>
+					{ this.props.translate( 'List' ) }
+				</SegmentedControl.Item>
+			</SegmentedControl>
+		);
+	}
+
 	render() {
 		// Render an empty div.site-selector element as a placeholder. It's useful for lazy
 		// rendering of the selector in sidebar while keeping the on-appear animation work.
@@ -400,9 +427,13 @@ class SiteSelector extends Component {
 
 		const hiddenSitesCount = this.props.siteCount - this.props.visibleSiteCount;
 
+		const showDisplayToggle = this.props.isWideLayout;
+
 		const selectorClass = classNames( 'site-selector', 'sites-list', this.props.className, {
 			'is-large': this.props.siteCount > 6 || hiddenSitesCount > 0 || this.state.showSearch,
 			'is-single': this.props.visibleSiteCount === 1,
+			'is-wide-layout': this.props.isWideLayout,
+			'is-grid': this.state.displayMode === 'grid',
 			'is-hover-enabled': ! this.state.isKeyboardEngaged,
 		} );
 
@@ -416,15 +447,18 @@ class SiteSelector extends Component {
 				onMouseMove={ this.onMouseMove }
 				onMouseLeave={ this.onMouseLeave }
 			>
-				<Search
-					onSearch={ this.onSearch }
-					delaySearch={ true }
-					// eslint-disable-next-line jsx-a11y/no-autofocus
-					autoFocus={ this.props.autoFocus }
-					disabled={ ! this.props.hasLoadedSites }
-					onSearchClose={ this.props.onClose }
-					onKeyDown={ this.onKeyDown }
-				/>
+				<div className="site-selector__search-filter">
+					<Search
+						onSearch={ this.onSearch }
+						delaySearch={ true }
+						// eslint-disable-next-line jsx-a11y/no-autofocus
+						autoFocus={ this.props.autoFocus }
+						disabled={ ! this.props.hasLoadedSites }
+						onSearchClose={ this.props.onClose }
+						onKeyDown={ this.onKeyDown }
+					/>
+					{ showDisplayToggle && this.renderDisplayToggle() }
+				</div>
 				<div className="site-selector__sites" ref={ this.setSiteSelectorRef }>
 					{ this.renderAllSites() }
 					{ this.renderRecentSites( sites ) }
