@@ -434,6 +434,7 @@ class SiteSelector extends Component {
 			'is-single': this.props.visibleSiteCount === 1,
 			'is-wide-layout': this.props.isWideLayout,
 			'is-grid': this.state.displayMode === 'grid',
+			'is-list': this.state.displayMode !== 'grid',
 			'is-hover-enabled': ! this.state.isKeyboardEngaged,
 		} );
 

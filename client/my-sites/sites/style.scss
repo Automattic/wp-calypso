@@ -32,15 +32,44 @@
 	}
 
 	.site-selector.is-large .site-selector__sites {
-		border-top: none;
 		background: transparent;
 		margin-top: 16px;
+	}
+
+	.site-selector.is-large.is-list .site-selector__sites {
+		margin-right: 16px;
+	}
+
+	.is-list {
+		.site {
+			background: var( --color-surface );
+			border: 1px solid var( --color-neutral-10 );
+			border-top: none;
+			box-sizing: border-box;
+			margin: 0;
+			padding: 8px;
+		}
+
+		.site .site-icon {
+			margin-right: 16px;
+			width: 60px !important;
+			height: 60px !important;
+		}
+
+		.site__title {
+			font-weight: 600;
+		}
+	}
+
+	.site-selector.is-large.is-grid .site-selector__sites {
+		border-top: none;
 	}
 
 	.is-grid {
 		.site {
 			background: var( --color-surface );
 			border: 1px solid var( --color-neutral-10 );
+			border-radius: 2px;
 			box-sizing: border-box;
 			float: left;
 			margin: 0 16px 16px 0;
