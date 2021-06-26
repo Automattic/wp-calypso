@@ -260,6 +260,7 @@ class HelpContact extends React.Component {
 		const {
 			helpSiteIsJetpack,
 			helpSiteIsNotWpCom,
+			helpSiteIsWpCom,
 			site,
 			subject,
 			message,
@@ -279,30 +280,32 @@ class HelpContact extends React.Component {
 		}
 
 		if ( site || userDeclaredUrl ) {
-			const siteUrl = userDeclaredUrl
-				? withoutHttp( userDeclaredUrl.trim() )
-				: withoutHttp( site.URL );
+			const siteUrl = userDeclaredUrl ? userDeclaredUrl.trim() : site.URL;
 
-			blogHelpMessage = translate( 'The site I need help with is %(siteUrl)s.', {
+			blogHelpMessage = translate( 'Site: %(siteUrl)s.', {
 				args: {
-					siteUrl: userRequestsHidingUrl
-						? translate( '[visible only to staff]' ) + ' help@' + siteUrl
-						: siteUrl,
+					siteUrl: userRequestsHidingUrl ? 'help@' + withoutHttp( siteUrl ) : siteUrl,
 				},
 			} );
 
+			if ( helpSiteIsWpCom ) {
+				blogHelpMessage += '\nWP.com: ' + translate( 'Yes' );
+			}
+
 			if ( helpSiteIsNotWpCom ) {
-				const jetpackMessage = helpSiteIsJetpack
-					? translate( 'It is not hosted by WordPress.com, but it is connected with Jetpack.' )
-					: translate( 'It is not hosted by WordPress.com or connected with Jetpack.' );
+				const jetpackMessage = helpSiteIsJetpack ? translate( 'Yes' ) : translate( 'Unknown' );
 
-				blogHelpMessage += ' ' + jetpackMessage;
-			}
-
-			if ( userDeclaredUrl ) {
 				blogHelpMessage +=
-					' ' + translate( 'This site is not linked to my WordPress.com account.' );
+					'\nWP.com: ' +
+					translate( 'Unknown' ) +
+					'\n' +
+					translate( 'Jetpack' ) +
+					': ' +
+					jetpackMessage;
 			}
+
+			const correctAccountMessage = userDeclaredUrl ? translate( 'Unknown' ) : translate( 'Yes' );
+			blogHelpMessage += '\nCorrect account: ' + correctAccountMessage;
 		}
 
 		const forumMessage = message + '\n\n' + blogHelpMessage;
