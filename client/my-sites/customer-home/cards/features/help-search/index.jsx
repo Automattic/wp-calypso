@@ -24,6 +24,7 @@ import {
 	RESULT_LINK,
 	RESULT_TOUR,
 	RESULT_TYPE,
+	RESULT_BLOG_ID,
 } from 'calypso/blocks/inline-help/constants';
 
 /**
@@ -69,8 +70,9 @@ const HelpSearch = ( { searchQuery, openDialog, track } ) => {
 		trackResultView( result );
 
 		const resultPostId = get( result, RESULT_POST_ID );
+		const resultBlogId = get( result, RESULT_BLOG_ID );
 		const resultLink = getResultLink( result );
-		openDialog( { postId: resultPostId, actionUrl: resultLink } );
+		openDialog( { postId: resultPostId, actionUrl: resultLink, blogId: resultBlogId } );
 	};
 
 	return (
