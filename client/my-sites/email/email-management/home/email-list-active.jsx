@@ -23,7 +23,7 @@ import { useEmailsQuery } from 'calypso/data/emails/use-emails-query'
 const EmailListActiveWarning = ( { domain, siteId } ) => {
 	const { data, error, isLoading } = useEmailsQuery( siteId, domain.name, { retry: false } );
 	var emailAccounts = null;
-	if(!isLoading && !error) {
+	if( !isLoading && !error ) {
 		emailAccounts = data?.accounts[0] ?? [];
 	}
 	const { icon, statusClass, text } = resolveEmailPlanStatus( domain, emailAccounts, isLoading );
