@@ -1,5 +1,5 @@
 {
-	"calypsoBaseURL": "http://calypso.localhost:3000",
+	"calypsoBaseURL": "https://wordpress.com",
 	"explicitWaitMS": 20000,
 	"emailWaitMS": 60000,
 	"mochaTimeoutMS": 160000,
