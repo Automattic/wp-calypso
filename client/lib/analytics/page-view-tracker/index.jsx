@@ -38,6 +38,7 @@ export class PageViewTracker extends React.Component {
 		selectedSiteId: PropTypes.number,
 		title: PropTypes.string.isRequired,
 		properties: PropTypes.object,
+		options: PropTypes.object,
 	};
 
 	state = {
@@ -91,9 +92,9 @@ export class PageViewTracker extends React.Component {
 	};
 
 	recordViewWithProperties() {
-		const { path, recorder = noop, title, properties } = this.props;
+		const { path, recorder = noop, title, properties, options } = this.props;
 
-		return recorder( path, title, 'default', properties );
+		return recorder( path, title, 'default', properties, options );
 	}
 
 	render() {
