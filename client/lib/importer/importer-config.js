@@ -176,6 +176,12 @@ function getConfig( { siteTitle = '' } = {} ) {
 				},
 			}
 		),
+		optionalUrl: {
+			title: translate( 'Substack Newsletter URL' ),
+			description: translate(
+				'An optional Substack Newsletter URL to import comments and author information.'
+			),
+		},
 		weight: 0,
 	};
 

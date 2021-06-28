@@ -20,7 +20,11 @@ import {
 } from 'calypso/state/imports/uploads/selectors';
 import DropZone from 'calypso/components/drop-zone';
 import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
+import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
 import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
+import TextInput from 'calypso/components/forms/form-text-input';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { ProgressBar } from '@automattic/components';
 
 /**
@@ -44,11 +48,20 @@ class UploadingPane extends React.PureComponent {
 			ID: PropTypes.number.isRequired,
 			single_user_site: PropTypes.bool.isRequired,
 		} ).isRequired,
+		optionalUrl: PropTypes.shape( {
+			title: PropTypes.string,
+			description: PropTypes.string,
+		} ),
 	};
 
-	static defaultProps = { description: null };
+	static defaultProps = { description: null, optionalUrl: null };
 
 	fileSelectorRef = React.createRef();
+
+	constructor( props ) {
+		super( props );
+		this.state = { urlInput: null };
+	}
 
 	componentDidUpdate( prevProps ) {
 		const { importerStatus } = this.props;
@@ -165,7 +178,27 @@ class UploadingPane extends React.PureComponent {
 					) }
 					<DropZone onFilesDrop={ isReadyForImport ? this.initiateFromDrop : noop } />
 				</div>
+				{ this.props.optionalUrl && (
+					<div className="importer__uploading-pane-url-input">
+						<FormLabel>
+							{ this.props.optionalUrl.title }
+							<TextInput
+								label={ this.props.optionalUrl.title }
+								onChange={ this.setUrl }
+								onKeyPress={ this.validateOnEnter }
+								value={ this.state.urlInput }
+								placeholder="https://newsletter.substack.com"
+							/>
+						</FormLabel>
+						<FormSettingExplanation>{ this.props.optionalUrl.description }</FormSettingExplanation>
+					</div>
+				) }
 				<ImporterActionButtonContainer>
+					{ this.props.optionalUrl && (
+						<ImporterActionButton primary>
+							{ this.props.translate( 'Upload' ) }
+						</ImporterActionButton>
+					) }
 					<ImporterCloseButton
 						importerStatus={ importerStatus }
 						site={ site }
