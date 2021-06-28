@@ -68,6 +68,15 @@ export default function ContactDetailsContainer( {
 	const { email } = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
 	const countries = useSelector( ( state ) => getCountries( state, 'domains' ) );
 
+	const updateDomainContactRelatedData = ( details: DomainContactDetailsData ) => {
+		updateDomainContactFields( details );
+		updateRequiredDomainFields( {
+			postalCode:
+				countries?.find( ( country ) => country.code === details.countryCode )?.has_postal_codes ??
+				true,
+		} );
+	};
+
 	switch ( contactDetailsType ) {
 		case 'domain':
 			return (
@@ -81,14 +90,7 @@ export default function ContactDetailsContainer( {
 						domainNames={ domainNames }
 						contactDetails={ contactDetails }
 						contactDetailsErrors={ contactDetailsErrors }
-						updateDomainContactFields={ ( details: DomainContactDetailsData ) => {
-							updateDomainContactFields( details );
-							updateRequiredDomainFields( {
-								postalCode:
-									countries?.find( ( country ) => country.code === details.countryCode )
-										?.has_postal_codes ?? true,
-							} );
-						} }
+						updateDomainContactFields={ updateDomainContactRelatedData }
 						shouldShowContactDetailsValidationErrors={ shouldShowContactDetailsValidationErrors }
 						isDisabled={ isDisabled }
 						isLoggedOutCart={ isLoggedOutCart }
