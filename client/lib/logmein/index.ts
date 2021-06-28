@@ -52,12 +52,10 @@ export function logmeinUrl( url: string ): string {
 	// We only want to logmein into valid sites that belong to the user (for now that is mapped simple sites)
 	// using INVALID_URL here to prevent the possibility of exceptions, if site.URL ever contains an invalid url
 	// the filtering will fail
-	const allowedHosts = sites
-		.map( ( site: any ) =>
-			isValidLogmeinSite( site ) ? new URL( site.URL, INVALID_URL ).host : false
-		)
-		.filter( Boolean );
-	if ( allowedHosts.indexOf( newurl.host ) === -1 ) {
+	const isValid = sites.some( ( site ) => {
+		return isValidLogmeinSite( site ) && new URL( site.URL, INVALID_URL ).host === newurl.host;
+	} );
+	if ( ! isValid ) {
 		return url;
 	}
 
