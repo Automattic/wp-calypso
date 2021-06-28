@@ -100,8 +100,8 @@ const exitSiteEditor = async function ( driver ) {
 		By.css( '.components-navigation__back-button, .edit-site-navigation-panel__back-to-dashboard' )
 	);
 
-	await this.driver.wait(
-		async function ( driver ) {
+	await driver.wait(
+		async function () {
 			if (
 				await driverHelper.isElementNotLocated(
 					driver,
@@ -116,7 +116,7 @@ const exitSiteEditor = async function ( driver ) {
 			}
 			return true;
 		},
-		config.get( 'explicitWaitMS' ),
+		config.get( 'explicitWaitMS' ) / 5,
 		'Could not reach the "Dashboard" button'
 	);
 
