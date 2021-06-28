@@ -38,7 +38,7 @@ export default function () {
 
 	page(
 		`/jetpack/connect/:type(${ planTypeString })/:interval(yearly|monthly)?`,
-		controller.redirectToSiteLessCheckoutIfLoggedOut,
+		controller.redirectToSiteLessCheckout,
 		controller.loginBeforeJetpackSearch,
 		controller.persistMobileAppFlow,
 		controller.setMasterbar,

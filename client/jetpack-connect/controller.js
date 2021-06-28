@@ -383,12 +383,13 @@ export function redirectToLoginIfLoggedOut( context, next ) {
 	next();
 }
 
-export function redirectToSiteLessCheckoutIfLoggedOut( context, next ) {
-	const { type } = context.params;
-	const isLoggedIn = isUserLoggedIn( context.store.getState() );
+export function redirectToSiteLessCheckout( context, next ) {
+	const { type, interval } = context.params;
 
-	if ( config.isEnabled( 'jetpack/siteless-checkout' ) && ! isLoggedIn ) {
-		page( addQueryArgs( context.query, `/checkout/jetpack/${ type }` ) );
+	const planSlug = getPlanSlugFromFlowType( type, interval );
+
+	if ( config.isEnabled( 'jetpack/siteless-checkout' ) ) {
+		page( addQueryArgs( context.query, `/checkout/jetpack/${ planSlug }` ) );
 		return;
 	}
 
