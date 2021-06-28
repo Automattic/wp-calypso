@@ -104,7 +104,7 @@ a.screen-switcher__button {
 	border: 1px solid transparent;
 	display: inline-block;
 	font-size: $font-body-extra-small;
-	color: var( --color-text );
+	color: $gray-700;
 	line-height: normal;
 
 	// When the user sees this component they are going to be in Calypso
