@@ -52,6 +52,7 @@
 		"layout/guided-tours": false,
 		"layout/nps-survey-notice": false,
 		"layout/query-selected-editor": false,
+		"jetpack/siteless-checkout": false,
 		"layout/support-article-dialog": false,
 		"marketplace-test": false,
 		"marketplace-yoast": false,

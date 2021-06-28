@@ -45,7 +45,10 @@ export default function buildCheckoutURL(
 		const canDoUnlinkedCheckout = unlinked && !! site && ( !! purchasetoken || purchaseNonce );
 
 		// Enter userless checkout if unlinked, purchasetoken or purchaseNonce, and site are all set
-		if ( isJetpackCloud() && canDoUnlinkedCheckout ) {
+		if (
+			isJetpackCloud() &&
+			( canDoUnlinkedCheckout || config.isEnabled( 'jetpack/siteless-checkout' ) )
+		) {
 			const host =
 				'development' === urlQueryArgs.calypso_env
 					? 'http://calypso.localhost:3000'
