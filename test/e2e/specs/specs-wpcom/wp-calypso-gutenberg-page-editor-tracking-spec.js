@@ -46,7 +46,7 @@ describe( `[${ host }] Calypso Gutenberg Page Editor Tracking: (${ screenSize })
 				By.css( '.page-pattern-modal .pattern-selector-item__label' )
 			);
 
-			const insertedEvents = await getEventsStack( this.driver ).filter(
+			const insertedEvents = ( await getEventsStack( this.driver ) ).filter(
 				( event ) => event[ 0 ] === 'wpcom_block_inserted'
 			);
 
