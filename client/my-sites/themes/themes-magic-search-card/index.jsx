@@ -15,7 +15,6 @@ import Gridicon from 'calypso/components/gridicon';
  */
 import Search from 'calypso/components/search';
 import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
-import KeyedSuggestions from 'calypso/components/keyed-suggestions';
 import StickyPanel from 'calypso/components/sticky-panel';
 import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
@@ -161,18 +160,6 @@ class ThemesMagicSearchCard extends React.Component {
 		} );
 	};
 
-	insertSuggestion = ( suggestion ) => {
-		const tokens = this.state.searchInput.split( /(\s+)/ );
-		// Get rid of empty match at end
-		tokens[ tokens.length - 1 ] === '' && tokens.splice( tokens.length - 1, 1 );
-		const tokenIndex = this.findEditedTokenIndex( tokens, this.state.cursorPosition );
-		// Check if we want to add additional sapce after suggestion so next suggestions card can be opened immediately
-		const hasNextTokenFirstSpace =
-			tokens[ tokenIndex + 1 ] && tokens[ tokenIndex + 1 ][ 0 ] === ' ';
-		tokens[ tokenIndex ] = hasNextTokenFirstSpace ? suggestion : suggestion + ' ';
-		return tokens.join( '' );
-	};
-
 	insertTextAtCursor = ( text ) => {
 		const input = this.state.searchInput;
 		const position = this.state.cursorPosition;
@@ -225,11 +212,6 @@ class ThemesMagicSearchCard extends React.Component {
 	updateInput = ( updatedInput ) => {
 		this.setState( { searchInput: updatedInput } );
 		this.searchInputRef.clear();
-	};
-
-	suggest = ( suggestion ) => {
-		const updatedInput = this.insertSuggestion( suggestion );
-		this.updateInput( updatedInput );
 	};
 
 	insertTextInInput = ( text ) => {
@@ -334,14 +316,6 @@ class ThemesMagicSearchCard extends React.Component {
 					</div>
 				</StickyPanel>
 				<div role="presentation" onClick={ this.handleClickInside }>
-					{ renderSuggestions && (
-						<KeyedSuggestions
-							ref={ this.setSuggestionsRefs( 'suggestions' ) }
-							terms={ this.props.filters }
-							input={ this.state.editedSearchElement }
-							suggest={ this.suggest }
-						/>
-					) }
 					{ ! renderSuggestions && (
 						<MagicSearchWelcome
 							ref={ this.setSuggestionsRefs( 'welcome' ) }
