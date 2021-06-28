@@ -19,7 +19,7 @@ import {
 import { noop } from './utils';
 import { recordSiftScienceUser } from 'calypso/lib/siftscience';
 import { makeLayout, redirectLoggedOut, render as clientRender } from 'calypso/controller';
-import { noSite, siteSelection } from 'calypso/my-sites/controller';
+import { loggedInSiteSelection, noSite, siteSelection } from 'calypso/my-sites/controller';
 import { isEnabled } from '@automattic/calypso-config';
 import userFactory from 'calypso/lib/user';
 
@@ -29,17 +29,18 @@ export default function () {
 	const user = userFactory();
 	const isLoggedOut = ! user.get();
 
-	if ( isLoggedOut ) {
-		if ( isEnabled( 'jetpack/userless-checkout' ) ) {
-			page( '/checkout/jetpack/:siteSlug/:productSlug', checkout, makeLayout, clientRender );
-			page(
-				'/checkout/jetpack/thank-you/:site/:product',
-				jetpackCheckoutThankYou,
-				makeLayout,
-				clientRender
-			);
-		}
+	if ( isEnabled( 'jetpack/userless-checkout' ) ) {
+		page( '/checkout/jetpack/:siteSlug/:productSlug', checkout, makeLayout, clientRender );
+		page(
+			'/checkout/jetpack/thank-you/:site/:product',
+			loggedInSiteSelection,
+			jetpackCheckoutThankYou,
+			makeLayout,
+			clientRender
+		);
+	}
 
+	if ( isLoggedOut ) {
 		page( '/checkout/offer-quickstart-session', upsellNudge, makeLayout, clientRender );
 
 		page( '/checkout/no-site/:lang?', noSite, checkout, makeLayout, clientRender );
@@ -47,18 +48,6 @@ export default function () {
 		page( '/checkout*', redirectLoggedOut );
 
 		return;
-	}
-
-	// Handle logged-in user visiting Jetpack checkout
-	if ( isEnabled( 'jetpack/userless-checkout' ) ) {
-		page( '/checkout/jetpack/:siteSlug/:productSlug', checkout, makeLayout, clientRender );
-		page(
-			'/checkout/jetpack/thank-you/:site/:product',
-			siteSelection,
-			jetpackCheckoutThankYou,
-			makeLayout,
-			clientRender
-		);
 	}
 
 	// Show these paths only for logged in users
