@@ -721,14 +721,15 @@ function getAnalyticsPath(
 	} else if ( selectedFeature && ! plan ) {
 		analyticsPath = '/checkout/features/:feature/:site';
 		analyticsProps = { feature: selectedFeature, site: selectedSiteSlug };
-	} else if ( product && ! purchaseId ) {
-		analyticsPath = isJetpackCheckout
-			? '/checkout/jetpack/:site/:product'
-			: '/checkout/:site/:product';
+	} else if ( product && selectedSiteSlug && ! purchaseId ) {
+		analyticsPath = '/checkout/:site/:product';
 		analyticsProps = { product, site: selectedSiteSlug, checkoutFlow };
 	} else if ( selectedSiteSlug ) {
 		analyticsPath = '/checkout/:site';
 		analyticsProps = { site: selectedSiteSlug };
+	} else if ( product && ! selectedSiteSlug ) {
+		analyticsPath = '/checkout/:product';
+		analyticsProps = { product, checkoutFlow };
 	} else {
 		analyticsPath = '/checkout/no-site';
 	}
