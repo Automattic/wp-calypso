@@ -166,7 +166,6 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"upsell/concierge-session": true,
 		"upsell/nudge-component": true,
-		"woocommerce/extension-dashboard": true,
 		"woocommerce/extension-referrers": true,
 		"woocommerce/store-on-non-atomic-sites": true,
 		"wpcom-user-bootstrap": false,
