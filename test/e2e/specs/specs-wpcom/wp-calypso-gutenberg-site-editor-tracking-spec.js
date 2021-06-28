@@ -128,6 +128,9 @@ const saveGlobalStyles = async ( driver ) => {
 		driver,
 		By.css( '.editor-entities-saved-states__save-button' )
 	);
+	// Ensure there is enough time for the debounced function to run, and get/compare entities to
+	// create the track event.
+	await driver.sleep( 500 );
 };
 
 const testGlobalStylesColorAndTypography = async ( driver, blocksLevel = false ) => {
@@ -479,8 +482,6 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				// Reset Global Styles before testing.
 				await clickGlobalStylesResetButton( this.driver );
 				await saveGlobalStyles( this.driver );
-				// Wait for debounce and entity retreival before clearing stack.
-				await this.driver.sleep( 500 );
 				await clearEventsStack( this.driver );
 
 				await testGlobalStylesColorAndTypography( this.driver );
@@ -524,16 +525,12 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				// Reset global styles before testing.
 				await clickGlobalStylesResetButton( this.driver );
 				await saveGlobalStyles( this.driver );
-				// Wait for debounce and entity fetching before clearing events.
-				await this.driver.sleep( 500 );
 				await clearEventsStack( this.driver );
 
 				await changeGlobalStylesFontSize( this.driver, '11' );
 				await changeGlobalStylesColor( this.driver, 1, 1 );
 				await changeGlobalStylesColor( this.driver, 3, 1 );
 				await saveGlobalStyles( this.driver );
-				// Wait for debounce and entity fetching before accessing events stack.
-				await this.driver.sleep( 500 );
 				const saveEvents = ( await getEventsStack( this.driver ) ).filter(
 					( event ) => event[ 0 ] === 'wpcom_block_editor_global_styles_save'
 				);
