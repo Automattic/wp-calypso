@@ -73,6 +73,7 @@ class ListAll extends Component {
 	state = {
 		isSavingContactInfo: false,
 		selectedDomains: {},
+		selectedDomainListHeader: true,
 		transferLockOptOut: false,
 		whoisData: {},
 		contactInfoSaveResults: {},
@@ -164,10 +165,13 @@ class ListAll extends Component {
 			this.fetchWhoisData( domain );
 		}
 
+		const selectedDomainListHeader = this.state.selectedDomainListHeader && selected;
+
 		this.setState( ( { selectedDomains } ) => {
 			return {
 				selectedDomains: { ...selectedDomains, [ domain ]: selected },
 				contactInfoSaveResults: {},
+				selectedDomainListHeader: selectedDomainListHeader,
 			};
 		} );
 	};
@@ -316,6 +320,44 @@ class ListAll extends Component {
 		);
 	}
 
+	handleDomainListHeaderToggle = ( selected ) => {
+		const selectedDomains = Object.keys( this.state.selectedDomains ?? {} ).reduce(
+			( list, domain ) => {
+				return { ...list, [ domain ]: selected };
+			},
+			{}
+		);
+
+		this.setState( () => {
+			return {
+				selectedDomainListHeader: selected,
+				contactInfoSaveResults: {},
+				selectedDomains: selectedDomains,
+			};
+		} );
+	};
+
+	renderDomainListHeader() {
+		const { isContactEmailEditContext } = this.props;
+		const { isSavingContactInfo, selectedDomainListHeader } = this.state;
+		const isLoadingDomainDetails = this.isLoadingDomainDetails();
+		const isChecked = selectedDomainListHeader || isLoadingDomainDetails;
+
+		return (
+			<ListHeader
+				key="list-header"
+				action={ this.props.action }
+				disabled={ isLoadingDomainDetails || isSavingContactInfo }
+				onToggle={ this.handleDomainListHeaderToggle }
+				isChecked={ isChecked }
+				isBusy={
+					isContactEmailEditContext &&
+					( ( isChecked && isSavingContactInfo ) || isLoadingDomainDetails )
+				}
+			/>
+		);
+	}
+
 	renderDomainsList() {
 		if ( this.isLoading() ) {
 			return Array.from( { length: 3 } ).map( ( _, n ) => (
@@ -334,7 +376,7 @@ class ListAll extends Component {
 			];
 		}
 
-		return [ <ListHeader key="list-header" action={ this.props.action } />, ...domainListItems ];
+		return [ this.renderDomainListHeader(), ...domainListItems ];
 	}
 
 	renderHeaderButtons() {
