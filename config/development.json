@@ -105,6 +105,7 @@
 		"layout/query-selected-editor": true,
 		"legal-updates-banner": true,
 		"login/magic-login": true,
+		"logmein": true,
 		"happychat": true,
 		"mailchimp": true,
 		"manage/export/guided-transfer": true,

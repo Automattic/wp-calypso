@@ -80,6 +80,7 @@
 		"layout/query-selected-editor": true,
 		"legal-updates-banner": false,
 		"login/magic-login": true,
+		"logmein": true,
 		"keyboard-shortcuts": true,
 		"mailchimp": true,
 		"manage/export/guided-transfer": true,
