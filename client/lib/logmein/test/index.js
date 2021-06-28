@@ -221,7 +221,7 @@ describe( 'logmein', () => {
 
 		it( 'attaches logmeinOnClick methods', () => {
 			attachLogmein( store );
-			expect( handlers ).toEqual( [ 'click', 'contextmenu' ] );
+			expect( handlers ).toEqual( [ 'click', 'auxclick', 'contextmenu' ] );
 		} );
 	} );
 
