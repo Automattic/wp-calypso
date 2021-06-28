@@ -53,6 +53,10 @@ import {
 	retrieveSignupDestination,
 	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
+import {
+	isContactValidationResponseValid,
+	getTaxValidationResult,
+} from 'calypso/my-sites/checkout/composite-checkout/contact-validation';
 
 /**
  * Style dependencies
@@ -96,14 +100,59 @@ export class UpsellNudge extends React.Component {
 
 	state = {
 		showPurchaseModal: false,
+		isValidatingContactInfo: true,
+		isContactInfoValid: false,
 	};
 
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
+		this.validateContactInfo();
 	}
+
+	componentDidUpdate() {
+		this.validateContactInfo();
+	}
+
+	validateContactInfo = () => {
+		if ( this.props.isLoading || ! this.state.isValidatingContactInfo ) {
+			return;
+		}
+		if ( this.props.cards.length === 0 ) {
+			this.setState( { isValidatingContactInfo: false, isContactInfoValid: false } );
+			return;
+		}
+		const storedCard = this.props.cards[ 0 ];
+		const countryCode = extractStoredCardMetaValue( storedCard, 'country_code' );
+		const postalCode = extractStoredCardMetaValue( storedCard, 'card_zip' );
+
+		const validateContactDetails = async () => {
+			const contactInfo = {
+				postalCode: {
+					value: postalCode,
+					isTouched: true,
+					errors: [],
+					isRequired: true,
+				},
+				countryCode: {
+					value: countryCode,
+					isTouched: true,
+					errors: [],
+					isRequired: true,
+				},
+			};
+			const validationResult = await getTaxValidationResult( contactInfo );
+			return isContactValidationResponseValid( validationResult, contactInfo );
+		};
+
+		validateContactDetails().then( ( isValid ) => {
+			this.setState( { isValidatingContactInfo: false, isContactInfoValid: isValid } );
+		} );
+	};
 
 	render() {
 		const { selectedSiteId, isLoading, hasProductsList, hasSitePlans, upsellType } = this.props;
+
+		const { isValidatingContactInfo } = this.state;
 
 		return (
 			<Main className={ upsellType }>
@@ -111,7 +160,7 @@ export class UpsellNudge extends React.Component {
 				<QueryStoredCards />
 				{ ! hasProductsList && <QueryProductsList /> }
 				{ ! hasSitePlans && <QuerySitePlans siteId={ selectedSiteId } /> }
-				{ isLoading ? this.renderPlaceholders() : this.renderContent() }
+				{ isLoading || isValidatingContactInfo ? this.renderPlaceholders() : this.renderContent() }
 				{ this.state.showPurchaseModal && this.renderPurchaseModal() }
 				{ this.preloadIconsForPurchaseModal() }
 			</Main>
@@ -302,6 +351,10 @@ export class UpsellNudge extends React.Component {
 
 		// stored cards should exist
 		if ( cards.length === 0 ) {
+			return false;
+		}
+
+		if ( ! this.state.isContactInfoValid ) {
 			return false;
 		}
 
