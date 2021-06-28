@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import config from '@automattic/calypso-config';
+import type { AnyAction, Dispatch } from 'redux';
 
 /**
  * Internal dependencies
@@ -37,9 +37,11 @@ import {
 	PLUGIN_INSTALLATION_COMPLETED,
 	PLUGIN_INSTALLATION_IN_PROGRESS,
 	PLUGIN_INSTALLATION_ERROR,
-} from 'calypso/state/plugins/installed/status/reducer';
+} from 'calypso/state/plugins/installed/status/constants';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin as getWporgPlugin } from 'calypso/state/plugins/wporg/selectors';
+import { IAppState } from 'calypso/state/plugins/reducer';
+import { marketplaceDebugger } from 'calypso/my-sites/plugins/marketplace/constants';
 
 export function setPrimaryDomainCandidate(
 	domainName: string | undefined
@@ -68,7 +70,7 @@ export function setIsPluginInstalledDuringPurchase(
 	};
 }
 
-export function resetPurchaseFlow(): { type: string } {
+export function resetPurchaseFlow(): AnyAction {
 	return {
 		type: MARKETPLACE_RESET_PURCHASE_FLOW,
 	};
@@ -76,19 +78,19 @@ export function resetPurchaseFlow(): { type: string } {
 
 export function siteTransferStateChange(
 	state: MARKETPLACE_ASYNC_PROCESS_STATUS,
-	reason = ''
-): { type: string; state: MARKETPLACE_ASYNC_PROCESS_STATUS; reason: string } {
+	reason = 'NOT_PROVIDED'
+): AnyAction {
 	return {
 		type: MARKETPLACE_SITE_TRANSFER_STATE_CHANGE,
 		state,
-		reason: reason ?? 'NOT_PROVIDED',
+		reason,
 	};
 }
 
 /**
  * This action is triggered when there is a site transfer performed along with a plugin install
  */
-export function siteTransferWithPluginInstallTriggered(): { type: string } {
+export function siteTransferWithPluginInstallTriggered(): AnyAction {
 	return {
 		type: MARKETPLACE_SITE_TRANSFER_PLUGIN_INSTALL,
 	};
@@ -97,11 +99,7 @@ export function siteTransferWithPluginInstallTriggered(): { type: string } {
 export function pluginInstallationStateChange(
 	state: MARKETPLACE_ASYNC_PROCESS_STATUS,
 	reason = ''
-): {
-	type: string;
-	state: MARKETPLACE_ASYNC_PROCESS_STATUS;
-	reason?: string;
-} {
+): AnyAction {
 	return {
 		type: MARKETPLACE_PLUGIN_INSTALLATION_STATE_CHANGE,
 		state,
@@ -110,7 +108,7 @@ export function pluginInstallationStateChange(
 }
 
 export function tryPluginInstall( selectedSiteId: number, pluginSlugToBeInstalled: string ) {
-	return function ( dispatch: any, getState: () => any ): void {
+	return function ( dispatch: Dispatch< AnyAction >, getState: () => IAppState ): void {
 		const state = getState();
 		const { pluginInstallationStatus } = getPurchaseFlowState( state );
 
@@ -133,14 +131,11 @@ export function tryPluginInstall( selectedSiteId: number, pluginSlugToBeInstalle
 				// There is no such plugin on wporg so there is something wrong here
 				// For some reason plugin information becomes unresponsive just right after a transfer
 				// currently we fail silently because it seems to resolve automatically
-				// TODO: This blocking experience occurs sometime and may need possible intervention to manually try and fallback to a given url
-				if ( config.isEnabled( 'marketplace-test' ) ) {
-					// eslint-disable-next-line no-console
-					console.error(
-						'::MARKETPLACE::ERROR:: The wporg plugin details could not be fetched or the slug does not exist',
-						{ wporgPlugin }
-					);
-				}
+				// TODO: This blocking experience occurs sometimes, requires investigation and a fix
+				marketplaceDebugger(
+					'::MARKETPLACE::ERROR:: The wporg plugin details could not be fetched or the slug does not exist',
+					{ wporgPlugin }
+				);
 			} else if ( isPluginInstalled || pluginStatus === 'completed' ) {
 				// This means the plugin was successfully installed earlier, most probably during purchase
 				dispatch( pluginInstallationStateChange( MARKETPLACE_ASYNC_PROCESS_STATUS.COMPLETED ) );
@@ -173,7 +168,7 @@ export function tryPluginInstall( selectedSiteId: number, pluginSlugToBeInstalle
 }
 
 export function trySiteTransfer( selectedSiteId: number, pluginSlugToBeInstalled: string ) {
-	return function ( dispatch: any, getState: () => any ): void {
+	return function ( dispatch: Dispatch< AnyAction >, getState: () => IAppState ): void {
 		const state = getState();
 		const { siteTransferStatus } = getPurchaseFlowState( state );
 		// First, figure out if the site is already transferred
@@ -220,7 +215,7 @@ export function trySiteTransfer( selectedSiteId: number, pluginSlugToBeInstalled
  * TODO: Write a comprehensive unit test for this function
  */
 export function tryProductInstall() {
-	return function ( dispatch: any, getState: () => any ): void {
+	return function ( dispatch: Dispatch< any >, getState: () => IAppState ): void {
 		const state = getState();
 		const selectedSiteId = getSelectedSiteId( state );
 		const { pluginSlugToBeInstalled } = getPurchaseFlowState( state );

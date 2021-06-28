@@ -26,13 +26,11 @@ import {
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
 	PLUGIN_REMOVE_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
-
-/**
- * Plugin installation statuses
- */
-export const PLUGIN_INSTALLATION_IN_PROGRESS = 'inProgress';
-export const PLUGIN_INSTALLATION_COMPLETED = 'completed';
-export const PLUGIN_INSTALLATION_ERROR = 'error';
+import {
+	PLUGIN_INSTALLATION_COMPLETED,
+	PLUGIN_INSTALLATION_ERROR,
+	PLUGIN_INSTALLATION_IN_PROGRESS,
+} from 'calypso/state/plugins/installed/status/constants';
 
 /*
  * Tracks the current status of plugins on sites, indexed by (site, plugin).

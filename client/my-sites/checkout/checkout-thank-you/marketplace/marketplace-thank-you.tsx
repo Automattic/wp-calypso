@@ -158,7 +158,7 @@ const MarketplaceThankYou = () => {
 			</Masterbar>
 			<MarketplaceThankYouContainer className="marketplace-thank-you__container checkout-thank-you">
 				<MarketplaceThankYouHeader>
-					<img alt="yoast logo" width={ imageWidth } src={ yoastInstalledImage }></img>
+					<img alt="yoast logo" width={ imageWidth } src={ yoastInstalledImage } />
 				</MarketplaceThankYouHeader>
 				<ThankYouBody>
 					<div>

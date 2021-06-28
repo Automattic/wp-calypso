@@ -6,7 +6,6 @@ import { ThemeProvider } from 'emotion-theming';
 import { useSelector, useDispatch } from 'react-redux';
 import page from 'page';
 import { useTranslate } from 'i18n-calypso';
-import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -42,9 +41,10 @@ import {
  * Style dependencies
  */
 import 'calypso/my-sites/plugins/marketplace/marketplace-plugin-setup-status/style.scss';
+import { marketplaceDebugger } from 'calypso/my-sites/plugins/marketplace/constants';
 
 /**
- * This page busy waits and/or  installs any plugins required in the marketplace purchase flow.
+ * This page busy waits and installs any plugins that are required in the marketplace purchase flow.
  */
 function WrappedMarketplacePluginSetup(): JSX.Element {
 	const translate = useTranslate();
@@ -83,26 +83,16 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 			page( '/home' );
 		} else if ( ! pluginSlugToBeInstalled ) {
 			// A plugin slug should have been provided to reach this page
-			if ( config.isEnabled( 'marketplace-test' ) ) {
-				// eslint-disable-next-line no-console
-				console.error(
-					'::MARKETPLACE::ERROR:: There is an error in plugin setup page pluginSlugToBeInstalled is not provided'
-				);
-			}
-			// In case plugin slug is not provided user will be navigated to the home page
+			marketplaceDebugger(
+				'::MARKETPLACE::ERROR:: There is an error in plugin setup page pluginSlugToBeInstalled is not provided'
+			);
 			page( `/home/${ selectedSiteSlug }` );
 		}
 	}, [ dispatch, pluginSlugToBeInstalled, selectedSiteSlug ] );
 
 	useEffect( () => {
 		if ( hasProductSetupError ) {
-			// TODO: Handle product setup errors, remove console log on production release
-			// A plugin slug should have been provided to reach this page
-			if ( config.isEnabled( 'marketplace-test' ) ) {
-				// eslint-disable-next-line no-console
-				console.error( '::MARKETPLACE::ERROR:: There is an error in plugin setup' );
-			}
-			// In case plugin slug is not provided user will be navigated to the home page
+			marketplaceDebugger( '::MARKETPLACE::ERROR:: There is an error in product setup' );
 			selectedSiteSlug &&
 				pluginSlugToBeInstalled &&
 				navigateToProductHomePage( selectedSiteSlug, pluginSlugToBeInstalled );

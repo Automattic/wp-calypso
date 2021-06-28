@@ -5,6 +5,8 @@ import page from 'page';
 
 /**
  * Navigation functions
+ *
+ * TODO: remove all feature flags from urls
  */
 
 export function navigateToProductHomePage( selectedSiteSlug: string, pluginSlug: string ): void {

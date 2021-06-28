@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { Button, Card } from '@automattic/components';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -27,15 +27,17 @@ export default function AdminMenuFetch(): JSX.Element {
 	const { url: yoastSeoPageUrl } =
 		menuItems.find( ( { slug }: { slug: string } ) => slug === 'wpseo_dashboard' ) ?? {};
 
+	const fetchAdminMenu = useCallback(
+		() => selectedSiteId && dispatch( requestAdminMenu( selectedSiteId ) ),
+		[ dispatch, selectedSiteId ]
+	);
 	useEffect( () => {
-		if ( ! postsPageUrl || ! yoastSeoPageUrl ) {
-			selectedSiteId && dispatch( requestAdminMenu( selectedSiteId ) );
-		}
-	}, [ dispatch, postsPageUrl, selectedSiteId, yoastSeoPageUrl ] );
+		fetchAdminMenu();
+	}, [ fetchAdminMenu ] );
 
 	return (
 		<Card>
-			<Button onClick={ () => dispatch( requestAdminMenu( selectedSiteId ) ) }>Refresh</Button>
+			<Button onClick={ fetchAdminMenu }>Refresh</Button>
 			<Card>
 				<CardHeading tagName="h1" size={ 21 }>
 					Is the menu available?

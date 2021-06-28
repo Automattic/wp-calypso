@@ -36,6 +36,7 @@ export const status = withPersistence( ( state = null, action ) => {
 		case TRANSFER_UPDATE:
 			return 'complete' === action.status ? transferStates.COMPLETE : state;
 		case REQUEST_STATUS_FAILURE:
+			// TODO : [MARKETPLACE] rely on a tangible status from the backend instead of this message
 			return action.error === 'An invalid transfer ID was passed.'
 				? transferStates.NONE
 				: transferStates.REQUEST_FAILURE;

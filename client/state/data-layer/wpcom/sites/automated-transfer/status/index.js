@@ -57,7 +57,7 @@ export const receiveStatus = ( { siteId }, { status, uploaded_plugin_slug, trans
 export const requestingStatusFailure = ( response ) => {
 	return automatedTransferStatusFetchingFailure( {
 		siteId: response.siteId,
-		error: response.meta?.dataLayer?.error?.message || 'Unknown Error when fetching state',
+		error: response.meta?.dataLayer?.error?.message,
 	} );
 };
 
