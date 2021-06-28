@@ -15,10 +15,6 @@
 	@include break-mobile {
 		padding: 16px 24px;
 	}
-
-	@include break-large {
-		box-shadow: none;
-	}
 }
 
 .go-mobile__app-badges {
@@ -30,21 +26,18 @@
 }
 
 .go-mobile__email-link {
-	padding-top: 8px;
+	padding-top: 20px;
 	color: var( --color-text-subtle );
 	display: none;
 
 	@include break-large() {
 		display: block;
 	}
-	@include break-xlarge {
-		padding-top: 18px;
-	}
 }
 
 .go-mobile__email-link-button {
 	display: block;
-	margin-top: 14px;
+	margin-top: 16px;
 }
 
 .go-mobile__row.has-2-cols {
