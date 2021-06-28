@@ -582,7 +582,7 @@ $font-size: rem( 14px );
 		}
 
 		&.is-sidebar-overflow {
-			.focus-content.is-section-theme {
+			.is-section-theme {
 				.layout__secondary {
 					transform: translateX( -100% );
 				}
