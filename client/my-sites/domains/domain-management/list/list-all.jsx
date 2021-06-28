@@ -72,7 +72,6 @@ class ListAll extends Component {
 
 	state = {
 		isSavingContactInfo: false,
-		selectedDomainsSet: false,
 		selectedDomains: {},
 		transferLockOptOut: false,
 		whoisData: {},
@@ -82,21 +81,53 @@ class ListAll extends Component {
 	renderedQuerySiteDomains = {};
 
 	componentDidUpdate() {
-		if (
-			this.props.isContactEmailEditContext &&
-			! this.isLoadingDomainDetails() &&
-			( this.props.filteredDomainsList ?? [] ).length !== 0 &&
-			! this.state.selectedDomainsSet
-		) {
+		if ( this.props.isContactEmailEditContext && ! this.isLoadingDomainDetails() ) {
 			this.setSelectedDomains();
 		}
 	}
 
 	setSelectedDomains = () => {
-		this.setState( { selectedDomainsSet: true }, () =>
-			this.props.filteredDomainsList.forEach( ( { domain } ) =>
-				this.handleDomainItemToggle( domain, true )
-			)
+		const newFilteredDomains = ( this.props.filteredDomainsList ?? [] ).filter( ( domain ) => {
+			return ! Object.keys( this.state.selectedDomains ?? {} ).includes( domain.domain );
+		} );
+
+		if ( newFilteredDomains.length === 0 ) {
+			return;
+		}
+
+		const newSelectedDomains = ( newFilteredDomains ?? [] ).reduce( ( list, domain ) => {
+			return {
+				...list,
+				[ domain.domain ]: true,
+			};
+		}, {} );
+
+		const newWhoisData = ( newFilteredDomains ?? [] ).reduce( ( list, domain ) => {
+			return {
+				...list,
+				[ domain.domain ]: null,
+			};
+		}, {} );
+
+		this.setState(
+			( { selectedDomains, whoisData } ) => {
+				return {
+					selectedDomains: { ...selectedDomains, ...newSelectedDomains },
+					whoisData: { ...newWhoisData, ...whoisData },
+				};
+			},
+			() => {
+				const domains = Object.keys( newSelectedDomains ?? {} );
+				if ( domains.length === 0 ) {
+					return;
+				}
+
+				domains.forEach( ( domain ) => {
+					if ( Object.keys( this.state.whoisData[ domain ] ?? {} ).length === 0 ) {
+						this.fetchWhoisData( domain );
+					}
+				} );
+			}
 		);
 	};
 
@@ -173,14 +204,10 @@ class ListAll extends Component {
 
 	isLoadingWhoisData() {
 		const { isContactEmailEditContext } = this.props;
-		const { selectedDomains, selectedDomainsSet, whoisData } = this.state;
+		const { selectedDomains, whoisData } = this.state;
 
 		if ( ! isContactEmailEditContext ) {
 			return false;
-		}
-
-		if ( ! selectedDomainsSet ) {
-			return true;
 		}
 
 		if ( Object.keys( whoisData ?? {} ).length === 0 ) {
