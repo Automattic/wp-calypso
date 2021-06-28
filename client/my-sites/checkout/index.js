@@ -10,7 +10,6 @@ import {
 	checkout,
 	checkoutPending,
 	checkoutThankYou,
-	gsuiteNudge,
 	upsellNudge,
 	redirectToSupportSession,
 	redirectJetpackLegacyPlans,
@@ -189,7 +188,6 @@ export default function () {
 	page(
 		'/checkout/:site/with-gsuite/:domain/:receiptId?',
 		siteSelection,
-		gsuiteNudge,
 		makeLayout,
 		clientRender
 	);

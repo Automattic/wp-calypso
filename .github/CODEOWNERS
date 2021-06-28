@@ -30,7 +30,6 @@
 /client/my-sites/checkout/checkout/domain-details-form.jsx @Automattic/letero
 /client/my-sites/checkout/checkout/index.jsx @Automattic/letero
 /client/my-sites/checkout/controller.jsx @Automattic/letero
-/client/my-sites/checkout/gsuite-nudge @Automattic/letero
 /client/my-sites/domains/components/domain-warnings @Automattic/letero
 /client/my-sites/domains/controller.jsx @Automattic/letero
 /client/my-sites/email @Automattic/letero
