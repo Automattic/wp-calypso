@@ -31,7 +31,7 @@ export function useSubmitTransaction( {
 }: {
 	cart: ResponseCart;
 	siteId: string | number;
-	storedCard: StoredCard;
+	storedCard: StoredCard | undefined;
 	setStep: SetStep;
 	onClose: OnClose;
 } ): SubmitTransactionFunction {
@@ -39,6 +39,9 @@ export function useSubmitTransaction( {
 	const reduxDispatch = useDispatch();
 
 	return useCallback( () => {
+		if ( ! storedCard ) {
+			throw new Error( 'No saved card found' );
+		}
 		const wpcomCart = translateResponseCartToWPCOMCart( cart );
 		const countryCode = extractStoredCardMetaValue( storedCard, 'country_code' );
 		const postalCode = extractStoredCardMetaValue( storedCard, 'card_zip' );
