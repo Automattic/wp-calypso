@@ -1,7 +1,7 @@
 @import './grid-mixins.scss';
 
 body.is-section-home {
-	background: white;
+	background: var( --studio-white );;
 }
 
 .customer-home__heading {
@@ -74,7 +74,8 @@ body.is-section-home {
 }
 
 .customer-home__main .card {
-	border-radius: 2px;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 3px;
 }
 
 .customer-home__main .card-heading {
@@ -109,4 +110,10 @@ body.is-section-home {
 	a:last-child .vertical-nav-item {
 		border-bottom: none;
 	}
+}
+
+
+/** Restyle sidebar on light themes **/
+.is-section-home.is-nav-unification .sidebar .sidebar__menu-link::after {
+	border-right-color: var( --studio-white );
 }
