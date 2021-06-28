@@ -6,6 +6,8 @@
 	box-shadow: 0 0 0 1px var( --color-border-subtle );
 	position: relative;
 	margin-bottom: 24px;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 3px;
 
 	.task__text,
 	.task__illustration {
