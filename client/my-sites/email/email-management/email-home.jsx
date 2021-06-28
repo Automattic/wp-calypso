@@ -60,7 +60,7 @@ class EmailManagementHome extends React.Component {
 			selectedSite,
 			selectedDomainName,
 			currentRoute,
-			selectedSiteId
+			selectedSiteId,
 		} = this.props;
 
 		if ( ! hasSiteDomainsLoaded || ! hasSitesLoaded || ! selectedSite ) {
