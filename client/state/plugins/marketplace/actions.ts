@@ -133,6 +133,7 @@ export function tryPluginInstall( selectedSiteId: number, pluginSlugToBeInstalle
 				// There is no such plugin on wporg so there is something wrong here
 				// For some reason plugin information becomes unresponsive just right after a transfer
 				// currently we fail silently because it seems to resolve automatically
+				// TODO: This blocking experience occurs sometime and may need possible intervention to manually try and fallback to a given url
 				if ( config.isEnabled( 'marketplace-test' ) ) {
 					// eslint-disable-next-line no-console
 					console.error(
@@ -195,6 +196,13 @@ export function trySiteTransfer( selectedSiteId: number, pluginSlugToBeInstalled
 					dispatch( initiateThemeTransfer( selectedSiteId, null, pluginSlugToBeInstalled ) );
 					dispatch( siteTransferStateChange( MARKETPLACE_ASYNC_PROCESS_STATUS.IN_PROGRESS ) );
 					break;
+				case transferStates.REQUEST_FAILURE:
+					dispatch(
+						siteTransferStateChange(
+							MARKETPLACE_ASYNC_PROCESS_STATUS.ERROR,
+							'The transfer state fetch request failed'
+						)
+					);
 				case transferStates.ERROR:
 					dispatch(
 						siteTransferStateChange(

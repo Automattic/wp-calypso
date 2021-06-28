@@ -18,12 +18,6 @@ export const PLUGIN_PRODUCT_MAP: PluginProductMappingInterface = {
 	'wordpress-seo-premium': YOAST_SEO,
 };
 
-export const marketplacePlugins = Object.keys( PLUGIN_PRODUCT_MAP );
-
-export function isMarketplacePlugin( pluginSlug: string ): boolean {
-	return marketplacePlugins.includes( pluginSlug );
-}
-
 export function getProductSlug( pluginSlug: keyof PluginProductMappingInterface ): string {
 	return PLUGIN_PRODUCT_MAP[ pluginSlug ];
 }

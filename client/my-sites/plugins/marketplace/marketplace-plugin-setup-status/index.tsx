@@ -26,6 +26,7 @@ import { tryProductInstall } from 'calypso/state/plugins/marketplace/actions';
 import {
 	navigateToInstallationThankYouPage,
 	navigateToProductHomePage,
+	waitFor,
 } from 'calypso/my-sites/plugins/marketplace/util';
 import {
 	isLoaded,
@@ -89,7 +90,7 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 				);
 			}
 			// In case plugin slug is not provided user will be navigated to the home page
-			navigateToProductHomePage( page, selectedSiteSlug );
+			page( `/home/${ selectedSiteSlug }` );
 		}
 	}, [ dispatch, pluginSlugToBeInstalled, selectedSiteSlug ] );
 
@@ -102,11 +103,18 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 				console.error( '::MARKETPLACE::ERROR:: There is an error in plugin setup' );
 			}
 			// In case plugin slug is not provided user will be navigated to the home page
-			navigateToProductHomePage( page, selectedSiteSlug ?? undefined );
+			selectedSiteSlug &&
+				pluginSlugToBeInstalled &&
+				navigateToProductHomePage( selectedSiteSlug, pluginSlugToBeInstalled );
 		} else if ( isProductSetupComplete ) {
-			navigateToInstallationThankYouPage( page, selectedSiteSlug ?? undefined );
+			/**
+			 * Wait for simulated progressbar to catchup
+			 */
+			waitFor( 5 ).then(
+				() => selectedSiteSlug && navigateToInstallationThankYouPage( selectedSiteSlug )
+			);
 		} else {
-			// For each effect call  try to install the plugin
+			// For each effect call, try to install the plugin
 			dispatch( tryProductInstall() );
 		}
 	}, [
@@ -116,6 +124,7 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 		siteTransferStatus,
 		hasProductSetupError,
 		isProductSetupComplete,
+		pluginSlugToBeInstalled,
 		/**
 		 * Additional subscribed states to run tryProductInstall
 		 */
@@ -138,7 +147,7 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 			<Masterbar></Masterbar>
 			<div className="marketplace-plugin-setup-status__root">
 				<div>
-					<SimulatedProgressBar steps={ steps } />
+					<SimulatedProgressBar steps={ steps } accelerateCompletion={ isProductSetupComplete } />
 				</div>
 			</div>
 		</>

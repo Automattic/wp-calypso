@@ -8,6 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 import { isDesktop } from '@automattic/viewport';
 import { ThemeProvider } from 'emotion-theming';
 import page from 'page';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 /**
  * Internal dependencies
@@ -231,7 +232,7 @@ const MarketplaceThankYou = () => {
 								<VerticalNavItem path={ '/help/contact' }>
 									{ translate( 'Ask a question' ) }
 								</VerticalNavItem>
-								<VerticalNavItem path={ 'https://wordpress.com/support' }>
+								<VerticalNavItem path={ localizeUrl( 'https://wordpress.com/support' ) }>
 									{ translate( 'Support documentation' ) }
 								</VerticalNavItem>
 							</VerticalNav>

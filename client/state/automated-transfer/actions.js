@@ -96,17 +96,21 @@ export const requestEligibility = ( siteId ) => ( {
  * @see state/automated-transfer/eligibility/reducer
  *
  * @param {number} siteId Site to which the information belongs
- * @param {object} data eligibility information to be merged into existing state
+ * @param {object} param eligibility information to be merged into existing state
+ * @param {object} param.eligibilityHolds The holds for eligibility
+ * @param {object} param.eligibilityWarnings Warnings against eligibility
+ * @param {object} param.lastUpdate last time the state was fetched
+ * @param {object} param.status transfer status
  * @returns {object} Redux action
  */
-export const updateEligibility = ( siteId, data ) => {
-	const { eligibilityHolds, eligibilityWarnings, lastUpdate, status } = data;
-	return {
-		type: AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE,
-		eligibilityHolds,
-		eligibilityWarnings,
-		lastUpdate,
-		siteId,
-		status,
-	};
-};
+export const updateEligibility = (
+	siteId,
+	{ eligibilityHolds, eligibilityWarnings, lastUpdate, status }
+) => ( {
+	type: AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE,
+	eligibilityHolds,
+	eligibilityWarnings,
+	lastUpdate,
+	siteId,
+	status,
+} );
