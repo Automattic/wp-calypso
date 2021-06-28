@@ -660,6 +660,7 @@ describe( 'initial-state', () => {
 		let store;
 		let clock;
 		let setStoredItemSpy;
+		let stopPersisting;
 
 		const dataReducer = withPersistence( ( state = null, { data } ) => {
 			if ( data && data !== state ) {
@@ -690,7 +691,7 @@ describe( 'initial-state', () => {
 				.mockImplementation( ( value ) => Promise.resolve( value ) );
 
 			store = createReduxStore( initialState, reducer );
-			persistOnChange( store, false );
+			stopPersisting = persistOnChange( store );
 		} );
 
 		afterEach( () => {
@@ -707,20 +708,6 @@ describe( 'initial-state', () => {
 			clock.tick( SERIALIZE_THROTTLE );
 
 			expect( setStoredItemSpy ).toHaveBeenCalledTimes( 1 );
-		} );
-
-		test( 'should not persist invalid state', () => {
-			// Create an invalid state by forcing the user ID stored in the
-			// state to differ from the current mocked user ID.
-			store.dispatch( {
-				type: 'foo',
-				data: 1,
-				userId: userFactory().get().ID + 1,
-			} );
-
-			clock.tick( SERIALIZE_THROTTLE );
-
-			expect( setStoredItemSpy ).toHaveBeenCalledTimes( 0 );
 		} );
 
 		test( 'should persist state for changed state', () => {
@@ -798,6 +785,24 @@ describe( 'initial-state', () => {
 				'redux-state-123456789',
 				expect.objectContaining( { data: 5 } )
 			);
+		} );
+
+		test( 'should not persist after calling the stop function', () => {
+			store.dispatch( {
+				type: 'foo',
+				data: 1,
+			} );
+			clock.tick( SERIALIZE_THROTTLE );
+			expect( setStoredItemSpy ).toHaveBeenCalledTimes( 1 );
+
+			stopPersisting();
+
+			store.dispatch( {
+				type: 'foo',
+				data: 1,
+			} );
+			clock.tick( SERIALIZE_THROTTLE );
+			expect( setStoredItemSpy ).toHaveBeenCalledTimes( 1 ); // no new call
 		} );
 	} );
 } );
