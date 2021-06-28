@@ -66,13 +66,24 @@ export function getGoogleAnalyticsDefaultConfig() {
  *
  * @param {string} urlPath The path of the current page
  * @param {string} pageTitle The title of the current page
+ * @param {bool} useJetpackGoogleAnalytics send the page view to Jetpack Google Analytics
  */
-export function fireGoogleAnalyticsPageView( urlPath, pageTitle ) {
-	window.gtag( 'config', TRACKING_IDS.wpcomGoogleAnalyticsGtag, {
-		...getGoogleAnalyticsDefaultConfig(),
-		page_path: urlPath,
-		page_title: pageTitle,
-	} );
+export function fireGoogleAnalyticsPageView(
+	urlPath,
+	pageTitle,
+	useJetpackGoogleAnalytics = false
+) {
+	window.gtag(
+		'config',
+		useJetpackGoogleAnalytics
+			? TRACKING_IDS.jetpackGoogleAnalyticsGtag
+			: TRACKING_IDS.wpcomGoogleAnalyticsGtag,
+		{
+			...getGoogleAnalyticsDefaultConfig(),
+			page_path: urlPath,
+			page_title: pageTitle,
+		}
+	);
 }
 
 /**
