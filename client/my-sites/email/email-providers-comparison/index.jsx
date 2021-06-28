@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import config from '@automattic/calypso-config';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -39,10 +38,7 @@ import {
 	getTitanFeatures,
 } from 'calypso/my-sites/email/email-provider-features/list';
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
-import {
-	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
-	GSUITE_BASIC_SLUG,
-} from 'calypso/lib/gsuite/constants';
+import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from 'calypso/lib/gsuite/constants';
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import {
 	getAnnualPrice,
@@ -66,7 +62,6 @@ import formatCurrency from '@automattic/format-currency';
 import emailIllustration from 'calypso/assets/images/email-providers/email-illustration.svg';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan.svg';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
-import gSuiteLogo from 'calypso/assets/images/email-providers/gsuite.svg';
 import forwardingIcon from 'calypso/assets/images/email-providers/forwarding.svg';
 import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
@@ -232,7 +227,7 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	onGoogleConfirmNewUsers = () => {
-		const { domain } = this.props;
+		const { domain, gSuiteProduct } = this.props;
 		const { googleUsers } = this.state;
 
 		const usersAreValid = areAllUsersValid( googleUsers );
@@ -251,14 +246,12 @@ class EmailProvidersComparison extends React.Component {
 
 		const { productsList, selectedSiteSlug, shoppingCartManager } = this.props;
 		const domains = [ domain ];
-		const googleProductSlug = config.isEnabled( 'google-workspace-migration' )
-			? GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
-			: GSUITE_BASIC_SLUG;
 
 		this.setState( { addingToCart: true } );
+
 		shoppingCartManager
 			.addProductsToCart(
-				getItemsForCart( domains, googleProductSlug, googleUsers ).map( ( item ) =>
+				getItemsForCart( domains, gSuiteProduct.product_slug, googleUsers ).map( ( item ) =>
 					fillInSingleCartItemAttributes( item, productsList )
 				)
 			)
@@ -266,11 +259,14 @@ class EmailProvidersComparison extends React.Component {
 				if ( this.isMounted ) {
 					this.setState( { addingToCart: false } );
 				}
+
 				const { errors } = this.props?.cart?.messages;
+
 				if ( errors && errors.length ) {
 					// Stay on the page to show the relevant error(s)
 					return;
 				}
+
 				this.isMounted && page( '/checkout/' + selectedSiteSlug );
 			} );
 	};
@@ -312,16 +308,13 @@ class EmailProvidersComparison extends React.Component {
 			return null;
 		}
 
-		const logoPath = config.isEnabled( 'google-workspace-migration' )
-			? googleWorkspaceIcon
-			: gSuiteLogo;
-
 		const formattedPrice = translate( '{{price/}} /user /month billed annually', {
 			components: {
 				price: <span>{ getMonthlyPrice( gSuiteProduct?.cost ?? null, currencyCode ) }</span>,
 			},
 			comment: '{{price/}} is the formatted price, e.g. $20',
 		} );
+
 		const discount = hasDiscount( gSuiteProduct )
 			? translate( 'First year %(discountedPrice)s', {
 					args: {
@@ -330,6 +323,7 @@ class EmailProvidersComparison extends React.Component {
 					comment: '%(discountedPrice)s is a formatted price, e.g. $75',
 			  } )
 			: null;
+
 		const additionalPriceInformation = translate( '%(price)s billed annually', {
 			args: {
 				price: getAnnualPrice( gSuiteProduct?.cost ?? null, currencyCode ),
@@ -374,7 +368,7 @@ class EmailProvidersComparison extends React.Component {
 		return (
 			<EmailProviderCard
 				providerKey="google"
-				logo={ { path: logoPath } }
+				logo={ { path: googleWorkspaceIcon } }
 				title={ getGoogleMailServiceFamily() }
 				description={ translate(
 					'Professional email integrated with Google Meet and other collaboration tools from Google.'
@@ -498,6 +492,7 @@ class EmailProvidersComparison extends React.Component {
 		return (
 			<>
 				<HeaderCake onClick={ this.handleBack }>{ translate( 'Add Email' ) }</HeaderCake>
+
 				<PromoCard
 					isPrimary
 					title={ translate( 'Get your own @%(domainName)s email address', translateArgs ) }
@@ -597,10 +592,6 @@ class EmailProvidersComparison extends React.Component {
 
 export default connect(
 	( state, ownProps ) => {
-		const productSlug = config.isEnabled( 'google-workspace-migration' )
-			? GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
-			: GSUITE_BASIC_SLUG;
-
 		const selectedSiteId = getSelectedSiteId( state );
 		const domains = getDomainsBySiteId( state, selectedSiteId );
 		const domain = getSelectedDomain( {
@@ -617,7 +608,7 @@ export default connect(
 			currentRoute: getCurrentRoute( state ),
 			domain,
 			domainsWithForwards: getDomainsWithForwards( state, domains ),
-			gSuiteProduct: getProductBySlug( state, productSlug ),
+			gSuiteProduct: getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY ),
 			isGSuiteSupported,
 			productsList: getProductsList( state ),
 			selectedSiteId,
