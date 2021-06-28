@@ -8,9 +8,6 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { PaymentLogo } from '@automattic/composite-checkout';
-import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Style dependencies
@@ -28,21 +25,11 @@ export default function StoredCreditCard( props ): ReactElement {
 	return (
 		<div className="stored-credit-card">
 			<div className="stored-credit-card__header">
-				<div className="stored-credit-card__header-left">
+				<div className="stored-credit-card__payment-logo">
 					<PaymentLogo brand={ creditCard.card_type } isSummary={ true } />
 				</div>
 
-				<div className="stored-credit-card__header-right">
-					<Gridicon icon="checkmark" size={ 18 } />
-					<div className="stored-credit-card__primary">
-						<span className="stored-credit-card__primary-text">{ translate( 'Primary' ) }</span>
-					</div>
-					<EllipsisMenu className="stored-credit-card__ellipsis" position="bottom">
-						<PopoverMenuItem>{ translate( 'Make primary' ) }</PopoverMenuItem>
-						<PopoverMenuItem>{ translate( 'Update details' ) }</PopoverMenuItem>
-						<PopoverMenuItem>{ translate( 'Delete card' ) }</PopoverMenuItem>
-					</EllipsisMenu>
-				</div>
+				<div className="stored-credit-card__primary">{ translate( 'Primary' ) }</div>
 			</div>
 			<div className="stored-credit-card__footer">
 				<div className="stored-credit-card__footer-left">

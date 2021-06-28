@@ -8,40 +8,25 @@
 	padding: 1rem;
 }
 
-.stored-credit-card__primary-text {
-	background: var( --color-masterbar-border );
-	color: var( --color-masterbar-text );
-	font-size: 0.75rem;
+.stored-credit-card__primary {
     padding: 2px 4px;
-    border-radius: 2px;
+	line-height: 1.25rem;
+	background: var( --studio-gray-80 );
+	color: var( --studio-white );
+	font-size: $font-body-small;
+    border-radius: var( --jetpack-corners-soft );
     font-weight: 400;
 }
 
 .stored-credit-card__header {
-	flex-grow: 1;
-	width: 100%;
 	display: flex;
 	justify-content: space-between;
+	flex-grow: 1;
+	margin-bottom: auto;
 }
 
-.stored-credit-card__header-left svg {
+.stored-credit-card__payment-logo svg {
 	filter: grayscale( 100% );
-}
-
-.stored-credit-card__header-right {
-	display: flex;
-}
-
-.stored-credit-card__header-right svg {
-	color: var( --color-primary );
-	padding-top: 3px;
-	padding-right: 5px;
-}
-
-.stored-credit-card__ellipsis button {
-	padding: 0;
-	margin-top: -4px;
-	margin-left: 10px;
 }
 
 .stored-credit-card__footer {
@@ -57,12 +42,13 @@
 }
 
 .stored-credit-card__name {
-	font-size: 0.875rem;
-	color: var( --color-masterbar-text );
+	font-size: 1.125rem; /* stylelint-disable-line */
+	color: var( --studio-gray-80 );
+	margin-bottom: 1rem;
 }
 
 .stored-credit-card__number,
 .stored-credit-card__expiry {
-	font-size: 0.75rem;
-	color: var( --color-masterbar-text );
+	font-size: $font-body-small;
+	color: var( --studio-gray-80 );
 }

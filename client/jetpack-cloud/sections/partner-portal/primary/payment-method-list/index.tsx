@@ -39,7 +39,7 @@ export default function PaymentMethodList(): ReactElement {
 
 			<div className="payment-method-list__body">
 				{ cards }
-				<AddStoredCreditCard />
+				<AddStoredCreditCard key="add-stored-credit-card" />
 			</div>
 		</Main>
 	);
