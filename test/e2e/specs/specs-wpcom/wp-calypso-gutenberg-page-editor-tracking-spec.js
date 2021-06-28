@@ -40,10 +40,16 @@ describe( `[${ host }] Calypso Gutenberg Page Editor Tracking: (${ screenSize })
 			await wpAdminSidebar.selectNewPage();
 
 			const editor = await GutenbergEditorComponent.Expect( this.driver, 'wp-admin' );
-			await editor.initEditor( { dismissPageTemplateLocator: false } );
+			await editor.initEditor( { dismissPageTemplateLocator: true } );
 		} );
 
 		it( 'Tracks "from_template_selector" property for "wpcom_block_inserted"', async function () {
+			// Reload for page layout selector.
+			await this.driver.navigate().refresh();
+			await driverHelper.dismissAlertIfPresent( this.driver );
+			const editor = await GutenbergEditorComponent.Expect( this.driver, 'wp-admin' );
+			await editor.initEditor();
+
 			await driverHelper.clickWhenClickable(
 				this.driver,
 				By.css( '.page-pattern-modal .pattern-selector-item__label' )
