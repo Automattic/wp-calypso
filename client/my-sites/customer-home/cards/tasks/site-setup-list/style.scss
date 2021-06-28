@@ -108,9 +108,10 @@
 
 	.nav-item__pending {
 		display: block;
+		box-sizing: border-box;
 		width: 8px;
 		height: 8px;
-		background-color: var( --color-neutral-20 );
+		border: 1px solid var( --studio-gray-10 );
 		// Using percentage because we're drawing a circle in CSS
 		// stylelint-disable-next-line declaration-property-unit-allowed-list
 		border-radius: 50%;
@@ -119,7 +120,8 @@
 	}
 
 	.nav-item.is-current .nav-item__pending {
-		background-color: var( --color-neutral-80 );
+		background-color: var( --studio-gray-80 );
+		border: none;
 	}
 
 	.nav-item__complete {
