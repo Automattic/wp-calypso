@@ -1,9 +1,5 @@
 @import './grid-mixins.scss';
 
-body.is-section-home {
-	background: white;
-}
-
 .customer-home__heading {
 	display: flex;
 
@@ -71,10 +67,6 @@ body.is-section-home {
 	@include breakpoint-deprecated( '<660px' ) {
 		padding: 0 16px;
 	}
-}
-
-.customer-home__main .card {
-	border-radius: 2px;
 }
 
 .customer-home__main .card-heading {
