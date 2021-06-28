@@ -300,7 +300,9 @@ class ThemesMagicSearchCard extends React.Component {
 		} );
 
 		// Check if we want to render suggestions or welcome banner
-		const renderSuggestions = this.state.editedSearchElement !== '';
+		const renderSuggestions = this.state.editedSearchElement.match(
+			/(feature|layout|column|subject|style):/i
+		);
 
 		return (
 			<div className={ magicSearchClass }>
