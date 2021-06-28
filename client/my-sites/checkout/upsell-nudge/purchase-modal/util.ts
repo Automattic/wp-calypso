@@ -3,7 +3,8 @@
  */
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { useProcessPayment } from '@automattic/composite-checkout';
+import { useProcessPayment, PaymentProcessorResponseType } from '@automattic/composite-checkout';
+import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
 /**
@@ -53,7 +54,17 @@ export function useSubmitTransaction( {
 			postalCode,
 			siteId: siteId ? String( siteId ) : undefined,
 		} )
-			.then( () => {
+			.then( ( response: PaymentProcessorResponse ) => {
+				if ( response.type === PaymentProcessorResponseType.ERROR ) {
+					recordTracksEvent( 'calypso_oneclick_upsell_payment_error', {
+						error_code: response.payload,
+						reason: response.payload,
+					} );
+					reduxDispatch( errorNotice( response.payload ) );
+					onClose();
+					return;
+				}
+
 				recordTracksEvent( 'calypso_oneclick_upsell_payment_success', {} );
 			} )
 			.catch( ( error ) => {
