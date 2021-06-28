@@ -11,7 +11,6 @@ import { compact, pickBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
 import ThemesSelection from './themes-selection';
 import SubMasterbarNav from 'calypso/components/sub-masterbar-nav';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -39,7 +38,6 @@ import {
 	prependThemeFilterKeys,
 } from 'calypso/state/themes/selectors';
 import UpworkBanner from 'calypso/blocks/upwork-banner';
-import RecommendedThemes from './recommended-themes';
 
 /**
  * Style dependencies
@@ -74,13 +72,6 @@ class ThemeShowcase extends React.Component {
 		this.state = {
 			page: 1,
 			showPreview: false,
-			isShowcaseOpen: !! (
-				this.props.loggedOutComponent ||
-				this.props.search ||
-				this.props.filter ||
-				this.props.tier ||
-				this.props.hasShowcaseOpened
-			),
 		};
 	}
 
@@ -145,12 +136,6 @@ class ThemeShowcase extends React.Component {
 		if ( ! this.props.loggedOutComponent && this.scrollRef && this.scrollRef.current ) {
 			this.scrollRef.current.scrollIntoView();
 		}
-	};
-
-	toggleShowcase = () => {
-		this.setState( { isShowcaseOpen: ! this.state.isShowcaseOpen } );
-		this.props.openThemesShowcase();
-		this.props.trackMoreThemesClick();
 	};
 
 	doSearch = ( searchBoxContent ) => {
@@ -261,8 +246,6 @@ class ThemeShowcase extends React.Component {
 
 		const showBanners = currentThemeId || ! siteId || ! isLoggedIn;
 
-		const { isShowcaseOpen } = this.state;
-		const isQueried = this.props.search || this.props.filter || this.props.tier;
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<div>
@@ -279,138 +262,63 @@ class ThemeShowcase extends React.Component {
 					/>
 				) }
 				<div className="themes__content">
-					{ ! this.props.loggedOutComponent && ! isQueried && (
-						<>
-							<RecommendedThemes
-								upsellUrl={ this.props.upsellUrl }
-								search={ search }
-								tier={ this.props.tier }
-								filter={ filter }
-								vertical={ this.props.vertical }
-								siteId={ this.props.siteId }
-								listLabel={ this.props.listLabel }
-								defaultOption={ this.props.defaultOption }
-								secondaryOption={ this.props.secondaryOption }
-								placeholderCount={ this.props.placeholderCount }
-								getScreenshotUrl={ function ( theme ) {
-									if ( ! getScreenshotOption( theme ).getUrl ) {
-										return null;
-									}
-
-									return localizeThemesPath(
-										getScreenshotOption( theme ).getUrl( theme ),
-										locale,
-										! isLoggedIn
-									);
-								} }
-								onScreenshotClick={ function ( themeId ) {
-									if ( ! getScreenshotOption( themeId ).action ) {
-										return;
-									}
-									getScreenshotOption( themeId ).action( themeId );
-								} }
-								getActionLabel={ function ( theme ) {
-									return getScreenshotOption( theme ).label;
-								} }
-								getOptions={ function ( theme ) {
-									return pickBy(
-										addTracking( options ),
-										( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
-									);
-								} }
-								trackScrollPage={ this.props.trackScrollPage }
-								emptyContent={ this.props.emptyContent }
-								isShowcaseOpen={ isShowcaseOpen }
-								scrollToSearchInput={ this.scrollToSearchInput }
-								bookmarkRef={ this.bookmarkRef }
-							/>
-							<div className="theme-showcase__open-showcase-button-holder">
-								{ isShowcaseOpen ? (
-									<hr />
-								) : (
-									<Button onClick={ this.toggleShowcase } data-e2e-value="open-themes-button">
-										{ translate( 'Show all themes' ) }
-									</Button>
-								) }
-							</div>
-						</>
+					{ ! this.props.loggedOutComponent && showBanners && (
+						<UpworkBanner location={ 'theme-banner' } />
 					) }
-					<div
-						ref={ this.scrollRef }
-						className={
-							! isShowcaseOpen
-								? 'themes__hidden-content theme-showcase__all-themes'
-								: 'theme-showcase__all-themes'
-						}
-					>
-						{ ! this.props.loggedOutComponent && (
-							<>
-								<h2>
-									<strong>{ translate( 'Advanced Themes' ) }</strong>
-								</h2>
-								<p>
-									{ translate(
-										'These themes offer more power and flexibility, but can be harder to setup and customize.'
-									) }
-								</p>
-								{ showBanners && <UpworkBanner location={ 'theme-banner' } /> }
-							</>
-						) }
-						<QueryThemeFilters />
+					<QueryThemeFilters />
 
-						<ThemesSearchCard
-							onSearch={ this.doSearch }
-							search={ filterString + search }
-							tier={ tier }
-							showTierThemesControl={ ! isMultisite }
-							select={ this.onTierSelect }
-						/>
-						{ this.props.upsellBanner }
+					<ThemesSearchCard
+						onSearch={ this.doSearch }
+						search={ filterString + search }
+						tier={ tier }
+						showTierThemesControl={ ! isMultisite }
+						select={ this.onTierSelect }
+					/>
+					{ this.props.upsellBanner }
 
-						<ThemesSelection
-							upsellUrl={ this.props.upsellUrl }
-							search={ search }
-							tier={ this.props.tier }
-							filter={ filter }
-							vertical={ this.props.vertical }
-							siteId={ this.props.siteId }
-							listLabel={ this.props.listLabel }
-							defaultOption={ this.props.defaultOption }
-							secondaryOption={ this.props.secondaryOption }
-							placeholderCount={ this.props.placeholderCount }
-							getScreenshotUrl={ function ( theme ) {
-								if ( ! getScreenshotOption( theme ).getUrl ) {
-									return null;
-								}
+					<ThemesSelection
+						upsellUrl={ this.props.upsellUrl }
+						search={ search }
+						tier={ this.props.tier }
+						filter={ filter }
+						vertical={ this.props.vertical }
+						siteId={ this.props.siteId }
+						listLabel={ this.props.listLabel }
+						defaultOption={ this.props.defaultOption }
+						secondaryOption={ this.props.secondaryOption }
+						placeholderCount={ this.props.placeholderCount }
+						getScreenshotUrl={ function ( theme ) {
+							if ( ! getScreenshotOption( theme ).getUrl ) {
+								return null;
+							}
 
-								return localizeThemesPath(
-									getScreenshotOption( theme ).getUrl( theme ),
-									locale,
-									! isLoggedIn
-								);
-							} }
-							onScreenshotClick={ function ( themeId ) {
-								if ( ! getScreenshotOption( themeId ).action ) {
-									return;
-								}
-								getScreenshotOption( themeId ).action( themeId );
-							} }
-							getActionLabel={ function ( theme ) {
-								return getScreenshotOption( theme ).label;
-							} }
-							getOptions={ function ( theme ) {
-								return pickBy(
-									addTracking( options ),
-									( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
-								);
-							} }
-							trackScrollPage={ this.props.trackScrollPage }
-							emptyContent={ this.props.emptyContent }
-							bookmarkRef={ this.bookmarkRef }
-						/>
-						<ThemePreview />
-						{ this.props.children }
-					</div>
+							return localizeThemesPath(
+								getScreenshotOption( theme ).getUrl( theme ),
+								locale,
+								! isLoggedIn
+							);
+						} }
+						onScreenshotClick={ function ( themeId ) {
+							if ( ! getScreenshotOption( themeId ).action ) {
+								return;
+							}
+							getScreenshotOption( themeId ).action( themeId );
+						} }
+						getActionLabel={ function ( theme ) {
+							return getScreenshotOption( theme ).label;
+						} }
+						getOptions={ function ( theme ) {
+							return pickBy(
+								addTracking( options ),
+								( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
+							);
+						} }
+						trackScrollPage={ this.props.trackScrollPage }
+						emptyContent={ this.props.emptyContent }
+						bookmarkRef={ this.bookmarkRef }
+					/>
+					<ThemePreview />
+					{ this.props.children }
 				</div>
 			</div>
 		);
