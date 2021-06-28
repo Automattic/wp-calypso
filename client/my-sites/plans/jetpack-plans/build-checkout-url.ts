@@ -40,20 +40,22 @@ export default function buildCheckoutURL(
 		}
 	}
 
+	// maybe needed in `jetpack/siteless-checkout` & `jetpack/userless-checkout` below
+	const host =
+		'development' === urlQueryArgs.calypso_env
+			? 'http://calypso.localhost:3000'
+			: 'https://wordpress.com';
+
+	if ( ! siteSlug && config.isEnabled( 'jetpack/siteless-checkout' ) ) {
+		return addQueryArgs( urlQueryArgs, host + `/checkout/jetpack/${ productsString }` );
+	}
+
 	if ( config.isEnabled( 'jetpack/userless-checkout' ) ) {
 		const { unlinked, purchasetoken, purchaseNonce, site } = urlQueryArgs;
 		const canDoUnlinkedCheckout = unlinked && !! site && ( !! purchasetoken || purchaseNonce );
 
 		// Enter userless checkout if unlinked, purchasetoken or purchaseNonce, and site are all set
-		if (
-			isJetpackCloud() &&
-			( canDoUnlinkedCheckout || config.isEnabled( 'jetpack/siteless-checkout' ) )
-		) {
-			const host =
-				'development' === urlQueryArgs.calypso_env
-					? 'http://calypso.localhost:3000'
-					: 'https://wordpress.com';
-
+		if ( isJetpackCloud() && canDoUnlinkedCheckout ) {
 			return addQueryArgs(
 				urlQueryArgs,
 				host + `/checkout/jetpack/${ siteSlug }/${ productsString }`
