@@ -50,6 +50,7 @@
 	border: 1px solid var( --color-accent );
 	border-radius: var( --jetpack-corners-soft );
 	box-sizing: border-box;
+	font-weight: 500; /* stylelint-disable-line scales/font-weights */
 
 	&:hover {
 		background-color: var( --color-accent-0 );
@@ -196,7 +197,17 @@
 
 	&[disabled],
 	&:disabled {
+		background: none;
 		color: var( --studio-gray-10 );
+	}
+}
+
+.button.is-borderless.is-scary {
+	color: var( --color-scary-50 );
+
+	&[disabled],
+	&:disabled {
+		background: none;
 	}
 }
 
@@ -210,6 +221,11 @@
 
 	&:active {
 		color: var( --color-scary-60 );
+	}
+
+	&[disabled],
+	&:disabled {
+		background: none;
 	}
 }
 
