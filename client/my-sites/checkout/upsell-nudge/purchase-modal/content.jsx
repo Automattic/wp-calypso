@@ -13,7 +13,7 @@ import { CheckoutCheckIcon, PaymentLogo } from '@automattic/composite-checkout';
  */
 import Gridicon from 'calypso/components/gridicon';
 import CheckoutTerms from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms';
-import { formatDate } from './util';
+import { formatDate, extractStoredCardMetaValue } from './util';
 import { BEFORE_SUBMIT } from './constants';
 
 function PurchaseModalStep( { children } ) {
@@ -51,6 +51,8 @@ function PaymentMethodStep( { siteSlug, card } ) {
 	}, [] );
 	// translators: %s will be replaced with the last 4 digits of a credit card.
 	const maskedCard = sprintf( translate( '**** %s' ), card?.card || '' );
+	const countryCode = extractStoredCardMetaValue( card, 'country_code' );
+	const postalCode = extractStoredCardMetaValue( card, 'card_zip' );
 
 	return (
 		<PurchaseModalStep>
@@ -68,6 +70,9 @@ function PaymentMethodStep( { siteSlug, card } ) {
 					<span className="purchase-modal__card-expiry">{ `${ translate(
 						'Expiry:'
 					) } ${ formatDate( card?.expiry ) }` }</span>
+				</div>
+				<div className="purchase-modal__card-address">
+					{ countryCode } { postalCode }
 				</div>
 			</div>
 		</PurchaseModalStep>
