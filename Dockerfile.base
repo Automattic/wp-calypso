@@ -11,7 +11,6 @@ ENV PERSISTENT_CACHE=true
 ENV PROFILE=true
 ENV SKIP_TSC=true
 ENV NVM_DIR=/calypso/.nvm
-ENV NODE_ENV=production
 ENV CALYPSO_ENV=production
 ENV BUILD_TRANSLATION_CHUNKS=true
 ENV NODE_OPTIONS=--max-old-space-size=$node_memory
@@ -31,7 +30,7 @@ RUN cd / \
 	# Prime yarn cache
 	&& yarn \
 	# Prime webpack caches
-	&& yarn build-client-both
+	&& NODE_ENV=production yarn build-client-both
 
 ENTRYPOINT [ "/bin/bash" ]
 

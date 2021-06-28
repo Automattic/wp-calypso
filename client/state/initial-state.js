@@ -137,19 +137,6 @@ function getReduxStateKeyForUserId( userId ) {
 	return 'redux-state-' + userId;
 }
 
-function isValidReduxKeyAndState( key, state ) {
-	// When the current user is changed (for example via logout) the previous
-	// user's state remains in memory until the page refreshes. To prevent this
-	// outdated state from being written to the new user's local storage, it is
-	// necessary to check that the user IDs match. (This check can be removed
-	// only if all places in the code that change the current user are also
-	// able to force the state in memory to be rebuilt - possibly using
-	// https://stackoverflow.com/questions/35622588/how-to-reset-the-state-of-a-redux-store/35641992#35641992
-	// - without generating any errors. Until then, it must remain in place.)
-	const userId = state?.currentUser?.id ?? null;
-	return key === getReduxStateKeyForUserId( userId );
-}
-
 async function persistentStoreState( reduxStateKey, storageKey, state, _timestamp ) {
 	if ( storageKey !== 'root' ) {
 		reduxStateKey += ':' + storageKey;
@@ -163,7 +150,7 @@ async function persistentStoreState( reduxStateKey, storageKey, state, _timestam
 
 export function persistOnChange( reduxStore ) {
 	if ( ! shouldPersist() ) {
-		return;
+		return () => {};
 	}
 
 	let prevState = null;
@@ -175,15 +162,11 @@ export function persistOnChange( reduxStore ) {
 				return;
 			}
 
-			const reduxStateKey = getReduxStateKey();
-			if ( ! isValidReduxKeyAndState( reduxStateKey, state ) ) {
-				return;
-			}
-
 			prevState = state;
 
 			const serializedState = serialize( reduxStore.getCurrentReducer(), state );
 			const _timestamp = Date.now();
+			const reduxStateKey = getReduxStateKey();
 
 			const storeTasks = map( serializedState.get(), ( data, storageKey ) =>
 				persistentStoreState( reduxStateKey, storageKey, data, _timestamp )
@@ -201,7 +184,16 @@ export function persistOnChange( reduxStore ) {
 		window.addEventListener( 'beforeunload', throttledSaveState.flush );
 	}
 
-	reduxStore.subscribe( throttledSaveState );
+	const unsubscribe = reduxStore.subscribe( throttledSaveState );
+
+	return () => {
+		if ( typeof window !== 'undefined' ) {
+			window.removeEventListener( 'beforeunload', throttledSaveState.flush );
+		}
+
+		unsubscribe();
+		throttledSaveState.cancel();
+	};
 }
 
 // Retrieve the initial state for the application, combining it from server and

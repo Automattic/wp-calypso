@@ -11,10 +11,8 @@ import Gridicon from './gridicons';
 import noticon2gridicon from '../utils/noticon2gridicon';
 import actions from '../state/actions';
 import ImagePreloader from './image-loader';
-
 import { html } from '../indices-to-html';
-
-const { recordTracksEvent } = require( '../helpers/stats' );
+import { recordTracksEvent } from '../helpers/stats';
 
 export class SummaryInList extends React.Component {
 	handleClick = ( event ) => {
@@ -23,7 +21,7 @@ export class SummaryInList extends React.Component {
 
 		if ( event.metaKey || event.shiftKey ) {
 			window.open( this.props.note.url, '_blank' );
-		} else if ( this.props.currentNote == this.props.note.id ) {
+		} else if ( this.props.currentNote === this.props.note.id ) {
 			this.props.unselectNote();
 		} else {
 			recordTracksEvent( 'calypso_notification_note_open', {
@@ -70,4 +68,4 @@ const mapDispatchToProps = {
 	unselectNote: actions.ui.unselectNote,
 };
 
-export default connect( null, mapDispatchToProps, null, { pure: false } )( SummaryInList );
+export default connect( null, mapDispatchToProps )( SummaryInList );

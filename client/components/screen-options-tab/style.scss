@@ -95,7 +95,8 @@ $screen-options-icon-border-y: 7px;
 	}
 }
 
-.screen-switcher__button {
+.screen-switcher__button,
+a.screen-switcher__button {
 	cursor: pointer;
 	border-radius: 4px; /* stylelint-disable-line */
 	padding: 8px;

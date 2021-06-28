@@ -1,10 +1,8 @@
 /**
  * Internal dependencies
  */
-import config from '@automattic/calypso-config';
 import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
-	GSUITE_BASIC_SLUG,
 	GSUITE_EXTRA_LICENSE_SLUG,
 } from 'calypso/lib/gsuite/constants';
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
@@ -433,11 +431,7 @@ export function googleApps( properties ) {
 
 	const domainName = meta ?? domain;
 
-	const productSlug =
-		product_slug ||
-		( config.isEnabled( 'google-workspace-migration' )
-			? GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
-			: GSUITE_BASIC_SLUG );
+	const productSlug = product_slug || GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY;
 
 	const extra = {
 		google_apps_users: users,

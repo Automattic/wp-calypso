@@ -45,13 +45,7 @@ Up-to-date instructions on installing individual pieces of required software can
 
 Once installed, open a Terminal instance and execute the following:
 
-1. navigate to the test directory:
-
-```
-cd <repo_root>/tests/e2e
-```
-
-2. install dependencies:
+1. install dependencies:
 
 ```
 yarn install

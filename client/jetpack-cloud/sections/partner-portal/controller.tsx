@@ -30,6 +30,7 @@ import Licenses from 'calypso/jetpack-cloud/sections/partner-portal/primary/lice
 import PaymentMethodList from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-list';
 import PaymentMethodAdd from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-add';
 import IssueLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license';
+import LandingPage from 'calypso/jetpack-cloud/sections/partner-portal/primary/landing-page';
 import {
 	LicenseFilter,
 	LicenseSortDirection,
@@ -112,6 +113,13 @@ export function paymentMethodAddContext( context: PageJS.Context, next: () => vo
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
 	context.primary = <PaymentMethodAdd />;
+	context.footer = <JetpackComFooter />;
+	next();
+}
+
+export function landingPageContext( context: PageJS.Context, next: () => void ): void {
+	context.header = <Header />;
+	context.primary = <LandingPage />;
 	context.footer = <JetpackComFooter />;
 	next();
 }

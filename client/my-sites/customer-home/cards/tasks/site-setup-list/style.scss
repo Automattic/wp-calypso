@@ -1,18 +1,23 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '../../../grid-mixins.scss';
+
 .site-setup-list {
 	padding: 0;
-	display: flex;
+	@include display-grid;
+	@include grid-template-columns( 12, 24px, 1fr );
 
 	@include breakpoint-deprecated( '<960px' ) {
 		display: block;
 	}
 
 	.site-setup-list__nav {
-		width: 328px;
-		flex-shrink: 0;
 		border-left: 1px solid var( --color-border-subtle );
 
-		@include breakpoint-deprecated( '<1280px' ) {
-			width: 260px;
+		@include grid-column( 9, 4 );
+
+		@include breakpoint-deprecated( '<1040px' ) {
+			@include grid-column( 8, 5 );
 		}
 
 		@include breakpoint-deprecated( '<960px' ) {
@@ -21,12 +26,18 @@
 		}
 
 		.site-setup-list__task {
-			padding: 0 24px 16px;
+			padding: 0 16px 16px;
 			border-bottom: 1px solid var( --color-border-subtle );
 			transition: all 0.1s;
+
+			@include break-mobile {
+				padding: 0 24px 16px;
+			}
+
 			&:last-child {
 				border-bottom: none;
 			}
+
 			.task__text {
 				padding: 0;
 			}
@@ -48,21 +59,29 @@
 	}
 
 	.card-heading {
-		padding: 16px 24px;
+		padding: 16px;
 		border-bottom: 1px solid var( --color-border-subtle );
 		display: flex;
 		align-items: center;
+
+		@include break-mobile {
+			padding: 16px 24px;
+		}
 	}
 
 	button.nav-item {
 		display: flex;
 		align-items: center;
-		padding: 16px 24px;
+		padding: 16px;
 		transition: all 0.1s;
 		cursor: pointer;
 		width: 100%;
 		margin: 0;
 		color: var( --color-text );
+
+		@include break-mobile {
+			padding: 16px 24px;
+		}
 
 		&:hover {
 			background-color: var( --color-neutral-0 );
@@ -89,9 +108,10 @@
 
 	.nav-item__pending {
 		display: block;
+		box-sizing: border-box;
 		width: 8px;
 		height: 8px;
-		background-color: var( --color-neutral-20 );
+		border: 1px solid var( --studio-gray-10 );
 		// Using percentage because we're drawing a circle in CSS
 		// stylelint-disable-next-line declaration-property-unit-allowed-list
 		border-radius: 50%;
@@ -100,7 +120,8 @@
 	}
 
 	.nav-item.is-current .nav-item__pending {
-		background-color: var( --color-neutral-80 );
+		background-color: var( --studio-gray-80 );
+		border: none;
 	}
 
 	.nav-item__complete {
@@ -124,7 +145,12 @@
 
 	.site-setup-list__task {
 		box-shadow: none;
-		flex: 1;
+
+		@include grid-column( 1, 8 );
+
+		@include breakpoint-deprecated( '<1040px' ) {
+			@include grid-column( 1, 7 );
+		}
 	}
 
 	.site-setup-list__task-actions {

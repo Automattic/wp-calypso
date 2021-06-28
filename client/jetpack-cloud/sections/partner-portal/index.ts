@@ -88,11 +88,22 @@ export default function () {
 
 	// Billing Dashboard.
 	page(
-		`/partner-portal`,
+		`/partner-portal/billing`,
 		controller.requireAccessContext,
 		controller.requireTermsOfServiceConsentContext,
 		controller.requireSelectedPartnerKeyContext,
 		controller.billingDashboardContext,
+		makeLayout,
+		clientRender
+	);
+
+	// Landing Page
+	page(
+		`/partner-portal`,
+		controller.requireAccessContext,
+		controller.requireTermsOfServiceConsentContext,
+		controller.requireSelectedPartnerKeyContext,
+		controller.landingPageContext,
 		makeLayout,
 		clientRender
 	);

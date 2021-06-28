@@ -25,7 +25,7 @@ export const SiteSetupListEcommerce = ( { siteUrl } ) => {
 			) }
 			actionText={ translate( 'Finish store setup' ) }
 			actionUrl={ `${ siteUrl }/wp-admin/admin.php?page=wc-admin` }
-			completeOnStart={ true }
+			completeOnStart={ false }
 			illustration={ earnSectionImage }
 			taskId={ TASK_SITE_SETUP_CHECKLIST_ECOMMERCE }
 			timing={ 7 }

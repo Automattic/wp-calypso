@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import PurchaseDetail from 'calypso/components/purchase-detail';
-import { hasCustomDomain } from 'calypso/lib/site/utils';
 
 /**
  * Image dependencies
@@ -52,24 +51,6 @@ const CustomDomainPurchaseDetail = ( {
 				}
 				buttonText={ translate( 'Claim your free domain' ) }
 				href={ `/domains/add/${ selectedSite.slug }` }
-			/>
-		);
-	} else if ( ! hasDomainCredit && hasCustomDomain( selectedSite ) ) {
-		const actionButton = {};
-		actionButton.buttonText = translate( 'Manage my domains' );
-		actionButton.href = `/domains/manage/${ selectedSite.slug }`;
-		return (
-			<PurchaseDetail
-				icon={ <img alt="" src={ customDomainIcon } /> }
-				title={ translate( 'Custom Domain' ) }
-				description={ translate(
-					'Your plan includes one year of your custom domain {{em}}%(siteDomain)s{{/em}}, your own personal corner of the web.',
-					{
-						args: { siteDomain: selectedSite.domain },
-						components: { em: <em /> },
-					}
-				) }
-				{ ...actionButton }
 			/>
 		);
 	} else if ( hasNonPrimaryDomainsFlag && registeredDomain ) {

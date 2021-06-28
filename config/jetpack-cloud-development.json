@@ -79,5 +79,6 @@
 	"site_filter": [ "jetpack" ],
 	"theme": "jetpack-cloud",
 	"restricted_me_access": false,
-	"theme_color": "#2fb41f"
+	"theme_color": "#2fb41f",
+	"google_analytics_key": "UA-52447-43"
 }

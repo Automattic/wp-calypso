@@ -15,12 +15,19 @@ export default withStorageKey(
 			postId: null,
 			postUrl: null,
 			isVisible: false,
+			blogId: null,
 		},
 		action
 	) => {
 		switch ( action.type ) {
 			case SUPPORT_ARTICLE_DIALOG_OPEN: {
-				const { postId, postUrl = null, actionLabel = null, actionUrl = null } = action;
+				const {
+					postId,
+					postUrl = null,
+					actionLabel = null,
+					actionUrl = null,
+					blogId = null,
+				} = action;
 
 				return {
 					postUrl,
@@ -28,6 +35,7 @@ export default withStorageKey(
 					isVisible: true,
 					actionLabel,
 					actionUrl,
+					blogId,
 				};
 			}
 			case SUPPORT_ARTICLE_DIALOG_CLOSE:

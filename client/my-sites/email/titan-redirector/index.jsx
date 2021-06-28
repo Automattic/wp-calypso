@@ -91,10 +91,11 @@ class TitanRedirector extends Component {
 
 		if ( ! loaded || ! hasAllSitesLoaded ) {
 			return (
-				<React.Fragment>
+				<>
 					{ ! hasAllSitesLoaded && <QuerySites allSites={ true } /> }
+
 					<EmptyContent title={ translate( 'Redirecting…' ) } />
-				</React.Fragment>
+				</>
 			);
 		}
 

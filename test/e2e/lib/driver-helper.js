@@ -74,7 +74,7 @@ export async function waitUntilElementLocated( driver, locator, timeout ) {
  * @param {By|Function} locator The element's locator
  * @param {number} [timeout=explicitWaitMS] The timeout in milliseconds
  * @returns {Promise<WebElement>} A promise that will be resolved with true when the element becomes
- * unavaialble
+ * unavailable
  */
 export async function waitUntilElementNotLocated( driver, locator, timeout ) {
 	const locatorStr = getLocatorString( locator );
