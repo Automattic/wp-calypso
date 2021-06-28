@@ -40,7 +40,7 @@ export default function buildCheckoutURL(
 		}
 	}
 
-	// maybe needed in `jetpack/siteless-checkout` & `jetpack/userless-checkout` below
+	// host maybe needed in either `jetpack/siteless-checkout` or `jetpack/userless-checkout` below
 	const host =
 		'development' === urlQueryArgs.calypso_env
 			? 'http://calypso.localhost:3000'
