@@ -33,12 +33,17 @@ export default function CalypsoShoppingCartProvider( {
 } ): JSX.Element {
 	const selectedSite = useSelector( getSelectedSite );
 	const finalCartKey = cartKey === undefined ? getCartKey( { selectedSite } ) : cartKey;
+	const cartKeysThatDoNotAllowRefetch = [ 'no-site', 'no-user' ];
+	const refetchOnWindowFocus: boolean =
+		Boolean( selectedSite?.ID ) &&
+		Boolean( finalCartKey ) &&
+		! cartKeysThatDoNotAllowRefetch.includes( String( finalCartKey ) );
 
 	const options = useMemo(
 		() => ( {
-			refetchOnWindowFocus: !! finalCartKey,
+			refetchOnWindowFocus,
 		} ),
-		[ finalCartKey ]
+		[ refetchOnWindowFocus ]
 	);
 
 	// If cartKey is null, we pass that to ShoppingCartProvider because it is
