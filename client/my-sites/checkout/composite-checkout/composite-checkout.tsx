@@ -723,13 +723,13 @@ function getAnalyticsPath(
 		analyticsProps = { feature: selectedFeature, site: selectedSiteSlug };
 	} else if ( product && selectedSiteSlug && ! purchaseId ) {
 		analyticsPath = '/checkout/:site/:product';
-		analyticsProps = { product, site: selectedSiteSlug, checkoutFlow };
+		analyticsProps = { product, site: selectedSiteSlug, checkout_flow: checkoutFlow };
 	} else if ( selectedSiteSlug ) {
 		analyticsPath = '/checkout/:site';
 		analyticsProps = { site: selectedSiteSlug };
 	} else if ( product && ! selectedSiteSlug ) {
 		analyticsPath = '/checkout/:product';
-		analyticsProps = { product, checkoutFlow };
+		analyticsProps = { product, checkout_flow: checkoutFlow };
 	} else {
 		analyticsPath = '/checkout/no-site';
 	}
