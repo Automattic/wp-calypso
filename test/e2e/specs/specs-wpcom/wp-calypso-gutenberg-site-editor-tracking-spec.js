@@ -117,7 +117,7 @@ const saveGlobalStyles = async ( driver ) => {
 		By.css( '.entities-saved-states__panel .components-checkbox-control__input' )
 	);
 	for ( const checkbox of allCheckboxes ) {
-		await driverHelper.setCheckbox( checkbox );
+		await checkbox.click();
 	}
 	const locator = driverHelper.createTextLocator(
 		By.css( '.entities-saved-states__panel .components-checkbox-control__label' ),
