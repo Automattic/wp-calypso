@@ -68,6 +68,7 @@ import {
 	getJetpackProductDisplayName,
 } from '@automattic/calypso-products';
 import { externalRedirect } from 'calypso/lib/route/path';
+import { addQueryArgs } from 'calypso/lib/route';
 
 /**
  * Module variables
@@ -376,6 +377,18 @@ export function redirectToLoginIfLoggedOut( context, next ) {
 
 	if ( ! isLoggedIn ) {
 		page( login( { isJetpack: true, redirectTo: context.path } ) );
+		return;
+	}
+
+	next();
+}
+
+export function redirectToSiteLessCheckoutIfLoggedOut( context, next ) {
+	const { type } = context.params;
+	const isLoggedIn = isUserLoggedIn( context.store.getState() );
+
+	if ( config.isEnabled( 'jetpack/siteless-checkout' ) && ! isLoggedIn ) {
+		page( addQueryArgs( context.query, `/checkout/jetpack/${ type }` ) );
 		return;
 	}
 
