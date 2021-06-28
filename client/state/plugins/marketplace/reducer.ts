@@ -52,7 +52,6 @@ export function purchaseFlow(
 				...state,
 				siteTransferStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
 				pluginInstallationStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
-				isPluginInstalledDuringPurchase: false,
 				pluginSlugToBeInstalled: action.pluginSlugToBeInstalled,
 			};
 		case MARKETPLACE_PLUGIN_INSTALLED_ON_PURCHASE:

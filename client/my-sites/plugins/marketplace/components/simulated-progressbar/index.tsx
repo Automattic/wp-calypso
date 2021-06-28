@@ -34,7 +34,7 @@ export function resolveStep(
 }
 
 const SIMULATION_REFRESH_INTERVAL = 2000;
-const INCREMENTED_PERCENTAGE_SIZE_ON_STEP = 6;
+const INCREMENTED_PERCENTAGE_SIZE_ON_STEP = 2;
 const MAX_PERCENTAGE_SIMULATED = 100 - INCREMENTED_PERCENTAGE_SIZE_ON_STEP * 2;
 
 export default function SimulatedProgressBar( {

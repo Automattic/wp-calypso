@@ -76,9 +76,7 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 	const isWporgPluginFetched = useSelector( ( state ) =>
 		getIsWporgPluginFetched( state, pluginSlugToBeInstalled )
 	);
-	const isWporgPlugin = useSelector( ( state ) =>
-		getWporgPlugin( state, pluginSlugToBeInstalled )
-	);
+	const wporgPlugin = useSelector( ( state ) => getWporgPlugin( state, pluginSlugToBeInstalled ) );
 	useEffect( () => {
 		if ( ! selectedSiteSlug ) {
 			page( '/home' );
@@ -128,7 +126,7 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 		isPluginStateFetching,
 		isWporgPluginFetching,
 		isWporgPluginFetched,
-		isWporgPlugin,
+		wporgPlugin,
 	] );
 
 	const STEP_1 = translate( 'Installing plugin' );

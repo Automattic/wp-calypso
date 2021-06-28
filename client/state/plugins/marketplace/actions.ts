@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import config from '@automattic/calypso-config';
+
+/**
  * Internal dependencies
  */
 import 'calypso/state/plugins/init';
@@ -17,30 +22,24 @@ import {
 	ISetPluginInstalledDuringPurchaseFlag,
 	MARKETPLACE_ASYNC_PROCESS_STATUS,
 } from './types';
-import { getPurchaseFlowState } from 'calypso/state/plugins/marketplace/selectors';
+import {
+	getPurchaseFlowState,
+	getIsPluginInformationLoaded,
+} from 'calypso/state/plugins/marketplace/selectors';
 import { fetchSitePlugins, installPlugin } from 'calypso/state/plugins/installed/actions';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransfer } from 'calypso/state/automated-transfer/selectors';
-import {
-	getPluginOnSite,
-	isLoaded,
-	getStatusForPlugin,
-	isRequestingForSites,
-} from 'calypso/state/plugins/installed/selectors';
+import { getPluginOnSite, getStatusForPlugin } from 'calypso/state/plugins/installed/selectors';
 import {
 	PLUGIN_INSTALLATION_COMPLETED,
 	PLUGIN_INSTALLATION_IN_PROGRESS,
 	PLUGIN_INSTALLATION_ERROR,
 } from 'calypso/state/plugins/installed/status/reducer';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
-import {
-	isFetching as getIsWporgPluginFetching,
-	isFetched as getIsWporgPluginFetched,
-	getPlugin as getWporgPlugin,
-} from 'calypso/state/plugins/wporg/selectors';
+import { getPlugin as getWporgPlugin } from 'calypso/state/plugins/wporg/selectors';
 
 export function setPrimaryDomainCandidate(
 	domainName: string | undefined
@@ -115,37 +114,38 @@ export function tryPluginInstall( selectedSiteId: number, pluginSlugToBeInstalle
 		const state = getState();
 		const { pluginInstallationStatus } = getPurchaseFlowState( state );
 
-		// WPcom Plugin Data
-		const isPluginStateLoaded = isLoaded( state, [ selectedSiteId ] );
-		const isPluginStateFetching = isRequestingForSites( state, [ selectedSiteId ] );
 		const pluginOnSite = getPluginOnSite( state, selectedSiteId, pluginSlugToBeInstalled );
 		const isPluginInstalled = !! pluginOnSite;
+		const wporgPlugin = getWporgPlugin( state, pluginSlugToBeInstalled );
+
 		const pluginStatus = getStatusForPlugin( state, selectedSiteId, pluginSlugToBeInstalled );
-
-		// WPorg Plugin Data
-		const isWporgPluginFetching = getIsWporgPluginFetching( state, pluginSlugToBeInstalled );
-		const isWporgPluginFetched = getIsWporgPluginFetched( state, pluginSlugToBeInstalled );
-		const isWporgPlugin = getWporgPlugin( state, pluginSlugToBeInstalled );
-
+		const isPluginInformationLoaded = getIsPluginInformationLoaded(
+			state,
+			selectedSiteId,
+			pluginSlugToBeInstalled
+		);
 		if ( pluginInstallationStatus === MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN ) {
 			dispatch( fetchSitePlugins( selectedSiteId ) );
 			dispatch( wporgFetchPluginData( pluginSlugToBeInstalled ) );
 			dispatch( pluginInstallationStateChange( MARKETPLACE_ASYNC_PROCESS_STATUS.FETCHING ) );
-		} else if ( isWporgPluginFetched && ! isWporgPluginFetching && ! isWporgPlugin ) {
-			// There is no such plugin on wporg so there is something wrong here
-			dispatch(
-				pluginInstallationStateChange(
-					MARKETPLACE_ASYNC_PROCESS_STATUS.ERROR,
-					`Plugin ${ pluginSlugToBeInstalled } does not exist`
-				)
-			);
-		} else if ( isPluginStateLoaded && ! isPluginStateFetching ) {
-			if ( isPluginInstalled || pluginStatus === 'completed' ) {
+		} else if ( isPluginInformationLoaded ) {
+			if ( ! isPluginInstalled && ( ! wporgPlugin || ! wporgPlugin.slug ) ) {
+				// There is no such plugin on wporg so there is something wrong here
+				// For some reason plugin information becomes unresponsive just right after a transfer
+				// currently we fail silently because it seems to resolve automatically
+				if ( config.isEnabled( 'marketplace-test' ) ) {
+					// eslint-disable-next-line no-console
+					console.error(
+						'::MARKETPLACE::ERROR:: The wporg plugin details could not be fetched or the slug does not exist',
+						{ wporgPlugin }
+					);
+				}
+			} else if ( isPluginInstalled || pluginStatus === 'completed' ) {
 				// This means the plugin was successfully installed earlier, most probably during purchase
 				dispatch( pluginInstallationStateChange( MARKETPLACE_ASYNC_PROCESS_STATUS.COMPLETED ) );
 			} else if ( pluginInstallationStatus !== MARKETPLACE_ASYNC_PROCESS_STATUS.IN_PROGRESS ) {
 				// If not already started, initiate the plugin install
-				dispatch( installPlugin( selectedSiteId, isWporgPlugin ) );
+				dispatch( installPlugin( selectedSiteId, wporgPlugin ) );
 				dispatch( siteTransferWithPluginInstallTriggered() );
 			} else if ( pluginInstallationStatus === MARKETPLACE_ASYNC_PROCESS_STATUS.IN_PROGRESS ) {
 				switch ( pluginStatus ) {

@@ -35,13 +35,14 @@ import { getBlockingMessages } from 'calypso/blocks/eligibility-warnings/hold-li
 import { isAtomicSiteWithoutBusinessPlan } from 'calypso/blocks/eligibility-warnings/utils';
 import Notice from 'calypso/components/notice';
 import ComponentDemo from 'calypso/my-sites/plugins/marketplace/marketplace-test/component-demo';
+import AdminMenuFetch from 'calypso/my-sites/plugins/marketplace/marketplace-test/admin-menu-fetch';
 
 export const Container = styled.div`
 	margin: 0 25px;
 	padding: 25px;
 `;
 
-function level1ObjectMap( obj: any, entryFilter = ( [ i ]: any[] ) => i ): any[] {
+export function level1ObjectMap( obj: any, entryFilter = ( [ i ]: any[] ) => i ): any[] {
 	return Object.entries( obj )
 		.filter( entryFilter )
 		.map( ( entry ) => ( { key: entry[ 0 ], value: JSON.stringify( entry[ 1 ] ) } ) );
@@ -55,6 +56,7 @@ export default function MarketplaceTest(): JSX.Element {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const isAtomicSite = useSelector( ( state ) => isSiteWpcomAtomic( state, selectedSiteId ?? 0 ) );
 	const pluginDetails = useSelector( ( state ) => getPlugins( state, [ selectedSiteId ] ) );
+
 	const isRequestingForSite = useSelector( ( state ) =>
 		isRequestingForSites( state, [ selectedSiteId ] )
 	);
@@ -255,6 +257,7 @@ export default function MarketplaceTest(): JSX.Element {
 						) ) }
 			</Card>
 			<ComponentDemo />
+			<AdminMenuFetch />
 		</Container>
 	);
 }
