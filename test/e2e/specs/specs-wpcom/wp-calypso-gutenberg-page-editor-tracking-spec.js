@@ -38,18 +38,9 @@ describe( `[${ host }] Calypso Gutenberg Page Editor Tracking: (${ screenSize })
 
 			const wpAdminSidebar = await WPAdminSidebar.Expect( this.driver );
 			await wpAdminSidebar.selectNewPage();
-
-			const editor = await GutenbergEditorComponent.Expect( this.driver, 'wp-admin' );
-			await editor.initEditor( { dismissPageTemplateLocator: true } );
 		} );
 
 		it( 'Tracks "from_template_selector" property for "wpcom_block_inserted"', async function () {
-			// Reload for page layout selector.
-			await this.driver.navigate().refresh();
-			await driverHelper.dismissAlertIfPresent( this.driver );
-			const editor = await GutenbergEditorComponent.Expect( this.driver, 'wp-admin' );
-			await editor.initEditor();
-
 			await driverHelper.clickWhenClickable(
 				this.driver,
 				By.css( '.page-pattern-modal .pattern-selector-item__label' )
@@ -63,6 +54,12 @@ describe( `[${ host }] Calypso Gutenberg Page Editor Tracking: (${ screenSize })
 				insertedEvents.filter( ( event ) => event[ 1 ].from_template_selector === true ).length ===
 					insertedEvents.length
 			);
+
+			// Reset for following tests.
+			await this.driver.navigate().refresh();
+			await driverHelper.dismissAlertIfPresent( this.driver );
+			const editor = await GutenbergEditorComponent.Expect( this.driver, 'wp-admin' );
+			await editor.initEditor( { dismissPageTemplateLocator: true } );
 		} );
 
 		createGeneralTests( { it, editorType: 'post', postType: 'page' } );
