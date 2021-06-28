@@ -30,7 +30,6 @@ import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
 import { successNotice } from 'calypso/state/notices/actions';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import config from '@automattic/calypso-config';
 
 /**
@@ -97,7 +96,6 @@ const Home = ( {
 
 	return (
 		<Main wideLayout className="customer-home__main">
-			<ScreenOptionsTab wpAdminPath="index.php" />
 			<PageViewTracker path={ `/home/:site` } title={ translate( 'My Home' ) } />
 			<DocumentHead title={ translate( 'My Home' ) } />
 			{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
