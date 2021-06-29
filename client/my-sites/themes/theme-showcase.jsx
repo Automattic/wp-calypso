@@ -279,7 +279,7 @@ class ThemeShowcase extends React.Component {
 
 					<SectionNav className="themes__section-nav">
 						<NavTabs>
-							<NavItem onClick={ () => this.onFilterClick( undefined ) } selected={ ! filter }>
+							<NavItem onClick={ () => this.onFilterClick( '' ) } selected={ ! filter }>
 								{ translate( 'All' ) }
 							</NavItem>
 							<NavItem
