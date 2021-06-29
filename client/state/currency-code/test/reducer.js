@@ -1,7 +1,11 @@
 /**
  * Internal dependencies
  */
-import { PLANS_RECEIVE, SITE_PLANS_FETCH_COMPLETED } from 'calypso/state/action-types';
+import {
+	PLANS_RECEIVE,
+	SITE_PLANS_FETCH_COMPLETED,
+	SITE_PRODUCTS_FETCH_COMPLETED,
+} from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
 import currencyCode from '../reducer';
 
@@ -69,6 +73,30 @@ describe( '#currencyCode()', () => {
 					currencyCode: 'CAD',
 				},
 			],
+		} );
+		expect( state ).toBe( 'CAD' );
+	} );
+	test( 'should set currency code when site products fetch is completed', () => {
+		const state = currencyCode( undefined, {
+			type: SITE_PRODUCTS_FETCH_COMPLETED,
+			products: {
+				free_plan: {
+					product_name: 'WordPress.com Free',
+					currency_code: 'USD',
+				},
+			},
+		} );
+		expect( state ).toBe( 'USD' );
+	} );
+	test( 'should update currency code when site products fetch is completed', () => {
+		const state = currencyCode( 'USD', {
+			type: SITE_PRODUCTS_FETCH_COMPLETED,
+			products: {
+				free_plan: {
+					product_name: 'WordPress.com Free',
+					currency_code: 'CAD',
+				},
+			},
 		} );
 		expect( state ).toBe( 'CAD' );
 	} );
