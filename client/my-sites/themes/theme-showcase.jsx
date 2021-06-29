@@ -196,9 +196,9 @@ class ThemeShowcase extends React.Component {
 		this.scrollToSearchInput();
 	};
 
-	onFilterClick = ( { filter } ) => {
-		trackClick( 'section nav filter', filter );
-		const url = this.constructUrl( { filter } );
+	onFilterClick = ( newFilter ) => {
+		trackClick( 'section nav filter', newFilter );
+		const url = this.constructUrl( { filter: newFilter } );
 		page( url );
 		this.scrollToSearchInput();
 	};
@@ -218,7 +218,6 @@ class ThemeShowcase extends React.Component {
 			filterString,
 			isMultisite,
 			locale,
-			siteSlug,
 		} = this.props;
 		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
 
@@ -280,16 +279,11 @@ class ThemeShowcase extends React.Component {
 
 					<SectionNav className="themes__section-nav">
 						<NavTabs>
-							<NavItem
-								onClick={ this.onFilterClick }
-								path={ '/themes/filter/all/' + siteSlug }
-								selected={ ! filter }
-							>
+							<NavItem onClick={ () => this.onFilterClick( undefined ) } selected={ ! filter }>
 								{ translate( 'All' ) }
 							</NavItem>
 							<NavItem
-								onClick={ this.onFilterClick }
-								path={ '/themes/filter/auto-loading-homepage/' + siteSlug }
+								onClick={ () => this.onFilterClick( 'auto-loading-homepage' ) }
 								selected={ 'auto-loading-homepage' === filter }
 							>
 								{ translate( 'Recommended' ) }
