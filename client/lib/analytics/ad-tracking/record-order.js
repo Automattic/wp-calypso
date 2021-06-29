@@ -525,8 +525,8 @@ function recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo ) {
 			'purchase',
 			{
 				send_to: TRACKING_IDS.jetpackGoogleAnalyticsGtag,
-				value: wpcomJetpackCartInfo.jetpackCost,
-				currency: cart.currency,
+				value: wpcomJetpackCartInfo.jetpackCostUSD,
+				currency: 'USD',
 				transaction_id: orderId,
 				coupon: cart.coupon_code?.toString() ?? '',
 				items: wpcomJetpackCartInfo.jetpackProducts.map(
@@ -534,7 +534,7 @@ function recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo ) {
 						id: product_id.toString(),
 						name: product_name_en.toString(),
 						quantity: parseInt( volume ),
-						price: cost,
+						price: ( costToUSD( cost, cart.currency ) ?? '' ).toString(),
 						brand: GA_PRODUCT_BRAND_JETPACK,
 					} )
 				),
