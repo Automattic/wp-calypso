@@ -18,11 +18,14 @@ import {
 	resolveEmailPlanStatus,
 } from 'calypso/my-sites/email/email-management/home/utils';
 import MaterialIcon from 'calypso/components/material-icon';
-import { useEmailsQuery } from 'calypso/data/emails/use-emails-query';
+import { useEmailAccountsQuery } from 'calypso/data/emails/use-emails-query';
 
-const EmailListActiveWarning = ( { domain, siteId } ) => {
-	const { data, error, isLoading } = useEmailsQuery( siteId, domain.name, { retry: false } );
+const EmailListActiveWarning = ( { domain, selectedSiteId } ) => {
+	const { data, error, isLoading } = useEmailAccountsQuery( selectedSiteId, domain.name, {
+		retry: false,
+	} );
 	let emailAccounts = null;
+
 	if ( ! isLoading && ! error ) {
 		emailAccounts = data?.accounts[ 0 ] ?? [];
 	}
@@ -43,12 +46,12 @@ const EmailListActiveWarning = ( { domain, siteId } ) => {
 
 EmailListActiveWarning.propTypes = {
 	domain: PropTypes.object.isRequired,
-	siteId: PropTypes.number.isRequired,
+	selectedSiteId: PropTypes.number.isRequired,
 };
 
 class EmailListActive extends React.Component {
 	render() {
-		const { currentRoute, domains, selectedSiteSlug, translate, siteId } = this.props;
+		const { currentRoute, domains, selectedSiteSlug, translate, selectedSiteId } = this.props;
 
 		if ( domains.length < 1 ) {
 			return null;
@@ -70,7 +73,7 @@ class EmailListActive extends React.Component {
 						<span>{ getNumberOfMailboxesText( domain ) }</span>
 					</div>
 
-					<EmailListActiveWarning domain={ domain } siteId={ siteId } />
+					<EmailListActiveWarning domain={ domain } selectedSiteId={ selectedSiteId } />
 				</CompactCard>
 			);
 		} );

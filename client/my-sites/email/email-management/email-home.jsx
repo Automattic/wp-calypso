@@ -111,7 +111,7 @@ class EmailManagementHome extends React.Component {
 					domains={ domainsWithEmail }
 					selectedSiteSlug={ selectedSite.slug }
 					currentRoute={ currentRoute }
-					siteId={ selectedSiteId }
+					selectedSiteId={ selectedSiteId }
 				/>
 				<EmailListInactive
 					domains={ domainsWithNoEmail }

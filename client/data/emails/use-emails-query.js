@@ -19,7 +19,7 @@ const getCacheKey = ( siteId, domain ) => [ 'emails', siteId, domain ];
  * @returns {data, error, isLoading} Returns and object with the
  * data associated to the SiteId & Domain
  */
-export const useEmailsQuery = ( siteId, domain ) => {
+export const useEmailAccountsQuery = ( siteId, domain ) => {
 	return useQuery( getCacheKey( siteId, domain ), () =>
 		wpcom.req.get( {
 			path: `/sites/${ siteId }/emails/accounts/${ encodeURIComponent( domain ) }/mailboxes`,
