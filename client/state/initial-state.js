@@ -77,23 +77,6 @@ function shouldAddSympathy() {
 	return false;
 }
 
-// This check is most important to do on save (to prevent bad data
-// from being written to local storage in the first place). But it
-// is worth doing also on load, to prevent using historical
-// bad state data (from before this check was added) or any other
-// scenario where state data may have been stored without this
-// check being performed.
-function verifyStoredRootState( state, currentUserId ) {
-	const storedUserId = state?.currentUser?.id ?? null;
-
-	if ( currentUserId !== storedUserId ) {
-		debug( `current user ID=${ currentUserId } and state user ID=${ storedUserId } don't match` );
-		return false;
-	}
-
-	return true;
-}
-
 // Verifies that the server-provided Redux state isn't too old.
 // This is rarely a problem, and only comes up in extremely long-lived sessions.
 function verifyBootTimestamp() {
@@ -267,7 +250,7 @@ function getStateFromPersistence( reducer, subkey, currentUserId ) {
 	const reduxStateKey = getPersistenceKey( subkey, currentUserId );
 
 	const state = stateCache[ reduxStateKey ] ?? null;
-	return deserializeState( subkey, state, reducer, false, currentUserId );
+	return deserializeState( subkey, state, reducer, false );
 }
 
 // Retrieve the initial state for a portion of state, choosing the freshest
@@ -310,14 +293,13 @@ export function getStateFromCache( reducer, subkey, currentUserId ) {
 		subkey,
 		useServerState ? serverState : persistedState,
 		reducer,
-		useServerState,
-		currentUserId
+		useServerState
 	);
 }
 
 // Deserialize a portion of state.
 // This function handles both legacy and modularized Redux state.
-function deserializeState( subkey, state, reducer, isServerState = false, currentUserId = null ) {
+function deserializeState( subkey, state, reducer, isServerState = false ) {
 	const origin = isServerState ? 'server' : 'persisted';
 
 	try {
@@ -336,11 +318,6 @@ function deserializeState( subkey, state, reducer, isServerState = false, curren
 		const deserializedState = deserializeStored( reducer, state );
 		if ( ! deserializedState ) {
 			debug( `${ origin } Redux state failed to deserialize, dropping` );
-			return null;
-		}
-
-		if ( ! subkey && ! verifyStoredRootState( deserializedState, currentUserId ) ) {
-			debug( `${ origin } root Redux state has invalid currentUser.id, dropping` );
 			return null;
 		}
 
