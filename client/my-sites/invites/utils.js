@@ -5,6 +5,12 @@ import React from 'react';
 import { get } from 'lodash';
 import i18n from 'i18n-calypso';
 
+/**
+ * Internal dependencies
+ */
+
+import { logmeinUrl } from 'calypso/lib/logmein';
+
 export function acceptedNotice( invite, displayOnNextPage = true ) {
 	const site = (
 		<a href={ get( invite, 'site.URL' ) } className="invites__notice-site-link">
@@ -158,13 +164,13 @@ export function getRedirectAfterAccept( invite ) {
 
 	const readerPath = '/read';
 	const postsListPath = '/posts/' + invite.site.ID;
-	const subdomainRegExp = /^https?:\/\/([a-z0-9]*).wordpress.com/;
-	const remoteLoginBackUrl = ( destinationUri ) => `https://wordpress.com${ destinationUri }`;
-	const remoteLoginHost = `https://${ invite.site.domain }`;
-	const remoteLoginUrl = ( destinationUri ) =>
-		`https://r-login.wordpress.com/remote-login.php?action=link&host=${ encodeURIComponent(
-			remoteLoginHost
-		) }&back=${ encodeURIComponent( remoteLoginBackUrl( destinationUri ) ) }`;
+	const getDestinationUrl = ( redirect ) => {
+		const remoteLoginHost = `https://${ invite.site.domain }`;
+		const remoteLoginBackUrl = ( destinationUri ) => `https://wordpress.com${ destinationUri }`;
+		const destination = logmeinUrl( remoteLoginHost, remoteLoginBackUrl( redirect ) );
+		const isMissingLogmein = destination === remoteLoginHost;
+		return isMissingLogmein ? redirect : destination;
+	};
 
 	if ( invite.site.is_vip ) {
 		switch ( invite.role ) {
@@ -180,11 +186,9 @@ export function getRedirectAfterAccept( invite ) {
 	switch ( invite.role ) {
 		case 'viewer':
 		case 'follower':
-			return subdomainRegExp.test( invite.site.domain ) ? readerPath : remoteLoginUrl( readerPath );
+			return getDestinationUrl( readerPath );
 
 		default:
-			return subdomainRegExp.test( invite.site.domain )
-				? postsListPath
-				: remoteLoginUrl( postsListPath );
+			return getDestinationUrl( postsListPath );
 	}
 }
