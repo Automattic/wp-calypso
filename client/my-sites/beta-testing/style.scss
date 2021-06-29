@@ -1,0 +1,17 @@
+.beta-testing__heading {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+
+	.formatted-header {
+		margin-right: 1rem;
+	}
+
+	.formatted-header__subtitle {
+		margin-bottom: 0;
+	}
+}
+
+.beta-testing__view-horizon-button {
+	white-space: nowrap;
+}
