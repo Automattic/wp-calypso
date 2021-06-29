@@ -5,7 +5,6 @@ import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { includes } from 'lodash';
-import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -275,7 +274,6 @@ class SinglePlugin extends React.Component {
 		}
 
 		const isWpcom = selectedSite && ! this.props.isJetpackSite;
-		const calypsoify = this.props.isAtomicSite && isEnabled( 'calypsoify/plugins' );
 		const analyticsPath = selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
 
 		return (
@@ -296,7 +294,6 @@ class SinglePlugin extends React.Component {
 						isInstalledOnSite={ this.isPluginInstalledOnsite() }
 						isInstalling={ this.props.isInstallingPlugin }
 						allowedActions={ allowedPluginActions }
-						calypsoify={ calypsoify }
 					/>
 					{ plugin.wporg ? (
 						<PluginSections plugin={ plugin } isWpcom={ isWpcom } />

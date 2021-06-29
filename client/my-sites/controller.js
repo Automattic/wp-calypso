@@ -233,7 +233,6 @@ function onSelectedSiteAvailable( context, basePath ) {
 
 	const isAtomicSite = isSiteAutomatedTransfer( state, selectedSite.ID );
 	const userCanManagePlugins = canCurrentUser( state, selectedSite.ID, 'activate_plugins' );
-	const calypsoify = isAtomicSite && config.isEnabled( 'calypsoify/plugins' );
 
 	// If migration is in progress, only /migrate paths should be loaded for the site
 	const isMigrationInProgress = isSiteMigrationInProgress( state, selectedSite.ID );
@@ -243,8 +242,8 @@ function onSelectedSiteAvailable( context, basePath ) {
 		return false;
 	}
 
-	// Issue of calypso linking to wp-admin here.
-	if ( userCanManagePlugins && calypsoify && /^\/plugins/.test( basePath ) ) {
+	// Redirects Atomic sites to wp-admin
+	if ( userCanManagePlugins && isAtomicSite && /^\/plugins/.test( basePath ) ) {
 		const plugin = get( context, 'params.plugin' );
 		let pluginString = '';
 		if ( plugin ) {
