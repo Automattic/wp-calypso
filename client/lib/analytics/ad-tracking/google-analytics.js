@@ -73,17 +73,18 @@ export function fireGoogleAnalyticsPageView(
 	pageTitle,
 	useJetpackGoogleAnalytics = false
 ) {
-	window.gtag(
-		'config',
-		useJetpackGoogleAnalytics
-			? TRACKING_IDS.jetpackGoogleAnalyticsGtag
-			: TRACKING_IDS.wpcomGoogleAnalyticsGtag,
-		{
+	window.gtag( 'config', TRACKING_IDS.wpcomGoogleAnalyticsGtag, {
+		...getGoogleAnalyticsDefaultConfig(),
+		page_path: urlPath,
+		page_title: pageTitle,
+	} );
+	if ( useJetpackGoogleAnalytics ) {
+		window.gtag( 'config', TRACKING_IDS.jetpackGoogleAnalyticsGtag, {
 			...getGoogleAnalyticsDefaultConfig(),
 			page_path: urlPath,
 			page_title: pageTitle,
-		}
-	);
+		} );
+	}
 }
 
 /**
