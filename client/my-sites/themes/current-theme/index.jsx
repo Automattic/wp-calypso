@@ -19,6 +19,8 @@ import { trackClick } from '../helpers';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
+import ExternalLink from 'calypso/components/external-link';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -69,24 +71,35 @@ class CurrentTheme extends Component {
 					{ showScreenshot && (
 						<img src={ currentTheme.screenshot + '?w=150' } className="current-theme__img" alt="" />
 					) }
-					<span className="current-theme__label">{ translate( 'Current Theme' ) }</span>
-					<span className="current-theme__name">{ text }</span>
-				</div>
-				<div
-					className={ classNames( 'current-theme__actions', {
-						'two-buttons': Object.keys( options ).length === 2,
-					} ) }
-				>
-					{ map( options, ( option, name ) => (
-						<CurrentThemeButton
-							name={ name }
-							key={ name }
-							label={ option.label }
-							icon={ option.icon }
-							href={ currentThemeId && option.getUrl( currentThemeId ) }
-							onClick={ this.trackClick }
-						/>
-					) ) }
+					<div className="current-theme__description">
+						<span className="current-theme__name">{ text }</span>
+						<span className="current-theme__label">
+							{ currentTheme && currentTheme.name && translate( 'Current Theme' ) }
+						</span>
+						<p>
+							{ translate( 'This is the active theme on your site.' ) }{ ' ' }
+							<ExternalLink
+								href={ localizeUrl( 'https://wordpress.com/support/changing-themes/' ) }
+								icon
+								target="__blank"
+							>
+								{ translate( 'Learn more.' ) }
+							</ExternalLink>
+						</p>
+					</div>
+
+					<div className={ classNames( 'current-theme__actions' ) }>
+						{ map( options, ( option, name ) => (
+							<CurrentThemeButton
+								name={ name }
+								key={ name }
+								label={ option.label }
+								icon={ option.icon }
+								href={ currentThemeId && option.getUrl( currentThemeId ) }
+								onClick={ this.trackClick }
+							/>
+						) ) }
+					</div>
 				</div>
 			</Card>
 		);

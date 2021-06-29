@@ -1,39 +1,27 @@
-$current-theme-height: 56px;
+$current-theme-height: 112px;
 $current-theme-border: 1px solid rgba( var( --color-neutral-10-rgb ), 0.25 );
 
 .current-theme {
-	font-weight: 600;
 	padding: 0;
 	margin-bottom: 24px;
 }
 
 .current-theme__current {
-	@include breakpoint-deprecated( '>480px' ) {
-		width: 50%;
-		float: left;
-	}
 	height: $current-theme-height;
+	display: flex;
 }
 
 .current-theme__img {
 	@include breakpoint-deprecated( '<480px' ) {
 		border-left: $current-theme-border;
-		float: right;
 	}
 	@include breakpoint-deprecated( '>480px' ) {
 		border-right: $current-theme-border;
-		float: left;
 	}
 	height: 100%;
 }
 
 .current-theme__img-placeholder {
-	@include breakpoint-deprecated( '<480px' ) {
-		float: right;
-	}
-	@include breakpoint-deprecated( '>480px' ) {
-		float: left;
-	}
 	width: 75px;
 	color: transparent;
 	background-color: var( --color-neutral-0 );
@@ -41,24 +29,29 @@ $current-theme-border: 1px solid rgba( var( --color-neutral-10-rgb ), 0.25 );
 	height: 100%;
 }
 
+.current-theme__description p {
+	padding: 15px;
+}
+
 .current-theme__label {
-	font-size: 0.8em;
-	color: var( --color-neutral-light );
-	text-transform: uppercase;
-	padding-left: 15px;
-	padding-top: 10px;
-	margin-bottom: -2px;
-	display: inline-block;
+	font-size: 0.75rem;
+	color: var( --color-text-inverted );
+	background: var( --color-neutral-dark );
+	padding: 4px 8px;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 120px;
+	margin-left: 10px;
 }
 
 .current-theme__name {
+	font-weight: 600;
 	box-sizing: border-box;
-	padding-left: 15px;
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
+	padding-left: 15px;
+	font-size: 0.875rem;
 	max-width: 100%;
-	display: block;
 }
 
 .current-theme__placeholder {
@@ -67,47 +60,24 @@ $current-theme-border: 1px solid rgba( var( --color-neutral-10-rgb ), 0.25 );
 	animation: loading-fade 1.6s ease-in-out infinite;
 }
 
+.current-theme__description {
+	margin-top: 15px;
+	font-size: 0.75rem;
+}
+
 .current-theme__actions {
 	height: $current-theme-height;
-	border-top: $current-theme-border;
 	box-sizing: border-box;
-
-	@include breakpoint-deprecated( '>480px' ) {
-		width: 50%;
-		float: right;
-		border-top: none;
-		border-left: $current-theme-border;
-	}
-
-	&.two-buttons {
-		@include breakpoint-deprecated( '>480px' ) {
-			width: 33.3%;
-		}
-
-		.current-theme__button {
-			width: 50%;
-		}
-	}
+	display: flex;
+	align-items: flex-end;
+	justify-content: flex-end;
+	flex-grow: 1;
 }
 
 .current-theme__button {
-	height: $current-theme-height;
-	box-sizing: border-box;
-	width: 33.33%;
-	float: left;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	margin: 0;
+	margin: 10px;
 	font-weight: normal;
-	/* transition: all 200ms ease-in-out; /* Unfortunately gradients don't transition (long-content-fade) */
 	position: relative;
-
-	&:link,
-	&:visited {
-		color: var( --color-neutral-70 );
-	}
 
 	&.disabled {
 		cursor: default;
@@ -136,21 +106,9 @@ $current-theme-border: 1px solid rgba( var( --color-neutral-10-rgb ), 0.25 );
 	overflow: hidden;
 	white-space: nowrap;
 	max-width: 95%;
-
-	&::after {
-		@include long-content-fade( $size: 10% );
-	}
-
-	.current-theme__button:not( .disabled ):hover &::after {
-		@include long-content-fade( $color: var( --color-primary-0-rgb ), $size: 10% );
-	}
 }
 
-.current-theme__info {
-	border-left: $current-theme-border;
-	border-right: $current-theme-border;
-
-	&:last-child {
-		border-right: none;
-	}
+.current-theme__customize {
+	color: var( --color-text-inverted );
+	background: var( --color-neutral-dark );
 }

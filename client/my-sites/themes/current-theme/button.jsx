@@ -22,9 +22,14 @@ export default class extends React.Component {
 		return (
 			<a
 				role="button"
-				className={ classNames( 'current-theme__button', 'current-theme__' + this.props.name, {
-					disabled: ! this.props.href,
-				} ) }
+				className={ classNames(
+					'current-theme__button',
+					'button',
+					'current-theme__' + this.props.name,
+					{
+						disabled: ! this.props.href,
+					}
+				) }
 				onClick={ this.props.onClick.bind( null, this.props.name ) }
 				href={ this.props.href }
 			>
