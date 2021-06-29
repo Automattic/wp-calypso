@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
@@ -10,24 +9,18 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
 import { dismissBanner } from './actions';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import isUpworkBannerDismissed from 'calypso/state/selectors/is-upwork-banner-dismissed';
 import QueryPreferences from 'calypso/components/data/query-preferences';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import ExternalLink from 'calypso/components/external-link';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
-/**
- * Image dependencies
- */
-import builderIllustration from 'calypso/assets/images/illustrations/builder-referral.svg';
 
 class UpworkBanner extends PureComponent {
 	static propTypes = {
@@ -79,33 +72,22 @@ class UpworkBanner extends PureComponent {
 			return null;
 		}
 		return (
-			<ExternalLink
-				className="upwork-banner"
-				role="button"
-				style={ { backgroundColor: '#DAF5FC' } }
-				onClick={ this.onStartNowClick }
-				href="https://wordpress.com/built-by-wordpress-com/"
-			>
+			<>
 				<QueryPreferences />
-				<h1 className="upwork-banner__title">
-					{ translate( 'Let Our WordPress.com Experts Build Your Site!' ) }
-				</h1>
-				<p className="upwork-banner__description">
-					{ translate( 'You want the website of your dreams. Our experts can create it for you.' ) }
-				</p>
-				<Button className="upwork-banner__cta" compact primary={ this.props.primaryButton }>
-					{ translate( 'Find your expert' ) }
-				</Button>
-				<Button className="upwork-banner__close" onClick={ this.onDismissClick }>
-					<Gridicon icon="cross-small" size={ 18 } />
-				</Button>
-				<img
-					alt={ translate( 'Find your expert' ) }
-					width={ 390 }
-					className="upwork-banner__image"
-					src={ builderIllustration }
+				<UpsellNudge
+					forceDisplay //Upwork banner has its own logic for showing/hiding
+					className="upwork-banner"
+					callToAction={ translate( 'Find your expert' ) }
+					onClick={ this.onStartNowClick }
+					href="https://wordpress.com/built-by-wordpress-com/"
+					title={ translate( 'Let our WordPress.com experts build your site!' ) }
+					description={ translate(
+						'You want the website of your dreams. Our experts can create it for you.'
+					) }
+					dismissPreferenceName={ this.props.location }
+					onDismissClick={ this.onDismissClick }
 				/>
-			</ExternalLink>
+			</>
 		);
 	}
 }
