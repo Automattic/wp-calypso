@@ -19,7 +19,7 @@ import {
 import PluginProductMappingInterface, {
 	getProductSlug,
 } from 'calypso/my-sites/plugins/marketplace/constants';
-import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import {
 	isFetching as isWporgPluginFetching,

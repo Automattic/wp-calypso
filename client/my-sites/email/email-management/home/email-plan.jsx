@@ -4,14 +4,16 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { isEnabled } from '@automattic/calypso-config';
-import { localize } from 'i18n-calypso';
+import { localize, useTranslate } from 'i18n-calypso';
 import { handleRenewNowClick, isExpired } from 'calypso/lib/purchases';
 import page from 'page';
 import PropTypes from 'prop-types';
+import titleCase from 'to-title-case';
 
 /**
  * Internal dependencies
  */
+import DocumentHead from 'calypso/components/data/document-head';
 import {
 	emailManagement,
 	emailManagementAddGSuiteUsers,
@@ -19,6 +21,7 @@ import {
 	emailManagementManageTitanAccount,
 	emailManagementManageTitanMailboxes,
 	emailManagementNewTitanAccount,
+	emailManagementPurchaseNewEmailAccount,
 	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
 import EmailPlanHeader from 'calypso/my-sites/email/email-management/home/email-plan-header';
@@ -49,19 +52,41 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL } from 'calypso/lib/titan/constants';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
-import { useEmailsQuery } from 'calypso/data/emails/use-emails-query';
+import { useEmailAccountsQuery } from 'calypso/data/emails/use-emails-query';
+
+const UpgradeNavItem = ( { currentRoute, domain, selectedSiteSlug } ) => {
+	const translate = useTranslate();
+
+	if ( hasGSuiteWithUs( domain ) || hasTitanMailWithUs( domain ) ) {
+		return null;
+	}
+
+	return (
+		<VerticalNavItem
+			path={ emailManagementPurchaseNewEmailAccount( selectedSiteSlug, domain.name, currentRoute ) }
+		>
+			{ translate( 'Upgrade to a hosted email' ) }
+		</VerticalNavItem>
+	);
+};
+
+UpgradeNavItem.propTypes = {
+	currentRoute: PropTypes.string,
+	domain: PropTypes.object.isRequired,
+	selectedSiteSlug: PropTypes.string.isRequired,
+};
 
 const EmailPlan = ( props ) => {
 	const shouldCheckForEmailForwards = ( domain ) => {
 		return ! hasGSuiteWithUs( domain ) && ! hasTitanMailWithUs( domain );
 	};
 
-	function getAccount() {
-		return props.emailAccounts;
+	function getAccount( data ) {
+		return data?.accounts?.[ 0 ];
 	}
 
-	function getMailboxes() {
-		const account = getAccount();
+	function getMailboxes( data ) {
+		const account = getAccount( data );
 
 		return account?.emails ?? [];
 	}
@@ -259,7 +284,7 @@ const EmailPlan = ( props ) => {
 	// Ensure we check for email forwarding additions and removals
 	const queryForEmailForwards = shouldCheckForEmailForwards( domain );
 
-	const { data, isLoading } = useEmailsQuery( props.selectedSite.ID, props.domain.name, {
+	const { data, isLoading } = useEmailAccountsQuery( props.selectedSite.ID, props.domain.name, {
 		retry: false,
 	} );
 
@@ -267,6 +292,7 @@ const EmailPlan = ( props ) => {
 		<>
 			{ selectedSite && hasSubscription && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 			{ queryForEmailForwards && <QueryEmailForwards domainName={ domain.name } /> }
+			<DocumentHead title={ titleCase( getHeaderText() ) } />
 
 			<HeaderCake onClick={ handleBack }>{ getHeaderText() }</HeaderCake>
 
@@ -281,9 +307,9 @@ const EmailPlan = ( props ) => {
 			/>
 
 			<EmailPlanMailboxesList
-				account={ getAccount() }
+				account={ getAccount( data ) }
 				domain={ domain }
-				mailboxes={ getMailboxes() }
+				mailboxes={ getMailboxes( data ) }
 				isLoadingEmails={ isLoading }
 			/>
 

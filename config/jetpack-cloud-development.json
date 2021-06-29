@@ -46,6 +46,7 @@
 		"jetpack/partner-portal-payment": true,
 		"jetpack/pricing-page": true,
 		"jetpack/server-credentials-advanced-flow": true,
+		"jetpack/siteless-checkout": false,
 		"jetpack/redirect-legacy-plans": true,
 		"jetpack/userless-checkout": true,
 		"layout/app-banner": false,

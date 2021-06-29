@@ -1,6 +1,6 @@
 {
 	"name": "WordPressDesktop",
-	"version": "7.0.0",
+	"version": "7.0.5",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/Automattic/wp-calypso/"
@@ -15,6 +15,7 @@
 	"homepage": "https://desktop.wordpress.com/",
 	"main": "./dist/index.js",
 	"keywords": [
+		"Automattic",
 		"desktop",
 		"wordpress",
 		"wordpress.com"
