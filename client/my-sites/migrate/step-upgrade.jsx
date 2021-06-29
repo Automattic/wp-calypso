@@ -17,7 +17,7 @@ import HeaderCake from 'calypso/components/header-cake';
 import MigrateButton from './migrate-button.jsx';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import QueryPlans from 'calypso/components/data/query-plans';
-import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

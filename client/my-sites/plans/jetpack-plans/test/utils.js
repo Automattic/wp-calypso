@@ -2,7 +2,7 @@
  * Mocks
  */
 jest.mock( 'calypso/state/products-list/selectors/get-product-cost' );
-jest.mock( 'calypso/state/current-user/selectors' );
+jest.mock( 'calypso/state/currency-code/selectors' );
 // Prevent `ReferenceError: window is not defined`
 jest.mock( '../product-grid', () => null );
 

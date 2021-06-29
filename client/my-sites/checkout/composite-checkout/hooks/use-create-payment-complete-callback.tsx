@@ -72,8 +72,8 @@ export default function useCreatePaymentCompleteCallback( {
 	isComingFromUpsell?: boolean;
 	isFocusedLaunch?: boolean;
 	siteSlug: string | undefined;
-	isJetpackCheckout: boolean;
-	checkoutFlow: string;
+	isJetpackCheckout?: boolean;
+	checkoutFlow?: string;
 } ): PaymentCompleteCallback {
 	const { responseCart } = useShoppingCart();
 	const reduxDispatch = useDispatch();
@@ -325,7 +325,7 @@ function recordPaymentCompleteAnalytics( {
 	transactionResult: WPCOMTransactionEndpointResponse | undefined;
 	redirectUrl: string;
 	responseCart: ResponseCart;
-	checkoutFlow: string;
+	checkoutFlow?: string;
 	reduxDispatch: ReturnType< typeof useDispatch >;
 } ) {
 	const wpcomPaymentMethod = paymentMethodId

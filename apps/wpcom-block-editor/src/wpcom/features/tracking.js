@@ -4,7 +4,7 @@
 import { use, select } from '@wordpress/data';
 import { registerPlugin } from '@wordpress/plugins';
 import { applyFilters } from '@wordpress/hooks';
-import { find } from 'lodash';
+import { find, isEqual } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -13,6 +13,7 @@ import debugFactory from 'debug';
 import tracksRecordEvent from './tracking/track-record-event';
 import delegateEventTracking from './tracking/delegate-event-tracking';
 import { trackGlobalStylesTabSelected } from './tracking/wpcom-block-editor-global-styles-tab-selected';
+import { buildGlobalStylesContentEvents } from './utils';
 
 // Debugger.
 const debug = debugFactory( 'wpcom-block-editor:tracking' );
@@ -407,6 +408,54 @@ const trackSaveEntityRecord = ( kind, name, record ) => {
 	}
 };
 /**
+ * Tracks editEntityRecord for global styles updates.
+ *
+ * @param {string} kind    Kind of the edited entity record.
+ * @param {string} type    Name of the edited entity record.
+ * @param {number} id      Record ID of the edited entity record.
+ * @param {object} updates The edits made to the record.
+ */
+const trackEditEntityRecord = ( kind, type, id, updates ) => {
+	if ( kind === 'postType' && type === 'wp_global_styles' ) {
+		const editedEntity = select( 'core' ).getEditedEntityRecord( kind, type, id );
+		const entityContent = JSON.parse( editedEntity?.content );
+		const updatedContent = JSON.parse( updates?.content );
+
+		// Sometimes a second update is triggered corresponding to no changes since the last update.
+		// Therefore we must check if there is a change to avoid debouncing a valid update to a changeless update.
+		if ( ! isEqual( updatedContent, entityContent ) ) {
+			buildGlobalStylesContentEvents(
+				updatedContent,
+				entityContent,
+				'wpcom_block_editor_global_styles_update'
+			);
+		}
+	}
+};
+
+/**
+ * Tracks saveEditedEntityRecord for saving global styles updates.
+ *
+ * @param {string} kind Kind of the edited entity record.
+ * @param {string} type Name of the edited entity record.
+ * @param {number} id   Record ID of the edited entity record.
+ */
+const trackSaveEditedEntityRecord = ( kind, type, id ) => {
+	if ( kind === 'postType' && type === 'wp_global_styles' ) {
+		const savedEntity = select( 'core' ).getEntityRecord( kind, type, id );
+		const editedEntity = select( 'core' ).getEditedEntityRecord( kind, type, id );
+		const entityContent = JSON.parse( savedEntity?.content?.raw );
+		const updatedContent = JSON.parse( editedEntity?.content );
+
+		buildGlobalStylesContentEvents(
+			updatedContent,
+			entityContent,
+			'wpcom_block_editor_global_styles_save'
+		);
+	}
+};
+
+/**
  * Tracker can be
  * - string - which means it is an event name and should be tracked as such automatically
  * - function - in case you need to load additional properties from the action.
@@ -429,6 +478,8 @@ const REDUX_TRACKING = {
 		undo: 'wpcom_block_editor_undo_performed',
 		redo: 'wpcom_block_editor_redo_performed',
 		saveEntityRecord: trackSaveEntityRecord,
+		editEntityRecord: trackEditEntityRecord,
+		saveEditedEntityRecord: trackSaveEditedEntityRecord,
 	},
 	'core/block-editor': {
 		moveBlocksUp: getBlocksTracker( 'wpcom_block_moved_up' ),

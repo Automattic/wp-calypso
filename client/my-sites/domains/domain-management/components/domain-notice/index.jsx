@@ -14,7 +14,7 @@ import './style.scss';
 export default class DomainNotice extends React.Component {
 	static propTypes = {
 		text: PropTypes.string,
-		status: PropTypes.oneOf( [ 'info', 'warning', 'alert' ] ),
+		status: PropTypes.oneOf( [ 'success', 'info', 'warning', 'alert' ] ),
 		className: PropTypes.string,
 	};
 
@@ -26,7 +26,13 @@ export default class DomainNotice extends React.Component {
 		const { status, text, className } = this.props;
 
 		const classes = classnames( 'domain-notice', `domain-notice__${ status }`, className );
-		const icon = status === 'info' ? 'time' : 'notice-outline';
+		let icon = 'notice-outline';
+		if ( 'info' === status ) {
+			icon = 'time';
+		}
+		if ( 'success' === status ) {
+			icon = 'checkmark';
+		}
 
 		return (
 			<span className={ classes }>

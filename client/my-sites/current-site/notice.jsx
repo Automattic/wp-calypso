@@ -31,7 +31,7 @@ import QueryActivePromotions from 'calypso/components/data/query-active-promotio
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getUnformattedDomainPrice, getUnformattedDomainSalePrice } from 'calypso/lib/domains';
 import formatCurrency from '@automattic/format-currency/src';
 import { getPreference } from 'calypso/state/preferences/selectors';

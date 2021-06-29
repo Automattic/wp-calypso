@@ -14,7 +14,7 @@ import { INTRO_PRICING_DISCOUNT_PERCENTAGE } from '../constants';
 import ProductCard from '../product-card';
 import ProductGridSection from '../product-grid/section';
 import slugToSelectorProduct from '../slug-to-selector-product';
-import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**

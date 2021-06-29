@@ -61,6 +61,7 @@ export class ManagedContactDetailsFormFields extends Component {
 		needsAlternateEmailForGSuite: PropTypes.bool,
 		hasCountryStates: PropTypes.bool,
 		translate: PropTypes.func,
+		emailOnly: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -76,6 +77,7 @@ export class ManagedContactDetailsFormFields extends Component {
 		hasCountryStates: false,
 		translate: ( x ) => x,
 		userCountryCode: 'US',
+		emailOnly: false,
 	};
 
 	constructor( props ) {
@@ -187,6 +189,30 @@ export class ManagedContactDetailsFormFields extends Component {
 		this.handleFieldChange( name, sanitizedValue );
 	};
 
+	createEmailField( description ) {
+		const { translate } = this.props;
+
+		return this.createField(
+			'email',
+			Input,
+			{
+				label: translate( 'Email' ),
+				description,
+			},
+			{
+				customErrorMessage: this.props.contactDetailsErrors?.email,
+			}
+		);
+	}
+
+	renderContactDetailsEmail() {
+		return (
+			<div className="contact-details-form-fields__contact-details">
+				{ this.createEmailField() }
+			</div>
+		);
+	}
+
 	renderContactDetailsEmailPhone() {
 		const { translate, isLoggedOutCart } = this.props;
 
@@ -194,18 +220,8 @@ export class ManagedContactDetailsFormFields extends Component {
 			return (
 				<>
 					<div className="contact-details-form-fields__row">
-						{ this.createField(
-							'email',
-							Input,
-							{
-								label: translate( 'Email' ),
-								description: translate(
-									"You'll use this email address to access your account later"
-								),
-							},
-							{
-								customErrorMessage: this.props.contactDetailsErrors?.email,
-							}
+						{ this.createEmailField(
+							translate( "You'll use this email address to access your account later" )
 						) }
 					</div>
 
@@ -243,15 +259,8 @@ export class ManagedContactDetailsFormFields extends Component {
 		return (
 			<>
 				<div className="contact-details-form-fields__row">
-					{ this.createField(
-						'email',
-						Input,
-						{
-							label: translate( 'Email' ),
-						},
-						{
-							customErrorMessage: this.props.contactDetailsErrors?.email,
-						}
+					{ this.createEmailField(
+						translate( "You'll use this email address to access your account later" )
 					) }
 
 					{ this.createField(
@@ -340,7 +349,7 @@ export class ManagedContactDetailsFormFields extends Component {
 		);
 	}
 
-	render() {
+	renderFullForm() {
 		const { translate, contactDetailsErrors } = this.props;
 		const form = getFormFromContactDetails(
 			this.props.contactDetails,
@@ -349,7 +358,7 @@ export class ManagedContactDetailsFormFields extends Component {
 		debug( 'rendering with form', form );
 
 		return (
-			<FormFieldset className="contact-details-form-fields">
+			<>
 				<div className="contact-details-form-fields__row">
 					{ this.createField(
 						'first-name',
@@ -390,7 +399,17 @@ export class ManagedContactDetailsFormFields extends Component {
 				{ this.props.children && (
 					<div className="contact-details-form-fields__extra-fields">{ this.props.children }</div>
 				) }
+			</>
+		);
+	}
 
+	render() {
+		const { emailOnly } = this.props;
+
+		return (
+			<FormFieldset className="contact-details-form-fields">
+				{ emailOnly && this.renderContactDetailsEmail() }
+				{ ! emailOnly && this.renderFullForm() }
 				<QueryDomainCountries />
 			</FormFieldset>
 		);

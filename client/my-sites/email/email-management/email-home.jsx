@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
+import titleCase from 'to-title-case';
 
 /**
  * Internal dependencies
@@ -149,7 +150,7 @@ class EmailManagementHome extends React.Component {
 			<Main wideLayout>
 				{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
-				<DocumentHead title={ translate( 'Emails' ) } />
+				<DocumentHead title={ titleCase( translate( 'Emails' ) ) } />
 
 				<SidebarNavigation />
 

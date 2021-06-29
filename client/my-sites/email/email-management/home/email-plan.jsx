@@ -4,15 +4,17 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { isEnabled } from '@automattic/calypso-config';
-import { localize } from 'i18n-calypso';
+import { localize, useTranslate } from 'i18n-calypso';
 import { handleRenewNowClick, isExpired } from 'calypso/lib/purchases';
 import page from 'page';
 import PropTypes from 'prop-types';
+import titleCase from 'to-title-case';
 
 /**
  * Internal dependencies
  */
 import wp from 'calypso/lib/wp';
+import DocumentHead from 'calypso/components/data/document-head';
 import {
 	emailManagement,
 	emailManagementAddGSuiteUsers,
@@ -20,6 +22,7 @@ import {
 	emailManagementManageTitanAccount,
 	emailManagementManageTitanMailboxes,
 	emailManagementNewTitanAccount,
+	emailManagementPurchaseNewEmailAccount,
 	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
 import EmailPlanHeader from 'calypso/my-sites/email/email-management/home/email-plan-header';
@@ -50,6 +53,28 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL } from 'calypso/lib/titan/constants';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
+
+const UpgradeNavItem = ( { currentRoute, domain, selectedSiteSlug } ) => {
+	const translate = useTranslate();
+
+	if ( hasGSuiteWithUs( domain ) || hasTitanMailWithUs( domain ) ) {
+		return null;
+	}
+
+	return (
+		<VerticalNavItem
+			path={ emailManagementPurchaseNewEmailAccount( selectedSiteSlug, domain.name, currentRoute ) }
+		>
+			{ translate( 'Upgrade to a hosted email' ) }
+		</VerticalNavItem>
+	);
+};
+
+UpgradeNavItem.propTypes = {
+	currentRoute: PropTypes.string,
+	domain: PropTypes.object.isRequired,
+	selectedSiteSlug: PropTypes.string.isRequired,
+};
 
 class EmailPlan extends React.Component {
 	static propTypes = {
@@ -332,7 +357,14 @@ class EmailPlan extends React.Component {
 	}
 
 	render() {
-		const { domain, selectedSite, hasSubscription, purchase, isLoadingPurchase } = this.props;
+		const {
+			currentRoute,
+			domain,
+			selectedSite,
+			hasSubscription,
+			purchase,
+			isLoadingPurchase,
+		} = this.props;
 
 		const { isLoadingEmailAccounts } = this.state;
 
@@ -343,6 +375,8 @@ class EmailPlan extends React.Component {
 			<>
 				{ selectedSite && hasSubscription && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				{ queryForEmailForwards && <QueryEmailForwards domainName={ domain.name } /> }
+
+				<DocumentHead title={ titleCase( this.getHeaderText() ) } />
 
 				<HeaderCake onClick={ this.handleBack }>{ this.getHeaderText() }</HeaderCake>
 
@@ -366,6 +400,12 @@ class EmailPlan extends React.Component {
 				<div className="email-plan__actions">
 					<VerticalNav>
 						{ this.renderAddNewMailboxesOrRenewNavItem() }
+
+						<UpgradeNavItem
+							currentRoute={ currentRoute }
+							domain={ domain }
+							selectedSiteSlug={ selectedSite.slug }
+						/>
 
 						{ this.renderManageAllMailboxesNavItem() }
 
