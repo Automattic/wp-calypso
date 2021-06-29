@@ -38,6 +38,9 @@ import {
 	prependThemeFilterKeys,
 } from 'calypso/state/themes/selectors';
 import UpworkBanner from 'calypso/blocks/upwork-banner';
+import SectionNav from 'calypso/components/section-nav';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import NavItem from 'calypso/components/section-nav/item';
 
 /**
  * Style dependencies
@@ -193,6 +196,13 @@ class ThemeShowcase extends React.Component {
 		this.scrollToSearchInput();
 	};
 
+	onFilterClick = ( filter ) => {
+		trackClick( 'section nav filter', filter );
+		const url = this.constructUrl( { filter } );
+		page( url );
+		this.scrollToSearchInput();
+	};
+
 	render() {
 		const {
 			currentThemeId,
@@ -208,6 +218,7 @@ class ThemeShowcase extends React.Component {
 			filterString,
 			isMultisite,
 			locale,
+			siteSlug,
 		} = this.props;
 		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
 
@@ -266,6 +277,20 @@ class ThemeShowcase extends React.Component {
 						<UpworkBanner location={ 'theme-banner' } />
 					) }
 					<QueryThemeFilters />
+
+					<SectionNav>
+						<NavTabs onClick={ this.onFilterClick }>
+							<NavItem path={ '/themes/filter/all/' + siteSlug } selected={ ! filter }>
+								{ translate( 'All' ) }
+							</NavItem>
+							<NavItem
+								path={ '/themes/filter/auto-loading-homepage/' + siteSlug }
+								selected={ 'auto-loading-homepage' === filter }
+							>
+								{ translate( 'Recommended' ) }
+							</NavItem>
+						</NavTabs>
+					</SectionNav>
 
 					<ThemesSearchCard
 						onSearch={ this.doSearch }
