@@ -165,7 +165,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 				path={ viewTrackerPath }
 				properties={ viewTrackerProps }
 				title="Plans"
-				options={ { useJetpackGoogleAnalytics: true } }
+				options={ { useJetpackGoogleAnalytics: ! isJetpackCloud() } }
 			/>
 
 			{ header }
