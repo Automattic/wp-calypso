@@ -5,6 +5,7 @@ import {
 	SITE_PLANS_FETCH_COMPLETED,
 	PLANS_RECEIVE,
 	PRODUCTS_LIST_RECEIVE,
+	SITE_PRODUCTS_FETCH_COMPLETED,
 } from 'calypso/state/action-types';
 import { withSchemaValidation } from 'calypso/state/utils';
 
@@ -20,6 +21,9 @@ function reducer( state = null, action ) {
 
 		case SITE_PLANS_FETCH_COMPLETED:
 			return action.plans[ 0 ]?.currencyCode ?? state;
+
+		case SITE_PRODUCTS_FETCH_COMPLETED:
+			return Object.values( action.products )[ 0 ]?.currency_code ?? state;
 	}
 
 	return state;
