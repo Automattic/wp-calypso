@@ -15,7 +15,7 @@ import PlanFeaturesComparisonActions from './actions';
 import PlanFeaturesComparisonHeader from './header';
 import { PlanFeaturesItem } from './item';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
-import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import {
 	getPlan,
 	getPlanBySlug,
