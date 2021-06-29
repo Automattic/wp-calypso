@@ -222,7 +222,7 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 		const locator = By.css( '.components-snackbar[aria-label="Dismiss this notice"]' );
 		const notices = await this.driver.findElements( locator );
 		for ( const notice of notices ) {
-				await driverHelper.clickWhenClickable( this.driver, () => notice );
+			await driverHelper.clickWhenClickable( this.driver, () => notice );
 		}
 		await driverHelper.waitUntilElementNotLocated( this.driver, locator );
 	}
