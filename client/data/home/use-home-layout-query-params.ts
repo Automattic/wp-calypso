@@ -18,7 +18,7 @@ export function useHomeLayoutQueryParams(): HomeLayoutQueryParams {
 	const { dev, view } = useSelector( getCurrentQueryArguments ) as any;
 
 	return {
-		dev: config.isEnabled( 'home/layout-dev' ) || dev === 'true' || undefined,
+		dev: dev === 'true' || ( ! dev && config.isEnabled( 'home/layout-dev' ) ) || undefined,
 		view,
 	};
 }
