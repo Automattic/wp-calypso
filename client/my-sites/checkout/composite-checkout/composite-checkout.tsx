@@ -648,7 +648,12 @@ export default function CompositeCheckout( {
 			<QueryPlans />
 			<QueryProducts />
 			<QueryContactDetailsCache />
-			<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
+			<PageViewTracker
+				path={ analyticsPath }
+				title="Checkout"
+				properties={ analyticsProps }
+				options={ { useJetpackGoogleAnalytics: isJetpackCheckout || isJetpackNotAtomic } }
+			/>
 			<CheckoutProvider
 				items={ items }
 				total={ total }

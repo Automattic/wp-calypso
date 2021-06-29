@@ -254,7 +254,14 @@ export function connect( context, next ) {
 		const product = getProductFromSlug( planSlug );
 		analyticsPageTitle = getJetpackProductDisplayName( product );
 	}
-	recordPageView( pathname, analyticsPageTitle || 'Jetpack Connect' );
+	recordPageView(
+		pathname,
+		analyticsPageTitle || 'Jetpack Connect',
+		{},
+		{
+			useJetpackGoogleAnalytics: true,
+		}
+	);
 
 	// Not clearing the plan here, because other flows can set the cookie before arriving here.
 	planSlug && storePlan( planSlug );
@@ -289,7 +296,14 @@ export function connect( context, next ) {
 }
 
 export function instructions( context, next ) {
-	recordPageView( 'jetpack/connect/instructions', 'Jetpack Manual Install Instructions' );
+	recordPageView(
+		'jetpack/connect/instructions',
+		'Jetpack Manual Install Instructions',
+		{},
+		{
+			useJetpackGoogleAnalytics: true,
+		}
+	);
 
 	const url = context.query.url;
 	if ( ! url ) {
@@ -300,7 +314,14 @@ export function instructions( context, next ) {
 }
 
 export function signupForm( context, next ) {
-	recordPageView( 'jetpack/connect/authorize', 'Jetpack Authorize' );
+	recordPageView(
+		'jetpack/connect/authorize',
+		'Jetpack Authorize',
+		{},
+		{
+			useJetpackGoogleAnalytics: true,
+		}
+	);
 
 	const isLoggedIn = !! getCurrentUserId( context.store.getState() );
 	if ( retrieveMobileRedirect() && ! isLoggedIn ) {
@@ -330,7 +351,14 @@ export function credsForm( context, next ) {
 }
 
 export function authorizeForm( context, next ) {
-	recordPageView( 'jetpack/connect/authorize', 'Jetpack Authorize' );
+	recordPageView(
+		'jetpack/connect/authorize',
+		'Jetpack Authorize',
+		{},
+		{
+			useJetpackGoogleAnalytics: true,
+		}
+	);
 
 	const { query } = context;
 	const transformedQuery = parseAuthorizationQuery( query );
@@ -348,7 +376,14 @@ export function sso( context, next ) {
 	const analyticsBasePath = '/jetpack/sso';
 	const analyticsPageTitle = 'Jetpack SSO';
 
-	recordPageView( analyticsBasePath, analyticsPageTitle );
+	recordPageView(
+		analyticsBasePath,
+		analyticsPageTitle,
+		{},
+		{
+			useJetpackGoogleAnalytics: true,
+		}
+	);
 
 	context.primary = (
 		<JetpackSsoForm
