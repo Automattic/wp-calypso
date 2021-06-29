@@ -196,7 +196,7 @@ class ThemeShowcase extends React.Component {
 		this.scrollToSearchInput();
 	};
 
-	onFilterClick = ( filter ) => {
+	onFilterClick = ( { filter } ) => {
 		trackClick( 'section nav filter', filter );
 		const url = this.constructUrl( { filter } );
 		page( url );
@@ -278,12 +278,17 @@ class ThemeShowcase extends React.Component {
 					) }
 					<QueryThemeFilters />
 
-					<SectionNav>
-						<NavTabs onClick={ this.onFilterClick }>
-							<NavItem path={ '/themes/filter/all/' + siteSlug } selected={ ! filter }>
+					<SectionNav className="themes__section-nav">
+						<NavTabs>
+							<NavItem
+								onClick={ this.onFilterClick }
+								path={ '/themes/filter/all/' + siteSlug }
+								selected={ ! filter }
+							>
 								{ translate( 'All' ) }
 							</NavItem>
 							<NavItem
+								onClick={ this.onFilterClick }
 								path={ '/themes/filter/auto-loading-homepage/' + siteSlug }
 								selected={ 'auto-loading-homepage' === filter }
 							>
