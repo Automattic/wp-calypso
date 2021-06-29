@@ -67,6 +67,9 @@ class DomainItem extends PureComponent {
 		selectionIndex: PropTypes.number,
 		enableSelection: PropTypes.bool,
 		isChecked: PropTypes.bool,
+		showDomainDetails: PropTypes.bool,
+		isEnabled: PropTypes.bool,
+		actionResult: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -77,13 +80,26 @@ class DomainItem extends PureComponent {
 		isLoadingDomainDetails: false,
 		isBusy: false,
 		isChecked: false,
+		showDomainDetails: true,
+		isEnabled: false,
 	};
 
 	handleClick = ( e ) => {
-		if ( this.props.enableSelection ) {
+		const {
+			enableSelection,
+			onClick,
+			domainDetails,
+			showCheckbox,
+			domain,
+			isChecked,
+			onToggle,
+		} = this.props;
+
+		if ( enableSelection ) {
 			this.onSelect( e );
 		} else {
-			this.props.onClick( this.props.domainDetails );
+			onClick( domainDetails );
+			showCheckbox && onToggle( domain.domain, ! isChecked );
 		}
 	};
 
@@ -93,7 +109,7 @@ class DomainItem extends PureComponent {
 
 	onToggle = ( event ) => {
 		if ( this.props.onToggle ) {
-			this.props.onToggle( event.target.checked );
+			this.props.onToggle( this.props.domain.domain, event.target.checked );
 		}
 	};
 
@@ -344,7 +360,11 @@ class DomainItem extends PureComponent {
 	}
 
 	renderActionItems() {
-		const { isLoadingDomainDetails, domainDetails } = this.props;
+		const { isLoadingDomainDetails, domainDetails, showDomainDetails } = this.props;
+
+		if ( ! showDomainDetails ) {
+			return;
+		}
 
 		if ( isLoadingDomainDetails || ! domainDetails ) {
 			return (
@@ -377,6 +397,10 @@ class DomainItem extends PureComponent {
 	}
 
 	renderSiteMeta() {
+		if ( ! this.props.showDomainDetails ) {
+			return;
+		}
+
 		return <div className="domain-item__meta">{ this.getSiteMeta() }</div>;
 	}
 
@@ -440,11 +464,27 @@ class DomainItem extends PureComponent {
 		return null;
 	}
 
+	renderActionResult() {
+		const { actionResult } = this.props;
+
+		if ( ! actionResult?.type || ! actionResult?.message ) {
+			return;
+		}
+
+		const { type, message } = actionResult;
+		const statusClass = 'error' === type ? 'alert' : 'success';
+
+		return <DomainNotice status={ statusClass } text={ message } />;
+	}
+
 	render() {
 		const {
 			domain,
 			domainDetails,
+			disabled,
+			isBusy,
 			isChecked,
+			isEnabled,
 			isManagingAllSites,
 			showCheckbox,
 			enableSelection,
@@ -465,12 +505,14 @@ class DomainItem extends PureComponent {
 						className="domain-item__checkbox"
 						onChange={ this.onToggle }
 						onClick={ this.stopPropagation }
+						checked={ isChecked }
+						disabled={ disabled || isBusy }
 					/>
 				) }
 				{ enableSelection && (
 					<FormRadio
 						className="domain-item__checkbox"
-						checked={ isChecked }
+						checked={ isEnabled }
 						onClick={ this.onSelect }
 					/>
 				) }
@@ -480,6 +522,7 @@ class DomainItem extends PureComponent {
 						{ listStatusText && (
 							<DomainNotice status={ listStatusClass || 'info' } text={ listStatusText } />
 						) }
+						{ this.renderActionResult() }
 					</div>
 					{ this.renderSiteMeta() }
 				</div>
