@@ -120,6 +120,8 @@ class MainComponent extends React.Component {
 			return this.props.translate( 'Jetpack Newsletter' );
 		} else if ( 'jetpack_reports' === category ) {
 			return this.props.translate( 'Jetpack Reports' );
+		} else if ( 'akismet_marketing' === category ) {
+			return this.props.translate( 'Akismet Marketing' );
 		}
 
 		return category;
@@ -159,6 +161,10 @@ class MainComponent extends React.Component {
 			return this.props.translate( 'Jetpack news, announcements, and product spotlights.' );
 		} else if ( 'jetpack_reports' === category ) {
 			return this.props.translate( 'Jetpack security and performance reports.' );
+		} else if ( 'akismet_marketing' === category ) {
+			return this.props.translate(
+				'Relevant tips and new features to get the most out of Akismet'
+			);
 		}
 
 		return null;
