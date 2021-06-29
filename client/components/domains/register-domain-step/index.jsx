@@ -1351,6 +1351,7 @@ class RegisterDomainStep extends React.Component {
 			lastDomainSearched,
 			lastDomainStatus,
 			premiumDomains,
+			lastQuery,
 		} = this.state;
 
 		const matchesSearchedDomain = ( suggestion ) => suggestion.domain_name === exactMatchDomain;
@@ -1363,9 +1364,10 @@ class RegisterDomainStep extends React.Component {
 
 		// the search returned no results
 		if (
-			suggestions.length === 0 &&
-			! this.state.loadingResults &&
-			this.props.showExampleSuggestions
+			lastQuery.length === 0 ||
+			( suggestions.length === 0 &&
+				! this.state.loadingResults &&
+				this.props.showExampleSuggestions )
 		) {
 			return this.renderExampleSuggestions();
 		}
