@@ -196,9 +196,50 @@ export class PlansStep extends Component {
 		const { flowName, hideFreePlan, subHeaderText, translate } = this.props;
 
 		if ( ! hideFreePlan ) {
+			if ( isDesktop() && flowName === 'launch-site' ) {
+				return translate(
+					"Pick one that's right for you and unlock features that help you grow. Or {{link}}continue with a free site{{/link}}.",
+					{
+						components: {
+							link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
+						},
+					}
+				);
+			} else if ( isDesktop() ) {
+				return translate(
+					"Pick one that's right for you and unlock features that help you grow. Or {{link}}start with a free site{{/link}}.",
+					{
+						components: {
+							link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
+						},
+					}
+				);
+			} else if ( flowName === 'launch-site' ) {
+				return translate( 'Choose a plan or {{link}}continue with a free site{{/link}}.', {
+					components: {
+						link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
+					},
+				} );
+			}
+
+			return translate( 'Choose a plan or {{link}}start with a free site{{/link}}.', {
+				components: {
+					link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
+				},
+			} );
+		}
+
+		if ( ! hideFreePlan ) {
 			if ( isDesktop() ) {
 				if ( flowName === 'launch-site' ) {
-					// TODO: return 'Pick one that's right for you and unlock features that help you grow. Or {{link}}continue with a free site{{/link}}.'
+					return translate(
+						"Pick one that's right for you and unlock features that help you grow. Or {{link}}continue with a free site{{/link}}.",
+						{
+							components: {
+								link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
+							},
+						}
+					);
 				}
 
 				return translate(
@@ -212,7 +253,11 @@ export class PlansStep extends Component {
 			}
 
 			if ( flowName === 'launch-site' ) {
-				// TODO: return 'Choose a plan or {{link}}continue with a free site{{/link}}.'
+				return translate( 'Choose a plan or {{link}}continue with a free site{{/link}}.', {
+					components: {
+						link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
+					},
+				} );
 			}
 			return translate( 'Choose a plan or {{link}}start with a free site{{/link}}.', {
 				components: {
