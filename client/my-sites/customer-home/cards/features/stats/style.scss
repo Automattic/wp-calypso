@@ -6,6 +6,7 @@
 
 .stats .chart {
 	margin: 0 -16px;
+	background: none;
 
 	@include breakpoint-deprecated( '>480px' ) {
 		margin: 0 -24px;
