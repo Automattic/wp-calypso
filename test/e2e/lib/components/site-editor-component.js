@@ -69,12 +69,10 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 		const inserterToggleLocator = By.css(
 			'.edit-site-header .edit-site-header-toolbar__inserter-toggle'
 		);
-		await driverHelper.clickWhenClickable( this.driver, inserterToggleLocator );
-		// "Click" twice - the first click seems to trigger a tooltip, the second opens the menu
-		// See https://github.com/Automattic/wp-calypso/issues/43179
 		if ( ! ( await this.isBlockInserterOpen() ) ) {
 			await driverHelper.clickWhenClickable( this.driver, inserterToggleLocator );
 		}
+
 		const inserterMenuLocator = By.css( '.block-editor-inserter__menu' );
 		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, inserterMenuLocator );
 	}
