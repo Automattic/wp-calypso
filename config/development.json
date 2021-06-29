@@ -91,6 +91,7 @@
 		"jetpack/features-section/jetpack": true,
 		"jetpack/personal-plan": false,
 		"jetpack/magic-link-signup": true,
+		"jetpack/siteless-checkout": false,
 		"jetpack/userless-checkout": true,
 		"jetpack/redirect-legacy-plans": true,
 		"jitms": true,
