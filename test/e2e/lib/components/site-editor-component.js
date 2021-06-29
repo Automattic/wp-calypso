@@ -219,32 +219,35 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 	}
 
 	async dismissNotices() {
-		const locator = By.css( '.components-snackbar[aria-label="Dismiss this notice"]' );
-		const notices = await this.driver.findElements( locator );
+		const snackbarNoticeLocator = By.css(
+			'.components-snackbar[aria-label="Dismiss this notice"]'
+		);
+
+		const notices = await this.driver.findElements( snackbarNoticeLocator );
 		for ( const notice of notices ) {
 			await driverHelper.clickWhenClickable( this.driver, () => notice );
 		}
-		await driverHelper.waitUntilElementNotLocated( this.driver, locator );
+
+		await driverHelper.waitUntilElementNotLocated( this.driver, snackbarNoticeLocator );
 	}
 
 	async insertBlockOrPatternViaBlockAppender( name, container = 'Group' ) {
 		const containerBlockId = await this.addBlock( container );
 		await this.runInCanvas( async () => {
-			await driverHelper.clickWhenClickable(
-				this.driver,
-				By.css( `#${ containerBlockId } .block-editor-button-block-appender` )
+			const blockAppenderLocator = By.css(
+				`#${ containerBlockId } .block-editor-button-block-appender`
 			);
+			await driverHelper.clickWhenClickable( this.driver, blockAppenderLocator );
 		} );
-		await driverHelper.setWhenSettable(
-			this.driver,
-			By.css( '.block-editor-inserter__quick-inserter .block-editor-inserter__search-input' ),
-			name
+
+		const quickInserterSearchInputLocator = By.css(
+			'.block-editor-inserter__quick-inserter .block-editor-inserter__search-input'
 		);
-		await driverHelper.clickWhenClickable(
-			this.driver,
-			By.css(
-				'.block-editor-inserter__quick-inserter .block-editor-block-types-list__item, .block-editor-inserter__quick-inserter .block-editor-block-patterns-list__item'
-			)
+		const patternItemLocator = By.css(
+			'.block-editor-inserter__quick-inserter .block-editor-block-types-list__item, .block-editor-inserter__quick-inserter .block-editor-block-patterns-list__item'
 		);
+
+		await driverHelper.setWhenSettable( this.driver, quickInserterSearchInputLocator, name );
+		await driverHelper.clickWhenClickable( this.driver, patternItemLocator );
 	}
 }
