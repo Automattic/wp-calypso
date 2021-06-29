@@ -256,7 +256,7 @@ function onSelectedSiteAvailable( context, basePath ) {
 			].join( '&' );
 		}
 
-		const pluginInstallURL = 'plugin-install.php?calypsoify=1' + `&${ pluginString }`;
+		const pluginInstallURL = 'plugin-install.php?' + `${ pluginString }`;
 		const pluginLink = getSiteAdminUrl( state, selectedSite.ID ) + pluginInstallURL;
 
 		window.location.replace( pluginLink );
