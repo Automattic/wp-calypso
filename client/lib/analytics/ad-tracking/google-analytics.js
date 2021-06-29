@@ -66,7 +66,7 @@ export function getGoogleAnalyticsDefaultConfig() {
  *
  * @param {string} urlPath The path of the current page
  * @param {string} pageTitle The title of the current page
- * @param {bool} useJetpackGoogleAnalytics send the page view to Jetpack Google Analytics
+ * @param {boolean} useJetpackGoogleAnalytics send the page view to Jetpack Google Analytics
  */
 export function fireGoogleAnalyticsPageView(
 	urlPath,
