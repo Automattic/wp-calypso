@@ -122,7 +122,7 @@ export function resolveEmailPlanStatus( domain, emailAccount, isLoadingEmails ) 
 	};
 
 	if ( hasGSuiteWithUs( domain ) ) {
-		// Check for pending TOS acceptance warnings at the account level
+		// Check for pending TOS acceptance warnings at the account level	
 		if (
 			isPendingGSuiteTOSAcceptance( domain ) ||
 			( emailAccount && hasGoogleAccountTOSWarning( emailAccount ) )

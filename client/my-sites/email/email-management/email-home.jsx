@@ -60,6 +60,7 @@ class EmailManagementHome extends React.Component {
 			selectedSite,
 			selectedDomainName,
 			currentRoute,
+			selectedSiteId,
 		} = this.props;
 
 		if ( ! hasSiteDomainsLoaded || ! hasSitesLoaded || ! selectedSite ) {
@@ -110,6 +111,7 @@ class EmailManagementHome extends React.Component {
 					domains={ domainsWithEmail }
 					selectedSiteSlug={ selectedSite.slug }
 					currentRoute={ currentRoute }
+					siteId={ selectedSiteId }
 				/>
 				<EmailListInactive
 					domains={ domainsWithNoEmail }
