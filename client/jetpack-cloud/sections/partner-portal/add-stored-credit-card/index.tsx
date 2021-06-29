@@ -37,7 +37,7 @@ export default function AddStoredCreditCard(): ReactElement {
 			<div className="add-stored-credit-card__content">
 				<CardHeading className="add-stored-credit-card__title" tagName="h3">
 					<Gridicon key="add-card-icon" icon="add-outline" size={ 24 } />
-					<span key="add-card-text">{ translate( 'New credit card' ) }</span>
+					<span key="add-card-text">{ translate( 'New Credit Card' ) }</span>
 				</CardHeading>
 
 				<Button>{ translate( 'Add new credit card' ) }</Button>
