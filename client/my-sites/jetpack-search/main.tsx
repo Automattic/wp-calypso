@@ -31,6 +31,8 @@ import JetpackSearchLogo from './logo';
 import JetpackSearchPlaceholder from './placeholder';
 import JetpackSearchUpsell from './upsell';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 
 export default function JetpackSearchMain(): ReactElement {
 	const site = useSelector( getSelectedSite );
@@ -38,14 +40,24 @@ export default function JetpackSearchMain(): ReactElement {
 	const siteId = useSelector( getSelectedSiteId );
 	const checkForSearchProduct = ( purchase ) => purchase.active && isJetpackSearch( purchase );
 	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
-	const isSearchEnabled = useSelector( ( state ) =>
-		getSiteSetting( state, siteId, 'jetpack_search_enabled' )
-	);
 	const hasSearchProduct =
 		sitePurchases.find( checkForSearchProduct ) || planHasJetpackSearch( site?.plan?.product_slug );
 	const hasLoadedSitePurchases = useSelector( hasLoadedSitePurchasesFromServer );
 	const onSettingsClick = useTrackCallback( undefined, 'calypso_jetpack_search_settings' );
 	const isCloud = isJetpackCloud();
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+
+	// On Jetpack sites, we need to check if the search module is active.
+	// On WPCOM Simple sites, we need to look for the jetpack_search_enabled flag.
+	const isJetpackSearchModuleActive = useSelector( ( state ) =>
+		isJetpackModuleActive( state, siteId, 'search' )
+	);
+	const isJetpackSearchSettingEnabled = useSelector( ( state ) =>
+		getSiteSetting( state, siteId, 'jetpack_search_enabled' )
+	);
+	const isSearchEnabled = isJetpack ? isJetpackSearchModuleActive : isJetpackSearchSettingEnabled;
+
+	// @todo check loading state of Jetpack modules and settings before showing whether it is enabled
 
 	// Send Jetpack Cloud users to wp-admin settings and everyone else to Calypso blue
 	const settingsUrl =
