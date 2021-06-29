@@ -28,7 +28,7 @@ import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopp
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 import { getStepModuleName } from 'calypso/signup/config/step-components';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { getStepUrl } from 'calypso/signup/utils';
+import { getStepUrl, isPlanSelectionAvailableLaterInFlow } from 'calypso/signup/utils';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -49,7 +49,6 @@ import {
 	saveSignupStep,
 	submitSignupStep,
 } from 'calypso/state/signup/progress/actions';
-import { isPlanStepExistsAndSkipped } from 'calypso/state/signup/progress/selectors';
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
@@ -124,26 +123,6 @@ class DomainsStep extends Component {
 		};
 	}
 
-	/**
-	 * Derive if the "plans" step actually will be visible to the customer in a given flow after the domain step
-	 */
-	getIsPlanSelectionAvailableLaterInFlow = () => {
-		const { steps, isPlanStepSkipped } = this.props;
-
-		/**
-		 * Caveat here even though "plans" step maybe available in a flow it might not be active
-		 * i.e. Check flow "domain"
-		 */
-
-		const plansIndex = steps.findIndex( ( stepName ) => getStepModuleName( stepName ) === 'plans' );
-		const domainsIndex = steps.findIndex(
-			( stepName ) => getStepModuleName( stepName ) === 'domains'
-		);
-		const isPlansStepExistsInFutureOfFlow = plansIndex > 0 && plansIndex > domainsIndex;
-
-		return isPlansStepExistsInFutureOfFlow && ! isPlanStepSkipped;
-	};
-
 	getLocale() {
 		return ! this.props.userLoggedIn ? this.props.locale : '';
 	}
@@ -211,7 +190,7 @@ class DomainsStep extends Component {
 		 */
 		return (
 			! this.props.forceHideFreeDomainExplainerAndStrikeoutUi &&
-			this.getIsPlanSelectionAvailableLaterInFlow()
+			this.props.isPlanSelectionAvailableLaterInFlow
 		);
 	};
 
@@ -452,7 +431,7 @@ class DomainsStep extends Component {
 	getSideContent = () => {
 		return (
 			<div className="domains__domain-side-content-container">
-				{ ! this.shouldHideDomainExplainer() && (
+				{ ! this.shouldHideDomainExplainer() && this.props.isPlanSelectionAvailableLaterInFlow && (
 					<div className="domains__domain-side-content">
 						<ReskinSideExplainer
 							onClick={ this.handleDomainExplainerClick }
@@ -514,8 +493,6 @@ class DomainsStep extends Component {
 			includeWordPressDotCom = ! this.props.isDomainOnly;
 		}
 
-		const isPlanSelectionAvailableInFlow = this.getIsPlanSelectionAvailableLaterInFlow();
-
 		const trueNamePromoTlds = TRUENAME_COUPONS.includes( this.props?.queryObject?.coupon )
 			? TRUENAME_TLDS
 			: null;
@@ -544,7 +521,7 @@ class DomainsStep extends Component {
 						trueNamePromoTlds ? false : this.shouldIncludeDotBlogSubdomain()
 					}
 					isSignupStep
-					isPlanSelectionAvailableInFlow={ isPlanSelectionAvailableInFlow }
+					isPlanSelectionAvailableInFlow={ this.props.isPlanSelectionAvailableLaterInFlow }
 					showExampleSuggestions={ showExampleSuggestions }
 					suggestion={ initialQuery }
 					designType={ this.getDesignType() }
@@ -899,9 +876,10 @@ const submitDomainStepSelection = ( suggestion, section ) => {
 };
 
 export default connect(
-	( state ) => {
+	( state, { steps } ) => {
 		const productsList = getAvailableProductsList( state );
 		const productsLoaded = ! isEmpty( productsList );
+		const isPlanStepSkipped = isPlanStepExistsAndSkipped( state );
 
 		return {
 			designType: getDesignType( state ),
@@ -911,7 +889,10 @@ export default connect(
 			vertical: getVerticalForDomainSuggestions( state ),
 			selectedSite: getSelectedSite( state ),
 			sites: getSitesItems( state ),
-			isPlanStepSkipped: isPlanStepExistsAndSkipped( state ),
+			isPlanSelectionAvailableLaterInFlow: isPlanSelectionAvailableLaterInFlow(
+				steps,
+				isPlanStepSkipped
+			),
 			userLoggedIn: isUserLoggedIn( state ),
 		};
 	},
