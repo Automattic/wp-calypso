@@ -43,13 +43,6 @@ class UpworkBanner extends PureComponent {
 		}
 	}
 
-	onDismissClick = ( event ) => {
-		event.preventDefault();
-		event.stopPropagation();
-		this.recordEvent( 'calypso_upwork_banner_dismiss_icon_click' );
-		this.props.dismissBanner( this.props.location );
-	};
-
 	onStartNowClick = () => {
 		this.recordEvent( 'calypso_upwork_banner_start_now_button_click' );
 	};
@@ -67,7 +60,7 @@ class UpworkBanner extends PureComponent {
 	}
 
 	render() {
-		const { isBannerVisible, translate } = this.props;
+		const { isBannerVisible, translate, location, currentPlan } = this.props;
 		if ( ! isBannerVisible ) {
 			return null;
 		}
@@ -79,13 +72,14 @@ class UpworkBanner extends PureComponent {
 					className="upwork-banner"
 					callToAction={ translate( 'Find your expert' ) }
 					onClick={ this.onStartNowClick }
+					dismissPreferenceName={ 'upwork-dismissible-banner' }
+					tracksDismissName={ 'calypso_upwork_banner_dismiss_icon_click' }
+					tracksDismissProperties={ { location: location, plan: currentPlan } }
 					href="https://wordpress.com/built-by-wordpress-com/"
 					title={ translate( 'Let our WordPress.com experts build your site!' ) }
 					description={ translate(
 						'You want the website of your dreams. Our experts can create it for you.'
 					) }
-					dismissPreferenceName={ this.props.location }
-					onDismissClick={ this.onDismissClick }
 				/>
 			</>
 		);
