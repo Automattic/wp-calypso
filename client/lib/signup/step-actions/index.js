@@ -3,6 +3,10 @@
  */
 import debugFactory from 'debug';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
+import { getUrlParts } from '@automattic/calypso-url';
+import { Site } from '@automattic/data-stores';
+import { getAvailableDesigns, isBlankCanvasDesign } from '@automattic/design-picker';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -18,7 +22,6 @@ import {
 	supportsPrivacyProtectionPurchase,
 	planItem as getCartItemForPlan,
 } from 'calypso/lib/cart-values/cart-items';
-import { getUrlParts } from '@automattic/calypso-url';
 
 // State actions and selectors
 import { getCurrentUserName, isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -40,25 +43,22 @@ import {
 	getNuxUrlInputValue,
 } from 'calypso/state/importer-nux/temp-selectors';
 import { getSiteId } from 'calypso/state/sites/selectors';
-import { Site } from '@automattic/data-stores';
-const Visibility = Site.Visibility;
 
 // Current directory dependencies
 import { isValidLandingPageVertical } from 'calypso/lib/signup/verticals';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
-
 import SignupCart from 'calypso/lib/signup/cart';
 
 // Others
 import flows from 'calypso/signup/config/flows';
 import steps, { isDomainStepSkippable } from 'calypso/signup/config/steps';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
-import { isBlankCanvasDesign } from '@automattic/design-picker';
 
 /**
  * Constants
  */
 const debug = debugFactory( 'calypso:signup:step-actions' );
+const Visibility = Site.Visibility;
 
 export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	const { siteId, siteSlug } = data;
@@ -143,7 +143,6 @@ function getNewSiteParams( {
 	const siteStyle = getSiteStyle( state ).trim();
 	const siteSegment = getSiteTypePropertyValue( 'slug', siteType, 'id' );
 	const siteTypeTheme = getSiteTypePropertyValue( 'slug', siteType, 'theme' );
-	const selectedDesign = get( signupDependencies, 'selectedDesign', false );
 
 	const shouldSkipDomainStep = ! siteUrl && isDomainStepSkippable( flowToCheck );
 	const shouldHideFreePlan = get( getSignupDependencyStore( state ), 'shouldHideFreePlan', false );
@@ -163,6 +162,20 @@ function getNewSiteParams( {
 	// when segment and vertical values are not sent. Check pbAok1-p2#comment-834.
 	const shouldUseDefaultAnnotationAsFallback = true;
 
+	// If the user didn't select any design, then we try
+	// to lookup the theme object based on the theme slug.
+	let selectedDesign = get( signupDependencies, 'selectedDesign', false );
+	if ( ! selectedDesign ) {
+		const designs = getAvailableDesigns( {
+			includeAlphaDesigns: false,
+			useFseDesigns: config.isEnabled( 'signup/core-site-editor' ),
+			randomize: false,
+		} );
+		const themeSlug = theme.replace( 'pub/', '' ).replace( 'premium/', '' );
+		selectedDesign = designs.featured.find( ( { slug } ) => slug === themeSlug );
+	}
+
+	const shouldEnableFse = selectedDesign?.is_fse;
 	const newSiteParams = {
 		blog_title: siteTitle,
 		public: Visibility.PublicNotIndexed,
@@ -182,6 +195,7 @@ function getNewSiteParams( {
 			site_creation_flow: flowToCheck,
 			timezone_string: guessTimezone(),
 			wpcom_public_coming_soon: 1,
+			enable_fse: shouldEnableFse,
 		},
 		validate: false,
 	};
@@ -213,7 +227,6 @@ function getNewSiteParams( {
 	}
 
 	if ( selectedDesign ) {
-		// If there's a selected design, it means that the current flow contains the "design" step.
 		newSiteParams.options.theme = `pub/${ selectedDesign.theme }`;
 		newSiteParams.options.template = selectedDesign.template;
 		newSiteParams.options.use_patterns = true;

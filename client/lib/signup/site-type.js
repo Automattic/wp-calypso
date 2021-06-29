@@ -3,15 +3,22 @@
  */
 import i18n from 'i18n-calypso';
 import { find, get } from 'lodash';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
  */
 
+/**
+ * Return default value for given `propertyKey`.
+ *
+ * @param {string} propertyKey property to retrieve
+ * @returns default value for the specified property
+ */
 const getSiteTypePropertyDefaults = ( propertyKey ) =>
 	get(
 		{
-			theme: 'pub/hever',
+			theme: config.isEnabled( 'signup/core-site-editor' ) ? 'pub/blockbase' : 'pub/hever',
 			// General copy
 			siteMockupHelpTipCopy: i18n.translate(
 				"Scroll down to see how your site will look. You can customize it with your own text and photos when we're done with the setup basics."

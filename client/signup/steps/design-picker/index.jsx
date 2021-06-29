@@ -5,7 +5,8 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import DesignPicker from '@automattic/design-picker';
+import DesignPicker, { getAvailableDesigns } from '@automattic/design-picker';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -51,8 +52,24 @@ class DesignPickerStep extends Component {
 	};
 
 	renderDesignPicker() {
+		const designs = getAvailableDesigns( {
+			includeAlphaDesigns: false,
+			useFseDesigns: config.isEnabled( 'signup/core-site-editor' ),
+			randomize: false,
+		} ).featured.filter(
+			// By default, exclude anchorfm-specific designs
+			( design ) => design.features.findIndex( ( f ) => f === 'anchorfm' ) < 0
+		);
+
 		// props.locale obtained via `localize` HoC
-		return <DesignPicker theme="dark" locale={ this.props.locale } onSelect={ this.pickDesign } />;
+		return (
+			<DesignPicker
+				theme="dark"
+				locale={ this.props.locale }
+				onSelect={ this.pickDesign }
+				designs={ designs }
+			/>
+		);
 	}
 
 	headerText() {
