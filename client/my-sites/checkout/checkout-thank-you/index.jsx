@@ -92,6 +92,7 @@ import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customiz
 import getCheckoutUpgradeIntent from 'calypso/state/selectors/get-checkout-upgrade-intent';
 import { isProductsListFetching } from 'calypso/state/products-list/selectors';
 import AsyncLoad from 'calypso/components/async-load';
+
 /**
  * Style dependencies
  */
@@ -433,7 +434,7 @@ export class CheckoutThankYou extends React.Component {
 
 		if ( wasMarketplaceProduct ) {
 			return (
-				<AsyncLoad require="calypso/my-sites/checkout/checkout-thank-you/marketplace/marketplace-thank-you" />
+				<AsyncLoad require="calypso/my-sites/plugins/marketplace/marketplace-plugin-setup-status" />
 			);
 		} else if ( wasEcommercePlanPurchased ) {
 			if ( ! this.props.transferComplete ) {

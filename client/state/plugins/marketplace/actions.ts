@@ -133,9 +133,12 @@ export function tryPluginInstall( selectedSiteId: number, pluginSlugToBeInstalle
 				// currently we fail silently because it seems to resolve automatically
 				// TODO: This blocking experience occurs sometimes, requires investigation and a fix
 				marketplaceDebugger(
-					'::MARKETPLACE::ERROR:: The wporg plugin details could not be fetched or the slug does not exist',
+					'::MARKETPLACE::ERROR:: The wporg plugin details could not be fetched or the slug does not exist, retrying plugin fetch',
 					{ wporgPlugin }
 				);
+				dispatch( fetchSitePlugins( selectedSiteId ) );
+				dispatch( wporgFetchPluginData( pluginSlugToBeInstalled ) );
+				dispatch( pluginInstallationStateChange( MARKETPLACE_ASYNC_PROCESS_STATUS.FETCHING ) );
 			} else if ( isPluginInstalled || pluginStatus === 'completed' ) {
 				// This means the plugin was successfully installed earlier, most probably during purchase
 				dispatch( pluginInstallationStateChange( MARKETPLACE_ASYNC_PROCESS_STATUS.COMPLETED ) );
