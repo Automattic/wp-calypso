@@ -13,7 +13,6 @@ import titleCase from 'to-title-case';
 /**
  * Internal dependencies
  */
-import wp from 'calypso/lib/wp';
 import DocumentHead from 'calypso/components/data/document-head';
 import {
 	emailManagement,
@@ -53,6 +52,7 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL } from 'calypso/lib/titan/constants';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import { useEmailAccountsQuery } from 'calypso/data/emails/use-emails-query';
 
 const UpgradeNavItem = ( { currentRoute, domain, selectedSiteSlug } ) => {
 	const translate = useTranslate();
@@ -76,116 +76,39 @@ UpgradeNavItem.propTypes = {
 	selectedSiteSlug: PropTypes.string.isRequired,
 };
 
-class EmailPlan extends React.Component {
-	static propTypes = {
-		domain: PropTypes.object.isRequired,
-		selectedSite: PropTypes.object.isRequired,
-
-		// Connected props
-		currentRoute: PropTypes.string,
-		emailForwards: PropTypes.array,
-		hasSubscription: PropTypes.bool,
-		isLoadingEmailForwards: PropTypes.bool,
-		isLoadingPurchase: PropTypes.bool,
-		purchase: PropTypes.object,
-	};
-
-	state = {
-		isLoadingEmailAccounts: false,
-		hasLoadedEmailAccounts: false,
-		emailAccounts: [],
-	};
-
-	componentDidMount() {
-		this.loadEmailAccounts();
-	}
-
-	componentDidUpdate() {
-		this.loadEmailAccounts();
-	}
-
-	loadEmailAccounts() {
-		const { domain, emailForwards, isLoadingEmailForwards, selectedSite } = this.props;
-
-		if ( this.state.isLoadingEmailAccounts ) {
-			return;
-		}
-
-		if ( this.state.hasLoadedEmailAccounts ) {
-			if ( ! this.shouldCheckForEmailForwards( domain ) ) {
-				return;
-			}
-
-			// Special handling for email forwards, as we want to trigger a re-fetch if the default email forward
-			// Redux data has been updated due to adding or removing an email forward.
-			if ( emailForwards === null || isLoadingEmailForwards ) {
-				return;
-			}
-
-			// We've finished loading both sets of data. If the two data sources have the same
-			// number of mailboxes, don't re-fetch the data below - this should help to
-			// prevent fetch loops triggered via componentDidUpdate().
-			if ( this.getMailboxes().length === emailForwards.length ) {
-				return;
-			}
-		}
-
-		this.setState( {
-			isLoadingEmailAccounts: true,
-		} );
-
-		wp.undocumented()
-			.getEmailAccountsForSiteAndDomain( selectedSite.ID, domain.name )
-			.then(
-				( data ) => {
-					this.setState( {
-						isLoadingEmailAccounts: false,
-						hasLoadedEmailAccounts: true,
-						emailAccounts: data?.accounts || [],
-					} );
-				},
-				() => {
-					this.setState( {
-						isLoadingEmailAccounts: false,
-						hasLoadedEmailAccounts: true,
-						emailAccounts: [],
-					} );
-				}
-			);
-	}
-
-	shouldCheckForEmailForwards = ( domain ) => {
+const EmailPlan = ( props ) => {
+	const shouldCheckForEmailForwards = ( domain ) => {
 		return ! hasGSuiteWithUs( domain ) && ! hasTitanMailWithUs( domain );
 	};
 
-	getAccount() {
-		return this.state?.emailAccounts[ 0 ];
+	function getAccount( data ) {
+		return data?.accounts?.[ 0 ];
 	}
 
-	getMailboxes() {
-		const account = this.getAccount();
+	function getMailboxes( data ) {
+		const account = getAccount( data );
 
 		return account?.emails ?? [];
 	}
 
-	handleBack = () => {
-		const { selectedSite } = this.props;
+	const handleBack = () => {
+		const { selectedSite } = props;
 
 		page( emailManagement( selectedSite.slug ) );
 	};
 
-	handleRenew = ( event ) => {
+	const handleRenew = ( event ) => {
 		event.preventDefault();
 
-		const { purchase, selectedSite } = this.props;
+		const { purchase, selectedSite } = props;
 
 		handleRenewNowClick( purchase, selectedSite.slug, {
 			tracksProps: { source: 'email-plan-view' },
 		} );
 	};
 
-	getAddMailboxProps() {
-		const { currentRoute, domain, selectedSite } = this.props;
+	function getAddMailboxProps() {
+		const { currentRoute, domain, selectedSite } = props;
 
 		if ( hasGSuiteWithUs( domain ) ) {
 			return {
@@ -225,8 +148,8 @@ class EmailPlan extends React.Component {
 		};
 	}
 
-	getHeaderText() {
-		const { domain, translate } = this.props;
+	function getHeaderText() {
+		const { domain, translate } = props;
 
 		if ( hasGSuiteWithUs( domain ) ) {
 			const googleMailService = getGoogleMailServiceFamily( getGSuiteProductSlug( domain ) );
@@ -252,8 +175,8 @@ class EmailPlan extends React.Component {
 		return translate( 'Email forwarding settings' );
 	}
 
-	renderViewBillingAndPaymentSettingsNavItem() {
-		const { hasSubscription, purchase, selectedSite, translate } = this.props;
+	function renderViewBillingAndPaymentSettingsNavItem() {
+		const { hasSubscription, purchase, selectedSite, translate } = props;
 
 		if ( ! hasSubscription ) {
 			return null;
@@ -272,8 +195,8 @@ class EmailPlan extends React.Component {
 		);
 	}
 
-	getManageAllNavItemProps() {
-		const { currentRoute, domain, selectedSite } = this.props;
+	function getManageAllNavItemProps() {
+		const { currentRoute, domain, selectedSite } = props;
 
 		if ( hasGSuiteWithUs( domain ) ) {
 			return {
@@ -299,14 +222,14 @@ class EmailPlan extends React.Component {
 		};
 	}
 
-	renderManageAllMailboxesNavItem() {
-		const { domain, translate } = this.props;
+	function renderManageAllMailboxesNavItem() {
+		const { domain, translate } = props;
 
 		if ( ! hasGSuiteWithUs( domain ) && ! hasTitanMailWithUs( domain ) ) {
 			return null;
 		}
 
-		const manageAllNavItemProps = this.getManageAllNavItemProps();
+		const manageAllNavItemProps = getManageAllNavItemProps();
 
 		return (
 			<VerticalNavItem { ...manageAllNavItemProps }>
@@ -318,12 +241,12 @@ class EmailPlan extends React.Component {
 		);
 	}
 
-	renderAddNewMailboxesOrRenewNavItem() {
-		const { domain, hasSubscription, purchase, translate } = this.props;
+	function renderAddNewMailboxesOrRenewNavItem() {
+		const { domain, hasSubscription, purchase, translate } = props;
 
 		if ( hasTitanMailWithUs( domain ) && ! hasSubscription ) {
 			return (
-				<VerticalNavItem { ...this.getAddMailboxProps() }>
+				<VerticalNavItem { ...getAddMailboxProps() }>
 					{ translate( 'Add new mailboxes' ) }
 				</VerticalNavItem>
 			);
@@ -336,86 +259,87 @@ class EmailPlan extends React.Component {
 
 			if ( isExpired( purchase ) ) {
 				return (
-					<VerticalNavItem onClick={ this.handleRenew } path="#">
+					<VerticalNavItem onClick={ handleRenew } path="#">
 						{ translate( 'Renew to add new mailboxes' ) }
 					</VerticalNavItem>
 				);
 			}
 
 			return (
-				<VerticalNavItem { ...this.getAddMailboxProps() }>
+				<VerticalNavItem { ...getAddMailboxProps() }>
 					{ translate( 'Add new mailboxes' ) }
 				</VerticalNavItem>
 			);
 		}
 
 		return (
-			<VerticalNavItem { ...this.getAddMailboxProps() }>
+			<VerticalNavItem { ...getAddMailboxProps() }>
 				{ translate( 'Add new email forwards' ) }
 			</VerticalNavItem>
 		);
 	}
 
-	render() {
-		const {
-			currentRoute,
-			domain,
-			selectedSite,
-			hasSubscription,
-			purchase,
-			isLoadingPurchase,
-		} = this.props;
+	const { domain, selectedSite, hasSubscription, purchase, isLoadingPurchase } = props;
 
-		const { isLoadingEmailAccounts } = this.state;
+	// Ensure we check for email forwarding additions and removals
+	const shouldQueryEmailForwards = shouldCheckForEmailForwards( domain );
 
-		// Ensure we check for email forwarding additions and removals
-		const queryForEmailForwards = this.shouldCheckForEmailForwards( domain );
+	const { data, isLoading } = useEmailAccountsQuery( props.selectedSite.ID, props.domain.name, {
+		retry: false,
+	} );
 
-		return (
-			<>
-				{ selectedSite && hasSubscription && <QuerySitePurchases siteId={ selectedSite.ID } /> }
-				{ queryForEmailForwards && <QueryEmailForwards domainName={ domain.name } /> }
+	return (
+		<>
+			{ selectedSite && hasSubscription && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 
-				<DocumentHead title={ titleCase( this.getHeaderText() ) } />
+			{ shouldQueryEmailForwards && <QueryEmailForwards domainName={ domain.name } /> }
 
-				<HeaderCake onClick={ this.handleBack }>{ this.getHeaderText() }</HeaderCake>
+			<DocumentHead title={ titleCase( getHeaderText() ) } />
 
-				<EmailPlanHeader
-					domain={ domain }
-					hasEmailSubscription={ hasSubscription }
-					isLoadingEmails={ isLoadingEmailAccounts }
-					isLoadingPurchase={ isLoadingPurchase }
-					purchase={ purchase }
-					selectedSite={ selectedSite }
-					emailAccount={ this.state.emailAccounts?.[ 0 ] }
-				/>
+			<HeaderCake onClick={ handleBack }>{ getHeaderText() }</HeaderCake>
 
-				<EmailPlanMailboxesList
-					account={ this.getAccount() }
-					domain={ domain }
-					mailboxes={ this.getMailboxes() }
-					isLoadingEmails={ isLoadingEmailAccounts }
-				/>
+			<EmailPlanHeader
+				domain={ domain }
+				hasEmailSubscription={ hasSubscription }
+				isLoadingEmails={ isLoading }
+				isLoadingPurchase={ isLoadingPurchase }
+				purchase={ purchase }
+				selectedSite={ selectedSite }
+				emailAccount={ data?.accounts?.[ 0 ] || {} }
+			/>
 
-				<div className="email-plan__actions">
-					<VerticalNav>
-						{ this.renderAddNewMailboxesOrRenewNavItem() }
+			<EmailPlanMailboxesList
+				account={ getAccount( data ) }
+				domain={ domain }
+				mailboxes={ getMailboxes( data ) }
+				isLoadingEmails={ isLoading }
+			/>
 
-						<UpgradeNavItem
-							currentRoute={ currentRoute }
-							domain={ domain }
-							selectedSiteSlug={ selectedSite.slug }
-						/>
+			<div className="email-plan__actions">
+				<VerticalNav>
+					{ renderAddNewMailboxesOrRenewNavItem() }
 
-						{ this.renderManageAllMailboxesNavItem() }
+					{ renderManageAllMailboxesNavItem() }
 
-						{ this.renderViewBillingAndPaymentSettingsNavItem() }
-					</VerticalNav>
-				</div>
-			</>
-		);
-	}
-}
+					{ renderViewBillingAndPaymentSettingsNavItem() }
+				</VerticalNav>
+			</div>
+		</>
+	);
+};
+
+EmailPlan.propType = {
+	domain: PropTypes.object.isRequired,
+	selectedSite: PropTypes.object.isRequired,
+
+	// Connected props
+	currentRoute: PropTypes.string,
+	emailForwards: PropTypes.array,
+	hasSubscription: PropTypes.bool,
+	isLoadingEmailForwards: PropTypes.bool,
+	isLoadingPurchase: PropTypes.bool,
+	purchase: PropTypes.object,
+};
 
 export default connect( ( state, ownProps ) => {
 	return {
