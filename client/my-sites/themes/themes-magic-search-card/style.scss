@@ -57,7 +57,7 @@
 	.segmented-control {
 		flex: 0 0 auto;
 		min-width: 0;
-		padding: 11px 10px;
+		padding: 11px 14px;
 
 		.segmented-control__item,
 		.segmented-control__link,
@@ -211,11 +211,4 @@
 
 .themes-magic-search-card__welcome-taxonomy-icon {
 	pointer-events: none;
-}
-
-.button.is-link.themes-magic-search-card__advanced-toggle {
-	font-size: 0.75rem;
-	margin-top: 3px;
-	margin-right: 10px;
-	white-space: nowrap;
 }
