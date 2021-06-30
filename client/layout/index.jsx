@@ -49,7 +49,7 @@ import LayoutLoader from './loader';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { withCurrentRoute } from 'calypso/components/route';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { isWpMobileApp } from 'calypso/lib/mobile-app';
+import { isWpMobileApp, isWcMobileApp } from 'calypso/lib/mobile-app';
 import { getShouldShowAppBanner, handleScroll } from './utils';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import { useBreakpoint } from '@automattic/viewport-react';
@@ -239,7 +239,7 @@ class Layout extends Component {
 			[ 'is-group-' + this.props.sectionGroup ]: this.props.sectionGroup,
 			[ 'is-section-' + this.props.sectionName ]: this.props.sectionName,
 			'is-support-session': this.props.isSupportSession,
-			'has-no-sidebar': ! this.props.secondary,
+			'has-no-sidebar': ! this.props.secondary || isWcMobileApp(),
 			'is-inline-help-showing': this.shouldLoadInlineHelp(),
 			'is-happychat-button-showing': this.shouldShowHappyChatButton(),
 			'has-chat': this.props.chatIsOpen,
