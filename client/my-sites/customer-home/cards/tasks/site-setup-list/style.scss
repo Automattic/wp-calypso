@@ -15,6 +15,8 @@
 		box-shadow: 0 0 0 1px var( --color-border-subtle );
 		border-bottom: none;
 		margin-bottom: 16px;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 3px;
 	}
 
 	@include breakpoint-deprecated( '<960px' ) {
