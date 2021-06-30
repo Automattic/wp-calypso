@@ -1,0 +1,12 @@
+.no-jetpack-sites-message {
+	margin: auto;
+	max-width: 720px;
+
+	@include breakpoint-deprecated( '<660px' ) {
+		margin: 16px;
+	}
+}
+
+.no-jetpack-sites-message__header {
+	margin-bottom: 1.5rem;
+}

@@ -11,7 +11,6 @@ import { Button, ProductIcon } from '@automattic/components';
  * Internal dependencies
  */
 import Gridicon from 'calypso/components/gridicon';
-import { useExperiment } from 'calypso/lib/explat';
 import { preventWidows } from 'calypso/lib/formatting';
 import JetpackProductCardTimeFrame from './time-frame';
 import PlanPrice from 'calypso/my-sites/plan-price';
@@ -87,11 +86,6 @@ const DisplayPrice = ( {
 	hideSavingLabel,
 } ) => {
 	const translate = useTranslate();
-	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
-		'calypso_jetpack_yearly_total_discount'
-	);
-	const withTreatmentVariation =
-		experimentAssignment?.variationName === 'treatment' && billingTerm === TERM_ANNUALLY;
 
 	if ( isDeprecated ) {
 		return (
@@ -158,29 +152,32 @@ const DisplayPrice = ( {
 	const couponDiscountedPrice = parseFloat(
 		( ( discountedPrice ?? originalPrice ) * FRESHPACK_PERCENTAGE ).toFixed( 2 )
 	);
-	const discountElt = withTreatmentVariation
-		? translate( '* Save %(percent)d%% for the first year', {
-				args: {
-					percent: ( ( originalPrice - couponDiscountedPrice ) / originalPrice ) * 100,
-				},
-				comment: 'Asterisk clause describing the displayed price adjustment',
-		  } )
-		: translate( '* You Save %(percent)d%%', {
-				args: {
-					percent: INTRO_PRICING_DISCOUNT_PERCENTAGE,
-				},
-				comment: 'Asterisk clause describing the displayed price adjustment',
-		  } );
+	const discountElt =
+		billingTerm === TERM_ANNUALLY
+			? translate( '* Save %(percent)d%% for the first year', {
+					args: {
+						percent: ( ( originalPrice - couponDiscountedPrice ) / originalPrice ) * 100,
+					},
+					comment: 'Asterisk clause describing the displayed price adjustment',
+			  } )
+			: translate( '* You Save %(percent)d%%', {
+					args: {
+						percent: INTRO_PRICING_DISCOUNT_PERCENTAGE,
+					},
+					comment: 'Asterisk clause describing the displayed price adjustment',
+			  } );
 
 	return (
 		<div className="jetpack-product-card__price">
-			{ currencyCode && originalPrice && ! isLoadingExperimentAssignment ? (
+			{ currencyCode && originalPrice ? (
 				<>
 					{ displayFrom && <span className="jetpack-product-card__price-from">from</span> }
 					<PlanPrice
 						original
 						className="jetpack-product-card__original-price"
-						rawPrice={ ( withTreatmentVariation ? originalPrice : couponOriginalPrice ) as number }
+						rawPrice={
+							( billingTerm === TERM_ANNUALLY ? originalPrice : couponOriginalPrice ) as number
+						}
 						currencyCode={ currencyCode }
 					/>
 					<PlanPrice

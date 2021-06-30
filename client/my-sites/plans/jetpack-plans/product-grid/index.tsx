@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { isEnabled } from '@automattic/calypso-config';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useMemo, useRef, useState, useEffect } from 'react';
@@ -170,8 +171,11 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 		[ onDurationChange, duration ]
 	);
 
+	const onlyRealtimeProducts = isEnabled( 'jetpack/only-realtime-products' );
+
 	return (
 		<>
+			{ onlyRealtimeProducts && <h1>jetpack/only-realtime-products is enabled</h1> }
 			{ planRecommendation && (
 				<PlanUpgradeSection
 					planRecommendation={ planRecommendation }

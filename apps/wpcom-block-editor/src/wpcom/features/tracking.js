@@ -223,11 +223,29 @@ const getBlocksTracker = ( eventName ) => ( blockIds ) => {
  */
 const maybeTrackPatternInsertion = ( actionData ) => {
 	const meta = find( actionData, ( item ) => item?.patternName );
-	const patternName = meta?.patternName;
+	let patternName = meta?.patternName;
+
+	// Quick block inserter doesn't use an object to store the patternName
+	// in the metadata. The pattern name is just directly used as a string.
+	if ( ! patternName ) {
+		const patterns = select( 'core/block-editor' ).getSettings().__experimentalBlockPatterns;
+		const actionDataToCheck = Object.values( actionData ).filter(
+			( data ) => typeof data === 'string'
+		);
+		const foundPattern = patterns.find( ( pattern ) => actionDataToCheck.includes( pattern.name ) );
+		if ( foundPattern ) {
+			patternName = foundPattern.name;
+		}
+	}
 
 	if ( patternName ) {
+		const patternCategory =
+			// Pattern category dropdown in global inserter
+			document.querySelector( '.block-editor-inserter__panel-header-patterns select' )?.value;
+
 		tracksRecordEvent( 'wpcom_pattern_inserted', {
 			pattern_name: patternName,
+			pattern_category: patternCategory,
 			blocks_replaced: actionData?.blocks_replaced,
 		} );
 	}
@@ -407,6 +425,41 @@ const trackSaveEntityRecord = ( kind, name, record ) => {
 		}
 	}
 };
+
+const trackSiteEditorBrowsingSidebarOpen = () => {
+	// We want to make sure the browsing sidebar is closed.
+	// This action is triggered even if the sidebar is open
+	// which we want to avoid tracking.
+	const isOpen = select( 'core/edit-site' ).isNavigationOpened();
+	if ( isOpen ) {
+		return;
+	}
+
+	tracksRecordEvent( 'wpcom_block_editor_nav_sidebar_open' );
+};
+
+const trackSiteEditorCreateTemplate = ( { slug } ) => {
+	tracksRecordEvent( 'wpcom_block_editor_nav_sidebar_item_add', {
+		item_type: 'template',
+		item_slug: slug,
+	} );
+};
+
+const trackSiteEditorChangeTemplate = ( id, slug ) => {
+	tracksRecordEvent( 'wpcom_block_editor_nav_sidebar_item_edit', {
+		item_type: 'template',
+		item_id: id,
+		item_slug: slug,
+	} );
+};
+
+const trackSiteEditorChangeTemplatePart = ( id ) => {
+	tracksRecordEvent( 'wpcom_block_editor_nav_sidebar_item_edit', {
+		item_type: 'template_part',
+		item_id: id,
+	} );
+};
+
 /**
  * Tracks editEntityRecord for global styles updates.
  *
@@ -498,6 +551,10 @@ const REDUX_TRACKING = {
 	},
 	'core/edit-site': {
 		setIsListViewOpened: trackListViewToggle,
+		openNavigationPanelToMenu: trackSiteEditorBrowsingSidebarOpen,
+		addTemplate: trackSiteEditorCreateTemplate,
+		setTemplate: trackSiteEditorChangeTemplate,
+		setTemplatePart: trackSiteEditorChangeTemplatePart,
 	},
 	'core/edit-post': {
 		setIsListViewOpened: trackListViewToggle,

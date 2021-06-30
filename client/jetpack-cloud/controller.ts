@@ -1,19 +1,20 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
+import { NoJetpackSitesMessage } from 'calypso/components/jetpack/no-jetpack-sites-message';
+import { makeLayout, render as clientRender, setSectionMiddleware } from 'calypso/controller';
+import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { addQueryArgs, getSiteFragment, sectionify } from 'calypso/lib/route';
 import {
 	redirectToPrimary,
 	updateRecentSitesPreferences,
-	renderEmptySites,
 	renderNoVisibleSites,
-	recordNoSitesPageView,
-	recordNoVisibleSitesPageView,
 	showMissingPrimaryError,
 } from 'calypso/my-sites/controller';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -152,6 +153,49 @@ const siteSelectionWithFragment = async (
 };
 
 /**
+ * Render a screen to indicate that there are no Jetpack sites.
+ *
+ * @param {PageJS.Context} context Route context
+ * @param {string} siteSlug Site slug
+ */
+const renderNoJetpackSites = ( context: PageJS.Context, siteSlug?: string ) => {
+	setSectionMiddleware( { group: 'sites' } )( context );
+
+	context.primary = React.createElement( NoJetpackSitesMessage, { siteSlug } );
+
+	// eslint-disable-next-line @typescript-eslint/no-empty-function
+	makeLayout( context, () => {} );
+	clientRender( context );
+};
+
+/**
+ * Record a page view for no Jetpack sites.
+ *
+ * @param {PageJS.Context} context Route context
+ * @param {string} siteFragment Parsed site slug
+ */
+function recordNoJetpackSitesPageView( context: PageJS.Context, siteFragment: string | undefined ) {
+	recordPageView( '/landing', 'No Jetpack Sites', {
+		base_path: sectionify( context.path, siteFragment ),
+	} );
+}
+
+/**
+ * Record a page view for no visible Jetpack sites.
+ *
+ * @param {PageJS.Context} context Route context
+ * @param {string} siteFragment Parsed site slug
+ */
+function recordNoVisibleJetpackSitesPageView(
+	context: PageJS.Context,
+	siteFragment: string | undefined
+) {
+	recordPageView( '/landing', 'All Jetpack Sites Hidden', {
+		base_path: sectionify( context.path, siteFragment ),
+	} );
+}
+
+/**
  * Show dedicated screen if user has no Jetpack site, or no visible Jetpack site
  *
  * @param {string} siteFragment Parsed site slug
@@ -165,17 +209,15 @@ export function noSite(
 	const { getState } = context.store;
 	const currentUser = getCurrentUser( getState() ) as UserData;
 
-	if ( 0 === currentUser?.site_count ) {
-		// TODO: use jetpack_site_count and render no Jetpack sites screen instead
-		renderEmptySites( context );
-		recordNoSitesPageView( context, siteFragment );
+	if ( 0 === currentUser?.jetpack_site_count ) {
+		renderNoJetpackSites( context, currentUser.primarySiteSlug );
+		recordNoJetpackSitesPageView( context, siteFragment );
 		return true;
 	}
 
-	if ( 0 === currentUser?.visible_site_count ) {
-		// TODO: use jetpack_visible_site_count and render no Jetpack visible sites screen instead
+	if ( 0 === currentUser?.jetpack_visible_site_count ) {
 		renderNoVisibleSites( context );
-		recordNoVisibleSitesPageView( context, siteFragment );
+		recordNoVisibleJetpackSitesPageView( context, siteFragment );
 		return true;
 	}
 }
