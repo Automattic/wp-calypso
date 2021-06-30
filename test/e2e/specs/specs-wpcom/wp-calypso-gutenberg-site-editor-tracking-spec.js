@@ -801,11 +801,19 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 					By.css( '.wp-block-template-part__selection-preview-item' )
 				);
 
-				const chooseEvents = ( await getEventsStack( this.driver ) ).filter(
+				const eventsStack = await getEventsStack( this.driver );
+				const chooseEvents = eventsStack.filter(
 					( event ) => event[ 0 ] === 'wpcom_block_editor_template_part_choose_existing'
 				);
 
 				assert.strictEqual( chooseEvents.length, 1 );
+
+				// Verify there are no replace events since these share the same selection component.
+				const replaceEvents = eventsStack.filter(
+					( event ) => event[ 0 ] === 'wpcom_block_editor_template_part_replace'
+				);
+				assert.strictEqual( replaceEvents.length, 0 );
+
 				const { variation_slug, template_part_id } = chooseEvents[ 0 ][ 1 ];
 				// Check the event props, assert id.length > 2 since the format is `{theme}//{slug}`.
 				assert(
@@ -825,10 +833,19 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 					this.driver,
 					By.css( '.wp-block-template-part__selection-preview-item' )
 				);
-				const replaceEvents = ( await getEventsStack( this.driver ) ).filter(
+
+				const eventsStack = await getEventsStack( this.driver );
+				const replaceEvents = eventsStack.filter(
 					( event ) => event[ 0 ] === 'wpcom_block_editor_template_part_replace'
 				);
 				assert.strictEqual( replaceEvents.length, 1 );
+
+				// Verify there are no choose_existing events since these share the same selection component.
+				const chooseExistingEvents = eventsStack.filter(
+					( event ) => event[ 0 ] === 'wpcom_block_editor_template_part_choose_existing'
+				);
+				assert.strictEqual( chooseExistingEvents.length, 0 );
+
 				const {
 					template_part_id,
 					replaced_template_part_id,
