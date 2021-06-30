@@ -97,6 +97,7 @@ class CurrentTheme extends Component {
 								icon={ option.icon }
 								href={ currentThemeId && option.getUrl( currentThemeId ) }
 								onClick={ this.trackClick }
+								isPrimary={ option.label.toLowerCase() === 'customize' }
 							/>
 						) ) }
 					</div>

@@ -50,7 +50,7 @@ $current-theme-border: 1px solid rgba( var( --color-neutral-10-rgb ), 0.25 );
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	padding-left: 15px;
-	font-size: 0.875rem;
+	font-size: 1rem;
 	max-width: 100%;
 }
 
@@ -62,7 +62,7 @@ $current-theme-border: 1px solid rgba( var( --color-neutral-10-rgb ), 0.25 );
 
 .current-theme__description {
 	margin-top: 15px;
-	font-size: 0.75rem;
+	font-size: 0.875rem;
 }
 
 .current-theme__actions {
@@ -75,40 +75,12 @@ $current-theme-border: 1px solid rgba( var( --color-neutral-10-rgb ), 0.25 );
 }
 
 .current-theme__button {
-	margin: 10px;
+	margin-right: 10px;
+	margin-bottom: 20px;
 	font-weight: normal;
 	position: relative;
 
-	&.disabled {
-		cursor: default;
-
-		span {
-			color: var( --color-neutral-light );
-		}
+	&:last-child {
+		margin-right: 20px;
 	}
-
-	&:not( .disabled ):hover {
-		background: var( --color-primary-0 );
-		cursor: pointer;
-	}
-
-	&:not( .disabled ):active {
-		background: var( --color-primary-0 );
-	}
-
-	.accessible-focus &:focus {
-		z-index: z-index( 'root', '.accessible-focus .current-theme__button:focus' );
-		outline: solid 3px var( --color-primary-light );
-	}
-}
-
-.current-theme__button-label {
-	overflow: hidden;
-	white-space: nowrap;
-	max-width: 95%;
-}
-
-.current-theme__customize {
-	color: var( --color-text-inverted );
-	background: var( --color-neutral-dark );
 }

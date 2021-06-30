@@ -16,6 +16,7 @@ export default class extends React.Component {
 		icon: PropTypes.string.isRequired,
 		href: PropTypes.string,
 		onClick: PropTypes.func,
+		isPrimary: PropTypes.bool,
 	};
 
 	render() {
@@ -24,10 +25,12 @@ export default class extends React.Component {
 				role="button"
 				className={ classNames(
 					'current-theme__button',
-					'button',
+					'components-button',
 					'current-theme__' + this.props.name,
 					{
 						disabled: ! this.props.href,
+						'is-primary': this.props.isPrimary,
+						'is-secondary': ! this.props.isPrimary,
 					}
 				) }
 				onClick={ this.props.onClick.bind( null, this.props.name ) }
