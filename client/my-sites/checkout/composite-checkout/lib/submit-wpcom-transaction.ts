@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { isEnabled } from '@automattic/calypso-config';
 import type {
 	WPCOMTransactionEndpointRequestPayload,
 	WPCOMTransactionEndpointResponse,
@@ -18,15 +17,15 @@ export default async function submitWpcomTransaction(
 	payload: WPCOMTransactionEndpointRequestPayload,
 	transactionOptions: PaymentProcessorOptions
 ): Promise< WPCOMTransactionEndpointResponse > {
-	if ( transactionOptions.createUserAndSiteBeforeTransaction || payload.cart.is_jetpack_checkout ) {
-		const isJetpackCheckout = payload.cart.is_jetpack_checkout;
+	const isJetpackUserLessCheckout =
+		payload.cart.is_jetpack_checkout && payload.cart.cart_key === 'no-user';
 
-		const createAccountOptions = isJetpackCheckout
+	if ( transactionOptions.createUserAndSiteBeforeTransaction || isJetpackUserLessCheckout ) {
+		const isJetpackUserLessCheckout = payload.cart.is_jetpack_checkout;
+
+		const createAccountOptions = isJetpackUserLessCheckout
 			? { signupFlowName: 'jetpack-userless-checkout' }
 			: { signupFlowName: 'onboarding-registrationless' };
-
-		const isSitelessJetpackCheckout =
-			isEnabled( 'jetpack/siteless-checkout' ) && isJetpackCheckout && payload.cart.blog_id === '0';
 
 		return createAccount( createAccountOptions ).then( ( response ) => {
 			const siteIdFromResponse = response?.blog_details?.blogid;
@@ -40,7 +39,6 @@ export default async function submitWpcomTransaction(
 					...payload.cart,
 					blog_id: siteId || '0',
 					cart_key: siteId || 'no-site',
-					create_new_blog: isSitelessJetpackCheckout,
 				},
 			};
 			return wp.undocumented().transactions( newPayload );
