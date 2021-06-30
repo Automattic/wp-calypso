@@ -453,7 +453,7 @@ function handleUpdateImageBlocks( calypsoPort ) {
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handlePreview( calypsoPort ) {
-	document.getElementById( 'editor' ).addEventListener(
+	document.getElementById( 'editor' )?.addEventListener(
 		'click',
 		( e ) => {
 			if ( ! e.target.classList.contains( 'editor-post-preview' ) ) {
