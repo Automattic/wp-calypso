@@ -256,6 +256,12 @@ class HelpContact extends React.Component {
 		this.clearSavedContactForm();
 	};
 
+	translateForForums = ( message ) => {
+		const { currentUserLocale, translate } = this.props;
+
+		return config( 'forum_locales' ).includes( currentUserLocale ) ? translate( message ) : message;
+	};
+
 	submitSupportForumsTopic = ( contactForm ) => {
 		const {
 			helpSiteIsJetpack,
@@ -273,38 +279,44 @@ class HelpContact extends React.Component {
 		this.setState( { isSubmitting: true } );
 		this.recordCompactSubmit( 'forums' );
 
-		let blogHelpMessage = translate( "I don't have a site linked to this WordPress.com account" );
+		let blogHelpMessage = this.translateForForums(
+			"I don't have a site linked to this WordPress.com account"
+		);
 
 		if ( userDeclaresNoSite ) {
-			blogHelpMessage = translate( "I don't have a site with WordPress.com yet" );
+			blogHelpMessage = this.translateForForums( "I don't have a site with WordPress.com yet" );
 		}
 
 		if ( site || userDeclaredUrl ) {
 			const siteUrl = userDeclaredUrl ? userDeclaredUrl.trim() : site.URL;
 
-			blogHelpMessage = translate( 'Site: %(siteUrl)s.', {
+			blogHelpMessage = this.translateForForums( 'Site: %(siteUrl)s.', {
 				args: {
 					siteUrl: userRequestsHidingUrl ? 'help@' + withoutHttp( siteUrl ) : siteUrl,
 				},
 			} );
 
 			if ( helpSiteIsWpCom ) {
-				blogHelpMessage += '\nWP.com: ' + translate( 'Yes' );
+				blogHelpMessage += '\nWP.com: ' + this.translateForForums( 'Yes' );
 			}
 
 			if ( helpSiteIsNotWpCom ) {
-				const jetpackMessage = helpSiteIsJetpack ? translate( 'Yes' ) : translate( 'Unknown' );
+				const jetpackMessage = helpSiteIsJetpack
+					? this.translateForForums( 'Yes' )
+					: this.translateForForums( 'Unknown' );
 
 				blogHelpMessage +=
 					'\nWP.com: ' +
-					translate( 'Unknown' ) +
+					this.translateForForums( 'Unknown' ) +
 					'\n' +
-					translate( 'Jetpack' ) +
+					this.translateForForums( 'Jetpack' ) +
 					': ' +
 					jetpackMessage;
 			}
 
-			const correctAccountMessage = userDeclaredUrl ? translate( 'Unknown' ) : translate( 'Yes' );
+			const correctAccountMessage = userDeclaredUrl
+				? this.translateForForums( 'Unknown' )
+				: this.translateForForums( 'Yes' );
 			blogHelpMessage += '\nCorrect account: ' + correctAccountMessage;
 		}
 
