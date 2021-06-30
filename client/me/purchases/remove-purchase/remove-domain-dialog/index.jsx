@@ -181,9 +181,17 @@ class RemoveDomainDialog extends Component {
 	}
 
 	async isWpComEmailBasedOnDomain() {
+		this.setState( {
+			isCheckingEmail: true,
+		} );
+
 		const { purchase } = this.props;
 		const productName = getName( purchase );
 		const { email } = await wpcom.me().get();
+
+		this.setState( {
+			isCheckingEmail: false,
+		} );
 
 		return email.endsWith( productName );
 	}
@@ -239,7 +247,10 @@ class RemoveDomainDialog extends Component {
 			},
 			{
 				action: 'remove',
-				additionalClassNames: [ this.props.isRemoving ? 'is-busy' : '', 'is-scary' ],
+				additionalClassNames: [
+					this.props.isRemoving || this.state.isCheckingEmail ? 'is-busy' : '',
+					'is-scary',
+				],
 				label: translate( 'Delete this Domain' ),
 				onClick: this.nextStep,
 			},
