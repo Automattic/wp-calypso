@@ -200,13 +200,13 @@ export function createGeneralTests( { it, editorType, postType } ) {
 		await clearEventsStack( this.driver );
 
 		await editor.insertPattern( 'gallery', 'Heading and Three Images' );
+		await editor.dismissNotices();
 		// We need to save the eventsStack after each insertion to make sure we
 		// aren't running out of the E2E queue size.
 		const eventsStackGallery = await getEventsStack( this.driver );
 		if ( await editor.isBlockInserterOpen() ) {
 			await editor.closeBlockInserter();
 		}
-		await editor.dismissNotices();
 
 		const patternInsertedEvents = [ ...eventsStackGallery, ...eventsStackList ].filter(
 			( [ eventName ] ) => eventName === 'wpcom_pattern_inserted'
