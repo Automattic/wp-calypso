@@ -127,7 +127,7 @@ function is_site_eligible_for_full_site_editing() {
  * @return bool True if current theme supports FSE, false otherwise.
  */
 function is_theme_supported() {
-	if ( 0 === get_current_blog_id() ) {
+	if ( is_multisite() && 0 === get_current_blog_id() ) {
 		// get_theme_slug will always return false.
 		return false;
 	}
