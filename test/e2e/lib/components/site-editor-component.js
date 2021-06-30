@@ -86,7 +86,7 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 		await driverHelper.setWhenSettable( this.driver, inserterSearchInputLocator, searchTerm );
 	}
 
-	async addBlock( title ) {
+	async addBlock( title, overrideLocatorSuffix, overrideAriaLabel ) {
 		const {
 			ariaLabel,
 			prefix,
@@ -95,13 +95,15 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 		} = new GutenbergEditorComponent().getBlockLocatorSettings( title );
 
 		const inserterBlockItemLocator = By.css(
-			`.edit-site-editor__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix }${ blockClass }`
+			`.edit-site-editor__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${
+				overrideLocatorSuffix || prefix + blockClass
+			}`
 		);
 
 		const insertedBlockLocator = By.css(
 			`.block-editor-block-list__block.${
 				initsWithChildFocus ? 'has-child-selected' : 'is-selected'
-			}[aria-label*='${ ariaLabel }']`
+			}[aria-label*='${ overrideAriaLabel || ariaLabel }']`
 		);
 
 		await this.openBlockInserterAndSearch( title );
