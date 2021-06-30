@@ -13,7 +13,7 @@ export function isWpMobileApp() {
 /**
  * Returns whether user is using a WooCommerce mobile app.
  *
- * @returns {boolean} Whether the user agent matches the ones used on the WordPress mobile apps.
+ * @returns {boolean} Whether the user agent matches the ones used on the WooCommerce mobile apps.
  */
 export function isWcMobileApp() {
 	if ( typeof navigator === 'undefined' ) {
