@@ -352,6 +352,19 @@ class ThemesMagicSearchCard extends React.Component {
 							suggest={ this.suggest }
 						/>
 					) }
+					<SectionNav className="themes-magic-search-card__section-nav">
+						<NavTabs>
+							<NavItem
+								onClick={ () => this.onFilterClick( 'recommended' ) }
+								selected={ 'recommended' === this.props.filter }
+							>
+								{ translate( 'Recommended' ) }
+							</NavItem>
+							<NavItem onClick={ () => this.onFilterClick( '' ) } selected={ ! this.props.filter }>
+								{ translate( 'All Themes' ) }
+							</NavItem>
+						</NavTabs>
+					</SectionNav>
 					{ ! renderSuggestions && (
 						<MagicSearchWelcome
 							ref={ this.setSuggestionsRefs( 'welcome' ) }
@@ -361,19 +374,6 @@ class ThemesMagicSearchCard extends React.Component {
 						/>
 					) }
 				</div>
-				<SectionNav className="themes-magic-search-card__section-nav">
-					<NavTabs>
-						<NavItem
-							onClick={ () => this.onFilterClick( 'recommended' ) }
-							selected={ 'recommended' === this.props.filter }
-						>
-							{ translate( 'Recommended' ) }
-						</NavItem>
-						<NavItem onClick={ () => this.onFilterClick( '' ) } selected={ ! this.props.filter }>
-							{ translate( 'All Themes' ) }
-						</NavItem>
-					</NavTabs>
-				</SectionNav>
 			</div>
 		);
 	}
