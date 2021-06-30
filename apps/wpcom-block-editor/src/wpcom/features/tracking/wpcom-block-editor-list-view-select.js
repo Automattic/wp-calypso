@@ -29,7 +29,7 @@ export default () => ( {
 
 		const currentBlock = getSelectedBlock();
 		tracksRecordEvent( 'wpcom_block_editor_list_view_select', {
-			block_name: currentBlock.block_name,
+			block_name: currentBlock.name,
 		} );
 	},
 } );
