@@ -20,6 +20,7 @@ import {
 } from 'calypso/state/ui/selectors';
 import getSiteSetting from 'calypso/state/selectors/get-site-setting';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import { isJetpackSearch, planHasJetpackSearch } from '@automattic/calypso-products';
 import {
 	getSitePurchases,
@@ -33,6 +34,9 @@ import JetpackSearchUpsell from './upsell';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
+import { isRequestingSiteSettings, getSiteSettings } from 'calypso/state/site-settings/selectors';
+import getJetpackModules from 'calypso/state/selectors/get-jetpack-modules';
 
 export default function JetpackSearchMain(): ReactElement {
 	const site = useSelector( getSelectedSite );
@@ -57,15 +61,15 @@ export default function JetpackSearchMain(): ReactElement {
 	);
 	const isSearchEnabled = isJetpack ? isJetpackSearchModuleActive : isJetpackSearchSettingEnabled;
 
-	// @todo check loading state of Jetpack modules and settings before showing whether it is enabled
+	// Have we loaded the necessary purchases, site settings and modules? If not, show the placeholder.
+	const settings = useSelector( ( state ) => getSiteSettings( state, siteId ) );
+	const modules = useSelector( ( state ) => getJetpackModules( state, siteId ) );
+	const isRequestingSettings =
+		useSelector( ( state ) => isRequestingSiteSettings( state, siteId ) ) && ! settings;
+	const isFetchingModules =
+		useSelector( ( state ) => isFetchingJetpackModules( state, siteId ) ) && ! modules;
 
-	// Send Jetpack Cloud users to wp-admin settings and everyone else to Calypso blue
-	const settingsUrl =
-		isCloud && site?.options?.admin_url
-			? `${ site.options.admin_url }admin.php?page=jetpack#/performance`
-			: `/settings/performance/${ siteSlug }`;
-
-	if ( ! hasLoadedSitePurchases ) {
+	if ( ! hasLoadedSitePurchases || isRequestingSettings || isFetchingModules ) {
 		return <JetpackSearchPlaceholder siteId={ siteId } />;
 	}
 
@@ -73,12 +77,19 @@ export default function JetpackSearchMain(): ReactElement {
 		return <JetpackSearchUpsell />;
 	}
 
+	// Send Jetpack Cloud users to wp-admin settings and everyone else to Calypso blue
+	const settingsUrl =
+		isCloud && site?.options?.admin_url
+			? `${ site.options.admin_url }admin.php?page=jetpack#/performance`
+			: `/settings/performance/${ siteSlug }`;
+
 	return (
 		<Main className="jetpack-search">
 			<DocumentHead title="Jetpack Search" />
 			<SidebarNavigation />
 			<PageViewTracker path="/jetpack-search/:site" title="Jetpack Search" />
-			<QuerySiteSettings siteId={ siteId } />
+			{ ! settings && <QuerySiteSettings siteId={ siteId } /> }
+			{ isJetpack && ! modules && <QueryJetpackModules siteId={ siteId } /> }
 
 			<JetpackSearchContent
 				headerText={
