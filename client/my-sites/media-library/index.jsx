@@ -7,7 +7,6 @@ import classNames from 'classnames';
 import { includes, isEqual, some } from 'lodash';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { FEATURE_VIDEO_UPLOADS } from '@automattic/calypso-products';
 
 /**
  * Internal dependencies
@@ -20,6 +19,7 @@ import { filterItemsByMimePrefix } from 'calypso/lib/media/utils';
 import filterToMimePrefix from './filter-to-mime-prefix';
 import FilterBar from './filter-bar';
 import QueryPreferences from 'calypso/components/data/query-preferences';
+import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import searchUrl from 'calypso/lib/search-url';
 import {
 	isKeyringConnectionsFetching,
@@ -27,9 +27,10 @@ import {
 } from 'calypso/state/sharing/keyring/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
+import hasAvailableSiteFeature from 'calypso/state/selectors/has-available-site-feature';
 import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
 import { selectMediaItems } from 'calypso/state/media/actions';
-import { hasSiteFeature } from 'calypso/lib/site/utils';
 
 /**
  * Style dependencies
@@ -131,7 +132,14 @@ class MediaLibrary extends Component {
 	};
 
 	filterRequiresUpgrade() {
-		const { filter, site, source, isJetpack, isAtomic, hasVideoUploadFeature } = this.props;
+		const {
+			filter,
+			site,
+			source,
+			isJetpack,
+			hasVideoUploadFeature,
+			hasVideoUploadAvailableFeature,
+		} = this.props;
 		if ( source ) {
 			return false;
 		}
@@ -141,11 +149,7 @@ class MediaLibrary extends Component {
 				return ! ( ( site && site.options.upgraded_filetypes_enabled ) || isJetpack );
 
 			case 'videos':
-				return ! (
-					( site && site.options.videopress_enabled ) ||
-					( isJetpack && ! isAtomic ) ||
-					( isAtomic && hasVideoUploadFeature )
-				);
+				return ! hasVideoUploadFeature && !! hasVideoUploadAvailableFeature;
 		}
 
 		return false;
@@ -176,6 +180,7 @@ class MediaLibrary extends Component {
 		return (
 			<div className={ classes }>
 				<QueryPreferences />
+				<QuerySiteFeatures key="query-features" siteId={ this.props.site?.ID } />,
 				{ this.renderDropZone() }
 				<FilterBar
 					site={ this.props.site }
@@ -224,7 +229,8 @@ export default connect(
 		selectedItems: getMediaLibrarySelectedItems( state, site?.ID ),
 		isJetpack: isJetpackSite( state, site?.ID ),
 		isAtomic: isAtomicSite( state, site?.ID ),
-		hasVideoUploadFeature: hasSiteFeature( site, FEATURE_VIDEO_UPLOADS ),
+		hasVideoUploadFeature: hasActiveSiteFeature( state, site.ID, 'videopress' ),
+		hasVideoUploadAvailableFeature: hasAvailableSiteFeature( state, site.ID, 'videopress' ),
 	} ),
 	{
 		requestKeyringConnections,
