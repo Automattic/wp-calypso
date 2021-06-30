@@ -166,7 +166,7 @@ const sections = [
 	},
 	{
 		name: 'settings',
-		paths: [ '/settings' ],
+		paths: [ '/settings-general' ],
 		module: 'calypso/my-sites/site-settings',
 		group: 'sites',
 	},
