@@ -277,7 +277,13 @@ class ThemeShowcase extends React.Component {
 						<UpworkBanner location={ 'theme-banner' } />
 					) }
 					<QueryThemeFilters />
-
+					<ThemesSearchCard
+						onSearch={ this.doSearch }
+						search={ filterString + search }
+						tier={ tier }
+						showTierThemesControl={ ! isMultisite }
+						select={ this.onTierSelect }
+					/>
 					<SectionNav className="themes__section-nav">
 						<NavTabs>
 							<NavItem
@@ -287,20 +293,11 @@ class ThemeShowcase extends React.Component {
 								{ translate( 'Recommended' ) }
 							</NavItem>
 							<NavItem onClick={ () => this.onFilterClick( '' ) } selected={ ! filter }>
-								{ translate( 'All' ) }
+								{ translate( 'All Themes' ) }
 							</NavItem>
 						</NavTabs>
 					</SectionNav>
-
-					<ThemesSearchCard
-						onSearch={ this.doSearch }
-						search={ filterString + search }
-						tier={ tier }
-						showTierThemesControl={ ! isMultisite }
-						select={ this.onTierSelect }
-					/>
 					{ this.props.upsellBanner }
-
 					<ThemesSelection
 						upsellUrl={ this.props.upsellUrl }
 						search={ search }
