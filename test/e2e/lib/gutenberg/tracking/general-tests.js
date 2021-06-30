@@ -176,6 +176,11 @@ export function createGeneralTests( { it, editorType, postType } ) {
 	it( `Block editor sidebar toggle should not trigger the "wpcom_block_editor_close_click" event`, async function () {
 		const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
 
+		// The button that triggers the block editor sidebar is not available on mobile
+		if ( editor.screenSize === 'mobile' ) {
+			return this.skip();
+		}
+
 		// We open and close the sidebar to make sure we don't leave the sidebar
 		// open for the upcoming tests. We also make sure we don't trigger the
 		// on open and close actions.
