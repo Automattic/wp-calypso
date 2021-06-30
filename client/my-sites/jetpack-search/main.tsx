@@ -19,8 +19,6 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import getSiteSetting from 'calypso/state/selectors/get-site-setting';
-import QuerySiteSettings from 'calypso/components/data/query-site-settings';
-import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import { isJetpackSearch, planHasJetpackSearch } from '@automattic/calypso-products';
 import {
 	getSitePurchases,
@@ -46,7 +44,8 @@ export default function JetpackSearchMain(): ReactElement {
 	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
 	const hasSearchProduct =
 		sitePurchases.find( checkForSearchProduct ) || planHasJetpackSearch( site?.plan?.product_slug );
-	const hasLoadedSitePurchases = useSelector( hasLoadedSitePurchasesFromServer );
+	const hasLoadedSitePurchases =
+		useSelector( hasLoadedSitePurchasesFromServer ) && sitePurchases?.length > 0;
 	const onSettingsClick = useTrackCallback( undefined, 'calypso_jetpack_search_settings' );
 	const isCloud = isJetpackCloud();
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
@@ -64,13 +63,14 @@ export default function JetpackSearchMain(): ReactElement {
 	// Have we loaded the necessary purchases, site settings and modules? If not, show the placeholder.
 	const settings = useSelector( ( state ) => getSiteSettings( state, siteId ) );
 	const modules = useSelector( ( state ) => getJetpackModules( state, siteId ) );
+
 	const isRequestingSettings =
 		useSelector( ( state ) => isRequestingSiteSettings( state, siteId ) ) && ! settings;
 	const isFetchingModules =
 		useSelector( ( state ) => isFetchingJetpackModules( state, siteId ) ) && ! modules;
 
 	if ( ! hasLoadedSitePurchases || isRequestingSettings || isFetchingModules ) {
-		return <JetpackSearchPlaceholder siteId={ siteId } />;
+		return <JetpackSearchPlaceholder siteId={ siteId } isJetpack={ isJetpack } />;
 	}
 
 	if ( ! hasSearchProduct ) {
@@ -88,8 +88,6 @@ export default function JetpackSearchMain(): ReactElement {
 			<DocumentHead title="Jetpack Search" />
 			<SidebarNavigation />
 			<PageViewTracker path="/jetpack-search/:site" title="Jetpack Search" />
-			{ ! settings && <QuerySiteSettings siteId={ siteId } /> }
-			{ isJetpack && ! modules && <QueryJetpackModules siteId={ siteId } /> }
 
 			<JetpackSearchContent
 				headerText={
