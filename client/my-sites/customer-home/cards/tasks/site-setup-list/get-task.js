@@ -1,5 +1,6 @@
 import { translate } from 'i18n-calypso';
 import React from 'react';
+import earnSectionImage from 'calypso/assets/images/earn/earn-section.svg';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
@@ -123,6 +124,19 @@ export const getTask = (
 					actionDispatchArgs: [ siteId, task.id ],
 				} ),
 				isSkippable: true,
+			};
+			break;
+		case CHECKLIST_KNOWN_TASKS.WOOCOMMERCE_SETUP:
+			taskData = {
+				timing: 7,
+				title: translate( 'Finish store setup' ),
+				description: translate(
+					"You're not ready to receive orders until you complete store setup."
+				),
+				actionText: translate( 'Finish store setup' ),
+				actionUrl: taskUrls?.woocommerce_setup,
+				illustration: earnSectionImage,
+				actionDisableOnComplete: false,
 			};
 			break;
 		case CHECKLIST_KNOWN_TASKS.SITE_LAUNCHED:
