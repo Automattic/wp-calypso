@@ -37,7 +37,7 @@
 		"chai": "4.3.4",
 		"copy-webpack-plugin": "^6.2.1",
 		"electron": "^13.1.4",
-		"electron-builder": "22.10.4",
+		"electron-builder": "^22.11.7",
 		"electron-chromedriver": "4.2.0",
 		"electron-mocha": "9.3.1",
 		"electron-notarize": "^0.1.1",
