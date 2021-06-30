@@ -648,7 +648,6 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 			await editor.addBlock( 'Template Part' );
 			await clearEventsStack( this.driver );
-			await editor.dismissNotices();
 
 			await editor.runInCanvas( async () => {
 				await driverHelper.clickWhenClickable(
@@ -661,6 +660,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				By.css( '.wp-block-template-part__selection-preview-item' )
 			);
 			await editor.waitForTemplatePartsToLoad();
+			await editor.dismissNotices();
 
 			const eventsStack = await getEventsStack( this.driver );
 			const blockInsertedEventFired = eventsStack.some(
@@ -685,7 +685,6 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			// so the insert event won't intefere with our asserts.
 			const blockId = await editor.addBlock( 'Template Part' );
 			await clearEventsStack( this.driver );
-			await editor.dismissNotices();
 
 			// Add a template part block and select an existing template part.
 			// Make sure the template part is loaded before moving on.
@@ -700,6 +699,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				By.css( '.wp-block-template-part__selection-preview-item' )
 			);
 			await editor.waitForTemplatePartsToLoad();
+			await editor.dismissNotices();
 
 			// Let's find out the ID of the first child block of the template part
 			// and remove the block.

@@ -192,7 +192,7 @@ export function createGeneralTests( { it, editorType, postType } ) {
 		);
 	} );
 
-	it( 'Tracks "wpcom_pattern_inserted"', async function () {
+	it( 'Tracks "wpcom_pattern_inserted" through sidebar', async function () {
 		const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
 
 		await editor.insertPattern( 'list', 'List with Image' );
@@ -200,13 +200,13 @@ export function createGeneralTests( { it, editorType, postType } ) {
 		await clearEventsStack( this.driver );
 
 		await editor.insertPattern( 'gallery', 'Heading and Three Images' );
+
 		// We need to save the eventsStack after each insertion to make sure we
 		// aren't running out of the E2E queue size.
 		const eventsStackGallery = await getEventsStack( this.driver );
 		if ( await editor.isBlockInserterOpen() ) {
 			await editor.closeBlockInserter();
 		}
-		await editor.dismissNotices();
 
 		const patternInsertedEvents = [ ...eventsStackGallery, ...eventsStackList ].filter(
 			( [ eventName ] ) => eventName === 'wpcom_pattern_inserted'
@@ -238,9 +238,11 @@ export function createGeneralTests( { it, editorType, postType } ) {
 			'list',
 			'"wpcom_pattern_inserted" editor tracking event pattern category property is incorrect'
 		);
+
+		await editor.dismissNotices();
 	} );
 
-	it( 'Tracks "wpcom_pattern_inserted"', async function () {
+	it( 'Tracks "wpcom_pattern_inserted" through quick inserter', async function () {
 		const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
 
 		await editor.insertBlockOrPatternViaBlockAppender( 'List with Image' );
