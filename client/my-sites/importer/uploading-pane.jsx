@@ -25,6 +25,7 @@ import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-butto
 import TextInput from 'calypso/components/forms/form-text-input';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import { ProgressBar } from '@automattic/components';
 
 /**
@@ -180,6 +181,11 @@ class UploadingPane extends React.PureComponent {
 			'importer__upload-content',
 			this.props.importerStatus.importerState
 		);
+		const hasEnteredUrl = this.state.urlInput && this.state.urlInput !== '';
+		const isValidUrl = this.validateUrl( this.state.urlInput );
+		const urlDescription = isValidUrl
+			? this.props.optionalUrl.description
+			: this.props.optionalUrl.invalidDescription;
 
 		return (
 			<div>
@@ -222,11 +228,11 @@ class UploadingPane extends React.PureComponent {
 								placeholder="https://newsletter.substack.com"
 							/>
 						</FormLabel>
-						<FormSettingExplanation>
-							{ this.validateUrl( this.state.urlInput )
-								? this.props.optionalUrl.description
-								: this.props.optionalUrl.invalidDescription }
-						</FormSettingExplanation>
+						{ hasEnteredUrl ? (
+							<FormInputValidation isError={ ! isValidUrl }>{ urlDescription }</FormInputValidation>
+						) : (
+							<FormSettingExplanation>{ urlDescription }</FormSettingExplanation>
+						) }
 					</div>
 				) }
 				<ImporterActionButtonContainer>
