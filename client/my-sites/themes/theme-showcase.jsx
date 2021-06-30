@@ -280,14 +280,14 @@ class ThemeShowcase extends React.Component {
 
 					<SectionNav className="themes__section-nav">
 						<NavTabs>
-							<NavItem onClick={ () => this.onFilterClick( '' ) } selected={ ! filter }>
-								{ translate( 'All' ) }
-							</NavItem>
 							<NavItem
 								onClick={ () => this.onFilterClick( 'auto-loading-homepage' ) }
 								selected={ 'auto-loading-homepage' === filter }
 							>
 								{ translate( 'Recommended' ) }
+							</NavItem>
+							<NavItem onClick={ () => this.onFilterClick( '' ) } selected={ ! filter }>
+								{ translate( 'All' ) }
 							</NavItem>
 						</NavTabs>
 					</SectionNav>
