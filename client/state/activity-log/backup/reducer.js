@@ -39,6 +39,7 @@ export const backupProgress = keyedReducer( 'siteId', ( state = undefined, actio
 				startedAt: '',
 				downloadCount: 0,
 				validUntil: '',
+				bytesFormatted: '',
 				url: '',
 			};
 
@@ -53,6 +54,7 @@ export const backupProgress = keyedReducer( 'siteId', ( state = undefined, actio
 						startedAt: action.startedAt,
 						downloadCount: action.downloadCount,
 						validUntil: action.validUntil,
+						bytesFormatted: action.bytesFormatted,
 						url: action.url,
 				  };
 
