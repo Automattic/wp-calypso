@@ -94,6 +94,17 @@ function getEditorDestination( dependencies ) {
 	return `/page/${ dependencies.siteSlug }/home`;
 }
 
+function getImportDestination( { importSiteEngine, importSiteUrl, siteSlug } ) {
+	return addQueryArgs(
+		{
+			engine: importSiteEngine || null,
+			'from-site': importSiteUrl || null,
+			signup: 1,
+		},
+		`/import/${ siteSlug }`
+	);
+}
+
 const flows = generateFlows( {
 	getSiteDestination,
 	getRedirectDestination,
@@ -102,6 +113,7 @@ const flows = generateFlows( {
 	getThankYouNoSiteDestination,
 	getChecklistThemeDestination,
 	getEditorDestination,
+	getImportDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {

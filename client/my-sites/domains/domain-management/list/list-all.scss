@@ -10,3 +10,13 @@
 		}
 	}
 }
+
+.list-all__form {
+	.list__form-buttons {
+		display: flex;
+		justify-content: flex-end;
+		button + button {
+			margin-left: 1em;
+		}
+	}
+}

@@ -5,6 +5,7 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import titleCase from 'to-title-case';
 
 /**
  * Internal dependencies
@@ -85,7 +86,7 @@ class TitanManagementIframe extends React.Component {
 					<QueryEmailAccounts siteId={ selectedSiteId } />
 				) }
 				<QuerySiteDomains siteId={ selectedSiteId } />
-				<DocumentHead title={ pageTitle } />
+				<DocumentHead title={ titleCase( pageTitle ) } />
 				<SidebarNavigation />
 
 				<Header backHref={ emailManagementPath } selectedDomainName={ domainName }>

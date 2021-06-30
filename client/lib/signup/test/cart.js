@@ -1,9 +1,13 @@
 /**
  * Internal dependencies
  */
-import SignupCart from '../cart';
+import { createCart, addToCart } from '../cart';
 import wp from 'calypso/lib/wp';
-import { getEmptyResponseCart, convertResponseCartToRequestCart } from '@automattic/shopping-cart';
+import {
+	getEmptyResponseCart,
+	convertResponseCartToRequestCart,
+	createRequestCartProduct,
+} from '@automattic/shopping-cart';
 
 jest.mock( 'calypso/lib/wp' );
 
@@ -22,6 +26,10 @@ const undocumentedFunctions = {
 };
 wp.undocumented = jest.fn().mockReturnValue( undocumentedFunctions );
 
+function addSignupContext( product ) {
+	return { ...product, extra: { ...product.extra, context: 'signup' } };
+}
+
 describe( 'SignupCart', () => {
 	describe( 'createCart', () => {
 		beforeEach( () => {
@@ -33,7 +41,7 @@ describe( 'SignupCart', () => {
 			const cartKey = '1234abcd';
 			const productsToAdd = [];
 			const callback = () => {};
-			SignupCart.createCart( cartKey, productsToAdd, callback );
+			createCart( cartKey, productsToAdd, callback );
 
 			const expectedCart = convertResponseCartToRequestCart( {
 				...getEmptyResponseCart(),
@@ -47,12 +55,12 @@ describe( 'SignupCart', () => {
 			const cartKey = '1234abcd';
 			const productsToAdd = [ { product_id: 1003, product_slug: 'plan' } ];
 			const callback = () => {};
-			SignupCart.createCart( cartKey, productsToAdd, callback );
+			createCart( cartKey, productsToAdd, callback );
 
 			const expectedCart = convertResponseCartToRequestCart( {
 				...getEmptyResponseCart(),
 				cart_key: cartKey,
-				products: productsToAdd,
+				products: productsToAdd.map( createRequestCartProduct ).map( addSignupContext ),
 			} );
 			expect( setCart ).toHaveBeenCalledWith( cartKey, expectedCart, expect.anything() );
 		} );
@@ -61,7 +69,7 @@ describe( 'SignupCart', () => {
 			const cartKey = '1234abcd';
 			const productsToAdd = [ { product_id: 1003, product_slug: 'plan' } ];
 			const callback = jest.fn();
-			SignupCart.createCart( cartKey, productsToAdd, callback );
+			createCart( cartKey, productsToAdd, callback );
 
 			expect( callback ).toHaveBeenCalled();
 		} );
@@ -77,12 +85,15 @@ describe( 'SignupCart', () => {
 			const cartKey = '1234abcd';
 			const productsToAdd = [ { product_id: 1003, product_slug: 'plan' } ];
 			const callback = jest.fn();
-			SignupCart.addToCart( cartKey, productsToAdd, callback );
+			addToCart( cartKey, productsToAdd, callback );
 
 			const expectedCart = convertResponseCartToRequestCart( {
 				...getEmptyResponseCart(),
 				cart_key: cartKey,
-				products: [ ...mockCart.products, ...productsToAdd ],
+				products: [
+					...mockCart.products,
+					...productsToAdd.map( createRequestCartProduct ).map( addSignupContext ),
+				],
 			} );
 			expect( setCart ).toHaveBeenCalledWith( cartKey, expectedCart, callback );
 		} );

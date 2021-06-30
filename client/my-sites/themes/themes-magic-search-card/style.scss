@@ -59,7 +59,7 @@
 	.segmented-control {
 		flex: 0 0 auto;
 		min-width: 0;
-		padding: 11px 14px;
+		padding: 11px 10px;
 
 		.segmented-control__item,
 		.segmented-control__link,
@@ -218,3 +218,11 @@
 .section-nav.themes-magic-search-card__section-nav {
 	margin-top: 1px;
 }
+
+.button.is-link.themes-magic-search-card__advanced-toggle {
+	font-size: 0.75rem;
+	margin-top: 3px;
+	margin-right: 10px;
+	white-space: nowrap;
+}
+

@@ -13,13 +13,13 @@ import { processQueue } from './queue';
 import { referRecordPageView } from './refer';
 import { recordTracksPageViewWithPageParams } from '@automattic/calypso-analytics';
 
-export function recordPageView( urlPath, pageTitle, params = {} ) {
+export function recordPageView( urlPath, pageTitle, params = {}, options = {} ) {
 	// Add delay to avoid stale `_dl` in recorded calypso_page_view event details.
 	// `_dl` (browserdocumentlocation) is read from the current URL by external JavaScript.
 	setTimeout( () => {
 		// Tracks, Google Analytics, Refer platform.
 		recordTracksPageViewWithPageParams( urlPath, params );
-		gaRecordPageView( urlPath, pageTitle );
+		gaRecordPageView( urlPath, pageTitle, options?.useJetpackGoogleAnalytics );
 		referRecordPageView();
 
 		// Retargeting.

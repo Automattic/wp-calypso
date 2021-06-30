@@ -161,7 +161,12 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 
 	return (
 		<Main className="selector__main" wideLayout>
-			<PageViewTracker path={ viewTrackerPath } properties={ viewTrackerProps } title="Plans" />
+			<PageViewTracker
+				path={ viewTrackerPath }
+				properties={ viewTrackerProps }
+				title="Plans"
+				options={ { useJetpackGoogleAnalytics: ! isJetpackCloud() } }
+			/>
 
 			{ header }
 

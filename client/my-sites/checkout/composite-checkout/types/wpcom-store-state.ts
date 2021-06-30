@@ -718,6 +718,13 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 		};
 	},
 
+	updateRequiredDomainFields: (
+		details: ManagedContactDetails,
+		requiredMask: ManagedContactDetailsRequiredMask
+	): ManagedContactDetails => {
+		return applyContactDetailsRequiredMask( details, requiredMask );
+	},
+
 	updateEmail: ( oldDetails: ManagedContactDetails, newEmail: string ): ManagedContactDetails => {
 		return {
 			...oldDetails,

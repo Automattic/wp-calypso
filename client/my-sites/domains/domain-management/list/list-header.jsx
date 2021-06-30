@@ -13,6 +13,8 @@ import { CompactCard } from '@automattic/components';
 import InfoPopover from 'calypso/components/info-popover';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { getTitanProductName } from 'calypso/lib/titan';
+import { ListAllActions } from 'calypso/my-sites/domains/domain-management/list/utils';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
 
 /**
  * Style dependencies
@@ -21,16 +23,36 @@ import './style.scss';
 
 class ListHeader extends React.PureComponent {
 	static propTypes = {
+		action: PropTypes.string,
 		headerClasses: PropTypes.object,
+		isChecked: PropTypes.bool,
+		disabled: PropTypes.bool,
+		isBusy: PropTypes.bool,
+		onToggle: PropTypes.func,
 	};
 
-	render() {
-		const { headerClasses, translate } = this.props;
+	static defaultProps = {
+		disabled: false,
+		onToggle: null,
+		isBusy: false,
+		isChecked: false,
+	};
 
-		const listHeaderClasses = classNames( 'list-header', headerClasses );
+	stopPropagation = ( event ) => {
+		event.stopPropagation();
+	};
+
+	onToggle = ( event ) => {
+		if ( this.props.onToggle ) {
+			this.props.onToggle( event.target.checked );
+		}
+	};
+
+	renderDefaultHeaderContent() {
+		const { translate } = this.props;
 
 		return (
-			<CompactCard className={ listHeaderClasses }>
+			<>
 				<div className="list__domain-link" />
 				<div className="list__domain-transfer-lock">
 					<span>{ translate( 'Transfer lock' ) }</span>
@@ -79,7 +101,43 @@ class ListHeader extends React.PureComponent {
 					</InfoPopover>
 				</div>
 				<div className="list__domain-options"></div>
-			</CompactCard>
+			</>
+		);
+	}
+
+	renderHeaderContent() {
+		const { isChecked, disabled, isBusy, translate } = this.props;
+
+		if (
+			ListAllActions.editContactInfo === this.props?.action ||
+			ListAllActions.editContactEmail === this.props?.action
+		) {
+			return (
+				<>
+					<FormCheckbox
+						className="list__checkbox"
+						onChange={ this.onToggle }
+						onClick={ this.stopPropagation }
+						checked={ isChecked }
+						disabled={ disabled || isBusy }
+					/>
+					<strong>
+						{ translate( 'Update the selected domains with the contact information above.' ) }
+					</strong>
+				</>
+			);
+		}
+
+		return this.renderDefaultHeaderContent();
+	}
+
+	render() {
+		const { headerClasses } = this.props;
+
+		const listHeaderClasses = classNames( 'list-header', headerClasses );
+
+		return (
+			<CompactCard className={ listHeaderClasses }>{ this.renderHeaderContent() }</CompactCard>
 		);
 	}
 }
