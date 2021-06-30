@@ -60,7 +60,7 @@ class UploadingPane extends React.PureComponent {
 
 	constructor( props ) {
 		super( props );
-		this.state = { urlInput: null };
+		this.state = { urlInput: null, fileToBeUploaded: null };
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -83,6 +83,9 @@ class UploadingPane extends React.PureComponent {
 		switch ( importerState ) {
 			case appStates.READY_FOR_UPLOAD:
 			case appStates.UPLOAD_FAILURE:
+				if ( this.state.fileToBeUploaded ) {
+					return <p>{ this.props.translate( 'Click Upload to begin uploading the file' ) }</p>;
+				}
 				return <p>{ this.props.translate( 'Drag a file here, or click to upload a file' ) }</p>;
 			case appStates.UPLOAD_PROCESSING:
 			case appStates.UPLOADING: {
@@ -114,14 +117,29 @@ class UploadingPane extends React.PureComponent {
 	};
 
 	initiateFromDrop = ( event ) => {
-		this.startUpload( event[ 0 ] );
+		this.setupUpload( event[ 0 ] );
 	};
 
 	initiateFromForm = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
 
-		this.startUpload( this.fileSelectorRef.current.files[ 0 ] );
+		this.setupUpload( this.fileSelectorRef.current.files[ 0 ] );
+	};
+
+	initiateFromUploadButton = () => {
+		this.startUpload( this.state.fileToBeUploaded );
+	};
+
+	setupUpload = ( file ) => {
+		this.setState( { fileToBeUploaded: file } );
+
+		// uploads are initiated by a button if a URL field is present.
+		if ( this.props.optionalUrl ) {
+			return;
+		}
+
+		this.startUpload( file );
 	};
 
 	isReadyForImport() {
@@ -165,7 +183,13 @@ class UploadingPane extends React.PureComponent {
 					onKeyPress={ isReadyForImport ? this.handleKeyPress : null }
 				>
 					<div className={ importerStatusClasses }>
-						<Gridicon size="48" className="importer__upload-icon" icon="cloud-upload" />
+						<Gridicon
+							size="48"
+							className="importer__upload-icon"
+							icon={
+								this.props.optionalUrl && this.state.fileToBeUploaded ? 'checkmark' : 'cloud-upload'
+							}
+						/>
 						{ this.getMessage() }
 					</div>
 					{ isReadyForImport && (
@@ -195,7 +219,11 @@ class UploadingPane extends React.PureComponent {
 				) }
 				<ImporterActionButtonContainer>
 					{ this.props.optionalUrl && (
-						<ImporterActionButton primary>
+						<ImporterActionButton
+							primary
+							onClick={ this.initiateFromUploadButton }
+							disabled={ ! this.state.fileToBeUploaded }
+						>
 							{ this.props.translate( 'Upload' ) }
 						</ImporterActionButton>
 					) }
