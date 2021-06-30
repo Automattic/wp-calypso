@@ -356,16 +356,10 @@ class ThemesMagicSearchCard extends React.Component {
 	}
 }
 
-// Magic Search only allows "feature", "column", "subject" theme attributes to be searched
-// For simplicity and less user confusion.
-const allowSomeThemeFilters = ( { feature, column, subject } ) => ( { feature, column, subject } );
-const allowSomeAllValidFilters = ( filtersKeys ) =>
-	intersection( filtersKeys, [ 'feature', 'column', 'subject' ] );
-
 export default compose(
 	connect( ( state ) => ( {
-		filters: allowSomeThemeFilters( getThemeFilters( state ) ),
-		allValidFilters: allowSomeAllValidFilters( Object.keys( getThemeFilterToTermTable( state ) ) ),
+		filters: getThemeFilters( state ),
+		allValidFilters: Object.keys( getThemeFilterToTermTable( state ) ),
 	} ) ),
 	localize,
 	wrapWithClickOutside,
