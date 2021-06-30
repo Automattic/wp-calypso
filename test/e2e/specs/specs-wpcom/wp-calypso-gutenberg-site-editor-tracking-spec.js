@@ -637,7 +637,12 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 		describe( 'tracks template part creation and replacement', function () {
 			it( 'Tracks "wpcom_block_editor_create_template_part', async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
-				await editor.addBlock( 'Header', 'template-part\\/header', 'Block: Template Part' );
+
+				const blockId = await editor.addBlock(
+					'Header',
+					'template-part\\/header',
+					'Block: Template Part'
+				);
 
 				await editor.runInCanvas( async () => {
 					const createNewHeaderLocator = driverHelper.createTextLocator(
@@ -651,6 +656,12 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 						'Choose'
 					);
 					await driverHelper.clickWhenClickable( this.driver, choosePatternLocator );
+
+					// Wait for this template part to load its new content.
+					await driverHelper.waitUntilElementLocated(
+						this.driver,
+						By.css( `#${ blockId }.block-editor-block-list__layout` )
+					);
 				} );
 
 				const eventsStack = await getEventsStack( this.driver );
@@ -660,7 +671,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 				assert.strictEqual( createdEvents.length, 1 );
 
-				// Verify this doesn't trigger a convert_to event, as they use the same redux action.
+				// Verify this doesn't trigger a convert_to event, as they track the same redux action.
 				const convertedEvents = eventsStack.filter(
 					( event ) => event[ 0 ] === 'wpcom_block_editor_convert_to_template_part'
 				);
@@ -670,7 +681,66 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				assert( variation_slug === 'header' && typeof content === 'string' && content.length > 0 );
 			} );
 
-			it( 'Tracks "wpcom_block_editor_choose_existing"', async function () {} );
+			it( 'Tracks "wpcom_block_editor_choose_existing"', async function () {
+				const editor = await SiteEditorComponent.Expect( this.driver );
+				// Undo the template part creation to go back to the placeholder.
+				await driverHelper.clickWhenClickable( this.driver, By.css( 'button[aria-label="Undo"]' ) );
+				await editor.runInCanvas( async () => {
+					const chooseExistingHeaderLocator = driverHelper.createTextLocator(
+						By.css( '.wp-block-template-part.is-selected .components-placeholder button' ),
+						'Choose existing'
+					);
+					await driverHelper.clickWhenClickable( this.driver, chooseExistingHeaderLocator );
+				} );
+
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					By.css( '.wp-block-template-part__selection-preview-item' )
+				);
+
+				const chooseEvents = ( await getEventsStack( this.driver ) ).filter(
+					( event ) => event[ 0 ] === 'wpcom_block_editor_template_part_choose_existing'
+				);
+
+				assert.strictEqual( chooseEvents.length, 1 );
+				const { variation_slug, template_part_id } = chooseEvents[ 0 ][ 1 ];
+				// Check the event props, assert id.length > 2 since the format is `{theme}//{slug}`.
+				assert(
+					variation_slug === 'header' &&
+						typeof template_part_id === 'string' &&
+						template_part_id.length > 2
+				);
+			} );
+
+			it( 'Tracks "wpcom_block_editor_template_part_replace"', async function () {
+				const replaceButtonLocator = driverHelper.createTextLocator(
+					By.css( '.components-toolbar-button' ),
+					'Replace'
+				);
+				await driverHelper.clickWhenClickable( this.driver, replaceButtonLocator );
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					By.css( '.wp-block-template-part__selection-preview-item' )
+				);
+				const replaceEvents = ( await getEventsStack( this.driver ) ).filter(
+					( event ) => event[ 0 ] === 'wpcom_block_editor_template_part_replace'
+				);
+				assert.strictEqual( replaceEvents.length, 1 );
+				const {
+					template_part_id,
+					replaced_template_part_id,
+					variation_slug,
+					replaced_variation_slug,
+				} = replaceEvents[ 0 ][ 1 ];
+				assert(
+					typeof template_part_id === 'string' &&
+						template_part_id.length > 2 &&
+						typeof replaced_template_part_id === 'string' &&
+						replaced_template_part_id.length > 2 &&
+						variation_slug === 'header' &&
+						replaced_variation_slug === 'header'
+				);
+			} );
 		} );
 
 		afterEach( async function () {
