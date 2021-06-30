@@ -77,6 +77,102 @@ const changeGlobalStylesFirstColorPaletteItem = async ( driver, value, pickerOpe
 	await driverHelper.setWhenSettable( driver, By.css( '.components-color-picker input' ), value );
 };
 
+const exitSiteEditor = async function ( driver ) {
+	const isSiteEditorOpen = await driverHelper.isElementLocated(
+		driver,
+		By.css( '.edit-site-header' )
+	);
+	if ( ! isSiteEditorOpen ) {
+		return;
+	}
+
+	const editor = await SiteEditorComponent.Expect( driver );
+	const isNavigationSidebarOpen = await driverHelper.isElementLocated(
+		driver,
+		By.css( '.edit-site-navigation-panel.is-open' )
+	);
+	if ( ! isNavigationSidebarOpen ) {
+		await editor.toggleNavigationSidebar();
+	}
+
+	await driverHelper.waitUntilElementLocatedAndVisible(
+		driver,
+		By.css( '.components-navigation__back-button, .edit-site-navigation-panel__back-to-dashboard' )
+	);
+
+	await driver.wait(
+		async function () {
+			if (
+				await driverHelper.isElementNotLocated(
+					driver,
+					By.css( '.edit-site-navigation-panel__back-to-dashboard' )
+				)
+			) {
+				await driverHelper.clickWhenClickable(
+					driver,
+					By.css( '.components-navigation__back-button' )
+				);
+				return false;
+			}
+			return true;
+		},
+		config.get( 'explicitWaitMS' ) / 5,
+		'Could not reach the "Dashboard" button'
+	);
+
+	await driverHelper.clickWhenClickable(
+		driver,
+		By.css( '.edit-site-navigation-panel__back-to-dashboard' )
+	);
+};
+
+const deleteAll = async function ( driver ) {
+	// Make sure we have posts before trying to delete them
+	const noItems = await driverHelper.isElementLocated( driver, By.css( '#the-list .no-items' ) );
+	if ( noItems ) {
+		return;
+	}
+
+	// Delete all posts
+	await driverHelper.clickWhenClickable( driver, By.css( '#cb-select-all-1' ) );
+	await driverHelper.clickWhenClickable( driver, By.css( '#bulk-action-selector-top' ) );
+	await driverHelper.clickWhenClickable(
+		driver,
+		By.css( '#bulk-action-selector-top option[value="trash"]' )
+	);
+	await driverHelper.clickWhenClickable( driver, By.css( '#doaction' ) );
+
+	// Empty trash
+	await driverHelper.clickWhenClickable( driver, By.css( '.subsubsub .trash a' ) );
+	await driverHelper.clickWhenClickable( driver, By.css( '#delete_all' ) );
+};
+
+const deleteTemplates = async function ( driver ) {
+	const sidebar = await SidebarComponent.Expect( driver );
+	await sidebar.selectTemplates();
+	await deleteAll( driver );
+};
+
+const deleteTemplateParts = async function ( driver ) {
+	const sidebar = await SidebarComponent.Expect( driver );
+	await sidebar.selectTemplateParts();
+	await deleteAll( driver );
+};
+
+const backToCalypso = async function ( driver ) {
+	await driverHelper.clickWhenClickable(
+		driver,
+		driverHelper.createTextLocator( By.css( '.wp-menu-name' ), 'Plans' )
+	);
+};
+
+const deleteTemplatesAndTemplateParts = async function ( driver ) {
+	await deleteTemplates( driver );
+	// At this point we are in wp-admin, go back to Calypso
+	await backToCalypso( driver );
+	await deleteTemplateParts( driver );
+};
+
 const clickBlockSettingsButton = async ( driver ) =>
 	await driverHelper.clickWhenClickable(
 		driver,
@@ -363,6 +459,11 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			const loginFlow = new LoginFlow( this.driver, host === 'WPCOM' ? siteEditorUser : undefined );
 			await loginFlow.loginAndSelectMySite();
 
+			await deleteTemplatesAndTemplateParts( this.driver );
+
+			// At this point we are in wp-admin, go back to Calypso
+			await backToCalypso( this.driver );
+
 			const sidebar = await SidebarComponent.Expect( this.driver );
 			await sidebar.selectSiteEditor();
 
@@ -636,8 +737,172 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			);
 		} );
 
+		describe( 'Navigation sidebar', function () {
+			it( 'should track "wpcom_block_editor_nav_sidebar_open" when sidebar is opened', async function () {
+				const editor = await SiteEditorComponent.Expect( this.driver );
+
+				// We open and close the navigation sidebar to make sure the
+				// event is only triggered on open. We use a separate events
+				// stack to ensure it's triggered afte open but not close.
+				await editor.toggleNavigationSidebar();
+				const eventsStackAfterOpen = await getEventsStack( this.driver );
+				await clearEventsStack( this.driver );
+				await editor.toggleNavigationSidebar();
+				const eventsStackAfterClose = await getEventsStack( this.driver );
+
+				const openEventFiredOnceAfterOpen =
+					eventsStackAfterOpen.filter(
+						( [ eventName ] ) => eventName === 'wpcom_block_editor_nav_sidebar_open'
+					).length === 1;
+				const noOpenEventFiredOnceAfterClose = ! eventsStackAfterClose.some(
+					( [ eventName ] ) => eventName === 'wpcom_block_editor_nav_sidebar_open'
+				);
+				assert(
+					openEventFiredOnceAfterOpen,
+					'"wpcom_block_editor_nav_sidebar_open" editor tracking event failed to fire only once'
+				);
+				assert(
+					noOpenEventFiredOnceAfterClose,
+					'"wpcom_block_editor_nav_sidebar_open" editor tracking event fired after close'
+				);
+			} );
+
+			it( 'should track "wpcom_block_editor_nav_sidebar_item_edit" when switching to a template', async function () {
+				const editor = await SiteEditorComponent.Expect( this.driver );
+
+				await editor.toggleNavigationSidebar();
+				const backButtonToTemplatesLocator = driverHelper.createTextLocator(
+					By.css( '.components-navigation__back-button' ),
+					'Templates'
+				);
+				await driverHelper.clickWhenClickable( this.driver, backButtonToTemplatesLocator );
+
+				const templateMenuItemLocator = driverHelper.createTextLocator(
+					By.css( '.edit-site-navigation-panel__template-item-title' ),
+					'404'
+				);
+				await driverHelper.clickWhenClickable( this.driver, templateMenuItemLocator );
+
+				const eventsStack = await getEventsStack( this.driver );
+				const editEvents = eventsStack.filter(
+					( [ eventName ] ) => eventName === 'wpcom_block_editor_nav_sidebar_item_edit'
+				);
+				assert.strictEqual( editEvents.length, 1 );
+				const [ , editEventData ] = editEvents[ 0 ];
+				assert.strictEqual( editEventData.item_type, 'template' );
+				assert.strictEqual( editEventData.item_id, 'pub/tt1-blocks//404' );
+				assert.strictEqual( editEventData.item_slug, '404' );
+			} );
+
+			it( 'should track "wpcom_block_editor_nav_sidebar_item_add" when creating a new template', async function () {
+				const editor = await SiteEditorComponent.Expect( this.driver );
+
+				await editor.toggleNavigationSidebar();
+
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					By.css(
+						'[role="region"][aria-label="Navigation Sidebar"] button[aria-label="Add Template"]'
+					)
+				);
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					driverHelper.createTextLocator(
+						By.css( '[role="menu"][aria-label="Add Template"] .components-menu-item__item' ),
+						'Archive'
+					)
+				);
+				await editor.toggleNavigationSidebar();
+
+				const eventsStack = await getEventsStack( this.driver );
+				const editEvents = eventsStack.filter(
+					( [ eventName ] ) => eventName === 'wpcom_block_editor_nav_sidebar_item_add'
+				);
+				assert.strictEqual( editEvents.length, 1 );
+				const [ , editEventData ] = editEvents[ 0 ];
+				assert.strictEqual( editEventData.item_type, 'template' );
+				assert.strictEqual( editEventData.item_slug, 'archive' );
+			} );
+
+			it( 'should track "wpcom_block_editor_nav_sidebar_item_edit" when switching to a template part', async function () {
+				const editor = await SiteEditorComponent.Expect( this.driver );
+
+				await editor.toggleNavigationSidebar();
+				const backButtonToTemplatesLocator = driverHelper.createTextLocator(
+					By.css( '.components-navigation__back-button' ),
+					'Back'
+				);
+				await driverHelper.clickWhenClickable( this.driver, backButtonToTemplatesLocator );
+
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					By.css(
+						'[role="region"][aria-label="Navigation Sidebar"] [role="menu"] [title="Template Parts"] button'
+					)
+				);
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					By.css(
+						'[role="region"][aria-label="Navigation Sidebar"] [role="menu"] [title="Headers"] button'
+					)
+				);
+
+				const templateMenuItemLocator3 = driverHelper.createTextLocator(
+					By.css( '.edit-site-navigation-panel__template-item-title' ),
+					'header'
+				);
+				await driverHelper.clickWhenClickable( this.driver, templateMenuItemLocator3 );
+
+				const eventsStack = await getEventsStack( this.driver );
+				const editEvents = eventsStack.filter(
+					( [ eventName ] ) => eventName === 'wpcom_block_editor_nav_sidebar_item_edit'
+				);
+				assert.strictEqual( editEvents.length, 1 );
+				const [ , editEventData ] = editEvents[ 0 ];
+				assert.strictEqual( editEventData.item_type, 'template_part' );
+				assert.strictEqual( editEventData.item_id, 'pub/tt1-blocks//header' );
+			} );
+
+			it( 'make sure back to dashboard button exists', async function () {
+				const editor = await SiteEditorComponent.Expect( this.driver );
+
+				await editor.toggleNavigationSidebar();
+				const backButtonToTemplatesLocator = driverHelper.createTextLocator(
+					By.css( '.components-navigation__back-button' ),
+					'Template Parts'
+				);
+				await driverHelper.clickWhenClickable( this.driver, backButtonToTemplatesLocator );
+				const backButtonToTemplatesLocator2 = driverHelper.createTextLocator(
+					By.css( '.components-navigation__back-button' ),
+					'Back'
+				);
+				await driverHelper.clickWhenClickable( this.driver, backButtonToTemplatesLocator2 );
+
+				const isBackToDashboardLocated = await driverHelper.isElementEventuallyLocatedAndVisible(
+					this.driver,
+					By.css( '.edit-site-navigation-panel__back-to-dashboard' )
+				);
+
+				assert( isBackToDashboardLocated );
+			} );
+		} );
+
 		afterEach( async function () {
 			await clearEventsStack( this.driver );
+		} );
+
+		after( async function () {
+			await exitSiteEditor( this.driver );
+
+			const isCalypsoSidebarAvailable = await driverHelper.isElementLocated(
+				this.driver,
+				By.css( '#content' )
+			);
+			if ( ! isCalypsoSidebarAvailable ) {
+				await backToCalypso( this.driver );
+			}
+
+			await deleteTemplatesAndTemplateParts( this.driver );
 		} );
 	} );
 } );

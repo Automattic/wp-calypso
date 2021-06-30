@@ -250,4 +250,11 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 		await driverHelper.setWhenSettable( this.driver, quickInserterSearchInputLocator, name );
 		await driverHelper.clickWhenClickable( this.driver, patternItemLocator );
 	}
+
+	async toggleNavigationSidebar() {
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.edit-site-navigation-toggle__button' )
+		);
+	}
 }
