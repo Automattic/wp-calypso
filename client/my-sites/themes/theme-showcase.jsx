@@ -199,7 +199,6 @@ class ThemeShowcase extends React.Component {
 	onFilterClick = ( newFilter ) => {
 		trackClick( 'section nav filter', newFilter );
 		this.doSearch( `feature:${ newFilter }` );
-		this.scrollToSearchInput();
 	};
 
 	render() {
