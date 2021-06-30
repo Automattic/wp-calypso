@@ -229,7 +229,7 @@ const EmailPlan = ( props ) => {
 			return null;
 		}
 
-		const manageAllNavItemProps = getManageAllNavItemProps( props );
+		const manageAllNavItemProps = getManageAllNavItemProps();
 
 		return (
 			<VerticalNavItem { ...manageAllNavItemProps }>
@@ -282,7 +282,7 @@ const EmailPlan = ( props ) => {
 	const { domain, selectedSite, hasSubscription, purchase, isLoadingPurchase } = props;
 
 	// Ensure we check for email forwarding additions and removals
-	const queryForEmailForwards = shouldCheckForEmailForwards( domain );
+	const shouldQueryEmailForwards = shouldCheckForEmailForwards( domain );
 
 	const { data, isLoading } = useEmailAccountsQuery( props.selectedSite.ID, props.domain.name, {
 		retry: false,
@@ -291,7 +291,9 @@ const EmailPlan = ( props ) => {
 	return (
 		<>
 			{ selectedSite && hasSubscription && <QuerySitePurchases siteId={ selectedSite.ID } /> }
-			{ queryForEmailForwards && <QueryEmailForwards domainName={ domain.name } /> }
+
+			{ shouldQueryEmailForwards && <QueryEmailForwards domainName={ domain.name } /> }
+
 			<DocumentHead title={ titleCase( getHeaderText() ) } />
 
 			<HeaderCake onClick={ handleBack }>{ getHeaderText() }</HeaderCake>
@@ -337,7 +339,6 @@ EmailPlan.propType = {
 	isLoadingEmailForwards: PropTypes.bool,
 	isLoadingPurchase: PropTypes.bool,
 	purchase: PropTypes.object,
-	emailAccounts: PropTypes.object,
 };
 
 export default connect( ( state, ownProps ) => {
