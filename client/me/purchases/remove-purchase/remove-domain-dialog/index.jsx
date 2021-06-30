@@ -25,6 +25,7 @@ import { getSelectedDomain } from 'calypso/lib/domains';
 import { getTitanProductName, hasTitanMailWithUs } from 'calypso/lib/titan';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import wpcom from 'calypso/lib/wp';
 
 class RemoveDomainDialog extends Component {
 	static propTypes = {
@@ -38,7 +39,6 @@ class RemoveDomainDialog extends Component {
 	state = {
 		step: 1,
 		domainValidated: false,
-		userAgreed: false,
 		showErrors: false,
 	};
 
@@ -97,7 +97,7 @@ class RemoveDomainDialog extends Component {
 		return (
 			<Fragment>
 				<FormSectionHeading>
-					{ translate( 'You are deleting {{strong}}%(domain)s{{/strong}} from the web.', {
+					{ translate( '{{strong}}You are deleting %(domain)s from the web.{{/strong}}', {
 						args: { domain: productName },
 						components: { strong: <strong /> },
 					} ) }
@@ -113,11 +113,37 @@ class RemoveDomainDialog extends Component {
 		this.setState( { domainValidated: event.currentTarget.value === productName } );
 	};
 
-	onAgreeChange = ( event ) => {
-		this.setState( { userAgreed: event.target.checked } );
-	};
+	renderUpdateEmailStep() {
+		const { translate } = this.props;
 
-	renderSecondStep( productName ) {
+		return (
+			<Fragment>
+				<FormSectionHeading>
+					{ translate( '{{strong}}Update your WordPress.com email address{{/strong}}', {
+						components: { strong: <strong /> },
+					} ) }
+				</FormSectionHeading>
+
+				<p>
+					{ translate(
+						'You are deleting a domain name used in the email address we have on file for you. ' +
+							'You must update your contact information.'
+					) }
+				</p>
+
+				<p>
+					{ translate(
+						'Please visit your {{a}}Account Settings{{/a}} page to update your email address before proceeding.',
+						{
+							components: { a: <a href="/me/account" /> },
+						}
+					) }
+				</p>
+			</Fragment>
+		);
+	}
+
+	renderFinalStep( productName ) {
 		const { translate } = this.props;
 
 		return (
@@ -145,46 +171,46 @@ class RemoveDomainDialog extends Component {
 						/>
 					) }
 				</FormFieldset>
-				{ /* <FormFieldset>
-					<FormLabel>
-						<FormCheckbox name="agree" value="true" onChange={ this.onAgreeChange } />
-						<span>
-							{ translate( 'I understand that this is permanent and irreversible.', {
-								context: 'Domain name',
-							} ) }
-						</span>
-					</FormLabel>
-
-					{ this.state.showErrors && ! this.state.userAgreed && (
-						<FormInputValidation
-							text={ translate(
-								"You need to confirm that you understand the action you're performing."
-							) }
-							isError
-						/>
-					) }
-				</FormFieldset> */ }
-
 				<p>
 					{ translate(
 						'We will delete the domain name. Any services related to the domain will cease to function. Be sure you wish to proceed.'
 					) }
 				</p>
-				{ /* { this.renderDomainDeletionWarning( productName ) } */ }
 			</Fragment>
 		);
 	}
 
-	nextStep = ( closeDialog ) => {
+	async isWpComEmailBasedOnDomain() {
+		const { purchase } = this.props;
+		const productName = getName( purchase );
+		const { email } = await wpcom.me().get();
+
+		return email.endsWith( productName );
+	}
+
+	nextStep = async ( closeDialog ) => {
 		if ( this.props.isRemoving ) {
 			return;
 		}
+		const isEmailBasedOnDomain = await this.isWpComEmailBasedOnDomain();
 		switch ( this.state.step ) {
 			case 1:
-				this.setState( { step: 2 } );
+				this.setState( {
+					step: isEmailBasedOnDomain ? 2 : 3,
+				} );
 				break;
 			case 2:
-				if ( this.state.domainValidated && this.state.userAgreed ) {
+				if ( isEmailBasedOnDomain ) break;
+				this.setState( {
+					step: 3,
+				} );
+				break;
+			case 3:
+				if ( isEmailBasedOnDomain ) {
+					this.setState( { step: 2 } );
+					break;
+				}
+				if ( this.state.domainValidated ) {
 					this.props.removePurchase( closeDialog );
 				} else {
 					this.setState( { showErrors: true } );
@@ -231,7 +257,8 @@ class RemoveDomainDialog extends Component {
 				onClose={ this.close }
 			>
 				{ this.state.step === 1 && this.renderFirstStep( productName ) }
-				{ this.state.step === 2 && this.renderSecondStep( productName ) }
+				{ this.state.step === 2 && this.renderUpdateEmailStep( productName ) }
+				{ this.state.step === 3 && this.renderFinalStep( productName ) }
 			</Dialog>
 		);
 	}
