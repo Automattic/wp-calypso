@@ -38,9 +38,6 @@ import {
 	prependThemeFilterKeys,
 } from 'calypso/state/themes/selectors';
 import UpworkBanner from 'calypso/blocks/upwork-banner';
-import SectionNav from 'calypso/components/section-nav';
-import NavTabs from 'calypso/components/section-nav/tabs';
-import NavItem from 'calypso/components/section-nav/item';
 
 /**
  * Style dependencies
@@ -196,11 +193,6 @@ class ThemeShowcase extends React.Component {
 		this.scrollToSearchInput();
 	};
 
-	onFilterClick = ( newFilter ) => {
-		trackClick( 'section nav filter', newFilter );
-		this.doSearch( `feature:${ newFilter }` );
-	};
-
 	render() {
 		const {
 			currentThemeId,
@@ -278,22 +270,10 @@ class ThemeShowcase extends React.Component {
 						onSearch={ this.doSearch }
 						search={ filterString + search }
 						tier={ tier }
+						filter={ filter }
 						showTierThemesControl={ ! isMultisite }
 						select={ this.onTierSelect }
 					/>
-					<SectionNav className="themes__section-nav">
-						<NavTabs>
-							<NavItem
-								onClick={ () => this.onFilterClick( 'recommended' ) }
-								selected={ 'recommended' === filter }
-							>
-								{ translate( 'Recommended' ) }
-							</NavItem>
-							<NavItem onClick={ () => this.onFilterClick( '' ) } selected={ ! filter }>
-								{ translate( 'All Themes' ) }
-							</NavItem>
-						</NavTabs>
-					</SectionNav>
 					{ this.props.upsellBanner }
 					<ThemesSelection
 						upsellUrl={ this.props.upsellUrl }

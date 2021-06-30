@@ -14,6 +14,7 @@ import Gridicon from 'calypso/components/gridicon';
  * Internal dependencies
  */
 import Search from 'calypso/components/search';
+import { trackClick } from '../helpers';
 import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 import KeyedSuggestions from 'calypso/components/keyed-suggestions';
 import StickyPanel from 'calypso/components/sticky-panel';
@@ -21,6 +22,9 @@ import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import MagicSearchWelcome from './welcome';
 import { getThemeFilters, getThemeFilterToTermTable } from 'calypso/state/themes/selectors';
+import SectionNav from 'calypso/components/section-nav';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import NavItem from 'calypso/components/section-nav/item';
 
 /**
  * Style dependencies
@@ -101,6 +105,12 @@ class ThemesMagicSearchCard extends React.Component {
 
 	onClick = ( event ) => {
 		this.findTextForSuggestions( event.target.value );
+	};
+
+	onFilterClick = ( newFilter ) => {
+		trackClick( 'section nav filter', newFilter );
+		this.clearSearch();
+		this.props.onSearch( `feature:${ newFilter }` );
 	};
 
 	// Check if char before cursor in input is a space.
@@ -351,6 +361,19 @@ class ThemesMagicSearchCard extends React.Component {
 						/>
 					) }
 				</div>
+				<SectionNav className="themes-magic-search-card__section-nav">
+					<NavTabs>
+						<NavItem
+							onClick={ () => this.onFilterClick( 'recommended' ) }
+							selected={ 'recommended' === this.props.filter }
+						>
+							{ translate( 'Recommended' ) }
+						</NavItem>
+						<NavItem onClick={ () => this.onFilterClick( '' ) } selected={ ! this.props.filter }>
+							{ translate( 'All Themes' ) }
+						</NavItem>
+					</NavTabs>
+				</SectionNav>
 			</div>
 		);
 	}
