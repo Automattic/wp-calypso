@@ -173,7 +173,26 @@ export function createGeneralTests( { it, editorType, postType } ) {
 		);
 	} );
 
-	it( 'Tracks "wpcom_pattern_inserted"', async function () {
+	it( `Block editor sidebar toggle should not trigger the "wpcom_block_editor_close_click" event`, async function () {
+		const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
+
+		// We open and close the sidebar to make sure we don't leave the sidebar
+		// open for the upcoming tests. We also make sure we don't trigger the
+		// on open and close actions.
+		await editor.toggleBlockEditorSidebar();
+		await editor.toggleBlockEditorSidebar();
+
+		const eventsStack = await getEventsStack( this.driver );
+		const editorCloseClickNotFired = ! eventsStack.some(
+			( [ eventName ] ) => eventName === 'wpcom_block_editor_close_click'
+		);
+		assert(
+			editorCloseClickNotFired,
+			'"wpcom_block_editor_close_click" editor tracking event fired'
+		);
+	} );
+
+	it( 'Tracks "wpcom_pattern_inserted" through sidebar', async function () {
 		const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
 
 		await editor.insertPattern( 'list', 'List with Image' );
@@ -181,13 +200,13 @@ export function createGeneralTests( { it, editorType, postType } ) {
 		await clearEventsStack( this.driver );
 
 		await editor.insertPattern( 'gallery', 'Heading and Three Images' );
+
 		// We need to save the eventsStack after each insertion to make sure we
 		// aren't running out of the E2E queue size.
 		const eventsStackGallery = await getEventsStack( this.driver );
 		if ( await editor.isBlockInserterOpen() ) {
 			await editor.closeBlockInserter();
 		}
-		await editor.dismissNotices();
 
 		const patternInsertedEvents = [ ...eventsStackGallery, ...eventsStackList ].filter(
 			( [ eventName ] ) => eventName === 'wpcom_pattern_inserted'
@@ -219,9 +238,11 @@ export function createGeneralTests( { it, editorType, postType } ) {
 			'list',
 			'"wpcom_pattern_inserted" editor tracking event pattern category property is incorrect'
 		);
+
+		await editor.dismissNotices();
 	} );
 
-	it( 'Tracks "wpcom_pattern_inserted"', async function () {
+	it( 'Tracks "wpcom_pattern_inserted" through quick inserter', async function () {
 		const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
 
 		await editor.insertBlockOrPatternViaBlockAppender( 'List with Image' );

@@ -4,6 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '@automattic/composite-checkout';
+import { TranslateResult } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -46,7 +47,7 @@ export default function Field( {
 	placeholder?: string;
 	tabIndex?: number;
 	description?: string;
-	errorMessage?: string;
+	errorMessage?: TranslateResult;
 	autoComplete?: string;
 	disabled?: boolean;
 } ): JSX.Element {
@@ -111,7 +112,7 @@ Field.propTypes = {
 	placeholder: PropTypes.string,
 	tabIndex: PropTypes.string,
 	description: PropTypes.string,
-	errorMessage: PropTypes.string,
+	errorMessage: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
 	autoComplete: PropTypes.string,
 	disabled: PropTypes.bool,
 };
@@ -252,7 +253,7 @@ function RenderedDescription( {
 }: {
 	description?: string;
 	isError?: boolean;
-	errorMessage?: string;
+	errorMessage?: TranslateResult;
 } ) {
 	if ( description || isError ) {
 		return <Description isError={ isError }>{ isError ? errorMessage : description }</Description>;

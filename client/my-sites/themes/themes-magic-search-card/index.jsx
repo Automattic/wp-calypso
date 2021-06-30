@@ -276,7 +276,7 @@ class ThemesMagicSearchCard extends React.Component {
 				value={ this.state.searchInput }
 				ref={ this.setSearchInputRef }
 				placeholder={ translate(
-					"I'm creating a site for a: portfolio, magazine, business, wedding, blog, or…"
+					'Search by style or feature: portfolio, store, multiple menus, or…'
 				) }
 				analyticsGroup="Themes"
 				delaySearch={ true }
@@ -356,10 +356,16 @@ class ThemesMagicSearchCard extends React.Component {
 	}
 }
 
+// Magic Search only allows "feature", "column", "subject" theme attributes to be searched
+// For simplicity and less user confusion.
+const allowSomeThemeFilters = ( { feature, column, subject } ) => ( { feature, column, subject } );
+const allowSomeAllValidFilters = ( filtersKeys ) =>
+	intersection( filtersKeys, [ 'feature', 'column', 'subject' ] );
+
 export default compose(
 	connect( ( state ) => ( {
-		filters: getThemeFilters( state ),
-		allValidFilters: Object.keys( getThemeFilterToTermTable( state ) ),
+		filters: allowSomeThemeFilters( getThemeFilters( state ) ),
+		allValidFilters: allowSomeAllValidFilters( Object.keys( getThemeFilterToTermTable( state ) ) ),
 	} ) ),
 	localize,
 	wrapWithClickOutside,
