@@ -223,11 +223,29 @@ const getBlocksTracker = ( eventName ) => ( blockIds ) => {
  */
 const maybeTrackPatternInsertion = ( actionData ) => {
 	const meta = find( actionData, ( item ) => item?.patternName );
-	const patternName = meta?.patternName;
+	let patternName = meta?.patternName;
+
+	// Quick block inserter doesn't use an object to store the patternName
+	// in the metadata. The pattern name is just directly used as a string.
+	if ( ! patternName ) {
+		const patterns = select( 'core/block-editor' ).getSettings().__experimentalBlockPatterns;
+		const actionDataToCheck = Object.values( actionData ).filter(
+			( data ) => typeof data === 'string'
+		);
+		const foundPattern = patterns.find( ( pattern ) => actionDataToCheck.includes( pattern.name ) );
+		if ( foundPattern ) {
+			patternName = foundPattern.name;
+		}
+	}
 
 	if ( patternName ) {
+		const patternCategory =
+			// Pattern category dropdown in global inserter
+			document.querySelector( '.block-editor-inserter__panel-header-patterns select' )?.value;
+
 		tracksRecordEvent( 'wpcom_pattern_inserted', {
 			pattern_name: patternName,
+			pattern_category: patternCategory,
 			blocks_replaced: actionData?.blocks_replaced,
 		} );
 	}
