@@ -1,8 +1,4 @@
 /**
- * External dependencies
- */
-
-/**
  * Internal dependencies
  */
 import {
@@ -18,6 +14,10 @@ import {
 	clearUnsavedUserSettings,
 } from 'calypso/state/user-settings/actions';
 import { successNotice } from 'calypso/state/notices/actions';
+
+jest.mock( 'calypso/state/current-user/actions', () => ( {
+	fetchCurrentUser: jest.fn(),
+} ) );
 
 describe( 'wpcom-api', () => {
 	describe( 'user settings request', () => {
@@ -145,15 +145,15 @@ describe( 'wpcom-api', () => {
 		} );
 
 		describe( '#userSettingsSaveSuccess', () => {
-			test( 'should dispatch user settings update and clear all unsaved settings on full save', () => {
+			test( 'should dispatch user settings update and clear all unsaved settings on full save', async () => {
 				const dispatch = jest.fn();
 				const action = { type: 'DUMMY' };
 
-				userSettingsSaveSuccess( action, {
+				await userSettingsSaveSuccess( action, {
 					language: 'qix',
 				} )( dispatch );
 
-				expect( dispatch ).toHaveBeenCalledTimes( 3 );
+				expect( dispatch ).toHaveBeenCalledTimes( 4 );
 				expect( dispatch ).toHaveBeenCalledWith(
 					saveUserSettingsSuccess( {
 						language: 'qix',
@@ -167,16 +167,16 @@ describe( 'wpcom-api', () => {
 				);
 			} );
 
-			test( 'should dispatch user settings update and clear only one unsaved setting on partial save', () => {
+			test( 'should dispatch user settings update and clear only one unsaved setting on partial save', async () => {
 				const dispatch = jest.fn();
 				const data = {
 					language: 'qix',
 				};
 				const action = { type: 'DUMMY', settingsOverride: data };
 
-				userSettingsSaveSuccess( action, data )( dispatch );
+				await userSettingsSaveSuccess( action, data )( dispatch );
 
-				expect( dispatch ).toHaveBeenCalledTimes( 3 );
+				expect( dispatch ).toHaveBeenCalledTimes( 4 );
 				expect( dispatch ).toHaveBeenCalledWith(
 					saveUserSettingsSuccess( {
 						language: 'qix',

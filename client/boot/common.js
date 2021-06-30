@@ -32,7 +32,7 @@ import getSuperProps from 'calypso/lib/analytics/super-props';
 import { getSiteFragment, normalize } from 'calypso/lib/route';
 import { isLegacyRoute } from 'calypso/lib/route/legacy-routes';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getCurrentUserId, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { initConnection as initHappychatConnection } from 'calypso/state/happychat/connection/actions';
 import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
 import { getHappychatAuth } from 'calypso/state/happychat/utils';
@@ -46,6 +46,7 @@ import initialReducer from 'calypso/state/reducer';
 import { getInitialState, persistOnChange, loadAllState } from 'calypso/state/initial-state';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import userFactory from 'calypso/lib/user';
+import { onDisablePersistence } from 'calypso/lib/user/store';
 import { isOutsideCalypso } from 'calypso/lib/url';
 import { getUrlParts } from '@automattic/calypso-url';
 import { setStore } from 'calypso/state/redux-store';
@@ -53,6 +54,7 @@ import { requestUnseenStatus } from 'calypso/state/reader-ui/seen-posts/actions'
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getLanguageSlugs } from 'calypso/lib/i18n-utils/utils';
 import DesktopListeners from 'calypso/lib/desktop-listeners';
+import { attachLogmein } from 'calypso/lib/logmein';
 
 const debug = debugFactory( 'calypso' );
 
@@ -410,6 +412,11 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 			featureHelper( document.querySelector( '.environment.is-features' ) );
 		} );
 	}
+
+	if ( config.isEnabled( 'logmein' ) && isUserLoggedIn( reduxStore.getState() ) ) {
+		// Attach logmein handler if we're currently logged in
+		attachLogmein( reduxStore );
+	}
 };
 
 function renderLayout( reduxStore ) {
@@ -429,7 +436,7 @@ const boot = ( currentUser, registerRoutes ) => {
 		const initialState = getInitialState( initialReducer );
 		const reduxStore = createReduxStore( initialState, initialReducer );
 		setStore( reduxStore );
-		persistOnChange( reduxStore );
+		onDisablePersistence( persistOnChange( reduxStore, currentUser.get()?.ID ) );
 		setupLocale( currentUser.get(), reduxStore );
 		configureReduxStore( currentUser, reduxStore );
 		setupMiddlewares( currentUser, reduxStore );

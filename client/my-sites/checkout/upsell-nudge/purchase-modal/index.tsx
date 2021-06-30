@@ -52,7 +52,7 @@ export function PurchaseModal( {
 		cart,
 		siteId,
 		setStep,
-		storedCard: cards?.[ 0 ],
+		storedCard: cards[ 0 ],
 		onClose,
 	} );
 	const contentProps = {

@@ -166,6 +166,7 @@ export function formatApiPartner( partner: APIPartner ): Partner {
 			name: key.name,
 			oAuth2Token: key.oauth2_token,
 			disabledOn: key.disabled_on,
+			hasLicenses: key.has_licenses,
 		} ) ),
 	};
 }

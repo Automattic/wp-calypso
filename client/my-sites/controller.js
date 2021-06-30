@@ -43,7 +43,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
@@ -68,7 +68,6 @@ import {
 	emailManagementForwarding,
 	emailManagementManageTitanAccount,
 	emailManagementManageTitanMailboxes,
-	emailManagementNewGSuiteAccount,
 	emailManagementNewTitanAccount,
 	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
@@ -192,7 +191,6 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		emailManagementForwarding,
 		emailManagementManageTitanAccount,
 		emailManagementManageTitanMailboxes,
-		emailManagementNewGSuiteAccount,
 		emailManagementNewTitanAccount,
 		emailManagementTitanControlPanelRedirect,
 	];
@@ -201,10 +199,6 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 	let domainManagementPaths = allPaths.map( ( pathFactory ) => {
 		if ( pathFactory === emailManagementAddGSuiteUsers ) {
 			return emailManagementAddGSuiteUsers( slug, slug, contextParams.productType );
-		}
-
-		if ( pathFactory === emailManagementNewGSuiteAccount ) {
-			return emailManagementNewGSuiteAccount( slug, slug, contextParams.productType );
 		}
 
 		return pathFactory( slug, slug );
@@ -491,6 +485,14 @@ export function siteSelection( context, next ) {
 				}
 			} );
 	}
+}
+
+export function loggedInSiteSelection( context, next ) {
+	if ( isUserLoggedIn( context.store.getState() ) ) {
+		siteSelection( context, next );
+		return;
+	}
+	next();
 }
 
 export function recordNoSitesPageView( context, siteFragment, title ) {

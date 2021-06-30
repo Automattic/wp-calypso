@@ -38,9 +38,11 @@
 		"jetpack-cloud": true,
 		"jetpack-cloud/connect": false,
 		"jetpack/backups-date-picker": true,
+		"jetpack/only-realtime-products": false,
 		"jetpack/pricing-page": true,
-		"jetpack/server-credentials-advanced-flow": true,
 		"jetpack/redirect-legacy-plans": true,
+		"jetpack/server-credentials-advanced-flow": true,
+		"jetpack/siteless-checkout": false,
 		"jetpack/userless-checkout": false,
 		"layout/app-banner": false,
 		"layout/guided-tours": false,
@@ -71,5 +73,5 @@
 	"theme": "jetpack-cloud",
 	"restricted_me_access": false,
 	"theme_color": "#2fb41f",
-	"google_analytics_key": "G-K8CRH0LL00"
+	"google_analytics_key": "UA-52447-43"
 }

@@ -29,7 +29,7 @@ import {
 } from 'calypso/components/domains/domain-registration-suggestion/utility';
 import { ProgressBar } from '@automattic/components';
 import { getDomainPrice, getDomainSalePrice, getTld, isHstsRequired } from 'calypso/lib/domains';
-import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import Badge from 'calypso/components/badge';
 import PremiumBadge from '../premium-badge';

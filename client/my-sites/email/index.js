@@ -52,24 +52,6 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagementNewGSuiteAccount(
-				':site',
-				':domain',
-				productType,
-				paths.emailManagementAllSitesPrefix
-			),
-			paths.emailManagementNewGSuiteAccount( ':site', ':domain', productType ),
-		],
-		handlers: [
-			...commonHandlers,
-			controller.emailManagementNewGSuiteAccount,
-			makeLayout,
-			clientRender,
-		],
-	} );
-
-	registerMultiPage( {
-		paths: [
 			paths.emailManagementManageTitanAccount(
 				':site',
 				':domain',

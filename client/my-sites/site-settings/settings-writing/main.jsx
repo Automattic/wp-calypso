@@ -21,14 +21,14 @@ import config from '@automattic/calypso-config';
 
 const SiteSettingsWriting = ( { site, translate } ) => (
 	<Main className="settings-writing site-settings">
-		<ScreenOptionsTab />
-		<DocumentHead title={ translate( 'Site Settings' ) } />
+		<ScreenOptionsTab wpAdminPath="options-writing.php" />
+		<DocumentHead title={ translate( 'Writing Settings' ) } />
 		<JetpackDevModeNotice />
 		<SidebarNavigation />
 		<FormattedHeader
 			brandFont
 			className="settings-writing__page-heading"
-			headerText={ translate( 'Settings' ) }
+			headerText={ translate( 'Writing Settings' ) }
 			subHeaderText={ translate(
 				"Manage categories, tags, and other settings related to your site's content."
 			) }

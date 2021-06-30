@@ -54,9 +54,9 @@ class PartnerPortalSidebar extends Component< Props > {
 							label={ translate( 'Billing', {
 								comment: 'Jetpack sidebar navigation item',
 							} ) }
-							link="/partner-portal"
+							link="/partner-portal/billing"
 							onNavigate={ this.onNavigate( 'Jetpack Cloud / Partner Portal' ) }
-							selected={ path === '/partner-portal' }
+							selected={ path === '/partner-portal/billing' }
 						/>
 
 						<SidebarItem

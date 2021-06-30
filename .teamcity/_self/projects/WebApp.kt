@@ -5,6 +5,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.*
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.dockerCommand
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.*
@@ -352,6 +353,10 @@ object BuildDockerImage : BuildType({
 	name = "Docker image"
 	description = "Build docker image containing Calypso"
 
+	params {
+		text("base_image", "registry.a8c.com/calypso/base:latest", label = "Base docker image", description = "Base docker image", allowEmpty = false)
+	}
+
 	vcs {
 		root(Settings.WpCalypso)
 		cleanCheckout = true
@@ -375,6 +380,19 @@ object BuildDockerImage : BuildType({
 			"""
 		}
 
+		script {
+			name = "Restore git mtime"
+			scriptContent = """
+				#!/usr/bin/env bash
+				sudo apt-get install -y git-restore-mtime
+				/usr/lib/git-core/git-restore-mtime --force --commit-time --skip-missing
+			"""
+			dockerImage = "%docker_image_e2e%"
+			dockerRunParameters = "-u %env.UID%"
+			dockerPull = true
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+		}
+
 		dockerCommand {
 			name = "Build docker image"
 			commandType = build {
@@ -393,6 +411,7 @@ object BuildDockerImage : BuildType({
 					--build-arg workers=16
 					--build-arg node_memory=32768
 					--build-arg use_cache=true
+					--build-arg base_image=%base_image%
 				""".trimIndent().replace("\n"," ")
 			}
 			param("dockerImage.platform", "linux")
@@ -800,6 +819,10 @@ object RunCalypsoPlaywrightE2eDesktopTests : BuildType({
 						sleep 5
 						continue
 					fi
+
+					# Wait some seconds to alleviate simulateneous traffic to the serving container
+					# to avoid incurring HTTP 304.
+					sleep 10
 
 					break
 				done

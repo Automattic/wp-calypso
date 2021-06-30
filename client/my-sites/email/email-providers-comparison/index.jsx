@@ -2,11 +2,11 @@
  * External dependencies
  */
 import React from 'react';
-import config from '@automattic/calypso-config';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
+import titleCase from 'to-title-case';
 
 /**
  * Internal dependencies
@@ -25,22 +25,23 @@ import {
 	getSelectedDomain,
 } from 'calypso/lib/domains';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
-import PromoCard from 'calypso/components/promo-section/promo-card';
+import DocumentHead from 'calypso/components/data/document-head';
+import EmailHeader from 'calypso/my-sites/email/email-header';
 import EmailProviderCard from './email-provider-card';
+import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
 import {
 	getEmailForwardingFeatures,
 	getGoogleFeatures,
 	getTitanFeatures,
 } from 'calypso/my-sites/email/email-provider-features/list';
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
-import {
-	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
-	GSUITE_BASIC_SLUG,
-} from 'calypso/lib/gsuite/constants';
+import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from 'calypso/lib/gsuite/constants';
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import {
 	getAnnualPrice,
@@ -49,14 +50,15 @@ import {
 	hasGSuiteSupportedDomain,
 } from 'calypso/lib/gsuite';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getTitanProductName } from 'calypso/lib/titan';
 import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
-import { emailManagementForwarding } from 'calypso/my-sites/email/paths';
+import { emailManagementForwarding, emailManagement } from 'calypso/my-sites/email/paths';
 import { errorNotice } from 'calypso/state/notices/actions';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
+import PromoCard from 'calypso/components/promo-section/promo-card';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import Gridicon from 'calypso/components/gridicon';
@@ -64,12 +66,13 @@ import formatCurrency from '@automattic/format-currency';
 import emailIllustration from 'calypso/assets/images/email-providers/email-illustration.svg';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan.svg';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
-import gSuiteLogo from 'calypso/assets/images/email-providers/gsuite.svg';
 import forwardingIcon from 'calypso/assets/images/email-providers/forwarding.svg';
+import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-add-mailboxes/titan-new-mailbox-list';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import HeaderCake from 'calypso/components/header-cake';
 
 /**
  * Style dependencies
@@ -90,8 +93,7 @@ class EmailProvidersComparison extends React.Component {
 		gSuiteProduct: PropTypes.object,
 		isGSuiteSupported: PropTypes.bool.isRequired,
 		productsList: PropTypes.object.isRequired,
-		selectedSiteId: PropTypes.number,
-		selectedSiteSlug: PropTypes.string,
+		selectedSite: PropTypes.object,
 		titanMailProduct: PropTypes.object,
 	};
 
@@ -140,11 +142,17 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	goToEmailForwarding = () => {
-		const { currentRoute, selectedDomainName, selectedSiteSlug } = this.props;
+		const { currentRoute, selectedDomainName, selectedSite } = this.props;
 
 		recordTracksEvent( 'calypso_email_providers_add_click', { provider: 'email-forwarding' } );
 
-		page( emailManagementForwarding( selectedSiteSlug, selectedDomainName, currentRoute ) );
+		page( emailManagementForwarding( selectedSite.slug, selectedDomainName, currentRoute ) );
+	};
+
+	isUpgrading = () => {
+		const { domain } = this.props;
+
+		return hasEmailForwards( domain );
 	};
 
 	onTitanMailboxesChange = ( updatedMailboxes ) =>
@@ -188,7 +196,7 @@ class EmailProvidersComparison extends React.Component {
 			return;
 		}
 
-		const { productsList, selectedSiteSlug, shoppingCartManager } = this.props;
+		const { productsList, selectedSite, shoppingCartManager } = this.props;
 
 		const cartItem = titanMailMonthly( {
 			domain: domain.name,
@@ -212,7 +220,7 @@ class EmailProvidersComparison extends React.Component {
 					// Stay on the page to show the relevant error(s)
 					return;
 				}
-				this.isMounted && page( '/checkout/' + selectedSiteSlug );
+				this.isMounted && page( '/checkout/' + selectedSite.slug );
 			} );
 	};
 
@@ -228,7 +236,7 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	onGoogleConfirmNewUsers = () => {
-		const { domain } = this.props;
+		const { domain, gSuiteProduct } = this.props;
 		const { googleUsers } = this.state;
 
 		const usersAreValid = areAllUsersValid( googleUsers );
@@ -245,16 +253,14 @@ class EmailProvidersComparison extends React.Component {
 			return;
 		}
 
-		const { productsList, selectedSiteSlug, shoppingCartManager } = this.props;
+		const { productsList, selectedSite, shoppingCartManager } = this.props;
 		const domains = [ domain ];
-		const googleProductSlug = config.isEnabled( 'google-workspace-migration' )
-			? GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
-			: GSUITE_BASIC_SLUG;
 
 		this.setState( { addingToCart: true } );
+
 		shoppingCartManager
 			.addProductsToCart(
-				getItemsForCart( domains, googleProductSlug, googleUsers ).map( ( item ) =>
+				getItemsForCart( domains, gSuiteProduct.product_slug, googleUsers ).map( ( item ) =>
 					fillInSingleCartItemAttributes( item, productsList )
 				)
 			)
@@ -262,17 +268,24 @@ class EmailProvidersComparison extends React.Component {
 				if ( this.isMounted ) {
 					this.setState( { addingToCart: false } );
 				}
+
 				const { errors } = this.props?.cart?.messages;
+
 				if ( errors && errors.length ) {
 					// Stay on the page to show the relevant error(s)
 					return;
 				}
-				this.isMounted && page( '/checkout/' + selectedSiteSlug );
+
+				this.isMounted && page( '/checkout/' + selectedSite.slug );
 			} );
 	};
 
 	renderEmailForwardingCard() {
 		const { domain, translate } = this.props;
+
+		if ( this.isUpgrading() ) {
+			return null;
+		}
 
 		return (
 			<EmailProviderCard
@@ -308,16 +321,13 @@ class EmailProvidersComparison extends React.Component {
 			return null;
 		}
 
-		const logoPath = config.isEnabled( 'google-workspace-migration' )
-			? googleWorkspaceIcon
-			: gSuiteLogo;
-
 		const formattedPrice = translate( '{{price/}} /user /month billed annually', {
 			components: {
 				price: <span>{ getMonthlyPrice( gSuiteProduct?.cost ?? null, currencyCode ) }</span>,
 			},
 			comment: '{{price/}} is the formatted price, e.g. $20',
 		} );
+
 		const discount = hasDiscount( gSuiteProduct )
 			? translate( 'First year %(discountedPrice)s', {
 					args: {
@@ -326,6 +336,7 @@ class EmailProvidersComparison extends React.Component {
 					comment: '%(discountedPrice)s is a formatted price, e.g. $75',
 			  } )
 			: null;
+
 		const additionalPriceInformation = translate( '%(price)s billed annually', {
 			args: {
 				price: getAnnualPrice( gSuiteProduct?.cost ?? null, currencyCode ),
@@ -338,6 +349,20 @@ class EmailProvidersComparison extends React.Component {
 			( this.state.googleUsers ?? [] ).length === 0
 				? newUsers( selectedDomainName )
 				: this.state.googleUsers;
+
+		const buttonLabel = this.isUpgrading()
+			? translate( 'Upgrade to %(googleMailService)s', {
+					args: {
+						googleMailService: getGoogleMailServiceFamily(),
+					},
+					comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
+			  } )
+			: translate( 'Add %(googleMailService)s', {
+					args: {
+						googleMailService: getGoogleMailServiceFamily(),
+					},
+					comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
+			  } );
 
 		const formFields = domain ? (
 			<FormFieldset>
@@ -356,12 +381,7 @@ class EmailProvidersComparison extends React.Component {
 						busy={ this.state.addingToCart }
 						onClick={ this.onGoogleConfirmNewUsers }
 					>
-						{ translate( 'Add %(googleMailService)s', {
-							args: {
-								googleMailService: getGoogleMailServiceFamily(),
-							},
-							comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
-						} ) }
+						{ buttonLabel }
 					</Button>
 				</GSuiteNewUserList>
 			</FormFieldset>
@@ -370,7 +390,7 @@ class EmailProvidersComparison extends React.Component {
 		return (
 			<EmailProviderCard
 				providerKey="google"
-				logo={ { path: logoPath } }
+				logo={ { path: googleWorkspaceIcon } }
 				title={ getGoogleMailServiceFamily() }
 				description={ translate(
 					'Professional email integrated with Google Meet and other collaboration tools from Google.'
@@ -383,12 +403,7 @@ class EmailProvidersComparison extends React.Component {
 				onExpandedChange={ this.onExpandedStateChange }
 				onButtonClick={ this.onGoogleConfirmNewUsers }
 				showExpandButton={ this.isDomainEligibleForEmail( domain ) }
-				expandButtonLabel={ translate( 'Add %(googleMailService)s', {
-					args: {
-						googleMailService: getGoogleMailServiceFamily(),
-					},
-					comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
-				} ) }
+				expandButtonLabel={ buttonLabel }
 				features={ getGoogleFeatures() }
 			/>
 		);
@@ -413,9 +428,26 @@ class EmailProvidersComparison extends React.Component {
 				icon="my-sites"
 			/>
 		);
+
 		const poweredByTitan = (
 			<img src={ poweredByTitanLogo } alt={ translate( 'Powered by Titan' ) } />
 		);
+
+		const buttonLabel = this.isUpgrading()
+			? translate( 'Upgrade to %(titanProductName)s', {
+					args: {
+						titanProductName: getTitanProductName(),
+					},
+					comment:
+						'%(titanProductName) is the name of the product, which should be "Professional Email" translated',
+			  } )
+			: translate( 'Add %(titanProductName)s', {
+					args: {
+						titanProductName: getTitanProductName(),
+					},
+					comment:
+						'%(titanProductName) is the name of the product, which should be "Professional Email" translated',
+			  } );
 
 		const formFields = (
 			<TitanNewMailboxList
@@ -432,13 +464,7 @@ class EmailProvidersComparison extends React.Component {
 					busy={ this.state.addingToCart }
 					onClick={ this.onTitanConfirmNewMailboxes }
 				>
-					{ translate( 'Add %(titanProductName)s', {
-						args: {
-							titanProductName: getTitanProductName(),
-						},
-						comment:
-							'%(titanProductName) is the name of the product, which should be "Professional Email" translated',
-					} ) }
+					{ buttonLabel }
 				</Button>
 			</TitanNewMailboxList>
 		);
@@ -458,20 +484,20 @@ class EmailProvidersComparison extends React.Component {
 				discount={ discount }
 				formFields={ formFields }
 				showExpandButton={ this.isDomainEligibleForEmail( domain ) }
-				expandButtonLabel={ translate( 'Add %(titanProductName)s', {
-					args: {
-						titanProductName: getTitanProductName(),
-					},
-					comment:
-						'%(titanProductName) is the name of the product, which should be "Professional Email" translated',
-				} ) }
+				expandButtonLabel={ buttonLabel }
 				features={ getTitanFeatures() }
 			/>
 		);
 	}
 
-	renderHeaderSection() {
-		const { selectedDomainName, translate } = this.props;
+	handleBack = () => {
+		const { selectedSite } = this.props;
+
+		page( emailManagement( selectedSite.slug ) );
+	};
+
+	renderHeader() {
+		const { currentRoute, selectedDomainName, selectedSite, translate } = this.props;
 
 		const image = {
 			path: emailIllustration,
@@ -485,21 +511,39 @@ class EmailProvidersComparison extends React.Component {
 			comment: '%(domainName)s is the domain name, e.g example.com',
 		};
 
+		const title = this.isUpgrading()
+			? translate( 'Upgrade to a hosted email' )
+			: translate( 'Add email' );
+
 		return (
-			<PromoCard
-				isPrimary
-				title={ translate( 'Get your own @%(domainName)s email address', translateArgs ) }
-				image={ image }
-				className="email-providers-comparison__action-panel"
-			>
-				<p>
-					{ translate(
-						'Pick one of our flexible options to connect your domain with email ' +
-							'and start getting emails @%(domainName)s today.',
-						translateArgs
-					) }
-				</p>
-			</PromoCard>
+			<>
+				<DocumentHead title={ titleCase( title ) } />
+
+				<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
+
+				<HeaderCake onClick={ this.handleBack }>{ title }</HeaderCake>
+
+				<PromoCard
+					isPrimary
+					title={
+						this.isUpgrading()
+							? translate( 'Upgrade to start sending emails from %(domainName)s', translateArgs )
+							: translate( 'Get your own @%(domainName)s email address', translateArgs )
+					}
+					image={ image }
+					className="email-providers-comparison__action-panel"
+				>
+					<p>
+						{ this.isUpgrading()
+							? translate( 'Pick from one of our flexible options to unlock full email features.' )
+							: translate(
+									'Pick one of our flexible options to connect your domain with email ' +
+										'and start getting emails @%(domainName)s today.',
+									translateArgs
+							  ) }
+					</p>
+				</PromoCard>
+			</>
 		);
 	}
 
@@ -542,15 +586,22 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	render() {
-		const { isGSuiteSupported, selectedSiteId } = this.props;
+		const { domainsWithForwards, isGSuiteSupported, selectedDomainName, selectedSite } = this.props;
 
 		return (
 			<Main wideLayout>
-				{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
+				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
-				{ this.renderHeaderSection() }
+				<QueryEmailForwards domainName={ selectedDomainName } />
+
+				{ this.renderHeader() }
 
 				{ this.renderDomainEligibilityNotice() }
+
+				<EmailExistingForwardsNotice
+					domainsWithForwards={ domainsWithForwards }
+					selectedDomainName={ selectedDomainName }
+				/>
 
 				{ this.renderTitanCard() }
 
@@ -572,12 +623,8 @@ class EmailProvidersComparison extends React.Component {
 
 export default connect(
 	( state, ownProps ) => {
-		const productSlug = config.isEnabled( 'google-workspace-migration' )
-			? GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
-			: GSUITE_BASIC_SLUG;
-
-		const selectedSiteId = getSelectedSiteId( state );
-		const domains = getDomainsBySiteId( state, selectedSiteId );
+		const selectedSite = getSelectedSite( state );
+		const domains = getDomainsBySiteId( state, selectedSite.ID );
 		const domain = getSelectedDomain( {
 			domains,
 			selectedDomainName: ownProps.selectedDomainName,
@@ -591,11 +638,11 @@ export default connect(
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			currentRoute: getCurrentRoute( state ),
 			domain,
-			gSuiteProduct: getProductBySlug( state, productSlug ),
+			domainsWithForwards: getDomainsWithForwards( state, domains ),
+			gSuiteProduct: getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY ),
 			isGSuiteSupported,
 			productsList: getProductsList( state ),
-			selectedSiteId,
-			selectedSiteSlug: getSelectedSiteSlug( state ),
+			selectedSite,
 			titanMailProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
 		};
 	},

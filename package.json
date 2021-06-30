@@ -93,7 +93,7 @@
 		"build-client-if-prod": "node -e \"process.env.CALYPSO_ENV === 'production' && process.exit(1)\" || yarn run build-client-both && yarn run build-languages-if-enabled",
 		"build-client-if-desktop": "node -e \"(process.env.CALYPSO_ENV === 'desktop' || process.env.CALYPSO_ENV === 'desktop-development') && process.exit(1)\" || yarn run build-client-fallback",
 		"build-client-stats": "NODE_ENV=production CALYPSO_ENV=production EMIT_STATS=true yarn run build-client-evergreen",
-		"build-packages": "{ [[ \"$SKIP_TSC\" == \"true\" ]] || tsc --build packages/tsconfig.json; } && lerna run prepare --stream",
+		"build-packages": "{ [ \"$SKIP_TSC\" = \"true\" ] || tsc --build packages/tsconfig.json; } && lerna run prepare --stream",
 		"build-languages": "yarn run translate && node bin/build-languages.js",
 		"build-languages-if-enabled": "node -e \"(process.env.BUILD_TRANSLATION_CHUNKS === 'true' || process.env.ENABLE_FEATURES === 'use-translation-chunks') && process.exit(1)\" || yarn run build-languages",
 		"calypso-doctor": "./node_modules/.bin/calypso-doctor",
@@ -312,7 +312,7 @@
 		"webpack": "^5.36.2",
 		"webpack-bundle-analyzer": "^4.4.2",
 		"webpack-cli": "^4.6.0",
-		"webpack-dev-middleware": "^4.2.0",
+		"webpack-dev-middleware": "^5.0.0",
 		"whybundled": "^2.0.0",
 		"wpcom": "^6.0.0",
 		"yargs": "^17.0.1"

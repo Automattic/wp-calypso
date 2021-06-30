@@ -44,6 +44,7 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 							apple_pay_available: action.payload?.apple_pay_available,
 							product_slug: action.payload?.product_slug,
 							is_composite: true,
+							checkout_flow: action.payload?.checkout_flow,
 						} )
 					);
 					return reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_loaded', {} ) );

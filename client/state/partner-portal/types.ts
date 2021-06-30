@@ -57,6 +57,7 @@ export interface APIPartnerKey {
 	name: string;
 	oauth2_token: string;
 	disabled_on: string | null;
+	has_licenses: boolean;
 }
 
 export interface APIPartner {
@@ -100,6 +101,7 @@ export interface PartnerKey {
 	name: string;
 	oAuth2Token: string;
 	disabledOn: string | null;
+	hasLicenses: boolean;
 }
 
 export interface Partner {
@@ -144,6 +146,7 @@ export interface LicensesStore {
 	isFetching: boolean;
 	paginated: PaginatedItems< License > | null;
 	counts: LicenseCounts;
+	hasFetchedLicenseCounts: boolean;
 }
 
 interface CombinedStore {

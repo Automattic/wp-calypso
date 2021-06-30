@@ -50,15 +50,6 @@ export function emailManagementAddGSuiteUsers(
 	return '/email/' + productType + '/add-users/' + siteName;
 }
 
-export function emailManagementNewGSuiteAccount(
-	siteName,
-	domainName,
-	productType,
-	relativeTo = null
-) {
-	return emailManagementEdit( siteName, domainName, productType + '/new', relativeTo );
-}
-
 export function emailManagementManageTitanAccount(
 	siteName,
 	domainName,

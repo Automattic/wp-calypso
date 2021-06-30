@@ -113,7 +113,7 @@ class SignupForm extends Component {
 
 	static defaultProps = {
 		displayNameInput: false,
-		displayUsernameInput: false,
+		displayUsernameInput: true,
 		flowName: '',
 		isSocialSignupEnabled: false,
 		showRecaptchaToS: false,
@@ -987,7 +987,7 @@ class SignupForm extends Component {
 					{ this.props.formFooter || this.formFooter() }
 				</LoggedOutForm>
 
-				{ this.props.horizontal && (
+				{ this.props.horizontal && ! this.userCreationComplete() && (
 					<div className="signup-form__separator">
 						<div className="signup-form__separator-text">{ this.props.translate( 'or' ) }</div>
 					</div>

@@ -4,9 +4,9 @@
 import { withoutHttp } from 'calypso/lib/url';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import getRawSite from 'calypso/state/selectors/get-raw-site';
-import getSiteOptions from 'calypso/state/selectors/get-site-options';
 import getSiteDomain from './get-site-domain';
 import getSiteOption from './get-site-option';
+import getSiteOptions from './get-site-options';
 import getSiteSlug from './get-site-slug';
 import getSiteTitle from './get-site-title';
 import isJetpackSite from './is-jetpack-site';

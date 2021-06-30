@@ -93,7 +93,7 @@ class PagesMain extends React.Component {
 
 		return (
 			<Main wideLayout classname="pages">
-				<ScreenOptionsTab />
+				<ScreenOptionsTab wpAdminPath="edit.php?post_type=page" />
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
 				<DocumentHead title={ translate( 'Pages' ) } />
 				<SidebarNavigation />

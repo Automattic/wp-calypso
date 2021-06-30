@@ -18,15 +18,12 @@ import {
 } from '../plans/jetpack-plans/plan-upgrade/constants';
 import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
 import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
-import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import GSuiteNudge from './gsuite-nudge';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutSystemDecider from './checkout-system-decider';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
 import CheckoutThankYouComponent from './checkout-thank-you';
-import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import { setSectionMiddleware } from 'calypso/controller';
 import { sites } from 'calypso/my-sites/controller';
 import {
@@ -129,6 +126,7 @@ export function checkout( context, next ) {
 			isJetpackCheckout={ isJetpackCheckout }
 			jetpackSiteSlug={ jetpackSiteSlug }
 			jetpackPurchaseToken={ jetpackPurchaseToken || jetpackPurchaseNonce }
+			isUserComingFromLoginForm={ isUserComingFromLoginForm }
 		/>
 	);
 
@@ -197,35 +195,6 @@ export function checkoutThankYou( context, next ) {
 			selectedSite={ selectedSite }
 			displayMode={ displayMode }
 		/>
-	);
-
-	next();
-}
-
-export function gsuiteNudge( context, next ) {
-	const { domain, site, receiptId } = context.params;
-	setSectionMiddleware( { name: 'gsuite-nudge' } )( context );
-
-	const state = context.store.getState();
-	const selectedSite =
-		getSelectedSite( state ) || getSiteBySlug( state, site ) || getSiteBySlug( state, domain );
-
-	if ( ! selectedSite ) {
-		return null;
-	}
-
-	if ( ! canUserPurchaseGSuite( context.store.getState() ) ) {
-		next();
-	}
-
-	context.primary = (
-		<CalypsoShoppingCartProvider>
-			<GSuiteNudge
-				domain={ domain }
-				receiptId={ Number( receiptId ) }
-				selectedSiteId={ selectedSite.ID }
-			/>
-		</CalypsoShoppingCartProvider>
 	);
 
 	next();

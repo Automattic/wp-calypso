@@ -21,14 +21,14 @@ import config from '@automattic/calypso-config';
 
 const SiteSettingsDiscussion = ( { site, translate } ) => (
 	<Main className="settings-discussion site-settings">
-		<ScreenOptionsTab />
-		<DocumentHead title={ translate( 'Site Settings' ) } />
+		<ScreenOptionsTab wpAdminPath="options-discussion.php" />
+		<DocumentHead title={ translate( 'Discussion Settings' ) } />
 		<JetpackDevModeNotice />
 		<SidebarNavigation />
 		<FormattedHeader
 			brandFont
 			className="settings-discussion__page-heading"
-			headerText={ translate( 'Settings' ) }
+			headerText={ translate( 'Discussion Settings' ) }
 			subHeaderText={ translate( 'Control how people interact with your site through comments.' ) }
 			align="left"
 			hasScreenOptions={ config.isEnabled( 'nav-unification/switcher' ) }

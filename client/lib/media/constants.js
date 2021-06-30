@@ -204,3 +204,4 @@ export const MEDIA_IMAGE_RESIZER = 'MEDIA_IMAGE_RESIZER';
  * @type {Array}
  */
 export const SCALE_CHOICES = [ 0.077, 0.115, 0.157, 0.24, 0.323 ];
+export const SCALE_TOUCH_GRID = 0.323;

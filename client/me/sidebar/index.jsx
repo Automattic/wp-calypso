@@ -22,7 +22,7 @@ import { logoutUser } from 'calypso/state/logout/actions';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { itemLinkMatches } from 'calypso/my-sites/sidebar-unified/utils';
-import { clearStore } from 'calypso/lib/user/store';
+import { clearStore, disablePersistence } from 'calypso/lib/user/store';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 
 /**
@@ -51,6 +51,7 @@ class MeSidebar extends React.Component {
 
 		try {
 			const { redirect_to } = await this.props.logoutUser( redirectTo );
+			disablePersistence();
 			await clearStore();
 			window.location.href = redirect_to || '/';
 		} catch {

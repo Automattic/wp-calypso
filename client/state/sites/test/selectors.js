@@ -3498,15 +3498,6 @@ describe( 'selectors', () => {
 			).toBe( false );
 		} );
 
-		test( 'should return true if site is Business and Store is deprecated but not removed', () => {
-			// Enable all features except for store removal
-			config.isEnabled.mockImplementation( ( feature ) => feature !== 'woocommerce/store-removed' );
-
-			expect(
-				canCurrentUserUseWooCommerceCoreStore( createState( true, true, false, PLAN_BUSINESS ) )
-			).toBe( true );
-		} );
-
 		test( 'should return true if site is Business and Store is not deprecated but is removed', () => {
 			expect(
 				canCurrentUserUseWooCommerceCoreStore( createState( true, true, false, PLAN_BUSINESS ) )

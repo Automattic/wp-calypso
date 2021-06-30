@@ -366,7 +366,7 @@ class Media extends Component {
 
 		return (
 			<div ref={ this.containerRef } className="main main-column media" role="main">
-				<ScreenOptionsTab />
+				<ScreenOptionsTab wpAdminPath="upload.php" />
 				{ mediaId && site && site.ID && <QueryMedia siteId={ site.ID } mediaId={ mediaId } /> }
 				<PageViewTracker path={ this.getAnalyticsPath() } title="Media" />
 				<DocumentHead title={ translate( 'Media' ) } />

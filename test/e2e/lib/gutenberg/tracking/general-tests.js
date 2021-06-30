@@ -9,7 +9,7 @@ import { By } from 'selenium-webdriver';
  */
 import GutenbergEditorComponent from '../gutenberg-editor-component';
 import SiteEditorComponent from '../../components/site-editor-component';
-import { getEventsStack, getTotalEventsFiredForBlock } from './utils';
+import { clearEventsStack, getEventsStack, getTotalEventsFiredForBlock } from './utils';
 import * as driverHelper from '../../driver-helper';
 
 export function createGeneralTests( { it, editorType, postType } ) {
@@ -105,6 +105,11 @@ export function createGeneralTests( { it, editorType, postType } ) {
 	it( 'Tracks "wpcom_block_editor_list_view_toggle" event', async function () {
 		const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
 
+		// The list view toggle button is not available on mobile
+		if ( editor.screenSize === 'mobile' ) {
+			return this.skip();
+		}
+
 		await editor.toggleListView(); // Open list view
 		await editor.toggleListView(); // Close list view
 
@@ -119,6 +124,11 @@ export function createGeneralTests( { it, editorType, postType } ) {
 
 	it( 'Tracks "wpcom_block_editor_undo_performed" event', async function () {
 		const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
+
+		// The undo button is not available on mobile
+		if ( editor.screenSize === 'mobile' ) {
+			return this.skip();
+		}
 
 		await editor.addBlock( 'Heading' );
 		await editor.addBlock( 'Columns' );
@@ -139,6 +149,11 @@ export function createGeneralTests( { it, editorType, postType } ) {
 
 	it( 'Tracks "wpcom_block_editor_redo_performed" event', async function () {
 		const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
+
+		// The redo button is not available on mobile
+		if ( editor.screenSize === 'mobile' ) {
+			return this.skip();
+		}
 
 		await editor.addBlock( 'Heading' );
 		await editor.addBlock( 'Columns' );
@@ -177,9 +192,107 @@ export function createGeneralTests( { it, editorType, postType } ) {
 		);
 	} );
 
+	it( 'Tracks "wpcom_pattern_inserted"', async function () {
+		const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
+
+		await editor.insertPattern( 'list', 'List with Image' );
+		const eventsStackList = await getEventsStack( this.driver );
+		await clearEventsStack( this.driver );
+
+		await editor.insertPattern( 'gallery', 'Heading and Three Images' );
+		// We need to save the eventsStack after each insertion to make sure we
+		// aren't running out of the E2E queue size.
+		const eventsStackGallery = await getEventsStack( this.driver );
+		if ( await editor.isBlockInserterOpen() ) {
+			await editor.closeBlockInserter();
+		}
+		await editor.dismissNotices();
+
+		const patternInsertedEvents = [ ...eventsStackGallery, ...eventsStackList ].filter(
+			( [ eventName ] ) => eventName === 'wpcom_pattern_inserted'
+		);
+		assert.strictEqual(
+			patternInsertedEvents.length,
+			2,
+			'"wpcom_pattern_inserted" editor tracking event failed to fire for both patterns'
+		);
+		const [ , eventDataGallery ] = patternInsertedEvents[ 0 ];
+		const [ , eventDataList ] = patternInsertedEvents[ 1 ];
+		assert.strictEqual(
+			eventDataGallery.pattern_name,
+			'a8c/heading-and-three-images',
+			'"wpcom_pattern_inserted" editor tracking event pattern name property is incorrect'
+		);
+		assert.strictEqual(
+			eventDataGallery.pattern_category,
+			'gallery',
+			'"wpcom_pattern_inserted" editor tracking event pattern category property is incorrect'
+		);
+		assert.strictEqual(
+			eventDataList.pattern_name,
+			'a8c/list-with-image',
+			'"wpcom_pattern_inserted" editor tracking event pattern name property is incorrect'
+		);
+		assert.strictEqual(
+			eventDataList.pattern_category,
+			'list',
+			'"wpcom_pattern_inserted" editor tracking event pattern category property is incorrect'
+		);
+	} );
+
+	it( 'Tracks "wpcom_pattern_inserted"', async function () {
+		const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
+
+		await editor.insertBlockOrPatternViaBlockAppender( 'List with Image' );
+		const eventsStackList = await getEventsStack( this.driver );
+		await clearEventsStack( this.driver );
+
+		await editor.insertBlockOrPatternViaBlockAppender( 'Heading and Three Images' );
+		// We need to save the eventsStack after each insertion to make sure we
+		// aren't running out of the E2E queue size.
+		const eventsStackGallery = await getEventsStack( this.driver );
+		await editor.dismissNotices();
+
+		const patternInsertedEvents = [ ...eventsStackGallery, ...eventsStackList ].filter(
+			( [ eventName ] ) => eventName === 'wpcom_pattern_inserted'
+		);
+		assert.strictEqual(
+			patternInsertedEvents.length,
+			2,
+			'"wpcom_pattern_inserted" editor tracking event failed to fire for both patterns'
+		);
+		const [ , eventDataGallery ] = patternInsertedEvents[ 0 ];
+		const [ , eventDataList ] = patternInsertedEvents[ 1 ];
+		assert.strictEqual(
+			eventDataGallery.pattern_name,
+			'a8c/heading-and-three-images',
+			'"wpcom_pattern_inserted" editor tracking event pattern name property is incorrect'
+		);
+		assert.strictEqual(
+			typeof eventDataGallery.pattern_category,
+			'undefined',
+			'"wpcom_pattern_inserted" editor tracking event pattern category property should not be present'
+		);
+		assert.strictEqual(
+			eventDataList.pattern_name,
+			'a8c/list-with-image',
+			'"wpcom_pattern_inserted" editor tracking event pattern name property is incorrect'
+		);
+		assert.strictEqual(
+			typeof eventDataGallery.pattern_category,
+			'undefined',
+			'"wpcom_pattern_inserted" editor tracking event pattern category property should not be present'
+		);
+	} );
+
 	if ( editorType === 'post' ) {
 		it( 'Tracks "wpcom_block_editor_details_open" event', async function () {
 			const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
+
+			// The details button is not available on mobile
+			if ( editor.screenSize === 'mobile' ) {
+				return this.skip();
+			}
 
 			await editor.toggleDetails(); // Open details
 			await editor.toggleDetails(); // Close details
