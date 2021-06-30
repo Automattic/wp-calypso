@@ -64,6 +64,8 @@ import CheckoutHelpLink from './checkout-help-link';
 import type { CountryListItem } from '../types/country-list-item';
 import type { OnChangeItemVariant } from '../components/item-variation-picker';
 
+import badge14Src from './assets/icons/badge-14.svg';
+
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
 // This will make converting to TS less noisy. The order of components can be reorganized later
@@ -449,6 +451,12 @@ export default function WPCheckout( {
 			</CheckoutSummaryArea>
 			<CheckoutStepArea
 				submitButtonHeader={ <SubmitButtonHeader /> }
+				submitButtonFooter={
+					<SubmitButtonFooter>
+						<img src={ badge14Src } alt="" />
+						<span>{ translate( '14 day money back guarantee' ) }</span>
+					</SubmitButtonFooter>
+				}
 				disableSubmitButton={ isOrderReviewActive }
 			>
 				{ infoMessage }
@@ -657,6 +665,22 @@ function SubmitButtonHeader() {
 		</SubmitButtonHeaderWrapper>
 	);
 }
+
+const SubmitButtonFooter = styled.div< React.HTMLAttributes< HTMLDivElement > >`
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	margin-top: 1.25rem;
+
+	color: ${ ( props ) => props.theme.colors.textColor };
+
+	font-weight: 500;
+
+	img {
+		margin-right: 0.5rem;
+	}
+`;
 
 const SubmitButtonHeaderWrapper = styled.div`
 	display: none;
