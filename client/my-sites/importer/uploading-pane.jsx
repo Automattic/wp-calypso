@@ -164,6 +164,15 @@ class UploadingPane extends React.PureComponent {
 		this.props.startUpload( this.props.importerStatus, file );
 	};
 
+	validateUrl = ( urlInput ) => {
+		return ! urlInput || urlInput === '' || /https:\/\/[\w-]+\.substack\.com/.test( urlInput );
+	};
+
+	setUrl = ( event ) => {
+		const urlInput = event.target.value;
+		this.setState( { urlInput } );
+	};
+
 	render() {
 		const { importerStatus, site, isEnabled } = this.props;
 		const isReadyForImport = this.isReadyForImport();
@@ -209,12 +218,15 @@ class UploadingPane extends React.PureComponent {
 							<TextInput
 								label={ this.props.optionalUrl.title }
 								onChange={ this.setUrl }
-								onKeyPress={ this.validateOnEnter }
 								value={ this.state.urlInput }
 								placeholder="https://newsletter.substack.com"
 							/>
 						</FormLabel>
-						<FormSettingExplanation>{ this.props.optionalUrl.description }</FormSettingExplanation>
+						<FormSettingExplanation>
+							{ this.validateUrl( this.state.urlInput )
+								? this.props.optionalUrl.description
+								: this.props.optionalUrl.invalidDescription }
+						</FormSettingExplanation>
 					</div>
 				) }
 				<ImporterActionButtonContainer>
@@ -222,7 +234,9 @@ class UploadingPane extends React.PureComponent {
 						<ImporterActionButton
 							primary
 							onClick={ this.initiateFromUploadButton }
-							disabled={ ! this.state.fileToBeUploaded }
+							disabled={
+								! this.state.fileToBeUploaded || ! this.validateUrl( this.state.urlInput )
+							}
 						>
 							{ this.props.translate( 'Upload' ) }
 						</ImporterActionButton>

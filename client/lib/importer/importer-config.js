@@ -181,6 +181,9 @@ function getConfig( { siteTitle = '' } = {} ) {
 			description: translate(
 				'An optional Substack Newsletter URL to import comments and author information.'
 			),
+			invalidDescription: translate(
+				'Enter a valid Substack Newsletter URL (https://newsletter.substack.com/).'
+			),
 		},
 		weight: 0,
 	};
