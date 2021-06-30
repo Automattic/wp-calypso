@@ -128,7 +128,7 @@ class UploadingPane extends React.PureComponent {
 	};
 
 	initiateFromUploadButton = () => {
-		this.startUpload( this.state.fileToBeUploaded );
+		this.startUpload( this.state.fileToBeUploaded, this.state.urlInput );
 	};
 
 	setupUpload = ( file ) => {
@@ -160,8 +160,8 @@ class UploadingPane extends React.PureComponent {
 		}
 	};
 
-	startUpload = ( file ) => {
-		this.props.startUpload( this.props.importerStatus, file );
+	startUpload = ( file, url = undefined ) => {
+		this.props.startUpload( this.props.importerStatus, file, url );
 	};
 
 	validateUrl = ( urlInput ) => {

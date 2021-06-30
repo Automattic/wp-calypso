@@ -188,7 +188,7 @@ export const setUploadStartState = ( importerId, filenameOrUrl ) => ( {
 	importerId,
 } );
 
-export const startUpload = ( importerStatus, file ) => ( dispatch ) => {
+export const startUpload = ( importerStatus, file, url = undefined ) => ( dispatch ) => {
 	const {
 		importerId,
 		site: { ID: siteId },
@@ -200,6 +200,7 @@ export const startUpload = ( importerStatus, file ) => ( dispatch ) => {
 		.uploadExportFile( siteId, {
 			importStatus: toApi( importerStatus ),
 			file,
+			url,
 			onprogress: ( event ) => {
 				dispatch(
 					setUploadProgress( importerId, {
