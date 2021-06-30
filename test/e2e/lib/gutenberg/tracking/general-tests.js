@@ -173,6 +173,25 @@ export function createGeneralTests( { it, editorType, postType } ) {
 		);
 	} );
 
+	it( `Block editor sidebar toggle should not trigger the "wpcom_block_editor_close_click" event`, async function () {
+		const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
+
+		// We open and close the sidebar to make sure we don't leave the sidebar
+		// open for the upcoming tests. We also make sure we don't trigger the
+		// on open and close actions.
+		await editor.toggleBlockEditorSidebar();
+		await editor.toggleBlockEditorSidebar();
+
+		const eventsStack = await getEventsStack( this.driver );
+		const editorCloseClickNotFired = ! eventsStack.some(
+			( [ eventName ] ) => eventName === 'wpcom_block_editor_close_click'
+		);
+		assert(
+			editorCloseClickNotFired,
+			'"wpcom_block_editor_close_click" editor tracking event fired'
+		);
+	} );
+
 	it( 'Tracks "wpcom_pattern_inserted"', async function () {
 		const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
 

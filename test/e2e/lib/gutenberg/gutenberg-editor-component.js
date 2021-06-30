@@ -704,6 +704,17 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		);
 	}
 
+	async toggleBlockEditorSidebar() {
+		const dismissSidebarButtonSelector =
+			'button[aria-label="Block editor sidebar"][aria-expanded="false"]';
+		const toggleSidebarButtonSelector = 'button[aria-label="Close block editor sidebar"]';
+
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( `${ toggleSidebarButtonSelector }, ${ dismissSidebarButtonSelector }` )
+		);
+	}
+
 	async dismissNotices() {
 		const locator = By.css( '.components-snackbar[aria-label="Dismiss this notice"]' );
 		const notices = await this.driver.findElements( locator );

@@ -116,7 +116,7 @@ const exitSiteEditor = async function ( driver ) {
 			}
 			return true;
 		},
-		config.get( 'explicitWaitMS' ) / 5,
+		config.get( 'explicitWaitMS' ),
 		'Could not reach the "Dashboard" button'
 	);
 
