@@ -26,6 +26,8 @@ import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method
 import PaymentMethodSelector from 'calypso/me/purchases/manage-purchase/payment-method-selector';
 import { useCreateCreditCard } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-create-payment-methods';
 import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
+import { hideMasterbar } from 'calypso/state/ui/actions';
+import { isWcMobileApp } from 'calypso/lib/mobile-app';
 
 function AddNewPaymentMethod() {
 	const goToPaymentMethods = () => page( paymentMethods );
@@ -55,6 +57,10 @@ function AddNewPaymentMethod() {
 	}
 
 	const title = `${ titles.activeUpgrades } › ${ addPaymentMethodTitle }`;
+
+	if ( isWcMobileApp() ) {
+		reduxDispatch( hideMasterbar() );
+	}
 
 	return (
 		<Main wideLayout className="add-new-payment-method">
