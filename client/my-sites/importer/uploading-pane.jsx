@@ -52,6 +52,8 @@ class UploadingPane extends React.PureComponent {
 		optionalUrl: PropTypes.shape( {
 			title: PropTypes.string,
 			description: PropTypes.string,
+			invalidDescription: PropTypes.string,
+			validate: PropTypes.func,
 		} ),
 	};
 
@@ -166,7 +168,7 @@ class UploadingPane extends React.PureComponent {
 	};
 
 	validateUrl = ( urlInput ) => {
-		return ! urlInput || urlInput === '' || /https:\/\/[\w-]+\.substack\.com/.test( urlInput );
+		return ! urlInput || urlInput === '' || this.props.optionalUrl.validate( urlInput );
 	};
 
 	setUrl = ( event ) => {
