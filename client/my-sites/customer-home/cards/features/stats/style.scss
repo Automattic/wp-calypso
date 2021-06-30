@@ -1,4 +1,5 @@
 .stats .card {
+	padding: 16px 16px 0;
 	@include breakpoint-deprecated( '>480px' ) {
 		box-shadow: none;
 		padding: 16px 24px 0;
