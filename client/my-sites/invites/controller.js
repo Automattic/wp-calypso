@@ -14,10 +14,10 @@ import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/ac
 import InviteAccept from 'calypso/my-sites/invites/invite-accept';
 import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
 import { acceptInvite as acceptInviteAction } from 'calypso/state/invites/actions';
-import user from 'calypso/lib/user';
 import { getLocaleFromPath, removeLocaleFromPath } from 'calypso/lib/i18n-utils';
 import { navigate } from 'calypso/lib/navigate';
 import { getCurrentUserEmail, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { setUserEmailVerified } from 'calypso/state/current-user/actions';
 
 /**
  * Module variables
@@ -41,7 +41,7 @@ export function acceptInvite( context, next ) {
 		debug( 'invite_accepted is set in localStorage' );
 		if ( getCurrentUserEmail( context.store.getState() ) === acceptedInvite.sentTo ) {
 			debug( 'Setting email_verified in user object' );
-			user().set( { email_verified: true } );
+			context.store.dispatch( setUserEmailVerified( true ) );
 		}
 		store.remove( 'invite_accepted' );
 
