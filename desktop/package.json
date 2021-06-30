@@ -17,8 +17,7 @@
 	"keywords": [
 		"Automattic",
 		"desktop",
-		"wordpress",
-		"wordpress.com"
+		"wordpress"
 	],
 	"scripts": {
 		"dev": "cross-env NODE_ENV=development DEBUG=1 WP_DESKTOP_DEBUG=1 electron app/index.js",
