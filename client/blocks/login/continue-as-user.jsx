@@ -44,9 +44,13 @@ async function validateUrl( redirectUrl ) {
 function ContinueAsUser( { currentUser, redirectUrlFromQuery, onChangeAccount } ) {
 	const translate = useTranslate();
 	const [ validatedRedirectUrl, setValidatedRedirectUrl ] = useState( null );
+	const [ isLoading, setIsLoading ] = useState( true );
 
 	useEffect( () => {
-		validateUrl( redirectUrlFromQuery ).then( setValidatedRedirectUrl );
+		validateUrl( redirectUrlFromQuery ).then( ( maybeValidatedUrl ) => {
+			setValidatedRedirectUrl( maybeValidatedUrl );
+			setIsLoading( false );
+		} );
 	}, [ redirectUrlFromQuery ] );
 
 	const userName = currentUser.display_name || currentUser.username;
@@ -58,7 +62,11 @@ function ContinueAsUser( { currentUser, redirectUrlFromQuery, onChangeAccount } 
 
 	return (
 		<div className="continue-as-user">
-			<a href={ validatedRedirectUrl || '/' } className="continue-as-user__gravatar-link">
+			<a
+				style={ { pointerEvents: isLoading ? 'none' : 'auto' } }
+				href={ validatedRedirectUrl || '/' }
+				className="continue-as-user__gravatar-link"
+			>
 				<Gravatar
 					user={ currentUser }
 					className="continue-as-user__gravatar"
@@ -67,7 +75,7 @@ function ContinueAsUser( { currentUser, redirectUrlFromQuery, onChangeAccount } 
 				/>
 				<div>{ userName }</div>
 			</a>
-			<Button primary href={ validatedRedirectUrl || '/' }>
+			<Button busy={ isLoading } primary href={ validatedRedirectUrl || '/' }>
 				{ translate( 'Continue' ) }
 			</Button>
 			<p>
