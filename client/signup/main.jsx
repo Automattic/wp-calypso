@@ -599,6 +599,7 @@ class Signup extends React.Component {
 	}
 
 	getFlowLength() {
+		flows.excludeStep( 'launch' );
 		return flows.getFlow( this.props.flowName, this.props.isLoggedIn ).steps.length;
 	}
 
