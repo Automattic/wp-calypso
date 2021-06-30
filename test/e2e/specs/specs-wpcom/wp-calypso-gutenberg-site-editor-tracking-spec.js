@@ -878,7 +878,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				);
 				await driverHelper.clickWhenClickable( this.driver, backButtonToTemplatesLocator2 );
 
-				const isBackToDashboardLocated = await driverHelper.isElementLocated(
+				const isBackToDashboardLocated = await driverHelper.isElementEventuallyLocatedAndVisible(
 					this.driver,
 					By.css( '.edit-site-navigation-panel__back-to-dashboard' )
 				);
