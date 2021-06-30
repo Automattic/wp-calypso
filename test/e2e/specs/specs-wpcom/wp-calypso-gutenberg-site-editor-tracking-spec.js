@@ -638,21 +638,33 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			it( 'Tracks "wpcom_block_editor_create_template_part', async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
 				await editor.addBlock( 'Header', 'template-part\\/header', 'Block: Template Part' );
-				const createNewHeaderLocator = driverHelper.createTextLocator(
-					By.css( '.wp-block-template-part:last-of-type .components-placeholder button' ),
-					'New header'
-				);
-				await driverHelper.clickWhenClickable( this.driver, createNewHeaderLocator );
-				const choosePatternLocator = driverHelper.createTextLocator(
-					By.css( '.wp-block-template-part .block-editor-block-pattern-setup button' ),
-					'Choose'
-				);
-				await driverHelper.clickWhenClickable( this.driver, choosePatternLocator );
-				const createdEvents = ( await getEventsStack( this.driver ) ).filter(
+
+				await editor.runInCanvas( async () => {
+					const createNewHeaderLocator = driverHelper.createTextLocator(
+						By.css( '.wp-block-template-part.is-selected .components-placeholder button' ),
+						'New header'
+					);
+					await driverHelper.clickWhenClickable( this.driver, createNewHeaderLocator );
+
+					const choosePatternLocator = driverHelper.createTextLocator(
+						By.css( '.wp-block-template-part .block-editor-block-pattern-setup button' ),
+						'Choose'
+					);
+					await driverHelper.clickWhenClickable( this.driver, choosePatternLocator );
+				} );
+
+				const eventsStack = await getEventsStack( this.driver );
+				const createdEvents = eventsStack.filter(
 					( event ) => event[ 0 ] === 'wpcom_block_editor_create_template_part'
 				);
 
 				assert.strictEqual( createdEvents.length, 1 );
+
+				// Verify this doesn't trigger a convert_to event, as they use the same redux action.
+				const convertedEvents = eventsStack.filter(
+					( event ) => event[ 0 ] === 'wpcom_block_editor_convert_to_template_part'
+				);
+				assert.strictEqual( convertedEvents.length, 0 );
 
 				const { variation_slug, content } = createdEvents[ 0 ][ 1 ];
 				assert( variation_slug === 'header' && typeof content === 'string' && content.length > 0 );
