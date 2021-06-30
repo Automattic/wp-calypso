@@ -138,7 +138,7 @@ export async function initializeCurrentUser() {
 		if ( window.currentUser ) {
 			return window.currentUser;
 		}
-		return;
+		return false;
 	}
 
 	let userData;
