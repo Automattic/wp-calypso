@@ -173,7 +173,7 @@ export function createGeneralTests( { it, editorType, postType } ) {
 		);
 	} );
 
-	it( `Block editor sidebar toggle hould not trigger the "wpcom_block_editor_close_click" event`, async function () {
+	it( `Block editor sidebar toggle should not trigger the "wpcom_block_editor_close_click" event`, async function () {
 		const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
 
 		// We open and close the sidebar to make sure we don't leave the sidebar
