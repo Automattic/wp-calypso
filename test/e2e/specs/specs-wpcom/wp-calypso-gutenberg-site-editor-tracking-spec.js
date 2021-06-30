@@ -659,8 +659,8 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				this.driver,
 				By.css( '.wp-block-template-part__selection-preview-item' )
 			);
-			await editor.dismissNotices();
 			await editor.waitForTemplatePartsToLoad();
+			await editor.dismissNotices();
 
 			const eventsStack = await getEventsStack( this.driver );
 			const blockInsertedEventFired = eventsStack.some(
@@ -698,8 +698,8 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				this.driver,
 				By.css( '.wp-block-template-part__selection-preview-item' )
 			);
-			await editor.dismissNotices();
 			await editor.waitForTemplatePartsToLoad();
+			await editor.dismissNotices();
 
 			// Let's find out the ID of the first child block of the template part
 			// and remove the block.
