@@ -32,20 +32,20 @@ import {
 	getTitanEmailUrl,
 	hasTitanMailWithUs,
 } from 'calypso/lib/titan';
-import gmailIcon from 'calypso/assets/images/email-providers/google-workspace/services/gmail.svg';
-import googleAdminIcon from 'calypso/assets/images/email-providers/google-workspace/services/admin.svg';
-import googleCalendarIcon from 'calypso/assets/images/email-providers/google-workspace/services/calendar.svg';
-import googleDocsIcon from 'calypso/assets/images/email-providers/google-workspace/services/docs.svg';
-import googleDriveIcon from 'calypso/assets/images/email-providers/google-workspace/services/drive.svg';
-import googleSheetsIcon from 'calypso/assets/images/email-providers/google-workspace/services/sheets.svg';
-import googleSlidesIcon from 'calypso/assets/images/email-providers/google-workspace/services/slides.svg';
+import gmailIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/gmail.svg';
+import googleAdminIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/admin.svg';
+import googleCalendarIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/calendar.svg';
+import googleDocsIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/docs.svg';
+import googleDriveIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/drive.svg';
+import googleSheetsIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/sheets.svg';
+import googleSlidesIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/slides.svg';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import MaterialIcon from 'calypso/components/material-icon';
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import { removeEmailForward } from 'calypso/state/email-forwarding/actions';
-import titanCalendarIcon from 'calypso/assets/images/email-providers/titan/services/calendar.svg';
-import titanContactsIcon from 'calypso/assets/images/email-providers/titan/services/contacts.svg';
-import titanMailIcon from 'calypso/assets/images/email-providers/titan/services/mail.svg';
+import titanCalendarIcon from 'calypso/assets/images/email-providers/titan/services/flat/calendar.svg';
+import titanContactsIcon from 'calypso/assets/images/email-providers/titan/services/flat/contacts.svg';
+import titanMailIcon from 'calypso/assets/images/email-providers/titan/services/flat/mail.svg';
 
 const removeEmailForwardMailbox = ( { dispatch, mailbox } ) => {
 	recordTracksEvent( 'calypso_email_management_email_forwarding_delete_click', {
