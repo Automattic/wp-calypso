@@ -48,7 +48,7 @@ const LearnGrow = ( { cards, trackCards } ) => {
 
 	return (
 		<>
-			<Card className="learn-grow__content">
+			<Card className="learn-grow__content customer-home__card">
 				{ cards.map(
 					( card, index ) =>
 						cardComponents[ card ] &&

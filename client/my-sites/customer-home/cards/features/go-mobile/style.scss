@@ -9,13 +9,9 @@
 	}
 }
 
-.go-mobile.card {
-	padding: 16px;
-
-	@include break-mobile {
-		padding: 16px 24px;
-	}
-
+.go-mobile.card.customer-home__card {
+	border-bottom: none;
+	
 	@include break-large {
 		box-shadow: none;
 	}
