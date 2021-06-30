@@ -559,6 +559,10 @@ class RegisterDomainStep extends React.Component {
 	}
 
 	renderFilterResetNotice() {
+		const { lastQuery } = this.state;
+		if ( ! lastQuery?.length ) {
+			return null;
+		}
 		return (
 			<FilterResetNotice
 				className="register-domain-step__filter-reset-notice"
@@ -575,7 +579,11 @@ class RegisterDomainStep extends React.Component {
 			return null;
 		}
 
-		const { searchResults, pageNumber, loadingResults: isLoading } = this.state;
+		const { searchResults, pageNumber, loadingResults: isLoading, lastQuery } = this.state;
+
+		if ( ! lastQuery?.length ) {
+			return null;
+		}
 
 		if ( searchResults === null ) {
 			return null;
@@ -613,7 +621,9 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	renderContent() {
-		if ( Array.isArray( this.state.searchResults ) || this.state.loadingResults ) {
+		const { lastQuery, searchResults, loadingResults } = this.state;
+
+		if ( lastQuery?.length && ( Array.isArray( searchResults ) || loadingResults ) ) {
 			return this.renderSearchResults();
 		}
 
@@ -621,7 +631,7 @@ class RegisterDomainStep extends React.Component {
 			return (
 				<>
 					{ this.renderExampleSuggestions() }
-					{ this.props.isReskinned && ! this.state.loadingResults && this.props.reskinSideContent }
+					{ this.props.isReskinned && ! loadingResults && this.props.reskinSideContent }
 				</>
 			);
 		}
@@ -1351,7 +1361,6 @@ class RegisterDomainStep extends React.Component {
 			lastDomainSearched,
 			lastDomainStatus,
 			premiumDomains,
-			lastQuery,
 		} = this.state;
 
 		const matchesSearchedDomain = ( suggestion ) => suggestion.domain_name === exactMatchDomain;
@@ -1364,10 +1373,9 @@ class RegisterDomainStep extends React.Component {
 
 		// the search returned no results
 		if (
-			lastQuery.length === 0 ||
-			( suggestions.length === 0 &&
-				! this.state.loadingResults &&
-				this.props.showExampleSuggestions )
+			suggestions.length === 0 &&
+			! this.state.loadingResults &&
+			this.props.showExampleSuggestions
 		) {
 			return this.renderExampleSuggestions();
 		}
