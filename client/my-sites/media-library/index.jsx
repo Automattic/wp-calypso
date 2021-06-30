@@ -26,7 +26,6 @@ import {
 	getKeyringConnections,
 } from 'calypso/state/sharing/keyring/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import hasAvailableSiteFeature from 'calypso/state/selectors/has-available-site-feature';
 import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
@@ -228,7 +227,6 @@ export default connect(
 		needsKeyring: needsKeyring( state, source ),
 		selectedItems: getMediaLibrarySelectedItems( state, site?.ID ),
 		isJetpack: isJetpackSite( state, site?.ID ),
-		isAtomic: isAtomicSite( state, site?.ID ),
 		hasVideoUploadFeature: hasActiveSiteFeature( state, site.ID, 'videopress' ),
 		hasVideoUploadAvailableFeature: hasAvailableSiteFeature( state, site.ID, 'videopress' ),
 	} ),
