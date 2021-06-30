@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { intersection, difference, includes, flowRight as compose } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
+import { Button } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -57,6 +58,7 @@ class ThemesMagicSearchCard extends React.Component {
 			editedSearchElement: '',
 			cursorPosition: 0,
 			searchInput: this.props.search,
+			isWelcomeBarEnabled: false,
 		};
 	}
 
@@ -233,6 +235,16 @@ class ThemesMagicSearchCard extends React.Component {
 	};
 
 	insertTextInInput = ( text ) => {
+		// Used by the "Magic Welcome Bar".
+
+		// Add an extra leading space sometimes. If the user has "abcd" in
+		// their bar and they click to add "feature:", we want "abcd feature:",
+		// not "abcdfeature:".
+		const { searchInput, cursorPosition } = this.state;
+		if ( searchInput[ cursorPosition - 1 ] !== ' ' ) {
+			text = ' ' + text;
+		}
+
 		const updatedInput = this.insertTextAtCursor( text );
 		this.updateInput( updatedInput );
 	};
@@ -254,8 +266,15 @@ class ThemesMagicSearchCard extends React.Component {
 		this.focusOnInput();
 	};
 
+	handleWelcomeBarToggle = () => {
+		this.setState( ( prevState ) => ( {
+			isWelcomeBarEnabled: ! prevState.isWelcomeBarEnabled,
+		} ) );
+	};
+
 	render() {
 		const { translate, filters, showTierThemesControl } = this.props;
+		const { isWelcomeBarEnabled } = this.state;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
 
 		const tiers = [
@@ -331,6 +350,16 @@ class ThemesMagicSearchCard extends React.Component {
 								onSelect={ this.props.select }
 							/>
 						) }
+						<div>
+							<Button
+								onClick={ this.handleWelcomeBarToggle }
+								className="is-link themes-magic-search-card__advanced-toggle"
+							>
+								{ isWelcomeBarEnabled
+									? translate( 'Hide Advanced' )
+									: translate( 'Show Advanced' ) }
+							</Button>
+						</div>
 					</div>
 				</StickyPanel>
 				<div role="presentation" onClick={ this.handleClickInside }>
@@ -342,7 +371,7 @@ class ThemesMagicSearchCard extends React.Component {
 							suggest={ this.suggest }
 						/>
 					) }
-					{ ! renderSuggestions && (
+					{ isWelcomeBarEnabled && (
 						<MagicSearchWelcome
 							ref={ this.setSuggestionsRefs( 'welcome' ) }
 							taxonomies={ filtersKeys }
