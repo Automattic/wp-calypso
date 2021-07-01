@@ -3,12 +3,7 @@
  */
 import React, { useEffect } from 'react';
 import { CompactCard } from '@automattic/components';
-import {
-	findFirstSimilarPlanKey,
-	FEATURE_GOOGLE_ANALYTICS,
-	TYPE_PREMIUM,
-	PLAN_PREMIUM,
-} from '@automattic/calypso-products';
+import { FEATURE_GOOGLE_ANALYTICS } from '@automattic/calypso-products';
 import { ToggleControl } from '@wordpress/components';
 
 /**
@@ -48,8 +43,7 @@ const GoogleAnalyticsSimpleForm = ( {
 	showUpgradeNudge,
 	site,
 	translate,
-	isFreeWPCOM,
-	isAtomic,
+	availableUpgrade,
 } ) => {
 	const analyticsSupportUrl = 'https://wordpress.com/support/google-analytics/';
 	const nudgeTitle = translate(
@@ -76,13 +70,6 @@ const GoogleAnalyticsSimpleForm = ( {
 	};
 
 	const renderForm = () => {
-		const plan =
-			isFreeWPCOM && isAtomic
-				? PLAN_PREMIUM
-				: findFirstSimilarPlanKey( site.plan.product_slug, {
-						type: TYPE_PREMIUM,
-				  } );
-
 		const nudge = (
 			<UpsellNudge
 				description={ translate(
@@ -90,7 +77,7 @@ const GoogleAnalyticsSimpleForm = ( {
 				) }
 				event={ 'google_analytics_settings' }
 				feature={ FEATURE_GOOGLE_ANALYTICS }
-				plan={ plan }
+				plan={ availableUpgrade }
 				showIcon={ true }
 				title={ nudgeTitle }
 			/>

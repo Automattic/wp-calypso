@@ -10,8 +10,8 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card, Button } from '@automattic/components';
-import hasSiteSeoFeature from 'calypso/state/selectors/has-site-seo-feature';
-import isSiteWPCOMOnFreePlan from 'calypso/state/selectors/is-site-wpcom-on-free-plan';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
+import getAvailablePlanUpgrade from 'calypso/state/selectors/get-available-plan-upgrade';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
@@ -46,13 +46,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import { hasFeature } from 'calypso/state/sites/plans/selectors';
 import { getPlugins } from 'calypso/state/plugins/installed/selectors';
-import {
-	FEATURE_ADVANCED_SEO,
-	FEATURE_SEO_PREVIEW_TOOLS,
-	TYPE_BUSINESS,
-	PLAN_BUSINESS,
-	findFirstSimilarPlanKey,
-} from '@automattic/calypso-products';
+import { FEATURE_ADVANCED_SEO, FEATURE_SEO_PREVIEW_TOOLS } from '@automattic/calypso-products';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
@@ -276,8 +270,8 @@ export class SeoForm extends React.Component {
 			siteIsJetpack,
 			siteIsComingSoon,
 			showAdvancedSeo,
-			isFreeWPCOM,
 			isAtomic,
+			availableUpgrade,
 			showWebsiteMeta,
 			selectedSite,
 			isSeoToolsActive,
@@ -316,13 +310,7 @@ export class SeoForm extends React.Component {
 							'Boost your search engine ranking with the powerful SEO tools in the Business plan'
 						),
 						feature: FEATURE_ADVANCED_SEO,
-						plan:
-							isFreeWPCOM && isAtomic
-								? PLAN_BUSINESS
-								: selectedSite.plan &&
-								  findFirstSimilarPlanKey( selectedSite.plan.product_slug, {
-										type: TYPE_BUSINESS,
-								  } ),
+						plan: availableUpgrade,
 				  };
 
 		// To ensure two Coming Soon badges don't appear while sites with Coming Soon v1 (isSitePrivate && siteIsComingSoon) still exist.
@@ -487,7 +475,7 @@ const mapStateToProps = ( state ) => {
 	// will soon be available on all Jetpack sites, so we're checking
 	// the availability of the module.
 	const isAdvancedSeoEligible =
-		hasSiteSeoFeature( state, siteId ) &&
+		hasActiveSiteFeature( state, siteId, FEATURE_ADVANCED_SEO ) &&
 		( ! siteIsJetpack || get( getJetpackModules( state, siteId ), 'seo-tools.available', false ) );
 
 	const activePlugins = getPlugins( state, [ siteId ], 'active' );
@@ -502,8 +490,8 @@ const mapStateToProps = ( state ) => {
 		selectedSite,
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
 		showAdvancedSeo: isAdvancedSeoEligible,
-		isFreeWPCOM: isSiteWPCOMOnFreePlan( state, siteId ),
 		isAtomic: isAtomicSite( state, siteId ),
+		availableUpgrade: getAvailablePlanUpgrade( state, siteId, FEATURE_ADVANCED_SEO ),
 		showWebsiteMeta: !! get( selectedSite, 'options.advanced_seo_front_page_description', '' ),
 		isSeoToolsActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 		isSiteHidden: isHiddenSite( state, siteId ),

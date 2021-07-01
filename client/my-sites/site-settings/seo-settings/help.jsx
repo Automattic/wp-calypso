@@ -17,7 +17,8 @@ import SupportInfo from 'calypso/components/support-info';
 import getJetpackModules from 'calypso/state/selectors/get-jetpack-modules';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import hasSiteSeoFeature from 'calypso/state/selectors/has-site-seo-feature';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
+import { FEATURE_ADVANCED_SEO } from '@automattic/calypso-products';
 
 const SeoSettingsHelpCard = ( {
 	disabled,
@@ -78,7 +79,7 @@ export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const hasAdvancedSEOFeature =
-		hasSiteSeoFeature( state, siteId ) &&
+		hasActiveSiteFeature( state, siteId, FEATURE_ADVANCED_SEO ) &&
 		( ! siteIsJetpack || get( getJetpackModules( state, siteId ), 'seo-tools.available', false ) );
 
 	return {

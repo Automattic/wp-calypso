@@ -8,8 +8,9 @@ import { flowRight, partialRight, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import hasSiteAnalyticsFeature from 'calypso/state/selectors/has-site-analytics-feature';
-import isSiteWPCOMOnFreePlan from 'calypso/state/selectors/is-site-wpcom-on-free-plan';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
+import { FEATURE_GOOGLE_ANALYTICS } from '@automattic/calypso-products';
+import getAvailablePlanUpgrade from 'calypso/state/selectors/get-available-plan-upgrade';
 import wrapSettingsForm from '../wrap-settings-form';
 import { getPlugins } from 'calypso/state/plugins/installed/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -40,8 +41,9 @@ export const GoogleAnalyticsForm = ( props ) => {
 		eventTracker,
 		uniqueEventTracker,
 		path,
-		isFreeWPCOM,
+		availableUpgrade,
 		isAtomic,
+		isGoogleAnalyticsEligible,
 	} = props;
 	const [ isCodeValid, setIsCodeValid ] = useState( true );
 	const [ loggedGoogleAnalyticsModified, setLoggedGoogleAnalyticsModified ] = useState( false );
@@ -92,10 +94,10 @@ export const GoogleAnalyticsForm = ( props ) => {
 		placeholderText,
 		recordSupportLinkClick,
 		setDisplayForm,
-		isFreeWPCOM,
+		availableUpgrade,
 		isAtomic,
 	};
-	if ( props.siteIsJetpack && ! isFreeWPCOM ) {
+	if ( ( props.siteIsJetpack && ! isAtomic ) || ( isAtomic && isGoogleAnalyticsEligible ) ) {
 		return <GoogleAnalyticsJetpackForm { ...newProps } />;
 	}
 	return <GoogleAnalyticsSimpleForm { ...newProps } />;
@@ -104,7 +106,7 @@ export const GoogleAnalyticsForm = ( props ) => {
 const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
-	const isGoogleAnalyticsEligible = hasSiteAnalyticsFeature( state, siteId );
+	const isGoogleAnalyticsEligible = hasActiveSiteFeature( state, siteId, FEATURE_GOOGLE_ANALYTICS );
 	const jetpackModuleActive = isJetpackModuleActive( state, siteId, 'google-analytics' );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const googleAnalyticsEnabled = site && ( ! siteIsJetpack || jetpackModuleActive );
@@ -120,8 +122,9 @@ const mapStateToProps = ( state ) => {
 		siteIsJetpack,
 		sitePlugins,
 		jetpackModuleActive,
-		isFreeWPCOM: isSiteWPCOMOnFreePlan( state, siteId ),
+		availableUpgrade: getAvailablePlanUpgrade( state, siteId, FEATURE_GOOGLE_ANALYTICS ),
 		isAtomic: isAtomicSite( state, siteId ),
+		isGoogleAnalyticsEligible,
 	};
 };
 
