@@ -160,6 +160,11 @@ const deleteTemplateParts = async function ( driver ) {
 };
 
 const backToCalypso = async function ( driver ) {
+	if ( driverManager.currentScreenSize() === 'mobile' ) {
+		await driverHelper.clickWhenClickable( driver, By.css( '#wp-admin-bar-blog' ) );
+		return;
+	}
+
 	await driverHelper.clickWhenClickable(
 		driver,
 		driverHelper.createTextLocator( By.css( '.wp-menu-name' ), 'Plans' )
