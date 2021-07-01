@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Upwork UpsellNudge renders correctly 1`] = `
+exports[`UpworkBanner renders correctly 1`] = `
 <div class="card banner upsell-nudge upwork-banner has-call-to-action is-dismissible">
    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="gridicon gridicons-cross dismissible-card__close-icon" height="24" width="24">
       <use xlink:href="/calypso/evergreen/images/gridicons-84d04a83ed8c3cfc40de995e9bd32649.svg#gridicons-cross"></use>
