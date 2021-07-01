@@ -357,10 +357,21 @@ class ThemesMagicSearchCard extends React.Component {
 	}
 }
 
+let allowSomeThemeFilters = ( x ) => x;
+let allowSomeAllValidFilters = ( x ) => x;
+
+if ( config.isEnabled( 'theme/showcase-revamp' ) ) {
+	// Magic Search only allows "feature", "column", "subject" theme attributes to be searched
+	// For simplicity and less user confusion.
+	allowSomeThemeFilters = ( { feature, column, subject } ) => ( { feature, column, subject } );
+	allowSomeAllValidFilters = ( filtersKeys ) =>
+		intersection( filtersKeys, [ 'feature', 'column', 'subject' ] );
+}
+
 export default compose(
 	connect( ( state ) => ( {
-		filters: getThemeFilters( state ),
-		allValidFilters: Object.keys( getThemeFilterToTermTable( state ) ),
+		filters: allowSomeThemeFilters( getThemeFilters( state ) ),
+		allValidFilters: allowSomeAllValidFilters( Object.keys( getThemeFilterToTermTable( state ) ) ),
 	} ) ),
 	localize,
 	wrapWithClickOutside,
