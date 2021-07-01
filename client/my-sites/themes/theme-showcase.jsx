@@ -74,7 +74,7 @@ class ThemeShowcase extends React.Component {
 		this.scrollRef = React.createRef();
 		this.bookmarkRef = React.createRef();
 		this.state = {
-			tabFilter: 'recommended',
+			tabFilter: this.props.loggedOutComponent ? 'all' : 'recommended',
 		};
 	}
 
@@ -304,7 +304,7 @@ class ThemeShowcase extends React.Component {
 					) }
 					{ this.props.upsellBanner }
 
-					{ 'recommended' === this.state.tabFilter && isLoggedIn && (
+					{ 'recommended' === this.state.tabFilter && (
 						<RecommendedThemes
 							upsellUrl={ this.props.upsellUrl }
 							search={ search }
