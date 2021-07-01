@@ -173,7 +173,8 @@ export function tryPluginInstall( selectedSiteId: number, pluginSlugToBeInstalle
 export function trySiteTransfer( selectedSiteId: number, pluginSlugToBeInstalled: string ) {
 	return function ( dispatch: Dispatch< AnyAction >, getState: () => IAppState ): void {
 		const state = getState();
-		const { siteTransferStatus } = getPurchaseFlowState( state );
+		const purchaseFlowState = getPurchaseFlowState( state );
+		const { siteTransferStatus } = purchaseFlowState;
 		// First, figure out if the site is already transferred
 		const { fetchingStatus: isFetchingTransferState, status } = getAutomatedTransfer(
 			state,
@@ -189,8 +190,10 @@ export function trySiteTransfer( selectedSiteId: number, pluginSlugToBeInstalled
 					dispatch( siteTransferStateChange( MARKETPLACE_ASYNC_PROCESS_STATUS.COMPLETED ) );
 					break;
 				case transferStates.NONE:
+				case transferStates.REVERTED:
 					// The transferStates.NONE state corresponds to when the transfer details request returns the error response with message "An invalid transfer ID was passed.""
-					// This actually means there is no transfer that exists in the current site
+					// The transferStates.REVERTED state corresponds to when after a site was reverted
+					// These states mean there is no transfer that exists in the current site
 					dispatch( initiateThemeTransfer( selectedSiteId, null, pluginSlugToBeInstalled ) );
 					dispatch( siteTransferStateChange( MARKETPLACE_ASYNC_PROCESS_STATUS.IN_PROGRESS ) );
 					break;
@@ -201,12 +204,20 @@ export function trySiteTransfer( selectedSiteId: number, pluginSlugToBeInstalled
 							'The transfer state fetch request failed'
 						)
 					);
+					break;
 				case transferStates.ERROR:
 					dispatch(
 						siteTransferStateChange(
 							MARKETPLACE_ASYNC_PROCESS_STATUS.ERROR,
 							'The fetched backend transfer status indicated an error state'
 						)
+					);
+					break;
+				default:
+					marketplaceDebugger(
+						'::MARKETPLACE::WARNING:: An unrecognized transfer state was ignored',
+						{ transferStatus: status },
+						{ purchaseFlowState }
 					);
 			}
 		}

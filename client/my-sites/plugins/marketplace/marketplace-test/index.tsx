@@ -108,10 +108,10 @@ export default function MarketplaceTest(): JSX.Element {
 			{ selectedSiteId && <QueryJetpackPlugins siteIds={ [ selectedSiteId ] } /> }
 			<SidebarNavigation />
 			<Card key="heading">
-				<CardHeading tagName="h1" size={ 24 }>
+				<CardHeading key="title" tagName="h1" size={ 24 }>
 					Marketplace Test Page
 				</CardHeading>
-				<CardHeading tagName="h1" size={ 24 }>
+				<CardHeading key="site-details" tagName="h1" size={ 24 }>
 					<div>Current Site : { selectedSite?.domain }</div>
 				</CardHeading>
 			</Card>
@@ -142,10 +142,10 @@ export default function MarketplaceTest(): JSX.Element {
 				<Card key="transfer-information">
 					<CardHeading tagName="h1" size={ 21 }>
 						Transfer Details <Button onClick={ refreshTransferDetails }>Refresh</Button>
-						<div>
+						<div key="selector">
 							selector:<strong>transferDetails</strong>
 						</div>
-						<div>
+						<div key="dispatch">
 							dispatch:<strong>fetchAutomatedTransferStatus</strong>
 						</div>
 					</CardHeading>
@@ -159,10 +159,10 @@ export default function MarketplaceTest(): JSX.Element {
 					) }
 					<CardHeading tagName="h1" size={ 21 }>
 						Eligibility Details
-						<div>
+						<div key="selector">
 							selector:<strong>getEligibility</strong>
 						</div>
-						<div>
+						<div key="dispatch">
 							dispatch:<strong>fetchAutomatedTransferStatus</strong>
 						</div>
 					</CardHeading>
@@ -172,8 +172,8 @@ export default function MarketplaceTest(): JSX.Element {
 						</div>
 					) ) }
 				</Card>
-				<CompactCard>
-					<CardHeading tagName="h1" size={ 21 }>
+				<CompactCard key="warnings">
+					<CardHeading key="title" tagName="h1" size={ 21 }>
 						Warnings
 					</CardHeading>
 					<WarningList
@@ -182,13 +182,14 @@ export default function MarketplaceTest(): JSX.Element {
 						translate={ translate }
 					/>
 				</CompactCard>
-				<CompactCard>
+				<CompactCard key="blocking-messages">
 					<CardHeading tagName="h1" size={ 21 }>
 						Blocking Messages
 					</CardHeading>
 					{ hasHardBlock &&
 						raisedBlockingMessages.map( ( message ) => (
 							<Notice
+								key={ message.message }
 								status={ message.status }
 								text={ message.message }
 								showDismiss={ false }
@@ -200,11 +201,11 @@ export default function MarketplaceTest(): JSX.Element {
 				<Card>
 					<CardHeading tagName="h1" size={ 21 }>
 						Plugin Statuses : selector : getPluginOnSite
-						<div>
+						<div key="details">
 							selector : isRequestingForSite : { JSON.stringify( { isRequestingForSite } ) }
 						</div>
 					</CardHeading>
-					<Card>
+					<Card key="yoast-premium">
 						Yoast Premium plugin Query : Type of yoastPremiumPluginOnSite -
 						{ typeof yoastPremiumPluginOnSite }
 						{ yoastPremiumPluginOnSite &&
@@ -215,7 +216,7 @@ export default function MarketplaceTest(): JSX.Element {
 							) ) }
 					</Card>
 
-					<Card>
+					<Card key="yoast-free">
 						Yoast Free plugin Query : Type of yoastFreePluginOnSite -
 						{ typeof yoastFreePluginOnSite }
 						{ yoastFreePluginOnSite &&
@@ -225,7 +226,7 @@ export default function MarketplaceTest(): JSX.Element {
 								</div>
 							) ) }
 					</Card>
-					<Card>
+					<Card key="contact-form">
 						Contact Form plugin Query: Type of - { typeof contactFormPlugin }
 						{ contactFormPlugin &&
 							level1ObjectMap( contactFormPlugin ).map( ( { key, value } ) => (
