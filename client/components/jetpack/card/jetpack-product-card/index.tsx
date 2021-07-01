@@ -64,7 +64,6 @@ type OwnProps = {
 	featuredLabel?: TranslateResult;
 	hideSavingLabel?: boolean;
 	scrollCardIntoView?: ScrollCardIntoViewCallback;
-	position?: number;
 };
 
 export type Props = OwnProps & Partial< FeaturesProps >;
@@ -240,7 +239,6 @@ const JetpackProductCard: React.FC< Props > = ( {
 	hideSavingLabel,
 	aboveButtonText = null,
 	scrollCardIntoView,
-	position,
 }: Props ) => {
 	const translate = useTranslate();
 	const parsedHeadingLevel = Number.isFinite( headingLevel )
@@ -266,17 +264,20 @@ const JetpackProductCard: React.FC< Props > = ( {
 	);
 
 	useEffect( () => {
+		const { current: observer } = onScreenObserver;
 		if ( cardElement.current ) {
-			onScreenObserver.current.observe( cardElement.current );
+			observer.observe( cardElement.current );
 		}
+		return () => {
+			observer.disconnect();
+		};
 	} );
 
 	useEffect( () => {
 		if ( hasBeenSeen ) {
-			// send product impression GA EEcommerce event
-			console.log( `send product impression GA EEcommerce event ${ productSlug }` );
 			if ( isGoogleAnalyticsAllowed() ) {
-				window.gtag();
+				// send product impression GA EEcommerce event
+				console.log( `send product impression GA EEcommerce event ${ productSlug }` );
 			}
 		}
 	}, [ hasBeenSeen, productSlug ] );
