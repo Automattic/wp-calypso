@@ -133,8 +133,6 @@ body.is-section-home {
 	}
 }
 
-
-/** Restyle sidebar on light themes **/
 .is-section-home.is-nav-unification .sidebar .sidebar__heading::after, .is-section-home.is-nav-unification .sidebar .sidebar__menu-link::after {
 	border-right-color: var( --studio-white );
 }
