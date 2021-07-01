@@ -10,7 +10,6 @@ import {
 	checkout,
 	checkoutPending,
 	checkoutThankYou,
-	gsuiteNudge,
 	upsellNudge,
 	redirectToSupportSession,
 	redirectJetpackLegacyPlans,
@@ -19,51 +18,26 @@ import {
 import { noop } from './utils';
 import { recordSiftScienceUser } from 'calypso/lib/siftscience';
 import { makeLayout, redirectLoggedOut, render as clientRender } from 'calypso/controller';
-import { noSite, siteSelection } from 'calypso/my-sites/controller';
+import { loggedInSiteSelection, noSite, siteSelection } from 'calypso/my-sites/controller';
 import { isEnabled } from '@automattic/calypso-config';
-import userFactory from 'calypso/lib/user';
 
 export default function () {
 	page( '/checkout*', recordSiftScienceUser );
 
-	const user = userFactory();
-	const isLoggedOut = ! user.get();
-
-	if ( isLoggedOut ) {
-		if ( isEnabled( 'jetpack/userless-checkout' ) ) {
-			page( '/checkout/jetpack/:siteSlug/:productSlug', checkout, makeLayout, clientRender );
-			page(
-				'/checkout/jetpack/thank-you/:site/:product',
-				jetpackCheckoutThankYou,
-				makeLayout,
-				clientRender
-			);
-		}
-
-		page( '/checkout/offer-quickstart-session', upsellNudge, makeLayout, clientRender );
-
-		page( '/checkout/no-site/:lang?', noSite, checkout, makeLayout, clientRender );
-
-		page( '/checkout*', redirectLoggedOut );
-
-		return;
-	}
-
-	// Handle logged-in user visiting Jetpack checkout
 	if ( isEnabled( 'jetpack/userless-checkout' ) ) {
 		page( '/checkout/jetpack/:siteSlug/:productSlug', checkout, makeLayout, clientRender );
 		page(
 			'/checkout/jetpack/thank-you/:site/:product',
-			siteSelection,
+			loggedInSiteSelection,
 			jetpackCheckoutThankYou,
 			makeLayout,
 			clientRender
 		);
 	}
 
-	// Show these paths only for logged in users
 	page(
 		'/checkout/thank-you/no-site/pending/:orderId',
+		redirectLoggedOut,
 		siteSelection,
 		checkoutPending,
 		makeLayout,
@@ -72,6 +46,7 @@ export default function () {
 
 	page(
 		'/checkout/thank-you/no-site/:receiptId?',
+		redirectLoggedOut,
 		noSite,
 		checkoutThankYou,
 		makeLayout,
@@ -80,6 +55,7 @@ export default function () {
 
 	page(
 		'/checkout/thank-you/:site/pending/:orderId',
+		redirectLoggedOut,
 		siteSelection,
 		checkoutPending,
 		makeLayout,
@@ -88,6 +64,7 @@ export default function () {
 
 	page(
 		'/checkout/thank-you/:site/:receiptId?',
+		redirectLoggedOut,
 		siteSelection,
 		checkoutThankYou,
 		makeLayout,
@@ -96,6 +73,7 @@ export default function () {
 
 	page(
 		'/checkout/thank-you/:site/:receiptId/with-gsuite/:gsuiteReceiptId',
+		redirectLoggedOut,
 		siteSelection,
 		checkoutThankYou,
 		makeLayout,
@@ -104,16 +82,18 @@ export default function () {
 
 	page(
 		'/checkout/thank-you/features/:feature/:site/:receiptId?',
+		redirectLoggedOut,
 		siteSelection,
 		checkoutThankYou,
 		makeLayout,
 		clientRender
 	);
 
-	page( '/checkout/no-site', noSite, checkout, makeLayout, clientRender );
+	page( '/checkout/no-site/:lang?', noSite, checkout, makeLayout, clientRender );
 
 	page(
 		'/checkout/features/:feature/:domain/:plan_name?',
+		redirectLoggedOut,
 		siteSelection,
 		checkout,
 		makeLayout,
@@ -126,6 +106,7 @@ export default function () {
 
 		page(
 			'/checkout/offer-support-session/:site?',
+			redirectLoggedOut,
 			siteSelection,
 			upsellNudge,
 			makeLayout,
@@ -134,6 +115,7 @@ export default function () {
 
 		page(
 			'/checkout/offer-support-session/:receiptId/:site',
+			redirectLoggedOut,
 			siteSelection,
 			upsellNudge,
 			makeLayout,
@@ -142,7 +124,7 @@ export default function () {
 
 		page(
 			'/checkout/offer-quickstart-session/:site?',
-			siteSelection,
+			loggedInSiteSelection,
 			upsellNudge,
 			makeLayout,
 			clientRender
@@ -150,6 +132,7 @@ export default function () {
 
 		page(
 			'/checkout/offer-quickstart-session/:receiptId/:site',
+			redirectLoggedOut,
 			siteSelection,
 			upsellNudge,
 			makeLayout,
@@ -159,6 +142,7 @@ export default function () {
 
 	page(
 		'/checkout/:domainOrProduct',
+		redirectLoggedOut,
 		siteSelection,
 		isEnabled( 'jetpack/redirect-legacy-plans' ) ? redirectJetpackLegacyPlans : noop,
 		checkout,
@@ -168,6 +152,7 @@ export default function () {
 
 	page(
 		'/checkout/:product/:domainOrProduct',
+		redirectLoggedOut,
 		siteSelection,
 		isEnabled( 'jetpack/redirect-legacy-plans' ) ? redirectJetpackLegacyPlans : noop,
 		checkout,
@@ -180,6 +165,7 @@ export default function () {
 
 	page(
 		'/checkout/:product/renew/:purchaseId/:domain',
+		redirectLoggedOut,
 		siteSelection,
 		checkout,
 		makeLayout,
@@ -188,8 +174,8 @@ export default function () {
 
 	page(
 		'/checkout/:site/with-gsuite/:domain/:receiptId?',
+		redirectLoggedOut,
 		siteSelection,
-		gsuiteNudge,
 		makeLayout,
 		clientRender
 	);
@@ -199,9 +185,12 @@ export default function () {
 
 	page(
 		'/checkout/:site/offer-plan-upgrade/:upgradeItem/:receiptId?',
+		redirectLoggedOut,
 		siteSelection,
 		upsellNudge,
 		makeLayout,
 		clientRender
 	);
+
+	page( '/checkout*', redirectLoggedOut );
 }

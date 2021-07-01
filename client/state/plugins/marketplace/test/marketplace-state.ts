@@ -45,7 +45,7 @@ describe( 'Marketplace reducer', () => {
 		expect( recievedState ).toEqual( expectedState );
 	} );
 
-	test( 'should set flag to indicate if plugin was istalled during checkout purchase', () => {
+	test( 'should set flag to indicate if plugin was installed during checkout purchase', () => {
 		const action = setIsPluginInstalledDuringPurchase( true );
 
 		const recievedState = purchaseFlowReducer( defaultMarketPlaceState, action );

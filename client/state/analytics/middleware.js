@@ -27,7 +27,7 @@ const eventServices = {
 
 const pageViewServices = {
 	ga: ( { url, title } ) => gaRecordPageView( url, title ),
-	default: ( { url, title, ...params } ) => recordPageView( url, title, params ),
+	default: ( { url, title, options, ...params } ) => recordPageView( url, title, params, options ),
 };
 
 const loadTrackingTool = ( trackingTool ) => {

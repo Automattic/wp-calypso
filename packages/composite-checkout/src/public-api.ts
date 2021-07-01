@@ -44,7 +44,6 @@ import {
 import { createIdealPaymentMethodStore, createIdealMethod } from './lib/payment-methods/ideal';
 import { createSofortPaymentMethodStore, createSofortMethod } from './lib/payment-methods/sofort';
 import { createAlipayPaymentMethodStore, createAlipayMethod } from './lib/payment-methods/alipay';
-import { createEpsPaymentMethodStore, createEpsMethod } from './lib/payment-methods/eps';
 import {
 	createStripeMethod,
 	createStripePaymentMethodStore,
@@ -110,8 +109,6 @@ export {
 	checkoutTheme,
 	createAlipayMethod,
 	createAlipayPaymentMethodStore,
-	createEpsMethod,
-	createEpsPaymentMethodStore,
 	createExistingCardMethod,
 	createIdealMethod,
 	createIdealPaymentMethodStore,

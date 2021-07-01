@@ -31,7 +31,7 @@ const QuickStart = ( { nextSession, reschedule, siteId, siteSlug, viewDetails } 
 	return (
 		<>
 			{ siteId && <QueryConciergeInitial siteId={ siteId } /> }
-			<Card className="quick-start next-session">
+			<Card className="quick-start next-session customer-home__card">
 				<HappinessEngineersTray />
 				<CardHeading>{ translate( 'Your scheduled Quick Start support session:' ) }</CardHeading>
 				<table>

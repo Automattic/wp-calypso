@@ -225,8 +225,9 @@ class KeyedSuggestions extends React.Component {
 			// Try a full match first and try substring matches
 			const cleanFilterTerm = this.sanitizeInput( filterTerm );
 			let multiRegex = cleanFilterTerm;
-			for ( let i = cleanFilterTerm.length; i > 1; i-- ) {
-				multiRegex += '|' + cleanFilterTerm.replace( new RegExp( '(.{' + i + '})', 'g' ), '$1.*' );
+			for ( let i = cleanFilterTerm.length - 1; i > 1; i-- ) {
+				multiRegex +=
+					'|' + cleanFilterTerm.replace( new RegExp( '(.{' + i + '})', 'g' ), '$1\\w+' );
 			}
 			const regex = new RegExp( multiRegex, 'iu' );
 

@@ -14,54 +14,119 @@ import theme from 'calypso/my-sites/plugins/marketplace/theme';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
-import { initiateThemeTransfer } from 'calypso/state/themes/actions';
-import { getPurchaseFlowState } from 'calypso/state/plugins/marketplace/selectors';
-import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
-import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
+import {
+	getPurchaseFlowState,
+	getIsProductSetupComplete,
+	getHasProductSetupError,
+} from 'calypso/state/plugins/marketplace/selectors';
 import SimulatedProgressBar from 'calypso/my-sites/plugins/marketplace/components/simulated-progressbar';
-
+import { getAutomatedTransfer } from 'calypso/state/automated-transfer/selectors';
+import { tryProductInstall } from 'calypso/state/plugins/marketplace/actions';
+import {
+	navigateToInstallationThankYouPage,
+	navigateToProductHomePage,
+	waitFor,
+} from 'calypso/my-sites/plugins/marketplace/util';
+import {
+	isLoaded,
+	isRequestingForSites,
+	getStatusForPlugin,
+} from 'calypso/state/plugins/installed/selectors';
+import {
+	isFetching as getIsWporgPluginFetching,
+	isFetched as getIsWporgPluginFetched,
+	getPlugin as getWporgPlugin,
+} from 'calypso/state/plugins/wporg/selectors';
 /**
  * Style dependencies
  */
 import 'calypso/my-sites/plugins/marketplace/marketplace-plugin-setup-status/style.scss';
+import { marketplaceDebugger } from 'calypso/my-sites/plugins/marketplace/constants';
 
 /**
- * This component simulates progress for the purchase flow. It also does any async tasks required in the purchase flow. This includes installing any plugins required.
- * TODO: Refactor component so that it can easily handle multiple speeds of simulated progress
+ * This page busy waits and installs any plugins that are required in the marketplace purchase flow.
  */
-
 function WrappedMarketplacePluginSetup(): JSX.Element {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const selectedSiteId = useSelector( getSelectedSiteId );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
-	const transferStatus = useSelector( ( state ) =>
-		getAutomatedTransferStatus( state, selectedSiteId )
-	);
-	const { pluginSlugToBeInstalled, isPluginInstalledDuringPurchase } = useSelector(
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const {
+		fetchingStatus: automatedTransferFetchingStatus,
+		status: automatedTransferStatus,
+	} = useSelector( ( state ) => getAutomatedTransfer( state, selectedSiteId ) );
+
+	const { pluginSlugToBeInstalled, siteTransferStatus, pluginInstallationStatus } = useSelector(
 		getPurchaseFlowState
 	);
+	const hasProductSetupError = useSelector( getHasProductSetupError );
+	const isProductSetupComplete = useSelector( getIsProductSetupComplete );
 
-	useEffect( () => {
-		dispatch( fetchAutomatedTransferStatus( selectedSiteId ?? 0 ) );
-	}, [ fetchAutomatedTransferStatus ] );
+	const pluginStatus = useSelector( ( state ) =>
+		getStatusForPlugin( state, selectedSiteId, pluginSlugToBeInstalled )
+	);
+	const isPluginStateLoaded = useSelector( ( state ) => isLoaded( state, [ selectedSiteId ] ) );
+	const isPluginStateFetching = useSelector( ( state ) =>
+		isRequestingForSites( state, [ selectedSiteId ] )
+	);
 
+	// WPorg Plugin Data
+	const isWporgPluginFetching = useSelector( ( state ) =>
+		getIsWporgPluginFetching( state, pluginSlugToBeInstalled )
+	);
+	const isWporgPluginFetched = useSelector( ( state ) =>
+		getIsWporgPluginFetched( state, pluginSlugToBeInstalled )
+	);
+	const wporgPlugin = useSelector( ( state ) => getWporgPlugin( state, pluginSlugToBeInstalled ) );
 	useEffect( () => {
-		if ( pluginSlugToBeInstalled && selectedSiteId ) {
-			dispatch( initiateThemeTransfer( selectedSiteId, null, pluginSlugToBeInstalled ) );
-		} else if ( ! isPluginInstalledDuringPurchase ) {
-			// Invalid State redirect to Yoast marketplace page for now, and maybe a marketplace home view in the future
-			page(
-				`/marketplace/product/details/wordpress-seo/${ selectedSiteSlug }?flags=marketplace-yoast`
+		if ( ! selectedSiteSlug ) {
+			page( '/home' );
+		} else if ( ! pluginSlugToBeInstalled ) {
+			// A plugin slug should have been provided to reach this page
+			marketplaceDebugger(
+				'::MARKETPLACE::ERROR:: There is an error in plugin setup page pluginSlugToBeInstalled is not provided'
 			);
+			page( `/home/${ selectedSiteSlug }` );
 		}
-	}, [ dispatch, pluginSlugToBeInstalled, isPluginInstalledDuringPurchase, selectedSiteId ] );
+	}, [ dispatch, pluginSlugToBeInstalled, selectedSiteSlug ] );
 
 	useEffect( () => {
-		if ( transferStatus === 'complete' ) {
-			page( `/marketplace/thank-you/${ selectedSiteId }?flags=marketplace-yoast` );
+		if ( hasProductSetupError ) {
+			marketplaceDebugger( '::MARKETPLACE::ERROR:: There is an error in product setup' );
+			selectedSiteSlug &&
+				pluginSlugToBeInstalled &&
+				navigateToProductHomePage( selectedSiteSlug, pluginSlugToBeInstalled );
+		} else if ( isProductSetupComplete ) {
+			/**
+			 * Wait for simulated progressbar to catchup
+			 */
+			waitFor( 5 ).then(
+				() => selectedSiteSlug && navigateToInstallationThankYouPage( selectedSiteSlug )
+			);
+		} else {
+			// For each effect call, try to install the plugin
+			dispatch( tryProductInstall() );
 		}
-	}, [ selectedSiteId, selectedSiteSlug, transferStatus ] );
+	}, [
+		dispatch,
+		selectedSiteSlug,
+		pluginInstallationStatus,
+		siteTransferStatus,
+		hasProductSetupError,
+		isProductSetupComplete,
+		pluginSlugToBeInstalled,
+		/**
+		 * Additional subscribed states to run tryProductInstall
+		 */
+		pluginStatus,
+		automatedTransferFetchingStatus,
+		automatedTransferStatus,
+		isPluginStateLoaded,
+		isPluginStateFetching,
+		isWporgPluginFetching,
+		isWporgPluginFetched,
+		wporgPlugin,
+	] );
 
 	const STEP_1 = translate( 'Installing plugin' );
 	const STEP_2 = translate( 'Activating plugin' );
@@ -72,7 +137,7 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 			<Masterbar></Masterbar>
 			<div className="marketplace-plugin-setup-status__root">
 				<div>
-					<SimulatedProgressBar steps={ steps } />
+					<SimulatedProgressBar steps={ steps } accelerateCompletion={ isProductSetupComplete } />
 				</div>
 			</div>
 		</>

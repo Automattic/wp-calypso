@@ -15,11 +15,8 @@ import formatCurrency from '@automattic/format-currency';
  * Internal dependencies
  */
 import { getProductsList } from 'calypso/state/products-list/selectors';
-import {
-	currentUserHasFlag,
-	getCurrentUser,
-	getCurrentUserCurrencyCode,
-} from 'calypso/state/current-user/selectors';
+import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { Card, Button } from '@automattic/components';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';

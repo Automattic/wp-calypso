@@ -77,7 +77,7 @@ const HelpSearch = ( { searchQuery, openDialog, track } ) => {
 
 	return (
 		<>
-			<Card className="help-search">
+			<Card className="help-search customer-home__card">
 				<div className="help-search__inner">
 					<CardHeading>{ translate( 'Get help' ) }</CardHeading>
 					<div className="help-search__content">

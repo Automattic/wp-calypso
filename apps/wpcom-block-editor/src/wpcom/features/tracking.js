@@ -4,7 +4,7 @@
 import { use, select } from '@wordpress/data';
 import { registerPlugin } from '@wordpress/plugins';
 import { applyFilters } from '@wordpress/hooks';
-import { find } from 'lodash';
+import { find, isEqual } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -13,6 +13,7 @@ import debugFactory from 'debug';
 import tracksRecordEvent from './tracking/track-record-event';
 import delegateEventTracking from './tracking/delegate-event-tracking';
 import { trackGlobalStylesTabSelected } from './tracking/wpcom-block-editor-global-styles-tab-selected';
+import { buildGlobalStylesContentEvents } from './utils';
 
 // Debugger.
 const debug = debugFactory( 'wpcom-block-editor:tracking' );
@@ -222,11 +223,29 @@ const getBlocksTracker = ( eventName ) => ( blockIds ) => {
  */
 const maybeTrackPatternInsertion = ( actionData ) => {
 	const meta = find( actionData, ( item ) => item?.patternName );
-	const patternName = meta?.patternName;
+	let patternName = meta?.patternName;
+
+	// Quick block inserter doesn't use an object to store the patternName
+	// in the metadata. The pattern name is just directly used as a string.
+	if ( ! patternName ) {
+		const patterns = select( 'core/block-editor' ).getSettings().__experimentalBlockPatterns;
+		const actionDataToCheck = Object.values( actionData ).filter(
+			( data ) => typeof data === 'string'
+		);
+		const foundPattern = patterns.find( ( pattern ) => actionDataToCheck.includes( pattern.name ) );
+		if ( foundPattern ) {
+			patternName = foundPattern.name;
+		}
+	}
 
 	if ( patternName ) {
+		const patternCategory =
+			// Pattern category dropdown in global inserter
+			document.querySelector( '.block-editor-inserter__panel-header-patterns select' )?.value;
+
 		tracksRecordEvent( 'wpcom_pattern_inserted', {
 			pattern_name: patternName,
+			pattern_category: patternCategory,
 			blocks_replaced: actionData?.blocks_replaced,
 		} );
 	}
@@ -391,6 +410,88 @@ const trackListViewToggle = ( isOpen ) => {
 	} );
 };
 
+const trackSiteEditorBrowsingSidebarOpen = () => {
+	// We want to make sure the browsing sidebar is closed.
+	// This action is triggered even if the sidebar is open
+	// which we want to avoid tracking.
+	const isOpen = select( 'core/edit-site' ).isNavigationOpened();
+	if ( isOpen ) {
+		return;
+	}
+
+	tracksRecordEvent( 'wpcom_block_editor_nav_sidebar_open' );
+};
+
+const trackSiteEditorCreateTemplate = ( { slug } ) => {
+	tracksRecordEvent( 'wpcom_block_editor_nav_sidebar_item_add', {
+		item_type: 'template',
+		item_slug: slug,
+	} );
+};
+
+const trackSiteEditorChangeTemplate = ( id, slug ) => {
+	tracksRecordEvent( 'wpcom_block_editor_nav_sidebar_item_edit', {
+		item_type: 'template',
+		item_id: id,
+		item_slug: slug,
+	} );
+};
+
+const trackSiteEditorChangeTemplatePart = ( id ) => {
+	tracksRecordEvent( 'wpcom_block_editor_nav_sidebar_item_edit', {
+		item_type: 'template_part',
+		item_id: id,
+	} );
+};
+
+/**
+ * Tracks editEntityRecord for global styles updates.
+ *
+ * @param {string} kind    Kind of the edited entity record.
+ * @param {string} type    Name of the edited entity record.
+ * @param {number} id      Record ID of the edited entity record.
+ * @param {object} updates The edits made to the record.
+ */
+const trackEditEntityRecord = ( kind, type, id, updates ) => {
+	if ( kind === 'postType' && type === 'wp_global_styles' ) {
+		const editedEntity = select( 'core' ).getEditedEntityRecord( kind, type, id );
+		const entityContent = JSON.parse( editedEntity?.content );
+		const updatedContent = JSON.parse( updates?.content );
+
+		// Sometimes a second update is triggered corresponding to no changes since the last update.
+		// Therefore we must check if there is a change to avoid debouncing a valid update to a changeless update.
+		if ( ! isEqual( updatedContent, entityContent ) ) {
+			buildGlobalStylesContentEvents(
+				updatedContent,
+				entityContent,
+				'wpcom_block_editor_global_styles_update'
+			);
+		}
+	}
+};
+
+/**
+ * Tracks saveEditedEntityRecord for saving global styles updates.
+ *
+ * @param {string} kind Kind of the edited entity record.
+ * @param {string} type Name of the edited entity record.
+ * @param {number} id   Record ID of the edited entity record.
+ */
+const trackSaveEditedEntityRecord = ( kind, type, id ) => {
+	if ( kind === 'postType' && type === 'wp_global_styles' ) {
+		const savedEntity = select( 'core' ).getEntityRecord( kind, type, id );
+		const editedEntity = select( 'core' ).getEditedEntityRecord( kind, type, id );
+		const entityContent = JSON.parse( savedEntity?.content?.raw );
+		const updatedContent = JSON.parse( editedEntity?.content );
+
+		buildGlobalStylesContentEvents(
+			updatedContent,
+			entityContent,
+			'wpcom_block_editor_global_styles_save'
+		);
+	}
+};
+
 /**
  * Tracker can be
  * - string - which means it is an event name and should be tracked as such automatically
@@ -413,6 +514,8 @@ const REDUX_TRACKING = {
 	core: {
 		undo: 'wpcom_block_editor_undo_performed',
 		redo: 'wpcom_block_editor_redo_performed',
+		editEntityRecord: trackEditEntityRecord,
+		saveEditedEntityRecord: trackSaveEditedEntityRecord,
 	},
 	'core/block-editor': {
 		moveBlocksUp: getBlocksTracker( 'wpcom_block_moved_up' ),
@@ -431,6 +534,10 @@ const REDUX_TRACKING = {
 	},
 	'core/edit-site': {
 		setIsListViewOpened: trackListViewToggle,
+		openNavigationPanelToMenu: trackSiteEditorBrowsingSidebarOpen,
+		addTemplate: trackSiteEditorCreateTemplate,
+		setTemplate: trackSiteEditorChangeTemplate,
+		setTemplatePart: trackSiteEditorChangeTemplatePart,
 	},
 	'core/edit-post': {
 		setIsListViewOpened: trackListViewToggle,

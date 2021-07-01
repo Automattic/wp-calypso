@@ -24,8 +24,8 @@ import { getGSuiteSupportedDomains } from 'calypso/lib/gsuite';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import ActionBox from './action-box';
-import isHomeQuickLinksExpanded from 'calypso/state/selectors/is-home-quick-links-expanded';
-import { expandHomeQuickLinks, collapseHomeQuickLinks } from 'calypso/state/home/actions';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
 
 /**
  * Image dependencies
@@ -313,7 +313,7 @@ const mapStateToProps = ( state ) => {
 		siteSlug,
 		isStaticHomePage,
 		editHomePageUrl,
-		isExpanded: isHomeQuickLinksExpanded( state ),
+		isExpanded: getPreference( state, 'homeQuickLinksToggleStatus' ) !== 'collapsed',
 	};
 };
 
@@ -329,8 +329,8 @@ const mapDispatchToProps = {
 	trackAnchorPodcastAction,
 	addEmailAction,
 	addDomainAction,
-	expand: expandHomeQuickLinks,
-	collapse: collapseHomeQuickLinks,
+	expand: () => savePreference( 'homeQuickLinksToggleStatus', 'expanded' ),
+	collapse: () => savePreference( 'homeQuickLinksToggleStatus', 'collapsed' ),
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {

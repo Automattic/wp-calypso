@@ -22,7 +22,7 @@ import PlanFeaturesHeader from './header';
 import PlanFeaturesItem from './item';
 import SpinnerLine from 'calypso/components/spinner-line';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
-import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import {
 	getPlan,
 	getPlanBySlug,

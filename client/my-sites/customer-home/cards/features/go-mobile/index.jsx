@@ -37,7 +37,7 @@ export const GoMobile = ( { email, sendMobileLoginEmail } ) => {
 	};
 
 	return (
-		<Card className="go-mobile">
+		<Card className="go-mobile customer-home__card">
 			<div className={ classnames( 'go-mobile__row', { 'has-2-cols': showOnlyOneBadge } ) }>
 				<div className="go-mobile__title">
 					<CardHeading>{ translate( 'WordPress app' ) }</CardHeading>

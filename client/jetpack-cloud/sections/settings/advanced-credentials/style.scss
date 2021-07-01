@@ -9,7 +9,7 @@
 		font-style: bold;
 
 		.step-progress__element-number-complete {
-			background-color: var( --color-primary-50 );
+			background-color: var( --studio-jetpack-green-50 );
 			color: var( --studio-white );
 		}
 		.step-progress__element-number-current {
@@ -87,8 +87,8 @@
 }
 
 .connection-status__connected {
-	color: var( --color-primary-50 );
-	fill: var( --color-primary-50 );
+	color: var( --studio-jetpack-green-50 );
+	fill: var( --studio-jetpack-green-50 );
 }
 
 .connection-status__loading {
