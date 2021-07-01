@@ -29,8 +29,8 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 .current-theme__img {
 	@include breakpoint-deprecated( '>660px' ) {
 		border-right: $current-theme-border;
-		max-width: 150px;
-		height: auto;
+		max-height: 112px;
+		width: auto;
 	}
 }
 
@@ -47,6 +47,7 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 
 .current-theme__description p {
 	padding: 16px;
+	margin-bottom: 0;
 }
 
 .current-theme__title-wrapper {
