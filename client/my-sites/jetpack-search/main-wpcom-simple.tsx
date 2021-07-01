@@ -7,18 +7,18 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
+import { getSite } from 'calypso/state/sites/selectors';
 import getSiteSetting from 'calypso/state/selectors/get-site-setting';
-import { isJetpackSearch, planHasJetpackSearch } from '@automattic/calypso-products';
 import {
 	getSitePurchases,
-	hasLoadedSitePurchasesFromServer,
-	isFetchingSitePurchases,
+	hasLoadedUserPurchasesFromServer,
+	isFetchingUserPurchases,
 } from 'calypso/state/purchases/selectors';
 import JetpackSearchPlaceholder from './placeholder';
 import JetpackSearchUpsell from './upsell';
 import { isRequestingSiteSettings, getSiteSettings } from 'calypso/state/site-settings/selectors';
 import JetpackSearchDetails from './details';
-import { getSite } from 'calypso/state/sites/selectors';
+import { hasJetpackSearchPurchaseOrPlan } from './purchases';
 
 interface Props {
 	siteId: number;
@@ -26,19 +26,17 @@ interface Props {
 
 export default function JetpackSearchMainWpcomSimple( { siteId }: Props ): ReactElement {
 	const site = useSelector( ( state ) => getSite( state, siteId ) );
-
-	const checkForSearchProduct = ( purchase ) => purchase.active && isJetpackSearch( purchase );
 	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
-	const hasSearchProduct =
-		!! sitePurchases.find( checkForSearchProduct ) ||
-		planHasJetpackSearch( site?.plan?.product_slug );
-	const isFetchingPurchases = useSelector( isFetchingSitePurchases );
-	const hasLoadedPurchases = useSelector( hasLoadedSitePurchasesFromServer );
+	const hasSearchProduct = hasJetpackSearchPurchaseOrPlan(
+		sitePurchases,
+		site?.plan?.product_slug
+	);
+	const isFetchingPurchases = useSelector( isFetchingUserPurchases );
+	const hasLoadedPurchases = useSelector( hasLoadedUserPurchasesFromServer );
 	const isRequestingPurchases =
-		isFetchingPurchases || ! hasLoadedPurchases || ! Array.isArray( sitePurchases );
+		! hasLoadedPurchases || isFetchingPurchases || ! Array.isArray( sitePurchases );
 
 	const settings = useSelector( ( state ) => getSiteSettings( state, siteId ) );
-
 	const isRequestingSettings =
 		useSelector( ( state ) => isRequestingSiteSettings( state, siteId ) ) || ! settings;
 
