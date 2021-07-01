@@ -84,6 +84,7 @@ const identityMap = ( item ) => item;
 class EmailProvidersComparison extends React.Component {
 	static propTypes = {
 		// Props passed to this component
+		hideEmailHeader: PropTypes.bool,
 		selectedDomainName: PropTypes.string.isRequired,
 
 		// Props injected via connect()
@@ -497,7 +498,7 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	renderHeader() {
-		const { currentRoute, selectedDomainName, selectedSite, translate } = this.props;
+		const { currentRoute, hideEmailHeader, selectedDomainName, selectedSite, translate } = this.props;
 
 		const image = {
 			path: emailIllustration,
@@ -519,7 +520,7 @@ class EmailProvidersComparison extends React.Component {
 			<>
 				<DocumentHead title={ titleCase( title ) } />
 
-				<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
+				{ ! hideEmailHeader && <EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } /> }
 
 				<HeaderCake onClick={ this.handleBack }>{ title }</HeaderCake>
 

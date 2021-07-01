@@ -82,7 +82,7 @@ class EmailManagementHome extends React.Component {
 
 			if ( ! domainHasEmail( selectedDomain ) ) {
 				return this.renderContentWithHeader(
-					<EmailProvidersComparison selectedDomainName={ selectedDomainName } />
+					<EmailProvidersComparison selectedDomainName={ selectedDomainName } hideEmailHeader={ true } />
 				);
 			}
 
@@ -102,7 +102,7 @@ class EmailManagementHome extends React.Component {
 
 		if ( domainsWithEmail.length < 1 && domainsWithNoEmail.length === 1 ) {
 			return this.renderContentWithHeader(
-				<EmailProvidersComparison selectedDomainName={ domainsWithNoEmail[ 0 ].name } />
+				<EmailProvidersComparison selectedDomainName={ domainsWithNoEmail[ 0 ].name } hideEmailHeader={ true } />
 			);
 		}
 
