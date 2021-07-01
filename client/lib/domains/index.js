@@ -9,7 +9,6 @@ export { getDomainPrice } from './get-domain-price';
 export { getDomainProductSlug } from './get-domain-product-slug';
 export { getDomainSalePrice } from './get-domain-sale-price';
 export { getDomainSuggestionSearch } from './get-domain-suggestion-search';
-export { getDomainsEligibleToPurchaseEmail } from './get-domains-eligible-to-purchase-email';
 export { getDomainTransferSalePrice } from './get-domain-transfer-sale-price';
 export { getDomainTypeText } from './get-domain-type-text';
 export { getFixedDomainSearch } from './get-fixed-domain-search';
