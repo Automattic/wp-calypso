@@ -41,6 +41,7 @@ import UpsellNudge, {
 } from './upsell-nudge';
 import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
 import { TRUENAME_COUPONS } from 'calypso/lib/domains';
+import { hideMasterbar } from 'calypso/state/ui/masterbar-visibility/actions';
 
 const debug = debugFactory( 'calypso:checkout-controller' );
 
@@ -328,4 +329,10 @@ function getRememberedCoupon() {
 	}
 	debug( 'not returning any coupon code.' );
 	return null;
+}
+
+// Call hideTheMasterbar 1st in index.js page route to prevent masterBar from appearing briefly before disappearing.
+export function hideTheMasterbar( context, next ) {
+	context.store.dispatch( hideMasterbar() );
+	next();
 }
