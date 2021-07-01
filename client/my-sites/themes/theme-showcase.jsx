@@ -284,25 +284,27 @@ class ThemeShowcase extends React.Component {
 						showTierThemesControl={ ! isMultisite }
 						select={ this.onTierSelect }
 					/>
-					<SectionNav className="themes__section-nav">
-						<NavTabs>
-							<NavItem
-								onClick={ () => this.onFilterClick( 'recommended' ) }
-								selected={ 'recommended' === this.state.tabFilter }
-							>
-								{ translate( 'Recommended' ) }
-							</NavItem>
-							<NavItem
-								onClick={ () => this.onFilterClick( 'all' ) }
-								selected={ 'all' === this.state.tabFilter }
-							>
-								{ translate( 'All Themes' ) }
-							</NavItem>
-						</NavTabs>
-					</SectionNav>
+					{ isLoggedIn && (
+						<SectionNav className="themes__section-nav">
+							<NavTabs>
+								<NavItem
+									onClick={ () => this.onFilterClick( 'recommended' ) }
+									selected={ 'recommended' === this.state.tabFilter }
+								>
+									{ translate( 'Recommended' ) }
+								</NavItem>
+								<NavItem
+									onClick={ () => this.onFilterClick( 'all' ) }
+									selected={ 'all' === this.state.tabFilter }
+								>
+									{ translate( 'All Themes' ) }
+								</NavItem>
+							</NavTabs>
+						</SectionNav>
+					) }
 					{ this.props.upsellBanner }
 
-					{ 'recommended' === this.state.tabFilter && (
+					{ 'recommended' === this.state.tabFilter && isLoggedIn && (
 						<RecommendedThemes
 							upsellUrl={ this.props.upsellUrl }
 							search={ search }
