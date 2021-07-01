@@ -285,7 +285,14 @@ class ThemeShowcase extends React.Component {
 						select={ this.onTierSelect }
 					/>
 					{ isLoggedIn && (
-						<SectionNav className="themes__section-nav">
+						<SectionNav
+							className="themes__section-nav"
+							selectedText={
+								'recommended' === this.state.tabFilter
+									? translate( 'Recommended' )
+									: translate( 'All Themes' )
+							}
+						>
 							<NavTabs>
 								<NavItem
 									onClick={ () => this.onFilterClick( 'recommended' ) }
