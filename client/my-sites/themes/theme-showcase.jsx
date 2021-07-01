@@ -155,6 +155,7 @@ class ThemeShowcase extends React.Component {
 			// Strip filters and excess whitespace
 			searchString: searchBoxContent.replace( filterRegex, '' ).replace( /\s+/g, ' ' ).trim(),
 		} );
+		this.setState( { tabFilter: 'all' } );
 		page( url );
 		this.scrollToSearchInput();
 	};
@@ -192,6 +193,7 @@ class ThemeShowcase extends React.Component {
 	};
 
 	onTierSelect = ( { value: tier } ) => {
+		this.setState( { tabFilter: 'all' } );
 		trackClick( 'search bar filter', tier );
 		const url = this.constructUrl( { tier } );
 		page( url );
