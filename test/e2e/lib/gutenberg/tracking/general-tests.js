@@ -177,7 +177,7 @@ export function createGeneralTests( { it, editorType, postType } ) {
 		const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
 
 		// The button that triggers the block editor sidebar is not available on mobile
-		if ( editor.screenSize === 'mobile' ) {
+		if ( editor.screenSize === 'mobile' && editorType === 'post' ) {
 			return this.skip();
 		}
 
