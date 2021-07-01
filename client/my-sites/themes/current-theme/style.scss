@@ -10,7 +10,7 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 	display: flex;
 	flex-direction: column;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		height: $current-theme-height;
 		flex-direction: row;
 	}
@@ -20,14 +20,14 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 	display: flex;
 	flex-direction: column;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		height: $current-theme-height;
 		flex-direction: row;
 	}
 }
 
 .current-theme__img {
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		border-right: $current-theme-border;
 		max-height: $current-theme-height;
 	}
@@ -39,7 +39,7 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 	animation: loading-fade 1.6s ease-in-out infinite;
 	height: 100%;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		width: 75px;
 	}
 }
@@ -53,7 +53,7 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 	flex-direction: column;
 	align-items: flex-start;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		flex-direction: row-reverse;
 		justify-content: flex-end;
 	}
@@ -64,13 +64,14 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 	color: var( --color-text-inverted );
 	display: inline-block;
 	background: var( --color-neutral-dark );
+	white-space: nowrap;
 	padding: 4px 12px;
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 120px;
 	margin-left: 16px;
 	margin-bottom: 4px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		margin-bottom: auto;
 		margin-left: 8px;
 	}
@@ -107,7 +108,7 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 	justify-content: center;
 	flex-grow: 1;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		height: $current-theme-height;
 		padding-top: 0;
 		align-items: flex-end;
