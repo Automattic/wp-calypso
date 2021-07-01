@@ -15,6 +15,7 @@ import {
 	redirectToSupportSession,
 	redirectJetpackLegacyPlans,
 	jetpackCheckoutThankYou,
+	hideTheMasterbar,
 } from './controller';
 import { noop } from './utils';
 import { recordSiftScienceUser } from 'calypso/lib/siftscience';
@@ -69,6 +70,7 @@ export default function () {
 
 	page(
 		'/checkout/thank-you/:site/:receiptId?',
+		hideTheMasterbar,
 		redirectLoggedOut,
 		siteSelection,
 		checkoutThankYou,
