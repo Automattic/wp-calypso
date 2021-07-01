@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 /**
  * Internal dependencies
@@ -43,9 +42,6 @@ class RecommendedThemes extends React.Component {
 	render() {
 		return (
 			<>
-				<h2>
-					<strong>{ translate( 'Recommended themes' ) }</strong>
-				</h2>
 				{ this.props.isLoading ? (
 					<Spinner size={ 100 } />
 				) : (
