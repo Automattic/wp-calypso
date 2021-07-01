@@ -416,11 +416,29 @@ class RegisterDomainStep extends React.Component {
 	}
 
 	render() {
-		const { trademarkClaimsNoticeInfo } = this.state;
+		const queryObject = getQueryObject( this.props );
+		const {
+			availabilityError,
+			availabilityErrorData,
+			availabilityErrorDomain,
+			showAvailabilityNotice,
+			showSuggestionNotice,
+			suggestionError,
+			suggestionErrorData,
+			suggestionErrorDomain,
+			trademarkClaimsNoticeInfo,
+		} = this.state;
 
 		if ( trademarkClaimsNoticeInfo ) {
 			return this.renderTrademarkClaimsNotice();
 		}
+
+		const { message: suggestionMessage, severity: suggestionSeverity } = showSuggestionNotice
+			? getAvailabilityNotice( suggestionErrorDomain, suggestionError, suggestionErrorData )
+			: {};
+		const { message: availabilityMessage, severity: availabilitySeverity } = showAvailabilityNotice
+			? getAvailabilityNotice( availabilityErrorDomain, availabilityError, availabilityErrorData )
+			: {};
 
 		const searchBoxClassName = classNames( 'register-domain-step__search', {
 			'register-domain-step__search-domain-step': this.props.isSignupStep,
@@ -453,67 +471,30 @@ class RegisterDomainStep extends React.Component {
 						</Search>
 					</CompactCard>
 				</StickyPanel>
+				{ availabilityMessage && (
+					<Notice
+						className="register-domain-step__notice"
+						text={ availabilityMessage }
+						status={ `is-${ availabilitySeverity }` }
+						showDismiss={ false }
+					/>
+				) }
+				{ suggestionMessage && availabilityError !== suggestionError && (
+					<Notice
+						className="register-domain-step__notice"
+						text={ suggestionMessage }
+						status={ `is-${ suggestionSeverity }` }
+						showDismiss={ false }
+					/>
+				) }
 
-				{ this.renderBody() }
+				{ this.renderContent() }
+				{ this.renderFilterResetNotice() }
+				{ this.renderPaginationControls() }
+				{ queryObject && <QueryDomainsSuggestions { ...queryObject } /> }
+				<QueryContactDetailsCache />
 			</div>
 		);
-	}
-
-	renderBody() {
-		const queryObject = getQueryObject( this.props );
-
-		const {
-			availabilityError,
-			showAvailabilityNotice,
-			showSuggestionNotice,
-			suggestionError,
-			suggestionErrorData,
-			suggestionErrorDomain,
-			trademarkClaimsNoticeInfo,
-			availabilityErrorDomain,
-			availabilityErrorData,
-			lastQuery,
-		} = this.state;
-
-		if ( trademarkClaimsNoticeInfo ) {
-			return this.renderTrademarkClaimsNotice();
-		}
-
-		if ( ! lastQuery?.length ) {
-			return this.renderExampleSuggestions();
-		}
-
-		const { message: suggestionMessage, severity: suggestionSeverity } = showSuggestionNotice
-			? getAvailabilityNotice( suggestionErrorDomain, suggestionError, suggestionErrorData )
-			: {};
-
-		const { message: availabilityMessage, severity: availabilitySeverity } = showAvailabilityNotice
-			? getAvailabilityNotice( availabilityErrorDomain, availabilityError, availabilityErrorData )
-			: {};
-
-		return [
-			availabilityMessage && (
-				<Notice
-					className="register-domain-step__notice"
-					text={ availabilityMessage }
-					status={ `is-${ availabilitySeverity }` }
-					showDismiss={ false }
-				/>
-			),
-			suggestionMessage && availabilityError !== suggestionError && (
-				<Notice
-					className="register-domain-step__notice"
-					text={ suggestionMessage }
-					status={ `is-${ suggestionSeverity }` }
-					showDismiss={ false }
-				/>
-			),
-			this.renderContent(),
-			this.renderFilterResetNotice(),
-			this.renderPaginationControls(),
-			queryObject && <QueryDomainsSuggestions { ...queryObject } />,
-			<QueryContactDetailsCache />,
-		];
 	}
 
 	renderSearchFilters() {
@@ -632,9 +613,7 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	renderContent() {
-		const { searchResults, loadingResults } = this.state;
-
-		if ( Array.isArray( searchResults ) || loadingResults ) {
+		if ( Array.isArray( this.state.searchResults ) || this.state.loadingResults ) {
 			return this.renderSearchResults();
 		}
 
@@ -642,7 +621,7 @@ class RegisterDomainStep extends React.Component {
 			return (
 				<>
 					{ this.renderExampleSuggestions() }
-					{ this.props.isReskinned && ! loadingResults && this.props.reskinSideContent }
+					{ this.props.isReskinned && ! this.state.loadingResults && this.props.reskinSideContent }
 				</>
 			);
 		}
@@ -785,11 +764,7 @@ class RegisterDomainStep extends React.Component {
 
 		const cleanedQuery = getDomainSuggestionSearch( searchQuery, MIN_QUERY_LENGTH );
 		const loadingResults = Boolean( cleanedQuery );
-		const isInitialQueryActive = searchQuery === this.props.suggestion;
-
-		if ( isEmpty( cleanedQuery ) ) {
-			return;
-		}
+		const isInitialQueryActive = ! searchQuery || searchQuery === this.props.suggestion;
 
 		this.setState(
 			{
