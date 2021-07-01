@@ -55,7 +55,7 @@ export default function SimulatedProgressBar( {
 	const [ simulatedProgressPercentage, setSimulatedProgressPercentage ] = useState( 1 );
 
 	useEffect( () => {
-		setTimeout(
+		const timeOutReference = setTimeout(
 			() => {
 				if ( ! accelerateCompletion && simulatedProgressPercentage <= MAX_PERCENTAGE_SIMULATED ) {
 					setSimulatedProgressPercentage(
@@ -70,6 +70,7 @@ export default function SimulatedProgressBar( {
 
 			accelerateCompletion ? ACCELERATED_REFRESH_INTERVAL : SIMULATION_REFRESH_INTERVAL
 		);
+		return () => clearTimeout( timeOutReference );
 	}, [ accelerateCompletion, simulatedProgressPercentage ] );
 
 	const newStep = resolveStep( steps, simulatedProgressPercentage );
