@@ -124,7 +124,7 @@ function admin_body_classes( $classes ) {
 		$classes .= ' slider-width-workaround';
 	}
 
-	if ( use_font_smooth_antialiased() ) {
+	if ( use_font_smooth_antialiased() && ! is_network_admin() ) {
 		// Extra space needed because the `legacy-color-*` class isn't adding
 		// a leading space and breaking this class string.
 		$classes .= ' font-smoothing-antialiased ';
