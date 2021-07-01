@@ -7,14 +7,13 @@ export const GROUP_JETPACK = 'GROUP_JETPACK';
 
 // Products
 export const PRODUCT_JETPACK_BACKUP = 'jetpack_backup';
-export const PRODUCT_JETPACK_BACKUP_DAILY = 'jetpack_backup_daily';
-export const PRODUCT_JETPACK_BACKUP_REALTIME = 'jetpack_backup_realtime';
-export const PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY = 'jetpack_backup_daily_monthly';
-export const PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY = 'jetpack_backup_realtime_monthly';
-export const PRODUCT_JETPACK_SCAN = 'jetpack_scan';
-export const PRODUCT_JETPACK_SCAN_MONTHLY = 'jetpack_scan_monthly';
-export const PRODUCT_JETPACK_SCAN_REALTIME = 'jetpack_scan_realtime';
-export const PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY = 'jetpack_scan_realtime_monthly';
+export const PRODUCT_JETPACK_BACKUP_MONTHLY = 'jetpack_backup_monthly';
+export const PRODUCT_JETPACK_BACKUP_PRO = 'jetpack_backup_pro';
+export const PRODUCT_JETPACK_BACKUP_PRO_MONTHLY = 'jetpack_backup_pro_monthly';
+export const PRODUCT_JETPACK_SCAN_2 = 'jetpack_scan_2';
+export const PRODUCT_JETPACK_SCAN_2_MONTHLY = 'jetpack_scan_2_monthly';
+export const PRODUCT_JETPACK_SCAN_PRO = 'jetpack_scan_pro';
+export const PRODUCT_JETPACK_SCAN_PRO_MONTHLY = 'jetpack_scan_pro_monthly';
 export const PRODUCT_JETPACK_ANTI_SPAM = 'jetpack_anti_spam';
 export const PRODUCT_JETPACK_ANTI_SPAM_MONTHLY = 'jetpack_anti_spam_monthly';
 export const PRODUCT_JETPACK_SEARCH = 'jetpack_search';
@@ -24,14 +23,28 @@ export const PRODUCT_JETPACK_CRM_MONTHLY = 'jetpack_crm_monthly';
 export const PRODUCT_JETPACK_CRM_FREE = 'jetpack_crm_free';
 export const PRODUCT_JETPACK_CRM_FREE_MONTHLY = 'jetpack_crm_free_monthly';
 
+// Legacy Products
+export const PRODUCT_JETPACK_BACKUP_DAILY = 'jetpack_backup_daily';
+export const PRODUCT_JETPACK_BACKUP_REALTIME = 'jetpack_backup_realtime';
+export const PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY = 'jetpack_backup_daily_monthly';
+export const PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY = 'jetpack_backup_realtime_monthly';
+export const PRODUCT_JETPACK_SCAN = 'jetpack_scan';
+export const PRODUCT_JETPACK_SCAN_MONTHLY = 'jetpack_scan_monthly';
+export const PRODUCT_JETPACK_SCAN_REALTIME = 'jetpack_scan_realtime';
+export const PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY = 'jetpack_scan_realtime_monthly';
+
 // Backup
 export const JETPACK_BACKUP_PRODUCTS_YEARLY = <const>[
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
+	PRODUCT_JETPACK_BACKUP,
+	PRODUCT_JETPACK_BACKUP_PRO,
 ];
 export const JETPACK_BACKUP_PRODUCTS_MONTHLY = <const>[
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_PRO_MONTHLY,
 ];
 export const JETPACK_BACKUP_PRODUCTS = <const>[
 	...JETPACK_BACKUP_PRODUCTS_YEARLY,
@@ -44,6 +57,10 @@ export const JETPACK_SCAN_PRODUCTS = <const>[
 	PRODUCT_JETPACK_SCAN_MONTHLY,
 	PRODUCT_JETPACK_SCAN_REALTIME,
 	PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY,
+	PRODUCT_JETPACK_SCAN_2,
+	PRODUCT_JETPACK_SCAN_2_MONTHLY,
+	PRODUCT_JETPACK_SCAN_PRO,
+	PRODUCT_JETPACK_SCAN_PRO_MONTHLY,
 ];
 
 // Anti-spam
@@ -106,6 +123,22 @@ export const JETPACK_PRODUCTS_BY_TERM = <const>[
 		yearly: PRODUCT_JETPACK_CRM_FREE,
 		monthly: PRODUCT_JETPACK_CRM_FREE_MONTHLY,
 	},
+	{
+		yearly: PRODUCT_JETPACK_BACKUP,
+		monthly: PRODUCT_JETPACK_BACKUP_MONTHLY,
+	},
+	{
+		yearly: PRODUCT_JETPACK_BACKUP_PRO,
+		monthly: PRODUCT_JETPACK_BACKUP_PRO_MONTHLY,
+	},
+	{
+		yearly: PRODUCT_JETPACK_SCAN_2,
+		monthly: PRODUCT_JETPACK_SCAN_2_MONTHLY,
+	},
+	{
+		yearly: PRODUCT_JETPACK_SCAN_PRO,
+		monthly: PRODUCT_JETPACK_SCAN_PRO_MONTHLY,
+	},
 ];
 export const JETPACK_PRODUCT_PRICE_MATRIX = <const>{
 	[ PRODUCT_JETPACK_BACKUP_DAILY ]: {
@@ -138,14 +171,20 @@ export const PLAN_JETPACK_PREMIUM = 'jetpack_premium';
 export const PLAN_JETPACK_PREMIUM_MONTHLY = 'jetpack_premium_monthly';
 export const PLAN_JETPACK_BUSINESS = 'jetpack_business';
 export const PLAN_JETPACK_BUSINESS_MONTHLY = 'jetpack_business_monthly';
+export const PLAN_JETPACK_SECURITY = 'jetpack_security';
+export const PLAN_JETPACK_SECURITY_MONTHLY = 'jetpack_security_monthly';
+export const PLAN_JETPACK_SECURITY_PRO = 'jetapck_security_pro';
+export const PLAN_JETPACK_SECURITY_PRO_MONTHLY = 'jetapck_security_pro_monthly';
+export const PLAN_JETPACK_COMPLETE = 'jetpack_complete';
+export const PLAN_JETPACK_COMPLETE_MONTHLY = 'jetpack_complete_monthly';
+
+// Legacy Security Plans
 export const PLAN_JETPACK_SECURITY_DAILY = 'jetpack_security_daily';
 export const PLAN_JETPACK_SECURITY_DAILY_MONTHLY = 'jetpack_security_daily_monthly';
 export const PLAN_JETPACK_SECURITY_REALTIME = 'jetpack_security_realtime';
 export const PLAN_JETPACK_SECURITY_REALTIME_MONTHLY = 'jetpack_security_realtime_monthly';
-export const PLAN_JETPACK_COMPLETE = 'jetpack_complete';
-export const PLAN_JETPACK_COMPLETE_MONTHLY = 'jetpack_complete_monthly';
 
-// Legacy
+// Legacy (before offer reset)
 export const JETPACK_LEGACY_PLANS = <const>[
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
@@ -162,6 +201,10 @@ export const JETPACK_SECURITY_PLANS = <const>[
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_SECURITY_REALTIME,
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+	PLAN_JETPACK_SECURITY,
+	PLAN_JETPACK_SECURITY_MONTHLY,
+	PLAN_JETPACK_SECURITY_PRO,
+	PLAN_JETPACK_SECURITY_PRO_MONTHLY,
 ];
 
 // Complete
@@ -176,6 +219,8 @@ export const JETPACK_MONTHLY_PLANS = <const>[
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+	PLAN_JETPACK_SECURITY_MONTHLY,
+	PLAN_JETPACK_SECURITY_PRO_MONTHLY,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 ];
 export const JETPACK_RESET_PLANS = <const>[ ...JETPACK_SECURITY_PLANS, ...JETPACK_COMPLETE_PLANS ];
@@ -191,6 +236,14 @@ export const JETPACK_RESET_PLANS_BY_TERM = <const>[
 	{
 		yearly: PLAN_JETPACK_SECURITY_REALTIME,
 		monthly: PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+	},
+	{
+		yearly: PLAN_JETPACK_SECURITY,
+		monthly: PLAN_JETPACK_SECURITY_MONTHLY,
+	},
+	{
+		yearly: PLAN_JETPACK_SECURITY_PRO,
+		monthly: PLAN_JETPACK_SECURITY_PRO_MONTHLY,
 	},
 ];
 export const JETPACK_PLANS = <const>[
