@@ -483,7 +483,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 			);
 		}
 
-		if ( isTitanMail( primaryPurchase ) ) {
+		if ( primaryPurchase && isTitanMail( primaryPurchase ) ) {
 			return (
 				<Button href={ emailManagementEdit( selectedSite.slug, primaryPurchase.meta ) }>
 					{ translate( 'Manage email' ) }
