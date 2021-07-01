@@ -18,6 +18,7 @@ import {
 } from 'calypso/state/products-list/selectors';
 import PluginProductMappingInterface, {
 	getProductSlug,
+	marketplaceDebugger,
 } from 'calypso/my-sites/plugins/marketplace/constants';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
@@ -73,8 +74,12 @@ function MarketplacePluginDetails( {
 		selectedSiteId && dispatch( requestEligibility( selectedSiteId ) );
 	}, [ dispatch, marketplacePluginSlug, selectedSiteId ] );
 
+	// TODO: Come up with a generic model for premium products and free products
 	const onAddYoastPremiumToCart = async () => {
+		marketplaceDebugger( 'Added marketplace yoast to cart' );
+
 		dispatch( setIsPluginInstalledDuringPurchase( true ) );
+		dispatch( setPluginSlugToBeInstalled( 'wordpress-seo-premium' ) );
 		const yoastProduct = fillInSingleCartItemAttributes( { product_slug: productSlug }, products );
 		return replaceProductsInCart( [ yoastProduct ] );
 	};

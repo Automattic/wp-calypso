@@ -34,31 +34,44 @@ export function resolveStep(
 }
 
 const SIMULATION_REFRESH_INTERVAL = 2000;
-const INCREMENTED_PERCENTAGE_SIZE_ON_STEP = 6;
+const INCREMENTED_PERCENTAGE_SIZE_ON_STEP = 2;
 const MAX_PERCENTAGE_SIMULATED = 100 - INCREMENTED_PERCENTAGE_SIZE_ON_STEP * 2;
+
+/**
+ * Accelerated parameters
+ */
+const ACCELERATED_REFRESH_INTERVAL = 1000;
+const ACCELERATED_INCREMENT = 5;
 
 export default function SimulatedProgressBar( {
 	steps,
+	accelerateCompletion,
 }: {
 	steps: TranslateResult[];
+	accelerateCompletion: boolean;
 } ): JSX.Element {
 	const translate = useTranslate();
 	const [ currentStep, setCurrentStep ] = useState( steps[ 0 ] );
 	const [ simulatedProgressPercentage, setSimulatedProgressPercentage ] = useState( 1 );
 
 	useEffect( () => {
-		setTimeout(
+		const timeOutReference = setTimeout(
 			() => {
-				if ( simulatedProgressPercentage < MAX_PERCENTAGE_SIMULATED ) {
+				if ( ! accelerateCompletion && simulatedProgressPercentage <= MAX_PERCENTAGE_SIMULATED ) {
 					setSimulatedProgressPercentage(
 						( previousPercentage ) => previousPercentage + INCREMENTED_PERCENTAGE_SIZE_ON_STEP
+					);
+				} else if ( accelerateCompletion && simulatedProgressPercentage <= 100 ) {
+					setSimulatedProgressPercentage(
+						( previousPercentage ) => previousPercentage + ACCELERATED_INCREMENT
 					);
 				}
 			},
 
-			SIMULATION_REFRESH_INTERVAL
+			accelerateCompletion ? ACCELERATED_REFRESH_INTERVAL : SIMULATION_REFRESH_INTERVAL
 		);
-	}, [ simulatedProgressPercentage ] );
+		return () => clearTimeout( timeOutReference );
+	}, [ accelerateCompletion, simulatedProgressPercentage ] );
 
 	const newStep = resolveStep( steps, simulatedProgressPercentage );
 	if ( newStep !== currentStep ) {
