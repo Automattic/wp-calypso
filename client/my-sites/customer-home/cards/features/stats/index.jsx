@@ -89,8 +89,8 @@ export const StatsV2 = ( {
 					<QuerySiteStats siteId={ siteId } statType="statsTopPosts" query={ topPostsQuery } />
 				</>
 			) }
-
-			<Card>
+			{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+			<Card className="customer-home__card">
 				{ isSiteUnlaunched && (
 					<Chart data={ placeholderChartData } isPlaceholder>
 						<div>
