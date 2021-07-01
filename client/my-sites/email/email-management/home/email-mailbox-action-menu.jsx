@@ -2,7 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState } from 'react';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
@@ -10,8 +10,11 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { Dialog } from '@automattic/components';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import {
+	getEmailAddress,
 	getEmailForwardAddress,
 	hasGoogleAccountTOSWarning,
 	isEmailUserAdmin,
@@ -46,6 +49,7 @@ import { removeEmailForward } from 'calypso/state/email-forwarding/actions';
 import titanCalendarIcon from 'calypso/assets/images/email-providers/titan/services/flat/calendar.svg';
 import titanContactsIcon from 'calypso/assets/images/email-providers/titan/services/flat/contacts.svg';
 import titanMailIcon from 'calypso/assets/images/email-providers/titan/services/flat/mail.svg';
+import { useRemoveTitanMailboxMutation } from 'calypso/data/emails/use-remove-titan-mailbox-mutation';
 
 const removeEmailForwardMailbox = ( { dispatch, mailbox } ) => {
 	recordTracksEvent( 'calypso_email_management_email_forwarding_delete_click', {
@@ -61,11 +65,14 @@ const removeEmailForwardMailbox = ( { dispatch, mailbox } ) => {
  * Returns the available menu items for Titan Emails
  *
  * @param {Object} titanMenuParams The argument for this function.
- * @param {string} titanMenuParams.email The email address of the Titan account
- * @param {Function} titanMenuParams.translate The translate function
+ * @param {Function} titanMenuParams.showRemoveMailboxDialog The function that removes modal dialogs for confirming mailbox removals
+ * @param {Object} titanMenuParams.mailbox The mailbox object.
+ * @param {Function} titanMenuParams.translate The translate function.
  * @returns Array of menu items
  */
-const getTitanMenuItems = ( { email, translate } ) => {
+const getTitanMenuItems = ( { showRemoveMailboxDialog, mailbox, translate } ) => {
+	const email = getEmailAddress( mailbox );
+
 	return [
 		{
 			href: getTitanEmailUrl( email ),
@@ -91,6 +98,20 @@ const getTitanMenuItems = ( { email, translate } ) => {
 				comment: 'View the Contacts application for Titan',
 			} ),
 		},
+		{
+			isInternalLink: true,
+			materialIcon: 'delete',
+			onClick: () => {
+				showRemoveMailboxDialog?.();
+
+				recordTracksEvent( 'calypso_email_management_titan_remove_mailbox_click', {
+					domain_name: mailbox.domain,
+					mailbox: mailbox.mailbox,
+				} );
+			},
+			key: `remove_mailbox:${ mailbox.mailbox }`,
+			title: translate( 'Remove mailbox' ),
+		},
 	];
 };
 
@@ -99,15 +120,16 @@ const getTitanMenuItems = ( { email, translate } ) => {
  *
  * @param {Object} gSuiteMenuParams Parameter for this function.
  * @param {Object} gSuiteMenuParams.account The account the current mailbox is linked to.
- * @param {string} gSuiteMenuParams.email The full email address for the current mailbox.
  * @param {Object} gSuiteMenuParams.mailbox The mailbox object.
  * @param {Function} gSuiteMenuParams.translate The translate function.
  * @returns {Array|null} Returns an array of menu items or null if no items should be shown.
  */
-const getGSuiteMenuItems = ( { account, email, mailbox, translate } ) => {
+const getGSuiteMenuItems = ( { account, mailbox, translate } ) => {
 	if ( hasGoogleAccountTOSWarning( account ) ) {
 		return null;
 	}
+
+	const email = getEmailAddress( mailbox );
 
 	return [
 		{
@@ -175,19 +197,117 @@ const getEmailForwardMenuItems = ( { dispatch, mailbox, translate } ) => {
 	];
 };
 
+const RemoveTitanMailboxConfirmationDialog = ( { mailbox, visible, setVisible } ) => {
+	const dispatch = useDispatch();
+	const translate = useTranslate();
+
+	const emailAddress = getEmailAddress( mailbox );
+
+	const errorMessage = errorNotice(
+		translate(
+			'There was an error removing {{strong}}%(emailAddress)s{{/strong}} from your account',
+			{
+				comment: '%(emailAddress)s is the email address associated to the mailbox being deleted',
+				args: { emailAddress },
+				components: {
+					strong: <strong />,
+				},
+			}
+		),
+		{ duration: 7000 }
+	);
+
+	const successMessage = successNotice(
+		translate( '{{strong}}%(emailAddress)s{{/strong}} has been removed from your account', {
+			comment: '%(emailAddress)s is the email address associated to the mailbox being deleted',
+			args: { emailAddress },
+			components: {
+				strong: <strong />,
+			},
+		} ),
+		{ duration: 5000 }
+	);
+
+	const { removeTitanMailbox } = useRemoveTitanMailboxMutation( mailbox.domain, mailbox.mailbox, {
+		onSettled: ( data ) => {
+			if ( data?.status === 202 ) {
+				dispatch( successMessage );
+				return;
+			}
+			dispatch( errorMessage );
+		},
+	} );
+
+	const onClose = ( action ) => {
+		setVisible( false );
+
+		if ( 'remove' === action ) {
+			removeTitanMailbox();
+
+			recordTracksEvent( 'calypso_email_management_titan_remove_mailbox_execute', {
+				domain_name: mailbox.domain,
+				mailbox: mailbox.mailbox,
+			} );
+		}
+	};
+
+	const buttons = [
+		{ action: 'cancel', label: translate( 'Cancel' ) },
+		{ action: 'remove', label: translate( 'Confirm' ), isPrimary: true },
+	];
+
+	return (
+		<Dialog
+			className="email-mailbox-action-menu__remove-titan-mailbox-dialog"
+			isVisible={ visible }
+			buttons={ buttons }
+			onClose={ onClose }
+		>
+			<div>
+				<h3> { translate( 'Remove mailbox' ) } </h3>
+				<p>
+					{ translate(
+						'Are you sure you want to remove {{strong}}%(emailAddress)s{{/strong}}? All your data will be deleted!',
+						{
+							comment:
+								'%(emailAddress)s is the email address associated to the mailbox being deleted',
+							args: { emailAddress },
+							components: {
+								strong: <strong />,
+							},
+						}
+					) }
+				</p>
+			</div>
+		</Dialog>
+	);
+};
+
+RemoveTitanMailboxConfirmationDialog.propTypes = {
+	mailbox: PropTypes.object.isRequired,
+	visible: PropTypes.bool.isRequired,
+	setVisible: PropTypes.func.isRequired,
+};
+
 const EmailMailboxActionMenu = ( { account, domain, mailbox } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const email = `${ mailbox.mailbox }@${ mailbox.domain }`;
+	const [ removeTitanMailboxDialogVisible, setRemoveTitanMailboxDialogVisible ] = useState( false );
+
+	const domainHasTitanMailWithUs = hasTitanMailWithUs( domain );
 
 	const getMenuItems = () => {
-		if ( hasTitanMailWithUs( domain ) ) {
-			return getTitanMenuItems( { email, translate } );
+		if ( domainHasTitanMailWithUs ) {
+			return getTitanMenuItems( {
+				showRemoveMailboxDialog: () => setRemoveTitanMailboxDialogVisible( true ),
+				mailbox,
+				translate,
+			} );
 		}
 
 		if ( hasGSuiteWithUs( domain ) ) {
-			return getGSuiteMenuItems( { account, email, mailbox, translate } );
+			return getGSuiteMenuItems( { account, mailbox, translate } );
 		}
 
 		if ( hasEmailForwards( domain ) ) {
@@ -208,32 +328,41 @@ const EmailMailboxActionMenu = ( { account, domain, mailbox } ) => {
 	}
 
 	return (
-		<EllipsisMenu position="bottom" className="email-mailbox-action-menu__main">
-			{ menuItems.map(
-				( {
-					href,
-					image,
-					imageAltText,
-					isInternalLink = false,
-					key,
-					materialIcon,
-					onClick,
-					title,
-				} ) => (
-					<PopoverMenuItem
-						key={ href || key }
-						className="email-mailbox-action-menu__menu-item"
-						isExternalLink={ ! isInternalLink }
-						href={ href }
-						onClick={ onClick }
-					>
-						{ image && <img src={ image } alt={ imageAltText } /> }
-						{ materialIcon && <MaterialIcon icon={ materialIcon } /> }
-						{ title }
-					</PopoverMenuItem>
-				)
+		<>
+			{ domainHasTitanMailWithUs && (
+				<RemoveTitanMailboxConfirmationDialog
+					mailbox={ mailbox }
+					visible={ removeTitanMailboxDialogVisible }
+					setVisible={ setRemoveTitanMailboxDialogVisible }
+				/>
 			) }
-		</EllipsisMenu>
+			<EllipsisMenu position="bottom" className="email-mailbox-action-menu__main">
+				{ menuItems.map(
+					( {
+						href,
+						image,
+						imageAltText,
+						isInternalLink = false,
+						key,
+						materialIcon,
+						onClick,
+						title,
+					} ) => (
+						<PopoverMenuItem
+							key={ href || key }
+							className="email-mailbox-action-menu__menu-item"
+							isExternalLink={ ! isInternalLink }
+							href={ href }
+							onClick={ onClick }
+						>
+							{ image && <img src={ image } alt={ imageAltText } /> }
+							{ materialIcon && <MaterialIcon icon={ materialIcon } /> }
+							{ title }
+						</PopoverMenuItem>
+					)
+				) }
+			</EllipsisMenu>
+		</>
 	);
 };
 
