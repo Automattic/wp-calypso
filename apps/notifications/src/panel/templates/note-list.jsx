@@ -68,7 +68,7 @@ export class NoteList extends React.Component {
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.isPanelOpen && ! nextProps.isPanelOpen ) {
 			// scroll to top, from toggling frame
-			this.setState( { lastSelectedIndex: 0, scrollY: 0 } );
+			this.setState( { scrollY: 0 } );
 		}
 	}
 

@@ -215,7 +215,7 @@ class TitanAddMailboxes extends React.Component {
 	};
 
 	onMailboxesChange = ( updatedMailboxes ) => {
-		this.setState( { mailboxes: updatedMailboxes, quantity: updatedMailboxes.length } );
+		this.setState( { mailboxes: updatedMailboxes } );
 	};
 
 	renderForm() {

@@ -58,7 +58,6 @@ class EditContactInfoFormCard extends React.Component {
 		super( props );
 
 		this.state = {
-			notice: null,
 			formSubmitting: false,
 			transferLock: true,
 			showNonDaConfirmationDialog: false,

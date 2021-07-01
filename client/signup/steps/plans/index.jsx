@@ -35,27 +35,10 @@ import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
  */
 import './style.scss';
 import PulsingDot from 'calypso/components/pulsing-dot';
-import { isTabletResolution, isDesktop } from '@automattic/viewport';
+import { isDesktop } from '@automattic/viewport';
 
 export class PlansStep extends Component {
-	state = {
-		isDesktop: ! isTabletResolution(),
-	};
-
-	windowResize = () => {
-		this.setState( { plansWithScroll: ! isTabletResolution() } );
-	};
-
-	componentWillUnmount() {
-		if ( typeof window === 'object' ) {
-			window.removeEventListener( 'resize', this.windowResize );
-		}
-	}
-
 	componentDidMount() {
-		if ( typeof window === 'object' ) {
-			window.addEventListener( 'resize', this.windowResize );
-		}
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 

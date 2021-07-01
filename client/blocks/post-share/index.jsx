@@ -105,7 +105,6 @@ class PostShare extends Component {
 		showSharingPreview: false,
 		scheduledDate: null,
 		showTooltip: false,
-		tooltipContext: null,
 		eventsByDay: [],
 	};
 

@@ -39,7 +39,6 @@ class ReauthRequired extends React.Component {
 		remember2fa: false, // Should the 2fa be remembered for 30 days?
 		code: '', // User's generated 2fa code
 		smsRequestsAllowed: true, // Can the user request another SMS code?
-		smsCodeSent: false,
 		twoFactorAuthType: 'authenticator',
 	};
 
@@ -122,7 +121,7 @@ class ReauthRequired extends React.Component {
 	};
 
 	sendSMSCode() {
-		this.setState( { smsRequestsAllowed: false, smsCodeSent: true } );
+		this.setState( { smsRequestsAllowed: false } );
 		this.codeRequestTimer = setTimeout( () => {
 			this.setState( { smsRequestsAllowed: true } );
 		}, 60000 );
