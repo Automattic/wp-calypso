@@ -573,9 +573,19 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				const tabSelectedEvents = await getGlobalStylesTabSelectedEvents( this.driver );
 				assert.strictEqual( tabSelectedEvents.length, 0 );
 			} );
+
+			after( async function () {
+				const editor = await SiteEditorComponent.Expect( this.driver );
+				await editor.closeGlobalStyles();
+			} );
 		} );
 
 		describe( 'Tracks "wpcom_block_editor_global_styles_update"', function () {
+			before( async function () {
+				const editor = await SiteEditorComponent.Expect( this.driver );
+				await editor.toggleGlobalStyles();
+			} );
+
 			// Since these events are tracked via redux actions in updateEntityRecord and
 			// saveEditedEntityRecord, they are independent of UI.  If the desktop flow populates
 			// these events properly, the mobile flow will as well.  There is no added benefit to
@@ -616,9 +626,19 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				}
 				await testGlobalStylesColorPalette( this.driver, 'core/column' );
 			} );
+
+			after( async function () {
+				const editor = await SiteEditorComponent.Expect( this.driver );
+				await editor.closeGlobalStyles();
+			} );
 		} );
 
 		describe( 'Tracks "wpcom_block_editor_global_styles_save"', function () {
+			before( async function () {
+				const editor = await SiteEditorComponent.Expect( this.driver );
+				await editor.toggleGlobalStyles();
+			} );
+
 			// This test can be less intensive than our global styles update tests since they share
 			// the same code to build event structure from global styles objects.  So we mainly need
 			// to verify that the expected number of events are triggered.
@@ -645,6 +665,11 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				// Clean up by resetting to be safe.
 				await clickGlobalStylesResetButton( this.driver );
 				await saveGlobalStyles( this.driver );
+			} );
+
+			after( async function () {
+				const editor = await SiteEditorComponent.Expect( this.driver );
+				await editor.closeGlobalStyles();
 			} );
 		} );
 
