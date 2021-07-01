@@ -266,6 +266,7 @@ class RemoveDomainDialog extends Component {
 				className="remove-domain-dialog__dialog"
 				isVisible={ this.props.isDialogVisible }
 				onClose={ this.close }
+				leaveTimeout={ 0 }
 			>
 				{ this.state.step === 1 && this.renderFirstStep( productName ) }
 				{ this.state.step === 2 && this.renderUpdateEmailStep( productName ) }
