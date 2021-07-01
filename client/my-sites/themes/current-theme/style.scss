@@ -1,4 +1,3 @@
-$current-theme-height: 112px;
 $current-theme-border: 1px solid var( --color-border-subtle );
 
 .current-theme {
@@ -11,7 +10,7 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 	flex-direction: column;
 
 	@include breakpoint-deprecated( '>960px' ) {
-		height: $current-theme-height;
+		min-height: 112px;
 		flex-direction: row;
 	}
 }
@@ -19,17 +18,19 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 .current-theme__details {
 	display: flex;
 	flex-direction: column;
+	font-size: $font-body-small;
 
-	@include breakpoint-deprecated( '>960px' ) {
-		height: $current-theme-height;
+	@include breakpoint-deprecated( '>660px' ) {
 		flex-direction: row;
+		font-size: $font-body;
 	}
 }
 
 .current-theme__img {
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		border-right: $current-theme-border;
-		max-height: $current-theme-height;
+		max-width: 150px;
+		height: auto;
 	}
 }
 
@@ -39,8 +40,8 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 	animation: loading-fade 1.6s ease-in-out infinite;
 	height: 100%;
 
-	@include breakpoint-deprecated( '>960px' ) {
-		width: 75px;
+	@include breakpoint-deprecated( '>660px' ) {
+		width: 150px;
 	}
 }
 
@@ -53,7 +54,7 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 	flex-direction: column;
 	align-items: flex-start;
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		flex-direction: row-reverse;
 		justify-content: flex-end;
 	}
@@ -71,7 +72,7 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 	margin-left: 16px;
 	margin-bottom: 4px;
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin-bottom: auto;
 		margin-left: 8px;
 	}
@@ -84,8 +85,12 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	padding-left: 16px;
-	font-size: $font-title-small;
+	font-size: $font-body;
 	max-width: 100%;
+
+	@include breakpoint-deprecated( '>960px' ) {
+		font-size: $font-title-small;
+	}
 }
 
 .current-theme__placeholder {
@@ -96,7 +101,11 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 
 .current-theme__description {
 	margin-top: 16px;
-	font-size: $font-body;
+	font-size: $font-body-small;
+
+	@include breakpoint-deprecated( '>960px' ) {
+		font-size: $font-body;
+	}
 }
 
 .current-theme__actions {
@@ -108,23 +117,27 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 	justify-content: center;
 	flex-grow: 1;
 
-	@include breakpoint-deprecated( '>960px' ) {
-		height: $current-theme-height;
-		padding-top: 0;
+	@include breakpoint-deprecated( '>660px' ) {
 		align-items: flex-end;
 		justify-content: flex-end;
-		flex-grow: 1;
+	}
+
+	@include breakpoint-deprecated( '>960px' ) {
+		min-height: 112px;
+		padding-top: 0;
 	}
 }
 
 .current-theme__button {
 	margin-right: 10px;
-	margin-bottom: 20px;
+	margin-bottom: 16px;
 	font-weight: normal;
 	position: relative;
 
-	&:last-child {
-		margin-right: 20px;
+	@include breakpoint-deprecated( '>660px' ) {
+		&:last-child {
+			margin-right: 16px;
+		}
 	}
 }
 
