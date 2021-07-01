@@ -22,6 +22,7 @@ import './style.scss';
 
 interface Props {
 	siteId: number;
+	isJetpack: boolean;
 }
 
 export default function JetpackSearchPlaceholder( { siteId, isJetpack }: Props ): ReactElement {
