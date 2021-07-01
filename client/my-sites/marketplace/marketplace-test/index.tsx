@@ -34,8 +34,8 @@ import {
 import { getBlockingMessages } from 'calypso/blocks/eligibility-warnings/hold-list';
 import { isAtomicSiteWithoutBusinessPlan } from 'calypso/blocks/eligibility-warnings/utils';
 import Notice from 'calypso/components/notice';
-import ComponentDemo from 'calypso/my-sites/plugins/marketplace/marketplace-test/component-demo';
-import AdminMenuFetch from 'calypso/my-sites/plugins/marketplace/marketplace-test/admin-menu-fetch';
+import ComponentDemo from 'calypso/my-sites/marketplace/marketplace-test/component-demo';
+import AdminMenuFetch from 'calypso/my-sites/marketplace/marketplace-test/admin-menu-fetch';
 
 export const Container = styled.div`
 	margin: 0 25px;
@@ -193,7 +193,7 @@ export default function MarketplaceTest(): JSX.Element {
 								status={ message.status }
 								text={ message.message }
 								showDismiss={ false }
-							></Notice>
+							/>
 						) ) }
 				</CompactCard>
 			</Card>

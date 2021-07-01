@@ -9,7 +9,7 @@ import { TranslateResult } from 'i18n-calypso';
  * Internal dependencies
  */
 import CardHeading from 'calypso/components/card-heading';
-import SimulatedProgressBar from 'calypso/my-sites/plugins/marketplace/components/simulated-progressbar';
+import SimulatedProgressBar from 'calypso/my-sites/marketplace/components/simulated-progressbar';
 
 export default function ComponentDemo(): JSX.Element {
 	const steps: TranslateResult[] = [

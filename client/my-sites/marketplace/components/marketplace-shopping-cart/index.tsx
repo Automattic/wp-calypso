@@ -12,11 +12,11 @@ import { keyframes } from '@emotion/core';
  * Internal dependencies
  */
 import { LineItem } from 'calypso/my-sites/checkout/composite-checkout/components/wp-order-review-line-items';
-import type { MarketplaceThemeProps } from 'calypso/my-sites/plugins/marketplace/theme';
+import type { MarketplaceThemeProps } from 'calypso/my-sites/marketplace/theme';
 import {
 	MobileHiddenHorizontalRule,
 	FullWidthButton,
-} from 'calypso/my-sites/plugins/marketplace/components';
+} from 'calypso/my-sites/marketplace/components';
 
 interface PropsForMarketplaceShoppingCart {
 	onCheckout: () => void;

@@ -19,7 +19,7 @@ import {
 import PluginProductMappingInterface, {
 	getProductSlug,
 	marketplaceDebugger,
-} from 'calypso/my-sites/plugins/marketplace/constants';
+} from 'calypso/my-sites/marketplace/constants';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import {
@@ -36,7 +36,7 @@ import {
 	setPluginSlugToBeInstalled,
 	setPrimaryDomainCandidate,
 	setIsPluginInstalledDuringPurchase,
-} from 'calypso/state/plugins/marketplace/actions';
+} from 'calypso/state/marketplace/purchase-flow/actions';
 import { getBlockingMessages } from 'calypso/blocks/eligibility-warnings/hold-list';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
 import { isAtomicSiteWithoutBusinessPlan } from 'calypso/blocks/eligibility-warnings/utils';
@@ -91,8 +91,8 @@ function MarketplacePluginDetails( {
 	const allBlockingMessages = getBlockingMessages( translate );
 	const holds = eligibilityDetails.eligibilityHolds || [];
 	const raisedBlockingMessages = holds
-		.filter( ( message: string ) => allBlockingMessages.hasOwnProperty( message ) )
-		.map( ( message: string ) => allBlockingMessages[ message ] );
+		.filter( ( messageCode: string ) => allBlockingMessages.hasOwnProperty( messageCode ) )
+		.map( ( messageCode: string ) => ( { messageCode, ...allBlockingMessages[ messageCode ] } ) );
 	const hasHardBlockSingleMessage = holds.some(
 		( message: string ) =>
 			message !== eligibilityHolds.TRANSFER_ALREADY_EXISTS &&
@@ -105,7 +105,12 @@ function MarketplacePluginDetails( {
 			<SidebarNavigation />
 			{ hasHardBlock &&
 				raisedBlockingMessages.map( ( message ) => (
-					<Notice status={ message.status } text={ message.message } showDismiss={ false }></Notice>
+					<Notice
+						key={ message.messageCode }
+						status={ message.status }
+						text={ message.message }
+						showDismiss={ false }
+					/>
 				) ) }
 			{ ! wporgFetching ? (
 				<PurchaseArea

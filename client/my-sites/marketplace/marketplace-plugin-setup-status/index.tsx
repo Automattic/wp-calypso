@@ -10,7 +10,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import theme from 'calypso/my-sites/plugins/marketplace/theme';
+import theme from 'calypso/my-sites/marketplace/theme';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
@@ -18,15 +18,15 @@ import {
 	getPurchaseFlowState,
 	getIsProductSetupComplete,
 	getHasProductSetupError,
-} from 'calypso/state/plugins/marketplace/selectors';
-import SimulatedProgressBar from 'calypso/my-sites/plugins/marketplace/components/simulated-progressbar';
+} from 'calypso/state/marketplace/purchase-flow/selectors';
+import SimulatedProgressBar from 'calypso/my-sites/marketplace/components/simulated-progressbar';
 import { getAutomatedTransfer } from 'calypso/state/automated-transfer/selectors';
-import { tryProductInstall } from 'calypso/state/plugins/marketplace/actions';
+import { tryProductInstall } from 'calypso/state/marketplace/purchase-flow/actions';
 import {
 	navigateToInstallationThankYouPage,
 	navigateToProductHomePage,
 	waitFor,
-} from 'calypso/my-sites/plugins/marketplace/util';
+} from 'calypso/my-sites/marketplace/util';
 import {
 	isLoaded,
 	isRequestingForSites,
@@ -37,11 +37,12 @@ import {
 	isFetched as getIsWporgPluginFetched,
 	getPlugin as getWporgPlugin,
 } from 'calypso/state/plugins/wporg/selectors';
+import { marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';
+
 /**
  * Style dependencies
  */
-import 'calypso/my-sites/plugins/marketplace/marketplace-plugin-setup-status/style.scss';
-import { marketplaceDebugger } from 'calypso/my-sites/plugins/marketplace/constants';
+import 'calypso/my-sites/marketplace/marketplace-plugin-setup-status/style.scss';
 
 /**
  * This page busy waits and installs any plugins that are required in the marketplace purchase flow.
