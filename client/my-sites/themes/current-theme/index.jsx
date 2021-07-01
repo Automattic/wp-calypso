@@ -67,27 +67,32 @@ class CurrentTheme extends Component {
 				<QueryActiveTheme siteId={ siteId } />
 				{ currentThemeId && <QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } /> }
 				<div className="current-theme__current">
-					{ showScreenshotPlaceholder && <div className="current-theme__img-placeholder" /> }
-					{ showScreenshot && (
-						<img src={ currentTheme.screenshot + '?w=150' } className="current-theme__img" alt="" />
-					) }
-					<div className="current-theme__description">
-						<span className="current-theme__name">{ text }</span>
-						<span className="current-theme__label">
-							{ currentTheme && currentTheme.name && translate( 'Current Theme' ) }
-						</span>
-						<p>
-							{ translate( 'This is the active theme on your site.' ) }{ ' ' }
-							<ExternalLink
-								href={ localizeUrl( 'https://wordpress.com/support/changing-themes/' ) }
-								icon
-								target="__blank"
-							>
-								{ translate( 'Learn more.' ) }
-							</ExternalLink>
-						</p>
+					<div className="current-theme__details">
+						{ showScreenshotPlaceholder && <div className="current-theme__img-placeholder" /> }
+						{ showScreenshot && (
+							<img
+								src={ currentTheme.screenshot + '?w=150' }
+								className="current-theme__img"
+								alt=""
+							/>
+						) }
+						<div className="current-theme__description">
+							<span className="current-theme__name">{ text }</span>
+							<span className="current-theme__label">
+								{ currentTheme && currentTheme.name && translate( 'Current Theme' ) }
+							</span>
+							<p>
+								{ translate( 'This is the active theme on your site.' ) }{ ' ' }
+								<ExternalLink
+									href={ localizeUrl( 'https://wordpress.com/support/changing-themes/' ) }
+									icon
+									target="__blank"
+								>
+									{ translate( 'Learn more.' ) }
+								</ExternalLink>
+							</p>
+						</div>
 					</div>
-
 					<div className={ classNames( 'current-theme__actions' ) }>
 						{ map( options, ( option, name ) => (
 							<CurrentThemeButton
