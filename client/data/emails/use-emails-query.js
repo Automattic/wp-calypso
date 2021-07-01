@@ -8,9 +8,7 @@ import { useQuery } from 'react-query';
  */
 import wpcom from 'calypso/lib/wp';
 
-export const queryKeyPrefix = 'emailAccounts';
-
-const getCacheKey = ( siteId, domain ) => [ queryKeyPrefix, siteId, domain ];
+export const getCacheKey = ( siteId, domain ) => [ 'emailAccounts', siteId, domain ];
 
 /**
  * Get the associated emails given a Site Identificator

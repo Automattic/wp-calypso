@@ -203,6 +203,8 @@ const RemoveTitanMailboxConfirmationDialog = ( { mailbox, visible, setVisible } 
 
 	const emailAddress = getEmailAddress( mailbox );
 
+	const noticeDuration = 7000;
+
 	const errorMessage = errorNotice(
 		translate(
 			'There was an error removing {{strong}}%(emailAddress)s{{/strong}} from your account',
@@ -214,7 +216,7 @@ const RemoveTitanMailboxConfirmationDialog = ( { mailbox, visible, setVisible } 
 				},
 			}
 		),
-		{ duration: 7000 }
+		{ duration: noticeDuration }
 	);
 
 	const successMessage = successNotice(
@@ -225,7 +227,7 @@ const RemoveTitanMailboxConfirmationDialog = ( { mailbox, visible, setVisible } 
 				strong: <strong />,
 			},
 		} ),
-		{ duration: 5000 }
+		{ duration: noticeDuration }
 	);
 
 	const { removeTitanMailbox } = useRemoveTitanMailboxMutation( mailbox.domain, mailbox.mailbox, {
@@ -332,8 +334,8 @@ const EmailMailboxActionMenu = ( { account, domain, mailbox } ) => {
 			{ domainHasTitanMailWithUs && (
 				<RemoveTitanMailboxConfirmationDialog
 					mailbox={ mailbox }
-					visible={ removeTitanMailboxDialogVisible }
 					setVisible={ setRemoveTitanMailboxDialogVisible }
+					visible={ removeTitanMailboxDialogVisible }
 				/>
 			) }
 			<EllipsisMenu position="bottom" className="email-mailbox-action-menu__main">
