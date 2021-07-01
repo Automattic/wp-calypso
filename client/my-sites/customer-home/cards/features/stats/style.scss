@@ -1,8 +1,10 @@
-.stats .card {
-	padding: 16px 16px 0;
-	@include breakpoint-deprecated( '>480px' ) {
-		box-shadow: none;
+.stats .card.customer-home__card {
+	box-shadow: none;
+	border-bottom: none;
+
+	@include breakpoint-deprecated( '>660px' ) {
 		padding: 16px 24px 0;
+		margin-bottom: 16px;
 	}
 }
 
@@ -86,7 +88,7 @@
 		border-top-right-radius: 3px; /* stylelint-disable-line scales/radii */
 	}
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		border-bottom: none;
 	}
 
@@ -133,7 +135,7 @@
 	border-top: none;
 	border-bottom-left-radius: 3px; /* stylelint-disable-line scales/radii */
 	border-bottom-right-radius: 3px; /* stylelint-disable-line scales/radii */
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		border: 1px solid var( --color-neutral-5 );
 	}
 }
