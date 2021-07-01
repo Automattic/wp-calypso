@@ -26,7 +26,6 @@ import { requestPlans } from 'calypso/state/plans/actions';
 import { computeProductsWithPrices } from 'calypso/state/products-list/selectors';
 import { requestProductsList } from 'calypso/state/products-list/actions';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
-import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import type { WPCOMProductVariant } from '../components/item-variation-picker';
 
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );
@@ -84,9 +83,6 @@ export function useGetProductVariants(
 		siteId ? getPlansBySiteId( state, siteId ) : null
 	);
 	const activePlan = sitePlans?.data?.find( ( plan ) => plan.currentPlan );
-	const isProductAnUpgrade = useSelector( ( state ) =>
-		siteId ? canUpgradeToPlan( state, siteId, productSlug ) : false
-	);
 
 	const variantProductSlugs = useVariantPlanProductSlugs( productSlug );
 	debug( 'variantProductSlugs', variantProductSlugs );
@@ -124,29 +120,19 @@ export function useGetProductVariants(
 	return useMemo( () => {
 		debug( 'found unfiltered variants', productsWithPrices );
 		return productsWithPrices
-			.filter( ( product ) =>
-				isVariantAllowed( product, activePlan?.interval, isProductAnUpgrade )
-			)
+			.filter( ( product ) => isVariantAllowed( product, activePlan?.interval ) )
 			.map( getProductVariantFromAvailableVariant );
-	}, [
-		activePlan?.interval,
-		isProductAnUpgrade,
-		getProductVariantFromAvailableVariant,
-		productsWithPrices,
-	] );
+	}, [ activePlan?.interval, getProductVariantFromAvailableVariant, productsWithPrices ] );
 }
 
 function isVariantAllowed(
 	variant: AvailableProductVariant,
-	activePlanRenewalInterval: number | undefined,
-	isProductAnUpgrade: boolean
+	activePlanRenewalInterval: number | undefined
 ): boolean {
-	// If this is a plan, does the site currently own a plan? If so, is this an
-	// upgrade to a higher plan level? If so, is the term of the variant lower
-	// than the term of the currently owned plan? If so, do not allow the
-	// variant. That is, do not allow variants which are upgrades that are also
-	// term length downgrades.
-	if ( ! activePlanRenewalInterval || activePlanRenewalInterval < 1 || ! isProductAnUpgrade ) {
+	// If this is a plan, does the site currently own a plan? If so, is the term
+	// of the variant lower than the term of the currently owned plan? If so, do
+	// not allow the variant.
+	if ( ! activePlanRenewalInterval || activePlanRenewalInterval < 1 ) {
 		return true;
 	}
 	const variantRenewalInterval = getTermDuration( variant.plan.term );
