@@ -45,19 +45,35 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 }
 
 .current-theme__description p {
-	padding: 15px;
+	padding: 16px;
+}
+
+.current-theme__title-wrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		flex-direction: row-reverse;
+		justify-content: flex-end;
+	}
 }
 
 .current-theme__label {
 	font-size: $font-body-extra-small;
 	color: var( --color-text-inverted );
+	display: inline-block;
 	background: var( --color-neutral-dark );
 	padding: 4px 12px;
-	position: relative;
-	top: -4px;
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 120px;
-	margin-left: 10px;
+	margin-left: 16px;
+	margin-bottom: 4px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-bottom: auto;
+		margin-left: 8px;
+	}
 }
 
 .current-theme__name {
@@ -66,7 +82,7 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
-	padding-left: 15px;
+	padding-left: 16px;
 	font-size: $font-title-small;
 	max-width: 100%;
 }
@@ -78,14 +94,14 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 }
 
 .current-theme__description {
-	margin-top: 15px;
+	margin-top: 16px;
 	font-size: $font-body;
 }
 
 .current-theme__actions {
 	border-top: $current-theme-border;
 	box-sizing: border-box;
-	padding-top: 15px;
+	padding-top: 16px;
 	display: flex;
 	align-items: center;
 	justify-content: center;

@@ -77,10 +77,12 @@ class CurrentTheme extends Component {
 							/>
 						) }
 						<div className="current-theme__description">
-							<span className="current-theme__name">{ text }</span>
-							<span className="current-theme__label">
-								{ currentTheme && currentTheme.name && translate( 'Current Theme' ) }
-							</span>
+							<div className="current-theme__title-wrapper">
+								<span className="current-theme__label">
+									{ currentTheme && currentTheme.name && translate( 'Current Theme' ) }
+								</span>
+								<span className="current-theme__name">{ text }</span>
+							</div>
 							<p>
 								{ translate( 'This is the active theme on your site.' ) }{ ' ' }
 								<ExternalLink
