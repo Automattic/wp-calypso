@@ -121,6 +121,7 @@
 		"signup/social": true,
 		"site-indicator": true,
 		"support-user": true,
+		"theme/showcase-revamp": false,
 		"tools/migrate": true,
 		"upgrades/checkout": true,
 		"upgrades/domain-search": true,

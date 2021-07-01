@@ -331,6 +331,7 @@ class ThemesMagicSearchCard extends React.Component {
 								onSelect={ this.props.select }
 							/>
 						) }
+						{ config.isEnabled( 'theme/showcase-revamp' ) && <div>Revamp Enabled</div> }
 					</div>
 				</StickyPanel>
 				<div role="presentation" onClick={ this.handleClickInside }>
