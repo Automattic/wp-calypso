@@ -360,10 +360,12 @@ export function WPOrderReviewLineItems( {
 
 WPOrderReviewLineItems.propTypes = {
 	className: PropTypes.string,
+	siteId: PropTypes.number,
 	isSummary: PropTypes.bool,
 	removeProductFromCart: PropTypes.func,
 	removeCoupon: PropTypes.func,
 	onChangePlanLength: PropTypes.func,
+	createUserAndSiteBeforeTransaction: PropTypes.bool,
 };
 
 function GSuiteUsersList( { product }: { product: ResponseCartProduct } ) {
@@ -979,6 +981,8 @@ function WPLineItem( {
 }
 
 WPLineItem.propTypes = {
+	siteId: PropTypes.number,
+	allowVariants: PropTypes.bool,
 	className: PropTypes.string,
 	total: PropTypes.bool,
 	tax: PropTypes.bool,
