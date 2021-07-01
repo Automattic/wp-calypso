@@ -38,6 +38,10 @@ import {
 	prependThemeFilterKeys,
 } from 'calypso/state/themes/selectors';
 import UpworkBanner from 'calypso/blocks/upwork-banner';
+import SectionNav from 'calypso/components/section-nav';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import NavItem from 'calypso/components/section-nav/item';
+import RecommendedThemes from './recommended-themes';
 
 /**
  * Style dependencies
@@ -70,6 +74,7 @@ class ThemeShowcase extends React.Component {
 		this.scrollRef = React.createRef();
 		this.bookmarkRef = React.createRef();
 		this.state = {
+			tabFilter: 'recommended',
 			page: 1,
 			showPreview: false,
 		};
@@ -193,6 +198,11 @@ class ThemeShowcase extends React.Component {
 		this.scrollToSearchInput();
 	};
 
+	onFilterClick = ( tabFilter ) => {
+		trackClick( 'section nav filter', tabFilter );
+		this.setState( { tabFilter } );
+	};
+
 	render() {
 		const {
 			currentThemeId,
@@ -274,49 +284,111 @@ class ThemeShowcase extends React.Component {
 						showTierThemesControl={ ! isMultisite }
 						select={ this.onTierSelect }
 					/>
+					<SectionNav className="themes__section-nav">
+						<NavTabs>
+							<NavItem
+								onClick={ () => this.onFilterClick( 'recommended' ) }
+								selected={ 'recommended' === this.state.tabFilter }
+							>
+								{ translate( 'Recommended' ) }
+							</NavItem>
+							<NavItem
+								onClick={ () => this.onFilterClick( 'all' ) }
+								selected={ 'all' === this.state.tabFilter }
+							>
+								{ translate( 'All Themes' ) }
+							</NavItem>
+						</NavTabs>
+					</SectionNav>
 					{ this.props.upsellBanner }
 
-					<ThemesSelection
-						upsellUrl={ this.props.upsellUrl }
-						search={ search }
-						tier={ this.props.tier }
-						filter={ filter }
-						vertical={ this.props.vertical }
-						siteId={ this.props.siteId }
-						listLabel={ this.props.listLabel }
-						defaultOption={ this.props.defaultOption }
-						secondaryOption={ this.props.secondaryOption }
-						placeholderCount={ this.props.placeholderCount }
-						getScreenshotUrl={ function ( theme ) {
-							if ( ! getScreenshotOption( theme ).getUrl ) {
-								return null;
-							}
+					{ 'recommended' === this.state.tabFilter && (
+						<RecommendedThemes
+							upsellUrl={ this.props.upsellUrl }
+							search={ search }
+							tier={ this.props.tier }
+							filter={ filter }
+							vertical={ this.props.vertical }
+							siteId={ this.props.siteId }
+							listLabel={ this.props.listLabel }
+							defaultOption={ this.props.defaultOption }
+							secondaryOption={ this.props.secondaryOption }
+							placeholderCount={ this.props.placeholderCount }
+							getScreenshotUrl={ function ( theme ) {
+								if ( ! getScreenshotOption( theme ).getUrl ) {
+									return null;
+								}
 
-							return localizeThemesPath(
-								getScreenshotOption( theme ).getUrl( theme ),
-								locale,
-								! isLoggedIn
-							);
-						} }
-						onScreenshotClick={ function ( themeId ) {
-							if ( ! getScreenshotOption( themeId ).action ) {
-								return;
-							}
-							getScreenshotOption( themeId ).action( themeId );
-						} }
-						getActionLabel={ function ( theme ) {
-							return getScreenshotOption( theme ).label;
-						} }
-						getOptions={ function ( theme ) {
-							return pickBy(
-								addTracking( options ),
-								( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
-							);
-						} }
-						trackScrollPage={ this.props.trackScrollPage }
-						emptyContent={ this.props.emptyContent }
-						bookmarkRef={ this.bookmarkRef }
-					/>
+								return localizeThemesPath(
+									getScreenshotOption( theme ).getUrl( theme ),
+									locale,
+									! isLoggedIn
+								);
+							} }
+							onScreenshotClick={ function ( themeId ) {
+								if ( ! getScreenshotOption( themeId ).action ) {
+									return;
+								}
+								getScreenshotOption( themeId ).action( themeId );
+							} }
+							getActionLabel={ function ( theme ) {
+								return getScreenshotOption( theme ).label;
+							} }
+							getOptions={ function ( theme ) {
+								return pickBy(
+									addTracking( options ),
+									( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
+								);
+							} }
+							trackScrollPage={ this.props.trackScrollPage }
+							emptyContent={ this.props.emptyContent }
+							scrollToSearchInput={ this.scrollToSearchInput }
+							bookmarkRef={ this.bookmarkRef }
+						/>
+					) }
+					{ 'all' === this.state.tabFilter && (
+						<ThemesSelection
+							upsellUrl={ this.props.upsellUrl }
+							search={ search }
+							tier={ this.props.tier }
+							filter={ filter }
+							vertical={ this.props.vertical }
+							siteId={ this.props.siteId }
+							listLabel={ this.props.listLabel }
+							defaultOption={ this.props.defaultOption }
+							secondaryOption={ this.props.secondaryOption }
+							placeholderCount={ this.props.placeholderCount }
+							getScreenshotUrl={ function ( theme ) {
+								if ( ! getScreenshotOption( theme ).getUrl ) {
+									return null;
+								}
+
+								return localizeThemesPath(
+									getScreenshotOption( theme ).getUrl( theme ),
+									locale,
+									! isLoggedIn
+								);
+							} }
+							onScreenshotClick={ function ( themeId ) {
+								if ( ! getScreenshotOption( themeId ).action ) {
+									return;
+								}
+								getScreenshotOption( themeId ).action( themeId );
+							} }
+							getActionLabel={ function ( theme ) {
+								return getScreenshotOption( theme ).label;
+							} }
+							getOptions={ function ( theme ) {
+								return pickBy(
+									addTracking( options ),
+									( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
+								);
+							} }
+							trackScrollPage={ this.props.trackScrollPage }
+							emptyContent={ this.props.emptyContent }
+							bookmarkRef={ this.bookmarkRef }
+						/>
+					) }
 					<ThemePreview />
 					{ this.props.children }
 				</div>
