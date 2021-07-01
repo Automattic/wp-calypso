@@ -249,3 +249,9 @@ export function tryProductInstall() {
 		}
 	};
 }
+
+export function installProduct( productSlug: string ) {
+	return function ( dispatch: Dispatch< any >, getState: () => IAppState ): void {
+		marketplaceDebugger( 'Not Implemented', dispatch, getState, productSlug );
+	};
+}
