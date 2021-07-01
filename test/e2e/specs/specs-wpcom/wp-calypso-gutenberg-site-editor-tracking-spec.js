@@ -128,23 +128,39 @@ const exitSiteEditor = async function ( driver ) {
 
 const deleteAll = async function ( driver ) {
 	// Make sure we have posts before trying to delete them
-	const noItems = await driverHelper.isElementLocated( driver, By.css( '#the-list .no-items' ) );
+	const noItemsRowLocator = By.css( '#the-list .no-items' );
+	const noItems = await driverHelper.isElementLocated( driver, noItemsRowLocator );
 	if ( noItems ) {
 		return;
 	}
 
+	const selectAllCheckboxLocator = By.css( '#cb-select-all-1' );
+	// We use the bottom bulk action dropdown and apply button because those are
+	// available on both mobile and desktop.
+	const bottomBulkActionDropdownLocator = By.css( '#bulk-action-selector-bottom' );
+	const bottomBulkActionApplyButtonLocator = By.css( '#doaction2' );
+	const createBottomBulkActionDropdownOptionLocator = ( value ) =>
+		By.css( `#bulk-action-selector-bottom option[value="${ value }"]` );
+	const trashedItemsLinkLocator = By.css( '.subsubsub .trash a' );
+
 	// Delete all posts
-	await driverHelper.clickWhenClickable( driver, By.css( '#cb-select-all-1' ) );
-	await driverHelper.clickWhenClickable( driver, By.css( '#bulk-action-selector-top' ) );
+	await driverHelper.clickWhenClickable( driver, selectAllCheckboxLocator );
+	await driverHelper.clickWhenClickable( driver, bottomBulkActionDropdownLocator );
 	await driverHelper.clickWhenClickable(
 		driver,
-		By.css( '#bulk-action-selector-top option[value="trash"]' )
+		createBottomBulkActionDropdownOptionLocator( 'trash' )
 	);
-	await driverHelper.clickWhenClickable( driver, By.css( '#doaction' ) );
+	await driverHelper.clickWhenClickable( driver, bottomBulkActionApplyButtonLocator );
 
 	// Empty trash
-	await driverHelper.clickWhenClickable( driver, By.css( '.subsubsub .trash a' ) );
-	await driverHelper.clickWhenClickable( driver, By.css( '#delete_all' ) );
+	await driverHelper.clickWhenClickable( driver, trashedItemsLinkLocator );
+	await driverHelper.clickWhenClickable( driver, selectAllCheckboxLocator );
+	await driverHelper.clickWhenClickable( driver, bottomBulkActionDropdownLocator );
+	await driverHelper.clickWhenClickable(
+		driver,
+		createBottomBulkActionDropdownOptionLocator( 'delete' )
+	);
+	await driverHelper.clickWhenClickable( driver, bottomBulkActionApplyButtonLocator );
 };
 
 const deleteTemplates = async function ( driver ) {
