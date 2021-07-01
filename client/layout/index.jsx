@@ -243,7 +243,7 @@ class Layout extends Component {
 			'is-inline-help-showing': this.shouldLoadInlineHelp(),
 			'is-happychat-button-showing': this.shouldShowHappyChatButton(),
 			'has-chat': this.props.chatIsOpen,
-			'has-no-masterbar': this.props.masterbarIsHidden,
+			'has-no-masterbar': this.props.masterbarIsHidden || isWcMobileApp(),
 			'is-jetpack-login': this.props.isJetpackLogin,
 			'is-jetpack-site': this.props.isJetpack,
 			'is-jetpack-mobile-flow': this.props.isJetpackMobileFlow,
