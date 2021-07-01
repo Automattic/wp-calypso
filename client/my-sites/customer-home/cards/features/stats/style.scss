@@ -1,6 +1,7 @@
-.stats .card.customer-home__card {
+.stats .customer-home__card.stats__with-chart {
 	box-shadow: none;
 	border-bottom: none;
+	margin-bottom: 0;
 
 	@include breakpoint-deprecated( '>660px' ) {
 		padding: 16px 24px 0;
@@ -22,10 +23,7 @@
 
 	&.is-placeholder {
 		padding: 16px;
-		margin: 0 -16px -24px;
-		box-shadow: 0 0 0 1px var( --color-border-subtle );
-		/* stylelint-disable-next-line scales/radii */
-		border-radius: 3px;
+		margin: 0 -16px;
 		
 		@include breakpoint-deprecated( '>660px' ) {
 			padding: 16px 24px;
