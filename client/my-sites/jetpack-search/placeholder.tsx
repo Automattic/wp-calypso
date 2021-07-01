@@ -28,7 +28,7 @@ export default function JetpackSearchPlaceholder( { siteId, isJetpack }: Props )
 	return (
 		<Main className="jetpack-search__placeholder">
 			<QuerySitePurchases siteId={ siteId } />
-			<QuerySiteSettings siteId={ siteId } />
+			{ ! isJetpack && <QuerySiteSettings siteId={ siteId } /> }
 			{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 
 			<DocumentHead title="Jetpack Search" />
