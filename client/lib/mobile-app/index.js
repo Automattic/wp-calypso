@@ -19,5 +19,5 @@ export function isWcMobileApp() {
 	if ( typeof navigator === 'undefined' ) {
 		return false;
 	}
-	return navigator.userAgent && /wc-(android|iphone)/.test( navigator.userAgent );
+	return navigator.userAgent && /wc-(android|ios)/.test( navigator.userAgent );
 }
