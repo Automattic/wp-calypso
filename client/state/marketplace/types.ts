@@ -36,3 +36,7 @@ export interface ISetPluginToBeInstalledAction extends Action {
 export interface ISetPluginInstalledDuringPurchaseFlag extends Action {
 	isPluginInstalledDuringPurchase: boolean;
 }
+
+export interface IMarketplaceState {
+	purchaseFlow: IPurchaseFlowState;
+}

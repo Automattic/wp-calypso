@@ -21,7 +21,7 @@ import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import {
 	MARKETPLACE_FLOW_ID,
 	ANALYTICS_UI_LOCATION_MARKETPLACE_DOMAIN_SELECTION,
-} from 'calypso/my-sites/plugins/marketplace/constants';
+} from 'calypso/my-sites/marketplace/constants';
 import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -30,15 +30,15 @@ import Item from 'calypso/layout/masterbar/item';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import { HorizontalRule } from '@wordpress/components';
 import ExternalLink from 'calypso/components/external-link';
-import MarketplaceShoppingCart from 'calypso/my-sites/plugins/marketplace/components/marketplace-shopping-cart';
-import theme from 'calypso/my-sites/plugins/marketplace/theme';
-import { MarketplaceHeaderTitle } from 'calypso/my-sites/plugins/marketplace/components';
-import { setPrimaryDomainCandidate } from 'calypso/state/plugins/marketplace/actions';
+import MarketplaceShoppingCart from 'calypso/my-sites/marketplace/components/marketplace-shopping-cart';
+import theme from 'calypso/my-sites/marketplace/theme';
+import { MarketplaceHeaderTitle } from 'calypso/my-sites/marketplace/components';
+import { setPrimaryDomainCandidate } from 'calypso/state/marketplace/purchase-flow/actions';
 
 /**
  * Style dependencies
  */
-import 'calypso/my-sites/plugins/marketplace/marketplace-domain-upsell/style.scss';
+import 'calypso/my-sites/marketplace/marketplace-domain-upsell/style.scss';
 
 const MarketplaceHeaderSubTitle = styled.h2`
 	font-size: 0.875rem;

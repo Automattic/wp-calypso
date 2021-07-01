@@ -2,17 +2,20 @@
  * Internal dependencies
  */
 import 'calypso/state/plugins/init';
-import { IAppState } from '../reducer';
-import { IPurchaseFlowState, MARKETPLACE_ASYNC_PROCESS_STATUS } from './types';
+import { IAppState } from 'calypso/state/types';
+import {
+	IPurchaseFlowState,
+	MARKETPLACE_ASYNC_PROCESS_STATUS,
+} from 'calypso/state/marketplace/types';
 import { isFetching as getIsWporgPluginFetching } from 'calypso/state/plugins/wporg/selectors';
 import { isLoaded, isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
 
 export function getPrimaryDomainCandidate( state: IAppState ): string | null {
-	return state.plugins.marketplace.purchaseFlow.primaryDomain;
+	return state.marketplace.purchaseFlow.primaryDomain;
 }
 
 export function getPurchaseFlowState( state: IAppState ): IPurchaseFlowState {
-	return state.plugins.marketplace.purchaseFlow;
+	return state.marketplace.purchaseFlow;
 }
 
 export function getIsProductSetupComplete( state: IAppState ): boolean {

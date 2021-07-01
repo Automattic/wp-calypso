@@ -4,12 +4,12 @@
 import {
 	purchaseFlow as purchaseFlowReducer,
 	defaultState as defaultMarketPlaceState,
-} from 'calypso/state/plugins/marketplace/reducer';
+} from 'calypso/state/marketplace/purchase-flow/reducer';
 import {
 	setPrimaryDomainCandidate,
 	setPluginSlugToBeInstalled,
 	setIsPluginInstalledDuringPurchase,
-} from 'calypso/state/plugins/marketplace/actions';
+} from 'calypso/state/marketplace/purchase-flow/actions';
 
 describe( 'Marketplace reducer', () => {
 	test( 'purchaseFlow reducer should default to an empty object', () => {

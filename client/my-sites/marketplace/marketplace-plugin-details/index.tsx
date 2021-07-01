@@ -19,7 +19,7 @@ import {
 import PluginProductMappingInterface, {
 	getProductSlug,
 	marketplaceDebugger,
-} from 'calypso/my-sites/plugins/marketplace/constants';
+} from 'calypso/my-sites/marketplace/constants';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import {
@@ -36,7 +36,7 @@ import {
 	setPluginSlugToBeInstalled,
 	setPrimaryDomainCandidate,
 	setIsPluginInstalledDuringPurchase,
-} from 'calypso/state/plugins/marketplace/actions';
+} from 'calypso/state/marketplace/purchase-flow/actions';
 import { getBlockingMessages } from 'calypso/blocks/eligibility-warnings/hold-list';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
 import { isAtomicSiteWithoutBusinessPlan } from 'calypso/blocks/eligibility-warnings/utils';
