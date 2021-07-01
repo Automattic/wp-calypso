@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -13,7 +13,6 @@ import QuickLinks from 'calypso/my-sites/customer-home/cards/actions/quick-links
 import HelpSearch from 'calypso/my-sites/customer-home/cards/features/help-search';
 import WpForTeamsQuickLinks from 'calypso/my-sites/customer-home/cards/actions/wp-for-teams-quick-links';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getHomeLayout } from 'calypso/state/selectors/get-home-layout';
 import {
 	ACTION_QUICK_LINKS,
 	ACTION_WP_FOR_TEAMS_QUICK_LINKS,
@@ -22,6 +21,7 @@ import {
 	FEATURE_SUPPORT,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 
 const cardComponents = {
 	[ FEATURE_GO_MOBILE ]: GoMobile,
@@ -31,12 +31,15 @@ const cardComponents = {
 	[ ACTION_WP_FOR_TEAMS_QUICK_LINKS ]: WpForTeamsQuickLinks,
 };
 
-const ManageSite = ( { cards, trackCards } ) => {
+const ManageSite = () => {
+	const cards = useManageSiteCards();
+	const dispatch = useDispatch();
+
 	useEffect( () => {
 		if ( cards && cards.length ) {
-			trackCards( cards );
+			dispatch( trackCardImpressions( cards ) );
 		}
-	}, [ cards, trackCards ] );
+	}, [ cards, dispatch ] );
 
 	if ( ! cards || ! cards.length ) {
 		return null;
@@ -55,16 +58,14 @@ const ManageSite = ( { cards, trackCards } ) => {
 	);
 };
 
-const mapStateToProps = ( state ) => {
-	const siteId = getSelectedSiteId( state );
-	const layout = getHomeLayout( state, siteId );
+function useManageSiteCards() {
+	const siteId = useSelector( getSelectedSiteId );
+	const { data: layout } = useHomeLayoutQuery( siteId, { enabled: false } );
 
-	return {
-		cards: layout?.[ 'tertiary.manage-site' ] ?? [],
-	};
-};
+	return layout?.[ 'tertiary.manage-site' ] ?? [];
+}
 
-const trackCardImpressions = ( cards ) => {
+function trackCardImpressions( cards ) {
 	const analyticsEvents = cards.reduce( ( events, card ) => {
 		return [
 			...events,
@@ -73,6 +74,6 @@ const trackCardImpressions = ( cards ) => {
 		];
 	}, [] );
 	return composeAnalytics( ...analyticsEvents );
-};
+}
 
-export default connect( mapStateToProps, { trackCards: trackCardImpressions } )( ManageSite );
+export default ManageSite;
