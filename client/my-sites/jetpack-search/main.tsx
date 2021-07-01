@@ -13,11 +13,7 @@ import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import getSiteSetting from 'calypso/state/selectors/get-site-setting';
 import { isJetpackSearch, planHasJetpackSearch } from '@automattic/calypso-products';
 import {
@@ -36,19 +32,28 @@ import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpac
 import { isRequestingSiteSettings, getSiteSettings } from 'calypso/state/site-settings/selectors';
 import getJetpackModules from 'calypso/state/selectors/get-jetpack-modules';
 
-export default function JetpackSearchMain(): ReactElement {
+export default function JetpackSearchMain( { siteId } ): ReactElement {
 	const site = useSelector( getSelectedSite );
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const siteId = useSelector( getSelectedSiteId );
 	const checkForSearchProduct = ( purchase ) => purchase.active && isJetpackSearch( purchase );
 	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
 	const hasSearchProduct =
 		sitePurchases.find( checkForSearchProduct ) || planHasJetpackSearch( site?.plan?.product_slug );
 	const hasLoadedSitePurchases =
-		useSelector( hasLoadedSitePurchasesFromServer ) && sitePurchases?.length > 0;
+		useSelector( hasLoadedSitePurchasesFromServer ) && Array.isArray( sitePurchases );
 	const onSettingsClick = useTrackCallback( undefined, 'calypso_jetpack_search_settings' );
 	const isCloud = isJetpackCloud();
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+
+	// Have we loaded the necessary purchases, site settings and modules? If not, show the placeholder.
+	const settings = useSelector( ( state ) => getSiteSettings( state, siteId ) );
+	const modules = useSelector( ( state ) => getJetpackModules( state, siteId ) );
+
+	const isRequestingSettings =
+		useSelector( ( state ) => isRequestingSiteSettings( state, siteId ) ) || ! settings;
+	const isRequestingModules =
+		useSelector( ( state ) => isFetchingJetpackModules( state, siteId ) ) ||
+		( isJetpack && ! modules );
 
 	// On Jetpack sites, we need to check if the search module is active.
 	// On WPCOM Simple sites, we need to look for the jetpack_search_enabled flag.
@@ -60,16 +65,7 @@ export default function JetpackSearchMain(): ReactElement {
 	);
 	const isSearchEnabled = isJetpack ? isJetpackSearchModuleActive : isJetpackSearchSettingEnabled;
 
-	// Have we loaded the necessary purchases, site settings and modules? If not, show the placeholder.
-	const settings = useSelector( ( state ) => getSiteSettings( state, siteId ) );
-	const modules = useSelector( ( state ) => getJetpackModules( state, siteId ) );
-
-	const isRequestingSettings =
-		useSelector( ( state ) => isRequestingSiteSettings( state, siteId ) ) && ! settings;
-	const isFetchingModules =
-		useSelector( ( state ) => isFetchingJetpackModules( state, siteId ) ) && ! modules;
-
-	if ( ! hasLoadedSitePurchases || isRequestingSettings || isFetchingModules ) {
+	if ( ! hasLoadedSitePurchases || isRequestingSettings || isRequestingModules ) {
 		return <JetpackSearchPlaceholder siteId={ siteId } isJetpack={ isJetpack } />;
 	}
 
