@@ -25,6 +25,7 @@ import {
 	getSelectedDomain,
 } from 'calypso/lib/domains';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
+import { canCurrentUserUseCustomerHome } from 'calypso/state/sites/selectors';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import EmailProviderCard from './email-provider-card';
@@ -92,6 +93,7 @@ class EmailProvidersComparison extends React.Component {
 		currentRoute: PropTypes.string,
 		domain: PropTypes.object,
 		gSuiteProduct: PropTypes.object,
+		isCustomerHomeEnabled: PropTypes.bool,
 		isGSuiteSupported: PropTypes.bool.isRequired,
 		productsList: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object,
@@ -492,9 +494,20 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	handleBack = () => {
-		const { selectedSite } = this.props;
+		const { currentRoute, isCustomerHomeEnabled, selectedSite } = this.props;
 
-		page( emailManagement( selectedSite.slug ) );
+		const emailManagementHomePath = emailManagement( selectedSite.slug );
+
+		// Go to the site home page if we're already viewing email management home
+		if ( currentRoute === emailManagementHomePath ) {
+			const homePath = isCustomerHomeEnabled ? `/home/${ selectedSite.slug }` : `/stats/${ selectedSite.slug }`;
+
+			page( homePath );
+
+			return;
+		}
+
+		page( emailManagementHomePath );
 	};
 
 	renderHeader() {
@@ -641,6 +654,7 @@ export default connect(
 			domain,
 			domainsWithForwards: getDomainsWithForwards( state, domains ),
 			gSuiteProduct: getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY ),
+			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, selectedSite.ID ),
 			isGSuiteSupported,
 			productsList: getProductsList( state ),
 			selectedSite,
