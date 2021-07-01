@@ -29,9 +29,11 @@ body {
 	font-family: $default-font;
 	font-size: $font-body;
 
-	&.font-smoothing-antialiased {
-		text-rendering: optimizeLegibility;
-		-moz-osx-font-smoothing: grayscale;
-		-webkit-font-smoothing: antialiased;
+	@media ( -webkit-min-device-pixel-ratio: 1.25 ), ( min-resolution: 120dpi ) {
+		&.font-smoothing-antialiased {
+			text-rendering: optimizeLegibility;
+			-moz-osx-font-smoothing: grayscale;
+			-webkit-font-smoothing: antialiased;
+		}
 	}
 }
