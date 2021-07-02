@@ -23,7 +23,7 @@ import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/w
 import PluginNotices from 'calypso/my-sites/plugins/notices';
 import MainComponent from 'calypso/components/main';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import JetpackManageErrorPage from 'calypso/my-sites/jetpack-manage-error-page';
+import EmptyContent from 'calypso/components/empty-content';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
 import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custom';
@@ -169,7 +169,7 @@ class SinglePlugin extends React.Component {
 
 		return (
 			<MainComponent>
-				<JetpackManageErrorPage
+				<EmptyContent
 					title={ translate( "Oops! We can't find this plugin!" ) }
 					line={ translate( "The plugin you are looking for doesn't exist." ) }
 					actionURL={ actionUrl }
