@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { isEnabled } from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { getTotalLineItemFromCart, tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
 import type { LineItem } from '@automattic/composite-checkout';
@@ -103,10 +104,21 @@ export function createTransactionEndpointCartFromResponseCart( {
 	responseCart: ResponseCart;
 } ): WPCOMTransactionEndpointCart {
 	if ( responseCart.products.some( ( product ) => product.extra.isJetpackCheckout ) ) {
+		const isUserLess = responseCart.cart_key === 'no-user';
+		const isSiteLess = responseCart.blog_id === 0;
+
+		// At this point, cart_key will be 'no-user' | blog_id | 'no-site', in that order.
+		const cartKey = isUserLess ? responseCart.cart_key : responseCart.blog_id || 'no-site';
+		const isSiteLessJetpackCheckout = isEnabled( 'jetpack/siteless-checkout' ) && isSiteLess;
+
+		// A cart with the 'no-user' key, in the context of a Jetpack checkout flow, means that
+		// a WP.com account will be created before submitting the transaction (see submitWpcomTransaction).
+		// Once the WP.com account is created, the cart key is replaced with the blog ID and sent to the
+		// /transactions endpoint. If there is no blog ID, a temporary blog is created on the backend side.
 		return {
 			blog_id: responseCart.blog_id.toString(),
-			cart_key: responseCart.blog_id.toString(),
-			create_new_blog: false,
+			cart_key: cartKey.toString(),
+			create_new_blog: isSiteLessJetpackCheckout,
 			is_jetpack_checkout: true,
 			coupon: responseCart.coupon || '',
 			currency: responseCart.currency,
@@ -123,9 +135,7 @@ export function createTransactionEndpointCartFromResponseCart( {
 		blog_id: siteId || '0',
 		cart_key: siteId || 'no-site',
 		create_new_blog: siteId ? false : true,
-		is_jetpack_checkout: responseCart.products.some(
-			( product ) => product.extra.isJetpackCheckout
-		),
+		is_jetpack_checkout: false,
 		coupon: responseCart.coupon || '',
 		currency: responseCart.currency,
 		temporary: false,
