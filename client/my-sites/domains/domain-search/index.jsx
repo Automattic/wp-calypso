@@ -24,7 +24,6 @@ import { canDomainAddGSuite, getProductType } from 'calypso/lib/gsuite';
 import {
 	hasPlan,
 	hasDomainInCart,
-	domainMapping,
 	domainTransfer,
 	domainRegistration,
 	updatePrivacyForDomain,
@@ -92,13 +91,8 @@ class DomainSearch extends Component {
 	};
 
 	handleAddMapping = ( domain ) => {
-		this.props.shoppingCartManager
-			.addProductsToCart( [
-				fillInSingleCartItemAttributes( domainMapping( { domain } ), this.props.productsList ),
-			] )
-			.then( () => {
-				this.isMounted && page( '/checkout/' + this.props.selectedSiteSlug );
-			} );
+		const mappingUrl = `/domains/add/mapping/${ this.props.selectedSiteSlug }?initialQuery=${ domain }`;
+		page( mappingUrl );
 	};
 
 	handleAddTransfer = ( domain ) => {

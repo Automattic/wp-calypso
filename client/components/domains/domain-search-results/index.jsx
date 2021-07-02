@@ -136,8 +136,8 @@ class DomainSearchResults extends React.Component {
 					);
 				} else if ( ! domainsWithPlansOnly ) {
 					offer = translate(
-						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}connect it{{/a}} for %(cost)s.{{/small}}',
-						{ args: { domain, cost: this.props.products.domain_map.cost_display }, components }
+						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}connect it{{/a}} with WordPress.com Premium.{{/small}}',
+						{ args: { domain }, components }
 					);
 				} else {
 					offer = translate(
