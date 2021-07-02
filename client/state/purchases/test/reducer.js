@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
 import reducer from '../reducer';
@@ -19,7 +14,7 @@ describe( 'reducer', () => {
 	const siteId = '2701';
 
 	test( 'should return an object with the initial state', () => {
-		expect( reducer( undefined, { type: 'UNRELATED' } ) ).to.be.eql( {
+		expect( reducer( undefined, { type: 'UNRELATED' } ) ).toEqual( {
 			data: [],
 			error: null,
 			isFetchingSitePurchases: false,
@@ -30,7 +25,7 @@ describe( 'reducer', () => {
 	} );
 
 	test( 'should return an object with an empty list and fetching enabled when fetching is triggered', () => {
-		expect( reducer( undefined, { type: PURCHASES_USER_FETCH } ) ).to.be.eql( {
+		expect( reducer( undefined, { type: PURCHASES_USER_FETCH } ) ).toEqual( {
 			data: [],
 			error: null,
 			isFetchingSitePurchases: false,
@@ -57,7 +52,7 @@ describe( 'reducer', () => {
 			],
 		} );
 
-		expect( state ).to.be.eql( {
+		expect( state ).toEqual( {
 			data: [
 				{ ID: '2', blog_id: siteId, user_id: userId },
 				{ ID: '3', blog_id: siteId, user_id: userId },
@@ -97,7 +92,7 @@ describe( 'reducer', () => {
 			userId: Number( userId ),
 		} );
 
-		expect( state ).to.be.eql( {
+		expect( state ).toEqual( {
 			data: [
 				{ ID: '1', blog_id: siteId, user_id: userId },
 				{ ID: '2', blog_id: siteId, user_id: userId },
@@ -116,7 +111,7 @@ describe( 'reducer', () => {
 			siteId: Number( siteId ),
 		} );
 
-		expect( state ).to.be.eql( {
+		expect( state ).toEqual( {
 			data: [
 				{ ID: '2', blog_id: siteId, user_id: userId },
 				{ ID: '4', blog_id: 2702, user_id: userId }, // the new purchase was not removed because it has a different `blog_id`
@@ -134,7 +129,7 @@ describe( 'reducer', () => {
 			userId,
 		} );
 
-		expect( state ).to.be.eql( {
+		expect( state ).toEqual( {
 			data: [ { ID: '2', blog_id: siteId, user_id: userId } ],
 			error: null,
 			isFetchingSitePurchases: false,
