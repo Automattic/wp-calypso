@@ -45,7 +45,11 @@ import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan
 import PurchaseModal from './purchase-modal';
 import Gridicon from 'calypso/components/gridicon';
 import { isMonthly, getPlanByPathSlug } from '@automattic/calypso-products';
-import { isFetchingStoredCards, getStoredCards } from 'calypso/state/stored-cards/selectors';
+import {
+	isFetchingStoredCards,
+	getStoredCards,
+	hasLoadedStoredCardsFromServer,
+} from 'calypso/state/stored-cards/selectors';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url';
 import { extractStoredCardMetaValue } from './purchase-modal/util';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
@@ -423,6 +427,8 @@ export default connect(
 			isMonthly: false,
 		} );
 		const isFetchingCards = isFetchingStoredCards( state );
+		// If the cards have not started fetching yet, isFetchingStoredCards will be false
+		const hasLoadedCardsFromServer = hasLoadedStoredCardsFromServer( state );
 		const productSlug = resolveProductSlug( upsellType, upgradeItem );
 		const productProperties = pick( getProductBySlug( state, productSlug ), [
 			'product_slug',
@@ -434,7 +440,7 @@ export default connect(
 				: null;
 
 		return {
-			isFetchingStoredCards: isFetchingCards,
+			isFetchingStoredCards: ! hasLoadedCardsFromServer || isFetchingCards,
 			cards: getStoredCards( state ),
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			isLoading:
