@@ -70,7 +70,7 @@ const removeEmailForwardMailbox = ( { dispatch, mailbox } ) => {
  * @param {Function} titanMenuParams.translate The translate function.
  * @returns Array of menu items
  */
-const getTitanMenuItems = ( { showRemoveMailboxDialog, mailbox, translate } ) => {
+const getTitanMenuItems = ( { mailbox, showRemoveMailboxDialog, translate } ) => {
 	const email = getEmailAddress( mailbox );
 
 	return [
@@ -209,7 +209,7 @@ const RemoveTitanMailboxConfirmationDialog = ( { mailbox, visible, setVisible } 
 		translate(
 			'There was an error removing {{strong}}%(emailAddress)s{{/strong}} from your account',
 			{
-				comment: '%(emailAddress)s is the email address associated to the mailbox being deleted',
+				comment: '%(emailAddress)s is the email address for the mailbox being deleted',
 				args: { emailAddress },
 				components: {
 					strong: <strong />,
@@ -225,7 +225,7 @@ const RemoveTitanMailboxConfirmationDialog = ( { mailbox, visible, setVisible } 
 		translate(
 			'{{strong}}%(emailAddress)s{{/strong}} has been scheduled for removal from your account',
 			{
-				comment: '%(emailAddress)s is the email address associated to the mailbox being deleted',
+				comment: '%(emailAddress)s is the email address for the mailbox being deleted',
 				args: { emailAddress },
 				components: {
 					strong: <strong />,
@@ -274,10 +274,9 @@ const RemoveTitanMailboxConfirmationDialog = ( { mailbox, visible, setVisible } 
 				<h3> { translate( 'Remove mailbox' ) } </h3>
 				<p>
 					{ translate(
-						'Are you sure you want to remove {{strong}}%(emailAddress)s{{/strong}}? All your data will be deleted!',
+						'Are you sure you want to remove {{strong}}%(emailAddress)s{{/strong}}? All your emails, calendar events, and contacts will be deleted!',
 						{
-							comment:
-								'%(emailAddress)s is the email address associated to the mailbox being deleted',
+							comment: '%(emailAddress)s is the email address for the mailbox being deleted',
 							args: { emailAddress },
 							components: {
 								strong: <strong />,

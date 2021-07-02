@@ -12,6 +12,7 @@ import { getCacheKey } from './use-emails-query';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import wp from 'calypso/lib/wp';
 
+const invalidationDelayTimeout = 5000;
 const noop = () => {};
 
 const getNumberOfMailboxes = ( queryClient, queryKey ) => {
@@ -58,14 +59,14 @@ export function useRemoveTitanMailboxMutation( domainName, mailboxName, mutation
 		queryClient.invalidateQueries( queryKey ).then( () => {
 			const numberOfMailboxes = getNumberOfMailboxes( queryClient, queryKey );
 
-			// Determine if we need to schedule another invalidation since the removal job is not synchronous
+			// Determine if we already have updated data, since the removal job is not synchronous
 			if ( numberOfMailboxes < context.previousNumberOfMailboxes ) {
 				return;
 			}
 
 			setTimeout( () => {
 				queryClient.invalidateQueries( queryKey );
-			}, 10000 );
+			}, invalidationDelayTimeout );
 		} );
 	};
 
