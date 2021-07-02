@@ -4,13 +4,13 @@
 import { useDispatch } from 'react-redux';
 import type { StripeConfiguration } from '@automattic/calypso-stripe';
 import type { ResponseCart } from '@automattic/shopping-cart';
+import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
  */
 import type { ReactStandardAction } from '../types/analytics';
 import type { GetThankYouUrl } from '../hooks/use-get-thank-you-url';
-import type { ManagedContactDetails } from '../types/wpcom-store-state';
 
 export interface PaymentProcessorOptions {
 	includeDomainDetails: boolean;
