@@ -2,7 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import classNames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
 import TranslatableString from 'calypso/components/translatable/proptype';
@@ -25,6 +25,7 @@ class MasterbarItem extends Component {
 		icon: '',
 		onClick: noop,
 		hasUnseen: false,
+		url: '',
 	};
 
 	_preloaded = false;
@@ -36,29 +37,42 @@ class MasterbarItem extends Component {
 		}
 	};
 
+	renderChildren() {
+		return (
+			<Fragment>
+				{ this.props.hasUnseen && (
+					<span className="masterbar__item-bubble" aria-label="You have unseen content" />
+				) }
+				{ !! this.props.icon && <Gridicon icon={ this.props.icon } size={ 24 } /> }
+				<span className="masterbar__item-content">{ this.props.children }</span>
+			</Fragment>
+		);
+	}
+
 	render() {
 		const itemClasses = classNames( 'masterbar__item', this.props.className, {
 			'is-active': this.props.isActive,
 			'has-unseen': this.props.hasUnseen,
 		} );
 
-		return (
-			<a
-				data-tip-target={ this.props.tipTarget }
-				href={ this.props.url }
-				onClick={ this.props.onClick }
-				title={ this.props.tooltip }
-				className={ itemClasses }
-				onTouchStart={ this.preload }
-				onMouseEnter={ this.preload }
-			>
-				{ this.props.hasUnseen && (
-					<span className="masterbar__item-bubble" aria-label="You have unseen content" />
-				) }
-				{ !! this.props.icon && <Gridicon icon={ this.props.icon } size={ 24 } /> }
-				<span className="masterbar__item-content">{ this.props.children }</span>
-			</a>
-		);
+		const attributes = {
+			'data-tip-target': this.props.tipTarget,
+			onClick: this.props.onClick,
+			title: this.props.tooltip,
+			className: itemClasses,
+			onTouchStart: this.preload,
+			onMouseEnter: this.preload,
+		};
+
+		if ( this.props.url ) {
+			return (
+				<a { ...attributes } href={ this.props.url }>
+					{ this.renderChildren() }
+				</a>
+			);
+		}
+
+		return <button { ...attributes }>{ this.renderChildren() }</button>;
 	}
 }
 
