@@ -263,11 +263,20 @@ class AdsWrapper extends Component {
 	}
 
 	renderNoticeSiteIsPrivate() {
-		const { translate } = this.props;
+		const { translate, siteSlug } = this.props;
 		return (
 			<Notice status="is-warning" showDismiss={ false }>
 				{ translate(
-					"No ads is displayed on your site becuase your site's privacy setting is set to private"
+					"No ads are displayed on your site because your site's {{link}}privacy setting{{/link}} is set to private.",
+					{
+						components: {
+							link: (
+								<a
+									href={ `https://wordpress.com/settings/general/${ siteSlug }#site-privacy-settings` }
+								/>
+							),
+						},
+					}
 				) }
 			</Notice>
 		);
