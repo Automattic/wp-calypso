@@ -227,7 +227,8 @@ class DomainSearchResults extends React.Component {
 		);
 	}
 
-	handleAddMapping = () => {
+	handleAddMapping = ( event ) => {
+		event.preventDefault();
 		this.props.onAddMapping( this.props.lastDomainSearched );
 	};
 

@@ -92,15 +92,15 @@ class DomainSearch extends Component {
 	};
 
 	handleAddMapping = ( domain ) => {
-		page.redirect( this.getDomainMappingUrl( domain ) );
+		page( this.getDomainMappingUrl( domain ) );
 	};
 
 	getDomainMappingUrl = ( domain ) => {
-		let url = '/domains/add/mapping/';
+		let url = '/domains/add/mapping';
 
 		if ( this.props.selectedSiteSlug ) {
 			const query = stringify( { initialQuery: domain.trim() } );
-			url += `${ this.props.selectedSiteSlug }?${ query }`;
+			url += `/${ this.props.selectedSiteSlug }?${ query }`;
 		}
 
 		return url;
