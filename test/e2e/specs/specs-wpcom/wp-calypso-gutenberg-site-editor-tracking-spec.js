@@ -149,21 +149,33 @@ const deleteAll = async function ( driver ) {
 
 const deleteTemplates = async function ( driver ) {
 	const sidebar = await SidebarComponent.Expect( driver );
+	// await sidebar.ensureSidebarMenuVisible();
 	await sidebar.selectTemplates();
 	await deleteAll( driver );
 };
 
 const deleteTemplateParts = async function ( driver ) {
 	const sidebar = await SidebarComponent.Expect( driver );
+	// await sidebar.ensureSidebarMenuVisible();
 	await sidebar.selectTemplateParts();
 	await deleteAll( driver );
 };
 
 const backToCalypso = async function ( driver ) {
-	await driverHelper.clickWhenClickable(
+	// const sidebar = await SidebarComponent.Expect( driver );
+	// await sidebar.ensureSidebarMenuVisible();
+	const isMenuOpen = await driverHelper.isElementLocated(
 		driver,
-		driverHelper.createTextLocator( By.css( '.wp-menu-name' ), 'Plans' )
+		By.css( '#wpwrap.wp-responsive-open' )
 	);
+	if ( ! isMenuOpen ) {
+		await driverHelper.clickWhenClickable( driver, By.css( '#wp-admin-bar-blog' ) );
+	} else {
+		await driverHelper.clickWhenClickable(
+			driver,
+			driverHelper.createTextLocator( By.css( '.wp-menu-name' ), 'Stats' )
+		);
+	}
 };
 
 const deleteTemplatesAndTemplateParts = async function ( driver ) {
