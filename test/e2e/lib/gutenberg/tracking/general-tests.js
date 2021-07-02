@@ -130,7 +130,6 @@ export function createGeneralTests( { it, editorType, postType } ) {
 			return this.skip();
 		}
 
-		await editor.addBlock( 'Columns' );
 		await editor.addBlock( 'Heading' );
 		await editor.addBlock( 'Image' );
 
