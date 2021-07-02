@@ -573,6 +573,13 @@ export default function buildFallbackResponse( {
 					},
 			  ]
 			: [] ),
+		{
+			icon: 'dashicons-feedback',
+			slug: 'beta-testing',
+			title: translate( 'Beta Testing' ),
+			type: 'menu-item',
+			url: `/beta-testing/${ siteDomain }`,
+		},
 	];
 
 	return fallbackResponse;
