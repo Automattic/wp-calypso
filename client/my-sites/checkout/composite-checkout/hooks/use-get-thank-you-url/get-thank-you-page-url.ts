@@ -125,14 +125,27 @@ export default function getThankYouPageUrl( {
 	const pendingOrReceiptId = getPendingOrReceiptId( receiptId, orderId, purchaseId );
 	debug( 'pendingOrReceiptId is', pendingOrReceiptId );
 
-	// jetpack userless checkout uses a special thank you page
+	// jetpack userless & siteless checkout uses a special thank you page
 	if ( isJetpackCheckout ) {
-		debug( 'redirecting to userless jetpack thank you' );
+		if ( siteSlug ) {
+			debug( 'redirecting to userless jetpack thank you' );
 
-		// extract a product from the cart, in userless checkout there should only be one
+			// extract a product from the cart, in userless checkout there should only be one
+			const productSlug = cart?.products[ 0 ]?.product_slug;
+
+			return `/checkout/jetpack/thank-you/${ siteSlug }/${ productSlug ?? 'no_product' }`;
+		}
+		// siteless checkout
+		debug( 'redirecting to siteless jetpack thank you' );
+
+		// extract a product from the cart, in siteless checkout there should only be one
 		const productSlug = cart?.products[ 0 ]?.product_slug;
 
-		return `/checkout/jetpack/thank-you/${ siteSlug }/${ productSlug ?? 'no_product' }`;
+		// TODO: Get the Zendesk ticket ID & pass it along with the thankYouPageUrl (`ticketId` query param).
+		// Just using the `pendingOrReceiptId` value for now as an example.
+		return `/checkout/jetpack/thank-you/no-site/${
+			productSlug ?? 'no_product'
+		}?ticketId=${ pendingOrReceiptId }`;
 	}
 
 	const fallbackUrl = getFallbackDestination( {
