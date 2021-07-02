@@ -87,7 +87,7 @@ class UploadingPane extends React.PureComponent {
 			case appStates.READY_FOR_UPLOAD:
 			case appStates.UPLOAD_FAILURE:
 				if ( this.state.fileToBeUploaded ) {
-					return <p>{ this.props.translate( 'Click Upload to begin uploading the file' ) }</p>;
+					return <p>{ this.state?.fileToBeUploaded?.name?.substring?.( 0, 100 ) }</p>;
 				}
 				return <p>{ this.props.translate( 'Drag a file here, or click to upload a file' ) }</p>;
 			case appStates.UPLOAD_PROCESSING:
