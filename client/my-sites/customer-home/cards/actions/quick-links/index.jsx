@@ -293,7 +293,12 @@ const addDomainAction = ( siteSlug, isStaticHomePage ) => ( dispatch ) => {
 	page( `/domains/add/${ siteSlug }` );
 };
 
-// WPCOM-specific domains like free and staging sub-domains are filtered by `canCurrentUserAddEmail`
+/**
+ * Select a list of domains that are eligible to add email to from a larger list.
+ * WPCOM-specific domains like free and staging sub-domains are filtered from this list courtesy of `canCurrentUserAddEmail`
+ *
+ * @param domains An array domains to filter
+ */
 const getDomainsThatCanAddEmail = ( domains ) =>
 	domains.filter(
 		( domain ) => ! hasPaidEmailWithUs( domain ) && canCurrentUserAddEmail( domain )
