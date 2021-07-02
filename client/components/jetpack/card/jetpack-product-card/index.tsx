@@ -248,13 +248,12 @@ const JetpackProductCard: React.FC< Props > = ( {
 	const anchorRef = useRef< HTMLDivElement >( null );
 
 	const [ hasBeenSeen, setHasBeenSeen ] = useState( false );
-	const cardElement = useRef< HTMLDivElement >( null );
 	const onScreenObserver = useRef(
 		new IntersectionObserver(
 			( entries ) => {
-				entries.forEach( ( entry ) => {
-					// if this element in in the viewport
-					if ( entry.isIntersecting ) {
+				entries.forEach( ( { isIntersecting } ) => {
+					// if this element is in the viewport
+					if ( isIntersecting && ! hasBeenSeen ) {
 						setHasBeenSeen( true );
 					}
 				} );
@@ -263,15 +262,21 @@ const JetpackProductCard: React.FC< Props > = ( {
 		)
 	);
 
+	// use ref callback to avoid un-necessary `useRef` hook
+	const observe = ( element: HTMLDivElement ) => {
+		const { current: observer } = onScreenObserver;
+		if ( observer && element ) {
+			observer.observe( element );
+		}
+	};
+
+	// clean up the observer when component's lifecycle ends
 	useEffect( () => {
 		const { current: observer } = onScreenObserver;
-		if ( cardElement.current ) {
-			observer.observe( cardElement.current );
-		}
 		return () => {
 			observer.disconnect();
 		};
-	} );
+	}, [] );
 
 	useEffect( () => {
 		if ( hasBeenSeen ) {
@@ -300,7 +305,7 @@ const JetpackProductCard: React.FC< Props > = ( {
 				'without-icon': ! iconSlug,
 			} ) }
 			data-e2e-product-slug={ productSlug }
-			ref={ cardElement }
+			ref={ observe }
 		>
 			<div className="jetpack-product-card__scroll-anchor" ref={ anchorRef }></div>
 			{ isFeatured && (
