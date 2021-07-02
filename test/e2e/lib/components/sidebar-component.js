@@ -218,7 +218,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		const isOpen = await driverHelper.isElementLocated( this.driver, openSidebarLocator );
 
 		if ( ! isOpen ) {
-			const mySitesButtonLocator = By.css( 'a[data-tip-target="my-sites"]' );
+			const mySitesButtonLocator = By.css( '[data-tip-target="my-sites"]' );
 			await driverHelper.clickWhenClickable( this.driver, mySitesButtonLocator );
 			await driverHelper.waitUntilElementStopsMoving( this.driver, openSidebarLocator );
 		}

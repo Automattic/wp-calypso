@@ -68,7 +68,7 @@
 		"gdpr-banner": false,
 		"google-my-business": true,
 		"google-drive": true,
-		"gutenboarding/alpha-templates": true,
+		"gutenboarding/alpha-templates": false,
 		"gutenboarding/show-vertical-input": false,
 		"gutenboarding/mshot-preview": true,
 		"gutenboarding/landscape-preview": true,
