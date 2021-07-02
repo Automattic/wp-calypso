@@ -50,7 +50,6 @@ class CancelPurchaseButton extends Component {
 	state = {
 		disabled: false,
 		showDialog: false,
-		survey: {},
 	};
 
 	getCancellationFlowType = () => {
@@ -72,12 +71,6 @@ class CancelPurchaseButton extends Component {
 	closeDialog = () => {
 		this.setState( {
 			showDialog: false,
-		} );
-	};
-
-	onSurveyChange = ( update ) => {
-		this.setState( {
-			survey: update,
 		} );
 	};
 
@@ -304,7 +297,6 @@ class CancelPurchaseButton extends Component {
 				<CancelPurchaseForm
 					disableButtons={ disableButtons }
 					defaultContent={ this.renderCancellationEffect() }
-					onInputChange={ this.onSurveyChange }
 					purchase={ purchase }
 					selectedSite={ selectedSite }
 					isVisible={ this.state.showDialog }

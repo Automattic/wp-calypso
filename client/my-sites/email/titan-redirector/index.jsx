@@ -29,11 +29,9 @@ class TitanRedirector extends Component {
 		loaded: false,
 		hasError: false,
 		action: null,
-		orderId: null,
 		subscriptionId: null,
 		blogId: null,
 		domain: null,
-		error: null,
 	};
 
 	componentDidMount() {
@@ -51,17 +49,15 @@ class TitanRedirector extends Component {
 						hasError: false,
 						loaded: true,
 						action: data?.action,
-						orderId: data?.order_id,
 						subscriptionId: data?.subscription_id,
 						blogId: data?.blog_id,
 						domain: data?.domain,
 					} );
 				},
-				( error ) => {
+				() => {
 					this.setState( {
 						hasError: true,
 						loaded: true,
-						error: error?.message,
 					} );
 				}
 			);

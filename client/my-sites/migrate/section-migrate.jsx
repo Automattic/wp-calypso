@@ -59,7 +59,6 @@ class SectionMigrate extends Component {
 		sourceSiteThemes: [],
 		startTime: '',
 		url: '',
-		chosenImportType: '',
 	};
 
 	componentDidMount() {
