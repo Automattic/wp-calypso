@@ -41,6 +41,7 @@ import {
 	getGoogleFeatures,
 	getTitanFeatures,
 } from 'calypso/my-sites/email/email-provider-features/list';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
 import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from 'calypso/lib/gsuite/constants';
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
@@ -55,7 +56,11 @@ import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getTitanProductName } from 'calypso/lib/titan';
 import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
-import { emailManagementForwarding, emailManagement } from 'calypso/my-sites/email/paths';
+import {
+	emailManagementForwarding,
+	emailManagement,
+	isUnderAnyEmailManagement,
+} from 'calypso/my-sites/email/paths';
 import { errorNotice } from 'calypso/state/notices/actions';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
@@ -494,24 +499,38 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	handleBack = () => {
-		const { currentRoute, isCustomerHomeEnabled, selectedSite } = this.props;
+		const { currentRoute, isCustomerHomeEnabled, previousRoute, selectedSite } = this.props;
 
 		const emailManagementHomePath = emailManagement( selectedSite.slug );
 
-		// Go to the site home page if we're already viewing email management home
-		if ( currentRoute === emailManagementHomePath ) {
-			const homePath = isCustomerHomeEnabled ? `/home/${ selectedSite.slug }` : `/stats/${ selectedSite.slug }`;
-
-			page( homePath );
-
+		// If we're not already viewing email management home, go to email management home
+		if ( currentRoute !== emailManagementHomePath ) {
+			page( emailManagementHomePath );
 			return;
 		}
 
-		page( emailManagementHomePath );
+		// If the previous route is defined and wasn't under email management, navigate to that route
+		if ( previousRoute && ! isUnderAnyEmailManagement( previousRoute ) ) {
+			page( previousRoute );
+			return;
+		}
+
+		// The previous route was under email management, either go home or to stats for the current site
+		const homePath = isCustomerHomeEnabled
+			? `/home/${ selectedSite.slug }`
+			: `/stats/${ selectedSite.slug }`;
+
+		page( homePath );
 	};
 
 	renderHeader() {
-		const { currentRoute, hideEmailHeader, selectedDomainName, selectedSite, translate } = this.props;
+		const {
+			currentRoute,
+			hideEmailHeader,
+			selectedDomainName,
+			selectedSite,
+			translate,
+		} = this.props;
 
 		const image = {
 			path: emailIllustration,
@@ -533,7 +552,9 @@ class EmailProvidersComparison extends React.Component {
 			<>
 				<DocumentHead title={ titleCase( title ) } />
 
-				{ ! hideEmailHeader && <EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } /> }
+				{ ! hideEmailHeader && (
+					<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
+				) }
 
 				<HeaderCake onClick={ this.handleBack }>{ title }</HeaderCake>
 
@@ -656,6 +677,7 @@ export default connect(
 			gSuiteProduct: getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY ),
 			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, selectedSite.ID ),
 			isGSuiteSupported,
+			previousRoute: getPreviousRoute( state ),
 			productsList: getProductsList( state ),
 			selectedSite,
 			titanMailProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
