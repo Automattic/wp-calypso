@@ -17,6 +17,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import SecurityIcon from 'calypso/components/jetpack/security-icon';
 import ScanPlaceholder from 'calypso/components/jetpack/scan-placeholder';
 import ScanThreats from 'calypso/components/jetpack/scan-threats';
+import ScanMultisiteNotice from 'calypso/components/jetpack/scan-multisite-notice';
 import { Scan, Site } from 'calypso/my-sites/scan/types';
 import Gridicon from 'calypso/components/gridicon';
 import Main from 'calypso/components/main';
@@ -38,6 +39,7 @@ import { withApplySiteOffset, applySiteOffsetType } from 'calypso/components/sit
 import ScanNavigation from './navigation';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
+import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
 
 /**
  * Type dependencies
@@ -58,6 +60,7 @@ interface Props {
 	scanProgress?: number;
 	isInitialScan?: boolean;
 	isRequestingScan: boolean;
+	isMultisite: boolean;
 	timezone: string | null;
 	gmtOffset: number | null;
 	moment: {
@@ -74,6 +77,7 @@ class ScanPage extends Component< Props > {
 	state = {
 		showJetpackReviewPrompt: false,
 	};
+
 	renderProvisioning() {
 		return (
 			<>
@@ -120,7 +124,7 @@ class ScanPage extends Component< Props > {
 	}
 
 	renderScanOkay() {
-		const { scanState, siteId, moment, dispatchScanRun, applySiteOffset } = this.props;
+		const { scanState, siteId, moment, dispatchScanRun, applySiteOffset, isMultiSite } = this.props;
 
 		const lastScanStartTime = scanState?.mostRecent?.timestamp;
 		const lastScanDuration = scanState?.mostRecent?.duration;
@@ -135,6 +139,7 @@ class ScanPage extends Component< Props > {
 		return (
 			<>
 				<SecurityIcon />
+				{ isMultiSite && <ScanMultisiteNotice /> }
 				{ this.renderHeader( translate( 'Don’t worry about a thing' ) ) }
 				<p>
 					{ translate(
@@ -333,6 +338,7 @@ export default connect(
 		const scanProgress = getSiteScanProgress( state, siteId ) ?? undefined;
 		const isRequestingScan = isRequestingJetpackScan( state, siteId );
 		const isInitialScan = getSiteScanIsInitial( state, siteId );
+		const isMultiSite = isJetpackSiteMultiSite( state, siteId );
 
 		return {
 			site,
@@ -343,6 +349,7 @@ export default connect(
 			isInitialScan,
 			siteSettingsUrl,
 			isRequestingScan,
+			isMultiSite,
 		};
 	},
 	{
