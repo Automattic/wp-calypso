@@ -177,7 +177,7 @@ const deleteTemplateParts = async function ( driver ) {
 
 const backToCalypso = async function ( driver ) {
 	if ( driverManager.currentScreenSize() === 'mobile' ) {
-		await driverHelper.clickWhenClickable( driver, By.css( '#wp-admin-bar-blog' ) );
+		await driverHelper.clickWhenClickable( driver, By.css( '#wp-admin-bar-blog' ), 1000000000 );
 		return;
 	}
 
@@ -942,7 +942,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 			const isCalypsoSidebarAvailable = await driverHelper.isElementLocated(
 				this.driver,
-				By.css( '#content' )
+				By.css( '#wpcom' )
 			);
 			if ( ! isCalypsoSidebarAvailable ) {
 				await backToCalypso( this.driver );
