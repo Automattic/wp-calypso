@@ -262,6 +262,23 @@ class AdsWrapper extends Component {
 		);
 	}
 
+	renderNoticeSiteIsPrivate() {
+		const { translate, siteSlug } = this.props;
+		const privacySettingPageLink = `https://wordpress.com/settings/general/${ siteSlug }#site-privacy-settings`;
+		return (
+			<Notice status="is-warning" showDismiss={ false }>
+				{ translate(
+					"No ads are displayed on your site because your site's {{link}}privacy setting{{/link}} is set to private.",
+					{
+						components: {
+							link: <a href={ privacySettingPageLink } />,
+						},
+					}
+				) }
+			</Notice>
+		);
+	}
+
 	render() {
 		const { site, translate } = this.props;
 		const jetpackPremium = site.jetpack && isEligbleJetpackPlan( site.plan );
@@ -287,6 +304,8 @@ class AdsWrapper extends Component {
 			component = this.renderEmptyContent();
 		} else if ( ! ( site.options.wordads || jetpackPremium ) ) {
 			component = null;
+		} else if ( site.options.wordads && site.is_private ) {
+			notice = this.renderNoticeSiteIsPrivate();
 		}
 
 		return (
