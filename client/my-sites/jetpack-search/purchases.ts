@@ -3,7 +3,7 @@
  */
 import { isJetpackSearch, planHasJetpackSearch } from '@automattic/calypso-products';
 
-export function hasJetpackSearchPurchaseOrPlan( sitePurchases, planSlug ) {
+export const hasJetpackSearchPurchaseOrPlan = ( sitePurchases: Record<string, unknown> | null, planSlug: string | null ) : boolean => {
 	if ( ! sitePurchases || ! planSlug ) {
 		return;
 	}
@@ -13,4 +13,4 @@ export function hasJetpackSearchPurchaseOrPlan( sitePurchases, planSlug ) {
 	return (
 		!! sitePurchases.find( checkForSearchProductInPurchases ) || planHasJetpackSearch( planSlug )
 	);
-}
+};
