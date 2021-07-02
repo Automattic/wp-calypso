@@ -40,7 +40,12 @@ const HelpSearch = ( { searchQuery, track } ) => {
 	const translate = useTranslate();
 
 	// trackResultView: Given a result, send an "_open" tracking event indicating that result is opened.
-	const trackResultView = ( result ) => {
+	const trackResultView = ( event, result ) => {
+		event.preventDefault();
+		if ( ! result ) {
+			return;
+		}
+
 		const resultLink = getResultLink( result );
 		const type = get( result, RESULT_TYPE, RESULT_ARTICLE );
 		const tour = get( result, RESULT_TOUR );
@@ -57,18 +62,6 @@ const HelpSearch = ( { searchQuery, track } ) => {
 		track( `calypso_inlinehelp_${ type }_open`, tracksData );
 	};
 
-	// openResultView: Given a result, open that result, and use trackResultView() to track it.
-	const openResultView = ( event, result ) => {
-		event.preventDefault();
-		if ( ! result ) {
-			return;
-		}
-
-		trackResultView( result );
-
-		window.open( getResultLink( result ) );
-	};
-
 	return (
 		<>
 			<Card className="help-search">
@@ -77,15 +70,16 @@ const HelpSearch = ( { searchQuery, track } ) => {
 					<div className="help-search__content">
 						<div className="help-search__search inline-help__search">
 							<HelpSearchCard
-								onSelect={ openResultView }
+								onSelect={ trackResultView }
 								query={ searchQuery }
 								location={ HELP_COMPONENT_LOCATION }
 								placeholder={ translate( 'Search support articles' ) }
 							/>
 							<HelpSearchResults
-								onSelect={ openResultView }
+								onSelect={ trackResultView }
 								searchQuery={ searchQuery }
 								placeholderLines={ 5 }
+								externalLinks
 							/>
 						</div>
 					</div>
