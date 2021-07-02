@@ -8,6 +8,7 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
+import { stringify } from 'qs';
 import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
@@ -91,8 +92,18 @@ class DomainSearch extends Component {
 	};
 
 	handleAddMapping = ( domain ) => {
-		const mappingUrl = `/domains/add/mapping/${ this.props.selectedSiteSlug }?initialQuery=${ domain }`;
-		page.redirect( mappingUrl );
+		page.redirect( this.getDomainMappingUrl( domain ) );
+	};
+
+	getDomainMappingUrl = ( domain ) => {
+		let url = '/domains/add/mapping/';
+
+		if ( this.props.selectedSiteSlug ) {
+			const query = stringify( { initialQuery: domain.trim() } );
+			url += `${ this.props.selectedSiteSlug }?${ query }`;
+		}
+
+		return url;
 	};
 
 	handleAddTransfer = ( domain ) => {
