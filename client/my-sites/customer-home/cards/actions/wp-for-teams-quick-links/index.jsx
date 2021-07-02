@@ -10,7 +10,6 @@ import page from 'page';
  * Internal dependencies
  */
 import FoldableCard from 'calypso/components/foldable-card';
-import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	getSiteFrontPage,
@@ -20,8 +19,6 @@ import {
 } from 'calypso/state/sites/selectors';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
-import { getGSuiteSupportedDomains } from 'calypso/lib/gsuite';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import ActionBox from '../quick-links/action-box';
 import { savePreference } from 'calypso/state/preferences/actions';
@@ -189,7 +186,6 @@ const trackCustomizeThemeAction = ( isStaticHomePage ) =>
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
-	const domains = getDomainsBySiteId( state, siteId );
 	const isStaticHomePage =
 		! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' );
 	const siteSlug = getSelectedSiteSlug( state );
@@ -201,8 +197,6 @@ const mapStateToProps = ( state ) => {
 		menusUrl: getCustomizerUrl( state, siteId, 'menus' ),
 		isNewlyCreatedSite: isNewSite( state, siteId ),
 		showCustomizer: ! isSiteUsingFullSiteEditing( state, siteId ),
-		hasCustomDomain:
-			getGSuiteSupportedDomains( domains ).length > 0 && canUserPurchaseGSuite( state ),
 		siteSlug,
 		isStaticHomePage,
 		editHomePageUrl,
