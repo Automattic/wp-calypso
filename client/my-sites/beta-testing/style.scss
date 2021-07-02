@@ -21,3 +21,42 @@
 		width: 100%;
 	}
 }
+
+.beta-testing__post.is-placeholder {
+	h4, p {
+		background: #DCDCDE;
+		color: #DCDCDE;
+		width: 40%;
+		margin: 15px 0;
+		padding: 0;
+		position: relative;
+		animation: pulse 2s ease-in-out infinite;
+		height: 21px;
+	}
+
+	p {
+		width: 80%;
+		margin: 10px 0 0 0;
+		height: 16px;
+	}
+}
+
+.beta-testing__heading {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+@keyframes pulse {
+	0% {
+		opacity: 1;
+	}
+
+	70% {
+		opacity: 0.5;
+	}
+
+	100% {
+		opacity: 1;
+	}
+}
