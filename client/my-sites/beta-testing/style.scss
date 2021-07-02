@@ -47,6 +47,16 @@
 	justify-content: space-between;
 }
 
+.beta-testing__post {
+	margin-top: 20px;
+	border-bottom: 1px solid #DCDCDE;
+
+	&:last-child {
+		border-bottom: none;
+	}
+}
+
+
 @keyframes pulse {
 	0% {
 		opacity: 1;

@@ -62,6 +62,10 @@ const BetaTesting = ( { siteId, posts, isRequestingPosts, trackViewHorizonAction
 	const main = (
 		<div className="beta-testing__main">
 			<Card>
+				<CardHeading tagName="h1" size={ 21 }>
+					{ translate( 'Help shape the future of online publishing.' ) }
+				</CardHeading>
+
 				<p>
 					{ translate(
 						"We’re making the web a better place, one release at a time -- and we’re asking for your help. WordPress.com ships updates and improvements every single day, and beta users will get to experience some of these before anyone else. By taking part in this program, you will be helping to shape the future of WordPress.com, making it better for you, your readers, your fellow bloggers, and for millions of people worldwide. You won't be testing everything but there are some important ideas and projects we’d love to share with you. It’s also worth noting that not everything you see will make it into WordPress.com or work exactly the same way once updates go public."
