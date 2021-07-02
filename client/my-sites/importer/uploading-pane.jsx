@@ -186,8 +186,8 @@ class UploadingPane extends React.PureComponent {
 		const hasEnteredUrl = this.state.urlInput && this.state.urlInput !== '';
 		const isValidUrl = this.validateUrl( this.state.urlInput );
 		const urlDescription = isValidUrl
-			? this.props.optionalUrl.description
-			: this.props.optionalUrl.invalidDescription;
+			? this.props?.optionalUrl?.description
+			: this.props?.optionalUrl?.invalidDescription;
 
 		return (
 			<div>
