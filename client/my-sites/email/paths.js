@@ -157,6 +157,22 @@ export function emailManagementEdit(
 	);
 }
 
+/**
+ * Indicate whether `path` is under any of the email management routes.
+ *
+ * @param path The path to check.
+ * @returns {boolean} True if the path is under email, otherwise false.
+ */
+export function isUnderAnyEmailManagement( path ) {
+	return Boolean( path?.startsWith( emailManagementPrefix ) || isUnderEmailManagementAll( path ) );
+}
+
+/**
+ * Indicate whether `path` is under the email management pages for all sites.
+ *
+ * @param path The path to check.
+ * @returns {boolean} True if the path is under email for all sites, otherwise false.
+ */
 export function isUnderEmailManagementAll( path ) {
-	return path?.startsWith( emailManagementAllSitesPrefix + '/' );
+	return Boolean( path?.startsWith( emailManagementAllSitesPrefix + '/' ) );
 }
