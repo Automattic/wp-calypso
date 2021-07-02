@@ -103,7 +103,7 @@
 		"site-indicator": true,
 		"memberships": true,
 		"support-user": true,
-		"theme/showcase-revamp": false,
+		"theme/showcase-revamp": true,
 		"upgrades/checkout": true,
 		"upgrades/domain-search": true,
 		"upgrades/redirect-payments": true,
