@@ -136,13 +136,13 @@ export class UpsellNudge extends React.Component {
 					value: postalCode,
 					isTouched: true,
 					errors: [],
-					isRequired: true,
+					isRequired: false,
 				},
 				countryCode: {
 					value: countryCode,
 					isTouched: true,
 					errors: [],
-					isRequired: true,
+					isRequired: false,
 				},
 			};
 			const validationResult = await getTaxValidationResult( contactInfo );
