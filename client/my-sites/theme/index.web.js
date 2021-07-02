@@ -5,6 +5,7 @@ import {
 	makeLayout,
 	redirectLoggedOut,
 	redirectWithoutLocaleParamIfLoggedIn,
+	selectSiteIfLoggedIn,
 } from 'calypso/controller';
 import { details, fetchThemeDetailsData } from './controller';
 import { createNavigation, siteSelection } from 'calypso/my-sites/controller';
@@ -32,7 +33,17 @@ export default function ( router ) {
 	const langParam = getLanguageRouteParam();
 
 	router(
-		`/${ langParam }/theme/:slug/:section(setup|support)?/:site_id?`,
+		`/${ langParam }/theme/:slug/:section(setup|support)?`,
+		redirectWithoutLocaleParamIfLoggedIn,
+		redirectToLoginIfSiteRequested,
+		selectSiteIfLoggedIn,
+		fetchThemeDetailsData,
+		details,
+		makeLayout
+	);
+
+	router(
+		`/${ langParam }/theme/:slug/:section(setup|support)?/:site_id`,
 		redirectWithoutLocaleParamIfLoggedIn,
 		redirectToLoginIfSiteRequested,
 		addNavigationIfLoggedIn,
