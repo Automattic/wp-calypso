@@ -177,7 +177,7 @@ const deleteTemplateParts = async function ( driver ) {
 
 const backToCalypso = async function ( driver ) {
 	if ( driverManager.currentScreenSize() === 'mobile' ) {
-		await driverHelper.clickWhenClickable( driver, By.css( '#wp-admin-bar-blog' ), 1000000000 );
+		await driverHelper.clickWhenClickable( driver, By.css( '#wp-admin-bar-blog' ) );
 		return;
 	}
 
