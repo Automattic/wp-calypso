@@ -262,6 +262,17 @@ class AdsWrapper extends Component {
 		);
 	}
 
+	renderNoticeSiteIsPrivate() {
+		const { translate } = this.props;
+		return (
+			<Notice status="is-warning" showDismiss={ false }>
+				{ translate(
+					"No ads is displayed on your site becuase your site's privacy setting is set to private"
+				) }
+			</Notice>
+		);
+	}
+
 	render() {
 		const { site, translate } = this.props;
 		const jetpackPremium = site.jetpack && isEligbleJetpackPlan( site.plan );
@@ -287,6 +298,8 @@ class AdsWrapper extends Component {
 			component = this.renderEmptyContent();
 		} else if ( ! ( site.options.wordads || jetpackPremium ) ) {
 			component = null;
+		} else if ( site.options.wordads && site.is_private ) {
+			notice = this.renderNoticeSiteIsPrivate();
 		}
 
 		return (
