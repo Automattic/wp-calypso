@@ -104,7 +104,7 @@
 		"republicize": true,
 		"rum-tracking/logstash": true,
 		"safari-idb-mitigation": true,
-		"security/security-checkup": true,
+		"security/security-checkup": false,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
 		"settings/security/monitor/wp-note": true,
