@@ -41,7 +41,6 @@ const HelpSearch = ( { searchQuery, track } ) => {
 
 	// trackResultView: Given a result, send an "_open" tracking event indicating that result is opened.
 	const trackResultView = ( event, result ) => {
-		event.preventDefault();
 		if ( ! result ) {
 			return;
 		}
