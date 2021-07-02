@@ -8,6 +8,7 @@ import { filter, orderBy, values } from 'lodash';
 /**
  * Internal dependencies
  */
+import config from '@automattic/calypso-config';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 
 function getConfig( { siteTitle = '' } = {} ) {
@@ -181,9 +182,9 @@ function getConfig( { siteTitle = '' } = {} ) {
 			description: translate(
 				'An optional Substack Newsletter URL to import comments and author information.'
 			),
-			invalidDescription: translate(
-				'Enter a valid Substack Newsletter URL (https://newsletter.substack.com/).'
-			),
+			invalidDescription: translate( 'Enter a valid Substack Newsletter URL (%(exampleUrl)s).', {
+				args: { exampleUrl: 'https://newsletter.substack.com/' },
+			} ),
 			validate: ( urlInput ) => {
 				return /https:\/\/[\w-]+\.substack\.com/.test( urlInput );
 			},
@@ -270,11 +271,13 @@ function getConfig( { siteTitle = '' } = {} ) {
 }
 
 export function getImporters( params = {} ) {
-	const importers = orderBy(
-		values( getConfig( params ) ),
-		[ 'weight', 'title' ],
-		[ 'desc', 'asc' ]
-	);
+	const importerConfig = getConfig( params );
+
+	if ( ! config.isEnabled( 'importers/substack' ) ) {
+		delete importerConfig.substack;
+	}
+
+	const importers = orderBy( values( importerConfig ), [ 'weight', 'title' ], [ 'desc', 'asc' ] );
 
 	return importers;
 }

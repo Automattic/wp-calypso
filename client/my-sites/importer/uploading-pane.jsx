@@ -227,7 +227,7 @@ class UploadingPane extends React.PureComponent {
 								label={ this.props.optionalUrl.title }
 								onChange={ this.setUrl }
 								value={ this.state.urlInput }
-								placeholder="https://newsletter.substack.com"
+								placeholder="https://newsletter.substack.com/"
 							/>
 						</FormLabel>
 						{ hasEnteredUrl ? (

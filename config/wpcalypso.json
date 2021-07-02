@@ -58,6 +58,7 @@
 		"happychat": true,
 		"help": true,
 		"home/layout-dev": true,
+		"importers/substack": true,
 		"inline-help": true,
 		"i18n/translation-scanner": true,
 		"ive/use-external-assignment": true,

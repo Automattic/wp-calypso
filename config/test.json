@@ -48,6 +48,7 @@
 		"gutenboarding/landscape-preview": true,
 		"gutenboarding/long-previews": true,
 		"help": true,
+		"importers/substack": true,
 		"inline-help": true,
 		"ive/use-external-assignment": true,
 		"jetpack/concierge-sessions": false,
