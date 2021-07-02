@@ -133,7 +133,7 @@ class RemoveDomainDialog extends Component {
 
 				<p>
 					{ translate(
-						'Please visit your {{a}}Account Settings{{/a}} page to update your email address before proceeding.',
+						'You must visit your {{a}}Account Settings{{/a}} to update your email address before proceeding.',
 						{
 							components: { a: <a href="/me/account" /> },
 						}
@@ -173,7 +173,7 @@ class RemoveDomainDialog extends Component {
 				</FormFieldset>
 				<p>
 					{ translate(
-						'We will delete the domain name. Any services related to the domain will cease to function. Be sure you wish to proceed.'
+						'This domain name will be deleted. Any services related to it will cease to function. Are you sure you wish to proceed?'
 					) }
 				</p>
 			</Fragment>
