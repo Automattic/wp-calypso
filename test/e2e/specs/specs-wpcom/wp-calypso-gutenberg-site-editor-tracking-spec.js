@@ -149,21 +149,17 @@ const deleteAll = async function ( driver ) {
 
 const deleteTemplates = async function ( driver ) {
 	const sidebar = await SidebarComponent.Expect( driver );
-	// await sidebar.ensureSidebarMenuVisible();
 	await sidebar.selectTemplates();
 	await deleteAll( driver );
 };
 
 const deleteTemplateParts = async function ( driver ) {
 	const sidebar = await SidebarComponent.Expect( driver );
-	// await sidebar.ensureSidebarMenuVisible();
 	await sidebar.selectTemplateParts();
 	await deleteAll( driver );
 };
 
 const backToCalypso = async function ( driver ) {
-	// const sidebar = await SidebarComponent.Expect( driver );
-	// await sidebar.ensureSidebarMenuVisible();
 	const isMenuOpen = await driverHelper.isElementLocated(
 		driver,
 		By.css( '#wpwrap.wp-responsive-open' )
