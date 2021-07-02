@@ -6,7 +6,12 @@ import { get, isEqual, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
-import { CURRENT_USER_RECEIVE, SITE_RECEIVE, SITES_RECEIVE } from 'calypso/state/action-types';
+import {
+	CURRENT_USER_RECEIVE,
+	CURRENT_USER_SET_EMAIL_VERIFIED,
+	SITE_RECEIVE,
+	SITES_RECEIVE,
+} from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { capabilitiesSchema, flagsSchema, idSchema, lasagnaSchema } from './schema';
 import gravatarStatus from './gravatar-status/reducer';
@@ -38,6 +43,11 @@ export const user = ( state = null, action ) => {
 	switch ( action.type ) {
 		case CURRENT_USER_RECEIVE:
 			return action.user;
+		case CURRENT_USER_SET_EMAIL_VERIFIED:
+			return {
+				...state,
+				email_verified: action.verified,
+			};
 	}
 
 	return state;

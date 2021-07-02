@@ -239,6 +239,10 @@ class SharingConnection extends Component {
 
 const SharingConnectionKeyringUserLabel = localize(
 	( { siteId, keyringUserId, translate, userId } ) => {
+		if ( ! keyringUserId ) {
+			return null;
+		}
+
 		const fetchOptions = {
 			search: keyringUserId,
 			search_columns: [ 'ID' ],

@@ -9,7 +9,11 @@ import {
 	getStoredUserId,
 	setStoredUserId,
 } from 'calypso/lib/user/store';
-import { CURRENT_USER_FETCH, CURRENT_USER_RECEIVE } from 'calypso/state/action-types';
+import {
+	CURRENT_USER_FETCH,
+	CURRENT_USER_RECEIVE,
+	CURRENT_USER_SET_EMAIL_VERIFIED,
+} from 'calypso/state/action-types';
 import { filterUserObject, getLogoutUrl } from 'calypso/lib/user/shared-utils';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
@@ -85,5 +89,12 @@ export function redirectToLogout( postLogoutRedirectUrl ) {
 		await clearStore();
 
 		window.location.href = logoutUrl;
+	};
+}
+
+export function setUserEmailVerified( verified ) {
+	return {
+		type: CURRENT_USER_SET_EMAIL_VERIFIED,
+		verified,
 	};
 }

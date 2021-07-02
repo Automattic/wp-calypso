@@ -581,6 +581,14 @@ $font-size: rem( 14px );
 			}
 		}
 
+		&.is-sidebar-overflow {
+			.is-section-theme {
+				.layout__secondary {
+					transform: translateX( -100% );
+				}
+			}
+		}
+
 		.sidebar__menu.is-togglable:not( .is-toggle-open ).hovered {
 			// .hovered is handled in client/layout/sidebar/expandable.jsx. Needed for repositioning and hover intent.
 			position: relative;

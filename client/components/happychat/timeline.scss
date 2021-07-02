@@ -84,6 +84,16 @@
 	}
 }
 
+.happychat__message-edited-flag {
+	color: var( --color-neutral-40 );
+	font-size: 0.8em;
+	vertical-align: text-bottom;
+	white-space: nowrap;
+	&:before {
+		content: '  ';
+	}
+}
+
 .happychat__timeline-message {
 	flex: 0 0 auto;
 	display: flex;

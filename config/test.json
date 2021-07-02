@@ -87,6 +87,7 @@
 		"signup/social": true,
 		"site-indicator": true,
 		"support-user": true,
+		"theme/showcase-revamp": false,
 		"upgrades/checkout": true,
 		"upgrades/domain-search": true,
 		"upgrades/redirect-payments": true,

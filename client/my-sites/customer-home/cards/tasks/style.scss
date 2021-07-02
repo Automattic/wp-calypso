@@ -10,7 +10,7 @@
 
 	@include breakpoint-deprecated( '>660px' ) {
 		box-shadow: 0 0 0 1px var( --color-border-subtle );
-		margin-bottom: 24px;
+		margin-bottom: 16px;
 	}
 
 	.task__text,
