@@ -3,6 +3,8 @@
 
 .quick-links.foldable-card.card {
 	box-shadow: none;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 3px;
 	
 	&:not( .is-expanded ) {
 		box-shadow: 0 0 0 1px var( --color-border-subtle );
