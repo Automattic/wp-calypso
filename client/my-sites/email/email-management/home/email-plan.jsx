@@ -53,6 +53,7 @@ import { TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL } from 'calypso/lib/titan/cons
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { useEmailAccountsQuery } from 'calypso/data/emails/use-emails-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 
 const UpgradeNavItem = ( { currentRoute, domain, selectedSiteSlug } ) => {
 	const translate = useTranslate();
@@ -324,6 +325,8 @@ const EmailPlan = ( props ) => {
 					{ renderViewBillingAndPaymentSettingsNavItem() }
 				</VerticalNav>
 			</div>
+
+			<ReactQueryDevtools initialIsOpen={ false } />
 		</>
 	);
 };

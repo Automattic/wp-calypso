@@ -219,14 +219,19 @@ const RemoveTitanMailboxConfirmationDialog = ( { mailbox, visible, setVisible } 
 		{ duration: noticeDuration }
 	);
 
+	// The mailboxes are not removed immediately, but rather scheduled. An async job takes care of the deletion. Then
+	// we also wait for the deletion event to come through from Titan since we really only read the local tables.
 	const successMessage = successNotice(
-		translate( '{{strong}}%(emailAddress)s{{/strong}} has been removed from your account', {
-			comment: '%(emailAddress)s is the email address associated to the mailbox being deleted',
-			args: { emailAddress },
-			components: {
-				strong: <strong />,
-			},
-		} ),
+		translate(
+			'{{strong}}%(emailAddress)s{{/strong}} has been scheduled for removal from your account',
+			{
+				comment: '%(emailAddress)s is the email address associated to the mailbox being deleted',
+				args: { emailAddress },
+				components: {
+					strong: <strong />,
+				},
+			}
+		),
 		{ duration: noticeDuration }
 	);
 

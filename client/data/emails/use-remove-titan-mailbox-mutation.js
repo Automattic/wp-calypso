@@ -14,6 +14,11 @@ import wp from 'calypso/lib/wp';
 
 const noop = () => {};
 
+const getNumberOfMailboxes = ( queryClient, queryKey ) => {
+	const data = queryClient.getQueryData( queryKey );
+	return data?.accounts?.[ 0 ].emails?.length || 0;
+};
+
 /**
  * Deletes a mailbox from a Professional Email (Titan) account
  *
@@ -34,39 +39,34 @@ export function useRemoveTitanMailboxMutation( domainName, mailboxName, mutation
 	// Collect the supplied callback
 	const suppliedOnSettled = mutationOptions.onSettled ?? noop;
 
-	// Setup optimistic updates before the mutation by excluding the mailbox we intend to delete from the cached query data.
-	// This can provide for a good UX.
+	// Setup actions to happen before the mutation
 	mutationOptions.onMutate = async () => {
 		await queryClient.cancelQueries( queryKey );
 
-		const previousData = queryClient.getQueryData( queryKey );
+		const previousNumberOfMailboxes = getNumberOfMailboxes( queryClient, queryKey );
 
-		queryClient.setQueryData( queryKey, ( data ) => {
-			if ( data?.accounts?.[ 0 ].emails?.length > 0 ) {
-				data.accounts[ 0 ].emails = data.accounts[ 0 ].emails.filter(
-					( mailbox ) => mailbox.mailbox !== mailboxName
-				);
-			}
-			return data;
-		} );
-
-		// Snapshot the query data before the mutation. This snapshot is provided in context to the status callbacks
-		return { previousData };
+		// Snapshot the number of mailboxes before the mutation. This snapshot is provided in context to the status callbacks
+		return { previousNumberOfMailboxes };
 	};
 
 	// This is called for both success and error statuses.
-	// Invoke any supplied `onSettled` callbacks here. This is so we can do things like invalidate queries and
-	// rollback optimistic updates if the mutation fails
+	// Invoke any supplied `onSettled` callbacks here. This is so we can do things like invalidate queries etc
 	mutationOptions.onSettled = ( data, error, variables, context ) => {
 		suppliedOnSettled?.( data, error, variables, context );
 
 		// Always invalidate attendant queries
-		queryClient.invalidateQueries( queryKey );
+		queryClient.invalidateQueries( queryKey ).then( () => {
+			const numberOfMailboxes = getNumberOfMailboxes( queryClient, queryKey );
 
-		if ( error ) {
-			// If the mutation failed to succeed, "rollback" the optimistic update
-			queryClient.setQueryData( queryKey, context.previousData );
-		}
+			// Determine if we need to schedule another invalidation since the removal job is not synchronous
+			if ( numberOfMailboxes < context.previousNumberOfMailboxes ) {
+				return;
+			}
+
+			setTimeout( () => {
+				queryClient.invalidateQueries( queryKey );
+			}, 10000 );
+		} );
 	};
 
 	const mutation = useMutation(
