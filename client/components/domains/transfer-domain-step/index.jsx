@@ -556,8 +556,8 @@ class TransferDomainStep extends React.Component {
 
 							this.setState( {
 								notice: this.props.translate(
-									"This domain is available to be registered, but we don't support transfers for domains ending with {{strong}}.%(tld)s{{/strong}}. " +
-										'If you register it elsewhere, you can {{a}}map it{{/a}} instead.',
+									'This domain appears to be available for registration, however we do not offer registrations or accept transfers for domains ending in {{strong}}.%(tld)s{{/strong}}. ' +
+										'If you register it elsewhere, you can {{a}}connect it{{/a}} to your WordPress.com site instead.',
 									{
 										args: { tld },
 										components: {
