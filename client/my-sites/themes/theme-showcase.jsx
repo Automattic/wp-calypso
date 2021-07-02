@@ -356,47 +356,49 @@ class ThemeShowcase extends React.Component {
 						/>
 					) }
 					{ 'all' === this.state.tabFilter && (
-						<ThemesSelection
-							upsellUrl={ this.props.upsellUrl }
-							search={ search }
-							tier={ this.props.tier }
-							filter={ filter }
-							vertical={ this.props.vertical }
-							siteId={ this.props.siteId }
-							listLabel={ this.props.listLabel }
-							defaultOption={ this.props.defaultOption }
-							secondaryOption={ this.props.secondaryOption }
-							placeholderCount={ this.props.placeholderCount }
-							getScreenshotUrl={ function ( theme ) {
-								if ( ! getScreenshotOption( theme ).getUrl ) {
-									return null;
-								}
+						<div className="theme-showcase__all-themes">
+							<ThemesSelection
+								upsellUrl={ this.props.upsellUrl }
+								search={ search }
+								tier={ this.props.tier }
+								filter={ filter }
+								vertical={ this.props.vertical }
+								siteId={ this.props.siteId }
+								listLabel={ this.props.listLabel }
+								defaultOption={ this.props.defaultOption }
+								secondaryOption={ this.props.secondaryOption }
+								placeholderCount={ this.props.placeholderCount }
+								getScreenshotUrl={ function ( theme ) {
+									if ( ! getScreenshotOption( theme ).getUrl ) {
+										return null;
+									}
 
-								return localizeThemesPath(
-									getScreenshotOption( theme ).getUrl( theme ),
-									locale,
-									! isLoggedIn
-								);
-							} }
-							onScreenshotClick={ function ( themeId ) {
-								if ( ! getScreenshotOption( themeId ).action ) {
-									return;
-								}
-								getScreenshotOption( themeId ).action( themeId );
-							} }
-							getActionLabel={ function ( theme ) {
-								return getScreenshotOption( theme ).label;
-							} }
-							getOptions={ function ( theme ) {
-								return pickBy(
-									addTracking( options ),
-									( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
-								);
-							} }
-							trackScrollPage={ this.props.trackScrollPage }
-							emptyContent={ this.props.emptyContent }
-							bookmarkRef={ this.bookmarkRef }
-						/>
+									return localizeThemesPath(
+										getScreenshotOption( theme ).getUrl( theme ),
+										locale,
+										! isLoggedIn
+									);
+								} }
+								onScreenshotClick={ function ( themeId ) {
+									if ( ! getScreenshotOption( themeId ).action ) {
+										return;
+									}
+									getScreenshotOption( themeId ).action( themeId );
+								} }
+								getActionLabel={ function ( theme ) {
+									return getScreenshotOption( theme ).label;
+								} }
+								getOptions={ function ( theme ) {
+									return pickBy(
+										addTracking( options ),
+										( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
+									);
+								} }
+								trackScrollPage={ this.props.trackScrollPage }
+								emptyContent={ this.props.emptyContent }
+								bookmarkRef={ this.bookmarkRef }
+							/>
+						</div>
 					) }
 					<ThemePreview />
 					{ this.props.children }
