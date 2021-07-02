@@ -24,7 +24,7 @@
 	&.is-placeholder {
 		padding: 16px;
 		margin: 0 -16px;
-		
+
 		@include breakpoint-deprecated( '>660px' ) {
 			padding: 16px 24px;
 			margin: -24px -24px 0;
@@ -107,7 +107,9 @@
 	}
 
 	@include breakpoint-deprecated( '<660px' ) {
-		&:first-child, &:nth-child( 2 ), &:last-child {
+		&:first-child,
+		&:nth-child( 2 ),
+		&:last-child {
 			border-radius: 0;
 		}
 	}
@@ -132,7 +134,7 @@
 }
 
 .stats__all {
-    margin: 0 -24px;
+	margin: 0 -24px;
 	border-top: none;
 	border-bottom-left-radius: 3px; /* stylelint-disable-line scales/radii */
 	border-bottom-right-radius: 3px; /* stylelint-disable-line scales/radii */
@@ -143,7 +145,7 @@
 
 .stats__all-link {
 	display: block;
-    padding: 12px 24px;
+	padding: 12px 24px;
 	font-size: $font-body-small;
 
 	&:hover {
@@ -152,6 +154,6 @@
 
 	&:focus {
 		background: var( --color-primary );
-    	color: var( --color-text-inverted );
+		color: var( --color-text-inverted );
 	}
 }
