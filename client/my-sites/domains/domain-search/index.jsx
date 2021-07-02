@@ -92,7 +92,7 @@ class DomainSearch extends Component {
 
 	handleAddMapping = ( domain ) => {
 		const mappingUrl = `/domains/add/mapping/${ this.props.selectedSiteSlug }?initialQuery=${ domain }`;
-		page( mappingUrl );
+		page.redirect( mappingUrl );
 	};
 
 	handleAddTransfer = ( domain ) => {
