@@ -88,11 +88,12 @@ function is_atomic() {
  * Enqueue assets
  */
 function enqueue_script() {
-	$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/error-reporting.asset.php';
-	$script_dependencies = isset( $asset_file['dependencies'] ) ? $asset_file['dependencies'] : array();
-	$script_version      = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . 'dist/error-reporting.js' );
-	$script_id           = 'a8c-fse-error-reporting-script';
-	$user_id             = get_current_user_id();
+	$asset_file             = include plugin_dir_path( __FILE__ ) . 'dist/error-reporting.asset.php';
+	$script_dependencies    = isset( $asset_file['dependencies'] ) ? $asset_file['dependencies'] : array();
+	$script_version         = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . 'dist/error-reporting.js' );
+	$script_id              = 'a8c-fse-error-reporting-script';
+	$user_id                = get_current_user_id();
+	$should_activate_sentry = ( user_is_automattician( $user_id ) && has_blog_sticker( 'error-reporting-use-sentry' ) ) || user_in_sentry_test_segment( $user_id );
 
 	wp_enqueue_script(
 		$script_id,
@@ -106,7 +107,7 @@ function enqueue_script() {
 		$script_id,
 		'dataFromPHP',
 		array(
-			'activateSentry' => ( user_is_automattician( $user_id ) && has_blog_sticker( 'error-reporting-use-sentry' ) ) || user_in_sentry_test_segment( $user_id ),
+			'shouldActivateSentry' => $should_activate_sentry ? 'true' : 'false',
 		)
 	);
 }

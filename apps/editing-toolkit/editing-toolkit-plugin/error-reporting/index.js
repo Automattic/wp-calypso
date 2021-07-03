@@ -4,9 +4,15 @@ import * as Sentry from '@sentry/browser';
 import { Integrations } from '@sentry/tracing';
 
 const dataFromPHP = window.dataFromPHP;
+const shouldActivateSentry =
+	typeof dataFromPHP === 'object' && typeof dataFromPHP.shouldActivateSentry === 'string'
+		? dataFromPHP.shouldActivateSentry === 'true'
+		: false;
+
+console.debug( dataFromPHP );
 
 function activateSentry() {
-	console.debug( 'Activating Sentry!' );
+	console.debug( '[error-reporting] Activating Sentry!' );
 	Sentry.init( {
 		dsn: 'https://732ae01df1fe4974820b55d2c14028fa@o892859.ingest.sentry.io/5840079',
 		integrations: [ new Integrations.BrowserTracing() ],
@@ -20,7 +26,7 @@ function activateSentry() {
 
 // Activate the home-brew error-reporting
 function activateHomebrewErrorReporting() {
-	console.debug( 'Activating homebrew error-reporting!' );
+	console.debug( '[error-reporting] Activating homebrew error-reporting!' );
 	/**
 	 * Errors that happened before this script had a chance to load
 	 * are captured in a global array. See `./index.php`.
@@ -66,7 +72,7 @@ function activateHomebrewErrorReporting() {
 	Promise.allSettled( headErrors.map( reportError ) ).then( () => delete window._jsErr );
 }
 
-if ( dataFromPHP.activateSentry ) {
+if ( shouldActivateSentry ) {
 	activateSentry();
 } else {
 	activateHomebrewErrorReporting();
