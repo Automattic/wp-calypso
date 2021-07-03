@@ -54,7 +54,8 @@ const JetpackCheckoutSitelessThankYou: FunctionComponent< Props > = ( {
 	const [ siteInput, setSiteInput ] = useState( '' );
 
 	const onUrlChange = useCallback( ( e ) => {
-		setSiteInput( e.target.value );
+		const siteUrl = e.target.value;
+		setSiteInput( siteUrl );
 	}, [] );
 
 	const onUrlSubmit = useCallback( () => {
@@ -89,9 +90,9 @@ const JetpackCheckoutSitelessThankYou: FunctionComponent< Props > = ( {
 						{ String.fromCodePoint( 0x1f389 ) /* Celebration emoji 🎉 */ }
 					</h1>
 					<p>
-						{ translate( 'Here’s how to get started with Jetpack.' ) }
+						{ translate( "Here's how to get started with Jetpack." ) }
 						<br />
-						{ translate( ' We’ve also sent you an email with these instructions.' ) }
+						{ translate( "We've also sent you an email with these instructions." ) }
 					</p>
 					<div className="jetpack-checkout-siteless-thank-you__step">
 						<div className="jetpack-checkout-siteless-thank-you__step-number">1</div>
@@ -132,7 +133,13 @@ const JetpackCheckoutSitelessThankYou: FunctionComponent< Props > = ( {
 							<div className="jetpack-checkout-siteless-thank-you__step-number">2</div>
 							<div className="jetpack-checkout-siteless-thank-you__step-content">
 								<h2>{ translate( 'Let us know your website address' ) }</h2>
-								<p>
+								<p
+									className={
+										isProductListFetching
+											? 'jetpack-checkout-siteless-thank-you__product-info-loading'
+											: 'jetpack-checkout-siteless-thank-you__product-info'
+									}
+								>
 									{ translate( 'What site will you be adding %(productName)s to?', {
 										args: {
 											productName,
@@ -173,7 +180,7 @@ const JetpackCheckoutSitelessThankYou: FunctionComponent< Props > = ( {
 						<h2>{ translate( 'Do you need help?' ) }</h2>
 						<p>
 							{ translate(
-								'If you prefer to setup Jetpack with the help of out Happiness Engineers, {{a}}schedule a 15 min call now{{/a}}.',
+								'If you prefer to setup Jetpack with the help of our Happiness Engineers, {{a}}schedule a 15 min call now{{/a}}.',
 								{
 									components: {
 										a: (
