@@ -92,7 +92,7 @@ class DomainSearch extends Component {
 	};
 
 	handleAddMapping = ( domain ) => {
-		page( this.getDomainMappingUrl( domain ) );
+		this.isMounted && page( this.getDomainMappingUrl( domain ) );
 	};
 
 	getDomainMappingUrl = ( domain ) => {
