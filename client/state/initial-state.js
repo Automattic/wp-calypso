@@ -12,7 +12,6 @@ import { serialize, deserialize } from 'calypso/state/utils';
 import { getAllStoredItems, setStoredItem, clearStorage } from 'calypso/lib/browser-storage';
 import { isSupportSession } from 'calypso/lib/user/support-user-interop';
 import config from '@automattic/calypso-config';
-import user from 'calypso/lib/user';
 
 /**
  * Module variables
@@ -78,24 +77,6 @@ function shouldAddSympathy() {
 	return false;
 }
 
-// This check is most important to do on save (to prevent bad data
-// from being written to local storage in the first place). But it
-// is worth doing also on load, to prevent using historical
-// bad state data (from before this check was added) or any other
-// scenario where state data may have been stored without this
-// check being performed.
-function verifyStoredRootState( state ) {
-	const currentUserId = user()?.get()?.ID ?? null;
-	const storedUserId = state?.currentUser?.id ?? null;
-
-	if ( currentUserId !== storedUserId ) {
-		debug( `current user ID=${ currentUserId } and state user ID=${ storedUserId } don't match` );
-		return false;
-	}
-
-	return true;
-}
-
 // Verifies that the server-provided Redux state isn't too old.
 // This is rarely a problem, and only comes up in extremely long-lived sessions.
 function verifyBootTimestamp() {
@@ -122,12 +103,12 @@ export async function clearAllState() {
 	await clearStorage();
 }
 
-function getPersistenceKey( subkey, forceLoggedOutUser ) {
-	return getReduxStateKey( forceLoggedOutUser ) + ( subkey ? ':' + subkey : '' );
+function getPersistenceKey( subkey, currentUserId ) {
+	return getReduxStateKey( currentUserId ) + ( subkey ? ':' + subkey : '' );
 }
 
-function getReduxStateKey( forceLoggedOutUser = false ) {
-	return getReduxStateKeyForUserId( forceLoggedOutUser ? null : user()?.get()?.ID ?? null );
+function getReduxStateKey( currentUserId = null ) {
+	return getReduxStateKeyForUserId( currentUserId );
 }
 
 function getReduxStateKeyForUserId( userId ) {
@@ -148,7 +129,7 @@ async function persistentStoreState( reduxStateKey, storageKey, state, _timestam
 	return result;
 }
 
-export function persistOnChange( reduxStore ) {
+export function persistOnChange( reduxStore, currentUserId ) {
 	if ( ! shouldPersist() ) {
 		return () => {};
 	}
@@ -166,7 +147,7 @@ export function persistOnChange( reduxStore ) {
 
 			const serializedState = serialize( reduxStore.getCurrentReducer(), state );
 			const _timestamp = Date.now();
-			const reduxStateKey = getReduxStateKey();
+			const reduxStateKey = getReduxStateKey( currentUserId );
 
 			const storeTasks = map( serializedState.get(), ( data, storageKey ) =>
 				persistentStoreState( reduxStateKey, storageKey, data, _timestamp )
@@ -200,8 +181,8 @@ export function persistOnChange( reduxStore ) {
 // local persistence (server data gets priority).
 // This function only handles legacy Redux state for the monolithic root reducer
 // `loadAllState` must have completed first.
-export function getInitialState( initialReducer ) {
-	const storedState = getInitialPersistedState( initialReducer );
+export function getInitialState( initialReducer, currentUserId ) {
+	const storedState = getInitialPersistedState( initialReducer, currentUserId );
 	const serverState = getInitialServerState( initialReducer );
 	return { ...storedState, ...serverState };
 }
@@ -220,7 +201,7 @@ function getInitialServerState( initialReducer ) {
 // Retrieve the initial persisted state from the cached local client data.
 // This function only handles legacy Redux state for the monolithic root reducer
 // `loadAllState` must have completed first.
-function getInitialPersistedState( initialReducer ) {
+function getInitialPersistedState( initialReducer, currentUserId ) {
 	if ( ! shouldPersist() ) {
 		return null;
 	}
@@ -240,11 +221,11 @@ function getInitialPersistedState( initialReducer ) {
 		}
 	}
 
-	let initialStoredState = getStateFromPersistence( initialReducer );
+	let initialStoredState = getStateFromPersistence( initialReducer, undefined, currentUserId );
 	const storageKeys = [ ...initialReducer.getStorageKeys() ];
 
 	function loadReducerState( { storageKey, reducer } ) {
-		const storedState = getStateFromPersistence( reducer, storageKey, false );
+		const storedState = getStateFromPersistence( reducer, storageKey, currentUserId );
 
 		if ( storedState ) {
 			initialStoredState = initialReducer( initialStoredState, {
@@ -265,8 +246,8 @@ function getInitialPersistedState( initialReducer ) {
 // Retrieve the initial state for a portion of state, from persisted data alone.
 // This function handles both legacy and modularized Redux state.
 // `loadAllState` must have completed first.
-function getStateFromPersistence( reducer, subkey, forceLoggedOutUser = false ) {
-	const reduxStateKey = getPersistenceKey( subkey, forceLoggedOutUser );
+function getStateFromPersistence( reducer, subkey, currentUserId ) {
+	const reduxStateKey = getPersistenceKey( subkey, currentUserId );
 
 	const state = stateCache[ reduxStateKey ] ?? null;
 	return deserializeState( subkey, state, reducer, false );
@@ -276,8 +257,8 @@ function getStateFromPersistence( reducer, subkey, forceLoggedOutUser = false ) 
 // between server and local persisted data.
 // This function handles both legacy and modularized Redux state.
 // `loadAllState` must have completed first.
-export function getStateFromCache( reducer, subkey ) {
-	let reduxStateKey = getPersistenceKey( subkey, false );
+export function getStateFromCache( reducer, subkey, currentUserId ) {
+	let reduxStateKey = getPersistenceKey( subkey, currentUserId );
 
 	let serverState = null;
 
@@ -289,7 +270,7 @@ export function getStateFromCache( reducer, subkey ) {
 
 	// Special case for handling signup flows where the user logs in halfway through.
 	if ( ! persistedState && subkey === 'signup' ) {
-		reduxStateKey = getPersistenceKey( subkey, true );
+		reduxStateKey = getPersistenceKey( subkey, null );
 		persistedState = stateCache[ reduxStateKey ] ?? null;
 
 		// If we are logged in, we no longer need the 'user' step in signup progress tree.
@@ -337,11 +318,6 @@ function deserializeState( subkey, state, reducer, isServerState = false ) {
 		const deserializedState = deserializeStored( reducer, state );
 		if ( ! deserializedState ) {
 			debug( `${ origin } Redux state failed to deserialize, dropping` );
-			return null;
-		}
-
-		if ( ! subkey && ! verifyStoredRootState( deserializedState ) ) {
-			debug( `${ origin } root Redux state has invalid currentUser.id, dropping` );
 			return null;
 		}
 

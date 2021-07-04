@@ -648,7 +648,12 @@ export default function CompositeCheckout( {
 			<QueryPlans />
 			<QueryProducts />
 			<QueryContactDetailsCache />
-			<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
+			<PageViewTracker
+				path={ analyticsPath }
+				title="Checkout"
+				properties={ analyticsProps }
+				options={ { useJetpackGoogleAnalytics: isJetpackCheckout || isJetpackNotAtomic } }
+			/>
 			<CheckoutProvider
 				items={ items }
 				total={ total }
@@ -721,17 +726,23 @@ function getAnalyticsPath(
 	} else if ( selectedFeature && ! plan ) {
 		analyticsPath = '/checkout/features/:feature/:site';
 		analyticsProps = { feature: selectedFeature, site: selectedSiteSlug };
-	} else if ( product && ! purchaseId ) {
-		analyticsPath = isJetpackCheckout
-			? '/checkout/jetpack/:site/:product'
-			: '/checkout/:site/:product';
-		analyticsProps = { product, site: selectedSiteSlug, checkoutFlow };
+	} else if ( product && selectedSiteSlug && ! purchaseId ) {
+		analyticsPath = '/checkout/:site/:product';
+		analyticsProps = { product, site: selectedSiteSlug, checkout_flow: checkoutFlow };
 	} else if ( selectedSiteSlug ) {
 		analyticsPath = '/checkout/:site';
 		analyticsProps = { site: selectedSiteSlug };
+	} else if ( product && ! selectedSiteSlug ) {
+		analyticsPath = '/checkout/:product';
+		analyticsProps = { product, checkout_flow: checkoutFlow };
 	} else {
 		analyticsPath = '/checkout/no-site';
 	}
+
+	if ( isJetpackCheckout ) {
+		analyticsPath = analyticsPath.replace( 'checkout', 'checkout/jetpack' );
+	}
+
 	return { analyticsPath, analyticsProps };
 }
 

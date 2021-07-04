@@ -77,7 +77,6 @@ class RemovePurchase extends Component {
 		isDialogVisible: false,
 		isRemoving: false,
 		isShowingNonPrimaryDomainWarning: false,
-		survey: {},
 	};
 
 	closeDialog = () => {
@@ -118,12 +117,6 @@ class RemovePurchase extends Component {
 
 	onClickChatButton = () => {
 		this.setState( { isDialogVisible: false } );
-	};
-
-	onSurveyChange = ( update ) => {
-		this.setState( {
-			survey: update,
-		} );
 	};
 
 	removePurchase = () => {
@@ -208,10 +201,7 @@ class RemovePurchase extends Component {
 	renderDomainDialog() {
 		let chatButton = null;
 
-		if (
-			config.isEnabled( 'upgrades/precancellation-chat' ) &&
-			this.state.surveyStep !== 'happychat_step'
-		) {
+		if ( config.isEnabled( 'upgrades/precancellation-chat' ) ) {
 			chatButton = this.getChatButton();
 		}
 
@@ -234,7 +224,6 @@ class RemovePurchase extends Component {
 			<CancelPurchaseForm
 				disableButtons={ this.state.isRemoving }
 				defaultContent={ this.renderPlanDialogText() }
-				onInputChange={ this.onSurveyChange }
 				purchase={ purchase }
 				selectedSite={ site }
 				isVisible={ this.state.isDialogVisible }

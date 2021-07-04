@@ -1,12 +1,12 @@
 /**
  * Internal dependencies
  */
-import config from '@automattic/calypso-config';
-import { isPiiUrl, mayWeTrackCurrentUserGdpr } from 'calypso/lib/analytics/utils';
-
 import { getCurrentUser, getDoNotTrack } from '@automattic/calypso-analytics';
 import { isGoogleAnalyticsEnabled, TRACKING_IDS } from './constants';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { isPiiUrl, mayWeTrackCurrentUserGdpr } from 'calypso/lib/analytics/utils';
 import { setupGtag } from './setup-gtag';
+import config from '@automattic/calypso-config';
 
 // Ensure setup has run.
 import './setup';
@@ -57,6 +57,7 @@ export function getGoogleAnalyticsDefaultConfig() {
 		custom_map: {
 			dimension3: 'client_id',
 		},
+		linker: isJetpackCloud() ? { domains: [ 'wordpress.com' ] } : { accept_incoming: true },
 	};
 }
 
@@ -65,13 +66,25 @@ export function getGoogleAnalyticsDefaultConfig() {
  *
  * @param {string} urlPath The path of the current page
  * @param {string} pageTitle The title of the current page
+ * @param {boolean} useJetpackGoogleAnalytics send the page view to Jetpack Google Analytics
  */
-export function fireGoogleAnalyticsPageView( urlPath, pageTitle ) {
+export function fireGoogleAnalyticsPageView(
+	urlPath,
+	pageTitle,
+	useJetpackGoogleAnalytics = false
+) {
 	window.gtag( 'config', TRACKING_IDS.wpcomGoogleAnalyticsGtag, {
 		...getGoogleAnalyticsDefaultConfig(),
 		page_path: urlPath,
 		page_title: pageTitle,
 	} );
+	if ( useJetpackGoogleAnalytics ) {
+		window.gtag( 'config', TRACKING_IDS.jetpackGoogleAnalyticsGtag, {
+			...getGoogleAnalyticsDefaultConfig(),
+			page_path: urlPath,
+			page_title: pageTitle,
+		} );
+	}
 }
 
 /**

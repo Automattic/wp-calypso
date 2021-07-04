@@ -20,3 +20,8 @@ export const getDomainManagementPath = ( domainName, domainType, siteSlug, curre
 			return domainManagementEdit( siteSlug, domainName, currentRoute );
 	}
 };
+
+export const ListAllActions = {
+	editContactInfo: 'edit-contact-info',
+	editContactEmail: 'edit-contact-email',
+};

@@ -347,6 +347,7 @@ jobs:
           command: |
             rm -rf desktop/release/mac
             rm -rf desktop/release/mac-arm64
+            rm desktop/release/builder-debug.yml
       - store_artifacts:
           when: always
           path: desktop/release
@@ -418,6 +419,7 @@ jobs:
             rm -rf desktop/release/github
             rm -rf desktop/release/linux-unpacked
             rm -rf desktop/release/.icon-set
+            rm desktop/release/builder-debug.yml
       - store_artifacts:
           when: always
           path: desktop/release
@@ -473,11 +475,9 @@ jobs:
                   set +e
                   rm -rf desktop/config
                   rm desktop/release/*.yml
-                  rm desktop/release/*.gz
-                  rm desktop/release/*.exe
-                  rm desktop/release/*.blockmap
                   rm -rf desktop/release/win-unpacked
                   rm -rf desktop/release/win-ia32-unpacked
+                  rm desktop/release/builder-debug.yml || true
                 shell: bash.exe
       - when:
           condition: << pipeline.git.tag >>
@@ -525,6 +525,7 @@ jobs:
             rm -rf desktop/release/github
             rm -rf desktop/release/win-unpacked
             rm -rf desktop/release/win-ia32-unpacked
+            rm desktop/release/builder-debug.yml || true
           shell: bash.exe
       - store_artifacts:
           when: always
@@ -556,9 +557,9 @@ jobs:
       - run:
           name: Publish Github Release
           command: |
-            VERSION="${VERSION#desktop-}"
-            echo "Publishing draft release for wp-desktop $VERSION..."
-            NAME="WP-Desktop ${VERSION#?}"
+            SHORT_VERSION="${VERSION#desktop-}"
+            echo "Publishing draft release for wp-desktop $SHORT_VERSION..."
+            NAME="WP-Desktop ${SHORT_VERSION#?}"
 
             chmod +x desktop/bin/make-changelog.sh
             ./desktop/bin/make-changelog.sh > desktop/CHANGELOG.md
@@ -572,7 +573,7 @@ jobs:
               --body "$(cat desktop/CHANGELOG.md)" \
               --delete \
               --draft \
-              "${VERSION}" desktop/release/
+              "${SHORT_VERSION}" desktop/release/
 
             echo "Publish complete"
 

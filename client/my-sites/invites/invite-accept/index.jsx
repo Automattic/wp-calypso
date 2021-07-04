@@ -46,7 +46,6 @@ class InviteAccept extends React.Component {
 	state = {
 		invite: false,
 		error: false,
-		matchEmailError: false,
 	};
 
 	mounted = false;

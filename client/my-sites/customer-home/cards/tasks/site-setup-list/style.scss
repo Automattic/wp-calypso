@@ -4,8 +4,20 @@
 
 .site-setup-list {
 	padding: 0;
+	box-shadow: none;
+	border-bottom: 1px solid var( --color-border-subtle );
+	margin-bottom: 30px;
+
 	@include display-grid;
 	@include grid-template-columns( 12, 24px, 1fr );
+
+	@include breakpoint-deprecated( '>660px' ) {
+		box-shadow: 0 0 0 1px var( --color-border-subtle );
+		border-bottom: none;
+		margin-bottom: 16px;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 3px;
+	}
 
 	@include breakpoint-deprecated( '<960px' ) {
 		display: block;
@@ -64,7 +76,7 @@
 		display: flex;
 		align-items: center;
 
-		@include break-mobile {
+		@include breakpoint-deprecated( '>660px' ) {
 			padding: 16px 24px;
 		}
 	}
@@ -79,7 +91,7 @@
 		margin: 0;
 		color: var( --color-text );
 
-		@include break-mobile {
+		@include breakpoint-deprecated( '>660px' ) {
 			padding: 16px 24px;
 		}
 

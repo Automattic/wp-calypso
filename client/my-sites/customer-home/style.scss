@@ -1,5 +1,9 @@
 @import './grid-mixins.scss';
 
+body.is-section-home {
+	background: var( --studio-white );
+}
+
 .customer-home__heading {
 	display: flex;
 
@@ -50,8 +54,12 @@
 	& > .card,
 	& > .foldable-card.card,
 	& > .foldable-card.card.is-expanded {
-		margin-bottom: 24px;
+		margin-bottom: 30px;
 		margin-top: 0;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			margin-bottom: 16px;
+		}
 	}
 }
 
@@ -66,6 +74,28 @@
 
 	@include breakpoint-deprecated( '<660px' ) {
 		padding: 0 16px;
+	}
+}
+
+.customer-home__main .customer-home__card {
+	padding: 0 16px 30px;
+	margin-top: 0;
+	margin-bottom: 24px;
+	border-bottom: 1px solid var( --color-border-subtle );
+	box-shadow: none;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 3px;
+		box-shadow: 0 0 0 1px var( --color-border-subtle );
+		border-bottom: none;
+		padding: 16px 24px;
+		margin: 0 0 16px;
+	}
+
+	&.is-compact {
+		margin: 0 0 1px;
+		padding: 16px 24px;
 	}
 }
 
@@ -101,4 +131,9 @@
 	a:last-child .vertical-nav-item {
 		border-bottom: none;
 	}
+}
+
+.is-section-home.is-nav-unification .sidebar .sidebar__heading::after,
+.is-section-home.is-nav-unification .sidebar .sidebar__menu-link::after {
+	border-right-color: var( --studio-white );
 }

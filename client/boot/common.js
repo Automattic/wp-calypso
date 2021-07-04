@@ -436,7 +436,7 @@ const boot = ( currentUser, registerRoutes ) => {
 		const initialState = getInitialState( initialReducer );
 		const reduxStore = createReduxStore( initialState, initialReducer );
 		setStore( reduxStore );
-		onDisablePersistence( persistOnChange( reduxStore ) );
+		onDisablePersistence( persistOnChange( reduxStore, currentUser.get()?.ID ) );
 		setupLocale( currentUser.get(), reduxStore );
 		configureReduxStore( currentUser, reduxStore );
 		setupMiddlewares( currentUser, reduxStore );

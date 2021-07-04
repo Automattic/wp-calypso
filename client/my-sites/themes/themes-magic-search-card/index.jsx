@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { intersection, difference, includes, flowRight as compose } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
+import { Button } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -57,6 +58,7 @@ class ThemesMagicSearchCard extends React.Component {
 			editedSearchElement: '',
 			cursorPosition: 0,
 			searchInput: this.props.search,
+			isWelcomeBarEnabled: false,
 		};
 	}
 
@@ -233,6 +235,18 @@ class ThemesMagicSearchCard extends React.Component {
 	};
 
 	insertTextInInput = ( text ) => {
+		// Used by the "Magic Welcome Bar".
+
+		if ( config.isEnabled( 'theme/showcase-revamp' ) ) {
+			// Add an extra leading space sometimes. If the user has "abcd" in
+			// their bar and they click to add "feature:", we want "abcd feature:",
+			// not "abcdfeature:".
+			const { searchInput, cursorPosition } = this.state;
+			if ( searchInput[ cursorPosition - 1 ] !== ' ' ) {
+				text = ' ' + text;
+			}
+		}
+
 		const updatedInput = this.insertTextAtCursor( text );
 		this.updateInput( updatedInput );
 	};
@@ -254,8 +268,15 @@ class ThemesMagicSearchCard extends React.Component {
 		this.focusOnInput();
 	};
 
+	handleWelcomeBarToggle = () => {
+		this.setState( ( prevState ) => ( {
+			isWelcomeBarEnabled: ! prevState.isWelcomeBarEnabled,
+		} ) );
+	};
+
 	render() {
 		const { translate, filters, showTierThemesControl } = this.props;
+		const { isWelcomeBarEnabled } = this.state;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
 
 		const tiers = [
@@ -276,7 +297,7 @@ class ThemesMagicSearchCard extends React.Component {
 				value={ this.state.searchInput }
 				ref={ this.setSearchInputRef }
 				placeholder={ translate(
-					"I'm creating a site for a: portfolio, magazine, business, wedding, blog, or…"
+					'Search by style or feature: portfolio, store, multiple menus, or…'
 				) }
 				analyticsGroup="Themes"
 				delaySearch={ true }
@@ -301,6 +322,11 @@ class ThemesMagicSearchCard extends React.Component {
 
 		// Check if we want to render suggestions or welcome banner
 		const renderSuggestions = this.state.editedSearchElement !== '';
+
+		let isWelcomeBarVisible = ! renderSuggestions;
+		if ( config.isEnabled( 'theme/showcase-revamp' ) ) {
+			isWelcomeBarVisible = isWelcomeBarEnabled;
+		}
 
 		return (
 			<div className={ magicSearchClass }>
@@ -329,7 +355,22 @@ class ThemesMagicSearchCard extends React.Component {
 								initialSelected={ this.props.tier }
 								options={ tiers }
 								onSelect={ this.props.select }
+								className={ classNames( {
+									'showcase-revamp': config.isEnabled( 'theme/showcase-revamp' ),
+								} ) }
 							/>
+						) }
+						{ config.isEnabled( 'theme/showcase-revamp' ) && (
+							<div>
+								<Button
+									onClick={ this.handleWelcomeBarToggle }
+									className="is-link themes-magic-search-card__advanced-toggle"
+								>
+									{ isWelcomeBarEnabled
+										? translate( 'Hide Advanced' )
+										: translate( 'Show Advanced' ) }
+								</Button>
+							</div>
 						) }
 					</div>
 				</StickyPanel>
@@ -342,7 +383,7 @@ class ThemesMagicSearchCard extends React.Component {
 							suggest={ this.suggest }
 						/>
 					) }
-					{ ! renderSuggestions && (
+					{ isWelcomeBarVisible && (
 						<MagicSearchWelcome
 							ref={ this.setSuggestionsRefs( 'welcome' ) }
 							taxonomies={ filtersKeys }
@@ -356,10 +397,21 @@ class ThemesMagicSearchCard extends React.Component {
 	}
 }
 
+let allowSomeThemeFilters = ( x ) => x;
+let allowSomeAllValidFilters = ( x ) => x;
+
+if ( config.isEnabled( 'theme/showcase-revamp' ) ) {
+	// Magic Search only allows "feature", "column", "subject" theme attributes to be searched
+	// For simplicity and less user confusion.
+	allowSomeThemeFilters = ( { feature, column, subject } ) => ( { feature, column, subject } );
+	allowSomeAllValidFilters = ( filtersKeys ) =>
+		intersection( filtersKeys, [ 'feature', 'column', 'subject' ] );
+}
+
 export default compose(
 	connect( ( state ) => ( {
-		filters: getThemeFilters( state ),
-		allValidFilters: Object.keys( getThemeFilterToTermTable( state ) ),
+		filters: allowSomeThemeFilters( getThemeFilters( state ) ),
+		allValidFilters: allowSomeAllValidFilters( Object.keys( getThemeFilterToTermTable( state ) ) ),
 	} ) ),
 	localize,
 	wrapWithClickOutside,

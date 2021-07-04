@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { isEqual } from 'lodash';
 import debugFactory from 'debug';
 import config from '@automattic/calypso-config';
 
@@ -17,7 +16,7 @@ import {
 import wpcom from 'calypso/lib/wp';
 import Emitter from 'calypso/lib/mixins/emitter';
 import { clearStore, getStoredUserId, setStoredUserId } from './store';
-import { getComputedAttributes, filterUserObject } from './shared-utils';
+import { filterUserObject } from './shared-utils';
 
 const debug = debugFactory( 'calypso:user' );
 
@@ -172,24 +171,6 @@ User.prototype.handleFetchSuccess = function ( userData ) {
 	this.data = userData;
 
 	this.emit( 'change' );
-};
-
-User.prototype.set = function ( attributes ) {
-	let changed = false;
-
-	for ( const [ attrName, attrValue ] of Object.entries( attributes ) ) {
-		if ( ! isEqual( attrValue, this.data[ attrName ] ) ) {
-			this.data[ attrName ] = attrValue;
-			changed = true;
-		}
-	}
-
-	if ( changed ) {
-		Object.assign( this.data, getComputedAttributes( this.data ) );
-		this.emit( 'change' );
-	}
-
-	return changed;
 };
 
 /**
