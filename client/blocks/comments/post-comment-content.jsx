@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import AutoDirection from 'calypso/components/auto-direction';
 import Emojify from 'calypso/components/emojify';
+import EmbedContainer from 'calypso/components/embed-container';
 
 /**
  * Style dependencies
@@ -47,17 +48,21 @@ class PostCommentContent extends React.Component {
 		}
 		/*eslint-disable react/no-danger*/
 		return (
-			<AutoDirection>
-				<div className={ classNames( 'comments__comment-content-wrapper', this.props.className ) }>
-					<Emojify>
-						<div
-							className="comments__comment-content"
-							ref={ this.props.setWithDimensionsRef }
-							dangerouslySetInnerHTML={ { __html: this.props.content } }
-						/>
-					</Emojify>
-				</div>
-			</AutoDirection>
+			<EmbedContainer>
+				<AutoDirection>
+					<div
+						className={ classNames( 'comments__comment-content-wrapper', this.props.className ) }
+					>
+						<Emojify>
+							<div
+								className="comments__comment-content"
+								ref={ this.props.setWithDimensionsRef }
+								dangerouslySetInnerHTML={ { __html: this.props.content } }
+							/>
+						</Emojify>
+					</div>
+				</AutoDirection>
+			</EmbedContainer>
 		);
 		/*eslint-enable react/no-danger*/
 	}

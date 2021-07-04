@@ -16,6 +16,7 @@ import AutoDirection from 'calypso/components/auto-direction';
 import CommentLink from 'calypso/my-sites/comments/comment/comment-link';
 import CommentPostLink from 'calypso/my-sites/comments/comment/comment-post-link';
 import Emojify from 'calypso/components/emojify';
+import EmbedContainer from 'calypso/components/embed-container';
 import QueryComment from 'calypso/components/data/query-comment';
 import { stripHTML, decodeEntities } from 'calypso/lib/formatting';
 import { getParentComment, getSiteComment } from 'calypso/state/comments/selectors';
@@ -99,14 +100,16 @@ export class CommentContent extends Component {
 							</div>
 						) }
 
-						<AutoDirection>
-							<Emojify>
-								<div
-									className="comment__content-body"
-									dangerouslySetInnerHTML={ { __html: DOMPurify.sanitize( commentContent ) } } //eslint-disable-line react/no-danger
-								/>
-							</Emojify>
-						</AutoDirection>
+						<EmbedContainer>
+							<AutoDirection>
+								<Emojify>
+									<div
+										className="comment__content-body"
+										dangerouslySetInnerHTML={ { __html: DOMPurify.sanitize( commentContent ) } } //eslint-disable-line react/no-danger
+									/>
+								</Emojify>
+							</AutoDirection>
+						</EmbedContainer>
 					</div>
 				) }
 			</div>

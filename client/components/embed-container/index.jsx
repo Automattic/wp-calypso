@@ -112,7 +112,12 @@ function embedTwitter( domNode ) {
 
 function embedFacebook( domNode ) {
 	debug( 'processing facebook for', domNode );
-	if ( typeof fb !== 'undefined' ) {
+	if ( typeof FB !== 'undefined' ) {
+		// Support async rendering of embedded FB posts
+		window.FB.init( {
+			xfbml: true,
+			version: 'v11.0',
+		} );
 		return;
 	}
 
