@@ -22,6 +22,10 @@ import {
 } from '@automattic/calypso-products';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
+import {
+	getForCurrentCROIteration,
+	Iterations,
+} from 'calypso/my-sites/plans/jetpack-plans/iterations';
 import slugToSelectorProduct from './slug-to-selector-product';
 
 /**
@@ -55,7 +59,12 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 	}
 
 	// Include Jetpack CRM
+	const includeCrmFree =
+		getForCurrentCROIteration( {
+			[ Iterations.ONLY_REALTIME_PRODUCTS ]: false,
+		} ) ?? true;
 	if (
+		includeCrmFree &&
 		! ownedProducts.some( ( ownedProduct ) => JETPACK_CRM_FREE_PRODUCTS.includes( ownedProduct ) )
 	) {
 		availableProducts = [ ...availableProducts, ...JETPACK_CRM_FREE_PRODUCTS ];
