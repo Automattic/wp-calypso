@@ -18,7 +18,13 @@ import {
 	doesCartLocationDifferFromResponseCartLocation,
 	doesResponseCartContainProductMatching,
 } from './cart-functions';
-import type { ResponseCart, ShoppingCartState, ShoppingCartAction, CouponStatus } from './types';
+import type {
+	ResponseCart,
+	ShoppingCartState,
+	ShoppingCartAction,
+	CouponStatus,
+	CacheStatus,
+} from './types';
 import { getEmptyResponseCart } from './empty-carts';
 
 const debug = debugFactory( 'shopping-cart:use-shopping-cart-reducer' );
@@ -46,6 +52,25 @@ export default function useShoppingCartReducer(): [
 	return [ hookState, hookDispatch ];
 }
 
+const alwaysAllowedActions = [
+	'RECEIVE_INITIAL_RESPONSE_CART',
+	'RECEIVE_UPDATED_RESPONSE_CART',
+	'FETCH_INITIAL_RESPONSE_CART',
+	'RAISE_ERROR',
+];
+
+const cacheStatusesForQueueing: CacheStatus[] = [ 'fresh', 'pending', 'fresh-pending' ];
+
+function shouldQueueReducerEvent( cacheStatus: CacheStatus, action: ShoppingCartAction ): boolean {
+	if ( alwaysAllowedActions.includes( action.type ) ) {
+		return false;
+	}
+	if ( cacheStatusesForQueueing.includes( cacheStatus ) ) {
+		return true;
+	}
+	return false;
+}
+
 function shoppingCartReducer(
 	state: ShoppingCartState,
 	action: ShoppingCartAction
@@ -56,15 +81,7 @@ function shoppingCartReducer(
 	// yet loaded and so we cannot make changes to it yet. We therefore will
 	// queue any action that comes through during that time except for
 	// 'RECEIVE_INITIAL_RESPONSE_CART' or 'RAISE_ERROR'.
-	if (
-		( state.cacheStatus === 'fresh' ||
-			state.cacheStatus === 'pending' ||
-			state.cacheStatus === 'fresh-pending' ) &&
-		action.type !== 'RECEIVE_INITIAL_RESPONSE_CART' &&
-		action.type !== 'RECEIVE_UPDATED_RESPONSE_CART' &&
-		action.type !== 'FETCH_INITIAL_RESPONSE_CART' &&
-		action.type !== 'RAISE_ERROR'
-	) {
+	if ( shouldQueueReducerEvent( state.cacheStatus, action ) ) {
 		if ( action.type === 'CART_RELOAD' ) {
 			debug( 'cart has not yet loaded; ignoring reload action', action );
 			return state;
