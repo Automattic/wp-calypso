@@ -39,18 +39,6 @@ class StatsDatePicker extends Component {
 		isActivity: false,
 	};
 
-	state = {
-		isTooltipVisible: false,
-	};
-
-	showTooltip = () => {
-		this.setState( { isTooltipVisible: true } );
-	};
-
-	hideTooltip = () => {
-		this.setState( { isTooltipVisible: false } );
-	};
-
 	dateForSummarize() {
 		const { query, moment, translate } = this.props;
 		const localizedDate = moment();

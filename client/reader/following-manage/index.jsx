@@ -97,7 +97,6 @@ class FollowingManage extends Component {
 
 	handleSearchClosed = () => {
 		this.scrollToTop();
-		this.setState( { showMoreResults: false } );
 		this.props.recordReaderTracksEvent( 'calypso_reader_following_manage_search_closed' );
 		recordAction( 'manage_feed_search_closed' );
 	};

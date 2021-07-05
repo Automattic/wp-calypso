@@ -51,9 +51,6 @@ class Security2faBackupCodes extends React.Component {
 
 	onRequestComplete = ( error, data ) => {
 		if ( error ) {
-			this.setState( {
-				lastError: this.props.translate( 'Unable to obtain backup codes. Please try again later.' ),
-			} );
 			return;
 		}
 

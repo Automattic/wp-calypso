@@ -54,7 +54,6 @@ class ActionButtons extends Component {
 		const buttonsClassName = classNames( {
 			'action-header__actions': true,
 			'is-dropdown': this.state.isDropdown,
-			'is-open': this.state.isDropdownOpen,
 		} );
 
 		return (

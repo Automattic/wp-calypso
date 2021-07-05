@@ -50,7 +50,6 @@ class KeyringConnectButton extends Component {
 	};
 
 	state = {
-		isOpen: false, // The service is visually opened
 		isConnecting: false, // A pending connection is awaiting authorization
 		isRefreshing: false, // A pending refresh is awaiting completion
 		isAwaitingConnections: false, // Waiting for Keyring Connections request to finish
