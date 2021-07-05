@@ -8,11 +8,6 @@ import assert from 'assert';
  */
 import { BaseContainer } from '../base-container';
 
-/**
- * Type dependencies
- */
-import { Page } from 'playwright';
-
 const selectors = {
 	// Main themes listing
 	themes: '.themes__content',
@@ -34,15 +29,6 @@ const selectors = {
  * @augments {BaseContainer}
  */
 export class ThemesPage extends BaseContainer {
-	/**
-	 * Constructs an instance of the component.
-	 *
-	 * @param {Page} page The underlying page.
-	 */
-	constructor( page: Page ) {
-		super( page );
-	}
-
 	/**
 	 * Post initialization steps.
 	 *

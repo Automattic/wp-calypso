@@ -6,7 +6,7 @@ import { BaseContainer } from '../base-container';
 /**
  * Type dependencies
  */
-import { Page, ElementHandle } from 'playwright';
+import { ElementHandle } from 'playwright';
 
 const selectors = {
 	// Comment
@@ -26,15 +26,6 @@ const selectors = {
  * @augments {BaseContainer}
  */
 export class CommentsComponent extends BaseContainer {
-	/**
-	 * Constructs and instance of the CommentsComponent.
-	 *
-	 * @param {Page} page Underlying page on which interactions take place.
-	 */
-	constructor( page: Page ) {
-		super( page );
-	}
-
 	/**
 	 * Fills and posts a comment in the post's comment section.
 	 *
@@ -62,7 +53,7 @@ export class CommentsComponent extends BaseContainer {
 	 * @throws {Error} If selector was not supplied or supplied selector did not resolve to a comment.
 	 */
 	async _click( selector: string | number ): Promise< ElementHandle > {
-		let commentToLike;
+		let commentToLike!: ElementHandle;
 
 		// Retrieve the nth comment on the page.
 		if ( typeof selector === 'number' ) {
@@ -78,10 +69,6 @@ export class CommentsComponent extends BaseContainer {
 				`.comment-content:has-text("${ selector }")`,
 				{ state: 'visible' }
 			);
-		}
-
-		if ( ! commentToLike ) {
-			throw new Error( `Failed to select a comment. Please check the comment number or selector.` );
 		}
 
 		// Click the like button and wait until the animations are done.

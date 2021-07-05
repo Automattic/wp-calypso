@@ -4,11 +4,6 @@
 import { BaseContainer } from '../base-container';
 import { PreviewComponent } from '../components';
 
-/**
- * Type dependencies
- */
-import { Page } from 'playwright';
-
 const selectors = {
 	demoPane: '.theme__sheet-screenshot',
 };
@@ -19,15 +14,6 @@ const selectors = {
  * @augments {BaseContainer}
  */
 export class ThemesDetailPage extends BaseContainer {
-	/**
-	 * Constructs an instance of the component.
-	 *
-	 * @param {Page} page The underlying page.
-	 */
-	constructor( page: Page ) {
-		super( page );
-	}
-
 	/**
 	 * Launches the live preview of the theme.
 	 *

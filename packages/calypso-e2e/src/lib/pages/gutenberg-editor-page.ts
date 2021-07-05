@@ -11,7 +11,7 @@ import { BaseContainer } from '../base-container';
 /**
  * Type dependencies
  */
-import { Frame, Page } from 'playwright';
+import { Frame } from 'playwright';
 
 const selectors = {
 	// iframe and editor
@@ -38,16 +38,6 @@ const selectors = {
  */
 export class GutenbergEditorPage extends BaseContainer {
 	frame!: Frame;
-
-	/**
-	 * Constructs an instance of this object.
-	 *
-	 * @param {Page} page The page where actions take place.
-	 */
-	constructor( page: Page ) {
-		super( page );
-	}
-
 	/**
 	 * Overrides the function of same name defined in the base class.
 	 * This ensures the iframe containing the editor is is fully loaded prior to

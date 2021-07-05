@@ -6,7 +6,7 @@ import { BaseContainer } from '../../base-container';
 /**
  * Type dependencies
  */
-import { Page, Frame } from 'playwright';
+import { Frame } from 'playwright';
 
 const selectors = {
 	// Like Widget
@@ -24,15 +24,6 @@ const selectors = {
  */
 export class PublishedPostPage extends BaseContainer {
 	frame!: Frame;
-
-	/**
-	 * Constructs an instance of the PublishedPostPage.
-	 *
-	 * @param {Page} page Underlying page on which interactions take place.
-	 */
-	constructor( page: Page ) {
-		super( page );
-	}
 
 	/**
 	 * Performs the click action on the post's like button.

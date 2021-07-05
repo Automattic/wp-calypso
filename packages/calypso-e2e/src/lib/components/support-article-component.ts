@@ -3,11 +3,6 @@
  */
 import { BaseContainer } from '../base-container';
 
-/**
- * Type dependencies
- */
-import { Page } from 'playwright';
-
 const selectors = {
 	visitArticleButton: 'text="Visit article"',
 };
@@ -18,15 +13,6 @@ const selectors = {
  * @augments {BaseContainer}
  */
 export class SupportArticleComponent extends BaseContainer {
-	/**
-	 * Construct an instance of the Support Article component.
-	 *
-	 * @param {Page} page Underlying page with which the component will interact.
-	 */
-	constructor( page: Page ) {
-		super( page );
-	}
-
 	/**
 	 * Confirms the support article is displayed on screen.
 	 *

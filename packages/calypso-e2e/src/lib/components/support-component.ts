@@ -12,7 +12,7 @@ import { SupportArticleComponent } from './support-article-component';
 /**
  * Type dependencies
  */
-import { ElementHandle, Page } from 'playwright';
+import { ElementHandle } from 'playwright';
 
 const selectors = {
 	// Components
@@ -42,15 +42,6 @@ const selectors = {
  * @augments {BaseContainer}
  */
 export class SupportComponent extends BaseContainer {
-	/**
-	 * Construct an instance of the Support component.
-	 *
-	 * @param {Page} page Underlying page with which the component will interact.
-	 */
-	constructor( page: Page ) {
-		super( page );
-	}
-
 	/**
 	 * Click on the support button (?).
 	 * This method will toggle the status of the support popover.
