@@ -87,12 +87,11 @@ function needs_slider_width_workaround() {
  * @return bool True if antialiased font-smoothing rule should be applied.
  */
 function use_font_smooth_antialiased() {
-	if ( defined( 'A8C_USE_FONT_SMOOTHING_ANTIALIASED' ) && A8C_USE_FONT_SMOOTHING_ANTIALIASED ) {
-		return true;
+	if ( defined( 'A8C_USE_FONT_SMOOTHING_ANTIALIASED' ) ) {
+		return (bool) A8C_USE_FONT_SMOOTHING_ANTIALIASED;
 	}
 
-	// Open anti-aliasing for all by default.
-	return apply_filters( 'a8c_use_font_smoothing_antialiased', true );
+	return true;
 }
 
 /**
