@@ -18,6 +18,7 @@ import config from '@automattic/calypso-config';
 import { logToLogstash } from 'calypso/state/logstash/actions';
 import Recaptcha from 'calypso/signup/recaptcha';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 
 export default function CheckoutSystemDecider( {
 	productAliasFromUrl,
@@ -90,29 +91,31 @@ export default function CheckoutSystemDecider( {
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logCheckoutError }
 			>
-				<StripeHookProvider
-					fetchStripeConfiguration={ fetchStripeConfigurationWpcom }
-					locale={ locale }
-				>
-					<CompositeCheckout
-						siteSlug={ siteSlug }
-						siteId={ selectedSite?.ID }
-						productAliasFromUrl={ productAliasFromUrl }
-						purchaseId={ purchaseId }
-						couponCode={ couponCode }
-						redirectTo={ redirectTo }
-						feature={ selectedFeature }
-						plan={ plan }
-						isComingFromUpsell={ isComingFromUpsell }
-						infoMessage={ prepurchaseNotices }
-						isLoggedOutCart={ isLoggedOutCart }
-						isNoSiteCart={ isNoSiteCart }
-						isJetpackCheckout={ isJetpackCheckout }
-						jetpackSiteSlug={ jetpackSiteSlug }
-						jetpackPurchaseToken={ jetpackPurchaseToken }
-						isUserComingFromLoginForm={ isUserComingFromLoginForm }
-					/>
-				</StripeHookProvider>
+				<CalypsoShoppingCartProvider>
+					<StripeHookProvider
+						fetchStripeConfiguration={ fetchStripeConfigurationWpcom }
+						locale={ locale }
+					>
+						<CompositeCheckout
+							siteSlug={ siteSlug }
+							siteId={ selectedSite?.ID }
+							productAliasFromUrl={ productAliasFromUrl }
+							purchaseId={ purchaseId }
+							couponCode={ couponCode }
+							redirectTo={ redirectTo }
+							feature={ selectedFeature }
+							plan={ plan }
+							isComingFromUpsell={ isComingFromUpsell }
+							infoMessage={ prepurchaseNotices }
+							isLoggedOutCart={ isLoggedOutCart }
+							isNoSiteCart={ isNoSiteCart }
+							isJetpackCheckout={ isJetpackCheckout }
+							jetpackSiteSlug={ jetpackSiteSlug }
+							jetpackPurchaseToken={ jetpackPurchaseToken }
+							isUserComingFromLoginForm={ isUserComingFromLoginForm }
+						/>
+					</StripeHookProvider>
+				</CalypsoShoppingCartProvider>
 			</CheckoutErrorBoundary>
 			{ isLoggedOutCart && <Recaptcha badgePosition="bottomright" /> }
 		</>

@@ -23,6 +23,7 @@ import QueryContactDetailsCache from 'calypso/components/data/query-contact-deta
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 
 class DomainManagementData extends React.Component {
 	static propTypes = {
@@ -58,17 +59,20 @@ class DomainManagementData extends React.Component {
 				{ selectedSite && needsDomains && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 				{ selectedSite && needsPlans && <QuerySitePlans siteId={ selectedSite.ID } /> }
 				{ needsProductsList && <QueryProductsList /> }
-				{ React.createElement( this.props.component, {
-					context: this.props.context,
-					domains: selectedSite ? this.props.domains : null,
-					hasSiteDomainsLoaded: this.props.hasSiteDomainsLoaded,
-					isRequestingSiteDomains: this.props.isRequestingSiteDomains,
-					products: this.props.products,
-					selectedDomainName: this.props.selectedDomainName,
-					selectedSite,
-					sitePlans: this.props.sitePlans,
-					user: this.props.currentUser,
-				} ) }
+
+				<CalypsoShoppingCartProvider>
+					{ React.createElement( this.props.component, {
+						context: this.props.context,
+						domains: selectedSite ? this.props.domains : null,
+						hasSiteDomainsLoaded: this.props.hasSiteDomainsLoaded,
+						isRequestingSiteDomains: this.props.isRequestingSiteDomains,
+						products: this.props.products,
+						selectedDomainName: this.props.selectedDomainName,
+						selectedSite,
+						sitePlans: this.props.sitePlans,
+						user: this.props.currentUser,
+					} ) }
+				</CalypsoShoppingCartProvider>
 			</div>
 		);
 	}
