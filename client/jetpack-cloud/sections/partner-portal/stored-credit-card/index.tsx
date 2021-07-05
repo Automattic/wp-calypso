@@ -18,9 +18,8 @@ export default function StoredCreditCard( props ): ReactElement {
 	const translate = useTranslate();
 	const creditCard = props.card;
 
-	const expiry = new Date( creditCard.expiry );
-	const month = expiry.getMonth();
-	const year = expiry.getFullYear().toString().substr( 2, 2 );
+	const [ year, expiryMonth ] = creditCard.expiry.split( '-' );
+	const expiryYear = year.substr( 2, 2 );
 
 	return (
 		<div className="stored-credit-card">
@@ -38,7 +37,7 @@ export default function StoredCreditCard( props ): ReactElement {
 				</div>
 
 				<div className="stored-credit-card__footer-right">
-					<div className="stored-credit-card__expiry">{ `${ month }/${ year }` }</div>
+					<div className="stored-credit-card__expiry">{ `${ expiryMonth }/${ expiryYear }` }</div>
 				</div>
 			</div>
 		</div>

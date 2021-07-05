@@ -24,7 +24,7 @@ import './style.scss';
 
 export default function PaymentMethodList(): ReactElement {
 	const translate = useTranslate();
-	const storedCards = useSelector( ( state ) => getAllStoredCards( state ) );
+	const storedCards = useSelector( getAllStoredCards );
 	const cards = storedCards.map( ( card ) => <StoredCreditCard key={ card.card } card={ card } /> );
 
 	return (
@@ -39,7 +39,7 @@ export default function PaymentMethodList(): ReactElement {
 
 			<div className="payment-method-list__body">
 				{ cards }
-				<AddStoredCreditCard key="add-stored-credit-card" />
+				<AddStoredCreditCard />
 			</div>
 		</Main>
 	);
