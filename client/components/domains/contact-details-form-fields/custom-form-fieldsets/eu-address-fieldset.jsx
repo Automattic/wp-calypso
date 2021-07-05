@@ -36,6 +36,7 @@ EuAddressFieldset.propTypes = {
 	getFieldProps: PropTypes.func,
 	translate: PropTypes.func,
 	contactDetailsErrors: PropTypes.object,
+	arePostalCodesSupported: PropTypes.bool,
 };
 
 EuAddressFieldset.defaultProps = {

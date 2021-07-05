@@ -53,6 +53,7 @@ UsAddressFieldset.propTypes = {
 	getFieldProps: PropTypes.func,
 	translate: PropTypes.func,
 	contactDetailsErrors: PropTypes.object,
+	arePostalCodesSupported: PropTypes.bool,
 };
 
 UsAddressFieldset.defaultProps = {
