@@ -7,7 +7,7 @@ import React, { FC, useMemo } from 'react';
 /**
  * Internal dependencies
  */
-import ProductCard from 'calypso/components/jetpack/card/product-without-price';
+import ProductCardWithoutPrice from 'calypso/components/jetpack/card/product-without-price';
 import useJetpackFreeButtonProps from './use-jetpack-free-button-props';
 
 /**
@@ -35,7 +35,7 @@ const JetpackFreeCard: FC< JetpackFreeProps > = ( { fullWidth, siteId, urlQueryA
 	);
 
 	return (
-		<ProductCard
+		<ProductCardWithoutPrice
 			fullWidth={ fullWidth }
 			className="jetpack-free-card"
 			productSlug="free"
