@@ -15,8 +15,10 @@ import PlanUpgradeSection from '../plan-upgrade';
 import ProductCard from '../product-card';
 import { getProductPosition } from '../product-grid/products-order';
 import { getPlansToDisplay, getProductsToDisplay, isConnectionFlow } from './utils';
+import { getForCurrentCROIteration, Iterations } from '../iterations';
 import useGetPlansGridProducts from '../use-get-plans-grid-products';
 import JetpackFreeCard from '../jetpack-free-card';
+import JetpackCrmFreeCard from '../jetpack-crm-free-card';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	PLAN_JETPACK_SECURITY_DAILY,
@@ -147,6 +149,10 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	}, [ duration, availableProducts, purchasedProducts, includedInPlanProducts, currentPlanSlug ] );
 
 	const showFreeCard = useSelector( getShowFreeCard );
+	const showCrmFreeCard =
+		getForCurrentCROIteration( {
+			[ Iterations.ONLY_REALTIME_PRODUCTS ]: true,
+		} ) ?? false;
 
 	const bundleComparisonRef = useRef< null | HTMLElement >( null );
 	const scrollToComparison = () => {
@@ -169,7 +175,6 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 		),
 		[ onDurationChange, duration ]
 	);
-
 
 	return (
 		<>
@@ -248,8 +253,19 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 					) ) }
 				</ul>
 				<div className="product-grid__free">
+					{ showCrmFreeCard && (
+						<JetpackCrmFreeCard
+							fullWidth={ ! showFreeCard }
+							siteId={ siteId }
+							duration={ duration }
+						/>
+					) }
 					{ showFreeCard && (
-						<JetpackFreeCard fullWidth={ true } siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
+						<JetpackFreeCard
+							fullWidth={ ! showCrmFreeCard }
+							siteId={ siteId }
+							urlQueryArgs={ urlQueryArgs }
+						/>
 					) }
 				</div>
 			</ProductGridSection>
