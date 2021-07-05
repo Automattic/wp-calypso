@@ -22,7 +22,8 @@ beforeAll( async () => {
 	const { testPath } = getState();
 
 	const sanitizedTestFilename = path.basename( testPath, path.extname( testPath ) );
-	const resultsPath = await mkdir( path.join( __dirname, '../../results' ), { recursive: true } );
+	const resultsPath = path.join( __dirname, '../../results' );
+	await mkdir( resultsPath, { recursive: true } );
 	tempDir = await mkdtemp( path.join( resultsPath, sanitizedTestFilename + '-' ) );
 
 	if ( isVideoEnabled() ) {
