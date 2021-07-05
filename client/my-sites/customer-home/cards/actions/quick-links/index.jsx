@@ -26,6 +26,8 @@ import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { hasPaidEmailWithUs } from 'calypso/lib/emails';
 import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
 import { savePreference } from 'calypso/state/preferences/actions';
+import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
+import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 
 /**
  * Image dependencies
@@ -58,6 +60,8 @@ export const QuickLinks = ( {
 	isExpanded,
 	expand,
 	collapse,
+	isUnifiedNavEnabled,
+	siteAdminUrl,
 } ) => {
 	const translate = useTranslate();
 
@@ -136,6 +140,14 @@ export const QuickLinks = ( {
 					onClick={ addDomainAction }
 					label={ translate( 'Add a domain' ) }
 					gridicon="domains"
+				/>
+			) }
+			{ isUnifiedNavEnabled && siteAdminUrl && (
+				<ActionBox
+					href={ siteAdminUrl }
+					hideLinkIndicator
+					gridicon="my-sites"
+					label={ translate( 'WP Admin Dashboard' ) }
 				/>
 			) }
 			<ActionBox
@@ -326,6 +338,8 @@ const mapStateToProps = ( state ) => {
 		isStaticHomePage,
 		editHomePageUrl,
 		isExpanded: getPreference( state, 'homeQuickLinksToggleStatus' ) !== 'collapsed',
+		isUnifiedNavEnabled: isNavUnificationEnabled,
+		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 	};
 };
 
