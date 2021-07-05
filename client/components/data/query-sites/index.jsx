@@ -71,7 +71,7 @@ function QueryPrimaryAndRecent() {
 	useEffect( () => {
 		const siteIds = [ ...( primarySiteId ? [ primarySiteId ] : [] ), ...( recentSiteIds ?? [] ) ];
 
-		if ( siteIds && siteIds.length ) {
+		if ( siteIds.length ) {
 			dispatch( requestPrimaryAndRecent( siteIds ) );
 		}
 	}, [ dispatch, primarySiteId, recentSiteIds ] );
