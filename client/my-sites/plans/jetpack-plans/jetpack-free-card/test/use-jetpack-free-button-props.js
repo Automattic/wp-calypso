@@ -141,6 +141,8 @@ describe( 'useJetpackFreeButtonProps', () => {
 	} );
 
 	it( 'should store Jetpack Free in session storage when onClick is called', () => {
+		useTrackCallback.mockReturnValue( jest.fn() );
+
 		const { result } = renderHook( () => useJetpackFreeButtonProps( siteId ) );
 		result.current.onClick();
 
