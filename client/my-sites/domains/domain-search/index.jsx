@@ -8,7 +8,6 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
-import { stringify } from 'qs';
 import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
@@ -49,6 +48,7 @@ import EmailVerificationGate from 'calypso/components/email-verification/email-v
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
 import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
+import { domainMapping } from 'calypso/my-sites/domains/paths';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 
 /**
@@ -92,18 +92,8 @@ class DomainSearch extends Component {
 	};
 
 	handleAddMapping = ( domain ) => {
-		this.isMounted && page( this.getDomainMappingUrl( domain ) );
-	};
-
-	getDomainMappingUrl = ( domain ) => {
-		let url = '/domains/add/mapping';
-
-		if ( this.props.selectedSiteSlug ) {
-			const query = stringify( { initialQuery: domain.trim() } );
-			url += `/${ this.props.selectedSiteSlug }?${ query }`;
-		}
-
-		return url;
+		const domainMappingUrl = domainMapping( this.props.selectedSiteSlug, domain );
+		this.isMounted && page( domainMappingUrl );
 	};
 
 	handleAddTransfer = ( domain ) => {
