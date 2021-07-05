@@ -45,13 +45,13 @@
 		"@wordpress/base-styles": "^3.4.3",
 		"copyfiles": "^2.3.0",
 		"history": "^5.0.0",
-		"react": "^16.12.0",
-		"react-dom": "^16.12.0",
+		"react": "^16.14.0",
+		"react-dom": "^16.14.0",
 		"tslib": "^2.2.0"
 	},
 	"peerDependencies": {
 		"@wordpress/i18n": "^3.20.0",
-		"react": "^16.8"
+		"react": "^16.14"
 	},
 	"private": true
 }

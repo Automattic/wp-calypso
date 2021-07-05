@@ -44,6 +44,6 @@
 		"wpcom": "^6.0.0"
 	},
 	"peerDependencies": {
-		"react": "^16.8"
+		"react": "^16.14"
 	}
 }

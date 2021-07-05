@@ -34,7 +34,7 @@
 		"prepack": "yarn run clean && yarn run build"
 	},
 	"peerDependencies": {
-		"react": "^16.8"
+		"react": "^16.14"
 	},
 	"types": "types"
 }

@@ -44,15 +44,15 @@
 		"@testing-library/jest-dom": "^5.11.10",
 		"@testing-library/react": "^11.2.6",
 		"jest-canvas-mock": "^2.3.0",
-		"react": "^16.12.0",
-		"react-dom": "^16.12.0"
+		"react": "^16.14.0",
+		"react-dom": "^16.14.0"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^4.27.3",
 		"@wordpress/element": "^2.20.3",
 		"@wordpress/i18n": "^3.20.0",
-		"react": "^16.12.0",
-		"react-dom": "^16.12.0",
+		"react": "^16.14.0",
+		"react-dom": "^16.14.0",
 		"debug": "^4.1.1"
 	},
 	"private": true
