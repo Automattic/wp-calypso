@@ -29,22 +29,12 @@ export class NavbarComponent extends BaseContainer {
 	}
 
 	/**
-	 * Locates and clicks on the selector once the element is stable.
-	 *
-	 * @param {string} selector String selector.
-	 */
-	async _click( selector: string ): Promise< void > {
-		const elementHandle = await this.page.waitForSelector( selector );
-		await elementHandle.click();
-	}
-
-	/**
 	 * Locates and clicks on the new post button on the nav bar.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickNewPost(): Promise< void > {
-		await this._click( selectors.newPostButton );
+		await this.click( selectors.newPostButton );
 	}
 
 	/**
@@ -53,6 +43,6 @@ export class NavbarComponent extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickMySites(): Promise< void > {
-		await this._click( selectors.mySiteButton );
+		await this.click( selectors.mySiteButton );
 	}
 }
