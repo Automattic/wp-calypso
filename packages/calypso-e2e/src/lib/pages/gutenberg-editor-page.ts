@@ -162,7 +162,6 @@ export class GutenbergEditorPage extends BaseContainer {
 	 */
 	async publish( { visit = false }: { visit?: boolean } ): Promise< void > {
 		await this.frame.click( `${ selectors.editPostHeader } >> text=Publish` );
-		await this.frame.waitForSelector( selectors.publishPanel );
 		await this.frame.click( `${ selectors.publishPanel } >> text=Publish` );
 
 		if ( visit ) {

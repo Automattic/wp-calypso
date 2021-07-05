@@ -20,9 +20,9 @@ export class PublishedPostsListPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async visitPost( postNumber = 1 ): Promise< void > {
-		const post = await this.page.waitForSelector(
-			`:nth-match(${ selectors.posts }, ${ postNumber })`
-		);
-		await Promise.all( [ this.page.waitForNavigation(), post.click() ] );
+		await Promise.all( [
+			this.page.waitForNavigation(),
+			this.page.waitForSelector( `:nth-match(${ selectors.posts }, ${ postNumber })` ),
+		] );
 	}
 }
