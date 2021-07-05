@@ -227,7 +227,7 @@ export function deleteSite( siteId ) {
 					dispatch(
 						errorNotice(
 							translate(
-								'Your P2 has spaces. You must delete all spaces before you can delete this P2'
+								'Your P2 has spaces. You must delete all spaces before you can delete this P2.'
 							),
 							{
 								id: siteDeletionNoticeId,
