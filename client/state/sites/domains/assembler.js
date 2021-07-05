@@ -54,6 +54,9 @@ export const createSiteDomainObject = ( domain ) => {
 		contactInfoDisclosureAvailable: Boolean( domain.contact_info_disclosure_available ),
 		contactInfoDisclosed: Boolean( domain.contact_info_disclosed ),
 		currentUserCanAddEmail: Boolean( domain.current_user_can_add_email ),
+		currentUserCanCreateSiteFromDomainOnly: Boolean(
+			domain.current_user_can_create_site_from_domain_only
+		),
 		currentUserCanManage: Boolean( domain.current_user_can_manage ),
 		currentUserCannotAddEmailReason: assembleCurrentUserCannotAddEmailReason(
 			domain.current_user_cannot_add_email_reason

@@ -279,7 +279,14 @@ const EmailPlan = ( props ) => {
 		);
 	}
 
-	const { domain, selectedSite, hasSubscription, purchase, isLoadingPurchase } = props;
+	const {
+		currentRoute,
+		domain,
+		selectedSite,
+		hasSubscription,
+		purchase,
+		isLoadingPurchase,
+	} = props;
 
 	// Ensure we check for email forwarding additions and removals
 	const shouldQueryEmailForwards = shouldCheckForEmailForwards( domain );
@@ -318,6 +325,12 @@ const EmailPlan = ( props ) => {
 			<div className="email-plan__actions">
 				<VerticalNav>
 					{ renderAddNewMailboxesOrRenewNavItem() }
+
+					<UpgradeNavItem
+						currentRoute={ currentRoute }
+						domain={ domain }
+						selectedSiteSlug={ selectedSite.slug }
+					/>
 
 					{ renderManageAllMailboxesNavItem() }
 

@@ -32,6 +32,7 @@ export const DOMAIN_PRIMARY = {
 	contactInfoDisclosed: false,
 	contactInfoDisclosureAvailable: false,
 	currentUserCanAddEmail: true,
+	currentUserCanCreateSiteFromDomainOnly: false,
 	currentUserCanManage: true,
 	currentUserCannotAddEmailReason: null,
 	domain: 'retronevergiveup.me',
@@ -107,6 +108,7 @@ export const DOMAIN_NOT_PRIMARY = {
 	contactInfoDisclosed: false,
 	contactInfoDisclosureAvailable: false,
 	currentUserCanAddEmail: false,
+	currentUserCanCreateSiteFromDomainOnly: false,
 	currentUserCanManage: true,
 	currentUserCannotAddEmailReason: {
 		code: DOMAIN_EXPIRED_ERROR_CODE,

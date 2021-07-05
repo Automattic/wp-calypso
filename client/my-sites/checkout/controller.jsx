@@ -44,6 +44,34 @@ import { TRUENAME_COUPONS } from 'calypso/lib/domains';
 
 const debug = debugFactory( 'calypso:checkout-controller' );
 
+export function checkoutSiteless( context, next ) {
+	const state = context.store.getState();
+	const isLoggedOut = ! isUserLoggedIn( state );
+	const { productSlug: product } = context.params;
+
+	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
+	context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
+
+	setSectionMiddleware( { name: 'checkout' } )( context );
+
+	// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
+	const couponCode = context.query.coupon || context.query.code || getRememberedCoupon();
+
+	context.primary = (
+		<CheckoutSystemDecider
+			productAliasFromUrl={ product }
+			couponCode={ couponCode }
+			isComingFromUpsell={ !! context.query.upgrade }
+			redirectTo={ context.query.redirect_to }
+			isLoggedOutCart={ isLoggedOut }
+			isNoSiteCart={ true }
+			isJetpackCheckout={ true }
+		/>
+	);
+
+	next();
+}
+
 export function checkout( context, next ) {
 	const { feature, plan, purchaseId } = context.params;
 
@@ -58,9 +86,12 @@ export function checkout( context, next ) {
 	const jetpackPurchaseToken = context.query.purchasetoken;
 	const jetpackPurchaseNonce = context.query.purchaseNonce;
 	const isUserComingFromLoginForm = context.query?.flow === 'logged-out-checkout';
+	const isUserComingFromPlansPage = [ 'jetpack-plans', 'jetpack-connect-plans' ].includes(
+		context.query?.source
+	);
 	const isJetpackCheckout =
 		context.pathname.includes( '/checkout/jetpack' ) &&
-		( isLoggedOut || isUserComingFromLoginForm ) &&
+		( isLoggedOut || isUserComingFromLoginForm || isUserComingFromPlansPage ) &&
 		( !! jetpackPurchaseToken || !! jetpackPurchaseNonce );
 	const jetpackSiteSlug = context.params.siteSlug;
 
