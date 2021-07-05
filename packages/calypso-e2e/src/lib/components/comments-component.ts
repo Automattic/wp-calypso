@@ -71,7 +71,8 @@ export class CommentsComponent extends BaseContainer {
 			);
 		}
 
-		// Click the like button and wait until the animations are done.
+		// Retrieve the like/unlike button for the comment to interact with, click on it and
+		// wait until the `load` event is fired confirming the end of the sequence.
 		const likeButton = await commentToLike.waitForSelector( selectors.likeButton );
 		await likeButton.click();
 		await this.page.waitForLoadState( 'load' );
