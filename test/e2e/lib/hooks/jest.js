@@ -38,11 +38,16 @@ beforeAll( async () => {
 afterAll( async () => {
 	if ( isVideoEnabled() ) {
 		if ( global.__CURRENT_TEST_FAILED__ ) {
-			await videoHooks.takeScreenshot( {
-				tempDir,
-				testName: global.__CURRENT_TEST_NAME__,
-				driver: driver,
-			} );
+			// Sometimes chrome crashes mid test. By wraping `takeScreenshot` in a try/catch we ensure
+			// we at least get a video recording
+			try {
+				videoHooks.takeScreenshot( {
+					tempDir,
+					testName: global.__CURRENT_TEST_NAME__,
+					driver: driver,
+				} );
+			} catch {}
+
 			await videoHooks.saveVideoRecording( { tempDir, testName: global.__CURRENT_TEST_NAME__ } );
 		}
 
