@@ -247,10 +247,10 @@
 		"eslint-plugin-import": "^2.23.4",
 		"eslint-plugin-inclusive-language": "^2.1.1",
 		"eslint-plugin-jest": "^24.3.6",
-		"eslint-plugin-jsdoc": "^32.3.4",
+		"eslint-plugin-jsdoc": "^35.4.1",
 		"eslint-plugin-jsx-a11y": "^6.4.1",
 		"eslint-plugin-md": "^1.0.19",
-		"eslint-plugin-mocha": "^8.2.0",
+		"eslint-plugin-mocha": "^9.0.0",
 		"eslint-plugin-prettier": "^3.4.0",
 		"eslint-plugin-react": "^7.24.0",
 		"eslint-plugin-react-hooks": "^4.2.0",
@@ -329,6 +329,6 @@
 	"devDependencies": {
 		"bunyan": "^1.8.15",
 		"chokidar": "^3.5.1",
-		"eslint-nibble": "^6.1.0"
+		"eslint-nibble": "^7.0.0"
 	}
 }
