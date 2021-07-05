@@ -12,7 +12,7 @@ body.slider-width-workaround {
 	}
 }
 
-%font-smoothing-antialiased {
+@mixin font-smoothing-antialiased {
 	text-rendering: optimizeLegibility;
 	-moz-osx-font-smoothing: grayscale;
 	-webkit-font-smoothing: antialiased;
@@ -20,17 +20,17 @@ body.slider-width-workaround {
 
 @media ( -webkit-min-device-pixel-ratio: 1.25 ), ( min-resolution: 120dpi ) {
 	body.font-smoothing-antialiased {
-		@extend %font-smoothing-antialiased;
+		@include font-smoothing-antialiased;
 
 		// Overriding an existing core WP rule so the ID selector is necessary
 		// stylelint-disable-next-line selector-max-id
 		#wpwrap {
-			@extend %font-smoothing-antialiased;
+			@include font-smoothing-antialiased;
 		}
 
 		// stylelint-disable-next-line selector-max-id
 		#wpadminbar * {
-			@extend %font-smoothing-antialiased;
+			@include font-smoothing-antialiased;
 		}
 	}
 }
