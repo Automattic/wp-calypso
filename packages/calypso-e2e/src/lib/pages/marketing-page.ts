@@ -12,7 +12,7 @@ import { Page } from 'playwright';
 const selectors = {
 	content: '#primary',
 	navTabs: 'div.section-nav-tabs',
-	navTabsDropdownOptions: '.select-dropdown__option',
+	navTabsDropdownOption: '.select-dropdown__option',
 
 	// Traffic tab
 	websiteMetaTextArea: '#advanced_seo_front_page_description',
@@ -51,7 +51,7 @@ export class MarketingPage extends BaseContainer {
 
 		if ( isDropdown ) {
 			await navTabs.click();
-			await this.page.click( `${ selectors.navTabsDropdownOptions } >> text=${ name }` );
+			await this.page.click( `${ selectors.navTabsDropdownOption } >> text=${ name }` );
 		} else {
 			await this.page.click( `text=${ sanitizedName }` );
 		}
