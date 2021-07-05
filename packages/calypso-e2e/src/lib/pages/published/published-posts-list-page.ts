@@ -22,7 +22,7 @@ export class PublishedPostsListPage extends BaseContainer {
 	async visitPost( postNumber = 1 ): Promise< void > {
 		await Promise.all( [
 			this.page.waitForNavigation(),
-			this.page.waitForSelector( `:nth-match(${ selectors.posts }, ${ postNumber })` ),
+			this.page.click( `:nth-match(${ selectors.posts }, ${ postNumber })` ),
 		] );
 	}
 }

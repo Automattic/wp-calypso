@@ -73,12 +73,8 @@ export class CommentsComponent extends BaseContainer {
 
 		// Click the like button and wait until the animations are done.
 		const likeButton = await commentToLike.waitForSelector( selectors.likeButton );
-		await Promise.all( [
-			likeButton.waitForElementState( 'stable' ),
-			// The loading attribute is added to the class temporarily while the animation is processing.
-			likeButton.waitForSelector( `${ selectors.likeButton }.loading`, { state: 'hidden' } ),
-			likeButton.click(),
-		] );
+		await likeButton.click();
+		await this.page.waitForLoadState( 'load' );
 
 		// Return the comment to the caller for further processing.
 		return commentToLike;
