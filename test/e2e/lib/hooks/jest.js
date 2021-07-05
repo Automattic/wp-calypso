@@ -24,9 +24,9 @@ if ( isVideoEnabled() ) {
 	const {
 		startFramebuffer,
 		stopFramebuffer,
-		// takeScreenshot,
+		takeScreenshot,
 		startVideoRecording,
-		// saveVideoRecording,
+		saveVideoRecording,
 		stopVideoRecording,
 	} = buildVideoHooks();
 
@@ -35,16 +35,16 @@ if ( isVideoEnabled() ) {
 		await startVideoRecording( { tempDir } );
 	} );
 
-	// afterEach( async () => {
-	// 	if ( this.currentTest && this.currentTest.state === 'failed' ) {
-	// 		await takeScreenshot( {
-	// 			tempDir,
-	// 			testName: this.currentTest.title,
-	// 			driver,
-	// 		} );
-	// 		await saveVideoRecording( { tempDir, testName: this.currentTest.title } );
-	// 	}
-	// } );
+	afterEach( async () => {
+		if ( global.__CURRENT_TEST_FAILED__ ) {
+			await takeScreenshot( {
+				tempDir,
+				testName: global.__CURRENT_TEST_NAME__,
+				driver: global.__BROWSER__,
+			} );
+			await saveVideoRecording( { tempDir, testName: global.__CURRENT_TEST_NAME__ } );
+		}
+	} );
 
 	afterAll( async () => {
 		await stopFramebuffer();

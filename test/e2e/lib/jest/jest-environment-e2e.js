@@ -12,12 +12,13 @@ class JestEnvironmentE2E extends JestEnvironmentNode {
 
 		// Save reference to current test
 		if ( event.name === 'test_start' ) {
-			event.global.__CURRENT_TEST__ = event.test.name;
+			this.global.__CURRENT_TEST_NAME__ = event.test.name;
 			return;
 		}
 
 		// If a hook or a test fails, enter in "failed mode"
 		if ( event.name === 'hook_failure' || event.name === 'test_fn_failure' ) {
+			this.global.__CURRENT_TEST_FAILED__ = true;
 			this.testFailed = true;
 			return;
 		}
