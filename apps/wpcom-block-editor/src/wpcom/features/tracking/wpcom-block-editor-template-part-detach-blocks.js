@@ -3,6 +3,7 @@
  */
 import { select } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { getFlattenedBlockNames } from '../utils';
 
 /**
  * Internal dependencies
@@ -29,8 +30,16 @@ export default () => ( {
 				'wp_template_part',
 				templatePartId
 			);
+			// We fire the event with and without the block names. We do this to
+			// make sure the event is tracked all the time. The block names
+			// might become a string that's too long and as a result it will
+			// fail because of URL length browser limitations.
 			tracksRecordEvent( 'wpcom_block_editor_template_part_detach_blocks', {
 				variation_slug: templatePart.area,
+			} );
+			tracksRecordEvent( 'wpcom_block_editor_template_part_detach_blocks', {
+				variation_slug: templatePart.area,
+				block_names: getFlattenedBlockNames( templatePart.blocks ).join( ',' ),
 			} );
 		}
 	},

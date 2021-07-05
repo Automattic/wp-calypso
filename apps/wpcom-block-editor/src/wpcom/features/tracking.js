@@ -15,7 +15,7 @@ import delegateEventTracking, {
 	registerSubscriber as registerDelegateEventSubscriber,
 } from './tracking/delegate-event-tracking';
 import { trackGlobalStylesTabSelected } from './tracking/wpcom-block-editor-global-styles-tab-selected';
-import { buildGlobalStylesContentEvents } from './utils';
+import { buildGlobalStylesContentEvents, getFlattenedBlockNames } from './utils';
 
 // Debugger.
 const debug = debugFactory( 'wpcom-block-editor:tracking' );
@@ -414,8 +414,19 @@ const trackSaveEntityRecord = ( kind, name, record ) => {
 		name === 'wp_template_part'
 	) {
 		ignoreNextReplaceBlocksAction = true;
+		const convertedParentBlocks = select( 'core/block-editor' ).getBlocksByClientId(
+			select( 'core/block-editor' ).getSelectedBlockClientIds()
+		);
+		// We fire the event with and without the block names. We do this to
+		// make sure the event is tracked all the time. The block names
+		// might become a string that's too long and as a result it will
+		// fail because of URL length browser limitations.
 		tracksRecordEvent( 'wpcom_block_editor_convert_to_template_part', {
 			variation_slug: record.area,
+		} );
+		tracksRecordEvent( 'wpcom_block_editor_convert_to_template_part', {
+			variation_slug: record.area,
+			block_names: getFlattenedBlockNames( convertedParentBlocks ).join( ',' ),
 		} );
 	}
 };
