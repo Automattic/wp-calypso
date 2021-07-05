@@ -53,7 +53,7 @@ describe( 'Logger', () => {
 		] );
 	} );
 
-	it.only( 'Logs info and above levels to the filesystem when the env variable is present', async () => {
+	it( 'Logs info and above levels to the filesystem when the env variable is present', async () => {
 		process.env.CALYPSO_LOGFILE = '/tmp123/calypso.log';
 		const logger = getLogger();
 
