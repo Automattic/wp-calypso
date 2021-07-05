@@ -34,7 +34,7 @@ export class NavbarComponent extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickNewPost(): Promise< void > {
-		await this.click( selectors.newPostButton );
+		await this.page.click( selectors.newPostButton );
 	}
 
 	/**
@@ -43,6 +43,6 @@ export class NavbarComponent extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickMySites(): Promise< void > {
-		await this.click( selectors.mySiteButton );
+		await this.page.click( selectors.mySiteButton );
 	}
 }
