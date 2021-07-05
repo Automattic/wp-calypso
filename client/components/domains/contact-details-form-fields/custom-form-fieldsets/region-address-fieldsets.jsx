@@ -3,6 +3,7 @@
  *
  */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { includes } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -19,6 +20,7 @@ import UsAddressFieldset from './us-address-fieldset';
 import EuAddressFieldset from './eu-address-fieldset';
 import UkAddressFieldset from './uk-address-fieldset';
 import { Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
+import { getCountryPostalCodeSupport } from 'calypso/state/countries/selectors';
 
 const noop = () => {};
 
@@ -94,5 +96,11 @@ export class RegionAddressFieldsets extends Component {
 		);
 	}
 }
+export default connect( ( state, props ) => {
+	const countryCode = props.countryCode;
+	const arePostalCodesSupported = getCountryPostalCodeSupport( state, countryCode );
 
-export default localize( RegionAddressFieldsets );
+	return {
+		arePostalCodesSupported,
+	};
+} )( localize( RegionAddressFieldsets ) );
