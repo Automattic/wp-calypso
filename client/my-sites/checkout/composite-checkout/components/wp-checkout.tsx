@@ -4,6 +4,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
+import { isYearly, isJetpackPurchasableItem } from '@automattic/calypso-products';
 import {
 	Checkout,
 	CheckoutStep,
@@ -417,6 +418,9 @@ export default function WPCheckout( {
 	const validatingButtonText = isCartPendingUpdate
 		? String( translate( 'Updating cart…' ) )
 		: String( translate( 'Please wait…' ) );
+	const hasYearlyJetpackProductInCart = responseCart?.products?.every(
+		( product ) => isJetpackPurchasableItem( product.product_slug ) && isYearly( product )
+	);
 
 	return (
 		<Checkout>
@@ -452,10 +456,12 @@ export default function WPCheckout( {
 			<CheckoutStepArea
 				submitButtonHeader={ <SubmitButtonHeader /> }
 				submitButtonFooter={
-					<SubmitButtonFooter>
-						<img src={ badge14Src } alt="" />
-						<span>{ translate( '14 day money back guarantee' ) }</span>
-					</SubmitButtonFooter>
+					hasYearlyJetpackProductInCart && (
+						<SubmitButtonFooter>
+							<img src={ badge14Src } alt="" />
+							<span>{ translate( '14 day money back guarantee' ) }</span>
+						</SubmitButtonFooter>
+					)
 				}
 				disableSubmitButton={ isOrderReviewActive }
 			>
