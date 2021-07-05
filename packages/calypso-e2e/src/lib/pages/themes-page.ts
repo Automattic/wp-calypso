@@ -20,7 +20,7 @@ const selectors = {
 	// Search
 	showAllThemesButton: 'text=Show all themes',
 	searchToolbar: '.themes-magic-search',
-	searchInput: `[placeholder="I'm creating a site for a: portfolio, magazine, business, wedding, blog, or…"]`,
+	searchInput: `[placeholder="Search by style or feature: portfolio, store, multiple menus, or…"]`,
 };
 
 /**
