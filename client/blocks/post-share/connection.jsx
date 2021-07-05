@@ -37,7 +37,12 @@ const PostShareConnection = ( { connection, isActive, onToggle } ) => {
 	}
 
 	return (
-		<div onClick={ toggle } className={ classes } role="presentation">
+		<div
+			onClick={ toggle }
+			className={ classes }
+			role="presentation"
+			aria-label={ `${ external_display } on ${ service }` }
+		>
 			<div className="post-share__service-account-image" style={ accountImageStyle }>
 				&nbsp;
 			</div>
@@ -49,7 +54,7 @@ const PostShareConnection = ( { connection, isActive, onToggle } ) => {
 			<div className="post-share__service-account-name">
 				<span>{ external_display }</span>
 			</div>
-			<ToggleControl label={ external_display } checked={ isActive } />
+			<ToggleControl checked={ isActive } />
 		</div>
 	);
 };
