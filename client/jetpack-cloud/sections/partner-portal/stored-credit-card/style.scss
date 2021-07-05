@@ -9,13 +9,13 @@
 }
 
 .stored-credit-card__primary {
-    padding: 2px 4px;
+	padding: 2px 4px;
 	line-height: 1.25rem;
 	background: var( --studio-gray-80 );
 	color: var( --studio-white );
 	font-size: $font-body-small;
-    border-radius: var( --jetpack-corners-soft );
-    font-weight: 400;
+	border-radius: var( --jetpack-corners-soft );
+	font-weight: 400;
 }
 
 .stored-credit-card__header {
