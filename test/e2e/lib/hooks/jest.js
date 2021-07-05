@@ -3,7 +3,7 @@
  */
 import config from 'config';
 import path from 'path';
-import { mkdtemp } from 'fs/promises';
+import { mkdtemp, mkdir } from 'fs/promises';
 import { getState } from 'expect';
 
 /**
@@ -20,9 +20,10 @@ const videoHooks = isVideoEnabled() ? buildVideoHooks() : null;
 
 beforeAll( async () => {
 	const { testPath } = getState();
-	tempDir = await mkdtemp(
-		path.join( __dirname, 'results', path.basename( testPath, path.extname( testPath ) ) )
-	);
+
+	const sanitizedTestFilename = path.basename( testPath, path.extname( testPath ) );
+	const resultsPath = await mkdir( path.join( __dirname, '../../results' ), { recursive: true } );
+	tempDir = await mkdtemp( path.join( resultsPath, sanitizedTestFilename + '-' ) );
 
 	if ( isVideoEnabled() ) {
 		await videoHooks.startFramebuffer();
