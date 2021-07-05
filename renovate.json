@@ -44,8 +44,8 @@
 			"prPriority": 1
 		},
 		{
-			"groupName": "eslint packages",
-			"matchPackagePatterns": [ "^eslint" ],
+			"groupName": "Testing library",
+			"matchPackagePrefixes": [ "@testing-library" ],
 			"prPriority": 1
 		}
 	],
