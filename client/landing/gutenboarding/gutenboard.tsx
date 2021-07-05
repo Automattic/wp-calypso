@@ -43,7 +43,10 @@ const Gutenboard: React.FunctionComponent = () => {
 	const { showSignupDialog, onSignupDialogClose } = useSignup();
 	const effectiveFontPairings = useFontPairings();
 
-	window.document.body.classList.add( 'font-smoothing-antialiased' );
+	// Enable anti-aliasing font smoothing on Gutenboarding.
+	React.useEffect( () => {
+		window.document.body.classList.add( 'font-smoothing-antialiased' );
+	}, [] );
 
 	// TODO: Explore alternatives for loading fonts and optimizations
 	// TODO: Don't load like this
