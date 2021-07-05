@@ -213,6 +213,14 @@
 	}
 }
 
+.email-mailbox-action-menu__remove-titan-mailbox-dialog {
+	h3 {
+		font-size: $font-title-medium;
+		margin-bottom: 10px;
+		font-weight: 600;
+	}
+}
+
 .popover__menu-item.email-mailbox-action-menu__menu-item {
 	align-items: center;
 	display: flex;

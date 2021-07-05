@@ -1,3 +1,4 @@
+export { getEmailAddress } from './get-email-address';
 export { getEmailForwardAddress } from './get-email-forward-address';
 export { hasGoogleAccountTOSWarning } from './has-google-account-t-o-s-warning';
 export { hasPaidEmailWithUs } from './has-paid-email-with-us';

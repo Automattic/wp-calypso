@@ -85,7 +85,7 @@ export default function useOnSiteCreation(): void {
 
 				const go = async () => {
 					if ( planProduct || domainProduct ) {
-						const cart: ResponseCart = await wpcom.getCart( newSite.site_slug );
+						const cart: ResponseCart = await wpcom.getCart( newSite.blogid );
 						await wpcom.setCart( newSite.blogid, {
 							...cart,
 							products: [ ...cart.products, planProduct, domainProduct ].filter( Boolean ),

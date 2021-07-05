@@ -10,17 +10,22 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { Dialog } from '@automattic/components';
+import {
+	domainManagementTransferOut,
+	domainManagementNameServers,
+} from 'calypso/my-sites/domains/paths';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
-import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import { MOVE_DOMAIN } from 'calypso/lib/url/support';
 import { getName } from 'calypso/lib/purchases';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { getTitanProductName, hasTitanMailWithUs } from 'calypso/lib/titan';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import wpcom from 'calypso/lib/wp';
 
 class RemoveDomainDialog extends Component {
 	static propTypes = {
@@ -34,38 +39,55 @@ class RemoveDomainDialog extends Component {
 	state = {
 		step: 1,
 		domainValidated: false,
-		userAgreed: false,
 		showErrors: false,
 	};
 
 	renderDomainDeletionWarning( productName ) {
-		const { translate, hasTitanWithUs } = this.props;
+		const { translate, hasTitanWithUs, slug, currentRoute } = this.props;
 
 		return (
-			<p>
-				{ translate(
-					'Deleting {{strong}}%(domain)s{{/strong}} is {{strong}}permanent{{/strong}}. ' +
-						'You will no longer own it, and it could be registered ' +
-						'by someone else.',
-					{
-						args: { domain: productName },
-						components: { strong: <strong /> },
-					}
-				) }
-				{ hasTitanWithUs &&
-					' ' +
-						translate(
-							'You also have an active %(productName)s subscription for this domain, and your emails will stop ' +
-								'working if you delete your domain.',
-							{
-								args: {
-									productName: getTitanProductName(),
-								},
-								comment:
-									'%(productName) is the name of the product, which should be "Professional Email" translated',
-							}
-						) }
-			</p>
+			<Fragment>
+				<p>
+					{ translate(
+						'This will stop all services connected to %(domain)s including your email and website. ' +
+							'If you wish to use %(domain)s with another service or provider you can:',
+						{
+							args: { domain: productName },
+						}
+					) }
+				</p>
+				<ul>
+					<li>
+						<a href={ domainManagementNameServers( slug, productName, currentRoute ) }>
+							{ translate( 'Point %(domain)s to another service', {
+								args: { domain: productName },
+							} ) }
+						</a>
+					</li>
+					<li>
+						<a href={ domainManagementTransferOut( slug, productName, currentRoute ) }>
+							{ translate( 'Move %(domain)s to another provider', {
+								args: { domain: productName },
+							} ) }
+						</a>
+					</li>
+				</ul>
+				<p>
+					{ hasTitanWithUs &&
+						' ' +
+							translate(
+								'You also have an active %(productName)s subscription for this domain, and your emails will stop ' +
+									'working if you delete your domain.',
+								{
+									args: {
+										productName: getTitanProductName(),
+									},
+									comment:
+										'%(productName) is the name of the product, which should be "Professional Email" translated',
+								}
+							) }
+				</p>
+			</Fragment>
 		);
 	}
 
@@ -75,25 +97,13 @@ class RemoveDomainDialog extends Component {
 		return (
 			<Fragment>
 				<FormSectionHeading>
-					{ translate( '{{strong}}Delete{{/strong}} %(domain)s and remove it from your account.', {
+					{ translate( '{{strong}}You are deleting %(domain)s from the web.{{/strong}}', {
 						args: { domain: productName },
 						components: { strong: <strong /> },
 					} ) }
 				</FormSectionHeading>
 
 				{ this.renderDomainDeletionWarning( productName ) }
-
-				<p>
-					{ translate( 'If you want to use this domain with another service, do not delete it.' ) }{ ' ' }
-					{ translate(
-						'Instead, keep the domain. You can then {{a}}move or point your domain to a different service.{{/a}}',
-						{
-							components: {
-								a: <a target="_blank" rel="noopener noreferrer" href={ MOVE_DOMAIN } />,
-							},
-						}
-					) }
-				</p>
 			</Fragment>
 		);
 	}
@@ -103,23 +113,46 @@ class RemoveDomainDialog extends Component {
 		this.setState( { domainValidated: event.currentTarget.value === productName } );
 	};
 
-	onAgreeChange = ( event ) => {
-		this.setState( { userAgreed: event.target.checked } );
-	};
-
-	renderSecondStep( productName ) {
+	renderUpdateEmailStep() {
 		const { translate } = this.props;
 
 		return (
 			<Fragment>
 				<FormSectionHeading>
+					{ translate( '{{strong}}Update your WordPress.com email address{{/strong}}', {
+						components: { strong: <strong /> },
+					} ) }
+				</FormSectionHeading>
+
+				<p>
 					{ translate(
-						'{{strong}}Delete{{/strong}} this domain by typing “%(domain)s” into the field below:',
+						'You are deleting a domain name used in the email address we have on file for you. ' +
+							'You must update your contact information.'
+					) }
+				</p>
+
+				<p>
+					{ translate(
+						'You must visit your {{a}}Account Settings{{/a}} to update your email address before proceeding.',
 						{
-							args: { domain: productName },
-							components: { strong: <strong /> },
+							components: { a: <a href="/me/account" /> },
 						}
 					) }
+				</p>
+			</Fragment>
+		);
+	}
+
+	renderFinalStep( productName ) {
+		const { translate } = this.props;
+
+		return (
+			<Fragment>
+				<FormSectionHeading>
+					{ translate( '{{strong}}Confirm your decision{{/strong}}', {
+						args: { domain: productName },
+						components: { strong: <strong /> },
+					} ) }
 				</FormSectionHeading>
 				<FormFieldset>
 					<FormLabel htmlFor="remove-domain-dialog__form-domain">
@@ -138,41 +171,54 @@ class RemoveDomainDialog extends Component {
 						/>
 					) }
 				</FormFieldset>
-				<FormFieldset>
-					<FormLabel>
-						<FormCheckbox name="agree" value="true" onChange={ this.onAgreeChange } />
-						<span>
-							{ translate( 'I understand that this is permanent and irreversible.', {
-								context: 'Domain name',
-							} ) }
-						</span>
-					</FormLabel>
-
-					{ this.state.showErrors && ! this.state.userAgreed && (
-						<FormInputValidation
-							text={ translate(
-								"You need to confirm that you understand the action you're performing."
-							) }
-							isError
-						/>
+				<p>
+					{ translate(
+						'This domain name will be deleted. Any services related to it will cease to function. Are you sure you wish to proceed?'
 					) }
-				</FormFieldset>
-
-				{ this.renderDomainDeletionWarning( productName ) }
+				</p>
 			</Fragment>
 		);
 	}
 
-	nextStep = ( closeDialog ) => {
+	async isWpComEmailBasedOnDomain() {
+		this.setState( {
+			isCheckingEmail: true,
+		} );
+
+		const { purchase } = this.props;
+		const productName = getName( purchase );
+		const { email } = await wpcom.me().get();
+
+		this.setState( {
+			isCheckingEmail: false,
+		} );
+
+		return email.endsWith( productName );
+	}
+
+	nextStep = async ( closeDialog ) => {
 		if ( this.props.isRemoving ) {
 			return;
 		}
+		const isEmailBasedOnDomain = await this.isWpComEmailBasedOnDomain();
 		switch ( this.state.step ) {
 			case 1:
-				this.setState( { step: 2 } );
+				this.setState( {
+					step: isEmailBasedOnDomain ? 2 : 3,
+				} );
 				break;
 			case 2:
-				if ( this.state.domainValidated && this.state.userAgreed ) {
+				if ( isEmailBasedOnDomain ) break;
+				this.setState( {
+					step: 3,
+				} );
+				break;
+			case 3:
+				if ( isEmailBasedOnDomain ) {
+					this.setState( { step: 2 } );
+					break;
+				}
+				if ( this.state.domainValidated ) {
 					this.props.removePurchase( closeDialog );
 				} else {
 					this.setState( { showErrors: true } );
@@ -197,11 +243,14 @@ class RemoveDomainDialog extends Component {
 				action: 'cancel',
 				disabled: this.props.isRemoving,
 				isPrimary: true,
-				label: translate( 'Keep this Domain' ),
+				label: translate( 'Nevermind' ),
 			},
 			{
 				action: 'remove',
-				additionalClassNames: [ this.props.isRemoving ? 'is-busy' : '', 'is-scary' ],
+				additionalClassNames: [
+					this.props.isRemoving || this.state.isCheckingEmail ? 'is-busy' : '',
+					'is-scary',
+				],
 				label: translate( 'Delete this Domain' ),
 				onClick: this.nextStep,
 			},
@@ -217,9 +266,11 @@ class RemoveDomainDialog extends Component {
 				className="remove-domain-dialog__dialog"
 				isVisible={ this.props.isDialogVisible }
 				onClose={ this.close }
+				leaveTimeout={ 0 }
 			>
 				{ this.state.step === 1 && this.renderFirstStep( productName ) }
-				{ this.state.step === 2 && this.renderSecondStep( productName ) }
+				{ this.state.step === 2 && this.renderUpdateEmailStep( productName ) }
+				{ this.state.step === 3 && this.renderFinalStep( productName ) }
 			</Dialog>
 		);
 	}
@@ -231,5 +282,7 @@ export default connect( ( state, ownProps ) => {
 	const selectedDomain = getSelectedDomain( { domains, selectedDomainName } );
 	return {
 		hasTitanWithUs: hasTitanMailWithUs( selectedDomain ),
+		currentRoute: getCurrentRoute( state ),
+		slug: getSelectedSiteSlug( state ),
 	};
 } )( localize( RemoveDomainDialog ) );
