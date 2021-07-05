@@ -71,7 +71,10 @@ export class MediaPage extends BaseContainer {
 	async selectItem( index: number ): Promise< void > {
 		// Playwright is able to select the nth matching item given a selector.
 		// See https://playwright.dev/docs/selectors#pick-n-th-match-from-the-query-result.
-		const elementHandle = await this.page.click( `:nth-match(${ selectors.items }, ${ index })` );
+		const elementHandle = await this.page.waitForSelector(
+			`:nth-match(${ selectors.items }, ${ index })`
+		);
+		await elementHandle.click();
 		await this.page.waitForFunction(
 			( element: any ) => element.classList.contains( 'is-selected' ),
 			elementHandle
