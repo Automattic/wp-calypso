@@ -75,7 +75,6 @@ class DomainSearchResults extends React.Component {
 	renderDomainAvailability() {
 		const {
 			availableDomain,
-			domainsWithPlansOnly,
 			lastDomainIsTransferrable,
 			lastDomainStatus,
 			lastDomainSearched,
@@ -131,17 +130,12 @@ class DomainSearchResults extends React.Component {
 			) {
 				if ( isDomainMappingFree( selectedSite ) || isNextDomainFree( this.props.cart ) ) {
 					offer = translate(
-						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for free.{{/small}}',
+						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}connect it{{/a}} for free.{{/small}}',
 						{ args: { domain }, components }
-					);
-				} else if ( ! domainsWithPlansOnly ) {
-					offer = translate(
-						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for %(cost)s.{{/small}}',
-						{ args: { domain, cost: this.props.products.domain_map.cost_display }, components }
 					);
 				} else {
 					offer = translate(
-						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} with WordPress.com Premium.{{/small}}',
+						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}connect it{{/a}} with WordPress.com Premium.{{/small}}',
 						{ args: { domain }, components }
 					);
 				}
@@ -227,8 +221,13 @@ class DomainSearchResults extends React.Component {
 		);
 	}
 
-	handleAddMapping = () => {
-		this.props.onAddMapping( this.props.lastDomainSearched );
+	handleAddMapping = ( event ) => {
+		event.preventDefault();
+		if ( this.props.isSignupStep ) {
+			this.props.onClickMapping( event );
+		} else {
+			this.props.onAddMapping( this.props.lastDomainSearched );
+		}
 	};
 
 	renderPlaceholders() {
