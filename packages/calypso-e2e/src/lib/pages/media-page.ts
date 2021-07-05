@@ -71,20 +71,11 @@ export class MediaPage extends BaseContainer {
 	async selectItem( index: number ): Promise< void > {
 		// Playwright is able to select the nth matching item given a selector.
 		// See https://playwright.dev/docs/selectors#pick-n-th-match-from-the-query-result.
-		const element = await this.page.waitForSelector(
-			`:nth-match(${ selectors.items }, ${ index })`
+		const elementHandle = await this.page.click( `:nth-match(${ selectors.items }, ${ index })` );
+		await this.page.waitForFunction(
+			( element: any ) => element.classList.contains( 'is-selected' ),
+			elementHandle
 		);
-
-		// Wait for the target element to be stable before checking for the `is-selected` class.
-		// Otherwise, Playwright executes too fast and the method throws despite successfully selecting.
-		await element.waitForElementState( 'visible' );
-		await element.click();
-		await element.waitForElementState( 'stable' );
-		const classAttributes = ( await element.getAttribute( 'class' ) ) as string;
-		const isSelected = classAttributes.includes( 'is-selected' );
-		if ( ! isSelected ) {
-			throw new Error( `Failed to select requested item number ${ index }` );
-		}
 	}
 
 	/**
@@ -121,7 +112,6 @@ export class MediaPage extends BaseContainer {
 	 */
 	async editImage(): Promise< void > {
 		await this.page.click( selectors.editButton );
-		await this.page.waitForSelector( selectors.mediaModalPreview );
 		await this.page.click( selectors.mediaModalEditButton );
 		await this.page.waitForSelector( selectors.imageEditorCanvas );
 	}
@@ -132,10 +122,9 @@ export class MediaPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async rotateImage(): Promise< void > {
-		const preview = await this.page.waitForSelector( selectors.imageEditorCanvas );
+		await this.page.waitForSelector( selectors.imageEditorCanvas );
 		const selector = `${ selectors.imageEditorToolbarButton } span:text("Rotate")`;
 		await this.page.click( selector );
-		await preview.waitForElementState( 'stable' );
 		await waitForElementEnabled( this.page, selectors.imageEditorResetButton );
 	}
 
@@ -145,8 +134,7 @@ export class MediaPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async cancelImageEdit(): Promise< void > {
-		const cancelButton = await this.page.waitForSelector( selectors.imageEditorCancelButton );
-		await cancelButton.click();
+		await this.page.click( selectors.imageEditorCancelButton );
 		await this.page.waitForSelector( selectors.mediaModal );
 	}
 }
