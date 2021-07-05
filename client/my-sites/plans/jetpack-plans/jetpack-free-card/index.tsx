@@ -8,6 +8,7 @@ import React, { FC, useMemo } from 'react';
  * Internal dependencies
  */
 import ProductCardWithoutPrice from 'calypso/components/jetpack/card/product-without-price';
+import { getForCurrentCROIteration, Iterations } from '../iterations';
 import useJetpackFreeButtonProps from './use-jetpack-free-button-props';
 
 /**
@@ -23,14 +24,22 @@ const JetpackFreeCard: FC< JetpackFreeProps > = ( { fullWidth, siteId, urlQueryA
 	);
 
 	const features = useMemo(
-		() => [
-			translate( 'Site stats' ),
-			translate( 'Brute force attack protection' ),
-			translate( 'Content Delivery Network' ),
-			translate( 'Automated social media posting' ),
-			translate( 'Downtime monitoring' ),
-			translate( 'Activity Log' ),
-		],
+		() =>
+			getForCurrentCROIteration( {
+				[ Iterations.ONLY_REALTIME_PRODUCTS ]: [
+					translate( 'Site stats' ),
+					translate( 'Content Delivery Network' ),
+					translate( 'Downtime monitoring' ),
+					translate( 'Activity Log' ),
+				],
+			} ) ?? [
+				translate( 'Site stats' ),
+				translate( 'Brute force attack protection' ),
+				translate( 'Content Delivery Network' ),
+				translate( 'Automated social media posting' ),
+				translate( 'Downtime monitoring' ),
+				translate( 'Activity Log' ),
+			],
 		[ translate ]
 	);
 
