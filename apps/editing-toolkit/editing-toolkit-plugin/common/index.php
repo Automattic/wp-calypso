@@ -91,7 +91,8 @@ function use_font_smooth_antialiased() {
 		return true;
 	}
 
-	return apply_filters( 'a8c_use_font_smoothing_antialiased', false );
+	// Open anti-aliasing for all by default.
+	return apply_filters( 'a8c_use_font_smoothing_antialiased', true );
 }
 
 /**
