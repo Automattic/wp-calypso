@@ -9,17 +9,14 @@ import type { AnyAction, Dispatch } from 'redux';
 import 'calypso/state/marketplace/init';
 import {
 	MARKETPLACE_PRIMARY_DOMAIN_SELECT,
-	MARKETPLACE_QUEUE_PLUGIN_INSTALL,
-	MARKETPLACE_PLUGIN_INSTALLED_ON_PURCHASE,
+	MARKETPLACE_QUEUE_PRODUCT_INSTALL,
 	MARKETPLACE_RESET_PURCHASE_FLOW,
 	MARKETPLACE_SITE_TRANSFER_STATE_CHANGE,
 	MARKETPLACE_PLUGIN_INSTALLATION_STATE_CHANGE,
 	MARKETPLACE_SITE_TRANSFER_PLUGIN_INSTALL,
 } from 'calypso/state/action-types';
 import {
-	ISetPluginToBeInstalledAction,
 	ISetPrimaryDomainCandidateAction,
-	ISetPluginInstalledDuringPurchaseFlag,
 	MARKETPLACE_ASYNC_PROCESS_STATUS,
 } from 'calypso/state/marketplace/types';
 import {
@@ -41,7 +38,8 @@ import {
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin as getWporgPlugin } from 'calypso/state/plugins/wporg/selectors';
 import { IAppState } from 'calypso/state/types';
-import { marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';
+import { getPluginsToInstall, marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';
+import { IProductGroupCollection } from 'calypso/my-sites/marketplace/types';
 
 export function setPrimaryDomainCandidate(
 	domainName: string | undefined
@@ -52,21 +50,16 @@ export function setPrimaryDomainCandidate(
 	};
 }
 
-export function setPluginSlugToBeInstalled(
-	pluginSlugToBeInstalled: string | undefined
-): ISetPluginToBeInstalledAction {
+export function productToBeInstalled(
+	productGroupSlug: keyof IProductGroupCollection,
+	productSlug: string,
+	primaryDomain: string
+): AnyAction {
 	return {
-		type: MARKETPLACE_QUEUE_PLUGIN_INSTALL,
-		pluginSlugToBeInstalled,
-	};
-}
-
-export function setIsPluginInstalledDuringPurchase(
-	isPluginInstalledDuringPurchase: boolean
-): ISetPluginInstalledDuringPurchaseFlag {
-	return {
-		type: MARKETPLACE_PLUGIN_INSTALLED_ON_PURCHASE,
-		isPluginInstalledDuringPurchase,
+		type: MARKETPLACE_QUEUE_PRODUCT_INSTALL,
+		productSlug,
+		productGroupSlug,
+		primaryDomain,
 	};
 }
 
@@ -98,12 +91,12 @@ export function siteTransferWithPluginInstallTriggered(): AnyAction {
 
 export function pluginInstallationStateChange(
 	state: MARKETPLACE_ASYNC_PROCESS_STATUS,
-	reason = ''
+	reason = 'NOT_PROVIDED'
 ): AnyAction {
 	return {
 		type: MARKETPLACE_PLUGIN_INSTALLATION_STATE_CHANGE,
 		state,
-		reason: reason ?? 'NOT_PROVIDED',
+		reason,
 	};
 }
 
@@ -232,9 +225,13 @@ export function tryProductInstall() {
 	return function ( dispatch: Dispatch< any >, getState: () => IAppState ): void {
 		const state = getState();
 		const selectedSiteId = getSelectedSiteId( state );
-		const { pluginSlugToBeInstalled } = getPurchaseFlowState( state );
+		const { productSlugInstalled, productGroupSlug } = getPurchaseFlowState( state );
 		const { pluginInstallationStatus, siteTransferStatus } = getPurchaseFlowState( state );
-
+		const [ pluginSlugToBeInstalled ] =
+			( productGroupSlug &&
+				productSlugInstalled &&
+				getPluginsToInstall( productGroupSlug, productSlugInstalled ) ) ??
+			[];
 		if (
 			selectedSiteId &&
 			pluginSlugToBeInstalled &&
