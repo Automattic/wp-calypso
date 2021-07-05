@@ -10,8 +10,13 @@ import { getTestNameWithTime } from '../../test-utils';
 
 const kill = ( proc ) =>
 	new Promise( ( resolve ) => {
-		proc.on( 'close', resolve );
-		proc.kill();
+		if ( proc.killed || proc.exitCode > 0 ) {
+			// Already killed
+			resolve();
+		} else {
+			proc.on( 'close', resolve );
+			proc.kill();
+		}
 	} );
 
 export const buildHooks = ( displayNum ) => {
