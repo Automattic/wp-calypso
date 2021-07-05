@@ -2,12 +2,12 @@
  * External dependencies
  */
 import debugFactory from 'debug';
+import { withStorageKey } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
  */
 import { SUPPORT_SESSION_TRANSITION } from 'calypso/state/action-types';
-import { withStorageKey } from 'calypso/state/utils';
 import { SESSION_ACTIVE, SESSION_EXPIRED, SESSION_NONE } from './constants';
 
 const debug = debugFactory( 'calypso:state:support:actions' );
