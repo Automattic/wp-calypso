@@ -41,12 +41,12 @@
 
 	display: grid;
 	grid-template-columns: repeat( auto-fit, minmax( 300px, 1fr ) );
-	grid-gap: 24px 16px;
+	gap: 24px 16px;
 }
 
 .product-grid__plan-grid:not( .is-wrapping ) {
 	margin-top: 72px;
-	grid-gap: 24px 0;
+	gap: 24px 0;
 
 	// Considering there are 3 plans
 	> li {
@@ -78,7 +78,7 @@
 }
 
 .product-grid__free {
-	margin-top: 32px;
+	margin-block-start: 32px;
 }
 
 .product-grid__asterisk-items {
