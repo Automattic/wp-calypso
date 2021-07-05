@@ -8,7 +8,7 @@ export const hasJetpackSearchPurchaseOrPlan = (
 	planSlug: string | null
 ): boolean => {
 	if ( ! sitePurchases || ! planSlug ) {
-		return;
+		return false;
 	}
 
 	const checkForSearchProductInPurchases = ( purchase ) =>
