@@ -164,7 +164,7 @@ class UploadingPane extends React.PureComponent {
 	};
 
 	startUpload = ( file, url = undefined ) => {
-		this.props.startUpload( this.props.importerStatus, file, url );
+		this.props.startUpload( this.props.importerStatus, file, url ? url.trim() : undefined );
 	};
 
 	validateUrl = ( urlInput ) => {
