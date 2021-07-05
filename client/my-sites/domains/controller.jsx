@@ -38,6 +38,7 @@ import JetpackManageErrorPage from 'calypso/my-sites/jetpack-manage-error-page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 
 const noop = () => {};
 const domainsAddHeader = ( context, next ) => {
@@ -72,7 +73,9 @@ const domainSearch = ( context, next ) => {
 		<Main wideLayout>
 			<PageViewTracker path="/domains/add/:site" title="Domain Search > Domain Registration" />
 			<DocumentHead title={ translate( 'Domain Search' ) } />
-			<DomainSearch basePath={ sectionify( context.path ) } context={ context } />
+			<CalypsoShoppingCartProvider>
+				<DomainSearch basePath={ sectionify( context.path ) } context={ context } />
+			</CalypsoShoppingCartProvider>
 		</Main>
 	);
 	next();
@@ -86,7 +89,9 @@ const siteRedirect = ( context, next ) => {
 				title="Domain Search > Site Redirect"
 			/>
 			<DocumentHead title={ translate( 'Redirect a Site' ) } />
-			<SiteRedirect />
+			<CalypsoShoppingCartProvider>
+				<SiteRedirect />
+			</CalypsoShoppingCartProvider>
 		</Main>
 	);
 	next();
@@ -97,7 +102,9 @@ const mapDomain = ( context, next ) => {
 		<Main wideLayout>
 			<PageViewTracker path={ domainMapping( ':site' ) } title="Domain Search > Domain Mapping" />
 			<DocumentHead title={ translate( 'Map a Domain' ) } />
-			<MapDomain initialQuery={ context.query.initialQuery } />
+			<CalypsoShoppingCartProvider>
+				<MapDomain initialQuery={ context.query.initialQuery } />
+			</CalypsoShoppingCartProvider>
 		</Main>
 	);
 	next();
@@ -114,11 +121,13 @@ const transferDomain = ( context, next ) => {
 				title="Domain Search > Domain Transfer"
 			/>
 			<DocumentHead title={ translate( 'Transfer a Domain' ) } />
-			<TransferDomain
-				basePath={ sectionify( context.path ) }
-				initialQuery={ context.query.initialQuery }
-				useStandardBack={ useStandardBack }
-			/>
+			<CalypsoShoppingCartProvider>
+				<TransferDomain
+					basePath={ sectionify( context.path ) }
+					initialQuery={ context.query.initialQuery }
+					useStandardBack={ useStandardBack }
+				/>
+			</CalypsoShoppingCartProvider>
 		</Main>
 	);
 	next();
@@ -140,11 +149,13 @@ const useYourDomain = ( context, next ) => {
 				title="Domain Search > Use Your Own Domain"
 			/>
 			<DocumentHead title={ translate( 'Use Your Own Domain' ) } />
-			<UseYourDomainStep
-				basePath={ sectionify( context.path ) }
-				initialQuery={ context.query.initialQuery }
-				goBack={ handleGoBack }
-			/>
+			<CalypsoShoppingCartProvider>
+				<UseYourDomainStep
+					basePath={ sectionify( context.path ) }
+					initialQuery={ context.query.initialQuery }
+					goBack={ handleGoBack }
+				/>
+			</CalypsoShoppingCartProvider>
 		</Main>
 	);
 	next();
@@ -164,13 +175,15 @@ const transferDomainPrecheck = ( context, next ) => {
 				path={ domainManagementTransferInPrecheck( ':site', ':domain' ) }
 				title="My Sites > Domains > Selected Domain"
 			/>
-			<div>
-				<TransferDomainStep
-					forcePrecheck={ true }
-					initialQuery={ domain }
-					goBack={ handleGoBack }
-				/>
-			</div>
+			<CalypsoShoppingCartProvider>
+				<div>
+					<TransferDomainStep
+						forcePrecheck={ true }
+						initialQuery={ domain }
+						goBack={ handleGoBack }
+					/>
+				</div>
+			</CalypsoShoppingCartProvider>
 		</Main>
 	);
 	next();
@@ -189,7 +202,9 @@ const googleAppsWithRegistration = ( context, next ) => {
 						args: { domain: context.params.registerDomain },
 					} ) }
 				/>
-				<GSuiteUpgrade domain={ context.params.registerDomain } />
+				<CalypsoShoppingCartProvider>
+					<GSuiteUpgrade domain={ context.params.registerDomain } />
+				</CalypsoShoppingCartProvider>
 			</Main>
 		);
 	}

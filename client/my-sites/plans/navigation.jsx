@@ -20,6 +20,7 @@ import isSiteOnFreePlan from 'calypso/state/selectors/is-site-on-free-plan';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 
 class PlansNavigation extends React.Component {
 	static propTypes = {
@@ -116,13 +117,15 @@ function CartToggleButton( {
 	};
 
 	return (
-		<PopoverCart
-			selectedSite={ site }
-			onToggle={ onToggle }
-			pinned={ isMobile() }
-			visible={ cartVisible }
-			path={ path }
-		/>
+		<CalypsoShoppingCartProvider>
+			<PopoverCart
+				selectedSite={ site }
+				onToggle={ onToggle }
+				pinned={ isMobile() }
+				visible={ cartVisible }
+				path={ path }
+			/>
+		</CalypsoShoppingCartProvider>
 	);
 }
 

@@ -16,7 +16,6 @@ import LayoutLoggedOut from 'calypso/layout/logged-out';
 import EmptyContent from 'calypso/components/empty-content';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import MomentProvider from 'calypso/components/localized-moment/provider';
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { RouteProvider } from 'calypso/components/route';
 import { login } from 'calypso/lib/paths';
 import { getLanguageSlugs } from 'calypso/lib/i18n-utils';
@@ -64,9 +63,7 @@ export const ProviderWrappedLayout = ( {
 			>
 				<QueryClientProvider client={ queryClient }>
 					<ReduxProvider store={ store }>
-						<CalypsoShoppingCartProvider>
-							<MomentProvider>{ layout }</MomentProvider>
-						</CalypsoShoppingCartProvider>
+						<MomentProvider>{ layout }</MomentProvider>
 					</ReduxProvider>
 				</QueryClientProvider>
 			</RouteProvider>
