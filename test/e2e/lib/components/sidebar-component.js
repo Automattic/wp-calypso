@@ -24,7 +24,6 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async expandDrawerItem( itemName ) {
-		await this.ensureSidebarMenuVisible();
 		const itemLocator = driverHelper.createTextLocator( By.css( '.sidebar__heading' ), itemName );
 		const itemElement = await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
