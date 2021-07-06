@@ -81,8 +81,11 @@ class EmailManagementHome extends React.Component {
 			} );
 
 			if ( ! domainHasEmail( selectedDomain ) ) {
-				return this.renderContentWithHeader(
-					<EmailProvidersComparison selectedDomainName={ selectedDomainName } />
+				return (
+					<EmailProvidersComparison
+						selectedDomainName={ selectedDomainName }
+						skipHeaderCake={ true }
+					/>
 				);
 			}
 
@@ -101,8 +104,11 @@ class EmailManagementHome extends React.Component {
 		const domainsWithNoEmail = nonWpcomDomains.filter( ( domain ) => ! domainHasEmail( domain ) );
 
 		if ( domainsWithEmail.length < 1 && domainsWithNoEmail.length === 1 ) {
-			return this.renderContentWithHeader(
-				<EmailProvidersComparison selectedDomainName={ domainsWithNoEmail[ 0 ].name } />
+			return (
+				<EmailProvidersComparison
+					selectedDomainName={ domainsWithNoEmail[ 0 ].name }
+					skipHeaderCake={ true }
+				/>
 			);
 		}
 
