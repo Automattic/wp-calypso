@@ -686,6 +686,10 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 		describe( 'tracks template part creation and replacement', function () {
 			it( 'Tracks "wpcom_block_editor_create_template_part', async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
+				// Clear block selection to ensure this starts at top level.
+				await this.driver.executeScript(
+					`return window.wp.data.dispatch( 'core/block-editor' ).selectBlock()`
+				);
 
 				const blockId = await editor.addBlock(
 					'Header',
