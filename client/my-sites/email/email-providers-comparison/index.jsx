@@ -497,7 +497,7 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	renderHeader() {
-		const { currentRoute, selectedDomainName, selectedSite, translate } = this.props;
+		const { currentRoute, selectedDomainName, selectedSite, translate, skipHeaderCake } = this.props;
 
 		const image = {
 			path: emailIllustration,
@@ -515,13 +515,17 @@ class EmailProvidersComparison extends React.Component {
 			? translate( 'Upgrade to a hosted email' )
 			: translate( 'Add email' );
 
+		const renderHeaderCake = skipHeaderCake ? null : (
+			<HeaderCake onClick={ this.handleBack }>{ title }</HeaderCake>
+		);
+
 		return (
 			<>
 				<DocumentHead title={ titleCase( title ) } />
 
 				<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
 
-				<HeaderCake onClick={ this.handleBack }>{ title }</HeaderCake>
+				{ renderHeaderCake }
 
 				<PromoCard
 					isPrimary
