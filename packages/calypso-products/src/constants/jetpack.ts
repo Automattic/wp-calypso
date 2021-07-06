@@ -10,10 +10,10 @@ export const PRODUCT_JETPACK_BACKUP = 'jetpack_backup';
 export const PRODUCT_JETPACK_BACKUP_MONTHLY = 'jetpack_backup_monthly';
 export const PRODUCT_JETPACK_BACKUP_PRO = 'jetpack_backup_pro';
 export const PRODUCT_JETPACK_BACKUP_PRO_MONTHLY = 'jetpack_backup_pro_monthly';
-export const PRODUCT_JETPACK_SCAN_2 = 'jetpack_scan_2';
-export const PRODUCT_JETPACK_SCAN_2_MONTHLY = 'jetpack_scan_2_monthly';
-export const PRODUCT_JETPACK_SCAN_PRO = 'jetpack_scan_pro';
-export const PRODUCT_JETPACK_SCAN_PRO_MONTHLY = 'jetpack_scan_pro_monthly';
+export const PRODUCT_JETPACK_SCAN = 'jetpack_scan';
+export const PRODUCT_JETPACK_SCAN_MONTHLY = 'jetpack_scan_monthly';
+export const PRODUCT_JETPACK_SCAN_REALTIME = 'jetpack_scan_realtime';
+export const PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY = 'jetpack_scan_realtime_monthly';
 export const PRODUCT_JETPACK_ANTI_SPAM = 'jetpack_anti_spam';
 export const PRODUCT_JETPACK_ANTI_SPAM_MONTHLY = 'jetpack_anti_spam_monthly';
 export const PRODUCT_JETPACK_SEARCH = 'jetpack_search';
@@ -28,10 +28,6 @@ export const PRODUCT_JETPACK_BACKUP_DAILY = 'jetpack_backup_daily';
 export const PRODUCT_JETPACK_BACKUP_REALTIME = 'jetpack_backup_realtime';
 export const PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY = 'jetpack_backup_daily_monthly';
 export const PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY = 'jetpack_backup_realtime_monthly';
-export const PRODUCT_JETPACK_SCAN = 'jetpack_scan';
-export const PRODUCT_JETPACK_SCAN_MONTHLY = 'jetpack_scan_monthly';
-export const PRODUCT_JETPACK_SCAN_REALTIME = 'jetpack_scan_realtime';
-export const PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY = 'jetpack_scan_realtime_monthly';
 
 // Backup
 export const JETPACK_BACKUP_PRODUCTS_YEARLY = <const>[
@@ -57,10 +53,6 @@ export const JETPACK_SCAN_PRODUCTS = <const>[
 	PRODUCT_JETPACK_SCAN_MONTHLY,
 	PRODUCT_JETPACK_SCAN_REALTIME,
 	PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY,
-	PRODUCT_JETPACK_SCAN_2,
-	PRODUCT_JETPACK_SCAN_2_MONTHLY,
-	PRODUCT_JETPACK_SCAN_PRO,
-	PRODUCT_JETPACK_SCAN_PRO_MONTHLY,
 ];
 
 // Anti-spam
@@ -130,14 +122,6 @@ export const JETPACK_PRODUCTS_BY_TERM = <const>[
 	{
 		yearly: PRODUCT_JETPACK_BACKUP_PRO,
 		monthly: PRODUCT_JETPACK_BACKUP_PRO_MONTHLY,
-	},
-	{
-		yearly: PRODUCT_JETPACK_SCAN_2,
-		monthly: PRODUCT_JETPACK_SCAN_2_MONTHLY,
-	},
-	{
-		yearly: PRODUCT_JETPACK_SCAN_PRO,
-		monthly: PRODUCT_JETPACK_SCAN_PRO_MONTHLY,
 	},
 ];
 export const JETPACK_PRODUCT_PRICE_MATRIX = <const>{
