@@ -43,13 +43,23 @@ const JetpackFreeCard: FC< JetpackFreeProps > = ( { fullWidth, siteId, urlQueryA
 		[ translate ]
 	);
 
+	const description = useMemo(
+		() =>
+			getForCurrentCROIteration( {
+				[ Iterations.ONLY_REALTIME_PRODUCTS ]: translate(
+					'Included for free with all products. Get started with Jetpack now at no cost.'
+				),
+			} ) ?? translate( 'Included for free with all products' ),
+		[ translate ]
+	);
+
 	return (
 		<ProductCardWithoutPrice
 			fullWidth={ fullWidth }
 			className="jetpack-free-card"
 			productSlug="free"
 			displayName={ translate( 'Jetpack Free' ) }
-			description={ translate( 'Included for free with all products' ) }
+			description={ description }
 			productFeatures={ features }
 			buttonHref={ buttonHref }
 			onButtonClick={ onButtonClick }
