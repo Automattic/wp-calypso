@@ -1,9 +1,12 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-.jetpack-free-card {
+.product-without-price,
+.product-without-price--full-width {
 	padding: 24px 32px;
+}
 
+.product-without-price--full-width {
 	@include break-small {
 		display: flex;
 		flex-direction: column;
@@ -14,14 +17,16 @@
 	}
 }
 
-.jetpack-free-card__header {
+.product-without-price--full-width
+.product-without-price__header {
 	@include breakpoint-deprecated( '>660px' ) {
 		flex: 1;
 		margin-inline-end: 32px;
 	}
 }
 
-.jetpack-free-card__title {
+.product-without-price--full-width
+.product-without-price__title {
 	color: var( --studio-gray-100 );
 	margin: 12px 0 20px;
 
@@ -36,13 +41,15 @@
 	}
 }
 
-.jetpack-free-card__subheadline {
+.product-without-price--full-width
+.product-without-price__subheadline {
 	color: var( --studio-gray-60 );
 
 	font-size: inherit;
 }
 
-.jetpack-free-card__button.button {
+.product-without-price--full-width
+.product-without-price__button.button {
 	display: block;
 
 	width: 100%;
@@ -63,7 +70,8 @@
 	}
 }
 
-.jetpack-free-card__features-list {
+.product-without-price--full-width
+.product-without-price__features-list {
 	margin: 28px 0 0;
 
 	color: var( --studio-gray-60 );

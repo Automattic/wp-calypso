@@ -33,10 +33,6 @@ class SecurityAccountRecoveryRecoveryPhoneEdit extends React.Component {
 		onDelete: PropTypes.func,
 	};
 
-	state = {
-		isInvalid: false,
-	};
-
 	render() {
 		const havePhone = ! isEmpty( this.props.storedPhone );
 
@@ -111,8 +107,6 @@ class SecurityAccountRecoveryRecoveryPhoneEdit extends React.Component {
 
 			return;
 		}
-
-		this.setState( { isInvalid: null } );
 
 		this.props.onSave( {
 			countryCode: phoneNumber.countryData.code,

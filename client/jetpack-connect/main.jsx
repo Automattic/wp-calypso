@@ -115,9 +115,7 @@ export class JetpackConnectMain extends Component {
 					onChange={ this.handleUrlChange }
 					onSubmit={ this.handleUrlSubmit }
 					isError={ status }
-					isFetching={
-						this.props.isCurrentUrlFetching || this.state.redirecting || this.state.waitingForSites
-					}
+					isFetching={ this.props.isCurrentUrlFetching || this.state.waitingForSites }
 					isInstall={ this.isInstall() }
 				/>
 			</Card>

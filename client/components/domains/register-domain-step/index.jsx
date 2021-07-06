@@ -764,11 +764,7 @@ class RegisterDomainStep extends React.Component {
 
 		const cleanedQuery = getDomainSuggestionSearch( searchQuery, MIN_QUERY_LENGTH );
 		const loadingResults = Boolean( cleanedQuery );
-		const isInitialQueryActive = searchQuery === this.props.suggestion;
-
-		if ( isEmpty( cleanedQuery ) ) {
-			return;
-		}
+		const isInitialQueryActive = ! searchQuery || searchQuery === this.props.suggestion;
 
 		this.setState(
 			{
@@ -782,10 +778,8 @@ class RegisterDomainStep extends React.Component {
 				loadingResults,
 				loadingSubdomainResults: loadingResults,
 				pageNumber: 1,
-				searchResults: null,
 				showAvailabilityNotice: false,
 				showSuggestionNotice: false,
-				subdomainSearchResults: null,
 				suggestionError: null,
 				suggestionErrorData: null,
 				suggestionErrorDomain: null,

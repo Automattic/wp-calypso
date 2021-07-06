@@ -24,7 +24,6 @@ import { canDomainAddGSuite, getProductType } from 'calypso/lib/gsuite';
 import {
 	hasPlan,
 	hasDomainInCart,
-	domainMapping,
 	domainTransfer,
 	domainRegistration,
 	updatePrivacyForDomain,
@@ -49,6 +48,7 @@ import EmailVerificationGate from 'calypso/components/email-verification/email-v
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
 import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
+import { domainMapping } from 'calypso/my-sites/domains/paths';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 
 /**
@@ -92,13 +92,8 @@ class DomainSearch extends Component {
 	};
 
 	handleAddMapping = ( domain ) => {
-		this.props.shoppingCartManager
-			.addProductsToCart( [
-				fillInSingleCartItemAttributes( domainMapping( { domain } ), this.props.productsList ),
-			] )
-			.then( () => {
-				this.isMounted && page( '/checkout/' + this.props.selectedSiteSlug );
-			} );
+		const domainMappingUrl = domainMapping( this.props.selectedSiteSlug, domain );
+		this.isMounted && page( domainMappingUrl );
 	};
 
 	handleAddTransfer = ( domain ) => {
