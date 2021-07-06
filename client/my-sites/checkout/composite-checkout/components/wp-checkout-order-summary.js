@@ -28,7 +28,7 @@ import {
 	isMonthly,
 	getYearlyPlanByMonthly,
 	getPlan,
-	isFreePlanProduct
+	isFreePlanProduct,
 } from '@automattic/calypso-products';
 import { isJetpackSite, getSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -150,8 +150,8 @@ function CheckoutSummaryFeaturesList( props ) {
 	);
 	const site = useSelector( ( state ) => getSite( state, siteId ) );
 	const { hasMonthlyPlan = false } = props;
-	const isPaidSite = ! isFreePlanProduct( site.plan );
-	const sitePlan = getPlan( site.plan?.product_slug );
+	const isPaidSite = site ? ! isFreePlanProduct( site?.plan ) : false;
+	const sitePlan = site ? getPlan( site?.plan?.product_slug ) : null;
 
 	const showRefundText = responseCart.total_cost > 0;
 	let refundText = translate( 'Money back guarantee' );
