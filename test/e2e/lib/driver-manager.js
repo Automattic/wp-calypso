@@ -11,11 +11,11 @@ import SauceLabs from 'saucelabs';
 import { times } from 'lodash';
 import { getChromeVersion } from '@testim/chrome-version';
 import * as remote from 'selenium-webdriver/remote';
+import path from 'path';
 
 /**
  * Internal dependencies
  */
-import { generatePath } from './test-utils';
 import * as dataHelper from './data-helper';
 
 const webDriverImplicitTimeOutMS = 2000;
@@ -118,6 +118,7 @@ export async function startBrowser( {
 	useCustomUA = true,
 	resizeBrowserWindow = true,
 	disableThirdPartyCookies = false,
+	tempDir = null,
 } = {} ) {
 	const screenSize = currentScreenSize();
 	const locale = currentLocale();
@@ -224,10 +225,10 @@ export async function startBrowser( {
 
 				// eslint-disable-next-line no-case-declarations
 				const service = new chrome.ServiceBuilder( chromedriver.path )
-					.loggingTo( generatePath( 'chromedriver.log' ) )
+					.loggingTo( path.join( tempDir, 'chromedriver.log' ) )
 					.build();
 				chrome.setDefaultService( service );
-				options.setChromeLogFile( generatePath( './chrome.log' ) );
+				options.setChromeLogFile( path.join( tempDir, 'chrome.log' ) );
 				options.addArguments( '--enable-logging' );
 
 				builder = new webdriver.Builder();

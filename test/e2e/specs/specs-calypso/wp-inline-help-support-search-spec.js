@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import config from 'config';
 import assert from 'assert';
 
 /**
@@ -15,7 +14,6 @@ import InlineHelpPopoverComponent from '../../lib/components/inline-help-popover
 import SupportSearchComponent from '../../lib/components/support-search-component';
 import SidebarComponent from '../../lib/components/sidebar-component';
 
-const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
@@ -23,22 +21,24 @@ let supportSearchComponent;
 let inlineHelpPopoverComponent;
 
 describe( `[${ host }] Inline Help: (${ screenSize }) @parallel`, function () {
-	this.timeout( mochaTimeOut );
+	let driver;
+
+	beforeAll( () => ( driver = global.__BROWSER__ ) );
 
 	it( 'Login and select a page that is not the My Home page', async function () {
-		const loginFlow = new LoginFlow( this.driver );
+		const loginFlow = new LoginFlow( driver );
 
 		// The "/home" route is the only one where the "FAB" inline help
 		// is not shown.
 		await loginFlow.loginAndSelectSettings();
 
 		// Initialize the helper component
-		inlineHelpPopoverComponent = await InlineHelpPopoverComponent.Expect( this.driver );
+		inlineHelpPopoverComponent = await InlineHelpPopoverComponent.Expect( driver );
 	} );
 
 	describe( 'Popover UI visibility', function () {
 		it( 'Check help toggle is not visible on My Home page', async function () {
-			const sidebarComponent = await SidebarComponent.Expect( this.driver );
+			const sidebarComponent = await SidebarComponent.Expect( driver );
 			await sidebarComponent.selectMyHome();
 
 			// The toggle only hides once the "Get help" card is rendered so
@@ -47,7 +47,7 @@ describe( `[${ host }] Inline Help: (${ screenSize }) @parallel`, function () {
 		} );
 
 		it( 'Check help toggle is visible on Settings page', async function () {
-			const sidebarComponent = await SidebarComponent.Expect( this.driver );
+			const sidebarComponent = await SidebarComponent.Expect( driver );
 
 			// The "inline help" FAB should not appear on the My Home
 			// because there is already a support search "Card" on that
@@ -69,7 +69,7 @@ describe( `[${ host }] Inline Help: (${ screenSize }) @parallel`, function () {
 	describe( 'Performing searches', function () {
 		it( 'Open Inline Help popover', async function () {
 			await inlineHelpPopoverComponent.toggleOpen();
-			supportSearchComponent = await SupportSearchComponent.Expect( this.driver );
+			supportSearchComponent = await SupportSearchComponent.Expect( driver );
 		} );
 
 		it( 'Displays contextual search results by default', async function () {
@@ -93,7 +93,7 @@ describe( `[${ host }] Inline Help: (${ screenSize }) @parallel`, function () {
 			);
 		} );
 
-		it( 'Resets search UI to default state when search input is cleared ', async function () {
+		it( 'Resets search UI to default state when search input is cleared', async function () {
 			await supportSearchComponent.clearSearchField();
 
 			const resultsCount = await supportSearchComponent.getDefaultResultsCount();

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import config from 'config';
 import assert from 'assert';
 
 /**
@@ -23,33 +22,34 @@ import * as driverManager from '../../lib/driver-manager.js';
 import * as dataHelper from '../../lib/data-helper.js';
 import * as driverHelper from '../../lib/driver-helper.js';
 
-const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 
 describe( `Gutenboarding - Create new site as existing user: (${ screenSize }) @parallel @canary`, function () {
-	this.timeout( mochaTimeOut );
 	const siteTitle = dataHelper.randomPhrase();
 	const domainQuery = dataHelper.randomPhrase();
 	let newSiteDomain = '';
+	let driver;
+
+	beforeAll( () => ( driver = global.__BROWSER__ ) );
 
 	it( 'Can log in as user', async function () {
-		await new LoginFlow( this.driver ).login();
+		await new LoginFlow( driver ).login();
 	} );
 
 	it( 'Can visit Gutenboarding page and see Onboarding block', async function () {
-		const newPage = await NewPage.Visit( this.driver, NewPage.getGutenboardingURL() );
+		const newPage = await NewPage.Visit( driver, NewPage.getGutenboardingURL() );
 		const isDisplayed = await newPage.isOnboardingBlockDisplayed();
 		assert( isDisplayed, 'Onboarding block is not displayed' );
 	} );
 
 	it( 'Can see Acquire Intent and set site title', async function () {
-		const acquireIntentPage = await AcquireIntentPage.Expect( this.driver );
+		const acquireIntentPage = await AcquireIntentPage.Expect( driver );
 		await acquireIntentPage.enterSiteTitle( siteTitle );
 	} );
 
 	it( 'Can change language to Spanish and back to English', async function () {
-		const acquireIntentPage = await AcquireIntentPage.Expect( this.driver );
-		const languagePicker = await LanguagePickerComponent.Expect( this.driver );
+		const acquireIntentPage = await AcquireIntentPage.Expect( driver );
+		const languagePicker = await LanguagePickerComponent.Expect( driver );
 
 		await languagePicker.switchLanguage( 'es' );
 
@@ -57,7 +57,7 @@ describe( `Gutenboarding - Create new site as existing user: (${ screenSize }) @
 			acquireIntentPage.nextButtonLocator,
 			'Continuar'
 		);
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, nextButtonLocatorES );
+		await driverHelper.waitUntilElementLocatedAndVisible( driver, nextButtonLocatorES );
 
 		await languagePicker.switchLanguage( 'en' );
 
@@ -65,13 +65,13 @@ describe( `Gutenboarding - Create new site as existing user: (${ screenSize }) @
 			acquireIntentPage.nextButtonLocator,
 			'Continue'
 		);
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, nextButtonLocatorEN );
+		await driverHelper.waitUntilElementLocatedAndVisible( driver, nextButtonLocatorEN );
 
 		await acquireIntentPage.goToNextStep();
 	} );
 
 	it( 'Can see Domains Page, search for domains, pick a free domain, and continue', async function () {
-		const domainsPage = await DomainsPage.Expect( this.driver );
+		const domainsPage = await DomainsPage.Expect( driver );
 		await domainsPage.enterDomainQuery( domainQuery );
 		await domainsPage.waitForDomainSuggestionsToLoad();
 		newSiteDomain = await domainsPage.getFreeDomainName();
@@ -80,25 +80,25 @@ describe( `Gutenboarding - Create new site as existing user: (${ screenSize }) @
 	} );
 
 	it( 'Can see Design Locator and select a random free design', async function () {
-		const designLocatorPage = await DesignLocatorPage.Expect( this.driver );
+		const designLocatorPage = await DesignLocatorPage.Expect( driver );
 		await designLocatorPage.selectFreeDesign();
 	} );
 
 	it( 'Can see Style Preview, choose a random font pairing, and continue', async function () {
-		const stylePreviewPage = await StylePreviewPage.Expect( this.driver );
+		const stylePreviewPage = await StylePreviewPage.Expect( driver );
 		await stylePreviewPage.selectFontPairing();
 		await stylePreviewPage.continue();
 	} );
 
 	it( 'Can see Feature picker and choose a feature that requires a business plan', async function () {
-		const featuresPage = await FeaturesPage.Expect( this.driver );
+		const featuresPage = await FeaturesPage.Expect( driver );
 		await featuresPage.selectPluginsFeature();
 		await featuresPage.goToNextStep();
 	} );
 
 	it( 'Can see Plans Grid with business plan recommended and can choose free plan', async function () {
-		const plansPage = await PlansPage.Expect( this.driver );
-		const recommendedPlan = await plansPage.getRecommendedPlan( this.driver );
+		const plansPage = await PlansPage.Expect( driver );
+		const recommendedPlan = await plansPage.getRecommendedPlan( driver );
 		assert.strictEqual(
 			recommendedPlan,
 			'Business',
@@ -108,7 +108,7 @@ describe( `Gutenboarding - Create new site as existing user: (${ screenSize }) @
 		await plansPage.selectFreePlan();
 
 		// Redirect console messages that starts with "onboarding-debug" to E2E log.
-		await this.driver
+		await driver
 			.manage()
 			.logs()
 			.get( 'browser' )
@@ -122,11 +122,11 @@ describe( `Gutenboarding - Create new site as existing user: (${ screenSize }) @
 	} );
 
 	it( 'Can see the gutenberg page editor', async function () {
-		const gEditorComponent = await GutenbergEditorComponent.Expect( this.driver );
+		const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 		await gEditorComponent.initEditor();
 	} );
 
-	after( 'Can delete site', async function () {
-		await new DeleteSiteFlow( this.driver ).deleteSite( newSiteDomain );
+	afterAll( async function () {
+		await new DeleteSiteFlow( driver ).deleteSite( newSiteDomain );
 	} );
 } );

@@ -8,8 +8,8 @@ export const buildHooks = () => {
 	let driver;
 
 	return {
-		createBrowser: async function () {
-			driver = await createBrowser();
+		createBrowser: async function ( options ) {
+			driver = await createBrowser( options );
 			return driver;
 		},
 		saveBrowserLogs: function ( options ) {

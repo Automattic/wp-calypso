@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import config from 'config';
 import assert from 'assert';
 
 /**
@@ -15,42 +14,39 @@ import PlansPage from '../../lib/pages/plans-page.js';
 import SidebarComponent from '../../lib/components/sidebar-component.js';
 import SecurePaymentComponent from '../../lib/components/secure-payment-component';
 
-const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Plans - Viewing: (${ screenSize }) @parallel @jetpack`, function () {
-	this.timeout( mochaTimeOut );
 	let originalCartAmount;
 	let loginFlow;
+	let driver;
 
-	before( async function () {
-		return await driverManager.ensureNotLoggedIn( this.driver );
-	} );
+	beforeAll( () => ( driver = global.__BROWSER__ ) );
 
 	it( 'Login and select my site', async function () {
-		loginFlow = new LoginFlow( this.driver );
+		loginFlow = new LoginFlow( driver );
 		return await loginFlow.loginAndSelectMySite();
 	} );
 
 	it( 'Select plans', async function () {
-		const sideBarComponent = await SidebarComponent.Expect( this.driver );
+		const sideBarComponent = await SidebarComponent.Expect( driver );
 		return await sideBarComponent.selectPlans();
 	} );
 
 	it( 'Compare plans', async function () {
-		const plansPage = await PlansPage.Expect( this.driver );
+		const plansPage = await PlansPage.Expect( driver );
 		await plansPage.openPlansTab();
 		return await plansPage.waitForComparison();
 	} );
 
 	it( 'Select Business plan', async function () {
-		const plansPage = await PlansPage.Expect( this.driver );
+		const plansPage = await PlansPage.Expect( driver );
 		return await plansPage.selectPaidPlan();
 	} );
 
 	it( 'Remove any existing coupon', async function () {
-		const securePaymentComponent = await SecurePaymentComponent.Expect( this.driver );
+		const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 
 		if ( await securePaymentComponent.hasCouponApplied() ) {
 			await securePaymentComponent.removeCoupon();
@@ -58,7 +54,7 @@ describe( `[${ host }] Plans - Viewing: (${ screenSize }) @parallel @jetpack`, f
 	} );
 
 	it( 'Apply coupon', async function () {
-		const securePaymentComponent = await SecurePaymentComponent.Expect( this.driver );
+		const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 
 		await securePaymentComponent.toggleCartSummary();
 		originalCartAmount = await securePaymentComponent.cartTotalAmount();
@@ -73,7 +69,7 @@ describe( `[${ host }] Plans - Viewing: (${ screenSize }) @parallel @jetpack`, f
 	} );
 
 	it( 'Remove coupon', async function () {
-		const securePaymentComponent = await SecurePaymentComponent.Expect( this.driver );
+		const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 
 		await securePaymentComponent.removeCoupon();
 
@@ -82,12 +78,12 @@ describe( `[${ host }] Plans - Viewing: (${ screenSize }) @parallel @jetpack`, f
 	} );
 
 	it( 'Remove Business plan', async function () {
-		const securePaymentComponent = await SecurePaymentComponent.Expect( this.driver );
+		const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 
 		return await securePaymentComponent.removeBusinessPlan();
 	} );
 
 	it( 'Redirect back to Plans page', async function () {
-		await PlansPage.Expect( this.driver ); // Redirect means the plan was successfully removed
+		await PlansPage.Expect( driver ); // Redirect means the plan was successfully removed
 	} );
 } );

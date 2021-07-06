@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import config from 'config';
 import assert from 'assert';
 
 /**
@@ -15,32 +14,29 @@ import PlansPage from '../../lib/pages/plans-page.js';
 import SidebarComponent from '../../lib/components/sidebar-component.js';
 import SecurePaymentComponent from '../../lib/components/secure-payment-component';
 
-const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Plans - Upgrade: (${ screenSize }) @parallel @jetpack`, function () {
-	this.timeout( mochaTimeOut );
+	let driver;
 
-	before( async function () {
-		return await driverManager.ensureNotLoggedIn( this.driver );
-	} );
+	beforeAll( () => ( driver = global.__BROWSER__ ) );
 
 	it( 'Can log into WordPress.com', async function () {
-		const loginFlow = new LoginFlow( this.driver );
+		const loginFlow = new LoginFlow( driver );
 		return await loginFlow.loginAndSelectMySite();
 	} );
 
 	it( 'Can navigate to plans page and select business plan', async function () {
-		const sidebarComponent = await SidebarComponent.Expect( this.driver );
+		const sidebarComponent = await SidebarComponent.Expect( driver );
 		await sidebarComponent.selectPlans();
-		const plansPage = await PlansPage.Expect( this.driver );
+		const plansPage = await PlansPage.Expect( driver );
 		await plansPage.openPlansTab();
 		return await plansPage.selectPaidPlan();
 	} );
 
 	it( 'User is taken to be Payment Details form', async function () {
-		const securePaymentComponent = await SecurePaymentComponent.Expect( this.driver );
+		const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 		const businessPlanInCart = await securePaymentComponent.containsBusinessPlan();
 		return assert.strictEqual(
 			businessPlanInCart,

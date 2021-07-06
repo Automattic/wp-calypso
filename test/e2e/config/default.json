@@ -3,6 +3,7 @@
 	"explicitWaitMS": 20000,
 	"emailWaitMS": 60000,
 	"mochaTimeoutMS": 160000,
+	"jestTimeoutMS": 160000,
 	"mochaDevDocsTimeoutMS": 1000000,
 	"startBrowserTimeoutMS": 60000,
 	"startAppTimeoutMS": 240000,

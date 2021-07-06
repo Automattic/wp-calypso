@@ -26,7 +26,6 @@ import * as dataHelper from '../../lib/data-helper.js';
 import * as driverManager from '../../lib/driver-manager.js';
 import EmailClient from '../../lib/email-client.js';
 
-const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const inviteInboxId = config.get( 'inviteInboxId' );
 const password = config.get( 'passwordForNewTestSignUps' );
 const screenSize = driverManager.currentScreenSize();
@@ -34,32 +33,34 @@ const host = dataHelper.getJetpackHost();
 const emailClient = new EmailClient( inviteInboxId );
 
 describe( `[${ host }] Invites - New user as Editor: (${ screenSize }) @parallel @jetpack`, function () {
-	this.timeout( mochaTimeOut );
 	const newUserName = 'e2eflowtestingeditora' + new Date().getTime().toString();
 	const newInviteEmailAddress = dataHelper.getEmailAddress( newUserName, inviteInboxId );
 	let acceptInviteURL = '';
 	let inviteCreated = false;
 	let inviteAccepted = false;
+	let driver;
+
+	beforeAll( () => ( driver = global.__BROWSER__ ) );
 
 	it( 'Can log in and navigate to Invite People page', async function () {
-		await new LoginFlow( this.driver ).loginAndSelectPeople();
-		const peoplePage = await PeoplePage.Expect( this.driver );
+		await new LoginFlow( driver ).loginAndSelectPeople();
+		const peoplePage = await PeoplePage.Expect( driver );
 		return await peoplePage.inviteUser();
 	} );
 
 	it( 'Can invite a new user as an editor and see its pending', async function () {
-		const invitePeoplePage = await InvitePeoplePage.Expect( this.driver );
+		const invitePeoplePage = await InvitePeoplePage.Expect( driver );
 		await invitePeoplePage.inviteNewUser(
 			newInviteEmailAddress,
 			'editor',
 			'Automated e2e testing'
 		);
-		const noticesComponent = await NoticesComponent.Expect( this.driver );
+		const noticesComponent = await NoticesComponent.Expect( driver );
 		await noticesComponent.isSuccessNoticeDisplayed();
 		inviteCreated = true;
 		await invitePeoplePage.backToPeopleMenu();
 
-		const peoplePage = await PeoplePage.Expect( this.driver );
+		const peoplePage = await PeoplePage.Expect( driver );
 		await peoplePage.selectInvites();
 		return await peoplePage.waitForPendingInviteDisplayedFor( newInviteEmailAddress );
 	} );
@@ -77,10 +78,10 @@ describe( `[${ host }] Invites - New user as Editor: (${ screenSize }) @parallel
 	} );
 
 	it( 'Can sign up as new user for the blog via invite link', async function () {
-		await driverManager.ensureNotLoggedIn( this.driver );
+		await driverManager.ensureNotLoggedIn( driver );
 
-		await this.driver.get( acceptInviteURL );
-		const acceptInvitePage = await AcceptInvitePage.Expect( this.driver );
+		await driver.get( acceptInviteURL );
+		const acceptInvitePage = await AcceptInvitePage.Expect( driver );
 
 		const actualEmailAddress = await acceptInvitePage.getEmailPreFilled();
 		const headerInviteText = await acceptInvitePage.getHeaderInviteText();
@@ -96,10 +97,10 @@ describe( `[${ host }] Invites - New user as Editor: (${ screenSize }) @parallel
 	} );
 
 	it( 'User has been added as Editor', async function () {
-		await PostsPage.Expect( this.driver );
+		await PostsPage.Expect( driver );
 
 		inviteAccepted = true;
-		const noticesComponent = await NoticesComponent.Expect( this.driver );
+		const noticesComponent = await NoticesComponent.Expect( driver );
 		const invitesMessageTitleDisplayed = await noticesComponent.getNoticeContent();
 		return assert(
 			invitesMessageTitleDisplayed.includes( 'Editor' ),
@@ -108,9 +109,9 @@ describe( `[${ host }] Invites - New user as Editor: (${ screenSize }) @parallel
 	} );
 
 	it( 'As the original user can see and remove new user', async function () {
-		await new LoginFlow( this.driver ).loginAndSelectPeople();
+		await new LoginFlow( driver ).loginAndSelectPeople();
 
-		const peoplePage = await PeoplePage.Expect( this.driver );
+		const peoplePage = await PeoplePage.Expect( driver );
 		await peoplePage.selectTeam();
 		await peoplePage.searchForUser( newUserName );
 		const numberPeopleShown = await peoplePage.numberSearchResults();
@@ -121,9 +122,9 @@ describe( `[${ host }] Invites - New user as Editor: (${ screenSize }) @parallel
 		);
 
 		await peoplePage.selectOnlyPersonDisplayed();
-		const editTeamMemberPage = await EditTeamMemberPage.Expect( this.driver );
+		const editTeamMemberPage = await EditTeamMemberPage.Expect( driver );
 		await editTeamMemberPage.removeUserAndDeleteContent();
-		const noticesComponent = await NoticesComponent.Expect( this.driver );
+		const noticesComponent = await NoticesComponent.Expect( driver );
 		const displayed = await noticesComponent.isSuccessNoticeDisplayed();
 		return assert.strictEqual(
 			displayed,
@@ -134,20 +135,20 @@ describe( `[${ host }] Invites - New user as Editor: (${ screenSize }) @parallel
 
 	it( 'As the invited user, I am no longer an editor on the site', async function () {
 		if ( 'WPCOM' !== dataHelper.getJetpackHost() ) return this.skip();
-		const loginPage = await LoginPage.Visit( this.driver );
+		const loginPage = await LoginPage.Visit( driver );
 		await loginPage.login( newInviteEmailAddress, password );
-		await ReaderPage.Expect( this.driver );
+		await ReaderPage.Expect( driver );
 
-		const navBarComponent = await NavBarComponent.Expect( this.driver );
+		const navBarComponent = await NavBarComponent.Expect( driver );
 		await navBarComponent.clickMySites();
-		return await NoSitesComponent.Expect( this.driver );
+		return await NoSitesComponent.Expect( driver );
 	} );
 
-	after( async function () {
+	afterAll( async function () {
 		if ( inviteCreated ) {
 			try {
-				await new LoginFlow( this.driver ).loginAndSelectPeople();
-				const peoplePage = await PeoplePage.Expect( this.driver );
+				await new LoginFlow( driver ).loginAndSelectPeople();
+				const peoplePage = await PeoplePage.Expect( driver );
 				await peoplePage.selectInvites();
 
 				// Sometimes, the 'accept invite' step fails. In these cases, we perform cleanup
@@ -158,7 +159,7 @@ describe( `[${ host }] Invites - New user as Editor: (${ screenSize }) @parallel
 					await peoplePage.goToRevokeInvitePage( newInviteEmailAddress );
 				}
 
-				const clearOrRevokeInvitePage = await RevokePage.Expect( this.driver );
+				const clearOrRevokeInvitePage = await RevokePage.Expect( driver );
 				await clearOrRevokeInvitePage.revokeUser();
 			} catch {
 				console.log( 'Invites cleanup failed for (Inviting new user as an Editor)' );

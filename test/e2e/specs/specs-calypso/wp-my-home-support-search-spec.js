@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import config from 'config';
 import assert from 'assert';
 import { By } from 'selenium-webdriver';
 
@@ -16,7 +15,6 @@ import * as dataHelper from '../../lib/data-helper';
 import SupportSearchComponent from '../../lib/components/support-search-component';
 import SidebarComponent from '../../lib/components/sidebar-component';
 
-const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
@@ -25,31 +23,30 @@ let supportSearchComponent;
 const helpCardLocator = By.css( '.help-search' );
 
 describe( `[${ host }] My Home "Get help" support search card: (${ screenSize }) @parallel`, function () {
-	this.timeout( mochaTimeOut );
+	let driver;
+
+	beforeAll( () => ( driver = global.__BROWSER__ ) );
 
 	it( 'Login and select the My Home page', async function () {
-		const loginFlow = new LoginFlow( this.driver );
+		const loginFlow = new LoginFlow( driver );
 
 		await loginFlow.loginAndSelectMySite();
 
 		// The "/home" route is the only one this support search
 		// "Card" will show on
-		const sidebarComponent = await SidebarComponent.Expect( this.driver );
+		const sidebarComponent = await SidebarComponent.Expect( driver );
 		await sidebarComponent.selectMyHome();
 	} );
 
 	it( 'Verify "Get help" support card is displayed', async function () {
 		// Card can take a little while to display, so let's wait...
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, helpCardLocator );
+		await driverHelper.waitUntilElementLocatedAndVisible( driver, helpCardLocator );
 
 		// For safety also scroll into viewport - also helps when visually verify test runs.
-		await driverHelper.scrollIntoView( this.driver, helpCardLocator );
+		await driverHelper.scrollIntoView( driver, helpCardLocator );
 
 		// Verify it is there.
-		const isGetHelpCardPresent = await driverHelper.isElementLocated(
-			this.driver,
-			helpCardLocator
-		);
+		const isGetHelpCardPresent = await driverHelper.isElementLocated( driver, helpCardLocator );
 		assert.equal(
 			isGetHelpCardPresent,
 			true,
@@ -59,14 +56,15 @@ describe( `[${ host }] My Home "Get help" support search card: (${ screenSize })
 
 	// Skipped because it depends on the existing state. If the user does not have a pending purchase
 	// it may show only 5 results, but this test doesn't try to create a purchase.
+	// eslint-disable-next-line jest/no-disabled-tests
 	it.skip( 'Displays Default Results initially', async function () {
-		// supportSearchComponent = await SupportSearchComponent.Expect( this.driver );
+		// supportSearchComponent = await SupportSearchComponent.Expect( driver );
 		const resultsCount = await supportSearchComponent.getDefaultResultsCount();
 		assert.equal( resultsCount, 6, 'There are not 6 Default Results displayed.' );
 	} );
 
 	it( 'Returns API Search Results for valid search query', async function () {
-		supportSearchComponent = await SupportSearchComponent.Expect( this.driver );
+		supportSearchComponent = await SupportSearchComponent.Expect( driver );
 		await supportSearchComponent.searchFor( 'Domain' );
 
 		const searchResultsCount = await supportSearchComponent.getSearchResultsCount();

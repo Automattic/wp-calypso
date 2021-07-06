@@ -2,7 +2,6 @@
  * External dependencies
  */
 import assert from 'assert';
-import config from 'config';
 
 /**
  * Internal dependencies
@@ -19,19 +18,20 @@ import ViewPostPage from '../../lib/pages/view-post-page.js';
 import NavBarComponent from '../../lib/components/nav-bar-component.js';
 import NotificationsComponent from '../../lib/components/notifications-component.js';
 
-const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Notifications: (${ screenSize }) @parallel`, function () {
-	this.timeout( mochaTimeOut );
+	let driver;
+
+	beforeAll( () => ( driver = global.__BROWSER__ ) );
 
 	const commentingUser = dataHelper.getAccountConfig( 'commentingUser' )[ 0 ];
 	const comment = dataHelper.randomPhrase() + ' TBD';
 	let commentedPostTitle;
 
 	it( 'Can log in as commenting user', async function () {
-		const loginFlow = new LoginFlow( this.driver, 'commentingUser' );
+		const loginFlow = new LoginFlow( driver, 'commentingUser' );
 		return await loginFlow.login();
 	} );
 
@@ -39,22 +39,22 @@ describe( `[${ host }] Notifications: (${ screenSize }) @parallel`, function () 
 		const testSiteForInvitationsURL = `https://${ dataHelper.configGet(
 			'testSiteForNotifications'
 		) }`;
-		const viewBlogPage = await ViewSitePage.Visit( this.driver, testSiteForInvitationsURL );
+		const viewBlogPage = await ViewSitePage.Visit( driver, testSiteForInvitationsURL );
 		return await viewBlogPage.viewFirstPost();
 	} );
 
 	it( 'Can see the first post page and capture the title', async function () {
-		const viewPostPage = await ViewPostPage.Expect( this.driver );
+		const viewPostPage = await ViewPostPage.Expect( driver );
 		commentedPostTitle = await viewPostPage.postTitle();
 	} );
 
 	it( 'Can leave a comment', async function () {
-		const viewPostPage = await ViewPostPage.Expect( this.driver );
+		const viewPostPage = await ViewPostPage.Expect( driver );
 		return await viewPostPage.leaveAComment( comment );
 	} );
 
 	it( 'Can see the comment', async function () {
-		const viewPostPage = await ViewPostPage.Expect( this.driver );
+		const viewPostPage = await ViewPostPage.Expect( driver );
 		const shown = await viewPostPage.commentEventuallyShown( comment );
 		if ( shown === false ) {
 			return slackNotifier.warn(
@@ -64,12 +64,12 @@ describe( `[${ host }] Notifications: (${ screenSize }) @parallel`, function () 
 	} );
 
 	it( 'Can log in as notifications user', async function () {
-		const loginFlow = new LoginFlow( this.driver, 'notificationsUser' );
+		const loginFlow = new LoginFlow( driver, 'notificationsUser' );
 		return await loginFlow.login();
 	} );
 
 	it( 'Can open notifications tab with keyboard shortcut', async function () {
-		const navBarComponent = await NavBarComponent.Expect( this.driver );
+		const navBarComponent = await NavBarComponent.Expect( driver );
 		await navBarComponent.openNotificationsShortcut();
 		const isOpen = await navBarComponent.isNotificationsTabOpen();
 		return assert( isOpen, 'Notifications tab is not open' );
@@ -77,9 +77,9 @@ describe( `[${ host }] Notifications: (${ screenSize }) @parallel`, function () 
 
 	it( 'Can see the notification of the comment', async function () {
 		const expectedContent = `${ commentingUser } commented on ${ commentedPostTitle }\n${ comment }`;
-		const navBarComponent = await NavBarComponent.Expect( this.driver );
+		const navBarComponent = await NavBarComponent.Expect( driver );
 		await navBarComponent.openNotifications();
-		const notificationsComponent = await NotificationsComponent.Expect( this.driver );
+		const notificationsComponent = await NotificationsComponent.Expect( driver );
 		await notificationsComponent.selectComments();
 		const content = await notificationsComponent.allCommentsContent();
 		return assert.strictEqual(
@@ -90,7 +90,7 @@ describe( `[${ host }] Notifications: (${ screenSize }) @parallel`, function () 
 	} );
 
 	it( 'Can delete the comment (and wait for UNDO grace period so it is actually deleted)', async function () {
-		const notificationsComponent = await NotificationsComponent.Expect( this.driver );
+		const notificationsComponent = await NotificationsComponent.Expect( driver );
 		await notificationsComponent.selectCommentByText( comment );
 		await notificationsComponent.trashComment();
 		await notificationsComponent.waitForUndoMessage();

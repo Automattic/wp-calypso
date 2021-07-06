@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import config from 'config';
 import assert from 'assert';
 
 /**
@@ -14,39 +13,40 @@ import LoginFlow from '../../lib/flows/login-flow.js';
 import PlansPage from '../../lib/pages/plans-page.js';
 import SidebarComponent from '../../lib/components/sidebar-component.js';
 
-const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
 describe( `[${ host }] Plans - Comparing plans: (${ screenSize }) @parallel @jetpack`, function () {
-	this.timeout( mochaTimeOut );
+	let driver;
+
+	beforeAll( () => ( driver = global.__BROWSER__ ) );
 
 	it( 'Login and Select My Site', async function () {
-		const loginFlow = new LoginFlow( this.driver );
+		const loginFlow = new LoginFlow( driver );
 		return await loginFlow.loginAndSelectMySite();
 	} );
 
 	it( 'Can Select Plans', async function () {
-		const sideBarComponent = await SidebarComponent.Expect( this.driver );
+		const sideBarComponent = await SidebarComponent.Expect( driver );
 		return await sideBarComponent.selectPlans();
 	} );
 
 	it( 'Can Compare Plans', async function () {
-		const plansPage = await PlansPage.Expect( this.driver );
+		const plansPage = await PlansPage.Expect( driver );
 		await plansPage.openPlansTab();
 		return await plansPage.waitForComparison();
 	} );
 
 	if ( host === 'WPCOM' ) {
-		it( 'Can Verify Current Plan', async function () {
+		it( 'Can Verify Current Plan [WPCOM]', async function () {
 			const planName = 'premium';
-			const plansPage = await PlansPage.Expect( this.driver );
+			const plansPage = await PlansPage.Expect( driver );
 			const present = await plansPage.isCurrentPlanPresent( planName );
 			return assert( present, `Failed to detect correct plan (${ planName })` );
 		} );
 
 		it( 'Can See Exactly One Primary CTA Button', async function () {
-			const plansPage = await PlansPage.Expect( this.driver );
+			const plansPage = await PlansPage.Expect( driver );
 			return assert(
 				await plansPage.onePrimaryButtonShown(),
 				'Incorrect number of primary buttons'
@@ -55,7 +55,7 @@ describe( `[${ host }] Plans - Comparing plans: (${ screenSize }) @parallel @jet
 	} else {
 		it( 'Can Verify Current Plan', async function () {
 			// Jetpack
-			const plansPage = await PlansPage.Expect( this.driver );
+			const plansPage = await PlansPage.Expect( driver );
 			const displayed = await plansPage.planTypesShown( 'jetpack' );
 			return assert( displayed, 'The Jetpack plans are NOT displayed' );
 		} );
