@@ -30,12 +30,12 @@ export function trigrams( str ) {
  * gramsToLookup([ "_BEGIN_mi", "mis", "iss", "ssi", "sis", "iss", "ssi", "sip", "ipp", "ppi", "pi_END_" ]) =
  *     { "_BEGIN_mi": 1, "mis": 1, "iss": 2, "ssi": 2, "sis": 1, "sip": 1, "ipp": 1, "ppi": 1, "pi_END_": 1 }
  *
- * @param {string} gram_list A list of trigrams, like [ "_BEGIN_He", "Hel", "ell", "llo", "lo_END_" ]
+ * @param {string} gramList A list of trigrams, like [ "_BEGIN_He", "Hel", "ell", "llo", "lo_END_" ]
  * @returns {object} A lookup table of trigram frequency.
  */
-export function gramsToLookup( gram_list ) {
+export function gramsToLookup( gramList ) {
 	const lookup = {};
-	for ( const gram of gram_list ) {
+	for ( const gram of gramList ) {
 		if ( gram in lookup ) {
 			lookup[ gram ] += 1;
 		} else {
@@ -82,9 +82,9 @@ const stringToLookupCache = new LRU( {
  * @returns {str} lookup A lookup table of trigram frequency.
  */
 function stringToLookup( str ) {
-	const cache_answer = stringToLookupCache.get( str );
-	if ( cache_answer !== undefined ) {
-		return cache_answer;
+	const cacheAnswer = stringToLookupCache.get( str );
+	if ( cacheAnswer !== undefined ) {
+		return cacheAnswer;
 	}
 
 	const answer = gramsToLookup( trigrams( str ) );
