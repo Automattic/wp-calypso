@@ -816,11 +816,9 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 				const { variation_slug, template_part_id } = chooseEvents[ 0 ][ 1 ];
 				// Check the event props, assert id.length > 2 since the format is `{theme}//{slug}`.
-				assert(
-					variation_slug === 'header' &&
-						typeof template_part_id === 'string' &&
-						template_part_id.length > 2
-				);
+				assert( variation_slug === 'header' );
+				assert( typeof template_part_id === 'string' );
+				assett( template_part_id.length > 2 );
 			} );
 
 			it( 'Tracks "wpcom_block_editor_template_part_replace"', async function () {
