@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { cosineSimilarity, trigrams, gramsToLookup } from '../';
+import { cosineSimilarity, trigrams, gramsToLookup, lookupToMagnitude } from '../';
 
 describe( 'trigram: cosineSimilarity()', () => {
 	test( 'Equal Strings should have cosineSimilarity of ~1', () => {
@@ -79,5 +79,27 @@ describe( 'trigram: integrate: gramsToLookup(trigrams())', () => {
 			an_END_: 1,
 		};
 		expect( result ).toEqual( expected );
+	} );
+} );
+describe( 'trigram: lookupToMagnitude', () => {
+	test( 'lookupToMagnitude: precomputed lookup: hi', () => {
+		const result = lookupToMagnitude( {
+			_BEGIN_hi: 1,
+			hi_END_: 1,
+		} );
+		// Look for square root of 2 =~ 1.414213562
+		expect( result ).toBeGreaterThan( 1.41 );
+		expect( result ).toBeLessThan( 1.42 );
+	} );
+	test( 'lookupToMagnitude: precomputed lookup: hihihi', () => {
+		const result = lookupToMagnitude( {
+			_BEGIN_hi: 1,
+			hih: 2,
+			ihi: 2,
+			hi_END_: 1,
+		} );
+		// 1 + 2^2 + 2^2 + 1 = 10, Look for square root of 10 =~ 3.1622
+		expect( result ).toBeGreaterThan( 3.16 );
+		expect( result ).toBeLessThan( 3.17 );
 	} );
 } );

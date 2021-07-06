@@ -56,7 +56,7 @@ export function gramsToLookup( gramList ) {
  * @param {object} lookup A lookup table of trigram frequency.
  * @returns {number} Magnitude of the vector
  */
-function lookupToMagnitude( lookup ) {
+export function lookupToMagnitude( lookup ) {
 	if ( ! lookup || Object.keys( lookup ).length === 0 ) {
 		return 0;
 	}
