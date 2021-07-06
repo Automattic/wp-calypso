@@ -5,22 +5,18 @@
 		"composite": true,
 		"disableReferencedProjectLoad": true,
 
-		"declaration": true,
-		"declarationMap": true,
-		"sourceMap": true,
-
-		"importHelpers": true,
-		"noEmitHelpers": true,
-		"skipLibCheck": true,
+		"noEmit": true,
 
 		"lib": [ "ES2020", "DOM", "DOM.Iterable"],
 		"module": "ES2020",
 		"target": "ES2020",
 		"esModuleInterop": true,
 		"jsx": "react",
+		"allowJs": true,
 		"resolveJsonModule": true,
 
 		"strict": true,
+		"checkJs": false,
 		"isolatedModules": true,
 
 		"moduleResolution": "node",

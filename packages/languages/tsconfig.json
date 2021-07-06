@@ -4,7 +4,6 @@
 		"declarationDir": "dist/types",
 		"outDir": "dist/esm",
 		"rootDir": "src",
-		"resolveJsonModule": true
 	},
 	"include": [ "src", "src/*.json" ]
 }
