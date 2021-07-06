@@ -732,8 +732,10 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 			it( 'Tracks "wpcom_block_editor_template_part_choose_existing"', async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
-				// Undo the template part creation to go back to the placeholder.
-				await driverHelper.clickWhenClickable( this.driver, By.css( 'button[aria-label="Undo"]' ) );
+				// Undo the template part creation to go back to the placeholder.  Use store api to
+				// trigger undo since the UI is not present in mobile viewport.
+				await this.driver.executeScript( `return window.wp.data.dispatch( 'core' ).undo()` );
+
 				await editor.runInCanvas( async () => {
 					const chooseExistingHeaderLocator = driverHelper.createTextLocator(
 						By.css( '.wp-block-template-part.is-selected .components-placeholder button' ),
@@ -764,7 +766,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				// Check the event props, assert id.length > 2 since the format is `{theme}//{slug}`.
 				assert( variation_slug === 'header' );
 				assert( typeof template_part_id === 'string' );
-				assett( template_part_id.length > 2 );
+				assert( template_part_id.length > 2 );
 			} );
 
 			it( 'Tracks "wpcom_block_editor_template_part_replace"', async function () {
