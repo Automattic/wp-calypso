@@ -18,7 +18,7 @@ import {
 } from 'lodash';
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
-import { cosine_similarity } from './trigrams';
+import { cosine_similarity } from 'calypso/lib/trigram';
 
 /**
  * Style dependencies
