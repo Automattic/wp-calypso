@@ -530,7 +530,7 @@ object RunAllUnitTests : BuildType({
 				export NODE_ENV="test"
 
 				# Run type checks
-				yarn tsc --build packages/tsconfig.json
+				yarn tsc --build packages/*/tsconfig.json
 				yarn tsc --build apps/editing-toolkit/tsconfig.json
 				yarn tsc --project client/landing/gutenboarding
 			"""
