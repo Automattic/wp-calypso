@@ -78,61 +78,40 @@ const changeGlobalStylesFirstColorPaletteItem = async ( driver, value, pickerOpe
 };
 
 const deleteTemplates = async function ( driver ) {
-	// const getAndDeleteTemplates = async () => {
-	// 	const templates = window.wp.data
-	// 		.select( 'core' )
-	// 		.getEntityRecords( 'postType', 'wp_template', {
-	// 			per_page: -1,
-	// 		} )
-	// 		.filter( ( item ) => item.source === 'custom' );
-	// 	for ( const template of templates ) {
-	// 		await window.wp.data
-	// 			.dispatch( 'core' )
-	// 			.deleteEntityRecord( 'postType', 'wp_template', template.id );
-	// 	}
-	// };
-	// await driver.executeScript( getAndDeleteTemplates );
-	const templates = (
-		await driver.executeScript( `return window.wp.data
-	.select( 'core' )
-	.getEntityRecords( 'postType', 'wp_template', {
-		per_page: -1,
-	} )` )
-	 ).filter( ( item ) => item.source === 'custom' );
-	for ( const template of templates ) {
-		await driver.executeScript( `return await window.wp.data
-		 .dispatch( 'core' )
-		 .deleteEntityRecord( 'postType', 'wp_template', ${ template.id } );` );
-	}
+	await SiteEditorComponent.Expect( driver );
+
+	const getAndDeleteTemplates = async () => {
+		const templates = window.wp.data
+			.select( 'core' )
+			.getEntityRecords( 'postType', 'wp_template', {
+				per_page: -1,
+			} )
+			.filter( ( item ) => item.source === 'custom' );
+		for ( const template of templates ) {
+			await window.wp.data
+				.dispatch( 'core' )
+				.deleteEntityRecord( 'postType', 'wp_template', template.id );
+		}
+	};
+	await driver.executeScript( getAndDeleteTemplates );
 };
 
 const deleteTemplateParts = async function ( driver ) {
-	// const getAndDeleteTemplateParts = async () => {
-	// 	const templateParts = window.wp.data
-	// 		.select( 'core' )
-	// 		.getEntityRecords( 'postType', 'wp_template_part', {
-	// 			per_page: -1,
-	// 		} )
-	// 		.filter( ( item ) => item.source === 'custom' );
-	// 	for ( const templatePart of templateParts ) {
-	// 		await window.wp.data
-	// 			.dispatch( 'core' )
-	// 			.deleteEntityRecord( 'postType', 'wp_template_part', templatePart.id );
-	// 	}
-	// };
-	// await driver.executeScript( getAndDeleteTemplateParts );
-	const templateParts = (
-		await driver.executeScript( `return window.wp.data
-	.select( 'core' )
-	.getEntityRecords( 'postType', 'wp_template_part', {
-		per_page: -1,
-	} )` )
-	 ).filter( ( item ) => item.source === 'custom' );
-	for ( const templatePart of templateParts ) {
-		await driver.executeScript( `return await window.wp.data
-		 .dispatch( 'core' )
-		 .deleteEntityRecord( 'postType', 'wp_template_part', ${ templatePart.id } );` );
-	}
+	await SiteEditorComponent.Expect( driver );
+	const getAndDeleteTemplateParts = async () => {
+		const templateParts = window.wp.data
+			.select( 'core' )
+			.getEntityRecords( 'postType', 'wp_template_part', {
+				per_page: -1,
+			} )
+			.filter( ( item ) => item.source === 'custom' );
+		for ( const templatePart of templateParts ) {
+			await window.wp.data
+				.dispatch( 'core' )
+				.deleteEntityRecord( 'postType', 'wp_template_part', templatePart.id );
+		}
+	};
+	await driver.executeScript( getAndDeleteTemplateParts );
 };
 
 const deleteTemplatesAndTemplateParts = async function ( driver ) {
