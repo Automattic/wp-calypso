@@ -77,46 +77,25 @@ const changeGlobalStylesFirstColorPaletteItem = async ( driver, value, pickerOpe
 	await driverHelper.setWhenSettable( driver, By.css( '.components-color-picker input' ), value );
 };
 
-const deleteTemplates = async function ( driver ) {
+const deleteCustomEntities = async function ( driver, name ) {
 	await SiteEditorComponent.Expect( driver );
-
-	const getAndDeleteTemplates = async () => {
-		const templates = window.wp.data
+	const getAndDeleteEntities = async () => {
+		const entities = window.wp.data
 			.select( 'core' )
-			.getEntityRecords( 'postType', 'wp_template', {
+			.getEntityRecords( 'postType', name, {
 				per_page: -1,
 			} )
 			.filter( ( item ) => item.source === 'custom' );
-		for ( const template of templates ) {
-			await window.wp.data
-				.dispatch( 'core' )
-				.deleteEntityRecord( 'postType', 'wp_template', template.id );
+		for ( const entity of entities ) {
+			await window.wp.data.dispatch( 'core' ).deleteEntityRecord( 'postType', name, entity.id );
 		}
 	};
-	await driver.executeScript( getAndDeleteTemplates );
-};
-
-const deleteTemplateParts = async function ( driver ) {
-	await SiteEditorComponent.Expect( driver );
-	const getAndDeleteTemplateParts = async () => {
-		const templateParts = window.wp.data
-			.select( 'core' )
-			.getEntityRecords( 'postType', 'wp_template_part', {
-				per_page: -1,
-			} )
-			.filter( ( item ) => item.source === 'custom' );
-		for ( const templatePart of templateParts ) {
-			await window.wp.data
-				.dispatch( 'core' )
-				.deleteEntityRecord( 'postType', 'wp_template_part', templatePart.id );
-		}
-	};
-	await driver.executeScript( getAndDeleteTemplateParts );
+	await driver.executeScript( getAndDeleteEntities );
 };
 
 const deleteTemplatesAndTemplateParts = async function ( driver ) {
-	await deleteTemplates( driver );
-	await deleteTemplateParts( driver );
+	await deleteCustomEntities( driver, 'wp_template' );
+	await deleteCustomEntities( driver, 'wp_template_part' );
 };
 
 const clickBlockSettingsButton = async ( driver ) =>
@@ -796,7 +775,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 					'Index'
 				);
 				await driverHelper.clickWhenClickable( this.driver, templateMenuItemLocator );
-				await deleteTemplates( this.driver );
+				await deleteCustomEntities( this.driver, 'wp_template' );
 			} );
 
 			it( 'should track "wpcom_block_editor_nav_sidebar_item_edit" when switching to a template part', async function () {
