@@ -17,18 +17,19 @@
 		"skipLibCheck": true,
 
 		// Target modern JS
-		"lib": [ "ES2020", "DOM" ],
+		"lib": [ "ES2020", "DOM", "DOM.Iterable"],
 		"module": "ES2020",
 		"target": "ES2020",
 		"esModuleInterop": true,
 		"jsx": "react",
+		"resolveJsonModule": true,
 
-		// Strict checks
+		// Code checks
 		"strict": true,
 		"isolatedModules": true,
 
 		"moduleResolution": "node",
-		"types": [ "node" ],
+		"types": [ ],
 		"forceConsistentCasingInFileNames": true
 	}
 }

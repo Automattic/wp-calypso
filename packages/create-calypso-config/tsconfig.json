@@ -3,7 +3,8 @@
 	"compilerOptions": {
 		"outDir": "dist/esm",
 		"declarationDir": "dist/types",
-		"rootDir": "src"
+		"rootDir": "src",
+		"types": ["node"]
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/test/*" ]
