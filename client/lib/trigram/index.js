@@ -69,7 +69,6 @@ export function lookupToMagnitude( lookup ) {
 
 const stringToLookupCache = new LRU( {
 	max: 5000,
-	maxAge: 1 * 60 * 60 * 1000, // 1 hour in milliseconds
 } );
 
 /**
