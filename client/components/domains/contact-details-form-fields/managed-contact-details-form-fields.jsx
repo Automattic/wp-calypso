@@ -33,6 +33,7 @@ import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
  * Style dependencies
  */
 import './style.scss';
+import { getCountryPostalCodeSupport } from './helper';
 
 const debug = debugFactory( 'calypso:managed-contact-details-form-fields' );
 
@@ -296,6 +297,9 @@ export class ManagedContactDetailsFormFields extends Component {
 		);
 	}
 
+	getCountryPostalCodeSupport = ( countryCode ) =>
+		getCountryPostalCodeSupport( this.props.countriesList, countryCode );
+
 	renderContactDetailsFields() {
 		const { translate, hasCountryStates } = this.props;
 		const form = getFormFromContactDetails(
@@ -303,6 +307,7 @@ export class ManagedContactDetailsFormFields extends Component {
 			this.props.contactDetailsErrors
 		);
 		const countryCode = form.countryCode?.value ?? '';
+		const arePostalCodesSupported = this.getCountryPostalCodeSupport( countryCode );
 
 		return (
 			<div className="contact-details-form-fields__contact-details">
@@ -324,6 +329,7 @@ export class ManagedContactDetailsFormFields extends Component {
 
 				{ countryCode && (
 					<RegionAddressFieldsets
+						arePostalCodesSupported={ arePostalCodesSupported }
 						getFieldProps={ this.getFieldProps }
 						countryCode={ countryCode }
 						hasCountryStates={ hasCountryStates }
