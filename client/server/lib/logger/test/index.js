@@ -12,7 +12,7 @@ beforeEach( () => {
 	( { getLogger } = require( '../index' ) );
 	mockStdout = mockProcessStdout();
 	mockFs( {
-		'/tmp123': {},
+		'/tmp': {},
 	} );
 } );
 
@@ -54,7 +54,7 @@ describe( 'Logger', () => {
 	} );
 
 	it( 'Logs info and above levels to the filesystem when the env variable is present', async () => {
-		process.env.CALYPSO_LOGFILE = '/tmp123/calypso.log';
+		process.env.CALYPSO_LOGFILE = '/tmp/calypso.log';
 		const logger = getLogger();
 
 		logger.trace( 'trace' ); // not logged
@@ -64,7 +64,7 @@ describe( 'Logger', () => {
 		logger.error( 'error' );
 		logger.fatal( 'fatal' );
 
-		const logLines = ( await fs.promises.readFile( '/tmp123/calypso.log', 'utf8' ) )
+		const logLines = ( await fs.promises.readFile( '/tmp/calypso.log', 'utf8' ) )
 			.split( '\n' )
 			.filter( ( line ) => line.length > 0 )
 			.map( JSON.parse );
