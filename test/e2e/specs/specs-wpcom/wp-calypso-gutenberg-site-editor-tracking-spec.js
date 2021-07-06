@@ -977,6 +977,80 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			} );
 		} );
 
+		it( 'Tracks "wpcom_block_editor_convert_to_template_part"', async function () {
+			const editor = await SiteEditorComponent.Expect( this.driver );
+
+			await editor.addBlock( 'Columns' );
+			await editor.runInCanvas( async () => {
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					By.css( '[aria-label="Three columns; equal split"]' )
+				);
+			} );
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '[aria-label="Select Columns"]' )
+			);
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '[aria-label="Block tools"] [aria-label="Options"]' )
+			);
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				driverHelper.createTextLocator(
+					By.css( '[aria-label="Options"] button' ),
+					'Make template part'
+				)
+			);
+			await driverHelper.setWhenSettable(
+				this.driver,
+				By.css( '[role="dialog"] input[type="text"]' ),
+				'test_make_template_part'
+			);
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '[role="dialog"] button[type="submit"]' )
+			);
+			const snackbarNoticeLocator = By.css(
+				'.components-snackbar[aria-label="Dismiss this notice"]'
+			);
+			await driverHelper.clickWhenClickable( this.driver, snackbarNoticeLocator );
+
+			const events = await getEventsStack( this.driver );
+			const convertEvents = events.filter(
+				( [ eventName ] ) => eventName === 'wpcom_block_editor_convert_to_template_part'
+			);
+			assert( convertEvents.length === 2 );
+			assert(
+				convertEvents[ 0 ][ 1 ].block_names === 'core/columns,core/column,core/column,core/column'
+			);
+			assert( typeof convertEvents[ 1 ][ 1 ].block_names );
+		} );
+
+		it( 'Tracks "wpcom_block_editor_template_part_detach_blocks"', async function () {
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '[aria-label="Block tools"] [aria-label="Options"]' )
+			);
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				driverHelper.createTextLocator(
+					By.css( '[aria-label="Options"] button' ),
+					'Detach blocks from template part'
+				)
+			);
+
+			const events = await getEventsStack( this.driver );
+			const detachEvents = events.filter(
+				( [ eventName ] ) => eventName === 'wpcom_block_editor_template_part_detach_blocks'
+			);
+			assert( detachEvents.length === 2 );
+			assert(
+				detachEvents[ 0 ][ 1 ].block_names === 'core/columns,core/column,core/column,core/column'
+			);
+			assert( typeof detachEvents[ 1 ][ 1 ].block_names );
+		} );
+
 		afterEach( async function () {
 			await clearEventsStack( this.driver );
 		} );
