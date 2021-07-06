@@ -1379,24 +1379,28 @@ export const PLANS_LIST = {
 		group: GROUP_JETPACK,
 		type: TYPE_SECURITY,
 		...getAnnualTimeframe(),
+		getTagline: () => 'TODO: placeholder',
 	},
 
 	[ PLAN_JETPACK_SECURITY_MONTHLY ]: {
 		group: GROUP_JETPACK,
 		type: TYPE_SECURITY,
 		...getMonthlyTimeframe(),
+		getTagline: () => 'TODO: placeholder',
 	},
 
 	[ PLAN_JETPACK_SECURITY_PRO ]: {
 		group: GROUP_JETPACK,
 		type: TYPE_SECURITY_PRO,
 		...getAnnualTimeframe(),
+		getTagline: () => 'TODO: placeholder',
 	},
 
 	[ PLAN_JETPACK_SECURITY_PRO_MONTHLY ]: {
 		group: GROUP_JETPACK,
 		type: TYPE_SECURITY_PRO,
 		...getMonthlyTimeframe(),
+		getTagline: () => 'TODO: placeholder',
 	},
 
 	[ PLAN_P2_PLUS ]: {
