@@ -1,4 +1,4 @@
-export const trigrams = ( str ) => {
+const trigrams = ( str ) => {
 	const n = 3;
 	const grams = [];
 	const input = [ '_BEGIN_', ...str.split( '' ), '_END_' ];
@@ -8,7 +8,7 @@ export const trigrams = ( str ) => {
 	return grams;
 };
 
-export const grams_to_lookup = ( gram_list ) => {
+const grams_to_lookup = ( gram_list ) => {
 	const lookup = {};
 	for ( const gram of gram_list ) {
 		if ( gram in lookup ) {
@@ -20,7 +20,7 @@ export const grams_to_lookup = ( gram_list ) => {
 	return lookup;
 };
 
-export const lookup_to_magnitude = ( lookup ) => {
+const lookup_to_magnitude = ( lookup ) => {
 	if ( ! lookup || Object.keys( lookup ).length === 0 ) {
 		return 0;
 	}
@@ -33,7 +33,7 @@ export const lookup_to_magnitude = ( lookup ) => {
 
 const string_to_lookup_cache = {};
 
-export const string_to_lookup = ( str ) => {
+const string_to_lookup = ( str ) => {
 	if ( str in string_to_lookup_cache ) {
 		return string_to_lookup_cache[ str ];
 	}
@@ -42,7 +42,7 @@ export const string_to_lookup = ( str ) => {
 	return answer;
 };
 
-export const dot_product = ( lookup1, lookup2 ) => {
+const dot_product = ( lookup1, lookup2 ) => {
 	let value = 0;
 	for ( const key of Object.keys( lookup1 ) ) {
 		if ( key in lookup2 ) {
@@ -61,3 +61,4 @@ export const cosine_similarity = ( str1, str2 ) => {
 	}
 	return dot_product( l1, l2 ) / denominator;
 };
+export default cosine_similarity;
