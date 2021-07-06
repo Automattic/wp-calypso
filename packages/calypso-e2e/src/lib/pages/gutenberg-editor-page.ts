@@ -8,7 +8,13 @@ const selectors = {
 	editorTitle: '.editor-post-title__input',
 	editorBody: '.edit-post-visual-editor',
 
-	// Editor body
+	// Block inserter
+	blockInserterToggle: '[aria-label="Toggle block inserter"]',
+	blockInserterPanel: '.block-editor-inserter__content',
+	blockSearch: '[placeholder="Search"]',
+	blockInserterResultItem: '.block-editor-block-types-list__list-item',
+
+	// Within the editor body.
 	blockAppender: '.block-editor-default-block-appender',
 	paragraphBlocks: 'p.block-editor-rich-text__editable',
 
@@ -141,6 +147,46 @@ export class GutenbergEditorPage extends BaseContainer {
 
 		// Strip out falsey values.
 		return lines.filter( Boolean ).join( '\n' );
+	}
+
+	/**
+	 * Given a name, adds the Gutenberg block matching the name.
+	 *
+	 * The name is expected to be formatted in the same manner as it
+	 * appears on the label when visible in the block inserter panel.
+	 *
+	 * Example:
+	 * 		- Click to Tweet
+	 * 		- Pay with Paypal
+	 * 		- SyntaxHighlighter Code
+	 *
+	 * @param {string} blockName Name of the block to be inserted.
+	 */
+	async addBlock( blockName: string ): Promise< ElementHandle > {
+		const isBlockInserterOpen = await this.frame.$eval(
+			selectors.blockInserterToggle,
+			( element: any ) => element.classList.contains( 'is-pressed' )
+		);
+		// Open the block inserter panel if not open already.
+		if ( ! isBlockInserterOpen ) {
+			await this.openBlockInserter();
+		}
+
+		await this.frame.fill( selectors.blockSearch, blockName );
+
+		await this.frame.click( `${ selectors.blockInserterResultItem }:has-text("${ blockName }")` );
+		// Confirm the block has been added to the editor body.
+		return await this.frame.waitForSelector( `[aria-label="Block: ${ blockName }"]` );
+	}
+
+	/**
+	 * Open the block inserter panel.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async openBlockInserter(): Promise< void > {
+		await this.frame.click( selectors.blockInserterToggle );
+		await this.frame.waitForSelector( selectors.blockInserterPanel );
 	}
 
 	/**
