@@ -43,29 +43,51 @@ class Global_Styles_Fonts_Message_Control extends \WP_Customize_Control {
 	 * Render the customizer help document content
 	 */
 	public function render_content() {
+		$this->render_intro_text();
+		$this->maybe_render_block_editor_link();
+		$this->render_learn_more_link();
+	}
+
+	/**
+	 * Render the intro text to the customizer help document content
+	 */
+	private function render_intro_text() {
 		$high_level_explanation = __( 'You can change your fonts using Global Styles, which can be found in the Block Editor.', 'full-site-editing' );
 		echo wp_kses(
 			'<p>' . $high_level_explanation . '</p>',
 			array( 'p' => array() )
 		);
+	}
+
+	/**
+	 * Render a link to the global styles section of the block editor, if a homepage exists
+	 */
+	private function maybe_render_block_editor_link() {
 		$editable_page_id = $this->get_link_to_editor_with_global_styles_sidebar();
-		if ( null !== $editable_page_id ) {
-			$open_block_editor_link = sprintf(
-				// Translators: %1$s is a link which opens the block editor, and then opens the global styles sidebar.
-				__( '<a href="%1$s" target="_blank">Click here to open the Block Editor and change your fonts.</a>', 'full-site-editing' ),
-				\esc_url( $editable_page_id )
-			);
-			echo wp_kses(
-				'<p>' . $open_block_editor_link . '</p>',
-				array(
-					'p' => array(),
-					'a' => array(
-						'href'   => array(),
-						'target' => array(),
-					),
-				)
-			);
+		if ( null === $editable_page_id ) {
+			return;
 		}
+		$open_block_editor_link = sprintf(
+			// Translators: %1$s is a link which opens the block editor, and then opens the global styles sidebar.
+			__( '<a href="%1$s" target="_blank">Click here to open the Block Editor and change your fonts.</a>', 'full-site-editing' ),
+			\esc_url( $editable_page_id )
+		);
+		echo wp_kses(
+			'<p>' . $open_block_editor_link . '</p>',
+			array(
+				'p' => array(),
+				'a' => array(
+					'href'   => array(),
+					'target' => array(),
+				),
+			)
+		);
+	}
+
+	/**
+	 * Render a link to the global styles fonts page help support document
+	 */
+	private function render_learn_more_link() {
 		$learn_more_link = __( '<a href="https://wordpress.com/support/custom-fonts/#changing-fonts-with-global-styles" target="_blank">Learn more about changing fonts using Global Styles.</a>', 'full-site-editing' );
 		echo wp_kses(
 			'<p>' . $learn_more_link . '</p>',
@@ -79,5 +101,3 @@ class Global_Styles_Fonts_Message_Control extends \WP_Customize_Control {
 		);
 	}
 }
-
-
