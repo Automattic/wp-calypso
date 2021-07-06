@@ -961,10 +961,7 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: undefined,
 			cart,
 			isJetpackCheckout: true,
-			receiptId: 123456789,
 		} );
-		expect( url ).toBe(
-			'/checkout/jetpack/thank-you/no-site/jetpack_backup_daily?ticketId=123456789'
-		);
+		expect( url ).toBe( '/checkout/jetpack/thank-you/no-site/jetpack_backup_daily' );
 	} );
 } );

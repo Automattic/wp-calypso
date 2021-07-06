@@ -19,21 +19,19 @@ import {
 	getProductName,
 } from 'calypso/state/products-list/selectors';
 import { cleanUrl } from 'calypso/jetpack-connect/utils.js';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import Main from 'calypso/components/main';
 
 interface Props {
 	productSlug: string | 'no_product';
-	zendeskTicketId: string | undefined;
 }
 
-const JetpackCheckoutSitelessThankYou: FunctionComponent< Props > = ( {
-	productSlug,
-	zendeskTicketId,
-} ) => {
+const JetpackCheckoutSitelessThankYou: FunctionComponent< Props > = ( { productSlug } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const userEmail = useSelector( getCurrentUserEmail );
 
 	const hasProductInfo = productSlug !== 'no_product';
 
@@ -49,7 +47,7 @@ const JetpackCheckoutSitelessThankYou: FunctionComponent< Props > = ( {
 		'https://jetpack.com/support/getting-started-with-jetpack/';
 
 	// TODO: Get the correct link to schedule 15min Happiness support session. This link is not correct.
-	const happinessAppointmentLink = `/schedule-happiness-appointment?ticketId=${ zendeskTicketId }`;
+	const happinessAppointmentLink = `/schedule-happiness-appointment?user=${ userEmail }`;
 
 	const [ siteInput, setSiteInput ] = useState( '' );
 

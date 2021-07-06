@@ -141,11 +141,7 @@ export default function getThankYouPageUrl( {
 		// extract a product from the cart, in siteless checkout there should only be one
 		const productSlug = cart?.products[ 0 ]?.product_slug;
 
-		// TODO: Get the Zendesk ticket ID & pass it along with the thankYouPageUrl (`ticketId` query param).
-		// Just using the `pendingOrReceiptId` value for now as an example.
-		return `/checkout/jetpack/thank-you/no-site/${
-			productSlug ?? 'no_product'
-		}?ticketId=${ pendingOrReceiptId }`;
+		return `/checkout/jetpack/thank-you/no-site/${ productSlug ?? 'no_product' }`;
 	}
 
 	const fallbackUrl = getFallbackDestination( {

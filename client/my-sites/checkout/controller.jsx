@@ -285,10 +285,7 @@ export function jetpackCheckoutThankYou( context, next ) {
 	const isSitelessCheckoutFlow = context.path.includes( '/checkout/jetpack/thank-you/no-site' );
 
 	context.primary = isSitelessCheckoutFlow ? (
-		<JetpackCheckoutSitelessThankYou
-			productSlug={ context.params.product }
-			zendeskTicketId={ context.query?.ticketId }
-		/>
+		<JetpackCheckoutSitelessThankYou productSlug={ context.params.product } />
 	) : (
 		<JetpackCheckoutThankYou
 			site={ context.params.site }
