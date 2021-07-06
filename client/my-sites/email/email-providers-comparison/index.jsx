@@ -491,13 +491,19 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	handleBack = () => {
-		const { selectedSite } = this.props;
+		const { selectedSite, handleBack } = this.props;
 
-		page( emailManagement( selectedSite.slug ) );
+		page( handleBack ?? emailManagement( selectedSite ) );
 	};
 
 	renderHeader() {
-		const { currentRoute, selectedDomainName, selectedSite, translate, skipHeaderCake } = this.props;
+		const {
+			currentRoute,
+			selectedDomainName,
+			selectedSite,
+			translate,
+			skipHeaderCake,
+		} = this.props;
 
 		const image = {
 			path: emailIllustration,

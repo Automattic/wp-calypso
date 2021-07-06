@@ -36,6 +36,7 @@ import Main from 'calypso/components/main';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import SectionHeader from 'calypso/components/section-header';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 
 /**
  * Style dependencies
@@ -84,7 +85,7 @@ class EmailManagementHome extends React.Component {
 				return (
 					<EmailProvidersComparison
 						selectedDomainName={ selectedDomainName }
-						skipHeaderCake={ true }
+						handleBack={ `${ domainManagementRoot() }/${ selectedDomainName }` }
 					/>
 				);
 			}
