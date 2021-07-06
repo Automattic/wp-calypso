@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import type { Dispatch } from 'react';
+
+/**
  * Internal dependencies
  */
 import type {
@@ -119,3 +124,11 @@ export type ShoppingCartState = {
 };
 
 export type CartValidCallback = ( cart: ResponseCart ) => void;
+
+export type DispatchAndWaitForValid = ( action: ShoppingCartAction ) => Promise< ResponseCart >;
+
+export type ShoppingCartMiddleware = (
+	action: ShoppingCartAction,
+	state: ShoppingCartState,
+	dispatch: Dispatch< ShoppingCartAction >
+) => void;
