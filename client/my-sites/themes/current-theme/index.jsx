@@ -12,8 +12,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Card } from '@automattic/components';
-import CurrentThemeButton from './button';
+import { Card, Button } from '@automattic/components';
+import Gridicon from 'calypso/components/gridicon';
 import { connectOptions } from '../theme-options';
 import { trackClick } from '../helpers';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
@@ -97,15 +97,22 @@ class CurrentTheme extends Component {
 					</div>
 					<div className={ classNames( 'current-theme__actions' ) }>
 						{ map( options, ( option, name ) => (
-							<CurrentThemeButton
+							<Button
+								className={ classNames(
+									'current-theme__button',
+									'components-button',
+									'current-theme__' + this.props.name
+								) }
+								primary={ option.label.toLowerCase() === 'customize' }
 								name={ name }
 								key={ name }
 								label={ option.label }
-								icon={ option.icon }
 								href={ currentThemeId && option.getUrl( currentThemeId ) }
 								onClick={ this.trackClick }
-								isPrimary={ option.label.toLowerCase() === 'customize' }
-							/>
+							>
+								{ option.icon && <Gridicon icon={ option.icon } size={ 18 } /> }
+								{ option.label }
+							</Button>
 						) ) }
 					</div>
 				</div>
