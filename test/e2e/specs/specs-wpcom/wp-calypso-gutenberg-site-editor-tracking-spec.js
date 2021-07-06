@@ -77,9 +77,9 @@ const changeGlobalStylesFirstColorPaletteItem = async ( driver, value, pickerOpe
 	await driverHelper.setWhenSettable( driver, By.css( '.components-color-picker input' ), value );
 };
 
-const deleteCustomEntities = async function ( driver, name ) {
+const deleteCustomEntities = async function ( driver, entityName ) {
 	await SiteEditorComponent.Expect( driver );
-	const getAndDeleteEntities = async () => {
+	const getAndDeleteEntities = async ( name ) => {
 		const entities = window.wp.data
 			.select( 'core' )
 			.getEntityRecords( 'postType', name, {
@@ -90,7 +90,7 @@ const deleteCustomEntities = async function ( driver, name ) {
 			await window.wp.data.dispatch( 'core' ).deleteEntityRecord( 'postType', name, entity.id );
 		}
 	};
-	await driver.executeScript( getAndDeleteEntities );
+	await driver.executeScript( getAndDeleteEntities, entityName );
 };
 
 const deleteTemplatesAndTemplateParts = async function ( driver ) {
