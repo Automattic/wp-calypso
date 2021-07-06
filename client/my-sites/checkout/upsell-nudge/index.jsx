@@ -439,9 +439,13 @@ export default connect(
 		const annualPrice = getSitePlanRawPrice( state, selectedSiteId, planSlug, {
 			isMonthly: false,
 		} );
-		const isFetchingCards = isFetchingStoredCards( state );
+
 		// If the cards have not started fetching yet, isFetchingStoredCards will be false
+		const isFetchingCards = isFetchingStoredCards( state );
 		const hasLoadedCardsFromServer = hasLoadedStoredCardsFromServer( state );
+		const areStoredCardsLoading = hasLoadedCardsFromServer ? isFetchingCards : true;
+		const cards = getStoredCards( state );
+
 		const productSlug = resolveProductSlug( upsellType, upgradeItem );
 		const productProperties = pick( getProductBySlug( state, productSlug ), [
 			'product_slug',
@@ -453,8 +457,8 @@ export default connect(
 				: null;
 
 		return {
-			isFetchingStoredCards: ! hasLoadedCardsFromServer || isFetchingCards,
-			cards: getStoredCards( state ),
+			isFetchingStoredCards: areStoredCardsLoading,
+			cards,
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			isLoading:
 				isFetchingCards ||
