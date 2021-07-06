@@ -19,7 +19,7 @@ import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import QuerySharingButtons from 'calypso/components/data/query-sharing-buttons';
 import { saveSiteSettings } from 'calypso/state/site-settings/actions';
 import { saveSharingButtons } from 'calypso/state/sites/sharing-buttons/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	getSiteSettings,
 	isSavingSiteSettings,
@@ -31,6 +31,7 @@ import isSavingSharingButtons from 'calypso/state/selectors/is-saving-sharing-bu
 import isSharingButtonsSaveSuccessful from 'calypso/state/selectors/is-sharing-buttons-save-successful';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
@@ -132,9 +133,11 @@ class SharingButtons extends Component {
 		const {
 			buttons,
 			isJetpack,
+			isPrivate,
 			isSaving,
 			settings,
 			siteId,
+			siteSlug,
 			isSharingButtonsModuleActive,
 			isFetchingModules,
 			translate,
@@ -159,12 +162,19 @@ class SharingButtons extends Component {
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
-						text={ translate(
-							'Adding sharing buttons need the Sharing Buttons module from Jetpack to be enabled'
-						) }
+						text={
+							isPrivate
+								? translate( 'Adding sharing buttons requires your site to be marked as Public.' )
+								: translate(
+										'Adding sharing buttons needs the Sharing Buttons module from Jetpack to be enabled.'
+								  )
+						}
 					>
-						<NoticeAction onClick={ () => this.props.activateModule( siteId, 'sharedaddy' ) }>
-							{ translate( 'Enable' ) }
+						<NoticeAction
+							href={ isPrivate ? '/settings/general/' + siteSlug + '#site-privacy-settings' : null }
+							onClick={ isPrivate ? null : () => this.props.activateModule( siteId, 'sharedaddy' ) }
+						>
+							{ isPrivate ? translate( 'Change settings' ) : translate( 'Enable' ) }
 						</NoticeAction>
 					</Notice>
 				) }
@@ -189,6 +199,7 @@ class SharingButtons extends Component {
 const connectComponent = connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
+		const siteSlug = getSelectedSiteSlug( state );
 		const settings = getSiteSettings( state, siteId );
 		const buttons = getSharingButtons( state, siteId );
 		const isJetpack = isJetpackSite( state, siteId );
@@ -199,6 +210,7 @@ const connectComponent = connect(
 		const isSavingButtons = isSavingSharingButtons( state, siteId );
 		const isSaveSettingsSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
 		const isSaveButtonsSuccessful = isSharingButtonsSaveSuccessful( state, siteId );
+		const isPrivate = isPrivateSite( state, siteId );
 		const path = getCurrentRouteParameterized( state, siteId );
 
 		return {
@@ -209,9 +221,11 @@ const connectComponent = connect(
 			isSaving: isSavingSettings || isSavingButtons,
 			isSaveSettingsSuccessful,
 			isSaveButtonsSuccessful,
+			isPrivate,
 			settings,
 			buttons,
 			siteId,
+			siteSlug,
 			path,
 		};
 	},
