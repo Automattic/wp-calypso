@@ -56,7 +56,7 @@ export function grams_to_lookup( gram_list ) {
  * @param {object} lookup A lookup table of trigram frequency.
  * @returns {number} Magnitude of the vector
  */
-const lookup_to_magnitude = ( lookup ) => {
+function lookup_to_magnitude( lookup ) {
 	if ( ! lookup || Object.keys( lookup ).length === 0 ) {
 		return 0;
 	}
@@ -65,7 +65,7 @@ const lookup_to_magnitude = ( lookup ) => {
 			.map( ( x ) => x * x )
 			.reduce( ( a, b ) => a + b )
 	);
-};
+}
 
 const string_to_lookup_cache = new LRU( {
 	max: 5000,
@@ -81,7 +81,7 @@ const string_to_lookup_cache = new LRU( {
  * @param str A string to convert to a lookup table of trigram frequency.
  * @returns {str} lookup A lookup table of trigram frequency.
  */
-const string_to_lookup = ( str ) => {
+function string_to_lookup( str ) {
 	const cache_answer = string_to_lookup_cache.get( str );
 	if ( cache_answer !== undefined ) {
 		return cache_answer;
@@ -90,7 +90,7 @@ const string_to_lookup = ( str ) => {
 	const answer = grams_to_lookup( trigrams( str ) );
 	string_to_lookup_cache.set( str, answer );
 	return answer;
-};
+}
 
 /**
  * Finds the dot product of two lookup tables of trigram frequency.
@@ -99,7 +99,7 @@ const string_to_lookup = ( str ) => {
  * @param {object} lookup2 Lookup table of trigram frequency.
  * @returns {number} Dot product.
  */
-const dot_product = ( lookup1, lookup2 ) => {
+function dot_product( lookup1, lookup2 ) {
 	let value = 0;
 	for ( const key of Object.keys( lookup1 ) ) {
 		if ( key in lookup2 ) {
@@ -107,7 +107,7 @@ const dot_product = ( lookup1, lookup2 ) => {
 		}
 	}
 	return value;
-};
+}
 
 /**
  * Finds the cosine similarity of two strings.
@@ -122,7 +122,7 @@ const dot_product = ( lookup1, lookup2 ) => {
  * @returns {number} Range 0-1. 1 = Exact same string, 0 = no similiarity.
  * In between = how much similiarity.
  */
-export const cosine_similarity = ( str1, str2 ) => {
+export function cosine_similarity( str1, str2 ) {
 	const l1 = string_to_lookup( str1 );
 	const l2 = string_to_lookup( str2 );
 	const denominator = lookup_to_magnitude( l1 ) * lookup_to_magnitude( l2 );
@@ -130,5 +130,5 @@ export const cosine_similarity = ( str1, str2 ) => {
 		return 0;
 	}
 	return dot_product( l1, l2 ) / denominator;
-};
+}
 export default cosine_similarity;
