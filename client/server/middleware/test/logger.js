@@ -67,7 +67,7 @@ const simulateRequest = ( { req, res, delay, finished = true } ) => {
 	res.emit( 'close' );
 };
 
-describe( 'Logger middlware', () => {
+describe( 'Logger middleware', () => {
 	withEnv( 'production' );
 	withCommitSha( 'abcd1234' );
 
