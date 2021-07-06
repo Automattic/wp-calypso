@@ -29,10 +29,6 @@ export interface User extends EventEmitter {
 	fetch: () => Promise< void >;
 	handleFetchFailure: ( error: Error ) => void;
 	handleFetchSuccess: ( userdata: UserData ) => void;
-	set: ( attributes: UserData ) => boolean;
-	verificationPollerCallback: ( signal?: true ) => void;
-	checkVerification: () => void;
-	signalVerification: () => void;
 	dispatchToken: string;
 }
 

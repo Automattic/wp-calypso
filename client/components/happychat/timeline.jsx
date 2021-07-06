@@ -25,9 +25,10 @@ import './timeline.scss';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:happychat:timeline' );
 
-const MessageParagraph = ( { message, twemojiUrl } ) => (
+const MessageParagraph = ( { message, isEdited, twemojiUrl } ) => (
 	<p>
 		<Emojify twemojiUrl={ twemojiUrl }>{ message }</Emojify>
+		{ isEdited && <small className="happychat__message-edited-flag">(edited)</small> }
 	</p>
 );
 
@@ -35,7 +36,7 @@ const MessageParagraph = ( { message, twemojiUrl } ) => (
  * Given a message and array of links contained within that message, returns the message
  * with clickable links inside of it.
  */
-const MessageWithLinks = ( { message, links, isExternalUrl } ) => {
+const MessageWithLinks = ( { message, isEdited, links, isExternalUrl } ) => {
 	const children = links.reduce(
 		( { parts, last }, [ url, startIndex, length ] ) => {
 			const text = url;
@@ -76,7 +77,12 @@ const MessageWithLinks = ( { message, links, isExternalUrl } ) => {
 		);
 	}
 
-	return <p>{ children.parts }</p>;
+	return (
+		<p>
+			{ children.parts }
+			{ isEdited && <small className="happychat__message-edited-flag">(edited)</small> }
+		</p>
+	);
 };
 
 /*
@@ -107,14 +113,16 @@ const renderGroupedMessages = ( { item, isCurrentUser, twemojiUrl, isExternalUrl
 				<MessageText
 					name={ event.name }
 					message={ event.message }
+					isEdited={ event.isEdited }
 					links={ event.links }
 					twemojiUrl={ twemojiUrl }
 					isExternalUrl={ isExternalUrl }
 				/>
-				{ rest.map( ( { message, id, links } ) => (
+				{ rest.map( ( { message, id, isEdited, links } ) => (
 					<MessageText
 						key={ id }
 						message={ message }
+						isEdited={ isEdited }
 						links={ links }
 						twemojiUrl={ twemojiUrl }
 						isExternalUrl={ isExternalUrl }

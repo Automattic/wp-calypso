@@ -85,7 +85,7 @@ class EmailPlanSubscription extends React.Component {
 		const hasSubscriptionExpired = this.hasSubscriptionExpired();
 		const translateArgs = {
 			args: {
-				expiryDate: moment.utc( purchase.expiryDate ).format( 'LL' ),
+				expiryDate: moment( purchase.expiryDate ).format( 'LL' ),
 			},
 			comment: 'Shows the expiry date of the email subscription',
 		};

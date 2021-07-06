@@ -1,0 +1,38 @@
+.add-stored-credit-card {
+	display: flex;
+	padding: 1.5rem;
+	background: transparent;
+	border: 1px solid var( --studio-gray-5 );
+	border-radius: var( --jetpack-corners-soft );
+	box-shadow: none;
+
+	&, & .button {
+		transition: all 0.2s ease-in-out;
+	}
+
+	&:hover, &:active {
+		background-color: var( --studio-white );
+		border-color: var( --studio-white );
+		box-shadow: 0 0 40px rgba( 0, 0, 0, 0.08 );
+	}
+}
+
+.add-stored-credit-card__content {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: flex-start;
+	width: 100%;
+}
+
+.add-stored-credit-card__title {
+	display: flex;
+	align-items: center;
+	font-size: 1.125rem; /* stylelint-disable-line */
+	color: var( --studio-gray-100 );
+
+	span {
+		margin-left: 1rem;
+		line-height: 1rem;
+	}
+}

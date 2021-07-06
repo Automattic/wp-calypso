@@ -1,0 +1,4 @@
+{
+	"extends": "@automattic/calypso-build/typescript/js-package.json",
+	"include": ["**/*.js", "package.json"]
+}

@@ -1,9 +1,10 @@
 /**
  * Internal dependencies
  */
-
 import { SUPPORT_SESSION_TRANSITION } from 'calypso/state/action-types';
-import { SESSION_ACTIVE, SESSION_EXPIRED } from './reducer';
+import { SESSION_ACTIVE, SESSION_EXPIRED } from './constants';
+
+import 'calypso/state/support/init';
 
 export function supportSessionActivate() {
 	return {

@@ -130,7 +130,6 @@ class SignupForm extends Component {
 			lastName: false,
 		},
 		form: null,
-		signedUp: false,
 		validationInitialized: false,
 	};
 

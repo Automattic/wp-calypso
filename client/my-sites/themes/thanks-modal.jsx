@@ -71,7 +71,6 @@ class ThanksModal extends Component {
 
 	onCloseModal = () => {
 		this.props.clearActivated( this.props.siteId );
-		this.setState( { show: false } );
 	};
 
 	trackClick = ( eventName, verb ) => {

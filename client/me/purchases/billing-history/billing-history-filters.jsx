@@ -22,7 +22,6 @@ import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-tr
 class BillingHistoryFilters extends React.Component {
 	state = {
 		activePopover: '',
-		searchValue: '',
 	};
 
 	preventEnterKeySubmission = ( event ) => {

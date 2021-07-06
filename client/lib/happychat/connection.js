@@ -15,6 +15,7 @@ import {
 	receiveInit,
 	receiveLocalizedSupport,
 	receiveMessage,
+	receiveMessageUpdate,
 	receiveReconnecting,
 	receiveStatus,
 	receiveToken,
@@ -71,7 +72,8 @@ class Connection {
 						.on( 'status', ( status ) => dispatch( receiveStatus( status ) ) )
 						.on( 'accept', ( accept ) => dispatch( receiveAccept( accept ) ) )
 						.on( 'localized-support', ( accept ) => dispatch( receiveLocalizedSupport( accept ) ) )
-						.on( 'message', ( message ) => dispatch( receiveMessage( message ) ) );
+						.on( 'message', ( message ) => dispatch( receiveMessage( message ) ) )
+						.on( 'message.update', ( message ) => dispatch( receiveMessageUpdate( message ) ) );
 				} )
 				.catch( ( e ) => reject( e ) );
 		} );

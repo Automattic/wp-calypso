@@ -62,16 +62,11 @@ export class UserStep extends Component {
 	};
 
 	state = {
-		submitting: false,
 		subHeaderText: '',
 		recaptchaClientId: null,
 	};
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.step && 'invalid' === nextProps.step.status ) {
-			this.setState( { submitting: false } );
-		}
-
 		if (
 			this.props.flowName !== nextProps.flowName ||
 			this.props.locale !== nextProps.locale ||

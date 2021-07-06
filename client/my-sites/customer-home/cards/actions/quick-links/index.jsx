@@ -9,8 +9,11 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import ActionBox from './action-box';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import FoldableCard from 'calypso/components/foldable-card';
-import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	getSiteFrontPage,
@@ -19,13 +22,12 @@ import {
 	isNewSite,
 } from 'calypso/state/sites/selectors';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
-import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
-import { getGSuiteSupportedDomains } from 'calypso/lib/gsuite';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import ActionBox from './action-box';
-import isHomeQuickLinksExpanded from 'calypso/state/selectors/is-home-quick-links-expanded';
-import { expandHomeQuickLinks, collapseHomeQuickLinks } from 'calypso/state/home/actions';
+import { hasPaidEmailWithUs } from 'calypso/lib/emails';
+import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
+import { savePreference } from 'calypso/state/preferences/actions';
+import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
+import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 
 /**
  * Image dependencies
@@ -42,7 +44,7 @@ export const QuickLinks = ( {
 	customizeUrl,
 	isStaticHomePage,
 	showCustomizer,
-	hasCustomDomain,
+	canAddEmail,
 	menusUrl,
 	editHomepageAction,
 	writePostAction,
@@ -58,6 +60,8 @@ export const QuickLinks = ( {
 	isExpanded,
 	expand,
 	collapse,
+	isUnifiedNavEnabled,
+	siteAdminUrl,
 } ) => {
 	const translate = useTranslate();
 
@@ -125,7 +129,7 @@ export const QuickLinks = ( {
 				label={ translate( 'Change theme' ) }
 				materialIcon="view_quilt"
 			/>
-			{ hasCustomDomain ? (
+			{ canAddEmail ? (
 				<ActionBox
 					onClick={ addEmailAction }
 					label={ translate( 'Add email' ) }
@@ -136,6 +140,14 @@ export const QuickLinks = ( {
 					onClick={ addDomainAction }
 					label={ translate( 'Add a domain' ) }
 					gridicon="domains"
+				/>
+			) }
+			{ isUnifiedNavEnabled && siteAdminUrl && (
+				<ActionBox
+					href={ siteAdminUrl }
+					hideLinkIndicator
+					gridicon="my-sites"
+					label={ translate( 'WP Admin Dashboard' ) }
 				/>
 			) }
 			<ActionBox
@@ -293,6 +305,17 @@ const addDomainAction = ( siteSlug, isStaticHomePage ) => ( dispatch ) => {
 	page( `/domains/add/${ siteSlug }` );
 };
 
+/**
+ * Select a list of domains that are eligible to add email to from a larger list.
+ * WPCOM-specific domains like free and staging sub-domains are filtered from this list courtesy of `canCurrentUserAddEmail`
+ *
+ * @param domains An array domains to filter
+ */
+const getDomainsThatCanAddEmail = ( domains ) =>
+	domains.filter(
+		( domain ) => ! hasPaidEmailWithUs( domain ) && canCurrentUserAddEmail( domain )
+	);
+
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
@@ -303,17 +326,20 @@ const mapStateToProps = ( state ) => {
 	const staticHomePageId = getSiteFrontPage( state, siteId );
 	const editHomePageUrl = isStaticHomePage && `/page/${ siteSlug }/${ staticHomePageId }`;
 
+	const canAddEmail = getDomainsThatCanAddEmail( domains ).length > 0;
+
 	return {
 		customizeUrl: getCustomizerUrl( state, siteId ),
 		menusUrl: getCustomizerUrl( state, siteId, 'menus' ),
 		isNewlyCreatedSite: isNewSite( state, siteId ),
 		showCustomizer: ! isSiteUsingFullSiteEditing( state, siteId ),
-		hasCustomDomain:
-			getGSuiteSupportedDomains( domains ).length > 0 && canUserPurchaseGSuite( state ),
+		canAddEmail,
 		siteSlug,
 		isStaticHomePage,
 		editHomePageUrl,
-		isExpanded: isHomeQuickLinksExpanded( state ),
+		isExpanded: getPreference( state, 'homeQuickLinksToggleStatus' ) !== 'collapsed',
+		isUnifiedNavEnabled: isNavUnificationEnabled,
+		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 	};
 };
 
@@ -329,8 +355,8 @@ const mapDispatchToProps = {
 	trackAnchorPodcastAction,
 	addEmailAction,
 	addDomainAction,
-	expand: expandHomeQuickLinks,
-	collapse: collapseHomeQuickLinks,
+	expand: () => savePreference( 'homeQuickLinksToggleStatus', 'expanded' ),
+	collapse: () => savePreference( 'homeQuickLinksToggleStatus', 'collapsed' ),
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {

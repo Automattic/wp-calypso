@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Card } from '@automattic/components';
 
 /**
@@ -13,7 +13,6 @@ import FreePhotoLibrary from 'calypso/my-sites/customer-home/cards/education/fre
 import MasteringGutenberg from 'calypso/my-sites/customer-home/cards/education/mastering-gutenberg';
 import EducationEarn from 'calypso/my-sites/customer-home/cards/education/earn';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getHomeLayout } from 'calypso/state/selectors/get-home-layout';
 import {
 	EDUCATION_FREE_PHOTO_LIBRARY,
 	EDUCATION_GUTENBERG,
@@ -22,6 +21,7 @@ import {
 } from 'calypso/my-sites/customer-home/cards/constants';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import WpCourses from 'calypso/my-sites/customer-home/cards/education/wpcourses';
+import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 
 /**
  * Style dependencies
@@ -35,12 +35,15 @@ const cardComponents = {
 	[ EDUCATION_WPCOURSES ]: WpCourses,
 };
 
-const LearnGrow = ( { cards, trackCards } ) => {
+const LearnGrow = () => {
+	const cards = useLearnGrowCards();
+	const dispatch = useDispatch();
+
 	useEffect( () => {
 		if ( cards && cards.length ) {
-			trackCards( cards );
+			dispatch( trackCardImpressions( cards ) );
 		}
-	}, [ cards, trackCards ] );
+	}, [ cards, dispatch ] );
 
 	if ( ! cards || ! cards.length ) {
 		return null;
@@ -48,7 +51,7 @@ const LearnGrow = ( { cards, trackCards } ) => {
 
 	return (
 		<>
-			<Card className="learn-grow__content">
+			<Card className="learn-grow__content customer-home__card">
 				{ cards.map(
 					( card, index ) =>
 						cardComponents[ card ] &&
@@ -61,16 +64,14 @@ const LearnGrow = ( { cards, trackCards } ) => {
 	);
 };
 
-const mapStateToProps = ( state ) => {
-	const siteId = getSelectedSiteId( state );
-	const layout = getHomeLayout( state, siteId );
+function useLearnGrowCards() {
+	const siteId = useSelector( getSelectedSiteId );
+	const { data: layout } = useHomeLayoutQuery( siteId, { enabled: false } );
 
-	return {
-		cards: layout?.[ 'secondary.learn-grow' ] ?? [],
-	};
-};
+	return layout?.[ 'secondary.learn-grow' ] ?? [];
+}
 
-const trackCardImpressions = ( cards ) => {
+function trackCardImpressions( cards ) {
 	const analyticsEvents = cards.reduce( ( events, card ) => {
 		return [
 			...events,
@@ -79,6 +80,6 @@ const trackCardImpressions = ( cards ) => {
 		];
 	}, [] );
 	return composeAnalytics( ...analyticsEvents );
-};
+}
 
-export default connect( mapStateToProps, { trackCards: trackCardImpressions } )( LearnGrow );
+export default LearnGrow;

@@ -64,6 +64,10 @@
 		.segmented-control__text {
 			min-width: inherit;
 		}
+
+		&.showcase-revamp {
+			padding: 11px 10px;
+		}
 	}
 
 	.more {
@@ -211,4 +215,11 @@
 
 .themes-magic-search-card__welcome-taxonomy-icon {
 	pointer-events: none;
+}
+
+.button.is-link.themes-magic-search-card__advanced-toggle {
+	font-size: 0.75rem;
+	margin-top: 3px;
+	margin-right: 10px;
+	white-space: nowrap;
 }

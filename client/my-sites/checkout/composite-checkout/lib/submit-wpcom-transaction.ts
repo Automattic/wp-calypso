@@ -17,8 +17,13 @@ export default async function submitWpcomTransaction(
 	payload: WPCOMTransactionEndpointRequestPayload,
 	transactionOptions: PaymentProcessorOptions
 ): Promise< WPCOMTransactionEndpointResponse > {
-	if ( transactionOptions.createUserAndSiteBeforeTransaction || payload.cart.is_jetpack_checkout ) {
-		const createAccountOptions = payload.cart.is_jetpack_checkout
+	const isJetpackUserLessCheckout =
+		payload.cart.is_jetpack_checkout && payload.cart.cart_key === 'no-user';
+
+	if ( transactionOptions.createUserAndSiteBeforeTransaction || isJetpackUserLessCheckout ) {
+		const isJetpackUserLessCheckout = payload.cart.is_jetpack_checkout;
+
+		const createAccountOptions = isJetpackUserLessCheckout
 			? { signupFlowName: 'jetpack-userless-checkout' }
 			: { signupFlowName: 'onboarding-registrationless' };
 
@@ -34,10 +39,8 @@ export default async function submitWpcomTransaction(
 					...payload.cart,
 					blog_id: siteId || '0',
 					cart_key: siteId || 'no-site',
-					create_new_blog: false,
 				},
 			};
-
 			return wp.undocumented().transactions( newPayload );
 		} );
 	}

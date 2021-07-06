@@ -123,7 +123,6 @@ class Account extends React.Component {
 		redirect: false,
 		submittingForm: false,
 		formsSubmitting: {},
-		changingUsername: false,
 		usernameAction: 'new',
 		validationResult: false,
 	};

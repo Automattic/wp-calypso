@@ -72,8 +72,6 @@ class ThemeShowcase extends React.Component {
 		this.scrollRef = React.createRef();
 		this.bookmarkRef = React.createRef();
 		this.state = {
-			page: 1,
-			showPreview: false,
 			isShowcaseOpen: !! (
 				this.props.loggedOutComponent ||
 				this.props.search ||

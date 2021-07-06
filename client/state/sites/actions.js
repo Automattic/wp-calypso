@@ -30,6 +30,8 @@ import {
 import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'calypso/state/sites/constants';
 
 import 'calypso/state/data-layer/wpcom/sites/homepage';
+import getP2HubBlogId from 'calypso/state/selectors/get-p2-hub-blog-id';
+import getSiteUrl from 'calypso/state/selectors/get-site-url';
 
 /**
  * Returns a thunk that dispatches an action object to be used in signalling that a site has been
@@ -214,6 +216,24 @@ export function deleteSite( siteId ) {
 								showDismiss: false,
 								button: translate( 'Manage Purchases' ),
 								href: purchasesRoot,
+							}
+						)
+					);
+					return;
+				}
+				if ( error.error === 'p2-hub-has-spaces' ) {
+					const hubId = getP2HubBlogId( getState(), siteId );
+					const hubUrl = getSiteUrl( getState(), hubId );
+					dispatch(
+						errorNotice(
+							translate(
+								'Your P2 has spaces. You must delete all spaces before you can delete this P2.'
+							),
+							{
+								id: siteDeletionNoticeId,
+								showDismiss: false,
+								button: translate( 'Manage P2 spaces' ),
+								href: hubUrl,
 							}
 						)
 					);

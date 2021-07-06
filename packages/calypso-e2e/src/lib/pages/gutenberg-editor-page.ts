@@ -176,7 +176,6 @@ export class GutenbergEditorPage extends BaseContainer {
 		await this.frame.click( selectors.publishPanelToggle );
 		await this.frame.waitForSelector( selectors.publishPanel );
 		await this.frame.click( selectors.publishButton );
-		await this.frame.waitForSelector( selectors.viewPostButton );
 
 		if ( visit ) {
 			await this._visitPublishedEntryFromPublishPane();
@@ -190,9 +189,9 @@ export class GutenbergEditorPage extends BaseContainer {
 	 */
 	async _visitPublishedEntryFromPublishPane(): Promise< void > {
 		await Promise.all( [
-			this.frame.click( selectors.viewPostButton ),
 			this.page.waitForNavigation(),
-			this.page.waitForLoadState( 'networkidle' ),
+			this.frame.click( selectors.viewPostButton ),
 		] );
+		await this.page.waitForLoadState( 'networkidle' );
 	}
 }
