@@ -40,7 +40,7 @@ const HelpSearch = ( { searchQuery, track } ) => {
 	const translate = useTranslate();
 
 	// trackResultView: Given a result, send an "_open" tracking event indicating that result is opened.
-	const trackResultView = ( result ) => {
+	const trackResultView = ( event, result ) => {
 		if ( ! result ) {
 			return;
 		}
