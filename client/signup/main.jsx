@@ -598,8 +598,10 @@ class Signup extends React.Component {
 		return flows.getFlow( flowName, this.props.isLoggedIn ).steps.indexOf( stepName );
 	}
 
-	getFlowLength() {
-		return flows.getFlow( this.props.flowName, this.props.isLoggedIn ).steps.length;
+	getInteractiveStepsCount() {
+		const flowStepsSlugs = flows.getFlow( this.props.flowName, this.props.isLoggedIn ).steps;
+		const flowSteps = flowStepsSlugs.filter( ( step ) => ! steps[ step ].props.nonInteractive );
+		return flowSteps.length;
 	}
 
 	renderProcessingScreen( isReskinned ) {
@@ -738,7 +740,7 @@ class Signup extends React.Component {
 				{ ! isWPForTeamsFlow( this.props.flowName ) && (
 					<SignupHeader
 						positionInFlow={ this.getPositionInFlow() }
-						flowLength={ this.getFlowLength() }
+						flowLength={ this.getInteractiveStepsCount() }
 						flowName={ this.props.flowName }
 						showProgressIndicator={ showProgressIndicator }
 						shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
