@@ -9,6 +9,7 @@ import { pick } from 'lodash';
 import { withShoppingCart, createRequestCartProduct } from '@automattic/shopping-cart';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { isURL } from '@wordpress/url';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -68,6 +69,8 @@ import {
  */
 import './style.scss';
 
+const debug = debugFactory( 'calypso:upsell-nudge' );
+
 /**
  * Upsell Types
  */
@@ -123,6 +126,7 @@ export class UpsellNudge extends React.Component {
 			return;
 		}
 		if ( this.props.cards.length === 0 ) {
+			debug( 'not validating contact info because there are no cards' );
 			this.setState( { isValidatingContactInfo: false, isContactInfoValid: false } );
 			return;
 		}
@@ -150,6 +154,7 @@ export class UpsellNudge extends React.Component {
 		};
 
 		validateContactDetails().then( ( isValid ) => {
+			debug( 'validation of contact details result is', isValid );
 			this.setState( { isValidatingContactInfo: false, isContactInfoValid: isValid } );
 		} );
 	};
@@ -342,27 +347,35 @@ export class UpsellNudge extends React.Component {
 		const { product, cards, siteSlug, upsellType } = this.props;
 
 		if ( ! product ) {
+			debug( 'not eligible for one-click upsell because no product exists' );
 			return false;
 		}
 
 		const supportedUpsellTypes = [ CONCIERGE_QUICKSTART_SESSION, BUSINESS_PLAN_UPGRADE_UPSELL ];
 		if ( 'accept' !== buttonAction || ! supportedUpsellTypes.includes( upsellType ) ) {
+			debug(
+				'not eligible for one-click upsell because the upsellType (${upsellType}) is not supported'
+			);
 			return false;
 		}
 
 		if ( ! siteSlug ) {
+			debug( 'not eligible for one-click upsell because there is no siteSlug' );
 			return false;
 		}
 
 		// stored cards should exist
 		if ( cards.length === 0 ) {
+			debug( 'not eligible for one-click upsell because there are no cards' );
 			return false;
 		}
 
 		if ( ! this.state.isContactInfoValid ) {
+			debug( 'not eligible for one-click upsell because the contact info is not valid' );
 			return false;
 		}
 
+		debug( 'eligible for one-click upsell' );
 		return true;
 	};
 
