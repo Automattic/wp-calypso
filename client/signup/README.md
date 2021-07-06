@@ -42,6 +42,7 @@ You can add a new step to Modular Signup from `/client/signup/config/steps-pure.
 - (optional) `providesDependencies` is an array that lets the signup framework know what dependencies the step is expected to provide. If the step does not provide all of these, or if it provides more than it says, an error will be thrown (unless `optionalDependencies` is used, see below).
 - (optional) `optionalDependencies` is an array that lists which of the items in `providesDependencies` are optional. If one of these values is missing when a step is submitted there'll be no error.
 - (optional) `delayApiRequestUntilComplete` is a boolean that, when true, causes the step's `apiRequestFunction` to be called only after the user has submitted every step in the signup flow. This is useful for steps that the user should be able to go back and change at any point in signup.
+- (optional) `props` is an object with some custom properties that may be specific to a certain step. 
 
 You will also need to define which React component implements your step in `/client/signup/config/step-components.js`. Make sure to require the component as an internal dependency in `step-components.js`.
 
