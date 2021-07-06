@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
  */
 import { Card, Button } from '@automattic/components';
 import Gridicon from 'calypso/components/gridicon';
+import CurrentThemeButton from './button';
 import { connectOptions } from '../theme-options';
 import { trackClick } from '../helpers';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
@@ -67,7 +68,41 @@ class CurrentTheme extends Component {
 			<Card className="current-theme">
 				<QueryActiveTheme siteId={ siteId } />
 				{ currentThemeId && <QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } /> }
-
+				{
+					// @TODO Remove this code as well as associated styles after feature flag deploy
+					! config.isEnabled( 'theme/showcase-revamp' ) && (
+						<div className="current-theme__pre-revamp">
+							<div className="current-theme__current">
+								{ showScreenshotPlaceholder && <div className="current-theme__img-placeholder" /> }
+								{ showScreenshot && (
+									<img
+										src={ currentTheme.screenshot + '?w=150' }
+										className="current-theme__img"
+										alt=""
+									/>
+								) }
+								<span className="current-theme__label">{ translate( 'Current Theme' ) }</span>
+								<span className="current-theme__name">{ text }</span>
+							</div>
+							<div
+								className={ classNames( 'current-theme__actions', {
+									'two-buttons': Object.keys( options ).length === 2,
+								} ) }
+							>
+								{ map( options, ( option, name ) => (
+									<CurrentThemeButton
+										name={ name }
+										key={ name }
+										label={ option.label }
+										icon={ option.icon }
+										href={ currentThemeId && option.getUrl( currentThemeId ) }
+										onClick={ this.trackClick }
+									/>
+								) ) }
+							</div>
+						</div>
+					)
+				}
 				{ config.isEnabled( 'theme/showcase-revamp' ) && (
 					<div className="current-theme__current">
 						<div className="current-theme__details">
