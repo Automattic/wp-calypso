@@ -410,11 +410,11 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 			// Wait until Site Editor page is loaded
 			await SiteEditorPage.Expect( this.driver );
-			await deleteTemplatesAndTemplateParts( this.driver );
 
 			const editor = await SiteEditorComponent.Expect( this.driver );
 			await editor.waitForTemplateToLoad();
 			await editor.waitForTemplatePartsToLoad();
+			await deleteTemplatesAndTemplateParts( this.driver );
 		} );
 
 		createGeneralTests( { it, editorType: 'site' } );
@@ -791,15 +791,12 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 				// Go back to index template and cleanup the new tempalte early to avoid parallel
 				// test conflicts as much as possible.
-				await driverHelper.clickWhenClickable(
-					this.driver,
-					driverHelper.createTextLocator(
-						By.css( '[role="menu"][aria-label="Add Template"] .components-menu-item__item' ),
-						'Archive'
-					)
+				const templateMenuItemLocator = driverHelper.createTextLocator(
+					By.css( '.edit-site-navigation-panel__template-item-title' ),
+					'Index'
 				);
+				await driverHelper.clickWhenClickable( this.driver, templateMenuItemLocator );
 				await deleteTemplates( this.driver );
-				await editor.toggleNavigationSidebar();
 			} );
 
 			it( 'should track "wpcom_block_editor_nav_sidebar_item_edit" when switching to a template part', async function () {
