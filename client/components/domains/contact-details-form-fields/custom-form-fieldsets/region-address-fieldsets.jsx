@@ -42,6 +42,7 @@ export class RegionAddressFieldsets extends Component {
 		getFieldProps: noop,
 		countryCode: 'US',
 		shouldAutoFocusAddressField: false,
+		arePostalCodesSupported: true,
 		hasCountryStates: false,
 	};
 

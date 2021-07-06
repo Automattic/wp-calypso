@@ -41,6 +41,7 @@ EuAddressFieldset.propTypes = {
 
 EuAddressFieldset.defaultProps = {
 	getFieldProps: noop,
+	arePostalCodesSupported: true,
 };
 
 export default localize( EuAddressFieldset );

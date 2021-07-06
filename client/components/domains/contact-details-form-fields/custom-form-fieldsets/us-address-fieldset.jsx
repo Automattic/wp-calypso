@@ -59,6 +59,7 @@ UsAddressFieldset.propTypes = {
 UsAddressFieldset.defaultProps = {
 	countryCode: 'US',
 	getFieldProps: noop,
+	arePostalCodesSupported: true,
 };
 
 export default localize( UsAddressFieldset );

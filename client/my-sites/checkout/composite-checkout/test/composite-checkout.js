@@ -157,10 +157,12 @@ describe( 'CompositeCheckout', () => {
 			{
 				code: 'US',
 				name: 'United States',
+				has_postal_codes: true,
 			},
 			{
 				code: 'AU',
 				name: 'Australia',
+				has_postal_codes: true,
 			},
 		];
 
