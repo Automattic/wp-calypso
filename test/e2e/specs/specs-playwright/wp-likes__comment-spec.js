@@ -65,7 +65,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 
 		it( 'Start new post', async function () {
 			const newPostFlow = new NewPostFlow( this.page );
-			await newPostFlow.newPostFromNavbar();
+			await newPostFlow.startNewPostFromMasterbar();
 		} );
 
 		it( 'Enter post title', async function () {
