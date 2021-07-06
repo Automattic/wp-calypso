@@ -22,6 +22,8 @@ import type {
 } from '../src/types';
 
 const planOne: ResponseCartProduct = {
+	time_added_to_cart: Date.now(),
+	current_quantity: 1,
 	product_name: 'WordPress.com Personal',
 	product_slug: 'personal-bundle',
 	currency: 'BRL',
@@ -54,6 +56,8 @@ const planOne: ResponseCartProduct = {
 };
 
 const planTwo: ResponseCartProduct = {
+	time_added_to_cart: Date.now(),
+	current_quantity: 1,
 	product_name: 'WordPress.com Business',
 	product_slug: 'business-bundle',
 	currency: 'BRL',
