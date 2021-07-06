@@ -12,7 +12,7 @@ import LRU from 'lru';
  * @param {string} str A string to convert to trigrams.
  * @returns {Array} A List of trigrams.
  */
-const trigrams = ( str ) => {
+export function trigrams( str ) {
 	const n = 3;
 	const grams = [];
 	const input = [ '_BEGIN_', ...str.split( '' ), '_END_' ];
@@ -20,7 +20,7 @@ const trigrams = ( str ) => {
 		grams.push( input.slice( i, i + n ).join( '' ) );
 	}
 	return grams;
-};
+}
 
 /**
  * Convert a list of trigrams into a lookup table.

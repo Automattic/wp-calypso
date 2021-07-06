@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { cosine_similarity } from '../';
+import { cosine_similarity, trigrams } from '../';
 
-describe( 'trigram', () => {
+describe( 'trigram: cosine_similarity()', () => {
 	test( 'Equal Strings should have cosine_similarity of ~1', () => {
 		const str1 = 'This is a string.';
 		const str2 = 'This is a string.';
@@ -24,5 +24,12 @@ describe( 'trigram', () => {
 		const sim = cosine_similarity( str1, str2 );
 		expect( sim ).toBeGreaterThan( 0.39 );
 		expect( sim ).toBeLessThan( 0.41 );
+	} );
+} );
+describe( 'trigram: trigrams()', () => {
+	test( 'Generate Trigrams: Hello', () => {
+		const result = trigrams( 'Hello' );
+		const expected = [ '_BEGIN_He', 'Hel', 'ell', 'llo', 'lo_END_' ];
+		expect( result ).toEqual( expected );
 	} );
 } );
