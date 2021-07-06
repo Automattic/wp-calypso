@@ -77,120 +77,45 @@ const changeGlobalStylesFirstColorPaletteItem = async ( driver, value, pickerOpe
 	await driverHelper.setWhenSettable( driver, By.css( '.components-color-picker input' ), value );
 };
 
-const exitSiteEditor = async function ( driver ) {
-	const isSiteEditorOpen = await driverHelper.isElementLocated(
-		driver,
-		By.css( '.edit-site-header' )
-	);
-	if ( ! isSiteEditorOpen ) {
-		return;
-	}
-
-	const editor = await SiteEditorComponent.Expect( driver );
-	const isNavigationSidebarOpen = await driverHelper.isElementLocated(
-		driver,
-		By.css( '.edit-site-navigation-panel.is-open' )
-	);
-	if ( ! isNavigationSidebarOpen ) {
-		await editor.toggleNavigationSidebar();
-	}
-
-	await driverHelper.waitUntilElementLocatedAndVisible(
-		driver,
-		By.css( '.components-navigation__back-button, .edit-site-navigation-panel__back-to-dashboard' )
-	);
-
-	await driver.wait(
-		async function () {
-			if (
-				await driverHelper.isElementNotLocated(
-					driver,
-					By.css( '.edit-site-navigation-panel__back-to-dashboard' )
-				)
-			) {
-				await driverHelper.clickWhenClickable(
-					driver,
-					By.css( '.components-navigation__back-button' )
-				);
-				return false;
-			}
-			return true;
-		},
-		config.get( 'explicitWaitMS' ),
-		'Could not reach the "Dashboard" button'
-	);
-
-	await driverHelper.clickWhenClickable(
-		driver,
-		By.css( '.edit-site-navigation-panel__back-to-dashboard' )
-	);
-};
-
-const deleteAll = async function ( driver ) {
-	// Make sure we have posts before trying to delete them
-	const noItemsRowLocator = By.css( '#the-list .no-items' );
-	const noItems = await driverHelper.isElementLocated( driver, noItemsRowLocator );
-	if ( noItems ) {
-		return;
-	}
-
-	const selectAllCheckboxLocator = By.css( '#cb-select-all-1' );
-	// We use the bottom bulk action dropdown and apply button because those are
-	// available on both mobile and desktop.
-	const bottomBulkActionDropdownLocator = By.css( '#bulk-action-selector-bottom' );
-	const bottomBulkActionApplyButtonLocator = By.css( '#doaction2' );
-	const createBottomBulkActionDropdownOptionLocator = ( value ) =>
-		By.css( `#bulk-action-selector-bottom option[value="${ value }"]` );
-	const trashedItemsLinkLocator = By.css( '.subsubsub .trash a' );
-
-	// Delete all posts
-	await driverHelper.clickWhenClickable( driver, selectAllCheckboxLocator );
-	await driverHelper.clickWhenClickable( driver, bottomBulkActionDropdownLocator );
-	await driverHelper.clickWhenClickable(
-		driver,
-		createBottomBulkActionDropdownOptionLocator( 'trash' )
-	);
-	await driverHelper.clickWhenClickable( driver, bottomBulkActionApplyButtonLocator );
-
-	// Empty trash
-	await driverHelper.clickWhenClickable( driver, trashedItemsLinkLocator );
-	await driverHelper.clickWhenClickable( driver, selectAllCheckboxLocator );
-	await driverHelper.clickWhenClickable( driver, bottomBulkActionDropdownLocator );
-	await driverHelper.clickWhenClickable(
-		driver,
-		createBottomBulkActionDropdownOptionLocator( 'delete' )
-	);
-	await driverHelper.clickWhenClickable( driver, bottomBulkActionApplyButtonLocator );
-};
-
 const deleteTemplates = async function ( driver ) {
-	const sidebar = await SidebarComponent.Expect( driver );
-	await sidebar.selectTemplates();
-	await deleteAll( driver );
+	await SiteEditorComponent.Expect( driver );
+
+	const getAndDeleteTemplates = async () => {
+		const templates = window.wp.data
+			.select( 'core' )
+			.getEntityRecords( 'postType', 'wp_template', {
+				per_page: -1,
+			} )
+			.filter( ( item ) => item.source === 'custom' );
+		for ( const template of templates ) {
+			await window.wp.data
+				.dispatch( 'core' )
+				.deleteEntityRecord( 'postType', 'wp_template', template.id );
+		}
+	};
+	await driver.executeScript( getAndDeleteTemplates );
 };
 
 const deleteTemplateParts = async function ( driver ) {
-	const sidebar = await SidebarComponent.Expect( driver );
-	await sidebar.selectTemplateParts();
-	await deleteAll( driver );
-};
-
-const backToCalypso = async function ( driver ) {
-	if ( driverManager.currentScreenSize() === 'mobile' ) {
-		await driverHelper.clickWhenClickable( driver, By.css( '#wp-admin-bar-blog' ) );
-		return;
-	}
-
-	await driverHelper.clickWhenClickable(
-		driver,
-		driverHelper.createTextLocator( By.css( '.wp-menu-name' ), 'Plans' )
-	);
+	await SiteEditorComponent.Expect( driver );
+	const getAndDeleteTemplateParts = async () => {
+		const templateParts = window.wp.data
+			.select( 'core' )
+			.getEntityRecords( 'postType', 'wp_template_part', {
+				per_page: -1,
+			} )
+			.filter( ( item ) => item.source === 'custom' );
+		for ( const templatePart of templateParts ) {
+			await window.wp.data
+				.dispatch( 'core' )
+				.deleteEntityRecord( 'postType', 'wp_template_part', templatePart.id );
+		}
+	};
+	await driver.executeScript( getAndDeleteTemplateParts );
 };
 
 const deleteTemplatesAndTemplateParts = async function ( driver ) {
 	await deleteTemplates( driver );
-	// At this point we are in wp-admin, go back to Calypso
-	await backToCalypso( driver );
 	await deleteTemplateParts( driver );
 };
 
@@ -480,11 +405,6 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			const loginFlow = new LoginFlow( this.driver, host === 'WPCOM' ? siteEditorUser : undefined );
 			await loginFlow.loginAndSelectMySite();
 
-			await deleteTemplatesAndTemplateParts( this.driver );
-
-			// At this point we are in wp-admin, go back to Calypso
-			await backToCalypso( this.driver );
-
 			const sidebar = await SidebarComponent.Expect( this.driver );
 			await sidebar.selectSiteEditor();
 
@@ -494,6 +414,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			const editor = await SiteEditorComponent.Expect( this.driver );
 			await editor.waitForTemplateToLoad();
 			await editor.waitForTemplatePartsToLoad();
+			await deleteTemplatesAndTemplateParts( this.driver );
 		} );
 
 		createGeneralTests( { it, editorType: 'site' } );
@@ -858,7 +779,6 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 						'Archive'
 					)
 				);
-				await editor.toggleNavigationSidebar();
 
 				const eventsStack = await getEventsStack( this.driver );
 				const editEvents = eventsStack.filter(
@@ -868,6 +788,15 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				const [ , editEventData ] = editEvents[ 0 ];
 				assert.strictEqual( editEventData.item_type, 'template' );
 				assert.strictEqual( editEventData.item_slug, 'archive' );
+
+				// Go back to index template and cleanup the new tempalte early to avoid parallel
+				// test conflicts as much as possible.
+				const templateMenuItemLocator = driverHelper.createTextLocator(
+					By.css( '.edit-site-navigation-panel__template-item-title' ),
+					'Index'
+				);
+				await driverHelper.clickWhenClickable( this.driver, templateMenuItemLocator );
+				await deleteTemplates( this.driver );
 			} );
 
 			it( 'should track "wpcom_block_editor_nav_sidebar_item_edit" when switching to a template part', async function () {
@@ -938,16 +867,6 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 		} );
 
 		after( async function () {
-			await exitSiteEditor( this.driver );
-
-			const isCalypsoSidebarAvailable = await driverHelper.isElementLocated(
-				this.driver,
-				By.css( '#wpcom' )
-			);
-			if ( ! isCalypsoSidebarAvailable ) {
-				await backToCalypso( this.driver );
-			}
-
 			await deleteTemplatesAndTemplateParts( this.driver );
 		} );
 	} );
