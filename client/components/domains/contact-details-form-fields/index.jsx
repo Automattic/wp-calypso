@@ -434,6 +434,7 @@ export class ContactDetailsFormFields extends Component {
 
 				{ countryCode && (
 					<RegionAddressFieldsets
+						{ ...this.state.form }
 						getFieldProps={ this.getFieldProps }
 						countryCode={ countryCode }
 						hasCountryStates={ hasCountryStates }
