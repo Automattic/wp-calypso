@@ -4,7 +4,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-import { isYearly, isJetpackPurchasableItem } from '@automattic/calypso-products';
+import { isYearly, isJetpackPurchasableItem, isMonthlyProduct } from '@automattic/calypso-products';
 import {
 	Checkout,
 	CheckoutStep,
@@ -65,6 +65,7 @@ import CheckoutHelpLink from './checkout-help-link';
 import type { CountryListItem } from '../types/country-list-item';
 import type { OnChangeItemVariant } from '../components/item-variation-picker';
 
+import badge7Src from './assets/icons/badge-7.svg';
 import badge14Src from './assets/icons/badge-14.svg';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
@@ -418,9 +419,13 @@ export default function WPCheckout( {
 	const validatingButtonText = isCartPendingUpdate
 		? String( translate( 'Updating cart…' ) )
 		: String( translate( 'Please wait…' ) );
-	const hasYearlyJetpackProductInCart = responseCart?.products?.every(
-		( product ) => isJetpackPurchasableItem( product.product_slug ) && isYearly( product )
+	const hasYearlyJetpackProductInCart = responseCart?.products?.every( ( product ) =>
+		isJetpackPurchasableItem( product.product_slug )
 	);
+	const show7DayGuarantee =
+		hasYearlyJetpackProductInCart && responseCart?.products?.every( isMonthlyProduct );
+	const show14DayGuarantee =
+		hasYearlyJetpackProductInCart && responseCart?.products?.every( isYearly );
 
 	return (
 		<Checkout>
@@ -456,10 +461,16 @@ export default function WPCheckout( {
 			<CheckoutStepArea
 				submitButtonHeader={ <SubmitButtonHeader /> }
 				submitButtonFooter={
-					hasYearlyJetpackProductInCart && (
+					( show7DayGuarantee || show14DayGuarantee ) && (
 						<SubmitButtonFooter>
-							<img src={ badge14Src } alt="" />
-							<span>{ translate( '14 day money back guarantee' ) }</span>
+							<img src={ show7DayGuarantee ? badge7Src : badge14Src } alt="" />
+							<span>
+								{ translate( '%(dayCount)s day money back guarantee', {
+									args: {
+										dayCount: show7DayGuarantee ? 7 : 14,
+									},
+								} ) }
+							</span>
 						</SubmitButtonFooter>
 					)
 				}
