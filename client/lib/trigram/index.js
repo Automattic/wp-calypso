@@ -51,7 +51,7 @@ export function gramsToLookup( gramList ) {
  * there are ~26 * 26 * 26 dimensions ("aaa" ... "zzz")
  *
  * Example:
- * lookupToMagnitude(gramsToLookup('hi')) = 1.414215... (sqrt of 2)
+ * lookupToMagnitude( gramsToLookup( trigrams( 'hi' ) ) ) = 1.414215... (sqrt of 2)
  *
  * @param {object} lookup A lookup table of trigram frequency.
  * @returns {number} Magnitude of the vector
@@ -115,6 +115,9 @@ function dotProduct( lookup1, lookup2 ) {
  * Think of the lookup table as a vector in a ~26 * 26 * 26 dimensional space
  * ("aaa" ... "zzz"), then we measure the angle between the vectors, and take
  * the cosine of that angle.
+ *
+ * Note this does not do .toLowerCase to either string. You might want to if
+ * you want case insensitive search.
  *
  * @param {str} str1 First string to compare
  * @param {str} str2 Second string to compare
