@@ -6,7 +6,14 @@ import '@automattic/calypso-polyfills';
  */
 import React, { useEffect, useRef } from 'react';
 import '@testing-library/jest-dom/extend-expect';
-import { screen, act, render, waitFor, fireEvent } from '@testing-library/react';
+import {
+	screen,
+	act,
+	render,
+	waitFor,
+	fireEvent,
+	waitForElementToBeRemoved,
+} from '@testing-library/react';
 
 /**
  * Internal dependencies
@@ -331,10 +338,8 @@ describe( 'useShoppingCart', () => {
 			);
 			await waitFor( () => screen.getByTestId( 'product-list' ) );
 			expect( screen.getByText( planOne.product_name ) ).toBeInTheDocument();
-			await act( async () => {
-				fireEvent.click( screen.getByText( 'Click me' ) );
-			} );
-			expect( screen.queryByText( planOne.product_name ) ).not.toBeInTheDocument();
+			fireEvent.click( screen.getByText( 'Click me' ) );
+			await waitForElementToBeRemoved( () => screen.queryByText( planOne.product_name ) );
 		} );
 
 		it( 'returns a Promise that resolves after the update completes', async () => {
@@ -350,7 +355,9 @@ describe( 'useShoppingCart', () => {
 				fireEvent.click( screen.getByText( 'Click me' ) );
 				expect( markUpdateComplete ).not.toHaveBeenCalled();
 			} );
-			expect( markUpdateComplete ).toHaveBeenCalled();
+			await waitFor( () => {
+				expect( markUpdateComplete ).toHaveBeenCalled();
+			} );
 		} );
 	} );
 
@@ -379,10 +386,8 @@ describe( 'useShoppingCart', () => {
 			);
 			await waitFor( () => screen.getByTestId( 'product-list' ) );
 			expect( screen.getByText( planOne.product_name ) ).toBeInTheDocument();
-			await act( async () => {
-				fireEvent.click( screen.getByText( 'Click me' ) );
-			} );
-			expect( screen.queryByText( planOne.product_name ) ).not.toBeInTheDocument();
+			fireEvent.click( screen.getByText( 'Click me' ) );
+			await waitForElementToBeRemoved( () => screen.queryByText( planOne.product_name ) );
 			expect( screen.getByText( planTwo.product_name ) ).toBeInTheDocument();
 		} );
 
@@ -410,7 +415,9 @@ describe( 'useShoppingCart', () => {
 				fireEvent.click( screen.getByText( 'Click me' ) );
 				expect( markUpdateComplete ).not.toHaveBeenCalled();
 			} );
-			expect( markUpdateComplete ).toHaveBeenCalled();
+			await waitFor( () => {
+				expect( markUpdateComplete ).toHaveBeenCalled();
+			} );
 		} );
 	} );
 
@@ -444,7 +451,7 @@ describe( 'useShoppingCart', () => {
 			await act( async () => {
 				fireEvent.click( screen.getByText( 'Click me' ) );
 			} );
-			expect( screen.queryByText( planOne.product_slug ) ).not.toBeInTheDocument();
+			await waitForElementToBeRemoved( () => screen.queryByText( planOne.product_slug ) );
 			expect( screen.getByText( planTwo.product_slug ) ).toBeInTheDocument();
 		} );
 
@@ -460,7 +467,9 @@ describe( 'useShoppingCart', () => {
 				fireEvent.click( screen.getByText( 'Click me' ) );
 				expect( markUpdateComplete ).not.toHaveBeenCalled();
 			} );
-			expect( markUpdateComplete ).toHaveBeenCalled();
+			await waitFor( () => {
+				expect( markUpdateComplete ).toHaveBeenCalled();
+			} );
 		} );
 	} );
 
@@ -489,7 +498,9 @@ describe( 'useShoppingCart', () => {
 			await act( async () => {
 				fireEvent.click( screen.getByText( 'Click me' ) );
 			} );
-			expect( screen.getByText( 'Coupon: ABCD' ) ).toBeInTheDocument();
+			await waitFor( () => {
+				expect( screen.getByText( 'Coupon: ABCD' ) ).toBeInTheDocument();
+			} );
 		} );
 
 		it( 'returns a Promise that resolves after the update completes', async () => {
@@ -504,7 +515,9 @@ describe( 'useShoppingCart', () => {
 				fireEvent.click( screen.getByText( 'Click me' ) );
 				expect( markUpdateComplete ).not.toHaveBeenCalled();
 			} );
-			expect( markUpdateComplete ).toHaveBeenCalled();
+			await waitFor( () => {
+				expect( markUpdateComplete ).toHaveBeenCalled();
+			} );
 		} );
 	} );
 
@@ -530,10 +543,8 @@ describe( 'useShoppingCart', () => {
 			);
 			await waitFor( () => screen.getByTestId( 'product-list' ) );
 			expect( screen.getByText( 'Coupon: ABCD' ) ).toBeInTheDocument();
-			await act( async () => {
-				fireEvent.click( screen.getByText( 'Click me' ) );
-			} );
-			expect( screen.queryByText( 'Coupon: ABCD' ) ).not.toBeInTheDocument();
+			fireEvent.click( screen.getByText( 'Click me' ) );
+			await waitForElementToBeRemoved( () => screen.queryByText( 'Coupon: ABCD' ) );
 		} );
 
 		it( 'returns a Promise that resolves after the update completes', async () => {
@@ -548,7 +559,9 @@ describe( 'useShoppingCart', () => {
 				fireEvent.click( screen.getByText( 'Click me' ) );
 				expect( markUpdateComplete ).not.toHaveBeenCalled();
 			} );
-			expect( markUpdateComplete ).toHaveBeenCalled();
+			await waitFor( () => {
+				expect( markUpdateComplete ).toHaveBeenCalled();
+			} );
 		} );
 	} );
 
@@ -582,7 +595,9 @@ describe( 'useShoppingCart', () => {
 			await act( async () => {
 				fireEvent.click( screen.getByText( 'Click me' ) );
 			} );
-			expect( screen.getByText( locationText ) ).toBeInTheDocument();
+			await waitFor( async () => {
+				expect( screen.getByText( locationText ) ).toBeInTheDocument();
+			} );
 		} );
 
 		it( 'returns a Promise that resolves after the update completes', async () => {
@@ -597,7 +612,9 @@ describe( 'useShoppingCart', () => {
 				fireEvent.click( screen.getByText( 'Click me' ) );
 				expect( markUpdateComplete ).not.toHaveBeenCalled();
 			} );
-			expect( markUpdateComplete ).toHaveBeenCalled();
+			await waitFor( () => {
+				expect( markUpdateComplete ).toHaveBeenCalled();
+			} );
 		} );
 	} );
 
