@@ -16,8 +16,8 @@ import type { RequestCart } from '@automattic/shopping-cart';
 import wp from 'calypso/lib/wp';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import getCartKey from './get-cart-key';
-import CartMessages from 'calypso/my-sites/checkout/cart/cart-messages';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import AsyncLoad from 'calypso/components/async-load';
 
 const wpcomGetCart = ( cartKey: string ) => wp.req.get( `/me/shopping-cart/${ cartKey }` );
 const wpcomSetCart = ( cartKey: string, cartData: RequestCart ) =>
@@ -79,5 +79,11 @@ export default function CalypsoShoppingCartProvider( {
 
 function CalypsoShoppingCartMessages() {
 	const { responseCart, isLoading } = useShoppingCart();
-	return <CartMessages cart={ responseCart } isLoadingCart={ isLoading } />;
+	return (
+		<AsyncLoad
+			require="calypso/my-sites/checkout/cart/cart-messages"
+			cart={ responseCart }
+			isLoadingCart={ isLoading }
+		/>
+	);
 }
