@@ -27,13 +27,13 @@ export function trigrams( str ) {
  * The keys are trigrams, the values are counts.
  *
  * Example: "mississippi"
- * grams_to_lookup([ "_BEGIN_mi", "mis", "iss", "ssi", "sis", "iss", "ssi", "sip", "ipp", "ppi", "pi_END_" ]) =
+ * gramsToLookup([ "_BEGIN_mi", "mis", "iss", "ssi", "sis", "iss", "ssi", "sip", "ipp", "ppi", "pi_END_" ]) =
  *     { "_BEGIN_mi": 1, "mis": 1, "iss": 2, "ssi": 2, "sis": 1, "sip": 1, "ipp": 1, "ppi": 1, "pi_END_": 1 }
  *
  * @param {string} gram_list A list of trigrams, like [ "_BEGIN_He", "Hel", "ell", "llo", "lo_END_" ]
  * @returns {object} A lookup table of trigram frequency.
  */
-export function grams_to_lookup( gram_list ) {
+export function gramsToLookup( gram_list ) {
 	const lookup = {};
 	for ( const gram of gram_list ) {
 		if ( gram in lookup ) {
@@ -51,12 +51,12 @@ export function grams_to_lookup( gram_list ) {
  * there are ~26 * 26 * 26 dimensions ("aaa" ... "zzz")
  *
  * Example:
- * lookup_to_magnitude(grams_to_lookup('hi')) = 1.414215... (sqrt of 2)
+ * lookupToMagnitude(gramsToLookup('hi')) = 1.414215... (sqrt of 2)
  *
  * @param {object} lookup A lookup table of trigram frequency.
  * @returns {number} Magnitude of the vector
  */
-function lookup_to_magnitude( lookup ) {
+function lookupToMagnitude( lookup ) {
 	if ( ! lookup || Object.keys( lookup ).length === 0 ) {
 		return 0;
 	}
@@ -67,7 +67,7 @@ function lookup_to_magnitude( lookup ) {
 	);
 }
 
-const string_to_lookup_cache = new LRU( {
+const stringToLookupCache = new LRU( {
 	max: 5000,
 	maxAge: 1 * 60 * 60 * 1000, // 1 hour in milliseconds
 } );
@@ -75,20 +75,20 @@ const string_to_lookup_cache = new LRU( {
 /**
  * Cached: Convert a string to a lookup table of trigram frequency.
  *
- * It's the same as calling grams_to_lookup( trigrams( str ) ), but
+ * It's the same as calling gramsToLookup( trigrams( str ) ), but
  * it caches all calculations it does to find them again quickly.
  *
  * @param str A string to convert to a lookup table of trigram frequency.
  * @returns {str} lookup A lookup table of trigram frequency.
  */
-function string_to_lookup( str ) {
-	const cache_answer = string_to_lookup_cache.get( str );
+function stringToLookup( str ) {
+	const cache_answer = stringToLookupCache.get( str );
 	if ( cache_answer !== undefined ) {
 		return cache_answer;
 	}
 
-	const answer = grams_to_lookup( trigrams( str ) );
-	string_to_lookup_cache.set( str, answer );
+	const answer = gramsToLookup( trigrams( str ) );
+	stringToLookupCache.set( str, answer );
 	return answer;
 }
 
@@ -99,7 +99,7 @@ function string_to_lookup( str ) {
  * @param {object} lookup2 Lookup table of trigram frequency.
  * @returns {number} Dot product.
  */
-function dot_product( lookup1, lookup2 ) {
+function dotProduct( lookup1, lookup2 ) {
 	let value = 0;
 	for ( const key of Object.keys( lookup1 ) ) {
 		if ( key in lookup2 ) {
@@ -122,13 +122,13 @@ function dot_product( lookup1, lookup2 ) {
  * @returns {number} Range 0-1. 1 = Exact same string, 0 = no similiarity.
  * In between = how much similiarity.
  */
-export function cosine_similarity( str1, str2 ) {
-	const l1 = string_to_lookup( str1 );
-	const l2 = string_to_lookup( str2 );
-	const denominator = lookup_to_magnitude( l1 ) * lookup_to_magnitude( l2 );
+export function cosineSimilarity( str1, str2 ) {
+	const l1 = stringToLookup( str1 );
+	const l2 = stringToLookup( str2 );
+	const denominator = lookupToMagnitude( l1 ) * lookupToMagnitude( l2 );
 	if ( denominator === 0 ) {
 		return 0;
 	}
-	return dot_product( l1, l2 ) / denominator;
+	return dotProduct( l1, l2 ) / denominator;
 }
-export default cosine_similarity;
+export default cosineSimilarity;

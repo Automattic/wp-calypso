@@ -1,27 +1,27 @@
 /**
  * Internal dependencies
  */
-import { cosine_similarity, trigrams, grams_to_lookup } from '../';
+import { cosineSimilarity, trigrams, gramsToLookup } from '../';
 
-describe( 'trigram: cosine_similarity()', () => {
-	test( 'Equal Strings should have cosine_similarity of ~1', () => {
+describe( 'trigram: cosineSimilarity()', () => {
+	test( 'Equal Strings should have cosineSimilarity of ~1', () => {
 		const str1 = 'This is a string.';
 		const str2 = 'This is a string.';
-		const sim = cosine_similarity( str1, str2 );
+		const sim = cosineSimilarity( str1, str2 );
 		expect( sim ).toBeGreaterThan( 0.99 );
 		expect( sim ).toBeLessThan( 1.01 );
 	} );
-	test( 'Completely different strings should have cosine_similarity of ~0', () => {
+	test( 'Completely different strings should have cosineSimilarity of ~0', () => {
 		const str1 = 'abcabcabc';
 		const str2 = 'xyzxyzxyz';
-		const sim = cosine_similarity( str1, str2 );
+		const sim = cosineSimilarity( str1, str2 );
 		expect( sim ).toBeGreaterThan( -0.01 );
 		expect( sim ).toBeLessThan( 0.01 );
 	} );
-	test( 'Somewhat overlapping strings should have a cosine_similarity between 0 and 1', () => {
+	test( 'Somewhat overlapping strings should have a cosineSimilarity between 0 and 1', () => {
 		const str1 = 'There';
 		const str2 = 'Their';
-		const sim = cosine_similarity( str1, str2 );
+		const sim = cosineSimilarity( str1, str2 );
 		expect( sim ).toBeGreaterThan( 0.39 );
 		expect( sim ).toBeLessThan( 0.41 );
 	} );
@@ -33,9 +33,9 @@ describe( 'trigram: trigrams()', () => {
 		expect( result ).toEqual( expected );
 	} );
 } );
-describe( 'trigram: grams_to_lookup()', () => {
+describe( 'trigram: gramsToLookup()', () => {
 	test( 'Generate Lookup from precomputed trigrams: mississippi', () => {
-		const result = grams_to_lookup( [
+		const result = gramsToLookup( [
 			'_BEGIN_mi',
 			'mis',
 			'iss',
@@ -62,9 +62,9 @@ describe( 'trigram: grams_to_lookup()', () => {
 		expect( result ).toEqual( expected );
 	} );
 } );
-describe( 'trigram: integrate: grams_to_lookup(trigrams())', () => {
+describe( 'trigram: integrate: gramsToLookup(trigrams())', () => {
 	test( 'Generate trigram and lookup: abecedarian', () => {
-		const result = grams_to_lookup( trigrams( 'abecedarian' ) );
+		const result = gramsToLookup( trigrams( 'abecedarian' ) );
 		const expected = {
 			_BEGIN_ab: 1,
 			abe: 1,

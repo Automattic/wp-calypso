@@ -18,7 +18,7 @@ import {
 } from 'lodash';
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
-import { cosine_similarity } from 'calypso/lib/trigram';
+import { cosineSimilarity } from 'calypso/lib/trigram';
 
 /**
  * Style dependencies
@@ -259,7 +259,7 @@ class KeyedSuggestions extends React.Component {
 				const matcher = ( term1, term2_single, threshold = 0.45 ) => {
 					let max_seen = 0;
 					for ( const term1_single of term1.split( /\s+/ ) ) {
-						const sim = cosine_similarity( term1_single, term2_single );
+						const sim = cosineSimilarity( term1_single, term2_single );
 						max_seen = Math.max( max_seen, sim );
 					}
 					return max_seen > threshold;
