@@ -789,7 +789,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				assert.strictEqual( editEventData.item_type, 'template' );
 				assert.strictEqual( editEventData.item_slug, 'archive' );
 
-				// Go back to index template and cleanup the new tempalte early to avoid parallel
+				// Go back to index template and cleanup the new template early to avoid parallel
 				// test conflicts as much as possible.
 				const templateMenuItemLocator = driverHelper.createTextLocator(
 					By.css( '.edit-site-navigation-panel__template-item-title' ),
