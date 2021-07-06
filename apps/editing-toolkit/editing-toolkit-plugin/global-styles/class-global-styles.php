@@ -237,6 +237,7 @@ class Global_Styles {
 				array( $this, 'block_editor_settings' ),
 				PHP_INT_MAX // So it runs last and overrides any style provided by the theme.
 			);
+			add_action( 'customize_register', array( $this, 'register_customizer_option' ) );
 		}
 
 		// Setup front-end.
@@ -244,6 +245,34 @@ class Global_Styles {
 			'wp_enqueue_scripts',
 			array( $this, 'wp_enqueue_scripts' ),
 			PHP_INT_MAX // So it runs last and overrides any style provided by the theme.
+		);
+	}
+
+	/**
+	 * Register customizer modifications
+	 * Add the 'Font' section to customizer.
+	 *
+	 * @param WP_Customize_Manager $wp_customize an instance of WP_Customize_Manager.
+	 */
+	public function register_customizer_option( $wp_customize ) {
+		require_once __DIR__ . '/class-global-styles-fonts-message-control.php';
+
+		$wp_customize->add_section(
+			'global_styles_reference',
+			array(
+				'title' => __( 'Fonts', 'full-site-editing' ),
+			)
+		);
+
+		$wp_customize->add_control(
+			new Global_Styles_Fonts_Message_Control(
+				$wp_customize,
+				'global_styles_fonts_message_control',
+				array(
+					'section'  => 'global_styles_reference',
+					'settings' => array(),
+				)
+			)
 		);
 	}
 

@@ -4,6 +4,10 @@
 import { PluginSidebar, PluginSidebarMoreMenuItem } from '@wordpress/edit-post';
 import { Button, PanelBody } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { getQueryArg } from '@wordpress/url';
+import { useEffect } from '@wordpress/element';
+import { dispatch } from '@wordpress/data';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 /**
  * Internal dependencies
@@ -51,6 +55,17 @@ const PanelActionButtons = ( {
 	</div>
 );
 
+function maybeOpenSidebar() {
+	const openSidebar = getQueryArg( window.location.href, 'openSidebar' );
+	if ( 'global-styles' === openSidebar ) {
+		// Ideally this tracks event would be paired with the <a> tag at the source: class-global-styles-fonts-message-control.php
+		// instead of at the destination of the <a> tag, which is here
+		// I wasn't sure how to record a tracks from that file.
+		recordTracksEvent( 'calypso_global_styles_customizer_link_clicked' );
+		dispatch( 'core/edit-post' ).openGeneralSidebar( 'jetpack-global-styles/global-styles' );
+	}
+}
+
 export default ( {
 	fontHeadings,
 	fontHeadingsDefault,
@@ -64,6 +79,9 @@ export default ( {
 	hasLocalChanges,
 	resetLocalChanges,
 } ) => {
+	useEffect( () => {
+		maybeOpenSidebar();
+	}, [] );
 	const publish = () =>
 		publishOptions( {
 			[ FONT_BASE ]: fontBase,
