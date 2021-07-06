@@ -33,7 +33,7 @@ export function trigrams( str ) {
  * @param {string} gram_list A list of trigrams, like [ "_BEGIN_He", "Hel", "ell", "llo", "lo_END_" ]
  * @returns {object} A lookup table of trigram frequency.
  */
-const grams_to_lookup = ( gram_list ) => {
+export function grams_to_lookup( gram_list ) {
 	const lookup = {};
 	for ( const gram of gram_list ) {
 		if ( gram in lookup ) {
@@ -43,7 +43,7 @@ const grams_to_lookup = ( gram_list ) => {
 		}
 	}
 	return lookup;
-};
+}
 
 /**
  * Convert a trigram lookup table into a real number magnitude, (aka l2 norm or
