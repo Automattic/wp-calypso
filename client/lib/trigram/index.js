@@ -1,3 +1,8 @@
+/**
+ * External dependencies
+ */
+import LRU from 'lru';
+
 const trigrams = ( str ) => {
 	const n = 3;
 	const grams = [];
@@ -31,14 +36,19 @@ const lookup_to_magnitude = ( lookup ) => {
 	);
 };
 
-const string_to_lookup_cache = {};
+const string_to_lookup_cache = new LRU( {
+	max: 5000,
+	maxAge: 1 * 60 * 60 * 1000, // 1 hour in milliseconds
+} );
 
 const string_to_lookup = ( str ) => {
-	if ( str in string_to_lookup_cache ) {
-		return string_to_lookup_cache[ str ];
+	const cache_answer = string_to_lookup_cache.get( str );
+	if ( cache_answer !== undefined ) {
+		return cache_answer;
 	}
+
 	const answer = grams_to_lookup( trigrams( str ) );
-	string_to_lookup_cache[ str ] = answer;
+	string_to_lookup_cache.set( str, answer );
 	return answer;
 };
 
