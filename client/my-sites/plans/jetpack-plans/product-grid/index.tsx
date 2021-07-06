@@ -17,7 +17,7 @@ import ProductCard from '../product-card';
 import { getProductPosition } from '../product-grid/products-order';
 import { getPlansToDisplay, getProductsToDisplay, isConnectionFlow } from './utils';
 import useGetPlansGridProducts from '../use-get-plans-grid-products';
-import JetpackFreeCard from 'calypso/components/jetpack/card/jetpack-free-card';
+import JetpackFreeCard from '../jetpack-free-card';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	PLAN_JETPACK_SECURITY_DAILY,
@@ -251,7 +251,9 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 					) ) }
 				</ul>
 				<div className="product-grid__free">
-					{ showFreeCard && <JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } /> }
+					{ showFreeCard && (
+						<JetpackFreeCard fullWidth={ true } siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
+					) }
 				</div>
 			</ProductGridSection>
 			<StoreFooter />
