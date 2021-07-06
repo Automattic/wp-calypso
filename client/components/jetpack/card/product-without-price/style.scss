@@ -23,6 +23,12 @@
 		}
 	}
 
+	.product-without-price__title {
+		@include breakpoint-deprecated( '>660px' ) {
+			margin-bottom: initial;
+		}
+	}
+
 	.product-without-price__button.button {
 		@include breakpoint-deprecated( '>660px' ) {
 			max-width: 210px;
@@ -72,7 +78,6 @@
 
 	@include breakpoint-deprecated( '>660px' ) {
 		margin-top: initial;
-		margin-bottom: initial;
 	}
 }
 
