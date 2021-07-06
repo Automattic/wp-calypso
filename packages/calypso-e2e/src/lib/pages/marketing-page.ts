@@ -4,11 +4,6 @@
 import { BaseContainer } from '../base-container';
 import { toTitleCase } from '../../data-helper';
 
-/**
- * Type dependencies
- */
-import { Page } from 'playwright';
-
 const selectors = {
 	content: '#primary',
 	navTabs: 'div.section-nav-tabs',
@@ -27,15 +22,6 @@ const selectors = {
  * @augments {BaseContainer}
  */
 export class MarketingPage extends BaseContainer {
-	/**
-	 * Constructs an instance of the MarketingPage object.
-	 *
-	 * @param {Page} page Underlying page on which the actions take place.
-	 */
-	constructor( page: Page ) {
-		super( page );
-	}
-
 	/**
 	 * Given a string, clicks on the tab matching the string at top of the page.
 	 *
