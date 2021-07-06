@@ -63,16 +63,15 @@ const JetpackCheckoutSitelessThankYou: FunctionComponent< Props > = ( {
 		if ( siteUrl ) {
 			dispatch(
 				recordTracksEvent( 'calypso_siteless_checkout_submit_website_address', {
-					zendeskTicketId,
-					productSlug,
-					siteUrl,
+					product_slug: productSlug,
+					site_url: siteUrl,
 				} )
 			);
-			// TODO: dispatch a request to WPCOM with the `siteUrl` and the ZendDesk ticket ID to some endpoint to
+			// TODO: dispatch a post request to WPCOM with the `siteUrl` and the users email address to some endpoint to
 			// append the `siteUrl` to the ZendDesk ticket.
 			// On successful response redirect to schedule 15min Happiness support page? (Calendly?)
 		}
-	}, [ siteInput, dispatch, productSlug, zendeskTicketId ] );
+	}, [ siteInput, dispatch, productSlug ] );
 
 	return (
 		<Main fullWidthLayout className="jetpack-checkout-siteless-thank-you">
@@ -113,8 +112,7 @@ const JetpackCheckoutSitelessThankYou: FunctionComponent< Props > = ( {
 															recordTracksEvent(
 																'calypso_siteless_checkout_install_instructions_link_clicked',
 																{
-																	zendeskTicketId,
-																	productSlug,
+																	product_slug: productSlug,
 																}
 															)
 														)
@@ -189,8 +187,7 @@ const JetpackCheckoutSitelessThankYou: FunctionComponent< Props > = ( {
 												onClick={ () =>
 													dispatch(
 														recordTracksEvent( 'calypso_siteless_checkout_happiness_link_clicked', {
-															zendeskTicketId,
-															productSlug,
+															product_slug: productSlug,
 														} )
 													)
 												}
