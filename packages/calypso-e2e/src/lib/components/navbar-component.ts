@@ -3,11 +3,6 @@
  */
 import { BaseContainer } from '../base-container';
 
-/**
- * Type dependencies
- */
-import { Page } from 'playwright';
-
 const selectors = {
 	mySiteButton: 'text=My Site',
 	writeButton: '*css=a >> text=Write',
