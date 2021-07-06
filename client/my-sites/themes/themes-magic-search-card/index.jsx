@@ -353,6 +353,7 @@ class ThemesMagicSearchCard extends React.Component {
 						) }
 						{ isPremiumThemesEnabled && showTierThemesControl && (
 							<SimplifiedSegmentedControl
+								key={ this.props.tier }
 								initialSelected={ this.props.tier }
 								options={ tiers }
 								onSelect={ this.props.select }
