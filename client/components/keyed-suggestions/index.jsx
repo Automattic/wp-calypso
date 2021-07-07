@@ -20,10 +20,16 @@ import classNames from 'classnames';
 import i18n from 'i18n-calypso';
 
 /**
+ * Internal dependencies
+ */
+import { cosineSimilarity } from 'calypso/lib/trigram';
+
+/**
  * Style dependencies
  */
 import './style.scss';
 
+const SEARCH_THRESHOLD = 0.45;
 const noop = () => {};
 
 function SuggestionsButtonAll( props ) {
@@ -251,10 +257,26 @@ class KeyedSuggestions extends React.Component {
 				// Concatenate mathing and non matchin - this is full set of filters just reordered.
 				filtered[ key ] = [ ...sortedMatching, ...notMatching ];
 			} else {
+				// Matcher is designed to be used with args (term.name, cleanFilterTerm)
+				// Order is important!
+				// Arg 1 can be multiple words. "flexible header" or "accepts header images of any size"
+				// Arg 2 will only be one word; even if the user types multiple words we search on each one individually.
+				const matcher = ( term1, term2_single ) => {
+					let max_seen = 0;
+					for ( const term1_single of term1.split( /\s+/ ) ) {
+						const sim = cosineSimilarity( term1_single, term2_single );
+						max_seen = Math.max( max_seen, sim );
+					}
+					return max_seen > SEARCH_THRESHOLD;
+				};
+
 				filtered[ key ] = take(
 					filter(
 						map( terms[ key ], ( term, k ) =>
-							term.name.match( regex ) || term.description.match( regex ) ? k : null
+							cleanFilterTerm === '' ||
+							matcher( term.name.toLowerCase(), cleanFilterTerm.toLowerCase() )
+								? k
+								: null
 						)
 					),
 					limit
