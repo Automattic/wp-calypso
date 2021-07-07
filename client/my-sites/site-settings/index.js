@@ -22,11 +22,6 @@ import {
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import { setScroll, siteSettings } from 'calypso/my-sites/site-settings/settings-controller';
-import jetpackSettings from './settings-jetpack';
-import settingsPerformance from './settings-performance';
-import settingsWriting from './settings-writing';
-import settingsDiscussion from './settings-discussion';
-import settingsSecurity from './settings-security';
 
 export default function () {
 	page( '/settings', '/settings/general' );
@@ -41,12 +36,6 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
-
-	jetpackSettings();
-	settingsPerformance();
-	settingsWriting();
-	settingsDiscussion();
-	settingsSecurity();
 
 	// Redirect settings pages for import and export now that they have their own sections.
 	page( '/settings/:importOrExport(import|export)/:subroute(.*)', ( context ) => {

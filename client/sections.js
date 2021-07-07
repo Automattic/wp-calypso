@@ -135,6 +135,36 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'settings-performance',
+		paths: [ '/settings/performance' ],
+		module: 'calypso/my-sites/site-settings/settings-performance',
+		group: 'sites',
+	},
+	{
+		name: 'settings-writing',
+		paths: [ '/settings/writing', '/settings/taxonomies', '/settings/podcasting' ],
+		module: 'calypso/my-sites/site-settings/settings-writing',
+		group: 'sites',
+	},
+	{
+		name: 'settings-discussion',
+		paths: [ '/settings/discussion' ],
+		module: 'calypso/my-sites/site-settings/settings-discussion',
+		group: 'sites',
+	},
+	{
+		name: 'settings-security',
+		paths: [ '/settings/security' ],
+		module: 'calypso/my-sites/site-settings/settings-security',
+		group: 'sites',
+	},
+	{
+		name: 'settings-jetpack',
+		paths: [ '/settings/jetpack' ],
+		module: 'calypso/my-sites/site-settings/settings-jetpack',
+		group: 'sites',
+	},
+	{
 		name: 'settings',
 		paths: [ '/settings' ],
 		module: 'calypso/my-sites/site-settings',
