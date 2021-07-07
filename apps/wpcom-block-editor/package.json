@@ -30,6 +30,7 @@
 		"@wordpress/blocks": "^8.0.3",
 		"@wordpress/components": "^13.0.3",
 		"@wordpress/compose": "^3.25.3",
+		"@wordpress/core-data": "^3.1.7",
 		"@wordpress/data": "^4.27.3",
 		"@wordpress/dom-ready": "^2.13.2",
 		"@wordpress/editor": "^9.26.3",
