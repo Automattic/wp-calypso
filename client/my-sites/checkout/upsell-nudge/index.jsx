@@ -122,12 +122,15 @@ export class UpsellNudge extends React.Component {
 	}
 
 	validateContactInfo = () => {
-		if ( this.props.isLoading || ! this.state.isValidatingContactInfo ) {
+		if ( this.props.isLoading ) {
 			return;
 		}
 		if ( this.props.cards.length === 0 ) {
 			debug( 'not validating contact info because there are no cards' );
 			this.setState( { isValidatingContactInfo: false, isContactInfoValid: false } );
+			return;
+		}
+		if ( ! this.haveCardsChanged() ) {
 			return;
 		}
 		const storedCard = this.props.cards[ 0 ];
@@ -155,8 +158,24 @@ export class UpsellNudge extends React.Component {
 
 		validateContactDetails().then( ( isValid ) => {
 			debug( 'validation of contact details result is', isValid );
-			this.setState( { isValidatingContactInfo: false, isContactInfoValid: isValid } );
+			this.setState( {
+				isValidatingContactInfo: false,
+				isContactInfoValid: isValid,
+			} );
 		} );
+	};
+
+	haveCardsChanged = () => {
+		const cardIds = this.props.cards.map( ( card ) => card.stored_details_id );
+		if ( this.lastCardIds ) {
+			cardIds.forEach( ( id ) => {
+				if ( ! this.lastCardIds.includes( id ) ) {
+					return false;
+				}
+			} );
+		}
+		this.lastCardIds = cardIds;
+		return true;
 	};
 
 	render() {
