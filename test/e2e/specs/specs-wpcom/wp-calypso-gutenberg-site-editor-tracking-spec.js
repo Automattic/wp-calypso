@@ -1052,11 +1052,20 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			const detachEvents = events.filter(
 				( [ eventName ] ) => eventName === 'wpcom_block_editor_template_part_detach_blocks'
 			);
-			assert( detachEvents.length === 2 );
-			assert(
-				detachEvents[ 0 ][ 1 ].block_names === 'core/columns,core/column,core/column,core/column'
+			assert.strictEqual( detachEvents.length, 2 );
+			assert.strictEqual(
+				detachEvents[ 0 ][ 1 ].block_names,
+				'core/columns,core/column,core/column,core/column'
 			);
-			assert( typeof detachEvents[ 1 ][ 1 ].block_names );
+			assert.strictEqual( typeof detachEvents[ 1 ][ 1 ].block_names, 'undefined' );
+			const replaceBlockEvents = events.filter(
+				( [ eventName ] ) => eventName === 'wpcom_block_picker_block_inserted'
+			);
+			assert.strictEqual(
+				replaceBlockEvents.length,
+				0,
+				"detaching blocks from template part shouldn't trigger replace blocks event"
+			);
 
 			await deleteCustomEntities( this.driver, 'wp_template_part' );
 		} );
