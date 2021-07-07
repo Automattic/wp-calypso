@@ -10,7 +10,6 @@ import { flowRight, partialRight, pick } from 'lodash';
  */
 import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import { FEATURE_GOOGLE_ANALYTICS } from '@automattic/calypso-products';
-import getAvailablePlanUpgrade from 'calypso/state/selectors/get-available-plan-upgrade';
 import wrapSettingsForm from '../wrap-settings-form';
 import { getPlugins } from 'calypso/state/plugins/installed/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -41,7 +40,6 @@ export const GoogleAnalyticsForm = ( props ) => {
 		eventTracker,
 		uniqueEventTracker,
 		path,
-		availableUpgrade,
 		isAtomic,
 		isGoogleAnalyticsEligible,
 	} = props;
@@ -94,7 +92,6 @@ export const GoogleAnalyticsForm = ( props ) => {
 		placeholderText,
 		recordSupportLinkClick,
 		setDisplayForm,
-		availableUpgrade,
 		isAtomic,
 	};
 	if ( ( props.siteIsJetpack && ! isAtomic ) || ( isAtomic && isGoogleAnalyticsEligible ) ) {
@@ -122,7 +119,6 @@ const mapStateToProps = ( state ) => {
 		siteIsJetpack,
 		sitePlugins,
 		jetpackModuleActive,
-		availableUpgrade: getAvailablePlanUpgrade( state, siteId, FEATURE_GOOGLE_ANALYTICS ),
 		isAtomic: isAtomicSite( state, siteId ),
 		isGoogleAnalyticsEligible,
 	};

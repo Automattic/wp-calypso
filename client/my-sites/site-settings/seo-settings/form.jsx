@@ -11,7 +11,6 @@ import { localize } from 'i18n-calypso';
  */
 import { Card, Button } from '@automattic/components';
 import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
-import getAvailablePlanUpgrade from 'calypso/state/selectors/get-available-plan-upgrade';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
@@ -46,7 +45,12 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import { hasFeature } from 'calypso/state/sites/plans/selectors';
 import { getPlugins } from 'calypso/state/plugins/installed/selectors';
-import { FEATURE_ADVANCED_SEO, FEATURE_SEO_PREVIEW_TOOLS } from '@automattic/calypso-products';
+import {
+	FEATURE_ADVANCED_SEO,
+	FEATURE_SEO_PREVIEW_TOOLS,
+	TYPE_BUSINESS,
+	findFirstSimilarPlanKey,
+} from '@automattic/calypso-products';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
@@ -271,7 +275,6 @@ export class SeoForm extends React.Component {
 			siteIsComingSoon,
 			showAdvancedSeo,
 			isAtomic,
-			availableUpgrade,
 			showWebsiteMeta,
 			selectedSite,
 			isSeoToolsActive,
@@ -310,7 +313,11 @@ export class SeoForm extends React.Component {
 							'Boost your search engine ranking with the powerful SEO tools in the Business plan'
 						),
 						feature: FEATURE_ADVANCED_SEO,
-						plan: availableUpgrade,
+						plan:
+							selectedSite.plan &&
+							findFirstSimilarPlanKey( selectedSite.plan.product_slug, {
+								type: TYPE_BUSINESS,
+							} ),
 				  };
 
 		// To ensure two Coming Soon badges don't appear while sites with Coming Soon v1 (isSitePrivate && siteIsComingSoon) still exist.
@@ -491,7 +498,6 @@ const mapStateToProps = ( state ) => {
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
 		showAdvancedSeo: isAdvancedSeoEligible,
 		isAtomic: isAtomicSite( state, siteId ),
-		availableUpgrade: getAvailablePlanUpgrade( state, siteId, FEATURE_ADVANCED_SEO ),
 		showWebsiteMeta: !! get( selectedSite, 'options.advanced_seo_front_page_description', '' ),
 		isSeoToolsActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 		isSiteHidden: isHiddenSite( state, siteId ),
