@@ -284,11 +284,7 @@ class ThemeShowcase extends React.Component {
 					/>
 				) }
 				<div className="themes__content">
-					{ ! this.props.loggedOutComponent && showBanners && (
-						<UpworkBanner location={ 'theme-banner' } />
-					) }
 					<QueryThemeFilters />
-
 					<ThemesSearchCard
 						onSearch={ this.doSearch }
 						search={ filterString + search }
@@ -320,6 +316,9 @@ class ThemeShowcase extends React.Component {
 								</NavItem>
 							</NavTabs>
 						</SectionNav>
+					) }
+					{ ! this.props.loggedOutComponent && showBanners && (
+						<UpworkBanner location={ 'theme-banner' } />
 					) }
 					{ this.props.upsellBanner }
 
