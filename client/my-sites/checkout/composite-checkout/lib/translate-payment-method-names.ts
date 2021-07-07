@@ -107,7 +107,6 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod 
 		case 'WPCOM_Billing_Ebanx':
 		case 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef':
 		case 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking':
-		case 'WPCOM_Billing_Dlocal_Redirect_Indonesia_Wallet':
 		case 'WPCOM_Billing_PayPal_Direct':
 		case 'WPCOM_Billing_PayPal_Express':
 		case 'WPCOM_Billing_Stripe_Payment_Method':
