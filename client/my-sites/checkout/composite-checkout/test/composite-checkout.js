@@ -26,10 +26,18 @@ jest.mock( 'calypso/state/sites/selectors' );
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
+import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
+jest.mock( 'calypso/state/products-list/selectors/get-products-list' );
+import { getProductsList } from 'calypso/state/products-list/selectors/get-products-list';
+jest.mock( 'calypso/state/plans/selectors' );
+import { getPlanRawPrice } from 'calypso/state/plans/selectors';
 
 jest.mock( 'page', () => ( {
 	redirect: jest.fn(),
 } ) );
+
+const siteId = 13579;
 
 const domainProduct = {
 	product_name: '.cash Domain',
@@ -104,6 +112,40 @@ const planWithoutDomain = {
 	free_trial: false,
 	meta: '',
 	product_id: 1009,
+	volume: 1,
+	item_original_cost_integer: 14400,
+	item_original_cost_display: 'R$144',
+	item_subtotal_integer: 14400,
+	item_subtotal_display: 'R$144',
+};
+
+const planWithoutDomainMonthly = {
+	product_name: 'WordPress.com Personal Monthly',
+	product_slug: 'personal-bundle-monthly',
+	currency: 'BRL',
+	extra: {
+		context: 'signup',
+	},
+	free_trial: false,
+	meta: '',
+	product_id: 1019,
+	volume: 1,
+	item_original_cost_integer: 14400,
+	item_original_cost_display: 'R$144',
+	item_subtotal_integer: 14400,
+	item_subtotal_display: 'R$144',
+};
+
+const planWithoutDomainBiannual = {
+	product_name: 'WordPress.com Personal 2 Year',
+	product_slug: 'personal-bundle-2y',
+	currency: 'BRL',
+	extra: {
+		context: 'signup',
+	},
+	free_trial: false,
+	meta: '',
+	product_id: 1029,
 	volume: 1,
 	item_original_cost_integer: 14400,
 	item_original_cost_display: 'R$144',
@@ -226,6 +268,7 @@ describe( 'CompositeCheckout', () => {
 				>
 					<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
 						<CompositeCheckout
+							siteId={ siteId }
 							siteSlug={ 'foo.com' }
 							getStoredCards={ async () => [] }
 							overrideCountryList={ countryList }
@@ -486,6 +529,57 @@ describe( 'CompositeCheckout', () => {
 		const { getByText } = renderResult;
 		expect( getByText( 'Purchase Details' ) ).toBeInTheDocument();
 		expect( page.redirect ).not.toHaveBeenCalled();
+	} );
+
+	it( 'renders the variant picker if there are variants after clicking into edit mode', async () => {
+		getPlanRawPrice.mockImplementation( () => 144 );
+		getPlansBySiteId.mockImplementation( () => ( {
+			data: [
+				{
+					interval: 365,
+					productSlug: planWithoutDomain.product_slug,
+					currentPlan: true,
+				},
+			],
+		} ) );
+		getProductsList.mockImplementation( () => ( {
+			[ planWithoutDomain.product_slug ]: {
+				product_id: planWithoutDomain.product_id,
+				product_slug: planWithoutDomain.product_slug,
+				product_type: 'bundle',
+				available: true,
+				is_domain_registration: false,
+				cost_display: planWithoutDomain.item_subtotal_display,
+				currency_code: planWithoutDomain.currency,
+			},
+			[ planWithoutDomainMonthly.product_slug ]: {
+				product_id: planWithoutDomainMonthly.product_id,
+				product_slug: planWithoutDomainMonthly.product_slug,
+				product_type: 'bundle',
+				available: true,
+				is_domain_registration: false,
+				cost_display: planWithoutDomainMonthly.item_subtotal_display,
+				currency_code: planWithoutDomainMonthly.currency,
+			},
+			[ planWithoutDomainBiannual.product_slug ]: {
+				product_id: planWithoutDomainBiannual.product_id,
+				product_slug: planWithoutDomainBiannual.product_slug,
+				product_type: 'bundle',
+				available: true,
+				is_domain_registration: false,
+				cost_display: planWithoutDomainBiannual.item_subtotal_display,
+				currency_code: planWithoutDomainBiannual.currency,
+			},
+		} ) );
+
+		const cartChanges = { products: [ planWithoutDomain ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+		fireEvent.click( editOrderButton );
+
+		expect( screen.queryByText( 'One month' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'One year' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Two years' ) ).toBeInTheDocument();
 	} );
 
 	it( 'removes a product from the cart after clicking to remove it in edit mode', async () => {
