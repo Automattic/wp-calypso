@@ -112,7 +112,7 @@
 		"memberships": true,
 		"ssr/sample-log-cache-misses": true,
 		"support-user": true,
-		"theme/showcase-revamp": true,
+		"theme/showcase-revamp": false,
 		"tools/migrate": true,
 		"upgrades/checkout": true,
 		"upgrades/domain-search": true,
