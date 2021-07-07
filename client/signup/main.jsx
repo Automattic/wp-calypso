@@ -601,7 +601,7 @@ class Signup extends React.Component {
 
 	getInteractiveStepsCount() {
 		const flowStepsSlugs = flows.getFlow( this.props.flowName, this.props.isLoggedIn ).steps;
-		const flowSteps = flowStepsSlugs.filter( ( step ) => ! steps[ step ].props.nonInteractive );
+		const flowSteps = flowStepsSlugs.filter( ( step ) => ! steps[ step ].props?.nonInteractive );
 		return flowSteps.length;
 	}
 
