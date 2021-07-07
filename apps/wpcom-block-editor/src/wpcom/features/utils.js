@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import { isEqual, some, debounce } from 'lodash';
+import { select } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -33,6 +34,32 @@ export const getEditorType = () => {
 	return undefined;
 };
 
+/**
+ * Determines the context of a block event in the site editor, given the rootClientId of the block
+ * action.
+ *
+ * @param {string} rootClientId The rootClientId of the block event.
+ *
+ * @returns {(string|undefined)} The block event's context.
+ */
+export const maybeAddBlockEventContext = ( rootClientId ) => {
+	if ( getEditorType() === 'site' ) {
+		if ( ! rootClientId ) return 'template';
+		const contexts = [ 'core/template-part', 'core/post-content', 'core/block', 'core/query' ];
+		const rootBlock = select( 'core/block-editor' ).getBlock( rootClientId );
+
+		if ( contexts.some( ( context ) => context === rootBlock?.name ) ) return rootBlock?.name;
+		const matchingParentIds = select( 'core/block-editor' ).getBlockParentsByBlockName(
+			rootClientId,
+			contexts,
+			true
+		);
+		if ( matchingParentIds.length )
+			return select( 'core/block-editor' ).getBlock( matchingParentIds[ 0 ] )?.name;
+		return 'template';
+	}
+	return undefined;
+};
 /**
  * Compares two objects, returning values in newObject that do not correspond
  * to values in oldObject.
