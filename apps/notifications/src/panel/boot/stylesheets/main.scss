@@ -767,9 +767,13 @@
 	}
 
 	.wpnc__single-view img {
-		max-height: 128px;
+		max-width: 128px;
 		height: auto;
-		width: auto;
+	}
+
+	.wpnc__single-view .wpnc__welcome_to_wordpress_com img {
+		max-height: 128px;
+		max-width: initial;
 	}
 
 	.wpnc__single-view .wpnc__badge .wpnc__body .wpnc__body-content .wpnc__paragraph {
