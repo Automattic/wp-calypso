@@ -11,6 +11,9 @@ import { details, fetchThemeDetailsData } from './controller';
 import { createNavigation, siteSelection } from 'calypso/my-sites/controller';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
+import { translate } from 'i18n-calypso';
+import React from 'react';
+import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 
 function redirectToLoginIfSiteRequested( context, next ) {
 	if ( context.params.site_id ) {
@@ -29,6 +32,20 @@ function addNavigationIfLoggedIn( context, next ) {
 	next();
 }
 
+function setTitleAndSelectSiteIfLoggedIn( context, next ) {
+	const state = context.store.getState();
+	const theme = getCanonicalTheme( state, null, context.params.slug );
+	const themeName = theme.name;
+
+	context.getSiteSelectionHeaderText = () =>
+		translate( 'Select a site to see {{strong}}%(themeName)s{{/strong}} details', {
+			args: { themeName },
+			components: { strong: <strong /> },
+		} );
+
+	selectSiteIfLoggedIn( context, next );
+}
+
 export default function ( router ) {
 	const langParam = getLanguageRouteParam();
 
@@ -36,7 +53,7 @@ export default function ( router ) {
 		`/${ langParam }/theme/:slug/:section(setup|support)?`,
 		redirectWithoutLocaleParamIfLoggedIn,
 		redirectToLoginIfSiteRequested,
-		selectSiteIfLoggedIn,
+		setTitleAndSelectSiteIfLoggedIn,
 		fetchThemeDetailsData,
 		details,
 		makeLayout
