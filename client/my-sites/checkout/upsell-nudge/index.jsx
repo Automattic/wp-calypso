@@ -170,12 +170,12 @@ export class UpsellNudge extends React.Component {
 		if ( this.lastCardIds ) {
 			cardIds.forEach( ( id ) => {
 				if ( ! this.lastCardIds.includes( id ) ) {
-					return false;
+					return true;
 				}
 			} );
 		}
 		this.lastCardIds = cardIds;
-		return true;
+		return false;
 	};
 
 	render() {
