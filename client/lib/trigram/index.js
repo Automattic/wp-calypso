@@ -77,8 +77,8 @@ const stringToLookupCache = new LRU( {
  * It's the same as calling gramsToLookup( trigrams( str ) ), but
  * it caches all calculations it does to find them again quickly.
  *
- * @param str A string to convert to a lookup table of trigram frequency.
- * @returns {str} lookup A lookup table of trigram frequency.
+ * @param {string} str A string to convert to a lookup table of trigram frequency.
+ * @returns {object} lookup A lookup table of trigram frequency.
  */
 function stringToLookup( str ) {
 	const cacheAnswer = stringToLookupCache.get( str );
