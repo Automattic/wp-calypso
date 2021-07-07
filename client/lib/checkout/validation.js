@@ -141,7 +141,7 @@ export function tokenFieldRules() {
  * Returns a validation ruleset to use for the given payment type
  *
  * @param {object} paymentDetails object containing fieldname/value keypairs
- * @param {string} paymentType credit-card|paypal|id_wallet|p24|brazil-tef|netbanking|token|stripe|ebanx
+ * @param {string} paymentType credit-card|paypal|p24|brazil-tef|netbanking|token|stripe|ebanx
  * @returns {object|null} the ruleset
  */
 export function paymentFieldRules( paymentDetails, paymentType ) {
@@ -159,8 +159,6 @@ export function paymentFieldRules( paymentDetails, paymentType ) {
 			);
 		case 'brazil-tef':
 			return tefPaymentFieldRules();
-		case 'id_wallet':
-			return countrySpecificFieldRules( 'ID' );
 		case 'netbanking':
 			return countrySpecificFieldRules( 'IN' );
 		case 'token':
@@ -350,7 +348,7 @@ validators.validStreetNumber = {
  * property of that object is an array of error strings.
  *
  * @param {object} paymentDetails object containing fieldname/value keypairs
- * @param {string} paymentType credit-card|paypal|id_wallet|p24|brazil-tef|netbanking|token|stripe|ebanx
+ * @param {string} paymentType credit-card|paypal|p24|brazil-tef|netbanking|token|stripe|ebanx
  * @returns {object} validation errors, if any
  */
 export function validatePaymentDetails( paymentDetails, paymentType ) {
