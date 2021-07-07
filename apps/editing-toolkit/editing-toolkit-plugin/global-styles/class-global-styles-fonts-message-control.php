@@ -43,9 +43,43 @@ class Global_Styles_Fonts_Message_Control extends \WP_Customize_Control {
 	 * Render the customizer help document content
 	 */
 	public function render_content() {
+		$this->render_tracks_events_functions();
 		$this->render_intro_text();
 		$this->maybe_render_block_editor_link();
 		$this->render_learn_more_link();
+	}
+
+	/**
+	 * Create tracks events functions which can be invoked later when links are clicked.
+	 */
+	private function render_tracks_events_functions() {
+		$current_user = wp_get_current_user();
+		?>
+			<script type="text/javascript">
+				function global_styles_fonts_message_control_prep_tracks() {
+					window._tkq = window._tkq || [];
+					window._tkq.push( [
+						'identifyUser',
+						<?php echo (int) $current_user->ID; ?>,
+						'<?php echo esc_js( $current_user->user_login ); ?>'
+					] );
+				}
+				function global_styles_fonts_message_control_block_editor_link_clicked() {
+					global_styles_fonts_message_control_prep_tracks();
+					window._tkq.push( [
+						'recordEvent',
+						'calypso_customizer_global_styles_block_editor_link_clicked'
+					] );
+				}
+				function global_styles_fonts_message_control_support_link_clicked() {
+					global_styles_fonts_message_control_prep_tracks();
+					window._tkq.push( [
+						'recordEvent',
+						'calypso_customizer_global_styles_support_link_clicked'
+					] );
+				}
+			</script>
+		<?php
 	}
 
 	/**
@@ -72,7 +106,10 @@ class Global_Styles_Fonts_Message_Control extends \WP_Customize_Control {
 		$block_editor_link_text = __( 'Click here to open the Block Editor and change your fonts.', 'full-site-editing' );
 		?>
 			<p>
-				<a href="<?php echo esc_url( $editable_page_id ); ?>" target="_blank">
+				<a
+					href="<?php echo esc_url( $editable_page_id ); ?>"
+					target="_blank"
+					onClick="global_styles_fonts_message_control_block_editor_link_clicked();">
 					<?php echo esc_html( $block_editor_link_text ); ?>
 				</a>
 			</p>
@@ -87,7 +124,11 @@ class Global_Styles_Fonts_Message_Control extends \WP_Customize_Control {
 		$learn_more_link_text = __( 'Learn more about changing fonts using Global Styles.', 'full-site-editing' );
 		?>
 			<p>
-				<a href="https://wordpress.com/support/custom-fonts/#changing-fonts-with-global-styles" target="_blank">
+				<a
+					href="https://wordpress.com/support/custom-fonts/#changing-fonts-with-global-styles"
+					target="_blank"
+					onClick="global_styles_fonts_message_control_support_link_clicked();"
+				>
 					<?php echo esc_html( $learn_more_link_text ); ?>
 				</a>
 			</p>
