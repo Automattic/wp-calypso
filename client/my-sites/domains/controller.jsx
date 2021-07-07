@@ -262,7 +262,7 @@ const jetpackNoDomainsWarning = ( context, next ) => {
 						'You can only purchase domains for sites hosted on WordPress.com at this time.'
 					) }
 					action={ translate( 'View Plans' ) }
-					actionURL={ '/plans/' + ( selectedSite.siteSlug || '' ) }
+					actionURL={ '/plans/' + ( selectedSite.slug || '' ) }
 				/>
 			</Main>
 		);
