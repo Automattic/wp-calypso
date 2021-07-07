@@ -15,17 +15,58 @@
 	@include breakpoint-deprecated( '>660px' ) {
 		flex-direction: row;
 	}
-}
 
-.product-without-price--full-width
-.product-without-price__header {
-	@include breakpoint-deprecated( '>660px' ) {
+	.product-without-price__header {
+		@include breakpoint-deprecated( '>660px' ) {
+			flex: 1;
+			margin-inline-end: 32px;
+		}
+	}
+
+	.product-without-price__title {
+		@include breakpoint-deprecated( '>660px' ) {
+			margin-bottom: initial;
+		}
+	}
+
+	.product-without-price__button.button {
+		@include breakpoint-deprecated( '>660px' ) {
+			max-width: 210px;
+		}
+
+		@include break-large {
+			margin-bottom: 0;
+		}
+	}
+
+	.product-without-price__features-list {
 		flex: 1;
-		margin-inline-end: 32px;
+
+		@include break-large {
+			align-self: center;
+
+			display: flex;
+			align-items: center;
+			flex-wrap: wrap;
+			flex: 2 1;
+
+			margin-top: initial;
+			margin-bottom: -14px;
+
+			> li {
+				width: calc( 50% - 8px );
+				padding-inline-start: 8px;
+
+				margin-bottom: 14px;
+			}
+
+			> li:last-child {
+				margin-bottom: 14px;
+			}
+		}
 	}
 }
 
-.product-without-price--full-width
 .product-without-price__title {
 	color: var( --studio-gray-100 );
 	margin: 12px 0 20px;
@@ -37,18 +78,14 @@
 
 	@include breakpoint-deprecated( '>660px' ) {
 		margin-top: initial;
-		margin-bottom: initial;
 	}
 }
 
-.product-without-price--full-width
 .product-without-price__subheadline {
 	color: var( --studio-gray-60 );
-
 	font-size: inherit;
 }
 
-.product-without-price--full-width
 .product-without-price__button.button {
 	display: block;
 
@@ -60,23 +97,10 @@
 	border-radius: 4px;
 
 	font-size: 1rem;
-
-	@include breakpoint-deprecated( '>660px' ) {
-		max-width: 210px;
-	}
-
-	@include break-large {
-		margin-bottom: 0;
-	}
 }
 
-.product-without-price--full-width
 .product-without-price__features-list {
-	margin: 28px 0 0;
-
 	color: var( --studio-gray-60 );
-
-	flex: 1;
 	margin: 0 16px 32px;
 
 	> li {
@@ -89,30 +113,6 @@
 	}
 
 	@include breakpoint-deprecated( '>660px' ) {
-		margin-top: 16px;
-		margin-bottom: 16px;
-	}
-
-	@include break-large {
-		align-self: center;
-
-		display: flex;
-		align-items: center;
-		flex-wrap: wrap;
-		flex: 2 1;
-
-		margin-top: initial;
-		margin-bottom: -14px;
-
-		> li {
-			width: calc( 50% - 8px );
-			padding-inline-start: 8px;
-
-			margin-bottom: 14px;
-		}
-
-		> li:last-child {
-			margin-bottom: 14px;
-		}
+		margin: 16px;
 	}
 }
