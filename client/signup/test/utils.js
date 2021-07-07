@@ -275,32 +275,14 @@ describe( 'utils', () => {
 		const defaultFlowSteps = [ 'user', 'domains', 'plans' ];
 
 		test( 'should return true when given flow contains "plans" step', () => {
-			const isPlanStepSkipped = false;
-			const isPlanSelectionAvailable = isPlanSelectionAvailableLaterInFlow(
-				defaultFlowSteps,
-				isPlanStepSkipped
-			);
+			const isPlanSelectionAvailable = isPlanSelectionAvailableLaterInFlow( defaultFlowSteps );
 
 			expect( isPlanSelectionAvailable ).toBe( true );
 		} );
 
 		test( 'should return false when given flow doesn`t contain "plans" step', () => {
 			const flowSteps = [ 'user', 'domains' ];
-			const isPlanStepSkipped = false;
-			const isPlanSelectionAvailable = isPlanSelectionAvailableLaterInFlow(
-				flowSteps,
-				isPlanStepSkipped
-			);
-
-			expect( isPlanSelectionAvailable ).toBe( false );
-		} );
-
-		test( 'should return false when "plans" step was skipped', () => {
-			const isPlanStepSkipped = true;
-			const isPlanSelectionAvailable = isPlanSelectionAvailableLaterInFlow(
-				defaultFlowSteps,
-				isPlanStepSkipped
-			);
+			const isPlanSelectionAvailable = isPlanSelectionAvailableLaterInFlow( flowSteps );
 
 			expect( isPlanSelectionAvailable ).toBe( false );
 		} );

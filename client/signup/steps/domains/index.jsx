@@ -889,10 +889,8 @@ export default connect(
 			vertical: getVerticalForDomainSuggestions( state ),
 			selectedSite: getSelectedSite( state ),
 			sites: getSitesItems( state ),
-			isPlanSelectionAvailableLaterInFlow: isPlanSelectionAvailableLaterInFlow(
-				steps,
-				isPlanStepSkipped
-			),
+			isPlanSelectionAvailableLaterInFlow:
+				! isPlanStepSkipped && isPlanSelectionAvailableLaterInFlow( steps ),
 			userLoggedIn: isUserLoggedIn( state ),
 		};
 	},
