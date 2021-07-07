@@ -121,9 +121,7 @@ export class UpsellNudge extends React.Component {
 	}
 
 	validateContactInfo = () => {
-		debug( 'possibly validating contact info' );
 		if ( this.props.isLoading ) {
-			debug( 'cancelling validating contact info; loading is still true' );
 			return;
 		}
 		if ( this.props.cards.length === 0 ) {
@@ -170,25 +168,20 @@ export class UpsellNudge extends React.Component {
 
 	haveCardsChanged = () => {
 		const cardIds = this.props.cards.map( ( card ) => card.stored_details_id );
-		debug( 'have cards changed?', cardIds, this.lastCardIds );
 		if ( ! this.lastCardIds ) {
 			this.lastCardIds = cardIds;
-			debug( 'cards have changed; no previous cards' );
 			return true;
 		}
 		if ( this.lastCardIds.length !== cardIds.length ) {
 			this.lastCardIds = cardIds;
-			debug( 'cards have changed; length differs' );
 			return true;
 		}
 		cardIds.forEach( ( id ) => {
 			if ( ! this.lastCardIds.includes( id ) ) {
-				debug( `cards have changed; id ${ id } is not in last render` );
 				this.lastCardIds = cardIds;
 				return true;
 			}
 		} );
-		debug( 'cards have not changed' );
 		this.lastCardIds = cardIds;
 		return false;
 	};
@@ -386,7 +379,7 @@ export class UpsellNudge extends React.Component {
 		const supportedUpsellTypes = [ CONCIERGE_QUICKSTART_SESSION, BUSINESS_PLAN_UPGRADE_UPSELL ];
 		if ( 'accept' !== buttonAction || ! supportedUpsellTypes.includes( upsellType ) ) {
 			debug(
-				'not eligible for one-click upsell because the upsellType (${upsellType}) is not supported'
+				`not eligible for one-click upsell because the upsellType (${ upsellType }) is not supported`
 			);
 			return false;
 		}
