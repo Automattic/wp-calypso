@@ -16,7 +16,6 @@ import { fetchStripeConfiguration } from 'calypso/my-sites/checkout/composite-ch
 import CompositeCheckout from 'calypso/my-sites/checkout/composite-checkout/composite-checkout';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import wp from 'calypso/lib/wp';
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 
 /**
  * Style dependencies
@@ -82,22 +81,20 @@ const EditorCheckoutModal: React.FunctionComponent< Props > = ( props ) => {
 			shouldCloseOnClickOutside={ false }
 			icon={ <Icon icon={ wordpress } size={ 36 } /> }
 		>
-			<CalypsoShoppingCartProvider>
-				<StripeHookProvider
-					fetchStripeConfiguration={ fetchStripeConfigurationWpcom }
-					locale={ translate.locale }
-				>
-					<CompositeCheckout
-						redirectTo={ redirectTo } // custom thank-you URL for payments that are processed after a redirect (eg: Paypal)
-						isInEditor
-						isFocusedLaunch={ isFocusedLaunch }
-						siteId={ site?.ID }
-						siteSlug={ site?.slug }
-						productAliasFromUrl={ commaSeparatedProductSlugs }
-						onAfterPaymentComplete={ handleAfterPaymentComplete }
-					/>
-				</StripeHookProvider>
-			</CalypsoShoppingCartProvider>
+			<StripeHookProvider
+				fetchStripeConfiguration={ fetchStripeConfigurationWpcom }
+				locale={ translate.locale }
+			>
+				<CompositeCheckout
+					redirectTo={ redirectTo } // custom thank-you URL for payments that are processed after a redirect (eg: Paypal)
+					isInEditor
+					isFocusedLaunch={ isFocusedLaunch }
+					siteId={ site?.ID }
+					siteSlug={ site?.slug }
+					productAliasFromUrl={ commaSeparatedProductSlugs }
+					onAfterPaymentComplete={ handleAfterPaymentComplete }
+				/>
+			</StripeHookProvider>
 		</Modal>
 	) : null;
 };

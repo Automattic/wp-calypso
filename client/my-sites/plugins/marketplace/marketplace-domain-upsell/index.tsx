@@ -16,7 +16,6 @@ import type { DomainSuggestions } from '@automattic/data-stores';
 /**
  * Internal dependencies
  */
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import {
 	MARKETPLACE_FLOW_ID,
@@ -202,9 +201,7 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 export default function MarketplaceDomainUpsell(): JSX.Element {
 	return (
 		<ThemeProvider theme={ theme }>
-			<CalypsoShoppingCartProvider>
-				<CalypsoWrappedMarketplaceDomainUpsell />
-			</CalypsoShoppingCartProvider>
+			<CalypsoWrappedMarketplaceDomainUpsell />
 		</ThemeProvider>
 	);
 }

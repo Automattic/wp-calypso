@@ -19,7 +19,6 @@ import {
 import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
 import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutSystemDecider from './checkout-system-decider';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
@@ -259,14 +258,12 @@ export function upsellNudge( context, next ) {
 	setSectionMiddleware( { name: upsellType } )( context );
 
 	context.primary = (
-		<CalypsoShoppingCartProvider>
-			<UpsellNudge
-				siteSlugParam={ site }
-				receiptId={ Number( receiptId ) }
-				upsellType={ upsellType }
-				upgradeItem={ upgradeItem }
-			/>
-		</CalypsoShoppingCartProvider>
+		<UpsellNudge
+			siteSlugParam={ site }
+			receiptId={ Number( receiptId ) }
+			upsellType={ upsellType }
+			upgradeItem={ upgradeItem }
+		/>
 	);
 
 	next();

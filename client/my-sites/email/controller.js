@@ -6,7 +6,6 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import EmailForwarding from 'calypso/my-sites/email/email-forwarding';
 import EmailManagementHome from 'calypso/my-sites/email/email-management/email-home';
 import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
@@ -19,12 +18,10 @@ import TitanManagementIframe from 'calypso/my-sites/email/email-management/titan
 export default {
 	emailManagementAddGSuiteUsers( pageContext, next ) {
 		pageContext.primary = (
-			<CalypsoShoppingCartProvider>
-				<GSuiteAddUsers
-					productType={ pageContext.params.productType }
-					selectedDomainName={ pageContext.params.domain }
-				/>
-			</CalypsoShoppingCartProvider>
+			<GSuiteAddUsers
+				productType={ pageContext.params.productType }
+				selectedDomainName={ pageContext.params.domain }
+			/>
 		);
 
 		next();
@@ -43,32 +40,24 @@ export default {
 
 	emailManagementManageTitanMailboxes( pageContext, next ) {
 		pageContext.primary = (
-			<CalypsoShoppingCartProvider>
-				<TitanManageMailboxes
-					context={ pageContext.query.context }
-					selectedDomainName={ pageContext.params.domain }
-				/>
-			</CalypsoShoppingCartProvider>
+			<TitanManageMailboxes
+				context={ pageContext.query.context }
+				selectedDomainName={ pageContext.params.domain }
+			/>
 		);
 
 		next();
 	},
 
 	emailManagementNewTitanAccount( pageContext, next ) {
-		pageContext.primary = (
-			<CalypsoShoppingCartProvider>
-				<TitanAddMailboxes selectedDomainName={ pageContext.params.domain } />
-			</CalypsoShoppingCartProvider>
-		);
+		pageContext.primary = <TitanAddMailboxes selectedDomainName={ pageContext.params.domain } />;
 
 		next();
 	},
 
 	emailManagementPurchaseNewEmailAccount( pageContext, next ) {
 		pageContext.primary = (
-			<CalypsoShoppingCartProvider>
-				<EmailProvidersComparison selectedDomainName={ pageContext.params.domain } />
-			</CalypsoShoppingCartProvider>
+			<EmailProvidersComparison selectedDomainName={ pageContext.params.domain } />
 		);
 
 		next();
@@ -93,11 +82,7 @@ export default {
 	},
 
 	emailManagement( pageContext, next ) {
-		pageContext.primary = (
-			<CalypsoShoppingCartProvider>
-				<EmailManagementHome selectedDomainName={ pageContext.params.domain } />
-			</CalypsoShoppingCartProvider>
-		);
+		pageContext.primary = <EmailManagementHome selectedDomainName={ pageContext.params.domain } />;
 
 		next();
 	},

@@ -80,7 +80,6 @@ import PlanFeaturesScroller from './scroller';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { getProductsList } from 'calypso/state/products-list/selectors';
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 
 /**
  * Style dependencies
@@ -1116,10 +1115,4 @@ const ConnectedPlanFeatures = connect(
 
 /* eslint-enable */
 
-export default function PlanFeaturesWrapper( props ) {
-	return (
-		<CalypsoShoppingCartProvider>
-			<ConnectedPlanFeatures { ...props } />
-		</CalypsoShoppingCartProvider>
-	);
-}
+export default ConnectedPlanFeatures;

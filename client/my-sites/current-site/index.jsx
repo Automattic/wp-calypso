@@ -22,7 +22,6 @@ import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { hasAllSitesList } from 'calypso/state/sites/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 
 /**
@@ -106,12 +105,10 @@ class CurrentSite extends Component {
 						/>
 					) }
 					{ selectedSite && isEnabled( 'current-site/stale-cart-notice' ) && (
-						<CalypsoShoppingCartProvider>
-							<AsyncLoad
-								require="calypso/my-sites/current-site/stale-cart-items-notice"
-								placeholder={ null }
-							/>
-						</CalypsoShoppingCartProvider>
+						<AsyncLoad
+							require="calypso/my-sites/current-site/stale-cart-items-notice"
+							placeholder={ null }
+						/>
 					) }
 					{ selectedSite && isEnabled( 'current-site/notice' ) && (
 						<AsyncLoad

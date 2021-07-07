@@ -27,7 +27,6 @@ import {
 	getPlugin as getWporgPlugin,
 } from 'calypso/state/plugins/wporg/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import PurchaseArea from './purchase-area';
@@ -48,7 +47,7 @@ interface MarketplacePluginDetailsInterface {
 	marketplacePluginSlug: keyof PluginProductMappingInterface;
 }
 
-function MarketplacePluginDetails( {
+export default function MarketplacePluginDetails( {
 	marketplacePluginSlug,
 }: MarketplacePluginDetailsInterface ): JSX.Element {
 	const translate = useTranslate();
@@ -132,15 +131,5 @@ function MarketplacePluginDetails( {
 				'Loading...'
 			) }
 		</>
-	);
-}
-
-export default function MarketplacePluginDetailsWrapper(
-	props: MarketplacePluginDetailsInterface
-): JSX.Element {
-	return (
-		<CalypsoShoppingCartProvider>
-			<MarketplacePluginDetails { ...props }></MarketplacePluginDetails>
-		</CalypsoShoppingCartProvider>
 	);
 }
