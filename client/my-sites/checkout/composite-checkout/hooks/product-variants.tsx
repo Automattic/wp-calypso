@@ -68,10 +68,12 @@ export function useGetProductVariants(
 	const reduxDispatch = useDispatch();
 
 	const variantProductSlugs = useVariantPlanProductSlugs( productSlug );
+	debug( 'variantProductSlugs', variantProductSlugs );
 
 	const productsWithPrices = useSelector( ( state ) => {
 		return computeProductsWithPrices( state, siteId, variantProductSlugs, 0, {} );
 	} );
+	debug( 'productsWithPrices', productsWithPrices );
 
 	const [ haveFetchedProducts, setHaveFetchedProducts ] = useState( false );
 	const shouldFetchProducts = ! productsWithPrices;
