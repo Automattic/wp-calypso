@@ -568,9 +568,20 @@ describe( 'CompositeCheckout', () => {
 		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
 		fireEvent.click( editOrderButton );
 
-		expect( screen.queryByText( 'One month' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'One month' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'One year' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Two years' ) ).toBeInTheDocument();
+	} );
+
+	it( 'does not render the variant picker if there are no variants after clicking into edit mode', async () => {
+		const cartChanges = { products: [ domainProduct ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+		fireEvent.click( editOrderButton );
+
+		expect( screen.queryByText( 'One month' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'One year' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Two years' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'removes a product from the cart after clicking to remove it in edit mode', async () => {
