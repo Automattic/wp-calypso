@@ -26,22 +26,21 @@ import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
 import { shouldDisplayJetpackCredentialsBanner } from 'calypso/state/site-settings/jetpack-credentials-banner/selectors';
 import { siteHasScanProductPurchase } from 'calypso/state/purchases/selectors';
 import isRewindActive from 'calypso/state/selectors/is-rewind-active';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import isSiteWPCOMOnFreePlan from 'calypso/state/selectors/is-site-wpcom-on-free-plan';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
+import { FEATURE_SECURITY_SETTINGS } from '@automattic/calypso-products';
 
 const SiteSettingsSecurity = ( {
 	site,
 	siteId,
-	siteIsJetpack,
 	hasScanProduct,
 	hasActiveRewind,
 	isJetpackSectionEnabled,
 	shouldDisplayBanner,
-	isFreeWPCOMSite,
 	translate,
+	hasActiveSecuritySettingsFeature,
 } ) => {
-	if ( ! siteIsJetpack || isFreeWPCOMSite ) {
+	if ( ! hasActiveSecuritySettingsFeature ) {
 		return (
 			<EmptyContent
 				action={ translate( 'Manage general settings for %(site)s', {
@@ -87,12 +86,11 @@ const SiteSettingsSecurity = ( {
 SiteSettingsSecurity.propTypes = {
 	site: PropTypes.object,
 	siteId: PropTypes.number,
-	siteIsJetpack: PropTypes.bool,
 	hasScanProduct: PropTypes.bool,
 	hasActiveRewind: PropTypes.bool,
 	isJetpackSectionEnabled: PropTypes.bool,
 	shouldDisplayBanner: PropTypes.bool,
-	isFreeWPCOMSite: PropTypes.bool,
+	hasActiveSecuritySettingsFeature: PropTypes.bool,
 };
 
 export default connect( ( state ) => {
@@ -102,11 +100,14 @@ export default connect( ( state ) => {
 	return {
 		site,
 		siteId,
-		siteIsJetpack: isJetpackSite( state, siteId ),
 		hasScanProduct: siteHasScanProductPurchase( state, siteId ),
 		hasActiveRewind: isRewindActive( state, siteId ),
 		isJetpackSectionEnabled: isJetpackSectionEnabledForSite( state, siteId ),
 		shouldDisplayBanner: shouldDisplayJetpackCredentialsBanner( state ),
-		isFreeWPCOMSite: isSiteWPCOMOnFreePlan( state, siteId ),
+		hasActiveSecuritySettingsFeature: hasActiveSiteFeature(
+			state,
+			siteId,
+			FEATURE_SECURITY_SETTINGS
+		),
 	};
 } )( localize( SiteSettingsSecurity ) );
