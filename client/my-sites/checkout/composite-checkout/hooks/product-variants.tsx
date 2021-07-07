@@ -135,23 +135,7 @@ function VariantPriceDiscount( { variant }: { variant: AvailableProductVariant }
 }
 
 function useVariantPlanProductSlugs( productSlug: string | undefined ): string[] {
-	const reduxDispatch = useDispatch();
-
 	const chosenPlan = getPlan( productSlug );
-
-	const [ haveFetchedPlans, setHaveFetchedPlans ] = useState( false );
-	const shouldFetchPlans = ! chosenPlan;
-
-	useEffect( () => {
-		// Trigger at most one HTTP request
-		debug( 'deciding whether to request plan variant data' );
-		if ( shouldFetchPlans && ! haveFetchedPlans ) {
-			debug( 'dispatching request for plan variant data' );
-			reduxDispatch( requestPlans() );
-			reduxDispatch( requestProductsList() );
-			setHaveFetchedPlans( true );
-		}
-	}, [ haveFetchedPlans, shouldFetchPlans, reduxDispatch ] );
 
 	if ( ! chosenPlan ) {
 		return [];
