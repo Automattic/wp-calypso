@@ -19,7 +19,7 @@ function useUpdateUserMutation( siteId, queryOptions = {} ) {
 			onSuccess( ...args ) {
 				const [ { login } ] = args;
 				queryClient.invalidateQueries( getCacheKey( siteId, login ) );
-				queryOptions?.onSuccess( ...args );
+				queryOptions.onSuccess?.( ...args );
 			},
 		}
 	);
