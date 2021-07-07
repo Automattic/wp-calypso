@@ -2,16 +2,16 @@
  * Internal dependencies
  */
 import {
-	purchaseFlow as purchaseFlowReducer,
+	default as purchaseFlowReducer,
 	defaultState as defaultMarketPlaceState,
-} from 'calypso/state/plugins/marketplace/reducer';
+} from 'calypso/state/marketplace/purchase-flow/reducer';
 import {
 	setPrimaryDomainCandidate,
 	setPluginSlugToBeInstalled,
 	setIsPluginInstalledDuringPurchase,
-} from 'calypso/state/plugins/marketplace/actions';
+} from 'calypso/state/marketplace/purchase-flow/actions';
 
-describe( 'Marketplace reducer', () => {
+describe( 'Purchase Flow states test suite', () => {
 	test( 'purchaseFlow reducer should default to an empty object', () => {
 		const recievedState = purchaseFlowReducer( defaultMarketPlaceState, {
 			type: 'SOME_RANDOM_ACTION',

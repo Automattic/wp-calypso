@@ -6,7 +6,7 @@ import type { AnyAction, Dispatch } from 'redux';
 /**
  * Internal dependencies
  */
-import 'calypso/state/plugins/init';
+import 'calypso/state/marketplace/init';
 import {
 	MARKETPLACE_PRIMARY_DOMAIN_SELECT,
 	MARKETPLACE_QUEUE_PLUGIN_INSTALL,
@@ -21,11 +21,11 @@ import {
 	ISetPrimaryDomainCandidateAction,
 	ISetPluginInstalledDuringPurchaseFlag,
 	MARKETPLACE_ASYNC_PROCESS_STATUS,
-} from './types';
+} from 'calypso/state/marketplace/types';
 import {
 	getPurchaseFlowState,
 	getIsPluginInformationLoaded,
-} from 'calypso/state/plugins/marketplace/selectors';
+} from 'calypso/state/marketplace/purchase-flow/selectors';
 import { fetchSitePlugins, installPlugin } from 'calypso/state/plugins/installed/actions';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -40,8 +40,8 @@ import {
 } from 'calypso/state/plugins/installed/status/constants';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin as getWporgPlugin } from 'calypso/state/plugins/wporg/selectors';
-import { IAppState } from 'calypso/state/plugins/reducer';
-import { marketplaceDebugger } from 'calypso/my-sites/plugins/marketplace/constants';
+import { IAppState } from 'calypso/state/types';
+import { marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';
 
 export function setPrimaryDomainCandidate(
 	domainName: string | undefined

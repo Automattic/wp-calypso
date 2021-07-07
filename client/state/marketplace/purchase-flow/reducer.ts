@@ -14,14 +14,13 @@ import {
 	MARKETPLACE_PLUGIN_INSTALLATION_STATE_CHANGE,
 	MARKETPLACE_SITE_TRANSFER_PLUGIN_INSTALL,
 } from 'calypso/state/action-types';
-import { combineReducers, withPersistence } from 'calypso/state/utils';
 import {
 	MARKETPLACE_ASYNC_PROCESS_STATUS,
 	IPurchaseFlowState,
 	ISetPluginInstalledDuringPurchaseFlag,
 	ISetPluginToBeInstalledAction,
 	ISetPrimaryDomainCandidateAction,
-} from './types';
+} from '../types';
 import { THEME_TRANSFER_INITIATE_REQUEST } from 'calypso/state/themes/action-types';
 
 export const defaultState: IPurchaseFlowState = {
@@ -35,7 +34,7 @@ export const defaultState: IPurchaseFlowState = {
 	isPluginInstalledAlongWithTransfer: null,
 };
 
-export function purchaseFlow(
+export default function purchaseFlow(
 	state: IPurchaseFlowState = defaultState,
 	action: AnyAction
 ): IPurchaseFlowState {
@@ -109,7 +108,3 @@ export function purchaseFlow(
 			return state;
 	}
 }
-
-export default combineReducers( {
-	purchaseFlow: withPersistence( purchaseFlow ),
-} );

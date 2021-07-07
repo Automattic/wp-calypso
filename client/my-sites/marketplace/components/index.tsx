@@ -8,7 +8,7 @@ import { Button } from '@automattic/components';
 /**
  * Internal dependencies
  */
-import { MarketplaceThemeProps } from 'calypso/my-sites/plugins/marketplace/theme';
+import { MarketplaceThemeProps } from 'calypso/my-sites/marketplace/theme';
 
 export const MobileHiddenHorizontalRule = styled( HorizontalRule )< MarketplaceThemeProps >`
 	@media ( ${ ( { theme } ) => theme?.breakpoints.tabletDown } ) {

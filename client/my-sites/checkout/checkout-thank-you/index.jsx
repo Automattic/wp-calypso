@@ -433,9 +433,7 @@ export class CheckoutThankYou extends React.Component {
 		}
 
 		if ( wasMarketplaceProduct ) {
-			return (
-				<AsyncLoad require="calypso/my-sites/plugins/marketplace/marketplace-plugin-setup-status" />
-			);
+			return <AsyncLoad require="calypso/my-sites/marketplace/marketplace-plugin-setup-status" />;
 		} else if ( wasEcommercePlanPurchased ) {
 			if ( ! this.props.transferComplete ) {
 				return (
