@@ -3,7 +3,7 @@
  */
 import assert from 'assert';
 import config from 'config';
-import { By } from 'selenium-webdriver';
+import { By, Key } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -980,39 +980,49 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 		it( 'Tracks "wpcom_block_editor_convert_to_template_part"', async function () {
 			const editor = await SiteEditorComponent.Expect( this.driver );
 
+			const threeColumnsEqualSplitVariationLocator = By.css(
+				'[aria-label="Three columns; equal split"]'
+			);
+			const selectParentColumnsBlockLocator = By.css( '[aria-label="Select Columns"]' );
+			const blockToolbarOptionsLocator = By.css(
+				'[aria-label="Block tools"] [aria-label="Options"]'
+			);
+			const makeTemplatePartOptionsItemLocator = driverHelper.createTextLocator(
+				By.css( '[aria-label="Options"] button' ),
+				'Make template part'
+			);
+			const makeTemplatePartDialogNameInputLocator = By.css( '[role="dialog"] input[type="text"]' );
+			const makeTemplatePartDialogSubmitButtonLocator = By.css(
+				'[role="dialog"] button[type="submit"]'
+			);
+			const snackbarNoticeLocator = By.css(
+				'.components-snackbar[aria-label="Dismiss this notice"]'
+			);
 			await editor.addBlock( 'Columns' );
 			await editor.runInCanvas( async () => {
 				await driverHelper.clickWhenClickable(
 					this.driver,
-					By.css( '[aria-label="Three columns; equal split"]' )
+					threeColumnsEqualSplitVariationLocator
 				);
 			} );
-			await driverHelper.clickWhenClickable(
-				this.driver,
-				By.css( '[aria-label="Select Columns"]' )
-			);
-			await driverHelper.clickWhenClickable(
-				this.driver,
-				By.css( '[aria-label="Block tools"] [aria-label="Options"]' )
-			);
-			await driverHelper.clickWhenClickable(
-				this.driver,
-				driverHelper.createTextLocator(
-					By.css( '[aria-label="Options"] button' ),
-					'Make template part'
-				)
-			);
+			// There is no way to select the parent block on mobile. We simulate
+			// an arrow up key press which navigates to the parent Columns block
+			// in this case.
+			if ( editor.screenSize === 'mobile' ) {
+				await this.driver.actions().sendKeys( Key.ARROW_UP ).perform();
+			} else {
+				await driverHelper.clickWhenClickable( this.driver, selectParentColumnsBlockLocator );
+			}
+			await driverHelper.clickWhenClickable( this.driver, blockToolbarOptionsLocator );
+			await driverHelper.clickWhenClickable( this.driver, makeTemplatePartOptionsItemLocator );
 			await driverHelper.setWhenSettable(
 				this.driver,
-				By.css( '[role="dialog"] input[type="text"]' ),
+				makeTemplatePartDialogNameInputLocator,
 				'test_make_template_part'
 			);
 			await driverHelper.clickWhenClickable(
 				this.driver,
-				By.css( '[role="dialog"] button[type="submit"]' )
-			);
-			const snackbarNoticeLocator = By.css(
-				'.components-snackbar[aria-label="Dismiss this notice"]'
+				makeTemplatePartDialogSubmitButtonLocator
 			);
 			await driverHelper.clickWhenClickable( this.driver, snackbarNoticeLocator );
 
@@ -1028,17 +1038,15 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 		} );
 
 		it( 'Tracks "wpcom_block_editor_template_part_detach_blocks"', async function () {
-			await driverHelper.clickWhenClickable(
-				this.driver,
-				By.css( '[aria-label="Block tools"] [aria-label="Options"]' )
+			const blockToolbarOptionsLocator = By.css(
+				'[aria-label="Block tools"] [aria-label="Options"]'
 			);
-			await driverHelper.clickWhenClickable(
-				this.driver,
-				driverHelper.createTextLocator(
-					By.css( '[aria-label="Options"] button' ),
-					'Detach blocks from template part'
-				)
+			const detachBlocksOptionsItemLocator = driverHelper.createTextLocator(
+				By.css( '[aria-label="Options"] button' ),
+				'Detach blocks from template part'
 			);
+			await driverHelper.clickWhenClickable( this.driver, blockToolbarOptionsLocator );
+			await driverHelper.clickWhenClickable( this.driver, detachBlocksOptionsItemLocator );
 
 			const events = await getEventsStack( this.driver );
 			const detachEvents = events.filter(
@@ -1049,6 +1057,8 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				detachEvents[ 0 ][ 1 ].block_names === 'core/columns,core/column,core/column,core/column'
 			);
 			assert( typeof detachEvents[ 1 ][ 1 ].block_names );
+
+			await deleteCustomEntities( this.driver, 'wp_template_part' );
 		} );
 
 		afterEach( async function () {
