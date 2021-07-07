@@ -108,7 +108,6 @@ export class UpsellNudge extends React.Component {
 
 	state = {
 		showPurchaseModal: false,
-		isValidatingContactInfo: true,
 		isContactInfoValid: false,
 	};
 
@@ -122,17 +121,22 @@ export class UpsellNudge extends React.Component {
 	}
 
 	validateContactInfo = () => {
+		debug( 'possibly validating contact info' );
 		if ( this.props.isLoading ) {
+			debug( 'cancelling validating contact info; loading is still true' );
 			return;
 		}
 		if ( this.props.cards.length === 0 ) {
 			debug( 'not validating contact info because there are no cards' );
-			this.setState( { isValidatingContactInfo: false, isContactInfoValid: false } );
+			this.setState( { isContactInfoValid: false } );
 			return;
 		}
 		if ( ! this.haveCardsChanged() ) {
+			debug( 'cancelling validating contact info; cards have not changed' );
 			return;
 		}
+		debug( 'validating contact info' );
+
 		const storedCard = this.props.cards[ 0 ];
 		const countryCode = extractStoredCardMetaValue( storedCard, 'country_code' );
 		const postalCode = extractStoredCardMetaValue( storedCard, 'card_zip' );
@@ -159,7 +163,6 @@ export class UpsellNudge extends React.Component {
 		validateContactDetails().then( ( isValid ) => {
 			debug( 'validation of contact details result is', isValid );
 			this.setState( {
-				isValidatingContactInfo: false,
 				isContactInfoValid: isValid,
 			} );
 		} );
@@ -167,13 +170,25 @@ export class UpsellNudge extends React.Component {
 
 	haveCardsChanged = () => {
 		const cardIds = this.props.cards.map( ( card ) => card.stored_details_id );
-		if ( this.lastCardIds ) {
-			cardIds.forEach( ( id ) => {
-				if ( ! this.lastCardIds.includes( id ) ) {
-					return true;
-				}
-			} );
+		debug( 'have cards changed?', cardIds, this.lastCardIds );
+		if ( ! this.lastCardIds ) {
+			this.lastCardIds = cardIds;
+			debug( 'cards have changed; no previous cards' );
+			return true;
 		}
+		if ( this.lastCardIds.length !== cardIds.length ) {
+			this.lastCardIds = cardIds;
+			debug( 'cards have changed; length differs' );
+			return true;
+		}
+		cardIds.forEach( ( id ) => {
+			if ( ! this.lastCardIds.includes( id ) ) {
+				debug( `cards have changed; id ${ id } is not in last render` );
+				this.lastCardIds = cardIds;
+				return true;
+			}
+		} );
+		debug( 'cards have not changed' );
 		this.lastCardIds = cardIds;
 		return false;
 	};
@@ -181,15 +196,13 @@ export class UpsellNudge extends React.Component {
 	render() {
 		const { selectedSiteId, isLoading, hasProductsList, hasSitePlans, upsellType } = this.props;
 
-		const { isValidatingContactInfo } = this.state;
-
 		return (
 			<Main className={ upsellType }>
 				<QuerySites siteId={ selectedSiteId } />
 				<QueryStoredCards />
 				{ ! hasProductsList && <QueryProductsList /> }
 				{ ! hasSitePlans && <QuerySitePlans siteId={ selectedSiteId } /> }
-				{ isLoading || isValidatingContactInfo ? this.renderPlaceholders() : this.renderContent() }
+				{ isLoading ? this.renderPlaceholders() : this.renderContent() }
 				{ this.state.showPurchaseModal && this.renderPurchaseModal() }
 				{ this.preloadIconsForPurchaseModal() }
 			</Main>
