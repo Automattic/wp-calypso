@@ -3,6 +3,10 @@
 	align-items: center;
 	justify-content: space-between;
 
+	@include breakpoint-deprecated( '<660px' ) {
+		padding-right: 16px;
+	}
+
 	.formatted-header {
 		margin-right: 1rem;
 	}

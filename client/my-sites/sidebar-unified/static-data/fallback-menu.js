@@ -574,7 +574,7 @@ export default function buildFallbackResponse( {
 			  ]
 			: [] ),
 		{
-			icon: 'dashicons-feedback',
+			icon: 'dashicons-hammer',
 			slug: 'beta-testing',
 			title: translate( 'Beta Testing' ),
 			type: 'menu-item',
