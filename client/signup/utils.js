@@ -3,8 +3,8 @@ import { translate } from 'i18n-calypso';
 import { filter, find, includes, isEmpty, pick, sortBy } from 'lodash';
 import { addQueryArgs } from 'calypso/lib/url';
 import flows from 'calypso/signup/config/flows';
-import steps from 'calypso/signup/config/steps-pure';
 import { getStepModuleName } from 'calypso/signup/config/step-components';
+import steps from 'calypso/signup/config/steps-pure';
 
 const { defaultFlowName } = flows;
 
@@ -174,9 +174,15 @@ export const isReskinnedFlow = ( flowName ) => {
 
 export const isP2Flow = ( flowName ) => {
 	return flowName === 'p2' || flowName === 'p2-new';
+};
 
-// Derive if the "plans" step actually will be visible to the customer in a given flow after the domain step
-// i.e. Check "launch-site" flow while having a purchased paid plan
+/**
+ * Derive if the "plans" step actually will be visible to the customer in a given flow after the domain step
+ * i.e. Check "launch-site" flow while having a purchased paid plan
+ *
+ * @param  {object} flowSteps steps in the current flow
+ * @returns {boolean} true indicates that "plans" step will be one of the next steps in the flow
+ */
 export const isPlanSelectionAvailableLaterInFlow = ( flowSteps ) => {
 	/**
 	 * Caveat here even though "plans" step maybe available in a flow it might not be active
