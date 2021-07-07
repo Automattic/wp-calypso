@@ -28,8 +28,6 @@ jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
-jest.mock( 'calypso/state/products-list/selectors/get-products-list' );
-import { getProductsList } from 'calypso/state/products-list/selectors/get-products-list';
 jest.mock( 'calypso/state/plans/selectors' );
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
 
@@ -153,6 +151,17 @@ const planWithoutDomainBiannual = {
 	item_subtotal_display: 'R$144',
 };
 
+getPlanRawPrice.mockImplementation( () => 144 );
+getPlansBySiteId.mockImplementation( () => ( {
+	data: [
+		{
+			interval: 365,
+			productSlug: planWithoutDomain.product_slug,
+			currentPlan: true,
+		},
+	],
+} ) );
+
 const fetchStripeConfiguration = async () => {
 	return {
 		public_key: 'abc123',
@@ -213,13 +222,35 @@ describe( 'CompositeCheckout', () => {
 				},
 				sites: { items: {} },
 				siteSettings: { items: {} },
-				ui: { selectedSiteId: 123 },
+				ui: { selectedSiteId: siteId },
 				productsList: {
 					items: {
-						'personal-bundle': {
-							product_id: 1009,
-							product_name: 'Plan',
-							product_slug: 'personal-bundle',
+						[ planWithoutDomain.product_slug ]: {
+							product_id: planWithoutDomain.product_id,
+							product_slug: planWithoutDomain.product_slug,
+							product_type: 'bundle',
+							available: true,
+							is_domain_registration: false,
+							cost_display: planWithoutDomain.item_subtotal_display,
+							currency_code: planWithoutDomain.currency,
+						},
+						[ planWithoutDomainMonthly.product_slug ]: {
+							product_id: planWithoutDomainMonthly.product_id,
+							product_slug: planWithoutDomainMonthly.product_slug,
+							product_type: 'bundle',
+							available: true,
+							is_domain_registration: false,
+							cost_display: planWithoutDomainMonthly.item_subtotal_display,
+							currency_code: planWithoutDomainMonthly.currency,
+						},
+						[ planWithoutDomainBiannual.product_slug ]: {
+							product_id: planWithoutDomainBiannual.product_id,
+							product_slug: planWithoutDomainBiannual.product_slug,
+							product_type: 'bundle',
+							available: true,
+							is_domain_registration: false,
+							cost_display: planWithoutDomainBiannual.item_subtotal_display,
+							currency_code: planWithoutDomainBiannual.currency,
 						},
 						domain_map: {
 							product_id: 5,
@@ -532,46 +563,6 @@ describe( 'CompositeCheckout', () => {
 	} );
 
 	it( 'renders the variant picker if there are variants after clicking into edit mode', async () => {
-		getPlanRawPrice.mockImplementation( () => 144 );
-		getPlansBySiteId.mockImplementation( () => ( {
-			data: [
-				{
-					interval: 365,
-					productSlug: planWithoutDomain.product_slug,
-					currentPlan: true,
-				},
-			],
-		} ) );
-		getProductsList.mockImplementation( () => ( {
-			[ planWithoutDomain.product_slug ]: {
-				product_id: planWithoutDomain.product_id,
-				product_slug: planWithoutDomain.product_slug,
-				product_type: 'bundle',
-				available: true,
-				is_domain_registration: false,
-				cost_display: planWithoutDomain.item_subtotal_display,
-				currency_code: planWithoutDomain.currency,
-			},
-			[ planWithoutDomainMonthly.product_slug ]: {
-				product_id: planWithoutDomainMonthly.product_id,
-				product_slug: planWithoutDomainMonthly.product_slug,
-				product_type: 'bundle',
-				available: true,
-				is_domain_registration: false,
-				cost_display: planWithoutDomainMonthly.item_subtotal_display,
-				currency_code: planWithoutDomainMonthly.currency,
-			},
-			[ planWithoutDomainBiannual.product_slug ]: {
-				product_id: planWithoutDomainBiannual.product_id,
-				product_slug: planWithoutDomainBiannual.product_slug,
-				product_type: 'bundle',
-				available: true,
-				is_domain_registration: false,
-				cost_display: planWithoutDomainBiannual.item_subtotal_display,
-				currency_code: planWithoutDomainBiannual.currency,
-			},
-		} ) );
-
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
