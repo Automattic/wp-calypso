@@ -58,11 +58,13 @@ class Global_Styles_Fonts_Message_Control extends \WP_Customize_Control {
 			<script type="text/javascript">
 				function global_styles_fonts_message_control_prep_tracks() {
 					window._tkq = window._tkq || [];
-					window._tkq.push( [
-						'identifyUser',
-						<?php echo (int) $current_user->ID; ?>,
-						'<?php echo esc_js( $current_user->user_login ); ?>'
-					] );
+					<?php if ( $current_user->exists() ) : ?>
+						window._tkq.push( [
+							'identifyUser',
+							<?php echo (int) $current_user->ID; ?>,
+							'<?php echo esc_js( $current_user->user_login ); ?>'
+						] );
+					<?php endif ?>
 				}
 				function global_styles_fonts_message_control_block_editor_link_clicked() {
 					global_styles_fonts_message_control_prep_tracks();
