@@ -67,6 +67,7 @@ import type { OnChangeItemVariant } from '../components/item-variation-picker';
 
 import badge7Src from './assets/icons/badge-7.svg';
 import badge14Src from './assets/icons/badge-14.svg';
+import badgeGenericSrc from './assets/icons/badge-generic.svg';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
@@ -419,13 +420,6 @@ export default function WPCheckout( {
 	const validatingButtonText = isCartPendingUpdate
 		? String( translate( 'Updating cart…' ) )
 		: String( translate( 'Please wait…' ) );
-	const hasYearlyJetpackProductInCart = responseCart?.products?.every( ( product ) =>
-		isJetpackPurchasableItem( product.product_slug )
-	);
-	const show7DayGuarantee =
-		hasYearlyJetpackProductInCart && responseCart?.products?.every( isMonthlyProduct );
-	const show14DayGuarantee =
-		hasYearlyJetpackProductInCart && responseCart?.products?.every( isYearly );
 
 	return (
 		<Checkout>
@@ -460,20 +454,7 @@ export default function WPCheckout( {
 			</CheckoutSummaryArea>
 			<CheckoutStepArea
 				submitButtonHeader={ <SubmitButtonHeader /> }
-				submitButtonFooter={
-					( show7DayGuarantee || show14DayGuarantee ) && (
-						<SubmitButtonFooter>
-							<img src={ show7DayGuarantee ? badge7Src : badge14Src } alt="" />
-							<span>
-								{ translate( '%(dayCount)s day money back guarantee', {
-									args: {
-										dayCount: show7DayGuarantee ? 7 : 14,
-									},
-								} ) }
-							</span>
-						</SubmitButtonFooter>
-					)
-				}
+				submitButtonFooter={ <SubmitButtonFooter /> }
 				disableSubmitButton={ isOrderReviewActive }
 			>
 				{ infoMessage }
@@ -683,10 +664,54 @@ function SubmitButtonHeader() {
 	);
 }
 
-const SubmitButtonFooter = styled.div< React.HTMLAttributes< HTMLDivElement > >`
+const SubmitButtonFooter = () => {
+	const { responseCart } = useShoppingCart();
+	const translate = useTranslate();
+
+	const hasCartJetpackProductsOnly = responseCart?.products?.every( ( product ) =>
+		isJetpackPurchasableItem( product.product_slug )
+	);
+
+	if ( ! hasCartJetpackProductsOnly ) {
+		return null;
+	}
+
+	const show7DayGuarantee = responseCart?.products?.every( isMonthlyProduct );
+	const show14DayGuarantee = responseCart?.products?.every( isYearly );
+	const content =
+		show7DayGuarantee || show14DayGuarantee ? (
+			translate( '%(dayCount)s day money back guarantee', {
+				args: {
+					dayCount: show7DayGuarantee ? 7 : 14,
+				},
+			} )
+		) : (
+			<>
+				{ translate( '14 day money back guarantee on yearly subscriptions' ) }
+				<br />
+				{ translate( '7 day money back guarantee on monthly subscriptions' ) }
+			</>
+		);
+	let imgSrc = badgeGenericSrc;
+
+	if ( show7DayGuarantee ) {
+		imgSrc = badge7Src;
+	} else if ( show14DayGuarantee ) {
+		imgSrc = badge14Src;
+	}
+
+	return (
+		<SubmitButtonFooterWrapper>
+			<img src={ imgSrc } alt="" />
+			<span>{ content }</span>
+		</SubmitButtonFooterWrapper>
+	);
+};
+
+const SubmitButtonFooterWrapper = styled.div< React.HTMLAttributes< HTMLDivElement > >`
 	display: flex;
 	justify-content: center;
-	align-items: center;
+	align-items: flex-start;
 
 	margin-top: 1.25rem;
 
@@ -696,6 +721,10 @@ const SubmitButtonFooter = styled.div< React.HTMLAttributes< HTMLDivElement > >`
 
 	img {
 		margin-right: 0.5rem;
+	}
+
+	span {
+		padding-top: 3px;
 	}
 `;
 
