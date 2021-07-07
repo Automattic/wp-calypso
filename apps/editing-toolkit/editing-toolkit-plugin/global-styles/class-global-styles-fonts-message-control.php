@@ -17,7 +17,7 @@ class Global_Styles_Fonts_Message_Control extends \WP_Customize_Control {
 	 */
 	private function get_link_to_editor_with_global_styles_sidebar() {
 		$homepage_id = \get_option( 'page_on_front' );
-		if ( null === $homepage_id ) {
+		if ( empty( $homepage_id ) ) {
 			return null;
 		}
 
