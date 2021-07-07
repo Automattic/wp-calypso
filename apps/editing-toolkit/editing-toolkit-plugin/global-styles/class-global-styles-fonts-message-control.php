@@ -96,7 +96,7 @@ class Global_Styles_Fonts_Message_Control extends \WP_Customize_Control {
 				<a
 					href="<?php echo esc_url( $block_editor_with_global_styles_url ); ?>"
 					target="_blank"
-					onClick="<?php echo esc_js( $this->get_tracks_event_script( 'calypso_customizer_global_styles_block_editor_link_clicked' ) ); ?>">
+					onClick="<?php echo esc_attr( $this->get_tracks_event_script( 'calypso_customizer_global_styles_block_editor_link_clicked' ) ); ?>">
 					<?php echo esc_html( $block_editor_link_text ); ?>
 				</a>
 			</p>
@@ -114,7 +114,7 @@ class Global_Styles_Fonts_Message_Control extends \WP_Customize_Control {
 				<a
 					href="https://wordpress.com/support/custom-fonts/#changing-fonts-with-global-styles"
 					target="_blank"
-					onClick="<?php echo esc_js( $this->get_tracks_event_script( 'calypso_customizer_global_styles_support_link_clicked' ) ); ?>"
+					onClick="<?php echo esc_attr( $this->get_tracks_event_script( 'calypso_customizer_global_styles_support_link_clicked' ) ); ?>"
 				>
 					<?php echo esc_html( $learn_more_link_text ); ?>
 				</a>
