@@ -661,14 +661,30 @@ describe( 'CompositeCheckout', () => {
 		expect( page.redirect ).not.toHaveBeenCalled();
 	} );
 
-	it( 'renders the variant picker if there are variants after clicking into edit mode', async () => {
+	it( 'renders the variant picker without monthly if there are variants when the current plan is yearly', async () => {
 		const cartChanges = { products: [ planLevel2 ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
 		fireEvent.click( editOrderButton );
 
-		expect( screen.getByText( 'One month' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'One month' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders the variant picker with yearly if there are variants when the current plan is yearly', async () => {
+		const cartChanges = { products: [ planLevel2 ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+		fireEvent.click( editOrderButton );
+
 		expect( screen.getByText( 'One year' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders the variant picker with two-years if there are variants when the current plan is yearly', async () => {
+		const cartChanges = { products: [ planLevel2 ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+		fireEvent.click( editOrderButton );
+
 		expect( screen.getByText( 'Two years' ) ).toBeInTheDocument();
 	} );
 
