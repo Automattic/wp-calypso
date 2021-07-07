@@ -79,10 +79,13 @@ export function useGetProductVariants(
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 
+	debug( 'siteId', siteId );
 	const sitePlans: SitesPlansResult | null = useSelector( ( state ) =>
 		siteId ? getPlansBySiteId( state, siteId ) : null
 	);
+	debug( 'sitePlans', sitePlans );
 	const activePlan = sitePlans?.data?.find( ( plan ) => plan.currentPlan );
+	debug( 'activePlan', activePlan );
 
 	const variantProductSlugs = useVariantPlanProductSlugs( productSlug );
 	debug( 'variantProductSlugs', variantProductSlugs );
