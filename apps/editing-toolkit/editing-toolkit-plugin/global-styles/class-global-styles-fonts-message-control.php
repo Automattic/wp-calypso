@@ -18,7 +18,7 @@ class Global_Styles_Fonts_Message_Control extends \WP_Customize_Control {
 	private function get_link_to_editor_with_global_styles_sidebar() {
 		$homepage_id = \get_option( 'page_on_front' );
 		if ( null === $homepage_id ) {
-			return;
+			return null;
 		}
 
 		// Is there a better way to direct calypso users back to calypso.localhost:3000 and production users to wordpress.com?
@@ -98,8 +98,8 @@ class Global_Styles_Fonts_Message_Control extends \WP_Customize_Control {
 	 * Render a link to the global styles section of the block editor, if a homepage exists
 	 */
 	private function maybe_render_block_editor_link() {
-		$editable_page_id = $this->get_link_to_editor_with_global_styles_sidebar();
-		if ( null === $editable_page_id ) {
+		$block_editor_with_global_styles_url = $this->get_link_to_editor_with_global_styles_sidebar();
+		if ( null === $block_editor_with_global_styles_url ) {
 			return;
 		}
 		// Translators: This is a link which opens the block editor, and then opens the global styles sidebar.
@@ -107,7 +107,7 @@ class Global_Styles_Fonts_Message_Control extends \WP_Customize_Control {
 		?>
 			<p>
 				<a
-					href="<?php echo esc_url( $editable_page_id ); ?>"
+					href="<?php echo esc_url( $block_editor_with_global_styles_url ); ?>"
 					target="_blank"
 					onClick="global_styles_fonts_message_control_block_editor_link_clicked();">
 					<?php echo esc_html( $block_editor_link_text ); ?>
