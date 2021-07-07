@@ -685,6 +685,12 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 		describe( 'tracks template part creation and replacement', function () {
 			it( 'Tracks "wpcom_block_editor_create_template_part', async function () {
+				// Reload editor to start from consistent clean slate for tests. At this point
+				// avoiding to do so causes the bug report button to intercept clicks for
+				// `editor.runInCanvas`, causing the suite to fail.
+				await this.driver.navigate().refresh();
+				await driverHelper.acceptAlertIfPresent( this.driver );
+
 				const editor = await SiteEditorComponent.Expect( this.driver );
 				// Clear block selection to ensure this starts at top level.
 				await this.driver.executeScript(
