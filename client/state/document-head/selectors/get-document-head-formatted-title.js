@@ -17,6 +17,7 @@ import { getDocumentHeadCappedUnreadCount } from 'calypso/state/document-head/se
 /**
  * Internal dependencies
  */
+import 'calypso/state/document-head/init';
 import 'calypso/state/ui/init';
 
 /**

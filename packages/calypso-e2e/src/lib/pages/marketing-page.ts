@@ -4,20 +4,16 @@
 import { BaseContainer } from '../base-container';
 import { toTitleCase } from '../../data-helper';
 
-/**
- * Type dependencies
- */
-import { Page } from 'playwright';
-
 const selectors = {
 	content: '#primary',
-	navtabsList: '.section-nav-tabs__list',
+	navTabs: 'div.section-nav-tabs',
+	navTabsDropdownOption: '.select-dropdown__option',
 
 	// Traffic tab
 	websiteMetaTextArea: '#advanced_seo_front_page_description',
 	seoPreviewButton: '.seo-settings__preview-button',
 	seoPreviewPane: '.web-preview.is-seo',
-	seoPreviewPaneCloseButton: '.web-preview .web-preview__close',
+	seoPreviewPaneCloseButton: '.web-preview__close',
 };
 
 /**
@@ -27,33 +23,24 @@ const selectors = {
  */
 export class MarketingPage extends BaseContainer {
 	/**
-	 * Constructs an instance of the MarketingPage object.
-	 *
-	 * @param {Page} page Underlying page on which the actions take place.
-	 */
-	constructor( page: Page ) {
-		super( page, selectors.content );
-	}
-
-	/**
-	 * Post-initialization steps when creating an instance of this object.
-	 *
-	 * @returns {Promise<void>} No return value.
-	 */
-	async _postInit(): Promise< void > {
-		await this.page.waitForSelector( selectors.navtabsList );
-	}
-
-	/**
 	 * Given a string, clicks on the tab matching the string at top of the page.
 	 *
 	 * @param {string} name Name of the tab to click on the top of the page.
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickTabItem( name: string ): Promise< void > {
+		const navTabs = await this.page.waitForSelector( selectors.navTabs );
+		const isDropdown = await navTabs
+			.getAttribute( 'class' )
+			.then( ( value ) => value?.includes( 'is-dropdown' ) );
 		const sanitizedName = toTitleCase( [ name ] );
 
-		await this.page.click( `text=${ sanitizedName }` );
+		if ( isDropdown ) {
+			await navTabs.click();
+			await this.page.click( `${ selectors.navTabsDropdownOption } >> text=${ name }` );
+		} else {
+			await this.page.click( `text=${ sanitizedName }` );
+		}
 	}
 
 	/* SEO Preview Methods */

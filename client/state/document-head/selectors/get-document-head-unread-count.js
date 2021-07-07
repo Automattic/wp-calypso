@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/document-head/init';
+
+/**
  * Returns a count reflecting unread items.
  *
  * @param  {object}  state  Global state tree

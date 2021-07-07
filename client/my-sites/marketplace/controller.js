@@ -8,11 +8,11 @@ import page from 'page';
  * Internal dependencies
  */
 import { getSiteFragment } from 'calypso/lib/route';
-import MarketplacePluginDetails from 'calypso/my-sites/plugins/marketplace/marketplace-plugin-details';
-import MarketplaceDomainUpsell from 'calypso/my-sites/plugins/marketplace/marketplace-domain-upsell';
-import MarketplacePluginSetup from 'calypso/my-sites/plugins/marketplace/marketplace-plugin-setup-status';
-import MarketplaceStandaloneThankYou from 'calypso/my-sites/plugins/marketplace/marketplace-stand-alone-thank-you';
-import MarketplaceTest from 'calypso/my-sites/plugins/marketplace/marketplace-test';
+import MarketplacePluginDetails from 'calypso/my-sites/marketplace/marketplace-plugin-details';
+import MarketplaceDomainUpsell from 'calypso/my-sites/marketplace/marketplace-domain-upsell';
+import MarketplacePluginSetup from 'calypso/my-sites/marketplace/marketplace-plugin-setup-status';
+import MarketplaceStandaloneThankYou from 'calypso/my-sites/marketplace/marketplace-stand-alone-thank-you';
+import MarketplaceTest from 'calypso/my-sites/marketplace/marketplace-test';
 
 export function renderMarketplacePlugin( context, next ) {
 	const siteUrl = getSiteFragment( context.path );

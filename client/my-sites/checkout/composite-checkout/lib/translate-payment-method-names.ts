@@ -46,11 +46,10 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 			return 'wechat';
 		case 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking':
 			return 'netbanking';
-		case 'WPCOM_Billing_Dlocal_Redirect_Indonesia_Wallet':
-			return 'id_wallet';
 		case 'WPCOM_Billing_Web_Payment':
 			return 'web-pay';
 	}
+	throw new Error( `Unknown payment method '${ paymentMethod }'` );
 }
 
 export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
@@ -67,8 +66,6 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 			return 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef';
 		case 'netbanking':
 			return 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking';
-		case 'id_wallet':
-			return 'WPCOM_Billing_Dlocal_Redirect_Indonesia_Wallet';
 		case 'paypal-direct':
 			return 'WPCOM_Billing_PayPal_Direct';
 		case 'paypal':
@@ -110,7 +107,6 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod 
 		case 'WPCOM_Billing_Ebanx':
 		case 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef':
 		case 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking':
-		case 'WPCOM_Billing_Dlocal_Redirect_Indonesia_Wallet':
 		case 'WPCOM_Billing_PayPal_Direct':
 		case 'WPCOM_Billing_PayPal_Express':
 		case 'WPCOM_Billing_Stripe_Payment_Method':
@@ -137,7 +133,6 @@ export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMe
 		case 'ebanx':
 		case 'brazil-tef':
 		case 'netbanking':
-		case 'id_wallet':
 		case 'paypal-direct':
 		case 'paypal':
 		case 'card':

@@ -410,6 +410,22 @@ const trackListViewToggle = ( isOpen ) => {
 	} );
 };
 
+const trackSaveEntityRecord = ( kind, name, record ) => {
+	if ( name === 'wp_template_part' && kind === 'postType' ) {
+		if ( document.querySelector( '.edit-site-template-part-converter__modal' ) ) {
+			tracksRecordEvent( 'wpcom_block_editor_convert_to_template_part', {
+				variation_slug: record.area !== 'uncategorized' ? record.area : undefined,
+				content: record.content,
+			} );
+		} else {
+			tracksRecordEvent( 'wpcom_block_editor_create_template_part', {
+				variation_slug: record.area !== 'uncategorized' ? record.area : undefined,
+				content: record.content ? record.content : undefined,
+			} );
+		}
+	}
+};
+
 const trackSiteEditorBrowsingSidebarOpen = () => {
 	// We want to make sure the browsing sidebar is closed.
 	// This action is triggered even if the sidebar is open
@@ -514,6 +530,7 @@ const REDUX_TRACKING = {
 	core: {
 		undo: 'wpcom_block_editor_undo_performed',
 		redo: 'wpcom_block_editor_redo_performed',
+		saveEntityRecord: trackSaveEntityRecord,
 		editEntityRecord: trackEditEntityRecord,
 		saveEditedEntityRecord: trackSaveEditedEntityRecord,
 	},

@@ -321,7 +321,8 @@ class ThemesMagicSearchCard extends React.Component {
 		} );
 
 		// Check if we want to render suggestions or welcome banner
-		const renderSuggestions = this.state.editedSearchElement !== '';
+		const renderSuggestions =
+			this.state.editedSearchElement !== '' && this.state.editedSearchElement.length > 2;
 
 		let isWelcomeBarVisible = ! renderSuggestions;
 		if ( config.isEnabled( 'theme/showcase-revamp' ) ) {
