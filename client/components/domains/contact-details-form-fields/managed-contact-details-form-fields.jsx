@@ -59,6 +59,7 @@ export class ManagedContactDetailsFormFields extends Component {
 		userCountryCode: PropTypes.string,
 		needsOnlyGoogleAppsDetails: PropTypes.bool,
 		needsAlternateEmailForGSuite: PropTypes.bool,
+		needsFax: PropTypes.bool,
 		hasCountryStates: PropTypes.bool,
 		translate: PropTypes.func,
 		emailOnly: PropTypes.bool,
@@ -296,6 +297,31 @@ export class ManagedContactDetailsFormFields extends Component {
 		);
 	}
 
+	renderContactDetailsFax() {
+		const { translate, needsFax } = this.props;
+
+		if ( ! needsFax ) {
+			return null;
+		}
+
+		return (
+			<>
+				<div className="contact-details-form-fields__row">
+					{ this.createField(
+						'fax',
+						Input,
+						{
+							label: translate( 'Fax' ),
+						},
+						{
+							customErrorMessage: this.props.contactDetailsErrors?.fax,
+						}
+					) }
+				</div>
+			</>
+		);
+	}
+
 	renderContactDetailsFields() {
 		const { translate, hasCountryStates } = this.props;
 		const form = getFormFromContactDetails(
@@ -321,6 +347,7 @@ export class ManagedContactDetailsFormFields extends Component {
 				</div>
 
 				{ this.renderContactDetailsEmailPhone() }
+				{ this.renderContactDetailsFax() }
 
 				{ countryCode && (
 					<RegionAddressFieldsets
@@ -471,11 +498,8 @@ function getMainFieldValues( form, countryCode, phoneCountryCode, hasCountryStat
 		state = '';
 	}
 
-	const fax = '';
-
 	return {
 		...mainFieldValues,
-		fax,
 		state,
 		phone: mainFieldValues.phone
 			? toIcannFormat( mainFieldValues.phone, countries[ phoneCountryCode ] )
