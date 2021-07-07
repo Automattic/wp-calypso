@@ -82,6 +82,7 @@ function CalypsoShoppingCartMessages() {
 	return (
 		<AsyncLoad
 			require="calypso/my-sites/checkout/cart/cart-messages"
+			placeholder={ null }
 			cart={ responseCart }
 			isLoadingCart={ isLoading }
 		/>
