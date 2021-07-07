@@ -13,14 +13,7 @@ import { removeQueryArgs } from '@wordpress/url';
 import { cloudSiteSelection } from 'calypso/jetpack-cloud/controller';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { requestSite } from 'calypso/state/sites/actions';
-import {
-	getSite,
-	getSiteId,
-	getSiteAdminUrl,
-	getSiteSlug,
-	isJetpackModuleActive,
-	isJetpackSite,
-} from 'calypso/state/sites/selectors';
+import { getSite, getSiteId, getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -240,7 +233,6 @@ function onSelectedSiteAvailable( context, basePath ) {
 
 	const isAtomicSite = isSiteAutomatedTransfer( state, selectedSite.ID );
 	const userCanManagePlugins = canCurrentUser( state, selectedSite.ID, 'activate_plugins' );
-	const calypsoify = isAtomicSite && config.isEnabled( 'calypsoify/plugins' );
 
 	// If migration is in progress, only /migrate paths should be loaded for the site
 	const isMigrationInProgress = isSiteMigrationInProgress( state, selectedSite.ID );
@@ -250,7 +242,8 @@ function onSelectedSiteAvailable( context, basePath ) {
 		return false;
 	}
 
-	if ( userCanManagePlugins && calypsoify && /^\/plugins/.test( basePath ) ) {
+	// Redirects Atomic sites to wp-admin
+	if ( userCanManagePlugins && isAtomicSite && /^\/plugins/.test( basePath ) ) {
 		const plugin = get( context, 'params.plugin' );
 		let pluginString = '';
 		if ( plugin ) {
@@ -263,7 +256,7 @@ function onSelectedSiteAvailable( context, basePath ) {
 			].join( '&' );
 		}
 
-		const pluginInstallURL = 'plugin-install.php?calypsoify=1' + `&${ pluginString }`;
+		const pluginInstallURL = 'plugin-install.php?' + `${ pluginString }`;
 		const pluginLink = getSiteAdminUrl( state, selectedSite.ID ) + pluginInstallURL;
 
 		window.location.replace( pluginLink );
@@ -513,25 +506,6 @@ export function redirectToPrimary( context, primarySiteSlug ) {
 		redirectPath += `?${ context.querystring }`;
 	}
 	page.redirect( redirectPath );
-}
-
-export function jetpackModuleActive( moduleId, redirect ) {
-	return function ( context, next ) {
-		const { getState } = getStore( context );
-		const siteId = getSelectedSiteId( getState() );
-		const isJetpack = isJetpackSite( getState(), siteId );
-		const isModuleActive = isJetpackModuleActive( getState(), siteId, moduleId );
-
-		if ( ! isJetpack ) {
-			return next();
-		}
-
-		if ( isModuleActive || false === redirect ) {
-			next();
-		} else {
-			page.redirect( 'string' === typeof redirect ? redirect : '/stats' );
-		}
-	};
 }
 
 export function navigation( context, next ) {

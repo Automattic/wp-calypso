@@ -46,10 +46,6 @@ class Dns extends React.Component {
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};
 
-	state = {
-		addNew: true,
-	};
-
 	renderDnsTemplates() {
 		const selectedDomain = getSelectedDomain( this.props );
 

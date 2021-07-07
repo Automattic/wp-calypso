@@ -35,7 +35,6 @@ class SiteImporterSitePreview extends React.Component {
 	};
 
 	state = {
-		previewRetries: 0,
 		sitePreviewImage: '',
 		sitePreviewFailed: false,
 		loadingPreviewImage: true,

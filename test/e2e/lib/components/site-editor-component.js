@@ -189,6 +189,26 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 		);
 	}
 
+	async closeGlobalStyles() {
+		if ( this.screenSize === 'mobile' ) {
+			const globalStylesCloseButtonLocator = By.css(
+				'button[aria-label="Close global styles sidebar"]'
+			);
+			return !! ( await driverHelper.clickIfPresent(
+				this.driver,
+				globalStylesCloseButtonLocator
+			) );
+		}
+
+		const pressedGlobalStylesButtonLocator = By.css(
+			'button[aria-label="Global Styles"][aria-expanded="true"]'
+		);
+		return !! ( await driverHelper.clickIfPresent(
+			this.driver,
+			pressedGlobalStylesButtonLocator
+		) );
+	}
+
 	async toggleGlobalStyles() {
 		if ( this.screenSize === 'mobile' ) {
 			const closed = await driverHelper.clickIfPresent(

@@ -90,6 +90,7 @@ const ScanUpsellBody: FunctionComponent = () => {
 		( state ) => siteId && canCurrentUser( state, siteId, 'manage_options' )
 	);
 	const translate = useTranslate();
+	const postCheckoutUrl = window.location.pathname + window.location.search;
 
 	return (
 		<PromoCard
@@ -118,7 +119,7 @@ const ScanUpsellBody: FunctionComponent = () => {
 						text: translate( 'Get daily scanning' ),
 						action: {
 							url: addQueryArgs( `/checkout/${ siteSlug }/jetpack_scan`, {
-								redirect_to: window.location.href,
+								redirect_to: postCheckoutUrl,
 							} ),
 							onClick: onUpgradeClick,
 							selfTarget: true,

@@ -995,7 +995,6 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 				// you are not supossed to log anything after the test is done.
 				//
 				// This timer should give time to that promise to fail within the test.
-				jest.useRealTimers();
 				setTimeout( done, 5 );
 			} ) );
 	} );
@@ -1300,8 +1299,6 @@ describe( 'main app', () => {
 						// you are not supossed to log anything after the test is done.
 						//
 						// This timer should give time to that promise to fail within the test.
-						// done();
-						jest.useRealTimers();
 						setTimeout( done, 5 );
 					} )
 			);

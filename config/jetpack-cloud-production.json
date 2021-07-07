@@ -43,7 +43,7 @@
 		"jetpack/redirect-legacy-plans": true,
 		"jetpack/server-credentials-advanced-flow": true,
 		"jetpack/siteless-checkout": false,
-		"jetpack/userless-checkout": false,
+		"jetpack/userless-checkout": true,
 		"layout/app-banner": false,
 		"layout/guided-tours": false,
 		"layout/nps-survey-notice": false,

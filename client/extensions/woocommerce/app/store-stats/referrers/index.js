@@ -78,7 +78,6 @@ class Referrers extends Component {
 			: data;
 		return {
 			filteredSortedData: sortBySales( filteredData ),
-			unfilteredDataLength: data.length,
 		};
 	};
 
@@ -105,7 +104,7 @@ class Referrers extends Component {
 	};
 
 	setData( props, filter ) {
-		const { filteredSortedData, unfilteredDataLength } = this.getFilteredData( filter, props );
+		const { filteredSortedData } = this.getFilteredData( filter, props );
 		const { selectedReferrer, selectedReferrerIndex } = this.getSelectedReferrer(
 			filteredSortedData,
 			props
@@ -113,7 +112,6 @@ class Referrers extends Component {
 		this.setState( {
 			filter,
 			filteredSortedData,
-			unfilteredDataLength,
 			selectedReferrer,
 			selectedReferrerIndex,
 		} );

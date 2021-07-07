@@ -433,7 +433,7 @@ const boot = ( currentUser, registerRoutes ) => {
 	saveOauthFlags();
 	utils();
 	loadAllState().then( () => {
-		const initialState = getInitialState( initialReducer );
+		const initialState = getInitialState( initialReducer, currentUser.get()?.ID );
 		const reduxStore = createReduxStore( initialState, initialReducer );
 		setStore( reduxStore );
 		onDisablePersistence( persistOnChange( reduxStore, currentUser.get()?.ID ) );

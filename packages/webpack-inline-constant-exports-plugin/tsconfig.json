@@ -1,7 +1,6 @@
 {
-	"extends": "@automattic/calypso-build/tsconfig",
-	"exclude": [ "node_modules" ],
+	"extends": "@automattic/calypso-build/typescript/js-package.json",
 	"compilerOptions": {
-		"allowJs": true
+		"types": ["node"]
 	}
 }
