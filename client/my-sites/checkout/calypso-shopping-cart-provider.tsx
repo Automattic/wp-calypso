@@ -3,11 +3,7 @@
  */
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import {
-	ShoppingCartProvider,
-	useShoppingCart,
-	getEmptyResponseCart,
-} from '@automattic/shopping-cart';
+import { ShoppingCartProvider, getEmptyResponseCart } from '@automattic/shopping-cart';
 import type { RequestCart } from '@automattic/shopping-cart';
 
 /**
@@ -71,20 +67,11 @@ export default function CalypsoShoppingCartProvider( {
 			setCart={ wpcomSetCart }
 			options={ options }
 		>
-			<CalypsoShoppingCartMessages />
+			<AsyncLoad
+				require="calypso/my-sites/checkout/calypso-shopping-cart-messages"
+				placeholder={ null }
+			/>
 			{ children }
 		</ShoppingCartProvider>
-	);
-}
-
-function CalypsoShoppingCartMessages() {
-	const { responseCart, isLoading } = useShoppingCart();
-	return (
-		<AsyncLoad
-			require="calypso/my-sites/checkout/cart/cart-messages"
-			placeholder={ null }
-			cart={ responseCart }
-			isLoadingCart={ isLoading }
-		/>
 	);
 }
