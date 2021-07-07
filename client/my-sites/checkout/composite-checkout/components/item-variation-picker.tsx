@@ -41,7 +41,7 @@ export const ItemVariationPicker: FunctionComponent< ItemVariationPickerProps > 
 	}
 
 	return (
-		<TermOptions>
+		<TermOptions className="item-variation-picker">
 			{ variants.map( ( productVariant: WPCOMProductVariant ) => (
 				<ProductVariant
 					key={ productVariant.variantLabel }
