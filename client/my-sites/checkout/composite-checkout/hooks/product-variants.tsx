@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
@@ -88,18 +88,22 @@ export function useGetProductVariants(
 		}
 	}, [ shouldFetchProducts, haveFetchedProducts, reduxDispatch ] );
 
-	const getProductVariantFromAvailableVariant = (
-		variant: AvailableProductVariant
-	): WPCOMProductVariant => {
-		return {
-			variantLabel: getTermText( variant.plan.term, translate ),
-			variantDetails: <VariantPrice variant={ variant } />,
-			productSlug: variant.planSlug,
-			productId: variant.product.product_id,
-		};
-	};
+	const getProductVariantFromAvailableVariant = useCallback(
+		( variant: AvailableProductVariant ): WPCOMProductVariant => {
+			return {
+				variantLabel: getTermText( variant.plan.term, translate ),
+				variantDetails: <VariantPrice variant={ variant } />,
+				productSlug: variant.planSlug,
+				productId: variant.product.product_id,
+			};
+		},
+		[ translate ]
+	);
 
-	return productsWithPrices.map( getProductVariantFromAvailableVariant );
+	return useMemo( () => productsWithPrices.map( getProductVariantFromAvailableVariant ), [
+		productsWithPrices,
+		getProductVariantFromAvailableVariant,
+	] );
 }
 
 function VariantPrice( { variant }: { variant: AvailableProductVariant } ) {
