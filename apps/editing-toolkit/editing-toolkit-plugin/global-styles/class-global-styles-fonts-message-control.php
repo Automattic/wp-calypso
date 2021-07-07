@@ -21,17 +21,21 @@ class Global_Styles_Fonts_Message_Control extends \WP_Customize_Control {
 			return null;
 		}
 
-		// Is there a better way to direct calypso users back to calypso.localhost:3000 and production users to wordpress.com?
-		// I'd prefer not to ignore the warning. But the nonce isn't needed here since the link only opens a page.
+		$base_url = null;
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$base_url = \esc_url_raw( $_GET['calypsoOrigin'] ) . '/';
+		if ( 'http://calypso.localhost:3000' === $_GET['calypsoOrigin'] ) {
+			$base_url = 'http://calypso.localhost:3000/';
+		} else {
+			$base_url = 'https://www.wordpress.com/';
+		}
 
-		$site_slug = \WPCOM_Masterbar::get_calypso_site_slug( \get_current_blog_id() ) . '/';
+		$home_url  = home_url( '/' );
+		$site_slug = wp_parse_url( $home_url, PHP_URL_HOST );
 
 		$url_components = array(
 			$base_url,
 			'page/',
-			$site_slug,
+			$site_slug . '/',
 			$homepage_id,
 			'?openSidebar=global-styles',
 		);
@@ -43,45 +47,26 @@ class Global_Styles_Fonts_Message_Control extends \WP_Customize_Control {
 	 * Render the customizer help document content
 	 */
 	public function render_content() {
-		$this->render_tracks_events_functions();
 		$this->render_intro_text();
 		$this->maybe_render_block_editor_link();
 		$this->render_learn_more_link();
 	}
 
 	/**
-	 * Create tracks events functions which can be invoked later when links are clicked.
+	 * Returns javascript which creates a tracks event
+	 *
+	 * @param string $tracks_event The name of the tracks event.
 	 */
-	private function render_tracks_events_functions() {
-		$current_user = wp_get_current_user();
-		?>
-			<script type="text/javascript">
-				function global_styles_fonts_message_control_prep_tracks() {
-					window._tkq = window._tkq || [];
-					<?php if ( $current_user->exists() ) : ?>
-						window._tkq.push( [
-							'identifyUser',
-							<?php echo (int) $current_user->ID; ?>,
-							'<?php echo esc_js( $current_user->user_login ); ?>'
-						] );
-					<?php endif ?>
-				}
-				function global_styles_fonts_message_control_block_editor_link_clicked() {
-					global_styles_fonts_message_control_prep_tracks();
-					window._tkq.push( [
-						'recordEvent',
-						'calypso_customizer_global_styles_block_editor_link_clicked'
-					] );
-				}
-				function global_styles_fonts_message_control_support_link_clicked() {
-					global_styles_fonts_message_control_prep_tracks();
-					window._tkq.push( [
-						'recordEvent',
-						'calypso_customizer_global_styles_support_link_clicked'
-					] );
-				}
-			</script>
-		<?php
+	private function get_tracks_event_script( $tracks_event ) {
+		$current_user        = wp_get_current_user();
+		$tracks_event_script = 'window._tkq = window._tkq || [];';
+		if ( $current_user->exists() ) {
+			$user_id              = (int) $current_user->ID;
+			$user_login           = esc_js( $current_user->user_login );
+			$tracks_event_script .= " window._tkq.push( [ 'identifyUser', $user_id, '$user_login' ] );";
+		}
+		$tracks_event_script .= " window._tkq.push( [ 'recordEvent', '$tracks_event' ] ); ";
+		return $tracks_event_script;
 	}
 
 	/**
@@ -111,7 +96,7 @@ class Global_Styles_Fonts_Message_Control extends \WP_Customize_Control {
 				<a
 					href="<?php echo esc_url( $block_editor_with_global_styles_url ); ?>"
 					target="_blank"
-					onClick="global_styles_fonts_message_control_block_editor_link_clicked();">
+					onClick="<?php echo esc_js( $this->get_tracks_event_script( 'calypso_customizer_global_styles_block_editor_link_clicked' ) ); ?>">
 					<?php echo esc_html( $block_editor_link_text ); ?>
 				</a>
 			</p>
@@ -129,7 +114,7 @@ class Global_Styles_Fonts_Message_Control extends \WP_Customize_Control {
 				<a
 					href="https://wordpress.com/support/custom-fonts/#changing-fonts-with-global-styles"
 					target="_blank"
-					onClick="global_styles_fonts_message_control_support_link_clicked();"
+					onClick="<?php echo esc_js( $this->get_tracks_event_script( 'calypso_customizer_global_styles_support_link_clicked' ) ); ?>"
 				>
 					<?php echo esc_html( $learn_more_link_text ); ?>
 				</a>
