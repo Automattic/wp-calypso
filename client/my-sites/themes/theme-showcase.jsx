@@ -317,9 +317,7 @@ class ThemeShowcase extends React.Component {
 							</NavTabs>
 						</SectionNav>
 					) }
-					{ ! this.props.loggedOutComponent && showBanners && (
-						<UpworkBanner location={ 'theme-banner' } />
-					) }
+
 					{ this.props.upsellBanner }
 
 					{ 'recommended' === this.state.tabFilter && (
@@ -368,6 +366,9 @@ class ThemeShowcase extends React.Component {
 					) }
 					{ 'all' === this.state.tabFilter && (
 						<div className="theme-showcase__all-themes">
+							{ ! this.props.loggedOutComponent && showBanners && (
+								<UpworkBanner location={ 'theme-banner' } />
+							) }
 							<ThemesSelection
 								upsellUrl={ this.props.upsellUrl }
 								search={ search }
