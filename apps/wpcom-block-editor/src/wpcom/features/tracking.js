@@ -223,9 +223,9 @@ const getBlocksTracker = ( eventName ) => ( blockIds, fromRootClientId, toRootCl
 	blockIdArray.forEach( ( blockId ) => {
 		tracksRecordEvent( eventName, {
 			block_name: getTypeForBlockId( blockId ),
-			context,
-			from_context,
-			to_context,
+			entity_context: context,
+			entity_context_from: from_context,
+			entity_context_to: to_context,
 		} );
 	} );
 };
@@ -290,7 +290,7 @@ const trackBlockInsertion = ( blocks, ...args ) => {
 		blocks_replaced: false,
 		pattern_name: patternName,
 		insert_method,
-		context,
+		entity_context: context,
 	} ) );
 };
 
@@ -307,7 +307,7 @@ const trackBlockRemoval = ( blocks ) => {
 	const context = maybeAddBlockEventContext( rootClientId );
 	trackBlocksHandler( blocks, 'wpcom_block_deleted', ( { name } ) => ( {
 		block_name: name,
-		context,
+		entity_context: context,
 	} ) );
 };
 
@@ -334,7 +334,7 @@ const trackBlockReplacement = ( originalBlockIds, blocks, ...args ) => {
 		blocks_replaced: true,
 		pattern_name: patternName,
 		insert_method,
-		context,
+		entity_context: context,
 	} ) );
 };
 
@@ -386,7 +386,7 @@ const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
 		from_template_selector:
 			applyFilters( 'isInsertingPagePattern', false ) ||
 			applyFilters( 'isInsertingPageTemplate', false ),
-		context,
+		entity_context: context,
 	} ) );
 };
 
