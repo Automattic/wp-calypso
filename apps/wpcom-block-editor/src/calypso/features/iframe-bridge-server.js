@@ -20,7 +20,6 @@ import { wordpress } from '@wordpress/icons';
 import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
 import debugFactory from 'debug';
-import { store as coreStore } from '@wordpress/core-data';
 import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../editing-toolkit/editing-toolkit-plugin/wpcom-block-editor-nav-sidebar/src/constants';
 
 /**
@@ -591,9 +590,7 @@ function handleCloseEditor( calypsoPort ) {
 							onClick={ ( e ) => {
 								e.preventDefault();
 
-								const dirtyEntityRecords = select(
-									coreStore
-								).__experimentalGetDirtyEntityRecords();
+								const dirtyEntityRecords = select( 'core' ).__experimentalGetDirtyEntityRecords();
 								const hasUnsavedChanges = dirtyEntityRecords.length > 0;
 
 								if (
