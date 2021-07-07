@@ -38,7 +38,7 @@ function setTitleAndSelectSiteIfLoggedIn( context, next ) {
 	const themeName = theme.name;
 
 	context.getSiteSelectionHeaderText = () =>
-		translate( 'Select a site to see {{strong}}%(themeName)s{{/strong}} details', {
+		translate( 'Select a site to view {{strong}}%(themeName)s{{/strong}}', {
 			args: { themeName },
 			components: { strong: <strong /> },
 		} );
