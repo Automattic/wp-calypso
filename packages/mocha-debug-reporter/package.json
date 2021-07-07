@@ -16,7 +16,7 @@
 	],
 	"license": "GPL-2.0-or-later",
 	"dependencies": {
-		"@types/mocha": "^8.2.2"
+		"@types/mocha": "^8.2.3"
 	},
 	"peerDependencies": {
 		"mocha": ">=8.0.0"
