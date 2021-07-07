@@ -45,7 +45,7 @@ import { createReduxStore } from 'calypso/state';
 import initialReducer from 'calypso/state/reducer';
 import { getInitialState, persistOnChange, loadAllState } from 'calypso/state/initial-state';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
-import userFactory from 'calypso/lib/user';
+import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { onDisablePersistence } from 'calypso/lib/user/store';
 import { isOutsideCalypso } from 'calypso/lib/url';
 import { getUrlParts } from '@automattic/calypso-url';
@@ -222,12 +222,9 @@ const utils = () => {
 const configureReduxStore = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso configure Redux store.' );
 
-	if ( currentUser.get() ) {
+	if ( currentUser ) {
 		// Set current user in Redux store
-		reduxStore.dispatch( setCurrentUser( currentUser.get() ) );
-		currentUser.on( 'change', () => {
-			reduxStore.dispatch( setCurrentUser( currentUser.get() ) );
-		} );
+		reduxStore.dispatch( setCurrentUser( currentUser ) );
 	}
 
 	if ( config.isEnabled( 'network-connection' ) ) {
@@ -239,7 +236,7 @@ const configureReduxStore = ( currentUser, reduxStore ) => {
 	setSupportSessionReduxStore( reduxStore );
 	setReduxBridgeReduxStore( reduxStore );
 
-	if ( currentUser.get() ) {
+	if ( currentUser ) {
 		if ( config.isEnabled( 'push-notifications' ) ) {
 			// If the browser is capable, registers a service worker & exposes the API
 			reduxStore.dispatch( pushNotificationsInit() );
@@ -294,7 +291,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	unsavedFormsMiddleware();
 
 	// The analytics module requires user (when logged in) and superProps objects. Inject these here.
-	initializeAnalytics( currentUser ? currentUser.get() : undefined, getSuperProps( reduxStore ) );
+	initializeAnalytics( currentUser ? currentUser : undefined, getSuperProps( reduxStore ) );
 
 	setupErrorLogger( reduxStore );
 
@@ -336,7 +333,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	} );
 
 	page( '*', function ( context, next ) {
-		if ( '/me/account' !== context.path && currentUser.get().phone_account ) {
+		if ( '/me/account' !== context.path && currentUser.phone_account ) {
 			page( '/me/account' );
 		}
 
@@ -350,7 +347,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		[ 'signupProgress', 'signupDependencies' ].forEach( ( item ) => store.remove( item ) );
 	}
 
-	if ( ! currentUser.get() ) {
+	if ( ! currentUser ) {
 		// Dead-end the sections the user can't access when logged out
 		page( '*', function ( context, next ) {
 			//see server/pages/index for prod redirect
@@ -433,11 +430,11 @@ const boot = ( currentUser, registerRoutes ) => {
 	saveOauthFlags();
 	utils();
 	loadAllState().then( () => {
-		const initialState = getInitialState( initialReducer, currentUser.get()?.ID );
+		const initialState = getInitialState( initialReducer, currentUser?.ID );
 		const reduxStore = createReduxStore( initialState, initialReducer );
 		setStore( reduxStore );
-		onDisablePersistence( persistOnChange( reduxStore, currentUser.get()?.ID ) );
-		setupLocale( currentUser.get(), reduxStore );
+		onDisablePersistence( persistOnChange( reduxStore, currentUser?.ID ) );
+		setupLocale( currentUser, reduxStore );
 		configureReduxStore( currentUser, reduxStore );
 		setupMiddlewares( currentUser, reduxStore );
 		detectHistoryNavigation.start();
@@ -456,8 +453,7 @@ const boot = ( currentUser, registerRoutes ) => {
 };
 
 export const bootApp = async ( appName, registerRoutes ) => {
-	const user = userFactory();
-	await user.initialize();
+	const user = await initializeCurrentUser();
 	debug( `Starting ${ appName }. Let's do this.` );
 	boot( user, registerRoutes );
 };

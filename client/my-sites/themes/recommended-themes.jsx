@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 /**
  * Internal dependencies
@@ -27,8 +26,8 @@ class RecommendedThemes extends React.Component {
 
 	componentDidUpdate( prevProps ) {
 		// Wait until rec themes to be loaded to scroll to search input if its in use.
-		const { isLoading, isShowcaseOpen, scrollToSearchInput, filter } = this.props;
-		if ( prevProps.isLoading !== isLoading && isLoading === false && isShowcaseOpen ) {
+		const { isLoading, scrollToSearchInput, filter } = this.props;
+		if ( prevProps.isLoading !== isLoading && isLoading === false ) {
 			scrollToSearchInput();
 		}
 		if ( prevProps.filter !== filter ) {
@@ -43,9 +42,6 @@ class RecommendedThemes extends React.Component {
 	render() {
 		return (
 			<>
-				<h2>
-					<strong>{ translate( 'Recommended themes' ) }</strong>
-				</h2>
 				{ this.props.isLoading ? (
 					<Spinner size={ 100 } />
 				) : (

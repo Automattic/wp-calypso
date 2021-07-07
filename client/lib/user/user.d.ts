@@ -1,17 +1,7 @@
 /**
  * External Dependencies
  */
-import { EventEmitter } from 'events';
-import { URL, JSONSerializable } from '../../types';
-
-type WPCOMError = { message: string };
-type WPCOMHeaders = { [ name: string ]: string } & { status: number };
-
-type WPCOMCallback = (
-	error: WPCOMError | null,
-	result: JSONSerializable | null,
-	headers: WPCOMHeaders
-) => void;
+import { URL } from '../../types';
 
 export type UserMetaData = {
 	links: Record< 'self' | 'help' | 'site' | 'flags', URL >;
@@ -21,16 +11,6 @@ export type UserMetaData = {
 		};
 	};
 };
-
-export interface User extends EventEmitter {
-	initialize: () => Promise< void >;
-	clearStoreIfChanged: ( userId: number ) => void;
-	get: () => UserData;
-	fetch: () => Promise< void >;
-	handleFetchFailure: ( error: Error ) => void;
-	handleFetchSuccess: ( userdata: UserData ) => void;
-	dispatchToken: string;
-}
 
 export type UserData = { ID: number } & Partial< OptionalUserData >;
 
