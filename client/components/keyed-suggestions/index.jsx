@@ -261,13 +261,13 @@ class KeyedSuggestions extends React.Component {
 				// Order is important!
 				// Arg 1 can be multiple words. "flexible header" or "accepts header images of any size"
 				// Arg 2 will only be one word; even if the user types multiple words we search on each one individually.
-				const matcher = ( term1, term2_single, threshold = SEARCH_THRESHOLD ) => {
+				const matcher = ( term1, term2_single ) => {
 					let max_seen = 0;
 					for ( const term1_single of term1.split( /\s+/ ) ) {
 						const sim = cosineSimilarity( term1_single, term2_single );
 						max_seen = Math.max( max_seen, sim );
 					}
-					return max_seen > threshold;
+					return max_seen > SEARCH_THRESHOLD;
 				};
 
 				filtered[ key ] = take(
