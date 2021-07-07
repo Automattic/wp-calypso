@@ -32,8 +32,6 @@ class TransferAwayConfirmationPage extends Component {
 	state = {
 		isLoading: false,
 		isProcessingRequest: false,
-		success: false,
-		error: false,
 	};
 
 	constructor( props ) {

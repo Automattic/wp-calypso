@@ -27,8 +27,6 @@ class RegistrantVerificationPage extends Component {
 
 	state = {
 		isLoading: true,
-		success: false,
-		error: false,
 	};
 
 	constructor( props ) {

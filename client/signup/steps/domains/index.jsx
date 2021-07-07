@@ -86,7 +86,6 @@ class DomainsStep extends React.Component {
 	};
 
 	getDefaultState = () => ( {
-		previousStepSectionName: this.props.stepSectionName,
 		suggestion: null,
 	} );
 
@@ -130,12 +129,6 @@ class DomainsStep extends React.Component {
 
 			props.goToNextStep();
 		}
-	}
-
-	static getDerivedStateFromProps( nextProps ) {
-		return {
-			previousStepSectionName: nextProps.stepSectionName,
-		};
 	}
 
 	/**
