@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import userFactory from 'calypso/lib/user';
 import {
 	clearStore,
 	disablePersistence,
@@ -31,12 +30,6 @@ export function setCurrentUser( user ) {
 
 let fetchingUser = null;
 
-function setLegacyUserData( userData ) {
-	const user = userFactory();
-	user.data = userData;
-	user.emit( 'change' );
-}
-
 export function fetchCurrentUser() {
 	return ( dispatch ) => {
 		if ( fetchingUser ) {
@@ -58,13 +51,9 @@ export function fetchCurrentUser() {
 
 				setStoredUserId( userData.ID );
 				dispatch( setCurrentUser( userData ) );
-
-				// @TODO: Remove this once `lib/user` has been fully reduxified
-				setLegacyUserData( userData );
 			} )
 			.catch( () => {
-				// @TODO: Remove this once `lib/user` has been fully reduxified
-				setLegacyUserData( false );
+				// @TODO: Improve error handling
 			} )
 			.finally( () => {
 				fetchingUser = null;
