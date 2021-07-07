@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import wpcom from 'calypso/lib/wp';
 import userFactory from 'calypso/lib/user';
 import {
 	clearStore,
@@ -14,7 +13,7 @@ import {
 	CURRENT_USER_RECEIVE,
 	CURRENT_USER_SET_EMAIL_VERIFIED,
 } from 'calypso/state/action-types';
-import { filterUserObject, getLogoutUrl } from 'calypso/lib/user/shared-utils';
+import { filterUserObject, getLogoutUrl, rawCurrentUserFetch } from 'calypso/lib/user/shared-utils';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 /**
@@ -48,11 +47,7 @@ export function fetchCurrentUser() {
 			type: CURRENT_USER_FETCH,
 		} );
 
-		fetchingUser = wpcom
-			.me()
-			.get( {
-				meta: 'flags',
-			} )
+		fetchingUser = rawCurrentUserFetch()
 			.then( async ( user ) => {
 				const userData = filterUserObject( user );
 
