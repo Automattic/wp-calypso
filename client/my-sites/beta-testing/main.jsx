@@ -79,7 +79,7 @@ const BetaTesting = ( { siteId, posts, isRequestingPosts, trackViewHorizonAction
 				</CardHeading>
 
 				<div className="beta-testing__posts">
-					{ isRequestingPosts && !posts && (
+					{ isRequestingPosts && ! posts && (
 						<article className="beta-testing__post is-placeholder">
 							<CardHeading tagName="h4" size={ 16 }></CardHeading>
 							<p></p>
