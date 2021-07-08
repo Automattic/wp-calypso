@@ -26,10 +26,16 @@ jest.mock( 'calypso/state/sites/selectors' );
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
+import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
+jest.mock( 'calypso/state/plans/selectors' );
+import { getPlanRawPrice } from 'calypso/state/plans/selectors';
 
 jest.mock( 'page', () => ( {
 	redirect: jest.fn(),
 } ) );
+
+const siteId = 13579;
 
 const domainProduct = {
 	product_name: '.cash Domain',
@@ -111,6 +117,102 @@ const planWithoutDomain = {
 	item_subtotal_display: 'R$144',
 };
 
+const planWithoutDomainMonthly = {
+	product_name: 'WordPress.com Personal Monthly',
+	product_slug: 'personal-bundle-monthly',
+	currency: 'BRL',
+	extra: {
+		context: 'signup',
+	},
+	free_trial: false,
+	meta: '',
+	product_id: 1019,
+	volume: 1,
+	item_original_cost_integer: 14400,
+	item_original_cost_display: 'R$144',
+	item_subtotal_integer: 14400,
+	item_subtotal_display: 'R$144',
+};
+
+const planWithoutDomainBiannual = {
+	product_name: 'WordPress.com Personal 2 Year',
+	product_slug: 'personal-bundle-2y',
+	currency: 'BRL',
+	extra: {
+		context: 'signup',
+	},
+	free_trial: false,
+	meta: '',
+	product_id: 1029,
+	volume: 1,
+	item_original_cost_integer: 14400,
+	item_original_cost_display: 'R$144',
+	item_subtotal_integer: 14400,
+	item_subtotal_display: 'R$144',
+};
+
+const planLevel2 = {
+	product_name: 'WordPress.com Business',
+	product_slug: 'business-bundle',
+	currency: 'BRL',
+	extra: {
+		context: 'signup',
+	},
+	free_trial: false,
+	meta: '',
+	product_id: 1008,
+	volume: 1,
+	item_original_cost_integer: 14400,
+	item_original_cost_display: 'R$144',
+	item_subtotal_integer: 14400,
+	item_subtotal_display: 'R$144',
+};
+
+const planLevel2Monthly = {
+	product_name: 'WordPress.com Business Monthly',
+	product_slug: 'business-bundle-monthly',
+	currency: 'BRL',
+	extra: {
+		context: 'signup',
+	},
+	free_trial: false,
+	meta: '',
+	product_id: 1018,
+	volume: 1,
+	item_original_cost_integer: 14400,
+	item_original_cost_display: 'R$144',
+	item_subtotal_integer: 14400,
+	item_subtotal_display: 'R$144',
+};
+
+const planLevel2Biannual = {
+	product_name: 'WordPress.com Business 2 Year',
+	product_slug: 'business-bundle-2y',
+	currency: 'BRL',
+	extra: {
+		context: 'signup',
+	},
+	free_trial: false,
+	meta: '',
+	product_id: 1028,
+	volume: 1,
+	item_original_cost_integer: 14400,
+	item_original_cost_display: 'R$144',
+	item_subtotal_integer: 14400,
+	item_subtotal_display: 'R$144',
+};
+
+getPlanRawPrice.mockImplementation( () => 144 );
+getPlansBySiteId.mockImplementation( () => ( {
+	data: [
+		{
+			interval: 365,
+			productSlug: planWithoutDomain.product_slug,
+			currentPlan: true,
+		},
+	],
+} ) );
+
 const fetchStripeConfiguration = async () => {
 	return {
 		public_key: 'abc123',
@@ -178,13 +280,62 @@ describe( 'CompositeCheckout', () => {
 				},
 				sites: { items: {} },
 				siteSettings: { items: {} },
-				ui: { selectedSiteId: 123 },
+				ui: { selectedSiteId: siteId },
 				productsList: {
 					items: {
-						'personal-bundle': {
-							product_id: 1009,
-							product_name: 'Plan',
-							product_slug: 'personal-bundle',
+						[ planWithoutDomain.product_slug ]: {
+							product_id: planWithoutDomain.product_id,
+							product_slug: planWithoutDomain.product_slug,
+							product_type: 'bundle',
+							available: true,
+							is_domain_registration: false,
+							cost_display: planWithoutDomain.item_subtotal_display,
+							currency_code: planWithoutDomain.currency,
+						},
+						[ planWithoutDomainMonthly.product_slug ]: {
+							product_id: planWithoutDomainMonthly.product_id,
+							product_slug: planWithoutDomainMonthly.product_slug,
+							product_type: 'bundle',
+							available: true,
+							is_domain_registration: false,
+							cost_display: planWithoutDomainMonthly.item_subtotal_display,
+							currency_code: planWithoutDomainMonthly.currency,
+						},
+						[ planWithoutDomainBiannual.product_slug ]: {
+							product_id: planWithoutDomainBiannual.product_id,
+							product_slug: planWithoutDomainBiannual.product_slug,
+							product_type: 'bundle',
+							available: true,
+							is_domain_registration: false,
+							cost_display: planWithoutDomainBiannual.item_subtotal_display,
+							currency_code: planWithoutDomainBiannual.currency,
+						},
+						[ planLevel2.product_slug ]: {
+							product_id: planWithoutDomain.product_id,
+							product_slug: planWithoutDomain.product_slug,
+							product_type: 'bundle',
+							available: true,
+							is_domain_registration: false,
+							cost_display: planWithoutDomain.item_subtotal_display,
+							currency_code: planWithoutDomain.currency,
+						},
+						[ planLevel2Monthly.product_slug ]: {
+							product_id: planLevel2Monthly.product_id,
+							product_slug: planLevel2Monthly.product_slug,
+							product_type: 'bundle',
+							available: true,
+							is_domain_registration: false,
+							cost_display: planLevel2Monthly.item_subtotal_display,
+							currency_code: planLevel2Monthly.currency,
+						},
+						[ planLevel2Biannual.product_slug ]: {
+							product_id: planLevel2Biannual.product_id,
+							product_slug: planLevel2Biannual.product_slug,
+							product_type: 'bundle',
+							available: true,
+							is_domain_registration: false,
+							cost_display: planLevel2Biannual.item_subtotal_display,
+							currency_code: planLevel2Biannual.currency,
 						},
 						domain_map: {
 							product_id: 5,
@@ -233,6 +384,7 @@ describe( 'CompositeCheckout', () => {
 				>
 					<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
 						<CompositeCheckout
+							siteId={ siteId }
 							siteSlug={ 'foo.com' }
 							getStoredCards={ async () => [] }
 							overrideCountryList={ countryList }
@@ -507,6 +659,28 @@ describe( 'CompositeCheckout', () => {
 		const { getByText } = renderResult;
 		expect( getByText( 'Purchase Details' ) ).toBeInTheDocument();
 		expect( page.redirect ).not.toHaveBeenCalled();
+	} );
+
+	it( 'renders the variant picker if there are variants after clicking into edit mode', async () => {
+		const cartChanges = { products: [ planLevel2 ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+		fireEvent.click( editOrderButton );
+
+		expect( screen.getByText( 'One month' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'One year' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Two years' ) ).toBeInTheDocument();
+	} );
+
+	it( 'does not render the variant picker if there are no variants after clicking into edit mode', async () => {
+		const cartChanges = { products: [ domainProduct ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+		fireEvent.click( editOrderButton );
+
+		expect( screen.queryByText( 'One month' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'One year' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Two years' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'removes a product from the cart after clicking to remove it in edit mode', async () => {
