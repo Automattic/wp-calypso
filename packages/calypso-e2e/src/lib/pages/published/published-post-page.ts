@@ -71,6 +71,13 @@ export class PublishedPostPage extends BaseContainer {
 		await this.frame.waitForSelector( selectors.notLikedText, { state: 'visible' } );
 	}
 
+	/**
+	 * Confirms the presenced of the block on the published page.
+	 *
+	 * This method accepts a selector referencing the block to verify whether the block(s) are rendered on page.
+	 *
+	 * @param {string} blockSelector Selector to block(s).
+	 */
 	async confirmBlockPresence( blockSelector: string ): Promise< void > {
 		await this.page.waitForSelector( `${ selectors.postBody } ${ blockSelector }` );
 	}

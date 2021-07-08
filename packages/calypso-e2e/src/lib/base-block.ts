@@ -4,18 +4,18 @@
 import { ElementHandle } from 'playwright';
 
 /**
- * Base class for asynchronously initializing objects.
+ * Base class for the Block type objects.
  */
 export class BaseBlock {
 	[ x: string ]: any;
-	block: ElementHandle;
+	static block: ElementHandle;
 
 	/**
-	 * Constructs an instance of a class.
+	 * Constructs a concrete instance of a block.
 	 *
-	 * @param {Page} page The page on which interactions take place.
-	 * @param {string} [selector] CSS selector that is expected to be located on page.
-	 * @param {string} [url] URL of the page represented by the object.
+	 * This base class accepts an ElementHandle reference to the block to be interacted with.
+	 *
+	 * @param {ElementHandle } block Handle referencing the block as inserted on the Gutenberg editor.
 	 */
 	constructor( block: ElementHandle ) {
 		this.block = block;
