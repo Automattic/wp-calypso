@@ -395,7 +395,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			await editor.waitForTemplatePartsToLoad();
 			await deleteTemplatesAndTemplateParts( this.driver );
 		} );
-
+		/*
 		createGeneralTests( { it, editorType: 'site' } );
 
 		describe( 'Tracks "wpcom_block_editor_global_styles_tab_selected', function () {
@@ -818,7 +818,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				);
 			} );
 		} );
-
+*/
 		describe( 'Navigation sidebar', function () {
 			it( 'should track "wpcom_block_editor_nav_sidebar_open" when sidebar is opened', async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
@@ -974,6 +974,28 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				);
 
 				assert( isBackToDashboardLocated );
+			} );
+
+			it( 'should track "wpcom_block_editor_nav_sidebar_item_edit" when switching to a content item', async function () {
+				const pagesMenuItemLocator = By.css(
+					'[role="region"][aria-label="Navigation Sidebar"] [role="menu"] [title="Pages"] button'
+				);
+				await driverHelper.clickWhenClickable( this.driver, pagesMenuItemLocator );
+
+				const contentMenuItemLocator = By.css(
+					'[role="region"][aria-label="Navigation Sidebar"] [role="menu"] [title="Home"] button'
+				);
+				await driverHelper.clickWhenClickable( this.driver, contentMenuItemLocator );
+
+				const eventsStack = await getEventsStack( this.driver );
+				const editEvents = eventsStack.filter(
+					( [ eventName ] ) => eventName === 'wpcom_block_editor_nav_sidebar_item_edit'
+				);
+				// TODO: Change this to 1 once https://github.com/WordPress/gutenberg/pull/33286 fix is deployed
+				assert.strictEqual( editEvents.length, 2 );
+				const [ , editEventData ] = editEvents[ 0 ];
+				assert.strictEqual( editEventData.item_type, 'page' );
+				assert.strictEqual( editEventData.item_slug, 'home' );
 			} );
 		} );
 
