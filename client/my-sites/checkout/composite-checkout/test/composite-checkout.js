@@ -218,13 +218,7 @@ describe( 'CompositeCheckout', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		getPlansBySiteId.mockImplementation( () => ( {
-			data: [
-				{
-					interval: 365,
-					productSlug: planWithoutDomain.product_slug,
-					currentPlan: true,
-				},
-			],
+			data: getActivePersonalPlanDataForType( 'yearly' ),
 		} ) );
 
 		container = document.createElement( 'div' );
@@ -662,235 +656,95 @@ describe( 'CompositeCheckout', () => {
 		expect( page.redirect ).not.toHaveBeenCalled();
 	} );
 
-	it( 'renders the variant picker with monthly for a yearly plan when there is no current plan', async () => {
-		getPlansBySiteId.mockImplementation( () => ( {
-			data: null,
-		} ) );
-		const cartChanges = { products: [ planLevel2 ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-		fireEvent.click( editOrderButton );
+	it.each( [
+		{ activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'monthly' },
+		{ activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'yearly' },
+		{ activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'two-year' },
+		{ activePlan: 'yearly', cartPlan: 'yearly', expectedVariant: 'yearly' },
+		{ activePlan: 'yearly', cartPlan: 'yearly', expectedVariant: 'two-year' },
+		{ activePlan: 'monthly', cartPlan: 'yearly', expectedVariant: 'monthly' },
+		{ activePlan: 'monthly', cartPlan: 'yearly', expectedVariant: 'yearly' },
+		{ activePlan: 'monthly', cartPlan: 'yearly', expectedVariant: 'two-year' },
+		{ activePlan: 'monthly', cartPlan: 'two-year', expectedVariant: 'monthly' },
+		{ activePlan: 'monthly', cartPlan: 'two-year', expectedVariant: 'yearly' },
+		{ activePlan: 'monthly', cartPlan: 'two-year', expectedVariant: 'two-year' },
+	] )(
+		'renders the variant picker with $expectedVariant for a $cartPlan plan when the current plan is $activePlan',
+		async ( { activePlan, cartPlan, expectedVariant } ) => {
+			getPlansBySiteId.mockImplementation( () => ( {
+				data: getActivePersonalPlanDataForType( activePlan ),
+			} ) );
+			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
+			render( <MyCheckout cartChanges={ cartChanges } />, container );
+			const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+			fireEvent.click( editOrderButton );
 
-		expect( screen.getByText( 'One month' ) ).toBeInTheDocument();
-	} );
+			expect(
+				screen.getByText( getVariantItemTextForInterval( expectedVariant ) )
+			).toBeInTheDocument();
+		}
+	);
 
-	it( 'renders the monthly variant without a discount percentage for a yearly plan when there is no current plan', async () => {
-		getPlansBySiteId.mockImplementation( () => ( {
-			data: null,
-		} ) );
-		const cartChanges = { products: [ planLevel2 ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-		fireEvent.click( editOrderButton );
+	it.each( [
+		{ activePlan: 'yearly', cartPlan: 'yearly', expectedVariant: 'monthly' },
+		{ activePlan: 'two-year', cartPlan: 'yearly', expectedVariant: 'monthly' },
+		{ activePlan: 'two-year', cartPlan: 'yearly', expectedVariant: 'yearly' },
+		{ activePlan: 'two-year', cartPlan: 'yearly', expectedVariant: 'two-year' },
+	] )(
+		'renders the variant picker without $expectedVariant for a $cartPlan plan when the current plan is $activePlan',
+		async ( { activePlan, cartPlan, expectedVariant } ) => {
+			getPlansBySiteId.mockImplementation( () => ( {
+				data: getActivePersonalPlanDataForType( activePlan ),
+			} ) );
+			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
+			render( <MyCheckout cartChanges={ cartChanges } />, container );
+			const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+			fireEvent.click( editOrderButton );
 
-		const variantItem = screen.getByText( 'One month' ).closest( 'label' );
-		expect( within( variantItem ).queryByText( 'Save' ) ).not.toBeInTheDocument();
-	} );
+			expect(
+				screen.queryByText( getVariantItemTextForInterval( expectedVariant ) )
+			).not.toBeInTheDocument();
+		}
+	);
 
-	it( 'renders the variant picker with yearly for a yearly plan when there is no current plan', async () => {
-		getPlansBySiteId.mockImplementation( () => ( {
-			data: null,
-		} ) );
-		const cartChanges = { products: [ planLevel2 ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-		fireEvent.click( editOrderButton );
+	it.each( [
+		{ activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'yearly' },
+		{ activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'two-year' },
+	] )(
+		'renders the $expectedVariant variant with a discount percentage for a $cartPlan plan when the current plan is $activePlan',
+		async ( { activePlan, cartPlan, expectedVariant } ) => {
+			getPlansBySiteId.mockImplementation( () => ( {
+				data: getActivePersonalPlanDataForType( activePlan ),
+			} ) );
+			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
+			render( <MyCheckout cartChanges={ cartChanges } />, container );
+			const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+			fireEvent.click( editOrderButton );
 
-		expect( screen.getByText( 'One year' ) ).toBeInTheDocument();
-	} );
+			const variantItem = screen
+				.getByText( getVariantItemTextForInterval( expectedVariant ) )
+				.closest( 'label' );
+			expect( within( variantItem ).getByText( /Save \d+%/ ) ).toBeInTheDocument();
+		}
+	);
 
-	it( 'renders the yearly variant with a discount percentage for a yearly plan when there is no current plan', async () => {
-		getPlansBySiteId.mockImplementation( () => ( {
-			data: null,
-		} ) );
-		const cartChanges = { products: [ planLevel2 ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-		fireEvent.click( editOrderButton );
+	it.each( [ { activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'monthly' } ] )(
+		'renders the $expectedVariant variant without a discount percentage for a $cartPlan plan when the current plan is $activePlan',
+		async ( { activePlan, cartPlan, expectedVariant } ) => {
+			getPlansBySiteId.mockImplementation( () => ( {
+				data: getActivePersonalPlanDataForType( activePlan ),
+			} ) );
+			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
+			render( <MyCheckout cartChanges={ cartChanges } />, container );
+			const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+			fireEvent.click( editOrderButton );
 
-		const variantItem = screen.getByText( 'One year' ).closest( 'label' );
-		expect( within( variantItem ).getByText( /Save \d+%/ ) ).toBeInTheDocument();
-	} );
-
-	it( 'renders the variant picker with two-years for a yearly plan when there is no current plan', async () => {
-		getPlansBySiteId.mockImplementation( () => ( {
-			data: null,
-		} ) );
-		const cartChanges = { products: [ planLevel2 ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-		fireEvent.click( editOrderButton );
-
-		expect( screen.getByText( 'Two years' ) ).toBeInTheDocument();
-	} );
-
-	it( 'renders the two-year variant with a discount percentage for a yearly plan when there is no current plan', async () => {
-		getPlansBySiteId.mockImplementation( () => ( {
-			data: null,
-		} ) );
-		const cartChanges = { products: [ planLevel2 ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-		fireEvent.click( editOrderButton );
-
-		const variantItem = screen.getByText( 'Two years' ).closest( 'label' );
-		expect( within( variantItem ).getByText( /Save \d+%/ ) ).toBeInTheDocument();
-	} );
-
-	it( 'renders the variant picker without monthly for a yearly plan when the current plan is yearly', async () => {
-		const cartChanges = { products: [ planLevel2 ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-		fireEvent.click( editOrderButton );
-
-		expect( screen.queryByText( 'One month' ) ).not.toBeInTheDocument();
-	} );
-
-	it( 'renders the variant picker with yearly for a yearly plan when the current plan is yearly', async () => {
-		const cartChanges = { products: [ planLevel2 ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-		fireEvent.click( editOrderButton );
-
-		expect( screen.getByText( 'One year' ) ).toBeInTheDocument();
-	} );
-
-	it( 'renders the variant picker with two-years for a yearly plan when the current plan is yearly', async () => {
-		const cartChanges = { products: [ planLevel2 ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-		fireEvent.click( editOrderButton );
-
-		expect( screen.getByText( 'Two years' ) ).toBeInTheDocument();
-	} );
-
-	it( 'renders the variant picker with monthly for a yearly plan when the current plan is monthly', async () => {
-		getPlansBySiteId.mockImplementation( () => ( {
-			data: [
-				{
-					interval: 30,
-					productSlug: planWithoutDomainMonthly.product_slug,
-					currentPlan: true,
-				},
-			],
-		} ) );
-		const cartChanges = { products: [ planLevel2 ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-		fireEvent.click( editOrderButton );
-
-		expect( screen.getByText( 'One month' ) ).toBeInTheDocument();
-	} );
-
-	it( 'renders the variant picker with yearly for a yearly plan when the current plan is monthly', async () => {
-		getPlansBySiteId.mockImplementation( () => ( {
-			data: [
-				{
-					interval: 30,
-					productSlug: planWithoutDomainMonthly.product_slug,
-					currentPlan: true,
-				},
-			],
-		} ) );
-		const cartChanges = { products: [ planLevel2 ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-		fireEvent.click( editOrderButton );
-
-		expect( screen.getByText( 'One year' ) ).toBeInTheDocument();
-	} );
-
-	it( 'renders the variant picker with two-years for a yearly plan when the current plan is monthly', async () => {
-		getPlansBySiteId.mockImplementation( () => ( {
-			data: [
-				{
-					interval: 30,
-					productSlug: planWithoutDomainMonthly.product_slug,
-					currentPlan: true,
-				},
-			],
-		} ) );
-		const cartChanges = { products: [ planLevel2 ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-		fireEvent.click( editOrderButton );
-
-		expect( screen.getByText( 'Two years' ) ).toBeInTheDocument();
-	} );
-
-	it( 'renders the variant picker with monthly for a two-year plan when the current plan is monthly', async () => {
-		getPlansBySiteId.mockImplementation( () => ( {
-			data: [
-				{
-					interval: 30,
-					productSlug: planWithoutDomainMonthly.product_slug,
-					currentPlan: true,
-				},
-			],
-		} ) );
-		const cartChanges = { products: [ planLevel2Biannual ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-		fireEvent.click( editOrderButton );
-
-		expect( screen.getByText( 'One month' ) ).toBeInTheDocument();
-	} );
-
-	it( 'renders the variant picker with yearly for a two-year plan when the current plan is monthly', async () => {
-		getPlansBySiteId.mockImplementation( () => ( {
-			data: [
-				{
-					interval: 30,
-					productSlug: planWithoutDomainMonthly.product_slug,
-					currentPlan: true,
-				},
-			],
-		} ) );
-		const cartChanges = { products: [ planLevel2Biannual ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-		fireEvent.click( editOrderButton );
-
-		expect( screen.getByText( 'One year' ) ).toBeInTheDocument();
-	} );
-
-	it( 'renders the variant picker with two-year for a two-year plan when the current plan is monthly', async () => {
-		getPlansBySiteId.mockImplementation( () => ( {
-			data: [
-				{
-					interval: 30,
-					productSlug: planWithoutDomainMonthly.product_slug,
-					currentPlan: true,
-				},
-			],
-		} ) );
-		const cartChanges = { products: [ planLevel2Biannual ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-		fireEvent.click( editOrderButton );
-
-		expect( screen.getByText( 'Two years' ) ).toBeInTheDocument();
-	} );
-
-	it( 'does not render the variant picker for a yearly plan when the current plan is biannual', async () => {
-		getPlansBySiteId.mockImplementation( () => ( {
-			data: [
-				{
-					interval: 730,
-					productSlug: planWithoutDomainBiannual.product_slug,
-					currentPlan: true,
-				},
-			],
-		} ) );
-		const cartChanges = { products: [ planLevel2 ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-		fireEvent.click( editOrderButton );
-
-		expect( screen.queryByText( 'One month' ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( 'One year' ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( 'Two years' ) ).not.toBeInTheDocument();
-	} );
+			const variantItem = screen
+				.getByText( getVariantItemTextForInterval( expectedVariant ) )
+				.closest( 'label' );
+			expect( within( variantItem ).queryByText( /Save \d+%/ ) ).not.toBeInTheDocument();
+		}
+	);
 
 	it( 'does not render the variant picker if there are no variants after clicking into edit mode', async () => {
 		const cartChanges = { products: [ domainProduct ] };
@@ -903,40 +757,29 @@ describe( 'CompositeCheckout', () => {
 		expect( screen.queryByText( 'Two years' ) ).not.toBeInTheDocument();
 	} );
 
+	it.each( [
+		{ activePlan: 'yearly', cartPlan: 'monthly' },
+		{ activePlan: 'monthly', cartPlan: 'yearly' },
+	] )(
+		'does not render the variant picker for a term change from $activePlan to $cartPlan of the current plan',
+		async ( { activePlan, cartPlan } ) => {
+			getPlansBySiteId.mockImplementation( () => ( {
+				data: getActivePersonalPlanDataForType( activePlan ),
+			} ) );
+			const cartChanges = { products: [ getPersonalPlanForInterval( cartPlan ) ] };
+			render( <MyCheckout cartChanges={ cartChanges } />, container );
+			const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+			fireEvent.click( editOrderButton );
+
+			expect( screen.queryByText( 'One month' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'One year' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Two years' ) ).not.toBeInTheDocument();
+		}
+	);
+
 	it( 'does not render the variant picker for a renewal of the current plan', async () => {
 		const currentPlanRenewal = { ...planWithoutDomain, extra: { purchaseType: 'renewal' } };
 		const cartChanges = { products: [ currentPlanRenewal ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-		fireEvent.click( editOrderButton );
-
-		expect( screen.queryByText( 'One month' ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( 'One year' ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( 'Two years' ) ).not.toBeInTheDocument();
-	} );
-
-	it( 'does not render the variant picker for a term change from annual to monthly of the current plan', async () => {
-		const cartChanges = { products: [ planWithoutDomainMonthly ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-		fireEvent.click( editOrderButton );
-
-		expect( screen.queryByText( 'One month' ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( 'One year' ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( 'Two years' ) ).not.toBeInTheDocument();
-	} );
-
-	it( 'does not render the variant picker for a term change from monthly to annual of the current plan', async () => {
-		getPlansBySiteId.mockImplementation( () => ( {
-			data: [
-				{
-					interval: 30,
-					productSlug: planWithoutDomainMonthly.product_slug,
-					currentPlan: true,
-				},
-			],
-		} ) );
-		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
 		fireEvent.click( editOrderButton );
@@ -1491,4 +1334,76 @@ function mockGetCartEndpointWith( initialCart ) {
 	return async () => {
 		return initialCart;
 	};
+}
+
+function getActivePersonalPlanDataForType( type ) {
+	switch ( type ) {
+		case 'none':
+			return null;
+		case 'monthly':
+			return [
+				{
+					interval: 30,
+					productSlug: planWithoutDomainMonthly.product_slug,
+					currentPlan: true,
+				},
+			];
+		case 'yearly':
+			return [
+				{
+					interval: 365,
+					productSlug: planWithoutDomain.product_slug,
+					currentPlan: true,
+				},
+			];
+		case 'two-year':
+			return [
+				{
+					interval: 730,
+					productSlug: planWithoutDomainBiannual.product_slug,
+					currentPlan: true,
+				},
+			];
+		default:
+			throw new Error( `Unknown plan type '${ type }'` );
+	}
+}
+
+function getPersonalPlanForInterval( type ) {
+	switch ( type ) {
+		case 'monthly':
+			return planWithoutDomainMonthly;
+		case 'yearly':
+			return planWithoutDomain;
+		case 'two-year':
+			return planWithoutDomainBiannual;
+		default:
+			throw new Error( `Unknown plan type '${ type }'` );
+	}
+}
+
+function getBusinessPlanForInterval( type ) {
+	switch ( type ) {
+		case 'monthly':
+			return planLevel2Monthly;
+		case 'yearly':
+			return planLevel2;
+		case 'two-year':
+			return planLevel2Biannual;
+		default:
+			throw new Error( `Unknown plan type '${ type }'` );
+	}
+}
+
+function getVariantItemTextForInterval( type ) {
+	switch ( type ) {
+		case 'monthly':
+			return 'One month';
+		case 'yearly':
+			return 'One year';
+		case 'two-year':
+			return 'Two years';
+		default:
+			throw new Error( `Unknown plan type '${ type }'` );
+	}
 }
