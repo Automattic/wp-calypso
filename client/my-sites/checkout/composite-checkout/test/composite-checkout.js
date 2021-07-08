@@ -786,6 +786,37 @@ describe( 'CompositeCheckout', () => {
 		expect( screen.queryByText( 'Two years' ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'does not render the variant picker for a term change from annual to monthly of the current plan', async () => {
+		const cartChanges = { products: [ planWithoutDomainMonthly ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+		fireEvent.click( editOrderButton );
+
+		expect( screen.queryByText( 'One month' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'One year' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Two years' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'does not render the variant picker for a term change from monthly to annual of the current plan', async () => {
+		getPlansBySiteId.mockImplementation( () => ( {
+			data: [
+				{
+					interval: 30,
+					productSlug: planWithoutDomainMonthly.product_slug,
+					currentPlan: true,
+				},
+			],
+		} ) );
+		const cartChanges = { products: [ planWithoutDomain ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+		fireEvent.click( editOrderButton );
+
+		expect( screen.queryByText( 'One month' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'One year' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Two years' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'removes a product from the cart after clicking to remove it in edit mode', async () => {
 		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
