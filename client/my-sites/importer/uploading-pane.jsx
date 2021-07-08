@@ -193,6 +193,12 @@ class UploadingPane extends React.PureComponent {
 		const urlDescription = isValidUrl
 			? this.props?.optionalUrl?.description
 			: this.props?.optionalUrl?.invalidDescription;
+		const uploadButtonEnabled =
+			[ appStates.READY_FOR_UPLOAD, appStates.UPLOAD_FAILURE ].includes(
+				importerStatus.importerState
+			) &&
+			this.state.fileToBeUploaded &&
+			this.validateUrl( this.state.urlInput );
 
 		return (
 			<div>
@@ -247,9 +253,7 @@ class UploadingPane extends React.PureComponent {
 						<ImporterActionButton
 							primary
 							onClick={ this.initiateFromUploadButton }
-							disabled={
-								! this.state.fileToBeUploaded || ! this.validateUrl( this.state.urlInput )
-							}
+							disabled={ ! uploadButtonEnabled }
 						>
 							{ this.props.translate( 'Upload' ) }
 						</ImporterActionButton>
