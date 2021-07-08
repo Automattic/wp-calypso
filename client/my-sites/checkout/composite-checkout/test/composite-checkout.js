@@ -674,6 +674,19 @@ describe( 'CompositeCheckout', () => {
 		expect( screen.getByText( 'One month' ) ).toBeInTheDocument();
 	} );
 
+	it( 'renders the monthly variant without a discount percentage for a yearly plan when there is no current plan', async () => {
+		getPlansBySiteId.mockImplementation( () => ( {
+			data: null,
+		} ) );
+		const cartChanges = { products: [ planLevel2 ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+		fireEvent.click( editOrderButton );
+
+		const variantItem = screen.getByText( 'One month' ).closest( 'label' );
+		expect( within( variantItem ).queryByText( 'Save' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'renders the variant picker with yearly for a yearly plan when there is no current plan', async () => {
 		getPlansBySiteId.mockImplementation( () => ( {
 			data: null,
@@ -686,6 +699,19 @@ describe( 'CompositeCheckout', () => {
 		expect( screen.getByText( 'One year' ) ).toBeInTheDocument();
 	} );
 
+	it( 'renders the yearly variant with a discount percentage for a yearly plan when there is no current plan', async () => {
+		getPlansBySiteId.mockImplementation( () => ( {
+			data: null,
+		} ) );
+		const cartChanges = { products: [ planLevel2 ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+		fireEvent.click( editOrderButton );
+
+		const variantItem = screen.getByText( 'One year' ).closest( 'label' );
+		expect( within( variantItem ).getByText( /Save \d+%/ ) ).toBeInTheDocument();
+	} );
+
 	it( 'renders the variant picker with two-years for a yearly plan when there is no current plan', async () => {
 		getPlansBySiteId.mockImplementation( () => ( {
 			data: null,
@@ -696,6 +722,19 @@ describe( 'CompositeCheckout', () => {
 		fireEvent.click( editOrderButton );
 
 		expect( screen.getByText( 'Two years' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders the two-year variant with a discount percentage for a yearly plan when there is no current plan', async () => {
+		getPlansBySiteId.mockImplementation( () => ( {
+			data: null,
+		} ) );
+		const cartChanges = { products: [ planLevel2 ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+		fireEvent.click( editOrderButton );
+
+		const variantItem = screen.getByText( 'Two years' ).closest( 'label' );
+		expect( within( variantItem ).getByText( /Save \d+%/ ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders the variant picker without monthly for a yearly plan when the current plan is yearly', async () => {
