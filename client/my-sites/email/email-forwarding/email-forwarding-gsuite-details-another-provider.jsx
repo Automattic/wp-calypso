@@ -10,7 +10,7 @@ import React from 'react';
  */
 import { CompactCard as Card } from '@automattic/components';
 
-const EmailForwardingGSuiteDetailsAnotherProvider = ( { translate } ) => {
+const EmailForwardingGoogleWorkspaceDetailsAnotherProvider = ( { translate } ) => {
 	return (
 		<Card className="email-forwarding__card">
 			<p className="email-forwarding__explanation">
@@ -22,8 +22,8 @@ const EmailForwardingGSuiteDetailsAnotherProvider = ( { translate } ) => {
 	);
 };
 
-EmailForwardingGSuiteDetailsAnotherProvider.propTypes = {
+EmailForwardingGoogleWorkspaceDetailsAnotherProvider.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export default localize( EmailForwardingGSuiteDetailsAnotherProvider );
+export default localize( EmailForwardingGoogleWorkspaceDetailsAnotherProvider );

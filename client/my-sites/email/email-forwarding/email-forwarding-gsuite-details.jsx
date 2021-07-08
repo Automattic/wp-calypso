@@ -11,7 +11,7 @@ import React from 'react';
 import { CompactCard as Card } from '@automattic/components';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 
-const EmailForwardingGSuiteDetails = ( { selectedDomainName, siteSlug, translate } ) => {
+const EmailForwardingGoogleWorkspaceDetails = ( { selectedDomainName, siteSlug, translate } ) => {
 	return (
 		<Card className="email-forwarding__card">
 			<p className="email-forwarding__explanation">
@@ -28,10 +28,10 @@ const EmailForwardingGSuiteDetails = ( { selectedDomainName, siteSlug, translate
 	);
 };
 
-EmailForwardingGSuiteDetails.propTypes = {
+EmailForwardingGoogleWorkspaceDetails.propTypes = {
 	selectedDomainName: PropTypes.string.isRequired,
 	siteSlug: PropTypes.string.isRequired,
 	translate: PropTypes.func.isRequired,
 };
 
-export default localize( EmailForwardingGSuiteDetails );
+export default localize( EmailForwardingGoogleWorkspaceDetails );

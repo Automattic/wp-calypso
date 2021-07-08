@@ -17,8 +17,8 @@ import EmailForwardingList from './email-forwarding-list';
 import EmailForwardingAddNew from './email-forwarding-add-new';
 import EmailForwardingDetails from './email-forwarding-details';
 import EmailForwardingCustomMxList from './email-forwarding-custom-mx-list';
-import EmailForwardingGSuiteDetails from './email-forwarding-gsuite-details';
-import EmailForwardingGSuiteDetailsAnotherProvider from './email-forwarding-gsuite-details-another-provider';
+import EmailForwardingGoogleWorkspaceDetails from './email-forwarding-gsuite-details';
+import EmailForwardingGoogleWorkspaceDetailsAnotherProvider from './email-forwarding-gsuite-details-another-provider';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import { CompactCard as Card } from '@automattic/components';
 import getEmailForwardingLimit from 'calypso/state/selectors/get-email-forwarding-limit';
@@ -72,14 +72,14 @@ class EmailForwarding extends Component {
 
 			case 'google-apps':
 				return (
-					<EmailForwardingGSuiteDetails
+					<EmailForwardingGoogleWorkspaceDetails
 						selectedDomainName={ selectedDomainName }
 						siteSlug={ siteSlug }
 					/>
 				);
 
 			case 'google-apps-another-provider':
-				return <EmailForwardingGSuiteDetailsAnotherProvider />;
+				return <EmailForwardingGoogleWorkspaceDetailsAnotherProvider />;
 
 			default:
 				return <EmailForwardingPlaceholder />;
