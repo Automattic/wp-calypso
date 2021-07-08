@@ -62,7 +62,7 @@ const Discount = styled.span`
 	}
 `;
 
-const DoNotPayThis = styled.span`
+const DoNotPayThis = styled.del`
 	text-decoration: line-through;
 	margin-right: 8px;
 
