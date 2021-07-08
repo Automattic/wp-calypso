@@ -1,7 +1,7 @@
 #### cache image
 #### This image is not pushed to any repository and it shouldn't be used as base image for any other docker build.
 #### Its main goal is to create a `/calypso/.cache` that can be copied over other images that can benefit from a warm cache.
-FROM node:14.16.1-buster as cache
+FROM node:14.17.3-buster as cache
 
 ARG node_memory=8192
 WORKDIR /calypso
@@ -36,7 +36,7 @@ ENTRYPOINT [ "/bin/bash" ]
 
 #### base image
 #### This image can be used as a base image for other builds, or to uni test and build calypso.
-FROM node:14.16.1-buster as base
+FROM node:14.17.3-buster as base
 
 ARG node_memory=8192
 ARG user=calypso
