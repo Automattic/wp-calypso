@@ -408,26 +408,30 @@ const trackDisableComplementaryArea = ( scope ) => {
 };
 
 const trackSaveEntityRecord = ( kind, name, record ) => {
-	if (
-		document.querySelector( '.edit-site-template-part-converter__modal' ) &&
-		kind === 'postType' &&
-		name === 'wp_template_part'
-	) {
-		ignoreNextReplaceBlocksAction = true;
-		const convertedParentBlocks = select( 'core/block-editor' ).getBlocksByClientId(
-			select( 'core/block-editor' ).getSelectedBlockClientIds()
-		);
-		// We fire the event with and without the block names. We do this to
-		// make sure the event is tracked all the time. The block names
-		// might become a string that's too long and as a result it will
-		// fail because of URL length browser limitations.
-		tracksRecordEvent( 'wpcom_block_editor_convert_to_template_part', {
-			variation_slug: record.area,
-		} );
-		tracksRecordEvent( 'wpcom_block_editor_convert_to_template_part', {
-			variation_slug: record.area,
-			block_names: getFlattenedBlockNames( convertedParentBlocks ).join( ',' ),
-		} );
+	if ( kind === 'postType' && name === 'wp_template_part' ) {
+		const variationSlug = record.area !== 'uncategorized' ? record.area : undefined;
+		if ( document.querySelector( '.edit-site-template-part-converter__modal' ) ) {
+			ignoreNextReplaceBlocksAction = true;
+			const convertedParentBlocks = select( 'core/block-editor' ).getBlocksByClientId(
+				select( 'core/block-editor' ).getSelectedBlockClientIds()
+			);
+			// We fire the event with and without the block names. We do this to
+			// make sure the event is tracked all the time. The block names
+			// might become a string that's too long and as a result it will
+			// fail because of URL length browser limitations.
+			tracksRecordEvent( 'wpcom_block_editor_convert_to_template_part', {
+				variation_slug: variationSlug,
+			} );
+			tracksRecordEvent( 'wpcom_block_editor_convert_to_template_part', {
+				variation_slug: variationSlug,
+				block_names: getFlattenedBlockNames( convertedParentBlocks ).join( ',' ),
+			} );
+		} else {
+			tracksRecordEvent( 'wpcom_block_editor_create_template_part', {
+				variation_slug: variationSlug,
+				content: record.content ? record.content : undefined,
+			} );
+		}
 	}
 };
 
@@ -440,22 +444,6 @@ const trackListViewToggle = ( isOpen ) => {
 	tracksRecordEvent( 'wpcom_block_editor_list_view_toggle', {
 		is_open: isOpen,
 	} );
-};
-
-const trackSaveEntityRecord = ( kind, name, record ) => {
-	if ( name === 'wp_template_part' && kind === 'postType' ) {
-		if ( document.querySelector( '.edit-site-template-part-converter__modal' ) ) {
-			tracksRecordEvent( 'wpcom_block_editor_convert_to_template_part', {
-				variation_slug: record.area !== 'uncategorized' ? record.area : undefined,
-				content: record.content,
-			} );
-		} else {
-			tracksRecordEvent( 'wpcom_block_editor_create_template_part', {
-				variation_slug: record.area !== 'uncategorized' ? record.area : undefined,
-				content: record.content ? record.content : undefined,
-			} );
-		}
-	}
 };
 
 const trackSiteEditorBrowsingSidebarOpen = () => {
@@ -565,7 +553,6 @@ const REDUX_TRACKING = {
 		saveEntityRecord: trackSaveEntityRecord,
 		editEntityRecord: trackEditEntityRecord,
 		saveEditedEntityRecord: trackSaveEditedEntityRecord,
-		saveEntityRecord: trackSaveEntityRecord,
 	},
 	'core/block-editor': {
 		moveBlocksUp: getBlocksTracker( 'wpcom_block_moved_up' ),
