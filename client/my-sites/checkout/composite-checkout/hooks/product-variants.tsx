@@ -185,7 +185,7 @@ function VariantPriceDiscount( { variant }: { variant: AvailableProductVariant }
 	);
 }
 
-function useVariantPlanProductSlugs( productSlug: string | undefined ): string[] {
+function getVariantPlanProductSlugs( productSlug: string | undefined ): string[] {
 	const chosenPlan = getPlan( productSlug );
 
 	if ( ! chosenPlan ) {
@@ -202,6 +202,10 @@ function useVariantPlanProductSlugs( productSlug: string | undefined ): string[]
 		group: chosenPlan.group,
 		type: chosenPlan.type,
 	} );
+}
+
+function useVariantPlanProductSlugs( productSlug: string | undefined ): string[] {
+	return useMemo( () => getVariantPlanProductSlugs( productSlug ), [ productSlug ] );
 }
 
 function getTermText( term: string, translate: ReturnType< typeof useTranslate > ): string {
