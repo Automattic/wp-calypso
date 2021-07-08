@@ -39,7 +39,7 @@ class RegistrantVerificationPage extends Component {
 		);
 	}
 
-	getLoadingState = () => {
+	getLoadingState() {
 		const { translate } = this.props;
 		return {
 			isLoading: true,
@@ -49,7 +49,7 @@ class RegistrantVerificationPage extends Component {
 			actionCallback: null,
 			footer: 'Loading…',
 		};
-	};
+	}
 
 	getVerificationSuccessState = ( domains ) => {
 		const { translate } = this.props;

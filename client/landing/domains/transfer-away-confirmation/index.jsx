@@ -45,7 +45,7 @@ class TransferAwayConfirmationPage extends Component {
 		);
 	}
 
-	getLoadingState = () => {
+	getLoadingState() {
 		const { translate } = this.props;
 		return {
 			isLoading: true,
@@ -55,7 +55,7 @@ class TransferAwayConfirmationPage extends Component {
 			actionCallback: null,
 			isProcessingRequest: false,
 		};
-	};
+	}
 
 	acceptTransfer = () => {
 		const { domain, recipientId, token } = this.props;
