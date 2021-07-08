@@ -25,14 +25,7 @@ class RegistrantVerificationPage extends Component {
 		token: PropTypes.string.isRequired,
 	};
 
-	state = {
-		isLoading: true,
-	};
-
-	constructor( props ) {
-		super( props );
-		this.state = this.getLoadingState();
-	}
+	state = this.getLoadingState();
 
 	UNSAFE_componentWillMount() {
 		const { domain, email, token } = this.props;
