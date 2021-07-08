@@ -11,6 +11,19 @@ namespace Automattic\Jetpack\Global_Styles;
  * Class Global_Styles_Fonts_Message_Control
  */
 class Global_Styles_Fonts_Message_Control extends \WP_Customize_Control {
+	/**
+	 * Get the site slug
+	 */
+	private function get_site_slug() {
+		if ( method_exists( '\WPCOM_Masterbar', 'get_calypso_site_slug' ) ) {
+			return \WPCOM_Masterbar::get_calypso_site_slug( get_current_blog_id() );
+		}
+
+		$home_url  = home_url( '/' );
+		$site_slug = wp_parse_url( $home_url, PHP_URL_HOST );
+
+		return $site_slug;
+	}
 
 	/**
 	 * Creates a link to the page editor for the user's homepage with the global styles sidebar opened.
@@ -29,8 +42,7 @@ class Global_Styles_Fonts_Message_Control extends \WP_Customize_Control {
 			$base_url = 'https://www.wordpress.com/';
 		}
 
-		$home_url  = home_url( '/' );
-		$site_slug = wp_parse_url( $home_url, PHP_URL_HOST );
+		$site_slug = $this->get_site_slug();
 
 		$url_components = array(
 			$base_url,
