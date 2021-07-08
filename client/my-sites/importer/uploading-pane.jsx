@@ -106,7 +106,12 @@ class UploadingPane extends React.PureComponent {
 				return (
 					<div>
 						<p>{ uploaderPrompt }</p>
-						<ProgressBar className={ progressClasses } value={ uploadPercent } total={ 100 } />
+						<ProgressBar
+							className={ progressClasses }
+							value={ uploadPercent }
+							total={ 100 }
+							isPulsing={ uploadPercent > 99 || importerState === appStates.UPLOAD_PROCESSING }
+						/>
 					</div>
 				);
 			}
