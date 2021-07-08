@@ -79,9 +79,6 @@ import { CountryListItem } from './types/country-list-item';
 import doesValueExist from './lib/does-value-exist';
 import EmptyCart from './components/empty-cart';
 import getContactDetailsType from './lib/get-contact-details-type';
-import getDomainDetails from './lib/get-domain-details';
-import getPostalCode from './lib/get-postal-code';
-import mergeIfObjects from './lib/merge-if-objects';
 import type { ReactStandardAction } from './types/analytics';
 import useCreatePaymentCompleteCallback from './hooks/use-create-payment-complete-callback';
 import useMaybeJetpackIntroCouponCode from './hooks/use-maybe-jetpack-intro-coupon-code';
@@ -399,7 +396,6 @@ export default function CompositeCheckout( {
 
 	const contactDetails: ManagedContactDetails | undefined = select( 'wpcom' )?.getContactInfo();
 	const countryCode: string = contactDetails?.countryCode?.value ?? '';
-	const subdivisionCode: string = contactDetails?.state?.value ?? '';
 
 	const paymentMethods = arePaymentMethodsLoading
 		? []
@@ -488,12 +484,6 @@ export default function CompositeCheckout( {
 		]
 	);
 
-	const domainDetails = getDomainDetails( contactDetails, {
-		includeDomainDetails,
-		includeGSuiteDetails,
-	} );
-	const postalCode = getPostalCode( contactDetails );
-
 	const paymentProcessors = useMemo(
 		() => ( {
 			'apple-pay': ( transactionData: unknown ) =>
@@ -524,19 +514,10 @@ export default function CompositeCheckout( {
 				genericRedirectProcessor( 'brazil-tef', transactionData, dataForProcessor ),
 			'full-credits': () => fullCreditsProcessor( dataForProcessor ),
 			'existing-card': ( transactionData: unknown ) =>
-				existingCardProcessor(
-					mergeIfObjects( transactionData, {
-						country: countryCode,
-						postalCode,
-						subdivisionCode,
-						siteId: siteId ? String( siteId ) : undefined,
-						domainDetails,
-					} ),
-					dataForProcessor
-				),
+				existingCardProcessor( transactionData, dataForProcessor ),
 			paypal: () => payPalProcessor( dataForProcessor ),
 		} ),
-		[ siteId, dataForProcessor, countryCode, subdivisionCode, postalCode, domainDetails ]
+		[ dataForProcessor ]
 	);
 
 	const jetpackColors = isJetpackNotAtomic
