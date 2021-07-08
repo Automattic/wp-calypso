@@ -2,6 +2,14 @@ import {
 	JETPACK_RESET_PLANS,
 	getMonthlyPlanByYearly,
 	getYearlyPlanByMonthly,
+	PLAN_JETPACK_SECURITY,
+	PLAN_JETPACK_SECURITY_MONTHLY,
+	PLAN_JETPACK_SECURITY_PRO,
+	PLAN_JETPACK_SECURITY_PRO_MONTHLY,
+	PLAN_JETPACK_SECURITY_DAILY,
+	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+	PLAN_JETPACK_SECURITY_REALTIME,
+	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 } from '@automattic/calypso-products';
 import { SELECTOR_PLANS } from '../constants';
 import slugToSelectorProduct from '../slug-to-selector-product';
@@ -28,7 +36,16 @@ export const getPlansToDisplay = ( {
 				// Don't include a plan the user already owns, regardless of the term
 				! currentPlanTerms.includes( product.productSlug )
 		);
+
+	const oldPlansToNewPlans: { [ key: string ]: string } = {
+		[ PLAN_JETPACK_SECURITY_DAILY ]: PLAN_JETPACK_SECURITY,
+		[ PLAN_JETPACK_SECURITY_DAILY_MONTHLY ]: PLAN_JETPACK_SECURITY_MONTHLY,
+		[ PLAN_JETPACK_SECURITY_REALTIME ]: PLAN_JETPACK_SECURITY_PRO,
+		[ PLAN_JETPACK_SECURITY_REALTIME_MONTHLY ]: PLAN_JETPACK_SECURITY_PRO_MONTHLY,
+	};
+
 	if ( currentPlanSlug && JETPACK_RESET_PLANS.includes( currentPlanSlug ) ) {
+		currentPlanSlug = oldPlansToNewPlans[ currentPlanSlug ] ?? currentPlanSlug;
 		const currentPlanSelectorProduct = slugToSelectorProduct( currentPlanSlug );
 		if ( currentPlanSelectorProduct ) {
 			return [ currentPlanSelectorProduct, ...plansToDisplay ];
