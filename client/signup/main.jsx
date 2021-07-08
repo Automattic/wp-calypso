@@ -504,14 +504,37 @@ class Signup extends React.Component {
 		return window.location.origin + path;
 	};
 
+	// animate the scroll position to the top
+	scrollToTop() {
+		return new Promise( ( resolve ) => {
+			const resolveScrolling = () => {
+				if ( 0 === window.pageYOffset ) {
+					window.removeEventListener( 'scroll', resolveScrolling );
+					resolve();
+				}
+			};
+
+			window.addEventListener( 'scroll', resolveScrolling );
+			window.scrollTo( {
+				top: 0,
+				left: 0,
+			} );
+		} );
+	}
+
 	// `flowName` is an optional parameter used to redirect to another flow, i.e., from `main`
 	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
-	goToStep = ( stepName, stepSectionName, flowName = this.props.flowName ) => {
-		if ( ! this.isEveryStepSubmitted() ) {
-			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
-			page( getStepUrl( flowName, stepName, stepSectionName, locale ) );
-		} else if ( this.isEveryStepSubmitted() ) {
-			this.goToFirstInvalidStep();
+	goToStep = async ( stepName, stepSectionName, flowName = this.props.flowName ) => {
+		// redirect the user to the next step
+		try {
+			await this.scrollToTop();
+		} finally {
+			if ( ! this.isEveryStepSubmitted() ) {
+				const locale = ! this.props.isLoggedIn ? this.props.locale : '';
+				page( getStepUrl( flowName, stepName, stepSectionName, locale ) );
+			} else if ( this.isEveryStepSubmitted() ) {
+				this.goToFirstInvalidStep();
+			}
 		}
 	};
 
