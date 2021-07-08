@@ -177,7 +177,7 @@ export const getFlattenedBlockNames = ( block ) => {
 
 	const queue = Array.isArray( block ) ? [ ...block ] : [ block ];
 	while ( queue.length > 0 ) {
-		const currentBlock = queue.pop();
+		const currentBlock = queue.shift();
 
 		blockNames.push( currentBlock.name );
 
