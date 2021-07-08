@@ -11,14 +11,17 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import tracksRecordEvent from './tracking/track-record-event';
-import delegateEventTracking from './tracking/delegate-event-tracking';
+import delegateEventTracking, {
+	registerSubscriber as registerDelegateEventSubscriber,
+} from './tracking/delegate-event-tracking';
 import { trackGlobalStylesTabSelected } from './tracking/wpcom-block-editor-global-styles-tab-selected';
-import { buildGlobalStylesContentEvents } from './utils';
+import { buildGlobalStylesContentEvents, getFlattenedBlockNames } from './utils';
 
 // Debugger.
 const debug = debugFactory( 'wpcom-block-editor:tracking' );
 
 const noop = () => {};
+let ignoreNextReplaceBlocksAction = false;
 
 /**
  * Global handler.
@@ -294,6 +297,11 @@ const trackBlockRemoval = ( blocks ) => {
  * @returns {void}
  */
 const trackBlockReplacement = ( originalBlockIds, blocks, ...args ) => {
+	if ( ignoreNextReplaceBlocksAction ) {
+		ignoreNextReplaceBlocksAction = false;
+		return;
+	}
+
 	const patternName = maybeTrackPatternInsertion( { ...args, blocks_replaced: true } );
 
 	const insert_method = getBlockInserterUsed( originalBlockIds );
@@ -399,6 +407,34 @@ const trackDisableComplementaryArea = ( scope ) => {
 	}
 };
 
+const trackSaveEntityRecord = ( kind, name, record ) => {
+	if ( kind === 'postType' && name === 'wp_template_part' ) {
+		const variationSlug = record.area !== 'uncategorized' ? record.area : undefined;
+		if ( document.querySelector( '.edit-site-template-part-converter__modal' ) ) {
+			ignoreNextReplaceBlocksAction = true;
+			const convertedParentBlocks = select( 'core/block-editor' ).getBlocksByClientId(
+				select( 'core/block-editor' ).getSelectedBlockClientIds()
+			);
+			// We fire the event with and without the block names. We do this to
+			// make sure the event is tracked all the time. The block names
+			// might become a string that's too long and as a result it will
+			// fail because of URL length browser limitations.
+			tracksRecordEvent( 'wpcom_block_editor_convert_to_template_part', {
+				variation_slug: variationSlug,
+			} );
+			tracksRecordEvent( 'wpcom_block_editor_convert_to_template_part', {
+				variation_slug: variationSlug,
+				block_names: getFlattenedBlockNames( convertedParentBlocks ).join( ',' ),
+			} );
+		} else {
+			tracksRecordEvent( 'wpcom_block_editor_create_template_part', {
+				variation_slug: variationSlug,
+				content: record.content ? record.content : undefined,
+			} );
+		}
+	}
+};
+
 /**
  * Track list view open and close events.
  *
@@ -408,22 +444,6 @@ const trackListViewToggle = ( isOpen ) => {
 	tracksRecordEvent( 'wpcom_block_editor_list_view_toggle', {
 		is_open: isOpen,
 	} );
-};
-
-const trackSaveEntityRecord = ( kind, name, record ) => {
-	if ( name === 'wp_template_part' && kind === 'postType' ) {
-		if ( document.querySelector( '.edit-site-template-part-converter__modal' ) ) {
-			tracksRecordEvent( 'wpcom_block_editor_convert_to_template_part', {
-				variation_slug: record.area !== 'uncategorized' ? record.area : undefined,
-				content: record.content,
-			} );
-		} else {
-			tracksRecordEvent( 'wpcom_block_editor_create_template_part', {
-				variation_slug: record.area !== 'uncategorized' ? record.area : undefined,
-				content: record.content ? record.content : undefined,
-			} );
-		}
-	}
 };
 
 const trackSiteEditorBrowsingSidebarOpen = () => {
@@ -628,4 +648,12 @@ if (
 			return null;
 		},
 	} );
+
+	registerDelegateEventSubscriber(
+		'wpcom-block-editor-template-part-detach-blocks',
+		'before',
+		() => {
+			ignoreNextReplaceBlocksAction = true;
+		}
+	);
 }
