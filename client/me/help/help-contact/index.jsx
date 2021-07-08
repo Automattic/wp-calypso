@@ -231,8 +231,8 @@ class HelpContact extends React.Component {
 					confirmation: {
 						title: this.props.translate( "We're on it!" ),
 						message: this.props.translate(
-							'We normally reply within 24-48 hours but are experiencing longer delays ' +
-								'right now. We appreciate your patience and will respond as soon as we can.'
+							"We've received your message, and you'll hear back from " +
+								'one of our Happiness Engineers shortly.'
 						),
 					},
 				} );
