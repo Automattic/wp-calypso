@@ -12,5 +12,5 @@ import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
  * @returns {?string}       Full URL to Yoast onboarding page in wp-admin
  */
 export default function getSiteWordPressSeoWizardUrl( state, siteId ) {
-	return getSiteAdminUrl( state, siteId, '/wp-admin/admin.php?page=wpseo_configurator' );
+	return getSiteAdminUrl( state, siteId, 'admin.php?page=wpseo_configurator' );
 }
