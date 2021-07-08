@@ -395,7 +395,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			await editor.waitForTemplatePartsToLoad();
 			await deleteTemplatesAndTemplateParts( this.driver );
 		} );
-		/*
+
 		createGeneralTests( { it, editorType: 'site' } );
 
 		describe( 'Tracks "wpcom_block_editor_global_styles_tab_selected', function () {
@@ -818,7 +818,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				);
 			} );
 		} );
-*/
+
 		describe( 'Navigation sidebar', function () {
 			it( 'should track "wpcom_block_editor_nav_sidebar_open" when sidebar is opened', async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
