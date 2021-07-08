@@ -1887,13 +1887,19 @@ Undocumented.prototype.uploadExportFile = function ( siteId, params ) {
 			error ? rejectPromise( error ) : resolve( data );
 		};
 
+		const formData = [
+			[ 'importStatus', JSON.stringify( params.importStatus ) ],
+			[ 'import', params.file ],
+		];
+
+		if ( params.url ) {
+			formData.push( [ 'url', params.url ] );
+		}
+
 		const req = this.wpcom.req.post(
 			{
 				path: `/sites/${ siteId }/imports/new`,
-				formData: [
-					[ 'importStatus', JSON.stringify( params.importStatus ) ],
-					[ 'import', params.file ],
-				],
+				formData,
 			},
 			resolver
 		);
