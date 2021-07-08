@@ -1053,10 +1053,14 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				( [ eventName ] ) => eventName === 'wpcom_block_editor_template_part_detach_blocks'
 			);
 			assert.strictEqual( detachEvents.length, 2 );
+			assert( detachEvents[ 0 ][ 1 ].template_part_id );
+			assert( detachEvents[ 0 ][ 1 ].variation_slug );
 			assert.strictEqual(
 				detachEvents[ 0 ][ 1 ].block_names,
 				'core/columns,core/column,core/column,core/column'
 			);
+			assert( detachEvents[ 1 ][ 1 ].template_part_id );
+			assert( detachEvents[ 1 ][ 1 ].variation_slug );
 			assert.strictEqual( typeof detachEvents[ 1 ][ 1 ].block_names, 'undefined' );
 			const replaceBlockEvents = events.filter(
 				( [ eventName ] ) => eventName === 'wpcom_block_picker_block_inserted'
