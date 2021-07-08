@@ -124,13 +124,13 @@ export class UpsellNudge extends React.Component {
 		if ( this.props.isLoading ) {
 			return;
 		}
+		if ( ! this.haveCardsChanged() ) {
+			debug( 'cancelling validating contact info; cards have not changed' );
+			return;
+		}
 		if ( this.props.cards.length === 0 ) {
 			debug( 'not validating contact info because there are no cards' );
 			this.setState( { isContactInfoValid: false } );
-			return;
-		}
-		if ( ! this.haveCardsChanged() ) {
-			debug( 'cancelling validating contact info; cards have not changed' );
 			return;
 		}
 		debug( 'validating contact info' );
