@@ -13,39 +13,21 @@ import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
-import getSiteSetting from 'calypso/state/selectors/get-site-setting';
-import QuerySiteSettings from 'calypso/components/data/query-site-settings';
-import { isJetpackSearch, planHasJetpackSearch } from '@automattic/calypso-products';
-import {
-	getSitePurchases,
-	hasLoadedSitePurchasesFromServer,
-} from 'calypso/state/purchases/selectors';
+import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import JetpackSearchContent from './content';
 import JetpackSearchFooter from './footer';
 import JetpackSearchLogo from './logo';
-import JetpackSearchPlaceholder from './placeholder';
-import JetpackSearchUpsell from './upsell';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
-export default function JetpackSearchMain(): ReactElement {
+interface Props {
+	isSearchEnabled: boolean;
+}
+
+export default function JetpackSearchDetails( { isSearchEnabled }: Props ): ReactElement {
 	const site = useSelector( getSelectedSite );
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const siteId = useSelector( getSelectedSiteId );
-	const checkForSearchProduct = ( purchase ) => purchase.active && isJetpackSearch( purchase );
-	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
-	const isSearchEnabled = useSelector( ( state ) =>
-		getSiteSetting( state, siteId, 'jetpack_search_enabled' )
-	);
-	const hasSearchProduct =
-		sitePurchases.find( checkForSearchProduct ) || planHasJetpackSearch( site?.plan?.product_slug );
-	const hasLoadedSitePurchases = useSelector( hasLoadedSitePurchasesFromServer );
-	const onSettingsClick = useTrackCallback( undefined, 'calypso_jetpack_search_settings' );
 	const isCloud = isJetpackCloud();
+	const onSettingsClick = useTrackCallback( undefined, 'calypso_jetpack_search_settings' );
 
 	// Send Jetpack Cloud users to wp-admin settings and everyone else to Calypso blue
 	const settingsUrl =
@@ -53,20 +35,11 @@ export default function JetpackSearchMain(): ReactElement {
 			? `${ site.options.admin_url }admin.php?page=jetpack#/performance`
 			: `/settings/performance/${ siteSlug }`;
 
-	if ( ! hasLoadedSitePurchases ) {
-		return <JetpackSearchPlaceholder siteId={ siteId } />;
-	}
-
-	if ( ! hasSearchProduct ) {
-		return <JetpackSearchUpsell />;
-	}
-
 	return (
 		<Main className="jetpack-search">
 			<DocumentHead title="Jetpack Search" />
 			<SidebarNavigation />
 			<PageViewTracker path="/jetpack-search/:site" title="Jetpack Search" />
-			<QuerySiteSettings siteId={ siteId } />
 
 			<JetpackSearchContent
 				headerText={
