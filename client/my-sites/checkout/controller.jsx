@@ -23,6 +23,7 @@ import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutSystemDecider from './checkout-system-decider';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
+import JetpackCheckoutSitelessThankYou from './checkout-thank-you/jetpack-checkout-siteless-thank-you';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import { setSectionMiddleware } from 'calypso/controller';
 import { sites } from 'calypso/my-sites/controller';
@@ -284,8 +285,11 @@ export function redirectToSupportSession( context ) {
 
 export function jetpackCheckoutThankYou( context, next ) {
 	const isUserlessCheckoutFlow = context.path.includes( '/checkout/jetpack' );
+	const isSitelessCheckoutFlow = context.path.includes( '/checkout/jetpack/thank-you/no-site' );
 
-	context.primary = (
+	context.primary = isSitelessCheckoutFlow ? (
+		<JetpackCheckoutSitelessThankYou productSlug={ context.params.product } />
+	) : (
 		<JetpackCheckoutThankYou
 			site={ context.params.site }
 			productSlug={ context.params.product }
