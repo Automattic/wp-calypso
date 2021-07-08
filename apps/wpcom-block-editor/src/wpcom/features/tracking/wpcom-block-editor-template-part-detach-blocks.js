@@ -35,9 +35,11 @@ export default () => ( {
 			// might become a string that's too long and as a result it will
 			// fail because of URL length browser limitations.
 			tracksRecordEvent( 'wpcom_block_editor_template_part_detach_blocks', {
+				template_part_id: templatePartId,
 				variation_slug: templatePart.area,
 			} );
 			tracksRecordEvent( 'wpcom_block_editor_template_part_detach_blocks', {
+				template_part_id: templatePartId,
 				variation_slug: templatePart.area,
 				block_names: getFlattenedBlockNames( templatePart.blocks ).join( ',' ),
 			} );
