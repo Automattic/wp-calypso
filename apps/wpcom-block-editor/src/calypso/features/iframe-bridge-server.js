@@ -557,7 +557,9 @@ function handleCloseEditor( calypsoPort ) {
 			{
 				action: 'closeEditor',
 				payload: {
-					unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
+					unsavedChanges: editSitePackage
+						? select( 'core' ).__experimentalGetDirtyEntityRecords().length > 0
+						: select( 'core/editor' ).isEditedPostDirty(),
 				},
 			},
 			[ port2 ]
@@ -587,22 +589,7 @@ function handleCloseEditor( calypsoPort ) {
 							// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 							className="edit-site-navigation-panel__back-to-dashboard"
 							href={ calypsoifyGutenberg.closeUrl }
-							onClick={ ( e ) => {
-								e.preventDefault();
-
-								const dirtyEntityRecords = select( 'core' ).__experimentalGetDirtyEntityRecords();
-								const hasUnsavedChanges = dirtyEntityRecords.length > 0;
-
-								if (
-									! hasUnsavedChanges ||
-									( hasUnsavedChanges &&
-										window.confirm(
-											__( 'You have unsaved changes. If you proceed, they will be lost.' )
-										) )
-								) {
-									dispatchAction( e );
-								}
-							} }
+							onClick={ dispatchAction }
 						/>
 					</SiteEditorDashboardFill>
 				);
