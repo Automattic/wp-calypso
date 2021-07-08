@@ -267,68 +267,7 @@ describe( 'CompositeCheckout', () => {
 		const store = applyMiddleware( thunk )( createStore )( () => {
 			return {
 				plans: {
-					items: [
-						{
-							product_id: planWithoutDomain.product_id,
-							product_slug: planWithoutDomain.product_slug,
-							bill_period: 365,
-							product_type: 'bundle',
-							available: true,
-							price: '$48',
-							formatted_price: '$48',
-							raw_price: 48,
-						},
-						{
-							product_id: planWithoutDomainMonthly.product_id,
-							product_slug: planWithoutDomainMonthly.product_slug,
-							bill_period: 30,
-							product_type: 'bundle',
-							available: true,
-							price: '$7',
-							formatted_price: '$7',
-							raw_price: 7,
-						},
-						{
-							product_id: planWithoutDomainBiannual.product_id,
-							product_slug: planWithoutDomainBiannual.product_slug,
-							bill_period: 730,
-							product_type: 'bundle',
-							available: true,
-							price: '$84',
-							formatted_price: '$84',
-							raw_price: 84,
-						},
-						{
-							product_id: planLevel2.product_id,
-							product_slug: planLevel2.product_slug,
-							bill_period: 365,
-							product_type: 'bundle',
-							available: true,
-							price: '$300',
-							formatted_price: '$300',
-							raw_price: 300,
-						},
-						{
-							product_id: planLevel2Monthly.product_id,
-							product_slug: planLevel2Monthly.product_slug,
-							bill_period: 30,
-							product_type: 'bundle',
-							available: true,
-							price: '$33',
-							formatted_price: '$33',
-							raw_price: 33,
-						},
-						{
-							product_id: planLevel2Biannual.product_id,
-							product_slug: planLevel2Biannual.product_slug,
-							bill_period: 730,
-							product_type: 'bundle',
-							available: true,
-							price: '$499',
-							formatted_price: '$499',
-							raw_price: 499,
-						},
-					],
+					items: getPlansItemsState(),
 				},
 				sites: { items: {} },
 				siteSettings: { items: {} },
@@ -781,7 +720,27 @@ describe( 'CompositeCheckout', () => {
 			const variantItem = screen
 				.getByText( getVariantItemTextForInterval( expectedVariant ) )
 				.closest( 'label' );
-			expect( within( variantItem ).getByText( /Save \d+%/ ) ).toBeInTheDocument();
+			const lowestVariantItem = variantItem.closest( 'ul' ).querySelector( 'label:first-of-type' );
+			const lowestVariantSlug = lowestVariantItem.closest( 'div' ).querySelector( 'input' ).value;
+			const variantSlug = variantItem.closest( 'div' ).querySelector( 'input' ).value;
+
+			const variantData = getPlansItemsState().find(
+				( plan ) => plan.product_slug === variantSlug
+			);
+			const finalPrice = variantData.raw_price;
+			const variantInterval = variantData.bill_period;
+			const lowestVariantData = getPlansItemsState().find(
+				( plan ) => plan.product_slug === lowestVariantSlug
+			);
+			const lowestVariantPrice = lowestVariantData.raw_price;
+			const lowestVariantInterval = lowestVariantData.bill_period;
+			const intervalsInVariant = Math.round( variantInterval / lowestVariantInterval );
+			const priceBeforeDiscount = lowestVariantPrice * intervalsInVariant;
+
+			const discountPercentage = Math.round( 100 - ( finalPrice / priceBeforeDiscount ) * 100 );
+			expect(
+				within( variantItem ).getByText( `Save ${ discountPercentage }%` )
+			).toBeInTheDocument();
 		}
 	);
 
@@ -1463,4 +1422,69 @@ function getVariantItemTextForInterval( type ) {
 		default:
 			throw new Error( `Unknown plan type '${ type }'` );
 	}
+}
+
+function getPlansItemsState() {
+	return [
+		{
+			product_id: planWithoutDomain.product_id,
+			product_slug: planWithoutDomain.product_slug,
+			bill_period: 365,
+			product_type: 'bundle',
+			available: true,
+			price: '$48',
+			formatted_price: '$48',
+			raw_price: 48,
+		},
+		{
+			product_id: planWithoutDomainMonthly.product_id,
+			product_slug: planWithoutDomainMonthly.product_slug,
+			bill_period: 30,
+			product_type: 'bundle',
+			available: true,
+			price: '$7',
+			formatted_price: '$7',
+			raw_price: 7,
+		},
+		{
+			product_id: planWithoutDomainBiannual.product_id,
+			product_slug: planWithoutDomainBiannual.product_slug,
+			bill_period: 730,
+			product_type: 'bundle',
+			available: true,
+			price: '$84',
+			formatted_price: '$84',
+			raw_price: 84,
+		},
+		{
+			product_id: planLevel2.product_id,
+			product_slug: planLevel2.product_slug,
+			bill_period: 365,
+			product_type: 'bundle',
+			available: true,
+			price: '$300',
+			formatted_price: '$300',
+			raw_price: 300,
+		},
+		{
+			product_id: planLevel2Monthly.product_id,
+			product_slug: planLevel2Monthly.product_slug,
+			bill_period: 30,
+			product_type: 'bundle',
+			available: true,
+			price: '$33',
+			formatted_price: '$33',
+			raw_price: 33,
+		},
+		{
+			product_id: planLevel2Biannual.product_id,
+			product_slug: planLevel2Biannual.product_slug,
+			bill_period: 730,
+			product_type: 'bundle',
+			available: true,
+			price: '$499',
+			formatted_price: '$499',
+			raw_price: 499,
+		},
+	];
 }
