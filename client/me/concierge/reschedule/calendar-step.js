@@ -10,6 +10,7 @@ import { without } from 'lodash';
 /**
  * Internal dependencies
  */
+import HeaderCake from 'calypso/components/header-cake';
 import { CompactCard } from '@automattic/components';
 import Timezone from 'calypso/components/timezone';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -77,6 +78,24 @@ class CalendarStep extends Component {
 		}
 	}
 
+	renderDisallowed() {
+		const { translate, siteSlug } = this.props;
+		return (
+			<>
+				<HeaderCake backHref={ `/me/concierge/${ siteSlug }/book` }>
+					{ translate( 'Reschedule or cancel' ) }
+				</HeaderCake>
+				<CompactCard>
+					<div>
+						{ translate(
+							'Sorry, you cannot reschedule or cancel less than 60 minutes before the session.'
+						) }
+					</div>
+				</CompactCard>
+			</>
+		);
+	}
+
 	render() {
 		const {
 			appointmentDetails,
@@ -88,6 +107,10 @@ class CalendarStep extends Component {
 			scheduleId,
 			translate,
 		} = this.props;
+		const canChangeAppointment = appointmentDetails?.meta.canChangeAppointment;
+		if ( appointmentDetails && ! canChangeAppointment ) {
+			return this.renderDisallowed();
+		}
 
 		return (
 			<div>
