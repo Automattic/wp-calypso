@@ -203,15 +203,6 @@ const planLevel2Biannual = {
 };
 
 getPlanRawPrice.mockImplementation( () => 144 );
-getPlansBySiteId.mockImplementation( () => ( {
-	data: [
-		{
-			interval: 365,
-			productSlug: planWithoutDomain.product_slug,
-			currentPlan: true,
-		},
-	],
-} ) );
 
 const fetchStripeConfiguration = async () => {
 	return {
@@ -226,6 +217,16 @@ describe( 'CompositeCheckout', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		getPlansBySiteId.mockImplementation( () => ( {
+			data: [
+				{
+					interval: 365,
+					productSlug: planWithoutDomain.product_slug,
+					currentPlan: true,
+				},
+			],
+		} ) );
+
 		container = document.createElement( 'div' );
 		document.body.appendChild( container );
 
@@ -686,6 +687,80 @@ describe( 'CompositeCheckout', () => {
 		fireEvent.click( editOrderButton );
 
 		expect( screen.getByText( 'Two years' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders the variant picker with monthly if there are variants when the current plan is monthly', async () => {
+		getPlansBySiteId.mockImplementation( () => ( {
+			data: [
+				{
+					interval: 30,
+					productSlug: planWithoutDomainMonthly.product_slug,
+					currentPlan: true,
+				},
+			],
+		} ) );
+		const cartChanges = { products: [ planLevel2 ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+		fireEvent.click( editOrderButton );
+
+		expect( screen.getByText( 'One month' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders the variant picker with yearly if there are variants when the current plan is monthly', async () => {
+		getPlansBySiteId.mockImplementation( () => ( {
+			data: [
+				{
+					interval: 30,
+					productSlug: planWithoutDomainMonthly.product_slug,
+					currentPlan: true,
+				},
+			],
+		} ) );
+		const cartChanges = { products: [ planLevel2 ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+		fireEvent.click( editOrderButton );
+
+		expect( screen.getByText( 'One year' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders the variant picker with two-years if there are variants when the current plan is monthly', async () => {
+		getPlansBySiteId.mockImplementation( () => ( {
+			data: [
+				{
+					interval: 30,
+					productSlug: planWithoutDomainMonthly.product_slug,
+					currentPlan: true,
+				},
+			],
+		} ) );
+		const cartChanges = { products: [ planLevel2 ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+		fireEvent.click( editOrderButton );
+
+		expect( screen.getByText( 'Two years' ) ).toBeInTheDocument();
+	} );
+
+	it( 'does not render the variant picker if there are variants when the current plan is biannual', async () => {
+		getPlansBySiteId.mockImplementation( () => ( {
+			data: [
+				{
+					interval: 730,
+					productSlug: planWithoutDomainBiannual.product_slug,
+					currentPlan: true,
+				},
+			],
+		} ) );
+		const cartChanges = { products: [ planLevel2 ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+		fireEvent.click( editOrderButton );
+
+		expect( screen.queryByText( 'One month' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'One year' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Two years' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'does not render the variant picker if there are no variants after clicking into edit mode', async () => {
