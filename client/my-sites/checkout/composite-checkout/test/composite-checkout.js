@@ -157,10 +157,17 @@ describe( 'CompositeCheckout', () => {
 			{
 				code: 'US',
 				name: 'United States',
+				has_postal_codes: true,
+			},
+			{
+				code: 'CW',
+				name: 'Curacao',
+				has_postal_codes: false,
 			},
 			{
 				code: 'AU',
 				name: 'Australia',
+				has_postal_codes: true,
 			},
 		];
 
@@ -476,6 +483,20 @@ describe( 'CompositeCheckout', () => {
 		expect( getByText( 'City' ) ).toBeInTheDocument();
 		expect( getByText( 'State' ) ).toBeInTheDocument();
 		expect( getByText( 'ZIP code' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders domain fields except postal code when a country without postal code support has been chosen and a domain is in the cart', async () => {
+		let renderResult;
+		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
+		await act( async () => {
+			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		} );
+		const { getByText, queryByText, getByLabelText } = renderResult;
+		fireEvent.change( getByLabelText( 'Country' ), { target: { value: 'CW' } } );
+		expect( getByText( 'Country' ) ).toBeInTheDocument();
+		expect( getByText( 'Phone' ) ).toBeInTheDocument();
+		expect( getByText( 'Email' ) ).toBeInTheDocument();
+		expect( queryByText( 'Postal code' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders the checkout summary', async () => {
