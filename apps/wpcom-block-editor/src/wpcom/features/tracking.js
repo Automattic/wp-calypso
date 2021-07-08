@@ -460,6 +460,13 @@ const trackSiteEditorChangeTemplatePart = ( id ) => {
 	} );
 };
 
+const trackSiteEditorChangeContent = ( { type, slug } ) => {
+	tracksRecordEvent( 'wpcom_block_editor_nav_sidebar_item_edit', {
+		item_type: type,
+		item_slug: slug,
+	} );
+};
+
 /**
  * Tracks editEntityRecord for global styles updates.
  *
@@ -555,6 +562,7 @@ const REDUX_TRACKING = {
 		addTemplate: trackSiteEditorCreateTemplate,
 		setTemplate: trackSiteEditorChangeTemplate,
 		setTemplatePart: trackSiteEditorChangeTemplatePart,
+		setPage: trackSiteEditorChangeContent,
 	},
 	'core/edit-post': {
 		setIsListViewOpened: trackListViewToggle,
