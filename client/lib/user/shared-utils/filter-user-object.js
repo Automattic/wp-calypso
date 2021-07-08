@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { decodeEntities } from 'calypso/lib/formatting/decode-entities';
-import { getComputedAttributes } from './';
+import { getComputedAttributes } from './get-computed-attributes';
 
 const allowedKeys = [
 	'ID',
