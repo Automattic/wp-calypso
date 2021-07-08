@@ -12,7 +12,8 @@ import {
 	supportUserBoot,
 	supportNextBoot,
 } from 'calypso/lib/user/support-user-interop';
-import { filterUserObject, rawCurrentUserFetch } from './';
+import { filterUserObject } from './filter-user-object';
+import { rawCurrentUserFetch } from './raw-current-user-fetch';
 
 export async function initializeCurrentUser() {
 	let skipBootstrap = false;
