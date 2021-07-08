@@ -151,6 +151,57 @@ const planWithoutDomainBiannual = {
 	item_subtotal_display: 'R$144',
 };
 
+const planLevel2 = {
+	product_name: 'WordPress.com Business',
+	product_slug: 'business-bundle',
+	currency: 'BRL',
+	extra: {
+		context: 'signup',
+	},
+	free_trial: false,
+	meta: '',
+	product_id: 1008,
+	volume: 1,
+	item_original_cost_integer: 14400,
+	item_original_cost_display: 'R$144',
+	item_subtotal_integer: 14400,
+	item_subtotal_display: 'R$144',
+};
+
+const planLevel2Monthly = {
+	product_name: 'WordPress.com Business Monthly',
+	product_slug: 'business-bundle-monthly',
+	currency: 'BRL',
+	extra: {
+		context: 'signup',
+	},
+	free_trial: false,
+	meta: '',
+	product_id: 1018,
+	volume: 1,
+	item_original_cost_integer: 14400,
+	item_original_cost_display: 'R$144',
+	item_subtotal_integer: 14400,
+	item_subtotal_display: 'R$144',
+};
+
+const planLevel2Biannual = {
+	product_name: 'WordPress.com Business 2 Year',
+	product_slug: 'business-bundle-2y',
+	currency: 'BRL',
+	extra: {
+		context: 'signup',
+	},
+	free_trial: false,
+	meta: '',
+	product_id: 1028,
+	volume: 1,
+	item_original_cost_integer: 14400,
+	item_original_cost_display: 'R$144',
+	item_subtotal_integer: 14400,
+	item_subtotal_display: 'R$144',
+};
+
 getPlanRawPrice.mockImplementation( () => 144 );
 getPlansBySiteId.mockImplementation( () => ( {
 	data: [
@@ -251,6 +302,33 @@ describe( 'CompositeCheckout', () => {
 							is_domain_registration: false,
 							cost_display: planWithoutDomainBiannual.item_subtotal_display,
 							currency_code: planWithoutDomainBiannual.currency,
+						},
+						[ planLevel2.product_slug ]: {
+							product_id: planWithoutDomain.product_id,
+							product_slug: planWithoutDomain.product_slug,
+							product_type: 'bundle',
+							available: true,
+							is_domain_registration: false,
+							cost_display: planWithoutDomain.item_subtotal_display,
+							currency_code: planWithoutDomain.currency,
+						},
+						[ planLevel2Monthly.product_slug ]: {
+							product_id: planLevel2Monthly.product_id,
+							product_slug: planLevel2Monthly.product_slug,
+							product_type: 'bundle',
+							available: true,
+							is_domain_registration: false,
+							cost_display: planLevel2Monthly.item_subtotal_display,
+							currency_code: planLevel2Monthly.currency,
+						},
+						[ planLevel2Biannual.product_slug ]: {
+							product_id: planLevel2Biannual.product_id,
+							product_slug: planLevel2Biannual.product_slug,
+							product_type: 'bundle',
+							available: true,
+							is_domain_registration: false,
+							cost_display: planLevel2Biannual.item_subtotal_display,
+							currency_code: planLevel2Biannual.currency,
 						},
 						domain_map: {
 							product_id: 5,
@@ -563,7 +641,7 @@ describe( 'CompositeCheckout', () => {
 	} );
 
 	it( 'renders the variant picker if there are variants after clicking into edit mode', async () => {
-		const cartChanges = { products: [ planWithoutDomain ] };
+		const cartChanges = { products: [ planLevel2 ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
 		fireEvent.click( editOrderButton );
