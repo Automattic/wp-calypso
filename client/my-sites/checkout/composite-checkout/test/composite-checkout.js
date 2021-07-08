@@ -699,6 +699,18 @@ describe( 'CompositeCheckout', () => {
 		expect( screen.queryByText( 'Two years' ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'does not render the variant picker for a renewal of the current plan', async () => {
+		const currentPlanRenewal = { ...planWithoutDomain, extra: { purchaseType: 'renewal' } };
+		const cartChanges = { products: [ currentPlanRenewal ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+		fireEvent.click( editOrderButton );
+
+		expect( screen.queryByText( 'One month' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'One year' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Two years' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'removes a product from the cart after clicking to remove it in edit mode', async () => {
 		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
