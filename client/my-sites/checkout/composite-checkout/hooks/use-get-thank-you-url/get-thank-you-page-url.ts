@@ -78,6 +78,11 @@ export default function getThankYouPageUrl( {
 } ): string {
 	debug( 'starting getThankYouPageUrl' );
 
+	function getAdminUrlFromQueryArg() {
+		const urlParams = new URLSearchParams( window.location.search );
+		return urlParams.get( 'admin_url' ) ?? undefined;
+	}
+
 	// If we're given an explicit `redirectTo` query arg, make sure it's either internal
 	// (i.e. on WordPress.com), the same site as the cart's site, or a Jetpack or WP.com
 	// site's block editor (in wp-admin). This is required for Jetpack's (and WP.com's)
@@ -125,14 +130,23 @@ export default function getThankYouPageUrl( {
 	const pendingOrReceiptId = getPendingOrReceiptId( receiptId, orderId, purchaseId );
 	debug( 'pendingOrReceiptId is', pendingOrReceiptId );
 
-	// jetpack userless checkout uses a special thank you page
+	// jetpack site-only(userless) checkout needs to first redirect to initiate user conection/authorization
+	// and then to custom thank-you page
 	if ( isJetpackCheckout ) {
-		debug( 'redirecting to userless jetpack thank you' );
+		debug( 'Redirecting to the site to initiate user connection' );
 
 		// extract a product from the cart, in userless checkout there should only be one
 		const productSlug = cart?.products[ 0 ]?.product_slug;
+		const thankYouPageUrl = `/checkout/jetpack/thank-you/${ siteSlug }/${
+			productSlug ?? 'no_product'
+		}`;
+		const siteAdminUrl = adminUrl || getAdminUrlFromQueryArg();
+		const authorizationUrl = `${ siteAdminUrl }admin.php?page=jetpack&action=authorize_redirect&from=jetpack_site_only_checkout&dest_url=http://wordpress.com${ thankYouPageUrl }`;
 
-		return `/checkout/jetpack/thank-you/${ siteSlug }/${ productSlug ?? 'no_product' }`;
+		if ( siteAdminUrl ) {
+			return authorizationUrl;
+		}
+		return thankYouPageUrl;
 	}
 
 	const fallbackUrl = getFallbackDestination( {

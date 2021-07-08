@@ -922,7 +922,29 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( redirectTo );
 	} );
 
-	it( 'redirects to the jetpack checkout thank you when jetpack checkout arg is set', () => {
+	it( 'redirects to the user connection/authorization page when jetpack checkout arg is set and the adminUrl is set', () => {
+		const cart = {
+			products: [
+				{
+					product_slug: 'jetpack_backup_daily',
+				},
+			],
+		};
+		const siteSlug = 'foo.bar';
+		const adminUrl = `https://${ siteSlug }/wp-admin/`;
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			adminUrl,
+			siteSlug,
+			cart,
+			isJetpackCheckout: true,
+		} );
+		expect( url ).toBe(
+			`${ adminUrl }admin.php?page=jetpack&action=authorize_redirect&from=jetpack_site_only_checkout&dest_url=http://wordpress.com/checkout/jetpack/thank-you/${ siteSlug }/${ cart?.products[ 0 ]?.product_slug }`
+		);
+	} );
+
+	it( 'redirects to the jetpack checkout thank you when jetpack checkout arg is set but no adminUrl is defined', () => {
 		const cart = {
 			products: [
 				{

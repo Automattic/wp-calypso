@@ -244,7 +244,8 @@ export class JetpackAuthorize extends Component {
 			getRoleFromScope( scope ) === 'subscriber' ||
 			this.isJetpackUpgradeFlow() ||
 			this.isFromJetpackConnectionManager() ||
-			this.isFromJetpackBackupPlugin()
+			this.isFromJetpackBackupPlugin() ||
+			this.isJetpackSiteOnlyCheckout()
 		) {
 			debug(
 				'Going back to WP Admin.',
@@ -280,6 +281,7 @@ export class JetpackAuthorize extends Component {
 		const { alreadyAuthorized, authApproved, from } = this.props.authQuery;
 		return (
 			this.isSso() ||
+			this.isJetpackSiteOnlyCheckout() ||
 			includes( [ 'woocommerce-services-auto-authorize', 'woocommerce-setup-wizard' ], from ) || // Auto authorize the old WooCommerce setup wizard only.
 			( ! this.props.isAlreadyOnSitesList &&
 				! alreadyAuthorized &&
@@ -316,6 +318,22 @@ export class JetpackAuthorize extends Component {
 	}
 
 	/**
+	 * Check if the user is coming from the Jetpack site-only checkout flow.
+	 *
+	 * @param  {object}  props           Props to test
+	 * @param  {?string} props.authQuery.redirectAfterAuth Where were we redirected after auth.
+	 * @returns {boolean}                True if the user is coming Jetpack site-only checkout flow, false otherwise.
+	 */
+	isJetpackSiteOnlyCheckout( props = this.props ) {
+		const { redirectAfterAuth } = props.authQuery;
+		return (
+			redirectAfterAuth &&
+			redirectAfterAuth.includes( 'page=jetpack&action=authorize_redirect' ) &&
+			redirectAfterAuth.includes( 'from=jetpack_site_only_checkout' )
+		);
+	}
+
+	/**
 	 * Check if the user is coming from the Jetpack upgrade flow.
 	 *
 	 * @param  {object}  props           Props to test
@@ -325,7 +343,9 @@ export class JetpackAuthorize extends Component {
 	isJetpackUpgradeFlow( props = this.props ) {
 		const { redirectAfterAuth } = props.authQuery;
 		return (
-			redirectAfterAuth && redirectAfterAuth.includes( 'page=jetpack&action=authorize_redirect' )
+			redirectAfterAuth &&
+			redirectAfterAuth.includes( 'page=jetpack&action=authorize_redirect' ) &&
+			! redirectAfterAuth.includes( 'from=jetpack_site_only_checkout' )
 		);
 	}
 
@@ -439,7 +459,7 @@ export class JetpackAuthorize extends Component {
 			recordTracksEvent( 'calypso_jpc_try_again_click' );
 			return this.handleResolve();
 		}
-		if ( this.props.isAlreadyOnSitesList ) {
+		if ( this.props.isAlreadyOnSitesList && ! this.isJetpackSiteOnlyCheckout() ) {
 			recordTracksEvent( 'calypso_jpc_return_site_click' );
 			return this.redirect();
 		}
@@ -639,7 +659,7 @@ export class JetpackAuthorize extends Component {
 			return translate( 'Authorizing your connection' );
 		}
 
-		if ( this.props.isAlreadyOnSitesList ) {
+		if ( this.props.isAlreadyOnSitesList && ! this.isJetpackSiteOnlyCheckout() ) {
 			return translate( 'Return to your site' );
 		}
 
