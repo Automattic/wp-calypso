@@ -188,6 +188,8 @@ describe( 'metadata:', () => {
 				equal( formatNumber( '4252222222', countries.US ), '(425) 222-2222' );
 				equal( formatNumber( '05325555555', countries.TR ), '0532 555 55 55' );
 				equal( formatNumber( '0215369851', countries.AU ), '02 1536 9851' );
+				equal( formatNumber( '3911711711', countries.IT ), '391 171 1711' );
+				equal( formatNumber( '5512345678', countries.BR ), '55 1234-5678' );
 			} );
 
 			test( 'should format as you type', () => {
