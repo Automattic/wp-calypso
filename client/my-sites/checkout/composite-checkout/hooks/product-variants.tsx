@@ -84,10 +84,12 @@ export function useGetProductVariants(
 		siteId ? getPlansBySiteId( state, siteId ) : null
 	);
 	debug( 'sitePlans', sitePlans );
-	const activePlan = sitePlans?.data?.find( ( plan ) => plan.currentPlan );
+	const activePlan: SitePlanData | undefined = sitePlans?.data?.find(
+		( plan ) => plan.currentPlan
+	);
 	debug( 'activePlan', activePlan );
 
-	const variantProductSlugs = useVariantPlanProductSlugs( productSlug );
+	const variantProductSlugs = useVariantPlanProductSlugs( productSlug, activePlan?.productSlug );
 	debug( 'variantProductSlugs', variantProductSlugs );
 
 	const productsWithPrices: AvailableProductVariant[] = useSelector( ( state ) => {
@@ -204,8 +206,24 @@ function getVariantPlanProductSlugs( productSlug: string | undefined ): string[]
 	} );
 }
 
-function useVariantPlanProductSlugs( productSlug: string | undefined ): string[] {
-	return useMemo( () => getVariantPlanProductSlugs( productSlug ), [ productSlug ] );
+function isVariantOfActivePlan(
+	activePlanSlug: string | undefined,
+	variantPlanSlug: string
+): boolean {
+	return getVariantPlanProductSlugs( activePlanSlug ).includes( variantPlanSlug );
+}
+
+function useVariantPlanProductSlugs(
+	productSlug: string | undefined,
+	activePlanSlug: string | undefined
+): string[] {
+	return useMemo(
+		() =>
+			getVariantPlanProductSlugs( productSlug ).filter(
+				( slug ) => ! isVariantOfActivePlan( activePlanSlug, slug )
+			),
+		[ productSlug, activePlanSlug ]
+	);
 }
 
 function getTermText( term: string, translate: ReturnType< typeof useTranslate > ): string {
