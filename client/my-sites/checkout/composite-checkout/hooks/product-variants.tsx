@@ -92,13 +92,13 @@ export function useGetProductVariants(
 	const variantProductSlugs = useVariantPlanProductSlugs( productSlug, activePlan?.productSlug );
 	debug( 'variantProductSlugs', variantProductSlugs );
 
-	const productsWithPrices: AvailableProductVariant[] = useSelector( ( state ) => {
+	const variantsWithPrices: AvailableProductVariant[] = useSelector( ( state ) => {
 		return computeProductsWithPrices( state, siteId, variantProductSlugs, 0, {} );
 	} );
-	debug( 'productsWithPrices', productsWithPrices );
+	debug( 'variantsWithPrices', variantsWithPrices );
 
 	const [ haveFetchedProducts, setHaveFetchedProducts ] = useState( false );
-	const shouldFetchProducts = ! productsWithPrices;
+	const shouldFetchProducts = ! variantsWithPrices;
 
 	useEffect( () => {
 		debug( 'deciding whether to request product variant data' );
@@ -122,12 +122,56 @@ export function useGetProductVariants(
 		[ translate ]
 	);
 
+	const filteredVariants = useMemo( () => {
+		debug( 'found unfiltered variants', variantsWithPrices );
+		return variantsWithPrices.filter( ( product ) =>
+			isVariantAllowed( product, activePlan?.interval )
+		);
+	}, [ activePlan?.interval, variantsWithPrices ] );
+
+	const variantsWithComparativeDiscounts = useMemo(
+		() => addComparativeDiscountsToVariants( filteredVariants ),
+		[ filteredVariants ]
+	);
+
 	return useMemo( () => {
-		debug( 'found unfiltered variants', productsWithPrices );
-		return productsWithPrices
-			.filter( ( product ) => isVariantAllowed( product, activePlan?.interval ) )
-			.map( getProductVariantFromAvailableVariant );
-	}, [ activePlan?.interval, getProductVariantFromAvailableVariant, productsWithPrices ] );
+		debug( 'found filtered variants', variantsWithComparativeDiscounts );
+		return variantsWithComparativeDiscounts.map( getProductVariantFromAvailableVariant );
+	}, [ getProductVariantFromAvailableVariant, variantsWithComparativeDiscounts ] );
+}
+
+function addComparativeDiscountsToVariants(
+	variants: AvailableProductVariant[]
+): AvailableProductVariant[] {
+	return variants.map( ( variant ) => {
+		return {
+			...variant,
+			priceFullBeforeDiscount: getLowestPriceTimesVariantInterval( variant, variants ),
+		};
+	} );
+}
+
+function getLowestPriceTimesVariantInterval(
+	variant: AvailableProductVariant,
+	allVariants: AvailableProductVariant[]
+): number {
+	if ( allVariants.length < 1 ) {
+		throw new Error(
+			'There must be at least one variant to compare against when generating relative prices'
+		);
+	}
+	allVariants.sort( ( variantA, variantB ) => {
+		const variantAInterval = getTermDuration( variantA.plan.term );
+		const variantBInterval = getTermDuration( variantB.plan.term );
+		return variantAInterval - variantBInterval;
+	} );
+	const lowestVariant = allVariants[ 0 ];
+	const lowestVariantInterval = getTermDuration( lowestVariant.plan.term );
+	const variantInterval = getTermDuration( variant.plan.term );
+	const lowestVariantIntervalsInVariantInterval = Math.ceil(
+		variantInterval / lowestVariantInterval
+	);
+	return lowestVariant.priceFull * lowestVariantIntervalsInVariantInterval;
 }
 
 function isVariantAllowed(
