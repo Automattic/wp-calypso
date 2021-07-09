@@ -12,13 +12,13 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import wpcom from 'calypso/lib/wp';
 import { errorNotice } from 'calypso/state/notices/actions';
 import Gridicon from 'calypso/components/gridicon';
 import {
 	READER_EXPORT_TYPE_SUBSCRIPTIONS,
 	READER_EXPORT_TYPE_LIST,
 } from 'calypso/blocks/reader-export-button/constants';
+import { exportReaderList, exportReaderSubscriptions } from './api';
 
 /**
  * Style dependencies
@@ -50,9 +50,13 @@ class ReaderExportButton extends React.Component {
 		}
 
 		if ( this.props.exportType === READER_EXPORT_TYPE_LIST ) {
-			wpcom.undocumented().exportReaderList( this.props.listId, this.onApiResponse );
+			exportReaderList( this.props.listId ).then( ( data ) => {
+				this.onApiResponse( data );
+			} );
 		} else {
-			wpcom.undocumented().exportReaderSubscriptions( this.onApiResponse );
+			exportReaderSubscriptions().then( ( data ) => {
+				this.onApiResponse( data );
+			} );
 		}
 
 		this.setState( {
@@ -60,12 +64,12 @@ class ReaderExportButton extends React.Component {
 		} );
 	};
 
-	onApiResponse = ( err, data ) => {
+	onApiResponse = ( data ) => {
 		this.setState( {
 			disabled: false,
 		} );
 
-		if ( ! err && ! data.success ) {
+		if ( ! data?.success ) {
 			this.props.errorNotice(
 				this.props.translate( 'Sorry, there was a problem creating your export file.' )
 			);
