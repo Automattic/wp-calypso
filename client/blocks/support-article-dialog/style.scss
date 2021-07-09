@@ -40,24 +40,6 @@
 	}
 }
 
-.support-article-dialog__story-content {
-	.toc-jump {
-		display: none;
-	}
-
-	color: var( --color-neutral-70 );
-	font-size: $font-title-small;
-	line-height: 28px;
-}
-
-.support-article-dialog__story-content img {
-	margin-bottom: 12px;
-}
-
-.support-article-dialog__story-content figure img {
-	margin-bottom: 0;
-}
-
 .support-article-dialog__header-title a {
 	text-decoration: none;
 	clear: none;
@@ -97,6 +79,12 @@
 
 .support-article-dialog__header {
 	margin-bottom: 23px;
+}
+
+.support-article-dialog__story-content {
+	.toc-jump {
+		display: none;
+	}
 }
 
 .support-article-dialog .embed-youtube,
