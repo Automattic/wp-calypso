@@ -16,7 +16,6 @@ import { reducer as httpData } from 'calypso/state/data-layer/http-data';
  */
 import currentUser from './current-user/reducer';
 import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
-import importerNux from './importer-nux/reducer';
 import sites from './sites/reducer';
 
 // Legacy reducers
@@ -26,7 +25,6 @@ const reducers = {
 	currentUser,
 	dataRequests,
 	httpData,
-	importerNux,
 	sites,
 };
 
