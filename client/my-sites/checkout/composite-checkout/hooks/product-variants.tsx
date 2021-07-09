@@ -37,9 +37,12 @@ export interface AvailableProductVariant {
 		product_id: number;
 		currency_code: string;
 	};
-	priceFullBeforeDiscount: number;
 	priceFull: number;
 	priceFinal: number;
+}
+
+export interface AvailableProductVariantAndCompared extends AvailableProductVariant {
+	priceFullBeforeDiscount: number;
 }
 
 export interface SitePlanData {
@@ -111,7 +114,7 @@ export function useGetProductVariants(
 	}, [ shouldFetchProducts, haveFetchedProducts, reduxDispatch ] );
 
 	const getProductVariantFromAvailableVariant = useCallback(
-		( variant: AvailableProductVariant ): WPCOMProductVariant => {
+		( variant: AvailableProductVariantAndCompared ): WPCOMProductVariant => {
 			return {
 				variantLabel: getTermText( variant.plan.term, translate ),
 				variantDetails: <VariantPrice variant={ variant } />,
@@ -142,7 +145,7 @@ export function useGetProductVariants(
 
 function addComparativeDiscountsToVariants(
 	variants: AvailableProductVariant[]
-): AvailableProductVariant[] {
+): AvailableProductVariantAndCompared[] {
 	return variants.map( ( variant ) => {
 		return {
 			...variant,
@@ -199,7 +202,7 @@ function isVariantAllowed(
 	return false;
 }
 
-function VariantPrice( { variant }: { variant: AvailableProductVariant } ) {
+function VariantPrice( { variant }: { variant: AvailableProductVariantAndCompared } ) {
 	const currentPrice = variant.priceFinal || variant.priceFull;
 	const isDiscounted = currentPrice !== variant.priceFullBeforeDiscount;
 	return (
@@ -215,7 +218,7 @@ function VariantPrice( { variant }: { variant: AvailableProductVariant } ) {
 	);
 }
 
-function VariantPriceDiscount( { variant }: { variant: AvailableProductVariant } ) {
+function VariantPriceDiscount( { variant }: { variant: AvailableProductVariantAndCompared } ) {
 	const translate = useTranslate();
 	const discountPercentage = Math.round(
 		100 - ( variant.priceFinal / variant.priceFullBeforeDiscount ) * 100
