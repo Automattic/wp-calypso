@@ -1,4 +1,6 @@
 .activity-card {
+	position: relative;
+
 	.card {
 		padding: 16px;
 		border-radius: var( --jetpack-corners-sharp );
