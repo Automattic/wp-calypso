@@ -10,28 +10,34 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { Dialog } from '@automattic/components';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import ExternalLink from 'calypso/components/external-link';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
+import ExternalLink from 'calypso/components/external-link';
+import Gridicon from 'calypso/components/gridicon';
+import Spinner from 'calypso/components/spinner';
 import {
 	getActiveTheme,
 	getCanonicalTheme,
 	hasActivatedTheme,
 	themeHasAutoLoadingHomepage,
 	isActivatingTheme,
-	isUsingRetiredTheme,
 	isThemeActive,
+	isUsingRetiredTheme,
 	getPreActivateThemeId,
 } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteDomain } from 'calypso/state/sites/selectors';
 import {
 	acceptActivateModalWarning,
 	hideActivateModalWarning,
 	activate as activateTheme,
 } from 'calypso/state/themes/actions';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { preventWidows } from 'calypso/lib/formatting';
 
 /**
  * Style dependencies
@@ -60,7 +66,23 @@ class ThemeActivationConfirmationModal extends Component {
 		super( props );
 		this.state = {
 			homepageAction: 'keep_current_homepage',
+			// Don't render the iframe on mobile; Doing it here prevents unnecessary data fetching vs. CSS.
+			isNarrow: isWithinBreakpoint( '<782px' ),
 		};
+	}
+
+	componentDidMount() {
+		// Change the isNarrow state when the size of the browser changes.
+		// (Putting this on an attribute instead of state because of react/no-did-mount-set-state)
+		this.unsubscribe = subscribeIsWithinBreakpoint( '<782px', ( isNarrow ) =>
+			this.setState( { isNarrow } )
+		);
+	}
+
+	componentWillUnmount() {
+		if ( typeof this.unsubscribe === 'function' ) {
+			this.unsubscribe();
+		}
 	}
 
 	handleHomepageAction = ( event ) => {
@@ -117,7 +139,6 @@ class ThemeActivationConfirmationModal extends Component {
 			return this.props.hideActivateModalWarning();
 		}
 	};
-
 	render() {
 		const {
 			activeTheme,
@@ -127,7 +148,9 @@ class ThemeActivationConfirmationModal extends Component {
 			hasAutoLoadingHomepage,
 			isCurrentTheme,
 			isCurrentThemeRetired,
+			siteDomain,
 		} = this.props;
+		const { isNarrow } = this.state;
 
 		// Nothing to do when it's the current theme.
 		if ( isCurrentTheme ) {
@@ -143,7 +166,12 @@ class ThemeActivationConfirmationModal extends Component {
 			return null;
 		}
 
+		const { stylesheet, screenshot: themeScreenshot } = installingTheme;
 		const themeName = isCurrentThemeRetired ? activeTheme.name : installingTheme.name;
+
+		const iframeSrcKeepHomepage = `//${ siteDomain }?theme=${ encodeURIComponent(
+			stylesheet
+		) }&hide_banners=true&preview_overlay=true`;
 
 		const classes = classNames( 'theme-activation-confirmation-modal', {
 			'is-solely-retired-modal': isCurrentThemeRetired && ! hasAutoLoadingHomepage,
@@ -204,6 +232,11 @@ class ThemeActivationConfirmationModal extends Component {
 				] }
 				onClose={ this.closeModalHandler( 'dismiss' ) }
 			>
+				<Gridicon
+					icon="cross"
+					className="theme-activation-confirmation-modal__close-icon"
+					onClick={ this.closeModalHandler( 'dismiss' ) }
+				/>
 				<TrackComponentView
 					eventName={ 'calypso_theme_autoloading_homepage_modal_view' }
 					eventProperties={ {
@@ -220,44 +253,102 @@ class ThemeActivationConfirmationModal extends Component {
 						} }
 					/>
 				) }
-				<div>
+				<div className="themes__theme-preview-wrapper">
 					<h1 className="theme-activation-confirmation-modal__title">{ dialogHeading }</h1>
 					{ hasAutoLoadingHomepage && (
 						<div>
-							<FormLabel>
-								<FormRadio
-									value="keep_current_homepage"
-									checked={ 'keep_current_homepage' === this.state.homepageAction }
-									onChange={ this.handleHomepageAction }
-									label={ translate(
-										'Switch to %(themeName)s without changing the homepage content.',
-										{
-											args: { themeName: installingTheme.name },
-										}
-									) }
-								/>
-							</FormLabel>
-							<FormLabel>
-								<FormRadio
-									value="use_new_homepage"
-									checked={ 'use_new_homepage' === this.state.homepageAction }
-									onChange={ this.handleHomepageAction }
-									label={ translate(
-										'Replace the homepage content with the %(themeName)s demo content. The existing homepage will be saved as a draft under Pages → Drafts.',
-										{
-											args: { themeName: installingTheme.name },
-										}
-									) }
-								/>
-							</FormLabel>
+							<div className="themes__theme-preview-items">
+								<div className="themes__theme-preview-item themes__theme-preview-item-iframe-container">
+									<FormLabel>
+										<div className="themes__iframe-wrapper">
+											<Spinner />
+											{ ! isNarrow && (
+												<iframe
+													scrolling="no"
+													loading="lazy"
+													title={ translate(
+														'Preview of current homepage with new theme applied'
+													) }
+													src={ iframeSrcKeepHomepage }
+												/>
+											) }
+										</div>
+										<FormRadio
+											value="keep_current_homepage"
+											checked={ 'keep_current_homepage' === this.state.homepageAction }
+											onChange={ this.handleHomepageAction }
+											label={ preventWidows(
+												translate( 'Switch theme, preserving my homepage content.' )
+											) }
+										/>
+									</FormLabel>
+								</div>
+								<div className="themes__theme-preview-item">
+									<FormLabel>
+										<div className="themes__theme-preview-image-wrapper">
+											<img
+												src={ themeScreenshot }
+												alt={ translate( "Preview of new theme's default homepage" ) }
+											/>
+										</div>
+										<FormRadio
+											value="use_new_homepage"
+											checked={ 'use_new_homepage' === this.state.homepageAction }
+											onChange={ this.handleHomepageAction }
+											label={ preventWidows(
+												translate( 'Replace my homepage content with the %(themeName)s homepage.', {
+													args: { themeName: installingTheme.name },
+												} )
+											) }
+										/>
+									</FormLabel>
+								</div>
+							</div>
+							<div className="themes__autoloading-homepage-option-description">
+								{ this.state.homepageAction === 'keep_current_homepage' && (
+									<p>
+										{ preventWidows(
+											translate(
+												'Your new theme design will be applied without changing your homepage content.'
+											)
+										) }{ ' ' }
+										<ExternalLink
+											href={ localizeUrl( 'https://wordpress.com/support/changing-themes/' ) }
+											icon
+											target="__blank"
+										>
+											{ translate( 'Learn more.' ) }
+										</ExternalLink>
+									</p>
+								) }
+								{ this.state.homepageAction === 'use_new_homepage' && (
+									<p>
+										<span
+											// eslint-disable-next-line react/no-danger
+											dangerouslySetInnerHTML={ {
+												__html: preventWidows(
+													translate(
+														'After activation, you can still access your old homepage content under Pages &rarr; Drafts.'
+													)
+												),
+											} }
+										/>{ ' ' }
+										<ExternalLink
+											href={ localizeUrl( 'https://wordpress.com/support/changing-themes/' ) }
+											icon
+											target="__blank"
+										>
+											{ translate( 'Learn more.' ) }
+										</ExternalLink>
+									</p>
+								) }
+							</div>
 						</div>
 					) }
-					{ hasAutoLoadingHomepage && isCurrentThemeRetired && (
-						<p className="theme-activation-confirmation-modal__retired-message">
-							{ retiredMessage }
-						</p>
-					) }
 				</div>
+				{ hasAutoLoadingHomepage && isCurrentThemeRetired && (
+					<p className="theme-activation-confirmation-modal__retired-message">{ retiredMessage }</p>
+				) }
 			</Dialog>
 		);
 	}
@@ -266,11 +357,12 @@ class ThemeActivationConfirmationModal extends Component {
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
-		const installingThemeId = getPreActivateThemeId( state );
 		const activeThemeId = getActiveTheme( state, siteId );
+		const installingThemeId = getPreActivateThemeId( state );
 
 		return {
 			siteId,
+			siteDomain: getSiteDomain( state, siteId ),
 			activeThemeId,
 			installingThemeId,
 			activeTheme: activeThemeId && getCanonicalTheme( state, siteId, activeThemeId ),

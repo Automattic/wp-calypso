@@ -25,9 +25,6 @@ import UploadDropZone from 'calypso/blocks/upload-drop-zone';
 import EmptyContent from 'calypso/components/empty-content';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import ThemeActivationConfirmationModal from 'calypso/my-sites/themes/theme-activation-confirmation-modal';
-import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import ThemeActivationConfirmationModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 // Necessary for ThanksModal
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
