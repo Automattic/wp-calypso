@@ -137,3 +137,39 @@ body.is-section-home {
 .is-section-home.is-nav-unification .sidebar .sidebar__menu-link::after {
 	border-right-color: var( --studio-white );
 }
+
+.customer-home__location-primary {
+	display: flex;
+	flex-direction: column-reverse;
+
+	.task {
+		box-shadow: none;
+	}
+}
+
+.customer-home__location-primary .dot-pager__controls {
+	justify-content: flex-start;
+	align-items: center;
+
+	button {
+		// Size the dots
+		min-height: 6px;
+		min-width: 6px;
+
+		// Allow the control buttons the space they need
+		display: inline-flex;
+		align-content: baseline;
+		width: auto;
+		height: auto;
+	}
+
+	// Move the Page Control Items over to the right
+	li:first-child {
+		order: 999;
+		margin-left: auto;
+	}
+
+	li:last-child {
+		order: 999;
+	}
+}
