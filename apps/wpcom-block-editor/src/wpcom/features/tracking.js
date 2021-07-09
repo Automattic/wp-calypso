@@ -18,7 +18,7 @@ import { trackGlobalStylesTabSelected } from './tracking/wpcom-block-editor-glob
 import {
 	buildGlobalStylesContentEvents,
 	getFlattenedBlockNames,
-	maybeAddBlockEventContext,
+	getBlockEventContextProperties,
 } from './utils';
 
 // Debugger.
@@ -214,27 +214,35 @@ function trackBlocksHandler( blocks, eventName, propertiesHandler = noop, parent
 const getBlocksTracker = ( eventName ) => ( blockIds, fromRootClientId, toRootClientId ) => {
 	const blockIdArray = Array.isArray( blockIds ) ? blockIds : [ blockIds ];
 
-	const fromContext = maybeAddBlockEventContext( fromRootClientId );
-	const toContext = maybeAddBlockEventContext( toRootClientId );
+	const fromContext = getBlockEventContextProperties( fromRootClientId );
+	const toContext = getBlockEventContextProperties( toRootClientId );
 
-	let context;
-	let from_context;
-	let to_context;
-	if ( toRootClientId === undefined || fromContext === toContext ) {
-		context = fromContext;
-	} else {
-		from_context = fromContext;
-		to_context = toContext;
-	}
-	// track separately for each block
-	blockIdArray.forEach( ( blockId ) => {
-		tracksRecordEvent( eventName, {
-			block_name: getTypeForBlockId( blockId ),
-			entity_context: context,
-			entity_context_from: from_context,
-			entity_context_to: to_context,
+	if ( toRootClientId === undefined || isEqual( fromContext, toContext ) ) {
+		// track separately for each block
+		blockIdArray.forEach( ( blockId ) => {
+			tracksRecordEvent( eventName, {
+				block_name: getTypeForBlockId( blockId ),
+				...fromContext,
+			} );
 		} );
-	} );
+	} else {
+		const fromProps = {};
+		const toProps = {};
+		for ( const key of Object.keys( fromContext ) ) {
+			fromProps[ `from_${ key }` ] = fromContext[ key ];
+		}
+		for ( const key of Object.keys( toContext ) ) {
+			toProps[ `from_${ key }` ] = toContext[ key ];
+		}
+		// track separately for each block
+		blockIdArray.forEach( ( blockId ) => {
+			tracksRecordEvent( eventName, {
+				block_name: getTypeForBlockId( blockId ),
+				...fromProps,
+				...toProps,
+			} );
+		} );
+	}
 };
 
 /**
@@ -250,7 +258,7 @@ const maybeTrackPatternInsertion = ( actionData ) => {
 	let patternName = meta?.patternName;
 
 	const rootClientId = actionData[ 1 ];
-	const context = maybeAddBlockEventContext( rootClientId );
+	const context = getBlockEventContextProperties( rootClientId );
 
 	// Quick block inserter doesn't use an object to store the patternName
 	// in the metadata. The pattern name is just directly used as a string.
@@ -274,7 +282,7 @@ const maybeTrackPatternInsertion = ( actionData ) => {
 			pattern_name: patternName,
 			pattern_category: patternCategory,
 			blocks_replaced: actionData?.blocks_replaced,
-			entity_context: context,
+			...context,
 		} );
 	}
 
@@ -292,7 +300,7 @@ const trackBlockInsertion = ( blocks, ...args ) => {
 	const patternName = maybeTrackPatternInsertion( { ...args, blocks_replaced: false } );
 
 	const [ , rootClientId ] = args;
-	const context = maybeAddBlockEventContext( rootClientId );
+	const context = getBlockEventContextProperties( rootClientId );
 
 	const insert_method = getBlockInserterUsed();
 
@@ -301,7 +309,7 @@ const trackBlockInsertion = ( blocks, ...args ) => {
 		blocks_replaced: false,
 		pattern_name: patternName,
 		insert_method,
-		entity_context: context,
+		...context,
 	} ) );
 };
 
@@ -315,10 +323,10 @@ const trackBlockRemoval = ( blocks ) => {
 	const rootClientId = select( 'core/block-editor' ).getBlockRootClientId(
 		Array.isArray( blocks ) ? blocks[ 0 ] : blocks
 	);
-	const context = maybeAddBlockEventContext( rootClientId );
+	const context = getBlockEventContextProperties( rootClientId );
 	trackBlocksHandler( blocks, 'wpcom_block_deleted', ( { name } ) => ( {
 		block_name: name,
-		entity_context: context,
+		...context,
 	} ) );
 };
 
@@ -341,7 +349,7 @@ const trackBlockReplacement = ( originalBlockIds, blocks, ...args ) => {
 	const rootClientId = select( 'core/block-editor' ).getBlockRootClientId(
 		Array.isArray( originalBlockIds ) ? originalBlockIds[ 0 ] : originalBlockIds
 	);
-	const context = maybeAddBlockEventContext( rootClientId );
+	const context = getBlockEventContextProperties( rootClientId );
 
 	const insert_method = getBlockInserterUsed( originalBlockIds );
 
@@ -350,7 +358,7 @@ const trackBlockReplacement = ( originalBlockIds, blocks, ...args ) => {
 		blocks_replaced: true,
 		pattern_name: patternName,
 		insert_method,
-		entity_context: context,
+		...context,
 	} ) );
 };
 
@@ -392,7 +400,7 @@ const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
 			return;
 		}
 	}
-	const context = maybeAddBlockEventContext( rootClientId );
+	const context = getBlockEventContextProperties( rootClientId );
 
 	trackBlocksHandler( blocks, 'wpcom_block_inserted', ( { name } ) => ( {
 		block_name: name,
@@ -402,7 +410,7 @@ const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
 		from_template_selector:
 			applyFilters( 'isInsertingPagePattern', false ) ||
 			applyFilters( 'isInsertingPageTemplate', false ),
-		entity_context: context,
+		...context,
 	} ) );
 };
 

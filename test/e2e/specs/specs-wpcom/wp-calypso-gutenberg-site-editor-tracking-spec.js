@@ -1109,7 +1109,8 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				);
 
 				assert.strictEqual( insertedEvents.length, 1 );
-				assert.strictEqual( insertedEvents[ 0 ][ 1 ].entity_context, 'core/template-part' );
+				assert.strictEqual( insertedEvents[ 0 ][ 1 ].entity_context, 'core/template-part/header' );
+				assert.strictEqual( insertedEvents[ 0 ][ 1 ].template_part_id, 'pub/tt1-blocks//header' );
 			} );
 
 			it( 'For "wpcom_block_moved_*" events', async function () {
@@ -1128,7 +1129,9 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				assert.strictEqual( events.length, 2 );
 
 				const matchesContext = events.filter(
-					( event ) => event[ 1 ].entity_context === 'core/template-part'
+					( event ) =>
+						event[ 1 ].entity_context === 'core/template-part/header' &&
+						event[ 1 ].template_part_id === 'pub/tt1-blocks//header'
 				);
 				assert.strictEqual( matchesContext.length, 2 );
 			} );
@@ -1149,7 +1152,8 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				const events = await getEventsStack( this.driver );
 
 				assert.strictEqual( events.length, 1 );
-				assert.strictEqual( events[ 0 ][ 1 ].entity_context, 'core/template-part' );
+				assert.strictEqual( events[ 0 ][ 1 ].entity_context, 'core/template-part/header' );
+				assert.strictEqual( events[ 0 ][ 1 ].template_part_id, 'pub/tt1-blocks//header' );
 			} );
 		} );
 
