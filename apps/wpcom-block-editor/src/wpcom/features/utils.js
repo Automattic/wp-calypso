@@ -43,26 +43,39 @@ export const getEditorType = () => {
  * @returns {(string|undefined)} The block event's context.
  */
 export const maybeAddBlockEventContext = ( rootClientId ) => {
+	const { getBlockParentsByBlockName, getBlock } = select( 'core/block-editor' );
+
+	// If this function doesn't exist, we cannot support context tracking.
+	if ( typeof getBlockParentsByBlockName !== 'function' ) {
+		return undefined;
+	}
+
 	const editorType = getEditorType();
 	const defaultReturn = editorType === 'site' ? 'template' : undefined;
 
+	// No root implies top level.
 	if ( ! rootClientId ) {
 		return defaultReturn;
 	}
-	const contexts = [ 'core/template-part', 'core/post-content', 'core/block', 'core/query' ];
-	const rootBlock = select( 'core/block-editor' ).getBlock( rootClientId );
 
-	if ( contexts.some( ( context ) => context === rootBlock?.name ) ) return rootBlock?.name;
-	const matchingParentIds = select( 'core/block-editor' ).getBlockParentsByBlockName(
-		rootClientId,
-		contexts,
-		true
-	);
-	if ( matchingParentIds.length ) {
-		return select( 'core/block-editor' ).getBlock( matchingParentIds[ 0 ] )?.name;
+	// Context controller blocks to check for.
+	const contexts = [ 'core/template-part', 'core/post-content', 'core/block', 'core/query' ];
+
+	// Check if the root matches a context controller.
+	const rootBlock = getBlock( rootClientId );
+	if ( contexts.some( ( context ) => context === rootBlock?.name ) ) {
+		return rootBlock?.name;
 	}
+
+	// Check if the root's parents match a context controller.
+	const matchingParentIds = getBlockParentsByBlockName( rootClientId, contexts, true );
+	if ( matchingParentIds.length ) {
+		return getBlock( matchingParentIds[ 0 ] )?.name;
+	}
+
 	return defaultReturn;
 };
+
 /**
  * Compares two objects, returning values in newObject that do not correspond
  * to values in oldObject.
