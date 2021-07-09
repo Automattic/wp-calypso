@@ -25,7 +25,7 @@ import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
-import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
@@ -94,6 +94,7 @@ class MasterbarLoggedIn extends React.Component {
 	clickMySites = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_my_sites_clicked' );
 		this.handleLayoutFocus( 'sites' );
+		this.props.activateNextLayoutFocus();
 
 		/**
 		 * Site Migration: Reset a failed migration when clicking on My Sites
@@ -349,5 +350,5 @@ export default connect(
 			isNavUnificationEnabled: isNavUnificationEnabled( state ),
 		};
 	},
-	{ setNextLayoutFocus, recordTracksEvent, updateSiteMigrationMeta }
+	{ setNextLayoutFocus, recordTracksEvent, updateSiteMigrationMeta, activateNextLayoutFocus }
 )( localize( MasterbarLoggedIn ) );

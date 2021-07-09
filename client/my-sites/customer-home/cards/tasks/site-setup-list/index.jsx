@@ -4,7 +4,7 @@
 import { Card } from '@automattic/components';
 import { isDesktop, isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { translate } from 'i18n-calypso';
-import React, { useEffect, useState, Fragment } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import classnames from 'classnames';
 
@@ -26,11 +26,11 @@ import getMenusUrl from 'calypso/state/selectors/get-menus-url';
 import { getSiteOption, getSiteSlug } from 'calypso/state/sites/selectors';
 import { requestGuidedTour } from 'calypso/state/guided-tours/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { skipCurrentViewHomeLayout } from 'calypso/state/home/actions';
 import NavItem from './nav-item';
 import CurrentTaskItem from './current-task-item';
 import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 import { getTask } from './get-task';
+import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 
 /**
  * Style dependencies
@@ -66,14 +66,22 @@ const startTask = ( dispatch, task, siteId, advanceToNextIncompleteTask, isPodca
 	}
 };
 
-const skipTask = ( dispatch, task, tasks, siteId, setIsLoading, isPodcastingSite ) => {
+const skipTask = (
+	dispatch,
+	skipCurrentView,
+	task,
+	tasks,
+	siteId,
+	setIsLoading,
+	isPodcastingSite
+) => {
 	const isLastTask = tasks.filter( ( t ) => ! t.isCompleted ).length === 1;
 
 	if ( isLastTask ) {
 		// When skipping the last task, we request skipping the current layout view so it's refreshed afterwards.
 		// Task will be dismissed server-side to avoid race conditions.
 		setIsLoading( true );
-		dispatch( skipCurrentViewHomeLayout( siteId ) );
+		skipCurrentView();
 	} else {
 		// Otherwise we simply skip the given task.
 		dispatch( requestSiteChecklistTaskUpdate( siteId, task.id ) );
@@ -120,6 +128,7 @@ const SiteSetupList = ( {
 	const [ showAccordionSelectedTask, setShowAccordionSelectedTask ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const dispatch = useDispatch();
+	const { skipCurrentView } = useSkipCurrentViewMutation( siteId );
 
 	const isDomainUnverified =
 		tasks.filter(
@@ -175,7 +184,6 @@ const SiteSetupList = ( {
 				emailVerificationStatus,
 				isDomainUnverified,
 				isEmailUnverified,
-				isPodcastingSite,
 				menusUrl,
 				siteId,
 				siteSlug,
@@ -225,7 +233,15 @@ const SiteSetupList = ( {
 					currentTask={ currentTask }
 					skipTask={ () => {
 						setTaskIsManuallySelected( false );
-						skipTask( dispatch, currentTask, tasks, siteId, setIsLoading, isPodcastingSite );
+						skipTask(
+							dispatch,
+							skipCurrentView,
+							currentTask,
+							tasks,
+							siteId,
+							setIsLoading,
+							isPodcastingSite
+						);
 					} }
 					startTask={ () =>
 						startTask(
@@ -241,63 +257,66 @@ const SiteSetupList = ( {
 
 			<div className="site-setup-list__nav">
 				<CardHeading>{ translate( 'Site setup' ) }</CardHeading>
-				{ tasks.map( ( task ) => {
-					const enhancedTask = getTask( task );
-					const isCurrent = task.id === currentTask.id;
-					const isCompleted = task.isCompleted;
+				<ul className="site-setup-list__list">
+					{ tasks.map( ( task ) => {
+						const enhancedTask = getTask( task );
+						const isCurrent = task.id === currentTask.id;
+						const isCompleted = task.isCompleted;
 
-					return (
-						<Fragment key={ task.id }>
-							<NavItem
-								key={ task.id }
-								taskId={ task.id }
-								text={ enhancedTask.label || enhancedTask.title }
-								isCompleted={ isCompleted }
-								isCurrent={
-									useAccordionLayout ? isCurrent && showAccordionSelectedTask : isCurrent
-								}
-								onClick={
-									useAccordionLayout && isCurrent && showAccordionSelectedTask
-										? () => {
-												setShowAccordionSelectedTask( false );
-										  }
-										: () => {
-												setShowAccordionSelectedTask( true );
-												setTaskIsManuallySelected( true );
-												setCurrentTaskId( task.id );
-										  }
-								}
-								useAccordionLayout={ useAccordionLayout }
-							/>
-							{ useAccordionLayout && isCurrent && showAccordionSelectedTask ? (
-								<CurrentTaskItem
-									currentTask={ currentTask }
-									skipTask={ () => {
-										setTaskIsManuallySelected( false );
-										skipTask(
-											dispatch,
-											currentTask,
-											tasks,
-											siteId,
-											setIsLoading,
-											isPodcastingSite
-										);
-									} }
-									startTask={ () =>
-										startTask(
-											dispatch,
-											currentTask,
-											siteId,
-											advanceToNextIncompleteTask,
-											isPodcastingSite
-										)
+						return (
+							<li key={ task.id }>
+								<NavItem
+									key={ task.id }
+									taskId={ task.id }
+									text={ enhancedTask.label || enhancedTask.title }
+									isCompleted={ isCompleted }
+									isCurrent={
+										useAccordionLayout ? isCurrent && showAccordionSelectedTask : isCurrent
+									}
+									onClick={
+										useAccordionLayout && isCurrent && showAccordionSelectedTask
+											? () => {
+													setShowAccordionSelectedTask( false );
+											  }
+											: () => {
+													setShowAccordionSelectedTask( true );
+													setTaskIsManuallySelected( true );
+													setCurrentTaskId( task.id );
+											  }
 									}
 									useAccordionLayout={ useAccordionLayout }
 								/>
-							) : null }
-						</Fragment>
-					);
-				} ) }
+								{ useAccordionLayout && isCurrent && showAccordionSelectedTask ? (
+									<CurrentTaskItem
+										currentTask={ currentTask }
+										skipTask={ () => {
+											setTaskIsManuallySelected( false );
+											skipTask(
+												dispatch,
+												skipCurrentView,
+												currentTask,
+												tasks,
+												siteId,
+												setIsLoading,
+												isPodcastingSite
+											);
+										} }
+										startTask={ () =>
+											startTask(
+												dispatch,
+												currentTask,
+												siteId,
+												advanceToNextIncompleteTask,
+												isPodcastingSite
+											)
+										}
+										useAccordionLayout={ useAccordionLayout }
+									/>
+								) : null }
+							</li>
+						);
+					} ) }
+				</ul>
 			</div>
 		</Card>
 	);

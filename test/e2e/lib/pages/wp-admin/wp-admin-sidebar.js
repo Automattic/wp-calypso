@@ -94,6 +94,13 @@ export default class WPAdminSidebar extends AsyncBaseContainer {
 		return await this._selectMenuItem( postsLocator, itemLocator );
 	}
 
+	async selectNewPage() {
+		const postsLocator = By.css( '#menu-pages' );
+		const itemLocator = By.css( '#menu-pages a[href*="post-new"]' );
+
+		return await this._selectMenuItem( postsLocator, itemLocator );
+	}
+
 	async _selectMenuItem( menuLocator, menuItemLocator ) {
 		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, menuLocator );
 		const classes = await this.driver.findElement( menuLocator ).getAttribute( 'class' );
@@ -102,9 +109,5 @@ export default class WPAdminSidebar extends AsyncBaseContainer {
 			await driverHelper.waitUntilElementLocatedAndVisible( this.driver, menuItemLocator );
 		}
 		return await driverHelper.clickWhenClickable( this.driver, menuItemLocator );
-	}
-
-	static async refreshIfJNError( driver ) {
-		return await driverHelper.refreshIfJNError( driver );
 	}
 }

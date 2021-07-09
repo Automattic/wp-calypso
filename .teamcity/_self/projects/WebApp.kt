@@ -5,7 +5,9 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.*
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.dockerCommand
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
@@ -18,7 +20,7 @@ object WebApp : Project({
 	buildType(RunAllUnitTests)
 	buildType(CheckCodeStyleBranch)
 	buildType(BuildDockerImage)
-	buildType(RunCalypsoPlaywrightE2eTests)
+	buildType(RunCalypsoPlaywrightE2eDesktopTests)
 })
 
 object RunCalypsoE2eDesktopTests : BuildType({
@@ -351,12 +353,46 @@ object BuildDockerImage : BuildType({
 	name = "Docker image"
 	description = "Build docker image containing Calypso"
 
+	params {
+		text("base_image", "registry.a8c.com/calypso/base:latest", label = "Base docker image", description = "Base docker image", allowEmpty = false)
+	}
+
 	vcs {
 		root(Settings.WpCalypso)
 		cleanCheckout = true
 	}
 
 	steps {
+		script {
+			name = "Post PR comment"
+			scriptContent = """
+				#!/usr/bin/env bash
+				if [[ "%teamcity.build.branch.is_default%" == "true" ]]; then
+					exit 0
+				fi
+
+				export GH_TOKEN="%matticbot_oauth_token%"
+				chmod +x ./bin/add-pr-comment.sh
+				./bin/add-pr-comment.sh "%teamcity.build.branch%" "calypso-live" <<- EOF || true
+				Link to live branch is being generated...
+				Please wait a few minutes and refresh this page.
+				EOF
+			"""
+		}
+
+		script {
+			name = "Restore git mtime"
+			scriptContent = """
+				#!/usr/bin/env bash
+				sudo apt-get install -y git-restore-mtime
+				/usr/lib/git-core/git-restore-mtime --force --commit-time --skip-missing
+			"""
+			dockerImage = "%docker_image_e2e%"
+			dockerRunParameters = "-u %env.UID%"
+			dockerPull = true
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+		}
+
 		dockerCommand {
 			name = "Build docker image"
 			commandType = build {
@@ -375,10 +411,12 @@ object BuildDockerImage : BuildType({
 					--build-arg workers=16
 					--build-arg node_memory=32768
 					--build-arg use_cache=true
+					--build-arg base_image=%base_image%
 				""".trimIndent().replace("\n"," ")
 			}
 			param("dockerImage.platform", "linux")
 		}
+
 		dockerCommand {
 			commandType = push {
 				namesAndTags = """
@@ -386,6 +424,23 @@ object BuildDockerImage : BuildType({
 					registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}
 				""".trimIndent()
 			}
+		}
+
+		script {
+			name = "Post PR comment with link"
+			scriptContent = """
+				#!/usr/bin/env bash
+				if [[ "%teamcity.build.branch.is_default%" == "true" ]]; then
+					exit 0
+				fi
+
+				export GH_TOKEN="%matticbot_oauth_token%"
+				chmod +x ./bin/add-pr-comment.sh
+				./bin/add-pr-comment.sh "%teamcity.build.branch%" "calypso-live" <<- EOF || true
+				Link to Calypso live: https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%
+				Link to Jetpack Cloud live: https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%&env=jetpack
+				EOF
+			"""
 		}
 	}
 
@@ -475,7 +530,7 @@ object RunAllUnitTests : BuildType({
 				export NODE_ENV="test"
 
 				# Run type checks
-				yarn tsc --build packages/tsconfig.json
+				yarn tsc --build packages/*/tsconfig.json
 				yarn tsc --build apps/editing-toolkit/tsconfig.json
 				yarn tsc --project client/landing/gutenboarding
 			"""
@@ -697,8 +752,9 @@ object CheckCodeStyleBranch : BuildType({
 	}
 })
 
-object RunCalypsoPlaywrightE2eTests : BuildType({
-	name = "Playwright E2E tests"
+object RunCalypsoPlaywrightE2eDesktopTests : BuildType({
+	name = "Playwright E2E tests (desktop)"
+	uuid = "23cc069f-59e5-4a63-a131-539fb55264e7"
 	description = "Runs Calypso e2e tests using Playwright"
 	params {
 		param("use_cached_node_modules", "false")
@@ -764,6 +820,10 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 						continue
 					fi
 
+					# Wait some seconds to alleviate simulateneous traffic to the serving container
+					# to avoid incurring HTTP 304.
+					sleep 10
+
 					break
 				done
 
@@ -777,9 +837,10 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
 				# Run the test
-				export VIEWPORT_SIZE="mobile"
-				export LOCALE="en"
+				export VIEWPORT_SIZE=desktop
+				export LOCALE=en
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
+				export DEBUG=pw:api
 
 				xvfb-run yarn magellan --config=magellan-playwright.json --max_workers=%E2E_WORKERS% --local_browser=chrome --mocha_args="--reporter mocha-multi-reporters --reporter-options configFile=mocha-reporter.json"
 			""".trimIndent()
@@ -822,6 +883,14 @@ object RunCalypsoPlaywrightE2eTests : BuildType({
 					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
 				}
 			}
+		}
+	}
+
+	triggers {
+		vcs {
+			branchFilter = """
+				+:trunk
+			""".trimIndent()
 		}
 	}
 

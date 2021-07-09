@@ -17,6 +17,7 @@ import {
 	areAllMailboxesAvailable,
 	buildNewTitanMailbox,
 	transformMailboxForCart,
+	validateMailboxes,
 } from 'calypso/lib/titan/new-mailbox';
 import { Button, Card } from '@automattic/components';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -39,7 +40,6 @@ import {
 	hasLoadedSiteDomains,
 	isRequestingSiteDomains,
 } from 'calypso/state/sites/domains/selectors';
-import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
 import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -54,7 +54,6 @@ import {
 	TITAN_MAIL_MONTHLY_SLUG,
 } from 'calypso/lib/titan/constants';
 import SectionHeader from 'calypso/components/section-header';
-import TitanExistingForwardsNotice from 'calypso/my-sites/email/titan-add-mailboxes/titan-existing-forwards-notice';
 import TitanMailboxPricingNotice from 'calypso/my-sites/email/titan-add-mailboxes/titan-mailbox-pricing-notice';
 import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-add-mailboxes/titan-new-mailbox-list';
@@ -71,6 +70,7 @@ class TitanAddMailboxes extends React.Component {
 		mailboxes: [ buildNewTitanMailbox( this.props.selectedDomainName, false ) ],
 		isAddingToCart: false,
 		isCheckingAvailability: false,
+		validatedMailboxUuids: [],
 	};
 
 	isMounted = false;
@@ -133,13 +133,16 @@ class TitanAddMailboxes extends React.Component {
 	handleContinue = async () => {
 		const { selectedSite } = this.props;
 		const { mailboxes } = this.state;
-		const allMailboxesAreValid = areAllMailboxesValid( mailboxes, [ 'alternativeEmail' ] );
+
+		const validatedMailboxes = validateMailboxes( mailboxes );
+
+		const allMailboxesAreValid = areAllMailboxesValid( validatedMailboxes );
 
 		let allMailboxesAreAvailable = false;
 		if ( allMailboxesAreValid ) {
 			this.setState( { isCheckingAvailability: true } );
 			allMailboxesAreAvailable = await areAllMailboxesAvailable(
-				mailboxes,
+				validatedMailboxes,
 				this.onMailboxesChange
 			);
 			if ( this.isMounted ) {
@@ -149,6 +152,13 @@ class TitanAddMailboxes extends React.Component {
 
 		const canContinue = allMailboxesAreValid && allMailboxesAreAvailable;
 
+		const validatedMailboxUuids = validatedMailboxes.map( ( mailbox ) => mailbox.uuid );
+
+		this.setState( {
+			mailboxes: validatedMailboxes,
+			validatedMailboxUuids,
+		} );
+
 		this.recordClickEvent( 'calypso_email_management_titan_add_mailboxes_continue_button_click', {
 			can_continue: canContinue,
 			mailbox_count: mailboxes.length,
@@ -156,6 +166,7 @@ class TitanAddMailboxes extends React.Component {
 
 		if ( canContinue ) {
 			this.setState( { isAddingToCart: true } );
+
 			this.props.shoppingCartManager
 				.addProductsToCart( [
 					fillInSingleCartItemAttributes( this.getCartItem(), this.props.productsList ),
@@ -203,12 +214,8 @@ class TitanAddMailboxes extends React.Component {
 		);
 	};
 
-	onButtonClick = () => {
-		this.setState( { quantity: this.state.quantity + 1 } );
-	};
-
 	onMailboxesChange = ( updatedMailboxes ) => {
-		this.setState( { mailboxes: updatedMailboxes, quantity: updatedMailboxes.length } );
+		this.setState( { mailboxes: updatedMailboxes } );
 	};
 
 	renderForm() {
@@ -227,6 +234,7 @@ class TitanAddMailboxes extends React.Component {
 						domain={ selectedDomainName }
 						mailboxes={ this.state.mailboxes }
 						onMailboxesChange={ this.onMailboxesChange }
+						validatedMailboxUuids={ this.state.validatedMailboxUuids }
 					>
 						<Button className="titan-add-mailboxes__action-cancel" onClick={ this.handleCancel }>
 							{ translate( 'Cancel' ) }
@@ -248,7 +256,6 @@ class TitanAddMailboxes extends React.Component {
 	render() {
 		const {
 			currentRoute,
-			domainsWithForwards,
 			isLoadingDomains,
 			isSelectedDomainNameValid,
 			maxTitanMailboxCount,
@@ -284,7 +291,6 @@ class TitanAddMailboxes extends React.Component {
 						{ getTitanProductName() + ': ' + selectedDomainName }
 					</HeaderCake>
 
-					<TitanExistingForwardsNotice domainsWithForwards={ domainsWithForwards } />
 					{ selectedDomain && (
 						<TitanUnusedMailboxesNotice
 							domain={ selectedDomain }
@@ -322,7 +328,6 @@ export default connect(
 			selectedSite,
 			isLoadingDomains,
 			currentRoute: getCurrentRoute( state ),
-			domainsWithForwards: getDomainsWithForwards( state, domains ),
 			productsList: getProductsList( state ),
 			maxTitanMailboxCount: hasTitanMailWithUs( selectedDomain )
 				? getMaxTitanMailboxCount( selectedDomain )

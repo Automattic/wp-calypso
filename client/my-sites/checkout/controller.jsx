@@ -18,19 +18,19 @@ import {
 } from '../plans/jetpack-plans/plan-upgrade/constants';
 import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
 import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
-import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import GSuiteNudge from './gsuite-nudge';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutSystemDecider from './checkout-system-decider';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
+import JetpackCheckoutSitelessThankYou from './checkout-thank-you/jetpack-checkout-siteless-thank-you';
 import CheckoutThankYouComponent from './checkout-thank-you';
-import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import { setSectionMiddleware } from 'calypso/controller';
 import { sites } from 'calypso/my-sites/controller';
-import userFactory from 'calypso/lib/user';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUserVisibleSiteCount,
+	isUserLoggedIn,
+} from 'calypso/state/current-user/selectors';
 import {
 	retrieveSignupDestination,
 	setSignupCheckoutPageUnloaded,
@@ -42,27 +42,58 @@ import UpsellNudge, {
 } from './upsell-nudge';
 import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
 import { TRUENAME_COUPONS } from 'calypso/lib/domains';
+import { hideMasterbar } from 'calypso/state/ui/masterbar-visibility/actions';
 
 const debug = debugFactory( 'calypso:checkout-controller' );
+
+export function checkoutSiteless( context, next ) {
+	const state = context.store.getState();
+	const isLoggedOut = ! isUserLoggedIn( state );
+	const { productSlug: product } = context.params;
+
+	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
+	context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
+
+	setSectionMiddleware( { name: 'checkout' } )( context );
+
+	// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
+	const couponCode = context.query.coupon || context.query.code || getRememberedCoupon();
+
+	context.primary = (
+		<CheckoutSystemDecider
+			productAliasFromUrl={ product }
+			couponCode={ couponCode }
+			isComingFromUpsell={ !! context.query.upgrade }
+			redirectTo={ context.query.redirect_to }
+			isLoggedOutCart={ isLoggedOut }
+			isNoSiteCart={ true }
+			isJetpackCheckout={ true }
+		/>
+	);
+
+	next();
+}
 
 export function checkout( context, next ) {
 	const { feature, plan, purchaseId } = context.params;
 
-	const user = userFactory();
-	const isLoggedOut = ! user.get();
 	const state = context.store.getState();
+	const isLoggedOut = ! isUserLoggedIn( state );
 	const selectedSite = getSelectedSite( state );
-	const currentUser = getCurrentUser( state );
-	const hasSite = currentUser && currentUser.visible_site_count >= 1;
+	const hasSite = getCurrentUserVisibleSiteCount( state ) >= 1;
 	const isDomainOnlyFlow = context.query?.isDomainOnly === '1';
 	const isDisallowedForSitePicker =
 		context.pathname.includes( '/checkout/no-site' ) &&
 		( isLoggedOut || ! hasSite || isDomainOnlyFlow );
 	const jetpackPurchaseToken = context.query.purchasetoken;
 	const jetpackPurchaseNonce = context.query.purchaseNonce;
+	const isUserComingFromLoginForm = context.query?.flow === 'logged-out-checkout';
+	const isUserComingFromPlansPage = [ 'jetpack-plans', 'jetpack-connect-plans' ].includes(
+		context.query?.source
+	);
 	const isJetpackCheckout =
 		context.pathname.includes( '/checkout/jetpack' ) &&
-		isLoggedOut &&
+		( isLoggedOut || isUserComingFromLoginForm || isUserComingFromPlansPage ) &&
 		( !! jetpackPurchaseToken || !! jetpackPurchaseNonce );
 	const jetpackSiteSlug = context.params.siteSlug;
 
@@ -128,6 +159,7 @@ export function checkout( context, next ) {
 			isJetpackCheckout={ isJetpackCheckout }
 			jetpackSiteSlug={ jetpackSiteSlug }
 			jetpackPurchaseToken={ jetpackPurchaseToken || jetpackPurchaseNonce }
+			isUserComingFromLoginForm={ isUserComingFromLoginForm }
 		/>
 	);
 
@@ -201,35 +233,6 @@ export function checkoutThankYou( context, next ) {
 	next();
 }
 
-export function gsuiteNudge( context, next ) {
-	const { domain, site, receiptId } = context.params;
-	setSectionMiddleware( { name: 'gsuite-nudge' } )( context );
-
-	const state = context.store.getState();
-	const selectedSite =
-		getSelectedSite( state ) || getSiteBySlug( state, site ) || getSiteBySlug( state, domain );
-
-	if ( ! selectedSite ) {
-		return null;
-	}
-
-	if ( ! canUserPurchaseGSuite( context.store.getState() ) ) {
-		next();
-	}
-
-	context.primary = (
-		<CalypsoShoppingCartProvider>
-			<GSuiteNudge
-				domain={ domain }
-				receiptId={ Number( receiptId ) }
-				selectedSiteId={ selectedSite.ID }
-			/>
-		</CalypsoShoppingCartProvider>
-	);
-
-	next();
-}
-
 export function upsellNudge( context, next ) {
 	const { receiptId, site } = context.params;
 
@@ -283,8 +286,11 @@ export function redirectToSupportSession( context ) {
 
 export function jetpackCheckoutThankYou( context, next ) {
 	const isUserlessCheckoutFlow = context.path.includes( '/checkout/jetpack' );
+	const isSitelessCheckoutFlow = context.path.includes( '/checkout/jetpack/thank-you/no-site' );
 
-	context.primary = (
+	context.primary = isSitelessCheckoutFlow ? (
+		<JetpackCheckoutSitelessThankYou productSlug={ context.params.product } />
+	) : (
 		<JetpackCheckoutThankYou
 			site={ context.params.site }
 			productSlug={ context.params.product }
@@ -358,4 +364,10 @@ function getRememberedCoupon() {
 	}
 	debug( 'not returning any coupon code.' );
 	return null;
+}
+
+// Call hideTheMasterbar 1st in index.js page route to prevent masterBar from appearing briefly before disappearing.
+export function hideTheMasterbar( context, next ) {
+	context.store.dispatch( hideMasterbar() );
+	next();
 }

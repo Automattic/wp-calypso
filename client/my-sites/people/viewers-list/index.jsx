@@ -10,7 +10,7 @@ import { useDispatch } from 'react-redux';
  */
 import Viewers from './viewers';
 import useViewersQuery from 'calypso/data/viewers/use-viewers-query';
-import useRemoveViewer from 'calypso/data/viewers/remove-viewer';
+import useRemoveViewer from 'calypso/data/viewers/use-remove-viewer-mutation';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 
 const useErrorNotice = ( error, refetch ) => {

@@ -13,8 +13,8 @@ import { getItemSlugByDuration } from './utils';
 import { INTRO_PRICING_DISCOUNT_PERCENTAGE } from '../constants';
 import ProductCard from '../product-card';
 import ProductGridSection from '../product-grid/section';
-import { slugToSelectorProduct } from '../utils';
-import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import slugToSelectorProduct from '../slug-to-selector-product';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
@@ -26,13 +26,14 @@ import './style.scss';
  * Type dependencies
  */
 import type { PlanRecommendation } from './types';
-import type { Duration, PurchaseCallback, SelectorProduct } from '../types';
+import type { Duration, PurchaseCallback, PurchaseURLCallback, SelectorProduct } from '../types';
 
 type Props = {
 	planRecommendation: PlanRecommendation;
 	duration: Duration;
 	filterBar: React.ReactNode;
 	onSelectProduct: PurchaseCallback;
+	createButtonURL: PurchaseURLCallback;
 };
 
 const PlanUpgradeSection: React.FC< Props > = ( {
@@ -40,6 +41,7 @@ const PlanUpgradeSection: React.FC< Props > = ( {
 	duration,
 	filterBar,
 	onSelectProduct,
+	createButtonURL,
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
@@ -100,6 +102,7 @@ const PlanUpgradeSection: React.FC< Props > = ( {
 						selectedTerm={ duration }
 						hideSavingLabel
 						onClick={ onSelectProduct }
+						createButtonURL={ createButtonURL }
 					/>
 				</li>
 				<li className="plan-upgrade__separator">
@@ -119,6 +122,7 @@ const PlanUpgradeSection: React.FC< Props > = ( {
 									isAligned
 									hideSavingLabel
 									onClick={ onSelectProduct }
+									createButtonURL={ createButtonURL }
 								/>
 							</li>
 						) ) }

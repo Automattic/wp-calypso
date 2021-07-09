@@ -26,13 +26,7 @@ function WpcomNux() {
 		isManuallyOpened: select( 'automattic/wpcom-welcome-guide' ).isWelcomeGuideManuallyOpened(),
 	} ) );
 
-	const { closeGeneralSidebar } = useDispatch( 'core/edit-post' );
 	const { setShowWelcomeGuide } = useDispatch( 'automattic/wpcom-welcome-guide' );
-
-	// Hide editor sidebar first time users sees the editor
-	useEffect( () => {
-		show && closeGeneralSidebar();
-	}, [ closeGeneralSidebar, show ] );
 
 	// Track opening of the welcome guide
 	useEffect( () => {

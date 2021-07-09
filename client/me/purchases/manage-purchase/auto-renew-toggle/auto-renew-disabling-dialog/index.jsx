@@ -180,7 +180,7 @@ class AutoRenewDisablingDialog extends Component {
 	renderAtomicFollowUpDialog = () => {
 		const { siteDomain, isVisible, translate } = this.props;
 
-		const exportPath = '//' + siteDomain + '/wp-admin/export.php';
+		const exportPath = '/backup/' + siteDomain;
 
 		return (
 			<Dialog

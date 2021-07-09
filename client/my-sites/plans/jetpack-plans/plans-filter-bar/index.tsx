@@ -20,7 +20,7 @@ import {
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isConnectStore } from 'calypso/my-sites/plans/jetpack-plans/product-grid/utils';
 import useDetectWindowBoundary from '../use-detect-window-boundary';
-import { getHighestAnnualDiscount } from '../utils';
+import getHighestAnnualDiscount from './get-highest-annual-discount';
 
 /**
  * Type dependencies
@@ -42,10 +42,6 @@ interface FilterBarProps {
 type DiscountMessageProps = {
 	toggleChecked?: boolean;
 };
-
-const CLOUD_MASTERBAR_STICKY = false;
-const CALYPSO_MASTERBAR_HEIGHT = 47;
-const CLOUD_MASTERBAR_HEIGHT = CLOUD_MASTERBAR_STICKY ? 94 : 0;
 
 const DiscountMessage: React.FC< DiscountMessageProps > = ( { toggleChecked } ) => {
 	const translate = useTranslate();
@@ -94,42 +90,55 @@ const PlansFilterBar: React.FC< FilterBarProps > = ( {
 	onDurationChange,
 } ) => {
 	const translate = useTranslate();
-	const isInConnectStore = useMemo( isConnectStore, [] );
-	const isInJetpackCloud = useMemo( isJetpackCloud, [] );
-	const windowBoundaryOffset =
-		isInJetpackCloud || isInConnectStore ? CLOUD_MASTERBAR_HEIGHT : CALYPSO_MASTERBAR_HEIGHT;
+
+	const CALYPSO_MASTERBAR_HEIGHT = 47;
+	const CLOUD_MASTERBAR_HEIGHT = 0;
+
+	const windowBoundaryOffset = useMemo( () => {
+		if ( isJetpackCloud() || isConnectStore() ) {
+			return CLOUD_MASTERBAR_HEIGHT;
+		}
+
+		return CALYPSO_MASTERBAR_HEIGHT;
+	}, [] );
 	const [ barRef, hasCrossed ] = useDetectWindowBoundary( windowBoundaryOffset );
 
-	const [ durationChecked, setDurationChecked ] = useState(
-		duration === TERM_ANNUALLY ? true : false
-	);
-
+	const [ durationChecked, setDurationChecked ] = useState( duration === TERM_ANNUALLY );
 	useEffect( () => {
 		const selectedDuration = durationChecked ? TERM_ANNUALLY : TERM_MONTHLY;
 		onDurationChange?.( selectedDuration );
 	}, [ onDurationChange, durationChecked ] );
 
 	return (
-		<div ref={ barRef } className={ classNames( 'plans-filter-bar', { sticky: hasCrossed } ) }>
-			<div className="plans-filter-bar__duration-toggle-wrapper">
-				<div
-					className={ classNames( 'plans-filter-bar__duration-toggle', {
-						checked: durationChecked,
-					} ) }
-				>
-					<span className="plans-filter-bar__toggle-off-label">
-						{ translate( 'Bill monthly' ) }
-					</span>
-					<ToggleControl
-						className="plans-filter-bar__toggle-control"
-						checked={ durationChecked }
-						onChange={ () => setDurationChecked( ( prevState ) => ! prevState ) }
-					/>
-					<span className="plans-filter-bar__toggle-on-label">{ translate( 'Bill yearly' ) }</span>
+		<>
+			<div className="plans-filter-bar__viewport-sentinel" ref={ barRef }></div>
+			<div
+				className={ classNames( 'plans-filter-bar', {
+					sticky: hasCrossed,
+				} ) }
+			>
+				<div className="plans-filter-bar__duration-toggle-wrapper">
+					<div
+						className={ classNames( 'plans-filter-bar__duration-toggle', {
+							checked: durationChecked,
+						} ) }
+					>
+						<span className="plans-filter-bar__toggle-off-label">
+							{ translate( 'Bill monthly' ) }
+						</span>
+						<ToggleControl
+							className="plans-filter-bar__toggle-control"
+							checked={ durationChecked }
+							onChange={ () => setDurationChecked( ( prevState ) => ! prevState ) }
+						/>
+						<span className="plans-filter-bar__toggle-on-label">
+							{ translate( 'Bill yearly' ) }
+						</span>
+					</div>
+					{ showDiscountMessage && <DiscountMessage toggleChecked={ durationChecked } /> }
 				</div>
-				{ showDiscountMessage && <DiscountMessage toggleChecked={ durationChecked } /> }
 			</div>
-		</div>
+		</>
 	);
 };
 

@@ -130,7 +130,7 @@
 			},
 			"categories": [ "featured", "portfolio" ],
 			"is_premium": false,
-			"is_alpha": false,
+			"is_alpha": true,
 			"features": []
 		},
 		{
@@ -274,6 +274,7 @@
 			},
 			"categories": [ "featured", "portfolio" ],
 			"is_premium": false,
+			"is_alpha": true,
 			"features": []
 		},
 		{

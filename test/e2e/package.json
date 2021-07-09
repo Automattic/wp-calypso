@@ -2,19 +2,19 @@
 	"name": "wp-e2e-tests",
 	"version": "0.0.1",
 	"description": "Automated end to end acceptance tests for the Calypso project",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
 	"private": true,
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Automattic/wp-e2e-tests.git"
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "test/e2e"
 	},
-	"main": "greetings.js",
-	"defaultTestArgs": "-g -s $BROWSERSIZE",
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
 	"scripts": {
-		"lint": "eslint . --max-warnings=0",
-		"precommitlint": "LIST=`git diff-index --name-only HEAD | grep js$`; if [ \"$LIST\" ]; then eslint $LIST --max-warnings=0; fi",
-		"precommit": "node scripts/pre-commit-hook.js",
-		"precommitcirclecivalidate": "./scripts/git-pre-commit-circleci-validate",
-		"test": "./run.sh ${TESTARGS:-$npm_package_defaultTestArgs}",
 		"encryptconfig": "openssl enc -md sha1 -aes-256-cbc -pass env:CONFIG_KEY -out ./config/encrypted.enc -in ./config/local-$NODE_CONFIG_ENV.json",
 		"decryptconfig": "openssl enc -md sha1 -aes-256-cbc -d -pass env:CONFIG_KEY -in ./config/encrypted.enc -out ./config/local-$NODE_CONFIG_ENV.json"
 	},

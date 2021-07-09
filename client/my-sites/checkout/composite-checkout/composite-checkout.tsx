@@ -18,7 +18,7 @@ import {
 import { useIsWebPayAvailable } from '@automattic/wpcom-checkout';
 import { ThemeProvider } from 'emotion-theming';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
+import type { ResponseCart } from '@automattic/shopping-cart';
 import colorStudio from '@automattic/color-studio';
 import { useStripe } from '@automattic/calypso-stripe';
 import type { PaymentCompleteCallbackArguments } from '@automattic/composite-checkout';
@@ -33,7 +33,6 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import { getPlan } from '@automattic/calypso-products';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
@@ -56,7 +55,6 @@ import existingCardProcessor from './lib/existing-card-processor';
 import payPalProcessor from './lib/paypal-express-processor';
 import useGetThankYouUrl from './hooks/use-get-thank-you-url';
 import createAnalyticsEventHandler from './record-analytics';
-import { useProductVariants } from './hooks/product-variants';
 import { translateResponseCartToWPCOMCart } from './lib/translate-cart';
 import useCountryList from './hooks/use-country-list';
 import useCachedDomainContactDetails from './hooks/use-cached-domain-contact-details';
@@ -79,9 +77,6 @@ import { CountryListItem } from './types/country-list-item';
 import doesValueExist from './lib/does-value-exist';
 import EmptyCart from './components/empty-cart';
 import getContactDetailsType from './lib/get-contact-details-type';
-import getDomainDetails from './lib/get-domain-details';
-import getPostalCode from './lib/get-postal-code';
-import mergeIfObjects from './lib/merge-if-objects';
 import type { ReactStandardAction } from './types/analytics';
 import useCreatePaymentCompleteCallback from './hooks/use-create-payment-complete-callback';
 import useMaybeJetpackIntroCouponCode from './hooks/use-maybe-jetpack-intro-coupon-code';
@@ -119,6 +114,7 @@ export default function CompositeCheckout( {
 	isJetpackCheckout,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
+	isUserComingFromLoginForm,
 }: {
 	siteSlug: string | undefined;
 	siteId: number | undefined;
@@ -137,9 +133,10 @@ export default function CompositeCheckout( {
 	infoMessage?: JSX.Element;
 	onAfterPaymentComplete?: () => void;
 	isFocusedLaunch?: boolean;
-	isJetpackCheckout?: boolean;
+	isJetpackCheckout: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
+	isUserComingFromLoginForm?: boolean;
 } ): JSX.Element {
 	const translate = useTranslate();
 	const isJetpackNotAtomic =
@@ -199,6 +196,18 @@ export default function CompositeCheckout( {
 		},
 		[ reduxDispatch ]
 	);
+
+	const checkoutFlow: string = useMemo( () => {
+		if ( isLoggedOutCart ) {
+			if ( isJetpackCheckout ) {
+				return isUserComingFromLoginForm
+					? 'jetpack_site_only_coming_from_login'
+					: 'jetpack_site_only';
+			}
+			return 'wpcom_registrationless';
+		}
+		return isJetpackNotAtomic ? 'jetpack_checkout' : 'wpcom_checkout';
+	}, [ isLoggedOutCart, isJetpackCheckout, isUserComingFromLoginForm, isJetpackNotAtomic ] );
 
 	const countriesList = useCountryList( overrideCountryList || [] );
 
@@ -385,7 +394,6 @@ export default function CompositeCheckout( {
 
 	const contactDetails: ManagedContactDetails | undefined = select( 'wpcom' )?.getContactInfo();
 	const countryCode: string = contactDetails?.countryCode?.value ?? '';
-	const subdivisionCode: string = contactDetails?.state?.value ?? '';
 
 	const paymentMethods = arePaymentMethodsLoading
 		? []
@@ -397,18 +405,14 @@ export default function CompositeCheckout( {
 		  } );
 	debug( 'filtered payment method objects', paymentMethods );
 
-	const planSlugs = getPlanProductSlugs( responseCart.products );
-	const getItemVariants = useProductVariants( {
-		siteId,
-		productSlug: planSlugs.length > 0 ? planSlugs[ 0 ] : undefined,
-	} );
-
 	const { analyticsPath, analyticsProps } = getAnalyticsPath(
 		purchaseId,
 		productAliasFromUrl,
 		updatedSiteSlug,
 		feature,
-		plan
+		plan,
+		isJetpackCheckout,
+		checkoutFlow
 	);
 
 	const products = useSelector( ( state ) => getProductsList( state ) );
@@ -472,12 +476,6 @@ export default function CompositeCheckout( {
 		]
 	);
 
-	const domainDetails = getDomainDetails( contactDetails, {
-		includeDomainDetails,
-		includeGSuiteDetails,
-	} );
-	const postalCode = getPostalCode( contactDetails );
-
 	const paymentProcessors = useMemo(
 		() => ( {
 			'apple-pay': ( transactionData: unknown ) =>
@@ -498,8 +496,6 @@ export default function CompositeCheckout( {
 			wechat: ( transactionData: unknown ) => weChatProcessor( transactionData, dataForProcessor ),
 			netbanking: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'netbanking', transactionData, dataForProcessor ),
-			id_wallet: ( transactionData: unknown ) =>
-				genericRedirectProcessor( 'id_wallet', transactionData, dataForProcessor ),
 			ideal: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'ideal', transactionData, dataForProcessor ),
 			sofort: ( transactionData: unknown ) =>
@@ -510,19 +506,10 @@ export default function CompositeCheckout( {
 				genericRedirectProcessor( 'brazil-tef', transactionData, dataForProcessor ),
 			'full-credits': () => fullCreditsProcessor( dataForProcessor ),
 			'existing-card': ( transactionData: unknown ) =>
-				existingCardProcessor(
-					mergeIfObjects( transactionData, {
-						country: countryCode,
-						postalCode,
-						subdivisionCode,
-						siteId: siteId ? String( siteId ) : undefined,
-						domainDetails,
-					} ),
-					dataForProcessor
-				),
+				existingCardProcessor( transactionData, dataForProcessor ),
 			paypal: () => payPalProcessor( dataForProcessor ),
 		} ),
-		[ siteId, dataForProcessor, countryCode, subdivisionCode, postalCode, domainDetails ]
+		[ dataForProcessor ]
 	);
 
 	const jetpackColors = isJetpackNotAtomic
@@ -560,6 +547,7 @@ export default function CompositeCheckout( {
 		responseCart,
 		storedCards,
 		productAliasFromUrl,
+		checkoutFlow,
 	} );
 
 	const onPaymentComplete = useCreatePaymentCompleteCallback( {
@@ -573,6 +561,7 @@ export default function CompositeCheckout( {
 		isFocusedLaunch,
 		siteSlug: updatedSiteSlug,
 		isJetpackCheckout,
+		checkoutFlow,
 	} );
 
 	const handlePaymentComplete = useCallback(
@@ -630,7 +619,12 @@ export default function CompositeCheckout( {
 			<QueryPlans />
 			<QueryProducts />
 			<QueryContactDetailsCache />
-			<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
+			<PageViewTracker
+				path={ analyticsPath }
+				title="Checkout"
+				properties={ analyticsProps }
+				options={ { useJetpackGoogleAnalytics: isJetpackCheckout || isJetpackNotAtomic } }
+			/>
 			<CheckoutProvider
 				items={ items }
 				total={ total }
@@ -653,7 +647,6 @@ export default function CompositeCheckout( {
 					siteId={ updatedSiteId }
 					siteUrl={ updatedSiteSlug }
 					countriesList={ countriesList }
-					getItemVariants={ getItemVariants }
 					addItemToCart={ addItemWithEssentialProperties }
 					showErrorMessageBriefly={ showErrorMessageBriefly }
 					isLoggedOutCart={ !! isLoggedOutCart }
@@ -665,24 +658,27 @@ export default function CompositeCheckout( {
 	);
 }
 
-function getPlanProductSlugs( items: ResponseCartProduct[] ): string[] {
-	return items
-		.filter( ( item ) => {
-			return getPlan( item.product_slug );
-		} )
-		.map( ( item ) => item.product_slug );
-}
-
 function getAnalyticsPath(
 	purchaseId: number | undefined,
 	product: string | undefined,
 	selectedSiteSlug: string | undefined,
 	selectedFeature: string | undefined,
-	plan: string | undefined
+	plan: string | undefined,
+	isJetpackCheckout: boolean,
+	checkoutFlow: string
 ): { analyticsPath: string; analyticsProps: Record< string, string > } {
-	debug( 'getAnalyticsPath', { purchaseId, product, selectedSiteSlug, selectedFeature, plan } );
+	debug( 'getAnalyticsPath', {
+		purchaseId,
+		product,
+		selectedSiteSlug,
+		selectedFeature,
+		plan,
+		isJetpackCheckout,
+		checkoutFlow,
+	} );
 	let analyticsPath = '';
 	let analyticsProps = {};
+
 	if ( purchaseId && product ) {
 		analyticsPath = '/checkout/:product/renew/:purchase_id/:site';
 		analyticsProps = { product, purchase_id: purchaseId, site: selectedSiteSlug };
@@ -692,15 +688,23 @@ function getAnalyticsPath(
 	} else if ( selectedFeature && ! plan ) {
 		analyticsPath = '/checkout/features/:feature/:site';
 		analyticsProps = { feature: selectedFeature, site: selectedSiteSlug };
-	} else if ( product && ! purchaseId ) {
+	} else if ( product && selectedSiteSlug && ! purchaseId ) {
 		analyticsPath = '/checkout/:site/:product';
-		analyticsProps = { product, site: selectedSiteSlug };
+		analyticsProps = { product, site: selectedSiteSlug, checkout_flow: checkoutFlow };
 	} else if ( selectedSiteSlug ) {
 		analyticsPath = '/checkout/:site';
 		analyticsProps = { site: selectedSiteSlug };
+	} else if ( product && ! selectedSiteSlug ) {
+		analyticsPath = '/checkout/:product';
+		analyticsProps = { product, checkout_flow: checkoutFlow };
 	} else {
 		analyticsPath = '/checkout/no-site';
 	}
+
+	if ( isJetpackCheckout ) {
+		analyticsPath = analyticsPath.replace( 'checkout', 'checkout/jetpack' );
+	}
+
 	return { analyticsPath, analyticsProps };
 }
 

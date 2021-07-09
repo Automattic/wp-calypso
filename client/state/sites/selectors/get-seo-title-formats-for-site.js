@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { flowRight as compose, get, partialRight } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { fromApi as seoTitleFromApi } from 'calypso/components/seo/meta-title-editor/mappings';
@@ -17,7 +12,4 @@ import { fromApi as seoTitleFromApi } from 'calypso/components/seo/meta-title-ed
  * @param  {object} site Selected site
  * @returns {object} Formats by type e.g. { frontPage: { type: 'siteName' } }
  */
-export default compose(
-	seoTitleFromApi,
-	partialRight( get, 'options.advanced_seo_title_formats', {} )
-);
+export default ( site ) => seoTitleFromApi( site?.options?.advanced_seo_title_formats ?? {} );

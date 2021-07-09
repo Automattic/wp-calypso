@@ -11,7 +11,6 @@ import { TranslateResult, useTranslate } from 'i18n-calypso';
 import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card';
 import PlanRenewalMessage from '../plan-renewal-message';
 import useItemPrice from '../use-item-price';
-import { productAboveButtonText, productButtonLabel, productTooltip } from '../utils';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	planHasFeature,
@@ -29,6 +28,9 @@ import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { getSiteAvailableProduct } from 'calypso/state/sites/products/selectors';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
+import productAboveButtonText from './product-above-button-text';
+import productButtonLabel from './product-button-label';
+import productTooltip from './product-tooltip';
 
 /**
  * Type dependencies
@@ -36,6 +38,7 @@ import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import type {
 	Duration,
 	PurchaseCallback,
+	PurchaseURLCallback,
 	ScrollCardIntoViewCallback,
 	SelectorProduct,
 	SiteProduct,
@@ -44,6 +47,7 @@ import type {
 interface ProductCardProps {
 	item: SelectorProduct;
 	onClick: PurchaseCallback;
+	createButtonURL?: PurchaseURLCallback;
 	siteId: number | null;
 	currencyCode: string | null;
 	selectedTerm?: Duration;
@@ -57,6 +61,7 @@ interface ProductCardProps {
 const ProductCard: React.FC< ProductCardProps > = ( {
 	item,
 	onClick,
+	createButtonURL,
 	siteId,
 	currencyCode,
 	selectedTerm,
@@ -159,7 +164,12 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 				currentPlan: sitePlan,
 			} ) }
 			buttonPrimary={ ! ( isOwned || isItemPlanFeature ) }
-			onButtonClick={ () => onClick( item, isUpgradeableToYearly, purchase ) }
+			onButtonClick={ () => {
+				onClick( item, isUpgradeableToYearly, purchase );
+			} }
+			buttonURL={
+				createButtonURL ? createButtonURL( item, isUpgradeableToYearly, purchase ) : undefined
+			}
 			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
 			isFeatured={ featuredPlans && featuredPlans.includes( item.productSlug ) }
 			isOwned={ isOwned }

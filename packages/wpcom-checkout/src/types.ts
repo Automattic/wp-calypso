@@ -213,7 +213,6 @@ export type CheckoutPaymentMethodSlug =
 	| 'ebanx'
 	| 'brazil-tef'
 	| 'netbanking'
-	| 'id_wallet'
 	| 'eps'
 	| 'giropay'
 	| 'ideal'
@@ -236,7 +235,6 @@ export type WPCOMPaymentMethod =
 	| 'WPCOM_Billing_Ebanx'
 	| 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef'
 	| 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking'
-	| 'WPCOM_Billing_Dlocal_Redirect_Indonesia_Wallet'
 	| 'WPCOM_Billing_PayPal_Direct'
 	| 'WPCOM_Billing_PayPal_Express'
 	| 'WPCOM_Billing_Stripe_Payment_Method'
@@ -354,6 +352,10 @@ export type ManagedContactDetailsUpdaters = {
 	updateDomainContactFields: (
 		arg0: ManagedContactDetails,
 		arg1: DomainContactDetails
+	) => ManagedContactDetails;
+	updateRequiredDomainFields: (
+		arg0: ManagedContactDetails,
+		arg1: ManagedContactDetailsRequiredMask
 	) => ManagedContactDetails;
 	touchContactFields: ( arg0: ManagedContactDetails ) => ManagedContactDetails;
 	updateVatId: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;

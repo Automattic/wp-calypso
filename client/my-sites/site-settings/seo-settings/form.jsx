@@ -93,7 +93,6 @@ export class SeoForm extends React.Component {
 		// are in progress and haven't yet been saved
 		// to the server
 		dirtyFields: new Set(),
-		invalidatedSiteObject: this.props.selectedSite,
 	};
 
 	componentDidMount() {
@@ -130,7 +129,6 @@ export class SeoForm extends React.Component {
 				{
 					...stateForSite( nextSite ),
 					seoTitleFormats: nextProps.storedTitleFormats,
-					invalidatedSiteObject: nextSite,
 					dirtyFields: new Set(),
 				},
 				this.refreshCustomTitles
@@ -254,14 +252,9 @@ export class SeoForm extends React.Component {
 	};
 
 	refreshCustomTitles = () => {
-		const { refreshSiteData, selectedSite, siteId } = this.props;
+		const { refreshSiteData, siteId } = this.props;
 
-		this.setState(
-			{
-				invalidatedSiteObject: selectedSite,
-			},
-			() => refreshSiteData( siteId )
-		);
+		refreshSiteData( siteId );
 	};
 
 	showPreview = () => {
@@ -529,9 +522,4 @@ const mapDispatchToProps = {
 	),
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps,
-	undefined,
-	{ pure: false } // defaults to true, but this component has internal state
-)( protectForm( localize( SeoForm ) ) );
+export default connect( mapStateToProps, mapDispatchToProps )( protectForm( localize( SeoForm ) ) );

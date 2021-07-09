@@ -6,22 +6,22 @@ import { isEnabled } from '@automattic/calypso-config';
 import {
 	createAlipayMethod,
 	createAlipayPaymentMethodStore,
-	createGiropayMethod,
-	createGiropayPaymentMethodStore,
-	createP24Method,
-	createP24PaymentMethodStore,
 	createIdealMethod,
 	createIdealPaymentMethodStore,
 	createSofortMethod,
 	createSofortPaymentMethodStore,
-	createEpsMethod,
-	createEpsPaymentMethodStore,
 } from '@automattic/composite-checkout';
 import {
 	createApplePayMethod,
 	createGooglePayMethod,
 	createBancontactMethod,
 	createBancontactPaymentMethodStore,
+	createGiropayMethod,
+	createGiropayPaymentMethodStore,
+	createP24Method,
+	createP24PaymentMethodStore,
+	createEpsMethod,
+	createEpsPaymentMethodStore,
 	createPayPalMethod,
 } from '@automattic/wpcom-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
@@ -40,10 +40,6 @@ import {
 	createEbanxTefPaymentMethodStore,
 	createEbanxTefMethod,
 } from '../../payment-methods/ebanx-tef';
-import {
-	createIdWalletPaymentMethodStore,
-	createIdWalletMethod,
-} from '../../payment-methods/id-wallet';
 import {
 	createNetBankingPaymentMethodStore,
 	createNetBankingMethod,
@@ -135,13 +131,9 @@ function useCreateAlipay( {
 function useCreateP24( {
 	isStripeLoading,
 	stripeLoadingError,
-	stripeConfiguration,
-	stripe,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
-	stripeConfiguration: StripeConfiguration | null;
-	stripe: Stripe | null;
 } ): PaymentMethod | null {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
 	const paymentMethodStore = useMemo( () => createP24PaymentMethodStore(), [] );
@@ -150,50 +142,38 @@ function useCreateP24( {
 			shouldLoad
 				? createP24Method( {
 						store: paymentMethodStore,
-						stripe,
-						stripeConfiguration,
 				  } )
 				: null,
-		[ shouldLoad, paymentMethodStore, stripe, stripeConfiguration ]
+		[ shouldLoad, paymentMethodStore ]
 	);
 }
 
 function useCreateBancontact( {
 	isStripeLoading,
 	stripeLoadingError,
-	stripeConfiguration,
-	stripe,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
-	stripeConfiguration: StripeConfiguration | null;
-	stripe: Stripe | null;
 } ): PaymentMethod | null {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
 	const paymentMethodStore = useMemo( () => createBancontactPaymentMethodStore(), [] );
 	return useMemo(
 		() =>
-			shouldLoad && stripe && stripeConfiguration
+			shouldLoad
 				? createBancontactMethod( {
 						store: paymentMethodStore,
-						stripe,
-						stripeConfiguration,
 				  } )
 				: null,
-		[ shouldLoad, paymentMethodStore, stripe, stripeConfiguration ]
+		[ shouldLoad, paymentMethodStore ]
 	);
 }
 
 function useCreateGiropay( {
 	isStripeLoading,
 	stripeLoadingError,
-	stripeConfiguration,
-	stripe,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
-	stripeConfiguration: StripeConfiguration | null;
-	stripe: Stripe | null;
 } ): PaymentMethod | null {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
 	const paymentMethodStore = useMemo( () => createGiropayPaymentMethodStore(), [] );
@@ -202,11 +182,9 @@ function useCreateGiropay( {
 			shouldLoad
 				? createGiropayMethod( {
 						store: paymentMethodStore,
-						stripe,
-						stripeConfiguration,
 				  } )
 				: null,
-		[ shouldLoad, paymentMethodStore, stripe, stripeConfiguration ]
+		[ shouldLoad, paymentMethodStore ]
 	);
 }
 
@@ -322,17 +300,6 @@ function useCreateNetbanking(): PaymentMethod {
 	return useMemo(
 		() =>
 			createNetBankingMethod( {
-				store: paymentMethodStore,
-			} ),
-		[ paymentMethodStore ]
-	);
-}
-
-function useCreateIdWallet(): PaymentMethod {
-	const paymentMethodStore = useMemo( () => createIdWalletPaymentMethodStore(), [] );
-	return useMemo(
-		() =>
-			createIdWalletMethod( {
 				store: paymentMethodStore,
 			} ),
 		[ paymentMethodStore ]
@@ -459,22 +426,16 @@ export default function useCreatePaymentMethods( {
 	const p24Method = useCreateP24( {
 		isStripeLoading,
 		stripeLoadingError,
-		stripeConfiguration,
-		stripe,
 	} );
 
 	const bancontactMethod = useCreateBancontact( {
 		isStripeLoading,
 		stripeLoadingError,
-		stripeConfiguration,
-		stripe,
 	} );
 
 	const giropayMethod = useCreateGiropay( {
 		isStripeLoading,
 		stripeLoadingError,
-		stripeConfiguration,
-		stripe,
 	} );
 
 	const epsMethod = useCreateEps( {
@@ -485,8 +446,6 @@ export default function useCreatePaymentMethods( {
 	} );
 
 	const ebanxTefMethod = useCreateEbanxTef();
-
-	const idWalletMethod = useCreateIdWallet();
 
 	const netbankingMethod = useCreateNetbanking();
 
@@ -556,7 +515,6 @@ export default function useCreatePaymentMethods( {
 		giropayMethod,
 		sofortMethod,
 		ebanxTefMethod,
-		idWalletMethod,
 		netbankingMethod,
 		alipayMethod,
 		p24Method,

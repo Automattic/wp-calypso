@@ -10,6 +10,7 @@ import { translate } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
 import config from '@automattic/calypso-config';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
 import {
@@ -29,18 +30,23 @@ import {
 import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'calypso/state/sites/constants';
 
 import 'calypso/state/data-layer/wpcom/sites/homepage';
+import getP2HubBlogId from 'calypso/state/selectors/get-p2-hub-blog-id';
+import getSiteUrl from 'calypso/state/selectors/get-site-url';
 
 /**
- * Returns an action object to be used in signalling that a site has been
- * deleted.
+ * Returns a thunk that dispatches an action object to be used in signalling that a site has been
+ * deleted. It also re-fetches the current user.
  *
  * @param  {number} siteId  ID of deleted site
- * @returns {object}         Action object
+ * @returns {Function}        Action thunk
  */
 export function receiveDeletedSite( siteId ) {
-	return {
-		type: SITE_DELETE_RECEIVE,
-		siteId,
+	return ( dispatch ) => {
+		dispatch( {
+			type: SITE_DELETE_RECEIVE,
+			siteId,
+		} );
+		dispatch( fetchCurrentUser() );
 	};
 }
 
@@ -210,6 +216,24 @@ export function deleteSite( siteId ) {
 								showDismiss: false,
 								button: translate( 'Manage Purchases' ),
 								href: purchasesRoot,
+							}
+						)
+					);
+					return;
+				}
+				if ( error.error === 'p2-hub-has-spaces' ) {
+					const hubId = getP2HubBlogId( getState(), siteId );
+					const hubUrl = getSiteUrl( getState(), hubId );
+					dispatch(
+						errorNotice(
+							translate(
+								'Your P2 has spaces. You must delete all spaces before you can delete this P2.'
+							),
+							{
+								id: siteDeletionNoticeId,
+								showDismiss: false,
+								button: translate( 'Manage P2 spaces' ),
+								href: hubUrl,
 							}
 						)
 					);

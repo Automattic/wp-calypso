@@ -12,7 +12,7 @@ import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
 
-export default function JetpackSearchFooter(): ReactElement {
+export default function JetpackSearchFooter(): ReactElement | null {
 	const siteId = useSelector( getSelectedSiteId );
 	const isWPCOM = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
 	const isCloud = isJetpackCloud();

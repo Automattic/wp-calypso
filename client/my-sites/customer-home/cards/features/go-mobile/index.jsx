@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { isDesktop } from '@automattic/viewport';
 import React from 'react';
 import classnames from 'classnames';
 import { Card, Button } from '@automattic/components';
@@ -26,11 +25,10 @@ import './style.scss';
 
 export const GoMobile = ( { email, sendMobileLoginEmail } ) => {
 	const translate = useTranslate();
-	const isDesktopView = isDesktop();
 	const { isiPad, isiPod, isiPhone, isAndroid } = userAgent;
 	const isIos = isiPad || isiPod || isiPhone;
-	const showIosBadge = isDesktopView || isIos || ! isAndroid;
-	const showAndroidBadge = isDesktopView || isAndroid || ! isIos;
+	const showIosBadge = ! isAndroid;
+	const showAndroidBadge = ! isIos;
 	const showOnlyOneBadge = showIosBadge !== showAndroidBadge;
 	const isDesktopApp = config.isEnabled( 'desktop' );
 
@@ -39,7 +37,7 @@ export const GoMobile = ( { email, sendMobileLoginEmail } ) => {
 	};
 
 	return (
-		<Card className="go-mobile">
+		<Card className="go-mobile customer-home__card">
 			<div className={ classnames( 'go-mobile__row', { 'has-2-cols': showOnlyOneBadge } ) }>
 				<div className="go-mobile__title">
 					<CardHeading>{ translate( 'WordPress app' ) }</CardHeading>
@@ -56,7 +54,7 @@ export const GoMobile = ( { email, sendMobileLoginEmail } ) => {
 					) }
 				</div>
 			</div>
-			{ isDesktopView && ! isDesktopApp && (
+			{ ! isDesktopApp && (
 				<div className="go-mobile__email-link">
 					{ translate( 'Get a download link via email — click it on your phone to get the app.' ) }
 					<Button className="go-mobile__email-link-button is-link" onClick={ emailLogin }>

@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import config from '@automattic/calypso-config';
@@ -40,12 +35,17 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		userLocaleSlug = config( 'i18n_default_locale_slug' );
 	}
 
+	const bootstrappedLocaleSlug = window?.i18nLanguageManifest?.locale?.[ '' ]?.localeSlug;
+
 	if ( window.i18nLocaleStrings ) {
 		// Use the locale translation data that were boostrapped by the server
 		const i18nLocaleStringsObject = JSON.parse( window.i18nLocaleStrings );
 
 		reduxStore.dispatch( setLocaleRawData( i18nLocaleStringsObject ) );
-		const languageSlug = get( i18nLocaleStringsObject, [ '', 'localeSlug' ] );
+
+		// The empty string key [ '' ] where metadata about the translation file
+		// (e.g., the locale name, plurals definitions, etc.) are stored.
+		const languageSlug = i18nLocaleStringsObject?.[ '' ]?.localeSlug;
 		if ( languageSlug ) {
 			loadUserUndeployedTranslations( languageSlug );
 		}
@@ -57,6 +57,9 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 			// Use the current user's and load traslation data with a fetch request
 			reduxStore.dispatch( setLocale( currentUser.localeSlug, currentUser.localeVariant ) );
 		}
+	} else if ( bootstrappedLocaleSlug ) {
+		// Use locale slug from bootstrapped language manifest object
+		reduxStore.dispatch( setLocale( bootstrappedLocaleSlug ) );
 	} else {
 		// For logged out Calypso pages, set the locale from slug
 		const pathLocaleSlug = getLocaleFromPathname();

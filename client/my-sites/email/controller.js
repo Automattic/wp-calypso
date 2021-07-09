@@ -2,40 +2,25 @@
  * External dependencies
  */
 import React from 'react';
-import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Internal Dependencies
  */
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import EmailForwarding from 'calypso/my-sites/email/email-forwarding';
-import EmailManagement from 'calypso/my-sites/email/email-management';
+import EmailManagementHome from 'calypso/my-sites/email/email-management/email-home';
+import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
 import GSuiteAddUsers from 'calypso/my-sites/email/gsuite-add-users';
 import TitanAddMailboxes from 'calypso/my-sites/email/titan-add-mailboxes';
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import TitanControlPanelRedirect from 'calypso/my-sites/email/email-management/titan-control-panel-redirect';
 import TitanManageMailboxes from 'calypso/my-sites/email/email-management/titan-manage-mailboxes';
 import TitanManagementIframe from 'calypso/my-sites/email/email-management/titan-management-iframe';
-import EmailManagementHome from 'calypso/my-sites/email/email-management/email-home';
 
 export default {
 	emailManagementAddGSuiteUsers( pageContext, next ) {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<GSuiteAddUsers
-					productType={ pageContext.params.productType }
-					selectedDomainName={ pageContext.params.domain }
-				/>
-			</CalypsoShoppingCartProvider>
-		);
-
-		next();
-	},
-
-	emailManagementNewGSuiteAccount( pageContext, next ) {
-		pageContext.primary = (
-			<CalypsoShoppingCartProvider>
-				<GSuiteAddUsers
-					isNewAccount
 					productType={ pageContext.params.productType }
 					selectedDomainName={ pageContext.params.domain }
 				/>
@@ -79,6 +64,16 @@ export default {
 		next();
 	},
 
+	emailManagementPurchaseNewEmailAccount( pageContext, next ) {
+		pageContext.primary = (
+			<CalypsoShoppingCartProvider>
+				<EmailProvidersComparison selectedDomainName={ pageContext.params.domain } />
+			</CalypsoShoppingCartProvider>
+		);
+
+		next();
+	},
+
 	emailManagementTitanControlPanelRedirect( pageContext, next ) {
 		pageContext.primary = (
 			<TitanControlPanelRedirect
@@ -98,15 +93,11 @@ export default {
 	},
 
 	emailManagement( pageContext, next ) {
-		if ( isEnabled( 'email/centralized-home' ) ) {
-			pageContext.primary = (
-				<CalypsoShoppingCartProvider>
-					<EmailManagementHome selectedDomainName={ pageContext.params.domain } />
-				</CalypsoShoppingCartProvider>
-			);
-		} else {
-			pageContext.primary = <EmailManagement selectedDomainName={ pageContext.params.domain } />;
-		}
+		pageContext.primary = (
+			<CalypsoShoppingCartProvider>
+				<EmailManagementHome selectedDomainName={ pageContext.params.domain } />
+			</CalypsoShoppingCartProvider>
+		);
 
 		next();
 	},

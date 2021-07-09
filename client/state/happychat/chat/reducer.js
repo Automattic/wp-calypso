@@ -2,13 +2,14 @@
 /**
  * External dependencies
  */
-import { concat, filter, find, map, get, sortBy } from 'lodash';
+import { concat, filter, find, findIndex, map, get, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import {
 	HAPPYCHAT_IO_RECEIVE_MESSAGE,
+	HAPPYCHAT_IO_RECEIVE_MESSAGE_UPDATE,
 	HAPPYCHAT_IO_RECEIVE_STATUS,
 	HAPPYCHAT_IO_REQUEST_TRANSCRIPT_RECEIVE,
 	HAPPYCHAT_IO_REQUEST_TRANSCRIPT_TIMEOUT,
@@ -78,6 +79,7 @@ export const status = ( state = HAPPYCHAT_CHAT_STATUS_DEFAULT, action ) => {
 const timelineEvent = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_IO_RECEIVE_MESSAGE:
+		case HAPPYCHAT_IO_RECEIVE_MESSAGE_UPDATE:
 			const { message } = action;
 			return {
 				id: message.id,
@@ -85,6 +87,7 @@ const timelineEvent = ( state = {}, action ) => {
 				message: message.text,
 				name: message.user.name,
 				image: message.user.avatarURL,
+				isEdited: !! message.revisions,
 				timestamp: maybeUpscaleTimePrecision( message.timestamp ),
 				user_id: message.user.id,
 				type: get( message, 'type', 'message' ),
@@ -115,6 +118,11 @@ const timelineReducer = ( state = [], action ) => {
 			const event = timelineEvent( {}, action );
 			const existing = find( state, ( { id } ) => event.id === id );
 			return existing ? state : concat( state, [ event ] );
+		case HAPPYCHAT_IO_RECEIVE_MESSAGE_UPDATE:
+			const index = findIndex( state, ( { id } ) => action.message.id === id );
+			return index === -1
+				? state
+				: [ ...state.slice( 0, index ), timelineEvent( {}, action ), ...state.slice( index + 1 ) ];
 		case HAPPYCHAT_IO_REQUEST_TRANSCRIPT_TIMEOUT:
 			return state;
 		case HAPPYCHAT_IO_REQUEST_TRANSCRIPT_RECEIVE:
@@ -138,6 +146,7 @@ const timelineReducer = ( state = [], action ) => {
 						message: message.text,
 						name: message.user.name,
 						image: message.user.picture,
+						isEdited: !! message.revisions,
 						timestamp: maybeUpscaleTimePrecision( message.timestamp ),
 						user_id: message.user.id,
 						type: get( message, 'type', 'message' ),

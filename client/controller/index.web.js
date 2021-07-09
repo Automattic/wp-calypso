@@ -18,6 +18,7 @@ import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import MomentProvider from 'calypso/components/localized-moment/provider';
 import { RouteProvider } from 'calypso/components/route';
 import { login } from 'calypso/lib/paths';
+import { getLanguageSlugs } from 'calypso/lib/i18n-utils';
 import { makeLayoutMiddleware } from './shared.js';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
@@ -135,6 +136,25 @@ export function redirectLoggedOut( context, next ) {
 		window.location = login( loginParameters );
 		return;
 	}
+	next();
+}
+
+/**
+ * Removes the locale param from the path and redirects logged-in users to it.
+ *
+ * @param   {Object}   context Context object
+ * @param   {Function} next    Calls next middleware
+ * @returns {void}
+ */
+export function redirectWithoutLocaleParamIfLoggedIn( context, next ) {
+	const langSlugs = getLanguageSlugs();
+	const langSlugPathSegmentMatcher = new RegExp( `\\/(${ langSlugs.join( '|' ) })(\\/|\\?|$)` );
+	const pathWithoutLocale = context.path.replace( langSlugPathSegmentMatcher, '$2' );
+
+	if ( isUserLoggedIn( context.store.getState() ) && pathWithoutLocale !== context.path ) {
+		return page.redirect( pathWithoutLocale );
+	}
+
 	next();
 }
 

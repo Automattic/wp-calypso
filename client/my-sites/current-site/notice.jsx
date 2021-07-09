@@ -7,7 +7,7 @@ import React from 'react';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import config, { isEnabled } from '@automattic/calypso-config';
+import config from '@automattic/calypso-config';
 import { get, reject } from 'lodash';
 
 /**
@@ -31,7 +31,7 @@ import QueryActivePromotions from 'calypso/components/data/query-active-promotio
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getUnformattedDomainPrice, getUnformattedDomainSalePrice } from 'calypso/lib/domains';
 import formatCurrency from '@automattic/format-currency/src';
 import { getPreference } from 'calypso/state/preferences/selectors';
@@ -87,7 +87,7 @@ export class SiteNotice extends React.Component {
 			return null;
 		}
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+		if ( this.props.isSiteWPForTeams ) {
 			return null;
 		}
 
@@ -123,7 +123,7 @@ export class SiteNotice extends React.Component {
 			return null;
 		}
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+		if ( this.props.isSiteWPForTeams ) {
 			return null;
 		}
 
@@ -216,11 +216,11 @@ export class SiteNotice extends React.Component {
 			return null;
 		}
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+		if ( this.props.isSiteWPForTeams ) {
 			return null;
 		}
 
-		const { site, activeDiscount } = this.props;
+		const { translate, site, activeDiscount } = this.props;
 		const { nudgeText, nudgeEndsTodayText, ctaText, name } = activeDiscount;
 
 		const bannerText =
@@ -236,12 +236,12 @@ export class SiteNotice extends React.Component {
 		return (
 			<UpsellNudge
 				event="calypso_upgrade_nudge_impression"
-				forceDisplay={ true }
+				forceDisplay
 				tracksClickName="calypso_upgrade_nudge_cta_click"
 				tracksClickProperties={ eventProperties }
 				tracksImpressionName="calypso_upgrade_nudge_impression"
 				tracksImpressionProperties={ eventProperties }
-				callToAction={ ctaText || 'Upgrade' }
+				callToAction={ ctaText || translate( 'Upgrade' ) }
 				href={ `/plans/${ site.slug }?discount=${ name }` }
 				title={ bannerText }
 			/>
@@ -249,9 +249,7 @@ export class SiteNotice extends React.Component {
 	}
 
 	promotionEndsToday( { endsAt } ) {
-		const now = new Date();
-		const format = 'YYYYMMDD';
-		return moment( now ).format( format ) === moment( endsAt ).format( format );
+		return moment().isSame( endsAt, 'day' );
 	}
 
 	render() {
@@ -265,8 +263,7 @@ export class SiteNotice extends React.Component {
 		const domainCreditNotice = this.domainCreditNotice();
 
 		const showJitms =
-			! ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) &&
-			( discountOrFreeToPaid || config.isEnabled( 'jitms' ) );
+			! this.props.isSiteWPForTeams && ( discountOrFreeToPaid || config.isEnabled( 'jitms' ) );
 
 		return (
 			<div className="current-site__notices">

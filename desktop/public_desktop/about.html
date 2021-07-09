@@ -69,19 +69,20 @@
 	const version = config.version;
 	const build = config.build;
 
+	let versionType = '';
 	if ( build === 'development' )
-		version += ' dev';
+		versionType = 'dev';
 	else if ( build === 'updater' )
-		version += ' updater';
+		versionType = 'updater';
 	else if ( build === 'release' )
-		version += ' release';
+		versionType = 'release';
 </script>
 
 <p><img src="app-logo.png" alt="WordPress.com" width="64" height="64" /></p>
 
 <p><strong>WordPress.com</strong></p>
 
-<p>Version <script type="text/javascript">document.write( version )</script></p>
+<p>Version <script type="text/javascript">document.write( version + ' ' + versionType )</script></p>
 
 <p>Copyright <a href="#">&copy;</a> Automattic, Inc. <br/>
 Proudly released under the GPL</p>

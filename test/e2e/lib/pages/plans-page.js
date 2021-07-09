@@ -28,13 +28,6 @@ export default class PlansPage extends AsyncBaseContainer {
 		return await driverHelper.clickWhenClickable( this.driver, locator );
 	}
 
-	async openAdvancedPlansSegment() {
-		const locator = By.css(
-			'.plans-features-main ul.segmented-control.is-primary.plan-features__interval-type.is-customer-type-toggle li:nth-child(2)'
-		);
-		return await driverHelper.clickWhenClickable( this.driver, locator );
-	}
-
 	async waitForComparison() {
 		const plansPageMainCssClass =
 			host === 'WPCOM' ? '.plans-features-main__group' : '.selector__main';

@@ -16,7 +16,6 @@ import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 const noop = () => {};
 
 export const CHECKLIST_KNOWN_TASKS = {
-	START_SITE_SETUP: 'start_site_setup',
 	DOMAIN_VERIFIED: 'domain_verified',
 	EMAIL_VERIFIED: 'email_verified',
 	BLOGNAME_SET: 'blogname_set',

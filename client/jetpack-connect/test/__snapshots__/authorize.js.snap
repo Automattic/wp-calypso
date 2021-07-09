@@ -19,6 +19,9 @@ exports[`JetpackAuthorize renders as expected 1`] = `
     <div
       className="jetpack-connect__logged-in-form"
     >
+      <QuerySitePurchases
+        siteId={98765}
+      />
       <Connect(QueryUserConnection)
         siteId={98765}
         siteIsOnSitesList={false}
@@ -29,6 +32,7 @@ exports[`JetpackAuthorize renders as expected 1`] = `
             "authApproved": false,
             "blogname": "Example Blog",
             "clientId": 98765,
+            "closeWindowAfterAuthorize": false,
             "closeWindowAfterLogin": false,
             "from": "banner-44-slide-1-dashboard",
             "homeUrl": "http://an.example.site",

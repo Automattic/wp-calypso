@@ -24,30 +24,23 @@ import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
-import QueryHomeLayout from 'calypso/components/data/query-home-layout';
-import { getHomeLayout } from 'calypso/state/selectors/get-home-layout';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
 import { successNotice } from 'calypso/state/notices/actions';
+import config from '@automattic/calypso-config';
+import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const Home = ( {
-	canUserUseCustomerHome,
-	isDev,
-	forcedView,
-	layout,
-	site,
-	siteId,
-	trackViewSiteAction,
-	noticeType,
-} ) => {
+const Home = ( { canUserUseCustomerHome, site, siteId, trackViewSiteAction, noticeType } ) => {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
+
+	const { data: layout, isLoading } = useHomeLayoutQuery( siteId );
 
 	const shouldShowNotice = Boolean( canUserUseCustomerHome && layout && noticeType );
 	const lastShownNotice = useRef( null );
@@ -83,6 +76,7 @@ const Home = ( {
 				headerText={ translate( 'My Home' ) }
 				subHeaderText={ translate( 'Your hub for posting, editing, and growing your site.' ) }
 				align="left"
+				hasScreenOptions={ config.isEnabled( 'nav-unification/switcher' ) }
 			/>
 			<div className="customer-home__view-site-button">
 				<Button href={ site.URL } onClick={ trackViewSiteAction }>
@@ -97,10 +91,11 @@ const Home = ( {
 			<PageViewTracker path={ `/home/:site` } title={ translate( 'My Home' ) } />
 			<DocumentHead title={ translate( 'My Home' ) } />
 			{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
-			{ siteId && <QueryHomeLayout siteId={ siteId } isDev={ isDev } forcedView={ forcedView } /> }
 			<SidebarNavigation />
 			{ header }
-			{ layout ? (
+			{ isLoading ? (
+				<div className="customer-home__loading-placeholder"></div>
+			) : (
 				<>
 					<Primary cards={ layout.primary } />
 					<div className="customer-home__layout">
@@ -112,8 +107,6 @@ const Home = ( {
 						</div>
 					</div>
 				</>
-			) : (
-				<div className="customer-home__loading-placeholder"></div>
 			) }
 		</Main>
 	);
@@ -121,10 +114,7 @@ const Home = ( {
 
 Home.propTypes = {
 	canUserUseCustomerHome: PropTypes.bool.isRequired,
-	isDev: PropTypes.bool,
 	isStaticHomePage: PropTypes.bool.isRequired,
-	forcedView: PropTypes.string,
-	layout: PropTypes.object,
 	site: PropTypes.object.isRequired,
 	siteId: PropTypes.number.isRequired,
 	trackViewSiteAction: PropTypes.func.isRequired,
@@ -133,7 +123,6 @@ Home.propTypes = {
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
-	const layout = getHomeLayout( state, siteId );
 
 	return {
 		site: getSelectedSite( state ),
@@ -141,7 +130,6 @@ const mapStateToProps = ( state ) => {
 		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
 		isStaticHomePage:
 			! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' ),
-		layout,
 	};
 };
 

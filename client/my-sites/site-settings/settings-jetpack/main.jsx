@@ -10,9 +10,9 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import DocumentHead from 'calypso/components/data/document-head';
+import EmptyContent from 'calypso/components/empty-content';
 import JetpackCredentials from 'calypso/my-sites/site-settings/jetpack-credentials';
 import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
-import JetpackManageErrorPage from 'calypso/my-sites/jetpack-manage-error-page';
 import Main from 'calypso/components/main';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -29,7 +29,7 @@ const SiteSettingsJetpack = ( { site, siteId, siteIsJetpack, showCredentials, tr
 	//todo: this check makes sense in Jetpack section?
 	if ( ! siteIsJetpack ) {
 		return (
-			<JetpackManageErrorPage
+			<EmptyContent
 				action={ translate( 'Manage general settings for %(site)s', {
 					args: { site: site.name },
 				} ) }
@@ -45,17 +45,16 @@ const SiteSettingsJetpack = ( { site, siteId, siteIsJetpack, showCredentials, tr
 		<Main className="settings-jetpack site-settings">
 			<QueryRewindState siteId={ siteId } />
 			<QuerySitePurchases siteId={ siteId } />
-			<DocumentHead title={ translate( 'Site Settings' ) } />
+			<DocumentHead title={ translate( 'Jetpack Settings' ) } />
 			<JetpackDevModeNotice />
 			<SidebarNavigation />
 			<FormattedHeader
 				brandFont
 				className="settings-jetpack__page-heading"
-				headerText={ translate( 'Settings' ) }
+				headerText={ translate( 'Jetpack Settings' ) }
 				align="left"
 			/>
 			<SiteSettingsNavigation site={ site } section="jetpack" />
-
 			{ showCredentials && <JetpackCredentials /> }
 		</Main>
 	);

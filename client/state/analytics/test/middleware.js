@@ -81,9 +81,14 @@ describe( 'middleware', () => {
 		test( 'should call pageView.record', () => {
 			dispatch( recordPageView( 'path', 'title', 'default', { name: 'value' } ) );
 
-			expect( pageviewRecordPageView ).toHaveBeenCalledWith( 'path', 'title', {
-				name: 'value',
-			} );
+			expect( pageviewRecordPageView ).toHaveBeenCalledWith(
+				'path',
+				'title',
+				{
+					name: 'value',
+				},
+				{}
+			);
 		} );
 
 		test( 'should call gaRecordEvent', () => {

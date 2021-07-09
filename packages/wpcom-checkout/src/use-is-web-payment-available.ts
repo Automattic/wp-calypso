@@ -74,13 +74,31 @@ export function useIsWebPayAvailable(
 			}
 		}
 
+		const normalizedCurrency: string = currency ? currency.toLowerCase() : 'usd';
+		// These arrays let us easily turn off web payments for particular currencies.
+		// Other payment methods handle this on the backend in a similar way.
+		const applePayDisabledCurrencies: string[] = [];
+		const googlePayDisabledCurrencies: string[] = [];
+		const isApplePayAllowedForCurrency = ! applePayDisabledCurrencies.includes(
+			normalizedCurrency
+		);
+		if ( ! isApplePayAllowedForCurrency ) {
+			debug( 'Apple Pay disabled by currency check.' );
+		}
+		const isGooglePayAllowedForCurrency = ! googlePayDisabledCurrencies.includes(
+			normalizedCurrency
+		);
+		if ( ! isGooglePayAllowedForCurrency ) {
+			debug( 'Google Pay disabled by currency check.' );
+		}
+
 		const paymentRequestOptions = {
 			requestPayerName: true,
 			requestPayerPhone: false,
 			requestPayerEmail: false,
 			requestShipping: false,
 			country: countryCode,
-			currency: currency ? currency.toLowerCase() : 'usd',
+			currency: normalizedCurrency,
 			// This is just used here to determine if web pay is available, not for
 			// the actual payment, so we leave most of the purchase details blank
 			displayItems: [],
@@ -98,8 +116,8 @@ export function useIsWebPayAvailable(
 			debug( 'stripe paymentRequest.canMakePayment returned', result );
 			setCanMakePayment( {
 				isLoading: false,
-				isApplePayAvailable: !! result?.applePay,
-				isGooglePayAvailable: !! result?.googlePay,
+				isApplePayAvailable: isApplePayAllowedForCurrency && !! result?.applePay,
+				isGooglePayAvailable: isGooglePayAllowedForCurrency && !! result?.googlePay,
 			} );
 		} );
 

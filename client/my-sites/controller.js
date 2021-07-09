@@ -13,14 +13,7 @@ import { removeQueryArgs } from '@wordpress/url';
 import { cloudSiteSelection } from 'calypso/jetpack-cloud/controller';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { requestSite } from 'calypso/state/sites/actions';
-import {
-	getSite,
-	getSiteId,
-	getSiteAdminUrl,
-	getSiteSlug,
-	isJetpackModuleActive,
-	isJetpackSite,
-} from 'calypso/state/sites/selectors';
+import { getSite, getSiteId, getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -43,7 +36,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
@@ -68,7 +61,6 @@ import {
 	emailManagementForwarding,
 	emailManagementManageTitanAccount,
 	emailManagementManageTitanMailboxes,
-	emailManagementNewGSuiteAccount,
 	emailManagementNewTitanAccount,
 	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
@@ -102,7 +94,7 @@ const noop = () => {};
  * @param { object } context - Middleware context
  * @returns { object } React element containing the site selector and sidebar
  */
-function createNavigation( context ) {
+export function createNavigation( context ) {
 	const siteFragment = getSiteFragment( context.pathname );
 	let basePath = context.pathname;
 
@@ -192,7 +184,6 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		emailManagementForwarding,
 		emailManagementManageTitanAccount,
 		emailManagementManageTitanMailboxes,
-		emailManagementNewGSuiteAccount,
 		emailManagementNewTitanAccount,
 		emailManagementTitanControlPanelRedirect,
 	];
@@ -201,10 +192,6 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 	let domainManagementPaths = allPaths.map( ( pathFactory ) => {
 		if ( pathFactory === emailManagementAddGSuiteUsers ) {
 			return emailManagementAddGSuiteUsers( slug, slug, contextParams.productType );
-		}
-
-		if ( pathFactory === emailManagementNewGSuiteAccount ) {
-			return emailManagementNewGSuiteAccount( slug, slug, contextParams.productType );
 		}
 
 		return pathFactory( slug, slug );
@@ -246,7 +233,6 @@ function onSelectedSiteAvailable( context, basePath ) {
 
 	const isAtomicSite = isSiteAutomatedTransfer( state, selectedSite.ID );
 	const userCanManagePlugins = canCurrentUser( state, selectedSite.ID, 'activate_plugins' );
-	const calypsoify = isAtomicSite && config.isEnabled( 'calypsoify/plugins' );
 
 	// If migration is in progress, only /migrate paths should be loaded for the site
 	const isMigrationInProgress = isSiteMigrationInProgress( state, selectedSite.ID );
@@ -256,7 +242,8 @@ function onSelectedSiteAvailable( context, basePath ) {
 		return false;
 	}
 
-	if ( userCanManagePlugins && calypsoify && /^\/plugins/.test( basePath ) ) {
+	// Redirects Atomic sites to wp-admin
+	if ( userCanManagePlugins && isAtomicSite && /^\/plugins/.test( basePath ) ) {
 		const plugin = get( context, 'params.plugin' );
 		let pluginString = '';
 		if ( plugin ) {
@@ -269,7 +256,7 @@ function onSelectedSiteAvailable( context, basePath ) {
 			].join( '&' );
 		}
 
-		const pluginInstallURL = 'plugin-install.php?calypsoify=1' + `&${ pluginString }`;
+		const pluginInstallURL = 'plugin-install.php?' + `${ pluginString }`;
 		const pluginLink = getSiteAdminUrl( state, selectedSite.ID ) + pluginInstallURL;
 
 		window.location.replace( pluginLink );
@@ -493,6 +480,14 @@ export function siteSelection( context, next ) {
 	}
 }
 
+export function loggedInSiteSelection( context, next ) {
+	if ( isUserLoggedIn( context.store.getState() ) ) {
+		siteSelection( context, next );
+		return;
+	}
+	next();
+}
+
 export function recordNoSitesPageView( context, siteFragment, title ) {
 	recordPageView( '/no-sites', sitesPageTitleForAnalytics + ` > ${ title || 'No Sites' }`, {
 		base_path: sectionify( context.path, siteFragment ),
@@ -511,25 +506,6 @@ export function redirectToPrimary( context, primarySiteSlug ) {
 		redirectPath += `?${ context.querystring }`;
 	}
 	page.redirect( redirectPath );
-}
-
-export function jetpackModuleActive( moduleId, redirect ) {
-	return function ( context, next ) {
-		const { getState } = getStore( context );
-		const siteId = getSelectedSiteId( getState() );
-		const isJetpack = isJetpackSite( getState(), siteId );
-		const isModuleActive = isJetpackModuleActive( getState(), siteId, moduleId );
-
-		if ( ! isJetpack ) {
-			return next();
-		}
-
-		if ( isModuleActive || false === redirect ) {
-			next();
-		} else {
-			page.redirect( 'string' === typeof redirect ? redirect : '/stats' );
-		}
-	};
 }
 
 export function navigation( context, next ) {

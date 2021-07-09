@@ -30,7 +30,6 @@ const EducationEarn = ( { siteSlug } ) => {
 				{
 					calypsoLink: true,
 					url: `/earn/${ siteSlug }`,
-					icon: 'arrow-right',
 					text: translate( 'Start making money' ),
 				},
 			] }

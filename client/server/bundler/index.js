@@ -31,11 +31,7 @@ function middleware( app ) {
 	app.set( 'compiler', compiler );
 
 	if ( shouldProfile ) {
-		compiler.apply(
-			new webpack.ProgressPlugin( {
-				profile: true,
-			} )
-		);
+		new compiler.webpack.ProgressPlugin( { profile: true } ).apply( compiler );
 	}
 
 	// In development environment we need to wait for initial webpack compile

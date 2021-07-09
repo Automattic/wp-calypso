@@ -1,10 +1,4 @@
 /**
- * External dependencies
- */
-
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import getRawSite from 'calypso/state/selectors/get-raw-site';
@@ -17,5 +11,6 @@ import getRawSite from 'calypso/state/selectors/get-raw-site';
  * @returns {?string}        URL of site if known
  */
 export default function getSiteUrl( state, siteId ) {
-	return get( getRawSite( state, siteId ), 'URL', null );
+	const site = getRawSite( state, siteId );
+	return site?.URL ?? null;
 }

@@ -20,18 +20,7 @@ export default class DomainsPage extends AsyncBaseContainer {
 	}
 
 	async clickPopoverItem( name ) {
-		const actionItemLocator = driverHelper.createTextLocator(
-			By.css( '.popover__menu-item' ),
-			name
-		);
-		return await driverHelper.clickWhenClickable( this.driver, actionItemLocator );
-	}
-
-	async popOverMenuDisplayed() {
-		const popOverMenuLocator = By.css( '.popover__menu' );
-		return await driverHelper.isElementEventuallyLocatedAndVisible(
-			this.driver,
-			popOverMenuLocator
-		);
+		const itemLocator = driverHelper.createTextLocator( By.css( '.popover__menu-item' ), name );
+		return await driverHelper.clickWhenClickable( this.driver, itemLocator );
 	}
 }

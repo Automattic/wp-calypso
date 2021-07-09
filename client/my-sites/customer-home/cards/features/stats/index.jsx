@@ -29,6 +29,7 @@ import {
 	isRequestingSiteStatsForQuery,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import classnames from 'classnames';
 
 /**
  * Style dependencies
@@ -80,6 +81,7 @@ export const StatsV2 = ( {
 				),
 				4
 		  );
+	const renderChart = ! isSiteUnlaunched && ! isLoading && views > 0;
 
 	return (
 		<div className="stats">
@@ -89,8 +91,8 @@ export const StatsV2 = ( {
 					<QuerySiteStats siteId={ siteId } statType="statsTopPosts" query={ topPostsQuery } />
 				</>
 			) }
-
-			<Card>
+			{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+			<Card className={ classnames( 'customer-home__card', { 'stats__with-chart': renderChart } ) }>
 				{ isSiteUnlaunched && (
 					<Chart data={ placeholderChartData } isPlaceholder>
 						<div>
@@ -135,7 +137,7 @@ export const StatsV2 = ( {
 						</div>
 					</div>
 				) }
-				{ ! isSiteUnlaunched && ! isLoading && views > 0 && (
+				{ renderChart && (
 					<>
 						<CardHeading>{ translate( 'Views' ) }</CardHeading>
 						<Chart data={ chartData } />
@@ -173,9 +175,11 @@ export const StatsV2 = ( {
 								</div>
 							) }
 						</div>
-						<a href={ `/stats/day/${ siteSlug }` } className="stats__all">
-							{ translate( 'See all stats' ) }
-						</a>
+						<div className="stats__all">
+							<a href={ `/stats/day/${ siteSlug }` } className="stats__all-link">
+								{ translate( 'See all stats' ) }
+							</a>
+						</div>
 					</>
 				) }
 			</Card>

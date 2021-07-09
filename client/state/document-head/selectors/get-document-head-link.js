@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/document-head/init';
+
+/**
  * Returns an array of document link objects as set by the DocumentHead
  * component or setDocumentHeadLink action.
  *

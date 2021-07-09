@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { includes } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import getSiteOption from './get-site-option';
@@ -20,9 +15,5 @@ import getSiteOption from './get-site-option';
  */
 export default function isJetpackModuleActive( state, siteId, slug ) {
 	const modules = getSiteOption( state, siteId, 'active_modules' );
-	if ( ! modules ) {
-		return null;
-	}
-
-	return includes( modules, slug );
+	return modules?.includes( slug ) ?? null;
 }

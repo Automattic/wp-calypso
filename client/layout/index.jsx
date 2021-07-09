@@ -28,6 +28,7 @@ import {
 	getSidebarIsCollapsed,
 } from 'calypso/state/ui/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
 import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -54,6 +55,10 @@ import { getShouldShowAppBanner, handleScroll } from './utils';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { isWithinBreakpoint } from '@automattic/viewport';
+import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
+import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 /**
  * Style dependencies
@@ -129,6 +134,8 @@ class Layout extends Component {
 		sectionName: PropTypes.string,
 		colorSchemePreference: PropTypes.string,
 		shouldShowAppBanner: PropTypes.bool,
+		shouldRequestReaderTeams: PropTypes.bool,
+		useFontSmoothAntialiased: PropTypes.bool,
 	};
 
 	componentDidMount() {
@@ -241,13 +248,9 @@ class Layout extends Component {
 			'is-jetpack-login': this.props.isJetpackLogin,
 			'is-jetpack-site': this.props.isJetpack,
 			'is-jetpack-mobile-flow': this.props.isJetpackMobileFlow,
-			'is-jetpack-woocommerce-flow':
-				config.isEnabled( 'jetpack/connect/woocommerce' ) && this.props.isJetpackWooCommerceFlow,
+			'is-jetpack-woocommerce-flow': this.props.isJetpackWooCommerceFlow,
 			'is-jetpack-woo-dna-flow': this.props.isJetpackWooDnaFlow,
-			'is-wccom-oauth-flow':
-				config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-				isWooOAuth2Client( this.props.oauth2Client ) &&
-				this.props.wccomFrom,
+			'is-wccom-oauth-flow': isWooOAuth2Client( this.props.oauth2Client ) && this.props.wccomFrom,
 		} );
 
 		const optionalBodyProps = () => {
@@ -264,6 +267,10 @@ class Layout extends Component {
 				bodyClass.push( 'is-sidebar-collapsed' );
 			}
 
+			if ( this.props.useFontSmoothAntialiased ) {
+				bodyClass.push( 'font-smoothing-antialiased' );
+			}
+
 			return {
 				bodyClass,
 			};
@@ -272,8 +279,11 @@ class Layout extends Component {
 
 		const loadInlineHelp = this.shouldLoadInlineHelp();
 
+		const { shouldRequestReaderTeams } = this.props;
+
 		return (
 			<div className={ sectionClass }>
+				{ shouldRequestReaderTeams && <QueryReaderTeams /> }
 				<SidebarScrollSynchronizer enabled={ this.props.isNavUnificationEnabled } />
 				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
 				<BodySectionCssClass
@@ -289,6 +299,7 @@ class Layout extends Component {
 				{ config.isEnabled( 'layout/query-selected-editor' ) && (
 					<QuerySiteSelectedEditor siteId={ this.props.siteId } />
 				) }
+				<UserVerificationChecker />
 				{ config.isEnabled( 'layout/guided-tours' ) && (
 					<AsyncLoad require="calypso/layout/guided-tours" placeholder={ null } />
 				) }
@@ -382,7 +393,9 @@ export default compose(
 		const shouldShowAppBanner = getShouldShowAppBanner( getSelectedSite( state ) );
 		const sectionJitmPath = getMessagePathForJITM( currentRoute );
 		const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
-		const isJetpack = isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
+		const isJetpack =
+			( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) ||
+			startsWith( currentRoute, '/checkout/jetpack' );
 		const isCheckoutFromGutenboarding =
 			'checkout' === sectionName && '1' === currentQuery?.preLaunch;
 		const noMasterbarForRoute = isJetpackLogin || currentRoute === '/me/account/closed';
@@ -442,6 +455,8 @@ export default compose(
 			isCheckoutFromGutenboarding,
 			isNavUnificationEnabled: isNavUnificationEnabled( state ),
 			sidebarIsCollapsed: getSidebarIsCollapsed( state ),
+			shouldRequestReaderTeams: !! getCurrentUser( state ),
+			useFontSmoothAntialiased: isAutomatticTeamMember( getReaderTeams( state ) ),
 		};
 	} )
 )( Layout );

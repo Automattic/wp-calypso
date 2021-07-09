@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { reduxGetState } from 'calypso/lib/redux-bridge';
 import LikeButtonContainer from 'calypso/blocks/like-button';
 import PostLikesPopover from 'calypso/blocks/post-likes/popover';
 import { markPostSeen } from 'calypso/state/reader/posts/actions';
@@ -35,12 +34,7 @@ class ReaderLikeButton extends React.Component {
 	}
 
 	recordLikeToggle = ( liked ) => {
-		const post =
-			this.props.post ||
-			getPostByKey( reduxGetState(), {
-				blogId: this.props.siteId,
-				postId: this.props.postId,
-			} );
+		const post = this.props.post || this.props.postByKey;
 
 		recordAction( liked ? 'liked_post' : 'unliked_post' );
 		recordGaEvent( liked ? 'Clicked Like Post' : 'Clicked Unlike Post' );
@@ -100,6 +94,10 @@ class ReaderLikeButton extends React.Component {
 export default connect(
 	( state, { siteId, postId } ) => {
 		return {
+			postByKey: getPostByKey( state, {
+				blogId: siteId,
+				postId,
+			} ),
 			likeCount: getPostLikeCount( state, siteId, postId ),
 			iLike: isLikedPost( state, siteId, postId ),
 		};

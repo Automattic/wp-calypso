@@ -199,7 +199,7 @@
 	margin-top: 15px;
 }
 
-.email-plan-mailboxes-list__mailbox-action-menu {
+.email-mailbox-action-menu__main {
 	position: absolute;
 	right: 16px;
 	top: 28px;
@@ -213,17 +213,21 @@
 	}
 }
 
-.popover__menu-item.email-plan-mailboxes-list__mailbox-action-menu-item {
+.email-mailbox-action-menu__remove-titan-mailbox-dialog {
+	h3 {
+		font-size: $font-title-medium;
+		margin-bottom: 10px;
+		font-weight: 600;
+	}
+}
+
+.popover__menu-item.email-mailbox-action-menu__menu-item {
 	align-items: center;
 	display: flex;
 	line-height: 24px;
 
 	> img, > svg {
-		height: 18px;
-		fill: var( --color-neutral-50 );
-		filter: grayscale( 100% );
 		margin-right: 8px;
-		width: 18px;
 	}
 
 	&:hover {

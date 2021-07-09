@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
+import { TERM_MONTHLY } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 /**
  * Internal dependencies
  */
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { durationToText } from 'calypso/my-sites/plans/jetpack-plans/utils';
 
 /**
  * Type dependencies
@@ -27,6 +27,14 @@ const JetpackProductCardTimeFrame: React.FC< Props > = ( { expiryDate, billingTe
 	const productExpiryDate =
 		moment.isMoment( expiryDate ) && expiryDate.isValid() ? expiryDate : null;
 
+	const billingTermText = useMemo( () => {
+		if ( billingTerm === TERM_MONTHLY ) {
+			return translate( '/month, paid monthly' );
+		}
+
+		return translate( '/month, paid yearly' );
+	}, [ billingTerm, translate ] );
+
 	return productExpiryDate ? (
 		<time
 			className="jetpack-product-card__expiration-date"
@@ -39,9 +47,7 @@ const JetpackProductCardTimeFrame: React.FC< Props > = ( { expiryDate, billingTe
 			} ) }
 		</time>
 	) : (
-		<span className="jetpack-product-card__billing-time-frame">
-			{ durationToText( billingTerm ) }
-		</span>
+		<span className="jetpack-product-card__billing-time-frame">{ billingTermText }</span>
 	);
 };
 

@@ -1,9 +1,14 @@
 /**
  * External dependencies
  */
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import titlecase from 'to-title-case';
 import { mapValues } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { isMagnificentLocale } from 'calypso/lib/i18n-utils';
 
 export function trackClick( componentName, eventName, verb = 'click' ) {
 	const stat = `${ componentName } ${ eventName } ${ verb }`;
@@ -51,4 +56,10 @@ export function getAnalyticsData( path, { filter, vertical, tier, site_id } ) {
 	}
 
 	return { analyticsPath, analyticsPageTitle };
+}
+
+export function localizeThemesPath( path, locale, isLoggedOut = true ) {
+	const shouldPrefix = isLoggedOut && isMagnificentLocale( locale ) && path.startsWith( '/theme' );
+
+	return shouldPrefix ? `/${ locale }${ path }` : path;
 }

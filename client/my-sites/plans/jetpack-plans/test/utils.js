@@ -2,7 +2,7 @@
  * Mocks
  */
 jest.mock( 'calypso/state/products-list/selectors/get-product-cost' );
-jest.mock( 'calypso/state/current-user/selectors' );
+jest.mock( 'calypso/state/currency-code/selectors' );
 // Prevent `ReferenceError: window is not defined`
 jest.mock( '../product-grid', () => null );
 
@@ -16,11 +16,11 @@ import {
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 } from '@automattic/calypso-products';
 import { getProductCost } from 'calypso/state/products-list/selectors/get-product-cost';
+import getHighestAnnualDiscount from 'calypso/my-sites/plans/jetpack-plans/plans-filter-bar/get-highest-annual-discount';
 import {
-	getHighestAnnualDiscount,
 	getMonthlySlugFromYearly,
 	getYearlySlugFromMonthly,
-} from 'calypso/my-sites/plans/jetpack-plans/utils';
+} from 'calypso/my-sites/plans/jetpack-plans/convert-slug-terms';
 
 let mockProductPrices;
 

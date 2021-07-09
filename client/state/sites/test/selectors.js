@@ -46,7 +46,6 @@ import {
 	isJetpackSiteSecondaryNetworkSite,
 	verifyJetpackModulesActive,
 	hasJetpackSiteCustomDomain,
-	getJetpackSiteUpdateFilesDisabledReasons,
 	isJetpackSiteMainNetworkSite,
 	getSiteAdminUrl,
 	getCustomizerUrl,
@@ -1915,7 +1914,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getSitePlanSlug()', () => {
-		test( 'should return undefined if the plan slug is not known', () => {
+		test( 'should return null if the plan slug is not known', () => {
 			const planSlug = getSitePlanSlug(
 				{
 					sites: {
@@ -1925,7 +1924,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			chaiExpect( planSlug ).to.be.undefined;
+			chaiExpect( planSlug ).to.be.null;
 		} );
 
 		test( 'should return the plan slug if it is known', () => {
@@ -2868,76 +2867,6 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getJetpackSiteUpdateFilesDisabledReasons()', () => {
-		test( 'it should have the correct reason for the clue `has_no_file_system_write_access`', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					jetpack: true,
-					options: {
-						file_mod_disabled: [ 'has_no_file_system_write_access' ],
-					},
-				},
-			} );
-
-			const reason = getJetpackSiteUpdateFilesDisabledReasons( state, siteId );
-			chaiExpect( reason ).to.deep.equal( [
-				'The file permissions on this host prevent editing files.',
-			] );
-		} );
-
-		test( 'it should have the correct reason for the clue `disallow_file_mods`', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					jetpack: true,
-					options: {
-						file_mod_disabled: [ 'disallow_file_mods' ],
-					},
-				},
-			} );
-
-			const reason = getJetpackSiteUpdateFilesDisabledReasons( state, siteId );
-			chaiExpect( reason ).to.deep.equal( [
-				'File modifications are explicitly disabled by a site administrator.',
-			] );
-		} );
-
-		test( 'it should have the correct reason for the clue `automatic_updater_disabled`', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					jetpack: true,
-					options: {
-						file_mod_disabled: [ 'automatic_updater_disabled' ],
-					},
-				},
-			} );
-
-			const reason = getJetpackSiteUpdateFilesDisabledReasons( state, siteId, 'autoupdateCore' );
-			chaiExpect( reason ).to.deep.equal( [
-				'Any autoupdates are explicitly disabled by a site administrator.',
-			] );
-		} );
-
-		test( 'it should have the correct reason for the clue `wp_auto_update_core_disabled`', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					jetpack: true,
-					options: {
-						file_mod_disabled: [ 'wp_auto_update_core_disabled' ],
-					},
-				},
-			} );
-
-			const reason = getJetpackSiteUpdateFilesDisabledReasons( state, siteId, 'autoupdateCore' );
-			chaiExpect( reason ).to.deep.equal( [
-				'Core autoupdates are explicitly disabled by a site administrator.',
-			] );
-		} );
-	} );
-
 	describe( '#isJetpackSiteMainNetworkSite()', () => {
 		test( 'should return `null` for a non-existing site', () => {
 			const isMainNetwork = isJetpackSiteMainNetworkSite( stateWithNoItems, nonExistingSiteId );
@@ -3485,18 +3414,9 @@ describe( 'selectors', () => {
 			);
 		} );
 
-		test( "should return true if user can't manage a site, but it has background transfer and atomic store flow is enabled", () => {
+		test( "should return true if user can't manage a site, but it has background transfer", () => {
 			expect( canCurrentUserUseAnyWooCommerceBasedStore( createState( false, false, true ) ) ).toBe(
 				true
-			);
-		} );
-
-		test( "should return false if user can't manage a site, but it has background transfer and atomic store flow is disabled", () => {
-			// Enable all features except for the atomic store flow
-			config.isEnabled.mockImplementation( ( feature ) => feature !== 'signup/atomic-store-flow' );
-
-			expect( canCurrentUserUseAnyWooCommerceBasedStore( createState( false, false, true ) ) ).toBe(
-				false
 			);
 		} );
 	} );
@@ -3566,34 +3486,16 @@ describe( 'selectors', () => {
 			).toBe( false );
 		} );
 
-		test( "should return true if user can't manage a site, but it has background transfer and atomic store flow is enabled", () => {
+		test( "should return true if user can't manage a site, but it has background transfer", () => {
 			expect(
 				canCurrentUserUseWooCommerceCoreStore( createState( false, false, true, PLAN_ECOMMERCE ) )
 			).toBe( true );
-		} );
-
-		test( "should return false if user can't manage a site, but it has background transfer and atomic store flow is disabled", () => {
-			// Enable all features except for the atomic store flow
-			config.isEnabled.mockImplementation( ( feature ) => feature !== 'signup/atomic-store-flow' );
-
-			expect(
-				canCurrentUserUseWooCommerceCoreStore( createState( false, false, true, PLAN_ECOMMERCE ) )
-			).toBe( false );
 		} );
 
 		test( 'should return false if site is not eCommerce or Business', () => {
 			expect(
 				canCurrentUserUseWooCommerceCoreStore( createState( true, true, false, PLAN_FREE ) )
 			).toBe( false );
-		} );
-
-		test( 'should return true if site is Business and Store is deprecated but not removed', () => {
-			// Enable all features except for store removal
-			config.isEnabled.mockImplementation( ( feature ) => feature !== 'woocommerce/store-removed' );
-
-			expect(
-				canCurrentUserUseWooCommerceCoreStore( createState( true, true, false, PLAN_BUSINESS ) )
-			).toBe( true );
 		} );
 
 		test( 'should return true if site is Business and Store is not deprecated but is removed', () => {

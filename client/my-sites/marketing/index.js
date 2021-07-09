@@ -6,7 +6,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { jetpackModuleActive, navigation, siteSelection, sites } from 'calypso/my-sites/controller';
+import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
 	connections,
 	layout,
@@ -48,7 +48,6 @@ export default function () {
 		'/marketing/connections/:domain',
 		siteSelection,
 		navigation,
-		jetpackModuleActive( 'publicize', false ),
 		connections,
 		layout,
 		makeLayout,
@@ -69,7 +68,6 @@ export default function () {
 		'/marketing/sharing-buttons/:domain',
 		siteSelection,
 		navigation,
-		jetpackModuleActive( 'sharedaddy' ),
 		sharingButtons,
 		layout,
 		makeLayout,

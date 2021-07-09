@@ -34,18 +34,12 @@ import wp from 'calypso/lib/wp';
  */
 import './style.scss';
 
-const wpcom = wp.undocumented();
-
 class AccountPassword extends React.Component {
 	state = {
 		password: '',
 		validation: null,
 		pendingValidation: true,
 	};
-
-	componentDidMount() {
-		this.debouncedPasswordValidate = debounce( this.validatePassword, 300 );
-	}
 
 	componentDidUpdate( prevProps ) {
 		if (
@@ -64,10 +58,10 @@ class AccountPassword extends React.Component {
 			pendingValidation: true,
 		} );
 		this.props.markChanged();
-		this.debouncedPasswordValidate();
+		this.validatePassword();
 	};
 
-	validatePassword = async () => {
+	validatePassword = debounce( async () => {
 		const password = this.state.password;
 
 		if ( '' === password ) {
@@ -76,18 +70,17 @@ class AccountPassword extends React.Component {
 		}
 
 		try {
-			const validationResult = await wpcom.me().validatePassword( password );
+			const validation = await wp.req.post( '/me/settings/password/validate', { password } );
 
-			this.setState( { pendingValidation: false, validation: validationResult } );
+			this.setState( { pendingValidation: false, validation } );
 		} catch ( err ) {
 			this.setState( { pendingValidation: false } );
-			return;
 		}
-	};
+	}, 300 );
 
 	handlePasswordChange = ( event ) => {
 		const newPassword = event.currentTarget.value;
-		this.debouncedPasswordValidate();
+		this.validatePassword();
 
 		this.setState( {
 			password: newPassword,

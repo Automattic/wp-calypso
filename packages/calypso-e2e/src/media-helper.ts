@@ -48,35 +48,40 @@ export function getVideoDir(): string {
 }
 
 /**
- * Returns a descriptive file name for the screenshot file.
+ * Returns a descriptive file name for the requested artifact type.
  *
- * @param {string} name Name of the test case that failed.
+ * @param {{[key: string]: string}} param0 Object assembled by the caller.
+ * @param {string} param0.name Name of the test suite or step that failed.
+ * @param {string} param0.type Target type of the file name.
  * @returns {string} A Path-like string.
+ * @throws {Error} If target type is not one of supported types.
  */
-export function getScreenshotName( name: string ): string {
-	const shortTestFileName = name.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
-	const screenSize = getViewportName().toUpperCase();
-	const locale = getLocale().toUpperCase();
-	const date = getDateString();
-	const fileName = `FAILED-${ locale }-${ screenSize }-${ shortTestFileName }-${ date }`;
-	const screenshotDir = getScreenshotDir();
-	return `${ screenshotDir }/${ fileName }.png`;
-}
-
-/**
- * Returns a descriptive file name for video recording file.
- *
- * @param {string} name Name of the suite and test case that failed.
- * @returns {string} A Path-like string.
- */
-export function getVideoName( name: string ): string {
+export function getFileName( {
+	name,
+	type,
+}: {
+	name: string;
+	type: 'video' | 'screenshot';
+} ): string {
 	const suiteName = name.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
+	const viewportName = getViewportName().toUpperCase();
 	const locale = getLocale().toUpperCase();
-	const screenSize = getViewportName().toUpperCase();
 	const date = getDateString();
-	const fileName = `FAILED-${ locale }-${ screenSize }-${ suiteName }-${ date }`;
-	const videoDir = getVideoDir();
-	return `${ videoDir }/${ fileName }.webm`;
+	const fileName = `FAILED-${ locale }-${ viewportName }-${ suiteName }-${ date }`;
+
+	let dir;
+	let extension;
+
+	if ( type.toLowerCase() === 'screenshot' ) {
+		dir = getScreenshotDir();
+		extension = 'png';
+	} else if ( type.toLowerCase() === 'video' ) {
+		dir = getVideoDir();
+		extension = 'webm';
+	} else {
+		throw new Error( `Unsupported type specified, received ${ type }` );
+	}
+	return `${ dir }/${ fileName }.${ extension }`;
 }
 
 /**

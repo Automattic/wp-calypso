@@ -25,6 +25,11 @@ describe( 'UK Address Fieldset', () => {
 		translate: ( string ) => string,
 	};
 
+	const propsWithoutPostalCode = {
+		...defaultProps,
+		arePostalCodesSupported: false,
+	};
+
 	test( 'should render correctly with default props', () => {
 		const wrapper = shallow( <UkAddressFieldset { ...defaultProps } /> );
 		expect( wrapper.find( '.uk-address-fieldset' ) ).to.have.length( 1 );
@@ -39,5 +44,11 @@ describe( 'UK Address Fieldset', () => {
 	test( 'should not render a state select components', () => {
 		const wrapper = shallow( <UkAddressFieldset { ...defaultProps } /> );
 		expect( wrapper.find( '[name="state"]' ) ).to.have.length( 0 );
+	} );
+
+	test( 'should render all expected input components but postal code', () => {
+		const wrapper = shallow( <UkAddressFieldset { ...propsWithoutPostalCode } /> );
+		expect( wrapper.find( '[name="city"]' ) ).to.have.length( 1 );
+		expect( wrapper.find( '[name="postal-code"]' ) ).to.have.length( 0 );
 	} );
 } );

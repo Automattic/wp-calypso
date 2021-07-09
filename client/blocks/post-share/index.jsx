@@ -28,7 +28,8 @@ import isPublicizeEnabled from 'calypso/state/selectors/is-publicize-enabled';
 import isSchedulingPublicizeShareAction from 'calypso/state/selectors/is-scheduling-publicize-share-action';
 import isSchedulingPublicizeShareActionError from 'calypso/state/selectors/is-scheduling-publicize-share-action-error';
 import { getSiteSlug, getSitePlanSlug, isJetpackSite } from 'calypso/state/sites/selectors';
-import { getCurrentUserId, getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 
 import {
 	fetchConnections as requestConnections,
@@ -104,7 +105,6 @@ class PostShare extends Component {
 		showSharingPreview: false,
 		scheduledDate: null,
 		showTooltip: false,
-		tooltipContext: null,
 		eventsByDay: [],
 	};
 

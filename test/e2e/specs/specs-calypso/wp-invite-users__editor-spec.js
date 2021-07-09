@@ -87,7 +87,11 @@ describe( `[${ host }] Invites - New user as Editor: (${ screenSize }) @parallel
 		assert.strictEqual( actualEmailAddress, newInviteEmailAddress );
 		assert( headerInviteText.includes( 'editor' ) );
 
-		await acceptInvitePage.enterUsernameAndPasswordAndSignUp( newUserName, password );
+		await acceptInvitePage.enterCredentialsAndSignUp(
+			newUserName,
+			newInviteEmailAddress,
+			password
+		);
 		return await acceptInvitePage.waitUntilNotVisible();
 	} );
 
@@ -131,7 +135,7 @@ describe( `[${ host }] Invites - New user as Editor: (${ screenSize }) @parallel
 	it( 'As the invited user, I am no longer an editor on the site', async function () {
 		if ( 'WPCOM' !== dataHelper.getJetpackHost() ) return this.skip();
 		const loginPage = await LoginPage.Visit( this.driver );
-		await loginPage.login( newUserName, password );
+		await loginPage.login( newInviteEmailAddress, password );
 		await ReaderPage.Expect( this.driver );
 
 		const navBarComponent = await NavBarComponent.Expect( this.driver );

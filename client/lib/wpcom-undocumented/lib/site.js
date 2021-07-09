@@ -90,92 +90,8 @@ UndocumentedSite.prototype.domains = function () {
 	return this.wpcom.req.get( `/sites/${ this._id }/domains`, { apiVersion: '1.2' } );
 };
 
-UndocumentedSite.prototype.postAutosave = function ( postId, attributes, callback ) {
-	return this.wpcom.req.post(
-		{
-			path: '/sites/' + this._id + '/posts/' + postId + '/autosave',
-			body: attributes,
-		},
-		callback
-	);
-};
-
-UndocumentedSite.prototype.embeds = function ( attributes, callback ) {
-	let url = '/sites/' + this._id + '/embeds';
-	if ( attributes && attributes.embed_url ) {
-		url += '/render';
-	}
-
-	return this.wpcom.req.get( url, attributes, callback );
-};
-
-UndocumentedSite.prototype.embedReversal = function ( markup, callback ) {
-	return this.wpcom.req.post(
-		`/sites/${ this._id }/embeds/reversal`,
-		{
-			maybe_embed: markup,
-		},
-		callback
-	);
-};
-
 UndocumentedSite.prototype.shortcodes = function ( attributes, callback ) {
 	return this.wpcom.req.get( '/sites/' + this._id + '/shortcodes/render', attributes, callback );
-};
-
-UndocumentedSite.prototype.getRoles = function ( callback ) {
-	return this.wpcom.req.get( '/sites/' + this._id + '/roles', {}, callback );
-};
-
-UndocumentedSite.prototype.removeViewer = function ( viewerId, callback ) {
-	return this.wpcom.req.post(
-		{
-			path: '/sites/' + this._id + '/viewers/' + viewerId + '/delete',
-		},
-		callback
-	);
-};
-
-UndocumentedSite.prototype.deleteUser = function ( userId, attributes, callback ) {
-	return this.wpcom.req.post(
-		{
-			path: '/sites/' + this._id + '/users/' + userId + '/delete',
-			body: attributes,
-		},
-		callback
-	);
-};
-
-UndocumentedSite.prototype.updateUser = function ( userId, attributes, callback ) {
-	return this.wpcom.req.post(
-		{
-			path: '/sites/' + this._id + '/users/' + userId,
-			body: attributes,
-		},
-		callback
-	);
-};
-
-UndocumentedSite.prototype.getUser = function ( login, callback ) {
-	return this.wpcom.req.get( '/sites/' + this._id + '/users/login:' + login, callback );
-};
-
-UndocumentedSite.prototype.removeFollower = function ( followerId, callback ) {
-	return this.wpcom.req.post(
-		{
-			path: '/sites/' + this._id + '/followers/' + followerId + '/delete',
-		},
-		callback
-	);
-};
-
-UndocumentedSite.prototype.removeEmailFollower = function ( followerId, callback ) {
-	return this.wpcom.req.post(
-		{
-			path: '/sites/' + this._id + '/email-followers/' + followerId + '/delete',
-		},
-		callback
-	);
 };
 
 UndocumentedSite.prototype.setOption = function ( query, callback ) {
@@ -204,17 +120,6 @@ UndocumentedSite.prototype.postCounts = function ( options, callback ) {
 	delete query.type;
 
 	return this.wpcom.req.get( '/sites/' + this._id + '/post-counts/' + type, query, callback );
-};
-
-/**
- * Returns media storage limits and space used for a given site. If site has
- * unlimited storage or is a jetpack site, values returned will be -1.
- *
- * @param {Function} callback - called on completion of the GET request
- * @returns {object} promise - resolves on completion of the GET request
- */
-UndocumentedSite.prototype.mediaStorage = function ( callback ) {
-	return this.wpcom.req.get( '/sites/' + this._id + '/media-storage', callback );
 };
 
 /**
@@ -256,28 +161,6 @@ UndocumentedSite.prototype.getConnection = function ( connectionId ) {
 		path: '/sites/' + this._id + '/publicize-connections/' + connectionId,
 		apiVersion: '1.1',
 	} );
-};
-
-/**
- * Upload an external media item to the WordPress media library
- *
- * @param {string} service - external media service name (i.e 'google_photos')
- * @param {Array} files - array of external media file IDs
- *
- * @returns {object} promise - resolves on completion of the GET request
- */
-UndocumentedSite.prototype.uploadExternalMedia = function ( service, files ) {
-	debug( '/sites/:site_id:/external-media-upload query' );
-
-	return this.wpcom.req.post(
-		{
-			path: '/sites/' + this._id + '/external-media-upload',
-		},
-		{
-			external_ids: files,
-			service,
-		}
-	);
 };
 
 /**
@@ -385,54 +268,6 @@ UndocumentedSite.prototype.statsTopCoupons = function ( query ) {
 			apiNamespace: 'wpcom/v2',
 		},
 		query
-	);
-};
-
-/**
- * Delete site invites
- *
- * @param {Array}     inviteIds  An array of inviteIds for deletion.
- * @returns {Promise}             A Promise to resolve when complete.
- */
-UndocumentedSite.prototype.deleteInvites = function ( inviteIds ) {
-	return this.wpcom.req.post(
-		{
-			path: `/sites/${ this._id }/invites/delete`,
-			apiNamespace: 'wpcom/v2',
-		},
-		{
-			invite_ids: inviteIds,
-		}
-	);
-};
-/**
- * Generate invite links
- *
- * @returns {Promise}             A Promise to resolve when complete.
- */
-UndocumentedSite.prototype.generateInviteLinks = function () {
-	return this.wpcom.req.post(
-		{
-			path: `/sites/${ this._id }/invites/links/generate`,
-			apiNamespace: 'wpcom/v2',
-		},
-		{}
-	);
-};
-
-/**
- * Disable invite links
- *
- * @returns {Promise}             A Promise to resolve when complete.
- */
-
-UndocumentedSite.prototype.disableInviteLinks = function () {
-	return this.wpcom.req.post(
-		{
-			path: `/sites/${ this._id }/invites/links/disable`,
-			apiNamespace: 'wpcom/v2',
-		},
-		{}
 	);
 };
 

@@ -15,7 +15,7 @@ interface Props {
 	value: any;
 }
 
-const ObjectPreference: FunctionComponent< Props > = ( { name, value } ) => {
+const ObjectPreference: FunctionComponent< Props > = ( { value } ) => {
 	const renderProperty = ( key: string, value: any ) => {
 		switch ( typeof value ) {
 			case 'number':

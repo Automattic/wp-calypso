@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
+import EmptyContent from 'calypso/components/empty-content';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import Spinner from 'calypso/components/spinner';
@@ -18,7 +19,6 @@ import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryPluginKeys from 'calypso/components/data/query-plugin-keys';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
-import JetpackManageErrorPage from 'calypso/my-sites/jetpack-manage-error-page';
 import PluginItem from 'calypso/my-sites/plugins/plugin-item/plugin-item';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
@@ -184,8 +184,7 @@ class PlansSetup extends React.Component {
 			error: 'wordpresscom',
 		} );
 		return (
-			<JetpackManageErrorPage
-				siteId={ this.props.siteId }
+			<EmptyContent
 				title={ this.props.translate(
 					'Oh no! You need to select a Jetpack site to be able to setup your plan'
 				) }
@@ -219,8 +218,7 @@ class PlansSetup extends React.Component {
 		}
 
 		return (
-			<JetpackManageErrorPage
-				siteId={ this.props.siteId }
+			<EmptyContent
 				action={ translate( 'Contact Support' ) }
 				actionURL={ JETPACK_CONTACT_SUPPORT }
 				title={ translate( "Oh no! We can't install plugins on this site." ) }

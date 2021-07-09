@@ -88,6 +88,10 @@ export const remoteValuesSchema = {
 				restore: { $ref: '#/definitions/dismissiblePrompt' },
 			},
 		},
+		homeQuickLinksToggleStatus: {
+			type: 'string',
+			enum: [ 'collapsed', 'expanded' ],
+		},
 	},
 	definitions: {
 		dismissiblePrompt: {

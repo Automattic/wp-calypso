@@ -11,10 +11,10 @@ $min_results_height: 180px;
 	}
 
 	.help-search__inner {
-		padding: 16px;
+		padding: 0 16px;
 
-		@include break-mobile {
-			padding: 16px 24px;
+		@include breakpoint-deprecated( '>660px' ) {
+			padding: 16px 24px 0;
 		}
 	}
 
@@ -28,16 +28,22 @@ $min_results_height: 180px;
 	}
 
 	.help-search__footer {
-		margin-top: -#{$card_padding_large/2};
-		border-top: 1px solid var( --color-border-subtle );
+		margin-bottom: 30px;
+		@include breakpoint-deprecated( '>660px' ) {
+			margin-bottom: 6px;
+		}
 	}
 
 	.help-search__cta {
 		display: flex;
 		align-items: center;
-		padding: 10px $card_padding_large;
+		padding: 10px $card_padding_small;
 		color: var( --color-text );
 		line-height: 1;
+
+		@include break-mobile {
+			padding: 10px $card_padding_large;
+		}
 
 		&:hover,
 		&:focus {
@@ -55,6 +61,8 @@ $min_results_height: 180px;
 		background: var( --color-primary );
 		box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
 		border: 1px solid var( --color-primary );
+		// Using percentage because we're drawing a circle in CSS
+		// stylelint-disable-next-line declaration-property-unit-allowed-list
 		border-radius: 100%;
 
 		&::before {
@@ -66,6 +74,8 @@ $min_results_height: 180px;
 			left: 4px;
 			content: '';
 			background: var( --color-surface );
+			// Using percentage because we're drawing a circle in CSS
+			// stylelint-disable-next-line declaration-property-unit-allowed-list
 			border-radius: 100%;
 		}
 
@@ -103,7 +113,6 @@ $min_results_height: 180px;
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
-			margin-right: 8px;
 
 			.gridicon {
 				margin: 0 5px -3px 0;
@@ -124,15 +133,30 @@ $min_results_height: 180px;
 	}
 
 	.inline-help__results {
-		margin: #{$search_results_top_spacing + 1px} #{-$card_padding_small} 0;
 		min-height: $min_results_height;
-		padding: #{$search_results_top_spacing / 2 - 1px} 0 0 0;
-		border-top: 1px solid var( --color-border-subtle );
+		padding: #{$search_results_top_spacing - 1px} 0 0 0;
+		margin-left: -$card_padding_small;
+		margin-right: -$card_padding_small;
 
 		@include break-mobile {
 			margin-left: -$card_padding_large;
 			margin-right: -$card_padding_large;
 		}
+	}
+
+	.inline-help__results-title {
+		padding-left: $card_padding_small;
+		padding-right: $card_padding_small;
+
+		@include break-mobile {
+			padding-left: $card_padding_large;
+			padding-right: $card_padding_large;
+		}
+	}
+
+	.inline-help__empty-results {
+		padding-left: 0;
+		padding-right: 0;
 	}
 
 	.search-card {
@@ -178,7 +202,6 @@ $min_results_height: 180px;
 		min-height: $min_results_height;
 		margin: #{$search_results_top_spacing + 1} 0 0 #{-$search_results_top_spacing};
 		padding: #{$search_results_top_spacing / 2 - 1px} 0 0 0;
-		border-top: 1px solid var( --color-border-subtle );
 	}
 
 	.inline-help__results-placeholder-item {

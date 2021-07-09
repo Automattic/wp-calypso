@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-const babelJest = require( 'babel-jest' );
+const babelJest = require( 'babel-jest' ).default;
 const path = require( 'path' );
 
 module.exports = babelJest.createTransformer( {

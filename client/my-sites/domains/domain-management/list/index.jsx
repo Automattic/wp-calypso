@@ -9,6 +9,7 @@ import page from 'page';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
 
 /**
  * Internal dependencies
@@ -44,11 +45,13 @@ import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import getSites from 'calypso/state/selectors/get-sites';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import { getDomainManagementPath } from './utils';
 import DomainItem from './domain-item';
 import ListHeader from './list-header';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import InfoPopover from 'calypso/components/info-popover';
 import ExternalLink from 'calypso/components/external-link';
 import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
@@ -344,7 +347,12 @@ export class List extends React.Component {
 	};
 
 	shouldUpgradeToMakeDomainPrimary( domain ) {
-		const { isDomainOnly, isOnFreePlan, hasNonPrimaryDomainsFlag } = this.props;
+		const {
+			isDomainOnly,
+			isOnFreePlan,
+			hasNonPrimaryDomainsFlag,
+			canSetPrimaryDomain,
+		} = this.props;
 
 		return (
 			hasNonPrimaryDomainsFlag &&
@@ -353,7 +361,8 @@ export class List extends React.Component {
 			! isDomainOnly &&
 			! domain.isPrimary &&
 			! domain.isWPCOMDomain &&
-			! domain.isWpcomStagingDomain
+			! domain.isWpcomStagingDomain &&
+			! canSetPrimaryDomain
 		);
 	}
 
@@ -463,6 +472,7 @@ export class List extends React.Component {
 
 		return [
 			<QuerySitePurchases key="query-purchases" siteId={ selectedSite.ID } />,
+			<QuerySiteFeatures key="query-features" siteId={ selectedSite.ID } />,
 			<ListHeader
 				key="domains-header"
 				headerClasses={ {
@@ -542,6 +552,7 @@ export default connect(
 			hasSingleSite: siteCount === 1,
 			isOnFreePlan,
 			userCanManageOptions,
+			canSetPrimaryDomain: hasActiveSiteFeature( state, siteId, FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ),
 		};
 	},
 	( dispatch ) => {

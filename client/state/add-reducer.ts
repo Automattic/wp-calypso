@@ -8,6 +8,7 @@ import { Reducer, Store } from 'redux';
  */
 import { APPLY_STORED_STATE } from 'calypso/state/action-types';
 import { getStateFromCache } from 'calypso/state/initial-state';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 
 const initializations = new Map< string, boolean >();
 const reducers = new Map< string, Reducer >();
@@ -34,7 +35,11 @@ function initializeState(
 	storageKey: string,
 	reducer: Reducer & OptionalStorageKey
 ) {
-	const storedState = getStateFromCache( reducer, storageKey );
+	const storedState = getStateFromCache(
+		reducer,
+		storageKey,
+		getCurrentUserId( store.getState() )
+	);
 
 	if ( storedState ) {
 		store.dispatch( { type: APPLY_STORED_STATE, storageKey, storedState } );

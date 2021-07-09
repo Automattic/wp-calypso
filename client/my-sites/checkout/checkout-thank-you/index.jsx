@@ -91,12 +91,12 @@ import { getActiveTheme } from 'calypso/state/themes/selectors';
 import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customize-or-edit-front-page-url';
 import getCheckoutUpgradeIntent from 'calypso/state/selectors/get-checkout-upgrade-intent';
 import { isProductsListFetching } from 'calypso/state/products-list/selectors';
+import AsyncLoad from 'calypso/components/async-load';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import AsyncLoad from 'calypso/components/async-load';
 
 function getPurchases( props ) {
 	return [
@@ -433,9 +433,7 @@ export class CheckoutThankYou extends React.Component {
 		}
 
 		if ( wasMarketplaceProduct ) {
-			return (
-				<AsyncLoad require="calypso/my-sites/checkout/checkout-thank-you/marketplace/marketplace-thank-you" />
-			);
+			return <AsyncLoad require="calypso/my-sites/marketplace/marketplace-plugin-setup-status" />;
 		} else if ( wasEcommercePlanPurchased ) {
 			if ( ! this.props.transferComplete ) {
 				return (

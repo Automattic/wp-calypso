@@ -56,6 +56,7 @@ class SiteSettingsFormWriting extends Component {
 			siteId,
 			siteIsJetpack,
 			translate,
+			siteIsAutomatedTransfer,
 			updateFields,
 			showAdvancedDashboard,
 		} = this.props;
@@ -68,7 +69,7 @@ class SiteSettingsFormWriting extends Component {
 			>
 				{
 					// Only show taxonomy management for non-advanced dashboard user setting
-					config.isEnabled( 'manage/site-settings/categories' ) && ! showAdvancedDashboard && (
+					! showAdvancedDashboard && (
 						<div className="site-settings__taxonomies">
 							<QueryTaxonomies siteId={ siteId } postType="post" />
 							<TaxonomyCard taxonomy="category" postType="post" />
@@ -97,7 +98,7 @@ class SiteSettingsFormWriting extends Component {
 					updateFields={ updateFields }
 				/>
 
-				{ siteIsJetpack && (
+				{ siteIsJetpack && ! siteIsAutomatedTransfer && (
 					<div>
 						<SettingsSectionHeader
 							disabled={ isRequestingSettings || isSavingSettings }
@@ -213,11 +214,10 @@ const connectComponent = connect(
 				! siteIsAutomatedTransfer,
 			isPodcastingSupported,
 			showAdvancedDashboard,
+			siteIsAutomatedTransfer,
 		};
 	},
-	{ requestPostTypes },
-	null,
-	{ pure: false }
+	{ requestPostTypes }
 );
 
 const getFormSettings = ( settings ) => {
@@ -261,6 +261,7 @@ const getFormSettings = ( settings ) => {
 		'time_format',
 		'timezone_string',
 		'podcasting_category_id',
+		'wpcom_publish_posts_with_markdown',
 	] );
 
 	// handling `gmt_offset` and `timezone_string` values

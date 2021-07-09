@@ -24,6 +24,8 @@ import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getPostType, isPostTypeSupported } from 'calypso/state/post-types/selectors';
 import QueryPostTypes from 'calypso/components/data/query-post-types';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import config from '@automattic/calypso-config';
 
 function Types( {
 	siteId,
@@ -44,6 +46,7 @@ function Types( {
 
 	return (
 		<Main wideLayout>
+			<ScreenOptionsTab wpAdminPath={ `edit.php?post_type=${ query.type }` } />
 			<DocumentHead title={ get( postType, 'label', '' ) } />
 			<PageViewTracker path={ siteId ? '/types/:site' : '/types' } title="Custom Post Type" />
 			<SidebarNavigation />
@@ -53,6 +56,7 @@ function Types( {
 				headerText={ get( postType, 'label', '' ) }
 				subHeaderText={ subHeaderText }
 				align="left"
+				hasScreenOptions={ config.isEnabled( 'nav-unification/switcher' ) }
 			/>
 			{ userCanEdit &&
 				postTypeSupported && [

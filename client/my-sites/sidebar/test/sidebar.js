@@ -39,26 +39,6 @@ describe( 'MySitesSidebar', () => {
 			config.isEnabled.mockImplementation( () => true );
 		} );
 
-		test( 'Should return null item if woocommerce/extension-dashboard is disabled', () => {
-			config.isEnabled.mockImplementation(
-				( feature ) => feature !== 'woocommerce/extension-dashboard'
-			);
-			const Sidebar = new MySitesSidebar( {
-				isSiteAutomatedTransfer: false,
-				canUserUpgradeSite: true,
-				...defaultProps,
-				site: {
-					plan: {
-						product_slug: 'business-bundle',
-					},
-				},
-			} );
-			const Store = () => Sidebar.store();
-
-			const wrapper = shallow( <Store /> );
-			expect( wrapper.html() ).toEqual( null );
-		} );
-
 		test( 'Should return wp-admin menu item if user can use store on this site and the site is an ecommerce plan', () => {
 			const Sidebar = new MySitesSidebar( {
 				canUserUseCalypsoStore: true,
@@ -264,7 +244,7 @@ describe( 'MySitesSidebar', () => {
 			expect( wrapper.html() ).toEqual( null );
 		} );
 
-		test( 'Should return null item if signup/wpforteams enabled and isSiteWPForTeams', () => {
+		test( 'Should return null item if isSiteWPForTeams', () => {
 			const Sidebar = new MySitesSidebar( {
 				isSiteWPForTeams: true,
 				...defaultProps,

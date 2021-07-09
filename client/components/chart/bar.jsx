@@ -25,8 +25,6 @@ export default class ChartBar extends React.PureComponent {
 		max: Infinity,
 	};
 
-	state = { showPopover: false };
-
 	clickHandler = () => {
 		if ( typeof this.props.clickHandler === 'function' ) {
 			this.props.clickHandler( this.props.data );

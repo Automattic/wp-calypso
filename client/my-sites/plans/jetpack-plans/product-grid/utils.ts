@@ -7,7 +7,7 @@ import {
 	getYearlyPlanByMonthly,
 } from '@automattic/calypso-products';
 import { SELECTOR_PLANS } from '../constants';
-import { slugToSelectorProduct } from '../utils';
+import slugToSelectorProduct from '../slug-to-selector-product';
 
 /**
  * Type dependencies

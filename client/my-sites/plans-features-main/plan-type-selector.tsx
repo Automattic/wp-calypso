@@ -100,17 +100,24 @@ export const PopupMessages: React.FunctionComponent< PopupMessageProps > = ( {
 	);
 };
 
-type IntervalTypeProps = Pick< Props, 'intervalType' | 'plans' | 'isInSignup' >;
+type IntervalTypeProps = Pick<
+	Props,
+	'intervalType' | 'plans' | 'isInSignup' | 'eligibleForWpcomMonthlyPlans'
+>;
 
 export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
 	const translate = useTranslate();
-	const { intervalType, isInSignup } = props;
+	const { intervalType, isInSignup, eligibleForWpcomMonthlyPlans } = props;
 	const [ spanRef, setSpanRef ] = useState< HTMLSpanElement >();
 	const segmentClasses = classNames( 'plan-features__interval-type', 'price-toggle', {
 		'is-signup': isInSignup,
 	} );
 	const popupIsVisible = intervalType === 'monthly' && isInSignup;
 	const maxDiscount = useMaxDiscount( props.plans );
+
+	if ( ! eligibleForWpcomMonthlyPlans ) {
+		return null;
+	}
 
 	return (
 		<IntervalTypeToggleWrapper

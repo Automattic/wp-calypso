@@ -109,6 +109,12 @@ const urlLocalizationMapping: UrlLocalizationMapping = {
 		}
 		return prefixLocalizedUrlPath( magnificentNonEnLocales )( url, localeSlug );
 	},
+	'wordpress.com/theme/': ( url: URL, localeSlug: Locale, isLoggedIn: boolean ) => {
+		return isLoggedIn ? url : prefixLocalizedUrlPath( magnificentNonEnLocales )( url, localeSlug );
+	},
+	'wordpress.com/themes/': ( url: URL, localeSlug: Locale, isLoggedIn: boolean ) => {
+		return isLoggedIn ? url : prefixLocalizedUrlPath( magnificentNonEnLocales )( url, localeSlug );
+	},
 };
 
 export function localizeUrl( fullUrl: string, locale: Locale, isLoggedIn = true ): string {

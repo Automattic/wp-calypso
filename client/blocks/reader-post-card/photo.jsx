@@ -75,7 +75,7 @@ class PostPhoto extends React.Component {
 
 		const featuredImageStyle = {
 			backgroundImage: 'url(' + cssSafeUrl( imageUrl ) + ')',
-			backgroundSize: this.state.isExpanded ? 'contain' : 'cover',
+			backgroundSize: this.props.isExpanded ? 'contain' : 'cover',
 			backgroundRepeat: 'no-repeat',
 			backgroundPosition: 'center',
 		};

@@ -100,7 +100,7 @@ export class UndoListItem extends React.Component {
 		const updateSpamStatus = function ( error, data ) {
 			if ( error ) throw error;
 
-			if ( 'spam' != data.status ) {
+			if ( 'spam' !== data.status ) {
 				// TODO: Handle failure to set Spam status
 			}
 		};
@@ -212,6 +212,4 @@ const mapDispatchToProps = {
 	undoAction: actions.ui.undoAction,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps, null, { pure: false } )(
-	localize( UndoListItem )
-);
+export default connect( mapStateToProps, mapDispatchToProps )( localize( UndoListItem ) );

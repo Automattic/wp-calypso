@@ -30,7 +30,12 @@ const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 const emailClient = new EmailClient( inviteInboxId );
 
-describe( `[${ host }] Invites - New user as Viewer: (${ screenSize }) @parallel`, function () {
+/**
+ * This test creates new invtites and try to clean them up. The problem is the invites are per-site,
+ * so all test runs will share the same list of invites. It causes this test to be flaky when run in
+ * parallel.
+ */
+describe.skip( `[${ host }] Invites - New user as Viewer: (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
 	const newUserName = 'e2eflowtestingviewer' + new Date().getTime().toString();
 	const newInviteEmailAddress = dataHelper.getEmailAddress( newUserName, inviteInboxId );
@@ -91,7 +96,11 @@ describe( `[${ host }] Invites - New user as Viewer: (${ screenSize }) @parallel
 		assert.strictEqual( actualEmailAddress, newInviteEmailAddress );
 		assert( headerInviteText.includes( 'view' ) );
 
-		await acceptInvitePage.enterUsernameAndPasswordAndSignUp( newUserName, password );
+		await acceptInvitePage.enterCredentialsAndSignUp(
+			newUserName,
+			newInviteEmailAddress,
+			password
+		);
 		removedViewerFlag = false;
 		return await acceptInvitePage.waitUntilNotVisible();
 	} );

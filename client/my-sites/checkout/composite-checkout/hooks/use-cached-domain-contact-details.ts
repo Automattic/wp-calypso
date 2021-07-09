@@ -12,6 +12,7 @@ import debugFactory from 'debug';
  */
 import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
 import { requestContactDetailsCache } from 'calypso/state/domains/management/actions';
+import getCountries from 'calypso/state/selectors/get-countries';
 
 const { dispatch } = defaultRegistry;
 
@@ -22,7 +23,6 @@ export default function useCachedDomainContactDetails(
 ): void {
 	const reduxDispatch = useReduxDispatch();
 	const haveRequestedCachedDetails = useRef( false );
-
 	useEffect( () => {
 		if ( ! haveRequestedCachedDetails.current ) {
 			debug( 'requesting cached domain contact details' );
@@ -32,10 +32,17 @@ export default function useCachedDomainContactDetails(
 	}, [ reduxDispatch ] );
 
 	const cachedContactDetails = useSelector( getContactDetailsCache );
+	const cachedDetailCountry = useSelector( ( state ) => getCountries( state, 'domains' ) )?.find(
+		( country ) => country.code === cachedContactDetails?.countryCode
+	);
+
 	useEffect( () => {
 		if ( cachedContactDetails ) {
 			debug( 'using fetched cached domain contact details', cachedContactDetails );
 			dispatch( 'wpcom' ).loadDomainContactDetailsFromCache( cachedContactDetails );
+			dispatch( 'wpcom' ).updateRequiredDomainFields( {
+				postalCode: cachedDetailCountry?.has_postal_codes ?? true,
+			} );
 		}
 		if (
 			cachedContactDetails?.countryCode ||
@@ -48,5 +55,5 @@ export default function useCachedDomainContactDetails(
 				subdivisionCode: cachedContactDetails.state ?? '',
 			} );
 		}
-	}, [ cachedContactDetails, updateCartLocation ] );
+	}, [ cachedContactDetails, updateCartLocation, cachedDetailCountry ] );
 }

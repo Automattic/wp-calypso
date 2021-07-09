@@ -171,7 +171,7 @@ class AutoLoadingHomepageModal extends Component {
 
 		const iframeSrcKeepHomepage = `//${ this.props.siteDomain }?theme=${ encodeURIComponent(
 			stylesheet
-		) }&hide_banners=1&preview_overlay=true`;
+		) }&hide_banners=true&preview_overlay=true`;
 
 		return (
 			<Dialog

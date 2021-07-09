@@ -2,6 +2,7 @@
  * External dependencies
  */
 import page from 'page';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -62,13 +63,47 @@ export default function () {
 		clientRender
 	);
 
+	// Manage payment methods.
+	if ( config.isEnabled( 'jetpack/partner-portal-payment' ) ) {
+		page(
+			`/partner-portal/payment-method`,
+			controller.requireAccessContext,
+			controller.requireTermsOfServiceConsentContext,
+			controller.requireSelectedPartnerKeyContext,
+			controller.paymentMethodListContext,
+			makeLayout,
+			clientRender
+		);
+
+		page(
+			`/partner-portal/payment-method/add`,
+			controller.requireAccessContext,
+			controller.requireTermsOfServiceConsentContext,
+			controller.requireSelectedPartnerKeyContext,
+			controller.paymentMethodAddContext,
+			makeLayout,
+			clientRender
+		);
+	}
+
 	// Billing Dashboard.
+	page(
+		`/partner-portal/billing`,
+		controller.requireAccessContext,
+		controller.requireTermsOfServiceConsentContext,
+		controller.requireSelectedPartnerKeyContext,
+		controller.billingDashboardContext,
+		makeLayout,
+		clientRender
+	);
+
+	// Landing Page
 	page(
 		`/partner-portal`,
 		controller.requireAccessContext,
 		controller.requireTermsOfServiceConsentContext,
 		controller.requireSelectedPartnerKeyContext,
-		controller.billingDashboardContext,
+		controller.landingPageContext,
 		makeLayout,
 		clientRender
 	);

@@ -59,6 +59,7 @@ import { getStepModuleName } from 'calypso/signup/config/step-components';
 import { getExternalBackUrl } from './utils';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 /**
  * Style dependencies
@@ -83,13 +84,6 @@ class DomainsStep extends React.Component {
 		vertical: PropTypes.string,
 		isReskinned: PropTypes.bool,
 	};
-
-	getDefaultState = () => ( {
-		previousStepSectionName: this.props.stepSectionName,
-		suggestion: null,
-	} );
-
-	state = this.getDefaultState();
 
 	constructor( props ) {
 		super( props );
@@ -131,12 +125,6 @@ class DomainsStep extends React.Component {
 		}
 	}
 
-	static getDerivedStateFromProps( nextProps ) {
-		return {
-			previousStepSectionName: nextProps.stepSectionName,
-		};
-	}
-
 	/**
 	 * Derive if the "plans" step actually will be visible to the customer in a given flow after the domain step
 	 */
@@ -174,12 +162,16 @@ class DomainsStep extends React.Component {
 		return this.showTestCopy;
 	}
 
+	getLocale() {
+		return ! this.props.userLoggedIn ? this.props.locale : '';
+	}
+
 	getMapDomainUrl = () => {
-		return getStepUrl( this.props.flowName, this.props.stepName, 'mapping', this.props.locale );
+		return getStepUrl( this.props.flowName, this.props.stepName, 'mapping', this.getLocale() );
 	};
 
 	getTransferDomainUrl = () => {
-		return getStepUrl( this.props.flowName, this.props.stepName, 'transfer', this.props.locale );
+		return getStepUrl( this.props.flowName, this.props.stepName, 'transfer', this.getLocale() );
 	};
 
 	getUseYourDomainUrl = () => {
@@ -187,7 +179,7 @@ class DomainsStep extends React.Component {
 			this.props.flowName,
 			this.props.stepName,
 			'use-your-domain',
-			this.props.locale
+			this.getLocale()
 		);
 	};
 
@@ -473,9 +465,6 @@ class DomainsStep extends React.Component {
 
 	domainForm = () => {
 		let initialState = {};
-		if ( this.state?.domainForm ) {
-			initialState = this.state.domainForm;
-		}
 		if ( this.props.step ) {
 			initialState = this.props.step.domainForm;
 		}
@@ -748,22 +737,18 @@ class DomainsStep extends React.Component {
 			return null;
 		}
 
-		const { flowName, isAllDomains, translate, sites, isReskinned } = this.props;
+		const { flowName, isAllDomains, translate, sites, isReskinned, userLoggedIn } = this.props;
 		const source = get( this.props, 'queryObject.source' );
 		const hasSite = Object.keys( sites ).length > 0;
 		let backUrl;
 		let backLabelText;
 		let isExternalBackUrl;
+		const locale = ! userLoggedIn ? getLocaleSlug() : '';
 
 		if ( 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName ) {
-			backUrl = getStepUrl(
-				this.props.flowName,
-				this.props.stepName,
-				'use-your-domain',
-				getLocaleSlug()
-			);
+			backUrl = getStepUrl( this.props.flowName, this.props.stepName, 'use-your-domain', locale );
 		} else if ( this.props.stepSectionName ) {
-			backUrl = getStepUrl( this.props.flowName, this.props.stepName, undefined, getLocaleSlug() );
+			backUrl = getStepUrl( this.props.flowName, this.props.stepName, undefined, locale );
 		} else if ( 0 === this.props.positionInFlow && hasSite ) {
 			backUrl = '/sites/';
 			backLabelText = translate( 'Back to My Sites' );
@@ -866,6 +851,7 @@ export default connect(
 			isSitePreviewVisible: isSitePreviewVisible( state ),
 			sites: getSitesItems( state ),
 			isPlanStepSkipped: isPlanStepExistsAndSkipped( state ),
+			userLoggedIn: isUserLoggedIn( state ),
 		};
 	},
 	{

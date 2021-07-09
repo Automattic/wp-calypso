@@ -39,7 +39,7 @@ export default class NavBarComponent extends AsyncBaseContainer {
 		return await driverHelper.clickWhenClickable( this.driver, profileLocator );
 	}
 	async clickMySites() {
-		const mySitesLocator = By.css( 'header.masterbar a.masterbar__item' );
+		const mySitesLocator = By.css( '[data-tip-target="my-sites"]' );
 		await driverHelper.clickWhenClickable( this.driver, mySitesLocator );
 	}
 	async hasUnreadNotifications() {

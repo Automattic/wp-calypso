@@ -12,6 +12,7 @@ class WebpackRTLPlugin {
 			plugins: [],
 			...options,
 		};
+		this.cache = new WeakMap();
 	}
 
 	apply( compiler ) {
@@ -34,24 +35,29 @@ class WebpackRTLPlugin {
 									}
 								}
 
-								// Extract RTL
-								const baseSource = assets[ asset ].source();
-								let rtlSource = rtlcss.process(
-									baseSource,
-									this.options.options,
-									this.options.plugins
-								);
-								if ( this.options.diffOnly ) {
-									rtlSource = cssDiff( baseSource, rtlSource );
-								}
-
 								// Compute the filename
 								const baseName = path.basename( asset, '.css' );
 								const filename = asset.replace( baseName, `${ baseName }.rtl` );
-
-								// Save the asset
-								assets[ filename ] = new ConcatSource( rtlSource );
+								const assetInstance = assets[ asset ];
 								chunk.files.add( filename );
+
+								if ( this.cache.has( assetInstance ) ) {
+									const cachedRTL = this.cache.get( assetInstance );
+									assets[ filename ] = cachedRTL;
+								} else {
+									const baseSource = assetInstance.source();
+									let rtlSource = rtlcss.process(
+										baseSource,
+										this.options.options,
+										this.options.plugins
+									);
+									if ( this.options.diffOnly ) {
+										rtlSource = cssDiff( baseSource, rtlSource );
+									}
+									// Save the asset
+									assets[ filename ] = new ConcatSource( rtlSource );
+									this.cache.set( assetInstance, assets[ filename ] );
+								}
 							} )
 					);
 				}

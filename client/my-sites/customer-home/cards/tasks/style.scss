@@ -1,17 +1,29 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .task {
 	display: flex;
-	background: var( --color-surface );
-	box-shadow: 0 0 0 1px var( --color-border-subtle );
 	position: relative;
-	margin-bottom: 24px;
+	margin-bottom: 30px;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 3px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		box-shadow: 0 0 0 1px var( --color-border-subtle );
+		margin-bottom: 16px;
+	}
 
 	.task__text,
 	.task__illustration {
 		box-sizing: border-box;
-		padding: 24px;
+		padding: 24px 24px 0;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			padding: 24px 16px;
+		}
 
 		@include breakpoint-deprecated( '>1040px' ) {
-			padding: 32px;
+			padding: 32px 24px;
 		}
 	}
 

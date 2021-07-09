@@ -3,6 +3,8 @@
  */
 import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { createRequestCartProduct } from '@automattic/shopping-cart';
+import type { RequestCartProduct, ResponseCart } from '@automattic/shopping-cart';
 import wp from '../../../lib/wp';
 
 /**
@@ -18,37 +20,6 @@ import { clearLastNonEditorRoute } from '../lib/clear-last-non-editor-route';
 import { useOnboardingFlow } from '../path';
 
 const wpcom = wp.undocumented();
-
-interface Cart {
-	blog_id: number;
-	cart_key: number;
-	coupon: string;
-	coupon_discounts: unknown[];
-	coupon_discounts_integer: unknown[];
-	is_coupon_applied: boolean;
-	has_bundle_credit: boolean;
-	next_domain_is_free: boolean;
-	next_domain_condition: string;
-	products: unknown[];
-	total_cost: number;
-	currency: string;
-	total_cost_display: string;
-	total_cost_integer: number;
-	temporary: boolean;
-	tax: unknown;
-	sub_total: number;
-	sub_total_display: string;
-	sub_total_integer: number;
-	total_tax: number;
-	total_tax_display: string;
-	total_tax_integer: number;
-	credits: number;
-	credits_display: string;
-	credits_integer: number;
-	allowed_payment_methods: unknown[];
-	create_new_blog: boolean;
-	messages: Record< 'errors' | 'success', unknown >;
-}
 
 /**
  * After a new site has been created there are 3 scenarios to cover:
@@ -75,41 +46,51 @@ export default function useOnSiteCreation(): void {
 	const flow = useOnboardingFlow();
 
 	const { resetOnboardStore, setIsRedirecting, setSelectedSite } = useDispatch( ONBOARD_STORE );
-	const flowCompleteTrackingParams = {
-		isNewSite: !! newSite,
-		isNewUser: !! newUser,
-		blogId: newSite?.blogid,
-		hasCartItems: false,
-	};
+	const flowCompleteTrackingParams = React.useMemo(
+		() => ( {
+			isNewSite: !! newSite,
+			isNewUser: !! newUser,
+			blogId: newSite?.blogid,
+			hasCartItems: false,
+		} ),
+		[ newSite, newUser ]
+	);
 
 	React.useEffect( () => {
 		// isRedirecting check this is needed to make sure we don't overwrite the first window.location.replace() call
 		if ( newSite && ! isRedirecting ) {
 			setIsRedirecting( true );
 
-			if ( selectedPlan && ! selectedPlan?.isFree ) {
-				const planProduct = {
-					product_id: planProductSource?.productId,
-					product_slug: planProductSource?.storeSlug,
+			if ( selectedPlan && ! selectedPlan?.isFree && planProductSource ) {
+				const planProduct: RequestCartProduct = createRequestCartProduct( {
+					product_id: planProductSource.productId,
+					product_slug: planProductSource.storeSlug,
 					extra: {
 						source: 'gutenboarding',
 					},
-				};
-				const domainProduct = {
-					meta: domain?.domain_name,
-					product_id: domain?.product_id,
-					extra: {
-						privacy_available: domain?.supports_privacy,
-						privacy: domain?.supports_privacy,
-						source: 'gutenboarding',
-					},
-				};
-				const go = async () => {
-					const cart: Cart = await wpcom.getCart( newSite.site_slug );
-					await wpcom.setCart( newSite.blogid, {
-						...cart,
-						products: [ ...cart.products, planProduct, domainProduct ],
+				} );
+
+				let domainProduct: RequestCartProduct | null = null;
+				if ( domain?.product_id && domain?.product_slug ) {
+					domainProduct = createRequestCartProduct( {
+						meta: domain.domain_name,
+						product_id: domain.product_id,
+						product_slug: domain.product_slug,
+						extra: {
+							privacy: domain.supports_privacy,
+							source: 'gutenboarding',
+						},
 					} );
+				}
+
+				const go = async () => {
+					if ( planProduct || domainProduct ) {
+						const cart: ResponseCart = await wpcom.getCart( newSite.blogid );
+						await wpcom.setCart( newSite.blogid, {
+							...cart,
+							products: [ ...cart.products, planProduct, domainProduct ].filter( Boolean ),
+						} );
+					}
 					resetOnboardStore();
 					clearLastNonEditorRoute();
 					setSelectedSite( newSite.blogid );
@@ -148,6 +129,8 @@ export default function useOnSiteCreation(): void {
 			window.location.href = destination;
 		}
 	}, [
+		flow,
+		planProductSource,
 		domain,
 		selectedPlan,
 		isRedirecting,

@@ -122,7 +122,6 @@ class Layout extends React.Component {
 
 		const index = nextProps.notes.findIndex( ( n ) => n.id === nextProps.selectedNoteId );
 		this.setState( {
-			index: index >= 0 ? index : null,
 			lastSelectedIndex: index === null ? 0 : index,
 			selectedNote: nextProps.selectedNoteId,
 			navigationEnabled: true,
@@ -424,8 +423,6 @@ class Layout extends React.Component {
 		) {
 			this.props.unselectNote();
 		}
-
-		this.setState( { notes } );
 	};
 
 	storeNoteList = ( ref ) => {

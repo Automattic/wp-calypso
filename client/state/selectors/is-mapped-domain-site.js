@@ -1,10 +1,4 @@
 /**
- * External dependencies
- */
-
-import { get, some } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import getRawSite from 'calypso/state/selectors/get-raw-site';
@@ -26,8 +20,5 @@ export default function isMappedDomainSite( state, siteId ) {
 		return null;
 	}
 
-	return (
-		get( site, 'options.is_mapped_domain', false ) &&
-		some( domains, ( { isWPCOMDomain } ) => ! isWPCOMDomain )
-	);
+	return site.options?.is_mapped_domain && domains.some( ( { isWPCOMDomain } ) => ! isWPCOMDomain );
 }

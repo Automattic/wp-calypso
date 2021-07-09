@@ -24,7 +24,7 @@ export type Item = {
 			tag?: string;
 		};
 	};
-	[ propName: string ]: string | number | object | null;
+	[ propName: string ]: string | number | Record< string, unknown > | null;
 };
 
 export type Feed = {

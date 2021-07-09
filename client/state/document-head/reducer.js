@@ -1,12 +1,13 @@
 /**
  * External dependencies
  */
+import config from '@automattic/calypso-config';
 import { uniqWith, isEqual } from 'lodash';
+import { withStorageKey } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
  */
-import config from '@automattic/calypso-config';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import {
 	DOCUMENT_HEAD_LINK_SET,
@@ -69,9 +70,11 @@ export const link = withSchemaValidation( linkSchema, ( state = [], action ) => 
 	return state;
 } );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	link,
 	meta,
 	title,
 	unreadCount,
 } );
+
+export default withStorageKey( 'documentHead', combinedReducer );

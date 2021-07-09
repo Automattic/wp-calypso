@@ -33,7 +33,7 @@ import {
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_RESET_PLANS,
 	JETPACK_REDIRECT_URL,
-	redirectCloudCheckoutToWpAdmin,
+	redirectCheckoutToWpAdmin,
 } from '@automattic/calypso-products';
 import { persistSignupDestination, retrieveSignupDestination } from 'calypso/signup/storageUtils';
 import { badNaiveClientSideRollout } from 'calypso/lib/naive-client-side-rollout';
@@ -125,14 +125,23 @@ export default function getThankYouPageUrl( {
 	const pendingOrReceiptId = getPendingOrReceiptId( receiptId, orderId, purchaseId );
 	debug( 'pendingOrReceiptId is', pendingOrReceiptId );
 
-	// jetpack userless checkout uses a special thank you page
+	// jetpack userless & siteless checkout uses a special thank you page
 	if ( isJetpackCheckout ) {
-		debug( 'redirecting to userless jetpack thank you' );
+		if ( siteSlug ) {
+			debug( 'redirecting to userless jetpack thank you' );
 
-		// extract a product from the cart, in userless checkout there should only be one
+			// extract a product from the cart, in userless checkout there should only be one
+			const productSlug = cart?.products[ 0 ]?.product_slug;
+
+			return `/checkout/jetpack/thank-you/${ siteSlug }/${ productSlug ?? 'no_product' }`;
+		}
+		// siteless checkout
+		debug( 'redirecting to siteless jetpack thank you' );
+
+		// extract a product from the cart, in siteless checkout there should only be one
 		const productSlug = cart?.products[ 0 ]?.product_slug;
 
-		return `/checkout/jetpack/thank-you/${ siteSlug }/${ productSlug ?? 'no_product' }`;
+		return `/checkout/jetpack/thank-you/no-site/${ productSlug ?? 'no_product' }`;
 	}
 
 	const fallbackUrl = getFallbackDestination( {
@@ -290,10 +299,10 @@ function getFallbackDestination( {
 		if ( isJetpackNotAtomic && purchasedProduct ) {
 			debug( 'the site is jetpack and bought a jetpack product', siteSlug, purchasedProduct );
 
-			// Jetpack Cloud will either redirect to wp-admin (if JETPACK_CLOUD_REDIRECT_CHECKOUT_TO_WPADMIN
+			// Jetpack Cloud will either redirect to wp-admin (if JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN
 			// flag is set), or otherwise will redirect to a Jetpack Redirect API url (source=jetpack-checkout-thankyou)
 			if ( isJetpackCloud() ) {
-				if ( redirectCloudCheckoutToWpAdmin() && adminUrl ) {
+				if ( redirectCheckoutToWpAdmin() && adminUrl ) {
 					debug( 'checkout is Jetpack Cloud, returning wp-admin url' );
 					return `${ adminUrl }admin.php?page=jetpack#/recommendations`;
 				}
@@ -303,7 +312,9 @@ function getFallbackDestination( {
 				) }`;
 			}
 			// Otherwise if not Jetpack Cloud:
-			return `/plans/my-plan/${ siteSlug }?thank-you=true&product=${ purchasedProduct }`;
+			return redirectCheckoutToWpAdmin() && adminUrl
+				? `${ adminUrl }admin.php?page=jetpack#/recommendations`
+				: `/plans/my-plan/${ siteSlug }?thank-you=true&product=${ purchasedProduct }`;
 		}
 
 		// If we just purchased a legacy Jetpack plan, redirect to the Jetpack onboarding plugin install flow.

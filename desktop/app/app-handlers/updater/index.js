@@ -45,7 +45,7 @@ function init() {
 			setInterval( updater.ping.bind( updater ), Config.updater.interval );
 		} );
 	} else {
-		log.info( 'Skipping Update – no configuration' );
+		log.info( 'Skipping updater configuration ...' );
 	}
 }
 

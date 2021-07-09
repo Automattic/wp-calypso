@@ -29,14 +29,19 @@ import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import MainWrapper from './main-wrapper';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserConnection from 'calypso/components/data/query-user-connection';
 import Spinner from 'calypso/components/spinner';
-import userUtilities from 'calypso/lib/user/utils';
+import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { addQueryArgs, externalRedirect } from 'calypso/lib/route';
 import { authQueryPropTypes, getRoleFromScope } from './utils';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { isRequestingSite, isRequestingSites } from 'calypso/state/sites/selectors';
+import {
+	isFetchingSitePurchases,
+	siteHasJetpackProductPurchase,
+} from 'calypso/state/purchases/selectors';
 import { JPC_PATH_PLANS, REMOTE_PATH_AUTH } from './constants';
 import { OFFER_RESET_FLOW_TYPES } from './flow-types';
 import { login } from 'calypso/lib/paths';
@@ -103,7 +108,9 @@ export class JetpackAuthorize extends Component {
 		isFetchingAuthorizationSite: PropTypes.bool,
 		isFetchingSites: PropTypes.bool,
 		isSiteBlocked: PropTypes.bool,
+		isRequestingSitePurchases: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
+		siteHasJetpackPaidProduct: PropTypes.bool,
 		retryAuth: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		user: PropTypes.object.isRequired,
@@ -206,7 +213,7 @@ export class JetpackAuthorize extends Component {
 
 	redirect() {
 		const { isMobileAppFlow, mobileAppRedirect } = this.props;
-		const { from, redirectAfterAuth, scope } = this.props.authQuery;
+		const { from, redirectAfterAuth, scope, closeWindowAfterAuthorize } = this.props.authQuery;
 		const { isRedirecting } = this.state;
 
 		if ( isRedirecting ) {
@@ -217,6 +224,14 @@ export class JetpackAuthorize extends Component {
 			debug( `Redirecting to mobile app ${ mobileAppRedirect }` );
 			window.location.replace( mobileAppRedirect );
 			return;
+		}
+
+		if ( closeWindowAfterAuthorize && typeof window !== 'undefined' ) {
+			// Certain connection flows may complete the authorization step within a popup window.
+			// In these cases, we'll want to automatically close the window when the authorization
+			// step is complete, and have the window opener detect this and re-check user authorization status.
+			debug( 'Closing window after authorize' );
+			window.close();
 		}
 
 		if (
@@ -240,7 +255,14 @@ export class JetpackAuthorize extends Component {
 			);
 			this.externalRedirectOnce( redirectAfterAuth );
 		} else {
-			page.redirect( this.getRedirectionTarget() );
+			const { target, isExternal } = this.getRedirectionTarget();
+
+			if ( isExternal ) {
+				externalRedirect( target );
+				return;
+			}
+
+			page.redirect( target );
 		}
 
 		this.setState( { isRedirecting: true } );
@@ -360,7 +382,7 @@ export class JetpackAuthorize extends Component {
 	handleSignIn = () => {
 		const { recordTracksEvent } = this.props;
 		const { from } = this.props.authQuery;
-		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && 'woocommerce-onboarding' === from ) {
+		if ( 'woocommerce-onboarding' === from ) {
 			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { different_account: true } );
 		}
 	};
@@ -370,11 +392,11 @@ export class JetpackAuthorize extends Component {
 		const { from } = this.props.authQuery;
 		recordTracksEvent( 'calypso_jpc_signout_click' );
 
-		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && 'woocommerce-onboarding' === from ) {
+		if ( 'woocommerce-onboarding' === from ) {
 			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { create_jetpack: true } );
 		}
 
-		userUtilities.logout( window.location.href );
+		this.props.redirectToLogout( window.location.href );
 	};
 
 	handleResolve = () => {
@@ -424,7 +446,7 @@ export class JetpackAuthorize extends Component {
 
 		recordTracksEvent( 'calypso_jpc_approve_click' );
 
-		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && 'woocommerce-onboarding' === from ) {
+		if ( 'woocommerce-onboarding' === from ) {
 			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { use_account: true } );
 		}
 
@@ -666,14 +688,14 @@ export class JetpackAuthorize extends Component {
 
 	getRedirectionTarget() {
 		const { clientId, homeUrl, redirectAfterAuth } = this.props.authQuery;
-		const { partnerSlug, selectedPlanSlug } = this.props;
+		const { partnerSlug, selectedPlanSlug, siteHasJetpackPaidProduct } = this.props;
 
 		// Redirect sites hosted on Pressable with a partner plan to some URL.
 		if (
 			config.isEnabled( 'jetpack/connect-redirect-pressable-credential-approval' ) &&
 			'pressable' === partnerSlug
 		) {
-			return `/start/pressable-nux?blogid=${ clientId }`;
+			return { target: `/start/pressable-nux?blogid=${ clientId }`, isExternal: false };
 		}
 
 		// If the redirect is part of a Jetpack plan or product go to the checkout page
@@ -684,13 +706,25 @@ export class JetpackAuthorize extends Component {
 			// Once we decide we want to redirect the user to the checkout page and that there is a
 			// valid plan, we can safely remove it from the session storage
 			clearPlan();
-			return `/checkout/${ urlToSlug( homeUrl ) }/${ selectedPlanSlug }`;
+			return {
+				target: `/checkout/${ urlToSlug( homeUrl ) }/${ selectedPlanSlug }`,
+				isExternal: false,
+			};
 		}
 
-		return addQueryArgs(
-			{ redirect: redirectAfterAuth },
-			`${ JPC_PATH_PLANS }/${ urlToSlug( homeUrl ) }`
-		);
+		// If the site has a Jetpack paid product, send the user back to wp-admin rather than
+		// to the Plans page.
+		if ( siteHasJetpackPaidProduct ) {
+			return { target: redirectAfterAuth, isExternal: true };
+		}
+
+		return {
+			target: addQueryArgs(
+				{ redirect: redirectAfterAuth },
+				`${ JPC_PATH_PLANS }/${ urlToSlug( homeUrl ) }`
+			),
+			isExternal: false,
+		};
 	}
 
 	renderFooterLinks() {
@@ -784,6 +818,7 @@ export class JetpackAuthorize extends Component {
 
 		if (
 			this.props.isFetchingAuthorizationSite ||
+			this.props.isRequestingSitePurchases ||
 			this.isAuthorizing() ||
 			this.retryingAuth ||
 			authorizeSuccess
@@ -817,6 +852,8 @@ export class JetpackAuthorize extends Component {
 
 		const isJetpackMagicLinkSignUpFlow = config.isEnabled( 'jetpack/magic-link-signup' );
 
+		const authSiteId = this.props.authQuery.clientId;
+
 		return (
 			<MainWrapper
 				isWoo={ this.isWooOnboarding() }
@@ -827,8 +864,9 @@ export class JetpackAuthorize extends Component {
 			>
 				<div className="jetpack-connect__authorize-form">
 					<div className="jetpack-connect__logged-in-form">
+						<QuerySitePurchases siteId={ authSiteId } />
 						<QueryUserConnection
-							siteId={ this.props.authQuery.clientId }
+							siteId={ authSiteId }
 							siteIsOnSitesList={ this.props.isAlreadyOnSitesList }
 						/>
 						<AuthFormHeader
@@ -869,12 +907,14 @@ const connectComponent = connect(
 			isFetchingAuthorizationSite: isRequestingSite( state, authQuery.clientId ),
 			isFetchingSites: isRequestingSites( state ),
 			isMobileAppFlow,
+			isRequestingSitePurchases: isFetchingSitePurchases( state ),
 			isSiteBlocked: isSiteBlockedSelector( state ),
 			isVip: isVipSite( state, authQuery.clientId ),
 			mobileAppRedirect,
 			partnerID: getPartnerIdFromQuery( state ),
 			partnerSlug: getPartnerSlugFromQuery( state ),
 			selectedPlanSlug,
+			siteHasJetpackPaidProduct: siteHasJetpackProductPurchase( state, authQuery.clientId ),
 			user: getCurrentUser( state ),
 			userAlreadyConnected: getUserAlreadyConnected( state ),
 		};
@@ -882,6 +922,7 @@ const connectComponent = connect(
 	{
 		authorize: authorizeAction,
 		recordTracksEvent: recordTracksEventAction,
+		redirectToLogout,
 		retryAuth: retryAuthAction,
 	}
 );

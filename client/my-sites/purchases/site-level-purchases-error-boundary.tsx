@@ -12,10 +12,10 @@ export default class SiteLevelPurchasesErrorBoundary extends React.Component< Si
 		super( props );
 	}
 
-	public state = { hasError: false, currentError: null };
+	public state = { hasError: false };
 
-	static getDerivedStateFromError( error: string ) {
-		return { currentError: error, hasError: true };
+	static getDerivedStateFromError() {
+		return { hasError: true };
 	}
 
 	componentDidCatch( error: Error, errorInfo: ErrorInfo ) {

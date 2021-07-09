@@ -54,18 +54,19 @@ class SiteSettingsPerformance extends Component {
 			trackEvent,
 			updateFields,
 			saveJetpackSettings,
+			activateModule,
 		} = this.props;
 		const siteIsJetpackNonAtomic = siteIsJetpack && ! siteIsAtomic;
 
 		return (
 			<Main className="settings-performance site-settings site-settings__performance-settings">
-				<DocumentHead title={ translate( 'Site Settings' ) } />
+				<DocumentHead title={ translate( 'Performance Settings' ) } />
 				<JetpackDevModeNotice />
 				<SidebarNavigation />
 				<FormattedHeader
 					brandFont
 					className="settings-performance__page-heading"
-					headerText={ translate( 'Settings' ) }
+					headerText={ translate( 'Performance Settings' ) }
 					subHeaderText={ translate( "Explore settings to improve your site's performance." ) }
 					align="left"
 				/>
@@ -80,6 +81,7 @@ class SiteSettingsPerformance extends Component {
 					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
 					trackEvent={ trackEvent }
+					activateModule={ activateModule }
 				/>
 
 				{ showCloudflare && ! siteIsJetpackNonAtomic && <Cloudflare /> }

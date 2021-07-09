@@ -20,6 +20,7 @@ import WordPressImporter from 'calypso/my-sites/importer/importer-wordpress';
 import MediumImporter from 'calypso/my-sites/importer/importer-medium';
 import BloggerImporter from 'calypso/my-sites/importer/importer-blogger';
 import WixImporter from 'calypso/my-sites/importer/importer-wix';
+import SubstackImporter from 'calypso/my-sites/importer/importer-substack';
 import SquarespaceImporter from 'calypso/my-sites/importer/importer-squarespace';
 import { fetchImporterState, startImport } from 'calypso/state/imports/actions';
 import { getImporters, getImporterByKey } from 'calypso/lib/importer/importer-config';
@@ -42,11 +43,13 @@ import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import EmptyContent from 'calypso/components/empty-content';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 
 /**
  * Style dependencies
  */
 import './section-import.scss';
+import config from '@automattic/calypso-config';
 
 /**
  * Configuration mapping import engines to associated import components.
@@ -58,6 +61,7 @@ import './section-import.scss';
 const importerComponents = {
 	blogger: BloggerImporter,
 	medium: MediumImporter,
+	substack: SubstackImporter,
 	squarespace: SquarespaceImporter,
 	wix: WixImporter,
 	wordpress: WordPressImporter,
@@ -288,6 +292,7 @@ class SectionImport extends Component {
 
 		return (
 			<Main>
+				<ScreenOptionsTab wpAdminPath="import.php" />
 				<DocumentHead title={ translate( 'Import Content' ) } />
 				<SidebarNavigation />
 				<FormattedHeader
@@ -296,6 +301,7 @@ class SectionImport extends Component {
 					headerText={ translate( 'Import Content' ) }
 					subHeaderText={ translate( 'Import content from another website or platform.' ) }
 					align="left"
+					hasScreenOptions={ config.isEnabled( 'nav-unification/switcher' ) }
 				/>
 				<EmailVerificationGate allowUnlaunched>
 					{ isJetpack && ! isAtomic ? <JetpackImporter /> : this.renderImportersList() }

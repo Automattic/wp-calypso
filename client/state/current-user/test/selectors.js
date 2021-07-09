@@ -9,7 +9,6 @@ import {
 	getCurrentUserDate,
 	isUserLoggedIn,
 	isValidCapability,
-	getCurrentUserCurrencyCode,
 	getCurrentUserEmail,
 	isCurrentUserBootstrapped,
 } from '../selectors';
@@ -224,25 +223,6 @@ describe( 'selectors', () => {
 			);
 
 			expect( isValid ).toBe( false );
-		} );
-	} );
-
-	describe( 'getCurrentUserCurrencyCode', () => {
-		test( 'should return null if currencyCode is not set', () => {
-			const selected = getCurrentUserCurrencyCode( {
-				currentUser: {
-					currencyCode: null,
-				},
-			} );
-			expect( selected ).toBeNull();
-		} );
-		test( 'should return value if currencyCode is set', () => {
-			const selected = getCurrentUserCurrencyCode( {
-				currentUser: {
-					currencyCode: 'USD',
-				},
-			} );
-			expect( selected ).toBe( 'USD' );
 		} );
 	} );
 

@@ -90,7 +90,6 @@ class SiteMenu extends PureComponent {
 				name: 'post',
 				label: translate( 'Posts' ),
 				capability: 'edit_posts',
-				config: 'manage/posts',
 				queryable: true,
 				link: '/posts' + this.getMyParameter(),
 				paths: [ '/posts', '/posts/my' ],
@@ -112,7 +111,6 @@ class SiteMenu extends PureComponent {
 				count: get( this.props.commentCounts, 'pending' ),
 				capability: 'edit_posts',
 				queryable: true,
-				config: 'manage/comments',
 				link: '/comments',
 				paths: [ '/comment', '/comments' ],
 				wpAdminLink: 'edit-comments.php',
@@ -206,11 +204,7 @@ class SiteMenu extends PureComponent {
 				}
 
 				// Hide "Feedback" for WP for Teams sites.
-				if (
-					config.isEnabled( 'signup/wpforteams' ) &&
-					this.props.isSiteWPForTeams &&
-					postTypeSlug === 'feedback'
-				) {
+				if ( this.props.isSiteWPForTeams && postTypeSlug === 'feedback' ) {
 					return memo;
 				} else if ( postTypeSlug === 'feedback' ) {
 					//Special handling for feedback (contact form entries), let's calypsoify except for VIP
@@ -219,7 +213,6 @@ class SiteMenu extends PureComponent {
 					return memo.concat( {
 						name: postType.name,
 						label: decodeEntities( get( postType.labels, 'menu_name', postType.label ) ),
-						config: 'manage/custom-post-types',
 						//controls if we show the wp-admin link. It feels like this is coupling two different meanings (api_queryable)
 						queryable: false,
 
@@ -242,7 +235,6 @@ class SiteMenu extends PureComponent {
 				return memo.concat( {
 					name: postType.name,
 					label: decodeEntities( get( postType.labels, 'menu_name', postType.label ) ),
-					config: 'manage/custom-post-types',
 					queryable: postType.api_queryable,
 
 					//If the API endpoint doesn't send the .capabilities property (e.g. because the site's Jetpack

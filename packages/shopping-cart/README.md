@@ -15,6 +15,7 @@ It requires three props:
 - `cartKey: string | number | undefined | null`. Every cart is keyed by a cart key; usually this is the WordPress.com site ID (preferred, because it is always unique) or site slug. It can also be `'no-site'` or `'no-user'`. If `undefined` or `null`, the cart will not be loaded and the `isLoading` value will be `true`; this can be used to temporarily disable the cart.
 - `getCart: ( cartKey: string ) => Promise< ResponseCart >`. This is an async function that will fetch the cart from the server.
 - `setCart: ( cartKey: string, requestCart: RequestCart ) => Promise< ResponseCart >`. This is an async function that will send an updated cart to the server.
+- `options?: { refetchOnWindowFocus?: boolean }`. Optional. Can be used to trigger `getCart` when the window or tab is hidden and then refocused.
 
 ## useShoppingCart
 

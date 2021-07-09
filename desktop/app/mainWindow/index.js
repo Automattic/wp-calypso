@@ -20,6 +20,8 @@ const { getPath } = require( '../lib/assets' );
  * Module variables
  */
 const USE_LOCALHOST = process.env.WP_DESKTOP_DEBUG_LOCALHOST !== undefined;
+const TITLE_BAR_HEIGHT = 38;
+
 let mainWindow = null;
 
 function showAppWindow() {
@@ -45,6 +47,10 @@ function showAppWindow() {
 		windowConfig.webPreferences.allowRunningInsecureContent = true;
 	}
 
+	if ( process.platform === 'linux' ) {
+		windowConfig.icon = getPath( 'app-logo.png' );
+	}
+
 	mainWindow = new BrowserWindow( {
 		...windowConfig,
 		...bounds,
@@ -59,8 +65,35 @@ function showAppWindow() {
 	mainWindow.webContents.loadURL( `file://${ getPath( 'index.html' ) }` );
 
 	mainWindow.setBrowserView( mainView );
-	mainView.setBounds( { ...bounds, ...{ x: 0, y: 38 } } );
-	mainView.setAutoResize( { horizontal: true, vertical: true } );
+	mainView.setBounds( {
+		x: 0,
+		y: TITLE_BAR_HEIGHT,
+		width: bounds.width,
+		height: bounds.height - TITLE_BAR_HEIGHT,
+	} );
+
+	// Windows and Linux don't resize properly and require extra space added to fit properly after resize.
+	mainWindow.on( 'resize', function () {
+		setTimeout( () => {
+			const newBounds = mainWindow.getBounds();
+			const boundsPadding = { width: 0, height: TITLE_BAR_HEIGHT };
+			if ( process.platform === 'win32' ) {
+				boundsPadding.width = 15;
+				boundsPadding.height = TITLE_BAR_HEIGHT + 55;
+			}
+			if ( process.platform === 'linux' ) {
+				boundsPadding.width = 1;
+				boundsPadding.height = TITLE_BAR_HEIGHT + 25;
+			}
+
+			mainView.setBounds( {
+				x: 0,
+				y: TITLE_BAR_HEIGHT,
+				width: newBounds.width - boundsPadding.width,
+				height: newBounds.height - boundsPadding.height,
+			} );
+		}, 10 );
+	} );
 
 	SessionManager.init( mainWindow );
 

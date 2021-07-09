@@ -230,29 +230,56 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		return await driverHelper.isElementLocated( this.driver, By.css( '.block-editor-warning' ) );
 	}
 
+	async isBlockInserterOpen() {
+		const inserterMenuLocator = By.css( '.block-editor-inserter__menu' );
+		return await driverHelper.isElementLocated( this.driver, inserterMenuLocator );
+	}
+
+	async openBlockInserter() {
+		const inserterToggleLocator = By.css(
+			'.edit-post-header .edit-post-header-toolbar__inserter-toggle'
+		);
+		if ( ! ( await this.isBlockInserterOpen() ) ) {
+			await driverHelper.clickWhenClickable( this.driver, inserterToggleLocator );
+		}
+
+		const inserterMenuLocator = By.css( '.block-editor-inserter__menu' );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, inserterMenuLocator );
+	}
+
 	async openBlockInserterAndSearch( searchTerm ) {
 		await driverHelper.scrollIntoView(
 			this.driver,
 			By.css( '.block-editor-writing-flow' ),
 			'start'
 		);
-		const inserterToggleLocator = By.css(
-			'.edit-post-header .edit-post-header-toolbar__inserter-toggle'
-		);
-		const inserterMenuLocator = By.css( '.block-editor-inserter__menu' );
+
+		await this.openBlockInserter();
 		const inserterSearchInputLocator = By.css( 'input.block-editor-inserter__search-input' );
 
-		if ( await driverHelper.isElementNotLocated( this.driver, inserterMenuLocator ) ) {
-			await driverHelper.clickWhenClickable( this.driver, inserterToggleLocator );
-			// "Click" twice - the first click seems to trigger a tooltip, the second opens the menu
-			// See https://github.com/Automattic/wp-calypso/issues/43179
-			if ( await driverHelper.isElementNotLocated( this.driver, inserterMenuLocator ) ) {
-				await driverHelper.clickWhenClickable( this.driver, inserterToggleLocator );
-			}
-
-			await driverHelper.waitUntilElementLocatedAndVisible( this.driver, inserterMenuLocator );
-		}
 		await driverHelper.setWhenSettable( this.driver, inserterSearchInputLocator, searchTerm );
+	}
+
+	async insertPattern( category, name ) {
+		await this.openBlockInserter();
+
+		const patternTabLocator = By.css(
+			'.block-editor-inserter__tabs .components-tab-panel__tabs-item[id$="patterns"]'
+		);
+		const patternCategoryDropdownLocator = By.css(
+			'.components-tab-panel__tab-content .components-select-control__input'
+		);
+		const patternCategoryDropdownOptionLocator = By.css(
+			`.components-tab-panel__tab-content .components-select-control__input option[value="${ category }"]`
+		);
+		const patternItemLocator = By.css(
+			`.block-editor-block-patterns-list__list-item[aria-label="${ name }"]`
+		);
+		await driverHelper.clickWhenClickable( this.driver, patternTabLocator );
+		await driverHelper.clickWhenClickable( this.driver, patternCategoryDropdownLocator );
+		await driverHelper.clickWhenClickable( this.driver, patternCategoryDropdownOptionLocator );
+		await driverHelper.clickWhenClickable( this.driver, patternCategoryDropdownLocator );
+		await driverHelper.clickWhenClickable( this.driver, patternItemLocator );
 	}
 
 	// @TODO: Remove `.block-editor-inserter__results .components-panel__body-title` selector in favor of the `.block-editor-inserter__block-list .block-editor-inserter__panel-title` selector when Gutenberg 8.0.0 is deployed.
@@ -264,12 +291,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async closeBlockInserter() {
-		// @TODO: Remove `.edit-post-header .block-editor-inserter__toggle` selector in favor of the `.edit-post-header-toolbar__inserter-toggle` selector when Gutenberg 8.0.0 is deployed.
-		// @TODO: Remove `.block-editor-inserter__popover .components-popover__close` selector in favor of the `.edit-post-layout__inserter-panel-header .components-button` selector when Gutenberg 8.0.0 is deployed.
 		const inserterCloseLocator = By.css(
 			driverManager.currentScreenSize() === 'mobile'
-				? '.block-editor-inserter__popover .components-popover__close, .edit-post-layout__inserter-panel-header .components-button'
-				: '.edit-post-header .block-editor-inserter__toggle, .edit-post-header .edit-post-header-toolbar__inserter-toggle'
+				? '.edit-post-editor__inserter-panel-header .components-button'
+				: '.edit-post-header-toolbar__inserter-toggle'
 		);
 		const inserterMenuLocator = By.css( '.block-editor-inserter__menu' );
 		await driverHelper.clickWhenClickable( this.driver, inserterCloseLocator );
@@ -285,7 +310,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		return await this.driver
 			.findElements(
 				By.css(
-					'.edit-post-layout__inserter-panel .block-editor-block-types-list span.block-editor-block-types-list__item-title'
+					'.edit-post-editor__inserter-panel .block-editor-block-types-list span.block-editor-block-types-list__item-title'
 				)
 			)
 			.then( ( els ) => webdriver.promise.map( els, ( el ) => el.getAttribute( 'innerText' ) ) );
@@ -388,7 +413,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		);
 
 		const inserterBlockItemLocator = By.css(
-			`.edit-post-layout__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix }${ blockClass }`
+			`.edit-post-editor__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix }${ blockClass }`
 		);
 
 		const insertedBlockLocator = By.css(
@@ -663,5 +688,55 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				'.jetpack-upgrade-plan-banner__wrapper .is-primary:not(.jetpack-upgrade-plan__hidden)'
 			)
 		);
+	}
+
+	async toggleListView() {
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.edit-post-header-toolbar__list-view-toggle' )
+		);
+	}
+
+	async toggleDetails() {
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.edit-post-header .table-of-contents button' )
+		);
+	}
+
+	async toggleBlockEditorSidebar() {
+		const dismissSidebarButtonSelector =
+			'button[aria-label="Block editor sidebar"][aria-expanded="false"]';
+		const toggleSidebarButtonSelector = 'button[aria-label="Close block editor sidebar"]';
+
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( `${ toggleSidebarButtonSelector }, ${ dismissSidebarButtonSelector }` )
+		);
+	}
+
+	async dismissNotices() {
+		const locator = By.css( '.components-snackbar[aria-label="Dismiss this notice"]' );
+		const notices = await this.driver.findElements( locator );
+		await Promise.all( notices.map( ( notice ) => notice.click() ) );
+		await driverHelper.waitUntilElementNotLocated( this.driver, locator );
+	}
+
+	async insertBlockOrPatternViaBlockAppender( name, container = 'Group' ) {
+		const containerBlockId = await this.addBlock( container );
+		const blockAppenderLocator = By.css(
+			`#${ containerBlockId } .block-editor-button-block-appender`
+		);
+		await driverHelper.clickWhenClickable( this.driver, blockAppenderLocator );
+
+		const quickInserterSearchInputLocator = By.css(
+			'.block-editor-inserter__quick-inserter .block-editor-inserter__search-input'
+		);
+		const patternItemLocator = By.css(
+			'.block-editor-inserter__quick-inserter .block-editor-block-types-list__item, .block-editor-inserter__quick-inserter .block-editor-block-patterns-list__item'
+		);
+
+		await driverHelper.setWhenSettable( this.driver, quickInserterSearchInputLocator, name );
+		await driverHelper.clickWhenClickable( this.driver, patternItemLocator );
 	}
 }

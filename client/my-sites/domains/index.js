@@ -14,7 +14,7 @@ import {
 } from 'calypso/my-sites/controller';
 import domainsController from './controller';
 import domainManagementController from './domain-management/controller';
-import SiftScience from 'calypso/lib/siftscience';
+import { recordSiftScienceUser } from 'calypso/lib/siftscience';
 import config from '@automattic/calypso-config';
 import * as paths from './paths';
 import { makeLayout, render as clientRender } from 'calypso/controller';
@@ -51,7 +51,7 @@ function getCommonHandlers( {
 }
 
 export default function () {
-	SiftScience.recordUser();
+	page( '/domains*', recordSiftScienceUser );
 
 	// These redirects are work-around in response to an issue where navigating back after a
 	// successful site address change shows a continuous placeholder state... #23929 for details.
@@ -141,6 +141,14 @@ export default function () {
 		paths.domainManagementRoot(),
 		...getCommonHandlers( { noSitePath: false } ),
 		domainManagementController.domainManagementListAllSites,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementAllEditContactInfo(),
+		...getCommonHandlers( { noSitePath: false } ),
+		domainManagementController.domainManagementBulkEditContactInfo,
 		makeLayout,
 		clientRender
 	);

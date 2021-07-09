@@ -670,33 +670,28 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 	};
 };
 
-const connectComponent = connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		const siteIsJetpack = isJetpackSite( state, siteId );
-		const selectedSite = getSelectedSite( state );
+const connectComponent = connect( ( state ) => {
+	const siteId = getSelectedSiteId( state );
+	const siteIsJetpack = isJetpackSite( state, siteId );
+	const selectedSite = getSelectedSite( state );
 
-		return {
-			isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
-			isComingSoon: isSiteComingSoon( state, siteId ),
-			siteIsJetpack,
-			siteIsVip: isVipSite( state, siteId ),
-			siteSlug: getSelectedSiteSlug( state ),
-			selectedSite,
-			isPaidPlan: isCurrentPlanPaid( state, siteId ),
-			siteDomains: getDomainsBySiteId( state, siteId ),
-			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
-			isP2HubSite: isSiteP2Hub( state, siteId ),
-			isAtomicAndEditingToolkitDeactivated: isAtomicAndEditingToolkitPluginDeactivated(
-				state,
-				siteId
-			),
-		};
-	},
-	mapDispatchToProps,
-	null,
-	{ pure: false }
-);
+	return {
+		isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
+		isComingSoon: isSiteComingSoon( state, siteId ),
+		siteIsJetpack,
+		siteIsVip: isVipSite( state, siteId ),
+		siteSlug: getSelectedSiteSlug( state ),
+		selectedSite,
+		isPaidPlan: isCurrentPlanPaid( state, siteId ),
+		siteDomains: getDomainsBySiteId( state, siteId ),
+		isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
+		isP2HubSite: isSiteP2Hub( state, siteId ),
+		isAtomicAndEditingToolkitDeactivated: isAtomicAndEditingToolkitPluginDeactivated(
+			state,
+			siteId
+		),
+	};
+}, mapDispatchToProps );
 
 const getFormSettings = ( settings ) => {
 	const defaultSettings = {

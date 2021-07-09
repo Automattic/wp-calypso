@@ -267,7 +267,7 @@ export class MySitesSidebar extends Component {
 
 		let label = translate( 'My Home' );
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+		if ( this.props.isSiteWPForTeams ) {
 			label = translate( 'Home' );
 		}
 
@@ -317,7 +317,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+		if ( this.props.isSiteWPForTeams ) {
 			return null;
 		}
 
@@ -355,7 +355,7 @@ export class MySitesSidebar extends Component {
 	earn() {
 		const { site, canUserUseEarn } = this.props;
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+		if ( this.props.isSiteWPForTeams ) {
 			return null;
 		}
 
@@ -530,7 +530,7 @@ export class MySitesSidebar extends Component {
 	domains() {
 		const { path, translate, canUserManageOptions } = this.props;
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+		if ( this.props.isSiteWPForTeams ) {
 			return null;
 		}
 
@@ -568,11 +568,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if (
-			isEnabled( 'signup/wpforteams' ) &&
-			this.props.isSiteWPForTeams &&
-			! isEnabled( 'p2/p2-plus' )
-		) {
+		if ( this.props.isSiteWPForTeams && ! isEnabled( 'p2/p2-plus' ) ) {
 			return null;
 		}
 
@@ -626,11 +622,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if (
-			isEnabled( 'signup/wpforteams' ) &&
-			this.props.isSiteWPForTeams &&
-			! isEnabled( 'p2/p2-plus' )
-		) {
+		if ( this.props.isSiteWPForTeams && ! isEnabled( 'p2/p2-plus' ) ) {
 			return null;
 		}
 
@@ -686,34 +678,21 @@ export class MySitesSidebar extends Component {
 	};
 
 	store() {
-		const {
-			translate,
-			site,
-			siteSuffix,
-			canUserUseWooCommerceCoreStore,
-			isSiteWpcomStore,
-		} = this.props;
+		const { translate, site, canUserUseWooCommerceCoreStore, isSiteWpcomStore } = this.props;
 
 		if ( ! site ) {
 			return null;
 		}
 
-		let experience = 'calypso-store';
-		let storeLink = '/store' + siteSuffix;
-		if ( isEcommerce( site.plan ) && canUserUseWooCommerceCoreStore ) {
-			// Eventually, the plan is to have the WooCommerce Core menu item labelled the same
-			// for both Business and eCommerce users. But, for now, we want to continue to
-			// use the "Store" label for eCommerce users because that is what they are used to.
-			// So, we'll just continue to change the link here as we have been doing.
-			experience = 'wpadmin-woocommerce-core';
-			storeLink = site.options.admin_url + 'admin.php?page=wc-admin';
-		} else {
+		if ( ! isEcommerce( site.plan ) || ! canUserUseWooCommerceCoreStore ) {
 			return null;
 		}
 
 		if ( ! isSiteWpcomStore && isBusiness( site.plan ) ) {
 			return null;
 		}
+
+		const storeLink = site.options.admin_url + 'admin.php?page=wc-admin';
 
 		const infoCopy = translate(
 			'Your favorite Store functions will become part of WooCommerce menus in February. {{link}}Learn more{{/link}}.',
@@ -737,7 +716,7 @@ export class MySitesSidebar extends Component {
 				onNavigate={ this.trackWooCommerceNavItemClick.bind(
 					this,
 					'store',
-					experience,
+					'wpadmin-woocommerce-core',
 					site.plan.product_slug
 				) }
 				materialIcon="shopping_cart"
@@ -821,7 +800,7 @@ export class MySitesSidebar extends Component {
 		const { path, site } = this.props;
 		const marketingLink = '/marketing' + this.props.siteSuffix;
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+		if ( this.props.isSiteWPForTeams ) {
 			return null;
 		}
 
@@ -854,7 +833,7 @@ export class MySitesSidebar extends Component {
 	hosting() {
 		const { translate, path, siteSuffix, canViewAtomicHosting } = this.props;
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+		if ( this.props.isSiteWPForTeams ) {
 			return null;
 		}
 
@@ -932,7 +911,7 @@ export class MySitesSidebar extends Component {
 	wpAdmin() {
 		const { site } = this.props;
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+		if ( this.props.isSiteWPForTeams ) {
 			return null;
 		}
 
@@ -1065,7 +1044,7 @@ export class MySitesSidebar extends Component {
 
 				{ this.props.shouldRenderJetpackSection && this.jetpack() }
 
-				{ ! ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) && this.design() ? (
+				{ ! this.props.isSiteWPForTeams && this.design() ? (
 					<ExpandableSidebarMenu
 						onClick={ this.toggleSection( SIDEBAR_SECTION_DESIGN ) }
 						expanded={ this.props.isDesignSectionOpen }
@@ -1076,7 +1055,7 @@ export class MySitesSidebar extends Component {
 					</ExpandableSidebarMenu>
 				) : null }
 
-				{ isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams && this.customize() }
+				{ this.props.isSiteWPForTeams && this.customize() }
 
 				<QueryRewindState siteId={ this.props.siteId } />
 				<QueryScanState siteId={ this.props.siteId } />

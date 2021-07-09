@@ -89,7 +89,7 @@ import SiteMockups from './site-mockup';
 import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
 import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
-import { ProvideExperimentData } from 'calypso/lib/explat';
+import FlowProgressIndicator from 'calypso/signup/flow-progress-indicator';
 
 /**
  * Style dependencies
@@ -126,6 +126,10 @@ function isWPForTeamsFlow( flowName ) {
 	return flowName === 'p2';
 }
 
+function isReskinnedFlow( flowName ) {
+	return config.isEnabled( 'signup/reskin' ) && config( 'reskinned_flows' ).includes( flowName );
+}
+
 class Signup extends React.Component {
 	static propTypes = {
 		store: PropTypes.object.isRequired,
@@ -155,7 +159,7 @@ class Signup extends React.Component {
 	};
 
 	UNSAFE_componentWillMount() {
-		const flow = flows.getFlow( this.props.flowName );
+		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
 		const queryObject = ( this.props.initialContext && this.props.initialContext.query ) || {};
 
 		let providedDependencies;
@@ -192,7 +196,7 @@ class Signup extends React.Component {
 		// a WP.com account during the signup flow.
 		this.completeP2FlowAfterLoggingIn();
 
-		if ( canResumeFlow( this.props.flowName, this.props.progress ) ) {
+		if ( canResumeFlow( this.props.flowName, this.props.progress, this.props.isLoggedIn ) ) {
 			// Resume from the current window location
 			return;
 		}
@@ -200,12 +204,12 @@ class Signup extends React.Component {
 		if ( this.getPositionInFlow() !== 0 ) {
 			// Flow is not resumable; redirect to the beginning of the flow.
 			// Set `resumingStep` to prevent flash of incorrect step before the redirect.
-			const destinationStep = flows.getFlow( this.props.flowName ).steps[ 0 ];
+			const destinationStep = flows.getFlow( this.props.flowName, this.props.isLoggedIn )
+				.steps[ 0 ];
 			this.setState( { resumingStep: destinationStep } );
-			return page.redirect( getStepUrl( this.props.flowName, destinationStep, this.props.locale ) );
+			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
+			return page.redirect( getStepUrl( this.props.flowName, destinationStep, undefined, locale ) );
 		}
-
-		this.isReskinned = false;
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
@@ -227,7 +231,10 @@ class Signup extends React.Component {
 			this.updateShouldShowLoadingScreen( progress );
 		}
 
-		if ( ! this.isReskinned ) {
+		if ( isReskinnedFlow( flowName ) ) {
+			document.body.classList.add( 'is-white-signup' );
+			debug( 'In componentWillReceiveProps, addded is-white-signup class' );
+		} else {
 			document.body.classList.remove( 'is-white-signup' );
 			debug( 'In componentWillReceiveProps, removed is-white-signup class' );
 		}
@@ -337,7 +344,11 @@ class Signup extends React.Component {
 	}
 
 	updateShouldShowLoadingScreen = ( progress = this.props.progress ) => {
-		const hasInvalidSteps = !! getFirstInvalidStep( this.props.flowName, progress );
+		const hasInvalidSteps = !! getFirstInvalidStep(
+			this.props.flowName,
+			progress,
+			this.props.isLoggedIn
+		);
 		const waitingForServer = ! hasInvalidSteps && this.isEveryStepSubmitted( progress );
 		const startLoadingScreen = waitingForServer && ! this.state.shouldShowLoadingScreen;
 
@@ -378,8 +389,8 @@ class Signup extends React.Component {
 	};
 
 	removeFulfilledSteps = ( nextProps ) => {
-		const { flowName, stepName } = nextProps;
-		const flowSteps = flows.getFlow( flowName ).steps;
+		const { flowName, isLoggedIn, stepName } = nextProps;
+		const flowSteps = flows.getFlow( flowName, isLoggedIn ).steps;
 		const excludedSteps = clone( flows.excludedSteps );
 		map( excludedSteps, ( flowStepName ) => this.processFulfilledSteps( flowStepName, nextProps ) );
 		map( flowSteps, ( flowStepName ) => this.processFulfilledSteps( flowStepName, nextProps ) );
@@ -527,7 +538,8 @@ class Signup extends React.Component {
 		// redirect the user to the next step
 		scrollPromise.then( () => {
 			if ( ! this.isEveryStepSubmitted() ) {
-				page( getStepUrl( flowName, stepName, stepSectionName, this.props.locale ) );
+				const locale = ! this.props.isLoggedIn ? this.props.locale : '';
+				page( getStepUrl( flowName, stepName, stepSectionName, locale ) );
 			} else if ( this.isEveryStepSubmitted() ) {
 				this.goToFirstInvalidStep();
 			}
@@ -537,7 +549,7 @@ class Signup extends React.Component {
 	// `nextFlowName` is an optional parameter used to redirect to another flow, i.e., from `main`
 	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
 	goToNextStep = ( nextFlowName = this.props.flowName ) => {
-		const flowSteps = flows.getFlow( nextFlowName ).steps;
+		const flowSteps = flows.getFlow( nextFlowName, this.props.isLoggedIn ).steps;
 		const currentStepIndex = flowSteps.indexOf( this.props.stepName );
 		const nextStepName = flowSteps[ currentStepIndex + 1 ];
 		const nextProgressItem = get( this.props.progress, nextStepName );
@@ -551,7 +563,11 @@ class Signup extends React.Component {
 	};
 
 	goToFirstInvalidStep = ( progress = this.props.progress ) => {
-		const firstInvalidStep = getFirstInvalidStep( this.props.flowName, progress );
+		const firstInvalidStep = getFirstInvalidStep(
+			this.props.flowName,
+			progress,
+			this.props.isLoggedIn
+		);
 
 		if ( firstInvalidStep ) {
 			recordSignupInvalidStep( this.props.flowName, this.props.stepName );
@@ -562,24 +578,31 @@ class Signup extends React.Component {
 				return;
 			}
 
+			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
 			debug( `Navigating to the first invalid step: ${ firstInvalidStep.stepName }` );
-			page( getStepUrl( this.props.flowName, firstInvalidStep.stepName, this.props.locale ) );
+			page( getStepUrl( this.props.flowName, firstInvalidStep.stepName, locale ) );
 		}
 	};
 
 	isEveryStepSubmitted = ( progress = this.props.progress ) => {
-		const flowSteps = flows.getFlow( this.props.flowName ).steps;
-		const completedSteps = getCompletedSteps( this.props.flowName, progress );
+		const flowSteps = flows.getFlow( this.props.flowName, this.props.isLoggedIn ).steps;
+		const completedSteps = getCompletedSteps(
+			this.props.flowName,
+			progress,
+			this.props.isLoggedIn
+		);
 		return flowSteps.length === completedSteps.length;
 	};
 
 	getPositionInFlow() {
 		const { flowName, stepName } = this.props;
-		return flows.getFlow( flowName ).steps.indexOf( stepName );
+		return flows.getFlow( flowName, this.props.isLoggedIn ).steps.indexOf( stepName );
 	}
 
-	getFlowLength() {
-		return flows.getFlow( this.props.flowName ).steps.length;
+	getInteractiveStepsCount() {
+		const flowStepsSlugs = flows.getFlow( this.props.flowName, this.props.isLoggedIn ).steps;
+		const flowSteps = flowStepsSlugs.filter( ( step ) => ! steps[ step ].props?.nonInteractive );
+		return flowSteps.length;
 	}
 
 	renderProcessingScreen( isReskinned ) {
@@ -591,7 +614,12 @@ class Signup extends React.Component {
 			const domainItem = get( this.props, 'signupDependencies.domainItem', false );
 			const hasPaidDomain = isDomainRegistration( domainItem );
 
-			return <ReskinnedProcessingScreen hasPaidDomain={ hasPaidDomain } />;
+			return (
+				<ReskinnedProcessingScreen
+					flowName={ this.props.flowName }
+					hasPaidDomain={ hasPaidDomain }
+				/>
+			);
 		}
 
 		return (
@@ -611,7 +639,7 @@ class Signup extends React.Component {
 			...steps[ this.props.stepName ].props,
 		};
 		const stepKey = this.state.shouldShowLoadingScreen ? 'processing' : this.props.stepName;
-		const flow = flows.getFlow( this.props.flowName );
+		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
 		const planWithDomain =
 			this.props.domainsWithPlansOnly &&
 			domainItem &&
@@ -669,7 +697,7 @@ class Signup extends React.Component {
 
 	shouldWaitToRender() {
 		const isStepRemovedFromFlow = ! includes(
-			flows.getFlow( this.props.flowName ).steps,
+			flows.getFlow( this.props.flowName, this.props.isLoggedIn ).steps,
 			this.props.stepName
 		);
 		const isDomainsForSiteEmpty =
@@ -685,14 +713,6 @@ class Signup extends React.Component {
 		if ( isDomainsForSiteEmpty ) {
 			return <QuerySiteDomains siteId={ this.props.siteId } />;
 		}
-	}
-
-	/**
-	 * Temporary hack for adding a css class to the body
-	 * for a user who is assigned to the reskinned group of reskinSignupFlow a/b test.
-	 */
-	addCssClassToBodyForReskinnedFlow() {
-		document.body.classList.add( 'is-white-signup' );
 	}
 
 	render() {
@@ -713,51 +733,38 @@ class Signup extends React.Component {
 
 		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
 
+		const isReskinned = isReskinnedFlow( this.props.flowName );
+
 		return (
-			<ProvideExperimentData
-				name="refined_reskin_v2"
-				options={ { isEligible: 'onboarding' === this.props.flowName } }
-			>
-				{ ( isLoading, experimentAssignment ) => {
-					if ( isLoading ) {
-						debug( 'Waiting for experiment status to load' );
-						return null;
-					}
-
-					this.isReskinned = 'treatment' === experimentAssignment?.variationName;
-					this.isReskinned
-						? document.body.classList.add( 'is-white-signup' )
-						: document.body.classList.remove( 'is-white-signup' );
-					debug( `isReskinned value is ${ this.isReskinned }` );
-
-					return (
-						<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
-							<DocumentHead title={ this.props.pageTitle } />
-							{ ! isWPForTeamsFlow( this.props.flowName ) && (
-								<SignupHeader
+			<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
+				<DocumentHead title={ this.props.pageTitle } />
+				{ ! isWPForTeamsFlow( this.props.flowName ) && (
+					<SignupHeader
+						shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
+						isReskinned={ isReskinned }
+						rightComponent={
+							showProgressIndicator && (
+								<FlowProgressIndicator
 									positionInFlow={ this.getPositionInFlow() }
-									flowLength={ this.getFlowLength() }
+									flowLength={ this.getInteractiveStepsCount() }
 									flowName={ this.props.flowName }
-									showProgressIndicator={ showProgressIndicator }
-									shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
-									isReskinned={ this.isReskinned }
 								/>
-							) }
-							<div className="signup__steps">{ this.renderCurrentStep( this.isReskinned ) }</div>
-							{ ! this.state.shouldShowLoadingScreen && this.props.isSitePreviewVisible && (
-								<SiteMockups stepName={ this.props.stepName } />
-							) }
-							{ this.state.bearerToken && (
-								<WpcomLoginForm
-									authorization={ 'Bearer ' + this.state.bearerToken }
-									log={ this.state.username }
-									redirectTo={ this.state.redirectTo }
-								/>
-							) }
-						</div>
-					);
-				} }
-			</ProvideExperimentData>
+							)
+						}
+					/>
+				) }
+				<div className="signup__steps">{ this.renderCurrentStep( isReskinned ) }</div>
+				{ ! this.state.shouldShowLoadingScreen && this.props.isSitePreviewVisible && (
+					<SiteMockups stepName={ this.props.stepName } />
+				) }
+				{ this.state.bearerToken && (
+					<WpcomLoginForm
+						authorization={ 'Bearer ' + this.state.bearerToken }
+						log={ this.state.username }
+						redirectTo={ this.state.redirectTo }
+					/>
+				) }
+			</div>
 		);
 	}
 }

@@ -5,6 +5,7 @@ import {
 	getLineItemsFromCart,
 	getCreditsLineItemFromCart,
 	getTaxLineItemFromCart,
+	getTaxBreakdownLineItemsFromCart,
 	getSubtotalLineItemFromCart,
 	getCouponLineItemFromCart,
 	getTotalLineItemFromCart,
@@ -149,6 +150,79 @@ describe( 'getTaxLineItemFromCart', function () {
 		};
 
 		expect( getTaxLineItemFromCart( cartWithTaxes ) ).toStrictEqual( expected );
+	} );
+} );
+
+describe( 'getTaxBreakdownLineItemsFromCart', function () {
+	it( 'returns empty array if taxes are not displayed', () => {
+		expect( getTaxBreakdownLineItemsFromCart( cart ) ).toEqual( [] );
+	} );
+
+	it( 'returns line item for taxes if displayed', () => {
+		const cartWithTaxes = {
+			...cart,
+			tax: { ...cart.tax, display_taxes: true },
+			total_tax_breakdown: [
+				{
+					label: 'GST',
+					rate_display: '5%',
+					tax_collected_integer: 100,
+					tax_collected_display: 'JPY 100',
+				},
+				{
+					label: 'PST',
+					rate_display: '10%',
+					tax_collected_integer: 200,
+					tax_collected_display: 'JPY 200',
+				},
+			],
+		};
+		const expected = [
+			{
+				id: 'tax-line-item-GST',
+				type: 'tax',
+				label: 'GST (5%)',
+				amount: {
+					currency: 'JPY',
+					value: 100,
+					displayValue: 'JPY 100',
+				},
+			},
+			{
+				id: 'tax-line-item-PST',
+				type: 'tax',
+				label: 'PST (10%)',
+				amount: {
+					currency: 'JPY',
+					value: 200,
+					displayValue: 'JPY 200',
+				},
+			},
+		];
+
+		expect( getTaxBreakdownLineItemsFromCart( cartWithTaxes ) ).toStrictEqual( expected );
+	} );
+
+	it( 'returns the total_tax root values if the breakdown array is empty', () => {
+		const cartWithTaxes = {
+			...cart,
+			tax: { ...cart.tax, display_taxes: true },
+			total_tax_breakdown: [],
+		};
+		const expected = [
+			{
+				id: 'tax-line-item',
+				type: 'tax',
+				label: 'Tax',
+				amount: {
+					currency: 'JPY',
+					value: 100,
+					displayValue: 'JPY 100',
+				},
+			},
+		];
+
+		expect( getTaxBreakdownLineItemsFromCart( cartWithTaxes ) ).toStrictEqual( expected );
 	} );
 } );
 

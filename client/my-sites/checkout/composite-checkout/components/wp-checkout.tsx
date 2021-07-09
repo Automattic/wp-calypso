@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { useEffect, useState, useCallback } from 'react';
+import { useDispatch as useReduxDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import {
 	Checkout,
@@ -56,10 +57,11 @@ import {
 	hasDomainRegistration,
 	hasTransferProduct,
 } from 'calypso/lib/cart-values/cart-items';
+import { addQueryArgs } from 'calypso/lib/route';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import PaymentMethodStep from './payment-method-step';
 import CheckoutHelpLink from './checkout-help-link';
 import type { CountryListItem } from '../types/country-list-item';
-import type { GetProductVariants } from '../hooks/product-variants';
 import type { OnChangeItemVariant } from '../components/item-variation-picker';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
@@ -130,7 +132,6 @@ export default function WPCheckout( {
 	siteId,
 	siteUrl,
 	countriesList,
-	getItemVariants,
 	addItemToCart,
 	showErrorMessageBriefly,
 	isLoggedOutCart,
@@ -142,7 +143,6 @@ export default function WPCheckout( {
 	siteId: number | undefined;
 	siteUrl: string | undefined;
 	countriesList: CountryListItem[];
-	getItemVariants: GetProductVariants;
 	addItemToCart: ( item: Partial< RequestCartProduct > ) => void;
 	showErrorMessageBriefly: ( error: string ) => void;
 	isLoggedOutCart: boolean;
@@ -160,6 +160,7 @@ export default function WPCheckout( {
 	const total = useTotal();
 	const activePaymentMethod = usePaymentMethod();
 	const onEvent = useEvents();
+	const reduxDispatch = useReduxDispatch();
 
 	const areThereDomainProductsInCart =
 		hasDomainRegistration( responseCart ) || hasTransferProduct( responseCart );
@@ -179,13 +180,45 @@ export default function WPCheckout( {
 	] = useState( false );
 
 	const emailTakenLoginRedirectMessage = ( emailAddress: string ) => {
-		const loginUrl = login( { redirectTo: '/checkout/no-site?cart=no-user', emailAddress } );
+		const { href, pathname } = window.location;
+		const isJetpackCheckout = pathname.includes( '/checkout/jetpack' );
+
+		// Users with a WP.com account should return to the checkout page
+		// once they are logged in to complete the process. The flow for them is
+		// checkout -> login -> checkout.
+		const currentURLQueryParameters = Object.fromEntries( new URL( href ).searchParams.entries() );
+		const redirectTo = isJetpackCheckout
+			? addQueryArgs( { ...currentURLQueryParameters, flow: 'logged-out-checkout' }, pathname )
+			: '/checkout/no-site?cart=no-user';
+
+		const loginUrl = login( { redirectTo, emailAddress } );
+
+		reduxDispatch(
+			recordTracksEvent( 'calypso_checkout_wpcom_email_exists', {
+				email: emailAddress,
+				checkout_flow: isJetpackCheckout ? 'site_only_checkout' : 'wpcom_registrationless',
+			} )
+		);
 
 		return translate(
 			'That email address is already in use. If you have an existing account, {{a}}please log in{{/a}}.',
 			{
 				components: {
-					a: <a href={ loginUrl } />,
+					a: (
+						<a
+							onClick={ () =>
+								reduxDispatch(
+									recordTracksEvent( 'calypso_checkout_composite_login_click', {
+										email: emailAddress,
+										checkout_flow: isJetpackCheckout
+											? 'site_only_checkout'
+											: 'wpcom_registrationless',
+									} )
+								)
+							}
+							href={ loginUrl }
+						/>
+					),
 				},
 			}
 		);
@@ -432,8 +465,8 @@ export default function WPCheckout( {
 							removeProductFromCart={ removeProductFromCart }
 							couponFieldStateProps={ couponFieldStateProps }
 							onChangePlanLength={ changePlanLength }
-							getItemVariants={ getItemVariants }
 							siteUrl={ siteUrl }
+							siteId={ siteId }
 							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 						/>
 					}

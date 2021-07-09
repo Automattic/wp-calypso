@@ -41,10 +41,12 @@ function updateNotificationBadge() {
 }
 
 module.exports = function ( { window, view } ) {
-	ipc.on( 'clear-notices-count', function ( _, count ) {
-		log.info( 'Notification count received: ' + count );
-		notificationBadgeCount = count;
-		updateNotificationBadge();
+	ipc.on( 'clear-notices-count', function () {
+		if ( notificationBadgeCount > 0 ) {
+			log.info( 'Notification badge count reset' );
+			notificationBadgeCount = 0;
+			updateNotificationBadge();
+		}
 	} );
 
 	ipc.on( 'preferences-changed-notification-badge', function ( _, enabled ) {

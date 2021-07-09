@@ -1,81 +1,28 @@
 /**
- * External Dependencies
- */
-const { URL } = require( 'url' );
-
-/**
  * Internal dependencies
  */
-const Config = require( '../../lib/config' );
-const openInBrowser = require( './open-in-browser' );
 const log = require( '../../lib/logger' )( 'desktop:external-links' );
 
-const isWordPress = ( url ) => url.hostname.includes( 'wordpress.com' );
-
-const isDevBuild = ( url ) => {
-	return (
-		process.env.WP_DESKTOP_DEBUG_LOCALHOST !== undefined &&
-		url.hostname.includes( 'calypso.localhost' )
-	);
-};
-
-const isJetpack = ( url ) => url.hostname.includes( 'jetpack.com' );
-
-const isWpAdmin = ( url ) => url.href.includes( 'wp-admin' );
-
-const isWpLogin = ( url ) => url.pathname.includes( 'wp-login.php' );
+let targetURL = '';
 
 module.exports = function ( { view } ) {
-	const webContents = view.webContents;
-
+	// TODO: Replace the "new-window" event with webcontents.setWindowOpenHandler
+	// when Electron is updated to >= 13.x
 	view.webContents.on( 'new-window', function ( event, url ) {
-		const parsed = new URL( url );
-		log.info( `Navigating to URL: '${ parsed.href }'` );
+		// Check if the incoming URL is blank and if it is send to the targetURL instead
+		const urlToLoad = url.includes( 'about:blank' ) || url === '' ? targetURL : url;
+		log.info( `Navigating to URL: '${ urlToLoad }'` );
 
-		// Should we open wordpres.com sites in the desktop app or open another desktop window
 		event.preventDefault();
-
-		if (
-			isWordPress( parsed ) ||
-			isDevBuild( parsed ) ||
-			isJetpack( parsed ) ||
-			isWpAdmin( parsed ) ||
-			isWpLogin( parsed ) // Disable wp-login/self-hosted for now ?
-		) {
-			view.webContents.loadURL( url );
-			return;
-		}
-
-		log.info( `Opening URL '${ parsed.href }' in external browser...` );
-
-		openInBrowser( url );
+		view.webContents.loadURL( urlToLoad );
+		return;
 	} );
 
-	webContents.on( 'will-navigate', async function ( event, url ) {
-		const parsed = new URL( url );
-		log.info( `Navigating to URL: '${ parsed.href }'` );
-
-		if ( isWordPress( parsed ) && parsed.search && parsed.search.includes( 'apppromo' ) ) {
-			event.preventDefault();
-			log.info( `Redirecting to 'wordpress.com/log-in'` );
-
-			view.webContents.loadURL( Config.loginURL() );
-			return;
-		}
-
-		if (
-			isWordPress( parsed ) ||
-			isDevBuild( parsed ) ||
-			isJetpack( parsed ) ||
-			isWpAdmin( parsed ) ||
-			isWpLogin( parsed ) // Disable wp-login/self-hosted for now ?
-		) {
-			return;
-		}
-
-		log.info( `Opening URL '${ parsed.href }' in external browser...` );
-
-		event.preventDefault();
-		openInBrowser( url );
+	// This is to fix an issue where certain links like Post Preview in the editor
+	// were not opening properly because of how the links were created.
+	// This allows us to capture the url of a link when hovered and then navigate
+	// to it in the new-window event listener above if the url sent to it is blank
+	view.webContents.on( 'update-target-url', function ( event, url ) {
+		targetURL = url;
 	} );
 };

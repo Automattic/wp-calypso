@@ -28,7 +28,6 @@ export function getProductSlug( productType ) {
  * @param {string} productSlug - slug of the product
  * @returns {string} the corresponding product type
  * @see emailManagementAddGSuiteUsers() in client/my-sites/email/paths.js
- * @see emailManagementNewGSuiteAccount() in client/my-sites/email/paths.js
  */
 export function getProductType( productSlug ) {
 	if ( productSlug === GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY ) {

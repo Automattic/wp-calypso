@@ -158,6 +158,10 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_SECURITY_REALTIME,
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+	PLAN_JETPACK_SECURITY,
+	PLAN_JETPACK_SECURITY_MONTHLY,
+	PLAN_JETPACK_SECURITY_PRO,
+	PLAN_JETPACK_SECURITY_PRO_MONTHLY,
 	PLAN_P2_FREE,
 	PLAN_P2_PLUS,
 	PLAN_PERSONAL,
@@ -180,6 +184,8 @@ import {
 	TYPE_PREMIUM,
 	TYPE_SECURITY_DAILY,
 	TYPE_SECURITY_REALTIME,
+	TYPE_SECURITY,
+	TYPE_SECURITY_PRO,
 } from './constants';
 
 function compact( elements ) {
@@ -364,7 +370,7 @@ const getPlanEcommerceDetails = () => ( {
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
-			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT,
+			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
 			isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
 			FEATURE_HOSTING,
 			FEATURE_JETPACK_ADVANCED,
@@ -470,7 +476,7 @@ const getPlanPremiumDetails = () => ( {
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
-			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT,
+			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 			isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
 			FEATURE_HOSTING,
 			FEATURE_JETPACK_ESSENTIAL,
@@ -494,7 +500,7 @@ const getPlanPremiumDetails = () => ( {
 		FEATURE_13GB_STORAGE,
 	],
 	getSignupFeatures: () => [
-		FEATURE_LIVE_CHAT_SUPPORT,
+		FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 		FEATURE_ADVANCED_CUSTOMIZATION,
 		FEATURE_ALL_PERSONAL_FEATURES,
 	],
@@ -553,7 +559,7 @@ const getPlanBusinessDetails = () => ( {
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
-			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT,
+			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
 			isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
 			FEATURE_HOSTING,
 			FEATURE_JETPACK_ADVANCED,
@@ -1367,6 +1373,30 @@ export const PLANS_LIST = {
 		getStoreSlug: () => PLAN_JETPACK_COMPLETE_MONTHLY,
 		getPathSlug: () => 'complete-monthly',
 		getProductId: () => 2015,
+	},
+
+	[ PLAN_JETPACK_SECURITY ]: {
+		group: GROUP_JETPACK,
+		type: TYPE_SECURITY,
+		...getAnnualTimeframe(),
+	},
+
+	[ PLAN_JETPACK_SECURITY_MONTHLY ]: {
+		group: GROUP_JETPACK,
+		type: TYPE_SECURITY,
+		...getMonthlyTimeframe(),
+	},
+
+	[ PLAN_JETPACK_SECURITY_PRO ]: {
+		group: GROUP_JETPACK,
+		type: TYPE_SECURITY_PRO,
+		...getAnnualTimeframe(),
+	},
+
+	[ PLAN_JETPACK_SECURITY_PRO_MONTHLY ]: {
+		group: GROUP_JETPACK,
+		type: TYPE_SECURITY_PRO,
+		...getMonthlyTimeframe(),
 	},
 
 	[ PLAN_P2_PLUS ]: {

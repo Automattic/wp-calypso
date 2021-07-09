@@ -22,7 +22,6 @@ class DnsTemplates extends React.Component {
 
 		this.state = {
 			currentComponentName: null,
-			currentProviderCardName: null,
 			templates: [
 				{
 					name: getGoogleMailServiceFamily(),

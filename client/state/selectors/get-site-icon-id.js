@@ -1,10 +1,4 @@
 /**
- * External dependencies
- */
-
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import getRawSite from 'calypso/state/selectors/get-raw-site';
@@ -22,7 +16,7 @@ export default function getSiteIconId( state, siteId ) {
 	// Treat site object as preferred source of truth of media ID
 	const site = getRawSite( state, siteId );
 	if ( site ) {
-		return get( site, 'icon.media_id', null );
+		return site.icon?.media_id ?? null;
 	}
 
 	// Fall back to site settings in case we know settings prior to having

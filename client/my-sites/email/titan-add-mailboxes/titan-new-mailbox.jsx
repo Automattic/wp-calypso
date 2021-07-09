@@ -34,6 +34,7 @@ const TitanNewMailbox = ( {
 		name: { value: name, error: nameError },
 		password: { value: password, error: passwordError },
 	},
+	showAllErrors = false,
 	showLabels = true,
 	showTrashButton = true,
 } ) => {
@@ -55,10 +56,11 @@ const TitanNewMailbox = ( {
 	const [ nameFieldTouched, setNameFieldTouched ] = useState( false );
 	const [ passwordFieldTouched, setPasswordFieldTouched ] = useState( false );
 
-	const hasAlternativeEmailError = alternativeEmailFieldTouched && null !== alternativeEmailError;
-	const hasMailboxError = mailboxFieldTouched && null !== mailboxError;
-	const hasNameError = nameFieldTouched && null !== nameError;
-	const hasPasswordError = passwordFieldTouched && null !== passwordError;
+	const hasAlternativeEmailError =
+		( alternativeEmailFieldTouched || showAllErrors ) && null !== alternativeEmailError;
+	const hasMailboxError = ( mailboxFieldTouched || showAllErrors ) && null !== mailboxError;
+	const hasNameError = ( nameFieldTouched || showAllErrors ) && null !== nameError;
+	const hasPasswordError = ( passwordFieldTouched || showAllErrors ) && null !== passwordError;
 
 	const showIsAdminToggle = false;
 
@@ -200,7 +202,9 @@ TitanNewMailbox.propTypes = {
 	onMailboxValueChange: PropTypes.func.isRequired,
 	onReturnKeyPress: PropTypes.func.isRequired,
 	mailbox: getMailboxPropTypeShape(),
+	showAllErrors: PropTypes.bool,
 	showLabels: PropTypes.bool.isRequired,
+	showTrashButton: PropTypes.bool,
 };
 
 export default TitanNewMailbox;

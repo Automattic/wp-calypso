@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useState } from 'react';
-import styled from '@emotion/styled';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import { styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import formatCurrency, { CURRENCIES } from '@automattic/format-currency';
@@ -24,7 +24,7 @@ import {
 } from '@automattic/calypso-products';
 import { requestProductsList } from 'calypso/state/products-list/actions';
 import type { Plan } from '@automattic/calypso-products';
-import type { WPCOMProductSlug, WPCOMProductVariant } from '../components/item-variation-picker';
+import type { WPCOMProductVariant } from '../components/item-variation-picker';
 
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );
 
@@ -39,8 +39,6 @@ export interface AvailableProductVariant {
 	priceFull: number;
 	priceFinal: number;
 }
-
-export type GetProductVariants = ( productSlug: WPCOMProductSlug ) => WPCOMProductVariant[];
 
 const Discount = styled.span`
 	color: ${ ( props ) => props.theme.colors.discount };
@@ -62,27 +60,20 @@ const DoNotPayThis = styled.span`
 	}
 `;
 
-export function useProductVariants( {
-	siteId,
-	productSlug,
-}: {
-	siteId: number | undefined;
-	productSlug: string | undefined;
-} ): GetProductVariants {
+export function useGetProductVariants(
+	siteId: number | undefined,
+	productSlug: string
+): WPCOMProductVariant[] {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 
 	const variantProductSlugs = useVariantPlanProductSlugs( productSlug );
+	debug( 'variantProductSlugs', variantProductSlugs );
 
 	const productsWithPrices = useSelector( ( state ) => {
-		return computeProductsWithPrices(
-			state,
-			siteId,
-			variantProductSlugs, // : WPCOMProductSlug[]
-			0, // coupon: number
-			{} // couponDiscounts: object of product ID / absolute amount pairs
-		);
+		return computeProductsWithPrices( state, siteId, variantProductSlugs, 0, {} );
 	} );
+	debug( 'productsWithPrices', productsWithPrices );
 
 	const [ haveFetchedProducts, setHaveFetchedProducts ] = useState( false );
 	const shouldFetchProducts = ! productsWithPrices;
@@ -97,22 +88,22 @@ export function useProductVariants( {
 		}
 	}, [ shouldFetchProducts, haveFetchedProducts, reduxDispatch ] );
 
-	const getProductVariant = ( variant: AvailableProductVariant ): WPCOMProductVariant => {
-		return {
-			variantLabel: getTermText( variant.plan.term, translate ),
-			variantDetails: <VariantPrice variant={ variant } />,
-			productSlug: variant.planSlug,
-			productId: variant.product.product_id,
-		};
-	};
+	const getProductVariantFromAvailableVariant = useCallback(
+		( variant: AvailableProductVariant ): WPCOMProductVariant => {
+			return {
+				variantLabel: getTermText( variant.plan.term, translate ),
+				variantDetails: <VariantPrice variant={ variant } />,
+				productSlug: variant.planSlug,
+				productId: variant.product.product_id,
+			};
+		},
+		[ translate ]
+	);
 
-	return ( anyProductSlug: string ) => {
-		if ( anyProductSlug !== productSlug ) {
-			return [];
-		}
-
-		return productsWithPrices.map( getProductVariant );
-	};
+	return useMemo( () => productsWithPrices.map( getProductVariantFromAvailableVariant ), [
+		productsWithPrices,
+		getProductVariantFromAvailableVariant,
+	] );
 }
 
 function VariantPrice( { variant }: { variant: AvailableProductVariant } ) {
@@ -148,23 +139,7 @@ function VariantPriceDiscount( { variant }: { variant: AvailableProductVariant }
 }
 
 function useVariantPlanProductSlugs( productSlug: string | undefined ): string[] {
-	const reduxDispatch = useDispatch();
-
 	const chosenPlan = getPlan( productSlug );
-
-	const [ haveFetchedPlans, setHaveFetchedPlans ] = useState( false );
-	const shouldFetchPlans = ! chosenPlan;
-
-	useEffect( () => {
-		// Trigger at most one HTTP request
-		debug( 'deciding whether to request plan variant data' );
-		if ( shouldFetchPlans && ! haveFetchedPlans ) {
-			debug( 'dispatching request for plan variant data' );
-			reduxDispatch( requestPlans() );
-			reduxDispatch( requestProductsList() );
-			setHaveFetchedPlans( true );
-		}
-	}, [ haveFetchedPlans, shouldFetchPlans, reduxDispatch ] );
 
 	if ( ! chosenPlan ) {
 		return [];

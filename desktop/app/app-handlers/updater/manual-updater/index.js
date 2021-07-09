@@ -165,7 +165,7 @@ class ManualUpdater extends Updater {
 			}
 
 			const body = await resp.text();
-			const config = yaml.safeLoad( body );
+			const config = yaml.load( body );
 
 			return config.version || null;
 		} catch ( err ) {

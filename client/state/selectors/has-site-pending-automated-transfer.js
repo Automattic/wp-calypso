@@ -7,8 +7,7 @@ import { get } from 'lodash';
 /**
  * Internal Dependencies
  */
-import getSiteOptions from 'calypso/state/selectors/get-site-options';
-
+import { getSiteOptions } from 'calypso/state/sites/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 
 /**

@@ -1,6 +1,6 @@
 {
 	"name": "WordPressDesktop",
-	"version": "7.0.0",
+	"version": "7.0.6",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/Automattic/wp-calypso/"
@@ -15,9 +15,9 @@
 	"homepage": "https://desktop.wordpress.com/",
 	"main": "./dist/index.js",
 	"keywords": [
+		"Automattic",
 		"desktop",
-		"wordpress",
-		"wordpress.com"
+		"wordpress"
 	],
 	"scripts": {
 		"dev": "cross-env NODE_ENV=development DEBUG=1 WP_DESKTOP_DEBUG=1 electron app/index.js",
@@ -25,7 +25,7 @@
 		"ci:build-mac": "yarn run build:main && node bin/build-mac-ci",
 		"build": "yarn run build:main && ELECTRON_BUILDER_ARGS=${ELECTRON_BUILDER_ARGS} yarn run build:app",
 		"build:app": "yarn electron-builder ${ELECTRON_BUILDER_ARGS} build --publish never",
-		"build:main": "webpack --stats-preset errors-only",
+		"build:main": "yarn run build:config && webpack --stats-preset errors-only",
 		"build:config": "node bin/build-desktop-config.js",
 		"build:secrets": "node bin/build-desktop-secrets.js",
 		"ci:github:add-review": "node bin/github/add-review.js",
@@ -33,7 +33,7 @@
 	},
 	"devDependencies": {
 		"asana-phrase": "0.0.8",
-		"chai": "3.5.0",
+		"chai": "4.3.4",
 		"copy-webpack-plugin": "^6.2.1",
 		"electron": "11.0.4",
 		"electron-builder": "22.10.4",
@@ -63,7 +63,7 @@
 		"make-dir": "^3.1.0",
 		"semver": "^7.3.2",
 		"superagent": "^3.8.3",
-		"winston": "^3.2.1",
+		"winston": "^3.3.3",
 		"wpcom-xhr-request": "^1.2.0",
 		"ws": "^7.3.1"
 	}

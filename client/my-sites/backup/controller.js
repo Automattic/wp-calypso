@@ -133,10 +133,7 @@ export function backups( context, next ) {
 	// `BackupStatus`.
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
-	context.store.dispatch( {
-		...setFilter( siteId, {} ),
-		meta: { skipUrlUpdate: true },
-	} );
+	context.store.dispatch( setFilter( siteId, {}, true ) );
 
 	const { date } = context.query;
 

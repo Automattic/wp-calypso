@@ -19,7 +19,7 @@ import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import QuerySharingButtons from 'calypso/components/data/query-sharing-buttons';
 import { saveSiteSettings } from 'calypso/state/site-settings/actions';
 import { saveSharingButtons } from 'calypso/state/sites/sharing-buttons/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	getSiteSettings,
 	isSavingSiteSettings,
@@ -31,10 +31,14 @@ import isSavingSharingButtons from 'calypso/state/selectors/is-saving-sharing-bu
 import isSharingButtonsSaveSuccessful from 'calypso/state/selectors/is-sharing-buttons-save-successful';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import { protectForm } from 'calypso/lib/protect-form';
+import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 
 class SharingButtons extends Component {
 	state = {
@@ -126,7 +130,18 @@ class SharingButtons extends Component {
 	}
 
 	render() {
-		const { buttons, isJetpack, isSaving, settings, siteId } = this.props;
+		const {
+			buttons,
+			isJetpack,
+			isPrivate,
+			isSaving,
+			settings,
+			siteId,
+			siteSlug,
+			isSharingButtonsModuleActive,
+			isFetchingModules,
+			translate,
+		} = this.props;
 		const updatedSettings = this.getUpdatedSettings();
 		const updatedButtons = this.state.buttonsPendingSave || buttons;
 
@@ -143,17 +158,37 @@ class SharingButtons extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<QuerySharingButtons siteId={ siteId } />
 				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
+				{ isJetpack && ! isFetchingModules && ! isSharingButtonsModuleActive && (
+					<Notice
+						status="is-warning"
+						showDismiss={ false }
+						text={
+							isPrivate
+								? translate( 'Adding sharing buttons requires your site to be marked as Public.' )
+								: translate(
+										'Adding sharing buttons needs the Sharing Buttons module from Jetpack to be enabled.'
+								  )
+						}
+					>
+						<NoticeAction
+							href={ isPrivate ? '/settings/general/' + siteSlug + '#site-privacy-settings' : null }
+							onClick={ isPrivate ? null : () => this.props.activateModule( siteId, 'sharedaddy' ) }
+						>
+							{ isPrivate ? translate( 'Change settings' ) : translate( 'Enable' ) }
+						</NoticeAction>
+					</Notice>
+				) }
+				<ButtonsOptions
+					settings={ updatedSettings }
+					onChange={ this.handleChange }
+					saving={ isSaving }
+				/>
 				<ButtonsAppearance
 					buttons={ updatedButtons }
 					values={ updatedSettings }
 					onChange={ this.handleChange }
 					onButtonsChange={ this.handleButtonsChange }
 					initialized={ !! buttons && !! settings }
-					saving={ isSaving }
-				/>
-				<ButtonsOptions
-					settings={ updatedSettings }
-					onChange={ this.handleChange }
 					saving={ isSaving }
 				/>
 			</form>
@@ -164,25 +199,33 @@ class SharingButtons extends Component {
 const connectComponent = connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
+		const siteSlug = getSelectedSiteSlug( state );
 		const settings = getSiteSettings( state, siteId );
 		const buttons = getSharingButtons( state, siteId );
 		const isJetpack = isJetpackSite( state, siteId );
+		const isSharingButtonsModuleActive = isJetpackModuleActive( state, siteId, 'sharedaddy' );
 		const isLikesModuleActive = isJetpackModuleActive( state, siteId, 'likes' );
+		const isFetchingModules = isFetchingJetpackModules( state, siteId );
 		const isSavingSettings = isSavingSiteSettings( state, siteId );
 		const isSavingButtons = isSavingSharingButtons( state, siteId );
 		const isSaveSettingsSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
 		const isSaveButtonsSuccessful = isSharingButtonsSaveSuccessful( state, siteId );
+		const isPrivate = isPrivateSite( state, siteId );
 		const path = getCurrentRouteParameterized( state, siteId );
 
 		return {
 			isJetpack,
+			isSharingButtonsModuleActive,
 			isLikesModuleActive,
+			isFetchingModules,
 			isSaving: isSavingSettings || isSavingButtons,
 			isSaveSettingsSuccessful,
 			isSaveButtonsSuccessful,
+			isPrivate,
 			settings,
 			buttons,
 			siteId,
+			siteSlug,
 			path,
 		};
 	},

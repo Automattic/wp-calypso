@@ -3,7 +3,6 @@
  */
 
 import React, { PureComponent } from 'react';
-import { map } from 'lodash';
 
 /**
  * Internal dependencies

@@ -10,7 +10,6 @@ import { stringify } from 'qs';
  */
 import Site from './site';
 import Me from './me';
-import MailingList from './mailing-list';
 import config from '@automattic/calypso-config';
 import { getLanguage, getLocaleSlug } from 'calypso/lib/i18n-utils';
 import readerContentWidth from 'calypso/reader/lib/content-width';
@@ -50,10 +49,6 @@ Undocumented.prototype.site = function ( id ) {
 
 Undocumented.prototype.me = function () {
 	return new Me( this.wpcom );
-};
-
-Undocumented.prototype.mailingList = function ( category ) {
-	return new MailingList( category, this.wpcom );
 };
 
 /*
@@ -261,72 +256,6 @@ Undocumented.prototype.scheduleJetpackFullysync = function ( siteId, fn ) {
 	debug( '/sites/:site_id:/sync query' );
 	const endpointPath = '/sites/' + siteId + '/sync';
 	return this.wpcom.req.post( { path: endpointPath }, {}, fn );
-};
-
-Undocumented.prototype.invitesList = function ( siteId, data = {}, fn ) {
-	debug( '/sites/:site_id:/invites query', siteId, data );
-	return this.wpcom.req.get( '/sites/' + siteId + '/invites', data, fn );
-};
-
-Undocumented.prototype.getInvite = function ( siteId, inviteKey, fn ) {
-	debug( '/sites/:site_id:/invites/:inviteKey:/ query' );
-	return this.wpcom.req.get( { path: '/sites/' + siteId + '/invites/' + inviteKey }, fn );
-};
-
-Undocumented.prototype.acceptInvite = function ( invite, fn ) {
-	debug( '/sites/:site_id:/invites/:inviteKey:/accept query' );
-	const apiVersion = '1.2';
-
-	return this.wpcom.req.get(
-		'/sites/' + invite.site.ID + '/invites/' + invite.inviteKey + '/accept',
-		{
-			activate: invite.activationKey,
-			include_domain_only: true,
-			apiVersion,
-		},
-		fn
-	);
-};
-
-Undocumented.prototype.sendInvites = function (
-	siteId,
-	usernamesOrEmails,
-	role,
-	message,
-	isExternal,
-	fn
-) {
-	debug( '/sites/:site_id:/invites/new query' );
-	return this.wpcom.req.post(
-		'/sites/' + siteId + '/invites/new',
-		{},
-		{
-			invitees: usernamesOrEmails,
-			is_external: isExternal,
-			role: role,
-			message: message,
-			source: 'calypso',
-		},
-		fn
-	);
-};
-
-Undocumented.prototype.resendInvite = function ( siteId, inviteId, fn ) {
-	debug( '/sites/:site_id:/invites/:invite_id:/resend query' );
-	return this.wpcom.req.post( '/sites/' + siteId + '/invites/' + inviteId + '/resend', {}, {}, fn );
-};
-
-Undocumented.prototype.createInviteValidation = function ( siteId, usernamesOrEmails, role, fn ) {
-	debug( '/sites/:site_id:/invites/validate query' );
-	return this.wpcom.req.post(
-		'/sites/' + siteId + '/invites/validate',
-		{},
-		{
-			invitees: usernamesOrEmails,
-			role: role,
-		},
-		fn
-	);
 };
 
 // Used to preserve backslash in some known settings fields like custom time and date formats.
@@ -795,18 +724,6 @@ Undocumented.prototype.validateGoogleAppsContactInformation = function (
 	return result.then?.( camelCaseKeys );
 };
 
-Undocumented.prototype.getEmailAccountsForSiteAndDomain = function ( siteId, domain, fn ) {
-	return this.wpcom.req.get(
-		{
-			path: `/sites/${ encodeURIComponent( siteId ) }/emails/accounts/${ encodeURIComponent(
-				domain
-			) }/mailboxes`,
-			apiNamespace: 'wpcom/v2',
-		},
-		fn
-	);
-};
-
 /**
  * Retrieves the Titan order provisioning URL for a domain.
  *
@@ -953,6 +870,25 @@ Undocumented.prototype.getSitePlans = function ( siteDomain, fn ) {
 };
 
 /**
+ * Get a site specific details for WordPress.com featurs
+ *
+ * @param {Function} siteDomain The site slug
+ * @param {Function} fn The callback function
+ */
+Undocumented.prototype.getSiteFeatures = function ( siteDomain, fn ) {
+	debug( '/sites/:site_domain:/features query' );
+
+	return this._sendRequest(
+		{
+			path: `/sites/${ encodeURIComponent( siteDomain ) }/features`,
+			method: 'get',
+			apiVersion: '1.1',
+		},
+		fn
+	);
+};
+
+/**
  * Get cart.
  *
  * @param {string} cartKey The cart's key.
@@ -1084,17 +1020,6 @@ Undocumented.prototype.sitesExternalServices = function ( siteId, fn ) {
 		},
 		fn
 	);
-};
-
-/**
- * Return a list of happiness engineers gravatar urls
- *
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.getHappinessEngineers = function ( fn ) {
-	debug( 'meta/happiness-engineers/ query' );
-
-	return this.wpcom.req.get( { path: '/meta/happiness-engineers/' }, fn );
 };
 
 /**
@@ -1353,44 +1278,6 @@ Undocumented.prototype.updateCreditCard = function ( params, fn ) {
 };
 
 /**
- * GET paygate configuration
- *
- * @param {object} query - query parameters
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.paygateConfiguration = function ( query, fn ) {
-	debug( '/me/paygate-configuration query' );
-
-	return this.wpcom.req.get( '/me/paygate-configuration', query, fn );
-};
-
-/**
- * GET stripe configuration
- *
- * @param {object} query - query parameters
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.stripeConfiguration = function ( query, fn ) {
-	debug( '/me/stripe-configuration query' );
-
-	return this.wpcom.req.get( '/me/stripe-configuration', query, fn );
-};
-
-/**
- * GET ebanx js configuration
- *
- * @param {object} query - query parameters
- * @param {Function} fn The callback function
- *
- * @returns {Promise} promise
- */
-Undocumented.prototype.ebanxConfiguration = function ( query, fn ) {
-	debug( '/me/ebanx-configuration query' );
-
-	return this.wpcom.req.get( '/me/ebanx-configuration', query, fn );
-};
-
-/**
  * GET paypal_express_url
  *
  * @param {object} [data] The GET data
@@ -1488,29 +1375,6 @@ Undocumented.prototype.supportAlternates = function ( query, fn ) {
 		'/support/alternates/' + query.site + '/posts/' + query.postId,
 		params,
 		fn
-	);
-};
-
-/**
- * Saves a user's A/B test variation on the backend
- *
- * @param {string} name - The name of the A/B test. No leading 'abtest_' needed
- * @param {string} variation - The variation the user is assigned to
- * @param {Function} callback - Function to invoke when request is complete
- * @returns {object} wpcomRequest
- */
-Undocumented.prototype.saveABTestData = function ( name, variation, callback ) {
-	const body = {
-		name,
-		variation,
-	};
-	debug( `POST /me/abtests with ${ JSON.stringify( body ) }` );
-	return this.wpcom.req.post(
-		{
-			path: '/me/abtests',
-			body,
-		},
-		callback
 	);
 };
 
@@ -2023,13 +1887,19 @@ Undocumented.prototype.uploadExportFile = function ( siteId, params ) {
 			error ? rejectPromise( error ) : resolve( data );
 		};
 
+		const formData = [
+			[ 'importStatus', JSON.stringify( params.importStatus ) ],
+			[ 'import', params.file ],
+		];
+
+		if ( params.url ) {
+			formData.push( [ 'url', params.url ] );
+		}
+
 		const req = this.wpcom.req.post(
 			{
 				path: `/sites/${ siteId }/imports/new`,
-				formData: [
-					[ 'importStatus', JSON.stringify( params.importStatus ) ],
-					[ 'import', params.file ],
-				],
+				formData,
 			},
 			resolver
 		);

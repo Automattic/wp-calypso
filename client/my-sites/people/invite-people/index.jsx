@@ -19,6 +19,7 @@ import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import getWpcomFollowerRole from 'calypso/lib/get-wpcom-follower-role';
 import { generateInviteLinks, disableInviteLinks } from 'calypso/state/invites/actions';
 import { Card, Button } from '@automattic/components';
 import Main from 'calypso/components/main';
@@ -43,7 +44,6 @@ import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import QuerySiteInvites from 'calypso/components/data/query-site-invites';
 import { getInviteLinksForSite } from 'calypso/state/invites/selectors';
-import { getSiteRoles, getWpcomFollowerRole } from 'calypso/state/site-roles/selectors';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
@@ -52,6 +52,8 @@ import accept from 'calypso/lib/accept';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import wpcom from 'calypso/lib/wp';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import withSiteRoles from 'calypso/data/site-roles/with-site-roles';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
 
 /**
  * Style dependencies
@@ -188,9 +190,10 @@ class InvitePeople extends React.Component {
 
 	async validateInvitation( siteId, usernamesOrEmails, role ) {
 		try {
-			const { success, errors } = await wpcom
-				.undocumented()
-				.createInviteValidation( siteId, usernamesOrEmails, role );
+			const { success, errors } = await wpcom.req.post( `/sites/${ siteId }/invites/validate`, {
+				invitees: usernamesOrEmails,
+				role,
+			} );
 
 			this.refreshValidation( success, errors );
 
@@ -251,9 +254,13 @@ class InvitePeople extends React.Component {
 
 	async sendInvites( siteId, usernamesOrEmails, role, message, isExternal ) {
 		try {
-			const response = await wpcom
-				.undocumented()
-				.sendInvites( siteId, usernamesOrEmails, role, message, isExternal );
+			const response = await wpcom.req.post( `/sites/${ siteId }/invites/new`, {
+				invitees: usernamesOrEmails,
+				is_external: isExternal,
+				role,
+				message,
+				source: 'calypso',
+			} );
 
 			const countValidationErrors = Object.keys( response.errors ).length;
 
@@ -496,7 +503,8 @@ class InvitePeople extends React.Component {
 	};
 
 	getInviteLinkRoles = () => {
-		const { siteRoles, wpcomFollowerRole } = this.props;
+		const { siteRoles, translate } = this.props;
+		const wpcomFollowerRole = getWpcomFollowerRole( this.props.isPrivateSite, translate );
 
 		if ( ! siteRoles || ! wpcomFollowerRole ) {
 			return [];
@@ -745,8 +753,7 @@ const mapStateToProps = ( state ) => {
 		isJetpack: isJetpackSite( state, siteId ),
 		isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 		inviteLinks: getInviteLinksForSite( state, siteId ),
-		siteRoles: getSiteRoles( state, siteId ),
-		wpcomFollowerRole: getWpcomFollowerRole( state, siteId ),
+		isPrivateSite: isPrivateSite( state, siteId ),
 	};
 };
 
@@ -761,4 +768,6 @@ const mapDispatchToProps = {
 
 const connectComponent = connect( mapStateToProps, mapDispatchToProps );
 
-export default connectComponent( localize( withTrackingTool( 'HotJar' )( InvitePeople ) ) );
+export default connectComponent(
+	localize( withTrackingTool( 'HotJar' )( withSiteRoles( InvitePeople ) ) )
+);

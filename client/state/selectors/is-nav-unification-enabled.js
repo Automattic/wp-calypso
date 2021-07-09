@@ -2,8 +2,9 @@
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteOption, isJetpackSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import versionCompare from 'calypso/lib/version-compare';
 
 export default ( state ) => {
 	const hasDocument = 'undefined' !== typeof document;
@@ -13,10 +14,11 @@ export default ( state ) => {
 		return false;
 	}
 
-	// Disabled for Jetpack sites.
+	// Disabled for Jetpack sites below 9.8.
 	const siteId = getSelectedSiteId( state );
 	if ( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) {
-		return false;
+		const jetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
+		return jetpackVersion && versionCompare( jetpackVersion, '9.8-alpha', '>=' );
 	}
 
 	return true;

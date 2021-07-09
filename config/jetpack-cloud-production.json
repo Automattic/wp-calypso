@@ -26,6 +26,7 @@
 	],
 	"oauth_client_id": 69041,
 	"features": {
+		"ad-tracking": true,
 		"activity-log/v2": true,
 		"always_use_logout_url": true,
 		"current-site/domain-warning": false,
@@ -37,15 +38,18 @@
 		"jetpack-cloud": true,
 		"jetpack-cloud/connect": false,
 		"jetpack/backups-date-picker": true,
+		"jetpack/only-realtime-products": false,
 		"jetpack/pricing-page": true,
-		"jetpack/server-credentials-advanced-flow": true,
 		"jetpack/redirect-legacy-plans": true,
-		"jetpack/userless-checkout": false,
+		"jetpack/server-credentials-advanced-flow": true,
+		"jetpack/siteless-checkout": false,
+		"jetpack/userless-checkout": true,
 		"layout/app-banner": false,
 		"layout/guided-tours": false,
 		"layout/nps-survey-notice": false,
 		"layout/query-selected-editor": false,
 		"layout/support-article-dialog": false,
+		"marketplace-test": false,
 		"marketplace-yoast": false,
 		"oauth": true,
 		"purchases/new-payment-methods": true,
@@ -68,5 +72,6 @@
 	"site_filter": [ "jetpack" ],
 	"theme": "jetpack-cloud",
 	"restricted_me_access": false,
-	"theme_color": "#2fb41f"
+	"theme_color": "#2fb41f",
+	"google_analytics_key": "UA-52447-43"
 }

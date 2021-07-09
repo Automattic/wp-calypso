@@ -8,7 +8,7 @@ references:
   defaults: &defaults
     working_directory: ~/wp-calypso
     docker:
-      - image: cimg/node:14.16.1
+      - image: cimg/node:14.17.3
     environment:
       CIRCLE_ARTIFACTS: /tmp/artifacts
       CIRCLE_TEST_REPORTS: /tmp/test_results
@@ -102,32 +102,11 @@ references:
       nvm install
       nvm use
 
-  # This is used later to send a custom UA string. `google-chrome` is in the PATH in all circleci-browser images
-  save-chrome-version: &save-chrome-version
-    name: Save chrome version
-    command: |
-      google-chrome --version > .chromedriver_version
-      echo -n "Google Chrome version: " && cat .chromedriver_version
-
   save-yarn-cache: &save-yarn-cache
     name: 'Save yarn cache'
     key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }}
     paths:
       - ~/.cache/yarn
-
-  set-e2e-variables: &set-e2e-variables
-    name: Set e2e environment variables
-    command: |
-      echo 'export NODE_CONFIG_ENV=test' >> $BASH_ENV &&
-      echo 'export BRANCHNAME=$CIRCLE_BRANCH' >> $BASH_ENV &&
-      echo 'export HIGHLIGHT_ELEMENT=true' >> $BASH_ENV
-
-  move-e2e-artifacts: &move-e2e-artifacts
-    name: Move report and screenshots
-    when: always
-    command: |
-      cp -r ./reports $CIRCLE_TEST_REPORTS/e2ereports &&
-      cp -r ./screenshots $CIRCLE_ARTIFACTS/screenshots
 
   desktop-install-app-deps: &desktop-install-app-deps
     name: Install Desktop Dependencies
@@ -137,13 +116,11 @@ references:
       npm install -g yarn
       yarn run build-desktop:install-app-deps
   desktop-cache-paths: &desktop-cache-paths
-    - desktop/config
     - desktop/resource/certificates/win.p12
     - desktop/resource/certificates/mac.p12
-  desktop-decrypt-assets: &desktop-decrypt-assets
-    name: Decrypt desktop app assets
+  desktop-decrypt-certs: &desktop-decrypt-certs
+    name: Decrypt desktop code signing certificates
     command: |
-      openssl aes-256-cbc -md md5 -d -in desktop/resource/calypso/secrets.json.enc -out config/secrets.json -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
       openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/mac.p12.enc -out desktop/resource/certificates/mac.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
       openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/win.p12.enc -out desktop/resource/certificates/win.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
   desktop-restore-yarn-cache: &desktop-restore-yarn-cache
@@ -288,84 +265,12 @@ jobs:
                     }
                   }'
 
-  test-e2e-canary:
-    <<: *defaults
-    working_directory: ~/wp-calypso/test/e2e
-    parameters:
-      test-flags:
-        type: string
-        default: '-C'
-      test-target:
-        type: string
-        default: ''
-      jetpack-host:
-        type: string
-        default: ''
-      slack-webhook:
-        type: string
-        default: $SLACK_E2E
-      env-vars:
-        type: string
-        default: ''
-    steps:
-      - prepare
-      - run: *set-e2e-variables
-      - run: *install-specific-chrome-browser
-      - run: *save-chrome-version
-      - run: sudo apt-get install -y fonts-ipafont-gothic xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic fonts-wqy-zenhei xvfb
-      - run:
-          name: Skip Jetpack Tests if needed
-          command: |
-            # If the skip jetpack env var is set, notify slack channel and skip the rest of the steps
-            if [[ "$SKIP_JETPACK" == "true" && "<< parameters.test-target >>" == "JETPACK" ]]; then
-              curl -X POST -H 'Content-type: application/json' \
-                  --data \
-                  "{ \
-                    \"attachments\": [ \
-                      { \
-                        \"text\": \"Jetpack tests were skipped\", \
-                        \"fields\": [ \
-                          { \
-                            \"title\": \"Project\", \
-                            \"value\": \"$CIRCLE_PROJECT_REPONAME\", \
-                            \"short\": true \
-                          }, \
-                          { \
-                            \"title\": \"Job Number\", \
-                            \"value\": \"$CIRCLE_BUILD_NUM\", \
-                            \"short\": true \
-                          } \
-                        ], \
-                        \"actions\": [ \
-                          { \
-                            \"type\": \"button\", \
-                            \"text\": \"Visit Job\", \
-                            \"url\": \"$CIRCLE_BUILD_URL\" \
-                          } \
-                        ], \
-                        \"color\": \"#FF0000\" \
-                      } \
-                    ] \
-                  }" << parameters.slack-webhook >>
-              circleci-agent step halt
-            fi
-      - run: yarn run decryptconfig
-      - run:
-          name: Run Canary Tests
-          command: |
-            env TARGET=<< parameters.test-target >> JETPACKHOST=<< parameters.jetpack-host >> << parameters.env-vars >> ./run.sh -R << parameters.test-flags >>
-      - run: *move-e2e-artifacts
-      - store-artifacts-and-test-results
-      - slack/status:
-          webhook: << parameters.slack-webhook >>
-
   wp-desktop-assets:
     docker:
       - image: circleci/node:12.16.2-browsers
     <<: *desktop_defaults
     environment:
       VERSION: << pipeline.git.tag >>
-      CONFIG_ENV: release
     working_directory: ~/wp-calypso
     steps:
       - checkout
@@ -378,7 +283,7 @@ jobs:
             - run:
                 name: Ensure package.json Version And Tag Match
                 command: cd desktop/bin && node validate_tag.js $VERSION
-      - run: *desktop-decrypt-assets
+      - run: *desktop-decrypt-certs
       - persist_to_workspace:
           root: ~/wp-calypso
           paths: *desktop-cache-paths
@@ -390,6 +295,8 @@ jobs:
       xcode: '12.3.0'
     shell: /bin/bash --login
     working_directory: /Users/distiller/wp-calypso
+    environment:
+      CONFIG_ENV: release
     steps:
       - checkout
       - attach_workspace:
@@ -440,6 +347,7 @@ jobs:
           command: |
             rm -rf desktop/release/mac
             rm -rf desktop/release/mac-arm64
+            rm desktop/release/builder-debug.yml
       - store_artifacts:
           when: always
           path: desktop/release
@@ -459,9 +367,11 @@ jobs:
 
   wp-desktop-linux:
     docker:
-      - image: circleci/node:14.16.1-browsers
+      - image: circleci/node:14.17.3-browsers
     <<: *desktop_defaults
     shell: /bin/bash --login
+    environment:
+      CONFIG_ENV: release
     steps:
       - checkout
       - attach_workspace:
@@ -509,6 +419,7 @@ jobs:
             rm -rf desktop/release/github
             rm -rf desktop/release/linux-unpacked
             rm -rf desktop/release/.icon-set
+            rm desktop/release/builder-debug.yml
       - store_artifacts:
           when: always
           path: desktop/release
@@ -528,6 +439,7 @@ jobs:
       name: win/default
     working_directory: C:\Users\circleci\wp-calypso
     environment:
+      CONFIG_ENV: release
     steps:
       - checkout
       - attach_workspace:
@@ -551,6 +463,26 @@ jobs:
           condition: << pipeline.git.tag >>
           steps:
             - run:
+                name: Build Appx
+                command: |
+                  # Use make (not yarn/npm directly) for bash-like environment variable substitution
+                  make -f desktop/Makefile build-main WINDOWS_STORE=1
+                  # Note: Windows Store build should be unsigned
+                  make -f desktop/Makefile package ELECTRON_BUILDER_ARGS='--config="electron-builder-appx.json"'
+            - run:
+                name: Clean Up Appx
+                command: |
+                  set +e
+                  rm -rf desktop/config
+                  rm desktop/release/*.yml
+                  rm -rf desktop/release/win-unpacked
+                  rm -rf desktop/release/win-ia32-unpacked
+                  rm desktop/release/builder-debug.yml || true
+                shell: bash.exe
+      - when:
+          condition: << pipeline.git.tag >>
+          steps:
+            - run:
                 name: Import Codesigning Certificate
                 command: |
                   # Workaround for Sign Tool "private key filter" bug in Circle's Windows image.
@@ -561,9 +493,10 @@ jobs:
                   $env:CSC_LINK='C:\Users\circleci\wp-calypso\desktop\resource\certificates\win.p12'
                   Import-PfxCertificate -FilePath $env:CSC_LINK -CertStoreLocation Cert:\LocalMachine\Root -Password (ConvertTo-SecureString -String $env:WIN_CSC_KEY_PASSWORD -AsPlainText -Force)
       - run:
-          name: Build Desktop Windows
+          name: Build NSIS
           command: |
-            # Use make for bash-like environment variable substitution
+            # Use make (not yarn/npm directly) for bash-like environment variable substitution
+            make -f desktop/Makefile build-main
 
             # Codesign release (tagged) builds only
             If ( $env:CIRCLE_TAG ) { $env:ARG1='-c.win.certificateSubjectName="Automattic"' }
@@ -571,9 +504,6 @@ jobs:
             # Build all artifacts only when project config changes.
             # Otherwise only build application executable required for end-to-end testing.
             If ( -Not $(git diff --name-only origin/trunk...HEAD | Select-String -Pattern desktop/package.json,desktop/yarn.lock) ) { $env:ARG2='-c.win.target=dir' }
-
-
-            make -f desktop/Makefile build-main
             make -f desktop/Makefile package ELECTRON_BUILDER_ARGS=$($env:ARG1,$env:ARG2 -join " ")
       - run:
           name: Archive Unpacked Directories
@@ -589,12 +519,13 @@ jobs:
             }
       - run:
           when: always
-          name: Clean Up
+          name: Clean Up NSIS
           command: |
             set +e
             rm -rf desktop/release/github
             rm -rf desktop/release/win-unpacked
             rm -rf desktop/release/win-ia32-unpacked
+            rm desktop/release/builder-debug.yml || true
           shell: bash.exe
       - store_artifacts:
           when: always
@@ -626,9 +557,9 @@ jobs:
       - run:
           name: Publish Github Release
           command: |
-            VERSION="${VERSION#desktop-}"
-            echo "Publishing draft release for wp-desktop $VERSION..."
-            NAME="WP-Desktop ${VERSION#?}"
+            SHORT_VERSION="${VERSION#desktop-}"
+            echo "Publishing draft release for wp-desktop $SHORT_VERSION..."
+            NAME="WP-Desktop ${SHORT_VERSION#?}"
 
             chmod +x desktop/bin/make-changelog.sh
             ./desktop/bin/make-changelog.sh > desktop/CHANGELOG.md
@@ -642,7 +573,7 @@ jobs:
               --body "$(cat desktop/CHANGELOG.md)" \
               --delete \
               --draft \
-              "${VERSION}" desktop/release/
+              "${SHORT_VERSION}" desktop/release/
 
             echo "Publish complete"
 
@@ -723,42 +654,3 @@ workflows:
           filters:
             tags:
               only: /desktop-v.*/
-
-  e2e-canary-i18n-monthly:
-    jobs:
-      - setup
-      - test-e2e-canary:
-          name: test-e2e-i18n-monthly
-          requires:
-            - setup
-          test-target: 'I18N'
-          test-flags: '-i'
-          filters:
-            branches:
-              only: trunk
-    triggers:
-      - schedule:
-          cron: '40 15 19 * *'
-          filters:
-            branches:
-              only: trunk
-
-  e2e-canary-i18n-nightly:
-    jobs:
-      - setup
-      - test-e2e-canary:
-          name: test-e2e-i18n-nightly
-          requires:
-            - setup
-          test-target: 'I18N'
-          test-flags: '-I'
-          filters:
-            branches:
-              only: trunk
-    triggers:
-      - schedule:
-          cron: '46 4 * * *'
-          filters:
-            branches:
-              only: trunk
-# vi: sts=2 ts=2 sw=2 et

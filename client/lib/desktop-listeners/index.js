@@ -7,8 +7,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import { newPost } from 'calypso/lib/paths';
-import user from 'calypso/lib/user';
-import userUtilities from 'calypso/lib/user/utils';
+import { redirectToLogout } from 'calypso/state/current-user/actions';
 import * as oAuthToken from 'calypso/lib/oauth-token';
 import { getStatsPathForTab } from 'calypso/lib/route';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
@@ -17,6 +16,7 @@ import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/anal
 import { NOTIFY_DESKTOP_NOTIFICATIONS_UNSEEN_COUNT_RESET } from 'calypso/state/desktop/window-events';
 import { setForceRefresh as forceNotificationsRefresh } from 'calypso/state/notifications-panel/actions';
 import { navigate } from 'calypso/lib/navigate';
+import { getCurrentUserId, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 /**
  * Module variables
@@ -102,7 +102,7 @@ const DesktopListeners = {
 	sendUserLoginStatus: function () {
 		let status = true;
 
-		if ( user().get() === false ) {
+		if ( ! isUserLoggedIn( this.store.getState() ) ) {
 			status = false;
 		}
 
@@ -111,7 +111,7 @@ const DesktopListeners = {
 		window.electron.send(
 			'user-login-status',
 			status,
-			{ id: user().data.ID },
+			{ id: getCurrentUserId( this.store.getState() ) },
 			oAuthToken.getToken()
 		);
 	},
@@ -138,7 +138,7 @@ const DesktopListeners = {
 	onSignout: function () {
 		debug( 'Signout' );
 
-		userUtilities.logout();
+		this.store.dispatch( redirectToLogout() );
 	},
 
 	onShowMySites: function () {

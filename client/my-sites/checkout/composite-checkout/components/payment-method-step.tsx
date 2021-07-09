@@ -6,7 +6,7 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import styled from '@emotion/styled';
 import {
 	getTotalLineItemFromCart,
-	getTaxLineItemFromCart,
+	getTaxBreakdownLineItemsFromCart,
 	getCreditsLineItemFromCart,
 	getSubtotalLineItemFromCart,
 } from '@automattic/wpcom-checkout';
@@ -72,7 +72,7 @@ export default function PaymentMethodStep( {
 	activeStepContent: React.ReactNode;
 } ): JSX.Element {
 	const { responseCart } = useShoppingCart();
-	const taxLineItem = getTaxLineItemFromCart( responseCart );
+	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	return (
 		<>
@@ -84,7 +84,9 @@ export default function PaymentMethodStep( {
 
 			<WPOrderReviewSection>
 				<NonProductLineItem subtotal lineItem={ getSubtotalLineItemFromCart( responseCart ) } />
-				{ taxLineItem && <NonProductLineItem tax lineItem={ taxLineItem } /> }
+				{ taxLineItems.map( ( taxLineItem ) => (
+					<NonProductLineItem key={ taxLineItem.id } tax lineItem={ taxLineItem } />
+				) ) }
 				{ creditsLineItem && responseCart.sub_total_integer > 0 && (
 					<NonProductLineItem subtotal lineItem={ creditsLineItem } />
 				) }
