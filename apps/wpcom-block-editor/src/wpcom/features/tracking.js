@@ -249,6 +249,9 @@ const maybeTrackPatternInsertion = ( actionData ) => {
 	const meta = find( actionData, ( item ) => item?.patternName );
 	let patternName = meta?.patternName;
 
+	const rootClientId = actionData[ 1 ];
+	const context = maybeAddBlockEventContext( rootClientId );
+
 	// Quick block inserter doesn't use an object to store the patternName
 	// in the metadata. The pattern name is just directly used as a string.
 	if ( ! patternName ) {
@@ -271,6 +274,7 @@ const maybeTrackPatternInsertion = ( actionData ) => {
 			pattern_name: patternName,
 			pattern_category: patternCategory,
 			blocks_replaced: actionData?.blocks_replaced,
+			entity_context: context,
 		} );
 	}
 

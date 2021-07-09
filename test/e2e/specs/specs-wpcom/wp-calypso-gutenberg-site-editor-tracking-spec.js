@@ -396,7 +396,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			await deleteTemplatesAndTemplateParts( this.driver );
 		} );
 
-		createGeneralTests( { it, editorType: 'site' } );
+		createGeneralTests( { it, editorType: 'site', baseContext: 'template' } );
 
 		describe( 'Tracks "wpcom_block_editor_global_styles_tab_selected', function () {
 			it( 'when Global Styles sidebar is opened', async function () {
@@ -1070,8 +1070,70 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				0,
 				"detaching blocks from template part shouldn't trigger replace blocks event"
 			);
+		} );
 
-			await deleteCustomEntities( this.driver, 'wp_template_part' );
+		describe( 'tracks "entity_context" property for block events in a template part', function () {
+			it( 'For "wpcom_block_inserted" event', async function () {
+				// Reload editor to start from consistent clean slate for tests.
+				await this.driver.navigate().refresh();
+				await driverHelper.acceptAlertIfPresent( this.driver );
+
+				const editor = await SiteEditorComponent.Expect( this.driver );
+				await editor.waitForTemplateToLoad();
+				await editor.waitForTemplatePartsToLoad();
+				await clearEventsStack( this.driver );
+
+				// Insert a block at the end of the template part.
+				await editor.runInCanvas( async () => {
+					await driverHelper.clickWhenClickable( this.driver, By.css( '.wp-block-template-part' ) );
+					await driverHelper.clickWhenClickable(
+						this.driver,
+						By.css( '.block-editor-inserter__toggle' )
+					);
+				} );
+				const quickInserterSearchInputLocator = By.css(
+					'.block-editor-inserter__quick-inserter .block-editor-inserter__search-input'
+				);
+				const blockItemLocator = By.css(
+					'.block-editor-inserter__quick-inserter .block-editor-block-types-list__item'
+				);
+				await driverHelper.setWhenSettable(
+					this.driver,
+					quickInserterSearchInputLocator,
+					'Heading'
+				);
+				await driverHelper.clickWhenClickable( this.driver, blockItemLocator );
+
+				await editor.runInCanvas( async () => {} );
+
+				const insertedEvents = ( await getEventsStack( this.driver ) ).filter(
+					( event ) => event[ 0 ] === 'wpcom_block_inserted'
+				);
+
+				assert.strictEqual( insertedEvents.length, 1 );
+				assert.strictEqual( insertedEvents[ 0 ][ 1 ].entity_context, 'core/template-part' );
+			} );
+
+			it( 'For "wpcom_block_moved_*" events', async function () {
+				await SiteEditorComponent.Expect( this.driver );
+
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					By.css( '.block-editor-block-mover-button.is-up-button' )
+				);
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					By.css( '.block-editor-block-mover-button.is-down-button' )
+				);
+
+				const events = await getEventsStack( this.driver );
+				assert.strictEqual( events.length, 2 );
+
+				const matchesContext = events.filter(
+					( event ) => event[ 1 ].entity_context === 'core/template-part'
+				);
+				assert.strictEqual( matchesContext.length, 2 );
+			} );
 		} );
 
 		afterEach( async function () {
