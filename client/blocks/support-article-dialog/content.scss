@@ -1,9 +1,10 @@
 .support-article-dialog__story-content {
+	color: var( --color-neutral-70 );
+	font-size: $font-body;
+	line-height: 1.7;
 	margin: 0;
 	padding-top: 16px;
 	position: relative;
-	font-size: $font-title-small;
-	line-height: 1.7;
 	overflow-wrap: break-word;
 	word-wrap: break-word;
 
@@ -62,11 +63,17 @@
 		height: auto;
 		display: inline;
 		margin: auto;
+		margin-bottom: 12px;
 
 		&.emojify__emoji {
 			height: 1em;
 			margin-bottom: 0;
 		}
+	}
+
+	figure img {
+		display: inherit;
+		margin-bottom: 0;
 	}
 
 	audio {
@@ -175,7 +182,7 @@
 		position: relative;
 		margin-bottom: 24px;
 		padding: 11px 24px;
-		border-radius: 1px;
+		border-radius: 2px;
 		background: var( --color-neutral-0 );
 		box-sizing: border-box;
 		font-size: $font-body-small;
