@@ -41,35 +41,24 @@ const PLANS_LIST = getPlans();
 
 export class PlanFeaturesHeader extends Component {
 	render() {
-		const {
-			isInSignup,
-			plansWithScroll,
-			planType,
-			isInVerticalScrollingPlansExperiment,
-		} = this.props;
+		const { isInSignup, plansWithScroll, planType } = this.props;
 
 		if ( planType === PLAN_P2_FREE ) {
 			return this.renderPlansHeaderP2Free();
 		}
 
-		// Do not use the signup-specific header, unify plans for the plansWithScroll test
+		// Do not use the signup-specific header
 		if ( plansWithScroll ) {
 			return this.renderPlansHeaderNoTabs();
 		} else if ( isInSignup ) {
-			if ( isInVerticalScrollingPlansExperiment ) {
-				return this.renderPlansHeaderNoTabs();
-			}
-			return this.renderSignupHeader();
+			return this.renderPlansHeaderNoTabs();
 		}
 		return this.renderPlansHeader();
 	}
 
 	resolveIsPillInCorner() {
-		const { isInSignup, isInVerticalScrollingPlansExperiment, plansWithScroll } = this.props;
-		return (
-			( isInVerticalScrollingPlansExperiment && isInSignup && plansWithScroll ) ||
-			( ! isInVerticalScrollingPlansExperiment && isInSignup )
-		);
+		const { isInSignup, plansWithScroll } = this.props;
+		return isInSignup && plansWithScroll;
 	}
 
 	renderPlansHeader() {
@@ -377,15 +366,8 @@ export class PlanFeaturesHeader extends Component {
 	}
 
 	renderPriceGroup( fullPrice, discountedPrice = null ) {
-		const {
-			currencyCode,
-			isInSignup,
-			plansWithScroll,
-			isInVerticalScrollingPlansExperiment,
-			isLoggedInMonthlyPricing,
-		} = this.props;
-		const displayFlatPrice =
-			isInSignup && ! plansWithScroll && ! isInVerticalScrollingPlansExperiment;
+		const { currencyCode, isInSignup, plansWithScroll, isLoggedInMonthlyPricing } = this.props;
+		const displayFlatPrice = false;
 
 		if ( fullPrice && discountedPrice ) {
 			return (
