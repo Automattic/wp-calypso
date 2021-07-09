@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'calypso/state/user-settings/init';
 
 /**
  * Returns true if there is a pending email change, false if not.
