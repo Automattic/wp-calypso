@@ -65,10 +65,10 @@ const Controls = ( { currentPage, numberOfPages, setCurrentPage } ) => {
 	);
 };
 
-export const DotPager = ( { children, className } ) => {
+export const DotPager = ( { children, className, ...props } ) => {
 	const [ currentPage, setCurrentPage ] = useState( 0 );
 	return (
-		<Card className={ className }>
+		<Card className={ className } { ...props }>
 			<Controls
 				currentPage={ currentPage }
 				numberOfPages={ Children.count( children ) }
