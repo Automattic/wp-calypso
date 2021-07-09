@@ -23,6 +23,7 @@ import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutSystemDecider from './checkout-system-decider';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
+import JetpackCheckoutSitelessThankYou from './checkout-thank-you/jetpack-checkout-siteless-thank-you';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import { setSectionMiddleware } from 'calypso/controller';
 import { sites } from 'calypso/my-sites/controller';
@@ -41,6 +42,7 @@ import UpsellNudge, {
 } from './upsell-nudge';
 import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
 import { TRUENAME_COUPONS } from 'calypso/lib/domains';
+import { hideMasterbar } from 'calypso/state/ui/masterbar-visibility/actions';
 
 const debug = debugFactory( 'calypso:checkout-controller' );
 
@@ -284,8 +286,11 @@ export function redirectToSupportSession( context ) {
 
 export function jetpackCheckoutThankYou( context, next ) {
 	const isUserlessCheckoutFlow = context.path.includes( '/checkout/jetpack' );
+	const isSitelessCheckoutFlow = context.path.includes( '/checkout/jetpack/thank-you/no-site' );
 
-	context.primary = (
+	context.primary = isSitelessCheckoutFlow ? (
+		<JetpackCheckoutSitelessThankYou productSlug={ context.params.product } />
+	) : (
 		<JetpackCheckoutThankYou
 			site={ context.params.site }
 			productSlug={ context.params.product }
@@ -359,4 +364,10 @@ function getRememberedCoupon() {
 	}
 	debug( 'not returning any coupon code.' );
 	return null;
+}
+
+// Call hideTheMasterbar 1st in index.js page route to prevent masterBar from appearing briefly before disappearing.
+export function hideTheMasterbar( context, next ) {
+	context.store.dispatch( hideMasterbar() );
+	next();
 }

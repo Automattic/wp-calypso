@@ -564,7 +564,9 @@ function handleCloseEditor( calypsoPort ) {
 			{
 				action: 'closeEditor',
 				payload: {
-					unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
+					unsavedChanges:
+						select( 'core' ).__experimentalGetDirtyEntityRecords?.().length > 0 ||
+						select( 'core/editor' ).isEditedPostDirty(),
 				},
 			},
 			[ port2 ]

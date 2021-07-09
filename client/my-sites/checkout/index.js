@@ -15,6 +15,7 @@ import {
 	redirectToSupportSession,
 	redirectJetpackLegacyPlans,
 	jetpackCheckoutThankYou,
+	hideTheMasterbar,
 } from './controller';
 import { noop } from './utils';
 import { recordSiftScienceUser } from 'calypso/lib/siftscience';
@@ -25,6 +26,17 @@ import { isEnabled } from '@automattic/calypso-config';
 export default function () {
 	page( '/checkout*', recordSiftScienceUser );
 
+	if ( isEnabled( 'jetpack/siteless-checkout' ) ) {
+		page( '/checkout/jetpack/:productSlug', noSite, checkoutSiteless, makeLayout, clientRender );
+		page(
+			'/checkout/jetpack/thank-you/no-site/:product',
+			noSite,
+			jetpackCheckoutThankYou,
+			makeLayout,
+			clientRender
+		);
+	}
+
 	if ( isEnabled( 'jetpack/userless-checkout' ) ) {
 		page( '/checkout/jetpack/:siteSlug/:productSlug', checkout, makeLayout, clientRender );
 		page(
@@ -34,10 +46,6 @@ export default function () {
 			makeLayout,
 			clientRender
 		);
-	}
-
-	if ( isEnabled( 'jetpack/siteless-checkout' ) ) {
-		page( '/checkout/jetpack/:productSlug', noSite, checkoutSiteless, makeLayout, clientRender );
 	}
 
 	page(
@@ -69,6 +77,7 @@ export default function () {
 
 	page(
 		'/checkout/thank-you/:site/:receiptId?',
+		hideTheMasterbar,
 		redirectLoggedOut,
 		siteSelection,
 		checkoutThankYou,

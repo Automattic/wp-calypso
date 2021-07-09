@@ -25,16 +25,7 @@ class RegistrantVerificationPage extends Component {
 		token: PropTypes.string.isRequired,
 	};
 
-	state = {
-		isLoading: true,
-		success: false,
-		error: false,
-	};
-
-	constructor( props ) {
-		super( props );
-		this.state = this.getLoadingState();
-	}
+	state = this.getLoadingState();
 
 	UNSAFE_componentWillMount() {
 		const { domain, email, token } = this.props;
@@ -48,7 +39,7 @@ class RegistrantVerificationPage extends Component {
 		);
 	}
 
-	getLoadingState = () => {
+	getLoadingState() {
 		const { translate } = this.props;
 		return {
 			isLoading: true,
@@ -58,7 +49,7 @@ class RegistrantVerificationPage extends Component {
 			actionCallback: null,
 			footer: 'Loading…',
 		};
-	};
+	}
 
 	getVerificationSuccessState = ( domains ) => {
 		const { translate } = this.props;

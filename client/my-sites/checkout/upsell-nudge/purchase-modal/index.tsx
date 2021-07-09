@@ -8,11 +8,12 @@ import { CheckoutProvider } from '@automattic/composite-checkout';
 import { useStripe } from '@automattic/calypso-stripe';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import type { ResponseCart } from '@automattic/shopping-cart';
+import type { ManagedValue } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
  */
-import { useSubmitTransaction } from './util';
+import { useSubmitTransaction, extractStoredCardMetaValue } from './util';
 import { BEFORE_SUBMIT } from './constants';
 import Content from './content';
 import Placeholder from './placeholder';
@@ -36,7 +37,6 @@ type PurchaseModalProps = {
 	isCartUpdating: boolean;
 	onClose: () => void;
 	siteSlug: string;
-	siteId: number;
 };
 
 export function PurchaseModal( {
@@ -45,12 +45,10 @@ export function PurchaseModal( {
 	isCartUpdating,
 	onClose,
 	siteSlug,
-	siteId,
 }: PurchaseModalProps ): JSX.Element {
 	const [ step, setStep ] = useState( BEFORE_SUBMIT );
 	const submitTransaction = useSubmitTransaction( {
 		cart,
-		siteId,
 		setStep,
 		storedCard: cards[ 0 ],
 		onClose,
@@ -71,6 +69,15 @@ export function PurchaseModal( {
 	);
 }
 
+function wrapValueInManagedValue( value: string | undefined ): ManagedValue {
+	return {
+		value: value ?? '',
+		isTouched: true,
+		isRequired: false,
+		errors: [],
+	};
+}
+
 export default function PurchaseModalWrapper( props: PurchaseModalProps ): JSX.Element {
 	const onComplete = useCreatePaymentCompleteCallback( {
 		isComingFromUpsell: true,
@@ -84,6 +91,9 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ): JSX.E
 	const contactDetailsType = getContactDetailsType( props.cart );
 	const includeDomainDetails = contactDetailsType === 'domain';
 	const includeGSuiteDetails = contactDetailsType === 'gsuite';
+	const storedCard = props.cards[ 0 ];
+	const countryCode = extractStoredCardMetaValue( storedCard, 'country_code' );
+	const postalCode = extractStoredCardMetaValue( storedCard, 'card_zip' );
 	const dataForProcessor: PaymentProcessorOptions = useMemo(
 		() => ( {
 			createUserAndSiteBeforeTransaction: false,
@@ -96,9 +106,14 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ): JSX.E
 			siteSlug: selectedSite?.slug ?? '',
 			siteId: selectedSite?.ID,
 			stripeConfiguration,
-			contactDetails: undefined,
+			contactDetails: {
+				countryCode: wrapValueInManagedValue( countryCode ),
+				postalCode: wrapValueInManagedValue( postalCode ),
+			},
 		} ),
 		[
+			countryCode,
+			postalCode,
 			includeDomainDetails,
 			includeGSuiteDetails,
 			stripeConfiguration,

@@ -89,6 +89,7 @@ import SiteMockups from './site-mockup';
 import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
 import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import FlowProgressIndicator from 'calypso/signup/flow-progress-indicator';
 
 /**
  * Style dependencies
@@ -598,8 +599,10 @@ class Signup extends React.Component {
 		return flows.getFlow( flowName, this.props.isLoggedIn ).steps.indexOf( stepName );
 	}
 
-	getFlowLength() {
-		return flows.getFlow( this.props.flowName, this.props.isLoggedIn ).steps.length;
+	getInteractiveStepsCount() {
+		const flowStepsSlugs = flows.getFlow( this.props.flowName, this.props.isLoggedIn ).steps;
+		const flowSteps = flowStepsSlugs.filter( ( step ) => ! steps[ step ].props?.nonInteractive );
+		return flowSteps.length;
 	}
 
 	renderProcessingScreen( isReskinned ) {
@@ -737,12 +740,17 @@ class Signup extends React.Component {
 				<DocumentHead title={ this.props.pageTitle } />
 				{ ! isWPForTeamsFlow( this.props.flowName ) && (
 					<SignupHeader
-						positionInFlow={ this.getPositionInFlow() }
-						flowLength={ this.getFlowLength() }
-						flowName={ this.props.flowName }
-						showProgressIndicator={ showProgressIndicator }
 						shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 						isReskinned={ isReskinned }
+						rightComponent={
+							showProgressIndicator && (
+								<FlowProgressIndicator
+									positionInFlow={ this.getPositionInFlow() }
+									flowLength={ this.getInteractiveStepsCount() }
+									flowName={ this.props.flowName }
+								/>
+							)
+						}
 					/>
 				) }
 				<div className="signup__steps">{ this.renderCurrentStep( isReskinned ) }</div>

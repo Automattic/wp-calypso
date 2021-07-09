@@ -76,7 +76,7 @@ const SVG_IGNORE_PATHS = [
 
 	// Credit card and payment gateway logos (the disabled versions are allowed)
 	/upgrades\/cc-(?:amex|diners|discover|jcb|mastercard|unionpay|visa)\.svg$/,
-	/upgrades\/(?:alipay|bancontact|brazil-tef|emergent-paywall|eps|giropay|ideal|netbanking|ovo|p24|paypal|paytm|sofort|tef|wechat)/,
+	/upgrades\/(?:alipay|bancontact|brazil-tef|emergent-paywall|eps|giropay|ideal|netbanking|p24|paypal|paytm|sofort|tef|wechat)/,
 
 	// Color scheme thumbnails that rely on .org colors
 	/color-scheme-thumbnail-(?:blue|classic-dark|coffee|ectoplasm|light|modern|ocean|sunrise)\.svg$/,

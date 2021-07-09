@@ -18,7 +18,7 @@ import {
 import { useIsWebPayAvailable } from '@automattic/wpcom-checkout';
 import { ThemeProvider } from 'emotion-theming';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
+import type { ResponseCart } from '@automattic/shopping-cart';
 import colorStudio from '@automattic/color-studio';
 import { useStripe } from '@automattic/calypso-stripe';
 import type { PaymentCompleteCallbackArguments } from '@automattic/composite-checkout';
@@ -33,7 +33,6 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import { getPlan } from '@automattic/calypso-products';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
@@ -56,7 +55,6 @@ import existingCardProcessor from './lib/existing-card-processor';
 import payPalProcessor from './lib/paypal-express-processor';
 import useGetThankYouUrl from './hooks/use-get-thank-you-url';
 import createAnalyticsEventHandler from './record-analytics';
-import { useProductVariants } from './hooks/product-variants';
 import { translateResponseCartToWPCOMCart } from './lib/translate-cart';
 import useCountryList from './hooks/use-country-list';
 import useCachedDomainContactDetails from './hooks/use-cached-domain-contact-details';
@@ -79,9 +77,6 @@ import { CountryListItem } from './types/country-list-item';
 import doesValueExist from './lib/does-value-exist';
 import EmptyCart from './components/empty-cart';
 import getContactDetailsType from './lib/get-contact-details-type';
-import getDomainDetails from './lib/get-domain-details';
-import getPostalCode from './lib/get-postal-code';
-import mergeIfObjects from './lib/merge-if-objects';
 import type { ReactStandardAction } from './types/analytics';
 import useCreatePaymentCompleteCallback from './hooks/use-create-payment-complete-callback';
 import useMaybeJetpackIntroCouponCode from './hooks/use-maybe-jetpack-intro-coupon-code';
@@ -399,7 +394,6 @@ export default function CompositeCheckout( {
 
 	const contactDetails: ManagedContactDetails | undefined = select( 'wpcom' )?.getContactInfo();
 	const countryCode: string = contactDetails?.countryCode?.value ?? '';
-	const subdivisionCode: string = contactDetails?.state?.value ?? '';
 
 	const paymentMethods = arePaymentMethodsLoading
 		? []
@@ -410,12 +404,6 @@ export default function CompositeCheckout( {
 				responseCart,
 		  } );
 	debug( 'filtered payment method objects', paymentMethods );
-
-	const planSlugs = getPlanProductSlugs( responseCart.products );
-	const getItemVariants = useProductVariants( {
-		siteId,
-		productSlug: planSlugs.length > 0 ? planSlugs[ 0 ] : undefined,
-	} );
 
 	const { analyticsPath, analyticsProps } = getAnalyticsPath(
 		purchaseId,
@@ -488,12 +476,6 @@ export default function CompositeCheckout( {
 		]
 	);
 
-	const domainDetails = getDomainDetails( contactDetails, {
-		includeDomainDetails,
-		includeGSuiteDetails,
-	} );
-	const postalCode = getPostalCode( contactDetails );
-
 	const paymentProcessors = useMemo(
 		() => ( {
 			'apple-pay': ( transactionData: unknown ) =>
@@ -514,8 +496,6 @@ export default function CompositeCheckout( {
 			wechat: ( transactionData: unknown ) => weChatProcessor( transactionData, dataForProcessor ),
 			netbanking: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'netbanking', transactionData, dataForProcessor ),
-			id_wallet: ( transactionData: unknown ) =>
-				genericRedirectProcessor( 'id_wallet', transactionData, dataForProcessor ),
 			ideal: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'ideal', transactionData, dataForProcessor ),
 			sofort: ( transactionData: unknown ) =>
@@ -526,19 +506,10 @@ export default function CompositeCheckout( {
 				genericRedirectProcessor( 'brazil-tef', transactionData, dataForProcessor ),
 			'full-credits': () => fullCreditsProcessor( dataForProcessor ),
 			'existing-card': ( transactionData: unknown ) =>
-				existingCardProcessor(
-					mergeIfObjects( transactionData, {
-						country: countryCode,
-						postalCode,
-						subdivisionCode,
-						siteId: siteId ? String( siteId ) : undefined,
-						domainDetails,
-					} ),
-					dataForProcessor
-				),
+				existingCardProcessor( transactionData, dataForProcessor ),
 			paypal: () => payPalProcessor( dataForProcessor ),
 		} ),
-		[ siteId, dataForProcessor, countryCode, subdivisionCode, postalCode, domainDetails ]
+		[ dataForProcessor ]
 	);
 
 	const jetpackColors = isJetpackNotAtomic
@@ -676,7 +647,6 @@ export default function CompositeCheckout( {
 					siteId={ updatedSiteId }
 					siteUrl={ updatedSiteSlug }
 					countriesList={ countriesList }
-					getItemVariants={ getItemVariants }
 					addItemToCart={ addItemWithEssentialProperties }
 					showErrorMessageBriefly={ showErrorMessageBriefly }
 					isLoggedOutCart={ !! isLoggedOutCart }
@@ -686,14 +656,6 @@ export default function CompositeCheckout( {
 			</CheckoutProvider>
 		</React.Fragment>
 	);
-}
-
-function getPlanProductSlugs( items: ResponseCartProduct[] ): string[] {
-	return items
-		.filter( ( item ) => {
-			return getPlan( item.product_slug );
-		} )
-		.map( ( item ) => item.product_slug );
 }
 
 function getAnalyticsPath(

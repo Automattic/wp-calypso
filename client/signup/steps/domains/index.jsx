@@ -85,13 +85,6 @@ class DomainsStep extends React.Component {
 		isReskinned: PropTypes.bool,
 	};
 
-	getDefaultState = () => ( {
-		previousStepSectionName: this.props.stepSectionName,
-		suggestion: null,
-	} );
-
-	state = this.getDefaultState();
-
 	constructor( props ) {
 		super( props );
 
@@ -130,12 +123,6 @@ class DomainsStep extends React.Component {
 
 			props.goToNextStep();
 		}
-	}
-
-	static getDerivedStateFromProps( nextProps ) {
-		return {
-			previousStepSectionName: nextProps.stepSectionName,
-		};
 	}
 
 	/**
@@ -478,9 +465,6 @@ class DomainsStep extends React.Component {
 
 	domainForm = () => {
 		let initialState = {};
-		if ( this.state?.domainForm ) {
-			initialState = this.state.domainForm;
-		}
 		if ( this.props.step ) {
 			initialState = this.props.step.domainForm;
 		}

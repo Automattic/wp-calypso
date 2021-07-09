@@ -11,14 +11,21 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import tracksRecordEvent from './tracking/track-record-event';
-import delegateEventTracking from './tracking/delegate-event-tracking';
+import delegateEventTracking, {
+	registerSubscriber as registerDelegateEventSubscriber,
+} from './tracking/delegate-event-tracking';
 import { trackGlobalStylesTabSelected } from './tracking/wpcom-block-editor-global-styles-tab-selected';
-import { buildGlobalStylesContentEvents, maybeAddBlockEventContext } from './utils';
+import {
+	buildGlobalStylesContentEvents,
+	getFlattenedBlockNames,
+	maybeAddBlockEventContext,
+} from './utils';
 
 // Debugger.
 const debug = debugFactory( 'wpcom-block-editor:tracking' );
 
 const noop = () => {};
+let ignoreNextReplaceBlocksAction = false;
 
 /**
  * Global handler.
@@ -320,6 +327,11 @@ const trackBlockRemoval = ( blocks ) => {
  * @returns {void}
  */
 const trackBlockReplacement = ( originalBlockIds, blocks, ...args ) => {
+	if ( ignoreNextReplaceBlocksAction ) {
+		ignoreNextReplaceBlocksAction = false;
+		return;
+	}
+
 	const patternName = maybeTrackPatternInsertion( { ...args, blocks_replaced: true } );
 
 	const rootClientId = select( 'core/block-editor' ).getBlockRootClientId(
@@ -430,6 +442,34 @@ const trackDisableComplementaryArea = ( scope ) => {
 	const activeArea = select( 'core/interface' ).getActiveComplementaryArea( scope );
 	if ( activeArea === 'edit-site/global-styles' && scope === 'core/edit-site' ) {
 		trackGlobalStylesTabSelected( { open: false } );
+	}
+};
+
+const trackSaveEntityRecord = ( kind, name, record ) => {
+	if ( kind === 'postType' && name === 'wp_template_part' ) {
+		const variationSlug = record.area !== 'uncategorized' ? record.area : undefined;
+		if ( document.querySelector( '.edit-site-template-part-converter__modal' ) ) {
+			ignoreNextReplaceBlocksAction = true;
+			const convertedParentBlocks = select( 'core/block-editor' ).getBlocksByClientId(
+				select( 'core/block-editor' ).getSelectedBlockClientIds()
+			);
+			// We fire the event with and without the block names. We do this to
+			// make sure the event is tracked all the time. The block names
+			// might become a string that's too long and as a result it will
+			// fail because of URL length browser limitations.
+			tracksRecordEvent( 'wpcom_block_editor_convert_to_template_part', {
+				variation_slug: variationSlug,
+			} );
+			tracksRecordEvent( 'wpcom_block_editor_convert_to_template_part', {
+				variation_slug: variationSlug,
+				block_names: getFlattenedBlockNames( convertedParentBlocks ).join( ',' ),
+			} );
+		} else {
+			tracksRecordEvent( 'wpcom_block_editor_create_template_part', {
+				variation_slug: variationSlug,
+				content: record.content ? record.content : undefined,
+			} );
+		}
 	}
 };
 
@@ -548,6 +588,7 @@ const REDUX_TRACKING = {
 	core: {
 		undo: 'wpcom_block_editor_undo_performed',
 		redo: 'wpcom_block_editor_redo_performed',
+		saveEntityRecord: trackSaveEntityRecord,
 		editEntityRecord: trackEditEntityRecord,
 		saveEditedEntityRecord: trackSaveEditedEntityRecord,
 	},
@@ -645,4 +686,12 @@ if (
 			return null;
 		},
 	} );
+
+	registerDelegateEventSubscriber(
+		'wpcom-block-editor-template-part-detach-blocks',
+		'before',
+		() => {
+			ignoreNextReplaceBlocksAction = true;
+		}
+	);
 }

@@ -20,6 +20,7 @@ import WordPressImporter from 'calypso/my-sites/importer/importer-wordpress';
 import MediumImporter from 'calypso/my-sites/importer/importer-medium';
 import BloggerImporter from 'calypso/my-sites/importer/importer-blogger';
 import WixImporter from 'calypso/my-sites/importer/importer-wix';
+import SubstackImporter from 'calypso/my-sites/importer/importer-substack';
 import SquarespaceImporter from 'calypso/my-sites/importer/importer-squarespace';
 import { fetchImporterState, startImport } from 'calypso/state/imports/actions';
 import { getImporters, getImporterByKey } from 'calypso/lib/importer/importer-config';
@@ -60,6 +61,7 @@ import config from '@automattic/calypso-config';
 const importerComponents = {
 	blogger: BloggerImporter,
 	medium: MediumImporter,
+	substack: SubstackImporter,
 	squarespace: SquarespaceImporter,
 	wix: WixImporter,
 	wordpress: WordPressImporter,
