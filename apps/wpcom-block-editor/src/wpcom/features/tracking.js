@@ -4,6 +4,7 @@
 import { use, select } from '@wordpress/data';
 import { registerPlugin } from '@wordpress/plugins';
 import { applyFilters } from '@wordpress/hooks';
+import { __ } from '@wordpress/i18n';
 import { find, isEqual } from 'lodash';
 import debugFactory from 'debug';
 
@@ -702,8 +703,11 @@ if (
 	registerDelegateEventSubscriber(
 		'wpcom-block-editor-template-part-detach-blocks',
 		'before',
-		() => {
-			ignoreNextReplaceBlocksAction = true;
+		( mapping, event, target ) => {
+			const item = target.querySelector( '.components-menu-item__item' );
+			if ( item?.innerText === __( 'Detach blocks from template part' ) ) {
+				ignoreNextReplaceBlocksAction = true;
+			}
 		}
 	);
 }
