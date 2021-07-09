@@ -15,9 +15,7 @@
 		"github"
 	],
 	"license": "GPL-2.0-or-later",
-	"bin": {
-		"retarget-open-prs": "./cli.js"
-	},
+	"bin": "./cli.js",
 	"dependencies": {
 		"@octokit/core": "^3.1.2",
 		"yargs": "^17.0.1"

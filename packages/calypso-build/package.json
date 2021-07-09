@@ -26,9 +26,9 @@
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
 	"bin": {
-		"transpile": "./bin/transpile.js",
 		"calypso-build": "./bin/calypso-build.js",
-		"copy-assets": "./bin/copy-assets.js"
+		"copy-assets": "./bin/copy-assets.js",
+		"transpile": "./bin/transpile.js"
 	},
 	"browserslist": [
 		"extends @wordpress/browserslist-config"

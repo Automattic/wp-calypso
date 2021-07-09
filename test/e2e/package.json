@@ -21,6 +21,7 @@
 	"dependencies": {
 		"@automattic/calypso-e2e": "^0.1.0",
 		"@automattic/mocha-debug-reporter": "^0.1.0",
+		"@automattic/testarmada-magellan-mocha-plugin": "^10.0.0",
 		"@babel/core": "^7.2.2",
 		"@babel/preset-env": "^7.3.1",
 		"@babel/register": "^7.0.0",
@@ -52,8 +53,8 @@
 		"mailosaur": "^4.0.0",
 		"mocha": "^8.1.3",
 		"mocha-junit-reporter": "^2.0.0",
-		"mocha-teamcity-reporter": "^3.0.0",
 		"mocha-multi-reporters": "^1.5.1",
+		"mocha-teamcity-reporter": "^3.0.0",
 		"node-slack-upload": "^1.2.1",
 		"png-itxt": "^1.3.0",
 		"prettier": "npm:wp-prettier@2.2.1-beta-1",
@@ -68,7 +69,6 @@
 		"spec-junit-reporter": "^0.0.1",
 		"testarmada-magellan": "11.0.10",
 		"testarmada-magellan-local-executor": "^2.0.3",
-		"@automattic/testarmada-magellan-mocha-plugin": "^10.0.0",
 		"xml2json-command": "^0.0.3",
 		"xmpp.js": "^0.3.0",
 		"xunit-viewer": "^5.1.8"

@@ -36,7 +36,7 @@
 		"@wordpress/data": "^4.27.3",
 		"@wordpress/icons": "^2.10.3",
 		"@wordpress/react-i18n": "^1.0.3",
-		"classnames": "^2.2.6",
+		"classnames": "^2.3.1",
 		"react-router-dom": "^5.1.2"
 	},
 	"devDependencies": {
@@ -51,7 +51,10 @@
 	},
 	"peerDependencies": {
 		"@wordpress/i18n": "^3.20.0",
-		"react": "^16.8"
+		"@wp-g2/create-styles": "^0.0.154",
+		"react": "^16.8",
+		"react-native": "^0.63.4",
+		"reakit-utils": "^0.15.1"
 	},
 	"private": true
 }
