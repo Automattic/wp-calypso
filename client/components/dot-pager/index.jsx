@@ -13,7 +13,11 @@ import { Icon, arrowRight } from '@wordpress/icons';
  */
 import './style.scss';
 
-const Controls = ( { currentPage, numberOfPages, setCurrentPage } ) => {
+const Controls = ( {
+	currentPage,
+	numberOfPages,
+	setCurrentPage,
+} ) => {
 	const translate = useTranslate();
 	if ( numberOfPages < 2 ) {
 		return null;
