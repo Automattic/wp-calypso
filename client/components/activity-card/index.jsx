@@ -34,6 +34,7 @@ import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import StreamsMediaPreview from './activity-card-streams-media-preview';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
 import { rewindShareRequest } from 'calypso/state/activity-log/actions';
+import ShareActivity from './share-activity';
 
 /**
  * Style dependencies
@@ -433,7 +434,9 @@ class ActivityCard extends Component {
 						<div className="activity-card__time-text">{ backupTimeDisplay }</div>
 					</div>
 				) }
-				{ ! summarize && isEnabled( 'jetpack/activity-log-sharing' ) && this.renderShareButton() }
+				{ ! summarize && isEnabled( 'jetpack/activity-log-sharing' ) && (
+					<ShareActivity siteId={ siteId } activity={ activity } />
+				) }
 				<Card>
 					<ActivityActor
 						actorAvatarUrl={ activity.actorAvatarUrl }
