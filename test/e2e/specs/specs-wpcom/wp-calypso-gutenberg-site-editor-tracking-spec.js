@@ -1104,8 +1104,6 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				);
 				await driverHelper.clickWhenClickable( this.driver, blockItemLocator );
 
-				await editor.runInCanvas( async () => {} );
-
 				const insertedEvents = ( await getEventsStack( this.driver ) ).filter(
 					( event ) => event[ 0 ] === 'wpcom_block_inserted'
 				);
@@ -1133,6 +1131,25 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 					( event ) => event[ 1 ].entity_context === 'core/template-part'
 				);
 				assert.strictEqual( matchesContext.length, 2 );
+			} );
+
+			it( 'For "wpcom_block_deleted" events', async function () {
+				await SiteEditorComponent.Expect( this.driver );
+
+				const blockToolbarOptionsLocator = By.css(
+					'[aria-label="Block tools"] [aria-label="Options"]'
+				);
+				const removeBlockOptionsItemLocator = driverHelper.createTextLocator(
+					By.css( '[aria-label="Options"] button' ),
+					'Remove block'
+				);
+				await driverHelper.clickWhenClickable( this.driver, blockToolbarOptionsLocator );
+				await driverHelper.clickWhenClickable( this.driver, removeBlockOptionsItemLocator );
+
+				const events = await getEventsStack( this.driver );
+
+				assert.strictEqual( events.length, 1 );
+				assert.strictEqual( events[ 0 ][ 1 ].entity_context, 'core/template-part' );
 			} );
 		} );
 
