@@ -35,8 +35,12 @@ const withDomainNameservers = createHigherOrderComponent( ( Wrapped ) => {
 				);
 			},
 			onError( err ) {
-				const defaultMessage = translate( 'An error occurred while updating the nameservers.' );
-				dispatch( errorNotice( err.message ?? defaultMessage, noticeOptions ) );
+				dispatch(
+					errorNotice(
+						err.message ?? translate( 'An error occurred while updating the nameservers.' ),
+						noticeOptions
+					)
+				);
 			},
 		} );
 
