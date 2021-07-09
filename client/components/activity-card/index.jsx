@@ -326,13 +326,15 @@ class ActivityCard extends Component {
 			>
 				<QueryRewindState siteId={ siteId } />
 				{ ! summarize && (
-					<div className="activity-card__time">
-						<Gridicon icon={ activity.activityIcon } className="activity-card__time-icon" />
-						<div className="activity-card__time-text">{ backupTimeDisplay }</div>
+					<div className="activity-card__header">
+						<div className="activity-card__time">
+							<Gridicon icon={ activity.activityIcon } className="activity-card__time-icon" />
+							<div className="activity-card__time-text">{ backupTimeDisplay }</div>
+						</div>
+						{ isEnabled( 'jetpack/activity-log-sharing' ) && (
+							<ShareActivity siteId={ siteId } activity={ activity } />
+						) }
 					</div>
-				) }
-				{ ! summarize && isEnabled( 'jetpack/activity-log-sharing' ) && (
-					<ShareActivity siteId={ siteId } activity={ activity } />
 				) }
 				<Card>
 					<ActivityActor
