@@ -146,9 +146,7 @@ class AppointmentInfo extends Component {
 				<Confirmation
 					title={ translate( 'Your upcoming appointment' ) }
 					description={ translate(
-						'We can talk about anything related to your site. ' +
-							'Get all your questions ready ' +
-							'-- we look forward to chatting!',
+						'Get all your questions ready ' + '-- we look forward to chatting!',
 						{
 							args: {
 								beginTime: moment( beginTimestamp ).format( beginTimeFormat ),
