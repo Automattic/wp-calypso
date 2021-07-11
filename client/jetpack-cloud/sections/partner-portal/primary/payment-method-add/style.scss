@@ -1,0 +1,26 @@
+.payment-method-add {
+	&__navigation-buttons {
+		margin-top: 1rem;
+	}
+
+	&__back-button {
+		margin-right: 1rem;
+		font-size: 1rem;
+	}
+
+	&__submit-button {
+		display: inline;
+		font-size: 1rem;
+	}
+
+	&__all-subscriptions-checkbox-label.form-label {
+		display: inline-block;
+		margin-top: 1rem;
+		margin-bottom: 1rem;
+
+		span {
+			display: inline;
+			margin-left: 1rem;
+		}
+	}
+}

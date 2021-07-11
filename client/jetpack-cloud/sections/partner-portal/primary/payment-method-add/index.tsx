@@ -6,11 +6,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import page from 'page';
 import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 import { useTranslate } from 'i18n-calypso';
-import {
-	CheckoutProvider,
-	CheckoutPaymentMethods,
-	CheckoutSubmitButton,
-} from '@automattic/composite-checkout';
+import { CheckoutProvider, CheckoutSubmitButton } from '@automattic/composite-checkout';
+import { Button, Card } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -19,19 +16,23 @@ import Main from 'calypso/components/main';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
-import { Card } from '@automattic/components';
 import { useCreateStoredCreditCard } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/hooks/use-create-stored-credit-card';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import getPaymentMethodIdFromPayment from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/get-payment-method-id-from-payment';
+import Notice from 'calypso/components/notice';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { assignNewCardProcessor } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/assignment-processor-functions';
+import { creditCardHasAlreadyExpired } from 'calypso/lib/purchases';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { TranslateResult } from 'i18n-calypso';
-import type { PaymentMethod } from '@automattic/composite-checkout';
-import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 function onPaymentSelectComplete( {
 	successCallback,
@@ -103,29 +104,6 @@ function CurrentPaymentMethodNotAvailableNotice( {
 	return null;
 }
 
-function AllSubscriptionsEffectWarning( {
-	useForAllSubscriptions,
-}: {
-	useForAllSubscriptions: boolean;
-} ) {
-	const translate = useTranslate();
-
-	if ( useForAllSubscriptions ) {
-		return (
-			<span className="payment-method-add__all-subscriptions-effect-warning">
-				{ translate( 'This card will be used for future renewals of existing purchases.' ) }
-			</span>
-		);
-	}
-	return (
-		<span className="payment-method-add__all-subscriptions-effect-warning">
-			{ translate(
-				'This card will not be assigned to any subscriptions. You can assign it to a subscription from the subscription page.'
-			) }
-		</span>
-	);
-}
-
 function PaymentMethodAdd(): ReactElement {
 	const purchase = undefined;
 	const reduxDispatch = useDispatch();
@@ -137,9 +115,7 @@ function PaymentMethodAdd(): ReactElement {
 		stripeLoadingError,
 		stripeConfiguration,
 		stripe,
-		shouldUseEbanx: false,
-		shouldShowTaxFields: true,
-		activePayButtonText: translate( 'Save card' ),
+		activePayButtonText: translate( 'Save payment method' ) as string,
 	} );
 	const paymentMethods = useMemo( () => [ stripeMethod ].filter( Boolean ), [ stripeMethod ] );
 
@@ -149,7 +125,9 @@ function PaymentMethodAdd(): ReactElement {
 		}
 	}, [ stripeLoadingError, reduxDispatch ] );
 
-	const goToPaymentMethods = () => page( '/partner-portal/payment-method/' );
+	const onGoToPaymentMethods = () => {
+		// record tracks events
+	};
 
 	const currentlyAssignedPaymentMethodId = getPaymentMethodIdFromPayment( purchase?.payment );
 
@@ -176,18 +154,12 @@ function PaymentMethodAdd(): ReactElement {
 	);
 
 	const currentPaymentMethodNotAvailable = ! paymentMethods.some(
-		( paymentMethod ) => paymentMethod.id === currentlyAssignedPaymentMethodId
+		( paymentMethod ) => paymentMethod?.id === currentlyAssignedPaymentMethodId
 	);
 
 	const [ useForAllSubscriptions, setUseForAllSubscriptions ] = useState< boolean >( ! purchase );
 
-	const assignAllSubscriptionsText = String(
-		translate( 'Assign this payment method to all of my subscriptions' )
-	);
-
-	if ( paymentMethods.length === 0 ) {
-		return <div>{ translate( 'loading...' ) }</div>;
-	}
+	const assignAllSubscriptionsText = String( translate( 'Set as primary payment method' ) );
 
 	return (
 		<Main wideLayout className="payment-method-add">
@@ -229,7 +201,6 @@ function PaymentMethodAdd(): ReactElement {
 				initiallySelectedPaymentMethodId="card"
 			>
 				<Card className="payment-method-add__content">
-					<QueryPaymentCountries />
 					{ currentPaymentMethodNotAvailable && purchase && (
 						<CurrentPaymentMethodNotAvailableNotice purchase={ purchase } />
 					) }
@@ -244,12 +215,21 @@ function PaymentMethodAdd(): ReactElement {
 								onChange={ () => setUseForAllSubscriptions( ( checked ) => ! checked ) }
 								aria-label={ assignAllSubscriptionsText }
 							/>
-							{ assignAllSubscriptionsText }
-							<AllSubscriptionsEffectWarning useForAllSubscriptions={ useForAllSubscriptions } />
+							<span>{ assignAllSubscriptionsText }</span>
 						</FormLabel>
 					) }
 
-					<CheckoutSubmitButton />
+					<div className="payment-method-add__navigation-buttons">
+						<Button
+							className="payment-method-add__back-button"
+							href="/partner-portal/payment-method/"
+							disabled={ isStripeLoading }
+							onClick={ onGoToPaymentMethods }
+						>
+							{ translate( 'Go back' ) }
+						</Button>
+						<CheckoutSubmitButton className="payment-method-add__submit-button" />
+					</div>
 				</Card>
 			</CheckoutProvider>
 		</Main>

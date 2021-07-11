@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useEffect } from 'react';
-import styled from '@emotion/styled';
+import React, { useState } from 'react';
 import { useTheme } from 'emotion-theming';
 import { useI18n } from '@wordpress/react-i18n';
 import {
@@ -12,6 +11,7 @@ import {
 	useDispatch,
 	useFormStatus,
 } from '@automattic/composite-checkout';
+import { Field } from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
@@ -20,13 +20,9 @@ import {
 	LeftColumn,
 	RightColumn,
 } from 'calypso/my-sites/checkout/composite-checkout/components/ie-fallback';
-import Spinner from 'calypso/my-sites/checkout/composite-checkout/components/spinner';
-import ContactFields from './contact-fields';
 import CreditCardNumberField from './credit-card-number-field';
 import CreditCardExpiryField from './credit-card-expiry-field';
 import CreditCardCvvField from './credit-card-cvv-field';
-import { FieldRow, CreditCardField } from './form-layout-components';
-import CreditCardLoading from './credit-card-loading';
 import PaymentMethodImage from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields/payment-method-image';
 
 /**
@@ -34,10 +30,11 @@ import PaymentMethodImage from 'calypso/jetpack-cloud/sections/partner-portal/cr
  */
 import './style.scss';
 
-export default function CreditCardFields( { shouldUseEbanx, shouldShowTaxFields } ) {
+export default function CreditCardFields() {
 	const { __ } = useI18n();
 	const theme = useTheme();
 	const onEvent = useEvents();
+	// eslint-disable-next-line no-unused-vars
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
 	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
 	const getField = ( key ) => fields[ key ] || {};
@@ -52,16 +49,6 @@ export default function CreditCardFields( { shouldUseEbanx, shouldShowTaxFields 
 	const { setFieldValue, changeBrand, setCardDataError, setCardDataComplete } = useDispatch(
 		'credit-card'
 	);
-
-	// We need the countryCode for the country specific payment fields which have
-	// no country selector but require country data during validation and submit
-	// as well as the code that decides which fields to display. Since Ebanx is
-	// only available in BR, we will hard-code it here, but if we ever expand
-	// Ebanx to other countries, this will need to be changed.
-	const contactCountryCode = shouldUseEbanx ? 'BR' : '';
-	useEffect( () => {
-		setFieldValue( 'countryCode', contactCountryCode );
-	}, [ contactCountryCode, setFieldValue ] );
 
 	const cardholderName = getField( 'cardholderName' );
 	const cardholderNameErrorMessages = getErrorMessagesForField( 'cardholderName' ) || [];
@@ -102,13 +89,12 @@ export default function CreditCardFields( { shouldUseEbanx, shouldShowTaxFields 
 		setCardDataError( input.elementType, null );
 	};
 
-	const shouldShowContactFields = shouldUseEbanx || shouldShowTaxFields;
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 
 	const stripeElementStyle = {
 		base: {
-			fontSize: '16px',
+			fontSize: '14px',
 			color: theme.colors.textColor,
 			fontFamily: theme.fonts.body,
 			fontWeight: theme.weights.normal,
@@ -121,15 +107,12 @@ export default function CreditCardFields( { shouldUseEbanx, shouldShowTaxFields 
 		},
 	};
 
-	const isLoaded = shouldShowContactFields ? true : isStripeFullyLoaded;
-
 	return (
 		<div className="credit-card-fields">
-			{ ! isLoaded && <LoadingFields /> }
-
 			<div className="credit-card-fields__form">
-				<CreditCardField
+				<Field
 					id="cardholder-name"
+					className="credit-card-fields__input-field"
 					type="Text"
 					autoComplete="cc-name"
 					label={ __( 'Name' ) }
@@ -140,8 +123,9 @@ export default function CreditCardFields( { shouldUseEbanx, shouldShowTaxFields 
 					disabled={ isDisabled }
 				/>
 
-				<CreditCardField
+				<Field
 					id="cardholder-email"
+					className="credit-card-fields__input-field"
 					type="Text"
 					autoComplete="cc-email"
 					label={ __( 'Email' ) }
@@ -152,8 +136,9 @@ export default function CreditCardFields( { shouldUseEbanx, shouldShowTaxFields 
 					disabled={ isDisabled }
 				/>
 
-				<CreditCardField
+				<Field
 					id="cardholder-phone"
+					className="credit-card-fields__input-field"
 					type="Text"
 					autoComplete="cc-phone"
 					label={ __( 'Phone' ) }
@@ -164,23 +149,21 @@ export default function CreditCardFields( { shouldUseEbanx, shouldShowTaxFields 
 					disabled={ isDisabled }
 				/>
 
-				<FieldRow>
+				<div className="credit-card-fields__field-block">
 					<CreditCardNumberField
 						setIsStripeFullyLoaded={ setIsStripeFullyLoaded }
 						handleStripeFieldChange={ handleStripeFieldChange }
 						stripeElementStyle={ stripeElementStyle }
-						shouldUseEbanx={ shouldUseEbanx }
 						getErrorMessagesForField={ getErrorMessagesForField }
 						setFieldValue={ setFieldValue }
 						getFieldValue={ getFieldValue }
 					/>
 
-					<FieldRow gap="4%" columnWidths="48% 48%">
+					<div className="credit-card-fields__field-row">
 						<LeftColumn>
 							<CreditCardExpiryField
 								handleStripeFieldChange={ handleStripeFieldChange }
 								stripeElementStyle={ stripeElementStyle }
-								shouldUseEbanx={ shouldUseEbanx }
 								getErrorMessagesForField={ getErrorMessagesForField }
 								setFieldValue={ setFieldValue }
 								getFieldValue={ getFieldValue }
@@ -190,25 +173,13 @@ export default function CreditCardFields( { shouldUseEbanx, shouldShowTaxFields 
 							<CreditCardCvvField
 								handleStripeFieldChange={ handleStripeFieldChange }
 								stripeElementStyle={ stripeElementStyle }
-								shouldUseEbanx={ shouldUseEbanx }
 								getErrorMessagesForField={ getErrorMessagesForField }
 								setFieldValue={ setFieldValue }
 								getFieldValue={ getFieldValue }
 							/>
 						</RightColumn>
-					</FieldRow>
-				</FieldRow>
-
-				{ shouldShowContactFields && (
-					<ContactFields
-						getField={ getField }
-						getFieldValue={ getFieldValue }
-						setFieldValue={ setFieldValue }
-						getErrorMessagesForField={ getErrorMessagesForField }
-						shouldUseEbanx={ shouldUseEbanx }
-						shouldShowTaxFields={ shouldShowTaxFields }
-					/>
-				) }
+					</div>
+				</div>
 			</div>
 			<div className="credit-card-fields__image">
 				<PaymentMethodImage />
@@ -216,23 +187,3 @@ export default function CreditCardFields( { shouldUseEbanx, shouldShowTaxFields 
 		</div>
 	);
 }
-
-function LoadingFields() {
-	return (
-		<React.Fragment>
-			<LoadingIndicator />
-			<CreditCardLoading />
-		</React.Fragment>
-	);
-}
-
-const LoadingIndicator = styled( Spinner )`
-	position: absolute;
-	right: 15px;
-	top: 10px;
-
-	.rtl & {
-		right: auto;
-		left: 15px;
-	}
-`;
