@@ -36,6 +36,11 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
  */
 import './style.scss';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 function onPaymentSelectComplete( {
 	successCallback,
 	translate,

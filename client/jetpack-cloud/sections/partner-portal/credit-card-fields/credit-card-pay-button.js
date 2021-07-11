@@ -6,18 +6,13 @@ import debugFactory from 'debug';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import {
-	Button,
 	FormStatus,
 	useLineItems,
 	useEvents,
 	useFormStatus,
 	useSelect,
 } from '@automattic/composite-checkout';
-
-/**
- * Internal dependencies
- */
-import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
+import { Button } from '@automattic/components';
 
 const debug = debugFactory( 'calypso:composite-checkout:credit-card' );
 
@@ -27,7 +22,6 @@ export default function CreditCardPayButton( {
 	store,
 	stripe,
 	stripeConfiguration,
-	shouldUseEbanx,
 	activeButtonText = undefined,
 } ) {
 	const { __ } = useI18n();
@@ -36,10 +30,11 @@ export default function CreditCardPayButton( {
 	const cardholderName = fields.cardholderName;
 	const { formStatus } = useFormStatus();
 	const onEvent = useEvents();
-	const paymentPartner = shouldUseEbanx ? 'ebanx' : 'stripe';
+	const paymentPartner = 'stripe';
 
 	return (
 		<Button
+			primary
 			disabled={ disabled }
 			onClick={ () => {
 				if ( isCreditCardFormValid( store, paymentPartner, __ ) ) {
@@ -58,36 +53,12 @@ export default function CreditCardPayButton( {
 						} );
 						return;
 					}
-					if ( paymentPartner === 'ebanx' ) {
-						debug( 'submitting ebanx payment' );
-						onEvent( { type: 'EBANX_TRANSACTION_BEGIN' } );
-						onClick( 'card', {
-							name: cardholderName?.value || '',
-							countryCode: fields?.countryCode?.value || '',
-							number: fields?.number?.value?.replace( /\s+/g, '' ) || '',
-							cvv: fields?.cvv?.value || '',
-							'expiration-date': fields[ 'expiration-date' ]?.value || '',
-							state: fields?.state?.value || '',
-							city: fields?.city?.value || '',
-							postalCode: fields[ 'postal-code' ]?.value || '',
-							address: fields[ 'address-1' ]?.value || '',
-							streetNumber: fields[ 'street-number' ]?.value || '',
-							phoneNumber: fields[ 'phone-number' ]?.value || '',
-							document: fields?.document?.value || '', // Taxpayer Identification Number
-							items,
-							total,
-							paymentPartner,
-						} );
-						return;
-					}
 					throw new Error(
 						'Unrecognized payment partner in submit handler: "' + paymentPartner + '"'
 					);
 				}
 			} }
-			buttonType="primary"
-			isBusy={ FormStatus.SUBMITTING === formStatus }
-			fullWidth
+			busy={ FormStatus.SUBMITTING === formStatus }
 		>
 			<ButtonContents
 				formStatus={ formStatus }
@@ -135,38 +106,6 @@ function isCreditCardFormValid( store, paymentPartner, __ ) {
 				return false;
 			}
 			return true;
-		}
-
-		case 'ebanx': {
-			// Touch fields so that we show errors
-			store.dispatch( store.actions.touchAllFields() );
-			let isValid = true;
-
-			const rawState = store.selectors.getFields( store.getState() );
-			const cardholderName = rawState.cardholderName;
-			const numberWithoutSpaces = {
-				value: rawState?.number?.value?.replace( /\s+/g, '' ),
-			}; // the validator package we're using requires this
-			const validationResults = validatePaymentDetails(
-				Object.entries( {
-					...rawState,
-					country: rawState.countryCode,
-					name: cardholderName,
-					number: numberWithoutSpaces,
-				} ).reduce( ( accum, [ key, managedValue ] ) => {
-					accum[ key ] = managedValue?.value;
-					return accum;
-				}, {} ),
-				'ebanx'
-			);
-			Object.entries( validationResults.errors ).map( ( [ key, errors ] ) => {
-				errors.map( ( error ) => {
-					isValid = false;
-					store.dispatch( store.actions.setFieldError( key, error ) );
-				} );
-			} );
-			debug( 'ebanx card details validation results: ', validationResults );
-			return isValid;
 		}
 
 		default: {
