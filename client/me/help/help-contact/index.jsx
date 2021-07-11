@@ -256,10 +256,14 @@ class HelpContact extends React.Component {
 		this.clearSavedContactForm();
 	};
 
-	translateForForums = ( message ) => {
+	translateForForums = ( message, args ) => {
 		const { currentUserLocale, translate } = this.props;
 
-		return config( 'forum_locales' ).includes( currentUserLocale ) ? translate( message ) : message;
+		if ( config( 'forum_locales' ).includes( currentUserLocale ) ) {
+			return translate( message, args );
+		}
+
+		return args ? message.replace( '%s', args.args[ 0 ] ) : message;
 	};
 
 	submitSupportForumsTopic = ( contactForm ) => {
@@ -290,14 +294,12 @@ class HelpContact extends React.Component {
 		if ( site || userDeclaredUrl ) {
 			const siteUrl = userDeclaredUrl ? userDeclaredUrl.trim() : site.URL;
 
-			blogHelpMessage = this.translateForForums( 'Site: %(siteUrl)s.', {
-				args: {
-					siteUrl: userRequestsHidingUrl ? 'help@' + withoutHttp( siteUrl ) : siteUrl,
-				},
+			blogHelpMessage = this.translateForForums( 'Site: %s.', {
+				args: [ userRequestsHidingUrl ? 'help@' + withoutHttp( siteUrl ) : siteUrl ],
 			} );
 
 			if ( helpSiteIsWpCom ) {
-				blogHelpMessage += '\nWP.com: ' + this.translateForForums( 'Yes' );
+				blogHelpMessage += this.translateForForums( '\nWP.com: Yes' );
 			}
 
 			if ( helpSiteIsNotWpCom ) {
@@ -305,19 +307,18 @@ class HelpContact extends React.Component {
 					? this.translateForForums( 'Yes' )
 					: this.translateForForums( 'Unknown' );
 
-				blogHelpMessage +=
-					'\nWP.com: ' +
-					this.translateForForums( 'Unknown' ) +
-					'\n' +
-					this.translateForForums( 'Jetpack' ) +
-					': ' +
-					jetpackMessage;
+				blogHelpMessage += this.translateForForums( '\nWP.com: Unknown \nJetpack: %s.', {
+					args: [ jetpackMessage ],
+				} );
 			}
 
 			const correctAccountMessage = userDeclaredUrl
 				? this.translateForForums( 'Unknown' )
 				: this.translateForForums( 'Yes' );
-			blogHelpMessage += '\nCorrect account: ' + correctAccountMessage;
+
+			blogHelpMessage += this.translateForForums( '\nCorrect account: %s.', {
+				args: [ correctAccountMessage ],
+			} );
 		}
 
 		const forumMessage = message + '\n\n' + blogHelpMessage;
