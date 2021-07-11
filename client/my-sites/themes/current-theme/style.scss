@@ -258,6 +258,7 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 	}
 
 	.current-theme__description {
+		align-self: center;
 		font-size: $font-body-small;
 		margin: 16px;
 
@@ -280,11 +281,8 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		justify-content: flex-end;
 		flex-grow: 1;
 
-		@include breakpoint-deprecated( '>660px' ) {
-			border-top: none;
-		}
-
 		@include breakpoint-deprecated( '>960px' ) {
+			border-top: none;
 			min-height: 112px;
 			padding-top: 0;
 		}
