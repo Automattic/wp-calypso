@@ -6,6 +6,16 @@ import { useSelector } from 'react-redux';
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/core';
 import {
+	isPlan,
+	isMonthly,
+	getYearlyPlanByMonthly,
+	getPlan,
+	isFreePlanProduct,
+	TERM_MONTHLY,
+	TERM_ANNUALLY,
+	TERM_BIENNIALLY,
+} from '@automattic/calypso-products';
+import {
 	CheckoutCheckIcon,
 	CheckoutSummaryCard as CheckoutSummaryCardUnstyled,
 	FormStatus,
@@ -23,16 +33,6 @@ import {
 /**
  * Internal dependencies
  */
-import {
-	isPlan,
-	isMonthly,
-	getYearlyPlanByMonthly,
-	getPlan,
-	isFreePlanProduct,
-	TERM_MONTHLY,
-	TERM_ANNUALLY,
-	TERM_BIENNIALLY,
-} from '@automattic/calypso-products';
 import { isJetpackSite, getSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import Gridicon from 'calypso/components/gridicon';
