@@ -491,7 +491,7 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	handleBack = () => {
-		const { selectedSite, backPath } = this.props;
+		const { backPath, selectedSite } = this.props;
 
 		page( backPath ?? emailManagement( selectedSite.slug ) );
 	};
@@ -501,8 +501,8 @@ class EmailProvidersComparison extends React.Component {
 			currentRoute,
 			selectedDomainName,
 			selectedSite,
-			translate,
 			skipHeaderElement,
+			translate,
 		} = this.props;
 
 		const image = {
