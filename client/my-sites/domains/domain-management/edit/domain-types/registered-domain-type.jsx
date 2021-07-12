@@ -36,7 +36,8 @@ import { shouldRenderExpiringCreditCard } from 'calypso/lib/purchases';
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import ExpiringSoon from '../card/notices/expiring-soon';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
-import { DomainExpiryOrRenewal, WrapDomainStatusButtons } from './helpers';
+import { RenewOptionsRow } from './renew-options-row';
+import { WrapDomainStatusButtons } from './helpers';
 import OutboundTransferConfirmation from '../../components/outbound-transfer-confirmation';
 import { hasPendingGSuiteUsers } from 'calypso/lib/gsuite';
 import PendingGSuiteTosNotice from 'calypso/my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
@@ -345,9 +346,13 @@ class RegisteredDomainType extends React.Component {
 					{ this.renderPendingGSuiteTosNotice() }
 				</DomainStatus>
 				<Card compact={ true } className="domain-types__expiration-row">
-					<DomainExpiryOrRenewal { ...this.props } />
-					{ this.renderDefaultRenewButton() }
-					{ domain.currentUserCanManage && this.renderAutoRenew() }
+					<RenewOptionsRow
+						purchase={ purchase }
+						domain={ domain }
+						isLoadingPurchase={ isLoadingPurchase }
+						moment={ this.props.moment }
+						selectedSite={ selectedSite }
+					/>
 				</Card>
 				<DomainManagementNavigationEnhanced
 					domain={ domain }
