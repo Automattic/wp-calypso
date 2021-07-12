@@ -1,8 +1,4 @@
-.edit-contact-info__note {
-	color: var( --color-neutral );
-}
-
-.edit-contact-info__opt-out-notice {
+.transfer-lock-opt-out-form {
 	color: var( --color-error );
 
 	.form-checkbox {
@@ -12,11 +8,11 @@
 		}
 	}
 
-	.edit-contact-info__opt-out-notice-label {
+	.transfer-lock-opt-out-form__label {
 		margin-left: 24px;
 	}
 
-	.edit-contact-info__opt-out-notice-icon {
+	.transfer-lock-opt-out-form__icon {
 		color: var( --color-error );
 		float: left;
 	}
