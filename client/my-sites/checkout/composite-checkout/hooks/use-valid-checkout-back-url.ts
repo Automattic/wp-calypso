@@ -27,12 +27,7 @@ const useValidCheckoutBackUrl = ( siteSlug: string | undefined ): string | undef
 			return undefined;
 		}
 		const { hostname } = parsedUrl;
-		if (
-			checkoutBackUrl &&
-			resemblesUrl( checkoutBackUrl ) &&
-			hostname &&
-			allowedHosts.includes( hostname )
-		) {
+		if ( resemblesUrl( checkoutBackUrl ) && hostname && allowedHosts.includes( hostname ) ) {
 			return checkoutBackUrl;
 		}
 
