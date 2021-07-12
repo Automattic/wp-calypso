@@ -83,7 +83,7 @@ import { getReaderTeams } from 'calypso/state/teams/selectors';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
-import iFrameResize from 'calypso/blocks/reader-full-post/iFrameResize';
+import WPiFrameResize from 'calypso/blocks/reader-full-post/wp-iframe-resize';
 
 /**
  * Style dependencies
@@ -120,7 +120,7 @@ export class FullPostView extends React.Component {
 		if ( this.hasCommentAnchor && ! this.hasScrolledToCommentAnchor ) {
 			this.scrollToComments();
 		}
-		iFrameResize();
+		WPiFrameResize();
 	}
 
 	componentDidUpdate( prevProps ) {
