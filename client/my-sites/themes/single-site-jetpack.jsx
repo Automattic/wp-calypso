@@ -19,8 +19,6 @@ import {
 	FEATURE_UNLIMITED_PREMIUM_THEMES,
 	PLAN_JETPACK_SECURITY_REALTIME,
 } from '@automattic/calypso-products';
-import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import ThemeShowcase from './theme-showcase';
 import ThemesSelection from './themes-selection';
 import { addTracking } from './helpers';
@@ -93,8 +91,6 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 				emptyContent={ showWpcomThemesList ? <div /> : null }
 				isJetpackSite={ true }
 			>
-				{ siteId && <QuerySitePlans siteId={ siteId } /> }
-				{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 				{ showWpcomThemesList && (
 					<div>
 						<ConnectedThemesSelection

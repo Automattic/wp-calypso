@@ -22,6 +22,8 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import ThemePreview from './theme-preview';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import config from '@automattic/calypso-config';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { openThemesShowcase } from 'calypso/state/themes/themes-ui/actions';
@@ -417,6 +419,8 @@ class ThemeShowcase extends React.Component {
 							{ isJetpackSite && this.props.children }
 						</div>
 					) }
+					{ siteId && <QuerySitePlans siteId={ siteId } /> }
+					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 					<ThanksModal source={ 'list' } />
 					<AutoLoadingHomepageModal source={ 'list' } />
 					<ThemePreview />
