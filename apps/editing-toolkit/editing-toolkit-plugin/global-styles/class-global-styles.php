@@ -258,7 +258,7 @@ class Global_Styles {
 		require_once __DIR__ . '/class-global-styles-fonts-message-control.php';
 
 		$wp_customize->add_section(
-			'global_styles_reference',
+			'global_styles_fonts_section',
 			array(
 				'title' => __( 'Fonts', 'full-site-editing' ),
 			)
@@ -269,7 +269,7 @@ class Global_Styles {
 				$wp_customize,
 				'global_styles_fonts_message_control',
 				array(
-					'section'  => 'global_styles_reference',
+					'section'  => 'global_styles_fonts_section',
 					'settings' => array(),
 				)
 			)
