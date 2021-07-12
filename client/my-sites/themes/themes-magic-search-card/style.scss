@@ -1,8 +1,21 @@
+.themes-magic-search-card__container {
+	margin-top: 24px;
+	display: flex;
+}
 /*
  * Search card and text input
  */
 .themes-magic-search {
-	margin-top: 24px;
+	// margin-top: 24px;
+	flex: 1 1 auto;
+}
+.themes-magic-search-card__side-1 {
+	background-color: rgb( 191, 219, 254 );
+	margin-left: 10px;
+}
+.themes-magic-search-card__side-2 {
+	background-color: rgb( 167, 243, 208 );
+	margin-left: 10px;
 }
 
 .themes-magic-search-card {

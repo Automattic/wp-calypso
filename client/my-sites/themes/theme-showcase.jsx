@@ -26,7 +26,7 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import config from '@automattic/calypso-config';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
-import ThemesSearchCard from './themes-magic-search-card';
+import ThemesMagicSearchCardContainer from './themes-magic-search-card/container';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
 import {
 	getActiveTheme,
@@ -284,7 +284,7 @@ class ThemeShowcase extends React.Component {
 				) }
 				<div className="themes__content">
 					<QueryThemeFilters />
-					<ThemesSearchCard
+					<ThemesMagicSearchCardContainer
 						onSearch={ this.doSearch }
 						search={ filterString + search }
 						tier={ tier }
