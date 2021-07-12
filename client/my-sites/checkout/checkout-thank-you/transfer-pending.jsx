@@ -20,10 +20,7 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
 import WordPressLogo from 'calypso/components/wordpress-logo';
-import {
-	hideMasterbar as hideMasterbarAction,
-	showMasterbar as showMasterbarAction,
-} from 'calypso/state/ui/masterbar-visibility/actions';
+import { hideMasterbar, showMasterbar } from 'calypso/state/ui/masterbar-visibility/actions';
 
 class TransferPending extends PureComponent {
 	static propTypes = {
@@ -146,7 +143,7 @@ export default connect(
 	} ),
 	{
 		showErrorNotice: errorNotice,
-		hideMasterbar: hideMasterbarAction,
-		showMasterbar: showMasterbarAction,
+		hideMasterbar,
+		showMasterbar,
 	}
 )( localize( TransferPending ) );
