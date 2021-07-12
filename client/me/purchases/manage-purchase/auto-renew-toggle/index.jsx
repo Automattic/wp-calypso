@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import { ToggleControl } from '@wordpress/components';
+import { Button } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -39,9 +40,11 @@ class AutoRenewToggle extends Component {
 		siteSlug: PropTypes.string,
 		getChangePaymentMethodUrlFor: PropTypes.func,
 		paymentMethodUrl: PropTypes.string,
+		displayButton: PropTypes.bool,
 	};
 
 	static defaultProps = {
+		displayButton: false,
 		fetchingUserPurchases: false,
 		getChangePaymentMethodUrlFor: getChangePaymentMethodPath,
 	};
@@ -198,7 +201,11 @@ class AutoRenewToggle extends Component {
 	}
 
 	renderTextStatus() {
-		const { translate, isEnabled } = this.props;
+		const { translate, isEnabled, displayButton } = this.props;
+
+		if ( displayButton ) {
+			return isEnabled ? translate( 'Disable auto renewal' ) : translate( 'Enable auto renewal' );
+		}
 
 		if ( this.isUpdatingAutoRenew() ) {
 			return translate( 'Auto-renew (…)' );
@@ -212,7 +219,7 @@ class AutoRenewToggle extends Component {
 	}
 
 	render() {
-		const { planName, siteDomain, purchase, withTextStatus } = this.props;
+		const { planName, siteDomain, purchase, withTextStatus, displayButton, isEnabled } = this.props;
 
 		if ( ! this.shouldRender( purchase ) ) {
 			return null;
@@ -220,12 +227,24 @@ class AutoRenewToggle extends Component {
 
 		return (
 			<>
-				<ToggleControl
-					checked={ this.getToggleUiStatus() }
-					disabled={ this.isUpdatingAutoRenew() }
-					onChange={ this.onToggleAutoRenew }
-					label={ withTextStatus && this.renderTextStatus() }
-				/>
+				{ displayButton ? (
+					<Button
+						busy={ this.isUpdatingAutoRenew() }
+						compact={ true }
+						label={ withTextStatus && this.renderTextStatus() }
+						onClick={ this.onToggleAutoRenew }
+						primary={ ! isEnabled }
+					>
+						{ withTextStatus && this.renderTextStatus() }
+					</Button>
+				) : (
+					<ToggleControl
+						checked={ this.getToggleUiStatus() }
+						disabled={ this.isUpdatingAutoRenew() }
+						onChange={ this.onToggleAutoRenew }
+						label={ withTextStatus && this.renderTextStatus() }
+					/>
+				) }
 				<AutoRenewDisablingDialog
 					isVisible={ this.state.showAutoRenewDisablingDialog }
 					planName={ planName }
