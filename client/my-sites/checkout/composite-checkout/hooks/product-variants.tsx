@@ -10,6 +10,7 @@ import debugFactory from 'debug';
 import {
 	getTermDuration,
 	getPlan,
+	getBillingMonthsForTerm,
 	findPlansKeys,
 	GROUP_WPCOM,
 	GROUP_JETPACK,
@@ -163,18 +164,19 @@ function getLowestPriceTimesVariantInterval(
 			'There must be at least one variant to compare against when generating relative prices'
 		);
 	}
+
 	allVariants.sort( ( variantA, variantB ) => {
 		const variantAInterval = getTermDuration( variantA.plan.term );
 		const variantBInterval = getTermDuration( variantB.plan.term );
 		return variantAInterval - variantBInterval;
 	} );
 	const lowestVariant = allVariants[ 0 ];
-	const lowestVariantInterval = getTermDuration( lowestVariant.plan.term );
-	const variantInterval = getTermDuration( variant.plan.term );
-	const lowestVariantIntervalsInVariantInterval = Math.ceil(
-		variantInterval / lowestVariantInterval
-	);
-	return lowestVariant.priceFull * lowestVariantIntervalsInVariantInterval;
+
+	const monthsInVariant = getBillingMonthsForTerm( variant.plan.term );
+	const monthsInLowestVariant = getBillingMonthsForTerm( lowestVariant.plan.term );
+	const lowestVariantIntervalsInVariantTerm = Math.round( monthsInVariant / monthsInLowestVariant );
+
+	return lowestVariant.priceFull * lowestVariantIntervalsInVariantTerm;
 }
 
 function isVariantAllowed(
