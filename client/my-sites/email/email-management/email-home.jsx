@@ -85,7 +85,7 @@ class EmailManagementHome extends React.Component {
 				return (
 					<EmailProvidersComparison
 						selectedDomainName={ selectedDomainName }
-						handleBack={ `${ domainManagementRoot() }/${ selectedDomainName }` }
+						backPath={ `${ domainManagementRoot() }/${ selectedDomainName }` }
 					/>
 				);
 			}
@@ -108,7 +108,7 @@ class EmailManagementHome extends React.Component {
 			return (
 				<EmailProvidersComparison
 					selectedDomainName={ domainsWithNoEmail[ 0 ].name }
-					skipHeaderCake={ true }
+					skipHeaderElement={ true }
 				/>
 			);
 		}
