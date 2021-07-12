@@ -38,6 +38,14 @@ export default function useRefetchOnFocus(
 			return [ undefined, 'visible', 'prerender' ].includes( document.visibilityState );
 		}
 
+		function isOffline(): boolean {
+			try {
+				return ! window.navigator.onLine;
+			} catch {
+				return true;
+			}
+		}
+
 		function wasLastFetchRecent(): boolean {
 			const nowInSeconds = convertMsToSecs( Date.now() );
 			const lastRefreshTime = lastCart.cart_generated_at_timestamp;
@@ -53,6 +61,10 @@ export default function useRefetchOnFocus(
 			}
 			if ( wasLastFetchRecent() ) {
 				debug( 'last fetch was quite recent; ignoring' );
+				return;
+			}
+			if ( isOffline() ) {
+				debug( 'network is offline; ignoring' );
 				return;
 			}
 
