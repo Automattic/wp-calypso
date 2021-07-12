@@ -25,6 +25,7 @@ import {
 import wpcom from 'calypso/lib/wp';
 
 import 'calypso/state/data-layer/wpcom/sites/plan-transfer';
+import 'calypso/state/currency-code/init';
 
 /**
  * Cancels the specified plan trial for the given site.

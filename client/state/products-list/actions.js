@@ -9,6 +9,7 @@ import {
 } from 'calypso/state/action-types';
 import { ensureNumericCost } from './assembler';
 
+import 'calypso/state/currency-code/init';
 import 'calypso/state/products-list/init';
 
 export function receiveProductsList( productsList ) {
