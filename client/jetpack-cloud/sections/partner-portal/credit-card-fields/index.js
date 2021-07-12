@@ -12,6 +12,7 @@ import {
 	useFormStatus,
 } from '@automattic/composite-checkout';
 import { Field } from '@automattic/wpcom-checkout';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -20,11 +21,11 @@ import {
 	LeftColumn,
 	RightColumn,
 } from 'calypso/my-sites/checkout/composite-checkout/components/ie-fallback';
-import CardHeading from 'calypso/components/card-heading';
 import CreditCardNumberField from './credit-card-number-field';
 import CreditCardExpiryField from './credit-card-expiry-field';
 import CreditCardCvvField from './credit-card-cvv-field';
 import PaymentMethodImage from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields/payment-method-image';
+import CreditCardLoading from './credit-card-loading';
 
 /**
  * Style dependencies
@@ -104,8 +105,14 @@ export default function CreditCardFields() {
 
 	return (
 		<>
-			<CardHeading>{ translate( 'Credit card details' ) }</CardHeading>
-			<div className="credit-card-fields">
+			{ ! isStripeFullyLoaded && <CreditCardLoading /> }
+
+			<div
+				className={ classnames( {
+					'credit-card-fields': true,
+					'credit-card-fields--is-loaded': isStripeFullyLoaded,
+				} ) }
+			>
 				<div className="credit-card-fields__form">
 					<Field
 						id="cardholder-name"

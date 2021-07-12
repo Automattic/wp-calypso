@@ -28,6 +28,7 @@ import type { Purchase } from 'calypso/lib/purchases/types';
 import type { TranslateResult } from 'i18n-calypso';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
+import CreditCardLoading from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields/credit-card-loading';
 
 /**
  * Style dependencies
@@ -201,6 +202,10 @@ function PaymentMethodAdd(): ReactElement {
 				initiallySelectedPaymentMethodId="card"
 			>
 				<Card className="payment-method-add__content">
+					<CardHeading>{ translate( 'Credit card details' ) }</CardHeading>
+
+					{ 0 === paymentMethods.length && <CreditCardLoading /> }
+
 					{ currentPaymentMethodNotAvailable && purchase && (
 						<CurrentPaymentMethodNotAvailableNotice purchase={ purchase } />
 					) }
