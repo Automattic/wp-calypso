@@ -460,11 +460,32 @@ const trackSiteEditorChangeTemplatePart = ( id ) => {
 	} );
 };
 
+/**
+ * Variable used to track the time of the last `trackSiteEditorChange` function
+ * call. This is used to debounce the function because it's called twice due to
+ * a bug. We prefer the first call because that's when the
+ * `getNavigationPanelActiveMenu` function returns the actual active menu.
+ *
+ * Keep this for backward compatibility.
+ * Fixed in: https://github.com/WordPress/gutenberg/pull/33286
+ */
+let lastTrackSiteEditorChangeContentCall = 0;
 const trackSiteEditorChangeContent = ( { type, slug } ) => {
+	if ( Date.now() - lastTrackSiteEditorChangeContentCall < 50 ) {
+		return;
+	}
+
+	const activeMenu = select( 'core/edit-site' ).getNavigationPanelActiveMenu();
+	if ( ! type && activeMenu === 'content-categories' ) {
+		type = 'taxonomy_category';
+	}
+
 	tracksRecordEvent( 'wpcom_block_editor_nav_sidebar_item_edit', {
 		item_type: type,
 		item_slug: slug,
 	} );
+
+	lastTrackSiteEditorChangeContentCall = Date.now();
 };
 
 /**
