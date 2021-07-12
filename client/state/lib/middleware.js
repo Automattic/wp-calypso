@@ -15,14 +15,11 @@ import {
 	SITE_RECEIVE,
 	SITES_RECEIVE,
 } from 'calypso/state/action-types';
-import hasSitePendingAutomatedTransfer from 'calypso/state/selectors/has-site-pending-automated-transfer';
-import { isFetchingAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import keyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
 import getGlobalKeyboardShortcuts from 'calypso/lib/keyboard-shortcuts/global';
-import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import {
 	createImmediateLoginMessage,
 	createPathWithoutImmediateLoginInformation,
@@ -108,16 +105,6 @@ const updateNotificationsOpenForKeyboardShortcuts = ( dispatch, action, getState
 	keyboardShortcuts.setNotificationsOpen( toggledState );
 };
 
-const fetchAutomatedTransferStatusForSelectedSite = ( dispatch, getState ) => {
-	const state = getState();
-	const siteId = getSelectedSiteId( state );
-	const isFetchingATStatus = isFetchingAutomatedTransferStatus( state, siteId );
-
-	if ( ! isFetchingATStatus && hasSitePendingAutomatedTransfer( state, siteId ) ) {
-		dispatch( fetchAutomatedTransferStatus( siteId ) );
-	}
-};
-
 const handler = ( dispatch, action, getState ) => {
 	switch ( action.type ) {
 		case ROUTE_SET:
@@ -131,12 +118,16 @@ const handler = ( dispatch, action, getState ) => {
 		case SITE_RECEIVE:
 		case SITES_RECEIVE:
 			// Wait a tick for the reducer to update the state tree
-			setTimeout( () => {
+			setTimeout( async () => {
 				if ( globalKeyBoardShortcutsEnabled ) {
 					updatedSelectedSiteForKeyboardShortcuts( dispatch, action, getState );
 				}
 
-				fetchAutomatedTransferStatusForSelectedSite( dispatch, getState );
+				const { fetchAutomatedTransferStatusForSelectedSite } = await import(
+					/* webpackChunkName: "state-automated-transfer-actions" */
+					'calypso/state/automated-transfer/actions'
+				);
+				dispatch( fetchAutomatedTransferStatusForSelectedSite( dispatch, getState ) );
 			}, 0 );
 			return;
 	}

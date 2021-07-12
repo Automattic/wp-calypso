@@ -9,6 +9,9 @@ import {
 	AUTOMATED_TRANSFER_STATUS_SET,
 	AUTOMATED_TRANSFER_STATUS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
+import hasSitePendingAutomatedTransfer from 'calypso/state/selectors/has-site-pending-automated-transfer';
+import { isFetchingAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import 'calypso/state/data-layer/wpcom/sites/automated-transfer/eligibility';
 import 'calypso/state/data-layer/wpcom/sites/automated-transfer/initiate';
@@ -114,3 +117,15 @@ export const updateEligibility = (
 	siteId,
 	status,
 } );
+
+export function fetchAutomatedTransferStatusForSelectedSite() {
+	return ( dispatch, getState ) => {
+		const state = getState();
+		const siteId = getSelectedSiteId( state );
+		const isFetchingATStatus = isFetchingAutomatedTransferStatus( state, siteId );
+
+		if ( ! isFetchingATStatus && hasSitePendingAutomatedTransfer( state, siteId ) ) {
+			dispatch( fetchAutomatedTransferStatus( siteId ) );
+		}
+	};
+}
