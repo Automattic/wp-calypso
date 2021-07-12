@@ -142,6 +142,7 @@ describe( 'metadata:', () => {
 			test( 'should format full length numbers', () => {
 				equal( formatNumber( '+14252222222', countries.US ), '+1 425-222-2222' );
 				equal( formatNumber( '+905325555555', countries.TR ), '+90 532 555 55 55' );
+				equal( formatNumber( '+5555912345678', countries.BR ), '+55 55 91234-5678' );
 			} );
 
 			test( 'should format as you type', () => {
@@ -189,7 +190,7 @@ describe( 'metadata:', () => {
 				equal( formatNumber( '05325555555', countries.TR ), '0532 555 55 55' );
 				equal( formatNumber( '0215369851', countries.AU ), '02 1536 9851' );
 				equal( formatNumber( '3911711711', countries.IT ), '391 171 1711' );
-				equal( formatNumber( '5512345678', countries.BR ), '55 1234-5678' );
+				equal( formatNumber( '5512345678', countries.BR ), '055 1234-5678' );
 			} );
 
 			test( 'should format as you type', () => {
