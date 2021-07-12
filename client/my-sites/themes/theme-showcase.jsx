@@ -17,7 +17,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { addTracking, trackClick, localizeThemesPath } from './helpers';
 import DocumentHead from 'calypso/components/data/document-head';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import ThemePreview from './theme-preview';
 import config from '@automattic/calypso-config';
@@ -410,10 +410,10 @@ class ThemeShowcase extends React.Component {
 								emptyContent={ this.props.emptyContent }
 								bookmarkRef={ this.bookmarkRef }
 							/>
+							{ this.props.isJetpack && this.props.children }
 						</div>
 					) }
 					<ThemePreview />
-					{ this.props.children }
 				</div>
 			</div>
 		);
@@ -431,6 +431,7 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 	filterToTermTable: getThemeFilterToTermTable( state ),
 	hasShowcaseOpened: hasShowcaseOpenedSelector( state ),
 	themesBookmark: getThemesBookmark( state ),
+	isJetpack: isJetpackSite( state, siteId ),
 } );
 
 const mapDispatchToProps = {
