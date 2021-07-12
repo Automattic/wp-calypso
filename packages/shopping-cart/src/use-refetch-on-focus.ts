@@ -26,7 +26,11 @@ export default function useRefetchOnFocus(
 	refetch: () => void
 ): void {
 	useEffect( () => {
-		if ( ! options.refetchOnWindowFocus || cacheStatus !== 'valid' ) {
+		if ( ! options.refetchOnWindowFocus ) {
+			return;
+		}
+		// Refresh only if the cart is not pending any other operations
+		if ( cacheStatus !== 'valid' && cacheStatus !== 'error' ) {
 			return;
 		}
 
