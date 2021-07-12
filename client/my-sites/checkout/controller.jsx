@@ -24,6 +24,7 @@ import CheckoutSystemDecider from './checkout-system-decider';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
 import JetpackCheckoutSitelessThankYou from './checkout-thank-you/jetpack-checkout-siteless-thank-you';
+import JetpackCheckoutScheduleAppointment from './checkout-thank-you/jetpack-checkout-schedule-appointment';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import { setSectionMiddleware } from 'calypso/controller';
 import { sites } from 'calypso/my-sites/controller';
@@ -296,6 +297,14 @@ export function jetpackCheckoutThankYou( context, next ) {
 			isUserlessCheckoutFlow={ isUserlessCheckoutFlow }
 		/>
 	);
+
+	next();
+}
+
+export function jetpackCheckoutScheduleAppointment( context, next ) {
+	const userEmail = context.query.user;
+
+	context.primary = <JetpackCheckoutScheduleAppointment user={ userEmail } />;
 
 	next();
 }
