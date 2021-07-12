@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UpworkBanner renders correctly 1`] = `
+<a
+  className="external-link upwork-banner"
+  href="https://wordpress.com/built-by-wordpress-com/"
+  onClick={[Function]}
+  rel="external"
+  role="button"
+  style={
+    Object {
+      "backgroundColor": "#DAF5FC",
+    }
+  }
+>
+  <h1
+    className="upwork-banner__title"
+  >
+    Let Our WordPress.com Experts Build Your Site!
+  </h1>
+  <p
+    className="upwork-banner__description"
+  >
+    You want the website of your dreams. Our experts can create it for you.
+  </p>
+  <button
+    className="button upwork-banner__cta is-compact"
+    type="button"
+  >
+    Find your expert
+  </button>
+  <button
+    className="button upwork-banner__close"
+    onClick={[Function]}
+    type="button"
+  >
+    <svg
+      className="gridicon gridicons-cross-small"
+      height={18}
+      viewBox="0 0 24 24"
+      width={18}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <use
+        xlinkHref="gridicons.svg#gridicons-cross-small"
+      />
+    </svg>
+  </button>
+  <img
+    alt="Find your expert"
+    className="upwork-banner__image"
+    src="builder-referral.svg"
+    width={390}
+  />
+</a>
+`;

@@ -122,6 +122,40 @@ export function createGeneralTests( { it, editorType, postType } ) {
 		assert.strictEqual( toggleEvents[ 1 ][ 1 ].is_open, true );
 	} );
 
+	it( 'Tracks "wpcom_block_editor_list_view_select" event', async function () {
+		const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
+
+		// The list view toggle button is not available on mobile
+		if ( editor.screenSize === 'mobile' ) {
+			return this.skip();
+		}
+
+		await editor.addBlock( 'Heading' );
+		await editor.addBlock( 'Image' );
+
+		await editor.toggleListView();
+
+		const secondLastItemLocator = By.css(
+			'[aria-label="Block navigation structure"] [role="row"]:nth-last-child(2) button'
+		);
+		const lastItemLocator = By.css(
+			'[aria-label="Block navigation structure"] [role="row"]:nth-last-child(1) button'
+		);
+		await driverHelper.clickWhenClickable( this.driver, secondLastItemLocator );
+		await driverHelper.clickWhenClickable( this.driver, lastItemLocator );
+
+		// Close list view so we don't leave it open for the other tests.
+		await editor.toggleListView();
+
+		const eventsStack = await getEventsStack( this.driver );
+		const selectEvents = eventsStack.filter(
+			( [ eventName ] ) => eventName === 'wpcom_block_editor_list_view_select'
+		);
+		assert.strictEqual( selectEvents.length, 2 );
+		assert.strictEqual( selectEvents[ 0 ][ 1 ].block_name, 'core/image' );
+		assert.strictEqual( selectEvents[ 1 ][ 1 ].block_name, 'core/heading' );
+	} );
+
 	it( 'Tracks "wpcom_block_editor_undo_performed" event', async function () {
 		const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
 
@@ -176,6 +210,11 @@ export function createGeneralTests( { it, editorType, postType } ) {
 	it( `Block editor sidebar toggle should not trigger the "wpcom_block_editor_close_click" event`, async function () {
 		const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
 
+		// The button that triggers the block editor sidebar is not available on mobile
+		if ( editor.screenSize === 'mobile' && editorType === 'post' ) {
+			return this.skip();
+		}
+
 		// We open and close the sidebar to make sure we don't leave the sidebar
 		// open for the upcoming tests. We also make sure we don't trigger the
 		// on open and close actions.
@@ -198,8 +237,10 @@ export function createGeneralTests( { it, editorType, postType } ) {
 		await editor.insertPattern( 'list', 'List with Image' );
 		const eventsStackList = await getEventsStack( this.driver );
 		await clearEventsStack( this.driver );
+		await editor.dismissNotices();
 
 		await editor.insertPattern( 'gallery', 'Heading and Three Images' );
+		await editor.dismissNotices();
 
 		// We need to save the eventsStack after each insertion to make sure we
 		// aren't running out of the E2E queue size.
@@ -238,8 +279,6 @@ export function createGeneralTests( { it, editorType, postType } ) {
 			'list',
 			'"wpcom_pattern_inserted" editor tracking event pattern category property is incorrect'
 		);
-
-		await editor.dismissNotices();
 	} );
 
 	it( 'Tracks "wpcom_pattern_inserted" through quick inserter', async function () {

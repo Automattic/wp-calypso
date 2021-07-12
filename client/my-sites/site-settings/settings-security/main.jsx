@@ -9,13 +9,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import EmptyContent from 'calypso/components/empty-content';
 import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormSecurity from 'calypso/my-sites/site-settings/form-security';
 import JetpackCredentials from 'calypso/my-sites/site-settings/jetpack-credentials';
 import JetpackCredentialsBanner from 'calypso/my-sites/site-settings/jetpack-credentials-banner';
 import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
-import JetpackManageErrorPage from 'calypso/my-sites/jetpack-manage-error-page';
 import JetpackMonitor from 'calypso/my-sites/site-settings/form-jetpack-monitor';
 import Main from 'calypso/components/main';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
@@ -41,7 +41,7 @@ const SiteSettingsSecurity = ( {
 } ) => {
 	if ( ! siteIsJetpack ) {
 		return (
-			<JetpackManageErrorPage
+			<EmptyContent
 				action={ translate( 'Manage general settings for %(site)s', {
 					args: { site: site.name },
 				} ) }

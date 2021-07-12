@@ -83,6 +83,7 @@ const BackupUpsellBody: FunctionComponent = () => {
 		( state ) => siteId && canCurrentUser( state, siteId, 'manage_options' )
 	);
 	const translate = useTranslate();
+	const postCheckoutUrl = window.location.pathname + window.location.search;
 	return (
 		<PromoCard
 			title={ preventWidows( translate( 'Get time travel for your site with Jetpack Backup' ) ) }
@@ -110,7 +111,7 @@ const BackupUpsellBody: FunctionComponent = () => {
 					<Button
 						className="backup__wpcom-cta backup__wpcom-realtime-cta"
 						href={ addQueryArgs( `/checkout/${ siteSlug }/jetpack_backup_realtime`, {
-							redirect_to: window.location.href,
+							redirect_to: postCheckoutUrl,
 						} ) }
 						onClick={ onUpgradeClick }
 						primary
@@ -120,7 +121,7 @@ const BackupUpsellBody: FunctionComponent = () => {
 					<Button
 						className="backup__wpcom-cta backup__wpcom-daily-cta"
 						href={ addQueryArgs( `/checkout/${ siteSlug }/jetpack_backup_daily`, {
-							redirect_to: window.location.href,
+							redirect_to: postCheckoutUrl,
 						} ) }
 						onClick={ onUpgradeClick }
 					>

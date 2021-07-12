@@ -3,7 +3,7 @@
  */
 import assert from 'assert';
 import config from 'config';
-import { By } from 'selenium-webdriver';
+import { By, Key } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -77,100 +77,25 @@ const changeGlobalStylesFirstColorPaletteItem = async ( driver, value, pickerOpe
 	await driverHelper.setWhenSettable( driver, By.css( '.components-color-picker input' ), value );
 };
 
-const exitSiteEditor = async function ( driver ) {
-	const isSiteEditorOpen = await driverHelper.isElementLocated(
-		driver,
-		By.css( '.edit-site-header' )
-	);
-	if ( ! isSiteEditorOpen ) {
-		return;
-	}
-
-	const editor = await SiteEditorComponent.Expect( driver );
-	const isNavigationSidebarOpen = await driverHelper.isElementLocated(
-		driver,
-		By.css( '.edit-site-navigation-panel.is-open' )
-	);
-	if ( ! isNavigationSidebarOpen ) {
-		await editor.toggleNavigationSidebar();
-	}
-
-	await driverHelper.waitUntilElementLocatedAndVisible(
-		driver,
-		By.css( '.components-navigation__back-button, .edit-site-navigation-panel__back-to-dashboard' )
-	);
-
-	await driver.wait(
-		async function () {
-			if (
-				await driverHelper.isElementNotLocated(
-					driver,
-					By.css( '.edit-site-navigation-panel__back-to-dashboard' )
-				)
-			) {
-				await driverHelper.clickWhenClickable(
-					driver,
-					By.css( '.components-navigation__back-button' )
-				);
-				return false;
-			}
-			return true;
-		},
-		config.get( 'explicitWaitMS' ),
-		'Could not reach the "Dashboard" button'
-	);
-
-	await driverHelper.clickWhenClickable(
-		driver,
-		By.css( '.edit-site-navigation-panel__back-to-dashboard' )
-	);
-};
-
-const deleteAll = async function ( driver ) {
-	// Make sure we have posts before trying to delete them
-	const noItems = await driverHelper.isElementLocated( driver, By.css( '#the-list .no-items' ) );
-	if ( noItems ) {
-		return;
-	}
-
-	// Delete all posts
-	await driverHelper.clickWhenClickable( driver, By.css( '#cb-select-all-1' ) );
-	await driverHelper.clickWhenClickable( driver, By.css( '#bulk-action-selector-top' ) );
-	await driverHelper.clickWhenClickable(
-		driver,
-		By.css( '#bulk-action-selector-top option[value="trash"]' )
-	);
-	await driverHelper.clickWhenClickable( driver, By.css( '#doaction' ) );
-
-	// Empty trash
-	await driverHelper.clickWhenClickable( driver, By.css( '.subsubsub .trash a' ) );
-	await driverHelper.clickWhenClickable( driver, By.css( '#delete_all' ) );
-};
-
-const deleteTemplates = async function ( driver ) {
-	const sidebar = await SidebarComponent.Expect( driver );
-	await sidebar.selectTemplates();
-	await deleteAll( driver );
-};
-
-const deleteTemplateParts = async function ( driver ) {
-	const sidebar = await SidebarComponent.Expect( driver );
-	await sidebar.selectTemplateParts();
-	await deleteAll( driver );
-};
-
-const backToCalypso = async function ( driver ) {
-	await driverHelper.clickWhenClickable(
-		driver,
-		driverHelper.createTextLocator( By.css( '.wp-menu-name' ), 'Plans' )
-	);
+const deleteCustomEntities = async function ( driver, entityName ) {
+	await SiteEditorComponent.Expect( driver );
+	const getAndDeleteEntities = async ( name ) => {
+		const entities = window.wp.data
+			.select( 'core' )
+			.getEntityRecords( 'postType', name, {
+				per_page: -1,
+			} )
+			.filter( ( item ) => item.source === 'custom' );
+		for ( const entity of entities ) {
+			await window.wp.data.dispatch( 'core' ).deleteEntityRecord( 'postType', name, entity.id );
+		}
+	};
+	await driver.executeScript( getAndDeleteEntities, entityName );
 };
 
 const deleteTemplatesAndTemplateParts = async function ( driver ) {
-	await deleteTemplates( driver );
-	// At this point we are in wp-admin, go back to Calypso
-	await backToCalypso( driver );
-	await deleteTemplateParts( driver );
+	await deleteCustomEntities( driver, 'wp_template' );
+	await deleteCustomEntities( driver, 'wp_template_part' );
 };
 
 const clickBlockSettingsButton = async ( driver ) =>
@@ -459,11 +384,6 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			const loginFlow = new LoginFlow( this.driver, host === 'WPCOM' ? siteEditorUser : undefined );
 			await loginFlow.loginAndSelectMySite();
 
-			await deleteTemplatesAndTemplateParts( this.driver );
-
-			// At this point we are in wp-admin, go back to Calypso
-			await backToCalypso( this.driver );
-
 			const sidebar = await SidebarComponent.Expect( this.driver );
 			await sidebar.selectSiteEditor();
 
@@ -473,6 +393,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			const editor = await SiteEditorComponent.Expect( this.driver );
 			await editor.waitForTemplateToLoad();
 			await editor.waitForTemplatePartsToLoad();
+			await deleteTemplatesAndTemplateParts( this.driver );
 		} );
 
 		createGeneralTests( { it, editorType: 'site' } );
@@ -568,9 +489,19 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				const tabSelectedEvents = await getGlobalStylesTabSelectedEvents( this.driver );
 				assert.strictEqual( tabSelectedEvents.length, 0 );
 			} );
+
+			after( async function () {
+				const editor = await SiteEditorComponent.Expect( this.driver );
+				await editor.closeGlobalStyles();
+			} );
 		} );
 
 		describe( 'Tracks "wpcom_block_editor_global_styles_update"', function () {
+			before( async function () {
+				const editor = await SiteEditorComponent.Expect( this.driver );
+				await editor.toggleGlobalStyles();
+			} );
+
 			// Since these events are tracked via redux actions in updateEntityRecord and
 			// saveEditedEntityRecord, they are independent of UI.  If the desktop flow populates
 			// these events properly, the mobile flow will as well.  There is no added benefit to
@@ -611,9 +542,19 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				}
 				await testGlobalStylesColorPalette( this.driver, 'core/column' );
 			} );
+
+			after( async function () {
+				const editor = await SiteEditorComponent.Expect( this.driver );
+				await editor.closeGlobalStyles();
+			} );
 		} );
 
 		describe( 'Tracks "wpcom_block_editor_global_styles_save"', function () {
+			before( async function () {
+				const editor = await SiteEditorComponent.Expect( this.driver );
+				await editor.toggleGlobalStyles();
+			} );
+
 			// This test can be less intensive than our global styles update tests since they share
 			// the same code to build event structure from global styles objects.  So we mainly need
 			// to verify that the expected number of events are triggered.
@@ -640,6 +581,11 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				// Clean up by resetting to be safe.
 				await clickGlobalStylesResetButton( this.driver );
 				await saveGlobalStyles( this.driver );
+			} );
+
+			after( async function () {
+				const editor = await SiteEditorComponent.Expect( this.driver );
+				await editor.closeGlobalStyles();
 			} );
 		} );
 
@@ -737,6 +683,142 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			);
 		} );
 
+		describe( 'tracks template part creation and replacement', function () {
+			it( 'Tracks "wpcom_block_editor_create_template_part', async function () {
+				// Reload editor to start from consistent clean slate for tests. At this point
+				// avoiding to do so causes the bug report button to intercept clicks for
+				// `editor.runInCanvas`, causing the suite to fail.
+				await this.driver.navigate().refresh();
+				await driverHelper.acceptAlertIfPresent( this.driver );
+
+				const editor = await SiteEditorComponent.Expect( this.driver );
+				// Clear block selection to ensure this starts at top level.
+				await this.driver.executeScript(
+					`return window.wp.data.dispatch( 'core/block-editor' ).selectBlock()`
+				);
+
+				const blockId = await editor.addBlock(
+					'Header',
+					'template-part\\/header',
+					'Block: Template Part'
+				);
+
+				await editor.runInCanvas( async () => {
+					const createNewHeaderLocator = driverHelper.createTextLocator(
+						By.css( '.wp-block-template-part.is-selected .components-placeholder button' ),
+						'New header'
+					);
+					await driverHelper.clickWhenClickable( this.driver, createNewHeaderLocator );
+
+					const choosePatternLocator = driverHelper.createTextLocator(
+						By.css( '.wp-block-template-part .block-editor-block-pattern-setup button' ),
+						'Choose'
+					);
+					await driverHelper.clickWhenClickable( this.driver, choosePatternLocator );
+
+					// Wait for this template part to load its new content.
+					await driverHelper.waitUntilElementLocated(
+						this.driver,
+						By.css( `#${ blockId }.block-editor-block-list__layout` )
+					);
+				} );
+
+				const eventsStack = await getEventsStack( this.driver );
+				const createdEvents = eventsStack.filter(
+					( event ) => event[ 0 ] === 'wpcom_block_editor_create_template_part'
+				);
+
+				assert.strictEqual( createdEvents.length, 1 );
+
+				// Verify this doesn't trigger a convert_to event, as they track the same redux action.
+				const convertedEvents = eventsStack.filter(
+					( event ) => event[ 0 ] === 'wpcom_block_editor_convert_to_template_part'
+				);
+				assert.strictEqual( convertedEvents.length, 0 );
+
+				const { variation_slug, content } = createdEvents[ 0 ][ 1 ];
+				assert( variation_slug === 'header' && typeof content === 'string' && content.length > 0 );
+			} );
+
+			it( 'Tracks "wpcom_block_editor_template_part_choose_existing"', async function () {
+				const editor = await SiteEditorComponent.Expect( this.driver );
+				// Undo the template part creation to go back to the placeholder.  Use store api to
+				// trigger undo since the UI is not present in mobile viewport.
+				await this.driver.executeScript( `return window.wp.data.dispatch( 'core' ).undo()` );
+
+				await editor.runInCanvas( async () => {
+					const chooseExistingHeaderLocator = driverHelper.createTextLocator(
+						By.css( '.wp-block-template-part.is-selected .components-placeholder button' ),
+						'Choose existing'
+					);
+					await driverHelper.clickWhenClickable( this.driver, chooseExistingHeaderLocator );
+				} );
+
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					By.css( '.wp-block-template-part__selection-preview-item' )
+				);
+
+				const eventsStack = await getEventsStack( this.driver );
+				const chooseEvents = eventsStack.filter(
+					( event ) => event[ 0 ] === 'wpcom_block_editor_template_part_choose_existing'
+				);
+
+				assert.strictEqual( chooseEvents.length, 1 );
+
+				// Verify there are no replace events since these share the same selection component.
+				const replaceEvents = eventsStack.filter(
+					( event ) => event[ 0 ] === 'wpcom_block_editor_template_part_replace'
+				);
+				assert.strictEqual( replaceEvents.length, 0 );
+
+				const { variation_slug, template_part_id } = chooseEvents[ 0 ][ 1 ];
+				// Check the event props, assert id.length > 2 since the format is `{theme}//{slug}`.
+				assert( variation_slug === 'header' );
+				assert( typeof template_part_id === 'string' );
+				assert( template_part_id.length > 2 );
+			} );
+
+			it( 'Tracks "wpcom_block_editor_template_part_replace"', async function () {
+				const replaceButtonLocator = driverHelper.createTextLocator(
+					By.css( '.components-toolbar-button' ),
+					'Replace'
+				);
+				await driverHelper.clickWhenClickable( this.driver, replaceButtonLocator );
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					By.css( '.wp-block-template-part__selection-preview-item' )
+				);
+
+				const eventsStack = await getEventsStack( this.driver );
+				const replaceEvents = eventsStack.filter(
+					( event ) => event[ 0 ] === 'wpcom_block_editor_template_part_replace'
+				);
+				assert.strictEqual( replaceEvents.length, 1 );
+
+				// Verify there are no choose_existing events since these share the same selection component.
+				const chooseExistingEvents = eventsStack.filter(
+					( event ) => event[ 0 ] === 'wpcom_block_editor_template_part_choose_existing'
+				);
+				assert.strictEqual( chooseExistingEvents.length, 0 );
+
+				const {
+					template_part_id,
+					replaced_template_part_id,
+					variation_slug,
+					replaced_variation_slug,
+				} = replaceEvents[ 0 ][ 1 ];
+				assert(
+					typeof template_part_id === 'string' &&
+						template_part_id.length > 2 &&
+						typeof replaced_template_part_id === 'string' &&
+						replaced_template_part_id.length > 2 &&
+						variation_slug === 'header' &&
+						replaced_variation_slug === 'header'
+				);
+			} );
+		} );
+
 		describe( 'Navigation sidebar', function () {
 			it( 'should track "wpcom_block_editor_nav_sidebar_open" when sidebar is opened', async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
@@ -812,7 +894,6 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 						'Archive'
 					)
 				);
-				await editor.toggleNavigationSidebar();
 
 				const eventsStack = await getEventsStack( this.driver );
 				const editEvents = eventsStack.filter(
@@ -822,6 +903,15 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				const [ , editEventData ] = editEvents[ 0 ];
 				assert.strictEqual( editEventData.item_type, 'template' );
 				assert.strictEqual( editEventData.item_slug, 'archive' );
+
+				// Go back to index template and cleanup the new template early to avoid parallel
+				// test conflicts as much as possible.
+				const templateMenuItemLocator = driverHelper.createTextLocator(
+					By.css( '.edit-site-navigation-panel__template-item-title' ),
+					'Index'
+				);
+				await driverHelper.clickWhenClickable( this.driver, templateMenuItemLocator );
+				await deleteCustomEntities( this.driver, 'wp_template' );
 			} );
 
 			it( 'should track "wpcom_block_editor_nav_sidebar_item_edit" when switching to a template part', async function () {
@@ -887,21 +977,108 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			} );
 		} );
 
+		it( 'Tracks "wpcom_block_editor_convert_to_template_part"', async function () {
+			const editor = await SiteEditorComponent.Expect( this.driver );
+
+			const threeColumnsEqualSplitVariationLocator = By.css(
+				'[aria-label="Three columns; equal split"]'
+			);
+			const selectParentColumnsBlockLocator = By.css( '[aria-label="Select Columns"]' );
+			const blockToolbarOptionsLocator = By.css(
+				'[aria-label="Block tools"] [aria-label="Options"]'
+			);
+			const makeTemplatePartOptionsItemLocator = driverHelper.createTextLocator(
+				By.css( '[aria-label="Options"] button' ),
+				'Make template part'
+			);
+			const makeTemplatePartDialogNameInputLocator = By.css( '[role="dialog"] input[type="text"]' );
+			const makeTemplatePartDialogSubmitButtonLocator = By.css(
+				'[role="dialog"] button[type="submit"]'
+			);
+			const snackbarNoticeLocator = By.css(
+				'.components-snackbar[aria-label="Dismiss this notice"]'
+			);
+			await editor.addBlock( 'Columns' );
+			await editor.runInCanvas( async () => {
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					threeColumnsEqualSplitVariationLocator
+				);
+			} );
+			// There is no way to select the parent block on mobile. We simulate
+			// an arrow up key press which navigates to the parent Columns block
+			// in this case.
+			if ( editor.screenSize === 'mobile' ) {
+				await this.driver.actions().sendKeys( Key.ARROW_UP ).perform();
+			} else {
+				await driverHelper.clickWhenClickable( this.driver, selectParentColumnsBlockLocator );
+			}
+			await driverHelper.clickWhenClickable( this.driver, blockToolbarOptionsLocator );
+			await driverHelper.clickWhenClickable( this.driver, makeTemplatePartOptionsItemLocator );
+			await driverHelper.setWhenSettable(
+				this.driver,
+				makeTemplatePartDialogNameInputLocator,
+				'test_make_template_part'
+			);
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				makeTemplatePartDialogSubmitButtonLocator
+			);
+			await driverHelper.clickWhenClickable( this.driver, snackbarNoticeLocator );
+
+			const events = await getEventsStack( this.driver );
+			const convertEvents = events.filter(
+				( [ eventName ] ) => eventName === 'wpcom_block_editor_convert_to_template_part'
+			);
+			assert( convertEvents.length === 2 );
+			assert(
+				convertEvents[ 0 ][ 1 ].block_names === 'core/columns,core/column,core/column,core/column'
+			);
+			assert( typeof convertEvents[ 1 ][ 1 ].block_names );
+		} );
+
+		it( 'Tracks "wpcom_block_editor_template_part_detach_blocks"', async function () {
+			const blockToolbarOptionsLocator = By.css(
+				'[aria-label="Block tools"] [aria-label="Options"]'
+			);
+			const detachBlocksOptionsItemLocator = driverHelper.createTextLocator(
+				By.css( '[aria-label="Options"] button' ),
+				'Detach blocks from template part'
+			);
+			await driverHelper.clickWhenClickable( this.driver, blockToolbarOptionsLocator );
+			await driverHelper.clickWhenClickable( this.driver, detachBlocksOptionsItemLocator );
+
+			const events = await getEventsStack( this.driver );
+			const detachEvents = events.filter(
+				( [ eventName ] ) => eventName === 'wpcom_block_editor_template_part_detach_blocks'
+			);
+			assert.strictEqual( detachEvents.length, 2 );
+			assert( detachEvents[ 0 ][ 1 ].template_part_id );
+			assert( detachEvents[ 0 ][ 1 ].variation_slug );
+			assert.strictEqual(
+				detachEvents[ 0 ][ 1 ].block_names,
+				'core/columns,core/column,core/column,core/column'
+			);
+			assert( detachEvents[ 1 ][ 1 ].template_part_id );
+			assert( detachEvents[ 1 ][ 1 ].variation_slug );
+			assert.strictEqual( typeof detachEvents[ 1 ][ 1 ].block_names, 'undefined' );
+			const replaceBlockEvents = events.filter(
+				( [ eventName ] ) => eventName === 'wpcom_block_picker_block_inserted'
+			);
+			assert.strictEqual(
+				replaceBlockEvents.length,
+				0,
+				"detaching blocks from template part shouldn't trigger replace blocks event"
+			);
+
+			await deleteCustomEntities( this.driver, 'wp_template_part' );
+		} );
+
 		afterEach( async function () {
 			await clearEventsStack( this.driver );
 		} );
 
 		after( async function () {
-			await exitSiteEditor( this.driver );
-
-			const isCalypsoSidebarAvailable = await driverHelper.isElementLocated(
-				this.driver,
-				By.css( '#content' )
-			);
-			if ( ! isCalypsoSidebarAvailable ) {
-				await backToCalypso( this.driver );
-			}
-
 			await deleteTemplatesAndTemplateParts( this.driver );
 		} );
 	} );

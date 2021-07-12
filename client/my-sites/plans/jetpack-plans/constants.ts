@@ -68,7 +68,10 @@ export const EXTERNAL_PRODUCT_CRM_FREE: ( variation: Iterations ) => SelectorPro
 		args: { minPrice: '$0', maxPrice: '$17' },
 	} ),
 	iconSlug: 'jetpack_crm',
-	displayName: translate( 'CRM' ),
+	displayName:
+		variation === Iterations.ONLY_REALTIME_PRODUCTS
+			? translate( 'Jetpack CRM Free' )
+			: translate( 'CRM' ),
 	shortName: translate( 'CRM' ),
 	tagline: translate( 'Manage contacts effortlessly' ),
 	// Jetpack CRM isn't considered as a product like others for the time being (and therefore not

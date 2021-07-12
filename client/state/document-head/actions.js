@@ -1,13 +1,14 @@
 /**
  * Internal dependencies
  */
-
 import {
 	DOCUMENT_HEAD_LINK_SET,
 	DOCUMENT_HEAD_META_SET,
 	DOCUMENT_HEAD_TITLE_SET,
 	DOCUMENT_HEAD_UNREAD_COUNT_SET,
 } from 'calypso/state/action-types';
+
+import 'calypso/state/document-head/init';
 
 /**
  * Returns an action object used in signalling that the document head title

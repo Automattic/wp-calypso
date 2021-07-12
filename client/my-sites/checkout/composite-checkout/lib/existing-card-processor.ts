@@ -21,6 +21,7 @@ import {
 import submitWpcomTransaction from './submit-wpcom-transaction';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import getDomainDetails from './get-domain-details';
+import getPostalCode from './get-postal-code';
 
 const debug = debugFactory( 'calypso:composite-checkout:existing-card-processor' );
 
@@ -28,13 +29,7 @@ type ExistingCardTransactionRequest = Partial< Omit< TransactionRequest, 'paymen
 	Required<
 		Pick<
 			TransactionRequest,
-			| 'country'
-			| 'postalCode'
-			| 'name'
-			| 'storedDetailsId'
-			| 'siteId'
-			| 'paymentMethodToken'
-			| 'paymentPartnerProcessorId'
+			'name' | 'storedDetailsId' | 'paymentMethodToken' | 'paymentPartnerProcessorId'
 		>
 	>;
 
@@ -59,6 +54,10 @@ export default async function existingCardProcessor(
 	debug( 'formatting existing card transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...transactionData,
+		siteId: dataForProcessor.siteId ? String( dataForProcessor.siteId ) : undefined,
+		country: contactDetails?.countryCode?.value ?? '',
+		postalCode: getPostalCode( contactDetails ),
+		subdivisionCode: contactDetails?.state?.value,
 		domainDetails: getDomainDetails( contactDetails, {
 			includeDomainDetails,
 			includeGSuiteDetails,
@@ -108,12 +107,6 @@ function isValidTransactionData(
 	// Validate data required for this payment method type. Some other data may
 	// be required by the server but not required here since the server will give
 	// a better localized error message than we can provide.
-	if ( ! data.country ) {
-		throw new Error( 'Transaction requires country code and none was provided' );
-	}
-	if ( ! data.postalCode ) {
-		throw new Error( 'Transaction requires postal code and none was provided' );
-	}
 	if ( ! data.storedDetailsId ) {
 		throw new Error( 'Transaction requires saved card information and none was provided' );
 	}

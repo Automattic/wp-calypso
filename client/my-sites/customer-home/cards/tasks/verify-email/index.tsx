@@ -11,6 +11,7 @@ import { useTranslate } from 'i18n-calypso';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 import { verifyEmail } from 'calypso/state/current-user/email-verification/actions';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
+import { TASK_VERIFY_EMAIL } from 'calypso/my-sites/customer-home/cards/constants';
 
 const VerifyEmail = (): React.ReactElement => {
 	const translate = useTranslate();
@@ -36,6 +37,7 @@ const VerifyEmail = (): React.ReactElement => {
 			actionOnClick={ () => dispatch( verifyEmail( { showGlobalNotices: true } ) ) }
 			badgeText={ translate( 'Action required' ) }
 			showSkip={ false }
+			taskId={ TASK_VERIFY_EMAIL }
 		/>
 	);
 };

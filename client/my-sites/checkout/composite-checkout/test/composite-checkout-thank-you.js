@@ -947,4 +947,21 @@ describe( 'getThankYouPageUrl', () => {
 		} );
 		expect( url ).toBe( '/checkout/jetpack/thank-you/foo.bar/no_product' );
 	} );
+
+	it( 'redirects to the jetpack "siteless" checkout thank you when jetpack checkout arg is set, but siteSlug is undefined.', () => {
+		const cart = {
+			products: [
+				{
+					product_slug: 'jetpack_backup_daily',
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: undefined,
+			cart,
+			isJetpackCheckout: true,
+		} );
+		expect( url ).toBe( '/checkout/jetpack/thank-you/no-site/jetpack_backup_daily' );
+	} );
 } );

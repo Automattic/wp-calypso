@@ -124,7 +124,7 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 		await driverHelper.waitUntilElementNotLocated( this.driver, inserterMenuLocator );
 	}
 
-	async addBlock( title ) {
+	async addBlock( title, overrideLocatorSuffix, overrideAriaLabel ) {
 		const {
 			ariaLabel,
 			prefix,
@@ -133,13 +133,15 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 		} = new GutenbergEditorComponent().getBlockLocatorSettings( title );
 
 		const inserterBlockItemLocator = By.css(
-			`.edit-site-editor__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix }${ blockClass }`
+			`.edit-site-editor__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${
+				overrideLocatorSuffix || prefix + blockClass
+			}`
 		);
 
 		const insertedBlockLocator = By.css(
 			`.block-editor-block-list__block.${
 				initsWithChildFocus ? 'has-child-selected' : 'is-selected'
-			}[aria-label*='${ ariaLabel }']`
+			}[aria-label*='${ overrideAriaLabel || ariaLabel }']`
 		);
 
 		await this.openBlockInserterAndSearch( title );
@@ -187,6 +189,26 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 				'.components-menu-group:last-of-type button.components-menu-item__button:last-of-type'
 			)
 		);
+	}
+
+	async closeGlobalStyles() {
+		if ( this.screenSize === 'mobile' ) {
+			const globalStylesCloseButtonLocator = By.css(
+				'button[aria-label="Close global styles sidebar"]'
+			);
+			return !! ( await driverHelper.clickIfPresent(
+				this.driver,
+				globalStylesCloseButtonLocator
+			) );
+		}
+
+		const pressedGlobalStylesButtonLocator = By.css(
+			'button[aria-label="Global Styles"][aria-expanded="true"]'
+		);
+		return !! ( await driverHelper.clickIfPresent(
+			this.driver,
+			pressedGlobalStylesButtonLocator
+		) );
 	}
 
 	async toggleGlobalStyles() {

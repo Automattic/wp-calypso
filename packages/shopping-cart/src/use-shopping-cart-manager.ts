@@ -25,6 +25,7 @@ import type {
 	RemoveProductFromCart,
 	UpdateTaxLocationInCart,
 	CartValidCallback,
+	DispatchAndWaitForValid,
 } from './types';
 import { convertTempResponseCartToResponseCart } from './cart-functions';
 import useShoppingCartReducer from './use-shopping-cart-reducer';
@@ -32,6 +33,7 @@ import useInitializeCartFromServer from './use-initialize-cart-from-server';
 import useCartUpdateAndRevalidate from './use-cart-update-and-revalidate';
 import { createRequestCartProducts } from './create-request-cart-product';
 import useRefetchOnFocus from './use-refetch-on-focus';
+import { createCartSyncMiddleware } from './sync';
 
 const debug = debugFactory( 'shopping-cart:use-shopping-cart-manager' );
 
@@ -50,7 +52,11 @@ export default function useShoppingCartManager( {
 
 	const cartValidCallbacks = useRef< CartValidCallback[] >( [] );
 
-	const [ hookState, hookDispatch ] = useShoppingCartReducer();
+	const syncCartToServer = useMemo( () => createCartSyncMiddleware( setServerCart ), [
+		setServerCart,
+	] );
+	const cartMiddleware = useMemo( () => [ syncCartToServer ], [ syncCartToServer ] );
+	const [ hookState, hookDispatch ] = useShoppingCartReducer( cartMiddleware );
 
 	const responseCart: TempResponseCart = hookState.responseCart;
 	const couponStatus: CouponStatus = hookState.couponStatus;
@@ -80,11 +86,11 @@ export default function useShoppingCartManager( {
 
 	useInitializeCartFromServer( cacheStatus, cartKey, getServerCart, setServerCart, hookDispatch );
 
-	// Asynchronously re-validate when the cache is dirty.
-	useCartUpdateAndRevalidate( cacheStatus, responseCart, setServerCart, hookDispatch );
+	useCartUpdateAndRevalidate( cacheStatus, hookDispatch );
 
-	const dispatchAndWaitForValid = useCallback(
+	const dispatchAndWaitForValid: DispatchAndWaitForValid = useCallback(
 		( action ) => {
+			debug( 'recevied action', action );
 			return new Promise< ResponseCart >( ( resolve ) => {
 				isMounted.current && hookDispatch( action );
 				cartValidCallbacks.current.push( resolve );

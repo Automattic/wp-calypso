@@ -17,17 +17,14 @@ import Masterbar from 'calypso/layout/masterbar/masterbar';
 import Item from 'calypso/layout/masterbar/item';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import yoastInstalledImage from 'calypso/assets/images/marketplace/yoast-installed.svg';
-import theme from 'calypso/my-sites/plugins/marketplace/theme';
-import type { MarketplaceThemeProps } from 'calypso/my-sites/plugins/marketplace/theme';
-import {
-	MarketplaceHeaderTitle,
-	FullWidthButton,
-} from 'calypso/my-sites/plugins/marketplace/components';
+import theme from 'calypso/my-sites/marketplace/theme';
+import type { MarketplaceThemeProps } from 'calypso/my-sites/marketplace/theme';
+import { MarketplaceHeaderTitle, FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import useSiteMenuItems from 'calypso/my-sites/sidebar-unified/use-site-menu-items';
 import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
-import { getPurchaseFlowState } from 'calypso/state/plugins/marketplace/selectors';
+import { getPurchaseFlowState } from 'calypso/state/marketplace/purchase-flow/selectors';
 import {
 	isFetchingAutomatedTransferStatus,
 	getAutomatedTransferStatus,

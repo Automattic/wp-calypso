@@ -191,7 +191,7 @@ describe( 'useWithServerCredentials HOC', () => {
 		// Verify the form was pre-filled with the current store
 		expect( formDataContainer.innerHTML ).toContain( 'jetpackUser' );
 		expect( formDataContainer.innerHTML ).toContain( 'jetpackHost' );
-		expect( formDataContainer.innerHTML ).toContain( 33 );
+		expect( formDataContainer.innerHTML ).toContain( '33' );
 		expect( formDataContainer.innerHTML ).toContain( '/jetpack/path' );
 
 		fireEvent.click( submitButton );

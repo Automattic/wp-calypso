@@ -33,6 +33,8 @@ class SecurityAccountRecoveryRecoveryPhoneEdit extends React.Component {
 		onDelete: PropTypes.func,
 	};
 
+	state = {};
+
 	render() {
 		const havePhone = ! isEmpty( this.props.storedPhone );
 

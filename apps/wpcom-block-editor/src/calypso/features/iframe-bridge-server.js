@@ -4,7 +4,7 @@
  * External dependencies
  */
 import $ from 'jquery';
-import { filter, find, forEach, get, map, partialRight } from 'lodash';
+import { debounce, filter, find, forEach, get, map, partialRight } from 'lodash';
 import { dispatch, select, subscribe, use } from '@wordpress/data';
 import { createBlock, parse } from '@wordpress/blocks';
 import { addAction, addFilter, doAction, removeAction } from '@wordpress/hooks';
@@ -564,7 +564,9 @@ function handleCloseEditor( calypsoPort ) {
 			{
 				action: 'closeEditor',
 				payload: {
-					unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
+					unsavedChanges:
+						select( 'core' ).__experimentalGetDirtyEntityRecords?.().length > 0 ||
+						select( 'core/editor' ).isEditedPostDirty(),
 				},
 			},
 			[ port2 ]
@@ -875,25 +877,32 @@ function openCustomizer( calypsoPort ) {
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function openTemplatePartLinks( calypsoPort ) {
-	$( '#editor' ).on( 'click', '.template__block-container .template-block__overlay a', ( e ) => {
-		e.preventDefault();
-		e.stopPropagation(); // Otherwise it will port the message twice.
+	$( '#editor' ).on(
+		'click',
+		'.template__block-container .template-block__overlay a',
+		// Prevents multiple calls. We suspect changes in React 17 to be the root cause,
+		// but not entirely certain. We'll remove this code soon when core FSE is released.
+		// See https://reactjs.org/blog/2020/08/10/react-v17-rc.html#changes-to-event-delegation
+		debounce( ( e ) => {
+			e.preventDefault();
+			e.stopPropagation(); // Otherwise it will port the message twice.
 
-		// Get the template part ID from the current href.
-		const templatePartId = parseInt( getQueryArg( e.target.href, 'post' ), 10 );
+			// Get the template part ID from the current href.
+			const templatePartId = parseInt( getQueryArg( e.target.href, 'post' ), 10 );
 
-		const { port2 } = new MessageChannel();
-		calypsoPort.postMessage(
-			{
-				action: 'openTemplatePart',
-				payload: {
-					templatePartId,
-					unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
+			const { port2 } = new MessageChannel();
+			calypsoPort.postMessage(
+				{
+					action: 'openTemplatePart',
+					payload: {
+						templatePartId,
+						unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
+					},
 				},
-			},
-			[ port2 ]
-		);
-	} );
+				[ port2 ]
+			);
+		} )
+	);
 }
 
 /**
