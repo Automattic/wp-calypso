@@ -25,12 +25,7 @@ import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homep
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import config from '@automattic/calypso-config';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { openThemesShowcase } from 'calypso/state/themes/themes-ui/actions';
-import {
-	getThemesBookmark,
-	hasShowcaseOpened as hasShowcaseOpenedSelector,
-} from 'calypso/state/themes/themes-ui/selectors';
+import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import ThemesSearchCard from './themes-magic-search-card';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
 import {
@@ -78,7 +73,10 @@ class ThemeShowcase extends React.Component {
 		this.scrollRef = React.createRef();
 		this.bookmarkRef = React.createRef();
 		this.state = {
-			tabFilter: this.props.loggedOutComponent ? 'all' : 'recommended',
+			tabFilter:
+				this.props.loggedOutComponent || this.props.search || this.props.filter || this.props.tier
+					? 'all'
+					: 'recommended',
 		};
 	}
 
@@ -109,11 +107,7 @@ class ThemeShowcase extends React.Component {
 	};
 
 	componentDidMount() {
-		const { search, filter, tier, hasShowcaseOpened, themesBookmark } = this.props;
-		// Open showcase on state if we open here with query override.
-		if ( ( search || filter || tier ) && ! hasShowcaseOpened ) {
-			this.props.openThemesShowcase();
-		}
+		const { themesBookmark } = this.props;
 		// Scroll to bookmark if applicable.
 		if ( themesBookmark ) {
 			// Timeout to move this to the end of the event queue or it won't work here.
@@ -438,13 +432,7 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 	subjects: getThemeFilterTerms( state, 'subject' ) || {},
 	filterString: prependThemeFilterKeys( state, filter ),
 	filterToTermTable: getThemeFilterToTermTable( state ),
-	hasShowcaseOpened: hasShowcaseOpenedSelector( state ),
 	themesBookmark: getThemesBookmark( state ),
 } );
 
-const mapDispatchToProps = {
-	trackMoreThemesClick: () => recordTracksEvent( 'calypso_themeshowcase_more_themes_clicked' ),
-	openThemesShowcase: () => openThemesShowcase(),
-};
-
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ThemeShowcase ) );
+export default connect( mapStateToProps, null )( localize( ThemeShowcase ) );
