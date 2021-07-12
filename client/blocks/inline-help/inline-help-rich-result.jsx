@@ -53,10 +53,6 @@ class InlineHelpRichResult extends Component {
 		article: 'reader',
 	};
 
-	state = {
-		showDialog: false,
-	};
-
 	handleClick = ( event ) => {
 		const isLocaleEnglish = 'en' === getLocaleSlug();
 		const { type, tour, link, searchQuery, postId } = this.props;

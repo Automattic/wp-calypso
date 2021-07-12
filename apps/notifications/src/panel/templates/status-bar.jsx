@@ -15,13 +15,11 @@ export class StatusBar extends React.Component {
 
 	state = {
 		isVisible: false,
-		timeoutHandle: null,
 	};
 
 	disappear = () => {
 		this.setState( {
 			isVisible: false,
-			timeoutHandle: null,
 		} );
 
 		this.props.statusReset();
@@ -41,7 +39,7 @@ export class StatusBar extends React.Component {
 		const component = this;
 
 		/* We only want this to appear for a bit, then disappear */
-		const timeout = window.setTimeout(
+		window.setTimeout(
 			function () {
 				component.disappear();
 			},
@@ -50,7 +48,6 @@ export class StatusBar extends React.Component {
 
 		this.setState( {
 			isVisible: true,
-			timeoutHandle: timeout,
 		} );
 	}
 
