@@ -180,19 +180,31 @@ describe( 'utils', () => {
 		test( 'should parse simple object to csv', () => {
 			expect(
 				buildExportArray( {
+					actions: [
+						{
+							type: 'link',
+							data: 'https://example.com/chicken',
+						},
+					],
 					label: 'Chicken',
 					value: 10,
 				} )
-			).toEqual( [ [ '"Chicken"', 10 ] ] );
+			).toEqual( [ [ '"Chicken"', 10, 'https://example.com/chicken' ] ] );
 		} );
 
 		test( 'should escape simple object to csv', () => {
 			expect(
 				buildExportArray( {
+					actions: [
+						{
+							type: 'link',
+							data: 'https://example.com/chicken',
+						},
+					],
 					label: 'Chicken and "Ribs"',
 					value: 10,
 				} )
-			).toEqual( [ [ '"Chicken and ""Ribs""', 10 ] ] );
+			).toEqual( [ [ '"Chicken and ""Ribs""', 10, 'https://example.com/chicken' ] ] );
 		} );
 
 		test( 'should recurse child data', () => {
@@ -200,16 +212,40 @@ describe( 'utils', () => {
 				buildExportArray( {
 					label: 'BBQ',
 					value: 10,
+					actions: [
+						{
+							type: 'link',
+							data: 'https://example.com/bbq',
+						},
+					],
 					children: [
 						{
+							actions: [
+								{
+									type: 'link',
+									data: 'https://example.com/bbq/chicken',
+								},
+							],
 							label: 'Chicken',
 							value: 5,
 						},
 						{
+							actions: [
+								{
+									type: 'link',
+									data: 'https://example.com/bbq/ribs',
+								},
+							],
 							label: 'Ribs',
 							value: 2,
 							children: [
 								{
+									actions: [
+										{
+											type: 'link',
+											data: 'https://example.com/bbq/ribs/babyback',
+										},
+									],
 									label: 'Babyback',
 									value: 1,
 								},
@@ -218,10 +254,10 @@ describe( 'utils', () => {
 					],
 				} )
 			).toEqual( [
-				[ '"BBQ"', 10 ],
-				[ '"BBQ > Chicken"', 5 ],
-				[ '"BBQ > Ribs"', 2 ],
-				[ '"BBQ > Ribs > Babyback"', 1 ],
+				[ '"BBQ"', 10, 'https://example.com/bbq' ],
+				[ '"BBQ > Chicken"', 5, 'https://example.com/bbq/chicken' ],
+				[ '"BBQ > Ribs"', 2, 'https://example.com/bbq/ribs' ],
+				[ '"BBQ > Ribs > Babyback"', 1, 'https://example.com/bbq/ribs/babyback' ],
 			] );
 		} );
 	} );
