@@ -20,7 +20,6 @@ import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
 import i18n from './i18n/reducer';
 import importerNux from './importer-nux/reducer';
 import sites from './sites/reducer';
-import userSettings from './user-settings/reducer';
 
 // Legacy reducers
 // The reducers in this list are not modularized, and are always loaded on boot.
@@ -33,7 +32,6 @@ const reducers = {
 	i18n,
 	importerNux,
 	sites,
-	userSettings,
 };
 
 export default combineReducers( reducers );

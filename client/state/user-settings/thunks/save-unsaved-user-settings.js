@@ -9,6 +9,8 @@ import {
 import wp from 'calypso/lib/wp';
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 
+import 'calypso/state/user-settings/init';
+
 const wpcom = wp.undocumented();
 
 /**
