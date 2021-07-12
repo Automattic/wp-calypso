@@ -13,6 +13,7 @@ import titleCase from 'to-title-case';
 import { Card } from '@automattic/components';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import DocumentHead from 'calypso/components/data/document-head';
+import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import EmailListActive from 'calypso/my-sites/email/email-management/home/email-list-active';
 import EmailListInactive from 'calypso/my-sites/email/email-management/home/email-list-inactive';
@@ -36,7 +37,6 @@ import Main from 'calypso/components/main';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import SectionHeader from 'calypso/components/section-header';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 
 /**
  * Style dependencies
@@ -85,7 +85,7 @@ class EmailManagementHome extends React.Component {
 				return (
 					<EmailProvidersComparison
 						selectedDomainName={ selectedDomainName }
-						backPath={ `${ domainManagementRoot() }/${ selectedDomainName }` }
+						backPath={ domainManagementList( selectedSite.slug, null ) }
 					/>
 				);
 			}
