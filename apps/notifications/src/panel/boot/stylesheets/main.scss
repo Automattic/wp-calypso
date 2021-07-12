@@ -14,10 +14,12 @@
 	// Fixes font anti-aliasing in iframes: andrewmoreton.co.uk/typekit-iframes-safari-weird-antialiasing/
 	-webkit-font-smoothing: subpixel-antialiased;
 
-	body.font-smoothing-antialiased & {
-		text-rendering: optimizeLegibility;
-		-moz-osx-font-smoothing: grayscale;
-		-webkit-font-smoothing: antialiased;
+	@media ( -webkit-min-device-pixel-ratio: 1.25 ), ( min-resolution: 120dpi ) {
+		body.font-smoothing-antialiased & {
+			text-rendering: optimizeLegibility;
+			-moz-osx-font-smoothing: grayscale;
+			-webkit-font-smoothing: antialiased;
+		}
 	}
 
 	@media only screen and ( max-width: 799px ) {
