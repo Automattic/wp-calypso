@@ -26,6 +26,16 @@ const host = dataHelper.getJetpackHost();
 
 const siteEditorUser = 'siteEditorSimpleSiteUser';
 
+const navigationSidebarBackToRoot = async ( driver ) => {
+	const backButtonLocator = By.css(
+		'.components-navigation__back-button:not(.edit-site-navigation-panel__back-to-dashboard)'
+	);
+
+	while ( await driverHelper.isElementEventuallyLocatedAndVisible( driver, backButtonLocator ) ) {
+		await driverHelper.clickWhenClickable( driver, backButtonLocator );
+	}
+};
+
 const clickGlobalStylesButton = async ( driver ) =>
 	await driverHelper.clickWhenClickable(
 		driver,
@@ -918,11 +928,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				const editor = await SiteEditorComponent.Expect( this.driver );
 
 				await editor.toggleNavigationSidebar();
-				const backButtonToTemplatesLocator = driverHelper.createTextLocator(
-					By.css( '.components-navigation__back-button' ),
-					'Back'
-				);
-				await driverHelper.clickWhenClickable( this.driver, backButtonToTemplatesLocator );
+				await navigationSidebarBackToRoot( this.driver );
 
 				await driverHelper.clickWhenClickable(
 					this.driver,
@@ -957,16 +963,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				const editor = await SiteEditorComponent.Expect( this.driver );
 
 				await editor.toggleNavigationSidebar();
-				const backButtonToTemplatesLocator = driverHelper.createTextLocator(
-					By.css( '.components-navigation__back-button' ),
-					'Template Parts'
-				);
-				await driverHelper.clickWhenClickable( this.driver, backButtonToTemplatesLocator );
-				const backButtonToTemplatesLocator2 = driverHelper.createTextLocator(
-					By.css( '.components-navigation__back-button' ),
-					'Back'
-				);
-				await driverHelper.clickWhenClickable( this.driver, backButtonToTemplatesLocator2 );
+				await navigationSidebarBackToRoot( this.driver );
 
 				const isBackToDashboardLocated = await driverHelper.isElementEventuallyLocatedAndVisible(
 					this.driver,
@@ -976,26 +973,50 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				assert( isBackToDashboardLocated );
 			} );
 
-			it( 'should track "wpcom_block_editor_nav_sidebar_item_edit" when switching to a content item', async function () {
+			it( 'should track "wpcom_block_editor_nav_sidebar_item_edit" when switching to a content item (type = page)', async function () {
 				const pagesMenuItemLocator = By.css(
 					'[role="region"][aria-label="Navigation Sidebar"] [role="menu"] [title="Pages"] button'
 				);
-				await driverHelper.clickWhenClickable( this.driver, pagesMenuItemLocator );
-
 				const contentMenuItemLocator = By.css(
 					'[role="region"][aria-label="Navigation Sidebar"] [role="menu"] [title="Home"] button'
 				);
+
+				// We don't need to open the navigation sidebar. It's still open from the previous test.
+				await driverHelper.clickWhenClickable( this.driver, pagesMenuItemLocator );
 				await driverHelper.clickWhenClickable( this.driver, contentMenuItemLocator );
 
 				const eventsStack = await getEventsStack( this.driver );
 				const editEvents = eventsStack.filter(
 					( [ eventName ] ) => eventName === 'wpcom_block_editor_nav_sidebar_item_edit'
 				);
-				// TODO: Change this to 1 once https://github.com/WordPress/gutenberg/pull/33286 fix is deployed
-				assert.strictEqual( editEvents.length, 2 );
+				assert.strictEqual( editEvents.length, 1 );
 				const [ , editEventData ] = editEvents[ 0 ];
 				assert.strictEqual( editEventData.item_type, 'page' );
 				assert.strictEqual( editEventData.item_slug, 'home' );
+			} );
+
+			it( 'should track "wpcom_block_editor_nav_sidebar_item_edit" when switching to a category item (type = taxonomy_category)', async function () {
+				const editor = await SiteEditorComponent.Expect( this.driver );
+				const categoriesMenuItemLocator = By.css(
+					'[role="region"][aria-label="Navigation Sidebar"] [role="menu"] [title="Categories"] button'
+				);
+				const contentMenuItemLocator = By.css(
+					'[role="region"][aria-label="Navigation Sidebar"] [role="menu"] [title="Uncategorized"] button'
+				);
+
+				await editor.toggleNavigationSidebar();
+				await navigationSidebarBackToRoot( this.driver );
+				await driverHelper.clickWhenClickable( this.driver, categoriesMenuItemLocator );
+				await driverHelper.clickWhenClickable( this.driver, contentMenuItemLocator );
+
+				const eventsStack = await getEventsStack( this.driver );
+				const editEvents = eventsStack.filter(
+					( [ eventName ] ) => eventName === 'wpcom_block_editor_nav_sidebar_item_edit'
+				);
+				assert.strictEqual( editEvents.length, 1 );
+				const [ , editEventData ] = editEvents[ 0 ];
+				assert.strictEqual( editEventData.item_type, 'taxonomy_category' );
+				assert.strictEqual( editEventData.item_slug, 'uncategorized' );
 			} );
 		} );
 
