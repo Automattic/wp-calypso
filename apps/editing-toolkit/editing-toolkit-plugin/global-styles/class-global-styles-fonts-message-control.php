@@ -12,17 +12,65 @@ namespace Automattic\Jetpack\Global_Styles;
  */
 class Global_Styles_Fonts_Message_Control extends \WP_Customize_Control {
 	/**
-	 * Get the site slug
+	 * Render the customizer help document content
 	 */
-	private function get_site_slug() {
-		if ( method_exists( '\WPCOM_Masterbar', 'get_calypso_site_slug' ) ) {
-			return \WPCOM_Masterbar::get_calypso_site_slug( get_current_blog_id() );
+	public function render_content() {
+		$this->render_intro_text();
+		$this->maybe_render_block_editor_link();
+		$this->render_learn_more_link();
+	}
+
+	/**
+	 * Render the intro text to the customizer help document content
+	 */
+	private function render_intro_text() {
+		$intro_text = __( 'You can change your fonts using Global Styles, which can be found in the Block Editor.', 'full-site-editing' );
+		?>
+			<p>
+				<?php echo esc_html( $intro_text ); ?>
+			</p>
+		<?php
+	}
+
+	/**
+	 * Render a link to the global styles fonts page help support document
+	 */
+	private function render_learn_more_link() {
+		// Translators: This is a link which opens: https://wordpress.com/support/custom-fonts/#changing-fonts-with-global-styles.
+		$learn_more_link_text = __( 'Learn more about changing fonts using Global Styles.', 'full-site-editing' );
+		?>
+			<p>
+				<a
+					href="https://wordpress.com/support/custom-fonts/#changing-fonts-with-global-styles"
+					target="_blank"
+					onClick="<?php echo esc_attr( $this->get_tracks_event_script( 'calypso_customizer_global_styles_support_link_clicked' ) ); ?>"
+				>
+					<?php echo esc_html( $learn_more_link_text ); ?>
+				</a>
+			</p>
+		<?php
+	}
+
+	/**
+	 * Render a link to the global styles section of the block editor, if a homepage exists
+	 */
+	private function maybe_render_block_editor_link() {
+		$block_editor_with_global_styles_url = $this->get_link_to_editor_with_global_styles_sidebar();
+		if ( null === $block_editor_with_global_styles_url ) {
+			return;
 		}
-
-		$home_url  = home_url( '/' );
-		$site_slug = wp_parse_url( $home_url, PHP_URL_HOST );
-
-		return $site_slug;
+		// Translators: This is a link which opens the block editor, and then opens the global styles sidebar.
+		$block_editor_link_text = __( 'Click here to open the Block Editor and change your fonts.', 'full-site-editing' );
+		?>
+			<p>
+				<a
+					href="<?php echo esc_url( $block_editor_with_global_styles_url ); ?>"
+					target="_blank"
+					onClick="<?php echo esc_attr( $this->get_tracks_event_script( 'calypso_customizer_global_styles_block_editor_link_clicked' ) ); ?>">
+					<?php echo esc_html( $block_editor_link_text ); ?>
+				</a>
+			</p>
+		<?php
 	}
 
 	/**
@@ -56,12 +104,17 @@ class Global_Styles_Fonts_Message_Control extends \WP_Customize_Control {
 	}
 
 	/**
-	 * Render the customizer help document content
+	 * Get the site slug
 	 */
-	public function render_content() {
-		$this->render_intro_text();
-		$this->maybe_render_block_editor_link();
-		$this->render_learn_more_link();
+	private function get_site_slug() {
+		if ( method_exists( '\WPCOM_Masterbar', 'get_calypso_site_slug' ) ) {
+			return \WPCOM_Masterbar::get_calypso_site_slug( get_current_blog_id() );
+		}
+
+		$home_url  = home_url( '/' );
+		$site_slug = wp_parse_url( $home_url, PHP_URL_HOST );
+
+		return $site_slug;
 	}
 
 	/**
@@ -79,58 +132,5 @@ class Global_Styles_Fonts_Message_Control extends \WP_Customize_Control {
 		}
 		$tracks_event_script .= " window._tkq.push( [ 'recordEvent', '$tracks_event' ] ); ";
 		return $tracks_event_script;
-	}
-
-	/**
-	 * Render the intro text to the customizer help document content
-	 */
-	private function render_intro_text() {
-		$intro_text = __( 'You can change your fonts using Global Styles, which can be found in the Block Editor.', 'full-site-editing' );
-		?>
-			<p>
-				<?php echo esc_html( $intro_text ); ?>
-			</p>
-		<?php
-	}
-
-	/**
-	 * Render a link to the global styles section of the block editor, if a homepage exists
-	 */
-	private function maybe_render_block_editor_link() {
-		$block_editor_with_global_styles_url = $this->get_link_to_editor_with_global_styles_sidebar();
-		if ( null === $block_editor_with_global_styles_url ) {
-			return;
-		}
-		// Translators: This is a link which opens the block editor, and then opens the global styles sidebar.
-		$block_editor_link_text = __( 'Click here to open the Block Editor and change your fonts.', 'full-site-editing' );
-		?>
-			<p>
-				<a
-					href="<?php echo esc_url( $block_editor_with_global_styles_url ); ?>"
-					target="_blank"
-					onClick="<?php echo esc_attr( $this->get_tracks_event_script( 'calypso_customizer_global_styles_block_editor_link_clicked' ) ); ?>">
-					<?php echo esc_html( $block_editor_link_text ); ?>
-				</a>
-			</p>
-		<?php
-	}
-
-	/**
-	 * Render a link to the global styles fonts page help support document
-	 */
-	private function render_learn_more_link() {
-		// Translators: This is a link which opens: https://wordpress.com/support/custom-fonts/#changing-fonts-with-global-styles.
-		$learn_more_link_text = __( 'Learn more about changing fonts using Global Styles.', 'full-site-editing' );
-		?>
-			<p>
-				<a
-					href="https://wordpress.com/support/custom-fonts/#changing-fonts-with-global-styles"
-					target="_blank"
-					onClick="<?php echo esc_attr( $this->get_tracks_event_script( 'calypso_customizer_global_styles_support_link_clicked' ) ); ?>"
-				>
-					<?php echo esc_html( $learn_more_link_text ); ?>
-				</a>
-			</p>
-		<?php
 	}
 }
