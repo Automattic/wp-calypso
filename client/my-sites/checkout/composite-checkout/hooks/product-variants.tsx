@@ -83,11 +83,9 @@ export function useGetProductVariants(
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 
-	debug( 'siteId', siteId );
 	const sitePlans: SitesPlansResult | null = useSelector( ( state ) =>
 		siteId ? getPlansBySiteId( state, siteId ) : null
 	);
-	debug( 'sitePlans', sitePlans );
 	const activePlan: SitePlanData | undefined = sitePlans?.data?.find(
 		( plan ) => plan.currentPlan
 	);
@@ -99,13 +97,11 @@ export function useGetProductVariants(
 	const variantsWithPrices: AvailableProductVariant[] = useSelector( ( state ) => {
 		return computeProductsWithPrices( state, siteId, variantProductSlugs, 0, {} );
 	} );
-	debug( 'variantsWithPrices', variantsWithPrices );
 
 	const [ haveFetchedProducts, setHaveFetchedProducts ] = useState( false );
 	const shouldFetchProducts = ! variantsWithPrices;
 
 	useEffect( () => {
-		debug( 'deciding whether to request product variant data' );
 		if ( shouldFetchProducts && ! haveFetchedProducts ) {
 			debug( 'dispatching request for product variant data' );
 			reduxDispatch( requestPlans() );
@@ -127,7 +123,6 @@ export function useGetProductVariants(
 	);
 
 	const filteredVariants = useMemo( () => {
-		debug( 'found unfiltered variants', variantsWithPrices );
 		return variantsWithPrices.filter( ( product ) =>
 			isVariantAllowed( product, activePlan?.interval )
 		);
