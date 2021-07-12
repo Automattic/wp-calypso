@@ -52,3 +52,19 @@
 .themes__hidden-content {
 	display: none;
 }
+
+.theme-showcase__all-themes-title {
+	font-weight: 600;
+}
+
+.theme-showcase__all-themes-title,
+.themes__themes-selection-header h2,
+.theme-showcase__all-themes-description {
+	margin-left: 16px;
+	margin-right: 16px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-left: 0;
+		margin-right: 0;
+	}
+}

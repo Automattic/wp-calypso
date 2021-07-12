@@ -187,8 +187,11 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 	}
 
 	.current-theme__img {
+		border-bottom: $current-theme-border;
+
 		@include breakpoint-deprecated( '>660px' ) {
 			border-right: $current-theme-border;
+			border-bottom: none;
 			max-height: 112px;
 			width: auto;
 		}
@@ -203,11 +206,6 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		@include breakpoint-deprecated( '>660px' ) {
 			width: 150px;
 		}
-	}
-
-	.current-theme__description p {
-		padding: 16px;
-		margin-bottom: 0;
 	}
 
 	.current-theme__title-wrapper {
@@ -230,11 +228,12 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		padding: 4px 12px;
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 120px;
-		margin-left: 16px;
 		margin-bottom: 4px;
 
 		@include breakpoint-deprecated( '>660px' ) {
+			align-self: center;
 			margin-left: 8px;
+			margin-bottom: 0;
 		}
 	}
 
@@ -244,7 +243,6 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		overflow: hidden;
 		white-space: nowrap;
 		text-overflow: ellipsis;
-		padding-left: 16px;
 		font-size: $font-body;
 		max-width: 100%;
 
@@ -260,11 +258,17 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 	}
 
 	.current-theme__description {
-		margin-top: 16px;
+		align-self: center;
 		font-size: $font-body-small;
+		margin: 16px;
 
-		@include breakpoint-deprecated( '>960px' ) {
-			font-size: $font-body;
+		p {
+			color: var( --color-text-subtle );
+			margin: 8px 0 0;
+
+			@include breakpoint-deprecated( '>660px' ) {
+				margin-top: 12px;
+			}
 		}
 	}
 
@@ -273,16 +277,12 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		box-sizing: border-box;
 		padding-top: 16px;
 		display: flex;
-		align-items: center;
-		justify-content: center;
+		align-items: flex-end;
+		justify-content: flex-end;
 		flex-grow: 1;
 
-		@include breakpoint-deprecated( '>660px' ) {
-			align-items: flex-end;
-			justify-content: flex-end;
-		}
-
 		@include breakpoint-deprecated( '>960px' ) {
+			border-top: none;
 			min-height: 112px;
 			padding-top: 0;
 		}
@@ -296,13 +296,11 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		border-width: 1px;
 
 		&:not( .is-primary ) {
-			outline: 1px solid var( --color-neutral-10 );
+			border: 1px solid var( --color-neutral-10 );
 		}
 
-		@include breakpoint-deprecated( '>660px' ) {
-			&:last-child {
-				margin-right: 16px;
-			}
+		&:last-child {
+			margin-right: 16px;
 		}
 
 		.gridicon {
