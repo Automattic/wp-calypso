@@ -200,25 +200,25 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 			</FormFieldset>
 
 			<FormFieldset>
-					<LabelWrapper label={ translate( 'Password' ) } showLabel={ showLabels }>
-						<FormPasswordInput
-							autoCapitalize="off"
-							autoCorrect="off"
-							placeholder={ translate( 'Password' ) }
-							value={ password }
-							maxLength={ 100 }
-							isError={ hasPasswordError }
-							onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-								onUserValueChange( 'password', event.target.value );
-							} }
-							onBlur={ () => {
-								setPasswordFieldTouched( wasValidated );
-							} }
-							onKeyUp={ onReturnKeyPress }
-						/>
-					</LabelWrapper>
+				<LabelWrapper label={ translate( 'Password' ) } showLabel={ showLabels }>
+					<FormPasswordInput
+						autoCapitalize="off"
+						autoCorrect="off"
+						placeholder={ translate( 'Password' ) }
+						value={ password }
+						maxLength={ 100 }
+						isError={ hasPasswordError }
+						onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+							onUserValueChange( 'password', event.target.value );
+						} }
+						onBlur={ () => {
+							setPasswordFieldTouched( wasValidated );
+						} }
+						onKeyUp={ onReturnKeyPress }
+					/>
+				</LabelWrapper>
 
-					{ hasPasswordError && <FormInputValidation text={ passwordError } isError /> }
+				{ hasPasswordError && <FormInputValidation text={ passwordError } isError /> }
 			</FormFieldset>
 		</div>
 	);
