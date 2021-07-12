@@ -230,7 +230,7 @@ class MasterbarLoggedIn extends React.Component {
 		if ( isCheckout ) {
 			return (
 				<AsyncLoad
-					require="calypso/layout/masterbar/checkout"
+					require="calypso/layout/masterbar/checkout.tsx"
 					placeholder={ null }
 					title={ title }
 					isJetpackNotAtomic={ isJetpackNotAtomic }
