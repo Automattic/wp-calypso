@@ -106,7 +106,12 @@ class UploadingPane extends React.PureComponent {
 				return (
 					<div>
 						<p>{ uploaderPrompt }</p>
-						<ProgressBar className={ progressClasses } value={ uploadPercent } total={ 100 } />
+						<ProgressBar
+							className={ progressClasses }
+							value={ uploadPercent }
+							total={ 100 }
+							isPulsing={ uploadPercent > 99 || importerState === appStates.UPLOAD_PROCESSING }
+						/>
 					</div>
 				);
 			}
@@ -188,6 +193,12 @@ class UploadingPane extends React.PureComponent {
 		const urlDescription = isValidUrl
 			? this.props?.optionalUrl?.description
 			: this.props?.optionalUrl?.invalidDescription;
+		const uploadButtonEnabled =
+			[ appStates.READY_FOR_UPLOAD, appStates.UPLOAD_FAILURE ].includes(
+				importerStatus.importerState
+			) &&
+			this.state.fileToBeUploaded &&
+			this.validateUrl( this.state.urlInput );
 
 		return (
 			<div>
@@ -242,9 +253,7 @@ class UploadingPane extends React.PureComponent {
 						<ImporterActionButton
 							primary
 							onClick={ this.initiateFromUploadButton }
-							disabled={
-								! this.state.fileToBeUploaded || ! this.validateUrl( this.state.urlInput )
-							}
+							disabled={ ! uploadButtonEnabled }
 						>
 							{ this.props.translate( 'Upload' ) }
 						</ImporterActionButton>
