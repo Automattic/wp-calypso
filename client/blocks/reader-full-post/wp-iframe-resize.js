@@ -1,7 +1,14 @@
-// This file is inspired by `wp-includes/js/wp-embed.js` of WP.org.
-// It actually waits for a message from the iFrame.
-// The message will contain the actual height of the iFrame.
-const WPiFrameResize = () => {
+/**
+ * This function is inspired by `wp-includes/js/wp-embed.js` of WP.org.
+ * It actually waits for a message from within the iFrame.
+ * The message will contain the actual height of the iFrame.
+ *
+ * @param {Element} contentWrapper This is a param with a description too long to fit in
+ *     one line.
+ * @param {boolean} removeListener This is a param with a description too long to fit in
+ *     one line.
+ */
+const WPiFrameResize = ( contentWrapper, removeListener ) => {
 	const receiveEmbedMessage = function ( e ) {
 		const data = e.data;
 
@@ -17,7 +24,7 @@ const WPiFrameResize = () => {
 			return;
 		}
 
-		const iframes = document.querySelectorAll( 'iframe[data-secret="' + data.secret + '"]' );
+		const iframes = contentWrapper.querySelectorAll( 'iframe[data-secret="' + data.secret + '"]' );
 		const blockquotes = document.querySelectorAll(
 			'blockquote[data-secret="' + data.secret + '"]'
 		);
@@ -71,7 +78,11 @@ const WPiFrameResize = () => {
 		}
 	};
 
-	window.addEventListener( 'message', receiveEmbedMessage, false );
+	if ( removeListener ) {
+		window.removeEventListener( 'message', receiveEmbedMessage, false );
+	} else {
+		window.addEventListener( 'message', receiveEmbedMessage, false );
+	}
 };
 
 export default WPiFrameResize;

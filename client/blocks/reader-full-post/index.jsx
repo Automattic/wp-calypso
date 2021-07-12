@@ -102,6 +102,7 @@ export class FullPostView extends React.Component {
 
 	hasScrolledToCommentAnchor = false;
 	commentsWrapper = React.createRef();
+	postContentWrapper = React.createRef();
 
 	componentDidMount() {
 		KeyboardShortcuts.on( 'close-full-post', this.handleBack );
@@ -120,7 +121,9 @@ export class FullPostView extends React.Component {
 		if ( this.hasCommentAnchor && ! this.hasScrolledToCommentAnchor ) {
 			this.scrollToComments();
 		}
-		WPiFrameResize();
+
+		// Adds WPiFrameResize listener for setting the corect height in embedded iFrames.
+		this.postContentWrapper.current && WPiFrameResize( this.postContentWrapper.current );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -153,6 +156,8 @@ export class FullPostView extends React.Component {
 		KeyboardShortcuts.off( 'like-selection', this.handleLike );
 		KeyboardShortcuts.off( 'move-selection-down', this.goToNextPost );
 		KeyboardShortcuts.off( 'move-selection-up', this.goToPreviousPost );
+		// Remove WPiFrameResize listener.
+		this.postContentWrapper.current && WPiFrameResize( this.postContentWrapper.current, true );
 	}
 
 	handleBack = ( event ) => {
@@ -502,6 +507,7 @@ export class FullPostView extends React.Component {
 								<EmbedContainer>
 									<AutoDirection>
 										<div
+											ref={ this.postContentWrapper }
 											className="reader-full-post__story-content"
 											dangerouslySetInnerHTML={ { __html: post.content } }
 										/>
