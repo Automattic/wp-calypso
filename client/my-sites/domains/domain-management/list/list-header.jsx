@@ -20,6 +20,7 @@ import FormCheckbox from 'calypso/components/forms/form-checkbox';
  * Style dependencies
  */
 import './style.scss';
+import Tooltip from 'calypso/components/tooltip';
 
 class ListHeader extends React.PureComponent {
 	static propTypes = {
@@ -38,6 +39,33 @@ class ListHeader extends React.PureComponent {
 		isChecked: false,
 	};
 
+	elementsData = {
+		transferLock: {
+			ref: React.createRef(),
+			getVisibility: () => this.state?.transferLockTooltipVisible,
+		},
+		privacy: {
+			ref: React.createRef(),
+			getVisibility: () => this.state?.privacyTooltipVisible,
+		},
+		autoRenew: {
+			ref: React.createRef(),
+			getVisibility: () => this.state?.autoRenewTooltipVisible,
+		},
+		email: {
+			ref: React.createRef(),
+			getVisibility: () => this.state?.emailTooltipVisible,
+		},
+	};
+
+	enableTooltip = ( name ) => {
+		this.setState( { [ `${ name }TooltipVisible` ]: true } );
+	};
+
+	disableTooltip = ( name ) => {
+		this.setState( { [ `${ name }TooltipVisible` ]: false } );
+	};
+
 	stopPropagation = ( event ) => {
 		event.stopPropagation();
 	};
@@ -54,7 +82,12 @@ class ListHeader extends React.PureComponent {
 		return (
 			<>
 				<div className="list__domain-link" />
-				<div className="list__domain-transfer-lock">
+				<div
+					className="list__domain-transfer-lock"
+					onMouseEnter={ () => this.enableTooltip( 'transferLock' ) }
+					onMouseLeave={ () => this.disableTooltip( 'transferLock' ) }
+					ref={ this.elementsData.transferLock.ref }
+				>
 					<span>{ translate( 'Transfer lock' ) }</span>
 					<InfoPopover iconSize={ 18 }>
 						{ translate(
@@ -64,7 +97,12 @@ class ListHeader extends React.PureComponent {
 						) }
 					</InfoPopover>
 				</div>
-				<div className="list__domain-privacy">
+				<div
+					className="list__domain-privacy"
+					onMouseEnter={ () => this.enableTooltip( 'privacy' ) }
+					onMouseLeave={ () => this.disableTooltip( 'privacy' ) }
+					ref={ this.elementsData.privacy.ref }
+				>
 					<span>{ translate( 'Privacy' ) }</span>
 					<InfoPopover iconSize={ 18 }>
 						{ translate(
@@ -74,7 +112,12 @@ class ListHeader extends React.PureComponent {
 						) }
 					</InfoPopover>
 				</div>
-				<div className="list__domain-auto-renew">
+				<div
+					className="list__domain-auto-renew"
+					onMouseEnter={ () => this.enableTooltip( 'autoRenew' ) }
+					onMouseLeave={ () => this.disableTooltip( 'autoRenew' ) }
+					ref={ this.elementsData.autoRenew.ref }
+				>
 					<span>{ translate( 'Auto-renew' ) }</span>
 					<InfoPopover iconSize={ 18 }>
 						{ translate(
@@ -83,7 +126,12 @@ class ListHeader extends React.PureComponent {
 						) }
 					</InfoPopover>
 				</div>
-				<div className="list__domain-email">
+				<div
+					className="list__domain-email"
+					onMouseEnter={ () => this.enableTooltip( 'email' ) }
+					onMouseLeave={ () => this.disableTooltip( 'email' ) }
+					ref={ this.elementsData.email.ref }
+				>
 					<span>{ translate( 'Email' ) }</span>
 					<InfoPopover iconSize={ 18 }>
 						{ translate(
@@ -101,6 +149,37 @@ class ListHeader extends React.PureComponent {
 					</InfoPopover>
 				</div>
 				<div className="list__domain-options"></div>
+
+				<>
+					<Tooltip
+						context={ this.elementsData.transferLock.ref.current }
+						isVisible={ this.elementsData.transferLock.getVisibility() }
+						position="top"
+					>
+						{ translate( 'Transfer lock' ) }
+					</Tooltip>
+					<Tooltip
+						context={ this.elementsData.privacy.ref.current }
+						isVisible={ this.elementsData.privacy.getVisibility() }
+						position="top"
+					>
+						{ translate( 'Privacy' ) }
+					</Tooltip>
+					<Tooltip
+						context={ this.elementsData.autoRenew.ref.current }
+						isVisible={ this.elementsData.autoRenew.getVisibility() }
+						position="top"
+					>
+						{ translate( 'Auto-renew' ) }
+					</Tooltip>
+					<Tooltip
+						context={ this.elementsData.email.ref.current }
+						isVisible={ this.elementsData.email.getVisibility() }
+						position="top"
+					>
+						{ translate( 'Email' ) }
+					</Tooltip>
+				</>
 			</>
 		);
 	}
