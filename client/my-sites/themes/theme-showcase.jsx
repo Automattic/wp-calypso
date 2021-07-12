@@ -333,7 +333,7 @@ class ThemeShowcase extends React.Component {
 							filter={ filter }
 							vertical={ this.props.vertical }
 							siteId={ this.props.siteId }
-							listLabel={ this.props.listLabel }
+							listLabel={ ' ' }
 							defaultOption={ this.props.defaultOption }
 							secondaryOption={ this.props.secondaryOption }
 							placeholderCount={ this.props.placeholderCount }

@@ -41,10 +41,7 @@ class RecommendedThemes extends React.Component {
 	render() {
 		return (
 			<>
-				<ConnectedThemesSelection
-					{ ...this.props }
-					listLabel={ translate( 'Recommended themes' ) }
-				/>
+				<ConnectedThemesSelection { ...this.props } />
 			</>
 		);
 	}
