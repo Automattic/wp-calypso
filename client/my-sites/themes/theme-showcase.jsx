@@ -172,7 +172,6 @@ class ThemeShowcase extends React.Component {
 	 * @param {string} sections.filter override filter prop
 	 * @param {string} sections.siteSlug override siteSlug prop
 	 * @param {string} sections.searchString override searchString prop
-	 *
 	 * @returns {string} Theme showcase url
 	 */
 	constructUrl = ( sections ) => {

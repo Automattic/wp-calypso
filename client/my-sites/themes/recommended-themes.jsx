@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { ConnectedThemesSelection } from './themes-selection';
-import Spinner from 'calypso/components/spinner';
 import { getRecommendedThemes } from 'calypso/state/themes/actions';
 
 import {
@@ -42,11 +41,10 @@ class RecommendedThemes extends React.Component {
 	render() {
 		return (
 			<>
-				{ this.props.isLoading ? (
-					<Spinner size={ 100 } />
-				) : (
-					<ConnectedThemesSelection { ...this.props } />
-				) }
+				<ConnectedThemesSelection
+					{ ...this.props }
+					listLabel={ translate( 'Recommended themes' ) }
+				/>
 			</>
 		);
 	}
