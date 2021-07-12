@@ -100,3 +100,4 @@ export const redirectWithoutLocaleParamIfLoggedIn = () => {};
 export const render = () => {};
 export const ProviderWrappedLayout = () => null;
 export const notFound = () => null;
+export const selectSiteIfLoggedIn = () => null;
