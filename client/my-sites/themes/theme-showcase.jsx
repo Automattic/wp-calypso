@@ -17,9 +17,11 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { addTracking, trackClick, localizeThemesPath } from './helpers';
 import DocumentHead from 'calypso/components/data/document-head';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import ThemePreview from './theme-preview';
+import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
+import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 import config from '@automattic/calypso-config';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { openThemesShowcase } from 'calypso/state/themes/themes-ui/actions';
@@ -93,6 +95,7 @@ class ThemeShowcase extends React.Component {
 		upsellBanner: PropTypes.any,
 		trackMoreThemesClick: PropTypes.func,
 		loggedOutComponent: PropTypes.bool,
+		isJetpackSite: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -230,6 +233,7 @@ class ThemeShowcase extends React.Component {
 			filterString,
 			isMultisite,
 			locale,
+			isJetpackSite,
 		} = this.props;
 		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
 
@@ -410,9 +414,11 @@ class ThemeShowcase extends React.Component {
 								emptyContent={ this.props.emptyContent }
 								bookmarkRef={ this.bookmarkRef }
 							/>
-							{ this.props.isJetpack && this.props.children }
+							{ isJetpackSite && this.props.children }
 						</div>
 					) }
+					<ThanksModal source={ 'list' } />
+					<AutoLoadingHomepageModal source={ 'list' } />
 					<ThemePreview />
 				</div>
 			</div>
@@ -431,7 +437,6 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 	filterToTermTable: getThemeFilterToTermTable( state ),
 	hasShowcaseOpened: hasShowcaseOpenedSelector( state ),
 	themesBookmark: getThemesBookmark( state ),
-	isJetpack: isJetpackSite( state, siteId ),
 } );
 
 const mapDispatchToProps = {

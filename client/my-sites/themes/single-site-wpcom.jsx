@@ -11,8 +11,6 @@ import { connect } from 'react-redux';
 import Main from 'calypso/components/main';
 import CurrentTheme from 'calypso/my-sites/themes/current-theme';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
-import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 import { connectOptions } from './theme-options';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_PREMIUM } from '@automattic/calypso-products';
@@ -84,8 +82,6 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 			>
 				{ siteId && <QuerySitePlans siteId={ siteId } /> }
 				{ siteId && <QuerySitePurchases siteId={ siteId } /> }
-				<ThanksModal source={ 'list' } />
-				<AutoLoadingHomepageModal source={ 'list' } />
 			</ThemeShowcase>
 		</Main>
 	);

@@ -12,8 +12,6 @@ import { connect } from 'react-redux';
 import Main from 'calypso/components/main';
 import CurrentTheme from 'calypso/my-sites/themes/current-theme';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
-import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 import { isPartnerPurchase } from 'calypso/lib/purchases';
 import { connectOptions } from './theme-options';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -93,11 +91,10 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 				{ ...props }
 				siteId={ siteId }
 				emptyContent={ showWpcomThemesList ? <div /> : null }
+				isJetpackSite={ true }
 			>
 				{ siteId && <QuerySitePlans siteId={ siteId } /> }
 				{ siteId && <QuerySitePurchases siteId={ siteId } /> }
-				<ThanksModal source={ 'list' } />
-				<AutoLoadingHomepageModal source={ 'list' } />
 				{ showWpcomThemesList && (
 					<div>
 						<ConnectedThemesSelection
