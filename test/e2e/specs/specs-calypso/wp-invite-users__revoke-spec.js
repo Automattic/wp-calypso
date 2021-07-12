@@ -13,7 +13,6 @@ import InvitePeoplePage from '../../lib/pages/invite-people-page.js';
 import PeoplePage from '../../lib/pages/people-page.js';
 import RevokePage from '../../lib/pages/revoke-page.js';
 
-
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const inviteInboxId = config.get( 'inviteInboxId' );
 const screenSize = driverManager.currentScreenSize();

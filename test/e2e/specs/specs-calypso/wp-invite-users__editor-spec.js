@@ -2,12 +2,9 @@ import assert from 'assert';
 
 import config from 'config';
 
-
-
 import NavBarComponent from '../../lib/components/nav-bar-component.js';
 import NoSitesComponent from '../../lib/components/no-sites-component.js';
 import NoticesComponent from '../../lib/components/notices-component.js';
-
 import * as dataHelper from '../../lib/data-helper.js';
 import * as driverManager from '../../lib/driver-manager.js';
 import EmailClient from '../../lib/email-client.js';

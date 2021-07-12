@@ -8,7 +8,6 @@ import GutenbergEditorComponent from '../gutenberg-editor-component';
 
 import { clearEventsStack, getEventsStack, getTotalEventsFiredForBlock } from './utils';
 
-
 export function createGeneralTests( { it, editorType, postType } ) {
 	const isSiteEditor = editorType === 'site';
 	const gutenbergEditorType = isSiteEditor ? 'iframe' : 'wp-admin';

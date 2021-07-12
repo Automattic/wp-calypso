@@ -4,7 +4,6 @@ import AsyncBaseContainer from '../../async-base-container';
 import * as driverHelper from '../../driver-helper.js';
 import * as driverManager from '../../driver-manager.js';
 
-
 const screenSize = driverManager.currentScreenSize();
 
 export default class TrafficPage extends AsyncBaseContainer {

@@ -1,4 +1,3 @@
-
 import GuideComponent from '../components/guide-component.js';
 import NavBarComponent from '../components/nav-bar-component.js';
 import SidebarComponent from '../components/sidebar-component.js';

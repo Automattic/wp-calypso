@@ -7,7 +7,6 @@ import * as driverHelper from '../driver-helper.js';
 
 import DisconnectSurveyPage from './disconnect-survey-page.js';
 
-
 export default class SettingsPage extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, By.css( '.site-settings' ) );

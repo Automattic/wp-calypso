@@ -4,7 +4,6 @@ import { By } from 'selenium-webdriver';
 import AsyncBaseContainer from '../async-base-container';
 import * as driverHelper from '../driver-helper.js';
 
-
 export default class NoticesComponent extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, By.css( '.wpcom-site' ), null, config.get( 'explicitWaitMS' ) * 3 );

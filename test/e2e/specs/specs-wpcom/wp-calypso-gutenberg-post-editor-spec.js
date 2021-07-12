@@ -3,22 +3,20 @@ import assert from 'assert';
 import config from 'config';
 import { By } from 'selenium-webdriver';
 
-
-
 import NavBarComponent from '../../lib/components/nav-bar-component.js';
 import NoticesComponent from '../../lib/components/notices-component.js';
 import PostPreviewComponent from '../../lib/components/post-preview-component';
 import RevisionsModalComponent from '../../lib/components/revisions-modal-component';
 import SidebarComponent from '../../lib/components/sidebar-component.js';
-import * as driverManager from '../../lib/driver-manager';
-import * as mediaHelper from '../../lib/media-helper';
 import * as dataHelper from '../../lib/data-helper';
 import * as driverHelper from '../../lib/driver-helper';
+import * as driverManager from '../../lib/driver-manager';
 import LoginFlow from '../../lib/flows/login-flow.js';
 import EmbedsBlockComponent from '../../lib/gutenberg/blocks/embeds-block-component';
 import SimplePaymentsBlockComponent from '../../lib/gutenberg/blocks/payment-block-component';
 import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
 import GutenbergEditorSidebarComponent from '../../lib/gutenberg/gutenberg-editor-sidebar-component';
+import * as mediaHelper from '../../lib/media-helper';
 import PaypalCheckoutPage from '../../lib/pages/external/paypal-checkout-page';
 import NotFoundPage from '../../lib/pages/not-found-page.js';
 import PostsPage from '../../lib/pages/posts-page.js';

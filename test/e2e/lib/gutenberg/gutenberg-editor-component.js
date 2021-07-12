@@ -11,7 +11,6 @@ import { FileBlockComponent } from './blocks/file-block-component';
 import { ImageBlockComponent } from './blocks/image-block-component';
 import { ShortcodeBlockComponent } from './blocks/shortcode-block-component';
 
-
 export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	constructor( driver, url, editorType = 'iframe' ) {
 		super( driver, By.css( '.edit-post-header' ), url );

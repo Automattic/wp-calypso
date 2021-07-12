@@ -4,7 +4,6 @@ import AsyncBaseContainer from '../async-base-container';
 import * as dataHelper from '../data-helper';
 import * as driverHelper from '../driver-helper.js';
 
-
 export default class EditorPage extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, By.css( '.post-editor' ), dataHelper.getCalypsoURL( 'post' ) );

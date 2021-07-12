@@ -3,7 +3,6 @@ import { By } from 'selenium-webdriver';
 import AsyncBaseContainer from '../../async-base-container';
 import * as driverHelper from '../../driver-helper';
 
-
 export default class CommentsAreaComponent extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, By.css( '#comments.comments-area' ) );

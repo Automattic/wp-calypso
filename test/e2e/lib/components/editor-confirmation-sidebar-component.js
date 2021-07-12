@@ -3,7 +3,6 @@ import { By } from 'selenium-webdriver';
 import AsyncBaseContainer from '../async-base-container.js';
 import * as driverHelper from '../driver-helper.js';
 
-
 export default class EditorConfirmationSidebarComponent extends AsyncBaseContainer {
 	constructor( driver ) {
 		super( driver, By.css( '.editor-confirmation-sidebar.is-active' ) );

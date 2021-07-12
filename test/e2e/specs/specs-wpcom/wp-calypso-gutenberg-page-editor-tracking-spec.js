@@ -12,7 +12,6 @@ import { createGeneralTests } from '../../lib/gutenberg/tracking/general-tests.j
 import { clearEventsStack, getEventsStack } from '../../lib/gutenberg/tracking/utils.js';
 import WPAdminSidebar from '../../lib/pages/wp-admin/wp-admin-sidebar';
 
-
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();

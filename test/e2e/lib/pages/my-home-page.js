@@ -2,7 +2,6 @@ import assert from 'assert';
 
 import { By } from 'selenium-webdriver';
 
-
 import AsyncBaseContainer from '../async-base-container';
 import GuideComponent from '../components/guide-component';
 import * as driverHelper from '../driver-helper.js';

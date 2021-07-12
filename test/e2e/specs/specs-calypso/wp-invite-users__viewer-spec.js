@@ -16,7 +16,6 @@ import ReaderPage from '../../lib/pages/reader-page.js';
 import RevokePage from '../../lib/pages/revoke-page.js';
 import ViewBlogPage from '../../lib/pages/signup/view-blog-page.js';
 
-
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const inviteInboxId = config.get( 'inviteInboxId' );
 const password = config.get( 'passwordForNewTestSignUps' );

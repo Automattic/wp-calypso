@@ -7,7 +7,6 @@ import * as driverManager from '../../lib/driver-manager';
 import LoginFlow from '../../lib/flows/login-flow';
 import SettingsPage from '../../lib/pages/settings-page';
 
-
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
