@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { listen } from 'push-receiver';
 import request from 'request-promise';
 

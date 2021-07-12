@@ -1,17 +1,11 @@
-/**
- * External dependencies
- */
+import config from 'config';
 import { By } from 'selenium-webdriver';
 
-/**
- * Internal dependencies
- */
-import config from 'config';
-import * as driverHelper from '../driver-helper';
 import FindADomainComponent from '../components/find-a-domain-component';
+import * as driverHelper from '../driver-helper';
+import MyHomePage from '../pages/my-home-page';
 import PickAPlanPage from '../pages/signup/pick-a-plan-page';
 import StartPage from '../pages/signup/start-page.js';
-import MyHomePage from '../pages/my-home-page';
 
 export default class CreateSiteFlow {
 	constructor( driver, blogName ) {

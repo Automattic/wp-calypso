@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import { By } from 'selenium-webdriver';
 
-/**
- * Internal dependencies
- */
 import GutenbergBlockComponent from './gutenberg-block-component';
 
 class PremiumContentBlockComponent extends GutenbergBlockComponent {

@@ -1,7 +1,5 @@
-/**
- * External dependencies
- */
 import assert from 'assert';
+
 import {
 	DataHelper,
 	LoginFlow,

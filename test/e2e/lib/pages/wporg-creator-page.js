@@ -1,15 +1,9 @@
-/**
- * External dependencies
- */
-import { By } from 'selenium-webdriver';
 import config from 'config';
+import { By } from 'selenium-webdriver';
 
-/**
- * Internal dependencies
- */
-import * as driverHelper from '../driver-helper';
-import * as dataHelper from '../data-helper';
 import AsyncBaseContainer from '../async-base-container';
+import * as dataHelper from '../data-helper';
+import * as driverHelper from '../driver-helper';
 
 const host = dataHelper.getJetpackHost();
 const jurassicNinjaCreateURL = 'http://jurassic.ninja/create';

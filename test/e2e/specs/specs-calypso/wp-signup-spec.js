@@ -1,27 +1,11 @@
-/**
- * External dependencies
- */
-
 // eslint-disable-next-line
 import config from 'config';
 import assert from 'assert';
+
 import { By } from 'selenium-webdriver';
 
-/**
- * Internal dependencies
- */
-import * as driverManager from '../../lib/driver-manager.js';
-import * as driverHelper from '../../lib/driver-helper.js';
-import * as dataHelper from '../../lib/data-helper.js';
 
-import WPHomePage from '../../lib/pages/wp-home-page.js';
-import StartPage from '../../lib/pages/signup/start-page.js';
 
-import AboutPage from '../../lib/pages/signup/about-page.js';
-import CustomerHomePage from '../../lib/pages/customer-home-page';
-import DomainFirstPage from '../../lib/pages/signup/domain-first-page';
-import ReaderLandingPage from '../../lib/pages/signup/reader-landing-page';
-import PickAPlanPage from '../../lib/pages/signup/pick-a-plan-page.js';
 import CreateYourAccountPage from '../../lib/pages/signup/create-your-account-page.js';
 import CheckOutPage from '../../lib/pages/signup/checkout-page';
 import SiteTypePage from '../../lib/pages/signup/site-type-page';
@@ -47,14 +31,23 @@ import * as SlackNotifier from '../../lib/slack-notifier';
 
 import EmailClient from '../../lib/email-client.js';
 import NewUserRegistrationUnavailableComponent from '../../lib/components/new-user-domain-registration-unavailable-component';
+import * as dataHelper from '../../lib/data-helper.js';
+import * as driverHelper from '../../lib/driver-helper.js';
+import * as driverManager from '../../lib/driver-manager.js';
 import DeleteAccountFlow from '../../lib/flows/delete-account-flow';
 import DeletePlanFlow from '../../lib/flows/delete-plan-flow';
-import SignUpStep from '../../lib/flows/sign-up-step';
 import GutenboardingFlow from '../../lib/flows/gutenboarding-flow';
-
-import * as sharedSteps from '../../lib/shared-steps/wp-signup-spec';
-import MyHomePage from '../../lib/pages/my-home-page';
+import SignUpStep from '../../lib/flows/sign-up-step';
 import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
+import CustomerHomePage from '../../lib/pages/customer-home-page';
+import MyHomePage from '../../lib/pages/my-home-page';
+import AboutPage from '../../lib/pages/signup/about-page.js';
+import DomainFirstPage from '../../lib/pages/signup/domain-first-page';
+import PickAPlanPage from '../../lib/pages/signup/pick-a-plan-page.js';
+import ReaderLandingPage from '../../lib/pages/signup/reader-landing-page';
+import StartPage from '../../lib/pages/signup/start-page.js';
+import WPHomePage from '../../lib/pages/wp-home-page.js';
+import * as sharedSteps from '../../lib/shared-steps/wp-signup-spec';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();

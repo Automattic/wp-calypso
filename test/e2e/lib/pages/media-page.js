@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
 import { By } from 'selenium-webdriver';
-import AsyncBaseContainer from '../async-base-container';
 
-/**
- * Internal dependencies
- */
+import AsyncBaseContainer from '../async-base-container';
 import * as driverHelper from '../driver-helper';
 import * as driverManager from '../driver-manager';
 

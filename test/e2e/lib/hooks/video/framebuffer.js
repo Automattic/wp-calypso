@@ -1,10 +1,8 @@
-/**
- * External dependencies
- */
 import { spawn } from 'child_process';
-import { mkdir, writeFile } from 'fs/promises';
 import { accessSync } from 'fs';
+import { mkdir, writeFile } from 'fs/promises';
 import path from 'path';
+
 import { getTestNameWithTime } from '../../test-utils';
 
 export const getFreeDisplay = () => {

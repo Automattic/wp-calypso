@@ -1,15 +1,10 @@
-/**
- * External dependencies
- */
-import config from 'config';
-import path from 'path';
 import { mkdtemp } from 'fs/promises';
+import path from 'path';
 
-/**
- * Internal dependencies
- */
-import { buildHooks as buildVideoHooks, isVideoEnabled } from './video';
+import config from 'config';
+
 import { buildHooks as buildBrowserHooks } from './browser';
+import { buildHooks as buildVideoHooks, isVideoEnabled } from './video';
 
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 

@@ -1,13 +1,7 @@
-/**
- * External dependencies
- */
 import { By } from 'selenium-webdriver';
 
-/**
- * Internal dependencies
- */
-import * as dataHelper from '../data-helper';
 import AsyncBaseContainer from '../async-base-container';
+import * as dataHelper from '../data-helper';
 
 export default class SiteEditorPage extends AsyncBaseContainer {
 	constructor( driver, url ) {

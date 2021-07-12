@@ -1,13 +1,7 @@
-/**
- * External dependencies
- */
 import config from 'config';
 
-/**
- * External dependencies
- */
-import * as driverManager from '../../lib/driver-manager.js';
 import * as dataHelper from '../../lib/data-helper';
+import * as driverManager from '../../lib/driver-manager.js';
 import LoginPage from '../../lib/pages/login-page';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );

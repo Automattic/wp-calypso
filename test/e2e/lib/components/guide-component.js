@@ -1,14 +1,8 @@
-/**
- * External dependencies
- */
 import { By, Key } from 'selenium-webdriver';
 
-/**
- * Internal dependencies
- */
+import AsyncBaseContainer from '../async-base-container.js';
 import * as driverHelper from '../driver-helper.js';
 
-import AsyncBaseContainer from '../async-base-container.js';
 
 export default class GuideComponent extends AsyncBaseContainer {
 	constructor( driver ) {

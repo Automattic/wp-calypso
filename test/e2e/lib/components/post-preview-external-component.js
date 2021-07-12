@@ -1,14 +1,8 @@
-/**
- * External dependencies
- */
-import { By } from 'selenium-webdriver';
 import config from 'config';
+import { By } from 'selenium-webdriver';
 
-/**
- * Internal dependencies
- */
-import AsyncBaseContainer from '../async-base-container';
 import ViewPostPage from '../../lib/pages/view-post-page.js';
+import AsyncBaseContainer from '../async-base-container';
 import * as driverHelper from '../driver-helper.js';
 
 const explicitWaitMS = config.get( 'explicitWaitMS' );
