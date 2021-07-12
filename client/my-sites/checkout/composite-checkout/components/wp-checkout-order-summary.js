@@ -20,7 +20,7 @@ import {
 } from '@automattic/wpcom-checkout';
 
 /**
-/**const
+/**
  * Internal dependencies
  */
 import {
@@ -29,17 +29,15 @@ import {
 	getYearlyPlanByMonthly,
 	getPlan,
 	isFreePlanProduct,
+	TERM_MONTHLY,
+	TERM_ANNUALLY,
+	TERM_BIENNIALLY,
 } from '@automattic/calypso-products';
 import { isJetpackSite, getSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import Gridicon from 'calypso/components/gridicon';
 import getPlanFeatures from '../lib/get-plan-features';
 import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
-import {
-	TERM_MONTHLY,
-	TERM_ANNUALLY,
-	TERM_BIENNIALLY,
-} from '@automattic/calypso-products/src/constants';
 
 export default function WPCheckoutOrderSummary( {
 	siteId,
@@ -150,8 +148,8 @@ function CheckoutSummaryFeaturesList( props ) {
 	);
 	const site = useSelector( ( state ) => getSite( state, siteId ) );
 	const { hasMonthlyPlan = false } = props;
-	const isPaidSite = site ? ! isFreePlanProduct( site?.plan ) : false;
-	const sitePlan = site ? getPlan( site?.plan?.product_slug ) : null;
+	const isPaidSite = site ? ! isFreePlanProduct( site.plan ) : false;
+	const sitePlan = site?.plan?.product_slug ? getPlan( site.plan.product_slug ) : null;
 
 	const showRefundText = responseCart.total_cost > 0;
 	let refundText = translate( 'Money back guarantee' );
@@ -161,7 +159,7 @@ function CheckoutSummaryFeaturesList( props ) {
 		refundDays = 4;
 	} else if ( hasPlanInCart && ! hasDomainsInCart ) {
 		refundDays = hasMonthlyPlan ? 7 : 14;
-	} else if ( isPaidSite ) {
+	} else if ( isPaidSite && sitePlan ) {
 		if ( [ TERM_ANNUALLY, TERM_BIENNIALLY ].some( ( t ) => t === sitePlan.term ) ) {
 			refundDays = 14;
 		} else if ( sitePlan.term === TERM_MONTHLY ) {
