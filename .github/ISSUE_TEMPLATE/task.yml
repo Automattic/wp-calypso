@@ -1,6 +1,6 @@
 name: Task
 description: Create a task
-title: ""
+title: "Task:"
 labels: ["[Type] Task"]
 body:
   - type: input
