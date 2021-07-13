@@ -6,8 +6,7 @@ body.is-section-signup {
 	// Use WordPress.com’s brand color for the signup background
 	background: var( --color-wordpress-com );
 
-	&.is-white-signup,
-	&.is-new-launch-flow {
+	&.is-white-signup {
 		background: #fdfdfd;
 
 		.layout:not( .dops ) .wpcom-site__logo {
@@ -345,100 +344,6 @@ body.is-section-signup .layout.gravatar .formatted-header {
 			margin-left: auto;
 			height: 48px;
 		}
-	}
-}
-
-// Background color and plans grid overrides for 'new-launch' flow
-body.is-section-signup.is-new-launch-flow {
-	background: var( --color-white );
-
-	.signup-header {
-		display: none;
-	}
-
-	.signup-processing-screen__content {
-		color: var( --color-text );
-	}
-
-	.signup-processing-screen__floaties .gridicon {
-		fill: var( --color-text );
-	}
-
-	.button.is-borderless.navigation-link {
-		color: var( --color-text );
-
-		svg {
-			fill: var( --color-text );
-		}
-	}
-
-	.flow-progress-indicator.flow-progress-indicator__new-launch {
-		color: var( --color-text );
-	}
-
-	.plan-features__header {
-		border-color: transparent;
-	}
-
-	tr:last-child .plan-features__table-item,
-	tr:first-child .plan-features__table-item {
-		border-radius: 0;
-	}
-
-	.plan-features__header,
-	.plan-features__table th,
-	.plan-features__table td {
-		background: rgba( 248, 248, 248, 0.7 );
-	}
-
-	.plan-price__integer {
-		font-weight: 600;
-	}
-
-	.plan-price__integer {
-		font-weight: 600;
-	}
-
-	.plan-features__header-title {
-		font-weight: 600;
-	}
-
-	.formatted-header__title {
-		@include onboarding-heading-text-mobile;
-
-		@include breakpoint-deprecated( '>480px' ) {
-			@include onboarding-heading-text;
-		}
-	}
-
-	.formatted-header__subtitle {
-		margin-bottom: 16px;
-	}
-}
-
-// Text and heading color override for 'new-launch' flow
-body.is-section-signup.is-new-launch-flow .layout:not( .dops ):not( .is-wccom-oauth-flow ) {
-	&.gravatar .formatted-header,
-	.formatted-header {
-		.formatted-header__title {
-			color: var( --color-text );
-		}
-
-		.formatted-header__subtitle {
-			color: var( --color-text );
-		}
-
-		a {
-			color: var( --color-link );
-
-			&:hover {
-				color: var( --color-link-dark );
-			}
-		}
-	}
-
-	.empty-content .empty-content__title {
-		color: var( --color-text );
 	}
 }
 

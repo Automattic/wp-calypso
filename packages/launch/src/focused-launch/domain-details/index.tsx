@@ -11,7 +11,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 import { FOCUSED_LAUNCH_FLOW_ID } from '../../constants';
-import LaunchContext from '../../context';
 import { useDomainSearch, useDomainSelection, useSiteDomains } from '../../hooks';
 import GoBackButton from '../go-back-button';
 import type { DomainSuggestions } from '@automattic/data-stores';
@@ -21,10 +20,8 @@ import './style.scss';
 const ANALYTICS_UI_LOCATION = 'domain_step';
 
 const DomainDetails: React.FunctionComponent = () => {
-	const { getCurrentLaunchFlowUrl, redirectTo } = React.useContext( LaunchContext );
 	const { __, hasTranslation } = useI18n();
 	const locale = useLocale();
-
 	const { siteSubdomain } = useSiteDomains();
 	const { domainSearch, setDomainSearch } = useDomainSearch();
 	const { onDomainSelect, onExistingSubdomainSelect, currentDomain } = useDomainSelection();
@@ -32,12 +29,6 @@ const DomainDetails: React.FunctionComponent = () => {
 
 	const goBack = () => {
 		history.goBack();
-	};
-
-	const launchFlowUrl = getCurrentLaunchFlowUrl();
-	const redirectToUseDomainFlow = (): void => {
-		const useYourDomainUrl = `/start/new-launch/domains-launch/use-your-domain?siteSlug=${ siteSubdomain?.domain }&source=${ launchFlowUrl }`;
-		redirectTo( useYourDomainUrl );
 	};
 
 	const handleSelect = ( suggestion: DomainSuggestions.DomainSuggestion ) => {
@@ -94,7 +85,6 @@ const DomainDetails: React.FunctionComponent = () => {
 					segregateFreeAndPaid
 					locale={ locale }
 					itemType={ SUGGESTION_ITEM_TYPE_BUTTON }
-					onUseYourDomainClick={ redirectToUseDomainFlow }
 				/>
 			</div>
 		</div>
