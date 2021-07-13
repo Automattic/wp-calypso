@@ -18,7 +18,7 @@ describe( DataHelper.createSuiteTitle( 'Social Login' ), function () {
 		} );
 	} );
 
-	describe( 'Apple', function () {
+	describe.skip( 'Apple', function () {
 		it( 'Click to continue with Apple', async function () {
 			const loginFlow = new LoginFlow( this.page );
 			await loginFlow.initiateSocialLogin( 'Apple' );
