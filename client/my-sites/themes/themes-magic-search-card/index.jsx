@@ -22,6 +22,7 @@ import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import MagicSearchWelcome from './welcome';
 import { getThemeFilters, getThemeFilterToTermTable } from 'calypso/state/themes/selectors';
+import Popover from 'calypso/components/popover';
 
 /**
  * Style dependencies
@@ -59,8 +60,11 @@ class ThemesMagicSearchCard extends React.Component {
 			cursorPosition: 0,
 			searchInput: this.props.search,
 			isWelcomeBarEnabled: false,
+			isPopoverVisible: false,
 		};
 	}
+
+	popoverButtonRef = React.createRef();
 
 	setSuggestionsRefs = ( key ) => ( suggestionComponent ) => {
 		this.suggestionsRefs[ key ] = suggestionComponent;
@@ -71,6 +75,10 @@ class ThemesMagicSearchCard extends React.Component {
 	componentDidMount() {
 		this.findTextForSuggestions( this.props.search );
 	}
+
+	togglePopover = () => {
+		this.setState( ( oldState ) => ( { isPopoverVisible: ! oldState.isPopoverVisible } ) );
+	};
 
 	onSearchOpen = () => {
 		this.setState( { searchIsOpen: true } );
@@ -234,9 +242,7 @@ class ThemesMagicSearchCard extends React.Component {
 		this.updateInput( updatedInput );
 	};
 
-	insertTextInInput = ( text ) => {
-		// Used by the "Magic Welcome Bar".
-
+	welcomeBarAddText = ( text ) => {
 		if ( config.isEnabled( 'theme/showcase-revamp' ) ) {
 			// Add an extra leading space sometimes. If the user has "abcd" in
 			// their bar and they click to add "feature:", we want "abcd feature:",
@@ -249,6 +255,7 @@ class ThemesMagicSearchCard extends React.Component {
 
 		const updatedInput = this.insertTextAtCursor( text );
 		this.updateInput( updatedInput );
+		this.setState( { isPopoverVisible: false } );
 	};
 
 	focusOnInput = () => {
@@ -276,7 +283,7 @@ class ThemesMagicSearchCard extends React.Component {
 
 	render() {
 		const { translate, filters, showTierThemesControl } = this.props;
-		const { isWelcomeBarEnabled } = this.state;
+		const { isWelcomeBarEnabled, isPopoverVisible } = this.state;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
 
 		const tiers = [
@@ -293,11 +300,6 @@ class ThemesMagicSearchCard extends React.Component {
 		// Check if we want to render suggestions or welcome banner
 		const renderSuggestions =
 			this.state.editedSearchElement !== '' && this.state.editedSearchElement.length > 2;
-
-		let isWelcomeBarVisible = ! renderSuggestions;
-		if ( config.isEnabled( 'theme/showcase-revamp' ) ) {
-			isWelcomeBarVisible = isWelcomeBarEnabled;
-		}
 
 		const searchField = (
 			<Search
@@ -361,14 +363,30 @@ class ThemesMagicSearchCard extends React.Component {
 						{ config.isEnabled( 'theme/showcase-revamp' ) && (
 							<div>
 								<Button
-									onClick={ this.handleWelcomeBarToggle }
+									oldOnClick={ this.handleWelcomeBarToggle }
+									onClick={ this.togglePopover }
 									className="components-button themes-magic-search-card__advanced-toggle"
+									ref={ ( ref ) => ( this.popoverButtonRef = ref ) }
 								>
 									<Gridicon icon="cog" size={ 18 } />
 									{ isWelcomeBarEnabled
 										? translate( 'Hide Advanced' )
 										: translate( 'Show Advanced' ) }
 								</Button>
+								<Popover
+									context={ this.popoverButtonRef }
+									isVisible={ isPopoverVisible }
+									// onClose={ this.closePopover }
+									// className="component__popover"
+									position="bottom"
+								>
+									<MagicSearchWelcome
+										ref={ this.setSuggestionsRefs( 'welcome' ) }
+										taxonomies={ filtersKeys }
+										topSearches={ [] }
+										suggestionsCallback={ this.welcomeBarAddText }
+									/>
+								</Popover>
 							</div>
 						) }
 						{ isPremiumThemesEnabled && showTierThemesControl && (
@@ -384,16 +402,6 @@ class ThemesMagicSearchCard extends React.Component {
 						) }
 					</div>
 				</StickyPanel>
-				<div role="presentation" onClick={ this.handleClickInside }>
-					{ isWelcomeBarVisible && (
-						<MagicSearchWelcome
-							ref={ this.setSuggestionsRefs( 'welcome' ) }
-							taxonomies={ filtersKeys }
-							topSearches={ [] }
-							suggestionsCallback={ this.insertTextInInput }
-						/>
-					) }
-				</div>
 			</div>
 		);
 	}
