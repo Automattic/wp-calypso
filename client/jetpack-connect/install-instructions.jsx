@@ -19,7 +19,7 @@ import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import MainWrapper from './main-wrapper';
 import { addCalypsoEnvQueryArg } from './utils';
 import { confirmJetpackInstallStatus } from 'calypso/state/jetpack-connect/actions';
-import { externalRedirect } from 'calypso/lib/route';
+import { navigate } from 'calypso/lib/navigate';
 import { getConnectingSite } from 'calypso/state/jetpack-connect/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { REMOTE_PATH_ACTIVATE, REMOTE_PATH_INSTALL } from './constants';
@@ -53,7 +53,7 @@ class InstallInstructions extends Component {
 			type: 'install_jetpack',
 		} );
 
-		externalRedirect( addCalypsoEnvQueryArg( remoteSiteUrl + REMOTE_PATH_INSTALL ) );
+		navigate( addCalypsoEnvQueryArg( remoteSiteUrl + REMOTE_PATH_INSTALL ) );
 	};
 
 	activateJetpack = () => {
@@ -64,7 +64,7 @@ class InstallInstructions extends Component {
 			type: 'activate_jetpack',
 		} );
 
-		externalRedirect( addCalypsoEnvQueryArg( remoteSiteUrl + REMOTE_PATH_ACTIVATE ) );
+		navigate( addCalypsoEnvQueryArg( remoteSiteUrl + REMOTE_PATH_ACTIVATE ) );
 	};
 
 	renderLocaleSuggestions() {

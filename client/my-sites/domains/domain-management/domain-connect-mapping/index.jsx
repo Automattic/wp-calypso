@@ -24,7 +24,7 @@ import {
 import { getSelectedDomain } from 'calypso/lib/domains';
 import SectionHeader from 'calypso/components/section-header';
 import wp from 'calypso/lib/wp';
-import { externalRedirect } from 'calypso/lib/route';
+import { navigate } from 'calypso/lib/navigate';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 const wpcom = wp.undocumented();
@@ -199,7 +199,7 @@ class DomainConnectMapping extends React.Component {
 					const success = get( data, 'success', false );
 					const syncUxUrl = get( data, 'sync_ux_apply_url', null );
 					if ( success && syncUxUrl ) {
-						externalRedirect( syncUxUrl );
+						navigate( syncUxUrl );
 					} else {
 						this.setState( {
 							error: true,

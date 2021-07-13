@@ -23,13 +23,8 @@ import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions
 import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
 import NavigationComponent from 'calypso/my-sites/navigation';
-import {
-	addQueryArgs,
-	getSiteFragment,
-	sectionify,
-	externalRedirect,
-	trailingslashit,
-} from 'calypso/lib/route';
+import { addQueryArgs, getSiteFragment, sectionify, trailingslashit } from 'calypso/lib/route';
+import { navigate } from 'calypso/lib/navigate';
 import config from '@automattic/calypso-config';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -467,7 +462,7 @@ export function siteSelection( context, next ) {
 						next();
 					}
 				} else if ( shouldRedirectToJetpackAuthorize( context, site ) ) {
-					externalRedirect( getJetpackAuthorizeURL( context, site ) );
+					navigate( getJetpackAuthorizeURL( context, site ) );
 				} else {
 					// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
 					const allSitesPath = addQueryArgs(
