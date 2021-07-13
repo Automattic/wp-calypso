@@ -49,7 +49,6 @@ export class ThemesPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async filterThemes( type: 'All' | 'Free' | 'Premium' ): Promise< void > {
-<<<<<<< HEAD
 		const selector = `a[data-e2e-value=${ type.toLowerCase() }]`;
 		await this.page.click( selector );
 		// Wait for placeholder to disappear (indicating load is completed).
@@ -58,26 +57,6 @@ export class ThemesPage extends BaseContainer {
 			element.getAttribute( 'aria-checked' )
 		);
 		assert.strictEqual( isSelected, 'true' );
-=======
-		const showAllThemesButton = await this.page.waitForSelector( selectors.showAllThemesButton, {
-			state: 'visible',
-		} );
-		await showAllThemesButton.waitForElementState( 'stable' );
-
-		// Click the 'Show all themes' button at bottom of gallery to expose the theme toolbar.
-		await showAllThemesButton.click();
-		const searchToolbar = await this.page.waitForSelector( selectors.searchToolbar, {
-			state: 'visible',
-		} );
-
-		// Retrive the target button and click on it.
-		const button = await searchToolbar.waitForSelector(
-			`a[data-e2e-value=${ type.toLowerCase() }]`
-		);
-		await button.click();
-		// Verify that filter has been successfully applied.
-		await this.page.waitForFunction( ( element: any ) => element.ariaChecked === 'true', button );
->>>>>>> 11984ccfbd (Simplify the ThemesPage.filterThemes method where it confirms the filter has been applied.)
 	}
 
 	/**
