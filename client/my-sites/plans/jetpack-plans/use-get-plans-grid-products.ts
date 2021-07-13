@@ -19,19 +19,13 @@ import {
 import { useSelector } from 'react-redux';
 import {
 	getForCurrentCROIteration,
+	doForCurrentCROIteration,
 	Iterations,
 } from 'calypso/my-sites/plans/jetpack-plans/iterations';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import slugToSelectorProduct from './slug-to-selector-product';
 import type { PlanGridProducts, SelectorProduct } from './types';
-
-const replaceProductInArray = ( oldProduct: string, newProduct: string, array: string[] ) => {
-	const index = array.indexOf( oldProduct );
-	if ( index !== -1 ) {
-		array[ index ] = newProduct;
-	}
-};
 
 const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 	let availableProducts: string[] = [];
@@ -114,27 +108,30 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 		availableProducts = [ ...availableProducts, ...JETPACK_ANTI_SPAM_PRODUCTS ];
 	}
 
-	// Replace backup products with their new versions
-	const backupReplacement: { [ key: string ]: string } = {
-		[ PRODUCT_JETPACK_BACKUP_DAILY ]: PRODUCT_JETPACK_BACKUP,
-		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: PRODUCT_JETPACK_BACKUP_MONTHLY,
-		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: PRODUCT_JETPACK_BACKUP_PRO,
-		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: PRODUCT_JETPACK_BACKUP_PRO_MONTHLY,
-	};
+	// Replace backup products with their new versions for the ONLY_REALTIME_PRODUCTS iteration
+	doForCurrentCROIteration( ( key ) => {
+		if ( Iterations.ONLY_REALTIME_PRODUCTS === key ) {
+			const backupReplacement: { [ key: string ]: string } = {
+				[ PRODUCT_JETPACK_BACKUP_DAILY ]: PRODUCT_JETPACK_BACKUP,
+				[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: PRODUCT_JETPACK_BACKUP_MONTHLY,
+				[ PRODUCT_JETPACK_BACKUP_REALTIME ]: PRODUCT_JETPACK_BACKUP_PRO,
+				[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: PRODUCT_JETPACK_BACKUP_PRO_MONTHLY,
+			};
 
-	for ( const oldBackupProduct in backupReplacement ) {
-		for ( const productsArray of [
-			availableProducts,
-			purchasedProducts,
-			includedInPlanProducts,
-		] ) {
-			replaceProductInArray(
-				oldBackupProduct,
-				backupReplacement[ oldBackupProduct ],
-				productsArray
-			);
+			for ( const oldBackupProduct in backupReplacement ) {
+				for ( const productsArray of [
+					availableProducts,
+					purchasedProducts,
+					includedInPlanProducts,
+				] ) {
+					const index = productsArray.indexOf( oldBackupProduct );
+					if ( -1 !== index ) {
+						productsArray[ index ] = backupReplacement[ oldBackupProduct ];
+					}
+				}
+			}
 		}
-	}
+	} );
 
 	return {
 		availableProducts: availableProducts.map( slugToSelectorProduct ) as SelectorProduct[],

@@ -1,3 +1,11 @@
+/**
+ * External dependencies
+ */
+import { translate } from 'i18n-calypso';
+
+/**
+ * Internal dependencies
+ */
 import {
 	PRODUCT_JETPACK_SCAN,
 	PRODUCT_JETPACK_SCAN_MONTHLY,
@@ -30,9 +38,12 @@ import {
 	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 	FEATURE_ACTIVITY_LOG,
 } from '@automattic/calypso-products';
-import { translate } from 'i18n-calypso';
 import buildCardFeaturesFromItem from './build-card-features-from-item';
-import { Iterations } from './iterations';
+import { getForCurrentCROIteration, Iterations } from './iterations';
+
+/**
+ * Type dependencies
+ */
 import type { SelectorProduct } from './types';
 import type { JetpackPlanSlug } from '@automattic/calypso-products';
 
@@ -171,14 +182,25 @@ export const EXTERNAL_PRODUCTS_SLUG_MAP: Record<
  * Constants that contain products including option and regular types.
  */
 
-export const SELECTOR_PLANS = [
-	PLAN_JETPACK_SECURITY,
-	PLAN_JETPACK_SECURITY_MONTHLY,
-	PLAN_JETPACK_SECURITY_PRO,
-	PLAN_JETPACK_SECURITY_PRO_MONTHLY,
-	PLAN_JETPACK_COMPLETE,
-	PLAN_JETPACK_COMPLETE_MONTHLY,
-];
+export const SELECTOR_PLANS = getForCurrentCROIteration( ( key ) => {
+	return Iterations.ONLY_REALTIME_PRODUCTS === key
+		? [
+				PLAN_JETPACK_SECURITY,
+				PLAN_JETPACK_SECURITY_MONTHLY,
+				PLAN_JETPACK_SECURITY_PRO,
+				PLAN_JETPACK_SECURITY_PRO_MONTHLY,
+				PLAN_JETPACK_COMPLETE,
+				PLAN_JETPACK_COMPLETE_MONTHLY,
+		  ]
+		: [
+				PLAN_JETPACK_SECURITY_DAILY,
+				PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+				PLAN_JETPACK_SECURITY_REALTIME,
+				PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+				PLAN_JETPACK_COMPLETE,
+				PLAN_JETPACK_COMPLETE_MONTHLY,
+		  ];
+} );
 
 /*
  * Matrix of allowed upsells between products (not plans or bundles).

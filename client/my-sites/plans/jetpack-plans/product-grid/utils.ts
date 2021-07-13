@@ -11,6 +11,10 @@ import {
 	PLAN_JETPACK_SECURITY_REALTIME,
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 } from '@automattic/calypso-products';
+import {
+	getForCurrentCROIteration,
+	Iterations,
+} from 'calypso/my-sites/plans/jetpack-plans/iterations';
 import { SELECTOR_PLANS } from '../constants';
 import slugToSelectorProduct from '../slug-to-selector-product';
 import type { Duration, SelectorProduct } from '../types';
@@ -27,6 +31,13 @@ export const getPlansToDisplay = ( {
 		? [ getMonthlyPlanByYearly( currentPlanSlug ), getYearlyPlanByMonthly( currentPlanSlug ) ]
 		: [];
 
+	const oldPlansToNewPlans: { [ key: string ]: string } = {
+		[ PLAN_JETPACK_SECURITY_DAILY ]: PLAN_JETPACK_SECURITY,
+		[ PLAN_JETPACK_SECURITY_DAILY_MONTHLY ]: PLAN_JETPACK_SECURITY_MONTHLY,
+		[ PLAN_JETPACK_SECURITY_REALTIME ]: PLAN_JETPACK_SECURITY_PRO,
+		[ PLAN_JETPACK_SECURITY_REALTIME_MONTHLY ]: PLAN_JETPACK_SECURITY_PRO_MONTHLY,
+	};
+
 	const plansToDisplay = SELECTOR_PLANS.map( slugToSelectorProduct )
 		// Remove plans that don't fit the filters or have invalid data.
 		.filter(
@@ -37,15 +48,12 @@ export const getPlansToDisplay = ( {
 				! currentPlanTerms.includes( product.productSlug )
 		);
 
-	const oldPlansToNewPlans: { [ key: string ]: string } = {
-		[ PLAN_JETPACK_SECURITY_DAILY ]: PLAN_JETPACK_SECURITY,
-		[ PLAN_JETPACK_SECURITY_DAILY_MONTHLY ]: PLAN_JETPACK_SECURITY_MONTHLY,
-		[ PLAN_JETPACK_SECURITY_REALTIME ]: PLAN_JETPACK_SECURITY_PRO,
-		[ PLAN_JETPACK_SECURITY_REALTIME_MONTHLY ]: PLAN_JETPACK_SECURITY_PRO_MONTHLY,
-	};
-
 	if ( currentPlanSlug && JETPACK_RESET_PLANS.includes( currentPlanSlug ) ) {
-		currentPlanSlug = oldPlansToNewPlans[ currentPlanSlug ] ?? currentPlanSlug;
+		currentPlanSlug = getForCurrentCROIteration( ( key ) => {
+			Iterations.ONLY_REALTIME_PRODUCTS === key && oldPlansToNewPlans[ currentPlanSlug ]
+				? oldPlansToNewPlans[ currentPlanSlug ]
+				: currentPlanSlug;
+		} );
 		const currentPlanSelectorProduct = slugToSelectorProduct( currentPlanSlug );
 		if ( currentPlanSelectorProduct ) {
 			return [ currentPlanSelectorProduct, ...plansToDisplay ];
