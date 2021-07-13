@@ -3,6 +3,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -43,5 +44,10 @@ const TransferLockOptOutForm = ( props ) => (
 		</FormLabel>
 	</div>
 );
+
+TransferLockOptOutForm.propTypes = {
+	disabled: PropTypes.bool,
+	onChange: PropTypes.func,
+};
 
 export default localize( TransferLockOptOutForm );
