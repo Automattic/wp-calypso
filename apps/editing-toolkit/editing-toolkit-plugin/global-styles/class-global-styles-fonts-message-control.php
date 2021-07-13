@@ -41,9 +41,9 @@ class Global_Styles_Fonts_Message_Control extends \WP_Customize_Control {
 		?>
 			<p>
 				<a
+					id="customizer_global_styles_support_link"
 					href="https://wordpress.com/support/custom-fonts/#changing-fonts-with-global-styles"
 					target="_blank"
-					onClick="<?php echo esc_attr( $this->get_tracks_event_script( 'calypso_customizer_global_styles_support_link_clicked' ) ); ?>"
 				>
 					<?php echo esc_html( $learn_more_link_text ); ?>
 				</a>
@@ -64,9 +64,9 @@ class Global_Styles_Fonts_Message_Control extends \WP_Customize_Control {
 		?>
 			<p>
 				<a
+					id="customizer_global_styles_block_editor_link"
 					href="<?php echo esc_url( $block_editor_with_global_styles_url ); ?>"
-					target="_blank"
-					onClick="<?php echo esc_attr( $this->get_tracks_event_script( 'calypso_customizer_global_styles_block_editor_link_clicked' ) ); ?>">
+					target="_blank">
 					<?php echo esc_html( $block_editor_link_text ); ?>
 				</a>
 			</p>
@@ -86,6 +86,12 @@ class Global_Styles_Fonts_Message_Control extends \WP_Customize_Control {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( 'http://calypso.localhost:3000' === $_GET['calypsoOrigin'] ) {
 			$base_url = 'http://calypso.localhost:3000/';
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		} elseif ( 'https://horizon.wordpress.com' === $_GET['calypsoOrigin'] ) {
+			$base_url = 'https://horizon.wordpress.com/';
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		} elseif ( 'https://wpcalypso.wordpress.com' === $_GET['calypsoOrigin'] ) {
+			$base_url = 'https://wpcalypso.wordpress.com/';
 		} else {
 			$base_url = 'https://www.wordpress.com/';
 		}
@@ -115,22 +121,5 @@ class Global_Styles_Fonts_Message_Control extends \WP_Customize_Control {
 		$site_slug = wp_parse_url( $home_url, PHP_URL_HOST );
 
 		return $site_slug;
-	}
-
-	/**
-	 * Returns javascript which creates a tracks event
-	 *
-	 * @param string $tracks_event The name of the tracks event.
-	 */
-	private function get_tracks_event_script( $tracks_event ) {
-		$current_user        = wp_get_current_user();
-		$tracks_event_script = 'window._tkq = window._tkq || [];';
-		if ( $current_user->exists() ) {
-			$user_id              = (int) $current_user->ID;
-			$user_login           = esc_js( $current_user->user_login );
-			$tracks_event_script .= " window._tkq.push( [ 'identifyUser', $user_id, '$user_login' ] );";
-		}
-		$tracks_event_script .= " window._tkq.push( [ 'recordEvent', '$tracks_event' ] ); ";
-		return $tracks_event_script;
 	}
 }
