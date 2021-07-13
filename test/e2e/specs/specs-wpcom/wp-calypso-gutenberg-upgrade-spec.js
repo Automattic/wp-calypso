@@ -1,21 +1,11 @@
-/**
- * External dependencies
- */
 import assert from 'assert';
 import config from 'config';
 import { times } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import * as driverManager from '../../lib/driver-manager.js';
-import * as dataHelper from '../../lib/data-helper.js';
-import * as mediaHelper from '../../lib/media-helper';
-import * as driverHelper from '../../lib/driver-helper';
-import LoginFlow from '../../lib/flows/login-flow.js';
-import ReaderPage from '../../lib/pages/reader-page';
 import NavBarComponent from '../../lib/components/nav-bar-component.js';
-import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
+import * as dataHelper from '../../lib/data-helper.js';
+import * as driverHelper from '../../lib/driver-helper';
+import * as driverManager from '../../lib/driver-manager.js';
+import LoginFlow from '../../lib/flows/login-flow.js';
 import {
 	BlogPostsBlockComponent,
 	ContactFormBlockComponent,
@@ -30,6 +20,9 @@ import {
 	YoutubeBlockComponent,
 	PremiumContentBlockComponent,
 } from '../../lib/gutenberg/blocks';
+import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
+import * as mediaHelper from '../../lib/media-helper';
+import ReaderPage from '../../lib/pages/reader-page';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();

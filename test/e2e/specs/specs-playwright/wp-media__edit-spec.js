@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { DataHelper, LoginFlow, MediaPage, SidebarComponent } from '@automattic/calypso-e2e';
 
 describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {

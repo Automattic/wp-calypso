@@ -1,11 +1,8 @@
-/**
- * External dependencies
- */
-import fs from 'fs-extra';
 import path from 'path';
-import sanitize from 'sanitize-filename';
-import pngitxt from 'png-itxt';
 import { PassThrough } from 'stream';
+import fs from 'fs-extra';
+import pngitxt from 'png-itxt';
+import sanitize from 'sanitize-filename';
 
 export function createFile( notRandom, uploadDirectoryName = 'image-uploads' ) {
 	let randomImageNumber = Math.floor( Math.random() * 2 );

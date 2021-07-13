@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { By } from 'selenium-webdriver';
-
-/**
- * Internal dependencies
- */
 import AsyncBaseContainer from '../async-base-container';
-import * as driverHelper from '../driver-helper.js';
 import * as dataHelper from '../data-helper';
+import * as driverHelper from '../driver-helper.js';
 
 export default class ReaderPage extends AsyncBaseContainer {
 	constructor( driver, url ) {

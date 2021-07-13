@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
-
-import webdriver, { By } from 'selenium-webdriver';
 import { kebabCase } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import webdriver, { By } from 'selenium-webdriver';
+import AsyncBaseContainer from '../async-base-container';
+import GuideComponent from '../components/guide-component.js';
 import * as driverHelper from '../driver-helper';
 import * as driverManager from '../driver-manager.js';
-import AsyncBaseContainer from '../async-base-container';
 import { ContactFormBlockComponent } from './blocks';
-import { ShortcodeBlockComponent } from './blocks/shortcode-block-component';
-import { ImageBlockComponent } from './blocks/image-block-component';
 import { FileBlockComponent } from './blocks/file-block-component';
-import GuideComponent from '../components/guide-component.js';
+import { ImageBlockComponent } from './blocks/image-block-component';
+import { ShortcodeBlockComponent } from './blocks/shortcode-block-component';
 
 export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	constructor( driver, url, editorType = 'iframe' ) {

@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
 import { By } from 'selenium-webdriver';
-
-/**
- * Internal dependencies
- */
 import AsyncBaseContainer from '../async-base-container';
 import SectionNavComponent from '../components/section-nav-component';
-
 import * as driverHelper from '../driver-helper.js';
 
 export default class PeoplePage extends AsyncBaseContainer {

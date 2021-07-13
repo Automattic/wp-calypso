@@ -30,7 +30,7 @@ const EditorTemplateClasses = withSelect( ( select ) => {
 	return { templateClasses };
 } )( ( { templateClasses } ) => {
 	const blockListInception = setInterval( () => {
-		const blockListParent = document.querySelector( '.block-editor__typewriter > div' );
+		const blockListParent = document.querySelector( '.editor-styles-wrapper' );
 
 		if ( ! blockListParent ) {
 			return;
@@ -38,6 +38,7 @@ const EditorTemplateClasses = withSelect( ( select ) => {
 		clearInterval( blockListInception );
 
 		blockListParent.className = classNames(
+			'editor-styles-wrapper',
 			'a8c-template-editor fse-template-part',
 			...templateClasses
 		);

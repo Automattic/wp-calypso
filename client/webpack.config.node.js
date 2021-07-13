@@ -1,5 +1,5 @@
 /**
- * **** WARNING: No ES6 modules here. Not transpiled! ****
+ * WARNING: No ES6 modules here. Not transpiled! *
  */
 
 /* eslint-disable import/no-nodejs-modules */
@@ -36,7 +36,9 @@ const shouldConcatenateModules = process.env.CONCATENATE_MODULES !== 'false';
 const cacheDirectory = path.resolve( '.cache', 'babel-server' );
 
 const fileLoader = FileConfig.loader( {
-	publicPath: isDevelopment ? `/calypso/${ devTarget }/images/` : '/calypso/images/',
+	// The final URL of the image is `${publicPath}${outputPath}/${fileName}` (note the slashes)
+	publicPath: isDevelopment ? `/calypso/${ devTarget }/` : '/calypso/',
+	outputPath: 'images/',
 	emitFile: false, // On the server side, don't actually copy files
 } );
 

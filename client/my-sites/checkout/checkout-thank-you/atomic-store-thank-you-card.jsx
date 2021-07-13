@@ -33,10 +33,6 @@ const RESEND_SUCCESS = 'RESEND_SUCCESS';
 class AtomicStoreThankYouCard extends Component {
 	state = { resendStatus: RESEND_NOT_SENT };
 
-	componentDidMount() {
-		this.props.showMasterbar();
-	}
-
 	componentDidUpdate( prevProps ) {
 		/**
 		 * This clears the  error in the event the email is verified in another tab

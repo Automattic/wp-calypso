@@ -1,16 +1,7 @@
-/**
- * External dependencies
- */
 import { By } from 'selenium-webdriver';
-
-/**
- * Internal dependencies
- */
 import AsyncBaseContainer from '../async-base-container';
-
-import SidebarComponent from '../components/sidebar-component.js';
 import NavBarComponent from '../components/nav-bar-component.js';
-
+import SidebarComponent from '../components/sidebar-component.js';
 import * as driverHelper from '../driver-helper.js';
 
 export default class InvitePeoplePage extends AsyncBaseContainer {

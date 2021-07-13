@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
 import config from 'config';
 import { By, promise } from 'selenium-webdriver';
-
-/**
- * Internal dependencies
- */
 import AsyncBaseContainer from '../async-base-container';
+import { getJetpackHost } from '../data-helper';
 import * as driverHelper from '../driver-helper.js';
 import { currentScreenSize } from '../driver-manager';
-import { getJetpackHost } from '../data-helper';
 
 export default class SecurePaymentComponent extends AsyncBaseContainer {
 	constructor( driver ) {

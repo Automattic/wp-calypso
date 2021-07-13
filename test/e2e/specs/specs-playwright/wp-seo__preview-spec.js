@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { DataHelper, LoginFlow, SidebarComponent, MarketingPage } from '@automattic/calypso-e2e';
 
 describe( DataHelper.createSuiteTitle( 'SEO Preview Page' ), function () {

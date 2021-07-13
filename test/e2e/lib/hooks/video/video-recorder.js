@@ -1,10 +1,7 @@
-/**
- * External dependencies
- */
-import path from 'path';
-import { rename, mkdir, unlink } from 'fs/promises';
-import { createWriteStream } from 'fs';
 import { spawn } from 'child_process';
+import { createWriteStream } from 'fs';
+import { rename, mkdir, unlink } from 'fs/promises';
+import path from 'path';
 import ffmpeg from 'ffmpeg-static';
 import { getTestNameWithTime } from '../../test-utils';
 

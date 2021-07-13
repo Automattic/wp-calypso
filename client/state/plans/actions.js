@@ -9,6 +9,7 @@ import {
 } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/plans';
+import 'calypso/state/currency-code/init';
 import 'calypso/state/plans/init';
 
 /**

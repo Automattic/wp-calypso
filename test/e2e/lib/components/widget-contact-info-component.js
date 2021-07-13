@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { By } from 'selenium-webdriver';
-
-/**
- * Internal dependencies
- */
 import AsyncBaseContainer from '../async-base-container.js';
 
 export default class WidgetContactInfoComponent extends AsyncBaseContainer {

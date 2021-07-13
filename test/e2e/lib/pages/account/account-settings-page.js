@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { By, Condition } from 'selenium-webdriver';
-
-/**
- * Internal dependencies
- */
-import * as driverHelper from '../../driver-helper.js';
-import * as dataHelper from '../../data-helper';
 import AsyncBaseContainer from '../../async-base-container';
+import * as dataHelper from '../../data-helper';
+import * as driverHelper from '../../driver-helper.js';
 
 export default class AccountSettingsPage extends AsyncBaseContainer {
 	constructor( driver, url = dataHelper.getCalypsoURL( 'me/account' ) ) {

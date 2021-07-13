@@ -241,11 +241,21 @@ function shoppingCartReducer(
 		case 'RAISE_ERROR':
 			switch ( action.error ) {
 				case 'GET_SERVER_CART_ERROR':
+					return {
+						...state,
+						cacheStatus: 'error',
+						loadingError:
+							action.message ||
+							'Error while fetching the shopping cart. Please check your network connection and try again.',
+						loadingErrorType: action.error,
+					};
 				case 'SET_SERVER_CART_ERROR':
 					return {
 						...state,
 						cacheStatus: 'error',
-						loadingError: action.message,
+						loadingError:
+							action.message ||
+							'Error while updating the shopping cart endpoint. Please check your network connection and try again.',
 						loadingErrorType: action.error,
 					};
 				default:

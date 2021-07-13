@@ -4,6 +4,11 @@
 import { get } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/i18n/init';
+
+/**
  * Returns an object of localized language names
  *
  * @param  {object}  state Global state tree

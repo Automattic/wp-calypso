@@ -1,24 +1,15 @@
-/**
- * External dependencies
- */
 import assert from 'assert';
 import config from 'config';
-
-/**
- * Internal dependencies
- */
-import LoginFlow from '../../lib/flows/login-flow.js';
-
-import AcceptInvitePage from '../../lib/pages/accept-invite-page.js';
-import PeoplePage from '../../lib/pages/people-page.js';
-import RevokePage from '../../lib/pages/revoke-page.js';
-import InviteErrorPage from '../../lib/pages/invite-error-page.js';
-import InvitePeoplePage from '../../lib/pages/invite-people-page.js';
 import NoticesComponent from '../../lib/components/notices-component.js';
-
 import * as dataHelper from '../../lib/data-helper.js';
 import * as driverManager from '../../lib/driver-manager.js';
 import EmailClient from '../../lib/email-client.js';
+import LoginFlow from '../../lib/flows/login-flow.js';
+import AcceptInvitePage from '../../lib/pages/accept-invite-page.js';
+import InviteErrorPage from '../../lib/pages/invite-error-page.js';
+import InvitePeoplePage from '../../lib/pages/invite-people-page.js';
+import PeoplePage from '../../lib/pages/people-page.js';
+import RevokePage from '../../lib/pages/revoke-page.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const inviteInboxId = config.get( 'inviteInboxId' );

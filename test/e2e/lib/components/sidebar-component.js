@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
 import { By } from 'selenium-webdriver';
-
-/**
- * Internal dependencies
- */
 import AsyncBaseContainer from '../async-base-container';
 // import DisconnectSurveyPage from '../pages/disconnect-survey-page.js';
+import * as dataHelper from '../data-helper';
 import * as driverHelper from '../driver-helper.js';
 import * as driverManager from '../driver-manager';
-import * as dataHelper from '../data-helper';
 
 const host = dataHelper.getJetpackHost();
 

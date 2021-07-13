@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import config from 'config';
 import { By } from 'selenium-webdriver';
-
-/**
- * Internal dependencies
- */
-import * as driverHelper from '../../driver-helper';
 import AsyncBaseContainer from '../../async-base-container';
+import * as driverHelper from '../../driver-helper';
 
 const explicitWaitMS = config.get( 'explicitWaitMS' );
 

@@ -1,27 +1,19 @@
-/**
- * External dependencies
- */
-import config from 'config';
 import assert from 'assert';
-
-/**
- * Internal dependencies
- */
-import LoginFlow from '../../lib/flows/login-flow.js';
-import DeleteSiteFlow from '../../lib/flows/delete-site-flow.js';
-import NewPage from '../../lib/pages/gutenboarding/new-page.js';
-import AcquireIntentPage from '../../lib/pages/gutenboarding/acquire-intent-page.js';
-import DesignLocatorPage from '../../lib/pages/gutenboarding/designs-page.js';
-import StylePreviewPage from '../../lib/pages/gutenboarding/style-preview-page.js';
-import PlansPage from '../../lib/pages/gutenboarding/plans-page.js';
-import DomainsPage from '../../lib/pages/gutenboarding/domains-page.js';
-import FeaturesPage from '../../lib/pages/gutenboarding/features-page.js';
-import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
+import config from 'config';
 import LanguagePickerComponent from '../../lib/components/gutenboarding-language-picker';
-
-import * as driverManager from '../../lib/driver-manager.js';
 import * as dataHelper from '../../lib/data-helper.js';
 import * as driverHelper from '../../lib/driver-helper.js';
+import * as driverManager from '../../lib/driver-manager.js';
+import DeleteSiteFlow from '../../lib/flows/delete-site-flow.js';
+import LoginFlow from '../../lib/flows/login-flow.js';
+import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
+import AcquireIntentPage from '../../lib/pages/gutenboarding/acquire-intent-page.js';
+import DesignLocatorPage from '../../lib/pages/gutenboarding/designs-page.js';
+import DomainsPage from '../../lib/pages/gutenboarding/domains-page.js';
+import FeaturesPage from '../../lib/pages/gutenboarding/features-page.js';
+import NewPage from '../../lib/pages/gutenboarding/new-page.js';
+import PlansPage from '../../lib/pages/gutenboarding/plans-page.js';
+import StylePreviewPage from '../../lib/pages/gutenboarding/style-preview-page.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
