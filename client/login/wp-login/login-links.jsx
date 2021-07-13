@@ -214,7 +214,7 @@ export class LoginLinks extends React.Component {
 				key="magic-login-link"
 				data-e2e-link="magic-login-link"
 			>
-				{ this.props.translate( 'Email me a login link, Stefan' ) }
+				{ this.props.translate( 'Email me a login link' ) }
 			</a>
 		);
 	}
