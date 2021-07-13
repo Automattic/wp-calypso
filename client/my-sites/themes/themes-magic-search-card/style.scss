@@ -175,18 +175,19 @@
 
 .themes-magic-search-card__welcome-header {
 	background-color: var( --color-neutral-0 );
-	border-bottom: 1px solid var( --color-neutral-5 );
-	border-top: 0;
-	padding: 4px 8px;
+	border: 0;
+	padding: 6px 12px 0;
 	font-size: $font-body-small;
 
 	text-transform: uppercase;
-	color: var( --color-neutral-70 );
+	color: var( --color-neutral-50 );
+	text-align: left;
 }
 
 .themes-magic-search-card__welcome-taxonomies {
 	display: flex;
 	flex-wrap: wrap;
+	padding: 6px 12px 12px;
 
 	@include breakpoint-deprecated( '>660px' ) {
 		flex-wrap: nowrap;
@@ -194,12 +195,18 @@
 }
 
 .themes-magic-search-card__welcome-taxonomy {
+	border: 1px solid var( --color-neutral-5 );
+	border-left: 0;
+	&:first-child {
+		border-left: 1px solid var( --color-neutral-5 );
+	}
+
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
 	text-align: center;
 	flex: 1 0 auto;
 	overflow: hidden;
-	padding: 10px 6px;
+	padding: 12px;
 	margin: 0;
 	font-size: $font-body-small;
 	line-height: 16px;
@@ -213,7 +220,7 @@
 
 	.gridicon {
 		fill: var( --color-neutral-70 );
-		margin: 0 auto;
+		margin-right: 10px;
 		transition: fill 200ms ease-in;
 	}
 

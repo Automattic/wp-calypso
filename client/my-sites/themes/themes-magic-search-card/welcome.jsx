@@ -114,7 +114,7 @@ class MagicSearchWelcome extends React.Component {
 					icon={ taxonomyToGridicon( taxonomy ) }
 					className="themes-magic-search-card__welcome-taxonomy-icon"
 					size={ 18 }
-				/>
+				/>{ ' ' }
 				{ taxonomyTranslations[ taxonomy ] ||
 					i18n.translate( 'Unknown', {
 						context: 'Theme Showcase filter name',
