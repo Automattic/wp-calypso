@@ -15,7 +15,6 @@ import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { getTitanProductName } from 'calypso/lib/titan';
 import { ListAllActions } from 'calypso/my-sites/domains/domain-management/list/utils';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import withDimensions from 'calypso/lib/with-dimensions';
 
 /**
  * Style dependencies
@@ -40,24 +39,36 @@ class ListHeader extends React.PureComponent {
 		isChecked: false,
 	};
 
-	headerElements = {
-		transferLock: {
-			ref: React.createRef(),
-			getVisibility: () => this.state?.transferLockTooltipVisible,
-		},
-		privacy: {
-			ref: React.createRef(),
-			getVisibility: () => this.state?.privacyTooltipVisible,
-		},
-		autoRenew: {
-			ref: React.createRef(),
-			getVisibility: () => this.state?.autoRenewTooltipVisible,
-		},
-		email: {
-			ref: React.createRef(),
-			getVisibility: () => this.state?.emailTooltipVisible,
-		},
-	};
+	constructor() {
+		super();
+		this.state = {};
+		this.headerElements = {
+			transferLock: {
+				ref: React.createRef(),
+				enableTooltip: this.enableTooltip.bind( this, 'transferLock' ),
+				disableTooltip: this.disableTooltip.bind( this, 'transferLock' ),
+				tooltipName: 'transferLockTooltipVisible',
+			},
+			privacy: {
+				ref: React.createRef(),
+				enableTooltip: this.enableTooltip.bind( this, 'privacy' ),
+				disableTooltip: this.disableTooltip.bind( this, 'privacy' ),
+				tooltipName: 'privacyTooltipVisible',
+			},
+			autoRenew: {
+				ref: React.createRef(),
+				enableTooltip: this.enableTooltip.bind( this, 'autoRenew' ),
+				disableTooltip: this.disableTooltip.bind( this, 'autoRenew' ),
+				tooltipName: 'autoRenewTooltipVisible',
+			},
+			email: {
+				ref: React.createRef(),
+				enableTooltip: this.enableTooltip.bind( this, 'email' ),
+				disableTooltip: this.disableTooltip.bind( this, 'email' ),
+				tooltipName: 'emailTooltipVisible',
+			},
+		};
+	}
 
 	enableTooltip = ( name ) => {
 		this.setState( { [ `${ name }TooltipVisible` ]: true } );
@@ -133,16 +144,17 @@ class ListHeader extends React.PureComponent {
 
 		return items.map( ( item ) => (
 			<div
+				key={ item.name }
 				className={ item.className }
-				onMouseEnter={ () => this.enableTooltip( item.name ) }
-				onMouseLeave={ () => this.disableTooltip( item.name ) }
+				onMouseEnter={ this.headerElements[ item.name ].enableTooltip }
+				onMouseLeave={ this.headerElements[ item.name ].disableTooltip }
 				ref={ this.headerElements[ item.name ].ref }
 			>
 				<span>{ item.title }</span>
 				<InfoPopover iconSize={ 18 }>{ item.popoverText }</InfoPopover>
 				<Tooltip
 					context={ this.headerElements[ item.name ].ref.current }
-					isVisible={ this.headerElements[ item.name ].getVisibility() }
+					isVisible={ this.state[ this.headerElements[ item.name ].tooltipName ] }
 					position="top"
 				>
 					{ item.title }
