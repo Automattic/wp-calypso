@@ -391,6 +391,7 @@ export class HelpContactForm extends React.PureComponent {
 			howCanWeHelp,
 			howYouFeel,
 			message,
+			siteCount,
 			userDeclaresUnableToSeeSite,
 			userDeclaredUrl,
 			userDeclaresNoSite,
@@ -434,6 +435,15 @@ export class HelpContactForm extends React.PureComponent {
 			userDeclaredUrl: userDeclaresUnableToSeeSite && userDeclaredUrl,
 			userDeclaresNoSite,
 			userRequestsHidingUrl,
+		} );
+
+		this.setState( {
+			message: '',
+			subject: '',
+			userDeclaresNoSite: false,
+			userDeclaresUnableToSeeSite: siteCount === 0,
+			userDeclaredUrl: '',
+			userRequestsHidingUrl: false,
 		} );
 	};
 
