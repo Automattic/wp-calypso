@@ -78,9 +78,8 @@ async function createStripeSetupIntentAsync(
 	return createStripeSetupIntent( stripe, stripeConfiguration, paymentDetailsForStripe );
 }
 
-function isNewCardDataValid( data: unknown ): data is NewCardSubmitData {
-	const newCardData = data as NewCardSubmitData;
-	return !! newCardData.name;
+function isNewCardDataValid( data: NewCardSubmitData ): boolean {
+	return !! data.name;
 }
 
 interface NewCardSubmitData {
