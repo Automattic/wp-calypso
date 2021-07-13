@@ -3,10 +3,8 @@
  * It actually waits for a message from within the iFrame.
  * The message will contain the actual height of the iFrame.
  *
- * @param {Element} contentWrapper This is a param with a description too long to fit in
- *     one line.
- * @param {boolean} removeListener This is a param with a description too long to fit in
- *     one line.
+ * @param {Element} contentWrapper The content wrapper element.
+ * @param {boolean} removeListener When true, remove the listener instead of adding it.
  */
 const WPiFrameResize = ( contentWrapper, removeListener ) => {
 	const receiveEmbedMessage = function ( e ) {
