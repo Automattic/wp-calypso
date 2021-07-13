@@ -9,14 +9,16 @@ import { useMutation, useQueryClient } from 'react-query';
  */
 import wp from 'calypso/lib/wp';
 
-function useDeleteUserMutation( siteId ) {
+function useDeleteUserMutation( siteId, queryOptions = {} ) {
 	const queryClient = useQueryClient();
 	const mutation = useMutation(
 		( { userId, variables } ) =>
 			wp.req.post( `/sites/${ siteId }/users/${ userId }/delete`, variables ),
 		{
-			onSuccess() {
+			...queryOptions,
+			onSuccess( ...args ) {
 				queryClient.invalidateQueries( [ 'users', siteId ] );
+				queryOptions.onSuccess?.( ...args );
 			},
 		}
 	);
