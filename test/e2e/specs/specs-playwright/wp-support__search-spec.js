@@ -6,26 +6,33 @@ import {
 	MyHomePage,
 	SettingsPage,
 	SupportComponent,
+	setupHooks,
 } from '@automattic/calypso-e2e';
 
 describe( DataHelper.createSuiteTitle( 'Support' ), function () {
+	let page;
+
+	setupHooks( ( setupPage ) => {
+		page = setupPage;
+	} );
+
 	describe( 'Search for a support topic then close popover', function () {
 		let supportComponent;
 
 		it( 'Log in', async function () {
-			const loginFlow = new LoginFlow( this.page );
+			const loginFlow = new LoginFlow( page );
 			await loginFlow.logIn();
 		} );
 
 		it( 'Open Settings page', async function () {
-			await MyHomePage.Expect( this.page );
-			const sidebarComponent = await SidebarComponent.Expect( this.page );
+			await MyHomePage.Expect( page );
+			const sidebarComponent = await SidebarComponent.Expect( page );
 			await sidebarComponent.gotoMenu( { item: 'Settings' } );
 		} );
 
 		it( 'Open support popover', async function () {
-			await SettingsPage.Expect( this.page );
-			supportComponent = await SupportComponent.Expect( this.page );
+			await SettingsPage.Expect( page );
+			supportComponent = await SupportComponent.Expect( page );
 			await supportComponent.clickSupportButton();
 		} );
 
@@ -68,19 +75,19 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 		let supportComponent;
 
 		it( 'Log in', async function () {
-			const loginFlow = new LoginFlow( this.page );
+			const loginFlow = new LoginFlow( page );
 			await loginFlow.logIn();
 		} );
 
 		it( 'Open Settings page', async function () {
-			await MyHomePage.Expect( this.page );
-			const sidebarComponent = await SidebarComponent.Expect( this.page );
+			await MyHomePage.Expect( page );
+			const sidebarComponent = await SidebarComponent.Expect( page );
 			await sidebarComponent.gotoMenu( { item: 'Settings' } );
 		} );
 
 		it( 'Open support popover', async function () {
-			await SettingsPage.Expect( this.page );
-			supportComponent = await SupportComponent.Expect( this.page );
+			await SettingsPage.Expect( page );
+			supportComponent = await SupportComponent.Expect( page );
 			await supportComponent.clickSupportButton();
 		} );
 
@@ -111,19 +118,19 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 		let supportComponent;
 
 		it( 'Log in', async function () {
-			const loginFlow = new LoginFlow( this.page );
+			const loginFlow = new LoginFlow( page );
 			await loginFlow.logIn();
 		} );
 
 		it( 'Open Settings page', async function () {
-			await MyHomePage.Expect( this.page );
-			const sidebarComponent = await SidebarComponent.Expect( this.page );
+			await MyHomePage.Expect( page );
+			const sidebarComponent = await SidebarComponent.Expect( page );
 			await sidebarComponent.gotoMenu( { item: 'Settings' } );
 		} );
 
 		it( 'Open support popover', async function () {
-			await SettingsPage.Expect( this.page );
-			supportComponent = await SupportComponent.Expect( this.page );
+			await SettingsPage.Expect( page );
+			supportComponent = await SupportComponent.Expect( page );
 			await supportComponent.clickSupportButton();
 		} );
 
@@ -147,19 +154,19 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 		let supportComponent;
 
 		it( 'Log in', async function () {
-			const loginFlow = new LoginFlow( this.page );
+			const loginFlow = new LoginFlow( page );
 			await loginFlow.logIn();
 		} );
 
 		it( 'Open Settings page', async function () {
-			await MyHomePage.Expect( this.page );
-			const sidebarComponent = await SidebarComponent.Expect( this.page );
+			await MyHomePage.Expect( page );
+			const sidebarComponent = await SidebarComponent.Expect( page );
 			await sidebarComponent.gotoMenu( { item: 'Settings' } );
 		} );
 
 		it( 'Open support popover', async function () {
-			await SettingsPage.Expect( this.page );
-			supportComponent = await SupportComponent.Expect( this.page );
+			await SettingsPage.Expect( page );
+			supportComponent = await SupportComponent.Expect( page );
 			await supportComponent.clickSupportButton();
 		} );
 

@@ -7,8 +7,13 @@ import { getTestNameWithTime } from '../../test-utils';
 
 const kill = ( proc ) =>
 	new Promise( ( resolve ) => {
-		proc.on( 'close', resolve );
-		proc.kill();
+		if ( proc.killed || proc.exitCode > 0 ) {
+			// Already killed
+			resolve();
+		} else {
+			proc.on( 'close', resolve );
+			proc.kill();
+		}
 	} );
 
 export const buildHooks = ( displayNum ) => {
@@ -43,7 +48,11 @@ export const buildHooks = ( displayNum ) => {
 	async function saveVideoRecording( { tempDir, testName } ) {
 		const newFile = path.join( tempDir, `screenshots/${ getTestNameWithTime( testName ) }.mpg` );
 		await mkdir( path.dirname( newFile ), { recursive: true } );
+		spawn( 'ls', [ '-la', tempDir + '/screenshots' ], { stdio: 'inherit' } );
 		await kill( ffVideo );
+		spawn( 'ls', [ '-la', tempDir + '/screenshots' ], { stdio: 'inherit' } );
+		spawn( 'ls', [ '-la', file ], { stdio: 'inherit' } );
+		spawn( 'ls', [ '-la', path.dirname( file ) ], { stdio: 'inherit' } );
 		await rename( file, newFile );
 	}
 

@@ -53,7 +53,7 @@ export const mochaHooks = async () => {
 
 	hooks.beforeAll.push( async function createBrowserHook() {
 		this.timeout( startBrowserTimeoutMS );
-		driver = await browserHooks.createBrowser();
+		driver = await browserHooks.createBrowser( { tempDir } );
 		this.driver = driver;
 	} );
 
