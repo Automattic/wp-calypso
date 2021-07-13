@@ -149,7 +149,6 @@ body.is-section-home {
 
 .customer-home__location-primary .dot-pager__controls {
 	justify-content: flex-start;
-	align-items: center;
 
 	button {
 		// Size the dots
@@ -157,8 +156,6 @@ body.is-section-home {
 		min-width: 6px;
 
 		// Allow the control buttons the space they need
-		display: inline-flex;
-		align-content: baseline;
 		width: auto;
 		height: auto;
 	}

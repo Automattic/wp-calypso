@@ -69,7 +69,11 @@ const Controls = ( {
 	);
 };
 
-export const DotPager = ( { children, className, ...props } ) => {
+export const DotPager = ( {
+	children,
+	className,
+	...props
+} ) => {
 	const [ currentPage, setCurrentPage ] = useState( 0 );
 	return (
 		<Card className={ className } { ...props }>

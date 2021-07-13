@@ -83,8 +83,6 @@ const Primary = ( { cards, trackCards } ) => {
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			className="customer-home__location-primary"
 			buttonText="true"
-			iconPrevious="arrow-left"
-			iconNext="arrow-right"
 		>
 			{ cards.map(
 				( card, index ) =>
