@@ -290,7 +290,7 @@ class Global_Styles {
 			$handle,
 			$src,
 			$deps,
-			filemtime( plugin_dir_path( __FILE__ ) . 'static/attach-tracks-events-to-fonts-links.js' ),
+			filemtime( plugin_dir_path( __FILE__ ) . 'dist/attach-tracks-events-to-fonts-links.js' ),
 			true
 		);
 	}
