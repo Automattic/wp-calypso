@@ -21,7 +21,6 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 	it( 'Log In', async function () {
 		const loginFlow = new LoginFlow( page );
 		await loginFlow.logIn();
-		expect( true ).toBe( false );
 	} );
 
 	it( 'Navigate to Themes', async function () {
