@@ -9,8 +9,10 @@
 		text-align: center;
 	}
 
-	.theme-activation-confirmation-modal__retired-message {
-		margin-top: 12px;
+	.theme-activation-confirmation-modal__retired-card {
+		font-size: $font-body-small;
+		margin-bottom: 12px;
+		padding: 8px 24px;
 	}
 
 	&.is-solely-retired-modal .theme-activation-confirmation-modal__title {
