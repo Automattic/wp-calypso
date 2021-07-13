@@ -53,22 +53,19 @@ export class ThemesPage extends BaseContainer {
 	}
 
 	/**
-	 * Filters the themes on page by clicking on the selector passed in as argument.
+	 * Filters the themes on page according to the pricing structure.
 	 *
 	 * @param {string} type Pre-defined types of themes.
 	 * @returns {Promise<void>} No return value.
 	 */
 	async filterThemes( type: 'All' | 'Free' | 'Premium' ): Promise< void > {
-		await this.page.click( selectors.showAllThemesButton );
-		const searchToolbar = await this.page.waitForSelector( selectors.searchToolbar );
-		const button = await searchToolbar.waitForSelector(
-			`a[data-e2e-value=${ type.toLowerCase() }]`
-		);
-		await button.click();
-		// This will wait for all placeholder classes to return to hidden state.
+		const selector = `a[data-e2e-value=${ type.toLowerCase() }]`;
+		await this.page.click( selector );
+		// Wait for placeholder to disappear (indicating load is completed).
 		await this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } );
-		// Verify that filter has been successfully applied.
-		const isSelected = await button.getAttribute( 'aria-checked' );
+		const isSelected = await this.page.$eval( selector, ( element ) =>
+			element.getAttribute( 'aria-checked' )
+		);
 		assert.strictEqual( isSelected, 'true' );
 	}
 
