@@ -65,6 +65,7 @@
 	min-height: 90px;
 
 	@include break-medium {
+		width: 70%;
 		min-height: 0;
 	}
 }
