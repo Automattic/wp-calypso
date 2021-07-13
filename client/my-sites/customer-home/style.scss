@@ -141,9 +141,18 @@ body.is-section-home {
 .customer-home__location-primary {
 	display: flex;
 	flex-direction: column-reverse;
+	padding: 32px;
 
 	.task {
 		box-shadow: none;
+
+		& > :first-child {
+			padding-left: 0;
+		}
+
+		& > :last-child {
+			padding-right: 0;
+		}
 	}
 }
 
