@@ -197,6 +197,21 @@ module.exports = {
 				'@typescript-eslint/no-empty-function': 'off',
 			},
 		},
+		{
+			files: [ 'packages/accessible-focus/**/*' ],
+			rules: {
+				'wpcalypso/import-docblock': 'off',
+				'import/order': [
+					'error',
+					{
+						'newlines-between': 'always',
+						alphabetize: {
+							order: 'asc',
+						},
+					},
+				],
+			},
+		},
 	],
 	env: {
 		jest: true,
