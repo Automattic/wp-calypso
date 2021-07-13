@@ -1,5 +1,4 @@
-import type { TranslateResult } from 'i18n-calypso';
-
+import * as features from './constants/features';
 import type {
 	GROUP_JETPACK,
 	GROUP_WPCOM,
@@ -13,7 +12,7 @@ import type {
 	TYPES_LIST,
 	PERIOD_LIST,
 } from './constants';
-import * as features from './constants/features';
+import type { TranslateResult } from 'i18n-calypso';
 
 const featureValues = Object.values( features );
 

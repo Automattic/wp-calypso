@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-
 import {
 	FEATURE_ALL_PERSONAL_FEATURES,
 	FEATURE_AUDIO_UPLOADS,

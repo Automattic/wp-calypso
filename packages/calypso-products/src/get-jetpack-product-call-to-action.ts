@@ -1,5 +1,4 @@
 import { TranslateResult } from 'i18n-calypso';
-
 import { formatProduct } from './format-product';
 import { getJetpackProductsCallToAction } from './translations';
 import type { Product } from './types';

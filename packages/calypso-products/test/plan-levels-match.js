@@ -1,7 +1,6 @@
 /* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["testPlansArrayIndependentOfOrder"] }] */
 
 import { expect } from 'chai';
-
 import { planLevelsMatch } from '../src';
 import {
 	PLAN_BUSINESS_MONTHLY,
