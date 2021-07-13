@@ -1,14 +1,8 @@
-/**
- * External dependencies
- */
-import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
+import type { Reducer } from 'redux';
 
-/**
- * Internal dependencies
- */
-import type { LoginFlowState } from './types';
 import type { Action } from './actions';
+import type { LoginFlowState } from './types';
 import { getNextTaskId } from './utils';
 
 export const loginFlowState: Reducer< LoginFlowState, Action > = (

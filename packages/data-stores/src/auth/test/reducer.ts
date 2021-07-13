@@ -6,11 +6,8 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
-import { errors, loginFlowState, usernameOrEmail } from '../reducer';
 import { createActions } from '../actions';
+import { errors, loginFlowState, usernameOrEmail } from '../reducer';
 
 const { reset, receiveAuthOptions, clearErrors } = createActions( {
 	client_id: '',

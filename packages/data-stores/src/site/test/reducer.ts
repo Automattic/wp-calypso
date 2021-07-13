@@ -6,9 +6,7 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
+import { createActions } from '../actions';
 import { sites, launchStatus } from '../reducer';
 import {
 	SiteLaunchError,
@@ -17,7 +15,6 @@ import {
 	SiteDetails,
 	SiteError,
 } from '../types';
-import { createActions } from '../actions';
 
 describe( 'Site', () => {
 	const siteDetailsResponse: SiteDetails = {

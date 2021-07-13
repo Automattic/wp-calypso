@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
-import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
+import type { Reducer } from 'redux';
 
-/**
- * Internal dependencies
- */
 import type { ReaderTeam, ReaderAction } from './actions';
 
 const teams: Reducer< ReaderTeam[] | null, ReaderAction > = ( state = null, action ) => {

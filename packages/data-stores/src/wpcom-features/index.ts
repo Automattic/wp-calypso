@@ -1,14 +1,9 @@
-/**
- * External dependencies
- */
-import { controls } from '@wordpress/data-controls';
 import { registerStore } from '@wordpress/data';
+import { controls } from '@wordpress/data-controls';
 import type { Reducer, AnyAction } from 'redux';
+
 import type { SelectFromMap } from '../mapped-types';
 
-/**
- * Internal dependencies
- */
 import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
 import * as selectors from './selectors';
