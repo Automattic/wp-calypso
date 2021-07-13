@@ -4,7 +4,7 @@
 import { beforeAll, afterAll } from '@jest/globals';
 import type { Page, Video } from 'playwright';
 import path from 'path';
-import { mkdtemp, mkdir, rename } from 'fs/promises';
+import { mkdtemp, mkdir, rename, appendFile } from 'fs/promises';
 import { getState } from 'expect';
 
 import { getTestNameWithTime } from './media-helper';
@@ -18,7 +18,16 @@ import { start, close } from './browser-manager';
 declare const __CURRENT_TEST_FAILED__: boolean;
 declare const __CURRENT_TEST_NAME__: string;
 
-export const setupHooks = ( callback: ( page: Page ) => void ): void => {
+/**
+ * Set up hoooks used for Jest tests.
+ *
+ * This method must be called once on the top `describe` block. It will set up a browser
+ * screenshot and video-recording capabilities. It will call the provided callback with an instance
+ * of the browser, so tests can use it to run actions and make assertions.
+ *
+ * @param callback Function to be called with the browser instance.
+ */
+export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): void => {
 	let page: Page;
 	let tempDir: string;
 
@@ -31,8 +40,15 @@ export const setupHooks = ( callback: ( page: Page ) => void ): void => {
 		tempDir = await mkdtemp( path.join( resultsPath, sanitizedTestFilename + '-' ) );
 
 		// Start the browser
-		page = await start();
-		callback( page );
+		page = await start( {
+			logger: async ( name, severity, message ) => {
+				await appendFile(
+					path.join( tempDir, 'playwright.log' ),
+					`${ new Date().toISOString() } ${ process.pid } ${ name } ${ severity }: ${ message }\n`
+				);
+			},
+		} );
+		callback( { page } );
 	} );
 
 	afterAll( async () => {
