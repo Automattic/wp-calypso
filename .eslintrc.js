@@ -198,7 +198,12 @@ module.exports = {
 			},
 		},
 		{
-			files: [ 'packages/accessible-focus/**/*', 'test/e2e/**/*', 'client/sections-helper.js' ],
+			files: [
+				'packages/accessible-focus/**/*',
+				'test/e2e/**/*',
+				'client/sections-helper.js',
+				'client/sections-filter.js',
+			],
 			rules: {
 				'wpcalypso/import-docblock': 'off',
 				'import/order': [
