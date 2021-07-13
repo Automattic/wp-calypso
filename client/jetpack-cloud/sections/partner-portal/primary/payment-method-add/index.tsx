@@ -61,7 +61,6 @@ function CurrentPaymentMethodNotAvailableNotice( {
 } ): JSX.Element | null {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
-	const storedPaymentAgreements = useSelector( getStoredPaymentAgreements );
 	const noticeProps: Record< string, boolean | string | number | TranslateResult > = {
 		showDismiss: false,
 	};
@@ -79,26 +78,6 @@ function CurrentPaymentMethodNotAvailableNotice( {
 				},
 			}
 		);
-		return <Notice { ...noticeProps } />;
-	}
-
-	if ( getPaymentMethodIdFromPayment( purchase.payment ) === 'paypal-existing' ) {
-		const storedPaymentAgreement = storedPaymentAgreements.find(
-			( agreement ) => agreement.stored_details_id === purchase.payment.storedDetailsId
-		);
-		if ( storedPaymentAgreement?.email ) {
-			noticeProps.text = translate(
-				'This purchase is currently billed to your PayPal account (%(emailAddress)s).',
-				{
-					args: {
-						emailAddress: storedPaymentAgreement.email,
-					},
-				}
-			);
-			return <Notice { ...noticeProps } />;
-		}
-
-		noticeProps.text = translate( 'This purchase is currently billed to your PayPal account.' );
 		return <Notice { ...noticeProps } />;
 	}
 
@@ -158,7 +137,9 @@ function PaymentMethodAdd(): ReactElement {
 		( paymentMethod ) => paymentMethod?.id === currentlyAssignedPaymentMethodId
 	);
 
-	const [ useForAllSubscriptions, setUseForAllSubscriptions ] = useState< boolean >( ! purchase );
+	const [ useAsPrimaryPaymentMethod, setUseAsPrimaryPaymentMethod ] = useState< boolean >(
+		! purchase
+	);
 
 	const assignAllSubscriptionsText = String( translate( 'Set as primary payment method' ) );
 
@@ -189,7 +170,7 @@ function PaymentMethodAdd(): ReactElement {
 						assignNewCardProcessor(
 							{
 								purchase,
-								useForAllSubscriptions,
+								useAsPrimaryPaymentMethod,
 								translate,
 								stripe,
 								stripeConfiguration,
@@ -216,8 +197,8 @@ function PaymentMethodAdd(): ReactElement {
 						<FormLabel className="payment-method-add__all-subscriptions-checkbox-label">
 							<FormInputCheckbox
 								className="payment-method-add__all-subscriptions-checkbox"
-								checked={ useForAllSubscriptions }
-								onChange={ () => setUseForAllSubscriptions( ( checked ) => ! checked ) }
+								checked={ useAsPrimaryPaymentMethod }
+								onChange={ () => setUseAsPrimaryPaymentMethod( ( checked ) => ! checked ) }
 								aria-label={ assignAllSubscriptionsText }
 							/>
 							<span>{ assignAllSubscriptionsText }</span>

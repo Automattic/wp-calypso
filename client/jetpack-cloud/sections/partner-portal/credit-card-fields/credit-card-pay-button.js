@@ -48,8 +48,6 @@ export default function CreditCardPayButton( {
 							total,
 							stripeConfiguration,
 							paymentPartner,
-							countryCode: fields?.countryCode?.value,
-							postalCode: fields?.postalCode?.value,
 						} );
 						return;
 					}
