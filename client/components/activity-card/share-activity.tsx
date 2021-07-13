@@ -73,7 +73,10 @@ const SharePopover: React.FC< SharePopoverProps > = ( {
 		} else {
 			dispatch(
 				withAnalytics(
-					recordTracksEvent( 'calypso_activity_share_request' ),
+					recordTracksEvent( 'calypso_activity_share_request', {
+						site_id: siteId,
+						rewind_id: activity.rewindId,
+					} ),
 					rewindShareRequest( siteId, activity.rewindId, email )
 				)
 			);
