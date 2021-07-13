@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
-import webdriver from 'selenium-webdriver';
-import firefox from 'selenium-webdriver/firefox';
-import chrome from 'selenium-webdriver/chrome';
+import { getChromeVersion } from '@testim/chrome-version';
 import chromedriver from 'chromedriver';
 import config from 'config';
-import proxy from 'selenium-webdriver/proxy';
-import SauceLabs from 'saucelabs';
 import { times } from 'lodash';
-import { getChromeVersion } from '@testim/chrome-version';
+import SauceLabs from 'saucelabs';
+import webdriver from 'selenium-webdriver';
+import chrome from 'selenium-webdriver/chrome';
+import firefox from 'selenium-webdriver/firefox';
+import proxy from 'selenium-webdriver/proxy';
 import * as remote from 'selenium-webdriver/remote';
-
-/**
- * Internal dependencies
- */
-import { generatePath } from './test-utils';
 import * as dataHelper from './data-helper';
+import { generatePath } from './test-utils';
 
 const webDriverImplicitTimeOutMS = 2000;
 const webDriverPageLoadTimeOutMS = 60000;

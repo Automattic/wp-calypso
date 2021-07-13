@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { merge } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import getMenusUrl from 'calypso/state/selectors/get-menus-url';
@@ -62,29 +57,8 @@ describe( 'getMenusUrl()', () => {
 		expect( url ).toBe( 'https://example.com/wp-admin/customize.php?autofocus[panel]=nav_menus' );
 	} );
 
-	test( 'should return URL of the Calypso customizer (top-level) for a user with unverified email', () => {
-		const userState = {
-			currentUser: {
-				user: {
-					email_verified: false,
-				},
-			},
-		};
-
-		const url = getMenusUrl( merge( state, userState ), 8765432 );
-		expect( url ).toBe( '/customize/example.wordpress.com' );
-	} );
-
 	test( "should return URL of the Calypso customizer's menu panel for a WP.com site", () => {
-		const userState = {
-			currentUser: {
-				user: {
-					email_verified: true,
-				},
-			},
-		};
-
-		const url = getMenusUrl( merge( state, userState ), 9876543 );
+		const url = getMenusUrl( state, 9876543 );
 		expect( url ).toBe( '/customize/menus/example2.wordpress.com' );
 	} );
 } );

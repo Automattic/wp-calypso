@@ -9,6 +9,8 @@ import {
 import { USER_SETTINGS_SAVE } from 'calypso/state/action-types';
 import wp from 'calypso/lib/wp';
 
+import 'calypso/state/user-settings/init';
+
 const wpcom = wp.undocumented();
 
 /**

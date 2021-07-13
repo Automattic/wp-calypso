@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
+import { withStorageKey } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
@@ -112,11 +112,14 @@ export const failed = ( state = false, action ) => {
 	return state;
 };
 
-export default combineReducers( {
-	settings,
-	unsavedSettings,
-	fetching,
-	updatingPassword,
-	updating,
-	failed,
-} );
+export default withStorageKey(
+	'userSettings',
+	combineReducers( {
+		settings,
+		unsavedSettings,
+		fetching,
+		updatingPassword,
+		updating,
+		failed,
+	} )
+);

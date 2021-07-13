@@ -197,6 +197,27 @@ module.exports = {
 				'@typescript-eslint/no-empty-function': 'off',
 			},
 		},
+		{
+			files: [
+				'packages/accessible-focus/**/*',
+				'test/e2e/**/*',
+				'client/sections-helper.js',
+				'client/sections-filter.js',
+			],
+			rules: {
+				'wpcalypso/import-docblock': 'off',
+				'import/order': [
+					'error',
+					{
+						'newlines-between': 'never',
+						alphabetize: {
+							order: 'asc',
+						},
+						groups: [ 'builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'type' ],
+					},
+				],
+			},
+		},
 	],
 	env: {
 		jest: true,
@@ -226,6 +247,7 @@ module.exports = {
 		jsdoc: {
 			mode: 'typescript',
 		},
+		'import/internal-regex': '^calypso/',
 	},
 	rules: {
 		// REST API objects include underscores

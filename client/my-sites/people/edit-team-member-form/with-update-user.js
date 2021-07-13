@@ -11,13 +11,12 @@ import useUpdateUserMutation from 'calypso/data/users/use-update-user-mutation';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { useTranslate } from 'i18n-calypso';
 
-const useSuccessNotice = ( isSuccess, user ) => {
-	const showNotice = React.useRef();
+const withUpdateUser = ( Component ) => ( props ) => {
+	const { siteId, user } = props;
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-
-	React.useEffect( () => {
-		showNotice.current = () => {
+	const { updateUser, isLoading } = useUpdateUserMutation( siteId, {
+		onSuccess() {
 			dispatch(
 				successNotice(
 					translate( 'Successfully updated @%(user)s', {
@@ -27,21 +26,8 @@ const useSuccessNotice = ( isSuccess, user ) => {
 					{ id: 'update-user-notice' }
 				)
 			);
-		};
-	}, [ dispatch, translate, user.login ] );
-
-	React.useEffect( () => {
-		isSuccess && showNotice.current();
-	}, [ isSuccess ] );
-};
-
-const useErrorNotice = ( isError, user ) => {
-	const showNotice = React.useRef();
-	const dispatch = useDispatch();
-	const translate = useTranslate();
-
-	React.useEffect( () => {
-		showNotice.current = () => {
+		},
+		onError() {
 			dispatch(
 				errorNotice(
 					translate( 'There was an error updating @%(user)s', {
@@ -51,20 +37,8 @@ const useErrorNotice = ( isError, user ) => {
 					{ id: 'update-user-notice' }
 				)
 			);
-		};
-	}, [ dispatch, translate, user.login ] );
-
-	React.useEffect( () => {
-		isError && showNotice.current();
-	}, [ isError ] );
-};
-
-const withUpdateUser = ( Component ) => ( props ) => {
-	const { siteId, user } = props;
-	const { updateUser, isSuccess, isError, isLoading } = useUpdateUserMutation( siteId );
-
-	useSuccessNotice( isSuccess, user );
-	useErrorNotice( isError, user );
+		},
+	} );
 
 	return <Component { ...props } updateUser={ updateUser } isUpdating={ isLoading } />;
 };

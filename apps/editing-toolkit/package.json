@@ -133,7 +133,7 @@
 		"@wordpress/scripts": "^15.0.1",
 		"@wordpress/server-side-render": "^1.21.3",
 		"@wordpress/url": "2.22.2",
-		"classnames": "^2.2.6",
+		"classnames": "^2.3.1",
 		"emotion-theming": "^10.0.27",
 		"enzyme": "^3.11.0",
 		"eslint": "^7.28.0",

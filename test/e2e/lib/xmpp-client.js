@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import xmpp from 'xmpp.js';
 
 const domain = 'im.wordpress.com';

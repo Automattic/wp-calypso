@@ -34,7 +34,6 @@ class PluginInformation extends React.Component {
 		hasUpdate: PropTypes.bool,
 		pluginVersion: PropTypes.string,
 		siteVersion: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
-		calypsoify: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -180,10 +179,6 @@ class PluginInformation extends React.Component {
 	};
 
 	getActionLinks = ( plugin ) => {
-		if ( this.props.calypsoify ) {
-			return null;
-		}
-
 		if ( ! get( plugin, 'active' ) ) {
 			return null;
 		}

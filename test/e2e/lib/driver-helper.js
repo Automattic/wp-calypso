@@ -1,6 +1,4 @@
-/**
- * External dependencies
- */
+import config from 'config';
 import {
 	By,
 	Condition,
@@ -11,11 +9,6 @@ import {
 	WebElement,
 	WebElementCondition,
 } from 'selenium-webdriver';
-import config from 'config';
-
-/**
- * Internal dependencies
- */
 import * as dataHelper from './data-helper';
 import * as driverManager from './driver-manager';
 

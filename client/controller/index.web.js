@@ -27,6 +27,8 @@ import {
 } from 'calypso/state/immediate-login/selectors';
 import { getSiteFragment } from 'calypso/lib/route';
 import { render, hydrate } from './web-util.js';
+import { composeHandlers } from 'calypso/controller/shared';
+import { sites, siteSelection } from 'calypso/my-sites/controller';
 
 /**
  * Re-export
@@ -172,3 +174,16 @@ export const notFound = ( context, next ) => {
 
 	next();
 };
+
+export function selectSiteIfLoggedIn( context, next ) {
+	const state = context.store.getState();
+	if ( ! isUserLoggedIn( state ) ) {
+		next();
+		return;
+	}
+
+	// Logged in: Terminate the regular handler path by not calling next()
+	// and render the site selection screen, redirecting the user if they
+	// only have one site.
+	composeHandlers( siteSelection, sites, makeLayout, render )( context );
+}

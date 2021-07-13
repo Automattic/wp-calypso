@@ -20,7 +20,7 @@ const CallToAction = styled( 'button' )< CallToActionProps >`
 		! props.buttonType || props.disabled ? '1px solid ' + props.theme.colors.borderColor : '0' };
 	background: ${ getBackgroundColor };
 	color: ${ getTextColor };
-	font-weight: theme.weights.normal;
+	font-weight: ${ ( props ) => props.theme.weights.normal };
 	text-decoration: ${ getTextDecoration };
 
 	:hover {

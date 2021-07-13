@@ -26,6 +26,7 @@ export class RegionAddressFieldsets extends Component {
 	static propTypes = {
 		getFieldProps: PropTypes.func,
 		translate: PropTypes.func,
+		arePostalCodesSupported: PropTypes.bool,
 		countryCode: PropTypes.string,
 		shouldAutoFocusAddressField: PropTypes.bool,
 		hasCountryStates: PropTypes.bool,
@@ -41,6 +42,7 @@ export class RegionAddressFieldsets extends Component {
 		getFieldProps: noop,
 		countryCode: 'US',
 		shouldAutoFocusAddressField: false,
+		arePostalCodesSupported: true,
 		hasCountryStates: false,
 	};
 
@@ -94,5 +96,4 @@ export class RegionAddressFieldsets extends Component {
 		);
 	}
 }
-
 export default localize( RegionAddressFieldsets );

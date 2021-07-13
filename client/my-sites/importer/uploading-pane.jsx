@@ -20,7 +20,12 @@ import {
 } from 'calypso/state/imports/uploads/selectors';
 import DropZone from 'calypso/components/drop-zone';
 import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
+import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
 import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
+import TextInput from 'calypso/components/forms/form-text-input';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import { ProgressBar } from '@automattic/components';
 
 /**
@@ -44,11 +49,22 @@ class UploadingPane extends React.PureComponent {
 			ID: PropTypes.number.isRequired,
 			single_user_site: PropTypes.bool.isRequired,
 		} ).isRequired,
+		optionalUrl: PropTypes.shape( {
+			title: PropTypes.string,
+			description: PropTypes.string,
+			invalidDescription: PropTypes.string,
+			validate: PropTypes.func,
+		} ),
 	};
 
-	static defaultProps = { description: null };
+	static defaultProps = { description: null, optionalUrl: null };
 
 	fileSelectorRef = React.createRef();
+
+	constructor( props ) {
+		super( props );
+		this.state = { urlInput: null, fileToBeUploaded: null };
+	}
 
 	componentDidUpdate( prevProps ) {
 		const { importerStatus } = this.props;
@@ -70,6 +86,9 @@ class UploadingPane extends React.PureComponent {
 		switch ( importerState ) {
 			case appStates.READY_FOR_UPLOAD:
 			case appStates.UPLOAD_FAILURE:
+				if ( this.state.fileToBeUploaded ) {
+					return <p>{ this.state?.fileToBeUploaded?.name?.substring?.( 0, 100 ) }</p>;
+				}
 				return <p>{ this.props.translate( 'Drag a file here, or click to upload a file' ) }</p>;
 			case appStates.UPLOAD_PROCESSING:
 			case appStates.UPLOADING: {
@@ -87,7 +106,12 @@ class UploadingPane extends React.PureComponent {
 				return (
 					<div>
 						<p>{ uploaderPrompt }</p>
-						<ProgressBar className={ progressClasses } value={ uploadPercent } total={ 100 } />
+						<ProgressBar
+							className={ progressClasses }
+							value={ uploadPercent }
+							total={ 100 }
+							isPulsing={ uploadPercent > 99 || importerState === appStates.UPLOAD_PROCESSING }
+						/>
 					</div>
 				);
 			}
@@ -101,14 +125,29 @@ class UploadingPane extends React.PureComponent {
 	};
 
 	initiateFromDrop = ( event ) => {
-		this.startUpload( event[ 0 ] );
+		this.setupUpload( event[ 0 ] );
 	};
 
 	initiateFromForm = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
 
-		this.startUpload( this.fileSelectorRef.current.files[ 0 ] );
+		this.setupUpload( this.fileSelectorRef.current.files[ 0 ] );
+	};
+
+	initiateFromUploadButton = () => {
+		this.startUpload( this.state.fileToBeUploaded, this.state.urlInput );
+	};
+
+	setupUpload = ( file ) => {
+		this.setState( { fileToBeUploaded: file } );
+
+		// uploads are initiated by a button if a URL field is present.
+		if ( this.props.optionalUrl ) {
+			return;
+		}
+
+		this.startUpload( file );
 	};
 
 	isReadyForImport() {
@@ -129,8 +168,17 @@ class UploadingPane extends React.PureComponent {
 		}
 	};
 
-	startUpload = ( file ) => {
-		this.props.startUpload( this.props.importerStatus, file );
+	startUpload = ( file, url = undefined ) => {
+		this.props.startUpload( this.props.importerStatus, file, url ? url.trim() : undefined );
+	};
+
+	validateUrl = ( urlInput ) => {
+		return ! urlInput || urlInput === '' || this.props.optionalUrl.validate( urlInput );
+	};
+
+	setUrl = ( event ) => {
+		const urlInput = event.target.value;
+		this.setState( { urlInput } );
 	};
 
 	render() {
@@ -140,6 +188,17 @@ class UploadingPane extends React.PureComponent {
 			'importer__upload-content',
 			this.props.importerStatus.importerState
 		);
+		const hasEnteredUrl = this.state.urlInput && this.state.urlInput !== '';
+		const isValidUrl = this.validateUrl( this.state.urlInput );
+		const urlDescription = isValidUrl
+			? this.props?.optionalUrl?.description
+			: this.props?.optionalUrl?.invalidDescription;
+		const uploadButtonEnabled =
+			[ appStates.READY_FOR_UPLOAD, appStates.UPLOAD_FAILURE ].includes(
+				importerStatus.importerState
+			) &&
+			this.state.fileToBeUploaded &&
+			this.validateUrl( this.state.urlInput );
 
 		return (
 			<div>
@@ -152,7 +211,13 @@ class UploadingPane extends React.PureComponent {
 					onKeyPress={ isReadyForImport ? this.handleKeyPress : null }
 				>
 					<div className={ importerStatusClasses }>
-						<Gridicon size="48" className="importer__upload-icon" icon="cloud-upload" />
+						<Gridicon
+							size="48"
+							className="importer__upload-icon"
+							icon={
+								this.props.optionalUrl && this.state.fileToBeUploaded ? 'checkmark' : 'cloud-upload'
+							}
+						/>
 						{ this.getMessage() }
 					</div>
 					{ isReadyForImport && (
@@ -165,7 +230,34 @@ class UploadingPane extends React.PureComponent {
 					) }
 					<DropZone onFilesDrop={ isReadyForImport ? this.initiateFromDrop : noop } />
 				</div>
+				{ this.props.optionalUrl && (
+					<div className="importer__uploading-pane-url-input">
+						<FormLabel>
+							{ this.props.optionalUrl.title }
+							<TextInput
+								label={ this.props.optionalUrl.title }
+								onChange={ this.setUrl }
+								value={ this.state.urlInput }
+								placeholder="https://newsletter.substack.com/"
+							/>
+						</FormLabel>
+						{ hasEnteredUrl ? (
+							<FormInputValidation isError={ ! isValidUrl }>{ urlDescription }</FormInputValidation>
+						) : (
+							<FormSettingExplanation>{ urlDescription }</FormSettingExplanation>
+						) }
+					</div>
+				) }
 				<ImporterActionButtonContainer>
+					{ this.props.optionalUrl && (
+						<ImporterActionButton
+							primary
+							onClick={ this.initiateFromUploadButton }
+							disabled={ ! uploadButtonEnabled }
+						>
+							{ this.props.translate( 'Upload' ) }
+						</ImporterActionButton>
+					) }
 					<ImporterCloseButton
 						importerStatus={ importerStatus }
 						site={ site }

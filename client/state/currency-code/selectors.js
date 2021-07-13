@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/currency-code/init';
+
+/**
  * Returns the currency code for the current user.
  *
  * @param  {object}  state  Global state tree

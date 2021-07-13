@@ -1,20 +1,11 @@
-/**
- * External dependencies
- */
 import config from 'config';
-
-/**
- * Internal dependencies
- */
-import StartPage from '../pages/signup/start-page';
-import CreateYourAccountPage from '../pages/signup/create-your-account-page';
-import SignupProcessingPage from '../pages/signup/signup-processing-page';
-
-import * as driverManager from '../driver-manager';
 import * as dataHelper from '../data-helper';
-
+import * as driverManager from '../driver-manager';
 import EmailClient from '../email-client';
 import ReaderPage from '../pages/reader-page';
+import CreateYourAccountPage from '../pages/signup/create-your-account-page';
+import SignupProcessingPage from '../pages/signup/signup-processing-page';
+import StartPage from '../pages/signup/start-page';
 
 const signupInboxId = config.get( 'signupInboxId' );
 

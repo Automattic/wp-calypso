@@ -171,3 +171,20 @@ export const buildGlobalStylesContentEvents = debounce( ( updated, original, eve
 		tracksRecordEvent( eventName, buildGlobalStylesEventProps( keyMap, value ) );
 	} );
 }, 100 );
+
+export const getFlattenedBlockNames = ( block ) => {
+	const blockNames = [];
+
+	const queue = Array.isArray( block ) ? [ ...block ] : [ block ];
+	while ( queue.length > 0 ) {
+		const currentBlock = queue.shift();
+
+		blockNames.push( currentBlock.name );
+
+		for ( const innerBlock of currentBlock.innerBlocks ) {
+			queue.unshift( innerBlock );
+		}
+	}
+
+	return blockNames;
+};

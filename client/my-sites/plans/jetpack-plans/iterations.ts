@@ -2,12 +2,15 @@
  * External dependencies
  */
 import { getUrlParts } from '@automattic/calypso-url';
+import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Iterations
  */
 
-export enum Iterations {}
+export enum Iterations {
+	ONLY_REALTIME_PRODUCTS = 'only-realtime-products',
+}
 
 const iterationNames: string[] = Object.values( Iterations );
 
@@ -43,7 +46,7 @@ const getCurrentCROIterationName = (): Iterations | null => {
 		}
 	}
 
-	return null;
+	return isEnabled( 'jetpack/only-realtime-products' ) ? Iterations.ONLY_REALTIME_PRODUCTS : null;
 };
 
 type IterationValueFunction< T > = ( key: Iterations | null ) => T | undefined;

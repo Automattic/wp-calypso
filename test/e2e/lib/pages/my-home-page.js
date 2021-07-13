@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
 import assert from 'assert';
 import { By } from 'selenium-webdriver';
-
-/**
- * Internal dependencies
- */
-import * as driverHelper from '../driver-helper.js';
-
 import AsyncBaseContainer from '../async-base-container';
 import GuideComponent from '../components/guide-component';
+import * as driverHelper from '../driver-helper.js';
 
 export default class MyHomePage extends AsyncBaseContainer {
 	constructor( driver, url ) {

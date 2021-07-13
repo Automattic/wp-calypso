@@ -22,7 +22,6 @@ import {
 	isDomainTransfer,
 } from '@automattic/calypso-products';
 import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
-import type { GetProductVariants } from '../hooks/product-variants';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import { hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
@@ -74,18 +73,18 @@ export default function WPCheckoutOrderReview( {
 	className,
 	removeProductFromCart,
 	couponFieldStateProps,
-	getItemVariants,
 	onChangePlanLength,
 	siteUrl,
+	siteId,
 	isSummary,
 	createUserAndSiteBeforeTransaction,
 }: {
 	className?: string;
 	removeProductFromCart?: RemoveProductFromCart;
 	couponFieldStateProps: CouponFieldStateProps;
-	getItemVariants?: GetProductVariants;
 	onChangePlanLength?: OnChangeItemVariant;
 	siteUrl?: string;
+	siteId?: number | undefined;
 	isSummary?: boolean;
 	createUserAndSiteBeforeTransaction?: boolean;
 } ): JSX.Element {
@@ -133,9 +132,9 @@ export default function WPCheckoutOrderReview( {
 
 			<WPOrderReviewSection>
 				<WPOrderReviewLineItems
+					siteId={ siteId }
 					removeProductFromCart={ removeProductFromCart }
 					removeCoupon={ removeCouponAndClearField }
-					getItemVariants={ getItemVariants }
 					onChangePlanLength={ onChangePlanLength }
 					isSummary={ isSummary }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
@@ -157,7 +156,6 @@ WPCheckoutOrderReview.propTypes = {
 	isSummary: PropTypes.bool,
 	className: PropTypes.string,
 	removeProductFromCart: PropTypes.func,
-	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,
 	siteUrl: PropTypes.string,
 	couponFieldStateProps: PropTypes.object.isRequired,

@@ -21,9 +21,7 @@ const ThemesSelectionHeader = ( { label, noMarginBeforeHeader } ) => {
 
 	return (
 		<div className={ classes }>
-			<h2>
-				<strong>{ label || translate( 'WordPress.com themes' ) }</strong>
-			</h2>
+			<h2>{ label || translate( 'WordPress.com themes' ) }</h2>
 		</div>
 	);
 };

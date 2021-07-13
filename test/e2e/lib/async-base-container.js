@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import config from 'config';
-
-/**
- * Internal dependencies
- */
-import * as driverManager from './driver-manager';
 import * as driverHelper from './driver-helper';
+import * as driverManager from './driver-manager';
 
 export default class AsyncBaseContainer {
 	constructor(

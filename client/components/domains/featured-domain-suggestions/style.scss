@@ -79,11 +79,11 @@
 		width: 100%;
 	}
 
-    .domain-registration-suggestion__title-wrapper .domain-registration-suggestion__title {
-        width: auto;
-    }
+	.domain-registration-suggestion__title-wrapper .domain-registration-suggestion__title {
+		width: auto;
+	}
 
-    .domain-registration-suggestion__title {
+	.domain-registration-suggestion__title {
 		font-size: $font-title-small;
 		font-weight: 400;
 		line-height: 1.2;
@@ -107,7 +107,7 @@
 		&.is-free-domain,
 		&.is-sale-domain {
 			small {
-				font-size: 0.9em;
+				font-size: 0.9em; /* stylelint-disable-line */
 			}
 		}
 	}
@@ -155,7 +155,7 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 	border-radius: 4px; /* stylelint-disable-line */
 	margin: 0;
 	align-items: center;
-	background: #fdfdfd;
+	background: #ffffff;
 	border-bottom: 1px solid rgba( 220, 220, 222, 0.64 );
 
 	@include break-mobile {
@@ -165,8 +165,15 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 		background: var( --color-surface );
 	}
 
+	.domain-suggestion__action-container {
+		width: 100%;
+
+		@include break-mobile {
+			width: auto;
+		}
+	}
+
 	.button.domain-suggestion__action {
-		margin-top: 0;
 		font-weight: 500; /* stylelint-disable-line */
 		padding: 0.57em 1.17em;
 		border-radius: 4px; /* stylelint-disable-line */
@@ -174,6 +181,7 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 		font-size: 0.875rem;
 
 		@include break-mobile {
+			margin-top: 0;
 			padding: 0.65em 2.8em;
 		}
 	}
@@ -236,19 +244,19 @@ body.is-section-signup.is-white-signup .featured-domain-suggestions {
 @include breakpoint-deprecated( '>660px' ) {
 	.domain-registration-suggestion__title {
 		.featured-domain-suggestions--title-in-18em & {
-			font-size: 1.8em;
+			font-size: 1.8em; /* stylelint-disable-line */
 		}
 		.featured-domain-suggestions--title-in-16em & {
-			font-size: 1.6em;
+			font-size: 1.6em; /* stylelint-disable-line */
 		}
 		.featured-domain-suggestions--title-in-14em & {
 			font-size: $font-title-small;
 		}
 		.featured-domain-suggestions--title-in-12em & {
-			font-size: 1.2em;
+			font-size: 1.2em; /* stylelint-disable-line */
 		}
 		.featured-domain-suggestions--title-in-10em & {
-			font-size: 1em;
+			font-size: 1em; /* stylelint-disable-line */
 		}
 	}
 

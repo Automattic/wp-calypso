@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { saveBrowserLogs } from './browser-logs';
 import { createBrowser, closeBrowser } from './browser';
+import { saveBrowserLogs } from './browser-logs';
 
 export const buildHooks = () => {
 	let driver;

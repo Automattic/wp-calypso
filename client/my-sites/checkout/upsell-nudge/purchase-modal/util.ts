@@ -25,13 +25,11 @@ type SubmitTransactionFunction = () => void;
 
 export function useSubmitTransaction( {
 	cart,
-	siteId,
 	storedCard,
 	setStep,
 	onClose,
 }: {
 	cart: ResponseCart;
-	siteId: string | number;
 	storedCard: StoredCard | undefined;
 	setStep: SetStep;
 	onClose: OnClose;
@@ -44,8 +42,6 @@ export function useSubmitTransaction( {
 			throw new Error( 'No saved card found' );
 		}
 		const wpcomCart = translateResponseCartToWPCOMCart( cart );
-		const countryCode = extractStoredCardMetaValue( storedCard, 'country_code' );
-		const postalCode = extractStoredCardMetaValue( storedCard, 'card_zip' );
 		setStep( 'processing' );
 		callPaymentProcessor( 'existing-card', {
 			items: wpcomCart.items,
@@ -53,9 +49,6 @@ export function useSubmitTransaction( {
 			storedDetailsId: storedCard.stored_details_id,
 			paymentMethodToken: storedCard.mp_ref,
 			paymentPartnerProcessorId: storedCard.payment_partner,
-			country: countryCode,
-			postalCode,
-			siteId: siteId ? String( siteId ) : undefined,
 		} )
 			.then( ( response: PaymentProcessorResponse ) => {
 				if ( response.type === PaymentProcessorResponseType.ERROR ) {
@@ -78,7 +71,7 @@ export function useSubmitTransaction( {
 				reduxDispatch( errorNotice( error.message ) );
 				onClose();
 			} );
-	}, [ siteId, callPaymentProcessor, cart, storedCard, setStep, onClose, reduxDispatch ] );
+	}, [ callPaymentProcessor, cart, storedCard, setStep, onClose, reduxDispatch ] );
 }
 
 export function formatDate( cardExpiry: string ): string {

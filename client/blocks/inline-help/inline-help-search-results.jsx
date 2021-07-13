@@ -51,6 +51,7 @@ const errorSpeak = debounceSpeak( { message: 'No search results found.' } );
 
 function HelpSearchResults( {
 	currentUserId,
+	externalLinks = false,
 	hasAPIResults = false,
 	hasPurchases,
 	isSearching = false,
@@ -146,6 +147,8 @@ function HelpSearchResults( {
 			'is-selected': selectedResultIndex === resultIndex,
 		} );
 
+		const external = externalLinks && support_type !== SUPPORT_TYPE_ADMIN_SECTION;
+
 		// Unless searching with Inline Help or on the Purchases section, hide the
 		// "Managing Purchases" documentation link for users who have not made a purchase.
 		if (
@@ -166,10 +169,16 @@ function HelpSearchResults( {
 						<a
 							href={ localizeUrl( link ) }
 							onClick={ ( event ) => {
-								event.preventDefault();
+								if ( ! external ) {
+									event.preventDefault();
+								}
 								selectSearchResult( resultIndex );
 								onLinkClickHandler( event, result );
 							} }
+							{ ...( external && {
+								target: '_blank',
+								rel: 'noreferrer',
+							} ) }
 						>
 							{ support_type === SUPPORT_TYPE_ADMIN_SECTION && (
 								<Gridicon icon={ icon } size={ 18 } />

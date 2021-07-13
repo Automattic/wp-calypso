@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
 import { By } from 'selenium-webdriver';
-
-/**
- * Internal dependencies
- */
+import AsyncBaseContainer from '../async-base-container';
 import * as driverHelper from '../driver-helper';
 import * as driverManager from '../driver-manager';
-import AsyncBaseContainer from '../async-base-container';
 import GutenbergEditorComponent from '../gutenberg/gutenberg-editor-component';
 
 export default class SiteEditorComponent extends AsyncBaseContainer {
@@ -124,7 +116,7 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 		await driverHelper.waitUntilElementNotLocated( this.driver, inserterMenuLocator );
 	}
 
-	async addBlock( title ) {
+	async addBlock( title, overrideLocatorSuffix, overrideAriaLabel ) {
 		const {
 			ariaLabel,
 			prefix,
@@ -133,13 +125,15 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 		} = new GutenbergEditorComponent().getBlockLocatorSettings( title );
 
 		const inserterBlockItemLocator = By.css(
-			`.edit-site-editor__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix }${ blockClass }`
+			`.edit-site-editor__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${
+				overrideLocatorSuffix || prefix + blockClass
+			}`
 		);
 
 		const insertedBlockLocator = By.css(
 			`.block-editor-block-list__block.${
 				initsWithChildFocus ? 'has-child-selected' : 'is-selected'
-			}[aria-label*='${ ariaLabel }']`
+			}[aria-label*='${ overrideAriaLabel || ariaLabel }']`
 		);
 
 		await this.openBlockInserterAndSearch( title );

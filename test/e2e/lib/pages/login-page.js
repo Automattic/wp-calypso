@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
 import { By, Key } from 'selenium-webdriver';
-
-/**
- * Internal dependencies
- */
 import AsyncBaseContainer from '../async-base-container';
-
-import * as driverHelper from '../driver-helper.js';
 import * as dataHelper from '../data-helper';
-import * as SlackNotifier from '../slack-notifier';
+import * as driverHelper from '../driver-helper.js';
 import * as driverManager from '../driver-manager';
+import * as SlackNotifier from '../slack-notifier';
 
 // This is the Calypso WordPress.com login page
 // For the wp-admin login page see /wp-admin/wp-admin-logon-page

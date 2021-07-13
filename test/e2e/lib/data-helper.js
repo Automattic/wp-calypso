@@ -1,10 +1,7 @@
-/**
- * External dependencies
- */
+import fs from 'fs';
 import phrase from 'asana-phrase';
 import config from 'config';
 import { difference, map } from 'lodash';
-import fs from 'fs';
 
 String.prototype.toProperCase = function () {
 	return this.replace( /\w\S*/g, function ( txt ) {

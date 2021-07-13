@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
 import assert from 'assert';
 import { By } from 'selenium-webdriver';
-
-/**
- * Internal dependencies
- */
-import GutenbergEditorComponent from '../gutenberg-editor-component';
 import SiteEditorComponent from '../../components/site-editor-component';
-import { clearEventsStack, getEventsStack, getTotalEventsFiredForBlock } from './utils';
 import * as driverHelper from '../../driver-helper';
+import GutenbergEditorComponent from '../gutenberg-editor-component';
+import { clearEventsStack, getEventsStack, getTotalEventsFiredForBlock } from './utils';
 
 export function createGeneralTests( { it, editorType, postType } ) {
 	const isSiteEditor = editorType === 'site';
@@ -120,6 +113,40 @@ export function createGeneralTests( { it, editorType, postType } ) {
 		assert.strictEqual( toggleEvents.length, 2 );
 		assert.strictEqual( toggleEvents[ 0 ][ 1 ].is_open, false );
 		assert.strictEqual( toggleEvents[ 1 ][ 1 ].is_open, true );
+	} );
+
+	it( 'Tracks "wpcom_block_editor_list_view_select" event', async function () {
+		const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
+
+		// The list view toggle button is not available on mobile
+		if ( editor.screenSize === 'mobile' ) {
+			return this.skip();
+		}
+
+		await editor.addBlock( 'Heading' );
+		await editor.addBlock( 'Image' );
+
+		await editor.toggleListView();
+
+		const secondLastItemLocator = By.css(
+			'[aria-label="Block navigation structure"] [role="row"]:nth-last-child(2) button'
+		);
+		const lastItemLocator = By.css(
+			'[aria-label="Block navigation structure"] [role="row"]:nth-last-child(1) button'
+		);
+		await driverHelper.clickWhenClickable( this.driver, secondLastItemLocator );
+		await driverHelper.clickWhenClickable( this.driver, lastItemLocator );
+
+		// Close list view so we don't leave it open for the other tests.
+		await editor.toggleListView();
+
+		const eventsStack = await getEventsStack( this.driver );
+		const selectEvents = eventsStack.filter(
+			( [ eventName ] ) => eventName === 'wpcom_block_editor_list_view_select'
+		);
+		assert.strictEqual( selectEvents.length, 2 );
+		assert.strictEqual( selectEvents[ 0 ][ 1 ].block_name, 'core/image' );
+		assert.strictEqual( selectEvents[ 1 ][ 1 ].block_name, 'core/heading' );
 	} );
 
 	it( 'Tracks "wpcom_block_editor_undo_performed" event', async function () {

@@ -2,7 +2,9 @@
  * Internal dependencies
  */
 import { BaseContainer } from '../base-container';
+import { NavbarComponent } from './navbar-component';
 import { toTitleCase } from '../../data-helper';
+import { getViewportName } from '../../browser-helper';
 
 /**
  * Type dependencies
@@ -10,6 +12,10 @@ import { toTitleCase } from '../../data-helper';
 import { ElementHandle, Page } from 'playwright';
 
 const selectors = {
+	// Mobile view
+	layout: '.layout',
+
+	// Sidebar
 	sidebar: '.sidebar',
 	heading: '.sidebar > li',
 	subheading: '.sidebar__menu-item--child',
@@ -63,19 +69,26 @@ export class SidebarComponent extends BaseContainer {
 	 * @param {{[key: string]: string}} param0 Named object parameter.
 	 * @param {string} param0.item Plaintext representation of the top level heading.
 	 * @param {string} param0.subitem Plaintext representation of the child level heading.
-	 * @throws {Error} If neither item or subitem were specified in the parameter.
 	 * @returns {Promise<void>} No return value.
 	 */
 	async gotoMenu( { item, subitem }: { item?: string; subitem?: string } ): Promise< void > {
 		let selector;
+		const viewportName = getViewportName();
+
+		// If mobile, sidebar is hidden by default and focus is on the content.
+		// The sidebar must be first brought into view.
+		if ( viewportName === 'mobile' ) {
+			await this._openMobileSidebar();
+		}
 
 		if ( item ) {
 			item = toTitleCase( item ).trim();
 			// This will exclude entries where the `heading` term matches multiple times
 			// eg. `Settings` but they are sub-headings in reality, such as Jetpack > Settings.
 			// Since the sub-headings are always hidden unless heading is selected, this works to
-			// our advantage.
+			// our advantage by specifying to match only visible text.
 			selector = `${ selectors.heading } span:has-text("${ item }"):visible`;
+			await this._click( selector );
 		}
 
 		if ( subitem ) {
@@ -86,15 +99,24 @@ export class SidebarComponent extends BaseContainer {
 			// This works better than using CSS pseudo-classes like `:has-text` or `:text-matches` for text
 			// matching.
 			selector = `${ selectors.subheading } >> text="${ subitem }"`;
+			await this._click( selector );
 		}
 
-		if ( ! selector ) {
-			throw new Error(
-				`Selector is undefined. Check if item or subitem has been specified as argument(s).`
-			);
-		}
+		// Confirm the focus is now back to the content, not the sidebar.
+		await this.page.waitForSelector( `${ selectors.layout }.focus-content` );
+	}
 
-		await this._click( selector );
+	/**
+	 * Opens the sidebar into view for mobile viewports.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async _openMobileSidebar(): Promise< void > {
+		const navbarComponent = await NavbarComponent.Expect( this.page );
+		await navbarComponent.clickMySites();
+		// `focus-sidebar` attribute is added once the sidebar is opened and focused in mobile view.
+		const layoutElement = await this.page.waitForSelector( `${ selectors.layout }.focus-sidebar` );
+		await layoutElement.waitForElementState( 'stable' );
 	}
 
 	/**

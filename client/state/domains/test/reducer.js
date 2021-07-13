@@ -8,7 +8,6 @@ describe( 'reducer', () => {
 		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual( [
 			'dns',
 			'management',
-			'nameservers',
 			'siteRedirect',
 			'suggestions',
 			'transfer',

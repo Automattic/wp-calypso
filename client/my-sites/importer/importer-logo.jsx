@@ -10,6 +10,7 @@ import { includes } from 'lodash';
  */
 import WixLogo from './logos/wix';
 import MediumLogo from './logos/medium';
+import SubstackLogo from './logos/substack';
 import SocialLogo from 'calypso/components/social-logo';
 
 /**
@@ -28,6 +29,10 @@ const ImporterLogo = ( { icon } ) => {
 
 	if ( 'medium' === icon ) {
 		return <MediumLogo />;
+	}
+
+	if ( 'substack' === icon ) {
+		return <SubstackLogo />;
 	}
 
 	return (

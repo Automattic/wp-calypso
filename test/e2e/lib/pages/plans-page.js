@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
 import { By } from 'selenium-webdriver';
-
-/**
- * Internal dependencies
- */
 import AsyncBaseContainer from '../async-base-container';
 import SectionNavComponent from '../components/section-nav-component';
-import * as driverHelper from '../driver-helper';
 import * as dataHelper from '../data-helper';
+import * as driverHelper from '../driver-helper';
 import { currentScreenSize } from '../driver-manager';
 
 const host = dataHelper.getJetpackHost();

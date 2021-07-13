@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
 import config from 'config';
-
-/**
- * Internal dependencies
- */
+import * as dataHelper from '../../lib/data-helper';
+import GutenbergEditorComponent from '../gutenberg/gutenberg-editor-component';
 import AcquireIntentPage from '../pages/gutenboarding/acquire-intent-page.js';
 import DesignLocatorPage from '../pages/gutenboarding/designs-page.js';
-import StylePreviewPage from '../pages/gutenboarding/style-preview-page.js';
-import PlansPage from '../pages/gutenboarding/plans-page.js';
 import DomainsPage from '../pages/gutenboarding/domains-page.js';
 import FeaturesPage from '../pages/gutenboarding/features-page.js';
+import PlansPage from '../pages/gutenboarding/plans-page.js';
 import SignupPage from '../pages/gutenboarding/signup-page.js';
-import GutenbergEditorComponent from '../gutenberg/gutenberg-editor-component';
-import * as dataHelper from '../../lib/data-helper';
+import StylePreviewPage from '../pages/gutenboarding/style-preview-page.js';
 
 export default class CreateSiteFlow {
 	constructor( driver ) {

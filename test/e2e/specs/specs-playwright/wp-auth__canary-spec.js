@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import config from 'config';
 import { DataHelper, BrowserHelper, LoginFlow } from '@automattic/calypso-e2e';
+import config from 'config';
 
 /**
  * Constants

@@ -4,8 +4,16 @@
 
 import { includes } from 'lodash';
 
+export const isAkismetOAuth2Client = ( oauth2Client ) => {
+	return oauth2Client?.id === 973;
+};
+
 export const isCrowdsignalOAuth2Client = ( oauth2Client ) => {
-	return oauth2Client && oauth2Client.id === 978;
+	return oauth2Client?.id === 978;
+};
+
+export const isGravatarOAuth2Client = ( oauth2Client ) => {
+	return oauth2Client?.id === 1854;
 };
 
 export const isWooOAuth2Client = ( oauth2Client ) => {

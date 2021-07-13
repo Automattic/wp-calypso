@@ -25,6 +25,17 @@ import { isEnabled } from '@automattic/calypso-config';
 export default function () {
 	page( '/checkout*', recordSiftScienceUser );
 
+	if ( isEnabled( 'jetpack/siteless-checkout' ) ) {
+		page( '/checkout/jetpack/:productSlug', noSite, checkoutSiteless, makeLayout, clientRender );
+		page(
+			'/checkout/jetpack/thank-you/no-site/:product',
+			noSite,
+			jetpackCheckoutThankYou,
+			makeLayout,
+			clientRender
+		);
+	}
+
 	if ( isEnabled( 'jetpack/userless-checkout' ) ) {
 		page( '/checkout/jetpack/:siteSlug/:productSlug', checkout, makeLayout, clientRender );
 		page(
@@ -34,10 +45,6 @@ export default function () {
 			makeLayout,
 			clientRender
 		);
-	}
-
-	if ( isEnabled( 'jetpack/siteless-checkout' ) ) {
-		page( '/checkout/jetpack/:productSlug', noSite, checkoutSiteless, makeLayout, clientRender );
 	}
 
 	page(

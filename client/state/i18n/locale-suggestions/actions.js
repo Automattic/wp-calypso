@@ -6,6 +6,7 @@ import {
 	I18N_LOCALE_SUGGESTIONS_REQUEST,
 } from 'calypso/state/action-types';
 
+import 'calypso/state/i18n/init';
 import 'calypso/state/data-layer/wpcom/locale-guess';
 
 /**

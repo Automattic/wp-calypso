@@ -63,6 +63,12 @@
 .importer__upload-progress {
 	&.progress-bar {
 		width: 80%;
+
+		&.is-pulsing {
+			.progress-bar__progress {
+				background-image: linear-gradient(-45deg, var(--color-accent) 28%, var(--color-accent-light) 28%, var(--color-accent-light) 72%, var(--color-accent) 72%);
+			}
+		}
 	}
 
 	.progress-bar__progress {

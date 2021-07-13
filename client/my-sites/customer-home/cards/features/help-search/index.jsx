@@ -14,17 +14,14 @@ import CardHeading from 'calypso/components/card-heading';
 import Gridicon from 'calypso/components/gridicon';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
-import { openSupportArticleDialog } from 'calypso/state/inline-support-article/actions';
 import HelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
 import HelpSearchResults from 'calypso/blocks/inline-help/inline-help-search-results';
 import getInlineHelpCurrentlySelectedResult from 'calypso/state/inline-help/selectors/get-inline-help-currently-selected-result';
 import {
-	RESULT_POST_ID,
 	RESULT_ARTICLE,
 	RESULT_LINK,
 	RESULT_TOUR,
 	RESULT_TYPE,
-	RESULT_BLOG_ID,
 } from 'calypso/blocks/inline-help/constants';
 
 /**
@@ -39,11 +36,15 @@ const amendYouTubeLink = ( link = '' ) =>
 
 const getResultLink = ( result ) => amendYouTubeLink( get( result, RESULT_LINK ) );
 
-const HelpSearch = ( { searchQuery, openDialog, track } ) => {
+const HelpSearch = ( { searchQuery, track } ) => {
 	const translate = useTranslate();
 
 	// trackResultView: Given a result, send an "_open" tracking event indicating that result is opened.
-	const trackResultView = ( result ) => {
+	const trackResultView = ( event, result ) => {
+		if ( ! result ) {
+			return;
+		}
+
 		const resultLink = getResultLink( result );
 		const type = get( result, RESULT_TYPE, RESULT_ARTICLE );
 		const tour = get( result, RESULT_TOUR );
@@ -60,21 +61,6 @@ const HelpSearch = ( { searchQuery, openDialog, track } ) => {
 		track( `calypso_inlinehelp_${ type }_open`, tracksData );
 	};
 
-	// openResultView: Given a result, open that result, and use trackResultView() to track it.
-	const openResultView = ( event, result ) => {
-		event.preventDefault();
-		if ( ! result ) {
-			return;
-		}
-
-		trackResultView( result );
-
-		const resultPostId = get( result, RESULT_POST_ID );
-		const resultBlogId = get( result, RESULT_BLOG_ID );
-		const resultLink = getResultLink( result );
-		openDialog( { postId: resultPostId, actionUrl: resultLink, blogId: resultBlogId } );
-	};
-
 	return (
 		<>
 			<Card className="help-search customer-home__card">
@@ -83,15 +69,16 @@ const HelpSearch = ( { searchQuery, openDialog, track } ) => {
 					<div className="help-search__content">
 						<div className="help-search__search inline-help__search">
 							<HelpSearchCard
-								onSelect={ openResultView }
+								onSelect={ trackResultView }
 								query={ searchQuery }
 								location={ HELP_COMPONENT_LOCATION }
 								placeholder={ translate( 'Search support articles' ) }
 							/>
 							<HelpSearchResults
-								onSelect={ openResultView }
+								onSelect={ trackResultView }
 								searchQuery={ searchQuery }
 								placeholderLines={ 5 }
+								externalLinks
 							/>
 						</div>
 					</div>
@@ -115,7 +102,6 @@ const mapStateToProps = ( state ) => ( {
 } );
 
 const mapDispatchToProps = {
-	openDialog: openSupportArticleDialog,
 	track: recordTracksEvent,
 };
 

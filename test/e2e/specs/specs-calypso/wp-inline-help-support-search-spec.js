@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
-import config from 'config';
 import assert from 'assert';
-
-/**
- * Internal dependencies
- */
-import * as driverManager from '../../lib/driver-manager.js';
-
-import LoginFlow from '../../lib/flows/login-flow.js';
-import * as dataHelper from '../../lib/data-helper';
+import config from 'config';
 import InlineHelpPopoverComponent from '../../lib/components/inline-help-popover-component';
-import SupportSearchComponent from '../../lib/components/support-search-component';
 import SidebarComponent from '../../lib/components/sidebar-component';
+import SupportSearchComponent from '../../lib/components/support-search-component';
+import * as dataHelper from '../../lib/data-helper';
+import * as driverManager from '../../lib/driver-manager.js';
+import LoginFlow from '../../lib/flows/login-flow.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();

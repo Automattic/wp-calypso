@@ -176,7 +176,6 @@ class ThemeShowcase extends React.Component {
 	 * @param {string} sections.filter override filter prop
 	 * @param {string} sections.siteSlug override siteSlug prop
 	 * @param {string} sections.searchString override searchString prop
-	 *
 	 * @returns {string} Theme showcase url
 	 */
 	constructUrl = ( sections ) => {
@@ -286,7 +285,6 @@ class ThemeShowcase extends React.Component {
 								filter={ filter }
 								vertical={ this.props.vertical }
 								siteId={ this.props.siteId }
-								listLabel={ this.props.listLabel }
 								defaultOption={ this.props.defaultOption }
 								secondaryOption={ this.props.secondaryOption }
 								placeholderCount={ this.props.placeholderCount }
@@ -343,10 +341,10 @@ class ThemeShowcase extends React.Component {
 					>
 						{ ! this.props.loggedOutComponent && (
 							<>
-								<h2>
-									<strong>{ translate( 'Advanced Themes' ) }</strong>
+								<h2 className="theme-showcase__all-themes-title">
+									{ translate( 'Advanced Themes' ) }
 								</h2>
-								<p>
+								<p className="theme-showcase__all-themes-description">
 									{ translate(
 										'These themes offer more power and flexibility, but can be harder to setup and customize.'
 									) }
