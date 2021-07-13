@@ -1,5 +1,4 @@
 import path from 'path';
-
 import { getChromeVersion } from '@testim/chrome-version';
 import chromedriver from 'chromedriver';
 import config from 'config';
