@@ -26,7 +26,7 @@ describe( DataHelper.createSuiteTitle( 'Theme: Activate' ), function () {
 
 		it( 'Navigate to Themes', async function () {
 			sidebarComponent = await SidebarComponent.Expect( this.page );
-			await sidebarComponent.gotoMenu( { item: 'Appearance' } );
+			await sidebarComponent.gotoMenu( { item: 'Appearance', subitem: 'Themes' } );
 		} );
 
 		it( 'Search for free theme', async function () {
