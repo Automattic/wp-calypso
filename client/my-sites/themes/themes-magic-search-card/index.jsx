@@ -79,6 +79,10 @@ class ThemesMagicSearchCard extends React.Component {
 		this.setState( ( oldState ) => ( { isPopoverVisible: ! oldState.isPopoverVisible } ) );
 	};
 
+	closePopover = () => {
+		this.setState( { isPopoverVisible: false } );
+	};
+
 	onSearchOpen = () => {
 		this.setState( { searchIsOpen: true } );
 	};
@@ -365,8 +369,7 @@ class ThemesMagicSearchCard extends React.Component {
 								<Popover
 									context={ this.popoverButtonRef }
 									isVisible={ isPopoverVisible }
-									// onClose={ this.closePopover }
-									// className="component__popover"
+									onClose={ this.closePopover }
 									position="bottom"
 								>
 									<MagicSearchWelcome
