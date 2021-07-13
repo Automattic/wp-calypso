@@ -59,7 +59,6 @@ class ThemesMagicSearchCard extends React.Component {
 			editedSearchElement: '',
 			cursorPosition: 0,
 			searchInput: this.props.search,
-			isWelcomeBarEnabled: false,
 			isPopoverVisible: false,
 		};
 	}
@@ -275,15 +274,9 @@ class ThemesMagicSearchCard extends React.Component {
 		this.focusOnInput();
 	};
 
-	handleWelcomeBarToggle = () => {
-		this.setState( ( prevState ) => ( {
-			isWelcomeBarEnabled: ! prevState.isWelcomeBarEnabled,
-		} ) );
-	};
-
 	render() {
 		const { translate, filters, showTierThemesControl } = this.props;
-		const { isWelcomeBarEnabled, isPopoverVisible } = this.state;
+		const { isPopoverVisible } = this.state;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
 
 		const tiers = [
@@ -363,15 +356,12 @@ class ThemesMagicSearchCard extends React.Component {
 						{ config.isEnabled( 'theme/showcase-revamp' ) && (
 							<div>
 								<Button
-									oldOnClick={ this.handleWelcomeBarToggle }
 									onClick={ this.togglePopover }
 									className="components-button themes-magic-search-card__advanced-toggle"
 									ref={ ( ref ) => ( this.popoverButtonRef = ref ) }
 								>
 									<Gridicon icon="cog" size={ 18 } />
-									{ isWelcomeBarEnabled
-										? translate( 'Hide Advanced' )
-										: translate( 'Show Advanced' ) }
+									{ translate( 'Filters' ) }
 								</Button>
 								<Popover
 									context={ this.popoverButtonRef }
