@@ -123,7 +123,8 @@ export class FullPostView extends React.Component {
 		}
 
 		// Adds WPiFrameResize listener for setting the corect height in embedded iFrames.
-		this.postContentWrapper.current && WPiFrameResize( this.postContentWrapper.current );
+		this.stopResize =
+			this.postContentWrapper.current && WPiFrameResize( this.postContentWrapper.current );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -157,7 +158,7 @@ export class FullPostView extends React.Component {
 		KeyboardShortcuts.off( 'move-selection-down', this.goToNextPost );
 		KeyboardShortcuts.off( 'move-selection-up', this.goToPreviousPost );
 		// Remove WPiFrameResize listener.
-		this.postContentWrapper.current && WPiFrameResize( this.postContentWrapper.current, true );
+		this.stopResize();
 	}
 
 	handleBack = ( event ) => {
