@@ -4,8 +4,8 @@ export const closeBrowser = async function ( { driver } ) {
 	await quitBrowser( driver );
 };
 
-export async function createBrowser( { tempDir } ) {
-	const driver = await startBrowser( { tempDir } );
+export async function createBrowser() {
+	const driver = await startBrowser();
 	await ensureNotLoggedIn( driver );
 	return driver;
 }

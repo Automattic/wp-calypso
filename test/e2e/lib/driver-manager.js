@@ -1,4 +1,3 @@
-import path from 'path';
 import { getChromeVersion } from '@testim/chrome-version';
 import chromedriver from 'chromedriver';
 import config from 'config';
@@ -10,6 +9,7 @@ import firefox from 'selenium-webdriver/firefox';
 import proxy from 'selenium-webdriver/proxy';
 import * as remote from 'selenium-webdriver/remote';
 import * as dataHelper from './data-helper';
+import { generatePath } from './test-utils';
 
 const webDriverImplicitTimeOutMS = 2000;
 const webDriverPageLoadTimeOutMS = 60000;
@@ -111,7 +111,6 @@ export async function startBrowser( {
 	useCustomUA = true,
 	resizeBrowserWindow = true,
 	disableThirdPartyCookies = false,
-	tempDir = null,
 } = {} ) {
 	const screenSize = currentScreenSize();
 	const locale = currentLocale();
@@ -218,10 +217,10 @@ export async function startBrowser( {
 
 				// eslint-disable-next-line no-case-declarations
 				const service = new chrome.ServiceBuilder( chromedriver.path )
-					.loggingTo( path.join( tempDir, 'chromedriver.log' ) )
+					.loggingTo( generatePath( 'chromedriver.log' ) )
 					.build();
 				chrome.setDefaultService( service );
-				options.setChromeLogFile( path.join( tempDir, 'chrome.log' ) );
+				options.setChromeLogFile( generatePath( './chrome.log' ) );
 				options.addArguments( '--enable-logging' );
 
 				builder = new webdriver.Builder();
