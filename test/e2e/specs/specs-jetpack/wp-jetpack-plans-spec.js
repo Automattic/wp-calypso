@@ -1,5 +1,4 @@
 import config from 'config';
-
 import NavBarComponent from '../../lib/components/nav-bar-component.js';
 import SecurePaymentComponent from '../../lib/components/secure-payment-component.js';
 import ShoppingCartWidgetComponent from '../../lib/components/shopping-cart-widget-component.js';

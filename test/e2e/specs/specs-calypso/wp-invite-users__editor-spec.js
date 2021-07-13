@@ -1,7 +1,5 @@
 import assert from 'assert';
-
 import config from 'config';
-
 import NavBarComponent from '../../lib/components/nav-bar-component.js';
 import NoSitesComponent from '../../lib/components/no-sites-component.js';
 import NoticesComponent from '../../lib/components/notices-component.js';

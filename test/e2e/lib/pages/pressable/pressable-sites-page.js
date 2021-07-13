@@ -1,8 +1,6 @@
 import { By } from 'selenium-webdriver';
-
 import AsyncBaseContainer from '../../async-base-container';
 import * as driverHelper from '../../driver-helper';
-
 import PressableSiteSettingsPage from './pressable-site-settings-page';
 
 export default class PressableSitesPage extends AsyncBaseContainer {

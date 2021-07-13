@@ -1,7 +1,5 @@
 import assert from 'assert';
-
 import config from 'config';
-
 import LanguagePickerComponent from '../../lib/components/gutenboarding-language-picker';
 import * as dataHelper from '../../lib/data-helper.js';
 import * as driverHelper from '../../lib/driver-helper.js';

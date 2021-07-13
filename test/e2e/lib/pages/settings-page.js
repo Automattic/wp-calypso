@@ -1,10 +1,8 @@
 import { By } from 'selenium-webdriver';
-
 import AsyncBaseContainer from '../async-base-container';
 import NoticesComponent from '../components/notices-component';
 import SectionNavComponent from '../components/section-nav-component';
 import * as driverHelper from '../driver-helper.js';
-
 import DisconnectSurveyPage from './disconnect-survey-page.js';
 
 export default class SettingsPage extends AsyncBaseContainer {

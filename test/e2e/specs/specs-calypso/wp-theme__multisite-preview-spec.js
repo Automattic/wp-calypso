@@ -1,7 +1,5 @@
 import assert from 'assert';
-
 import config from 'config';
-
 import SidebarComponent from '../../lib/components/sidebar-component';
 import * as dataHelper from '../../lib/data-helper';
 import * as driverManager from '../../lib/driver-manager.js';

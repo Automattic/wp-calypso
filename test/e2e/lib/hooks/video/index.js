@@ -1,5 +1,4 @@
 import config from 'config';
-
 import { buildHooks as buildFramebufferHooks, getFreeDisplay } from './framebuffer';
 import { buildHooks as buildVideoHooks } from './video-recorder';
 

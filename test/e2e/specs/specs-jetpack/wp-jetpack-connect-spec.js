@@ -1,7 +1,5 @@
 import assert from 'assert';
-
 import config from 'config';
-
 import SecurePaymentComponent from '../../lib/components/secure-payment-component';
 import ThankYouModalComponent from '../../lib/components/thank-you-modal-component';
 import * as dataHelper from '../../lib/data-helper';

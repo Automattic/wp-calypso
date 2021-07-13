@@ -1,7 +1,5 @@
 import assert from 'assert';
-
 import config from 'config';
-
 import SecurePaymentComponent from '../../lib/components/secure-payment-component';
 import SidebarComponent from '../../lib/components/sidebar-component.js';
 import * as dataHelper from '../../lib/data-helper';

@@ -1,7 +1,5 @@
 import assert from 'assert';
-
 import config from 'config';
-
 import NavBarComponent from '../../lib/components/nav-bar-component.js';
 import SideBarComponent from '../../lib/components/sidebar-component';
 import * as driverManager from '../../lib/driver-manager.js';

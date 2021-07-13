@@ -9,7 +9,6 @@ import {
 	WebElement,
 	WebElementCondition,
 } from 'selenium-webdriver';
-
 import * as dataHelper from './data-helper';
 import * as driverManager from './driver-manager';
 

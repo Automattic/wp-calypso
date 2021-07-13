@@ -1,5 +1,4 @@
 import config from 'config';
-
 import FindADomainComponent from '../../lib/components/find-a-domain-component.js';
 import SecurePaymentComponent from '../../lib/components/secure-payment-component.js';
 import SidebarComponent from '../../lib/components/sidebar-component.js';

@@ -1,8 +1,6 @@
 import assert from 'assert';
-
 import config from 'config';
 import { By } from 'selenium-webdriver';
-
 import SidebarComponent from '../../lib/components/sidebar-component';
 import SupportSearchComponent from '../../lib/components/support-search-component';
 import * as dataHelper from '../../lib/data-helper';

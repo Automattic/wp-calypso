@@ -1,5 +1,4 @@
 import config from 'config';
-
 import SideBarComponent from '../../lib/components/sidebar-component';
 import * as dataHelper from '../../lib/data-helper';
 import * as driverManager from '../../lib/driver-manager.js';

@@ -1,8 +1,6 @@
 import assert from 'assert';
-
 import config from 'config';
 import { By } from 'selenium-webdriver';
-
 import * as dataHelper from '../../lib/data-helper';
 import LoginPage from '../../lib/pages/login-page';
 import ThemesPage from '../../lib/pages/themes-page';

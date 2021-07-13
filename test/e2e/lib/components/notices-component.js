@@ -1,6 +1,5 @@
 import config from 'config';
 import { By } from 'selenium-webdriver';
-
 import AsyncBaseContainer from '../async-base-container';
 import * as driverHelper from '../driver-helper.js';
 

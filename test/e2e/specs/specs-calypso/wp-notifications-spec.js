@@ -1,7 +1,5 @@
 import assert from 'assert';
-
 import config from 'config';
-
 import NavBarComponent from '../../lib/components/nav-bar-component.js';
 import NotificationsComponent from '../../lib/components/notifications-component.js';
 import * as dataHelper from '../../lib/data-helper';

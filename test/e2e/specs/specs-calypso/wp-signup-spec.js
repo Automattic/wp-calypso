@@ -2,7 +2,6 @@
 import assert from 'assert';
 import config from 'config';
 import { By } from 'selenium-webdriver';
-
 import FindADomainComponent from '../../lib/components/find-a-domain-component.js';
 import NavBarComponent from '../../lib/components/nav-bar-component';
 import NewUserRegistrationUnavailableComponent from '../../lib/components/new-user-domain-registration-unavailable-component';

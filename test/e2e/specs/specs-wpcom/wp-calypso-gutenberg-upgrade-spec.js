@@ -1,8 +1,6 @@
 import assert from 'assert';
-
 import config from 'config';
 import { times } from 'lodash';
-
 import NavBarComponent from '../../lib/components/nav-bar-component.js';
 import * as dataHelper from '../../lib/data-helper.js';
 import * as driverHelper from '../../lib/driver-helper';

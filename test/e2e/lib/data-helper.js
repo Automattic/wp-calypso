@@ -1,5 +1,4 @@
 import fs from 'fs';
-
 import phrase from 'asana-phrase';
 import config from 'config';
 import { difference, map } from 'lodash';

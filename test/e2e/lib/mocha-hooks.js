@@ -1,9 +1,7 @@
 /* eslint-disable mocha/no-top-level-hooks */
 
 import assert from 'assert';
-
 import config from 'config';
-
 import * as driverManager from './driver-manager';
 
 const afterHookTimeoutMS = config.get( 'afterHookTimeoutMS' );

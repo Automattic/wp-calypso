@@ -1,5 +1,4 @@
 import config from 'config';
-
 import LoggedOutMasterbarComponent from '../../lib/components/logged-out-masterbar-component';
 import NavBarComponent from '../../lib/components/nav-bar-component.js';
 import * as dataHelper from '../../lib/data-helper';

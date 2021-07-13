@@ -1,5 +1,4 @@
 import { By } from 'selenium-webdriver';
-
 import ViewPagePage from '../../lib/pages/view-page-page.js';
 import AsyncBaseContainer from '../async-base-container';
 import * as driverHelper from '../driver-helper.js';

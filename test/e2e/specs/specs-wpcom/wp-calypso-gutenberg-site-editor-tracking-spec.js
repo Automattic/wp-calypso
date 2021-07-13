@@ -1,8 +1,6 @@
 import assert from 'assert';
-
 import config from 'config';
 import { By, Key } from 'selenium-webdriver';
-
 import SidebarComponent from '../../lib/components/sidebar-component.js';
 import SiteEditorComponent from '../../lib/components/site-editor-component.js';
 import * as dataHelper from '../../lib/data-helper.js';
