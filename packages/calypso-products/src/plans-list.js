@@ -2,7 +2,6 @@ import { isEnabled } from '@automattic/calypso-config';
 import i18n, { translate } from 'i18n-calypso';
 import React from 'react';
 
-
 import {
 	FEATURE_BACKUP_DAILY_V2,
 	FEATURE_13GB_STORAGE,

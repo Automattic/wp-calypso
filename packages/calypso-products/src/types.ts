@@ -1,4 +1,3 @@
-
 import type { TranslateResult } from 'i18n-calypso';
 
 import type {
