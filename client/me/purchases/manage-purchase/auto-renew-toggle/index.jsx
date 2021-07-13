@@ -52,7 +52,6 @@ class AutoRenewToggle extends Component {
 	state = {
 		showAutoRenewDisablingDialog: false,
 		showPaymentMethodDialog: false,
-		isTogglingToward: null,
 		isRequesting: false,
 	};
 
@@ -141,7 +140,6 @@ class AutoRenewToggle extends Component {
 		}
 
 		this.setState( {
-			isTogglingToward,
 			isRequesting: true,
 		} );
 

@@ -66,7 +66,6 @@ class AboutStep extends Component {
 			verticalParentId: props.verticalParentId,
 			siteTopicValue: props.siteTopic,
 			userExperience: props.userExperience,
-			pendingStoreClick: false,
 			hasPrepopulatedVertical,
 		};
 	}
