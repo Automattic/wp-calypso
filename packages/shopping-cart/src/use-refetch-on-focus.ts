@@ -26,12 +26,24 @@ export default function useRefetchOnFocus(
 	refetch: () => void
 ): void {
 	useEffect( () => {
-		if ( ! options.refetchOnWindowFocus || cacheStatus !== 'valid' ) {
+		if ( ! options.refetchOnWindowFocus ) {
+			return;
+		}
+		// Refresh only if the cart is not pending any other operations
+		if ( cacheStatus !== 'valid' && cacheStatus !== 'error' ) {
 			return;
 		}
 
 		function isFocused(): boolean {
 			return [ undefined, 'visible', 'prerender' ].includes( document.visibilityState );
+		}
+
+		function isOffline(): boolean {
+			try {
+				return ! window.navigator.onLine;
+			} catch {
+				return true;
+			}
 		}
 
 		function wasLastFetchRecent(): boolean {
@@ -51,6 +63,10 @@ export default function useRefetchOnFocus(
 				debug( 'last fetch was quite recent; ignoring' );
 				return;
 			}
+			if ( isOffline() ) {
+				debug( 'network is offline; ignoring' );
+				return;
+			}
 
 			debug( 'window was refocused; refetching' );
 			refetch();
@@ -58,10 +74,12 @@ export default function useRefetchOnFocus(
 
 		window.addEventListener( 'visibilitychange', handleFocusChange );
 		window.addEventListener( 'focus', handleFocusChange );
+		window.addEventListener( 'online', handleFocusChange );
 
 		return () => {
 			window.removeEventListener( 'visibilitychange', handleFocusChange );
 			window.removeEventListener( 'focus', handleFocusChange );
+			window.removeEventListener( 'online', handleFocusChange );
 		};
 	}, [ options.refetchOnWindowFocus, lastCart.cart_generated_at_timestamp, refetch, cacheStatus ] );
 }
