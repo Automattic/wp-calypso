@@ -12,7 +12,8 @@ module.exports = [
 		accelerator: 'Alt+CmdOrCtrl+I',
 		click: function () {
 			const window = BrowserWindow.getFocusedWindow();
-			window.openDevTools( { mode: 'undocked' } );
+			const view = window.getBrowserView();
+			view.webContents.openDevTools( { mode: 'right' } );
 		},
 	},
 ];
