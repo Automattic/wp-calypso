@@ -15,6 +15,7 @@ import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { getTitanProductName } from 'calypso/lib/titan';
 import { ListAllActions } from 'calypso/my-sites/domains/domain-management/list/utils';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import withDimensions from 'calypso/lib/with-dimensions';
 
 /**
  * Style dependencies
@@ -39,7 +40,7 @@ class ListHeader extends React.PureComponent {
 		isChecked: false,
 	};
 
-	elementsData = {
+	headerElements = {
 		transferLock: {
 			ref: React.createRef(),
 			getVisibility: () => this.state?.transferLockTooltipVisible,
@@ -76,110 +77,86 @@ class ListHeader extends React.PureComponent {
 		}
 	};
 
-	renderDefaultHeaderContent() {
+	renderHeaderItems() {
 		const { translate } = this.props;
+		const items = [
+			{
+				className: 'list__domain-transfer-lock',
+				name: 'transferLock',
+				title: translate( 'Transfer lock' ),
+				popoverText: translate(
+					'When enabled, a transfer lock prevents your domain from being transferred to another ' +
+						'provider. Sometimes the transfer lock cannot be disabled, such as when a domain ' +
+						'is recently registered.'
+				),
+			},
 
+			{
+				className: 'list__domain-privacy',
+				name: 'privacy',
+				title: translate( 'Privacy' ),
+				popoverText: translate(
+					'Enabling domain privacy protection hides your contact information from public view. ' +
+						'For some domain extensions, such as some country specific domain extensions, ' +
+						'privacy protection is not available.'
+				),
+			},
+
+			{
+				className: 'list__domain-auto-renew',
+				name: 'autoRenew',
+				title: translate( 'Auto-renew' ),
+				popoverText: translate(
+					'When auto-renew is enabled, we will automatically attempt to renew your domain 30 days ' +
+						'before it expires, to ensure you do not lose access to your domain.'
+				),
+			},
+
+			{
+				className: 'list__domain-email',
+				name: 'email',
+				title: translate( 'Email' ),
+				popoverText: translate(
+					'You can receive email using your custom domain by purchasing %(titanMailService)s or %(googleMailService)s, or by ' +
+						'setting up email forwarding. Note that email forwarding requires a plan subscription.',
+					{
+						args: {
+							googleMailService: getGoogleMailServiceFamily(),
+							titanMailService: getTitanProductName(),
+						},
+						comment:
+							'%(googleMailService)s can be either "G Suite" or "Google Workspace"; %(titanMailService)s will be "Professional Email" translated',
+					}
+				),
+			},
+		];
+
+		return items.map( ( item ) => (
+			<div
+				className={ item.className }
+				onMouseEnter={ () => this.enableTooltip( item.name ) }
+				onMouseLeave={ () => this.disableTooltip( item.name ) }
+				ref={ this.headerElements[ item.name ].ref }
+			>
+				<span>{ item.title }</span>
+				<InfoPopover iconSize={ 18 }>{ item.popoverText }</InfoPopover>
+				<Tooltip
+					context={ this.headerElements[ item.name ].ref.current }
+					isVisible={ this.headerElements[ item.name ].getVisibility() }
+					position="top"
+				>
+					{ item.title }
+				</Tooltip>
+			</div>
+		) );
+	}
+
+	renderDefaultHeaderContent() {
 		return (
 			<>
 				<div className="list__domain-link" />
-				<div
-					className="list__domain-transfer-lock"
-					onMouseEnter={ () => this.enableTooltip( 'transferLock' ) }
-					onMouseLeave={ () => this.disableTooltip( 'transferLock' ) }
-					ref={ this.elementsData.transferLock.ref }
-				>
-					<span>{ translate( 'Transfer lock' ) }</span>
-					<InfoPopover iconSize={ 18 }>
-						{ translate(
-							'When enabled, a transfer lock prevents your domain from being transferred to another ' +
-								'provider. Sometimes the transfer lock cannot be disabled, such as when a domain ' +
-								'is recently registered.'
-						) }
-					</InfoPopover>
-				</div>
-				<div
-					className="list__domain-privacy"
-					onMouseEnter={ () => this.enableTooltip( 'privacy' ) }
-					onMouseLeave={ () => this.disableTooltip( 'privacy' ) }
-					ref={ this.elementsData.privacy.ref }
-				>
-					<span>{ translate( 'Privacy' ) }</span>
-					<InfoPopover iconSize={ 18 }>
-						{ translate(
-							'Enabling domain privacy protection hides your contact information from public view. ' +
-								'For some domain extensions, such as some country specific domain extensions, ' +
-								'privacy protection is not available.'
-						) }
-					</InfoPopover>
-				</div>
-				<div
-					className="list__domain-auto-renew"
-					onMouseEnter={ () => this.enableTooltip( 'autoRenew' ) }
-					onMouseLeave={ () => this.disableTooltip( 'autoRenew' ) }
-					ref={ this.elementsData.autoRenew.ref }
-				>
-					<span>{ translate( 'Auto-renew' ) }</span>
-					<InfoPopover iconSize={ 18 }>
-						{ translate(
-							'When auto-renew is enabled, we will automatically attempt to renew your domain 30 days ' +
-								'before it expires, to ensure you do not lose access to your domain.'
-						) }
-					</InfoPopover>
-				</div>
-				<div
-					className="list__domain-email"
-					onMouseEnter={ () => this.enableTooltip( 'email' ) }
-					onMouseLeave={ () => this.disableTooltip( 'email' ) }
-					ref={ this.elementsData.email.ref }
-				>
-					<span>{ translate( 'Email' ) }</span>
-					<InfoPopover iconSize={ 18 }>
-						{ translate(
-							'You can receive email using your custom domain by purchasing %(titanMailService)s or %(googleMailService)s, or by ' +
-								'setting up email forwarding. Note that email forwarding requires a plan subscription.',
-							{
-								args: {
-									googleMailService: getGoogleMailServiceFamily(),
-									titanMailService: getTitanProductName(),
-								},
-								comment:
-									'%(googleMailService)s can be either "G Suite" or "Google Workspace"; %(titanMailService)s will be "Professional Email" translated',
-							}
-						) }
-					</InfoPopover>
-				</div>
+				{ this.renderHeaderItems() }
 				<div className="list__domain-options"></div>
-
-				<>
-					<Tooltip
-						context={ this.elementsData.transferLock.ref.current }
-						isVisible={ this.elementsData.transferLock.getVisibility() }
-						position="top"
-					>
-						{ translate( 'Transfer lock' ) }
-					</Tooltip>
-					<Tooltip
-						context={ this.elementsData.privacy.ref.current }
-						isVisible={ this.elementsData.privacy.getVisibility() }
-						position="top"
-					>
-						{ translate( 'Privacy' ) }
-					</Tooltip>
-					<Tooltip
-						context={ this.elementsData.autoRenew.ref.current }
-						isVisible={ this.elementsData.autoRenew.getVisibility() }
-						position="top"
-					>
-						{ translate( 'Auto-renew' ) }
-					</Tooltip>
-					<Tooltip
-						context={ this.elementsData.email.ref.current }
-						isVisible={ this.elementsData.email.getVisibility() }
-						position="top"
-					>
-						{ translate( 'Email' ) }
-					</Tooltip>
-				</>
 			</>
 		);
 	}
