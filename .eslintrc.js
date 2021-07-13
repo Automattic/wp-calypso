@@ -213,6 +213,7 @@ module.exports = {
 						alphabetize: {
 							order: 'asc',
 						},
+						groups: [ 'builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'type' ],
 					},
 				],
 			},
@@ -246,6 +247,7 @@ module.exports = {
 		jsdoc: {
 			mode: 'typescript',
 		},
+		'import/internal-regex': '^calypso/',
 	},
 	rules: {
 		// REST API objects include underscores
