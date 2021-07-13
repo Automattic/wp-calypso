@@ -169,4 +169,8 @@ body.is-section-home {
 	li:last-child {
 		order: 999;
 	}
+
+	.dot-pager__control-current {
+		background-color: var( --studio-gray-80 );
+	}
 }
