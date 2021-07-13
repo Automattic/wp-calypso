@@ -74,10 +74,12 @@ export default function useRefetchOnFocus(
 
 		window.addEventListener( 'visibilitychange', handleFocusChange );
 		window.addEventListener( 'focus', handleFocusChange );
+		window.addEventListener( 'online', handleFocusChange );
 
 		return () => {
 			window.removeEventListener( 'visibilitychange', handleFocusChange );
 			window.removeEventListener( 'focus', handleFocusChange );
+			window.removeEventListener( 'online', handleFocusChange );
 		};
 	}, [ options.refetchOnWindowFocus, lastCart.cart_generated_at_timestamp, refetch, cacheStatus ] );
 }
