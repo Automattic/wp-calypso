@@ -1,6 +1,5 @@
 import { select } from '@wordpress/data-controls';
 import { stringify } from 'qs';
-import type { WpcomClientCredentials } from '../shared-types';
 import {
 	wpcomRequest,
 	fetchAndParse,
@@ -10,6 +9,8 @@ import {
 } from '../wpcom-request-controls';
 import { STORE_KEY, POLL_APP_PUSH_INTERVAL_SECONDS } from './constants';
 import { remoteLoginUser } from './controls';
+import { getNextTaskId } from './utils';
+import type { WpcomClientCredentials } from '../shared-types';
 import type {
 	AuthOptionsSuccessResponse,
 	AuthOptionsErrorResponse,
@@ -21,7 +22,6 @@ import type {
 	PushNotificationSentData,
 	LoginCompleteData,
 } from './types';
-import { getNextTaskId } from './utils';
 
 export interface ActionsConfig extends WpcomClientCredentials {
 	/**

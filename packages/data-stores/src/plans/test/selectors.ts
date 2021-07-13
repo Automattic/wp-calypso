@@ -1,9 +1,9 @@
 import * as deprecate from '@wordpress/deprecated';
 import { TIMELESS_PLAN_ECOMMERCE, TIMELESS_PLAN_FREE, FREE_PLAN_PRODUCT_ID } from '../constants';
 import * as MockData from '../mock';
-import type { State } from '../reducer';
 import * as Selectors from '../selectors';
 import { buildPlanFeaturesDict } from '../test-utils';
+import type { State } from '../reducer';
 
 // Test data
 const MOCK_LOCALE_1 = 'test-locale-1';

@@ -9,8 +9,8 @@ import {
 	fetchDomainSuggestions,
 	receiveDomainAvailability,
 } from './actions';
-import type { DomainSuggestion, DomainSuggestionQuery } from './types';
 import { getFormattedPrice } from './utils';
+import type { DomainSuggestion, DomainSuggestionQuery } from './types';
 
 function getAvailabilityURL( domainName: string ) {
 	return `https://public-api.wordpress.com/rest/v1.3/domains/${ encodeURIComponent(

@@ -1,5 +1,6 @@
-import type { WpcomClientCredentials } from '../shared-types';
 import { wpcomRequest } from '../wpcom-request-controls';
+import { SiteLaunchError } from './types';
+import type { WpcomClientCredentials } from '../shared-types';
 import type {
 	CreateSiteParams,
 	NewSiteErrorResponse,
@@ -10,7 +11,6 @@ import type {
 	Domain,
 	SiteLaunchError as SiteLaunchErrorType,
 } from './types';
-import { SiteLaunchError } from './types';
 
 export function createActions( clientCreds: WpcomClientCredentials ) {
 	const fetchSite = () => ( {

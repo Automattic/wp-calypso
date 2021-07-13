@@ -1,9 +1,9 @@
 import { combineReducers } from '@wordpress/data';
-import type { Reducer } from 'redux';
-import type { Action } from './actions';
 import { DataStatus } from './constants';
-import type { DomainCategory, DomainSuggestionState, DomainAvailabilities } from './types';
 import { stringifyDomainQueryObject } from './utils';
+import type { Action } from './actions';
+import type { DomainCategory, DomainSuggestionState, DomainAvailabilities } from './types';
+import type { Reducer } from 'redux';
 
 const initialDomainSuggestionState: DomainSuggestionState = {
 	state: DataStatus.Uninitialized,

@@ -1,8 +1,8 @@
 import { combineReducers } from '@wordpress/data';
-import type { Reducer } from 'redux';
+import { getNextTaskId } from './utils';
 import type { Action } from './actions';
 import type { LoginFlowState } from './types';
-import { getNextTaskId } from './utils';
+import type { Reducer } from 'redux';
 
 export const loginFlowState: Reducer< LoginFlowState, Action > = (
 	state = 'ENTER_USERNAME_OR_EMAIL',

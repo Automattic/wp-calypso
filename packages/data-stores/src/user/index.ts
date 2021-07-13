@@ -1,12 +1,12 @@
 import { registerStore } from '@wordpress/data';
-import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
-import type { WpcomClientCredentials } from '../shared-types';
 import { controls } from '../wpcom-request-controls';
 import { createActions } from './actions';
 import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
 import { createResolvers } from './resolvers';
 import * as selectors from './selectors';
+import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
+import type { WpcomClientCredentials } from '../shared-types';
 
 export * from './types';
 export type { State };

@@ -1,7 +1,7 @@
 import { select } from '@wordpress/data';
 import { STORE_KEY } from './constants';
-import type { State } from './reducer';
 import { SiteLaunchStatus } from './types';
+import type { State } from './reducer';
 
 export const getState = ( state: State ) => state;
 

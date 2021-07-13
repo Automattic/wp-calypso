@@ -1,11 +1,11 @@
 import { registerStore } from '@wordpress/data';
 import { controls } from '@wordpress/data-controls';
-import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
 import * as actions from './actions';
 import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
 import * as resolvers from './resolvers';
 import * as selectors from './selectors';
+import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
 
 export type { Vertical } from './types';
 export type { State };
