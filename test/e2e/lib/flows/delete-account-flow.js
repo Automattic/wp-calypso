@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
-import CloseAccountPage from '../pages/account/close-account-page';
 import LoggedOutMasterbarComponent from '../components/logged-out-masterbar-component';
 import AccountSettingsPage from '../pages/account/account-settings-page';
+import CloseAccountPage from '../pages/account/close-account-page';
 import * as SlackNotifier from '../slack-notifier';
 
 export default class DeleteAccountFlow {

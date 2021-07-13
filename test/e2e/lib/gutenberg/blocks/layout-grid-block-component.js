@@ -1,13 +1,8 @@
-/**
- * External dependencies
- */
 import { By } from 'selenium-webdriver';
 
-/**
- * Internal dependencies
- */
-import GutenbergBlockComponent from './gutenberg-block-component';
 import * as driverHelper from '../../driver-helper';
+
+import GutenbergBlockComponent from './gutenberg-block-component';
 
 class LayoutGridBlockComponent extends GutenbergBlockComponent {
 	static blockTitle = 'Layout Grid';

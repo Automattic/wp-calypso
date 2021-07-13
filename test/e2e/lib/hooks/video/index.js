@@ -1,13 +1,7 @@
-/**
- * External dependencies
- */
 import config from 'config';
 
-/**
- * Internal dependencies
- */
-import { buildHooks as buildVideoHooks } from './video-recorder';
 import { buildHooks as buildFramebufferHooks, getFreeDisplay } from './framebuffer';
+import { buildHooks as buildVideoHooks } from './video-recorder';
 
 export const isVideoEnabled = () => {
 	const video = config.has( 'useTestVideo' )

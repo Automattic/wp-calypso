@@ -1,13 +1,10 @@
-/**
- * Internal dependencies
- */
-import ManagePurchasePage from '../pages/manage-purchase-page';
-import CancelPurchasePage from '../pages/cancel-purchase-page';
-import * as SlackNotifier from '../slack-notifier';
 import NavBarComponent from '../components/nav-bar-component';
 import NoticesComponent from '../components/notices-component';
+import CancelPurchasePage from '../pages/cancel-purchase-page';
+import ManagePurchasePage from '../pages/manage-purchase-page';
 import ProfilePage from '../pages/profile-page';
 import PurchasesPage from '../pages/purchases-page';
+import * as SlackNotifier from '../slack-notifier';
 
 export default class DeletePlanFlow {
 	constructor( driver ) {

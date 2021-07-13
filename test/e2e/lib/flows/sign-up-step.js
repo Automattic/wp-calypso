@@ -1,13 +1,7 @@
-/**
- * External dependencies
- */
 //import assert from 'assert';
 
-/**
- * Internal dependencies
- */
-import SignupProcessingPage from '../pages/signup/signup-processing-page';
 import FindADomainComponent from '../components/find-a-domain-component';
+import SignupProcessingPage from '../pages/signup/signup-processing-page';
 
 export default class SignUpStep {
 	constructor( driver ) {
