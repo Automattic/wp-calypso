@@ -8,7 +8,6 @@ import { LaunchSequence, LaunchStep } from './data';
 import type { State } from './reducer';
 import type { LaunchStepType } from './types';
 
-
 export const getLaunchSequence = (): typeof LaunchSequence => LaunchSequence;
 export const getLaunchStep = (): typeof LaunchStep => LaunchStep;
 

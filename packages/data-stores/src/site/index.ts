@@ -10,7 +10,6 @@ import reducer, { State } from './reducer';
 import * as resolvers from './resolvers';
 import * as selectors from './selectors';
 
-
 export * from './types';
 export type { State };
 

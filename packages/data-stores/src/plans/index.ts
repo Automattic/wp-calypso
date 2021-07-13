@@ -9,7 +9,6 @@ import reducer, { State } from './reducer';
 import * as resolvers from './resolvers';
 import * as selectors from './selectors';
 
-
 export type { State };
 export type {
 	Plan,

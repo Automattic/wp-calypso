@@ -7,7 +7,6 @@ import type { ReturnOrGeneratorYieldUnion } from '../mapped-types';
 import { PLANS_STORE } from './constants';
 import type { LaunchStepType } from './types';
 
-
 export const setSidebarFullscreen = () =>
 	( {
 		type: 'SET_SIDEBAR_FULLSCREEN',

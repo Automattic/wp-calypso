@@ -11,7 +11,6 @@ import { controls } from './controls';
 import reducer, { State } from './reducer';
 import * as selectors from './selectors';
 
-
 export * from './types';
 export type { State };
 

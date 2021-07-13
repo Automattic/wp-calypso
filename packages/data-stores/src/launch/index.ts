@@ -9,7 +9,6 @@ import persistOptions from './persist';
 import reducer, { State } from './reducer';
 import * as selectors from './selectors';
 
-
 export type { State };
 export type { LaunchStepType } from './types';
 export { STORE_KEY };

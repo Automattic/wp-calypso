@@ -4,7 +4,6 @@ import { plansOrder } from '../plans/constants';
 import type { State } from './reducer';
 import type { FeatureId } from './types';
 
-
 export const getAllFeatures = ( state: State ) => state;
 
 export const getRecommendedPlanSlug = (
