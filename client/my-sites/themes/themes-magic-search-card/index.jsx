@@ -335,6 +335,31 @@ class ThemesMagicSearchCard extends React.Component {
 						/>
 					</div>
 				) }
+				{ config.isEnabled( 'theme/showcase-revamp' ) && (
+					<div>
+						<Button
+							onClick={ this.togglePopover }
+							className="components-button themes-magic-search-card__advanced-toggle"
+							ref={ ( ref ) => ( this.popoverButtonRef = ref ) }
+						>
+							<Gridicon icon="cog" size={ 18 } />
+							{ translate( 'Filters' ) }
+						</Button>
+						<Popover
+							context={ this.popoverButtonRef }
+							isVisible={ isPopoverVisible }
+							onClose={ this.closePopover }
+							position="bottom"
+						>
+							<MagicSearchWelcome
+								ref={ this.setSuggestionsRefs( 'welcome' ) }
+								taxonomies={ filtersKeys }
+								topSearches={ [] }
+								suggestionsCallback={ this.welcomeBarAddText }
+							/>
+						</Popover>
+					</div>
+				) }
 			</Search>
 		);
 
@@ -356,31 +381,6 @@ class ThemesMagicSearchCard extends React.Component {
 						onClick={ this.handleClickInside }
 					>
 						{ searchField }
-						{ config.isEnabled( 'theme/showcase-revamp' ) && (
-							<div>
-								<Button
-									onClick={ this.togglePopover }
-									className="components-button themes-magic-search-card__advanced-toggle"
-									ref={ ( ref ) => ( this.popoverButtonRef = ref ) }
-								>
-									<Gridicon icon="cog" size={ 18 } />
-									{ translate( 'Filters' ) }
-								</Button>
-								<Popover
-									context={ this.popoverButtonRef }
-									isVisible={ isPopoverVisible }
-									onClose={ this.closePopover }
-									position="bottom"
-								>
-									<MagicSearchWelcome
-										ref={ this.setSuggestionsRefs( 'welcome' ) }
-										taxonomies={ filtersKeys }
-										topSearches={ [] }
-										suggestionsCallback={ this.welcomeBarAddText }
-									/>
-								</Popover>
-							</div>
-						) }
 						{ isPremiumThemesEnabled && showTierThemesControl && (
 							<SimplifiedSegmentedControl
 								key={ this.props.tier }
