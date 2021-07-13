@@ -290,6 +290,15 @@ class ThemesMagicSearchCard extends React.Component {
 			...difference( Object.keys( filters ), preferredOrderOfTaxonomies ),
 		];
 
+		// Check if we want to render suggestions or welcome banner
+		const renderSuggestions =
+			this.state.editedSearchElement !== '' && this.state.editedSearchElement.length > 2;
+
+		let isWelcomeBarVisible = ! renderSuggestions;
+		if ( config.isEnabled( 'theme/showcase-revamp' ) ) {
+			isWelcomeBarVisible = isWelcomeBarEnabled;
+		}
+
 		const searchField = (
 			<Search
 				onSearch={ this.props.onSearch }
@@ -307,7 +316,16 @@ class ThemesMagicSearchCard extends React.Component {
 				overlayStyling={ this.searchTokens }
 				fitsContainer={ this.props.isBreakpointActive && this.state.searchIsOpen }
 				hideClose={ true }
-			/>
+			>
+				{ renderSuggestions && (
+					<KeyedSuggestions
+						ref={ this.setSuggestionsRefs( 'suggestions' ) }
+						terms={ this.props.filters }
+						input={ this.state.editedSearchElement }
+						suggest={ this.suggest }
+					/>
+				) }
+			</Search>
 		);
 
 		const magicSearchClass = classNames( 'themes-magic-search', {
@@ -317,15 +335,6 @@ class ThemesMagicSearchCard extends React.Component {
 		const themesSearchCardClass = classNames( 'themes-magic-search-card', {
 			'has-highlight': this.state.searchIsOpen,
 		} );
-
-		// Check if we want to render suggestions or welcome banner
-		const renderSuggestions =
-			this.state.editedSearchElement !== '' && this.state.editedSearchElement.length > 2;
-
-		let isWelcomeBarVisible = ! renderSuggestions;
-		if ( config.isEnabled( 'theme/showcase-revamp' ) ) {
-			isWelcomeBarVisible = isWelcomeBarEnabled;
-		}
 
 		return (
 			<div className={ magicSearchClass }>
@@ -376,14 +385,6 @@ class ThemesMagicSearchCard extends React.Component {
 					</div>
 				</StickyPanel>
 				<div role="presentation" onClick={ this.handleClickInside }>
-					{ renderSuggestions && (
-						<KeyedSuggestions
-							ref={ this.setSuggestionsRefs( 'suggestions' ) }
-							terms={ this.props.filters }
-							input={ this.state.editedSearchElement }
-							suggest={ this.suggest }
-						/>
-					) }
 					{ isWelcomeBarVisible && (
 						<MagicSearchWelcome
 							ref={ this.setSuggestionsRefs( 'welcome' ) }
