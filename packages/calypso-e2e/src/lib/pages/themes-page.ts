@@ -80,7 +80,10 @@ export class ThemesPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async select( name: string ): Promise< void > {
+		// Build selector that will select themes on the page that match the name but excludes
+		// currently activated themes.
 		const selector = `${ selectors.items }:has-text("${ name }")${ selectors.excludeActiveTheme }`;
+		// Get number of themes being shown on page.
 		const numThemes = await this.page.$$( selector ).then( ( themes ) => themes.length );
 		// If the themes matching the selector is 1, we know there is an exact match.
 		// Otherwise, select a random theme matching the requirement.
@@ -89,6 +92,8 @@ export class ThemesPage extends BaseContainer {
 			`:nth-match(${ selector }, ${ index })`
 		);
 
+		// Hover over the chosen theme to expose the `INFO` button, then wait for the animation to
+		// complete.
 		await selectedTheme.hover();
 		await selectedTheme.waitForElementState( 'stable' );
 
