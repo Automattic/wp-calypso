@@ -406,6 +406,14 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			await deleteTemplatesAndTemplateParts( this.driver );
 		} );
 
+		it( 'should skip tracking "wpcom_block_editor_nav_sidebar_item_edit" when editor just loaded (no query params)', async function () {
+			const eventsStack = await getEventsStack( this.driver );
+			const isEditEventNotTriggered = ! eventsStack.find(
+				( [ eventName ] ) => eventName === 'wpcom_block_editor_nav_sidebar_item_edit'
+			);
+			assert( isEditEventNotTriggered );
+		} );
+
 		createGeneralTests( { it, editorType: 'site' } );
 
 		describe( 'Tracks "wpcom_block_editor_global_styles_tab_selected', function () {
@@ -1017,6 +1025,21 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				const [ , editEventData ] = editEvents[ 0 ];
 				assert.strictEqual( editEventData.item_type, 'taxonomy_category' );
 				assert.strictEqual( editEventData.item_slug, 'uncategorized' );
+			} );
+
+			it( 'should skip tracking "wpcom_block_editor_nav_sidebar_item_edit" when editor just loaded (with query params)', async function () {
+				await this.driver.navigate().refresh();
+				await driverHelper.acceptAlertIfPresent( this.driver );
+
+				const editor = await SiteEditorComponent.Expect( this.driver );
+				await editor.waitForTemplateToLoad();
+				await editor.waitForTemplatePartsToLoad();
+
+				const eventsStack = await getEventsStack( this.driver );
+				const isEditEventNotTriggered = ! eventsStack.find(
+					( [ eventName ] ) => eventName === 'wpcom_block_editor_nav_sidebar_item_edit'
+				);
+				assert( isEditEventNotTriggered );
 			} );
 		} );
 

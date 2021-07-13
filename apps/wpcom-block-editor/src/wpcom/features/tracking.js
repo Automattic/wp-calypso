@@ -445,7 +445,20 @@ const trackSiteEditorCreateTemplate = ( { slug } ) => {
 	} );
 };
 
+/**
+ * Flag used to track the first call of tracking
+ * `wpcom_block_editor_nav_sidebar_item_edit`. When the site editor is loaded
+ * with query params specified to load a specific template/template part, then
+ * `setTemplate`, `setTemplatePart` or `setPage` is called editor load. We don't
+ * want to track the first call so we use this flag to track it.
+ */
+let isSiteEditorFirstSidebarItemEditCalled = false;
 const trackSiteEditorChangeTemplate = ( id, slug ) => {
+	if ( ! isSiteEditorFirstSidebarItemEditCalled ) {
+		isSiteEditorFirstSidebarItemEditCalled = true;
+		return;
+	}
+
 	tracksRecordEvent( 'wpcom_block_editor_nav_sidebar_item_edit', {
 		item_type: 'template',
 		item_id: id,
@@ -454,6 +467,11 @@ const trackSiteEditorChangeTemplate = ( id, slug ) => {
 };
 
 const trackSiteEditorChangeTemplatePart = ( id ) => {
+	if ( ! isSiteEditorFirstSidebarItemEditCalled ) {
+		isSiteEditorFirstSidebarItemEditCalled = true;
+		return;
+	}
+
 	tracksRecordEvent( 'wpcom_block_editor_nav_sidebar_item_edit', {
 		item_type: 'template_part',
 		item_id: id,
@@ -472,6 +490,11 @@ const trackSiteEditorChangeTemplatePart = ( id ) => {
 let lastTrackSiteEditorChangeContentCall = 0;
 const trackSiteEditorChangeContent = ( { type, slug } ) => {
 	if ( Date.now() - lastTrackSiteEditorChangeContentCall < 50 ) {
+		return;
+	}
+
+	if ( ! isSiteEditorFirstSidebarItemEditCalled ) {
+		isSiteEditorFirstSidebarItemEditCalled = true;
 		return;
 	}
 
@@ -497,6 +520,19 @@ const trackSiteEditorChangeContent = ( { type, slug } ) => {
  * @param {object} updates The edits made to the record.
  */
 const trackEditEntityRecord = ( kind, type, id, updates ) => {
+	// When the site editor is loaded without query params specified to which
+	// template or template part to load, then the `setPage`, `setTemplate` and
+	// `setTemplatePart` call is skipped. In this case we want to make sure the
+	// first call is tracked.
+	if (
+		! isSiteEditorFirstSidebarItemEditCalled &&
+		kind === 'postType' &&
+		( type === 'wp_template' || type === 'wp_template_part' )
+	) {
+		isSiteEditorFirstSidebarItemEditCalled = true;
+		return;
+	}
+
 	if ( kind === 'postType' && type === 'wp_global_styles' ) {
 		const editedEntity = select( 'core' ).getEditedEntityRecord( kind, type, id );
 		const entityContent = JSON.parse( editedEntity?.content );
