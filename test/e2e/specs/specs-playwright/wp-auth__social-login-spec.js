@@ -1,7 +1,7 @@
 import { DataHelper, LoginFlow } from '@automattic/calypso-e2e';
 
 describe( DataHelper.createSuiteTitle( 'Social Login' ), function () {
-	describe( 'Google', function () {
+	describe.skip( 'Google', function () {
 		let popupPage;
 
 		it( 'Click to continue with Google', async function () {
