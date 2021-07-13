@@ -12,17 +12,15 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card, Dialog } from '@automattic/components';
-import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import FormLabel from 'calypso/components/forms/form-label';
 import {
 	domainManagementContactsPrivacy,
 	domainManagementEdit,
 } from 'calypso/my-sites/domains/paths';
 import wp from 'calypso/lib/wp';
 import { errorNotice, successNotice, infoNotice } from 'calypso/state/notices/actions';
-import { UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES } from 'calypso/lib/url/support';
 import { registrar as registrarNames } from 'calypso/lib/domains/constants';
 import DesignatedAgentNotice from 'calypso/my-sites/domains/domain-management/components/designated-agent-notice';
+import TransferLockOptOutForm from 'calypso/my-sites/domains/domain-management/components/transfer-lock-opt-out-form';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import ContactDetailsFormFields from 'calypso/components/domains/contact-details-form-fields';
 import { requestWhois, saveWhois } from 'calypso/state/domains/management/actions';
@@ -149,32 +147,16 @@ class EditContactInfoFormCard extends React.Component {
 	renderTransferLockOptOut() {
 		const { domainRegistrationAgreementUrl, translate } = this.props;
 		return (
-			<div>
-				<FormLabel>
-					<FormCheckbox
-						name="transfer-lock-opt-out"
-						disabled={ this.state.formSubmitting }
-						onChange={ this.onTransferLockOptOutChange }
-					/>
-					<span>
-						{ translate( 'Opt-out of the {{link}}60-day transfer lock{{/link}}.', {
-							components: {
-								link: (
-									<a
-										href={ UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES }
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							},
-						} ) }
-					</span>
-				</FormLabel>
+			<>
+				<TransferLockOptOutForm
+					disabled={ this.state.formSubmitting }
+					onChange={ this.onTransferLockOptOutChange }
+				/>
 				<DesignatedAgentNotice
 					domainRegistrationAgreementUrl={ domainRegistrationAgreementUrl }
 					saveButtonLabel={ translate( 'Save contact info' ) }
 				/>
-			</div>
+			</>
 		);
 	}
 
