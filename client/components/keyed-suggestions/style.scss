@@ -1,3 +1,12 @@
+.keyed-suggestions {
+	position: absolute;
+	z-index: 9000;
+	top: 37px;
+	left: 0;
+	width: 100%;
+	margin-left: -1px;
+}
+
 .keyed-suggestions__suggestions {
 	display: flex;
 	flex-direction: column;
