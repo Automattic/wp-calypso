@@ -13,6 +13,12 @@
 		0 1px 2px var( --color-neutral-0 );
 	transition: all 0.15s ease-in-out;
 
+	@include breakpoint-deprecated( '<660px' ) {
+		flex-wrap: wrap;
+		justify-content: center;
+		padding-top: 10px;
+	}
+
 	&.has-highlight {
 		box-shadow: 0 0 0 1px var( --color-primary ), 0 0 0 4px var( --color-primary-light );
 		position: relative;

@@ -309,7 +309,6 @@ class ThemesMagicSearchCard extends React.Component {
 				onKeyDown={ this.onKeyDown }
 				onClick={ this.onClick }
 				overlayStyling={ this.searchTokens }
-				fitsContainer={ this.props.isBreakpointActive && this.state.searchIsOpen }
 				hideClose={ true }
 			>
 				{ renderSuggestions && (
