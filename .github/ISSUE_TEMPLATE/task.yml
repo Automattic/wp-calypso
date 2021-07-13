@@ -1,0 +1,16 @@
+name: Task
+description: Create a task
+title: ""
+labels: [[Type] Task]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Details
+      description: Elaborate on what the task should be.
+    validations:
+      required: true
+  - type: textarea
+    id: related
+    attributes:
+      label: Related
