@@ -422,6 +422,8 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 
 			// Prevent navigating to edit the template part if it's already being edited.
 			// Solves an issue where a click event to edit the template part is received twice.
+			// Example URL we're testing for, where the `templatePartId` is 2:
+			// `/edit/wp_template_part/{site}/2?fse_parent_post=42`
 			if (
 				new RegExp( `\\/edit\\/wp_template_part\\/.+\\/${ templatePartId }\\?`, 'i' ).test(
 					window.location.href
