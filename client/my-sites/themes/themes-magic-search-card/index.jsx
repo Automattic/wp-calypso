@@ -296,9 +296,7 @@ class ThemesMagicSearchCard extends React.Component {
 				initialValue={ this.state.searchInput }
 				value={ this.state.searchInput }
 				ref={ this.setSearchInputRef }
-				placeholder={ translate(
-					'Search by style or feature: portfolio, store, multiple menus, or…'
-				) }
+				placeholder={ translate( 'Search for themes' ) }
 				analyticsGroup="Themes"
 				delaySearch={ true }
 				onSearchOpen={ this.onSearchOpen }
@@ -351,6 +349,19 @@ class ThemesMagicSearchCard extends React.Component {
 								/>
 							</div>
 						) }
+						{ config.isEnabled( 'theme/showcase-revamp' ) && (
+							<div>
+								<Button
+									onClick={ this.handleWelcomeBarToggle }
+									className="components-button themes-magic-search-card__advanced-toggle"
+								>
+									<Gridicon icon="cog" size={ 18 } />
+									{ isWelcomeBarEnabled
+										? translate( 'Hide Advanced' )
+										: translate( 'Show Advanced' ) }
+								</Button>
+							</div>
+						) }
 						{ isPremiumThemesEnabled && showTierThemesControl && (
 							<SimplifiedSegmentedControl
 								key={ this.props.tier }
@@ -361,18 +372,6 @@ class ThemesMagicSearchCard extends React.Component {
 									'showcase-revamp': config.isEnabled( 'theme/showcase-revamp' ),
 								} ) }
 							/>
-						) }
-						{ config.isEnabled( 'theme/showcase-revamp' ) && (
-							<div>
-								<Button
-									onClick={ this.handleWelcomeBarToggle }
-									className="is-link themes-magic-search-card__advanced-toggle"
-								>
-									{ isWelcomeBarEnabled
-										? translate( 'Hide Advanced' )
-										: translate( 'Show Advanced' ) }
-								</Button>
-							</div>
 						) }
 					</div>
 				</StickyPanel>
