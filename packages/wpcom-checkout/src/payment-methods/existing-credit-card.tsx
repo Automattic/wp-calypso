@@ -89,7 +89,7 @@ function formatDate( cardExpiry: string ): string {
 	return formattedDate;
 }
 
-export function ExistingCardLabel( {
+function ExistingCardLabel( {
 	last4,
 	cardExpiry,
 	cardholderName,
