@@ -10,7 +10,7 @@ import ExternalLink from 'calypso/components/external-link';
 import Gridicon from 'calypso/components/gridicon';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import { isDomainConnectAuthorizePath } from 'calypso/lib/domains/utils';
-import { getSignupUrl } from 'calypso/lib/login';
+import { getSignupUrl, getLoginLinkPageUrl } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
 	isJetpackCloudOAuth2Client,
@@ -92,25 +92,6 @@ export class LoginLinks extends React.Component {
 
 	recordSignUpLinkClick = () => {
 		this.props.recordTracksEvent( 'calypso_login_sign_up_link_click' );
-	};
-
-	getLoginLinkPageUrl = () => {
-		// The email address from the URL (if present) is added to the login
-		// parameters in this.handleMagicLoginLinkClick(). But it's left out
-		// here deliberately, to ensure that if someone copies this link to
-		// paste somewhere else, their email address isn't included in it.
-		const loginParameters = {
-			locale: this.props.locale,
-			twoFactorAuthType: 'link',
-		};
-
-		if ( this.props.currentRoute === '/log-in/jetpack' ) {
-			loginParameters.twoFactorAuthType = 'jetpack/link';
-		} else if ( this.props.isGutenboarding ) {
-			loginParameters.twoFactorAuthType = 'new/link';
-		}
-
-		return login( loginParameters );
 	};
 
 	renderBackLink() {
@@ -229,7 +210,7 @@ export class LoginLinks extends React.Component {
 				// A simpler solution would have been to add rel=external or
 				// rel=download, but it would have been semantically wrong.
 				ref={ this.loginLinkRef }
-				href={ this.getLoginLinkPageUrl() }
+				href={ getLoginLinkPageUrl() }
 				key="magic-login-link"
 				data-e2e-link="magic-login-link"
 			>
