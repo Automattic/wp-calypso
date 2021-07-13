@@ -421,7 +421,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 			const { templatePartId, unsavedChanges } = payload;
 
 			// Prevent navigating to edit the template part if it's already being edited.
-			// Solves an issue where a click event to edit the tempalte part is received twice.
+			// Solves an issue where a click event to edit the template part is received twice.
 			if (
 				new RegExp( `\\/edit\\/wp_template_part\\/.+\\/${ templatePartId }\\?`, 'i' ).test(
 					window.location.href
