@@ -460,8 +460,9 @@ export class LoginForm extends Component {
 			return null;
 		}
 
+		// The leading space is NO typo! It's added since the first part of the validation message (originating from the BE) contains no trailing space.
 		return this.props.translate(
-			'Would you like to {{magicLoginLink}}receive a login link{{/magicLoginLink}}?',
+			' Would you like to {{magicLoginLink}}receive a login link{{/magicLoginLink}}?',
 			{
 				components: {
 					magicLoginLink: (
