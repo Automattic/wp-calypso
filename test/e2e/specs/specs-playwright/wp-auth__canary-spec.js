@@ -9,8 +9,8 @@ const viewportName = BrowserHelper.getViewportName();
 describe( `[${ host }] Authentication: (${ viewportName }) @canary @parallel @safaricanary`, function () {
 	let page;
 
-	setupHooks( ( setupPage ) => {
-		page = setupPage;
+	setupHooks( ( args ) => {
+		page = args.page;
 	} );
 
 	it( 'Can log in', async function () {

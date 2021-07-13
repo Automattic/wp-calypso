@@ -10,8 +10,8 @@ describe( DataHelper.createSuiteTitle( 'SEO Preview Page' ), function () {
 	let marketingPage;
 	let page;
 
-	setupHooks( ( setupPage ) => {
-		page = setupPage;
+	setupHooks( ( args ) => {
+		page = args.page;
 	} );
 
 	it( 'Log in', async function () {

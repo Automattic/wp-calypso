@@ -18,8 +18,8 @@ const quote =
 describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 	let page;
 
-	setupHooks( ( setupPage ) => {
-		page = setupPage;
+	setupHooks( ( args ) => {
+		page = args.page;
 	} );
 
 	describe( 'Like a new post', function () {

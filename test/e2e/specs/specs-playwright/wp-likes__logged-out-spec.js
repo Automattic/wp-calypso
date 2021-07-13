@@ -15,8 +15,8 @@ const user = 'gutenbergSimpleSiteUser';
 describe( DataHelper.createSuiteTitle( 'Likes (Logged Out)' ), function () {
 	let page;
 
-	setupHooks( ( setupPage ) => {
-		page = setupPage;
+	setupHooks( ( args ) => {
+		page = args.page;
 	} );
 
 	describe( 'Like an existing post as logged out user', function () {

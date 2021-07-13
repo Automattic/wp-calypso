@@ -12,8 +12,8 @@ import {
 describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 	let page;
 
-	setupHooks( ( setupPage ) => {
-		page = setupPage;
+	setupHooks( ( args ) => {
+		page = args.page;
 	} );
 
 	describe( 'Search for a support topic then close popover', function () {

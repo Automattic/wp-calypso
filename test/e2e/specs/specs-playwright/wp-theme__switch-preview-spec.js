@@ -14,8 +14,8 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 	const themeName = 'Twenty Seventeen';
 	let page;
 
-	setupHooks( ( setupPage ) => {
-		page = setupPage;
+	setupHooks( ( args ) => {
+		page = args.page;
 	} );
 
 	it( 'Log In', async function () {
