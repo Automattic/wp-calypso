@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import { ToggleControl } from '@wordpress/components';
+import { FormToggle, BaseControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -29,6 +29,8 @@ const PostShareConnection = ( { connection, isActive, onToggle } ) => {
 		'is-broken': status === 'broken',
 	} );
 
+	const id = `post-share__label-${ keyring_connection_ID }`;
+
 	const accountImageStyle = {};
 	if ( external_profile_picture ) {
 		accountImageStyle.backgroundImage = 'url( ' + cssSafeUrl( external_profile_picture ) + ' )';
@@ -37,12 +39,7 @@ const PostShareConnection = ( { connection, isActive, onToggle } ) => {
 	}
 
 	return (
-		<div
-			onClick={ toggle }
-			className={ classes }
-			role="presentation"
-			aria-label={ `${ external_display } on ${ service }` }
-		>
+		<div onClick={ toggle } className={ classes } role="presentation">
 			<div className="post-share__service-account-image" style={ accountImageStyle }>
 				&nbsp;
 			</div>
@@ -52,9 +49,11 @@ const PostShareConnection = ( { connection, isActive, onToggle } ) => {
 			</div>
 
 			<div className="post-share__service-account-name">
-				<span>{ external_display }</span>
+				<label id={ id }>{ external_display }</label>
 			</div>
-			<ToggleControl checked={ isActive } />
+			<BaseControl className={ classNames( 'components-toggle-control' ) }>
+				<FormToggle checked={ isActive } aria-describedby={ id } />
+			</BaseControl>
 		</div>
 	);
 };
