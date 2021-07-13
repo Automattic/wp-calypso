@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { withStorageKey } from '@automattic/state-utils';
+
+/**
  * Internal dependencies
  */
 import {
@@ -29,4 +34,4 @@ function reducer( state = null, action ) {
 	return state;
 }
 
-export default withSchemaValidation( schema, reducer );
+export default withStorageKey( 'currencyCode', withSchemaValidation( schema, reducer ) );

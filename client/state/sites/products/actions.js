@@ -20,6 +20,8 @@ import {
 } from 'calypso/state/action-types';
 import wpcom from 'calypso/lib/wp';
 
+import 'calypso/state/currency-code/init';
+
 /**
  * Returns an action object to be used in signalling that products for the given site have been cleared.
  *
