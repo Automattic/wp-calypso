@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import assert from 'assert';
-
-/**
  * Internal dependencies
  */
 import { BaseContainer } from '../base-container';
@@ -49,14 +44,13 @@ export class ThemesPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async filterThemes( type: 'All' | 'Free' | 'Premium' ): Promise< void > {
-		const selector = `a[data-e2e-value=${ type.toLowerCase() }]`;
+		const selector = `a[role="radio"]:has-text("${ type }")`;
 		await this.page.click( selector );
+		const button = await this.page.waitForSelector( selector );
+
 		// Wait for placeholder to disappear (indicating load is completed).
 		await this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } );
-		const isSelected = await this.page.$eval( selector, ( element ) =>
-			element.getAttribute( 'aria-checked' )
-		);
-		assert.strictEqual( isSelected, 'true' );
+		await this.page.waitForFunction( ( element: any ) => element.ariaChecked === 'true', button );
 	}
 
 	/**
