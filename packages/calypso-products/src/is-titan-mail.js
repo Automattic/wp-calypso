@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { formatProduct } from './format-product';
 import { TITAN_MAIL_MONTHLY_SLUG } from './constants';
+import { formatProduct } from './format-product';
 
 export function isTitanMail( product ) {
 	product = formatProduct( product );

@@ -1,12 +1,10 @@
-/**
- * Internal dependencies
- */
 import {
 	format as formatUrl,
 	getUrlParts,
 	getUrlFromParts,
 	determineUrlType,
 } from '@automattic/calypso-url';
+
 import {
 	TERM_MONTHLY,
 	TERM_ANNUALLY,
@@ -28,6 +26,7 @@ import {
 	TYPE_P2_PLUS,
 } from './constants';
 import { PLANS_LIST } from './plans-list';
+
 import { isJetpackBusiness, isBusiness, isEnterprise, isEcommerce, isVipPlan } from '.';
 
 export function getPlans() {

@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
-import React, { createElement } from 'react';
 import { translate } from 'i18n-calypso';
+import React, { createElement } from 'react';
 
-/**
- * Internal dependencies
- */
 import {
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
