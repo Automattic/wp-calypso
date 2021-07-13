@@ -284,7 +284,8 @@ class Global_Styles {
 	public function enqueue_fonts_section_control() {
 		$handle = 'attach-tracks-events-to-fonts-links.js';
 		$src    = plugins_url( 'static/attach-tracks-events-to-fonts-links.js', __FILE__ );
-		$deps   = array( 'customize-controls' );
+		$deps   = array();
+
 		wp_enqueue_script(
 			$handle,
 			$src,
