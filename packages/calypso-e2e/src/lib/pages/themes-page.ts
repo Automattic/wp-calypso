@@ -1,17 +1,7 @@
 /**
- * External dependencies
- */
-import assert from 'assert';
-
-/**
  * Internal dependencies
  */
 import { BaseContainer } from '../base-container';
-
-/**
- * Type dependencies
- */
-import { Page } from 'playwright';
 
 const selectors = {
 	// Main themes listing
@@ -25,7 +15,7 @@ const selectors = {
 	// Search
 	showAllThemesButton: 'text=Show all themes',
 	searchToolbar: '.themes-magic-search',
-	searchInput: '.themes-magic-search-card input.search__input',
+	searchInput: `[placeholder="Search by style or feature: portfolio, store, multiple menus, or…"]`,
 };
 
 /**
@@ -35,21 +25,16 @@ const selectors = {
  */
 export class ThemesPage extends BaseContainer {
 	/**
-	 * Constructs an instance of the component.
-	 *
-	 * @param {Page} page The underlying page.
-	 */
-	constructor( page: Page ) {
-		super( page );
-	}
-
-	/**
 	 * Post initialization steps.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
 	async _postInit(): Promise< void > {
-		await this.page.waitForSelector( selectors.spinner, { state: 'hidden' } );
+		await Promise.all( [
+			this.page.waitForSelector( selectors.spinner, { state: 'hidden' } ),
+			this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } ),
+			this.page.waitForLoadState( 'domcontentloaded' ),
+		] );
 	}
 
 	/**
@@ -59,14 +44,13 @@ export class ThemesPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async filterThemes( type: 'All' | 'Free' | 'Premium' ): Promise< void > {
-		const selector = `a[data-e2e-value=${ type.toLowerCase() }]`;
+		const selector = `a[role="radio"]:has-text("${ type }")`;
 		await this.page.click( selector );
+		const button = await this.page.waitForSelector( selector );
+
 		// Wait for placeholder to disappear (indicating load is completed).
 		await this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } );
-		const isSelected = await this.page.$eval( selector, ( element ) =>
-			element.getAttribute( 'aria-checked' )
-		);
-		assert.strictEqual( isSelected, 'true' );
+		await this.page.waitForFunction( ( element: any ) => element.ariaChecked === 'true', button );
 	}
 
 	/**
