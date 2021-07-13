@@ -461,7 +461,7 @@ export class LoginForm extends Component {
 		}
 
 		return this.props.translate(
-			' Would you like to {{magicLoginLink}}receive a login link{{/magicLoginLink}}?',
+			'Would you like to {{magicLoginLink}}receive a login link{{/magicLoginLink}}?',
 			{
 				components: {
 					magicLoginLink: (
