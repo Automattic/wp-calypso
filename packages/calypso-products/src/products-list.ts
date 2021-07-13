@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { translate } from 'i18n-calypso';
+
+/**
  * Internal dependencies
  */
 import {
@@ -190,7 +195,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		],
 	},
 	[ PRODUCT_JETPACK_BACKUP ]: {
-		product_name: 'Backup', // TODO: switch to translated string once official copy is known
+		product_name: translate( 'Backup' ),
 		product_slug: PRODUCT_JETPACK_BACKUP,
 		type: PRODUCT_JETPACK_BACKUP,
 		term: TERM_ANNUALLY,
@@ -203,7 +208,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		],
 	},
 	[ PRODUCT_JETPACK_BACKUP_MONTHLY ]: {
-		product_name: 'Backup', // TODO: switch to translated string once official copy is known
+		product_name: translate( 'Backup' ),
 		product_slug: PRODUCT_JETPACK_BACKUP_MONTHLY,
 		type: PRODUCT_JETPACK_BACKUP,
 		term: TERM_MONTHLY,
@@ -216,7 +221,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		],
 	},
 	[ PRODUCT_JETPACK_BACKUP_PRO ]: {
-		product_name: 'Backup Pro', // TODO: switch to translated string once official copy is known
+		product_name: translate( 'Backup Pro' ),
 		product_slug: PRODUCT_JETPACK_BACKUP_PRO,
 		type: PRODUCT_JETPACK_BACKUP_PRO,
 		term: TERM_ANNUALLY,
@@ -229,7 +234,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		],
 	},
 	[ PRODUCT_JETPACK_BACKUP_PRO_MONTHLY ]: {
-		product_name: 'Backup Pro', // TODO: switch to translated string once official copy is known
+		product_name: translate( 'Backup Pro' ),
 		product_slug: PRODUCT_JETPACK_BACKUP_PRO_MONTHLY,
 		type: PRODUCT_JETPACK_BACKUP_PRO,
 		term: TERM_MONTHLY,

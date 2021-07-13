@@ -867,6 +867,88 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 	],
 } );
 
+const getPlanJetpackSecurityDetails = () => ( {
+	group: GROUP_JETPACK,
+	type: TYPE_SECURITY,
+	getTitle: () => translate( 'Security' ),
+	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
+	getDescription: () =>
+		translate(
+			'Get next-level protection with real-time backups, real-time scan and all essential security tools.'
+		),
+	getTagline: () => translate( 'Best for sites with frequent updates' ), // TODO: new tagline
+	getPlanCardFeatures: () => [
+		FEATURE_PLAN_SECURITY_DAILY,
+		FEATURE_PRODUCT_BACKUP_REALTIME_V2,
+		FEATURE_PRODUCT_SCAN_REALTIME_V2,
+		FEATURE_ACTIVITY_LOG_1_YEAR_V2,
+	],
+	getHiddenFeatures: () => [
+		FEATURE_JETPACK_BACKUP_REALTIME,
+		FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+		FEATURE_JETPACK_SCAN_DAILY,
+		FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
+		FEATURE_JETPACK_ANTI_SPAM,
+		FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+		FEATURE_BACKUP_ARCHIVE_UNLIMITED,
+		FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+		FEATURE_REPUBLICIZE,
+		FEATURE_ADVANCED_SEO,
+		FEATURE_SEO_PREVIEW_TOOLS,
+		FEATURE_SIMPLE_PAYMENTS,
+		FEATURE_WORDADS_INSTANT,
+		FEATURE_GOOGLE_ANALYTICS,
+		FEATURE_UNLIMITED_PREMIUM_THEMES,
+		FEATURE_PREMIUM_SUPPORT,
+	],
+	getInferiorHiddenFeatures: () => [
+		FEATURE_JETPACK_BACKUP_DAILY,
+		FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		FEATURE_BACKUP_ARCHIVE_30,
+	],
+} );
+
+const getPlanJetpackSecurityProDetails = () => ( {
+	group: GROUP_JETPACK,
+	type: TYPE_SECURITY_PRO,
+	getTitle: () => translate( 'Security Pro' ),
+	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
+	getDescription: () =>
+		translate(
+			'Get next-level protection with real-time backups, real-time scan and all essential security tools.'
+		),
+	getTagline: () => translate( 'Best for sites with frequent updates' ), // TODO: new tagline
+	getPlanCardFeatures: () => [
+		FEATURE_PLAN_SECURITY_DAILY,
+		FEATURE_PRODUCT_BACKUP_REALTIME_V2,
+		FEATURE_PRODUCT_SCAN_REALTIME_V2,
+		FEATURE_ACTIVITY_LOG_1_YEAR_V2,
+	],
+	getHiddenFeatures: () => [
+		FEATURE_JETPACK_BACKUP_REALTIME,
+		FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+		FEATURE_JETPACK_SCAN_DAILY,
+		FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
+		FEATURE_JETPACK_ANTI_SPAM,
+		FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+		FEATURE_BACKUP_ARCHIVE_UNLIMITED,
+		FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+		FEATURE_REPUBLICIZE,
+		FEATURE_ADVANCED_SEO,
+		FEATURE_SEO_PREVIEW_TOOLS,
+		FEATURE_SIMPLE_PAYMENTS,
+		FEATURE_WORDADS_INSTANT,
+		FEATURE_GOOGLE_ANALYTICS,
+		FEATURE_UNLIMITED_PREMIUM_THEMES,
+		FEATURE_PREMIUM_SUPPORT,
+	],
+	getInferiorHiddenFeatures: () => [
+		FEATURE_JETPACK_BACKUP_DAILY,
+		FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		FEATURE_BACKUP_ARCHIVE_30,
+	],
+} );
+
 const getPlanJetpackCompleteDetails = () => ( {
 	group: GROUP_JETPACK,
 	type: TYPE_ALL,
@@ -1376,27 +1458,35 @@ export const PLANS_LIST = {
 	},
 
 	[ PLAN_JETPACK_SECURITY ]: {
-		group: GROUP_JETPACK,
-		type: TYPE_SECURITY,
+		...getPlanJetpackSecurityDetails(),
 		...getAnnualTimeframe(),
+		getStoreSlug: () => PLAN_JETPACK_SECURITY,
+		getPathSlug: () => 'security', // TODO: verify slug
+		getProductId: () => null, // TODO: add product ID when it exists
 	},
 
 	[ PLAN_JETPACK_SECURITY_MONTHLY ]: {
-		group: GROUP_JETPACK,
-		type: TYPE_SECURITY,
+		...getPlanJetpackSecurityDetails(),
 		...getMonthlyTimeframe(),
+		getStoreSlug: () => PLAN_JETPACK_SECURITY_MONTHLY,
+		getPathSlug: () => 'security-monthly', // TODO: verify slug
+		getProductId: () => null, // TODO: add product ID when it exists
 	},
 
 	[ PLAN_JETPACK_SECURITY_PRO ]: {
-		group: GROUP_JETPACK,
-		type: TYPE_SECURITY_PRO,
+		...getPlanJetpackSecurityProDetails(),
 		...getAnnualTimeframe(),
+		getStoreSlug: () => PLAN_JETPACK_SECURITY_PRO,
+		getPathSlug: () => 'security-pro', // TODO: verify slug
+		getProductId: () => null, // TODO: add product ID when it exists
 	},
 
 	[ PLAN_JETPACK_SECURITY_PRO_MONTHLY ]: {
-		group: GROUP_JETPACK,
-		type: TYPE_SECURITY_PRO,
+		...getPlanJetpackSecurityProDetails(),
 		...getMonthlyTimeframe(),
+		getStoreSlug: () => PLAN_JETPACK_SECURITY_PRO_MONTHLY,
+		getPathSlug: () => 'security-pro-monthly', // TODO: verify slug
+		getProductId: () => null, // TODO: add product ID when it exists
 	},
 
 	[ PLAN_P2_PLUS ]: {

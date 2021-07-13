@@ -157,8 +157,8 @@ export const PLAN_JETPACK_BUSINESS = 'jetpack_business';
 export const PLAN_JETPACK_BUSINESS_MONTHLY = 'jetpack_business_monthly';
 export const PLAN_JETPACK_SECURITY = 'jetpack_security';
 export const PLAN_JETPACK_SECURITY_MONTHLY = 'jetpack_security_monthly';
-export const PLAN_JETPACK_SECURITY_PRO = 'jetapck_security_pro';
-export const PLAN_JETPACK_SECURITY_PRO_MONTHLY = 'jetapck_security_pro_monthly';
+export const PLAN_JETPACK_SECURITY_PRO = 'jetpack_security_pro';
+export const PLAN_JETPACK_SECURITY_PRO_MONTHLY = 'jetpack_security_pro_monthly';
 export const PLAN_JETPACK_COMPLETE = 'jetpack_complete';
 export const PLAN_JETPACK_COMPLETE_MONTHLY = 'jetpack_complete_monthly';
 
