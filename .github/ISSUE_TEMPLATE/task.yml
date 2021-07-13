@@ -1,7 +1,7 @@
 name: Task
 description: Create a task
 title: ""
-labels: [[Type] Task]
+labels: ["[Type] Task"]
 body:
   - type: input
     id: version
