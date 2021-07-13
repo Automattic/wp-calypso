@@ -1,9 +1,7 @@
 import { combineReducers } from '@wordpress/data';
 import type { Reducer } from 'redux';
-
 import type { Plans } from '..';
 import type * as DomainSuggestions from '../domain-suggestions';
-
 import type { LaunchAction } from './actions';
 import { LaunchStep } from './data';
 import type { LaunchStepType } from './types';

@@ -1,6 +1,5 @@
 import { combineReducers } from '@wordpress/data';
 import type { Reducer } from 'redux';
-
 import type { Action } from './actions';
 import { DataStatus } from './constants';
 import type { DomainCategory, DomainSuggestionState, DomainAvailabilities } from './types';

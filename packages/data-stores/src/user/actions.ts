@@ -1,8 +1,6 @@
 import { stringify } from 'qs';
-
 import type { WpcomClientCredentials } from '../shared-types';
 import { wpcomRequest, requestAllBlogsAccess, reloadProxy } from '../wpcom-request-controls';
-
 import type {
 	CurrentUser,
 	CreateAccountParams,

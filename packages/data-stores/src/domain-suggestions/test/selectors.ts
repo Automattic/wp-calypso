@@ -1,6 +1,5 @@
 import { select, subscribe } from '@wordpress/data';
 import wpcomRequest from 'wpcom-proxy-request';
-
 import { register } from '..';
 import { DataStatus } from '../constants';
 

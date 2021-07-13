@@ -1,8 +1,6 @@
 import { plugins, registerStore, use } from '@wordpress/data';
-
 import type { SelectFromMap, DispatchFromMap } from '../mapped-types';
 import { controls } from '../wpcom-request-controls';
-
 import * as actions from './actions';
 import { STORE_KEY } from './constants';
 import persistOptions from './persist';

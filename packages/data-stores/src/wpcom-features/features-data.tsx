@@ -1,5 +1,4 @@
 import * as Plans from '../plans';
-
 import type { FeatureId, Feature } from './types';
 
 const {

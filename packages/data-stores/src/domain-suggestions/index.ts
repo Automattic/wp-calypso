@@ -1,8 +1,6 @@
 import { registerStore } from '@wordpress/data';
-
 import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
 import { controls } from '../wpcom-request-controls';
-
 import * as actions from './actions';
 import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';

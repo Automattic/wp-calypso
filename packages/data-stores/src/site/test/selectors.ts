@@ -8,7 +8,6 @@
 
 import { dispatch, select, subscribe } from '@wordpress/data';
 import wpcomRequest from 'wpcom-proxy-request';
-
 import { register } from '..';
 
 jest.mock( 'wpcom-proxy-request', () => ( {

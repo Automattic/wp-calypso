@@ -1,5 +1,4 @@
 import { apiFetch } from '@wordpress/data-controls';
-
 import { receiveVerticals } from './actions';
 import type { Vertical } from './types';
 

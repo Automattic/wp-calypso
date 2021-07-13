@@ -1,7 +1,5 @@
 import { dispatch } from '@wordpress/data';
-
 import { wpcomRequest } from '../wpcom-request-controls';
-
 import { STORE_KEY } from './constants';
 import type { SiteDetails, Domain } from './types';
 

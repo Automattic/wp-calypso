@@ -1,7 +1,6 @@
 import { dispatch, select } from '@wordpress/data';
 import waitForExpect from 'wait-for-expect';
 import wpcomRequest from 'wpcom-proxy-request';
-
 import { STORE_KEY } from '../constants';
 import { register } from '../index';
 import readerReducer from '../reducer';

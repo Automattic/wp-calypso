@@ -1,5 +1,4 @@
 import * as deprecate from '@wordpress/deprecated';
-
 import { TIMELESS_PLAN_ECOMMERCE, TIMELESS_PLAN_FREE, FREE_PLAN_PRODUCT_ID } from '../constants';
 import * as MockData from '../mock';
 import type { State } from '../reducer';

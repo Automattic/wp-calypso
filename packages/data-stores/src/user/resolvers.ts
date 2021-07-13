@@ -1,6 +1,5 @@
 import type { WpcomClientCredentials } from '../shared-types';
 import { wpcomRequest } from '../wpcom-request-controls';
-
 import { createActions } from './actions';
 import type { CurrentUser } from './types';
 

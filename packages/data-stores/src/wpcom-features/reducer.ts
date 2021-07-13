@@ -1,5 +1,4 @@
 import type { AnyAction, Reducer } from 'redux';
-
 import { featuresList } from './features-data';
 import type { Feature, FeatureId } from './types';
 

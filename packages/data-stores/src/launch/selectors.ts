@@ -1,8 +1,6 @@
 import { select } from '@wordpress/data';
-
 import type { Plans } from '..';
 import type * as DomainSuggestions from '../domain-suggestions';
-
 import { STORE_KEY as LAUNCH_STORE, PLANS_STORE } from './constants';
 import { LaunchSequence, LaunchStep } from './data';
 import type { State } from './reducer';

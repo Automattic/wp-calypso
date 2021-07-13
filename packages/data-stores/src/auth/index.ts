@@ -1,10 +1,8 @@
 import { registerStore } from '@wordpress/data';
 import { controls as dataControls } from '@wordpress/data-controls';
 import { requestAllBlogsAccess } from 'wpcom-proxy-request';
-
 import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
 import { controls as wpcomRequestControls } from '../wpcom-request-controls';
-
 import { createActions, ActionsConfig } from './actions';
 import { STORE_KEY } from './constants';
 import { controls } from './controls';

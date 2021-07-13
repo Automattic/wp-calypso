@@ -1,5 +1,4 @@
 import { select } from '@wordpress/data';
-
 import { STORE_KEY, DataStatus } from './constants';
 import type { State } from './reducer';
 import type {

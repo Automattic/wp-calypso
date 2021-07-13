@@ -1,6 +1,5 @@
 import { select } from '@wordpress/data-controls';
 import { stringify } from 'qs';
-
 import type { WpcomClientCredentials } from '../shared-types';
 import {
 	wpcomRequest,
@@ -9,7 +8,6 @@ import {
 	reloadProxy,
 	wait,
 } from '../wpcom-request-controls';
-
 import { STORE_KEY, POLL_APP_PUSH_INTERVAL_SECONDS } from './constants';
 import { remoteLoginUser } from './controls';
 import type {

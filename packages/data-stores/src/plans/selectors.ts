@@ -1,6 +1,5 @@
 import { select } from '@wordpress/data';
 import deprecate from '@wordpress/deprecated';
-
 import {
 	DEFAULT_PAID_PLAN,
 	TIMELESS_PLAN_ECOMMERCE,

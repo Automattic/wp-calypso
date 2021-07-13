@@ -1,6 +1,5 @@
 import formatCurrency from '@automattic/format-currency';
 import deterministicStringify from 'fast-json-stable-stringify';
-
 import type { DomainSuggestionQuery, DomainSuggestionSelectorOptions } from './types';
 
 /**

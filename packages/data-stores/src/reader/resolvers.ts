@@ -1,5 +1,4 @@
 import { wpcomRequest } from '../wpcom-request-controls';
-
 import { fetchReaderTeamsSuccess, ReaderTeamsResponse } from './actions';
 
 export function* isA8cTeamMember(): Generator {

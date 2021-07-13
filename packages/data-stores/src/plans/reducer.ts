@@ -1,6 +1,5 @@
 import { combineReducers } from '@wordpress/data';
 import type { Reducer } from 'redux';
-
 import type { PlanAction } from './actions';
 import type { Plan, PlanFeature, FeaturesByType, PlanProduct } from './types';
 

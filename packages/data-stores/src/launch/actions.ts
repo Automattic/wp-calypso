@@ -1,9 +1,7 @@
 import { select } from '@wordpress/data';
-
 import type { Plans } from '..';
 import type * as DomainSuggestions from '../domain-suggestions';
 import type { ReturnOrGeneratorYieldUnion } from '../mapped-types';
-
 import { PLANS_STORE } from './constants';
 import type { LaunchStepType } from './types';
 

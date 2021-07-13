@@ -1,8 +1,6 @@
 import formatCurrency from '@automattic/format-currency';
 import { stringify } from 'qs';
-
 import { fetchAndParse, wpcomRequest } from '../wpcom-request-controls';
-
 import { setFeatures, setFeaturesByType, setPlanProducts, setPlans } from './actions';
 import {
 	TIMELESS_PLAN_FREE,

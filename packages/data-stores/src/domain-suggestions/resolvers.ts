@@ -1,9 +1,7 @@
 import { translate } from 'i18n-calypso';
 import { stringify } from 'qs';
 import validator from 'validator';
-
 import { fetchAndParse, wpcomRequest } from '../wpcom-request-controls';
-
 import {
 	receiveCategories,
 	receiveDomainSuggestionsSuccess,

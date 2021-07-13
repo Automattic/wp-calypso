@@ -1,6 +1,5 @@
 import { combineReducers } from '@wordpress/data';
 import type { Reducer } from 'redux';
-
 import type { ReaderTeam, ReaderAction } from './actions';
 
 const teams: Reducer< ReaderTeam[] | null, ReaderAction > = ( state = null, action ) => {

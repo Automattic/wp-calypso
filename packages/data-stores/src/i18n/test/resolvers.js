@@ -1,6 +1,5 @@
 import { apiFetch } from '@wordpress/data-controls';
 import { addQueryArgs } from '@wordpress/url';
-
 import { setLocalizedLanguageNames } from '../actions';
 import { LANGUAGE_NAMES_URL } from '../constants';
 import { getLocalizedLanguageNames } from '../resolvers';
