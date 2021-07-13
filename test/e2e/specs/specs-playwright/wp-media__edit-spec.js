@@ -16,8 +16,8 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 			let mediaPage;
 			let page;
 
-			setupHooks( ( setupPage ) => {
-				page = setupPage;
+			setupHooks( ( args ) => {
+				page = args.page;
 			} );
 
 			it( 'Log In', async function () {
