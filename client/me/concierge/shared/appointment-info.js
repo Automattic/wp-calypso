@@ -145,15 +145,12 @@ class AppointmentInfo extends Component {
 			<div>
 				<Confirmation
 					title={ translate( 'Your upcoming appointment' ) }
-					description={ translate(
-						'Get all your questions ready ' + '-- we look forward to chatting!',
-						{
-							args: {
-								beginTime: moment( beginTimestamp ).format( beginTimeFormat ),
-								duration: moment( endTimestamp ).diff( beginTimestamp, 'minutes' ),
-							},
-						}
-					) }
+					description={ translate( 'Get all your questions ready — we look forward to chatting!', {
+						args: {
+							beginTime: moment( beginTimestamp ).format( beginTimeFormat ),
+							duration: moment( endTimestamp ).diff( beginTimestamp, 'minutes' ),
+						},
+					} ) }
 				/>
 				{ this.renderAppointmentDetails() }
 			</div>
