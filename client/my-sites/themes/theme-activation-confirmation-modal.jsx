@@ -11,7 +11,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
-import { Dialog } from '@automattic/components';
+import { Card, Dialog } from '@automattic/components';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -178,8 +178,7 @@ class ThemeActivationConfirmationModal extends Component {
 		} );
 
 		const retiredMessage = translate(
-			'Your active theme {{strong}}%(themeName)s{{/strong}} is retired. ' +
-				'If you activate a new theme, you might not be able to switch back to %(themeName)s. {{supportLink/}}',
+			'Please note that {{strong}}%(themeName)s{{/strong}} is retired and no longer supported, so you might not be able to switch back. {{supportLink/}}',
 			{
 				args: {
 					themeName,
@@ -255,6 +254,11 @@ class ThemeActivationConfirmationModal extends Component {
 				) }
 				<div className="themes__theme-preview-wrapper">
 					<h1 className="theme-activation-confirmation-modal__title">{ dialogHeading }</h1>
+					{ hasAutoLoadingHomepage && isCurrentThemeRetired && (
+						<Card className="theme-activation-confirmation-modal__retired-card" highlight="warning">
+							{ retiredMessage }
+						</Card>
+					) }
 					{ hasAutoLoadingHomepage && (
 						<div>
 							<div className="themes__theme-preview-items">
@@ -346,9 +350,6 @@ class ThemeActivationConfirmationModal extends Component {
 						</div>
 					) }
 				</div>
-				{ hasAutoLoadingHomepage && isCurrentThemeRetired && (
-					<p className="theme-activation-confirmation-modal__retired-message">{ retiredMessage }</p>
-				) }
 			</Dialog>
 		);
 	}
