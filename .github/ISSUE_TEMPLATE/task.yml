@@ -3,14 +3,25 @@ description: Create a task
 title: "Task:"
 labels: ["[Type] Task"]
 body:
-  - type: input
-    id: version
+  - type: textarea
+    id: details
     attributes:
       label: Details
-      description: Elaborate on what the task should be.
-    validations:
+      description: Details of the task.
+    validation:
       required: true
+
   - type: textarea
+    id: checklist
+    attributes:
+      label: Checklist
+      description: Checklist for the task.
+    value: |
+      - [ ]
+      - [ ]
+
+  - type: input
     id: related
     attributes:
       label: Related
+      description: Related GitHub issues.
