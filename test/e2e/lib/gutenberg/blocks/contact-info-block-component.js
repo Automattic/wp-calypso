@@ -1,7 +1,5 @@
 import { By } from 'selenium-webdriver';
-
 import * as driverHelper from '../../driver-helper';
-
 import GutenbergBlockComponent from './gutenberg-block-component';
 
 class ContactInfoBlockComponent extends GutenbergBlockComponent {

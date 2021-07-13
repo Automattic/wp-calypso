@@ -1,5 +1,4 @@
 import { By, Condition } from 'selenium-webdriver';
-
 import AsyncBaseContainer from '../../async-base-container';
 import * as dataHelper from '../../data-helper';
 import * as driverHelper from '../../driver-helper.js';

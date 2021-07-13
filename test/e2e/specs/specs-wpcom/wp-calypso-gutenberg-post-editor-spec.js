@@ -1,8 +1,6 @@
 import assert from 'assert';
-
 import config from 'config';
 import { By } from 'selenium-webdriver';
-
 import NavBarComponent from '../../lib/components/nav-bar-component.js';
 import NoticesComponent from '../../lib/components/notices-component.js';
 import PostPreviewComponent from '../../lib/components/post-preview-component';

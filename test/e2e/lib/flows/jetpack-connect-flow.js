@@ -1,5 +1,4 @@
 import config from 'config';
-
 import SidebarComponent from '../components/sidebar-component';
 import * as dataHelper from '../data-helper';
 import * as driverHelper from '../driver-helper';
@@ -12,7 +11,6 @@ import WPAdminJetpackPage from '../pages/wp-admin/wp-admin-jetpack-page.js';
 import WPAdminLogonPage from '../pages/wp-admin/wp-admin-logon-page';
 import WPAdminSidebar from '../pages/wp-admin/wp-admin-sidebar.js';
 import WporgCreatorPage from '../pages/wporg-creator-page';
-
 import LoginFlow from './login-flow';
 // import NoticesComponent from '../components/notices-component';
 

@@ -1,11 +1,9 @@
 import { kebabCase } from 'lodash';
 import webdriver, { By } from 'selenium-webdriver';
-
 import AsyncBaseContainer from '../async-base-container';
 import GuideComponent from '../components/guide-component.js';
 import * as driverHelper from '../driver-helper';
 import * as driverManager from '../driver-manager.js';
-
 import { ContactFormBlockComponent } from './blocks';
 import { FileBlockComponent } from './blocks/file-block-component';
 import { ImageBlockComponent } from './blocks/image-block-component';

@@ -1,7 +1,5 @@
 import assert from 'assert';
-
 import { By } from 'selenium-webdriver';
-
 import localizationData from '../../localization-data.json';
 import AsyncBaseContainer from '../async-base-container';
 

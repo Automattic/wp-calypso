@@ -1,7 +1,5 @@
 import assert from 'assert';
-
 import config from 'config';
-
 import { getJetpackHost } from '../../lib/data-helper';
 import * as driverManager from '../../lib/driver-manager';
 import LoginFlow from '../../lib/flows/login-flow';

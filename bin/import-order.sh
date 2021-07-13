@@ -28,5 +28,5 @@ do
 	removeComments "$file"
 done < <(find -E "$DIR" -type f  -regex '.*\.[jt]sx?' -print0)
 
-prettify "$DIR"
 fix "$DIR"
+prettify "$DIR"

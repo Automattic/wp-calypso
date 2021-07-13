@@ -1,7 +1,5 @@
 import assert from 'assert';
-
 import config from 'config';
-
 import SidebarComponent from '../../lib/components/sidebar-component';
 import ThemeDialogComponent from '../../lib/components/theme-dialog-component.js';
 import ThemeSwitchConfirmationComponent from '../../lib/components/theme-switch-confirmation-component.js';

@@ -1,7 +1,5 @@
 import assert from 'assert';
-
 import config from 'config';
-
 import NoticesComponent from '../../lib/components/notices-component.js';
 import * as dataHelper from '../../lib/data-helper.js';
 import * as driverManager from '../../lib/driver-manager.js';

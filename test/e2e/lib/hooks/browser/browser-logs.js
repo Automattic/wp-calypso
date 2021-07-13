@@ -1,6 +1,5 @@
 import fs from 'fs/promises';
 import path from 'path';
-
 import { logging } from 'selenium-webdriver';
 
 export const saveBrowserLogs = async ( { tempDir, driver } ) => {

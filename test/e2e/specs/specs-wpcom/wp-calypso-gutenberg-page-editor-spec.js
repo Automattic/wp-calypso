@@ -1,7 +1,5 @@
 import assert from 'assert';
-
 import config from 'config';
-
 import PagePreviewComponent from '../../lib/components/page-preview-component';
 import * as dataHelper from '../../lib/data-helper.js';
 import * as driverHelper from '../../lib/driver-helper';

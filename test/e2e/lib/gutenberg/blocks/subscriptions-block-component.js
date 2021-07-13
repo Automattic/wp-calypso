@@ -1,5 +1,4 @@
 import { By } from 'selenium-webdriver';
-
 import GutenbergBlockComponent from './gutenberg-block-component';
 
 class SubscriptionsBlockComponent extends GutenbergBlockComponent {

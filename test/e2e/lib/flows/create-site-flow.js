@@ -1,6 +1,5 @@
 import config from 'config';
 import { By } from 'selenium-webdriver';
-
 import FindADomainComponent from '../components/find-a-domain-component';
 import * as driverHelper from '../driver-helper';
 import MyHomePage from '../pages/my-home-page';

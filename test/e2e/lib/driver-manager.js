@@ -8,7 +8,6 @@ import chrome from 'selenium-webdriver/chrome';
 import firefox from 'selenium-webdriver/firefox';
 import proxy from 'selenium-webdriver/proxy';
 import * as remote from 'selenium-webdriver/remote';
-
 import * as dataHelper from './data-helper';
 import { generatePath } from './test-utils';
 

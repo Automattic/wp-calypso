@@ -1,5 +1,4 @@
 import config from 'config';
-
 import SidebarComponent from '../../lib/components/sidebar-component.js';
 import SiteEditorComponent from '../../lib/components/site-editor-component';
 import * as dataHelper from '../../lib/data-helper';

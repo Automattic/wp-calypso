@@ -1,5 +1,4 @@
 import assert from 'assert';
-
 import InlineHelpChecklistComponent from '../components/inline-help-checklist-component.js';
 import SitePreviewComponent from '../components/site-preview-component.js';
 import MyHomePage from '../pages/my-home-page';

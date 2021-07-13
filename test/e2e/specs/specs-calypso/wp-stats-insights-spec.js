@@ -1,5 +1,4 @@
 import config from 'config';
-
 import NavBarComponent from '../../lib/components/nav-bar-component.js';
 import SidebarComponent from '../../lib/components/sidebar-component.js';
 import * as driverManager from '../../lib/driver-manager.js';

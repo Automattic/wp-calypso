@@ -1,7 +1,5 @@
 import assert from 'assert';
-
 import config from 'config';
-
 import InlineHelpPopoverComponent from '../../lib/components/inline-help-popover-component';
 import SidebarComponent from '../../lib/components/sidebar-component';
 import SupportSearchComponent from '../../lib/components/support-search-component';

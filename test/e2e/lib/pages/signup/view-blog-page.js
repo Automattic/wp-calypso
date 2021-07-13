@@ -1,5 +1,4 @@
 import { By } from 'selenium-webdriver';
-
 import AsyncBaseContainer from '../../async-base-container';
 
 export default class ViewBlogPage extends AsyncBaseContainer {

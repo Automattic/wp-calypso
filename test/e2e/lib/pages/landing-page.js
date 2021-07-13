@@ -1,7 +1,5 @@
 import assert from 'assert';
-
 import { By } from 'selenium-webdriver';
-
 import AsyncBaseContainer from '../async-base-container';
 
 export default class LandingPage extends AsyncBaseContainer {

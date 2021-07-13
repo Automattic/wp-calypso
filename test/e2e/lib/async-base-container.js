@@ -1,5 +1,4 @@
 import config from 'config';
-
 import * as driverHelper from './driver-helper';
 import * as driverManager from './driver-manager';
 

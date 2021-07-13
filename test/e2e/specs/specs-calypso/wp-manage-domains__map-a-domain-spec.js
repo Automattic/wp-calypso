@@ -1,5 +1,4 @@
 import config from 'config';
-
 import EnterADomainComponent from '../../lib/components/enter-a-domain-component';
 import FindADomainComponent from '../../lib/components/find-a-domain-component.js';
 import * as dataHelper from '../../lib/data-helper.js';

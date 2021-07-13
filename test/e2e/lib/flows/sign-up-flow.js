@@ -1,5 +1,4 @@
 import config from 'config';
-
 import * as dataHelper from '../data-helper';
 import * as driverManager from '../driver-manager';
 import EmailClient from '../email-client';

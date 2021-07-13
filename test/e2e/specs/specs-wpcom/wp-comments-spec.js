@@ -1,5 +1,4 @@
 import config from 'config';
-
 import * as dataHelper from '../../lib/data-helper';
 import * as driverManager from '../../lib/driver-manager';
 import LoginFlow from '../../lib/flows/login-flow';

@@ -1,6 +1,5 @@
 import config from 'config';
 import { By, promise } from 'selenium-webdriver';
-
 import AsyncBaseContainer from '../async-base-container';
 import { getJetpackHost } from '../data-helper';
 import * as driverHelper from '../driver-helper.js';

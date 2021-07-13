@@ -1,7 +1,5 @@
 import assert from 'assert';
-
 import config from 'config';
-
 import NavBarComponent from '../../lib/components/nav-bar-component';
 import SecurePaymentComponent from '../../lib/components/secure-payment-component';
 import * as dataHelper from '../../lib/data-helper';

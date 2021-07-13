@@ -1,5 +1,4 @@
 import config from 'config';
-
 import * as dataHelper from '../../lib/data-helper';
 import GutenbergEditorComponent from '../gutenberg/gutenberg-editor-component';
 import AcquireIntentPage from '../pages/gutenboarding/acquire-intent-page.js';
