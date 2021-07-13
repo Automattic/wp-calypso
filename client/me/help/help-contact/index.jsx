@@ -299,7 +299,7 @@ class HelpContact extends React.Component {
 			} );
 
 			if ( helpSiteIsWpCom ) {
-				blogHelpMessage += this.translateForForums( '\nWP.com: Yes' );
+				blogHelpMessage += '\n' + this.translateForForums( 'WP.com: Yes' );
 			}
 
 			if ( helpSiteIsNotWpCom ) {
@@ -307,7 +307,7 @@ class HelpContact extends React.Component {
 					? this.translateForForums( 'Yes' )
 					: this.translateForForums( 'Unknown' );
 
-				blogHelpMessage += this.translateForForums( '\nWP.com: Unknown \nJetpack: %s.', {
+				blogHelpMessage += '\n' + this.translateForForums( 'WP.com: Unknown \nJetpack: %s', {
 					args: [ jetpackMessage ],
 				} );
 			}
@@ -316,7 +316,7 @@ class HelpContact extends React.Component {
 				? this.translateForForums( 'Unknown' )
 				: this.translateForForums( 'Yes' );
 
-			blogHelpMessage += this.translateForForums( '\nCorrect account: %s.', {
+			blogHelpMessage += '\n' + this.translateForForums( 'Correct account: %s', {
 				args: [ correctAccountMessage ],
 			} );
 		}
