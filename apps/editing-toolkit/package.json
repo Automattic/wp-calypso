@@ -52,7 +52,7 @@
 		"global-styles": "BROWSERSLIST_ENV=wpcom calypso-build --env source='global-styles'",
 		"build:global-styles": "NODE_ENV=production yarn run global-styles",
 		"dev:global-styles": "yarn run global-styles",
-		"global-styles-customizer-fonts": "BROWSERSLIST_ENV=wpcom calypso-build --env source='global-styles/customizer-fonts",
+		"global-styles-customizer-fonts": "BROWSERSLIST_ENV=wpcom calypso-build --env source='global-styles/customizer-fonts'",
 		"build:global-styles-customizer-fonts": "NODE_ENV=production yarn run global-styles-customizer-fonts",
 		"dev:global-styles-customizer-fonts": "yarn run global-styles-customizer-fonts",
 		"jetpack-timeline": "BROWSERSLIST_ENV=wpcom calypso-build --env source='jetpack-timeline'",
