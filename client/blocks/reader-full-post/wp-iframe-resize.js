@@ -26,19 +26,14 @@ const WPiFrameResize = ( contentWrapper, removeListener ) => {
 		const blockquotes = contentWrapper.querySelectorAll(
 			'blockquote[data-secret="' + data.secret + '"]'
 		);
-		let i;
-		let source;
-		let height;
-		let sourceURL;
-		let targetURL;
 
 		// Hide the blockquotes that come together with the iFrame.
-		for ( i = 0; i < blockquotes.length; i++ ) {
+		for ( let i = 0; i < blockquotes.length; i++ ) {
 			blockquotes[ i ].style.display = 'none';
 		}
 
-		for ( i = 0; i < iframes.length; i++ ) {
-			source = iframes[ i ];
+		for ( let i = 0; i < iframes.length; i++ ) {
+			const source = iframes[ i ];
 
 			if ( e.source !== source.contentWindow ) {
 				continue;
@@ -48,6 +43,7 @@ const WPiFrameResize = ( contentWrapper, removeListener ) => {
 
 			/* Resize the iframe on request. */
 			if ( 'height' === data.message ) {
+				let height;
 				height = parseInt( data.value, 10 );
 				if ( height > 1000 ) {
 					height = 1000;
@@ -60,8 +56,8 @@ const WPiFrameResize = ( contentWrapper, removeListener ) => {
 
 			/* Link to a specific URL on request. */
 			if ( 'link' === data.message ) {
-				sourceURL = document.createElement( 'a' );
-				targetURL = document.createElement( 'a' );
+				const sourceURL = document.createElement( 'a' );
+				const targetURL = document.createElement( 'a' );
 
 				sourceURL.href = source.getAttribute( 'src' );
 				targetURL.href = data.value;
