@@ -8,17 +8,18 @@ import {
 
 describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 	// Parametrized test.
+	let page;
+
+	setupHooks( ( args ) => {
+		page = args.page;
+	} );
+
 	[
 		[ 'Simple', 'defaultUser' ],
 		[ 'Atomic', 'wooCommerceUser' ],
 	].forEach( function ( [ siteType, user ] ) {
 		describe( `Edit Image (${ siteType })`, function () {
 			let mediaPage;
-			let page;
-
-			setupHooks( ( args ) => {
-				page = args.page;
-			} );
 
 			it( 'Log In', async function () {
 				const loginFlow = new LoginFlow( page, user );
