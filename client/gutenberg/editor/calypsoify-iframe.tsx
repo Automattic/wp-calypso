@@ -420,8 +420,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		if ( EditorActions.OpenTemplatePart === action ) {
 			const { templatePartId, unsavedChanges } = payload;
 
-			const templatePartUrl = this.getTemplateEditorUrl( templatePartId );
-
 			// Prevent navigating to edit the template part if it's already being edited.
 			// Solves an issue where a click event to edit the tempalte part is received twice.
 			if (
@@ -432,6 +430,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 				return;
 			}
 
+			const templatePartUrl = this.getTemplateEditorUrl( templatePartId );
 			this.navigate( templatePartUrl, unsavedChanges );
 		}
 
