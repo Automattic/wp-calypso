@@ -141,7 +141,12 @@ export default function getThankYouPageUrl( {
 		// extract a product from the cart, in siteless checkout there should only be one
 		const productSlug = cart?.products[ 0 ]?.product_slug;
 
-		return `/checkout/jetpack/thank-you/no-site/${ productSlug ?? 'no_product' }`;
+		const thankYouUrlSiteLess = `/checkout/jetpack/thank-you/no-site/${
+			productSlug ?? 'no_product'
+		}`;
+		return pendingOrReceiptId
+			? `${ thankYouUrlSiteLess }?receiptId=${ pendingOrReceiptId }`
+			: thankYouUrlSiteLess;
 	}
 
 	const fallbackUrl = getFallbackDestination( {
