@@ -36,5 +36,8 @@ module.exports = {
 		// We have many tests that don't make an explicit `expect`, but instead puts the browser
 		// in certain state that will be used by the next test, or asserted by WebDriver
 		'jest/expect-expect': 'off',
+
+		// We compose the test titles dynamically
+		'jest/valid-title': 'off',
 	},
 };
