@@ -23,7 +23,7 @@ const WPiFrameResize = ( contentWrapper, removeListener ) => {
 		}
 
 		const iframes = contentWrapper.querySelectorAll( 'iframe[data-secret="' + data.secret + '"]' );
-		const blockquotes = document.querySelectorAll(
+		const blockquotes = contentWrapper.querySelectorAll(
 			'blockquote[data-secret="' + data.secret + '"]'
 		);
 		let i;
