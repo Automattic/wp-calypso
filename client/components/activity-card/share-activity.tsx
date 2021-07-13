@@ -84,6 +84,16 @@ const SharePopover: React.FC< SharePopoverProps > = ( {
 			onClose();
 		}
 	}, [ email, dispatch, siteId, activity.rewindId, onClose ] );
+	const shareOnEnterKeyPress: React.KeyboardEventHandler = useCallback(
+		( { key } ) => {
+			if ( key !== 'Enter' ) {
+				return;
+			}
+
+			handleShare();
+		},
+		[ handleShare ]
+	);
 
 	return (
 		<PopoverMenu
@@ -108,6 +118,7 @@ const SharePopover: React.FC< SharePopoverProps > = ( {
 					value={ email }
 					onChange={ handleEmailChange }
 					isError={ showEmailError }
+					onKeyPress={ shareOnEnterKeyPress }
 				/>
 				<Button
 					className="activity-card__share-submit"
