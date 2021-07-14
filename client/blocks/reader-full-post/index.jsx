@@ -158,7 +158,7 @@ export class FullPostView extends React.Component {
 		KeyboardShortcuts.off( 'move-selection-down', this.goToNextPost );
 		KeyboardShortcuts.off( 'move-selection-up', this.goToPreviousPost );
 		// Remove WPiFrameResize listener.
-		this.stopResize();
+		this.stopResize?.();
 	}
 
 	handleBack = ( event ) => {
