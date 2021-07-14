@@ -70,7 +70,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 	}, [ dispatch, rootUrl, siteSlug, viewTrackerPath ] );
 
 	const { unlinked, purchasetoken, purchaseNonce, site } = urlQueryArgs;
-	const canDoSiteOnlyCheckout = unlinked && !! site && ( !! purchasetoken || purchaseNonce );
+	const canDoSiteOnlyCheckout = unlinked && !! site && !! ( purchasetoken || purchaseNonce );
 	useEffect( () => {
 		if ( canDoSiteOnlyCheckout ) {
 			dispatch(
