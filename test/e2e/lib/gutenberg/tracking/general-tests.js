@@ -5,6 +5,7 @@ import * as driverHelper from '../../driver-helper';
 import GutenbergEditorComponent from '../gutenberg-editor-component';
 import { clearEventsStack, getEventsStack, getTotalEventsFiredForBlock } from './utils';
 
+// eslint-disable-next-line jest/no-export
 export function createGeneralTests( { it, editorType, postType, baseContext = undefined } ) {
 	const isSiteEditor = editorType === 'site';
 	const gutenbergEditorType = isSiteEditor ? 'iframe' : 'wp-admin';
