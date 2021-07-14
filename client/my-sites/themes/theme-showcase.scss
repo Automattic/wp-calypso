@@ -54,7 +54,9 @@
 }
 
 .section-nav.themes__section-nav {
-	margin-top: 1px;
+	box-shadow: none;
+	border: 1px solid rgba( var( --color-neutral-10-rgb ), 0.5 );
+	border-top: 0;
 }
 
 .theme-showcase__all-themes-title {
