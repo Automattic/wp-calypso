@@ -9,7 +9,7 @@
 	display: flex;
 	align-items: center;
 	background: white;
-	border: 1px solid rgba( var( --color-neutral-10-rgb ), 0.5 );
+	border: 1px solid var( --color-border-subtle );
 	border-bottom: 0;
 	transition: all 0.15s ease-in-out;
 
@@ -183,7 +183,7 @@
 	font-size: $font-body-small;
 
 	text-transform: uppercase;
-	color: var( --color-neutral-50 );
+	color: var( --color-text-subtle );
 	text-align: left;
 }
 
@@ -198,10 +198,10 @@
 }
 
 .themes-magic-search-card__welcome-taxonomy {
-	border: 1px solid var( --color-neutral-5 );
+	border: 1px solid var( --color-border-subtle );
 	border-left: 0;
 	&:first-child {
-		border-left: 1px solid var( --color-neutral-5 );
+		border-left: 1px solid var( --color-border-subtle );
 	}
 
 	display: flex;
