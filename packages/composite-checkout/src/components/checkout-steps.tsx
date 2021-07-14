@@ -1,6 +1,6 @@
-/**
- * External dependencies
- */
+import { useI18n } from '@wordpress/react-i18n';
+import debugFactory from 'debug';
+import PropTypes from 'prop-types';
 import React, {
 	Dispatch,
 	SetStateAction,
@@ -9,21 +9,10 @@ import React, {
 	useEffect,
 	useState,
 } from 'react';
-import debugFactory from 'debug';
-import PropTypes from 'prop-types';
-import { useI18n } from '@wordpress/react-i18n';
-
-/**
- * Internal dependencies
- */
-import joinClasses from '../lib/join-classes';
-import CheckoutErrorBoundary from './checkout-error-boundary';
 import { useFormStatus } from '../lib/form-status';
-import LoadingContent from './loading-content';
-import CheckoutSubmitButton from './checkout-submit-button';
-import Button from './button';
-import { CheckIcon } from './shared-icons';
-import CheckoutNextStepButton from './checkout-next-step-button';
+import joinClasses from '../lib/join-classes';
+import styled from '../lib/styled';
+import { Theme } from '../lib/theme';
 import {
 	getDefaultOrderReviewStep,
 	getDefaultOrderSummary,
@@ -32,9 +21,13 @@ import {
 	useEvents,
 	usePaymentMethod,
 } from '../public-api';
-import styled from '../lib/styled';
-import { Theme } from '../lib/theme';
 import { FormStatus, CheckoutStepProps } from '../types';
+import Button from './button';
+import CheckoutErrorBoundary from './checkout-error-boundary';
+import CheckoutNextStepButton from './checkout-next-step-button';
+import CheckoutSubmitButton from './checkout-submit-button';
+import LoadingContent from './loading-content';
+import { CheckIcon } from './shared-icons';
 
 const debug = debugFactory( 'composite-checkout:checkout' );
 

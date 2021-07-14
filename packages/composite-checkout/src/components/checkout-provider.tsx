@@ -1,30 +1,23 @@
-/**
- * External dependencies
- */
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ThemeProvider } from 'emotion-theming';
-import debugFactory from 'debug';
-import { useI18n } from '@wordpress/react-i18n';
 import { DataRegistry } from '@wordpress/data';
-
-/**
- * Internal dependencies
- */
+import { useI18n } from '@wordpress/react-i18n';
+import debugFactory from 'debug';
+import { ThemeProvider } from 'emotion-theming';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import CheckoutContext from '../lib/checkout-context';
-import CheckoutErrorBoundary from './checkout-error-boundary';
+import { useFormStatusManager } from '../lib/form-status';
 import { LineItemsProvider } from '../lib/line-items';
 import { defaultRegistry, RegistryProvider } from '../lib/registry';
-import { useFormStatusManager } from '../lib/form-status';
-import { useTransactionStatusManager } from '../lib/transaction-status';
 import defaultTheme from '../lib/theme';
+import { useTransactionStatusManager } from '../lib/transaction-status';
 import {
 	validateArg,
 	validateLineItems,
 	validatePaymentMethods,
 	validateTotal,
 } from '../lib/validation';
-import TransactionStatusHandler from './transaction-status-handler';
 import { LineItem, CheckoutProviderProps, FormStatus, PaymentMethod } from '../types';
+import CheckoutErrorBoundary from './checkout-error-boundary';
+import TransactionStatusHandler from './transaction-status-handler';
 
 const debug = debugFactory( 'composite-checkout:checkout-provider' );
 

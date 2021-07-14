@@ -1,8 +1,3 @@
-/**
- * External dependencies
- */
-import React, { useState, useEffect, useMemo } from 'react';
-import styled from '@emotion/styled';
 import {
 	Checkout,
 	CheckoutStepArea,
@@ -26,6 +21,8 @@ import {
 	useFormStatus,
 	makeSuccessResponse,
 } from '@automattic/composite-checkout';
+import styled from '@emotion/styled';
+import React, { useState, useEffect, useMemo } from 'react';
 import { StripeHookProvider, useStripe } from '../src/lib/stripe-demo';
 
 const stripeKey = 'pk_test_zIh4nRbVgmaetTZqoG4XKxWT';

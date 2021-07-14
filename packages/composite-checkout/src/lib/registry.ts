@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import {
 	createRegistry,
 	RegistryProvider,
@@ -10,8 +7,8 @@ import {
 	StoreConfig,
 	SelectorMap,
 } from '@wordpress/data';
-import { useRef } from 'react';
 import debugFactory from 'debug';
+import { useRef } from 'react';
 
 const debug = debugFactory( 'composite-checkout:registry' );
 
