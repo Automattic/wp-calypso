@@ -11,9 +11,7 @@ import nock from 'nock';
 import { parse } from 'qs';
 import waitForExpect from 'wait-for-expect';
 import wpcomRequest from 'wpcom-proxy-request';
-
 import 'jest-fetch-mock';
-
 import { register } from '..';
 
 jest.mock( '../constants', () => ( {
