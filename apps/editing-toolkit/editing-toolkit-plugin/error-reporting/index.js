@@ -3,13 +3,7 @@ import apiFetch from '@wordpress/api-fetch';
 import * as Sentry from '@sentry/browser';
 import { Integrations } from '@sentry/tracing';
 
-const dataFromPHP = window.dataFromPHP;
-const shouldActivateSentry =
-	typeof dataFromPHP === 'object' && typeof dataFromPHP.shouldActivateSentry === 'string'
-		? dataFromPHP.shouldActivateSentry === 'true'
-		: false;
-
-console.debug( dataFromPHP );
+const shouldActivateSentry = window.dataFromPHP?.shouldActivateSentry === 'true';
 
 function activateSentry() {
 	console.debug( '[error-reporting] Activating Sentry!' );
