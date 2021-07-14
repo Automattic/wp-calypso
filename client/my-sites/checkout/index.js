@@ -29,6 +29,7 @@ export default function () {
 	if ( isEnabled( 'jetpack/siteless-checkout' ) ) {
 		page(
 			'/checkout/jetpack/schedule-happiness-appointment',
+			redirectLoggedOut,
 			noSite,
 			jetpackCheckoutScheduleAppointment,
 			makeLayout,

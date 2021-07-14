@@ -11,22 +11,23 @@ import { useSelector } from 'react-redux';
 import Main from 'calypso/components/main';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
-interface Props {
-	user: string;
-}
+/**
+ * Type dependencies
+ */
+import type { UserData } from 'calypso/lib/user/user';
 
-const JetpackCheckoutScheduleAppointment: FunctionComponent< Props > = ( { user } ) => {
-	const currentUser = useSelector( ( state ) => getCurrentUser( state ) );
+const JetpackCheckoutScheduleAppointment: FunctionComponent = () => {
+	const currentUser = useSelector( ( state ) => getCurrentUser( state ) ) as UserData;
 
 	return (
 		<Main fullWidthLayout className="jetpack-checkout-schedule-appointment">
 			<InlineWidget
-				url="https://calendly.com/d/xfg8-3ykd/jetpack-com-onboarding-call?month=2021-07"
+				url="https://calendly.com/d/xfg8-3ykd/jetpack-com-onboarding-call"
 				pageSettings={ {
 					// --studio-jetpack-green
 					primaryColor: '069e08',
 				} }
-				prefill={ { email: currentUser?.email ?? user, name: currentUser?.display_name } }
+				prefill={ { email: currentUser?.email, name: currentUser?.display_name } }
 			/>
 		</Main>
 	);

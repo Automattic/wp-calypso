@@ -302,10 +302,7 @@ export function jetpackCheckoutThankYou( context, next ) {
 }
 
 export function jetpackCheckoutScheduleAppointment( context, next ) {
-	const userEmail = context.query.user;
-
-	context.primary = <JetpackCheckoutScheduleAppointment user={ userEmail } />;
-
+	context.primary = <JetpackCheckoutScheduleAppointment />;
 	next();
 }
 

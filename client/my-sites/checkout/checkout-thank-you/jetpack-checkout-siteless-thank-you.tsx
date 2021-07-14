@@ -46,8 +46,7 @@ const JetpackCheckoutSitelessThankYou: FunctionComponent< Props > = ( { productS
 	const jetpackInstallInstructionsLink =
 		'https://jetpack.com/support/getting-started-with-jetpack/';
 
-	// TODO: Get the correct link to schedule 15min Happiness support session. This link is not correct.
-	const happinessAppointmentLink = `/schedule-happiness-appointment?user=${ userEmail }`;
+	const happinessAppointmentLink = '/checkout/jetpack/schedule-happiness-appointment';
 
 	const [ siteInput, setSiteInput ] = useState( '' );
 
