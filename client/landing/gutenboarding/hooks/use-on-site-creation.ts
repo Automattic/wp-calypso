@@ -100,8 +100,8 @@ export default function useOnSiteCreation(): void {
 						: `block-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`;
 
 					const redirectionUrl = shouldRedirectToEditorAfterCheckout
-						? `/checkout/${ newSite.site_slug }?isGutenboardingCreate=1&redirect_to=%2F${ editorUrl }`
-						: `/checkout/${ newSite.site_slug }?isGutenboardingCreate=1`;
+						? `/checkout/${ newSite.site_slug }?redirect_to=%2F${ editorUrl }`
+						: `/checkout/${ newSite.site_slug }`;
 					window.location.href = redirectionUrl;
 				};
 				recordOnboardingComplete( {

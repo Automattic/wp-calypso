@@ -21,7 +21,6 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 	return addQueryArgs(
 		{
 			signup: 1,
-			...( dependencies.isGutenboardingCreate && { isGutenboardingCreate: 1 } ),
 			...( [ 'domain', 'add-domain' ].includes( flowName ) && { isDomainOnly: 1 } ),
 		},
 		checkoutURL
