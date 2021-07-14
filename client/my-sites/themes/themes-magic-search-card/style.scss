@@ -81,6 +81,9 @@
 
 			a {
 				color: var( --color-text-inverted );
+				&:hover {
+					color: var( --color-neutral-70 );
+				}
 			}
 		}
 
