@@ -6,11 +6,7 @@ module.exports = {
 	overrides: [
 		{
 			plugins: [ 'mocha' ],
-			files: [
-				'test/e2e/specs/specs-jetpack/*',
-				'test/e2e/specs/specs-calypso/*',
-				'test/e2e/specs/specs-wpcom/*',
-			],
+			files: [ 'specs/specs-jetpack/*', 'specs/specs-calypso/*', 'specs/specs-wpcom/*' ],
 			rules: {
 				'mocha/no-exclusive-tests': 'error',
 				'mocha/handle-done-callback': [ 'error', { ignoreSkipped: true } ],
@@ -24,11 +20,11 @@ module.exports = {
 					{}
 				),
 			},
-			globals: {
-				step: false,
-			},
 			env: {
 				mocha: true,
+			},
+			globals: {
+				step: false,
 			},
 		},
 	],
