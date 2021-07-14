@@ -1,30 +1,33 @@
-/**
- * External dependencies
- */
 import {
+	setupHooks,
 	DataHelper,
 	LoginFlow,
 	NewPostFlow,
 	GutenbergEditorPage,
 	PublishedPostPage,
 	PricingTableBlock,
-	DynamicHRBlock, //eslint-disable-line no-unused-vars
-	HeroBlock, //eslint-disable-line no-unused-vars
+	DynamicHRBlock,
+	HeroBlock,
 } from '@automattic/calypso-e2e';
 
-describe( DataHelper.createSuiteTitle( 'Gutenberg: CoBlocks' ), function () {
+describe.only( DataHelper.createSuiteTitle( 'Gutenberg: CoBlocks' ), () => {
 	let gutenbergEditorPage;
 	let pricingTableBlock;
+	let page;
+
+	setupHooks( ( args ) => {
+		page = args.page;
+	} );
 
 	it( 'Log in', async function () {
-		const loginFlow = new LoginFlow( this.page, 'gutenbergSimpleSiteUser' );
+		const loginFlow = new LoginFlow( page, 'gutenbergSimpleSiteUser' );
 		await loginFlow.logIn();
 	} );
 
 	it( 'Start new post', async function () {
-		const newPostFlow = new NewPostFlow( this.page );
+		const newPostFlow = new NewPostFlow( page );
 		await newPostFlow.newPostFromNavbar();
-		gutenbergEditorPage = await GutenbergEditorPage.Expect( this.page );
+		gutenbergEditorPage = await GutenbergEditorPage.Expect( page );
 	} );
 
 	it( 'Enter post title', async function () {
@@ -48,15 +51,17 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: CoBlocks' ), function () {
 
 	it( 'Publish and visit post', async function () {
 		await gutenbergEditorPage.publish( { visit: true } );
-		await PublishedPostPage.Expect( this.page );
+		await PublishedPostPage.Expect( page );
 	} );
 
-	[ 'Pricing Table', 'Dynamic HR', 'Hero' ].forEach( function ( blockName ) {
-		it( `Confirm ${ blockName } is visible in published post`, async function () {
-			const blockClassName = `${ blockName.replace( /\s/g, '' ) }Block`;
-			// eval() will allow us to call the static function of each block from
-			// the string representation of the name.
-			await eval( blockClassName ).validatePublishedContent( this.page );
-		} );
+	it.each`
+		block                  | name
+		${ PricingTableBlock } | ${ 'Pricing Table' }
+		${ DynamicHRBlock }    | ${ 'Dynamic HR' }
+		${ HeroBlock }         | ${ 'Hero' }
+	`( `Confirm $name block is visible in published post`, async ( { block } ) => {
+		// Passing in the actual object reference permits this call to succeed.
+		// Calling `eval(objName)` or `global[objName]` leads to failure.
+		await block.validatePublishedContent( page );
 	} );
 } );

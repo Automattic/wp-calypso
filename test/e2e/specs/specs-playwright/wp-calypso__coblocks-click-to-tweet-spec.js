@@ -1,7 +1,5 @@
-/**
- * External dependencies
- */
 import {
+	setupHooks,
 	DataHelper,
 	LoginFlow,
 	NewPostFlow,
@@ -12,31 +10,36 @@ import {
 
 // This test has been isolated in its own file due to the following issue:
 // https://github.com/Automattic/wp-calypso/issues/54421
-// This issue causes interference with the post-publish panel being auto-dismissed.
-describe( DataHelper.createSuiteTitle( 'Gutenberg: CoBlocks: Click to Tweet' ), function () {
+// which causes interference with the post-publish panel being auto-dismissed if this block is present.
+// Once the issue is fixed, combine this test into the main coblock test.
+describe( DataHelper.createSuiteTitle( 'Gutenberg: CoBlocks: Click to Tweet' ), () => {
 	let gutenbergEditorPage;
 	let clickToTweetBlock;
-	const blockName = 'Click to Tweet';
 	const tweet =
 		'The foolish man seeks happiness in the distance. The wise grows it under his feet. — James Oppenheim';
+	let page;
+
+	setupHooks( ( args ) => {
+		page = args.page;
+	} );
 
 	it( 'Log in', async function () {
-		const loginFlow = new LoginFlow( this.page, 'gutenbergSimpleSiteUser' );
+		const loginFlow = new LoginFlow( page, 'gutenbergSimpleSiteUser' );
 		await loginFlow.logIn();
 	} );
 
 	it( 'Start new post', async function () {
-		const newPostFlow = new NewPostFlow( this.page );
+		const newPostFlow = new NewPostFlow( page );
 		await newPostFlow.newPostFromNavbar();
-		gutenbergEditorPage = await GutenbergEditorPage.Expect( this.page );
+		gutenbergEditorPage = await GutenbergEditorPage.Expect( page );
 	} );
 
 	it( 'Enter post title', async function () {
-		await gutenbergEditorPage.enterTitle( blockName );
+		await gutenbergEditorPage.enterTitle( 'Click to Tweet' );
 	} );
 
-	it( `Insert ${ blockName } block`, async function () {
-		const blockHandle = await gutenbergEditorPage.addBlock( blockName );
+	it( `Insert Click to Tweet block`, async function () {
+		const blockHandle = await gutenbergEditorPage.addBlock( 'Click to Tweet' );
 		clickToTweetBlock = new ClicktoTweetBlock( blockHandle );
 	} );
 
@@ -46,10 +49,10 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: CoBlocks: Click to Tweet' ), 
 
 	it( 'Publish and visit post', async function () {
 		await gutenbergEditorPage.publish( { visit: true } );
+		await PublishedPostPage.Expect( page );
 	} );
 
-	it( `${ blockName } block is visible in published post`, async function () {
-		const publishedPostPage = await PublishedPostPage.Expect( this.page );
-		await publishedPostPage.confirmBlockPresence( '.wp-block-coblocks-click-to-tweet' );
+	it( `Click to Tweet block is visible in published post`, async function () {
+		await ClicktoTweetBlock.validatePublishedContent( page );
 	} );
 } );

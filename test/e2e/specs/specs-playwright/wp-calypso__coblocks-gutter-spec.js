@@ -1,30 +1,31 @@
-/**
- * External dependencies
- */
+import assert from 'assert';
 import {
+	setupHooks,
 	DataHelper,
 	LoginFlow,
 	NewPostFlow,
 	GutenbergEditorPage,
 	PricingTableBlock,
 } from '@automattic/calypso-e2e';
-import assert from 'assert';
 
-describe( DataHelper.createSuiteTitle( 'WPCOM-specific gutter controls' ), function () {
-	const blockName = 'Pricing Table';
-	const gutters = [ 'None', 'Small', 'Medium', 'Large', 'Huge' ];
+describe( DataHelper.createSuiteTitle( 'WPCOM-specific gutter controls' ), () => {
 	let gutenbergEditorPage;
 	let pricingTableBlock;
+	let page;
+
+	setupHooks( ( args ) => {
+		page = args.page;
+	} );
 
 	it( 'Log in', async function () {
-		const loginFlow = new LoginFlow( this.page, 'gutenbergSimpleSiteUser' );
+		const loginFlow = new LoginFlow( page, 'gutenbergSimpleSiteUser' );
 		await loginFlow.logIn();
 	} );
 
 	it( 'Start new post', async function () {
-		const newPostFlow = new NewPostFlow( this.page );
+		const newPostFlow = new NewPostFlow( page );
 		await newPostFlow.newPostFromNavbar();
-		gutenbergEditorPage = await GutenbergEditorPage.Expect( this.page );
+		gutenbergEditorPage = await GutenbergEditorPage.Expect( page );
 	} );
 
 	it( 'Open settings sidebar', async function () {
@@ -32,14 +33,19 @@ describe( DataHelper.createSuiteTitle( 'WPCOM-specific gutter controls' ), funct
 	} );
 
 	it( 'Insert Pricing Table block', async function () {
-		const blockHandle = await gutenbergEditorPage.addBlock( blockName );
+		const blockHandle = await gutenbergEditorPage.addBlock( 'Pricing Table' );
 		pricingTableBlock = new PricingTableBlock( blockHandle );
 	} );
 
-	gutters.forEach( async function ( gutterValue ) {
-		it( `Set gutter value to ${ gutterValue }`, async function () {
-			const isSelected = await pricingTableBlock.setGutter( gutterValue );
-			assert.strictEqual( isSelected, true );
-		} );
+	it.each`
+		gutterValue
+		${ 'None' }
+		${ 'Small' }
+		${ 'Medium' }
+		${ 'Large' }
+		${ 'Huge' }
+	`( 'Set gutter value to $gutterValue', async ( { gutterValue } ) => {
+		const isSelected = await pricingTableBlock.setGutter( gutterValue );
+		assert.strictEqual( isSelected, true );
 	} );
 } );

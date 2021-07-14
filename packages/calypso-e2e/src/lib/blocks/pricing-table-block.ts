@@ -52,7 +52,7 @@ export class PricingTableBlock extends BaseBlock {
 	 * @param {Page} page Page on which to verify the presence of the block.
 	 */
 	static async validatePublishedContent( page: Page ): Promise< void > {
-		await page.isVisible( selectors.pricing );
-		await page.isVisible( selectors.block );
+		await page.waitForSelector( selectors.pricing );
+		await page.waitForSelector( selectors.block );
 	}
 }
