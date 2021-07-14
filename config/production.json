@@ -54,7 +54,6 @@
 		"ive/use-external-assignment": true,
 		"jetpack/api-cache": false,
 		"jetpack/concierge-sessions": false,
-		"jetpack/connect-redirect-pressable-credential-approval": true,
 		"jetpack/connect/mobile-app-flow": true,
 		"jetpack/features-section/atomic": true,
 		"jetpack/features-section/jetpack": true,

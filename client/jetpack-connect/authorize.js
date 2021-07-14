@@ -357,19 +357,8 @@ export class JetpackAuthorize extends Component {
 
 	shouldRedirectJetpackStart( props = this.props ) {
 		const { partnerSlug, partnerID } = props;
-		const pressableRedirectFlag = config.isEnabled(
-			'jetpack/connect-redirect-pressable-credential-approval'
-		);
 
-		// If the redirect flag is set, then we conditionally redirect the Pressable client to
-		// a credential approval screen. Otherwise, we need to redirect all other partners back
-		// to wp-admin.
-		if ( pressableRedirectFlag ) {
-			return partnerID && 'pressable' !== partnerSlug;
-		}
-
-		// If partner ID query param is set, then assume that the connection is from the Jetpack Start flow.
-		return !! partnerID;
+		return partnerID && 'pressable' !== partnerSlug;
 	}
 
 	handleSignIn = () => {
@@ -684,10 +673,7 @@ export class JetpackAuthorize extends Component {
 		const { partnerSlug, selectedPlanSlug, siteHasJetpackPaidProduct } = this.props;
 
 		// Redirect sites hosted on Pressable with a partner plan to some URL.
-		if (
-			config.isEnabled( 'jetpack/connect-redirect-pressable-credential-approval' ) &&
-			'pressable' === partnerSlug
-		) {
+		if ( 'pressable' === partnerSlug ) {
 			return `/start/pressable-nux?blogid=${ clientId }`;
 		}
 
