@@ -599,6 +599,8 @@ class RegisterDomainStep extends React.Component {
 					disabled={ isLoading }
 					busy={ isLoading }
 					onClick={ this.showNextPage }
+					primary
+					borderless
 				>
 					{ this.props.translate( 'Show more results' ) }
 				</Button>
