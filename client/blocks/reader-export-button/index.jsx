@@ -55,9 +55,13 @@ class ReaderExportButton extends React.Component {
 
 	onClick = async () => {
 		// Don't kick off a new export request if there's one in progress
-		if ( this.props.disabled || this.state.disabled ) {
+		if ( ! this.isMounted || this.props.disabled || this.state.disabled ) {
 			return;
 		}
+
+		this.setState( {
+			disabled: true,
+		} );
 
 		let data;
 
@@ -70,21 +74,9 @@ class ReaderExportButton extends React.Component {
 		}
 
 		this.onApiResponse( data );
-
-		this.setState( {
-			disabled: true,
-		} );
 	};
 
 	onApiResponse = ( data ) => {
-		if ( ! this.isMounted ) {
-			return;
-		}
-
-		this.setState( {
-			disabled: false,
-		} );
-
 		if ( ! data?.success ) {
 			this.props.errorNotice(
 				this.props.translate( 'Sorry, there was a problem creating your export file.' )
@@ -94,6 +86,12 @@ class ReaderExportButton extends React.Component {
 
 		const blob = new Blob( [ data.opml ], { type: 'text/xml;charset=utf-8' } ); // eslint-disable-line no-undef
 		saveAs( blob, this.props.filename );
+
+		if ( this.isMounted ) {
+			this.setState( {
+				disabled: false,
+			} );
+		}
 	};
 
 	render() {
