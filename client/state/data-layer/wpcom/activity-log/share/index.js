@@ -24,15 +24,21 @@ const requestShare = ( action ) =>
 		action
 	);
 
-const successfulShare = ( siteId ) =>
+const successfulShare = ( { siteId, rewindId } ) =>
 	withAnalytics(
-		recordTracksEvent( 'calypso_activity_event_share_success', { siteId } ),
+		recordTracksEvent( 'calypso_activity_event_share_success', {
+			site_id: siteId,
+			rewind_id: rewindId,
+		} ),
 		successNotice( translate( "We've shared the event!" ) )
 	);
 
-const failedShare = ( siteId ) =>
+const failedShare = ( { siteId, rewindId } ) =>
 	withAnalytics(
-		recordTracksEvent( 'calypso_activity_event_share_failed', { siteId } ),
+		recordTracksEvent( 'calypso_activity_event_share_failed', {
+			site_id: siteId,
+			rewind_id: rewindId,
+		} ),
 		errorNotice( translate( 'The event failed to send, please try again.' ) )
 	);
 
