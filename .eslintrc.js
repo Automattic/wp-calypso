@@ -181,6 +181,7 @@ module.exports = {
 				'client/sections-helper.js',
 				'client/sections-middleware.js',
 				'client/sections-preloaders.js',
+				'client/sections.js',
 				'packages/accessible-focus/**/*',
 				'packages/calypso-products/**/*',
 				'packages/data-stores/**/*',
