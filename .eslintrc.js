@@ -183,6 +183,7 @@ module.exports = {
 				'client/sections-preloaders.js',
 				'client/sections.js',
 				'client/support/**/*',
+				'client/types.ts',
 				'packages/accessible-focus/**/*',
 				'packages/calypso-products/**/*',
 				'packages/data-stores/**/*',
