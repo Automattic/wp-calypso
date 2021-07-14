@@ -144,7 +144,10 @@ export default function getThankYouPageUrl( {
 		const thankYouUrlSiteLess = `/checkout/jetpack/thank-you/no-site/${
 			productSlug ?? 'no_product'
 		}`;
-		return pendingOrReceiptId
+
+		const isValidReceiptId = ! isNaN( parseInt( pendingOrReceiptId ) );
+
+		return isValidReceiptId
 			? `${ thankYouUrlSiteLess }?receiptId=${ pendingOrReceiptId }`
 			: thankYouUrlSiteLess;
 	}
