@@ -889,19 +889,3 @@
 		@include placeholder( --color-neutral-30 );
 	}
 }
-
-.jetpack-checkout-schedule-appointment {
-	.jetpack-checkout-schedule-appointment__card {
-		box-shadow: 0 0 40px 0 #00000014;
-
-		width: 100%;
-		max-width: none;
-		padding: 16px;
-
-		@include break-mobile {
-			width: auto;
-			max-width: 650px;
-			padding: 96px;
-		}
-	}
-}

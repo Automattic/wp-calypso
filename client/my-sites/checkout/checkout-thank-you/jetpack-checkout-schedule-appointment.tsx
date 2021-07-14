@@ -3,32 +3,31 @@
  */
 import { InlineWidget } from 'react-calendly';
 import React, { FunctionComponent } from 'react';
-import { Card } from '@automattic/components';
+import { useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import Main from 'calypso/components/main';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 interface Props {
 	user: string;
 }
 
 const JetpackCheckoutScheduleAppointment: FunctionComponent< Props > = ( { user } ) => {
+	const currentUser = useSelector( ( state ) => getCurrentUser( state ) );
+
 	return (
 		<Main fullWidthLayout className="jetpack-checkout-schedule-appointment">
-			<Card className="jetpack-checkout-schedule-appointment__card">
-				<InlineWidget
-					url="https://calendly.com/caleb-bauermeister-dev"
-					pageSettings={ {
-						backgroundColor: 'ffffff',
-						hideEventTypeDetails: false,
-						hideLandingPageDetails: false,
-						primaryColor: '00a2ff',
-						textColor: '4d5055',
-					} }
-				/>
-			</Card>
+			<InlineWidget
+				url="https://calendly.com/d/xfg8-3ykd/jetpack-com-onboarding-call?month=2021-07"
+				pageSettings={ {
+					// --studio-jetpack-green
+					primaryColor: '069e08',
+				} }
+				prefill={ { email: currentUser?.email ?? user, name: currentUser?.display_name } }
+			/>
 		</Main>
 	);
 };
