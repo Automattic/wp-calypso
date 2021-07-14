@@ -82,6 +82,12 @@
 	margin-bottom: 0;
 }
 
+.reader-full-post .is-type-wp-embed {
+	iframe {
+		width: 100%;
+	}
+}
+
 // Social Icons Styles
 .wp-block-social-links .wp-social-link a,
 .wp-block-social-links .wp-social-link a:hover {
