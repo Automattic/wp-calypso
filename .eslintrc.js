@@ -185,6 +185,7 @@ module.exports = {
 				'client/support/**/*',
 				'packages/accessible-focus/**/*',
 				'packages/calypso-products/**/*',
+				'packages/composite-checkout/**/*',
 				'packages/data-stores/**/*',
 				'test/e2e/**/*',
 			],

@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import styled from '../lib/styled';
 
 export function CheckIcon( { className, id }: { className?: string; id: string } ) {
