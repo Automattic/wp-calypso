@@ -28,7 +28,7 @@
 	.search {
 		position: relative;
 		flex: 0 1 auto;
-		margin: 0 10px;
+		margin: 0 5px 0 10px;
 		height: 36px;
 		border: solid 1px var( --color-neutral-10 );
 
@@ -94,7 +94,7 @@
 		}
 
 		&.showcase-revamp {
-			padding: 11px 10px;
+			padding: 11px 10px 11px 5px;
 		}
 	}
 
