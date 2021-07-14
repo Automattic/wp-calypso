@@ -156,6 +156,7 @@ body.is-section-home {
 		}
 
 		.task__text, .task__illustration {
+			padding-top: 0;
 			padding-bottom: 0;
 		}
 	}
@@ -164,6 +165,7 @@ body.is-section-home {
 .customer-home__location-primary .dot-pager__controls {
 	justify-content: flex-start;
 	margin-top: 0;
+	margin-bottom: 32px;
 
 	button {
 		// Size the dots
