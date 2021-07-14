@@ -13,6 +13,10 @@ const selectors = {
 	username: '#usernameOrEmail',
 	password: '#password',
 	changeAccountButton: '#loginAsAnotherUser',
+
+	// Social
+	socialGoogleButton: ':text("Continue with Google")',
+	socialAppleButton: ':text("Continue with Apple")',
 };
 
 /**
@@ -62,5 +66,15 @@ export class LoginPage extends BaseContainer {
 
 		// Enter submits the form and initiates the log in process.
 		await this.page.keyboard.press( 'Enter' );
+	}
+
+	/**
+	 * Clicks on the requested Social Login button.
+	 *
+	 * @param {string} socialType Target social network login service to be used.
+	 * @returns {Promise<void>} No return value.
+	 */
+	async clickSocialLogin( socialType: string ): Promise< void > {
+		await this.page.click( `:text("Continue with ${ socialType }")` );
 	}
 }

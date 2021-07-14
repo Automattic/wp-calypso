@@ -86,4 +86,32 @@ export class LoginFlow {
 		// Wait for the popup to be closed before passing control back.
 		await popupPage.waitForEvent( 'close' );
 	}
+
+	/**
+	 * Initiates the Social Login flow.
+	 *
+	 * This method accepts a parameter `socialType` that will map to the available social
+	 * login service offered on WordPresss.com.
+	 *
+	 * @param {'Google'|'Apple'} socialType Target social network login service to be used.
+	 * @returns {Page|null} Reference to the popup page if socialType is Google. Otherwise, null.
+	 */
+	async initiateSocialLogin( socialType: 'Google' | 'Apple' ): Promise< Page | null > {
+		await this.page.goto( getCalypsoURL( 'log-in' ) );
+		const loginPage = await LoginPage.Expect( this.page );
+		await loginPage.clickSocialLogin( socialType );
+
+		if ( socialType === 'Google' ) {
+			// Intercept the popup event to obtain the reference to the
+			// popup Page.
+			const popupPage = await this.page.waitForEvent( 'popup' );
+
+			await popupPage.waitForLoadState( 'load' );
+			return popupPage;
+		}
+		if ( socialType === 'Apple' ) {
+			await this.page.waitForLoadState( 'load' );
+		}
+		return null;
+	}
 }
