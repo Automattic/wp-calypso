@@ -167,8 +167,7 @@ export default class SignupFlowController {
 			return;
 		}
 
-		// If we are entering from one flow to another, e.g. 'new-launch' to 'onboarding',
-		// we should remove the siteSlug stored by previous flow if the following conditions are met:
+		// If we are entering from one flow to another, we should remove the siteSlug stored by previous flow if the following conditions are met:
 		// - the previous flow does not contain a step that provides the siteSlug dependency
 		// - the current flow contains a step that provides the siteSlug dependency
 		const previousFlowName = getPreviousFlowName( this._reduxStore.getState() );

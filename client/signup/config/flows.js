@@ -7,7 +7,6 @@ import { get, includes, reject } from 'lodash';
  * Internal dependencies
  */
 import stepConfig from './steps';
-import { isEcommercePlan } from '@automattic/calypso-products';
 import { generateFlows } from 'calypso/signup/config/flows-pure';
 import { addQueryArgs } from 'calypso/lib/url';
 
@@ -22,13 +21,6 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 	return addQueryArgs(
 		{
 			signup: 1,
-			...( dependencies.isPreLaunch && {
-				preLaunch: 1,
-			} ),
-			...( dependencies.isPreLaunch &&
-				! isEcommercePlan( dependencies.cartItem.product_slug ) && {
-					redirect_to: `/home/${ dependencies.siteSlug }`,
-				} ),
 			...( dependencies.isGutenboardingCreate && { isGutenboardingCreate: 1 } ),
 			...( [ 'domain', 'add-domain' ].includes( flowName ) && { isDomainOnly: 1 } ),
 		},
