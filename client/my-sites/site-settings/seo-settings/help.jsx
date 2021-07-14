@@ -20,7 +20,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import { FEATURE_ADVANCED_SEO } from '@automattic/calypso-products';
 
-const SeoSettingsHelpCard = ( {
+export const SeoSettingsHelpCard = ( {
 	disabled,
 	hasAdvancedSEOFeature,
 	siteId,
