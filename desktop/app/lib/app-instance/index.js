@@ -22,6 +22,7 @@ AppInstance.prototype.anotherInstanceStarted = function () {
 
 AppInstance.prototype.isSingleInstance = function () {
 	if ( app.requestSingleInstanceLock() ) {
+		this.anotherInstanceStarted();
 		return true;
 	}
 
