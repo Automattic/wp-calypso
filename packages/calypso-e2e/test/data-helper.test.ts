@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { describe, expect, test } from '@jest/globals';
-
-/**
- * Internal dependencies
- */
 import {
 	getAccountCredential,
 	getCalypsoURL,

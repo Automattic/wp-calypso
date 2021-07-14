@@ -3,23 +3,20 @@
  * @author Edwin Takahashi
  */
 
-/**
- * External dependencies
- */
-import { chromium } from 'playwright';
 import config from 'config';
-import type { Browser, BrowserContext, Page, Logger } from 'playwright';
-
-/**
- * Internal dependencies
- */
-import { getVideoDir } from './media-helper';
+import { chromium, chromium } from 'playwright';
 import { getViewportSize } from './browser-helper';
-
-/**
- * Type dependencies
- */
+import { getVideoDir, getVideoDir } from './media-helper';
 import { viewportSize } from './types';
+import type {
+	Browser,
+	BrowserContext,
+	Page,
+	Logger,
+	Browser,
+	BrowserContext,
+	Page,
+} from 'playwright';
 
 export let browser: Browser;
 

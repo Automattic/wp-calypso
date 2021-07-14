@@ -1,12 +1,5 @@
-/**
- * Internal dependencies
- */
-import { BaseContainer } from '../../base-container';
-
-/**
- * Type dependencies
- */
 import { Frame } from 'playwright';
+import { BaseContainer } from '../../base-container';
 
 const selectors = {
 	// Like Widget

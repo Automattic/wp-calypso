@@ -184,6 +184,7 @@ module.exports = {
 				'client/sections.js',
 				'client/support/**/*',
 				'packages/accessible-focus/**/*',
+				'packages/calypso-e2e/**/*',
 				'packages/calypso-products/**/*',
 				'packages/composite-checkout/**/*',
 				'packages/data-stores/**/*',
