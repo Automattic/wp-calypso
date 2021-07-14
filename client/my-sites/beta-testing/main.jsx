@@ -1,11 +1,12 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import FollowButtonContainer from 'calypso/blocks/follow-button';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
@@ -24,6 +25,7 @@ import {
 	isRequestingPostsForQueryIgnoringPage,
 } from 'calypso/state/posts/selectors';
 import QueryPosts from 'calypso/components/data/query-posts';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 
 /**
  * Style dependencies
@@ -44,49 +46,91 @@ const horizonSiteId = 90972941;
 const BetaTesting = ( { siteId, posts, isRequestingPosts, trackViewHorizonAction } ) => {
 	const translate = useTranslate();
 	const header = (
-		<div className="beta-testing__heading">
-			<FormattedHeader
-				brandFont
-				headerText={ translate( 'Beta Testing' ) }
-				subHeaderText={ translate( 'Join the WordPress.com Beta Community' ) }
-				align="left"
-			/>
-			<div className="beta-testing__view-horizon-button">
-				<Button href="https://horizon.wordpress.com/" onClick={ trackViewHorizonAction }>
-					{ translate( 'Visit Horizon' ) }
-				</Button>
-			</div>
-		</div>
+		<FormattedHeader
+			brandFont
+			headerText={ translate( 'Beta Testing' ) }
+			subHeaderText={ translate( 'Help make the web a better place, one release at a time.' ) }
+			align="left"
+		/>
 	);
 
 	const main = (
-		<div className="beta-testing__main">
-			<Card>
-				<CardHeading tagName="h1" size={ 21 }>
-					{ translate( 'Help shape the future of online publishing.' ) }
-				</CardHeading>
+		<Fragment>
+			<Card className="beta-testing__header-body">
+				<div className="beta-testing__header-info">
+					<CardHeading tagName="h2" size={ 20 }>
+						{ translate( 'Help shape the future of online publishing' ) }
+					</CardHeading>
 
-				<p>
-					{ translate(
-						"We’re making the web a better place, one release at a time -- and we’re asking for your help. WordPress.com ships updates and improvements every single day, and beta users will get to experience some of these before anyone else. By taking part in this program, you will be helping to shape the future of WordPress.com, making it better for you, your readers, your fellow bloggers, and for millions of people worldwide. You won't be testing everything but there are some important ideas and projects we’d love to share with you. It’s also worth noting that not everything you see will make it into WordPress.com or work exactly the same way once updates go public."
-					) }
-				</p>
+					<p>
+						{ translate(
+							'WordPress.com ships updates and improvements every single day, and beta users will get to experience some of these before anyone else. By taking part in this program, you will be helping to shape the future of WordPress.com, making it better for millions of people worldwide.'
+						) }
+					</p>
+					<p>
+						{ translate(
+							"You won't be testing everything but there are some important ideas and projects we’d love to share with you."
+						) }
+					</p>
+
+					<div className="beta-testing__cta-section">
+						<Button
+							className="beta-testing__view-horizon-button is-primary"
+							href="https://horizon.wordpress.com/"
+							onClick={ trackViewHorizonAction }
+						>
+							{ translate( 'Join the Beta Program' ) }
+						</Button>
+
+						<a
+							className="beta-testing__external-link"
+							href="https://horizonfeedback.wordpress.com/about/"
+						>
+							{ translate( 'Learn how it works' ) }
+							<Gridicon icon="external" size={ 18 } />
+						</a>
+					</div>
+				</div>
+				<div className="beta-testing__header-image-wrapper">
+					<img
+						className="beta-testing__header-image"
+						src="/calypso/images/illustrations/illustration-404.svg"
+						alt={ translate( 'Beta Testing' ) }
+					/>
+				</div>
 			</Card>
-			<Card>
-				<CardHeading className="beta-testing__heading" tagName="h1" size={ 21 }>
-					<span>{ translate( 'Recent Beta Features' ) }</span>
+			<div className="beta-testing__main">
+				<SettingsSectionHeader
+					className="beta-testing__posts-header"
+					title={ translate( 'Recent Beta Features' ) }
+				>
 					<FollowButtonContainer siteUrl="https://horizonfeedback.wordpress.com" />
-				</CardHeading>
-
-				<div className="beta-testing__posts">
+					<a className="beta-testing__see-all" href="https://horizonfeedback.wordpress.com">
+						{ translate( 'See All' ) }
+						<Gridicon icon="chevron-right" size={ 18 } />
+					</a>
+				</SettingsSectionHeader>
+				<Card className="beta-testing__posts">
 					{ isRequestingPosts && ! posts && (
-						<article className="beta-testing__post is-placeholder">
-							<CardHeading tagName="h4" size={ 16 }></CardHeading>
-							<p></p>
-							<p></p>
-							<p></p>
-						</article>
+						<Fragment>
+							<article className="beta-testing__post is-placeholder">
+								<CardHeading tagName="h4" size={ 16 }></CardHeading>
+								<p></p>
+								<p></p>
+							</article>
+							<article className="beta-testing__post is-placeholder">
+								<CardHeading tagName="h4" size={ 16 }></CardHeading>
+								<p></p>
+								<p></p>
+							</article>
+							<article className="beta-testing__post is-placeholder">
+								<CardHeading tagName="h4" size={ 16 }></CardHeading>
+								<p></p>
+								<p></p>
+							</article>
+						</Fragment>
 					) }
+
 					{ posts?.map( ( post ) => {
 						return (
 							<article key={ post.ID } className="beta-testing__post">
@@ -97,45 +141,9 @@ const BetaTesting = ( { siteId, posts, isRequestingPosts, trackViewHorizonAction
 							</article>
 						);
 					} ) }
-				</div>
-			</Card>
-
-			<Card>
-				<CardHeading tagName="h1" size={ 21 }>
-					{ translate( 'How it Works' ) }
-				</CardHeading>
-				<p>{ translate( 'Welcome to Horizon: a beta testing project for WordPress.com' ) }</p>
-				<p>
-					{ translate(
-						'Horizon is where the makers of WordPress.com test upcoming changes and new features with the WordPress.com community.'
-					) }
-				</p>
-				<p>
-					{ translate(
-						'By volunteering to be a Horizon beta tester, you will sometimes see small and big changes still under development. We will share information about these updates and features through the Horizon blog.'
-					) }
-				</p>
-				<p>{ translate( 'Please keep in mind:' ) }</p>
-				<ul>
-					<li>{ translate( 'Not every new feature will be tested.' ) }</li>
-					<li>{ translate( 'Involvement will be on a volunteer basis.' ) }</li>
-					<li>
-						{ translate(
-							'Be aware: things might break! So please only use this on test or development sites.'
-						) }
-					</li>
-				</ul>
-				<p>
-					{ translate(
-						'We will use your experiences along with other data and insights such as stats, past experience, and company goals.'
-					) }
-				</p>
-				<p>
-					{ translate( 'Your participation will help us, you, and millions of people worldwide.' ) }
-				</p>
-				<p>{ translate( 'Please follow the Horizon blog to stay updated.' ) }</p>
-			</Card>
-		</div>
+				</Card>
+			</div>
+		</Fragment>
 	);
 	return (
 		<Main wideLayout className="beta-testing__main">
