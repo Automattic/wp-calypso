@@ -78,6 +78,9 @@ WindowsPlatform.prototype.showBackgroundBubble = function () {
 };
 
 WindowsPlatform.prototype.restore = function () {
+	if ( window.isMinimized() ) {
+		window.restore();
+	}
 	window.show();
 };
 
