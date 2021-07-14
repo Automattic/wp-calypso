@@ -26,6 +26,7 @@ module.exports = {
 			},
 			globals: {
 				step: false,
+				mocha: false,
 			},
 		},
 	],
