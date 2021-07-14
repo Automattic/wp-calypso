@@ -57,6 +57,11 @@
 	box-shadow: none;
 	border: 1px solid rgba( var( --color-neutral-10-rgb ), 0.5 );
 	border-top: 0;
+	.section-nav-tab__link {
+		@include breakpoint-deprecated( '>480px' ) {
+			padding-top: 8px;
+		}
+	}
 }
 
 .theme-showcase__all-themes-title {
