@@ -13,19 +13,16 @@ import {
 	MARKETPLACE_SITE_TRANSFER_STATE_CHANGE,
 	MARKETPLACE_PLUGIN_INSTALLATION_STATE_CHANGE,
 	MARKETPLACE_SITE_TRANSFER_PLUGIN_INSTALL,
+	MARKETPLACE_QUEUE_PRODUCT_INSTALL,
 } from 'calypso/state/action-types';
-import {
-	MARKETPLACE_ASYNC_PROCESS_STATUS,
-	IPurchaseFlowState,
-	ISetPluginInstalledDuringPurchaseFlag,
-	ISetPluginToBeInstalledAction,
-	ISetPrimaryDomainCandidateAction,
-} from '../types';
+import { MARKETPLACE_ASYNC_PROCESS_STATUS, IPurchaseFlowState } from '../types';
 import { THEME_TRANSFER_INITIATE_REQUEST } from 'calypso/state/themes/action-types';
 
 export const defaultState: IPurchaseFlowState = {
 	primaryDomain: null,
 	pluginSlugToBeInstalled: null,
+	productSlugInstalled: null,
+	productGroupSlug: null,
 	isPluginInstalledDuringPurchase: false,
 	siteTransferStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
 	pluginInstallationStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
@@ -40,26 +37,35 @@ export default function purchaseFlow(
 ): IPurchaseFlowState {
 	switch ( action.type ) {
 		case MARKETPLACE_PRIMARY_DOMAIN_SELECT:
-			action = action as ISetPrimaryDomainCandidateAction;
 			return {
 				...state,
 				primaryDomain: action.domainName,
 			};
+		// TODO: Remove reliance on plugin
 		case MARKETPLACE_QUEUE_PLUGIN_INSTALL:
-			action = action as ISetPluginToBeInstalledAction;
 			return {
 				...state,
 				siteTransferStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
 				pluginInstallationStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
 				pluginSlugToBeInstalled: action.pluginSlugToBeInstalled,
 			};
+		// TODO: Remove reliance on plugin
 		case MARKETPLACE_PLUGIN_INSTALLED_ON_PURCHASE:
-			action = action as ISetPluginInstalledDuringPurchaseFlag;
 			return {
 				...state,
 				siteTransferStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
 				pluginInstallationStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
 				isPluginInstalledDuringPurchase: action.isPluginInstalledDuringPurchase,
+			};
+		case MARKETPLACE_QUEUE_PRODUCT_INSTALL:
+			return {
+				...state,
+				siteTransferStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
+				pluginInstallationStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
+				pluginSlugToBeInstalled: action.pluginSlugToBeInstalled,
+				productSlugInstalled: action.productSlug,
+				productGroupSlug: action.productGroupSlug,
+				primaryDomain: action.primaryDomain,
 			};
 		case THEME_TRANSFER_INITIATE_REQUEST:
 			return {
