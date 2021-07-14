@@ -286,9 +286,13 @@ export function redirectToSupportSession( context ) {
 export function jetpackCheckoutThankYou( context, next ) {
 	const isUserlessCheckoutFlow = context.path.includes( '/checkout/jetpack' );
 	const isSitelessCheckoutFlow = context.path.includes( '/checkout/jetpack/thank-you/no-site' );
+	const { receiptId } = context.query;
 
 	context.primary = isSitelessCheckoutFlow ? (
-		<JetpackCheckoutSitelessThankYou productSlug={ context.params.product } />
+		<JetpackCheckoutSitelessThankYou
+			productSlug={ context.params.product }
+			receiptId={ receiptId }
+		/>
 	) : (
 		<JetpackCheckoutThankYou
 			site={ context.params.site }
