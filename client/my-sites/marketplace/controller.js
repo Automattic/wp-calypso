@@ -8,25 +8,34 @@ import page from 'page';
  * Internal dependencies
  */
 import { getSiteFragment } from 'calypso/lib/route';
-import MarketplacePluginDetails from 'calypso/my-sites/marketplace/marketplace-plugin-details';
+import { MarketplaceProductDetails } from 'calypso/my-sites/marketplace/marketplace-product-details';
 import MarketplaceDomainUpsell from 'calypso/my-sites/marketplace/marketplace-domain-upsell';
 import MarketplacePluginSetup from 'calypso/my-sites/marketplace/marketplace-plugin-setup-status';
 import MarketplaceStandaloneThankYou from 'calypso/my-sites/marketplace/marketplace-stand-alone-thank-you';
 import MarketplaceTest from 'calypso/my-sites/marketplace/marketplace-test';
+import { getDefaultProductInProductGroup } from 'calypso/my-sites/marketplace/constants';
 
-export function renderMarketplacePlugin( context, next ) {
-	const siteUrl = getSiteFragment( context.path );
+export function renderMarketplaceProduct( context, next ) {
+	const siteFragment = getSiteFragment( context.path );
+	const { productSlug: productSlugParam, productGroupSlug: productGroupSlugParam } = context.params;
+	let productSlug = productSlugParam ? decodeURIComponent( productSlugParam ) : null;
+	const productGroupSlug = productGroupSlugParam
+		? decodeURIComponent( productGroupSlugParam )
+		: null;
 
-	const pluginSlug = decodeURIComponent( context.params.plugin );
-
+	if ( ! siteFragment ) {
+		return page.redirect( '/home' );
+	} else if ( ! productGroupSlug && ! productSlug ) {
+		return page.redirect( `/home/${ siteFragment }` );
+	} else if ( ! productSlug ) {
+		productSlug = getDefaultProductInProductGroup( productGroupSlug );
+		return page.redirect(
+			`/marketplace/product/details/${ productGroupSlug }/${ productSlug }/${ siteFragment }`
+		);
+	}
 	context.primary = (
-		<MarketplacePluginDetails
-			path={ context.path }
-			marketplacePluginSlug={ pluginSlug }
-			siteUrl={ siteUrl }
-		/>
+		<MarketplaceProductDetails productGroupSlug={ productGroupSlug } productSlug={ productSlug } />
 	);
-
 	next();
 }
 

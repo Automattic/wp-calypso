@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { IProductGroupCollection } from 'calypso/my-sites/marketplace/types';
 import page from 'page';
 
 /**
@@ -9,9 +10,12 @@ import page from 'page';
  * TODO: remove all feature flags from urls
  */
 
-export function navigateToProductHomePage( selectedSiteSlug: string, pluginSlug: string ): void {
+export function navigateToProductHomePage(
+	selectedSiteSlug: string,
+	productGroupSlug: keyof IProductGroupCollection
+): void {
 	page(
-		`/marketplace/product/details/${ pluginSlug }/${ selectedSiteSlug }?flags=marketplace-yoast`
+		`/marketplace/product/details/${ productGroupSlug }/${ selectedSiteSlug }?flags=marketplace-yoast`
 	);
 }
 

@@ -24,7 +24,7 @@ import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import useSiteMenuItems from 'calypso/my-sites/sidebar-unified/use-site-menu-items';
 import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
-import { getPurchaseFlowState } from 'calypso/state/marketplace/purchase-flow/selectors';
+import { getIsPluginInstalledDuringPurchase } from 'calypso/state/marketplace/purchase-flow/selectors';
 import {
 	isFetchingAutomatedTransferStatus,
 	getAutomatedTransferStatus,
@@ -99,7 +99,7 @@ const MarketplaceThankYou = () => {
 		isFetchingAutomatedTransferStatus( state, selectedSiteId ?? 0 )
 	);
 
-	const { isPluginInstalledDuringPurchase } = useSelector( getPurchaseFlowState );
+	const isPluginInstalledDuringPurchase = useSelector( getIsPluginInstalledDuringPurchase );
 	const transferStatus = useSelector( ( state ) =>
 		getAutomatedTransferStatus( state, selectedSiteId ?? 0 )
 	);

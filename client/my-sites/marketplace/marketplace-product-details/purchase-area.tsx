@@ -14,7 +14,7 @@ interface PurchaseArea {
 	isProductListLoading: boolean;
 	displayCost?: string | null;
 	wporgPluginName?: string;
-	onAddYoastPremiumToCart: () => Promise< ResponseCart >;
+	onAddYoastPremiumToCart: ( primaryDomain: string ) => Promise< ResponseCart >;
 	onNavigateToCheckout: () => void;
 	onNavigateToDomainsSelection: () => void;
 	onRemoveEverythingFromCart: () => Promise< ResponseCart >;
@@ -63,11 +63,11 @@ export default function PurchaseArea( {
 		const isCustomDomainPrimary = evaluateIsCustomDomainPrimary( siteDomains );
 
 		await onRemoveEverythingFromCart();
+		const primaryDomain = getPrimaryDomain( siteDomains ).domain;
 
 		if ( isProductPurchased ) {
-			await onAddYoastPremiumToCart();
+			await onAddYoastPremiumToCart( primaryDomain );
 		} else {
-			const primaryDomain = getPrimaryDomain( siteDomains ).domain;
 			onInstallPluginManually( primaryDomain );
 		}
 
@@ -83,7 +83,7 @@ export default function PurchaseArea( {
 
 	return (
 		<>
-			<div className="marketplace-plugin-details__name">{ wporgPluginName }</div>
+			<div className="marketplace-product-details__name">{ wporgPluginName }</div>
 			<div>
 				<h2>Yoast Premium cost : { ! isProductListLoading ? displayCost : '' }</h2>
 				<Button
