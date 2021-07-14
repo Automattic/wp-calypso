@@ -172,7 +172,3 @@ export function mapPostStatus( status: string ): string {
 			return 'publish,private';
 	}
 }
-
-export function externalRedirect( url: URLString ) {
-	window.location.href = url;
-}
