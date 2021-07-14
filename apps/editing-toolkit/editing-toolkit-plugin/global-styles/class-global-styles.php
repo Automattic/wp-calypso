@@ -257,7 +257,7 @@ class Global_Styles {
 	public function register_customizer_option( $wp_customize ) {
 		require_once __DIR__ . '/class-global-styles-fonts-message-control.php';
 
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_fonts_section_control' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_tracks_events_fonts_section_control' ) );
 
 		$wp_customize->add_section(
 			'global_styles_fonts_section',
@@ -279,18 +279,18 @@ class Global_Styles {
 	}
 
 	/**
-	 * Enqueue script attach-tracks-events-to-fonts-links which executes tracks events when clicking the block editor and support links from the 'Fonts' section.
+	 * Enqueue script customizer_fonts which executes tracks events when clicking the block editor and support links from the 'Fonts' section.
 	 */
-	public function enqueue_fonts_section_control() {
-		$handle = 'attach-tracks-events-to-fonts-links.js';
-		$src    = plugins_url( 'static/attach-tracks-events-to-fonts-links.js', __FILE__ );
+	public function enqueue_tracks_events_fonts_section_control() {
+		$handle = 'tracks_events_fonts_section_control';
+		$src    = plugins_url( 'dist/customizer-fonts.js', __FILE__ );
 		$deps   = array();
 
 		wp_enqueue_script(
 			$handle,
 			$src,
 			$deps,
-			filemtime( plugin_dir_path( __FILE__ ) . 'dist/attach-tracks-events-to-fonts-links.js' ),
+			filemtime( plugin_dir_path( __FILE__ ) . 'dist/customizer-fonts.js' ),
 			true
 		);
 	}
