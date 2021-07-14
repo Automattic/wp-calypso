@@ -18,7 +18,7 @@ import {
 	READER_EXPORT_TYPE_SUBSCRIPTIONS,
 	READER_EXPORT_TYPE_LIST,
 } from 'calypso/blocks/reader-export-button/constants';
-import { exportReaderList, exportReaderSubscriptions } from './api';
+import wp from 'calypso/lib/wp';
 
 /**
  * Style dependencies
@@ -43,21 +43,33 @@ class ReaderExportButton extends React.Component {
 
 	state = { disabled: false };
 
-	onClick = () => {
+	isMounted = false;
+
+	componentDidMount() {
+		this.isMounted = true;
+	}
+
+	componentWillUnmount() {
+		this.isMounted = false;
+	}
+
+	onClick = async () => {
 		// Don't kick off a new export request if there's one in progress
 		if ( this.props.disabled || this.state.disabled ) {
 			return;
 		}
 
+		let data;
+
 		if ( this.props.exportType === READER_EXPORT_TYPE_LIST ) {
-			exportReaderList( this.props.listId ).then( ( data ) => {
-				this.onApiResponse( data );
+			data = await wp.req.get( `/read/lists/${ this.props.listId }/export`, {
+				apiNamespace: 'wpcom/v2',
 			} );
 		} else {
-			exportReaderSubscriptions().then( ( data ) => {
-				this.onApiResponse( data );
-			} );
+			data = await wp.req.get( `/read/following/mine/export`, { apiVersion: '1.2' } );
 		}
+
+		this.onApiResponse( data );
 
 		this.setState( {
 			disabled: true,
@@ -65,6 +77,10 @@ class ReaderExportButton extends React.Component {
 	};
 
 	onApiResponse = ( data ) => {
+		if ( ! this.isMounted ) {
+			return;
+		}
+
 		this.setState( {
 			disabled: false,
 		} );
