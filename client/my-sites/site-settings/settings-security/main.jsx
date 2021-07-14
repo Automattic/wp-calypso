@@ -30,7 +30,7 @@ import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import { FEATURE_SECURITY_SETTINGS } from '@automattic/calypso-products';
 
-const SiteSettingsSecurity = ( {
+export const SiteSettingsSecurity = ( {
 	site,
 	siteId,
 	hasScanProduct,
