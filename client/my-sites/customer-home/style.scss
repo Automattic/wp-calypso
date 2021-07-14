@@ -145,6 +145,7 @@ body.is-section-home {
 
 	.task {
 		box-shadow: none;
+		margin-bottom: 0;
 
 		& > :first-child {
 			padding-left: 0;
@@ -153,11 +154,16 @@ body.is-section-home {
 		& > :last-child {
 			padding-right: 0;
 		}
+
+		.task__text, .task__illustration {
+			padding-bottom: 0;
+		}
 	}
 }
 
 .customer-home__location-primary .dot-pager__controls {
 	justify-content: flex-start;
+	margin-top: 0;
 
 	button {
 		// Size the dots
@@ -173,10 +179,18 @@ body.is-section-home {
 	li:first-child {
 		order: 999;
 		margin-left: auto;
+		.gridicon {
+			margin-right: 6px;
+			color: var( --studio-gray-80 );
+		}
 	}
 
 	li:last-child {
 		order: 999;
+		.gridicon {
+			margin-left: 6px;
+		    color: var( --studio-gray-80 );
+		}
 	}
 
 	.dot-pager__control-current {
