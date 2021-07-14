@@ -466,7 +466,20 @@ const trackSiteEditorCreateTemplate = ( { slug } ) => {
 	} );
 };
 
+/**
+ * Flag used to track the first call of tracking
+ * `wpcom_block_editor_nav_sidebar_item_edit`. When the site editor is loaded
+ * with query params specified to load a specific template/template part, then
+ * `setTemplate`, `setTemplatePart` or `setPage` is called editor load. We don't
+ * want to track the first call so we use this flag to track it.
+ */
+let isSiteEditorFirstSidebarItemEditCalled = false;
 const trackSiteEditorChangeTemplate = ( id, slug ) => {
+	if ( ! isSiteEditorFirstSidebarItemEditCalled ) {
+		isSiteEditorFirstSidebarItemEditCalled = true;
+		return;
+	}
+
 	tracksRecordEvent( 'wpcom_block_editor_nav_sidebar_item_edit', {
 		item_type: 'template',
 		item_id: id,
@@ -475,10 +488,48 @@ const trackSiteEditorChangeTemplate = ( id, slug ) => {
 };
 
 const trackSiteEditorChangeTemplatePart = ( id ) => {
+	if ( ! isSiteEditorFirstSidebarItemEditCalled ) {
+		isSiteEditorFirstSidebarItemEditCalled = true;
+		return;
+	}
+
 	tracksRecordEvent( 'wpcom_block_editor_nav_sidebar_item_edit', {
 		item_type: 'template_part',
 		item_id: id,
 	} );
+};
+
+/**
+ * Variable used to track the time of the last `trackSiteEditorChange` function
+ * call. This is used to debounce the function because it's called twice due to
+ * a bug. We prefer the first call because that's when the
+ * `getNavigationPanelActiveMenu` function returns the actual active menu.
+ *
+ * Keep this for backward compatibility.
+ * Fixed in: https://github.com/WordPress/gutenberg/pull/33286
+ */
+let lastTrackSiteEditorChangeContentCall = 0;
+const trackSiteEditorChangeContent = ( { type, slug } ) => {
+	if ( Date.now() - lastTrackSiteEditorChangeContentCall < 50 ) {
+		return;
+	}
+
+	if ( ! isSiteEditorFirstSidebarItemEditCalled ) {
+		isSiteEditorFirstSidebarItemEditCalled = true;
+		return;
+	}
+
+	const activeMenu = select( 'core/edit-site' ).getNavigationPanelActiveMenu();
+	if ( ! type && activeMenu === 'content-categories' ) {
+		type = 'taxonomy_category';
+	}
+
+	tracksRecordEvent( 'wpcom_block_editor_nav_sidebar_item_edit', {
+		item_type: type,
+		item_slug: slug,
+	} );
+
+	lastTrackSiteEditorChangeContentCall = Date.now();
 };
 
 /**
@@ -490,6 +541,19 @@ const trackSiteEditorChangeTemplatePart = ( id ) => {
  * @param {object} updates The edits made to the record.
  */
 const trackEditEntityRecord = ( kind, type, id, updates ) => {
+	// When the site editor is loaded without query params specified to which
+	// template or template part to load, then the `setPage`, `setTemplate` and
+	// `setTemplatePart` call is skipped. In this case we want to make sure the
+	// first call is tracked.
+	if (
+		! isSiteEditorFirstSidebarItemEditCalled &&
+		kind === 'postType' &&
+		( type === 'wp_template' || type === 'wp_template_part' )
+	) {
+		isSiteEditorFirstSidebarItemEditCalled = true;
+		return;
+	}
+
 	if ( kind === 'postType' && type === 'wp_global_styles' ) {
 		const editedEntity = select( 'core' ).getEditedEntityRecord( kind, type, id );
 		const entityContent = JSON.parse( editedEntity?.content );
@@ -576,6 +640,7 @@ const REDUX_TRACKING = {
 		addTemplate: trackSiteEditorCreateTemplate,
 		setTemplate: trackSiteEditorChangeTemplate,
 		setTemplatePart: trackSiteEditorChangeTemplatePart,
+		setPage: trackSiteEditorChangeContent,
 	},
 	'core/edit-post': {
 		setIsListViewOpened: trackListViewToggle,
