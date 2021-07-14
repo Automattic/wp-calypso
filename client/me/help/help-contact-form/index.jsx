@@ -323,6 +323,7 @@ export class HelpContactForm extends React.PureComponent {
 	 */
 	analyseSiteData = () => {
 		const { userDeclaredUrl, userDeclaresUnableToSeeSite, errorData, siteData } = this.state;
+		const { helpSite } = this.props;
 
 		// "Unauthorized" means it's still a WP.com site - just a private one.
 		const isWpComConnectedSite =
@@ -330,6 +331,11 @@ export class HelpContactForm extends React.PureComponent {
 				siteData &&
 				siteData.ID &&
 				( ! siteData.jetpack || siteData.is_wpcom_atomic ) ) ||
+			( helpSite &&
+				! userDeclaresUnableToSeeSite &&
+				helpSite &&
+				helpSite.ID &&
+				( ! helpSite.jetpack || helpSite.is_wpcom_atomic ) ) ||
 			( userDeclaredUrl && errorData && errorData === 'unauthorized' );
 
 		// Returns true for self-hosted sites, irrespective of Jetpack connection status, and non-WordPress sites.
@@ -338,10 +344,12 @@ export class HelpContactForm extends React.PureComponent {
 			( userDeclaredUrl &&
 				errorData &&
 				( errorData === 'unknown_blog' || errorData === 'jetpack_error' ) ) ||
-			( this.props.helpSite && this.props.helpSite.jetpack && ! userDeclaresUnableToSeeSite );
+			( helpSite && helpSite.jetpack && ! userDeclaresUnableToSeeSite );
 
 		if ( isWpComConnectedSite ) {
-			return 'isWpComConnectedSite';
+			return userDeclaredUrl
+				? 'isWpComConnectedSiteNotLinkedToAccount'
+				: 'isWpComConnectedSiteLinkedToAccount';
 		}
 
 		if ( isNonWpComHostedSite ) {
@@ -383,6 +391,7 @@ export class HelpContactForm extends React.PureComponent {
 			howCanWeHelp,
 			howYouFeel,
 			message,
+			siteCount,
 			userDeclaresUnableToSeeSite,
 			userDeclaredUrl,
 			userDeclaresNoSite,
@@ -422,9 +431,19 @@ export class HelpContactForm extends React.PureComponent {
 			site: this.props.helpSite,
 			helpSiteIsJetpack: analyseSiteData === 'isNonWpComHostedSiteWithJetpack',
 			helpSiteIsNotWpCom: analyseSiteData && analyseSiteData.startsWith( 'isNonWpComHosted' ),
+			helpSiteIsWpCom: analyseSiteData && analyseSiteData.startsWith( 'isWpComConnectedSite' ),
 			userDeclaredUrl: userDeclaresUnableToSeeSite && userDeclaredUrl,
 			userDeclaresNoSite,
 			userRequestsHidingUrl,
+		} );
+
+		this.setState( {
+			message: '',
+			subject: '',
+			userDeclaresNoSite: false,
+			userDeclaresUnableToSeeSite: siteCount === 0,
+			userDeclaredUrl: '',
+			userRequestsHidingUrl: false,
 		} );
 	};
 
@@ -514,7 +533,7 @@ export class HelpContactForm extends React.PureComponent {
 		let actionLink;
 		let actionMessage;
 
-		if ( analyseSiteData === 'isWpComConnectedSite' ) {
+		if ( analyseSiteData === 'isWpComConnectedSiteNotLinkedToAccount' ) {
 			// The site is linked to WordPress.com but not appearing for the user, so they've probably lost access to the account which owns it.
 			noticeMessage = translate(
 				"%(siteName)s is linked to another WordPress.com account. If you're trying to access it, please follow our Account Recovery procedure.",
