@@ -13,6 +13,7 @@ import {
 	USER_SETTINGS_UNSAVED_REMOVE,
 } from 'calypso/state/action-types';
 
+import 'calypso/state/user-settings/init';
 import 'calypso/state/data-layer/wpcom/me/settings';
 
 export { default as setUserSetting } from './thunks/set-user-setting';

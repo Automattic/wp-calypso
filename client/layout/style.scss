@@ -40,6 +40,12 @@
 		margin: 0;
 	}
 
+	.is-section-theme & {
+		.sites.main {
+			padding-top: 79px;
+		}
+	}
+
 	// This is needed to ensure the WebPreview component
 	// displays at full height.
 	.is-section-preview & {

@@ -92,3 +92,15 @@ export function getFileName( {
 export function getDateString(): string {
 	return new Date().getTime().toString();
 }
+
+/**
+ * Generates a valid filanem using the test name and a time stamp
+ *
+ * @param {string} testName The test name.
+ * @returns The filename.
+ */
+export function getTestNameWithTime( testName: string ): string {
+	const currentTestName = testName.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
+	const dateTime = new Date().toISOString().split( '.' )[ 0 ].replace( /:/g, '-' );
+	return `${ currentTestName }-${ dateTime }`;
+}

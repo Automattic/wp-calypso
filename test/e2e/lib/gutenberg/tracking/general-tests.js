@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
 import assert from 'assert';
 import { By } from 'selenium-webdriver';
-
-/**
- * Internal dependencies
- */
-import GutenbergEditorComponent from '../gutenberg-editor-component';
 import SiteEditorComponent from '../../components/site-editor-component';
-import { clearEventsStack, getEventsStack, getTotalEventsFiredForBlock } from './utils';
 import * as driverHelper from '../../driver-helper';
+import GutenbergEditorComponent from '../gutenberg-editor-component';
+import { clearEventsStack, getEventsStack, getTotalEventsFiredForBlock } from './utils';
 
 export function createGeneralTests( { it, editorType, postType, baseContext = undefined } ) {
 	const isSiteEditor = editorType === 'site';

@@ -12,7 +12,6 @@ import { localize } from 'i18n-calypso';
  */
 import { Card } from '@automattic/components';
 import HelpButton from '../../jetpack-connect/help-button';
-import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import MainHeader from '../../jetpack-connect/main-header';
@@ -22,7 +21,6 @@ import SiteUrlInput from '../../jetpack-connect/site-url-input';
 import { cleanUrl } from '../../jetpack-connect/utils';
 import { checkUrl, dismissUrl } from 'calypso/state/jetpack-connect/actions';
 import { getConnectingSite, getJetpackSiteByUrl } from 'calypso/state/jetpack-connect/selectors';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
 import { persistSession, retrieveMobileRedirect } from '../../jetpack-connect/persistence-utils';
@@ -30,14 +28,12 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { urlToSlug } from 'calypso/lib/url';
 import searchSites from 'calypso/components/search-sites';
 import jetpackConnection from '../../jetpack-connect/jetpack-connection';
-import { IS_DOT_COM_GET_SEARCH, JPC_PATH_REMOTE_INSTALL } from '../../jetpack-connect/constants';
+import { IS_DOT_COM_GET_SEARCH } from '../../jetpack-connect/constants';
 import { FLOW_TYPES } from 'calypso/jetpack-connect/flow-types';
 import { ALREADY_CONNECTED } from '../../jetpack-connect/connection-notice-types';
 
 export class SearchPurchase extends Component {
 	static propTypes = {
-		locale: PropTypes.string,
-		path: PropTypes.string,
 		type: PropTypes.oneOf( concat( FLOW_TYPES, false ) ),
 		url: PropTypes.string,
 		processJpSite: PropTypes.func,
@@ -74,9 +70,6 @@ export class SearchPurchase extends Component {
 	UNSAFE_componentWillMount() {
 		if ( this.props.url ) {
 			this.checkUrl( cleanUrl( this.props.url ), true );
-		}
-		if ( ! this.props.isLoggedIn ) {
-			this.goToRemoteInstall( JPC_PATH_REMOTE_INSTALL );
 		}
 	}
 
@@ -186,20 +179,11 @@ export class SearchPurchase extends Component {
 		);
 	}
 
-	renderLocaleSuggestions() {
-		if ( this.props.isLoggedIn || ! this.props.locale ) {
-			return;
-		}
-
-		return <LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />;
-	}
-
 	render() {
 		const { renderFooter, status } = this.props;
 
 		return (
 			<MainWrapper>
-				{ this.renderLocaleSuggestions() }
 				<div className="purchase-product__site-url-entry-container">
 					<MainHeader type={ 'jetpack_search' } />
 
@@ -226,7 +210,6 @@ const connectComponent = connect(
 		return {
 			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 			getJetpackSiteByUrl: ( url ) => getJetpackSiteByUrl( state, url ),
-			isLoggedIn: !! getCurrentUserId( state ),
 			isMobileAppFlow,
 			isRequestingSites: isRequestingSites( state ),
 			jetpackConnectSite,

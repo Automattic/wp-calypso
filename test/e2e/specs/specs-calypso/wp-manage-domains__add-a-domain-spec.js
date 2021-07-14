@@ -1,22 +1,14 @@
-/**
- * External dependencies
- */
 import config from 'config';
-
-/**
- * Internal dependencies
- */
-import * as driverManager from '../../lib/driver-manager.js';
-import * as dataHelper from '../../lib/data-helper.js';
-
-import CreateSiteFlow from '../../lib/flows/create-site-flow.js';
-import DeleteSiteFlow from '../../lib/flows/delete-site-flow.js';
-import DomainsPage from '../../lib/pages/domains-page.js';
-import CheckOutPage from '../../lib/pages/signup/checkout-page.js';
 import FindADomainComponent from '../../lib/components/find-a-domain-component.js';
 import SecurePaymentComponent from '../../lib/components/secure-payment-component.js';
 import SidebarComponent from '../../lib/components/sidebar-component.js';
+import * as dataHelper from '../../lib/data-helper.js';
+import * as driverManager from '../../lib/driver-manager.js';
+import CreateSiteFlow from '../../lib/flows/create-site-flow.js';
+import DeleteSiteFlow from '../../lib/flows/delete-site-flow.js';
 import LoginFlow from '../../lib/flows/login-flow.js';
+import DomainsPage from '../../lib/pages/domains-page.js';
+import CheckOutPage from '../../lib/pages/signup/checkout-page.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();

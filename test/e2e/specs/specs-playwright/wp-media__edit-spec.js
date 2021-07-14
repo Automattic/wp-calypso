@@ -1,10 +1,19 @@
-/**
- * External dependencies
- */
-import { DataHelper, LoginFlow, MediaPage, SidebarComponent } from '@automattic/calypso-e2e';
+import {
+	DataHelper,
+	LoginFlow,
+	MediaPage,
+	SidebarComponent,
+	setupHooks,
+} from '@automattic/calypso-e2e';
 
 describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 	// Parametrized test.
+	let page;
+
+	setupHooks( ( args ) => {
+		page = args.page;
+	} );
+
 	[
 		[ 'Simple', 'defaultUser' ],
 		[ 'Atomic', 'wooCommerceUser' ],
@@ -13,17 +22,17 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 			let mediaPage;
 
 			it( 'Log In', async function () {
-				const loginFlow = new LoginFlow( this.page, user );
+				const loginFlow = new LoginFlow( page, user );
 				await loginFlow.logIn();
 			} );
 
 			it( 'Navigate to Media', async function () {
-				const sidebarComponent = await SidebarComponent.Expect( this.page );
+				const sidebarComponent = await SidebarComponent.Expect( page );
 				await sidebarComponent.gotoMenu( { item: 'Media' } );
 			} );
 
 			it( 'See media gallery', async function () {
-				mediaPage = await MediaPage.Expect( this.page );
+				mediaPage = await MediaPage.Expect( page );
 			} );
 
 			it( 'Show only images', async function () {

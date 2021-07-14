@@ -85,6 +85,8 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 	}
 
 	.components-card__footer {
+		width: auto;
+
 		.welcome-tour__end-text {
 			color: $gray-600;
 			font-size: 0.875rem;

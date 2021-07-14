@@ -5,7 +5,7 @@
  * External dependencies
  */
 import page from 'page';
-import { externalRedirect } from 'calypso/lib/route';
+import { navigate } from 'calypso/lib/navigate';
 
 /**
  * Internal dependencies
@@ -147,8 +147,8 @@ describe( 'parseAuthorizationQuery', () => {
 	} );
 } );
 
-jest.mock( 'calypso/lib/route/path', () => ( {
-	externalRedirect: jest.fn(),
+jest.mock( 'calypso/lib/navigate', () => ( {
+	navigate: jest.fn(),
 } ) );
 
 jest.mock( 'page', () => ( {
@@ -157,7 +157,7 @@ jest.mock( 'page', () => ( {
 
 describe( 'redirect', () => {
 	beforeEach( () => {
-		externalRedirect.mockReset();
+		navigate.mockReset();
 		page.redirect.mockReset();
 	} );
 	test( 'should fire redirect', () => {
@@ -183,7 +183,7 @@ describe( 'redirect', () => {
 
 	test( 'external redirect should be called once during remote authorization', () => {
 		redirect( 'remote_auth', 'example.com' );
-		expect( externalRedirect ).toHaveBeenCalledTimes( 1 );
+		expect( navigate ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	test( 'should redirect once', () => {

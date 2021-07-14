@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import config from 'config';
 import slack from 'slack-notify';
-
-/**
- * Internal dependencies
- */
-import * as driverManager from './driver-manager';
 import * as dataHelper from './data-helper';
+import * as driverManager from './driver-manager';
 
 const messages = [];
 

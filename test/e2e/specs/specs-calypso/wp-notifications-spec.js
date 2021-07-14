@@ -1,23 +1,13 @@
-/**
- * External dependencies
- */
 import assert from 'assert';
 import config from 'config';
-
-/**
- * Internal dependencies
- */
-import * as driverManager from '../../lib/driver-manager.js';
-import * as slackNotifier from '../../lib/slack-notifier';
-import * as dataHelper from '../../lib/data-helper';
-
-import LoginFlow from '../../lib/flows/login-flow.js';
-
-import ViewSitePage from '../../lib/pages/view-site-page.js';
-import ViewPostPage from '../../lib/pages/view-post-page.js';
-
 import NavBarComponent from '../../lib/components/nav-bar-component.js';
 import NotificationsComponent from '../../lib/components/notifications-component.js';
+import * as dataHelper from '../../lib/data-helper';
+import * as driverManager from '../../lib/driver-manager.js';
+import LoginFlow from '../../lib/flows/login-flow.js';
+import ViewPostPage from '../../lib/pages/view-post-page.js';
+import ViewSitePage from '../../lib/pages/view-site-page.js';
+import * as slackNotifier from '../../lib/slack-notifier';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();

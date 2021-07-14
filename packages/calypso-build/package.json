@@ -59,7 +59,6 @@
 		"duplicate-package-checker-webpack-plugin": "^3.0.0",
 		"enzyme-adapter-react-16": "^1.15.1",
 		"enzyme-to-json": "^3.4.3",
-		"file-loader": "^4.3.0",
 		"jest-config": "^27.0.6",
 		"jest-emotion": "^10.0.27",
 		"jest-enzyme": "^7.1.2",
@@ -72,7 +71,7 @@
 		"semver": "^7.3.2",
 		"terser-webpack-plugin": "^5.1.1",
 		"thread-loader": "^3.0.4",
-		"typescript": "^4.3.2",
+		"typescript": "^4.3.5",
 		"webpack-cli": "^4.6.0"
 	},
 	"peerDependencies": {

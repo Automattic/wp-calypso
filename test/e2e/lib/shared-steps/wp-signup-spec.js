@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
 import assert from 'assert';
-
-/**
- * Internal dependencies
- */
-import UpsellPage from '../pages/signup/upsell-page';
-import MyHomePage from '../pages/my-home-page';
 import InlineHelpChecklistComponent from '../components/inline-help-checklist-component.js';
 import SitePreviewComponent from '../components/site-preview-component.js';
+import MyHomePage from '../pages/my-home-page';
+import UpsellPage from '../pages/signup/upsell-page';
 
 export const canSeeTheSitePreview = () => {
 	it( 'Can then see the site preview', async function () {

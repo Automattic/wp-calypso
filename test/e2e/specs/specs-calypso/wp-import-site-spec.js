@@ -1,20 +1,10 @@
-/**
- * External dependencies
- */
-import config from 'config';
 import assert from 'assert';
-
-/**
- * Internal dependencies
- */
-import LoginFlow from '../../lib/flows/login-flow.js';
-
+import config from 'config';
 import NavBarComponent from '../../lib/components/nav-bar-component.js';
 import SideBarComponent from '../../lib/components/sidebar-component';
-
-import ImporterPage from '../../lib/pages/importer-page';
-
 import * as driverManager from '../../lib/driver-manager.js';
+import LoginFlow from '../../lib/flows/login-flow.js';
+import ImporterPage from '../../lib/pages/importer-page';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();

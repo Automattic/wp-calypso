@@ -1,9 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-/**
- * Internal dependencies
- */
+
 import { createActions } from '../actions';
 import { SiteLaunchError } from '../types';
 

@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { By } from 'selenium-webdriver';
-
-/**
- * Internal dependencies
- */
 import AsyncBaseContainer from '../async-base-container';
-import * as driverHelper from '../driver-helper.js';
 import NoticesComponent from '../components/notices-component';
+import * as driverHelper from '../driver-helper.js';
 
 export default class CancelDomainPage extends AsyncBaseContainer {
 	constructor( driver ) {

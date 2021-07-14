@@ -1,17 +1,7 @@
 /**
- * External dependencies
- */
-import assert from 'assert';
-
-/**
  * Internal dependencies
  */
 import { BaseContainer } from '../base-container';
-
-/**
- * Type dependencies
- */
-import { Page } from 'playwright';
 
 const selectors = {
 	// Main themes listing
@@ -25,7 +15,7 @@ const selectors = {
 	// Search
 	showAllThemesButton: 'text=Show all themes',
 	searchToolbar: '.themes-magic-search',
-	searchInput: '.themes-magic-search-card input.search__input',
+	searchInput: `[placeholder="Search by style or feature: portfolio, store, multiple menus, or…"]`,
 };
 
 /**
@@ -35,41 +25,32 @@ const selectors = {
  */
 export class ThemesPage extends BaseContainer {
 	/**
-	 * Constructs an instance of the component.
-	 *
-	 * @param {Page} page The underlying page.
-	 */
-	constructor( page: Page ) {
-		super( page );
-	}
-
-	/**
 	 * Post initialization steps.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
 	async _postInit(): Promise< void > {
-		await this.page.waitForSelector( selectors.spinner, { state: 'hidden' } );
+		await Promise.all( [
+			this.page.waitForSelector( selectors.spinner, { state: 'hidden' } ),
+			this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } ),
+			this.page.waitForLoadState( 'domcontentloaded' ),
+		] );
 	}
 
 	/**
-	 * Filters the themes on page by clicking on the selector passed in as argument.
+	 * Filters the themes on page according to the pricing structure.
 	 *
 	 * @param {string} type Pre-defined types of themes.
 	 * @returns {Promise<void>} No return value.
 	 */
 	async filterThemes( type: 'All' | 'Free' | 'Premium' ): Promise< void > {
-		await this.page.click( selectors.showAllThemesButton );
-		const searchToolbar = await this.page.waitForSelector( selectors.searchToolbar );
-		const button = await searchToolbar.waitForSelector(
-			`a[data-e2e-value=${ type.toLowerCase() }]`
-		);
-		await button.click();
-		// This will wait for all placeholder classes to return to hidden state.
+		const selector = `a[role="radio"]:has-text("${ type }")`;
+		await this.page.click( selector );
+		const button = await this.page.waitForSelector( selector );
+
+		// Wait for placeholder to disappear (indicating load is completed).
 		await this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } );
-		// Verify that filter has been successfully applied.
-		const isSelected = await button.getAttribute( 'aria-checked' );
-		assert.strictEqual( isSelected, 'true' );
+		await this.page.waitForFunction( ( element: any ) => element.ariaChecked === 'true', button );
 	}
 
 	/**

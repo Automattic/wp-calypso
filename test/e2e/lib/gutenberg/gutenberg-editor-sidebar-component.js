@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { By, Key } from 'selenium-webdriver';
-
-/**
- * Internal dependencies
- */
-import * as driverHelper from '../driver-helper.js';
 import AsyncBaseContainer from '../async-base-container';
+import * as driverHelper from '../driver-helper.js';
 import * as driverManager from '../driver-manager';
 import * as SlackNotifier from '../slack-notifier';
 import GutenbergEditorComponent from './gutenberg-editor-component';

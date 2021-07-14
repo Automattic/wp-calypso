@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { By } from 'selenium-webdriver';
-
-/**
- * Internal dependencies
- */
 import AsyncBaseContainer from '../async-base-container';
-import * as driverHelper from '../driver-helper';
 import * as dataHelper from '../data-helper';
+import * as driverHelper from '../driver-helper';
 
 export default class ThemesPage extends AsyncBaseContainer {
 	constructor( driver, url ) {
@@ -33,7 +26,6 @@ export default class ThemesPage extends AsyncBaseContainer {
 	}
 
 	async showOnlyThemesType( type ) {
-		await this.openShowcase();
 		await driverHelper.clickWhenClickable( this.driver, By.css( `a[data-e2e-value="${ type }"]` ) );
 		await this.waitUntilThemesLoaded();
 	}
@@ -107,13 +99,6 @@ export default class ThemesPage extends AsyncBaseContainer {
 		await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.themes-magic-search-card__icon-close' )
-		);
-	}
-
-	async openShowcase() {
-		await driverHelper.clickWhenClickable(
-			this.driver,
-			By.css( `button[data-e2e-value="open-themes-button"]` )
 		);
 	}
 }

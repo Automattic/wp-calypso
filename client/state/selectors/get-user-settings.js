@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/user-settings/init';
+
+/**
  * Returns all user settings as one object
  *
  *

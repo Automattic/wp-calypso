@@ -72,6 +72,6 @@ export class MarketingPage extends BaseContainer {
 	 */
 	async closeSEOPreview(): Promise< void > {
 		await this.page.click( selectors.seoPreviewPaneCloseButton );
-		await this.page.waitForSelector( selectors.content );
+		await this.page.waitForSelector( selectors.seoPreviewButton );
 	}
 }

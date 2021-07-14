@@ -93,7 +93,6 @@ class Security2faBackupCodesList extends React.Component {
 
 	onCopy = () => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked On 2fa Copy to clipboard Button' );
-		this.setState( { isCopied: true } );
 	};
 
 	saveCodesToFile = () => {

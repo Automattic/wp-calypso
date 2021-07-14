@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { By } from 'selenium-webdriver';
 import config from 'config';
-
-/**
- * Internal dependencies
- */
+import { By } from 'selenium-webdriver';
 import AsyncBaseContainer from '../async-base-container';
 
 export default class TransferDomainPrecheckPage extends AsyncBaseContainer {

@@ -1,0 +1,19 @@
+.transfer-lock-opt-out-form {
+	color: var( --color-error );
+
+	.form-checkbox {
+		border: 1px solid var( --color-error );
+		&:hover {
+			border: 1px solid var( --color-error-20 );
+		}
+	}
+
+	.transfer-lock-opt-out-form__label {
+		margin-left: 24px;
+	}
+
+	.transfer-lock-opt-out-form__icon {
+		color: var( --color-error );
+		float: left;
+	}
+}

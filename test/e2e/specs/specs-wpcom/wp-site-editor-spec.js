@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
 import config from 'config';
-
-/**
- * Internal dependencies
- */
-import LoginFlow from '../../lib/flows/login-flow.js';
-import * as driverManager from '../../lib/driver-manager';
-import * as dataHelper from '../../lib/data-helper';
 import SidebarComponent from '../../lib/components/sidebar-component.js';
-import SiteEditorPage from '../../lib/pages/site-editor-page.js';
 import SiteEditorComponent from '../../lib/components/site-editor-component';
+import * as dataHelper from '../../lib/data-helper';
+import * as driverManager from '../../lib/driver-manager';
+import LoginFlow from '../../lib/flows/login-flow.js';
+import SiteEditorPage from '../../lib/pages/site-editor-page.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();

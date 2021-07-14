@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { select } from '@wordpress/data';
-
-/**
- * Internal dependencies
- */
-import type { State } from './reducer';
 import { STORE_KEY } from './constants';
 import { SiteLaunchStatus } from './types';
+import type { State } from './reducer';
 
 export const getState = ( state: State ) => state;
 

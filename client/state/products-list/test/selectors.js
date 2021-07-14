@@ -134,7 +134,6 @@ describe( 'selectors', () => {
 
 			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
 			expect( computeFullAndMonthlyPricesForPlan( {}, 1, plan, 0, {} ) ).toEqual( {
-				priceFullBeforeDiscount: 150,
 				priceFull: 120,
 				priceFinal: 120,
 			} );
@@ -143,7 +142,6 @@ describe( 'selectors', () => {
 		test( 'Should return proper priceFinal if couponDiscounts are provided', () => {
 			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
 			expect( computeFullAndMonthlyPricesForPlan( {}, 1, plan, 0, { def: 60 } ) ).toEqual( {
-				priceFullBeforeDiscount: 150,
 				priceFull: 120,
 				priceFinal: 60,
 			} );
@@ -180,7 +178,7 @@ describe( 'selectors', () => {
 			getPlan.mockImplementation( ( slug ) => testPlans[ slug ] );
 		} );
 
-		test( 'Should return list of shapes { priceFull, priceFullBeforeDiscount, plan, product, planSlug }', () => {
+		test( 'Should return list of shapes { priceFull, plan, product, planSlug }', () => {
 			const state = {
 				productsList: {
 					items: {
@@ -195,7 +193,6 @@ describe( 'selectors', () => {
 					planSlug: 'plan1',
 					plan: testPlans.plan1,
 					product: state.productsList.items.plan1,
-					priceFullBeforeDiscount: 150,
 					priceFull: 120,
 					priceFinal: 120,
 				},
@@ -203,7 +200,6 @@ describe( 'selectors', () => {
 					planSlug: 'plan2',
 					plan: testPlans.plan2,
 					product: state.productsList.items.plan2,
-					priceFullBeforeDiscount: 150,
 					priceFull: 240,
 					priceFinal: 240,
 				},
@@ -227,7 +223,6 @@ describe( 'selectors', () => {
 					planSlug: 'plan1',
 					plan: testPlans.plan1,
 					product: state.productsList.items.plan1,
-					priceFullBeforeDiscount: 150,
 					priceFull: 120,
 					priceFinal: 60,
 				},
@@ -235,7 +230,6 @@ describe( 'selectors', () => {
 					planSlug: 'plan2',
 					plan: testPlans.plan2,
 					product: state.productsList.items.plan2,
-					priceFullBeforeDiscount: 150,
 					priceFull: 240,
 					priceFinal: 120,
 				},
@@ -257,7 +251,6 @@ describe( 'selectors', () => {
 					planSlug: 'plan1',
 					plan: testPlans.plan1,
 					product: state.productsList.items.plan1,
-					priceFullBeforeDiscount: 150,
 					priceFinal: 120,
 					priceFull: 120,
 				},
@@ -278,7 +271,6 @@ describe( 'selectors', () => {
 					planSlug: 'plan1',
 					plan: testPlans.plan1,
 					product: state.productsList.items.plan1,
-					priceFullBeforeDiscount: 150,
 					priceFull: 120,
 					priceFinal: 120,
 				},
@@ -311,7 +303,6 @@ describe( 'selectors', () => {
 					planSlug: 'plan1',
 					plan: testPlans.plan1,
 					product: state.productsList.items.plan1,
-					priceFullBeforeDiscount: 150,
 					priceFull: 120,
 					priceFinal: 120,
 				},

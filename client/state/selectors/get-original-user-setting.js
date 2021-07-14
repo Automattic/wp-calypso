@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'calypso/state/user-settings/init';
 
 /**
  * Given a settingName, returns that original setting if it exists or null

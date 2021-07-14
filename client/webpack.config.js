@@ -1,5 +1,5 @@
 /**
- * **** WARNING: No ES6 modules here. Not transpiled! ****
+ * WARNING: No ES6 modules here. Not transpiled! *
  */
 
 /* eslint-disable import/no-nodejs-modules */
@@ -140,19 +140,17 @@ const outputDir = path.resolve( '.' );
 const fileLoader = FileConfig.loader(
 	// The server bundler express middleware serves assets from a hard-coded publicPath.
 	// This is required so that running calypso via `yarn start` doesn't break.
+	// The final URL of the image is `${publichPath}${outputPath}/${fileName}` (note the slashes)
 	isDevelopment
 		? {
-				outputPath: 'images',
-				publicPath: `/calypso/${ extraPath }/images/`,
-				esModules: true,
+				publicPath: `/calypso/${ extraPath }/`,
+				outputPath: 'images/',
 		  }
 		: {
-				// File-loader does not understand absolute paths so __dirname won't work.
-				// Build off `output.path` for a result like `/…/public/evergreen/../images/`.
-				outputPath: path.join( '..', 'images' ),
+				// Build off `outputPath` for a result like `/…/public/evergreen/../images/`.
 				publicPath: '/calypso/images/',
+				outputPath: '../images/',
 				emitFile: browserslistEnv === defaultBrowserslistEnv, // Only output files once.
-				esModules: true,
 		  }
 );
 

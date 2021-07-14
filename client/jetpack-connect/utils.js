@@ -10,7 +10,8 @@ import page from 'page';
  */
 import config, { isCalypsoLive } from '@automattic/calypso-config';
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
-import { addQueryArgs, externalRedirect, untrailingslashit } from 'calypso/lib/route';
+import { addQueryArgs, untrailingslashit } from 'calypso/lib/route';
+import { navigate } from 'calypso/lib/navigate';
 import { urlToSlug } from 'calypso/lib/url';
 import {
 	JPC_PATH_PLANS,
@@ -162,7 +163,7 @@ export function redirect( type, url, product = null, queryArgs = {} ) {
 
 	if ( type === 'remote_auth' ) {
 		urlRedirect = addCalypsoEnvQueryArg( url + REMOTE_PATH_AUTH );
-		externalRedirect( urlRedirect );
+		navigate( urlRedirect );
 	}
 
 	if ( type === 'install_instructions' ) {
