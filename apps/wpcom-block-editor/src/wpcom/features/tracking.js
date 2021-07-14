@@ -616,12 +616,20 @@ if (
 					const tracker = trackers[ actionName ];
 					actions[ actionName ] = ( ...args ) => {
 						debug( 'action "%s" called with %o arguments', actionName, [ ...args ] );
-						if ( typeof tracker === 'string' ) {
-							// Simple track - just based on the event name.
-							tracksRecordEvent( tracker );
-						} else if ( typeof tracker === 'function' ) {
-							// Advanced tracking - call function.
-							tracker( ...args );
+						// We use a try-catch here to make sure the `originalAction`
+						// is always called. We don't want to break the original
+						// behaviour when our tracking throws an error.
+						try {
+							if ( typeof tracker === 'string' ) {
+								// Simple track - just based on the event name.
+								tracksRecordEvent( tracker );
+							} else if ( typeof tracker === 'function' ) {
+								// Advanced tracking - call function.
+								tracker( ...args );
+							}
+						} catch ( err ) {
+							// eslint-disable-next-line no-console
+							console.error( err );
 						}
 						return originalAction( ...args );
 					};
