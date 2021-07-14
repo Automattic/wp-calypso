@@ -96,7 +96,7 @@ export default function useShoppingCartManager( {
 				cartValidCallbacks.current.push( resolve );
 			} );
 		},
-		[ hookDispatch, isMounted ]
+		[ hookDispatch ]
 	);
 
 	const addProductsToCart: AddProductsToCart = useCallback(
