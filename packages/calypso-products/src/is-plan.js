@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { formatProduct } from './format-product';
 import { isBlogger } from './is-blogger';
 import { isBusiness } from './is-business';
@@ -8,9 +5,9 @@ import { isEcommerce } from './is-ecommerce';
 import { isEnterprise } from './is-enterprise';
 import { isJetpackPlan } from './is-jetpack-plan';
 import { isJpphpBundle } from './is-jpphp-bundle';
+import { isP2Plus } from './is-p2-plus';
 import { isPersonal } from './is-personal';
 import { isPremium } from './is-premium';
-import { isP2Plus } from './is-p2-plus';
 
 export function isPlan( product ) {
 	product = formatProduct( product );

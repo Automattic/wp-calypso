@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { isJetpackBackupSlug } from './is-jetpack-backup-slug';
 
 export function getProductClass( productSlug ) {

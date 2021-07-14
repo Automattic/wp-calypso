@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,

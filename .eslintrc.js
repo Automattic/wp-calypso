@@ -199,10 +199,11 @@ module.exports = {
 		},
 		{
 			files: [
-				'packages/accessible-focus/**/*',
-				'test/e2e/**/*',
-				'client/sections-helper.js',
 				'client/sections-filter.js',
+				'client/sections-helper.js',
+				'packages/accessible-focus/**/*',
+				'packages/calypso-products/**/*',
+				'test/e2e/**/*',
 			],
 			rules: {
 				'wpcalypso/import-docblock': 'off',

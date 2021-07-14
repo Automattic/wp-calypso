@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import {
 	FEATURE_ALL_PERSONAL_FEATURES,
 	FEATURE_AUDIO_UPLOADS,
