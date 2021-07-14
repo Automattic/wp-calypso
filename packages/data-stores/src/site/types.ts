@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import type { FeatureId } from '../wpcom-features';
 
 export interface NewSiteBlogDetails {

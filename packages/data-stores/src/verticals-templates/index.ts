@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import { controls } from '@wordpress/data-controls';
 import { registerStore } from '@wordpress/data';
-
-/**
- * Internal dependencies
- */
+import { controls } from '@wordpress/data-controls';
+import * as actions from './actions';
 import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
-import * as actions from './actions';
 import * as resolvers from './resolvers';
 import * as selectors from './selectors';
 import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
