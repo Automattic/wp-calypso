@@ -293,6 +293,19 @@ class Global_Styles {
 			filemtime( plugin_dir_path( __FILE__ ) . 'dist/customizer-fonts.js' ),
 			true
 		);
+
+		$current_user       = wp_get_current_user();
+		$tracks_events_data = array();
+		if ( $current_user->exists() ) {
+			$tracks_events_data['user_id']    = (int) $current_user->ID;
+			$tracks_events_data['user_login'] = esc_js( $current_user->user_login );
+		}
+
+		wp_localize_script(
+			'tracks_events_fonts_section_control',
+			'tracks_events_fonts_section_control_variables',
+			$tracks_events_data
+		);
 	}
 
 	/**
