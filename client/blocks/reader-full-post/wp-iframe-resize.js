@@ -64,10 +64,10 @@ const WPiFrameResize = ( contentWrapper ) => {
 		}
 	};
 
-	window.addEventListener( 'message', receiveEmbedMessage, false );
+	window.addEventListener( 'message', receiveEmbedMessage );
 
 	return () => {
-		window.removeEventListener( 'message', receiveEmbedMessage, false );
+		window.removeEventListener( 'message', receiveEmbedMessage );
 	};
 };
 
