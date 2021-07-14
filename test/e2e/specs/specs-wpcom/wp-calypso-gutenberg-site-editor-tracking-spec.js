@@ -405,7 +405,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			assert( isEditEventNotTriggered );
 		} );
 
-		createGeneralTests( { it, editorType: 'site' } );
+		createGeneralTests( { it, editorType: 'site', baseContext: 'template' } );
 
 		describe( 'Tracks "wpcom_block_editor_global_styles_tab_selected', function () {
 			it( 'when Global Styles sidebar is opened', async function () {
