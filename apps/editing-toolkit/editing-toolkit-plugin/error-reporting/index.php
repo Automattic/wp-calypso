@@ -72,7 +72,7 @@ function user_in_sentry_test_segment( $user_id ) {
  * @return bool
  */
 function user_is_automattician( $user_id ) {
-	return function_exists( 'is_automattician' ) && is_automattician( $user_id );
+	return function_exists( __NAMESPACE__ . '\is_automattician' ) && is_automattician( $user_id );
 }
 
 /**
@@ -83,17 +83,32 @@ function user_is_automattician( $user_id ) {
 function is_atomic() {
 	return defined( 'IS_ATOMIC' ) && IS_ATOMIC;
 }
+/**
+ * Return whether Sentry should be activated for a given user.
+ *
+ * In this phase, a12s have the possibility of configuring what error reporter to choose
+ * through the sticker. a12s shouldn not be covered by the segment logic.
+ *
+ * Regular users have the error reporter chosen based on the segmentation logic, only.
+ *
+ * @param int $user_id The user id. Used to check if the user is A8C or in
+ * the Sentry test segment.
+ * @param int $blog_id The blog ID. Usually the value of `get_current_blog_id`.
+ * Used to check if the sticker is applied if user is A8C.
+ */
+function should_activate_sentry( $user_id, $blog_id ) {
+	return ( user_is_automattician( $user_id ) && has_blog_sticker( 'error-reporting-use-sentry', $blog_id ) )
+		|| ( ! user_is_automattician( $user_id ) && user_in_sentry_test_segment( $user_id ) );
+}
 
 /**
  * Enqueue assets
  */
 function enqueue_script() {
-	$asset_file             = include plugin_dir_path( __FILE__ ) . 'dist/error-reporting.asset.php';
-	$script_dependencies    = isset( $asset_file['dependencies'] ) ? $asset_file['dependencies'] : array();
-	$script_version         = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . 'dist/error-reporting.js' );
-	$script_id              = 'a8c-fse-error-reporting-script';
-	$user_id                = get_current_user_id();
-	$should_activate_sentry = ( user_is_automattician( $user_id ) && has_blog_sticker( 'error-reporting-use-sentry' ) ) || user_in_sentry_test_segment( $user_id );
+	$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/error-reporting.asset.php';
+	$script_dependencies = isset( $asset_file['dependencies'] ) ? $asset_file['dependencies'] : array();
+	$script_version      = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . 'dist/error-reporting.js' );
+	$script_id           = 'a8c-fse-error-reporting-script';
 
 	wp_enqueue_script(
 		$script_id,
@@ -107,7 +122,7 @@ function enqueue_script() {
 		$script_id,
 		'dataFromPHP',
 		array(
-			'shouldActivateSentry' => $should_activate_sentry ? 'true' : 'false',
+			'shouldActivateSentry' => should_activate_sentry( get_current_user_id(), get_current_blog_id() ) ? 'true' : 'false',
 		)
 	);
 }
