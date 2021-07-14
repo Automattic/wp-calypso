@@ -2,15 +2,18 @@
 /**
  * Error Reporting Activation Test File.
  *
- * Unit tests Sentry/homebrew error reporting activation logic. This
- * test file should be ephemeral and will be removed once we decide
- * which solution to use.
+ * Unit-tests the Sentry/homebrew error reporting activation logic.
+ * This test file should be ephemeral and will be removed once we
+ * decide which solution to use.
  *
- * It's here to make it easier to test the the weakest link in the
- * logic chain in terms of complexity. The rest of the error reporting
- * module is easier to test manually and harder (and probably not worth
- * the time and effort) to write automate tests for. I think this provides
- * for a good pragmatic balance. -Marcelo.
+ * The rest of the error reporting module is easier to test manually,
+ * and harder (and probably not worth the time and effort) to write
+ * automated tests for. In fact, if we choose to use Sentry, then
+ * it'll pretty much only add a snippet (maybe with some additional
+ * conditional logic for WoA).
+ *
+ * I think this provides for a good pragmatic balance in giving
+ * us confidence. -Marcelo.
  *
  * @package full-site-editing-plugin
  */
@@ -112,7 +115,7 @@ class ErrorReporting_Activation_Test extends TestCase {
 	 * Tests that the `should_activate_sentry` function returns `false` for an a11n
 	 * user id if the current blog does not have the sticker applied.
 	 */
-	public function test_should_activate_sentry_false_if_a11n_without_sticker() {
+	public function test_should_activate_sentry_is_false_if_a11n_without_sticker() {
 		$this->assertFalse( should_activate_sentry( $this->a11n_user_id, $this->blog_without_sticker_id ) );
 	}
 
