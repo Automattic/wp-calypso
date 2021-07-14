@@ -7,31 +7,37 @@
 		max-width: 744px;
 	}
 	.jetpack-free-welcome__card {
-		display: flex;
-		flex-direction: column;
 		padding: 0;
 		box-shadow: 0 0 40px 0 #00000014;
 
 		width: 100%;
 		max-width: none;
 
-		@include break-medium {
-			flex-direction: row;
-			width: auto;
-			max-width: 1200px;
+		> div.jetpack-free-welcome__card-main {
+			box-sizing: border-box;
+			padding: 26px;
+			@include break-mobile {
+				padding: 76px;
+			}
 		}
 
 		.jetpack-logo {
-			margin-bottom: 25px;
+			margin-bottom: 48px;
 		}
 
 		h1 {
-			font-size: 3rem;
-			line-height: 3.25rem;
-			padding-bottom: 24px;
+			@include break-mobile {
+				font-size: 3rem;
+				line-height: 3.25rem;
+				padding-bottom: 24px;
+			}
 			+ p {
-				font-size: 1.5rem;
-				line-height: 2rem;
+				font-size: 18px; /* stylelint-disable-line */
+				line-height: 1.5rem;
+				@include break-mobile {
+					font-size: 1.5rem;
+					line-height: 2rem;
+				}
 			}
 		}
 		h2 {
@@ -50,17 +56,10 @@
 			}
 		}
 
-		> div {
-			box-sizing: border-box;
-			padding: 15px 26px 26px;
-			@include break-mobile {
-				padding: 30px 76px 55px;
-			}
-		}
-
 		.jetpack-free-welcome__step {
 			display: flex;
 			align-items: flex-start;
+			padding-bottom: 40px;
 			.jetpack-free-welcome__step-number {
 				color: white;
 				background-color: var( --studio-jetpack-green-50 );
@@ -74,8 +73,11 @@
 				flex: 1;
 				padding: 0 10px 0 16px;
 				p {
-					font-size: 18px; /* stylelint-disable-line */
-					line-height: 1.75rem;
+					@include break-mobile {
+						font-size: 18px; /* stylelint-disable-line */
+						line-height: 1.75rem;
+					}
+					margin: 0;
 				}
 			}
 		}
@@ -92,14 +94,17 @@
 
 		.jetpack-free-welcome__features {
 			margin: 0 0 0 10px;
-			padding: 0 0 36px 5px;
-			font-size: 18px; /* stylelint-disable-line */
-			line-height: 2rem;
+			padding: 0 0 32px 5px;
+			@include break-mobile {
+				font-size: 18px; /* stylelint-disable-line */
+				line-height: 2rem;
+			}
 		}
 
 		.jetpack-free-welcome__feature-nav-button {
 			display: flex;
 			align-items: center;
+			justify-content: space-between;
 			border: 2px solid var( --studio-jetpack-green-50 );
 			border-radius: calc( 2px * 2 );
 			padding: 16px 24px;
@@ -108,13 +113,13 @@
 			&:hover {
 				text-decoration: underline;
 			}
-			.jetpack-free-welcome__feature-nav-button-content {
-				padding-right: 8px;
-			}
+
 			.jetpack-free-welcome__feature-nav-button-icon {
-				padding-left: 8px;
-				text-align: right;
+				padding-left: 24px;
 				color: var( --studio-jetpack-green-50 );
+				> svg {
+					display: block;
+				}
 			}
 		}
 	}

@@ -41,7 +41,11 @@ const JetpackFreeWelcome: FC = () => {
 				<div className="jetpack-free-welcome__card-main">
 					<JetpackLogo size={ 45 } />
 					<h1 className="jetpack-free-welcome__main-message">
-						{ translate( 'Welcome to Jetpack!' ) }{ ' ' }
+						{ translate( 'Welcome{{br/}} to Jetpack!', {
+							components: {
+								br: <br />,
+							},
+						} ) }{ ' ' }
 						{ String.fromCodePoint( 0x1f389 ) /* Celebration emoji 🎉 */ }
 					</h1>
 					<p>{ translate( "Here's how to get started with Jetpack." ) }</p>
