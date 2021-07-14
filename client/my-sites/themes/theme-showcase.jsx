@@ -191,7 +191,12 @@ class ThemeShowcase extends React.Component {
 	onTierSelect = ( { value: tier } ) => {
 		// In this state: tabFilter = [ ##Recommended## | All(1) ]   tier = [ All(2) | Free | Premium ]
 		// Clicking "Free" or "Premium" forces tabFilter from "Recommended" to "All"
-		if ( tier !== '' && tier !== 'all' && this.state.tabFilter === 'recommended' ) {
+		if (
+			tier !== '' &&
+			tier !== 'all' &&
+			this.state.tabFilter === 'recommended' &&
+			this.state.tabFilter === 'uploaded'
+		) {
 			this.setState( { tabFilter: 'all' } );
 		}
 		trackClick( 'search bar filter', tier );
@@ -207,7 +212,10 @@ class ThemeShowcase extends React.Component {
 		let callback = () => null;
 		// In this state: tabFilter = [ Recommended | ##All(1)## ]  tier = [ All(2) | Free | ##Premium## ]
 		// Clicking "Recommended" forces tier to be "all", since Recommend themes cannot filter on tier.
-		if ( 'recommended' === tabFilter && 'all' !== this.props.tier ) {
+		if (
+			'recommended' === tabFilter ||
+			( 'uploaded' === tabFilter && 'all' !== this.props.tier )
+		) {
 			callback = () => this.onTierSelect( { value: 'all' } );
 		}
 		this.setState( { tabFilter }, callback );
@@ -345,6 +353,14 @@ class ThemeShowcase extends React.Component {
 								>
 									{ translate( 'Recommended' ) }
 								</NavItem>
+								{ isJetpackSite && (
+									<NavItem
+										onClick={ () => this.onFilterClick( 'uploaded' ) }
+										selected={ 'uploaded' === this.state.tabFilter }
+									>
+										{ translate( 'Uploaded' ) }
+									</NavItem>
+								) }
 								<NavItem
 									onClick={ () => this.onFilterClick( 'all' ) }
 									selected={ 'all' === this.state.tabFilter }
@@ -364,7 +380,59 @@ class ThemeShowcase extends React.Component {
 							scrollToSearchInput={ this.scrollToSearchInput }
 						/>
 					) }
-					{ 'all' === this.state.tabFilter && (
+					{ 'all' === this.state.tabFilter &&
+						( isJetpackSite ? (
+							this.props.children
+						) : (
+							<div className="theme-showcase__all-themes">
+								{ ! this.props.loggedOutComponent && showBanners && (
+									<UpworkBanner location={ 'theme-banner' } />
+								) }
+								<ThemesSelection
+									upsellUrl={ this.props.upsellUrl }
+									search={ search }
+									tier={ this.props.tier }
+									filter={ filter }
+									vertical={ this.props.vertical }
+									siteId={ this.props.siteId }
+									listLabel={ this.props.listLabel }
+									defaultOption={ this.props.defaultOption }
+									secondaryOption={ this.props.secondaryOption }
+									placeholderCount={ this.props.placeholderCount }
+									getScreenshotUrl={ function ( theme ) {
+										if ( ! getScreenshotOption( theme ).getUrl ) {
+											return null;
+										}
+
+										return localizeThemesPath(
+											getScreenshotOption( theme ).getUrl( theme ),
+											locale,
+											! isLoggedIn
+										);
+									} }
+									onScreenshotClick={ function ( themeId ) {
+										if ( ! getScreenshotOption( themeId ).action ) {
+											return;
+										}
+										getScreenshotOption( themeId ).action( themeId );
+									} }
+									getActionLabel={ function ( theme ) {
+										return getScreenshotOption( theme ).label;
+									} }
+									getOptions={ function ( theme ) {
+										return pickBy(
+											addTracking( options ),
+											( option ) =>
+												! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
+										);
+									} }
+									trackScrollPage={ this.props.trackScrollPage }
+									emptyContent={ this.props.emptyContent }
+									bookmarkRef={ this.bookmarkRef }
+								/>
+							</div>
+						) ) }
+					{ 'uploaded' === this.state.tabFilter && (
 						<div className="theme-showcase__all-themes">
 							{ ! this.props.loggedOutComponent && showBanners && (
 								<UpworkBanner location={ 'theme-banner' } />
