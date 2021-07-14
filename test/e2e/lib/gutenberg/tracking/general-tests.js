@@ -5,7 +5,8 @@ import * as driverHelper from '../../driver-helper';
 import GutenbergEditorComponent from '../gutenberg-editor-component';
 import { clearEventsStack, getEventsStack, getTotalEventsFiredForBlock } from './utils';
 
-export function createGeneralTests( { it, editorType, postType } ) {
+// eslint-disable-next-line jest/no-export
+export function createGeneralTests( { it, editorType, postType, baseContext = undefined } ) {
 	const isSiteEditor = editorType === 'site';
 	const gutenbergEditorType = isSiteEditor ? 'iframe' : 'wp-admin';
 	const EditorComponent = isSiteEditor ? SiteEditorComponent : GutenbergEditorComponent;
@@ -50,7 +51,7 @@ export function createGeneralTests( { it, editorType, postType } ) {
 		} );
 	} );
 
-	it( `'editor_type' property should be '${ editorType }' and 'post_type' property should be '${ postType }' when editing a post`, async function () {
+	it( `'editor_type' property should be '${ editorType }','post_type' property should be '${ postType }', and 'entity_context' should be '${ baseContext }' when editing a post`, async function () {
 		const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
 
 		await editor.addBlock( 'Heading' );
@@ -65,6 +66,11 @@ export function createGeneralTests( { it, editorType, postType } ) {
 		assert.strictEqual(
 			lastEventData.post_type,
 			postType,
+			`'post_type' property does not match '${ postType }', actual '${ lastEventData.post_type }'`
+		);
+		assert.strictEqual(
+			lastEventData.entity_context,
+			baseContext,
 			`'post_type' property does not match '${ postType }', actual '${ lastEventData.post_type }'`
 		);
 	} );
@@ -92,6 +98,17 @@ export function createGeneralTests( { it, editorType, postType } ) {
 			getTotalEventsFiredForBlock( eventsStack, 'wpcom_block_inserted', 'core/columns' ),
 			2,
 			`"wpcom_block_inserted" editor tracking event failed to fire twice for core/columns`
+		);
+
+		const matchesExpectedContext = eventsStack.filter(
+			( event ) =>
+				event[ 0 ] === 'wpcom_block_inserted' && event[ 1 ].entity_context === baseContext
+		);
+
+		assert.strictEqual(
+			matchesExpectedContext.length,
+			3,
+			'"wpcom_block_inserted" does not have expected entity context at top level'
 		);
 	} );
 
@@ -272,6 +289,11 @@ export function createGeneralTests( { it, editorType, postType } ) {
 			'list',
 			'"wpcom_pattern_inserted" editor tracking event pattern category property is incorrect'
 		);
+		assert.strictEqual(
+			eventDataList.entity_context,
+			baseContext,
+			`"wpcom_pattern_inserted" editor tracking event entity context is incorrect`
+		);
 	} );
 
 	it( 'Tracks "wpcom_pattern_inserted" through quick inserter', async function () {
@@ -316,6 +338,11 @@ export function createGeneralTests( { it, editorType, postType } ) {
 			typeof eventDataGallery.pattern_category,
 			'undefined',
 			'"wpcom_pattern_inserted" editor tracking event pattern category property should not be present'
+		);
+		assert.strictEqual(
+			eventDataList.entity_context,
+			baseContext,
+			`"wpcom_pattern_inserted" editor tracking event entity context is incorrect`
 		);
 	} );
 
