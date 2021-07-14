@@ -19,7 +19,6 @@ import {
 	getProductName,
 } from 'calypso/state/products-list/selectors';
 import { cleanUrl } from 'calypso/jetpack-connect/utils.js';
-import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import Main from 'calypso/components/main';
@@ -31,7 +30,6 @@ interface Props {
 const JetpackCheckoutSitelessThankYou: FunctionComponent< Props > = ( { productSlug } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const userEmail = useSelector( getCurrentUserEmail );
 
 	const hasProductInfo = productSlug !== 'no_product';
 
