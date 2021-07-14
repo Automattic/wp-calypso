@@ -179,6 +179,7 @@ module.exports = {
 			files: [
 				'client/sections-filter.js',
 				'client/sections-helper.js',
+				'client/sections-middleware.js',
 				'packages/accessible-focus/**/*',
 				'packages/calypso-products/**/*',
 				'packages/data-stores/**/*',

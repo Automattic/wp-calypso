@@ -1,24 +1,17 @@
-/**
- * External dependencies
- */
-import page from 'page';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
+import page from 'page';
+import * as LoadingError from 'calypso/layout/error';
+import { performanceTrackerStart } from 'calypso/lib/performance-tracking';
+import { addReducerToStore } from 'calypso/state/add-reducer';
+import { bumpStat } from 'calypso/state/analytics/actions';
 import { setSectionLoading } from 'calypso/state/ui/actions';
 import { activateNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-import { bumpStat } from 'calypso/state/analytics/actions';
-import * as LoadingError from 'calypso/layout/error';
 import * as controller from './controller/index.web';
-import { pathToRegExp } from './utils';
-import { receiveSections, load } from './sections-helper';
-import isSectionEnabled from './sections-filter';
-import { addReducerToStore } from 'calypso/state/add-reducer';
-import { performanceTrackerStart } from 'calypso/lib/performance-tracking';
-
 import sections from './sections';
+import isSectionEnabled from './sections-filter';
+import { receiveSections, load } from './sections-helper';
+import { pathToRegExp } from './utils';
+
 receiveSections( sections );
 
 function activateSection( section, context ) {
