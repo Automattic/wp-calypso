@@ -141,6 +141,8 @@ body.is-section-home {
 .customer-home__location-primary {
 	display: flex;
 	flex-direction: column-reverse;
+	// We add padding here and strip it away from the outer edges of child
+	// elements so that the text, images, controls etc all line up.
 	padding: 32px;
 
 	.task {
@@ -177,10 +179,11 @@ body.is-section-home {
 		height: auto;
 	}
 
-	// Move the Page Control Items over to the right
 	li:first-child {
-		order: 999;
+		// Move the Page Control Items over to the right
 		margin-left: auto;
+		order: 999;
+
 		.gridicon {
 			margin-right: 6px;
 			color: var( --studio-gray-80 );
@@ -189,6 +192,7 @@ body.is-section-home {
 
 	li:last-child {
 		order: 999;
+
 		.gridicon {
 			margin-left: 6px;
 		    color: var( --studio-gray-80 );
