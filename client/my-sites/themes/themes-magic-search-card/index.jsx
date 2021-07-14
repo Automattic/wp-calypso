@@ -304,7 +304,9 @@ class ThemesMagicSearchCard extends React.Component {
 				initialValue={ this.state.searchInput }
 				value={ this.state.searchInput }
 				ref={ this.setSearchInputRef }
-				placeholder={ translate( 'Search for themes' ) }
+				placeholder={ translate(
+					'Search by style or feature: portfolio, store, multiple menus, or…'
+				) }
 				analyticsGroup="Themes"
 				delaySearch={ true }
 				onSearchOpen={ this.onSearchOpen }
