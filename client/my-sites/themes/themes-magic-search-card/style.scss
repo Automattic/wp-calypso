@@ -105,6 +105,18 @@
 }
 
 /*
+ * Align SVGs and nearby text
+ */
+.themes-magic-search-card__welcome-taxonomy-icon-container,
+.themes-magic-search-card__welcome-taxonomy-text-container {
+	vertical-align: middle;
+	display: inline-block;
+}
+.themes-magic-search-card__welcome-taxonomy-text-container {
+	padding-bottom: 2px;
+}
+
+/*
  * Tokens
  */
 .themes-magic-search-card__token {
@@ -209,8 +221,6 @@
 		border-left: 1px solid var( --color-border-subtle );
 	}
 
-	display: flex;
-	flex-direction: row;
 	text-align: center;
 	flex: 1 0 auto;
 	overflow: hidden;
