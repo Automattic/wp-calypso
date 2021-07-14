@@ -43,15 +43,7 @@ const WPiFrameResize = ( contentWrapper ) => {
 
 			/* Resize the iframe on request. */
 			if ( 'height' === data.message ) {
-				let height;
-				height = parseInt( data.value, 10 );
-				if ( height > 1000 ) {
-					height = 1000;
-				} else if ( ~~height < 200 ) {
-					height = 200;
-				}
-
-				source.height = height;
+				source.height = parseInt( data.value, 10 );
 			}
 
 			/* Link to a specific URL on request. */
