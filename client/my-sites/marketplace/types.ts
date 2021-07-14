@@ -3,6 +3,10 @@
  */
 import { YOAST_PREMIUM, YOAST_FREE } from '@automattic/calypso-products';
 
+/**
+ * Internal dependencies
+ */
+import { YOAST } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
 export interface IProductDefinition {
 	/**
 	 * defaultPluginSlug : Some plugins may not be available in the calypso product library so we specify a default plugin that is accessible in the product library
@@ -17,12 +21,6 @@ export interface IProductCollection {
 	[ YOAST_PREMIUM ]: IProductDefinition;
 	[ YOAST_FREE ]: IProductDefinition;
 }
-
-/**
- * A set of logical product groups, grouped by actual products, to be shown in one product (group) page
- * i.e. : YOAST_PREMIUM, YOAST_FREE are 2 products that belong to the product group YOAST
- * */
-export const YOAST = 'YOAST';
 
 /**
  * IProductGroupCollection is a one-to-many mapping between logical product groups and actual products
