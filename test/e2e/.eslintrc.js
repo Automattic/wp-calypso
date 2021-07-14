@@ -1,7 +1,7 @@
 module.exports = {
 	env: {
 		node: true,
-		mocha: false,
+		mocha: true,
 	},
 	overrides: [
 		{
