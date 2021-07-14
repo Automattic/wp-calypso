@@ -205,8 +205,19 @@ export default function useShoppingCartManager( {
 			reloadFromServer,
 			responseCart: lastValidResponseCart.current,
 		} ),
+		// We want to make sure that the valid responseCart object is returned when
+		// it changes, but lastValidResponseCart is a ref so we have to depend on
+		// the data that generates it: responseCartWithoutTempProducts. We can't
+		// use responseCartWithoutTempProducts for the data itself though because
+		// we don't want to return it if it isn't valid. We also don't want to use
+		// a useState for the valid cart because then it will require an extra
+		// render before the valid cart data is returned, during which time the
+		// other variables (eg: isPendingUpdate) will already have changed.
+		// Therefore, please ignore any warnings that this array contains that
+		// value as an unnecessary dependency (I wont disable the eslint warning
+		// because we might want to see other dependency warnings).
 		[
-			lastValidResponseCart,
+			responseCartWithoutTempProducts,
 			isLoading,
 			isPendingUpdate,
 			loadingErrorForManager,
