@@ -164,11 +164,9 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 		[ onDurationChange, duration ]
 	);
 
-	const featuredPlans = getForCurrentCROIteration( ( key ) => {
-		return Iterations.ONLY_REALTIME_PRODUCTS === key
-			? [ PLAN_JETPACK_SECURITY, PLAN_JETPACK_SECURITY_MONTHLY ]
-			: [ PLAN_JETPACK_SECURITY_DAILY, PLAN_JETPACK_SECURITY_DAILY_MONTHLY ];
-	} );
+	const featuredPlans = getForCurrentCROIteration( {
+		[ Iterations.ONLY_REALTIME_PRODUCTS ]: [ PLAN_JETPACK_SECURITY, PLAN_JETPACK_SECURITY_MONTHLY ],
+	} ) ?? [ PLAN_JETPACK_SECURITY_DAILY, PLAN_JETPACK_SECURITY_DAILY_MONTHLY ];
 
 	return (
 		<>
