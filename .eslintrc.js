@@ -187,6 +187,7 @@ module.exports = {
 				'packages/calypso-products/**/*',
 				'packages/composite-checkout/**/*',
 				'packages/data-stores/**/*',
+				'packages/components/**/*',
 				'test/e2e/**/*',
 			],
 			rules: {

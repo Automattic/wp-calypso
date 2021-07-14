@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
 import React from 'react';
 import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
+import DocsExample from 'calypso/devdocs/docs-example';
 import Button from '..';
 import Card from '../../card';
-import DocsExample from 'calypso/devdocs/docs-example';
 
 export default class ButtonExample extends React.PureComponent {
 	static displayName = 'ButtonExample';
