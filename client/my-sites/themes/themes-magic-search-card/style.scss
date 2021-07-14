@@ -76,6 +76,12 @@
 			min-width: inherit;
 		}
 
+		// Default padding is 8px 12px,
+		// Add one to Y for alignment in theme showcase search
+		.segmented-control__link {
+			padding: 9px 12px;
+		}
+
 		.segmented-control__item.is-selected {
 			background: var( --color-neutral-100 );
 
