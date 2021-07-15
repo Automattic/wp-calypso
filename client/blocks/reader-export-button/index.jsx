@@ -65,12 +65,17 @@ class ReaderExportButton extends React.Component {
 
 		let data;
 
-		if ( this.props.exportType === READER_EXPORT_TYPE_LIST ) {
-			data = await wp.req.get( `/read/lists/${ this.props.listId }/export`, {
-				apiNamespace: 'wpcom/v2',
-			} );
-		} else {
-			data = await wp.req.get( `/read/following/mine/export`, { apiVersion: '1.2' } );
+		try {
+			if ( this.props.exportType === READER_EXPORT_TYPE_LIST ) {
+				data = await wp.req.get( `/read/lists/${ this.props.listId }/export`, {
+					apiNamespace: 'wpcom/v2',
+				} );
+			} else {
+				data = await wp.req.get( `/read/following/mine/export`, { apiVersion: '1.2' } );
+			}
+		} catch ( error ) {
+			this.showErrorNotice();
+			return;
 		}
 
 		this.onApiResponse( data );
@@ -78,9 +83,7 @@ class ReaderExportButton extends React.Component {
 
 	onApiResponse = ( data ) => {
 		if ( ! data?.success ) {
-			this.props.errorNotice(
-				this.props.translate( 'Sorry, there was a problem creating your export file.' )
-			);
+			this.showErrorNotice();
 			return;
 		}
 
@@ -92,6 +95,12 @@ class ReaderExportButton extends React.Component {
 				disabled: false,
 			} );
 		}
+	};
+
+	showErrorNotice = () => {
+		this.props.errorNotice(
+			this.props.translate( 'Sorry, there was a problem creating your export file.' )
+		);
 	};
 
 	render() {
