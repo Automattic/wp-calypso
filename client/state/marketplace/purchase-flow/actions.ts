@@ -98,12 +98,12 @@ export function siteTransferWithPluginInstallTriggered(): AnyAction {
 
 export function pluginInstallationStateChange(
 	state: MARKETPLACE_ASYNC_PROCESS_STATUS,
-	reason: string
+	reason = 'NOT_PROVIDED'
 ): AnyAction {
 	return {
 		type: MARKETPLACE_PLUGIN_INSTALLATION_STATE_CHANGE,
 		state,
-		reason: reason ?? 'NOT_PROVIDED',
+		reason: reason,
 	};
 }
 
