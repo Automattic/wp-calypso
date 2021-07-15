@@ -166,7 +166,7 @@ export function getRedirectAfterAccept( invite ) {
 	const postsListPath = '/posts/' + invite.site.ID;
 	const getDestinationUrl = ( redirect ) => {
 		const remoteLoginHost = `https://${ invite.site.domain }`;
-		const remoteLoginBackUrl = ( destinationUri ) => `https://wordpress.com${ destinationUri }`;
+		const remoteLoginBackUrl = ( destinationPath ) => `https://wordpress.com${ destinationPath }`;
 		const destination = logmeinUrl( remoteLoginHost, remoteLoginBackUrl( redirect ) );
 		const isMissingLogmein = destination === remoteLoginHost;
 		return isMissingLogmein ? redirect : destination;
