@@ -209,6 +209,7 @@ module.exports = {
 				'packages/spec-junit-reporter/**/*',
 				'packages/spec-xunit-reporter/**/*',
 				'packages/tree-select/**/*',
+				'packages/viewport/**/*',
 				'packages/wpcom-checkout/**/*',
 				'test/e2e/**/*',
 			],
