@@ -74,7 +74,7 @@ class UpworkBanner extends PureComponent {
 	}
 
 	render() {
-		const { isBannerVisible, translate } = this.props;
+		const { isBannerVisible, traanslate } = this.props;
 		if ( ! isBannerVisible ) {
 			return null;
 		}
