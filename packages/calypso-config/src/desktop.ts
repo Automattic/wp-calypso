@@ -16,8 +16,8 @@ const config = {
 const features = {
 	desktop: true,
 	'desktop-promo': false,
-	'sign-in-with-apple': false,
-	'signup/social': false,
+	'sign-in-with-apple': true,
+	'signup/social': true,
 	'login/magic-login': false,
 };
 
