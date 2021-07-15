@@ -1,5 +1,5 @@
-import { BaseContainer } from '../base-container';
 import { getRandomInteger } from '../../data-helper';
+import { BaseContainer } from '../base-container';
 
 const selectors = {
 	// Main themes listing

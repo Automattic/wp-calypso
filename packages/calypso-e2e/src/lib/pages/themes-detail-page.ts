@@ -1,7 +1,6 @@
+import { Page } from 'playwright';
 import { BaseContainer } from '../base-container';
 import { PreviewComponent } from '../components';
-
-import { Page } from 'playwright';
 
 const selectors = {
 	demoPane: '.theme__sheet-screenshot',
