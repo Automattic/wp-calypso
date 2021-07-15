@@ -22,14 +22,8 @@ namespace A8C\FSE\ErrorReporting;
 
 use PHPUnit\Framework\TestCase;
 
-/**
- * Stub for the is_automattician function
- *
- * @param int $user_id The user id.
- */
-function is_automattician( $user_id ) {
-	return ( 8898 === $user_id || 8808 === $user_id );
-}
+// Stub for the `is_automattician` function is in `bootstrap.php`.
+// See comments there for more info.
 
 /**
  * Stub for the has_blog_sticker function

@@ -61,21 +61,6 @@ function user_in_sentry_test_segment( $user_id ) {
 }
 
 /**
- * Returns whether or not the user is an automattician, but first verifies
- * if the function `is_automattician` exists in the current context. If not,
- * then we consider the user to not be an automattician. This guard is needed
- * because this function is not present in some envs, namely the testing env.
- *
- * @todo Remove once roll-out is complete
- *
- * @param int $user_id the user id.
- * @return bool
- */
-function user_is_automattician( $user_id ) {
-	return function_exists( __NAMESPACE__ . '\is_automattician' ) && is_automattician( $user_id );
-}
-
-/**
  * Returns whether or not the site loading ETK is in the WoA env.
  *
  * @return bool
@@ -97,8 +82,8 @@ function is_atomic() {
  * Used to check if the sticker is applied if user is A8C.
  */
 function should_activate_sentry( $user_id, $blog_id ) {
-	return ( user_is_automattician( $user_id ) && has_blog_sticker( 'error-reporting-use-sentry', $blog_id ) )
-		|| ( ! user_is_automattician( $user_id ) && user_in_sentry_test_segment( $user_id ) );
+	return ( is_automattician( $user_id ) && has_blog_sticker( 'error-reporting-use-sentry', $blog_id ) )
+		|| ( ! is_automattician( $user_id ) && user_in_sentry_test_segment( $user_id ) );
 }
 
 /**
