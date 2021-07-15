@@ -677,7 +677,7 @@
 
 .jetpack-checkout-siteless-thank-you-completed {
 	&.main.is-wide-layout {
-		max-width: 744px;
+		max-width: 660px;
 	}
 	.jetpack-checkout-siteless-thank-you-completed__card {
 		padding: 0;
@@ -722,10 +722,11 @@
 		.jetpack-checkout-siteless-thank-you-completed__main-message {
 			font-size: 2.25rem;
 			font-weight: 700;
-			margin-bottom: 24px;
-
+			margin-bottom: 56px;
+			line-height: 1;
 			@include break-mobile {
 				font-size: 3rem;
+				line-height: 1.25;
 			}
 		}
 
