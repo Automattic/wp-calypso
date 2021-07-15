@@ -200,6 +200,7 @@ module.exports = {
 				'packages/data-stores/**/*',
 				'packages/js-utils/**/*',
 				'packages/launch/**/*',
+				'packages/mocha-debug-reporter/**/*',
 				'packages/wpcom-checkout/**/*',
 				'test/e2e/**/*',
 			],
