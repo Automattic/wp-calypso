@@ -4,6 +4,7 @@
 import React, { FC, useState, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import classNames from 'classnames';
 import { Card } from '@automattic/components';
 
@@ -78,10 +79,9 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( { productSlug, receiptId 
 
 	useEffect( () => {
 		if ( supportTicketStatus && supportTicketStatus === 'success' ) {
-			// redirect to "Site submitted & email sent" UI page. /checkout/jetpack/thank-you-completed/:product_slug
-			console.log( 'Site URL was submitted sucessfully.' );
+			page.redirect( `/checkout/jetpack/thank-you-completed/no-site/${ productSlug }` );
 		}
-	}, [ supportTicketStatus, receiptId ] );
+	}, [ supportTicketStatus, productSlug, receiptId ] );
 
 	return (
 		<Main fullWidthLayout className="jetpack-checkout-siteless-thank-you">
