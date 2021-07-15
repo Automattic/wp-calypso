@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import phrase from 'asana-phrase';
 import config from 'config';
-
-/**
- * Internal dependencies
- */
 import { getViewportName } from './browser-helper';
 
 /**

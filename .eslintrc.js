@@ -185,6 +185,7 @@ module.exports = {
 				'client/support/**/*',
 				'client/types.ts',
 				'packages/accessible-focus/**/*',
+				'packages/calypso-e2e/**/*',
 				'packages/calypso-products/**/*',
 				'packages/composite-checkout/**/*',
 				'packages/data-stores/**/*',

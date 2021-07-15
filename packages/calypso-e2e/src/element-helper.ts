@@ -1,10 +1,3 @@
-/**
- * Internal dependencies
- */
-
-/**
- * Type dependencies
- */
 import { Page } from 'playwright';
 
 /**

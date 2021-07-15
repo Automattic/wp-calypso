@@ -1,18 +1,7 @@
-/**
- * External dependencies
- */
 import assert from 'assert';
-
-/**
- * Internal dependencies
- */
+import { ElementHandle } from 'playwright';
 import { BaseContainer } from '../base-container';
 import { SupportArticleComponent } from './support-article-component';
-
-/**
- * Type dependencies
- */
-import { ElementHandle } from 'playwright';
 
 const selectors = {
 	// Components
