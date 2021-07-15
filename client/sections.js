@@ -466,7 +466,7 @@ const sections = [
 	},
 	{
 		name: 'jetpack-cloud-pricing',
-		paths: [ '/pricing', '/plans', '/[^\\/]+/pricing' ],
+		paths: [ '/pricing', '/[^\\/]+/pricing' ],
 		module: 'calypso/jetpack-cloud/sections/pricing',
 		group: 'jetpack-cloud',
 		enableLoggedOut: true,
