@@ -1,3 +1,13 @@
+.keyed-suggestions {
+	position: absolute;
+	top: 37px;
+	left: 0;
+	width: 100%;
+	margin-left: -1px;
+	overflow-y: auto;
+	max-height: 50vh;
+}
+
 .keyed-suggestions__suggestions {
 	display: flex;
 	flex-direction: column;
@@ -39,7 +49,7 @@
 	font-size: $font-body;
 	cursor: pointer;
 
-	&.has-highlight {
+	&.is-selected {
 		background-color: var( --color-primary );
 		color: var( --color-text-inverted );
 
@@ -81,7 +91,7 @@
 	&::before {
 		@include long-content-fade();
 
-		.has-highlight & {
+		.is-selected & {
 			@include long-content-fade( $color: var( --color-primary-rgb ) );
 		}
 	}

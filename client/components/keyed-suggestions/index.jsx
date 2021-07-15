@@ -390,9 +390,9 @@ class KeyedSuggestions extends React.Component {
 			rendered.push(
 				suggestions[ key ].map( ( value, i ) => {
 					const taxonomyName = terms[ key ][ value ].name;
-					const hasHighlight = noOfSuggestions + i === this.state.suggestionPosition;
+					const isSelected = noOfSuggestions + i === this.state.suggestionPosition;
 					const className = classNames( 'keyed-suggestions__value', {
-						'has-highlight': hasHighlight,
+						'is-selected': isSelected,
 					} );
 					return (
 						/* eslint-disable jsx-a11y/no-static-element-interactions, jsx-a11y/mouse-events-have-key-events */
