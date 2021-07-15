@@ -190,6 +190,7 @@ module.exports = {
 				'packages/components/**/*',
 				'packages/composite-checkout/**/*',
 				'packages/data-stores/**/*',
+				'packages/launch/**/*',
 				'packages/wpcom-checkout/**/*',
 				'test/e2e/**/*',
 			],
