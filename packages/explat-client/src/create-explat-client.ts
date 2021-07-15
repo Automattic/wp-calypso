@@ -83,7 +83,7 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 				config,
 				experimentName
 			);
-			storeExperimentAssignment( fetchedExperimentAssignment );
+			await storeExperimentAssignment( fetchedExperimentAssignment );
 			return fetchedExperimentAssignment;
 		} );
 	const experimentNameToWrappedExperimentAssignmentFetchAndStore: Record<
@@ -104,7 +104,7 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 					throw new Error( `Invalid experimentName: "${ experimentName }"` );
 				}
 
-				const storedExperimentAssignment = retrieveExperimentAssignment( experimentName );
+				const storedExperimentAssignment = await retrieveExperimentAssignment( experimentName );
 				if (
 					storedExperimentAssignment &&
 					ExperimentAssignments.isAlive( storedExperimentAssignment )
@@ -148,7 +148,7 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 			// Fetching failed and we're not in development mode.
 			try {
 				// We provide stale ExperimentAssignments, important for offline users.
-				const storedExperimentAssignment = retrieveExperimentAssignment( experimentName );
+				const storedExperimentAssignment = await retrieveExperimentAssignment( experimentName );
 				if ( storedExperimentAssignment ) {
 					return storedExperimentAssignment;
 				}
@@ -157,7 +157,7 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 				// be retrieved by all other loadExperimentAssignments that are currently running or will run,
 				// preventing a run on the server.
 				const fallbackExperimentAssignment = createFallbackExperimentAssignment( experimentName );
-				storeExperimentAssignment( fallbackExperimentAssignment );
+				await storeExperimentAssignment( fallbackExperimentAssignment );
 				return fallbackExperimentAssignment;
 			} catch ( fallbackError ) {
 				safeLogError( {

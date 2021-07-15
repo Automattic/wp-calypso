@@ -6,7 +6,10 @@ import { validateExperimentAssignment, isObject } from './validations';
 import { monotonicNow } from './timing';
 
 import * as ExperimentAssignments from './experiment-assignments';
-import localStorage from './local-storage';
+
+import { get, set, createStore } from 'idb-keyval';
+
+const generalStore = createStore( 'explat', 'general' );
 
 interface FetchExperimentAssignmentResponse {
 	variations: Record< string, unknown >;
@@ -60,17 +63,20 @@ const lastAnonIdExpiryTimeMs = 24 * 60 * 60 * 1000; // 24 hours
 export const localStorageCachedGetAnonId = async ( getAnonId: Config[ 'getAnonId' ] ) => {
 	const anonId = await getAnonId();
 	if ( anonId ) {
-		localStorage.setItem( localStorageLastAnonIdKey, anonId );
-		localStorage.setItem( localStorageLastAnonIdRetrievalTimeKey, String( monotonicNow() ) );
+		set( localStorageLastAnonIdKey, anonId, generalStore );
+		set( localStorageLastAnonIdRetrievalTimeKey, monotonicNow(), generalStore );
 		return anonId;
 	}
 
-	const maybeStoredAnonId = localStorage.getItem( localStorageLastAnonIdKey );
-	const maybeStoredRetrievalTime = localStorage.getItem( localStorageLastAnonIdRetrievalTimeKey );
+	const maybeStoredAnonId = await get( localStorageLastAnonIdKey, generalStore );
+	const maybeStoredRetrievalTime = await get(
+		localStorageLastAnonIdRetrievalTimeKey,
+		generalStore
+	);
 	if (
 		maybeStoredAnonId &&
 		maybeStoredRetrievalTime &&
-		monotonicNow() - parseInt( maybeStoredRetrievalTime, 10 ) < lastAnonIdExpiryTimeMs
+		monotonicNow() - maybeStoredRetrievalTime < lastAnonIdExpiryTimeMs
 	) {
 		return maybeStoredAnonId;
 	}

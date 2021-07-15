@@ -18,7 +18,6 @@ import {
 } from '../internal/test-common';
 import * as Timing from '../internal/timing';
 import type { Config, ExperimentAssignment } from '../types';
-import localStorage from '../internal/local-storage';
 
 type MockedFunction = ReturnType< typeof jest.fn >;
 

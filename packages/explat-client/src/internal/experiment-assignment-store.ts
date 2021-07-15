@@ -3,22 +3,21 @@
  */
 import type { ExperimentAssignment } from '../types';
 import * as Validations from './validations';
-import localStorage from './local-storage';
+import { get, set, createStore } from 'idb-keyval';
 
-const localStorageExperimentAssignmentKeyPrefix = 'explat-experiment-';
-
-const localStorageExperimentAssignmentKey = ( experimentName: string ): string =>
-	`${ localStorageExperimentAssignmentKeyPrefix }-${ experimentName }`;
+const experimentAssignmentStore = createStore( 'explat', 'experimentAssignments' );
 
 /**
  * Store an ExperimentAssignment.
  *
  * @param experimentAssignment The ExperimentAssignment
  */
-export function storeExperimentAssignment( experimentAssignment: ExperimentAssignment ): void {
+export async function storeExperimentAssignment(
+	experimentAssignment: ExperimentAssignment
+): Promise< void > {
 	Validations.validateExperimentAssignment( experimentAssignment );
 
-	const previousExperimentAssignment = retrieveExperimentAssignment(
+	const previousExperimentAssignment = await retrieveExperimentAssignment(
 		experimentAssignment.experimentName
 	);
 	if (
@@ -30,9 +29,10 @@ export function storeExperimentAssignment( experimentAssignment: ExperimentAssig
 		);
 	}
 
-	localStorage.setItem(
-		localStorageExperimentAssignmentKey( experimentAssignment.experimentName ),
-		JSON.stringify( experimentAssignment )
+	return set(
+		experimentAssignment.experimentName,
+		experimentAssignment,
+		experimentAssignmentStore
 	);
 }
 
@@ -41,15 +41,13 @@ export function storeExperimentAssignment( experimentAssignment: ExperimentAssig
  *
  * @param experimentName The experiment name.
  */
-export function retrieveExperimentAssignment(
+export async function retrieveExperimentAssignment(
 	experimentName: string
-): ExperimentAssignment | undefined {
-	const maybeExperimentAssignmentJson = localStorage.getItem(
-		localStorageExperimentAssignmentKey( experimentName )
-	);
+): Promise< ExperimentAssignment | undefined > {
+	const maybeExperimentAssignmentJson = await get( experimentName, experimentAssignmentStore );
 	if ( ! maybeExperimentAssignmentJson ) {
 		return undefined;
 	}
 
-	return Validations.validateExperimentAssignment( JSON.parse( maybeExperimentAssignmentJson ) );
+	return Validations.validateExperimentAssignment( maybeExperimentAssignmentJson );
 }
