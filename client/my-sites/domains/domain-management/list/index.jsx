@@ -23,11 +23,8 @@ import { domainManagementRoot, domainManagementList } from 'calypso/my-sites/dom
 import { Button, Card, CompactCard } from '@automattic/components';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
-import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
 import EmptyContent from 'calypso/components/empty-content';
 import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -55,6 +52,7 @@ import InfoPopover from 'calypso/components/info-popover';
 import ExternalLink from 'calypso/components/external-link';
 import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
 import AddDomainButton from 'calypso/my-sites/domains/domain-management/list/add-domain-button';
+import EmptyDomainsListNudge from 'calypso/my-sites/domains/domain-management/list/empty-domains-list-nudge';
 
 /**
  * Style dependencies
@@ -110,35 +108,6 @@ export class List extends React.Component {
 		}
 	}
 
-	domainCreditsInfoNotice() {
-		if ( ! this.props.hasDomainCredit ) {
-			return null;
-		}
-
-		const { translate } = this.props;
-
-		return (
-			<Notice
-				status="is-success"
-				showDismiss={ false }
-				text={ translate( 'Free domain available' ) }
-				icon="info-outline"
-				className="domain-management__claim-free-domain"
-			>
-				<NoticeAction
-					onClick={ this.props.clickClaimDomainNotice }
-					href={ `/domains/add/${ this.props.selectedSite.slug }` }
-				>
-					{ translate( 'Claim Free Domain' ) }
-					<TrackComponentView
-						eventName={ 'calypso_domain_credit_reminder_impression' }
-						eventProperties={ { cta_name: 'domain_info_notice' } }
-					/>
-				</NoticeAction>
-			</Notice>
-		);
-	}
-
 	filterOutWpcomDomains( domains ) {
 		return domains.filter(
 			( domain ) => domain.type !== type.WPCOM || domain.isWpcomStagingDomain
@@ -146,29 +115,35 @@ export class List extends React.Component {
 	}
 
 	renderNewDesign() {
+		const { selectedSite, currentRoute, translate } = this.props;
+
 		return (
 			<>
 				<div className="domains__header">
 					<FormattedHeader
 						brandFont
 						className="domain-management__page-heading"
-						headerText={ this.props.translate( 'Site Domains' ) }
-						subHeaderText={ this.props.translate( 'Manage the domains connected to your site.' ) }
+						headerText={ translate( 'Site Domains' ) }
+						subHeaderText={ translate( 'Manage the domains connected to your site.' ) }
 						align="left"
 					/>
 					<div className="domains__header-buttons">
-						<HeaderCart
-							selectedSite={ this.props.selectedSite }
-							currentRoute={ this.props.currentRoute }
-						/>
+						<HeaderCart selectedSite={ selectedSite } currentRoute={ currentRoute } />
 						{ this.addDomainButton() }
 					</div>
 				</div>
 
 				{ this.domainWarnings() }
-				{ this.domainCreditsInfoNotice() }
 
 				<div className="domain-management-list__primary-domain">{ this.renderPrimaryDomain() }</div>
+
+				{ ! this.isLoading() && (
+					<EmptyDomainsListNudge
+						selectedSite={ selectedSite }
+						hasDomainCredit={ this.props.hasDomainCredit }
+					/>
+				) }
+
 				<div className="domain-management-list__items">{ this.listNewItems() }</div>
 				<DomainToPlanNudge />
 			</>
