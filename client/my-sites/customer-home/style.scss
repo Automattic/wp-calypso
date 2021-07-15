@@ -187,10 +187,15 @@ body.is-section-home {
 		height: auto;
 	}
 
+	button:not( :disabled ) {
+		color: var( --studio-gray-80 );
+	}
+
 	.dashicons-before::before {
 		width: 18px;
 		height: 18px;
 	}
+
 
 	li:first-child {
 		// Move the Page Control Items over to the right
@@ -198,8 +203,7 @@ body.is-section-home {
 		order: 999;
 
 		.gridicon {
-			margin-right: 8px;
-			color: var( --studio-gray-80 );
+			margin-right: 6px;
 		}
 	}
 
@@ -208,8 +212,7 @@ body.is-section-home {
 		margin-right: 0;
 
 		.gridicon {
-			margin-left: 8px;
-		    color: var( --studio-gray-80 );
+			margin-left: 6px;
 		}
 	}
 
