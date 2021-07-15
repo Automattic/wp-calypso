@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import path from 'path';
-
-/**
- * Internal dependencies
- */
-import { BaseContainer } from '../base-container';
+import { ElementHandle, Page } from 'playwright';
 import { waitForElementEnabled } from '../../element-helper';
+import { BaseContainer } from '../base-container';
 
 /**
  * Type dependencies
  */
-import { ElementHandle, Page } from 'playwright';
 
 const selectors = {
 	// Navigation tabs

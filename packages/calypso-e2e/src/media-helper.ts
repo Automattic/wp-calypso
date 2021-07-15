@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
+import path from 'path';
 import config from 'config';
 import fs from 'fs-extra';
-import path from 'path';
-
-/**
- * Internal dependencies
- */
 import { getLocale, getViewportName } from './browser-helper';
 
 const artifacts: { [ key: string ]: string } = config.get( 'artifacts' );
