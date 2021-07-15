@@ -1,9 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-/**
- * External dependencies
- */
+
 import 'regenerator-runtime';
 
 let viewport;
