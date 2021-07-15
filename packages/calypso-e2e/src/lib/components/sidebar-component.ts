@@ -144,6 +144,8 @@ export class SidebarComponent extends BaseContainer {
 			[ elementHandle ]
 		);
 
+		await elementHandle.waitForElementState( 'stable' );
+
 		await elementHandle.click();
 
 		await this.page.waitForLoadState( 'domcontentloaded' );
