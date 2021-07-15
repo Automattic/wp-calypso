@@ -13,6 +13,7 @@ import {
 	checkoutThankYou,
 	jetpackCheckoutScheduleAppointment,
 	jetpackCheckoutThankYou,
+	jetpackCheckoutThankYouCompleted,
 	redirectJetpackLegacyPlans,
 	redirectToSupportSession,
 	upsellNudge,
@@ -37,6 +38,13 @@ export default function () {
 		);
 
 		page( '/checkout/jetpack/:productSlug', noSite, checkoutSiteless, makeLayout, clientRender );
+		page(
+			'/checkout/jetpack/thank-you-completed/no-site/:product',
+			noSite,
+			jetpackCheckoutThankYouCompleted,
+			makeLayout,
+			clientRender
+		);
 		page(
 			'/checkout/jetpack/thank-you/no-site/:product',
 			noSite,
