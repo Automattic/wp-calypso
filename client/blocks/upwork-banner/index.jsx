@@ -87,7 +87,7 @@ class UpworkBanner extends PureComponent {
 				<UpsellNudge
 					event={ 'calypso_upwork_banner_start_now_button_click' }
 					forceDisplay //Upwork banner has its own logic for showing/hiding
-					className="upwork-banner"
+					className="upwork-banner-troubleshooting"
 					showIcon
 					callToAction={ translate( 'Find your expert' ) }
 					dismissPreferenceName={ 'upwork-dismissible-banner' }
