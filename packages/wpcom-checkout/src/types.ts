@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import type { LineItem } from '@automattic/composite-checkout';
 import type {
 	RequestCartProduct,

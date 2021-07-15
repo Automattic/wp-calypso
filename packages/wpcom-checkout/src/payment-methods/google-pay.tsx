@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import React, { useCallback } from 'react';
-import debugFactory from 'debug';
 import { ProcessPayment } from '@automattic/composite-checkout';
-import type { PaymentMethod } from '@automattic/composite-checkout';
-import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
-
-/**
- * Internal dependencies
- */
+import debugFactory from 'debug';
+import React, { useCallback } from 'react';
+import { GooglePayMark } from '../google-pay-mark';
+import { PaymentMethodLogos } from '../payment-method-logos';
 import PaymentRequestButton from '../payment-request-button';
 import { usePaymentRequestOptions, useStripePaymentRequest } from './web-pay-utils';
-import { PaymentMethodLogos } from '../payment-method-logos';
-import { GooglePayMark } from '../google-pay-mark';
+import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
+import type { PaymentMethod } from '@automattic/composite-checkout';
 
 const debug = debugFactory( 'wpcom-checkout:google-pay-payment-method' );
 

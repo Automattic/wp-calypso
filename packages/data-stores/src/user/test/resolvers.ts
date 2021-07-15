@@ -6,9 +6,6 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
 import { createResolvers } from '../resolvers';
 
 const { getCurrentUser } = createResolvers( { client_id: '', client_secret: '' } );

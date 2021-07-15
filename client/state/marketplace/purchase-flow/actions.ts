@@ -98,7 +98,7 @@ export function siteTransferWithPluginInstallTriggered(): AnyAction {
 
 export function pluginInstallationStateChange(
 	state: MARKETPLACE_ASYNC_PROCESS_STATUS,
-	reason = ''
+	reason: string
 ): AnyAction {
 	return {
 		type: MARKETPLACE_PLUGIN_INSTALLATION_STATE_CHANGE,

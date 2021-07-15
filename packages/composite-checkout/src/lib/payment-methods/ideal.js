@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import styled from '@emotion/styled';
-import debugFactory from 'debug';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-
-/**
- * Internal dependencies
- */
-import Field from '../../components/field';
+import debugFactory from 'debug';
+import React from 'react';
 import Button from '../../components/button';
-import { FormStatus, useLineItems } from '../../public-api';
-import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
-import { useFormStatus } from '../form-status';
+import Field from '../../components/field';
 import { registerStore, useSelect, useDispatch } from '../../lib/registry';
+import { FormStatus, useLineItems } from '../../public-api';
+import { useFormStatus } from '../form-status';
 import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
+import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 
 const debug = debugFactory( 'composite-checkout:ideal-payment-method' );
 

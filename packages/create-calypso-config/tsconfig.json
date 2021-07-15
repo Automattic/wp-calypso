@@ -4,7 +4,7 @@
 		"outDir": "dist/esm",
 		"declarationDir": "dist/types",
 		"rootDir": "src",
-		"types": ["node"]
+		"types": [ "node" ]
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/test/*" ]

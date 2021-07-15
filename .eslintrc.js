@@ -65,28 +65,6 @@ module.exports = {
 				'valid-jsdoc': 'off',
 			},
 		},
-		{
-			plugins: [ 'mocha' ],
-			files: [ 'test/e2e/**/*', 'packages/magellan-mocha-plugin/test_support/**/*' ],
-			rules: {
-				'import/no-nodejs-modules': 'off',
-				'mocha/no-exclusive-tests': 'error',
-				'mocha/handle-done-callback': [ 'error', { ignoreSkipped: true } ],
-				'mocha/no-global-tests': 'error',
-				'mocha/no-async-describe': 'error',
-				'mocha/no-top-level-hooks': 'error',
-				'mocha/max-top-level-suites': [ 'error', { limit: 1 } ],
-				'no-console': 'off',
-				// Disable all rules from "plugin:jest/recommended", as e2e tests use mocha
-				...Object.keys( require( 'eslint-plugin-jest' ).configs.recommended.rules ).reduce(
-					( disabledRules, key ) => ( { ...disabledRules, [ key ]: 'off' } ),
-					{}
-				),
-			},
-			globals: {
-				step: false,
-			},
-		},
 		merge(
 			// ESLint doesn't allow the `extends` field inside `overrides`, so we need to compose
 			// the TypeScript config manually using internal bits from various plugins
@@ -199,10 +177,34 @@ module.exports = {
 		},
 		{
 			files: [
-				'packages/accessible-focus/**/*',
-				'test/e2e/**/*',
-				'client/sections-helper.js',
 				'client/sections-filter.js',
+				'client/sections-helper.js',
+				'client/sections-middleware.js',
+				'client/sections-preloaders.js',
+				'client/sections.js',
+				'client/support/**/*',
+				'client/types.ts',
+				'client/webpack.config.desktop.js',
+				'client/webpack.config.js',
+				'client/webpack.config.node.js',
+				'desktop/webpack.config.js',
+				'packages/accessible-focus/**/*',
+				'packages/babel-plugin-i18n-calypso/**/*',
+				'packages/calypso-config/**/*',
+				'packages/calypso-e2e/**/*',
+				'packages/calypso-products/**/*',
+				'packages/calypso-stripe/**/*',
+				'packages/components/**/*',
+				'packages/composite-checkout/**/*',
+				'packages/create-calypso-config/**/*',
+				'packages/data-stores/**/*',
+				'packages/js-utils/**/*',
+				'packages/launch/**/*',
+				'packages/mocha-debug-reporter/**/*',
+				'packages/spec-junit-reporter/**/*',
+				'packages/spec-xunit-reporter/**/*',
+				'packages/wpcom-checkout/**/*',
+				'test/e2e/**/*',
 			],
 			rules: {
 				'wpcalypso/import-docblock': 'off',

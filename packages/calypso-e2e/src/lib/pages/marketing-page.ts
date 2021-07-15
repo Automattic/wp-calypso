@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { BaseContainer } from '../base-container';
 import { toTitleCase } from '../../data-helper';
+import { BaseContainer } from '../base-container';
 
 const selectors = {
 	content: '#primary',
@@ -72,6 +69,6 @@ export class MarketingPage extends BaseContainer {
 	 */
 	async closeSEOPreview(): Promise< void > {
 		await this.page.click( selectors.seoPreviewPaneCloseButton );
-		await this.page.waitForSelector( selectors.content );
+		await this.page.waitForSelector( selectors.seoPreviewButton );
 	}
 }

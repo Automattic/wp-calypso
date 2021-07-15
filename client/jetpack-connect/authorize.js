@@ -4,7 +4,6 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import debugModule from 'debug';
-import page from 'page';
 import { connect } from 'react-redux';
 import { flowRight, get, includes, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -33,7 +32,8 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserConnection from 'calypso/components/data/query-user-connection';
 import Spinner from 'calypso/components/spinner';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
-import { addQueryArgs, externalRedirect } from 'calypso/lib/route';
+import { addQueryArgs } from 'calypso/lib/route';
+import { navigate } from 'calypso/lib/navigate';
 import { authQueryPropTypes, getRoleFromScope } from './utils';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -207,7 +207,7 @@ export class JetpackAuthorize extends Component {
 		if ( ! this.redirecting ) {
 			this.redirecting = true;
 			debug( `Redirecting to ${ url }` );
-			externalRedirect( url );
+			navigate( url );
 		}
 	}
 
@@ -255,14 +255,7 @@ export class JetpackAuthorize extends Component {
 			);
 			this.externalRedirectOnce( redirectAfterAuth );
 		} else {
-			const { target, isExternal } = this.getRedirectionTarget();
-
-			if ( isExternal ) {
-				externalRedirect( target );
-				return;
-			}
-
-			page.redirect( target );
+			navigate( this.getRedirectionTarget() );
 		}
 
 		this.setState( { isRedirecting: true } );
@@ -364,19 +357,8 @@ export class JetpackAuthorize extends Component {
 
 	shouldRedirectJetpackStart( props = this.props ) {
 		const { partnerSlug, partnerID } = props;
-		const pressableRedirectFlag = config.isEnabled(
-			'jetpack/connect-redirect-pressable-credential-approval'
-		);
 
-		// If the redirect flag is set, then we conditionally redirect the Pressable client to
-		// a credential approval screen. Otherwise, we need to redirect all other partners back
-		// to wp-admin.
-		if ( pressableRedirectFlag ) {
-			return partnerID && 'pressable' !== partnerSlug;
-		}
-
-		// If partner ID query param is set, then assume that the connection is from the Jetpack Start flow.
-		return !! partnerID;
+		return partnerID && 'pressable' !== partnerSlug;
 	}
 
 	handleSignIn = () => {
@@ -691,11 +673,8 @@ export class JetpackAuthorize extends Component {
 		const { partnerSlug, selectedPlanSlug, siteHasJetpackPaidProduct } = this.props;
 
 		// Redirect sites hosted on Pressable with a partner plan to some URL.
-		if (
-			config.isEnabled( 'jetpack/connect-redirect-pressable-credential-approval' ) &&
-			'pressable' === partnerSlug
-		) {
-			return { target: `/start/pressable-nux?blogid=${ clientId }`, isExternal: false };
+		if ( 'pressable' === partnerSlug ) {
+			return `/start/pressable-nux?blogid=${ clientId }`;
 		}
 
 		// If the redirect is part of a Jetpack plan or product go to the checkout page
@@ -706,25 +685,19 @@ export class JetpackAuthorize extends Component {
 			// Once we decide we want to redirect the user to the checkout page and that there is a
 			// valid plan, we can safely remove it from the session storage
 			clearPlan();
-			return {
-				target: `/checkout/${ urlToSlug( homeUrl ) }/${ selectedPlanSlug }`,
-				isExternal: false,
-			};
+			return `/checkout/${ urlToSlug( homeUrl ) }/${ selectedPlanSlug }`;
 		}
 
 		// If the site has a Jetpack paid product, send the user back to wp-admin rather than
 		// to the Plans page.
 		if ( siteHasJetpackPaidProduct ) {
-			return { target: redirectAfterAuth, isExternal: true };
+			return redirectAfterAuth;
 		}
 
-		return {
-			target: addQueryArgs(
-				{ redirect: redirectAfterAuth },
-				`${ JPC_PATH_PLANS }/${ urlToSlug( homeUrl ) }`
-			),
-			isExternal: false,
-		};
+		return addQueryArgs(
+			{ redirect: redirectAfterAuth },
+			`${ JPC_PATH_PLANS }/${ urlToSlug( homeUrl ) }`
+		);
 	}
 
 	renderFooterLinks() {

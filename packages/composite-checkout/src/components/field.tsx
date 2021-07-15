@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { LabelHTMLAttributes, InputHTMLAttributes, HTMLAttributes } from 'react';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
+import React, { LabelHTMLAttributes, InputHTMLAttributes, HTMLAttributes } from 'react';
 import styled from '../lib/styled';
 import Button from './button';
 

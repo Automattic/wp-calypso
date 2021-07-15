@@ -1,13 +1,6 @@
-/**
- * Internal dependencies
- */
+import { Page } from 'playwright';
 import { NavbarComponent, SidebarComponent } from '../components';
 import { GutenbergEditorPage } from '../pages';
-
-/**
- * Type dependencies
- */
-import { Page } from 'playwright';
 
 /**
  * Handles all sorts of flows related to starting a new post.

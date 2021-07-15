@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { keyframes } from '@emotion/core';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import styled from '../lib/styled';
 
 export default function Spinner( { className }: { className?: string } ) {

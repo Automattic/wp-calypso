@@ -49,7 +49,7 @@ export default function makeEmbedsSafe( post, dom ) {
 		} else if ( iframeIsAllowed( iframe ) ) {
 			iframe.setAttribute( 'sandbox', 'allow-same-origin allow-scripts allow-popups' );
 		} else {
-			iframe.setAttribute( 'sandbox', '' );
+			iframe.setAttribute( 'sandbox', 'allow-scripts' );
 		}
 	} );
 

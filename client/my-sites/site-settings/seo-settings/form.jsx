@@ -10,7 +10,8 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card, Button } from '@automattic/components';
-import { hasSiteSeoFeature } from './utils';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import MetaTitleEditor from 'calypso/components/seo/meta-title-editor';
@@ -273,6 +274,7 @@ export class SeoForm extends React.Component {
 			siteIsJetpack,
 			siteIsComingSoon,
 			showAdvancedSeo,
+			isAtomic,
 			showWebsiteMeta,
 			selectedSite,
 			isSeoToolsActive,
@@ -299,23 +301,24 @@ export class SeoForm extends React.Component {
 
 		const generalTabUrl = getGeneralTabUrl( slug );
 
-		const upsellProps = siteIsJetpack
-			? {
-					title: translate( 'Boost your search engine ranking' ),
-					feature: FEATURE_SEO_PREVIEW_TOOLS,
-					href: `/checkout/${ slug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_ADVANCED_SEO ] }`,
-			  }
-			: {
-					title: translate(
-						'Boost your search engine ranking with the powerful SEO tools in the Business plan'
-					),
-					feature: FEATURE_ADVANCED_SEO,
-					plan:
-						selectedSite.plan &&
-						findFirstSimilarPlanKey( selectedSite.plan.product_slug, {
-							type: TYPE_BUSINESS,
-						} ),
-			  };
+		const upsellProps =
+			siteIsJetpack && ! isAtomic
+				? {
+						title: translate( 'Boost your search engine ranking' ),
+						feature: FEATURE_SEO_PREVIEW_TOOLS,
+						href: `/checkout/${ slug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_ADVANCED_SEO ] }`,
+				  }
+				: {
+						title: translate(
+							'Boost your search engine ranking with the powerful SEO tools in the Business plan'
+						),
+						feature: FEATURE_ADVANCED_SEO,
+						plan:
+							selectedSite.plan &&
+							findFirstSimilarPlanKey( selectedSite.plan.product_slug, {
+								type: TYPE_BUSINESS,
+							} ),
+				  };
 
 		// To ensure two Coming Soon badges don't appear while sites with Coming Soon v1 (isSitePrivate && siteIsComingSoon) still exist.
 		const isPublicComingSoon = ! isSitePrivate && siteIsComingSoon;
@@ -325,7 +328,7 @@ export class SeoForm extends React.Component {
 				<QuerySiteSettings siteId={ siteId } />
 				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
-				{ ( isSitePrivate || isSiteHidden ) && hasSiteSeoFeature( selectedSite ) && (
+				{ ( isSitePrivate || isSiteHidden ) && showAdvancedSeo && (
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
@@ -479,8 +482,7 @@ const mapStateToProps = ( state ) => {
 	// will soon be available on all Jetpack sites, so we're checking
 	// the availability of the module.
 	const isAdvancedSeoEligible =
-		selectedSite.plan &&
-		hasSiteSeoFeature( selectedSite ) &&
+		hasActiveSiteFeature( state, siteId, FEATURE_ADVANCED_SEO ) &&
 		( ! siteIsJetpack || get( getJetpackModules( state, siteId ), 'seo-tools.available', false ) );
 
 	const activePlugins = getPlugins( state, [ siteId ], 'active' );
@@ -495,6 +497,7 @@ const mapStateToProps = ( state ) => {
 		selectedSite,
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
 		showAdvancedSeo: isAdvancedSeoEligible,
+		isAtomic: isAtomicSite( state, siteId ),
 		showWebsiteMeta: !! get( selectedSite, 'options.advanced_seo_front_page_description', '' ),
 		isSeoToolsActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 		isSiteHidden: isHiddenSite( state, siteId ),

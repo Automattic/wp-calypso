@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { PRODUCT_WPCOM_SEARCH, PRODUCT_WPCOM_SEARCH_MONTHLY } from './wpcom';
 
 export const GROUP_JETPACK = 'GROUP_JETPACK';

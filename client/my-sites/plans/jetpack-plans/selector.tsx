@@ -69,6 +69,20 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 		);
 	}, [ dispatch, rootUrl, siteSlug, viewTrackerPath ] );
 
+	const { unlinked, purchasetoken, purchaseNonce, site } = urlQueryArgs;
+	const canDoSiteOnlyCheckout = unlinked && !! site && !! ( purchasetoken || purchaseNonce );
+	useEffect( () => {
+		if ( canDoSiteOnlyCheckout ) {
+			dispatch(
+				recordTracksEvent( 'calypso_jetpack_siteonly_pricing_page_visit', {
+					site: siteSlug,
+					path: viewTrackerPath,
+					root_path: rootUrl,
+				} )
+			);
+		}
+	}, [ canDoSiteOnlyCheckout, dispatch, rootUrl, siteSlug, viewTrackerPath ] );
+
 	useEffect( () => {
 		setDuration( defaultDuration );
 	}, [ defaultDuration ] );

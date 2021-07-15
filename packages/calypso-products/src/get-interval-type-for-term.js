@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from './constants';
 
 export function getIntervalTypeForTerm( term ) {

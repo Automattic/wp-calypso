@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { select } from '@wordpress/data';
 import deprecate from '@wordpress/deprecated';
-
-/**
- * Internal dependencies
- */
-import type { State } from './reducer';
 import {
 	DEFAULT_PAID_PLAN,
 	TIMELESS_PLAN_ECOMMERCE,
@@ -15,6 +7,7 @@ import {
 	STORE_KEY,
 	FREE_PLAN_PRODUCT_ID,
 } from './constants';
+import type { State } from './reducer';
 import type {
 	Plan,
 	PlanFeature,

@@ -55,6 +55,7 @@ import { getShouldShowAppBanner, handleScroll } from './utils';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { isWithinBreakpoint } from '@automattic/viewport';
+import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 
 /**
  * Style dependencies
@@ -283,6 +284,7 @@ class Layout extends Component {
 				<QuerySites primaryAndRecent={ ! config.isEnabled( 'jetpack-cloud' ) } />
 				{ this.props.shouldQueryAllSites && <QuerySites allSites /> }
 				<QueryPreferences />
+				<QuerySiteFeatures siteId={ this.props.siteId } />
 				{ config.isEnabled( 'layout/query-selected-editor' ) && (
 					<QuerySiteSelectedEditor siteId={ this.props.siteId } />
 				) }

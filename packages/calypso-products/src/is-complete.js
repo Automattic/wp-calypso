@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { isCompletePlan } from './main';
 import { formatProduct } from './format-product';
+import { isCompletePlan } from './main';
 
 export function isComplete( product ) {
 	product = formatProduct( product );

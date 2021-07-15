@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import type { Action } from 'redux';
 
 export interface CurrentUser {

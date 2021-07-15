@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import * as MockData from '../';
 import type { PlanSimplifiedFeature, PlanFeature } from '../../types';
 

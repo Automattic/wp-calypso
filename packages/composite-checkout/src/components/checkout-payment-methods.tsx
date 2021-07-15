@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-import React, { useCallback } from 'react';
-import PropTypes from 'prop-types';
-import debugFactory from 'debug';
-import { useI18n } from '@wordpress/react-i18n';
 import { sprintf } from '@wordpress/i18n';
-
-/**
- * Internal dependencies
- */
-import styled from '../lib/styled';
+import { useI18n } from '@wordpress/react-i18n';
+import debugFactory from 'debug';
+import PropTypes from 'prop-types';
+import React, { useCallback } from 'react';
 import joinClasses from '../lib/join-classes';
-import RadioButton from './radio-button';
+import styled from '../lib/styled';
 import {
 	useAllPaymentMethods,
 	usePaymentMethod,
@@ -22,8 +14,9 @@ import {
 	useEvents,
 	useFormStatus,
 } from '../public-api';
-import CheckoutErrorBoundary from './checkout-error-boundary';
 import { FormStatus } from '../types';
+import CheckoutErrorBoundary from './checkout-error-boundary';
+import RadioButton from './radio-button';
 
 const debug = debugFactory( 'composite-checkout:checkout-payment-methods' );
 
