@@ -4,19 +4,11 @@
  */
 
 import config from 'config';
-import { chromium, chromium } from 'playwright';
+import { chromium } from 'playwright';
 import { getViewportSize } from './browser-helper';
-import { getVideoDir, getVideoDir } from './media-helper';
+import { getVideoDir } from './media-helper';
 import { viewportSize } from './types';
-import type {
-	Browser,
-	BrowserContext,
-	Page,
-	Logger,
-	Browser,
-	BrowserContext,
-	Page,
-} from 'playwright';
+import type { Browser, BrowserContext, Logger, Page } from 'playwright';
 
 export let browser: Browser;
 
