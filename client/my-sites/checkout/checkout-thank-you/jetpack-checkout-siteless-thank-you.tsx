@@ -177,7 +177,7 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( { productSlug, receiptId 
 						<h2>{ translate( 'Do you need help?' ) }</h2>
 						<p>
 							{ translate(
-								'If you prefer to setup Jetpack with the help of our Happiness Engineers, {{a}}schedule a 15 min call now{{/a}}.',
+								'If you prefer to setup Jetpack with the help of our Happiness Engineers, {{a}}schedule a 15 minute call now{{/a}}.',
 								{
 									components: {
 										a: (
