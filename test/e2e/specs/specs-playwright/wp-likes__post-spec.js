@@ -59,7 +59,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 		} );
 	} );
 
-	describe( 'Like an existing post', function () {
+	describe.skip( 'Like an existing post', function () {
 		let publishedPostPage;
 
 		it( 'Log in', async function () {
