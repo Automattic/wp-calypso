@@ -78,7 +78,7 @@ export function resetPurchaseFlow(): AnyAction {
 
 export function siteTransferStateChange(
 	state: MARKETPLACE_ASYNC_PROCESS_STATUS,
-	reason = 'NOT_PROVIDED'
+	reason = 'Not provided.'
 ): AnyAction {
 	return {
 		type: MARKETPLACE_SITE_TRANSFER_STATE_CHANGE,
@@ -98,7 +98,7 @@ export function siteTransferWithPluginInstallTriggered(): AnyAction {
 
 export function pluginInstallationStateChange(
 	state: MARKETPLACE_ASYNC_PROCESS_STATUS,
-	reason = 'NOT_PROVIDED'
+	reason = 'Not provided.'
 ): AnyAction {
 	return {
 		type: MARKETPLACE_PLUGIN_INSTALLATION_STATE_CHANGE,

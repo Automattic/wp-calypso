@@ -16,10 +16,7 @@ import {
 	getProductCost,
 	isProductsListFetching,
 } from 'calypso/state/products-list/selectors';
-import PluginProductMappingInterface, {
-	getProductSlug,
-	marketplaceDebugger,
-} from 'calypso/my-sites/marketplace/constants';
+import { marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import {

@@ -14,6 +14,8 @@ import MarketplacePluginSetup from 'calypso/my-sites/marketplace/pages/marketpla
 import MarketplaceStandaloneThankYou from 'calypso/my-sites/marketplace/pages/marketplace-stand-alone-thank-you';
 import MarketplaceTest from 'calypso/my-sites/marketplace/pages/marketplace-test';
 import { getDefaultProductInProductGroup } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
+import { navigate } from 'calypso/lib/navigate';
+import { marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';
 
 export function renderMarketplaceProduct( context, next ) {
 	const siteFragment = getSiteFragment( context.path );
@@ -23,13 +25,12 @@ export function renderMarketplaceProduct( context, next ) {
 		? decodeURIComponent( productGroupSlugParam )
 		: null;
 
-	if ( ! siteFragment ) {
-		return page.redirect( '/home' );
-	} else if ( ! productGroupSlug && ! productSlug ) {
-		return page.redirect( `/home/${ siteFragment }` );
+	if ( ! productGroupSlug && ! productSlug ) {
+		marketplaceDebugger( 'The productSlug and productGroupSlug were note set' );
+		return navigate( `/home/${ siteFragment }` );
 	} else if ( ! productSlug ) {
 		productSlug = getDefaultProductInProductGroup( productGroupSlug );
-		return page.redirect(
+		return navigate(
 			`/marketplace/product/details/${ productGroupSlug }/${ productSlug }/${ siteFragment }`
 		);
 	}
