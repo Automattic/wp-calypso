@@ -189,6 +189,7 @@ module.exports = {
 				'client/webpack.config.node.js',
 				'desktop/webpack.config.js',
 				'packages/accessible-focus/**/*',
+				'packages/babel-plugin-i18n-calypso/**/*',
 				'packages/calypso-e2e/**/*',
 				'packages/calypso-products/**/*',
 				'packages/components/**/*',
