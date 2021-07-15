@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
+import { Button, useFormStatus, FormStatus } from '@automattic/composite-checkout';
+import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
 import React, { MouseEvent } from 'react';
-import { useI18n } from '@wordpress/react-i18n';
-import { Button, useFormStatus, FormStatus } from '@automattic/composite-checkout';
-import type { StripePaymentRequest } from '@automattic/calypso-stripe';
-
-/**
- * Internal dependencies
- */
-import styled from './styled';
 import { GooglePayMark } from './google-pay-mark';
+import styled from './styled';
+import type { StripePaymentRequest } from '@automattic/calypso-stripe';
 
 // Disabling this rule to make migrating this to calypso easier with fewer changes
 /* eslint-disable @typescript-eslint/no-use-before-define */

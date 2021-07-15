@@ -187,9 +187,10 @@ module.exports = {
 				'packages/accessible-focus/**/*',
 				'packages/calypso-e2e/**/*',
 				'packages/calypso-products/**/*',
+				'packages/components/**/*',
 				'packages/composite-checkout/**/*',
 				'packages/data-stores/**/*',
-				'packages/components/**/*',
+				'packages/wpcom-checkout/**/*',
 				'test/e2e/**/*',
 			],
 			rules: {
