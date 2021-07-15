@@ -25,7 +25,6 @@ import {
 	isRequestingPostsForQueryIgnoringPage,
 } from 'calypso/state/posts/selectors';
 import QueryPosts from 'calypso/components/data/query-posts';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 
 /**
  * Style dependencies
@@ -55,10 +54,10 @@ const BetaTesting = ( { siteId, posts, isRequestingPosts, trackViewHorizonAction
 	);
 
 	const main = (
-		<Fragment>
-			<Card className="beta-testing__header-body">
-				<div className="beta-testing__header-info">
-					<CardHeading tagName="h2" size={ 20 }>
+		<Card>
+			<div className="beta-testing__main-body">
+				<div className="beta-testing__main-info">
+					<CardHeading className="beta-testing__main-title" size={ 36 }>
 						{ translate( 'Help shape the future of online publishing' ) }
 					</CardHeading>
 
@@ -91,26 +90,26 @@ const BetaTesting = ( { siteId, posts, isRequestingPosts, trackViewHorizonAction
 						</a>
 					</div>
 				</div>
-				<div className="beta-testing__header-image-wrapper">
+				<div className="beta-testing__main-image-wrapper">
 					<img
-						className="beta-testing__header-image"
+						className="beta-testing__main-image"
 						src="/calypso/images/illustrations/illustration-404.svg"
 						alt={ translate( 'Beta Testing' ) }
 					/>
 				</div>
-			</Card>
-			<div className="beta-testing__main">
-				<SettingsSectionHeader
-					className="beta-testing__posts-header"
-					title={ translate( 'Recent Beta Features' ) }
-				>
-					<FollowButtonContainer siteUrl="https://horizonfeedback.wordpress.com" />
-					<a className="beta-testing__see-all" href="https://horizonfeedback.wordpress.com">
-						{ translate( 'See All' ) }
-						<Gridicon icon="chevron-right" size={ 18 } />
-					</a>
-				</SettingsSectionHeader>
-				<Card className="beta-testing__posts">
+			</div>
+			<div className="beta-testing__posts-wrapper">
+				<h3 className="beta-testing__posts-title">
+					{ translate( 'Recent Beta Features' ) }
+					<div className="beta-testing__posts-actions">
+						<FollowButtonContainer siteUrl="https://horizonfeedback.wordpress.com" />
+						<a className="beta-testing__see-all" href="https://horizonfeedback.wordpress.com">
+							{ translate( 'See All' ) }
+							<Gridicon icon="chevron-right" size={ 18 } />
+						</a>
+					</div>
+				</h3>
+				<div className="beta-testing__posts">
 					{ isRequestingPosts && ! posts && (
 						<Fragment>
 							<article className="beta-testing__post is-placeholder">
@@ -141,12 +140,12 @@ const BetaTesting = ( { siteId, posts, isRequestingPosts, trackViewHorizonAction
 							</article>
 						);
 					} ) }
-				</Card>
+				</div>
 			</div>
-		</Fragment>
+		</Card>
 	);
 	return (
-		<Main wideLayout className="beta-testing__main">
+		<Main wideLayout>
 			<QueryPosts siteId={ horizonSiteId } query={ { ...query } } />
 			<PageViewTracker path={ `/beta-testing/:site` } title={ translate( 'Beta Testing' ) } />
 			<DocumentHead title={ translate( 'Beta Testing' ) } />

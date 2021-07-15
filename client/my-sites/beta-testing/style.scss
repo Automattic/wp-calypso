@@ -1,3 +1,5 @@
+@import '@automattic/onboarding/styles/mixins';
+
 .beta-testing__heading {
 	display: flex;
 	align-items: center;
@@ -16,42 +18,59 @@
 	}
 }
 
-.beta-testing__header-body {
+.beta-testing__main-body {
 	display: flex;
 	flex-direction: row;
+
+	@include breakpoint-deprecated( '>960px' ) {
+		padding: 24px;
+	}
 }
 
-.beta-testing__header-info {
+.beta-testing__main-info {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	flex: 1;
 }
 
-.beta-testing__header-image-wrapper {
+.beta-testing__main-title {
+	@include onboarding-font-recoleta;
+	line-height: 1.24;
+}
+
+.beta-testing__main-image-wrapper {
 	display: none;
 	padding: 35px;
     flex: 1;
 	align-items: center;
 	justify-content: center;
 
+	img {
+		width: 100%;
+		max-width: 300px;
+	}
+
 	@include breakpoint-deprecated( '>1040px' ) {
 		display: flex;
 	}
 }
-
+.beta-testing__posts-wrapper {
+	border-top: 1px solid #DCDCDE;
+	padding-top: 24px;
+	margin-top: 24px;
+}
 .beta-testing__posts {
 	display: block;
 	align-items: stretch;
-	padding: 0;
 	flex-wrap: wrap;
 
 	@include breakpoint-deprecated( '>1040px' ) {
 		display: flex;
 	}
 }
+
 .beta-testing__post {
-	padding: 10px 20px 0;
 	border-bottom: 1px solid #F6F7F7;
 	font-size: 14px;
 	flex: 1;
@@ -61,11 +80,11 @@
 	}
 
 	@include breakpoint-deprecated( '>1040px' ) {
-		border-right: 1px solid #F6F7F7;
 		border-bottom: none;
+		margin-right: 48px;
 
 		&:last-child {
-			border-right: none;
+			margin-right: 0;
 		}
 	}
 
@@ -108,7 +127,6 @@
 	justify-content: space-between;
 }
 
-
 .beta-testing__view-horizon-button {
 	margin-right: 24px;
 	padding-left: 24px;
@@ -129,8 +147,18 @@
 	}
 }
 
-.beta-testing__main {
-	.section-header__actions {
+.beta-testing__posts-title {
+	display: flex;
+	justify-content: space-between;
+	font-weight: 500;
+	font-size: 14px;
+	margin: 12px 0 24px;
+
+	@include breakpoint-deprecated( '>1040px' ) {
+		margin: 12px 0;
+	}
+
+	.beta-testing__posts-actions {
 		display: flex;
 	}
 
