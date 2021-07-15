@@ -1,4 +1,3 @@
-import { getRandomInteger } from '../../data-helper';
 import { BaseContainer } from '../base-container';
 
 const selectors = {
