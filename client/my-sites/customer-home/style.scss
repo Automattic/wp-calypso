@@ -146,30 +146,6 @@ body.is-section-home {
 	// We add padding here and strip it away from the outer edges of child
 	// elements so that the text, images, controls etc all line up.
 	padding: 32px;
-
-	.task {
-		box-shadow: none;
-		margin-bottom: 0;
-
-		& > :first-child {
-			padding-left: 0;
-			margin-left: 0;
-		}
-
-		& > :last-child {
-			padding-right: 0;
-			margin-right: 0;
-		}
-
-		.task__text, .task__illustration {
-			padding-top: 0;
-			padding-bottom: 0;
-		}
-
-		.task__illustration {
-			text-align: right;
-		}
-	}
 }
 
 .customer-home__location-primary .dot-pager__controls {
@@ -225,5 +201,47 @@ body.is-section-home {
 
 	.dot-pager__control-current {
 		background-color: var( --studio-gray-80 );
+	}
+}
+
+.customer-home__location-primary .task {
+	box-shadow: none;
+
+	// Flush against the top and bottom
+	margin-top: 0;
+	margin-bottom: 0;
+
+	.task__text, .task__illustration {
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+
+	// Flush against the left and right
+	& > :first-child {
+		padding-left: 0;
+		margin-left: 0;
+	}
+
+	& > :last-child {
+		padding-right: 0;
+		margin-right: 0;
+	}
+
+	.task__illustration {
+		text-align: right;
+	}
+
+	// 32px spacing for everything except the space before the CTA (48px)
+	.task__text {
+		gap: 32px;
+
+		& > * {
+			margin-top: 0;
+			margin-bottom: 0;
+		}
+
+		.task__actions {
+			margin-top: 16px;
+		}
 	}
 }
