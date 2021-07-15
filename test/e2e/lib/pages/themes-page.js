@@ -26,6 +26,7 @@ export default class ThemesPage extends AsyncBaseContainer {
 	}
 
 	async showOnlyThemesType( type ) {
+		await this.openShowcase();
 		await driverHelper.clickWhenClickable( this.driver, By.css( `a[data-e2e-value="${ type }"]` ) );
 		await this.waitUntilThemesLoaded();
 	}
@@ -99,6 +100,13 @@ export default class ThemesPage extends AsyncBaseContainer {
 		await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.themes-magic-search-card__icon-close' )
+		);
+	}
+
+	async openShowcase() {
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( `button[data-e2e-value="open-themes-button"]` )
 		);
 	}
 }
