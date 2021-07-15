@@ -193,6 +193,7 @@ module.exports = {
 				'packages/calypso-config/**/*',
 				'packages/calypso-e2e/**/*',
 				'packages/calypso-products/**/*',
+				'packages/calypso-stripe/**/*',
 				'packages/components/**/*',
 				'packages/composite-checkout/**/*',
 				'packages/data-stores/**/*',
