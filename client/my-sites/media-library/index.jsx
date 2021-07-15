@@ -225,8 +225,12 @@ export default connect(
 		needsKeyring: needsKeyring( state, source ),
 		selectedItems: getMediaLibrarySelectedItems( state, site?.ID ),
 		isJetpack: isJetpackSite( state, site?.ID ),
-		hasVideoUploadFeature: hasActiveSiteFeature( state, site.ID, 'upload-video-files' ),
-		hasVideoUploadAvailableFeature: hasAvailableSiteFeature( state, site.ID, 'upload-video-files' ),
+		hasVideoUploadFeature: hasActiveSiteFeature( state, site?.ID, 'upload-video-files' ),
+		hasVideoUploadAvailableFeature: hasAvailableSiteFeature(
+			state,
+			site?.ID,
+			'upload-video-files'
+		),
 	} ),
 	{
 		requestKeyringConnections,
