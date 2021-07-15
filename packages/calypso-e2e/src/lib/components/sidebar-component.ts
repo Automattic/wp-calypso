@@ -1,15 +1,8 @@
-/**
- * Internal dependencies
- */
+import { ElementHandle, Page } from 'playwright';
+import { getViewportName } from '../../browser-helper';
+import { toTitleCase } from '../../data-helper';
 import { BaseContainer } from '../base-container';
 import { NavbarComponent } from './navbar-component';
-import { toTitleCase } from '../../data-helper';
-import { getViewportName } from '../../browser-helper';
-
-/**
- * Type dependencies
- */
-import { ElementHandle, Page } from 'playwright';
 
 const selectors = {
 	// Mobile view

@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import path from 'path';
-import mockdate from 'mockdate';
 import { describe, expect, test, beforeAll, afterAll } from '@jest/globals';
-
-/**
- * Internal dependencies
- */
+import mockdate from 'mockdate';
 import { getAssetDir, getScreenshotDir, getVideoDir, getFileName } from '../src/media-helper';
 
 let env: NodeJS.ProcessEnv;

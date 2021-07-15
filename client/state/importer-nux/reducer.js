@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { withStorageKey } from '@automattic/state-utils';
+
+/**
  * Internal dependencies
  */
 import { combineReducers } from 'calypso/state/utils';
@@ -36,7 +41,10 @@ export const siteDetails = ( state = null, action ) => {
 	return state;
 };
 
-export default combineReducers( {
-	siteDetails,
-	urlInputValue,
-} );
+export default withStorageKey(
+	'importerNux',
+	combineReducers( {
+		siteDetails,
+		urlInputValue,
+	} )
+);

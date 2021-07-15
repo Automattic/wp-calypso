@@ -278,7 +278,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 			// Notify external listeners that the iframe has loaded
 			this.props.setEditorIframeLoaded( true, this.iframePort );
 
-			window.performance?.mark( 'iframe_loaded' );
+			window.performance?.mark?.( 'iframe_loaded' );
 			this.setState( { isIframeLoaded: true, currentIFrameUrl: this.props.iframeUrl } );
 
 			return;

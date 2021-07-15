@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import classNames from 'classnames';
 import { findKey, includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import { iconToProductSlugMap, paths } from './config';
 import type { SupportedSlugs } from './config';
 

@@ -589,10 +589,10 @@ const _translationsBatch = [];
  * @param {Object} userTranslations User translations data that will override chunk translations
  */
 const _addTranslationsBatch = throttle( function ( userTranslations ) {
-	window.performance?.mark( 'add_translations_start' );
+	window.performance?.mark?.( 'add_translations_start' );
 	i18n.addTranslations( Object.assign( {}, ..._translationsBatch.splice( 0 ), userTranslations ) );
-	window.performance?.measure( 'add_translations', 'add_translations_start' );
-	window.performance?.clearMarks( 'add_translations_start' );
+	window.performance?.measure?.( 'add_translations', 'add_translations_start' );
+	window.performance?.clearMarks?.( 'add_translations_start' );
 }, 50 );
 
 /**

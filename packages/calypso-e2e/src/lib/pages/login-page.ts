@@ -1,12 +1,5 @@
-/**
- * Internal dependencies
- */
-import { BaseContainer } from '../base-container';
-
-/**
- * Type dependencies
- */
 import { Page } from 'playwright';
+import { BaseContainer } from '../base-container';
 
 const selectors = {
 	loginContainer: '.wp-login__container',

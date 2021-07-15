@@ -242,17 +242,15 @@ describe( 'ExPlatClient.loadExperimentAssignment single-use', () => {
 		} );
 		jest.advanceTimersByTime( 10 * 1000 );
 		await expectationPromise;
-		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
-		Array [
-		  Array [
-		    Object {
-		      "experimentName": "experiment_name_a",
-		      "message": "Promise has timed-out.",
-		      "source": "loadExperimentAssignment-initialError",
-		    },
-		  ],
-		]
-	` );
+		// Temporary hack for the A/B experiment, see https://github.com/Automattic/wp-calypso/pull/54507
+		const error = ( mockedConfig.logError as MockedFunction ).mock.calls[ 0 ][ 0 ];
+		expect( error ).toEqual(
+			expect.objectContaining( {
+				experimentName: 'experiment_name_a',
+				source: 'loadExperimentAssignment-initialError',
+			} )
+		);
+		expect( error.message ).toMatch( /Promise has timed-out after [0-9]+ms\./ );
 		jest.useRealTimers();
 	} );
 	it( `logError throws/secondary error: should attempt to log secondary error and return fallback`, async () => {

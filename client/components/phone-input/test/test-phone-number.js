@@ -142,6 +142,9 @@ describe( 'metadata:', () => {
 			test( 'should format full length numbers', () => {
 				equal( formatNumber( '+14252222222', countries.US ), '+1 425-222-2222' );
 				equal( formatNumber( '+905325555555', countries.TR ), '+90 532 555 55 55' );
+				equal( formatNumber( '+5555912345678', countries.BR ), '+55 55 91234-5678' );
+				equal( formatNumber( '+393911711711', countries.IT ), '+39 391 171 1711' );
+				equal( formatNumber( '+919100123456', countries.IN ), '+91 91001 23456' );
 			} );
 
 			test( 'should format as you type', () => {
@@ -188,6 +191,10 @@ describe( 'metadata:', () => {
 				equal( formatNumber( '4252222222', countries.US ), '(425) 222-2222' );
 				equal( formatNumber( '05325555555', countries.TR ), '0532 555 55 55' );
 				equal( formatNumber( '0215369851', countries.AU ), '02 1536 9851' );
+				equal( formatNumber( '3911711711', countries.IT ), '391 171 1711' );
+				equal( formatNumber( '5512345678', countries.BR ), '055 1234-5678' );
+				equal( formatNumber( '9100123456', countries.IN ), '091001 23456' );
+				equal( formatNumber( '00000123456', countries.UK ), '01234 56' );
 			} );
 
 			test( 'should format as you type', () => {
@@ -273,6 +280,9 @@ describe( 'metadata:', () => {
 		} );
 		test( 'should separate country codes properly for countries with +1 and a separate leading digit', () => {
 			equal( toIcannFormat( '+18686559999', countries.TT ), '+1.8686559999' );
+		} );
+		test( 'should be able to handle other countries', () => {
+			equal( toIcannFormat( '+555512345678', countries.BR ), '+55.5512345678' );
 		} );
 	} );
 } );

@@ -21,6 +21,7 @@ import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUserCreateSiteFromDomainOnly } from 'calypso/lib/domains';
+import Illustration from 'calypso/assets/images/customer-home/illustration--task-find-domain.svg';
 
 /**
  * Style dependencies
@@ -33,10 +34,7 @@ const DomainOnly = ( { primaryDomain, hasNotice, recordTracks, siteId, slug, tra
 		return (
 			<div>
 				<QuerySiteDomains siteId={ siteId } />
-				<EmptyContent
-					className="domain-only-site__placeholder"
-					illustration={ '/calypso/images/drake/drake-browser.svg' }
-				/>
+				<EmptyContent className="domain-only-site__placeholder" illustration={ Illustration } />
 			</div>
 		);
 	}
@@ -69,7 +67,7 @@ const DomainOnly = ( { primaryDomain, hasNotice, recordTracks, siteId, slug, tra
 				actionURL={ canCreateSite && createSiteUrl }
 				secondaryAction={ translate( 'Manage domain' ) }
 				secondaryActionURL={ domainManagementEdit( slug, domainName ) }
-				illustration={ '/calypso/images/drake/drake-browser.svg' }
+				illustration={ Illustration }
 			>
 				<Button
 					className="empty-content__action button"

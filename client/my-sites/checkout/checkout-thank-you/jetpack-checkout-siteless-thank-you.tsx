@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent, useState, useCallback } from 'react';
+import React, { FC, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import { Card } from '@automattic/components';
@@ -22,13 +22,15 @@ import { cleanUrl } from 'calypso/jetpack-connect/utils.js';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { requestUpdateJetpackCheckoutSupportTicket } from 'calypso/state/jetpack-checkout/actions';
 import Main from 'calypso/components/main';
 
 interface Props {
 	productSlug: string | 'no_product';
+	receiptId?: number;
 }
 
-const JetpackCheckoutSitelessThankYou: FunctionComponent< Props > = ( { productSlug } ) => {
+const JetpackCheckoutSitelessThankYou: FC< Props > = ( { productSlug, receiptId = 0 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const userEmail = useSelector( getCurrentUserEmail );
@@ -65,11 +67,10 @@ const JetpackCheckoutSitelessThankYou: FunctionComponent< Props > = ( { productS
 					site_url: siteUrl,
 				} )
 			);
-			// TODO: dispatch a post request to WPCOM with the `siteUrl` and the users email address to some endpoint to
-			// append the `siteUrl` to the ZendDesk ticket.
+			dispatch( requestUpdateJetpackCheckoutSupportTicket( siteUrl, receiptId ) );
 			// On successful response redirect to schedule 15min Happiness support page? (Calendly?)
 		}
-	}, [ siteInput, dispatch, productSlug ] );
+	}, [ siteInput, dispatch, productSlug, receiptId ] );
 
 	return (
 		<Main fullWidthLayout className="jetpack-checkout-siteless-thank-you">

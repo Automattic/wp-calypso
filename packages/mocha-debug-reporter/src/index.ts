@@ -1,10 +1,6 @@
-/**
- * External dependencies
- */
-import Mocha from 'mocha';
 import fs from 'fs';
 import path from 'path';
-
+import Mocha from 'mocha';
 import type { Runner, MochaOptions, Suite, Hook, Test } from 'mocha';
 
 const {

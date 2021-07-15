@@ -1,16 +1,13 @@
-/**
- * External dependencies
- */
-import { useState, useCallback, useEffect, useMemo } from 'react';
-import debugFactory from 'debug';
 import { useLineItems } from '@automattic/composite-checkout';
-import type { LineItem } from '@automattic/composite-checkout';
+import debugFactory from 'debug';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import type {
 	Stripe,
 	StripeConfiguration,
 	StripePaymentRequest,
 	PaymentRequestOptions,
 } from '@automattic/calypso-stripe';
+import type { LineItem } from '@automattic/composite-checkout';
 
 const debug = debugFactory( 'wpcom-checkout:web-pay-utils' );
 

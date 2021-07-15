@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { BaseContainer } from '../base-container';
 
 const selectors = {

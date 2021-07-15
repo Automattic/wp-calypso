@@ -1,16 +1,9 @@
-/**
- * External Dependencies
- */
 const path = require( 'path' );
-const webpack = require( 'webpack' );
-
-/**
- * Internal Dependencies
- */
-const { workerCount } = require( './webpack.common' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
 const { shouldTranspileDependency } = require( '@automattic/calypso-build/webpack/util' );
+const webpack = require( 'webpack' );
 const cacheIdentifier = require( '../build-tools/babel/babel-loader-cache-identifier' );
+const { workerCount } = require( './webpack.common' );
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 const cacheDirectory = path.resolve( '.cache', 'babel-desktop' );
