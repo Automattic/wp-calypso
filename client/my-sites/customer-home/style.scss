@@ -140,7 +140,7 @@ body.is-section-home {
 
 .customer-home__location-primary {
 	display: flex;
-	flex-direction: column-reverse;
+	flex-direction: column;
 	border-radius: 3px; /* stylelint-disable-line scales/radii */
 
 	// We add padding here and strip it away from the outer edges of child
@@ -176,6 +176,7 @@ body.is-section-home {
 	justify-content: flex-start;
 	margin-top: 0;
 	margin-bottom: 32px;
+	order: -1;
 
 	button {
 		// Size the dots
