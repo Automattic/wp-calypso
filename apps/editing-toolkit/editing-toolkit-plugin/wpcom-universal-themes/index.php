@@ -108,12 +108,20 @@ function theme_nag() {
 	}
 	$message = sprintf(
 		/* translators: %s: URL for linking to activation subpage */
-		__( 'You are running a theme capable of Full Site Editing! <a href="%s">Click here</a> to try out the new Site Editor.', 'full-site-editing' ),
+		__( 'You are running a theme capable of Full Site Editing! <a href="%s" class="button">Try the Site Editor</a>', 'full-site-editing' ),
 		admin_url( 'themes.php?page=site-editor-toggle' )
 	);
 	printf(
 		'<div class="notice is-dismissible"><p>%s</p></div>',
-		wp_kses( $message, array( 'a' => array( 'href' => array() ) ) )
+		wp_kses(
+			$message,
+			array(
+				'a' => array(
+					'href'  => array(),
+					'class' => array(),
+				),
+			)
+		)
 	);
 
 }
