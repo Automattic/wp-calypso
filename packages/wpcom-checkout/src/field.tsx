@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { Button } from '@automattic/composite-checkout';
 import { TranslateResult } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React from 'react';
 import styled from './styled';
 
 // Disabling this to make migrating files easier

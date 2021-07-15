@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import React from 'react';
 
 export function GooglePayMark( { fill }: { fill: string } ): JSX.Element {
