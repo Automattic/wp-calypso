@@ -15,7 +15,7 @@ import { createFallbackExperimentAssignment as createFallbackExperimentAssignmen
 /**
  * The number of milliseconds before we abandon fetching an experiment
  */
-const EXPERIMENT_FETCH_TIMEOUT = 5000;
+const EXPERIMENT_FETCH_TIMEOUT = 10000;
 
 export interface ExPlatClient {
 	/**
@@ -62,6 +62,7 @@ export class MissingExperimentAssignmentError extends Error {
  * Create an ExPlat Client
  *
  * @param config Configuration object
+ *
  */
 export function createExPlatClient( config: Config ): ExPlatClient {
 	if ( typeof window === 'undefined' ) {
@@ -118,11 +119,18 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 						experimentName
 					] = createWrappedExperimentAssignmentFetchAndStore( experimentName );
 				}
+
+				// Temporarilly running an A/B experiment on the timeout, see https://github.com/Automattic/wp-calypso/pull/54507
+				let experimentFetchTimeout = EXPERIMENT_FETCH_TIMEOUT;
+				if ( Math.random() > 0.5 ) {
+					experimentFetchTimeout = 5000;
+				}
+
 				// We time out the request here and not above so the fetch-and-store continues and can be
 				// returned by future uses of loadExperimentAssignment.
 				const fetchedExperimentAssignment = await Timing.timeoutPromise(
 					experimentNameToWrappedExperimentAssignmentFetchAndStore[ experimentName ](),
-					EXPERIMENT_FETCH_TIMEOUT
+					experimentFetchTimeout
 				);
 				if ( ! fetchedExperimentAssignment ) {
 					throw new Error( `Could not fetch ExperimentAssignment` );
