@@ -5,14 +5,13 @@ import {
 	SidebarComponent,
 	ThemesPage,
 	ThemesDetailPage,
-	ThemesCustomizerPage,
 } from '@automattic/calypso-e2e';
 
 describe( DataHelper.createSuiteTitle( 'Theme: Activate' ), () => {
 	let sidebarComponent;
 	let themesPage;
 	let themesDetailPage;
-	let themesCustomizerPage;
+	let popupTab;
 	let page;
 	const themeName = 'Twenty Twen';
 	const user = 'defaultUser';
@@ -47,11 +46,11 @@ describe( DataHelper.createSuiteTitle( 'Theme: Activate' ), () => {
 	} );
 
 	it( 'Theme customizer loads in a new tab', async function () {
-		const popupTab = await themesDetailPage.customizeSite();
-		themesCustomizerPage = await ThemesCustomizerPage.Expect( popupTab );
+		popupTab = await themesDetailPage.customizeSite();
+		await popupTab.waitForLoadState( 'load' );
 	} );
 
 	it( 'Close theme customizer', async function () {
-		await themesCustomizerPage.closeTab();
+		await popupTab.close();
 	} );
 } );

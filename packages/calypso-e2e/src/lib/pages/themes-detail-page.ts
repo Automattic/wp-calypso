@@ -42,7 +42,6 @@ export class ThemesDetailPage extends BaseContainer {
 	 */
 	async activate( { keepModal = false }: { keepModal?: boolean } = {} ): Promise< void > {
 		await this.page.click( selectors.activateDesignButton );
-		await this.page.waitForSelector( selectors.activateModal );
 		await this.page.click( selectors.activateModalButton );
 		await this.page.waitForSelector( selectors.thanksMessage );
 		if ( ! keepModal ) {

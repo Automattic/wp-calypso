@@ -7,4 +7,3 @@ export * from './settings-page';
 export * from './themes-page';
 export * from './themes-detail-page';
 export * from './media-page';
-export * from './themes-customizer-page';

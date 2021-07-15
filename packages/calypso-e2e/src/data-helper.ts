@@ -3,14 +3,16 @@ import config from 'config';
 import { getViewportName } from './browser-helper';
 
 /**
- * Generate a pseudo-random integer.
+ * Generate a pseudo-random integer, inclusive on the lower bound and exclusive on the upper bound.
  *
- * @param {number} min Minimum value. Defaults to 0.
- * @param {number} max Maximum value.
+ * @param {number} min Minimum value, inclusive.
+ * @param {number} max Maximum value, exclusive.
  * @returns {number} Generated pseudo-random integer.
  */
-export function getRandomInteger( min = 0, max: number ): number {
-	return Math.floor( Math.random() * ( max - min + 1 ) ) + min;
+export function getRandomInteger( min: number, max: number ): number {
+	min = Math.ceil( min );
+	max = Math.floor( max );
+	return Math.floor( Math.random() * ( max - min ) + min );
 }
 
 /**

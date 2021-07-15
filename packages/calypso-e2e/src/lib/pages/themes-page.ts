@@ -78,18 +78,18 @@ export class ThemesPage extends BaseContainer {
 	 */
 	async select( name: string ): Promise< void > {
 		// Build selector that will select themes on the page that match the name but excludes
-		// currently activated themes.
+		// the currently activated theme from selection (even if shown on page).
 		const selector = `${ selectors.items }:has-text("${ name }")${ selectors.excludeActiveTheme }`;
 		// Get number of themes being shown on page.
 		const numThemes = await this.page.$$( selector ).then( ( themes ) => themes.length );
-		// If the themes matching the selector is 1, we know there is an exact match.
-		// Otherwise, select a random theme matching the requirement.
-		const index = numThemes === 1 ? 1 : getRandomInteger( 0, numThemes );
-		const selectedTheme = await this.page.waitForSelector(
-			`:nth-match(${ selector }, ${ index })`
-		);
+		if ( numThemes === 0 ) {
+			throw new Error( `No theme shown on page that match name: ${ name }.` );
+		}
 
-		// Hover over the chosen theme to expose the `INFO` button, then wait for the animation to
+		// Select the first available theme as the target.
+		const selectedTheme = await this.page.waitForSelector( `:nth-match(${ selector }, 1)` );
+
+		// Hover over the target theme to expose the `INFO` button and wait for the animation to
 		// complete.
 		await selectedTheme.hover();
 		await selectedTheme.waitForElementState( 'stable' );
