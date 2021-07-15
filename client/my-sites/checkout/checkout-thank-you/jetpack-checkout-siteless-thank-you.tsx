@@ -70,10 +70,10 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( { productSlug, receiptId 
 				recordTracksEvent( 'calypso_siteless_checkout_submit_website_address', {
 					product_slug: productSlug,
 					site_url: siteUrl,
+					receipt_id: receiptId,
 				} )
 			);
 			dispatch( requestUpdateJetpackCheckoutSupportTicket( siteUrl, receiptId ) );
-			// On successful response redirect to schedule 15min Happiness support page? (Calendly?)
 		}
 	}, [ siteInput, dispatch, productSlug, receiptId ] );
 

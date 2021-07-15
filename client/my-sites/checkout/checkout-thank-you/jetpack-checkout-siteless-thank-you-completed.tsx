@@ -41,13 +41,14 @@ const JetpackCheckoutSitelessThankYouCompleted: FC< Props > = ( { productSlug } 
 		getIsProductListFetching( state )
 	) as boolean;
 
-	const contactSupportLink = 'https://jetpack.com/support/getting-started-with-jetpack/';
+	const contactSupportLink = 'https://wordpress.com/help/contact';
 
 	return (
 		<Main wideLayout className="jetpack-checkout-siteless-thank-you-completed">
 			<PageViewTracker
-				path="/pricing/jetpack-free/welcome"
-				title="Pricing > Jetpack Free > Welcome to Jetpack"
+				path="/checkout/jetpack/thank-you-completed/no-site/:product"
+				title="Checkout > Jetpack Siteless Thank You Completed"
+				properties={ { product_slug: productSlug } }
 			/>
 			<Card className="jetpack-checkout-siteless-thank-you-completed__card">
 				<div className="jetpack-checkout-siteless-thank-you-completed__card-main">

@@ -728,6 +728,10 @@
 				font-size: 3rem;
 			}
 		}
+
+		.jetpack-checkout-siteless-thank-you-completed__main-messag-loading {
+			@include placeholder( --color-neutral-20 );
+		}
 	}
 }
 
@@ -845,6 +849,15 @@
 			.button.jetpack-checkout-siteless-thank-you__form-submit {
 				margin: 0;
 				&.is-primary {
+					&.is-busy {
+						background-image: linear-gradient(
+							-45deg,
+							var( --studio-jetpack-green-40 ) 28%,
+							var( --studio-jetpack-green-50 ) 28%,
+							var( --studio-jetpack-green-50 ) 72%,
+							var( --studio-jetpack-green-40 ) 72%
+						);
+					}
 					background-color: var( --studio-jetpack-green-50 );
 					border-color: var( --studio-jetpack-green-50 );
 					&:hover {
