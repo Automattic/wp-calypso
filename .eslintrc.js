@@ -198,6 +198,7 @@ module.exports = {
 				'packages/composite-checkout/**/*',
 				'packages/data-stores/**/*',
 				'packages/launch/**/*',
+				'packages/mocha-debug-reporter/**/*',
 				'packages/wpcom-checkout/**/*',
 				'test/e2e/**/*',
 			],
