@@ -19,7 +19,6 @@ import { filterItemsByMimePrefix } from 'calypso/lib/media/utils';
 import filterToMimePrefix from './filter-to-mime-prefix';
 import FilterBar from './filter-bar';
 import QueryPreferences from 'calypso/components/data/query-preferences';
-import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import searchUrl from 'calypso/lib/search-url';
 import {
 	isKeyringConnectionsFetching,
@@ -179,7 +178,6 @@ class MediaLibrary extends Component {
 		return (
 			<div className={ classes }>
 				<QueryPreferences />
-				<QuerySiteFeatures key="query-features" siteId={ this.props.site?.ID } />,
 				{ this.renderDropZone() }
 				<FilterBar
 					site={ this.props.site }
