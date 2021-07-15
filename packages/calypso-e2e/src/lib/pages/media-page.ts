@@ -3,10 +3,6 @@ import { ElementHandle, Page } from 'playwright';
 import { waitForElementEnabled } from '../../element-helper';
 import { BaseContainer } from '../base-container';
 
-/**
- * Type dependencies
- */
-
 const selectors = {
 	// Navigation tabs
 	navTabs: '.section-nav-tabs',
