@@ -153,15 +153,21 @@ body.is-section-home {
 
 		& > :first-child {
 			padding-left: 0;
+			margin-left: 0;
 		}
 
 		& > :last-child {
 			padding-right: 0;
+			margin-right: 0;
 		}
 
 		.task__text, .task__illustration {
 			padding-top: 0;
 			padding-bottom: 0;
+		}
+
+		.task__illustration {
+			text-align: right;
 		}
 	}
 }
@@ -181,6 +187,11 @@ body.is-section-home {
 		height: auto;
 	}
 
+	.dashicons-before::before {
+		width: 18px;
+		height: 18px;
+	}
+
 	li:first-child {
 		// Move the Page Control Items over to the right
 		margin-left: auto;
@@ -194,11 +205,18 @@ body.is-section-home {
 
 	li:last-child {
 		order: 999;
+		margin-right: 0;
 
 		.gridicon {
 			margin-left: 8px;
 		    color: var( --studio-gray-80 );
 		}
+	}
+
+	// This is the left-most dot, so we want it flush against the
+	// conatiner padding
+	li:nth-child( 2 ) {
+		margin-left: 0;
 	}
 
 	.dot-pager__control-current {
