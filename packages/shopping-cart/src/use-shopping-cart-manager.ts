@@ -58,7 +58,7 @@ export default function useShoppingCartManager( {
 	const cartMiddleware = useMemo( () => [ syncCartToServer ], [ syncCartToServer ] );
 	const [ hookState, hookDispatch ] = useShoppingCartReducer( cartMiddleware );
 
-	const responseCart: TempResponseCart = hookState.responseCart;
+	const tempResponseCart: TempResponseCart = hookState.responseCart;
 	const couponStatus: CouponStatus = hookState.couponStatus;
 	const cacheStatus: CacheStatus = hookState.cacheStatus;
 	const loadingError: string | undefined = hookState.loadingError;
@@ -158,8 +158,8 @@ export default function useShoppingCartManager( {
 		hookState.queuedActions.length > 0 || cacheStatus !== 'valid' || ! cartKey;
 
 	const responseCartWithoutTempProducts = useMemo(
-		() => convertTempResponseCartToResponseCart( responseCart ),
-		[ responseCart ]
+		() => convertTempResponseCartToResponseCart( tempResponseCart ),
+		[ tempResponseCart ]
 	);
 	const lastValidResponseCart = useRef< ResponseCart >( responseCartWithoutTempProducts );
 	if ( cacheStatus === 'valid' ) {
