@@ -202,6 +202,7 @@ module.exports = {
 				'packages/launch/**/*',
 				'packages/mocha-debug-reporter/**/*',
 				'packages/spec-junit-reporter/**/*',
+				'packages/spec-xunit-reporter/**/*',
 				'packages/wpcom-checkout/**/*',
 				'test/e2e/**/*',
 			],
