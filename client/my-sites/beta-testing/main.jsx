@@ -47,7 +47,7 @@ const BetaTesting = ( { siteId, posts, isRequestingPosts, trackViewHorizonAction
 	const header = (
 		<FormattedHeader
 			brandFont
-			headerText={ translate( 'Beta Testing' ) }
+			headerText={ translate( 'Beta Testing', { context: 'Plugin Installer'} ) }
 			subHeaderText={ translate( 'Help make the web a better place, one release at a time.' ) }
 			align="left"
 		/>
