@@ -32,6 +32,10 @@
 	flex-direction: column;
 	justify-content: center;
 	flex: 1;
+
+	@include breakpoint-deprecated( '>960px' ) {
+		min-width: 400px;
+	}
 }
 
 .beta-testing__main-title {
@@ -41,7 +45,6 @@
 
 .beta-testing__main-image-wrapper {
 	display: none;
-	padding: 35px;
     flex: 1;
 	align-items: center;
 	justify-content: center;
@@ -71,16 +74,10 @@
 }
 
 .beta-testing__post {
-	border-bottom: 1px solid #F6F7F7;
 	font-size: 14px;
 	flex: 1;
 
-	&:last-child {
-		border-bottom: none;
-	}
-
 	@include breakpoint-deprecated( '>1040px' ) {
-		border-bottom: none;
 		margin-right: 48px;
 
 		&:last-child {
@@ -152,7 +149,7 @@
 	justify-content: space-between;
 	font-weight: 500;
 	font-size: 14px;
-	margin: 12px 0 24px;
+	margin: 0 0 24px;
 
 	@include breakpoint-deprecated( '>1040px' ) {
 		margin: 12px 0;
