@@ -51,7 +51,6 @@ import { getDomainManagementPath } from './utils';
 import DomainItem from './domain-item';
 import ListHeader from './list-header';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import InfoPopover from 'calypso/components/info-popover';
 import ExternalLink from 'calypso/components/external-link';
 import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
@@ -472,7 +471,6 @@ export class List extends React.Component {
 
 		return [
 			<QuerySitePurchases key="query-purchases" siteId={ selectedSite.ID } />,
-			<QuerySiteFeatures key="query-features" siteId={ selectedSite.ID } />,
 			<ListHeader
 				key="domains-header"
 				headerClasses={ {
