@@ -26,22 +26,21 @@
 		}
 
 		h1 {
+			line-height: 1;
 			@include break-mobile {
-				font-size: 3rem;
-				line-height: 3.25rem;
-				padding-bottom: 24px;
+				font-size: $font-headline-medium;
 			}
 			+ p {
 				font-size: 18px; /* stylelint-disable-line */
 				line-height: 1.5rem;
 				@include break-mobile {
-					font-size: 1.5rem;
+					font-size: $font-title-medium;
 					line-height: 2rem;
 				}
 			}
 		}
 		h2 {
-			font-size: 1.5rem;
+			font-size: $font-title-medium;
 			font-weight: 700;
 			line-height: 1.75rem;
 			padding-bottom: 16px;
@@ -60,14 +59,20 @@
 			display: flex;
 			align-items: flex-start;
 			padding-bottom: 40px;
+
+			&:last-of-type {
+				padding-bottom: 0;
+			}
+
 			.jetpack-free-welcome__step-number {
 				color: white;
-				background-color: var( --studio-jetpack-green-50 );
+				background-color: var( --studio-jetpack-green-40 );
 				text-align: center;
 				border-radius: 50%; /* stylelint-disable-line */
-				font-size: 1.25rem;
-				width: 1.8rem;
-				height: 1.8rem;
+				font-size: $font-title-small;
+				font-weight: 600;
+				width: rem( 32px );
+				height: rem( 32px );
 			}
 			.jetpack-free-welcome__step-content {
 				flex: 1;
@@ -102,24 +107,46 @@
 		}
 
 		.jetpack-free-welcome__feature-nav-button {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			border: 2px solid var( --studio-jetpack-green-50 );
-			border-radius: calc( 2px * 2 );
-			padding: 16px 24px;
-			text-decoration: none;
+			position: relative;
+			display: block;
+			padding: 16px 64px 16px 24px;
 			color: var( --color-studio-black );
-			&:hover {
-				text-decoration: underline;
+			border: 2px solid var( --studio-jetpack-green-40 );
+			border-radius: calc( 2px * 2 );
+			text-decoration: none;
+
+			span {
+				display: block;
+
+				&:last-of-type {
+					font-weight: 600;
+				}
 			}
 
-			.jetpack-free-welcome__feature-nav-button-icon {
-				padding-left: 24px;
-				color: var( --studio-jetpack-green-50 );
-				> svg {
-					display: block;
+			&:hover,
+				&:focus {
+					//box-shadow: 0px 0px 40px rgba( 0, 0, 0, 0.08 );
+
+					span:last-of-type {
+						text-decoration: underline;
+						text-decoration-thickness: 2px;
+					}
+
+					&::after {
+						transform: translateY( -50% ) translateX( 8px );
+					}
 				}
+
+			&::after {
+				content: '→';
+				position: absolute;
+				top: 50%;
+				right: 24px;
+				font-size: $font-title-medium;
+				font-weight: 600;
+				color: var( --studio-jetpack-green-40 );
+				transform: translateY( -50% );
+				transition: transform 0.15s ease-out;
 			}
 		}
 	}
