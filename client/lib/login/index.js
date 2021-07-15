@@ -125,13 +125,13 @@ export function getSignupUrl(
 	return signupUrl;
 }
 
-export const getLoginLinkPageUrl = ( locale, currentRoute, isGutenboarding ) => {
+export const getLoginLinkPageUrl = ( locale = 'en', currentRoute, isGutenboarding ) => {
 	const loginParameters = {
 		locale,
 		twoFactorAuthType: 'link',
 	};
 
-	if ( currentRoute === '/login-in/jetpack' ) {
+	if ( currentRoute === '/log-in/jetpack' ) {
 		loginParameters.twoFactorAuthType = 'jetpack/link';
 	} else if ( isGutenboarding ) {
 		loginParameters.twoFactorAuthType = 'new/link';
