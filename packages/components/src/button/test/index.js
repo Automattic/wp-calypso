@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import Gridicon from 'gridicons'; // eslint-disable-line no-restricted-imports
 import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
+import Gridicon from 'gridicons'; // eslint-disable-line no-restricted-imports
+import React from 'react';
 import Button from '..';
 
 describe( 'Button', () => {

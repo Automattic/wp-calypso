@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import React, { Fragment } from 'react';
-
-/**
- * Internal dependencies
- */
 import ProductIcon from '../index';
 
 function ProductIconExample() {
