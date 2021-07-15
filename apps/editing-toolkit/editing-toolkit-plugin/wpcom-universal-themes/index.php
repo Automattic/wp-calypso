@@ -22,13 +22,23 @@ define( 'OPTION_NAME', 'is_fse_activated' );
  */
 function is_core_fse_active() {
 	// If `gutenberg_is_fse_theme` is false, this is a non-starter.
-	$gutenberg_is_fse_theme = function_exists( 'gutenberg_is_fse_theme' ) && gutenberg_is_fse_theme();
-	if ( ! $gutenberg_is_fse_theme ) {
+	if ( ! is_fse_theme() ) {
 		return false;
 	}
 
 	// Now we just check for our own option.
 	return (bool) get_option( OPTION_NAME );
+}
+
+/**
+ * Proxy for `gutenberg_is_fse_theme` with `function_exists` guarding.
+ *
+ * @uses gutenberg_is_fse_theme
+ *
+ * @return boolean
+ */
+function is_fse_theme() {
+	return function_exists( 'gutenberg_is_fse_theme' ) && gutenberg_is_fse_theme();
 }
 
 /**
@@ -70,6 +80,10 @@ function load_core_fse() {
  * @return void
  */
 function load_universal_helpers() {
+	// we don't need to show anything to non-FSE-capable themes.
+	if ( ! is_fse_theme() ) {
+		return;
+	}
 	if ( apply_filters( 'a8c_hide_core_fse_activation', false ) ) {
 		return;
 	}
@@ -102,7 +116,7 @@ function add_submenu() {
 function theme_nag() {
 	$is_active        = is_core_fse_active();
 	$is_themes_screen = 'themes' === get_current_screen()->id;
-	$is_fse_theme     = function_exists( 'gutenberg_is_fse_theme' ) && gutenberg_is_fse_theme();
+	$is_fse_theme     = is_fse_theme();
 	if ( $is_active || ! $is_themes_screen || ! $is_fse_theme ) {
 		return;
 	}
