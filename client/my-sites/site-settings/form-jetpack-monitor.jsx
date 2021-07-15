@@ -150,8 +150,7 @@ class SiteSettingsFormJetpackMonitor extends Component {
 
 					<div className="site-settings__child-settings">
 						{ this.settingsMonitorEmailCheckbox() }
-						{ config.isEnabled( 'settings/security/monitor/wp-note' ) &&
-							this.settingsMonitorWpNoteCheckbox() }
+						{ this.settingsMonitorWpNoteCheckbox() }
 					</div>
 				</Card>
 			</div>
