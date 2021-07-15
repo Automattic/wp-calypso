@@ -296,7 +296,7 @@ const CancelPurchaseRefundInformation = ( {
 		);
 	} else {
 		text = i18n.translate(
-			"When you cancel your subscription, you'll be able to use %(productName)s until your subscription expires. " +
+			"You'll be able to use %(productName)s until your subscription expires. " +
 				'Once it expires, it will be automatically removed from your site.',
 			{
 				args: {

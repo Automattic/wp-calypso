@@ -7,7 +7,7 @@ import i18n from 'i18n-calypso';
 const titles = {
 	addCreditCard: i18n.translate( 'Add Credit Card' ),
 	addPaymentMethod: i18n.translate( 'Add Payment Method' ),
-	cancelPurchase: i18n.translate( 'Cancel Purchase' ),
+	cancelPurchase: i18n.translate( 'Purchase Settings' ),
 	confirmCancelDomain: i18n.translate( 'Cancel Domain' ),
 	changePaymentMethod: i18n.translate( 'Change Payment Method' ),
 	addCardDetails: i18n.translate( 'Add Credit Card' ),
@@ -30,7 +30,7 @@ Object.defineProperties( titles, {
 		get: () => i18n.translate( 'Add Payment Method' ),
 	},
 	cancelPurchase: {
-		get: () => i18n.translate( 'Cancel Purchase' ),
+		get: () => i18n.translate( 'Purchase Settings' ),
 	},
 	confirmCancelDomain: {
 		get: () => i18n.translate( 'Cancel Domain' ),

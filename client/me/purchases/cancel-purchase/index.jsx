@@ -142,7 +142,7 @@ class CancelPurchase extends React.Component {
 		}
 
 		return this.props.translate(
-			'After you confirm this change, the subscription will be removed on %(expirationDate)s',
+			'After you confirm this change, auto-renew will be disabled and your subscription will be removed on %(expirationDate)s',
 			{
 				args: { expirationDate },
 			}
@@ -180,7 +180,7 @@ class CancelPurchase extends React.Component {
 		}
 
 		if ( isSubscription( purchase ) ) {
-			heading = this.props.translate( 'Cancel Your %(purchaseName)s Subscription', {
+			heading = this.props.translate( 'Disable auto-renew for your %(purchaseName)s Subscription', {
 				args: { purchaseName },
 			} );
 		}

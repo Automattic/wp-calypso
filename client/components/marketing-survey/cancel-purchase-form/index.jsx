@@ -680,7 +680,7 @@ class CancelPurchaseForm extends React.Component {
 			isJetpackProductSlug( purchase.productSlug ) || isJetpackPlanSlug( purchase.productSlug );
 		const productName = isJetpack ? translate( 'Jetpack' ) : translate( 'WordPress.com' );
 
-		if ( showSurvey ) {
+		if ( showSurvey && this.getSurveyDataType() !== 'cancel-autorenew' ) {
 			if ( surveyStep === steps.INITIAL_STEP ) {
 				return (
 					<div>
@@ -818,7 +818,7 @@ class CancelPurchaseForm extends React.Component {
 		const cancel = {
 			action: 'cancel',
 			disabled,
-			label: translate( 'Cancel Now' ),
+			label: translate( 'Confirm' ),
 			onClick: this.onSubmit,
 			isPrimary: true,
 		};
@@ -846,6 +846,10 @@ class CancelPurchaseForm extends React.Component {
 		const firstButtons = [ close ];
 		if ( this.shouldShowChatButton() ) {
 			firstButtons.unshift( chat );
+		}
+
+		if ( this.getSurveyDataType() === 'cancel-autorenew' ) {
+			return firstButtons.concat( [ cancel ] );
 		}
 
 		if ( surveyStep === steps.FINAL_STEP ) {
