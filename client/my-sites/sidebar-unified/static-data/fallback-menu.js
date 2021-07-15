@@ -577,7 +577,7 @@ export default function buildFallbackResponse( {
 		{
 			icon: BETA_TESTING_ICON,
 			slug: 'beta-testing',
-			title: translate( 'Beta Testing' ),
+			title: translate( 'Beta Testing', { context: 'Plugin Installer' } ),
 			type: 'menu-item',
 			url: `/beta-testing/${ siteDomain }`,
 		},
