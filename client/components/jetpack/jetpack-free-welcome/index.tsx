@@ -13,7 +13,6 @@ import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Style dependencies
@@ -161,16 +160,8 @@ const JetpackFreeWelcome: FC = () => {
 								}
 								href={ featuresComparisonLink }
 							>
-								<div className="jetpack-free-welcome__feature-nav-button-content">
-									{ translate( 'Want to learn more about our products?' ) }
-									<br />
-									<strong>
-										{ translate( 'See how Jetpack can help grow your business or hobby' ) }
-									</strong>
-								</div>
-								<div className="jetpack-free-welcome__feature-nav-button-icon">
-									<Gridicon icon="arrow-right" size={ 24 } />
-								</div>
+								<span>{ translate( 'Want to learn more about our products?' ) }</span>
+								<span>{ translate( 'See how Jetpack can help grow your business or hobby' ) }</span>
 							</a>
 						</div>
 					</div>
