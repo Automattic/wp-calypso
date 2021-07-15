@@ -34,6 +34,7 @@ export class PricingTableBlock extends BaseBlock {
 	 * Given an appropriate value, select the gutter value on the settings sidebar for Pricing Table block.
 	 *
 	 * @param {string} value Value to set the gutter to.
+	 * @returns {Promise<void>} No return value.
 	 */
 	async setGutter( value: 'None' | 'Small' | 'Medium' | 'Large' | 'Huge' ): Promise< boolean > {
 		const frame = ( await this.block.ownerFrame() ) as Frame;
@@ -50,6 +51,7 @@ export class PricingTableBlock extends BaseBlock {
 	 * Validates block on the page.
 	 *
 	 * @param {Page} page Page on which to verify the presence of the block.
+	 * @returns {Promise<void>} No return value.
 	 */
 	static async validatePublishedContent( page: Page ): Promise< void > {
 		await page.waitForSelector( selectors.pricing );

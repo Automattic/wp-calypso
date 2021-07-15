@@ -10,7 +10,7 @@ import {
 	HeroBlock,
 } from '@automattic/calypso-e2e';
 
-describe.only( DataHelper.createSuiteTitle( 'Gutenberg: CoBlocks' ), () => {
+describe( DataHelper.createSuiteTitle( 'Gutenberg: CoBlocks' ), () => {
 	let gutenbergEditorPage;
 	let pricingTableBlock;
 	let page;
@@ -46,7 +46,9 @@ describe.only( DataHelper.createSuiteTitle( 'Gutenberg: CoBlocks' ), () => {
 	} );
 
 	it( 'Insert Hero block', async function () {
-		await gutenbergEditorPage.addBlock( 'Hero' );
+		const blockHandle = await gutenbergEditorPage.addBlock( 'Hero' );
+		const heroBlock = new HeroBlock( blockHandle );
+		await heroBlock.enterHeading( 'Hero heading' );
 	} );
 
 	it( 'Publish and visit post', async function () {

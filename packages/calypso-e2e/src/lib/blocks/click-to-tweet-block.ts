@@ -29,6 +29,7 @@ export class ClicktoTweetBlock extends BaseBlock {
 	 * Validates block on the page.
 	 *
 	 * @param {Page} page Page on which to verify the presence of the block.
+	 * @returns {Promise<void>} No return value.
 	 */
 	static async validatePublishedContent( page: Page ): Promise< void > {
 		await page.waitForSelector( selectors.block );
