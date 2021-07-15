@@ -32,6 +32,7 @@ export function generateSteps( {
 	createWpForTeamsSite = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
+	buyEmailWithCart = noop,
 	currentPage = noop,
 	setThemeOnSite = noop,
 	addDomainToCart = noop,
@@ -296,6 +297,7 @@ export function generateSteps( {
 				'themeItem',
 				'shouldHideFreePlan',
 				'isManageSiteFlow',
+				'siteUrl',
 			],
 			optionalDependencies: [ 'shouldHideFreePlan', 'isManageSiteFlow' ],
 			props: {
@@ -303,7 +305,22 @@ export function generateSteps( {
 			},
 			delayApiRequestUntilComplete: true,
 		},
-
+		emails: {
+			stepName: 'emails',
+			dependencies: [ 'siteUrl', 'domainItem' ],
+			providesDependencies: [
+				'siteId',
+				'domainItem',
+				'themeItem',
+				'shouldHideFreePlan',
+				'isManageSiteFlow',
+			],
+			apiRequestFunction: buyEmailWithCart,
+			props: {
+				isDomainOnly: false,
+			},
+			delayApiRequestUntilComplete: true,
+		},
 		'domain-only': {
 			stepName: 'domain-only',
 			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ],
