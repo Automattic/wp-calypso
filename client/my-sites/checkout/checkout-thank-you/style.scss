@@ -675,6 +675,62 @@
 	}
 }
 
+.jetpack-checkout-siteless-thank-you-completed {
+	&.main.is-wide-layout {
+		max-width: 744px;
+	}
+	.jetpack-checkout-siteless-thank-you-completed__card {
+		padding: 0;
+		box-shadow: 0 0 40px 0 #00000014;
+
+		width: 100%;
+		max-width: none;
+
+		> div.jetpack-checkout-siteless-thank-you-completed__card-main {
+			box-sizing: border-box;
+			padding: 26px;
+			@include break-mobile {
+				padding: 76px;
+			}
+		}
+
+		.jetpack-logo {
+			margin-bottom: 48px;
+		}
+
+		h1 {
+			@include break-mobile {
+				font-size: $font-headline-medium;
+			}
+		}
+		p {
+			@include break-mobile {
+				font-size: 18px; /* stylelint-disable-line */
+				line-height: 1.75rem;
+			}
+		}
+
+		a.jetpack-checkout-siteless-thank-you-completed__link,
+		a.jetpack-checkout-siteless-thank-you-completed__feature-link {
+			text-decoration: underline;
+			color: var( --color-studio-black );
+			&:hover {
+				text-decoration: none;
+			}
+		}
+
+		.jetpack-checkout-siteless-thank-you-completed__main-message {
+			font-size: 2.25rem;
+			font-weight: 700;
+			margin-bottom: 24px;
+
+			@include break-mobile {
+				font-size: 3rem;
+			}
+		}
+	}
+}
+
 .jetpack-checkout-siteless-thank-you {
 	.jetpack-checkout-siteless-thank-you__card {
 		display: flex;
