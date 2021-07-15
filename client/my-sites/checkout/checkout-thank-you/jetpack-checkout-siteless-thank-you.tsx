@@ -81,7 +81,7 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( { productSlug, receiptId 
 			/>
 			<Card className="jetpack-checkout-siteless-thank-you__card">
 				<div className="jetpack-checkout-siteless-thank-you__card-main">
-					<JetpackLogo full size={ 45 } />
+					<JetpackLogo size={ 45 } />
 					{ hasProductInfo && <QueryProducts type="jetpack" /> }
 					<h1 className="jetpack-checkout-siteless-thank-you__main-message">
 						{ translate( 'Thank you for your purchase!' ) }{ ' ' }
