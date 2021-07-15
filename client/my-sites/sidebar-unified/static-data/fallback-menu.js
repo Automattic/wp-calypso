@@ -27,7 +27,6 @@ import { translate } from 'i18n-calypso';
 /* eslint-enable jsdoc/require-param */
 
 const JETPACK_ICON = `data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 32 32" %3E%3Cpath fill="%23a0a5aa" d="M16,0C7.2,0,0,7.2,0,16s7.2,16,16,16s16-7.2,16-16S24.8,0,16,0z"%3E%3C/path%3E%3Cpolygon fill="%23fff" points="15,19 7,19 15,3 "%3E%3C/polygon%3E%3Cpolygon fill="%23fff" points="17,29 17,13 25,13 "%3E%3C/polygon%3E%3C/svg%3E`;
-const BETA_TESTING_ICON = `data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxOCAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE1LjE5MDEgMTAuODU2N0MxNC45NTc0IDEwLjYyNCAxNC42NjExIDEwLjQ2NTQgMTQuMzM4NCAxMC40MDA4TDEyLjM0OTMgMTAuMDAzM0MxMS4yNTkgOS43ODUzIDEwLjEyNzEgOS45MzY5IDkuMTMyNjIgMTAuNDM0Mkw4Ljg2NzYxIDEwLjU2NThDNy44NzMxMiAxMS4wNjMxIDYuNzQxMjUgMTEuMjE0NyA1LjY1MDk1IDEwLjk5NjdMNC4wNDE3OCAxMC42NzVDMy43NzI3OCAxMC42MjEzIDMuNDk0NjggMTAuNjM0OCAzLjIzMjE0IDEwLjcxNDNDMi45Njk2MSAxMC43OTM4IDIuNzMwNzYgMTAuOTM2OSAyLjUzNjc4IDExLjEzMDhNNC42NjY3OCAxLjMzMzM0SDEzLjMzMzRMMTEuNTAwMSAyLjE2NjY4VjYuNDc2NjhDMTEuNTAwMiA2LjkxODY3IDExLjY3NTkgNy4zNDI1MiAxMS45ODg0IDcuNjU1MDFMMTYuMTU1MSAxMS44MjE3QzE3LjIwNTEgMTIuODcxNyAxNi40NjA5IDE0LjY2NjcgMTQuOTc1OSAxNC42NjY3SDMuMDIzNDVDMS41Mzg0NSAxNC42NjY3IDAuNzk1MTE2IDEyLjg3MTcgMS44NDUxMiAxMS44MjE3TDYuMDExNzggNy42NTUwMUM2LjMyNDM2IDcuMzQyNTIgNi41MDAwMiA2LjkxODY3IDYuNTAwMTEgNi40NzY2OFYyLjE2NjY4TDQuNjY2NzggMS4zMzMzNFoiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InNxdWFyZSIgc3Ryb2tlLWxpbmVqb2luPSJiZXZlbCIvPgo8cmVjdCB4PSIxLjcyNzU0IiB5PSIxMC43MjczIiB3aWR0aD0iMTQuNTQ1NSIgaGVpZ2h0PSIzLjYzNjM2IiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K`;
 
 export default function buildFallbackResponse( {
 	siteDomain = '',
@@ -574,13 +573,6 @@ export default function buildFallbackResponse( {
 					},
 			  ]
 			: [] ),
-		{
-			icon: BETA_TESTING_ICON,
-			slug: 'beta-testing',
-			title: translate( 'Beta Testing' ),
-			type: 'menu-item',
-			url: `/beta-testing/${ siteDomain }`,
-		},
 	];
 
 	return fallbackResponse;
