@@ -342,3 +342,11 @@ function load_error_reporting() {
 	require_once __DIR__ . '/error-reporting/index.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_error_reporting' );
+
+/**
+ * Load Logmein
+ */
+function load_logmein() {
+	require_once __DIR__ . '/logmein/logmein.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_logmein' );
