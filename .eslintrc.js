@@ -185,6 +185,7 @@ module.exports = {
 				'client/support/**/*',
 				'client/types.ts',
 				'packages/accessible-focus/**/*',
+				'packages/babel-plugin-i18n-calypso/**/*',
 				'packages/calypso-e2e/**/*',
 				'packages/calypso-products/**/*',
 				'packages/components/**/*',
