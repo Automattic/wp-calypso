@@ -151,12 +151,12 @@ const themeNode = ( { site_slug, slug, version, uri, intent, section } ) => ( {
 const inferNode = ( range ) => {
 	const { type, url } = range;
 
-	if ( type ) {
-		return typedNode( range );
-	}
-
 	if ( url ) {
 		return linkNode( range );
+	}
+
+	if ( type ) {
+		return typedNode( range );
 	}
 
 	return range;
