@@ -8,12 +8,6 @@ import { get, has } from 'lodash';
  * Internal dependencies
  */
 import shouldLoadGutenframe from 'calypso/state/selectors/should-load-gutenframe';
-import {
-	getPreference,
-	isFetchingPreferences,
-	hasPreferencesRequestFailed,
-} from 'calypso/state/preferences/selectors';
-import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { EDITOR_START, POST_EDIT } from 'calypso/state/action-types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -36,6 +30,8 @@ import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-cor
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import { requestSite } from 'calypso/state/sites/actions';
 import { stopEditingPost } from 'calypso/state/editor/actions';
+import { getAdminMenu, getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
+import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 
 const noop = () => {};
 
@@ -89,26 +85,26 @@ function waitForSiteIdAndSelectedEditor( context ) {
 	} );
 }
 
-function isDashboardAppearancePreferenceAvailable( state ) {
-	return null !== getPreference( state, 'linkDestination' );
+function isPreferredEditorViewAvailable( state ) {
+	const siteId = getSelectedSiteId( state );
+	if ( ! siteId || getIsRequestingAdminMenu( state ) ) {
+		return false;
+	}
+	return null !== getAdminMenu( state, siteId );
 }
 
-function waitForCalypsoPreferences( context ) {
+function waitForPreferredEditorView( context ) {
 	return new Promise( ( resolve ) => {
 		const unsubscribe = context.store.subscribe( () => {
 			const state = context.store.getState();
-			if (
-				! isDashboardAppearancePreferenceAvailable( state ) &&
-				! hasPreferencesRequestFailed( state )
-			) {
+			if ( ! isPreferredEditorViewAvailable( state ) ) {
 				return;
 			}
 			unsubscribe();
 			resolve();
 		} );
-		if ( ! isFetchingPreferences( context.store.getState() ) ) {
-			context.store.dispatch( fetchPreferences() );
-		}
+		// Trigger a `store.subscribe()` callback
+		context.store.dispatch( requestAdminMenu( getSelectedSiteId( context.store.getState() ) ) );
 	} );
 }
 
@@ -190,8 +186,8 @@ export const redirect = async ( context, next ) => {
 	if ( ! selectedEditor ) {
 		checkPromises.push( waitForSiteIdAndSelectedEditor( context ) );
 	}
-	if ( ! isDashboardAppearancePreferenceAvailable( tmpState ) ) {
-		checkPromises.push( waitForCalypsoPreferences( context ) );
+	if ( ! isPreferredEditorViewAvailable( tmpState ) ) {
+		checkPromises.push( waitForPreferredEditorView( context ) );
 	}
 	await Promise.all( checkPromises );
 

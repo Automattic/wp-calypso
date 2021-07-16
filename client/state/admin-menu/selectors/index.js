@@ -22,3 +22,12 @@ export function getIsRequestingAdminMenu( state ) {
 
 	return state.adminMenu.requesting;
 }
+
+/**
+ * Returns whether the previous request to save or retrieve the preferences, failed.
+ *
+ * @param {state} state State object
+ */
+export function hasAdminMenuRequestFailed( state ) {
+	return state.adminMenu.failed;
+}
