@@ -6,6 +6,16 @@ import { useSelector } from 'react-redux';
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/core';
 import {
+	isPlan,
+	isMonthly,
+	getYearlyPlanByMonthly,
+	getPlan,
+	isFreePlanProduct,
+	TERM_MONTHLY,
+	TERM_ANNUALLY,
+	TERM_BIENNIALLY,
+} from '@automattic/calypso-products';
+import {
 	CheckoutCheckIcon,
 	CheckoutSummaryCard as CheckoutSummaryCardUnstyled,
 	FormStatus,
@@ -20,10 +30,10 @@ import {
 } from '@automattic/wpcom-checkout';
 
 /**
+/**
  * Internal dependencies
  */
-import { isPlan, isMonthly, getYearlyPlanByMonthly, getPlan } from '@automattic/calypso-products';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite, getSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import Gridicon from 'calypso/components/gridicon';
 import getPlanFeatures from '../lib/get-plan-features';
@@ -136,7 +146,10 @@ function CheckoutSummaryFeaturesList( props ) {
 	const isJetpackNotAtomic = useSelector(
 		( state ) => isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
 	);
+	const site = useSelector( ( state ) => getSite( state, siteId ) );
 	const { hasMonthlyPlan = false } = props;
+	const isPaidSite = site ? ! isFreePlanProduct( site.plan ) : false;
+	const sitePlan = site?.plan?.product_slug ? getPlan( site.plan.product_slug ) : null;
 
 	const showRefundText = responseCart.total_cost > 0;
 	let refundText = translate( 'Money back guarantee' );
@@ -146,6 +159,12 @@ function CheckoutSummaryFeaturesList( props ) {
 		refundDays = 4;
 	} else if ( hasPlanInCart && ! hasDomainsInCart ) {
 		refundDays = hasMonthlyPlan ? 7 : 14;
+	} else if ( isPaidSite && sitePlan ) {
+		if ( [ TERM_ANNUALLY, TERM_BIENNIALLY ].some( ( t ) => t === sitePlan.term ) ) {
+			refundDays = 14;
+		} else if ( sitePlan.term === TERM_MONTHLY ) {
+			refundDays = 7;
+		}
 	}
 
 	if ( refundDays !== 0 ) {
@@ -178,6 +197,7 @@ function CheckoutSummaryFeaturesList( props ) {
 				<SupportText
 					hasPlanInCart={ hasPlanInCart }
 					isJetpackNotAtomic={ isJetpackNotAtomic }
+					isPaidSite={ isPaidSite }
 					{ ...props }
 				/>
 			</CheckoutSummaryFeaturesListItem>
@@ -191,10 +211,10 @@ function CheckoutSummaryFeaturesList( props ) {
 	);
 }
 
-function SupportText( { hasPlanInCart, isJetpackNotAtomic } ) {
+function SupportText( { hasPlanInCart, isJetpackNotAtomic, isPaidSite } ) {
 	const translate = useTranslate();
 
-	if ( hasPlanInCart && ! isJetpackNotAtomic ) {
+	if ( ( hasPlanInCart && ! isJetpackNotAtomic ) || isPaidSite ) {
 		return <span>{ translate( 'Unlimited email support' ) }</span>;
 	}
 
