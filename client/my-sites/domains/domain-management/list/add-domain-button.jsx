@@ -54,9 +54,14 @@ class AddDomainButton extends React.Component {
 
 		return (
 			<React.Fragment>
-				<Button primary compact className="add-domain-button" onClick={ this.toggleAddMenu }>
-					{ translate( 'Add a domain' ) }
-					<Gridicon icon="chevron-down" ref={ this.addDomainButtonRef } />
+				<Button
+					compact
+					className="add-domain-button"
+					onClick={ this.toggleAddMenu }
+					ref={ this.addDomainButtonRef }
+				>
+					{ translate( 'Other domain options' ) }
+					<Gridicon icon="chevron-down" />
 				</Button>
 				<PopoverMenu
 					isVisible={ this.state.isAddMenuVisible }
