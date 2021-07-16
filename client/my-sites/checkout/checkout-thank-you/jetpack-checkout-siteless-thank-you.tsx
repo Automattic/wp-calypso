@@ -81,7 +81,7 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( { productSlug, receiptId 
 			/>
 			<Card className="jetpack-checkout-siteless-thank-you__card">
 				<div className="jetpack-checkout-siteless-thank-you__card-main">
-					<JetpackLogo full size={ 45 } />
+					<JetpackLogo size={ 45 } />
 					{ hasProductInfo && <QueryProducts type="jetpack" /> }
 					<h1 className="jetpack-checkout-siteless-thank-you__main-message">
 						{ translate( 'Thank you for your purchase!' ) }{ ' ' }
@@ -177,7 +177,7 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( { productSlug, receiptId 
 						<h2>{ translate( 'Do you need help?' ) }</h2>
 						<p>
 							{ translate(
-								'If you prefer to setup Jetpack with the help of our Happiness Engineers, {{a}}schedule a 15 min call now{{/a}}.',
+								'If you prefer to setup Jetpack with the help of our Happiness Engineers, {{a}}schedule a 15 minute call now{{/a}}.',
 								{
 									components: {
 										a: (
