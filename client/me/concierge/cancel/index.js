@@ -58,7 +58,7 @@ class ConciergeCancel extends Component {
 		const { translate, siteSlug } = this.props;
 		return (
 			<>
-				<HeaderCake backHref={ `/me/concierge/${ siteSlug }/book` }>
+				<HeaderCake backHref={ `/me/quickstart/${ siteSlug }/book` }>
 					{ translate( 'Reschedule or cancel' ) }
 				</HeaderCake>
 				<CompactCard>
@@ -91,7 +91,7 @@ class ConciergeCancel extends Component {
 					>
 						<Button
 							className="cancel__schedule-button"
-							href={ `/me/concierge/${ siteSlug }/book` }
+							href={ `/me/quickstart/${ siteSlug }/book` }
 							primary={ true }
 						>
 							{ translate( 'Schedule', {
@@ -128,7 +128,7 @@ class ConciergeCancel extends Component {
 							/>
 						) }
 
-						<HeaderCake backHref={ `/me/concierge/${ siteSlug }/book` }>
+						<HeaderCake backHref={ `/me/quickstart/${ siteSlug }/book` }>
 							{ translate( 'Reschedule or cancel' ) }
 						</HeaderCake>
 						<Confirmation
@@ -143,7 +143,7 @@ class ConciergeCancel extends Component {
 									<Button
 										className="cancel__reschedule-button"
 										disabled={ disabledRescheduling }
-										href={ `/me/concierge/${ siteSlug }/${ appointmentId }/reschedule` }
+										href={ `/me/quickstart/${ siteSlug }/${ appointmentId }/reschedule` }
 									>
 										{ translate( 'Reschedule session' ) }
 									</Button>

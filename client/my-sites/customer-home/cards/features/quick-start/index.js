@@ -94,7 +94,7 @@ export default connect(
 					bumpStat( 'calypso_customer_home', 'view_quick_start_session_details' )
 				)
 			);
-			page( `/me/concierge/${ siteSlug }/book` );
+			page( `/me/quickstart/${ siteSlug }/book` );
 		},
 		reschedule: ( siteId, siteSlug, sessionId ) => ( dispatch ) => {
 			dispatch(
@@ -105,7 +105,7 @@ export default connect(
 					bumpStat( 'calypso_customer_home', 'reschedule_quick_start_session' )
 				)
 			);
-			page( `/me/concierge/${ siteSlug }/${ sessionId }/cancel` );
+			page( `/me/quickstart/${ siteSlug }/${ sessionId }/cancel` );
 		},
 	}
 )( QuickStart );

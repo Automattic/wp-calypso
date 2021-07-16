@@ -612,7 +612,7 @@ class CancelPurchaseForm extends React.Component {
 		}
 		this.recordClickConciergeEvent();
 
-		return window.open( `/me/concierge/${ this.props.selectedSite.slug }/book` );
+		return window.open( `/me/quickstart/${ this.props.selectedSite.slug }/book` );
 	};
 
 	renderConciergeOffer = () => {

@@ -124,7 +124,7 @@ describe( 'NpsSurvey', () => {
 		expect( mockedProps.recordTracksEventAction ).toHaveBeenLastCalledWith(
 			'calypso_nps_survey_link_clicked',
 			{
-				url: 'https://example.com/me/concierge',
+				url: 'https://example.com/me/quickstart',
 				type: 'booking',
 			}
 		);

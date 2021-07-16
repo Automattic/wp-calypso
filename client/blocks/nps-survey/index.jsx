@@ -243,7 +243,7 @@ export class NpsSurvey extends PureComponent {
 									components: {
 										booking: (
 											<a
-												href="/me/concierge"
+												href="/me/quickstart"
 												onClick={ this.handleLinkClick }
 												data-type="booking"
 											/>

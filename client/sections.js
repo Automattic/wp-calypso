@@ -35,7 +35,7 @@ const sections = [
 	},
 	{
 		name: 'concierge',
-		paths: [ '/me/concierge' ],
+		paths: [ '/me/concierge', '/me/quickstart' ],
 		module: 'calypso/me/concierge',
 		group: 'me',
 	},

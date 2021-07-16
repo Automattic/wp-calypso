@@ -91,7 +91,7 @@ class AppointmentInfo extends Component {
 
 					{ isAllowedToChangeAppointment && (
 						<FormFieldset>
-							<a href={ `/me/concierge/${ site.slug }/${ id }/cancel` } rel="noopener noreferrer">
+							<a href={ `/me/quickstart/${ site.slug }/${ id }/cancel` } rel="noopener noreferrer">
 								<FormButton isPrimary={ false } type="button">
 									{ translate( 'Reschedule or cancel' ) }
 								</FormButton>

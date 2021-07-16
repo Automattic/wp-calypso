@@ -48,7 +48,7 @@ const EcommercePlanDetails = ( { selectedSite, sitePlans, selectedFeature, purch
 						'your site and learn more about WordPress.com.'
 				) }
 				buttonText={ i18n.translate( 'Schedule a session' ) }
-				href={ `/me/concierge/${ selectedSite.slug }/book` }
+				href={ `/me/quickstart/${ selectedSite.slug }/book` }
 				onClick={ trackOnboardingButtonClick }
 			/>
 
