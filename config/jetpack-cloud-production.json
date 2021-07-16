@@ -36,7 +36,6 @@
 		"i18n/community-translator": false,
 		"ive/use-external-assignment": true,
 		"jetpack-cloud": true,
-		"jetpack-cloud/connect": false,
 		"jetpack/backups-date-picker": true,
 		"jetpack/only-realtime-products": false,
 		"jetpack/pricing-page": true,

@@ -14,19 +14,12 @@ import { setLocale } from 'calypso/state/ui/language/actions';
 import { addQueryArgs } from 'calypso/lib/route';
 
 export function jetpackPricingContext( context: PageJS.Context, next: () => void ): void {
-	const { pathname } = context;
 	const urlQueryArgs = context.query;
-	const { site: siteFromUrl } = urlQueryArgs;
 	const { locale } = context.params;
 
 	if ( locale ) {
 		context.store.dispatch( setLocale( locale ) );
 		page.redirect( addQueryArgs( urlQueryArgs, `/pricing` ) );
-		return;
-	}
-
-	if ( /\/(pricing|plans)$/.test( pathname ) && siteFromUrl ) {
-		page.redirect( addQueryArgs( urlQueryArgs, `${ pathname }/${ siteFromUrl }` ) );
 		return;
 	}
 

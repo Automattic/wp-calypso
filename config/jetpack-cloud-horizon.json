@@ -33,7 +33,6 @@
 		"checkout/google-pay": true,
 		"ive/use-external-assignment": true,
 		"jetpack-cloud": true,
-		"jetpack-cloud/connect": false,
 		"jetpack/backups-date-picker": true,
 		"jetpack/search-product": true,
 		"jetpack/pricing-page": true,
@@ -56,14 +55,12 @@
 	"sections": {
 		"activity": true,
 		"backup": true,
-		"checkout": true,
 		"jetpack-cloud-auth": false,
 		"jetpack-cloud-pricing": true,
 		"jetpack-cloud-settings": true,
 		"jetpack-cloud-partner-portal": true,
 		"jetpack-cloud": true,
-		"scan": true,
-		"jetpack-connect": true
+		"scan": true
 	},
 	"site_filter": [ "jetpack" ],
 	"theme": "jetpack-cloud"

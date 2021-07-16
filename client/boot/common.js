@@ -164,10 +164,6 @@ const oauthTokenMiddleware = () => {
 	if ( config.isEnabled( 'oauth' ) ) {
 		const loggedOutRoutes = [ '/start', '/api/oauth/token', '/connect' ];
 
-		if ( config.isEnabled( 'jetpack-cloud/connect' ) ) {
-			loggedOutRoutes.push( '/jetpack/connect', '/plans' );
-		}
-
 		if ( isJetpackCloud() && config.isEnabled( 'jetpack/pricing-page' ) ) {
 			loggedOutRoutes.push( '/pricing' );
 			getLanguageSlugs().forEach( ( slug ) => loggedOutRoutes.push( `/${ slug }/pricing` ) );
@@ -351,7 +347,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		// Dead-end the sections the user can't access when logged out
 		page( '*', function ( context, next ) {
 			//see server/pages/index for prod redirect
-			if ( ! config.isEnabled( 'jetpack-cloud/connect' ) && '/plans' === context.pathname ) {
+			if ( '/plans' === context.pathname ) {
 				const queryFor = context.query && context.query.for;
 				if ( queryFor && 'jetpack' === queryFor ) {
 					window.location =
