@@ -3,7 +3,7 @@
  */
 import classNames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import React, { createElement, ReactNode, useEffect, useRef } from 'react';
+import React, { createElement, ReactNode, useEffect, useRef, useState } from 'react';
 import { TERM_ANNUALLY } from '@automattic/calypso-products';
 import { Button, ProductIcon } from '@automattic/components';
 
@@ -17,7 +17,7 @@ import PlanPrice from 'calypso/my-sites/plan-price';
 import JetpackProductCardFeatures, { Props as FeaturesProps } from './features';
 import InfoPopover from 'calypso/components/info-popover';
 import { INTRO_PRICING_DISCOUNT_PERCENTAGE } from 'calypso/my-sites/plans/jetpack-plans/constants';
-
+import { isGoogleAnalyticsAllowed } from 'calypso/lib/analytics/ad-tracking';
 /**
  * Type dependencies
  */
@@ -244,6 +244,46 @@ const JetpackProductCard: React.FC< Props > = ( {
 
 	const anchorRef = useRef< HTMLDivElement >( null );
 
+	const [ hasBeenSeen, setHasBeenSeen ] = useState( false );
+	const onScreenObserver = useRef(
+		new IntersectionObserver(
+			( entries ) => {
+				entries.forEach( ( { isIntersecting } ) => {
+					// if this element is in the viewport
+					if ( isIntersecting && ! hasBeenSeen ) {
+						setHasBeenSeen( true );
+					}
+				} );
+			},
+			{ root: null, rootMargin: '0px', threshold: 0.5 }
+		)
+	);
+
+	// use ref callback to avoid un-necessary `useRef` hook
+	const observe = ( element: HTMLDivElement ) => {
+		const { current: observer } = onScreenObserver;
+		if ( observer && element ) {
+			observer.observe( element );
+		}
+	};
+
+	// clean up the observer when component's lifecycle ends
+	useEffect( () => {
+		const { current: observer } = onScreenObserver;
+		return () => {
+			observer.disconnect();
+		};
+	}, [] );
+
+	useEffect( () => {
+		if ( hasBeenSeen ) {
+			if ( isGoogleAnalyticsAllowed() ) {
+				// send product impression GA EEcommerce event
+				console.log( `send product impression GA EEcommerce event ${ productSlug }` );
+			}
+		}
+	}, [ hasBeenSeen, productSlug ] );
+
 	useEffect( () => {
 		// The <DisplayPrice /> appearance changes the layout of the page and breaks the scroll into view behavior. Therefore, we will only scroll the element into view once the price is fully loaded.
 		if ( anchorRef && anchorRef.current && originalPrice ) {
@@ -262,6 +302,7 @@ const JetpackProductCard: React.FC< Props > = ( {
 				'without-icon': ! iconSlug,
 			} ) }
 			data-e2e-product-slug={ productSlug }
+			ref={ observe }
 		>
 			<div className="jetpack-product-card__scroll-anchor" ref={ anchorRef }></div>
 			{ isFeatured && (
