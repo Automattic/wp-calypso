@@ -24,7 +24,7 @@ import { Card, ProgressBar, Button } from '@automattic/components';
 import UploadDropZone from 'calypso/blocks/upload-drop-zone';
 import EmptyContent from 'calypso/components/empty-content';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
-import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
+import ThemeActivationConfirmationModal from 'calypso/my-sites/themes/theme-activation-confirmation-modal';
 // Necessary for ThanksModal
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
@@ -335,7 +335,7 @@ class Upload extends React.Component {
 				<QueryActiveTheme siteId={ siteId } />
 				{ themeId && complete && <QueryCanonicalTheme siteId={ siteId } themeId={ themeId } /> }
 				<ThanksModal source="upload" />
-				<AutoLoadingHomepageModal source="upload" />
+				<ThemeActivationConfirmationModal source="upload" />
 
 				<FormattedHeader
 					brandFont

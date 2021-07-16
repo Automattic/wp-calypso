@@ -8,8 +8,9 @@ import { showAutoLoadingHomepageWarning } from 'calypso/state/themes/actions/sho
 import { suffixThemeIdForInstall } from 'calypso/state/themes/actions/suffix-theme-id-for-install';
 import {
 	getTheme,
-	hasAutoLoadingHomepageModalAccepted,
+	hasActivateConfirmationModalAccepted,
 	themeHasAutoLoadingHomepage,
+	isUsingRetiredTheme,
 } from 'calypso/state/themes/selectors';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 
@@ -40,10 +41,11 @@ export function activate(
 		 * allowing cancel it if it's desired.
 		 */
 		if (
-			themeHasAutoLoadingHomepage( getState(), themeId ) &&
+			( isUsingRetiredTheme( getState(), siteId ) ||
+				themeHasAutoLoadingHomepage( getState(), themeId ) ) &&
 			! isJetpackSite( getState(), siteId ) &&
 			! isSiteAtomic( getState(), siteId ) &&
-			! hasAutoLoadingHomepageModalAccepted( getState(), themeId )
+			! hasActivateConfirmationModalAccepted( getState(), themeId )
 		) {
 			return dispatch( showAutoLoadingHomepageWarning( themeId ) );
 		}

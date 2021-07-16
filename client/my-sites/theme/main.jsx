@@ -33,8 +33,7 @@ import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { isUserPaid } from 'calypso/state/purchases/selectors';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
-import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
-
+import ThemeActivationConfirmationModal from 'calypso/my-sites/themes/theme-activation-confirmation-modal';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
@@ -761,7 +760,7 @@ class ThemeSheet extends React.Component {
 				{ this.renderBar() }
 				<QueryActiveTheme siteId={ siteId } />
 				<ThanksModal source={ 'details' } />
-				<AutoLoadingHomepageModal source={ 'details' } />
+				<ThemeActivationConfirmationModal source={ 'details' } />
 				{ pageUpsellBanner }
 				<HeaderCake
 					className="theme__sheet-action-bar"

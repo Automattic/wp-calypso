@@ -33,8 +33,8 @@ export { getThemeSignupUrl } from 'calypso/state/themes/selectors/get-theme-sign
 export { getThemesLastPageForQuery } from 'calypso/state/themes/selectors/get-themes-last-page-for-query';
 export { getThemeSupportUrl } from 'calypso/state/themes/selectors/get-theme-support-url';
 export { getWpcomParentThemeId } from 'calypso/state/themes/selectors/get-wpcom-parent-theme-id';
+export { hasActivateConfirmationModalAccepted } from 'calypso/state/themes/selectors/has-activate-confirmation-modal-accepted';
 export { hasActivatedTheme } from 'calypso/state/themes/selectors/has-activated-theme';
-export { hasAutoLoadingHomepageModalAccepted } from 'calypso/state/themes/selectors/has-auto-loading-homepage-modal-accepted';
 export { isActivatingTheme } from 'calypso/state/themes/selectors/is-activating-theme';
 export { isAmbiguousThemeFilterTerm } from 'calypso/state/themes/selectors/is-ambiguous-theme-filter-term';
 export { isDownloadableFromWpcom } from 'calypso/state/themes/selectors/is-downloadable-from-wpcom';
@@ -49,10 +49,10 @@ export { isThemeGutenbergFirst } from 'calypso/state/themes/selectors/is-theme-g
 export { isThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
 export { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 export { isThemesLastPageForQuery } from 'calypso/state/themes/selectors/is-themes-last-page-for-query';
+export { isUsingRetiredTheme } from 'calypso/state/themes/selectors/is-using-retired-theme';
 export { isValidThemeFilterTerm } from 'calypso/state/themes/selectors/is-valid-theme-filter-term';
 export { isWpcomTheme } from 'calypso/state/themes/selectors/is-wpcom-theme';
 export { isWporgTheme } from 'calypso/state/themes/selectors/is-wporg-theme';
 export { prependThemeFilterKeys } from 'calypso/state/themes/selectors/prepend-theme-filter-keys';
-export { shouldShowHomepageWarning } from 'calypso/state/themes/selectors/should-show-homepage-warning';
 export { themeHasAutoLoadingHomepage } from 'calypso/state/themes/selectors/theme-has-auto-loading-homepage';
 export { themePreviewVisibility } from 'calypso/state/themes/selectors/theme-preview-visibility';
