@@ -210,6 +210,8 @@ export class UserStep extends Component {
 					locale,
 					oauth2ClientId: oauth2Client?.id,
 					wccomFrom,
+					isWhiteLogin: isReskinned,
+					signupUrl: window.location.pathname + window.location.search,
 				} );
 
 				subHeaderText = translate(
