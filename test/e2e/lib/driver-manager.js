@@ -110,7 +110,7 @@ export async function createDriverProxy( twd ) {
 export async function startBrowser( {
 	useCustomUA = true,
 	resizeBrowserWindow = true,
-	disableThirdPartyCookies = false,
+	disableThirdPartyCookies = true,
 } = {} ) {
 	const screenSize = currentScreenSize();
 	const locale = currentLocale();
