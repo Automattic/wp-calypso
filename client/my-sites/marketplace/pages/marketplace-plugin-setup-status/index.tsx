@@ -24,7 +24,7 @@ import { getAutomatedTransfer } from 'calypso/state/automated-transfer/selectors
 import { tryProductInstall } from 'calypso/state/marketplace/purchase-flow/actions';
 import {
 	navigateToInstallationThankYouPage,
-	navigateToProductHomePage,
+	navigateToProductGroupHomePage,
 	waitFor,
 } from 'calypso/my-sites/marketplace/util';
 import {
@@ -42,7 +42,7 @@ import { marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';
 /**
  * Style dependencies
  */
-import 'calypso/my-sites/marketplace/marketplace-plugin-setup-status/style.scss';
+import './style.scss';
 
 /**
  * This page busy waits and installs any plugins that are required in the marketplace purchase flow.
@@ -57,9 +57,12 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 		status: automatedTransferStatus,
 	} = useSelector( ( state ) => getAutomatedTransfer( state, selectedSiteId ) );
 
-	const { pluginSlugToBeInstalled, siteTransferStatus, pluginInstallationStatus } = useSelector(
-		getPurchaseFlowState
-	);
+	const {
+		pluginSlugToBeInstalled,
+		siteTransferStatus,
+		pluginInstallationStatus,
+		productGroupSlug,
+	} = useSelector( getPurchaseFlowState );
 	const hasProductSetupError = useSelector( getHasProductSetupError );
 	const isProductSetupComplete = useSelector( getIsProductSetupComplete );
 
@@ -95,8 +98,8 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 		if ( hasProductSetupError ) {
 			marketplaceDebugger( '::MARKETPLACE::ERROR:: There is an error in product setup' );
 			selectedSiteSlug &&
-				pluginSlugToBeInstalled &&
-				navigateToProductHomePage( selectedSiteSlug, pluginSlugToBeInstalled );
+				productGroupSlug &&
+				navigateToProductGroupHomePage( selectedSiteSlug, productGroupSlug );
 		} else if ( isProductSetupComplete ) {
 			/**
 			 * Wait for simulated progressbar to catchup
@@ -116,6 +119,7 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 		hasProductSetupError,
 		isProductSetupComplete,
 		pluginSlugToBeInstalled,
+		productGroupSlug,
 		/**
 		 * Additional subscribed states to run tryProductInstall
 		 */

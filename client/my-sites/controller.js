@@ -10,6 +10,8 @@ import { removeQueryArgs } from '@wordpress/url';
 /**
  * Internal Dependencies
  */
+import { composeHandlers } from 'calypso/controller/shared';
+import { render } from 'calypso/controller/web-util';
 import { cloudSiteSelection } from 'calypso/jetpack-cloud/controller';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { requestSite } from 'calypso/state/sites/actions';
@@ -675,4 +677,17 @@ export function getJetpackAuthorizeURL( context, site ) {
 		},
 		trailingslashit( site?.URL ) + 'wp-admin/'
 	);
+}
+
+export function selectSiteIfLoggedIn( context, next ) {
+	const state = context.store.getState();
+	if ( ! isUserLoggedIn( state ) ) {
+		next();
+		return;
+	}
+
+	// Logged in: Terminate the regular handler path by not calling next()
+	// and render the site selection screen, redirecting the user if they
+	// only have one site.
+	composeHandlers( siteSelection, sites, makeLayout, render )( context );
 }

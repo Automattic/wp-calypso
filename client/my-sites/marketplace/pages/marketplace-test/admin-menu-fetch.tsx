@@ -12,7 +12,7 @@ import useSiteMenuItems from 'calypso/my-sites/sidebar-unified/use-site-menu-ite
 import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { level1ObjectMap } from 'calypso/my-sites/marketplace/marketplace-test';
+import { level1ObjectMap } from 'calypso/my-sites/marketplace/pages/marketplace-test';
 import CardHeading from 'calypso/components/card-heading';
 
 export default function AdminMenuFetch(): JSX.Element {

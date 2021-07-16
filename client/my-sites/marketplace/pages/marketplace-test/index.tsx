@@ -7,6 +7,7 @@ import page from 'page';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { Button, Card, CompactCard } from '@automattic/components';
+import { YOAST_PREMIUM, YOAST_FREE } from '@automattic/calypso-products';
 
 /**
  * Internal dependencies
@@ -34,15 +35,19 @@ import {
 import { getBlockingMessages } from 'calypso/blocks/eligibility-warnings/hold-list';
 import { isAtomicSiteWithoutBusinessPlan } from 'calypso/blocks/eligibility-warnings/utils';
 import Notice from 'calypso/components/notice';
-import ComponentDemo from 'calypso/my-sites/marketplace/marketplace-test/component-demo';
-import AdminMenuFetch from 'calypso/my-sites/marketplace/marketplace-test/admin-menu-fetch';
+import ComponentDemo from 'calypso/my-sites/marketplace/pages/marketplace-test/component-demo';
+import AdminMenuFetch from 'calypso/my-sites/marketplace/pages/marketplace-test/admin-menu-fetch';
+import { YOAST } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
 
 export const Container = styled.div`
 	margin: 0 25px;
 	padding: 25px;
 `;
 
-export function level1ObjectMap( obj: any, entryFilter = ( [ i ]: any[] ) => i ): any[] {
+export function level1ObjectMap(
+	obj: ArrayLike< unknown >,
+	entryFilter = ( [ i ]: unknown[] ) => i
+): unknown[] {
 	return Object.entries( obj )
 		.filter( entryFilter )
 		.map( ( entry ) => ( { key: entry[ 0 ], value: JSON.stringify( entry[ 1 ] ) } ) );
@@ -74,7 +79,14 @@ export default function MarketplaceTest(): JSX.Element {
 	const transferDetails = useSelector( ( state ) => getAutomatedTransfer( state, selectedSiteId ) );
 	const eligibilityDetails = useSelector( ( state ) => getEligibility( state, selectedSiteId ) );
 	const marketplacePages = [
-		{ name: 'Plugin Details Page', path: '/marketplace/product/details/wordpress-seo' },
+		{
+			name: 'Yoast Premium Details Page',
+			path: `/marketplace/product/details/${ YOAST }/${ YOAST_PREMIUM }`,
+		},
+		{
+			name: 'Yoast Free Details Page',
+			path: `/marketplace/product/details/${ YOAST }/${ YOAST_FREE }`,
+		},
 		{ name: 'Loading Page', path: '/marketplace/product/setup' },
 		{ name: 'Domains Page', path: '/marketplace/domain' },
 		{ name: 'Thank You Page', path: '/marketplace/thank-you' },

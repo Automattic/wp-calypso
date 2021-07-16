@@ -16,10 +16,7 @@ import {
 	getProductCost,
 	isProductsListFetching,
 } from 'calypso/state/products-list/selectors';
-import PluginProductMappingInterface, {
-	getProductSlug,
-	marketplaceDebugger,
-} from 'calypso/my-sites/marketplace/constants';
+import { marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import {
@@ -43,16 +40,20 @@ import { isAtomicSiteWithoutBusinessPlan } from 'calypso/blocks/eligibility-warn
 import { requestEligibility } from 'calypso/state/automated-transfer/actions';
 import Notice from 'calypso/components/notice';
 import { eligibilityHolds } from 'calypso/state/automated-transfer/constants';
+import { getDefaultPluginInProduct } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
 
 interface MarketplacePluginDetailsInterface {
-	marketplacePluginSlug: keyof PluginProductMappingInterface;
+	productGroupSlug: keyof IProductGroupCollection;
+	productSlug: keyof IProductCollection;
 }
 
 function MarketplacePluginDetails( {
-	marketplacePluginSlug,
+	productGroupSlug,
 }: MarketplacePluginDetailsInterface ): JSX.Element {
+	// TODO : Depend on product slug to show product details in the page
+	const productSlug = 'yoast_premium';
+	const marketplacePluginSlug = getDefaultPluginInProduct( productGroupSlug, productSlug );
 	const translate = useTranslate();
-	const productSlug = getProductSlug( marketplacePluginSlug );
 	const { replaceProductsInCart } = useShoppingCart();
 	const products = useSelector( getProductsList );
 	const cost = useSelector( ( state ) => getProductCost( state, productSlug ) );

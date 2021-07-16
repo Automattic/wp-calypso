@@ -78,7 +78,7 @@ export function resetPurchaseFlow(): AnyAction {
 
 export function siteTransferStateChange(
 	state: MARKETPLACE_ASYNC_PROCESS_STATUS,
-	reason = 'NOT_PROVIDED'
+	reason = 'Not provided.'
 ): AnyAction {
 	return {
 		type: MARKETPLACE_SITE_TRANSFER_STATE_CHANGE,
@@ -98,12 +98,12 @@ export function siteTransferWithPluginInstallTriggered(): AnyAction {
 
 export function pluginInstallationStateChange(
 	state: MARKETPLACE_ASYNC_PROCESS_STATUS,
-	reason: string
+	reason = 'Not provided.'
 ): AnyAction {
 	return {
 		type: MARKETPLACE_PLUGIN_INSTALLATION_STATE_CHANGE,
 		state,
-		reason: reason ?? 'NOT_PROVIDED',
+		reason: reason,
 	};
 }
 
@@ -229,7 +229,7 @@ export function trySiteTransfer( selectedSiteId: number, pluginSlugToBeInstalled
  * TODO: Write a comprehensive unit test for this function
  */
 export function tryProductInstall() {
-	return function ( dispatch: Dispatch< any >, getState: () => IAppState ): void {
+	return function ( dispatch: Dispatch< AnyAction >, getState: () => IAppState ): void {
 		const state = getState();
 		const selectedSiteId = getSelectedSiteId( state );
 		const { pluginSlugToBeInstalled } = getPurchaseFlowState( state );
