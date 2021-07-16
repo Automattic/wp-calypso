@@ -17,6 +17,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import MxRecord from './mx-record';
+import NsRecord from './ns-record';
 import TxtRecord from './txt-record';
 import SrvRecord from './srv-record';
 import formState from 'calypso/lib/form-state';
@@ -59,6 +60,14 @@ class DnsAddNew extends React.Component {
 				name: '',
 				data: '',
 				aux: 10,
+			},
+		},
+		{
+			component: NsRecord,
+			types: [ 'NS' ],
+			initialFields: {
+				name: '',
+				data: '',
 			},
 		},
 		{

@@ -49,6 +49,13 @@ class DnsRecord extends React.Component {
 					},
 				} );
 
+			case 'NS':
+				return translate( 'Name servers handles by %(data)s', {
+					args: {
+						data,
+					},
+				} );
+
 			case 'MX':
 				return translate( 'Mail handled by %(data)s with priority %(aux)s', {
 					args: {
