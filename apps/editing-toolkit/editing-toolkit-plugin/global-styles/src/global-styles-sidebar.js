@@ -4,6 +4,9 @@
 import { PluginSidebar, PluginSidebarMoreMenuItem } from '@wordpress/edit-post';
 import { Button, PanelBody } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { getQueryArg } from '@wordpress/url';
+import { useEffect } from '@wordpress/element';
+import { dispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -51,6 +54,13 @@ const PanelActionButtons = ( {
 	</div>
 );
 
+function maybeOpenSidebar() {
+	const openSidebar = getQueryArg( window.location.href, 'openSidebar' );
+	if ( 'global-styles' === openSidebar ) {
+		dispatch( 'core/edit-post' ).openGeneralSidebar( 'jetpack-global-styles/global-styles' );
+	}
+}
+
 export default ( {
 	fontHeadings,
 	fontHeadingsDefault,
@@ -64,6 +74,9 @@ export default ( {
 	hasLocalChanges,
 	resetLocalChanges,
 } ) => {
+	useEffect( () => {
+		maybeOpenSidebar();
+	}, [] );
 	const publish = () =>
 		publishOptions( {
 			[ FONT_BASE ]: fontBase,

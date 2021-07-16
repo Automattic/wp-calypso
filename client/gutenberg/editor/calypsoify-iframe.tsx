@@ -25,6 +25,7 @@ import {
 	getSite,
 } from 'calypso/state/sites/selectors';
 import { addQueryArgs } from 'calypso/lib/route';
+import { getQueryArg } from '@wordpress/url';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
 import { clearLastNonEditorRoute, setRoute } from 'calypso/state/route/actions';
 import { updateSiteFrontPage } from 'calypso/state/sites/actions';
@@ -866,6 +867,7 @@ const mapStateToProps = (
 		'new-homepage': creatingNewHomepage,
 		...( !! stripeConnectSuccess && { stripe_connect_success: stripeConnectSuccess } ),
 		...anchorFmData,
+		openSidebar: getQueryArg( window.location.href, 'openSidebar' ),
 	} );
 
 	// needed for loading the editor in SU sessions
