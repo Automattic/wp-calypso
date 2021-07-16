@@ -198,6 +198,11 @@ export default function CompositeCheckout( {
 	);
 
 	const checkoutFlow: string = useMemo( () => {
+		const isSitelessJetpackCheckout = isJetpackCheckout && isNoSiteCart;
+		if ( isSitelessJetpackCheckout ) {
+			return 'jetpack_siteless_checkout';
+		}
+
 		if ( isLoggedOutCart ) {
 			if ( isJetpackCheckout ) {
 				return isUserComingFromLoginForm
@@ -207,7 +212,13 @@ export default function CompositeCheckout( {
 			return 'wpcom_registrationless';
 		}
 		return isJetpackNotAtomic ? 'jetpack_checkout' : 'wpcom_checkout';
-	}, [ isLoggedOutCart, isJetpackCheckout, isUserComingFromLoginForm, isJetpackNotAtomic ] );
+	}, [
+		isLoggedOutCart,
+		isNoSiteCart,
+		isJetpackCheckout,
+		isUserComingFromLoginForm,
+		isJetpackNotAtomic,
+	] );
 
 	const countriesList = useCountryList( overrideCountryList || [] );
 
