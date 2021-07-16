@@ -26,24 +26,25 @@ import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
 import { shouldDisplayJetpackCredentialsBanner } from 'calypso/state/site-settings/jetpack-credentials-banner/selectors';
 import { siteHasScanProductPurchase } from 'calypso/state/purchases/selectors';
 import isRewindActive from 'calypso/state/selectors/is-rewind-active';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
+import { FEATURE_SECURITY_SETTINGS } from '@automattic/calypso-products';
 
-const SiteSettingsSecurity = ( {
+export const SiteSettingsSecurity = ( {
 	site,
 	siteId,
-	siteIsJetpack,
 	hasScanProduct,
 	hasActiveRewind,
 	isJetpackSectionEnabled,
 	shouldDisplayBanner,
 	translate,
+	hasActiveSecuritySettingsFeature,
 } ) => {
-	if ( ! siteIsJetpack ) {
+	if ( ! hasActiveSecuritySettingsFeature ) {
 		return (
 			<EmptyContent
 				action={ translate( 'Manage general settings for %(site)s', {
-					args: { site: site.name },
+					args: { site: site.name || site.slug },
 				} ) }
 				actionURL={ '/settings/general/' + site.slug }
 				title={ translate( 'No security configuration is required.' ) }
@@ -85,11 +86,11 @@ const SiteSettingsSecurity = ( {
 SiteSettingsSecurity.propTypes = {
 	site: PropTypes.object,
 	siteId: PropTypes.number,
-	siteIsJetpack: PropTypes.bool,
 	hasScanProduct: PropTypes.bool,
 	hasActiveRewind: PropTypes.bool,
 	isJetpackSectionEnabled: PropTypes.bool,
 	shouldDisplayBanner: PropTypes.bool,
+	hasActiveSecuritySettingsFeature: PropTypes.bool,
 };
 
 export default connect( ( state ) => {
@@ -99,10 +100,14 @@ export default connect( ( state ) => {
 	return {
 		site,
 		siteId,
-		siteIsJetpack: isJetpackSite( state, siteId ),
 		hasScanProduct: siteHasScanProductPurchase( state, siteId ),
 		hasActiveRewind: isRewindActive( state, siteId ),
 		isJetpackSectionEnabled: isJetpackSectionEnabledForSite( state, siteId ),
 		shouldDisplayBanner: shouldDisplayJetpackCredentialsBanner( state ),
+		hasActiveSecuritySettingsFeature: hasActiveSiteFeature(
+			state,
+			siteId,
+			FEATURE_SECURITY_SETTINGS
+		),
 	};
 } )( localize( SiteSettingsSecurity ) );
