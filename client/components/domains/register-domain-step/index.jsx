@@ -954,6 +954,7 @@ class RegisterDomainStep extends React.Component {
 			tld_weight_overrides: getTldWeightOverrides( this.props.designType ),
 			vendor: this.props.vendor,
 			vertical: this.props.vertical,
+			site_slug: this.props?.selectedSite?.slug,
 			recommendation_context: get( this.props, 'selectedSite.name', '' )
 				.replace( ' ', ',' )
 				.toLocaleLowerCase(),
