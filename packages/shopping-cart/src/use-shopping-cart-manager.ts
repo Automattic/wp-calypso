@@ -161,10 +161,7 @@ export default function useShoppingCartManager( {
 		() => convertTempResponseCartToResponseCart( tempResponseCart ),
 		[ tempResponseCart ]
 	);
-	const lastValidResponseCart = useRef< ResponseCart >( responseCartWithoutTempProducts );
-	if ( cacheStatus === 'valid' ) {
-		lastValidResponseCart.current = responseCartWithoutTempProducts;
-	}
+	const responseCart = useLastValidCart( responseCartWithoutTempProducts, cacheStatus );
 
 	// Refetch when the window is refocused
 	useRefetchOnFocus(
@@ -181,14 +178,10 @@ export default function useShoppingCartManager( {
 		debug( `cacheStatus changed to ${ cacheStatus } and cartValidCallbacks exist` );
 		if ( hookState.queuedActions.length === 0 && cacheStatus === 'valid' ) {
 			debug( 'calling cartValidCallbacks' );
-			cartValidCallbacks.current.forEach( ( callback ) =>
-				callback( lastValidResponseCart.current )
-			);
+			cartValidCallbacks.current.forEach( ( callback ) => callback( responseCart ) );
 			cartValidCallbacks.current = [];
 		}
-	}, [ hookState.queuedActions, cacheStatus ] );
-
-	const responseCart = lastValidResponseCart.current;
+	}, [ hookState.queuedActions, cacheStatus, responseCart ] );
 
 	const shoppingCartManager = useMemo(
 		() => ( {
@@ -230,4 +223,15 @@ export default function useShoppingCartManager( {
 	}, [ shoppingCartManager ] );
 
 	return shoppingCartManager;
+}
+
+function useLastValidCart(
+	currentResponseCart: ResponseCart,
+	cacheStatus: CacheStatus
+): ResponseCart {
+	const lastValidResponseCart = useRef< ResponseCart >( currentResponseCart );
+	if ( cacheStatus === 'valid' ) {
+		lastValidResponseCart.current = currentResponseCart;
+	}
+	return lastValidResponseCart.current;
 }
