@@ -277,7 +277,7 @@
 		"loader-utils": "^1.2.3",
 		"lodash": "^4.17.21",
 		"lunr": "^2.3.8",
-		"mini-css-extract-plugin": "^1.6.0",
+		"mini-css-extract-plugin": "^2.1.0",
 		"mixedindentlint": "^1.2.0",
 		"mkdirp": "^1.0.4",
 		"ncp": "^2.0.0",

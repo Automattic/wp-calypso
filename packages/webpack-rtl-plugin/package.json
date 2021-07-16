@@ -26,7 +26,7 @@
 	"license": "GPL-2.0-or-later",
 	"devDependencies": {
 		"css-loader": "^5.2.4",
-		"mini-css-extract-plugin": "^1.6.0",
+		"mini-css-extract-plugin": "^2.1.0",
 		"webpack": "^5.36.2"
 	},
 	"peerDependencies": {
