@@ -8,19 +8,19 @@
 import getSiteFeatures from 'calypso/state/selectors/get-site-features';
 
 /**
- * Check if the feature is active in the site.
+ * Check if the feature is available for the site.
  *
  * @param  {object}  state      Global state tree
  * @param  {number}  siteId     The ID of the site we're querying
  * @param  {string}  featureId  The dotcom feature to check.
- * @returns {?object}           True if the feature is active. Otherwise, False.
+ * @returns {?Array|boolean}    Plasns array if the feature is available. Otherwise, False.
  */
-export default function hasActiveSiteFeature( state, siteId, featureId ) {
+export default function hasAvailableSiteFeature( state, siteId, featureId ) {
 	const siteFeatures = getSiteFeatures( state, siteId );
 
-	if ( ! siteFeatures?.active ) {
+	if ( ! siteFeatures?.available ) {
 		return false;
 	}
 
-	return siteFeatures.active.indexOf( featureId ) >= 0;
+	return siteFeatures.available[ featureId ] ?? false;
 }
