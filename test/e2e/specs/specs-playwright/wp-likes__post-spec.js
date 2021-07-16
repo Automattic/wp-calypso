@@ -1,3 +1,4 @@
+import assert from 'assert';
 import {
 	DataHelper,
 	LoginFlow,
@@ -9,9 +10,6 @@ import {
 	setupHooks,
 } from '@automattic/calypso-e2e';
 
-/**
- * Constants
- */
 const quote =
 	'The foolish man seeks happiness in the distance. The wise grows it under his feet.\n— James Oppenheim';
 
@@ -47,7 +45,8 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 		} );
 
 		it( 'Publish and visit post', async function () {
-			await gutenbergEditorPage.publish( { visit: true } );
+			const publishedURL = await gutenbergEditorPage.publish( { visit: true } );
+			assert.strictEqual( await page.url(), publishedURL );
 		} );
 
 		it( 'Like post', async function () {
