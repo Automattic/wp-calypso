@@ -220,7 +220,7 @@ export const ConnectedThemesSelection = connect(
 		// results and sends all of the themes at once. QueryManager is not expecting such behaviour
 		// and we ended up loosing all of the themes above number 20. Real solution will be pagination on
 		// Jetpack themes endpoint.
-		const number = ! includes( [ 'wpcom', 'wporg' ], sourceSiteId ) ? 2000 : 20;
+		const number = ! includes( [ 'wpcom', 'wporg' ], sourceSiteId ) ? 2000 : 30;
 		const query = {
 			search,
 			page,
