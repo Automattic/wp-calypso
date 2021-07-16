@@ -90,55 +90,62 @@ class SocialSignupForm extends Component {
 		const uxModeApple = config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : uxMode;
 
 		return (
-			<div className="signup-form__social">
-				{ ! this.props.compact && (
-					<p>{ preventWidows( this.props.translate( 'Or create an account using:' ) ) }</p>
-				) }
+			// Note: we allow social sign-in on the Desktop app, but not social sign-up. Existing config flags do
+			// not distinguish between sign-in and sign-up but instead use the catch-all `signup/social` flag.
+			// Therefore we need to make an exception for the desktop app directly in this component because there
+			// are many places in which the social signup form is rendered based only on the presence of the
+			// `signup/social` config flag.
+			! config.isEnabled( 'desktop' ) && (
+				<div className="signup-form__social">
+					{ ! this.props.compact && (
+						<p>{ preventWidows( this.props.translate( 'Or create an account using:' ) ) }</p>
+					) }
 
-				<div className="signup-form__social-buttons">
-					<GoogleLoginButton
-						clientId={ config( 'google_oauth_client_id' ) }
-						responseHandler={ this.handleGoogleResponse }
-						uxMode={ uxMode }
-						redirectUri={ redirectUri }
-						onClick={ () => this.trackSocialLogin( 'google' ) }
-						socialServiceResponse={
-							this.props.socialService === 'google' ? this.props.socialServiceResponse : null
-						}
-						isReskinned={ this.props.isReskinned }
-					/>
-
-					<AppleLoginButton
-						clientId={ config( 'apple_oauth_client_id' ) }
-						responseHandler={ this.handleAppleResponse }
-						uxMode={ uxModeApple }
-						redirectUri={ redirectUri }
-						onClick={ () => this.trackSocialLogin( 'apple' ) }
-						socialServiceResponse={
-							this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
-						}
-					/>
-
-					<p className="signup-form__social-buttons-tos">
-						{ this.props.translate(
-							"If you continue with Google or Apple and don't already have a WordPress.com account, you" +
-								' are creating an account and you agree to our' +
-								' {{a}}Terms of Service{{/a}}.',
-							{
-								components: {
-									a: (
-										<a
-											href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-								},
+					<div className="signup-form__social-buttons">
+						<GoogleLoginButton
+							clientId={ config( 'google_oauth_client_id' ) }
+							responseHandler={ this.handleGoogleResponse }
+							uxMode={ uxMode }
+							redirectUri={ redirectUri }
+							onClick={ () => this.trackSocialLogin( 'google' ) }
+							socialServiceResponse={
+								this.props.socialService === 'google' ? this.props.socialServiceResponse : null
 							}
-						) }
-					</p>
+							isReskinned={ this.props.isReskinned }
+						/>
+
+						<AppleLoginButton
+							clientId={ config( 'apple_oauth_client_id' ) }
+							responseHandler={ this.handleAppleResponse }
+							uxMode={ uxModeApple }
+							redirectUri={ redirectUri }
+							onClick={ () => this.trackSocialLogin( 'apple' ) }
+							socialServiceResponse={
+								this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
+							}
+						/>
+
+						<p className="signup-form__social-buttons-tos">
+							{ this.props.translate(
+								"If you continue with Google or Apple and don't already have a WordPress.com account, you" +
+									' are creating an account and you agree to our' +
+									' {{a}}Terms of Service{{/a}}.',
+								{
+									components: {
+										a: (
+											<a
+												href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
+									},
+								}
+							) }
+						</p>
+					</div>
 				</div>
-			</div>
+			)
 		);
 	}
 }

@@ -56,6 +56,7 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import { getSectionName } from 'calypso/state/ui/selectors';
 import TextControl from 'calypso/extensions/woocommerce/components/text-control';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
+import config from '@automattic/calypso-config';
 
 /**
  * Style dependencies
@@ -986,11 +987,13 @@ class SignupForm extends Component {
 					{ this.props.formFooter || this.formFooter() }
 				</LoggedOutForm>
 
-				{ this.props.horizontal && ! this.userCreationComplete() && (
-					<div className="signup-form__separator">
-						<div className="signup-form__separator-text">{ this.props.translate( 'or' ) }</div>
-					</div>
-				) }
+				{ ! config.isEnabled( 'desktop' ) &&
+					this.props.horizontal &&
+					! this.userCreationComplete() && (
+						<div className="signup-form__separator">
+							<div className="signup-form__separator-text">{ this.props.translate( 'or' ) }</div>
+						</div>
+					) }
 
 				{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
 					<SocialSignupForm
