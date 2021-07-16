@@ -51,6 +51,7 @@ import { deserialize } from 'calypso/state/utils';
 import middlewareBuildTarget from '../middleware/build-target.js';
 import middlewareAssets from '../middleware/assets.js';
 import middlewareCache from '../middleware/cache.js';
+import middlewareUnsupportedBrowser from '../middleware/unsupported-browser.js';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -121,6 +122,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 	}
 
 	const target = request.getTarget();
+	const bypassTargetRedirection = request.bypassTargetRedirection();
 
 	const oauthClientId = request.query.oauth2_client_id || request.query.client_id;
 	const isWCComConnect =
@@ -151,7 +153,8 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		featuresHelper: !! config.isEnabled( 'dev/features-helper' ),
 		devDocsURL: '/devdocs',
 		store: reduxStore,
-		addEvergreenCheck: target === 'evergreen' && calypsoEnv !== 'development',
+		addEvergreenCheck:
+			bypassTargetRedirection === false && target === 'evergreen' && calypsoEnv !== 'development',
 		target: target || 'fallback',
 		useTranslationChunks:
 			config.isEnabled( 'use-translation-chunks' ) ||
@@ -561,6 +564,7 @@ export default function pages() {
 	app.use( middlewareCache() );
 	app.use( setupLoggedInContext );
 	app.use( handleLocaleSubdomains );
+	app.use( middlewareUnsupportedBrowser() );
 
 	// redirect homepage if the Reader is disabled
 	app.get( '/', function ( request, response, next ) {
@@ -626,10 +630,12 @@ export default function pages() {
 					);
 				} else if ( ! config.isEnabled( 'jetpack-cloud/connect' ) ) {
 					res.redirect( 'https://wordpress.com/pricing' );
+				} else {
+					next();
 				}
+			} else {
+				next();
 			}
-
-			next();
 		} );
 	}
 
@@ -748,6 +754,17 @@ export default function pages() {
 	);
 
 	app.get( '/browsehappy', setupDefaultContext(), setUpRoute, function ( req, res ) {
+		if ( req.query.bypassTargetRedirection === 'true' ) {
+			res.cookie( 'bypass_target_redirection', true, {
+				httpOnly: true,
+				secure: true,
+			} );
+
+			if ( req.query.url ) {
+				return res.redirect( decodeURIComponent( req.query.url ) );
+			}
+		}
+
 		const wpcomRe = /^https?:\/\/[A-z0-9_-]+\.wordpress\.com$/;
 		const primaryBlogUrl = get( req, 'context.user.primary_blog_url', '' );
 		const isWpcom = wpcomRe.test( primaryBlogUrl );
@@ -755,6 +772,10 @@ export default function pages() {
 		req.context.dashboardUrl = isWpcom
 			? primaryBlogUrl + '/wp-admin'
 			: 'https://dashboard.wordpress.com/wp-admin/';
+
+		if ( req.query.url ) {
+			req.context.bypassUrl = req.url + '&bypassTargetRedirection=true';
+		}
 
 		res.send( renderJsx( 'browsehappy', req.context ) );
 	} );

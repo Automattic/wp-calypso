@@ -22,7 +22,7 @@ class EmptyContent extends Component {
 		title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
 		illustration: PropTypes.string,
 		illustrationWidth: PropTypes.number,
-		line: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
+		line: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.array ] ),
 		action: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 		actionURL: PropTypes.string,
 		actionCallback: PropTypes.func,
