@@ -325,3 +325,11 @@ function load_error_reporting() {
 	require_once __DIR__ . '/error-reporting/index.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_error_reporting' );
+
+/**
+ * Universal themes.
+ */
+function load_universal_themes() {
+	require_once __DIR__ . '/wpcom-universal-themes/index.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_universal_themes', 11 ); // load just after the Gutenberg plugin.
