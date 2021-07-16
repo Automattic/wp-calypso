@@ -1,9 +1,5 @@
-/**
- * Internal dependencies
- */
-import { BaseBlock } from '../base-block';
-
 import { Page } from 'playwright';
+import { BaseBlock } from '../base-block';
 
 const selectors = {
 	block: '.wp-block-coblocks-hero',
