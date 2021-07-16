@@ -181,7 +181,6 @@ export class PlansFeaturesMain extends Component {
 			redirectTo,
 			siteId,
 			plansWithScroll,
-			isInVerticalScrollingPlansExperiment,
 			redirectToAddDomainFlow,
 		} = this.props;
 
@@ -225,7 +224,6 @@ export class PlansFeaturesMain extends Component {
 						availablePlans: visiblePlans,
 					} ) }
 					siteId={ siteId }
-					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 					kindOfPlanTypeSelector={ this.getKindOfPlanTypeSelector( this.props ) }
 				/>
 			</div>
