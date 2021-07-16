@@ -38,8 +38,8 @@
 	"dependencies": {
 		"@automattic/calypso-analytics": "^1.0.0-alpha.1",
 		"@automattic/i18n-utils": "^1.0.0",
-		"@wordpress/components": "^13.0.3",
-		"@wordpress/react-i18n": "^1.0.3",
+		"@wordpress/components": "^14.1.10",
+		"@wordpress/react-i18n": "^2.1.1",
 		"wpcom-proxy-request": "^6.0.0",
 		"wpcom": "^6.0.0"
 	},

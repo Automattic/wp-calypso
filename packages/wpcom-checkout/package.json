@@ -41,8 +41,8 @@
 		"@automattic/composite-checkout": "^1.0.0",
 		"@automattic/shopping-cart": "^1.0.0",
 		"@emotion/styled": "^10.0.27",
-		"@wordpress/i18n": "^3.20.0",
-		"@wordpress/react-i18n": "^1.0.3",
+		"@wordpress/i18n": "^4.1.1",
+		"@wordpress/react-i18n": "^2.1.1",
 		"debug": "^4.1.1",
 		"i18n-calypso": "^5.0.0",
 		"prop-types": "^15.7.2"

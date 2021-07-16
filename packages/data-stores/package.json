@@ -34,10 +34,10 @@
 	},
 	"dependencies": {
 		"@automattic/format-currency": "^1.0.0-alpha.0",
-		"@wordpress/api-fetch": "^4.0.0",
-		"@wordpress/data-controls": "^1.21.3",
-		"@wordpress/deprecated": "^2.12.3",
-		"@wordpress/url": "^2.22.2",
+		"@wordpress/api-fetch": "^5.1.1",
+		"@wordpress/data-controls": "^2.1.3",
+		"@wordpress/deprecated": "^3.1.1",
+		"@wordpress/url": "^3.1.1",
 		"fast-json-stable-stringify": "^2.1.0",
 		"i18n-calypso": "^5.0.0",
 		"qs": "^6.9.1",
@@ -47,7 +47,7 @@
 		"validator": "^13.5.2"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^4",
+		"@wordpress/data": "^5",
 		"react": "^16.8"
 	},
 	"devDependencies": {
