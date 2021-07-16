@@ -19,6 +19,10 @@ import { composeAnalytics, recordGoogleEvent } from 'calypso/state/analytics/act
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { domainAddNew, domainManagementAllRoot } from 'calypso/my-sites/domains/paths';
 
+/**
+ * Style dependencies
+ */
+import './add-domain-button.scss';
 class AddDomainButton extends React.Component {
 	static propTypes = {
 		selectedSiteSlug: PropTypes.string,
@@ -64,6 +68,7 @@ class AddDomainButton extends React.Component {
 					<Gridicon icon="chevron-down" />
 				</Button>
 				<PopoverMenu
+					className="add-domain-button__popover"
 					isVisible={ this.state.isAddMenuVisible }
 					onClose={ this.closeAddMenu }
 					context={ this.addDomainButtonRef.current }
