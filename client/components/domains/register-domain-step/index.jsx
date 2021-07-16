@@ -34,7 +34,7 @@ import Search from '@automattic/search';
  */
 import config from '@automattic/calypso-config';
 import wpcom from 'calypso/lib/wp';
-import { CompactCard, Button } from '@automattic/components';
+import { Button, CompactCard } from '@automattic/components';
 import Notice from 'calypso/components/notice';
 import StickyPanel from 'calypso/components/sticky-panel';
 import {
