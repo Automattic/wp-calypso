@@ -22,7 +22,6 @@ import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
@@ -130,7 +129,6 @@ class Plans extends React.Component {
 								align="left"
 							/>
 							<div id="plans" className="plans plans__has-sidebar">
-								<PlansNavigation path={ this.props.context.path } />
 								{ isEnabled( 'p2/p2-plus' ) && isWPForTeamsSite ? (
 									<P2PlansMain
 										selectedPlan={ this.props.selectedPlan }

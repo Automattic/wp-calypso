@@ -16,7 +16,6 @@ import {
 } from '@automattic/calypso-products';
 import JetpackPluginUpdateWarning from 'calypso/blocks/jetpack-plugin-update-warning';
 import { preventWidows } from 'calypso/lib/formatting';
-import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Notice from 'calypso/components/notice';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -37,8 +36,12 @@ type StandardHeaderProps = {
 
 const StandardPlansHeader = ( { shouldShowPlanRecommendation, siteId }: StandardHeaderProps ) => (
 	<>
-		<FormattedHeader headerText={ translate( 'Plans' ) } align="left" brandFont />
-		<PlansNavigation path={ '/plans' } />
+		<FormattedHeader
+			brandFont
+			headerText={ translate( 'Plans' ) }
+			subHeaderText={ translate( 'See and compare the features available on each Jetpack plan.' ) }
+			align="left"
+		/>
 		{ shouldShowPlanRecommendation && siteId && (
 			<JetpackPluginUpdateWarning
 				siteId={ siteId }
@@ -56,17 +59,14 @@ const StandardPlansHeader = ( { shouldShowPlanRecommendation, siteId }: Standard
 );
 
 const ConnectFlowPlansHeader = () => (
-	<>
-		<div className="jetpack-plans__heading">
-			<FormattedHeader
-				headerText={ translate( 'Explore our Jetpack plans' ) }
-				subHeaderText={ translate( "Now that you're set up, pick a plan that fits your needs." ) }
-				align="left"
-				brandFont
-			/>
-		</div>
-		<PlansNavigation path={ '/plans' } />
-	</>
+	<div className="jetpack-plans__heading">
+		<FormattedHeader
+			headerText={ translate( 'Explore our Jetpack plans' ) }
+			subHeaderText={ translate( "Now that you're set up, pick a plan that fits your needs." ) }
+			align="left"
+			brandFont
+		/>
+	</div>
 );
 
 const PlansHeader = ( { context, shouldShowPlanRecommendation }: HeaderProps ) => {
