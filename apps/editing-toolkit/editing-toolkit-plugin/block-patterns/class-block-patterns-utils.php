@@ -82,8 +82,8 @@ class Block_Patterns_Utils {
 	 * @return string locale slug
 	 */
 	public function get_block_patterns_locale() {
-		// Make sure to get blog locale, not user locale.
-		$language = function_exists( 'get_blog_lang_code' ) ? get_blog_lang_code() : get_locale();
+		// Block patterns display in the user locale.
+		$language = get_user_locale();
 		return \A8C\FSE\Common\get_iso_639_locale( $language );
 	}
 
