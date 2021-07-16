@@ -84,13 +84,13 @@ class Global_Styles_Fonts_Message_Control extends \WP_Customize_Control {
 
 		$base_url = null;
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( 'http://calypso.localhost:3000' === $_GET['calypsoOrigin'] ) {
+		if ( isset( $_GET['calypsoOrigin'] ) && 'http://calypso.localhost:3000' === $_GET['calypsoOrigin'] ) {
 			$base_url = 'http://calypso.localhost:3000/';
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		} elseif ( 'https://horizon.wordpress.com' === $_GET['calypsoOrigin'] ) {
+		} elseif ( isset( $_GET['calypsoOrigin'] ) && 'https://horizon.wordpress.com' === $_GET['calypsoOrigin'] ) {
 			$base_url = 'https://horizon.wordpress.com/';
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		} elseif ( 'https://wpcalypso.wordpress.com' === $_GET['calypsoOrigin'] ) {
+		} elseif ( isset( $_GET['calypsoOrigin'] ) && 'https://wpcalypso.wordpress.com' === $_GET['calypsoOrigin'] ) {
 			$base_url = 'https://wpcalypso.wordpress.com/';
 		} else {
 			$base_url = 'https://www.wordpress.com/';
