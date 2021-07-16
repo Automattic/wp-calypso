@@ -44,7 +44,7 @@ export const SiteSettingsSecurity = ( {
 		return (
 			<EmptyContent
 				action={ translate( 'Manage general settings for %(site)s', {
-					args: { site: site.name },
+					args: { site: site.name || site.slug },
 				} ) }
 				actionURL={ '/settings/general/' + site.slug }
 				title={ translate( 'No security configuration is required.' ) }
