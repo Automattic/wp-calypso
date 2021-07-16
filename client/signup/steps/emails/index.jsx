@@ -85,7 +85,6 @@ class EmailsStep extends React.Component {
 				</CalypsoShoppingCartProvider>
 			</div>
 		);
-
 		const sideContent = this.renderSideContent();
 
 		return (
