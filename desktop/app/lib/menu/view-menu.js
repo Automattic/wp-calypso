@@ -65,16 +65,11 @@ menuItems.push(
 		visible: false,
 		acceleratorWorksWhenHidden: true,
 		accelerator: 'CommandOrControl+num0',
-	}
+	},
+	{
+		type: 'separator',
+	},
+	...debugMenu
 );
-
-if ( process.env.WP_DESKTOP_DEBUG ) {
-	menuItems.push(
-		{
-			type: 'separator',
-		},
-		...debugMenu
-	);
-}
 
 module.exports = menuItems;
