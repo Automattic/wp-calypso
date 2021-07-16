@@ -47,7 +47,7 @@ import {
 	isFormDisabled as isFormDisabledSelector,
 } from 'calypso/state/login/selectors';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
-import { getSignupUrl } from 'calypso/lib/login';
+import { canDoMagicLogin, getSignupUrl, getLoginLinkPageUrl } from 'calypso/lib/login';
 import { isRegularAccount } from 'calypso/state/login/utils';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -448,6 +448,37 @@ export class LoginForm extends Component {
 		);
 	}
 
+	renderMagicLoginLink() {
+		if (
+			! canDoMagicLogin(
+				this.props.twoFactorAuthType,
+				this.props.oauth2Client,
+				this.props.wccomFrom,
+				this.props.isJetpackWooCommerceFlow
+			)
+		) {
+			return null;
+		}
+
+		// The leading space is NO typo! It's added since the first part of the validation message (originating from the BE) contains no trailing space.
+		return this.props.translate(
+			' Would you like to {{magicLoginLink}}receive a login link{{/magicLoginLink}}?',
+			{
+				components: {
+					magicLoginLink: (
+						<a
+							href={ getLoginLinkPageUrl(
+								this.props.locale,
+								this.props.currentRoute,
+								this.props.isGutenboarding
+							) }
+						/>
+					),
+				},
+			}
+		);
+	}
+
 	render() {
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 
@@ -578,7 +609,6 @@ export class LoginForm extends Component {
 							} ) }
 						>
 							<FormLabel htmlFor="password">{ this.props.translate( 'Password' ) }</FormLabel>
-
 							<FormPasswordInput
 								autoCapitalize="off"
 								autoComplete="current-password"
@@ -593,9 +623,10 @@ export class LoginForm extends Component {
 								disabled={ isFormDisabled }
 								tabIndex={ isPasswordHidden ? -1 : undefined /* not tabbable when hidden */ }
 							/>
-
 							{ requestError && requestError.field === 'password' && (
-								<FormInputValidation isError text={ requestError.message } />
+								<FormInputValidation isError text={ requestError.message }>
+									{ this.renderMagicLoginLink() }
+								</FormInputValidation>
 							) }
 						</div>
 					</div>
