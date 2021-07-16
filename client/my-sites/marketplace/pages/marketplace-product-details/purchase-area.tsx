@@ -14,7 +14,7 @@ interface PurchaseArea {
 	isProductListLoading: boolean;
 	displayCost?: string | null;
 	wporgPluginName?: string;
-	onAddYoastPremiumToCart: () => Promise< ResponseCart >;
+	onAddYoastPremiumToCart: ( primaryDomain: string ) => Promise< ResponseCart >;
 	onNavigateToCheckout: () => void;
 	onNavigateToDomainsSelection: () => void;
 	onRemoveEverythingFromCart: () => Promise< ResponseCart >;
@@ -63,11 +63,11 @@ export default function PurchaseArea( {
 		const isCustomDomainPrimary = evaluateIsCustomDomainPrimary( siteDomains );
 
 		await onRemoveEverythingFromCart();
+		const primaryDomain = getPrimaryDomain( siteDomains ).domain;
 
 		if ( isProductPurchased ) {
-			await onAddYoastPremiumToCart();
+			await onAddYoastPremiumToCart( primaryDomain );
 		} else {
-			const primaryDomain = getPrimaryDomain( siteDomains ).domain;
 			onInstallPluginManually( primaryDomain );
 		}
 

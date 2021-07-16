@@ -19,7 +19,6 @@ import { marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';
  * */
 export const YOAST = 'YOAST';
 
-// TODO: Integrate this data structure with marketplace code
 export const productGroups: IProductGroupCollection = {
 	[ YOAST ]: {
 		products: {
