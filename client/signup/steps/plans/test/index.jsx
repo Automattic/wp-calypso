@@ -6,6 +6,7 @@ jest.mock( 'calypso/my-sites/plan-features', () => 'plan-features' );
  */
 import { shallow } from 'enzyme';
 import React from 'react';
+import { isDesktop } from '@automattic/viewport';
 
 /**
  * Internal dependencies
@@ -31,6 +32,13 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
+
+jest.mock( '@automattic/viewport', () => {
+	return {
+		...jest.requireActual( '@automattic/viewport' ),
+		isDesktop: jest.fn(),
+	};
+} );
 
 const noop = () => {};
 const props = {
@@ -269,5 +277,51 @@ describe( 'isDotBlogDomainRegistration()', () => {
 				is_domain_registration: true,
 			} )
 		).toBe( false );
+	} );
+
+	describe( 'Subheader text', () => {
+		beforeEach( () => {
+			jest.clearAllMocks();
+		} );
+
+		test( 'should return the correct subheader on desktop when free plan is visible & flowName = launch-site', () => {
+			isDesktop.mockImplementation( () => true );
+
+			const expected = `Pick one that's right for you and unlock features that help you grow. Or {{link}}continue with a free site{{/link}}.`;
+			const comp = shallow(
+				<PlansStep { ...props } flowName="launch-site" hideFreePlan={ false } />
+			);
+
+			expect( comp.find( 'step-wrapper' ).prop( 'subHeaderText' ) ).toEqual( expected );
+		} );
+
+		test( 'should return the correct subheader on desktop when free plan is visible', () => {
+			isDesktop.mockImplementation( () => true );
+
+			const expected = `Pick one that's right for you and unlock features that help you grow. Or {{link}}start with a free site{{/link}}.`;
+			const comp = shallow( <PlansStep { ...props } hideFreePlan={ false } /> );
+
+			expect( comp.find( 'step-wrapper' ).prop( 'subHeaderText' ) ).toEqual( expected );
+		} );
+
+		test( 'should return the correct subheader on non-desktop when free plan is visible & flow name = launch-site', () => {
+			isDesktop.mockImplementation( () => false );
+
+			const expected = `Choose a plan or {{link}}continue with a free site{{/link}}.`;
+			const comp = shallow(
+				<PlansStep { ...props } flowName="launch-site" hideFreePlan={ false } />
+			);
+
+			expect( comp.find( 'step-wrapper' ).prop( 'subHeaderText' ) ).toEqual( expected );
+		} );
+
+		test( 'should return the correct subheader on non-desktop when free plan is visible', () => {
+			isDesktop.mockImplementation( () => false );
+
+			const expected = `Choose a plan or {{link}}start with a free site{{/link}}.`;
+			const comp = shallow( <PlansStep { ...props } hideFreePlan={ false } /> );
+
+			expect( comp.find( 'step-wrapper' ).prop( 'subHeaderText' ) ).toEqual( expected );
+		} );
 	} );
 } );

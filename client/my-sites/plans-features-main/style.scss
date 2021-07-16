@@ -130,6 +130,14 @@ body.is-section-signup.is-white-signup {
 			}
 		}
 
+		.plan-features__pricing {
+			.plan-price.is-discounted {
+				.plan-price__currency-symbol {
+					color: var( --color-text );
+				}
+			}
+		}
+
 		.plan-features__scroller-container {
 			.plan-features__scroll-button {
 				background: var( --color-text );
