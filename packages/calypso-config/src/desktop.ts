@@ -17,6 +17,8 @@ const features = {
 	desktop: true,
 	'desktop-promo': false,
 	'sign-in-with-apple': true,
+	// Note: there is also a sign-in-with-apple/redirect flag
+	// that may/may not be relevant to override for the Desktop app.
 	'signup/social': true,
 	'login/magic-login': false,
 };
