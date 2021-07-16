@@ -25,6 +25,7 @@ const incompatiblePlugins = new Set( [
 	'post-type-switcher',
 	'reset-wp',
 	'secure-file-manager',
+	`ultimate-reset`,
 	'ultimate-wp-reset',
 	'username-changer',
 	'username-updater',
