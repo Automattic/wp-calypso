@@ -168,7 +168,7 @@ export class List extends React.Component {
 				{ this.domainWarnings() }
 				{ this.domainCreditsInfoNotice() }
 
-				<div className="domain-management-list__primary-domain">{ this.renderPrimaryDomain() }</div>
+				{ /* <div className="domain-management-list__primary-domain">{ this.renderPrimaryDomain() }</div> */ }
 				<div className="domain-management-list__items">{ this.listNewItems() }</div>
 				<DomainToPlanNudge />
 			</>
