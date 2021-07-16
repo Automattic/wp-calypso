@@ -71,6 +71,7 @@ export const QuickLinks = ( {
 			{ isStaticHomePage ? (
 				<ActionBox
 					href={ editHomePageUrl }
+					hideLinkIndicator
 					onClick={ trackEditHomepageAction }
 					label={ translate( 'Edit homepage' ) }
 					materialIcon="laptop"
@@ -78,6 +79,7 @@ export const QuickLinks = ( {
 			) : (
 				<ActionBox
 					href={ `/post/${ siteSlug }` }
+					hideLinkIndicator
 					onClick={ trackWritePostAction }
 					label={ translate( 'Write blog post' ) }
 					materialIcon="edit"
@@ -86,6 +88,7 @@ export const QuickLinks = ( {
 			{ isStaticHomePage ? (
 				<ActionBox
 					href={ `/page/${ siteSlug }` }
+					hideLinkIndicator
 					onClick={ trackAddPageAction }
 					label={ translate( 'Add a page' ) }
 					materialIcon="insert_drive_file"
@@ -93,6 +96,7 @@ export const QuickLinks = ( {
 			) : (
 				<ActionBox
 					href={ `/comments/${ siteSlug }` }
+					hideLinkIndicator
 					onClick={ trackManageCommentsAction }
 					label={ translate( 'Manage comments' ) }
 					materialIcon="mode_comment"
@@ -101,6 +105,7 @@ export const QuickLinks = ( {
 			{ isStaticHomePage ? (
 				<ActionBox
 					href={ `/post/${ siteSlug }` }
+					hideLinkIndicator
 					onClick={ trackWritePostAction }
 					label={ translate( 'Write blog post' ) }
 					materialIcon="edit"
@@ -108,6 +113,7 @@ export const QuickLinks = ( {
 			) : (
 				<ActionBox
 					href={ `/page/${ siteSlug }` }
+					hideLinkIndicator
 					onClick={ trackAddPageAction }
 					label={ translate( 'Add a page' ) }
 					materialIcon="insert_drive_file"
@@ -133,6 +139,7 @@ export const QuickLinks = ( {
 			) }
 			<ActionBox
 				href={ `/themes/${ siteSlug }` }
+				hideLinkIndicator
 				onClick={ trackChangeThemeAction }
 				label={ translate( 'Change theme' ) }
 				materialIcon="view_quilt"
@@ -140,6 +147,7 @@ export const QuickLinks = ( {
 			{ canAddEmail ? (
 				<ActionBox
 					href={ `/email/${ siteSlug }` }
+					hideLinkIndicator
 					onClick={ trackAddEmailAction }
 					label={ translate( 'Add email' ) }
 					materialIcon="email"
@@ -147,6 +155,7 @@ export const QuickLinks = ( {
 			) : (
 				<ActionBox
 					href={ `/domains/add/${ siteSlug }` }
+					hideLinkIndicator
 					onClick={ trackAddDomainAction }
 					label={ translate( 'Add a domain' ) }
 					gridicon="domains"

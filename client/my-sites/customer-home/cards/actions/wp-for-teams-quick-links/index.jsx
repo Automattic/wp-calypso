@@ -52,6 +52,7 @@ export const QuickLinks = ( {
 			{ isStaticHomePage ? (
 				<ActionBox
 					href={ editHomePageUrl }
+					hideLinkIndicator
 					onClick={ trackEditHomepageAction }
 					label={ translate( 'Edit homepage' ) }
 					materialIcon="laptop"
@@ -59,6 +60,7 @@ export const QuickLinks = ( {
 			) : (
 				<ActionBox
 					href={ `/post/${ siteSlug }` }
+					hideLinkIndicator
 					onClick={ trackWritePostAction }
 					label={ translate( 'Write blog post' ) }
 					materialIcon="edit"
@@ -67,6 +69,7 @@ export const QuickLinks = ( {
 			{ isStaticHomePage ? (
 				<ActionBox
 					href={ `/page/${ siteSlug }` }
+					hideLinkIndicator
 					onClick={ trackAddPageAction }
 					label={ translate( 'Add a page' ) }
 					materialIcon="insert_drive_file"
@@ -74,6 +77,7 @@ export const QuickLinks = ( {
 			) : (
 				<ActionBox
 					href={ `/comments/${ siteSlug }` }
+					hideLinkIndicator
 					onClick={ trackManageCommentsAction }
 					label={ translate( 'Manage comments' ) }
 					materialIcon="mode_comment"
@@ -82,6 +86,7 @@ export const QuickLinks = ( {
 			{ isStaticHomePage ? (
 				<ActionBox
 					href={ `/post/${ siteSlug }` }
+					hideLinkIndicator
 					onClick={ trackWritePostAction }
 					label={ translate( 'Write blog post' ) }
 					materialIcon="edit"
@@ -89,6 +94,7 @@ export const QuickLinks = ( {
 			) : (
 				<ActionBox
 					href={ `/page/${ siteSlug }` }
+					hideLinkIndicator
 					onClick={ trackAddPageAction }
 					label={ translate( 'Add a page' ) }
 					materialIcon="insert_drive_file"
@@ -97,6 +103,7 @@ export const QuickLinks = ( {
 			{ showCustomizer && (
 				<ActionBox
 					href={ menusUrl }
+					hideLinkIndicator
 					onClick={ trackEditMenusAction }
 					label={ translate( 'Edit menus' ) }
 					materialIcon="list"
@@ -105,6 +112,7 @@ export const QuickLinks = ( {
 			{ showCustomizer && (
 				<ActionBox
 					href={ customizeUrl }
+					hideLinkIndicator
 					onClick={ trackCustomizeThemeAction }
 					label={ translate( 'Customize theme' ) }
 					materialIcon="palette"
