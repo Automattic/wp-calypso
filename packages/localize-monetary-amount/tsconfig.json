@@ -1,0 +1,22 @@
+{
+	"compilerOptions": {
+		"target": "es5",
+		"module": "es2015",
+		"declaration": true,
+		"declarationDir": "types",
+		"outDir": "./dist/esm",
+
+		"strict": true,
+		"noImplicitAny": false,
+
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+
+		"moduleResolution": "node",
+		"esModuleInterop": true
+	},
+	"include": [ "src/**/*" ],
+	"exclude": [ "**/test/**/*", "**/docs/**/*" ]
+}
