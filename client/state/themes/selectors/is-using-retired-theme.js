@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { get } from 'lodash';
 import { getActiveTheme } from 'calypso/state/themes/selectors/get-active-theme';
+import { getCanonicalTheme } from 'calypso/state/themes/selectors/get-canonical-theme';
 
 import 'calypso/state/themes/init';
 
@@ -14,8 +14,5 @@ import 'calypso/state/themes/init';
  * @returns {?boolean}          Whether the current theme is retired.
  */
 export function isUsingRetiredTheme( state, siteId ) {
-	return get(
-		state,
-		'themes.queries.wpcom.data.items.' + getActiveTheme( state, siteId ) + '.retired'
-	);
+	return getCanonicalTheme( state, siteId, getActiveTheme( state, siteId ) )?.retired;
 }
