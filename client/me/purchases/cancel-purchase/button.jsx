@@ -97,8 +97,8 @@ class CancelPurchaseButton extends Component {
 			if ( success ) {
 				this.props.successNotice(
 					translate(
-						'%(purchaseName)s was successfully cancelled. It will be available ' +
-							'for use until it expires on %(subscriptionEndDate)s.',
+						'Auto-renew for %(purchaseName)s was successfully disabled. Your paid features will be available ' +
+							'for use until your plan expires on %(subscriptionEndDate)s.',
 						{
 							args: {
 								purchaseName,
@@ -113,7 +113,7 @@ class CancelPurchaseButton extends Component {
 			} else {
 				this.props.errorNotice(
 					translate(
-						'There was a problem canceling %(purchaseName)s. ' +
+						'There was a problem disabling auto-renew for %(purchaseName)s. ' +
 							'Please try again later or contact support.',
 						{
 							args: { purchaseName },
@@ -263,7 +263,7 @@ class CancelPurchaseButton extends Component {
 			}
 
 			if ( isSubscription( purchase ) ) {
-				text = translate( 'Cancel Subscription' );
+				text = translate( 'Disable Auto-renew' );
 			}
 
 			if ( isOneTimePurchase( purchase ) ) {
@@ -278,7 +278,7 @@ class CancelPurchaseButton extends Component {
 
 			if ( isSubscription( purchase ) ) {
 				onClick = this.handleCancelPurchaseClick;
-				text = translate( 'Cancel Subscription' );
+				text = translate( 'Disable Auto-renew' );
 			}
 		}
 
