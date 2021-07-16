@@ -17,7 +17,7 @@ import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import Gridicon from 'calypso/components/gridicon';
 import { composeAnalytics, recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { domainAddNew } from 'calypso/my-sites/domains/paths';
+import { domainAddNew, domainManagementAllRoot } from 'calypso/my-sites/domains/paths';
 
 class AddDomainButton extends React.Component {
 	static propTypes = {
@@ -69,19 +69,17 @@ class AddDomainButton extends React.Component {
 					context={ this.addDomainButtonRef.current }
 					position="bottom"
 				>
-					{ this.props.selectedSiteSlug && (
-						<PopoverMenuItem onClick={ this.clickAddDomain }>
-							{ translate( 'to this site' ) }
-						</PopoverMenuItem>
-					) }
+					<PopoverMenuItem href={ domainManagementAllRoot() } onClick={ this.trackMenuClick }>
+						{ translate( 'Manage all domains' ) }
+					</PopoverMenuItem>
 					<PopoverMenuItem href="/new" onClick={ this.trackMenuClick }>
-						{ translate( 'to a new site' ) }
+						{ translate( 'Add a domain to a new site' ) }
 					</PopoverMenuItem>
 					<PopoverMenuItem href="/domains/add" onClick={ this.trackMenuClick }>
-						{ translate( 'to a different site' ) }
+						{ translate( 'Add a domain to a different site' ) }
 					</PopoverMenuItem>
 					<PopoverMenuItem href="/start/domain" onClick={ this.trackMenuClick }>
-						{ translate( 'without a site' ) }
+						{ translate( 'Add a domain without a site' ) }
 					</PopoverMenuItem>
 				</PopoverMenu>
 			</React.Fragment>
