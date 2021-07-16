@@ -1,5 +1,6 @@
 import path from 'path';
 import config from 'config';
+import fs from 'fs-extra';
 import { getLocale, getViewportName } from './browser-helper';
 
 const artifacts: { [ key: string ]: string } = config.get( 'artifacts' );
@@ -59,7 +60,7 @@ export function getFileName( {
 	const suiteName = name.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
 	const viewportName = getViewportName().toUpperCase();
 	const locale = getLocale().toUpperCase();
-	const date = getDateString();
+	const date = createTimestamp();
 	const fileName = `FAILED-${ locale }-${ viewportName }-${ suiteName }-${ date }`;
 
 	let dir;
@@ -82,7 +83,7 @@ export function getFileName( {
  *
  * @returns {string} Date represented as a timestamp.
  */
-export function getDateString(): string {
+export function createTimestamp(): string {
 	return new Date().getTime().toString();
 }
 
@@ -96,4 +97,64 @@ export function getTestNameWithTime( testName: string ): string {
 	const currentTestName = testName.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
 	const dateTime = new Date().toISOString().split( '.' )[ 0 ].replace( /:/g, '-' );
 	return `${ currentTestName }-${ dateTime }`;
+}
+
+/**
+ * Given a full path to file on disk, remove the file.
+ *
+ * @param {string} filePath Full path on disk.
+ * @returns {void} No return value.
+ */
+export function deleteFile( filePath: string ): void {
+	fs.removeSync( filePath );
+}
+
+/**
+ * Creates a temporary test file by cloning a source file under a new name.
+ *
+ * @param {{[key: string]: string}} param0 Parameter object.
+ * @param {string} param0.testFileName Basename of the test file to be generated.
+ * @param {string} param0.sourceFileName Basename of the source file to be cloned.
+ * @returns {string} Full path to the generated test file.
+ */
+export function createTestFile( { sourceFileName }: { sourceFileName: string } ): string {
+	const testFileName = `${ createTimestamp() }.${ sourceFileName.split( '.' ).pop() }`;
+	const sourceFileDir = path.join( __dirname, '../../../../../test/e2e/image-uploads/' );
+	const sourceFilePath = path.join( sourceFileDir, sourceFileName );
+
+	// Generated test file will also go under the source directory.
+	// Attempting to copy the file elsewhere will trigger the following error on TeamCity:
+	// EPERM: operation not permitted
+	const testFilePath = path.join( sourceFileDir, testFileName );
+	// Copy the source file specified to testFilePath, creating a clone differing only by name.
+	fs.copySync( sourceFilePath, testFilePath );
+
+	return testFilePath;
+}
+
+/**
+ * Returns the path to a generated temporary JPEG image file.
+ *
+ * @returns {string} Full path on disk to the generated test file.
+ */
+export function createTestImage(): string {
+	return createTestFile( { sourceFileName: 'image0.jpg' } );
+}
+
+/**
+ * Returns the path to a generated temporary MP3 audio file.
+ *
+ * @returns {string} Full path on disk to the generated test file.
+ */
+export function createTestAudio(): string {
+	return createTestFile( { sourceFileName: 'bees.mp3' } );
+}
+
+/**
+ * Returns the path to an unsupported file.
+ *
+ * @returns {string} Full path on disk to the generated test file.
+ */
+export function createInvalidFile(): string {
+	return createTestFile( { sourceFileName: 'unsupported_extension.mkv' } );
 }
