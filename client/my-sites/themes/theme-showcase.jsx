@@ -67,9 +67,19 @@ const optionShape = PropTypes.shape( {
 	action: PropTypes.func,
 } );
 
+// To add a new tab:
+// 1. Define the name in constructor( props ), where it sets up this.state.themeTabs:
+//      my_new_tab: translate( "My New Tab"),
+// 2. Draw the tab element by adding a call inside <NavTabs>
+//     { this.renderTab( 'my_new_tab' ) }
+// 3. Draw the tab contents by adding a check for tabFilter in the main render area:
+//    { 'my_new_tab' === this.state.tabFilter && <div>Hello</div> }
+
 class ThemeShowcase extends React.Component {
 	constructor( props ) {
 		super( props );
+		const { translate } = props;
+
 		this.scrollRef = React.createRef();
 		this.bookmarkRef = React.createRef();
 		this.state = {
@@ -77,6 +87,11 @@ class ThemeShowcase extends React.Component {
 				this.props.loggedOutComponent || this.props.search || this.props.filter || this.props.tier
 					? 'all'
 					: 'recommended',
+			themeTabs: {
+				recommended: translate( 'Recommended' ),
+				uploaded: translate( 'My Themes' ),
+				all: translate( 'All Themes' ),
+			},
 		};
 	}
 
@@ -207,14 +222,23 @@ class ThemeShowcase extends React.Component {
 		let callback = () => null;
 		// In this state: tabFilter = [ Recommended | ##All(1)## ]  tier = [ All(2) | Free | ##Premium## ]
 		// Clicking "Recommended" forces tier to be "all", since Recommend themes cannot filter on tier.
-		if (
-			( 'recommended' === tabFilter || 'uploaded' === tabFilter ) &&
-			'all' !== this.props.tier
-		) {
+		if ( tabFilter in this.state.themeTabs && 'all' !== tabFilter && 'all' !== this.props.tier ) {
 			callback = () => this.onTierSelect( { value: 'all' } );
 		}
 		this.setState( { tabFilter }, callback );
 	};
+
+	renderTab( tabName ) {
+		const { themeTabs } = this.state;
+		return (
+			<NavItem
+				onClick={ () => this.onFilterClick( tabName ) }
+				selected={ tabName === this.state.tabFilter }
+			>
+				{ themeTabs[ tabName ] }
+			</NavItem>
+		);
+	}
 
 	render() {
 		const {
@@ -308,13 +332,8 @@ class ThemeShowcase extends React.Component {
 				),
 		};
 
-		let selectedText = translate( 'All Themes' );
-
-		if ( 'recommended' === this.state.tabFilter ) {
-			selectedText = translate( 'Recommended' );
-		} else if ( 'uploaded' === this.state.tabFilter ) {
-			selectedText = translate( 'My Themes' );
-		}
+		const { themeTabs, tabFilter } = this.state;
+		const selectedText = themeTabs[ tabFilter ] ?? themeTabs.all;
 
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
@@ -343,40 +362,23 @@ class ThemeShowcase extends React.Component {
 					{ isLoggedIn && (
 						<SectionNav className="themes__section-nav" selectedText={ selectedText }>
 							<NavTabs>
-								<NavItem
-									onClick={ () => this.onFilterClick( 'recommended' ) }
-									selected={ 'recommended' === this.state.tabFilter }
-								>
-									{ translate( 'Recommended' ) }
-								</NavItem>
-								{ isJetpackSite && (
-									<NavItem
-										onClick={ () => this.onFilterClick( 'uploaded' ) }
-										selected={ 'uploaded' === this.state.tabFilter }
-									>
-										{ translate( 'My Themes' ) }
-									</NavItem>
-								) }
-								<NavItem
-									onClick={ () => this.onFilterClick( 'all' ) }
-									selected={ 'all' === this.state.tabFilter }
-								>
-									{ translate( 'All Themes' ) }
-								</NavItem>
+								{ this.renderTab( 'recommended' ) }
+								{ isJetpackSite ? this.renderTab( 'uploaded' ) : null }
+								{ this.renderTab( 'all' ) }
 							</NavTabs>
 						</SectionNav>
 					) }
 
 					{ this.props.upsellBanner }
 
-					{ 'recommended' === this.state.tabFilter && (
+					{ 'recommended' === tabFilter && (
 						<RecommendedThemes
 							listLabel={ ' ' }
 							{ ...themeProps }
 							scrollToSearchInput={ this.scrollToSearchInput }
 						/>
 					) }
-					{ 'all' === this.state.tabFilter &&
+					{ 'all' === tabFilter &&
 						( isJetpackSite ? (
 							this.props.children
 						) : (
@@ -387,7 +389,7 @@ class ThemeShowcase extends React.Component {
 								<ThemesSelection listLabel={ this.props.listLabel } { ...themeProps } />
 							</div>
 						) ) }
-					{ 'uploaded' === this.state.tabFilter && (
+					{ 'uploaded' === tabFilter && (
 						<ThemesSelection listLabel={ this.props.listLabel } { ...themeProps } />
 					) }
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
