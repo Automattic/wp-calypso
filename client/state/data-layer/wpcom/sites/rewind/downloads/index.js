@@ -71,6 +71,7 @@ const fromApi = ( data ) => ( {
 	rewindId: data.rewindId,
 	startedAt: data.startedAt,
 	downloadCount: +data.downloadCount,
+	bytesFormatted: data.bytesFormatted,
 	validUntil: data.validUntil,
 	url: data.url,
 	error: data.error,
