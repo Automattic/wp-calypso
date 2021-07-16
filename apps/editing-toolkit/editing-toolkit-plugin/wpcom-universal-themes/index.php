@@ -79,7 +79,7 @@ function load_core_fse() {
  *
  * @return void
  */
-function load_universal_helpers() {
+function load_helpers() {
 	// we don't need to show anything to non-FSE-capable themes.
 	if ( ! is_fse_theme() ) {
 		return;
@@ -90,6 +90,17 @@ function load_universal_helpers() {
 	add_action( 'admin_notices', __NAMESPACE__ . '\theme_nag' );
 	add_action( 'admin_menu', __NAMESPACE__ . '\add_submenu' );
 	add_action( 'admin_init', __NAMESPACE__ . '\init_settings' );
+}
+
+/**
+ * Unloads our menus
+ *
+ * @return void
+ */
+function unload_helpers() {
+	remove_action( 'admin_notices', __NAMESPACE__ . '\theme_nag' );
+	remove_action( 'admin_menu', __NAMESPACE__ . '\add_submenu' );
+	remove_action( 'admin_init', __NAMESPACE__ . '\init_settings' );
 }
 
 /**
@@ -260,13 +271,18 @@ function display_fse_section() {
  * @return void
  */
 function init() {
-	load_universal_helpers();
 	// always unload first since we will add below only when needed.
 	unload_core_fse();
+	unload_helpers();
+
+	load_helpers();
 	if ( is_core_fse_active() ) {
 		load_core_fse();
 	}
 }
-
-// As of this writing we don't need to add this to any hooks, so just run it.
+// For WPcom REST API requests to work properly.
+add_action( 'restapi_theme_init', __NAMESPACE__ . '\init' );
+// Just run it.
 init();
+
+
