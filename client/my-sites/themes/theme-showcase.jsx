@@ -41,6 +41,7 @@ import SectionNav from 'calypso/components/section-nav';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import NavItem from 'calypso/components/section-nav/item';
 import RecommendedThemes from './recommended-themes';
+import TrendingThemes from './trending-themes';
 
 /**
  * Style dependencies
@@ -59,6 +60,11 @@ const subjectsMeta = {
 	food: { icon: 'flip-horizontal', order: 9 },
 	music: { icon: 'audio', order: 10 },
 };
+const tabFilters = {
+	ALL: { key: 'all', text: 'All Themes' },
+	RECOMMENDED: { key: 'recommended', text: 'Recommended' },
+	TRENDING: { key: 'trending', text: 'Trending' },
+};
 
 const optionShape = PropTypes.shape( {
 	label: PropTypes.string,
@@ -75,8 +81,8 @@ class ThemeShowcase extends React.Component {
 		this.state = {
 			tabFilter:
 				this.props.loggedOutComponent || this.props.search || this.props.filter || this.props.tier
-					? 'all'
-					: 'recommended',
+					? tabFilters.ALL
+					: tabFilters.RECOMMENDED,
 		};
 	}
 
@@ -152,7 +158,7 @@ class ThemeShowcase extends React.Component {
 			// Strip filters and excess whitespace
 			searchString: searchBoxContent.replace( filterRegex, '' ).replace( /\s+/g, ' ' ).trim(),
 		} );
-		this.setState( { tabFilter: 'all' } );
+		this.setState( { tabFilter: tabFilters.ALL } );
 		page( url );
 		this.scrollToSearchInput();
 	};
@@ -191,7 +197,7 @@ class ThemeShowcase extends React.Component {
 	onTierSelect = ( { value: tier } ) => {
 		// In this state: tabFilter = [ ##Recommended## | All(1) ]   tier = [ All(2) | Free | Premium ]
 		// Clicking "Free" or "Premium" forces tabFilter from "Recommended" to "All"
-		if ( tier !== '' && tier !== 'all' && this.state.tabFilter === 'recommended' ) {
+		if ( tier !== '' && tier !== 'all' && this.state.tabFilter.key === 'recommended' ) {
 			this.setState( { tabFilter: 'all' } );
 		}
 		trackClick( 'search bar filter', tier );
@@ -207,7 +213,7 @@ class ThemeShowcase extends React.Component {
 		let callback = () => null;
 		// In this state: tabFilter = [ Recommended | ##All(1)## ]  tier = [ All(2) | Free | ##Premium## ]
 		// Clicking "Recommended" forces tier to be "all", since Recommend themes cannot filter on tier.
-		if ( 'recommended' === tabFilter && 'all' !== this.props.tier ) {
+		if ( 'recommended' === tabFilter.key && 'all' !== this.props.tier ) {
 			callback = () => this.onTierSelect( { value: 'all' } );
 		}
 		this.setState( { tabFilter }, callback );
@@ -330,41 +336,31 @@ class ThemeShowcase extends React.Component {
 						select={ this.onTierSelect }
 					/>
 					{ isLoggedIn && (
-						<SectionNav
-							className="themes__section-nav"
-							selectedText={
-								'recommended' === this.state.tabFilter
-									? translate( 'Recommended' )
-									: translate( 'All Themes' )
-							}
-						>
+						<SectionNav className="themes__section-nav" selectedText={ this.state.tabFilter.text }>
 							<NavTabs>
-								<NavItem
-									onClick={ () => this.onFilterClick( 'recommended' ) }
-									selected={ 'recommended' === this.state.tabFilter }
-								>
-									{ translate( 'Recommended' ) }
-								</NavItem>
-								<NavItem
-									onClick={ () => this.onFilterClick( 'all' ) }
-									selected={ 'all' === this.state.tabFilter }
-								>
-									{ translate( 'All Themes' ) }
-								</NavItem>
+								{ Object.values( tabFilters ).map( ( tabFilter ) => (
+									<NavItem
+										key={ tabFilter.key }
+										onClick={ () => this.onFilterClick( tabFilter ) }
+										selected={ tabFilter.key === this.state.tabFilter.key }
+									>
+										{ tabFilter.text }
+									</NavItem>
+								) ) }
 							</NavTabs>
 						</SectionNav>
 					) }
 
 					{ this.props.upsellBanner }
 
-					{ 'recommended' === this.state.tabFilter && (
+					{ 'recommended' === this.state.tabFilter.key && (
 						<RecommendedThemes
 							listLabel={ ' ' }
 							{ ...themeProps }
 							scrollToSearchInput={ this.scrollToSearchInput }
 						/>
 					) }
-					{ 'all' === this.state.tabFilter && (
+					{ 'all' === this.state.tabFilter.key && (
 						<div className="theme-showcase__all-themes">
 							{ ! this.props.loggedOutComponent && showBanners && (
 								<UpworkBanner location={ 'theme-banner' } />
@@ -372,6 +368,51 @@ class ThemeShowcase extends React.Component {
 							<ThemesSelection listLabel={ this.props.listLabel } { ...themeProps } />
 							{ isJetpackSite && this.props.children }
 						</div>
+					) }
+
+					{ 'trending' === this.state.tabFilter.key && (
+						<TrendingThemes
+							upsellUrl={ this.props.upsellUrl }
+							search={ search }
+							tier={ this.props.tier }
+							filter={ filter }
+							vertical={ this.props.vertical }
+							siteId={ this.props.siteId }
+							listLabel={ ' ' }
+							defaultOption={ this.props.defaultOption }
+							secondaryOption={ this.props.secondaryOption }
+							placeholderCount={ this.props.placeholderCount }
+							getScreenshotUrl={ function ( theme ) {
+								if ( ! getScreenshotOption( theme ).getUrl ) {
+									return null;
+								}
+
+								return localizeThemesPath(
+									getScreenshotOption( theme ).getUrl( theme ),
+									locale,
+									! isLoggedIn
+								);
+							} }
+							onScreenshotClick={ function ( themeId ) {
+								if ( ! getScreenshotOption( themeId ).action ) {
+									return;
+								}
+								getScreenshotOption( themeId ).action( themeId );
+							} }
+							getActionLabel={ function ( theme ) {
+								return getScreenshotOption( theme ).label;
+							} }
+							getOptions={ function ( theme ) {
+								return pickBy(
+									addTracking( options ),
+									( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
+								);
+							} }
+							trackScrollPage={ this.props.trackScrollPage }
+							emptyContent={ this.props.emptyContent }
+							scrollToSearchInput={ this.scrollToSearchInput }
+							bookmarkRef={ this.bookmarkRef }
+						/>
 					) }
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
