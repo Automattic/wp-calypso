@@ -318,6 +318,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 			callback,
 			reduxStore,
 			siteSlug,
+			siteId,
 			isFreeThemePreselected,
 			themeSlugWithRepo
 		);
@@ -339,7 +340,7 @@ export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
 }
 
 export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
-	const { siteSlug } = dependencies;
+	const { siteSlug, siteId } = dependencies;
 	const { cartItem } = stepProvidedItems;
 	if ( isEmpty( cartItem ) ) {
 		// the user selected the free plan
@@ -351,7 +352,16 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 	const providedDependencies = { cartItem };
 	const newCartItems = [ cartItem ].filter( ( item ) => item );
 
-	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, null, null );
+	processItemCart(
+		providedDependencies,
+		newCartItems,
+		callback,
+		reduxStore,
+		siteSlug,
+		siteId,
+		null,
+		null
+	);
 }
 
 export function addDomainToCart(
@@ -365,10 +375,20 @@ export function addDomainToCart(
 	const slug = siteSlug || dependencies.siteSlug;
 	const { domainItem, googleAppsCartItem } = stepProvidedItems;
 	const providedDependencies = stepProvidedDependencies || { domainItem };
+	const siteId = dependencies.siteId ?? stepProvidedDependencies?.siteId;
 
 	const newCartItems = [ domainItem, googleAppsCartItem ].filter( ( item ) => item );
 
-	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug, null, null );
+	processItemCart(
+		providedDependencies,
+		newCartItems,
+		callback,
+		reduxStore,
+		slug,
+		siteId,
+		null,
+		null
+	);
 }
 
 function processItemCart(
@@ -377,6 +397,7 @@ function processItemCart(
 	callback,
 	reduxStore,
 	siteSlug,
+	siteId,
 	isFreeThemePreselected,
 	themeSlugWithRepo
 ) {
@@ -387,7 +408,7 @@ function processItemCart(
 		);
 
 		if ( newCartItemsToAdd.length ) {
-			addToCart( siteSlug, newCartItemsToAdd, function ( cartError ) {
+			addToCart( siteId ?? siteSlug, newCartItemsToAdd, function ( cartError ) {
 				callback( cartError, providedDependencies );
 			} );
 		} else {
