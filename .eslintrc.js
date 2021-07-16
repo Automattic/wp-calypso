@@ -203,6 +203,7 @@ module.exports = {
 				'packages/mocha-debug-reporter/**/*',
 				'packages/spec-junit-reporter/**/*',
 				'packages/spec-xunit-reporter/**/*',
+				'packages/tree-select/**/*',
 				'packages/wpcom-checkout/**/*',
 				'test/e2e/**/*',
 			],
