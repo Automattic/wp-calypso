@@ -199,10 +199,10 @@ export default function CompositeCheckout( {
 	);
 
 	const checkoutFlow = useCheckoutFlowTrackKey( {
+		hasJetpackSiteSlug: !! jetpackSiteSlug,
 		isJetpackCheckout,
 		isJetpackNotAtomic,
 		isLoggedOutCart,
-		isNoSiteCart,
 		isUserComingFromLoginForm,
 	} );
 

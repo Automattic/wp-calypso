@@ -7,19 +7,19 @@ interface Props {
 	isJetpackCheckout: boolean;
 	isJetpackNotAtomic: boolean;
 	isLoggedOutCart?: boolean;
-	isNoSiteCart?: boolean;
 	isUserComingFromLoginForm?: boolean;
+	hasJetpackSiteSlug: boolean;
 }
 
 export default function useCheckoutFlowTrackKey( {
+	hasJetpackSiteSlug,
 	isJetpackCheckout,
 	isJetpackNotAtomic,
 	isLoggedOutCart,
-	isNoSiteCart,
 	isUserComingFromLoginForm,
 }: Props ): string {
 	return useMemo( () => {
-		const isSitelessJetpackCheckout = isJetpackCheckout && isNoSiteCart;
+		const isSitelessJetpackCheckout = isJetpackCheckout && ! hasJetpackSiteSlug;
 		if ( isSitelessJetpackCheckout ) {
 			return 'jetpack_siteless_checkout';
 		}
@@ -35,10 +35,10 @@ export default function useCheckoutFlowTrackKey( {
 
 		return isJetpackNotAtomic ? 'jetpack_checkout' : 'wpcom_checkout';
 	}, [
+		hasJetpackSiteSlug,
 		isJetpackCheckout,
 		isJetpackNotAtomic,
 		isLoggedOutCart,
-		isNoSiteCart,
 		isUserComingFromLoginForm,
 	] );
 }
