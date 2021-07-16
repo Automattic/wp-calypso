@@ -43,6 +43,7 @@ import QueryPlans from 'calypso/components/data/query-plans';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import filterAppropriatePaymentMethods from './lib/filter-appropriate-payment-methods';
 import useStoredCards from './hooks/use-stored-cards';
+import useCheckoutFlowTrackKey from './hooks/use-checkout-flow-track-key';
 import usePrepareProductsForCart from './hooks/use-prepare-products-for-cart';
 import useCreatePaymentMethods from './hooks/use-create-payment-methods';
 import webPayProcessor from './lib/web-pay-processor';
@@ -197,28 +198,13 @@ export default function CompositeCheckout( {
 		[ reduxDispatch ]
 	);
 
-	const checkoutFlow: string = useMemo( () => {
-		const isSitelessJetpackCheckout = isJetpackCheckout && isNoSiteCart;
-		if ( isSitelessJetpackCheckout ) {
-			return 'jetpack_siteless_checkout';
-		}
-
-		if ( isLoggedOutCart ) {
-			if ( isJetpackCheckout ) {
-				return isUserComingFromLoginForm
-					? 'jetpack_site_only_coming_from_login'
-					: 'jetpack_site_only';
-			}
-			return 'wpcom_registrationless';
-		}
-		return isJetpackNotAtomic ? 'jetpack_checkout' : 'wpcom_checkout';
-	}, [
+	const checkoutFlow = useCheckoutFlowTrackKey( {
+		isJetpackCheckout,
+		isJetpackNotAtomic,
 		isLoggedOutCart,
 		isNoSiteCart,
-		isJetpackCheckout,
 		isUserComingFromLoginForm,
-		isJetpackNotAtomic,
-	] );
+	} );
 
 	const countriesList = useCountryList( overrideCountryList || [] );
 
