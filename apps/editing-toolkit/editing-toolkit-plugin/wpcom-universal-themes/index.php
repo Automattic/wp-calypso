@@ -7,7 +7,7 @@
  * @package A8C\FSE
  */
 
-namespace A8C\FSE\Universal_Themes;
+namespace A8C\FSE;
 
 /**
  * This is the option name for enabling/disabling.
@@ -72,6 +72,7 @@ function load_core_fse() {
 	add_action( 'admin_bar_menu', 'gutenberg_adminbar_items', 50 );
 	add_filter( 'menu_order', 'gutenberg_menu_order' );
 	remove_action( 'init', __NAMESPACE__ . '\hide_template_cpts', 11 );
+	remove_action( 'restapi_theme_init', __NAMESPACE__ . '\hide_template_cpts', 11 );
 }
 
 /**
@@ -163,6 +164,7 @@ function unload_core_fse() {
 	remove_action( 'admin_bar_menu', 'gutenberg_adminbar_items', 50 );
 	remove_filter( 'menu_order', 'gutenberg_menu_order' );
 	add_action( 'init', __NAMESPACE__ . '\hide_template_cpts', 11 );
+	add_action( 'restapi_theme_init', __NAMESPACE__ . '\hide_template_cpts', 11 );
 }
 
 /**
@@ -284,5 +286,3 @@ function init() {
 add_action( 'restapi_theme_init', __NAMESPACE__ . '\init' );
 // Just run it.
 init();
-
-
