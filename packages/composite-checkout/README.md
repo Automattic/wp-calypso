@@ -220,6 +220,7 @@ Creates the Checkout form and provides a wrapper for [CheckoutStep](#CheckoutSte
 This component's props are:
 
 - `submitButtonHeader: React.ReactNode`. Displays with the Checkout submit button.
+- `submitButtonFooter: React.ReactNode`. Displays with the Checkout submit button.
 - `disableSubmitButton: boolean`. If true, the submit button will always be disabled. If false (the default), the submit button will be enabled only on the last step and only if the [formStatus](#useFormStatus) is [`.READY`](#FormStatus).
 
 ## CheckoutStepAreaWrapper

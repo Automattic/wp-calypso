@@ -447,6 +447,7 @@ export const SubmitButtonWrapper = styled.div`
 
 	.checkout-button {
 		width: calc( 100% - 60px );
+		margin: 0 auto;
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
@@ -465,11 +466,13 @@ export function CheckoutStepArea( {
 	children,
 	className,
 	submitButtonHeader,
+	submitButtonFooter,
 	disableSubmitButton,
 }: {
 	children: React.ReactNode;
 	className?: string;
 	submitButtonHeader?: React.ReactNode;
+	submitButtonFooter?: React.ReactNode;
 	disableSubmitButton?: boolean;
 } ): JSX.Element {
 	const onEvent = useEvents();
@@ -494,11 +497,12 @@ export function CheckoutStepArea( {
 			{ children }
 
 			<SubmitButtonWrapper className="checkout-steps__submit-button-wrapper">
-				{ submitButtonHeader ? submitButtonHeader : null }
+				{ submitButtonHeader || null }
 				<CheckoutSubmitButton
 					disabled={ isThereAnotherNumberedStep || disableSubmitButton }
 					onLoadError={ onSubmitButtonLoadError }
 				/>
+				{ submitButtonFooter || null }
 			</SubmitButtonWrapper>
 		</CheckoutStepAreaWrapper>
 	);
