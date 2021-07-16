@@ -2,34 +2,30 @@
  * External dependencies
  */
 import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 
 /**
  * Internal dependencies
  */
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import EmailStepSideBar from 'calypso/components/emails/email-step-side-bar';
+import EmailSignupTitanCard from 'calypso/components/emails/email-signup-titan-card';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import EmailTitanCard from 'calypso/components/emails/emails-titan-card';
-import EmailSideExplainer from 'calypso/components/emails/emails-side-explainer';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 
 class EmailsStep extends React.Component {
-	constructor( props ) {
-		super( props );
-	}
+	//TODO
+	handleSkip = () => {};
 
-	getSideContent = () => {
+	renderSideContent = () => {
 		return (
 			<div className="emails__email-side-content-container">
 				<div className="emails__email-side-content">
-					<EmailSideExplainer />
+					<EmailStepSideBar />
 				</div>
 			</div>
 		);
@@ -39,35 +35,37 @@ class EmailsStep extends React.Component {
 		const content = (
 			<div className="register-email-step">
 				<CalypsoShoppingCartProvider>
-					<EmailTitanCard
+					<EmailSignupTitanCard
 						siteUrl={ this.props.progress.domains.siteUrl }
-						addButtonContent={ 'Add' }
-						skipButtonContent={ 'Skip' }
+						//TODO
+						addButtonTitle={ this.props.translate( 'Add' ) }
+						skipButtonTitle={ this.props.translate( 'Skip' ) }
 						onAddButtonClick={ () => {} }
 						onSkipButtonClick={ () => {} }
-						price={ '3.5' }
-					></EmailTitanCard>
+						//TODO
+						price={ '3.5$' }
+					/>
 				</CalypsoShoppingCartProvider>
 			</div>
 		);
-		const sideContent = this.getSideContent();
+		const sideContent = this.renderSideContent();
 
 		return (
-			<div
-				key={ this.props.step + this.props.stepSectionName }
-				className="emails__step-content emails__step-content-email-step"
-			>
-				{ content }
-				{ sideContent }
+			<div className="emails__email-suggestion-content-container">
+				<div
+					key={ this.props.step + this.props.stepSectionName }
+					className="emails__step-content emails__step-content-email-step"
+				>
+					{ content }
+					{ sideContent }
+				</div>
 			</div>
 		);
 	}
 
-	handleSkip = () => {};
-
 	render() {
 		const { flowName, translate, stepName, positionInFlow } = this.props;
-		const backUrl = '/emails/';
+		const backUrl = 'start/domains/';
 		const headerText = translate( 'Add Professional Email' );
 		const url = this.props.progress.domains.siteUrl;
 		const subHeaderText = translate(
@@ -87,7 +85,7 @@ class EmailsStep extends React.Component {
 				isExternalBackUrl={ false }
 				fallbackHeaderText={ headerText }
 				fallbackSubHeaderText={ subHeaderText }
-				stepContent={ <div>{ this.renderContent() }</div> }
+				stepContent={ this.renderContent() }
 				showSiteMockups={ false }
 				allowBackFirstStep={ !! backUrl }
 				backLabelText={ translate( 'Back' ) }

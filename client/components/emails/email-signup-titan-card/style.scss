@@ -288,42 +288,6 @@ body.is-section-signup.is-white-signup {
 			margin-right: 40px;
 		}
 
-		.email-product-price__free-text {
-			color: var( --color-neutral-60 );
-			font-size: $font-body;
-		}
-
-		.email-product-price__price {
-			font-size: $font-body-small;
-
-			&:not( .email-product-price__free-price ) {
-				color: var( --color-neutral-40 );
-			}
-		}
-
-		.email-registration-suggestion__title {
-			font-size: 0.875rem;
-
-			@include break-mobile {
-				font-size: 1rem;
-			}
-		}
-
-		& .email-registration-suggestion__email-title {
-			color: var( --studio-gray-90 );
-		}
-
-		& .email-product-price__free-price {
-			font-size: $font-body-small;
-			color: var( --studio-green-60 );
-			line-height: 20px;
-			letter-spacing: 0.2px;
-
-			@include break-mobile {
-				font-weight: 500; /* stylelint-disable-line */
-			}
-		}
-
 		&:not( .featured-email-suggestion ) {
 			background: none;
 			border-radius: 4px;
@@ -342,18 +306,6 @@ body.is-section-signup.is-white-signup {
 				.email-registration-suggestion__email-title-tld {
 					font-weight: 500; /* stylelint-disable-line */
 				}
-			}
-
-			.email-product-price__free-text {
-				font-size: $font-body;
-
-				@include break-mobile {
-					font-size: $font-body-small;
-				}
-			}
-
-			.email-product-price__price:not( .email-product-price__free-price ) {
-				font-size: $font-body-small;
 			}
 
 			.email-suggestion__action-container {
@@ -376,20 +328,6 @@ body.is-section-signup.is-white-signup {
 					width: auto;
 				}
 			}
-
-			&.email-transfer-suggestion {
-				$cod-grey: #2b2d2f;
-
-				.email-suggestion__action {
-					color: $cod-grey;
-					text-decoration-line: underline;
-				}
-				.email-suggestion__chevron {
-					fill: $cod-grey;
-					margin-left: 0;
-				}
-			}
-
 			&.email-skip-suggestion {
 				$cod-grey: #2b2d2f;
 

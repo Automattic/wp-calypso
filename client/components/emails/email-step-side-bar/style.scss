@@ -22,17 +22,17 @@
     }
 }
 
-svg {
-	padding-top: 4px;
-	fill: #1d2327;
-	margin-right: 13px;
-}
-
-.checkmark {
+.gridicons-checkmark {
 	display: inline-flex;
 	align-self: center;
 	height: 1em;
 	width: 1em;
 	top: 0.125em;
 	position: relative;
+}
+
+svg {
+	padding-top: 4px;
+	fill: #1d2327;
+	margin-right: 13px;
 }

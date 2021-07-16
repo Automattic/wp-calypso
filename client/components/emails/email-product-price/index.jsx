@@ -5,71 +5,41 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
+import moment from 'moment';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
-import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-class EmailProductPrice extends React.Component {
-	static propTypes = {
-		isLoading: PropTypes.bool,
-		price: PropTypes.string,
-		salePrice: PropTypes.string,
-	};
+const EmailProductPrice = ( { isLoading, price, translate } ) => {
+	const startDate = moment().add( 3, 'months' ).format( 'LL' );
+	const message = translate( 'Free for first three months' );
+	const priceText = translate( '%(price)s per user per month starting %(startDate)s', {
+		args: {
+			price,
+			startDate,
+		},
+		comment:
+			'%(price)s is the price of a subscription, and %(startDate)s is the date the subscription will first renew',
+	} );
 
-	static defaultProps = {
-		isMappingProduct: false,
-	};
-
-	renderContentText() {
-		const message = this.props.translate( 'Free for first three months' );
-
-		return <div className="email-product-price__free-text">{ message }</div>;
+	if ( isLoading ) {
+		return <div className="email-product-price is-placeholder">{ translate( 'Loading…' ) }</div>;
 	}
 
-	renderContentPrice() {
-		const threeMonths = 86400 * 90 * 10000;
-		const startDate = Date.now() + threeMonths;
+	return (
+		<div className="email-product-price is-free-email email-product-price__email-step-signup-flow">
+			<div className="email-product-price__free-text">{ message }</div>
+			<div className="email-product-price__free-price">{ priceText }</div>
+		</div>
+	);
+};
 
-		const priceText = this.props.translate( '%(cost)s per month starting %(starts)s', {
-			args: { cost: this.props.price, starts: startDate },
-		} );
-
-		return <div className="email-product-price__price">{ priceText }</div>;
-	}
-
-	renderContent() {
-		const className = classnames( 'email-product-price', 'is-free-domain', {
-			'email-product-price__email-step-signup-flow': this.props.showStrikedOutPrice,
-		} );
-		return (
-			<div className={ className }>
-				{ this.renderContentText() }
-				{ this.renderContentPrice() }
-			</div>
-		);
-	}
-
-	render() {
-		if ( this.props.isLoading ) {
-			return (
-				<div className="email-product-price is-placeholder">
-					{ this.props.translate( 'Loading…' ) }
-				</div>
-			);
-		}
-
-		return this.renderContent();
-	}
-}
+EmailProductPrice.propTypes = {
+	isLoading: PropTypes.bool,
+	price: PropTypes.string,
+};
 
 export default localize( EmailProductPrice );
