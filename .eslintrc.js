@@ -198,6 +198,7 @@ module.exports = {
 				'packages/composite-checkout/**/*',
 				'packages/create-calypso-config/**/*',
 				'packages/data-stores/**/*',
+				'packages/domain-picker/**/*',
 				'packages/js-utils/**/*',
 				'packages/launch/**/*',
 				'packages/mocha-debug-reporter/**/*',
