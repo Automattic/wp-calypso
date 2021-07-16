@@ -9,12 +9,12 @@ import page from 'page';
  * TODO: remove all feature flags from urls
  */
 
-export function navigateToProductHomePage( selectedSiteSlug: string, pluginSlug: string ): void {
-	page(
-		`/marketplace/product/details/${ pluginSlug }/${ selectedSiteSlug }?flags=marketplace-yoast`
-	);
+export function navigateToProductGroupHomePage(
+	selectedSiteSlug: string,
+	productGroupSlug: keyof IProductGroupCollection
+): void {
+	page( `/marketplace/product/details/${ productGroupSlug }/${ selectedSiteSlug }` );
 }
-
 export function navigateToInstallationThankYouPage( selectedSiteSlug: string ): void {
 	page( `/marketplace/thank-you/${ selectedSiteSlug }?flags=marketplace-yoast` );
 }
