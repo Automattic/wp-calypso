@@ -84,7 +84,7 @@ class Hosting extends Component {
 			<UpsellNudge
 				title={ translate( 'Upgrade to the Business plan to access all hosting features' ) }
 				event="calypso_hosting_configuration_upgrade_click"
-				href={ `/checkout/${ siteId }/business` }
+				href={ `/checkout/${ siteId }/business?redirect_to=/hosting-config/${ siteId }` }
 				plan={ PLAN_BUSINESS }
 				feature={ FEATURE_SFTP }
 				showIcon={ true }
