@@ -39,19 +39,20 @@ class Preference extends Component {
 		}
 
 		return (
-			<div>
-				<div className="preferences-helper__preference-header">
+			<tr>
+				<td className="preference__unset">
 					<button
-						className="preferences-helper__unset"
 						onClick={ partial( unsetPreference, name, null ) }
 						title={ translate( 'Unset Preference' ) }
 					>
-						{ 'X' }
+						<span role="img" aria-label={ translate( 'Unset Preference' ) }>
+							&#10060;
+						</span>
 					</button>
-					<span>{ name }</span>
-				</div>
-				{ preferenceHandler }
-			</div>
+				</td>
+				<td className="preference__name">{ name }</td>
+				<td className="preference__value">{ preferenceHandler }</td>
+			</tr>
 		);
 	}
 }
