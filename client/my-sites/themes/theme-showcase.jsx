@@ -363,6 +363,17 @@ class ThemeShowcase extends React.Component {
 						/>
 					) }
 					{ 'all' === this.state.tabFilter.key && (
+						( isJetpackSite ? (
+							this.props.children
+						) : (
+							<div className="theme-showcase__all-themes">
+								{ ! this.props.loggedOutComponent && showBanners && (
+									<UpworkBanner location={ 'theme-banner' } />
+								) }
+								<ThemesSelection listLabel={ this.props.listLabel } { ...themeProps } />
+							</div>
+						) ) }
+					{ 'uploaded' === this.state.tabFilter && (
 						<div className="theme-showcase__all-themes">
 							{ ! this.props.loggedOutComponent && showBanners && (
 								<UpworkBanner location={ 'theme-banner' } />
