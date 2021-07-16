@@ -11,7 +11,7 @@ const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
-describe( `[${ host }] Manage Domains - Map a Domain: (${ screenSize }) @parallel`, function () {
+describe.skip( `[${ host }] Manage Domains - Map a Domain: (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
 
 	const blogName = 'nature.com';

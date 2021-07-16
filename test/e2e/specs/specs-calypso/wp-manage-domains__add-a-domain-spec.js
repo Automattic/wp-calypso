@@ -15,7 +15,7 @@ const screenSize = driverManager.currentScreenSize();
 const domainsInboxId = config.get( 'domainsInboxId' );
 const host = dataHelper.getJetpackHost();
 
-describe( `[${ host }] Manage Domains - Add a Domain: (${ screenSize }) @parallel`, function () {
+describe.skip( `[${ host }] Manage Domains - Add a Domain: (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
 
 	const tmpFreeSiteName = dataHelper.getNewBlogName();
