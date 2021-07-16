@@ -124,6 +124,10 @@ function render_range( new_sub_text, new_sub_range, range_info, range_data, opti
 			break;
 		case 'button':
 			new_classes.push( 'is-primary' );
+		case 'custom-html':
+			new_container = document.createElement( 'div' );
+			new_container.innerHTML = range_info.content;
+			break;
 		default:
 			// Most range types fall here
 			if ( ( options.links && range_info.url ) || range_info_type === 'a' ) {
