@@ -114,11 +114,24 @@ export async function close(): Promise< void > {
 }
 
 /**
- * Given a page, this will clear the cookies for the context to which the page belongs.
+ * Given a page, this will clear all cookies, local storage and reset permissions for the
+ * Browser Context to which the page belongs.
  *
  * @param {Page} page Object representing a page launched by Playwright.
  * @returns {Promise<void>} No return value.
  */
-export async function clearCookies( page: Page ): Promise< void > {
-	await page.context().clearCookies();
+export async function clearCookies( page: Page, url: string ): Promise< void > {
+	const browserContext = page.context();
+	await browserContext.clearCookies();
+	// await browserContext.clearPermissions();
+	await page.goto( config.get( 'calypsoBaseURL' ) );
+	await page.evaluate( 'window.document.cookie = "sensitive_pixel_option=no;";' );
+	await page.evaluate(
+		'window.document.cookie = "sensitive_pixel_option=no;domain=.wordpress.com;SameSite=None;Secure"'
+	);
+	// await page.waitForTimeout( 500 );
+	await page.goto( 'https://r-login.wordpress.com/' );
+	await browserContext.clearCookies();
+	await page.evaluate( 'localStorage.clear();' );
+	await page.goto( url );
 }

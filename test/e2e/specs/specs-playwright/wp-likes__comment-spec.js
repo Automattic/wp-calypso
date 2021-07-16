@@ -14,7 +14,7 @@ const quote =
 
 describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 	let page;
-	let postURL;
+	let publishedURL;
 
 	setupHooks( ( args ) => {
 		page = args.page;
@@ -46,8 +46,8 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 		} );
 
 		it( 'Publish and visit post', async function () {
-			postURL = gutenbergEditorPage.publish( { visit: true } );
-			assert.strictEqual( postURL, await page.url() );
+			publishedURL = await gutenbergEditorPage.publish( { visit: true } );
+			assert.strictEqual( publishedURL, await page.url() );
 			await PublishedPostPage.Expect( page );
 		} );
 
