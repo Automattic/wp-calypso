@@ -102,7 +102,7 @@
 		"cache-loader": "^4.1.0",
 		"chai": "^4.3.4",
 		"chalk": "^4.0.0",
-		"chrono-node": "^1.3.5",
+		"chrono-node": "^2.2.4",
 		"circular-dependency-plugin": "^5.2.0",
 		"classnames": "^2.3.1",
 		"clipboard": "^2.0.6",
