@@ -3167,6 +3167,55 @@ describe( 'selectors', () => {
 			);
 		} );
 
+		test( 'should prepend guide parameter for WordPress.com site', () => {
+			const customizerUrl = getCustomizerUrl(
+				{
+					sites: {
+						items: {
+							77203199: {
+								ID: 77203199,
+								URL: 'https://example.com',
+								jetpack: false,
+							},
+						},
+					},
+				},
+				77203199,
+				'identity',
+				null,
+				'test-guide'
+			);
+
+			chaiExpect( customizerUrl ).to.equal( '/customize/identity/example.com?guide=test-guide' );
+		} );
+
+		test( 'should prepend guide parameter for Jetpack site', () => {
+			const customizerUrl = getCustomizerUrl(
+				{
+					sites: {
+						items: {
+							77203199: {
+								ID: 77203199,
+								URL: 'https://example.com',
+								jetpack: true,
+								options: {
+									admin_url: 'https://example.com/wp-admin/',
+								},
+							},
+						},
+					},
+				},
+				77203199,
+				'identity',
+				null,
+				'test-guide'
+			);
+
+			chaiExpect( customizerUrl ).to.equal(
+				'https://example.com/wp-admin/customize.php?autofocus%5Bsection%5D=title_tagline&guide=test-guide'
+			);
+		} );
+
 		describe( 'browser', () => {
 			beforeAll( () => {
 				global.window = {
