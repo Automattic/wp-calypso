@@ -1,6 +1,7 @@
 import assert from 'assert';
 import {
 	DataHelper,
+	BrowserManager,
 	LoginFlow,
 	NewPostFlow,
 	GutenbergEditorPage,
@@ -13,7 +14,7 @@ const quote =
 
 describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 	let page;
-	let postURL;
+	let publishedURL;
 
 	setupHooks( ( args ) => {
 		page = args.page;
@@ -44,16 +45,42 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 		} );
 
 		it( 'Publish and visit post', async function () {
-			const publishedURL = await gutenbergEditorPage.publish( { visit: true } );
+			publishedURL = await gutenbergEditorPage.publish( { visit: true } );
 			assert.strictEqual( await page.url(), publishedURL );
-		} );
-
-		it( 'Like post', async function () {
 			publishedPostPage = await PublishedPostPage.Expect( page );
 		} );
 
 		it( 'Like post', async function () {
 			await publishedPostPage.likePost();
+		} );
+
+		it( 'Unlike post', async function () {
+			await publishedPostPage.unlikePost();
+		} );
+	} );
+
+	describe( 'Like an existing post as logged out user', function () {
+		let loginFlow;
+		let publishedPostPage;
+
+		it( 'Set up', async function () {
+			await page.pause();
+			await BrowserManager.clearCookies( page );
+		} );
+
+		it( 'Visit site', async function () {
+			// This is a raw call to the underlying page as it does not warrant creating
+			// an entire flow or page for this one action.
+			await page.goto( publishedURL );
+		} );
+
+		it( 'Like post as logged out user and confirm post is liked', async function () {
+			publishedPostPage = await PublishedPostPage.Expect( page );
+			loginFlow = new LoginFlow( page, 'gutenbergSimpleSiteUser' );
+
+			// Clicking the Like button will bring up a new popup, so
+			// specifically call the flow for dealing with logging in from a popup.
+			await Promise.all( [ loginFlow.logInFromPopup(), publishedPostPage.likePost() ] );
 		} );
 
 		it( 'Unlike post', async function () {

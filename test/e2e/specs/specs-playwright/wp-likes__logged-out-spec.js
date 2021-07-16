@@ -12,7 +12,7 @@ import {
  */
 const user = 'gutenbergSimpleSiteUser';
 
-describe( DataHelper.createSuiteTitle( 'Likes (Logged Out)' ), function () {
+describe.skip( DataHelper.createSuiteTitle( 'Likes (Logged Out)' ), function () {
 	let page;
 
 	setupHooks( ( args ) => {
