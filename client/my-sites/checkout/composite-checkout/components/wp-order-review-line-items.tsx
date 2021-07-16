@@ -155,11 +155,8 @@ const LineItemPriceWrapper = styled.span< { theme?: Theme; isSummary?: boolean }
 	}
 `;
 
-const DeleteButton = styled( Button )< { theme?: Theme; coupon?: boolean } >`
-	position: absolute;
-	padding: 10px;
-	right: -50px;
-	top: ${ ( props ) => ( props.coupon ? '0px' : '7px' ) };
+const DeleteButton = styled( Button )< { theme?: Theme } >`
+	padding: 0 0 0 10px;
 
 	:hover rect {
 		fill: ${ ( props ) => props.theme.colors.error };
@@ -167,11 +164,6 @@ const DeleteButton = styled( Button )< { theme?: Theme; coupon?: boolean } >`
 
 	svg {
 		opacity: 1;
-	}
-
-	.rtl & {
-		right: auto;
-		left: -50px;
 	}
 `;
 
@@ -220,7 +212,6 @@ function DeleteIcon( { uniqueID, product }: { uniqueID: string; product: string 
 
 export function WPNonProductLineItem( {
 	lineItem,
-	coupon,
 	className = null,
 	isSummary,
 	hasDeleteButton,
@@ -228,7 +219,6 @@ export function WPNonProductLineItem( {
 	createUserAndSiteBeforeTransaction,
 }: {
 	lineItem: LineItemType;
-	coupon?: boolean;
 	className?: string | null;
 	isSummary?: boolean;
 	hasDeleteButton?: boolean;
@@ -271,7 +261,6 @@ export function WPNonProductLineItem( {
 			{ hasDeleteButton && removeProductFromCart && formStatus === FormStatus.READY && (
 				<>
 					<DeleteButton
-						coupon={ coupon }
 						className="checkout-line-item__remove-product"
 						buttonType="borderless"
 						disabled={ isDisabled }
@@ -342,7 +331,6 @@ export function WPOrderReviewLineItems( {
 			{ couponLineItem && (
 				<WPOrderReviewListItem key={ couponLineItem.id }>
 					<NonProductLineItem
-						coupon
 						lineItem={ couponLineItem }
 						isSummary={ isSummary }
 						hasDeleteButton={ ! isSummary }
@@ -910,18 +898,6 @@ function WPLineItem( {
 					isSummary={ isSummary }
 				/>
 			</span>
-			{ sublabel && (
-				<LineItemMeta>
-					<LineItemSublabelAndPrice product={ product } />
-					<DomainDiscountCallout product={ product } />
-					<FirstTermDiscountCallout product={ product } />
-					<CouponDiscountCallout product={ product } />
-					<IntroductoryOfferCallout product={ product } />
-				</LineItemMeta>
-			) }
-			{ isJetpackSearch( product ) && <JetpackSearchMeta product={ product } /> }
-			{ isGSuite && <GSuiteUsersList product={ product } /> }
-			{ isTitanMail && <TitanMailMeta product={ product } isRenewal={ isRenewal } /> }
 			{ hasDeleteButton && removeProductFromCart && formStatus === FormStatus.READY && (
 				<>
 					<DeleteButton
@@ -966,6 +942,18 @@ function WPLineItem( {
 					/>
 				</>
 			) }
+			{ sublabel && (
+				<LineItemMeta>
+					<LineItemSublabelAndPrice product={ product } />
+					<DomainDiscountCallout product={ product } />
+					<FirstTermDiscountCallout product={ product } />
+					<CouponDiscountCallout product={ product } />
+					<IntroductoryOfferCallout product={ product } />
+				</LineItemMeta>
+			) }
+			{ isJetpackSearch( product ) && <JetpackSearchMeta product={ product } /> }
+			{ isGSuite && <GSuiteUsersList product={ product } /> }
+			{ isTitanMail && <TitanMailMeta product={ product } isRenewal={ isRenewal } /> }
 
 			{ shouldShowVariantSelector && onChangePlanLength && (
 				<ItemVariationPicker
