@@ -42,7 +42,9 @@ function FormattedHeader( {
 			{ ! isSecondary && <h1 className={ headerClasses }>{ preventWidows( headerText, 2 ) }</h1> }
 			{ isSecondary && <h2 className={ headerClasses }>{ preventWidows( headerText, 2 ) }</h2> }
 			{ subHeaderText && (
-				<p className="formatted-header__subtitle">{ preventWidows( subHeaderText, 2 ) }</p>
+				<p className="formatted-header__subtitle" data-hello="world">
+					{ preventWidows( subHeaderText, 2 ) }
+				</p>
 			) }
 		</header>
 	);
