@@ -52,6 +52,7 @@ export function recordOnboardingComplete( params: OnboardingCompleteParameters )
 	const trackingParams = {
 		is_new_user: params.isNewUser,
 		is_new_site: params.isNewSite,
+		is_blank_canvas: params.isBlankCanvas,
 		blog_id: params.blogId,
 		has_cart_items: params.hasCartItems,
 		flow: params.flow,

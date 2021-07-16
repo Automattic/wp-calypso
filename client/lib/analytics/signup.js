@@ -32,7 +32,7 @@ export function recordSignupStart( flow, ref ) {
 }
 
 export function recordSignupComplete(
-	{ flow, siteId, isNewUser, hasCartItems, isNew7DUserSite },
+	{ flow, siteId, isNewUser, hasCartItems, isNew7DUserSite, isBlankCanvas },
 	now
 ) {
 	const isNewSite = !! siteId;
@@ -42,7 +42,7 @@ export function recordSignupComplete(
 		return addToQueue(
 			'signup',
 			'recordSignupComplete',
-			{ flow, siteId, isNewUser, hasCartItems, isNew7DUserSite },
+			{ flow, siteId, isNewUser, hasCartItems, isNew7DUserSite, isBlankCanvas },
 			true
 		);
 	}

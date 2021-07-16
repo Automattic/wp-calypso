@@ -20,6 +20,7 @@ import {
 	startsWith,
 } from 'lodash';
 import { connect } from 'react-redux';
+import { isBlankCanvasDesign } from '@automattic/design-picker';
 
 /**
  * Internal dependencies
@@ -437,6 +438,7 @@ class Signup extends React.Component {
 			isNewUser,
 			hasCartItems,
 			isNew7DUserSite,
+			isBlankCanvas: isBlankCanvasDesign( dependencies.selectedDesign ),
 		} );
 
 		this.handleLogin( dependencies, destination );
