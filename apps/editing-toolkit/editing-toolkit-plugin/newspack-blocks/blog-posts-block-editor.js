@@ -10,6 +10,7 @@ import { addFilter } from '@wordpress/hooks';
  */
 import { settings } from './synced-newspack-blocks/blocks/homepage-articles/index';
 import { registerQueryStore } from './synced-newspack-blocks/blocks/homepage-articles/store';
+import { CAROUSEL_BLOCK_NAME } from './consts';
 
 /**
  * Block name in the A8C\FSE context.
@@ -32,4 +33,6 @@ registerBlockType( blockName, {
 	category: 'widgets',
 } );
 
-registerQueryStore( blockName );
+// The Blog Posts block and Carousel block should use the same store, so that deduplication is handled
+// between these blocks.
+registerQueryStore( [ blockName, CAROUSEL_BLOCK_NAME ] );
