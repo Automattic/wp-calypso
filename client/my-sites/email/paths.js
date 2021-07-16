@@ -93,6 +93,21 @@ export function emailManagementTitanControlPanelRedirect(
 	);
 }
 
+export function emailManagementTitanSetupThankYouPage(
+	siteName,
+	domainName,
+	emailAddress = null,
+	relativeTo = null
+) {
+	return emailManagementEdit(
+		siteName,
+		domainName,
+		'titan/thank-you',
+		relativeTo,
+		emailAddress ? { email: emailAddress } : {}
+	);
+}
+
 export function emailManagement( siteName, domainName, relativeTo = null ) {
 	let path;
 
