@@ -14,6 +14,7 @@ import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/laun
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { verifyEmail } from 'calypso/state/current-user/email-verification/actions';
 import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
+import earnSectionImage from 'calypso/assets/images/earn/earn-section.svg';
 
 const getTaskDescription = ( task, { isDomainUnverified } ) => {
 	switch ( task.id ) {
@@ -130,6 +131,19 @@ export const getTask = (
 					actionDispatchArgs: [ siteId, task.id ],
 				} ),
 				isSkippable: true,
+			};
+			break;
+		case CHECKLIST_KNOWN_TASKS.WOOCOMMERCE_SETUP:
+			taskData = {
+				timing: 7,
+				title: translate( 'Finish store setup' ),
+				description: translate(
+					"You're not ready to receive orders until you complete store setup."
+				),
+				actionText: translate( 'Finish store setup' ),
+				actionUrl: taskUrls?.woocommerce_setup,
+				illustration: earnSectionImage,
+				actionDisableOnComplete: false,
 			};
 			break;
 		case CHECKLIST_KNOWN_TASKS.SITE_LAUNCHED:
