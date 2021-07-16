@@ -379,7 +379,6 @@ class ThemeShowcase extends React.Component {
 								<UpworkBanner location={ 'theme-banner' } />
 							) }
 							<ThemesSelection listLabel={ this.props.listLabel } { ...themeProps } />
-							{ isJetpackSite && this.props.children }
 						</div>
 					) }
 
