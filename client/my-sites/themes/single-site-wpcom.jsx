@@ -19,6 +19,7 @@ import ThemeShowcase from './theme-showcase';
 import ThemesHeader from './themes-header';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
+import isWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 
 const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 	const {
@@ -28,11 +29,11 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 		isVip,
 		siteSlug,
 		translate,
-		isJetpack,
+		isJetpackNotAtomic,
 	} = props;
 
 	const displayUpsellBanner = ! requestingSitePlans && ! hasUnlimitedPremiumThemes && ! isVip;
-	const bannerLocationBelowSearch = ! isJetpack;
+	const bannerLocationBelowSearch = ! isJetpackNotAtomic;
 
 	const upsellUrl = `/plans/${ siteSlug }`;
 	let upsellBanner = null;
@@ -83,7 +84,7 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 } );
 
 export default connect( ( state, { siteId } ) => ( {
-	isJetpack: isJetpackSite( state, siteId ),
+	isJetpackNotAtomic: isJetpackSite( state, siteId ) && ! isWpcomAtomic( state, siteId ),
 	isVip: isVipSite( state, siteId ),
 	siteSlug: getSiteSlug( state, siteId ),
 	hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
