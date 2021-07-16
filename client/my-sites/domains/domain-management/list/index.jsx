@@ -52,7 +52,7 @@ import InfoPopover from 'calypso/components/info-popover';
 import ExternalLink from 'calypso/components/external-link';
 import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
 import AddDomainButton from 'calypso/my-sites/domains/domain-management/list/add-domain-button';
-import EmptyDomainsListNudge from 'calypso/my-sites/domains/domain-management/list/empty-domains-list-nudge';
+import EmptyDomainsListCard from 'calypso/my-sites/domains/domain-management/list/empty-domains-list-card';
 
 /**
  * Style dependencies
@@ -138,7 +138,7 @@ export class List extends React.Component {
 				<div className="domain-management-list__primary-domain">{ this.renderPrimaryDomain() }</div>
 
 				{ ! this.isLoading() && (
-					<EmptyDomainsListNudge
+					<EmptyDomainsListCard
 						selectedSite={ selectedSite }
 						hasDomainCredit={ this.props.hasDomainCredit }
 					/>

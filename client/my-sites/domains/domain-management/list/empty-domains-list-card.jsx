@@ -4,6 +4,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useTranslate } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -14,9 +15,18 @@ import { domainAddNew, domainUseYourDomain } from 'calypso/my-sites/domains/path
 import customerHomeIllustrationTaskFindDomain from 'calypso/assets/images/customer-home/illustration--task-find-domain.svg';
 import { isFreePlan } from '@automattic/calypso-products';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-function EmptyDomainsListNudge( { selectedSite, hasDomainCredit } ) {
+function EmptyDomainsListCard( { selectedSite, hasDomainCredit, dispatchRecordTracksEvent } ) {
 	const translate = useTranslate();
+
+	const getActionClickHandler = ( type, buttonURL, sourceCardType ) => () => {
+		dispatchRecordTracksEvent( 'calypso_empty_domain_list_card_action', {
+			button_type: type,
+			button_url: buttonURL,
+			source_card_type: sourceCardType,
+		} );
+	};
 
 	const siteHasPaidPlan =
 		selectedSite?.plan?.product_slug && ! isFreePlan( selectedSite.plan.product_slug );
@@ -42,7 +52,7 @@ function EmptyDomainsListNudge( { selectedSite, hasDomainCredit } ) {
 		actionURL = domainAddNew( selectedSite.slug );
 		secondaryAction = translate( 'I have a domain' );
 		secondaryActionURL = domainUseYourDomain( selectedSite.slug );
-		contentType = 'domain_credit';
+		contentType = 'free_domain_credit';
 	}
 
 	return (
@@ -54,8 +64,14 @@ function EmptyDomainsListNudge( { selectedSite, hasDomainCredit } ) {
 				illustrationWidth={ 150 }
 				action={ action }
 				actionURL={ actionURL }
+				actionCallback={ getActionClickHandler( 'primary', actionURL, contentType ) }
 				secondaryAction={ secondaryAction }
 				secondaryActionURL={ secondaryActionURL }
+				secondartActionCallback={ getActionClickHandler(
+					'secondary',
+					secondaryActionURL,
+					contentType
+				) }
 			/>
 			<TrackComponentView
 				eventName="calypso_get_your_domain_empty_impression"
@@ -65,10 +81,13 @@ function EmptyDomainsListNudge( { selectedSite, hasDomainCredit } ) {
 	);
 }
 
-EmptyDomainsListNudge.propTypes = {
+EmptyDomainsListCard.propTypes = {
 	selectedSite: PropTypes.object,
 	hasDomainCredit: PropTypes.bool,
 	domains: PropTypes.array,
+	dispatchRecordTracksEvent: PropTypes.func,
 };
 
-export default EmptyDomainsListNudge;
+export default connect( null, { dispatchRecordTracksEvent: recordTracksEvent } )(
+	EmptyDomainsListCard
+);
