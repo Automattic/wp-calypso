@@ -55,20 +55,21 @@ class JetpackCloudSidebar extends Component {
 				<SidebarFooter>
 					<SidebarMenu>
 						<SidebarItem
-							label={ translate( 'Get help', {
-								comment: 'Jetpack Cloud sidebar navigation item',
-							} ) }
-							link="https://jetpack.com/support"
-							materialIcon="help"
-							materialIconStyle="filled"
-							onNavigate={ this.onGetHelp }
-						/>
-						<SidebarItem
 							label={ translate( 'WP Admin', {
 								comment: 'Jetpack Cloud sidebar navigation item',
 							} ) }
 							link={ jetpackAdminUrl }
 							icon="my-sites"
+						/>
+						<SidebarItem
+							label={ translate( 'Get help', {
+								comment: 'Jetpack Cloud sidebar navigation item',
+							} ) }
+							link="https://jetpack.com/support"
+							className="sidebar__jetpack-cloud-item-has-border"
+							materialIcon="help"
+							materialIconStyle="filled"
+							onNavigate={ this.onGetHelp }
 						/>
 					</SidebarMenu>
 				</SidebarFooter>
