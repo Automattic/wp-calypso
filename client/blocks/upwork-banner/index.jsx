@@ -27,12 +27,9 @@ class UpworkBanner extends PureComponent {
 	};
 
 	render() {
-		const { isBannerVisible, translate, location, currentPlan } = this.props;
+		const { translate, location, currentPlan } = this.props;
 		const plan = currentPlan?.productSlug;
 
-		if ( ! isBannerVisible ) {
-			return null;
-		}
 		return (
 			<UpsellNudge
 				event={ 'calypso_upwork_banner_start_now_button_click' }
