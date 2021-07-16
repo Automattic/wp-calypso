@@ -1,25 +1,16 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
-import classNames from 'classnames';
+import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { sprintf } from '@wordpress/i18n';
-import { useI18n } from '@wordpress/react-i18n';
-import { useLocale } from '@automattic/i18n-utils';
 import { useSelect } from '@wordpress/data';
+import { sprintf } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
-
-import type { DomainSuggestions, Plans } from '@automattic/data-stores';
-
-/**
- * Internal dependencies
- */
+import { useI18n } from '@wordpress/react-i18n';
+import classNames from 'classnames';
+import * as React from 'react';
 import PlansFeatureList from '../plans-feature-list';
 import { PLANS_STORE } from '../stores';
-
 import type { CTAVariation, PopularBadgeVariation } from './types';
+import type { DomainSuggestions, Plans } from '@automattic/data-stores';
 
 // TODO: remove when all needed core types are available
 /*#__PURE__*/ import '../types-patch';
