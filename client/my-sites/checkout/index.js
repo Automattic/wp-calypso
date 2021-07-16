@@ -15,6 +15,7 @@ import {
 	redirectToSupportSession,
 	redirectJetpackLegacyPlans,
 	jetpackCheckoutThankYou,
+	jetpackCheckoutThankYouCompleted,
 } from './controller';
 import { noop } from './utils';
 import { recordSiftScienceUser } from 'calypso/lib/siftscience';
@@ -27,6 +28,13 @@ export default function () {
 
 	if ( isEnabled( 'jetpack/siteless-checkout' ) ) {
 		page( '/checkout/jetpack/:productSlug', noSite, checkoutSiteless, makeLayout, clientRender );
+		page(
+			'/checkout/jetpack/thank-you-completed/no-site/:product',
+			noSite,
+			jetpackCheckoutThankYouCompleted,
+			makeLayout,
+			clientRender
+		);
 		page(
 			'/checkout/jetpack/thank-you/no-site/:product',
 			noSite,
