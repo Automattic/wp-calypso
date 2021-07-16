@@ -34,7 +34,7 @@ import Search from '@automattic/search';
  */
 import config from '@automattic/calypso-config';
 import wpcom from 'calypso/lib/wp';
-import { CompactCard, Button } from '@automattic/components';
+import { CompactCard } from '@automattic/components';
 import Notice from 'calypso/components/notice';
 import StickyPanel from 'calypso/components/sticky-panel';
 import {
@@ -593,17 +593,8 @@ class RegisterDomainStep extends React.Component {
 			'register-domain-step__next-page--is-loading': isLoading,
 		} );
 		return (
-			<CompactCard className={ className }>
-				<Button
-					className="register-domain-step__next-page-button"
-					disabled={ isLoading }
-					busy={ isLoading }
-					onClick={ this.showNextPage }
-					primary
-					borderless
-				>
-					{ this.props.translate( 'Show more results' ) }
-				</Button>
+			<CompactCard className={ className } onClick={ this.showNextPage } disabled={ isLoading }>
+				{ this.props.translate( 'Show more results' ) }
 			</CompactCard>
 		);
 	}
