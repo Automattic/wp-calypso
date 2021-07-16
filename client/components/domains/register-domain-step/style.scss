@@ -119,6 +119,12 @@
 	}
 }
 
+button.register-domain-step__next-page-button {
+	font-size: 0.875rem;
+	font-weight: 500; /* stylelint-disable-line */
+}
+
+
 body.is-section-domains {
 	.register-domain-step {
 		button.register-domain-step__next-page-button {
@@ -138,8 +144,6 @@ body.is-section-signup.is-white-signup {
 			padding: 0.57em 1.17em;
 			border-radius: 4px; /* stylelint-disable-line */
 
-			font-size: 0.875rem;
-			font-weight: 500; /* stylelint-disable-line */
 			letter-spacing: 0.32px;
 			line-height: 1.25rem;
 
