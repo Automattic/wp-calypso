@@ -3,6 +3,7 @@ export { computeProductsWithPrices } from './compute-products-with-prices';
 export { getAvailableProductsList } from './get-available-products-list';
 export { getPlanPrice } from './get-plan-price';
 export { getProductBySlug } from './get-product-by-slug';
+export { getProductByType } from './get-product-by-type';
 export { getProductCost } from './get-product-cost';
 export { getProductName } from './get-product-name';
 export { getProductDisplayCost } from './get-product-display-cost';
