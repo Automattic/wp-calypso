@@ -311,6 +311,14 @@ class ThemeShowcase extends React.Component {
 				),
 		};
 
+		let selectedText = translate( 'All Themes' );
+
+		if ( 'recommended' === this.state.tabFilter ) {
+			selectedText = translate( 'Recommended' );
+		} else if ( 'uploaded' === this.state.tabFilter ) {
+			selectedText = translate( 'My Themes' );
+		}
+
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<div>
@@ -372,14 +380,10 @@ class ThemeShowcase extends React.Component {
 								) }
 								<ThemesSelection listLabel={ this.props.listLabel } { ...themeProps } />
 							</div>
-						) ) }
+						) )
+					) }
 					{ 'uploaded' === this.state.tabFilter && (
-						<div className="theme-showcase__all-themes">
-							{ ! this.props.loggedOutComponent && showBanners && (
-								<UpworkBanner location={ 'theme-banner' } />
-							) }
-							<ThemesSelection listLabel={ this.props.listLabel } { ...themeProps } />
-						</div>
+						<ThemesSelection listLabel={ this.props.listLabel } { ...themeProps } />
 					) }
 
 					{ 'trending' === this.state.tabFilter.key && (
