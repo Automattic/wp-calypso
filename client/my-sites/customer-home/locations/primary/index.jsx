@@ -46,6 +46,7 @@ import {
 	TASK_WEBINARS,
 	TASK_WP_COURSES,
 } from 'calypso/my-sites/customer-home/cards/constants';
+import DotPager from 'calypso/components/dot-pager';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { connect } from 'react-redux';
@@ -73,6 +74,10 @@ const cardComponents = {
 	[ TASK_VERIFY_EMAIL ]: VerifyEmail,
 };
 
+const iconPrevious = <span className={ `gridicon dashicons-before dashicons-arrow-left-alt` } />;
+
+const iconNext = <span className={ `gridicon dashicons-before dashicons-arrow-right-alt` } />;
+
 const Primary = ( { cards, trackCards } ) => {
 	useEffect( () => {
 		if ( cards && cards.length ) {
@@ -85,7 +90,12 @@ const Primary = ( { cards, trackCards } ) => {
 	}
 
 	return (
-		<>
+		<DotPager
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+			className="customer-home__location-primary"
+			buttonText="true"
+			{ ...{ iconPrevious, iconNext } }
+		>
 			{ cards.map(
 				( card, index ) =>
 					cardComponents[ card ] &&
@@ -95,7 +105,7 @@ const Primary = ( { cards, trackCards } ) => {
 						card,
 					} )
 			) }
-		</>
+		</DotPager>
 	);
 };
 
