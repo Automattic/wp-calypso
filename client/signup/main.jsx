@@ -271,7 +271,13 @@ class Signup extends React.Component {
 		if ( this.props.stepName !== prevProps.stepName ) {
 			this.maybeShowSitePreview();
 			this.preloadNextStep();
+			// `scrollToTop` here handles cases where the viewport may fall slightly below the top of the page when the next step is rendered
+			this.scrollToTop();
 		}
+	}
+
+	scrollToTop() {
+		setTimeout( () => window.scrollTo( 0, 0 ), 0 );
 	}
 
 	/**
@@ -508,42 +514,12 @@ class Signup extends React.Component {
 	// `flowName` is an optional parameter used to redirect to another flow, i.e., from `main`
 	// to `ecommerce`. If not specified, the current flow (`this.props.flowName`) continues.
 	goToStep = ( stepName, stepSectionName, flowName = this.props.flowName ) => {
-		if ( this.state.scrolling ) {
-			return;
+		if ( ! this.isEveryStepSubmitted() ) {
+			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
+			page( getStepUrl( flowName, stepName, stepSectionName, locale ) );
+		} else if ( this.isEveryStepSubmitted() ) {
+			this.goToFirstInvalidStep();
 		}
-
-		// animate the scroll position to the top
-		const scrollPromise = new Promise( ( resolve ) => {
-			this.setState( { scrolling: true } );
-
-			const ANIMATION_LENGTH_MS = 200;
-			const startTime = window.performance.now();
-			const scrollHeight = window.pageYOffset;
-
-			const scrollToTop = ( timestamp ) => {
-				const progress = timestamp - startTime;
-
-				if ( progress < ANIMATION_LENGTH_MS ) {
-					window.scrollTo( 0, scrollHeight - ( scrollHeight * progress ) / ANIMATION_LENGTH_MS );
-					window.requestAnimationFrame( scrollToTop );
-				} else {
-					this.setState( { scrolling: false } );
-					resolve();
-				}
-			};
-
-			window.requestAnimationFrame( scrollToTop );
-		} );
-
-		// redirect the user to the next step
-		scrollPromise.then( () => {
-			if ( ! this.isEveryStepSubmitted() ) {
-				const locale = ! this.props.isLoggedIn ? this.props.locale : '';
-				page( getStepUrl( flowName, stepName, stepSectionName, locale ) );
-			} else if ( this.isEveryStepSubmitted() ) {
-				this.goToFirstInvalidStep();
-			}
-		} );
 	};
 
 	// `nextFlowName` is an optional parameter used to redirect to another flow, i.e., from `main`
