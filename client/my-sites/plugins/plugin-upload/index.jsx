@@ -37,6 +37,7 @@ import {
 	isEligibleForAutomatedTransfer,
 	getAutomatedTransferStatus,
 } from 'calypso/state/automated-transfer/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { successNotice } from 'calypso/state/notices/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 
@@ -170,6 +171,7 @@ const mapStateToProps = ( state ) => {
 	const hasEligibilityMessages = ! (
 		isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
 	);
+	const isJetpackNonAtomic = isJetpack && ! isAtomicSite( state, siteId );
 
 	return {
 		siteId,
@@ -184,7 +186,7 @@ const mapStateToProps = ( state ) => {
 		installing: progress === 100,
 		isJetpackMultisite,
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
-		showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
+		showEligibility: ! isJetpackNonAtomic && ( hasEligibilityMessages || ! isEligible ),
 		automatedTransferStatus: getAutomatedTransferStatus( state, siteId ),
 	};
 };

@@ -185,6 +185,9 @@ export const HardBlockingNotice = ( {
 export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) => {
 	const holdMessages = getHoldMessages( context, translate );
 	const blockingMessages = getBlockingMessages( translate );
+	// eslint-disable-next-line
+	console.log( holds );
+	// console.log( blockingMessages, holdMessages );
 
 	const blockingHold = holds.find( ( h ) => isHardBlockingHoldType( h, blockingMessages ) );
 	const hasValidBlockingHold = blockingHold && ! isAtomicSiteWithoutBusinessPlan( holds );
