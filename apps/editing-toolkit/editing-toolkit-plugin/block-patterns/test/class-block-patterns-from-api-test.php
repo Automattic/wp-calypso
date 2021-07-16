@@ -90,7 +90,7 @@ class Block_Patterns_From_Api_Test extends TestCase {
 	 */
 	public function test_patterns_request_succeeds_with_empty_cache() {
 		$utils_mock              = $this->createBlockPatternsUtilsMock( array( $this->pattern_mock_object ) );
-		$block_patterns_from_api = new Block_Patterns_From_API( array(), $utils_mock );
+		$block_patterns_from_api = new Block_Patterns_From_API( '', $utils_mock );
 
 		$utils_mock->expects( $this->once() )
 			->method( 'cache_get' )
@@ -108,11 +108,41 @@ class Block_Patterns_From_Api_Test extends TestCase {
 	}
 
 	/**
+	 *  Tests that we're making two requests when we specify that we're on the site editor.
+	 */
+	public function test_patterns_site_editor_source_site() {
+		/**
+		 * A callback for the `a8c_enable_fse_block_patterns_api` filter.
+		 *
+		 * @return bool
+		 */
+		$should_enable_fse_block_patterns_api = function () {
+			return true;
+		};
+
+		add_filter( 'a8c_enable_fse_block_patterns_api', $should_enable_fse_block_patterns_api );
+
+		$utils_mock              = $this->createBlockPatternsUtilsMock( array( $this->pattern_mock_object ) );
+		$block_patterns_from_api = new Block_Patterns_From_API( 'site_editor', $utils_mock );
+
+		$utils_mock->expects( $this->exactly( 2 ) )
+			->method( 'remote_get' )
+			->withConsecutive(
+				array( 'https://public-api.wordpress.com/rest/v1/ptk/patterns/fr?tags=pattern&pattern_meta=is_web&patterns_source=block_patterns' ),
+				array( 'https://public-api.wordpress.com/rest/v1/ptk/patterns/fr?tags=pattern&pattern_meta=is_web&patterns_source=fse_block_patterns' )
+			);
+
+		$this->assertEquals( array( 'a8c/' . $this->pattern_mock_object['name'] => true ), $block_patterns_from_api->register_patterns() );
+
+		remove_filter( 'a8c_enable_fse_block_patterns_api', $should_enable_fse_block_patterns_api );
+	}
+
+	/**
 	 *  Tests that we're NOT making a request where there ARE cached patterns.
 	 */
 	public function test_patterns_request_succeeds_with_set_cache() {
 		$utils_mock              = $this->createBlockPatternsUtilsMock( array( $this->pattern_mock_object ), array( $this->pattern_mock_object ) );
-		$block_patterns_from_api = new Block_Patterns_From_API( array(), $utils_mock );
+		$block_patterns_from_api = new Block_Patterns_From_API( '', $utils_mock );
 
 		$utils_mock->expects( $this->once() )
 			->method( 'cache_get' )
@@ -137,7 +167,7 @@ class Block_Patterns_From_Api_Test extends TestCase {
 
 		add_filter( 'a8c_override_patterns_source_site', $example_site );
 		$utils_mock              = $this->createBlockPatternsUtilsMock( array( $this->pattern_mock_object ) );
-		$block_patterns_from_api = new Block_Patterns_From_API( array(), $utils_mock );
+		$block_patterns_from_api = new Block_Patterns_From_API( '', $utils_mock );
 
 		$utils_mock->expects( $this->never() )
 			->method( 'cache_get' );

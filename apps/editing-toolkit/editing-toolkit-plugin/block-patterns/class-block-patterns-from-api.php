@@ -13,25 +13,10 @@ require_once __DIR__ . '/class-block-patterns-utils.php';
  * Class Block_Patterns_From_API
  */
 class Block_Patterns_From_API {
-
 	const PATTERN_NAMESPACE = 'a8c/';
 
 	/**
-	 * Class instance.
-	 *
-	 * @var Block_Patterns
-	 */
-	private static $instance = null;
-
-	/**
-	 * Valid source strings for retrieving patterns.
-	 *
-	 * @var array
-	 */
-	private $valid_patterns_sources = array( 'block_patterns', 'fse_block_patterns' );
-
-	/**
-	 * Patterns source sites.
+	 * Patterns source sites. A array of strings, each of which matches a valid source for retrieving patterns.
 	 *
 	 * @var array
 	 */
@@ -54,15 +39,29 @@ class Block_Patterns_From_API {
 	private $core_to_wpcom_categories_dictionary;
 
 	/**
+	 * This is the current editor type. One of `block_editor` (default), `site_editor`.
+	 *
+	 * @var string
+	 */
+	private $editor_type;
+
+	/**
 	 * Block_Patterns constructor.
 	 *
-	 * @param array                $patterns_sources A array of strings, each of which matches a valid source for retrieving patterns.
-	 * @param Block_Patterns_Utils $utils            A class dependency containing utils methods.
+	 * @param string                    $editor_type The current editor. One of `block_editor` (default), `site_editor`.
+	 * @param Block_Patterns_Utils|null $utils       A class dependency containing utils methods.
 	 */
-	public function __construct( $patterns_sources, Block_Patterns_Utils $utils = null ) {
-		$patterns_sources       = empty( $patterns_sources ) ? array( 'block_patterns' ) : $patterns_sources;
-		$this->patterns_sources = empty( array_diff( $patterns_sources, $this->valid_patterns_sources ) ) ? $patterns_sources : array( 'block_patterns' );
-		$this->utils            = empty( $utils ) ? new \A8C\FSE\Block_Patterns_Utils() : $utils;
+	public function __construct( string $editor_type = 'block_editor', Block_Patterns_Utils $utils = null ) {
+		$this->editor_type      = $editor_type;
+		$this->patterns_sources = array( 'block_patterns' );
+
+		// While we're still testing the FSE patterns, limit activation via a filter.
+		if ( 'site_editor' === $this->editor_type && apply_filters( 'a8c_enable_fse_block_patterns_api', false ) ) {
+			$this->patterns_sources[] = 'fse_block_patterns';
+		}
+
+		$this->utils = empty( $utils ) ? new \A8C\FSE\Block_Patterns_Utils() : $utils;
+
 		// Add categories to this array using the core pattern name as the key for core patterns we wish to "recategorize".
 		$this->core_to_wpcom_categories_dictionary = array(
 			'core/quote' => array(
@@ -78,8 +77,6 @@ class Block_Patterns_From_API {
 	 * @return array Results of pattern registration.
 	 */
 	public function register_patterns() {
-		$this->reregister_core_patterns();
-
 		// Used to track which patterns we successfully register.
 		$results = array();
 
@@ -244,38 +241,8 @@ class Block_Patterns_From_API {
 	}
 
 	/**
-	 * Unregister all core patterns, then reregister core patterns in core WordPress only,
-	 * that is those in wp-includes/block-patterns.php
-	 * Gutenberg adds new and overrides existing core patterns. We don't want these for now.
-	 */
-	private function reregister_core_patterns() {
-		if ( class_exists( 'WP_Block_Patterns_Registry' ) ) {
-			foreach ( \WP_Block_Patterns_Registry::get_instance()->get_all_registered() as $pattern ) {
-				// Gutenberg registers patterns with varying prefixes, but categorizes them using `core/*` in a blockTypes array.
-				// This will ensure we remove `query/*` blocks for example.
-				// TODO: We need to revisit our usage or $pattern['blockTypes']: they are currently an experimental feature and not guaranteed to reference `core/*` blocks.
-				$pattern_block_type_or_name =
-					isset( $pattern['blockTypes'] ) && ! empty( $pattern['blockTypes'][0] )
-					? $pattern['blockTypes'][0]
-					: $pattern['name'];
-				if ( 'core/' === substr( $pattern_block_type_or_name, 0, 5 ) ) {
-					unregister_block_pattern( $pattern['name'] );
-				}
-			}
-			if ( function_exists( '_register_core_block_patterns_and_categories' ) ) {
-				$did_switch_locale = switch_to_locale( $this->utils->get_block_patterns_locale() );
-				_register_core_block_patterns_and_categories();
-				// The site locale might be the same as the current locale so switching could have failed in such instances.
-				if ( false !== $did_switch_locale ) {
-					restore_previous_locale();
-				}
-			}
-		}
-	}
-
-	/**
 	 * Update categories for core patterns if a records exists in $this->core_to_wpcom_categories_dictionary
-	 * and reregister them.
+	 * and re-registers them.
 	 */
 	private function update_core_patterns_with_wpcom_categories() {
 		if ( class_exists( 'WP_Block_Patterns_Registry' ) ) {
