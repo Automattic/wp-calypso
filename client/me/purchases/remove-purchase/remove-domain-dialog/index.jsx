@@ -243,7 +243,7 @@ class RemoveDomainDialog extends Component {
 				action: 'cancel',
 				disabled: this.props.isRemoving,
 				isPrimary: true,
-				label: translate( 'Nevermind' ),
+				label: translate( 'Never Mind' ),
 			},
 			{
 				action: 'remove',
