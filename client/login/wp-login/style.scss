@@ -329,11 +329,8 @@ $image-height: 47px;
 		background-color: #007cba;
 		border-color: #007cba;
 		color: #fff;
-		width: auto;
 		min-width: 100%;
 		text-align: center;
-		font-size: $font-body-small;
-		line-height: 24px;
 		height: 42px;
 		display: block;
 		margin: 13px auto;
@@ -341,7 +338,6 @@ $image-height: 47px;
 		font-weight: 600;
 		letter-spacing: 0;
 		transition: background 0.2s ease-in-out, border-color 0.2s ease-in-out, color 0.2s ease-in-out;
-		border-radius: 2px;
 		box-shadow: none;
 
 		&:hover,
@@ -361,27 +357,48 @@ $image-height: 47px;
 	.two-factor-authentication__verification-code-form > p,
 	.login__form .login__form-userdata label,
 	.login__form-terms,
-	.login__social-tos {
+	.login__social-tos,
+	.login__form-terms a,
+	.login__social-tos a {
 		color: var( --studio-gray-40 );
 	}
 
-	.login__form-terms a,
-	.login__social-tos a {
-		color: var( --studio-gray-80 );
+	.login__form-terms {
+		/* same as `.login__form .login__form-userdata label` */
+		font-size: 0.875rem;
 	}
 
-	.two-factor-authentication__verification-code-form input,
-	.login__form input {
-		padding: 18px 14px;
-		font-size: $font-body-small;
+	.login__form-terms,
+	.login__social-tos {
+		text-align: left;
+		margin-top: 0.75em;
+		a {
+			text-decoration: underline;
+		}
+	}
+
+	.login__form {
+		input, button {
+			/* same as `button.signup-form__submit, .signup-form__input.form-text-input` */
+			border-radius: 4px; /* stylelint-disable-line */
+			height: 44px;
+			border: 1px solid var( --studio-gray-10 );
+			font-size: $font-body-small;
+		}
 	}
 
 	.wp-login__main {
 		max-width: 540px;
 
+		.wp-login__links,
 		form {
-			max-width: 440px;
+			max-width: 420px;
 			margin: 0 auto;
+		}
+
+		form .card {
+			padding-left: 0;
+			padding-right: 0;
 		}
 	}
 
@@ -389,10 +406,12 @@ $image-height: 47px;
 		top: 17px;
 	}
 
-	.wp-login__links a:hover,
-	.wp-login__links a:active,
-	.wp-login__links button:hover,
-	.wp-login__links button:active {
-		color: #00a0d2;
+	.wp-login__links {
+		a:hover,
+		a:active,
+		button:hover,
+		button:active {
+			color: #00a0d2;
+		}
 	}
 }
