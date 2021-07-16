@@ -593,8 +593,6 @@ class RegisterDomainStep extends React.Component {
 			'register-domain-step__next-page--is-loading': isLoading,
 		} );
 		return (
-			// <CompactCard className={ className } onClick={ this.showNextPage } disabled={ isLoading }>
-			// 	{ this.props.translate( 'Show more results' ) }
 			<CompactCard className={ className }>
 				<Button
 					className="register-domain-step__next-page-button"
