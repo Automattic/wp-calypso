@@ -40,6 +40,7 @@
 		"@automattic/launch": "^1.0.0",
 		"@automattic/load-script": "^1.0.0",
 		"@automattic/material-design-icons": "^1.0.0",
+		"@automattic/notices": "^1.0.0",
 		"@automattic/notifications": "^1.0.0",
 		"@automattic/onboarding": "^1.0.0",
 		"@automattic/plans-grid": "^1.0.0-alpha.0",

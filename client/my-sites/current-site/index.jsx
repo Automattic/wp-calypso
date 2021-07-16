@@ -7,6 +7,7 @@ import { localize, withRtl } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { isEnabled } from '@automattic/calypso-config';
 import { Button, Card } from '@automattic/components';
+import SiteNotice from '@automattic/notices';
 
 /**
  * Internal dependencies
@@ -114,11 +115,7 @@ class CurrentSite extends Component {
 						</CalypsoShoppingCartProvider>
 					) }
 					{ selectedSite && isEnabled( 'current-site/notice' ) && (
-						<AsyncLoad
-							require="calypso/my-sites/current-site/notice"
-							placeholder={ null }
-							site={ selectedSite }
-						/>
+						<SiteNotice site={ selectedSite } />
 					) }
 				</div>
 			</Card>
