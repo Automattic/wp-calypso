@@ -485,7 +485,6 @@ class DomainItem extends PureComponent {
 			isBusy,
 			isChecked,
 			isEnabled,
-			isManagingAllSites,
 			showCheckbox,
 			enableSelection,
 		} = this.props;
@@ -493,9 +492,6 @@ class DomainItem extends PureComponent {
 
 		const rowClasses = classNames( 'domain-item', `domain-item__status-${ listStatusClass }`, {
 			'domain-item__enable-selection': enableSelection,
-		} );
-		const domainTitleClass = classNames( 'domain-item__title', {
-			'domain-item__primary': ! isManagingAllSites && domainDetails?.isPrimary,
 		} );
 
 		return (
@@ -518,7 +514,7 @@ class DomainItem extends PureComponent {
 				) }
 				<div className="list__domain-link">
 					<div className="domain-item__status">
-						<div className={ domainTitleClass }>{ domain.domain }</div>
+						<div className="domain-item__title">{ domain.domain }</div>
 						{ listStatusText && (
 							<DomainNotice status={ listStatusClass || 'info' } text={ listStatusText } />
 						) }

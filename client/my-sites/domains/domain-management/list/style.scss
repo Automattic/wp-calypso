@@ -182,7 +182,7 @@
 }
 
 .domain-item__title {
-	font-size: $font-body;
+	font-size: $font-title-small;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	margin-left: 4px;
@@ -197,6 +197,10 @@
 		margin-left: 1px;
 		transform: translateY( -1px );
 	}
+}
+
+.domain-item__meta-item {
+	margin-left: 20px;
 }
 
 .domain-item__status-info {
@@ -287,10 +291,6 @@
 
 .domain-item__icon {
 	fill: var( --color-text-subtle );
-}
-
-.domain-item__primary {
-	font-weight: 600;
 }
 
 .list__view-all {
