@@ -83,7 +83,7 @@ export default function PurchaseArea( {
 
 	return (
 		<>
-			<div className="marketplace-plugin-details__name">{ wporgPluginName }</div>
+			<div className="marketplace-product-details__name">{ wporgPluginName }</div>
 			<div>
 				<h2>Yoast Premium cost : { ! isProductListLoading ? displayCost : '' }</h2>
 				<Button

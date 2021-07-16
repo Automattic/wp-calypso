@@ -119,6 +119,7 @@ function WrappedMarketplacePluginSetup(): JSX.Element {
 		hasProductSetupError,
 		isProductSetupComplete,
 		pluginSlugToBeInstalled,
+		productGroupSlug,
 		/**
 		 * Additional subscribed states to run tryProductInstall
 		 */

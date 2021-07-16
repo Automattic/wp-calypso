@@ -229,7 +229,7 @@ export function trySiteTransfer( selectedSiteId: number, pluginSlugToBeInstalled
  * TODO: Write a comprehensive unit test for this function
  */
 export function tryProductInstall() {
-	return function ( dispatch: Dispatch< any >, getState: () => IAppState ): void {
+	return function ( dispatch: Dispatch< AnyAction >, getState: () => IAppState ): void {
 		const state = getState();
 		const selectedSiteId = getSelectedSiteId( state );
 		const { pluginSlugToBeInstalled } = getPurchaseFlowState( state );

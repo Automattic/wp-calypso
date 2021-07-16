@@ -44,7 +44,10 @@ export const Container = styled.div`
 	padding: 25px;
 `;
 
-export function level1ObjectMap( obj: any, entryFilter = ( [ i ]: any[] ) => i ): any[] {
+export function level1ObjectMap(
+	obj: ArrayLike< unknown >,
+	entryFilter = ( [ i ]: unknown[] ) => i
+): unknown[] {
 	return Object.entries( obj )
 		.filter( entryFilter )
 		.map( ( entry ) => ( { key: entry[ 0 ], value: JSON.stringify( entry[ 1 ] ) } ) );
