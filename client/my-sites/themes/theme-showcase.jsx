@@ -313,6 +313,14 @@ class ThemeShowcase extends React.Component {
 				),
 		};
 
+		let selectedText = translate( 'All Themes' );
+
+		if ( 'recommended' === this.state.tabFilter ) {
+			selectedText = translate( 'Recommended' );
+		} else if ( 'uploaded' === this.state.tabFilter ) {
+			selectedText = translate( 'My Themes' );
+		}
+
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<div>
@@ -338,14 +346,7 @@ class ThemeShowcase extends React.Component {
 						select={ this.onTierSelect }
 					/>
 					{ isLoggedIn && (
-						<SectionNav
-							className="themes__section-nav"
-							selectedText={
-								'recommended' === this.state.tabFilter
-									? translate( 'Recommended' )
-									: translate( 'All Themes' )
-							}
-						>
+						<SectionNav className="themes__section-nav" selectedText={ selectedText }>
 							<NavTabs>
 								<NavItem
 									onClick={ () => this.onFilterClick( 'recommended' ) }
@@ -358,7 +359,7 @@ class ThemeShowcase extends React.Component {
 										onClick={ () => this.onFilterClick( 'uploaded' ) }
 										selected={ 'uploaded' === this.state.tabFilter }
 									>
-										{ translate( 'Uploaded' ) }
+										{ translate( 'My Themes' ) }
 									</NavItem>
 								) }
 								<NavItem
@@ -392,12 +393,7 @@ class ThemeShowcase extends React.Component {
 							</div>
 						) ) }
 					{ 'uploaded' === this.state.tabFilter && (
-						<div className="theme-showcase__all-themes">
-							{ ! this.props.loggedOutComponent && showBanners && (
-								<UpworkBanner location={ 'theme-banner' } />
-							) }
-							<ThemesSelection listLabel={ this.props.listLabel } { ...themeProps } />
-						</div>
+						<ThemesSelection listLabel={ this.props.listLabel } { ...themeProps } />
 					) }
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
