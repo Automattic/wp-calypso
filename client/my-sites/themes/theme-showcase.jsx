@@ -191,7 +191,7 @@ class ThemeShowcase extends React.Component {
 	onTierSelect = ( { value: tier } ) => {
 		// In this state: tabFilter = [ ##Recommended## | All(1) ]   tier = [ All(2) | Free | Premium ]
 		// Clicking "Free" or "Premium" forces tabFilter from "Recommended" to "All"
-		if ( tier !== '' && tier !== 'all' && this.state.tabFilter === 'recommended' ) {
+		if ( tier !== '' && tier !== 'all' && this.state.tabFilter !== 'all' ) {
 			this.setState( { tabFilter: 'all' } );
 		}
 		trackClick( 'search bar filter', tier );
@@ -207,7 +207,10 @@ class ThemeShowcase extends React.Component {
 		let callback = () => null;
 		// In this state: tabFilter = [ Recommended | ##All(1)## ]  tier = [ All(2) | Free | ##Premium## ]
 		// Clicking "Recommended" forces tier to be "all", since Recommend themes cannot filter on tier.
-		if ( 'recommended' === tabFilter && 'all' !== this.props.tier ) {
+		if (
+			( 'recommended' === tabFilter || 'uploaded' === tabFilter ) &&
+			'all' !== this.props.tier
+		) {
 			callback = () => this.onTierSelect( { value: 'all' } );
 		}
 		this.setState( { tabFilter }, callback );
@@ -305,6 +308,14 @@ class ThemeShowcase extends React.Component {
 				),
 		};
 
+		let selectedText = translate( 'All Themes' );
+
+		if ( 'recommended' === this.state.tabFilter ) {
+			selectedText = translate( 'Recommended' );
+		} else if ( 'uploaded' === this.state.tabFilter ) {
+			selectedText = translate( 'My Themes' );
+		}
+
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<div>
@@ -330,14 +341,7 @@ class ThemeShowcase extends React.Component {
 						select={ this.onTierSelect }
 					/>
 					{ isLoggedIn && (
-						<SectionNav
-							className="themes__section-nav"
-							selectedText={
-								'recommended' === this.state.tabFilter
-									? translate( 'Recommended' )
-									: translate( 'All Themes' )
-							}
-						>
+						<SectionNav className="themes__section-nav" selectedText={ selectedText }>
 							<NavTabs>
 								<NavItem
 									onClick={ () => this.onFilterClick( 'recommended' ) }
@@ -345,6 +349,14 @@ class ThemeShowcase extends React.Component {
 								>
 									{ translate( 'Recommended' ) }
 								</NavItem>
+								{ isJetpackSite && (
+									<NavItem
+										onClick={ () => this.onFilterClick( 'uploaded' ) }
+										selected={ 'uploaded' === this.state.tabFilter }
+									>
+										{ translate( 'My Themes' ) }
+									</NavItem>
+								) }
 								<NavItem
 									onClick={ () => this.onFilterClick( 'all' ) }
 									selected={ 'all' === this.state.tabFilter }
@@ -364,14 +376,19 @@ class ThemeShowcase extends React.Component {
 							scrollToSearchInput={ this.scrollToSearchInput }
 						/>
 					) }
-					{ 'all' === this.state.tabFilter && (
-						<div className="theme-showcase__all-themes">
-							{ ! this.props.loggedOutComponent && showBanners && (
-								<UpworkBanner location={ 'theme-banner' } />
-							) }
-							<ThemesSelection listLabel={ this.props.listLabel } { ...themeProps } />
-							{ isJetpackSite && this.props.children }
-						</div>
+					{ 'all' === this.state.tabFilter &&
+						( isJetpackSite ? (
+							this.props.children
+						) : (
+							<div className="theme-showcase__all-themes">
+								{ ! this.props.loggedOutComponent && showBanners && (
+									<UpworkBanner location={ 'theme-banner' } />
+								) }
+								<ThemesSelection listLabel={ this.props.listLabel } { ...themeProps } />
+							</div>
+						) ) }
+					{ 'uploaded' === this.state.tabFilter && (
+						<ThemesSelection listLabel={ this.props.listLabel } { ...themeProps } />
 					) }
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }

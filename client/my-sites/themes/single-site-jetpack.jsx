@@ -97,7 +97,6 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 							origin="wpcom"
 							defaultOption={ 'activate' }
 							secondaryOption={ 'tryandcustomize' }
-							noMarginBeforeHeader={ true }
 							search={ search }
 							tier={ tier }
 							filter={ filter }
