@@ -35,6 +35,11 @@ class AppointmentInfo extends Component {
 
 		const conferenceLink = meta.conference_link || '';
 		const guessedTimezone = moment.tz.guess();
+		const userTimezoneAbbr = moment.tz( guessedTimezone ).format( 'z' );
+		// Moment timezone does not display the abbreviation for some countries(e.g. for Dubai, it shows timezone abbr as +04 ).
+		// Don't display the timezone for such countries.
+		const shouldDisplayTzAbbr = /[a-zA-Z]/g.test( userTimezoneAbbr );
+		const momentDisplayFormat = shouldDisplayTzAbbr ? 'LT z' : 'LT';
 		const isAllowedToChangeAppointment = meta.canChangeAppointment;
 
 		return (
@@ -45,6 +50,7 @@ class AppointmentInfo extends Component {
 
 				<CompactCard>
 					<FormattedHeader
+						headerText=""
 						subHeaderText={ translate( 'Your scheduled Quick Start session details are:' ) }
 					/>
 
@@ -77,7 +83,7 @@ class AppointmentInfo extends Component {
 						<FormLabel>{ translate( 'When?' ) }</FormLabel>
 						<FormSettingExplanation>
 							{ moment( beginTimestamp ).format( 'llll - ' ) }
-							{ moment.tz( endTimestamp, guessedTimezone ).format( 'LT z' ) }{ ' ' }
+							{ moment.tz( endTimestamp, guessedTimezone ).format( momentDisplayFormat ) }{ ' ' }
 							{ `(${ guessedTimezone })` }
 						</FormSettingExplanation>
 					</FormFieldset>
