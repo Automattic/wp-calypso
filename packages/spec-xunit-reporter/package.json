@@ -16,6 +16,6 @@
 	},
 	"private": true,
 	"peerDependencies": {
-		"mocha": "^5.2.0"
+		"mocha": "^9.0.2"
 	}
 }

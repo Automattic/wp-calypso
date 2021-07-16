@@ -19,7 +19,7 @@
 		"@types/mocha": "^8.2.3"
 	},
 	"peerDependencies": {
-		"mocha": ">=8.0.0"
+		"mocha": ">=9.0.2"
 	},
 	"scripts": {
 		"clean": "yarn build --clean && npx rimraf dist",
