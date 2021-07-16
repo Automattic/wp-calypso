@@ -4,11 +4,11 @@
 import { useMemo } from 'react';
 
 interface Props {
+	hasJetpackSiteSlug: boolean;
 	isJetpackCheckout: boolean;
 	isJetpackNotAtomic: boolean;
 	isLoggedOutCart?: boolean;
 	isUserComingFromLoginForm?: boolean;
-	hasJetpackSiteSlug: boolean;
 }
 
 export default function useCheckoutFlowTrackKey( {
