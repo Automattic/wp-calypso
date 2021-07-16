@@ -8,7 +8,7 @@
 		display: block;
 		position: relative;
 		padding: $wpnc__padding-medium;
-		background-color: var( --color-neutral-0 );
+		background-color: var( --color-surface );
 
 		textarea {
 			@extend %wpnc-form-field;
