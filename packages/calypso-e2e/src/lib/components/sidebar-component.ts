@@ -126,7 +126,7 @@ export class SidebarComponent extends BaseContainer {
 		// Wait for these promises in no particular order. We simply want to ensure the sidebar
 		// and the page is in a state to accept inputs.
 		await Promise.all( [
-			this.page.waitForLoadState( 'domcontentloaded' ),
+			this.page.waitForLoadState( 'load' ),
 			this.sidebar.waitForElementState( 'stable' ),
 		] );
 
