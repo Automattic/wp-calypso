@@ -23,6 +23,7 @@ import {
 	isTwitterEnabled,
 	isPinterestEnabled,
 	isIconMediaEnabled,
+	isIponwebEnabled,
 	TRACKING_IDS,
 	ICON_MEDIA_SIGNUP_PIXEL_URL,
 } from './constants';
@@ -190,6 +191,19 @@ export async function adTrackSignupComplete( { isNewUserSite } ) {
 		const params = [ 'track', 'Signup', {} ];
 		debug( 'recordSignup: [Twitter]', params );
 		window.twq( ...params );
+	}
+
+	// Iponweb
+
+	if ( isIponwebEnabled ) {
+		debug( 'recordSignup: [Iponweb]' );
+		window.smartPixel( 'sendEvent', {
+			id: 'signup',
+			data: {
+				is_new_user: 0,
+				user_id: currentUser ? currentUser.hashedPii.ID : '',
+			},
+		} );
 	}
 
 	debug( 'recordSignup: dataLayer:', JSON.stringify( window.dataLayer, null, 2 ) );
