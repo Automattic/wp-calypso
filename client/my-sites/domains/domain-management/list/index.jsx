@@ -29,7 +29,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import DomainToPlanNudge from 'calypso/blocks/domain-to-plan-nudge';
-import { type } from 'calypso/lib/domains/constants';
+import { type as domainTypes, type } from 'calypso/lib/domains/constants';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -53,6 +53,7 @@ import ExternalLink from 'calypso/components/external-link';
 import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
 import AddDomainButton from 'calypso/my-sites/domains/domain-management/list/add-domain-button';
 import EmptyDomainsListCard from 'calypso/my-sites/domains/domain-management/list/empty-domains-list-card';
+import WpcomDomainItem from 'calypso/my-sites/domains/domain-management/list/wpcom-domain-item';
 
 /**
  * Style dependencies
@@ -455,6 +456,8 @@ export class List extends React.Component {
 			</Card>
 		);
 
+		const wpcomDomain = domains.filter( ( domain ) => domain.type === domainTypes.WPCOM )[ 0 ];
+
 		return [
 			<QuerySitePurchases key="query-purchases" siteId={ selectedSite.ID } />,
 			<ListHeader
@@ -465,6 +468,7 @@ export class List extends React.Component {
 			/>,
 			...domainListItems,
 			manageAllDomainsLink,
+			wpcomDomain && <WpcomDomainItem key="wpcom-domain-items" domain={ wpcomDomain } />,
 		];
 	}
 
