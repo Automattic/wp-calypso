@@ -4,8 +4,6 @@ import {
 	LoginFlow,
 	NewPostFlow,
 	GutenbergEditorPage,
-	MyHomePage,
-	PublishedPostsListPage,
 	PublishedPostPage,
 	setupHooks,
 } from '@automattic/calypso-e2e';
@@ -15,6 +13,7 @@ const quote =
 
 describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 	let page;
+	let postURL;
 
 	setupHooks( ( args ) => {
 		page = args.page;
@@ -51,34 +50,9 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 
 		it( 'Like post', async function () {
 			publishedPostPage = await PublishedPostPage.Expect( page );
-			await publishedPostPage.likePost();
-		} );
-
-		it( 'Unlike post', async function () {
-			await publishedPostPage.unlikePost();
-		} );
-	} );
-
-	describe( 'Like an existing post', function () {
-		let publishedPostPage;
-
-		it( 'Log in', async function () {
-			const loginFlow = new LoginFlow( page, 'gutenbergSimpleSiteUser' );
-			await loginFlow.logIn();
-		} );
-
-		it( 'Visit site', async function () {
-			const myHomePage = await MyHomePage.Expect( page );
-			await myHomePage.visitSite();
-		} );
-
-		it( 'Click on first post', async function () {
-			const publishedPostsListPage = await PublishedPostsListPage.Expect( page );
-			await publishedPostsListPage.visitPost( 1 );
 		} );
 
 		it( 'Like post', async function () {
-			publishedPostPage = await PublishedPostPage.Expect( page );
 			await publishedPostPage.likePost();
 		} );
 
