@@ -21,8 +21,8 @@ import JetpackFreeCard from '../jetpack-free-card';
 import JetpackCrmFreeCard from '../jetpack-crm-free-card';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
-	PLAN_JETPACK_SECURITY_DAILY,
-	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+	PLAN_JETPACK_SECURITY_REALTIME,
+	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 } from '@automattic/calypso-products';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
@@ -204,8 +204,8 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 								selectedTerm={ duration }
 								isAligned={ ! shouldWrapGrid }
 								featuredPlans={ [
-									PLAN_JETPACK_SECURITY_DAILY,
-									PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+									PLAN_JETPACK_SECURITY_REALTIME,
+									PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 								] }
 								scrollCardIntoView={ scrollCardIntoView }
 								createButtonURL={ createButtonURL }
