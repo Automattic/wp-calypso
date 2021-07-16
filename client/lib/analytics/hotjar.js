@@ -45,3 +45,13 @@ export function addHotJarScript() {
 
 	hotJarScriptLoaded = true;
 }
+
+export function triggerEvent( eventName ) {
+	addHotJarScript();
+
+	if ( 'undefined' === typeof window || 'function' !== typeof window.hj ) {
+		return;
+	}
+
+	window.hj( 'trigger', eventName );
+}
