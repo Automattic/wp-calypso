@@ -139,92 +139,86 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 			className={ classNames( 'gsuite-new-user-list__new-user', { 'show-labels': showLabels } ) }
 		>
 			<FormFieldset>
-				<div className="gsuite-new-user-list__new-user-section">
-					<div className="gsuite-new-user-list__new-user-name-container">
-						<LabelWrapper label={ translate( 'First name' ) } showLabel={ showLabels }>
-							<FormTextInput
-								autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
-								placeholder={ translate( 'First name' ) }
-								value={ firstName }
-								maxLength={ 60 }
-								isError={ hasFirstNameError }
-								onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-									onUserValueChange( 'firstName', event.target.value, mailBoxFieldTouched );
-								} }
-								onBlur={ () => {
-									setFirstNameFieldTouched( wasValidated );
-								} }
-								onKeyUp={ onReturnKeyPress }
-							/>
-						</LabelWrapper>
+				<LabelWrapper label={ translate( 'First name' ) } showLabel={ showLabels }>
+					<FormTextInput
+						autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
+						placeholder={ translate( 'First name' ) }
+						value={ firstName }
+						maxLength={ 60 }
+						isError={ hasFirstNameError }
+						onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+							onUserValueChange( 'firstName', event.target.value, mailBoxFieldTouched );
+						} }
+						onBlur={ () => {
+							setFirstNameFieldTouched( wasValidated );
+						} }
+						onKeyUp={ onReturnKeyPress }
+					/>
+				</LabelWrapper>
 
-						{ hasFirstNameError && <FormInputValidation text={ firstNameError } isError /> }
+				{ hasFirstNameError && <FormInputValidation text={ firstNameError } isError /> }
+			</FormFieldset>
+
+			<FormFieldset>
+				<LabelWrapper label={ translate( 'Last name' ) } showLabel={ showLabels }>
+					<FormTextInput
+						placeholder={ translate( 'Last name' ) }
+						value={ lastName }
+						maxLength={ 60 }
+						isError={ hasLastNameError }
+						onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+							onUserValueChange( 'lastName', event.target.value );
+						} }
+						onBlur={ () => {
+							setLastNameFieldTouched( wasValidated );
+						} }
+						onKeyUp={ onReturnKeyPress }
+					/>
+				</LabelWrapper>
+
+				{ hasLastNameError && <FormInputValidation text={ lastNameError } isError /> }
+
+				{ showTrashButton && (
+					<Button
+						className="gsuite-new-user-list__new-user-remove-user-button"
+						onClick={ onUserRemove }
+					>
+						<Gridicon icon="trash" />
+						<span>{ translate( 'Remove user' ) }</span>
+					</Button>
+				) }
+			</FormFieldset>
+
+			<FormFieldset>
+				<div className="gsuite-new-user-list__new-user-email-container">
+					<div className="gsuite-new-user-list__new-user-email">
+						{ domains.length > 1 ? renderMultiDomain() : renderSingleDomain() }
 					</div>
 
-					<div className="gsuite-new-user-list__new-user-name-container">
-						<LabelWrapper label={ translate( 'Last name' ) } showLabel={ showLabels }>
-							<FormTextInput
-								placeholder={ translate( 'Last name' ) }
-								value={ lastName }
-								maxLength={ 60 }
-								isError={ hasLastNameError }
-								onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-									onUserValueChange( 'lastName', event.target.value );
-								} }
-								onBlur={ () => {
-									setLastNameFieldTouched( wasValidated );
-								} }
-								onKeyUp={ onReturnKeyPress }
-							/>
-						</LabelWrapper>
-
-						{ hasLastNameError && <FormInputValidation text={ lastNameError } isError /> }
-					</div>
-
-					{ showTrashButton && (
-						<Button
-							className="gsuite-new-user-list__new-user-remove-user-button"
-							onClick={ onUserRemove }
-						>
-							<Gridicon icon="trash" />
-							<span>{ translate( 'Remove user' ) }</span>
-						</Button>
-					) }
+					{ hasMailBoxError && <FormInputValidation text={ mailBoxError } isError /> }
 				</div>
 			</FormFieldset>
 
 			<FormFieldset>
-				<div className="gsuite-new-user-list__new-user-section">
-					<div className="gsuite-new-user-list__new-user-email-container">
-						<div className="gsuite-new-user-list__new-user-email">
-							{ domains.length > 1 ? renderMultiDomain() : renderSingleDomain() }
-						</div>
+				<LabelWrapper label={ translate( 'Password' ) } showLabel={ showLabels }>
+					<FormPasswordInput
+						autoCapitalize="off"
+						autoCorrect="off"
+						placeholder={ translate( 'Password' ) }
+						value={ password }
+						maxLength={ 100 }
+						isError={ hasPasswordError }
+						onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+							onUserValueChange( 'password', event.target.value );
+						} }
+						onBlur={ () => {
+							setPasswordFieldTouched( wasValidated );
+						} }
+						onKeyUp={ onReturnKeyPress }
+					/>
+				</LabelWrapper>
 
-						{ hasMailBoxError && <FormInputValidation text={ mailBoxError } isError /> }
-					</div>
-
-					<div className="gsuite-new-user-list__new-user-password-container">
-						<LabelWrapper label={ translate( 'Password' ) } showLabel={ showLabels }>
-							<FormPasswordInput
-								autoCapitalize="off"
-								autoCorrect="off"
-								placeholder={ translate( 'Password' ) }
-								value={ password }
-								maxLength={ 100 }
-								isError={ hasPasswordError }
-								onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-									onUserValueChange( 'password', event.target.value );
-								} }
-								onBlur={ () => {
-									setPasswordFieldTouched( wasValidated );
-								} }
-								onKeyUp={ onReturnKeyPress }
-							/>
-						</LabelWrapper>
-
-						{ hasPasswordError && <FormInputValidation text={ passwordError } isError /> }
-					</div>
-				</div>
+				{ hasPasswordError && <FormInputValidation text={ passwordError } isError /> }
 			</FormFieldset>
 		</div>
 	);

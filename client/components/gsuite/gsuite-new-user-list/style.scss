@@ -53,7 +53,8 @@
 .gsuite-new-user-list__new-user {
 	.form-fieldset .form-label {
 		color: var( --color-text );
-		margin-bottom: 0;
+		margin-bottom: 1em;
+		margin-top: 0;
 
 		.form-text-input-with-affixes__suffix {
 			font-weight: normal;
@@ -106,7 +107,6 @@
 	}
 
 	@include breakpoint-deprecated( '>800px' ) {
-		flex-direction: row;
 
 		input[type='text'].form-text-input {
 			margin: 0;
