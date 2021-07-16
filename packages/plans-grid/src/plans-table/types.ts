@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import type { Plans } from '@automattic/data-stores';
 
 export type CTAVariation = 'FULL_WIDTH' | 'NORMAL';

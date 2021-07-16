@@ -1,10 +1,6 @@
-/**
- * External dependencies
- */
-
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import classNames from 'classnames';
 
 class SegmentedControlItem extends React.Component {
 	static propTypes = {
