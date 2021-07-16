@@ -25,6 +25,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { getSiteFragment } from 'calypso/lib/route';
 
 function canDeleteSite( state, siteId ) {
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
@@ -119,6 +120,16 @@ export function legacyRedirects( context, next ) {
 
 	if ( redirectMap[ section ] ) {
 		return page.redirect( redirectMap[ section ] );
+	}
+
+	next();
+}
+
+export function redirectToGeneral( context, next ) {
+	const site = getSiteFragment( context.path );
+
+	if ( site ) {
+		return page.redirect( `/settings/general/${ site }` );
 	}
 
 	next();

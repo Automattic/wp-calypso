@@ -15,6 +15,7 @@ import {
 	legacyRedirects,
 	manageConnection,
 	redirectIfCantDeleteSite,
+	redirectToGeneral,
 	redirectToTraffic,
 	startOver,
 	themeSetup,
@@ -118,5 +119,13 @@ export default function () {
 	page( '/settings/analytics/:site_id?', redirectToTraffic );
 	page( '/settings/seo/:site_id?', redirectToTraffic );
 
-	page( '/settings/:section', legacyRedirects, siteSelection, sites, makeLayout, clientRender );
+	page(
+		'/settings/:section',
+		legacyRedirects,
+		redirectToGeneral,
+		siteSelection,
+		sites,
+		makeLayout,
+		clientRender
+	);
 }
