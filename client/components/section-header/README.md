@@ -36,6 +36,9 @@ This is the base component and acts as a wrapper for a section's (a list of card
 ### Props
 
 - `className` - _optional_ (string|object) Classes to be added to the rendered component.
+- `count` - _optional_ (number) If supplied, this shows a badge containing the number.
+- `href` - _optional_ (string) A URL or path to navigate to when the header is clicked. (This makes the entire header clickable.)
+- `isPlaceholder` - _optional_ (bool) Show placeholder content.
 - `label` - _optional_ (string) The text to be displayed in the header.
 - `popoverText` - _optional_ (string) If entered, a support popover will appear to the right with this text.
 
