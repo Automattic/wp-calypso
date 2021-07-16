@@ -3,7 +3,6 @@
  */
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Card } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -22,11 +21,7 @@ import {
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import WpCourses from 'calypso/my-sites/customer-home/cards/education/wpcourses';
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
-
-/**
- * Style dependencies
- */
-import './style.scss';
+import DotPager from 'calypso/components/dot-pager';
 
 const cardComponents = {
 	[ EDUCATION_FREE_PHOTO_LIBRARY ]: FreePhotoLibrary,
@@ -50,17 +45,15 @@ const LearnGrow = () => {
 	}
 
 	return (
-		<>
-			<Card className="learn-grow__content customer-home__card">
-				{ cards.map(
-					( card, index ) =>
-						cardComponents[ card ] &&
-						React.createElement( cardComponents[ card ], {
-							key: index,
-						} )
-				) }
-			</Card>
-		</>
+		<DotPager className="learn-grow__content customer-home__card">
+			{ cards.map(
+				( card, index ) =>
+					cardComponents[ card ] &&
+					React.createElement( cardComponents[ card ], {
+						key: index,
+					} )
+			) }
+		</DotPager>
 	);
 };
 
