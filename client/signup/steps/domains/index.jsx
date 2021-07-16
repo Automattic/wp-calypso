@@ -15,7 +15,7 @@ import MapDomainStep from 'calypso/components/domains/map-domain-step';
 import TransferDomainStep from 'calypso/components/domains/transfer-domain-step';
 import UseYourDomainStep from 'calypso/components/domains/use-your-domain-step';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
-import { getStepUrl } from 'calypso/signup/utils';
+import { getStepUrl, isPlanSelectionAvailableLaterInFlow } from 'calypso/signup/utils';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import {
 	domainRegistration,
@@ -55,7 +55,6 @@ import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
 import { hideSitePreview, showSitePreview } from 'calypso/state/signup/preview/actions';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import { isPlanStepExistsAndSkipped } from 'calypso/state/signup/progress/selectors';
-import { getStepModuleName } from 'calypso/signup/config/step-components';
 import { getExternalBackUrl } from './utils';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
@@ -124,26 +123,6 @@ class DomainsStep extends React.Component {
 			props.goToNextStep();
 		}
 	}
-
-	/**
-	 * Derive if the "plans" step actually will be visible to the customer in a given flow after the domain step
-	 */
-	getIsPlanSelectionAvailableLaterInFlow = () => {
-		const { steps, isPlanStepSkipped } = this.props;
-
-		/**
-		 * Caveat here even though "plans" step maybe available in a flow it might not be active
-		 * i.e. Check flow "domain"
-		 */
-
-		const plansIndex = steps.findIndex( ( stepName ) => getStepModuleName( stepName ) === 'plans' );
-		const domainsIndex = steps.findIndex(
-			( stepName ) => getStepModuleName( stepName ) === 'domains'
-		);
-		const isPlansStepExistsInFutureOfFlow = plansIndex > 0 && plansIndex > domainsIndex;
-
-		return isPlansStepExistsInFutureOfFlow && ! isPlanStepSkipped;
-	};
 
 	componentDidUpdate( prevProps ) {
 		// If the signup site preview is visible and there's a sub step, e.g., mapping, transfer, use-your-domain
@@ -237,7 +216,7 @@ class DomainsStep extends React.Component {
 		 */
 		return (
 			! this.props.forceHideFreeDomainExplainerAndStrikeoutUi &&
-			this.getIsPlanSelectionAvailableLaterInFlow()
+			this.props.isPlanSelectionAvailableLaterInFlow
 		);
 	};
 
@@ -447,12 +426,14 @@ class DomainsStep extends React.Component {
 	getSideContent = () => {
 		return (
 			<div className="domains__domain-side-content-container">
-				<div className="domains__domain-side-content">
-					<ReskinSideExplainer
-						onClick={ this.handleDomainExplainerClick }
-						type={ 'free-domain-explainer' }
-					/>
-				</div>
+				{ this.props.isPlanSelectionAvailableLaterInFlow && (
+					<div className="domains__domain-side-content">
+						<ReskinSideExplainer
+							onClick={ this.handleDomainExplainerClick }
+							type={ 'free-domain-explainer' }
+						/>
+					</div>
+				) }
 				<div className="domains__domain-side-content">
 					<ReskinSideExplainer
 						onClick={ this.handleUseYourDomainClick }
@@ -497,8 +478,6 @@ class DomainsStep extends React.Component {
 			includeWordPressDotCom = ! this.props.isDomainOnly;
 		}
 
-		const isPlanSelectionAvailableInFlow = this.getIsPlanSelectionAvailableLaterInFlow();
-
 		const trueNamePromoTlds = TRUENAME_COUPONS.includes( this.props?.queryObject?.coupon )
 			? TRUENAME_TLDS
 			: null;
@@ -527,7 +506,7 @@ class DomainsStep extends React.Component {
 						trueNamePromoTlds ? false : this.shouldIncludeDotBlogSubdomain()
 					}
 					isSignupStep
-					isPlanSelectionAvailableInFlow={ isPlanSelectionAvailableInFlow }
+					isPlanSelectionAvailableInFlow={ this.props.isPlanSelectionAvailableLaterInFlow }
 					showExampleSuggestions={ showExampleSuggestions }
 					suggestion={ initialQuery }
 					designType={ this.getDesignType() }
@@ -836,9 +815,10 @@ const submitDomainStepSelection = ( suggestion, section ) => {
 };
 
 export default connect(
-	( state ) => {
+	( state, { steps } ) => {
 		const productsList = getAvailableProductsList( state );
 		const productsLoaded = ! isEmpty( productsList );
+		const isPlanStepSkipped = isPlanStepExistsAndSkipped( state );
 
 		return {
 			designType: getDesignType( state ),
@@ -850,7 +830,8 @@ export default connect(
 			selectedSite: getSelectedSite( state ),
 			isSitePreviewVisible: isSitePreviewVisible( state ),
 			sites: getSitesItems( state ),
-			isPlanStepSkipped: isPlanStepExistsAndSkipped( state ),
+			isPlanSelectionAvailableLaterInFlow:
+				! isPlanStepSkipped && isPlanSelectionAvailableLaterInFlow( steps ),
 			userLoggedIn: isUserLoggedIn( state ),
 		};
 	},
