@@ -21,6 +21,7 @@ const noop = () => {};
 class VerticalNavItem extends Component {
 	static propTypes = {
 		children: PropTypes.any,
+		disabled: PropTypes.bool,
 		className: PropTypes.string,
 		external: PropTypes.bool,
 		isPlaceholder: PropTypes.bool,
@@ -57,7 +58,7 @@ class VerticalNavItem extends Component {
 	};
 
 	render() {
-		const { isPlaceholder, external, onClick, path, className, children } = this.props;
+		const { disabled, isPlaceholder, external, onClick, path, className, children } = this.props;
 
 		if ( isPlaceholder ) {
 			return this.renderPlaceholder();
@@ -67,13 +68,22 @@ class VerticalNavItem extends Component {
 
 		const linkProps = external ? { target: '_blank', rel: 'noreferrer' } : {};
 
-		return (
-			<a href={ path } onClick={ onClick } { ...linkProps }>
-				<CompactCard className={ compactCardClassNames }>
-					{ this.getIcon() }
+		const navItemCard = (
+			<CompactCard className={ compactCardClassNames }>
+				{ this.getIcon() }
 
-					<span>{ children }</span>
-				</CompactCard>
+				<span>{ children }</span>
+			</CompactCard>
+		);
+
+		if ( disabled ) {
+			return navItemCard;
+		}
+
+		return (
+			// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+			<a href={ path } onClick={ onClick } { ...linkProps }>
+				{ navItemCard }
 			</a>
 		);
 	}

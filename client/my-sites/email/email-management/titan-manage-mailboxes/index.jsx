@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
+import { CompactCard } from '@automattic/components';
 import { connect } from 'react-redux';
+import { isDesktop as isDesktopViewport } from '@automattic/viewport';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -32,6 +34,7 @@ import {
 	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
 import HeaderCake from 'calypso/components/header-cake';
+import Notice from 'calypso/components/notice';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -45,6 +48,11 @@ import {
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItemEnhanced from 'calypso/components/vertical-nav/item/enhanced';
 import Main from 'calypso/components/main';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class TitanManageMailboxes extends Component {
 	static propTypes = {
@@ -81,16 +89,75 @@ class TitanManageMailboxes extends Component {
 		} );
 	};
 
+	getTitanItems = () => {
+		const { isDesktop, translate } = this.props;
+		return [
+			{
+				className: 'titan-manage-mailboxes__manage-titan-link',
+				disabled: ! isDesktop,
+				external: true,
+				materialIcon: 'dvr',
+				text: translate( 'Configure desktop app' ),
+				path: this.getPath( TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_DESKTOP_APP ),
+				description: translate( 'View settings required to configure third-party email apps' ),
+			},
+			{
+				className: 'titan-manage-mailboxes__manage-titan-link',
+				external: true,
+				materialIcon: 'smartphone',
+				text: translate( 'Get mobile app' ),
+				path: this.getPath( TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP ),
+				description: translate(
+					'Download our Android and iOS apps to access your emails on the go'
+				),
+			},
+			{
+				className: 'titan-manage-mailboxes__manage-titan-link',
+				disabled: ! isDesktop,
+				external: true,
+				materialIcon: 'move_to_inbox',
+				text: translate( 'Import email data' ),
+				path: this.getPath( TITAN_CONTROL_PANEL_CONTEXT_IMPORT_EMAIL_DATA ),
+				description: translate( 'Migrate existing emails from a remote server via IMAP' ),
+			},
+			{
+				className: 'titan-manage-mailboxes__manage-titan-link',
+				disabled: ! isDesktop,
+				external: true,
+				materialIcon: 'mediation',
+				text: translate( 'Configure catch-all email' ),
+				path: this.getPath( TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_CATCH_ALL_EMAIL ),
+				description: translate(
+					'Route all undelivered emails to your domain to a specific mailbox'
+				),
+			},
+			{
+				className: 'titan-manage-mailboxes__manage-titan-link',
+				disabled: ! isDesktop,
+				external: true,
+				materialIcon: 'forward_to_inbox',
+				text: translate( 'Set up internal forwarding' ),
+				path: this.getPath( TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_INTERNAL_FORWARDING ),
+				description: translate(
+					'Create email aliases that forward messages to one or several mailboxes'
+				),
+			},
+		];
+	};
+
 	render() {
 		const {
 			currentRoute,
 			domain,
 			hasSubscription,
+			isDesktop,
 			isLoadingPurchase,
 			purchase,
 			selectedSite,
 			translate,
 		} = this.props;
+
+		const manageTitanItems = this.getTitanItems();
 
 		return (
 			<>
@@ -121,54 +188,24 @@ class TitanManageMailboxes extends Component {
 						selectedSite={ selectedSite }
 					/>
 
+					{ isDesktop ? (
+						<CompactCard>
+							<Notice
+								className="titan-manage-mailboxes__mobile-warning"
+								status="is-error"
+								showDismiss={ false }
+							>
+								{ translate(
+									'Please switch to a desktop device to access all email management features.'
+								) }
+							</Notice>
+						</CompactCard>
+					) : null }
+
 					<VerticalNav>
-						<VerticalNavItemEnhanced
-							description={ translate(
-								'View settings required to configure third-party email apps'
-							) }
-							external={ true }
-							materialIcon="dvr"
-							path={ this.getPath( TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_DESKTOP_APP ) }
-							text={ translate( 'Configure desktop app' ) }
-						/>
-
-						<VerticalNavItemEnhanced
-							description={ translate(
-								'Download our Android and iOS apps to access your emails on the go'
-							) }
-							external={ true }
-							materialIcon="smartphone"
-							path={ this.getPath( TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP ) }
-							text={ translate( 'Get mobile app' ) }
-						/>
-
-						<VerticalNavItemEnhanced
-							description={ translate( 'Migrate existing emails from a remote server via IMAP' ) }
-							external={ true }
-							materialIcon="move_to_inbox"
-							path={ this.getPath( TITAN_CONTROL_PANEL_CONTEXT_IMPORT_EMAIL_DATA ) }
-							text={ translate( 'Import email data' ) }
-						/>
-
-						<VerticalNavItemEnhanced
-							description={ translate(
-								'Route all undelivered emails to your domain to a specific mailbox'
-							) }
-							external={ true }
-							materialIcon="mediation"
-							path={ this.getPath( TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_CATCH_ALL_EMAIL ) }
-							text={ translate( 'Configure catch-all email' ) }
-						/>
-
-						<VerticalNavItemEnhanced
-							description={ translate(
-								'Create email aliases that forward messages to one or several mailboxes'
-							) }
-							external={ true }
-							materialIcon="forward_to_inbox"
-							path={ this.getPath( TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_INTERNAL_FORWARDING ) }
-							text={ translate( 'Set up internal forwarding' ) }
-						/>
+						{ manageTitanItems.map( ( navProps ) => (
+							<VerticalNavItemEnhanced { ...navProps } />
+						) ) }
 					</VerticalNav>
 				</Main>
 			</>
@@ -189,6 +226,7 @@ export default connect( ( state, ownProps ) => {
 		currentRoute: getCurrentRoute( state ),
 		domain,
 		hasSubscription: hasEmailSubscription( domain ),
+		isDesktop: isDesktopViewport(),
 		isLoadingPurchase:
 			isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 		purchase: getEmailPurchaseByDomain( state, domain ),
