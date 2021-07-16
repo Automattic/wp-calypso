@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useMemo } from 'react';
-import { createExistingCardMethod } from '@automattic/composite-checkout';
+import { createExistingCardMethod } from '@automattic/wpcom-checkout';
 import type { PaymentMethod } from '@automattic/composite-checkout';
 
 /**
