@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/_breakpoints.scss';
+@import '~@wordpress/base-styles/_mixins.scss';
+
 .step-wrapper__skip-hr {
 	background: var( --color-primary-light );
 	max-width: 270px;
@@ -22,33 +25,7 @@
 }
 
 .step-wrapper__buttons.is-top-buttons {
-	text-align: center;
-	padding: 5px 0;
-	margin-bottom: 32px;
-}
-
-.step-wrapper__buttons.is-top-buttons .step-wrapper__skip-wrapper {
-	display: inline-block;
-	background: var( --color-surface );
-	border-radius: 2px;
-	padding: 2px 12px;
-	@include elevation ( 2dp );
-}
-
-.step-wrapper__buttons.is-top-buttons .step-wrapper__skip-heading {
-	display: inline;
-	color: var( --color-text );
-}
-
-.step-wrapper__buttons.is-top-buttons .navigation-link {
-	color: var( --color-accent );
-	text-decoration: underline;
-	transform: none;
-	vertical-align: baseline;
-	margin-left: 0.5em;
-	padding: 7px 0 9px !important;
-}
-
-.step-wrapper__buttons.is-top-buttons .navigation-link svg {
-	display: none;
+	@include break-mobile {
+		margin-top: 20px;
+	}
 }
