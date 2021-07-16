@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import page from 'page';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -15,42 +14,36 @@ import { Button } from '@automattic/components';
 import PopoverMenu from 'calypso/components/popover/menu';
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import Gridicon from 'calypso/components/gridicon';
-import { composeAnalytics, recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { domainAddNew, domainManagementAllRoot } from 'calypso/my-sites/domains/paths';
+import { domainManagementAllRoot } from 'calypso/my-sites/domains/paths';
 
 /**
  * Style dependencies
  */
-import './add-domain-button.scss';
-class AddDomainButton extends React.Component {
+import './options-domain-button.scss';
+class OptionsDomainButton extends React.Component {
 	static propTypes = {
 		selectedSiteSlug: PropTypes.string,
 	};
 
 	state = {
-		isAddMenuVisible: false,
+		isOptionsMenuVisible: false,
 	};
 
-	addDomainButtonRef = React.createRef();
+	optionsDomainButtonRef = React.createRef();
 
-	clickAddDomain = () => {
-		this.props.trackAddDomainClick();
-		page( domainAddNew( this.props.selectedSiteSlug ) );
-	};
-
-	toggleAddMenu = () => {
+	toggleOptionsMenu = () => {
 		this.setState( ( state ) => {
-			return { isAddMenuVisible: ! state.isAddMenuVisible };
+			return { isOptionsMenuVisible: ! state.isOptionsMenuVisible };
 		} );
 	};
 
-	closeAddMenu = () => {
-		this.setState( { isAddMenuVisible: false } );
+	closeOptionsMenu = () => {
+		this.setState( { isOptionsMenuVisible: false } );
 	};
 
 	trackMenuClick = ( reactEvent ) => {
-		this.props.trackAddDomainMenuClick( reactEvent.target.pathname );
+		this.props.trackOptionsDomainMenuClick( reactEvent.target.pathname );
 	};
 
 	render() {
@@ -60,18 +53,18 @@ class AddDomainButton extends React.Component {
 			<React.Fragment>
 				<Button
 					compact
-					className="add-domain-button"
-					onClick={ this.toggleAddMenu }
-					ref={ this.addDomainButtonRef }
+					className="options-domain-button"
+					onClick={ this.toggleOptionsMenu }
+					ref={ this.optionsDomainButtonRef }
 				>
 					{ translate( 'Other domain options' ) }
 					<Gridicon icon="chevron-down" />
 				</Button>
 				<PopoverMenu
-					className="add-domain-button__popover"
-					isVisible={ this.state.isAddMenuVisible }
-					onClose={ this.closeAddMenu }
-					context={ this.addDomainButtonRef.current }
+					className="options-domain-button__popover"
+					isVisible={ this.state.isOptionsMenuVisible }
+					onClose={ this.closeOptionsMenu }
+					context={ this.optionsDomainButtonRef.current }
 					position="bottom"
 				>
 					<PopoverMenuItem href={ domainManagementAllRoot() } onClick={ this.trackMenuClick }>
@@ -92,13 +85,7 @@ class AddDomainButton extends React.Component {
 	}
 }
 
-const trackAddDomainClick = () =>
-	composeAnalytics(
-		recordGoogleEvent( 'Domain Management', 'Clicked "Add Domain" Button in List' ),
-		recordTracksEvent( 'calypso_domain_management_list_add_domain_click' )
-	);
-
-const trackAddDomainMenuClick = ( menuUrl ) =>
+const trackOptionsDomainMenuClick = ( menuUrl ) =>
 	recordTracksEvent( 'calypso_domain_management_list_add_domain_menu_click', {
 		menu_slug: menuUrl,
 	} );
@@ -111,8 +98,7 @@ export default connect(
 	},
 	() => {
 		return {
-			trackAddDomainClick,
-			trackAddDomainMenuClick,
+			trackOptionsDomainMenuClick,
 		};
 	}
-)( localize( AddDomainButton ) );
+)( localize( OptionsDomainButton ) );
