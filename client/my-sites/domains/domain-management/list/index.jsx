@@ -115,7 +115,9 @@ export class List extends React.Component {
 	}
 
 	renderNewDesign() {
-		const { selectedSite, currentRoute, translate } = this.props;
+		const { selectedSite, domains, currentRoute, translate } = this.props;
+
+		const nonWpcomDomains = this.filterOutWpcomDomains( domains );
 
 		return (
 			<>
@@ -137,7 +139,7 @@ export class List extends React.Component {
 
 				<div className="domain-management-list__primary-domain">{ this.renderPrimaryDomain() }</div>
 
-				{ ! this.isLoading() && (
+				{ ! this.isLoading() && nonWpcomDomains.length === 0 && (
 					<EmptyDomainsListCard
 						selectedSite={ selectedSite }
 						hasDomainCredit={ this.props.hasDomainCredit }
@@ -145,6 +147,15 @@ export class List extends React.Component {
 				) }
 
 				<div className="domain-management-list__items">{ this.listNewItems() }</div>
+
+				{ ! this.isLoading() && nonWpcomDomains.length > 0 && (
+					<EmptyDomainsListCard
+						selectedSite={ selectedSite }
+						hasDomainCredit={ this.props.hasDomainCredit }
+						isCompact={ true }
+					/>
+				) }
+
 				<DomainToPlanNudge />
 			</>
 		);

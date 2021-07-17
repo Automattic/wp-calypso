@@ -1,3 +1,5 @@
+@import '@wordpress/base-styles/mixins';
+
 .domain-management-list__notice {
 	margin-bottom: 0;
 }
@@ -332,5 +334,66 @@
 
 	.domain-item__upsell {
 		margin-left: auto;
+	}
+}
+
+.empty-domains-list-card {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	h2 {
+		@extend .wp-brand-font;
+		color: var( --color-neutral-70 );
+		font-size: $font-headline-small;
+	}
+
+	h3 {
+		color: var( --color-neutral-50 );
+		font-size: $font-body;
+	}
+
+	.empty-domains-list-card__text {
+		text-align: center;
+		margin-bottom: 30px;
+	}
+
+	.empty-domains-list-card__content {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.empty-domains-list-card__actions {
+		text-align: center;
+		& > .button {
+			margin: 10px 10px 0 0;
+		}
+	}
+
+	&.is-compact {
+		flex-direction: row-reverse;
+
+		h2 {
+			font-size: $font-title-medium;
+		}
+
+		> .empty-domains-list-card__illustration {
+			margin-left: 40px;
+		}
+
+		.empty-domains-list-card__text {
+			margin-bottom: 10px;
+			text-align: initial;
+		}
+
+		.empty-domains-list-card__actions {
+			text-align: initial;
+		}
+
+		.empty-domains-list-card__content {
+			align-items: normal;
+			width: 100%;
+		}
 	}
 }

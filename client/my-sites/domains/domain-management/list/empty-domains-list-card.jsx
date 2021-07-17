@@ -5,19 +5,26 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import { Card } from '@automattic/components';
-import EmptyContent from 'calypso/components/empty-content';
+import { Card, Button } from '@automattic/components';
 import { domainAddNew, domainUseYourDomain } from 'calypso/my-sites/domains/paths';
 import customerHomeIllustrationTaskFindDomain from 'calypso/assets/images/customer-home/illustration--task-find-domain.svg';
 import { isFreePlan } from '@automattic/calypso-products';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-function EmptyDomainsListCard( { selectedSite, hasDomainCredit, dispatchRecordTracksEvent } ) {
+import './style.scss';
+
+function EmptyDomainsListCard( {
+	selectedSite,
+	hasDomainCredit,
+	isCompact,
+	dispatchRecordTracksEvent,
+} ) {
 	const translate = useTranslate();
 
 	const getActionClickHandler = ( type, buttonURL, sourceCardType ) => () => {
@@ -55,24 +62,41 @@ function EmptyDomainsListCard( { selectedSite, hasDomainCredit, dispatchRecordTr
 		contentType = 'free_domain_credit';
 	}
 
+	const illustration = customerHomeIllustrationTaskFindDomain && (
+		<img src={ customerHomeIllustrationTaskFindDomain } alt="" width={ 150 } />
+	);
+
 	return (
 		<Card>
-			<EmptyContent
-				title={ title }
-				line={ line }
-				illustration={ customerHomeIllustrationTaskFindDomain }
-				illustrationWidth={ 150 }
-				action={ action }
-				actionURL={ actionURL }
-				actionCallback={ getActionClickHandler( 'primary', actionURL, contentType ) }
-				secondaryAction={ secondaryAction }
-				secondaryActionURL={ secondaryActionURL }
-				secondartActionCallback={ getActionClickHandler(
-					'secondary',
-					secondaryActionURL,
-					contentType
-				) }
-			/>
+			<div
+				className={ classNames( 'empty-domains-list-card', {
+					'is-compact': isCompact,
+					'has-title-only': title && ! line,
+				} ) }
+			>
+				<div className="empty-domains-list-card__illustration">{ illustration }</div>
+				<div className="empty-domains-list-card__content">
+					<div className="empty-domains-list-card__text">
+						{ title ? <h2>{ title }</h2> : null }
+						{ line ? <h3>{ line }</h3> : null }
+					</div>
+					<div className="empty-domains-list-card__actions">
+						<Button
+							primary
+							onClick={ getActionClickHandler( 'primary', actionURL, contentType ) }
+							href={ actionURL }
+						>
+							{ action }
+						</Button>
+						<Button
+							onClick={ getActionClickHandler( 'secondary', secondaryActionURL, contentType ) }
+							href={ secondaryActionURL }
+						>
+							{ secondaryAction }
+						</Button>
+					</div>
+				</div>
+			</div>
 			<TrackComponentView
 				eventName="calypso_get_your_domain_empty_impression"
 				eventProperties={ { content_type: contentType } }
@@ -84,6 +108,7 @@ function EmptyDomainsListCard( { selectedSite, hasDomainCredit, dispatchRecordTr
 EmptyDomainsListCard.propTypes = {
 	selectedSite: PropTypes.object,
 	hasDomainCredit: PropTypes.bool,
+	isCompact: PropTypes.bool,
 	domains: PropTypes.array,
 	dispatchRecordTracksEvent: PropTypes.func,
 };
