@@ -5,7 +5,6 @@ import { PreviewComponent } from '../components';
 const selectors = {
 	// Preview
 	demoPane: '.theme__sheet-screenshot',
-	closeDemoPane: '.web-preview__close',
 
 	// Main body
 	activateDesignButton: 'button:text("Activate this design")',
@@ -41,8 +40,8 @@ export class ThemesDetailPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async closePreview(): Promise< void > {
-		await this.page.click( selectors.closeDemoPane );
-		await this.page.waitForSelector( selectors.demoPane, { state: 'hidden' } );
+		const previewComponent = await PreviewComponent.Expect( this.page );
+		await previewComponent.closePreview();
 	}
 
 	/**
