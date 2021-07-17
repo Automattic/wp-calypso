@@ -19,7 +19,14 @@ import { domainManagementChangeSiteAddress } from 'calypso/my-sites/domains/path
  */
 import './wpcom-domain-item.scss';
 
-export default function WpcomDomainItem( { currentRoute, domain, onMakePrimary, site } ) {
+export default function WpcomDomainItem( {
+	currentRoute,
+	domain,
+	disabled,
+	isBusy,
+	onMakePrimary,
+	site,
+} ) {
 	const [ menuVisibility, setMenuVisibility ] = useState( false );
 	const buttonRef = useRef( null );
 	const canMakePrimary = domain.canSetAsPrimary && ! domain.isPrimary;
@@ -36,7 +43,13 @@ export default function WpcomDomainItem( { currentRoute, domain, onMakePrimary, 
 				{ __( 'Your free WordPress.com address is ' ) }
 				<strong>{ domain.domain }</strong>
 			</span>
-			<Button compact ref={ buttonRef } onClick={ handleToggleMenu }>
+			<Button
+				compact
+				ref={ buttonRef }
+				onClick={ handleToggleMenu }
+				disabled={ disabled }
+				busy={ isBusy }
+			>
 				Manage
 				<Gridicon icon="chevron-down" />
 			</Button>
@@ -65,6 +78,8 @@ export default function WpcomDomainItem( { currentRoute, domain, onMakePrimary, 
 WpcomDomainItem.propTypes = {
 	currentRoute: PropTypes.string,
 	domain: PropTypes.object.isRequired,
+	disabled: PropTypes.bool,
+	isBusy: PropTypes.bool,
 	onMakePrimary: PropTypes.func,
 	site: PropTypes.object,
 };

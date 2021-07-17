@@ -44,7 +44,12 @@ import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/s
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
-import { getDomainManagementPath } from './utils';
+import {
+	filterOutWpcomDomains,
+	getDomainManagementPath,
+	showUpdatePrimaryDomainSuccessNotice,
+	showUpdatePrimaryDomainErrorNotice,
+} from './utils';
 import DomainItem from './domain-item';
 import ListHeader from './list-header';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -112,6 +117,35 @@ export class List extends React.Component {
 	filterOutWpcomDomains( domains ) {
 		return domains.filter(
 			( domain ) => domain.type !== type.WPCOM || domain.isWpcomStagingDomain
+		);
+	}
+
+	domainCreditsInfoNotice() {
+		if ( ! this.props.hasDomainCredit ) {
+			return null;
+		}
+
+		const { translate } = this.props;
+
+		return (
+			<Notice
+				status="is-success"
+				showDismiss={ false }
+				text={ translate( 'Free domain available' ) }
+				icon="info-outline"
+				className="domain-management__claim-free-domain"
+			>
+				<NoticeAction
+					onClick={ this.props.clickClaimDomainNotice }
+					href={ `/domains/add/${ this.props.selectedSite.slug }` }
+				>
+					{ translate( 'Claim Free Domain' ) }
+					<TrackComponentView
+						eventName={ 'calypso_domain_credit_reminder_impression' }
+						eventProperties={ { cta_name: 'domain_info_notice' } }
+					/>
+				</NoticeAction>
+			</Notice>
 		);
 	}
 
@@ -200,7 +234,7 @@ export class List extends React.Component {
 				);
 			}
 
-			if ( isEmpty( this.filterOutWpcomDomains( this.props.domains ) ) ) {
+			if ( isEmpty( filterOutWpcomDomains( this.props.domains ) ) ) {
 				return null;
 			}
 		}
@@ -275,40 +309,26 @@ export class List extends React.Component {
 		} );
 	}
 
-	showUpdatePrimaryDomainSuccessNotice( domainName ) {
-		const { translate } = this.props;
-		this.props.successNotice(
-			translate(
-				'Primary domain changed: all domains will redirect to {{em}}%(domainName)s{{/em}}.',
-				{ args: { domainName }, components: { em: <em /> } }
-			),
-			{ duration: 10000, isPersistent: true }
-		);
-	}
-
-	showUpdatePrimaryDomainErrorNotice( errorMessage ) {
-		const { translate } = this.props;
-		this.props.errorNotice(
-			errorMessage ||
-				translate( "Something went wrong and we couldn't change your primary domain." ),
-			{ duration: 10000, isPersistent: true }
-		);
-	}
-
 	handleUpdatePrimaryDomainWpcom = ( domainName ) => {
 		if ( this.state.settingPrimaryDomain ) {
 			return;
 		}
 
-		return this.setPrimaryDomain( domainName ).then(
-			() => {
-				this.setState( { primaryDomainIndex: null } );
-				this.showUpdatePrimaryDomainSuccessNotice( domainName );
-			},
-			( error ) => {
-				this.showUpdatePrimaryDomainErrorNotice( error.message );
-			}
-		);
+		this.props.changePrimary( domainName, 'wpcom_domain_manage_click' );
+
+		this.setState( { settingPrimaryDomain: true } );
+
+		return this.setPrimaryDomain( domainName )
+			.then(
+				() => {
+					this.setState( { primaryDomainIndex: null } );
+					showUpdatePrimaryDomainSuccessNotice( domainName );
+				},
+				( error ) => {
+					showUpdatePrimaryDomainErrorNotice( error.message );
+				}
+			)
+			.then( () => this.setState( { settingPrimaryDomain: false } ) );
 	};
 
 	handleUpdatePrimaryDomainOptionClick = ( index, domain ) => {
@@ -344,14 +364,14 @@ export class List extends React.Component {
 					changePrimaryDomainModeEnabled: false,
 				} );
 
-				this.showUpdatePrimaryDomainSuccessNotice( domain.name );
+				showUpdatePrimaryDomainSuccessNotice( domain.name );
 			},
 			( error ) => {
 				this.setState( {
 					settingPrimaryDomain: false,
 					primaryDomainIndex: currentPrimaryIndex,
 				} );
-				this.showUpdatePrimaryDomainErrorNotice( error.message );
+				showUpdatePrimaryDomainErrorNotice( error.message );
 			}
 		);
 	};
@@ -438,7 +458,8 @@ export class List extends React.Component {
 
 		const { changePrimaryDomainModeEnabled, primaryDomainIndex, settingPrimaryDomain } = this.state;
 
-		const domains = this.filterOutWpcomDomains( this.props.domains );
+		const domains = filterOutWpcomDomains( this.props.domains );
+		const disabled = settingPrimaryDomain || changePrimaryDomainModeEnabled;
 		const wpcomDomain = this.props.domains.find(
 			( domain ) => domain.type === type.WPCOM || domain.isWpcomStagingDomain
 		);
@@ -457,7 +478,7 @@ export class List extends React.Component {
 				busyMessage={ this.props.translate( 'Setting Primary Domain…', {
 					context: 'Shows up when the primary domain is changing and the user is waiting',
 				} ) }
-				disabled={ settingPrimaryDomain || changePrimaryDomainModeEnabled }
+				disabled={ disabled }
 				enableSelection={ changePrimaryDomainModeEnabled && domain.canSetAsPrimary }
 				selectionIndex={ index }
 				onMakePrimaryClick={ this.handleUpdatePrimaryDomainOptionClick }
@@ -485,9 +506,11 @@ export class List extends React.Component {
 			manageAllDomainsLink,
 			wpcomDomain && (
 				<WpcomDomainItem
-					key="wpcom-domain-items"
+					key="wpcom-domain-item"
 					currentRoute={ currentRoute }
 					domain={ wpcomDomain }
+					disabled={ disabled }
+					isBusy={ settingPrimaryDomain }
 					site={ selectedSite }
 					onMakePrimary={ this.handleUpdatePrimaryDomainWpcom }
 				/>
