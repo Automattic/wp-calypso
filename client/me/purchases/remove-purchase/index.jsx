@@ -15,6 +15,7 @@ import classNames from 'classnames';
 import { Dialog, Button, CompactCard } from '@automattic/components';
 import config from '@automattic/calypso-config';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
+import CancelJetpackForm from 'calypso/components/marketing-survey/cancel-jetpack-form';
 import PrecancellationChatButton from 'calypso/components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
 import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
 import GSuiteCancellationPurchaseDialog from 'calypso/components/marketing-survey/gsuite-cancel-purchase-dialog';
@@ -310,6 +311,22 @@ class RemovePurchase extends Component {
 		);
 	}
 
+	renderJetpackDialog() {
+		const { purchase, site } = this.props;
+
+		return (
+			<CancelJetpackForm
+				disableButtons={ this.state.isRemoving }
+				purchase={ purchase }
+				selectedSite={ site }
+				isVisible={ this.state.isDialogVisible }
+				onClose={ this.closeDialog }
+				onClickFinalConfirm={ this.removePurchase }
+				flowType={ CANCEL_FLOW_TYPE.REMOVE }
+			/>
+		);
+	}
+
 	renderDialog() {
 		const { purchase } = this.props;
 
@@ -334,6 +351,11 @@ class RemovePurchase extends Component {
 
 		if ( this.props.isAtomicSite && ! isJetpackSearch( purchase ) ) {
 			return this.renderAtomicDialog( purchase );
+		}
+
+		// Jetpack Plan or Product Cancellation
+		if ( this.props.isJetpack ) {
+			return this.renderJetpackDialog();
 		}
 
 		return this.renderPlanDialog();
