@@ -3,7 +3,11 @@ import { BaseContainer } from '../base-container';
 import { PreviewComponent } from '../components';
 
 const selectors = {
+	// Preview
 	demoPane: '.theme__sheet-screenshot',
+	closeDemoPane: '.web-preview__close',
+
+	// Main body
 	activateDesignButton: 'button:text("Activate this design")',
 	customizeDesignButton: 'span:text("Customize site")',
 
@@ -29,6 +33,16 @@ export class ThemesDetailPage extends BaseContainer {
 	async preview(): Promise< void > {
 		await this.page.click( selectors.demoPane );
 		await PreviewComponent.Expect( this.page );
+	}
+
+	/**
+	 * Close the theme preview pane.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async closePreview(): Promise< void > {
+		await this.page.click( selectors.closeDemoPane );
+		await this.page.waitForSelector( selectors.demoPane, { state: 'hidden' } );
 	}
 
 	/**

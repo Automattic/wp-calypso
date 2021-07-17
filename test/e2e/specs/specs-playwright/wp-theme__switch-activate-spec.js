@@ -7,7 +7,7 @@ import {
 	ThemesDetailPage,
 } from '@automattic/calypso-e2e';
 
-describe( DataHelper.createSuiteTitle( 'Theme: Activate' ), () => {
+describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 	let sidebarComponent;
 	let themesPage;
 	let themesDetailPage;
@@ -40,8 +40,16 @@ describe( DataHelper.createSuiteTitle( 'Theme: Activate' ), () => {
 		await themesPage.select( themeName );
 	} );
 
-	it( 'Activate theme', async function () {
+	it( 'Preview theme', async function () {
 		themesDetailPage = await ThemesDetailPage.Expect( page );
+		await themesDetailPage.preview();
+	} );
+
+	it( 'Close theme preview', async function () {
+		await themesDetailPage.closePreview();
+	} );
+
+	it( 'Activate theme', async function () {
 		await themesDetailPage.activate();
 	} );
 

@@ -7,7 +7,7 @@ import {
 	setupHooks,
 } from '@automattic/calypso-e2e';
 
-describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
+describe.skip( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 	let sidebarComponent;
 	let themesPage;
 	let themesDetailPage;
