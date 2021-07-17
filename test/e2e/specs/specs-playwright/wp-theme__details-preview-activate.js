@@ -37,7 +37,8 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 	} );
 
 	it( `Select a theme starting with ${ themeName }`, async function () {
-		await themesPage.select( themeName );
+		const selectedTheme = await themesPage.select( themeName );
+		await themesPage.viewInfo( selectedTheme );
 	} );
 
 	it( 'Preview theme', async function () {

@@ -3,14 +3,13 @@ import {
 	LoginFlow,
 	SidebarComponent,
 	ThemesPage,
-	ThemesDetailPage,
+	PreviewComponent,
 	setupHooks,
 } from '@automattic/calypso-e2e';
 
-describe.skip( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
+describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 	let sidebarComponent;
 	let themesPage;
-	let themesDetailPage;
 	const themeName = 'Twenty Seventeen';
 	let page;
 
@@ -34,15 +33,12 @@ describe.skip( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 		await themesPage.search( themeName );
 	} );
 
-	it( `Select ${ themeName }`, async function () {
-		await themesPage.select( themeName );
-	} );
-
-	it( 'See theme detail page', async function () {
-		themesDetailPage = await ThemesDetailPage.Expect( page );
-	} );
+	it( `Select ${ themeName} and click on Live Demo popover item`, async function() {
+		const selectedTheme = await themesPage.select( themeName );
+		await themesPage.clickPopoverItem( selectedTheme, 'Live Demo');
+	})
 
 	it( 'Preview theme', async function () {
-		await themesDetailPage.preview();
+		await PreviewComponent.Expect( page );
 	} );
 } );
