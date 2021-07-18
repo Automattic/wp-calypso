@@ -127,7 +127,7 @@ button.register-domain-step__next-page-button {
 
 body.is-section-domains {
 	.register-domain-step {
-		&__next-page-button {
+		button.register-domain-step__next-page-button {
 			color: var( --color-link );
 			border: none;
 			box-shadow: none;
@@ -140,7 +140,7 @@ body.is-section-signup.is-white-signup {
 		background: none;
 		box-shadow: none;
 
-		&-button {
+		button.register-domain-step__next-page-button {
 			padding: 0.57em 1.17em;
 			border-radius: 4px; /* stylelint-disable-line */
 
