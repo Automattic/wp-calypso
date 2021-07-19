@@ -582,7 +582,7 @@ class DomainItem extends PureComponent {
 			showCheckbox,
 			enableSelection,
 		} = this.props;
-		const { listStatusText, listStatusClass } = resolveDomainStatus( domainDetails || domain );
+		const { listStatusClass } = resolveDomainStatus( domainDetails || domain );
 
 		const rowClasses = classNames( 'domain-item', `domain-item__status-${ listStatusClass }`, {
 			'domain-item__enable-selection': enableSelection,
@@ -610,9 +610,6 @@ class DomainItem extends PureComponent {
 					<div className="domain-item__status">
 						<div className="domain-item__title">{ domain.domain }</div>
 						{ domainDetails?.isPrimary && this.renderPrimaryBadge() }
-						{ listStatusText && (
-							<DomainNotice status={ listStatusClass || 'info' } text={ listStatusText } />
-						) }
 						{ this.renderActionResult() }
 					</div>
 					{ this.renderSiteMeta() }
