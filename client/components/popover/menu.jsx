@@ -17,6 +17,7 @@ class PopoverMenu extends Component {
 	static propTypes = {
 		autoPosition: PropTypes.bool,
 		isVisible: PropTypes.bool.isRequired,
+		isFocusEnabled: PropTypes.bool,
 		onClose: PropTypes.func.isRequired,
 		position: PropTypes.string,
 		className: PropTypes.string,
@@ -27,6 +28,7 @@ class PopoverMenu extends Component {
 
 	static defaultProps = {
 		autoPosition: true,
+		isFocusEnabled: true,
 		position: 'top',
 		popoverComponent: Popover,
 	};
@@ -46,7 +48,6 @@ class PopoverMenu extends Component {
 			context,
 			customPosition,
 			isVisible,
-			isFocusEnabled,
 			popoverTitle,
 			position,
 		} = this.props;
@@ -60,7 +61,8 @@ class PopoverMenu extends Component {
 				context={ context }
 				customPosition={ customPosition }
 				isVisible={ isVisible }
-				isFocusEnabled={ isFocusEnabled }
+				// Make sure we focus on PopoverMenu so that we can control PopoverMenuItem by keyboard
+				isFocusEnabled={ false }
 				popoverTitle={ popoverTitle }
 				position={ position }
 			>
@@ -94,6 +96,10 @@ class PopoverMenu extends Component {
 	};
 
 	_onShow = () => {
+		if ( ! this.props.isFocusEnabled ) {
+			return;
+		}
+
 		const elementToFocus = this.menu.current;
 
 		this._previouslyFocusedElement = document.activeElement;
@@ -140,7 +146,7 @@ class PopoverMenu extends Component {
 
 		switch ( event.keyCode ) {
 			case 9: // tab
-				this.props.onClose();
+				this._onClose();
 				handled = true;
 				break;
 			case 38: // up arrow

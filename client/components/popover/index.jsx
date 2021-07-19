@@ -42,6 +42,7 @@ class PopoverInner extends Component {
 		isRtl: false,
 		isFocusEnabled: true,
 		position: 'top',
+		onShow: noop,
 		onClose: noop,
 		onMouseEnter: noop,
 		onMouseLeave: noop,
@@ -74,6 +75,7 @@ class PopoverInner extends Component {
 	componentDidMount() {
 		this.bindListeners();
 		this.setPositionAndFocus();
+		this.show();
 	}
 
 	componentDidUpdate() {
@@ -325,6 +327,10 @@ class PopoverInner extends Component {
 		return { left, top };
 	}
 
+	show() {
+		this.props.onShow();
+	}
+
 	close( wasCanceled = false ) {
 		this.props.onClose( wasCanceled );
 	}
@@ -445,6 +451,7 @@ Popover.propTypes = {
 		'top left',
 	] ),
 	showDelay: PropTypes.number,
+	onShow: PropTypes.func,
 	onClose: PropTypes.func,
 	relativePosition: PropTypes.shape( { left: PropTypes.number } ),
 	// Bypass position calculations and provide custom position values

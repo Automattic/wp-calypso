@@ -137,6 +137,8 @@ const Task = ( {
 							className="task__skip is-link"
 							ref={ skipButtonRef }
 							onClick={ () => ( enableSkipOptions ? setSkipOptionsVisible( true ) : skipTask() ) }
+							aria-haspopup
+							aria-expanded={ enableSkipOptions && areSkipOptionsVisible }
 						>
 							{ enableSkipOptions ? translate( 'Hide this' ) : translate( 'Dismiss' ) }
 							{ enableSkipOptions && <Gridicon icon="dropdown" size={ 18 } /> }
