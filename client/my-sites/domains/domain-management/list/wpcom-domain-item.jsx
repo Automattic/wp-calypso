@@ -41,7 +41,7 @@ export default function WpcomDomainItem( {
 
 	return (
 		<div className="wpcom-domain-item">
-			<span>
+			<span className="wpcom-domain-item__description">
 				{ createInterpolateElement(
 					sprintf(
 						/* translators: %s - The WordPress.com subdomain. (ex.: subdomain.wordpress.com) */
