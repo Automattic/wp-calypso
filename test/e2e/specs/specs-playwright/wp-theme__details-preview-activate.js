@@ -3,6 +3,7 @@ import {
 	DataHelper,
 	LoginFlow,
 	SidebarComponent,
+	PreviewComponent,
 	ThemesPage,
 	ThemesDetailPage,
 } from '@automattic/calypso-e2e';
@@ -11,6 +12,7 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 	let sidebarComponent;
 	let themesPage;
 	let themesDetailPage;
+	let previewComponent;
 	let popupTab;
 	let page;
 	const themeName = 'Twenty Twen';
@@ -47,7 +49,8 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 	} );
 
 	it( 'Close theme preview', async function () {
-		await themesDetailPage.closePreview();
+		previewComponent = await PreviewComponent.Expect( page );
+		await previewComponent.closePreview();
 	} );
 
 	it( 'Activate theme', async function () {

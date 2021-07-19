@@ -10,6 +10,7 @@ import {
 describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 	let sidebarComponent;
 	let themesPage;
+	let previewComponent;
 	const themeName = 'Twenty Seventeen';
 	let page;
 
@@ -39,6 +40,10 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 	} );
 
 	it( 'Preview theme', async function () {
-		await PreviewComponent.Expect( page );
+		previewComponent = await PreviewComponent.Expect( page );
+	} );
+
+	it( 'Close preview', async function () {
+		await previewComponent.closePreview();
 	} );
 } );

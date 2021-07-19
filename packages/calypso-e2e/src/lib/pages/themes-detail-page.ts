@@ -35,16 +35,6 @@ export class ThemesDetailPage extends BaseContainer {
 	}
 
 	/**
-	 * Close the theme preview pane.
-	 *
-	 * @returns {Promise<void>} No return value.
-	 */
-	async closePreview(): Promise< void > {
-		const previewComponent = await PreviewComponent.Expect( this.page );
-		await previewComponent.closePreview();
-	}
-
-	/**
 	 * Activates the theme.
 	 *
 	 * If the optional parameter `keepModal` is set to true, the Thanks message modal will not

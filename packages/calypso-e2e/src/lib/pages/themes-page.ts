@@ -102,7 +102,7 @@ export class ThemesPage extends BaseContainer {
 	 * @param {ElementHandle} selectedTheme Reference to the target theme.
 	 * @param {string} action Action to be called from the popover.
 	 */
-	async clickPopoverAction(
+	async clickPopoverItem(
 		selectedTheme: ElementHandle,
 		action: 'Live Demo' | 'Activate' | 'Info' | 'Support'
 	): Promise< void > {
