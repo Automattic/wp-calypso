@@ -1,3 +1,6 @@
+@import '@automattic/typography/styles/variables';
+@import '../../styles/shared';
+
 .wpcom-domain-item {
 	display: flex;
 	align-items: center;
@@ -9,6 +12,7 @@
 
 	.wpcom-domain-item__primary-badge {
 		font-size: $font-body-extra-small;
+		@extend %domains__badge;
 	}
 
 	.wpcom-domain-item__manage-button {
