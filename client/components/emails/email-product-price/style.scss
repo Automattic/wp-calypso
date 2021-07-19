@@ -10,6 +10,10 @@
 	line-height: 1;
 	text-align: right;
 
+	> div {
+		line-height: 1.5em;
+	}
+
 	@include breakpoint-deprecated( '>660px' ) {
 		align-items: flex-end;
 		font-size: $font-body;
@@ -29,24 +33,23 @@
 			flex-direction: column-reverse;
 			margin-top: 4px;
 
+			> div {
+				margin-top: 4px;
+			}
 		}
 	}
 
 	.email-product-price__free-price {
 		color: var( --color-text-subtle );
 		font-size: $font-body-small;
-		line-height: 20px;
-		letter-spacing: 0.2px;
-		font-width: normal;
-
-		@include break-mobile {
-			font-weight: 500; /* stylelint-disable-line */
-		}
 	}
 
 	.email-product-price__free-text {
 		color: var( --studio-green-60 );
-		display: block;
+
+		@include break-mobile {
+			font-weight: 500; /* stylelint-disable-line */
+		}
 	}
 
 	.is-placeholder & {
