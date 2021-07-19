@@ -1,5 +1,4 @@
 import { Page } from 'playwright';
-import { BaseContainer } from '../base-container';
 
 const selectors = {
 	loginContainer: '.wp-login__container',
@@ -10,26 +9,17 @@ const selectors = {
 
 /**
  * Represents an instance of the calypso Login page.
- *
- * @augments {BaseContainer}
  */
-export class LoginPage extends BaseContainer {
+export class LoginPage {
+	private page: Page;
+
 	/**
 	 * Creates an instance of the Login page.
 	 *
 	 * @param {Page} page Playwright page on which actions are executed.
 	 */
 	constructor( page: Page ) {
-		super( page, selectors.loginContainer );
-	}
-
-	/**
-	 * Post-initialization steps.
-	 */
-	async _postInit(): Promise< void > {
-		await this.page.waitForLoadState( 'networkidle' );
-		const container = await this.page.waitForSelector( selectors.loginContainer );
-		await container.waitForElementState( 'stable' );
+		this.page = page;
 	}
 
 	/**
