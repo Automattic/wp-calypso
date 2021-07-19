@@ -16,8 +16,8 @@ const EmailProductPrice = ( { isLoading, price } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const startDate = moment().add( 3, 'months' ).format( 'LL' );
-	const message = translate( 'Free for first three months' );
-	const priceText = translate( '%(price)s per user per month starting %(startDate)s', {
+	const message = translate( 'Free for the first three months' );
+	const priceText = translate( '%(price)s /user /month starting %(startDate)s', {
 		args: {
 			price,
 			startDate,
