@@ -26,7 +26,7 @@
 	&.is-added {
 		background-color: var( --color-neutral-0 );
 
-		.email-suggestion__content {
+		.email-signup-titan-card__suggestion-content {
 			h3,
 			.email-product-price {
 				color: var( --color-neutral );
@@ -37,7 +37,7 @@
 	&.is-unavailable {
 		cursor: default;
 
-		.email-suggestion__content {
+		.email-signup-titan-card__suggestion-content {
 			h3,
 			.email-product-price {
 				color: var( --color-neutral );
@@ -46,7 +46,7 @@
 	}
 }
 
-.email-suggestion__content {
+.email-signup-titan-card__suggestion-content {
 	width: 100%;
 	min-height: 32px;
 	flex-direction: column;
@@ -55,7 +55,7 @@
 		display: flex;
 		justify-content: space-between;
 
-		&.email-suggestion__content-email {
+		&.email-signup-titan-card__suggestion-content-email {
 			justify-content: initial;
 		}
 	}
@@ -122,12 +122,12 @@
 	}
 }
 
-.email-registration-suggestion__title-wrapper {
+.email-signup-titan-card__title-wrapper {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
 
-	&.email-registration-suggestion__title-email {
+	&.email-signup-titan-card__title-email {
 		@include breakpoint-deprecated( '>480px' ) {
 			max-width: 50%;
 			min-width: 50%;
@@ -141,7 +141,7 @@
 		}
 	}
 
-	.email-registration-suggestion__title {
+	.email-signup-titan-card__title {
 		width: auto;
 		max-width: 100%;
 		padding-right: 0.2em;
@@ -151,20 +151,20 @@
 		align-self: center;
 	}
 
-	.email-registration-suggestion__hsts-tooltip {
+	.email-signup-titan-card__hsts-tooltip {
 		display: flex;
 		align-items: center;
 		justify-content: center;
 	}
 
 	body.is-section-signup .layout:not( .dops ) & {
-		.email-registration-suggestion__hsts-tooltip {
+		.email-signup-titan-card__hsts-tooltip {
 			padding: 0;
 		}
 	}
 }
 
-.email-registration-suggestion__title {
+.email-signup-titan-card__title {
 	font-size: $font-body;
 	word-break: break-all;
 
@@ -174,7 +174,7 @@
 	}
 }
 
-.button.email-suggestion__action {
+.button.email-signup-titan-card__suggestion-action {
 	min-width: 66px;
 	text-align: center;
 	margin-top: 16px;
@@ -221,7 +221,7 @@
 	}
 }
 
-.email-suggestion__chevron {
+.email-signup-titan-card__suggestion-chevron {
 	display: none;
 	margin-left: 10px;
 	flex: 1 0 auto;
@@ -246,7 +246,7 @@
 }
 
 body.is-section-signup.is-white-signup {
-	.email-registration-suggestion__progress-bar {
+	.email-signup-titan-card__progress-bar {
 		align-self: center;
 		margin-left: 0;
 		margin-top: 0;
@@ -264,7 +264,7 @@ body.is-section-signup.is-white-signup {
 		}
 	}
 
-	.featured-email-suggestion--is-placeholder .email-registration-suggestion__progress-bar {
+	.featured-email-suggestion--is-placeholder .email-signup-titan-card__progress-bar {
 		margin-left: 0;
 	}
 
@@ -283,7 +283,7 @@ body.is-section-signup.is-white-signup {
 			margin: 0;
 		}
 
-		& .email-suggestion__content-email {
+		& .email-signup-titan-card__suggestion-content-email {
 			justify-content: space-between;
 			margin-right: 40px;
 		}
@@ -295,24 +295,24 @@ body.is-section-signup.is-white-signup {
 			padding-left: 24px;
 			padding-right: 24px;
 
-			.email-registration-suggestion__email-title {
+			.email-signup-titan-card__email-title {
 				font-size: 1.5rem; /* stylelint-disable-line */
 				line-height: 60px;
 
-				.email-registration-suggestion__email-title-name {
+				.email-signup-titan-card__email-title-name {
 					color: var( --studio-gray-60 );
 				}
 
-				.email-registration-suggestion__email-title-tld {
+				.email-signup-titan-card__email-title-tld {
 					font-weight: 500; /* stylelint-disable-line */
 				}
 			}
 
-			.email-suggestion__action-container {
+			.email-signup-titan-card__suggestion-action-container {
 				flex: 0 0 auto;
 			}
 
-			.email-suggestion__action:not( .is-borderless ) {
+			.email-signup-titan-card__suggestion-action:not( .is-borderless ) {
 				width: 100%;
 				line-height: 20px;
 				padding: 0.57em 1.17em;
@@ -331,11 +331,11 @@ body.is-section-signup.is-white-signup {
 			&.email-skip-suggestion {
 				$cod-grey: #2b2d2f;
 
-				.email-suggestion__action {
+				.email-signup-titan-card__suggestion-action {
 					color: $cod-grey;
 					text-decoration-line: underline;
 				}
-				.email-suggestion__chevron {
+				.email-signup-titan-card__suggestion-chevron {
 					fill: $cod-grey;
 					margin-left: 0;
 				}
@@ -344,7 +344,7 @@ body.is-section-signup.is-white-signup {
 	}
 }
 
-.register-email-step__example-prompt {
+.email-signup-titan-card__example-prompt {
 	font-size: 0.875rem;
 	line-height: 20px;
 	color: var( --studio-gray-40 );
@@ -362,7 +362,7 @@ body.is-section-signup.is-white-signup {
 	}
 }
 
-.email-suggestion__price-placeholder {
+.email-signup-titan-card__suggestion-price-placeholder {
 	animation: loading-fade 1.6s ease-in-out infinite;
 	background-color: var( --color-neutral-0 );
 	color: transparent;

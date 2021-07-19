@@ -2,12 +2,14 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import EmailStepSideBar from 'calypso/components/emails/email-step-side-bar';
 import EmailSignupTitanCard from 'calypso/components/emails/email-signup-titan-card';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -33,10 +35,10 @@ class EmailsStep extends React.Component {
 
 	renderContent() {
 		const content = (
-			<div className="register-email-step">
+			<div className="emails__register-email-step">
 				<CalypsoShoppingCartProvider>
 					<EmailSignupTitanCard
-						siteUrl={ this.props.progress.domains.siteUrl }
+						siteUrl={ this.props.signupDependencies.domainItem.meta }
 						//TODO
 						addButtonTitle={ this.props.translate( 'Add' ) }
 						skipButtonTitle={ this.props.translate( 'Skip' ) }
@@ -67,11 +69,13 @@ class EmailsStep extends React.Component {
 		const { flowName, translate, stepName, positionInFlow } = this.props;
 		const backUrl = 'start/domains/';
 		const headerText = translate( 'Add Professional Email' );
-		const url = this.props.progress.domains.siteUrl;
+		const domainName = this.props.progress.domains.siteUrl;
 		const subHeaderText = translate(
-			`Add a custom email address to start sending and receiving emails from {{b}}${ url }{{/b}} today.`,
+			`Add a custom email address to start sending and receiving emails from {{b}}%(domainName)s{{/b}} today.`,
 			{
+				args: { domainName },
 				components: { b: <strong /> },
+				comment: 'DomainName is the domain that will be shown as part of your email address',
 			}
 		);
 		return (
@@ -101,4 +105,9 @@ class EmailsStep extends React.Component {
 	}
 }
 
-export default localize( EmailsStep );
+export default connect( ( state ) => {
+	const signupDependencies = getSignupDependencyStore( state );
+	return {
+		signupDependencies,
+	};
+} )( localize( EmailsStep ) );

@@ -2,55 +2,55 @@
  * External dependencies
  */
 import React from 'react';
-import { localize } from 'i18n-calypso';
-import { Icon } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
+
+/**
+ * Internal dependencies
+ */
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import Gridicon from "calypso/components/gridicon";
 
-class EmailStepSideBar extends React.Component {
-	getExplainers() {
-		const { translate } = this.props;
-
+function EmailStepSideBar() {
+	const translate = useTranslate();
+	function getExplainers() {
 		const title = translate(
 			'{{b}}75%{{/b}} of U.S. e-commerce customers prefer to trust a business with a custom email',
 			{
 				components: { b: <strong /> },
 			}
 		);
-		const subtitle = (
+		const contents = (
 			<>
 				<p>
-					<Gridicon icon="checkmark" size={ 16 } />
-					{ `${ translate( 'Stand out with every email you send' ) }` }
+					<Gridicon icon="checkmark" size={ 18 } />
+					{ translate( 'Stand out with every email you send' ) }
 				</p>
 				<p>
-					<Gridicon icon="checkmark" size={ 16 } />
-					{ `${ translate( 'Single dashboard for your email, domain and website' ) }` }
+					<Gridicon icon="checkmark" size={ 18 } />
+					{ translate( 'Single dashboard for your email, domain and website' ) }
 				</p>
 				<p>
-					<Gridicon icon="checkmark" size={ 16 } />
-					{ `${ translate( 'Easy to import your existing emails and contacts' ) }` }
+					<Gridicon icon="checkmark" size={ 18 } />
+					{ translate( 'Easy to import your existing emails and contacts' ) }
 				</p>
 			</>
 		);
 
-		return { title, subtitle };
+		return { title, contents };
 	}
 
-	render() {
-		const { title, subtitle } = this.getExplainers();
+	const { title, contents } = getExplainers();
 
-		return (
-			<div className="email-side-explainer">
-				<div className="email-side-explainer__title">{ title }</div>
-				<div className="email-side-explainer__subtitle">{ subtitle }</div>
-			</div>
-		);
-	}
+	return (
+		<div className="email-step-side-bar">
+			<div className="email-step-side-bar__title">{ title }</div>
+			<div className="email-step-side-bar__contents">{ contents }</div>
+		</div>
+	);
 }
 
-export default localize( EmailStepSideBar );
+export default EmailStepSideBar;

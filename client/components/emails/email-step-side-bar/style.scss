@@ -1,17 +1,17 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-.email-side-explainer {
+.email-step-side-bar {
     width: 100%;
 
-    .email-side-explainer__title {
+    .email-step-side-bar__title {
         font-size: 1.25rem;
         letter-spacing: 0.2px;
         line-height: 1.625rem;
         color: var( --studio-gray-90 );
     }
 
-    .email-side-explainer__subtitle {
+    .email-step-side-bar__contents {
         color: var( --studio-gray-60 );
         line-height: 1.25rem;
         letter-spacing: -0.16px;

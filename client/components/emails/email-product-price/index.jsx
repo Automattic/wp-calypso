@@ -4,16 +4,17 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import classnames from 'classnames';
-import moment from 'moment';
-import { localize } from 'i18n-calypso';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const EmailProductPrice = ( { isLoading, price, translate } ) => {
+const EmailProductPrice = ( { isLoading, price } ) => {
+	const translate = useTranslate();
+	const moment = useLocalizedMoment();
 	const startDate = moment().add( 3, 'months' ).format( 'LL' );
 	const message = translate( 'Free for first three months' );
 	const priceText = translate( '%(price)s per user per month starting %(startDate)s', {
@@ -42,4 +43,4 @@ EmailProductPrice.propTypes = {
 	price: PropTypes.string,
 };
 
-export default localize( EmailProductPrice );
+export default EmailProductPrice;
