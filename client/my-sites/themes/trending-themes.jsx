@@ -37,11 +37,7 @@ class TrendingThemes extends React.Component {
 	}
 
 	render() {
-		return (
-			<>
-				<ConnectedThemesSelection { ...this.props } />
-			</>
-		);
+		return <ConnectedThemesSelection { ...this.props } />;
 	}
 }
 

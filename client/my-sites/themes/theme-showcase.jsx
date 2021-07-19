@@ -60,11 +60,6 @@ const subjectsMeta = {
 	food: { icon: 'flip-horizontal', order: 9 },
 	music: { icon: 'audio', order: 10 },
 };
-const tabFilters = {
-	ALL: { key: 'all', text: 'All Themes' },
-	RECOMMENDED: { key: 'recommended', text: 'Recommended' },
-	TRENDING: { key: 'trending', text: 'Trending' },
-};
 
 const optionShape = PropTypes.shape( {
 	label: PropTypes.string,
@@ -78,11 +73,16 @@ class ThemeShowcase extends React.Component {
 		super( props );
 		this.scrollRef = React.createRef();
 		this.bookmarkRef = React.createRef();
+		this.tabFilters = {
+			ALL: { key: 'all', text: props.translate( 'All Themes' ) },
+			RECOMMENDED: { key: 'recommended', text: props.translate( 'Recommended' ) },
+			TRENDING: { key: 'trending', text: props.translate( 'Trending' ) },
+		};
 		this.state = {
 			tabFilter:
 				this.props.loggedOutComponent || this.props.search || this.props.filter || this.props.tier
-					? tabFilters.ALL
-					: tabFilters.RECOMMENDED,
+					? this.tabFilters.ALL
+					: this.tabFilters.RECOMMENDED,
 		};
 	}
 
@@ -158,7 +158,7 @@ class ThemeShowcase extends React.Component {
 			// Strip filters and excess whitespace
 			searchString: searchBoxContent.replace( filterRegex, '' ).replace( /\s+/g, ' ' ).trim(),
 		} );
-		this.setState( { tabFilter: tabFilters.ALL } );
+		this.setState( { tabFilter: this.tabFilters.ALL } );
 		page( url );
 		this.scrollToSearchInput();
 	};
@@ -338,7 +338,7 @@ class ThemeShowcase extends React.Component {
 					{ isLoggedIn && (
 						<SectionNav className="themes__section-nav" selectedText={ this.state.tabFilter.text }>
 							<NavTabs>
-								{ Object.values( tabFilters ).map( ( tabFilter ) => (
+								{ Object.values( this.tabFilters ).map( ( tabFilter ) => (
 									<NavItem
 										key={ tabFilter.key }
 										onClick={ () => this.onFilterClick( tabFilter ) }
@@ -372,46 +372,9 @@ class ThemeShowcase extends React.Component {
 
 					{ 'trending' === this.state.tabFilter.key && (
 						<TrendingThemes
-							upsellUrl={ this.props.upsellUrl }
-							search={ search }
-							tier={ this.props.tier }
-							filter={ filter }
-							vertical={ this.props.vertical }
-							siteId={ this.props.siteId }
 							listLabel={ ' ' }
-							defaultOption={ this.props.defaultOption }
-							secondaryOption={ this.props.secondaryOption }
-							placeholderCount={ this.props.placeholderCount }
-							getScreenshotUrl={ function ( theme ) {
-								if ( ! getScreenshotOption( theme ).getUrl ) {
-									return null;
-								}
-
-								return localizeThemesPath(
-									getScreenshotOption( theme ).getUrl( theme ),
-									locale,
-									! isLoggedIn
-								);
-							} }
-							onScreenshotClick={ function ( themeId ) {
-								if ( ! getScreenshotOption( themeId ).action ) {
-									return;
-								}
-								getScreenshotOption( themeId ).action( themeId );
-							} }
-							getActionLabel={ function ( theme ) {
-								return getScreenshotOption( theme ).label;
-							} }
-							getOptions={ function ( theme ) {
-								return pickBy(
-									addTracking( options ),
-									( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
-								);
-							} }
-							trackScrollPage={ this.props.trackScrollPage }
-							emptyContent={ this.props.emptyContent }
+							{ ...themeProps }
 							scrollToSearchInput={ this.scrollToSearchInput }
-							bookmarkRef={ this.bookmarkRef }
 						/>
 					) }
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
