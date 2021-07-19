@@ -192,6 +192,25 @@ class DomainItem extends PureComponent {
 		return <Gridicon className="domain-item__icon" size={ 18 } icon="minus" />;
 	}
 
+	renderAutoRenew = () => {
+		if ( ! this.shouldShowAutoRenewStatus() ) {
+			return;
+		}
+		const autoRenewValue = this.props.domainDetails?.isAutoRenewing ? 'on' : 'off';
+		return <span className="domain-item__meta-item">Auto-renew: { autoRenewValue }</span>;
+	};
+
+	shouldShowAutoRenewStatus = () => {
+		const { domainDetails } = this.props;
+		if (
+			domainDetails?.type === domainTypes.WPCOM ||
+			domainDetails?.type === domainTypes.TRANSFER
+		) {
+			return false;
+		}
+		return ! domainDetails?.bundledPlanSubscriptionId;
+	};
+
 	renderOptionsButton() {
 		const { disabled, isBusy, site, domain, domainDetails, currentRoute, translate } = this.props;
 
@@ -310,30 +329,11 @@ class DomainItem extends PureComponent {
 		return (
 			<div className="domain-item__meta">
 				{ this.getSiteMeta() }
-				{ this.renderAutoRenewStatus() }
+				{ this.renderAutoRenew() }
 				{ this.renderEmailStatus() }
 			</div>
 		);
 	}
-
-	renderAutoRenewStatus = () => {
-		if ( ! this.shouldShowAutoRenewStatus() ) {
-			return;
-		}
-		const autoRenewValue = this.props.domainDetails?.isAutoRenewing ? 'on' : 'off';
-		return <span className="domain-item__meta-item">Auto-renew: { autoRenewValue }</span>;
-	};
-
-	shouldShowAutoRenewStatus = () => {
-		const { domainDetails } = this.props;
-		if (
-			domainDetails?.type === domainTypes.WPCOM ||
-			domainDetails?.type === domainTypes.TRANSFER
-		) {
-			return false;
-		}
-		return ! domainDetails?.bundledPlanSubscriptionId;
-	};
 
 	renderEmailStatus = () => {
 		const { domainDetails, translate } = this.props;
