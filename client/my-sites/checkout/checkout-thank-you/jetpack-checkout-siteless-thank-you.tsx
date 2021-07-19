@@ -41,11 +41,9 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( { productSlug, receiptId 
 
 	const productName = useSelector( ( state ) =>
 		hasProductInfo ? getProductName( state, productSlug ) : null
-	) as string | null;
+	);
 
-	const isProductListFetching = useSelector( ( state ) =>
-		getIsProductListFetching( state )
-	) as boolean;
+	const isProductListFetching = useSelector( ( state ) => getIsProductListFetching( state ) );
 
 	const supportTicketStatus = useSelector( ( state ) =>
 		getJetpackCheckoutSupportTicketStatus( state, receiptId )
@@ -79,7 +77,7 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( { productSlug, receiptId 
 
 	useEffect( () => {
 		if ( supportTicketStatus && supportTicketStatus === 'success' ) {
-			page.redirect( `/checkout/jetpack/thank-you-completed/no-site/${ productSlug }` );
+			page( `/checkout/jetpack/thank-you-completed/no-site/${ productSlug }` );
 		}
 	}, [ supportTicketStatus, productSlug, receiptId ] );
 
