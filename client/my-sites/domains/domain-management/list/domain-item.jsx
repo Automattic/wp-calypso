@@ -290,52 +290,7 @@ class DomainItem extends PureComponent {
 		);
 	}
 
-	renderActionItems() {
-		const { isLoadingDomainDetails, domainDetails, showDomainDetails } = this.props;
-
-		if ( ! showDomainDetails ) {
-			return;
-		}
-
-		if ( isLoadingDomainDetails || ! domainDetails ) {
-			return (
-				<>
-					<div className="list__domain-options list__action_item_placeholder" />
-				</>
-			);
-		}
-
-		return <>{ this.renderOptionsButton() }</>;
-	}
-
-	getSiteName( site ) {
-		if ( site.name ) {
-			return `${ site.name } (${ withoutHttp( site.URL ) })`;
-		}
-		return withoutHttp( site.URL );
-	}
-
-	renderSiteMeta() {
-		const { showDomainDetails, isLoadingDomainDetails, domainDetails } = this.props;
-
-		if ( ! showDomainDetails ) {
-			return;
-		}
-
-		if ( isLoadingDomainDetails || ! domainDetails ) {
-			return <div className="domain-item__meta domain-item__meta-placeholder" />;
-		}
-
-		return (
-			<div className="domain-item__meta">
-				{ this.getSiteMeta() }
-				{ this.renderAutoRenew() }
-				{ this.renderEmailStatus() }
-			</div>
-		);
-	}
-
-	renderEmailStatus = () => {
+	renderEmail = () => {
 		const { domainDetails, translate } = this.props;
 
 		if ( [ domainTypes.MAPPED, domainTypes.REGISTERED ].indexOf( domainDetails.type ) === -1 ) {
@@ -397,6 +352,51 @@ class DomainItem extends PureComponent {
 			</span>
 		);
 	};
+
+	renderActionItems() {
+		const { isLoadingDomainDetails, domainDetails, showDomainDetails } = this.props;
+
+		if ( ! showDomainDetails ) {
+			return;
+		}
+
+		if ( isLoadingDomainDetails || ! domainDetails ) {
+			return (
+				<>
+					<div className="list__domain-options list__action_item_placeholder" />
+				</>
+			);
+		}
+
+		return <>{ this.renderOptionsButton() }</>;
+	}
+
+	getSiteName( site ) {
+		if ( site.name ) {
+			return `${ site.name } (${ withoutHttp( site.URL ) })`;
+		}
+		return withoutHttp( site.URL );
+	}
+
+	renderSiteMeta() {
+		const { showDomainDetails, isLoadingDomainDetails, domainDetails } = this.props;
+
+		if ( ! showDomainDetails ) {
+			return;
+		}
+
+		if ( isLoadingDomainDetails || ! domainDetails ) {
+			return <div className="domain-item__meta domain-item__meta-placeholder" />;
+		}
+
+		return (
+			<div className="domain-item__meta">
+				{ this.getSiteMeta() }
+				{ this.renderAutoRenew() }
+				{ this.renderEmail() }
+			</div>
+		);
+	}
 
 	getSiteMeta() {
 		const { domainDetails, isManagingAllSites, site, translate } = this.props;
