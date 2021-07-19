@@ -405,6 +405,7 @@ class DomainItem extends PureComponent {
 			<div className="domain-item__meta">
 				{ this.getSiteMeta() }
 				{ this.renderAutoRenewStatus() }
+				{ this.renderEmailStatus() }
 			</div>
 		);
 	}
@@ -426,6 +427,69 @@ class DomainItem extends PureComponent {
 			return false;
 		}
 		return ! domainDetails?.bundledPlanSubscriptionId;
+	};
+
+	renderEmailStatus = () => {
+		const { domainDetails, translate } = this.props;
+
+		if ( [ domainTypes.MAPPED, domainTypes.REGISTERED ].indexOf( domainDetails.type ) === -1 ) {
+			return;
+		}
+
+		if ( hasGSuiteWithUs( domainDetails ) ) {
+			const gSuiteMailboxCount = getGSuiteMailboxCount( domainDetails );
+
+			const text = translate(
+				'%(gSuiteMailboxCount)d mailbox',
+				'%(gSuiteMailboxCount)d mailboxes',
+				{
+					count: gSuiteMailboxCount,
+					args: {
+						gSuiteMailboxCount,
+					},
+					comment: 'The number of GSuite mailboxes active for the current domain',
+				}
+			);
+			return <span className="domain-item__meta-item">{ text }</span>;
+		}
+
+		if ( hasTitanMailWithUs( domainDetails ) ) {
+			const titanMailboxCount = getMaxTitanMailboxCount( domainDetails );
+
+			const text = translate( '%(titanMailboxCount)d mailbox', '%(titanMailboxCount)d mailboxes', {
+				args: {
+					titanMailboxCount,
+				},
+				count: titanMailboxCount,
+				comment: '%(titanMailboxCount)d is the number of mailboxes for the current domain',
+			} );
+			return <span className="domain-item__meta-item">{ text }</span>;
+		}
+
+		if ( hasEmailForwards( domainDetails ) ) {
+			const emailForwardsCount = getEmailForwardsCount( domainDetails );
+
+			const text = translate( '%(emailForwardsCount)d forward', '%(emailForwardsCount)d forwards', {
+				count: emailForwardsCount,
+				args: {
+					emailForwardsCount,
+				},
+				comment: 'The number of email forwards active for the current domain',
+			} );
+			return <span className="domain-item__meta-item">{ text }</span>;
+		}
+
+		if ( ! canCurrentUserAddEmail( domainDetails ) ) {
+			return;
+		}
+
+		return (
+			<span className="domain-item__meta-item">
+				<Button compact onClick={ this.addEmailClick } className="domain-item__email-button">
+					{ translate( 'Add email', { context: 'Button label' } ) }
+				</Button>
+			</span>
+		);
 	};
 
 	getSiteMeta() {

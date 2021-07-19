@@ -201,6 +201,17 @@
 
 .domain-item__meta-item {
 	margin-left: 20px;
+
+	button.domain-item__email-button {
+		color: var( --color-link );
+		background: none;
+		border: none;
+		box-shadow: none;
+
+		&:hover {
+			color: var( --color-link-dark );
+		}
+	}
 }
 
 .domain-item__status-info {
