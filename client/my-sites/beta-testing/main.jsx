@@ -12,9 +12,8 @@ import Gridicon from 'calypso/components/gridicon';
  * Internal dependencies
  */
 import Main from 'calypso/components/main';
-import { Button, Card } from '@automattic/components';
+import { Button } from '@automattic/components';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import FormattedHeader from 'calypso/components/formatted-header';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import DocumentHead from 'calypso/components/data/document-head';
