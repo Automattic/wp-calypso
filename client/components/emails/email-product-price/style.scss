@@ -71,10 +71,10 @@
 	}
 
 	.email-product-price__free-price {
+		color: var( --color-text-subtle );
 		font-size: $font-body-small;
 		line-height: 20px;
 		letter-spacing: 0.2px;
-		color: var(--color-text-subtle);
 		font-width: normal;
 
 		@include break-mobile {
