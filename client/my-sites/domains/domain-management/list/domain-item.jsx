@@ -565,6 +565,12 @@ class DomainItem extends PureComponent {
 		return <DomainNotice status={ statusClass } text={ message } />;
 	}
 
+
+	renderPrimaryBadge() {
+		// TODO: Implement proper badge
+		return <span>Primary site address</span>;
+	}
+
 	render() {
 		const {
 			domain,
@@ -603,6 +609,7 @@ class DomainItem extends PureComponent {
 				<div className="list__domain-link">
 					<div className="domain-item__status">
 						<div className="domain-item__title">{ domain.domain }</div>
+						{ domainDetails?.isPrimary && this.renderPrimaryBadge() }
 						{ listStatusText && (
 							<DomainNotice status={ listStatusClass || 'info' } text={ listStatusText } />
 						) }
