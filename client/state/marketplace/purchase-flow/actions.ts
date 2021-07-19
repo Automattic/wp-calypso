@@ -37,7 +37,7 @@ import { getPlugin as getWporgPlugin } from 'calypso/state/plugins/wporg/selecto
 import { IAppState } from 'calypso/state/types';
 import { marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';
 import { IProductGroupCollection, IProductCollection } from 'calypso/my-sites/marketplace/types';
-import { getPluginsToInstall } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
+import { getDefaultPluginInProduct } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
 
 export function setPrimaryDomainCandidate( domainName: string | undefined ): AnyAction {
 	return {
@@ -96,7 +96,11 @@ export function pluginInstallationStateChange(
 	};
 }
 
-export function tryPluginInstall( selectedSiteId: number, pluginSlug: string ) {
+export function tryPluginInstall(
+	selectedSiteId: number,
+	pluginSlug: string,
+	defaultPlugin: string
+) {
 	return function ( dispatch: Dispatch< AnyAction >, getState: () => IAppState ): void {
 		const state = getState();
 		const { pluginInstallationStatus } = getPurchaseFlowState( state );
@@ -113,7 +117,7 @@ export function tryPluginInstall( selectedSiteId: number, pluginSlug: string ) {
 		);
 		if ( pluginInstallationStatus === MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN ) {
 			dispatch( fetchSitePlugins( selectedSiteId ) );
-			dispatch( wporgFetchPluginData( pluginSlug ) );
+			dispatch( wporgFetchPluginData( defaultPlugin ) );
 			dispatch( pluginInstallationStateChange( MARKETPLACE_ASYNC_PROCESS_STATUS.FETCHING ) );
 		} else if ( isPluginInformationLoaded ) {
 			if ( ! isPluginInstalled && ( ! wporgPlugin || ! wporgPlugin.slug ) ) {
@@ -126,7 +130,7 @@ export function tryPluginInstall( selectedSiteId: number, pluginSlug: string ) {
 					{ wporgPlugin }
 				);
 				dispatch( fetchSitePlugins( selectedSiteId ) );
-				dispatch( wporgFetchPluginData( pluginSlug ) );
+				dispatch( wporgFetchPluginData( defaultPlugin ) );
 				dispatch( pluginInstallationStateChange( MARKETPLACE_ASYNC_PROCESS_STATUS.FETCHING ) );
 			} else if ( isPluginInstalled || pluginStatus === 'completed' ) {
 				// This means the plugin was successfully installed earlier, most probably during purchase
@@ -228,27 +232,27 @@ export function tryProductInstall() {
 			productGroupSlug,
 		} = getPurchaseFlowState( state );
 
-		// TODO : Handle multiple plugin installation
-		const pluginsToInstalls =
+		// We cannot initiate transfer using premium plugins that are installed in the backend.
+		// So we revert to using the "default plugin" which is the defacto plugin available in the wporg plugin library.
+		// In any case transfer should not be initiated if we are using a premium plugin since there will be a purchase which installs this plugin
+		// However this is a temporary fix which always uses the default plugin for now, which eventually be moved to the backend.
+		// TODO : Handle verification of multiple plugin installations
+		const defaultPlugin =
 			( productGroupSlug &&
 				productSlugInstalled &&
-				getPluginsToInstall( productGroupSlug, productSlugInstalled ) ) ??
-			[];
-		let installedPluginSlug = null;
-		if ( Array.isArray( pluginsToInstalls ) && pluginsToInstalls.length > 0 ) {
-			installedPluginSlug = pluginsToInstalls[ 0 ];
-		}
+				getDefaultPluginInProduct( productGroupSlug, productSlugInstalled ) ) ??
+			null;
 
 		if (
+			defaultPlugin &&
 			selectedSiteId &&
-			installedPluginSlug &&
 			pluginInstallationStatus !== MARKETPLACE_ASYNC_PROCESS_STATUS.ERROR &&
 			siteTransferStatus !== MARKETPLACE_ASYNC_PROCESS_STATUS.ERROR
 		) {
 			if ( siteTransferStatus !== MARKETPLACE_ASYNC_PROCESS_STATUS.COMPLETED ) {
-				dispatch( trySiteTransfer( selectedSiteId, installedPluginSlug ) );
+				dispatch( trySiteTransfer( selectedSiteId, defaultPlugin ) );
 			} else if ( siteTransferStatus === MARKETPLACE_ASYNC_PROCESS_STATUS.COMPLETED ) {
-				dispatch( tryPluginInstall( selectedSiteId, installedPluginSlug ) );
+				dispatch( tryPluginInstall( selectedSiteId, defaultPlugin ) );
 			}
 		}
 	};

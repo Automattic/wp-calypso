@@ -37,6 +37,7 @@ import { requestEligibility } from 'calypso/state/automated-transfer/actions';
 import Notice from 'calypso/components/notice';
 import { eligibilityHolds } from 'calypso/state/automated-transfer/constants';
 import { getDefaultPluginInProduct } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
+import { IProductGroupCollection, IProductCollection } from 'calypso/my-sites/marketplace/types';
 
 interface MarketplacePluginDetailsInterface {
 	productGroupSlug: keyof IProductGroupCollection;
