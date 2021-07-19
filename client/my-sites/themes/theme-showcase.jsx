@@ -197,8 +197,8 @@ class ThemeShowcase extends React.Component {
 	onTierSelect = ( { value: tier } ) => {
 		// In this state: tabFilter = [ ##Recommended## | All(1) ]   tier = [ All(2) | Free | Premium ]
 		// Clicking "Free" or "Premium" forces tabFilter from "Recommended" to "All"
-		if ( tier !== '' && tier !== 'all' && this.state.tabFilter.key === 'recommended' ) {
-			this.setState( { tabFilter: 'all' } );
+		if ( tier !== '' && tier !== 'all' && this.state.tabFilter.key !== this.tabFilters.ALL.key ) {
+			this.setState( { tabFilter: this.tabFilters.ALL } );
 		}
 		trackClick( 'search bar filter', tier );
 		const url = this.constructUrl( { tier } );
@@ -213,7 +213,7 @@ class ThemeShowcase extends React.Component {
 		let callback = () => null;
 		// In this state: tabFilter = [ Recommended | ##All(1)## ]  tier = [ All(2) | Free | ##Premium## ]
 		// Clicking "Recommended" forces tier to be "all", since Recommend themes cannot filter on tier.
-		if ( 'recommended' === tabFilter.key && 'all' !== this.props.tier ) {
+		if ( tabFilter.key !== this.tabFilters.ALL.key && 'all' !== this.props.tier ) {
 			callback = () => this.onTierSelect( { value: 'all' } );
 		}
 		this.setState( { tabFilter }, callback );
