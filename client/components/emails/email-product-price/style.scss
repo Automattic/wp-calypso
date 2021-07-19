@@ -14,10 +14,6 @@
 		align-items: flex-end;
 		font-size: $font-body;
 
-		.featured-email-suggestions & {
-			align-items: flex-start;
-		}
-
 		&.email-product-price__email-step-signup-flow {
 			align-items: flex-start;
 		}
@@ -32,25 +28,8 @@
 			display: flex;
 			flex-direction: column-reverse;
 			margin-top: 4px;
-		}
-	}
 
-	.is-section-signup &:not( .email-product-price__email-step-signup-flow ) {
-		@include breakpoint-deprecated( '>660px' ) {
-			padding-left: 1em;
-			padding-right: 2em;
 		}
-	}
-
-	.is-section-emails & {
-		@include breakpoint-deprecated( '>800px' ) {
-			padding-left: 1em;
-			padding-right: 2em;
-		}
-	}
-
-	small {
-		color: var( --color-text-subtle );
 	}
 
 	.email-product-price__free-price {
@@ -69,22 +48,6 @@
 		color: var( --studio-green-60 );
 		display: block;
 	}
-	.email-product-price__sale-price {
-		display: block;
-
-	}
-
-	&.no-price .email-product-price__free-text,
-	&.no-price .email-product-price__sale-price {
-		@include breakpoint-deprecated( '>660px' ) {
-			margin-left: 0;
-		}
-	}
-
-	.email-product-price__price,
-	.email-product-price__renewal-price {
-		margin: auto 0;
-	}
 
 	.is-placeholder & {
 		@include breakpoint-deprecated( '>660px' ) {
@@ -95,18 +58,6 @@
 			animation: loading-fade 1.6s ease-in-out infinite;
 			background-color: var( --color-neutral-0 );
 			color: transparent;
-		}
-	}
-}
-
-.featured-email-suggestions {
-	.email-product-price {
-		.is-section-emails & {
-			padding-left: 0;
-		}
-
-		&.is-free-email {
-			padding-left: 0;
 		}
 	}
 }
