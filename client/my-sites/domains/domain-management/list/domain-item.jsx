@@ -192,13 +192,13 @@ class DomainItem extends PureComponent {
 		return <Gridicon className="domain-item__icon" size={ 18 } icon="minus" />;
 	}
 
-	renderAutoRenew = () => {
+	renderAutoRenew() {
 		if ( ! this.shouldShowAutoRenewStatus() ) {
 			return;
 		}
 		const autoRenewValue = this.props.domainDetails?.isAutoRenewing ? 'on' : 'off';
 		return <span className="domain-item__meta-item">Auto-renew: { autoRenewValue }</span>;
-	};
+	}
 
 	shouldShowAutoRenewStatus = () => {
 		const { domainDetails } = this.props;
@@ -290,8 +290,8 @@ class DomainItem extends PureComponent {
 		);
 	}
 
-	renderEmail = () => {
-		const { domainDetails, translate } = this.props;
+	renderEmail( domainDetails ) {
+		const { translate } = this.props;
 
 		if ( [ domainTypes.MAPPED, domainTypes.REGISTERED ].indexOf( domainDetails.type ) === -1 ) {
 			return;
@@ -351,7 +351,7 @@ class DomainItem extends PureComponent {
 				</Button>
 			</span>
 		);
-	};
+	}
 
 	renderActionItems() {
 		const { isLoadingDomainDetails, domainDetails, showDomainDetails } = this.props;
@@ -393,7 +393,7 @@ class DomainItem extends PureComponent {
 			<div className="domain-item__meta">
 				{ this.getSiteMeta() }
 				{ this.renderAutoRenew() }
-				{ this.renderEmail() }
+				{ this.renderEmail( domainDetails ) }
 			</div>
 		);
 	}
