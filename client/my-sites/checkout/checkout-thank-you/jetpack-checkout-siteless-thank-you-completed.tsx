@@ -35,11 +35,9 @@ const JetpackCheckoutSitelessThankYouCompleted: FC< Props > = ( { productSlug } 
 
 	const productName = useSelector( ( state ) =>
 		hasProductInfo ? getProductName( state, productSlug ) : null
-	) as string | null;
+	);
 
-	const isProductListFetching = useSelector( ( state ) =>
-		getIsProductListFetching( state )
-	) as boolean;
+	const isProductListFetching = useSelector( ( state ) => getIsProductListFetching( state ) );
 
 	const contactSupportLink = 'https://wordpress.com/help/contact';
 
