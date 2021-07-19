@@ -10,6 +10,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { playtime } from 'calypso/lib/media/utils';
+import ExternalLink from 'calypso/components/external-link';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 class EditorMediaModalDetailFileInfo extends React.Component {
@@ -99,6 +100,51 @@ class EditorMediaModalDetailFileInfo extends React.Component {
 		);
 	};
 
+	renderUploadedTo = () => {
+		const parentTitle = this.getItemValue( 'parent_title' );
+		const parentLink = this.getItemValue( 'parent_link' );
+
+		if ( ! parentTitle || ! parentLink ) {
+			return;
+		}
+
+		return (
+			<tr>
+				<th>{ this.props.translate( 'Uploaded to' ) }</th>
+				<td>
+					<ExternalLink icon href={ parentLink }>
+						{ parentTitle }
+					</ExternalLink>
+				</td>
+			</tr>
+		);
+	};
+
+	renderAttachedTo = () => {
+		const attachedToDetails = this.getItemValue( 'attached_to' );
+
+		if ( ! attachedToDetails ) {
+			return;
+		}
+
+		return (
+			<tr>
+				<th>{ this.props.translate( 'Attached to' ) }</th>
+				<td>
+					<ul>
+						{ attachedToDetails.map( ( item ) => (
+							<li key={ item.url }>
+								<ExternalLink icon href={ item.url }>
+									{ [ item.title ] }
+								</ExternalLink>
+							</li>
+						) ) }
+					</ul>
+				</td>
+			</tr>
+		);
+	};
+
 	render() {
 		const classes = classNames( 'editor-media-modal-detail__file-info', {
 			'is-loading': ! this.props.item,
@@ -124,6 +170,8 @@ class EditorMediaModalDetailFileInfo extends React.Component {
 						<th>{ this.props.translate( 'Upload Date' ) }</th>
 						<td>{ this.getItemValue( 'date' ) }</td>
 					</tr>
+					{ this.renderUploadedTo() }
+					{ this.renderAttachedTo() }
 				</tbody>
 			</table>
 		);
