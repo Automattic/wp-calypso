@@ -192,37 +192,6 @@ class DomainItem extends PureComponent {
 		return <Gridicon className="domain-item__icon" size={ 18 } icon="minus" />;
 	}
 
-	renderTransferLock() {
-		const { domainDetails } = this.props;
-		if ( domainDetails?.type === domainTypes.REGISTERED ) {
-			return this.renderCheckmark( domainDetails?.isLocked );
-		}
-
-		return this.renderMinus();
-	}
-
-	renderAutoRenew() {
-		const { domainDetails } = this.props;
-		switch ( domainDetails?.type ) {
-			case domainTypes.WPCOM:
-			case domainTypes.TRANSFER:
-				return this.renderMinus();
-			default:
-				return domainDetails?.bundledPlanSubscriptionId
-					? this.renderMinus()
-					: this.renderCheckmark( domainDetails?.isAutoRenewing );
-		}
-	}
-
-	renderPrivacy() {
-		const { domainDetails } = this.props;
-		if ( domainDetails?.type === domainTypes.REGISTERED ) {
-			return this.renderCheckmark( domainDetails?.privateDomain );
-		}
-
-		return this.renderMinus();
-	}
-
 	renderOptionsButton() {
 		const { disabled, isBusy, site, domain, domainDetails, currentRoute, translate } = this.props;
 
@@ -302,63 +271,6 @@ class DomainItem extends PureComponent {
 		);
 	}
 
-	renderEmail( domainDetails ) {
-		const { translate } = this.props;
-
-		if ( [ domainTypes.MAPPED, domainTypes.REGISTERED ].indexOf( domainDetails.type ) === -1 ) {
-			return this.renderMinus();
-		}
-
-		if ( hasGSuiteWithUs( domainDetails ) ) {
-			const gSuiteMailboxCount = getGSuiteMailboxCount( domainDetails );
-
-			return translate( '%(gSuiteMailboxCount)d mailbox', '%(gSuiteMailboxCount)d mailboxes', {
-				count: gSuiteMailboxCount,
-				args: {
-					gSuiteMailboxCount,
-				},
-				comment: 'The number of GSuite mailboxes active for the current domain',
-			} );
-		}
-
-		if ( hasTitanMailWithUs( domainDetails ) ) {
-			const titanMailboxCount = getMaxTitanMailboxCount( domainDetails );
-
-			return translate( '%(titanMailboxCount)d mailbox', '%(titanMailboxCount)d mailboxes', {
-				args: {
-					titanMailboxCount,
-				},
-				count: titanMailboxCount,
-				comment: '%(titanMailboxCount)d is the number of mailboxes for the current domain',
-			} );
-		}
-
-		if ( hasEmailForwards( domainDetails ) ) {
-			const emailForwardsCount = getEmailForwardsCount( domainDetails );
-
-			return translate( '%(emailForwardsCount)d forward', '%(emailForwardsCount)d forwards', {
-				count: emailForwardsCount,
-				args: {
-					emailForwardsCount,
-				},
-				comment: 'The number of email forwards active for the current domain',
-			} );
-		}
-
-		if ( ! canCurrentUserAddEmail( domainDetails ) ) {
-			return this.renderMinus();
-		}
-
-		return (
-			<Button compact onClick={ this.addEmailClick }>
-				{ translate( 'Add', {
-					context: 'Button label',
-					comment: '"Add" as in "Add an email"',
-				} ) }
-			</Button>
-		);
-	}
-
 	renderActionItems() {
 		const { isLoadingDomainDetails, domainDetails, showDomainDetails } = this.props;
 
@@ -369,24 +281,12 @@ class DomainItem extends PureComponent {
 		if ( isLoadingDomainDetails || ! domainDetails ) {
 			return (
 				<>
-					<div className="list__domain-transfer-lock list__action_item_placeholder" />
-					<div className="list__domain-privacy list__action_item_placeholder" />
-					<div className="list__domain-auto-renew list__action_item_placeholder" />
-					<div className="list__domain-email list__action_item_placeholder" />
 					<div className="list__domain-options list__action_item_placeholder" />
 				</>
 			);
 		}
 
-		return (
-			<>
-				<div className="list__domain-transfer-lock">{ this.renderTransferLock() }</div>
-				<div className="list__domain-privacy">{ this.renderPrivacy() }</div>
-				<div className="list__domain-auto-renew">{ this.renderAutoRenew() }</div>
-				<div className="list__domain-email">{ this.renderEmail( domainDetails ) }</div>
-				{ this.renderOptionsButton() }
-			</>
-		);
+		return <>{ this.renderOptionsButton() }</>;
 	}
 
 	getSiteName( site ) {
