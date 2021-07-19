@@ -120,7 +120,7 @@
 	display: flex;
 }
 
-input[type=text].form-text-input.activity-card__share-email {
+input[type='text'].form-text-input.activity-card__share-email {
 	margin-right: 0.5rem;
 }
 
@@ -268,27 +268,4 @@ input[type=text].form-text-input.activity-card__share-email {
 .activity-card__credentials-warning-text a.external-link {
 	color: var( --color-text );
 	text-decoration: underline;
-}
-.activity-card__streams-media-preview {
-	display: flex;
-	flex-direction: row;
-	margin: 16px 0;
-
-	div {
-		max-width: 72px;
-		max-height: 72px;
-		overflow: hidden;
-		text-align: center;
-
-		img {
-			min-width: 72px;
-			max-width: none;
-			max-height: 72px;
-			margin: 0 -100%;
-		}
-
-		&:not( :first-child ) {
-			margin-left: 16px;
-		}
-	}
 }

@@ -21,7 +21,6 @@ import { withApplySiteOffset } from 'calypso/components/site-offset';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import ActivityActor from 'calypso/components/activity-card/activity-actor';
 import ActivityDescription from 'calypso/components/activity-card/activity-description';
-import ActivityMedia from 'calypso/components/activity-card/activity-media';
 import Button from 'calypso/components/forms/form-button';
 import ExternalLink from 'calypso/components/external-link';
 import getAllowRestore from 'calypso/state/selectors/get-allow-restore';
@@ -30,8 +29,8 @@ import { getActionableRewindId } from 'calypso/lib/jetpack/actionable-rewind-id'
 import Gridicon from 'calypso/components/gridicon';
 import PopoverMenu from 'calypso/components/popover/menu';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
-import StreamsMediaPreview from './activity-card-streams-media-preview';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
+import MediaPreview from './media-preview';
 import ShareActivity from './share-activity';
 import StreamsContent from './streams-content';
 
@@ -238,28 +237,6 @@ class ActivityCard extends Component {
 		);
 	}
 
-	renderMediaPreview() {
-		const {
-			activity: { streams, activityMedia },
-		} = this.props;
-
-		if (
-			streams &&
-			streams.filter( ( { activityMedia: streamActivityMedia } ) => streamActivityMedia?.available )
-				.length > 2
-		) {
-			return <StreamsMediaPreview streams={ streams } />;
-		} else if ( activityMedia?.available ) {
-			return (
-				<ActivityMedia
-					name={ activityMedia.name }
-					thumbnail={ activityMedia.medium_url || activityMedia.thumbnail_url }
-				/>
-			);
-		}
-		return null;
-	}
-
 	render() {
 		const { activity, allowRestore, applySiteOffset, className, siteId, summarize } = this.props;
 
@@ -295,7 +272,7 @@ class ActivityCard extends Component {
 						actorType={ activity.actorType }
 					/>
 					<div className="activity-card__activity-description">
-						{ this.renderMediaPreview() }
+						<MediaPreview activity={ activity } />
 						<ActivityDescription activity={ activity } rewindIsActive={ allowRestore } />
 					</div>
 					<div className="activity-card__activity-title">{ activity.activityTitle }</div>
