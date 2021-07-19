@@ -11,6 +11,7 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 	let sidebarComponent;
 	let themesPage;
 	let previewComponent;
+	// This test will use this specific theme as it will never be active.
 	const themeName = 'Twenty Seventeen';
 	let page;
 

@@ -101,6 +101,7 @@ export class ThemesPage extends BaseContainer {
 	 *
 	 * @param {ElementHandle} selectedTheme Reference to the target theme.
 	 * @param {string} action Action to be called from the popover.
+	 * @returns {Promise<void>} No return value.
 	 */
 	async clickPopoverItem(
 		selectedTheme: ElementHandle,
@@ -109,5 +110,21 @@ export class ThemesPage extends BaseContainer {
 		const popoverButton = await selectedTheme.waitForSelector( selectors.popoverButton );
 		await popoverButton.click();
 		await this.page.click( `${ selectors.popoverMenuItem }:text("${ action }")` );
+	}
+
+	/**
+	 * Given a target theme, hover over the card in the theme gallery and perform a click.
+	 *
+	 * @param {ElementHandle} selectedTheme Reference to the target theme.
+	 * @returns {Promise<void>} No return value.
+	 */
+	async hoverThenClick( selectedTheme: ElementHandle ): Promise< void > {
+		// Hover over the target theme in the gallery. This will expose a normally hidden
+		// INFO button.
+		await selectedTheme.hover();
+		// Wait for the fade-in animation to complete.
+		await selectedTheme.waitForElementState( 'stable' );
+		// Clicking on the INFO button will always result in navigation to a new page.
+		await Promise.all( [ this.page.waitForNavigation(), selectedTheme.click() ] );
 	}
 }

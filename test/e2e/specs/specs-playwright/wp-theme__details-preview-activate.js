@@ -15,6 +15,7 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 	let previewComponent;
 	let popupTab;
 	let page;
+	// This test will use partial matching names to cycle between available themes.
 	const themeName = 'Twenty Twen';
 	const user = 'defaultUser';
 
@@ -40,7 +41,7 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 
 	it( `Select and view details of a theme starting with ${ themeName }`, async function () {
 		const selectedTheme = await themesPage.select( themeName );
-		await themesPage.clickPopoverItem( selectedTheme, 'Info' );
+		await themesPage.hoverThenClick( selectedTheme );
 	} );
 
 	it( 'Preview theme', async function () {

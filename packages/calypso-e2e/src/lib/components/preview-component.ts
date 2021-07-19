@@ -5,7 +5,7 @@ const selectors = {
 	previewPane: '.web-preview',
 
 	// Actions on pane
-	closeButton: 'button:text("Close")',
+	closeButton: 'button[aria-label="Close preview"]',
 	activateButton: 'text=Activate',
 };
 
