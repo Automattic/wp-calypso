@@ -3,12 +3,15 @@
 	align-items: center;
 	margin: 24px 0;
 
+	& > * + * {
+		margin-left: 12px;
+	}
+
 	.wpcom-domain-item__primary-badge {
-		margin-left: 16px;
+		font-size: $font-body-extra-small;
 	}
 
 	.wpcom-domain-item__manage-button {
-		margin-left: 16px;
 		background: none;
 	}
 }

@@ -50,12 +50,12 @@ export default function WpcomDomainItem( {
 					),
 					{ strong: React.createElement( 'strong', null ) }
 				) }
-				{ domain.isPrimary && (
-					<Badge className="wpcom-domain-item__primary-badge" type="info-green">
-						{ __( 'Primary site address' ) }
-					</Badge>
-				) }
 			</span>
+			{ domain.isPrimary && (
+				<Badge className="wpcom-domain-item__primary-badge" type="info-green">
+					{ __( 'Primary site address' ) }
+				</Badge>
+			) }
 			<Button
 				className="wpcom-domain-item__manage-button"
 				compact
