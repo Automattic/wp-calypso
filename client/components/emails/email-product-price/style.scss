@@ -52,57 +52,6 @@
 		}
 	}
 
-	.is-section-signup &:not( .email-product-price__email-step-signup-flow ) {
-		@include breakpoint-deprecated( '>660px' ) {
-			padding-left: 1em;
-			padding-right: 2em;
-		}
-	}
-
-	.is-section-emails & {
-		@include breakpoint-deprecated( '>800px' ) {
-			padding-left: 1em;
-			padding-right: 2em;
-		}
-	}
-
-	small {
-		color: var( --color-text-subtle );
-	}
-
-	.email-product-price__free-price {
-		color: var( --color-text-subtle );
-		font-size: $font-body-small;
-		line-height: 20px;
-		letter-spacing: 0.2px;
-		font-width: normal;
-
-		@include break-mobile {
-			font-weight: 500; /* stylelint-disable-line */
-		}
-	}
-
-	.email-product-price__free-text {
-		color: var( --studio-green-60 );
-		display: block;
-	}
-	.email-product-price__sale-price {
-		display: block;
-
-	}
-
-	&.no-price .email-product-price__free-text,
-	&.no-price .email-product-price__sale-price {
-		@include breakpoint-deprecated( '>660px' ) {
-			margin-left: 0;
-		}
-	}
-
-	.email-product-price__price,
-	.email-product-price__renewal-price {
-		margin: auto 0;
-	}
-
 	.is-placeholder & {
 		@include breakpoint-deprecated( '>660px' ) {
 			display: none;
