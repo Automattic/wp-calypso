@@ -23,7 +23,7 @@ export default function SidebarItem( props ) {
 		selected: props.selected,
 		'has-unseen': props.hasUnseen,
 	} );
-	const { materialIcon, materialIconStyle, icon, customIcon, count } = props;
+	const { materialIcon, materialIconStyle, icon, customIcon, count, badge } = props;
 
 	let _preloaded = false;
 
@@ -76,6 +76,13 @@ export default function SidebarItem( props ) {
 							: props.label
 					}
 					{ !! count && <Count count={ count } /> }
+					{ !! badge && (
+						<span className="sidebar__menu-link-badge">
+							{ 'string' === typeof props.badge
+								? stripHTML( decodeEntities( props.badge ) )
+								: props.badge }
+						</span>
+					) }
 				</span>
 				{ showAsExternal && <Gridicon icon="external" size={ 24 } /> }
 				{ props.children }
@@ -100,4 +107,5 @@ SidebarItem.propTypes = {
 	testTarget: PropTypes.string,
 	tipTarget: PropTypes.string,
 	count: PropTypes.number,
+	badge: PropTypes.string,
 };
