@@ -62,7 +62,6 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 	// Clean up test files.
 	afterAll( () => {
 		for ( const testFile of Object.values( testFiles ) ) {
-			console.log( testFile );
 			MediaHelper.deleteFile( testFile.filepath );
 		}
 		MediaHelper.deleteFile( invalidFile );

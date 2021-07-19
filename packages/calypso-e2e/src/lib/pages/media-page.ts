@@ -152,7 +152,7 @@ export class MediaPage extends BaseContainer {
 		// Item in gallery have the `title=<filename>` attribute.
 		const itemSelector = `figure[title="${ filename }"]`;
 		const result = await Promise.race( [
-			this.page.waitForSelector( itemSelector ), // Upload successful
+			this.page.waitForSelector( itemSelector, { state: 'visible' } ), // Upload successful
 			this.page.waitForSelector( selectors.uploadRejectionNotice ), // Upload failed
 		] );
 
