@@ -27,16 +27,16 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 		await sidebarComponent.gotoMenu( { item: 'Appearance' } );
 	} );
 
-	it( 'Search for free theme', async function () {
+	it( `Search for free theme with keyword ${ themeName }`, async function () {
 		themesPage = await ThemesPage.Expect( page );
 		await themesPage.filterThemes( 'Free' );
 		await themesPage.search( themeName );
 	} );
 
-	it( `Select ${ themeName} and click on Live Demo popover item`, async function() {
+	it( `Select ${ themeName } and click on Live Demo popover item`, async function () {
 		const selectedTheme = await themesPage.select( themeName );
-		await themesPage.clickPopoverItem( selectedTheme, 'Live Demo');
-	})
+		await themesPage.clickPopoverItem( selectedTheme, 'Live Demo' );
+	} );
 
 	it( 'Preview theme', async function () {
 		await PreviewComponent.Expect( page );

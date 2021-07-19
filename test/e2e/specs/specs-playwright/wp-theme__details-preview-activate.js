@@ -30,15 +30,15 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 		await sidebarComponent.gotoMenu( { item: 'Appearance', subitem: 'Themes' } );
 	} );
 
-	it( 'Search for free theme', async function () {
+	it( `Search for free theme with keyword ${ themeName }`, async function () {
 		themesPage = await ThemesPage.Expect( page );
 		await themesPage.filterThemes( 'Free' );
 		await themesPage.search( themeName );
 	} );
 
-	it( `Select a theme starting with ${ themeName }`, async function () {
+	it( `Select and view details of a theme starting with ${ themeName }`, async function () {
 		const selectedTheme = await themesPage.select( themeName );
-		await themesPage.viewInfo( selectedTheme );
+		await themesPage.clickPopoverItem( selectedTheme, 'Info' );
 	} );
 
 	it( 'Preview theme', async function () {
@@ -54,7 +54,7 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 		await themesDetailPage.activate();
 	} );
 
-	it( 'Theme customizer loads in a new tab', async function () {
+	it( 'Open theme customizer', async function () {
 		popupTab = await themesDetailPage.customizeSite();
 		await popupTab.waitForLoadState( 'load' );
 	} );

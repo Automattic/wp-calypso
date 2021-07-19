@@ -1,5 +1,5 @@
-import { BaseContainer } from '../base-container';
 import { ElementHandle } from 'playwright';
+import { BaseContainer } from '../base-container';
 
 const selectors = {
 	// Main themes listing
@@ -66,15 +66,6 @@ export class ThemesPage extends BaseContainer {
 		await this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } );
 	}
 
-	async viewInfo( selectedTheme: ElementHandle ): Promise< void > {
-		// Hover over the target theme to expose the `INFO` button and wait for the animation to
-		// complete.
-		await selectedTheme.hover();
-		await selectedTheme.waitForElementState( 'stable' );
-
-		await Promise.all( [ this.page.waitForNavigation(), selectedTheme.click() ] );
-	}
-
 	/**
 	 * Selects a theme from the gallery.
 	 *
@@ -89,7 +80,7 @@ export class ThemesPage extends BaseContainer {
 	 * 		exact match: `Twenty Seventeen` -> Twenty Seventeen
 	 *
 	 * @param {string} [name] Theme name to select.
-	 * @returns {Promise<void>} No return value.
+	 * @returns {Promise<ElementHandle>} Reference to the selected theme card on the gallery.
 	 */
 	async select( name: string ): Promise< ElementHandle > {
 		// Build selector that will select themes on the page that match the name but excludes
@@ -105,7 +96,13 @@ export class ThemesPage extends BaseContainer {
 		return await this.page.waitForSelector( `:nth-match(${ selector }, 1)` );
 	}
 
-	async clickPopoverItem(
+	/**
+	 * Given a target theme and action, click on the popover item of the action on the theme.
+	 *
+	 * @param {ElementHandle} selectedTheme Reference to the target theme.
+	 * @param {string} action Action to be called from the popover.
+	 */
+	async clickPopoverAction(
 		selectedTheme: ElementHandle,
 		action: 'Live Demo' | 'Activate' | 'Info' | 'Support'
 	): Promise< void > {
