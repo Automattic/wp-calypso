@@ -124,8 +124,7 @@ export async function clearCookies( page: Page ): Promise< void > {
 	// Save references to the BrowserContext and the current URL the page is on.
 	const browserContext = page.context();
 	const currentURL = page.url();
-	// First step - clear the cookies stored in the Browser Context.
-	// await browserContext.clearCookies();
+
 	// Navigate to the WordPress.com base URL.
 	await page.goto( config.get( 'calypsoBaseURL' ) );
 	// Clear the GDPR banner cookie.
@@ -138,6 +137,7 @@ export async function clearCookies( page: Page ): Promise< void > {
 	await page.goto( 'https://r-login.wordpress.com/' );
 	// Clear local storage.
 	await page.evaluate( 'localStorage.clear();' );
+	// Lastly, clear the cookies using built-in method.
 	await browserContext.clearCookies();
 	// Previous steps navigated page away from target page. Return page to the original URL.
 	await page.goto( currentURL );
