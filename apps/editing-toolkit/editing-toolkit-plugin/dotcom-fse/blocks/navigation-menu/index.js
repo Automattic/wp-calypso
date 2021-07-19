@@ -1,14 +1,8 @@
-/**
- * WordPress dependencies
- */
 import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
-
-/**
- * Internal dependencies
- */
-import edit from './edit';
 import { getCategoryWithFallbacks } from '../../../block-helpers';
+import edit from './edit';
+
 import './style.scss';
 
 const icon = (

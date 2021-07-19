@@ -1,8 +1,6 @@
-/* eslint-disable wpcalypso/import-docblock */
 /* global fullSiteEditing */
-/**
- * WordPress dependencies
- */
+
+// eslint-disable-next-line no-restricted-imports
 import { Icon } from '@wordpress/components';
 
 const { footerCreditOptions } = fullSiteEditing;
