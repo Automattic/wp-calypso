@@ -42,6 +42,7 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import NavItem from 'calypso/components/section-nav/item';
 import RecommendedThemes from './recommended-themes';
 import TrendingThemes from './trending-themes';
+import FseThemes from './fse-themes';
 
 /**
  * Style dependencies
@@ -88,6 +89,7 @@ class ThemeShowcase extends React.Component {
 				show: this.props.isJetpackSite,
 			},
 			ALL: { key: 'all', text: props.translate( 'All Themes' ), order: 4, show: true },
+			FSE: { key: 'fse', text: props.translate( 'FSE' ), order: 4 },
 		};
 		this.state = {
 			tabFilter:
@@ -390,6 +392,9 @@ class ThemeShowcase extends React.Component {
 					{ 'all' === this.state.tabFilter.key && this.allThemes( { themeProps } ) }
 					{ 'my-themes' === this.state.tabFilter.key && <ThemesSelection { ...themeProps } /> }
 					{ 'trending' === this.state.tabFilter.key && <TrendingThemes { ...themeProps } /> }
+					{ 'fse' === this.state.tabFilter.key && (
+						<FseThemes listLabel={ ' ' } { ...themeProps } />
+					) }
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 					<ThanksModal source={ 'list' } />
