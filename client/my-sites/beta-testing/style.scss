@@ -1,29 +1,21 @@
 @import '@automattic/onboarding/styles/mixins';
 
-.beta-testing__heading {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
+body.is-section-beta-testing {
+	background: #fff;
+}
 
-	@include breakpoint-deprecated( '<660px' ) {
-		padding-right: 16px;
-	}
-
-	.formatted-header {
-		margin-right: 1rem;
-	}
-
-	.formatted-header__subtitle {
-		margin-bottom: 0;
-	}
+.beta-testing {
+	line-height: 1.75;
+	padding: 24px;
 }
 
 .beta-testing__main-body {
 	display: flex;
 	flex-direction: row;
+	margin-bottom: 48px;
 
-	@include breakpoint-deprecated( '>960px' ) {
-		padding: 24px;
+	@include breakpoint-deprecated( '>1040px' ) {
+		margin-bottom: 90px;
 	}
 }
 
@@ -38,31 +30,64 @@
 	}
 }
 
-.beta-testing__main-title {
+.card-heading.beta-testing__main-title {
 	@include onboarding-font-recoleta;
 	line-height: 1.24;
+	margin-bottom: 24px;
+
+	@include breakpoint-deprecated( '>1040px' ) {
+		margin: 28px 0;
+	}
 }
 
 .beta-testing__main-image-wrapper {
 	display: none;
     flex: 1;
+	background: #f4f7fa;
 	align-items: center;
 	justify-content: center;
+	margin-left: 30px;
+	max-width: 500px;
 
 	img {
 		width: 100%;
-		max-width: 300px;
+		max-width: 360px;
 	}
 
 	@include breakpoint-deprecated( '>1040px' ) {
 		display: flex;
 	}
 }
+
+.beta-testing__view-horizon-button {
+	margin-right: 24px;
+	padding-left: 24px;
+	padding-right: 24px;
+}
+
+.beta-testing__cta-section {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+
+	@include breakpoint-deprecated( '>960px' ) {
+		margin-bottom: 48px;
+	}
+}
+
+.beta-testing__external-link {
+	margin: 15px 0;
+	font-size: 14px;
+
+	.gridicon {
+		margin: 0px 0 -3px 4px;
+	}
+}
+
 .beta-testing__posts-wrapper {
-	border-top: 1px solid #DCDCDE;
-	padding-top: 24px;
 	margin-top: 24px;
 }
+
 .beta-testing__posts {
 	display: block;
 	align-items: stretch;
@@ -95,8 +120,10 @@
 		-webkit-box-orient: vertical;
 		overflow: hidden;
 		text-overflow: ellipsis;
+		margin-bottom: 12px;
 	}
 }
+
 .beta-testing__post.is-placeholder {
 	padding-bottom: 20px;
 
@@ -118,38 +145,16 @@
 	}
 }
 
-.beta-testing__heading {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-}
-
-.beta-testing__view-horizon-button {
-	margin-right: 24px;
-	padding-left: 24px;
-	padding-right: 24px;
-}
-
-.beta-testing__cta-section {
-	display: flex;
-	align-items: center;
-	flex-wrap: wrap;
-}
-
-.beta-testing__external-link {
-	margin: 15px 0;
-
-	.gridicon {
-		margin: 0px 0 -2px 4px;
-	}
-}
-
 .beta-testing__posts-title {
 	display: flex;
 	justify-content: space-between;
-	font-weight: 500;
+	font-weight: 600;
 	font-size: 14px;
+	line-height: 1.6;
 	margin: 0 0 24px;
+	padding-bottom: 24px;
+	border-bottom: 1px solid #DCDCDE;
+	text-transform: uppercase;
 
 	@include breakpoint-deprecated( '>1040px' ) {
 		margin: 12px 0;
@@ -157,6 +162,7 @@
 
 	.beta-testing__posts-actions {
 		display: flex;
+		text-transform: none;
 	}
 
 	.follow-button {
@@ -173,6 +179,11 @@
 		margin-left: 2px;
     	margin-bottom: -3px;
 	}
+}
+
+.beta-testing__post-read {
+	margin-bottom: 16px;
+	display: inline-block;
 }
 
 @keyframes pulse {

@@ -44,17 +44,9 @@ const horizonSiteId = 90972941;
 
 const BetaTesting = ( { siteId, posts, isRequestingPosts, trackViewHorizonAction } ) => {
 	const translate = useTranslate();
-	const header = (
-		<FormattedHeader
-			brandFont
-			headerText={ translate( 'Beta Testing', { context: 'Plugin Installer' } ) }
-			subHeaderText={ translate( 'Help make the web a better place, one release at a time.' ) }
-			align="left"
-		/>
-	);
 
 	const main = (
-		<Card>
+		<section className="beta-testing">
 			<div className="beta-testing__main-body">
 				<div className="beta-testing__main-info">
 					<CardHeading className="beta-testing__main-title" size={ 36 }>
@@ -105,7 +97,7 @@ const BetaTesting = ( { siteId, posts, isRequestingPosts, trackViewHorizonAction
 						<FollowButtonContainer siteUrl="https://horizonfeedback.wordpress.com" />
 						<a className="beta-testing__see-all" href="https://horizonfeedback.wordpress.com">
 							{ translate( 'See All' ) }
-							<Gridicon icon="chevron-right" size={ 18 } />
+							<Gridicon icon="chevron-right" size={ 12 } />
 						</a>
 					</div>
 				</h3>
@@ -137,12 +129,16 @@ const BetaTesting = ( { siteId, posts, isRequestingPosts, trackViewHorizonAction
 									<a href={ post.URL }>{ post.title }</a>
 								</CardHeading>
 								<p>{ post.excerpt }</p>
+
+								<a className="beta-testing__post-read" href={ post.URL }>
+									{ translate( 'Read more' ) }
+								</a>
 							</article>
 						);
 					} ) }
 				</div>
 			</div>
-		</Card>
+		</section>
 	);
 	return (
 		<Main wideLayout>
@@ -151,7 +147,6 @@ const BetaTesting = ( { siteId, posts, isRequestingPosts, trackViewHorizonAction
 			<DocumentHead title={ translate( 'Beta Testing' ) } />
 			{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 			<SidebarNavigation />
-			{ header }
 			{ main }
 		</Main>
 	);
