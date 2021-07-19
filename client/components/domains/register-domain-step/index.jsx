@@ -491,6 +491,7 @@ class RegisterDomainStep extends React.Component {
 				{ this.renderContent() }
 				{ this.renderFilterResetNotice() }
 				{ this.renderPaginationControls() }
+				{ this.renderSideContent() }
 				{ queryObject && <QueryDomainsSuggestions { ...queryObject } /> }
 				<QueryContactDetailsCache />
 			</div>
@@ -1419,9 +1420,12 @@ class RegisterDomainStep extends React.Component {
 					hasResults &&
 					isFreeDomainExplainerVisible &&
 					this.renderFreeDomainExplainer() }
-				{ this.props.isReskinned && ! this.state.loadingResults && this.props.reskinSideContent }
 			</DomainSearchResults>
 		);
+	}
+
+	renderSideContent() {
+		return this.props.isReskinned && ! this.state.loadingResults && this.props.reskinSideContent;
 	}
 
 	getFetchAlgo() {
