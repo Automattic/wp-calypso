@@ -3,11 +3,11 @@
 
 .email-product-price {
 	color: var( --color-text );
-	font-weight: 400;
-	font-size: $font-body-small;
-	line-height: 1;
 	display: flex;
 	flex-direction: column;
+	font-size: $font-body-small;
+	font-weight: 400;
+	line-height: 1;
 	text-align: right;
 
 	@include breakpoint-deprecated( '>660px' ) {
@@ -54,10 +54,10 @@
 	}
 
 	.email-product-price__free-price {
+		color: var( --color-text-subtle );
 		font-size: $font-body-small;
 		line-height: 20px;
 		letter-spacing: 0.2px;
-		color: var(--color-text-subtle);
 		font-width: normal;
 
 		@include break-mobile {
