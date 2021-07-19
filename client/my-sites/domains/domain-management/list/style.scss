@@ -199,6 +199,11 @@
 	}
 }
 
+.domain-item__meta.domain-item__meta-placeholder {
+	width: 30%;
+	@include placeholder( --color-neutral-5 );
+}
+
 .domain-item__meta-item {
 	margin-left: 14px;
 

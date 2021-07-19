@@ -397,8 +397,14 @@ class DomainItem extends PureComponent {
 	}
 
 	renderSiteMeta() {
-		if ( ! this.props.showDomainDetails ) {
+		const { showDomainDetails, isLoadingDomainDetails, domainDetails } = this.props;
+
+		if ( ! showDomainDetails ) {
 			return;
+		}
+
+		if ( isLoadingDomainDetails || ! domainDetails ) {
+			return <div className="domain-item__meta domain-item__meta-placeholder" />;
 		}
 
 		return (
