@@ -1,3 +1,5 @@
+@import '@automattic/typography/styles/variables';
+
 .domain-management-list__notice {
 	margin-bottom: 0;
 }
@@ -239,6 +241,7 @@
 	display: flex;
 	flex-wrap: wrap;
 	margin-left: -4px;
+	align-items: center;
 
 	.domain-notice {
 		margin-left: 4px;
@@ -349,4 +352,14 @@
 	.domain-item__upsell {
 		margin-left: auto;
 	}
+}
+
+.domain-item .domain-item__primary-badge {
+	margin-left: 8px;
+	// font-size: $font-body-extra-small;
+	// TODO: Rebase with #54645
+	// @extend %domains__badge;
+	border-radius: 4px; /* stylelint-disable-line */
+	font-size: 0.75rem;
+	font-weight: 500; /* stylelint-disable-line */
 }

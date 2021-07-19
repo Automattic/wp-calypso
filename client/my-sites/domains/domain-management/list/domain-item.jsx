@@ -13,6 +13,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { Button, CompactCard } from '@automattic/components';
+import Badge from 'calypso/components/badge';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormRadio from 'calypso/components/forms/form-radio';
 import DomainNotice from 'calypso/my-sites/domains/domain-management/components/domain-notice';
@@ -473,8 +474,11 @@ class DomainItem extends PureComponent {
 
 
 	renderPrimaryBadge() {
-		// TODO: Implement proper badge
-		return <span>Primary site address</span>;
+		return (
+			<Badge className="domain-item__primary-badge" type="info-green">
+				{ this.props.translate( 'Primary site address' ) }
+			</Badge>
+		);
 	}
 
 	render() {
