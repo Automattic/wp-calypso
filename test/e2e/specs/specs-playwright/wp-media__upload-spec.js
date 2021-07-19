@@ -9,10 +9,10 @@ import {
 } from '@automattic/calypso-e2e';
 
 describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
-	const testFiles = {
-		image: MediaHelper.createTestImage(),
-		audio: MediaHelper.createTestAudio(),
-	};
+	const testFiles = [
+		{ type: 'image', filepath: MediaHelper.createTestImage() },
+		{ type: 'audio', filepath: MediaHelper.createTestAudio() },
+	];
 	const invalidFile = MediaHelper.createInvalidFile();
 	let page;
 
@@ -42,12 +42,13 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 			mediaPage = await MediaPage.Expect( page );
 		} );
 
-		Object.entries( testFiles ).forEach( function ( [ key, value ] ) {
-			it( `Upload ${ key } and confirm addition to gallery`, async function () {
-				const uploadedItem = await mediaPage.upload( value );
+		it.each( testFiles )(
+			'Uplaod $type and confirm addition to gallery',
+			async ( { filepath } ) => {
+				const uploadedItem = await mediaPage.upload( filepath );
 				assert.strictEqual( await uploadedItem.isVisible(), true );
-			} );
-		} );
+			}
+		);
 
 		it( 'Upload an unsupported file type and see the rejection notice', async function () {
 			try {
@@ -60,8 +61,9 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 
 	// Clean up test files.
 	afterAll( () => {
-		for ( const filepath of Object.values( testFiles ) ) {
-			MediaHelper.deleteFile( filepath );
+		for ( const testFile of Object.values( testFiles ) ) {
+			console.log( testFile );
+			MediaHelper.deleteFile( testFile.filepath );
 		}
 		MediaHelper.deleteFile( invalidFile );
 	} );
