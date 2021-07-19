@@ -680,6 +680,8 @@
 		display: flex;
 		flex-direction: column;
 		padding: 0;
+		border-radius: 4px; /* stylelint-disable-line */
+		overflow: hidden;
 		box-shadow: 0 0 40px 0 #00000014;
 
 		width: 100%;
@@ -696,16 +698,21 @@
 		}
 
 		h1 {
-			font-size: 3rem;
-			line-height: 3.25rem;
-			padding-bottom: 24px;
+			line-height: 1;
+			@include break-mobile {
+				font-size: $font-headline-medium;
+			}
 			+ p {
-				font-size: 1.5rem;
-				line-height: 2rem;
+				font-size: 18px; /* stylelint-disable-line */
+				line-height: 1.5rem;
+				@include break-mobile {
+					font-size: $font-title-medium;
+					line-height: 2rem;
+				}
 			}
 		}
 		h2 {
-			font-size: 1.5rem;
+			font-size: $font-title-medium;
 			font-weight: 700;
 			line-height: 1.75rem;
 			padding-bottom: 16px;
@@ -721,9 +728,9 @@
 
 		> div {
 			box-sizing: border-box;
-			padding: 15px 26px 26px;
+			padding: 26px;
 			@include break-mobile {
-				padding: 30px 76px 55px;
+				padding: 76px;
 			}
 		}
 		.jetpack-checkout-siteless-thank-you__card-main {
@@ -733,18 +740,32 @@
 		.jetpack-checkout-siteless-thank-you__step {
 			display: flex;
 			align-items: flex-start;
+			padding-bottom: 40px;
+
+			&:last-of-type {
+				padding-bottom: 0;
+			}
+
 			.jetpack-checkout-siteless-thank-you__step-number {
 				color: white;
-				background-color: var( --studio-jetpack-green-50 );
+				background-color: var( --studio-jetpack-green-40 );
 				text-align: center;
-				border-radius: 50%;
-				font-size: 1.25rem;
-				width: 1.8rem;
-				height: 1.8rem;
+				border-radius: 50%; /* stylelint-disable-line */
+				font-size: $font-title-small;
+				font-weight: 600;
+				width: rem( 32px );
+				height: rem( 32px );
 			}
 			.jetpack-checkout-siteless-thank-you__step-content {
 				flex: 1;
 				padding: 0 10px 0 16px;
+				p {
+					@include break-mobile {
+						font-size: 18px; /* stylelint-disable-line */
+						line-height: 1.75rem;
+					}
+					margin: 0;
+				}
 			}
 		}
 
@@ -792,7 +813,7 @@
 			display: flex;
 			align-items: flex-end;
 
-			background-color: var( --color-neutral-5 );
+			background-color: #f9f9f6;
 			> div {
 				max-width: 456px;
 			}
@@ -814,7 +835,11 @@
 		}
 
 		.jetpack-checkout-siteless-thank-you__product-info-loading {
-			@include placeholder( --color-neutral-30 );
+			@include placeholder( --color-neutral-20 );
+		}
+
+		.jetpack-checkout-siteless-thank-you__form-label {
+			margin-top: 24px;
 		}
 	}
 }
@@ -834,22 +859,20 @@
 			padding: 96px;
 		}
 
-		// TODO min width
-		// TODO primary button color
 		.jetpack-checkout-thank-you__main-message {
-			font-size: 36px;
+			font-size: $font-headline-small;
 			font-weight: 700;
 			margin-bottom: 24px;
 
 			@include break-mobile {
-				font-size: 48px;
+				font-size: $font-headline-medium;
 			}
 		}
 
 		.jetpack-checkout-thank-you__sub-message-loading,
 		.jetpack-checkout-thank-you__sub-message {
-			font-size: 24px;
-			font-weight: 500;
+			font-size: $font-title-medium;
+			font-weight: 500; /* stylelint-disable-line */
 			margin-bottom: 64px;
 		}
 
@@ -861,7 +884,7 @@
 
 		.jetpack-checkout-thank-you__button,
 		.jetpack-checkout-thank-you__button:visited {
-			border-radius: 4px;
+			border-radius: calc( 2px * 2 );
 			// button colors imported from packages/calypso-color-schemes/src/shared/color-schemes/_jetpack-cloud.scss
 			background-color: var( --studio-jetpack-green-50 );
 			border-color: var( --studio-jetpack-green-50 );
@@ -886,6 +909,6 @@
 
 	.jetpack-checkout-thank-you__sub-message-loading,
 	.jetpack-checkout-thank-you__email-message-loading {
-		@include placeholder( --color-neutral-30 );
+		@include placeholder( --color-neutral-20 );
 	}
 }
