@@ -16,5 +16,10 @@ export function getTrendingThemes( state ) {
 	if ( ! state.themes.trendingThemes?.themes ) {
 		return emptyList;
 	}
-	return Object.values( state.themes.trendingThemes?.themes );
+	const themes = Object.values( state.themes.trendingThemes?.themes );
+	// Only return themes which do not have the "Block Templates" feature.
+	// @TODO remove this check when it is valid to do so.
+	return themes.filter( ( t ) =>
+		t?.taxonomies?.features.every( ( f ) => f.slug !== 'block-templates' )
+	);
 }
