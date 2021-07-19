@@ -37,7 +37,6 @@ export default function useSteps(): Array< StepType > {
 		steps = [
 			Step.IntentGathering,
 			Step.Domains,
-			Step.Emails,
 			Step.DesignSelection,
 			Step.Style,
 			Step.Features,
@@ -49,7 +48,6 @@ export default function useSteps(): Array< StepType > {
 			Step.DesignSelection,
 			Step.Style,
 			Step.Domains,
-			Step.Emails,
 			Step.Features,
 			Step.Plans,
 		];
