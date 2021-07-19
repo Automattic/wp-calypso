@@ -3,12 +3,13 @@
  */
 import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
+import Badge from 'calypso/components/badge';
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import PopoverMenu from 'calypso/components/popover/menu';
 import Gridicon from 'calypso/components/gridicon';
@@ -18,6 +19,7 @@ import { domainManagementChangeSiteAddress } from 'calypso/my-sites/domains/path
  * Style dependencies
  */
 import './wpcom-domain-item.scss';
+import { createInterpolateElement } from '@wordpress/element';
 
 export default function WpcomDomainItem( {
 	currentRoute,
@@ -40,10 +42,22 @@ export default function WpcomDomainItem( {
 	return (
 		<div className="wpcom-domain-item">
 			<span>
-				{ __( 'Your free WordPress.com address is ' ) }
-				<strong>{ domain.domain }</strong>
+				{ createInterpolateElement(
+					sprintf(
+						/* translators: %s - The WordPress.com subdomain. (ex.: subdomain.wordpress.com) */
+						__( 'Your free WordPress.com address is <strong>%s</strong>' ),
+						domain.domain
+					),
+					{ strong: React.createElement( 'strong', null ) }
+				) }
+				{ domain.isPrimary && (
+					<Badge className="wpcom-domain-item__primary-badge" type="info-green">
+						{ __( 'Primary site address' ) }
+					</Badge>
+				) }
 			</span>
 			<Button
+				className="wpcom-domain-item__manage-button"
 				compact
 				ref={ buttonRef }
 				onClick={ handleToggleMenu }
