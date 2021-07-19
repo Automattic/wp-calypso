@@ -85,7 +85,7 @@ const BetaTesting = ( { siteId, posts, isRequestingPosts, trackViewHorizonAction
 					<img
 						className="beta-testing__main-image"
 						src="/calypso/images/illustrations/illustration-404.svg"
-						alt={ translate( 'Beta Testing' ) }
+						alt={ translate( 'Beta Testing', { context: 'Plugin Installer' } ) }
 					/>
 				</div>
 			</div>
@@ -142,8 +142,11 @@ const BetaTesting = ( { siteId, posts, isRequestingPosts, trackViewHorizonAction
 	return (
 		<Main wideLayout>
 			<QueryPosts siteId={ horizonSiteId } query={ { ...query } } />
-			<PageViewTracker path={ `/beta-testing/:site` } title={ translate( 'Beta Testing' ) } />
-			<DocumentHead title={ translate( 'Beta Testing' ) } />
+			<PageViewTracker
+				path={ `/beta-testing/:site` }
+				title={ translate( 'Beta Testing', { context: 'Plugin Installer' } ) }
+			/>
+			<DocumentHead title={ translate( 'Beta Testing', { context: 'Plugin Installer' } ) } />
 			{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 			<SidebarNavigation />
 			{ main }
