@@ -35,6 +35,8 @@ class EmailsStep extends React.Component {
 			step: stepName,
 		} );
 
+		this.props.submitSignupStep( { stepName } );
+
 		goToNextStep();
 	};
 
