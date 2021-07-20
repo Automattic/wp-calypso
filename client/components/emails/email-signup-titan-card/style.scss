@@ -16,9 +16,9 @@
 }
 
 .email-signup-titan-card__suggestion-content {
-	width: 100%;
-	min-height: 32px;
 	flex-direction: column;
+	min-height: 32px;
+	width: 100%;
 
 	@include breakpoint-deprecated( '>660px' ) {
 		display: flex;
@@ -118,10 +118,10 @@
 }
 
 .email-signup-titan-card__suggestion-chevron {
-	display: none;
-	margin-left: 10px;
-	flex: 1 0 auto;
 	color: var( --color-neutral-light );
+	display: none;
+	flex: 1 0 auto;
+	margin-left: 10px;
 
 	.is-section-signup & {
 		@include breakpoint-deprecated( '>480px' ) {
@@ -132,54 +132,56 @@
 
 body.is-section-signup.is-white-signup {
 	.email-suggestion {
-		flex-direction: column;
+		background: none;
+		border-bottom: 1px solid #e2e4e7;
+		border-top: 1px solid #e2e4e7;
 		box-shadow: none;
-		padding-right: 24px;
+		flex-direction: column;
 		padding-left: 24px;
+		padding-right: 24px;
 
 		@include break-mobile {
-			margin: 0 20px;
+			border: 1px solid #e2e4e7;
+			border-radius: 4px; /* stylelint-disable-line */
 			flex-direction: row;
+			margin: 0 20px;
 		}
 
 		@include break-large {
 			margin: 0;
 		}
 
+		.email-product-price {
+			@include break-mobile {
+				margin-top: 12px;
+			}
+		}
 
-		&:not( .featured-email-suggestion ) {
-			background: none;
+		.email-signup-titan-card__email-title {
+			font-size: 1.375rem; /* stylelint-disable-line */
+			line-height: 30px;
+
+			@include break-mobile {
+				font-size: 1.625rem; /* stylelint-disable-line */
+			}
+		}
+
+		.email-signup-titan-card__suggestion-action-container {
+			flex: 0 0 auto;
+		}
+
+		.email-signup-titan-card__suggestion-action {
+			border: 1px solid #c3c4c7;
 			border-radius: 4px; /* stylelint-disable-line */
-			border: 1px solid rgba( 220, 220, 222, 0.64 );
-			padding-left: 24px;
-			padding-right: 24px;
+			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
+			font-size: 0.875rem;
+			font-weight: 500; /* stylelint-disable-line */
+			padding: 0.57em 1.17em;
+			width: 100%;
 
-			.email-signup-titan-card__email-title {
-				font-size: 1.5rem; /* stylelint-disable-line */
-				line-height: 60px;
-
-
-			}
-
-			.email-signup-titan-card__suggestion-action-container {
-				flex: 0 0 auto;
-			}
-
-			.email-signup-titan-card__suggestion-action:not( .is-borderless ) {
-				width: 100%;
-				line-height: 20px;
-				padding: 0.57em 1.17em;
-				font-weight: 500; /* stylelint-disable-line */
-				border-radius: 4px; /* stylelint-disable-line */
-				box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
-				border: 1px solid #c3c4c7;
-				letter-spacing: 0.32px;
-				font-size: 0.875rem;
-
-				@include break-mobile {
-					padding: 0.65em 2.8em;
-					width: auto;
-				}
+			@include break-mobile {
+				padding: 0.65em 2.8em;
+				width: auto;
 			}
 		}
 	}
