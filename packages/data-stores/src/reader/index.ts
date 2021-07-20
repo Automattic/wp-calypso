@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
 import { plugins, registerStore, use } from '@wordpress/data';
-
-/**
- * Internal dependencies
- */
+import { controls } from '../wpcom-request-controls';
+import * as actions from './actions';
 import { STORE_KEY } from './constants';
+import persistOptions from './persist';
 import reducer, { State } from './reducer';
 import * as resolvers from './resolvers';
-import * as actions from './actions';
 import * as selectors from './selectors';
-import persistOptions from './persist';
 import type { SelectFromMap, DispatchFromMap } from '../mapped-types';
-import { controls } from '../wpcom-request-controls';
 
 export type { State };
 export { STORE_KEY };

@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import React, { useEffect } from 'react';
 import { keyframes } from '@emotion/core';
-import PropTypes from 'prop-types';
 import { useI18n } from '@wordpress/react-i18n';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React, { useEffect } from 'react';
 import joinClasses from '../lib/join-classes';
-import Button from './button';
 import styled from '../lib/styled';
+import Button from './button';
 
 /* eslint-disable @typescript-eslint/no-use-before-define */
 

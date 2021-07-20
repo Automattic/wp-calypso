@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
 import { stringify } from 'qs';
-
-/**
- * Internal dependencies
- */
+import { wpcomRequest, requestAllBlogsAccess, reloadProxy } from '../wpcom-request-controls';
+import type { WpcomClientCredentials } from '../shared-types';
 import type {
 	CurrentUser,
 	CreateAccountParams,
 	NewUserErrorResponse,
 	NewUserSuccessResponse,
 } from './types';
-import { wpcomRequest, requestAllBlogsAccess, reloadProxy } from '../wpcom-request-controls';
-import type { WpcomClientCredentials } from '../shared-types';
 
 export function createActions( clientCreds: WpcomClientCredentials ) {
 	const receiveCurrentUser = ( currentUser: CurrentUser ) => ( {

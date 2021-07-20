@@ -1,4 +1,6 @@
 .activity-card {
+	position: relative;
+
 	.card {
 		padding: 16px;
 		border-radius: var( --jetpack-corners-sharp );
@@ -51,11 +53,22 @@
 	}
 }
 
+.activity-card__header {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	column-gap: 16px;
+	margin: 24px 0 8px;
+
+	.activity-card-list__secondary-card & {
+		transform: translateX( 32px );
+	}
+}
+
 .activity-card__time {
 	align-items: center;
 	display: flex;
 	flex-direction: row;
-	margin: 24px 0 8px;
 }
 
 .activity-card__time-icon {
@@ -69,6 +82,60 @@
 	font-size: $font-body-extra-small;
 	line-height: 17px;
 	margin-left: 4px;
+}
+
+.activity-card__share-button svg {
+	margin-right: 5px;
+}
+
+.activity-card__share-button.button.is-borderless.is-primary {
+	margin: 0;
+	color: var( --color-neutral-40 );
+	font-size: $font-body-extra-small;
+	line-height: $font-body;
+}
+
+.activity-card__share-heading {
+	font-size: 1rem;
+	font-weight: 600;
+	text-align: left;
+	margin-bottom: 0.25rem;
+}
+
+.activity-card__share-description {
+	font-size: 0.875rem;
+	margin-bottom: 0.75rem;
+	text-align: left;
+}
+
+.activity-card__share-popover {
+	width: 340px;
+}
+
+.activity-card__share-popover .popover__inner {
+	padding: 1rem;
+}
+
+.activity-card__share-form {
+	display: flex;
+}
+
+input[type=text].form-text-input.activity-card__share-email {
+	margin-right: 0.5rem;
+}
+
+.activity-card__share-submit {
+	width: 32%;
+
+	&.form-button {
+		margin: 0;
+	}
+}
+
+.activity-card__share-error {
+	color: var( --color-error );
+	text-align: left;
+	margin-top: 0.25rem;
 }
 
 .activity-card__activity-description {
@@ -224,69 +291,4 @@
 			margin-left: 16px;
 		}
 	}
-}
-
-.activity-card__share-button svg {
-	margin-right: 5px;
-}
-
-.activity-card__share-button-wrap {
-	position: absolute;
-	top: -6px; // Offset the button's inherit padding
-	right: 0;
-	text-align: right;
-
-	.activity-card-list__secondary-card & {
-		right: -32px;
-	}
-}
-
-.activity-card__share-button.button.is-borderless.is-primary {
-	margin: 0;
-	color: var( --color-neutral-40 );
-	font-size: $font-body-extra-small;
-	line-height: $font-body;
-}
-
-.activity-card__share-heading {
-	font-size: 1rem;
-	font-weight: 600;
-	text-align: left;
-	margin-bottom: 0.25rem;
-}
-
-.activity-card__share-description {
-	font-size: 0.875rem;
-	margin-bottom: 0.75rem;
-	text-align: left;
-}
-
-.activity-card__share-popover {
-	width: 340px;
-}
-
-.activity-card__share-popover .popover__inner {
-	padding: 1rem;
-}
-
-.activity-card__share-form {
-	display: flex;
-}
-
-input[type=text].form-text-input.activity-card__share-email {
-	margin-right: 0.5rem;
-}
-
-.activity-card__share-submit {
-	width: 32%;
-
-	&.form-button {
-		margin: 0;
-	}
-}
-
-.activity-card__share-error {
-	color: var( --color-error );
-	text-align: left;
-	margin-top: 0.25rem;
 }

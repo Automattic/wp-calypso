@@ -1,17 +1,6 @@
-/**
- * External dependencies
- */
 import { TranslateResult } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { formatProduct } from './format-product';
 import { getJetpackProductsCallToAction } from './translations';
-
-/**
- * Type dependencies
- */
 import type { Product } from './types';
 
 /**

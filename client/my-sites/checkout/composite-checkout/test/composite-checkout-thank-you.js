@@ -948,20 +948,60 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/jetpack/thank-you/foo.bar/no_product' );
 	} );
 
-	it( 'redirects to the jetpack "siteless" checkout thank you when jetpack checkout arg is set, but siteSlug is undefined.', () => {
-		const cart = {
-			products: [
-				{
-					product_slug: 'jetpack_backup_daily',
-				},
-			],
-		};
-		const url = getThankYouPageUrl( {
-			...defaultArgs,
-			siteSlug: undefined,
-			cart,
-			isJetpackCheckout: true,
+	describe( 'Jetpack Siteless Checkout Thank You', () => {
+		it( 'redirects when jetpack checkout arg is set, but siteSlug is undefined.', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: 'jetpack_backup_daily',
+					},
+				],
+			};
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: undefined,
+				cart,
+				isJetpackCheckout: true,
+			} );
+			expect( url ).toBe( '/checkout/jetpack/thank-you/no-site/jetpack_backup_daily' );
 		} );
-		expect( url ).toBe( '/checkout/jetpack/thank-you/no-site/jetpack_backup_daily' );
+
+		it( 'redirects with receiptId query param when a valid receipt ID is provided', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: 'jetpack_backup_daily',
+					},
+				],
+			};
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: undefined,
+				cart,
+				isJetpackCheckout: true,
+				receiptId: 80023,
+			} );
+			expect( url ).toBe(
+				'/checkout/jetpack/thank-you/no-site/jetpack_backup_daily?receiptId=80023'
+			);
+		} );
+
+		it( 'redirects without receiptId query param when an invalid receipt ID is provided', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: 'jetpack_backup_daily',
+					},
+				],
+			};
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: undefined,
+				cart,
+				isJetpackCheckout: true,
+				receiptId: 'invalid receipt ID',
+			} );
+			expect( url ).toBe( '/checkout/jetpack/thank-you/no-site/jetpack_backup_daily' );
+		} );
 	} );
 } );

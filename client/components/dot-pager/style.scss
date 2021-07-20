@@ -1,3 +1,5 @@
+@import '@wordpress/base-styles/mixins';
+
 .dot-pager__pages {
 	overflow: hidden;
 	display: flex;
@@ -8,6 +10,7 @@
 	flex-shrink: 0;
 	margin-left: 0;
 	transition: all 0.5s ease-in-out;
+	@include reduce-motion( 'transition' );
 	opacity: 1;
 
 	&.is-prev,

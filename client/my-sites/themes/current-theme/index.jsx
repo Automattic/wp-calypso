@@ -20,9 +20,9 @@ import { trackClick } from '../helpers';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
-import ExternalLink from 'calypso/components/external-link';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import config from '@automattic/calypso-config';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 
 /**
  * Style dependencies
@@ -124,13 +124,14 @@ class CurrentTheme extends Component {
 									</div>
 									<p>
 										{ translate( 'This is the active theme on your site.' ) }{ ' ' }
-										<ExternalLink
-											href={ localizeUrl( 'https://wordpress.com/support/changing-themes/' ) }
-											icon
-											target="__blank"
+										<InlineSupportLink
+											supportPostId={ 184023 }
+											supportLink={ localizeUrl(
+												'https://wordpress.com/support/changing-themes/'
+											) }
 										>
 											{ translate( 'Learn more.' ) }
-										</ExternalLink>
+										</InlineSupportLink>
 									</p>
 								</div>
 							</div>

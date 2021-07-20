@@ -1,17 +1,6 @@
-/**
- * External dependencies
- */
 import assert from 'assert';
-
-/**
- * Internal dependencies
- */
-import { BaseContainer } from '../base-container';
-
-/**
- * Type dependencies
- */
 import { Frame } from 'playwright';
+import { BaseContainer } from '../base-container';
 
 const selectors = {
 	// iframe and editor

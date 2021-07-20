@@ -299,6 +299,12 @@ const selectors = {
 }
 ```
 
+### Selectors for Stability
+
+Where possible, use CSS selectors that rely on user-facing attributes (like an `aria-label` instead of a `class` name). These are less likely to change over time and add stability to your tests.
+
+You can read more about this in the [Playwright selector best practices](https://playwright.dev/docs/selectors/#prioritize-user-facing-attributes).
+
 ---
 
 ## Test Naming
@@ -322,3 +328,11 @@ it( 'Log In' )
 
 it( 'Start new post' )
 ```
+
+## Other Best Practices
+
+### Only Involve Necessary Elements
+
+Only involve or wait for elements that are actually critical to the test flow and that you will interact directly with. 
+
+For example, do not wait for a wrapper to click a button that’s inside — wait only for that button instead.

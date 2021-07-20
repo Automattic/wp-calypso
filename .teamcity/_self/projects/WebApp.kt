@@ -799,10 +799,7 @@ object RunCalypsoPlaywrightE2eDesktopTests : BuildType({
 				export LIVEBRANCHES=true
 				export NODE_CONFIG_ENV=test
 				export PLAYWRIGHT_BROWSERS_PATH=0
-
-				# Instructs Magellan to not hide the output from individual `mocha` processes. This is required for
-				# mocha-teamcity-reporter to work.
-				export MAGELLANDEBUG=true
+				export TEAMCITY_VERSION=2021
 
 				IMAGE_URL="https://calypso.live?image=registry.a8c.com/calypso/app:build-${BuildDockerImage.depParamRefs.buildNumber}";
 				MAX_LOOP=10
@@ -842,7 +839,7 @@ object RunCalypsoPlaywrightE2eDesktopTests : BuildType({
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 				export DEBUG=pw:api
 
-				xvfb-run yarn magellan --config=magellan-playwright.json --max_workers=%E2E_WORKERS% --local_browser=chrome --mocha_args="--reporter mocha-multi-reporters --reporter-options configFile=mocha-reporter.json"
+				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --testNamePattern @parallel --maxWorkers=%E2E_WORKERS% specs/specs-playwright
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
@@ -854,10 +851,10 @@ object RunCalypsoPlaywrightE2eDesktopTests : BuildType({
 				set -x
 
 				mkdir -p screenshots
-				find test/e2e/temp -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
+				find test/e2e/results -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
 
 				mkdir -p logs
-				find test/e2e -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+				find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}

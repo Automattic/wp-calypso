@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { select, subscribe } from '@wordpress/data';
 import wpcomRequest from 'wpcom-proxy-request';
-
-/**
- * Internal dependencies
- */
 import { register } from '..';
 import { DataStatus } from '../constants';
 

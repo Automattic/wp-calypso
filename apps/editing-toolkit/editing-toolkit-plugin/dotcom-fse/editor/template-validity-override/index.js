@@ -1,8 +1,5 @@
 /* global fullSiteEditing */
 
-/**
- * External dependencies
- */
 import { select, dispatch, subscribe } from '@wordpress/data';
 
 /**

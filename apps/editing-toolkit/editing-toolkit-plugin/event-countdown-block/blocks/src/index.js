@@ -1,15 +1,9 @@
-/**
- * WordPress dependencies
- */
 import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
-
-/**
- * Internal dependencies
- */
-import { EventCountdownIcon } from './icon';
 import edit from './edit';
+import { EventCountdownIcon } from './icon';
 import view from './view';
+
 import './editor.scss';
 import './style.scss';
 

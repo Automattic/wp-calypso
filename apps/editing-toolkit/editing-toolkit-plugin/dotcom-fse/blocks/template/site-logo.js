@@ -1,7 +1,3 @@
-/* eslint-disable wpcalypso/import-docblock */
-/**
- * WordPress dependencies
- */
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { addFilter } from '@wordpress/hooks';
 

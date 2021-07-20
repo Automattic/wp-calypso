@@ -7,7 +7,6 @@
 	"hostname": "jetpack.cloud.localhost",
 	"i18n_default_locale_slug": "en",
 	"port": 3000,
-	"rtl": false,
 	"login_url": "/connect",
 	"logout_url": "https://jetpack.com",
 	"jetpack_connect_url": "https://wordpress.com/jetpack/connect",

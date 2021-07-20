@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordpress/plugins';
-import { doAction, hasAction } from '@wordpress/hooks';
-import { LaunchContext } from '@automattic/launch';
 import { LocaleProvider, i18nDefaultLocaleSlug } from '@automattic/i18n-utils';
-
-/**
- * Internal dependencies
- */
+import { LaunchContext } from '@automattic/launch';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { doAction, hasAction } from '@wordpress/hooks';
+import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordpress/plugins';
+import React from 'react';
+import { inIframe } from '../../block-inserter-modifications/contextual-tips/utils';
+import { FLOW_ID } from './constants';
 import LaunchModal from './launch-modal';
 import { LAUNCH_STORE } from './stores';
-import { FLOW_ID } from './constants';
 import { openCheckout, redirectToWpcomPath, getCurrentLaunchFlowUrl } from './utils';
-import { inIframe } from '../../block-inserter-modifications/contextual-tips/utils';
 
 const registerPlugin = ( name: string, settings: Omit< PluginSettings, 'icon' > ) =>
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
+import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter as Router } from 'react-router-dom';
-import { render, screen } from '@testing-library/react';
-
-/**
- * Internal dependencies
- */
 import DomainStep from '../';
 
 describe( 'DomainStep', () => {

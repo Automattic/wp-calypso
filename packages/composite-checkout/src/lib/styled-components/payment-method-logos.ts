@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import styled from '../styled';
 
 export const PaymentMethodLogos = styled.span`

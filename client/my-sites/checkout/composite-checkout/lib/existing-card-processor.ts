@@ -51,6 +51,10 @@ export default async function existingCardProcessor(
 		throw new Error( 'Stripe configuration is required' );
 	}
 
+	const domainDetails = getDomainDetails( contactDetails, {
+		includeDomainDetails,
+		includeGSuiteDetails,
+	} );
 	debug( 'formatting existing card transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...transactionData,
@@ -58,13 +62,10 @@ export default async function existingCardProcessor(
 		country: contactDetails?.countryCode?.value ?? '',
 		postalCode: getPostalCode( contactDetails ),
 		subdivisionCode: contactDetails?.state?.value,
-		domainDetails: getDomainDetails( contactDetails, {
-			includeDomainDetails,
-			includeGSuiteDetails,
-		} ),
+		domainDetails,
 		cart: createTransactionEndpointCartFromResponseCart( {
 			siteId: dataForProcessor.siteId ? String( dataForProcessor.siteId ) : undefined,
-			contactDetails: transactionData.domainDetails ?? null,
+			contactDetails: domainDetails ?? null,
 			responseCart: dataForProcessor.responseCart,
 		} ),
 		paymentMethodType: 'WPCOM_Billing_MoneyPress_Stored',

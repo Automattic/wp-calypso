@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React, { isValidElement, cloneElement } from 'react';
-import type { ReactElement, ReactNode, FunctionComponent } from 'react';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import React, { isValidElement, cloneElement } from 'react';
 import Button from '../button';
+import type { ReactElement, ReactNode, FunctionComponent } from 'react';
 
 export type BaseButton = {
 	action: string;

@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
-
-/**
- * Internal dependencies
- */
-import type { DomainCategory, DomainSuggestionState, DomainAvailabilities } from './types';
 import { DataStatus } from './constants';
-import type { Action } from './actions';
 import { stringifyDomainQueryObject } from './utils';
+import type { Action } from './actions';
+import type { DomainCategory, DomainSuggestionState, DomainAvailabilities } from './types';
+import type { Reducer } from 'redux';
 
 const initialDomainSuggestionState: DomainSuggestionState = {
 	state: DataStatus.Uninitialized,

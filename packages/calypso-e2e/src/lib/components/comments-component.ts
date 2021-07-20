@@ -1,12 +1,5 @@
-/**
- * Internal dependencies
- */
-import { BaseContainer } from '../base-container';
-
-/**
- * Type dependencies
- */
 import { ElementHandle } from 'playwright';
+import { BaseContainer } from '../base-container';
 
 const selectors = {
 	// Comment

@@ -10,6 +10,8 @@ import { removeQueryArgs } from '@wordpress/url';
 /**
  * Internal Dependencies
  */
+import { composeHandlers } from 'calypso/controller/shared';
+import { render } from 'calypso/controller/web-util';
 import { cloudSiteSelection } from 'calypso/jetpack-cloud/controller';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { requestSite } from 'calypso/state/sites/actions';
@@ -23,13 +25,8 @@ import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions
 import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
 import NavigationComponent from 'calypso/my-sites/navigation';
-import {
-	addQueryArgs,
-	getSiteFragment,
-	sectionify,
-	externalRedirect,
-	trailingslashit,
-} from 'calypso/lib/route';
+import { addQueryArgs, getSiteFragment, sectionify, trailingslashit } from 'calypso/lib/route';
+import { navigate } from 'calypso/lib/navigate';
 import config from '@automattic/calypso-config';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -467,7 +464,7 @@ export function siteSelection( context, next ) {
 						next();
 					}
 				} else if ( shouldRedirectToJetpackAuthorize( context, site ) ) {
-					externalRedirect( getJetpackAuthorizeURL( context, site ) );
+					navigate( getJetpackAuthorizeURL( context, site ) );
 				} else {
 					// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
 					const allSitesPath = addQueryArgs(
@@ -680,4 +677,17 @@ export function getJetpackAuthorizeURL( context, site ) {
 		},
 		trailingslashit( site?.URL ) + 'wp-admin/'
 	);
+}
+
+export function selectSiteIfLoggedIn( context, next ) {
+	const state = context.store.getState();
+	if ( ! isUserLoggedIn( state ) ) {
+		next();
+		return;
+	}
+
+	// Logged in: Terminate the regular handler path by not calling next()
+	// and render the site selection screen, redirecting the user if they
+	// only have one site.
+	composeHandlers( siteSelection, sites, makeLayout, render )( context );
 }

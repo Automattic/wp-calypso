@@ -267,6 +267,44 @@ class ThemeShowcase extends React.Component {
 
 		const showBanners = currentThemeId || ! siteId || ! isLoggedIn;
 
+		const themeProps = {
+			filter: filter,
+			vertical: this.props.vertical,
+			siteId: this.props.siteId,
+			upsellUrl: this.props.upsellUrl,
+			search: search,
+			tier: this.props.tier,
+			defaultOption: this.props.defaultOption,
+			secondaryOption: this.props.secondaryOption,
+			placeholderCount: this.props.placeholderCount,
+			bookmarkRef: this.bookmarkRef,
+			getScreenshotUrl: ( theme ) => {
+				if ( ! getScreenshotOption( theme ).getUrl ) {
+					return null;
+				}
+
+				return localizeThemesPath(
+					getScreenshotOption( theme ).getUrl( theme ),
+					locale,
+					! isLoggedIn
+				);
+			},
+			onScreenshotClick: ( themeId ) => {
+				if ( ! getScreenshotOption( themeId ).action ) {
+					return;
+				}
+				getScreenshotOption( themeId ).action( themeId );
+			},
+			getActionLabel: ( theme ) => getScreenshotOption( theme ).label,
+			trackScrollPage: this.props.trackScrollPage,
+			emptyContent: this.props.emptyContent,
+			getOptions: ( theme ) =>
+				pickBy(
+					addTracking( options ),
+					( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
+				),
+		};
+
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<div>
@@ -321,46 +359,9 @@ class ThemeShowcase extends React.Component {
 
 					{ 'recommended' === this.state.tabFilter && (
 						<RecommendedThemes
-							upsellUrl={ this.props.upsellUrl }
-							search={ search }
-							tier={ this.props.tier }
-							filter={ filter }
-							vertical={ this.props.vertical }
-							siteId={ this.props.siteId }
 							listLabel={ ' ' }
-							defaultOption={ this.props.defaultOption }
-							secondaryOption={ this.props.secondaryOption }
-							placeholderCount={ this.props.placeholderCount }
-							getScreenshotUrl={ function ( theme ) {
-								if ( ! getScreenshotOption( theme ).getUrl ) {
-									return null;
-								}
-
-								return localizeThemesPath(
-									getScreenshotOption( theme ).getUrl( theme ),
-									locale,
-									! isLoggedIn
-								);
-							} }
-							onScreenshotClick={ function ( themeId ) {
-								if ( ! getScreenshotOption( themeId ).action ) {
-									return;
-								}
-								getScreenshotOption( themeId ).action( themeId );
-							} }
-							getActionLabel={ function ( theme ) {
-								return getScreenshotOption( theme ).label;
-							} }
-							getOptions={ function ( theme ) {
-								return pickBy(
-									addTracking( options ),
-									( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
-								);
-							} }
-							trackScrollPage={ this.props.trackScrollPage }
-							emptyContent={ this.props.emptyContent }
+							{ ...themeProps }
 							scrollToSearchInput={ this.scrollToSearchInput }
-							bookmarkRef={ this.bookmarkRef }
 						/>
 					) }
 					{ 'all' === this.state.tabFilter && (
@@ -368,47 +369,7 @@ class ThemeShowcase extends React.Component {
 							{ ! this.props.loggedOutComponent && showBanners && (
 								<UpworkBanner location={ 'theme-banner' } />
 							) }
-							<ThemesSelection
-								upsellUrl={ this.props.upsellUrl }
-								search={ search }
-								tier={ this.props.tier }
-								filter={ filter }
-								vertical={ this.props.vertical }
-								siteId={ this.props.siteId }
-								listLabel={ this.props.listLabel }
-								defaultOption={ this.props.defaultOption }
-								secondaryOption={ this.props.secondaryOption }
-								placeholderCount={ this.props.placeholderCount }
-								getScreenshotUrl={ function ( theme ) {
-									if ( ! getScreenshotOption( theme ).getUrl ) {
-										return null;
-									}
-
-									return localizeThemesPath(
-										getScreenshotOption( theme ).getUrl( theme ),
-										locale,
-										! isLoggedIn
-									);
-								} }
-								onScreenshotClick={ function ( themeId ) {
-									if ( ! getScreenshotOption( themeId ).action ) {
-										return;
-									}
-									getScreenshotOption( themeId ).action( themeId );
-								} }
-								getActionLabel={ function ( theme ) {
-									return getScreenshotOption( theme ).label;
-								} }
-								getOptions={ function ( theme ) {
-									return pickBy(
-										addTracking( options ),
-										( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
-									);
-								} }
-								trackScrollPage={ this.props.trackScrollPage }
-								emptyContent={ this.props.emptyContent }
-								bookmarkRef={ this.bookmarkRef }
-							/>
+							<ThemesSelection listLabel={ this.props.listLabel } { ...themeProps } />
 							{ isJetpackSite && this.props.children }
 						</div>
 					) }

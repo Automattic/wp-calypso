@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import config from 'config';
-
-/**
- * Internal dependencies
- */
 import type { viewportName, localeCode, viewportSize } from './types';
 
 /**

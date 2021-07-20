@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { formatProduct } from './format-product';
 import { getJetpackProductsDescriptions } from './translations';
 

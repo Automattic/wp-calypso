@@ -1198,7 +1198,7 @@ function initPort( message ) {
 			);
 
 			mediaSelectChannel.port1.onmessage = ( { data } ) => {
-				this.props.onSelect( data );
+				this.props.onSelect?.( data );
 
 				// this is a once-only port
 				// to send more messages we have to re-open the
@@ -1207,7 +1207,7 @@ function initPort( message ) {
 			};
 
 			mediaCancelChannel.port1.onmessage = () => {
-				this.props.onClose();
+				this.props.onClose?.();
 
 				// this is a once-only port
 				// to send more messages we have to re-open the

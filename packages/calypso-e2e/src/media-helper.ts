@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import path from 'path';
 import config from 'config';
-
-/**
- * Internal dependencies
- */
 import { getLocale, getViewportName } from './browser-helper';
 
 const artifacts: { [ key: string ]: string } = config.get( 'artifacts' );
@@ -91,4 +84,16 @@ export function getFileName( {
  */
 export function getDateString(): string {
 	return new Date().getTime().toString();
+}
+
+/**
+ * Generates a valid filanem using the test name and a time stamp
+ *
+ * @param {string} testName The test name.
+ * @returns The filename.
+ */
+export function getTestNameWithTime( testName: string ): string {
+	const currentTestName = testName.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
+	const dateTime = new Date().toISOString().split( '.' )[ 0 ].replace( /:/g, '-' );
+	return `${ currentTestName }-${ dateTime }`;
 }

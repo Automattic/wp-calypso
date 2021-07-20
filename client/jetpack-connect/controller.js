@@ -67,7 +67,7 @@ import {
 	getProductFromSlug,
 	getJetpackProductDisplayName,
 } from '@automattic/calypso-products';
-import { externalRedirect } from 'calypso/lib/route/path';
+import { navigate } from 'calypso/lib/navigate';
 import { addQueryArgs } from 'calypso/lib/route';
 
 /**
@@ -98,7 +98,7 @@ export function offerResetRedirects( context, next ) {
 		: null;
 	if ( isAutomatedTransfer ) {
 		debug( 'controller: offerResetRedirects -> redirecting WoA back to wp-admin', context.params );
-		return externalRedirect( selectedSite.URL + JETPACK_ADMIN_PATH );
+		return navigate( selectedSite.URL + JETPACK_ADMIN_PATH );
 	}
 
 	// If site has a paid plan or is not a Jetpack site, redirect to Calypso's Plans page
@@ -109,7 +109,7 @@ export function offerResetRedirects( context, next ) {
 			'controller: offerResetRedirects -> redirecting to /plans since site has a plan or is not a Jetpack site',
 			context.params
 		);
-		return externalRedirect( CALYPSO_PLANS_PAGE + selectedSite.slug );
+		return navigate( CALYPSO_PLANS_PAGE + selectedSite.slug );
 	}
 
 	// If the user previously selected Jetpack Free, redirect them to their wp-admin page
@@ -120,7 +120,7 @@ export function offerResetRedirects( context, next ) {
 			'controller: offerResetRedirects -> redirecting to wp-admin because the user got here by clicking Jetpack Free',
 			context.params
 		);
-		externalRedirect( context.query.redirect || selectedSite.options.admin_url );
+		navigate( context.query.redirect || selectedSite.options.admin_url );
 		return;
 	}
 
@@ -137,9 +137,9 @@ export function offerResetRedirects( context, next ) {
 
 		const queryRedirect = context.query.redirect;
 		if ( queryRedirect ) {
-			externalRedirect( queryRedirect );
+			navigate( queryRedirect );
 		} else if ( selectedSite ) {
-			externalRedirect( selectedSite.URL + JETPACK_ADMIN_PATH );
+			navigate( selectedSite.URL + JETPACK_ADMIN_PATH );
 		}
 	}
 
@@ -271,8 +271,6 @@ export function connect( context, next ) {
 			<SearchPurchase
 				ctaFrom={ query.cta_from /* origin tracking params */ }
 				ctaId={ query.cta_id /* origin tracking params */ }
-				locale={ params.locale }
-				path={ path }
 				type={ type }
 				url={ query.url }
 			/>

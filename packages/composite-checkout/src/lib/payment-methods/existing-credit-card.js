@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import styled from '@emotion/styled';
-import debugFactory from 'debug';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-
-/**
- * Internal dependencies
- */
+import debugFactory from 'debug';
+import React from 'react';
 import Button from '../../components/button';
 import { FormStatus, useLineItems, useEvents } from '../../public-api';
-import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import { useFormStatus } from '../form-status';
+import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import PaymentLogo from './payment-logo.js';
 
 const debug = debugFactory( 'composite-checkout:existing-card-payment-method' );

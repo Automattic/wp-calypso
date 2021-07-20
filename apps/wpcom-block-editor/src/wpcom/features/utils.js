@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import { isEqual, some, debounce } from 'lodash';
+import { select } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -31,6 +32,81 @@ export const getEditorType = () => {
 	}
 
 	return undefined;
+};
+
+/**
+ * Helper for `getBlockEventContextProperties` function.  Builds the properties to return based on
+ * the block provided.
+ *
+ * @param {object} block block object that provides context.
+ * @returns	{object} Properties for tracking event.
+ */
+const buildPropsFromContextBlock = ( block ) => {
+	let context = block?.name;
+
+	if ( block?.name === 'core/template-part' ) {
+		const templatePartId = `${ block.attributes.theme }//${ block.attributes.slug }`;
+		const { getActiveBlockVariation } = select( 'core/blocks' );
+
+		if ( typeof getActiveBlockVariation === 'function' ) {
+			const variation = getActiveBlockVariation( block.name, block.attributes );
+
+			if ( variation?.name ) {
+				context = `${ context }/${ variation.name }`;
+			}
+		}
+
+		return {
+			entity_context: context,
+			template_part_id: templatePartId,
+		};
+	}
+
+	return {
+		entity_context: context,
+	};
+};
+
+/**
+ * Determines the entity context props of a block event, given the rootClientId of the
+ * block action.
+ *
+ * @param {string} rootClientId The rootClientId of the block event.
+ *
+ * @returns {object} The block event's context properties.
+ */
+export const getBlockEventContextProperties = ( rootClientId ) => {
+	const { getBlockParentsByBlockName, getBlock } = select( 'core/block-editor' );
+
+	// If this function doesn't exist, we cannot support context tracking.
+	if ( typeof getBlockParentsByBlockName !== 'function' ) {
+		return {};
+	}
+
+	const editorType = getEditorType();
+	const defaultReturn = editorType === 'site' ? { entity_context: 'template' } : {};
+
+	// No root implies top level.
+	if ( ! rootClientId ) {
+		return defaultReturn;
+	}
+
+	// Context controller blocks to check for.
+	const contexts = [ 'core/template-part', 'core/post-content', 'core/block', 'core/query' ];
+
+	// Check if the root matches a context controller.
+	const rootBlock = getBlock( rootClientId );
+	if ( contexts.some( ( context ) => context === rootBlock?.name ) ) {
+		return buildPropsFromContextBlock( rootBlock );
+	}
+
+	// Check if the root's parents match a context controller.
+	const matchingParentIds = getBlockParentsByBlockName( rootClientId, contexts, true );
+	if ( matchingParentIds.length ) {
+		return buildPropsFromContextBlock( getBlock( matchingParentIds[ 0 ] ) );
+	}
+
+	return defaultReturn;
 };
 
 /**

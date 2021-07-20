@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import styled, { CreateStyled } from '@emotion/styled';
 import type { Theme } from '@automattic/composite-checkout';
 

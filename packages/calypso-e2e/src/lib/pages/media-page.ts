@@ -1,13 +1,6 @@
-/**
- * Internal dependencies
- */
-import { BaseContainer } from '../base-container';
-import { waitForElementEnabled } from '../../element-helper';
-
-/**
- * Type dependencies
- */
 import { Page } from 'playwright';
+import { waitForElementEnabled } from '../../element-helper';
+import { BaseContainer } from '../base-container';
 
 const selectors = {
 	// Navigation tabs

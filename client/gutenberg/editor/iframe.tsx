@@ -10,7 +10,7 @@ type IframeProps = DetailedHTMLProps<
 
 const Iframe = forwardRef< HTMLIFrameElement, IframeProps >( function IFrame( props, ref ) {
 	useEffect( () => {
-		window.performance?.mark( 'iframe_rendered' );
+		window.performance?.mark?.( 'iframe_rendered' );
 	}, [ props.src ] );
 
 	// eslint-disable-next-line jsx-a11y/iframe-has-title

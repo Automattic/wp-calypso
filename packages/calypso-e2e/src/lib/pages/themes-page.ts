@@ -1,12 +1,9 @@
-/**
- * Internal dependencies
- */
 import { BaseContainer } from '../base-container';
 
 const selectors = {
 	// Main themes listing
-	themes: '.themes__content',
 	items: '.card.theme',
+	excludeActiveTheme: ':not(.is-active)',
 
 	// Transitions
 	spinner: '.themes__content > .spinner',
@@ -33,7 +30,6 @@ export class ThemesPage extends BaseContainer {
 		await Promise.all( [
 			this.page.waitForSelector( selectors.spinner, { state: 'hidden' } ),
 			this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } ),
-			this.page.waitForLoadState( 'domcontentloaded' ),
 		] );
 	}
 
@@ -61,28 +57,42 @@ export class ThemesPage extends BaseContainer {
 	 */
 	async search( keyword: string ): Promise< void > {
 		const searchInput = await this.page.waitForSelector( selectors.searchInput );
-		await searchInput.fill( keyword );
+		await Promise.all( [ this.page.waitForNavigation(), searchInput.fill( keyword ) ] );
 		await this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } );
 	}
 
 	/**
-	 * Select a theme by name.
+	 * Selects a theme from the gallery.
 	 *
-	 * If the theme is not shown, this will throw an Error.
+	 * This method can perform either exact name match or a fuzzy (partial) name match.
+	 * To match exactly, supply the full name of the theme as it appears to the user.
+	 * For a fuzzy match, supply partially the name of the them that should be matched.
 	 *
-	 * @param {string} name Theme name to select.
+	 * Example:
+	 * 		partial match: `Twenty Twen` -> [Twenty Twenty, Twenty Twenty-One]
+	 * 		exact match: `Twenty Seventeen` -> Twenty Seventeen
+	 *
+	 * @param {string} [name] Theme name to select.
 	 * @returns {Promise<void>} No return value.
-	 * @throws {Error} If theme is not shown on page.
 	 */
 	async select( name: string ): Promise< void > {
-		const selectedTheme = await this.page.waitForSelector(
-			`${ selectors.items }:has-text("${ name }")`,
-			{ state: 'visible' }
-		);
-
-		if ( ! selectedTheme ) {
-			throw new Error( `Requested theme ${ name } is not shown on page.` );
+		// Build selector that will select themes on the page that match the name but excludes
+		// the currently activated theme from selection (even if shown on page).
+		const selector = `${ selectors.items }:has-text("${ name }")${ selectors.excludeActiveTheme }`;
+		// Get number of themes being shown on page.
+		const numThemes = await this.page.$$( selector ).then( ( themes ) => themes.length );
+		if ( numThemes === 0 ) {
+			throw new Error( `No theme shown on page that match name: ${ name }.` );
 		}
-		await selectedTheme.click();
+
+		// Select the first available theme as the target.
+		const selectedTheme = await this.page.waitForSelector( `:nth-match(${ selector }, 1)` );
+
+		// Hover over the target theme to expose the `INFO` button and wait for the animation to
+		// complete.
+		await selectedTheme.hover();
+		await selectedTheme.waitForElementState( 'stable' );
+
+		await Promise.all( [ this.page.waitForNavigation(), selectedTheme.click() ] );
 	}
 }

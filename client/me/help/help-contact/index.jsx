@@ -256,10 +256,21 @@ class HelpContact extends React.Component {
 		this.clearSavedContactForm();
 	};
 
+	translateForForums = ( message, args ) => {
+		const { currentUserLocale, translate } = this.props;
+
+		if ( config( 'forum_locales' ).includes( currentUserLocale ) ) {
+			return translate( message, args );
+		}
+
+		return args ? message.replace( '%s', args.args[ 0 ] ) : message;
+	};
+
 	submitSupportForumsTopic = ( contactForm ) => {
 		const {
 			helpSiteIsJetpack,
 			helpSiteIsNotWpCom,
+			helpSiteIsWpCom,
 			site,
 			subject,
 			message,
@@ -272,37 +283,42 @@ class HelpContact extends React.Component {
 		this.setState( { isSubmitting: true } );
 		this.recordCompactSubmit( 'forums' );
 
-		let blogHelpMessage = translate( "I don't have a site linked to this WordPress.com account" );
+		let blogHelpMessage = this.translateForForums(
+			"I don't have a site linked to this WordPress.com account"
+		);
 
 		if ( userDeclaresNoSite ) {
-			blogHelpMessage = translate( "I don't have a site with WordPress.com yet" );
+			blogHelpMessage = this.translateForForums( "I don't have a site with WordPress.com yet" );
 		}
 
 		if ( site || userDeclaredUrl ) {
-			const siteUrl = userDeclaredUrl
-				? withoutHttp( userDeclaredUrl.trim() )
-				: withoutHttp( site.URL );
+			const siteUrl = userDeclaredUrl ? userDeclaredUrl.trim() : site.URL;
 
-			blogHelpMessage = translate( 'The site I need help with is %(siteUrl)s.', {
-				args: {
-					siteUrl: userRequestsHidingUrl
-						? translate( '[visible only to staff]' ) + ' help@' + siteUrl
-						: siteUrl,
-				},
+			blogHelpMessage = this.translateForForums( 'Site: %s.', {
+				args: [ userRequestsHidingUrl ? 'help@' + withoutHttp( siteUrl ) : siteUrl ],
 			} );
+
+			if ( helpSiteIsWpCom ) {
+				blogHelpMessage += '\n' + this.translateForForums( 'WP.com: Yes' );
+			}
 
 			if ( helpSiteIsNotWpCom ) {
 				const jetpackMessage = helpSiteIsJetpack
-					? translate( 'It is not hosted by WordPress.com, but it is connected with Jetpack.' )
-					: translate( 'It is not hosted by WordPress.com or connected with Jetpack.' );
+					? this.translateForForums( 'Yes' )
+					: this.translateForForums( 'Unknown' );
 
-				blogHelpMessage += ' ' + jetpackMessage;
+				blogHelpMessage += '\n' + this.translateForForums( 'WP.com: Unknown \nJetpack: %s', {
+					args: [ jetpackMessage ],
+				} );
 			}
 
-			if ( userDeclaredUrl ) {
-				blogHelpMessage +=
-					' ' + translate( 'This site is not linked to my WordPress.com account.' );
-			}
+			const correctAccountMessage = userDeclaredUrl
+				? this.translateForForums( 'Unknown' )
+				: this.translateForForums( 'Yes' );
+
+			blogHelpMessage += '\n' + this.translateForForums( 'Correct account: %s', {
+				args: [ correctAccountMessage ],
+			} );
 		}
 
 		const forumMessage = message + '\n\n' + blogHelpMessage;

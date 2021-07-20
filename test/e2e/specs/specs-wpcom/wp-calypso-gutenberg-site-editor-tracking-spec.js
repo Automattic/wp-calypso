@@ -17,6 +17,16 @@ const host = dataHelper.getJetpackHost();
 
 const siteEditorUser = 'siteEditorSimpleSiteUser';
 
+const navigationSidebarBackToRoot = async ( driver ) => {
+	const backButtonLocator = By.css(
+		'.components-navigation__back-button:not(.edit-site-navigation-panel__back-to-dashboard)'
+	);
+
+	while ( await driverHelper.isElementEventuallyLocatedAndVisible( driver, backButtonLocator ) ) {
+		await driverHelper.clickWhenClickable( driver, backButtonLocator );
+	}
+};
+
 const clickGlobalStylesButton = async ( driver ) =>
 	await driverHelper.clickWhenClickable(
 		driver,
@@ -387,7 +397,15 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			await deleteTemplatesAndTemplateParts( this.driver );
 		} );
 
-		createGeneralTests( { it, editorType: 'site' } );
+		it( 'should skip tracking "wpcom_block_editor_nav_sidebar_item_edit" when editor just loaded (no query params)', async function () {
+			const eventsStack = await getEventsStack( this.driver );
+			const isEditEventNotTriggered = ! eventsStack.find(
+				( [ eventName ] ) => eventName === 'wpcom_block_editor_nav_sidebar_item_edit'
+			);
+			assert( isEditEventNotTriggered );
+		} );
+
+		createGeneralTests( { it, editorType: 'site', baseContext: 'template' } );
 
 		describe( 'Tracks "wpcom_block_editor_global_styles_tab_selected', function () {
 			it( 'when Global Styles sidebar is opened', async function () {
@@ -909,11 +927,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				const editor = await SiteEditorComponent.Expect( this.driver );
 
 				await editor.toggleNavigationSidebar();
-				const backButtonToTemplatesLocator = driverHelper.createTextLocator(
-					By.css( '.components-navigation__back-button' ),
-					'Back'
-				);
-				await driverHelper.clickWhenClickable( this.driver, backButtonToTemplatesLocator );
+				await navigationSidebarBackToRoot( this.driver );
 
 				await driverHelper.clickWhenClickable(
 					this.driver,
@@ -948,16 +962,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				const editor = await SiteEditorComponent.Expect( this.driver );
 
 				await editor.toggleNavigationSidebar();
-				const backButtonToTemplatesLocator = driverHelper.createTextLocator(
-					By.css( '.components-navigation__back-button' ),
-					'Template Parts'
-				);
-				await driverHelper.clickWhenClickable( this.driver, backButtonToTemplatesLocator );
-				const backButtonToTemplatesLocator2 = driverHelper.createTextLocator(
-					By.css( '.components-navigation__back-button' ),
-					'Back'
-				);
-				await driverHelper.clickWhenClickable( this.driver, backButtonToTemplatesLocator2 );
+				await navigationSidebarBackToRoot( this.driver );
 
 				const isBackToDashboardLocated = await driverHelper.isElementEventuallyLocatedAndVisible(
 					this.driver,
@@ -965,6 +970,67 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				);
 
 				assert( isBackToDashboardLocated );
+			} );
+
+			it( 'should track "wpcom_block_editor_nav_sidebar_item_edit" when switching to a content item (type = page)', async function () {
+				const pagesMenuItemLocator = By.css(
+					'[role="region"][aria-label="Navigation Sidebar"] [role="menu"] [title="Pages"] button'
+				);
+				const contentMenuItemLocator = By.css(
+					'[role="region"][aria-label="Navigation Sidebar"] [role="menu"] [title="Home"] button'
+				);
+
+				// We don't need to open the navigation sidebar. It's still open from the previous test.
+				await driverHelper.clickWhenClickable( this.driver, pagesMenuItemLocator );
+				await driverHelper.clickWhenClickable( this.driver, contentMenuItemLocator );
+
+				const eventsStack = await getEventsStack( this.driver );
+				const editEvents = eventsStack.filter(
+					( [ eventName ] ) => eventName === 'wpcom_block_editor_nav_sidebar_item_edit'
+				);
+				assert.strictEqual( editEvents.length, 1 );
+				const [ , editEventData ] = editEvents[ 0 ];
+				assert.strictEqual( editEventData.item_type, 'page' );
+				assert.strictEqual( editEventData.item_slug, 'home' );
+			} );
+
+			it( 'should track "wpcom_block_editor_nav_sidebar_item_edit" when switching to a category item (type = taxonomy_category)', async function () {
+				const editor = await SiteEditorComponent.Expect( this.driver );
+				const categoriesMenuItemLocator = By.css(
+					'[role="region"][aria-label="Navigation Sidebar"] [role="menu"] [title="Categories"] button'
+				);
+				const contentMenuItemLocator = By.css(
+					'[role="region"][aria-label="Navigation Sidebar"] [role="menu"] [title="Uncategorized"] button'
+				);
+
+				await editor.toggleNavigationSidebar();
+				await navigationSidebarBackToRoot( this.driver );
+				await driverHelper.clickWhenClickable( this.driver, categoriesMenuItemLocator );
+				await driverHelper.clickWhenClickable( this.driver, contentMenuItemLocator );
+
+				const eventsStack = await getEventsStack( this.driver );
+				const editEvents = eventsStack.filter(
+					( [ eventName ] ) => eventName === 'wpcom_block_editor_nav_sidebar_item_edit'
+				);
+				assert.strictEqual( editEvents.length, 1 );
+				const [ , editEventData ] = editEvents[ 0 ];
+				assert.strictEqual( editEventData.item_type, 'taxonomy_category' );
+				assert.strictEqual( editEventData.item_slug, 'uncategorized' );
+			} );
+
+			it( 'should skip tracking "wpcom_block_editor_nav_sidebar_item_edit" when editor just loaded (with query params)', async function () {
+				await this.driver.navigate().refresh();
+				await driverHelper.acceptAlertIfPresent( this.driver );
+
+				const editor = await SiteEditorComponent.Expect( this.driver );
+				await editor.waitForTemplateToLoad();
+				await editor.waitForTemplatePartsToLoad();
+
+				const eventsStack = await getEventsStack( this.driver );
+				const isEditEventNotTriggered = ! eventsStack.find(
+					( [ eventName ] ) => eventName === 'wpcom_block_editor_nav_sidebar_item_edit'
+				);
+				assert( isEditEventNotTriggered );
 			} );
 		} );
 
@@ -1061,8 +1127,91 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				0,
 				"detaching blocks from template part shouldn't trigger replace blocks event"
 			);
+		} );
 
-			await deleteCustomEntities( this.driver, 'wp_template_part' );
+		describe( 'tracks "entity_context" property for block events in a template part', function () {
+			it( 'For "wpcom_block_inserted" event', async function () {
+				// Reload editor to start from consistent clean slate for tests.
+				await this.driver.navigate().refresh();
+				await driverHelper.acceptAlertIfPresent( this.driver );
+
+				const editor = await SiteEditorComponent.Expect( this.driver );
+				await editor.waitForTemplateToLoad();
+				await editor.waitForTemplatePartsToLoad();
+				await clearEventsStack( this.driver );
+
+				// Insert a block at the end of the template part.
+				await editor.runInCanvas( async () => {
+					await driverHelper.clickWhenClickable( this.driver, By.css( '.wp-block-template-part' ) );
+					await driverHelper.clickWhenClickable(
+						this.driver,
+						By.css( '.block-editor-inserter__toggle' )
+					);
+				} );
+				const quickInserterSearchInputLocator = By.css(
+					'.block-editor-inserter__quick-inserter .block-editor-inserter__search-input'
+				);
+				const blockItemLocator = By.css(
+					'.block-editor-inserter__quick-inserter .block-editor-block-types-list__item'
+				);
+				await driverHelper.setWhenSettable(
+					this.driver,
+					quickInserterSearchInputLocator,
+					'Heading'
+				);
+				await driverHelper.clickWhenClickable( this.driver, blockItemLocator );
+
+				const insertedEvents = ( await getEventsStack( this.driver ) ).filter(
+					( event ) => event[ 0 ] === 'wpcom_block_inserted'
+				);
+
+				assert.strictEqual( insertedEvents.length, 1 );
+				assert.strictEqual( insertedEvents[ 0 ][ 1 ].entity_context, 'core/template-part/header' );
+				assert.strictEqual( insertedEvents[ 0 ][ 1 ].template_part_id, 'pub/tt1-blocks//header' );
+			} );
+
+			it( 'For "wpcom_block_moved_*" events', async function () {
+				await SiteEditorComponent.Expect( this.driver );
+
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					By.css( '.block-editor-block-mover-button.is-up-button' )
+				);
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					By.css( '.block-editor-block-mover-button.is-down-button' )
+				);
+
+				const events = await getEventsStack( this.driver );
+				assert.strictEqual( events.length, 2 );
+
+				const matchesContext = events.filter(
+					( event ) =>
+						event[ 1 ].entity_context === 'core/template-part/header' &&
+						event[ 1 ].template_part_id === 'pub/tt1-blocks//header'
+				);
+				assert.strictEqual( matchesContext.length, 2 );
+			} );
+
+			it( 'For "wpcom_block_deleted" events', async function () {
+				await SiteEditorComponent.Expect( this.driver );
+
+				const blockToolbarOptionsLocator = By.css(
+					'[aria-label="Block tools"] [aria-label="Options"]'
+				);
+				const removeBlockOptionsItemLocator = driverHelper.createTextLocator(
+					By.css( '[aria-label="Options"] button' ),
+					'Remove block'
+				);
+				await driverHelper.clickWhenClickable( this.driver, blockToolbarOptionsLocator );
+				await driverHelper.clickWhenClickable( this.driver, removeBlockOptionsItemLocator );
+
+				const events = await getEventsStack( this.driver );
+
+				assert.strictEqual( events.length, 1 );
+				assert.strictEqual( events[ 0 ][ 1 ].entity_context, 'core/template-part/header' );
+				assert.strictEqual( events[ 0 ][ 1 ].template_part_id, 'pub/tt1-blocks//header' );
+			} );
 		} );
 
 		afterEach( async function () {

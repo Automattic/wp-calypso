@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import type { PlanProduct } from '../../types';
 
 // Plan products

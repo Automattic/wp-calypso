@@ -1,27 +1,21 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-/**
- * External dependencies
- */
-import * as React from 'react';
-import { Link } from 'react-router-dom';
-import { ActionButtons, NextButton, SubTitle, Title } from '@automattic/onboarding';
-import { __, sprintf } from '@wordpress/i18n';
-import { createInterpolateElement } from '@wordpress/element';
-import { TextControl, SVG, Path, Tooltip, Circle, Rect, Button } from '@wordpress/components';
 import DomainPicker, {
 	mockDomainSuggestion,
 	SUGGESTION_ITEM_TYPE_INDIVIDUAL,
 } from '@automattic/domain-picker';
-import classNames from 'classnames';
-import { Icon, check } from '@wordpress/icons';
-import { useSelect, useDispatch } from '@wordpress/data';
 import { useLocalizeUrl, useLocale } from '@automattic/i18n-utils';
-
-/**
- * Internal dependencies
- */
-import { Route } from '../route';
+import { ActionButtons, NextButton, SubTitle, Title } from '@automattic/onboarding';
+import { TextControl, SVG, Path, Tooltip, Circle, Rect, Button } from '@wordpress/components';
+import { useSelect, useDispatch } from '@wordpress/data';
+import { createInterpolateElement } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
+import { Icon, check } from '@wordpress/icons';
+import classNames from 'classnames';
+import * as React from 'react';
+import { Link } from 'react-router-dom';
+import { FOCUSED_LAUNCH_FLOW_ID } from '../../constants';
+import LaunchContext from '../../context';
 import {
 	useTitle,
 	useDomainSearch,
@@ -31,13 +25,12 @@ import {
 	usePlans,
 	useCart,
 } from '../../hooks';
+import { LAUNCH_STORE, SITE_STORE, PLANS_STORE } from '../../stores';
+import { Route } from '../route';
 import FocusedLaunchSummaryItem, {
 	LeadingContentSide,
 	TrailingContentSide,
 } from './focused-launch-summary-item';
-import { LAUNCH_STORE, SITE_STORE, PLANS_STORE } from '../../stores';
-import LaunchContext from '../../context';
-import { FOCUSED_LAUNCH_FLOW_ID } from '../../constants';
 import type { Plan, PlanProduct } from '../../stores';
 
 import './style.scss';

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
@@ -42,10 +39,6 @@ import {
 	PRODUCT_JETPACK_BACKUP_PRO_MONTHLY,
 } from './constants';
 import { getJetpackProductsShortNames } from './translations';
-
-/**
- * Type dependencies
- */
 import type { ProductSlug, JetpackProductSlug, WPComProductSlug, Product } from './types';
 
 const PRODUCT_SHORT_NAMES = getJetpackProductsShortNames();
