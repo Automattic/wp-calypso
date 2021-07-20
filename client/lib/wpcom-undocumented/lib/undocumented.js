@@ -1327,18 +1327,6 @@ Undocumented.prototype.paypalExpressUrl = function ( data, fn ) {
 	return this.wpcom.req.post( '/me/paypal-express-url', data, fn );
 };
 
-/**
- * Update primary domain for blog
- *
- * @param {number} siteId The site ID
- * @param {string} domain The domain to set as primary
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.setPrimaryDomain = function ( siteId, domain, fn ) {
-	debug( '/sites/:site_id/domains/primary' );
-	return this.wpcom.req.post( '/sites/' + siteId + '/domains/primary', {}, { domain: domain }, fn );
-};
-
 function addReaderContentWidth( params ) {
 	if ( params.content_width ) {
 		return;

@@ -117,10 +117,8 @@ export function fetchConnection( siteId, connectionId ) {
 			siteId,
 		} );
 
-		return wpcom
-			.undocumented()
-			.site( siteId )
-			.getConnection( connectionId )
+		return wpcom.req
+			.get( `/sites/${ siteId }/publicize-connections/${ connectionId }` )
 			.then( ( connection ) => {
 				dispatch( {
 					type: PUBLICIZE_CONNECTION_RECEIVE,
