@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import {
 	InspectorControls,
 	InnerBlocks,
@@ -13,10 +10,6 @@ import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { positionLeft, positionRight } from '@wordpress/icons';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import { TimelineIcon } from './icon';
 
 function Controls( { alignment, clientId, toggleAlignment } ) {

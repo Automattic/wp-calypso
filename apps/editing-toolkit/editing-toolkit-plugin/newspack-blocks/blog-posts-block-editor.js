@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { registerBlockType } from '@wordpress/blocks';
-import { __ } from '@wordpress/i18n';
 import { addFilter } from '@wordpress/hooks';
-
-/**
- * Internal dependencies
- */
+import { __ } from '@wordpress/i18n';
 import { settings } from './synced-newspack-blocks/blocks/homepage-articles/index';
 import { registerQueryStore } from './synced-newspack-blocks/blocks/homepage-articles/store';
 

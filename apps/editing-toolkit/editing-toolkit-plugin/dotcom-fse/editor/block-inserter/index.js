@@ -1,14 +1,7 @@
 /* global fullSiteEditing */
 
-/**
- * External dependencies
- */
 import domReady from '@wordpress/dom-ready';
 import { render } from '@wordpress/element';
-
-/**
- * Internal dependencies
- */
 import PostContentBlockAppender from './post-content-block-appender';
 
 const CONTAINER_CLASS_NAME = 'fse-post-content-block-inserter';

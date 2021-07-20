@@ -1,7 +1,5 @@
-/**
- * External dependencies
- */
 import { select, dispatch, subscribe } from '@wordpress/data';
+
 import '@wordpress/nux'; //ensure nux store loads
 
 // Disable nux and welcome guide features from core.

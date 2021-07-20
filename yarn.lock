@@ -22989,6 +22989,11 @@ react-autosize-textarea@^7.0.0, react-autosize-textarea@^7.1.0:
     line-height "^0.3.1"
     prop-types "^15.5.6"
 
+react-calendly@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/react-calendly/-/react-calendly-2.2.1.tgz#7c35f7747e01045dbd77e18ea1eb18adddf373cf"
+  integrity sha512-r9WJ2WNr3hjBFnE8UyFCtJiTy7InME0lghw3gA5BqAMOFe70OtLDINDRAKDSS8O1tTSxJJrFdmZ1PpFSL0NAJA==
+
 react-click-outside@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/react-click-outside/-/react-click-outside-3.0.1.tgz#6e77e84d2f17afaaac26dbad743cbbf909f5e24c"

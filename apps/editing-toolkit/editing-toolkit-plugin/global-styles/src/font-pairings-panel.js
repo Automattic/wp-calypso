@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
+import { Button } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { ENTER } from '@wordpress/keycodes';
 import classnames from 'classnames';
-import { __ } from '@wordpress/i18n';
-import { Button } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
 import NoSupport from './no-support';
 
 export default ( { fontPairings, fontBase, fontHeadings, update } ) => {

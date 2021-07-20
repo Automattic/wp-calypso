@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { useSelect } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import { LAUNCH_STORE } from '../stores';
 
 import './styles.scss';

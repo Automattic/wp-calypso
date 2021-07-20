@@ -14,13 +14,19 @@ import { fireEvent, screen } from '@testing-library/react';
 import ScreenOptionsTab from '../index';
 import { render as rtlRender } from 'config/testing-library';
 import { reducer as ui } from 'calypso/state/ui/reducer';
+import jetpack from 'calypso/state/jetpack/reducer';
 
 jest.mock( 'calypso/state/preferences/selectors', () => ( {
 	hasReceivedRemotePreferences: jest.fn( () => true ),
 	getPreference: jest.fn( () => true ),
 } ) );
 
-const render = ( el, options ) => rtlRender( el, { ...options, reducers: { ui } } );
+jest.mock( 'react-redux', () => ( {
+	...jest.requireActual( 'react-redux' ),
+	useDispatch: jest.fn( () => () => {} ),
+} ) );
+
+const render = ( el, options ) => rtlRender( el, { ...options, reducers: { ui, jetpack } } );
 
 const siteId = 1;
 const adminUrl = 'https://example.wordpress.com/wp-admin';
@@ -29,7 +35,14 @@ const initialState = {
 	ui: { selectedSiteId: siteId },
 	sites: {
 		items: {
-			[ siteId ]: { options: { admin_url: adminUrl }, jetpack: false },
+			[ siteId ]: { options: { admin_url: adminUrl, is_wpcom_atomic: false }, jetpack: false },
+		},
+	},
+	jetpack: {
+		modules: {
+			items: {
+				[ siteId ]: { sso: { active: true } },
+			},
 		},
 	},
 };
@@ -38,7 +51,7 @@ describe( 'ScreenOptionsTab', () => {
 	test( 'it renders correctly', () => {
 		render( <ScreenOptionsTab wpAdminPath="index.php" />, { initialState } );
 
-		expect( screen.getByRole( 'button' ) ).toBeTruthy();
+		expect( screen.queryByTestId( 'screen-options-tab' ) ).toBeTruthy();
 	} );
 
 	test( 'does not render on all-sites screens', () => {
@@ -58,7 +71,44 @@ describe( 'ScreenOptionsTab', () => {
 				...initialState,
 				sites: {
 					items: {
-						[ siteId ]: { options: { admin_url: adminUrl }, jetpack: true },
+						[ siteId ]: { options: { admin_url: adminUrl, is_wpcom_atomic: false }, jetpack: true },
+					},
+				},
+			},
+		} );
+
+		expect( screen.queryByTestId( 'screen-options-tab' ) ).toBeNull();
+	} );
+
+	test( 'does render on Atomic sites', () => {
+		render( <ScreenOptionsTab wpAdminPath="index.php" />, {
+			initialState: {
+				...initialState,
+				sites: {
+					items: {
+						[ siteId ]: { options: { admin_url: adminUrl, is_wpcom_atomic: true }, jetpack: true },
+					},
+				},
+			},
+		} );
+
+		expect( screen.queryByTestId( 'screen-options-tab' ) ).toBeTruthy();
+	} );
+
+	test( 'does not render when the SSO module is disabled', () => {
+		render( <ScreenOptionsTab wpAdminPath="index.php" />, {
+			initialState: {
+				...initialState,
+				sites: {
+					items: {
+						[ siteId ]: { options: { admin_url: adminUrl, is_wpcom_atomic: true }, jetpack: true },
+					},
+				},
+				jetpack: {
+					modules: {
+						items: {
+							[ siteId ]: { sso: { active: false } },
+						},
 					},
 				},
 			},
