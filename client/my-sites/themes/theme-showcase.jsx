@@ -230,9 +230,29 @@ class ThemeShowcase extends React.Component {
 		this.setState( { tabFilter }, callback );
 	};
 
+	expertsBanner = () => {
+		const { currentThemeId, loggedOutComponent, siteId, isLoggedIn } = this.props;
+		const showBanners = currentThemeId || ! siteId || ! isLoggedIn;
+		if ( loggedOutComponent || ! showBanners ) {
+			return;
+		}
+		return <UpworkBanner location={ 'theme-banner' } />;
+	};
+
+	allThemes = ( { themeProps } ) => {
+		const { isJetpackSite, children } = this.props;
+		if ( isJetpackSite ) {
+			return children;
+		}
+		return (
+			<div className="theme-showcase__all-themes">
+				<ThemesSelection { ...themeProps } />
+			</div>
+		);
+	};
+
 	render() {
 		const {
-			currentThemeId,
 			siteId,
 			options,
 			getScreenshotOption,
@@ -245,7 +265,6 @@ class ThemeShowcase extends React.Component {
 			filterString,
 			isMultisite,
 			locale,
-			isJetpackSite,
 		} = this.props;
 		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
 
@@ -281,8 +300,6 @@ class ThemeShowcase extends React.Component {
 				.filter( ( icon ) => !! icon )
 				.sort( ( a, b ) => a.order - b.order )
 		);
-
-		const showBanners = currentThemeId || ! siteId || ! isLoggedIn;
 
 		const themeProps = {
 			filter: filter,
@@ -369,17 +386,8 @@ class ThemeShowcase extends React.Component {
 					) }
 					{ this.props.upsellBanner }
 					{ 'recommended' === this.state.tabFilter.key && <RecommendedThemes { ...themeProps } /> }
-					{ 'all' === this.state.tabFilter.key &&
-						( isJetpackSite ? (
-							this.props.children
-						) : (
-							<div className="theme-showcase__all-themes">
-								{ ! this.props.loggedOutComponent && showBanners && (
-									<UpworkBanner location={ 'theme-banner' } />
-								) }
-								<ThemesSelection { ...themeProps } />
-							</div>
-						) ) }
+					{ 'all' === this.state.tabFilter.key && this.expertsBanner() }
+					{ 'all' === this.state.tabFilter.key && this.allThemes( { themeProps } ) }
 					{ 'my-themes' === this.state.tabFilter.key && <ThemesSelection { ...themeProps } /> }
 					{ 'trending' === this.state.tabFilter.key && <TrendingThemes { ...themeProps } /> }
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
