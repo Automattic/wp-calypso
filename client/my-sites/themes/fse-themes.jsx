@@ -2,17 +2,18 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 import { useQuery } from 'react-query';
 
 /**
  * Internal dependencies
  */
+import EmptyContent from 'calypso/components/empty-content';
 import wpcom from 'calypso/lib/wp';
 import { ConnectedThemesSelection } from './themes-selection';
 
-const FseThemes = ( props ) => {
-	// useQuery also provides 'error', currently unused here
-	const { data, isLoading } = useQuery(
+const FseThemes = localize( ( { translate, ...restProps } ) => {
+	const { data, error, isLoading } = useQuery(
 		'fse-themes',
 		() =>
 			wpcom.req.get( '/themes', {
@@ -23,12 +24,15 @@ const FseThemes = ( props ) => {
 			} ),
 		{}
 	);
+	if ( error ) {
+		return <EmptyContent title={ translate( 'Sorry, no themes found.' ) } />;
+	}
 	return (
 		<ConnectedThemesSelection
 			isLoading={ isLoading }
 			customizedThemesList={ data?.themes ?? [] }
-			{ ...props }
+			{ ...restProps }
 		/>
 	);
-};
+} );
 export default FseThemes;
