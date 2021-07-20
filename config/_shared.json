@@ -119,7 +119,6 @@
 	],
 	"english_locales": [ "en", "en-gb" ],
 	"readerFollowingSource": "calypso",
-	"rtl": false,
 	"siftscience_key": false,
 	"signup_url": false,
 	"gutenboarding_url": false,

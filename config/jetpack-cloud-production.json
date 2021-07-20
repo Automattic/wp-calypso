@@ -5,7 +5,6 @@
 	"client_slug": "browser",
 	"hostname": "cloud.jetpack.com",
 	"i18n_default_locale_slug": "en",
-	"rtl": false,
 	"login_url": "/connect",
 	"logout_url": "https://jetpack.com",
 	"jetpack_connect_url": "https://wordpress.com/jetpack/connect",
