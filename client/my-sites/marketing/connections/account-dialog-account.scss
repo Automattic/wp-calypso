@@ -17,17 +17,34 @@
 	display: block;
 	min-height: 40px;
 	padding-top: 5px;
+	padding-left:0px;
 	font-weight: 400;
 	font-size: 1rem;
 	margin-bottom: 0;
 }
 
 .account-dialog-account__input.form-radio {
-	margin: 2px;
+	margin: 2px 3px 2px 2px;
+	top: 8px;
+	position: relative;
+}
+.account-dialog-account__name{
+	margin-left:-4px;
 }
 
 .account-dialog.single-account .account-dialog-account__input {
 	display: none;
+}
+.account-dialog.single-account .account-dialog-account__picture{
+	margin-left:0px;
+	margin-right: .5rem;
+	left:0px;
+}
+.account-dialog.single-account .account-dialog-account__content{
+	 margin-left: 0;
+}
+.account-dialog.single-account .account-dialog-account__name{
+	margin-left: 0px;
 }
 
 .account-dialog-account:not( .is-connected ) .account-dialog-account__label {
@@ -39,25 +56,27 @@
 	left: -22px;
 	color: var( --color-warning );
 }
-.account-dialog .gridicons-null{display: none;}
+.account-dialog .gridicons-null {
+	display: none;
+}
 
 // specificity of .account-dialog is needed for display property to apply
 .account-dialog .account-dialog-account__picture {
 	position: relative;
-	
+	margin-left: 1rem;
+	margin-right: -.5rem;
 	left: -5px;
-	width: 39px;
+	width: 34px;
 	height: 34px;
+	
 }
 
-//.account-dialog-account:not( .is-connected ) .account-dialog-account__picture {
-	
-//}
 
 .account-dialog-account__content {
 	display: inline-block;
 	position: relative;
-	top: -9px;
+	vertical-align: top;	
+	margin-left: 1rem;
 	line-height: 34px;
 	color: var( --color-neutral-70 );
 }
