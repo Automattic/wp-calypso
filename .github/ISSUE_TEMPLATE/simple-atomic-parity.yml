@@ -2,49 +2,48 @@ name: Simple-Atomic Feature Parity
 description: Did you find something inconsistent or unexpected between the two platforms?
 title: "Feature Parity:"
 labels: "Sipmle/Atomic Parity"
-assignees: ''
 body:
-- type: dropdown
-    id: plan
-    attributes:
-      label: Plan
-      description: What plan tier are affected?
-      options:
-        - Free
-        - Personal
-        - Premium
-        - Business
-        - eCommerce
-- type: textarea
-    id: steps
-    attributes:
-      label: Steps
-      description: How to reproduce this issue?
-    validations:
-      required: true
-- type: textarea
-    id: expected-simple
-    attributes:
-      label: Expected (Simple)
-      description: Behavior expected on a simple WordPress.com site.
-    validations:
-      required: true
+  - type: dropdown
+      id: plan
+      attributes:
+        label: Plan
+        description: What plan tier are affected?
+        options:
+          - Free
+          - Personal
+          - Premium
+          - Business
+          - eCommerce
   - type: textarea
-    id: expected-atomic
-    attributes:
-      label: Expected (Atomic)
-      description: Behavior expected on an atomic WordPress.com site.
-    validations:
-      required: true
+      id: steps
+      attributes:
+        label: Steps
+        description: How to reproduce this issue?
+      validations:
+        required: true
   - type: textarea
-    id: actual
-    attributes:
-      label: Actual
-      description: Behavior observed.
-    validations:
-      required: true
-- type: input
-    id: theme-specific
-    attributes:
-      label: Theme-Specific
-      description: Is this specific to the applied theme? If so, which one?
+      id: expected-simple
+      attributes:
+        label: Expected (Simple)
+        description: Behavior expected on a simple WordPress.com site.
+      validations:
+        required: true
+  - type: textarea
+      id: expected-atomic
+      attributes:
+        label: Expected (Atomic)
+        description: Behavior expected on an atomic WordPress.com site.
+      validations:
+        required: true
+  - type: textarea
+      id: actual
+      attributes:
+        label: Actual
+        description: Behavior observed.
+      validations:
+        required: true
+  - type: input
+      id: theme-specific
+      attributes:
+        label: Theme-Specific
+        description: Is this specific to the applied theme? If so, which one?
