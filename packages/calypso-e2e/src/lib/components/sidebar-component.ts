@@ -125,29 +125,27 @@ export class SidebarComponent extends BaseContainer {
 	async _click( selector: string ): Promise< void > {
 		// Wait for these promises in no particular order. We simply want to ensure the sidebar
 		// and the page is not animating and is ready to accept inputs.
-		await Promise.all( [
-			this.page.waitForLoadState( 'load' ),
-			this.sidebar.waitForElementState( 'stable' ),
-		] );
+		await this.page.waitForLoadState( 'load' );
 
-		const elementHandle = await this.page.waitForSelector( selector );
+		// await Promise.all( [
+		// 	this.sidebar.waitForElementState( 'stable' ),
+		// ] );
 
-		// Scroll to reveal the element fully using a page function if required.
+		await this.page.waitForSelector( selector, { state: 'attached' } );
+
+		// Scroll to reveal the target element fully using a page function if required.
 		// This workaround is necessary as the sidebar is 'sticky' in calypso, so a traditional
 		// scroll behavior does not adequately expose the sidebar element.
-		await this.page.evaluate(
-			( [ element ] ) => {
-				const elementBottom = element.getBoundingClientRect().bottom;
-				const isOutsideViewport = window.innerHeight < elementBottom;
+		await this.page.$eval( selector, ( element ) => {
+			const elementBottom = element.getBoundingClientRect().bottom;
+			const isOutsideViewport = window.innerHeight < elementBottom;
 
-				if ( isOutsideViewport ) {
-					window.scrollTo( 0, elementBottom - window.innerHeight );
-				}
-			},
-			[ elementHandle ]
-		);
+			if ( isOutsideViewport ) {
+				window.scrollTo( 0, elementBottom - window.innerHeight );
+			}
+		} );
 
-		await elementHandle.click();
+		await this.page.click( selector );
 
 		await this.page.waitForLoadState( 'domcontentloaded' );
 	}
