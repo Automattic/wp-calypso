@@ -861,7 +861,8 @@ export default connect(
 			forumUrl: getThemeForumUrl( state, id, siteId ),
 			hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
 			canUserUploadThemes: hasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),
-			canonicalUrl: localizeUrl( englishUrl, getLocaleSlug(), false ),
+			// Remove the trailing slash because the page URL doesn't have one either.
+			canonicalUrl: localizeUrl( englishUrl, getLocaleSlug(), false ).replace( /\/$/, '' ),
 			demoUrl: getThemeDemoUrl( state, id, siteId ),
 			previousRoute: getPreviousRoute( state ),
 		};

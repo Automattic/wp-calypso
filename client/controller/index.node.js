@@ -63,7 +63,14 @@ const getLocalizedCanonicalUrl = ( path, locale ) => {
 		new RegExp( `\\/(${ getLanguageSlugs().join( '|' ) })(\\/|\\?|$)` ),
 		'$2'
 	);
-	return localizeUrl( baseUrlWithoutLang, locale, false );
+	let localizedUrl = localizeUrl( baseUrlWithoutLang, locale, false );
+
+	// Remove the trailing slash if `path` doesn't have one either.
+	if ( path.slice( -1 ) !== '/' && localizedUrl.slice( -1 ) === '/' ) {
+		localizedUrl = localizedUrl.slice( 0, -1 );
+	}
+
+	return localizedUrl;
 };
 
 export const setHrefLangLinks = ( context, next ) => {
