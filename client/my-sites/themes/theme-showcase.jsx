@@ -74,8 +74,8 @@ class ThemeShowcase extends React.Component {
 		this.scrollRef = React.createRef();
 		this.bookmarkRef = React.createRef();
 		this.tabFilters = {
-			ALL: { key: 'all', text: props.translate( 'All Themes' ) },
 			RECOMMENDED: { key: 'recommended', text: props.translate( 'Recommended' ) },
+			ALL: { key: 'all', text: props.translate( 'All Themes' ) },
 			TRENDING: { key: 'trending', text: props.translate( 'Trending' ) },
 		};
 		this.state = {
