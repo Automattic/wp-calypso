@@ -1,0 +1,16 @@
+.backup-storage-space {
+	margin-top: 1rem;
+	padding: 16px 32px;
+	background: #fff;
+	box-shadow: 0 0 0 1px #dcdcde;
+}
+
+.backup-storage-space__container {
+	display: grid;
+	grid-template-columns: max-content auto max-content;
+	align-items: center;
+}
+
+.backup-storage-space__progress-bar {
+	padding: 0 24px;
+}
