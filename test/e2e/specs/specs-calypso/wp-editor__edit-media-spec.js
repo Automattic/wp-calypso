@@ -25,11 +25,10 @@ describe( `[${ host }] Media: Edit Media (${ screenSize }) @parallel @jetpack`, 
 	} );
 
 	it( 'Select a random media item and click edit', async function () {
-		if ( process.env.FLAGS === 'nav-unification/switcher' ) {
-			// Makes sure that the Quick Switch modal will be dismissed.
-			const guideComponent = new GuideComponent( this.driver );
-			await guideComponent.dismiss( 1000, '.nav-unification-quick-switch-modal' );
-		}
+		// Makes sure that the Quick Switch modal will be dismissed.
+		const guideComponent = new GuideComponent( this.driver );
+		await guideComponent.dismiss( 1000, '.nav-unification-quick-switch-modal' );
+
 		const mediaPage = await MediaPage.Expect( this.driver );
 		await mediaPage.selectFirstImage();
 		await mediaPage.selectEditMedia();

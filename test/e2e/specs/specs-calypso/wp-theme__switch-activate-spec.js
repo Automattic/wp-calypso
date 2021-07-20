@@ -32,11 +32,10 @@ describe( `[${ host }] Activating Themes: (${ screenSize }) @parallel`, function
 	} );
 
 	it( 'Can activate a different free theme', async function () {
-		if ( process.env.FLAGS === 'nav-unification/switcher' ) {
-			// Makes sure that the Quick Switch modal will be dismissed.
-			const guideComponent = new GuideComponent( this.driver );
-			await guideComponent.dismiss( 1000, '.nav-unification-quick-switch-modal' );
-		}
+		// Makes sure that the Quick Switch modal will be dismissed.
+		const guideComponent = new GuideComponent( this.driver );
+		await guideComponent.dismiss( 1000, '.nav-unification-quick-switch-modal' );
+
 		const themesPage = await ThemesPage.Expect( this.driver );
 		await themesPage.waitUntilThemesLoaded();
 		await themesPage.showOnlyFreeThemes();

@@ -44,11 +44,11 @@ describe.skip( `[${ host }] Invites - New user as Viewer: (${ screenSize }) @par
 
 	it( 'Can log in and navigate to Invite People page', async function () {
 		await new LoginFlow( this.driver, 'privateSiteUser' ).loginAndSelectPeople();
-		if ( process.env.FLAGS === 'nav-unification/switcher' ) {
-			// Makes sure that the Quick Switch modal will be dismissed.
-			const guideComponent = new GuideComponent( this.driver );
-			await guideComponent.dismiss( 1000, '.nav-unification-quick-switch-modal' );
-		}
+
+		// Makes sure that the Quick Switch modal will be dismissed.
+		const guideComponent = new GuideComponent( this.driver );
+		await guideComponent.dismiss( 1000, '.nav-unification-quick-switch-modal' );
+
 		const peoplePage = await PeoplePage.Expect( this.driver );
 		return await peoplePage.inviteUser();
 	} );

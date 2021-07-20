@@ -28,11 +28,11 @@ describe( `[${ host }] Plans - Upgrade: (${ screenSize }) @parallel @jetpack`, f
 		const sidebarComponent = await SidebarComponent.Expect( this.driver );
 		await sidebarComponent.selectPlans();
 		const plansPage = await PlansPage.Expect( this.driver );
-		if ( process.env.FLAGS === 'nav-unification/switcher' ) {
-			// Makes sure that the Quick Switch modal will be dismissed.
-			const guideComponent = new GuideComponent( this.driver );
-			await guideComponent.dismiss( 1000, '.nav-unification-quick-switch-modal' );
-		}
+
+		// Makes sure that the Quick Switch modal will be dismissed.
+		const guideComponent = new GuideComponent( this.driver );
+		await guideComponent.dismiss( 1000, '.nav-unification-quick-switch-modal' );
+
 		await plansPage.openPlansTab();
 		return await plansPage.selectPaidPlan();
 	} );

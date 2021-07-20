@@ -49,11 +49,9 @@ describe( `[${ host }] Inline Help: (${ screenSize }) @parallel`, function () {
 			// the `/home` route :)
 			await sidebarComponent.selectSettings();
 
-			if ( process.env.FLAGS === 'nav-unification/switcher' ) {
-				// Makes sure that the Quick Switch modal will be dismissed.
-				const guideComponent = new GuideComponent( this.driver );
-				await guideComponent.dismiss( 1000, '.nav-unification-quick-switch-modal' );
-			}
+			// Makes sure that the Quick Switch modal will be dismissed.
+			const guideComponent = new GuideComponent( this.driver );
+			await guideComponent.dismiss( 1000, '.nav-unification-quick-switch-modal' );
 
 			// Once removed we can assert is is invisible.
 			const isToggleVisible = await inlineHelpPopoverComponent.isToggleVisible();
