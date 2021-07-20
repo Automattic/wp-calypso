@@ -76,13 +76,7 @@ export default function SidebarItem( props ) {
 							: props.label
 					}
 					{ !! count && <Count count={ count } /> }
-					{ !! badge && (
-						<span className="sidebar__menu-link-badge">
-							{ 'string' === typeof props.badge
-								? stripHTML( decodeEntities( props.badge ) )
-								: props.badge }
-						</span>
-					) }
+					{ !! badge && <span className="sidebar__menu-link-badge">{ badge }</span> }
 				</span>
 				{ showAsExternal && <Gridicon icon="external" size={ 24 } /> }
 				{ props.children }
