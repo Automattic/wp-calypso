@@ -6,9 +6,11 @@
 @import '@wordpress/base-styles/breakpoints';
 
 $modal-breakpoint: 600px;
+$modal-breakpoint-phone-height: 415px;
 $modal-padding-v: 40px;
 $modal-padding-h: 50px;
 $modal-content-min-height: 410px;
+$modal-content-min-height-landscape: 370px;
 $modal-footer-padding-v: 20px;
 $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 
@@ -30,6 +32,11 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 			width: 740px;
 			height: $modal-content-min-height;
 			top: calc( 50% - #{$modal-footer-height / 2} );
+		}
+
+		@media ( min-width: $modal-breakpoint ) and ( max-height: $modal-breakpoint-phone-height ) {
+			height: $modal-content-min-height-landscape;
+			top: calc( 50% - 0px );
 		}
 	}
 
@@ -58,6 +65,10 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 
 		@media ( min-width: $modal-breakpoint ) {
 			height: $modal-content-min-height;
+		}
+
+		@media ( min-width: $modal-breakpoint ) and ( max-height: $modal-breakpoint-phone-height ) {
+			height: $modal-content-min-height-landscape;
 		}
 	}
 
@@ -115,6 +126,10 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 		height: 100%;
 		bottom: 0;
 	}
+
+	@media ( min-width: $modal-breakpoint ) and ( max-height: $modal-breakpoint-phone-height ) {
+		min-height: $modal-content-min-height-landscape;
+	}
 }
 
 .nav-unification-quick-switch-modal__text,
@@ -132,6 +147,10 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 	@media ( min-width: $modal-breakpoint ) {
 		height: auto;
 		padding: $modal-padding-v $modal-padding-h;
+	}
+
+	@media ( min-width: $modal-breakpoint ) and ( max-height: $modal-breakpoint-phone-height ) {
+		padding: 25px;
 	}
 }
 .nav-unification-quick-switch-modal__visual {
