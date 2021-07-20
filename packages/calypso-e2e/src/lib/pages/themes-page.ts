@@ -1,3 +1,4 @@
+import { ElementHandle } from 'playwright';
 import { BaseContainer } from '../base-container';
 
 const selectors = {
@@ -13,6 +14,10 @@ const selectors = {
 	showAllThemesButton: 'text=Show all themes',
 	searchToolbar: '.themes-magic-search',
 	searchInput: `[placeholder="Search by style or feature: portfolio, store, multiple menus, or…"]`,
+
+	// Theme card
+	popoverButton: '.theme__more-button',
+	popoverMenuItem: '.popover__menu-item',
 };
 
 /**
@@ -68,14 +73,16 @@ export class ThemesPage extends BaseContainer {
 	 * To match exactly, supply the full name of the theme as it appears to the user.
 	 * For a fuzzy match, supply partially the name of the them that should be matched.
 	 *
+	 * The first available theme is always returned.
+	 *
 	 * Example:
 	 * 		partial match: `Twenty Twen` -> [Twenty Twenty, Twenty Twenty-One]
 	 * 		exact match: `Twenty Seventeen` -> Twenty Seventeen
 	 *
 	 * @param {string} [name] Theme name to select.
-	 * @returns {Promise<void>} No return value.
+	 * @returns {Promise<ElementHandle>} Reference to the selected theme card on the gallery.
 	 */
-	async select( name: string ): Promise< void > {
+	async select( name: string ): Promise< ElementHandle > {
 		// Build selector that will select themes on the page that match the name but excludes
 		// the currently activated theme from selection (even if shown on page).
 		const selector = `${ selectors.items }:has-text("${ name }")${ selectors.excludeActiveTheme }`;
@@ -86,13 +93,38 @@ export class ThemesPage extends BaseContainer {
 		}
 
 		// Select the first available theme as the target.
-		const selectedTheme = await this.page.waitForSelector( `:nth-match(${ selector }, 1)` );
+		return await this.page.waitForSelector( `:nth-match(${ selector }, 1)` );
+	}
 
-		// Hover over the target theme to expose the `INFO` button and wait for the animation to
-		// complete.
+	/**
+	 * Given a target theme and action, click on the popover item of the action on the theme.
+	 *
+	 * @param {ElementHandle} selectedTheme Reference to the target theme.
+	 * @param {string} action Action to be called from the popover.
+	 * @returns {Promise<void>} No return value.
+	 */
+	async clickPopoverItem(
+		selectedTheme: ElementHandle,
+		action: 'Live Demo' | 'Activate' | 'Info' | 'Support'
+	): Promise< void > {
+		const popoverButton = await selectedTheme.waitForSelector( selectors.popoverButton );
+		await popoverButton.click();
+		await this.page.click( `${ selectors.popoverMenuItem }:text("${ action }")` );
+	}
+
+	/**
+	 * Given a target theme, hover over the card in the theme gallery and perform a click.
+	 *
+	 * @param {ElementHandle} selectedTheme Reference to the target theme.
+	 * @returns {Promise<void>} No return value.
+	 */
+	async hoverThenClick( selectedTheme: ElementHandle ): Promise< void > {
+		// Hover over the target theme in the gallery. This will expose a normally hidden
+		// INFO button.
 		await selectedTheme.hover();
+		// Wait for the fade-in animation to complete.
 		await selectedTheme.waitForElementState( 'stable' );
-
+		// Clicking on the INFO button will always result in navigation to a new page.
 		await Promise.all( [ this.page.waitForNavigation(), selectedTheme.click() ] );
 	}
 }

@@ -3,7 +3,10 @@ import { BaseContainer } from '../base-container';
 import { PreviewComponent } from '../components';
 
 const selectors = {
+	// Preview
 	demoPane: '.theme__sheet-screenshot',
+
+	// Main body
 	activateDesignButton: 'button:text("Activate this design")',
 	customizeDesignButton: 'span:text("Customize site")',
 
