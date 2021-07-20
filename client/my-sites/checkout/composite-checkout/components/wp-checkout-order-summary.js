@@ -198,7 +198,7 @@ function SupportText( { hasPlanInCart, isJetpackNotAtomic } ) {
 		return <span>{ translate( 'Unlimited customer support via email' ) }</span>;
 	}
 
-	return <span>{ translate( 'customer support via email' ) }</span>;
+	return <span>{ translate( 'Customer support via email' ) }</span>;
 }
 
 function CheckoutSummaryFeaturesListDomainItem( { domain, hasMonthlyPlan, nextDomainIsFree } ) {
