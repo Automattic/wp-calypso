@@ -9,10 +9,12 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import config from '@automattic/calypso-config';
 import { CompactCard } from '@automattic/components';
 import InfoPopover from 'calypso/components/info-popover';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { getTitanProductName } from 'calypso/lib/titan';
+import AddDomainButton from 'calypso/my-sites/domains/domain-management/list/add-domain-button';
 import { ListAllActions } from 'calypso/my-sites/domains/domain-management/list/utils';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 
@@ -163,12 +165,18 @@ class ListHeader extends React.PureComponent {
 		) );
 	}
 
+	renderAddDomainToThisSiteButton() {
+		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
+			return null;
+		}
+		return <AddDomainButton specificSiteActions={ true } />;
+	}
+
 	renderDefaultHeaderContent() {
 		return (
 			<>
-				<div className="list__domain-link" />
-				{ this.renderHeaderItems() }
-				<div className="list__domain-options"></div>
+				<span style={ { flex: 1 } }>Your site domains</span>
+				{ this.renderAddDomainToThisSiteButton() }
 			</>
 		);
 	}
