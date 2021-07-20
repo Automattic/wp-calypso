@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import React, { useEffect, useRef } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -156,4 +155,4 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 
 const connectHome = connect( mapStateToProps, mapDispatchToProps, mergeProps );
 
-export default flowRight( connectHome, withTrackingTool( 'HotJar' ) )( Home );
+export default connectHome( withTrackingTool( 'HotJar' )( Home ) );
