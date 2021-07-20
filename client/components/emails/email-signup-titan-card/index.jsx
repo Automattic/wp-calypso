@@ -7,7 +7,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
 import { Button, Card } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
 
@@ -16,6 +15,7 @@ import { Icon } from '@wordpress/icons';
  */
 import EmailProductPrice from 'calypso/components/emails/email-product-price';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
+import Gridicon from 'calypso/components/gridicon';
 import tip from 'calypso/components/domains/register-domain-step/tip';
 
 /**
@@ -44,40 +44,24 @@ class EmailSignupTitanCard extends React.Component {
 		showChevron: false,
 	};
 
-	renderPrice() {
-		const { price, salePrice } = this.props;
-
-		return (
-			<EmailProductPrice
-				price={ price }
-				salePrice={ salePrice }
-				isSignupStep={ true }
-				showStrikedOutPrice={ false }
-			/>
-		);
-	}
-
-	renderCustomDomainName( customDomainName ) {
-		return (
-			<div className="email-signup-titan-card__title-wrapper">
-				<h3 className="email-signup-titan-card__title">
-					<div className="email-signup-titan-card__email-title email-signup-titan-card__email-title-name">
-						{ this.props.translate( 'youremail@%(domainName)s', {
-							args: { domainName: customDomainName },
-							comment:
-								'This is a sample email address for the user at their domain; %(domainName)s is a domain name, e.g. example.com',
-						} ) }
-					</div>
-				</h3>
-			</div>
-		);
-	}
-
 	renderEmailSuggestion( customDomainName ) {
+		const { price, salePrice, translate } = this.props;
+
 		return (
 			<div className="email-signup-titan-card__suggestion-content">
-				{ this.renderCustomDomainName( customDomainName ) }
-				{ this.renderPrice() }
+				<h3 className="email-signup-titan-card__title">
+					{ translate( 'youremail@%(domainName)s', {
+						args: { domainName: customDomainName },
+						comment:
+							'This is a sample email address for the user at their domain; %(domainName)s is a domain name, e.g. example.com',
+					} ) }
+				</h3>
+				<EmailProductPrice
+					price={ price }
+					salePrice={ salePrice }
+					isSignupStep={ true }
+					showStrikedOutPrice={ false }
+				/>
 			</div>
 		);
 	}
@@ -114,7 +98,7 @@ class EmailSignupTitanCard extends React.Component {
 							<Button className="email-signup-titan-card__suggestion-action">
 								{ this.props.skipButtonTitle }
 							</Button>
-							<Button className="email-signup-titan-card__suggestion-action is-primary">
+							<Button className="email-signup-titan-card__suggestion-action" primary>
 								{ this.props.addButtonTitle }
 							</Button>
 						</>
