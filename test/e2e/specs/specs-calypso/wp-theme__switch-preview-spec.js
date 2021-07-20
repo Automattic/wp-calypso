@@ -1,4 +1,5 @@
 import config from 'config';
+import GuideComponent from '../../lib/components/guide-component';
 import * as dataHelper from '../../lib/data-helper';
 import * as driverManager from '../../lib/driver-manager.js';
 import LoginFlow from '../../lib/flows/login-flow.js';
@@ -19,6 +20,11 @@ describe( `[${ host }] Previewing Themes: (${ screenSize }) @parallel @jetpack`,
 	} );
 
 	it( 'Can select a different free theme', async function () {
+		if ( process.env.FLAGS === 'nav-unification/switcher' ) {
+			// Makes sure that the Quick Switch modal will be dismissed.
+			const guideComponent = new GuideComponent( this.driver );
+			await guideComponent.dismiss( 1000, '.nav-unification-quick-switch-modal' );
+		}
 		this.themesPage = await ThemesPage.Expect( this.driver );
 		await this.themesPage.waitUntilThemesLoaded();
 		await this.themesPage.showOnlyFreeThemes();

@@ -1,5 +1,6 @@
 import assert from 'assert';
 import config from 'config';
+import GuideComponent from '../../lib/components/guide-component';
 import SidebarComponent from '../../lib/components/sidebar-component';
 import ThemeDialogComponent from '../../lib/components/theme-dialog-component.js';
 import ThemeSwitchConfirmationComponent from '../../lib/components/theme-switch-confirmation-component.js';
@@ -31,6 +32,11 @@ describe( `[${ host }] Activating Themes: (${ screenSize }) @parallel`, function
 	} );
 
 	it( 'Can activate a different free theme', async function () {
+		if ( process.env.FLAGS === 'nav-unification/switcher' ) {
+			// Makes sure that the Quick Switch modal will be dismissed.
+			const guideComponent = new GuideComponent( this.driver );
+			await guideComponent.dismiss( 1000, '.nav-unification-quick-switch-modal' );
+		}
 		const themesPage = await ThemesPage.Expect( this.driver );
 		await themesPage.waitUntilThemesLoaded();
 		await themesPage.showOnlyFreeThemes();
