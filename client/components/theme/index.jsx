@@ -257,11 +257,7 @@ export class Theme extends Component {
 						<h2 className="theme__info-title">
 							{ name }
 							{ this.isFullSiteEditingTheme() && (
-								<span className="theme__badge-beta">
-									{ translate( 'Beta', {
-										context: 'singular noun, the currently active theme',
-									} ) }
-								</span>
+								<span className="theme__badge-beta">{ translate( 'Beta' ) }</span>
 							) }
 						</h2>
 						{ active && (
