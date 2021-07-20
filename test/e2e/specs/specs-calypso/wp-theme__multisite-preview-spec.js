@@ -1,6 +1,6 @@
 import assert from 'assert';
 import config from 'config';
-import GuideComponent from 'e2e/lib/components/guide-component';
+import GuideComponent from '../../lib/components/guide-component';
 import SidebarComponent from '../../lib/components/sidebar-component';
 import * as dataHelper from '../../lib/data-helper';
 import * as driverManager from '../../lib/driver-manager.js';
