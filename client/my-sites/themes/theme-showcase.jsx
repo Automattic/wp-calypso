@@ -74,9 +74,9 @@ class ThemeShowcase extends React.Component {
 		this.scrollRef = React.createRef();
 		this.bookmarkRef = React.createRef();
 		this.tabFilters = {
-			RECOMMENDED: { key: 'recommended', text: props.translate( 'Recommended' ) },
-			ALL: { key: 'all', text: props.translate( 'All Themes' ) },
-			TRENDING: { key: 'trending', text: props.translate( 'Trending' ) },
+			RECOMMENDED: { key: 'recommended', text: props.translate( 'Recommended' ), order: 1 },
+			ALL: { key: 'all', text: props.translate( 'All Themes' ), order: 2 },
+			TRENDING: { key: 'trending', text: props.translate( 'Trending' ), order: 3 },
 		};
 		this.state = {
 			tabFilter:
@@ -338,15 +338,17 @@ class ThemeShowcase extends React.Component {
 					{ isLoggedIn && (
 						<SectionNav className="themes__section-nav" selectedText={ this.state.tabFilter.text }>
 							<NavTabs>
-								{ Object.values( this.tabFilters ).map( ( tabFilter ) => (
-									<NavItem
-										key={ tabFilter.key }
-										onClick={ () => this.onFilterClick( tabFilter ) }
-										selected={ tabFilter.key === this.state.tabFilter.key }
-									>
-										{ tabFilter.text }
-									</NavItem>
-								) ) }
+								{ Object.values( this.tabFilters )
+									.sort( ( a, b ) => a.order - b.order )
+									.map( ( tabFilter ) => (
+										<NavItem
+											key={ tabFilter.key }
+											onClick={ () => this.onFilterClick( tabFilter ) }
+											selected={ tabFilter.key === this.state.tabFilter.key }
+										>
+											{ tabFilter.text }
+										</NavItem>
+									) ) }
 							</NavTabs>
 						</SectionNav>
 					) }
