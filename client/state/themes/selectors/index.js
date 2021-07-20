@@ -1,7 +1,9 @@
+export { areFullSiteEditingThemesLoading } from 'calypso/state/themes/selectors/are-full-site-editing-themes-loading';
 export { areRecommendedThemesLoading } from 'calypso/state/themes/selectors/are-recommended-themes-loading';
 export { findThemeFilterTerm } from 'calypso/state/themes/selectors/find-theme-filter-term';
 export { getActiveTheme } from 'calypso/state/themes/selectors/get-active-theme';
 export { getCanonicalTheme } from 'calypso/state/themes/selectors/get-canonical-theme';
+export { getFullSiteEditingThemes } from 'calypso/state/themes/selectors/get-full-site-editing-themes';
 export { getJetpackUpgradeUrlIfPremiumTheme } from 'calypso/state/themes/selectors/get-jetpack-upgrade-url-if-premium-theme';
 export { getLastThemeQuery } from 'calypso/state/themes/selectors/get-last-theme-query';
 export { getPreActivateThemeId } from 'calypso/state/themes/selectors/get-pre-activate-theme-id';

@@ -56,6 +56,7 @@ class ThemesSelection extends Component {
 		isRequesting: PropTypes.bool,
 		isThemeActive: PropTypes.func,
 		placeholderCount: PropTypes.number,
+		fullSiteEditingThemes: PropTypes.array,
 		recommendedThemes: PropTypes.array,
 		source: PropTypes.oneOfType( [ PropTypes.number, PropTypes.oneOf( [ 'wpcom', 'wporg' ] ) ] ),
 		themes: PropTypes.array,
@@ -69,8 +70,14 @@ class ThemesSelection extends Component {
 
 	componentDidMount() {
 		// Create "buffer zone" to prevent overscrolling too early bugging pagination requests.
-		const { query, recommendedThemes } = this.props;
-		if ( ! recommendedThemes && ! query.search && ! query.filter && ! query.tier ) {
+		const { query, recommendedThemes, fullSiteEditingThemes } = this.props;
+		if (
+			! fullSiteEditingThemes &&
+			! recommendedThemes &&
+			! query.search &&
+			! query.filter &&
+			! query.tier
+		) {
 			this.props.incrementPage();
 		}
 	}
@@ -78,7 +85,8 @@ class ThemesSelection extends Component {
 	recordSearchResultsClick = ( themeId, resultsRank, action ) => {
 		// TODO do we need different query if from RecommendedThemes?
 		const { query, filterString } = this.props;
-		const themes = this.props.recommendedThemes || this.props.themes;
+		const themes =
+			this.props.fullSiteEditingThemes || this.props.recommendedThemes || this.props.themes;
 		const search_taxonomies = filterString;
 		const search_term = search_taxonomies + ( query.search || '' );
 
@@ -121,7 +129,7 @@ class ThemesSelection extends Component {
 			this.trackScrollPage();
 		}
 
-		if ( ! this.props.recommendedThemes ) {
+		if ( ! this.props.fullSiteEditingThemes && ! this.props.recommendedThemes ) {
 			this.props.incrementPage();
 		}
 	};
@@ -172,7 +180,9 @@ class ThemesSelection extends Component {
 				) }
 				<ThemesList
 					upsellUrl={ upsellUrl }
-					themes={ this.props.recommendedThemes || this.props.themes }
+					themes={
+						this.props.fullSiteEditingThemes || this.props.recommendedThemes || this.props.themes
+					}
 					fetchNextPage={ this.fetchNextPage }
 					onMoreButtonClick={ this.recordSearchResultsClick }
 					getButtonOptions={ this.getOptions }

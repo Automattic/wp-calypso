@@ -37,6 +37,9 @@ import {
 	THEME_SHOW_AUTO_LOADING_HOMEPAGE_WARNING,
 	THEME_HIDE_AUTO_LOADING_HOMEPAGE_WARNING,
 	THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING,
+	FULL_SITE_EDITING_THEMES_FAIL,
+	FULL_SITE_EDITING_THEMES_FETCH,
+	FULL_SITE_EDITING_THEMES_SUCCESS,
 } from 'calypso/state/themes/action-types';
 import { getSerializedThemesQuery, getThemeIdFromStylesheet } from './utils';
 import {
@@ -491,6 +494,27 @@ export function recommendedThemes( state = {}, action ) {
 	return state;
 }
 
+/**
+ * Returns updated state for full site editing themes after
+ * corresponding actions have been dispatched.
+ *
+ * @param   {object} state  Current state
+ * @param   {object} action Action payload
+ * @returns {object}        Updated state
+ */
+export function fullSiteEditingThemes( state = {}, action ) {
+	switch ( action.type ) {
+		case FULL_SITE_EDITING_THEMES_FETCH:
+			return { ...state, [ action.filter ]: { isLoading: true, themes: [] } };
+		case FULL_SITE_EDITING_THEMES_SUCCESS:
+			return { ...state, [ action.filter ]: { isLoading: false, themes: action.payload.themes } };
+		case FULL_SITE_EDITING_THEMES_FAIL:
+			return { ...state, [ action.filter ]: { isLoading: false, themes: [] } };
+	}
+
+	return state;
+}
+
 const combinedReducer = combineReducers( {
 	queries,
 	queryRequests,
@@ -509,6 +533,7 @@ const combinedReducer = combineReducers( {
 	themePreviewVisibility,
 	themeFilters,
 	recommendedThemes,
+	fullSiteEditingThemes,
 	themeHasAutoLoadingHomepageWarning,
 } );
 const themesReducer = withStorageKey( 'themes', combinedReducer );

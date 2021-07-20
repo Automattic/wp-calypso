@@ -13,6 +13,10 @@ export { installTheme } from 'calypso/state/themes/actions/install-theme';
 export { receiveTheme } from 'calypso/state/themes/actions/receive-theme';
 export { receiveThemes } from 'calypso/state/themes/actions/receive-themes';
 export {
+	getFullSiteEditingThemes,
+	receiveFullSiteEditingThemes,
+} from 'calypso/state/themes/actions/full-site-editing-themes';
+export {
 	getRecommendedThemes,
 	receiveRecommendedThemes,
 } from 'calypso/state/themes/actions/recommended-themes';

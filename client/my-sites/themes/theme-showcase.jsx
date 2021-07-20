@@ -41,6 +41,7 @@ import SectionNav from 'calypso/components/section-nav';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import NavItem from 'calypso/components/section-nav/item';
 import RecommendedThemes from './recommended-themes';
+import FullSiteEditingThemes from './full-site-editing-themes';
 
 /**
  * Style dependencies
@@ -346,6 +347,13 @@ class ThemeShowcase extends React.Component {
 									{ translate( 'Recommended' ) }
 								</NavItem>
 								<NavItem
+									onClick={ () => this.onFilterClick( 'full-site-editing' ) }
+									selected={ 'full-site-editing' === this.state.tabFilter }
+								>
+									{ translate( 'Full Site Editing' ) }
+									<span className="theme-showcase__badge-beta ">{ translate( 'Beta' ) }</span>
+								</NavItem>
+								<NavItem
 									onClick={ () => this.onFilterClick( 'all' ) }
 									selected={ 'all' === this.state.tabFilter }
 								>
@@ -359,6 +367,13 @@ class ThemeShowcase extends React.Component {
 
 					{ 'recommended' === this.state.tabFilter && (
 						<RecommendedThemes
+							listLabel={ ' ' }
+							{ ...themeProps }
+							scrollToSearchInput={ this.scrollToSearchInput }
+						/>
+					) }
+					{ 'full-site-editing' === this.state.tabFilter && (
+						<FullSiteEditingThemes
 							listLabel={ ' ' }
 							{ ...themeProps }
 							scrollToSearchInput={ this.scrollToSearchInput }
