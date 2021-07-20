@@ -119,6 +119,12 @@ export class Theme extends Component {
 		return some( skillLevels, { slug: 'beginner' } );
 	}
 
+	isFullSiteEditingTheme() {
+		const { theme } = this.props;
+		const features = get( theme, [ 'taxonomies', 'theme_feature' ] );
+		return some( features, { slug: 'full-site-editing' } );
+	}
+
 	renderPlaceholder() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
@@ -248,7 +254,16 @@ export class Theme extends Component {
 					</a>
 
 					<div className="theme__info">
-						<h2 className="theme__info-title">{ name }</h2>
+						<h2 className="theme__info-title">
+							{ name }
+							{ this.isFullSiteEditingTheme() && (
+								<span className="theme__badge-beta">
+									{ translate( 'Beta', {
+										context: 'singular noun, the currently active theme',
+									} ) }
+								</span>
+							) }
+						</h2>
 						{ active && (
 							<span className="theme__badge-active">
 								{ translate( 'Active', {

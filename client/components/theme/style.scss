@@ -33,6 +33,11 @@ $theme-info-height: 54px;
 		.price {
 			color: var( --color-text-inverted );
 		}
+
+		.theme__badge-beta {
+			color: var( --color-text-inverted );
+			border-color: var( --color-text-inverted );
+		}
 	}
 
 	&.is-actionable {
@@ -132,6 +137,19 @@ $theme-info-height: 54px;
 	text-transform: uppercase;
 	font-size: $font-body-extra-small;
 	font-weight: 600;
+}
+
+.theme__badge-beta {
+	display: inline-block;
+	padding: 1px 6px;
+	margin-left: 6px;
+	border: 1px solid var( --studio-yellow );
+	border-radius: 12px;
+	font-size: $font-body-extra-small;
+	font-weight: 600;
+	line-height: 14px;
+	color: var( --studio-yellow );
+	text-align: center;
 }
 
 .theme__thumbnail {
