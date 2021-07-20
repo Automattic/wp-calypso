@@ -26,9 +26,11 @@ export class CommentsComponent extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async postComment( comment: string ): Promise< void > {
+		// Wait for the page to fully load. Otherwise, the Post Comment button may not
+		// appear even if the text area is clicked on.
+		await this.page.waitForLoadState( 'networkidle' );
 		// To simulate user action first click on the field. This also exposes the
 		// submit comment button.
-		await this.page.waitForLoadState( 'load' );
 		await this.page.click( selectors.commentTextArea );
 		await this.page.fill( selectors.commentTextArea, comment );
 		await this.page.click( selectors.submitButton );
