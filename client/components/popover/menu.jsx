@@ -50,6 +50,7 @@ class PopoverMenu extends Component {
 			isVisible,
 			popoverTitle,
 			position,
+			id,
 		} = this.props;
 
 		return (
@@ -68,6 +69,7 @@ class PopoverMenu extends Component {
 			>
 				<div
 					ref={ this.menu }
+					id={ id }
 					role="menu"
 					className="popover__menu"
 					onKeyDown={ this._onKeyDown }
@@ -100,7 +102,9 @@ class PopoverMenu extends Component {
 			return;
 		}
 
-		const elementToFocus = this.menu.current;
+		// When a menu opens, or when a menubar receives focus, keyboard focus is placed on the first item
+		// See: https://www.w3.org/TR/wai-aria-practices/#keyboard-interaction-12
+		const elementToFocus = this.menu.current.firstChild;
 
 		this._previouslyFocusedElement = document.activeElement;
 
