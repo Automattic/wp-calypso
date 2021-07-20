@@ -1,8 +1,7 @@
 {
 	"extends": "@automattic/calypso-build/typescript/ts-package.json",
 	"compilerOptions": {
-		"module": "commonjs",
-		"outDir": "dist/cjs",
+		"outDir": "dist/esm",
 		"declarationDir": "dist/types",
 		"rootDir": "."
 	},
