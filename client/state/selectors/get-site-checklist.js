@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import 'calypso/state/checklist/init';
@@ -16,5 +11,5 @@ import 'calypso/state/checklist/init';
  * @returns {object}        Site settings
  */
 export default function getSiteChecklist( state, siteId ) {
-	return get( state.checklist, [ siteId, 'items' ], null );
+	return state.checklist?.[ siteId ]?.items ?? null;
 }
