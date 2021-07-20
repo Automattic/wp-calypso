@@ -242,8 +242,6 @@ class ThemeShowcase extends React.Component {
 			{ property: 'og:site_name', content: 'WordPress.com' },
 		];
 
-		const links = [ { rel: 'canonical', href: canonicalUrl } ];
-
 		const headerIcons = [
 			{
 				label: translate( 'New' ),
@@ -270,7 +268,7 @@ class ThemeShowcase extends React.Component {
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<div>
-				<DocumentHead title={ title } meta={ metas } link={ links } />
+				<DocumentHead title={ title } meta={ metas } />
 				<PageViewTracker
 					path={ this.props.analyticsPath }
 					title={ this.props.analyticsPageTitle }
