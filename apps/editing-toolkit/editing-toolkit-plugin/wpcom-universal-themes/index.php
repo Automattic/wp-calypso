@@ -112,7 +112,11 @@ function unload_helpers() {
 function add_submenu() {
 	add_theme_page(
 		__( 'Site Editor (beta)', 'full-site-editing' ),
-		__( 'Site Editor (beta)', 'full-site-editing' ),
+		sprintf(
+		/* translators: %s: "beta" label. */
+			__( 'Site Editor %s', 'full-site-editing' ),
+			'<span class="awaiting-mod">' . esc_html__( 'beta', 'full-site-editing' ) . '</span>'
+		),
 		'edit_theme_options',
 		'site-editor-toggle',
 		__NAMESPACE__ . '\menu_page'
