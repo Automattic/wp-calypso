@@ -1,0 +1,74 @@
+.is-p2.invite-accept {
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 100vh;
+	width: 100vw;
+	z-index: 200;
+	background: #fff;
+	padding-top: 2em;
+	font-family: var( --p2-font-inter );
+
+	.invite-form-header__title {
+		font-size: 2rem;
+		font-weight: 700;
+		line-height: 1.2;
+		margin: 2rem 0;
+	}
+
+	.invite-form-header__explanation {
+		font-size: 1.25rem;
+		line-height: 1.5;
+	}
+
+	.invite-accept-logged-in__join-as {
+		display: flex;
+		align-items: center;
+		margin: 2rem 0;
+
+		.gravatar {
+			margin: 0 1rem 0 0;
+			width: 48px;
+			height: 48px;
+		}
+	}
+
+	.invite-accept-logged-in__join-as-text-container {
+		text-align: left;
+
+		.logged-out-form__links {
+			text-align: left;
+
+			&::before {
+				height: 0;
+				margin: 0;
+			}
+		}
+
+		.logged-out-form__link-item {
+			padding: 0;
+		}
+	}
+
+	.invite-accept-logged-in__buttons {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
+		button {
+			border-radius: 20px; /* stylelint-disable-line */
+			margin: 10px 0;
+			width: 100%;
+			padding: 12px 0;
+
+			&.is-primary {
+				color: #fff;
+				background: var( --p2-color-link );
+
+				&:hover {
+					background: var( --p2-color-link-dark );
+				}
+			}
+		}
+	}
+}
