@@ -255,6 +255,8 @@ export class UserStep extends Component {
 		if ( oauth2Signup ) {
 			dependencies.oauth2_client_id = data.queryArgs.oauth2_client_id;
 			dependencies.oauth2_redirect = data.queryArgs.oauth2_redirect;
+		} else if ( data.queryArgs.redirect_to ) {
+			dependencies.redirect = data.queryArgs.redirect_to;
 		}
 
 		this.props.submitSignupStep(
@@ -402,6 +404,32 @@ export class UserStep extends Component {
 		}
 
 		return headerText;
+	}
+
+	getRedirectToAfterLoginUrl() {
+		if (
+			this.props.oauth2Signup &&
+			this.props.initialContext &&
+			this.props.initialContext.query.oauth2_redirect &&
+			this.isOauth2RedirectValid( this.props.initialContext.query.oauth2_redirect )
+		) {
+			return this.props.initialContext.query.oauth2_redirect;
+		}
+		if ( this.props.initialContext?.canonicalPath?.startsWith( '/start/account' ) ) {
+			return this.props.initialContext.query.redirect_to;
+		}
+
+		const stepAfterRedirect =
+			getNextStepName( this.props.flowName, this.props.stepName, this.props.userLoggedIn ) ||
+			getPreviousStepName( this.props.flowName, this.props.stepName, this.props.userLoggedIn );
+		const queryArgs = new URLSearchParams( this.props?.initialContext?.query );
+		const queryArgsString = queryArgs.toString() ? '?' + queryArgs.toString() : '';
+
+		return (
+			window.location.origin +
+			getStepUrl( this.props.flowName, stepAfterRedirect ) +
+			queryArgsString
+		);
 	}
 
 	submitButtonText() {
