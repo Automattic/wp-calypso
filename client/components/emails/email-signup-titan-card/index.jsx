@@ -76,8 +76,15 @@ class EmailSignupTitanCard extends React.Component {
 	}
 
 	render() {
-		const { extraClasses, isReskinned } = this.props;
-		const domainItem = this.props.signupDependencies.domainItem.meta;
+		const {
+			addButtonTitle,
+			extraClasses,
+			isReskinned,
+			showChevron,
+			signupDependencies,
+			skipButtonTitle,
+		} = this.props;
+		const domainItem = signupDependencies.domainItem?.meta;
 		const classes = classNames( 'email-suggestion', extraClasses );
 
 		const wrapDivActionContainer = ( contentElement ) =>
@@ -96,14 +103,14 @@ class EmailSignupTitanCard extends React.Component {
 					{ wrapDivActionContainer(
 						<>
 							<Button className="email-signup-titan-card__suggestion-action">
-								{ this.props.skipButtonTitle }
+								{ skipButtonTitle }
 							</Button>
 							<Button className="email-signup-titan-card__suggestion-action" primary>
-								{ this.props.addButtonTitle }
+								{ addButtonTitle }
 							</Button>
 						</>
 					) }
-					{ this.props.showChevron && (
+					{ showChevron && (
 						<Gridicon
 							className="email-signup-titan-card__suggestion-chevron"
 							icon="chevron-right"

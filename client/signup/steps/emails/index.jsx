@@ -38,7 +38,7 @@ class EmailsStep extends React.Component {
 			<div className="emails__register-email-step">
 				<CalypsoShoppingCartProvider>
 					<EmailSignupTitanCard
-						siteUrl={ this.props.signupDependencies.domainItem.meta }
+						siteUrl={ this.props.signupDependencies.domainItem?.meta }
 						//TODO
 						addButtonTitle={ this.props.translate( 'Add' ) }
 						skipButtonTitle={ this.props.translate( 'Skip' ) }
@@ -71,11 +71,11 @@ class EmailsStep extends React.Component {
 		const headerText = translate( 'Add Professional Email' );
 		const domainName = this.props.progress.domains.siteUrl;
 		const subHeaderText = translate(
-			`Add a custom email address to start sending and receiving emails from {{b}}%(domainName)s{{/b}} today.`,
+			'Add a custom email address to start sending and receiving emails from {{strong}}%(domainName)s{{/strong}} today.',
 			{
 				args: { domainName },
-				components: { b: <strong /> },
-				comment: 'DomainName is the domain that will be shown as part of your email address',
+				components: { strong: <strong /> },
+				comment: '%(domainName)s is a domain name chosen by the user',
 			}
 		);
 		return (
