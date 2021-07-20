@@ -15,6 +15,11 @@ import ScreenOptionsTab from '../index';
 import { render as rtlRender } from 'config/testing-library';
 import { reducer as ui } from 'calypso/state/ui/reducer';
 
+jest.mock( 'calypso/state/preferences/selectors', () => ( {
+	hasReceivedRemotePreferences: jest.fn( () => true ),
+	getPreference: jest.fn( () => true ),
+} ) );
+
 const render = ( el, options ) => rtlRender( el, { ...options, reducers: { ui } } );
 
 const siteId = 1;
