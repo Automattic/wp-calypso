@@ -1,8 +1,6 @@
 name: Happiness Bug Report
 description: Helps us improve our product!
-title: ""
 labels: "User Report, [Type] Bug"
-assignees: ''
 body:
   - type: markdown
     attributes:
@@ -40,6 +38,7 @@ body:
         - Windows
         - macOS
         - Linux
+      multiple: true
     validations:
       required: true
   - type: input
@@ -55,6 +54,7 @@ body:
         - Firefox
         - Safari
         - Microsoft Edge (legacy)
+      multiple: true
     validations:
       required: true
   - type: input
@@ -71,6 +71,7 @@ body:
       options:
         - Simple
         - Atomic
+      multiple: true
   - type: textarea
     id: errors
     attributes:
@@ -79,7 +80,7 @@ body:
     id: impact
     attributes:
       label: Level of impact
-      description: Does it block purchases? Does it affect more than one site?
+      description: Does it block a core feature? Does it impact more than one site?
       options:
         - Low
         - Normal
@@ -98,3 +99,4 @@ body:
     id: other
     attributes:
       label: Other information
+      placeholder: logs, notes, etc.
