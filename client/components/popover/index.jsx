@@ -40,7 +40,7 @@ class PopoverInner extends Component {
 		className: '',
 		closeOnEsc: true,
 		isRtl: false,
-		isFocusEnabled: true,
+		focusOnShow: true,
 		position: 'top',
 		onShow: noop,
 		onClose: noop,
@@ -74,7 +74,7 @@ class PopoverInner extends Component {
 
 	componentDidMount() {
 		this.bindListeners();
-		this.setPositionAndFocus();
+		this.setPosition();
 		this.show();
 	}
 
@@ -193,13 +193,6 @@ class PopoverInner extends Component {
 	onWindowChange = () => {
 		this.setPosition();
 	};
-
-	setPositionAndFocus() {
-		this.setPosition();
-		if ( this.props.isFocusEnabled ) {
-			this.focusPopover();
-		}
-	}
 
 	focusPopover() {
 		// Defer the focus a bit to make sure that the popover already has the final position.
@@ -328,6 +321,10 @@ class PopoverInner extends Component {
 	}
 
 	show() {
+		if ( this.props.focusOnShow ) {
+			this.focusPopover();
+		}
+
 		this.props.onShow();
 	}
 
@@ -439,7 +436,7 @@ Popover.propTypes = {
 	context: PropTypeElement,
 	ignoreContext: PropTypeElement,
 	isVisible: PropTypes.bool,
-	isFocusEnabled: PropTypes.bool,
+	focusOnShow: PropTypes.bool,
 	position: PropTypes.oneOf( [
 		'top',
 		'top right',
