@@ -34,28 +34,29 @@ class EmailsStep extends React.Component {
 	};
 
 	renderContent() {
+		const { signupDependencies, step, stepSectionName, translate } = this.props;
+
 		const content = (
 			<div className="emails__register-email-step">
 				<CalypsoShoppingCartProvider>
 					<EmailSignupTitanCard
-						siteUrl={ this.props.signupDependencies.domainItem?.meta }
+						siteUrl={ signupDependencies.domainItem?.meta }
 						//TODO
-						addButtonTitle={ this.props.translate( 'Add' ) }
-						skipButtonTitle={ this.props.translate( 'Skip' ) }
+						addButtonTitle={ translate( 'Add' ) }
+						skipButtonTitle={ translate( 'Skip' ) }
 						onAddButtonClick={ () => {} }
 						onSkipButtonClick={ () => {} }
-						//TODO
-						price={ '3.5$' }
 					/>
 				</CalypsoShoppingCartProvider>
 			</div>
 		);
+
 		const sideContent = this.renderSideContent();
 
 		return (
 			<div className="emails__email-suggestion-content-container">
 				<div
-					key={ this.props.step + this.props.stepSectionName }
+					key={ step + stepSectionName }
 					className="emails__step-content emails__step-content-email-step"
 				>
 					{ content }

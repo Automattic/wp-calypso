@@ -14,9 +14,11 @@ import { Icon } from '@wordpress/icons';
  * Internal dependencies
  */
 import EmailProductPrice from 'calypso/components/emails/email-product-price';
+import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import Gridicon from 'calypso/components/gridicon';
 import tip from 'calypso/components/domains/register-domain-step/tip';
+import { TITAN_MAIL_MONTHLY_SLUG } from '@automattic/calypso-products';
 
 /**
  * Style dependencies
@@ -45,7 +47,7 @@ class EmailSignupTitanCard extends React.Component {
 	};
 
 	renderEmailSuggestion( customDomainName ) {
-		const { price, salePrice, translate } = this.props;
+		const { salePrice, titanMonthlyRenewalCost, translate } = this.props;
 
 		return (
 			<div className="email-signup-titan-card__suggestion-content">
@@ -57,7 +59,7 @@ class EmailSignupTitanCard extends React.Component {
 					} ) }
 				</h3>
 				<EmailProductPrice
-					price={ price }
+					price={ titanMonthlyRenewalCost }
 					salePrice={ salePrice }
 					isSignupStep={ true }
 					showStrikedOutPrice={ false }
@@ -80,6 +82,7 @@ class EmailSignupTitanCard extends React.Component {
 			addButtonTitle,
 			extraClasses,
 			isReskinned,
+			onSkipButtonClick,
 			showChevron,
 			signupDependencies,
 			skipButtonTitle,
@@ -102,7 +105,10 @@ class EmailSignupTitanCard extends React.Component {
 					{ this.renderEmailSuggestion( domainItem ) }
 					{ wrapDivActionContainer(
 						<>
-							<Button className="email-signup-titan-card__suggestion-action">
+							<Button
+								className="email-signup-titan-card__suggestion-action"
+								onClick={ onSkipButtonClick }
+							>
 								{ skipButtonTitle }
 							</Button>
 							<Button className="email-signup-titan-card__suggestion-action" primary>
@@ -125,7 +131,9 @@ class EmailSignupTitanCard extends React.Component {
 
 export default connect( ( state ) => {
 	const signupDependencies = getSignupDependencyStore( state );
+	const titanMonthlyRenewalCost = getProductDisplayCost( state, TITAN_MAIL_MONTHLY_SLUG );
 	return {
 		signupDependencies,
+		titanMonthlyRenewalCost,
 	};
 } )( localize( EmailSignupTitanCard ) );
