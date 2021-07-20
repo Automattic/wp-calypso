@@ -299,6 +299,11 @@
 	width: 90px;
 }
 
+.list__domains-header {
+	flex: 1;
+	margin-right: 8px;
+}
+
 .list__domain-options {
 	width: 65px;
 	font-size: $font-body-small;

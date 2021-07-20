@@ -175,7 +175,7 @@ class ListHeader extends React.PureComponent {
 	renderDefaultHeaderContent() {
 		return (
 			<>
-				<span style={ { flex: 1 } }>Your site domains</span>
+				<span className="list__domains-header">Your site domains</span>
 				{ this.renderAddDomainToThisSiteButton() }
 			</>
 		);
