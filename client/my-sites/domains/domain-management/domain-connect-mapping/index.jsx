@@ -26,6 +26,7 @@ import SectionHeader from 'calypso/components/section-header';
 import wp from 'calypso/lib/wp';
 import { navigate } from 'calypso/lib/navigate';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 const wpcom = wp.undocumented();
 
@@ -63,6 +64,8 @@ class DomainConnectMapping extends React.Component {
 
 		const { translate } = this.props;
 
+		this.props.recordConfigureYourDomainError( this.props.selectedDomainName );
+
 		return (
 			<Notice status="is-error" icon="notice" onDismissClick={ this.dismissNotice }>
 				{ translate(
@@ -94,6 +97,8 @@ class DomainConnectMapping extends React.Component {
 					'take effect at your domain provider.'
 			);
 		}
+
+		this.props.recordConfigureYourDomainSuccess( this.props.selectedDomainName );
 
 		return (
 			<Notice status="is-success" icon="checkmark" showDismiss={ false }>
@@ -178,6 +183,8 @@ class DomainConnectMapping extends React.Component {
 	applyDomainConnectMappingTemplate = () => {
 		this.setState( { submitting: true } );
 
+		this.props.recordConfigureYourDomainClick( this.props.selectedDomainName );
+
 		const redirectUri =
 			'https://wordpress.com' +
 			domainManagementDomainConnectMapping(
@@ -198,7 +205,12 @@ class DomainConnectMapping extends React.Component {
 				( data ) => {
 					const success = get( data, 'success', false );
 					const syncUxUrl = get( data, 'sync_ux_apply_url', null );
+
 					if ( success && syncUxUrl ) {
+						this.props.recordConfigureYourDomainRedirect(
+							this.props.selectedDomainName,
+							syncUxUrl
+						);
 						navigate( syncUxUrl );
 					} else {
 						this.setState( {
@@ -227,6 +239,35 @@ class DomainConnectMapping extends React.Component {
 	};
 }
 
-export default connect( ( state ) => ( {
-	currentRoute: getCurrentRoute( state ),
-} ) )( localize( DomainConnectMapping ) );
+const recordConfigureYourDomainClick = ( domain_name ) =>
+	recordTracksEvent( 'calypso_domain_connect_configure_your_domain_click', {
+		domain_name,
+	} );
+
+const recordConfigureYourDomainRedirect = ( domain_name, sync_ux_url ) =>
+	recordTracksEvent( 'calypso_domain_connect_configure_your_domain_recirect', {
+		domain_name,
+		sync_ux_url,
+	} );
+
+const recordConfigureYourDomainSuccess = ( domain_name ) =>
+	recordTracksEvent( 'calypso_domain_connect_configure_your_domain_success', {
+		domain_name,
+	} );
+
+const recordConfigureYourDomainError = ( domain_name ) =>
+	recordTracksEvent( 'calypso_domain_connect_configure_your_domain_error', {
+		domain_name,
+	} );
+
+export default connect(
+	( state ) => ( {
+		currentRoute: getCurrentRoute( state ),
+	} ),
+	{
+		recordConfigureYourDomainClick,
+		recordConfigureYourDomainRedirect,
+		recordConfigureYourDomainSuccess,
+		recordConfigureYourDomainError,
+	}
+)( localize( DomainConnectMapping ) );
