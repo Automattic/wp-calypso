@@ -125,10 +125,10 @@ export function getSignupUrl(
 		includes( get( currentQuery, 'redirect_to' ), 'action=jetpack-sso' ) &&
 		includes( get( currentQuery, 'redirect_to' ), 'sso_nonce=' )
 	) {
-		const oauth2Params = new URLSearchParams( {
-			oauth2_redirect: redirectTo,
+		const params = new URLSearchParams( {
+			redirect_to: redirectTo,
 		} );
-		signupUrl = `/start/account?${ oauth2Params.toString() }`;
+		signupUrl = `/start/account?${ params.toString() }`;
 	}
 
 	return signupUrl;
