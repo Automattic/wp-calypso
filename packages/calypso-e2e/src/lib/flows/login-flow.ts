@@ -70,11 +70,8 @@ export class LoginFlow {
 		// For more information, see https://playwright.dev/docs/multi-pages#handling-popups
 		// under 'unknown trigger'.
 		const popupPage = await this.page.waitForEvent( 'popup' );
-		// this.page.on( 'popup', async ( popupPage ) => {
-		// 	await popupPage.waitForLoadState( 'networkidle' );
-		// 	await this.baseflow( popupPage );
-		// 	await popupPage.waitForEvent( 'close' );
-		// } );
+
+		await popupPage.waitForLoadState( 'networkidle' );
 
 		// Execute the login steps using the popup page, not the base page.
 		await this.baseflow( popupPage );

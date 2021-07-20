@@ -1,3 +1,4 @@
+import assert from 'assert';
 import {
 	DataHelper,
 	BrowserManager,
@@ -16,6 +17,8 @@ const quote =
 
 describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 	let page;
+	const mainUser = 'gutenbergSimpleSiteUser';
+	const anotherUser = 'defaultUser';
 
 	setupHooks( ( args ) => {
 		page = args.page;
@@ -27,7 +30,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 		let publishedURL;
 
 		it( 'Log in', async function () {
-			const loginFlow = new LoginFlow( page, 'gutenbergSimpleSiteUser' );
+			const loginFlow = new LoginFlow( page, mainUser );
 			await loginFlow.logIn();
 		} );
 
@@ -48,6 +51,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 
 		it( 'Publish and visit post', async function () {
 			publishedURL = await gutenbergEditorPage.publish( { visit: true } );
+			assert.strictEqual( publishedURL, await page.url() );
 		} );
 
 		it( 'Like post', async function () {
@@ -63,22 +67,14 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 			await BrowserManager.clearCookies( page );
 		} );
 
-		it( 'Like post as another user', async function () {
+		it( `Like post as ${ anotherUser }`, async function () {
 			publishedPostPage = await PublishedPostPage.Expect( page );
 
-			// await Promise.all( [
-			// 	page.on( 'popup', async ( popupPage ) => {
-			// 		const loginFlow = new LoginFlow( popupPage, 'defaultUser' );
-			// 		await loginFlow.logIn();
-			// 		await popupPage.waitForEvent( 'close' );
-			// 	} ),
-			// 	publishedPostPage.likePost(),
-			// ] );
+			const loginFlow = new LoginFlow( page, anotherUser );
 
-			const loginFlow = new LoginFlow( page, 'defaultUser' );
-
-			// Clicking the Like button will bring up a new popup, so
-			// specifically call the flow for dealing with logging in from a popup.
+			// Clicking the Like button will bring up a new popup.
+			// `loginFromPopup` will observe for a popup event, grab the new popup and
+			// execute the login process on that page.
 			await Promise.all( [ loginFlow.logInFromPopup(), publishedPostPage.likePost() ] );
 		} );
 	} );
