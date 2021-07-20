@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import FollowButtonContainer from 'calypso/blocks/follow-button';
 import Gridicon from 'calypso/components/gridicon';
+import { useQuery } from 'react-query';
 
 /**
  * Internal dependencies
@@ -13,16 +14,10 @@ import Gridicon from 'calypso/components/gridicon';
 import Main from 'calypso/components/main';
 import { Button } from '@automattic/components';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import DocumentHead from 'calypso/components/data/document-head';
-import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import {
-	getPostsForQueryIgnoringPage,
-	isRequestingPostsForQueryIgnoringPage,
-} from 'calypso/state/posts/selectors';
-import QueryPosts from 'calypso/components/data/query-posts';
+import wp from 'calypso/lib/wp';
 
 /**
  * Style dependencies
@@ -34,14 +29,25 @@ const query = {
 	author: null,
 	number: 3,
 	order: 'DESC',
+	http_envelope: 1,
 	status: 'publish',
 	type: 'post',
 	category: 'testing',
 };
 const horizonSiteId = 90972941;
 
-const BetaTesting = ( { siteId, posts, isRequestingPosts, trackViewHorizonAction } ) => {
+const BetaTesting = ( { trackViewHorizonAction } ) => {
 	const translate = useTranslate();
+	const { data = {}, isFetching: isRequestingPosts } = useQuery( 'horizon-posts', () =>
+		wp.req.get(
+			{
+				path: `/sites/${ horizonSiteId }/posts`,
+				apiNamespace: 'rest/v1.1',
+			},
+			query
+		)
+	);
+	const { posts } = data;
 
 	const main = (
 		<section className="beta-testing">
@@ -120,48 +126,37 @@ const BetaTesting = ( { siteId, posts, isRequestingPosts, trackViewHorizonAction
 						</Fragment>
 					) }
 
-					{ posts?.map( ( post ) => {
-						return (
-							<article key={ post.ID } className="beta-testing__post">
-								<CardHeading tagName="h4" size={ 16 }>
-									<a href={ post.URL }>{ post.title }</a>
-								</CardHeading>
-								<p>{ post.excerpt }</p>
-
-								<a className="beta-testing__post-read" href={ post.URL }>
-									{ translate( 'Read more' ) }
-								</a>
-							</article>
-						);
-					} ) }
+					{ posts &&
+						posts.map( ( post ) => {
+							return (
+								<article key={ post.ID } className="beta-testing__post">
+									<CardHeading tagName="h4" size={ 16 }>
+										<a href={ post.URL }>{ post.title }</a>
+									</CardHeading>
+									<div
+										dangerouslySetInnerHTML={ { __html: post.excerpt } } // eslint-disable-line react/no-danger
+									></div>
+									<a className="beta-testing__post-read" href={ post.URL }>
+										{ translate( 'Read more' ) }
+									</a>
+								</article>
+							);
+						} ) }
 				</div>
 			</div>
 		</section>
 	);
 	return (
 		<Main wideLayout>
-			<QueryPosts siteId={ horizonSiteId } query={ { ...query } } />
 			<PageViewTracker
 				path={ `/beta-testing/:site` }
 				title={ translate( 'Beta Testing', { context: 'Plugin Installer' } ) }
 			/>
 			<DocumentHead title={ translate( 'Beta Testing', { context: 'Plugin Installer' } ) } />
-			{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 			<SidebarNavigation />
 			{ main }
 		</Main>
 	);
-};
-
-const mapStateToProps = ( state ) => {
-	const siteId = getSelectedSiteId( state );
-
-	return {
-		site: getSelectedSite( state ),
-		posts: getPostsForQueryIgnoringPage( state, horizonSiteId, query ),
-		isRequestingPosts: isRequestingPostsForQueryIgnoringPage( state, horizonSiteId, query ),
-		siteId,
-	};
 };
 
 const trackViewHorizonAction = ( isStaticHomePage ) =>
@@ -185,4 +180,4 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	};
 };
 
-export default connect( mapStateToProps, mapDispatchToProps, mergeProps )( BetaTesting );
+export default connect( null, mapDispatchToProps, mergeProps )( BetaTesting );
