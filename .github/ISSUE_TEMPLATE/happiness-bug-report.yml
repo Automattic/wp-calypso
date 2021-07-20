@@ -24,15 +24,15 @@ body:
       label: What actually happened
     validations:
       required: true
-  - type: context
-    id: context
+  - type: textarea
+    id: issue_context
     attributes:
       label: Context
     validations:
       required: true
   - type: dropdown
     id: os
-    attriutes:
+    attributes:
       label: Operating System
       options:
         - Windows
@@ -43,11 +43,11 @@ body:
       required: true
   - type: input
     id: os_version
-    attriutes:
+    attributes:
       label: OS Version
   - type: dropdown
     id: browser
-    attriutes:
+    attributes:
       label: Browser
       options:
         - Chrome/Chromium
