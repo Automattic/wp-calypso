@@ -1,48 +1,17 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-.email-suggestion:not( .featured-email-suggestion ) {
+.email-suggestion {
 	display: flex;
 	flex-direction: column;
 
+	@include breakpoint-deprecated( '>480px' ) {
+		align-items: center;
+		flex-direction: row;
+	}
+
 	@include breakpoint-deprecated( '>660px' ) {
 		padding: 15px 20px;
-	}
-
-	.is-section-signup & {
-		@include breakpoint-deprecated( '>480px' ) {
-			flex-direction: row;
-			align-items: center;
-		}
-	}
-
-	.is-section-emails & {
-		@include breakpoint-deprecated( '>800px' ) {
-			flex-direction: row;
-			align-items: center;
-		}
-	}
-
-	&.is-added {
-		background-color: var( --color-neutral-0 );
-
-		.email-signup-titan-card__suggestion-content {
-			h3,
-			.email-product-price {
-				color: var( --color-neutral );
-			}
-		}
-	}
-
-	&.is-unavailable {
-		cursor: default;
-
-		.email-signup-titan-card__suggestion-content {
-			h3,
-			.email-product-price {
-				color: var( --color-neutral );
-			}
-		}
 	}
 }
 
@@ -54,57 +23,6 @@
 	@include breakpoint-deprecated( '>660px' ) {
 		display: flex;
 		justify-content: space-between;
-
-		&.email-signup-titan-card__suggestion-content-email {
-			justify-content: initial;
-		}
-	}
-
-	.notice.is-compact {
-		margin: 0 0 0 8px;
-		color: var( --color-text-inverted );
-
-		&.is-success {
-			background: var( --color-success );
-		}
-
-		&.is-info {
-			background: var( --color-primary );
-		}
-
-		&.is-warning {
-			background: var( --color-warning );
-		}
-
-		.notice__content {
-			padding: 4px 8px;
-		}
-	}
-
-	.notice__icon-wrapper {
-		display: none;
-	}
-
-	.is-placeholder & {
-		animation: loading-fade 1.6s ease-in-out infinite;
-		background-color: var( --color-neutral-0 );
-		color: transparent;
-		min-height: 44px;
-	}
-
-	@include breakpoint-deprecated( '>660px' ) {
-		.is-placeholder & {
-			margin-right: 50%;
-			min-height: 22px;
-		}
-
-		.is-placeholder:nth-of-type( 2n + 1 ) & {
-			margin-right: 52%;
-		}
-
-		.is-placeholder:nth-of-type( 1 ) & {
-			margin-right: 40%;
-		}
 	}
 
 	> h3 {
@@ -112,12 +30,6 @@
 
 		@include breakpoint-deprecated( '>660px' ) {
 			flex-grow: 2;
-		}
-	}
-
-	> div {
-		.is-placeholder & {
-			color: transparent;
 		}
 	}
 }
@@ -145,22 +57,6 @@
 		width: auto;
 		max-width: 100%;
 		padding-right: 0.2em;
-	}
-
-	.badge {
-		align-self: center;
-	}
-
-	.email-signup-titan-card__hsts-tooltip {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	body.is-section-signup .layout:not( .dops ) & {
-		.email-signup-titan-card__hsts-tooltip {
-			padding: 0;
-		}
 	}
 }
 
@@ -227,47 +123,14 @@
 	flex: 1 0 auto;
 	color: var( --color-neutral-light );
 
-	.is-placeholder & {
-		animation: loading-fade 1.6s ease-in-out infinite;
-		color: var( --color-neutral-0 );
-	}
-
 	.is-section-signup & {
 		@include breakpoint-deprecated( '>480px' ) {
-			display: block;
-		}
-	}
-
-	.is-section-emails & {
-		@include breakpoint-deprecated( '>800px' ) {
 			display: block;
 		}
 	}
 }
 
 body.is-section-signup.is-white-signup {
-	.email-signup-titan-card__progress-bar {
-		align-self: center;
-		margin-left: 0;
-		margin-top: 0;
-		margin-bottom: 10px;
-
-		.badge {
-			border-radius: 4px; /* stylelint-disable-line */
-			font-size: 0.75rem;
-			font-weight: 500; /* stylelint-disable-line */
-		}
-
-		@include break-xlarge {
-			margin-left: 12px;
-			margin-bottom: 0;
-		}
-	}
-
-	.featured-email-suggestion--is-placeholder .email-signup-titan-card__progress-bar {
-		margin-left: 0;
-	}
-
 	.email-suggestion {
 		flex-direction: column;
 		box-shadow: none;
@@ -283,14 +146,10 @@ body.is-section-signup.is-white-signup {
 			margin: 0;
 		}
 
-		& .email-signup-titan-card__suggestion-content-email {
-			justify-content: space-between;
-			margin-right: 40px;
-		}
 
 		&:not( .featured-email-suggestion ) {
 			background: none;
-			border-radius: 4px;
+			border-radius: 4px; /* stylelint-disable-line */
 			border: 1px solid rgba( 220, 220, 222, 0.64 );
 			padding-left: 24px;
 			padding-right: 24px;
@@ -299,13 +158,7 @@ body.is-section-signup.is-white-signup {
 				font-size: 1.5rem; /* stylelint-disable-line */
 				line-height: 60px;
 
-				.email-signup-titan-card__email-title-name {
-					color: var( --studio-gray-60 );
-				}
 
-				.email-signup-titan-card__email-title-tld {
-					font-weight: 500; /* stylelint-disable-line */
-				}
 			}
 
 			.email-signup-titan-card__suggestion-action-container {
@@ -328,18 +181,6 @@ body.is-section-signup.is-white-signup {
 					width: auto;
 				}
 			}
-			&.email-skip-suggestion {
-				$cod-grey: #2b2d2f;
-
-				.email-signup-titan-card__suggestion-action {
-					color: $cod-grey;
-					text-decoration-line: underline;
-				}
-				.email-signup-titan-card__suggestion-chevron {
-					fill: $cod-grey;
-					margin-left: 0;
-				}
-			}
 		}
 	}
 }
@@ -360,13 +201,4 @@ body.is-section-signup.is-white-signup {
 	@include break-xlarge {
 		margin: 0;
 	}
-}
-
-.email-signup-titan-card__suggestion-price-placeholder {
-	animation: loading-fade 1.6s ease-in-out infinite;
-	background-color: var( --color-neutral-0 );
-	color: transparent;
-	height: 16px;
-	margin: auto 0;
-	width: 20%;
 }

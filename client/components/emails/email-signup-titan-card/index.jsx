@@ -94,7 +94,7 @@ class EmailSignupTitanCard extends React.Component {
 	render() {
 		const { extraClasses, isReskinned } = this.props;
 		const domainItem = this.props.signupDependencies.domainItem.meta;
-		const classes = classNames( 'email-suggestion', 'card', 'is-compact', extraClasses );
+		const classes = classNames( 'email-suggestion', extraClasses );
 
 		const wrapDivActionContainer = ( contentElement ) =>
 			isReskinned ? (
@@ -107,7 +107,7 @@ class EmailSignupTitanCard extends React.Component {
 
 		return (
 			<>
-				<Card className={ classes }>
+				<Card className={ classes } compact>
 					{ this.renderEmailSuggestion( domainItem ) }
 					{ wrapDivActionContainer(
 						<>
