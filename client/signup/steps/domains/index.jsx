@@ -118,7 +118,10 @@ class DomainsStep extends React.Component {
 					isPurchasingItem: true,
 					stepSectionName: props.stepSectionName,
 				},
-				{ domainItem }
+				{
+					domainItem,
+					siteUrl: domain,
+				}
 			);
 
 			props.goToNextStep();

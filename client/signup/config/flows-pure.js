@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
+import { isEnabled } from '@automattic/calypso-config';
 
 const noop = () => {};
 
@@ -112,7 +113,9 @@ export function generateFlows( {
 		},
 		{
 			name: 'onboarding',
-			steps: [ 'user', 'domains', 'plans' ],
+			steps: isEnabled( 'signup/professional-email-step' )
+				? [ 'user', 'domains', 'emails', 'plans' ]
+				: [ 'user', 'domains', 'plans' ],
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
 			lastModified: '2020-12-10',
