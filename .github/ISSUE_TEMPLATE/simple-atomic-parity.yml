@@ -1,7 +1,7 @@
 name: Simple-Atomic Feature Parity
 description: Did you find something inconsistent or unexpected between the two platforms?
 title: "Feature Parity:"
-labels: "Sipmle/Atomic Parity"
+labels: "Simple/Atomic Parity"
 body:
   - type: dropdown
     id: plan
