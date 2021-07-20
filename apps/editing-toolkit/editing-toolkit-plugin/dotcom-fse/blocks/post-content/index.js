@@ -1,17 +1,11 @@
-/**
- * External dependencies
- */
-import { createHigherOrderComponent } from '@wordpress/compose';
 import { registerBlockType } from '@wordpress/blocks';
-import { __ } from '@wordpress/i18n';
+import { createHigherOrderComponent } from '@wordpress/compose';
 import { addFilter } from '@wordpress/hooks';
-
-/**
- * Internal dependencies
- */
+import { __ } from '@wordpress/i18n';
+import { getCategoryWithFallbacks } from '../../../block-helpers';
 import edit from './edit';
 import save from './save';
-import { getCategoryWithFallbacks } from '../../../block-helpers';
+
 import './style.scss';
 
 registerBlockType( 'a8c/post-content', {

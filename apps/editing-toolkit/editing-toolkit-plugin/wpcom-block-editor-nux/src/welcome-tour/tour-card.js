@@ -1,22 +1,16 @@
-/**
- * Internal dependencies
- */
-import './style-tour.scss';
-import PaginationControl from './pagination';
-import minimize from './icons/minimize';
-import thumbsUp from './icons/thumbs_up';
-import thumbsDown from './icons/thumbs_down';
-
-/**
- * External dependencies
- */
-import classNames from 'classnames';
-import { Button, Card, CardBody, CardFooter, CardMedia, Flex } from '@wordpress/components';
-import { close } from '@wordpress/icons';
-import { useEffect } from '@wordpress/element';
-import { useDispatch, useSelect } from '@wordpress/data';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Button, Card, CardBody, CardFooter, CardMedia, Flex } from '@wordpress/components';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { close } from '@wordpress/icons';
+import classNames from 'classnames';
+import minimize from './icons/minimize';
+import thumbsDown from './icons/thumbs_down';
+import thumbsUp from './icons/thumbs_up';
+import PaginationControl from './pagination';
+
+import './style-tour.scss';
 
 // eslint-disable-next-line react-hooks/exhaustive-deps
 const useEffectOnlyOnce = ( func ) => useEffect( func, [] );

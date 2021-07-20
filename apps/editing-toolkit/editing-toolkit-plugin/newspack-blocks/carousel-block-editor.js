@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { registerBlockType } from '@wordpress/blocks';
 import { addFilter } from '@wordpress/hooks';
-
-/**
- * External dependencies
- */
 import { settings } from './synced-newspack-blocks/blocks/carousel/index';
 
 /**

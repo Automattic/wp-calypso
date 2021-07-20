@@ -1,17 +1,12 @@
 /* global fullSiteEditing */
-/**
- * WordPress dependencies
- */
+
 import { registerBlockType } from '@wordpress/blocks';
-import { __ } from '@wordpress/i18n';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { addFilter } from '@wordpress/hooks';
-
-/**
- * Internal dependencies
- */
-import edit from './edit';
+import { __ } from '@wordpress/i18n';
 import { getCategoryWithFallbacks } from '../../../block-helpers';
+import edit from './edit';
+
 import './style.scss';
 import './site-logo';
 

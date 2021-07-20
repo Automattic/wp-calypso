@@ -1,18 +1,12 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button as OriginalButton } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import { STORE_KEY } from '../../constants';
 import SiteIcon from '../site-icon';
+
 import './style.scss';
 
 const Button = ( {

@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import { PluginSidebar, PluginSidebarMoreMenuItem } from '@wordpress/edit-post';
 import { Button, PanelBody } from '@wordpress/components';
+import { dispatch } from '@wordpress/data';
+import { PluginSidebar, PluginSidebarMoreMenuItem } from '@wordpress/edit-post';
+import { useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { getQueryArg } from '@wordpress/url';
-import { useEffect } from '@wordpress/element';
-import { dispatch } from '@wordpress/data';
-
-/**
- * Internal dependencies
- */
+import { FONT_BASE, FONT_HEADINGS } from './constants';
 import FontPairingsPanel from './font-pairings-panel';
 import FontSelectionPanel from './font-selection-panel';
 import { GlobalStylesIcon } from './icon';
-import { FONT_BASE, FONT_HEADINGS } from './constants';
 
 const ANY_PROPERTY = 'ANY_PROPERTY';
 

@@ -1,15 +1,9 @@
 /* global fullSiteEditing */
-/**
- * External dependencies
- */
-import classNames from 'classnames';
-import { get, map } from 'lodash';
 
-/**
- * WordPress dependencies
- */
 import { withSelect } from '@wordpress/data';
 import { registerPlugin } from '@wordpress/plugins';
+import classNames from 'classnames';
+import { get, map } from 'lodash';
 
 const EditorTemplateClasses = withSelect( ( select ) => {
 	const { getEntityRecord } = select( 'core' );
