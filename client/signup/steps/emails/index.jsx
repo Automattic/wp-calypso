@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { defer } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -27,7 +28,7 @@ class EmailsStep extends React.Component {
 	}
 
 	handleSkip = () => {
-		const { flowName, goToNextStep, stepName } = this.props;
+		const { flowName, stepName } = this.props;
 
 		this.props.recordTracksEvent( 'calypso_signup_skip_step', {
 			section: 'signup',
@@ -35,9 +36,28 @@ class EmailsStep extends React.Component {
 			step: stepName,
 		} );
 
-		this.props.submitSignupStep( { stepName } );
+		this.submitEmailPurchase( undefined );
+	};
 
-		goToNextStep();
+	submitEmailPurchase = ( emailItem ) => {
+		defer( () => {
+			const { stepName, stepSectionName, goToNextStep } = this.props;
+			const { domainItem, shouldHideFreePlan } = this.props.signupDependencies;
+			const dependencies = {
+				emailItem,
+				domainItem,
+				shouldHideFreePlan,
+			};
+			this.props.submitSignupStep(
+				{
+					emailItem,
+					stepName,
+					stepSectionName: stepSectionName,
+				},
+				dependencies
+			);
+			goToNextStep();
+		} );
 	};
 
 	renderSideContent = () => {

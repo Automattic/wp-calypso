@@ -11,6 +11,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import flows from 'calypso/signup/config/flows';
 import MapDomainStep from 'calypso/components/domains/map-domain-step';
 import TransferDomainStep from 'calypso/components/domains/transfer-domain-step';
 import UseYourDomainStep from 'calypso/components/domains/use-your-domain-step';
@@ -303,6 +304,8 @@ class DomainsStep extends React.Component {
 			  } )
 			: undefined;
 
+		this.restoreAndExcludeEmailsStep( !! domainItem );
+
 		suggestion && this.props.submitDomainStepSelection( suggestion, this.getAnalyticsSection() );
 
 		this.props.submitSignupStep(
@@ -330,6 +333,13 @@ class DomainsStep extends React.Component {
 		// Start the username suggestion process.
 		siteUrl && this.props.fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] );
 	};
+
+	restoreAndExcludeEmailsStep( exclude ) {
+		flows.resetExcludedStep( 'emails' );
+		if ( ! exclude ) {
+			flows.excludeStep( 'emails' );
+		}
+	}
 
 	handleAddMapping = ( sectionName, domain, state ) => {
 		const domainItem = domainMapping( { domain } );
@@ -679,6 +689,7 @@ class DomainsStep extends React.Component {
 		if ( isReskinned ) {
 			return ! stepSectionName && translate( 'Choose a domain' );
 		}
+		this.restoreAndExcludeEmailsStep( true );
 
 		const headerPropertyName = 'signUpFlowDomainsStepHeader';
 

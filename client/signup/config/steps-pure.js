@@ -307,13 +307,7 @@ export function generateSteps( {
 		emails: {
 			stepName: 'emails',
 			dependencies: [ 'domainItem' ],
-			providesDependencies: [
-				'siteId',
-				'domainItem',
-				'themeItem',
-				'shouldHideFreePlan',
-				'isManageSiteFlow',
-			],
+			providesDependencies: [ 'domainItem', 'shouldHideFreePlan', 'emailItem' ],
 			apiRequestFunction: addEmailToCart,
 			props: {
 				isDomainOnly: false,
