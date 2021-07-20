@@ -4,25 +4,25 @@ title: "Flaky E2E:"
 labels: "Flaky e2e"
 body:
   - type: markdown
-      attributes:
-        value: |
-          Thanks for reporting a flaky spec!
+    attributes:
+      value: |
+        Thanks for reporting a flaky spec!
   - type: input
-      id: spec
-      attributes:
-        label: Spec
-        description: Name of the spec file that is flaky.
-        placeholder: eg. wp-likes__post.js
-      validations:
-        required: true
+    id: spec
+    attributes:
+      label: Spec
+      description: Name of the spec file that is flaky.
+      placeholder: eg. wp-likes__post.js
+    validations:
+      required: true
   - type: input
-      id: suite
-      attributes:
-        label: Suite
-        description: Name of the suite or step that is flaky.
-        placeholder: eg. Like a new Post
-      validations:
-        required: true
+    id: suite
+    attributes:
+      label: Suite
+      description: Name of the suite or step that is flaky.
+      placeholder: eg. Like a new Post
+    validations:
+      required: true
   - type: dropdown
     id: framework
     attributes:
@@ -31,12 +31,13 @@ body:
       options:
         - Selenium
         - Playwright
+      multiple: true
     validations:
       required: true
   - type: textarea
-      id: logs
-      attributes:
-        label: Logs
-        description: Add relevant logs.
-      validations:
-        required: true
+    id: logs
+    attributes:
+      label: Logs
+      description: Add relevant logs.
+    validations:
+      required: true
