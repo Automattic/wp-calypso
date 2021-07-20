@@ -30,7 +30,7 @@ const fetchFilters = ( action ) =>
 
 const storeFilters = ( action, data ) => {
 	let filters = action.isFse ? data : omit( data, 'feature.full-site-editing' );
-	filters = action.isCoreFse ? data : omit( data, 'feature.block-templates' );
+	filters = action.isCoreFse ? filters : omit( filters, 'feature.block-templates' );
 	return { type: THEME_FILTERS_ADD, filters };
 };
 
