@@ -89,7 +89,7 @@ class ThemeShowcase extends React.Component {
 				show: this.props.isJetpackSite,
 			},
 			ALL: { key: 'all', text: props.translate( 'All Themes' ), order: 4, show: true },
-			FSE: { key: 'fse', text: props.translate( 'FSE' ), order: 4 },
+			FSE: { key: 'fse', text: props.translate( 'Full Site Editing' ), order: 4 },
 		};
 		this.state = {
 			tabFilter:
