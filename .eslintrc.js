@@ -177,6 +177,7 @@ module.exports = {
 		},
 		{
 			files: [
+				'apps/editing-toolkit/**/*',
 				'client/sections-filter.js',
 				'client/sections-helper.js',
 				'client/sections-middleware.js',

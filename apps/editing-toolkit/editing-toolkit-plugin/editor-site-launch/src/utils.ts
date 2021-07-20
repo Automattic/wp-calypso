@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { doAction, hasAction } from '@wordpress/hooks';
 import { addQueryArgs } from '@wordpress/url';
 import { FOCUSED_LAUNCH_FLOW, IMMEDIATE_LAUNCH_QUERY_ARG } from './constants';

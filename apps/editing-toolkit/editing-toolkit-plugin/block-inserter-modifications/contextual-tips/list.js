@@ -1,12 +1,5 @@
-/**
- * WordPress dependencies
- */
-import { __ } from '@wordpress/i18n';
 import { createInterpolateElement } from '@wordpress/element';
-
-/**
- * Internal dependencies
- */
+import { __ } from '@wordpress/i18n';
 import TipLink from './tip-link';
 
 function getTipDescription( text, conversion, textFallback ) {

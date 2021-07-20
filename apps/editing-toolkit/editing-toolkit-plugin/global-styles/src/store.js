@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import apiFetch from '@wordpress/api-fetch';
 import { registerStore } from '@wordpress/data';
 

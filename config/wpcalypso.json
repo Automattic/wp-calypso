@@ -7,7 +7,6 @@
 	"happychat_url": "https://happychat-io-staging.go-vip.co/customer",
 	"hostname": "wpcalypso.wordpress.com",
 	"i18n_default_locale_slug": "en",
-	"rtl": false,
 	"signup_url": "/start",
 	"gutenboarding_url": "/new",
 	"login_url": "https://wordpress.com/wp-login.php",
