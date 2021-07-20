@@ -263,42 +263,6 @@
 	}
 }
 
-.list__domain-transfer-lock,
-.list__domain-auto-renew,
-.list__domain-privacy,
-.list__domain-email {
-	flex-shrink: 0;
-	text-align: center;
-	font-size: $font-body-small;
-	margin-right: 8px;
-
-	@include breakpoint-deprecated( '<960px' ) {
-		display: none;
-	}
-
-	span {
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
-}
-
-.list__domain-transfer-lock {
-	width: 105px;
-}
-
-.list__domain-auto-renew {
-	width: 96px;
-}
-
-.list__domain-privacy {
-	width: 80px;
-}
-
-.list__domain-email {
-	width: 90px;
-}
-
 .list__domains-header {
 	flex: 1;
 	margin-right: 8px;
@@ -326,10 +290,6 @@
 }
 
 .domain-item__enable-selection {
-	> .list__domain-transfer-lock,
-	> .list__domain-privacy,
-	> .list__domain-auto-renew,
-	> .list__domain-email,
 	> .list__domain-options {
 		visibility: hidden;
 	}
