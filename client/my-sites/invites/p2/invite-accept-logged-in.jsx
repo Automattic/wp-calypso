@@ -38,8 +38,13 @@ export function renderAcceptForP2( props ) {
 					</div>
 				</div>
 				<div className="invite-accept-logged-in__buttons">
-					<Button primary onClick={ props.accept } disabled={ props.isSubmitting }>
-						{ props.buttonText }
+					<Button
+						primary
+						onClick={ props.accept }
+						disabled={ props.isSubmitting }
+						className={ props.isSubmitting ? 'is-busy' : '' }
+					>
+						{ ! props.isSubmitting ? props.buttonText : '' }
 					</Button>
 					<Button onClick={ props.decline } disabled={ props.isSubmitting }>
 						{ props.translate( 'Cancel', { context: 'button' } ) }
