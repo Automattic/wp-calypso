@@ -74,9 +74,20 @@ class ThemeShowcase extends React.Component {
 		this.scrollRef = React.createRef();
 		this.bookmarkRef = React.createRef();
 		this.tabFilters = {
-			RECOMMENDED: { key: 'recommended', text: props.translate( 'Recommended' ), order: 1 },
-			ALL: { key: 'all', text: props.translate( 'All Themes' ), order: 2 },
-			TRENDING: { key: 'trending', text: props.translate( 'Trending' ), order: 3 },
+			RECOMMENDED: {
+				key: 'recommended',
+				text: props.translate( 'Recommended' ),
+				order: 1,
+				show: true,
+			},
+			TRENDING: { key: 'trending', text: props.translate( 'Trending' ), order: 2, show: true },
+			MYTHEMES: {
+				key: 'my-themes',
+				text: props.translate( 'My Themes' ),
+				order: 3,
+				show: this.props.isJetpackSite,
+			},
+			ALL: { key: 'all', text: props.translate( 'All Themes' ), order: 4, show: true },
 		};
 		this.state = {
 			tabFilter:
@@ -304,20 +315,13 @@ class ThemeShowcase extends React.Component {
 			getActionLabel: ( theme ) => getScreenshotOption( theme ).label,
 			trackScrollPage: this.props.trackScrollPage,
 			emptyContent: this.props.emptyContent,
+			scrollToSearchInput: this.scrollToSearchInput,
 			getOptions: ( theme ) =>
 				pickBy(
 					addTracking( options ),
 					( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
 				),
 		};
-
-		let selectedText = translate( 'All Themes' );
-
-		if ( 'recommended' === this.state.tabFilter ) {
-			selectedText = translate( 'Recommended' );
-		} else if ( 'uploaded' === this.state.tabFilter ) {
-			selectedText = translate( 'My Themes' );
-		}
 
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
@@ -348,29 +352,24 @@ class ThemeShowcase extends React.Component {
 							<NavTabs>
 								{ Object.values( this.tabFilters )
 									.sort( ( a, b ) => a.order - b.order )
-									.map( ( tabFilter ) => (
-										<NavItem
-											key={ tabFilter.key }
-											onClick={ () => this.onFilterClick( tabFilter ) }
-											selected={ tabFilter.key === this.state.tabFilter.key }
-										>
-											{ tabFilter.text }
-										</NavItem>
-									) ) }
+									.map(
+										( tabFilter ) =>
+											tabFilter.show && (
+												<NavItem
+													key={ tabFilter.key }
+													onClick={ () => this.onFilterClick( tabFilter ) }
+													selected={ tabFilter.key === this.state.tabFilter.key }
+												>
+													{ tabFilter.text }
+												</NavItem>
+											)
+									) }
 							</NavTabs>
 						</SectionNav>
 					) }
-
 					{ this.props.upsellBanner }
-
-					{ 'recommended' === this.state.tabFilter.key && (
-						<RecommendedThemes
-							listLabel={ ' ' }
-							{ ...themeProps }
-							scrollToSearchInput={ this.scrollToSearchInput }
-						/>
-					) }
-					{ 'all' === this.state.tabFilter.key && (
+					{ 'recommended' === this.state.tabFilter.key && <RecommendedThemes { ...themeProps } /> }
+					{ 'all' === this.state.tabFilter.key &&
 						( isJetpackSite ? (
 							this.props.children
 						) : (
@@ -378,21 +377,11 @@ class ThemeShowcase extends React.Component {
 								{ ! this.props.loggedOutComponent && showBanners && (
 									<UpworkBanner location={ 'theme-banner' } />
 								) }
-								<ThemesSelection listLabel={ this.props.listLabel } { ...themeProps } />
+								<ThemesSelection { ...themeProps } />
 							</div>
-						) )
-					) }
-					{ 'uploaded' === this.state.tabFilter && (
-						<ThemesSelection listLabel={ this.props.listLabel } { ...themeProps } />
-					) }
-
-					{ 'trending' === this.state.tabFilter.key && (
-						<TrendingThemes
-							listLabel={ ' ' }
-							{ ...themeProps }
-							scrollToSearchInput={ this.scrollToSearchInput }
-						/>
-					) }
+						) ) }
+					{ 'my-themes' === this.state.tabFilter.key && <ThemesSelection { ...themeProps } /> }
+					{ 'trending' === this.state.tabFilter.key && <TrendingThemes { ...themeProps } /> }
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 					<ThanksModal source={ 'list' } />
