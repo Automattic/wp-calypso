@@ -30,6 +30,8 @@ import {
 	requestThemeFilters,
 	getRecommendedThemes,
 	receiveRecommendedThemes,
+	getFullSiteEditingThemes,
+	receiveFullSiteEditingThemes,
 } from '../actions';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import {
@@ -59,6 +61,8 @@ import {
 	THEMES_REQUEST,
 	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
+	FULL_SITE_EDITING_THEMES_FETCH,
+	FULL_SITE_EDITING_THEMES_SUCCESS,
 } from 'calypso/state/themes/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
 
@@ -1181,6 +1185,27 @@ describe( 'actions', () => {
 			receiveRecommendedThemes( themes, filter )( spy );
 			expect( spy ).to.have.been.calledWith( {
 				type: RECOMMENDED_THEMES_SUCCESS,
+				payload: themes,
+				filter,
+			} );
+		} );
+	} );
+
+	describe( '#getFullSiteEditingThemes()', () => {
+		const filter = 'nonsense-test-filter';
+		test( 'should dispatch fetch action', () => {
+			getFullSiteEditingThemes( filter )( spy );
+			expect( spy ).to.have.been.calledWith( { type: FULL_SITE_EDITING_THEMES_FETCH, filter } );
+		} );
+	} );
+
+	describe( '#receiveFullSiteEditingThemes()', () => {
+		const themes = [ 'a', 'b', 'c' ];
+		const filter = 'test-filter-nonsense';
+		test( 'should dispatch success action with themes as payload', () => {
+			receiveFullSiteEditingThemes( themes, filter )( spy );
+			expect( spy ).to.have.been.calledWith( {
+				type: FULL_SITE_EDITING_THEMES_SUCCESS,
 				payload: themes,
 				filter,
 			} );

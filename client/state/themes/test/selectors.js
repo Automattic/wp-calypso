@@ -42,6 +42,8 @@ import {
 	getRecommendedThemes,
 	getRecommendedThemesFilter,
 	areRecommendedThemesLoading,
+	getFullSiteEditingThemes,
+	areFullSiteEditingThemesLoading,
 } from '../selectors';
 import {
 	PLAN_FREE,
@@ -2532,5 +2534,53 @@ describe( '#areRecommendedThemesLoading', () => {
 
 	test( 'should return false when filter request not initiated', () => {
 		expect( areRecommendedThemesLoading( state, 'lolol' ) ).to.be.false;
+	} );
+} );
+
+describe( '#getFullSiteEditingThemes', () => {
+	const themes = [ 'a', 'b', 'c' ];
+	const filter = 'foobar';
+	const state = {
+		themes: {
+			fullSiteEditingThemes: {
+				[ filter ]: {
+					isLoading: false,
+					themes,
+				},
+			},
+		},
+	};
+	test( 'should return correct themes list for filter', () => {
+		const fullSiteEditingThemes = getFullSiteEditingThemes( state, filter );
+		expect( fullSiteEditingThemes ).to.equal( themes );
+	} );
+
+	test( 'should return empty themes list for unfetched filter', () => {
+		const fullSiteEditingThemes = getFullSiteEditingThemes( state, 'bazbazbaz' );
+		expect( fullSiteEditingThemes ).to.be.empty;
+	} );
+} );
+
+describe( '#areFullSiteEditingThemesLoading', () => {
+	const filterForIsLoading = 'foo';
+	const filterForNotLoading = 'bar';
+	const state = {
+		themes: {
+			fullSiteEditingThemes: {
+				[ filterForNotLoading ]: { isLoading: false },
+				[ filterForIsLoading ]: { isLoading: true },
+			},
+		},
+	};
+	test( 'should return true when loading', () => {
+		expect( areFullSiteEditingThemesLoading( state, filterForIsLoading ) ).to.be.true;
+	} );
+
+	test( 'should return false when not loading', () => {
+		expect( areFullSiteEditingThemesLoading( state, filterForNotLoading ) ).to.be.false;
+	} );
+
+	test( 'should return false when filter request not initiated', () => {
+		expect( areFullSiteEditingThemesLoading( state, 'lolol' ) ).to.be.false;
 	} );
 } );

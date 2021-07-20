@@ -19,6 +19,7 @@ import reducer, {
 	themeInstalls,
 	completedActivationRequests,
 	recommendedThemes,
+	fullSiteEditingThemes,
 } from '../reducer';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import {
@@ -41,6 +42,9 @@ import {
 	RECOMMENDED_THEMES_FETCH,
 	RECOMMENDED_THEMES_SUCCESS,
 	RECOMMENDED_THEMES_FAIL,
+	FULL_SITE_EDITING_THEMES_FETCH,
+	FULL_SITE_EDITING_THEMES_SUCCESS,
+	FULL_SITE_EDITING_THEMES_FAIL,
 } from 'calypso/state/themes/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
 
@@ -1005,6 +1009,56 @@ describe( 'reducer', () => {
 				{ [ filter ]: { isLoading: true, themes: [] } },
 				{
 					type: RECOMMENDED_THEMES_FAIL,
+					filter,
+				}
+			);
+			expect( state ).toEqual( { [ filter ]: { isLoading: false, themes: [] } } );
+		} );
+	} );
+
+	describe( '#fullSiteEditingThemes()', () => {
+		const filter = 'some-filter-string';
+
+		test( 'should default to an empty object', () => {
+			const state = fullSiteEditingThemes( undefined, {} );
+			expect( state ).toEqual( {} );
+		} );
+
+		test( 'should update isLoading when fetch is called', () => {
+			const state = fullSiteEditingThemes(
+				{},
+				{
+					type: FULL_SITE_EDITING_THEMES_FETCH,
+					filter,
+				}
+			);
+			expect( state ).toEqual( { [ filter ]: { isLoading: true, themes: [] } } );
+		} );
+
+		test( 'should update isLoading and themes on fetch success', () => {
+			const state = fullSiteEditingThemes(
+				{ [ filter ]: { isLoading: true, themes: [] } },
+				{
+					type: FULL_SITE_EDITING_THEMES_SUCCESS,
+					filter,
+					payload: {
+						themes: [ 'a', 'b', 'c' ],
+					},
+				}
+			);
+			expect( state ).toEqual( {
+				[ filter ]: {
+					isLoading: false,
+					themes: [ 'a', 'b', 'c' ],
+				},
+			} );
+		} );
+
+		test( 'should update isLoading on fetch fail', () => {
+			const state = fullSiteEditingThemes(
+				{ [ filter ]: { isLoading: true, themes: [] } },
+				{
+					type: FULL_SITE_EDITING_THEMES_FAIL,
 					filter,
 				}
 			);
