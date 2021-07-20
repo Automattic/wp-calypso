@@ -32,3 +32,11 @@
 		right: -3px;
 	}
 }
+
+.is-section-domains {
+	.badge {
+		border-radius: 4px; /* stylelint-disable-line */
+		font-size: 0.75rem;
+		font-weight: 500; /* stylelint-disable-line */
+	}
+}
