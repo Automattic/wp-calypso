@@ -1,9 +1,9 @@
 import { registerBlockType } from '@wordpress/blocks';
 import { addFilter } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
+import { CAROUSEL_BLOCK_NAME } from './consts';
 import { settings } from './synced-newspack-blocks/blocks/homepage-articles/index';
 import { registerQueryStore } from './synced-newspack-blocks/blocks/homepage-articles/store';
-import { CAROUSEL_BLOCK_NAME } from './consts';
 
 /**
  * Block name in the A8C\FSE context.
