@@ -1,0 +1,100 @@
+name: Happiness Bug Report
+description: Helps us improve our product!
+title: ""
+labels: "User Report, [Type] Bug"
+assignees: ''
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for contributing to calypso! Pick a clear title and proceed.
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What I expected to happen
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What actually happened
+    validations:
+      required: true
+  - type: context
+    id: context
+    attributes:
+      label: Context
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attriutes:
+      label: Operating System
+      options:
+        - Windows
+        - macOS
+        - Linux
+    validations:
+      required: true
+  - type: input
+    id: os_version
+    attriutes:
+      label: OS Version
+  - type: dropdown
+    id: browser
+    attriutes:
+      label: Browser
+      options:
+        - Chrome/Chromium
+        - Firefox
+        - Safari
+        - Microsoft Edge (legacy)
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Browser Version
+  - type: input
+    id: theme
+    attributes:
+      label: Is this specific to applied theme?
+  - type: dropdown
+    id: site-type
+    attributes:
+      label: Simple, Atomic or both?
+      options:
+        - Simple
+        - Atomic
+  - type: textarea
+    id: errors
+    attributes:
+      label: Is there any console output or error text?
+  - type: dropdown
+    id: impact
+    attributes:
+      label: Level of impact
+      description: Does it block purchases? Does it affect more than one site?
+      options:
+        - Low
+        - Normal
+        - High
+        - Blocker
+  - type: dropdown
+    id: reproducibility
+    attributes:
+      label: Reproducibility
+      options:
+        - Consistent
+        - Intermittent
+        - Once
+        - Never
+  - type: textarea
+    id: other
+    attributes:
+      label: Other information
