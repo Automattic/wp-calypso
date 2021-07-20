@@ -4,7 +4,6 @@
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-import { flowRight } from 'lodash';
 import FollowButtonContainer from 'calypso/blocks/follow-button';
 import Gridicon from 'calypso/components/gridicon';
 
@@ -186,6 +185,4 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	};
 };
 
-const connectBetaTesting = connect( mapStateToProps, mapDispatchToProps, mergeProps );
-
-export default flowRight( connectBetaTesting )( BetaTesting );
+export default connect( mapStateToProps, mapDispatchToProps, mergeProps )( BetaTesting );
