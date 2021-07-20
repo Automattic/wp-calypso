@@ -5,7 +5,6 @@ import { Card } from '@automattic/components';
 import React from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { omitBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -49,15 +48,15 @@ const HelpSearch = ( { searchQuery, track } ) => {
 		const type = result[ RESULT_TYPE ] ?? RESULT_ARTICLE;
 		const tour = result[ RESULT_TOUR ];
 
-		const tracksData = omitBy(
-			{
+		const tracksData = Object.fromEntries(
+			Object.entries( {
 				search_query: searchQuery,
 				tour,
 				result_url: resultLink,
 				location: HELP_COMPONENT_LOCATION,
-			},
-			( prop ) => typeof prop === 'undefined'
+			} ).filter( ( [ , value ] ) => typeof value !== 'undefined' )
 		);
+
 		track( `calypso_inlinehelp_${ type }_open`, tracksData );
 	};
 
