@@ -294,10 +294,23 @@ const CancelPurchaseRefundInformation = ( {
 				},
 			}
 		);
+	} else if ( maybeWithinRefundPeriod( purchase ) ) {
+		text = i18n.translate(
+			"Clicking the Cancel Subscription button below will disable auto-renew and you'll be able to use %(productName)s " +
+				'until your subscription expires. When your subscription expires, the paid plan features will be automatically ' +
+				'removed from your site.',
+			{
+				args: {
+					productName: getName( purchase ),
+				},
+			}
+		);
 	} else {
 		text = i18n.translate(
-			"You'll be able to use %(productName)s until your subscription expires. " +
-				'Once it expires, it will be automatically removed from your site.',
+			'Your purchase is outside of the money-back guarantee window and is not eligible for a refund. ' +
+				"Clicking the Cancel Subscription button below will disable auto-renew and you'll be able to use %(productName)s " +
+				'until your subscription expires. When your subscription expires, the paid plan features will be automatically ' +
+				'removed from your site.',
 			{
 				args: {
 					productName: getName( purchase ),

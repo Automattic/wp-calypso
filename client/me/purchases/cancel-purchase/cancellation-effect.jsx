@@ -39,7 +39,7 @@ export function cancellationEffectHeadline( purchase, translate ) {
 
 	if ( isPlan( purchase ) ) {
 		return translate(
-			'Are you sure you want to disable the auto-renewal of %(purchaseName)s for {{em}}%(domain)s{{/em}}? ',
+			'Are you sure you want to cancel %(purchaseName)s for {{em}}%(domain)s{{/em}}? ',
 			{
 				args: {
 					purchaseName,

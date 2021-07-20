@@ -482,7 +482,7 @@ class ManagePurchase extends Component {
 			}
 
 			if ( isSubscription( purchase ) ) {
-				text = translate( 'Disable Auto-renew' );
+				text = translate( 'Cancel Subscription' );
 			}
 		}
 

@@ -278,7 +278,7 @@ class CancelPurchaseButton extends Component {
 
 			if ( isSubscription( purchase ) ) {
 				onClick = this.handleCancelPurchaseClick;
-				text = translate( 'Disable Auto-renew' );
+				text = translate( 'Cancel Subscription' );
 			}
 		}
 
