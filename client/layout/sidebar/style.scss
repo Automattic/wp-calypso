@@ -281,13 +281,12 @@
 .sidebar__menu-link-badge {
 	display: inline-block;
 	padding: 1px 6px;
-	border: solid 1px var( --color-border );
+	border: solid 1px var( --studio-yellow );
 	border-radius: 12px;
 	font-size: $font-body-extra-small;
 	line-height: 14px;
 	text-align: center;
 	color: var( --color-text-inverted );
-	border-color: var( --color-accent );
-	background-color: var( --color-accent );
+	background-color: var( --studio-yellow );
 	margin-left: 8px;
 }
