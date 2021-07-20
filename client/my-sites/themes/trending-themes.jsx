@@ -7,16 +7,14 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { ConnectedThemesSelection } from './themes-selection';
-import { getRecommendedThemes } from 'calypso/state/themes/actions';
+import { getTrendingThemes } from 'calypso/state/themes/actions';
 
 import {
-	getRecommendedThemes as getRecommendedThemesSelector,
-	areRecommendedThemesLoading,
-	getRecommendedThemesFilter,
+	getTrendingThemes as getTrendingThemesSelector,
+	areTrendingThemesLoading,
 } from 'calypso/state/themes/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-class RecommendedThemes extends React.Component {
+class TrendingThemes extends React.Component {
 	componentDidMount() {
 		if ( ! this.props.customizedThemesList.length ) {
 			this.fetchThemes();
@@ -35,7 +33,7 @@ class RecommendedThemes extends React.Component {
 	}
 
 	fetchThemes() {
-		this.props.getRecommendedThemes( this.props.filter );
+		this.props.getTrendingThemes( this.props.filter );
 	}
 
 	render() {
@@ -43,17 +41,14 @@ class RecommendedThemes extends React.Component {
 	}
 }
 
-const ConnectedRecommendedThemes = connect(
+const ConnectedTrendingThemes = connect(
 	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		const filter = getRecommendedThemesFilter( state, siteId );
 		return {
-			customizedThemesList: getRecommendedThemesSelector( state, filter ),
-			isLoading: areRecommendedThemesLoading( state, filter ),
-			filter,
+			customizedThemesList: getTrendingThemesSelector( state ),
+			isLoading: areTrendingThemesLoading( state ),
 		};
 	},
-	{ getRecommendedThemes }
-)( RecommendedThemes );
+	{ getTrendingThemes }
+)( TrendingThemes );
 
-export default ConnectedRecommendedThemes;
+export default ConnectedTrendingThemes;

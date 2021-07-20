@@ -56,7 +56,7 @@ class ThemesSelection extends Component {
 		isRequesting: PropTypes.bool,
 		isThemeActive: PropTypes.func,
 		placeholderCount: PropTypes.number,
-		recommendedThemes: PropTypes.array,
+		customizedThemesList: PropTypes.array,
 		source: PropTypes.oneOfType( [ PropTypes.number, PropTypes.oneOf( [ 'wpcom', 'wporg' ] ) ] ),
 		themes: PropTypes.array,
 		themesCount: PropTypes.number,
@@ -69,16 +69,15 @@ class ThemesSelection extends Component {
 
 	componentDidMount() {
 		// Create "buffer zone" to prevent overscrolling too early bugging pagination requests.
-		const { query, recommendedThemes } = this.props;
-		if ( ! recommendedThemes && ! query.search && ! query.filter && ! query.tier ) {
+		const { query, customizedThemesList } = this.props;
+		if ( ! customizedThemesList && ! query.search && ! query.filter && ! query.tier ) {
 			this.props.incrementPage();
 		}
 	}
 
 	recordSearchResultsClick = ( themeId, resultsRank, action ) => {
-		// TODO do we need different query if from RecommendedThemes?
 		const { query, filterString } = this.props;
-		const themes = this.props.recommendedThemes || this.props.themes;
+		const themes = this.props.customizedThemesList || this.props.themes;
 		const search_taxonomies = filterString;
 		const search_term = search_taxonomies + ( query.search || '' );
 
@@ -121,7 +120,7 @@ class ThemesSelection extends Component {
 			this.trackScrollPage();
 		}
 
-		if ( ! this.props.recommendedThemes ) {
+		if ( ! this.props.customizedThemesList ) {
 			this.props.incrementPage();
 		}
 	};
@@ -172,7 +171,7 @@ class ThemesSelection extends Component {
 				) }
 				<ThemesList
 					upsellUrl={ upsellUrl }
-					themes={ this.props.recommendedThemes || this.props.themes }
+					themes={ this.props.customizedThemesList || this.props.themes }
 					fetchNextPage={ this.fetchNextPage }
 					onMoreButtonClick={ this.recordSearchResultsClick }
 					getButtonOptions={ this.getOptions }
@@ -204,7 +203,7 @@ function bindGetPremiumThemePrice( state, siteId ) {
 	return ( themeId ) => getPremiumThemePrice( state, themeId, siteId );
 }
 
-// Exporting this for use in recommended-themes.jsx
+// Exporting this for use in customized themes lists (recommended-themes.jsx, etc.)
 // We do not want pagination triggered in that use of the component.
 export const ConnectedThemesSelection = connect(
 	( state, { filter, page, search, tier, vertical, siteId, source } ) => {
