@@ -405,9 +405,7 @@ class ThemeShowcase extends React.Component {
 					{ 'all' === this.state.tabFilter.key && this.allThemes( { themeProps } ) }
 					{ 'my-themes' === this.state.tabFilter.key && <ThemesSelection { ...themeProps } /> }
 					{ 'trending' === this.state.tabFilter.key && <TrendingThemes { ...themeProps } /> }
-					{ 'fse' === this.state.tabFilter.key && (
-						<FseThemes listLabel={ ' ' } { ...themeProps } />
-					) }
+					{ 'fse' === this.state.tabFilter.key && <FseThemes { ...themeProps } /> }
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 					<ThanksModal source={ 'list' } />
