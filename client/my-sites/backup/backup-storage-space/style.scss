@@ -9,10 +9,19 @@
 	display: grid;
 	grid-template-columns: max-content auto max-content;
 	align-items: center;
+
+	@include breakpoint-deprecated( '<480px' ) {
+		grid-template-columns: none;
+		grid-template-rows: max-content auto max-content;
+	}
 }
 
 .backup-storage-space__progress-bar {
 	padding: 0 24px;
+
+	@include breakpoint-deprecated( '<480px' ) {
+		padding: 0;
+	}
 }
 
 .backup-storage-space__divider {
