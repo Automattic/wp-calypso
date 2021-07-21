@@ -57,11 +57,11 @@ export const BackupStorageSpaceUpsell: FunctionComponent< Props > = ( {
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_jetpack_backup_storage_upsell_display', { type: upsellOption } );
-	}, [] );
+	}, [ upsellOption ] );
 
 	const onUpsellClick = useCallback( () => {
 		recordTracksEvent( 'calypso_jetpack_backup_storage_upsell_click', { type: upsellOption } );
-	}, [] );
+	}, [ upsellOption ] );
 
 	const titleText =
 		'out_of_storage' === upsellOption
