@@ -29,11 +29,7 @@ import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import PurchaseArea from './purchase-area';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import {
-	setPluginSlugToBeInstalled,
-	setPrimaryDomainCandidate,
-	setIsPluginInstalledDuringPurchase,
-} from 'calypso/state/marketplace/purchase-flow/actions';
+import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import { getBlockingMessages } from 'calypso/blocks/eligibility-warnings/hold-list';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
 import { isAtomicSiteWithoutBusinessPlan } from 'calypso/blocks/eligibility-warnings/utils';
@@ -41,6 +37,7 @@ import { requestEligibility } from 'calypso/state/automated-transfer/actions';
 import Notice from 'calypso/components/notice';
 import { eligibilityHolds } from 'calypso/state/automated-transfer/constants';
 import { getDefaultPluginInProduct } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
+import { IProductGroupCollection, IProductCollection } from 'calypso/my-sites/marketplace/types';
 
 interface MarketplacePluginDetailsInterface {
 	productGroupSlug: keyof IProductGroupCollection;
@@ -49,14 +46,16 @@ interface MarketplacePluginDetailsInterface {
 
 function MarketplacePluginDetails( {
 	productGroupSlug,
+	productSlug,
 }: MarketplacePluginDetailsInterface ): JSX.Element {
-	// TODO : Depend on product slug to show product details in the page
-	const productSlug = 'yoast_premium';
-	const marketplacePluginSlug = getDefaultPluginInProduct( productGroupSlug, productSlug );
+	/* ****** TODO : Depend on product slug to show product details in this page ****** */
+	const hardcodedProductSlug = 'yoast_premium';
+	const defaultPlugin = getDefaultPluginInProduct( productGroupSlug, productSlug );
+	/* ******************************************************************************* */
 	const translate = useTranslate();
 	const { replaceProductsInCart } = useShoppingCart();
 	const products = useSelector( getProductsList );
-	const cost = useSelector( ( state ) => getProductCost( state, productSlug ) );
+	const cost = useSelector( ( state ) => getProductCost( state, hardcodedProductSlug ) );
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
 	const isProductListLoading = useSelector( ( state ) => isProductsListFetching( state ) );
 	const selectedSiteId = useSelector( getSelectedSiteId );
@@ -64,24 +63,24 @@ function MarketplacePluginDetails( {
 	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSiteId ?? 0 ) );
 	const displayCost = formatCurrency( cost, currencyCode, { stripZeros: true } );
 	const dispatch = useDispatch();
-	const wporgPlugin = useSelector( ( state ) => getWporgPlugin( state, marketplacePluginSlug ) );
-	const wporgFetching = useSelector( ( state ) =>
-		isWporgPluginFetching( state, marketplacePluginSlug )
-	);
+	const wporgPlugin = useSelector( ( state ) => getWporgPlugin( state, defaultPlugin ) );
+	const wporgFetching = useSelector( ( state ) => isWporgPluginFetching( state, defaultPlugin ) );
 	const eligibilityDetails = useSelector( ( state ) => getEligibility( state, selectedSiteId ) );
 
 	useEffect( () => {
-		dispatch( wporgFetchPluginData( marketplacePluginSlug ) );
+		dispatch( wporgFetchPluginData( defaultPlugin ) );
 		selectedSiteId && dispatch( requestEligibility( selectedSiteId ) );
-	}, [ dispatch, marketplacePluginSlug, selectedSiteId ] );
+	}, [ dispatch, defaultPlugin, selectedSiteId ] );
 
 	// TODO: Come up with a generic model for premium products and free products
-	const onAddYoastPremiumToCart = async () => {
+	const onAddYoastPremiumToCart = async ( primaryDomain: string ) => {
 		marketplaceDebugger( 'Added marketplace yoast to cart' );
 
-		dispatch( setIsPluginInstalledDuringPurchase( true ) );
-		dispatch( setPluginSlugToBeInstalled( 'wordpress-seo-premium' ) );
-		const yoastProduct = fillInSingleCartItemAttributes( { product_slug: productSlug }, products );
+		dispatch( productToBeInstalled( productGroupSlug, productSlug, primaryDomain ) );
+		const yoastProduct = fillInSingleCartItemAttributes(
+			{ product_slug: hardcodedProductSlug },
+			products
+		);
 		return replaceProductsInCart( [ yoastProduct ] );
 	};
 
@@ -129,8 +128,7 @@ function MarketplacePluginDetails( {
 						page( `/marketplace/domain/${ selectedSiteSlug }?flags=marketplace-yoast` )
 					}
 					onInstallPluginManually={ async ( primaryDomain ) => {
-						dispatch( setPluginSlugToBeInstalled( marketplacePluginSlug ) );
-						dispatch( setPrimaryDomainCandidate( primaryDomain ) );
+						dispatch( productToBeInstalled( productGroupSlug, productSlug, primaryDomain ) );
 						page( `/marketplace/product/setup/${ selectedSiteSlug }?flags=marketplace-yoast` );
 					} }
 				/>
