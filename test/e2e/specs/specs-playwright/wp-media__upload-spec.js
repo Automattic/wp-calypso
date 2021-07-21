@@ -43,7 +43,7 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 		} );
 
 		it.each( testFiles )(
-			'Uplaod $type and confirm addition to gallery',
+			'Upload $type and confirm addition to gallery',
 			async ( { filepath } ) => {
 				const uploadedItem = await mediaPage.upload( filepath );
 				assert.strictEqual( await uploadedItem.isVisible(), true );

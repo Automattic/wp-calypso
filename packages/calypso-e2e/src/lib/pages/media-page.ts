@@ -158,6 +158,9 @@ export class MediaPage extends BaseContainer {
 
 		// If the promise resolved to a result with `title` attribute, upload was successful.
 		if ( ( await result.getAttribute( 'title' ) ) === filename ) {
+			await this.page.waitForSelector( `${ itemSelector } .media-library__list-item-spinner`, {
+				state: 'hidden',
+			} );
 			return result;
 		}
 		// Otherwise, throw the content of the error banner to the caller for further processing.
