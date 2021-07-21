@@ -82,6 +82,7 @@ class EmailSignupTitanCard extends React.Component {
 			addButtonTitle,
 			extraClasses,
 			isReskinned,
+			onAddButtonClick,
 			onSkipButtonClick,
 			showChevron,
 			signupDependencies,
@@ -111,7 +112,11 @@ class EmailSignupTitanCard extends React.Component {
 							>
 								{ skipButtonTitle }
 							</Button>
-							<Button className="email-signup-titan-card__suggestion-action" primary>
+							<Button
+								className="email-signup-titan-card__suggestion-action"
+								primary
+								onClick={ onAddButtonClick }
+							>
 								{ addButtonTitle }
 							</Button>
 						</>
