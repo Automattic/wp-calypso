@@ -27,7 +27,6 @@ import {
 import { generateSteps } from './steps-pure';
 
 export default generateSteps( {
-	addEmailToCart,
 	addPlanToCart,
 	createAccount,
 	createSite,
