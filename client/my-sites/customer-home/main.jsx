@@ -27,6 +27,7 @@ import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
+import ActionCenter from 'calypso/my-sites/customer-home/locations/action-center';
 import { successNotice } from 'calypso/state/notices/actions';
 import config from '@automattic/calypso-config';
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
@@ -97,6 +98,7 @@ const Home = ( { canUserUseCustomerHome, site, siteId, trackViewSiteAction, noti
 				<div className="customer-home__loading-placeholder"></div>
 			) : (
 				<>
+					<ActionCenter />
 					<Primary cards={ layout.primary } />
 					<div className="customer-home__layout">
 						<div className="customer-home__layout-col customer-home__layout-col-left">

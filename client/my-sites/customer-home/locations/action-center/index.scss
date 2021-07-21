@@ -1,0 +1,13 @@
+.action-center__action {
+	display: flex;
+	background: var( --color-surface-backdrop );
+}
+
+.action-center__action > * {
+	flex-shrink: 0;
+	padding: 8px;
+}
+
+.action-center__action-link {
+	margin-left: auto;
+}
