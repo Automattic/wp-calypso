@@ -5,7 +5,7 @@
 	box-shadow: 0 0 0 1px #dcdcde;
 }
 
-.backup-storage-space__container {
+.backup-storage-space__progress-bar-container {
 	display: grid;
 	grid-template-columns: max-content auto max-content;
 	align-items: center;
@@ -13,4 +13,9 @@
 
 .backup-storage-space__progress-bar {
 	padding: 0 24px;
+}
+
+.backup-storage-space__divider {
+	margin: 16px -32px;
+	border-bottom: 1px solid var( --studio-gray-10 );
 }

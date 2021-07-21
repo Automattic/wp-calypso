@@ -9,6 +9,7 @@ import React, { FunctionComponent } from 'react';
  * Internal dependencies
  */
 import { useTranslate } from 'i18n-calypso';
+import { BackupStorageSpaceUpsell } from './backup-storage-space-upsell';
 
 /**
  * Style dependencies
@@ -20,16 +21,37 @@ type Props = {
 	usedStorage: number;
 };
 
+const upsellLimit1 = 0.6;
+const upsellLimit2 = 0.85;
+
 export const BackupStorageSpace: FunctionComponent< Props > = ( { storageLimit, usedStorage } ) => {
 	const translate = useTranslate();
 
 	const usedStorageFraction = usedStorage / storageLimit;
-	let color = '#2C3338';
-	if ( 0.6 <= usedStorageFraction ) {
-		color = '#DEB100';
+
+	const showUpsell = upsellLimit1 <= usedStorageFraction;
+
+	let progressBarColor = '#2C3338';
+	if ( usedStorageFraction >= upsellLimit1 ) {
+		progressBarColor = '#DEB100';
 	}
-	if ( 0.85 <= usedStorageFraction ) {
-		color = '#E65054';
+	if ( usedStorageFraction >= upsellLimit2 ) {
+		progressBarColor = '#E65054';
+	}
+
+	const actionText = translate( 'Upgrade your backup storage to 2TB' );
+
+	let statusText;
+	let titleText;
+	if ( usedStorageFraction >= upsellLimit1 ) {
+		statusText = translate( 'You will reach your 200GB storage limit in 3 days' );
+	}
+	if ( usedStorageFraction >= upsellLimit2 ) {
+		statusText = translate( 'You’re running out of storage space.' );
+	}
+	if ( 1 === usedStorageFraction ) {
+		statusText = translate( 'You ran out of storage space.' );
+		titleText = translate( 'Your Backup storage is full and new backups have been paused' );
 	}
 
 	// TODO: account for MB/GB and translate once API data is available
@@ -37,18 +59,29 @@ export const BackupStorageSpace: FunctionComponent< Props > = ( { storageLimit, 
 
 	return (
 		<Card className="backup-storage-space">
-			<div className="backup-storage-space__container">
+			<div className="backup-storage-space__progress-bar-container">
 				<div>{ translate( 'Storage space' ) }</div>
 				<div className="backup-storage-space__progress-bar">
 					<ProgressBar
 						value={ usedStorage }
 						total={ storageLimit }
-						color={ color }
+						color={ progressBarColor }
 						title={ title }
 					/>
 				</div>
 				<div>{ title }</div>
 			</div>
+			{ showUpsell && (
+				<>
+					<div className="backup-storage-space__divider"></div>
+					<BackupStorageSpaceUpsell
+						titleText={ titleText }
+						statusText={ statusText }
+						actionText={ actionText }
+						href=""
+					/>
+				</>
+			) }
 		</Card>
 	);
 };

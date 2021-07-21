@@ -121,7 +121,7 @@ const AdminContent = ( { selectedDate } ) => {
 
 	const backupStorageSpace = getForCurrentCROIteration( {
 		[ Iterations.ONLY_REALTIME_PRODUCTS ]: (
-			<BackupStorageSpace storageLimit={ 200 } usedStorage={ 190 } />
+			<BackupStorageSpace storageLimit={ 200 } usedStorage={ 200 } />
 		),
 	} );
 
