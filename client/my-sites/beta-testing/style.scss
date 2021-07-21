@@ -11,11 +11,12 @@ body.is-section-beta-testing {
 
 .beta-testing__main-body {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column-reverse;
 	margin-bottom: 48px;
 
 	@include breakpoint-deprecated( '>1040px' ) {
 		margin-bottom: 90px;
+		flex-direction: row;
 	}
 }
 
@@ -24,6 +25,7 @@ body.is-section-beta-testing {
 	flex-direction: column;
 	justify-content: center;
 	flex: 1;
+	order: 0;
 
 	@include breakpoint-deprecated( '>960px' ) {
 		min-width: 400px;
@@ -33,29 +35,31 @@ body.is-section-beta-testing {
 .card-heading.beta-testing__main-title {
 	@include onboarding-font-recoleta;
 	line-height: 1.24;
-	margin-bottom: 24px;
-
-	@include breakpoint-deprecated( '>1040px' ) {
-		margin: 28px 0;
-	}
+	margin: 24px 0;
 }
 
 .beta-testing__main-image-wrapper {
-	display: none;
+	display: flex;
     flex: 1;
 	background: #f4f7fa;
 	align-items: center;
 	justify-content: center;
-	margin-left: 30px;
-	max-width: 500px;
+	margin: -48px -48px 30px -48px;
 
 	img {
 		width: 100%;
 		max-width: 360px;
+		margin: 40px 0;
+	}
+
+	@media only screen and ( min-width: 782px ) {
+		margin: 0 0 30px;
 	}
 
 	@include breakpoint-deprecated( '>1040px' ) {
-		display: flex;
+		margin-left: 30px;
+		margin-bottom: 0;
+		max-width: 500px;
 	}
 }
 
