@@ -247,7 +247,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		);
 
 		await this.openBlockInserter();
-		const inserterSearchInputLocator = By.css( 'input.block-editor-inserter__search-input' );
+		const inserterSearchInputLocator = By.css( 'input.components-search-control__input' );
 
 		await driverHelper.setWhenSettable( this.driver, inserterSearchInputLocator, searchTerm );
 	}
