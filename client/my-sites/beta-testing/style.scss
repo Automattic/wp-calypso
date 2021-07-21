@@ -14,7 +14,7 @@ body.is-section-beta-testing {
 	flex-direction: column-reverse;
 	margin-bottom: 48px;
 
-	@include breakpoint-deprecated( '>1040px' ) {
+	@include break-xlarge {
 		margin-bottom: 90px;
 		flex-direction: row;
 	}
@@ -27,7 +27,7 @@ body.is-section-beta-testing {
 	flex: 1;
 	order: 0;
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include break-large {
 		min-width: 400px;
 	}
 }
@@ -52,11 +52,11 @@ body.is-section-beta-testing {
 		margin: 40px 0;
 	}
 
-	@media only screen and ( min-width: 782px ) {
+	@include break-medium {
 		margin: 0 0 30px;
 	}
 
-	@include breakpoint-deprecated( '>1040px' ) {
+	@include break-xlarge {
 		margin-left: 30px;
 		margin-bottom: 0;
 		max-width: 500px;
@@ -74,7 +74,7 @@ body.is-section-beta-testing {
 	align-items: center;
 	flex-wrap: wrap;
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include break-large {
 		margin-bottom: 48px;
 	}
 }
@@ -97,7 +97,7 @@ body.is-section-beta-testing {
 	align-items: stretch;
 	flex-wrap: wrap;
 
-	@include breakpoint-deprecated( '>1040px' ) {
+	@include break-xlarge {
 		display: flex;
 	}
 }
@@ -106,7 +106,7 @@ body.is-section-beta-testing {
 	font-size: 14px;
 	flex: 1;
 
-	@include breakpoint-deprecated( '>1040px' ) {
+	@include break-xlarge {
 		margin-right: 48px;
 
 		&:last-child {
@@ -160,7 +160,7 @@ body.is-section-beta-testing {
 	border-bottom: 1px solid #DCDCDE;
 	text-transform: uppercase;
 
-	@include breakpoint-deprecated( '>1040px' ) {
+	@include break-xlarge {
 		margin: 12px 0;
 	}
 
