@@ -15,7 +15,9 @@ export default async function ( context, next ) {
 		window.scrollTo( 0, 0 );
 	}
 
-	context.primary = <CustomerHome key={ siteId } noticeType={ noticeType } />;
+	context.primary = (
+		<CustomerHome key={ siteId } noticeType={ noticeType } dev={ context.query.dev } />
+	);
 
 	next();
 }
