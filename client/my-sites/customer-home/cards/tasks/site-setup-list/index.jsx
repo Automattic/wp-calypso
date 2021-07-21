@@ -253,6 +253,10 @@ const SiteSetupList = ( {
 						const isCurrent = task.id === currentTask.id;
 						const isCompleted = task.isCompleted;
 
+						if ( enhancedTask.isHidden ) {
+							return null;
+						}
+
 						return (
 							<li key={ task.id }>
 								<NavItem

@@ -36,7 +36,7 @@ const CurrentTaskItem = ( { currentTask, skipTask, startTask, useAccordionLayout
 							className={ classnames( 'site-setup-list__task-action', 'task__action', {
 								'is-link': currentTask.actionIsLink,
 							} ) }
-							primary={ ! currentTask.actionIsLink }
+							primary={ ! ( currentTask.actionIsLink || currentTask.isCompleted ) }
 							onClick={ () => startTask() }
 							disabled={
 								currentTask.isDisabled ||
