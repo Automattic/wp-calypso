@@ -9,17 +9,27 @@ import React, { FunctionComponent } from 'react';
  * Internal dependencies
  */
 import { useTranslate } from 'i18n-calypso';
-import { BackupStorageSpaceUpsell } from './backup-storage-space-upsell';
+import {
+	BackupStorageSpaceUpsell,
+	BackupStorageSpaceUpsellOptions,
+} from './backup-storage-space-upsell';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-type Props = Record< string, never >;
-
 const upsellLimit1 = 0.6;
 const upsellLimit2 = 0.85;
+
+const progressBarColors: Record< BackupStorageSpaceUpsellOptions, string > = {
+	no_upsell: '#2C3338',
+	first_limit: '#DEB100',
+	second_limit: '#E65054',
+	out_of_storage: '#E65054',
+};
+
+type Props = Record< string, never >;
 
 export const BackupStorageSpace: FunctionComponent< Props > = () => {
 	const storageLimit = 200;
@@ -29,35 +39,20 @@ export const BackupStorageSpace: FunctionComponent< Props > = () => {
 
 	const usedStorageFraction = usedStorage / storageLimit;
 
-	const showUpsell = upsellLimit1 <= usedStorageFraction;
-
-	let progressBarColor = '#2C3338';
+	let upsellOption: BackupStorageSpaceUpsellOptions = 'no_upsell';
 	if ( usedStorageFraction >= upsellLimit1 ) {
-		progressBarColor = '#DEB100';
+		upsellOption = 'first_limit';
 	}
 	if ( usedStorageFraction >= upsellLimit2 ) {
-		progressBarColor = '#E65054';
+		upsellOption = 'second_limit';
+	}
+	if ( usedStorage >= storageLimit ) {
+		upsellOption = 'out_of_storage';
 	}
 
-	const actionText = translate( 'Upgrade your backup storage to 2TB' );
+	const showUpsell = upsellOption !== 'no_upsell';
 
-	let statusText;
-	let titleText;
-	if ( usedStorageFraction >= upsellLimit1 ) {
-		// TODO: calculate storage time, account for GB, and translate once API data is available.
-		statusText = sprintf(
-			'You will reach your %1$sGB storage limit in %2$s days',
-			storageLimit,
-			3
-		);
-	}
-	if ( usedStorageFraction >= upsellLimit2 ) {
-		statusText = translate( 'You’re running out of storage space.' );
-	}
-	if ( 1 === usedStorageFraction ) {
-		statusText = translate( 'You ran out of storage space.' );
-		titleText = translate( 'Your Backup storage is full and new backups have been paused' );
-	}
+	const progressBarColor = progressBarColors[ upsellOption ];
 
 	// TODO: account for MB/GB and translate once API data is available
 	const title = sprintf( '%1$sGB of %2$sGB used', usedStorage, storageLimit );
@@ -80,9 +75,8 @@ export const BackupStorageSpace: FunctionComponent< Props > = () => {
 				<>
 					<div className="backup-storage-space__divider"></div>
 					<BackupStorageSpaceUpsell
-						titleText={ titleText }
-						statusText={ statusText }
-						actionText={ actionText }
+						upsellOption={ upsellOption }
+						storageLimit={ storageLimit }
 						href="/pricing/backup"
 					/>
 				</>
