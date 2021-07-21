@@ -62,12 +62,7 @@ export const BackupStorageSpace: FunctionComponent< Props > = () => {
 			<div className="backup-storage-space__progress-bar-container">
 				<div>{ translate( 'Storage space' ) }</div>
 				<div className="backup-storage-space__progress-bar">
-					<ProgressBar
-						value={ usedStorage }
-						total={ storageLimit }
-						color={ progressBarColor }
-						title={ title }
-					/>
+					<ProgressBar value={ usedStorage } total={ storageLimit } color={ progressBarColor } />
 				</div>
 				<div>{ title }</div>
 			</div>
