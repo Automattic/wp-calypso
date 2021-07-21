@@ -339,9 +339,11 @@ export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
 }
 
 export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
-	const { siteSlug } = dependencies;
+	// Note that we pull in emailItem to avoid race conditions from multiple step API functions
+	// trying to fetch and update the cart simultaneously, as both of those actions are asynchronous.
+	const { emailItem, siteSlug } = dependencies;
 	const { cartItem } = stepProvidedItems;
-	if ( isEmpty( cartItem ) ) {
+	if ( isEmpty( cartItem ) && isEmpty( emailItem ) ) {
 		// the user selected the free plan
 		defer( callback );
 
@@ -349,7 +351,7 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 	}
 
 	const providedDependencies = { cartItem };
-	const newCartItems = [ cartItem ].filter( ( item ) => item );
+	const newCartItems = [ cartItem, emailItem ].filter( ( item ) => item );
 
 	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, null, null );
 }
@@ -369,32 +371,6 @@ export function addDomainToCart(
 	const newCartItems = [ domainItem, googleAppsCartItem ].filter( ( item ) => item );
 
 	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug, null, null );
-}
-
-export function addEmailToCart(
-	callback,
-	dependencies,
-	stepProvidedItems,
-	reduxStore,
-	siteSlug,
-	stepProvidedDependencies
-) {
-	const { domainItem, emailItem, shouldHideFreePlan } = stepProvidedItems?.providedDependencies;
-
-	if ( ! emailItem ) {
-		defer( callback );
-
-		return;
-	}
-
-	const slug = siteSlug || dependencies.siteSlug;
-	const providedDependencies = stepProvidedDependencies || {
-		domainItem,
-		emailItem,
-		shouldHideFreePlan,
-	};
-
-	processItemCart( providedDependencies, [ emailItem ], callback, reduxStore, slug, null, null );
 }
 
 function processItemCart(

@@ -35,7 +35,6 @@ export function generateSteps( {
 	currentPage = noop,
 	setThemeOnSite = noop,
 	addDomainToCart = noop,
-	addEmailToCart = noop,
 	launchSiteApi = noop,
 	isPlanFulfilled = noop,
 	isDomainFulfilled = noop,
@@ -191,6 +190,7 @@ export function generateSteps( {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
+			optionalDependencies: [ 'emailItem' ],
 			providesDependencies: [ 'cartItem' ],
 			fulfilledStepCallback: isPlanFulfilled,
 		},
@@ -308,11 +308,9 @@ export function generateSteps( {
 			stepName: 'emails',
 			dependencies: [ 'domainItem', 'siteSlug' ],
 			providesDependencies: [ 'domainItem', 'emailItem', 'shouldHideFreePlan' ],
-			apiRequestFunction: addEmailToCart,
 			props: {
 				isDomainOnly: false,
 			},
-			delayApiRequestUntilComplete: true,
 		},
 		'domain-only': {
 			stepName: 'domain-only',
