@@ -472,7 +472,6 @@ class DomainItem extends PureComponent {
 		return <DomainNotice status={ statusClass } text={ message } />;
 	}
 
-
 	renderPrimaryBadge() {
 		return (
 			<Badge className="domain-item__primary-badge" type="info-green">
@@ -492,7 +491,7 @@ class DomainItem extends PureComponent {
 			showCheckbox,
 			enableSelection,
 		} = this.props;
-		const { listStatusClass } = resolveDomainStatus( domainDetails || domain );
+		const { listStatusText, listStatusClass } = resolveDomainStatus( domainDetails || domain );
 
 		const rowClasses = classNames( 'domain-item', `domain-item__status-${ listStatusClass }`, {
 			'domain-item__enable-selection': enableSelection,
@@ -523,6 +522,9 @@ class DomainItem extends PureComponent {
 						{ this.renderActionResult() }
 					</div>
 					{ this.renderSiteMeta() }
+					{ ! domain.pointsToWpcom && (
+						<DomainNotice status={ listStatusClass || 'info' } text={ listStatusText } />
+					) }
 				</div>
 				{ this.renderActionItems() }
 				{ this.renderOverlay() }

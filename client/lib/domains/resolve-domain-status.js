@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
 
@@ -45,12 +46,20 @@ export function resolveDomainStatus(
 			}
 
 			if ( ( ! isJetpackSite || isSiteAutomatedTransfer ) && ! domain.pointsToWpcom ) {
+				const status = translate(
+					'{{strong}}Verifying connection:{{/strong}} You can continue to work on your site, but you domain won’t be reachable just yet.',
+					{
+						components: {
+							strong: <strong />,
+						},
+					}
+				);
 				return {
-					statusText: translate( 'Complete setup' ),
-					statusClass: 'status-warning',
-					icon: 'info',
-					listStatusText: translate( 'Complete setup' ),
-					listStatusClass: 'warning',
+					statusText: translate( 'Verifying connection' ),
+					statusClass: 'status-verifying',
+					icon: 'verifying',
+					listStatusText: status,
+					listStatusClass: 'verifying',
 				};
 			}
 
