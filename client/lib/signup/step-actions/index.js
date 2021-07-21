@@ -338,33 +338,6 @@ export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
 		} );
 }
 
-export function addEmailToCart(
-	callback,
-	dependencies,
-	stepProvidedItems,
-	reduxStore,
-	siteSlug,
-	stepProvidedDependencies
-) {
-	const slug = siteSlug || dependencies.siteSlug;
-	const { domainItem, emailItem, shouldHideFreePlan } = stepProvidedItems?.providedDependencies;
-	const providedDependencies = stepProvidedDependencies || {
-		domainItem,
-		emailItem,
-		shouldHideFreePlan,
-	};
-
-	if ( ! emailItem ) {
-		defer( callback );
-
-		return;
-	}
-
-	const newCartItems = [ emailItem ].filter( ( item ) => item );
-
-	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug, null, null );
-}
-
 export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
 	const { siteSlug } = dependencies;
 	const { cartItem } = stepProvidedItems;
