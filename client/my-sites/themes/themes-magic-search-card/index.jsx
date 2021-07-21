@@ -186,12 +186,6 @@ class ThemesMagicSearchCard extends React.Component {
 		return tokens.join( '' );
 	};
 
-	insertTextAtCursor = ( text ) => {
-		const input = this.state.searchInput;
-		const position = this.state.cursorPosition;
-		return input.slice( 0, position ) + text + input.slice( position );
-	};
-
 	onSearchChange = ( input ) => {
 		this.findTextForSuggestions( input );
 		this.setState( { searchInput: input } );
@@ -245,19 +239,23 @@ class ThemesMagicSearchCard extends React.Component {
 		this.updateInput( updatedInput );
 	};
 
+	// User has clicked on an item in the "Magic Welcome Bar" to add something like
+	// "feature:" to their search text, which causes autocompletions to display.
 	welcomeBarAddText = ( text ) => {
-		if ( config.isEnabled( 'theme/showcase-revamp' ) ) {
-			// Add an extra leading space sometimes. If the user has "abcd" in
-			// their bar and they click to add "feature:", we want "abcd feature:",
-			// not "abcdfeature:".
-			const { searchInput, cursorPosition } = this.state;
-			if ( searchInput[ cursorPosition - 1 ] !== ' ' ) {
-				text = ' ' + text;
-			}
+		let { searchInput } = this.state;
+		// Since we are adding an unfinished feature to the search, like "feature:" or "column:",
+		// remove other unfinished features from the search. The user doesn't want to have their
+		// search bar reading "feature: column:" after clicking feature, then column.
+		searchInput = searchInput.replace( /(feature|column|subject):(\s|$)/i, '' );
+
+		// Add an extra leading space sometimes. If the user has "abcd" in
+		// their bar and they click to add "feature:", we want "abcd feature:",
+		// not "abcdfeature:".
+		if ( searchInput.length > 0 && searchInput.slice( -1 ) !== ' ' ) {
+			text = ' ' + text;
 		}
 
-		const updatedInput = this.insertTextAtCursor( text );
-		this.updateInput( updatedInput );
+		this.updateInput( searchInput + text );
 		this.setState( { isPopoverVisible: false } );
 	};
 
