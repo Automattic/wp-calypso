@@ -20,7 +20,7 @@ import NoDirectAccessError from './no-direct-access-error';
 import OrgCredentialsForm from './remote-credentials';
 import SearchPurchase from './search';
 import StoreHeader from './store-header';
-import { getCurrentUserId, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getLocaleFromPath, removeLocaleFromPath } from 'calypso/lib/i18n-utils';
 import { hideMasterbar, showMasterbar } from 'calypso/state/ui/actions';
 import { OFFER_RESET_FLOW_TYPES } from './flow-types';
@@ -189,7 +189,7 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 
 export function redirectWithoutLocaleIfLoggedIn( context, next ) {
 	debug( 'controller: redirectWithoutLocaleIfLoggedIn', context.params );
-	const isLoggedIn = !! getCurrentUserId( context.store.getState() );
+	const isLoggedIn = isUserLoggedIn( context.store.getState() );
 	if ( isLoggedIn && getLocaleFromPath( context.path ) ) {
 		const urlWithoutLocale = removeLocaleFromPath( context.path );
 		debug( 'redirectWithoutLocaleIfLoggedIn to %s', urlWithoutLocale );
@@ -230,11 +230,11 @@ export function loginBeforeJetpackSearch( context, next ) {
 	debug( 'controller: loginBeforeJetpackSearch', context.params );
 	const { params, path } = context;
 	const { type } = params;
-	const isLoggedOut = ! getCurrentUserId( context.store.getState() );
+	const isLoggedIn = isUserLoggedIn( context.store.getState() );
 
 	// Log in to WP.com happens at the start of the flow for Search products
 	// ( to facilitate site selection ).
-	if ( JETPACK_SEARCH_PRODUCTS.includes( type ) && isLoggedOut ) {
+	if ( JETPACK_SEARCH_PRODUCTS.includes( type ) && ! isLoggedIn ) {
 		return page( login( { isJetpack: true, redirectTo: path } ) );
 	}
 	next();
@@ -321,7 +321,7 @@ export function signupForm( context, next ) {
 		}
 	);
 
-	const isLoggedIn = !! getCurrentUserId( context.store.getState() );
+	const isLoggedIn = isUserLoggedIn( context.store.getState() );
 	if ( retrieveMobileRedirect() && ! isLoggedIn ) {
 		// Force login for mobile app flow. App will intercept this request and prompt native login.
 		return window.location.replace( login( { redirectTo: context.path } ) );
