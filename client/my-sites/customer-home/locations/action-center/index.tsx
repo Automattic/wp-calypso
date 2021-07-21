@@ -38,7 +38,7 @@ const ActionCenter: FunctionComponent< Props > = ( { isEmailUnverified } ) => {
 			<div className="action-center__action">
 				<Gridicon className="action-center__action-icon" icon="mail" />
 				<div className="action-center__action-text">
-					{ translate( 'Please verify your email' ) }
+					{ translate( 'Please Verify Your Email Address' ) }
 				</div>
 				<Button
 					onClick={ resendVerificationEmail }
@@ -46,7 +46,7 @@ const ActionCenter: FunctionComponent< Props > = ( { isEmailUnverified } ) => {
 					compact
 					className="action-center__action-link"
 				>
-					{ translate( 'send email' ) }
+					{ translate( 'Send Email' ) }
 				</Button>
 				<Button borderless compact className="action-center__action-dismiss-button">
 					<Gridicon icon="cross-small" />
