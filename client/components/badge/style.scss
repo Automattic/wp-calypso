@@ -1,6 +1,6 @@
 .badge {
 	display: inline-block;
-    // A number large enough to exceed height of any badge to make it look like a pill
+	// A number large enough to exceed height of any badge to make it look like a pill
 	border-radius: 1000px; /* stylelint-disable-line scales/radii */
 	padding: $badge-padding-y $badge-padding-x;
 	font-size: $font-body-small;
