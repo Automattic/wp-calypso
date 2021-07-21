@@ -14,7 +14,7 @@ import './style.scss';
 export default class DomainNotice extends React.Component {
 	static propTypes = {
 		text: PropTypes.string,
-		status: PropTypes.oneOf( [ 'success', 'info', 'warning', 'alert' ] ),
+		status: PropTypes.oneOf( [ 'success', 'info', 'warning', 'alert', 'verifying' ] ),
 		className: PropTypes.string,
 	};
 
@@ -32,6 +32,9 @@ export default class DomainNotice extends React.Component {
 		}
 		if ( 'success' === status ) {
 			icon = 'checkmark';
+		}
+		if ( 'verifying' === status ) {
+			icon = 'sync';
 		}
 
 		return (

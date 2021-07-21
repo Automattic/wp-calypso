@@ -221,7 +221,8 @@
 	}
 }
 
-.domain-item__status-info {
+.domain-item__status-info,
+.domain-item__status-verifying {
 	border-left: 3px solid var( --color-success-50 );
 }
 

@@ -9,14 +9,17 @@
 }
 
 .domain-notice__info,
-.domain-notice__success {
-	color: var( --color-success-50 );
+.domain-notice__success,
+.domain-notice__verifying {
+	svg {
+		color: var( --color-success-50 );
+	}
 }
 
-.domain-notice__warning {
+.domain-notice__warning svg {
 	color: var( --color-warning-40 );
 }
 
-.domain-notice__alert {
+.domain-notice__alert svg {
 	color: var( --color-error );
 }
