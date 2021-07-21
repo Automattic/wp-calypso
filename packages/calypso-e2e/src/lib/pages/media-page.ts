@@ -13,7 +13,7 @@ const selectors = {
 	items: '.media-library__list-item',
 	placeholder: '.is-placeholder',
 	editButton: 'button[data-e2e-button="edit"]',
-	addNewButton: 'input[type="file"]',
+	fileInput: 'input.media-library__upload-button-input',
 	uploadRejectionNotice: 'text=/could not be uploaded/i',
 
 	// Modal view
@@ -145,7 +145,7 @@ export class MediaPage extends BaseContainer {
 	 */
 	async upload( fullPath: string ): Promise< ElementHandle > {
 		// Simulate the user selecting a file and confirming.
-		await this.page.setInputFiles( selectors.addNewButton, fullPath );
+		await this.page.setInputFiles( selectors.fileInput, fullPath );
 
 		// From here, confirm if upload is successful or rejected.
 		const filename = path.basename( fullPath );
