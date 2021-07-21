@@ -167,6 +167,7 @@ function CheckoutSummaryFeaturesList( props ) {
 					return (
 						<CheckoutSummaryFeaturesListDomainItem
 							domain={ domain }
+							hasPlanInCart={ hasPlanInCart }
 							key={ domain.uuid }
 							{ ...props }
 						/>
@@ -201,8 +202,18 @@ function SupportText( { hasPlanInCart, isJetpackNotAtomic } ) {
 	return <span>{ translate( 'Email support' ) }</span>;
 }
 
-function CheckoutSummaryFeaturesListDomainItem( { domain, hasMonthlyPlan, nextDomainIsFree } ) {
+function CheckoutSummaryFeaturesListDomainItem( {
+	domain,
+	hasMonthlyPlan,
+	hasPlanInCart,
+	nextDomainIsFree,
+} ) {
 	const translate = useTranslate();
+
+	if ( ! hasPlanInCart ) {
+		return null;
+	}
+
 	const bundledText = translate( 'free for one year' );
 	const bundledDomain = translate( '{{strong}}%(domain)s{{/strong}} - %(bundled)s', {
 		components: {
