@@ -253,6 +253,7 @@ export default class QueryManager {
 	 * @param  {boolean}        options.patch      Apply changes as partial
 	 * @param  {object}         options.query      Query set to set or replace
 	 * @param  {boolean}        options.mergeQuery Add to existing query set
+	 * @param  {boolean}        options.dontShareQueryResultsWhenQueriesAreDifferent When storing results for one query, results for that query should not be shared with different queries
 	 * @param  {number}         options.found      Total found items for query
 	 * @returns {QueryManager}                      New instance if changed, or
 	 *                                             same instance otherwise
@@ -371,7 +372,7 @@ export default class QueryManager {
 					return memo;
 				}
 
-				if ( ! isReceivedQueryKey && options.ownResultsOnly ) {
+				if ( ! isReceivedQueryKey && options.dontShareQueryResultsWhenQueriesAreDifferent ) {
 					return memo;
 				}
 
