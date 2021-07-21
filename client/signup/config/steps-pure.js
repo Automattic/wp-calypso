@@ -32,7 +32,6 @@ export function generateSteps( {
 	createWpForTeamsSite = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
-	addEmailToCart = noop,
 	currentPage = noop,
 	setThemeOnSite = noop,
 	addDomainToCart = noop,
