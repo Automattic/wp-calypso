@@ -77,6 +77,7 @@ export const BackupStorageSpace: FunctionComponent< Props > = () => {
 					<BackupStorageSpaceUpsell
 						upsellOption={ upsellOption }
 						storageLimit={ storageLimit }
+						usedStorage={ usedStorage }
 						href="/pricing/backup"
 					/>
 				</>

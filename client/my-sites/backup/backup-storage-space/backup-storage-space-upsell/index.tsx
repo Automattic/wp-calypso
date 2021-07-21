@@ -46,22 +46,30 @@ type Props = {
 	href: string;
 	storageLimit: number;
 	upsellOption: BackupStorageSpaceUpsellOptions;
+	usedStorage: number;
 };
 
 export const BackupStorageSpaceUpsell: FunctionComponent< Props > = ( {
 	href,
 	storageLimit,
 	upsellOption,
+	usedStorage,
 } ) => {
 	const translate = useTranslate();
 
 	useEffect( () => {
-		recordTracksEvent( 'calypso_jetpack_backup_storage_upsell_display', { type: upsellOption } );
-	}, [ upsellOption ] );
+		recordTracksEvent( 'calypso_jetpack_backup_storage_upsell_display', {
+			type: upsellOption,
+			usedStorage,
+		} );
+	}, [ upsellOption, usedStorage ] );
 
 	const onUpsellClick = useCallback( () => {
-		recordTracksEvent( 'calypso_jetpack_backup_storage_upsell_click', { type: upsellOption } );
-	}, [ upsellOption ] );
+		recordTracksEvent( 'calypso_jetpack_backup_storage_upsell_click', {
+			type: upsellOption,
+			usedStorage,
+		} );
+	}, [ upsellOption, usedStorage ] );
 
 	const titleText =
 		'out_of_storage' === upsellOption
