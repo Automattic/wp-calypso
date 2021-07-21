@@ -1,28 +1,18 @@
-/**
- * External dependencies
- */
-import React, { useEffect, useRef, useState } from 'react';
-import { useTranslate } from 'i18n-calypso';
-import { connect, useDispatch } from 'react-redux';
 import { Button } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { useTranslate } from 'i18n-calypso';
+import React, { useEffect, useRef, useState } from 'react';
+import { connect, useDispatch } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import Gridicon from 'calypso/components/gridicon';
 import PopoverMenu from 'calypso/components/popover/menu';
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import Spinner from 'calypso/components/spinner';
+import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const Task = ( {

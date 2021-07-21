@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
-import React from 'react';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSiteUrl } from 'calypso/state/sites/selectors';
-import { TASK_SITE_SETUP_CHECKLIST_ECOMMERCE } from 'calypso/my-sites/customer-home/cards/constants';
+import React from 'react';
+import { connect } from 'react-redux';
 import earnSectionImage from 'calypso/assets/images/earn/earn-section.svg';
+import { TASK_SITE_SETUP_CHECKLIST_ECOMMERCE } from 'calypso/my-sites/customer-home/cards/constants';
+import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
+import { getSiteUrl } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export const SiteSetupListEcommerce = ( { siteUrl } ) => {
 	const translate = useTranslate();
