@@ -16,7 +16,6 @@ import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-valu
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ActivityActor from 'calypso/components/activity-card/activity-actor';
 import ActivityDescription from 'calypso/components/activity-card/activity-description';
-import getAllowRestore from 'calypso/state/selectors/get-allow-restore';
 import Gridicon from 'calypso/components/gridicon';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import MediaPreview from './media-preview';
@@ -25,11 +24,16 @@ import StreamsContent from './streams-content';
 import Toolbar from './toolbar';
 
 /**
+ * Type dependencies
+ */
+import type { Activity } from './types';
+
+/**
  * Style dependencies
  */
 import './style.scss';
 
-const useToggleContent = () => {
+const useToggleContent = (): [ boolean, () => void ] => {
 	const [ isVisible, setVisible ] = useState( false );
 
 	const toggle = () => {
@@ -39,8 +43,8 @@ const useToggleContent = () => {
 	return [ isVisible, toggle ];
 };
 
-const useBackupTimeDisplay = ( activityTs ) => {
-	const siteId = useSelector( getSelectedSiteId );
+const useBackupTimeDisplay = ( activityTs: number ) => {
+	const siteId = useSelector( getSelectedSiteId ) as number;
 	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
 	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
 
@@ -51,11 +55,16 @@ const useBackupTimeDisplay = ( activityTs ) => {
 	] );
 };
 
-const ActivityCard = ( { className, summarize, activity } ) => {
+type OwnProps = {
+	className?: string;
+	summarize?: boolean;
+	activity: Activity;
+};
+
+const ActivityCard: React.FC< OwnProps > = ( { className, summarize, activity } ) => {
 	const [ showContent, toggleShowContent ] = useToggleContent();
 
-	const siteId = useSelector( getSelectedSiteId );
-	const allowRestore = useSelector( ( state ) => getAllowRestore( state, siteId ) );
+	const siteId = useSelector( getSelectedSiteId ) as number;
 	const backupTimeDisplay = useBackupTimeDisplay( activity.activityTs );
 
 	const showStreamsContent = showContent && activity.streams;
@@ -71,7 +80,10 @@ const ActivityCard = ( { className, summarize, activity } ) => {
 			{ ! summarize && (
 				<div className="activity-card__header">
 					<div className="activity-card__time">
-						<Gridicon icon={ activity.activityIcon } className="activity-card__time-icon" />
+						<Gridicon
+							icon={ activity.activityIcon as string }
+							className="activity-card__time-icon"
+						/>
 						<div className="activity-card__time-text">{ backupTimeDisplay }</div>
 					</div>
 					{ isEnabled( 'jetpack/activity-log-sharing' ) && (
@@ -88,7 +100,7 @@ const ActivityCard = ( { className, summarize, activity } ) => {
 				/>
 				<div className="activity-card__activity-description">
 					<MediaPreview activity={ activity } />
-					<ActivityDescription activity={ activity } rewindIsActive={ allowRestore } />
+					<ActivityDescription activity={ activity } />
 				</div>
 				<div className="activity-card__activity-title">{ activity.activityTitle }</div>
 
@@ -103,7 +115,7 @@ const ActivityCard = ( { className, summarize, activity } ) => {
 
 				{ showStreamsContent && (
 					<div className="activity-card__content">
-						<StreamsContent streams={ activity.streams } />
+						<StreamsContent streams={ activity.streams as Activity[] } />
 						<Toolbar
 							siteId={ siteId }
 							activity={ activity }
