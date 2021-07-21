@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { Button } from '@automattic/components';
-import PopoverMenu from 'calypso/components/popover/menu';
+import Popover from 'calypso/components/popover';
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import Gridicon from 'calypso/components/gridicon';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
@@ -60,12 +60,13 @@ class OptionsDomainButton extends React.Component {
 					{ translate( 'Other domain options' ) }
 					<Gridicon icon="chevron-down" />
 				</Button>
-				<PopoverMenu
+				<Popover
 					className="options-domain-button__popover"
 					isVisible={ this.state.isOptionsMenuVisible }
 					onClose={ this.closeOptionsMenu }
 					context={ this.optionsDomainButtonRef.current }
 					position="bottom"
+					relativePosition={ { left: -70 } }
 				>
 					<PopoverMenuItem href={ domainManagementAllRoot() } onClick={ this.trackMenuClick }>
 						{ translate( 'Manage all domains' ) }
@@ -79,7 +80,7 @@ class OptionsDomainButton extends React.Component {
 					<PopoverMenuItem href="/start/domain" onClick={ this.trackMenuClick }>
 						{ translate( 'Add a domain without a site' ) }
 					</PopoverMenuItem>
-				</PopoverMenu>
+				</Popover>
 			</React.Fragment>
 		);
 	}
