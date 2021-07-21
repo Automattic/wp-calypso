@@ -16,7 +16,7 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 		page = args.page;
 	} );
 
-	describe( 'Search for a support topic then close popover', function () {
+	describe( 'Search for a support then open support article', function () {
 		let supportComponent;
 
 		it( 'Log in', async function () {
@@ -56,61 +56,17 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 			assert.strictEqual( 3, adminCount );
 		} );
 
-		it( 'Clear keyword', async function () {
-			await supportComponent.clearSearch();
-			const defaultResults = await supportComponent.getOverallResultsCount();
-			assert.notStrictEqual( 0, defaultResults );
-			const supportResults = await supportComponent.getSupportResultsCount();
-			assert.strictEqual( 0, supportResults );
-			const adminResults = await supportComponent.getAdminResultsCount();
-			assert.strictEqual( 0, adminResults );
-		} );
-
-		it( 'Close support popover', async function () {
-			await supportComponent.closePopover();
-		} );
-	} );
-
-	describe( 'Search for a support topic and open a support page article', function () {
-		let supportComponent;
-
-		it( 'Log in', async function () {
-			const loginFlow = new LoginFlow( page );
-			await loginFlow.logIn();
-		} );
-
-		it( 'Open Settings page', async function () {
-			await MyHomePage.Expect( page );
-			const sidebarComponent = await SidebarComponent.Expect( page );
-			await sidebarComponent.gotoMenu( { item: 'Settings', subitem: 'General' } );
-		} );
-
-		it( 'Open support popover', async function () {
-			await SettingsPage.Expect( page );
-			supportComponent = await SupportComponent.Expect( page );
-			await supportComponent.clickSupportButton();
-		} );
-
-		it( 'Displays default entries', async function () {
-			const results = await supportComponent.getOverallResultsCount();
-			assert.ok( results >= 5 );
-		} );
-
-		it( 'Enter search keyword', async function () {
-			const keyword = 'domain';
-			await supportComponent.search( keyword );
-		} );
-
-		it( 'Search results are shown', async function () {
-			const supportCount = await supportComponent.getSupportResultsCount();
-			assert.strictEqual( 4, supportCount );
-
-			const adminCount = await supportComponent.getAdminResultsCount();
-			assert.strictEqual( 3, adminCount );
-		} );
-
-		it( 'Click on first link', async function () {
+		it( 'Click and view first support article', async function () {
 			await supportComponent.clickResult( 1 );
+		} );
+
+		it( 'Visit and close support article page', async function () {
+			const supportArticlePage = await supportComponent.visitArticle();
+			await supportArticlePage.close();
+		} );
+
+		it( 'Close support article preview', async function () {
+			await supportComponent.closeArticle();
 		} );
 	} );
 
@@ -147,6 +103,21 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 		it( 'Continues to display default results', async function () {
 			const defaultResults = await supportComponent.getOverallResultsCount();
 			assert.notStrictEqual( 0, defaultResults );
+		} );
+
+		it( 'Clear keyword', async function () {
+			await supportComponent.clearSearch();
+
+			const defaultResults = await supportComponent.getOverallResultsCount();
+			assert.notStrictEqual( 0, defaultResults );
+			const supportResults = await supportComponent.getSupportResultsCount();
+			assert.strictEqual( 0, supportResults );
+			const adminResults = await supportComponent.getAdminResultsCount();
+			assert.strictEqual( 0, adminResults );
+		} );
+
+		it( 'Close support popover', async function () {
+			await supportComponent.closePopover();
 		} );
 	} );
 
