@@ -24,8 +24,8 @@ const upsellLimit2 = 0.85;
 
 const progressBarColors: Record< BackupStorageSpaceUpsellOptions, string > = {
 	no_upsell: '#2C3338',
-	first_limit: '#DEB100',
-	second_limit: '#E65054',
+	first_upsell: '#DEB100',
+	second_upsell: '#E65054',
 	out_of_storage: '#E65054',
 };
 
@@ -41,10 +41,10 @@ export const BackupStorageSpace: FunctionComponent< Props > = () => {
 
 	let upsellOption: BackupStorageSpaceUpsellOptions = 'no_upsell';
 	if ( usedStorageFraction >= upsellLimit1 ) {
-		upsellOption = 'first_limit';
+		upsellOption = 'first_upsell';
 	}
 	if ( usedStorageFraction >= upsellLimit2 ) {
-		upsellOption = 'second_limit';
+		upsellOption = 'second_upsell';
 	}
 	if ( usedStorage >= storageLimit ) {
 		upsellOption = 'out_of_storage';

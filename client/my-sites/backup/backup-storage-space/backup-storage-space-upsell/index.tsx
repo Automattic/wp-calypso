@@ -19,8 +19,8 @@ import './style.scss';
 
 export type BackupStorageSpaceUpsellOptions =
 	| 'no_upsell'
-	| 'first_limit'
-	| 'second_limit'
+	| 'first_upsell'
+	| 'second_upsell'
 	| 'out_of_storage';
 
 const getStatusText = (
@@ -29,10 +29,10 @@ const getStatusText = (
 	translate: typeof translateType
 ) => {
 	switch ( upsellOption ) {
-		case 'first_limit':
+		case 'first_upsell':
 			// TODO: calculate storage time, account for GB, and translate once API data is available.
 			return sprintf( 'You will reach your %1$sGB storage limit in %2$s days', storageLimit, 3 );
-		case 'second_limit':
+		case 'second_upsell':
 			return translate( 'You’re running out of storage space.' );
 		case 'out_of_storage':
 			return translate( 'You ran out of storage space.' );
