@@ -37,14 +37,12 @@
 	flex-direction: row-reverse;
 }
 
+.toolbar__button.button.is-borderless.is-primary:focus {
+	box-shadow: none;
 }
 
 .toolbar__button-icon {
 	margin-left: 0.3rem;
-}
-
-.button.is-borderless.is-primary:focus {
-	box-shadow: none;
 }
 
 .toolbar__download-button--multisite {
