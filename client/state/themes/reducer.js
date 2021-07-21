@@ -338,7 +338,8 @@ const queriesReducer = ( state = {}, action ) => {
 				siteId,
 				// Always 'patch' to avoid overwriting existing fields when receiving
 				// from a less rich endpoint such as /mine
-				( m ) => m.receive( map( themes, fromApi ), { query, found, patch: true } ),
+				( m ) =>
+					m.receive( map( themes, fromApi ), { query, found, patch: true, ownResultsOnly: true } ),
 				() => new ThemeQueryManager( null, { itemKey: 'id' } )
 			);
 		}

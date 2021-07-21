@@ -371,6 +371,10 @@ export default class QueryManager {
 					return memo;
 				}
 
+				if ( ! isReceivedQueryKey && options.ownResultsOnly ) {
+					return memo;
+				}
+
 				// Found counts should not be adjusted for the received query if
 				// merging into existing items
 				const shouldAdjustFoundCount = ! isReceivedQueryKey;
