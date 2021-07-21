@@ -214,6 +214,7 @@ export async function startBrowser( {
 				}
 
 				options.addArguments( '--app=https://www.wordpress.com' );
+				options.addArguments( '--v=2' );
 
 				// eslint-disable-next-line no-case-declarations
 				const service = new chrome.ServiceBuilder( chromedriver.path )
