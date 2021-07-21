@@ -144,26 +144,29 @@ export class MediaPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async upload( fullPath: string ): Promise< ElementHandle > {
-		// Simulate the user selecting a file and confirming.
+		const filename = path.basename( fullPath );
+		const itemSelector = `figure[title="${ filename }"]`;
+
+		// Simulate the action of user selecting a file then clicking confirm.
 		await this.page.setInputFiles( selectors.fileInput, fullPath );
 
-		// From here, confirm if upload is successful or rejected.
-		const filename = path.basename( fullPath );
-		// Item in gallery have the `title=<filename>` attribute.
-		const itemSelector = `figure[title="${ filename }"]`;
-		const result = await Promise.race( [
-			this.page.waitForSelector( itemSelector, { state: 'visible' } ), // Upload successful
-			this.page.waitForSelector( selectors.uploadRejectionNotice ), // Upload failed
-		] );
+		// Wait until the spinner for the file being uploaded is hidden.
+		// This is necessary as Simple and Atomic sites behave slightly differently when rejecting.
+		// For Atomic, a figure and associated spinner are shown briefly in the gallery before rejection.
+		await this.page.waitForSelector( `${ itemSelector } .media-library__list-item-spinner`, {
+			state: 'hidden',
+		} );
 
-		// If the promise resolved to a result with `title` attribute, upload was successful.
-		if ( ( await result.getAttribute( 'title' ) ) === filename ) {
-			await this.page.waitForSelector( `${ itemSelector } .media-library__list-item-spinner`, {
-				state: 'hidden',
-			} );
-			return result;
+		// At this point, if the rejection notice is visible, it means the file was not a supported
+		// file type. Throw the error containing the rejection banner text for handling.
+		if ( await this.page.isVisible( selectors.uploadRejectionNotice ) ) {
+			throw new Error(
+				await this.page
+					.waitForSelector( selectors.uploadRejectionNotice )
+					.then( ( element ) => element.innerText() )
+			);
+		} else {
+			return await this.page.waitForSelector( itemSelector );
 		}
-		// Otherwise, throw the content of the error banner to the caller for further processing.
-		throw new Error( await result.innerText() );
 	}
 }
