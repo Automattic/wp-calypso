@@ -17,7 +17,7 @@ import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item'
  */
 import './style.scss';
 
-export function renderAcceptForP2( props ) {
+export function renderInviteAcceptForP2( props ) {
 	return (
 		<div>
 			<div className="invite-accept-logged-in__p2-logo">
