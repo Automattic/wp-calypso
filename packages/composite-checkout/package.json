@@ -39,9 +39,9 @@
 	"dependencies": {
 		"@emotion/core": "^10.0.27",
 		"@emotion/styled": "^10.0.27",
-		"@wordpress/data": "^4.27.3",
-		"@wordpress/i18n": "^3.20.0",
-		"@wordpress/react-i18n": "^1.0.3",
+		"@wordpress/data": "^5.2.0",
+		"@wordpress/i18n": "^4.2.0",
+		"@wordpress/react-i18n": "^2.2.0",
 		"debug": "^4.1.1",
 		"emotion-theming": "^10.0.27",
 		"prop-types": "^15.7.2",
