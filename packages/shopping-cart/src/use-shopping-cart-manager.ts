@@ -1,12 +1,12 @@
-/**
- * External dependencies
- */
-import { useCallback, useMemo, useEffect, useRef } from 'react';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import { useCallback, useMemo, useEffect, useRef } from 'react';
+import { convertTempResponseCartToResponseCart } from './cart-functions';
+import { createRequestCartProducts } from './create-request-cart-product';
+import { createCartSyncMiddleware } from './sync';
+import useCartUpdateAndRevalidate from './use-cart-update-and-revalidate';
+import useInitializeCartFromServer from './use-initialize-cart-from-server';
+import useRefetchOnFocus from './use-refetch-on-focus';
+import useShoppingCartReducer from './use-shopping-cart-reducer';
 import type {
 	TempResponseCart,
 	ResponseCart,
@@ -27,13 +27,6 @@ import type {
 	CartValidCallback,
 	DispatchAndWaitForValid,
 } from './types';
-import { convertTempResponseCartToResponseCart } from './cart-functions';
-import useShoppingCartReducer from './use-shopping-cart-reducer';
-import useInitializeCartFromServer from './use-initialize-cart-from-server';
-import useCartUpdateAndRevalidate from './use-cart-update-and-revalidate';
-import { createRequestCartProducts } from './create-request-cart-product';
-import useRefetchOnFocus from './use-refetch-on-focus';
-import { createCartSyncMiddleware } from './sync';
 
 const debug = debugFactory( 'shopping-cart:use-shopping-cart-manager' );
 
