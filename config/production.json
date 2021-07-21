@@ -14,10 +14,12 @@
 	"facebook_app_id": "2373049596",
 	"rebrand_cities_prefix": "rebrandcitiessite",
 	"livechat_support_locales": [ "en", "es", "pt-br" ],
+	"bilmur_url": "/wp-content/js/bilmur.min.js",
 	"features": {
 		"ad-tracking": true,
 		"async-payments": false,
 		"automated-transfer": true,
+		"bilmur-script": true,
 		"blogger-plan": false,
 		"calypsoify/plugins": true,
 		"catch-js-errors": true,
