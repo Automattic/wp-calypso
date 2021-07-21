@@ -42,6 +42,8 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import NavItem from 'calypso/components/section-nav/item';
 import RecommendedThemes from './recommended-themes';
 import TrendingThemes from './trending-themes';
+import FseThemes from './fse-themes';
+import Badge from 'calypso/components/badge';
 
 /**
  * Style dependencies
@@ -88,6 +90,19 @@ class ThemeShowcase extends React.Component {
 				show: this.props.isJetpackSite,
 			},
 			ALL: { key: 'all', text: props.translate( 'All Themes' ), order: 4, show: true },
+			FSE: {
+				key: 'fse',
+				text: (
+					<span>
+						{ props.translate( 'Full Site Editing' ) }
+						<Badge type="warning-clear" className="theme-showcase__badge-beta">
+							{ props.translate( 'Beta' ) }
+						</Badge>
+					</span>
+				),
+				order: 5,
+				show: config.isEnabled( 'gutenboarding/site-editor' ),
+			},
 		};
 		this.state = {
 			tabFilter:
@@ -390,6 +405,7 @@ class ThemeShowcase extends React.Component {
 					{ 'all' === this.state.tabFilter.key && this.allThemes( { themeProps } ) }
 					{ 'my-themes' === this.state.tabFilter.key && <ThemesSelection { ...themeProps } /> }
 					{ 'trending' === this.state.tabFilter.key && <TrendingThemes { ...themeProps } /> }
+					{ 'fse' === this.state.tabFilter.key && <FseThemes { ...themeProps } /> }
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 					<ThanksModal source={ 'list' } />
