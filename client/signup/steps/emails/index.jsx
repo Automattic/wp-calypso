@@ -129,10 +129,10 @@ class EmailsStep extends React.Component {
 	}
 
 	render() {
-		const { flowName, translate, stepName, positionInFlow } = this.props;
+		const { flowName, translate, stepName, positionInFlow, signupDependencies } = this.props;
 		const backUrl = 'start/domains/';
 		const headerText = translate( 'Add Professional Email' );
-		const domainName = this.props.progress.domains.siteUrl;
+		const domainName = signupDependencies.domainItem?.meta;
 		const subHeaderText = translate(
 			'Add a custom email address to start sending and receiving emails from {{strong}}%(domainName)s{{/strong}} today.',
 			{
