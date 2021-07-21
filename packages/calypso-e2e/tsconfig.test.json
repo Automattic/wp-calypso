@@ -1,0 +1,7 @@
+{
+	"extends": "@automattic/calypso-build/typescript/ts-package.json",
+	"compilerOptions": {
+		"noEmit": true // just type checking, no output. The output is handled by babel.
+	},
+	"include": [ "src", "test" ]
+}
