@@ -89,9 +89,7 @@ class ThemeShowcase extends React.Component {
 				show: this.props.isJetpackSite,
 			},
 			ALL: { key: 'all', text: props.translate( 'All Themes' ), order: 4, show: true },
-		};
-		if ( config.isEnabled( 'gutenboarding/site-editor' ) ) {
-			this.tabFilters.FSE = {
+			FSE: {
 				key: 'fse',
 				text: (
 					<span>
@@ -100,8 +98,9 @@ class ThemeShowcase extends React.Component {
 					</span>
 				),
 				order: 5,
-			};
-		}
+				show: config.isEnabled( 'gutenboarding/site-editor' ),
+			},
+		};
 		this.state = {
 			tabFilter:
 				this.props.loggedOutComponent || this.props.search || this.props.filter || this.props.tier
