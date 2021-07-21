@@ -16,15 +16,15 @@ import { BackupStorageSpaceUpsell } from './backup-storage-space-upsell';
  */
 import './style.scss';
 
-type Props = {
-	storageLimit: number;
-	usedStorage: number;
-};
+type Props = Record< string, never >;
 
 const upsellLimit1 = 0.6;
 const upsellLimit2 = 0.85;
 
-export const BackupStorageSpace: FunctionComponent< Props > = ( { storageLimit, usedStorage } ) => {
+export const BackupStorageSpace: FunctionComponent< Props > = () => {
+	const storageLimit = 200;
+	const usedStorage = 200;
+
 	const translate = useTranslate();
 
 	const usedStorageFraction = usedStorage / storageLimit;
@@ -44,7 +44,12 @@ export const BackupStorageSpace: FunctionComponent< Props > = ( { storageLimit, 
 	let statusText;
 	let titleText;
 	if ( usedStorageFraction >= upsellLimit1 ) {
-		statusText = translate( 'You will reach your 200GB storage limit in 3 days' );
+		// TODO: calculate storage time, account for GB, and translate once API data is available.
+		statusText = sprintf(
+			'You will reach your %1$sGB storage limit in %2$s days',
+			storageLimit,
+			3
+		);
 	}
 	if ( usedStorageFraction >= upsellLimit2 ) {
 		statusText = translate( 'You’re running out of storage space.' );
@@ -78,7 +83,7 @@ export const BackupStorageSpace: FunctionComponent< Props > = ( { storageLimit, 
 						titleText={ titleText }
 						statusText={ statusText }
 						actionText={ actionText }
-						href=""
+						href="/pricing/backup"
 					/>
 				</>
 			) }

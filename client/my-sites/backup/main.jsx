@@ -120,9 +120,7 @@ const AdminContent = ( { selectedDate } ) => {
 		page( backupMainPath( siteSlug, { date: date.format( INDEX_FORMAT ) } ) );
 
 	const backupStorageSpace = getForCurrentCROIteration( {
-		[ Iterations.ONLY_REALTIME_PRODUCTS ]: (
-			<BackupStorageSpace storageLimit={ 200 } usedStorage={ 200 } />
-		),
+		[ Iterations.ONLY_REALTIME_PRODUCTS ]: <BackupStorageSpace />,
 	} );
 
 	return (
