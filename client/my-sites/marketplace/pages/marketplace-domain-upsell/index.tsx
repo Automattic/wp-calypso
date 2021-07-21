@@ -95,6 +95,12 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 		selectedSite && dispatch( fetchSiteDomains( selectedSite.ID ) );
 	}, [ setIsExpandedBasketView, selectedSite, dispatch ] );
 
+	const redirectToUseDomainFlow = (): void => {
+		const currentUrl = '/plugins/domain';
+		const useYourDomainUrl = `/start/launch-site/domains-launch/use-your-domain?siteSlug=${ selectedSite?.slug }&source=${ currentUrl }`;
+		page( useYourDomainUrl );
+	};
+
 	const onDomainSelect = async ( suggestion: DomainSuggestions.DomainSuggestion ) => {
 		const { product_slug, domain_name } = suggestion;
 		const domainProduct = {
@@ -175,6 +181,7 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 						onExistingSubdomainSelect={ onExistingSubdomainSelect }
 						currentDomain={ selectedDomain }
 						showRecommendationLabel={ false }
+						onUseYourDomainClick={ redirectToUseDomainFlow }
 					/>
 				</div>
 				<div className="marketplace-domain-upsell__shopping-cart-container">
