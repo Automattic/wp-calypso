@@ -47,7 +47,7 @@ class Sites extends Component {
 
 		// Plans are for not Jetpack or Jetpack upgradeable sites.
 		if ( /^\/plans/.test( path ) ) {
-			return ! site.jetpack || site.isSiteUpgradeable;
+			return ! site.jetpack || site.capabilities.manage_options;
 		}
 
 		if ( /^\/hosting-config/.test( path ) ) {
