@@ -503,6 +503,13 @@ describe( 'QueryManager', () => {
 			);
 			expect( manager.getItems( { a: true } ) ).toEqual( [ { ID: 1 }, { ID: 2 } ] );
 		} );
+		test( 'Can still retrieve items without a query', () => {
+			manager = manager.receive(
+				{ ID: 1 },
+				{ dontShareQueryResultsWhenQueriesAreDifferent: true }
+			);
+			expect( manager.getItems() ).toEqual( [ { ID: 1 } ] );
+		} );
 	} );
 
 	describe( '.QueryKey', () => {
