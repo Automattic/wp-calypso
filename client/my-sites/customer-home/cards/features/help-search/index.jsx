@@ -1,31 +1,21 @@
-/**
- * External dependencies
- */
 import { Card } from '@automattic/components';
-import React from 'react';
 import { useTranslate } from 'i18n-calypso';
+import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import CardHeading from 'calypso/components/card-heading';
-import Gridicon from 'calypso/components/gridicon';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
-import HelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
-import HelpSearchResults from 'calypso/blocks/inline-help/inline-help-search-results';
-import getInlineHelpCurrentlySelectedResult from 'calypso/state/inline-help/selectors/get-inline-help-currently-selected-result';
 import {
 	RESULT_ARTICLE,
 	RESULT_LINK,
 	RESULT_TOUR,
 	RESULT_TYPE,
 } from 'calypso/blocks/inline-help/constants';
+import HelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
+import HelpSearchResults from 'calypso/blocks/inline-help/inline-help-search-results';
+import CardHeading from 'calypso/components/card-heading';
+import Gridicon from 'calypso/components/gridicon';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getInlineHelpCurrentlySelectedResult from 'calypso/state/inline-help/selectors/get-inline-help-currently-selected-result';
+import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const HELP_COMPONENT_LOCATION = 'customer-home';

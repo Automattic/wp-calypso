@@ -1,18 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import EducationalContent from '../educational-content';
-
-/**
- * Image dependencies
- */
+import React from 'react';
 import webinarIllustration from 'calypso/assets/images/customer-home/illustration-webinars.svg';
+import EducationalContent from '../educational-content';
 
 const Webinars = () => {
 	const translate = useTranslate();

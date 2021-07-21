@@ -1,42 +1,28 @@
-/**
- * External dependencies
- */
+import i18nCalypso, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import i18nCalypso, { getLocaleSlug, useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import ActionBox from './action-box';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { canCurrentUserAddEmail } from 'calypso/lib/domains';
+import anchorLogoIcon from 'calypso/assets/images/customer-home/anchor-logo-grey.svg';
+import fiverrIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
 import FoldableCard from 'calypso/components/foldable-card';
+import { canCurrentUserAddEmail } from 'calypso/lib/domains';
+import { hasPaidEmailWithUs } from 'calypso/lib/emails';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
+import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
+import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
 	getSiteFrontPage,
 	getCustomizerUrl,
 	getSiteOption,
 	isNewSite,
 } from 'calypso/state/sites/selectors';
-import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { hasPaidEmailWithUs } from 'calypso/lib/emails';
-import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
-import { savePreference } from 'calypso/state/preferences/actions';
-import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import ActionBox from './action-box';
 
-/**
- * Image dependencies
- */
-import fiverrIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
-import anchorLogoIcon from 'calypso/assets/images/customer-home/anchor-logo-grey.svg';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export const QuickLinks = ( {
