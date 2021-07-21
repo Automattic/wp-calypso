@@ -23,7 +23,7 @@ function translatePlaceholder( string ) {
 export function getDomainTypeText( domain = {}, __ = translatePlaceholder ) {
 	switch ( domain.type ) {
 		case domainTypes.MAPPED:
-			return __( 'Connected Domain' );
+			return __( 'Managed by external provider' );
 
 		case domainTypes.REGISTERED:
 			if ( domain?.isPremium ) {
