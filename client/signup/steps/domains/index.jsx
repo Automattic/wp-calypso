@@ -11,7 +11,6 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import flows from 'calypso/signup/config/flows';
 import MapDomainStep from 'calypso/components/domains/map-domain-step';
 import TransferDomainStep from 'calypso/components/domains/transfer-domain-step';
 import UseYourDomainStep from 'calypso/components/domains/use-your-domain-step';
@@ -37,6 +36,7 @@ import {
 } from 'calypso/state/analytics/actions';
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
+import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
 import Notice from 'calypso/components/notice';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
@@ -49,7 +49,11 @@ import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getVerticalForDomainSuggestions } from 'calypso/state/signup/steps/site-vertical/selectors';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
-import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import {
+	removeStep,
+	saveSignupStep,
+	submitSignupStep,
+} from 'calypso/state/signup/progress/actions';
 import { isDomainStepSkippable } from 'calypso/signup/config/steps';
 import { fetchUsernameSuggestion } from 'calypso/state/signup/optional-dependencies/actions';
 import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
@@ -304,9 +308,15 @@ class DomainsStep extends React.Component {
 			  } )
 			: undefined;
 
-		this.restoreAndExcludeEmailsStep( !! domainItem );
-
 		suggestion && this.props.submitDomainStepSelection( suggestion, this.getAnalyticsSection() );
+
+		maybeExcludeEmailsStep( {
+			domainItem,
+			resetSignupStep: this.props.removeStep,
+			siteUrl: suggestion.domain_name,
+			stepName: 'emails',
+			submitSignupStep: this.props.submitSignupStep,
+		} );
 
 		this.props.submitSignupStep(
 			Object.assign(
@@ -333,13 +343,6 @@ class DomainsStep extends React.Component {
 		// Start the username suggestion process.
 		siteUrl && this.props.fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] );
 	};
-
-	restoreAndExcludeEmailsStep( exclude ) {
-		flows.resetExcludedStep( 'emails' );
-		if ( ! exclude ) {
-			flows.excludeStep( 'emails' );
-		}
-	}
 
 	handleAddMapping = ( sectionName, domain, state ) => {
 		const domainItem = domainMapping( { domain } );
@@ -689,7 +692,6 @@ class DomainsStep extends React.Component {
 		if ( isReskinned ) {
 			return ! stepSectionName && translate( 'Choose a domain' );
 		}
-		this.restoreAndExcludeEmailsStep( true );
 
 		const headerPropertyName = 'signUpFlowDomainsStepHeader';
 
@@ -874,6 +876,7 @@ export default connect(
 		recordAddDomainButtonClickInTransferDomain,
 		recordAddDomainButtonClickInUseYourDomain,
 		recordUseYourDomainButtonClick,
+		removeStep,
 		submitDomainStepSelection,
 		setDesignType,
 		saveSignupStep,

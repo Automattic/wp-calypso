@@ -41,21 +41,19 @@ class EmailsStep extends React.Component {
 
 	submitEmailPurchase = ( emailItem ) => {
 		defer( () => {
-			const { stepName, stepSectionName, goToNextStep } = this.props;
-			const { domainItem, shouldHideFreePlan } = this.props.signupDependencies;
-			const dependencies = {
-				emailItem,
-				domainItem,
-				shouldHideFreePlan,
-			};
+			const { goToNextStep, stepName, stepSectionName } = this.props;
+
 			this.props.submitSignupStep(
 				{
 					emailItem,
 					stepName,
-					stepSectionName: stepSectionName,
+					stepSectionName,
 				},
-				dependencies
+				{
+					emailItem,
+				}
 			);
+
 			goToNextStep();
 		} );
 	};
