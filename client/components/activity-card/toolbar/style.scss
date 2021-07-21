@@ -45,14 +45,12 @@
 	margin-left: 0.3rem;
 }
 
-.toolbar__download-button--multisite {
+.toolbar__download-button--multisite.button {
 	margin: 0.8rem;
 	margin-right: 0;
 	margin-bottom: 0.5rem;
-	padding-top: 0.8rem;
 	display: flex;
 	justify-content: left;
-	font-size: 0.875rem;
 }
 
 .toolbar__download-button.is-borderless {
