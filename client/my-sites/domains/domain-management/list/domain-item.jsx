@@ -490,8 +490,13 @@ class DomainItem extends PureComponent {
 			isEnabled,
 			showCheckbox,
 			enableSelection,
+			site,
 		} = this.props;
-		const { listStatusText, listStatusClass } = resolveDomainStatus( domainDetails || domain );
+		const { listStatusText, listStatusClass } = resolveDomainStatus(
+			domainDetails || domain,
+			null,
+			{ siteSlug: site?.slug }
+		);
 
 		const rowClasses = classNames( 'domain-item', `domain-item__status-${ listStatusClass }`, {
 			'domain-item__enable-selection': enableSelection,

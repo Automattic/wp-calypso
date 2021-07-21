@@ -13,11 +13,18 @@ import { isExpiringSoon } from 'calypso/lib/domains/utils/is-expiring-soon';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils/is-recently-registered';
 import { hasPendingGSuiteUsers } from 'calypso/lib/gsuite';
 import { shouldRenderExpiringCreditCard } from 'calypso/lib/purchases';
+import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 
 export function resolveDomainStatus(
 	domain,
 	purchase = null,
-	{ isJetpackSite = null, isSiteAutomatedTransfer = null, isDomainOnlySite = false } = {}
+	{
+		isJetpackSite = null,
+		isSiteAutomatedTransfer = null,
+		isDomainOnlySite = false,
+		hasMappingError: hasConnectionError = false,
+		siteSlug = null,
+	} = {}
 ) {
 	switch ( domain.type ) {
 		case domainTypes.MAPPED:
@@ -60,6 +67,31 @@ export function resolveDomainStatus(
 					icon: 'verifying',
 					listStatusText: status,
 					listStatusClass: 'verifying',
+				};
+			}
+
+			if ( hasConnectionError ) {
+				// New layout: "Connection error: We noticed that the name servers weren’t updated correctly, please try this step again."
+				const status = translate(
+					"{{strong}}Connection error:{{/strong}} We couldn't verify your connection. Please {{a}}follow this setup again{{/a}}.",
+					{
+						components: {
+							strong: <strong />,
+							a: (
+								<a
+									href={ domainManagementEdit( siteSlug, domain.domain ) }
+									onClick={ ( e ) => e.stopPropagation() }
+								/>
+							),
+						},
+					}
+				);
+				return {
+					statusText: translate( 'Connection error' ),
+					statusClass: 'status-alert',
+					icon: 'info',
+					listStatusText: status,
+					listStatusClass: 'alert',
 				};
 			}
 
