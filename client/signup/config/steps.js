@@ -37,6 +37,7 @@ export default generateSteps( {
 	currentPage,
 	setThemeOnSite,
 	addDomainToCart,
+	addEmailToCart,
 	launchSiteApi,
 	isPlanFulfilled,
 	isDomainFulfilled,
