@@ -41,7 +41,7 @@ import {
 } from 'calypso/lib/plugins/constants';
 import { getSite } from 'calypso/state/sites/selectors';
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { sitePluginUpdated } from 'calypso/state/sites/actions';
 
 import 'calypso/state/plugins/init';
