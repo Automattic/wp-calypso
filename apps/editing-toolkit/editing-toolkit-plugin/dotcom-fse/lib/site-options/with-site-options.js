@@ -1,3 +1,5 @@
+/* eslint-disable jsdoc/no-undefined-types */
+
 import { createHigherOrderComponent, pure } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useSiteOptions } from './use-site-options';
