@@ -59,10 +59,6 @@
 	justify-content: space-between;
 	column-gap: 16px;
 	margin: 24px 0 8px;
-
-	.activity-card-list__secondary-card & {
-		transform: translateX( 32px );
-	}
 }
 
 .activity-card__time {
