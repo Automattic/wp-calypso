@@ -5,7 +5,6 @@ import React, { useEffect } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import { numberFormat, useTranslate } from 'i18n-calypso';
 import { Card } from '@automattic/components';
-import { times } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -36,7 +35,7 @@ import classnames from 'classnames';
  */
 import './style.scss';
 
-const placeholderChartData = times( 7, () => ( {
+const placeholderChartData = Array.from( { length: 7 }, () => ( {
 	value: Math.random(),
 } ) );
 
