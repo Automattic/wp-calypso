@@ -41,6 +41,7 @@ import SectionNav from 'calypso/components/section-nav';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import NavItem from 'calypso/components/section-nav/item';
 import RecommendedThemes from './recommended-themes';
+import TrendingThemes from './trending-themes';
 
 /**
  * Style dependencies
@@ -72,11 +73,16 @@ class ThemeShowcase extends React.Component {
 		super( props );
 		this.scrollRef = React.createRef();
 		this.bookmarkRef = React.createRef();
+		this.tabFilters = {
+			RECOMMENDED: { key: 'recommended', text: props.translate( 'Recommended' ), order: 1 },
+			ALL: { key: 'all', text: props.translate( 'All Themes' ), order: 2 },
+			TRENDING: { key: 'trending', text: props.translate( 'Trending' ), order: 3 },
+		};
 		this.state = {
 			tabFilter:
 				this.props.loggedOutComponent || this.props.search || this.props.filter || this.props.tier
-					? 'all'
-					: 'recommended',
+					? this.tabFilters.ALL
+					: this.tabFilters.RECOMMENDED,
 		};
 	}
 
@@ -152,7 +158,7 @@ class ThemeShowcase extends React.Component {
 			// Strip filters and excess whitespace
 			searchString: searchBoxContent.replace( filterRegex, '' ).replace( /\s+/g, ' ' ).trim(),
 		} );
-		this.setState( { tabFilter: 'all' } );
+		this.setState( { tabFilter: this.tabFilters.ALL } );
 		page( url );
 		this.scrollToSearchInput();
 	};
@@ -191,8 +197,8 @@ class ThemeShowcase extends React.Component {
 	onTierSelect = ( { value: tier } ) => {
 		// In this state: tabFilter = [ ##Recommended## | All(1) ]   tier = [ All(2) | Free | Premium ]
 		// Clicking "Free" or "Premium" forces tabFilter from "Recommended" to "All"
-		if ( tier !== '' && tier !== 'all' && this.state.tabFilter === 'recommended' ) {
-			this.setState( { tabFilter: 'all' } );
+		if ( tier !== '' && tier !== 'all' && this.state.tabFilter.key !== this.tabFilters.ALL.key ) {
+			this.setState( { tabFilter: this.tabFilters.ALL } );
 		}
 		trackClick( 'search bar filter', tier );
 		const url = this.constructUrl( { tier } );
@@ -207,7 +213,7 @@ class ThemeShowcase extends React.Component {
 		let callback = () => null;
 		// In this state: tabFilter = [ Recommended | ##All(1)## ]  tier = [ All(2) | Free | ##Premium## ]
 		// Clicking "Recommended" forces tier to be "all", since Recommend themes cannot filter on tier.
-		if ( 'recommended' === tabFilter && 'all' !== this.props.tier ) {
+		if ( tabFilter.key !== this.tabFilters.ALL.key && 'all' !== this.props.tier ) {
 			callback = () => this.onTierSelect( { value: 'all' } );
 		}
 		this.setState( { tabFilter }, callback );
@@ -330,41 +336,33 @@ class ThemeShowcase extends React.Component {
 						select={ this.onTierSelect }
 					/>
 					{ isLoggedIn && (
-						<SectionNav
-							className="themes__section-nav"
-							selectedText={
-								'recommended' === this.state.tabFilter
-									? translate( 'Recommended' )
-									: translate( 'All Themes' )
-							}
-						>
+						<SectionNav className="themes__section-nav" selectedText={ this.state.tabFilter.text }>
 							<NavTabs>
-								<NavItem
-									onClick={ () => this.onFilterClick( 'recommended' ) }
-									selected={ 'recommended' === this.state.tabFilter }
-								>
-									{ translate( 'Recommended' ) }
-								</NavItem>
-								<NavItem
-									onClick={ () => this.onFilterClick( 'all' ) }
-									selected={ 'all' === this.state.tabFilter }
-								>
-									{ translate( 'All Themes' ) }
-								</NavItem>
+								{ Object.values( this.tabFilters )
+									.sort( ( a, b ) => a.order - b.order )
+									.map( ( tabFilter ) => (
+										<NavItem
+											key={ tabFilter.key }
+											onClick={ () => this.onFilterClick( tabFilter ) }
+											selected={ tabFilter.key === this.state.tabFilter.key }
+										>
+											{ tabFilter.text }
+										</NavItem>
+									) ) }
 							</NavTabs>
 						</SectionNav>
 					) }
 
 					{ this.props.upsellBanner }
 
-					{ 'recommended' === this.state.tabFilter && (
+					{ 'recommended' === this.state.tabFilter.key && (
 						<RecommendedThemes
 							listLabel={ ' ' }
 							{ ...themeProps }
 							scrollToSearchInput={ this.scrollToSearchInput }
 						/>
 					) }
-					{ 'all' === this.state.tabFilter && (
+					{ 'all' === this.state.tabFilter.key && (
 						<div className="theme-showcase__all-themes">
 							{ ! this.props.loggedOutComponent && showBanners && (
 								<UpworkBanner location={ 'theme-banner' } />
@@ -372,6 +370,14 @@ class ThemeShowcase extends React.Component {
 							<ThemesSelection listLabel={ this.props.listLabel } { ...themeProps } />
 							{ isJetpackSite && this.props.children }
 						</div>
+					) }
+
+					{ 'trending' === this.state.tabFilter.key && (
+						<TrendingThemes
+							listLabel={ ' ' }
+							{ ...themeProps }
+							scrollToSearchInput={ this.scrollToSearchInput }
+						/>
 					) }
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }

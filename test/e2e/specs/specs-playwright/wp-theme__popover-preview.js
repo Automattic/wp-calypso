@@ -3,14 +3,15 @@ import {
 	LoginFlow,
 	SidebarComponent,
 	ThemesPage,
-	ThemesDetailPage,
+	PreviewComponent,
 	setupHooks,
 } from '@automattic/calypso-e2e';
 
 describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 	let sidebarComponent;
 	let themesPage;
-	let themesDetailPage;
+	let previewComponent;
+	// This test will use this specific theme as it will never be active.
 	const themeName = 'Twenty Seventeen';
 	let page;
 
@@ -28,21 +29,22 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 		await sidebarComponent.gotoMenu( { item: 'Appearance' } );
 	} );
 
-	it( 'Search for free theme', async function () {
+	it( `Search for free theme with keyword ${ themeName }`, async function () {
 		themesPage = await ThemesPage.Expect( page );
 		await themesPage.filterThemes( 'Free' );
 		await themesPage.search( themeName );
 	} );
 
-	it( `Select ${ themeName }`, async function () {
-		await themesPage.select( themeName );
-	} );
-
-	it( 'See theme detail page', async function () {
-		themesDetailPage = await ThemesDetailPage.Expect( page );
+	it( `Select ${ themeName } and click on Live Demo popover item`, async function () {
+		const selectedTheme = await themesPage.select( themeName );
+		await themesPage.clickPopoverItem( selectedTheme, 'Live Demo' );
 	} );
 
 	it( 'Preview theme', async function () {
-		await themesDetailPage.preview();
+		previewComponent = await PreviewComponent.Expect( page );
+	} );
+
+	it( 'Close preview', async function () {
+		await previewComponent.closePreview();
 	} );
 } );

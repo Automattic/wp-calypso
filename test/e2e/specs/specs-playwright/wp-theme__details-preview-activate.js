@@ -3,16 +3,19 @@ import {
 	DataHelper,
 	LoginFlow,
 	SidebarComponent,
+	PreviewComponent,
 	ThemesPage,
 	ThemesDetailPage,
 } from '@automattic/calypso-e2e';
 
-describe( DataHelper.createSuiteTitle( 'Theme: Activate' ), () => {
+describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 	let sidebarComponent;
 	let themesPage;
 	let themesDetailPage;
+	let previewComponent;
 	let popupTab;
 	let page;
+	// This test will use partial matching names to cycle between available themes.
 	const themeName = 'Twenty Twen';
 	const user = 'defaultUser';
 
@@ -30,22 +33,32 @@ describe( DataHelper.createSuiteTitle( 'Theme: Activate' ), () => {
 		await sidebarComponent.gotoMenu( { item: 'Appearance', subitem: 'Themes' } );
 	} );
 
-	it( 'Search for free theme', async function () {
+	it( `Search for free theme with keyword ${ themeName }`, async function () {
 		themesPage = await ThemesPage.Expect( page );
 		await themesPage.filterThemes( 'Free' );
 		await themesPage.search( themeName );
 	} );
 
-	it( `Select a theme starting with ${ themeName }`, async function () {
-		await themesPage.select( themeName );
+	it( `Select and view details of a theme starting with ${ themeName }`, async function () {
+		const selectedTheme = await themesPage.select( themeName );
+		await themesPage.hoverThenClick( selectedTheme );
+	} );
+
+	it( 'Preview theme', async function () {
+		themesDetailPage = await ThemesDetailPage.Expect( page );
+		await themesDetailPage.preview();
+	} );
+
+	it( 'Close theme preview', async function () {
+		previewComponent = await PreviewComponent.Expect( page );
+		await previewComponent.closePreview();
 	} );
 
 	it( 'Activate theme', async function () {
-		themesDetailPage = await ThemesDetailPage.Expect( page );
 		await themesDetailPage.activate();
 	} );
 
-	it( 'Theme customizer loads in a new tab', async function () {
+	it( 'Open theme customizer', async function () {
 		popupTab = await themesDetailPage.customizeSite();
 		await popupTab.waitForLoadState( 'load' );
 	} );
