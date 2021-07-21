@@ -18,7 +18,7 @@ import ExternalLink from 'calypso/components/external-link';
 import Gridicon from 'calypso/components/gridicon';
 import PopoverMenu from 'calypso/components/popover/menu';
 import Button from 'calypso/components/forms/form-button';
-import { Activity } from './types';
+import { Activity } from '../types';
 
 /**
  * Style dependencies

@@ -9,7 +9,7 @@ import React from 'react';
 import { isSuccessfulRealtimeBackup } from 'calypso/lib/jetpack/backup-utils';
 import ExpandContent from './expand-content';
 import ActionsButton from './actions-button';
-import { Activity } from './types';
+import { Activity } from '../types';
 
 /**
  * Style dependencies
