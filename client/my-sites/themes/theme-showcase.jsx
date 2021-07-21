@@ -43,6 +43,7 @@ import NavItem from 'calypso/components/section-nav/item';
 import RecommendedThemes from './recommended-themes';
 import TrendingThemes from './trending-themes';
 import FseThemes from './fse-themes';
+import Badge from 'calypso/components/badge';
 
 /**
  * Style dependencies
@@ -94,7 +95,9 @@ class ThemeShowcase extends React.Component {
 				text: (
 					<span>
 						{ props.translate( 'Full Site Editing' ) }
-						<span className="theme-showcase__badge-beta ">{ props.translate( 'Beta' ) }</span>
+						<Badge type="warning-clear" className="theme-showcase__badge-beta">
+							{ props.translate( 'Beta' ) }
+						</Badge>
 					</span>
 				),
 				order: 5,
