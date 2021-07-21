@@ -522,7 +522,7 @@ class DomainItem extends PureComponent {
 						{ this.renderActionResult() }
 					</div>
 					{ this.renderSiteMeta() }
-					{ ! domain.pointsToWpcom && (
+					{ listStatusText && (
 						<DomainNotice status={ listStatusClass || 'info' } text={ listStatusText } />
 					) }
 				</div>
