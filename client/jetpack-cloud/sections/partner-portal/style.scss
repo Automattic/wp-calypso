@@ -15,3 +15,25 @@
 		display: none;
 	}
 }
+
+.dialog__content {
+	max-width: 628px;
+
+	&, & p {
+		font-size: 1rem;
+	}
+}
+
+.dialog__action-buttons {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	background: var( --studio-gray-0 );
+	border: 0;
+
+	a:not( .button ) {
+		margin-right: auto;
+		font-weight: 600;
+		text-decoration: underline;
+	}
+}

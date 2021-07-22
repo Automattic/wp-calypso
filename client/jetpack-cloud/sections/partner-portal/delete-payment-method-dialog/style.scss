@@ -1,0 +1,52 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
+.delete-payment-method-dialog {
+	.dialog__content {
+		max-width: 676px;
+		color: var( --color-primary-80 );
+	}
+
+	&__heading {
+		margin: -16px -16px 16px;
+		padding: 16px 24px;
+		font-size: 1.125rem; /* stylelint-disable-line */
+		font-weight: 600;
+		line-height: 21px;
+		border-bottom: 1px solid var( --studio-gray-5 );
+
+		@include break-mobile() {
+			margin: -24px -24px 24px;
+			line-height: 36px;
+		}
+	}
+
+	h3 {
+		font-size: $font-body-small;
+		font-weight: 700;
+	}
+
+	&__card-details {
+		margin-top: 1rem;
+		padding-bottom: 0.5rem;
+		border-bottom: 1px solid var( --studio-gray-5 );
+
+		&:last-child {
+			border: none;
+		}
+	}
+
+	&__credit-card {
+		margin-top: 1rem;
+		margin-bottom: 1rem;
+		font-size: 0.875rem;
+
+		& > *:not( :last-child ) {
+			margin-right: 2rem;
+		}
+	}
+
+	&__brand-logo {
+		filter: grayscale( 100% );
+	}
+}

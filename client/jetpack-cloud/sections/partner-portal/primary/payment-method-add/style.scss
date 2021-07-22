@@ -8,6 +8,7 @@
 
 	&__navigation-buttons {
 		margin-top: 1rem;
+		margin-bottom: 1rem;
 	}
 
 	&__back-button {
@@ -18,6 +19,12 @@
 	&__submit-button {
 		display: inline;
 		font-size: 1rem;
+	}
+
+	&__delete-button {
+		margin-top: 1rem;
+		text-decoration: underline;
+		text-underline-offset: 0.1rem;
 	}
 
 	&__all-subscriptions-checkbox-label.form-label {

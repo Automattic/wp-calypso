@@ -170,3 +170,16 @@ export function formatApiPartner( partner: APIPartner ): Partner {
 		} ) ),
 	};
 }
+
+/**
+ * Format a Stripe expiry date (yyyy-mm-dd)
+ *
+ * @param {string} stripeExpiryDate A expiry date from Stripe aPI
+ * @returns {string} Formatted expiry date
+ */
+export function getFormattedExpiryDate( stripeExpiryDate: string ): string {
+	const [ year, expiryMonth ] = stripeExpiryDate.split( '-' );
+	const expiryYear = year.substr( 2, 2 );
+
+	return `${ expiryMonth }/${ expiryYear }`;
+}

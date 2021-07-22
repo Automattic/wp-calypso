@@ -3,6 +3,7 @@
  */
 import React, { ReactElement } from 'react';
 import { useTranslate } from 'i18n-calypso';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -21,13 +22,24 @@ interface Props {
 
 export default function StoredCreditCard( props: Props ): ReactElement {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const creditCard = props.card;
 
 	const [ year, expiryMonth ] = creditCard.expiry.split( '-' );
 	const expiryYear = year.substr( 2, 2 );
 
+	const navigateToStoredCard = () => {
+		dispatch(
+			recordTracksEvent( 'calypso_partner_portal_license_list_empty_issue_license_click' )
+		);
+	};
+
 	return (
-		<div className="stored-credit-card">
+		<a
+			href={ '/partner-portal/payment-method/card/?details_id=' + creditCard.stored_details_id }
+			onClick={ navigateToStoredCard }
+			className="stored-credit-card"
+		>
 			<div className="stored-credit-card__header">
 				<div className="stored-credit-card__payment-logo">
 					<PaymentLogo brand={ creditCard.card_type } isSummary={ true } />
@@ -45,6 +57,6 @@ export default function StoredCreditCard( props: Props ): ReactElement {
 					<div className="stored-credit-card__expiry">{ `${ expiryMonth }/${ expiryYear }` }</div>
 				</div>
 			</div>
-		</div>
+		</a>
 	);
 }
