@@ -9,7 +9,6 @@ import { intersection } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { parse as parseQs } from 'qs';
-import { Button } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -174,26 +173,7 @@ export class PlansStep extends Component {
 	}
 
 	getSubHeaderText() {
-		const { hideFreePlan, subHeaderText, translate } = this.props;
-
-		if ( ! hideFreePlan ) {
-			if ( isDesktop() ) {
-				return translate(
-					"Pick one that's right for you and unlock features that help you grow. Or {{link}}start with a free site{{/link}}.",
-					{
-						components: {
-							link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
-						},
-					}
-				);
-			}
-
-			return translate( 'Choose a plan or {{link}}start with a free site{{/link}}.', {
-				components: {
-					link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
-				},
-			} );
-		}
+		const { subHeaderText, translate } = this.props;
 
 		if ( isDesktop() ) {
 			return translate( "Pick one that's right for you and unlock features that help you grow." );

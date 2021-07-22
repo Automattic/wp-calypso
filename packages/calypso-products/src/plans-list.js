@@ -932,10 +932,6 @@ export const PLANS_LIST = {
 		getPlanCompareFeatures: () => [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_WP_SUBDOMAIN,
-			FEATURE_JETPACK_ESSENTIAL,
-			FEATURE_COMMUNITY_SUPPORT,
-			FEATURE_FREE_THEMES,
-			FEATURE_BASIC_DESIGN,
 			FEATURE_3GB_STORAGE,
 		],
 		getSignupFeatures: () => [

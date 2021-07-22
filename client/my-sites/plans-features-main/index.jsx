@@ -340,6 +340,7 @@ export class PlansFeaturesMain extends Component {
 		if ( plansWithScroll ) {
 			return plans.filter( ( plan ) =>
 				isPlanOneOfType( plan, [
+					TYPE_FREE,
 					TYPE_BLOGGER,
 					TYPE_PERSONAL,
 					TYPE_PREMIUM,

@@ -24,7 +24,12 @@ export function getPlanRawPrice( state, productId, isMonthly = false ) {
 	if ( get( plan, 'raw_price', -1 ) < 0 ) {
 		return null;
 	}
+
 	const price = get( plan, 'orig_cost', 0 ) || plan.raw_price;
+
+	if ( price === 0 ) {
+		return 0;
+	}
 
 	return isMonthly ? calculateMonthlyPriceForPlan( plan.product_slug, price ) : price;
 }

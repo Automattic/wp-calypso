@@ -58,6 +58,10 @@ export class PlanFeaturesComparisonHeader extends Component {
 			isMonthlyPlan,
 		} = this.props;
 
+		if ( rawPrice === 0 ) {
+			return translate( 'Free forever' );
+		}
+
 		if ( isMonthlyPlan && annualPricePerMonth < rawPrice ) {
 			const discountRate = Math.round( ( 100 * ( rawPrice - annualPricePerMonth ) ) / rawPrice );
 			return translate( `Save %(discountRate)s%% by paying annually`, { args: { discountRate } } );
@@ -76,7 +80,17 @@ export class PlanFeaturesComparisonHeader extends Component {
 	}
 
 	getAnnualDiscount() {
-		const { isMonthlyPlan, rawPriceForMonthlyPlan, annualPricePerMonth, translate } = this.props;
+		const {
+			isMonthlyPlan,
+			rawPriceForMonthlyPlan,
+			annualPricePerMonth,
+			translate,
+			rawPrice,
+		} = this.props;
+
+		if ( rawPrice === 0 ) {
+			return null;
+		}
 
 		if ( ! isMonthlyPlan ) {
 			const isLoading = typeof rawPriceForMonthlyPlan !== 'number';

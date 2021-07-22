@@ -1013,17 +1013,17 @@ const ConnectedPlanFeatures = connect(
 					? getPlanDiscountedRawPrice( state, selectedSiteId, plan, isMonthlyObj )
 					: getDiscountedRawPrice( state, planProductId, showMonthlyPrice );
 
+				const isFree = rawPrice === 0;
+
 				const annualPlansOnlyFeatures = planConstantObj.getAnnualPlansOnlyFeatures?.() || [];
 				if ( annualPlansOnlyFeatures.length > 0 ) {
 					planFeatures = planFeatures.map( ( feature ) => {
-						const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes(
-							feature.getSlug()
-						);
-
+						const availableOnlyForAnnualPlans =
+							! isFree && annualPlansOnlyFeatures.includes( feature.getSlug() );
 						return {
 							...feature,
 							availableOnlyForAnnualPlans,
-							availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
+							availableForCurrentPlan: isFree || ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
 						};
 					} );
 				}

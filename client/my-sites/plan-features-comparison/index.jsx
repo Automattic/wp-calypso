@@ -4,7 +4,6 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { compact, get, map, reduce } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -39,6 +38,7 @@ import {
 	isFreePlan,
 	isMonthly,
 	TERM_MONTHLY,
+	TYPE_FREE,
 } from '@automattic/calypso-products';
 import {
 	getPlanDiscountedRawPrice,
@@ -93,7 +93,7 @@ export class PlanFeaturesComparison extends Component {
 	renderPlanHeaders() {
 		const { basePlansPath, planProperties, isReskinned } = this.props;
 
-		return map( planProperties, ( properties ) => {
+		return planProperties.map( ( properties ) => {
 			const {
 				availableForPurchase,
 				currencyCode,
@@ -147,7 +147,8 @@ export class PlanFeaturesComparison extends Component {
 		const { onUpgradeClick: ownPropsOnUpgradeClick } = this.props;
 		const { cartItemForPlan } = singlePlanProperties;
 
-		if ( ownPropsOnUpgradeClick && ownPropsOnUpgradeClick !== noop && cartItemForPlan ) {
+		if ( ownPropsOnUpgradeClick && ownPropsOnUpgradeClick !== noop ) {
+			// cartItemForPlan can be null, which implies a free plan
 			ownPropsOnUpgradeClick( cartItemForPlan );
 			return;
 		}
@@ -158,7 +159,7 @@ export class PlanFeaturesComparison extends Component {
 	renderTopButtons() {
 		const { isInSignup, isLaunchPage, planProperties } = this.props;
 
-		return map( planProperties, ( properties ) => {
+		return planProperties.map( ( properties ) => {
 			const { availableForPurchase } = properties;
 			const {
 				current,
@@ -195,19 +196,15 @@ export class PlanFeaturesComparison extends Component {
 	getLongestFeaturesList() {
 		const { planProperties } = this.props;
 
-		return reduce(
-			planProperties,
-			( longest, properties ) => {
-				const currentFeatures = Object.keys( properties.features );
-				return currentFeatures.length > longest.length ? currentFeatures : longest;
-			},
-			[]
-		);
+		return planProperties.reduce( ( longest, properties ) => {
+			const currentFeatures = Object.keys( properties.features );
+			return currentFeatures.length > longest.length ? currentFeatures : longest;
+		}, [] );
 	}
 
 	renderPlanFeatureRows() {
 		const longestFeatures = this.getLongestFeaturesList();
-		return map( longestFeatures, ( featureKey, rowIndex ) => {
+		return longestFeatures.map( ( _, rowIndex ) => {
 			return (
 				<tr key={ rowIndex } className="plan-features-comparison__row">
 					{ this.renderPlanFeatureColumns( rowIndex ) }
@@ -259,8 +256,7 @@ export class PlanFeaturesComparison extends Component {
 
 	renderPlanFeatureColumns( rowIndex ) {
 		const { planProperties, selectedFeature } = this.props;
-
-		return map( planProperties, ( properties, mapIndex ) => {
+		return planProperties.map( ( properties, mapIndex ) => {
 			const { features, planName } = properties;
 			const featureKeys = Object.keys( features );
 			const key = featureKeys[ rowIndex ];
@@ -347,9 +343,8 @@ export default connect(
 		} = ownProps;
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteType = signupDependencies.designType;
-
-		let planProperties = compact(
-			map( plans, ( plan ) => {
+		let planProperties = plans
+			.map( ( plan ) => {
 				let isPlaceholder = false;
 				const planConstantObj = applyTestFiltersToPlansList( plan, undefined );
 				const planProductId = planConstantObj.getProductId();
@@ -397,7 +392,15 @@ export default connect(
 				// This is the per month price of a monthly plan. E.g. $14 for Premium monthly.
 				const rawPriceForMonthlyPlan = getPlanRawPrice( state, monthlyPlanProductId, true );
 				const annualPlansOnlyFeatures = planConstantObj.getAnnualPlansOnlyFeatures?.() || [];
-				if ( annualPlansOnlyFeatures.length > 0 ) {
+
+				if ( planConstantObj.type === TYPE_FREE ) {
+					planFeatures = planFeatures.map( ( feature ) => {
+						return {
+							...feature,
+							availableForCurrentPlan: true,
+						};
+					} );
+				} else if ( annualPlansOnlyFeatures.length > 0 ) {
 					planFeatures = planFeatures.map( ( feature ) => {
 						const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes(
 							feature.getSlug()
@@ -430,7 +433,7 @@ export default connect(
 					planName: plan,
 					planObject: planObject,
 					popular: popular,
-					productSlug: get( planObject, 'product_slug' ),
+					productSlug: planObject?.product_slug,
 					hideMonthly: false,
 					primaryUpgrade: popular || plans.length === 1,
 					rawPrice,
@@ -441,7 +444,7 @@ export default connect(
 					isMonthlyPlan,
 				};
 			} )
-		);
+			.filter( Boolean );
 
 		if ( Array.isArray( visiblePlans ) ) {
 			planProperties = planProperties.filter( ( p ) => visiblePlans.indexOf( p.planName ) !== -1 );
