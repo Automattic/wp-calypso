@@ -203,6 +203,7 @@ module.exports = {
 				'packages/data-stores/**/*',
 				'packages/domain-picker/**/*',
 				'packages/js-utils/**/*',
+				'packages/language-picker/**/*',
 				'packages/launch/**/*',
 				'packages/mocha-debug-reporter/**/*',
 				'packages/plans-grid/**/*',
