@@ -498,6 +498,7 @@ class DomainItem extends PureComponent {
 			isBusy,
 			isChecked,
 			isEnabled,
+			isManagingAllSites,
 			showCheckbox,
 			enableSelection,
 			site,
@@ -533,7 +534,7 @@ class DomainItem extends PureComponent {
 				<div className="list__domain-link">
 					<div className="domain-item__status">
 						<div className="domain-item__title">{ domain.domain }</div>
-						{ domainDetails?.isPrimary && this.renderPrimaryBadge() }
+						{ domainDetails?.isPrimary && ! isManagingAllSites && this.renderPrimaryBadge() }
 						{ this.renderActionResult() }
 					</div>
 					{ this.renderSiteMeta() }
