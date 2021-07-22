@@ -49,7 +49,11 @@ export function login( {
 	}
 
 	if ( redirectTo ) {
-		url = addQueryArgs( { redirect_to: redirectTo }, url );
+		if ( redirectTo.indexOf( 'jetpack-sso' ) !== -1 ) {
+			url = redirectTo;
+		} else {
+			url = addQueryArgs( { redirect_to: redirectTo }, url );
+		}
 	}
 
 	if ( emailAddress ) {
