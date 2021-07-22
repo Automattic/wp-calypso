@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import classNames from 'classnames';
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { openPopupWidget } from 'react-calendly';
 
 /**
@@ -45,7 +45,7 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( { productSlug, receiptId 
 		hasProductInfo ? getProductName( state, productSlug ) : null
 	);
 
-	const hasCalendlyURL = getCalendlyUrl() !== null;
+	const calendlyUrl = getCalendlyUrl();
 
 	const isProductListFetching = useSelector( ( state ) => getIsProductListFetching( state ) );
 
@@ -194,49 +194,34 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( { productSlug, receiptId 
 						</div>
 					) }
 				</div>
-				{ hasCalendlyURL && (
+				{ calendlyUrl !== null && (
 					<div className="jetpack-checkout-siteless-thank-you__card-footer">
 						<div>
 							<h2>{ translate( 'Do you need help?' ) }</h2>
-							<p>
-								{ translate(
-									'If you prefer to setup Jetpack with the help of our Happiness Engineers, {{a}}schedule a 15 minute call now{{/a}}.',
-									{
-										components: {
-											a: (
-												<a
-													className="jetpack-checkout-siteless-thank-you__link"
-													onClick={ () => {
-														dispatch(
-															recordTracksEvent(
-																'calypso_siteless_checkout_happiness_link_clicked',
-																{
-																	product_slug: productSlug,
-																}
-															)
-														);
-														openPopupWidget( {
-															url: getCalendlyUrl(),
-															pageSettings: {
-																// --studio-jetpack-green
-																primaryColor: '069e08',
-															},
-															// prefill: {
-															// 	email: currentUser?.email,
-															// 	name: currentUser?.display_name,
-															// },
-															// styles={ {
-															// 	height: '1000px',
-															// } }
-														} );
-													} }
-													// href={ happinessAppointmentLink }
-												/>
-											),
+							<p>{ translate( 'Setup Jetpack with the help of our Happiness Engineers.' ) }</p>
+							<Button
+								className="jetpack-checkout-siteless-thank-you__button"
+								onClick={ () => {
+									dispatch(
+										recordTracksEvent( 'calypso_siteless_checkout_happiness_link_clicked', {
+											product_slug: productSlug,
+										} )
+									);
+									openPopupWidget( {
+										url: calendlyUrl,
+										pageSettings: {
+											// --studio-jetpack-green
+											primaryColor: '069e08',
 										},
-									}
-								) }
-							</p>
+										// prefill: {
+										// 	email: currentUser?.email,
+										// 	name: currentUser?.display_name,
+										// },
+									} );
+								} }
+							>
+								{ translate( 'Schedule a 15 minute call now.' ) }
+							</Button>
 						</div>
 					</div>
 				) }
