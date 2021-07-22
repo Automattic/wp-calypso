@@ -448,6 +448,7 @@ PurchaseItem.propTypes = {
 	getManagePurchaseUrlFor: PropTypes.func,
 	isDisconnectedSite: PropTypes.bool,
 	isJetpack: PropTypes.bool,
+	isJetpackTemporarySite: PropTypes.bool,
 	isPlaceholder: PropTypes.bool,
 	purchase: PropTypes.object,
 	showSite: PropTypes.bool,
