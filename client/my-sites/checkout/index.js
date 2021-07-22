@@ -11,7 +11,6 @@ import {
 	checkoutPending,
 	checkoutSiteless,
 	checkoutThankYou,
-	jetpackCheckoutScheduleAppointment,
 	jetpackCheckoutThankYou,
 	jetpackCheckoutThankYouCompleted,
 	redirectJetpackLegacyPlans,
@@ -28,15 +27,6 @@ export default function () {
 	page( '/checkout*', recordSiftScienceUser );
 
 	if ( isEnabled( 'jetpack/siteless-checkout' ) ) {
-		page(
-			'/checkout/jetpack/schedule-happiness-appointment',
-			redirectLoggedOut,
-			noSite,
-			jetpackCheckoutScheduleAppointment,
-			makeLayout,
-			clientRender
-		);
-
 		page( '/checkout/jetpack/:productSlug', noSite, checkoutSiteless, makeLayout, clientRender );
 		page(
 			'/checkout/jetpack/thank-you-completed/no-site/:product',

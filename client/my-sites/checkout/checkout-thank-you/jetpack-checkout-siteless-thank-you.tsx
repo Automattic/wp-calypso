@@ -7,6 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import classNames from 'classnames';
 import { Card } from '@automattic/components';
+import { openPopupWidget } from 'react-calendly';
 
 /**
  * Internal dependencies
@@ -54,8 +55,6 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( { productSlug, receiptId 
 
 	const jetpackInstallInstructionsLink =
 		'https://jetpack.com/support/getting-started-with-jetpack/';
-
-	const happinessAppointmentLink = '/checkout/jetpack/schedule-happiness-appointment';
 
 	const [ siteInput, setSiteInput ] = useState( '' );
 
@@ -207,7 +206,7 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( { productSlug, receiptId 
 											a: (
 												<a
 													className="jetpack-checkout-siteless-thank-you__link"
-													onClick={ () =>
+													onClick={ () => {
 														dispatch(
 															recordTracksEvent(
 																'calypso_siteless_checkout_happiness_link_clicked',
@@ -215,9 +214,23 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( { productSlug, receiptId 
 																	product_slug: productSlug,
 																}
 															)
-														)
-													}
-													href={ happinessAppointmentLink }
+														);
+														openPopupWidget( {
+															url: getCalendlyUrl(),
+															pageSettings: {
+																// --studio-jetpack-green
+																primaryColor: '069e08',
+															},
+															// prefill: {
+															// 	email: currentUser?.email,
+															// 	name: currentUser?.display_name,
+															// },
+															// styles={ {
+															// 	height: '1000px',
+															// } }
+														} );
+													} }
+													// href={ happinessAppointmentLink }
 												/>
 											),
 										},
