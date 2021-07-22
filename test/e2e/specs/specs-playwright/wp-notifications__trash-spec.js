@@ -25,6 +25,7 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 	it( `Log in as ${ commentingUser }`, async function () {
 		const loginFlow = new LoginFlow( page, commentingUser );
 		await loginFlow.logIn();
+		await page.waitForURL( '**/read' );
 	} );
 
 	it( 'View site', async function () {
