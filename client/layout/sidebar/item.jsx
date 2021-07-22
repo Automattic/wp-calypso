@@ -12,6 +12,7 @@ import Gridicon from 'calypso/components/gridicon';
 import { isExternal } from 'calypso/lib/url';
 import MaterialIcon from 'calypso/components/material-icon';
 import Count from 'calypso/components/count';
+import Badge from 'calypso/components/badge';
 import { preload } from 'calypso/sections-helper';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
@@ -76,7 +77,11 @@ export default function SidebarItem( props ) {
 							: props.label
 					}
 					{ !! count && <Count count={ count } /> }
-					{ !! badge && <span className="sidebar__menu-link-badge">{ badge }</span> }
+					{ !! badge && (
+						<Badge type="warning-clear" className="sidebar__menu-link-badge">
+							{ badge }
+						</Badge>
+					) }
 				</span>
 				{ showAsExternal && <Gridicon icon="external" size={ 24 } /> }
 				{ props.children }

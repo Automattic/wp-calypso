@@ -156,6 +156,13 @@
 		margin: -7px 0 -8px;
 	}
 
+	.sidebar__menu-link-badge {
+		margin-left: 8px;
+		color: var( --color-warning-light );
+		padding: 1px 6px;
+		font-size: $font-body-extra-small;
+	}
+
 	.selected &,
 	.selected &:hover {
 		color: var( --color-sidebar-menu-selected-text );
