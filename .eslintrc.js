@@ -208,6 +208,7 @@ module.exports = {
 				'packages/shopping-cart/**/*',
 				'packages/spec-junit-reporter/**/*',
 				'packages/spec-xunit-reporter/**/*',
+				'packages/tree-select/**/*',
 				'packages/wpcom-checkout/**/*',
 				'test/e2e/**/*',
 			],
