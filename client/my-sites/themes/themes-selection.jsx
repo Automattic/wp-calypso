@@ -15,7 +15,7 @@ import QueryThemes from 'calypso/components/data/query-themes';
 import ThemesList from 'calypso/components/themes-list';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	getPremiumThemePrice,
 	getThemesForQueryIgnoringPage,
@@ -229,7 +229,7 @@ export const ConnectedThemesSelection = connect(
 			themesCount: getThemesFoundForQuery( state, sourceSiteId, query ),
 			isRequesting: isRequestingThemesForQuery( state, sourceSiteId, query ),
 			isLastPage: isThemesLastPageForQuery( state, sourceSiteId, query ),
-			isLoggedIn: !! getCurrentUserId( state ),
+			isLoggedIn: isUserLoggedIn( state ),
 			isThemeActive: bindIsThemeActive( state, siteId ),
 			isInstallingTheme: bindIsInstallingTheme( state, siteId ),
 			// Note: This component assumes that purchase and plans data is already present in the state tree

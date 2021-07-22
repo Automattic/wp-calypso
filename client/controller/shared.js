@@ -7,7 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import config from '@automattic/calypso-config';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setSection } from 'calypso/state/ui/actions';
 import { setLocale } from 'calypso/state/ui/language/actions';
 import { isTranslatedIncompletely } from 'calypso/lib/i18n-utils/utils';
@@ -19,7 +19,7 @@ export function makeLayoutMiddleware( LayoutComponent ) {
 		const { store, section, pathname, query, primary, secondary } = context;
 
 		// On server, only render LoggedOutLayout when logged-out.
-		if ( ! context.isServerSide || ! getCurrentUser( context.store.getState() ) ) {
+		if ( ! ( context.isServerSide && isUserLoggedIn( context.store.getState() ) ) ) {
 			context.layout = (
 				<LayoutComponent
 					store={ store }

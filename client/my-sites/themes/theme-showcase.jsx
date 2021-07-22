@@ -18,7 +18,7 @@ import { addTracking, trackClick, localizeThemesPath } from './helpers';
 import DocumentHead from 'calypso/components/data/document-head';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import ThemePreview from './theme-preview';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
@@ -417,7 +417,7 @@ class ThemeShowcase extends React.Component {
 
 const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 	currentThemeId: getActiveTheme( state, siteId ),
-	isLoggedIn: !! getCurrentUserId( state ),
+	isLoggedIn: isUserLoggedIn( state ),
 	siteSlug: getSiteSlug( state, siteId ),
 	description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
 	title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),
