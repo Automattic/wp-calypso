@@ -371,6 +371,32 @@ export function addDomainToCart(
 	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug, null, null );
 }
 
+export function addEmailToCart(
+	callback,
+	dependencies,
+	stepProvidedItems,
+	reduxStore,
+	siteSlug,
+	stepProvidedDependencies
+) {
+	const { domainItem, emailItem, shouldHideFreePlan } = stepProvidedItems?.providedDependencies;
+
+	if ( ! emailItem ) {
+		defer( callback );
+
+		return;
+	}
+
+	const slug = siteSlug || dependencies.siteSlug;
+	const providedDependencies = stepProvidedDependencies || {
+		domainItem,
+		emailItem,
+		shouldHideFreePlan,
+	};
+
+	processItemCart( providedDependencies, [ emailItem ], callback, reduxStore, slug, null, null );
+}
+
 function processItemCart(
 	providedDependencies,
 	newCartItems,
@@ -718,6 +744,41 @@ export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
 		const tracksEventValue = siteDomains.map( ( siteDomain ) => siteDomain.domain ).join( ', ' );
 		excludeDomainStep( stepName, tracksEventValue, submitSignupStep );
 	}
+}
+
+export function maybeExcludeEmailsStep( {
+	domainItem,
+	resetSignupStep,
+	siteUrl,
+	stepName,
+	submitSignupStep,
+} ) {
+	const isEmailStepExcluded = flows.excludedSteps.includes( stepName );
+
+	/* If we have a domain, make sure the step isn't excluded */
+	if ( domainItem ) {
+		if ( ! isEmailStepExcluded ) {
+			return;
+		}
+
+		resetSignupStep( stepName );
+		flows.resetExcludedStep( stepName );
+
+		return;
+	}
+
+	/* We don't have a domain, so exclude the step if it hasn't been excluded yet */
+	if ( isEmailStepExcluded ) {
+		return;
+	}
+
+	const emailItem = undefined;
+
+	submitSignupStep( { stepName, emailItem, wasSkipped: true }, { emailItem } );
+
+	recordExcludeStepEvent( stepName, siteUrl );
+
+	flows.excludeStep( stepName );
 }
 
 export function maybeRemoveStepForUserlessCheckout( stepName, defaultDependencies, nextProps ) {

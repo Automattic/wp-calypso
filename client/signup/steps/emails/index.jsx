@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { defer } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -12,6 +13,8 @@ import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopp
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import EmailStepSideBar from 'calypso/components/emails/email-step-side-bar';
 import EmailSignupTitanCard from 'calypso/components/emails/email-signup-titan-card';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import StepWrapper from 'calypso/signup/step-wrapper';
 
 /**
@@ -20,8 +23,40 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import './style.scss';
 
 class EmailsStep extends React.Component {
-	//TODO
-	handleSkip = () => {};
+	componentDidMount() {
+		this.props.saveSignupStep( { stepName: this.props.stepName } );
+	}
+
+	handleSkip = () => {
+		const { flowName, stepName } = this.props;
+
+		this.props.recordTracksEvent( 'calypso_signup_skip_step', {
+			section: 'signup',
+			flow: flowName,
+			step: stepName,
+		} );
+
+		this.submitEmailPurchase( undefined );
+	};
+
+	submitEmailPurchase = ( emailItem ) => {
+		defer( () => {
+			const { goToNextStep, stepName, stepSectionName } = this.props;
+
+			this.props.submitSignupStep(
+				{
+					emailItem,
+					stepName,
+					stepSectionName,
+				},
+				{
+					emailItem,
+				}
+			);
+
+			goToNextStep();
+		} );
+	};
 
 	renderSideContent = () => {
 		return (
@@ -45,7 +80,7 @@ class EmailsStep extends React.Component {
 						addButtonTitle={ translate( 'Add' ) }
 						skipButtonTitle={ translate( 'Skip' ) }
 						onAddButtonClick={ () => {} }
-						onSkipButtonClick={ () => {} }
+						onSkipButtonClick={ this.handleSkip }
 					/>
 				</CalypsoShoppingCartProvider>
 			</div>
@@ -106,9 +141,16 @@ class EmailsStep extends React.Component {
 	}
 }
 
-export default connect( ( state ) => {
-	const signupDependencies = getSignupDependencyStore( state );
-	return {
-		signupDependencies,
-	};
-} )( localize( EmailsStep ) );
+export default connect(
+	( state ) => {
+		const signupDependencies = getSignupDependencyStore( state );
+		return {
+			signupDependencies,
+		};
+	},
+	{
+		recordTracksEvent,
+		saveSignupStep,
+		submitSignupStep,
+	}
+)( localize( EmailsStep ) );

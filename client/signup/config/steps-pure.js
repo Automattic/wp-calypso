@@ -32,10 +32,10 @@ export function generateSteps( {
 	createWpForTeamsSite = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
-	addEmailToCart = noop,
 	currentPage = noop,
 	setThemeOnSite = noop,
 	addDomainToCart = noop,
+	addEmailToCart = noop,
 	launchSiteApi = noop,
 	isPlanFulfilled = noop,
 	isDomainFulfilled = noop,
@@ -306,14 +306,8 @@ export function generateSteps( {
 		},
 		emails: {
 			stepName: 'emails',
-			dependencies: [ 'domainItem' ],
-			providesDependencies: [
-				'siteId',
-				'domainItem',
-				'themeItem',
-				'shouldHideFreePlan',
-				'isManageSiteFlow',
-			],
+			dependencies: [ 'domainItem', 'siteSlug' ],
+			providesDependencies: [ 'domainItem', 'emailItem', 'shouldHideFreePlan' ],
 			apiRequestFunction: addEmailToCart,
 			props: {
 				isDomainOnly: false,
