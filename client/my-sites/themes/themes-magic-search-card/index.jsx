@@ -157,21 +157,29 @@ class ThemesMagicSearchCard extends React.Component {
 	findTextForSuggestions = ( input ) => {
 		const val = input;
 		window.requestAnimationFrame( () => {
-			this.setState( {
-				cursorPosition: val.slice( 0, this.searchInputRef.searchInput.selectionStart ).length,
-			} );
-			const tokens = input.split( /(\s+)/ );
-
-			// Get rid of empty match at end
-			tokens[ tokens.length - 1 ] === '' && tokens.splice( tokens.length - 1, 1 );
-			if ( tokens.length === 0 ) {
-				this.setState( { editedSearchElement: '' } );
-				return;
-			}
-			const tokenIndex = this.findEditedTokenIndex( tokens, this.state.cursorPosition );
-			const text = tokens[ tokenIndex ].trim();
-			this.setState( { editedSearchElement: text } );
+			const selectionStart = this.searchInputRef.searchInput.selectionStart;
+			const [ editedSearchElement, cursorPosition ] = this.computeEditedSearchElement(
+				val,
+				selectionStart
+			);
+			this.setState( { editedSearchElement, cursorPosition } );
 		} );
+	};
+
+	computeEditedSearchElement = ( searchText, selectionStart ) => {
+		const cursorPosition = searchText.slice( 0, selectionStart ).length;
+		const tokens = searchText.split( /(\s+)/ );
+
+		let editedSearchElement = '';
+
+		// Get rid of empty match at end
+		tokens[ tokens.length - 1 ] === '' && tokens.splice( tokens.length - 1, 1 );
+		if ( tokens.length === 0 ) {
+			return [ editedSearchElement, cursorPosition ];
+		}
+		const tokenIndex = this.findEditedTokenIndex( tokens, cursorPosition );
+		editedSearchElement = tokens[ tokenIndex ].trim();
+		return [ editedSearchElement, cursorPosition ];
 	};
 
 	insertSuggestion = ( suggestion ) => {
@@ -231,7 +239,6 @@ class ThemesMagicSearchCard extends React.Component {
 
 	updateInput = ( updatedInput ) => {
 		this.setState( { searchInput: updatedInput } );
-		this.findTextForSuggestions( updatedInput );
 		this.searchInputRef.clear();
 	};
 
