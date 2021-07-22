@@ -156,6 +156,7 @@ export default function CompositeCheckout( {
 		createAnalyticsEventHandler( reduxDispatch ),
 		[]
 	);
+	const isJetpackSitelessCheckout = isJetpackCheckout && ! jetpackSiteSlug;
 	const updatedSiteSlug = isJetpackCheckout ? jetpackSiteSlug : siteSlug;
 
 	const showErrorMessage = useCallback(
@@ -231,6 +232,7 @@ export default function CompositeCheckout( {
 		applyCoupon,
 		updateLocation,
 		replaceProductInCart,
+		replaceProductsInCart,
 		isLoading: isLoadingCart,
 		isPendingUpdate: isCartPendingUpdate,
 		responseCart,
@@ -247,11 +249,13 @@ export default function CompositeCheckout( {
 	const isInitialCartLoading = useAddProductsFromUrl( {
 		isLoadingCart,
 		isCartPendingUpdate,
+		isJetpackSitelessCheckout,
 		productsForCart,
 		areCartProductsPreparing,
 		couponCodeFromUrl: couponCodeFromUrl || maybeJetpackIntroCouponCode,
 		applyCoupon,
 		addProductsToCart,
+		replaceProductsInCart,
 	} );
 
 	useRecordCartLoaded( {
