@@ -20,6 +20,14 @@ function head_error_handler() {
 			window._jsErr.push( errEvent );
 		}
 		window.addEventListener( 'error', window._headJsErrorHandler );
+		// Test code, will be removed later. Simulate several errors happening at about the same time.
+		let count = 0;
+		let intervalId;
+		intervalId = setInterval(() => {
+			count = count + 1;
+			if ( count >= 3 ) clearInterval( intervalId );
+			throw new Error( `Head error ${count} from the top-level document`);
+		}, 0 );
 	</script>
 	<?php
 }
