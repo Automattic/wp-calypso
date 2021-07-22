@@ -210,8 +210,14 @@ function CheckoutSummaryFeaturesListDomainItem( {
 } ) {
 	const translate = useTranslate();
 
+	// If there's no plan in the cart, list the domain only.
 	if ( ! hasPlanInCart ) {
-		return null;
+		return (
+			<CheckoutSummaryFeaturesListItem isIncluded={ true }>
+				<WPCheckoutCheckIcon />
+				<strong>{ domain.meta }</strong>
+			</CheckoutSummaryFeaturesListItem>
+		);
 	}
 
 	const bundledText = translate( 'free for one year' );
@@ -225,29 +231,25 @@ function CheckoutSummaryFeaturesListDomainItem( {
 		},
 		comment: 'domain name and bundling message, separated by a dash',
 	} );
-	const annualPlanOnly = translate( '(annual plans only)', {
-		comment: 'Label attached to a feature',
-	} );
 
-	const isSupported = ! ( hasMonthlyPlan && nextDomainIsFree );
-	let label = <strong>{ domain.meta }</strong>;
-
-	if ( domain.is_bundled ) {
-		label = bundledDomain;
-	} else if ( hasMonthlyPlan && nextDomainIsFree ) {
-		label = (
-			<>
+	// Conditionally show if domain is included with current plan purchase
+	if ( ! ( hasMonthlyPlan && nextDomainIsFree ) && ! domain.is_bundled ) {
+		return (
+			<CheckoutSummaryFeaturesListItem isIncluded={ false }>
+				<WPCheckoutCrossIcon />
 				{ bundledDomain }
 				{ ` ` }
-				{ annualPlanOnly }
-			</>
+				{ translate( '(annual plans only)', {
+					comment: 'Label attached to a feature',
+				} ) }
+			</CheckoutSummaryFeaturesListItem>
 		);
 	}
 
 	return (
-		<CheckoutSummaryFeaturesListItem isSupported={ isSupported }>
-			{ isSupported ? <WPCheckoutCheckIcon /> : <WPCheckoutCrossIcon /> }
-			{ label }
+		<CheckoutSummaryFeaturesListItem isIncluded={ true }>
+			<WPCheckoutCheckIcon />
+			{ bundledDomain }
 		</CheckoutSummaryFeaturesListItem>
 	);
 }
@@ -274,14 +276,14 @@ function CheckoutSummaryPlanFeatures( { siteId } ) {
 	return (
 		<>
 			{ planFeatures.map( ( feature ) => {
-				const isSupported = ! feature.startsWith( '~~' );
-				if ( ! isSupported ) {
+				const isIncluded = ! feature.startsWith( '~~' );
+				if ( ! isIncluded ) {
 					feature = feature.substr( 2 );
 				}
 
 				return (
-					<CheckoutSummaryFeaturesListItem key={ String( feature ) } isSupported={ isSupported }>
-						{ isSupported ? <WPCheckoutCheckIcon /> : <WPCheckoutCrossIcon /> }
+					<CheckoutSummaryFeaturesListItem key={ String( feature ) } isIncluded={ isIncluded }>
+						{ isIncluded ? <WPCheckoutCheckIcon /> : <WPCheckoutCrossIcon /> }
 						{ feature }
 					</CheckoutSummaryFeaturesListItem>
 				);
@@ -358,7 +360,7 @@ const CheckoutSummaryFeaturesListItem = styled.li`
 	padding-left: 24px;
 	position: relative;
 	overflow-wrap: break-word;
-	color: ${ ( props ) => ( props.isSupported ? 'inherit' : 'var( --color-neutral-30 )' ) };
+	color: ${ ( props ) => ( props.isIncluded ? 'inherit' : 'var( --color-neutral-30 )' ) };
 
 	.rtl & {
 		padding-right: 24px;
@@ -366,7 +368,7 @@ const CheckoutSummaryFeaturesListItem = styled.li`
 	}
 `;
 CheckoutSummaryFeaturesListItem.defaultProps = {
-	isSupported: true,
+	isIncluded: true,
 };
 
 const CheckoutSummaryAmountWrapper = styled.div`
