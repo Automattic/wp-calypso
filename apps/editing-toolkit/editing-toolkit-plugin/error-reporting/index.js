@@ -1,14 +1,13 @@
-import apiFetch from '@wordpress/api-fetch';
-
 import * as Sentry from '@sentry/browser';
 import { Integrations } from '@sentry/tracing';
+import apiFetch from '@wordpress/api-fetch';
 
 const shouldActivateSentry = window.dataFromPHP?.shouldActivateSentry === 'true';
 
 function activateSentry() {
 	console.debug( '[error-reporting] Activating Sentry!' );
 	Sentry.init( {
-		dsn: 'https://732ae01df1fe4974820b55d2c14028fa@o892859.ingest.sentry.io/5840079',
+		dsn: 'https://658ae291b00242148af6b76494d4a49a@o248881.ingest.sentry.io/5876245',
 		integrations: [ new Integrations.BrowserTracing() ],
 
 		// Set tracesSampleRate to 1.0 to capture 100%
