@@ -30,7 +30,7 @@
 		"mockdate": "^3.0.5"
 	},
 	"scripts": {
-		"clean": "yarn build --clean && npx rimraf dist && npx rimraf tsconfig.test.tsbuildinfo",
+		"clean": "yarn build --clean && npx rimraf dist",
 		"build": "tsc --build ./tsconfig.json",
 		"test": "yarn jest"
 	}
