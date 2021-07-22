@@ -19,6 +19,7 @@ import {
 	TYPE_FREE,
 	GROUP_WPCOM,
 	TERM_ANNUALLY,
+	TERM_BIENNIALLY,
 	PLAN_P2_FREE,
 	PLAN_P2_PLUS,
 } from '@automattic/calypso-products';
@@ -248,8 +249,20 @@ export class PlanFeaturesHeader extends Component {
 			return translate( `Save %(discountRate)s%% by paying annually`, { args: { discountRate } } );
 		}
 
-		if ( ( isInSignup || isLoggedInMonthlyPricing ) && ! isMonthlyPlan ) {
+		if (
+			( isInSignup || isLoggedInMonthlyPricing ) &&
+			! isMonthlyPlan &&
+			planMatches( planType, { group: GROUP_WPCOM, term: TERM_ANNUALLY } )
+		) {
 			return translate( 'billed annually' );
+		}
+
+		if (
+			( isInSignup || isLoggedInMonthlyPricing ) &&
+			! isMonthlyPlan &&
+			planMatches( planType, { group: GROUP_WPCOM, term: TERM_BIENNIALLY } )
+		) {
+			return translate( 'billed every two years' );
 		}
 
 		if ( typeof discountPrice !== 'number' || typeof rawPrice !== 'number' ) {
