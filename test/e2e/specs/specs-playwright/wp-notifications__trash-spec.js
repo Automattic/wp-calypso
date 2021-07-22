@@ -54,10 +54,10 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 	it( 'Open notification using keyboard shortcut', async function () {
 		const navbarComponent = await NavbarComponent.Expect( page );
 		await navbarComponent.openNotificationsPanel( { keyboard: true } );
-		notificationsComponent = await NotificationsComponent.Expect( page );
 	} );
 
 	it( `See notification for the comment left by ${ commentingUser }`, async function () {
+		notificationsComponent = await NotificationsComponent.Expect( page );
 		await notificationsComponent.clickNotification( comment );
 	} );
 
