@@ -18,7 +18,9 @@ object WPComPlugins : Project({
 		param("build.prefix", "1")
 		param("normalize_files", "")
 		param("build_env", "production")
+		param("teamcity.git.fetchAllHeads", "true")
 	}
+
 	buildType(EditingToolkit)
 	buildType(WpcomBlockEditor)
 	buildType(Notifications)
@@ -44,7 +46,6 @@ object WPComPlugins : Project({
 		}
 	}
 })
-
 
 private object EditingToolkit : BuildType({
 	id("WPComPlugins_EditorToolKit")
