@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import type { Dispatch } from 'react';
-
-/**
- * Internal dependencies
- */
 import type {
 	TempResponseCart,
 	ResponseCart,
@@ -14,6 +6,7 @@ import type {
 	CartLocation,
 	MinimalRequestCartProduct,
 } from './shopping-cart-endpoint';
+import type { Dispatch } from 'react';
 
 export * from './shopping-cart-endpoint';
 

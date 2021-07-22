@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { useEffect } from 'react';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import { useEffect } from 'react';
 import type { CacheStatus, ShoppingCartManagerOptions, ResponseCart } from './types';
 
 const debug = debugFactory( 'shopping-cart:use-refetch-on-focus' );

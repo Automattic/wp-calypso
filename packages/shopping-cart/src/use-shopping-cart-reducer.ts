@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { useReducer, useEffect, Dispatch, useCallback, useRef } from 'react';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import { useReducer, useEffect, Dispatch, useCallback, useRef } from 'react';
 import {
 	removeItemFromResponseCart,
 	addItemsToResponseCart,
@@ -18,6 +11,7 @@ import {
 	doesCartLocationDifferFromResponseCartLocation,
 	doesResponseCartContainProductMatching,
 } from './cart-functions';
+import { getEmptyResponseCart } from './empty-carts';
 import type {
 	ResponseCart,
 	ShoppingCartState,
@@ -26,7 +20,6 @@ import type {
 	CacheStatus,
 	ShoppingCartMiddleware,
 } from './types';
-import { getEmptyResponseCart } from './empty-carts';
 
 const debug = debugFactory( 'shopping-cart:use-shopping-cart-reducer' );
 const emptyResponseCart = getEmptyResponseCart();

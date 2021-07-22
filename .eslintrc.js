@@ -205,6 +205,7 @@ module.exports = {
 				'packages/launch/**/*',
 				'packages/mocha-debug-reporter/**/*',
 				'packages/plans-grid/**/*',
+				'packages/shopping-cart/**/*',
 				'packages/spec-junit-reporter/**/*',
 				'packages/spec-xunit-reporter/**/*',
 				'packages/wpcom-checkout/**/*',
