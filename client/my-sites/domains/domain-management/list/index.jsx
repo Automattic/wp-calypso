@@ -20,7 +20,7 @@ import DomainOnly from './domain-only';
 import ListItemPlaceholder from './item-placeholder';
 import Main from 'calypso/components/main';
 import { domainManagementRoot, domainManagementList } from 'calypso/my-sites/domains/paths';
-import { Button, Card, CompactCard } from '@automattic/components';
+import { Card } from '@automattic/components';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
 import Notice from 'calypso/components/notice';
@@ -51,8 +51,6 @@ import { getDomainManagementPath } from './utils';
 import DomainItem from './domain-item';
 import ListHeader from './list-header';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import InfoPopover from 'calypso/components/info-popover';
-import ExternalLink from 'calypso/components/external-link';
 import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
 import AddDomainButton from 'calypso/my-sites/domains/domain-management/list/add-domain-button';
 
@@ -168,7 +166,6 @@ export class List extends React.Component {
 				{ this.domainWarnings() }
 				{ this.domainCreditsInfoNotice() }
 
-				{ /* <div className="domain-management-list__primary-domain">{ this.renderPrimaryDomain() }</div> */ }
 				<div className="domain-management-list__items">{ this.listNewItems() }</div>
 				<DomainToPlanNudge />
 			</>
@@ -245,27 +242,6 @@ export class List extends React.Component {
 				.isBefore( this.props.moment( domain.registrationDate ) )
 		);
 	}
-
-	clickAddDomain = () => {
-		this.props.addDomainClick();
-		page( `/domains/add/${ this.props.selectedSite.slug }` );
-	};
-
-	enableChangePrimaryDomainMode = () => {
-		this.props.enablePrimaryDomainMode();
-		this.setState( {
-			changePrimaryDomainModeEnabled: true,
-			primaryDomainIndex: findIndex( this.props.domains, { isPrimary: true } ),
-		} );
-	};
-
-	disableChangePrimaryDomainMode = () => {
-		this.props.disablePrimaryDomainMode();
-		this.setState( {
-			changePrimaryDomainModeEnabled: false,
-			primaryDomainIndex: -1,
-		} );
-	};
 
 	addDomainButton() {
 		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
@@ -363,59 +339,6 @@ export class List extends React.Component {
 			! domain.isWpcomStagingDomain &&
 			! canSetPrimaryDomain
 		);
-	}
-
-	renderPrimaryDomain() {
-		const { domains, selectedSite, translate } = this.props;
-		const primaryDomain = find( domains, 'isPrimary' );
-
-		if ( this.isLoading() || ! primaryDomain ) {
-			return <ListItemPlaceholder />;
-		}
-
-		const moreThanOneDomain = domains.filter( ( domain ) => domain?.canSetAsPrimary ).length > 1;
-
-		return [
-			<CompactCard className="list__header-primary-domain" key="primary-domain-header">
-				<div className="list__header-primary-domain-info">
-					{ translate( 'Primary domain' ) }
-					<InfoPopover iconSize={ 18 }>
-						{ translate(
-							'Your primary domain is the address visitors will see in their address bar when visiting your blog. All other domains will redirect to the primary domain.'
-						) }
-					</InfoPopover>
-				</div>
-				<div className="list__header-primary-domain-buttons">
-					<Button
-						compact
-						disabled={ ! moreThanOneDomain }
-						className="list__change-primary-domain"
-						onClick={
-							this.state.changePrimaryDomainModeEnabled
-								? this.disableChangePrimaryDomainMode
-								: this.enableChangePrimaryDomainMode
-						}
-					>
-						{ this.state.changePrimaryDomainModeEnabled
-							? translate( 'Cancel primary domain change' )
-							: translate( 'Change primary domain' ) }
-					</Button>
-				</div>
-			</CompactCard>,
-			<CompactCard className="list__item-primary-domain" key="primary-domain-content">
-				<div className="list__header-primary-domain-content">
-					<ExternalLink
-						className="list__header-primary-domain-url"
-						href={ selectedSite.URL }
-						title={ translate( 'Launch your site' ) }
-						target="_blank"
-						icon={ true }
-					>
-						{ primaryDomain.name }
-					</ExternalLink>
-				</div>
-			</CompactCard>,
-		];
 	}
 
 	listNewItems() {
