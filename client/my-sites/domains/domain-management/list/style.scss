@@ -126,10 +126,6 @@
 		margin-left: 2px;
 	}
 
-	@include breakpoint-deprecated( '<960px' ) {
-		display: none;
-	}
-
 	div {
 		display: flex;
 		justify-content: center;
