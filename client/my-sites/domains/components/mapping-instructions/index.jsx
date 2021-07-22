@@ -16,7 +16,7 @@ import {
 } from 'calypso/lib/url/support';
 import { WPCOM_DEFAULT_NAMESERVERS } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 import FoldableFAQ from 'calypso/components/foldable-faq';
-import { Notice } from 'calypso/components/notice';
+import Notice from 'calypso/components/notice';
 import ExternalLink from 'calypso/components/external-link';
 
 /**
