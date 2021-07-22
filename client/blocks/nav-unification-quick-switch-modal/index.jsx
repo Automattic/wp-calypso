@@ -13,6 +13,7 @@ import { useTranslate } from 'i18n-calypso';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import isNewUserId from 'calypso/state/selectors/is-new-user-id';
 
 /**
  * Image dependencies
@@ -23,6 +24,9 @@ import featureImage from 'calypso/assets/images/nav-unification-announcement/qui
  * Style dependencies
  */
 import './style.scss';
+
+// User registered on 22nd July 2021
+const NEW_USER_THRESHOLD = 209270731;
 
 const Page = ( { heading, content, image } ) => {
 	return (
@@ -43,12 +47,13 @@ const Page = ( { heading, content, image } ) => {
 const Modal = () => {
 	const dispatch = useDispatch();
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
+	const isNewUser = useSelector( ( state ) => isNewUserId( state, NEW_USER_THRESHOLD ) );
 	const hasPreferences = useSelector( hasReceivedRemotePreferences );
 	const dismissPreference = `nav-unification-quick-switch-modal-${ userId }`;
 	const isDismissed = useSelector( ( state ) => getPreference( state, dismissPreference ) );
 	const translate = useTranslate();
 
-	if ( ! hasPreferences || isDismissed ) {
+	if ( ! hasPreferences || isDismissed || isNewUser ) {
 		return null;
 	}
 

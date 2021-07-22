@@ -36,7 +36,7 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 
 		@media ( min-width: $modal-breakpoint ) and ( max-height: $modal-breakpoint-phone-height ) {
 			height: $modal-content-min-height-landscape;
-			top: calc( 50% - 0px );
+			top: 50%;
 		}
 	}
 
@@ -46,8 +46,20 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 
 	.components-modal__header {
 		display: block;
-		position: fixed;
+		position: absolute;
 		text-align: right;
+
+		svg {
+			fill: white;
+		}
+
+		@media ( min-width: $modal-breakpoint ) {
+			position: fixed;
+
+			svg {
+				fill: currentColor;
+			}
+		}
 	}
 
 	.components-guide__footer {
@@ -69,43 +81,6 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 
 		@media ( min-width: $modal-breakpoint ) and ( max-height: $modal-breakpoint-phone-height ) {
 			height: $modal-content-min-height-landscape;
-		}
-	}
-
-	.components-guide__page-control {
-		position: relative;
-		height: 0;
-		top: 100%;
-		overflow: visible;
-		margin: 0 auto;
-		z-index: 2;
-
-		&::before {
-			display: inline-block;
-			content: '';
-			height: $modal-footer-height;
-			vertical-align: middle;
-		}
-
-		li {
-			vertical-align: middle;
-			margin-bottom: 0;
-		}
-
-		// Temporarily disable dots on mobile as alignment is wonky.
-		display: none;
-		@media ( min-width: $modal-breakpoint ) {
-			display: block;
-		}
-	}
-
-	.components-guide__finish-button {
-		background-color: var( --studio-pink-50 );
-		color: #ffffff;
-		border-radius: 3px;
-
-		&:hover {
-			color: #ffffff;
 		}
 	}
 }
