@@ -22,7 +22,7 @@ export function resolveDomainStatus(
 		isJetpackSite = null,
 		isSiteAutomatedTransfer = null,
 		isDomainOnlySite = false,
-		hasMappingError: hasConnectionError = false,
+		hasMappingError = false,
 		siteSlug = null,
 	} = {}
 ) {
@@ -52,25 +52,7 @@ export function resolveDomainStatus(
 				};
 			}
 
-			if ( ( ! isJetpackSite || isSiteAutomatedTransfer ) && ! domain.pointsToWpcom ) {
-				const status = translate(
-					'{{strong}}Verifying connection:{{/strong}} You can continue to work on your site, but you domain won’t be reachable just yet.',
-					{
-						components: {
-							strong: <strong />,
-						},
-					}
-				);
-				return {
-					statusText: translate( 'Verifying connection' ),
-					statusClass: 'status-verifying',
-					icon: 'verifying',
-					listStatusText: status,
-					listStatusClass: 'verifying',
-				};
-			}
-
-			if ( hasConnectionError ) {
+			if ( hasMappingError ) {
 				// New layout: "Connection error: We noticed that the name servers weren’t updated correctly, please try this step again."
 				const status = translate(
 					"{{strong}}Connection error:{{/strong}} We couldn't verify your connection. Please {{a}}follow this setup again{{/a}}.",
@@ -92,6 +74,24 @@ export function resolveDomainStatus(
 					icon: 'info',
 					listStatusText: status,
 					listStatusClass: 'alert',
+				};
+			}
+
+			if ( ( ! isJetpackSite || isSiteAutomatedTransfer ) && ! domain.pointsToWpcom ) {
+				const status = translate(
+					'{{strong}}Verifying connection:{{/strong}} You can continue to work on your site, but you domain won’t be reachable just yet.',
+					{
+						components: {
+							strong: <strong />,
+						},
+					}
+				);
+				return {
+					statusText: translate( 'Verifying connection' ),
+					statusClass: 'status-verifying',
+					icon: 'verifying',
+					listStatusText: status,
+					listStatusClass: 'verifying',
 				};
 			}
 

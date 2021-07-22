@@ -8,6 +8,7 @@ import page from 'page';
 import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -480,6 +481,15 @@ class DomainItem extends PureComponent {
 		);
 	}
 
+	hasMappingError( domain ) {
+		const registrationDatePlus3Days = moment.utc( domain.registrationDate ).add( 3, 'days' );
+		return (
+			domain.type === domainTypes.MAPPED &&
+			! domain.pointsToWpcom &&
+			moment.utc().isAfter( registrationDatePlus3Days )
+		);
+	}
+
 	render() {
 		const {
 			domain,
@@ -495,7 +505,7 @@ class DomainItem extends PureComponent {
 		const { listStatusText, listStatusClass } = resolveDomainStatus(
 			domainDetails || domain,
 			null,
-			{ siteSlug: site?.slug }
+			{ siteSlug: site?.slug, hasMappingError: this.hasMappingError( domain ) }
 		);
 
 		const rowClasses = classNames( 'domain-item', `domain-item__status-${ listStatusClass }`, {
