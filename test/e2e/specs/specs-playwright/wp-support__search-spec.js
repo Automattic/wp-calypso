@@ -14,11 +14,14 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 		page = args.page;
 	} );
 
-	describe( 'Search for and view a support article', function () {
+	describe.each( [
+		{ siteType: 'Simple', user: 'defaultUser' },
+		{ siteType: 'Atomic', user: 'wooCommerceUser' },
+	] )( 'Search and view a support article ($siteType)', function ( { user } ) {
 		let supportComponent;
 
 		it( 'Log in', async function () {
-			const loginFlow = new LoginFlow( page );
+			const loginFlow = new LoginFlow( page, user );
 			await loginFlow.logIn();
 		} );
 
@@ -66,11 +69,14 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 		} );
 	} );
 
-	describe( 'Unsupported search keywords', function () {
+	describe.each( [
+		{ siteType: 'Simple', user: 'defaultUser' },
+		{ siteType: 'Atomic', user: 'wooCommerceUser' },
+	] )( 'Unsupported search keywords ($siteType)', function ( { user } ) {
 		let supportComponent;
 
 		it( 'Log in', async function () {
-			const loginFlow = new LoginFlow( page );
+			const loginFlow = new LoginFlow( page, user );
 			await loginFlow.logIn();
 		} );
 
