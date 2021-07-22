@@ -16,6 +16,7 @@ import photon from 'photon';
  */
 import { Card, Ribbon, Button } from '@automattic/components';
 import ThemeMoreButton from './more-button';
+import Badge from 'calypso/components/badge';
 import PulsingDot from 'calypso/components/pulsing-dot';
 import InfoPopover from 'calypso/components/info-popover';
 import { decodeEntities } from 'calypso/lib/formatting';
@@ -257,7 +258,9 @@ export class Theme extends Component {
 						<h2 className="theme__info-title">
 							{ name }
 							{ this.isFullSiteEditingTheme() && (
-								<span className="theme__badge-beta">{ translate( 'Beta' ) }</span>
+								<Badge type="warning-clear" className="theme__badge-beta">
+									{ translate( 'Beta' ) }
+								</Badge>
 							) }
 						</h2>
 						{ active && (
