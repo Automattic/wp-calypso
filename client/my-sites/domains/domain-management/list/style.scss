@@ -159,26 +159,41 @@
 		margin-left: 1px;
 		transform: translateY( -1px );
 	}
+
+	.domain-item__meta-item {
+		margin-left: 14px;
+
+		button.domain-item__email-button {
+			color: var( --color-link );
+			background: none;
+			border: none;
+			box-shadow: none;
+
+			&:hover {
+				color: var( --color-link-dark );
+			}
+		}
+	}
+
+	@include breakpoint-deprecated( '<660px' ) {
+		display: flex;
+		flex-direction: column;
+
+		.domain-item__meta-item {
+			margin: 0;
+
+			button.domain-item__email-button {
+				padding: 0;
+				margin: 4px 0 0;
+				font-size: $font-body-small;
+			}
+		}
+	}
 }
 
 .domain-item__meta.domain-item__meta-placeholder {
 	width: 30%;
 	@include placeholder( --color-neutral-5 );
-}
-
-.domain-item__meta-item {
-	margin-left: 14px;
-
-	button.domain-item__email-button {
-		color: var( --color-link );
-		background: none;
-		border: none;
-		box-shadow: none;
-
-		&:hover {
-			color: var( --color-link-dark );
-		}
-	}
 }
 
 .domain-item__status-info,
@@ -209,9 +224,8 @@
 	}
 
 	@include breakpoint-deprecated( '<660px' ) {
-		flex-direction: column;
+		display: inline;
 		margin-left: 0;
-		flex-wrap: nowrap;
 		overflow: hidden;
 
 		.domain-item__title {
@@ -282,10 +296,11 @@
 
 .domain-item .domain-item__primary-badge {
 	margin-left: 8px;
-	// font-size: $font-body-extra-small;
-	// TODO: Rebase with #54645
-	// @extend %domains__badge;
 	border-radius: 4px; /* stylelint-disable-line */
 	font-size: 0.75rem;
 	font-weight: 500; /* stylelint-disable-line */
+
+	@include breakpoint-deprecated( '<660px' ) {
+		margin-left: 0;
+	}
 }
