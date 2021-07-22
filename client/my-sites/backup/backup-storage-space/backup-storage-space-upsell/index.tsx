@@ -3,6 +3,7 @@
  */
 import React, { FunctionComponent, useCallback, useEffect } from 'react';
 import { Button } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 
 /**
@@ -55,21 +56,26 @@ export const BackupStorageSpaceUpsell: FunctionComponent< Props > = ( {
 	upsellOption,
 	usedStorage,
 } ) => {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 
 	useEffect( () => {
-		recordTracksEvent( 'calypso_jetpack_backup_storage_upsell_display', {
-			type: upsellOption,
-			usedStorage,
-		} );
-	}, [ upsellOption, usedStorage ] );
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_storage_upsell_display', {
+				type: upsellOption,
+				usedStorage,
+			} )
+		);
+	}, [ dispatch, upsellOption, usedStorage ] );
 
 	const onUpsellClick = useCallback( () => {
-		recordTracksEvent( 'calypso_jetpack_backup_storage_upsell_click', {
-			type: upsellOption,
-			usedStorage,
-		} );
-	}, [ upsellOption, usedStorage ] );
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_storage_upsell_click', {
+				type: upsellOption,
+				usedStorage,
+			} )
+		);
+	}, [ dispatch, upsellOption, usedStorage ] );
 
 	const titleText =
 		'out_of_storage' === upsellOption
