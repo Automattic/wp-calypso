@@ -59,7 +59,9 @@ class ListHeader extends React.PureComponent {
 	renderDefaultHeaderContent() {
 		return (
 			<>
-				<span className="list__domains-header">Your site domains</span>
+				<span className="list__domains-header">
+					{ this.props.translate( 'Your site domains' ) }
+				</span>
 				{ ! this.props.isManagingAllSites && this.renderAddDomainToThisSiteButton() }
 			</>
 		);
