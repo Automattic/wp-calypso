@@ -254,9 +254,16 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 			await driverHelper.clickWhenClickable( this.driver, blockAppenderLocator );
 		} );
 
+		// @todo Remove this fallback and its reference below in the `By.css` call
+		// once Gutenberg v11.1.0 is in production. This is here to support GB
+		// versions < 11.1.0, which is still the case at the moment as v11.1.0 is
+		// on edge sites.
+		const quickInserterSearchInputDeprecatedSelector =
+			'.block-editor-inserter__quick-inserter .block-editor-inserter__search-input';
 		const quickInserterSearchInputLocator = By.css(
-			'.block-editor-inserter__quick-inserter .block-editor-inserter__search-input'
+			`.block-editor-inserter__quick-inserter .components-search-control__input, ${ quickInserterSearchInputDeprecatedSelector }`
 		);
+
 		const patternItemLocator = By.css(
 			'.block-editor-inserter__quick-inserter .block-editor-block-types-list__item, .block-editor-inserter__quick-inserter .block-editor-block-patterns-list__item'
 		);
