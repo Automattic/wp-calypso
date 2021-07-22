@@ -122,7 +122,7 @@ export class Theme extends Component {
 	isFullSiteEditingTheme() {
 		const { theme } = this.props;
 		const features = get( theme, [ 'taxonomies', 'theme_feature' ] );
-		return some( features, { slug: 'full-site-editing' } );
+		return some( features, { slug: 'block-templates' } );
 	}
 
 	renderPlaceholder() {
