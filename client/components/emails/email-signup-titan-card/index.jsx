@@ -27,8 +27,7 @@ import './style.scss';
 
 class EmailSignupTitanCard extends React.Component {
 	static propTypes = {
-		addButtonTitle: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] )
-			.isRequired,
+		addButtonTitle: PropTypes.node.isRequired,
 		buttonStyles: PropTypes.object,
 		email: PropTypes.string,
 		extraClasses: PropTypes.string,
@@ -38,8 +37,7 @@ class EmailSignupTitanCard extends React.Component {
 		priceRule: PropTypes.string,
 		price: PropTypes.string,
 		showChevron: PropTypes.bool,
-		skipButtonTitle: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] )
-			.isRequired,
+		skipButtonTitle: PropTypes.node.isRequired,
 	};
 
 	static defaultProps = {

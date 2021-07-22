@@ -37,8 +37,7 @@ function LanguagePickerItemTooltip( { children } ) {
 }
 
 LanguagePickerItemTooltip.propTypes = {
-	children: PropTypes.oneOfType( [ PropTypes.arrayOf( PropTypes.node ), PropTypes.node ] )
-		.isRequired,
+	children: PropTypes.node.isRequired,
 };
 
 export default LanguagePickerItemTooltip;
