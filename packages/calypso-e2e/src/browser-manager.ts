@@ -120,20 +120,12 @@ export async function close(): Promise< void > {
  * @param {Page} page Object representing a page launched by Playwright.
  * @returns {Promise<void>} No return value.
  */
-export async function clearCookies( page: Page ): Promise< void > {
+export async function clearAuthenticationState( page: Page ): Promise< void > {
 	// Save references to the BrowserContext and the current URL the page is on.
 	const browserContext = page.context();
 	const currentURL = page.url();
 
 	// Navigate to the WordPress.com base URL.
-	await page.goto( config.get( 'calypsoBaseURL' ) );
-	// Clear the GDPR banner cookie.
-	await page.evaluate( 'window.document.cookie = "sensitive_pixel_option=no;";' );
-	// Clear additional cookies.
-	await page.evaluate(
-		'window.document.cookie = "sensitive_pixel_option=no;domain=.wordpress.com;SameSite=None;Secure"'
-	);
-	// Clear cookies to remote login.
 	await page.goto( 'https://r-login.wordpress.com/' );
 	// Clear local storage.
 	await page.evaluate( 'localStorage.clear();' );

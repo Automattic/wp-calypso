@@ -64,7 +64,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 		} );
 
 		it( 'Clear cookies', async function () {
-			await BrowserManager.clearCookies( page );
+			await BrowserManager.clearAuthenticationState( page );
 		} );
 
 		it( `Like post as ${ anotherUser }`, async function () {
