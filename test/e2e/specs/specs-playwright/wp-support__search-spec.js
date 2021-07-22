@@ -3,8 +3,6 @@ import {
 	DataHelper,
 	LoginFlow,
 	SidebarComponent,
-	MyHomePage,
-	SettingsPage,
 	SupportComponent,
 	setupHooks,
 } from '@automattic/calypso-e2e';
@@ -16,7 +14,7 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 		page = args.page;
 	} );
 
-	describe( 'Search for a support then open support article', function () {
+	describe( 'Search for and view a support article', function () {
 		let supportComponent;
 
 		it( 'Log in', async function () {
@@ -25,13 +23,11 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 		} );
 
 		it( 'Open Settings page', async function () {
-			await MyHomePage.Expect( page );
 			const sidebarComponent = await SidebarComponent.Expect( page );
 			await sidebarComponent.gotoMenu( { item: 'Settings', subitem: 'General' } );
 		} );
 
 		it( 'Open support popover', async function () {
-			await SettingsPage.Expect( page );
 			supportComponent = await SupportComponent.Expect( page );
 			await supportComponent.clickSupportButton();
 		} );
@@ -70,7 +66,7 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 		} );
 	} );
 
-	describe( 'Empty search string', function () {
+	describe( 'Unsupported search keywords', function () {
 		let supportComponent;
 
 		it( 'Log in', async function () {
@@ -79,13 +75,11 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 		} );
 
 		it( 'Open Settings page', async function () {
-			await MyHomePage.Expect( page );
 			const sidebarComponent = await SidebarComponent.Expect( page );
 			await sidebarComponent.gotoMenu( { item: 'Settings', subitem: 'General' } );
 		} );
 
 		it( 'Open support popover', async function () {
-			await SettingsPage.Expect( page );
 			supportComponent = await SupportComponent.Expect( page );
 			await supportComponent.clickSupportButton();
 		} );
@@ -95,7 +89,7 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 			assert.ok( results >= 5 );
 		} );
 
-		it( 'Enter invalid search keyword', async function () {
+		it( 'Enter empty search keyword', async function () {
 			const keyword = '        ';
 			await supportComponent.search( keyword );
 		} );
@@ -116,36 +110,6 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 			assert.strictEqual( 0, adminResults );
 		} );
 
-		it( 'Close support popover', async function () {
-			await supportComponent.closePopover();
-		} );
-	} );
-
-	describe( 'Invalid search string', function () {
-		let supportComponent;
-
-		it( 'Log in', async function () {
-			const loginFlow = new LoginFlow( page );
-			await loginFlow.logIn();
-		} );
-
-		it( 'Open Settings page', async function () {
-			await MyHomePage.Expect( page );
-			const sidebarComponent = await SidebarComponent.Expect( page );
-			await sidebarComponent.gotoMenu( { item: 'Settings', subitem: 'General' } );
-		} );
-
-		it( 'Open support popover', async function () {
-			await SettingsPage.Expect( page );
-			supportComponent = await SupportComponent.Expect( page );
-			await supportComponent.clickSupportButton();
-		} );
-
-		it( 'Displays default entries', async function () {
-			const results = await supportComponent.getOverallResultsCount();
-			assert.ok( results >= 5 );
-		} );
-
 		it( 'Enter invalid search keyword', async function () {
 			const keyword = ';;;ppp;;;';
 			await supportComponent.search( keyword );
@@ -153,6 +117,10 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 
 		it( 'No search results are shown', async function () {
 			await supportComponent.noResults();
+		} );
+
+		it( 'Close support popover', async function () {
+			await supportComponent.closePopover();
 		} );
 	} );
 } );
