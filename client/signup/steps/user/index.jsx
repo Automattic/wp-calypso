@@ -224,6 +224,8 @@ export class UserStep extends Component {
 		if ( oauth2Signup ) {
 			dependencies.oauth2_client_id = data.queryArgs.oauth2_client_id;
 			dependencies.oauth2_redirect = data.queryArgs.oauth2_redirect;
+		} else if ( data.queryArgs.redirect_to ) {
+			dependencies.redirect = data.queryArgs.redirect_to;
 		}
 
 		this.props.submitSignupStep(
