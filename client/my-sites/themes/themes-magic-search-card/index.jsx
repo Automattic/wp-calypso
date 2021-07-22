@@ -267,6 +267,7 @@ class ThemesMagicSearchCard extends React.Component {
 	suggest = ( suggestion ) => {
 		const updatedInput = this.insertSuggestion( suggestion );
 		this.updateInput( updatedInput );
+		this.focusOnInput();
 	};
 
 	// User has clicked on an item in the "Magic Welcome Bar" to add something like
