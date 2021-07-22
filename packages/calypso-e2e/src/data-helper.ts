@@ -38,6 +38,16 @@ export function getCalypsoURL(
 }
 
 /**
+ * Wrapper around the `config.get` call.
+ *
+ * @param {string} key Top level key in the decrypted configuration file to get.
+ * @returns {[key: string]: any|string|null} Either a JSON dictionary or string matching the key if the key exists. Returns null otherwise.
+ */
+export function getConfig( key: string ): { [ key: string ]: any } | string | null {
+	return config.get( key );
+}
+
+/**
  * Returns the credential for a specified account from the secrets file.
  *
  * @param {string} accountType Type of the account for which the credentials are to be obtained.
