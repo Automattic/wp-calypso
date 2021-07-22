@@ -6,23 +6,17 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import page from 'page';
 import { useTranslate } from 'i18n-calypso';
-import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
 import {
 	getProductsList,
-	getProductCost,
 	isProductsListFetching,
+	getProductDisplayCost,
 } from 'calypso/state/products-list/selectors';
 import { marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
-import {
-	isFetching as isWporgPluginFetching,
-	getPlugin as getWporgPlugin,
-} from 'calypso/state/plugins/wporg/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -48,23 +42,17 @@ function MarketplacePluginDetails( {
 	productGroupSlug,
 	productSlug,
 }: MarketplacePluginDetailsInterface ): JSX.Element {
-	/* ****** TODO : Depend on product slug to show product details in this page ****** */
-	const hardcodedProductSlug = 'yoast_premium';
 	const defaultPlugin = getDefaultPluginInProduct( productGroupSlug, productSlug );
-	/* ******************************************************************************* */
+	const displayCost = useSelector( ( state ) => getProductDisplayCost( state, productSlug ) );
+
 	const translate = useTranslate();
 	const { replaceProductsInCart } = useShoppingCart();
 	const products = useSelector( getProductsList );
-	const cost = useSelector( ( state ) => getProductCost( state, hardcodedProductSlug ) );
-	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
 	const isProductListLoading = useSelector( ( state ) => isProductsListFetching( state ) );
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSiteId ?? 0 ) );
-	const displayCost = formatCurrency( cost, currencyCode, { stripZeros: true } );
 	const dispatch = useDispatch();
-	const wporgPlugin = useSelector( ( state ) => getWporgPlugin( state, defaultPlugin ) );
-	const wporgFetching = useSelector( ( state ) => isWporgPluginFetching( state, defaultPlugin ) );
 	const eligibilityDetails = useSelector( ( state ) => getEligibility( state, selectedSiteId ) );
 
 	useEffect( () => {
@@ -72,16 +60,18 @@ function MarketplacePluginDetails( {
 		selectedSiteId && dispatch( requestEligibility( selectedSiteId ) );
 	}, [ dispatch, defaultPlugin, selectedSiteId ] );
 
-	// TODO: Come up with a generic model for premium products and free products
-	const onAddYoastPremiumToCart = async ( primaryDomain: string ) => {
-		marketplaceDebugger( 'Added marketplace yoast to cart' );
+	const onAddMarketplaceProductToCart = async (
+		productSlug: keyof IProductCollection,
+		primaryDomain: string
+	) => {
+		marketplaceDebugger( `Added marketplace product ${ productSlug } to cart` );
 
 		dispatch( productToBeInstalled( productGroupSlug, productSlug, primaryDomain ) );
-		const yoastProduct = fillInSingleCartItemAttributes(
-			{ product_slug: hardcodedProductSlug },
+		const marketplaceProduct = fillInSingleCartItemAttributes(
+			{ product_slug: productSlug },
 			products
 		);
-		return replaceProductsInCart( [ yoastProduct ] );
+		return replaceProductsInCart( [ marketplaceProduct ] );
 	};
 
 	const onRemoveEverythingFromCart = () => {
@@ -112,24 +102,19 @@ function MarketplacePluginDetails( {
 						showDismiss={ false }
 					/>
 				) ) }
-			{ ! wporgFetching ? (
+			{ ! isProductListLoading ? (
 				<PurchaseArea
+					productSlug={ productSlug }
 					isDisabled={ hasHardBlock }
 					siteDomains={ siteDomains }
-					isProductListLoading={ isProductListLoading }
 					displayCost={ displayCost }
-					wporgPluginName={ wporgPlugin?.name }
-					onAddYoastPremiumToCart={ onAddYoastPremiumToCart }
+					onAddMarketplaceProductToCart={ onAddMarketplaceProductToCart }
 					onRemoveEverythingFromCart={ onRemoveEverythingFromCart }
-					onNavigateToCheckout={ () =>
-						page( `/checkout/${ selectedSiteSlug }?flags=marketplace-yoast` )
-					}
-					onNavigateToDomainsSelection={ () =>
-						page( `/marketplace/domain/${ selectedSiteSlug }?flags=marketplace-yoast` )
-					}
-					onInstallPluginManually={ async ( primaryDomain ) => {
+					onNavigateToCheckout={ () => page( `/checkout/${ selectedSiteSlug }` ) }
+					onNavigateToDomainsSelection={ () => page( `/marketplace/domain/${ selectedSiteSlug }` ) }
+					onInstallProductManually={ ( productSlug, primaryDomain ) => {
 						dispatch( productToBeInstalled( productGroupSlug, productSlug, primaryDomain ) );
-						page( `/marketplace/product/setup/${ selectedSiteSlug }?flags=marketplace-yoast` );
+						page( `/marketplace/product/setup/${ selectedSiteSlug }` );
 					} }
 				/>
 			) : (
