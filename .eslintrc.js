@@ -201,6 +201,7 @@ module.exports = {
 				'packages/create-calypso-config/**/*',
 				'packages/data-stores/**/*',
 				'packages/domain-picker/**/*',
+				'packages/format-currency/**/*',
 				'packages/js-utils/**/*',
 				'packages/launch/**/*',
 				'packages/mocha-debug-reporter/**/*',
