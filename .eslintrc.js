@@ -212,7 +212,9 @@ module.exports = {
 				'packages/viewport/**/*',
 				'packages/webpack-config-flag-plugin/**/*',
 				'packages/wpcom-checkout/**/*',
+				'test/client/**/*',
 				'test/e2e/**/*',
+				'test/server/**/*',
 			],
 			rules: {
 				'wpcalypso/import-docblock': 'off',
