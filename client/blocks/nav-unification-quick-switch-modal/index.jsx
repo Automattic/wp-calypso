@@ -18,7 +18,7 @@ import isNewUserId from 'calypso/state/selectors/is-new-user-id';
 /**
  * Image dependencies
  */
-import featureImage from 'calypso/assets/images/nav-unification-announcement/quick-switch-feature.png';
+import featureImage from 'calypso/assets/images/nav-unification-announcement/quick-switch-feature-no-text.png';
 
 /**
  * Style dependencies
