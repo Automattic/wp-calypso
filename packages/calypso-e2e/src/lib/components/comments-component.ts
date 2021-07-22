@@ -26,13 +26,16 @@ export class CommentsComponent extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async postComment( comment: string ): Promise< void > {
-		// Wait for the page to fully load. Otherwise, the Post Comment button may not
+		// Wait for all network connections to complete. Otherwise, the Post Comment button may not
 		// appear even if the text area is clicked on.
 		await this.page.waitForLoadState( 'networkidle' );
-		// To simulate user action first click on the field. This also exposes the
-		// submit comment button.
+		// Wait until the comment text area is fully stable on the page.
+		// This is to guard against long-loading pages (eg. notifications test) where all network
+		// requests may have completed but the page remains in a loading state.
 		const commentArea = await this.page.waitForSelector( selectors.commentTextArea );
 		await commentArea.waitForElementState( 'stable' );
+		// To simulate user action first click on the field. This also exposes the
+		// submit comment button.
 		await this.page.click( selectors.commentTextArea );
 		await this.page.fill( selectors.commentTextArea, comment );
 		await Promise.all( [
