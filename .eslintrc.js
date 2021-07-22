@@ -210,6 +210,7 @@ module.exports = {
 				'packages/spec-xunit-reporter/**/*',
 				'packages/tree-select/**/*',
 				'packages/viewport/**/*',
+				'packages/webpack-config-flag-plugin/**/*',
 				'packages/wpcom-checkout/**/*',
 				'test/e2e/**/*',
 			],
