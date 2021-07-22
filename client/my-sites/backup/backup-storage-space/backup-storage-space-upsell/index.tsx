@@ -10,7 +10,7 @@ import { sprintf } from '@wordpress/i18n';
  */
 import Gridicon from 'calypso/components/gridicon';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
-import { useTranslate, translate as translateType } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Style dependencies
@@ -26,7 +26,7 @@ export type BackupStorageSpaceUpsellOptions =
 const getStatusText = (
 	upsellOption: BackupStorageSpaceUpsellOptions,
 	storageLimit: number,
-	translate: typeof translateType
+	translate: ReturnType< typeof useTranslate >
 ) => {
 	switch ( upsellOption ) {
 		case 'first_upsell':
