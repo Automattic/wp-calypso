@@ -73,15 +73,12 @@ export const getTask = (
 						? domainManagementEdit( siteSlug, task.unverifiedDomains[ 0 ] )
 						: domainManagementList( siteSlug ),
 				actionText: translate( 'Verify' ),
-				isHidden: task.isCompleted,
 			};
 			break;
 		case CHECKLIST_KNOWN_TASKS.EMAIL_VERIFIED:
 			taskData = {
 				timing: 1,
-				title: task.isCompleted
-					? translate( 'Your email address has been verified' )
-					: translate( 'Confirm your email address' ),
+				title: translate( 'Confirm your email address' ),
 				description: translate(
 					'Please click the link in the email we sent to %(email)s. ' +
 						'Typo in your email address? {{changeButton}}Change it here{{/changeButton}}.',
@@ -103,9 +100,7 @@ export const getTask = (
 		case CHECKLIST_KNOWN_TASKS.BLOGNAME_SET:
 			taskData = {
 				timing: 1,
-				title: task.isCompleted
-					? translate( 'Your site has a name' )
-					: translate( 'Give your site a name' ),
+				title: translate( 'Give your site a name' ),
 				description: translate(
 					'Give your new site a title to let people know what your site is about.'
 				),
@@ -117,9 +112,7 @@ export const getTask = (
 		case CHECKLIST_KNOWN_TASKS.MOBILE_APP_INSTALLED:
 			taskData = {
 				timing: 3,
-				title: task.isCompleted
-					? translate( "You've installed the WordPress app" )
-					: translate( 'Try the WordPress app' ),
+				title: translate( 'Try the WordPress app' ),
 				description: translate(
 					'Download the WordPress app to your mobile device to manage your site and follow your stats on the go.'
 				),
@@ -135,35 +128,20 @@ export const getTask = (
 		case CHECKLIST_KNOWN_TASKS.SITE_LAUNCHED:
 			taskData = {
 				timing: 1,
-				title: task.isCompleted
-					? translate( "You've launched your site!" )
-					: translate( 'Launch your site to the world' ),
-				description: task.isCompleted
-					? translate(
-							'Your site is live and visible to the world! You can change your site visibility in your site settings at any time.'
-					  )
-					: translate(
-							"Your site is private and only visible to you. When you're ready, launch your site to make it public."
-					  ),
-				actionText: task.isCompleted
-					? translate( 'View visibility settings' )
-					: translate( 'Launch site' ),
-				...( task.isCompleted
-					? {
-							actionUrl: `/settings/general/${ siteSlug }#site-privacy-settings`,
-					  }
-					: {
-							actionDispatch: launchSiteOrRedirectToLaunchSignupFlow,
-							actionDispatchArgs: [ siteId ],
-					  } ),
+				title: translate( 'Launch your site to the world' ),
+				description: translate(
+					"Your site is private and only visible to you. When you're ready, launch your site to make it public."
+				),
+				actionText: translate( 'Launch site' ),
+				actionDispatch: launchSiteOrRedirectToLaunchSignupFlow,
+				actionDispatchArgs: [ siteId ],
+				actionDisableOnComplete: true,
 			};
 			break;
 		case CHECKLIST_KNOWN_TASKS.FRONT_PAGE_UPDATED:
 			taskData = {
 				timing: 20,
-				title: task.isCompleted
-					? translate( 'Your homepage is good to go' )
-					: translate( 'Update your homepage' ),
+				title: translate( 'Update your homepage' ),
 				description: translate(
 					"We've created the basics, now it's time for you to update the images and text. Make a great first impression. Everything you do can be changed anytime."
 				),
@@ -174,9 +152,7 @@ export const getTask = (
 		case CHECKLIST_KNOWN_TASKS.SITE_MENU_UPDATED:
 			taskData = {
 				timing: 10,
-				title: task.isCompleted
-					? translate( "You've set up your menu" )
-					: translate( 'Customize your site menu' ),
+				title: translate( 'Customize your site menu' ),
 				description: translate(
 					"Building an effective navigation menu makes it easier for someone to find what they're looking for and improve search engine rankings."
 				),
