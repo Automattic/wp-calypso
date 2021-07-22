@@ -399,6 +399,7 @@ export class List extends React.Component {
 				headerClasses={ {
 					'domain-item__enable-selection': this.state.changePrimaryDomainModeEnabled,
 				} }
+				isManagingAllSites={ false }
 			/>,
 			...domainListItems,
 			manageAllDomainsLink,

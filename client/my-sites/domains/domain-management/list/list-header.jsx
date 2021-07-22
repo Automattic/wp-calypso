@@ -28,6 +28,7 @@ class ListHeader extends React.PureComponent {
 		disabled: PropTypes.bool,
 		isBusy: PropTypes.bool,
 		onToggle: PropTypes.func,
+		isManagingAllSites: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -35,6 +36,7 @@ class ListHeader extends React.PureComponent {
 		onToggle: null,
 		isBusy: false,
 		isChecked: false,
+		isManagingAllSites: false,
 	};
 
 	stopPropagation = ( event ) => {
@@ -58,7 +60,7 @@ class ListHeader extends React.PureComponent {
 		return (
 			<>
 				<span className="list__domains-header">Your site domains</span>
-				{ this.renderAddDomainToThisSiteButton() }
+				{ ! this.props.isManagingAllSites && this.renderAddDomainToThisSiteButton() }
 			</>
 		);
 	}
