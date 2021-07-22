@@ -44,8 +44,11 @@ export class NavbarComponent extends BaseContainer {
 	async openNotificationsPanel( {
 		keyboard = false,
 	}: { keyboard?: boolean } = {} ): Promise< void > {
-		await this.page.waitForLoadState( 'networkidle' );
-		await this.page.waitForSelector( selectors.notificationsButton );
+		await Promise.all( [
+			this.page.waitForURL( '**/home/**' ),
+			this.page.waitForLoadState( 'networkidle' ),
+		] );
+		await this.page.waitForSelector( selectors.notificationsButton, { state: 'visible' } );
 		if ( keyboard ) {
 			return await this.page.keyboard.press( 'n' );
 		}
