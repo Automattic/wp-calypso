@@ -31,7 +31,7 @@ jest.mock( 'enzyme', () => {
 		jest.requireActual( 'jest-enzyme' );
 
 		// configure enzyme 3 for React, from docs: http://airbnb.io/enzyme/docs/installation/index.html
-		const Adapter = jest.requireActual( 'enzyme-adapter-react-16' );
+		const Adapter = jest.requireActual( '@wojtekmaj/enzyme-adapter-react-17' );
 		actualEnzyme.configure( { adapter: new Adapter() } );
 
 		// configure snapshot serializer for enzyme

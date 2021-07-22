@@ -154,6 +154,7 @@
 		"@typeform/embed-react": "^1.1.0",
 		"@types/cookie": "^0.4.1",
 		"@types/debug": "^4.1.7",
+		"@types/enzyme": "^3.10.9",
 		"@types/fast-json-stable-stringify": "^2.0.0",
 		"@types/lodash": "^4.14.171",
 		"@types/page": "^1.11.3",
