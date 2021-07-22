@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { defer, get, includes, isEmpty } from 'lodash';
+import { defer, get, isEmpty } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import page from 'page';
 
@@ -650,7 +650,7 @@ class DomainsStep extends React.Component {
 		const subHeaderPropertyName = 'signUpFlowDomainsStepSubheader';
 		const onboardingSubHeaderCopy =
 			siteType &&
-			includes( [ 'onboarding', 'ecommerce-onboarding' ], flowName ) &&
+			[ 'onboarding', 'ecommerce-onboarding' ].includes( flowName ) &&
 			getSiteTypePropertyValue( 'slug', siteType, subHeaderPropertyName );
 
 		if ( onboardingSubHeaderCopy ) {

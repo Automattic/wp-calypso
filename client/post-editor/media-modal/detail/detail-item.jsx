@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { flowRight, includes } from 'lodash';
+import { flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { getUrlParts } from '@automattic/calypso-url';
 import Gridicon from 'calypso/components/gridicon';
@@ -115,7 +115,7 @@ export class EditorMediaModalDetailItem extends Component {
 
 		const mimePrefix = getMimePrefix( item );
 
-		if ( ! includes( [ 'image', 'video' ], mimePrefix ) ) {
+		if ( ! [ 'image', 'video' ].includes( mimePrefix ) ) {
 			return null;
 		}
 

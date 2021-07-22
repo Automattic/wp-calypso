@@ -234,7 +234,7 @@ export function formatNumber( inputNumber, country ) {
 	const { nationalNumber, prefix } = processNumber( inputNumber, country );
 
 	const patterns =
-		( includes( [ '+', '1' ], inputNumber[ 0 ] ) && country.internationalPatterns ) ||
+		( [ '+', '1' ].includes( inputNumber[ 0 ] ) && country.internationalPatterns ) ||
 		country.patterns ||
 		[];
 	const pattern = findPattern( nationalNumber, patterns );

@@ -3,7 +3,7 @@
  */
 import React, { Fragment } from 'react';
 import getCaretCoordinates from 'textarea-caret';
-import { escapeRegExp, findIndex, get, includes, throttle, pick } from 'lodash';
+import { escapeRegExp, findIndex, get, throttle, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -88,12 +88,12 @@ export default ( WrappedComponent ) =>
 			const selectedIndex = this.getSelectedSuggestionIndex();
 
 			// Cancel Enter and Tab default actions so we can define our own in keyUp
-			if ( includes( [ keys.enter, keys.tab ], event.keyCode ) ) {
+			if ( [ keys.enter, keys.tab ].includes( event.keyCode ) ) {
 				event.preventDefault();
 				return false;
 			}
 
-			if ( ! includes( [ keys.upArrow, keys.downArrow ], event.keyCode ) || -1 === selectedIndex ) {
+			if ( ! [ keys.upArrow, keys.downArrow ].includes( event.keyCode ) || -1 === selectedIndex ) {
 				return;
 			}
 
@@ -117,15 +117,15 @@ export default ( WrappedComponent ) =>
 		};
 
 		handleKeyUp = ( event ) => {
-			if ( includes( [ keys.downArrow, keys.upArrow ], event.keyCode ) ) {
+			if ( [ keys.downArrow, keys.upArrow ].includes( event.keyCode ) ) {
 				return;
 			}
 
-			if ( includes( [ keys.spaceBar, keys.esc ], event.keyCode ) ) {
+			if ( [ keys.spaceBar, keys.esc ].includes( event.keyCode ) ) {
 				return this.hidePopover();
 			}
 
-			if ( includes( [ keys.enter, keys.tab ], event.keyCode ) ) {
+			if ( [ keys.enter, keys.tab ].includes( event.keyCode ) ) {
 				if ( ! this.state.showPopover || this.matchingSuggestions.length === 0 ) {
 					return;
 				}

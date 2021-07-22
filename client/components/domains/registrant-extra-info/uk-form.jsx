@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { camelCase, difference, filter, get, includes, isEmpty, keys, map, pick } from 'lodash';
+import { camelCase, difference, filter, get, isEmpty, keys, map, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -106,14 +106,13 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 	};
 
 	isTradingNameRequired( registrantType ) {
-		return includes(
-			[ 'LTD', 'PLC', 'LLP', 'IP', 'RCHAR', 'FCORP', 'OTHER', 'FOTHER', 'STRA' ],
+		return [ 'LTD', 'PLC', 'LLP', 'IP', 'RCHAR', 'FCORP', 'OTHER', 'FOTHER', 'STRA' ].includes(
 			registrantType
 		);
 	}
 
 	isRegistrationNumberRequired( registrantType ) {
-		return includes( [ 'LTD', 'PLC', 'LLP', 'IP', 'SCH', 'RCHAR' ], registrantType );
+		return [ 'LTD', 'PLC', 'LLP', 'IP', 'SCH', 'RCHAR' ].includes( registrantType );
 	}
 
 	renderTradingNameField() {

@@ -887,7 +887,7 @@ class RegisterDomainStep extends React.Component {
 						TRANSFERRABLE_PREMIUM,
 						UNKNOWN,
 					} = domainAvailability;
-					const isDomainAvailable = includes( [ AVAILABLE, UNKNOWN ], status );
+					const isDomainAvailable = [ AVAILABLE, UNKNOWN ].includes( status );
 					const isDomainTransferrable = TRANSFERRABLE === status;
 					const isDomainMapped = MAPPED === mappable;
 					const isAvailablePremiumDomain = AVAILABLE_PREMIUM === status;

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { includes, pick } from 'lodash';
+import { pick } from 'lodash';
 import { ToggleControl } from '@wordpress/components';
 
 /**
@@ -84,7 +84,7 @@ const Caching = ( {
 					<FormFieldset className="wp-super-cache__cache-type-fieldset">
 						<FormLabel>
 							<FormRadio
-								checked={ includes( [ 'PHP', 'wpcache' ], cache_type ) /* wpcache is legacy */ }
+								checked={ [ 'PHP', 'wpcache' ].includes( cache_type ) /* wpcache is legacy */ }
 								disabled={ isDisabled || ! is_cache_enabled }
 								name="cache_type"
 								onChange={ handleRadio }

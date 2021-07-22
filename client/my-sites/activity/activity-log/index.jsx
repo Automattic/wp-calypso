@@ -7,7 +7,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get, includes, isEmpty, isEqual } from 'lodash';
+import { find, get, isEmpty, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -380,7 +380,7 @@ class ActivityLog extends Component {
 
 		const disableRestore =
 			! enableRewind ||
-			includes( [ 'queued', 'running' ], get( this.props, [ 'restoreProgress', 'status' ] ) ) ||
+			[ 'queued', 'running' ].includes( get( this.props, [ 'restoreProgress', 'status' ] ) ) ||
 			'active' !== rewindState.state;
 		const disableBackup = 0 <= get( this.props, [ 'backupProgress', 'progress' ], -Infinity );
 
@@ -531,7 +531,7 @@ class ActivityLog extends Component {
 
 		const rewindNoThanks = get( context, 'query.rewind-redirect', '' );
 		const rewindIsNotReady =
-			includes( [ 'uninitialized', 'awaitingCredentials' ], rewindState.state ) ||
+			[ 'uninitialized', 'awaitingCredentials' ].includes( rewindState.state ) ||
 			'vp_can_transfer' === rewindState.reason;
 
 		return (

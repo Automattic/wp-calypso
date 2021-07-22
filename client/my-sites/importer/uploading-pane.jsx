@@ -6,7 +6,7 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { includes, truncate } from 'lodash';
+import { truncate } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 
 /**
@@ -154,7 +154,7 @@ class UploadingPane extends React.PureComponent {
 		const { importerState } = this.props.importerStatus;
 		const { READY_FOR_UPLOAD, UPLOAD_FAILURE } = appStates;
 
-		return includes( [ READY_FOR_UPLOAD, UPLOAD_FAILURE ], importerState );
+		return [ READY_FOR_UPLOAD, UPLOAD_FAILURE ].includes( importerState );
 	}
 
 	openFileSelector = () => {

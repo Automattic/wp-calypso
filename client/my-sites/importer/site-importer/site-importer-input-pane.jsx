@@ -5,7 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { includes, isEmpty, flowRight, has, trim, sortBy } from 'lodash';
+import { isEmpty, flowRight, has, trim, sortBy } from 'lodash';
 import url from 'url'; // eslint-disable-line no-restricted-imports
 import moment from 'moment';
 
@@ -91,7 +91,7 @@ class SiteImporterInputPane extends React.Component {
 			site: { ID: siteId } = {},
 		} = this.props;
 
-		if ( ! includes( [ appStates.UPLOAD_SUCCESS ], importerState ) ) {
+		if ( importerState !== appStates.UPLOAD_SUCCESS ) {
 			this.props.cancelImport( siteId, importerId );
 			this.resetImport();
 		}
