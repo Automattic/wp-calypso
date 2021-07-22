@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import FollowButtonContainer from 'calypso/blocks/follow-button';
 import Gridicon from 'calypso/components/gridicon';
-import { useQuery } from 'react-query';
 
 /**
  * Internal dependencies
@@ -18,6 +17,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import DocumentHead from 'calypso/components/data/document-head';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import wp from 'calypso/lib/wp';
+import usePostsQuery from 'calypso/data/posts/use-posts-query';
 
 /**
  * Style dependencies
@@ -38,14 +38,10 @@ const horizonSiteId = 90972941;
 
 const BetaTesting = ( { trackViewHorizonAction } ) => {
 	const translate = useTranslate();
-	const { data = {}, isFetching: isRequestingPosts } = useQuery( 'horizon-posts', () =>
-		wp.req.get(
-			{
-				path: `/sites/${ horizonSiteId }/posts`,
-				apiNamespace: 'rest/v1.1',
-			},
-			query
-		)
+	const { data = {}, isFetching: isRequestingPosts } = usePostsQuery(
+		horizonSiteId,
+		'horizon-latest',
+		query
 	);
 	const { posts } = data;
 
