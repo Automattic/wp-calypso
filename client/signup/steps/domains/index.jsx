@@ -313,7 +313,7 @@ class DomainsStep extends React.Component {
 		maybeExcludeEmailsStep( {
 			domainItem,
 			resetSignupStep: this.props.removeStep,
-			siteUrl: suggestion.domain_name,
+			siteUrl: suggestion?.domain_name,
 			stepName: 'emails',
 			submitSignupStep: this.props.submitSignupStep,
 		} );

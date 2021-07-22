@@ -8,6 +8,7 @@ import { current as currentPage } from 'page';
  * Internal dependencies
  */
 import {
+	addEmailToCart,
 	addPlanToCart,
 	createAccount,
 	createSite,
@@ -35,6 +36,7 @@ export default generateSteps( {
 	currentPage,
 	setThemeOnSite,
 	addDomainToCart,
+	addEmailToCart,
 	launchSiteApi,
 	isPlanFulfilled,
 	isDomainFulfilled,

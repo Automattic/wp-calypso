@@ -19,7 +19,6 @@ import { getToken } from 'calypso/lib/oauth-token';
 import emailVerification from 'calypso/components/email-verification';
 import Logger from 'calypso/lib/catch-js-errors';
 import { hasTouch } from 'calypso/lib/touch-detect';
-import { installPerfmonPageHandlers } from 'calypso/lib/perfmon';
 import { setupRoutes } from 'calypso/sections-middleware';
 import { checkFormHandler } from 'calypso/lib/protect-form';
 import { setReduxStore as setReduxBridgeReduxStore } from 'calypso/lib/redux-bridge';
@@ -283,7 +282,6 @@ function setupErrorLogger( reduxStore ) {
 const setupMiddlewares = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso setup middlewares.' );
 
-	installPerfmonPageHandlers();
 	setupContextMiddleware( reduxStore );
 	oauthTokenMiddleware();
 	setupRoutes();

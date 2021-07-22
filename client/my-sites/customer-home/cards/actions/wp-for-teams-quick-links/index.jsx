@@ -1,31 +1,21 @@
-/**
- * External dependencies
- */
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import FoldableCard from 'calypso/components/foldable-card';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
+import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
+import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
 import {
 	getSiteFrontPage,
 	getCustomizerUrl,
 	getSiteOption,
 	isNewSite,
 } from 'calypso/state/sites/selectors';
-import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
-import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ActionBox from '../quick-links/action-box';
-import { savePreference } from 'calypso/state/preferences/actions';
-import { getPreference } from 'calypso/state/preferences/selectors';
 
-/**
- * Style dependencies
- */
 import '../quick-links/style.scss';
 
 export const QuickLinks = ( {

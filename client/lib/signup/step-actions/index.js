@@ -373,6 +373,32 @@ export function addDomainToCart(
 	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug, null, null );
 }
 
+export function addEmailToCart(
+	callback,
+	dependencies,
+	stepProvidedItems,
+	reduxStore,
+	siteSlug,
+	stepProvidedDependencies
+) {
+	const { domainItem, emailItem, shouldHideFreePlan } = stepProvidedItems?.providedDependencies;
+
+	if ( ! emailItem ) {
+		defer( callback );
+
+		return;
+	}
+
+	const slug = siteSlug || dependencies.siteSlug;
+	const providedDependencies = stepProvidedDependencies || {
+		domainItem,
+		emailItem,
+		shouldHideFreePlan,
+	};
+
+	processItemCart( providedDependencies, [ emailItem ], callback, reduxStore, slug, null, null );
+}
+
 function processItemCart(
 	providedDependencies,
 	newCartItems,

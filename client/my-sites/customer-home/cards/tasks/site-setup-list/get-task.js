@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import { requestSiteChecklistTaskUpdate } from 'calypso/state/checklist/actions';
-import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { verifyEmail } from 'calypso/state/current-user/email-verification/actions';
 import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
+import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
 
 const getTaskDescription = ( task, { isDomainUnverified } ) => {
 	switch ( task.id ) {

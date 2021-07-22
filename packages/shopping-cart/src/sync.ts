@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
-import type { Dispatch } from 'react';
-
-/**
- * Internal dependencies
- */
 import {
 	convertResponseCartToRequestCart,
 	convertRawResponseCartToResponseCart,
@@ -18,6 +10,7 @@ import type {
 	ShoppingCartAction,
 	ShoppingCartMiddleware,
 } from './types';
+import type { Dispatch } from 'react';
 
 const debug = debugFactory( 'shopping-cart:sync' );
 

@@ -35,6 +35,7 @@ export function generateSteps( {
 	currentPage = noop,
 	setThemeOnSite = noop,
 	addDomainToCart = noop,
+	addEmailToCart = noop,
 	launchSiteApi = noop,
 	isPlanFulfilled = noop,
 	isDomainFulfilled = noop,

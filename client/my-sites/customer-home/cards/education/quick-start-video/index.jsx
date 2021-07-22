@@ -1,25 +1,14 @@
-/**
- * External dependencies
- */
-import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
 import { Card } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
-
-/**
- * Internal dependencies
- */
-import InlineSupportLink from 'calypso/components/inline-support-link';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { FEATURE_QUICK_START_VIDEO } from 'calypso/my-sites/customer-home/cards/constants';
-import MaterialIcon from 'calypso/components/material-icon';
-
-/**
- * Style dependencies
- */
+import { useTranslate } from 'i18n-calypso';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
 import quickStartVideoImage from 'calypso/assets/images/customer-home/quick-start-video-ss.png';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import MaterialIcon from 'calypso/components/material-icon';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { FEATURE_QUICK_START_VIDEO } from 'calypso/my-sites/customer-home/cards/constants';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 
 export const QuickStartVideo = ( { trackQuickStartImpression } ) => {
 	const translate = useTranslate();
