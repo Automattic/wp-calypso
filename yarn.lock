@@ -5452,6 +5452,19 @@
     react "^16.13.1"
     react-dom "^16.13.1"
 
+"@wordpress/element@^3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@wordpress/element/-/element-3.2.0.tgz#531720b3a023a1509f13d2464b2e1d670153116e"
+  integrity sha512-YXJhtBF8FnFYwA9X6Dvs4k6yJf5wy1lhU04VNJVzoUDwCt/pK747RGePIPDdUWVd3X/TlyNH2yLRtcCyOC/SzQ==
+  dependencies:
+    "@babel/runtime" "^7.13.10"
+    "@types/react" "^16.9.0"
+    "@types/react-dom" "^16.9.0"
+    "@wordpress/escape-html" "^2.2.0"
+    lodash "^4.17.21"
+    react "^17.0.1"
+    react-dom "^17.0.1"
+
 "@wordpress/env@^4.0.3":
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/@wordpress/env/-/env-4.0.3.tgz#826ea7e3bb6c2eb944b34c9aee3141b389859e02"
@@ -5474,6 +5487,13 @@
   version "1.12.2"
   resolved "https://registry.yarnpkg.com/@wordpress/escape-html/-/escape-html-1.12.2.tgz#dcc92178bacc69952cde9bb8fb1cbbea9deb2cc3"
   integrity sha512-FabgSwznhdaUwe6hr1CsGpgxQbzqEoGevv73WIL1B9GvlZ6csRWodgHfWh4P6fYqpzxFL4WYB8wPJ1PdO32XFA==
+  dependencies:
+    "@babel/runtime" "^7.13.10"
+
+"@wordpress/escape-html@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@wordpress/escape-html/-/escape-html-2.2.0.tgz#0270b85b8ce09021d73fa574ad10ece85e184d95"
+  integrity sha512-10U0qkEgNa+htpBCpBDJScV+9uhaUXaIZWJVhExtr8kG3omxO/pCwlRUd7r/ad7ZjuIoaLhdqzLgXT4JQCZ8uQ==
   dependencies:
     "@babel/runtime" "^7.13.10"
 
@@ -5555,6 +5575,15 @@
     "@babel/runtime" "^7.13.10"
     "@wordpress/element" "^2.20.3"
     "@wordpress/primitives" "^1.12.3"
+
+"@wordpress/icons@^4.0.1":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@wordpress/icons/-/icons-4.1.0.tgz#12e3f6e5923c7c78200d242c152db6d068dc76a5"
+  integrity sha512-1FpEjT9kJbr0cWbgdgIwd2DoeerWijcVx3qCZ/WMFKNElBH9lfZLuWPI1hpX102HGWFcEi3VlbVpdBGeCeYQWg==
+  dependencies:
+    "@babel/runtime" "^7.13.10"
+    "@wordpress/element" "^3.2.0"
+    "@wordpress/primitives" "^2.2.0"
 
 "@wordpress/interface@^1.0.6":
   version "1.0.6"
@@ -5738,6 +5767,15 @@
     "@babel/runtime" "^7.13.10"
     "@wordpress/element" "^2.20.3"
     classnames "^2.2.5"
+
+"@wordpress/primitives@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@wordpress/primitives/-/primitives-2.2.0.tgz#a813c3d8a43ad1f873b8e53f0b125cb8832273b0"
+  integrity sha512-WupgR+tt6fKGZE1UKy2gz3wDdpRL9MWQbVuetXv/7TPAz2ofOS2fZIsXNrl4D0HkA82gYh8w8s2TXK0XNyAAow==
+  dependencies:
+    "@babel/runtime" "^7.13.10"
+    "@wordpress/element" "^3.2.0"
+    classnames "^2.3.1"
 
 "@wordpress/priority-queue@^1.10.1", "@wordpress/priority-queue@^1.11.2":
   version "1.11.2"
@@ -19828,7 +19866,6 @@ new-github-issue-url@^0.2.1:
   version "1.30.0"
   resolved "https://codeload.github.com/Automattic/newspack-blocks/tar.gz/396703aa237b5811f25a29334503b7de58219f0a"
   dependencies:
-    "@stripe/stripe-js" "^1.15.0"
     "@wordpress/a11y" "^2.9.0"
     "@wordpress/compose" "^3.9.0"
     "@wordpress/data" "^4.11.0"
@@ -19843,7 +19880,6 @@ new-github-issue-url@^0.2.1:
     "@wordpress/keycodes" "^2.9.0"
     "@wordpress/plugins" "^2.12.0"
     lodash "^4.17.20"
-    newspack-components "^1.6.1"
     react "^16.12.0"
     redux "^4.0.5"
     redux-saga "^1.1.3"
@@ -23154,6 +23190,15 @@ react-docgen@^5.0.0:
     prop-types "^15.6.2"
     scheduler "^0.19.1"
 
+react-dom@^17.0.1:
+  version "17.0.2"
+  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-17.0.2.tgz#ecffb6845e3ad8dbfcdc498f0d0a939736502c23"
+  integrity sha512-s4h96KtLDUQlsENhMn1ar8t2bEa+q/YAtj8pPPdIjPDGBDIVNsrD9aXNWqspUe6AzKCIG0C1HZZLqLV7qpOBGA==
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
+    scheduler "^0.20.2"
+
 react-draggable@^4.0.3:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/react-draggable/-/react-draggable-4.2.0.tgz#40cc5209082ca7d613104bf6daf31372cc0e1114"
@@ -23495,6 +23540,14 @@ react-with-styles@^3.2.0:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
     prop-types "^15.6.2"
+
+react@^17.0.1:
+  version "17.0.2"
+  resolved "https://registry.yarnpkg.com/react/-/react-17.0.2.tgz#d0b5cc516d29eb3eee383f75b62864cfb6800037"
+  integrity sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA==
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
 
 reactcss@^1.2.0:
   version "1.2.3"
@@ -25282,6 +25335,14 @@ scheduler@^0.19.1:
   version "0.19.1"
   resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.19.1.tgz#4f3e2ed2c1a7d65681f4c854fa8c5a1ccb40f196"
   integrity sha512-n/zwRWRYSUj0/3g/otKDRPMh6qv2SYMWNq85IEa8iZyAv8od9zDYpGSnpBEjNgcMNq6Scbu5KfIPxNF72R/2EA==
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
+
+scheduler@^0.20.2:
+  version "0.20.2"
+  resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.20.2.tgz#4baee39436e34aa93b4874bddcbf0fe8b8b50e91"
+  integrity sha512-2eWfGgAqqWFGqtdMmcL5zCMK1U8KlXv8SQFGglL3CEtd0aDVDWgeF/YoCmvln55m5zSk3J/20hTaSBeSObsQDQ==
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
