@@ -13,6 +13,7 @@ import { openPopupWidget } from 'react-calendly';
  * Internal dependencies
  */
 import { cleanUrl } from 'calypso/jetpack-connect/utils.js';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
 	isProductsListFetching as getIsProductListFetching,
 	getProductName,
@@ -30,6 +31,10 @@ import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryProducts from 'calypso/components/data/query-products-list';
 
+/**
+ * Type dependencies
+ */
+import { UserData } from 'calypso/types';
 interface Props {
 	productSlug: string | 'no_product';
 	receiptId?: number;
@@ -46,6 +51,7 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( { productSlug, receiptId 
 	);
 
 	const calendlyUrl = getCalendlyUrl();
+	const currentUser = useSelector( ( state ) => getCurrentUser( state ) ) as UserData;
 
 	const isProductListFetching = useSelector( ( state ) => getIsProductListFetching( state ) );
 
@@ -213,10 +219,10 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( { productSlug, receiptId 
 											// --studio-jetpack-green
 											primaryColor: '069e08',
 										},
-										// prefill: {
-										// 	email: currentUser?.email,
-										// 	name: currentUser?.display_name,
-										// },
+										prefill: {
+											email: currentUser?.email,
+											name: currentUser?.display_name,
+										},
 									} );
 								} }
 							>
