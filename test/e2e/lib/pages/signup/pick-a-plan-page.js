@@ -36,15 +36,8 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 				? `.plan-features__mobile button.is-${ level }-plan, .plan-features-comparison__table button.is-${ level }-plan, .plan-features__table button.is-${ level }-plan`
 				: `.plan-features-comparison__table button.is-${ level }-plan, .plan-features__table button.is-${ level }-plan`;
 
-		let locator = By.css( planLocator );
+		const locator = By.css( planLocator );
 
-		if ( level === 'free' ) {
-			if ( ! ( await driverHelper.isElementLocated( this.driver, locator ) ) ) {
-				locator = By.css(
-					'.plans-features-main__banner-content button, .formatted-header__subtitle button'
-				);
-			}
-		}
 		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			By.css(
