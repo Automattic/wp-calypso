@@ -31,8 +31,8 @@ export class CommentsComponent extends BaseContainer {
 		await this.page.waitForLoadState( 'networkidle' );
 		// To simulate user action first click on the field. This also exposes the
 		// submit comment button.
-		// const commentArea = await this.page.waitForSelector( selectors.commentTextArea)
-		// await commentArea.waitForElementState('stable');
+		const commentArea = await this.page.waitForSelector( selectors.commentTextArea );
+		await commentArea.waitForElementState( 'stable' );
 		await this.page.click( selectors.commentTextArea );
 		await this.page.fill( selectors.commentTextArea, comment );
 		await Promise.all( [
