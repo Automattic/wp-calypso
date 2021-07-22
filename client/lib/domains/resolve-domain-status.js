@@ -53,7 +53,6 @@ export function resolveDomainStatus(
 			}
 
 			if ( hasMappingError ) {
-				// New layout: "Connection error: We noticed that the name servers weren’t updated correctly, please try this step again."
 				const status = translate(
 					"{{strong}}Connection error:{{/strong}} We couldn't verify your connection. Please {{a}}follow this setup again{{/a}}.",
 					{
