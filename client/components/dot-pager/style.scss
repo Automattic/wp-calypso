@@ -52,8 +52,12 @@
 	}
 
 	button {
-		width: 6px;
-		height: 6px;
+		display: inline-flex;
+
+		// Size the dots
+		min-width: 6px;
+		min-height: 6px;
+
 		// Drawing a CSS circle
 		// stylelint-disable-next-line  declaration-property-unit-allowed-list
 		border-radius: 50%;
@@ -74,8 +78,14 @@
 
 		&.dot-pager__control-prev,
 		&.dot-pager__control-next {
-			width: 18px;
-			height: 18px;
+			// Allow the control buttons the space they need for labels
+			width: auto;
+			height: auto;
+
+			svg {
+				width: 18px;
+				height: 18px;
+			}
 			background-color: transparent;
 			color: var( --studio-gray-80 );
 

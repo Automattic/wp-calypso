@@ -148,60 +148,8 @@ body.is-section-home {
 	padding: 32px;
 }
 
-.customer-home__location-primary .dot-pager__controls {
-	justify-content: flex-start;
-	margin-top: 0;
-	margin-bottom: 32px;
-	order: -1;
-
-	button {
-		// Size the dots
-		min-height: 6px;
-		min-width: 6px;
-
-		// Allow the control buttons the space they need
-		width: auto;
-		height: auto;
-	}
-
-	button:not( :disabled ) {
-		color: var( --studio-gray-80 );
-	}
-
-	.dashicons-before::before {
-		width: 18px;
-		height: 18px;
-	}
-
-
-	li:first-child {
-		// Move the Page Control Items over to the right
-		margin-left: auto;
-		order: 999;
-
-		.gridicon {
-			margin-right: 6px;
-		}
-	}
-
-	li:last-child {
-		order: 999;
-		margin-right: 0;
-
-		.gridicon {
-			margin-left: 6px;
-		}
-	}
-
-	// This is the left-most dot, so we want it flush against the
-	// conatiner padding
-	li:nth-child( 2 ) {
-		margin-left: 0;
-	}
-
-	.dot-pager__control-current {
-		background-color: var( --studio-gray-80 );
-	}
+.customer-home__location-primary {
+		margin-bottom: 32px;
 }
 
 .customer-home__location-primary .task {
