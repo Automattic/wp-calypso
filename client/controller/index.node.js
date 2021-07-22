@@ -5,6 +5,7 @@ import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { getLocaleSlug } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -56,10 +57,24 @@ export const makeLayout = makeLayoutMiddleware( ProviderWrappedLoggedOutLayout )
 
 export const ssrSetupLocale = ssrSetupLocaleMiddleware();
 
-export const setHrefLangLinks = ( context, next ) => {
-	const isLoggedIn = isUserLoggedIn( context.store.getState() );
+const getLocalizedCanonicalUrl = ( path, locale ) => {
+	const baseUrl = `https://wordpress.com${ path }`;
+	const baseUrlWithoutLang = baseUrl.replace(
+		new RegExp( `\\/(${ getLanguageSlugs().join( '|' ) })(\\/|\\?|$)` ),
+		'$2'
+	);
+	let localizedUrl = localizeUrl( baseUrlWithoutLang, locale, false );
 
-	if ( isLoggedIn ) {
+	// Remove the trailing slash if `path` doesn't have one either.
+	if ( path.slice( -1 ) !== '/' && localizedUrl.slice( -1 ) === '/' ) {
+		localizedUrl = localizedUrl.slice( 0, -1 );
+	}
+
+	return localizedUrl;
+};
+
+export const setHrefLangLinks = ( context, next ) => {
+	if ( isUserLoggedIn( context.store.getState() ) ) {
 		next();
 		return;
 	}
@@ -72,15 +87,7 @@ export const setHrefLangLinks = ( context, next ) => {
 			localeSlug = config( 'i18n_default_locale_slug' );
 		}
 
-		const baseUrl = `${ context.res.req.protocol }://${ context.res.req.get( 'host' ) }${
-			context.res.req.originalUrl
-		}`;
-		const baseUrlWithoutLang = baseUrl.replace(
-			new RegExp( `\\/(${ getLanguageSlugs().join( '|' ) })(\\/|\\?|$)` ),
-			'$2'
-		);
-		const href = localizeUrl( baseUrlWithoutLang, localeSlug, isLoggedIn );
-
+		const href = getLocalizedCanonicalUrl( context.res.req.originalUrl, localeSlug );
 		return {
 			rel: 'alternate',
 			hrefLang,
@@ -89,6 +96,22 @@ export const setHrefLangLinks = ( context, next ) => {
 	} );
 
 	context.store.dispatch( setDocumentHeadLink( hrefLangBlock ) );
+	next();
+};
+
+export const setLocalizedCanonicalUrl = ( context, next ) => {
+	if ( isUserLoggedIn( context.store.getState() ) ) {
+		next();
+		return;
+	}
+
+	const href = getLocalizedCanonicalUrl( context.res.req.originalUrl, getLocaleSlug() );
+	const link = {
+		rel: 'canonical',
+		href,
+	};
+
+	context.store.dispatch( setDocumentHeadLink( link ) );
 	next();
 };
 
