@@ -16,7 +16,6 @@ import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import DocumentHead from 'calypso/components/data/document-head';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import wp from 'calypso/lib/wp';
 import usePostsQuery from 'calypso/data/posts/use-posts-query';
 
 /**
