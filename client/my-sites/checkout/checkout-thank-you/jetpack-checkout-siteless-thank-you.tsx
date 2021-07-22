@@ -11,22 +11,23 @@ import { Card } from '@automattic/components';
 /**
  * Internal dependencies
  */
-import FormLabel from 'calypso/components/forms/form-label';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
-import FormButton from 'calypso/components/forms/form-button';
-import JetpackLogo from 'calypso/components/jetpack-logo';
-import QueryProducts from 'calypso/components/data/query-products-list';
+import { cleanUrl } from 'calypso/jetpack-connect/utils.js';
 import {
 	isProductsListFetching as getIsProductListFetching,
 	getProductName,
 } from 'calypso/state/products-list/selectors';
-import { cleanUrl } from 'calypso/jetpack-connect/utils.js';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestUpdateJetpackCheckoutSupportTicket } from 'calypso/state/jetpack-checkout/actions';
-import Main from 'calypso/components/main';
+import FormButton from 'calypso/components/forms/form-button';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import getCalendlyUrl from 'calypso/lib/jetpack/get-calendly-url';
 import getJetpackCheckoutSupportTicketStatus from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-status';
+import JetpackLogo from 'calypso/components/jetpack-logo';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import QueryProducts from 'calypso/components/data/query-products-list';
 
 interface Props {
 	productSlug: string | 'no_product';
@@ -42,6 +43,8 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( { productSlug, receiptId 
 	const productName = useSelector( ( state ) =>
 		hasProductInfo ? getProductName( state, productSlug ) : null
 	);
+
+	const hasCalendlyURL = getCalendlyUrl() !== null;
 
 	const isProductListFetching = useSelector( ( state ) => getIsProductListFetching( state ) );
 
@@ -192,33 +195,38 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( { productSlug, receiptId 
 						</div>
 					) }
 				</div>
-				<div className="jetpack-checkout-siteless-thank-you__card-footer">
-					<div>
-						<h2>{ translate( 'Do you need help?' ) }</h2>
-						<p>
-							{ translate(
-								'If you prefer to setup Jetpack with the help of our Happiness Engineers, {{a}}schedule a 15 minute call now{{/a}}.',
-								{
-									components: {
-										a: (
-											<a
-												className="jetpack-checkout-siteless-thank-you__link"
-												onClick={ () =>
-													dispatch(
-														recordTracksEvent( 'calypso_siteless_checkout_happiness_link_clicked', {
-															product_slug: productSlug,
-														} )
-													)
-												}
-												href={ happinessAppointmentLink }
-											/>
-										),
-									},
-								}
-							) }
-						</p>
+				{ hasCalendlyURL && (
+					<div className="jetpack-checkout-siteless-thank-you__card-footer">
+						<div>
+							<h2>{ translate( 'Do you need help?' ) }</h2>
+							<p>
+								{ translate(
+									'If you prefer to setup Jetpack with the help of our Happiness Engineers, {{a}}schedule a 15 minute call now{{/a}}.',
+									{
+										components: {
+											a: (
+												<a
+													className="jetpack-checkout-siteless-thank-you__link"
+													onClick={ () =>
+														dispatch(
+															recordTracksEvent(
+																'calypso_siteless_checkout_happiness_link_clicked',
+																{
+																	product_slug: productSlug,
+																}
+															)
+														)
+													}
+													href={ happinessAppointmentLink }
+												/>
+											),
+										},
+									}
+								) }
+							</p>
+						</div>
 					</div>
-				</div>
+				) }
 			</Card>
 		</Main>
 	);
