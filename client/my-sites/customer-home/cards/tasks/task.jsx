@@ -1,5 +1,6 @@
 import { Button } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
+import { useInstanceId } from '@wordpress/compose';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect, useRef, useState } from 'react';
@@ -42,6 +43,7 @@ const Task = ( {
 	const translate = useTranslate();
 	const skipButtonRef = useRef( null );
 	const { skipCurrentView } = useSkipCurrentViewMutation( siteId );
+	const instanceId = useInstanceId( Task );
 
 	useEffect( () => setIsLoading( forceIsLoading ), [ forceIsLoading ] );
 
@@ -137,6 +139,11 @@ const Task = ( {
 							className="task__skip is-link"
 							ref={ skipButtonRef }
 							onClick={ () => ( enableSkipOptions ? setSkipOptionsVisible( true ) : skipTask() ) }
+							aria-haspopup
+							// The WAI recommendation is to not present the aria-expanded attribute when the menu is hidden.
+							// See: https://www.w3.org/TR/wai-aria-practices/#wai-aria-roles-states-and-properties-14
+							aria-expanded={ enableSkipOptions && areSkipOptionsVisible ? true : undefined }
+							aria-controls={ `popover-menu-${ instanceId }` }
 						>
 							{ enableSkipOptions ? translate( 'Hide this' ) : translate( 'Dismiss' ) }
 							{ enableSkipOptions && <Gridicon icon="dropdown" size={ 18 } /> }
@@ -144,6 +151,7 @@ const Task = ( {
 					) }
 					{ showSkip && enableSkipOptions && areSkipOptionsVisible && (
 						<PopoverMenu
+							id={ `popover-menu-${ instanceId }` }
 							context={ skipButtonRef.current }
 							isVisible={ areSkipOptionsVisible }
 							onClose={ () => setSkipOptionsVisible( false ) }
