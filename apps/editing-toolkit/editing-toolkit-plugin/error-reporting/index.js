@@ -3,6 +3,12 @@ import { Integrations } from '@sentry/tracing';
 import apiFetch from '@wordpress/api-fetch';
 
 const shouldActivateSentry = window.dataFromPHP?.shouldActivateSentry === 'true';
+/**
+ * Errors that happened before this script had a chance to load
+ * are captured in a global array. See `./index.php`.
+ */
+const headErrors = window._jsErr || [];
+const headErrorHandler = window._headJsErrorHandler;
 
 function activateSentry() {
 	console.debug( '[error-reporting] Activating Sentry!' );
@@ -15,18 +21,13 @@ function activateSentry() {
 		// We recommend adjusting this value in production
 		tracesSampleRate: 1.0,
 	} );
+
+	return ( { error } ) => Sentry.captureException( error );
 }
 
 // Activate the home-brew error-reporting
 function activateHomebrewErrorReporting() {
 	console.debug( '[error-reporting] Activating homebrew error-reporting!' );
-	/**
-	 * Errors that happened before this script had a chance to load
-	 * are captured in a global array. See `./index.php`.
-	 */
-	const headErrors = window._jsErr || [];
-	const headErrorHandler = window._headJsErrorHandler;
-
 	const reportError = ( { error } ) => {
 		// Sanitized error event objects do not include a nested error attribute. In
 		// that case, we return early to prevent a needless TypeError when defining
@@ -57,16 +58,14 @@ function activateHomebrewErrorReporting() {
 
 	window.addEventListener( 'error', reportError );
 
-	// Remove the head handler as it's not needed anymore after we set the main one above
-	window.removeEventListener( 'error', headErrorHandler );
-	delete window._headJsErrorHandler;
-
-	// We still need to report the head errors, if any.
-	Promise.allSettled( headErrors.map( reportError ) ).then( () => delete window._jsErr );
+	return reportError;
 }
 
-if ( shouldActivateSentry ) {
-	activateSentry();
-} else {
-	activateHomebrewErrorReporting();
-}
+const reportError = shouldActivateSentry ? activateSentry() : activateHomebrewErrorReporting();
+
+// Remove the head handler as it's not needed anymore after we set the main one above (either Sentry or homebrew)
+window.removeEventListener( 'error', headErrorHandler );
+delete window._headJsErrorHandler;
+
+// We still need to report the head errors, if any.
+Promise.allSettled( headErrors.map( reportError ) ).then( () => delete window._jsErr );
