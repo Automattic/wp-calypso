@@ -16,6 +16,7 @@ import EmailSignupTitanCard from 'calypso/components/emails/email-signup-titan-c
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
 
 /**
  * Style dependencies
@@ -26,6 +27,33 @@ class EmailsStep extends React.Component {
 	componentDidMount() {
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
+
+	handleAddEmail = () => {
+		const { flowName, signupDependencies, stepName } = this.props;
+		const { domainItem } = signupDependencies;
+
+		const emailItem =
+			domainItem && domainItem.meta
+				? titanMailMonthly( {
+						domain: domainItem.meta,
+						quantity: 1,
+						extra: {
+							new_quantity: 1,
+						},
+				  } )
+				: undefined;
+
+		// It may be cleaner to call handleSkip() if emailItem is undefined.
+		this.props.recordTracksEvent( 'calypso_signup_email_add', {
+			domain: domainItem?.meta,
+			domain_slug: domainItem?.product_slug,
+			flow: flowName,
+			product_slug: emailItem?.product_slug,
+			step: stepName,
+		} );
+
+		this.submitEmailPurchase( emailItem );
+	};
 
 	handleSkip = () => {
 		const { flowName, stepName } = this.props;
@@ -76,10 +104,9 @@ class EmailsStep extends React.Component {
 				<CalypsoShoppingCartProvider>
 					<EmailSignupTitanCard
 						siteUrl={ signupDependencies.domainItem?.meta }
-						//TODO
 						addButtonTitle={ translate( 'Add' ) }
 						skipButtonTitle={ translate( 'Skip' ) }
-						onAddButtonClick={ () => {} }
+						onAddButtonClick={ this.handleAddEmail }
 						onSkipButtonClick={ this.handleSkip }
 					/>
 				</CalypsoShoppingCartProvider>
@@ -102,10 +129,10 @@ class EmailsStep extends React.Component {
 	}
 
 	render() {
-		const { flowName, translate, stepName, positionInFlow } = this.props;
+		const { flowName, translate, stepName, positionInFlow, signupDependencies } = this.props;
 		const backUrl = 'start/domains/';
 		const headerText = translate( 'Add Professional Email' );
-		const domainName = this.props.progress.domains.siteUrl;
+		const domainName = signupDependencies.domainItem?.meta;
 		const subHeaderText = translate(
 			'Add a custom email address to start sending and receiving emails from {{strong}}%(domainName)s{{/strong}} today.',
 			{
