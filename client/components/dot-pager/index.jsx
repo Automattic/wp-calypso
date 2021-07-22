@@ -13,11 +13,7 @@ import { Icon, arrowRight } from '@wordpress/icons';
  */
 import './style.scss';
 
-const Controls = ( {
-	currentPage,
-	numberOfPages,
-	setCurrentPage,
-} ) => {
+const Controls = ( { buttonText, currentPage, numberOfPages, setCurrentPage } ) => {
 	const translate = useTranslate();
 	if ( numberOfPages < 2 ) {
 		return null;
@@ -53,6 +49,7 @@ const Controls = ( {
 						fill="currentColor"
 						style={ { transform: 'scaleX(-1)' } }
 					/>
+					{ buttonText && translate( 'Previous' ) }
 				</button>
 			</li>
 			<li key="dot-pager-next">
@@ -62,6 +59,7 @@ const Controls = ( {
 					aria-label={ translate( 'Next' ) }
 					onClick={ () => setCurrentPage( currentPage + 1 ) }
 				>
+					{ buttonText && translate( 'Next' ) }
 					<Icon icon={ arrowRight } size={ 18 } fill="currentColor" />
 				</button>
 			</li>
@@ -69,15 +67,12 @@ const Controls = ( {
 	);
 };
 
-export const DotPager = ( {
-	children,
-	className,
-	...props
-} ) => {
+export const DotPager = ( { buttonText = false, children, className, ...props } ) => {
 	const [ currentPage, setCurrentPage ] = useState( 0 );
 	return (
 		<Card className={ className } { ...props }>
 			<Controls
+				buttonText={ buttonText }
 				currentPage={ currentPage }
 				numberOfPages={ Children.count( children ) }
 				setCurrentPage={ setCurrentPage }
