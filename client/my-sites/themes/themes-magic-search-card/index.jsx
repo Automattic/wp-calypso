@@ -231,6 +231,7 @@ class ThemesMagicSearchCard extends React.Component {
 
 	updateInput = ( updatedInput ) => {
 		this.setState( { searchInput: updatedInput } );
+		this.findTextForSuggestions( updatedInput );
 		this.searchInputRef.clear();
 	};
 
