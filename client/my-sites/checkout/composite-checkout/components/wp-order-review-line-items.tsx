@@ -766,13 +766,15 @@ function IntroductoryOfferCallout( {
 
 function DomainDiscountCallout( {
 	product,
+	hasPlanInCart,
 }: {
 	product: ResponseCartProduct;
+	hasPlanInCart: boolean;
 } ): JSX.Element | null {
 	const translate = useTranslate();
 
 	const isFreeBundledDomainRegistration = product.is_bundled && product.item_subtotal_integer === 0;
-	if ( isFreeBundledDomainRegistration && product.is_renewal ) {
+	if ( isFreeBundledDomainRegistration && ! hasPlanInCart ) {
 		return <DiscountCallout>{ translate( 'Domain credit applied' ) }</DiscountCallout>;
 	}
 
@@ -846,6 +848,7 @@ function WPLineItem( {
 	const id = product.uuid;
 	const translate = useTranslate();
 	const { responseCart } = useShoppingCart();
+	const hasPlanInCart = responseCart.products.some( isPlan );
 	const hasDomainsInCart = responseCart.products.some(
 		( product ) => product.is_domain_registration || product.product_slug === 'domain_transfer'
 	);
@@ -917,7 +920,7 @@ function WPLineItem( {
 			{ sublabel && (
 				<LineItemMeta>
 					<LineItemSublabelAndPrice product={ product } />
-					<DomainDiscountCallout product={ product } />
+					<DomainDiscountCallout product={ product } hasPlanInCart={ hasPlanInCart } />
 					<FirstTermDiscountCallout product={ product } />
 					<CouponDiscountCallout product={ product } />
 					<IntroductoryOfferCallout product={ product } />
