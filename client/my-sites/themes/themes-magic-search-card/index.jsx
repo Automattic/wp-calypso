@@ -60,6 +60,7 @@ class ThemesMagicSearchCard extends React.Component {
 			cursorPosition: 0,
 			searchInput: this.props.search,
 			isPopoverVisible: false,
+			log: [ '...', '...', '...', '...', '...', '...' ],
 		};
 	}
 
@@ -156,13 +157,16 @@ class ThemesMagicSearchCard extends React.Component {
 
 	findTextForSuggestions = ( input ) => {
 		const val = input;
+		this.addLog( `findTextForSuggestions: queued up RAF` );
 		window.requestAnimationFrame( () => {
 			const selectionStart = this.searchInputRef.searchInput.selectionStart;
 			const [ editedSearchElement, cursorPosition ] = this.computeEditedSearchElement(
 				val,
 				selectionStart
 			);
-			this.setState( { editedSearchElement, cursorPosition } );
+			this.setState( { editedSearchElement, cursorPosition }, () => {
+				this.addLog( `RAF setState finished` );
+			} );
 		} );
 	};
 
@@ -175,11 +179,26 @@ class ThemesMagicSearchCard extends React.Component {
 		// Get rid of empty match at end
 		tokens[ tokens.length - 1 ] === '' && tokens.splice( tokens.length - 1, 1 );
 		if ( tokens.length === 0 ) {
+			this.logCompute( searchText, selectionStart, cursorPosition, editedSearchElement );
 			return [ editedSearchElement, cursorPosition ];
 		}
 		const tokenIndex = this.findEditedTokenIndex( tokens, cursorPosition );
 		editedSearchElement = tokens[ tokenIndex ].trim();
+		this.logCompute( searchText, selectionStart, cursorPosition, editedSearchElement );
 		return [ editedSearchElement, cursorPosition ];
+	};
+
+	logCompute = ( searchText, selectionStart, cursorPosition, editedSearchElement ) => {
+		const text = `[${ searchText }] [${ selectionStart }] -> [${ cursorPosition }] [${ editedSearchElement }]`;
+		this.addLog( text );
+	};
+
+	addLog = ( text ) => {
+		const ts = new Date().toISOString().slice( 11, -1 );
+		const newText = `${ ts } ${ text }`;
+		const { log } = this.state;
+		log.push( newText );
+		this.setState( { log } );
 	};
 
 	insertSuggestion = ( suggestion ) => {
@@ -238,7 +257,10 @@ class ThemesMagicSearchCard extends React.Component {
 	};
 
 	updateInput = ( updatedInput ) => {
-		this.setState( { searchInput: updatedInput } );
+		// this.addLog( `Update Input setState: [${ updatedInput }]` );
+		this.setState( { searchInput: updatedInput }, () => {
+			this.addLog( `Update Input Setstate finished: [${ updatedInput }]` );
+		} );
 		this.searchInputRef.clear();
 	};
 
@@ -382,6 +404,17 @@ class ThemesMagicSearchCard extends React.Component {
 		return (
 			<div className={ magicSearchClass }>
 				<StickyPanel>
+					<div>
+						Search Input: [{ this.state.searchInput }] | Edited Search Element: [
+						{ this.state.editedSearchElement }]
+					</div>
+					<div>
+						{ this.state.log.slice( -12 ).map( ( logText, i ) => (
+							<div style={ { fontSize: '12px' } } key={ i }>
+								{ logText }
+							</div>
+						) ) }
+					</div>
 					<div
 						className={ themesSearchCardClass }
 						role="presentation"
