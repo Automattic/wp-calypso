@@ -1,7 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`webpack-config-flag-plugin should produce expected output: Output bundle should match snapshot 1`] = `
-"(() => {
+"\\"use strict\\";
+(() => {
 var exports = {};
 exports.id = \\"main\\";
 exports.ids = [\\"main\\"];
@@ -10,7 +11,6 @@ exports.modules = {
 /***/ \\"./main.js\\":
 /***/ ((__unused_webpack_module, __unused_webpack___webpack_exports__, __webpack_require__) => {
 
-\\"use strict\\";
 
 // NAMESPACE OBJECT: ./default-import/config/index.js
 var default_import_config_namespaceObject = {};
@@ -84,7 +84,7 @@ if ( config.isEnabled( 'bar' ) ) {
 
 
 // Should NOT be replaced with true
-if ( default_import_config_namespaceObject.default.isEnabled( 'foo' ) ) {
+if ( default_import_config_namespaceObject[\\"default\\"].isEnabled( 'foo' ) ) {
 }
 
 ;// CONCATENATED MODULE: ./default-import/config/index.js
