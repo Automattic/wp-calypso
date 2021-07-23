@@ -774,8 +774,13 @@ function DomainDiscountCallout( {
 	const translate = useTranslate();
 
 	const isFreeBundledDomainRegistration = product.is_bundled && product.item_subtotal_integer === 0;
-	if ( isFreeBundledDomainRegistration && ! hasPlanInCart ) {
+
+	if ( isFreeBundledDomainRegistration && product.is_renewal ) {
 		return <DiscountCallout>{ translate( 'Domain credit applied' ) }</DiscountCallout>;
+	}
+
+	if ( isFreeBundledDomainRegistration && ! hasPlanInCart ) {
+		return <DiscountCallout>{ translate( 'First year free with your plan' ) }</DiscountCallout>;
 	}
 
 	if ( isFreeBundledDomainRegistration ) {
