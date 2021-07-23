@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { RuleTester } from 'eslint';
-
-/**
- * Internal dependencies
- */
 import rule from '../no-unsafe-wp-apis';
 
 const ruleTester = new RuleTester( {
