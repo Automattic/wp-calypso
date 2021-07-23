@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { flatMap } from 'lodash';
 import { createSelector } from '@automattic/state-utils';
 
 /**
@@ -27,21 +26,12 @@ export const getThemesForQueryIgnoringPage = createSelector(
 			return null;
 		}
 
-		let themesForQueryIgnoringPage = themes.getItemsIgnoringPage( query );
+		const themesForQueryIgnoringPage = themes.getItemsIgnoringPage( query );
 		if ( ! themesForQueryIgnoringPage ) {
 			return null;
 		}
 
-		// If query is default, filter out recommended themes.
-		if ( ! ( query.search || query.filter || query.tier ) ) {
-			const recommendedThemes = state.themes.recommendedThemes.themes;
-			const themeIds = flatMap( recommendedThemes, ( theme ) => {
-				return theme.id;
-			} );
-			themesForQueryIgnoringPage = themesForQueryIgnoringPage.filter( ( theme ) => {
-				return ! themeIds.includes( theme.id );
-			} );
-		}
+		// Deafult query used to filter out recommended themes, it no longer does
 
 		// FIXME: The themes endpoint weirdly sometimes returns duplicates (spread
 		// over different pages) which we need to remove manually here for now.
