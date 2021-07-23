@@ -384,7 +384,7 @@ export class UserStep extends Component {
 		) {
 			return this.props.initialContext.query.oauth2_redirect;
 		}
-		if ( this.props.initialContext.canonicalPath.indexOf( '/start/account' ) !== -1 ) {
+		if ( this.props.initialContext.canonicalPath.includes( '/start/account' ) ) {
 			return this.props.initialContext.query.redirect_to;
 		}
 
