@@ -8,7 +8,6 @@ import type { StripeConfiguration } from '@automattic/calypso-stripe';
  */
 import wpcomFactory from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import type { Purchase } from 'calypso/lib/purchases/types';
 
 const wpcom = wpcomFactory.undocumented();
 
@@ -28,54 +27,56 @@ export async function saveCreditCard( {
 		stripeConfiguration,
 		useAsPrimaryPaymentMethod,
 	} );
+
 	const response = await wpcom.me().storedCardAdd( token, additionalData );
 	if ( response.error ) {
-		recordTracksEvent( 'calypso_purchases_add_new_payment_method_error' );
+		recordTracksEvent( 'calypso_partner_portal_add_new_credit_card_error' );
 		throw new Error( response );
 	}
-	recordTracksEvent( 'calypso_purchases_add_new_payment_method' );
+
+	recordTracksEvent( 'calypso_partner_portal_add_new_credit_card' );
 	return response;
 }
 
-export async function updateCreditCard( {
-	purchase,
-	token,
-	stripeConfiguration,
-}: {
-	purchase: Purchase;
+interface UpdateCreditCard {
 	token: string;
 	stripeConfiguration: StripeConfiguration;
-} ): Promise< StoredCardEndpointResponse > {
+	useAsPrimaryPaymentMethod: boolean;
+}
+
+export async function updateCreditCard( {
+	token,
+	stripeConfiguration,
+	useAsPrimaryPaymentMethod,
+}: UpdateCreditCard ): Promise< StoredCardEndpointResponse > {
 	const updatedCreditCardApiParams = getParamsForApi( {
 		cardToken: token,
 		stripeConfiguration,
-		purchase,
+		useAsPrimaryPaymentMethod,
 	} );
 	const response = await wpcom.updateCreditCard( updatedCreditCardApiParams );
+
 	if ( response.error ) {
-		recordTracksEvent( 'calypso_purchases_save_new_payment_method_error' );
+		recordTracksEvent( 'calypso_partner_portal_update_credit_card_error' );
 		throw new Error( response );
 	}
-	recordTracksEvent( 'calypso_purchases_save_new_payment_method' );
+
+	recordTracksEvent( 'calypso_partner_portal_update_credit_card' );
 	return response;
 }
 
 function getParamsForApi( {
 	cardToken,
 	stripeConfiguration,
-	purchase,
 	useAsPrimaryPaymentMethod,
 }: {
 	cardToken: string;
 	stripeConfiguration: StripeConfiguration;
-	purchase?: Purchase | undefined;
-	useAsPrimaryPaymentMethod?: boolean;
+	useAsPrimaryPaymentMethod: boolean;
 } ) {
 	return {
-		payment_partner: stripeConfiguration ? stripeConfiguration.processor_id : '',
+		payment_partner: stripeConfiguration.processor_id,
 		paygate_token: cardToken,
-		...( useAsPrimaryPaymentMethod === true ? { use_for_existing: true } : {} ),
-		...( useAsPrimaryPaymentMethod === false ? { use_for_existing: false } : {} ), // if undefined, we do not add this property
-		...( purchase ? { purchaseId: purchase.id } : {} ),
+		use_for_existing: useAsPrimaryPaymentMethod,
 	};
 }
