@@ -22,7 +22,8 @@ export function useCreateStoredCreditCard( {
 } ): PaymentMethod | null {
 	const shouldLoadStripeMethod = ! isStripeLoading && ! stripeLoadingError;
 	const stripePaymentMethodStore = useMemo( () => createStoredCreditCardPaymentMethodStore(), [] );
-	const stripeMethod = useMemo(
+
+	return useMemo(
 		() =>
 			shouldLoadStripeMethod
 				? createStoredCreditCardMethod( {
@@ -40,5 +41,4 @@ export function useCreateStoredCreditCard( {
 			activePayButtonText,
 		]
 	);
-	return stripeMethod;
 }
