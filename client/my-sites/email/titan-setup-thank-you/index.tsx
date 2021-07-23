@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import page from 'page';
 import React from 'react';
 import { ThemeProvider } from 'emotion-theming';
 import { useSelector } from 'react-redux';
@@ -10,10 +9,8 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { ThankYou } from 'calypso/my-sites/checkout/checkout-thank-you/marketplace/marketplace-thank-you';
+import { ThankYou } from 'calypso/components/thank-you';
 import theme from 'calypso/my-sites/marketplace/theme';
-import Item from 'calypso/layout/masterbar/item';
-import yoastInstalledImage from 'calypso/assets/images/marketplace/yoast-installed.svg';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -26,27 +23,19 @@ type TitanSetupThankYouProps = {
 	emailAddress?: string;
 };
 
-export const TitanSetupThankYou = ( props: TitanSetupThankYouProps ) => {
+export const TitanSetupThankYou = ( props: TitanSetupThankYouProps ): JSX.Element => {
 	const currentRoute = useSelector( getCurrentRoute );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
+	const thankYouImageSrc = '/calypso/images/upgrades/thank-you.svg';
 
 	const { domainName, emailAddress = `youremail@${ domainName }` } = props;
 
 	const emailManagementPath = emailManagement( selectedSiteSlug, domainName, currentRoute );
 
-	const masterbarItem = (
-		<Item
-			icon="cross"
-			onClick={ () => page( emailManagementPath ) }
-			tooltip={ translate( 'Manage email' ) }
-			tipTarget="close"
-		/>
-	);
-
 	const thankYouImage = {
-		alt: 'yoast logo',
-		src: yoastInstalledImage,
+		alt: 'Thank you',
+		src: thankYouImageSrc,
 	};
 
 	const titanThankYouSection = {
@@ -70,7 +59,9 @@ export const TitanSetupThankYou = ( props: TitanSetupThankYouProps ) => {
 				stepDescription: translate(
 					"Access your email on the go with Titan's Android and iOS apps."
 				),
-				/* TODO: Fix URL */
+				/* TODO: Fix URL: There are a some services that automatically redirects you to the Android or App Store
+				 * regarding your user's agent. Eg: https://tosto.re/ We might use a service like that, to take the user
+				 * to the store that is relative to hum (Windows Store? Apple Store? Android Store? Web app?*/
 				stepCta: (
 					<FullWidthButton href="https://titan.email">
 						{ translate( 'Get the app' ) }
@@ -93,7 +84,6 @@ export const TitanSetupThankYou = ( props: TitanSetupThankYouProps ) => {
 	return (
 		<ThemeProvider theme={ theme }>
 			<ThankYou
-				masterbarItem={ masterbarItem }
 				sections={ [ titanThankYouSection ] }
 				showSupportSection={ true }
 				thankYouImage={ thankYouImage }
