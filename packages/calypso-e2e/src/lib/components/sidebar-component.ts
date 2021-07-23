@@ -86,8 +86,6 @@ export class SidebarComponent extends BaseContainer {
 
 		if ( subitem ) {
 			subitem = toTitleCase( subitem ).trim();
-			// If there is a subheading, by definition the expanded menu element will always be present.
-			await this.sidebar.waitForSelector( selectors.expandedMenu );
 			// Explicitly select only the child headings and combine with the text matching engine.
 			// This works better than using CSS pseudo-classes like `:has-text` or `:text-matches` for text
 			// matching.
