@@ -207,6 +207,7 @@ module.exports = {
 				'packages/language-picker/**/*',
 				'packages/launch/**/*',
 				'packages/mocha-debug-reporter/**/*',
+				'packages/photon/**/*',
 				'packages/plans-grid/**/*',
 				'packages/shopping-cart/**/*',
 				'packages/spec-junit-reporter/**/*',
