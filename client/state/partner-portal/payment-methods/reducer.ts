@@ -9,7 +9,21 @@ import { AnyAction, Reducer } from 'redux';
 import { combineReducers } from 'calypso/state/utils';
 import { maskField } from 'calypso/lib/checkout';
 
-export const fields: Reducer< Record< string, unknown >, AnyAction > = ( state = {}, action ) => {
+const initialState = {
+	fields: {},
+	cardDataComplete: {
+		cardNumber: false,
+		cardCvc: false,
+		cardExpiry: false,
+	},
+	cardDataErrors: {},
+	brand: {},
+};
+
+export const fields: Reducer< Record< string, unknown >, AnyAction > = (
+	state = initialState.fields,
+	action
+) => {
 	switch ( action?.type ) {
 		case 'FIELD_VALUE_SET':
 			return {
@@ -44,11 +58,7 @@ export const fields: Reducer< Record< string, unknown >, AnyAction > = ( state =
 };
 
 export const cardDataComplete: Reducer< Record< string, boolean >, AnyAction > = (
-	state = {
-		cardNumber: false,
-		cardCvc: false,
-		cardExpiry: false,
-	},
+	state = initialState.cardDataComplete,
 	action
 ) => {
 	switch ( action?.type ) {
@@ -60,7 +70,7 @@ export const cardDataComplete: Reducer< Record< string, boolean >, AnyAction > =
 };
 
 export const cardDataErrors: Reducer< Record< string, unknown >, AnyAction > = (
-	state = {},
+	state = initialState.cardDataErrors,
 	action
 ) => {
 	switch ( action?.type ) {
@@ -71,7 +81,10 @@ export const cardDataErrors: Reducer< Record< string, unknown >, AnyAction > = (
 	}
 };
 
-export const brand: Reducer< Record< string, unknown >, AnyAction > = ( state = {}, action ) => {
+export const brand: Reducer< Record< string, unknown >, AnyAction > = (
+	state = initialState.brand,
+	action
+) => {
 	switch ( action?.type ) {
 		case 'BRAND_SET':
 			return action.payload;
