@@ -2,7 +2,7 @@ import * as Sentry from '@sentry/browser';
 import { Integrations } from '@sentry/tracing';
 import apiFetch from '@wordpress/api-fetch';
 
-const shouldActivateSentry = window.dataFromPHP?.shouldActivateSentry === 'true';
+const shouldActivateSentry = window.A8C_FSE_ErrorReporting_Config?.shouldActivateSentry === 'true';
 /**
  * Errors that happened before this script had a chance to load
  * are captured in a global array. See `./index.php`.

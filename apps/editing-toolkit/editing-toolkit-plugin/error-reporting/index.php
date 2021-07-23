@@ -76,6 +76,7 @@ function user_in_sentry_test_segment( $user_id ) {
 function is_atomic() {
 	return defined( 'IS_ATOMIC' ) && IS_ATOMIC;
 }
+
 /**
  * Return whether Sentry should be activated for a given user.
  *
@@ -113,7 +114,7 @@ function enqueue_script() {
 
 	wp_localize_script(
 		$script_id,
-		'dataFromPHP',
+		'A8C_FSE_ErrorReporting_Config',
 		array(
 			'shouldActivateSentry' => should_activate_sentry( get_current_user_id(), get_current_blog_id() ) ? 'true' : 'false',
 		)
