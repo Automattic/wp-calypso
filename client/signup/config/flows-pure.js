@@ -362,15 +362,6 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
-			name: 'new-launch',
-			steps: [ 'domains-launch', 'plans-launch', 'launch' ],
-			destination: getLaunchDestination,
-			description: 'Launch flow for a site created from /new',
-			lastModified: '2020-04-28',
-			pageTitle: translate( 'Launch your site' ),
-			providesDependenciesInQuery: [ 'siteSlug', 'source' ],
-		},
-		{
 			name: 'launch-only',
 			steps: [ 'launch' ],
 			destination: getLaunchDestination,

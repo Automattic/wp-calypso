@@ -97,7 +97,7 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 
 	const redirectToUseDomainFlow = (): void => {
 		const currentUrl = '/plugins/domain';
-		const useYourDomainUrl = `/start/new-launch/domains-launch/use-your-domain?siteSlug=${ selectedSite?.slug }&source=${ currentUrl }`;
+		const useYourDomainUrl = `/start/launch-site/domains-launch/use-your-domain?siteSlug=${ selectedSite?.slug }&source=${ currentUrl }`;
 		page( useYourDomainUrl );
 	};
 
