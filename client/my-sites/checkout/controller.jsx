@@ -285,14 +285,20 @@ export function redirectToSupportSession( context ) {
 }
 
 export function jetpackCheckoutThankYou( context, next ) {
+	const forSitelessScheduling = context.path.includes(
+		'/checkout/jetpack/schedule-happiness-appointment'
+	);
 	const isUserlessCheckoutFlow = context.path.includes( '/checkout/jetpack' );
-	const isSitelessCheckoutFlow = context.path.includes( '/checkout/jetpack/thank-you/no-site' );
+	const isSitelessCheckoutFlow =
+		context.path.includes( '/checkout/jetpack/thank-you/no-site' ) || forSitelessScheduling;
+
 	const { receiptId } = context.query;
 
 	context.primary = isSitelessCheckoutFlow ? (
 		<JetpackCheckoutSitelessThankYou
 			productSlug={ context.params.product }
 			receiptId={ receiptId }
+			forScheduling={ forSitelessScheduling }
 		/>
 	) : (
 		<JetpackCheckoutThankYou

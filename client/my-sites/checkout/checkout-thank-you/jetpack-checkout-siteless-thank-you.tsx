@@ -34,13 +34,18 @@ import QueryProducts from 'calypso/components/data/query-products-list';
 /**
  * Type dependencies
  */
-import { UserData } from 'calypso/types';
+import type { UserData } from 'calypso/lib/user/user';
 interface Props {
+	forScheduling: boolean;
 	productSlug: string | 'no_product';
 	receiptId?: number;
 }
 
-const JetpackCheckoutSitelessThankYou: FC< Props > = ( { productSlug, receiptId = 0 } ) => {
+const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
+	forScheduling,
+	productSlug,
+	receiptId = 0,
+} ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -83,11 +88,39 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( { productSlug, receiptId 
 		}
 	}, [ siteInput, dispatch, productSlug, receiptId ] );
 
+	const onScheduleClick = useCallback( () => {
+		if ( calendlyUrl !== null ) {
+			dispatch(
+				recordTracksEvent( 'calypso_siteless_checkout_happiness_link_clicked', {
+					product_slug: productSlug,
+				} )
+			);
+			openPopupWidget( {
+				url: calendlyUrl,
+				pageSettings: {
+					// --studio-jetpack-green
+					primaryColor: '069e08',
+				},
+				prefill: {
+					email: currentUser?.email,
+					name: currentUser?.display_name,
+				},
+			} );
+		}
+	}, [ calendlyUrl, currentUser, dispatch, productSlug ] );
+
 	useEffect( () => {
 		if ( supportTicketStatus && supportTicketStatus === 'success' ) {
 			page( `/checkout/jetpack/thank-you-completed/no-site/${ productSlug }` );
 		}
 	}, [ supportTicketStatus, productSlug, receiptId ] );
+
+	useEffect( () => {
+		if ( forScheduling ) {
+			onScheduleClick();
+		}
+		/* this effect is used in the the style of a `useMountEffect` */
+	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return (
 		<Main fullWidthLayout className="jetpack-checkout-siteless-thank-you">
@@ -207,24 +240,7 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( { productSlug, receiptId 
 							<p>{ translate( 'Setup Jetpack with the help of our Happiness Engineers.' ) }</p>
 							<Button
 								className="jetpack-checkout-siteless-thank-you__button"
-								onClick={ () => {
-									dispatch(
-										recordTracksEvent( 'calypso_siteless_checkout_happiness_link_clicked', {
-											product_slug: productSlug,
-										} )
-									);
-									openPopupWidget( {
-										url: calendlyUrl,
-										pageSettings: {
-											// --studio-jetpack-green
-											primaryColor: '069e08',
-										},
-										prefill: {
-											email: currentUser?.email,
-											name: currentUser?.display_name,
-										},
-									} );
-								} }
+								onClick={ onScheduleClick }
 							>
 								{ translate( 'Schedule a 15 minute call now.' ) }
 							</Button>

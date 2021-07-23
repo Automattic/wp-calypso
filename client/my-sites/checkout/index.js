@@ -27,6 +27,13 @@ export default function () {
 	page( '/checkout*', recordSiftScienceUser );
 
 	if ( isEnabled( 'jetpack/siteless-checkout' ) ) {
+		page(
+			'/checkout/jetpack/schedule-happiness-appointment',
+			noSite,
+			jetpackCheckoutThankYou,
+			makeLayout,
+			clientRender
+		);
 		page( '/checkout/jetpack/:productSlug', noSite, checkoutSiteless, makeLayout, clientRender );
 		page(
 			'/checkout/jetpack/thank-you-completed/no-site/:product',
