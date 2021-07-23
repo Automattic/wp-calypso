@@ -212,6 +212,7 @@ module.exports = {
 				'packages/tree-select/**/*',
 				'packages/viewport/**/*',
 				'packages/webpack-config-flag-plugin/**/*',
+				'packages/whats-new/**/*',
 				'packages/wpcom-checkout/**/*',
 				'test/client/**/*',
 				'test/e2e/**/*',

@@ -1,10 +1,7 @@
-/**
- * External dependencies
- */
-import { Button, GuidePage } from '@wordpress/components';
-import React, { useEffect } from 'react';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Button, GuidePage } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
+import React, { useEffect } from 'react';
 
 function WhatsNewPage( { description, heading, imageSrc, isLastPage, link, pageNumber } ) {
 	const __ = useI18n().__;
