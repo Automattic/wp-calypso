@@ -97,12 +97,10 @@ class AddDomainButton extends React.Component {
 		const label = this.props.specificSiteActions
 			? translate( 'Add a domain to this site' )
 			: translate( 'Add a domain' );
-		const className =
-			'add-domain-button' + ( this.props.specificSiteActions ? '-specific-site' : '' );
 
 		return (
 			<React.Fragment>
-				<Button primary compact className={ className } onClick={ this.toggleAddMenu }>
+				<Button primary compact className={ 'add-domain-button' } onClick={ this.toggleAddMenu }>
 					{ label }
 					<Gridicon icon="chevron-down" ref={ this.addDomainButtonRef } />
 				</Button>
