@@ -22,7 +22,9 @@ function activateSentry() {
 		tracesSampleRate: 1.0,
 	} );
 
-	return ( { error } ) => Sentry.captureException( error );
+	// We still need to report the head errors, if any.
+	headErrors.forEach( ( error ) => Sentry.captureException( error ) );
+	Sentry.flush().then( () => delete window._jsErr );
 }
 
 // Activate the home-brew error-reporting
@@ -58,14 +60,16 @@ function activateHomebrewErrorReporting() {
 
 	window.addEventListener( 'error', reportError );
 
-	return reportError;
+	// We still need to report the head errors, if any.
+	Promise.allSettled( headErrors.map( reportError ) ).then( () => delete window._jsErr );
 }
 
-const reportError = shouldActivateSentry ? activateSentry() : activateHomebrewErrorReporting();
+if ( shouldActivateSentry ) {
+	activateSentry();
+} else {
+	activateHomebrewErrorReporting();
+}
 
 // Remove the head handler as it's not needed anymore after we set the main one above (either Sentry or homebrew)
 window.removeEventListener( 'error', headErrorHandler );
 delete window._headJsErrorHandler;
-
-// We still need to report the head errors, if any.
-Promise.allSettled( headErrors.map( reportError ) ).then( () => delete window._jsErr );
