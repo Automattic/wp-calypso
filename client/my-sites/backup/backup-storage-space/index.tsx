@@ -22,11 +22,11 @@ import './style.scss';
 const upsellLimit1 = 0.6;
 const upsellLimit2 = 0.85;
 
-const progressBarColors: Record< BackupStorageSpaceUpsellOptions, string > = {
-	no_upsell: '#2C3338',
-	first_upsell: '#DEB100',
-	second_upsell: '#E65054',
-	out_of_storage: '#E65054',
+const progressBarWarnings: Record< BackupStorageSpaceUpsellOptions, string > = {
+	no_upsell: 'no-warning',
+	first_upsell: 'yellow-warning',
+	second_upsell: 'red-warning',
+	out_of_storage: 'red-warning',
 };
 
 type Props = Record< string, never >;
@@ -52,7 +52,7 @@ export const BackupStorageSpace: FunctionComponent< Props > = () => {
 
 	const showUpsell = upsellOption !== 'no_upsell';
 
-	const progressBarColor = progressBarColors[ upsellOption ];
+	const progressBarWarning = progressBarWarnings[ upsellOption ];
 
 	// TODO: account for MB/GB and translate once API data is available
 	const title = sprintf( '%1$sGB of %2$sGB used', usedStorage, storageLimit );
@@ -62,7 +62,11 @@ export const BackupStorageSpace: FunctionComponent< Props > = () => {
 			<div className="backup-storage-space__progress-bar-container">
 				<div>{ translate( 'Storage space' ) }</div>
 				<div className="backup-storage-space__progress-bar">
-					<ProgressBar value={ usedStorage } total={ storageLimit } color={ progressBarColor } />
+					<ProgressBar
+						className={ progressBarWarning }
+						value={ usedStorage }
+						total={ storageLimit }
+					/>
 				</div>
 				<div>{ title }</div>
 			</div>

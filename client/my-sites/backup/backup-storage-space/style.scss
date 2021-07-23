@@ -22,6 +22,26 @@
 	@include breakpoint-deprecated( '<480px' ) {
 		padding: 0;
 	}
+
+	.progress-bar {
+		&.no-warning {
+			.progress-bar__progress {
+				background-color: var( --studio-gray-80 );
+			}
+		}
+
+		&.yellow-warning {
+			.progress-bar__progress {
+				background-color: var( --studio-yellow-30 );
+			}
+		}
+
+		&.red-warning {
+			.progress-bar__progress {
+				background-color: var( --studio-red-40 );
+			}
+		}
+	}
 }
 
 .backup-storage-space__divider {
