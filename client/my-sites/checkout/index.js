@@ -11,7 +11,6 @@ import {
 	checkoutPending,
 	checkoutSiteless,
 	checkoutThankYou,
-	jetpackCheckoutScheduleAppointment,
 	jetpackCheckoutThankYou,
 	jetpackCheckoutThankYouCompleted,
 	redirectJetpackLegacyPlans,
@@ -30,13 +29,11 @@ export default function () {
 	if ( isEnabled( 'jetpack/siteless-checkout' ) ) {
 		page(
 			'/checkout/jetpack/schedule-happiness-appointment',
-			redirectLoggedOut,
 			noSite,
-			jetpackCheckoutScheduleAppointment,
+			jetpackCheckoutThankYou,
 			makeLayout,
 			clientRender
 		);
-
 		page( '/checkout/jetpack/:productSlug', noSite, checkoutSiteless, makeLayout, clientRender );
 		page(
 			'/checkout/jetpack/thank-you-completed/no-site/:product',

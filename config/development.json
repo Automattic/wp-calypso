@@ -27,7 +27,7 @@
 	"happychat_url": "https://happychat-io-staging.go-vip.co/customer",
 	"rebrand_cities_prefix": "rebrandcitiesdevelopmentsite",
 	"livechat_support_locales": [ "en", "es", "pt-br" ],
-	"calendly_jetpack_appointment_url": "https://calendly.com/jetpack-com/onboarding-call",
+	"calendly_jetpack_appointment_url": "https://calendly.com/jetpack-com/jetpack-onboarding-call-test",
 	"features": {
 		"ad-tracking": false,
 		"async-payments": false,
