@@ -102,7 +102,7 @@ const selectors = {
  */
 export class SomeComponent extends BaseContainer {
 	/**
-	 * JSDoc is expected for constructor.
+	 * JSDoc is expected for constructor if present.
 	 *
 	 * @param {Page} page Page object.
 	 */
@@ -136,11 +136,13 @@ export class SomeComponent extends BaseContainer {
 
 ## Page Objects
 
-Page objects are to be used to represent a corresponding page on WPCOM. It can hold element selectors, class methods to interact with the page and define other helper functions.
+Page objects are to be used to represent a corresponding page on WPCOM. It can hold attributes, class methods to interact with the page and define other helper functions.
 
 A well-implemented page object will abstract complex interactions on the page to an easily understandable method call. The method should be well-contained, predictable and easy to understand.
 
-Every page object file should contain an object outside of the class definition to hold element selectors. The Page object should access element selector values using dot notation within the method calls.
+- **Don't Repeat Yourself (DRY)**: common actions can be called from the page object.
+- **maintainability**: if a page changes, update the page object at one spot.
+- **readability**: named variables and functions are much easier to decipher than series of strings.
 
 On many pages of WPCOM elements will load asynchronously. This leads to issues when initializing page objects as constructors cannot be asynchronous. To address this, page objects almost always inherit from the `BaseContainer` class as it provides asynchronous initialization of the page object through use of static method `Expect`. Only use synchronous class constructor if the page in question does not require any post-initialization setup.
 
@@ -274,6 +276,88 @@ async function openModal() {
 ---
 
 ## Selectors
+
+Selectors form the core of any automated e2e test scripts. For an overview please refer to the [MDN page on CSS selectors](https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Selectors).
+
+Ideally, a selector satisfies all of the following:
+
+- **unique**: one selector, one element.
+- **reliable**: the same element is selected with each iteration.
+- **brief**: selector is short and easy to read.
+
+Place selectors within the same file, but outside of the class representing the object. Never place a selector within the class definition itself.
+
+**Avoid**:
+
+```typescript
+class SomeObject() {
+	submitButtonSelector: '#submit'
+}
+```
+
+**Instead**:
+
+```typescript
+const selectors = {
+	submitButton: '#submit',
+}
+
+class SomeObject() {
+	// class things
+}
+
+```
+
+Selectors should be defined in an key:value object mapping as follows:
+
+```typescript
+const selectors = {
+	// Buttons
+	submitButton: '#submit',
+	cancelButton: '#cancel',
+}
+```
+
+Within the class, call on selectors as follows:
+
+```typescript
+await this.page.click( selectors.submitButton );
+```
+
+While defining one-off selectors within a code block is acceptable, if the same selector is used multiple times in different sections of the code, move the selector into the `selectors` object:
+
+**Avoid**:
+
+```typescript
+class SomeObject() {
+	async doSomething() {
+		await this.page.click( '#submit' );
+	}
+
+	async doSomethingElse() {
+		await this.page.click( '#submit' );
+	}
+}
+```
+
+**Instead**:
+
+```typescript
+const selectors = {
+	submitButton: '#submit',
+}
+
+class SomeObject() {
+	async doSomething() {
+		await this.page.click( selectors.submitButton );
+	}
+
+	async doSomethingElse() {
+		await this.page.click( selectors.submitButton );
+	}
+}
+
+```
 
 ### Engine
 
