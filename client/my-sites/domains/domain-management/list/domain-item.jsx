@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import page from 'page';
-import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import moment from 'moment';
@@ -184,14 +183,6 @@ class DomainItem extends PureComponent {
 				<TrackComponentView eventName="calypso_domain_management_list_change_primary_upgrade_impression" />
 			</div>
 		);
-	}
-
-	renderCheckmark( present ) {
-		return present ? <Gridicon className="domain-item__icon" size={ 18 } icon="checkmark" /> : null;
-	}
-
-	renderMinus() {
-		return <Gridicon className="domain-item__icon" size={ 18 } icon="minus" />;
 	}
 
 	renderAutoRenew() {
