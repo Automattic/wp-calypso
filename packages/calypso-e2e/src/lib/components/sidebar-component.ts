@@ -1,7 +1,6 @@
 import { ElementHandle, Page } from 'playwright';
 import { getViewportName } from '../../browser-helper';
 import { toTitleCase } from '../../data-helper';
-import { BaseContainer } from '../base-container';
 import { NavbarComponent } from './navbar-component';
 
 const selectors = {
@@ -18,10 +17,18 @@ const selectors = {
 /**
  * Component representing the sidebar on the dashboard of WPCOM.
  *
- * @augments {BaseContainer}
  */
-export class SidebarComponent extends BaseContainer {
-	sidebar!: ElementHandle;
+export class SidebarComponent {
+	private page: Page;
+
+	/**
+	 * Get the sidebar ElementHandle
+	 *
+	 * @returns the ElementHandle for the sidebar
+	 */
+	private async selectSidebar(): Promise< ElementHandle > {
+		return await this.page.waitForSelector( selectors.sidebar );
+	}
 
 	/**
 	 * Constructs an instance of the component.
@@ -29,17 +36,7 @@ export class SidebarComponent extends BaseContainer {
 	 * @param {Page} page The underlying page.
 	 */
 	constructor( page: Page ) {
-		super( page, selectors.sidebar );
-	}
-
-	/**
-	 * Post-initialization steps of this object.
-	 *
-	 * @returns {Promise<void>} No return value.
-	 */
-	async _postInit(): Promise< void > {
-		await this.page.waitForLoadState( 'domcontentloaded' );
-		this.sidebar = await this.page.waitForSelector( selectors.sidebar );
+		this.page = page;
 	}
 
 	/**
@@ -86,8 +83,9 @@ export class SidebarComponent extends BaseContainer {
 
 		if ( subitem ) {
 			subitem = toTitleCase( subitem ).trim();
+			const sidebar = await this.selectSidebar();
 			// If there is a subheading, by definition the expanded menu element will always be present.
-			await this.sidebar.waitForSelector( selectors.expandedMenu );
+			await sidebar.waitForSelector( selectors.expandedMenu );
 			// Explicitly select only the child headings and combine with the text matching engine.
 			// This works better than using CSS pseudo-classes like `:has-text` or `:text-matches` for text
 			// matching.
@@ -149,6 +147,6 @@ export class SidebarComponent extends BaseContainer {
 		// See https://github.com/microsoft/playwright/issues/6244#issuecomment-824384845.
 		await this.page.click( selector );
 
-		await this.page.waitForLoadState( 'domcontentloaded' );
+		await this.page.waitForLoadState( 'load' );
 	}
 }

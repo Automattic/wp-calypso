@@ -1,5 +1,5 @@
 import { Page } from 'playwright';
-import { NavbarComponent, SidebarComponent } from '../components';
+import { NavbarComponent } from '../components';
 import { GutenbergEditorPage } from '../pages';
 
 /**
@@ -23,7 +23,6 @@ export class NewPostFlow {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async newPostFromNavbar(): Promise< void > {
-		await SidebarComponent.Expect( this.page );
 		const navbarComponent = await NavbarComponent.Expect( this.page );
 		await navbarComponent.clickNewPost();
 		await GutenbergEditorPage.Expect( this.page );
