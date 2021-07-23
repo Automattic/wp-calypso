@@ -32,6 +32,7 @@ import { getLastThemeQuery, getThemesFoundForQuery } from 'calypso/state/themes/
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import ThemesHeader from './themes-header';
+import { ThemeDataProvider } from './theme-data-context';
 
 const ConnectedThemesSelection = connectOptions( ( props ) => {
 	return (
@@ -85,45 +86,47 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 					href={ `/checkout/${ siteSlug }/${ PLAN_JETPACK_SECURITY_REALTIME }` }
 				/>
 			) }
-			<ThemeShowcase
-				{ ...props }
-				siteId={ siteId }
-				emptyContent={ showWpcomThemesList ? <div /> : null }
-				isJetpackSite={ true }
-			>
-				{ showWpcomThemesList && (
-					<div>
-						<ConnectedThemesSelection
-							origin="wpcom"
-							defaultOption={ 'activate' }
-							secondaryOption={ 'tryandcustomize' }
-							search={ search }
-							tier={ tier }
-							filter={ filter }
-							vertical={ vertical }
-							siteId={ siteId /* This is for the options in the '...' menu only */ }
-							getScreenshotUrl={ function ( theme ) {
-								if ( ! getScreenshotOption( theme ).getUrl ) {
-									return null;
-								}
-								return getScreenshotOption( theme ).getUrl( theme );
-							} }
-							onScreenshotClick={ function ( themeId ) {
-								if ( ! getScreenshotOption( themeId ).action ) {
-									return;
-								}
-								getScreenshotOption( themeId ).action( themeId );
-							} }
-							getActionLabel={ function ( theme ) {
-								return getScreenshotOption( theme ).label;
-							} }
-							trackScrollPage={ props.trackScrollPage }
-							source="wpcom"
-							emptyContent={ emptyContent }
-						/>
-					</div>
-				) }
-			</ThemeShowcase>
+			<ThemeDataProvider>
+				<ThemeShowcase
+					{ ...props }
+					siteId={ siteId }
+					emptyContent={ showWpcomThemesList ? <div /> : null }
+					isJetpackSite={ true }
+				>
+					{ showWpcomThemesList && (
+						<div>
+							<ConnectedThemesSelection
+								origin="wpcom"
+								defaultOption={ 'activate' }
+								secondaryOption={ 'tryandcustomize' }
+								search={ search }
+								tier={ tier }
+								filter={ filter }
+								vertical={ vertical }
+								siteId={ siteId /* This is for the options in the '...' menu only */ }
+								getScreenshotUrl={ function ( theme ) {
+									if ( ! getScreenshotOption( theme ).getUrl ) {
+										return null;
+									}
+									return getScreenshotOption( theme ).getUrl( theme );
+								} }
+								onScreenshotClick={ function ( themeId ) {
+									if ( ! getScreenshotOption( themeId ).action ) {
+										return;
+									}
+									getScreenshotOption( themeId ).action( themeId );
+								} }
+								getActionLabel={ function ( theme ) {
+									return getScreenshotOption( theme ).label;
+								} }
+								trackScrollPage={ props.trackScrollPage }
+								source="wpcom"
+								emptyContent={ emptyContent }
+							/>
+						</div>
+					) }
+				</ThemeShowcase>
+			</ThemeDataProvider>
 		</Main>
 	);
 } );

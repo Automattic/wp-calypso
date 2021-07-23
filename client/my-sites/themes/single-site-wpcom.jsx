@@ -19,6 +19,7 @@ import ThemeShowcase from './theme-showcase';
 import ThemesHeader from './themes-header';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { ThemeDataProvider } from './theme-data-context';
 
 const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 	const {
@@ -72,12 +73,14 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 			<CurrentTheme siteId={ siteId } />
 			{ bannerLocationBelowSearch ? null : upsellBanner }
 
-			<ThemeShowcase
-				{ ...props }
-				upsellUrl={ upsellUrl }
-				upsellBanner={ bannerLocationBelowSearch ? upsellBanner : null }
-				siteId={ siteId }
-			/>
+			<ThemeDataProvider>
+				<ThemeShowcase
+					{ ...props }
+					upsellUrl={ upsellUrl }
+					upsellBanner={ bannerLocationBelowSearch ? upsellBanner : null }
+					siteId={ siteId }
+				/>
+			</ThemeDataProvider>
 		</Main>
 	);
 } );

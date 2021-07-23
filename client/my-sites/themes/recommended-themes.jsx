@@ -2,58 +2,28 @@
  * External dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
+import EmptyContent from 'calypso/components/empty-content';
 import { ConnectedThemesSelection } from './themes-selection';
-import { getRecommendedThemes } from 'calypso/state/themes/actions';
+import { useThemeData } from './theme-data-context';
 
-import {
-	getRecommendedThemes as getRecommendedThemesSelector,
-	areRecommendedThemesLoading,
-	getRecommendedThemesFilter,
-} from 'calypso/state/themes/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-
-class RecommendedThemes extends React.Component {
-	componentDidMount() {
-		if ( ! this.props.customizedThemesList.length ) {
-			this.fetchThemes();
-		}
+const TrendingThemes = localize( ( { translate, ...restProps } ) => {
+	const {
+		recommendedThemes: { data, error, isLoading },
+	} = useThemeData();
+	if ( error ) {
+		return <EmptyContent title={ translate( 'Sorry, no themes found.' ) } />;
 	}
-
-	componentDidUpdate( prevProps ) {
-		// Wait until rec themes to be loaded to scroll to search input if its in use.
-		const { isLoading, scrollToSearchInput, filter } = this.props;
-		if ( prevProps.isLoading !== isLoading && isLoading === false ) {
-			scrollToSearchInput();
-		}
-		if ( prevProps.filter !== filter ) {
-			this.fetchThemes();
-		}
-	}
-
-	fetchThemes() {
-		this.props.getRecommendedThemes( this.props.filter );
-	}
-
-	render() {
-		return <ConnectedThemesSelection { ...this.props } />;
-	}
-}
-
-const ConnectedRecommendedThemes = connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		const filter = getRecommendedThemesFilter( state, siteId );
-		return {
-			customizedThemesList: getRecommendedThemesSelector( state, filter ),
-			isLoading: areRecommendedThemesLoading( state, filter ),
-			filter,
-		};
-	},
-	{ getRecommendedThemes }
-)( RecommendedThemes );
-
-export default ConnectedRecommendedThemes;
+	return (
+		<ConnectedThemesSelection
+			isLoading={ isLoading }
+			customizedThemesList={ data ?? [] }
+			{ ...restProps }
+		/>
+	);
+} );
+export default TrendingThemes;

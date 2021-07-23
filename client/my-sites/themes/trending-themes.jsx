@@ -2,53 +2,28 @@
  * External dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
+import EmptyContent from 'calypso/components/empty-content';
 import { ConnectedThemesSelection } from './themes-selection';
-import { getTrendingThemes } from 'calypso/state/themes/actions';
+import { useThemeData } from './theme-data-context';
 
-import {
-	getTrendingThemes as getTrendingThemesSelector,
-	areTrendingThemesLoading,
-} from 'calypso/state/themes/selectors';
-
-class TrendingThemes extends React.Component {
-	componentDidMount() {
-		if ( ! this.props.customizedThemesList.length ) {
-			this.fetchThemes();
-		}
+const TrendingThemes = localize( ( { translate, ...restProps } ) => {
+	const {
+		trendingThemes: { data, error, isLoading },
+	} = useThemeData();
+	if ( error ) {
+		return <EmptyContent title={ translate( 'Sorry, no themes found.' ) } />;
 	}
-
-	componentDidUpdate( prevProps ) {
-		// Wait until rec themes to be loaded to scroll to search input if its in use.
-		const { isLoading, scrollToSearchInput, filter } = this.props;
-		if ( prevProps.isLoading !== isLoading && isLoading === false ) {
-			scrollToSearchInput();
-		}
-		if ( prevProps.filter !== filter ) {
-			this.fetchThemes();
-		}
-	}
-
-	fetchThemes() {
-		this.props.getTrendingThemes( this.props.filter );
-	}
-
-	render() {
-		return <ConnectedThemesSelection { ...this.props } />;
-	}
-}
-
-const ConnectedTrendingThemes = connect(
-	( state ) => {
-		return {
-			customizedThemesList: getTrendingThemesSelector( state ),
-			isLoading: areTrendingThemesLoading( state ),
-		};
-	},
-	{ getTrendingThemes }
-)( TrendingThemes );
-
-export default ConnectedTrendingThemes;
+	return (
+		<ConnectedThemesSelection
+			isLoading={ isLoading }
+			customizedThemesList={ data ?? [] }
+			{ ...restProps }
+		/>
+	);
+} );
+export default TrendingThemes;
