@@ -44,13 +44,13 @@ const MyPlanCard = ( { action, isError, isPlaceholder, details, product, tagline
 };
 
 MyPlanCard.propTypes = {
-	action: PropTypes.oneOfType( [ PropTypes.node, PropTypes.element ] ),
+	action: PropTypes.node,
 	isError: PropTypes.bool,
 	isPlaceholder: PropTypes.bool,
-	details: PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ),
+	details: PropTypes.node,
 	product: PropTypes.string,
-	tagline: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node, PropTypes.element ] ),
-	title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node, PropTypes.element ] ),
+	tagline: PropTypes.node,
+	title: PropTypes.node,
 };
 
 export default MyPlanCard;

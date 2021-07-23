@@ -52,7 +52,7 @@ class SiteImporterInputPane extends React.Component {
 	static displayName = 'SiteImporterSitePreview';
 
 	static propTypes = {
-		description: PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ),
+		description: PropTypes.node,
 		importerStatus: PropTypes.shape( {
 			importerState: PropTypes.string.isRequired,
 			percentComplete: PropTypes.number,

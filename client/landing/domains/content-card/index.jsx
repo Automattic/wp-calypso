@@ -18,18 +18,18 @@ import './style.scss';
 
 class DomainsLandingContentCard extends Component {
 	static propTypes = {
-		title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ).isRequired,
-		message: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
+		title: PropTypes.node.isRequired,
+		message: PropTypes.node,
 		messageAlignCenter: PropTypes.bool,
-		actionTitle: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
+		actionTitle: PropTypes.node,
 		actionCallback: PropTypes.func,
 		actionPrimary: PropTypes.bool,
 		actionBusy: PropTypes.bool,
-		alternateActionTitle: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
+		alternateActionTitle: PropTypes.node,
 		alternateActionCallback: PropTypes.func,
 		alternateActionPrimary: PropTypes.bool,
 		alternateActionBusy: PropTypes.bool,
-		footer: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
+		footer: PropTypes.node,
 		isLoading: PropTypes.bool,
 	};
 

@@ -39,7 +39,7 @@ class UploadingPane extends React.PureComponent {
 	static displayName = 'SiteSettingsUploadingPane';
 
 	static propTypes = {
-		description: PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ),
+		description: PropTypes.node,
 		importerStatus: PropTypes.shape( {
 			importerState: PropTypes.string.isRequired,
 		} ),
