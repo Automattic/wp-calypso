@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import pageRouter from 'page';
 import { connect } from 'react-redux';
-import { get, includes, partial } from 'lodash';
+import { get, partial } from 'lodash';
 import { saveAs } from 'browser-filesaver';
 import classNames from 'classnames';
 
@@ -319,7 +319,7 @@ class Page extends Component {
 	getCopyPageItem() {
 		const { copyPagesModuleDisabled, wpAdminGutenberg, page: post, duplicateUrl } = this.props;
 		if (
-			! includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], post.status ) ||
+			! [ 'draft', 'future', 'pending', 'private', 'publish' ].includes( post.status ) ||
 			! userCan( 'edit_post', post ) ||
 			wpAdminGutenberg ||
 			copyPagesModuleDisabled

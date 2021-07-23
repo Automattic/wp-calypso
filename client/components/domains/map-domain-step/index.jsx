@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { includes, get } from 'lodash';
+import { get } from 'lodash';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { Button } from '@automattic/components';
 
@@ -247,8 +247,8 @@ class MapDomainStep extends React.Component {
 				}
 
 				if (
-					! includes( [ AVAILABILITY_CHECK_ERROR, NOT_REGISTRABLE ], status ) &&
-					includes( [ MAPPABLE, UNKNOWN ], mappableStatus )
+					! [ AVAILABILITY_CHECK_ERROR, NOT_REGISTRABLE ].includes( status ) &&
+					[ MAPPABLE, UNKNOWN ].includes( mappableStatus )
 				) {
 					this.props.onMapDomain( domain );
 					this.setState( { isPendingSubmit: false } );

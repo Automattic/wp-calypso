@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, includes } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -103,7 +103,7 @@ const mapStateToProps = ( state, ownProps ) => {
 	const postId = get( comment, 'post.ID' );
 
 	const canModerateComments = canCurrentUser( state, siteId, 'moderate_comments' );
-	const hasPermalink = includes( [ 'approved', 'unapproved' ], get( comment, 'status' ) );
+	const hasPermalink = [ 'approved', 'unapproved' ].includes( get( comment, 'status' ) );
 
 	return {
 		siteId,

@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { compact, includes, isEqual, property, snakeCase } from 'lodash';
+import { compact, isEqual, property, snakeCase } from 'lodash';
 
 /**
  * Internal dependencies
@@ -212,7 +212,7 @@ export const ConnectedThemesSelection = connect(
 		// results and sends all of the themes at once. QueryManager is not expecting such behaviour
 		// and we ended up loosing all of the themes above number 20. Real solution will be pagination on
 		// Jetpack themes endpoint.
-		const number = ! includes( [ 'wpcom', 'wporg' ], sourceSiteId ) ? 2000 : 30;
+		const number = ! [ 'wpcom', 'wporg' ].includes( sourceSiteId ) ? 2000 : 30;
 		const query = {
 			search,
 			page,

@@ -5,7 +5,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { get, includes } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -99,7 +99,7 @@ export default connect(
 		const rewindState = getRewindState( state, siteId );
 		return {
 			siteId,
-			rewindIsNowActive: includes( [ 'active', 'provisioning' ], rewindState.state ),
+			rewindIsNowActive: [ 'active', 'provisioning' ].includes( rewindState.state ),
 		};
 	},
 	{ submitSignupStep }

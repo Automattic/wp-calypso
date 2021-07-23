@@ -272,7 +272,7 @@ export class JetpackAuthorize extends Component {
 		const { alreadyAuthorized, authApproved, from } = this.props.authQuery;
 		return (
 			this.isSso() ||
-			includes( [ 'woocommerce-services-auto-authorize', 'woocommerce-setup-wizard' ], from ) || // Auto authorize the old WooCommerce setup wizard only.
+			[ 'woocommerce-services-auto-authorize', 'woocommerce-setup-wizard' ].includes( from ) || // Auto authorize the old WooCommerce setup wizard only.
 			( ! this.props.isAlreadyOnSitesList &&
 				! alreadyAuthorized &&
 				( this.props.calypsoStartedConnection || authApproved ) )
@@ -329,14 +329,11 @@ export class JetpackAuthorize extends Component {
 	isWooRedirect = ( props = this.props ) => {
 		const { from } = props.authQuery;
 		return (
-			includes(
-				[
-					'woocommerce-services-auto-authorize',
-					'woocommerce-setup-wizard',
-					'woocommerce-onboarding',
-				],
-				from
-			) || this.getWooDnaConfig( props ).isWooDnaFlow()
+			[
+				'woocommerce-services-auto-authorize',
+				'woocommerce-setup-wizard',
+				'woocommerce-onboarding',
+			].includes( from ) || this.getWooDnaConfig( props ).isWooDnaFlow()
 		);
 	};
 
