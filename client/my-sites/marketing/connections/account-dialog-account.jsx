@@ -35,7 +35,6 @@ const AccountDialogAccount = ( { account, conflicting, onChange, selected, defau
 						className="account-dialog-account__input"
 					/>
 				) }
-				{ /*Changes needed here.*/ }
 				{ account.picture ? (
 					<Image
 						src={ account.picture }
