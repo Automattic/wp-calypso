@@ -205,6 +205,7 @@ module.exports = {
 				'packages/format-currency/**/*',
 				'packages/js-utils/**/*',
 				'packages/language-picker/**/*',
+				'packages/languages/**/*',
 				'packages/launch/**/*',
 				'packages/mocha-debug-reporter/**/*',
 				'packages/plans-grid/**/*',

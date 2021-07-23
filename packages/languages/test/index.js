@@ -2,9 +2,6 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
 import languages from '../src';
 
 describe( 'languages', () => {
