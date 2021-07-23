@@ -68,7 +68,9 @@ export function Purchases(): JSX.Element {
 				brandFont
 				className="purchases__page-heading"
 				headerText={ titles.sectionTitle }
-				subHeaderText={ translate( 'View, manage, or cancel your plan and other purchases.' ) }
+				subHeaderText={ translate(
+					'View, manage, or cancel your plan and other purchases for this site.'
+				) }
 				align="left"
 			/>
 			<PurchasesNavigation sectionTitle={ 'Active Upgrades' } siteSlug={ siteSlug } />
