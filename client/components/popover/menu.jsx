@@ -109,7 +109,7 @@ class PopoverMenu extends Component {
 		this._previouslyFocusedElement = document.activeElement;
 
 		if ( elementToFocus ) {
-			elementToFocus.focus();
+			elementToFocus.focus( { preventScroll: true } );
 		}
 	};
 
