@@ -216,6 +216,7 @@ module.exports = {
 				'packages/webpack-config-flag-plugin/**/*',
 				'packages/whats-new/**/*',
 				'packages/wpcom-checkout/**/*',
+				'packages/wpcom-proxy-request/**/*',
 				'test/client/**/*',
 				'test/e2e/**/*',
 				'test/server/**/*',

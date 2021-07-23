@@ -1,10 +1,7 @@
-/**
- * External dependencies
- */
+import debugFactory from 'debug';
+import ProgressEvent from 'progress-event';
 import { v4 as uuidv4 } from 'uuid';
 import WPError from 'wp-error';
-import ProgressEvent from 'progress-event';
-import debugFactory from 'debug';
 
 /**
  * debug instance
