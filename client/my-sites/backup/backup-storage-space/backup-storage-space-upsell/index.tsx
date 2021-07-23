@@ -2,8 +2,8 @@
  * External dependencies
  */
 import React, { FunctionComponent, useCallback, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { Button } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 
 /**
@@ -64,6 +64,7 @@ export const BackupStorageSpaceUpsell: FunctionComponent< Props > = ( {
 			recordTracksEvent( 'calypso_jetpack_backup_storage_upsell_display', {
 				type: upsellOption,
 				usedStorage,
+				path: '/backup/:site',
 			} )
 		);
 	}, [ dispatch, upsellOption, usedStorage ] );
@@ -73,6 +74,7 @@ export const BackupStorageSpaceUpsell: FunctionComponent< Props > = ( {
 			recordTracksEvent( 'calypso_jetpack_backup_storage_upsell_click', {
 				type: upsellOption,
 				usedStorage,
+				path: '/backup/:site',
 			} )
 		);
 	}, [ dispatch, upsellOption, usedStorage ] );
