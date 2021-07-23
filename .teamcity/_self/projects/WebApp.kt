@@ -788,6 +788,14 @@ object RunCalypsoPlaywrightE2eDesktopTests : BuildType({
 			dockerImage = "%docker_image_e2e%"
 		}
 		bashNodeScript {
+			name = "Type check TypeScript e2e specs"
+			scriptContent = """
+				cd test/e2e
+				yarn tsc --project ./tsconfig.json
+			"""
+			dockerImage = "%docker_image_e2e%"
+		}
+		bashNodeScript {
 			name = "Run e2e tests"
 			scriptContent = """
 				shopt -s globstar

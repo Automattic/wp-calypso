@@ -16,8 +16,7 @@
 	},
 	"scripts": {
 		"encryptconfig": "openssl enc -md sha1 -aes-256-cbc -pass env:CONFIG_KEY -out ./config/encrypted.enc -in ./config/local-$NODE_CONFIG_ENV.json",
-		"decryptconfig": "openssl enc -md sha1 -aes-256-cbc -d -pass env:CONFIG_KEY -in ./config/encrypted.enc -out ./config/local-$NODE_CONFIG_ENV.json",
-		"checktypes": "tsc --project ./tsconfig.json"
+		"decryptconfig": "openssl enc -md sha1 -aes-256-cbc -d -pass env:CONFIG_KEY -in ./config/encrypted.enc -out ./config/local-$NODE_CONFIG_ENV.json"
 	},
 	"dependencies": {
 		"@automattic/calypso-e2e": "^0.1.0",
