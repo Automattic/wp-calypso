@@ -13,7 +13,7 @@ import './style.scss';
 
 export default class DomainNotice extends React.Component {
 	static propTypes = {
-		text: PropTypes.string,
+		text: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
 		status: PropTypes.oneOf( [ 'success', 'info', 'warning', 'alert', 'verifying' ] ),
 		className: PropTypes.string,
 	};
