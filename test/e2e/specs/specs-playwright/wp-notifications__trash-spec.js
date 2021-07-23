@@ -44,7 +44,7 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 	} );
 
 	it( 'Clear cookies', async function () {
-		await BrowserManager.clearCookies( page );
+		await BrowserManager.clearAuthenticationState( page );
 	} );
 
 	it( `Log in as ${ notificationsUser }`, async function () {
