@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import ActionButton from './action-button';
 import { keys } from '../helpers/input';
 import { getEditCommentLink } from '../helpers/notes';
 import { editComment } from '../state/ui/actions';
+import ActionButton from './action-button';
 
 const EditButton = ( { editComment, note, translate } ) => {
 	const { site: siteId, post: postId, comment: commentId } = note?.meta?.ids ?? {};

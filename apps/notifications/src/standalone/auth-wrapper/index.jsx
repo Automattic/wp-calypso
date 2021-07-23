@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { useClient } from './client';
 import createIframeProxyClient from './client/iframe-proxy';
 import createOauthClient from './client/oauth';
-import { useClient } from './client';
 
 const isProduction = 'production' === process.env.NODE_ENV;
 const clientFactory = isProduction ? createIframeProxyClient : createOauthClient;
