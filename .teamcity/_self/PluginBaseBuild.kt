@@ -148,7 +148,7 @@ open class PluginBaseBuild : Template({
 					fi
 				else
 					# If the current build is the same as trunk, remove any related comments posted to the PR.
-					%teamcity.build.checkoutDir%/bin/add-pr-comment.sh "%teamcity.build.branch%" "$pluginSlug" "delete" <<< ""
+					%teamcity.build.checkoutDir%/bin/add-pr-comment.sh "%teamcity.build.branch%" "$pluginSlug" "delete" <<< "" || true
 				fi
 
 				# 4. Create metadata file with info for the download script.

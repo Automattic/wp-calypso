@@ -78,7 +78,7 @@ if [[ ${operation} == "delete" ]]; then
 	commentId=$(get_existing_comment $prNumber $watermark)
 	if [[ -z "${commentId}" || "${commentId}" == "null" ]]; then
 		echo "No comment found to delete."
-		exit
+		exit 1
 	fi
 	echo "Deleting comment"
 	delete "https://api.github.com/repos/Automattic/wp-calypso/issues/comments/${commentId}"
