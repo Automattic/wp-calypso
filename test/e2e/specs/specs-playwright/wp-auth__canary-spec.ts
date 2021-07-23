@@ -1,4 +1,5 @@
 import { DataHelper, BrowserHelper, LoginFlow, setupHooks } from '@automattic/calypso-e2e';
+import { Page } from 'playwright';
 
 /**
  * Constants
@@ -7,7 +8,7 @@ const host = DataHelper.getJetpackHost();
 const viewportName = BrowserHelper.getViewportName();
 
 describe( `[${ host }] Authentication: (${ viewportName }) @canary @parallel @safaricanary`, function () {
-	let page;
+	let page: Page;
 
 	setupHooks( ( args ) => {
 		page = args.page;
