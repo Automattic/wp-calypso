@@ -8,6 +8,7 @@ import page from 'page';
 import classNames from 'classnames';
 import { Button, Card } from '@automattic/components';
 import { openPopupWidget } from 'react-calendly';
+import { isURL } from '@wordpress/url';
 
 /**
  * Internal dependencies
@@ -49,11 +50,6 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const validUrl = ( url: string ): boolean => {
-		const pattern = new RegExp( '^https?:\\/\\/\\w+\\.[a-z]{2,}', 'i' );
-		return !! pattern.test( url );
-	};
-
 	const hasProductInfo = productSlug !== 'no_product';
 
 	const productName = useSelector( ( state ) =>
@@ -81,7 +77,7 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 			const siteUrl = e.target.value;
 			setSiteInput( siteUrl );
 			if ( isFormDirty ) {
-				if ( ! validUrl( cleanUrl( siteUrl ) ) ) {
+				if ( ! isURL( cleanUrl( siteUrl ) ) ) {
 					setError( translate( 'That is not a valid website URL.' ) );
 				} else {
 					setError( false );
@@ -96,7 +92,7 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 		const siteUrl = cleanUrl( siteInput );
 		setSiteInput( siteUrl );
 
-		if ( ! validUrl( siteUrl ) ) {
+		if ( ! isURL( siteUrl ) ) {
 			setError( translate( 'That is not a valid website URL.' ) );
 			return;
 		}
