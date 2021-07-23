@@ -3,6 +3,7 @@
  */
 import React, { ReactElement, useState, useMemo, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import page from 'page';
 import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 import { useTranslate } from 'i18n-calypso';
@@ -22,7 +23,10 @@ import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import getPaymentMethodIdFromPayment from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/get-payment-method-id-from-payment';
 import Notice from 'calypso/components/notice';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
-import { assignNewCardProcessor } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/assignment-processor-functions';
+import {
+	assignNewCardProcessor,
+	NewCardSubmitData,
+} from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/assignment-processor-functions';
 import { creditCardHasAlreadyExpired } from 'calypso/lib/purchases';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -39,18 +43,12 @@ function onPaymentSelectComplete( {
 	successCallback,
 	translate,
 	showSuccessMessage,
-	purchase,
 }: {
 	successCallback: () => void;
 	translate: ReturnType< typeof useTranslate >;
 	showSuccessMessage: ( message: string | TranslateResult ) => void;
-	purchase?: Purchase | undefined;
 } ) {
-	if ( purchase ) {
-		showSuccessMessage( translate( 'Your payment method has been set.' ) );
-	} else {
-		showSuccessMessage( translate( 'Your payment method has been added successfully.' ) );
-	}
+	showSuccessMessage( translate( 'Your payment method has been added successfully.' ) );
 	successCallback();
 }
 
@@ -86,7 +84,7 @@ function CurrentPaymentMethodNotAvailableNotice( {
 
 function PaymentMethodAdd(): ReactElement {
 	const purchase = undefined;
-	const reduxDispatch = useDispatch();
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
 
@@ -101,9 +99,9 @@ function PaymentMethodAdd(): ReactElement {
 
 	useEffect( () => {
 		if ( stripeLoadingError ) {
-			reduxDispatch( errorNotice( stripeLoadingError.message ) );
+			dispatch( errorNotice( stripeLoadingError.message ) );
 		}
-	}, [ stripeLoadingError, reduxDispatch ] );
+	}, [ stripeLoadingError, dispatch ] );
 
 	const onGoToPaymentMethods = () => {
 		// record tracks events
@@ -113,24 +111,24 @@ function PaymentMethodAdd(): ReactElement {
 
 	const showSuccessMessage = useCallback(
 		( message ) => {
-			reduxDispatch( successNotice( message, { displayOnNextPage: true, duration: 5000 } ) );
+			dispatch( successNotice( message, { displayOnNextPage: true, duration: 5000 } ) );
 		},
-		[ reduxDispatch ]
+		[ dispatch ]
 	);
 
 	const showErrorMessage = useCallback(
 		( error ) => {
 			const message = error?.toString ? error.toString() : error;
-			reduxDispatch( errorNotice( message, { displayOnNextPage: true } ) );
+			dispatch( errorNotice( message, { displayOnNextPage: true } ) );
 		},
-		[ reduxDispatch ]
+		[ dispatch ]
 	);
 
 	const showInfoMessage = useCallback(
 		( message ) => {
-			reduxDispatch( infoNotice( message ) );
+			dispatch( infoNotice( message ) );
 		},
-		[ reduxDispatch ]
+		[ dispatch ]
 	);
 
 	const currentPaymentMethodNotAvailable = ! paymentMethods.some(
@@ -158,7 +156,6 @@ function PaymentMethodAdd(): ReactElement {
 						successCallback: () => page( '/partner-portal/payment-method/' ),
 						translate,
 						showSuccessMessage,
-						purchase,
 					} )
 				}
 				showErrorMessage={ showErrorMessage }
@@ -169,14 +166,13 @@ function PaymentMethodAdd(): ReactElement {
 					card: ( data ) =>
 						assignNewCardProcessor(
 							{
-								purchase,
 								useAsPrimaryPaymentMethod,
 								translate,
 								stripe,
 								stripeConfiguration,
-								reduxDispatch,
+								dispatch,
 							},
-							data
+							data as NewCardSubmitData
 						),
 				} }
 				isLoading={ isStripeLoading }

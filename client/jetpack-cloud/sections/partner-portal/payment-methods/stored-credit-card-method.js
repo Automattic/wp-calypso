@@ -29,5 +29,7 @@ export function createStoredCreditCardMethod( {
 			/>
 		),
 		getAriaLabel: ( __ ) => __( 'Credit Card' ),
+		inactiveContent: ( __ ) => __( 'Credit Card' ),
+		label: ( __ ) => __( 'Credit Card' ),
 	};
 }

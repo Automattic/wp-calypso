@@ -28,6 +28,8 @@ export default function CreditCardPayButton( {
 	const [ items, total ] = useLineItems();
 	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
 	const cardholderName = fields.cardholderName;
+	const cardholderEmail = fields.cardholderEmail;
+	const cardholderPhone = fields.cardholderPhone;
 	const { formStatus } = useFormStatus();
 	const onEvent = useEvents();
 	const paymentPartner = 'stripe';
@@ -44,6 +46,8 @@ export default function CreditCardPayButton( {
 						onClick( 'card', {
 							stripe,
 							name: cardholderName?.value,
+							email: cardholderEmail?.value,
+							phone: cardholderPhone?.value,
 							items,
 							total,
 							stripeConfiguration,
