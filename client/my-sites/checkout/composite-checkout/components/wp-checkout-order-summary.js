@@ -213,7 +213,7 @@ function CheckoutSummaryFeaturesListDomainItem( {
 	// If there's no plan in the cart, list the domain only.
 	if ( ! hasPlanInCart ) {
 		return (
-			<CheckoutSummaryFeaturesListItem isIncluded={ true }>
+			<CheckoutSummaryFeaturesListItem>
 				<WPCheckoutCheckIcon />
 				<strong>{ domain.meta }</strong>
 			</CheckoutSummaryFeaturesListItem>
@@ -247,7 +247,7 @@ function CheckoutSummaryFeaturesListDomainItem( {
 	}
 
 	return (
-		<CheckoutSummaryFeaturesListItem isIncluded={ true }>
+		<CheckoutSummaryFeaturesListItem>
 			<WPCheckoutCheckIcon />
 			{ bundledDomain }
 		</CheckoutSummaryFeaturesListItem>
