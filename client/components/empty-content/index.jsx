@@ -19,16 +19,16 @@ import './style.scss';
 
 class EmptyContent extends Component {
 	static propTypes = {
-		title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
+		title: PropTypes.node,
 		illustration: PropTypes.string,
 		illustrationWidth: PropTypes.number,
-		line: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
-		action: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+		line: PropTypes.node,
+		action: PropTypes.node,
 		actionURL: PropTypes.string,
 		actionCallback: PropTypes.func,
 		actionTarget: PropTypes.string,
 		actionHoverCallback: PropTypes.func,
-		secondaryAction: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+		secondaryAction: PropTypes.node,
 		secondaryActionURL: PropTypes.string,
 		secondaryActionCallback: PropTypes.func,
 		secondaryActionTarget: PropTypes.string,

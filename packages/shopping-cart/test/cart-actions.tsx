@@ -1,11 +1,3 @@
-// This is required to fix the "regeneratorRuntime is not defined" error
-import '@automattic/calypso-polyfills';
-
-/**
- * External dependencies
- */
-import React, { useEffect, useRef } from 'react';
-import '@testing-library/jest-dom/extend-expect';
 import {
 	screen,
 	render,
@@ -13,12 +5,9 @@ import {
 	fireEvent,
 	waitForElementToBeRemoved,
 } from '@testing-library/react';
-
-/**
- * Internal dependencies
- */
-import { useShoppingCart, ShoppingCartProvider } from '../src/index';
+import React, { useEffect, useRef } from 'react';
 import { getEmptyResponseCart } from '../src/empty-carts';
+import { useShoppingCart, ShoppingCartProvider } from '../src/index';
 import type {
 	RequestCartProduct,
 	ResponseCartProduct,
@@ -26,6 +15,10 @@ import type {
 	ResponseCart,
 	MinimalRequestCartProduct,
 } from '../src/types';
+
+// This is required to fix the "regeneratorRuntime is not defined" error
+import '@automattic/calypso-polyfills';
+import '@testing-library/jest-dom/extend-expect';
 
 const planOne: ResponseCartProduct = {
 	time_added_to_cart: Date.now(),

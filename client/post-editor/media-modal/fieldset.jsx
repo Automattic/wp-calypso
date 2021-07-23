@@ -19,7 +19,7 @@ export default class extends React.Component {
 	static displayName = 'EditorMediaModalFieldset';
 
 	static propTypes = {
-		legend: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ).isRequired,
+		legend: PropTypes.node.isRequired,
 	};
 
 	render() {

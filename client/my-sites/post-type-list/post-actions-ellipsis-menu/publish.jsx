@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -47,7 +46,7 @@ class PostActionsEllipsisMenuPublish extends Component {
 
 	render() {
 		const { translate, status, canPublish } = this.props;
-		if ( ! canPublish || ! includes( [ 'pending', 'draft' ], status ) ) {
+		if ( ! canPublish || ! [ 'pending', 'draft' ].includes( status ) ) {
 			return null;
 		}
 

@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { useContext } from 'react';
-
-/**
- * Internal dependencies
- */
-import type { ShoppingCartManager } from './types';
 import ShoppingCartContext from './shopping-cart-context';
+import type { ShoppingCartManager } from './types';
 
 export default function useShoppingCart(): ShoppingCartManager {
 	const manager = useContext( ShoppingCartContext );

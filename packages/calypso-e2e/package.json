@@ -2,7 +2,8 @@
 	"name": "@automattic/calypso-e2e",
 	"version": "0.1.0",
 	"description": "Tools for e2e tests",
-	"main": "dist/cjs/src/index.js",
+	"main": "dist/esm/src/index.js",
+	"types": "dist/types/src/index.d.ts",
 	"author": "Automattic Inc.",
 	"repository": {
 		"type": "git",
@@ -21,13 +22,16 @@
 	},
 	"devDependencies": {
 		"@types/config": "^0.0.39",
+		"@types/fs-extra": "^9.0.12",
 		"@types/jest": "^25.2.3",
 		"@types/node": "^15.0.2",
 		"asana-phrase": "^0.0.8",
+		"fs-extra": "^0.22.1",
 		"mockdate": "^3.0.5"
 	},
 	"scripts": {
 		"clean": "yarn build --clean && npx rimraf dist",
-		"build": "tsc --build ./tsconfig.json"
+		"build": "tsc --build ./tsconfig.json",
+		"test": "yarn jest"
 	}
 }

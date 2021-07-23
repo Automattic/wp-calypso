@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { includes, isEmpty, reduce, snakeCase } from 'lodash';
+import { isEmpty, reduce, snakeCase } from 'lodash';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 
 /**
@@ -50,7 +50,7 @@ function recordSubmitStep( stepName, providedDependencies ) {
 			}
 
 			// Ensure we don't capture identifiable user data we don't need.
-			if ( includes( [ 'email' ], propName ) ) {
+			if ( propName === 'email' ) {
 				propName = `user_entered_${ propName }`;
 				propValue = !! propValue;
 			}
@@ -61,7 +61,7 @@ function recordSubmitStep( stepName, providedDependencies ) {
 					.join( ',' );
 			}
 
-			if ( includes( [ 'selected_design' ], propName ) ) {
+			if ( propName === 'selected_design' ) {
 				propValue = propValue.slug;
 			}
 

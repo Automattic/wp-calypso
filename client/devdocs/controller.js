@@ -20,7 +20,7 @@ import DevWelcome from './welcome';
 import Sidebar from './sidebar';
 import EmptyContent from 'calypso/components/empty-content';
 import WizardComponent from './wizard-component';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 const devdocs = {
 	/*
@@ -138,7 +138,7 @@ const devdocs = {
 
 	pleaseLogIn: function ( context, next ) {
 		const redirectTo = window.location.origin + '/devdocs/welcome';
-		if ( ! getCurrentUserId( context.store.getState() ) ) {
+		if ( ! isUserLoggedIn( context.store.getState() ) ) {
 			context.primary = React.createElement( EmptyContent, {
 				title: 'Log In to start hacking',
 				line: 'Required to access the WordPress.com API',

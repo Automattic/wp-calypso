@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import emailIllustration from 'calypso/assets/images/email-providers/email-illustration.svg';
+import { TASK_UPSELL_TITAN } from 'calypso/my-sites/customer-home/cards/constants';
+import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
-import { TASK_UPSELL_TITAN } from 'calypso/my-sites/customer-home/cards/constants';
 
 const TitanBanner = () => {
 	const translate = useTranslate();

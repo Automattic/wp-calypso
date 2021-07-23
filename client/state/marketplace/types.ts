@@ -16,11 +16,8 @@ export enum MARKETPLACE_ASYNC_PROCESS_STATUS {
 }
 export interface IPurchaseFlowState {
 	primaryDomain: string | null;
-	// TODO : remove reliance on plugin slug to be installed
-	pluginSlugToBeInstalled: string | null;
 	productSlugInstalled: keyof IProductCollection | null;
 	productGroupSlug: keyof IProductGroupCollection | null;
-	isPluginInstalledDuringPurchase: boolean;
 	siteTransferStatus: MARKETPLACE_ASYNC_PROCESS_STATUS;
 	reasonForSiteTransferStatus: string | null;
 	pluginInstallationStatus: MARKETPLACE_ASYNC_PROCESS_STATUS;

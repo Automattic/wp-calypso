@@ -5,7 +5,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,7 +29,7 @@ function PostActionsEllipsisMenuDuplicate( {
 	onDuplicateClick,
 	siteId,
 } ) {
-	const validStatus = includes( [ 'draft', 'future', 'pending', 'private', 'publish' ], status );
+	const validStatus = [ 'draft', 'future', 'pending', 'private', 'publish' ].includes( status );
 
 	if ( ! canEdit || ! validStatus || 'post' !== type || ! copyPostIsActive ) {
 		return <QueryJetpackModules siteId={ siteId } />;

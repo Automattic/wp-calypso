@@ -1,9 +1,6 @@
-/**
- * External dependencies
- */
 import crc32 from 'crc32';
-import seed from 'seed-random';
 import debugFactory from 'debug';
+import seed from 'seed-random';
 
 const debug = debugFactory( 'photon' );
 
@@ -18,7 +15,7 @@ const mappings = {
 };
 
 const PARSE_BASE_HOST = '__domain__.invalid';
-const PARSE_BASE_URL = `http://${ PARSE_BASE_HOST }`;
+const PARSE_BASE_URL = `https://${ PARSE_BASE_HOST }`;
 const PHOTON_BASE_URL = 'https://i0.wp.com';
 
 /**
@@ -49,7 +46,7 @@ export default function photon( imageUrl, opts ) {
 		// We already have a server to use.
 		// Use it, even if it doesn't match our hash.
 		photonUrl.pathname = parsedUrl.pathname;
-		photonUrl.hostname = parsedUrl.hostname;
+		photonUrl.hostname = wasSecure ? 'i0.wp.com' : parsedUrl.hostname;
 	} else {
 		// Photon does not support URLs with a querystring component
 		if ( parsedUrl.search ) {
@@ -65,7 +62,7 @@ export default function photon( imageUrl, opts ) {
 			formattedUrl = parsedUrl.pathname;
 		}
 		photonUrl.pathname = formattedUrl;
-		photonUrl.hostname = serverFromPathname( formattedUrl );
+		photonUrl.hostname = serverFromUrlParts( formattedUrl, photonUrl.protocol === 'https:' );
 		if ( wasSecure ) {
 			photonUrl.searchParams.set( 'ssl', 1 );
 		}
@@ -103,11 +100,17 @@ function isAlreadyPhotoned( host ) {
  * Determine which Photon server to connect to: `i0`, `i1`, or `i2`.
  *
  * Statically hash the subdomain based on the URL, to optimize browser caches.
+ * Only use i0 when using photon over https, based on the assumption that https
+ * maps to http/2 (or later)
  *
  * @param  {string} pathname The pathname to use
+ * @param  {boolean} isSecure Whether we're constructing a HTTPS URL or a HTTP one
  * @returns {string}          The hostname for the pathname
  */
-function serverFromPathname( pathname ) {
+function serverFromUrlParts( pathname, isSecure ) {
+	if ( isSecure ) {
+		return 'i0.wp.com';
+	}
 	const hash = crc32( pathname );
 	const rng = seed( hash );
 	const server = 'i' + Math.floor( rng() * 3 );

@@ -20,8 +20,7 @@ import './style.scss';
 
 class DomainSuggestion extends React.Component {
 	static propTypes = {
-		buttonContent: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] )
-			.isRequired,
+		buttonContent: PropTypes.node.isRequired,
 		buttonStyles: PropTypes.object,
 		extraClasses: PropTypes.string,
 		onButtonClick: PropTypes.func.isRequired,

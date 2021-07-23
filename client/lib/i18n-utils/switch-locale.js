@@ -3,7 +3,7 @@
  */
 import i18n from 'i18n-calypso';
 import debugFactory from 'debug';
-import { forEach, includes, throttle } from 'lodash';
+import { forEach, throttle } from 'lodash';
 
 /**
  * Internal dependencies
@@ -66,7 +66,7 @@ export function getLanguagesInternalBasePath( targetBuild = 'evergreen' ) {
  * @returns {string} A language file URL.
  */
 export function getLanguageFileUrl( localeSlug, fileType = 'json', languageRevisions = {} ) {
-	if ( ! includes( [ 'js', 'json' ], fileType ) ) {
+	if ( ! [ 'js', 'json' ].includes( fileType ) ) {
 		fileType = 'json';
 	}
 
@@ -141,7 +141,7 @@ export function getLanguageManifestFileUrl( {
 	targetBuild = 'evergreen',
 	hash = null,
 } = {} ) {
-	if ( ! includes( [ 'js', 'json' ], fileType ) ) {
+	if ( ! [ 'js', 'json' ].includes( fileType ) ) {
 		fileType = 'json';
 	}
 
@@ -201,7 +201,7 @@ export function getTranslationChunkFileUrl( {
 	targetBuild = 'evergreen',
 	hash = null,
 } = {} ) {
-	if ( ! includes( [ 'js', 'json' ], fileType ) ) {
+	if ( ! [ 'js', 'json' ].includes( fileType ) ) {
 		fileType = 'json';
 	}
 
@@ -463,7 +463,7 @@ export function loadUserUndeployedTranslations( currentLocaleSlug ) {
 		return;
 	}
 
-	if ( ! includes( [ 'current', 'waiting' ], translationStatus ) ) {
+	if ( ! [ 'current', 'waiting' ].includes( translationStatus ) ) {
 		return;
 	}
 

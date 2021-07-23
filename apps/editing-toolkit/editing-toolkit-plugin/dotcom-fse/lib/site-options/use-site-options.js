@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import { __, sprintf } from '@wordpress/i18n';
-import { useState, useEffect } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { useState, useEffect } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
-
-/**
- * Internal dependencies
- */
+import { __, sprintf } from '@wordpress/i18n';
 import { usePrevious } from './use-previous';
 
 export function useSiteOptions(

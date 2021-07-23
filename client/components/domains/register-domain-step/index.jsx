@@ -34,7 +34,7 @@ import Search from '@automattic/search';
  */
 import config from '@automattic/calypso-config';
 import wpcom from 'calypso/lib/wp';
-import { CompactCard, Button } from '@automattic/components';
+import { Button, CompactCard } from '@automattic/components';
 import Notice from 'calypso/components/notice';
 import StickyPanel from 'calypso/components/sticky-panel';
 import {
@@ -491,6 +491,7 @@ class RegisterDomainStep extends React.Component {
 				{ this.renderContent() }
 				{ this.renderFilterResetNotice() }
 				{ this.renderPaginationControls() }
+				{ this.renderSideContent() }
 				{ queryObject && <QueryDomainsSuggestions { ...queryObject } /> }
 				<QueryContactDetailsCache />
 			</div>
@@ -886,7 +887,7 @@ class RegisterDomainStep extends React.Component {
 						TRANSFERRABLE_PREMIUM,
 						UNKNOWN,
 					} = domainAvailability;
-					const isDomainAvailable = includes( [ AVAILABLE, UNKNOWN ], status );
+					const isDomainAvailable = [ AVAILABLE, UNKNOWN ].includes( status );
 					const isDomainTransferrable = TRANSFERRABLE === status;
 					const isDomainMapped = MAPPED === mappable;
 					const isAvailablePremiumDomain = AVAILABLE_PREMIUM === status;
@@ -954,6 +955,7 @@ class RegisterDomainStep extends React.Component {
 			tld_weight_overrides: getTldWeightOverrides( this.props.designType ),
 			vendor: this.props.vendor,
 			vertical: this.props.vertical,
+			site_slug: this.props?.selectedSite?.slug,
 			recommendation_context: get( this.props, 'selectedSite.name', '' )
 				.replace( ' ', ',' )
 				.toLocaleLowerCase(),
@@ -1418,9 +1420,12 @@ class RegisterDomainStep extends React.Component {
 					hasResults &&
 					isFreeDomainExplainerVisible &&
 					this.renderFreeDomainExplainer() }
-				{ this.props.isReskinned && ! this.state.loadingResults && this.props.reskinSideContent }
 			</DomainSearchResults>
 		);
+	}
+
+	renderSideContent() {
+		return this.props.isReskinned && ! this.state.loadingResults && this.props.reskinSideContent;
 	}
 
 	getFetchAlgo() {

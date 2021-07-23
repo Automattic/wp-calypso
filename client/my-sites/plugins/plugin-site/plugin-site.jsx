@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { get, includes } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,7 +36,7 @@ function mergeProps( stateProps, dispatchProps, ownProps ) {
 	const pluginSlug = get( ownProps, 'plugin.slug' );
 	let overrides = {};
 
-	if ( includes( [ 'jetpack', 'vaultpress' ], pluginSlug ) && stateProps.isAutomatedTransfer ) {
+	if ( [ 'jetpack', 'vaultpress' ].includes( pluginSlug ) && stateProps.isAutomatedTransfer ) {
 		overrides = {
 			allowedActions: {
 				activation: false,

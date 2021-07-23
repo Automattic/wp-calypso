@@ -1,0 +1,23 @@
+.media-preview__streams {
+	display: flex;
+	flex-direction: row;
+	margin: 16px 0;
+
+	div {
+		max-width: 72px;
+		max-height: 72px;
+		overflow: hidden;
+		text-align: center;
+
+		img {
+			min-width: 72px;
+			max-width: none;
+			max-height: 72px;
+			margin: 0 -100%;
+		}
+
+		&:not( :first-child ) {
+			margin-left: 16px;
+		}
+	}
+}

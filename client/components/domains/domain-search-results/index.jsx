@@ -6,7 +6,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { get, includes, times } from 'lodash';
+import { get, times } from 'lodash';
 
 /**
  * Internal dependencies
@@ -104,18 +104,15 @@ class DomainSearchResults extends React.Component {
 		if (
 			domain &&
 			suggestions.length !== 0 &&
-			includes(
-				[
-					TRANSFERRABLE,
-					MAPPABLE,
-					MAPPED,
-					TLD_NOT_SUPPORTED,
-					TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE,
-					TLD_NOT_SUPPORTED_TEMPORARILY,
-					UNKNOWN,
-				],
-				lastDomainStatus
-			) &&
+			[
+				TRANSFERRABLE,
+				MAPPABLE,
+				MAPPED,
+				TLD_NOT_SUPPORTED,
+				TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE,
+				TLD_NOT_SUPPORTED_TEMPORARILY,
+				UNKNOWN,
+			].includes( lastDomainStatus ) &&
 			get( this.props, 'products.domain_map', false )
 		) {
 			// eslint-disable-next-line jsx-a11y/anchor-is-valid
@@ -123,8 +120,7 @@ class DomainSearchResults extends React.Component {
 
 			// If the domain is available we shouldn't offer to let people purchase mappings for it.
 			if (
-				includes(
-					[ TLD_NOT_SUPPORTED, TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE ],
+				[ TLD_NOT_SUPPORTED, TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE ].includes(
 					lastDomainStatus
 				)
 			) {
@@ -146,7 +142,7 @@ class DomainSearchResults extends React.Component {
 				offer = null;
 			}
 
-			let domainUnavailableMessage = includes( [ TLD_NOT_SUPPORTED, UNKNOWN ], lastDomainStatus )
+			let domainUnavailableMessage = [ TLD_NOT_SUPPORTED, UNKNOWN ].includes( lastDomainStatus )
 				? translate(
 						'{{strong}}.%(tld)s{{/strong}} domains are not available for registration on WordPress.com.',
 						{

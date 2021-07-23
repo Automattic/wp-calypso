@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
+import { Card } from '@automattic/components';
+import classnames from 'classnames';
+import { numberFormat, useTranslate } from 'i18n-calypso';
+import moment from 'moment';
 import React, { useEffect } from 'react';
 import { connect, useDispatch } from 'react-redux';
-import { numberFormat, useTranslate } from 'i18n-calypso';
-import { Card } from '@automattic/components';
-import { times } from 'lodash';
-import moment from 'moment';
-
-/**
- * Internal dependencies
- */
 import CardHeading from 'calypso/components/card-heading';
 import Chart from 'calypso/components/chart';
-import Spinner from 'calypso/components/spinner';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import Spinner from 'calypso/components/spinner';
 import { preventWidows } from 'calypso/lib/formatting';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { getSiteOption } from 'calypso/state/sites/selectors';
@@ -29,14 +22,10 @@ import {
 	isRequestingSiteStatsForQuery,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import classnames from 'classnames';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-const placeholderChartData = times( 7, () => ( {
+const placeholderChartData = Array.from( { length: 7 }, () => ( {
 	value: Math.random(),
 } ) );
 

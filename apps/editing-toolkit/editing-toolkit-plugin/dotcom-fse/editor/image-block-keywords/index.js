@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { addFilter } from '@wordpress/hooks';
 
 const additionalKeywords = [ 'logo', 'brand', 'emblem', 'hallmark' ];

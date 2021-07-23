@@ -3,7 +3,7 @@
 	"compilerOptions": {
 		"declarationDir": "dist/types",
 		"outDir": "dist/esm",
-		"rootDir": "src",
+		"rootDir": "src"
 	},
 	"include": [ "src", "src/*.json" ]
 }

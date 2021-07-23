@@ -1,12 +1,10 @@
-/**
- * External dependencies
- */
-import '@wordpress/nux';
-import { useSelect, useDispatch } from '@wordpress/data';
-import { addFilter, removeFilter } from '@wordpress/hooks';
 import { PagePatternModal, PatternDefinition } from '@automattic/page-pattern-modal';
+import { useSelect, useDispatch } from '@wordpress/data';
 import React, { useCallback } from '@wordpress/element';
+import { addFilter, removeFilter } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
+
+import '@wordpress/nux';
 
 const INSERTING_HOOK_NAME = 'isInsertingPagePattern';
 const INSERTING_HOOK_NAMESPACE = 'automattic/full-site-editing/inserting-pattern';

@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import classnames from 'classnames';
+import { useLocale } from '@automattic/i18n-utils';
+import { LaunchContext, useOnLaunch } from '@automattic/launch';
+import { Modal, Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { Modal, Button } from '@wordpress/components';
 import { Icon, wordpress, close } from '@wordpress/icons';
-import { LaunchContext, useOnLaunch } from '@automattic/launch';
-import { useLocale } from '@automattic/i18n-utils';
-
-/**
- * Internal dependencies
- */
-import { LAUNCH_STORE, SITE_STORE, PLANS_STORE } from '../stores';
+import classnames from 'classnames';
+import React from 'react';
 import Launch from '../launch';
-import LaunchSidebar from '../launch-sidebar';
 import LaunchProgress from '../launch-progress';
+import LaunchSidebar from '../launch-sidebar';
+import { LAUNCH_STORE, SITE_STORE, PLANS_STORE } from '../stores';
 
 import './styles.scss';
 

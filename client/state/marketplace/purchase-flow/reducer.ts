@@ -8,8 +8,6 @@ import type { AnyAction } from 'redux';
  */
 import {
 	MARKETPLACE_PRIMARY_DOMAIN_SELECT,
-	MARKETPLACE_QUEUE_PLUGIN_INSTALL,
-	MARKETPLACE_PLUGIN_INSTALLED_ON_PURCHASE,
 	MARKETPLACE_SITE_TRANSFER_STATE_CHANGE,
 	MARKETPLACE_PLUGIN_INSTALLATION_STATE_CHANGE,
 	MARKETPLACE_SITE_TRANSFER_PLUGIN_INSTALL,
@@ -20,10 +18,8 @@ import { THEME_TRANSFER_INITIATE_REQUEST } from 'calypso/state/themes/action-typ
 
 export const defaultState: IPurchaseFlowState = {
 	primaryDomain: null,
-	pluginSlugToBeInstalled: null,
 	productSlugInstalled: null,
 	productGroupSlug: null,
-	isPluginInstalledDuringPurchase: false,
 	siteTransferStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
 	pluginInstallationStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
 	reasonForSiteTransferStatus: null,
@@ -41,28 +37,11 @@ export default function purchaseFlow(
 				...state,
 				primaryDomain: action.domainName,
 			};
-		// TODO: Remove reliance on plugin
-		case MARKETPLACE_QUEUE_PLUGIN_INSTALL:
-			return {
-				...state,
-				siteTransferStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
-				pluginInstallationStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
-				pluginSlugToBeInstalled: action.pluginSlugToBeInstalled,
-			};
-		// TODO: Remove reliance on plugin
-		case MARKETPLACE_PLUGIN_INSTALLED_ON_PURCHASE:
-			return {
-				...state,
-				siteTransferStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
-				pluginInstallationStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
-				isPluginInstalledDuringPurchase: action.isPluginInstalledDuringPurchase,
-			};
 		case MARKETPLACE_QUEUE_PRODUCT_INSTALL:
 			return {
 				...state,
 				siteTransferStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
 				pluginInstallationStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
-				pluginSlugToBeInstalled: action.pluginSlugToBeInstalled,
 				productSlugInstalled: action.productSlug,
 				productGroupSlug: action.productGroupSlug,
 				primaryDomain: action.primaryDomain,
