@@ -3,15 +3,19 @@
 <!-- TOC -->
 
 - [Style Guide](#style-guide)
-  - [Tests](#tests)
-  - [Components](#components)
-  - [Page Objects](#page-objects)
-  - [Flows](#flows)
-  - [Async / Await](#async--await)
-  - [Selectors](#selectors)
-    - [Type](#type)
-    - [Naming](#naming)
-  - [Test Naming](#test-naming)
+    - [Tests](#tests)
+        - [Other Notes on TypeScript Test Scripts](#other-notes-on-typescript-test-scripts)
+    - [Components](#components)
+    - [Page Objects](#page-objects)
+    - [Flows](#flows)
+    - [Async / Await](#async--await)
+    - [Selectors](#selectors)
+        - [Engine](#engine)
+        - [Naming](#naming)
+        - [Stability](#stability)
+    - [Test steps](#test-steps)
+        - [Naming](#naming)
+        - [Step size](#step-size)
 
 <!-- /TOC -->
 
@@ -25,34 +29,42 @@ There should only be [one top-level describe block](style-guide.md#maximum-1-top
 <summary>Example Test File</summary>
 
 ```typescript
-describe( 'Feature: @parallel', function () {
+describe( DataHelper.createSuiteTitle( 'Feature' ), function () {
 	let page: Page;
 
 	setupHooks( ( args ) => {
 		page = args.page;
 	} );
 
-	describe( 'Test case 1', function () {
+	describe( 'Input valid search query', function () {
 		let someComponent: SomeComponent;
+		const searchQuery = 'valid search string';
 
 		it( 'Check title', async function () {
 			someComponent = await SomeComponent.Expect( page );
 			await someComponent.clickMyPages();
 			const resultValue = await someComponent.getTitle();
-			assert( resultValue === expectedValue );
+			assert.strictEqual( resultValue, expectedValue );
+		} );
+
+		it( 'Enter search string', async function () {
+			await someComponent.search( searchQuery );
+			await someComponent.clickResult( 1 );
 		} );
 	} );
 
-	describe( 'Test case 2', function () {
+	describe( 'Change preview value', function () {
 		let anotherComponent: AnotherComponent;
 
-		before( 'Set up before all test steps', async function () {
-			anotherComponent = await AnotherComponent.Expect( page, 'param' );
-		} );
-
-		it( 'Test step', async function () {
-			// tests here
-		} );
+		it.each`
+		value | expected 
+		${'small'} | ${'s'}
+		${'medium'} | ${'m'}
+		`( 'Click on $value on AnotherComponent', function({ value, expected }) {
+			anotherComponent = await AnotherComponent.Expect( page );
+			const resultValue = await anotherComponent.click( value );
+			assert.strictEqual( resultValue, expected );
+		})
 	} );
 } );
 ```
@@ -263,13 +275,13 @@ async function openModal() {
 
 ## Selectors
 
-### Type
+### Engine
 
-Where possible, prioritize selector types as follows:
+Where possible, use text or CSS selectors:
 
-`CSS > Text = CSS with Attribute > Xpath`
+`Text > CSS > Text/CSS with Attribute > Xpath`
 
-Please refer to the [Playwright documentation](https://playwright.dev/docs/selectors/#quick-guide) for more information.
+Please refer to the [Playwright documentation](https://playwright.dev/docs/selectors/#quick-guide) for more information on selector engines.
 
 **Avoid**:
 
@@ -277,27 +289,29 @@ Please refer to the [Playwright documentation](https://playwright.dev/docs/selec
 await page.click( 'xpath=//button' );
 ```
 
+```
+await page.click( 'div.someclass .yet-another-class .attribute .very-long-attrbute');
+```
+
 **Instead**:
 
 ```
-await page.click( '.button text("Contact us")' );
+await page.click( 'button:text("Contact us")' );
 ```
 
 ### Naming
 
-Where possible, name selectors based on the CSS selector instead its location.
+Where possible, name selectors based on the CSS selector instead of its location.
 
 If the above is not possible, fall back to describing its usage, function or type.
 
 Avoid appending the term 'Selector' or something similar to the selector name. It is redundant.
 
-Avoid using the location of the element as its name. Element placement can shift, but its role likely does not change.
-
 **Avoid**:
 
 ```
 const selectors = {
-	buttonOnHeaderPane: '.button contact-us',
+	contactButtonOnHeaderPane: '.button contact-us',
 	secondButtonOnPopupSelector: '.button send-form',
 	...
 }
@@ -313,15 +327,32 @@ const selectors = {
 }
 ```
 
-### Selectors for Stability
+### Stability
 
 Where possible, use CSS selectors that rely on user-facing attributes (like an `aria-label` instead of a `class` name). These are less likely to change over time and add stability to your tests.
 
 You can read more about this in the [Playwright selector best practices](https://playwright.dev/docs/selectors/#prioritize-user-facing-attributes).
 
+Furthermore, where possible, only involve selectors that are required for the test flow. 
+
+**Avoid**:
+
+```
+await this.page.waitForSelector( '.some-unnecessary-selector-not-related-to-the-test-flow' );
+await this.page.fill( '.someclass__form-input .is-selected' );
+```
+
+**Instead**:
+
+```
+await this.page.fill( 'input[aria-placeholder="Enter contact details"]' );
+```
+
 ---
 
-## Test Naming
+## Test steps
+
+### Naming
 
 Use step description.
 
@@ -343,10 +374,23 @@ it( 'Log In' )
 it( 'Start new post' )
 ```
 
-## Other Best Practices
+### Step size
 
-### Only Involve Necessary Elements
+Prefer more of smaller steps.
 
-Only involve or wait for elements that are actually critical to the test flow and that you will interact directly with. 
+**Avoid**:
 
-For example, do not wait for a wrapper to click a button that’s inside — wait only for that button instead.
+```
+it( 'Log in, select home page and start a search')
+
+```
+
+**Instead**:
+
+```
+it( 'Log In' )
+
+it( 'Navigate to home page' )
+
+it( 'Search for ${string}' )
+```
