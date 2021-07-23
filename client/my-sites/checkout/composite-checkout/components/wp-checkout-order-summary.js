@@ -232,8 +232,8 @@ function CheckoutSummaryFeaturesListDomainItem( {
 		comment: 'domain name and bundling message, separated by a dash',
 	} );
 
-	// Conditionally show if domain is included with current plan purchase
-	if ( ! ( hasMonthlyPlan && nextDomainIsFree ) && ! domain.is_bundled ) {
+	// If the domain is not bundled or included with plan, display the "annual plans only" message.
+	if ( ! ( hasMonthlyPlan && nextDomainIsFree ) || ! domain.is_bundled ) {
 		return (
 			<CheckoutSummaryFeaturesListItem isIncluded={ false }>
 				<WPCheckoutCrossIcon />
