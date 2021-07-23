@@ -958,7 +958,7 @@ object RunCalypsoPlaywrightE2eMobileTests : BuildType({
 				COUNTER=0
 
 				# Transform an URL like https://calypso.live?image=... into https://<container>.calypso.live
-				while [[ ${'$'}COUNTER -le ${'$'}MfAX_LOOP ]]; do
+				while [[ ${'$'}COUNTER -le ${'$'}MAX_LOOP ]]; do
 					COUNTER=${'$'}((COUNTER+1))
 					REDIRECT=${'$'}(curl --output /dev/null --silent --show-error  --write-out "%{http_code} %{redirect_url}" "${'$'}{IMAGE_URL}")
 					read HTTP_STATUS URL <<< "${'$'}{REDIRECT}"
