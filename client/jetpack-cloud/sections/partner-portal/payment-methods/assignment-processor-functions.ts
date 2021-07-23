@@ -47,6 +47,7 @@ export async function assignNewCardProcessor(
 			stripeConfiguration
 		);
 		const token = tokenResponse.payment_method;
+
 		if ( ! token ) {
 			throw new Error( String( translate( 'Failed to add card.' ) ) );
 		}
