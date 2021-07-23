@@ -78,7 +78,7 @@ class PurchaseItem extends Component {
 		if ( isDisconnectedSite ) {
 			if ( isJetpackTemporarySite ) {
 				return (
-					<span className="purchase-item__is-error">{ translate( 'Waiting for site URL' ) }</span>
+					<span className="purchase-item__is-error">{ translate( 'Awaiting site URL' ) }</span>
 				);
 			}
 
