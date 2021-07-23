@@ -64,6 +64,16 @@ export default {
 		next();
 	},
 
+	emailManagementCreateTitanMailbox( pageContext, next ) {
+		pageContext.primary = (
+			<CalypsoShoppingCartProvider>
+				<TitanAddMailboxes selectedDomainName={ pageContext.params.domain } />
+			</CalypsoShoppingCartProvider>
+		);
+
+		next();
+	},
+
 	emailManagementPurchaseNewEmailAccount( pageContext, next ) {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
