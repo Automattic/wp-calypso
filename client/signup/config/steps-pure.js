@@ -654,7 +654,6 @@ export function generateSteps( {
 			stepName: 'launch',
 			apiRequestFunction: launchSiteApi,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [],
 			props: {
 				nonInteractive: true,
 			},
