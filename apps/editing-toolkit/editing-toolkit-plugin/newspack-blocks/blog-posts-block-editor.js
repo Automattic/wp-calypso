@@ -1,6 +1,7 @@
 import { registerBlockType } from '@wordpress/blocks';
 import { addFilter } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
+import { CAROUSEL_BLOCK_NAME } from './consts';
 import { settings } from './synced-newspack-blocks/blocks/homepage-articles/index';
 import { registerQueryStore } from './synced-newspack-blocks/blocks/homepage-articles/store';
 
@@ -25,4 +26,6 @@ registerBlockType( blockName, {
 	category: 'widgets',
 } );
 
-registerQueryStore( blockName );
+// The Blog Posts block and Carousel block should use the same store, so that deduplication is handled
+// between these blocks.
+registerQueryStore( [ blockName, CAROUSEL_BLOCK_NAME ] );
