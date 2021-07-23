@@ -9,12 +9,12 @@ a.backup-storage-space-upsell__button {
 }
 
 .backup-storage-space-upsell__button {
-	border: 2px solid var( --studio-jetpack-green );
+	border: 2px solid var( --color-primary );
 	border-radius: 2px;
 	padding: 16px 24px;
 	width: 100%;
 	height: 100%;
-	font-size: 1rem;
+	font-size: $font-body;
 
 	&:hover {
 		background: var( --color-accent-0 );
