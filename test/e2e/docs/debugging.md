@@ -6,14 +6,12 @@
 
 - [Debugging](#debugging)
   - [Table of contents](#table-of-contents)
-  - [Mocha and Selenium](#mocha-and-selenium)
-    - [Visual Studio Code](#visual-studio-code)
-    - [Enable Mocha Debug Output](#enable-mocha-debug-output)
-  - [Jest and Playwright](#jest-and-playwright)
+  - [Visual Studio Code](#visual-studio-code)
+  - [Enable Mocha Debug Output](#enable-mocha-debug-output)
 
 <!-- /TOC -->
 
-## Mocha and Selenium
+## Mocha / Selenium
 
 ### Visual Studio Code
 
@@ -61,7 +59,7 @@ eg.
 DEBUG=mocha:* node_modules/.bin/mocha specs/wp-manage-domains-spec.js
 ```
 
-## Jest and Playwright
+## Jest / Playwright
 
 Our Playwright E2E tests run on Jest. Fortunately, Jest has fanstastic documentation on setting up debuggers, which can be found here: [https://jestjs.io/docs/troubleshooting](https://jestjs.io/docs/troubleshooting).  
 
