@@ -27,7 +27,9 @@ import {
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
 	PRODUCT_WPCOM_SEARCH,
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
+	isJetpackProductSlug,
 } from '@automattic/calypso-products';
+import { addQueryArgs } from 'calypso/lib/route';
 
 /**
  * Module variables
@@ -107,5 +109,18 @@ export function purchase( context, next ) {
 			url={ query.url }
 		/>
 	);
+	next();
+}
+
+export function redirectToSitelessCheckout( context, next ) {
+	const { type, interval } = context.params;
+
+	const planSlug = getPlanSlugFromFlowType( type, interval );
+
+	if ( config.isEnabled( 'jetpack/siteless-checkout' ) && isJetpackProductSlug( planSlug ) ) {
+		page( addQueryArgs( context.query, `/checkout/jetpack/${ planSlug }` ) );
+		return;
+	}
+
 	next();
 }
