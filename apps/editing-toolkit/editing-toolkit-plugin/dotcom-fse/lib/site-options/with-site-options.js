@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { createHigherOrderComponent, pure } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
-
-/**
- * Internal dependencies
- */
 import { useSiteOptions } from './use-site-options';
 
 /**

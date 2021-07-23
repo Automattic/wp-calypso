@@ -19,7 +19,7 @@ import { cleanUrl } from './utils';
 import { checkUrl } from 'calypso/state/jetpack-connect/actions';
 import { FLOW_TYPES } from 'calypso/jetpack-connect/flow-types';
 import { getJetpackSiteByUrl } from 'calypso/state/jetpack-connect/selectors';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
 import { persistSession } from './persistence-utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -150,7 +150,7 @@ const connectComponent = connect(
 		return {
 			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 			getJetpackSiteByUrl: ( url ) => getJetpackSiteByUrl( state, url ),
-			isLoggedIn: !! getCurrentUserId( state ),
+			isLoggedIn: isUserLoggedIn( state ),
 			isRequestingSites: isRequestingSites( state ),
 		};
 	},

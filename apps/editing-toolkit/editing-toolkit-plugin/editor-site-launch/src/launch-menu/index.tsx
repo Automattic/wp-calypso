@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import { LAUNCH_STORE } from '../stores';
 import LaunchMenuItem from './item';
 import type { LaunchStepType } from '../../../common/data-stores/launch';

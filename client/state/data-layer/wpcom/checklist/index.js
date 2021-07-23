@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { SITE_CHECKLIST_REQUEST, SITE_CHECKLIST_TASK_UPDATE } from 'calypso/state/action-types';
@@ -39,7 +34,7 @@ const fromApi = ( payload ) => {
 	// The checklist API requests use the http_envelope query param, however on
 	// desktop the envelope is not being unpacked for some reason. This conversion
 	// ensures the payload has been unpacked.
-	const data = get( payload, 'body', payload );
+	const data = payload?.body ?? payload;
 
 	if ( ! data ) {
 		throw new TypeError( `Missing 'body' property on API response` );

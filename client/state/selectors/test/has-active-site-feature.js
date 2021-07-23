@@ -47,7 +47,7 @@ describe( 'selectors', () => {
 			expect( activeFeature ).to.eql( false );
 		} );
 
-		test( 'should return False when feature is no feature id', () => {
+		test( 'should return False when feature param is not defined', () => {
 			const active = [ 'feature_active_01', 'feature_active_02', 'feature_active_03' ];
 
 			const state = {

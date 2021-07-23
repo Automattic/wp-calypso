@@ -15,6 +15,7 @@ export default class Badge extends React.Component {
 	static propTypes = {
 		type: PropTypes.oneOf( [
 			'warning',
+			'warning-clear',
 			'success',
 			'info',
 			'info-blue',

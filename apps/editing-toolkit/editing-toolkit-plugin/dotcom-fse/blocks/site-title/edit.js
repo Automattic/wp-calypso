@@ -1,13 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-/**
- * External dependencies
- */
-import classNames from 'classnames';
 
-/**
- * WordPress dependencies
- */
-import { __ } from '@wordpress/i18n';
 import {
 	AlignmentToolbar,
 	BlockControls,
@@ -18,14 +10,12 @@ import {
 	withColors,
 	withFontSizes,
 } from '@wordpress/block-editor';
-import { withSelect, withDispatch } from '@wordpress/data';
-import { compose } from '@wordpress/compose';
-import { Fragment } from '@wordpress/element';
 import { PanelBody } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
+import { compose } from '@wordpress/compose';
+import { withSelect, withDispatch } from '@wordpress/data';
+import { Fragment } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import classNames from 'classnames';
 import { withSiteOptions } from '../../lib';
 
 const noop = () => {};

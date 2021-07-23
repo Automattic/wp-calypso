@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import i18n, { localize } from 'i18n-calypso';
-import { includes, isEmpty, omit, get } from 'lodash';
+import { isEmpty, omit, get } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -123,7 +123,7 @@ export class UserStep extends Component {
 
 		let subHeaderText = props.subHeaderText;
 
-		if ( includes( [ 'wpcc', 'crowdsignal' ], flowName ) && oauth2Client ) {
+		if ( [ 'wpcc', 'crowdsignal' ].includes( flowName ) && oauth2Client ) {
 			if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
 				subHeaderText =
 					'cart' === wccomFrom
@@ -373,7 +373,7 @@ export class UserStep extends Component {
 			);
 		}
 
-		if ( includes( [ 'wpcc' ], flowName ) && oauth2Client ) {
+		if ( flowName === 'wpcc' && oauth2Client ) {
 			return translate( 'Sign up for %(clientTitle)s with a WordPress.com account', {
 				args: { clientTitle: oauth2Client.title },
 				comment:

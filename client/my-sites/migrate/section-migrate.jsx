@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { getLocaleSlug, localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
-import { get, includes, isEmpty, omit } from 'lodash';
+import { get, isEmpty, omit } from 'lodash';
 import moment from 'moment';
 import { Button, Card, CompactCard, ProgressBar } from '@automattic/components';
 
@@ -346,11 +346,11 @@ class SectionMigrate extends Component {
 	};
 
 	isInProgress = () => {
-		return includes( [ 'new', 'backing-up', 'restoring' ], this.state.migrationStatus );
+		return [ 'new', 'backing-up', 'restoring' ].includes( this.state.migrationStatus );
 	};
 
 	isFinished = () => {
-		return includes( [ 'done', 'error', 'unknown' ], this.state.migrationStatus );
+		return [ 'done', 'error', 'unknown' ].includes( this.state.migrationStatus );
 	};
 
 	isNonAtomicJetpack = () => {

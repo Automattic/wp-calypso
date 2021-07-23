@@ -18,7 +18,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class RecommendedThemes extends React.Component {
 	componentDidMount() {
-		if ( ! this.props.recommendedThemes.length ) {
+		if ( ! this.props.customizedThemesList.length ) {
 			this.fetchThemes();
 		}
 	}
@@ -39,11 +39,7 @@ class RecommendedThemes extends React.Component {
 	}
 
 	render() {
-		return (
-			<>
-				<ConnectedThemesSelection { ...this.props } />
-			</>
-		);
+		return <ConnectedThemesSelection { ...this.props } />;
 	}
 }
 
@@ -52,7 +48,7 @@ const ConnectedRecommendedThemes = connect(
 		const siteId = getSelectedSiteId( state );
 		const filter = getRecommendedThemesFilter( state, siteId );
 		return {
-			recommendedThemes: getRecommendedThemesSelector( state, filter ),
+			customizedThemesList: getRecommendedThemesSelector( state, filter ),
 			isLoading: areRecommendedThemesLoading( state, filter ),
 			filter,
 		};

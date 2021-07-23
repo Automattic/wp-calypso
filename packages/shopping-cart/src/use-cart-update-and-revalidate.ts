@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import { useEffect } from 'react';
 import debugFactory from 'debug';
-import type { Dispatch } from 'react';
-
-/**
- * Internal dependencies
- */
+import { useEffect } from 'react';
 import type { CacheStatus, ShoppingCartAction } from './types';
+import type { Dispatch } from 'react';
 
 const debug = debugFactory( 'shopping-cart:use-cart-update-and-revalidate' );
 

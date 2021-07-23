@@ -1,16 +1,13 @@
 /*** THIS MUST BE THE FIRST THING EVALUATED IN THIS SCRIPT *****/
 import './public-path';
 
-/**
- * External dependencies
- */
-import { __ } from '@wordpress/i18n';
-import { Fill, MenuItem } from '@wordpress/components';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { registerPlugin } from '@wordpress/plugins';
-import { useEffect } from '@wordpress/element';
-import { useState } from 'react';
 import WhatsNewGuide from '@automattic/whats-new';
+import { Fill, MenuItem } from '@wordpress/components';
+import { useEffect } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import { registerPlugin } from '@wordpress/plugins';
+import { useState } from 'react';
 
 function WhatsNewMenuItem() {
 	const [ showGuide, setShowGuide ] = useState( false );

@@ -1,19 +1,13 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import classNames from 'classnames';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
 import { forwardRef } from '@wordpress/element';
+import { applyFilters } from '@wordpress/hooks';
 import { _x } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { applyFilters } from '@wordpress/hooks';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
-
-/**
- * Internal dependencies
- */
+import classNames from 'classnames';
+import React from 'react';
 import { Post } from '../../types';
+
 import './style.scss';
 
 interface NavItemProps {

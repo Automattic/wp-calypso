@@ -73,7 +73,7 @@ function ProductCard( {
 ProductCard.propTypes = {
 	billingTimeFrame: PropTypes.string,
 	currencyCode: PropTypes.string,
-	description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] ),
+	description: PropTypes.node,
 	discountedPrice: PropTypes.oneOfType( [
 		PropTypes.number,
 		PropTypes.arrayOf( PropTypes.number ),
@@ -81,8 +81,8 @@ ProductCard.propTypes = {
 	fullPrice: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
 	isPlaceholder: PropTypes.bool,
 	purchase: PropTypes.object,
-	subtitle: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] ),
-	title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+	subtitle: PropTypes.node,
+	title: PropTypes.node,
 };
 
 export default localize( ProductCard );

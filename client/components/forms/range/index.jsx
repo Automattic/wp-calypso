@@ -21,8 +21,8 @@ export default class extends React.Component {
 	static displayName = 'Range';
 
 	static propTypes = {
-		minContent: PropTypes.oneOfType( [ PropTypes.element, PropTypes.string ] ),
-		maxContent: PropTypes.oneOfType( [ PropTypes.element, PropTypes.string ] ),
+		minContent: PropTypes.node,
+		maxContent: PropTypes.node,
 		min: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 		max: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 		value: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),

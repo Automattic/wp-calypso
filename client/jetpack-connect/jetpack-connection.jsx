@@ -5,7 +5,7 @@ import debugModule from 'debug';
 import React, { Component } from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
-import { flowRight, get, includes, omit } from 'lodash';
+import { flowRight, get, omit } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -115,7 +115,7 @@ const jetpackConnection = ( WrappedComponent ) => {
 			}
 
 			if (
-				includes( [ NOT_JETPACK, NOT_ACTIVE_JETPACK ], status ) ||
+				[ NOT_JETPACK, NOT_ACTIVE_JETPACK ].includes( status ) ||
 				( status === NOT_CONNECTED_JETPACK && forceRemoteInstall )
 			) {
 				if ( ! isMobileAppFlow && ! skipRemoteInstall ) {

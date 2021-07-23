@@ -119,7 +119,6 @@
 	],
 	"english_locales": [ "en", "en-gb" ],
 	"readerFollowingSource": "calypso",
-	"rtl": false,
 	"siftscience_key": false,
 	"signup_url": false,
 	"gutenboarding_url": false,
@@ -150,5 +149,7 @@
 	],
 	"restricted_me_access": true,
 	"theme_color": "#055d9c",
-	"reskinned_flows": [ "onboarding", "launch-site" ]
+	"reskinned_flows": [ "onboarding", "launch-site" ],
+	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js",
+	"calendly_jetpack_appointment_url": ""
 }

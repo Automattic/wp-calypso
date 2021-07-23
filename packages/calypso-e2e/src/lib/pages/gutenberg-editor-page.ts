@@ -17,7 +17,7 @@ const selectors = {
 
 	// Publish panel (including post-publish)
 	publishPanel: '.editor-post-publish-panel',
-	viewPostButton: 'text=View Post',
+	viewButton: '.editor-post-publish-panel a:has-text("View")',
 };
 
 /**
@@ -149,13 +149,16 @@ export class GutenbergEditorPage extends BaseContainer {
 	 * @param {boolean} visit Whether to then visit the page.
 	 * @returns {Promise<void} No return value.
 	 */
-	async publish( { visit = false }: { visit?: boolean } ): Promise< void > {
+	async publish( { visit = false }: { visit?: boolean } = {} ): Promise< string > {
 		await this.frame.click( `${ selectors.editPostHeader } >> text=Publish` );
 		await this.frame.click( `${ selectors.publishPanel } >> text=Publish` );
+		const viewPublishedArticleButton = await this.frame.waitForSelector( selectors.viewButton );
+		const publishedURL = ( await viewPublishedArticleButton.getAttribute( 'href' ) ) as string;
 
 		if ( visit ) {
 			await this._visitPublishedEntryFromPublishPane();
 		}
+		return publishedURL;
 	}
 
 	/**
@@ -166,7 +169,7 @@ export class GutenbergEditorPage extends BaseContainer {
 	async _visitPublishedEntryFromPublishPane(): Promise< void > {
 		await Promise.all( [
 			this.page.waitForNavigation(),
-			this.frame.click( selectors.viewPostButton ),
+			this.frame.click( selectors.viewButton ),
 		] );
 		await this.page.waitForLoadState( 'networkidle' );
 	}

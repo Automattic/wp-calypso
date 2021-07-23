@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { flow, get, isEmpty, includes, partial, some, values } from 'lodash';
+import { flow, get, isEmpty, partial, some, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -387,7 +387,7 @@ export class EditorMediaModal extends Component {
 	}
 
 	getModalButtons() {
-		if ( includes( [ ModalViews.IMAGE_EDITOR, ModalViews.VIDEO_EDITOR ], this.props.view ) ) {
+		if ( [ ModalViews.IMAGE_EDITOR, ModalViews.VIDEO_EDITOR ].includes( this.props.view ) ) {
 			return;
 		}
 
@@ -440,7 +440,7 @@ export class EditorMediaModal extends Component {
 	}
 
 	shouldClose() {
-		return ! includes( [ ModalViews.IMAGE_EDITOR, ModalViews.VIDEO_EDITOR ], this.props.view );
+		return ! [ ModalViews.IMAGE_EDITOR, ModalViews.VIDEO_EDITOR ].includes( this.props.view );
 	}
 
 	updateSettings = ( gallerySettings ) => {

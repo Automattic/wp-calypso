@@ -413,12 +413,7 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	render() {
-		const {
-			siteId,
-			customHeader,
-			redirectToAddDomainFlow,
-			shouldShowPlansFeatureComparison,
-		} = this.props;
+		const { siteId, redirectToAddDomainFlow, shouldShowPlansFeatureComparison } = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
@@ -441,8 +436,6 @@ export class PlansFeaturesMain extends Component {
 				<QuerySitePlans siteId={ siteId } />
 				<HappychatConnection />
 				<div className="plans-features-main__notice" />
-
-				{ customHeader }
 				{ ! hidePlanSelector && (
 					<PlanTypeSelector
 						{ ...this.props }
@@ -491,7 +484,6 @@ PlansFeaturesMain.propTypes = {
 	isAllPaidPlansShown: PropTypes.bool,
 	plansWithScroll: PropTypes.bool,
 	planTypes: PropTypes.array,
-	customHeader: PropTypes.node,
 	isReskinned: PropTypes.bool,
 	planTypeSelector: PropTypes.string,
 };

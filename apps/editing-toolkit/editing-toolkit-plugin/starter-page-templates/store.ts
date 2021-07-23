@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { registerStore } from '@wordpress/data';
 import type { Reducer } from 'redux';
 

@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
-import { TASK_PODCASTING } from 'calypso/my-sites/customer-home/cards/constants';
+import React from 'react';
 import podcastingIllustration from 'calypso/assets/images/customer-home/illustration--task-podcasting.svg';
+import { TASK_PODCASTING } from 'calypso/my-sites/customer-home/cards/constants';
+import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 
 const Podcasting = () => {
 	const translate = useTranslate();

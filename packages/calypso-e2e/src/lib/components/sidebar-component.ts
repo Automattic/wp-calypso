@@ -123,15 +123,13 @@ export class SidebarComponent extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async _click( selector: string ): Promise< void > {
-		// Wait for these promises in no particular order. We simply want to ensure the sidebar
-		// and the page is in a state to accept inputs.
-		await Promise.all( [
-			this.page.waitForLoadState( 'domcontentloaded' ),
-			this.sidebar.waitForElementState( 'stable' ),
-		] );
+		await this.page.waitForLoadState( 'load' );
 
-		const elementHandle = await this.page.waitForSelector( selector );
+		const elementHandle = await this.page.waitForSelector( selector, { state: 'attached' } );
 
+		// Scroll to reveal the target element fully using a page function if required.
+		// This workaround is necessary as the sidebar is 'sticky' in calypso, so a traditional
+		// scroll behavior does not adequately expose the sidebar element.
 		await this.page.evaluate(
 			( [ element ] ) => {
 				const elementBottom = element.getBoundingClientRect().bottom;
@@ -144,7 +142,12 @@ export class SidebarComponent extends BaseContainer {
 			[ elementHandle ]
 		);
 
-		await elementHandle.click();
+		// Use page.click since if the ElementHandle moves or otherwise disappears from the original
+		// location in the DOM, it is no longer valid and will throw an error.
+		// For Atomic sites, sidebar items often shift soon after initial rendering as Atomic-specific
+		// features are loaded.
+		// See https://github.com/microsoft/playwright/issues/6244#issuecomment-824384845.
+		await this.page.click( selector );
 
 		await this.page.waitForLoadState( 'domcontentloaded' );
 	}

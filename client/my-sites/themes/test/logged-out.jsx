@@ -45,7 +45,7 @@ describe( 'logged-out', () => {
 				author_uri: 'http://www.organicthemes.com',
 				demo_uri: 'https://naturaldemo.wordpress.com/',
 				screenshot:
-					'https://i2.wp.com/theme.wordpress.com/wp-content/themes/premium/natural/screenshot.png',
+					'https://i0.wp.com/theme.wordpress.com/wp-content/themes/premium/natural/screenshot.png',
 				price: '$69',
 			},
 			{
@@ -67,7 +67,7 @@ describe( 'logged-out', () => {
 				author_uri: 'http://theme.wordpress.com/themes/by/anariel-design/',
 				demo_uri: 'https://penademo.wordpress.com/',
 				screenshot:
-					'https://i2.wp.com/theme.wordpress.com/wp-content/themes/premium/pena/screenshot.png',
+					'https://i0.wp.com/theme.wordpress.com/wp-content/themes/premium/pena/screenshot.png',
 				price: '$89',
 			},
 			{

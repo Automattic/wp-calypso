@@ -1,29 +1,33 @@
 /**
  * External dependencies
  */
-import React, { FC, useState, useCallback } from 'react';
+import React, { FC, useState, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
+import classNames from 'classnames';
 import { Card } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
-import FormLabel from 'calypso/components/forms/form-label';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormButton from 'calypso/components/forms/form-button';
-import JetpackLogo from 'calypso/components/jetpack-logo';
-import QueryProducts from 'calypso/components/data/query-products-list';
+import { cleanUrl } from 'calypso/jetpack-connect/utils.js';
 import {
 	isProductsListFetching as getIsProductListFetching,
 	getProductName,
 } from 'calypso/state/products-list/selectors';
-import { cleanUrl } from 'calypso/jetpack-connect/utils.js';
-import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestUpdateJetpackCheckoutSupportTicket } from 'calypso/state/jetpack-checkout/actions';
+import FormButton from 'calypso/components/forms/form-button';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import getCalendlyUrl from 'calypso/lib/jetpack/get-calendly-url';
+import getJetpackCheckoutSupportTicketStatus from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-status';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import QueryProducts from 'calypso/components/data/query-products-list';
 
 interface Props {
 	productSlug: string | 'no_product';
@@ -33,23 +37,25 @@ interface Props {
 const JetpackCheckoutSitelessThankYou: FC< Props > = ( { productSlug, receiptId = 0 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const userEmail = useSelector( getCurrentUserEmail );
 
 	const hasProductInfo = productSlug !== 'no_product';
 
 	const productName = useSelector( ( state ) =>
 		hasProductInfo ? getProductName( state, productSlug ) : null
-	) as string | null;
+	);
 
-	const isProductListFetching = useSelector( ( state ) =>
-		getIsProductListFetching( state )
-	) as boolean;
+	const hasCalendlyURL = getCalendlyUrl() !== null;
+
+	const isProductListFetching = useSelector( ( state ) => getIsProductListFetching( state ) );
+
+	const supportTicketStatus = useSelector( ( state ) =>
+		getJetpackCheckoutSupportTicketStatus( state, receiptId )
+	);
 
 	const jetpackInstallInstructionsLink =
 		'https://jetpack.com/support/getting-started-with-jetpack/';
 
-	// TODO: Get the correct link to schedule 15min Happiness support session. This link is not correct.
-	const happinessAppointmentLink = `/schedule-happiness-appointment?user=${ userEmail }`;
+	const happinessAppointmentLink = '/checkout/jetpack/schedule-happiness-appointment';
 
 	const [ siteInput, setSiteInput ] = useState( '' );
 
@@ -65,12 +71,18 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( { productSlug, receiptId 
 				recordTracksEvent( 'calypso_siteless_checkout_submit_website_address', {
 					product_slug: productSlug,
 					site_url: siteUrl,
+					receipt_id: receiptId,
 				} )
 			);
 			dispatch( requestUpdateJetpackCheckoutSupportTicket( siteUrl, receiptId ) );
-			// On successful response redirect to schedule 15min Happiness support page? (Calendly?)
 		}
 	}, [ siteInput, dispatch, productSlug, receiptId ] );
+
+	useEffect( () => {
+		if ( supportTicketStatus && supportTicketStatus === 'success' ) {
+			page( `/checkout/jetpack/thank-you-completed/no-site/${ productSlug }` );
+		}
+	}, [ supportTicketStatus, productSlug, receiptId ] );
 
 	return (
 		<Main fullWidthLayout className="jetpack-checkout-siteless-thank-you">
@@ -81,7 +93,7 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( { productSlug, receiptId 
 			/>
 			<Card className="jetpack-checkout-siteless-thank-you__card">
 				<div className="jetpack-checkout-siteless-thank-you__card-main">
-					<JetpackLogo full size={ 45 } />
+					<JetpackLogo size={ 45 } />
 					{ hasProductInfo && <QueryProducts type="jetpack" /> }
 					<h1 className="jetpack-checkout-siteless-thank-you__main-message">
 						{ translate( 'Thank you for your purchase!' ) }{ ' ' }
@@ -153,7 +165,9 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( { productSlug, receiptId 
 								</FormLabel>
 								<div className="jetpack-checkout-siteless-thank-you__form-group" role="group">
 									<FormTextInput
-										className="jetpack-checkout-siteless-thank-you__form-input"
+										className={ classNames( 'jetpack-checkout-siteless-thank-you__form-input', {
+											'is-error': supportTicketStatus && supportTicketStatus === 'failed',
+										} ) }
 										autoCapitalize="off"
 										value={ siteInput }
 										placeholder="https://yourjetpack.blog"
@@ -162,43 +176,57 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( { productSlug, receiptId 
 									/>
 									<FormButton
 										className="jetpack-checkout-siteless-thank-you__form-submit"
-										disabled={ ! siteInput }
+										disabled={ ! siteInput || supportTicketStatus === 'pending' }
+										busy={ supportTicketStatus === 'pending' }
 										onClick={ onUrlSubmit }
 									>
 										{ translate( 'Continue' ) }
 									</FormButton>
 								</div>
+								{ supportTicketStatus && supportTicketStatus === 'failed' && (
+									<FormInputValidation
+										isError
+										text={ translate(
+											'There was a problem submitting your website address, please try again.'
+										) }
+									></FormInputValidation>
+								) }
 							</div>
 						</div>
 					) }
 				</div>
-				<div className="jetpack-checkout-siteless-thank-you__card-footer">
-					<div>
-						<h2>{ translate( 'Do you need help?' ) }</h2>
-						<p>
-							{ translate(
-								'If you prefer to setup Jetpack with the help of our Happiness Engineers, {{a}}schedule a 15 min call now{{/a}}.',
-								{
-									components: {
-										a: (
-											<a
-												className="jetpack-checkout-siteless-thank-you__link"
-												onClick={ () =>
-													dispatch(
-														recordTracksEvent( 'calypso_siteless_checkout_happiness_link_clicked', {
-															product_slug: productSlug,
-														} )
-													)
-												}
-												href={ happinessAppointmentLink }
-											/>
-										),
-									},
-								}
-							) }
-						</p>
+				{ hasCalendlyURL && (
+					<div className="jetpack-checkout-siteless-thank-you__card-footer">
+						<div>
+							<h2>{ translate( 'Do you need help?' ) }</h2>
+							<p>
+								{ translate(
+									'If you prefer to setup Jetpack with the help of our Happiness Engineers, {{a}}schedule a 15 minute call now{{/a}}.',
+									{
+										components: {
+											a: (
+												<a
+													className="jetpack-checkout-siteless-thank-you__link"
+													onClick={ () =>
+														dispatch(
+															recordTracksEvent(
+																'calypso_siteless_checkout_happiness_link_clicked',
+																{
+																	product_slug: productSlug,
+																}
+															)
+														)
+													}
+													href={ happinessAppointmentLink }
+												/>
+											),
+										},
+									}
+								) }
+							</p>
+						</div>
 					</div>
-				</div>
+				) }
 			</Card>
 		</Main>
 	);

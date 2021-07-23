@@ -1,32 +1,20 @@
-/**
- * External dependencies
- */
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Card } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
-import FreePhotoLibrary from 'calypso/my-sites/customer-home/cards/education/free-photo-library';
-// eslint-disable-next-line inclusive-language/use-inclusive-words
-import MasteringGutenberg from 'calypso/my-sites/customer-home/cards/education/mastering-gutenberg';
-import EducationEarn from 'calypso/my-sites/customer-home/cards/education/earn';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import DotPager from 'calypso/components/dot-pager';
+import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import {
 	EDUCATION_FREE_PHOTO_LIBRARY,
 	EDUCATION_GUTENBERG,
 	EDUCATION_EARN,
 	EDUCATION_WPCOURSES,
 } from 'calypso/my-sites/customer-home/cards/constants';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import EducationEarn from 'calypso/my-sites/customer-home/cards/education/earn';
+import FreePhotoLibrary from 'calypso/my-sites/customer-home/cards/education/free-photo-library';
+// eslint-disable-next-line inclusive-language/use-inclusive-words
+import MasteringGutenberg from 'calypso/my-sites/customer-home/cards/education/mastering-gutenberg';
 import WpCourses from 'calypso/my-sites/customer-home/cards/education/wpcourses';
-import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
-
-/**
- * Style dependencies
- */
-import './style.scss';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const cardComponents = {
 	[ EDUCATION_FREE_PHOTO_LIBRARY ]: FreePhotoLibrary,
@@ -50,17 +38,15 @@ const LearnGrow = () => {
 	}
 
 	return (
-		<>
-			<Card className="learn-grow__content customer-home__card">
-				{ cards.map(
-					( card, index ) =>
-						cardComponents[ card ] &&
-						React.createElement( cardComponents[ card ], {
-							key: index,
-						} )
-				) }
-			</Card>
-		</>
+		<DotPager className="learn-grow__content customer-home__card">
+			{ cards.map(
+				( card, index ) =>
+					cardComponents[ card ] &&
+					React.createElement( cardComponents[ card ], {
+						key: index,
+					} )
+			) }
+		</DotPager>
 	);
 };
 

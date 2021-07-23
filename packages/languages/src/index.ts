@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import data from './languages-meta.json';
 
 type LanguageSlug = string;
