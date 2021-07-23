@@ -90,7 +90,7 @@ export type ThankYouProps = {
 	showSupportSection?: boolean;
 	thankYouImage: {
 		alt: string;
-		src: any;
+		src: string;
 		width?: number;
 	};
 	thankYouTitle: TranslateResult;
@@ -119,7 +119,7 @@ const ThankYouSection = ( props: ThankYouSectionProps ) => {
 
 	return (
 		<MarketplaceThankyouSection>
-			<MarketplaceHeaderTitle subtitle className="marketplace-thank-you__body-header wp-brand-font">
+			<MarketplaceHeaderTitle subtitle className="thank-you__body-header wp-brand-font">
 				{ sectionTitle }
 			</MarketplaceHeaderTitle>
 
@@ -128,7 +128,7 @@ const ThankYouSection = ( props: ThankYouSectionProps ) => {
 	);
 };
 
-export const ThankYou = ( props: ThankYouProps ) => {
+export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 	const translate = useTranslate();
 
 	const { sections, showSupportSection = true, thankYouTitle, thankYouImage } = props;
@@ -138,7 +138,7 @@ export const ThankYou = ( props: ThankYouProps ) => {
 	) );
 
 	return (
-		<MarketplaceThankYouContainer className="marketplace-thank-you__container checkout-thank-you">
+		<MarketplaceThankYouContainer className="thank-you__container checkout-thank-you">
 			<MarketplaceThankYouHeader>
 				{ /* eslint-disable-next-line jsx-a11y/alt-text */ }
 				<img { ...thankYouImage } />
@@ -146,7 +146,7 @@ export const ThankYou = ( props: ThankYouProps ) => {
 			<ThankYouBody>
 				<div>
 					<MarketplaceThankyouSection>
-						<MarketplaceHeaderTitle className="marketplace-thank-you__body-header wp-brand-font">
+						<MarketplaceHeaderTitle className="thank-you__body-header wp-brand-font">
 							{ thankYouTitle }
 						</MarketplaceHeaderTitle>
 					</MarketplaceThankyouSection>
@@ -155,10 +155,7 @@ export const ThankYou = ( props: ThankYouProps ) => {
 
 					{ showSupportSection && (
 						<MarketplaceThankyouSection>
-							<MarketplaceHeaderTitle
-								subtitle
-								className="marketplace-thank-you__body-header wp-brand-font"
-							>
+							<MarketplaceHeaderTitle subtitle className="thank-you__body-header wp-brand-font">
 								{ translate( 'How can we help?' ) }
 							</MarketplaceHeaderTitle>
 							<p>
