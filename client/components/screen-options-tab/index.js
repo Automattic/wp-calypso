@@ -5,7 +5,6 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import classNames from 'classnames';
 import { useI18n } from '@wordpress/react-i18n';
 import { useDispatch, useSelector } from 'react-redux';
-import config from '@automattic/calypso-config';
 
 /**
  * Internal Dependencies
@@ -80,10 +79,6 @@ const ScreenOptionsTab = ( { wpAdminPath } ) => {
 			document.removeEventListener( 'keydown', handleClosing, true );
 		};
 	}, [ siteId, isAtomic, dispatch, handleClosing ] );
-
-	if ( ! config.isEnabled( 'nav-unification/switcher' ) ) {
-		return null;
-	}
 
 	// Only visible on single-site screens of WordPress.com Simple and Atomic sites.
 	if ( ! wpAdminPath || ! siteId || ( isJetpack && ! isAtomic ) ) {
