@@ -39,9 +39,7 @@ import {
 	isThemePurchased,
 	isPremiumThemeAvailable,
 	getWpcomParentThemeId,
-	getRecommendedThemes,
 	getRecommendedThemesFilter,
-	areRecommendedThemesLoading,
 } from '../selectors';
 import {
 	PLAN_FREE,
@@ -876,6 +874,8 @@ describe( 'themes selectors', () => {
 			expect( themes ).to.eql( [ twentyfifteen, twentysixteen ] );
 		} );
 
+		/*
+            I disabled this behavior - do we want it back?
 		test( 'should remove recommendedThemes with no filter and no search in query', () => {
 			const themes = getThemesForQueryIgnoringPage(
 				{
@@ -903,6 +903,7 @@ describe( 'themes selectors', () => {
 			);
 			expect( themes ).to.eql( [ twentysixteen ] );
 		} );
+        */
 
 		test( "should omit found items for which the requested result hasn't been received", () => {
 			const themes = getThemesForQueryIgnoringPage(
@@ -2468,30 +2469,6 @@ describe( 'themes selectors', () => {
 	} );
 } );
 
-describe( '#getRecommendedThemes', () => {
-	const themes = [ 'a', 'b', 'c' ];
-	const filter = 'foobar';
-	const state = {
-		themes: {
-			recommendedThemes: {
-				[ filter ]: {
-					isLoading: false,
-					themes,
-				},
-			},
-		},
-	};
-	test( 'should return correct themes list for filter', () => {
-		const recommended = getRecommendedThemes( state, filter );
-		expect( recommended ).to.equal( themes );
-	} );
-
-	test( 'should return empty themes list for unfetched filter', () => {
-		const recommended = getRecommendedThemes( state, 'bazbazbaz' );
-		expect( recommended ).to.be.empty;
-	} );
-} );
-
 describe( '#getRecommendedThemesFilter', () => {
 	const state = {
 		sites: {
@@ -2508,29 +2485,5 @@ describe( '#getRecommendedThemesFilter', () => {
 
 	test( 'should return `block-templates` for FSE site', () => {
 		expect( getRecommendedThemesFilter( state, 123 ) ).to.equal( 'block-templates' );
-	} );
-} );
-
-describe( '#areRecommendedThemesLoading', () => {
-	const filterForIsLoading = 'foo';
-	const filterForNotLoading = 'bar';
-	const state = {
-		themes: {
-			recommendedThemes: {
-				[ filterForNotLoading ]: { isLoading: false },
-				[ filterForIsLoading ]: { isLoading: true },
-			},
-		},
-	};
-	test( 'should return true when loading', () => {
-		expect( areRecommendedThemesLoading( state, filterForIsLoading ) ).to.be.true;
-	} );
-
-	test( 'should return false when not loading', () => {
-		expect( areRecommendedThemesLoading( state, filterForNotLoading ) ).to.be.false;
-	} );
-
-	test( 'should return false when filter request not initiated', () => {
-		expect( areRecommendedThemesLoading( state, 'lolol' ) ).to.be.false;
 	} );
 } );

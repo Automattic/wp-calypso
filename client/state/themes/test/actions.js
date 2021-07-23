@@ -28,16 +28,12 @@ import {
 	tryAndCustomize,
 	deleteTheme,
 	requestThemeFilters,
-	getRecommendedThemes,
-	receiveRecommendedThemes,
 } from '../actions';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST_FAILURE,
-	RECOMMENDED_THEMES_FETCH,
-	RECOMMENDED_THEMES_SUCCESS,
 	THEME_ACTIVATE,
 	THEME_ACTIVATE_SUCCESS,
 	THEME_ACTIVATE_FAILURE,
@@ -888,6 +884,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
+		/* eslint-disable jest/no-conditional-expect */
 		test( 'should dispatch failure on error', () => {
 			return initiateThemeTransfer( siteId )( spy ).catch( () => {
 				expect( spy ).to.have.been.calledOnce;
@@ -899,6 +896,7 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( sinon.match.has( 'error', sinon.match.truthy ) );
 			} );
 		} );
+		/* eslint-enable jest/no-conditional-expect */
 	} );
 
 	describe( '#installTheme', () => {
@@ -1163,27 +1161,6 @@ describe( 'actions', () => {
 		test( 'should return THEME_FILTERS_REQUEST action', () => {
 			const action = requestThemeFilters();
 			expect( action ).to.deep.equal( { type: THEME_FILTERS_REQUEST } );
-		} );
-	} );
-
-	describe( '#getRecommendedThemes()', () => {
-		const filter = 'nonsense-test-filter';
-		test( 'should dispatch fetch action', () => {
-			getRecommendedThemes( filter )( spy );
-			expect( spy ).to.have.been.calledWith( { type: RECOMMENDED_THEMES_FETCH, filter } );
-		} );
-	} );
-
-	describe( '#receiveRecommendedThemes()', () => {
-		const themes = [ 'a', 'b', 'c' ];
-		const filter = 'test-filter-nonsense';
-		test( 'should dispatch success action with themes as payload', () => {
-			receiveRecommendedThemes( themes, filter )( spy );
-			expect( spy ).to.have.been.calledWith( {
-				type: RECOMMENDED_THEMES_SUCCESS,
-				payload: themes,
-				filter,
-			} );
 		} );
 	} );
 } );

@@ -18,7 +18,6 @@ import reducer, {
 	activeThemeRequests,
 	themeInstalls,
 	completedActivationRequests,
-	recommendedThemes,
 } from '../reducer';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import {
@@ -38,9 +37,6 @@ import {
 	THEME_INSTALL,
 	THEME_INSTALL_SUCCESS,
 	THEME_INSTALL_FAILURE,
-	RECOMMENDED_THEMES_FETCH,
-	RECOMMENDED_THEMES_SUCCESS,
-	RECOMMENDED_THEMES_FAIL,
 } from 'calypso/state/themes/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
 
@@ -88,7 +84,6 @@ describe( 'reducer', () => {
 				'themeRequests',
 				'themesUI',
 				'uploadTheme',
-				'recommendedThemes',
 			] )
 		);
 	} );
@@ -959,56 +954,6 @@ describe( 'reducer', () => {
 			expect( state ).toEqual( {
 				2916284: false,
 			} );
-		} );
-	} );
-
-	describe( '#recommendedThemes()', () => {
-		const filter = 'some-filter-string';
-
-		test( 'should default to an empty object', () => {
-			const state = recommendedThemes( undefined, {} );
-			expect( state ).toEqual( {} );
-		} );
-
-		test( 'should update isLoading when fetch is called', () => {
-			const state = recommendedThemes(
-				{},
-				{
-					type: RECOMMENDED_THEMES_FETCH,
-					filter,
-				}
-			);
-			expect( state ).toEqual( { [ filter ]: { isLoading: true, themes: [] } } );
-		} );
-
-		test( 'should update isLoading and themes on fetch success', () => {
-			const state = recommendedThemes(
-				{ [ filter ]: { isLoading: true, themes: [] } },
-				{
-					type: RECOMMENDED_THEMES_SUCCESS,
-					filter,
-					payload: {
-						themes: [ 'a', 'b', 'c' ],
-					},
-				}
-			);
-			expect( state ).toEqual( {
-				[ filter ]: {
-					isLoading: false,
-					themes: [ 'a', 'b', 'c' ],
-				},
-			} );
-		} );
-
-		test( 'should update isLoading on fetch fail', () => {
-			const state = recommendedThemes(
-				{ [ filter ]: { isLoading: true, themes: [] } },
-				{
-					type: RECOMMENDED_THEMES_FAIL,
-					filter,
-				}
-			);
-			expect( state ).toEqual( { [ filter ]: { isLoading: false, themes: [] } } );
 		} );
 	} );
 } );
