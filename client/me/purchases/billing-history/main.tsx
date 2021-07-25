@@ -52,7 +52,7 @@ function BillingHistory(): JSX.Element {
 			<DocumentHead title={ titles.billingHistory } />
 			<PageViewTracker path="/me/purchases/billing" title="Me > Billing History" />
 			<MeSidebarNavigation />
-			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="lefat" />
 			<QueryBillingTransactions />
 			<PurchasesNavigation section="billingHistory" />
 			<BillingHistoryContent siteId={ null } getReceiptUrlFor={ billingHistoryReceipt } />
