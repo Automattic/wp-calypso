@@ -35,9 +35,15 @@ class PopoverMenu extends Component {
 
 	menu = React.createRef();
 
+	delayedFocus = null;
+
 	componentWillUnmount() {
 		// Make sure we don't hold on to reference to the DOM reference
 		this._previouslyFocusedElement = null;
+
+		if ( this.delayedFocus !== null ) {
+			window.clearTimeout( this.delayedFocus );
+		}
 	}
 
 	render() {
@@ -109,7 +115,14 @@ class PopoverMenu extends Component {
 		this._previouslyFocusedElement = document.activeElement;
 
 		if ( elementToFocus ) {
-			elementToFocus.focus();
+			// Defer the focus a bit to make sure that the popover already has the final position.
+			// Initially, after first render, the popover is positioned outside the screen, at
+			// { top: -9999, left: -9999 } where it already has dimensions. These dimensions are measured
+			// and used to calculate the final position.
+			// Focusing the element while it's off the screen would cause unwanted scrolling.
+			this.delayedFocus = setTimeout( () => {
+				elementToFocus.focus();
+			}, 1 );
 		}
 	};
 
