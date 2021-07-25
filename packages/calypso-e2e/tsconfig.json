@@ -4,5 +4,5 @@
 		"outDir": "dist/esm",
 		"declarationDir": "dist/types"
 	},
-	"include": [ "src" ]
+	"include": [ "src", "test" ]
 }

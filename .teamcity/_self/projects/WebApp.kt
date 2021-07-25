@@ -21,6 +21,7 @@ object WebApp : Project({
 	buildType(CheckCodeStyleBranch)
 	buildType(BuildDockerImage)
 	buildType(RunCalypsoPlaywrightE2eDesktopTests)
+	buildType(RunCalypsoPlaywrightE2eMobileTests)
 })
 
 object RunCalypsoE2eDesktopTests : BuildType({
@@ -788,7 +789,7 @@ object RunCalypsoPlaywrightE2eDesktopTests : BuildType({
 			dockerImage = "%docker_image_e2e%"
 		}
 		bashNodeScript {
-			name = "Run e2e tests"
+			name = "Run e2e tests (desktop)"
 			scriptContent = """
 				shopt -s globstar
 				set -x
@@ -835,6 +836,157 @@ object RunCalypsoPlaywrightE2eDesktopTests : BuildType({
 
 				# Run the test
 				export VIEWPORT_SIZE=desktop
+				export LOCALE=en
+				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
+				export DEBUG=pw:api
+
+				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --testNamePattern @parallel --maxWorkers=%E2E_WORKERS% specs/specs-playwright
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
+		}
+		bashNodeScript {
+			name = "Collect results"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				set -x
+
+				mkdir -p screenshots
+				find test/e2e/results -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
+
+				mkdir -p logs
+				find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
+	}
+
+	features {
+		perfmon {
+		}
+		pullRequests {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			provider = github {
+				authType = token {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+			}
+		}
+		commitStatusPublisher {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
+		}
+	}
+
+	triggers {
+		vcs {
+			branchFilter = """
+				+:trunk
+			""".trimIndent()
+		}
+	}
+
+	failureConditions {
+		executionTimeoutMin = 20
+		// TeamCity will mute a test if it fails and then succeeds within the same build. Otherwise TeamCity UI will not
+		// display a difference between real errors and retries, making it hard to understand what is actually failing.
+		supportTestRetry = true
+	}
+
+	dependencies {
+		snapshot(BuildDockerImage) {
+		}
+	}
+})
+
+object RunCalypsoPlaywrightE2eMobileTests : BuildType({
+	name = "Playwright E2E tests (mobile)"
+	description = "Runs Calypso e2e tests using Playwright"
+	params {
+		param("use_cached_node_modules", "false")
+	}
+
+	artifactRules = """
+		reports => reports
+		logs.tgz => logs.tgz
+		screenshots => screenshots
+	""".trimIndent()
+
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
+	steps {
+		bashNodeScript {
+			name = "Prepare environment"
+			scriptContent = """
+				export NODE_ENV="test"
+				export PLAYWRIGHT_BROWSERS_PATH=0
+
+				# Install modules
+				${_self.yarn_install_cmd}
+
+				# Build packages
+				yarn workspace @automattic/calypso-e2e build
+				yarn workspace @automattic/mocha-debug-reporter build
+			"""
+			dockerImage = "%docker_image_e2e%"
+		}
+		bashNodeScript {
+			name = "Run e2e tests (mobile)"
+			scriptContent = """
+				shopt -s globstar
+				set -x
+
+				cd test/e2e
+				mkdir temp
+
+				export LIVEBRANCHES=true
+				export NODE_CONFIG_ENV=test
+				export PLAYWRIGHT_BROWSERS_PATH=0
+				export TEAMCITY_VERSION=2021
+
+				IMAGE_URL="https://calypso.live?image=registry.a8c.com/calypso/app:build-${BuildDockerImage.depParamRefs.buildNumber}";
+				MAX_LOOP=10
+				COUNTER=0
+
+				# Transform an URL like https://calypso.live?image=... into https://<container>.calypso.live
+				while [[ ${'$'}COUNTER -le ${'$'}MAX_LOOP ]]; do
+					COUNTER=${'$'}((COUNTER+1))
+					REDIRECT=${'$'}(curl --output /dev/null --silent --show-error  --write-out "%{http_code} %{redirect_url}" "${'$'}{IMAGE_URL}")
+					read HTTP_STATUS URL <<< "${'$'}{REDIRECT}"
+
+					# 202 means the image is being downloaded, retry in a few seconds
+					if [[ "${'$'}{HTTP_STATUS}" -eq "202" ]]; then
+						sleep 5
+						continue
+					fi
+
+					# Wait some seconds to alleviate simulateneous traffic to the serving container
+					# to avoid incurring HTTP 304.
+					sleep 10
+
+					break
+				done
+
+				if [[ -z "${'$'}URL" ]]; then
+					echo "Can't redirect to ${'$'}{IMAGE_URL}" >&2
+					echo "Curl response: ${'$'}{REDIRECT}" >&2
+					exit 1
+				fi
+
+				# Decrypt config
+				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
+
+				# Run the test
+				export VIEWPORT_SIZE=mobile
 				export LOCALE=en
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 				export DEBUG=pw:api

@@ -39,7 +39,7 @@ const JetpackCheckoutSitelessThankYouCompleted: FC< Props > = ( { productSlug } 
 
 	const isProductListFetching = useSelector( ( state ) => getIsProductListFetching( state ) );
 
-	const contactSupportLink = 'https://wordpress.com/help/contact';
+	const happinessAppointmentLink = '/checkout/jetpack/schedule-happiness-appointment';
 
 	return (
 		<Main wideLayout className="jetpack-checkout-siteless-thank-you-completed">
@@ -70,26 +70,26 @@ const JetpackCheckoutSitelessThankYouCompleted: FC< Props > = ( { productSlug } 
 						) }
 					</p>
 					<p>
-						{ translate( '{{a}}Contact us{{/a}} at any time if you need assistance with Jetpack.', {
-							components: {
-								a: (
-									<a
-										className="jetpack-checkout-siteless-thank-you-completed__link"
-										onClick={ () =>
-											dispatch(
-												recordTracksEvent(
-													'calypso_siteless_checkout_completed_support_link_clicked',
-													{
+						{ translate(
+							'If you prefer to setup Jetpack with the help of our Happiness Engineers, {{a}}schedule a 15 minute call now{{/a}}.',
+							{
+								components: {
+									a: (
+										<a
+											className="jetpack-checkout-siteless-thank-you-completed__link"
+											onClick={ () =>
+												dispatch(
+													recordTracksEvent( 'calypso_siteless_checkout_happiness_link_clicked', {
 														product_slug: productSlug,
-													}
+													} )
 												)
-											)
-										}
-										href={ contactSupportLink }
-									/>
-								),
-							},
-						} ) }
+											}
+											href={ happinessAppointmentLink }
+										/>
+									),
+								},
+							}
+						) }
 					</p>
 				</div>
 			</Card>

@@ -26,7 +26,7 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 
 	it( 'Navigate to Themes', async function () {
 		sidebarComponent = await SidebarComponent.Expect( page );
-		await sidebarComponent.gotoMenu( { item: 'Appearance' } );
+		await sidebarComponent.gotoMenu( { item: 'Appearance', subitem: 'Themes' } );
 	} );
 
 	it( `Search for free theme with keyword ${ themeName }`, async function () {

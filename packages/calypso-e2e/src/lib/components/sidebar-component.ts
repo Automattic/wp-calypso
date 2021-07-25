@@ -12,7 +12,7 @@ const selectors = {
 	sidebar: '.sidebar',
 	heading: '.sidebar > li',
 	subheading: '.sidebar__menu-item--child',
-	expandedMenu: '.sidebar__menu--selected',
+	expandedMenu: '.sidebar__menu.is-toggle-open',
 };
 
 /**
