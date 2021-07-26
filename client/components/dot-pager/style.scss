@@ -50,45 +50,47 @@
 	.dot-pager__control-gap {
 		margin-left: auto;
 	}
+}
 
-	button {
-		display: inline-flex;
+.dot-pager__control-prev,
+.dot-pager__control-next,
+.dot-pager__control-choose-page {
+	cursor: pointer;
 
-		// Drawing a CSS circle
-		// stylelint-disable-next-line  declaration-property-unit-allowed-list
-		border-radius: 50%;
-		min-width: 6px;
-		min-height: 6px;
-		cursor: pointer;
-		background-color: var( --color-neutral-10 );
+	&:disabled {
+		cursor: default;
+	}
+}
 
-		&:hover {
-			background-color: var( --studio-gray-20 );
-		}
+.dot-pager__control-prev,
+.dot-pager__control-next, {
+	display: inline-flex;
 
-		&:disabled {
-			cursor: default;
-		}
+	svg {
+		width: 18px;
+		height: 18px;
+	}
+	background-color: transparent;
+	color: var( --studio-gray-80 );
 
-		&.dot-pager__control-current {
-			background-color: var( --studio-gray-80 );
-		}
+	&[disabled] {
+		color: var( --studio-gray-10 );
+	}
+}
 
-		&.dot-pager__control-prev,
-		&.dot-pager__control-next {
-			// Allow the control buttons the space they need for labels
-			width: auto;
+.dot-pager__control-choose-page {
+	// Drawing a CSS circle
+	// stylelint-disable-next-line  declaration-property-unit-allowed-list
+	border-radius: 50%;
+	width: 6px;
+	height: 6px;
+	background-color: var( --color-neutral-10 );
 
-			svg {
-				width: 18px;
-				height: 18px;
-			}
-			background-color: transparent;
-			color: var( --studio-gray-80 );
+	&:hover {
+		background-color: var( --studio-gray-20 );
+	}
 
-			&[disabled] {
-				color: var( --studio-gray-10 );
-			}
-		}
+	&.dot-pager__control-current {
+		background-color: var( --studio-gray-80 );
 	}
 }

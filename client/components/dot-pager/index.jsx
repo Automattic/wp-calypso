@@ -26,7 +26,9 @@ const Controls = ( { showControlLabels = false, currentPage, numberOfPages, setC
 				<li key={ `page-${ page }` } aria-current={ page === currentPage ? 'page' : undefined }>
 					<button
 						key={ page.toString() }
-						className={ classnames( { 'dot-pager__control-current': page === currentPage } ) }
+						className={ classnames( 'dot-pager__control-choose-page', {
+							'dot-pager__control-current': page === currentPage,
+						} ) }
 						disabled={ page === currentPage }
 						aria-label={ translate( 'Page %(page)d of %(numberOfPages)d', {
 							args: { page: page + 1, numberOfPages },
