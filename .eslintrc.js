@@ -179,6 +179,7 @@ module.exports = {
 			files: [
 				'apps/editing-toolkit/**/*',
 				'client/auth/**/*',
+				'client/controller/**/*',
 				'client/incoming-redirect/**/*',
 				'client/my-sites/customer-home/**/*',
 				'client/sections-filter.js',
