@@ -25,9 +25,9 @@ $plan-features-sidebar-width: 272px;
 			align-items: center;
 
 			@media ( min-width: 660px ) and ( max-width: 1040px ) {
-				.plan-features__summary, .plan-features__description {
+				.plan-features__summary,
+				.plan-features__description {
 					padding: 16px 33px;
-
 				}
 				.plan-features--signup .plan-features__pricing {
 					padding: 0 7px;
@@ -42,6 +42,11 @@ $plan-features-sidebar-width: 272px;
 				border-top: solid 8px;
 				border-radius: 2px 2px 0 0;
 				padding-bottom: 12px;
+
+				&.is-free-plan {
+					border-color: var( --color-plan-blogger );
+					border-bottom: solid 2px var( --color-neutral-10 );
+				}
 
 				&.is-blogger-plan {
 					border-color: var( --color-plan-blogger );
@@ -69,7 +74,7 @@ $plan-features-sidebar-width: 272px;
 				}
 			}
 
-			 .plan-price {
+			.plan-price {
 				font-weight: 600;
 				margin-right: 10px;
 				font-size: $font-headline-large;
@@ -102,18 +107,17 @@ $plan-features-sidebar-width: 272px;
 
 			.plan-features__mobile-plan {
 				max-width: 408px;
+				width: 100%;
 			}
 		}
 	}
 }
-
 
 .plan-features--loading-container {
 	margin-top: 300px;
 }
 
 /******************************************/
-
 
 /* Breakpoints 1150px, */
 
@@ -359,6 +363,7 @@ $plan-features-sidebar-width: 272px;
 	width: 56px;
 	height: 56px;
 	margin-right: 15px;
+	// stylelint-disable-next-line declaration-property-unit-allowed-list
 	border-radius: 50%;
 }
 

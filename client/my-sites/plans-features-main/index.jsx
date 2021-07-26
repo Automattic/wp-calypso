@@ -354,7 +354,13 @@ export class PlansFeaturesMain extends Component {
 
 		if ( isAllPaidPlansShown || withIntervalSelector ) {
 			return plans.filter( ( plan ) =>
-				isPlanOneOfType( plan, [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE ] )
+				isPlanOneOfType( plan, [
+					TYPE_FREE,
+					TYPE_PERSONAL,
+					TYPE_PREMIUM,
+					TYPE_BUSINESS,
+					TYPE_ECOMMERCE,
+				] )
 			);
 		}
 

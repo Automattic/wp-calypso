@@ -152,7 +152,7 @@ export class PlansStep extends Component {
 						planTypes={ planTypes }
 						flowName={ flowName }
 						showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
-						isAllPaidPlansShown={ true }
+						isAllPaidPlansShown={ false }
 						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 						shouldShowPlansFeatureComparison={ isDesktop() } // Show feature comparison layout in signup flow and desktop resolutions
 						isReskinned={ isReskinned }
