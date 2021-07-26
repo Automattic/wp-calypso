@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import TitanRedirector from 'calypso/my-sites/email/titan-redirector';
+import React from 'react';
 import EmptyContent from 'calypso/components/empty-content';
+import TitanRedirector from 'calypso/my-sites/email/titan-redirector';
 
 export default {
 	emailTitanAddMailboxes( pageContext, next ) {
