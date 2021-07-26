@@ -312,6 +312,21 @@ export default function () {
 			makeLayout,
 			clientRender
 		);
+
+		const domainPurchaseFlowEnabled = true;
+
+		if ( domainPurchaseFlowEnabled ) {
+			page(
+				'/domains/add/:domain/email/:siteSlug',
+				siteSelection,
+				navigation,
+				domainsController.redirectIfNoSite( '/domains/add' ),
+				domainsController.jetpackNoDomainsWarning,
+				domainsController.emailWithRegistration,
+				makeLayout,
+				clientRender
+			);
+		}
 	}
 
 	page(

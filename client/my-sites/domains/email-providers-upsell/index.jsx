@@ -1,0 +1,53 @@
+/**
+ * External dependencies
+ */
+import page from 'page';
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
+
+/**
+ * Internal dependencies
+ */
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import HeaderCake from 'calypso/components/header-cake';
+import PromoCard from 'calypso/components/promo-section/promo-card';
+import emailIllustration from 'calypso/assets/images/email-providers/email-illustration.svg';
+
+export default function EmailProvidersUpsell( { domain } ) {
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const translate = useTranslate();
+
+	const handleGoBack = () => {
+		page( `/domains/add/${ selectedSiteSlug }` );
+	};
+
+	const translateArgs = {
+		args: {
+			domainName: 'example.com',
+		},
+		comment: '%(domainName)s is the domain name, e.g example.com',
+	};
+
+	const image = {
+		path: emailIllustration,
+		align: 'right',
+	};
+
+	return (
+		<>
+			<HeaderCake onClick={ handleGoBack }>
+				{ translate( 'Register %(domain)s', { args: { domain } } ) }
+			</HeaderCake>
+
+			<PromoCard
+				isPrimary
+				title={ translate( 'Add a professional email address to %(domainName)s', translateArgs ) }
+				image={ image }
+				className="email-providers-upsell__action-panel"
+			>
+				<p>{ translate( 'No setup or software required. Easy to manage from your dashboard.' ) }</p>
+			</PromoCard>
+		</>
+	);
+}

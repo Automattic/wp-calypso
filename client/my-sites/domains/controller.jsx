@@ -39,6 +39,7 @@ import { makeLayout, render as clientRender } from 'calypso/controller';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import EmailProvidersUpsell from './email-providers-upsell';
 
 const noop = () => {};
 const domainsAddHeader = ( context, next ) => {
@@ -274,10 +275,30 @@ const jetpackNoDomainsWarning = ( context, next ) => {
 	}
 };
 
+const emailWithRegistration = ( context, next ) => {
+	context.primary = (
+		<Main wideLayout>
+			<PageViewTracker
+				path="/domains/add/:domain/email/:site"
+				title="Domain Search > Domain Registration > Email"
+			/>
+			<DocumentHead
+				title={ translate( 'Register %(domain)s', {
+					args: { domain: context.params.registerDomain },
+				} ) }
+			/>
+			<EmailProvidersUpsell domain={ context.params.domain } />
+		</Main>
+	);
+
+	next();
+};
+
 export default {
 	domainsAddHeader,
 	domainsAddRedirectHeader,
 	domainSearch,
+	emailWithRegistration,
 	jetpackNoDomainsWarning,
 	siteRedirect,
 	mapDomain,
