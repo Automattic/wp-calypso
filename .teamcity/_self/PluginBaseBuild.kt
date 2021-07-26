@@ -69,7 +69,10 @@ open class PluginBaseBuild : Template({
 					git config --local user.name "TeamCity Build Agent"
 					# Note that `trunk` is already up-to-date from the `teamcity.git.fetchAllHeads`
 					# parameter in the project settings.
-					git merge trunk
+					if ! git merge trunk ; then
+						echo "##teamcity[buildProblem description='There is a merge conflict with trunk. Rebase on trunk to resolve this problem.' identity='merge_conflict']]"
+						exit
+					fi
 					# See if the trunk commit shows up:
 					git --no-pager log --oneline -n 5
 				fi
