@@ -84,11 +84,7 @@ const Primary = ( { cards, trackCards, queryArguments } ) => {
 	}
 
 	return (
-		<DotPager
-			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-			className="customer-home__location-primary"
-			buttonText="true"
-		>
+		<DotPager className="primary__customer-home-location-content" buttonText="true">
 			{ cards.map(
 				( card, index ) =>
 					cardComponents[ card ] &&
