@@ -154,9 +154,7 @@ class ActivityCardList extends Component {
 			logsWithRetention.slice( ( actualPage - 1 ) * pageSize )
 		);
 		const showRetentionLimitUpsell =
-			retentionPoliciesEnabled &&
-			logsWithRetention.length < logs.length &&
-			actualPage === pageCount;
+			retentionPoliciesEnabled && logsWithRetention.length < logs.length && actualPage >= pageCount;
 
 		return (
 			<div className="activity-card-list">
