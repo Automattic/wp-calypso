@@ -319,7 +319,9 @@ export class ManagedContactDetailsFormFields extends Component {
 							label: translate( 'Organization' ),
 							text: translate( '+ Add organization name' ),
 							toggled:
-								form.organization?.value || this.props.getIsFieldRequired?.( 'organization' ),
+								form.organization?.value ||
+								this.props.getIsFieldRequired?.( 'organization' ) ||
+								undefined,
 						},
 						{
 							customErrorMessage: this.props.contactDetailsErrors?.organization,
