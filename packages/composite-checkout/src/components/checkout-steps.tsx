@@ -7,12 +7,15 @@ import React, {
 	useCallback,
 	useContext,
 	useEffect,
+	useRef,
+	useMemo,
 	useState,
 } from 'react';
 import { useFormStatus } from '../lib/form-status';
 import joinClasses from '../lib/join-classes';
 import styled from '../lib/styled';
-import { Theme } from '../lib/theme';
+import theme from '../lib/theme';
+import type { Theme } from '../lib/theme';
 import {
 	getDefaultOrderReviewStep,
 	getDefaultOrderSummary,
@@ -492,11 +495,39 @@ export function CheckoutStepArea( {
 		...( ! isThereAnotherNumberedStep ? [ 'checkout__step-wrapper--last-step' ] : [] ),
 	] );
 
+	const [ submitWrapperHeight, setSubmitWrapperHeight ] = useState( 0 );
+	const [ initialVw, setInitialVw ] = useState( 0 );
+	const tabletBp = useMemo(
+		() => parseInt( theme.breakpoints.tabletUp.replace( /^.*:/, '' ), 10 ),
+		[]
+	);
+	const rootRef = useRef( null );
+	const submitWrapperRef = useRef( null );
+
+	// Get `SubmitButtonWrapper` height and viewport width.
+	useEffect( () => {
+		if ( submitWrapperRef.current ) {
+			setSubmitWrapperHeight( submitWrapperRef.current.offsetHeight );
+		}
+		setInitialVw( window.innerWidth );
+	}, [ setSubmitWrapperHeight, submitWrapperRef, setInitialVw ] );
+
+	// Then update `CheckoutStepAreaWrapper` bottom margin on mobile, so that there's
+	// enough room to show the `SubmitButtonWrapper` without hidding the page content.
+	useEffect( () => {
+		if ( initialVw && submitWrapperHeight && initialVw < tabletBp && rootRef.current ) {
+			rootRef.current.style.marginBottom = `${ submitWrapperHeight }px`;
+		}
+	}, [ initialVw, submitWrapperHeight, tabletBp, rootRef ] );
+
 	return (
-		<CheckoutStepAreaWrapper className={ classNames }>
+		<CheckoutStepAreaWrapper className={ classNames } ref={ rootRef }>
 			{ children }
 
-			<SubmitButtonWrapper className="checkout-steps__submit-button-wrapper">
+			<SubmitButtonWrapper
+				className="checkout-steps__submit-button-wrapper"
+				ref={ submitWrapperRef }
+			>
 				{ submitButtonHeader || null }
 				<CheckoutSubmitButton
 					disabled={ isThereAnotherNumberedStep || disableSubmitButton }
