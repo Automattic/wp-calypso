@@ -3,7 +3,7 @@
  */
 import React, { FC, useState, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import page from 'page';
 import classNames from 'classnames';
 import { Button, Card } from '@automattic/components';
@@ -12,7 +12,8 @@ import { openPopupWidget } from 'react-calendly';
 /**
  * Internal dependencies
  */
-import { cleanUrl } from 'calypso/jetpack-connect/utils.js';
+import { resemblesUrl } from 'calypso/lib/url';
+import { addHttpIfMissing } from 'calypso/my-sites/checkout/utils';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
 	isProductsListFetching as getIsProductListFetching,
@@ -68,25 +69,43 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 		'https://jetpack.com/support/getting-started-with-jetpack/';
 
 	const [ siteInput, setSiteInput ] = useState( '' );
+	const [ isFormDirty, setIsFormDirty ] = useState( false );
+	const [ error, setError ] = useState< TranslateResult | false >( false );
 
-	const onUrlChange = useCallback( ( e ) => {
-		const siteUrl = e.target.value;
-		setSiteInput( siteUrl );
-	}, [] );
+	const onUrlChange = useCallback(
+		( e ) => {
+			const siteUrl = e.target.value;
+			setSiteInput( siteUrl );
+			if ( isFormDirty ) {
+				if ( ! resemblesUrl( addHttpIfMissing( siteUrl ) ) ) {
+					setError( translate( 'That is not a valid website URL.' ) );
+				} else {
+					setError( false );
+				}
+			}
+		},
+		[ translate, isFormDirty ]
+	);
 
 	const onUrlSubmit = useCallback( () => {
-		const siteUrl = cleanUrl( siteInput );
-		if ( siteUrl ) {
-			dispatch(
-				recordTracksEvent( 'calypso_siteless_checkout_submit_website_address', {
-					product_slug: productSlug,
-					site_url: siteUrl,
-					receipt_id: receiptId,
-				} )
-			);
-			dispatch( requestUpdateJetpackCheckoutSupportTicket( siteUrl, receiptId ) );
+		setIsFormDirty( true );
+		const siteUrl = addHttpIfMissing( siteInput );
+		setSiteInput( siteUrl );
+
+		if ( ! resemblesUrl( siteUrl ) ) {
+			setError( translate( 'That is not a valid website URL.' ) );
+			return;
 		}
-	}, [ siteInput, dispatch, productSlug, receiptId ] );
+
+		dispatch(
+			recordTracksEvent( 'calypso_siteless_checkout_submit_website_address', {
+				product_slug: productSlug,
+				site_url: siteUrl,
+				receipt_id: receiptId,
+			} )
+		);
+		dispatch( requestUpdateJetpackCheckoutSupportTicket( siteUrl, receiptId ) );
+	}, [ siteInput, dispatch, translate, productSlug, receiptId ] );
 
 	const onScheduleClick = useCallback( () => {
 		if ( calendlyUrl !== null ) {
@@ -110,10 +129,14 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 	}, [ calendlyUrl, currentUser, dispatch, productSlug ] );
 
 	useEffect( () => {
-		if ( supportTicketStatus && supportTicketStatus === 'success' ) {
+		if ( supportTicketStatus === 'success' ) {
 			page( `/checkout/jetpack/thank-you-completed/no-site/${ productSlug }` );
+		} else if ( supportTicketStatus === 'failed' ) {
+			setError(
+				translate( 'There was a problem submitting your website address, please try again.' )
+			);
 		}
-	}, [ supportTicketStatus, productSlug, receiptId ] );
+	}, [ supportTicketStatus, productSlug, translate ] );
 
 	useEffect( () => {
 		if ( forScheduling ) {
@@ -204,7 +227,7 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 								<div className="jetpack-checkout-siteless-thank-you__form-group" role="group">
 									<FormTextInput
 										className={ classNames( 'jetpack-checkout-siteless-thank-you__form-input', {
-											'is-error': supportTicketStatus && supportTicketStatus === 'failed',
+											'is-error': error,
 										} ) }
 										autoCapitalize="off"
 										value={ siteInput }
@@ -221,12 +244,10 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 										{ translate( 'Continue' ) }
 									</FormButton>
 								</div>
-								{ supportTicketStatus && supportTicketStatus === 'failed' && (
+								{ error && (
 									<FormInputValidation
-										isError
-										text={ translate(
-											'There was a problem submitting your website address, please try again.'
-										) }
+										isError={ !! ( isFormDirty && error ) }
+										text={ error }
 									></FormInputValidation>
 								) }
 							</div>
