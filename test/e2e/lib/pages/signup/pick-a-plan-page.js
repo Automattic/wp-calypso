@@ -29,21 +29,12 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 	}
 
 	async _selectPlan( level ) {
-		// We are switching from two separate designs for mobile and desktop plans to one. There will be two buttons -
-		// one visible and one hidden in control and only one button in the test variation.
-		const planLocator =
-			driverManager.currentScreenSize() === 'mobile'
-				? `.plan-features__mobile button.is-${ level }-plan, .plan-features-comparison__table button.is-${ level }-plan, .plan-features__table button.is-${ level }-plan`
-				: `.plan-features-comparison__table button.is-${ level }-plan, .plan-features__table button.is-${ level }-plan`;
+		const planLocator = `button.is-${ level }-plan`;
 
 		const locator = By.css( planLocator );
 
-		await driverHelper.waitUntilElementLocatedAndVisible(
-			this.driver,
-			By.css(
-				'.plan-features__mobile button.is-business-plan, .plan-features-comparison__table button.is-business-plan, .plan-features__table button.is-business-plan'
-			)
-		);
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, planLocator );
+
 		await this.scrollPlanInToView( level );
 
 		await driverHelper.clickWhenClickable( this.driver, locator );
