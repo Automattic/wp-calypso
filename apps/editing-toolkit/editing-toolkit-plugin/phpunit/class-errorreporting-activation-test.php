@@ -125,7 +125,7 @@ class ErrorReporting_Activation_Test extends TestCase {
 
 	/**
 	 * Tests that the `should_activate_sentry` function returns `true` for the ids that fall
-	 * insidet the segment.
+	 * inside the segment.
 	 */
 	public function test_should_activate_sentry_is_true_if_regular_user_in_sentry_segment() {
 		for ( $i = $this->regular_user_id; $i < $this->regular_user_id + $this->current_segment; $i++ ) {
