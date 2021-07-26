@@ -214,6 +214,7 @@ module.exports = {
 				'packages/mocha-debug-reporter/**/*',
 				'packages/photon/**/*',
 				'packages/plans-grid/**/*',
+				'packages/popup-monitor/**/*',
 				'packages/shopping-cart/**/*',
 				'packages/spec-junit-reporter/**/*',
 				'packages/spec-xunit-reporter/**/*',
