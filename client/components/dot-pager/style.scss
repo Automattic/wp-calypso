@@ -54,13 +54,11 @@
 	button {
 		display: inline-flex;
 
-		// Size the dots
-		min-width: 6px;
-		min-height: 6px;
-
 		// Drawing a CSS circle
 		// stylelint-disable-next-line  declaration-property-unit-allowed-list
 		border-radius: 50%;
+		min-width: 6px;
+		min-height: 6px;
 		cursor: pointer;
 		background-color: var( --color-neutral-10 );
 
