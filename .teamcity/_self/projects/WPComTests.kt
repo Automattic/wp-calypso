@@ -327,19 +327,6 @@ fun jetpackBuildType(screenSize: String): BuildType {
 				}
 			}
 		}
-
-		triggers {
-			schedule {
-				schedulingPolicy = daily {
-					hour = 2
-				}
-				branchFilter = """
-					+:trunk
-				""".trimIndent()
-				triggerBuild = always()
-				withPendingChangesOnly = false
-			}
-		}
 	}
 }
 
@@ -413,19 +400,6 @@ private object VisualRegressionTests : BuildType({
 			buildFailedToStart = true
 			firstSuccessAfterFailure = true
 			buildProbablyHanging = true
-		}
-	}
-
-	triggers {
-		schedule {
-			schedulingPolicy = daily {
-				hour = 3
-			}
-			branchFilter = """
-				+:trunk
-			""".trimIndent()
-			triggerBuild = always()
-			withPendingChangesOnly = false
 		}
 	}
 })
