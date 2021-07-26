@@ -74,8 +74,13 @@
 		</section>
 
 		<script>
+			var elVersion = document.getElementById( 'wpcom-version' );
+			if ( elVersion ) {
+				elVersion.innerHTML = pkg.version;
+			}
+
 			// create a client WPCOM instance
-			var wpcom = WPCOM();
+			var wpcom = WPCOM(); // TODO: provide a handler to make a successful request
 
 			// retrieve a listing of the most recent
 			// 5 posts on "en.blog.wordpress.com"
@@ -89,11 +94,6 @@
 					console.log( '  %d: "%s"', i+1, post.title );
 				} );
 			} );
-
-			var elVersion = document.getElementById( 'wpcom-version' );
-			if ( elVersion ) {
-				elVersion.innerHTML = pkg.version;
-			}
 		</script>
 	</body>
 </html>
