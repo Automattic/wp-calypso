@@ -33,7 +33,9 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 
 		const locator = By.css( planLocator );
 
+		console.error( 'locating', planLocator );
 		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, planLocator );
+		console.error( 'located', planLocator );
 
 		await this.scrollPlanInToView( level );
 
