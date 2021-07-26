@@ -13,6 +13,7 @@ import { openPopupWidget } from 'react-calendly';
  * Internal dependencies
  */
 import { resemblesUrl } from 'calypso/lib/url';
+import { addHttpIfMissing } from 'calypso/my-sites/checkout/utils';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
 	isProductsListFetching as getIsProductListFetching,
@@ -76,7 +77,7 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 			const siteUrl = e.target.value;
 			setSiteInput( siteUrl );
 			if ( isFormDirty ) {
-				if ( ! resemblesUrl( siteUrl ) ) {
+				if ( ! resemblesUrl( addHttpIfMissing( siteUrl ) ) ) {
 					setError( translate( 'That is not a valid website URL.' ) );
 				} else {
 					setError( false );
@@ -88,8 +89,10 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 
 	const onUrlSubmit = useCallback( () => {
 		setIsFormDirty( true );
+		const siteUrl = addHttpIfMissing( siteInput );
+		setSiteInput( siteUrl );
 
-		if ( ! resemblesUrl( siteInput ) ) {
+		if ( ! resemblesUrl( siteUrl ) ) {
 			setError( translate( 'That is not a valid website URL.' ) );
 			return;
 		}
@@ -97,11 +100,11 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 		dispatch(
 			recordTracksEvent( 'calypso_siteless_checkout_submit_website_address', {
 				product_slug: productSlug,
-				site_url: siteInput,
+				site_url: siteUrl,
 				receipt_id: receiptId,
 			} )
 		);
-		dispatch( requestUpdateJetpackCheckoutSupportTicket( siteInput, receiptId ) );
+		dispatch( requestUpdateJetpackCheckoutSupportTicket( siteUrl, receiptId ) );
 	}, [ siteInput, dispatch, translate, productSlug, receiptId ] );
 
 	const onScheduleClick = useCallback( () => {
@@ -228,7 +231,7 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 										} ) }
 										autoCapitalize="off"
 										value={ siteInput }
-										placeholder="www.yourjetpack.blog"
+										placeholder="https://yourjetpack.blog"
 										onChange={ onUrlChange }
 										autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
 									/>
