@@ -17,5 +17,5 @@ export default function canCurrentUser( state, siteId, capability ) {
 		return null;
 	}
 
-	return capabilities[ capability ] ?? false;
+	return capabilities[ capability ] || false;
 }
