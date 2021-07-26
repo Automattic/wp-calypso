@@ -52,12 +52,12 @@ function activate_core_fse() {
 }
 
 /**
- * Deactivates Core FSE by removing our option.
+ * Deactivates Core FSE by setting the option to NULL (matches the Options API).
  *
  * @return void
  */
 function deactivate_core_fse() {
-	delete_option( ACTIVATE_FSE_OPTION_NAME );
+	update_option( ACTIVATE_FSE_OPTION_NAME, null );
 }
 
 /**
