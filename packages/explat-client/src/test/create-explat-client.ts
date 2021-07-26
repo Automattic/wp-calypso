@@ -1,13 +1,8 @@
-/**
- * External dependencies
- */
 // This is required to fix the "regeneratorRuntime is not defined" error
 import '@automattic/calypso-polyfills';
 
-/**
- * Internal dependencies
- */
 import { createExPlatClient } from '../create-explat-client';
+import localStorage from '../internal/local-storage';
 import {
 	delayedValue,
 	ONE_DELAY,
@@ -18,7 +13,6 @@ import {
 } from '../internal/test-common';
 import * as Timing from '../internal/timing';
 import type { Config, ExperimentAssignment } from '../types';
-import localStorage from '../internal/local-storage';
 
 type MockedFunction = ReturnType< typeof jest.fn >;
 

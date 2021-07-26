@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
-import type { ExperimentAssignment } from '../types';
-import * as Validations from './validations';
 import localStorage from './local-storage';
+import * as Validations from './validations';
+import type { ExperimentAssignment } from '../types';
 
 const localStorageExperimentAssignmentKeyPrefix = 'explat-experiment-';
 

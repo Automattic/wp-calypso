@@ -2,15 +2,12 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
 import {
 	retrieveExperimentAssignment,
 	storeExperimentAssignment,
 } from '../experiment-assignment-store';
-import { validExperimentAssignment, validFallbackExperimentAssignment } from '../test-common';
 import localStorage from '../local-storage';
+import { validExperimentAssignment, validFallbackExperimentAssignment } from '../test-common';
 
 beforeEach( () => {
 	localStorage.clear();
