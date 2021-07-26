@@ -56,6 +56,10 @@
 				color: var( --color-sidebar-menu-hover-text );
 			}
 		}
+		
+		html.accessible-focus &:focus {
+			box-shadow: inset 0 0 0 2px var( --color-primary-light );
+		}
 
 		&:active {
 			background-color: rgba ( var ( --color-sidebar-menu-selected-text-rgb ), 0.075);
