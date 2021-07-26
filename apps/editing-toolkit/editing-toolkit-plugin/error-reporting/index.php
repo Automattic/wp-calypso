@@ -114,7 +114,7 @@ function enqueue_script() {
 
 	wp_localize_script(
 		$script_id,
-		'A8C_FSE_ErrorReporting_Config',
+		'A8C_ETK_ErrorReporting_Config',
 		array(
 			'shouldActivateSentry' => should_activate_sentry( get_current_user_id(), get_current_blog_id() ) ? 'true' : 'false',
 		)
