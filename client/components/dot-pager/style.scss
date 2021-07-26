@@ -80,10 +80,6 @@
 		&.dot-pager__control-next {
 			// Allow the control buttons the space they need for labels
 			width: auto;
-			height: auto;
-
-			// align label and icon
-			align-items: end;
 
 			svg {
 				width: 18px;
