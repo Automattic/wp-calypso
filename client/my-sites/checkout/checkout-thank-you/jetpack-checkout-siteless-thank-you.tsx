@@ -8,12 +8,11 @@ import page from 'page';
 import classNames from 'classnames';
 import { Button, Card } from '@automattic/components';
 import { openPopupWidget } from 'react-calendly';
-import { isURL } from '@wordpress/url';
 
 /**
  * Internal dependencies
  */
-import { cleanUrl } from 'calypso/jetpack-connect/utils.js';
+import { resemblesUrl } from 'calypso/lib/url';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
 	isProductsListFetching as getIsProductListFetching,
@@ -77,7 +76,7 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 			const siteUrl = e.target.value;
 			setSiteInput( siteUrl );
 			if ( isFormDirty ) {
-				if ( ! isURL( cleanUrl( siteUrl ) ) ) {
+				if ( ! resemblesUrl( siteUrl ) ) {
 					setError( translate( 'That is not a valid website URL.' ) );
 				} else {
 					setError( false );
@@ -89,10 +88,8 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 
 	const onUrlSubmit = useCallback( () => {
 		setIsFormDirty( true );
-		const siteUrl = cleanUrl( siteInput );
-		setSiteInput( siteUrl );
 
-		if ( ! isURL( siteUrl ) ) {
+		if ( ! resemblesUrl( siteInput ) ) {
 			setError( translate( 'That is not a valid website URL.' ) );
 			return;
 		}
@@ -100,11 +97,11 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 		dispatch(
 			recordTracksEvent( 'calypso_siteless_checkout_submit_website_address', {
 				product_slug: productSlug,
-				site_url: siteUrl,
+				site_url: siteInput,
 				receipt_id: receiptId,
 			} )
 		);
-		dispatch( requestUpdateJetpackCheckoutSupportTicket( siteUrl, receiptId ) );
+		dispatch( requestUpdateJetpackCheckoutSupportTicket( siteInput, receiptId ) );
 	}, [ siteInput, dispatch, translate, productSlug, receiptId ] );
 
 	const onScheduleClick = useCallback( () => {
@@ -231,7 +228,7 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 										} ) }
 										autoCapitalize="off"
 										value={ siteInput }
-										placeholder="https://yourjetpack.blog"
+										placeholder="www.yourjetpack.blog"
 										onChange={ onUrlChange }
 										autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
 									/>
@@ -244,7 +241,12 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 										{ translate( 'Continue' ) }
 									</FormButton>
 								</div>
-								{ error && <FormInputValidation isError text={ error }></FormInputValidation> }
+								{ error && (
+									<FormInputValidation
+										isError={ !! ( isFormDirty && error ) }
+										text={ error }
+									></FormInputValidation>
+								) }
 							</div>
 						</div>
 					) }
