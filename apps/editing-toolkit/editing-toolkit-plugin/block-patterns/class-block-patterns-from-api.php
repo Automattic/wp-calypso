@@ -51,7 +51,11 @@ class Block_Patterns_From_API {
 	 * @param string                    $editor_type The current editor. One of `block_editor` (default), `site_editor`.
 	 * @param Block_Patterns_Utils|null $utils       A class dependency containing utils methods.
 	 */
-	public function __construct( string $editor_type = 'block_editor', Block_Patterns_Utils $utils = null ) {
+	public function __construct( $editor_type, Block_Patterns_Utils $utils = null ) {
+		if ( ! $editor_type || ! is_string( $editor_type ) ) {
+			$editor_type = 'block_editor';
+		}
+
 		$this->editor_type      = $editor_type;
 		$this->patterns_sources = array( 'block_patterns' );
 
