@@ -52,7 +52,9 @@ const MailchimpSettings = ( {
 				follower_list_id: event.target.value,
 				keyring_id: keyringConnections[ 0 ].ID,
 			},
-			translate( 'Subscriber emails will be saved to the %s Mailchimp list', { args: list.name } )
+			translate( 'Subscriber emails will be saved to the %s Mailchimp audience', {
+				args: list.name,
+			} )
 		);
 	};
 	const common = (
@@ -62,7 +64,7 @@ const MailchimpSettings = ( {
 			<div className="sharing-connections__mailchimp-gutenberg_explanation">
 				<p>
 					{ translate(
-						'Start building your mailing list by adding the Mailchimp block to your posts and pages. '
+						'Start building your audience by adding the Mailchimp block to your posts and pages. '
 					) }
 					<a
 						href={ localizeUrl( 'https://wordpress.com/support/mailchimp-block/' ) }
@@ -95,12 +97,12 @@ const MailchimpSettings = ( {
 		<div>
 			<QueryMailchimpLists siteId={ siteId } />
 			<QueryMailchimpSettings siteId={ siteId } />
-			<p>{ translate( 'What Mailchimp list should subscribers be added to?' ) }</p>
+			<p>{ translate( 'What Mailchimp audience should subscribers be added to?' ) }</p>
 			{ Array.isArray( mailchimpLists ) && mailchimpLists.length === 0 && (
 				<Notice
 					status="is-info"
 					text={ translate(
-						"Looks like you've not set up any Mailchimp lists yet. Head to your Mailchimp admin to add a list."
+						"Looks like you've not set up any Mailchimp audiences yet. Head to your Mailchimp admin to add an audience."
 					) }
 					showDismiss={ false }
 				>
@@ -111,7 +113,7 @@ const MailchimpSettings = ( {
 				<Notice
 					status="is-warning"
 					text={ translate(
-						'Subscribers will not be added to Mailchimp for this site. Please select a list to sign them up for your Mailchimp content'
+						'Subscribers will not be added to Mailchimp for this site. Please select an audience to sign them up for your Mailchimp content'
 					) }
 					showDismiss={ false }
 				/>
