@@ -128,7 +128,6 @@ enum EditorActions {
 	GetTemplateEditorUrl = 'getTemplateEditorUrl',
 	OpenTemplatePart = 'openTemplatePart',
 	GetCloseButtonUrl = 'getCloseButtonUrl',
-	LogError = 'logError',
 	GetGutenboardingStatus = 'getGutenboardingStatus',
 	ToggleInlineHelpButton = 'toggleInlineHelpButton',
 	GetNavSidebarLabels = 'getNavSidebarLabels',
@@ -487,16 +486,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 				origin: window.location.origin,
 				siteSlug: this.props.siteSlug,
 			} );
-		}
-
-		// Pipes errors in the iFrame context to the Calypso error handler if it exists:
-		if ( EditorActions.LogError === action ) {
-			const { error } = payload;
-			if ( Array.isArray( error ) && error.length > 4 && window.onerror ) {
-				const errorObject = error[ 4 ];
-				error[ 4 ] = errorObject && JSON.parse( errorObject );
-				window.onerror( ...error );
-			}
 		}
 
 		if ( EditorActions.PostStatusChange === action ) {
