@@ -180,6 +180,7 @@ module.exports = {
 				'apps/editing-toolkit/**/*',
 				'apps/notifications/**/*',
 				'client/auth/**/*',
+				'client/boot/**/*',
 				'client/controller/**/*',
 				'client/incoming-redirect/**/*',
 				'client/mailing-lists/**/*',
