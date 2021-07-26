@@ -180,6 +180,7 @@ module.exports = {
 				'apps/editing-toolkit/**/*',
 				'client/auth/**/*',
 				'client/incoming-redirect/**/*',
+				'client/mailing-lists/**/*',
 				'client/my-sites/customer-home/**/*',
 				'client/sections-filter.js',
 				'client/sections-helper.js',
