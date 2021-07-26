@@ -39,7 +39,6 @@ function delete() {
 function get_existing_comment() {
 	prNumber="${1}"
 	watermark="${2}"
-	# `-watermark:apr@v1` is used to avod collisions with other script that use watermarks.
 	get "https://api.github.com/repos/Automattic/wp-calypso/issues/${prNumber}/comments?per_page=100" | jq ". | map(select(.body | contains(\"${watermark}\")))[0] | .id"
 }
 
@@ -74,6 +73,7 @@ if [[ "$operation" == "delete" ]]; then
 		echo "A watermark is required for deleting comments."
 		exit 1
 	fi
+	# `-watermark:apr@v1` is used to avod collisions with other script that use watermarks.
 	watermark="<!--${watermarkName}-watermark:apr@v1-->"
 	commentId=$(get_existing_comment "$prNumber" "$watermark")
 	if [[ -z "${commentId}" || "${commentId}" == "null" ]]; then
@@ -89,6 +89,7 @@ if [[ -z "$watermarkName" ]]; then
 	echo "Creating comment"
 	post "https://api.github.com/repos/Automattic/wp-calypso/issues/${prNumber}/comments" "{\"body\":${message}}" > /dev/null
 else
+	# `-watermark:apr@v1` is used to avod collisions with other script that use watermarks.
 	watermark="<!--${watermarkName}-watermark:apr@v1-->"
 	watermarkedMessage="${message/%\"/${watermark}\"}"
 	commentId=$(get_existing_comment "$prNumber" "$watermark")
