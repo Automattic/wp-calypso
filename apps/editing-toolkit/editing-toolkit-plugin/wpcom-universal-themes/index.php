@@ -12,7 +12,7 @@ namespace A8C\FSE;
 /**
  * This is the option name for enabling/disabling.
  */
-define( 'OPTION_NAME', 'is_fse_activated' );
+define( 'ACTIVATE_FSE_OPTION_NAME', 'is_fse_activated' );
 
 /**
  * Checks if Core's FSE is active via this plugin,
@@ -27,7 +27,7 @@ function is_core_fse_active() {
 	}
 
 	// Now we just check for our own option.
-	return (bool) get_option( OPTION_NAME );
+	return (bool) get_option( ACTIVATE_FSE_OPTION_NAME );
 }
 
 /**
@@ -48,7 +48,7 @@ function is_fse_theme() {
  * @return void
  */
 function activate_core_fse() {
-	update_option( OPTION_NAME, true );
+	update_option( ACTIVATE_FSE_OPTION_NAME, true );
 }
 
 /**
@@ -57,7 +57,7 @@ function activate_core_fse() {
  * @return void
  */
 function deactivate_core_fse() {
-	delete_option( OPTION_NAME );
+	delete_option( ACTIVATE_FSE_OPTION_NAME );
 }
 
 /**
@@ -230,7 +230,7 @@ function init_settings() {
 	);
 	register_setting(
 		'site-editor-toggle',
-		OPTION_NAME
+		ACTIVATE_FSE_OPTION_NAME
 	);
 }
 
@@ -240,7 +240,7 @@ function init_settings() {
  * @return void
  */
 function do_field() {
-	$value       = (bool) get_option( OPTION_NAME ) ? 1 : 0;
+	$value       = (bool) get_option( ACTIVATE_FSE_OPTION_NAME ) ? 1 : 0;
 	$for_sprintf = <<<HTML
 	<label for="%s">
 		<input type="checkbox" name="%s" id="%s" value="1" %s />
@@ -250,9 +250,9 @@ HTML;
 	// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 	printf(
 		$for_sprintf,
-		OPTION_NAME,
-		OPTION_NAME,
-		OPTION_NAME,
+		ACTIVATE_FSE_OPTION_NAME,
+		ACTIVATE_FSE_OPTION_NAME,
+		ACTIVATE_FSE_OPTION_NAME,
 		checked( 1, $value, false ),
 		esc_html__( 'Enable Site Editor', 'full-site-editing' )
 	);
