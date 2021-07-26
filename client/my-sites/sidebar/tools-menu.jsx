@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { compact, partial } from 'lodash';
+import { compact } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -144,9 +144,8 @@ export default connect(
 	( state, { siteId } ) => ( {
 		canManagePlugins: canCurrentUserManagePlugins( state ),
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-		canCurrentUser: partial( canCurrentUserStateSelector, state, siteId ),
+		canCurrentUser: ( capability ) => canCurrentUserStateSelector( state, siteId, capability ),
 		isJetpack: isJetpackSite( state, siteId ),
-		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
 		isSiteWPForTeams: isSiteWPForTeams( state, siteId ),

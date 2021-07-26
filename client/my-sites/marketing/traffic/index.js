@@ -25,7 +25,7 @@ import RelatedPosts from 'calypso/my-sites/site-settings/related-posts';
 import Sitemaps from 'calypso/my-sites/site-settings/sitemaps';
 import Shortlinks from 'calypso/my-sites/site-settings/shortlinks';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 

@@ -28,7 +28,7 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import EmptyContent from 'calypso/components/empty-content';
 import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import DomainToPlanNudge from 'calypso/blocks/domain-to-plan-nudge';

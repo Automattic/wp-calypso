@@ -17,7 +17,7 @@ import FollowersCount from 'calypso/blocks/followers-count';
 import isGoogleMyBusinessLocationConnectedSelector from 'calypso/state/selectors/is-google-my-business-location-connected';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
 import { getSiteOption } from 'calypso/state/sites/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { navItems, intervals as intervalConstants } from './constants';
 import config from '@automattic/calypso-config';
 
