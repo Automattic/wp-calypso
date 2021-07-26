@@ -2,23 +2,12 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import React from 'react';
-import { renderHook, act as actReactHooks } from '@testing-library/react-hooks';
-import { render, act as actReact, waitFor } from '@testing-library/react';
-
-/**
- * WordPress dependencies
- */
-import type { ExPlatClient, ExperimentAssignment } from '@automattic/explat-client';
 import { validExperimentAssignment } from '@automattic/explat-client/src/internal/test-common';
-
-/**
- * Internal dependencies
- */
+import { render, act as actReact, waitFor } from '@testing-library/react';
+import { renderHook, act as actReactHooks } from '@testing-library/react-hooks';
+import React from 'react';
 import createExPlatClientReactHelpers from '../index';
+import type { ExPlatClient, ExperimentAssignment } from '@automattic/explat-client';
 
 const createMockExPlatClient = ( isDevelopmentMode = false ): ExPlatClient => ( {
 	loadExperimentAssignment: jest.fn(),

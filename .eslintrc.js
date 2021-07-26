@@ -205,6 +205,7 @@ module.exports = {
 				'packages/data-stores/**/*',
 				'packages/domain-picker/**/*',
 				'packages/eslint-plugin-wpcalypso/**/*',
+				'packages/explat-client-react-helpers/**/*',
 				'packages/explat-client/**/*',
 				'packages/format-currency/**/*',
 				'packages/js-utils/**/*',
