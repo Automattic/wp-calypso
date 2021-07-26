@@ -37,7 +37,7 @@ import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selec
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 import {
 	domainManagementContactsPrivacy,

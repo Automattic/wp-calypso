@@ -18,7 +18,7 @@ import CommentList from './comment-list';
 import CommentTree from './comment-tree';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { preventWidows } from 'calypso/lib/formatting';
 import config, { isEnabled } from '@automattic/calypso-config';
 import { NEWEST_FIRST } from './constants';

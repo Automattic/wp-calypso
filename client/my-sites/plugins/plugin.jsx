@@ -31,7 +31,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { isJetpackSite, isRequestingSites } from 'calypso/state/sites/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';

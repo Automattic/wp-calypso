@@ -39,7 +39,7 @@ import {
 import { getSiteTitle } from 'calypso/state/sites/selectors';
 import Main from 'calypso/components/main';
 import JetpackImporter from 'calypso/my-sites/importer/jetpack-importer';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import EmptyContent from 'calypso/components/empty-content';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

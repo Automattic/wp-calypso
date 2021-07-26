@@ -12,7 +12,7 @@ import { includes } from 'lodash';
  */
 import accept from 'calypso/lib/accept';
 import AuthorSelector from 'calypso/blocks/author-selector';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { Card } from '@automattic/components';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';

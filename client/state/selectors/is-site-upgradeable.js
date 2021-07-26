@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 
 /**
  * Returns true if the site can be upgraded by the user, false if the

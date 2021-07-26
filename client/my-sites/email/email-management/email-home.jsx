@@ -11,7 +11,7 @@ import titleCase from 'to-title-case';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import DocumentHead from 'calypso/components/data/document-head';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import EmailHeader from 'calypso/my-sites/email/email-header';

@@ -14,7 +14,7 @@ import QueryMediaStorage from 'calypso/components/data/query-media-storage';
 import { getMediaStorage } from 'calypso/state/sites/media-storage/selectors';
 import { getSitePlanSlug, getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import {
 	FEATURE_UNLIMITED_STORAGE,
 	planHasFeature,

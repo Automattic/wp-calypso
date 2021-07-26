@@ -11,7 +11,7 @@
  * @param  {string}   capability Capability label
  * @returns {boolean}            Whether current user has capability
  */
-export default function canCurrentUser( state, siteId, capability ) {
+export function canCurrentUser( state, siteId, capability ) {
 	const capabilities = state.currentUser.capabilities[ siteId ];
 	if ( ! capabilities ) {
 		return null;

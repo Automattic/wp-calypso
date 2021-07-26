@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 
 describe( 'canCurrentUser()', () => {
 	test( 'should return null if the site is not known', () => {

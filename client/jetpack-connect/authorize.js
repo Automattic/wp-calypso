@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import AuthFormHeader from './auth-form-header';
 import { Button, Card } from '@automattic/components';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import config from '@automattic/calypso-config';
 import Disclaimer from './disclaimer';
 import FormLabel from 'calypso/components/forms/form-label';

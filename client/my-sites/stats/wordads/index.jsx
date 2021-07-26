@@ -32,7 +32,7 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import { canCurrentUserUseAds } from 'calypso/state/sites/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import PrivacyPolicyBanner from 'calypso/blocks/privacy-policy-banner';
 import StickyPanel from 'calypso/components/sticky-panel';
