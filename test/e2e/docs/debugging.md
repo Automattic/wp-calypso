@@ -63,8 +63,9 @@ DEBUG=mocha:* node_modules/.bin/mocha specs/wp-manage-domains-spec.js
 
 ## Jest and Playwright
 
-Our Playwright E2E tests run on Jest. Fortunately, Jest has fanstastic documentation on setting up debuggers, which can be found here: [https://jestjs.io/docs/troubleshooting](https://jestjs.io/docs/troubleshooting).  
+Our Playwright E2E tests run on Jest. Fortunately, Jest has fanstastic documentation on setting up debuggers, which can be found here: [https://jestjs.io/docs/troubleshooting](https://jestjs.io/docs/troubleshooting).
 
 A couple notes:
+
 - If using VSCode, setting up the debugger using the attaching method is often easier (as opposed to directly launching Jest in the `launch.json`). The attach configuration gives you more control over which script you want to run.
 - The E2E tests use the Jest binary that is installed at the root level of the repo. Put all together, if you were currently in the `e2e` directory, the command to run a single spec would look like `node --inspect-brk ../../node_modules/.bin/jest --runInBand specs/specs-playwright/wp-auth__canary-spec.ts`
