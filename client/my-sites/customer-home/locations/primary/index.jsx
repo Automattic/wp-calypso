@@ -84,7 +84,7 @@ const Primary = ( { cards, trackCards, queryArguments } ) => {
 	}
 
 	return (
-		<DotPager className="primary__customer-home-location-content" buttonText="true">
+		<DotPager className="primary__customer-home-location-content" showControlLabels="true">
 			{ cards.map(
 				( card, index ) =>
 					cardComponents[ card ] &&
