@@ -12,7 +12,7 @@ namespace A8C\FSE;
 /**
  * This is the option name for enabling/disabling.
  */
-define( 'ACTIVATE_FSE_OPTION_NAME', 'is_fse_activated' );
+define( 'ACTIVATE_FSE_OPTION_NAME', 'wpcom_is_fse_activated' );
 
 /**
  * Checks if Core's FSE is active via this plugin,
