@@ -69,13 +69,13 @@ if [[ -z "${prNumber}" ]]; then
 	exit 1
 fi
 
-if [[ ${operation} == "delete" ]]; then
+if [[ "$operation" == "delete" ]]; then
 	if [[ -z "$watermarkName" ]]; then
 		echo "A watermark is required for deleting comments."
 		exit 1
 	fi
 	watermark="<!--${watermarkName}-watermark:apr@v1-->"
-	commentId=$(get_existing_comment $prNumber $watermark)
+	commentId=$(get_existing_comment "$prNumber" "$watermark")
 	if [[ -z "${commentId}" || "${commentId}" == "null" ]]; then
 		echo "No comment found to delete."
 		exit 1
@@ -91,7 +91,7 @@ if [[ -z "$watermarkName" ]]; then
 else
 	watermark="<!--${watermarkName}-watermark:apr@v1-->"
 	watermarkedMessage="${message/%\"/${watermark}\"}"
-	commentId=$(get_existing_comment $prNumber $watermark)
+	commentId=$(get_existing_comment "$prNumber" "$watermark")
 	if [[ -z "${commentId}" || "${commentId}" == "null" ]]; then
 		echo "Creating comment"
 		post "https://api.github.com/repos/Automattic/wp-calypso/issues/${prNumber}/comments" "{\"body\":${watermarkedMessage}}" > /dev/null
