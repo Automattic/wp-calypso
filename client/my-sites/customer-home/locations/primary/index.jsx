@@ -43,7 +43,6 @@ import VerifyEmail from 'calypso/my-sites/customer-home/cards/tasks/verify-email
 import Webinars from 'calypso/my-sites/customer-home/cards/tasks/webinars';
 import WPCourses from 'calypso/my-sites/customer-home/cards/tasks/wp-courses';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 
 const cardComponents = {
 	[ NOTICE_CELEBRATE_SITE_CREATION ]: CelebrateSiteCreation,
@@ -68,7 +67,7 @@ const cardComponents = {
 	[ TASK_VERIFY_EMAIL ]: VerifyEmail,
 };
 
-const Primary = ( { cards, trackCards, queryArguments } ) => {
+const Primary = ( { cards, trackCards } ) => {
 	useEffect( () => {
 		if ( cards && cards.length ) {
 			trackCards( cards );
@@ -77,10 +76,6 @@ const Primary = ( { cards, trackCards, queryArguments } ) => {
 
 	if ( ! cards || ! cards.length ) {
 		return null;
-	}
-
-	if ( queryArguments.dev ) {
-		cards = [ ...cards, TASK_FIND_DOMAIN, TASK_EARN_FEATURES ];
 	}
 
 	return (
@@ -109,10 +104,6 @@ const trackCardImpressions = ( cards ) => {
 	return composeAnalytics( ...analyticsEvents );
 };
 
-const mapState = ( state ) => ( {
-	queryArguments: getCurrentQueryArguments( state ),
-} );
-
 export default withPerformanceTrackerStop(
-	connect( mapState, { trackCards: trackCardImpressions } )( Primary )
+	connect( null, { trackCards: trackCardImpressions } )( Primary )
 );
