@@ -801,8 +801,8 @@ class ManagePurchase extends Component {
 					! isJetpackTemporarySite &&
 					this.renderUpgradeNavItem() }
 				{ isProductOwner && this.renderEditPaymentMethodNavItem() }
-				{ isProductOwner && this.renderCancelPurchaseNavItem() }
-				{ isProductOwner && this.renderRemovePurchaseNavItem() }
+				{ isProductOwner && ! isJetpackTemporarySite && this.renderCancelPurchaseNavItem() }
+				{ isProductOwner && ! isJetpackTemporarySite && this.renderRemovePurchaseNavItem() }
 			</Fragment>
 		);
 	}
