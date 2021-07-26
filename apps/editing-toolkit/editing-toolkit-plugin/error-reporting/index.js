@@ -11,7 +11,6 @@ const headErrors = window._jsErr || [];
 const headErrorHandler = window._headJsErrorHandler;
 
 function activateSentry() {
-	console.debug( '[error-reporting] Activating Sentry!' );
 	Sentry.init( {
 		dsn: 'https://658ae291b00242148af6b76494d4a49a@o248881.ingest.sentry.io/5876245',
 		integrations: [ new Integrations.BrowserTracing() ],
@@ -29,7 +28,6 @@ function activateSentry() {
 
 // Activate the home-brew error-reporting
 function activateHomebrewErrorReporting() {
-	console.debug( '[error-reporting] Activating homebrew error-reporting!' );
 	const reportError = ( { error } ) => {
 		// Sanitized error event objects do not include a nested error attribute. In
 		// that case, we return early to prevent a needless TypeError when defining
