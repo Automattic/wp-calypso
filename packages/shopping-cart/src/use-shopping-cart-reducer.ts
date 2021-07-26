@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { useReducer, useEffect, Dispatch } from 'react';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import { useReducer, useEffect, Dispatch, useCallback, useRef } from 'react';
 import {
 	removeItemFromResponseCart,
 	addItemsToResponseCart,
@@ -18,20 +11,33 @@ import {
 	doesCartLocationDifferFromResponseCartLocation,
 	doesResponseCartContainProductMatching,
 } from './cart-functions';
-import type { ResponseCart, ShoppingCartState, ShoppingCartAction, CouponStatus } from './types';
 import { getEmptyResponseCart } from './empty-carts';
+import type {
+	ResponseCart,
+	ShoppingCartState,
+	ShoppingCartAction,
+	CouponStatus,
+	CacheStatus,
+	ShoppingCartMiddleware,
+} from './types';
 
 const debug = debugFactory( 'shopping-cart:use-shopping-cart-reducer' );
 const emptyResponseCart = getEmptyResponseCart();
 
-export default function useShoppingCartReducer(): [
-	ShoppingCartState,
-	Dispatch< ShoppingCartAction >
-] {
+export default function useShoppingCartReducer(
+	middleware: ShoppingCartMiddleware[]
+): [ ShoppingCartState, Dispatch< ShoppingCartAction > ] {
 	const [ hookState, hookDispatch ] = useReducer(
 		shoppingCartReducer,
 		getInitialShoppingCartState()
 	);
+
+	// We need a copy of the state so that dispatchWithMiddleware does not need
+	// hookState as a dependency. Otherwise, dispatchWithMiddleware will change
+	// on every render, which can cause problems for other hooks that depend on
+	// it.
+	const cachedState = useRef< ShoppingCartState >( hookState );
+	cachedState.current = hookState;
 
 	useEffect( () => {
 		if ( hookState.queuedActions.length > 0 && hookState.cacheStatus === 'valid' ) {
@@ -43,7 +49,40 @@ export default function useShoppingCartReducer(): [
 			debug( 'cart is loaded; queued actions complete' );
 		}
 	}, [ hookState.queuedActions, hookState.cacheStatus ] );
-	return [ hookState, hookDispatch ];
+
+	const dispatchWithMiddleware = useCallback(
+		( action: ShoppingCartAction ) => {
+			// We want to defer the middleware actions just like the dispatcher is deferred.
+			setTimeout( () => {
+				middleware.forEach( ( middlewareFn ) =>
+					middlewareFn( action, cachedState.current, hookDispatch )
+				);
+			} );
+			hookDispatch( action );
+		},
+		[ middleware ]
+	);
+
+	return [ hookState, dispatchWithMiddleware ];
+}
+
+const alwaysAllowedActions = [
+	'RECEIVE_INITIAL_RESPONSE_CART',
+	'RECEIVE_UPDATED_RESPONSE_CART',
+	'FETCH_INITIAL_RESPONSE_CART',
+	'RAISE_ERROR',
+];
+
+const cacheStatusesForQueueing: CacheStatus[] = [ 'fresh', 'pending', 'fresh-pending' ];
+
+function shouldQueueReducerEvent( cacheStatus: CacheStatus, action: ShoppingCartAction ): boolean {
+	if ( alwaysAllowedActions.includes( action.type ) ) {
+		return false;
+	}
+	if ( cacheStatusesForQueueing.includes( cacheStatus ) ) {
+		return true;
+	}
+	return false;
 }
 
 function shoppingCartReducer(
@@ -56,15 +95,7 @@ function shoppingCartReducer(
 	// yet loaded and so we cannot make changes to it yet. We therefore will
 	// queue any action that comes through during that time except for
 	// 'RECEIVE_INITIAL_RESPONSE_CART' or 'RAISE_ERROR'.
-	if (
-		( state.cacheStatus === 'fresh' ||
-			state.cacheStatus === 'pending' ||
-			state.cacheStatus === 'fresh-pending' ) &&
-		action.type !== 'RECEIVE_INITIAL_RESPONSE_CART' &&
-		action.type !== 'RECEIVE_UPDATED_RESPONSE_CART' &&
-		action.type !== 'FETCH_INITIAL_RESPONSE_CART' &&
-		action.type !== 'RAISE_ERROR'
-	) {
+	if ( shouldQueueReducerEvent( state.cacheStatus, action ) ) {
 		if ( action.type === 'CART_RELOAD' ) {
 			debug( 'cart has not yet loaded; ignoring reload action', action );
 			return state;
@@ -203,11 +234,21 @@ function shoppingCartReducer(
 		case 'RAISE_ERROR':
 			switch ( action.error ) {
 				case 'GET_SERVER_CART_ERROR':
+					return {
+						...state,
+						cacheStatus: 'error',
+						loadingError:
+							action.message ||
+							'Error while fetching the shopping cart. Please check your network connection and try again.',
+						loadingErrorType: action.error,
+					};
 				case 'SET_SERVER_CART_ERROR':
 					return {
 						...state,
 						cacheStatus: 'error',
-						loadingError: action.message,
+						loadingError:
+							action.message ||
+							'Error while updating the shopping cart endpoint. Please check your network connection and try again.',
 						loadingErrorType: action.error,
 					};
 				default:

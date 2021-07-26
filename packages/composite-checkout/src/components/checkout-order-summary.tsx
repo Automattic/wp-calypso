@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { useI18n } from '@wordpress/react-i18n';
-
-/**
- * Internal dependencies
- */
-import { CheckoutSummaryCard, useLineItems, useLineItemsOfType, useTotal } from '../public-api';
+import React from 'react';
 import styled from '../lib/styled';
+import { CheckoutSummaryCard, useLineItems, useLineItemsOfType, useTotal } from '../public-api';
 
 export default function CheckoutOrderSummaryStep() {
 	const [ items ] = useLineItems();

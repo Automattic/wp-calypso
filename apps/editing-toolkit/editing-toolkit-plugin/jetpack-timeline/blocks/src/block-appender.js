@@ -2,15 +2,7 @@
 // disabled CSS class rule due to existing code already
 // that users the non-conformant classnames
 
-/**
- * External dependencies
- */
-
 import { __ } from '@wordpress/i18n';
-
-/**
- * WordPress dependencies
- */
 
 export const BlockAppender = ( props ) => {
 	const { onClick } = props;

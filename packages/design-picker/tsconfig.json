@@ -1,34 +1,10 @@
 {
+	"extends": "@automattic/calypso-build/typescript/ts-package.json",
 	"compilerOptions": {
-		"target": "ES5",
-		"lib": [ "DOM", "ES2015" ],
-
-		"baseUrl": ".",
-		"module": "esnext",
-		"allowJs": false,
-		"jsx": "react",
-		"declaration": true,
 		"declarationDir": "dist/types",
 		"outDir": "dist/esm",
 		"rootDir": "src",
-
-		"strict": true,
-		"noUnusedLocals": true,
-		"noUnusedParameters": true,
-		"noImplicitReturns": true,
-		"noFallthroughCasesInSwitch": true,
-
-		"moduleResolution": "node",
-		"esModuleInterop": true,
-		"resolveJsonModule": true,
-		"forceConsistentCasingInFileNames": true,
-
-		"typeRoots": [ "../../node_modules/@types" ],
-		"types": [],
-
-		"importsNotUsedAsValues": "error",
-		"importHelpers": true,
-		"composite": true
+		"types": []
 	},
 	"include": [ "src", "src/*.json" ],
 	"exclude": [ "**/__tests__/*", "**/__mocks__/*" ],

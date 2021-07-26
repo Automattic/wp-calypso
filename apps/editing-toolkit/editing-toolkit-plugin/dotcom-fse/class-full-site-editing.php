@@ -61,6 +61,7 @@ class Full_Site_Editing {
 		add_action( 'pre_delete_term', array( $this, 'restrict_template_taxonomy_deletion' ), 10, 2 );
 		add_action( 'transition_post_status', array( $this, 'restrict_template_drafting' ), 10, 3 );
 		add_action( 'admin_menu', array( $this, 'remove_wp_admin_menu_items' ) );
+		add_filter( 'block_editor_rest_api_preload_paths', array( $this, 'preload_template_parts' ), 10, 2 );
 
 		$this->theme_slug           = normalize_theme_slug( get_stylesheet() );
 		$this->wp_template_inserter = new WP_Template_Inserter( $this->theme_slug );
@@ -624,5 +625,21 @@ class Full_Site_Editing {
 				'description'  => __( 'WordPress Footer Credit', 'full-site-editing' ),
 			)
 		);
+	}
+
+	/**
+	 * Preload the path used to request a template part post when editing it in the block editor.
+	 *
+	 * @param array                   $paths   Preload paths.
+	 * @param WP_Block_Editor_Context $context Current editor context.
+	 * @return $paths                          Filtered preload paths.
+	 */
+	public function preload_template_parts( $paths, $context ) {
+		$post = $context->post;
+
+		if ( $post && 'wp_template_part' === $post->post_type ) {
+			$paths[] = sprintf( '/wp/v2/template_parts?wp_id=%s&context=edit', $post->ID );
+		}
+		return $paths;
 	}
 }

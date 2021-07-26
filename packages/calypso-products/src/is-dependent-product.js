@@ -1,11 +1,3 @@
-/**
- * Internal dependencies
- */
-import { formatProduct } from './format-product';
-import { getDomain } from './get-domain';
-import { isDomainMapping } from './is-domain-mapping';
-import { isDomainRegistration } from './is-domain-registration';
-import { isPlan } from './is-plan';
 import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
@@ -15,6 +7,11 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
 } from './constants';
+import { formatProduct } from './format-product';
+import { getDomain } from './get-domain';
+import { isDomainMapping } from './is-domain-mapping';
+import { isDomainRegistration } from './is-domain-registration';
+import { isPlan } from './is-plan';
 
 const productDependencies = {
 	domain: {

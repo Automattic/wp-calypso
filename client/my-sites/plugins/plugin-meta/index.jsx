@@ -610,7 +610,6 @@ export class PluginMeta extends Component {
 							this.props.selectedSite && this.props.selectedSite.options.software_version
 						}
 						hasUpdate={ this.getAvailableNewVersions().length > 0 }
-						calypsoify={ this.props.calypsoify }
 					/>
 				) }
 

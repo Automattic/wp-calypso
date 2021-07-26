@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { PLAN_ANNUAL_PERIOD } from './constants';
 import { formatProduct } from './format-product';
 

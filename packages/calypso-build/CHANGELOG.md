@@ -2,6 +2,9 @@
 
 ## trunk
 
+- Breaking: Changed `webpack/file-loader` to internally use the new `asset/resource` modules (the former is deprecated in
+  webpack 5). The semantics of the options have changed, now the final asset URL is `${publichPath}${outputPath}/${fileName}`,
+  before it didn't include the `outputPath` part.
 - Switched from `node-sass` to `sass` (Dart Sass) for processing Sass files.
   - Removed dependency `node-sass`
   - Added dependency `sass ^1.32.13`

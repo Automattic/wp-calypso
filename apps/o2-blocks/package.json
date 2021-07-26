@@ -34,7 +34,7 @@
 		"@wordpress/hooks": "^2.12.3",
 		"@wordpress/i18n": "^3.20.0",
 		"@wordpress/primitives": "^1.12.3",
-		"classnames": "^2.2.6",
+		"classnames": "^2.3.1",
 		"lodash": "^4.17.21",
 		"moment": "^2.26.0",
 		"new-github-issue-url": "^0.2.1",

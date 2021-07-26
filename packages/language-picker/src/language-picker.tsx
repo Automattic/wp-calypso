@@ -1,26 +1,13 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
-import type { ReactNode } from 'react';
-import { useI18n } from '@wordpress/react-i18n';
+
 import Search from '@automattic/search';
-
-/**
- * WordPress dependencies
- */
 import { Button, CustomSelectControl, Flex, FlexBlock, FlexItem } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import type { Language, LanguageGroup } from './Language';
+import { useI18n } from '@wordpress/react-i18n';
+import React, { useState } from 'react';
 import { getSearchedLanguages, LocalizedLanguageNames } from './search';
+import type { Language, LanguageGroup } from './Language';
+import type { ReactNode } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 type Props< TLanguage extends Language > = {

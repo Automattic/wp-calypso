@@ -25,16 +25,7 @@ class RegistrantVerificationPage extends Component {
 		token: PropTypes.string.isRequired,
 	};
 
-	state = {
-		isLoading: true,
-		success: false,
-		error: false,
-	};
-
-	constructor( props ) {
-		super( props );
-		this.state = this.getLoadingState();
-	}
+	state = this.getLoadingState();
 
 	UNSAFE_componentWillMount() {
 		const { domain, email, token } = this.props;
@@ -48,7 +39,7 @@ class RegistrantVerificationPage extends Component {
 		);
 	}
 
-	getLoadingState = () => {
+	getLoadingState() {
 		const { translate } = this.props;
 		return {
 			isLoading: true,
@@ -58,22 +49,25 @@ class RegistrantVerificationPage extends Component {
 			actionCallback: null,
 			footer: 'Loading…',
 		};
-	};
+	}
 
 	getVerificationSuccessState = ( domains ) => {
 		const { translate } = this.props;
 
-		const verifiedDomains = domains.join( ', ' );
+		const DomainLinks = domains.map( ( domain, index ) => [
+			index > 0 && ', ',
+			<a key={ domain } href={ `https://${ domain }?logmein=1` }>
+				{ domain }
+			</a>,
+		] );
 
 		return {
 			title: translate( 'Success!' ),
 			message: translate(
-				'Thank your for verifying your contact information for:{{br /}}{{strong}}%(domain)s{{/strong}}.',
+				'Thank your for verifying your contact information for:{{br /}}{{strong}}{{domainLinks /}}{{/strong}}.',
 				{
-					args: {
-						domain: verifiedDomains,
-					},
 					components: {
+						domainLinks: DomainLinks,
 						strong: <strong />,
 						br: <br />,
 					},
@@ -139,7 +133,7 @@ class RegistrantVerificationPage extends Component {
 			return {
 				title: translate( 'Already verified.' ),
 				message: translate(
-					"You've already verified {{strong}}%(email)s{{/strong}} for:{{br /}}{{strong}}%(domain)s{{/strong}}.",
+					"You've already verified {{strong}}%(email)s{{/strong}} for:{{br /}}{{strong}}{{a}}%(domain)s{{/a}}{{/strong}}.",
 					{
 						args: {
 							email: email,
@@ -148,6 +142,7 @@ class RegistrantVerificationPage extends Component {
 						components: {
 							strong: <strong />,
 							br: <br />,
+							a: <a href={ `https://${ domain }?logmein=1` } />,
 						},
 					}
 				),

@@ -30,6 +30,11 @@
 		background-color: var( --color-squarespace );
 	}
 
+	&.substack-logo {
+		padding: 8px;
+		background-color: var( --color-substack );
+	}
+
 	@include breakpoint-deprecated( '>960px' ) {
 		width: 56px;
 		height: 56px;

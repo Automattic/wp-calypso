@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
 import config from 'config';
-
-/**
- * Internal dependencies
- */
-import * as driverManager from '../../lib/driver-manager.js';
-import * as dataHelper from '../../lib/data-helper.js';
-
-import LoginFlow from '../../lib/flows/login-flow.js';
-import DomainsPage from '../../lib/pages/domains-page.js';
-import FindADomainComponent from '../../lib/components/find-a-domain-component.js';
-import MyOwnDomainPage from '../../lib/pages/domain-my-own-page';
 import EnterADomainComponent from '../../lib/components/enter-a-domain-component';
+import FindADomainComponent from '../../lib/components/find-a-domain-component.js';
+import * as dataHelper from '../../lib/data-helper.js';
+import * as driverManager from '../../lib/driver-manager.js';
+import LoginFlow from '../../lib/flows/login-flow.js';
+import MyOwnDomainPage from '../../lib/pages/domain-my-own-page';
+import DomainsPage from '../../lib/pages/domains-page.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();

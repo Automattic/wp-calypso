@@ -76,6 +76,8 @@ const customMiddleware = {
 };
 
 const render = () => {
+	document.body.classList.add( 'font-smoothing-antialiased' );
+
 	ReactDOM.render(
 		React.createElement( AuthWrapper( Notifications ), {
 			customEnhancer,
@@ -85,7 +87,6 @@ const render = () => {
 			locale,
 			receiveMessage: sendMessage,
 			redirectPath: '/',
-			isStandalone: true,
 		} ),
 		document.getElementsByClassName( 'wpnc__main' )[ 0 ]
 	);

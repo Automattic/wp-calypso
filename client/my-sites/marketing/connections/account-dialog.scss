@@ -38,9 +38,9 @@
 	max-height: 300px;
 	max-height: 40vh;
 	overflow-y: auto;
-	margin: 0 0 1em 1em;
+	margin: 0 0 1em calc( 0.5rem + 2px );
 }
 
 .account-dialog.single-account .account-dialog__accounts {
-	margin: 0 0 1em 1em;
+	margin: 0 0 1em;
 }

@@ -1,8 +1,5 @@
 // This code combines the Mocha spec and junit outputs with a dynamically allocated directory for junit output
 
-/**
- * Module dependencies.
- */
 const mocha = require( 'mocha' );
 const MochaJUnitReporter = require( 'mocha-junit-reporter' );
 const Spec = mocha.reporters.Spec;

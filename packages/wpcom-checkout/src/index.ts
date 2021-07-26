@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import useDisplayCartMessages from './use-display-cart-messages';
 
 export * from './transformations';
@@ -15,6 +12,8 @@ export { default as styled } from './styled';
 export * from './payment-methods/bancontact';
 export * from './payment-methods/giropay';
 export * from './payment-methods/p24';
+export * from './payment-methods/eps';
 export * from './use-is-web-payment-available';
 export * from './payment-methods/google-pay';
+export * from './payment-methods/existing-credit-card';
 export { isWpComProductRenewal } from './is-wpcom-product-renewal';

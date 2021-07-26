@@ -1,10 +1,3 @@
-/**
- * External dependencies
- */
-
-/**
- * WordPress dependencies
- */
 import { createBlock } from '@wordpress/blocks';
 
 const HOMEPAGE_POSTS_BLOCK_TYPES = [ 'a8c/blog-posts', 'newspack-blocks/homepage-articles' ];

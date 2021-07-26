@@ -157,6 +157,7 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
       />
     </div>
     <RegionAddressFieldsets
+      arePostalCodesSupported={false}
       countryCode="IT"
       getFieldProps={[Function]}
       hasCountryStates={false}

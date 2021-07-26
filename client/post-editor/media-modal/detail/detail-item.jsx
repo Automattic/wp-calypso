@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { flowRight, includes } from 'lodash';
+import { flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { getUrlParts } from '@automattic/calypso-url';
 import Gridicon from 'calypso/components/gridicon';
@@ -27,7 +27,7 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import { getMimePrefix, isItemBeingUploaded, isVideoPressItem } from 'calypso/lib/media/utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteOption, isJetpackModuleActive, isJetpackSite } from 'calypso/state/sites/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 
@@ -115,7 +115,7 @@ export class EditorMediaModalDetailItem extends Component {
 
 		const mimePrefix = getMimePrefix( item );
 
-		if ( ! includes( [ 'image', 'video' ], mimePrefix ) ) {
+		if ( ! [ 'image', 'video' ].includes( mimePrefix ) ) {
 			return null;
 		}
 

@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import i18n, { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { isEnabled } from '@automattic/calypso-config';
+import i18n, { translate } from 'i18n-calypso';
+import React from 'react';
 import {
 	FEATURE_BACKUP_DAILY_V2,
 	FEATURE_13GB_STORAGE,
@@ -158,6 +151,10 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_SECURITY_REALTIME,
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+	PLAN_JETPACK_SECURITY,
+	PLAN_JETPACK_SECURITY_MONTHLY,
+	PLAN_JETPACK_SECURITY_PRO,
+	PLAN_JETPACK_SECURITY_PRO_MONTHLY,
 	PLAN_P2_FREE,
 	PLAN_P2_PLUS,
 	PLAN_PERSONAL,
@@ -180,6 +177,8 @@ import {
 	TYPE_PREMIUM,
 	TYPE_SECURITY_DAILY,
 	TYPE_SECURITY_REALTIME,
+	TYPE_SECURITY,
+	TYPE_SECURITY_PRO,
 } from './constants';
 
 function compact( elements ) {
@@ -1367,6 +1366,30 @@ export const PLANS_LIST = {
 		getStoreSlug: () => PLAN_JETPACK_COMPLETE_MONTHLY,
 		getPathSlug: () => 'complete-monthly',
 		getProductId: () => 2015,
+	},
+
+	[ PLAN_JETPACK_SECURITY ]: {
+		group: GROUP_JETPACK,
+		type: TYPE_SECURITY,
+		...getAnnualTimeframe(),
+	},
+
+	[ PLAN_JETPACK_SECURITY_MONTHLY ]: {
+		group: GROUP_JETPACK,
+		type: TYPE_SECURITY,
+		...getMonthlyTimeframe(),
+	},
+
+	[ PLAN_JETPACK_SECURITY_PRO ]: {
+		group: GROUP_JETPACK,
+		type: TYPE_SECURITY_PRO,
+		...getAnnualTimeframe(),
+	},
+
+	[ PLAN_JETPACK_SECURITY_PRO_MONTHLY ]: {
+		group: GROUP_JETPACK,
+		type: TYPE_SECURITY_PRO,
+		...getMonthlyTimeframe(),
 	},
 
 	[ PLAN_P2_PLUS ]: {

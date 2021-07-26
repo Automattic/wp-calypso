@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import { useCallback, useMemo, useState } from 'react';
-import debugFactory from 'debug';
 import { useI18n } from '@wordpress/react-i18n';
-
-/**
- * Internal dependencies
- */
+import debugFactory from 'debug';
+import { useCallback, useMemo, useState } from 'react';
 import {
 	usePaymentProcessors,
 	useTransactionStatus,

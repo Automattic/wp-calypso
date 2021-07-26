@@ -11,7 +11,7 @@ import { Button } from '@automattic/components';
  */
 import { addQueryArgs } from '@wordpress/url';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackDisconnectedWPCOM from 'calypso/components/jetpack/jetpack-disconnected-wpcom';
@@ -90,6 +90,7 @@ const ScanUpsellBody: FunctionComponent = () => {
 		( state ) => siteId && canCurrentUser( state, siteId, 'manage_options' )
 	);
 	const translate = useTranslate();
+	const postCheckoutUrl = window.location.pathname + window.location.search;
 
 	return (
 		<PromoCard
@@ -118,7 +119,7 @@ const ScanUpsellBody: FunctionComponent = () => {
 						text: translate( 'Get daily scanning' ),
 						action: {
 							url: addQueryArgs( `/checkout/${ siteSlug }/jetpack_scan`, {
-								redirect_to: window.location.href,
+								redirect_to: postCheckoutUrl,
 							} ),
 							onClick: onUpgradeClick,
 							selfTarget: true,

@@ -1,32 +1,18 @@
-/**
- * External dependencies
- */
 import { Card } from '@automattic/components';
-import React from 'react';
 import { useTranslate } from 'i18n-calypso';
+import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import happinessIllustration from 'calypso/assets/images/customer-home/happiness.png';
 import CardHeading from 'calypso/components/card-heading';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { composeAnalytics, recordTracksEvent, bumpStat } from 'calypso/state/analytics/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
+import { getSiteOption } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
-
-/**
- * Image dependencies
- */
-import happinessIllustration from 'calypso/assets/images/customer-home/happiness.png';
 
 const Support = ( { trackContactAction, trackDocsAction } ) => {
 	const translate = useTranslate();

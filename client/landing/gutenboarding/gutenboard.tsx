@@ -8,7 +8,6 @@ import { createBlock, registerBlockType } from '@wordpress/blocks';
 import '@wordpress/format-library';
 import { useI18n } from '@wordpress/react-i18n';
 import { FontPair, getFontTitle } from '@automattic/design-picker';
-import { useSelect } from '@wordpress/data';
 
 // Uncomment and remove the redundant sass import from `./style.css` when a release after @wordpress/components@8.5.0 is published.
 // See https://github.com/WordPress/gutenberg/pull/19535
@@ -28,8 +27,6 @@ import useOnLogin from './hooks/use-on-login';
 import useSiteTitle from './hooks/use-site-title';
 import useTrackOnboardingStart from './hooks/use-track-onboarding-start';
 import { useFontPairings } from './fonts';
-import { useBodyClass } from './hooks/use-body-class';
-import { READER_STORE } from './stores/reader';
 
 import './style.scss';
 
@@ -46,8 +43,10 @@ const Gutenboard: React.FunctionComponent = () => {
 	const { showSignupDialog, onSignupDialogClose } = useSignup();
 	const effectiveFontPairings = useFontPairings();
 
-	const isA8cTeamMember = useSelect( ( select ) => select( READER_STORE ).isA8cTeamMember() );
-	useBodyClass( 'font-smoothing-antialiased', isA8cTeamMember );
+	// Enable anti-aliasing font smoothing on Gutenboarding.
+	React.useEffect( () => {
+		window.document.body.classList.add( 'font-smoothing-antialiased' );
+	}, [] );
 
 	// TODO: Explore alternatives for loading fonts and optimizations
 	// TODO: Don't load like this

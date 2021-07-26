@@ -5,13 +5,15 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
+import titleCase from 'to-title-case';
 
 /**
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import DocumentHead from 'calypso/components/data/document-head';
+import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import EmailListActive from 'calypso/my-sites/email/email-management/home/email-list-active';
 import EmailListInactive from 'calypso/my-sites/email/email-management/home/email-list-inactive';
@@ -60,6 +62,7 @@ class EmailManagementHome extends React.Component {
 			selectedSite,
 			selectedDomainName,
 			currentRoute,
+			selectedSiteId,
 		} = this.props;
 
 		if ( ! hasSiteDomainsLoaded || ! hasSitesLoaded || ! selectedSite ) {
@@ -79,8 +82,11 @@ class EmailManagementHome extends React.Component {
 			} );
 
 			if ( ! domainHasEmail( selectedDomain ) ) {
-				return this.renderContentWithHeader(
-					<EmailProvidersComparison selectedDomainName={ selectedDomainName } />
+				return (
+					<EmailProvidersComparison
+						selectedDomainName={ selectedDomainName }
+						backPath={ domainManagementList( selectedSite.slug, null ) }
+					/>
 				);
 			}
 
@@ -99,8 +105,11 @@ class EmailManagementHome extends React.Component {
 		const domainsWithNoEmail = nonWpcomDomains.filter( ( domain ) => ! domainHasEmail( domain ) );
 
 		if ( domainsWithEmail.length < 1 && domainsWithNoEmail.length === 1 ) {
-			return this.renderContentWithHeader(
-				<EmailProvidersComparison selectedDomainName={ domainsWithNoEmail[ 0 ].name } />
+			return (
+				<EmailProvidersComparison
+					selectedDomainName={ domainsWithNoEmail[ 0 ].name }
+					skipHeaderElement={ true }
+				/>
 			);
 		}
 
@@ -110,6 +119,7 @@ class EmailManagementHome extends React.Component {
 					domains={ domainsWithEmail }
 					selectedSiteSlug={ selectedSite.slug }
 					currentRoute={ currentRoute }
+					selectedSiteId={ selectedSiteId }
 				/>
 				<EmailListInactive
 					domains={ domainsWithNoEmail }
@@ -149,7 +159,7 @@ class EmailManagementHome extends React.Component {
 			<Main wideLayout>
 				{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
-				<DocumentHead title={ translate( 'Emails' ) } />
+				<DocumentHead title={ titleCase( translate( 'Emails' ) ) } />
 
 				<SidebarNavigation />
 

@@ -26,10 +26,14 @@ jest.mock( 'calypso/state/sites/selectors' );
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
+import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 
 jest.mock( 'page', () => ( {
 	redirect: jest.fn(),
 } ) );
+
+const siteId = 13579;
 
 const domainProduct = {
 	product_name: '.cash Domain',
@@ -111,6 +115,91 @@ const planWithoutDomain = {
 	item_subtotal_display: 'R$144',
 };
 
+const planWithoutDomainMonthly = {
+	product_name: 'WordPress.com Personal Monthly',
+	product_slug: 'personal-bundle-monthly',
+	currency: 'BRL',
+	extra: {
+		context: 'signup',
+	},
+	free_trial: false,
+	meta: '',
+	product_id: 1019,
+	volume: 1,
+	item_original_cost_integer: 14400,
+	item_original_cost_display: 'R$144',
+	item_subtotal_integer: 14400,
+	item_subtotal_display: 'R$144',
+};
+
+const planWithoutDomainBiannual = {
+	product_name: 'WordPress.com Personal 2 Year',
+	product_slug: 'personal-bundle-2y',
+	currency: 'BRL',
+	extra: {
+		context: 'signup',
+	},
+	free_trial: false,
+	meta: '',
+	product_id: 1029,
+	volume: 1,
+	item_original_cost_integer: 14400,
+	item_original_cost_display: 'R$144',
+	item_subtotal_integer: 14400,
+	item_subtotal_display: 'R$144',
+};
+
+const planLevel2 = {
+	product_name: 'WordPress.com Business',
+	product_slug: 'business-bundle',
+	currency: 'BRL',
+	extra: {
+		context: 'signup',
+	},
+	free_trial: false,
+	meta: '',
+	product_id: 1008,
+	volume: 1,
+	item_original_cost_integer: 14400,
+	item_original_cost_display: 'R$144',
+	item_subtotal_integer: 14400,
+	item_subtotal_display: 'R$144',
+};
+
+const planLevel2Monthly = {
+	product_name: 'WordPress.com Business Monthly',
+	product_slug: 'business-bundle-monthly',
+	currency: 'BRL',
+	extra: {
+		context: 'signup',
+	},
+	free_trial: false,
+	meta: '',
+	product_id: 1018,
+	volume: 1,
+	item_original_cost_integer: 14400,
+	item_original_cost_display: 'R$144',
+	item_subtotal_integer: 14400,
+	item_subtotal_display: 'R$144',
+};
+
+const planLevel2Biannual = {
+	product_name: 'WordPress.com Business 2 Year',
+	product_slug: 'business-bundle-2y',
+	currency: 'BRL',
+	extra: {
+		context: 'signup',
+	},
+	free_trial: false,
+	meta: '',
+	product_id: 1028,
+	volume: 1,
+	item_original_cost_integer: 14400,
+	item_original_cost_display: 'R$144',
+	item_subtotal_integer: 14400,
+	item_subtotal_display: 'R$144',
+};
+
 const fetchStripeConfiguration = async () => {
 	return {
 		public_key: 'abc123',
@@ -124,6 +213,10 @@ describe( 'CompositeCheckout', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		getPlansBySiteId.mockImplementation( () => ( {
+			data: getActivePersonalPlanDataForType( 'yearly' ),
+		} ) );
+
 		container = document.createElement( 'div' );
 		document.body.appendChild( container );
 
@@ -157,27 +250,83 @@ describe( 'CompositeCheckout', () => {
 			{
 				code: 'US',
 				name: 'United States',
+				has_postal_codes: true,
+			},
+			{
+				code: 'CW',
+				name: 'Curacao',
+				has_postal_codes: false,
 			},
 			{
 				code: 'AU',
 				name: 'Australia',
+				has_postal_codes: true,
 			},
 		];
 
 		const store = applyMiddleware( thunk )( createStore )( () => {
 			return {
 				plans: {
-					items: [],
+					items: getPlansItemsState(),
 				},
 				sites: { items: {} },
 				siteSettings: { items: {} },
-				ui: { selectedSiteId: 123 },
+				ui: { selectedSiteId: siteId },
 				productsList: {
 					items: {
-						'personal-bundle': {
-							product_id: 1009,
-							product_name: 'Plan',
-							product_slug: 'personal-bundle',
+						[ planWithoutDomain.product_slug ]: {
+							product_id: planWithoutDomain.product_id,
+							product_slug: planWithoutDomain.product_slug,
+							product_type: 'bundle',
+							available: true,
+							is_domain_registration: false,
+							cost_display: planWithoutDomain.item_subtotal_display,
+							currency_code: planWithoutDomain.currency,
+						},
+						[ planWithoutDomainMonthly.product_slug ]: {
+							product_id: planWithoutDomainMonthly.product_id,
+							product_slug: planWithoutDomainMonthly.product_slug,
+							product_type: 'bundle',
+							available: true,
+							is_domain_registration: false,
+							cost_display: planWithoutDomainMonthly.item_subtotal_display,
+							currency_code: planWithoutDomainMonthly.currency,
+						},
+						[ planWithoutDomainBiannual.product_slug ]: {
+							product_id: planWithoutDomainBiannual.product_id,
+							product_slug: planWithoutDomainBiannual.product_slug,
+							product_type: 'bundle',
+							available: true,
+							is_domain_registration: false,
+							cost_display: planWithoutDomainBiannual.item_subtotal_display,
+							currency_code: planWithoutDomainBiannual.currency,
+						},
+						[ planLevel2.product_slug ]: {
+							product_id: planWithoutDomain.product_id,
+							product_slug: planWithoutDomain.product_slug,
+							product_type: 'bundle',
+							available: true,
+							is_domain_registration: false,
+							cost_display: planWithoutDomain.item_subtotal_display,
+							currency_code: planWithoutDomain.currency,
+						},
+						[ planLevel2Monthly.product_slug ]: {
+							product_id: planLevel2Monthly.product_id,
+							product_slug: planLevel2Monthly.product_slug,
+							product_type: 'bundle',
+							available: true,
+							is_domain_registration: false,
+							cost_display: planLevel2Monthly.item_subtotal_display,
+							currency_code: planLevel2Monthly.currency,
+						},
+						[ planLevel2Biannual.product_slug ]: {
+							product_id: planLevel2Biannual.product_id,
+							product_slug: planLevel2Biannual.product_slug,
+							product_type: 'bundle',
+							available: true,
+							is_domain_registration: false,
+							cost_display: planLevel2Biannual.item_subtotal_display,
+							currency_code: planLevel2Biannual.currency,
 						},
 						domain_map: {
 							product_id: 5,
@@ -226,6 +375,7 @@ describe( 'CompositeCheckout', () => {
 				>
 					<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
 						<CompositeCheckout
+							siteId={ siteId }
 							siteSlug={ 'foo.com' }
 							getStoredCards={ async () => [] }
 							overrideCountryList={ countryList }
@@ -478,6 +628,20 @@ describe( 'CompositeCheckout', () => {
 		expect( getByText( 'ZIP code' ) ).toBeInTheDocument();
 	} );
 
+	it( 'renders domain fields except postal code when a country without postal code support has been chosen and a domain is in the cart', async () => {
+		let renderResult;
+		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
+		await act( async () => {
+			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
+		} );
+		const { getByText, queryByText, getByLabelText } = renderResult;
+		fireEvent.change( getByLabelText( 'Country' ), { target: { value: 'CW' } } );
+		expect( getByText( 'Country' ) ).toBeInTheDocument();
+		expect( getByText( 'Phone' ) ).toBeInTheDocument();
+		expect( getByText( 'Email' ) ).toBeInTheDocument();
+		expect( queryByText( 'Postal code' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'renders the checkout summary', async () => {
 		let renderResult;
 		await act( async () => {
@@ -486,6 +650,159 @@ describe( 'CompositeCheckout', () => {
 		const { getByText } = renderResult;
 		expect( getByText( 'Purchase Details' ) ).toBeInTheDocument();
 		expect( page.redirect ).not.toHaveBeenCalled();
+	} );
+
+	it.each( [
+		{ activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'monthly' },
+		{ activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'yearly' },
+		{ activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'two-year' },
+		{ activePlan: 'yearly', cartPlan: 'yearly', expectedVariant: 'yearly' },
+		{ activePlan: 'yearly', cartPlan: 'yearly', expectedVariant: 'two-year' },
+		{ activePlan: 'monthly', cartPlan: 'yearly', expectedVariant: 'monthly' },
+		{ activePlan: 'monthly', cartPlan: 'yearly', expectedVariant: 'yearly' },
+		{ activePlan: 'monthly', cartPlan: 'yearly', expectedVariant: 'two-year' },
+		{ activePlan: 'monthly', cartPlan: 'two-year', expectedVariant: 'monthly' },
+		{ activePlan: 'monthly', cartPlan: 'two-year', expectedVariant: 'yearly' },
+		{ activePlan: 'monthly', cartPlan: 'two-year', expectedVariant: 'two-year' },
+	] )(
+		'renders the variant picker with $expectedVariant for a $cartPlan plan when the current plan is $activePlan',
+		async ( { activePlan, cartPlan, expectedVariant } ) => {
+			getPlansBySiteId.mockImplementation( () => ( {
+				data: getActivePersonalPlanDataForType( activePlan ),
+			} ) );
+			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
+			render( <MyCheckout cartChanges={ cartChanges } />, container );
+			const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+			fireEvent.click( editOrderButton );
+
+			expect(
+				screen.getByText( getVariantItemTextForInterval( expectedVariant ) )
+			).toBeInTheDocument();
+		}
+	);
+
+	it.each( [
+		{ activePlan: 'yearly', cartPlan: 'yearly', expectedVariant: 'monthly' },
+		{ activePlan: 'two-year', cartPlan: 'yearly', expectedVariant: 'monthly' },
+		{ activePlan: 'two-year', cartPlan: 'yearly', expectedVariant: 'yearly' },
+		{ activePlan: 'two-year', cartPlan: 'yearly', expectedVariant: 'two-year' },
+	] )(
+		'renders the variant picker without $expectedVariant for a $cartPlan plan when the current plan is $activePlan',
+		async ( { activePlan, cartPlan, expectedVariant } ) => {
+			getPlansBySiteId.mockImplementation( () => ( {
+				data: getActivePersonalPlanDataForType( activePlan ),
+			} ) );
+			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
+			render( <MyCheckout cartChanges={ cartChanges } />, container );
+			const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+			fireEvent.click( editOrderButton );
+
+			expect(
+				screen.queryByText( getVariantItemTextForInterval( expectedVariant ) )
+			).not.toBeInTheDocument();
+		}
+	);
+
+	it.each( [
+		{ activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'yearly' },
+		{ activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'two-year' },
+	] )(
+		'renders the $expectedVariant variant with a discount percentage for a $cartPlan plan when the current plan is $activePlan',
+		async ( { activePlan, cartPlan, expectedVariant } ) => {
+			getPlansBySiteId.mockImplementation( () => ( {
+				data: getActivePersonalPlanDataForType( activePlan ),
+			} ) );
+			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
+			render( <MyCheckout cartChanges={ cartChanges } />, container );
+			const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+			fireEvent.click( editOrderButton );
+
+			const variantItem = screen
+				.getByText( getVariantItemTextForInterval( expectedVariant ) )
+				.closest( 'label' );
+			const lowestVariantItem = variantItem.closest( 'ul' ).querySelector( 'label:first-of-type' );
+			const lowestVariantSlug = lowestVariantItem.closest( 'div' ).querySelector( 'input' ).value;
+			const variantSlug = variantItem.closest( 'div' ).querySelector( 'input' ).value;
+
+			const variantData = getPlansItemsState().find(
+				( plan ) => plan.product_slug === variantSlug
+			);
+			const finalPrice = variantData.raw_price;
+			const variantInterval = variantData.bill_period;
+			const lowestVariantData = getPlansItemsState().find(
+				( plan ) => plan.product_slug === lowestVariantSlug
+			);
+			const lowestVariantPrice = lowestVariantData.raw_price;
+			const lowestVariantInterval = lowestVariantData.bill_period;
+			const intervalsInVariant = Math.round( variantInterval / lowestVariantInterval );
+			const priceBeforeDiscount = lowestVariantPrice * intervalsInVariant;
+
+			const discountPercentage = Math.round( 100 - ( finalPrice / priceBeforeDiscount ) * 100 );
+			expect(
+				within( variantItem ).getByText( `Save ${ discountPercentage }%` )
+			).toBeInTheDocument();
+		}
+	);
+
+	it.each( [ { activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'monthly' } ] )(
+		'renders the $expectedVariant variant without a discount percentage for a $cartPlan plan when the current plan is $activePlan',
+		async ( { activePlan, cartPlan, expectedVariant } ) => {
+			getPlansBySiteId.mockImplementation( () => ( {
+				data: getActivePersonalPlanDataForType( activePlan ),
+			} ) );
+			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
+			render( <MyCheckout cartChanges={ cartChanges } />, container );
+			const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+			fireEvent.click( editOrderButton );
+
+			const variantItem = screen
+				.getByText( getVariantItemTextForInterval( expectedVariant ) )
+				.closest( 'label' );
+			expect( within( variantItem ).queryByText( /Save \d+%/ ) ).not.toBeInTheDocument();
+		}
+	);
+
+	it( 'does not render the variant picker if there are no variants after clicking into edit mode', async () => {
+		const cartChanges = { products: [ domainProduct ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+		fireEvent.click( editOrderButton );
+
+		expect( screen.queryByText( 'One month' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'One year' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Two years' ) ).not.toBeInTheDocument();
+	} );
+
+	it.each( [
+		{ activePlan: 'yearly', cartPlan: 'monthly' },
+		{ activePlan: 'monthly', cartPlan: 'yearly' },
+	] )(
+		'does not render the variant picker for a term change from $activePlan to $cartPlan of the current plan',
+		async ( { activePlan, cartPlan } ) => {
+			getPlansBySiteId.mockImplementation( () => ( {
+				data: getActivePersonalPlanDataForType( activePlan ),
+			} ) );
+			const cartChanges = { products: [ getPersonalPlanForInterval( cartPlan ) ] };
+			render( <MyCheckout cartChanges={ cartChanges } />, container );
+			const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+			fireEvent.click( editOrderButton );
+
+			expect( screen.queryByText( 'One month' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'One year' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Two years' ) ).not.toBeInTheDocument();
+		}
+	);
+
+	it( 'does not render the variant picker for a renewal of the current plan', async () => {
+		const currentPlanRenewal = { ...planWithoutDomain, extra: { purchaseType: 'renewal' } };
+		const cartChanges = { products: [ currentPlanRenewal ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+		fireEvent.click( editOrderButton );
+
+		expect( screen.queryByText( 'One month' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'One year' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Two years' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'removes a product from the cart after clicking to remove it in edit mode', async () => {
@@ -1033,4 +1350,141 @@ function mockGetCartEndpointWith( initialCart ) {
 	return async () => {
 		return initialCart;
 	};
+}
+
+function getActivePersonalPlanDataForType( type ) {
+	switch ( type ) {
+		case 'none':
+			return null;
+		case 'monthly':
+			return [
+				{
+					interval: 30,
+					productSlug: planWithoutDomainMonthly.product_slug,
+					currentPlan: true,
+				},
+			];
+		case 'yearly':
+			return [
+				{
+					interval: 365,
+					productSlug: planWithoutDomain.product_slug,
+					currentPlan: true,
+				},
+			];
+		case 'two-year':
+			return [
+				{
+					interval: 730,
+					productSlug: planWithoutDomainBiannual.product_slug,
+					currentPlan: true,
+				},
+			];
+		default:
+			throw new Error( `Unknown plan type '${ type }'` );
+	}
+}
+
+function getPersonalPlanForInterval( type ) {
+	switch ( type ) {
+		case 'monthly':
+			return planWithoutDomainMonthly;
+		case 'yearly':
+			return planWithoutDomain;
+		case 'two-year':
+			return planWithoutDomainBiannual;
+		default:
+			throw new Error( `Unknown plan type '${ type }'` );
+	}
+}
+
+function getBusinessPlanForInterval( type ) {
+	switch ( type ) {
+		case 'monthly':
+			return planLevel2Monthly;
+		case 'yearly':
+			return planLevel2;
+		case 'two-year':
+			return planLevel2Biannual;
+		default:
+			throw new Error( `Unknown plan type '${ type }'` );
+	}
+}
+
+function getVariantItemTextForInterval( type ) {
+	switch ( type ) {
+		case 'monthly':
+			return 'One month';
+		case 'yearly':
+			return 'One year';
+		case 'two-year':
+			return 'Two years';
+		default:
+			throw new Error( `Unknown plan type '${ type }'` );
+	}
+}
+
+function getPlansItemsState() {
+	return [
+		{
+			product_id: planWithoutDomain.product_id,
+			product_slug: planWithoutDomain.product_slug,
+			bill_period: 365,
+			product_type: 'bundle',
+			available: true,
+			price: '$48',
+			formatted_price: '$48',
+			raw_price: 48,
+		},
+		{
+			product_id: planWithoutDomainMonthly.product_id,
+			product_slug: planWithoutDomainMonthly.product_slug,
+			bill_period: 30,
+			product_type: 'bundle',
+			available: true,
+			price: '$7',
+			formatted_price: '$7',
+			raw_price: 7,
+		},
+		{
+			product_id: planWithoutDomainBiannual.product_id,
+			product_slug: planWithoutDomainBiannual.product_slug,
+			bill_period: 730,
+			product_type: 'bundle',
+			available: true,
+			price: '$84',
+			formatted_price: '$84',
+			raw_price: 84,
+		},
+		{
+			product_id: planLevel2.product_id,
+			product_slug: planLevel2.product_slug,
+			bill_period: 365,
+			product_type: 'bundle',
+			available: true,
+			price: '$300',
+			formatted_price: '$300',
+			raw_price: 300,
+		},
+		{
+			product_id: planLevel2Monthly.product_id,
+			product_slug: planLevel2Monthly.product_slug,
+			bill_period: 30,
+			product_type: 'bundle',
+			available: true,
+			price: '$33',
+			formatted_price: '$33',
+			raw_price: 33,
+		},
+		{
+			product_id: planLevel2Biannual.product_id,
+			product_slug: planLevel2Biannual.product_slug,
+			bill_period: 730,
+			product_type: 'bundle',
+			available: true,
+			price: '$499',
+			formatted_price: '$499',
+			raw_price: 499,
+		},
+	];
 }

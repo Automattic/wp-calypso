@@ -724,18 +724,6 @@ Undocumented.prototype.validateGoogleAppsContactInformation = function (
 	return result.then?.( camelCaseKeys );
 };
 
-Undocumented.prototype.getEmailAccountsForSiteAndDomain = function ( siteId, domain, fn ) {
-	return this.wpcom.req.get(
-		{
-			path: `/sites/${ encodeURIComponent( siteId ) }/emails/accounts/${ encodeURIComponent(
-				domain
-			) }/mailboxes`,
-			apiNamespace: 'wpcom/v2',
-		},
-		fn
-	);
-};
-
 /**
  * Retrieves the Titan order provisioning URL for a domain.
  *
@@ -1899,13 +1887,19 @@ Undocumented.prototype.uploadExportFile = function ( siteId, params ) {
 			error ? rejectPromise( error ) : resolve( data );
 		};
 
+		const formData = [
+			[ 'importStatus', JSON.stringify( params.importStatus ) ],
+			[ 'import', params.file ],
+		];
+
+		if ( params.url ) {
+			formData.push( [ 'url', params.url ] );
+		}
+
 		const req = this.wpcom.req.post(
 			{
 				path: `/sites/${ siteId }/imports/new`,
-				formData: [
-					[ 'importStatus', JSON.stringify( params.importStatus ) ],
-					[ 'import', params.file ],
-				],
+				formData,
 			},
 			resolver
 		);
@@ -2138,22 +2132,6 @@ Undocumented.prototype.getSiteConnectInfo = function ( inputUrl ) {
 };
 
 /**
- * Exports the user's Reader subscriptions as an OPML XML file.
- * A JSON object is returned with the XML given as a String
- * in the `opml` field.
- *
- * @param  {Function} 	fn      The callback function
- * @returns {Promise}  	promise
- */
-Undocumented.prototype.exportReaderSubscriptions = function ( fn ) {
-	debug( '/read/following/mine/export' );
-	const query = {
-		apiVersion: '1.2',
-	};
-	return this.wpcom.req.get( '/read/following/mine/export', query, fn );
-};
-
-/**
  * Imports given XML file into the user's Reader feed.
  * XML file is expected to be in OPML format.
  *
@@ -2174,19 +2152,6 @@ Undocumented.prototype.importReaderFeed = function ( file, fn ) {
 		apiVersion: '1.2',
 	};
 	return this.wpcom.req.post( params, query, null, fn );
-};
-
-/**
- * Exports a Reader list as an OPML XML file.
- * A JSON object is returned with the XML given as a String
- * in the `opml` field.
- *
- * @param 	{number}	listId	The list ID
- * @param  	{Function} 	fn      The callback function
- * @returns {Promise}  	promise
- */
-Undocumented.prototype.exportReaderList = function ( listId, fn ) {
-	return this.wpcom.req.get( `/read/lists/${ listId }/export`, { apiNamespace: 'wpcom/v2' }, fn );
 };
 
 /**

@@ -20,7 +20,7 @@ import PostTypeFilter from 'calypso/my-sites/post-type-filter';
 import PostTypeList from 'calypso/my-sites/post-type-list';
 import PostTypeUnsupported from './post-type-unsupported';
 import PostTypeForbidden from './post-type-forbidden';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getPostType, isPostTypeSupported } from 'calypso/state/post-types/selectors';
 import QueryPostTypes from 'calypso/components/data/query-post-types';

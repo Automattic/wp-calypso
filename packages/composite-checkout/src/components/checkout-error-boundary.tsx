@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { ErrorInfo } from 'react';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import React, { ErrorInfo } from 'react';
 import styled from '../lib/styled';
 
 const debug = debugFactory( 'composite-checkout:checkout-error-boundary' );
@@ -21,10 +14,10 @@ export default class CheckoutErrorBoundary extends React.Component< CheckoutErro
 		super( props );
 	}
 
-	public state = { hasError: false, currentError: null };
+	public state = { hasError: false };
 
-	static getDerivedStateFromError( error: string ) {
-		return { currentError: error, hasError: true };
+	static getDerivedStateFromError() {
+		return { hasError: true };
 	}
 
 	componentDidCatch( error: Error, errorInfo: ErrorInfo ) {

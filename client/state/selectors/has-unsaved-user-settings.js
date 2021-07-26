@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get, isEmpty } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'calypso/state/user-settings/init';
 
 /**
  * Check if there are any unsaved settings

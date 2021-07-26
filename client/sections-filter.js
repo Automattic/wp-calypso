@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
 
 export default function isSectionEnabled( section ) {

@@ -83,6 +83,7 @@ import { getReaderTeams } from 'calypso/state/teams/selectors';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
+import WPiFrameResize from 'calypso/blocks/reader-full-post/wp-iframe-resize';
 
 /**
  * Style dependencies
@@ -101,6 +102,7 @@ export class FullPostView extends React.Component {
 
 	hasScrolledToCommentAnchor = false;
 	commentsWrapper = React.createRef();
+	postContentWrapper = React.createRef();
 
 	componentDidMount() {
 		KeyboardShortcuts.on( 'close-full-post', this.handleBack );
@@ -119,6 +121,10 @@ export class FullPostView extends React.Component {
 		if ( this.hasCommentAnchor && ! this.hasScrolledToCommentAnchor ) {
 			this.scrollToComments();
 		}
+
+		// Adds WPiFrameResize listener for setting the corect height in embedded iFrames.
+		this.stopResize =
+			this.postContentWrapper.current && WPiFrameResize( this.postContentWrapper.current );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -151,6 +157,8 @@ export class FullPostView extends React.Component {
 		KeyboardShortcuts.off( 'like-selection', this.handleLike );
 		KeyboardShortcuts.off( 'move-selection-down', this.goToNextPost );
 		KeyboardShortcuts.off( 'move-selection-up', this.goToPreviousPost );
+		// Remove WPiFrameResize listener.
+		this.stopResize?.();
 	}
 
 	handleBack = ( event ) => {
@@ -500,6 +508,7 @@ export class FullPostView extends React.Component {
 								<EmbedContainer>
 									<AutoDirection>
 										<div
+											ref={ this.postContentWrapper }
 											className="reader-full-post__story-content"
 											dangerouslySetInnerHTML={ { __html: post.content } }
 										/>

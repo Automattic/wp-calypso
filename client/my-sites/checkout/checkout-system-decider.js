@@ -1,13 +1,11 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useCallback, useMemo } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import debugFactory from 'debug';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
-import { getEmptyResponseCart } from '@automattic/shopping-cart';
 
 /**
  * Internal Dependencies
@@ -19,13 +17,8 @@ import { fetchStripeConfiguration } from './composite-checkout/payment-method-he
 import config from '@automattic/calypso-config';
 import { logToLogstash } from 'calypso/state/logstash/actions';
 import Recaptcha from 'calypso/signup/recaptcha';
-import getCartKey from './get-cart-key';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
-
-const emptyCart = getEmptyResponseCart();
-
-const debug = debugFactory( 'calypso:checkout-system-decider' );
 
 export default function CheckoutSystemDecider( {
 	productAliasFromUrl,
@@ -82,17 +75,6 @@ export default function CheckoutSystemDecider( {
 		[ reduxDispatch ]
 	);
 
-	const cartKey = useMemo(
-		() =>
-			getCartKey( {
-				selectedSite,
-				isLoggedOutCart,
-				isNoSiteCart,
-			} ),
-		[ selectedSite, isLoggedOutCart, isNoSiteCart ]
-	);
-	debug( 'cartKey is', cartKey );
-
 	let siteSlug = selectedSite?.slug;
 
 	if ( ! siteSlug ) {
@@ -103,17 +85,13 @@ export default function CheckoutSystemDecider( {
 		}
 	}
 
-	// If we do not have a site or user, we cannot fetch the initial cart from
-	// the server, so we'll just mock it as an empty cart here.
-	const getCart = isLoggedOutCart || isNoSiteCart ? () => Promise.resolve( emptyCart ) : undefined;
-
 	return (
 		<>
 			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logCheckoutError }
 			>
-				<CalypsoShoppingCartProvider cartKey={ cartKey } getCart={ getCart }>
+				<CalypsoShoppingCartProvider>
 					<StripeHookProvider
 						fetchStripeConfiguration={ fetchStripeConfigurationWpcom }
 						locale={ locale }

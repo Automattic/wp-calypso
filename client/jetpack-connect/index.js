@@ -37,7 +37,9 @@ export default function () {
 	].join( '|' );
 
 	page(
-		`/jetpack/connect/:type(${ planTypeString })/:interval(yearly|monthly)?`,
+		`/jetpack/connect/:type(${ planTypeString })/:interval(yearly|monthly)?/${ locale }`,
+		controller.redirectToSiteLessCheckout,
+		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.loginBeforeJetpackSearch,
 		controller.persistMobileAppFlow,
 		controller.setMasterbar,
@@ -94,16 +96,6 @@ export default function () {
 		siteSelection,
 		controller.offerResetRedirects,
 		controller.offerResetContext
-	);
-
-	page(
-		`/jetpack/connect/:type(${ planTypeString })?/${ locale }`,
-		controller.redirectWithoutLocaleIfLoggedIn,
-		controller.persistMobileAppFlow,
-		controller.setMasterbar,
-		controller.connect,
-		makeLayout,
-		clientRender
 	);
 
 	page( '/jetpack/sso/:siteId?/:ssoNonce?', controller.sso, makeLayout, clientRender );

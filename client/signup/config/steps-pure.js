@@ -190,6 +190,7 @@ export function generateSteps( {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
+			optionalDependencies: [ 'emailItem' ],
 			providesDependencies: [ 'cartItem' ],
 			fulfilledStepCallback: isPlanFulfilled,
 		},
@@ -303,7 +304,14 @@ export function generateSteps( {
 			},
 			delayApiRequestUntilComplete: true,
 		},
-
+		emails: {
+			stepName: 'emails',
+			dependencies: [ 'domainItem', 'siteSlug' ],
+			providesDependencies: [ 'domainItem', 'emailItem', 'shouldHideFreePlan' ],
+			props: {
+				isDomainOnly: false,
+			},
+		},
 		'domain-only': {
 			stepName: 'domain-only',
 			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ],
@@ -638,7 +646,9 @@ export function generateSteps( {
 			stepName: 'launch',
 			apiRequestFunction: launchSiteApi,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'isPreLaunch' ],
+			props: {
+				nonInteractive: true,
+			},
 		},
 
 		passwordless: {

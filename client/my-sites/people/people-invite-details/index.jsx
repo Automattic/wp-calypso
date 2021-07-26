@@ -28,7 +28,7 @@ import {
 	didInviteDeletionSucceed,
 } from 'calypso/state/invites/selectors';
 import { deleteInvite } from 'calypso/state/invites/actions';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
 /**

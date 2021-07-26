@@ -15,15 +15,13 @@ import { backupDownloadPath, backupRestorePath } from 'calypso/my-sites/backup/p
 import { Card } from '@automattic/components';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { isSuccessfulRealtimeBackup } from 'calypso/lib/jetpack/backup-utils';
-import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
 import { withApplySiteOffset } from 'calypso/components/site-offset';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import ActivityActor from 'calypso/components/activity-card/activity-actor';
 import ActivityDescription from 'calypso/components/activity-card/activity-description';
-import ActivityMedia from 'calypso/components/activity-card/activity-media';
 import Button from 'calypso/components/forms/form-button';
-import FormTextInput from 'calypso/components/forms/form-text-input';
 import ExternalLink from 'calypso/components/external-link';
 import getAllowRestore from 'calypso/state/selectors/get-allow-restore';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
@@ -31,9 +29,10 @@ import { getActionableRewindId } from 'calypso/lib/jetpack/actionable-rewind-id'
 import Gridicon from 'calypso/components/gridicon';
 import PopoverMenu from 'calypso/components/popover/menu';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
-import StreamsMediaPreview from './activity-card-streams-media-preview';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
-import { rewindShareRequest } from 'calypso/state/activity-log/actions';
+import MediaPreview from './media-preview';
+import ShareActivity from './share-activity';
+import StreamsContent from './streams-content';
 
 /**
  * Style dependencies
@@ -62,7 +61,6 @@ class ActivityCard extends Component {
 
 	topPopoverContext = React.createRef();
 	bottomPopoverContext = React.createRef();
-	sharePopoverContext = React.createRef();
 
 	constructor( props ) {
 		super( props );
@@ -71,30 +69,8 @@ class ActivityCard extends Component {
 			showTopPopoverMenu: false,
 			showBottomPopoverMenu: false,
 			showContent: false,
-			showSharePopover: false,
-			shareEmail: '',
-			showShareEmailError: false,
 		};
-
-		this.handleShareEmailChange = this.handleShareEmailChange.bind( this );
 	}
-
-	handleShareEmailChange = ( event ) =>
-		this.setState( { shareEmail: event.target.value, showShareEmailError: false } );
-
-	handleShare = () => {
-		const email = this.state.shareEmail;
-		if ( ! email.includes( '@' ) || ! email.includes( '.' ) ) {
-			this.setState( { showShareEmailError: true } );
-		} else {
-			this.props.shareActivity(
-				this.props.siteId,
-				this.props.activity.rewindId,
-				this.state.shareEmail
-			);
-			this.setState( { showSharePopover: false } );
-		}
-	};
 
 	togglePopoverMenu = ( topPopoverMenu = true ) => {
 		this.props.dispatchRecordTracksEvent( 'calypso_jetpack_backup_actions_click' );
@@ -109,26 +85,6 @@ class ActivityCard extends Component {
 	closePopoverMenu = () =>
 		this.setState( { showTopPopoverMenu: false, showBottomPopoverMenu: false } );
 
-	toggleSharePopover = () => {
-		const {
-			activity: { siteId, rewindId },
-			dispatchShareActivityPopoverTracksEvent,
-		} = this.props;
-
-		if ( ! this.state.showSharePopover ) {
-			dispatchShareActivityPopoverTracksEvent( siteId, rewindId );
-		}
-
-		this.setState( { showSharePopover: ! this.state.showSharePopover } );
-	};
-
-	closeSharePopover = ( event ) => {
-		// bit of a hack here, but it works
-		if ( false === event ) {
-			this.setState( { showSharePopover: false } );
-		}
-	};
-
 	toggleSeeContent = () => {
 		this.props.dispatchRecordTracksEvent( 'calypso_jetpack_backup_content_expand' );
 		this.setState( { showContent: ! this.state.showContent } );
@@ -141,56 +97,6 @@ class ActivityCard extends Component {
 
 		return () => {};
 	};
-
-	renderStreams( streams = [] ) {
-		const { applySiteOffset, allowRestore, moment, siteSlug, siteId, translate } = this.props;
-
-		return streams.map( ( item, index ) => {
-			const activityMedia = item.activityMedia;
-
-			if ( activityMedia && activityMedia.available ) {
-				return (
-					<div
-						key={ `activity-card__streams-item-${ index }` }
-						className="activity-card__streams-item"
-					>
-						<div className="activity-card__streams-item-title">{ activityMedia.name }</div>
-						<ActivityMedia
-							name={ activityMedia.name }
-							fullImage={ activityMedia.medium_url || activityMedia.thumbnail_url }
-						/>
-					</div>
-				);
-			}
-			return (
-				<ActivityCard
-					activity={ item }
-					allowRestore={ allowRestore }
-					applySiteOffset={ applySiteOffset }
-					key={ item.activityId }
-					moment={ moment }
-					siteSlug={ siteSlug }
-					siteId={ siteId }
-					summarize
-					translate={ translate }
-				/>
-			);
-		} );
-	}
-
-	renderActivityContent() {
-		const { activity } = this.props;
-
-		//todo: add the rest of the cases for expandable content (daily backup,...)
-		return (
-			<div className="activity-card__content">
-				{ !! activity.streams && [
-					...this.renderStreams( activity.streams ),
-					this.renderBottomToolbar(),
-				] }
-			</div>
-		);
-	}
 
 	renderExpandContentControl() {
 		const { translate } = this.props;
@@ -304,64 +210,6 @@ class ActivityCard extends Component {
 		);
 	}
 
-	renderShareButton() {
-		const { translate } = this.props;
-
-		return (
-			<>
-				<div className="activity-card__share-button-wrap">
-					<Button
-						compact
-						borderless
-						onClick={ this.toggleSharePopover }
-						ref={ this.sharePopoverContext }
-						className="activity-card__share-button"
-					>
-						<Gridicon icon="mail" />
-						{ translate( 'Share this event' ) }
-					</Button>
-				</div>
-				<PopoverMenu
-					context={ this.sharePopoverContext.current }
-					isVisible={ this.state.showSharePopover }
-					onClose={ this.closeSharePopover }
-					position="top"
-					className="activity-card__share-popover"
-				>
-					<div className="activity-card__share-heading">
-						{ translate( 'Share this event via email' ) }
-					</div>
-					<div className="activity-card__share-description">
-						{ translate(
-							'Share what is happening with your site with your clients or business partners.'
-						) }
-					</div>
-					<div className="activity-card__share-form">
-						<FormTextInput
-							className="activity-card__share-email"
-							placeholder="Email address"
-							value={ this.state.shareEmail }
-							onChange={ this.handleShareEmailChange }
-							isError={ this.state.showShareEmailError }
-						/>
-						<Button
-							className="activity-card__share-submit"
-							disabled={ ! this.state.shareEmail }
-							onClick={ this.handleShare }
-						>
-							{ translate( 'Share' ) }
-						</Button>
-					</div>
-					{ this.state.showShareEmailError && (
-						<div className="activity-card__share-error">
-							{ translate( 'Please enter a valid email address' ) }
-						</div>
-					) }
-				</PopoverMenu>
-			</>
-		);
-	}
-
 	renderTopToolbar = () => this.renderToolbar( true );
 	renderBottomToolbar = () => this.renderToolbar( false );
 
@@ -389,35 +237,13 @@ class ActivityCard extends Component {
 		);
 	}
 
-	renderMediaPreview() {
-		const {
-			activity: { streams, activityMedia },
-		} = this.props;
-
-		if (
-			streams &&
-			streams.filter( ( { activityMedia: streamActivityMedia } ) => streamActivityMedia?.available )
-				.length > 2
-		) {
-			return <StreamsMediaPreview streams={ streams } />;
-		} else if ( activityMedia?.available ) {
-			return (
-				<ActivityMedia
-					name={ activityMedia.name }
-					thumbnail={ activityMedia.medium_url || activityMedia.thumbnail_url }
-				/>
-			);
-		}
-		return null;
-	}
-
 	render() {
 		const { activity, allowRestore, applySiteOffset, className, siteId, summarize } = this.props;
 
 		const backupTimeDisplay = applySiteOffset
 			? applySiteOffset( activity.activityTs ).format( 'LT' )
 			: '';
-		const showActivityContent = this.state.showContent;
+		const showStreamsContent = this.state.showContent && activity.streams;
 		const hasActivityFailed = activity.activityStatus === 'error';
 
 		return (
@@ -428,12 +254,16 @@ class ActivityCard extends Component {
 			>
 				<QueryRewindState siteId={ siteId } />
 				{ ! summarize && (
-					<div className="activity-card__time">
-						<Gridicon icon={ activity.activityIcon } className="activity-card__time-icon" />
-						<div className="activity-card__time-text">{ backupTimeDisplay }</div>
+					<div className="activity-card__header">
+						<div className="activity-card__time">
+							<Gridicon icon={ activity.activityIcon } className="activity-card__time-icon" />
+							<div className="activity-card__time-text">{ backupTimeDisplay }</div>
+						</div>
+						{ isEnabled( 'jetpack/activity-log-sharing' ) && (
+							<ShareActivity siteId={ siteId } activity={ activity } />
+						) }
 					</div>
 				) }
-				{ ! summarize && isEnabled( 'jetpack/activity-log-sharing' ) && this.renderShareButton() }
 				<Card>
 					<ActivityActor
 						actorAvatarUrl={ activity.actorAvatarUrl }
@@ -442,14 +272,19 @@ class ActivityCard extends Component {
 						actorType={ activity.actorType }
 					/>
 					<div className="activity-card__activity-description">
-						{ this.renderMediaPreview() }
+						<MediaPreview activity={ activity } />
 						<ActivityDescription activity={ activity } rewindIsActive={ allowRestore } />
 					</div>
 					<div className="activity-card__activity-title">{ activity.activityTitle }</div>
 
 					{ ! summarize && this.renderTopToolbar() }
 
-					{ showActivityContent && this.renderActivityContent() }
+					{ showStreamsContent && (
+						<div className="activity-card__content">
+							<StreamsContent streams={ activity.streams } />
+							{ this.renderBottomToolbar() }
+						</div>
+					) }
 				</Card>
 			</div>
 		);
@@ -470,21 +305,13 @@ const mapStateToProps = ( state ) => {
 	};
 };
 
-const mapDispatchToProps = ( dispatch ) => ( {
+const mapDispatchToProps = {
 	dispatchRecordTracksEvent: recordTracksEvent,
-	shareActivity: ( siteId, rewindId, email ) => {
-		dispatch(
-			withAnalytics(
-				recordTracksEvent( 'calypso_activity_share_request' ),
-				rewindShareRequest( siteId, rewindId, email )
-			)
-		);
-	},
-	dispatchShareActivityPopoverTracksEvent: ( siteId, rewindId ) =>
-		dispatch( recordTracksEvent( 'calypso_activity_share_popup', { siteId, rewindId } ) ),
-} );
+};
 
-export default connect(
+const ConnectedActivityCard = connect(
 	mapStateToProps,
 	mapDispatchToProps
 )( withLocalizedMoment( withApplySiteOffset( localize( ActivityCard ) ) ) );
+
+export default ConnectedActivityCard;

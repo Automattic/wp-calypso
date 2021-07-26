@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	format as formatUrl,
 	getUrlParts,

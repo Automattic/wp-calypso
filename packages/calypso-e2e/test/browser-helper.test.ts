@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { describe, expect, test, beforeAll, afterAll } from '@jest/globals';
-
-/**
- * Internal dependencies
- */
 import { getViewportName, getLocale, getViewportSize } from '../src/browser-helper';
 
 let env: NodeJS.ProcessEnv;

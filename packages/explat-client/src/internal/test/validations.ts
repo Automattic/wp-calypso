@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import * as Validations from '../validations';
 import { validExperimentAssignment, validFallbackExperimentAssignment } from '../test-common';
+import * as Validations from '../validations';
 
 describe( 'isObject', () => {
 	it( 'returns true for an object', () => {

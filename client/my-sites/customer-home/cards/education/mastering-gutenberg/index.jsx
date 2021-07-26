@@ -1,20 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-import EducationalContent from '../educational-content';
-import { EDUCATION_GUTENBERG } from 'calypso/my-sites/customer-home/cards/constants';
-
-/**
- * Image dependencies
- */
+import React from 'react';
 import gutenbergIllustration from 'calypso/assets/images/customer-home/illustration--secondary-gutenberg.svg';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { EDUCATION_GUTENBERG } from 'calypso/my-sites/customer-home/cards/constants';
+import EducationalContent from '../educational-content';
 
 const MasteringGutenberg = () => {
 	const translate = useTranslate();

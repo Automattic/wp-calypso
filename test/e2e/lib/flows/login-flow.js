@@ -1,23 +1,18 @@
-/**
- * Internal dependencies
- */
-import LoginPage from '../pages/login-page.js';
-import EditorPage from '../pages/editor-page';
-import WPAdminLoginPage from '../pages/wp-admin/wp-admin-logon-page';
-import ReaderPage from '../pages/reader-page.js';
-import PluginsBrowserPage from '../pages/plugins-browser-page';
-import GutenbergEditorComponent from '../gutenberg/gutenberg-editor-component';
-import CustomerHome from '../pages/customer-home-page';
-
-import SidebarComponent from '../components/sidebar-component.js';
-import NavBarComponent from '../components/nav-bar-component.js';
 import GuideComponent from '../components/guide-component.js';
-
+import NavBarComponent from '../components/nav-bar-component.js';
+import SidebarComponent from '../components/sidebar-component.js';
 import * as dataHelper from '../data-helper';
-import * as driverManager from '../driver-manager';
 import * as driverHelper from '../driver-helper';
+import * as driverManager from '../driver-manager';
+import GutenbergEditorComponent from '../gutenberg/gutenberg-editor-component';
 import * as loginCookieHelper from '../login-cookie-helper';
+import CustomerHome from '../pages/customer-home-page';
+import EditorPage from '../pages/editor-page';
+import LoginPage from '../pages/login-page.js';
 import PagesPage from '../pages/pages-page';
+import PluginsBrowserPage from '../pages/plugins-browser-page';
+import ReaderPage from '../pages/reader-page.js';
+import WPAdminLoginPage from '../pages/wp-admin/wp-admin-logon-page';
 
 const host = dataHelper.getJetpackHost();
 
@@ -68,8 +63,6 @@ export default class LoginFlow {
 		// 	}
 		// 	return;
 		// }
-
-		console.log( 'Logging in as ' + this.account.username );
 
 		let loginURL = this.account.loginURL;
 		let loginPage;

@@ -1,11 +1,18 @@
 /**
  * Internal dependencies
  */
-import wpcom from 'calypso/lib/wp';
-import userFactory from 'calypso/lib/user';
-import { clearStore, getStoredUserId, setStoredUserId } from 'calypso/lib/user/store';
-import { CURRENT_USER_FETCH, CURRENT_USER_RECEIVE } from 'calypso/state/action-types';
-import { filterUserObject, getLogoutUrl } from 'calypso/lib/user/shared-utils';
+import {
+	clearStore,
+	disablePersistence,
+	getStoredUserId,
+	setStoredUserId,
+} from 'calypso/lib/user/store';
+import {
+	CURRENT_USER_FETCH,
+	CURRENT_USER_RECEIVE,
+	CURRENT_USER_SET_EMAIL_VERIFIED,
+} from 'calypso/state/action-types';
+import { filterUserObject, getLogoutUrl, rawCurrentUserFetch } from 'calypso/lib/user/shared-utils';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 /**
@@ -23,12 +30,6 @@ export function setCurrentUser( user ) {
 
 let fetchingUser = null;
 
-function setLegacyUserData( userData ) {
-	const user = userFactory();
-	user.data = userData;
-	user.emit( 'change' );
-}
-
 export function fetchCurrentUser() {
 	return ( dispatch ) => {
 		if ( fetchingUser ) {
@@ -39,11 +40,7 @@ export function fetchCurrentUser() {
 			type: CURRENT_USER_FETCH,
 		} );
 
-		fetchingUser = wpcom
-			.me()
-			.get( {
-				meta: 'flags',
-			} )
+		fetchingUser = rawCurrentUserFetch()
 			.then( async ( user ) => {
 				const userData = filterUserObject( user );
 
@@ -54,13 +51,9 @@ export function fetchCurrentUser() {
 
 				setStoredUserId( userData.ID );
 				dispatch( setCurrentUser( userData ) );
-
-				// @TODO: Remove this once `lib/user` has been fully reduxified
-				setLegacyUserData( userData );
 			} )
 			.catch( () => {
-				// @TODO: Remove this once `lib/user` has been fully reduxified
-				setLegacyUserData( false );
+				// @TODO: Improve error handling
 			} )
 			.finally( () => {
 				fetchingUser = null;
@@ -76,8 +69,16 @@ export function redirectToLogout( postLogoutRedirectUrl ) {
 		const logoutUrl = getLogoutUrl( userData, postLogoutRedirectUrl );
 
 		// Clear any data stored locally within the user data module or localStorage
+		disablePersistence();
 		await clearStore();
 
 		window.location.href = logoutUrl;
+	};
+}
+
+export function setUserEmailVerified( verified ) {
+	return {
+		type: CURRENT_USER_SET_EMAIL_VERIFIED,
+		verified,
 	};
 }

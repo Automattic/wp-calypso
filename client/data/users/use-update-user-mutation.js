@@ -10,13 +10,16 @@ import { useMutation, useQueryClient } from 'react-query';
 import wp from 'calypso/lib/wp';
 import { getCacheKey } from './use-user-query';
 
-function useUpdateUserMutation( siteId ) {
+function useUpdateUserMutation( siteId, queryOptions = {} ) {
 	const queryClient = useQueryClient();
 	const mutation = useMutation(
 		( { userId, variables } ) => wp.req.post( `/sites/${ siteId }/users/${ userId }`, variables ),
 		{
-			onSuccess( { login } ) {
+			...queryOptions,
+			onSuccess( ...args ) {
+				const [ { login } ] = args;
 				queryClient.invalidateQueries( getCacheKey( siteId, login ) );
+				queryOptions.onSuccess?.( ...args );
 			},
 		}
 	);

@@ -55,10 +55,7 @@ export class Notice extends Component {
 		onDismissClick: PropTypes.func,
 		showDismiss: PropTypes.bool,
 		status: PropTypes.oneOf( [ 'is-error', 'is-info', 'is-success', 'is-warning', 'is-plain' ] ),
-		text: PropTypes.oneOfType( [
-			PropTypes.arrayOf( PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ) ),
-			PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
-		] ),
+		text: PropTypes.node,
 		translate: PropTypes.func.isRequired,
 	};
 

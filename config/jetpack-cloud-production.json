@@ -5,7 +5,6 @@
 	"client_slug": "browser",
 	"hostname": "cloud.jetpack.com",
 	"i18n_default_locale_slug": "en",
-	"rtl": false,
 	"login_url": "/connect",
 	"logout_url": "https://jetpack.com",
 	"jetpack_connect_url": "https://wordpress.com/jetpack/connect",
@@ -38,10 +37,12 @@
 		"jetpack-cloud": true,
 		"jetpack-cloud/connect": false,
 		"jetpack/backups-date-picker": true,
+		"jetpack/only-realtime-products": false,
 		"jetpack/pricing-page": true,
-		"jetpack/server-credentials-advanced-flow": true,
 		"jetpack/redirect-legacy-plans": true,
-		"jetpack/userless-checkout": false,
+		"jetpack/server-credentials-advanced-flow": true,
+		"jetpack/siteless-checkout": false,
+		"jetpack/userless-checkout": true,
 		"layout/app-banner": false,
 		"layout/guided-tours": false,
 		"layout/nps-survey-notice": false,
@@ -71,5 +72,5 @@
 	"theme": "jetpack-cloud",
 	"restricted_me_access": false,
 	"theme_color": "#2fb41f",
-	"google_analytics_key": "G-K8CRH0LL00"
+	"google_analytics_key": "UA-52447-43"
 }

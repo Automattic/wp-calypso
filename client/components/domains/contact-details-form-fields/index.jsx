@@ -41,6 +41,7 @@ import './style.scss';
 import classNames from 'classnames';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import { getCountryPostalCodeSupport } from './helper';
 
 const noop = () => {};
 
@@ -362,9 +363,13 @@ export class ContactDetailsFormFields extends Component {
 		return get( this.state.form, 'countryCode.value', '' );
 	}
 
+	getCountryPostalCodeSupport = ( countryCode ) =>
+		getCountryPostalCodeSupport( this.props.countriesList, countryCode );
+
 	renderContactDetailsFields() {
 		const { translate, needsFax, hasCountryStates, labelTexts } = this.props;
 		const countryCode = this.getCountryCode();
+		const arePostalCodesSupported = this.getCountryPostalCodeSupport( countryCode );
 
 		return (
 			<div className="contact-details-form-fields__contact-details">
@@ -434,6 +439,7 @@ export class ContactDetailsFormFields extends Component {
 
 				{ countryCode && (
 					<RegionAddressFieldsets
+						arePostalCodesSupported={ arePostalCodesSupported }
 						getFieldProps={ this.getFieldProps }
 						countryCode={ countryCode }
 						hasCountryStates={ hasCountryStates }

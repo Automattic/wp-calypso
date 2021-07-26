@@ -132,7 +132,7 @@ class TagStream extends React.Component {
 		return (
 			<Stream
 				{ ...this.props }
-				listName={ this.state.title }
+				listName={ title }
 				emptyContent={ emptyContent }
 				showFollowInHeader={ true }
 				forcePlaceholders={ ! tag } // if tag has not loaded yet, then make everything a placeholder

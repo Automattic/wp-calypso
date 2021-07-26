@@ -5,7 +5,6 @@ import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { includes } from 'lodash';
-import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -24,7 +23,7 @@ import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/w
 import PluginNotices from 'calypso/my-sites/plugins/notices';
 import MainComponent from 'calypso/components/main';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import JetpackManageErrorPage from 'calypso/my-sites/jetpack-manage-error-page';
+import EmptyContent from 'calypso/components/empty-content';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
 import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custom';
@@ -32,7 +31,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { isJetpackSite, isRequestingSites } from 'calypso/state/sites/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -170,7 +169,7 @@ class SinglePlugin extends React.Component {
 
 		return (
 			<MainComponent>
-				<JetpackManageErrorPage
+				<EmptyContent
 					title={ translate( "Oops! We can't find this plugin!" ) }
 					line={ translate( "The plugin you are looking for doesn't exist." ) }
 					actionURL={ actionUrl }
@@ -275,7 +274,6 @@ class SinglePlugin extends React.Component {
 		}
 
 		const isWpcom = selectedSite && ! this.props.isJetpackSite;
-		const calypsoify = this.props.isAtomicSite && isEnabled( 'calypsoify/plugins' );
 		const analyticsPath = selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
 
 		return (
@@ -296,7 +294,6 @@ class SinglePlugin extends React.Component {
 						isInstalledOnSite={ this.isPluginInstalledOnsite() }
 						isInstalling={ this.props.isInstallingPlugin }
 						allowedActions={ allowedPluginActions }
-						calypsoify={ calypsoify }
 					/>
 					{ plugin.wporg ? (
 						<PluginSections plugin={ plugin } isWpcom={ isWpcom } />

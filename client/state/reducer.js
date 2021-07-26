@@ -16,12 +16,7 @@ import { reducer as httpData } from 'calypso/state/data-layer/http-data';
  */
 import currentUser from './current-user/reducer';
 import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
-import documentHead from './document-head/reducer';
-import i18n from './i18n/reducer';
-import importerNux from './importer-nux/reducer';
 import sites from './sites/reducer';
-import support from './support/reducer';
-import userSettings from './user-settings/reducer';
 
 // Legacy reducers
 // The reducers in this list are not modularized, and are always loaded on boot.
@@ -29,13 +24,8 @@ import userSettings from './user-settings/reducer';
 const reducers = {
 	currentUser,
 	dataRequests,
-	documentHead,
 	httpData,
-	i18n,
-	importerNux,
 	sites,
-	support,
-	userSettings,
 };
 
 export default combineReducers( reducers );

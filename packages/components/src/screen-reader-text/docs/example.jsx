@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import ScreenReaderText from '..';
 
 export default function ScreenReaderTextExample() {

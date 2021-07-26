@@ -656,7 +656,7 @@ describe( 'index', () => {
 			};
 			const normalized = withContentDOM( [ makeEmbedsSafe ] )( post );
 			expect( normalized.content ).toBe(
-				'<iframe src="https://example.com/" sandbox=""></iframe>'
+				'<iframe src="https://example.com/" sandbox="allow-scripts"></iframe>'
 			);
 		} );
 

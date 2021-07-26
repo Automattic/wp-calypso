@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal Classes
- */
-import styled from '../lib/styled';
 import joinClasses from '../lib/join-classes';
+import styled from '../lib/styled';
 import { Theme } from '../lib/theme';
 
 const CallToAction = styled( 'button' )< CallToActionProps >`
@@ -20,7 +13,7 @@ const CallToAction = styled( 'button' )< CallToActionProps >`
 		! props.buttonType || props.disabled ? '1px solid ' + props.theme.colors.borderColor : '0' };
 	background: ${ getBackgroundColor };
 	color: ${ getTextColor };
-	font-weight: theme.weights.normal;
+	font-weight: ${ ( props ) => props.theme.weights.normal };
 	text-decoration: ${ getTextDecoration };
 
 	:hover {

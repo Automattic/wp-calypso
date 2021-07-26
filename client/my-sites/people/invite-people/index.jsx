@@ -153,18 +153,18 @@ class InvitePeople extends React.Component {
 		} );
 
 		const filteredErrors = pickBy( errors, ( error, key ) => {
-			return includes( filteredTokens, key );
+			return filteredTokens.includes( key );
 		} );
 
 		const filteredSuccess = filter( success, ( successfulValidation ) => {
-			return includes( filteredTokens, successfulValidation );
+			return filteredTokens.includes( successfulValidation );
 		} );
 
 		this.setState( {
 			usernamesOrEmails: filteredTokens,
 			errors: filteredErrors,
 			success: filteredSuccess,
-			errorToDisplay: includes( filteredTokens, errorToDisplay ) && errorToDisplay,
+			errorToDisplay: filteredTokens.includes( errorToDisplay ) && errorToDisplay,
 		} );
 		this.validateInvitation( this.props.siteId, filteredTokens, role );
 
@@ -336,7 +336,7 @@ class InvitePeople extends React.Component {
 			has_custom_message: 'string' === typeof message && !! message.length,
 		} );
 
-		if ( includes( [ 'administrator', 'editor', 'author', 'contributor' ], role ) ) {
+		if ( [ 'administrator', 'editor', 'author', 'contributor' ].includes( role ) ) {
 			page( `/people/new/${ this.props.site.slug }/sent` );
 		}
 	};

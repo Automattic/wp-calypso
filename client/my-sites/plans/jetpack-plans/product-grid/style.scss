@@ -41,12 +41,12 @@
 
 	display: grid;
 	grid-template-columns: repeat( auto-fit, minmax( 300px, 1fr ) );
-	grid-gap: 24px 16px;
+	gap: 24px 16px;
 }
 
 .product-grid__plan-grid:not( .is-wrapping ) {
 	margin-top: 72px;
-	grid-gap: 24px 0;
+	gap: 24px 0;
 
 	// Considering there are 3 plans
 	> li {
@@ -78,7 +78,7 @@
 }
 
 .product-grid__free {
-	margin-top: 32px;
+	margin-block-start: 32px;
 }
 
 .product-grid__asterisk-items {
@@ -107,4 +107,34 @@
 
 .product-grid__more.is-detached {
 	margin-top: 48px;
+}
+
+
+/*
+ * From this point, rules only apply:
+ * - when the 'jetpack/only-realtime-products' feature flag is enabled
+ * - and the current active iteration is Iterations.ONLY_REALTIME_PRODUCTS
+ */
+.jetpack-plans__iteration--only-realtime-products {
+	.product-grid__plan-grid,
+	.product-grid__product-grid {
+		gap: 16px;
+	}
+
+	.product-grid__plan-grid:not( .is-wrapping ) {
+		gap: 16px 0;
+	}
+
+	.product-grid__free {
+		display: flex;
+		gap: 16px;
+		flex-wrap: wrap;
+
+		margin-block-start: 16px;
+
+		.product-without-price {
+			flex: 1 1 0;
+			min-width: 300px;
+		}
+	}
 }

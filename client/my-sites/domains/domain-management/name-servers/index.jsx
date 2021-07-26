@@ -19,17 +19,14 @@ import WpcomNameserversToggle from './wpcom-nameservers-toggle';
 import IcannVerificationCard from 'calypso/my-sites/domains/domain-management/components/icann-verification';
 import DnsTemplates from './dns-templates';
 import { domainManagementEdit, domainManagementDns } from 'calypso/my-sites/domains/paths';
-import QueryDomainNameservers from 'calypso/components/data/query-domain-nameservers';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
-import { updateNameservers } from 'calypso/state/domains/nameservers/actions';
 import {
 	WPCOM_DEFAULT_NAMESERVERS,
 	WPCOM_DEFAULT_NAMESERVERS_REGEX,
 	CLOUDFLARE_NAMESERVERS_REGEX,
-} from 'calypso/state/domains/nameservers/constants';
+} from './constants';
 import { getSelectedDomain } from 'calypso/lib/domains';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
 import FetchError from './fetch-error';
 import Notice from 'calypso/components/notice';
@@ -40,25 +37,25 @@ import {
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getNameserversByDomainName } from 'calypso/state/domains/nameservers/selectors';
+import NonPrimaryDomainPlanUpsell from 'calypso/my-sites/domains/domain-management/components/domain/non-primary-domain-plan-upsell';
+import withDomainNameservers from './with-domain-nameservers';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import NonPrimaryDomainPlanUpsell from 'calypso/my-sites/domains/domain-management/components/domain/non-primary-domain-plan-upsell';
 
 class NameServers extends React.Component {
 	static propTypes = {
 		domains: PropTypes.array.isRequired,
 		isRequestingSiteDomains: PropTypes.bool.isRequired,
-		nameservers: PropTypes.object.isRequired,
+		nameservers: PropTypes.array,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};
 
 	state = {
-		nameservers: this.props.nameservers.hasLoadedFromServer ? this.props.nameservers.list : null,
+		nameservers: this.props.nameservers ?? null,
 	};
 
 	UNSAFE_componentWillReceiveProps( props ) {
@@ -66,7 +63,7 @@ class NameServers extends React.Component {
 	}
 
 	hasWpcomNameservers = () => {
-		if ( ! this.props.nameservers.hasLoadedFromServer ) {
+		if ( ! this.props.nameservers ) {
 			return true;
 		}
 
@@ -89,21 +86,18 @@ class NameServers extends React.Component {
 		} );
 	};
 
-	setStateWhenLoadedFromServer( props ) {
-		const prevNameservers = this.props.nameservers;
-		const nextNameservers = props.nameservers;
-		const finishedLoading =
-			! prevNameservers.hasLoadedFromServer && nextNameservers.hasLoadedFromServer;
+	setStateWhenLoadedFromServer( nextProps ) {
+		const finishedLoading = this.props.isLoadingNameservers && ! nextProps.isLoadingNameservers;
 
 		if ( ! finishedLoading ) {
 			return;
 		}
 
-		this.setState( { nameservers: nextNameservers.list } );
+		this.setState( { nameservers: nextProps.nameservers } );
 	}
 
 	isLoading() {
-		return this.props.isRequestingSiteDomains || this.props.nameservers.isFetching;
+		return this.props.isRequestingSiteDomains || this.props.isLoadingNameservers;
 	}
 
 	isPendingTransfer() {
@@ -148,7 +142,7 @@ class NameServers extends React.Component {
 	};
 
 	getContent() {
-		if ( this.props.nameservers.error ) {
+		if ( this.props.loadingNameserversError ) {
 			return <FetchError selectedDomainName={ this.props.selectedDomainName } />;
 		}
 
@@ -186,7 +180,6 @@ class NameServers extends React.Component {
 
 		return (
 			<Main className={ classes }>
-				<QueryDomainNameservers domainName={ this.props.selectedDomainName } />
 				{ this.header() }
 				{ this.getContent() }
 			</Main>
@@ -227,9 +220,8 @@ class NameServers extends React.Component {
 
 	saveNameservers = () => {
 		const { nameservers } = this.state;
-		const { selectedDomainName } = this.props;
 
-		this.props.updateNameservers( selectedDomainName, nameservers );
+		this.props.updateNameservers( nameservers );
 	};
 
 	header() {
@@ -342,15 +334,6 @@ const customNameServersLearnMoreClick = ( domainName ) =>
 		)
 	);
 
-export default connect(
-	( state, { selectedDomainName } ) => ( {
-		currentRoute: getCurrentRoute( state ),
-		nameservers: getNameserversByDomainName( state, selectedDomainName ),
-	} ),
-	{
-		customNameServersLearnMoreClick,
-		errorNotice,
-		successNotice,
-		updateNameservers,
-	}
-)( localize( NameServers ) );
+export default connect( ( state ) => ( { currentRoute: getCurrentRoute( state ) } ), {
+	customNameServersLearnMoreClick,
+} )( localize( withDomainNameservers( NameServers ) ) );

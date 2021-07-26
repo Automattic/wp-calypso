@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { defer, get, includes, isEmpty } from 'lodash';
+import { defer, get, isEmpty } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import page from 'page';
 
@@ -36,6 +36,7 @@ import {
 } from 'calypso/state/analytics/actions';
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
+import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
 import Notice from 'calypso/components/notice';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
@@ -48,7 +49,11 @@ import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getVerticalForDomainSuggestions } from 'calypso/state/signup/steps/site-vertical/selectors';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
-import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import {
+	removeStep,
+	saveSignupStep,
+	submitSignupStep,
+} from 'calypso/state/signup/progress/actions';
 import { isDomainStepSkippable } from 'calypso/signup/config/steps';
 import { fetchUsernameSuggestion } from 'calypso/state/signup/optional-dependencies/actions';
 import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
@@ -85,13 +90,6 @@ class DomainsStep extends React.Component {
 		isReskinned: PropTypes.bool,
 	};
 
-	getDefaultState = () => ( {
-		previousStepSectionName: this.props.stepSectionName,
-		suggestion: null,
-	} );
-
-	state = this.getDefaultState();
-
 	constructor( props ) {
 		super( props );
 
@@ -125,17 +123,14 @@ class DomainsStep extends React.Component {
 					isPurchasingItem: true,
 					stepSectionName: props.stepSectionName,
 				},
-				{ domainItem }
+				{
+					domainItem,
+					siteUrl: domain,
+				}
 			);
 
 			props.goToNextStep();
 		}
-	}
-
-	static getDerivedStateFromProps( nextProps ) {
-		return {
-			previousStepSectionName: nextProps.stepSectionName,
-		};
 	}
 
 	/**
@@ -315,6 +310,14 @@ class DomainsStep extends React.Component {
 
 		suggestion && this.props.submitDomainStepSelection( suggestion, this.getAnalyticsSection() );
 
+		maybeExcludeEmailsStep( {
+			domainItem,
+			resetSignupStep: this.props.removeStep,
+			siteUrl: suggestion?.domain_name,
+			stepName: 'emails',
+			submitSignupStep: this.props.submitSignupStep,
+		} );
+
 		this.props.submitSignupStep(
 			Object.assign(
 				{
@@ -478,9 +481,6 @@ class DomainsStep extends React.Component {
 
 	domainForm = () => {
 		let initialState = {};
-		if ( this.state?.domainForm ) {
-			initialState = this.state.domainForm;
-		}
 		if ( this.props.step ) {
 			initialState = this.props.step.domainForm;
 		}
@@ -663,7 +663,7 @@ class DomainsStep extends React.Component {
 		const subHeaderPropertyName = 'signUpFlowDomainsStepSubheader';
 		const onboardingSubHeaderCopy =
 			siteType &&
-			includes( [ 'onboarding', 'ecommerce-onboarding' ], flowName ) &&
+			[ 'onboarding', 'ecommerce-onboarding' ].includes( flowName ) &&
 			getSiteTypePropertyValue( 'slug', siteType, subHeaderPropertyName );
 
 		if ( onboardingSubHeaderCopy ) {
@@ -876,6 +876,7 @@ export default connect(
 		recordAddDomainButtonClickInTransferDomain,
 		recordAddDomainButtonClickInUseYourDomain,
 		recordUseYourDomainButtonClick,
+		removeStep,
 		submitDomainStepSelection,
 		setDesignType,
 		saveSignupStep,

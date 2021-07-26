@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-import React, { useState, useContext } from 'react';
 import {
 	render,
 	getAllByLabelText as getAllByLabelTextInNode,
@@ -10,11 +6,8 @@ import {
 	fireEvent,
 	act,
 } from '@testing-library/react';
+import React, { useState, useContext } from 'react';
 import '@testing-library/jest-dom/extend-expect';
-
-/**
- * Internal dependencies
- */
 import {
 	Checkout,
 	CheckoutProvider,

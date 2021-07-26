@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
 import { By } from 'selenium-webdriver';
-
-/**
- * Internal dependencies
- */
-import * as driverHelper from '../driver-helper.js';
-
 import AsyncBaseContainer from '../async-base-container';
+import * as driverHelper from '../driver-helper.js';
 
 export default class NavBarComponent extends AsyncBaseContainer {
 	constructor( driver ) {
@@ -39,7 +31,7 @@ export default class NavBarComponent extends AsyncBaseContainer {
 		return await driverHelper.clickWhenClickable( this.driver, profileLocator );
 	}
 	async clickMySites() {
-		const mySitesLocator = By.css( 'header.masterbar a.masterbar__item' );
+		const mySitesLocator = By.css( '[data-tip-target="my-sites"]' );
 		await driverHelper.clickWhenClickable( this.driver, mySitesLocator );
 	}
 	async hasUnreadNotifications() {

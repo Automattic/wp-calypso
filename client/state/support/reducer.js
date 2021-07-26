@@ -2,19 +2,17 @@
  * External dependencies
  */
 import debugFactory from 'debug';
+import { withStorageKey } from '@automattic/state-utils';
 
 /**
  * Internal dependencies
  */
 import { SUPPORT_SESSION_TRANSITION } from 'calypso/state/action-types';
+import { SESSION_ACTIVE, SESSION_EXPIRED, SESSION_NONE } from './constants';
 
 const debug = debugFactory( 'calypso:state:support:actions' );
 
-export const SESSION_NONE = 'none';
-export const SESSION_ACTIVE = 'active';
-export const SESSION_EXPIRED = 'expired';
-
-export default function supportSession( state = SESSION_NONE, { type, nextState } ) {
+function supportSession( state = SESSION_NONE, { type, nextState } ) {
 	switch ( type ) {
 		case SUPPORT_SESSION_TRANSITION:
 			if (
@@ -31,3 +29,5 @@ export default function supportSession( state = SESSION_NONE, { type, nextState 
 			return state;
 	}
 }
+
+export default withStorageKey( 'support', supportSession );

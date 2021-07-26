@@ -47,7 +47,7 @@ const Visibility = Site.Visibility;
 import { isValidLandingPageVertical } from 'calypso/lib/signup/verticals';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 
-import SignupCart from 'calypso/lib/signup/cart';
+import { createCart, addToCart } from 'calypso/lib/signup/cart';
 
 // Others
 import flows from 'calypso/signup/config/flows';
@@ -76,25 +76,22 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 			domainItem,
 		};
 
-		const domainChoiceCart = [ domainItem ];
-		SignupCart.createCart( cartKey, domainChoiceCart, ( error ) =>
-			callback( error, providedDependencies )
-		);
+		const domainChoiceCart = [ domainItem ].filter( Boolean );
+		createCart( cartKey, domainChoiceCart, ( error ) => callback( error, providedDependencies ) );
 	} else if ( designType === 'existing-site' ) {
 		const providedDependencies = {
 			siteId,
 			siteSlug,
 		};
+		const products = [
+			dependencies.domainItem,
+			dependencies.privacyItem,
+			dependencies.cartItem,
+		].filter( Boolean );
 
-		SignupCart.createCart(
-			siteId,
-			[ dependencies.domainItem, dependencies.privacyItem, dependencies.cartItem ].filter(
-				Boolean
-			),
-			( error ) => {
-				callback( error, providedDependencies );
-			}
-		);
+		createCart( siteId, products, ( error ) => {
+			callback( error, providedDependencies );
+		} );
 	} else {
 		const newSiteData = {
 			cartItem,
@@ -342,9 +339,11 @@ export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
 }
 
 export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
-	const { siteSlug } = dependencies;
+	// Note that we pull in emailItem to avoid race conditions from multiple step API functions
+	// trying to fetch and update the cart simultaneously, as both of those actions are asynchronous.
+	const { emailItem, siteSlug } = dependencies;
 	const { cartItem } = stepProvidedItems;
-	if ( isEmpty( cartItem ) ) {
+	if ( isEmpty( cartItem ) && isEmpty( emailItem ) ) {
 		// the user selected the free plan
 		defer( callback );
 
@@ -352,7 +351,7 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 	}
 
 	const providedDependencies = { cartItem };
-	const newCartItems = [ cartItem ].filter( ( item ) => item );
+	const newCartItems = [ cartItem, emailItem ].filter( ( item ) => item );
 
 	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, null, null );
 }
@@ -384,12 +383,13 @@ function processItemCart(
 	themeSlugWithRepo
 ) {
 	const addToCartAndProceed = () => {
+		debug( 'adding cart items', newCartItems );
 		const newCartItemsToAdd = newCartItems.map( ( item ) =>
 			addPrivacyProtectionIfSupported( item, reduxStore.getState() )
 		);
 
 		if ( newCartItemsToAdd.length ) {
-			SignupCart.addToCart( siteSlug, newCartItemsToAdd, function ( cartError ) {
+			addToCart( siteSlug, newCartItemsToAdd, function ( cartError ) {
 				callback( cartError, providedDependencies );
 			} );
 		} else {
@@ -720,6 +720,41 @@ export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
 		const tracksEventValue = siteDomains.map( ( siteDomain ) => siteDomain.domain ).join( ', ' );
 		excludeDomainStep( stepName, tracksEventValue, submitSignupStep );
 	}
+}
+
+export function maybeExcludeEmailsStep( {
+	domainItem,
+	resetSignupStep,
+	siteUrl,
+	stepName,
+	submitSignupStep,
+} ) {
+	const isEmailStepExcluded = flows.excludedSteps.includes( stepName );
+
+	/* If we have a domain, make sure the step isn't excluded */
+	if ( domainItem ) {
+		if ( ! isEmailStepExcluded ) {
+			return;
+		}
+
+		resetSignupStep( stepName );
+		flows.resetExcludedStep( stepName );
+
+		return;
+	}
+
+	/* We don't have a domain, so exclude the step if it hasn't been excluded yet */
+	if ( isEmailStepExcluded ) {
+		return;
+	}
+
+	const emailItem = undefined;
+
+	submitSignupStep( { stepName, emailItem, wasSkipped: true }, { emailItem } );
+
+	recordExcludeStepEvent( stepName, siteUrl );
+
+	flows.excludeStep( stepName );
 }
 
 export function maybeRemoveStepForUserlessCheckout( stepName, defaultDependencies, nextProps ) {

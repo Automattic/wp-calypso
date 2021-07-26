@@ -13,7 +13,7 @@ import Gridicon from 'calypso/components/gridicon';
  */
 import ActionCard from 'calypso/components/action-card';
 import { Button, Card } from '@automattic/components';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import ExternalLink from 'calypso/components/external-link';

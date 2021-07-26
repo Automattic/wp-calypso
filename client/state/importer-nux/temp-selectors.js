@@ -3,6 +3,11 @@
  */
 import { get } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
+import 'calypso/state/importer-nux/init';
+
 // TODO: Follow project conventions once finalised
 export const getNuxUrlInputValue = ( state ) => get( state, 'importerNux.urlInputValue' );
 

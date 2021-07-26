@@ -14,6 +14,7 @@ import {
 	setUnsavedUserSetting,
 } from 'calypso/state/user-settings/actions';
 
+import 'calypso/state/user-settings/init';
 import 'calypso/state/data-layer/wpcom/me/settings';
 
 const debug = debugFactory( 'calypso:user:settings' );

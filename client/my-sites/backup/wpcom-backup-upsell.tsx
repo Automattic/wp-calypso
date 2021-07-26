@@ -11,7 +11,7 @@ import { Button } from '@automattic/components';
  * Internal dependencies
  */
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { preventWidows } from 'calypso/lib/formatting';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -83,6 +83,7 @@ const BackupUpsellBody: FunctionComponent = () => {
 		( state ) => siteId && canCurrentUser( state, siteId, 'manage_options' )
 	);
 	const translate = useTranslate();
+	const postCheckoutUrl = window.location.pathname + window.location.search;
 	return (
 		<PromoCard
 			title={ preventWidows( translate( 'Get time travel for your site with Jetpack Backup' ) ) }
@@ -110,7 +111,7 @@ const BackupUpsellBody: FunctionComponent = () => {
 					<Button
 						className="backup__wpcom-cta backup__wpcom-realtime-cta"
 						href={ addQueryArgs( `/checkout/${ siteSlug }/jetpack_backup_realtime`, {
-							redirect_to: window.location.href,
+							redirect_to: postCheckoutUrl,
 						} ) }
 						onClick={ onUpgradeClick }
 						primary
@@ -120,7 +121,7 @@ const BackupUpsellBody: FunctionComponent = () => {
 					<Button
 						className="backup__wpcom-cta backup__wpcom-daily-cta"
 						href={ addQueryArgs( `/checkout/${ siteSlug }/jetpack_backup_daily`, {
-							redirect_to: window.location.href,
+							redirect_to: postCheckoutUrl,
 						} ) }
 						onClick={ onUpgradeClick }
 					>

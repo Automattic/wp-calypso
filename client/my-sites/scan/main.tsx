@@ -71,9 +71,6 @@ interface Props {
 }
 
 class ScanPage extends Component< Props > {
-	state = {
-		showJetpackReviewPrompt: false,
-	};
 	renderProvisioning() {
 		return (
 			<>

@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import { useCallback, useEffect } from 'react';
-import debugFactory from 'debug';
 import { useI18n } from '@wordpress/react-i18n';
-
-/**
- * Internal dependencies
- */
-import { usePaymentMethodId } from '../lib/payment-methods';
-import useMessages from './use-messages';
-import useEvents from './use-events';
+import debugFactory from 'debug';
+import { useCallback, useEffect } from 'react';
 import { useFormStatus } from '../lib/form-status';
+import { usePaymentMethodId } from '../lib/payment-methods';
 import { useTransactionStatus } from '../lib/transaction-status';
 import { TransactionStatus } from '../types';
+import useEvents from './use-events';
+import useMessages from './use-messages';
 
 const debug = debugFactory( 'composite-checkout:transaction-status-handler' );
 

@@ -1,13 +1,6 @@
-/**
- * Internal dependencies
- */
-import { LoginPage } from '../pages';
-import { getAccountCredential, getCalypsoURL } from '../../data-helper';
-
-/**
- * Type dependencies
- */
 import { Page } from 'playwright';
+import { getAccountCredential, getCalypsoURL } from '../../data-helper';
+import { LoginPage } from '../pages';
 
 /**
  * Class representing the end-to-end log in process.

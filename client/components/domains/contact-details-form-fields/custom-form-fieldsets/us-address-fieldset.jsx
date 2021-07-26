@@ -14,7 +14,13 @@ import { getStateLabelText, getPostCodeLabelText, STATE_SELECT_TEXT } from './ut
 const noop = () => {};
 
 const UsAddressFieldset = ( props ) => {
-	const { getFieldProps, translate, countryCode, contactDetailsErrors } = props;
+	const {
+		getFieldProps,
+		translate,
+		countryCode,
+		contactDetailsErrors,
+		arePostalCodesSupported,
+	} = props;
 	return (
 		<div className="custom-form-fieldsets__address-fields us-address-fieldset">
 			<Input
@@ -30,12 +36,14 @@ const UsAddressFieldset = ( props ) => {
 					customErrorMessage: contactDetailsErrors?.state,
 				} ) }
 			/>
-			<Input
-				label={ getPostCodeLabelText( countryCode ) }
-				{ ...getFieldProps( 'postal-code', {
-					customErrorMessage: contactDetailsErrors?.postalCode,
-				} ) }
-			/>
+			{ arePostalCodesSupported && (
+				<Input
+					label={ getPostCodeLabelText( countryCode ) }
+					{ ...getFieldProps( 'postal-code', {
+						customErrorMessage: contactDetailsErrors?.postalCode,
+					} ) }
+				/>
+			) }
 		</div>
 	);
 };
@@ -45,11 +53,13 @@ UsAddressFieldset.propTypes = {
 	getFieldProps: PropTypes.func,
 	translate: PropTypes.func,
 	contactDetailsErrors: PropTypes.object,
+	arePostalCodesSupported: PropTypes.bool,
 };
 
 UsAddressFieldset.defaultProps = {
 	countryCode: 'US',
 	getFieldProps: noop,
+	arePostalCodesSupported: true,
 };
 
 export default localize( UsAddressFieldset );

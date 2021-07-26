@@ -14,7 +14,7 @@ import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getPlan, PLAN_PERSONAL, FEATURE_NO_ADS } from '@automattic/calypso-products';
-import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import {
 	getSitePlanRawPrice,
 	getPlanDiscountedRawPrice,

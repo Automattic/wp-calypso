@@ -42,7 +42,7 @@ class MasterbarLoggedOut extends React.Component {
 
 	renderLoginItem() {
 		const { currentQuery, currentRoute, sectionName, translate, redirectUri } = this.props;
-		if ( includes( [ 'login' ], sectionName ) ) {
+		if ( sectionName === 'login' ) {
 			return null;
 		}
 
@@ -81,7 +81,7 @@ class MasterbarLoggedOut extends React.Component {
 		const { currentQuery, currentRoute, locale, sectionName, translate } = this.props;
 
 		// Hide for some sections
-		if ( includes( [ 'signup' ], sectionName ) ) {
+		if ( sectionName === 'signup' ) {
 			return null;
 		}
 
@@ -148,7 +148,7 @@ class MasterbarLoggedOut extends React.Component {
 		if ( isCheckout ) {
 			return (
 				<AsyncLoad
-					require="calypso/layout/masterbar/checkout"
+					require="calypso/layout/masterbar/checkout.tsx"
 					placeholder={ null }
 					title={ title }
 				/>

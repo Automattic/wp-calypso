@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import webdriver from 'selenium-webdriver';
 import config from 'config';
+import webdriver from 'selenium-webdriver';
 
 const emailWaitMS = config.get( 'emailWaitMS' );
 

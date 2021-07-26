@@ -8,7 +8,9 @@ import { get, includes, startsWith } from 'lodash';
  */
 import config from '@automattic/calypso-config';
 import {
+	isAkismetOAuth2Client,
 	isCrowdsignalOAuth2Client,
+	isGravatarOAuth2Client,
 	isJetpackCloudOAuth2Client,
 	isWooOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
@@ -69,6 +71,15 @@ export function getSignupUrl(
 		signupUrl = '/jetpack/connect';
 	} else if ( signupFlow ) {
 		signupUrl += '/' + signupFlow;
+	}
+
+	if ( isAkismetOAuth2Client( oauth2Client ) || isGravatarOAuth2Client( oauth2Client ) ) {
+		const oauth2Flow = 'wpcc';
+		const oauth2Params = new URLSearchParams( {
+			oauth2_client_id: oauth2Client.id,
+			oauth2_redirect: redirectTo,
+		} );
+		signupUrl = `${ signupUrl }/${ oauth2Flow }?${ oauth2Params.toString() }`;
 	}
 
 	if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {

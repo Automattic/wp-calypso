@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import config from 'config';
-
-/**
- * Internal dependencies
- */
 import EmailClient from '../email-client';
 
 const signupInboxId = config.get( 'signupInboxId' );

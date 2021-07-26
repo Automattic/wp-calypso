@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
 import assert from 'assert';
 import config from 'config';
-
-/**
- * Internal dependencies
- */
-import * as driverManager from '../../lib/driver-manager';
 import { getJetpackHost } from '../../lib/data-helper';
-
-import PluginsBrowserPage from '../../lib/pages/plugins-browser-page';
+import * as driverManager from '../../lib/driver-manager';
 import LoginFlow from '../../lib/flows/login-flow';
+import PluginsBrowserPage from '../../lib/pages/plugins-browser-page';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();

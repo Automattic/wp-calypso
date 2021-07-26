@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { By } from 'selenium-webdriver';
 import config from 'config';
-
-/**
- * Internal dependencies
- */
+import { By } from 'selenium-webdriver';
 import * as driverHelper from '../driver-helper';
 import WPAdminLogonPage from '../pages/wp-admin/wp-admin-logon-page';
 

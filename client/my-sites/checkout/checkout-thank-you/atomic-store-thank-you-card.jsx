@@ -22,6 +22,7 @@ import {
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import wpcom from 'calypso/lib/wp';
+import { showMasterbar } from 'calypso/state/ui/masterbar-visibility/actions';
 
 const VERIFY_EMAIL_ERROR_NOTICE = 'ecommerce-verify-email-error';
 const RESEND_ERROR = 'RESEND_ERROR';
@@ -183,5 +184,5 @@ export default connect(
 			planClass,
 		};
 	},
-	{ errorNotice, fetchCurrentUser, removeNotice }
+	{ errorNotice, fetchCurrentUser, removeNotice, showMasterbar }
 )( localize( AtomicStoreThankYouCard ) );

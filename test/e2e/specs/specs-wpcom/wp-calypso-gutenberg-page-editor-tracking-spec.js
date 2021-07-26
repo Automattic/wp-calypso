@@ -1,20 +1,14 @@
-/**
- * External dependencies
- */
+import assert from 'assert';
 import config from 'config';
-
-/**
- * Internal dependencies
- */
-import LoginFlow from '../../lib/flows/login-flow.js';
-
-import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
-import WPAdminSidebar from '../../lib/pages/wp-admin/wp-admin-sidebar';
-
-import * as driverManager from '../../lib/driver-manager.js';
+import { By } from 'selenium-webdriver';
 import * as dataHelper from '../../lib/data-helper.js';
-import { clearEventsStack } from '../../lib/gutenberg/tracking/utils.js';
+import * as driverHelper from '../../lib/driver-helper.js';
+import * as driverManager from '../../lib/driver-manager.js';
+import LoginFlow from '../../lib/flows/login-flow.js';
+import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
 import { createGeneralTests } from '../../lib/gutenberg/tracking/general-tests.js';
+import { clearEventsStack, getEventsStack } from '../../lib/gutenberg/tracking/utils.js';
+import WPAdminSidebar from '../../lib/pages/wp-admin/wp-admin-sidebar';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
@@ -35,7 +29,26 @@ describe( `[${ host }] Calypso Gutenberg Page Editor Tracking: (${ screenSize })
 
 			const wpAdminSidebar = await WPAdminSidebar.Expect( this.driver );
 			await wpAdminSidebar.selectNewPage();
+		} );
 
+		it( 'Tracks "from_template_selector" property for "wpcom_block_inserted"', async function () {
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.page-pattern-modal .pattern-selector-item__label' )
+			);
+
+			const insertedEvents = ( await getEventsStack( this.driver ) ).filter(
+				( event ) => event[ 0 ] === 'wpcom_block_inserted'
+			);
+
+			assert(
+				insertedEvents.filter( ( event ) => event[ 1 ].from_template_selector === true ).length ===
+					insertedEvents.length
+			);
+
+			// Reset for following tests.
+			await this.driver.navigate().refresh();
+			await driverHelper.dismissAlertIfPresent( this.driver );
 			const editor = await GutenbergEditorComponent.Expect( this.driver, 'wp-admin' );
 			await editor.initEditor( { dismissPageTemplateLocator: true } );
 		} );

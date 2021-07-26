@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, includes } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,7 +21,7 @@ import CommentDeleteWarning from 'calypso/my-sites/comment/comment-delete-warnin
 import CommentListHeader from 'calypso/my-sites/comments/comment-list/comment-list-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { preventWidows } from 'calypso/lib/formatting';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteComment } from 'calypso/state/comments/selectors';
 import { getSiteId } from 'calypso/state/sites/selectors';
 
@@ -103,7 +103,7 @@ const mapStateToProps = ( state, ownProps ) => {
 	const postId = get( comment, 'post.ID' );
 
 	const canModerateComments = canCurrentUser( state, siteId, 'moderate_comments' );
-	const hasPermalink = includes( [ 'approved', 'unapproved' ], get( comment, 'status' ) );
+	const hasPermalink = [ 'approved', 'unapproved' ].includes( get( comment, 'status' ) );
 
 	return {
 		siteId,

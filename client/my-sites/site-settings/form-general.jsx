@@ -43,6 +43,7 @@ import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { launchSite } from 'calypso/state/sites/launch/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import { domainManagementChangeSiteAddress } from 'calypso/my-sites/domains/paths';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
@@ -190,6 +191,12 @@ export class SiteSettingsFormGeneral extends Component {
 								),
 							},
 						}
+					) }
+					&nbsp;
+					{ site.domain.endsWith( '.wordpress.com' ) && (
+						<a href={ domainManagementChangeSiteAddress( siteSlug, site.domain ) }>
+							{ translate( 'You can change your site address in Domain Settings.' ) }
+						</a>
 					) }
 				</FormSettingExplanation>
 			);

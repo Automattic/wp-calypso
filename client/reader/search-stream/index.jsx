@@ -66,10 +66,6 @@ class SearchStream extends React.Component {
 
 	getTitle = ( props = this.props ) => props.query || props.translate( 'Search' );
 
-	state = {
-		selected: SEARCH_TYPES.POSTS,
-	};
-
 	updateQuery = ( newValue ) => {
 		this.scrollToTop();
 		const trimmedValue = trim( newValue ).substring( 0, 1024 );

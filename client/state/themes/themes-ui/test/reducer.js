@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import reducer, { backPath, themesShowcaseOpen, themesBookmark } from '../reducer';
-import { THEMES_SHOWCASE_OPEN, THEMES_BOOKMARK_SET } from 'calypso/state/themes/action-types';
+import reducer, { backPath, themesBookmark } from '../reducer';
+import { THEMES_BOOKMARK_SET } from 'calypso/state/themes/action-types';
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {
@@ -17,23 +17,6 @@ describe( '#backPath', () => {
 
 	test( 'should default to a backPath of /themes', () => {
 		expect( state ).toBe( '/themes' );
-	} );
-} );
-
-describe( '#themesShowcaseOpen', () => {
-	test( 'initializes to false', () => {
-		const state = themesShowcaseOpen( undefined, {} );
-		expect( state ).toBe( false );
-	} );
-
-	test( 'action type THEMES_SHOWCASE_OPEN sets value to true', () => {
-		const state = themesShowcaseOpen( false, { type: THEMES_SHOWCASE_OPEN } );
-		expect( state ).toBe( true );
-	} );
-
-	test( 'fubar action does not alter state', () => {
-		const state = themesShowcaseOpen( false, { type: 'FUBAR_ACTION' } );
-		expect( state ).toBe( false );
 	} );
 } );
 

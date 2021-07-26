@@ -52,3 +52,34 @@
 .themes__hidden-content {
 	display: none;
 }
+
+.section-nav.themes__section-nav {
+	box-shadow: none;
+	border: 1px solid var( --color-border-subtle );
+	border-top: 0;
+	.section-nav-tab__link {
+		@include breakpoint-deprecated( '>480px' ) {
+			padding-top: 8px;
+		}
+	}
+}
+
+.theme-showcase__all-themes-title {
+	font-weight: 600;
+}
+
+.theme-showcase__all-themes-title,
+.themes__themes-selection-header h2,
+.theme-showcase__all-themes-description {
+	margin-left: 16px;
+	margin-right: 16px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-left: 0;
+		margin-right: 0;
+	}
+}
+
+.theme-showcase__badge-beta {
+	margin-left: 6px;
+}

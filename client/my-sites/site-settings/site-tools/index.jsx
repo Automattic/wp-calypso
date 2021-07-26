@@ -40,7 +40,6 @@ const trackDeleteSiteOption = ( option ) => {
 class SiteTools extends Component {
 	state = {
 		showDialog: false,
-		showStartOverDialog: false,
 	};
 
 	componentDidUpdate( prevProps ) {

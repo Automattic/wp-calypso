@@ -34,15 +34,16 @@
 	}
 
 	// Themes sets it own padding/margin
-	.is-section-theme.has-no-sidebar &,
+	.is-section-theme &,
 	.is-section-themes.has-no-sidebar & {
 		padding: 0;
 		margin: 0;
 	}
 
 	.is-section-theme & {
-		padding: 0 0 0 calc( var( --sidebar-width-max ) );
-		margin: 0;
+		.sites.main {
+			padding-top: 79px;
+		}
 	}
 
 	// This is needed to ensure the WebPreview component
@@ -60,14 +61,9 @@
 			padding-left: 24px;
 		}
 
-		.is-section-theme.has-no-sidebar &,
+		.is-section-theme &,
 		.is-section-themes.has-no-sidebar & {
 			padding: 0;
-			margin: 0;
-		}
-	
-		.is-section-theme & {
-			padding: 0 0 0 calc( var( --sidebar-width-max ) );
 			margin: 0;
 		}
 

@@ -1,13 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	getPlan,
-	getMonthlyPlanByYearly,
-	getBillingMonthsForTerm,
-	GROUP_WPCOM,
-	TERM_MONTHLY,
-} from '@automattic/calypso-products';
+import { GROUP_WPCOM } from '@automattic/calypso-products';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
 import { getPlanPrice } from './get-plan-price';
 
@@ -35,7 +29,6 @@ export const computeFullAndMonthlyPricesForPlan = (
 	}
 
 	return {
-		priceFullBeforeDiscount: getPlanRawPrice( state, planObject.getProductId(), false ),
 		priceFull: getPlanPrice( state, siteId, planObject, false ),
 		priceFinal: Math.max(
 			getPlanPrice( state, siteId, planObject, false ) - credits - couponDiscount,
@@ -52,19 +45,8 @@ export const computeFullAndMonthlyPricesForPlan = (
  */
 function computePricesForWpComPlan( state, planObject ) {
 	const priceFull = getPlanRawPrice( state, planObject.getProductId(), false ) || 0;
-	const isMonthly = planObject.term === TERM_MONTHLY;
-	const monthlyPlanObject = isMonthly
-		? planObject
-		: getPlan( getMonthlyPlanByYearly( planObject.getStoreSlug() ) );
-	const priceMonthly = monthlyPlanObject
-		? getPlanRawPrice( state, monthlyPlanObject.getProductId(), true ) || 0
-		: 0;
-	const priceFullBeforeDiscount = priceMonthly
-		? priceMonthly * getBillingMonthsForTerm( planObject.term )
-		: priceFull;
 
 	return {
-		priceFullBeforeDiscount,
 		priceFull,
 		priceFinal: priceFull,
 	};

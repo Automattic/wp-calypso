@@ -94,6 +94,10 @@ is called.
 
 This function will be executed when the popover is shown.
 
+#### `focusOnShow { bool } - default: true`
+
+Defines whether or not the `Popover` should receive the focus when it shows.
+
 ### Usage notes
 
 #### Within modals / dialogs

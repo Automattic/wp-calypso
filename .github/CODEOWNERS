@@ -30,7 +30,6 @@
 /client/my-sites/checkout/checkout/domain-details-form.jsx @Automattic/letero
 /client/my-sites/checkout/checkout/index.jsx @Automattic/letero
 /client/my-sites/checkout/controller.jsx @Automattic/letero
-/client/my-sites/checkout/gsuite-nudge @Automattic/letero
 /client/my-sites/domains/components/domain-warnings @Automattic/letero
 /client/my-sites/domains/controller.jsx @Automattic/letero
 /client/my-sites/email @Automattic/letero
@@ -95,6 +94,10 @@
 /packages/explat-* @Automattic/experimentation-platform
 
 # Framework
+/client/boot @Automattic/team-calypso-frameworks
+/client/controller @Automattic/team-calypso-frameworks
+/client/layout @Automattic/team-calypso-frameworks
+/client/server @Automattic/team-calypso-frameworks
 /packages/js-utils @Automattic/team-calypso-frameworks
 
 # Jetpack Search
@@ -128,3 +131,6 @@
 # E2E specs
 /test/e2e @WunderBart @scinos @Automattic/quality-squad
 /packages/calypso-e2e @worldomonation
+
+# Node updates
+/.nvmrc @Automattic/ground-control

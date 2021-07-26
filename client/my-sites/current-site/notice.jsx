@@ -22,7 +22,7 @@ import {
 	hasDomainCredit,
 	isCurrentUserCurrentPlanOwner,
 } from 'calypso/state/sites/plans/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isEligibleForFreeToPaidUpsell from 'calypso/state/selectors/is-eligible-for-free-to-paid-upsell';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -31,7 +31,7 @@ import QueryActivePromotions from 'calypso/components/data/query-active-promotio
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getUnformattedDomainPrice, getUnformattedDomainSalePrice } from 'calypso/lib/domains';
 import formatCurrency from '@automattic/format-currency/src';
 import { getPreference } from 'calypso/state/preferences/selectors';

@@ -1,4 +1,5 @@
 export { canCurrentUserAddEmail } from './can-current-user-add-email';
+export { canCurrentUserCreateSiteFromDomainOnly } from './can-current-user-create-site-from-domain-only';
 export { canRedirect } from './can-redirect';
 export { checkAuthCode } from './check-auth-code';
 export { checkDomainAvailability } from './check-domain-availability';

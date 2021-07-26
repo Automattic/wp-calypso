@@ -9,7 +9,7 @@ import i18n from 'i18n-calypso';
  */
 
 import { successNotice } from 'calypso/state/notices/actions';
-import user from 'calypso/lib/user';
+import { sendVerificationSignal } from 'calypso/lib/user/verification-checker';
 
 /**
  * Page middleware
@@ -19,7 +19,7 @@ export default function emailVerification( context, next ) {
 	const showVerifiedNotice = '1' === context.query.verified;
 
 	if ( showVerifiedNotice ) {
-		user().signalVerification();
+		sendVerificationSignal();
 		setTimeout( () => {
 			const message = i18n.translate( 'Email confirmed!' );
 			const notice = successNotice( message, { duration: 10000 } );

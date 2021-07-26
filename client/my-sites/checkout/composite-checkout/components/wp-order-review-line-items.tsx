@@ -50,11 +50,8 @@ import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/s
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import { getSublabel, getLabel } from '../lib/translate-cart';
-import type {
-	WPCOMProductSlug,
-	WPCOMProductVariant,
-	OnChangeItemVariant,
-} from './item-variation-picker';
+import { useGetProductVariants } from '../hooks/product-variants';
+import type { OnChangeItemVariant } from './item-variation-picker';
 import { getIntroductoryOfferIntervalDisplay } from 'calypso/lib/purchases/utils';
 import {
 	getProductDisplayCost,
@@ -305,18 +302,18 @@ export function WPNonProductLineItem( {
 
 export function WPOrderReviewLineItems( {
 	className,
+	siteId,
 	isSummary,
 	removeProductFromCart,
 	removeCoupon,
-	getItemVariants,
 	onChangePlanLength,
 	createUserAndSiteBeforeTransaction,
 }: {
 	className?: string;
+	siteId?: number | undefined;
 	isSummary?: boolean;
 	removeProductFromCart?: RemoveProductFromCart;
 	removeCoupon: RemoveCouponFromCart;
-	getItemVariants?: ( productSlug: WPCOMProductSlug ) => WPCOMProductVariant[];
 	onChangePlanLength?: OnChangeItemVariant;
 	createUserAndSiteBeforeTransaction?: boolean;
 } ): JSX.Element {
@@ -331,9 +328,10 @@ export function WPOrderReviewLineItems( {
 					<WPOrderReviewListItem key={ product.uuid }>
 						<LineItem
 							product={ product }
+							allowVariants
+							siteId={ siteId }
 							hasDeleteButton={ canItemBeDeleted( product ) }
 							removeProductFromCart={ removeProductFromCart }
-							getItemVariants={ getItemVariants }
 							onChangePlanLength={ onChangePlanLength }
 							isSummary={ isSummary }
 							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
@@ -362,11 +360,12 @@ export function WPOrderReviewLineItems( {
 
 WPOrderReviewLineItems.propTypes = {
 	className: PropTypes.string,
+	siteId: PropTypes.number,
 	isSummary: PropTypes.bool,
 	removeProductFromCart: PropTypes.func,
 	removeCoupon: PropTypes.func,
-	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,
+	createUserAndSiteBeforeTransaction: PropTypes.bool,
 };
 
 function GSuiteUsersList( { product }: { product: ResponseCartProduct } ) {
@@ -821,19 +820,21 @@ function GSuiteDiscountCallout( {
 
 function WPLineItem( {
 	product,
+	allowVariants,
+	siteId,
 	className,
 	hasDeleteButton,
 	removeProductFromCart,
-	getItemVariants,
 	onChangePlanLength,
 	isSummary,
 	createUserAndSiteBeforeTransaction,
 }: {
 	product: ResponseCartProduct;
+	allowVariants?: boolean;
+	siteId?: number | undefined;
 	className?: string;
 	hasDeleteButton?: boolean;
 	removeProductFromCart?: RemoveProductFromCart;
-	getItemVariants?: ( productSlug: WPCOMProductSlug ) => WPCOMProductVariant[];
 	onChangePlanLength?: OnChangeItemVariant;
 	isSummary?: boolean;
 	createUserAndSiteBeforeTransaction?: boolean;
@@ -863,10 +864,11 @@ function WPLineItem( {
 	const isDisabled = formStatus !== FormStatus.READY;
 
 	const isRenewal = isWpComProductRenewal( product );
-	// Show the variation picker when this is not a renewal
-	const shouldShowVariantSelector = getItemVariants && product && ! isRenewal;
 
 	const productSlug = product?.product_slug;
+
+	const shouldShowVariantSelector = allowVariants && product && ! isRenewal;
+	const variants = useGetProductVariants( siteId, productSlug );
 
 	const isGSuite =
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) || isGoogleWorkspaceProductSlug( productSlug );
@@ -965,10 +967,10 @@ function WPLineItem( {
 				</>
 			) }
 
-			{ shouldShowVariantSelector && getItemVariants && onChangePlanLength && (
+			{ shouldShowVariantSelector && onChangePlanLength && (
 				<ItemVariationPicker
+					variants={ variants }
 					selectedItem={ product }
-					getItemVariants={ getItemVariants }
 					onChangeItemVariant={ onChangePlanLength }
 					isDisabled={ isDisabled }
 				/>
@@ -979,6 +981,8 @@ function WPLineItem( {
 }
 
 WPLineItem.propTypes = {
+	siteId: PropTypes.number,
+	allowVariants: PropTypes.bool,
 	className: PropTypes.string,
 	total: PropTypes.bool,
 	tax: PropTypes.bool,
@@ -987,7 +991,6 @@ WPLineItem.propTypes = {
 	hasDeleteButton: PropTypes.bool,
 	removeProductFromCart: PropTypes.func,
 	product: PropTypes.object.isRequired,
-	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,
 	createUserAndSiteBeforeTransaction: PropTypes.bool,
 };

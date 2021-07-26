@@ -11,9 +11,9 @@ $min_results_height: 180px;
 	}
 
 	.help-search__inner {
-		padding: 16px 16px 0;
+		padding: 0 16px;
 
-		@include break-mobile {
+		@include breakpoint-deprecated( '>660px' ) {
 			padding: 16px 24px 0;
 		}
 	}
@@ -28,7 +28,10 @@ $min_results_height: 180px;
 	}
 
 	.help-search__footer {
-		margin-bottom: 12px;
+		margin-bottom: 30px;
+		@include breakpoint-deprecated( '>660px' ) {
+			margin-bottom: 6px;
+		}
 	}
 
 	.help-search__cta {

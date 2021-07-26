@@ -1,10 +1,23 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .quick-links.foldable-card.card {
+	box-shadow: none;
+	@include breakpoint-deprecated( '>660px' ) {
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 3px;
+	}
+
+	&:not( .is-expanded ) {
+		box-shadow: 0 0 0 1px var( --color-border-subtle );
+	}
+
 	.foldable-card__header {
 		padding: 16px;
 		min-height: auto;
 
-		@include breakpoint-deprecated( '>480px' ) {
-			padding: 16px 24px;
+		@include breakpoint-deprecated( '>660px' ) {
+			padding: 16px 24px 14px;
 		}
 	}
 
@@ -28,8 +41,13 @@
 	display: flex;
 	align-items: center;
 	transition: all 0.1s;
-	padding-top: 12px;
-	padding-bottom: 12px;
+	padding-top: 8px;
+	padding-bottom: 8px;
+	padding-left: 16px;
+	box-shadow: none;
+	@include breakpoint-deprecated( '>660px' ) {
+		padding-left: 24px;
+	}
 
 	.quick-links__action-box-image {
 		display: flex;

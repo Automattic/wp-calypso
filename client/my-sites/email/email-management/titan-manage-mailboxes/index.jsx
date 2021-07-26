@@ -6,6 +6,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
+import titleCase from 'to-title-case';
 
 /**
  * Internal dependencies
@@ -103,7 +104,7 @@ class TitanManageMailboxes extends Component {
 				{ selectedSite && hasSubscription && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 
 				<Main wideLayout={ true }>
-					<DocumentHead title={ translate( 'Manage All Mailboxes' ) } />
+					<DocumentHead title={ titleCase( translate( 'Manage all mailboxes' ) ) } />
 
 					<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
 

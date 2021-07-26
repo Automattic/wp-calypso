@@ -13,7 +13,7 @@ import { isEnabled } from '@automattic/calypso-config';
  */
 import DocumentHead from 'calypso/components/data/document-head';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import Main from 'calypso/components/main';
 import EmptyContent from 'calypso/components/empty-content';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';

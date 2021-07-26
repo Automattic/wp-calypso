@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { PLAN_WPCOM_ENTERPRISE } from './constants';
 import { formatProduct } from './format-product';
 

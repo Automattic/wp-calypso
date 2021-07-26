@@ -1,3 +1,5 @@
+@import '@wordpress/base-styles/mixins';
+
 .dot-pager__pages {
 	overflow: hidden;
 	display: flex;
@@ -8,6 +10,7 @@
 	flex-shrink: 0;
 	margin-left: 0;
 	transition: all 0.5s ease-in-out;
+	@include reduce-motion( 'transition' );
 	opacity: 1;
 
 	&.is-prev,
@@ -26,26 +29,39 @@
 
 .dot-pager__controls {
 	margin: 0;
-	margin-top: 16px;
+	margin-bottom: 16px;
 	display: flex;
-	justify-content: center;
+	justify-content: flex-start;
 
 	li {
 		display: inline-flex;
 		margin: 0 4px;
 		height: 18px;
 		align-items: center;
+
+		&:first-child {
+			margin-left: 0;
+		}
+		&:last-child {
+			margin-right: 0;
+		}
+	}
+
+	.dot-pager__control-gap {
+		margin-left: auto;
 	}
 
 	button {
-		width: 12px;
-		height: 12px;
+		width: 6px;
+		height: 6px;
+		// Drawing a CSS circle
+		// stylelint-disable-next-line  declaration-property-unit-allowed-list
 		border-radius: 50%;
 		cursor: pointer;
 		background-color: var( --color-neutral-10 );
 
 		&:hover {
-			background-color: var( --color-neutral-light );
+			background-color: var( --studio-gray-20 );
 		}
 
 		&:disabled {
@@ -53,7 +69,7 @@
 		}
 
 		&.dot-pager__control-current {
-			background-color: var( --color-primary );
+			background-color: var( --studio-gray-80 );
 		}
 
 		&.dot-pager__control-prev,
@@ -61,6 +77,11 @@
 			width: 18px;
 			height: 18px;
 			background-color: transparent;
+			color: var( --studio-gray-80 );
+
+			&[disabled] {
+				color: var( --studio-gray-10 );
+			}
 		}
 	}
 }

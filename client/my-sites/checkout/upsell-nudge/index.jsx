@@ -9,6 +9,7 @@ import { pick } from 'lodash';
 import { withShoppingCart, createRequestCartProduct } from '@automattic/shopping-cart';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { isURL } from '@wordpress/url';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -19,7 +20,8 @@ import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import { CompactCard } from '@automattic/components';
-import { getCurrentUserCurrencyCode, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	getProductsList,
@@ -44,7 +46,11 @@ import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan
 import PurchaseModal from './purchase-modal';
 import Gridicon from 'calypso/components/gridicon';
 import { isMonthly, getPlanByPathSlug } from '@automattic/calypso-products';
-import { isFetchingStoredCards, getStoredCards } from 'calypso/state/stored-cards/selectors';
+import {
+	isFetchingStoredCards,
+	getStoredCards,
+	hasLoadedStoredCardsFromServer,
+} from 'calypso/state/stored-cards/selectors';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url';
 import { extractStoredCardMetaValue } from './purchase-modal/util';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
@@ -53,11 +59,17 @@ import {
 	retrieveSignupDestination,
 	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
+import {
+	isContactValidationResponseValid,
+	getTaxValidationResult,
+} from 'calypso/my-sites/checkout/composite-checkout/contact-validation';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const debug = debugFactory( 'calypso:upsell-nudge' );
 
 /**
  * Upsell Types
@@ -96,11 +108,83 @@ export class UpsellNudge extends React.Component {
 
 	state = {
 		showPurchaseModal: false,
+		isContactInfoValid: false,
 	};
 
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
+		this.validateContactInfo();
 	}
+
+	componentDidUpdate() {
+		this.validateContactInfo();
+	}
+
+	validateContactInfo = () => {
+		if ( this.props.isLoading ) {
+			return;
+		}
+		if ( ! this.haveCardsChanged() ) {
+			debug( 'cancelling validating contact info; cards have not changed' );
+			return;
+		}
+		if ( this.props.cards.length === 0 ) {
+			debug( 'not validating contact info because there are no cards' );
+			this.setState( { isContactInfoValid: false } );
+			return;
+		}
+		debug( 'validating contact info' );
+
+		const storedCard = this.props.cards[ 0 ];
+		const countryCode = extractStoredCardMetaValue( storedCard, 'country_code' );
+		const postalCode = extractStoredCardMetaValue( storedCard, 'card_zip' );
+
+		const validateContactDetails = async () => {
+			const contactInfo = {
+				postalCode: {
+					value: postalCode,
+					isTouched: true,
+					errors: [],
+					isRequired: false,
+				},
+				countryCode: {
+					value: countryCode,
+					isTouched: true,
+					errors: [],
+					isRequired: false,
+				},
+			};
+			const validationResult = await getTaxValidationResult( contactInfo );
+			return isContactValidationResponseValid( validationResult, contactInfo );
+		};
+
+		validateContactDetails().then( ( isValid ) => {
+			debug( 'validation of contact details result is', isValid );
+			this.setState( {
+				isContactInfoValid: isValid,
+			} );
+		} );
+	};
+
+	haveCardsChanged = () => {
+		const cardIds = this.props.cards.map( ( card ) => card.stored_details_id );
+		if ( ! this.lastCardIds ) {
+			this.lastCardIds = cardIds;
+			return true;
+		}
+		if ( this.lastCardIds.length !== cardIds.length ) {
+			this.lastCardIds = cardIds;
+			return true;
+		}
+		cardIds.forEach( ( id ) => {
+			if ( ! this.lastCardIds.includes( id ) ) {
+				this.lastCardIds = cardIds;
+				return true;
+			}
+		} );
+		this.lastCardIds = cardIds;
+		return false;
+	};
 
 	render() {
 		const { selectedSiteId, isLoading, hasProductsList, hasSitePlans, upsellType } = this.props;
@@ -288,23 +372,35 @@ export class UpsellNudge extends React.Component {
 		const { product, cards, siteSlug, upsellType } = this.props;
 
 		if ( ! product ) {
+			debug( 'not eligible for one-click upsell because no product exists' );
 			return false;
 		}
 
 		const supportedUpsellTypes = [ CONCIERGE_QUICKSTART_SESSION, BUSINESS_PLAN_UPGRADE_UPSELL ];
 		if ( 'accept' !== buttonAction || ! supportedUpsellTypes.includes( upsellType ) ) {
+			debug(
+				`not eligible for one-click upsell because the upsellType (${ upsellType }) is not supported`
+			);
 			return false;
 		}
 
 		if ( ! siteSlug ) {
+			debug( 'not eligible for one-click upsell because there is no siteSlug' );
 			return false;
 		}
 
 		// stored cards should exist
 		if ( cards.length === 0 ) {
+			debug( 'not eligible for one-click upsell because there are no cards' );
 			return false;
 		}
 
+		if ( ! this.state.isContactInfoValid ) {
+			debug( 'not eligible for one-click upsell because the contact info is not valid' );
+			return false;
+		}
+
+		debug( 'eligible for one-click upsell' );
 		return true;
 	};
 
@@ -322,7 +418,6 @@ export class UpsellNudge extends React.Component {
 					cart={ this.props.cart }
 					cards={ this.props.cards }
 					onClose={ onCloseModal }
-					siteId={ this.props.selectedSiteId }
 					siteSlug={ this.props.siteSlug }
 					isCartUpdating={ isCartUpdating }
 				/>
@@ -369,7 +464,13 @@ export default connect(
 		const annualPrice = getSitePlanRawPrice( state, selectedSiteId, planSlug, {
 			isMonthly: false,
 		} );
+
+		// If the cards have not started fetching yet, isFetchingStoredCards will be false
 		const isFetchingCards = isFetchingStoredCards( state );
+		const hasLoadedCardsFromServer = hasLoadedStoredCardsFromServer( state );
+		const areStoredCardsLoading = hasLoadedCardsFromServer ? isFetchingCards : true;
+		const cards = getStoredCards( state );
+
 		const productSlug = resolveProductSlug( upsellType, upgradeItem );
 		const productProperties = pick( getProductBySlug( state, productSlug ), [
 			'product_slug',
@@ -381,8 +482,8 @@ export default connect(
 				: null;
 
 		return {
-			isFetchingStoredCards: isFetchingCards,
-			cards: getStoredCards( state ),
+			isFetchingStoredCards: areStoredCardsLoading,
+			cards,
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			isLoading:
 				isFetchingCards ||

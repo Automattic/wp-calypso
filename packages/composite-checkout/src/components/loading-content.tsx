@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { keyframes } from '@emotion/core';
 import { useI18n } from '@wordpress/react-i18n';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import styled from '../lib/styled';
 
 const LoadingContentWrapper = styled.div`

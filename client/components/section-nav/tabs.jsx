@@ -79,7 +79,6 @@ class NavTabs extends Component {
 
 		const tabsClassName = classNames( 'section-nav-tabs', {
 			'is-dropdown': this.state.isDropdown,
-			'is-open': this.state.isDropdownOpen,
 			'has-siblings': this.props.hasSiblingControls,
 		} );
 

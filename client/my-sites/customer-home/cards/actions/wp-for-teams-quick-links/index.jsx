@@ -1,35 +1,21 @@
-/**
- * External dependencies
- */
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-import page from 'page';
-
-/**
- * Internal dependencies
- */
 import FoldableCard from 'calypso/components/foldable-card';
-import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
+import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
+import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
 import {
 	getSiteFrontPage,
 	getCustomizerUrl,
 	getSiteOption,
 	isNewSite,
 } from 'calypso/state/sites/selectors';
-import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
-import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
-import { getGSuiteSupportedDomains } from 'calypso/lib/gsuite';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ActionBox from '../quick-links/action-box';
-import isHomeQuickLinksExpanded from 'calypso/state/selectors/is-home-quick-links-expanded';
-import { expandHomeQuickLinks, collapseHomeQuickLinks } from 'calypso/state/home/actions';
 
-/**
- * Style dependencies
- */
 import '../quick-links/style.scss';
 
 export const QuickLinks = ( {
@@ -37,15 +23,17 @@ export const QuickLinks = ( {
 	isStaticHomePage,
 	showCustomizer,
 	menusUrl,
-	editHomepageAction,
-	writePostAction,
-	addPageAction,
-	manageCommentsAction,
+	trackEditHomepageAction,
+	trackWritePostAction,
+	trackAddPageAction,
+	trackManageCommentsAction,
 	trackEditMenusAction,
 	trackCustomizeThemeAction,
 	isExpanded,
 	expand,
 	collapse,
+	editHomePageUrl,
+	siteSlug,
 } ) => {
 	const translate = useTranslate();
 
@@ -53,39 +41,51 @@ export const QuickLinks = ( {
 		<div className="wp-for-teams-quick-links__boxes quick-links__boxes">
 			{ isStaticHomePage ? (
 				<ActionBox
-					onClick={ editHomepageAction }
+					href={ editHomePageUrl }
+					hideLinkIndicator
+					onClick={ trackEditHomepageAction }
 					label={ translate( 'Edit homepage' ) }
 					materialIcon="laptop"
 				/>
 			) : (
 				<ActionBox
-					onClick={ writePostAction }
+					href={ `/post/${ siteSlug }` }
+					hideLinkIndicator
+					onClick={ trackWritePostAction }
 					label={ translate( 'Write blog post' ) }
 					materialIcon="edit"
 				/>
 			) }
 			{ isStaticHomePage ? (
 				<ActionBox
-					onClick={ addPageAction }
+					href={ `/page/${ siteSlug }` }
+					hideLinkIndicator
+					onClick={ trackAddPageAction }
 					label={ translate( 'Add a page' ) }
 					materialIcon="insert_drive_file"
 				/>
 			) : (
 				<ActionBox
-					onClick={ manageCommentsAction }
+					href={ `/comments/${ siteSlug }` }
+					hideLinkIndicator
+					onClick={ trackManageCommentsAction }
 					label={ translate( 'Manage comments' ) }
 					materialIcon="mode_comment"
 				/>
 			) }
 			{ isStaticHomePage ? (
 				<ActionBox
-					onClick={ writePostAction }
+					href={ `/post/${ siteSlug }` }
+					hideLinkIndicator
+					onClick={ trackWritePostAction }
 					label={ translate( 'Write blog post' ) }
 					materialIcon="edit"
 				/>
 			) : (
 				<ActionBox
-					onClick={ addPageAction }
+					href={ `/page/${ siteSlug }` }
+					hideLinkIndicator
+					onClick={ trackAddPageAction }
 					label={ translate( 'Add a page' ) }
 					materialIcon="insert_drive_file"
 				/>
@@ -93,6 +93,7 @@ export const QuickLinks = ( {
 			{ showCustomizer && (
 				<ActionBox
 					href={ menusUrl }
+					hideLinkIndicator
 					onClick={ trackEditMenusAction }
 					label={ translate( 'Edit menus' ) }
 					materialIcon="list"
@@ -101,6 +102,7 @@ export const QuickLinks = ( {
 			{ showCustomizer && (
 				<ActionBox
 					href={ customizeUrl }
+					hideLinkIndicator
 					onClick={ trackCustomizeThemeAction }
 					label={ translate( 'Customize theme' ) }
 					materialIcon="palette"
@@ -122,7 +124,7 @@ export const QuickLinks = ( {
 	);
 };
 
-const editHomepageAction = ( editHomePageUrl, isStaticHomePage ) => ( dispatch ) => {
+const trackEditHomepageAction = ( isStaticHomePage ) => ( dispatch ) => {
 	dispatch(
 		composeAnalytics(
 			recordTracksEvent( 'calypso_customer_home_my_site_edit_homepage_click', {
@@ -131,10 +133,9 @@ const editHomepageAction = ( editHomePageUrl, isStaticHomePage ) => ( dispatch )
 			bumpStat( 'calypso_customer_home', 'my_site_edit_homepage' )
 		)
 	);
-	page( editHomePageUrl );
 };
 
-const writePostAction = ( siteSlug, isStaticHomePage ) => ( dispatch ) => {
+const trackWritePostAction = ( isStaticHomePage ) => ( dispatch ) => {
 	dispatch(
 		composeAnalytics(
 			recordTracksEvent( 'calypso_customer_home_my_site_write_post_click', {
@@ -143,10 +144,9 @@ const writePostAction = ( siteSlug, isStaticHomePage ) => ( dispatch ) => {
 			bumpStat( 'calypso_customer_home', 'my_site_write_post' )
 		)
 	);
-	page( `/post/${ siteSlug }` );
 };
 
-const addPageAction = ( siteSlug, isStaticHomePage ) => ( dispatch ) => {
+const trackAddPageAction = ( isStaticHomePage ) => ( dispatch ) => {
 	dispatch(
 		composeAnalytics(
 			recordTracksEvent( 'calypso_customer_home_my_site_add_page_click', {
@@ -155,10 +155,9 @@ const addPageAction = ( siteSlug, isStaticHomePage ) => ( dispatch ) => {
 			bumpStat( 'calypso_customer_home', 'my_site_add_page' )
 		)
 	);
-	page( `/page/${ siteSlug }` );
 };
 
-const manageCommentsAction = ( siteSlug, isStaticHomePage ) => ( dispatch ) => {
+const trackManageCommentsAction = ( isStaticHomePage ) => ( dispatch ) => {
 	dispatch(
 		composeAnalytics(
 			recordTracksEvent( 'calypso_customer_home_my_site_manage_comments_click', {
@@ -167,7 +166,6 @@ const manageCommentsAction = ( siteSlug, isStaticHomePage ) => ( dispatch ) => {
 			bumpStat( 'calypso_customer_home', 'my_site_manage_comments' )
 		)
 	);
-	page( `/comments/${ siteSlug }` );
 };
 
 const trackEditMenusAction = ( isStaticHomePage ) =>
@@ -189,7 +187,6 @@ const trackCustomizeThemeAction = ( isStaticHomePage ) =>
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
-	const domains = getDomainsBySiteId( state, siteId );
 	const isStaticHomePage =
 		! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' );
 	const siteSlug = getSelectedSiteSlug( state );
@@ -201,35 +198,33 @@ const mapStateToProps = ( state ) => {
 		menusUrl: getCustomizerUrl( state, siteId, 'menus' ),
 		isNewlyCreatedSite: isNewSite( state, siteId ),
 		showCustomizer: ! isSiteUsingFullSiteEditing( state, siteId ),
-		hasCustomDomain:
-			getGSuiteSupportedDomains( domains ).length > 0 && canUserPurchaseGSuite( state ),
 		siteSlug,
 		isStaticHomePage,
 		editHomePageUrl,
-		isExpanded: isHomeQuickLinksExpanded( state ),
+		isExpanded: getPreference( state, 'homeQuickLinksToggleStatus' ) !== 'collapsed',
 	};
 };
 
 const mapDispatchToProps = {
-	editHomepageAction,
-	writePostAction,
-	addPageAction,
-	manageCommentsAction,
+	trackEditHomepageAction,
+	trackWritePostAction,
+	trackAddPageAction,
+	trackManageCommentsAction,
 	trackEditMenusAction,
 	trackCustomizeThemeAction,
-	expand: expandHomeQuickLinks,
-	collapse: collapseHomeQuickLinks,
+	expand: () => savePreference( 'homeQuickLinksToggleStatus', 'expanded' ),
+	collapse: () => savePreference( 'homeQuickLinksToggleStatus', 'collapsed' ),
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const { editHomePageUrl, isStaticHomePage, siteSlug } = stateProps;
+	const { isStaticHomePage } = stateProps;
 	return {
 		...stateProps,
 		...dispatchProps,
-		editHomepageAction: () => dispatchProps.editHomepageAction( editHomePageUrl, isStaticHomePage ),
-		writePostAction: () => dispatchProps.writePostAction( siteSlug, isStaticHomePage ),
-		addPageAction: () => dispatchProps.addPageAction( siteSlug, isStaticHomePage ),
-		manageCommentsAction: () => dispatchProps.manageCommentsAction( siteSlug, isStaticHomePage ),
+		trackEditHomepageAction: () => dispatchProps.trackEditHomepageAction( isStaticHomePage ),
+		trackWritePostAction: () => dispatchProps.trackWritePostAction( isStaticHomePage ),
+		trackAddPageAction: () => dispatchProps.trackAddPageAction( isStaticHomePage ),
+		trackManageCommentsAction: () => dispatchProps.trackManageCommentsAction( isStaticHomePage ),
 		trackEditMenusAction: () => dispatchProps.trackEditMenusAction( isStaticHomePage ),
 		trackCustomizeThemeAction: () => dispatchProps.trackCustomizeThemeAction( isStaticHomePage ),
 		...ownProps,

@@ -44,6 +44,8 @@ function WindowsPlatform( appWindow ) {
 			tray.destroy();
 		}
 	} );
+
+	app.on( 'second-instance', this.restore.bind( this ) );
 }
 
 WindowsPlatform.prototype.onClosed = function ( ev ) {
@@ -78,6 +80,11 @@ WindowsPlatform.prototype.showBackgroundBubble = function () {
 };
 
 WindowsPlatform.prototype.restore = function () {
+	log.info( 'Restoring app window ...' );
+	if ( window.isMinimized() ) {
+		window.restore();
+		window.focus();
+	}
 	window.show();
 };
 

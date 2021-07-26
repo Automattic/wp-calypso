@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { By } from 'selenium-webdriver';
-
-/**
- * Internal dependencies
- */
 import AsyncBaseContainer from '../async-base-container';
-import * as SlackNotifier from '../slack-notifier';
 import * as driverHelper from '../driver-helper';
+import * as SlackNotifier from '../slack-notifier';
 
 export default class PluginsBrowserPage extends AsyncBaseContainer {
 	constructor( driver ) {

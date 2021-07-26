@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import type { FeaturesByType } from '../../types';
 
 // Individual Features
