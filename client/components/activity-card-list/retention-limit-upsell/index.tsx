@@ -85,7 +85,7 @@ const RetentionLimitUpsell: React.FC = ( { cardClassName } ) => {
 					ref={ upsellRef }
 					className="retention-limit-upsell__call-to-action-button"
 					onClick={ trackUpgradeClick }
-					href="/backup"
+					href="/pricing"
 				>
 					{ translate( 'Upgrade storage' ) }
 				</Button>
