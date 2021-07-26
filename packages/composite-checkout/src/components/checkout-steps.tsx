@@ -15,7 +15,6 @@ import { useFormStatus } from '../lib/form-status';
 import joinClasses from '../lib/join-classes';
 import styled from '../lib/styled';
 import theme from '../lib/theme';
-import type { Theme } from '../lib/theme';
 import {
 	getDefaultOrderReviewStep,
 	getDefaultOrderSummary,
@@ -31,6 +30,7 @@ import CheckoutNextStepButton from './checkout-next-step-button';
 import CheckoutSubmitButton from './checkout-submit-button';
 import LoadingContent from './loading-content';
 import { CheckIcon } from './shared-icons';
+import type { Theme } from '../lib/theme';
 
 const debug = debugFactory( 'composite-checkout:checkout' );
 
@@ -501,8 +501,8 @@ export function CheckoutStepArea( {
 		() => parseInt( theme.breakpoints.tabletUp.replace( /^.*:/, '' ), 10 ),
 		[]
 	);
-	const rootRef = useRef( null );
-	const submitWrapperRef = useRef( null );
+	const rootRef = useRef< HTMLDivElement >( null );
+	const submitWrapperRef = useRef< HTMLDivElement >( null );
 
 	// Get `SubmitButtonWrapper` height and viewport width.
 	useEffect( () => {
