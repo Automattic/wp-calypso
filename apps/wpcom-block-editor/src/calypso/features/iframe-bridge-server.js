@@ -78,7 +78,7 @@ function handlePostTrash( calypsoPort ) {
 				 * More context:
 				 * - https://github.com/WordPress/gutenberg/issues/27088;
 				 * - https://github.com/WordPress/gutenberg/pull/32153.
-				 **/
+				 */
 				const namespace = store.name ?? store;
 				const actions = { ...registry.dispatch( namespace ) };
 
@@ -1050,27 +1050,6 @@ function getCalypsoUrlInfo( calypsoPort ) {
 	);
 }
 
-/**
- * Passes uncaught errors in window.onerror to Calypso for logging.
- *
- * @param {MessagePort} calypsoPort Port used for communication with parent frame.
- */
-function handleUncaughtErrors( calypsoPort ) {
-	window.onerror = ( ...error ) => {
-		// Since none of Error's properties are enumerable, JSON.stringify does not work on it.
-		// We therefore stringify the error with a custom replacer containing the object's properties.
-		const errorObject = error[ 4 ]; // the 5th argument is the error object
-		error[ 4 ] =
-			errorObject && JSON.stringify( errorObject, Object.getOwnPropertyNames( errorObject ) );
-
-		// The other parameters don't need encoded since they are numbers or strings.
-		calypsoPort.postMessage( {
-			action: 'logError',
-			payload: { error },
-		} );
-	};
-}
-
 async function handleEditorLoaded( calypsoPort ) {
 	await isEditorReadyWithBlocks();
 	const isNew = select( 'core/editor' ).isCleanNewPost();
@@ -1269,8 +1248,6 @@ function initPort( message ) {
 		getNavSidebarLabels( calypsoPort );
 
 		getCalypsoUrlInfo( calypsoPort );
-
-		handleUncaughtErrors( calypsoPort );
 
 		handleEditorLoaded( calypsoPort );
 
