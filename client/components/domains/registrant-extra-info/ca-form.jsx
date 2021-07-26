@@ -19,7 +19,6 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
-import { Input } from 'calypso/my-sites/domains/components/form';
 import { disableSubmitButton } from './with-contact-details-validation';
 import wp from 'calypso/lib/wp';
 
@@ -138,20 +137,18 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 	};
 
 	handleChangeEvent = ( event ) => {
-		const { value, name, checked, type, id } = event.target;
+		const { value, checked, type, id } = event.target;
 		const newContactDetails = {};
 
-		if ( name === 'organization' ) {
-			newContactDetails[ name ] = value;
-			this.validateContactDetails( {
-				...this.props.contactDetails,
-				[ name ]: value,
+		if ( id === 'legal-type' ) {
+			this.props.updateRequiredDomainFields( {
+				organization: this.isCorporationLegalType( value ),
 			} );
-		} else {
-			newContactDetails.extra = {
-				ca: { [ camelCase( id ) ]: type === 'checkbox' ? checked : value },
-			};
 		}
+
+		newContactDetails.extra = {
+			ca: { [ camelCase( id ) ]: type === 'checkbox' ? checked : value },
+		};
 
 		this.props.updateContactDetailsCache( { ...newContactDetails } );
 
@@ -160,8 +157,12 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		}
 	};
 
+	isCorporationLegalType( legalType ) {
+		return legalType === 'CCO';
+	}
+
 	needsOrganization() {
-		return get( this.props.ccTldDetails, 'legalType' ) === 'CCO';
+		return this.isCorporationLegalType( get( this.props.ccTldDetails, 'legalType' ) );
 	}
 
 	organizationFieldIsValid() {
@@ -189,28 +190,6 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		}
 
 		return this.props.translate( 'Required' );
-	}
-
-	renderOrganizationField() {
-		const { translate, contactDetails } = this.props;
-		const label = {
-			label: translate( 'Organization' ),
-			...( this.needsOrganization() ? {} : { labelProps: { optional: true } } ),
-		};
-
-		return (
-			<FormFieldset>
-				<Input
-					name="organization"
-					className="registrant-extra-info__organization"
-					value={ contactDetails.organization || '' }
-					isError={ ! this.organizationFieldIsValid() }
-					errorMessage={ this.getOrganizationErrorMessage() }
-					{ ...label }
-					onChange={ this.handleChangeEvent }
-				/>
-			</FormFieldset>
-		);
 	}
 
 	render() {
@@ -266,7 +245,6 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 						) }
 					</FormLabel>
 				</FormFieldset>
-				{ this.renderOrganizationField() }
 				{ validatingSubmitButton }
 			</form>
 		);
