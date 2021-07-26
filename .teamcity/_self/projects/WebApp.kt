@@ -835,7 +835,7 @@ object RunCalypsoPlaywrightE2eDesktopTests : BuildType({
 				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
 				# Run the test
-				export VIEWPORT_SIZE=desktop
+				export VIEWPORT_NAME=desktop
 				export LOCALE=en
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 				export DEBUG=pw:api
@@ -986,7 +986,7 @@ object RunCalypsoPlaywrightE2eMobileTests : BuildType({
 				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
 				# Run the test
-				export VIEWPORT_SIZE=mobile
+				export VIEWPORT_NAME=mobile
 				export LOCALE=en
 				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 				export DEBUG=pw:api
