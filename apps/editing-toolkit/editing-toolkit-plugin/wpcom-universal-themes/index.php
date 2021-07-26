@@ -73,6 +73,7 @@ function load_core_fse() {
 	add_filter( 'menu_order', 'gutenberg_menu_order' );
 	remove_action( 'init', __NAMESPACE__ . '\hide_template_cpts', 11 );
 	remove_action( 'restapi_theme_init', __NAMESPACE__ . '\hide_template_cpts', 11 );
+	remove_filter( 'block_editor_settings_all', __NAMESPACE__ . '\hide_fse_blocks' );
 }
 
 /**
@@ -169,6 +170,23 @@ function unload_core_fse() {
 	remove_filter( 'menu_order', 'gutenberg_menu_order' );
 	add_action( 'init', __NAMESPACE__ . '\hide_template_cpts', 11 );
 	add_action( 'restapi_theme_init', __NAMESPACE__ . '\hide_template_cpts', 11 );
+	add_filter( 'block_editor_settings_all', __NAMESPACE__ . '\hide_fse_blocks' );
+}
+
+/**
+ * Filter for `block_editor_settings_all` in order to prevent expermiental
+ * blocks from showing up in the post editor when FSE is inactive.
+ *
+ * @param [array] $editor_settings Editor settings.
+ * @return array Possibly modified editor settings.
+ */
+function hide_fse_blocks( $editor_settings ) {
+	// this shouldn't even be hooked under this condition, but let's be sure.
+	if ( is_core_fse_active() ) {
+		return $editor_settings;
+	}
+	$editor_settings['__unstableEnableFullSiteEditingBlocks'] = false;
+	return $editor_settings;
 }
 
 /**
