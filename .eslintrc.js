@@ -195,6 +195,7 @@ module.exports = {
 				'packages/babel-plugin-i18n-calypso/**/*',
 				'packages/calypso-config/**/*',
 				'packages/calypso-e2e/**/*',
+				'packages/calypso-polyfills/**/*',
 				'packages/calypso-products/**/*',
 				'packages/calypso-stripe/**/*',
 				'packages/components/**/*',
