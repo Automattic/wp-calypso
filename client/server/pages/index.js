@@ -115,7 +115,6 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 	}
 
 	const target = request.getTarget();
-	const bypassTargetRedirection = request.bypassTargetRedirection();
 
 	const oauthClientId = request.query.oauth2_client_id || request.query.client_id;
 	const isWCComConnect =
@@ -147,7 +146,9 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		devDocsURL: '/devdocs',
 		store: reduxStore,
 		addEvergreenCheck:
-			bypassTargetRedirection === false && target === 'evergreen' && calypsoEnv !== 'development',
+			request.query.bypassTargetRedirection !== 'true' &&
+			target === 'evergreen' &&
+			calypsoEnv !== 'development',
 		target: target || 'fallback',
 		useTranslationChunks:
 			config.isEnabled( 'use-translation-chunks' ) ||
@@ -746,30 +747,9 @@ export default function pages() {
 		}
 	);
 
-	app.get( '/browsehappy', setupDefaultContext(), setUpRoute, function ( req, res ) {
-		if ( req.query.bypassTargetRedirection === 'true' ) {
-			res.cookie( 'bypass_target_redirection', true, {
-				httpOnly: true,
-				secure: true,
-			} );
-
-			if ( req.query.url ) {
-				return res.redirect( decodeURIComponent( req.query.url ) );
-			}
-		}
-
-		const wpcomRe = /^https?:\/\/[A-z0-9_-]+\.wordpress\.com$/;
-		const primaryBlogUrl = get( req, 'context.user.primary_blog_url', '' );
-		const isWpcom = wpcomRe.test( primaryBlogUrl );
-
-		req.context.dashboardUrl = isWpcom
-			? primaryBlogUrl + '/wp-admin'
-			: 'https://dashboard.wordpress.com/wp-admin/';
-
-		if ( req.query.url ) {
-			req.context.bypassUrl = req.url + '&bypassTargetRedirection=true';
-		}
-
+	app.get( '/browsehappy', ( req, res ) => {
+		req.context.entrypoint = req.getFilesForEntrypoint( 'entry-browsehappy' );
+		req.context.from = req.query.from;
 		res.send( renderJsx( 'browsehappy', req.context ) );
 	} );
 

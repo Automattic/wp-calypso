@@ -220,6 +220,11 @@ const buildApp = ( environment ) => {
 							...assets.map( ( asset ) => asset.replace( 'entry-main', 'entry-gutenboarding' ) ),
 						],
 					},
+					'entry-browsehappy': {
+						assets: [
+							...assets.map( ( asset ) => asset.replace( 'entry-main', 'entry-browsehappy' ) ),
+						],
+					},
 				},
 				chunks: [
 					...sections.map( ( section ) => ( {
@@ -1489,32 +1494,6 @@ describe( 'main app', () => {
 	describe( 'Route /browsehappy', () => {
 		beforeEach( () => {
 			app.withRenderJSX( 'content' );
-			app.withConfigEnabled( {
-				'wpcom-user-bootstrap': true,
-				'use-translation-chunks': true,
-			} );
-			app.withReduxStore( { dispatch: jest.fn() } );
-		} );
-
-		it( 'sets the dashboard url by default', async () => {
-			const { request } = await app.run( { request: { url: '/browsehappy' } } );
-			expect( request.context.dashboardUrl ).toEqual( 'https://dashboard.wordpress.com/wp-admin/' );
-		} );
-
-		it( 'sets the dashboard url when the primary blog url is from wordpress.com', async () => {
-			app.withBootstrapUser( { primary_blog_url: 'https://test.wordpress.com' } );
-			const { request } = await app.run( {
-				request: { url: '/browsehappy', cookies: { wordpress_logged_in: true } },
-			} );
-			expect( request.context.dashboardUrl ).toEqual( 'https://test.wordpress.com/wp-admin' );
-		} );
-
-		it( 'sets the dashboard url when the primary blog url is not from wordpress.com', async () => {
-			app.withBootstrapUser( { primary_blog_url: 'https://test.blog' } );
-			const { request } = await app.run( {
-				request: { url: '/browsehappy', cookies: { wordpress_logged_in: true } },
-			} );
-			expect( request.context.dashboardUrl ).toEqual( 'https://dashboard.wordpress.com/wp-admin/' );
 		} );
 
 		it( 'renders the content', async () => {
