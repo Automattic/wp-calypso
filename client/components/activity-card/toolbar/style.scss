@@ -37,7 +37,8 @@
 	flex-direction: row-reverse;
 }
 
-.toolbar__button.button.is-borderless.is-primary:focus {
+.toolbar__button.button.is-borderless.is-primary:focus,
+.toolbar__see-content-link.button.is-borderless.is-primary:focus {
 	box-shadow: none;
 }
 
