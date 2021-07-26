@@ -3,7 +3,6 @@
  */
 import React, { ReactElement, useState, useMemo, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import page from 'page';
 import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 import { useTranslate } from 'i18n-calypso';
@@ -19,16 +18,13 @@ import DocumentHead from 'calypso/components/data/document-head';
 import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
 import { useCreateStoredCreditCard } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/hooks/use-create-stored-credit-card';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { getAllStoredCards } from 'calypso/state/stored-cards/selectors';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
-import getPaymentMethodIdFromPayment from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/get-payment-method-id-from-payment';
-import Notice from 'calypso/components/notice';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import {
 	assignNewCardProcessor,
 	NewCardSubmitData,
 } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/assignment-processor-functions';
-import { creditCardHasAlreadyExpired } from 'calypso/lib/purchases';
-import type { Purchase } from 'calypso/lib/purchases/types';
 import type { TranslateResult } from 'i18n-calypso';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -52,40 +48,10 @@ function onPaymentSelectComplete( {
 	successCallback();
 }
 
-function CurrentPaymentMethodNotAvailableNotice( {
-	purchase,
-}: {
-	purchase: Purchase;
-} ): JSX.Element | null {
-	const translate = useTranslate();
-	const moment = useLocalizedMoment();
-	const noticeProps: Record< string, boolean | string | number | TranslateResult > = {
-		showDismiss: false,
-	};
-
-	if ( purchase.payment.creditCard && creditCardHasAlreadyExpired( purchase ) ) {
-		noticeProps.text = translate(
-			'Your %(cardType)s ending in %(cardNumber)d expired %(cardExpiry)s.',
-			{
-				args: {
-					cardType: purchase.payment.creditCard.type.toUpperCase(),
-					cardNumber: parseInt( purchase.payment.creditCard.number, 10 ),
-					cardExpiry: moment( purchase.payment.creditCard.expiryDate, 'MM/YY' ).format(
-						'MMMM YYYY'
-					),
-				},
-			}
-		);
-		return <Notice { ...noticeProps } />;
-	}
-
-	return null;
-}
-
 function PaymentMethodAdd(): ReactElement {
-	const purchase = undefined;
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const storedCards = useSelector( getAllStoredCards );
 	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
 
 	const stripeMethod = useCreateStoredCreditCard( {
@@ -106,8 +72,6 @@ function PaymentMethodAdd(): ReactElement {
 	const onGoToPaymentMethods = () => {
 		// record tracks events
 	};
-
-	const currentlyAssignedPaymentMethodId = getPaymentMethodIdFromPayment( purchase?.payment );
 
 	const showSuccessMessage = useCallback(
 		( message ) => {
@@ -131,12 +95,8 @@ function PaymentMethodAdd(): ReactElement {
 		[ dispatch ]
 	);
 
-	const currentPaymentMethodNotAvailable = ! paymentMethods.some(
-		( paymentMethod ) => paymentMethod?.id === currentlyAssignedPaymentMethodId
-	);
-
 	const [ useAsPrimaryPaymentMethod, setUseAsPrimaryPaymentMethod ] = useState< boolean >(
-		! purchase
+		0 === storedCards.length
 	);
 
 	const assignAllSubscriptionsText = String( translate( 'Set as primary payment method' ) );
@@ -183,13 +143,9 @@ function PaymentMethodAdd(): ReactElement {
 
 					{ 0 === paymentMethods.length && <CreditCardLoading /> }
 
-					{ currentPaymentMethodNotAvailable && purchase && (
-						<CurrentPaymentMethodNotAvailableNotice purchase={ purchase } />
-					) }
-
 					{ paymentMethods && paymentMethods[ 0 ] && paymentMethods[ 0 ].activeContent }
 
-					{ ! purchase && (
+					{ storedCards.length > 0 && (
 						<FormLabel className="payment-method-add__all-subscriptions-checkbox-label">
 							<FormInputCheckbox
 								className="payment-method-add__all-subscriptions-checkbox"
@@ -218,7 +174,7 @@ function PaymentMethodAdd(): ReactElement {
 	);
 }
 
-export default function PaymentMethodAddWrapper( props ) {
+export default function PaymentMethodAddWrapper(): ReactElement {
 	const locale = useSelector( getCurrentUserLocale );
 
 	return (
@@ -227,7 +183,7 @@ export default function PaymentMethodAddWrapper( props ) {
 			configurationArgs={ { needs_intent: true } }
 			fetchStripeConfiguration={ getStripeConfiguration }
 		>
-			<PaymentMethodAdd { ...props } />
+			<PaymentMethodAdd />
 		</StripeHookProvider>
 	);
 }
