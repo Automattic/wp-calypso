@@ -355,8 +355,9 @@ export function noSite( context, next ) {
 	const currentUser = getCurrentUser( getState() );
 	const hasSite = currentUser && currentUser.visible_site_count >= 1;
 	const isDomainOnlyFlow = context.query?.isDomainOnly === '1';
+	const isJetpackCheckoutFlow = context.pathname.includes( '/checkout/jetpack' );
 
-	if ( ! isDomainOnlyFlow && hasSite ) {
+	if ( ! isDomainOnlyFlow && ! isJetpackCheckoutFlow && hasSite ) {
 		siteSelection( context, next );
 	} else {
 		context.store.dispatch( setSelectedSiteId( null ) );

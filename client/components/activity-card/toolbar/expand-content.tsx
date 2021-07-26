@@ -1,0 +1,53 @@
+/**
+ * External dependencies
+ */
+import { useTranslate } from 'i18n-calypso';
+import React from 'react';
+import { useDispatch } from 'react-redux';
+
+/**
+ * Internal dependencies
+ */
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+import Gridicon from 'calypso/components/gridicon';
+import Button from 'calypso/components/forms/form-button';
+
+type OwnProps = {
+	isExpanded?: boolean;
+	onToggle?: () => void;
+};
+
+const ExpandContent: React.FC< OwnProps > = ( { isExpanded = false, onToggle } ) => {
+	const dispatch = useDispatch();
+	const translate = useTranslate();
+
+	const toggleWithTracking = () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_backup_content_expand' ) );
+		onToggle?.();
+	};
+
+	const toggleContentOnSpace: React.KeyboardEventHandler = ( { key } ) => {
+		if ( key === ' ' ) {
+			toggleWithTracking();
+		}
+	};
+
+	return (
+		<Button
+			compact
+			borderless
+			className="toolbar__see-content-link"
+			onClick={ toggleWithTracking }
+			onKeyDown={ toggleContentOnSpace }
+		>
+			{ isExpanded ? translate( 'Hide content' ) : translate( 'See content' ) }
+			<Gridicon
+				size={ 18 }
+				icon={ isExpanded ? 'chevron-up' : 'chevron-down' }
+				className="toolbar__see-content-icon"
+			/>
+		</Button>
+	);
+};
+
+export default ExpandContent;

@@ -421,8 +421,14 @@ export function redirectToSiteLessCheckout( context, next ) {
 
 	const planSlug = getPlanSlugFromFlowType( type, interval );
 
+	const urlQueryArgs = context.query;
+
 	if ( config.isEnabled( 'jetpack/siteless-checkout' ) ) {
-		page( addQueryArgs( context.query, `/checkout/jetpack/${ planSlug }` ) );
+		if ( ! urlQueryArgs?.checkoutBackUrl ) {
+			urlQueryArgs.checkoutBackUrl = 'https://jetpack.com';
+		}
+
+		page( addQueryArgs( urlQueryArgs, `/checkout/jetpack/${ planSlug }` ) );
 		return;
 	}
 
