@@ -151,7 +151,7 @@
 		"isolated-block-editor": "https://github.com/Automattic/isolated-block-editor.git#alpha-0",
 		"jest-emotion": "^10.0.27",
 		"jest-fetch-mock": "^3.0.3",
-		"jest-mock-process": "^1.4.0",
+		"jest-mock-process": "^1.4.1",
 		"jquery": "^1.12.3",
 		"js-yaml": "^3.14.0",
 		"keymaster": "^1.6.2",
