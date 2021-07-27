@@ -1,22 +1,13 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { modifierKeyIsActive } from '../helpers/input';
+import { bumpStat } from '../rest-client/bump-stat';
 import { wpcom } from '../rest-client/wpcom';
 import actions from '../state/actions';
-import getSelectedNoteId from '../state/selectors/get-selected-note-id';
-import { bumpStat } from '../rest-client/bump-stat';
 import getKeyboardShortcutsEnabled from '../state/selectors/get-keyboard-shortcuts-enabled';
-import { modifierKeyIsActive } from '../helpers/input';
-
+import getSelectedNoteId from '../state/selectors/get-selected-note-id';
 import Gridicon from './gridicons';
-
 const { recordTracksEvent } = require( '../helpers/stats' );
 
 const KEY_U = 85;

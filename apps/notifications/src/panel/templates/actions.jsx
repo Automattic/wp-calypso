@@ -1,24 +1,16 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { getActions, getReferenceId } from '../helpers/notes';
 import getIsNoteApproved from '../state/selectors/get-is-note-approved';
 import getIsNoteLiked from '../state/selectors/get-is-note-liked';
 import ApproveButton from './button-approve';
 import EditButton from './button-edit';
 import LikeButton from './button-like';
-import ReplyInput from './comment-reply-input';
 import SpamButton from './button-spam';
 import TrashButton from './button-trash';
-
-import { getActions, getReferenceId } from '../helpers/notes';
+import ReplyInput from './comment-reply-input';
 
 const getType = ( note ) => ( null === getReferenceId( note, 'comment' ) ? 'post' : 'comment' );
 

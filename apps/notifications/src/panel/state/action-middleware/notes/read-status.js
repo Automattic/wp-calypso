@@ -1,12 +1,8 @@
-/* global localStorage */
-/**
- * Internal dependencies
- */
+import { bumpStat } from '../../../rest-client/bump-stat';
+import { markReadStatus, markPostAsSeen } from '../../../rest-client/wpcom';
 import * as types from '../../action-types';
 import getIsNoteRead from '../../selectors/get-is-note-read';
 import getNote from '../../selectors/get-note';
-import { markReadStatus, markPostAsSeen } from '../../../rest-client/wpcom';
-import { bumpStat } from '../../../rest-client/bump-stat';
 
 const clearLocalReadCache = ( noteId ) => {
 	try {

@@ -1,20 +1,10 @@
-/**
- * External dependencies
- */
 import '@automattic/calypso-polyfills';
-import ReactDOM from 'react-dom';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
+import ReactDOM from 'react-dom';
 import Notifications, { refreshNotes } from '../panel/Notifications';
 import AuthWrapper from './auth-wrapper';
 import { receiveMessage, sendMessage } from './messaging';
 
-/**
- * Style dependencies
- */
 import '../panel/boot/stylesheets/style.scss';
 
 const localePattern = /[&?]locale=([\w_-]+)/;

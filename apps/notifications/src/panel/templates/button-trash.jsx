@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-
-import React, { useContext } from 'react';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { useContext } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import { RestClientContext } from '../Notifications';
+import { keys } from '../helpers/input';
 import { trashNote } from '../state/notes/thunks';
 import ActionButton from './action-button';
-import { keys } from '../helpers/input';
-import { RestClientContext } from '../Notifications';
 
 const TrashButton = ( { note, translate, trashNote } ) => {
 	const restClient = useContext( RestClientContext );

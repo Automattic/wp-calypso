@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
-import { approveNote } from '../actions';
-import { wpcom } from '../../../rest-client/wpcom';
 import { recordTracksEvent } from '../../../helpers/stats';
+import { wpcom } from '../../../rest-client/wpcom';
+import { approveNote } from '../actions';
 import bumpStat from '../utils/bump-stat';
 
 const setApproveStatus = ( noteId, siteId, commentId, isApproved, type, restClient ) => (

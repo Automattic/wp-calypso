@@ -178,6 +178,7 @@ module.exports = {
 		{
 			files: [
 				'apps/editing-toolkit/**/*',
+				'apps/notifications/**/*',
 				'client/auth/**/*',
 				'client/incoming-redirect/**/*',
 				'client/my-sites/customer-home/**/*',
