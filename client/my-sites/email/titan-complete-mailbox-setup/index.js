@@ -209,7 +209,7 @@ const TitanCompleteMailboxSetup = ( { selectedDomainName } ) => {
 		<>
 			<PageViewTracker
 				path={ analyticsPath }
-				title="Email Managements > Setup your Professional Email"
+				title="Email Management > Setup your Professional Email"
 			/>
 
 			{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
