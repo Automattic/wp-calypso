@@ -133,7 +133,7 @@ function is_theme_supported() {
 	}
 	$slug = get_theme_slug();
 	// Use un-normalized theme slug because get_theme requires the full string.
-	$theme      = wp_get_theme( get_theme_slug() );
+	$theme      = wp_get_theme( $slug );
 	$theme_slug = normalize_theme_slug( $slug );
 	return ! $theme->errors() && in_array( $theme_slug, get_supported_themes(), true );
 }
