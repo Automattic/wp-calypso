@@ -27,6 +27,7 @@ export const CHECKLIST_KNOWN_TASKS = {
 	JETPACK_LAZY_IMAGES: 'jetpack_lazy_images',
 	JETPACK_VIDEO_HOSTING: 'jetpack_video_hosting',
 	JETPACK_SEARCH: 'jetpack_search',
+	SETUP_YOUR_PROFESSIONAL_EMAIL: 'setup_your_professional_email',
 };
 
 // Transform the response to a data / schema calypso understands, eg filter out unknown tasks

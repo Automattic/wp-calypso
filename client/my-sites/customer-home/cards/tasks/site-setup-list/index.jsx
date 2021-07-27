@@ -20,12 +20,14 @@ import getMenusUrl from 'calypso/state/selectors/get-menus-url';
 import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { getSiteOption, getSiteSlug } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from "calypso/state/ui/selectors";
 import CurrentTaskItem from './current-task-item';
 import { getTask } from './get-task';
 import NavItem from './nav-item';
 
 import './style.scss';
+import { getDomainsBySiteId } from "calypso/state/sites/domains/selectors";
+import { getSelectedDomain } from "calypso/lib/domains";
 
 const startTask = ( dispatch, task, siteId, advanceToNextIncompleteTask, isPodcastingSite ) => {
 	dispatch(
@@ -321,6 +323,12 @@ export default connect( ( state ) => {
 	const siteVerticals = siteChecklist?.vertical;
 	const taskStatuses = siteChecklist?.tasks;
 	const siteIsUnlaunched = isUnlaunchedSite( state, siteId );
+	const siteSlug = getSiteSlug( state, siteId );
+	const domains = getDomainsBySiteId( state, siteId );
+	const domain = getSelectedDomain( {
+		domains,
+		selectedDomainName: siteSlug,
+	} );
 	const taskList = getTaskList( {
 		taskStatuses,
 		designType,
@@ -339,7 +347,8 @@ export default connect( ( state ) => {
 		isPodcastingSite: !! getSiteOption( state, siteId, 'anchor_podcast' ),
 		menusUrl: getMenusUrl( state, siteId ),
 		siteId,
-		siteSlug: getSiteSlug( state, siteId ),
+		domainName: domain.name,
+		siteSlug,
 		tasks: taskList.getAll(),
 		taskUrls: getChecklistTaskUrls( state, siteId ),
 		userEmail: user?.email,
