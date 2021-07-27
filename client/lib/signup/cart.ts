@@ -11,10 +11,14 @@ import {
 /**
  * Internal dependencies
  */
-import wpcom from 'calypso/lib/wp';
+import wp from 'calypso/lib/wp';
 import productsListFactory from 'calypso/lib/products-list';
 const productsList = productsListFactory();
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+
+const wpcomGetCart = ( cartKey: string ) => wp.req.get( `/me/shopping-cart/${ cartKey }` );
+const wpcomSetCart = ( cartKey: string, cartData: RequestCart ) =>
+	wp.req.post( `/me/shopping-cart/${ cartKey }`, cartData );
 
 function addProductsToCart( cart: ResponseCart, newCartItems: RequestCartProduct[] ): RequestCart {
 	const productsData = productsList.get();
@@ -30,12 +34,12 @@ function addProductsToCart( cart: ResponseCart, newCartItems: RequestCartProduct
 	} );
 }
 
-export type ErrorCallback = ( error: unknown ) => void;
+export type CartOperationCallback = ( error: unknown, data?: unknown ) => void;
 
 export function createCart(
 	cartKey: string,
 	newCartItems: RequestCartProduct[],
-	callback: ErrorCallback
+	callback: CartOperationCallback
 ): void {
 	const newCart = {
 		...getEmptyResponseCart(),
@@ -44,27 +48,26 @@ export function createCart(
 
 	const updatedCart = addProductsToCart( newCart, newCartItems );
 
-	wpcom.undocumented().setCart( cartKey, updatedCart, function ( postError: unknown ) {
-		callback( postError );
-	} );
+	wpcomSetCart( cartKey, updatedCart )
+		.then( ( result: unknown ) => callback( undefined, result ) )
+		.catch( ( error: unknown ) => callback( error ) );
 }
 
 export function addToCart(
 	cartKey: string,
 	newCartItems: RequestCartProduct[],
-	callback: ErrorCallback
+	callback: CartOperationCallback
 ): void {
-	wpcom.undocumented().getCart( cartKey, function ( error: unknown, data: ResponseCart ) {
-		if ( error ) {
-			return callback( error );
-		}
+	wpcomGetCart( cartKey )
+		.then( ( data: ResponseCart ) => {
+			if ( ! Array.isArray( newCartItems ) ) {
+				newCartItems = [ newCartItems ];
+			}
 
-		if ( ! Array.isArray( newCartItems ) ) {
-			newCartItems = [ newCartItems ];
-		}
+			const newCart = addProductsToCart( data, newCartItems );
 
-		const newCart = addProductsToCart( data, newCartItems );
-
-		wpcom.undocumented().setCart( cartKey, newCart, callback );
-	} );
+			return wpcomSetCart( cartKey, newCart );
+		} )
+		.then( ( result: unknown ) => callback( undefined, result ) )
+		.catch( ( error: unknown ) => callback( error ) );
 }
