@@ -118,7 +118,7 @@ class DomainSearchResults extends React.Component {
 			get( this.props, 'products.domain_map', false )
 		) {
 			// eslint-disable-next-line jsx-a11y/anchor-is-valid
-			const components = { a: <a href="#" onClick={ this.handleAddMapping } />, small: <small /> };
+			const components = { a: <a href="#" onClick={ this.handleAddMapping } /> };
 
 			// If the domain is available we shouldn't offer to let people purchase mappings for it.
 			if (
@@ -128,12 +128,12 @@ class DomainSearchResults extends React.Component {
 			) {
 				if ( isDomainMappingFree( selectedSite ) || isNextDomainFree( this.props.cart ) ) {
 					offer = translate(
-						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}connect it{{/a}} for free.{{/small}}',
+						'If you purchased %(domain)s elsewhere, you can {{a}}connect it{{/a}} for free.',
 						{ args: { domain }, components }
 					);
 				} else {
 					offer = translate(
-						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}connect it{{/a}} with WordPress.com Premium.{{/small}}',
+						'If you purchased %(domain)s elsewhere, you can {{a}}connect it{{/a}} with WordPress.com Premium.',
 						{ args: { domain }, components }
 					);
 				}
@@ -145,13 +145,9 @@ class DomainSearchResults extends React.Component {
 			}
 
 			let domainUnavailableMessage = [ TLD_NOT_SUPPORTED, UNKNOWN ].includes( lastDomainStatus )
-				? translate(
-						'{{strong}}.%(tld)s{{/strong}} domains are not available for registration on WordPress.com.',
-						{
-							args: { tld: getTld( domain ) },
-							components: { strong: <strong /> },
-						}
-				  )
+				? translate( '.%(tld)s domains are not available for registration on WordPress.com.', {
+						args: { tld: getTld( domain ) },
+				  } )
 				: translate( '%(domain)s is already registered. {{a}}Do you own it?{{/a}}', {
 						args: { domain },
 						components: {
@@ -187,9 +183,12 @@ class DomainSearchResults extends React.Component {
 					);
 				} else if ( lastDomainStatus !== MAPPED ) {
 					availabilityElement = (
-						<Notice status="is-warning" showDismiss={ false }>
-							{ domainUnavailableMessage } { offer }
-						</Notice>
+						<CompactCard className="domain-search-results__domain-available-notice">
+							<MaterialIcon icon="info" />
+							<span>
+								{ domainUnavailableMessage } { offer }
+							</span>
+						</CompactCard>
 					);
 				}
 			} else {
