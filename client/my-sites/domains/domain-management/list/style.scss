@@ -141,10 +141,16 @@
 	margin-right: 8px;
 	flex: 1;
 	overflow: hidden;
+
+	.domain-notice {
+		display: block;
+		margin-top: 8px;
+	}
 }
 
 .domain-item__title {
 	font-size: $font-title-small;
+	font-weight: 500; /* stylelint-disable-line */
 	overflow: hidden;
 	text-overflow: ellipsis;
 	margin-left: 4px;
@@ -168,6 +174,7 @@
 			background: none;
 			border: none;
 			box-shadow: none;
+			font-size: $font-body-small;
 
 			&:hover {
 				color: var( --color-link-dark );
@@ -208,6 +215,7 @@
 	display: flex;
 	flex-wrap: wrap;
 	margin-left: -4px;
+	margin-bottom: 4px;
 	align-items: center;
 
 	.domain-notice {
