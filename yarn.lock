@@ -4967,6 +4967,11 @@
   resolved "https://registry.yarnpkg.com/@wordpress/base-styles/-/base-styles-3.4.3.tgz#389ca7740588bf77a5cac76a9873d776a5fc5b8b"
   integrity sha512-HabpKnrXN2CEC10IvQrZWjg6hQDxPt1jhARl7DCZBKqUTYmdbRYxQ6ZKoPnJcgbk2O6iIjBGXe8i4Gz+84I4Xw==
 
+"@wordpress/base-styles@^3.5.1":
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/@wordpress/base-styles/-/base-styles-3.5.1.tgz#d065ff2bb7d26007a6e2aaf9efd016a2f9b055cc"
+  integrity sha512-fK0BYDW4+Ch3JqjC/mObnOKjhYNGrIotZjrY2PfAOckRR3sBWY3g4ujgx1sSlcAeNskhGDULylQWhuF+MvQ7bw==
+
 "@wordpress/blob@^2.12.1", "@wordpress/blob@^2.13.2":
   version "2.13.2"
   resolved "https://registry.yarnpkg.com/@wordpress/blob/-/blob-2.13.2.tgz#b77797cc045db575bf287d9901446425d202701e"
@@ -11666,6 +11671,11 @@ electron-updater@^4.2.5:
     lazy-val "^1.0.4"
     lodash.isequal "^4.5.0"
     semver "^7.1.3"
+
+element-closest@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/element-closest/-/element-closest-3.0.2.tgz#3814a69a84f30e48e63eaf57341f4dbf4227d2aa"
+  integrity sha512-JxKQiJKX0Zr5Q2/bCaTx8P+UbfyMET1OQd61qu5xQFeWr1km3fGaxelSJtnfT27XQ5Uoztn2yIyeamAc/VX13g==
 
 element-resize-detector@^1.2.1:
   version "1.2.1"
