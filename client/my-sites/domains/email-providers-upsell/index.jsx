@@ -28,7 +28,7 @@ export default function EmailProvidersUpsell( { domain } ) {
 
 	const translateArgs = {
 		args: {
-			domainName: 'example.com',
+			domainName: domain,
 		},
 		comment: '%(domainName)s is the domain name, e.g example.com',
 	};
