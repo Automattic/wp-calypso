@@ -20,7 +20,7 @@ import {
 /*
  * Show a list of Jetpack benefits that do not depend on site data
  * These can vary by plan, but we do not need to get any data about the site to show these
- * This is similar to the disconnection flow where come plan benefits are listed if a user is disconnecting Jetpack
+ * This is similar to the disconnection flow where some plan benefits are listed if a user is disconnecting Jetpack
  */
 const JetpackGeneralBenefits = ( props ) => {
 	const { productSlug } = props;
