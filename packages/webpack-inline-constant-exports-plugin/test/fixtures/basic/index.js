@@ -1,11 +1,8 @@
-/**
- * Internal dependencies
- */
 import { PLANS_REQUEST, PLANS_RECEIVE } from './actions';
-import ALL_PLANS, { BLOGGER, PREMIUM } from './plans';
 import THE_ANSWER, { PI, YES, NO, NULL } from './constants';
-import { HOME_PATH } from './paths';
 import { FOO } from './export';
+import { HOME_PATH } from './paths';
+import ALL_PLANS, { BLOGGER, PREMIUM } from './plans';
 
 /* eslint-disable no-console */
 console.log( PLANS_REQUEST, PLANS_RECEIVE );

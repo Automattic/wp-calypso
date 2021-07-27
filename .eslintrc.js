@@ -225,6 +225,7 @@ module.exports = {
 				'packages/tree-select/**/*',
 				'packages/viewport/**/*',
 				'packages/webpack-config-flag-plugin/**/*',
+				'packages/webpack-inline-constant-exports-plugin/**/*',
 				'packages/whats-new/**/*',
 				'packages/wpcom-checkout/**/*',
 				'packages/wpcom-proxy-request/**/*',
