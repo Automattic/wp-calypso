@@ -126,6 +126,7 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 		} );
 
 		it( 'Close support popover', async function () {
+			await supportComponent.clearSearch();
 			await supportComponent.closePopover();
 		} );
 	} );
