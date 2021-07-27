@@ -18,6 +18,10 @@
 }
 
 .backup-storage-space__progress-bar {
+	@include breakpoint-deprecated( '<960px' ) {
+		padding: initial;
+		grid-row: 2;
+		grid-column: 1 / span end;
 	}
 
 	.progress-bar {
@@ -52,4 +56,8 @@
 
 .backup-storage-space__progress-usage-text {
 	color: var( --color-text-subtle );
+
+	@include breakpoint-deprecated( '<960px' ) {
+		grid-row: 3;
+	}
 }
