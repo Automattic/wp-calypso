@@ -16,15 +16,28 @@ const mockCart = {
 	cart_key: 'original_key',
 	products: [ { product_id: 25, product_slug: 'something_original' } ],
 };
-const setCart = jest.fn().mockImplementation( ( cart_key, value, callback ) => callback() );
-const getCart = jest
-	.fn()
-	.mockImplementation( ( cart_key, callback ) => callback( null, { ...mockCart, cart_key } ) );
-const undocumentedFunctions = {
-	setCart,
-	getCart,
-};
-wp.undocumented = jest.fn().mockReturnValue( undocumentedFunctions );
+wp.req.get = jest.fn().mockImplementation( ( path ) => {
+	return new Promise( ( resolve, reject ) => {
+		const matches = /\/me\/shopping-cart\/([^/]+)/.exec( path );
+		if ( matches ) {
+			const cart_key = matches[ 1 ];
+			resolve( { ...mockCart, cart_key } );
+			return;
+		}
+		reject();
+	} );
+} );
+wp.req.post = jest.fn().mockImplementation( ( path, data ) => {
+	return new Promise( ( resolve, reject ) => {
+		const matches = /\/me\/shopping-cart\/([^/]+)/.exec( path );
+		if ( matches ) {
+			const cart_key = matches[ 1 ];
+			resolve( { ...data, cart_key } );
+			return;
+		}
+		reject();
+	} );
+} );
 
 function addSignupContext( product ) {
 	return { ...product, extra: { ...product.extra, context: 'signup' } };
@@ -33,8 +46,8 @@ function addSignupContext( product ) {
 describe( 'SignupCart', () => {
 	describe( 'createCart', () => {
 		beforeEach( () => {
-			setCart.mockClear();
-			getCart.mockClear();
+			wp.req.post.mockClear();
+			wp.req.get.mockClear();
 		} );
 
 		it( 'sends a basic cart for the cart key to the cart endpoint', () => {
@@ -48,7 +61,7 @@ describe( 'SignupCart', () => {
 				cart_key: cartKey,
 				products: productsToAdd,
 			} );
-			expect( setCart ).toHaveBeenCalledWith( cartKey, expectedCart, expect.anything() );
+			expect( wp.req.post ).toHaveBeenCalledWith( `/me/shopping-cart/${ cartKey }`, expectedCart );
 		} );
 
 		it( 'sends a cart with the passed-in products to the cart endpoint', () => {
@@ -62,40 +75,51 @@ describe( 'SignupCart', () => {
 				cart_key: cartKey,
 				products: productsToAdd.map( createRequestCartProduct ).map( addSignupContext ),
 			} );
-			expect( setCart ).toHaveBeenCalledWith( cartKey, expectedCart, expect.anything() );
+			expect( wp.req.post ).toHaveBeenCalledWith( `/me/shopping-cart/${ cartKey }`, expectedCart );
 		} );
 
 		it( 'calls the callback when the cart creation completes', () => {
-			const cartKey = '1234abcd';
-			const productsToAdd = [ { product_id: 1003, product_slug: 'plan' } ];
-			const callback = jest.fn();
-			createCart( cartKey, productsToAdd, callback );
-
-			expect( callback ).toHaveBeenCalled();
+			return new Promise( ( resolve ) => {
+				const cartKey = '1234abcd';
+				const productsToAdd = [ { product_id: 1003, product_slug: 'plan' } ];
+				const callback = ( error ) => {
+					expect( error ).toBeUndefined();
+					resolve();
+				};
+				createCart( cartKey, productsToAdd, callback );
+			} );
 		} );
 	} );
 
 	describe( 'addToCart', () => {
 		beforeEach( () => {
-			setCart.mockClear();
-			getCart.mockClear();
+			wp.req.post.mockClear();
+			wp.req.get.mockClear();
 		} );
 
 		it( 'fetches the cart from the server and then sends a cart with passed-in products appended to the endpoint', () => {
-			const cartKey = '1234abcd';
-			const productsToAdd = [ { product_id: 1003, product_slug: 'plan' } ];
-			const callback = jest.fn();
-			addToCart( cartKey, productsToAdd, callback );
+			return new Promise( ( resolve ) => {
+				const cartKey = '1234abcd';
+				const productsToAdd = [ { product_id: 1003, product_slug: 'plan' } ];
 
-			const expectedCart = convertResponseCartToRequestCart( {
-				...getEmptyResponseCart(),
-				cart_key: cartKey,
-				products: [
-					...mockCart.products,
-					...productsToAdd.map( createRequestCartProduct ).map( addSignupContext ),
-				],
+				const expectedCart = convertResponseCartToRequestCart( {
+					...getEmptyResponseCart(),
+					cart_key: cartKey,
+					products: [
+						...mockCart.products,
+						...productsToAdd.map( createRequestCartProduct ).map( addSignupContext ),
+					],
+				} );
+
+				const callback = () => {
+					expect( wp.req.post ).toHaveBeenCalledWith(
+						`/me/shopping-cart/${ cartKey }`,
+						expectedCart
+					);
+					resolve();
+				};
+				addToCart( cartKey, productsToAdd, callback );
 			} );
-			expect( setCart ).toHaveBeenCalledWith( cartKey, expectedCart, callback );
 		} );
 	} );
 } );
