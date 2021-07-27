@@ -1,4 +1,5 @@
 import { Frame, Page } from 'playwright';
+import { gutterValues } from '../../types';
 import { BaseBlock } from '../base-block';
 
 const selectors = {
@@ -13,7 +14,6 @@ const selectors = {
 export class PricingTableBlock extends BaseBlock {
 	// Static properties.
 	static blockName = 'Pricing Table';
-	static gutterValues: string[] = [ 'None', 'Small', 'Medium', 'Large', 'Huge' ];
 
 	/**
 	 * Enters the price to the side chosen.
@@ -35,7 +35,7 @@ export class PricingTableBlock extends BaseBlock {
 	 * @param {string} value Value to set the gutter to.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async setGutter( value: 'None' | 'Small' | 'Medium' | 'Large' | 'Huge' ): Promise< void > {
+	async setGutter( value: gutterValues ): Promise< void > {
 		const frame = ( await this.block.ownerFrame() ) as Frame;
 
 		const selector = `${ selectors.gutterControl } button[aria-label="${ value }"]`;

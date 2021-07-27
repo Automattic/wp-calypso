@@ -37,13 +37,13 @@ describe( DataHelper.createSuiteTitle( 'WPCOM-specific gutter controls' ), () =>
 	} );
 
 	it.each`
-		gutterValue
+		value
 		${ 'None' }
 		${ 'Small' }
 		${ 'Medium' }
 		${ 'Large' }
 		${ 'Huge' }
-	`( 'Set gutter value to $gutterValue', async ( { gutterValue } ) => {
-		await pricingTableBlock.setGutter( gutterValue );
+	`( 'Set gutter value to $value', async ( { value } ) => {
+		await pricingTableBlock.setGutter( value );
 	} );
 } );
