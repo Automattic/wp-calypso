@@ -195,10 +195,10 @@ export class GutenbergEditorPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async openSettings(): Promise< void > {
-		const isSidebarOppen = await this.frame.$eval( selectors.settingsToggle, ( element ) =>
+		const isSidebarOpen = await this.frame.$eval( selectors.settingsToggle, ( element ) =>
 			element.classList.contains( 'is-pressed' )
 		);
-		if ( ! isSidebarOppen ) {
+		if ( ! isSidebarOpen ) {
 			await this.frame.click( selectors.settingsToggle );
 		}
 		const settingsToggle = await this.frame.waitForSelector( selectors.settingsToggle );

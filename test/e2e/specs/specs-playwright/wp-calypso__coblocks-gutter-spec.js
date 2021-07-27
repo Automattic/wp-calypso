@@ -1,4 +1,3 @@
-import assert from 'assert';
 import {
 	setupHooks,
 	DataHelper,
@@ -45,7 +44,6 @@ describe( DataHelper.createSuiteTitle( 'WPCOM-specific gutter controls' ), () =>
 		${ 'Large' }
 		${ 'Huge' }
 	`( 'Set gutter value to $gutterValue', async ( { gutterValue } ) => {
-		const isSelected = await pricingTableBlock.setGutter( gutterValue );
-		assert.strictEqual( isSelected, true );
+		await pricingTableBlock.setGutter( gutterValue );
 	} );
 } );

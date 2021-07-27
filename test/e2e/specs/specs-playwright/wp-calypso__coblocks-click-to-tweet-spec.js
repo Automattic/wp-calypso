@@ -4,7 +4,6 @@ import {
 	LoginFlow,
 	NewPostFlow,
 	GutenbergEditorPage,
-	PublishedPostPage,
 	ClicktoTweetBlock,
 } from '@automattic/calypso-e2e';
 
@@ -49,7 +48,6 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: CoBlocks: Click to Tweet' ), 
 
 	it( 'Publish and visit post', async function () {
 		await gutenbergEditorPage.publish( { visit: true } );
-		await PublishedPostPage.Expect( page );
 	} );
 
 	it( `Click to Tweet block is visible in published post`, async function () {

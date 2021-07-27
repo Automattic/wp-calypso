@@ -14,14 +14,13 @@ export class PricingTableBlock extends BaseBlock {
 	/**
 	 * Enters the price to the side chosen.
 	 *
-	 * @param {'left'|'right'} side Left or right side of the block.
-	 * @param {string} price Price to be entered.
+	 * @param {1|2} column Left or right column of the pricing table.
+	 * @param {string|number} price Price to be entered.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async enterPrice( side: 'left' | 'right', price: string | number ): Promise< void > {
-		const index = side === 'left' ? 1 : 2;
+	async enterPrice( column: 1 | 2, price: string | number ): Promise< void > {
 		const priceHandler = await this.block.waitForSelector(
-			`:nth-match(${ selectors.pricing }, ${ index })`
+			`:nth-match(${ selectors.pricing }, ${ column })`
 		);
 		await priceHandler.fill( price.toString() );
 	}
@@ -32,14 +31,17 @@ export class PricingTableBlock extends BaseBlock {
 	 * @param {string} value Value to set the gutter to.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async setGutter( value: 'None' | 'Small' | 'Medium' | 'Large' | 'Huge' ): Promise< boolean > {
+	async setGutter( value: 'None' | 'Small' | 'Medium' | 'Large' | 'Huge' ): Promise< void > {
 		const frame = ( await this.block.ownerFrame() ) as Frame;
 
 		const selector = `${ selectors.gutterControl } button[aria-label="${ value }"]`;
 		await frame.click( selector );
-		return await frame.$eval(
-			selector,
-			( element ) => element.getAttribute( 'aria-pressed' ) === 'true'
+		const elementHandle = await frame.waitForSelector( selector );
+		// waitForFunction will do its own validation, so no need to return the value
+		// to caller for a check.
+		await frame.waitForFunction(
+			( element: any ) => element.ariaPressed === 'true',
+			elementHandle
 		);
 	}
 

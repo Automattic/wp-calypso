@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { ElementHandle } from 'playwright';
 
 /**

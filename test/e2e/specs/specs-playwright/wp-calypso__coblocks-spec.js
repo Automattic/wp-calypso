@@ -4,7 +4,6 @@ import {
 	LoginFlow,
 	NewPostFlow,
 	GutenbergEditorPage,
-	PublishedPostPage,
 	PricingTableBlock,
 	DynamicHRBlock,
 	HeroBlock,
@@ -38,7 +37,7 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: CoBlocks' ), () => {
 		const blockHandle = await gutenbergEditorPage.addBlock( 'Pricing Table' );
 		pricingTableBlock = new PricingTableBlock( blockHandle );
 		const price = 888;
-		await pricingTableBlock.enterPrice( 'left', price );
+		await pricingTableBlock.enterPrice( 1, price );
 	} );
 
 	it( 'Insert Dynamic HR block', async function () {
@@ -53,7 +52,6 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: CoBlocks' ), () => {
 
 	it( 'Publish and visit post', async function () {
 		await gutenbergEditorPage.publish( { visit: true } );
-		await PublishedPostPage.Expect( page );
 	} );
 
 	it.each`
