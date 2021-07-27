@@ -3,8 +3,11 @@
  */
 import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { createRequestCartProduct } from '@automattic/shopping-cart';
-import type { RequestCartProduct, ResponseCart } from '@automattic/shopping-cart';
+import {
+	createRequestCartProduct,
+	convertResponseCartToRequestCart,
+} from '@automattic/shopping-cart';
+import type { RequestCartProduct, ResponseCart, RequestCart } from '@automattic/shopping-cart';
 import wp from '../../../lib/wp';
 
 /**
@@ -18,15 +21,18 @@ import { recordOnboardingComplete } from '../lib/analytics';
 import { useSelectedPlan, useShouldRedirectToEditorAfterCheckout } from './use-selected-plan';
 import { clearLastNonEditorRoute } from '../lib/clear-last-non-editor-route';
 import { useOnboardingFlow } from '../path';
+import doesValueExist from 'calypso/my-sites/checkout/composite-checkout/lib/does-value-exist';
 
-const wpcom = wp.undocumented();
+const wpcomGetCart = ( cartKey: string ) => wp.req.get( `/me/shopping-cart/${ cartKey }` );
+const wpcomSetCart = ( cartKey: string, cartData: RequestCart ) =>
+	wp.req.post( `/me/shopping-cart/${ cartKey }`, cartData );
 
 /**
  * After a new site has been created there are 3 scenarios to cover:
  * 1. The user explicitly selected a paid plan using PlansGrid => redirect to checkout with that plan + any selected paid domain in cart
  * 2. The user selected a paid domain using DomainPicker (Premium Plan appears in top-right corner) => show PlansGrid as the last step of Gutenboarding => scenario 1
  * 3. The user is still seeing 'Free Plan' label on PlansButton => redirect to editor
- **/
+ */
 
 export default function useOnSiteCreation(): void {
 	const { domain } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
@@ -85,11 +91,14 @@ export default function useOnSiteCreation(): void {
 
 				const go = async () => {
 					if ( planProduct || domainProduct ) {
-						const cart: ResponseCart = await wpcom.getCart( newSite.blogid );
-						await wpcom.setCart( newSite.blogid, {
-							...cart,
-							products: [ ...cart.products, planProduct, domainProduct ].filter( Boolean ),
-						} );
+						const cart: ResponseCart = await wpcomGetCart( String( newSite.blogid ) );
+						await wpcomSetCart(
+							String( newSite.blogid ),
+							convertResponseCartToRequestCart( {
+								...cart,
+								products: [ ...cart.products, planProduct, domainProduct ].filter( doesValueExist ),
+							} )
+						);
 					}
 					resetOnboardStore();
 					clearLastNonEditorRoute();
