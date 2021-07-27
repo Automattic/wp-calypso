@@ -4,8 +4,8 @@
 	margin-bottom: 16px;
 }
 
-a.backup-storage-space-upsell__button {
-	color: #1e1e1e;
+.backup-storage-space-upsell__button.components-button {
+	color: var( --color-text );
 }
 
 .backup-storage-space-upsell__button {
