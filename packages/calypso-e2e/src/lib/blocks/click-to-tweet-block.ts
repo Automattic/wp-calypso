@@ -10,6 +10,9 @@ const selectors = {
  * Represents the Click to Tweet coblock.
  */
 export class ClicktoTweetBlock extends BaseBlock {
+	// Static properties.
+	static blockName = 'Click to Tweet';
+
 	/**
 	 * Given a text string, enters the text into the main tweet body.
 	 *
@@ -25,9 +28,15 @@ export class ClicktoTweetBlock extends BaseBlock {
 	 * Validates block on the page.
 	 *
 	 * @param {Page} page Page on which to verify the presence of the block.
+	 * @param {(string|number)} contents Contents used to validate the block.
 	 * @returns {Promise<void>} No return value.
 	 */
-	static async validatePublishedContent( page: Page ): Promise< void > {
-		await page.waitForSelector( selectors.block );
+	static async validatePublishedContent(
+		page: Page,
+		contents: ( string | number )[]
+	): Promise< void > {
+		for await ( const content of contents ) {
+			await page.waitForSelector( `${ selectors.block } :text("${ content.toString() }")` );
+		}
 	}
 }

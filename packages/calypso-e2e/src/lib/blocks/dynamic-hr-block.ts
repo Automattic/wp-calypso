@@ -9,6 +9,9 @@ const selectors = {
  * Represents the Dynamic HR coblock.
  */
 export class DynamicHRBlock extends BaseBlock {
+	// Static properties.
+	static blockName = 'Dynamic HR';
+
 	/**
 	 * Validates block on the page.
 	 *

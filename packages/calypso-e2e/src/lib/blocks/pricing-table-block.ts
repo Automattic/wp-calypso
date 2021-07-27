@@ -11,6 +11,10 @@ const selectors = {
  * Represents the Pricing Table coblock.
  */
 export class PricingTableBlock extends BaseBlock {
+	// Static properties.
+	static blockName = 'Pricing Table';
+	static gutterValues: string[] = [ 'None', 'Small', 'Medium', 'Large', 'Huge' ];
+
 	/**
 	 * Enters the price to the side chosen.
 	 *
@@ -49,10 +53,15 @@ export class PricingTableBlock extends BaseBlock {
 	 * Validates block on the page.
 	 *
 	 * @param {Page} page Page on which to verify the presence of the block.
+	 * @param {(string|number)} contents Contents used to validate the block.
 	 * @returns {Promise<void>} No return value.
 	 */
-	static async validatePublishedContent( page: Page ): Promise< void > {
-		await page.waitForSelector( selectors.pricing );
-		await page.waitForSelector( selectors.block );
+	static async validatePublishedContent(
+		page: Page,
+		contents: ( string | number )[]
+	): Promise< void > {
+		for await ( const content of contents ) {
+			await page.waitForSelector( `${ selectors.block } :text("${ content.toString() }")` );
+		}
 	}
 }
