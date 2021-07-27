@@ -17,7 +17,7 @@ import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
 import FeaturedDomainSuggestions from 'calypso/components/domains/featured-domain-suggestions';
 import { isDomainMappingFree, isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
 import Notice from 'calypso/components/notice';
-import { Card, ScreenReaderText } from '@automattic/components';
+import { CompactCard, ScreenReaderText } from '@automattic/components';
 import { getTld } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
@@ -25,6 +25,8 @@ import { DESIGN_TYPE_STORE } from 'calypso/signup/constants';
 import { hideSitePreview } from 'calypso/state/signup/preview/actions';
 import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
 import DomainSkipSuggestion from 'calypso/components/domains/domain-skip-suggestion';
+import MaterialIcon from 'calypso/components/material-icon';
+
 /**
  * Style dependencies
  */
@@ -150,9 +152,18 @@ class DomainSearchResults extends React.Component {
 							components: { strong: <strong /> },
 						}
 				  )
-				: translate( '{{strong}}%(domain)s{{/strong}} is taken.', {
+				: translate( '%(domain)s is already registered. {{a}}Do you own it?{{/a}}', {
 						args: { domain },
-						components: { strong: <strong /> },
+						components: {
+							a: (
+								// eslint-disable-next-line jsx-a11y/anchor-is-valid
+								<a
+									href="#"
+									onClick={ this.props.onClickUseYourDomain }
+									data-tracks-button-click-source={ this.props.tracksButtonClickSource }
+								/>
+							),
+						},
 				  } );
 
 			if ( TLD_NOT_SUPPORTED_TEMPORARILY === lastDomainStatus ) {
@@ -169,30 +180,10 @@ class DomainSearchResults extends React.Component {
 			if ( this.props.offerUnavailableOption ) {
 				if ( this.props.siteDesignType !== DESIGN_TYPE_STORE && lastDomainIsTransferrable ) {
 					availabilityElement = (
-						<Card className="domain-search-results__transfer-card" highlight="info">
-							<div className="domain-search-results__transfer-card-copy">
-								<div>{ domainUnavailableMessage }</div>
-								<p>
-									{ translate(
-										'If you already own this domain you can use it for your WordPress.com site.'
-									) }
-								</p>
-							</div>
-							<div className="domain-search-results__transfer-card-link">
-								{ translate( '{{a}}Yes, I own this domain{{/a}}', {
-									components: {
-										a: (
-											// eslint-disable-next-line jsx-a11y/anchor-is-valid
-											<a
-												href="#"
-												onClick={ this.props.onClickUseYourDomain }
-												data-tracks-button-click-source={ this.props.tracksButtonClickSource }
-											/>
-										),
-									},
-								} ) }
-							</div>
-						</Card>
+						<CompactCard className="domain-search-results__domain-available-notice">
+							<MaterialIcon icon="info" />
+							<span>{ domainUnavailableMessage }</span>
+						</CompactCard>
 					);
 				} else if ( lastDomainStatus !== MAPPED ) {
 					availabilityElement = (

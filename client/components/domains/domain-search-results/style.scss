@@ -63,3 +63,22 @@ body.is-section-signup.is-white-signup {
 		}
 	}
 }
+
+.domain-search-results__domain-available-notice {
+	display: flex;
+	span {
+		font-size: $font-body-small;
+		color: var( --color-text-subtle );
+		a {
+			color: var( --color-text );
+			text-decoration: underline;
+		}
+	}
+	svg {
+		fill: var( --color-neutral-20 );
+		margin-right: 8px;
+		width: 20px;
+		height: 20px;
+		margin-top: 2px;
+	}
+}
