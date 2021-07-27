@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { camelCase, debounce, difference, get, isEmpty, keys, map, pick } from 'lodash';
+import { camelCase, difference, get, isEmpty, keys, map, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,9 +20,7 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import { disableSubmitButton } from './with-contact-details-validation';
-import wp from 'calypso/lib/wp';
 
-const wpcom = wp.undocumented();
 const ciraAgreementUrl = 'https://cira.ca/agree';
 const defaultValues = {
 	lang: 'EN',
@@ -94,7 +92,6 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		this.state = {
 			errorMessages: {},
 		};
-		this.validateContactDetails = debounce( this.validateContactDetails, 333 );
 	}
 
 	componentDidMount() {
@@ -123,18 +120,6 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		this.props.updateContactDetailsCache( payload );
 		this.props.onContactDetailsChange?.( payload );
 	}
-
-	validateContactDetails = ( contactDetails ) => {
-		wpcom.validateDomainContactInformation(
-			contactDetails,
-			this.props.getDomainNames(),
-			( error, data ) => {
-				this.setState( {
-					errorMessages: ( data && data.messages ) || {},
-				} );
-			}
-		);
-	};
 
 	handleChangeEvent = ( event ) => {
 		const { value, checked, type, id } = event.target;
