@@ -115,7 +115,20 @@ export class List extends React.Component {
 						brandFont
 						className="domain-management__page-heading"
 						headerText={ translate( 'Site Domains' ) }
-						subHeaderText={ translate( 'Manage the domains connected to your site.' ) }
+						subHeaderText={ translate(
+							'Manage the domains connected to your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+							{
+								components: {
+									learnMoreLink: (
+										<InlineSupportLink
+											supportLink="https://wordpress.com/support/domains/"
+											supportPostId={ 1988 }
+											showIcon={ false }
+										/>
+									),
+								},
+							}
+						) }
 						align="left"
 					/>
 					<div className="domains__header-buttons">
