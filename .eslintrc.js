@@ -217,6 +217,7 @@ module.exports = {
 				'packages/photon/**/*',
 				'packages/plans-grid/**/*',
 				'packages/popup-monitor/**/*',
+				'packages/search/**/*',
 				'packages/shopping-cart/**/*',
 				'packages/spec-junit-reporter/**/*',
 				'packages/spec-xunit-reporter/**/*',
