@@ -63,7 +63,7 @@ export const BackupStorageSpaceUpsell: FunctionComponent< Props > = ( {
 		dispatch(
 			recordTracksEvent( 'calypso_jetpack_backup_storage_upsell_display', {
 				type: upsellOption,
-				usedStorage,
+				used_storage: usedStorage,
 				path: '/backup/:site',
 			} )
 		);
@@ -73,7 +73,7 @@ export const BackupStorageSpaceUpsell: FunctionComponent< Props > = ( {
 		dispatch(
 			recordTracksEvent( 'calypso_jetpack_backup_storage_upsell_click', {
 				type: upsellOption,
-				usedStorage,
+				used_storage: usedStorage,
 				path: '/backup/:site',
 			} )
 		);
