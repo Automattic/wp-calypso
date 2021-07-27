@@ -144,12 +144,12 @@ export class PlanFeaturesComparison extends Component {
 	}
 
 	handleUpgradeClick( singlePlanProperties ) {
-		const { onUpgradeClick: ownPropsOnUpgradeClick } = this.props;
+		const { onUpgradeClick } = this.props;
 		const { cartItemForPlan } = singlePlanProperties;
 
-		if ( ownPropsOnUpgradeClick && ownPropsOnUpgradeClick !== noop ) {
+		if ( onUpgradeClick && onUpgradeClick !== noop ) {
 			// cartItemForPlan can be null, which implies a free plan
-			ownPropsOnUpgradeClick( cartItemForPlan );
+			onUpgradeClick( cartItemForPlan );
 			return;
 		}
 
