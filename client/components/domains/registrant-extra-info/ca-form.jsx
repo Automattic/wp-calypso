@@ -162,7 +162,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 	}
 
 	needsOrganization() {
-		return this.isCorporationLegalType( get( this.props.ccTldDetails, 'legalType' ) );
+		return this.isCorporationLegalType( this.props.ccTldDetails?.legalType );
 	}
 
 	organizationFieldIsValid() {
