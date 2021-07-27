@@ -16,6 +16,7 @@ import QueryKeyringConnections from 'calypso/components/data/query-keyring-conne
 import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import StickyPanel from 'calypso/components/sticky-panel';
@@ -190,7 +191,18 @@ class StatsSite extends Component {
 					headerText={ translate( 'Stats and Insights' ) }
 					align="left"
 					subHeaderText={ translate(
-						"Learn more about the activity and behavior of your site's visitors."
+						"Learn more about the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}.",
+						{
+							components: {
+								learnMoreLink: (
+									<InlineSupportLink
+										supportLink="https://wordpress.com/support/stats/"
+										supportPostId={ 4454 }
+										showIcon={ false }
+									/>
+								),
+							},
+						}
 					) }
 				/>
 				<StatsNavigation
