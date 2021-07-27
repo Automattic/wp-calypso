@@ -21,6 +21,7 @@ import {
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import DomainSearch from './domain-search';
 import SiteRedirect from './domain-search/site-redirect';
+import EmailProvidersUpsell from './email-providers-upsell';
 import MapDomain from 'calypso/my-sites/domains/map-domain';
 import TransferDomain from 'calypso/my-sites/domains/transfer-domain';
 import TransferDomainStep from 'calypso/components/domains/transfer-domain-step';
@@ -39,7 +40,6 @@ import { makeLayout, render as clientRender } from 'calypso/controller';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import EmailProvidersUpsell from './email-providers-upsell';
 
 const noop = () => {};
 const domainsAddHeader = ( context, next ) => {
@@ -213,6 +213,25 @@ const googleAppsWithRegistration = ( context, next ) => {
 	next();
 };
 
+const emailWithRegistration = ( context, next ) => {
+	context.primary = (
+		<Main wideLayout>
+			<PageViewTracker
+				path="/domains/add/:domain/email/:site"
+				title="Domain Search > Domain Registration > Email"
+			/>
+			<DocumentHead
+				title={ translate( 'Register %(domain)s', {
+					args: { domain: context.params.registerDomain },
+				} ) }
+			/>
+			<EmailProvidersUpsell domain={ context.params.domain } />
+		</Main>
+	);
+
+	next();
+};
+
 const redirectIfNoSite = ( redirectTo ) => {
 	return ( context, next ) => {
 		const state = context.store.getState();
@@ -273,25 +292,6 @@ const jetpackNoDomainsWarning = ( context, next ) => {
 	} else {
 		next();
 	}
-};
-
-const emailWithRegistration = ( context, next ) => {
-	context.primary = (
-		<Main wideLayout>
-			<PageViewTracker
-				path="/domains/add/:domain/email/:site"
-				title="Domain Search > Domain Registration > Email"
-			/>
-			<DocumentHead
-				title={ translate( 'Register %(domain)s', {
-					args: { domain: context.params.registerDomain },
-				} ) }
-			/>
-			<EmailProvidersUpsell domain={ context.params.domain } />
-		</Main>
-	);
-
-	next();
 };
 
 export default {

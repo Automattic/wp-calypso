@@ -2,7 +2,7 @@
  * External dependencies
  */
 import page from 'page';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
@@ -12,6 +12,10 @@ import { useTranslate } from 'i18n-calypso';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HeaderCake from 'calypso/components/header-cake';
 import PromoCard from 'calypso/components/promo-section/promo-card';
+
+/**
+ * Style dependencies
+ */
 import emailIllustration from 'calypso/assets/images/email-providers/email-illustration.svg';
 
 export default function EmailProvidersUpsell( { domain } ) {
@@ -35,7 +39,7 @@ export default function EmailProvidersUpsell( { domain } ) {
 	};
 
 	return (
-		<>
+		<Fragment>
 			<HeaderCake onClick={ handleGoBack }>
 				{ translate( 'Register %(domain)s', { args: { domain } } ) }
 			</HeaderCake>
@@ -48,6 +52,6 @@ export default function EmailProvidersUpsell( { domain } ) {
 			>
 				<p>{ translate( 'No setup or software required. Easy to manage from your dashboard.' ) }</p>
 			</PromoCard>
-		</>
+		</Fragment>
 	);
 }
