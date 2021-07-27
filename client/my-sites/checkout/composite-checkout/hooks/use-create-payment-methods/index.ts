@@ -6,8 +6,6 @@ import { isEnabled } from '@automattic/calypso-config';
 import {
 	createAlipayMethod,
 	createAlipayPaymentMethodStore,
-	createIdealMethod,
-	createIdealPaymentMethodStore,
 	createSofortMethod,
 	createSofortPaymentMethodStore,
 } from '@automattic/composite-checkout';
@@ -23,6 +21,8 @@ import {
 	createEpsMethod,
 	createEpsPaymentMethodStore,
 	createPayPalMethod,
+	createIdealMethod,
+	createIdealPaymentMethodStore,
 } from '@automattic/wpcom-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import type { StripeConfiguration, Stripe, StripeLoadingError } from '@automattic/calypso-stripe';
