@@ -29,7 +29,7 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 	} );
 
 	it( 'View site', async function () {
-		const siteURL = `https://${ DataHelper.getConfig( 'testSiteForNotifications' ) }`;
+		const siteURL = `https://${ DataHelper.config.get( 'testSiteForNotifications' ) }`;
 		await page.goto( siteURL );
 		publishedPostsListPage = await PublishedPostsListPage.Expect( page );
 	} );
@@ -54,7 +54,7 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 
 	it( 'Open notification using keyboard shortcut', async function () {
 		const navbarComponent = await NavbarComponent.Expect( page );
-		await navbarComponent.openNotificationsPanel( { keyboard: true } );
+		await navbarComponent.openNotificationsPanel( { useKeyboard: true } );
 	} );
 
 	it( `See notification for the comment left by ${ commentingUser }`, async function () {

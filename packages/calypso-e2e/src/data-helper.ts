@@ -2,6 +2,8 @@ import phrase from 'asana-phrase';
 import config from 'config';
 import { getViewportName } from './browser-helper';
 
+export { config };
+
 /**
  * Generate a pseudo-random integer, inclusive on the lower bound and exclusive on the upper bound.
  *
@@ -35,16 +37,6 @@ export function getCalypsoURL(
 	);
 
 	return url.toString();
-}
-
-/**
- * Wrapper around the `config.get` call.
- *
- * @param {string} key Top level key in the decrypted configuration file to get.
- * @returns {[key: string]: any|string|null} Either a JSON dictionary or string matching the key if the key exists. Returns null otherwise.
- */
-export function getConfig( key: string ): { [ key: string ]: any } | string | null {
-	return config.get( key );
 }
 
 /**

@@ -38,12 +38,12 @@ export class NavbarComponent extends BaseContainer {
 	 * Optionally, set the `keyboard` parameter to trigger this action using keyboard shortcut.
 	 *
 	 * @param {{[key: string]: string}} [param0] Object assembled by the caller.
-	 * @param {string} param0.keyboard Set to true to use keyboard shortcut to open the notifications panel. Defaults to false.
+	 * @param {string} param0.useKeyboard Set to true to use keyboard shortcut to open the notifications panel. Defaults to false.
 	 * @returns {Promise<void>} No return value.
 	 */
 	async openNotificationsPanel( {
-		keyboard = false,
-	}: { keyboard?: boolean } = {} ): Promise< void > {
+		useKeyboard = false,
+	}: { useKeyboard?: boolean } = {} ): Promise< void > {
 		const notificationsButton = await this.page.waitForSelector( selectors.notificationsButton, {
 			state: 'visible',
 		} );
@@ -51,7 +51,7 @@ export class NavbarComponent extends BaseContainer {
 			this.page.waitForLoadState( 'networkidle' ),
 			notificationsButton.waitForElementState( 'stable' ),
 		] );
-		if ( keyboard ) {
+		if ( useKeyboard ) {
 			return await this.page.keyboard.type( 'n' );
 		}
 
