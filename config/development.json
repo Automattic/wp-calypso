@@ -170,7 +170,6 @@
 		"woocommerce/extension-referrers": true,
 		"woocommerce/store-on-non-atomic-sites": true,
 		"wpcom-user-bootstrap": false,
-		"wordpress-action-search": false,
-		"nav-unification/switcher": true
+		"wordpress-action-search": false
 	}
 }

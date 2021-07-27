@@ -94,7 +94,6 @@
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
 		"wpcom-user-bootstrap": false,
-		"wordpress-action-search": false,
-		"nav-unification/switcher": true
+		"wordpress-action-search": false
 	}
 }
