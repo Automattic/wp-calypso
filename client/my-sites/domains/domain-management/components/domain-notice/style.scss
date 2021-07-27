@@ -11,15 +11,22 @@
 .domain-notice__info,
 .domain-notice__success,
 .domain-notice__verifying {
-	svg {
+	svg,
+	strong {
 		color: var( --color-success-50 );
 	}
 }
 
-.domain-notice__warning svg {
-	color: var( --color-warning-40 );
+.domain-notice__warning {
+	svg,
+	strong {
+		color: var( --color-warning-40 );
+	}
 }
 
-.domain-notice__alert svg {
-	color: var( --color-error );
+.domain-notice__alert {
+	svg,
+	strong {
+		color: var( --color-error );
+	}
 }
