@@ -7,6 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { Button } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from 'calypso/lib/url';
 import Circle from './circle';
 import Logo from './logo-wide';
@@ -26,21 +27,21 @@ export default function Browsehappy( { from } ) {
 	return (
 		<body className="browsehappy__body">
 			<nav className="browsehappy__nav">
-				<a href="https://wordpress.com" title="WordPress.com" rel="home">
+				<a href="https://wordpress.com" title={ __( 'WordPress.com' ) } rel="home">
 					<Logo />
 				</a>
 			</nav>
 			<main className="browsehappy__main" role="main">
 				<img src={ illustrationURL } alt="" />
-				<h1>Unsupported Browser</h1>
-				<p>Unfortunately this page may not work correctly in your browser.</p>
+				<h1>{ __( 'Unsupported Browser' ) }</h1>
+				<p>{ __( 'Unfortunately this page may not work correctly in your browser.' ) }</p>
 				<Button isPrimary href={ SUPPORTED_BROWSERS_LINK }>
-					View supported browsers
+					{ __( 'View supported browsers' ) }
 				</Button>
 				{ from && (
 					<p>
 						<a className="browsehappy__anyway" href={ continueUrl }>
-							Continue loading the page anyway
+							{ __( 'Continue loading the page anyway' ) }
 						</a>
 					</p>
 				) }
