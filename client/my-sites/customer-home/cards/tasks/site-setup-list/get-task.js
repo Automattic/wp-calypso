@@ -127,7 +127,7 @@ export const getTask = (
 			break;
 		case CHECKLIST_KNOWN_TASKS.WOOCOMMERCE_SETUP:
 			taskData = {
-				timing: 2,
+				timing: 7,
 				title: translate( 'Finish store setup' ),
 				description: translate(
 					'Add your store details, add products, configure shipping, so you can begin to collect orders!'
