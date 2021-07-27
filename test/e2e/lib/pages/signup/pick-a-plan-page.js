@@ -29,7 +29,7 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 	}
 
 	async _selectPlan( level ) {
-		const planLocator = `.button.is-${ level }-plan`;
+		const planLocator = `button.is-${ level }-plan`;
 
 		const locator = By.css( planLocator );
 
