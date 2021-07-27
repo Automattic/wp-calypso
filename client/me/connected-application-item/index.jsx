@@ -27,10 +27,6 @@ class ConnectedApplicationItem extends React.Component {
 		isPlaceholder: false,
 	};
 
-	state = {
-		showDetail: false,
-	};
-
 	recordClickEvent = ( action, label = null ) => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action, label );
 	};

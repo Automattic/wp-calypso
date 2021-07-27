@@ -1,9 +1,7 @@
 /* global fullSiteEditing */
-/**
- * External dependencies
- */
-import domReady from '@wordpress/dom-ready';
+
 import { dispatch } from '@wordpress/data';
+import domReady from '@wordpress/dom-ready';
 import { __ } from '@wordpress/i18n';
 
 domReady( () => {

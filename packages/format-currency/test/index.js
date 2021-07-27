@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import formatCurrency, { getCurrencyDefaults, getCurrencyObject } from '../src';
 
 describe( 'formatCurrency', () => {

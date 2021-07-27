@@ -1,18 +1,9 @@
-/**
- * External dependencies
- */
 import assert from 'assert';
 import config from 'config';
-
-/**
- * Internal dependencies
- */
-import LoginFlow from '../../lib/flows/login-flow.js';
-
-import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
-
-import * as driverManager from '../../lib/driver-manager';
 import * as dataHelper from '../../lib/data-helper';
+import * as driverManager from '../../lib/driver-manager';
+import LoginFlow from '../../lib/flows/login-flow.js';
+import GutenbergEditorComponent from '../../lib/gutenberg/gutenberg-editor-component';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();

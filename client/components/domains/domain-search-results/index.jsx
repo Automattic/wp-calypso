@@ -6,7 +6,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { get, includes, times } from 'lodash';
+import { get, times } from 'lodash';
 
 /**
  * Internal dependencies
@@ -75,7 +75,6 @@ class DomainSearchResults extends React.Component {
 	renderDomainAvailability() {
 		const {
 			availableDomain,
-			domainsWithPlansOnly,
 			lastDomainIsTransferrable,
 			lastDomainStatus,
 			lastDomainSearched,
@@ -105,18 +104,15 @@ class DomainSearchResults extends React.Component {
 		if (
 			domain &&
 			suggestions.length !== 0 &&
-			includes(
-				[
-					TRANSFERRABLE,
-					MAPPABLE,
-					MAPPED,
-					TLD_NOT_SUPPORTED,
-					TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE,
-					TLD_NOT_SUPPORTED_TEMPORARILY,
-					UNKNOWN,
-				],
-				lastDomainStatus
-			) &&
+			[
+				TRANSFERRABLE,
+				MAPPABLE,
+				MAPPED,
+				TLD_NOT_SUPPORTED,
+				TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE,
+				TLD_NOT_SUPPORTED_TEMPORARILY,
+				UNKNOWN,
+			].includes( lastDomainStatus ) &&
 			get( this.props, 'products.domain_map', false )
 		) {
 			// eslint-disable-next-line jsx-a11y/anchor-is-valid
@@ -124,24 +120,18 @@ class DomainSearchResults extends React.Component {
 
 			// If the domain is available we shouldn't offer to let people purchase mappings for it.
 			if (
-				includes(
-					[ TLD_NOT_SUPPORTED, TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE ],
+				[ TLD_NOT_SUPPORTED, TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE ].includes(
 					lastDomainStatus
 				)
 			) {
 				if ( isDomainMappingFree( selectedSite ) || isNextDomainFree( this.props.cart ) ) {
 					offer = translate(
-						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for free.{{/small}}',
+						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}connect it{{/a}} for free.{{/small}}',
 						{ args: { domain }, components }
-					);
-				} else if ( ! domainsWithPlansOnly ) {
-					offer = translate(
-						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for %(cost)s.{{/small}}',
-						{ args: { domain, cost: this.props.products.domain_map.cost_display }, components }
 					);
 				} else {
 					offer = translate(
-						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} with WordPress.com Premium.{{/small}}',
+						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}connect it{{/a}} with WordPress.com Premium.{{/small}}',
 						{ args: { domain }, components }
 					);
 				}
@@ -152,7 +142,7 @@ class DomainSearchResults extends React.Component {
 				offer = null;
 			}
 
-			let domainUnavailableMessage = includes( [ TLD_NOT_SUPPORTED, UNKNOWN ], lastDomainStatus )
+			let domainUnavailableMessage = [ TLD_NOT_SUPPORTED, UNKNOWN ].includes( lastDomainStatus )
 				? translate(
 						'{{strong}}.%(tld)s{{/strong}} domains are not available for registration on WordPress.com.',
 						{
@@ -227,8 +217,13 @@ class DomainSearchResults extends React.Component {
 		);
 	}
 
-	handleAddMapping = () => {
-		this.props.onAddMapping( this.props.lastDomainSearched );
+	handleAddMapping = ( event ) => {
+		event.preventDefault();
+		if ( this.props.isSignupStep ) {
+			this.props.onClickMapping( event );
+		} else {
+			this.props.onAddMapping( this.props.lastDomainSearched );
+		}
 	};
 
 	renderPlaceholders() {
@@ -339,12 +334,13 @@ class DomainSearchResults extends React.Component {
 
 		return (
 			<div className="domain-search-results__domain-suggestions">
-				{ this.props.children }
+				{ ! this.props.isReskinned && this.props.children }
 				{ suggestionCount }
 				{ featuredSuggestionElement }
 				{ suggestionElements }
 				{ unavailableOffer }
 				{ this.props.showSkipButton && domainSkipSuggestion }
+				{ this.props.isReskinned && this.props.children }
 			</div>
 		);
 	}

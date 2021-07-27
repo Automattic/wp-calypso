@@ -10,8 +10,6 @@ import {
 	createIdealPaymentMethodStore,
 	createSofortMethod,
 	createSofortPaymentMethodStore,
-	createEpsMethod,
-	createEpsPaymentMethodStore,
 } from '@automattic/composite-checkout';
 import {
 	createApplePayMethod,
@@ -22,6 +20,8 @@ import {
 	createGiropayPaymentMethodStore,
 	createP24Method,
 	createP24PaymentMethodStore,
+	createEpsMethod,
+	createEpsPaymentMethodStore,
 	createPayPalMethod,
 } from '@automattic/wpcom-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
@@ -40,10 +40,6 @@ import {
 	createEbanxTefPaymentMethodStore,
 	createEbanxTefMethod,
 } from '../../payment-methods/ebanx-tef';
-import {
-	createIdWalletPaymentMethodStore,
-	createIdWalletMethod,
-} from '../../payment-methods/id-wallet';
 import {
 	createNetBankingPaymentMethodStore,
 	createNetBankingMethod,
@@ -310,17 +306,6 @@ function useCreateNetbanking(): PaymentMethod {
 	);
 }
 
-function useCreateIdWallet(): PaymentMethod {
-	const paymentMethodStore = useMemo( () => createIdWalletPaymentMethodStore(), [] );
-	return useMemo(
-		() =>
-			createIdWalletMethod( {
-				store: paymentMethodStore,
-			} ),
-		[ paymentMethodStore ]
-	);
-}
-
 function useCreateEbanxTef() {
 	const paymentMethodStore = useMemo( () => createEbanxTefPaymentMethodStore(), [] );
 	return useMemo(
@@ -462,8 +447,6 @@ export default function useCreatePaymentMethods( {
 
 	const ebanxTefMethod = useCreateEbanxTef();
 
-	const idWalletMethod = useCreateIdWallet();
-
 	const netbankingMethod = useCreateNetbanking();
 
 	const sofortMethod = useCreateSofort( {
@@ -532,7 +515,6 @@ export default function useCreatePaymentMethods( {
 		giropayMethod,
 		sofortMethod,
 		ebanxTefMethod,
-		idWalletMethod,
 		netbankingMethod,
 		alipayMethod,
 		p24Method,

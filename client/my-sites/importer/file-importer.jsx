@@ -49,8 +49,8 @@ class FileImporter extends React.PureComponent {
 		importerData: PropTypes.shape( {
 			title: PropTypes.string.isRequired,
 			icon: PropTypes.string.isRequired,
-			description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ).isRequired,
-			uploadDescription: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
+			description: PropTypes.node.isRequired,
+			uploadDescription: PropTypes.node,
 		} ).isRequired,
 		importerStatus: PropTypes.shape( {
 			errorData: PropTypes.shape( {
@@ -89,6 +89,7 @@ class FileImporter extends React.PureComponent {
 			description,
 			overrideDestination,
 			uploadDescription,
+			optionalUrl,
 		} = this.props.importerData;
 		const { importerStatus, site } = this.props;
 		const { errorData, importerState } = importerStatus;
@@ -132,6 +133,7 @@ class FileImporter extends React.PureComponent {
 						description={ uploadDescription }
 						importerStatus={ importerStatus }
 						site={ site }
+						optionalUrl={ optionalUrl }
 					/>
 				) }
 			</Card>

@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
 import { By } from 'selenium-webdriver';
-
-/**
- * Internal dependencies
- */
 import AsyncBaseContainer from '../async-base-container';
 // import DisconnectSurveyPage from '../pages/disconnect-survey-page.js';
+import * as dataHelper from '../data-helper';
 import * as driverHelper from '../driver-helper.js';
 import * as driverManager from '../driver-manager';
-import * as dataHelper from '../data-helper';
 
 const host = dataHelper.getJetpackHost();
 
@@ -52,6 +45,24 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		}
 		await this.expandDrawerItem( 'Appearance' );
 		return await this._scrollToAndClickMenuItem( 'Themes' );
+	}
+
+	async selectTemplates() {
+		if ( host !== 'WPCOM' ) {
+			await this.expandDrawerItem( 'Design' );
+			return await this._scrollToAndClickMenuItem( 'Templates' );
+		}
+		await this.expandDrawerItem( 'Appearance' );
+		return await this._scrollToAndClickMenuItem( 'Templates' );
+	}
+
+	async selectTemplateParts() {
+		if ( host !== 'WPCOM' ) {
+			await this.expandDrawerItem( 'Design' );
+			return await this._scrollToAndClickMenuItem( 'Template Parts' );
+		}
+		await this.expandDrawerItem( 'Appearance' );
+		return await this._scrollToAndClickMenuItem( 'Template Parts' );
 	}
 
 	async selectAllSitesThemes() {
@@ -200,7 +211,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		const isOpen = await driverHelper.isElementLocated( this.driver, openSidebarLocator );
 
 		if ( ! isOpen ) {
-			const mySitesButtonLocator = By.css( 'a[data-tip-target="my-sites"]' );
+			const mySitesButtonLocator = By.css( '[data-tip-target="my-sites"]' );
 			await driverHelper.clickWhenClickable( this.driver, mySitesButtonLocator );
 			await driverHelper.waitUntilElementStopsMoving( this.driver, openSidebarLocator );
 		}

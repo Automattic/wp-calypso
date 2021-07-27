@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { intersection, difference, includes, flowRight as compose } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
+import { Button } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -21,6 +22,7 @@ import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import MagicSearchWelcome from './welcome';
 import { getThemeFilters, getThemeFilterToTermTable } from 'calypso/state/themes/selectors';
+import Popover from 'calypso/components/popover';
 
 /**
  * Style dependencies
@@ -57,8 +59,11 @@ class ThemesMagicSearchCard extends React.Component {
 			editedSearchElement: '',
 			cursorPosition: 0,
 			searchInput: this.props.search,
+			isPopoverVisible: false,
 		};
 	}
+
+	popoverButtonRef = React.createRef();
 
 	setSuggestionsRefs = ( key ) => ( suggestionComponent ) => {
 		this.suggestionsRefs[ key ] = suggestionComponent;
@@ -69,6 +74,14 @@ class ThemesMagicSearchCard extends React.Component {
 	componentDidMount() {
 		this.findTextForSuggestions( this.props.search );
 	}
+
+	togglePopover = () => {
+		this.setState( ( oldState ) => ( { isPopoverVisible: ! oldState.isPopoverVisible } ) );
+	};
+
+	closePopover = () => {
+		this.setState( { isPopoverVisible: false } );
+	};
 
 	onSearchOpen = () => {
 		this.setState( { searchIsOpen: true } );
@@ -232,9 +245,20 @@ class ThemesMagicSearchCard extends React.Component {
 		this.updateInput( updatedInput );
 	};
 
-	insertTextInInput = ( text ) => {
+	welcomeBarAddText = ( text ) => {
+		if ( config.isEnabled( 'theme/showcase-revamp' ) ) {
+			// Add an extra leading space sometimes. If the user has "abcd" in
+			// their bar and they click to add "feature:", we want "abcd feature:",
+			// not "abcdfeature:".
+			const { searchInput, cursorPosition } = this.state;
+			if ( searchInput[ cursorPosition - 1 ] !== ' ' ) {
+				text = ' ' + text;
+			}
+		}
+
 		const updatedInput = this.insertTextAtCursor( text );
 		this.updateInput( updatedInput );
+		this.setState( { isPopoverVisible: false } );
 	};
 
 	focusOnInput = () => {
@@ -256,6 +280,7 @@ class ThemesMagicSearchCard extends React.Component {
 
 	render() {
 		const { translate, filters, showTierThemesControl } = this.props;
+		const { isPopoverVisible } = this.state;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
 
 		const tiers = [
@@ -269,6 +294,10 @@ class ThemesMagicSearchCard extends React.Component {
 			...difference( Object.keys( filters ), preferredOrderOfTaxonomies ),
 		];
 
+		// Check if we want to render suggestions or welcome banner
+		const renderSuggestions =
+			this.state.editedSearchElement !== '' && this.state.editedSearchElement.length > 2;
+
 		const searchField = (
 			<Search
 				onSearch={ this.props.onSearch }
@@ -276,7 +305,7 @@ class ThemesMagicSearchCard extends React.Component {
 				value={ this.state.searchInput }
 				ref={ this.setSearchInputRef }
 				placeholder={ translate(
-					"I'm creating a site for a: portfolio, magazine, business, wedding, blog, or…"
+					'Search by style or feature: portfolio, store, multiple menus, or…'
 				) }
 				analyticsGroup="Themes"
 				delaySearch={ true }
@@ -286,9 +315,54 @@ class ThemesMagicSearchCard extends React.Component {
 				onKeyDown={ this.onKeyDown }
 				onClick={ this.onClick }
 				overlayStyling={ this.searchTokens }
-				fitsContainer={ this.props.isBreakpointActive && this.state.searchIsOpen }
 				hideClose={ true }
-			/>
+			>
+				{ renderSuggestions && (
+					<KeyedSuggestions
+						ref={ this.setSuggestionsRefs( 'suggestions' ) }
+						terms={ this.props.filters }
+						input={ this.state.editedSearchElement }
+						suggest={ this.suggest }
+					/>
+				) }
+				{ this.state.searchInput !== '' && (
+					<div className="themes-magic-search-card__icon">
+						<Gridicon
+							icon="cross"
+							className="themes-magic-search-card__icon-close"
+							tabIndex="0"
+							onClick={ this.clearSearch }
+							aria-controls={ 'search-component-magic-search' }
+							aria-label={ translate( 'Clear Search' ) }
+						/>
+					</div>
+				) }
+				{ config.isEnabled( 'theme/showcase-revamp' ) && (
+					<div>
+						<Button
+							onClick={ this.togglePopover }
+							className="components-button themes-magic-search-card__advanced-toggle"
+							ref={ ( ref ) => ( this.popoverButtonRef = ref ) }
+						>
+							<Gridicon icon="cog" size={ 18 } />
+							{ translate( 'Filters' ) }
+						</Button>
+						<Popover
+							context={ this.popoverButtonRef }
+							isVisible={ isPopoverVisible }
+							onClose={ this.closePopover }
+							position="bottom"
+						>
+							<MagicSearchWelcome
+								ref={ this.setSuggestionsRefs( 'welcome' ) }
+								taxonomies={ filtersKeys }
+								topSearches={ [] }
+								suggestionsCallback={ this.welcomeBarAddText }
+							/>
+						</Popover>
+					</div>
+				) }
+			</Search>
 		);
 
 		const magicSearchClass = classNames( 'themes-magic-search', {
@@ -298,9 +372,6 @@ class ThemesMagicSearchCard extends React.Component {
 		const themesSearchCardClass = classNames( 'themes-magic-search-card', {
 			'has-highlight': this.state.searchIsOpen,
 		} );
-
-		// Check if we want to render suggestions or welcome banner
-		const renderSuggestions = this.state.editedSearchElement !== '';
 
 		return (
 			<div className={ magicSearchClass }>
@@ -312,54 +383,39 @@ class ThemesMagicSearchCard extends React.Component {
 						onClick={ this.handleClickInside }
 					>
 						{ searchField }
-						{ this.state.searchInput !== '' && (
-							<div className="themes-magic-search-card__icon">
-								<Gridicon
-									icon="cross"
-									className="themes-magic-search-card__icon-close"
-									tabIndex="0"
-									onClick={ this.clearSearch }
-									aria-controls={ 'search-component-magic-search' }
-									aria-label={ translate( 'Clear Search' ) }
-								/>
-							</div>
-						) }
 						{ isPremiumThemesEnabled && showTierThemesControl && (
 							<SimplifiedSegmentedControl
+								key={ this.props.tier }
 								initialSelected={ this.props.tier }
 								options={ tiers }
 								onSelect={ this.props.select }
+								className={ classNames( {
+									'showcase-revamp': config.isEnabled( 'theme/showcase-revamp' ),
+								} ) }
 							/>
 						) }
 					</div>
 				</StickyPanel>
-				<div role="presentation" onClick={ this.handleClickInside }>
-					{ renderSuggestions && (
-						<KeyedSuggestions
-							ref={ this.setSuggestionsRefs( 'suggestions' ) }
-							terms={ this.props.filters }
-							input={ this.state.editedSearchElement }
-							suggest={ this.suggest }
-						/>
-					) }
-					{ ! renderSuggestions && (
-						<MagicSearchWelcome
-							ref={ this.setSuggestionsRefs( 'welcome' ) }
-							taxonomies={ filtersKeys }
-							topSearches={ [] }
-							suggestionsCallback={ this.insertTextInInput }
-						/>
-					) }
-				</div>
 			</div>
 		);
 	}
 }
 
+let allowSomeThemeFilters = ( x ) => x;
+let allowSomeAllValidFilters = ( x ) => x;
+
+if ( config.isEnabled( 'theme/showcase-revamp' ) ) {
+	// Magic Search only allows "feature", "column", "subject" theme attributes to be searched
+	// For simplicity and less user confusion.
+	allowSomeThemeFilters = ( { feature, column, subject } ) => ( { feature, column, subject } );
+	allowSomeAllValidFilters = ( filtersKeys ) =>
+		intersection( filtersKeys, [ 'feature', 'column', 'subject' ] );
+}
+
 export default compose(
 	connect( ( state ) => ( {
-		filters: getThemeFilters( state ),
-		allValidFilters: Object.keys( getThemeFilterToTermTable( state ) ),
+		filters: allowSomeThemeFilters( getThemeFilters( state ) ),
+		allValidFilters: allowSomeAllValidFilters( Object.keys( getThemeFilterToTermTable( state ) ) ),
 	} ) ),
 	localize,
 	wrapWithClickOutside,

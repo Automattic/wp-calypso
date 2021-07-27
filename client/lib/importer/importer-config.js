@@ -8,6 +8,7 @@ import { filter, orderBy, values } from 'lodash';
 /**
  * Internal dependencies
  */
+import config from '@automattic/calypso-config';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 
 function getConfig( { siteTitle = '' } = {} ) {
@@ -137,6 +138,60 @@ function getConfig( { siteTitle = '' } = {} ) {
 		weight: 0,
 	};
 
+	importerConfig.substack = {
+		engine: 'substack',
+		key: 'importer-type-substack',
+		type: 'file',
+		title: 'Substack',
+		icon: 'substack',
+		description: translate(
+			'Import posts and images, podcasts and public comments from a %(importerName)s export file to {{b}}%(siteTitle)s{{/b}}.',
+			{
+				args: {
+					importerName: 'Substack',
+					siteTitle,
+				},
+				components: {
+					b: <strong />,
+				},
+			}
+		),
+		uploadDescription: translate(
+			'A %(importerName)s export file is a ZIP file ' +
+				'containing a CSV file with all posts and individual HTML posts. ' +
+				'{{supportLink/}}',
+			{
+				args: {
+					importerName: 'Substack',
+				},
+				components: {
+					supportLink: (
+						<InlineSupportLink
+							supportPostId={ 87696 } // TODO: update
+							supportLink="https://wordpress.com/support/import/import-from-substack/"
+							showIcon={ false }
+						>
+							{ translate( 'Need help exporting your content?' ) }
+						</InlineSupportLink>
+					),
+				},
+			}
+		),
+		optionalUrl: {
+			title: translate( 'Substack Newsletter URL' ),
+			description: translate(
+				'An optional Substack Newsletter URL to import comments and author information.'
+			),
+			invalidDescription: translate( 'Enter a valid Substack Newsletter URL (%(exampleUrl)s).', {
+				args: { exampleUrl: 'https://newsletter.substack.com/' },
+			} ),
+			validate: ( urlInput ) => {
+				return /^https:\/\/[\w-]+\.substack\.com\/?$/.test( urlInput.trim() );
+			},
+		},
+		weight: 0,
+	};
+
 	importerConfig.squarespace = {
 		engine: 'squarespace',
 		key: 'importer-type-squarespace',
@@ -216,11 +271,13 @@ function getConfig( { siteTitle = '' } = {} ) {
 }
 
 export function getImporters( params = {} ) {
-	const importers = orderBy(
-		values( getConfig( params ) ),
-		[ 'weight', 'title' ],
-		[ 'desc', 'asc' ]
-	);
+	const importerConfig = getConfig( params );
+
+	if ( ! config.isEnabled( 'importers/substack' ) ) {
+		delete importerConfig.substack;
+	}
+
+	const importers = orderBy( values( importerConfig ), [ 'weight', 'title' ], [ 'desc', 'asc' ] );
 
 	return importers;
 }

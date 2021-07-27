@@ -1,15 +1,7 @@
-/**
- * Internal dependencies
- */
 import { BaseContainer } from '../base-container';
 
-/**
- * Type dependencies
- */
-import { Page } from 'playwright';
-
 const selectors = {
-	main: '.support-article-dialog__base .dialog__content',
+	visitArticleButton: 'text="Visit article"',
 };
 
 /**
@@ -19,11 +11,12 @@ const selectors = {
  */
 export class SupportArticleComponent extends BaseContainer {
 	/**
-	 * Construct an instance of the Support Article component.
+	 * Confirms the support article is displayed on screen.
 	 *
-	 * @param {Page} page Underlying page with which the component will interact.
+	 * @returns {Promise<void>} No return value.
+	 *
 	 */
-	constructor( page: Page ) {
-		super( page, selectors.main );
+	async articleDisplayed(): Promise< void > {
+		await this.page.waitForSelector( selectors.visitArticleButton );
 	}
 }

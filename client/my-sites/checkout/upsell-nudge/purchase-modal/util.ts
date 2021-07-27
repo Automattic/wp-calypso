@@ -3,7 +3,8 @@
  */
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { useProcessPayment } from '@automattic/composite-checkout';
+import { useProcessPayment, PaymentProcessorResponseType } from '@automattic/composite-checkout';
+import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
 /**
@@ -24,14 +25,12 @@ type SubmitTransactionFunction = () => void;
 
 export function useSubmitTransaction( {
 	cart,
-	siteId,
 	storedCard,
 	setStep,
 	onClose,
 }: {
 	cart: ResponseCart;
-	siteId: string | number;
-	storedCard: StoredCard;
+	storedCard: StoredCard | undefined;
 	setStep: SetStep;
 	onClose: OnClose;
 } ): SubmitTransactionFunction {
@@ -39,9 +38,10 @@ export function useSubmitTransaction( {
 	const reduxDispatch = useDispatch();
 
 	return useCallback( () => {
+		if ( ! storedCard ) {
+			throw new Error( 'No saved card found' );
+		}
 		const wpcomCart = translateResponseCartToWPCOMCart( cart );
-		const countryCode = extractStoredCardMetaValue( storedCard, 'country_code' );
-		const postalCode = extractStoredCardMetaValue( storedCard, 'card_zip' );
 		setStep( 'processing' );
 		callPaymentProcessor( 'existing-card', {
 			items: wpcomCart.items,
@@ -49,11 +49,18 @@ export function useSubmitTransaction( {
 			storedDetailsId: storedCard.stored_details_id,
 			paymentMethodToken: storedCard.mp_ref,
 			paymentPartnerProcessorId: storedCard.payment_partner,
-			country: countryCode,
-			postalCode,
-			siteId: siteId ? String( siteId ) : undefined,
 		} )
-			.then( () => {
+			.then( ( response: PaymentProcessorResponse ) => {
+				if ( response.type === PaymentProcessorResponseType.ERROR ) {
+					recordTracksEvent( 'calypso_oneclick_upsell_payment_error', {
+						error_code: response.payload,
+						reason: response.payload,
+					} );
+					reduxDispatch( errorNotice( response.payload ) );
+					onClose();
+					return;
+				}
+
 				recordTracksEvent( 'calypso_oneclick_upsell_payment_success', {} );
 			} )
 			.catch( ( error ) => {
@@ -64,7 +71,7 @@ export function useSubmitTransaction( {
 				reduxDispatch( errorNotice( error.message ) );
 				onClose();
 			} );
-	}, [ siteId, callPaymentProcessor, cart, storedCard, setStep, onClose, reduxDispatch ] );
+	}, [ callPaymentProcessor, cart, storedCard, setStep, onClose, reduxDispatch ] );
 }
 
 export function formatDate( cardExpiry: string ): string {

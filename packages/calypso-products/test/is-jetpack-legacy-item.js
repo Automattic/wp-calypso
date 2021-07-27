@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-import isJetpackLegacyItem from '../src/is-jetpack-legacy-item';
 import {
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
@@ -10,6 +6,7 @@ import {
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 } from '../src/constants';
+import isJetpackLegacyItem from '../src/is-jetpack-legacy-item';
 
 describe( 'isJetpackLegacyItem', () => {
 	it( 'should return true if the item is a Jetpack legacy item', () => {

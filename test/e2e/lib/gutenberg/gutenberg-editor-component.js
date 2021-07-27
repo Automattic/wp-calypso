@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
-
-import webdriver, { By } from 'selenium-webdriver';
 import { kebabCase } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import webdriver, { By } from 'selenium-webdriver';
+import AsyncBaseContainer from '../async-base-container';
+import GuideComponent from '../components/guide-component.js';
 import * as driverHelper from '../driver-helper';
 import * as driverManager from '../driver-manager.js';
-import AsyncBaseContainer from '../async-base-container';
 import { ContactFormBlockComponent } from './blocks';
-import { ShortcodeBlockComponent } from './blocks/shortcode-block-component';
-import { ImageBlockComponent } from './blocks/image-block-component';
 import { FileBlockComponent } from './blocks/file-block-component';
-import GuideComponent from '../components/guide-component.js';
+import { ImageBlockComponent } from './blocks/image-block-component';
+import { ShortcodeBlockComponent } from './blocks/shortcode-block-component';
 
 export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	constructor( driver, url, editorType = 'iframe' ) {
@@ -230,29 +222,64 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		return await driverHelper.isElementLocated( this.driver, By.css( '.block-editor-warning' ) );
 	}
 
+	async isBlockInserterOpen() {
+		const inserterMenuLocator = By.css( '.block-editor-inserter__menu' );
+		return await driverHelper.isElementLocated( this.driver, inserterMenuLocator );
+	}
+
+	async openBlockInserter() {
+		const inserterToggleLocator = By.css(
+			'.edit-post-header .edit-post-header-toolbar__inserter-toggle'
+		);
+		if ( ! ( await this.isBlockInserterOpen() ) ) {
+			await driverHelper.clickWhenClickable( this.driver, inserterToggleLocator );
+		}
+
+		const inserterMenuLocator = By.css( '.block-editor-inserter__menu' );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, inserterMenuLocator );
+	}
+
 	async openBlockInserterAndSearch( searchTerm ) {
 		await driverHelper.scrollIntoView(
 			this.driver,
 			By.css( '.block-editor-writing-flow' ),
 			'start'
 		);
-		const inserterToggleLocator = By.css(
-			'.edit-post-header .edit-post-header-toolbar__inserter-toggle'
+
+		await this.openBlockInserter();
+
+		// @todo Remove this fallback and its reference below in the `By.css` call
+		// once Gutenberg v11.1.0 is in production. This is here to support GB
+		// versions < 11.1.0, which is still the case at the moment as v11.1.0 is
+		// on edge sites.
+		const inserterSearchInputDeprecatedSelector = 'input.block-editor-inserter__search-input';
+		const inserterSearchInputLocator = By.css(
+			`input.components-search-control__input, ${ inserterSearchInputDeprecatedSelector }`
 		);
-		const inserterMenuLocator = By.css( '.block-editor-inserter__menu' );
-		const inserterSearchInputLocator = By.css( 'input.block-editor-inserter__search-input' );
 
-		if ( await driverHelper.isElementNotLocated( this.driver, inserterMenuLocator ) ) {
-			await driverHelper.clickWhenClickable( this.driver, inserterToggleLocator );
-			// "Click" twice - the first click seems to trigger a tooltip, the second opens the menu
-			// See https://github.com/Automattic/wp-calypso/issues/43179
-			if ( await driverHelper.isElementNotLocated( this.driver, inserterMenuLocator ) ) {
-				await driverHelper.clickWhenClickable( this.driver, inserterToggleLocator );
-			}
-
-			await driverHelper.waitUntilElementLocatedAndVisible( this.driver, inserterMenuLocator );
-		}
 		await driverHelper.setWhenSettable( this.driver, inserterSearchInputLocator, searchTerm );
+	}
+
+	async insertPattern( category, name ) {
+		await this.openBlockInserter();
+
+		const patternTabLocator = By.css(
+			'.block-editor-inserter__tabs .components-tab-panel__tabs-item[id$="patterns"]'
+		);
+		const patternCategoryDropdownLocator = By.css(
+			'.components-tab-panel__tab-content .components-select-control__input'
+		);
+		const patternCategoryDropdownOptionLocator = By.css(
+			`.components-tab-panel__tab-content .components-select-control__input option[value="${ category }"]`
+		);
+		const patternItemLocator = By.css(
+			`.block-editor-block-patterns-list__list-item[aria-label="${ name }"]`
+		);
+		await driverHelper.clickWhenClickable( this.driver, patternTabLocator );
+		await driverHelper.clickWhenClickable( this.driver, patternCategoryDropdownLocator );
+		await driverHelper.clickWhenClickable( this.driver, patternCategoryDropdownOptionLocator );
+		await driverHelper.clickWhenClickable( this.driver, patternCategoryDropdownLocator );
+		await driverHelper.clickWhenClickable( this.driver, patternItemLocator );
 	}
 
 	// @TODO: Remove `.block-editor-inserter__results .components-panel__body-title` selector in favor of the `.block-editor-inserter__block-list .block-editor-inserter__panel-title` selector when Gutenberg 8.0.0 is deployed.
@@ -675,5 +702,48 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			this.driver,
 			By.css( '.edit-post-header .table-of-contents button' )
 		);
+	}
+
+	async toggleBlockEditorSidebar() {
+		const dismissSidebarButtonSelector =
+			'button[aria-label="Block editor sidebar"][aria-expanded="false"]';
+		const toggleSidebarButtonSelector = 'button[aria-label="Close block editor sidebar"]';
+
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( `${ toggleSidebarButtonSelector }, ${ dismissSidebarButtonSelector }` )
+		);
+	}
+
+	async dismissNotices() {
+		const locator = By.css( '.components-snackbar[aria-label="Dismiss this notice"]' );
+		const notices = await this.driver.findElements( locator );
+		await Promise.all( notices.map( ( notice ) => notice.click() ) );
+		await driverHelper.waitUntilElementNotLocated( this.driver, locator );
+	}
+
+	async insertBlockOrPatternViaBlockAppender( name, container = 'Group' ) {
+		const containerBlockId = await this.addBlock( container );
+		const blockAppenderLocator = By.css(
+			`#${ containerBlockId } .block-editor-button-block-appender`
+		);
+		await driverHelper.clickWhenClickable( this.driver, blockAppenderLocator );
+
+		// @todo Remove this fallback and its reference below in the `By.css` call
+		// once Gutenberg v11.1.0 is in production. This is here to support GB
+		// versions < 11.1.0, which is still the case at the moment as v11.1.0 is
+		// on edge sites.
+		const quickInserterSearchInputDeprecatedSelector =
+			'.block-editor-inserter__quick-inserter .block-editor-inserter__search-input';
+		const quickInserterSearchInputLocator = By.css(
+			`.block-editor-inserter__quick-inserter .components-search-control__input, ${ quickInserterSearchInputDeprecatedSelector }`
+		);
+
+		const patternItemLocator = By.css(
+			'.block-editor-inserter__quick-inserter .block-editor-block-types-list__item, .block-editor-inserter__quick-inserter .block-editor-block-patterns-list__item'
+		);
+
+		await driverHelper.setWhenSettable( this.driver, quickInserterSearchInputLocator, name );
+		await driverHelper.clickWhenClickable( this.driver, patternItemLocator );
 	}
 }

@@ -34,6 +34,7 @@ const JetpackSearchContent: FunctionComponent< Props > = ( {
 	const translate = useTranslate();
 
 	// Jetpack Cloud uses the Upsell component to render content
+	// This is not related to our upsell
 	if ( isCloud ) {
 		return (
 			<JetpackUpsell

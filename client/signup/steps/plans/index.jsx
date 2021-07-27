@@ -18,7 +18,6 @@ import { getTld, isSubdomain } from 'calypso/lib/domains';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
-import GutenboardingHeader from 'calypso/my-sites/plans-features-main/gutenboarding-header';
 import QueryPlans from 'calypso/components/data/query-plans';
 import { planHasFeature, FEATURE_UPLOAD_THEMES_PLUGINS } from '@automattic/calypso-products';
 import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
@@ -35,27 +34,10 @@ import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
  */
 import './style.scss';
 import PulsingDot from 'calypso/components/pulsing-dot';
-import { isTabletResolution, isDesktop } from '@automattic/viewport';
+import { isDesktop } from '@automattic/viewport';
 
 export class PlansStep extends Component {
-	state = {
-		isDesktop: ! isTabletResolution(),
-	};
-
-	windowResize = () => {
-		this.setState( { plansWithScroll: ! isTabletResolution() } );
-	};
-
-	componentWillUnmount() {
-		if ( typeof window === 'object' ) {
-			window.removeEventListener( 'resize', this.windowResize );
-		}
-	}
-
 	componentDidMount() {
-		if ( typeof window === 'object' ) {
-			window.addEventListener( 'resize', this.windowResize );
-		}
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 
@@ -122,23 +104,6 @@ export class PlansStep extends Component {
 		this.onSelectPlan( null ); // onUpgradeClick expects a cart item -- null means Free Plan.
 	};
 
-	getGutenboardingHeader() {
-		// launch flow coming from Gutenboarding
-		if ( this.props.flowName === 'new-launch' ) {
-			const { headerText, subHeaderText } = this.props;
-
-			return (
-				<GutenboardingHeader
-					headerText={ headerText }
-					subHeaderText={ subHeaderText }
-					onFreePlanSelect={ this.handleFreePlanButtonClick }
-				/>
-			);
-		}
-
-		return null;
-	}
-
 	getIntervalType() {
 		const urlParts = getUrlParts( typeof window !== 'undefined' ? window.location?.href : '' );
 		const intervalType = urlParts?.searchParams.get( 'intervalType' );
@@ -187,7 +152,6 @@ export class PlansStep extends Component {
 						plansWithScroll={ isDesktop() }
 						planTypes={ planTypes }
 						flowName={ flowName }
-						customHeader={ this.getGutenboardingHeader() }
 						showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
 						isAllPaidPlansShown={ true }
 						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
@@ -275,7 +239,6 @@ export class PlansStep extends Component {
 					allowBackFirstStep={ !! hasInitializedSitesBackUrl }
 					backUrl={ backUrl }
 					backLabelText={ backLabelText }
-					hideFormattedHeader={ !! this.getGutenboardingHeader() }
 				/>
 			</>
 		);

@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { By } from 'selenium-webdriver';
-
-/**
- * Internal dependencies
- */
 import AsyncBaseContainer from '../async-base-container';
-import * as slackNotifier from '../slack-notifier';
 import * as driverHelper from '../driver-helper.js';
+import * as slackNotifier from '../slack-notifier';
 
 const searchInputLocator = By.className( 'search-component__input' );
 
@@ -76,7 +69,7 @@ export default class FindADomainComponent extends AsyncBaseContainer {
 	}
 
 	async skipSuggestion() {
-		// currently used in 'launch-site' and 'new-launch' signup flows
+		// currently used in 'launch-site' signup flow
 		const skipSuggestion = By.css( '.domain-skip-suggestion > .button.domain-suggestion__action' );
 		await driverHelper.scrollIntoView( this.driver, skipSuggestion );
 		return await driverHelper.clickWhenClickable(

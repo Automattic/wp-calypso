@@ -1,18 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import classnames from 'classnames';
-import { ThemeProvider } from 'emotion-theming';
-import { createInterpolateElement } from '@wordpress/element';
-import { sprintf } from '@wordpress/i18n';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { Button, Tip } from '@wordpress/components';
-import { Icon, check } from '@wordpress/icons';
-import { useSiteDomains, useDomainSuggestion, useDomainSearch, useTitle } from '@automattic/launch';
-import { useLocale, useLocalizeUrl } from '@automattic/i18n-utils';
-import { useI18n } from '@wordpress/react-i18n';
-import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
 import {
 	CheckoutStepBody,
 	checkoutTheme,
@@ -23,10 +8,18 @@ import {
 	SubmitButtonWrapper,
 	FormStatus,
 } from '@automattic/composite-checkout';
-
-/**
- * Internal dependencies
- */
+import { useLocale, useLocalizeUrl } from '@automattic/i18n-utils';
+import { useSiteDomains, useDomainSuggestion, useDomainSearch, useTitle } from '@automattic/launch';
+import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
+import { Button, Tip } from '@wordpress/components';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { createInterpolateElement } from '@wordpress/element';
+import { sprintf } from '@wordpress/i18n';
+import { Icon, check } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
+import classnames from 'classnames';
+import { ThemeProvider } from 'emotion-theming';
+import React from 'react';
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
 import { LAUNCH_STORE, PLANS_STORE } from '../../stores';
 

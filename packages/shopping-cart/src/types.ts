@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import type {
 	TempResponseCart,
 	ResponseCart,
@@ -9,6 +6,7 @@ import type {
 	CartLocation,
 	MinimalRequestCartProduct,
 } from './shopping-cart-endpoint';
+import type { Dispatch } from 'react';
 
 export * from './shopping-cart-endpoint';
 
@@ -87,6 +85,7 @@ export type CacheStatus = 'fresh' | 'fresh-pending' | 'valid' | 'invalid' | 'pen
 export type CouponStatus = 'fresh' | 'pending' | 'applied' | 'rejected';
 
 export type ShoppingCartAction =
+	| { type: 'SYNC_CART_TO_SERVER' }
 	| { type: 'CLEAR_QUEUED_ACTIONS' }
 	| { type: 'REMOVE_CART_ITEM'; uuidToRemove: string }
 	| { type: 'CART_PRODUCTS_ADD'; products: RequestCartProduct[] }
@@ -118,3 +117,11 @@ export type ShoppingCartState = {
 };
 
 export type CartValidCallback = ( cart: ResponseCart ) => void;
+
+export type DispatchAndWaitForValid = ( action: ShoppingCartAction ) => Promise< ResponseCart >;
+
+export type ShoppingCartMiddleware = (
+	action: ShoppingCartAction,
+	state: ShoppingCartState,
+	dispatch: Dispatch< ShoppingCartAction >
+) => void;

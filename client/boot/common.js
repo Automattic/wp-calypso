@@ -19,7 +19,6 @@ import { getToken } from 'calypso/lib/oauth-token';
 import emailVerification from 'calypso/components/email-verification';
 import Logger from 'calypso/lib/catch-js-errors';
 import { hasTouch } from 'calypso/lib/touch-detect';
-import { installPerfmonPageHandlers } from 'calypso/lib/perfmon';
 import { setupRoutes } from 'calypso/sections-middleware';
 import { checkFormHandler } from 'calypso/lib/protect-form';
 import { setReduxStore as setReduxBridgeReduxStore } from 'calypso/lib/redux-bridge';
@@ -32,7 +31,7 @@ import getSuperProps from 'calypso/lib/analytics/super-props';
 import { getSiteFragment, normalize } from 'calypso/lib/route';
 import { isLegacyRoute } from 'calypso/lib/route/legacy-routes';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getCurrentUserId, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { initConnection as initHappychatConnection } from 'calypso/state/happychat/connection/actions';
 import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
 import { getHappychatAuth } from 'calypso/state/happychat/utils';
@@ -45,7 +44,8 @@ import { createReduxStore } from 'calypso/state';
 import initialReducer from 'calypso/state/reducer';
 import { getInitialState, persistOnChange, loadAllState } from 'calypso/state/initial-state';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
-import userFactory from 'calypso/lib/user';
+import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
+import { onDisablePersistence } from 'calypso/lib/user/store';
 import { isOutsideCalypso } from 'calypso/lib/url';
 import { getUrlParts } from '@automattic/calypso-url';
 import { setStore } from 'calypso/state/redux-store';
@@ -53,6 +53,7 @@ import { requestUnseenStatus } from 'calypso/state/reader-ui/seen-posts/actions'
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getLanguageSlugs } from 'calypso/lib/i18n-utils/utils';
 import DesktopListeners from 'calypso/lib/desktop-listeners';
+import { attachLogmein } from 'calypso/lib/logmein';
 
 const debug = debugFactory( 'calypso' );
 
@@ -220,12 +221,9 @@ const utils = () => {
 const configureReduxStore = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso configure Redux store.' );
 
-	if ( currentUser.get() ) {
+	if ( currentUser ) {
 		// Set current user in Redux store
-		reduxStore.dispatch( setCurrentUser( currentUser.get() ) );
-		currentUser.on( 'change', () => {
-			reduxStore.dispatch( setCurrentUser( currentUser.get() ) );
-		} );
+		reduxStore.dispatch( setCurrentUser( currentUser ) );
 	}
 
 	if ( config.isEnabled( 'network-connection' ) ) {
@@ -237,7 +235,7 @@ const configureReduxStore = ( currentUser, reduxStore ) => {
 	setSupportSessionReduxStore( reduxStore );
 	setReduxBridgeReduxStore( reduxStore );
 
-	if ( currentUser.get() ) {
+	if ( currentUser ) {
 		if ( config.isEnabled( 'push-notifications' ) ) {
 			// If the browser is capable, registers a service worker & exposes the API
 			reduxStore.dispatch( pushNotificationsInit() );
@@ -284,7 +282,6 @@ function setupErrorLogger( reduxStore ) {
 const setupMiddlewares = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso setup middlewares.' );
 
-	installPerfmonPageHandlers();
 	setupContextMiddleware( reduxStore );
 	oauthTokenMiddleware();
 	setupRoutes();
@@ -292,7 +289,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	unsavedFormsMiddleware();
 
 	// The analytics module requires user (when logged in) and superProps objects. Inject these here.
-	initializeAnalytics( currentUser ? currentUser.get() : undefined, getSuperProps( reduxStore ) );
+	initializeAnalytics( currentUser ? currentUser : undefined, getSuperProps( reduxStore ) );
 
 	setupErrorLogger( reduxStore );
 
@@ -334,7 +331,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 	} );
 
 	page( '*', function ( context, next ) {
-		if ( '/me/account' !== context.path && currentUser.get().phone_account ) {
+		if ( '/me/account' !== context.path && currentUser.phone_account ) {
 			page( '/me/account' );
 		}
 
@@ -348,7 +345,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		[ 'signupProgress', 'signupDependencies' ].forEach( ( item ) => store.remove( item ) );
 	}
 
-	if ( ! currentUser.get() ) {
+	if ( ! currentUser ) {
 		// Dead-end the sections the user can't access when logged out
 		page( '*', function ( context, next ) {
 			//see server/pages/index for prod redirect
@@ -410,6 +407,11 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 			featureHelper( document.querySelector( '.environment.is-features' ) );
 		} );
 	}
+
+	if ( config.isEnabled( 'logmein' ) && isUserLoggedIn( reduxStore.getState() ) ) {
+		// Attach logmein handler if we're currently logged in
+		attachLogmein( reduxStore );
+	}
 };
 
 function renderLayout( reduxStore ) {
@@ -426,11 +428,11 @@ const boot = ( currentUser, registerRoutes ) => {
 	saveOauthFlags();
 	utils();
 	loadAllState().then( () => {
-		const initialState = getInitialState( initialReducer );
+		const initialState = getInitialState( initialReducer, currentUser?.ID );
 		const reduxStore = createReduxStore( initialState, initialReducer );
 		setStore( reduxStore );
-		persistOnChange( reduxStore );
-		setupLocale( currentUser.get(), reduxStore );
+		onDisablePersistence( persistOnChange( reduxStore, currentUser?.ID ) );
+		setupLocale( currentUser, reduxStore );
 		configureReduxStore( currentUser, reduxStore );
 		setupMiddlewares( currentUser, reduxStore );
 		detectHistoryNavigation.start();
@@ -449,8 +451,7 @@ const boot = ( currentUser, registerRoutes ) => {
 };
 
 export const bootApp = async ( appName, registerRoutes ) => {
-	const user = userFactory();
-	await user.initialize();
+	const user = await initializeCurrentUser();
 	debug( `Starting ${ appName }. Let's do this.` );
 	boot( user, registerRoutes );
 };

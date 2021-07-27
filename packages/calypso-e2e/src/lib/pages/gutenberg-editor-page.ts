@@ -1,36 +1,23 @@
-/**
- * External dependencies
- */
 import assert from 'assert';
-
-/**
- * Internal dependencies
- */
+import { Frame } from 'playwright';
 import { BaseContainer } from '../base-container';
 
-/**
- * Type dependencies
- */
-import { ElementHandle, Frame, Page } from 'playwright';
-
 const selectors = {
-	// Editor selectors.
-	editorFrame: 'div.main.main-column.calypsoify.is-iframe > iframe',
+	// iframe and editor
+	editorFrame: '.calypsoify.is-iframe iframe.is-loaded',
 	editorTitle: '.editor-post-title__input',
 	editorBody: '.edit-post-visual-editor',
 
-	// Within the editor body.
+	// Editor body
 	blockAppender: '.block-editor-default-block-appender',
 	paragraphBlocks: 'p.block-editor-rich-text__editable',
 
-	// Top bar selectors.
-	publishPanelToggle: '.editor-post-publish-panel__toggle',
+	// Top bar
+	editPostHeader: '.edit-post-header',
 
-	// Publish panel selectors (including post-publish).
+	// Publish panel (including post-publish)
 	publishPanel: '.editor-post-publish-panel',
-	publishButton:
-		'.editor-post-publish-panel__header-publish-button button.editor-post-publish-button',
-	viewPostButton: 'text=View Post',
+	viewButton: '.editor-post-publish-panel a:has-text("View")',
 };
 
 /**
@@ -40,16 +27,6 @@ const selectors = {
  */
 export class GutenbergEditorPage extends BaseContainer {
 	frame!: Frame;
-
-	/**
-	 * Constructs an instance of this object.
-	 *
-	 * @param {Page} page The page where actions take place.
-	 */
-	constructor( page: Page ) {
-		super( page, selectors.editorFrame );
-	}
-
 	/**
 	 * Overrides the function of same name defined in the base class.
 	 * This ensures the iframe containing the editor is is fully loaded prior to
@@ -58,8 +35,8 @@ export class GutenbergEditorPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async _postInit(): Promise< void > {
-		const handle = ( await this.page.$( selectors.editorFrame ) ) as ElementHandle;
-		this.frame = ( await handle.contentFrame() ) as Frame;
+		const elementHandle = await this.page.waitForSelector( selectors.editorFrame );
+		this.frame = ( await elementHandle.contentFrame() ) as Frame;
 		await this.page.waitForLoadState( 'networkidle' );
 		await this.frame.waitForSelector( selectors.editorBody );
 	}
@@ -172,15 +149,16 @@ export class GutenbergEditorPage extends BaseContainer {
 	 * @param {boolean} visit Whether to then visit the page.
 	 * @returns {Promise<void} No return value.
 	 */
-	async publish( { visit = false }: { visit?: boolean } ): Promise< void > {
-		await this.frame.click( selectors.publishPanelToggle );
-		await this.frame.waitForSelector( selectors.publishPanel );
-		await this.frame.click( selectors.publishButton );
-		await this.frame.waitForSelector( selectors.viewPostButton );
+	async publish( { visit = false }: { visit?: boolean } = {} ): Promise< string > {
+		await this.frame.click( `${ selectors.editPostHeader } >> text=Publish` );
+		await this.frame.click( `${ selectors.publishPanel } >> text=Publish` );
+		const viewPublishedArticleButton = await this.frame.waitForSelector( selectors.viewButton );
+		const publishedURL = ( await viewPublishedArticleButton.getAttribute( 'href' ) ) as string;
 
 		if ( visit ) {
 			await this._visitPublishedEntryFromPublishPane();
 		}
+		return publishedURL;
 	}
 
 	/**
@@ -190,9 +168,9 @@ export class GutenbergEditorPage extends BaseContainer {
 	 */
 	async _visitPublishedEntryFromPublishPane(): Promise< void > {
 		await Promise.all( [
-			this.frame.click( selectors.viewPostButton ),
 			this.page.waitForNavigation(),
-			this.page.waitForLoadState( 'networkidle' ),
+			this.frame.click( selectors.viewButton ),
 		] );
+		await this.page.waitForLoadState( 'networkidle' );
 	}
 }

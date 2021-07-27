@@ -13,7 +13,7 @@ import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { bumpStatGenerator } from './utils';
 import { trashPost, deletePost } from 'calypso/state/posts/actions';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getPost } from 'calypso/state/posts/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 

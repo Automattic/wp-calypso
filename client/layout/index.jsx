@@ -28,6 +28,7 @@ import {
 	getSidebarIsCollapsed,
 } from 'calypso/state/ui/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
 import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -54,10 +55,7 @@ import { getShouldShowAppBanner, handleScroll } from './utils';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { isWithinBreakpoint } from '@automattic/viewport';
-import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
-import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
-import { getReaderTeams } from 'calypso/state/teams/selectors';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 
 /**
  * Style dependencies
@@ -133,8 +131,6 @@ class Layout extends Component {
 		sectionName: PropTypes.string,
 		colorSchemePreference: PropTypes.string,
 		shouldShowAppBanner: PropTypes.bool,
-		shouldRequestReaderTeams: PropTypes.bool,
-		useFontSmoothAntialiased: PropTypes.bool,
 	};
 
 	componentDidMount() {
@@ -253,10 +249,8 @@ class Layout extends Component {
 		} );
 
 		const optionalBodyProps = () => {
-			const bodyClass = [];
-			if ( this.props.isNewLaunchFlow || this.props.isCheckoutFromGutenboarding ) {
-				bodyClass.push( 'is-new-launch-flow' );
-			}
+			const bodyClass = [ 'font-smoothing-antialiased' ];
+
 			if ( this.props.isNavUnificationEnabled && ! config.isEnabled( 'jetpack-cloud' ) ) {
 				// Jetpack cloud hasn't yet aligned with WPCOM.
 				bodyClass.push( 'is-nav-unification' );
@@ -264,10 +258,6 @@ class Layout extends Component {
 
 			if ( this.props.sidebarIsCollapsed && isWithinBreakpoint( '>800px' ) ) {
 				bodyClass.push( 'is-sidebar-collapsed' );
-			}
-
-			if ( this.props.useFontSmoothAntialiased ) {
-				bodyClass.push( 'font-smoothing-antialiased' );
 			}
 
 			return {
@@ -278,11 +268,8 @@ class Layout extends Component {
 
 		const loadInlineHelp = this.shouldLoadInlineHelp();
 
-		const { shouldRequestReaderTeams } = this.props;
-
 		return (
 			<div className={ sectionClass }>
-				{ shouldRequestReaderTeams && <QueryReaderTeams /> }
 				<SidebarScrollSynchronizer enabled={ this.props.isNavUnificationEnabled } />
 				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
 				<BodySectionCssClass
@@ -295,9 +282,11 @@ class Layout extends Component {
 				<QuerySites primaryAndRecent={ ! config.isEnabled( 'jetpack-cloud' ) } />
 				{ this.props.shouldQueryAllSites && <QuerySites allSites /> }
 				<QueryPreferences />
+				<QuerySiteFeatures siteId={ this.props.siteId } />
 				{ config.isEnabled( 'layout/query-selected-editor' ) && (
 					<QuerySiteSelectedEditor siteId={ this.props.siteId } />
 				) }
+				<UserVerificationChecker />
 				{ config.isEnabled( 'layout/guided-tours' ) && (
 					<AsyncLoad require="calypso/layout/guided-tours" placeholder={ null } />
 				) }
@@ -394,8 +383,6 @@ export default compose(
 		const isJetpack =
 			( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) ||
 			startsWith( currentRoute, '/checkout/jetpack' );
-		const isCheckoutFromGutenboarding =
-			'checkout' === sectionName && '1' === currentQuery?.preLaunch;
 		const noMasterbarForRoute = isJetpackLogin || currentRoute === '/me/account/closed';
 		const noMasterbarForSection = [ 'signup', 'jetpack-connect' ].includes( sectionName );
 		const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
@@ -415,7 +402,6 @@ export default compose(
 			'plugins',
 			'comments',
 		].includes( sectionName );
-		const isNewLaunchFlow = startsWith( currentRoute, '/start/new-launch' );
 
 		return {
 			masterbarIsHidden:
@@ -449,12 +435,8 @@ export default compose(
 			// authorization, it would remove the newly connected site that has been fetched separately.
 			// See https://github.com/Automattic/wp-calypso/pull/31277 for more details.
 			shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
-			isNewLaunchFlow,
-			isCheckoutFromGutenboarding,
 			isNavUnificationEnabled: isNavUnificationEnabled( state ),
 			sidebarIsCollapsed: getSidebarIsCollapsed( state ),
-			shouldRequestReaderTeams: !! getCurrentUser( state ),
-			useFontSmoothAntialiased: isAutomatticTeamMember( getReaderTeams( state ) ),
 		};
 	} )
 )( Layout );

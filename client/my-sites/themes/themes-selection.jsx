@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { compact, includes, isEqual, property, snakeCase } from 'lodash';
+import { compact, isEqual, property, snakeCase } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,7 +15,7 @@ import QueryThemes from 'calypso/components/data/query-themes';
 import ThemesList from 'calypso/components/themes-list';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	getPremiumThemePrice,
 	getThemesForQueryIgnoringPage,
@@ -28,7 +28,6 @@ import {
 } from 'calypso/state/themes/selectors';
 import { setThemePreviewOptions } from 'calypso/state/themes/actions';
 import config from '@automattic/calypso-config';
-import ThemesSelectionHeader from './themes-selection-header';
 
 /**
  * Style dependencies
@@ -38,27 +37,28 @@ import './themes-selection.scss';
 class ThemesSelection extends Component {
 	static propTypes = {
 		emptyContent: PropTypes.element,
-		query: PropTypes.object.isRequired,
-		siteId: PropTypes.number,
-		onScreenshotClick: PropTypes.func,
 		getOptions: PropTypes.func,
 		getActionLabel: PropTypes.func,
 		incrementPage: PropTypes.func,
+		listLabel: PropTypes.string,
+		onScreenshotClick: PropTypes.func,
+		query: PropTypes.object.isRequired,
+		siteId: PropTypes.number,
 		// connected props
-		source: PropTypes.oneOfType( [ PropTypes.number, PropTypes.oneOf( [ 'wpcom', 'wporg' ] ) ] ),
-		themes: PropTypes.array,
-		recommendedThemes: PropTypes.array,
-		themesCount: PropTypes.number,
-		isRequesting: PropTypes.bool,
-		isLastPage: PropTypes.bool,
-		isThemeActive: PropTypes.func,
-		getPremiumThemePrice: PropTypes.func,
-		isInstallingTheme: PropTypes.func,
-		placeholderCount: PropTypes.number,
 		bookmarkRef: PropTypes.oneOfType( [
 			PropTypes.func,
 			PropTypes.shape( { current: PropTypes.any } ),
 		] ),
+		getPremiumThemePrice: PropTypes.func,
+		isInstallingTheme: PropTypes.func,
+		isLastPage: PropTypes.bool,
+		isRequesting: PropTypes.bool,
+		isThemeActive: PropTypes.func,
+		placeholderCount: PropTypes.number,
+		customizedThemesList: PropTypes.array,
+		source: PropTypes.oneOfType( [ PropTypes.number, PropTypes.oneOf( [ 'wpcom', 'wporg' ] ) ] ),
+		themes: PropTypes.array,
+		themesCount: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -68,16 +68,15 @@ class ThemesSelection extends Component {
 
 	componentDidMount() {
 		// Create "buffer zone" to prevent overscrolling too early bugging pagination requests.
-		const { query, recommendedThemes } = this.props;
-		if ( ! recommendedThemes && ! query.search && ! query.filter && ! query.tier ) {
+		const { query, customizedThemesList } = this.props;
+		if ( ! customizedThemesList && ! query.search && ! query.filter && ! query.tier ) {
 			this.props.incrementPage();
 		}
 	}
 
 	recordSearchResultsClick = ( themeId, resultsRank, action ) => {
-		// TODO do we need different query if from RecommendedThemes?
 		const { query, filterString } = this.props;
-		const themes = this.props.recommendedThemes || this.props.themes;
+		const themes = this.props.customizedThemesList || this.props.themes;
 		const search_taxonomies = filterString;
 		const search_term = search_taxonomies + ( query.search || '' );
 
@@ -120,7 +119,7 @@ class ThemesSelection extends Component {
 			this.trackScrollPage();
 		}
 
-		if ( ! this.props.recommendedThemes ) {
+		if ( ! this.props.customizedThemesList ) {
 			this.props.incrementPage();
 		}
 	};
@@ -158,20 +157,14 @@ class ThemesSelection extends Component {
 	};
 
 	render() {
-		const { source, query, upsellUrl, listLabel, noMarginBeforeHeader } = this.props;
+		const { source, query, upsellUrl } = this.props;
 
 		return (
 			<div className="themes__selection">
 				<QueryThemes query={ query } siteId={ source } />
-				{ ! this.props.recommendedThemes && this.props.isLoggedIn && (
-					<ThemesSelectionHeader
-						label={ listLabel }
-						noMarginBeforeHeader={ noMarginBeforeHeader }
-					/>
-				) }
 				<ThemesList
 					upsellUrl={ upsellUrl }
-					themes={ this.props.recommendedThemes || this.props.themes }
+					themes={ this.props.customizedThemesList || this.props.themes }
 					fetchNextPage={ this.fetchNextPage }
 					onMoreButtonClick={ this.recordSearchResultsClick }
 					getButtonOptions={ this.getOptions }
@@ -203,7 +196,7 @@ function bindGetPremiumThemePrice( state, siteId ) {
 	return ( themeId ) => getPremiumThemePrice( state, themeId, siteId );
 }
 
-// Exporting this for use in recommended-themes.jsx
+// Exporting this for use in customized themes lists (recommended-themes.jsx, etc.)
 // We do not want pagination triggered in that use of the component.
 export const ConnectedThemesSelection = connect(
 	( state, { filter, page, search, tier, vertical, siteId, source } ) => {
@@ -219,7 +212,7 @@ export const ConnectedThemesSelection = connect(
 		// results and sends all of the themes at once. QueryManager is not expecting such behaviour
 		// and we ended up loosing all of the themes above number 20. Real solution will be pagination on
 		// Jetpack themes endpoint.
-		const number = ! includes( [ 'wpcom', 'wporg' ], sourceSiteId ) ? 2000 : 20;
+		const number = ! [ 'wpcom', 'wporg' ].includes( sourceSiteId ) ? 2000 : 30;
 		const query = {
 			search,
 			page,
@@ -236,7 +229,7 @@ export const ConnectedThemesSelection = connect(
 			themesCount: getThemesFoundForQuery( state, sourceSiteId, query ),
 			isRequesting: isRequestingThemesForQuery( state, sourceSiteId, query ),
 			isLastPage: isThemesLastPageForQuery( state, sourceSiteId, query ),
-			isLoggedIn: !! getCurrentUserId( state ),
+			isLoggedIn: isUserLoggedIn( state ),
 			isThemeActive: bindIsThemeActive( state, siteId ),
 			isInstallingTheme: bindIsInstallingTheme( state, siteId ),
 			// Note: This component assumes that purchase and plans data is already present in the state tree

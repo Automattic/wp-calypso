@@ -17,10 +17,19 @@ import {
 	isPlan,
 	isTheme,
 } from '@automattic/calypso-products';
+import { isJetpackTemporarySitePurchase } from '../utils';
 
 export function cancellationEffectHeadline( purchase, translate ) {
 	const { domain } = purchase;
 	const purchaseName = getName( purchase );
+
+	if ( isJetpackTemporarySitePurchase( purchase.domain ) ) {
+		return translate( 'Are you sure you want to cancel and remove %(purchaseName)s? ', {
+			args: {
+				purchaseName,
+			},
+		} );
+	}
 
 	if ( isRefundable( purchase ) ) {
 		return translate(

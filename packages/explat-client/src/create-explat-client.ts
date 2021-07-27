@@ -1,16 +1,13 @@
-/**
- * Internal dependencies
- */
-import type { ExperimentAssignment, Config } from './types';
-import * as ExperimentAssignments from './internal/experiment-assignments';
-import * as Request from './internal/requests';
 import {
 	retrieveExperimentAssignment,
 	storeExperimentAssignment,
 } from './internal/experiment-assignment-store';
+import * as ExperimentAssignments from './internal/experiment-assignments';
+import { createFallbackExperimentAssignment as createFallbackExperimentAssignment } from './internal/experiment-assignments';
+import * as Request from './internal/requests';
 import * as Timing from './internal/timing';
 import * as Validation from './internal/validations';
-import { createFallbackExperimentAssignment as createFallbackExperimentAssignment } from './internal/experiment-assignments';
+import type { ExperimentAssignment, Config } from './types';
 
 /**
  * The number of milliseconds before we abandon fetching an experiment
@@ -62,6 +59,7 @@ export class MissingExperimentAssignmentError extends Error {
  * Create an ExPlat Client
  *
  * @param config Configuration object
+ *
  */
 export function createExPlatClient( config: Config ): ExPlatClient {
 	if ( typeof window === 'undefined' ) {
@@ -118,11 +116,18 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 						experimentName
 					] = createWrappedExperimentAssignmentFetchAndStore( experimentName );
 				}
+
+				// Temporarilly running an A/B experiment on the timeout, see https://github.com/Automattic/wp-calypso/pull/54507
+				let experimentFetchTimeout = EXPERIMENT_FETCH_TIMEOUT;
+				if ( Math.random() > 0.5 ) {
+					experimentFetchTimeout = 5000;
+				}
+
 				// We time out the request here and not above so the fetch-and-store continues and can be
 				// returned by future uses of loadExperimentAssignment.
 				const fetchedExperimentAssignment = await Timing.timeoutPromise(
 					experimentNameToWrappedExperimentAssignmentFetchAndStore[ experimentName ](),
-					EXPERIMENT_FETCH_TIMEOUT
+					experimentFetchTimeout
 				);
 				if ( ! fetchedExperimentAssignment ) {
 					throw new Error( `Could not fetch ExperimentAssignment` );

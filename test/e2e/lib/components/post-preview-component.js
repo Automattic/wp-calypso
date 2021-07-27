@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { By } from 'selenium-webdriver';
-
-/**
- * Internal dependencies
- */
-import AsyncBaseContainer from '../async-base-container';
 import ViewPostPage from '../../lib/pages/view-post-page.js';
+import AsyncBaseContainer from '../async-base-container';
 import * as driverHelper from '../driver-helper.js';
 
 export default class PostPreviewComponent extends AsyncBaseContainer {

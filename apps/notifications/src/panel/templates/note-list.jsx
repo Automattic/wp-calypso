@@ -1,22 +1,14 @@
-/**
- * External dependencies
- */
-import ReactDOM from 'react-dom';
-import React from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { localize } from 'i18n-calypso';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { connect } from 'react-redux';
 import actions from '../state/actions';
 import getFilterName from '../state/selectors/get-filter-name';
 import getIsLoading from '../state/selectors/get-is-loading';
 import getIsNoteHidden from '../state/selectors/get-is-note-hidden';
 import getIsPanelOpen from '../state/selectors/get-is-panel-open';
 import getSelectedNoteId from '../state/selectors/get-selected-note-id';
-
 import EmptyMessage from './empty-message';
 import FilterBar from './filter-bar';
 import Filters from './filters';
@@ -68,7 +60,7 @@ export class NoteList extends React.Component {
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.isPanelOpen && ! nextProps.isPanelOpen ) {
 			// scroll to top, from toggling frame
-			this.setState( { lastSelectedIndex: 0, scrollY: 0 } );
+			this.setState( { scrollY: 0 } );
 		}
 	}
 

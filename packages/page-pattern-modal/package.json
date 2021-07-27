@@ -36,12 +36,12 @@
 		"@wordpress/compose": "^3.25.3",
 		"@wordpress/element": "^2.20.3",
 		"@wordpress/i18n": "^3.20.0",
-		"classnames": "^2.2.6",
+		"classnames": "^2.3.1",
 		"lodash": "^4.17.21"
 	},
 	"devDependencies": {
-		"@testing-library/react": "^11.2.6",
-		"jest": "^26.4.0",
+		"@testing-library/react": "^12.0.0",
+		"jest": "^27.0.6",
 		"react": "^16.12.0",
 		"react-dom": "^16.12.0"
 	},

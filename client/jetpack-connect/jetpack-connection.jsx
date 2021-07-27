@@ -5,7 +5,7 @@ import debugModule from 'debug';
 import React, { Component } from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
-import { flowRight, get, includes, omit } from 'lodash';
+import { flowRight, get, omit } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -16,7 +16,8 @@ import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import { JETPACK_ADMIN_PATH } from 'calypso/jetpack-connect/constants';
 import { PLAN_JETPACK_FREE } from '@automattic/calypso-products';
 import versionCompare from 'calypso/lib/version-compare';
-import { addQueryArgs, externalRedirect } from 'calypso/lib/route';
+import { addQueryArgs } from 'calypso/lib/route';
+import { navigate } from 'calypso/lib/navigate';
 import { checkUrl, dismissUrl } from 'calypso/state/jetpack-connect/actions';
 import { getConnectingSite, getJetpackSiteByUrl } from 'calypso/state/jetpack-connect/selectors';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
@@ -97,7 +98,7 @@ const jetpackConnection = ( WrappedComponent ) => {
 				if ( currentPlan ) {
 					if ( currentPlan === PLAN_JETPACK_FREE ) {
 						debug( `Redirecting to wpadmin` );
-						return externalRedirect( this.props.siteHomeUrl + JETPACK_ADMIN_PATH );
+						return navigate( this.props.siteHomeUrl + JETPACK_ADMIN_PATH );
 					}
 					debug( `Redirecting to checkout with ${ currentPlan } plan retrieved from cookies` );
 					this.redirect( 'checkout', url, currentPlan, queryArgs );
@@ -114,7 +115,7 @@ const jetpackConnection = ( WrappedComponent ) => {
 			}
 
 			if (
-				includes( [ NOT_JETPACK, NOT_ACTIVE_JETPACK ], status ) ||
+				[ NOT_JETPACK, NOT_ACTIVE_JETPACK ].includes( status ) ||
 				( status === NOT_CONNECTED_JETPACK && forceRemoteInstall )
 			) {
 				if ( ! isMobileAppFlow && ! skipRemoteInstall ) {
@@ -148,7 +149,7 @@ const jetpackConnection = ( WrappedComponent ) => {
 
 				const url = addQueryArgs( { reason }, this.props.mobileAppRedirect );
 				debug( `Redirecting to mobile app ${ url }` );
-				externalRedirect( url );
+				navigate( url );
 			}
 		};
 

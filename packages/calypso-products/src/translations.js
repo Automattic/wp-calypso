@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { createElement } from 'react';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import React, { createElement } from 'react';
 import {
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
@@ -14,6 +7,10 @@ import {
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+	PRODUCT_JETPACK_BACKUP,
+	PRODUCT_JETPACK_BACKUP_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_PRO,
+	PRODUCT_JETPACK_BACKUP_PRO_MONTHLY,
 	PRODUCT_JETPACK_SCAN,
 	PRODUCT_JETPACK_SCAN_MONTHLY,
 	PRODUCT_JETPACK_SCAN_REALTIME,
@@ -170,6 +167,23 @@ export const getJetpackProductsTaglines = () => {
 			owned: backupOwnedTagline,
 		},
 		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: {
+			default: backupRealtimeTagline,
+			owned: backupOwnedTagline,
+		},
+		// TODO: get taglines specifically for the new Jetpack Backup products
+		[ PRODUCT_JETPACK_BACKUP ]: {
+			default: backupRealtimeTagline,
+			owned: backupOwnedTagline,
+		},
+		[ PRODUCT_JETPACK_BACKUP_MONTHLY ]: {
+			default: backupRealtimeTagline,
+			owned: backupOwnedTagline,
+		},
+		[ PRODUCT_JETPACK_BACKUP_PRO ]: {
+			default: backupRealtimeTagline,
+			owned: backupOwnedTagline,
+		},
+		[ PRODUCT_JETPACK_BACKUP_PRO_MONTHLY ]: {
 			default: backupRealtimeTagline,
 			owned: backupOwnedTagline,
 		},

@@ -13,7 +13,7 @@ console.log( config( 'redirect_uri' ) );
 
 ## Feature Flags
 
-The config files contain a features object that can be used to determine whether to enable a feature for certain environments. This allows us to merge in-progress features without launching them to production. The config module adds a method to detect this: `config.isEnabled()`. Please make sure to add new feature flags alphabetically so they are easy to find. Remember to also include any new feature flags in all config files (client.json, desktop.json, development.json, production.jsons, desktop-development.json, horizon.json, stage.json, test.json, wpcalypso.json)
+The config files contain a features object that can be used to determine whether to enable a feature for certain environments. This allows us to merge in-progress features without launching them to production. The config module adds a method to detect this: `config.isEnabled()`. Please make sure to add new feature flags alphabetically so they are easy to find. Remember to also include any new feature flags in all config files (client.json, development.json, production.json, horizon.json, stage.json, test.json, wpcalypso.json)
 
 ```json
 {

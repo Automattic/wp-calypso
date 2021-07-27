@@ -2,14 +2,12 @@
  * External dependencies
  */
 import React from 'react';
-import { isEnabled } from '@automattic/calypso-config';
 
 /**
  * Internal Dependencies
  */
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import EmailForwarding from 'calypso/my-sites/email/email-forwarding';
-import EmailManagement from 'calypso/my-sites/email/email-management';
 import EmailManagementHome from 'calypso/my-sites/email/email-management/email-home';
 import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
 import GSuiteAddUsers from 'calypso/my-sites/email/gsuite-add-users';
@@ -95,15 +93,11 @@ export default {
 	},
 
 	emailManagement( pageContext, next ) {
-		if ( isEnabled( 'email/centralized-home' ) ) {
-			pageContext.primary = (
-				<CalypsoShoppingCartProvider>
-					<EmailManagementHome selectedDomainName={ pageContext.params.domain } />
-				</CalypsoShoppingCartProvider>
-			);
-		} else {
-			pageContext.primary = <EmailManagement selectedDomainName={ pageContext.params.domain } />;
-		}
+		pageContext.primary = (
+			<CalypsoShoppingCartProvider>
+				<EmailManagementHome selectedDomainName={ pageContext.params.domain } />
+			</CalypsoShoppingCartProvider>
+		);
 
 		next();
 	},

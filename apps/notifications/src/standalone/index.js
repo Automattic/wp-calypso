@@ -1,20 +1,10 @@
-/**
- * External dependencies
- */
 import '@automattic/calypso-polyfills';
-import ReactDOM from 'react-dom';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
+import ReactDOM from 'react-dom';
 import Notifications, { refreshNotes } from '../panel/Notifications';
 import AuthWrapper from './auth-wrapper';
 import { receiveMessage, sendMessage } from './messaging';
 
-/**
- * Style dependencies
- */
 import '../panel/boot/stylesheets/style.scss';
 
 const localePattern = /[&?]locale=([\w_-]+)/;
@@ -76,6 +66,8 @@ const customMiddleware = {
 };
 
 const render = () => {
+	document.body.classList.add( 'font-smoothing-antialiased' );
+
 	ReactDOM.render(
 		React.createElement( AuthWrapper( Notifications ), {
 			customEnhancer,
@@ -85,7 +77,6 @@ const render = () => {
 			locale,
 			receiveMessage: sendMessage,
 			redirectPath: '/',
-			isStandalone: true,
 		} ),
 		document.getElementsByClassName( 'wpnc__main' )[ 0 ]
 	);

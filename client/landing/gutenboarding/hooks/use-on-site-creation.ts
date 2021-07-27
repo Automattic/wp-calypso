@@ -85,7 +85,7 @@ export default function useOnSiteCreation(): void {
 
 				const go = async () => {
 					if ( planProduct || domainProduct ) {
-						const cart: ResponseCart = await wpcom.getCart( newSite.site_slug );
+						const cart: ResponseCart = await wpcom.getCart( newSite.blogid );
 						await wpcom.setCart( newSite.blogid, {
 							...cart,
 							products: [ ...cart.products, planProduct, domainProduct ].filter( Boolean ),
@@ -100,8 +100,8 @@ export default function useOnSiteCreation(): void {
 						: `block-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`;
 
 					const redirectionUrl = shouldRedirectToEditorAfterCheckout
-						? `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1&redirect_to=%2F${ editorUrl }`
-						: `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1`;
+						? `/checkout/${ newSite.site_slug }?redirect_to=%2F${ editorUrl }`
+						: `/checkout/${ newSite.site_slug }`;
 					window.location.href = redirectionUrl;
 				};
 				recordOnboardingComplete( {

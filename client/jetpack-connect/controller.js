@@ -20,7 +20,7 @@ import NoDirectAccessError from './no-direct-access-error';
 import OrgCredentialsForm from './remote-credentials';
 import SearchPurchase from './search';
 import StoreHeader from './store-header';
-import { getCurrentUserId, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getLocaleFromPath, removeLocaleFromPath } from 'calypso/lib/i18n-utils';
 import { hideMasterbar, showMasterbar } from 'calypso/state/ui/actions';
 import { OFFER_RESET_FLOW_TYPES } from './flow-types';
@@ -41,7 +41,7 @@ import {
 	storePlan,
 } from './persistence-utils';
 import { startAuthorizeStep } from 'calypso/state/jetpack-connect/actions';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
@@ -67,7 +67,8 @@ import {
 	getProductFromSlug,
 	getJetpackProductDisplayName,
 } from '@automattic/calypso-products';
-import { externalRedirect } from 'calypso/lib/route/path';
+import { navigate } from 'calypso/lib/navigate';
+import { addQueryArgs } from 'calypso/lib/route';
 
 /**
  * Module variables
@@ -97,7 +98,7 @@ export function offerResetRedirects( context, next ) {
 		: null;
 	if ( isAutomatedTransfer ) {
 		debug( 'controller: offerResetRedirects -> redirecting WoA back to wp-admin', context.params );
-		return externalRedirect( selectedSite.URL + JETPACK_ADMIN_PATH );
+		return navigate( selectedSite.URL + JETPACK_ADMIN_PATH );
 	}
 
 	// If site has a paid plan or is not a Jetpack site, redirect to Calypso's Plans page
@@ -108,7 +109,7 @@ export function offerResetRedirects( context, next ) {
 			'controller: offerResetRedirects -> redirecting to /plans since site has a plan or is not a Jetpack site',
 			context.params
 		);
-		return externalRedirect( CALYPSO_PLANS_PAGE + selectedSite.slug );
+		return navigate( CALYPSO_PLANS_PAGE + selectedSite.slug );
 	}
 
 	// If the user previously selected Jetpack Free, redirect them to their wp-admin page
@@ -119,7 +120,7 @@ export function offerResetRedirects( context, next ) {
 			'controller: offerResetRedirects -> redirecting to wp-admin because the user got here by clicking Jetpack Free',
 			context.params
 		);
-		externalRedirect( context.query.redirect || selectedSite.options.admin_url );
+		navigate( context.query.redirect || selectedSite.options.admin_url );
 		return;
 	}
 
@@ -136,9 +137,9 @@ export function offerResetRedirects( context, next ) {
 
 		const queryRedirect = context.query.redirect;
 		if ( queryRedirect ) {
-			externalRedirect( queryRedirect );
+			navigate( queryRedirect );
 		} else if ( selectedSite ) {
-			externalRedirect( selectedSite.URL + JETPACK_ADMIN_PATH );
+			navigate( selectedSite.URL + JETPACK_ADMIN_PATH );
 		}
 	}
 
@@ -188,7 +189,7 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 
 export function redirectWithoutLocaleIfLoggedIn( context, next ) {
 	debug( 'controller: redirectWithoutLocaleIfLoggedIn', context.params );
-	const isLoggedIn = !! getCurrentUserId( context.store.getState() );
+	const isLoggedIn = isUserLoggedIn( context.store.getState() );
 	if ( isLoggedIn && getLocaleFromPath( context.path ) ) {
 		const urlWithoutLocale = removeLocaleFromPath( context.path );
 		debug( 'redirectWithoutLocaleIfLoggedIn to %s', urlWithoutLocale );
@@ -229,11 +230,11 @@ export function loginBeforeJetpackSearch( context, next ) {
 	debug( 'controller: loginBeforeJetpackSearch', context.params );
 	const { params, path } = context;
 	const { type } = params;
-	const isLoggedOut = ! getCurrentUserId( context.store.getState() );
+	const isLoggedIn = isUserLoggedIn( context.store.getState() );
 
 	// Log in to WP.com happens at the start of the flow for Search products
 	// ( to facilitate site selection ).
-	if ( JETPACK_SEARCH_PRODUCTS.includes( type ) && isLoggedOut ) {
+	if ( JETPACK_SEARCH_PRODUCTS.includes( type ) && ! isLoggedIn ) {
 		return page( login( { isJetpack: true, redirectTo: path } ) );
 	}
 	next();
@@ -253,7 +254,14 @@ export function connect( context, next ) {
 		const product = getProductFromSlug( planSlug );
 		analyticsPageTitle = getJetpackProductDisplayName( product );
 	}
-	recordPageView( pathname, analyticsPageTitle || 'Jetpack Connect' );
+	recordPageView(
+		pathname,
+		analyticsPageTitle || 'Jetpack Connect',
+		{},
+		{
+			useJetpackGoogleAnalytics: true,
+		}
+	);
 
 	// Not clearing the plan here, because other flows can set the cookie before arriving here.
 	planSlug && storePlan( planSlug );
@@ -263,8 +271,6 @@ export function connect( context, next ) {
 			<SearchPurchase
 				ctaFrom={ query.cta_from /* origin tracking params */ }
 				ctaId={ query.cta_id /* origin tracking params */ }
-				locale={ params.locale }
-				path={ path }
 				type={ type }
 				url={ query.url }
 			/>
@@ -288,7 +294,14 @@ export function connect( context, next ) {
 }
 
 export function instructions( context, next ) {
-	recordPageView( 'jetpack/connect/instructions', 'Jetpack Manual Install Instructions' );
+	recordPageView(
+		'jetpack/connect/instructions',
+		'Jetpack Manual Install Instructions',
+		{},
+		{
+			useJetpackGoogleAnalytics: true,
+		}
+	);
 
 	const url = context.query.url;
 	if ( ! url ) {
@@ -299,9 +312,16 @@ export function instructions( context, next ) {
 }
 
 export function signupForm( context, next ) {
-	recordPageView( 'jetpack/connect/authorize', 'Jetpack Authorize' );
+	recordPageView(
+		'jetpack/connect/authorize',
+		'Jetpack Authorize',
+		{},
+		{
+			useJetpackGoogleAnalytics: true,
+		}
+	);
 
-	const isLoggedIn = !! getCurrentUserId( context.store.getState() );
+	const isLoggedIn = isUserLoggedIn( context.store.getState() );
 	if ( retrieveMobileRedirect() && ! isLoggedIn ) {
 		// Force login for mobile app flow. App will intercept this request and prompt native login.
 		return window.location.replace( login( { redirectTo: context.path } ) );
@@ -329,7 +349,14 @@ export function credsForm( context, next ) {
 }
 
 export function authorizeForm( context, next ) {
-	recordPageView( 'jetpack/connect/authorize', 'Jetpack Authorize' );
+	recordPageView(
+		'jetpack/connect/authorize',
+		'Jetpack Authorize',
+		{},
+		{
+			useJetpackGoogleAnalytics: true,
+		}
+	);
 
 	const { query } = context;
 	const transformedQuery = parseAuthorizationQuery( query );
@@ -347,7 +374,14 @@ export function sso( context, next ) {
 	const analyticsBasePath = '/jetpack/sso';
 	const analyticsPageTitle = 'Jetpack SSO';
 
-	recordPageView( analyticsBasePath, analyticsPageTitle );
+	recordPageView(
+		analyticsBasePath,
+		analyticsPageTitle,
+		{},
+		{
+			useJetpackGoogleAnalytics: true,
+		}
+	);
 
 	context.primary = (
 		<JetpackSsoForm
@@ -376,6 +410,25 @@ export function redirectToLoginIfLoggedOut( context, next ) {
 
 	if ( ! isLoggedIn ) {
 		page( login( { isJetpack: true, redirectTo: context.path } ) );
+		return;
+	}
+
+	next();
+}
+
+export function redirectToSiteLessCheckout( context, next ) {
+	const { type, interval } = context.params;
+
+	const planSlug = getPlanSlugFromFlowType( type, interval );
+
+	const urlQueryArgs = context.query;
+
+	if ( config.isEnabled( 'jetpack/siteless-checkout' ) ) {
+		if ( ! urlQueryArgs?.checkoutBackUrl ) {
+			urlQueryArgs.checkoutBackUrl = 'https://jetpack.com';
+		}
+
+		page( addQueryArgs( urlQueryArgs, `/checkout/jetpack/${ planSlug }` ) );
 		return;
 	}
 

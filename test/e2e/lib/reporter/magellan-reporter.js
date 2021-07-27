@@ -1,12 +1,12 @@
-const BaseReporter = require( 'testarmada-magellan' ).Reporter;
 const util = require( 'util' );
 
 // Requirements for Slack output
-const slack = require( 'slack-notify' );
 const config = require( 'config' );
 const fs = require( 'fs-extra' );
-const XunitViewerParser = require( 'xunit-viewer/parser' );
 const pngitxt = require( 'png-itxt' );
+const slack = require( 'slack-notify' );
+const BaseReporter = require( 'testarmada-magellan' ).Reporter;
+const XunitViewerParser = require( 'xunit-viewer/parser' );
 
 const Reporter = function () {};
 

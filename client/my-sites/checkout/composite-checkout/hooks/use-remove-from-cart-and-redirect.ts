@@ -11,6 +11,7 @@ import type { RemoveProductFromCart, ResponseCart } from '@automattic/shopping-c
  * Internal dependencies
  */
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
+import useValidCheckoutBackUrl from './use-valid-checkout-back-url';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-redirect-if-cart-empty' );
 
@@ -23,6 +24,10 @@ export default function useRemoveFromCartAndRedirect(
 	removeProductFromCartAndMaybeRedirect: RemoveProductFromCart;
 } {
 	const { removeProductFromCart } = useShoppingCart();
+
+	// In some cases, the cloud.jetpack.com/pricing page sends a `checkoutBackUrl` url query param to checkout.
+	const checkoutBackUrl = useValidCheckoutBackUrl( siteSlug || siteSlugLoggedOutCart );
+
 	const redirectDueToEmptyCart = useCallback( () => {
 		debug( 'cart is empty; redirecting...' );
 		let cartEmptyRedirectUrl = `/plans/${ siteSlug || '' }`;
@@ -46,8 +51,12 @@ export default function useRemoveFromCartAndRedirect(
 			window.location.href = cartEmptyRedirectUrl;
 			return;
 		}
-		page.redirect( cartEmptyRedirectUrl );
-	}, [ createUserAndSiteBeforeTransaction, siteSlug, siteSlugLoggedOutCart ] );
+		if ( checkoutBackUrl ) {
+			window.location.href = checkoutBackUrl;
+		} else {
+			page.redirect( cartEmptyRedirectUrl );
+		}
+	}, [ createUserAndSiteBeforeTransaction, siteSlug, siteSlugLoggedOutCart, checkoutBackUrl ] );
 
 	const [ isRemovingProductFromCart, setIsRemovingFromCart ] = useState< boolean >( false );
 	const removeProductFromCartAndMaybeRedirect = useCallback(

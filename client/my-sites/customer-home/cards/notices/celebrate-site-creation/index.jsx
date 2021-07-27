@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import CelebrateNotice from 'calypso/my-sites/customer-home/cards/notices/celebrate-notice';
 import { NOTICE_CELEBRATE_SITE_CREATION } from 'calypso/my-sites/customer-home/cards/constants';
+import CelebrateNotice from 'calypso/my-sites/customer-home/cards/notices/celebrate-notice';
 
 const CelebrateSiteCreation = () => {
 	const translate = useTranslate();

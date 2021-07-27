@@ -1,4 +1,4 @@
-.post-type-page .edit-post-header-toolbar > .edit-post-header-toolbar__inserter-toggle {
+.post-type-page .edit-post-header-toolbar__left > .edit-post-header-toolbar__inserter-toggle {
 	display: none;
 }
 
@@ -12,11 +12,6 @@
 	// removing the PostStatus panel:
 	.edit-post-post-status {
 		display: none;
-	}
-
-	.edit-post-visual-editor {
-		margin-top: 20px;
-		padding-top: 0;
 	}
 
 	.editor-post-switch-to-draft {

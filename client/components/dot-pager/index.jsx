@@ -6,11 +6,7 @@ import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { times } from 'lodash';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
+import { Icon, arrowRight } from '@wordpress/icons';
 
 /**
  * Style dependencies
@@ -26,16 +22,6 @@ const Controls = ( { currentPage, numberOfPages, setCurrentPage } ) => {
 	const canGoForward = currentPage < numberOfPages - 1;
 	return (
 		<ul className="dot-pager__controls" aria-label={ translate( 'Pager controls' ) }>
-			<li key="dot-pager-prev">
-				<button
-					className="dot-pager__control-prev"
-					disabled={ ! canGoBack }
-					aria-label={ translate( 'Previous' ) }
-					onClick={ () => setCurrentPage( currentPage - 1 ) }
-				>
-					<Gridicon icon="chevron-left" size={ 18 } />
-				</button>
-			</li>
 			{ times( numberOfPages, ( page ) => (
 				<li key={ `page-${ page }` } aria-current={ page === currentPage ? 'page' : undefined }>
 					<button
@@ -49,6 +35,22 @@ const Controls = ( { currentPage, numberOfPages, setCurrentPage } ) => {
 					/>
 				</li>
 			) ) }
+			<li key="dot-pager-prev" className="dot-pager__control-gap">
+				<button
+					className="dot-pager__control-prev"
+					disabled={ ! canGoBack }
+					aria-label={ translate( 'Previous' ) }
+					onClick={ () => setCurrentPage( currentPage - 1 ) }
+				>
+					{ /* The arrowLeft icon isn't as bold as arrowRight, so using the same icon and flipping to make sure they match */ }
+					<Icon
+						icon={ arrowRight }
+						size={ 18 }
+						fill="currentColor"
+						style={ { transform: 'scaleX(-1)' } }
+					/>
+				</button>
+			</li>
 			<li key="dot-pager-next">
 				<button
 					className="dot-pager__control-next"
@@ -56,17 +58,22 @@ const Controls = ( { currentPage, numberOfPages, setCurrentPage } ) => {
 					aria-label={ translate( 'Next' ) }
 					onClick={ () => setCurrentPage( currentPage + 1 ) }
 				>
-					<Gridicon icon="chevron-right" size={ 18 } />
+					<Icon icon={ arrowRight } size={ 18 } fill="currentColor" />
 				</button>
 			</li>
 		</ul>
 	);
 };
 
-export const DotPager = ( { children } ) => {
+export const DotPager = ( { children, className } ) => {
 	const [ currentPage, setCurrentPage ] = useState( 0 );
 	return (
-		<Card>
+		<Card className={ className }>
+			<Controls
+				currentPage={ currentPage }
+				numberOfPages={ Children.count( children ) }
+				setCurrentPage={ setCurrentPage }
+			/>
 			<div className="dot-pager__pages">
 				{ Children.map( children, ( child, index ) => (
 					<div
@@ -81,11 +88,6 @@ export const DotPager = ( { children } ) => {
 					</div>
 				) ) }
 			</div>
-			<Controls
-				currentPage={ currentPage }
-				numberOfPages={ Children.count( children ) }
-				setCurrentPage={ setCurrentPage }
-			/>
 		</Card>
 	);
 };

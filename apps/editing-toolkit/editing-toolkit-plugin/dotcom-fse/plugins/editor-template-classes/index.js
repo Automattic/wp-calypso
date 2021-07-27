@@ -1,15 +1,9 @@
 /* global fullSiteEditing */
-/**
- * External dependencies
- */
-import classNames from 'classnames';
-import { get, map } from 'lodash';
 
-/**
- * WordPress dependencies
- */
 import { withSelect } from '@wordpress/data';
 import { registerPlugin } from '@wordpress/plugins';
+import classNames from 'classnames';
+import { get, map } from 'lodash';
 
 const EditorTemplateClasses = withSelect( ( select ) => {
 	const { getEntityRecord } = select( 'core' );
@@ -30,7 +24,7 @@ const EditorTemplateClasses = withSelect( ( select ) => {
 	return { templateClasses };
 } )( ( { templateClasses } ) => {
 	const blockListInception = setInterval( () => {
-		const blockListParent = document.querySelector( '.block-editor__typewriter > div' );
+		const blockListParent = document.querySelector( '.block-editor-writing-flow' );
 
 		if ( ! blockListParent ) {
 			return;
@@ -38,6 +32,7 @@ const EditorTemplateClasses = withSelect( ( select ) => {
 		clearInterval( blockListInception );
 
 		blockListParent.className = classNames(
+			'block-editor-writing-flow',
 			'a8c-template-editor fse-template-part',
 			...templateClasses
 		);

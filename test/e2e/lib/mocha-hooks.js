@@ -1,14 +1,7 @@
 /* eslint-disable mocha/no-top-level-hooks */
 
-/**
- * External dependencies
- */
-import config from 'config';
 import assert from 'assert';
-
-/**
- * Internal dependencies
- */
+import config from 'config';
 import * as driverManager from './driver-manager';
 
 const afterHookTimeoutMS = config.get( 'afterHookTimeoutMS' );

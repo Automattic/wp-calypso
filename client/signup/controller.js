@@ -101,11 +101,7 @@ export default {
 	redirectTests( context, next ) {
 		const isLoggedIn = isUserLoggedIn( context.store.getState() );
 		const currentFlowName = getFlowName( context.params, isLoggedIn );
-		if ( context.pathname.indexOf( 'new-launch' ) >= 0 ) {
-			// For 'new-launch' flow, 'is-white-signup' class name is being removed in client/signup/main.jsx
-			// Don't remove it here to prevent the flash of blue while the component is mounted
-			next();
-		} else if (
+		if (
 			config( 'reskinned_flows' ).includes( currentFlowName ) &&
 			config.isEnabled( 'signup/reskin' )
 		) {
@@ -312,7 +308,7 @@ export default {
 		context.store.dispatch( setLayoutFocus( 'content' ) );
 		context.store.dispatch( setCurrentFlowName( flowName ) );
 
-		if ( ! [ 'launch-site', 'new-launch' ].includes( flowName ) ) {
+		if ( ! [ 'launch-site' ].includes( flowName ) ) {
 			context.store.dispatch( setSelectedSiteId( null ) );
 		}
 

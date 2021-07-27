@@ -26,6 +26,11 @@ import {
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
 	PLUGIN_REMOVE_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
+import {
+	PLUGIN_INSTALLATION_COMPLETED,
+	PLUGIN_INSTALLATION_ERROR,
+	PLUGIN_INSTALLATION_IN_PROGRESS,
+} from 'calypso/state/plugins/installed/status/constants';
 
 /*
  * Tracks the current status of plugins on sites, indexed by (site, plugin).
@@ -127,7 +132,10 @@ function statusForSitePlugin( state = {}, action ) {
 		case PLUGIN_AUTOUPDATE_DISABLE_REQUEST:
 		case PLUGIN_INSTALL_REQUEST:
 		case PLUGIN_REMOVE_REQUEST:
-			return Object.assign( {}, state, { status: 'inProgress', action: action.action } );
+			return Object.assign( {}, state, {
+				status: PLUGIN_INSTALLATION_IN_PROGRESS,
+				action: action.action,
+			} );
 		case PLUGIN_ACTIVATE_REQUEST_SUCCESS:
 		case PLUGIN_DEACTIVATE_REQUEST_SUCCESS:
 		case PLUGIN_UPDATE_REQUEST_SUCCESS:
@@ -135,7 +143,10 @@ function statusForSitePlugin( state = {}, action ) {
 		case PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS:
 		case PLUGIN_INSTALL_REQUEST_SUCCESS:
 		case PLUGIN_REMOVE_REQUEST_SUCCESS:
-			return Object.assign( {}, state, { status: 'completed', action: action.action } );
+			return Object.assign( {}, state, {
+				status: PLUGIN_INSTALLATION_COMPLETED,
+				action: action.action,
+			} );
 		case PLUGIN_ACTIVATE_REQUEST_FAILURE:
 		case PLUGIN_DEACTIVATE_REQUEST_FAILURE:
 		case PLUGIN_UPDATE_REQUEST_FAILURE:
@@ -144,7 +155,7 @@ function statusForSitePlugin( state = {}, action ) {
 		case PLUGIN_INSTALL_REQUEST_FAILURE:
 		case PLUGIN_REMOVE_REQUEST_FAILURE:
 			return Object.assign( {}, state, {
-				status: 'error',
+				status: PLUGIN_INSTALLATION_ERROR,
 				action: action.action,
 				error: action.error,
 			} );

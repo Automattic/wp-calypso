@@ -1,18 +1,7 @@
-/**
- * External dependencies
- */
-
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import controller from './controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
+import controller from './controller';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default function () {

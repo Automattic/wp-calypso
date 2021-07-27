@@ -1,29 +1,6 @@
-/**
- * External dependencies
- */
 import React, { useEffect } from 'react';
-
-/**
- * Internal dependencies
- */
-import ConnectAccounts from 'calypso/my-sites/customer-home/cards/tasks/connect-accounts';
-import EarnFeatures from 'calypso/my-sites/customer-home/cards/tasks/earn-features';
-import FindDomain from 'calypso/my-sites/customer-home/cards/tasks/find-domain';
-import GoMobile from 'calypso/my-sites/customer-home/cards/tasks/go-mobile';
-import GrowthSummit from 'calypso/my-sites/customer-home/cards/tasks/growth-summit';
-import Podcasting from 'calypso/my-sites/customer-home/cards/tasks/podcasting';
-import Renew from 'calypso/my-sites/customer-home/cards/tasks/renew';
-import SiteSetupList from 'calypso/my-sites/customer-home/cards/tasks/site-setup-list';
-import SiteSetupListEcommerce from 'calypso/my-sites/customer-home/cards/tasks/site-setup-checklist-ecommerce';
-import TitanBanner from 'calypso/my-sites/customer-home/cards/tasks/titan-banner';
-import Webinars from 'calypso/my-sites/customer-home/cards/tasks/webinars';
-import WPCourses from 'calypso/my-sites/customer-home/cards/tasks/wp-courses';
-import Cloudflare from 'calypso/my-sites/customer-home/cards/tasks/cloudflare';
-import VerifyEmail from 'calypso/my-sites/customer-home/cards/tasks/verify-email';
-import CelebrateSiteCreation from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-creation';
-import CelebrateSiteLaunch from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-launch';
-import CelebrateSiteMigration from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-migration';
-import CelebrateSiteSetupComplete from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-setup-complete';
+import { connect } from 'react-redux';
+import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import {
 	NOTICE_CELEBRATE_SITE_CREATION,
 	NOTICE_CELEBRATE_SITE_LAUNCH,
@@ -46,9 +23,25 @@ import {
 	TASK_WEBINARS,
 	TASK_WP_COURSES,
 } from 'calypso/my-sites/customer-home/cards/constants';
-import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import CelebrateSiteCreation from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-creation';
+import CelebrateSiteLaunch from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-launch';
+import CelebrateSiteMigration from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-migration';
+import CelebrateSiteSetupComplete from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-setup-complete';
+import Cloudflare from 'calypso/my-sites/customer-home/cards/tasks/cloudflare';
+import ConnectAccounts from 'calypso/my-sites/customer-home/cards/tasks/connect-accounts';
+import EarnFeatures from 'calypso/my-sites/customer-home/cards/tasks/earn-features';
+import FindDomain from 'calypso/my-sites/customer-home/cards/tasks/find-domain';
+import GoMobile from 'calypso/my-sites/customer-home/cards/tasks/go-mobile';
+import GrowthSummit from 'calypso/my-sites/customer-home/cards/tasks/growth-summit';
+import Podcasting from 'calypso/my-sites/customer-home/cards/tasks/podcasting';
+import Renew from 'calypso/my-sites/customer-home/cards/tasks/renew';
+import SiteSetupListEcommerce from 'calypso/my-sites/customer-home/cards/tasks/site-setup-checklist-ecommerce';
+import SiteSetupList from 'calypso/my-sites/customer-home/cards/tasks/site-setup-list';
+import TitanBanner from 'calypso/my-sites/customer-home/cards/tasks/titan-banner';
+import VerifyEmail from 'calypso/my-sites/customer-home/cards/tasks/verify-email';
+import Webinars from 'calypso/my-sites/customer-home/cards/tasks/webinars';
+import WPCourses from 'calypso/my-sites/customer-home/cards/tasks/wp-courses';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { connect } from 'react-redux';
 
 const cardComponents = {
 	[ NOTICE_CELEBRATE_SITE_CREATION ]: CelebrateSiteCreation,

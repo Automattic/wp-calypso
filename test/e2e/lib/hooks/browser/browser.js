@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { quitBrowser, startBrowser, ensureNotLoggedIn } from '../../driver-manager';
 
 export const closeBrowser = async function ( { driver } ) {

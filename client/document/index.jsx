@@ -18,7 +18,8 @@ import EnvironmentBadge, {
 	PreferencesHelper,
 	FeaturesHelper,
 } from 'calypso/components/environment-badge';
-import { chunkCssLinks } from './utils';
+import { chunkCssLinks } from './utils/chunk';
+import { isBilmurEnabled, getBilmurUrl } from './utils/bilmur';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
@@ -212,6 +213,16 @@ class Document extends React.Component {
 								} }
 							/>
 						) ) }
+
+					{ isBilmurEnabled() && (
+						<script
+							defer
+							id="bilmur"
+							src={ getBilmurUrl() }
+							data-provider="wordpress.com"
+							data-service="calypso"
+						/>
+					) }
 
 					{ entrypoint?.language?.manifest && <script src={ entrypoint.language.manifest } /> }
 

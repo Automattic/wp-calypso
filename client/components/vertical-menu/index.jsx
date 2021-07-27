@@ -17,7 +17,7 @@ export class VerticalMenu extends PureComponent {
 	static propTypes = {
 		onClick: PropTypes.func,
 		initalItemIndex: PropTypes.number,
-		children: PropTypes.arrayOf( PropTypes.element ),
+		children: PropTypes.node,
 	};
 
 	static defaultProps = {

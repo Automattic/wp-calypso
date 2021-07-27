@@ -7,9 +7,14 @@ import {
 	redirectLoggedOut,
 	redirectWithoutLocaleParamIfLoggedIn,
 } from 'calypso/controller';
-import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
+import {
+	navigation,
+	selectSiteIfLoggedIn,
+	siteSelection,
+	sites,
+} from 'calypso/my-sites/controller';
 import { loggedOut } from './controller';
-import { loggedIn, upload, selectSiteIfLoggedIn } from './controller-logged-in';
+import { loggedIn, upload } from './controller-logged-in';
 import { fetchAndValidateVerticalsAndFilters } from './validate-filters';
 
 export default function ( router ) {

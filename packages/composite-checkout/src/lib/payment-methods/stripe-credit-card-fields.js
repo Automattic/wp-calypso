@@ -1,29 +1,22 @@
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
 import styled from '@emotion/styled';
-import { useTheme } from 'emotion-theming';
-import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
-import { LeftColumn, RightColumn } from '../styled-components/ie-fallback';
-import debugFactory from 'debug';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-
-/**
- * Internal dependencies
- */
-import { VisaLogo, MastercardLogo, AmexLogo } from '../../components/payment-logos';
-import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
+import debugFactory from 'debug';
+import { useTheme } from 'emotion-theming';
+import React, { useState } from 'react';
+import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
+import Button from '../../components/button';
 import Field from '../../components/field';
 import GridRow from '../../components/grid-row';
-import Button from '../../components/button';
-import PaymentLogo from './payment-logo';
-import { FormStatus, useLineItems } from '../../public-api';
-import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
+import { VisaLogo, MastercardLogo, AmexLogo } from '../../components/payment-logos';
 import Spinner from '../../components/spinner';
-import { useFormStatus } from '../form-status';
 import { registerStore, useSelect, useDispatch } from '../../lib/registry';
+import { FormStatus, useLineItems } from '../../public-api';
+import { useFormStatus } from '../form-status';
+import { LeftColumn, RightColumn } from '../styled-components/ie-fallback';
+import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
+import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
+import PaymentLogo from './payment-logo';
 
 const debug = debugFactory( 'composite-checkout:stripe-payment-method' );
 

@@ -100,6 +100,10 @@ open class PluginBaseBuild : Template({
 		bashNodeScript {
 			name = "Process Artifact"
 			scriptContent = """
+				# Prepare pr commenter script.
+				export GH_TOKEN="%matticbot_oauth_token%"
+				chmod +x ./bin/add-pr-comment.sh
+
 				cd $workingDir
 				cp README.md $archiveDir
 
@@ -124,17 +128,13 @@ open class PluginBaseBuild : Template({
 
 					# On normal PRs, post a message about WordPress.com deployments.
 					if [[ "%teamcity.build.branch.is_default%" != "true" ]] ; then
-						cd %teamcity.build.checkoutDir%
-						export GH_TOKEN="%matticbot_oauth_token%"
-						chmod +x ./bin/add-pr-comment.sh
-						./bin/add-pr-comment.sh "%teamcity.build.branch%" "$pluginSlug" <<- EOF || true
+						%teamcity.build.checkoutDir%/bin/add-pr-comment.sh "%teamcity.build.branch%" "$pluginSlug" <<- EOF || true
 						**This PR modifies the release build for $pluginSlug**
 
 						To test your changes on WordPress.com, run \`install-plugin.sh $pluginSlug %teamcity.build.branch%\` on your sandbox.
 						
 						To deploy your changes after merging, see the documentation: %docs_link%
 						EOF
-						cd $workingDir
 					fi
 
 					# Ping commit merger in Slack if we're on the main branch and the build has changed.
@@ -146,6 +146,9 @@ open class PluginBaseBuild : Template({
 						ping_response=`curl -s -d "${'$'}payload" -X POST -H "TEAMCITY_SIGNATURE: ${'$'}signature" %mc_post_root%?plugin-deploy-reminder`
 						echo -e "Slack ping status: ${'$'}ping_response\n"
 					fi
+				else
+					# If the current build is the same as trunk, remove any related comments posted to the PR.
+					%teamcity.build.checkoutDir%/bin/add-pr-comment.sh "%teamcity.build.branch%" "$pluginSlug" "delete" <<< "" || true
 				fi
 
 				# 4. Create metadata file with info for the download script.

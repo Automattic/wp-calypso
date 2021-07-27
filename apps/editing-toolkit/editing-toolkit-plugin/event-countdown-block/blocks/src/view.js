@@ -2,14 +2,7 @@
 // disabled CSS class rule due to existing code already
 // that users the non-conformant classnames
 
-/**
- * WordPress dependencies
- */
 import { __, _x } from '@wordpress/i18n';
-
-/**
- * Internal dependencies
- */
 
 const view = ( { attributes, className, isEditView } ) => {
 	// Expected values in save.

@@ -83,6 +83,7 @@ export async function recordOrder( cart, orderId ) {
 	recordOrderInQuantcast( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInCriteo( cart, orderId );
 	recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo );
+	recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo );
 
 	// Fire a single tracking event without any details about what was purchased
 
@@ -507,6 +508,41 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo )
 	window.gtag( ...params );
 
 	debug( 'recordOrderInGAEnhancedEcommerce: Record WPCom Purchase', params );
+}
+
+/**
+ * Records an order in the Jetpack.com GA4 Property
+ *
+ * @param {object} cart - cart as `ResponseCart` object
+ * @param {number} orderId - the order id
+ * @param {object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
+ * @returns {void}
+ */
+function recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo ) {
+	if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
+		const jetpackParams = [
+			'event',
+			'purchase',
+			{
+				send_to: TRACKING_IDS.jetpackGoogleAnalyticsGtag,
+				value: wpcomJetpackCartInfo.jetpackCostUSD,
+				currency: 'USD',
+				transaction_id: orderId,
+				coupon: cart.coupon_code?.toString() ?? '',
+				items: wpcomJetpackCartInfo.jetpackProducts.map(
+					( { product_id, product_name_en, cost, volume } ) => ( {
+						id: product_id.toString(),
+						name: product_name_en.toString(),
+						quantity: parseInt( volume ),
+						price: ( costToUSD( cost, cart.currency ) ?? '' ).toString(),
+						brand: GA_PRODUCT_BRAND_JETPACK,
+					} )
+				),
+			},
+		];
+		debug( 'recordOrderInJetpackGA: Record Jetpack Purchase', jetpackParams );
+		window.gtag( ...jetpackParams );
+	}
 }
 
 /**

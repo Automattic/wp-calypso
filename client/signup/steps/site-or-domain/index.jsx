@@ -12,7 +12,7 @@ import { get, isEmpty } from 'lodash';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
 import { getDomainProductSlug } from 'calypso/lib/domains';
@@ -200,7 +200,7 @@ export default connect(
 		const productsLoaded = ! isEmpty( productsList );
 
 		return {
-			isLoggedIn: !! getCurrentUserId( state ),
+			isLoggedIn: isUserLoggedIn( state ),
 			productsList,
 			productsLoaded,
 		};

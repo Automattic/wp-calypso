@@ -57,6 +57,7 @@ export type PlanGridProducts = {
 };
 
 export interface JetpackFreeProps {
+	fullWidth?: boolean;
 	urlQueryArgs: QueryArgs;
 	siteId: number | null;
 }

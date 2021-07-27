@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { applyMiddleware, combineReducers, compose, createStore } from 'redux'; //eslint-disable-line no-restricted-imports
 import thunkMiddleware from 'redux-thunk';
-
-/**
- * Internal dependencies
- */
 import actionMiddleware from './action-middleware';
 import notes from './notes/reducer';
 import suggestions from './suggestions/reducer';

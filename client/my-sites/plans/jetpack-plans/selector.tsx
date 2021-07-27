@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -23,6 +24,7 @@ import ProductGrid from './product-grid';
 import buildCheckoutURL from './build-checkout-url';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { getForCurrentCROIteration, Iterations } from './iterations';
 
 /**
  * Type dependencies
@@ -66,6 +68,20 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 			} )
 		);
 	}, [ dispatch, rootUrl, siteSlug, viewTrackerPath ] );
+
+	const { unlinked, purchasetoken, purchaseNonce, site } = urlQueryArgs;
+	const canDoSiteOnlyCheckout = unlinked && !! site && !! ( purchasetoken || purchaseNonce );
+	useEffect( () => {
+		if ( canDoSiteOnlyCheckout ) {
+			dispatch(
+				recordTracksEvent( 'calypso_jetpack_siteonly_pricing_page_visit', {
+					site: siteSlug,
+					path: viewTrackerPath,
+					root_path: rootUrl,
+				} )
+			);
+		}
+	}, [ canDoSiteOnlyCheckout, dispatch, rootUrl, siteSlug, viewTrackerPath ] );
 
 	useEffect( () => {
 		setDuration( defaultDuration );
@@ -159,9 +175,18 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 		setDuration( selectedDuration );
 	};
 
+	const iterationClassName = getForCurrentCROIteration(
+		( variation: Iterations | null ) => `jetpack-plans__iteration--${ variation ?? 'default' }`
+	);
+
 	return (
-		<Main className="selector__main" wideLayout>
-			<PageViewTracker path={ viewTrackerPath } properties={ viewTrackerProps } title="Plans" />
+		<Main className={ classNames( 'selector__main', iterationClassName ) } wideLayout>
+			<PageViewTracker
+				path={ viewTrackerPath }
+				properties={ viewTrackerProps }
+				title="Plans"
+				options={ { useJetpackGoogleAnalytics: ! isJetpackCloud() } }
+			/>
 
 			{ header }
 

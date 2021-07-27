@@ -118,38 +118,15 @@ describe( 'existingCardProcessor', () => {
 		transactionsEndpoint.mockReturnValue( Promise.resolve( 'success' ) );
 	} );
 
-	it( 'throws an error if there is no country passed', async () => {
-		const submitData = {};
-		await expect( existingCardProcessor( submitData, options ) ).rejects.toThrowError(
-			/requires country code and none was provided/
-		);
-	} );
-
-	it( 'throws an error if there is no postalCode passed', async () => {
-		const submitData = { country: 'US' };
-		await expect( existingCardProcessor( submitData, options ) ).rejects.toThrowError(
-			/requires postal code and none was provided/
-		);
-	} );
-
 	it( 'throws an error if there is no storedDetailsId passed', async () => {
-		const submitData = { country: 'US', postalCode: '10001' };
+		const submitData = {};
 		await expect( existingCardProcessor( submitData, options ) ).rejects.toThrowError(
 			/requires saved card information and none was provided/
 		);
 	} );
 
-	it( 'throws an error if there is no name passed', async () => {
-		const submitData = { country: 'US', postalCode: '10001', storedDetailsId: 'stored-details-id' };
-		await expect( existingCardProcessor( submitData, options ) ).rejects.toThrowError(
-			/requires cardholder name and none was provided/
-		);
-	} );
-
 	it( 'throws an error if there is no paymentMethodToken passed', async () => {
 		const submitData = {
-			country: 'US',
-			postalCode: '10001',
 			storedDetailsId: 'stored-details-id',
 			name: 'test name',
 		};
@@ -160,8 +137,6 @@ describe( 'existingCardProcessor', () => {
 
 	it( 'throws an error if there is no paymentPartnerProcessorId passed', async () => {
 		const submitData = {
-			country: 'US',
-			postalCode: '10001',
 			storedDetailsId: 'stored-details-id',
 			name: 'test name',
 			paymentMethodToken: 'stripe-token',
@@ -173,8 +148,6 @@ describe( 'existingCardProcessor', () => {
 
 	it( 'sends the correct data to the endpoint with no site and one product', async () => {
 		const submitData = {
-			country: 'US',
-			postalCode: '10001',
 			storedDetailsId: 'stored-details-id',
 			name: 'test name',
 			paymentMethodToken: 'stripe-token',
@@ -193,10 +166,33 @@ describe( 'existingCardProcessor', () => {
 		expect( transactionsEndpoint ).toHaveBeenCalledWith( basicExpectedStripeRequest );
 	} );
 
+	it( 'sends the correct data to the endpoint with no site and one product and no name', async () => {
+		const submitData = {
+			storedDetailsId: 'stored-details-id',
+			paymentMethodToken: 'stripe-token',
+			paymentPartnerProcessorId: 'IE',
+		};
+		const expected = { payload: 'success', type: 'SUCCESS' };
+		await expect(
+			existingCardProcessor( submitData, {
+				...options,
+				contactDetails: {
+					countryCode,
+					postalCode,
+				},
+			} )
+		).resolves.toStrictEqual( expected );
+		expect( transactionsEndpoint ).toHaveBeenCalledWith( {
+			...basicExpectedStripeRequest,
+			payment: {
+				...basicExpectedStripeRequest.payment,
+				name: '',
+			},
+		} );
+	} );
+
 	it( 'returns an explicit error response if the transaction fails', async () => {
 		const submitData = {
-			country: 'US',
-			postalCode: '10001',
 			storedDetailsId: 'stored-details-id',
 			name: 'test name',
 			paymentMethodToken: 'stripe-token',
@@ -217,8 +213,6 @@ describe( 'existingCardProcessor', () => {
 
 	it( 'sends the correct data to the endpoint with a site and one product', async () => {
 		const submitData = {
-			country: 'US',
-			postalCode: '10001',
 			storedDetailsId: 'stored-details-id',
 			name: 'test name',
 			paymentMethodToken: 'stripe-token',
@@ -250,8 +244,6 @@ describe( 'existingCardProcessor', () => {
 
 	it( 'sends the correct data to the endpoint with tax information', async () => {
 		const submitData = {
-			country: 'US',
-			postalCode: '10001',
 			storedDetailsId: 'stored-details-id',
 			name: 'test name',
 			paymentMethodToken: 'stripe-token',
@@ -294,8 +286,6 @@ describe( 'existingCardProcessor', () => {
 
 	it( 'sends the correct data to the endpoint with a site and one domain product', async () => {
 		const submitData = {
-			country: 'US',
-			postalCode: '10001',
 			storedDetailsId: 'stored-details-id',
 			name: 'test name',
 			paymentMethodToken: 'stripe-token',

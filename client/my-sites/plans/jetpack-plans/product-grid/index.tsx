@@ -15,14 +15,16 @@ import PlanUpgradeSection from '../plan-upgrade';
 import ProductCard from '../product-card';
 import { getProductPosition } from '../product-grid/products-order';
 import { getPlansToDisplay, getProductsToDisplay, isConnectionFlow } from './utils';
+import { getForCurrentCROIteration, Iterations } from '../iterations';
 import useGetPlansGridProducts from '../use-get-plans-grid-products';
-import JetpackFreeCard from 'calypso/components/jetpack/card/jetpack-free-card';
+import JetpackFreeCard from '../jetpack-free-card';
+import JetpackCrmFreeCard from '../jetpack-crm-free-card';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 } from '@automattic/calypso-products';
-import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import MoreInfoBox from '../more-info-box';
@@ -147,6 +149,10 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	}, [ duration, availableProducts, purchasedProducts, includedInPlanProducts, currentPlanSlug ] );
 
 	const showFreeCard = useSelector( getShowFreeCard );
+	const showCrmFreeCard =
+		getForCurrentCROIteration( {
+			[ Iterations.ONLY_REALTIME_PRODUCTS ]: true,
+		} ) ?? false;
 
 	const bundleComparisonRef = useRef< null | HTMLElement >( null );
 	const scrollToComparison = () => {
@@ -247,7 +253,20 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 					) ) }
 				</ul>
 				<div className="product-grid__free">
-					{ showFreeCard && <JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } /> }
+					{ showCrmFreeCard && (
+						<JetpackCrmFreeCard
+							fullWidth={ ! showFreeCard }
+							siteId={ siteId }
+							duration={ duration }
+						/>
+					) }
+					{ showFreeCard && (
+						<JetpackFreeCard
+							fullWidth={ ! showCrmFreeCard }
+							siteId={ siteId }
+							urlQueryArgs={ urlQueryArgs }
+						/>
+					) }
 				</div>
 			</ProductGridSection>
 			<StoreFooter />

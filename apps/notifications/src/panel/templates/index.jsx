@@ -1,28 +1,20 @@
-/**
- * External dependencies
- */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import BackButton from './button-back';
-import NavButton from './nav-button';
-import NoteList from './note-list';
-import AppError from './error';
-import FilterBarController from './filter-bar-controller';
-import Note from './note';
-import { interceptLinks } from '../utils/link-interceptor';
-
+import { modifierKeyIsActive } from '../helpers/input';
 import actions from '../state/actions';
 import getAllNotes from '../state/selectors/get-all-notes';
 import getIsNoteHidden from '../state/selectors/get-is-note-hidden';
 import getIsPanelOpen from '../state/selectors/get-is-panel-open';
-import getSelectedNoteId from '../state/selectors/get-selected-note-id';
 import getKeyboardShortcutsEnabled from '../state/selectors/get-keyboard-shortcuts-enabled';
-import { modifierKeyIsActive } from '../helpers/input';
+import getSelectedNoteId from '../state/selectors/get-selected-note-id';
+import { interceptLinks } from '../utils/link-interceptor';
+import BackButton from './button-back';
+import AppError from './error';
+import FilterBarController from './filter-bar-controller';
+import NavButton from './nav-button';
+import Note from './note';
+import NoteList from './note-list';
 
 const KEY_ENTER = 13;
 const KEY_ESC = 27;
@@ -122,7 +114,6 @@ class Layout extends React.Component {
 
 		const index = nextProps.notes.findIndex( ( n ) => n.id === nextProps.selectedNoteId );
 		this.setState( {
-			index: index >= 0 ? index : null,
 			lastSelectedIndex: index === null ? 0 : index,
 			selectedNote: nextProps.selectedNoteId,
 			navigationEnabled: true,
@@ -424,8 +415,6 @@ class Layout extends React.Component {
 		) {
 			this.props.unselectNote();
 		}
-
-		this.setState( { notes } );
 	};
 
 	storeNoteList = ( ref ) => {

@@ -28,6 +28,7 @@ import {
 	PRODUCT_WPCOM_SEARCH,
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
 } from '@automattic/calypso-products';
+import { addQueryArgs } from 'calypso/lib/route';
 
 /**
  * Module variables
@@ -102,11 +103,26 @@ export function purchase( context, next ) {
 		<SearchPurchase
 			ctaFrom={ query.cta_from /* origin tracking params */ }
 			ctaId={ query.cta_id /* origin tracking params */ }
-			locale={ params.locale }
 			path={ path }
 			type={ type }
 			url={ query.url }
 		/>
 	);
+	next();
+}
+
+export function redirectToSitelessCheckout( context, next ) {
+	const { type, interval } = context.params;
+
+	const planSlug = getPlanSlugFromFlowType( type, interval );
+
+	if (
+		config.isEnabled( 'jetpack/siteless-checkout' ) &&
+		[ PRODUCT_JETPACK_SEARCH, PRODUCT_JETPACK_SEARCH_MONTHLY ].includes( planSlug )
+	) {
+		page( addQueryArgs( context.query, `/checkout/jetpack/${ planSlug }` ) );
+		return;
+	}
+
 	next();
 }

@@ -28,7 +28,8 @@ import { getProductsList } from 'calypso/state/products-list/selectors';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
 import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
-import { getCurrentUser, getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import Notice from 'calypso/components/notice';
 import {
@@ -555,8 +556,8 @@ class TransferDomainStep extends React.Component {
 
 							this.setState( {
 								notice: this.props.translate(
-									"This domain is available to be registered, but we don't support transfers for domains ending with {{strong}}.%(tld)s{{/strong}}. " +
-										'If you register it elsewhere, you can {{a}}map it{{/a}} instead.',
+									'This domain appears to be available for registration, however we do not offer registrations or accept transfers for domains ending in {{strong}}.%(tld)s{{/strong}}. ' +
+										'If you register it elsewhere, you can {{a}}connect it{{/a}} to your WordPress.com site instead.',
 									{
 										args: { tld },
 										components: {

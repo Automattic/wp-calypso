@@ -1,19 +1,18 @@
-/**
- * Internal dependencies
- */
-import { BaseContainer } from '../base-container';
-import { toTitleCase } from '../../data-helper';
-
-/**
- * Type dependencies
- */
 import { ElementHandle, Page } from 'playwright';
+import { getViewportName } from '../../browser-helper';
+import { toTitleCase } from '../../data-helper';
+import { BaseContainer } from '../base-container';
+import { NavbarComponent } from './navbar-component';
 
 const selectors = {
+	// Mobile view
+	layout: '.layout',
+
+	// Sidebar
 	sidebar: '.sidebar',
 	heading: '.sidebar > li',
 	subheading: '.sidebar__menu-item--child',
-	expandedMenu: '.sidebar__menu--selected',
+	expandedMenu: '.sidebar__menu.is-toggle-open',
 };
 
 /**
@@ -63,19 +62,26 @@ export class SidebarComponent extends BaseContainer {
 	 * @param {{[key: string]: string}} param0 Named object parameter.
 	 * @param {string} param0.item Plaintext representation of the top level heading.
 	 * @param {string} param0.subitem Plaintext representation of the child level heading.
-	 * @throws {Error} If neither item or subitem were specified in the parameter.
 	 * @returns {Promise<void>} No return value.
 	 */
 	async gotoMenu( { item, subitem }: { item?: string; subitem?: string } ): Promise< void > {
 		let selector;
+		const viewportName = getViewportName();
+
+		// If mobile, sidebar is hidden by default and focus is on the content.
+		// The sidebar must be first brought into view.
+		if ( viewportName === 'mobile' ) {
+			await this._openMobileSidebar();
+		}
 
 		if ( item ) {
 			item = toTitleCase( item ).trim();
 			// This will exclude entries where the `heading` term matches multiple times
 			// eg. `Settings` but they are sub-headings in reality, such as Jetpack > Settings.
 			// Since the sub-headings are always hidden unless heading is selected, this works to
-			// our advantage.
+			// our advantage by specifying to match only visible text.
 			selector = `${ selectors.heading } span:has-text("${ item }"):visible`;
+			await this._click( selector );
 		}
 
 		if ( subitem ) {
@@ -86,15 +92,24 @@ export class SidebarComponent extends BaseContainer {
 			// This works better than using CSS pseudo-classes like `:has-text` or `:text-matches` for text
 			// matching.
 			selector = `${ selectors.subheading } >> text="${ subitem }"`;
+			await this._click( selector );
 		}
 
-		if ( ! selector ) {
-			throw new Error(
-				`Selector is undefined. Check if item or subitem has been specified as argument(s).`
-			);
-		}
+		// Confirm the focus is now back to the content, not the sidebar.
+		await this.page.waitForSelector( `${ selectors.layout }.focus-content` );
+	}
 
-		await this._click( selector );
+	/**
+	 * Opens the sidebar into view for mobile viewports.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async _openMobileSidebar(): Promise< void > {
+		const navbarComponent = await NavbarComponent.Expect( this.page );
+		await navbarComponent.clickMySites();
+		// `focus-sidebar` attribute is added once the sidebar is opened and focused in mobile view.
+		const layoutElement = await this.page.waitForSelector( `${ selectors.layout }.focus-sidebar` );
+		await layoutElement.waitForElementState( 'stable' );
 	}
 
 	/**
@@ -108,15 +123,13 @@ export class SidebarComponent extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async _click( selector: string ): Promise< void > {
-		// Wait for these promises in no particular order. We simply want to ensure the sidebar
-		// and the page is in a state to accept inputs.
-		await Promise.all( [
-			this.page.waitForLoadState( 'domcontentloaded' ),
-			this.sidebar.waitForElementState( 'stable' ),
-		] );
+		await this.page.waitForLoadState( 'load' );
 
-		const elementHandle = await this.page.waitForSelector( selector );
+		const elementHandle = await this.page.waitForSelector( selector, { state: 'attached' } );
 
+		// Scroll to reveal the target element fully using a page function if required.
+		// This workaround is necessary as the sidebar is 'sticky' in calypso, so a traditional
+		// scroll behavior does not adequately expose the sidebar element.
 		await this.page.evaluate(
 			( [ element ] ) => {
 				const elementBottom = element.getBoundingClientRect().bottom;
@@ -129,7 +142,12 @@ export class SidebarComponent extends BaseContainer {
 			[ elementHandle ]
 		);
 
-		await elementHandle.click();
+		// Use page.click since if the ElementHandle moves or otherwise disappears from the original
+		// location in the DOM, it is no longer valid and will throw an error.
+		// For Atomic sites, sidebar items often shift soon after initial rendering as Atomic-specific
+		// features are loaded.
+		// See https://github.com/microsoft/playwright/issues/6244#issuecomment-824384845.
+		await this.page.click( selector );
 
 		await this.page.waitForLoadState( 'domcontentloaded' );
 	}

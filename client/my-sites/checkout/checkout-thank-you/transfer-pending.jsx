@@ -20,6 +20,7 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
 import WordPressLogo from 'calypso/components/wordpress-logo';
+import { hideMasterbar, showMasterbar } from 'calypso/state/ui/masterbar-visibility/actions';
 
 class TransferPending extends PureComponent {
 	static propTypes = {
@@ -28,6 +29,14 @@ class TransferPending extends PureComponent {
 		siteId: PropTypes.number.isRequired,
 		transfer: PropTypes.object,
 	};
+
+	componentDidMount() {
+		this.props.hideMasterbar();
+	}
+
+	componentWillUnmount() {
+		this.props.showMasterbar();
+	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { transfer, error } = nextProps;
@@ -132,5 +141,9 @@ export default connect(
 		siteSlug: getSiteSlug( state, siteId ),
 		transfer: getAtomicTransfer( state, siteId ),
 	} ),
-	{ showErrorNotice: errorNotice }
+	{
+		showErrorNotice: errorNotice,
+		hideMasterbar,
+		showMasterbar,
+	}
 )( localize( TransferPending ) );

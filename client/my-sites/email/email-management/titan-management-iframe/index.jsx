@@ -5,11 +5,12 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import titleCase from 'to-title-case';
 
 /**
  * Internal dependencies
  */
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import DocumentHead from 'calypso/components/data/document-head';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import EmptyContent from 'calypso/components/empty-content';
@@ -85,7 +86,7 @@ class TitanManagementIframe extends React.Component {
 					<QueryEmailAccounts siteId={ selectedSiteId } />
 				) }
 				<QuerySiteDomains siteId={ selectedSiteId } />
-				<DocumentHead title={ pageTitle } />
+				<DocumentHead title={ titleCase( pageTitle ) } />
 				<SidebarNavigation />
 
 				<Header backHref={ emailManagementPath } selectedDomainName={ domainName }>

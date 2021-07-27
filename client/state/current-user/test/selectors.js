@@ -8,8 +8,6 @@ import {
 	getCurrentUserLocaleVariant,
 	getCurrentUserDate,
 	isUserLoggedIn,
-	isValidCapability,
-	getCurrentUserCurrencyCode,
 	getCurrentUserEmail,
 	isCurrentUserBootstrapped,
 } from '../selectors';
@@ -172,77 +170,6 @@ describe( 'selectors', () => {
 			} );
 
 			expect( currentUserDate ).toBeNull();
-		} );
-	} );
-
-	describe( 'isValidCapability()', () => {
-		test( 'should return null if the site is not known', () => {
-			const isValid = isValidCapability(
-				{
-					currentUser: {
-						capabilities: {},
-					},
-				},
-				2916284,
-				'manage_options'
-			);
-
-			expect( isValid ).toBeNull();
-		} );
-
-		test( 'should return true if the capability is valid', () => {
-			const isValid = isValidCapability(
-				{
-					currentUser: {
-						capabilities: {
-							2916284: {
-								manage_options: false,
-							},
-						},
-					},
-				},
-				2916284,
-				'manage_options'
-			);
-
-			expect( isValid ).toBe( true );
-		} );
-
-		test( 'should return false if the capability is invalid', () => {
-			const isValid = isValidCapability(
-				{
-					currentUser: {
-						capabilities: {
-							2916284: {
-								manage_options: false,
-							},
-						},
-					},
-				},
-				2916284,
-				'manage_foo'
-			);
-
-			expect( isValid ).toBe( false );
-		} );
-	} );
-
-	describe( 'getCurrentUserCurrencyCode', () => {
-		test( 'should return null if currencyCode is not set', () => {
-			const selected = getCurrentUserCurrencyCode( {
-				currentUser: {
-					currencyCode: null,
-				},
-			} );
-			expect( selected ).toBeNull();
-		} );
-		test( 'should return value if currencyCode is set', () => {
-			const selected = getCurrentUserCurrencyCode( {
-				currentUser: {
-					currencyCode: 'USD',
-				},
-			} );
-			expect( selected ).toBe( 'USD' );
 		} );
 	} );
 

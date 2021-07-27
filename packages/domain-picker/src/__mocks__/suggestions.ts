@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import type { DomainSuggestion } from '@automattic/data-stores/src/domain-suggestions';
 
 export const MOCK_DOMAIN_SUGGESTION: DomainSuggestion = {

@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { spamNote as spamNoteAction } from '../actions';
 import { recordTracksEvent } from '../../../helpers/stats';
+import { spamNote as spamNoteAction } from '../actions';
 import bumpStat from '../utils/bump-stat';
 
 const spamNote = ( note, restClient ) => ( dispatch ) => {

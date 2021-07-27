@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
+import { Card } from '@automattic/components';
+import classnames from 'classnames';
+import { numberFormat, useTranslate } from 'i18n-calypso';
+import moment from 'moment';
 import React, { useEffect } from 'react';
 import { connect, useDispatch } from 'react-redux';
-import { numberFormat, useTranslate } from 'i18n-calypso';
-import { Card } from '@automattic/components';
-import { times } from 'lodash';
-import moment from 'moment';
-
-/**
- * Internal dependencies
- */
 import CardHeading from 'calypso/components/card-heading';
 import Chart from 'calypso/components/chart';
-import Spinner from 'calypso/components/spinner';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import Spinner from 'calypso/components/spinner';
 import { preventWidows } from 'calypso/lib/formatting';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { getSiteOption } from 'calypso/state/sites/selectors';
@@ -30,12 +23,9 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
-const placeholderChartData = times( 7, () => ( {
+const placeholderChartData = Array.from( { length: 7 }, () => ( {
 	value: Math.random(),
 } ) );
 
@@ -80,6 +70,7 @@ export const StatsV2 = ( {
 				),
 				4
 		  );
+	const renderChart = ! isSiteUnlaunched && ! isLoading && views > 0;
 
 	return (
 		<div className="stats">
@@ -89,8 +80,8 @@ export const StatsV2 = ( {
 					<QuerySiteStats siteId={ siteId } statType="statsTopPosts" query={ topPostsQuery } />
 				</>
 			) }
-
-			<Card>
+			{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+			<Card className={ classnames( 'customer-home__card', { 'stats__with-chart': renderChart } ) }>
 				{ isSiteUnlaunched && (
 					<Chart data={ placeholderChartData } isPlaceholder>
 						<div>
@@ -135,7 +126,7 @@ export const StatsV2 = ( {
 						</div>
 					</div>
 				) }
-				{ ! isSiteUnlaunched && ! isLoading && views > 0 && (
+				{ renderChart && (
 					<>
 						<CardHeading>{ translate( 'Views' ) }</CardHeading>
 						<Chart data={ chartData } />
@@ -173,9 +164,11 @@ export const StatsV2 = ( {
 								</div>
 							) }
 						</div>
-						<a href={ `/stats/day/${ siteSlug }` } className="stats__all">
-							{ translate( 'See all stats' ) }
-						</a>
+						<div className="stats__all">
+							<a href={ `/stats/day/${ siteSlug }` } className="stats__all-link">
+								{ translate( 'See all stats' ) }
+							</a>
+						</div>
 					</>
 				) }
 			</Card>

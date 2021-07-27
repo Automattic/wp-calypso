@@ -75,6 +75,10 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import { clearStore } from 'calypso/lib/user/store';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
+import isRequestingAllDomains from 'calypso/state/selectors/is-requesting-all-domains';
+import { getFlatDomainsList } from 'calypso/state/sites/domains/selectors';
+import QueryAllDomains from 'calypso/components/data/query-all-domains';
+import { type as domainTypes } from 'calypso/lib/domains/constants';
 
 export const noticeId = 'me-settings-notice';
 const noticeOptions = {
@@ -119,7 +123,6 @@ class Account extends React.Component {
 		redirect: false,
 		submittingForm: false,
 		formsSubmitting: {},
-		changingUsername: false,
 		usernameAction: 'new',
 		validationResult: false,
 	};
@@ -532,29 +535,52 @@ class Account extends React.Component {
 
 	renderPendingEmailChange() {
 		const { translate } = this.props;
+		const editContactInfoInBulkUrl = `/domains/manage?site=all&action=edit-contact-email`;
 
 		if ( ! this.hasPendingEmailChange() ) {
 			return null;
 		}
 
+		let text = translate(
+			'Your email change is pending. Please take a moment to check %(email)s for an email with the subject "[WordPress.com] New Email Address" to confirm your change.',
+			{
+				args: {
+					email: this.getUserSetting( 'new_user_email' ),
+				},
+			}
+		);
+
+		if ( this.hasCustomDomains() ) {
+			text = translate(
+				'Your email change is pending. Please take a moment to:{{br/}}1. Check %(email)s for an email with the subject "[WordPress.com] New Email Address" to confirm your change.{{br/}}2. Update contact information on your domain names if necessary {{link}}here{{/link}}.',
+				{
+					args: {
+						email: this.getUserSetting( 'new_user_email' ),
+					},
+					components: {
+						br: <br />,
+						link: <a href={ editContactInfoInBulkUrl } />,
+					},
+				}
+			);
+		}
+
 		return (
-			<Notice
-				showDismiss={ false }
-				status="is-info"
-				text={ translate(
-					'There is a pending change of your email to %(email)s. Please check your inbox for a confirmation link.',
-					{
-						args: {
-							email: this.getUserSetting( 'new_user_email' ),
-						},
-					}
-				) }
-			>
+			<Notice showDismiss={ false } status="is-info" text={ text }>
 				<NoticeAction onClick={ () => this.props.cancelPendingEmailChange() }>
 					{ translate( 'Cancel' ) }
 				</NoticeAction>
 			</Notice>
 		);
+	}
+
+	hasCustomDomains() {
+		if ( this.props.requestingFlatDomains ) {
+			return false;
+		}
+		return this.props.domainsList.some( ( domain ) => {
+			return domainTypes.REGISTERED === domain.type;
+		} );
 	}
 
 	renderUsernameValidation() {
@@ -766,10 +792,10 @@ class Account extends React.Component {
 						onChange={ this.updateEmailAddress }
 					/>
 					{ this.renderEmailValidation() }
-					{ this.renderPendingEmailChange() }
 					<FormSettingExplanation>
 						{ translate( 'Will not be publicly displayed' ) }
 					</FormSettingExplanation>
+					{ this.renderPendingEmailChange() }
 				</FormFieldset>
 
 				<FormFieldset>
@@ -967,6 +993,7 @@ class Account extends React.Component {
 
 		return (
 			<Main wideLayout className="account">
+				<QueryAllDomains />
 				<QueryUserSettings />
 				<PageViewTracker path="/me/account" title="Me > Account Settings" />
 				<MeSidebarNavigation />
@@ -1114,6 +1141,8 @@ export default compose(
 			onboardingUrl: getOnboardingUrl( state ),
 			isNavUnificationEnabled: isNavUnificationEnabled( state ),
 			linkDestination: getPreference( state, linkDestinationKey ),
+			requestingFlatDomains: isRequestingAllDomains( state ),
+			domainsList: getFlatDomainsList( state ),
 		} ),
 		{
 			bumpStat,

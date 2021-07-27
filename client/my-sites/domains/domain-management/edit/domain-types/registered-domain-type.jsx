@@ -85,7 +85,7 @@ class RegisteredDomainType extends React.Component {
 						strong: <strong />,
 					},
 					args: {
-						days: moment.utc( domain.renewableUntil ).fromNow( true ),
+						days: moment( domain.renewableUntil ).fromNow( true ),
 						redemptionCost: redemptionCost,
 					},
 				}
@@ -99,7 +99,7 @@ class RegisteredDomainType extends React.Component {
 						strong: <strong />,
 					},
 					args: {
-						days: moment.utc( domain.redeemableUntil ).fromNow( true ),
+						days: moment( domain.redeemableUntil ).fromNow( true ),
 						redemptionCost: redemptionCost,
 					},
 				}

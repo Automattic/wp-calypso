@@ -37,7 +37,7 @@ function ExpiringSoon( props ) {
 						strong: <strong />,
 					},
 					args: {
-						days: moment.utc( expiry ).fromNow( true ),
+						days: moment( expiry ).fromNow( true ),
 						owner: domain.owner,
 					},
 				}
@@ -50,7 +50,7 @@ function ExpiringSoon( props ) {
 						strong: <strong />,
 					},
 					args: {
-						days: moment.utc( expiry ).fromNow( true ),
+						days: moment( expiry ).fromNow( true ),
 					},
 				}
 			);
@@ -65,7 +65,7 @@ function ExpiringSoon( props ) {
 						strong: <strong />,
 					},
 					args: {
-						days: moment.utc( expiry ).fromNow( true ),
+						days: moment( expiry ).fromNow( true ),
 					},
 				}
 			);
@@ -82,7 +82,7 @@ function ExpiringSoon( props ) {
 						strong: <strong />,
 					},
 					args: {
-						days: moment.utc( expiry ).fromNow( true ),
+						days: moment( expiry ).fromNow( true ),
 						owner: domain.owner,
 					},
 				}
@@ -95,7 +95,7 @@ function ExpiringSoon( props ) {
 						strong: <strong />,
 					},
 					args: {
-						days: moment.utc( expiry ).fromNow( true ),
+						days: moment( expiry ).fromNow( true ),
 					},
 				}
 			);

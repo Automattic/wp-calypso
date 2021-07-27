@@ -50,7 +50,6 @@ class DeleteUser extends React.Component {
 	};
 
 	state = {
-		showDialog: false,
 		radioOption: false,
 		reassignUser: false,
 		authorSelectorToggled: false,

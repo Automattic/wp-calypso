@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
 import config from 'config';
-
-/**
- * Internal dependencies
- */
-import LoginFlow from '../../lib/flows/login-flow.js';
-
-import * as driverManager from '../../lib/driver-manager.js';
-import * as dataHelper from '../../lib/data-helper';
 import SideBarComponent from '../../lib/components/sidebar-component';
+import * as dataHelper from '../../lib/data-helper';
+import * as driverManager from '../../lib/driver-manager.js';
+import LoginFlow from '../../lib/flows/login-flow.js';
 import MediaPage from '../../lib/pages/media-page';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );

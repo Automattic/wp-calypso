@@ -8,20 +8,12 @@ import { get, isEqual, reduce } from 'lodash';
  */
 import {
 	CURRENT_USER_RECEIVE,
+	CURRENT_USER_SET_EMAIL_VERIFIED,
 	SITE_RECEIVE,
-	SITE_PLANS_FETCH_COMPLETED,
 	SITES_RECEIVE,
-	PLANS_RECEIVE,
-	PRODUCTS_LIST_RECEIVE,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import {
-	capabilitiesSchema,
-	currencyCodeSchema,
-	flagsSchema,
-	idSchema,
-	lasagnaSchema,
-} from './schema';
+import { capabilitiesSchema, flagsSchema, idSchema, lasagnaSchema } from './schema';
 import gravatarStatus from './gravatar-status/reducer';
 import emailVerification from './email-verification/reducer';
 
@@ -51,6 +43,11 @@ export const user = ( state = null, action ) => {
 	switch ( action.type ) {
 		case CURRENT_USER_RECEIVE:
 			return action.user;
+		case CURRENT_USER_SET_EMAIL_VERIFIED:
+			return {
+				...state,
+				email_verified: action.verified,
+			};
 	}
 
 	return state;
@@ -60,30 +57,6 @@ export const flags = withSchemaValidation( flagsSchema, ( state = [], action ) =
 	switch ( action.type ) {
 		case CURRENT_USER_RECEIVE:
 			return get( action.user, 'meta.data.flags.active_flags', [] );
-	}
-
-	return state;
-} );
-
-/**
- * Tracks the currency code of the current user
- *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
- *
- */
-export const currencyCode = withSchemaValidation( currencyCodeSchema, ( state = null, action ) => {
-	switch ( action.type ) {
-		case PRODUCTS_LIST_RECEIVE: {
-			return Object.values( action.productsList )[ 0 ]?.currency_code ?? state;
-		}
-		case PLANS_RECEIVE: {
-			return get( action.plans, [ 0, 'currency_code' ], state );
-		}
-		case SITE_PLANS_FETCH_COMPLETED: {
-			return get( action.plans, [ 0, 'currencyCode' ], state );
-		}
 	}
 
 	return state;
@@ -137,7 +110,6 @@ export const lasagnaJwt = withSchemaValidation( lasagnaSchema, ( state = null, a
 export default combineReducers( {
 	id,
 	user,
-	currencyCode,
 	capabilities,
 	flags,
 	gravatarStatus,

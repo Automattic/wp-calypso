@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
 import config from 'config';
-
-/**
- * Internal dependencies
- */
+import * as driverManager from '../../lib/driver-manager.js';
 import LoginFlow from '../../lib/flows/login-flow.js';
 import NewPage from '../../lib/pages/gutenboarding/new-page.js';
-
-import * as driverManager from '../../lib/driver-manager.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();

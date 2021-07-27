@@ -153,7 +153,6 @@ export const MySitesSidebarUnified = ( { path } ) => {
 					icon="dashicons-admin-collapse"
 				/>
 			</Sidebar>
-			<AsyncLoad require="calypso/blocks/nav-unification-modal" placeholder={ null } />
 			<AsyncLoad
 				require="calypso/my-sites/sidebar-unified/external-link-dialog"
 				isVisible={ showDialog }

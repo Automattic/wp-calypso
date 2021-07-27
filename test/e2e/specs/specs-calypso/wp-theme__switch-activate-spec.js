@@ -1,25 +1,16 @@
-/**
- * External dependencies
- */
-import config from 'config';
 import assert from 'assert';
-
-/**
- * Internal dependencies
- */
-import * as driverManager from '../../lib/driver-manager.js';
-
-import LoginFlow from '../../lib/flows/login-flow.js';
-
-import CustomizerPage from '../../lib/pages/customizer-page';
-import ThemesPage from '../../lib/pages/themes-page.js';
+import config from 'config';
+import SidebarComponent from '../../lib/components/sidebar-component';
 import ThemeDialogComponent from '../../lib/components/theme-dialog-component.js';
 import ThemeSwitchConfirmationComponent from '../../lib/components/theme-switch-confirmation-component.js';
-import SidebarComponent from '../../lib/components/sidebar-component';
-import WPAdminCustomizerPage from '../../lib/pages/wp-admin/wp-admin-customizer-page.js';
-import WPAdminLogonPage from '../../lib/pages/wp-admin/wp-admin-logon-page.js';
 import * as dataHelper from '../../lib/data-helper';
 import * as driverHelper from '../../lib/driver-helper';
+import * as driverManager from '../../lib/driver-manager.js';
+import LoginFlow from '../../lib/flows/login-flow.js';
+import CustomizerPage from '../../lib/pages/customizer-page';
+import ThemesPage from '../../lib/pages/themes-page.js';
+import WPAdminCustomizerPage from '../../lib/pages/wp-admin/wp-admin-customizer-page.js';
+import WPAdminLogonPage from '../../lib/pages/wp-admin/wp-admin-logon-page.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();

@@ -1,22 +1,13 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import page from 'page';
-
-/**
- * Internal Dependencies
- */
-import CustomerHome from './main';
-import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import React from 'react';
 import { canCurrentUserUseCustomerHome } from 'calypso/state/sites/selectors';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import CustomerHome from './main';
 
 export default async function ( context, next ) {
 	const state = await context.store.getState();
 	const siteId = await getSelectedSiteId( state );
 
-	const isDev = context.query.dev === 'true';
-	const forcedView = context.query.view;
 	const noticeType = context.query.notice;
 
 	// Scroll to the top
@@ -24,14 +15,7 @@ export default async function ( context, next ) {
 		window.scrollTo( 0, 0 );
 	}
 
-	context.primary = (
-		<CustomerHome
-			key={ siteId }
-			isDev={ isDev }
-			forcedView={ forcedView }
-			noticeType={ noticeType }
-		/>
-	);
+	context.primary = <CustomerHome key={ siteId } noticeType={ noticeType } />;
 
 	next();
 }

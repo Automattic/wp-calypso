@@ -1,26 +1,14 @@
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
-import { connect, useDispatch } from 'react-redux';
 import { Button } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import React, { useState } from 'react';
+import { connect, useDispatch } from 'react-redux';
+import fireworksIllustration from 'calypso/assets/images/customer-home/illustration--fireworks-v2.svg';
 import Spinner from 'calypso/components/spinner';
-import { skipViewHomeLayout } from 'calypso/state/home/actions';
+import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
+import { composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getHomeLayout } from 'calypso/state/selectors/get-home-layout';
-
-/**
- * Image dependencies
- */
-import fireworksIllustration from 'calypso/assets/images/customer-home/illustration--fireworks-v2.svg';
 
 const CelebrateNotice = ( {
 	actionText,
@@ -33,11 +21,11 @@ const CelebrateNotice = ( {
 	siteId,
 	title,
 	tracksEventExtras = {},
-	currentView,
 } ) => {
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isVisible, setIsVisible ] = useState( true );
 	const dispatch = useDispatch();
+	const { skipCurrentView } = useSkipCurrentViewMutation( siteId );
 
 	if ( ! isVisible ) {
 		return null;
@@ -47,7 +35,7 @@ const CelebrateNotice = ( {
 
 	const showNextTask = () => {
 		setIsLoading( true );
-		dispatch( skipViewHomeLayout( siteId, currentView ) );
+		skipCurrentView();
 
 		dispatch(
 			composeAnalytics(
@@ -109,7 +97,6 @@ const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	return {
 		siteId,
-		currentView: getHomeLayout( state, siteId )?.view_name,
 	};
 };
 

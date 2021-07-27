@@ -10,17 +10,12 @@ import { removeQueryArgs } from '@wordpress/url';
 /**
  * Internal Dependencies
  */
+import { composeHandlers } from 'calypso/controller/shared';
+import { render } from 'calypso/controller/web-util';
 import { cloudSiteSelection } from 'calypso/jetpack-cloud/controller';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { requestSite } from 'calypso/state/sites/actions';
-import {
-	getSite,
-	getSiteId,
-	getSiteAdminUrl,
-	getSiteSlug,
-	isJetpackModuleActive,
-	isJetpackSite,
-} from 'calypso/state/sites/selectors';
+import { getSite, getSiteId, getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -30,13 +25,8 @@ import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions
 import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
 import NavigationComponent from 'calypso/my-sites/navigation';
-import {
-	addQueryArgs,
-	getSiteFragment,
-	sectionify,
-	externalRedirect,
-	trailingslashit,
-} from 'calypso/lib/route';
+import { addQueryArgs, getSiteFragment, sectionify, trailingslashit } from 'calypso/lib/route';
+import { navigate } from 'calypso/lib/navigate';
 import config from '@automattic/calypso-config';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -47,7 +37,7 @@ import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selec
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 import {
 	domainManagementContactsPrivacy,
@@ -240,7 +230,6 @@ function onSelectedSiteAvailable( context, basePath ) {
 
 	const isAtomicSite = isSiteAutomatedTransfer( state, selectedSite.ID );
 	const userCanManagePlugins = canCurrentUser( state, selectedSite.ID, 'activate_plugins' );
-	const calypsoify = isAtomicSite && config.isEnabled( 'calypsoify/plugins' );
 
 	// If migration is in progress, only /migrate paths should be loaded for the site
 	const isMigrationInProgress = isSiteMigrationInProgress( state, selectedSite.ID );
@@ -250,7 +239,8 @@ function onSelectedSiteAvailable( context, basePath ) {
 		return false;
 	}
 
-	if ( userCanManagePlugins && calypsoify && /^\/plugins/.test( basePath ) ) {
+	// Redirects Atomic sites to wp-admin
+	if ( userCanManagePlugins && isAtomicSite && /^\/plugins/.test( basePath ) ) {
 		const plugin = get( context, 'params.plugin' );
 		let pluginString = '';
 		if ( plugin ) {
@@ -263,7 +253,7 @@ function onSelectedSiteAvailable( context, basePath ) {
 			].join( '&' );
 		}
 
-		const pluginInstallURL = 'plugin-install.php?calypsoify=1' + `&${ pluginString }`;
+		const pluginInstallURL = 'plugin-install.php?' + `${ pluginString }`;
 		const pluginLink = getSiteAdminUrl( state, selectedSite.ID ) + pluginInstallURL;
 
 		window.location.replace( pluginLink );
@@ -365,8 +355,9 @@ export function noSite( context, next ) {
 	const currentUser = getCurrentUser( getState() );
 	const hasSite = currentUser && currentUser.visible_site_count >= 1;
 	const isDomainOnlyFlow = context.query?.isDomainOnly === '1';
+	const isJetpackCheckoutFlow = context.pathname.includes( '/checkout/jetpack' );
 
-	if ( ! isDomainOnlyFlow && hasSite ) {
+	if ( ! isDomainOnlyFlow && ! isJetpackCheckoutFlow && hasSite ) {
 		siteSelection( context, next );
 	} else {
 		context.store.dispatch( setSelectedSiteId( null ) );
@@ -474,7 +465,7 @@ export function siteSelection( context, next ) {
 						next();
 					}
 				} else if ( shouldRedirectToJetpackAuthorize( context, site ) ) {
-					externalRedirect( getJetpackAuthorizeURL( context, site ) );
+					navigate( getJetpackAuthorizeURL( context, site ) );
 				} else {
 					// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
 					const allSitesPath = addQueryArgs(
@@ -513,25 +504,6 @@ export function redirectToPrimary( context, primarySiteSlug ) {
 		redirectPath += `?${ context.querystring }`;
 	}
 	page.redirect( redirectPath );
-}
-
-export function jetpackModuleActive( moduleId, redirect ) {
-	return function ( context, next ) {
-		const { getState } = getStore( context );
-		const siteId = getSelectedSiteId( getState() );
-		const isJetpack = isJetpackSite( getState(), siteId );
-		const isModuleActive = isJetpackModuleActive( getState(), siteId, moduleId );
-
-		if ( ! isJetpack ) {
-			return next();
-		}
-
-		if ( isModuleActive || false === redirect ) {
-			next();
-		} else {
-			page.redirect( 'string' === typeof redirect ? redirect : '/stats' );
-		}
-	};
 }
 
 export function navigation( context, next ) {
@@ -706,4 +678,17 @@ export function getJetpackAuthorizeURL( context, site ) {
 		},
 		trailingslashit( site?.URL ) + 'wp-admin/'
 	);
+}
+
+export function selectSiteIfLoggedIn( context, next ) {
+	const state = context.store.getState();
+	if ( ! isUserLoggedIn( state ) ) {
+		next();
+		return;
+	}
+
+	// Logged in: Terminate the regular handler path by not calling next()
+	// and render the site selection screen, redirecting the user if they
+	// only have one site.
+	composeHandlers( siteSelection, sites, makeLayout, render )( context );
 }

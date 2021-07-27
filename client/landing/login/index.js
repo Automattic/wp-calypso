@@ -16,7 +16,7 @@ import page from 'page';
 import createStore from './store';
 import { setupMiddlewares, configureReduxStore } from './common';
 import initLoginSection from 'calypso/login';
-import userFactory from 'calypso/lib/user';
+import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { setupLocale } from 'calypso/boot/locale';
 import { setStore } from 'calypso/state/redux-store';
 
@@ -35,7 +35,7 @@ const boot = ( currentUser ) => {
 
 	configureReduxStore( currentUser, store );
 	setupMiddlewares( currentUser, store );
-	setupLocale( currentUser.get(), store );
+	setupLocale( currentUser, store );
 
 	page( '*', ( context, next ) => {
 		context.store = store;
@@ -51,7 +51,7 @@ const boot = ( currentUser ) => {
 	page.start( { decodeURLComponents: false } );
 };
 
-window.AppBoot = () => {
-	const user = userFactory();
-	user.initialize().then( () => boot( user ) );
+window.AppBoot = async () => {
+	const user = await initializeCurrentUser();
+	boot( user );
 };

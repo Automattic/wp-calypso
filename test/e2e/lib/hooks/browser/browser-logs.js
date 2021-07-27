@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import fs from 'fs/promises';
 import path from 'path';
 import { logging } from 'selenium-webdriver';

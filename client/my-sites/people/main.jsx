@@ -19,13 +19,12 @@ import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import titlecase from 'to-title-case';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
-import config from '@automattic/calypso-config';
 
 class People extends React.Component {
 	renderPeopleList() {
@@ -102,7 +101,7 @@ class People extends React.Component {
 					headerText={ translate( 'People' ) }
 					subHeaderText={ this.renderSubheaderText() }
 					align="left"
-					hasScreenOptions={ config.isEnabled( 'nav-unification/switcher' ) }
+					hasScreenOptions
 				/>
 				<div>
 					{

@@ -9,4 +9,5 @@ export const DEFAULT_PREFERENCE_VALUES = {
 	editorConfirmationDisabledSites: [],
 	colorScheme: 'default',
 	linkDestination: false,
+	homeQuickLinksToggleStatus: 'expanded',
 };

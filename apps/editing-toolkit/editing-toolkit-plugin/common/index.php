@@ -87,11 +87,11 @@ function needs_slider_width_workaround() {
  * @return bool True if antialiased font-smoothing rule should be applied.
  */
 function use_font_smooth_antialiased() {
-	if ( defined( 'A8C_USE_FONT_SMOOTHING_ANTIALIASED' ) && A8C_USE_FONT_SMOOTHING_ANTIALIASED ) {
-		return true;
+	if ( defined( 'A8C_USE_FONT_SMOOTHING_ANTIALIASED' ) ) {
+		return (bool) A8C_USE_FONT_SMOOTHING_ANTIALIASED;
 	}
 
-	return apply_filters( 'a8c_use_font_smoothing_antialiased', false );
+	return true;
 }
 
 /**
@@ -124,7 +124,7 @@ function admin_body_classes( $classes ) {
 		$classes .= ' slider-width-workaround';
 	}
 
-	if ( use_font_smooth_antialiased() ) {
+	if ( use_font_smooth_antialiased() && ! is_network_admin() ) {
 		// Extra space needed because the `legacy-color-*` class isn't adding
 		// a leading space and breaking this class string.
 		$classes .= ' font-smoothing-antialiased ';

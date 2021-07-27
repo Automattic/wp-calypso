@@ -1,8 +1,11 @@
 /**
  * External dependencies
  */
-import isJetpackPurchasableItem from '@automattic/calypso-products/src/is-jetpack-purchasable-item';
-import isJetpackLegacyItem from '@automattic/calypso-products/src/is-jetpack-legacy-item';
+import {
+	isJetpackPurchasableItem,
+	isJetpackLegacyItem,
+	TERM_MONTHLY,
+} from '@automattic/calypso-products';
 
 /**
  * Internal dependencies
@@ -12,10 +15,9 @@ import { COMPARE_PLANS_QUERY_PARAM } from './constants';
 /**
  * Type dependencies
  */
-import {
+import type {
 	JetpackLegacyPlanSlug,
 	JetpackPurchasableItemSlug,
-	TERM_MONTHLY,
 } from '@automattic/calypso-products';
 import type { PlanRecommendation } from './types';
 import type { Duration } from '../types';

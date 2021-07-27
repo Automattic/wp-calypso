@@ -1,22 +1,12 @@
-/**
- * External dependencies
- */
 import config from 'config';
-
-/**
- * External dependencies
- */
-import * as driverManager from '../../lib/driver-manager.js';
+import LoggedOutMasterbarComponent from '../../lib/components/logged-out-masterbar-component';
+import NavBarComponent from '../../lib/components/nav-bar-component.js';
 import * as dataHelper from '../../lib/data-helper';
-
+import * as driverManager from '../../lib/driver-manager.js';
+import LoginFlow from '../../lib/flows/login-flow';
+import ProfilePage from '../../lib/pages/profile-page';
 import ReaderPage from '../../lib/pages/reader-page';
 import StatsPage from '../../lib/pages/stats-page';
-import ProfilePage from '../../lib/pages/profile-page';
-
-import NavBarComponent from '../../lib/components/nav-bar-component.js';
-import LoggedOutMasterbarComponent from '../../lib/components/logged-out-masterbar-component';
-
-import LoginFlow from '../../lib/flows/login-flow';
 import WPAdminLogonPage from '../../lib/pages/wp-admin/wp-admin-logon-page.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );

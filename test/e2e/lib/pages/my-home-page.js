@@ -1,16 +1,7 @@
-/**
- * External dependencies
- */
 import assert from 'assert';
 import { By } from 'selenium-webdriver';
-
-/**
- * Internal dependencies
- */
-import * as driverHelper from '../driver-helper.js';
-
 import AsyncBaseContainer from '../async-base-container';
-import GuideComponent from '../components/guide-component';
+import * as driverHelper from '../driver-helper.js';
 
 export default class MyHomePage extends AsyncBaseContainer {
 	constructor( driver, url ) {
@@ -28,14 +19,6 @@ export default class MyHomePage extends AsyncBaseContainer {
 			'.customer-home__main [data-task="site_launched"] .nav-item__complete'
 		);
 		this.celebrateNoticeTitleLocator = By.css( '.celebrate-notice__title' );
-	}
-
-	async _postInit() {
-		if ( process.env.FLAGS === 'nav-unification' ) {
-			// Makes sure that the nav-unification welcome modal will be dismissed.
-			const guideComponent = new GuideComponent( this.driver );
-			await guideComponent.dismiss( 1000, '.nav-unification-modal' );
-		}
 	}
 
 	async closeCelebrateNotice() {

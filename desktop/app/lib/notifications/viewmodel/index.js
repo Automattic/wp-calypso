@@ -74,7 +74,8 @@ function parseNote( note ) {
 }
 
 function getSiteTitle( note ) {
-	// TODO: Cache and check site titles from Calypso
+	// TODO: Ideally we should augment the note data from the API with
+	// the site's human-readable name. Using the note's URL for now.
 	return '' || ( note.url ? url.parse( note.url ).host : note.title );
 }
 
@@ -87,7 +88,19 @@ function getApprovedStatus( note ) {
 		return false;
 	}
 
-	const actions = note.body[ 1 ].actions;
+	// Unfortunately it appears that the exact location within the note body array
+	// containing action attributes may not be consistent between note types (and
+	// has in fact changed since this code was originally written).
+	//
+	// Inspect all elements in the body array to be safe.
+	let actions = null;
+	for ( let i = 0; i < note.body.length; i++ ) {
+		actions = note.body[ i ].actions;
+		if ( actions ) {
+			break;
+		}
+	}
+
 	if ( ! actions ) {
 		return false;
 	}

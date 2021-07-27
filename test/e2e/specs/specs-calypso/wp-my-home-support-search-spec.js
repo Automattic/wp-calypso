@@ -1,20 +1,12 @@
-/**
- * External dependencies
- */
-import config from 'config';
 import assert from 'assert';
+import config from 'config';
 import { By } from 'selenium-webdriver';
-
-/**
- * Internal dependencies
- */
-import * as driverManager from '../../lib/driver-manager.js';
-import * as driverHelper from '../../lib/driver-helper.js';
-
-import LoginFlow from '../../lib/flows/login-flow.js';
-import * as dataHelper from '../../lib/data-helper';
-import SupportSearchComponent from '../../lib/components/support-search-component';
 import SidebarComponent from '../../lib/components/sidebar-component';
+import SupportSearchComponent from '../../lib/components/support-search-component';
+import * as dataHelper from '../../lib/data-helper';
+import * as driverHelper from '../../lib/driver-helper.js';
+import * as driverManager from '../../lib/driver-manager.js';
+import LoginFlow from '../../lib/flows/login-flow.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();

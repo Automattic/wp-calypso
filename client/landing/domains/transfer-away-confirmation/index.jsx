@@ -29,17 +29,7 @@ class TransferAwayConfirmationPage extends Component {
 		token: PropTypes.string.isRequired,
 	};
 
-	state = {
-		isLoading: false,
-		isProcessingRequest: false,
-		success: false,
-		error: false,
-	};
-
-	constructor( props ) {
-		super( props );
-		this.state = this.getLoadingState();
-	}
+	state = this.getLoadingState();
 
 	UNSAFE_componentWillMount() {
 		const { domain, recipientId, token } = this.props;
@@ -55,7 +45,7 @@ class TransferAwayConfirmationPage extends Component {
 		);
 	}
 
-	getLoadingState = () => {
+	getLoadingState() {
 		const { translate } = this.props;
 		return {
 			isLoading: true,
@@ -63,8 +53,9 @@ class TransferAwayConfirmationPage extends Component {
 			message: translate( 'Loading…' ),
 			actionTitle: null,
 			actionCallback: null,
+			isProcessingRequest: false,
 		};
-	};
+	}
 
 	acceptTransfer = () => {
 		const { domain, recipientId, token } = this.props;

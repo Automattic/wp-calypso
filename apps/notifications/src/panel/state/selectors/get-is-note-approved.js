@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import getNotes from './get-notes';
 import { getActions } from '../../helpers/notes';
+import getNotes from './get-notes';
 
 export const getIsNoteApproved = ( notesState, note ) => {
 	const noteApprovals = notesState.noteApprovals;

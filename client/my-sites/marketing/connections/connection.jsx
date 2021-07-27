@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
@@ -239,6 +239,10 @@ class SharingConnection extends Component {
 
 const SharingConnectionKeyringUserLabel = localize(
 	( { siteId, keyringUserId, translate, userId } ) => {
+		if ( ! keyringUserId ) {
+			return null;
+		}
+
 		const fetchOptions = {
 			search: keyringUserId,
 			search_columns: [ 'ID' ],

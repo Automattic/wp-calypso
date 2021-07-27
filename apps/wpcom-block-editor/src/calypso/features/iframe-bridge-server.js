@@ -78,7 +78,7 @@ function handlePostTrash( calypsoPort ) {
 				 * More context:
 				 * - https://github.com/WordPress/gutenberg/issues/27088;
 				 * - https://github.com/WordPress/gutenberg/pull/32153.
-				 **/
+				 */
 				const namespace = store.name ?? store;
 				const actions = { ...registry.dispatch( namespace ) };
 
@@ -453,74 +453,81 @@ function handleUpdateImageBlocks( calypsoPort ) {
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handlePreview( calypsoPort ) {
-	$( '#editor' ).on( 'click', '.editor-post-preview', ( e ) => {
-		e.preventDefault();
-		e.stopPropagation();
-
-		const postUrl = select( 'core/editor' ).getCurrentPostAttribute( 'link' );
-		const previewChannel = new MessageChannel();
-
-		calypsoPort.postMessage(
-			{
-				action: 'previewPost',
-				payload: {
-					postUrl: postUrl,
-				},
-			},
-			[ previewChannel.port2 ]
-		);
-
-		const isAutosaveable = select( 'core/editor' ).isEditedPostAutosaveable();
-
-		// If we don't need to autosave the post before previewing, then we simply
-		// generate the preview.
-		if ( ! isAutosaveable ) {
-			sendPreviewData();
-			return;
-		}
-
-		// Request an autosave before generating the preview.
-		const postStatus = select( 'core/editor' ).getEditedPostAttribute( 'status' );
-		const isDraft = [ 'draft', 'auto-draft' ].indexOf( postStatus ) !== -1;
-		if ( isDraft ) {
-			dispatch( 'core/editor' ).savePost( { isPreview: true } );
-		} else {
-			dispatch( 'core/editor' ).autosave( { isPreview: true } );
-		}
-		const unsubscribe = subscribe( () => {
-			const previewUrl = select( 'core/editor' ).getEditedPostPreviewLink();
-			if ( previewUrl ) {
-				unsubscribe();
-				sendPreviewData();
+	document.getElementById( 'editor' )?.addEventListener(
+		'click',
+		( e ) => {
+			if ( ! e.target.classList.contains( 'editor-post-preview' ) ) {
+				return;
 			}
-		} );
+			e.preventDefault();
+			e.stopPropagation();
 
-		function sendPreviewData() {
-			const previewUrl = select( 'core/editor' ).getEditedPostPreviewLink();
+			const postUrl = select( 'core/editor' ).getCurrentPostAttribute( 'link' );
+			const previewChannel = new MessageChannel();
 
-			const featuredImageId = select( 'core/editor' ).getEditedPostAttribute( 'featured_media' );
-			const featuredImage = featuredImageId
-				? get( select( 'core' ).getMedia( featuredImageId ), 'source_url' )
-				: null;
+			calypsoPort.postMessage(
+				{
+					action: 'previewPost',
+					payload: {
+						postUrl: postUrl,
+					},
+				},
+				[ previewChannel.port2 ]
+			);
 
-			const authorId = select( 'core/editor' ).getCurrentPostAttribute( 'author' );
-			const author = find( select( 'core' ).getAuthors(), { id: authorId } );
-			const editedPost = {
-				title: select( 'core/editor' ).getEditedPostAttribute( 'title' ),
-				URL: select( 'core/editor' ).getEditedPostAttribute( 'link' ),
-				excerpt: select( 'core/editor' ).getEditedPostAttribute( 'excerpt' ),
-				content: select( 'core/editor' ).getEditedPostAttribute( 'content' ),
-				featured_image: featuredImage,
-				author: author,
-			};
+			const isAutosaveable = select( 'core/editor' ).isEditedPostAutosaveable();
 
-			previewChannel.port1.postMessage( {
-				previewUrl: previewUrl,
-				editedPost: editedPost,
+			// If we don't need to autosave the post before previewing, then we simply
+			// generate the preview.
+			if ( ! isAutosaveable ) {
+				sendPreviewData();
+				return;
+			}
+
+			// Request an autosave before generating the preview.
+			const postStatus = select( 'core/editor' ).getEditedPostAttribute( 'status' );
+			const isDraft = [ 'draft', 'auto-draft' ].indexOf( postStatus ) !== -1;
+			if ( isDraft ) {
+				dispatch( 'core/editor' ).savePost( { isPreview: true } );
+			} else {
+				dispatch( 'core/editor' ).autosave( { isPreview: true } );
+			}
+			const unsubscribe = subscribe( () => {
+				const previewUrl = select( 'core/editor' ).getEditedPostPreviewLink();
+				if ( previewUrl ) {
+					unsubscribe();
+					sendPreviewData();
+				}
 			} );
-			previewChannel.port1.close();
-		}
-	} );
+
+			function sendPreviewData() {
+				const previewUrl = select( 'core/editor' ).getEditedPostPreviewLink();
+
+				const featuredImageId = select( 'core/editor' ).getEditedPostAttribute( 'featured_media' );
+				const featuredImage = featuredImageId
+					? get( select( 'core' ).getMedia( featuredImageId ), 'source_url' )
+					: null;
+
+				const authorId = select( 'core/editor' ).getCurrentPostAttribute( 'author' );
+				const author = find( select( 'core' ).getAuthors(), { id: authorId } );
+				const editedPost = {
+					title: select( 'core/editor' ).getEditedPostAttribute( 'title' ),
+					URL: select( 'core/editor' ).getEditedPostAttribute( 'link' ),
+					excerpt: select( 'core/editor' ).getEditedPostAttribute( 'excerpt' ),
+					content: select( 'core/editor' ).getEditedPostAttribute( 'content' ),
+					featured_image: featuredImage,
+					author: author,
+				};
+
+				previewChannel.port1.postMessage( {
+					previewUrl: previewUrl,
+					editedPost: editedPost,
+				} );
+				previewChannel.port1.close();
+			}
+		},
+		{ capture: true }
+	);
 }
 
 /**
@@ -557,7 +564,9 @@ function handleCloseEditor( calypsoPort ) {
 			{
 				action: 'closeEditor',
 				payload: {
-					unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
+					unsavedChanges:
+						select( 'core' ).__experimentalGetDirtyEntityRecords?.().length > 0 ||
+						select( 'core/editor' ).isEditedPostDirty(),
 				},
 			},
 			[ port2 ]
@@ -1041,27 +1050,6 @@ function getCalypsoUrlInfo( calypsoPort ) {
 	);
 }
 
-/**
- * Passes uncaught errors in window.onerror to Calypso for logging.
- *
- * @param {MessagePort} calypsoPort Port used for communication with parent frame.
- */
-function handleUncaughtErrors( calypsoPort ) {
-	window.onerror = ( ...error ) => {
-		// Since none of Error's properties are enumerable, JSON.stringify does not work on it.
-		// We therefore stringify the error with a custom replacer containing the object's properties.
-		const errorObject = error[ 4 ]; // the 5th argument is the error object
-		error[ 4 ] =
-			errorObject && JSON.stringify( errorObject, Object.getOwnPropertyNames( errorObject ) );
-
-		// The other parameters don't need encoded since they are numbers or strings.
-		calypsoPort.postMessage( {
-			action: 'logError',
-			payload: { error },
-		} );
-	};
-}
-
 async function handleEditorLoaded( calypsoPort ) {
 	await isEditorReadyWithBlocks();
 	const isNew = select( 'core/editor' ).isCleanNewPost();
@@ -1189,7 +1177,7 @@ function initPort( message ) {
 			);
 
 			mediaSelectChannel.port1.onmessage = ( { data } ) => {
-				this.props.onSelect( data );
+				this.props.onSelect?.( data );
 
 				// this is a once-only port
 				// to send more messages we have to re-open the
@@ -1198,7 +1186,7 @@ function initPort( message ) {
 			};
 
 			mediaCancelChannel.port1.onmessage = () => {
-				this.props.onClose();
+				this.props.onClose?.();
 
 				// this is a once-only port
 				// to send more messages we have to re-open the
@@ -1260,8 +1248,6 @@ function initPort( message ) {
 		getNavSidebarLabels( calypsoPort );
 
 		getCalypsoUrlInfo( calypsoPort );
-
-		handleUncaughtErrors( calypsoPort );
 
 		handleEditorLoaded( calypsoPort );
 

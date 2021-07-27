@@ -26,7 +26,7 @@ import {
 	MEDIA_IMAGE_THUMBNAIL,
 	SCALE_TOUCH_GRID,
 } from 'calypso/lib/media/constants';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import MediaLibraryHeader from './header';
 import MediaLibraryExternalHeader from './external-media-header';

@@ -25,6 +25,7 @@ import {
 	getSite,
 } from 'calypso/state/sites/selectors';
 import { addQueryArgs } from 'calypso/lib/route';
+import { getQueryArg } from '@wordpress/url';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
 import { clearLastNonEditorRoute, setRoute } from 'calypso/state/route/actions';
 import { updateSiteFrontPage } from 'calypso/state/sites/actions';
@@ -127,7 +128,6 @@ enum EditorActions {
 	GetTemplateEditorUrl = 'getTemplateEditorUrl',
 	OpenTemplatePart = 'openTemplatePart',
 	GetCloseButtonUrl = 'getCloseButtonUrl',
-	LogError = 'logError',
 	GetGutenboardingStatus = 'getGutenboardingStatus',
 	ToggleInlineHelpButton = 'toggleInlineHelpButton',
 	GetNavSidebarLabels = 'getNavSidebarLabels',
@@ -278,7 +278,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 			// Notify external listeners that the iframe has loaded
 			this.props.setEditorIframeLoaded( true, this.iframePort );
 
-			window.performance?.mark( 'iframe_loaded' );
+			window.performance?.mark?.( 'iframe_loaded' );
 			this.setState( { isIframeLoaded: true, currentIFrameUrl: this.props.iframeUrl } );
 
 			return;
@@ -419,6 +419,19 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 
 		if ( EditorActions.OpenTemplatePart === action ) {
 			const { templatePartId, unsavedChanges } = payload;
+
+			// Prevent navigating to edit the template part if it's already being edited.
+			// Solves an issue where a click event to edit the template part is received twice.
+			// Example URL we're testing for, where the `templatePartId` is 2:
+			// `/edit/wp_template_part/{site}/2?fse_parent_post=42`
+			if (
+				new RegExp( `\\/edit\\/wp_template_part\\/.+\\/${ templatePartId }\\?`, 'i' ).test(
+					window.location.href
+				)
+			) {
+				return;
+			}
+
 			const templatePartUrl = this.getTemplateEditorUrl( templatePartId );
 			this.navigate( templatePartUrl, unsavedChanges );
 		}
@@ -473,16 +486,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 				origin: window.location.origin,
 				siteSlug: this.props.siteSlug,
 			} );
-		}
-
-		// Pipes errors in the iFrame context to the Calypso error handler if it exists:
-		if ( EditorActions.LogError === action ) {
-			const { error } = payload;
-			if ( Array.isArray( error ) && error.length > 4 && window.onerror ) {
-				const errorObject = error[ 4 ];
-				error[ 4 ] = errorObject && JSON.parse( errorObject );
-				window.onerror( ...error );
-			}
 		}
 
 		if ( EditorActions.PostStatusChange === action ) {
@@ -853,6 +856,7 @@ const mapStateToProps = (
 		'new-homepage': creatingNewHomepage,
 		...( !! stripeConnectSuccess && { stripe_connect_success: stripeConnectSuccess } ),
 		...anchorFmData,
+		openSidebar: getQueryArg( window.location.href, 'openSidebar' ),
 	} );
 
 	// needed for loading the editor in SU sessions

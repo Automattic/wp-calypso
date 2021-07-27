@@ -22,7 +22,7 @@ export function resolveDomainStatus(
 		case domainTypes.MAPPED:
 			if ( isExpiringSoon( domain, 30 ) ) {
 				const expiresMessage = translate( 'Expires in %(days)s', {
-					args: { days: moment.utc( domain.expiry ).fromNow( true ) },
+					args: { days: moment( domain.expiry ).fromNow( true ) },
 				} );
 
 				if ( isExpiringSoon( domain, 5 ) ) {
@@ -111,7 +111,7 @@ export function resolveDomainStatus(
 
 			if ( isExpiringSoon( domain, 30 ) ) {
 				const expiresMessage = translate( 'Expires in %(days)s', {
-					args: { days: moment.utc( domain.expiry ).fromNow( true ) },
+					args: { days: moment( domain.expiry ).fromNow( true ) },
 				} );
 
 				if ( isExpiringSoon( domain, 5 ) ) {

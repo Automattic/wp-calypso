@@ -34,7 +34,7 @@ import {
 	domainUseYourDomain,
 } from 'calypso/my-sites/domains/paths';
 import { isATEnabled } from 'calypso/lib/automated-transfer';
-import JetpackManageErrorPage from 'calypso/my-sites/jetpack-manage-error-page';
+import EmptyContent from 'calypso/components/empty-content';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
@@ -256,7 +256,14 @@ const jetpackNoDomainsWarning = ( context, next ) => {
 					path={ context.path.indexOf( '/domains/add' ) === 0 ? '/domains/add' : '/domains/manage' }
 					title="My Sites > Domains > No Domains On Jetpack"
 				/>
-				<JetpackManageErrorPage template="noDomainsOnJetpack" siteId={ selectedSite.ID } />
+				<EmptyContent
+					title={ translate( 'Domains are not available for this site.' ) }
+					line={ translate(
+						'You can only purchase domains for sites hosted on WordPress.com at this time.'
+					) }
+					action={ translate( 'View Plans' ) }
+					actionURL={ '/plans/' + ( selectedSite.slug || '' ) }
+				/>
 			</Main>
 		);
 

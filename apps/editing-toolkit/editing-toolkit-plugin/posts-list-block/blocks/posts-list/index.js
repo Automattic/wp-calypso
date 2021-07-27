@@ -1,24 +1,18 @@
-/**
- * WordPress dependencies
- */
+import { InspectorControls } from '@wordpress/block-editor';
 import {
 	registerBlockType,
 	switchToBlockType,
 	getPossibleBlockTransformations,
 } from '@wordpress/blocks';
-import { __ } from '@wordpress/i18n';
 import { Placeholder, RangeControl, PanelBody, Notice } from '@wordpress/components';
-import { Fragment } from '@wordpress/element';
-import { InspectorControls } from '@wordpress/block-editor';
 import { select, dispatch } from '@wordpress/data';
-
-/**
- * Internal dependencies
- */
+import { Fragment } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import metadata from './block.json';
+import { transforms, isValidHomepagePostsBlockType } from './transforms';
+
 import './editor.scss';
 import './style.scss';
-import { transforms, isValidHomepagePostsBlockType } from './transforms';
 
 const icon = (
 	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">

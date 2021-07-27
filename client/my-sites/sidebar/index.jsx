@@ -36,7 +36,7 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isSidebarSectionOpen } from 'calypso/state/my-sites/sidebar/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
@@ -678,34 +678,21 @@ export class MySitesSidebar extends Component {
 	};
 
 	store() {
-		const {
-			translate,
-			site,
-			siteSuffix,
-			canUserUseWooCommerceCoreStore,
-			isSiteWpcomStore,
-		} = this.props;
+		const { translate, site, canUserUseWooCommerceCoreStore, isSiteWpcomStore } = this.props;
 
 		if ( ! site ) {
 			return null;
 		}
 
-		let experience = 'calypso-store';
-		let storeLink = '/store' + siteSuffix;
-		if ( isEcommerce( site.plan ) && canUserUseWooCommerceCoreStore ) {
-			// Eventually, the plan is to have the WooCommerce Core menu item labelled the same
-			// for both Business and eCommerce users. But, for now, we want to continue to
-			// use the "Store" label for eCommerce users because that is what they are used to.
-			// So, we'll just continue to change the link here as we have been doing.
-			experience = 'wpadmin-woocommerce-core';
-			storeLink = site.options.admin_url + 'admin.php?page=wc-admin';
-		} else {
+		if ( ! isEcommerce( site.plan ) || ! canUserUseWooCommerceCoreStore ) {
 			return null;
 		}
 
 		if ( ! isSiteWpcomStore && isBusiness( site.plan ) ) {
 			return null;
 		}
+
+		const storeLink = site.options.admin_url + 'admin.php?page=wc-admin';
 
 		const infoCopy = translate(
 			'Your favorite Store functions will become part of WooCommerce menus in February. {{link}}Learn more{{/link}}.',
@@ -729,7 +716,7 @@ export class MySitesSidebar extends Component {
 				onNavigate={ this.trackWooCommerceNavItemClick.bind(
 					this,
 					'store',
-					experience,
+					'wpadmin-woocommerce-core',
 					site.plan.product_slug
 				) }
 				materialIcon="shopping_cart"

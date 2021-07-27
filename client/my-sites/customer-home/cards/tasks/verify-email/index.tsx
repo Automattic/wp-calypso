@@ -1,13 +1,7 @@
-/**
- * External dependencies
- */
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { TASK_VERIFY_EMAIL } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 import { verifyEmail } from 'calypso/state/current-user/email-verification/actions';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
@@ -36,6 +30,7 @@ const VerifyEmail = (): React.ReactElement => {
 			actionOnClick={ () => dispatch( verifyEmail( { showGlobalNotices: true } ) ) }
 			badgeText={ translate( 'Action required' ) }
 			showSkip={ false }
+			taskId={ TASK_VERIFY_EMAIL }
 		/>
 	);
 };

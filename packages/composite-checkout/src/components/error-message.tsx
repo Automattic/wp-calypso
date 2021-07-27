@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import styled from '../lib/styled';
 
 export default function ErrorMessage( { children }: { children?: React.ReactNode } ) {

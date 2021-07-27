@@ -15,7 +15,7 @@ import MagicLogin from './magic-login';
 import WPLogin from './wp-login';
 import { getUrlParts } from '@automattic/calypso-url';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
-import { getCurrentUser, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 
 const enhanceContextWithLogin = ( context ) => {
 	const {
@@ -137,7 +137,7 @@ export function redirectDefaultLocale( context, next ) {
 
 	// Do not redirect if user bootrapping is disabled
 	if (
-		! getCurrentUser( context.store.getState() ) &&
+		! isUserLoggedIn( context.store.getState() ) &&
 		! config.isEnabled( 'wpcom-user-bootstrap' )
 	) {
 		return next();

@@ -5,7 +5,7 @@ import classnames from 'classnames';
 import React, { Component, Fragment } from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
-import { flowRight, includes } from 'lodash';
+import { flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
 /**
  * External dependencies
@@ -174,8 +174,7 @@ export class OrgCredentialsForm extends Component {
 	}
 
 	isInvalidCreds() {
-		const { installError } = this.props;
-		return includes( [ INVALID_CREDENTIALS ], this.getError( installError ) );
+		return this.getError( this.props.installError ) === INVALID_CREDENTIALS;
 	}
 
 	isInvalidUsername() {

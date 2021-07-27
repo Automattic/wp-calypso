@@ -20,7 +20,7 @@ const ProductCardPromoNudge = ( { badgeText, text } ) => {
 
 ProductCardPromoNudge.propTypes = {
 	badgeText: PropTypes.string,
-	text: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] ),
+	text: PropTypes.node,
 };
 
 export default ProductCardPromoNudge;

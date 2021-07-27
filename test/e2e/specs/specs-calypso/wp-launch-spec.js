@@ -1,22 +1,14 @@
-/**
- * External dependencies
- */
 import config from 'config';
-
-/**
- * Internal dependencies
- */
-import * as driverManager from '../../lib/driver-manager.js';
+import FindADomainComponent from '../../lib/components/find-a-domain-component.js';
+import SidebarComponent from '../../lib/components/sidebar-component';
 import * as dataHelper from '../../lib/data-helper.js';
-
-import SignUpFlow from '../../lib/flows/sign-up-flow.js';
-import LoginFlow from '../../lib/flows/login-flow.js';
+import * as driverManager from '../../lib/driver-manager.js';
 import CreateSiteFlow from '../../lib/flows/create-site-flow.js';
-import LaunchSiteFlow from '../../lib/flows/launch-site-flow.js';
 import DeleteAccountFlow from '../../lib/flows/delete-account-flow.js';
 import DeleteSiteFlow from '../../lib/flows/delete-site-flow.js';
-import SidebarComponent from '../../lib/components/sidebar-component';
-import FindADomainComponent from '../../lib/components/find-a-domain-component.js';
+import LaunchSiteFlow from '../../lib/flows/launch-site-flow.js';
+import LoginFlow from '../../lib/flows/login-flow.js';
+import SignUpFlow from '../../lib/flows/sign-up-flow.js';
 import MyHomePage from '../../lib/pages/my-home-page.js';
 
 const host = dataHelper.getJetpackHost();

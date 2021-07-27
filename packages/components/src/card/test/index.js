@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { shallow } from 'enzyme';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import Card from '../';
 import CompactCard from '../compact';
 

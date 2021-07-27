@@ -80,7 +80,6 @@ export class AppsBadge extends PureComponent {
 		const shouldLoadExternalImage = ! startsWith( localeSlug, 'en' );
 
 		this.state = {
-			shouldLoadExternalImage,
 			imageSrc: shouldLoadExternalImage
 				? APP_STORE_BADGE_URLS[ props.storeName ].src.replace( '{localeSlug}', localeSlug )
 				: APP_STORE_BADGE_URLS[ props.storeName ].defaultSrc,
