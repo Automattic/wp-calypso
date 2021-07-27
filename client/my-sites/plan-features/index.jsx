@@ -547,7 +547,8 @@ export class PlanFeatures extends Component {
 			productSlug,
 		} = singlePlanProperties;
 
-		if ( ownPropsOnUpgradeClick && ownPropsOnUpgradeClick !== noop && cartItemForPlan ) {
+		if ( ownPropsOnUpgradeClick && ownPropsOnUpgradeClick !== noop ) {
+			// cartItemForPlan can be null, which implies a free plan
 			ownPropsOnUpgradeClick( cartItemForPlan );
 			return;
 		}
