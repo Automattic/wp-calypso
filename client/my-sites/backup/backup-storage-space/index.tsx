@@ -60,7 +60,9 @@ export const BackupStorageSpace: FunctionComponent< Props > = () => {
 	return (
 		<Card className="backup-storage-space">
 			<div className="backup-storage-space__progress-bar-container">
-				<div>{ translate( 'Storage space' ) }</div>
+				<div className="backup-storage-space__progress-heading">
+					{ translate( 'Storage space' ) }
+				</div>
 				<div className="backup-storage-space__progress-bar">
 					<ProgressBar
 						className={ progressBarWarning }
@@ -68,7 +70,7 @@ export const BackupStorageSpace: FunctionComponent< Props > = () => {
 						total={ storageLimit }
 					/>
 				</div>
-				<div>{ title }</div>
+				<div className="backup-storage-space__progress-usage-text">{ title }</div>
 			</div>
 			{ showUpsell && (
 				<>
