@@ -120,7 +120,7 @@ function enqueue_script() {
  * decide what tool to activate.
  */
 function setup_error_reporting() {
-	add_action( 'admin_print_scripts', __NAMESPACE__ . '\head_error_handler' );
+	add_action( 'admin_print_scripts', __NAMESPACE__ . '\head_error_handler', 0 );
 	add_filter( 'script_loader_tag', __NAMESPACE__ . '\add_crossorigin_to_script_els', 99, 2 );
 	// We load as last as possible for perf reasons. The head handler will
 	// capture errors until the main handler is loaded.
