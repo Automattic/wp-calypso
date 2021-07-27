@@ -1,7 +1,7 @@
 @import '@automattic/onboarding/styles/mixins';
 @import '../../../../landing/gutenboarding/onboarding-block/colors.scss';
 
-$progress-duration: 800ms;
+$progress-duration: 20000ms;
 
 .transfer-pending {
 	padding: 1em;
