@@ -66,7 +66,7 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 	);
 
 	const jetpackInstallInstructionsLink =
-		'https://jetpack.com/support/getting-started-with-jetpack/';
+		'https://jetpack.com/support/install-jetpack-and-connect-your-new-plan/';
 
 	const [ siteInput, setSiteInput ] = useState( '' );
 	const [ isFormDirty, setIsFormDirty ] = useState( false );
