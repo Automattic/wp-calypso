@@ -639,7 +639,7 @@ async function getElementsTranslations( elements, locale, project ) {
 		return null;
 	}
 
-	const originals = await webdriver.promise.map( elements, async ( element ) => {
+	const originals = await promise.map( elements, async ( element ) => {
 		const singular = await element.getAttribute( 'data-e2e-string' );
 		return { singular };
 	} );
@@ -654,8 +654,8 @@ export async function verifyTranslationsPresent(
 	waitOverride
 ) {
 	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
-	const translatableElements = await webdriver.promise.filter(
-		await driver.findElements( by.css( selector ) ),
+	const translatableElements = await promise.filter(
+		await driver.findElements( By.css( selector ) ),
 		Boolean
 	);
 	const translations = await getElementsTranslations( translatableElements, locale );
