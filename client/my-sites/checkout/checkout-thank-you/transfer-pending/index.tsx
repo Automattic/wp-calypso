@@ -4,15 +4,13 @@
 import * as React from 'react';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-//import { useSelect } from '@wordpress/data';
-import { useInterval } from '../../../../lib/interval/use-interval';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-// import { useSelectedPlan } from '../../hooks/use-selected-plan';
-// import { useTrackStep } from '../../hooks/use-track-step';
-// import { STORE_KEY } from '../../stores/onboard';
+import { hideMasterbar, showMasterbar } from 'calypso/state/ui/masterbar-visibility/actions';
+import { useInterval } from '../../../../lib/interval/use-interval';
 
 /**
  * Style dependencies
@@ -25,16 +23,15 @@ const DURATION_IN_MS = 60000;
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const TransferPending: React.FunctionComponent = () => {
 	const { __ } = useI18n();
-	//const hasPaidDomain = useSelect( ( select ) => select( STORE_KEY ).hasPaidDomain() );
-	//const plan = useSelectedPlan();
+	const dispatch = useDispatch();
 
-	const steps = React.useRef< string[] >(
-		[
-			__( 'Processing your payment' ),
-			__( 'Installing plugin' ),
-			__( 'Activating plugin' ),
-		].filter( Boolean ) as string[]
-	);
+	const steps = React.useRef< string[] >( [
+		__( 'Upgrading your site' ),
+		__( 'Installing plugin' ),
+		__( 'Activating plugin' ),
+	] );
+	// add more steps
+
 	const totalSteps = steps.current.length;
 
 	const [ currentStep, setCurrentStep ] = React.useState( 0 );
@@ -57,6 +54,14 @@ const TransferPending: React.FunctionComponent = () => {
 		const id = setTimeout( () => setHasStarted( true ), 750 );
 		return () => clearTimeout( id );
 	}, [] );
+
+	// Hide toolbar while component is mounted
+	React.useEffect( () => {
+		dispatch( hideMasterbar() );
+		return () => {
+			dispatch( showMasterbar() );
+		};
+	}, [ dispatch ] );
 
 	return (
 		<div className="transfer-pending">
