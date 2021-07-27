@@ -103,6 +103,8 @@
 		"@automattic/plans-grid": "^1.0.0-alpha.0",
 		"@automattic/typography": "^1.0.0",
 		"@babel/core": "^7.14.0",
+		"@sentry/browser": "^6.8.0",
+		"@sentry/tracing": "^6.8.0",
 		"@wordpress/a11y": "^2.15.3",
 		"@wordpress/api-fetch": "^4.0.0",
 		"@wordpress/base-styles": "^3.4.3",
