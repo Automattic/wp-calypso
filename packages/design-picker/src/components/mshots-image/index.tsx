@@ -1,14 +1,8 @@
-/**
- * External dependencies
- */
-import React, { useState, useEffect, useRef } from 'react';
-import classnames from 'classnames';
 import { addQueryArgs } from '@wordpress/url';
+import classnames from 'classnames';
 import debugFactory from 'debug';
+import React, { useState, useEffect, useRef } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface MShotsImageProps {

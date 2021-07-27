@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { shuffleArray } from '../shuffle';
 
 const TEST_ARRAY_EMPTY = [];

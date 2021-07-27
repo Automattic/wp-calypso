@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 export { default } from './components';
 
 export { default as MShotsImage } from './components/mshots-image';
