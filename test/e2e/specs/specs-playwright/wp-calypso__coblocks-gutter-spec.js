@@ -27,13 +27,13 @@ describe( DataHelper.createSuiteTitle( 'WPCOM-specific gutter controls' ), () =>
 		gutenbergEditorPage = await GutenbergEditorPage.Expect( page );
 	} );
 
-	it( 'Open settings sidebar', async function () {
-		await gutenbergEditorPage.openSettings();
-	} );
-
 	it( 'Insert Pricing Table block', async function () {
 		const blockHandle = await gutenbergEditorPage.addBlock( 'Pricing Table' );
 		pricingTableBlock = new PricingTableBlock( blockHandle );
+	} );
+
+	it( 'Open settings sidebar', async function () {
+		await gutenbergEditorPage.openSettings();
 	} );
 
 	it.each`
