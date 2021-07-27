@@ -191,7 +191,7 @@ export const getTask = (
 				actionUrl: `/themes/${ siteSlug }`,
 			};
 			break;
-		case CHECKLIST_KNOWN_TASKS.SETUP_YOUR_PROFESSIONAL_EMAIL:
+		case CHECKLIST_KNOWN_TASKS.PROFESSIONAL_EMAIL_MAILBOX_CREATED:
 			taskData = {
 				timing: 2,
 				title: translate( 'Setup your professional Email' ),
