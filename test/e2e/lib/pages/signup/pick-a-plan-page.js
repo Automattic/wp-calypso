@@ -29,13 +29,11 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 	}
 
 	async _selectPlan( level ) {
-		const planLocator = `button.is-${ level }-plan`;
+		const planLocator = `.button.is-${ level }-plan`;
 
 		const locator = By.css( planLocator );
 
-		console.error( 'locating', planLocator );
-		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, planLocator );
-		console.error( 'located', planLocator );
+		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, locator );
 
 		await this.scrollPlanInToView( level );
 
