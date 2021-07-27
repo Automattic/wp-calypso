@@ -9,6 +9,7 @@ import { sprintf } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
+import { preventWidows } from 'calypso/lib/formatting';
 import Gridicon from 'calypso/components/gridicon';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { useTranslate } from 'i18n-calypso';
@@ -83,8 +84,8 @@ export const BackupStorageSpaceUpsell: FunctionComponent< Props > = ( {
 		'out_of_storage' === upsellOption
 			? translate( 'Your Backup storage is full and new backups have been paused' )
 			: undefined;
-	const statusText = getStatusText( upsellOption, storageLimit, translate );
-	const actionText = translate( 'Upgrade your backup storage to 2TB' );
+	const statusText = preventWidows( getStatusText( upsellOption, storageLimit, translate ) );
+	const actionText = preventWidows( translate( 'Upgrade your backup storage to 2TB' ) );
 
 	return (
 		<>
