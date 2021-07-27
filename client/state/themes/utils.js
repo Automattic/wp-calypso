@@ -47,7 +47,7 @@ export function normalizeJetpackTheme( theme = {} ) {
 		...omit( theme, 'tags' ),
 		taxonomies: {
 			// Map slugs only since JP sites give us no names
-			theme_feature: map( theme.tags, ( slug ) => ( { slug } ) ),
+			theme_feature: theme.tags.map( ( slug ) => ( { slug } ) ),
 		},
 	};
 }
@@ -103,7 +103,7 @@ export function normalizeWporgTheme( theme ) {
 	return {
 		...omit( normalizedTheme, 'tags' ),
 		taxonomies: {
-			theme_feature: map( normalizedTheme.tags, ( name, slug ) => ( { name, slug } ) ),
+			theme_feature: normalizedTheme.tags.map( ( name, slug ) => ( { name, slug } ) ),
 		},
 	};
 }

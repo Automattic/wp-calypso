@@ -266,12 +266,12 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 
 		const trademarkNumberValidationMessage = () => {
 			if ( this.props.isManaged ) {
-				return map( [ ...new Set( validationErrors.trademarkNumber ) ], ( error ) =>
+				return [ ...new Set( validationErrors.trademarkNumber ) ].map( ( error ) =>
 					renderValidationError( error )
 				);
 			}
 
-			return map( validationErrors.trademarkNumber, ( error ) =>
+			return validationErrors.trademarkNumber.map( ( error ) =>
 				renderValidationError( trademarkNumberStrings[ error ] )
 			);
 		};
@@ -315,7 +315,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 					: renderValidationError( contactDetailsValidationErrors.organization );
 			}
 
-			return map( contactDetailsValidationErrors.organization, ( error ) =>
+			return contactDetailsValidationErrors.organization.map( ( error ) =>
 				renderValidationError( organizationValidationStrings[ error ] )
 			);
 		};

@@ -58,7 +58,7 @@ class EditorMediaModalGalleryEdit extends React.Component {
 		return (
 			<div>
 				<EllipsisMenu popoverClassName="gallery__order-popover" position="bottom right">
-					{ map( orders, ( orderedItems, name ) => {
+					{ orders.map( ( orderedItems, name ) => {
 						const boundAction = () => onUpdateSetting( { items: orderedItems } );
 						return (
 							<PopoverMenuItem key={ name } onClick={ boundAction }>

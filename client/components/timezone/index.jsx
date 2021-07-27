@@ -26,12 +26,12 @@ class Timezone extends Component {
 	renderOptionsByContinent() {
 		const { timezones } = this.props;
 
-		return map( timezones, ( timezoneContinent ) => {
+		return timezones.map( ( timezoneContinent ) => {
 			const [ continent, countries ] = timezoneContinent;
 
 			return (
 				<optgroup label={ continent } key={ continent }>
-					{ map( countries, ( timezone, index ) => {
+					{ countries.map( ( timezone, index ) => {
 						const [ value, label ] = timezone;
 
 						return (
@@ -50,7 +50,7 @@ class Timezone extends Component {
 
 		return (
 			<optgroup label={ translate( 'Manual Offsets' ) }>
-				{ map( rawOffsets, ( label, value ) => {
+				{ rawOffsets.map( ( label, value ) => {
 					return (
 						<option value={ value } key={ value }>
 							{ label }

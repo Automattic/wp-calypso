@@ -22,7 +22,7 @@ import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-f
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export function fromApi( apiResponse ) {
-	const feeds = map( apiResponse.feeds, ( feed ) => ( {
+	const feeds = apiResponse.feeds.map( ( feed ) => ( {
 		...feed,
 		feed_URL: feed.subscribe_URL,
 	} ) );

@@ -18,7 +18,7 @@ export const asyncLoader = ( { promises, loading, success, failure } ) =>
 			// on the first rejection instead of an array as when they all
 			// resolve. this is for our own accounting and ensures that
 			// we wait for all promises to fulfill
-			const runners = map( promises, ( promise, key ) =>
+			const runners = promises.map( ( promise, key ) =>
 				promise
 					.then( ( a ) => {
 						if ( this._isMounted ) {

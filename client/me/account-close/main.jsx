@@ -205,7 +205,7 @@ class AccountSettingsClose extends Component {
 											'You will also lose access to the following premium themes you have purchased:'
 										) }
 										<ul className="account-close__theme-list">
-											{ map( purchasedPremiumThemes, ( purchasedPremiumTheme ) => {
+											{ purchasedPremiumThemes.map( ( purchasedPremiumTheme ) => {
 												return (
 													<li key={ purchasedPremiumTheme.id }>
 														{ purchasedPremiumTheme.productName }

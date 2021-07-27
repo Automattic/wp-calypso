@@ -39,7 +39,7 @@ class GravatarCaterpillar extends React.Component {
 
 		return (
 			<div className="gravatar-caterpillar" onClick={ onClick } aria-hidden="true">
-				{ map( displayedUsers, ( user, index ) => {
+				{ displayedUsers.map( ( user, index ) => {
 					let gravClasses = 'gravatar-caterpillar__gravatar';
 					// If we have more than x gravs,
 					// add a additional class so we can hide some on small screens

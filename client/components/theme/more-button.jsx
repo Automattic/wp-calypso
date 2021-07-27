@@ -73,7 +73,7 @@ class ThemeMoreButton extends Component {
 						onClose={ this.closePopover }
 						position="top left"
 					>
-						{ map( this.props.options, ( option, key ) => {
+						{ this.props.options.map( ( option, key ) => {
 							if ( option.separator ) {
 								return <PopoverMenuSeparator key={ key } />;
 							}

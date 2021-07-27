@@ -121,7 +121,7 @@ export function items( state = {}, action ) {
 		}
 		case COMMENTS_RECEIVE: {
 			const { skipSort } = action;
-			const comments = map( action.comments, ( _comment ) => ( {
+			const comments = action.comments.map( ( _comment ) => ( {
 				..._comment,
 				contiguous: ! action.commentById,
 				has_link: commentHasLink( _comment.content, _comment.has_link ),
@@ -192,7 +192,7 @@ export function pendingItems( state = {}, action ) {
 
 	switch ( type ) {
 		case COMMENTS_UPDATES_RECEIVE: {
-			const comments = map( action.comments, ( _comment ) => ( {
+			const comments = action.comments.map( ( _comment ) => ( {
 				..._comment,
 				contiguous: ! action.commentById,
 				has_link: commentHasLink( _comment.content, _comment.has_link ),
@@ -260,7 +260,7 @@ export const expansions = ( state = {}, action ) => {
 			const stateKey = getStateKey( siteId, postId );
 			const currentExpansions = state[ stateKey ] || {};
 
-			const newDisplayTypes = map( commentIds, ( id ) => {
+			const newDisplayTypes = commentIds.map( ( id ) => {
 				if (
 					! has( currentExpansions, id ) ||
 					expansionValue( displayType ) > expansionValue( currentExpansions[ id ] )

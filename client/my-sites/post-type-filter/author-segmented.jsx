@@ -26,7 +26,7 @@ const AuthorSegmented = ( { author, siteSlug, statusSlug, translate, user, type 
 
 	return (
 		<NavSegmented label={ translate( 'Author', { context: 'Filter group label for segmented' } ) }>
-			{ map( scopes, ( label, scope ) => {
+			{ scopes.map( ( label, scope ) => {
 				const isMe = 'me' === scope;
 				const path = compact( [
 					basePath,

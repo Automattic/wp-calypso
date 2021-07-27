@@ -93,7 +93,7 @@ export class PlanFeaturesComparison extends Component {
 	renderPlanHeaders() {
 		const { basePlansPath, planProperties, isReskinned } = this.props;
 
-		return map( planProperties, ( properties ) => {
+		return planProperties.map( ( properties ) => {
 			const {
 				availableForPurchase,
 				currencyCode,
@@ -158,7 +158,7 @@ export class PlanFeaturesComparison extends Component {
 	renderTopButtons() {
 		const { isInSignup, isLaunchPage, planProperties } = this.props;
 
-		return map( planProperties, ( properties ) => {
+		return planProperties.map( ( properties ) => {
 			const { availableForPurchase } = properties;
 			const {
 				current,
@@ -207,7 +207,7 @@ export class PlanFeaturesComparison extends Component {
 
 	renderPlanFeatureRows() {
 		const longestFeatures = this.getLongestFeaturesList();
-		return map( longestFeatures, ( featureKey, rowIndex ) => {
+		return longestFeatures.map( ( featureKey, rowIndex ) => {
 			return (
 				<tr key={ rowIndex } className="plan-features-comparison__row">
 					{ this.renderPlanFeatureColumns( rowIndex ) }
@@ -260,7 +260,7 @@ export class PlanFeaturesComparison extends Component {
 	renderPlanFeatureColumns( rowIndex ) {
 		const { planProperties, selectedFeature } = this.props;
 
-		return map( planProperties, ( properties, mapIndex ) => {
+		return planProperties.map( ( properties, mapIndex ) => {
 			const { features, planName } = properties;
 			const featureKeys = Object.keys( features );
 			const key = featureKeys[ rowIndex ];

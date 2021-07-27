@@ -149,9 +149,11 @@ export function persistOnChange( reduxStore, currentUserId ) {
 			const _timestamp = Date.now();
 			const reduxStateKey = getReduxStateKey( currentUserId );
 
-			const storeTasks = map( serializedState.get(), ( data, storageKey ) =>
-				persistentStoreState( reduxStateKey, storageKey, data, _timestamp )
-			);
+			const storeTasks = serializedState
+				.get()
+				.map( ( data, storageKey ) =>
+					persistentStoreState( reduxStateKey, storageKey, data, _timestamp )
+				);
 
 			Promise.all( storeTasks ).catch( ( setError ) =>
 				debug( 'failed to set redux-store state', setError )

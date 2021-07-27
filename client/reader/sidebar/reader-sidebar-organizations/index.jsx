@@ -19,7 +19,7 @@ export class ReaderSidebarOrganizations extends Component {
 
 	renderItems() {
 		const { organizations, path } = this.props;
-		return map( organizations, ( organization ) => (
+		return organizations.map( ( organization ) => (
 			<ReaderSidebarOrganizationsList
 				key={ organization.id }
 				path={ path }

@@ -36,7 +36,7 @@ class PostSuggestions extends Component {
 
 	render() {
 		const { exclude, posts, search, siteId } = this.props;
-		const suggestions = map( posts, ( post ) => ( { label: post.title, postId: post.ID } ) );
+		const suggestions = posts.map( ( post ) => ( { label: post.title, postId: post.ID } ) );
 
 		return (
 			<Fragment>

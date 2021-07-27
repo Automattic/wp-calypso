@@ -45,7 +45,7 @@ const mapPosts = ( commentIds, apiPostId ) => {
 };
 
 const mapTree = ( tree, status, type ) => {
-	return map( flatMap( tree, mapPosts ), ( [ commentId, postId, commentParentId ] ) => ( {
+	return flatMap( tree, mapPosts ).map( ( [ commentId, postId, commentParentId ] ) => ( {
 		commentId,
 		commentParentId,
 		postId,

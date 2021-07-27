@@ -185,7 +185,7 @@ export class CommentTree extends Component {
 				{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
 				<TransitionGroup className="comment-list__transition-wrapper">
 					{ /* eslint-enable wpcalypso/jsx-classname-namespace */ }
-					{ map( commentsPage, ( commentId ) => (
+					{ commentsPage.map( ( commentId ) => (
 						<CommentTransition key={ `comment-${ siteId }-${ commentId }` }>
 							<Comment
 								commentId={ commentId }

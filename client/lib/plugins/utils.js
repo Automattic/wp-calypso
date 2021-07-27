@@ -225,7 +225,7 @@ export function normalizePluginsList( pluginsList ) {
 	if ( ! pluginsList ) {
 		return [];
 	}
-	return map( pluginsList, ( pluginData ) => normalizePluginData( pluginData ) );
+	return pluginsList.map( ( pluginData ) => normalizePluginData( pluginData ) );
 }
 
 /**

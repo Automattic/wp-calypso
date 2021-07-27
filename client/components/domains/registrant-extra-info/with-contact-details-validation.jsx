@@ -26,12 +26,14 @@ export function disableSubmitButton( children ) {
 		return children;
 	}
 
-	return map( Array.isArray( children ) ? children : [ children ], ( child, index ) =>
-		React.cloneElement( child, {
-			disabled: !! child.props.className.match( /submit-button/ ) || child.props.disabled,
-			key: index,
-		} )
-	);
+	return Array.isArray( children )
+		? children
+		: [ children ].map( ( child, index ) =>
+				React.cloneElement( child, {
+					disabled: !! child.props.className.match( /submit-button/ ) || child.props.disabled,
+					key: index,
+				} )
+		  );
 }
 
 /*

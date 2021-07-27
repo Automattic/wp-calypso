@@ -8,7 +8,7 @@ import { get, map } from 'lodash';
 const EditorTemplateClasses = withSelect( ( select ) => {
 	const { getEntityRecord } = select( 'core' );
 	const { getEditedPostAttribute } = select( 'core/editor' );
-	const templateClasses = map( getEditedPostAttribute( 'template_part_types' ), ( typeId ) => {
+	const templateClasses = getEditedPostAttribute( 'template_part_types' ).map( ( typeId ) => {
 		const typeName = get(
 			getEntityRecord( 'taxonomy', 'wp_template_part_type', typeId ),
 			'name',

@@ -62,7 +62,7 @@ export default function waitForImagesToLoad( post ) {
 			);
 
 			// this adds adds height/width to images
-			post.content_media = map( post.content_media, ( media ) => {
+			post.content_media = post.content_media.map( ( media ) => {
 				if ( media.mediaType === 'image' ) {
 					const img = find( post.images, { src: media.src } );
 					return { ...media, ...img };
@@ -119,7 +119,7 @@ export default function waitForImagesToLoad( post ) {
 		// convert to image objects to start the load process
 		// only check the first x images
 		const NUMBER_OF_IMAGES_TO_CHECK = 10;
-		let promises = map( take( imagesToCheck, NUMBER_OF_IMAGES_TO_CHECK ), ( imageUrl ) => {
+		let promises = take( imagesToCheck, NUMBER_OF_IMAGES_TO_CHECK ).map( ( imageUrl ) => {
 			if ( imageUrl in knownImages ) {
 				return Promise.resolve( knownImages[ imageUrl ] );
 			}

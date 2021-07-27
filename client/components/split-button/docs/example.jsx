@@ -81,7 +81,7 @@ class SplitButtonExample extends React.PureComponent {
 						],
 						( row, rowIndex ) => (
 							<div className="docs__design-button-row" key={ `split-button-row-${ rowIndex }` }>
-								{ map( row, ( item, itemIndex ) => (
+								{ row.map( ( item, itemIndex ) => (
 									<SplitButton
 										key={ `split-button-item-${ rowIndex }-${ itemIndex }` }
 										{ ...item }

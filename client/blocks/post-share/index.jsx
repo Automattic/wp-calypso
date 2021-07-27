@@ -486,7 +486,7 @@ class PostShare extends Component {
 		const { hasFetchedConnections, siteId, siteSlug, translate } = this.props;
 
 		// enrich connections
-		const connections = map( this.props.connections, ( connection ) => ( {
+		const connections = this.props.connections.map( ( connection ) => ( {
 			...connection,
 			isActive: this.isConnectionActive( connection ),
 		} ) );

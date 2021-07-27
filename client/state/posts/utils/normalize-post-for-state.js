@@ -37,7 +37,7 @@ export function normalizePostForState( post ) {
 			...reduce(
 				post.terms,
 				( memo, terms, taxonomy ) =>
-					memo.concat( map( terms, ( term, slug ) => [ 'terms', taxonomy, slug ] ) ),
+					memo.concat( terms.map( ( term, slug ) => [ 'terms', taxonomy, slug ] ) ),
 				[]
 			),
 			...map( post.categories, ( category, slug ) => [ 'categories', slug ] ),

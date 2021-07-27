@@ -23,7 +23,7 @@ function MyJetpackSettings( { settings, siteId } ) {
 	return (
 		<div>
 			<QueryJetpackSettings query={ query } siteId={ siteId } />
-			{ map( settings, ( value, name ) => (
+			{ settings.map( ( value, name ) => (
 				<div>
 					{ name }: { value.toString() }
 				</div>

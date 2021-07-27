@@ -154,7 +154,7 @@ class PodcastingDetails extends Component {
 				disabled={ isRequestingSettings || ! isPodcastingEnabled }
 			>
 				<option value="0">None</option>
-				{ map( Object.entries( podcastingTopics ), ( [ topic, subtopics ] ) => {
+				{ Object.entries( podcastingTopics ).map( ( [ topic, subtopics ] ) => {
 					// The keys for podcasting in Apple Podcasts use &amp;
 					const topicKey = topic.replace( '&', '&amp;' );
 					return [

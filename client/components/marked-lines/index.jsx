@@ -67,7 +67,7 @@ const MarkedLines = ( { context } ) => {
 	return (
 		<div className="marked-lines">
 			<div className="marked-lines__line-numbers">
-				{ map( lines, ( content, lineNumber ) => {
+				{ lines.map( ( content, lineNumber ) => {
 					const hasMarks = marks.hasOwnProperty( lineNumber );
 
 					return (
@@ -83,7 +83,7 @@ const MarkedLines = ( { context } ) => {
 				} ) }
 			</div>
 			<div className="marked-lines__lines">
-				{ map( lines, ( content, lineNumber ) => {
+				{ lines.map( ( content, lineNumber ) => {
 					const hasMarks = marks.hasOwnProperty( lineNumber );
 
 					if ( content === '' ) {

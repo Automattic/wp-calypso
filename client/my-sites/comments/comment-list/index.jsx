@@ -190,7 +190,7 @@ export class CommentList extends Component {
 				/>
 
 				<TransitionGroup className="comment-list__transition-wrapper">
-					{ map( comments, ( commentId ) => (
+					{ comments.map( ( commentId ) => (
 						<CommentTransition key={ `comment-${ siteId }-${ commentId }` }>
 							<Comment
 								commentId={ commentId }

@@ -35,7 +35,7 @@ const siteTree = ( state = [], action ) => {
 	switch ( action.type ) {
 		case COMMENTS_CHANGE_STATUS:
 			// Update the comment status in the state
-			return map( state, ( comment ) => {
+			return state.map( ( comment ) => {
 				if ( comment.commentId === action.commentId ) {
 					return {
 						...comment,

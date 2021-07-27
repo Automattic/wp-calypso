@@ -89,7 +89,7 @@ class CurrentTheme extends Component {
 									'two-buttons': Object.keys( options ).length === 2,
 								} ) }
 							>
-								{ map( options, ( option, name ) => (
+								{ options.map( ( option, name ) => (
 									<CurrentThemeButton
 										name={ name }
 										key={ name }
@@ -136,7 +136,7 @@ class CurrentTheme extends Component {
 								</div>
 							</div>
 							<div className={ classNames( 'current-theme__actions' ) }>
-								{ map( options, ( option, name ) => (
+								{ options.map( ( option, name ) => (
 									<Button
 										className={ classNames(
 											'current-theme__button',

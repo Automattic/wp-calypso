@@ -21,7 +21,7 @@ export default function generateEmbedFrameMarkup( { body, scripts, styles } = {}
 	return renderToStaticMarkup(
 		<html>
 			<head>
-				{ map( styles, ( { media, src }, key ) => (
+				{ styles.map( ( { media, src }, key ) => (
 					<link key={ key } rel="stylesheet" media={ media } href={ src } />
 				) ) }
 				<style dangerouslySetInnerHTML={ { __html: 'a { cursor: default; }' } } />

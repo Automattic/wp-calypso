@@ -101,7 +101,7 @@ export default class ImportTypeChoice extends Component {
 
 		return (
 			<div className="import-type-choice__wrapper">
-				{ map( items, ( item, key ) => this.renderOption( item, key ) ) }
+				{ items.map( ( item, key ) => this.renderOption( item, key ) ) }
 			</div>
 		);
 	}

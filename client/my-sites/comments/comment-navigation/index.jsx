@@ -275,7 +275,7 @@ export class CommentNavigation extends Component {
 		return (
 			<SectionNav className="comment-navigation" selectedText={ navItems[ queryStatus ].label }>
 				<NavTabs selectedText={ navItems[ queryStatus ].label }>
-					{ map( navItems, ( { label, count }, status ) => (
+					{ navItems.map( ( { label, count }, status ) => (
 						<NavItem
 							key={ status }
 							count={ count }
@@ -328,7 +328,7 @@ export class CommentNavigation extends Component {
 
 const mapStateToProps = ( state, { commentsPage, siteId } ) => {
 	// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-	const visibleComments = map( commentsPage, ( commentId ) => {
+	const visibleComments = commentsPage.map( ( commentId ) => {
 		const comment = getSiteComment( state, siteId, commentId );
 		if ( comment ) {
 			return {

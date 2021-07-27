@@ -23,7 +23,7 @@ export class ReaderSidebarListsList extends React.Component {
 
 	renderItems() {
 		const { currentListOwner, currentListSlug, path } = this.props;
-		return map( this.props.lists, ( list ) => {
+		return this.props.lists.map( ( list ) => {
 			return (
 				<ListItem
 					key={ list.ID }

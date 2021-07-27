@@ -144,7 +144,7 @@ export class MediaLibraryContent extends React.Component {
 
 	renderErrors() {
 		const { mediaValidationErrorTypes, site, translate } = this.props;
-		return map( groupBy( mediaValidationErrorTypes ), ( occurrences, errorType ) => {
+		return groupBy( mediaValidationErrorTypes ).map( ( occurrences, errorType ) => {
 			let message;
 			let onDismiss;
 			const i18nOptions = {

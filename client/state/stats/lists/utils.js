@@ -114,7 +114,7 @@ export function buildExportArray( data, parent = null ) {
 	}
 
 	if ( data.children ) {
-		const childData = map( data.children, ( child ) => {
+		const childData = data.children.map( ( child ) => {
 			return buildExportArray( child, label );
 		} );
 
@@ -399,7 +399,7 @@ export const normalizers = {
 			: [ 'days', startOf, 'postviews' ];
 		const viewData = get( data, dataPath, [] );
 
-		return map( viewData, ( item ) => {
+		return viewData.map( ( item ) => {
 			const detailPage = site ? `/stats/post/${ item.id }/${ site.slug }` : null;
 			let inPeriod = false;
 
@@ -455,7 +455,7 @@ export const normalizers = {
 			return countryInfo[ viewData.country_code ];
 		} );
 
-		return map( countryData, ( viewData ) => {
+		return countryData.map( ( viewData ) => {
 			const country = countryInfo[ viewData.country_code ];
 
 			// ’ in country names causes google's geo viz to break

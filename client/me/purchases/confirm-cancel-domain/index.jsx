@@ -309,7 +309,7 @@ class ConfirmCancelDomain extends React.Component {
 						<option disabled="disabled" value="disabled" key="disabled">
 							{ this.props.translate( 'Please let us know why you wish to cancel.' ) }
 						</option>
-						{ map( cancellationReasons, ( { value, label } ) => (
+						{ cancellationReasons.map( ( { value, label } ) => (
 							<option value={ value } key={ value }>
 								{ label }
 							</option>

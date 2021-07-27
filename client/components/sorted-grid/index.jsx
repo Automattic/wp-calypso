@@ -48,7 +48,7 @@ class SortedGrid extends PureComponent {
 	renderLabels( row ) {
 		return (
 			<div key={ `header_${ row.id }` } className="sorted-grid__header">
-				{ map( row.groups, ( count, group ) => {
+				{ row.groups.map( ( count, group ) => {
 					const labelText = this.props.getGroupLabel( group );
 					return (
 						'' !== labelText && (

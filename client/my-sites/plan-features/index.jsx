@@ -325,7 +325,7 @@ export class PlanFeatures extends Component {
 			forceDisplayButton = true;
 		}
 
-		return map( reorderedPlans, ( properties ) => {
+		return reorderedPlans.map( ( properties ) => {
 			const {
 				availableForPurchase,
 				currencyCode,
@@ -402,7 +402,7 @@ export class PlanFeatures extends Component {
 	}
 
 	renderMobileFeatures( features ) {
-		return map( features, ( currentFeature, index ) => {
+		return features.map( ( currentFeature, index ) => {
 			return currentFeature ? this.renderFeatureItem( currentFeature, index ) : null;
 		} );
 	}
@@ -421,7 +421,7 @@ export class PlanFeatures extends Component {
 			isInVerticalScrollingPlansExperiment,
 		} = this.props;
 
-		return map( planProperties, ( properties ) => {
+		return planProperties.map( ( properties ) => {
 			const {
 				availableForPurchase,
 				currencyCode,
@@ -502,7 +502,7 @@ export class PlanFeatures extends Component {
 	renderPlanDescriptions() {
 		const { planProperties, withScroll } = this.props;
 
-		return map( planProperties, ( properties ) => {
+		return planProperties.map( ( properties ) => {
 			const { planName, planConstantObj, isPlaceholder } = properties;
 
 			const classes = classNames( 'plan-features__table-item', {
@@ -618,7 +618,7 @@ export class PlanFeatures extends Component {
 			translate,
 		} = this.props;
 
-		return map( planProperties, ( properties ) => {
+		return planProperties.map( ( properties ) => {
 			let { availableForPurchase } = properties;
 			const {
 				current,
@@ -697,7 +697,7 @@ export class PlanFeatures extends Component {
 
 	renderPlanFeatureRows() {
 		const longestFeatures = this.getLongestFeaturesList();
-		return map( longestFeatures, ( featureKey, rowIndex ) => {
+		return longestFeatures.map( ( featureKey, rowIndex ) => {
 			return (
 				<tr key={ rowIndex } className="plan-features__row">
 					{ this.renderPlanFeatureColumns( rowIndex ) }
@@ -748,7 +748,7 @@ export class PlanFeatures extends Component {
 	renderPlanFeatureColumns( rowIndex ) {
 		const { planProperties, selectedFeature, withScroll } = this.props;
 
-		return map( planProperties, ( properties ) => {
+		return planProperties.map( ( properties ) => {
 			const { availableForPurchase, features, planName } = properties;
 
 			const featureKeys = Object.keys( features );
@@ -788,7 +788,7 @@ export class PlanFeatures extends Component {
 			purchaseId,
 		} = this.props;
 
-		return map( planProperties, ( properties ) => {
+		return planProperties.map( ( properties ) => {
 			let { availableForPurchase } = properties;
 			const {
 				current,

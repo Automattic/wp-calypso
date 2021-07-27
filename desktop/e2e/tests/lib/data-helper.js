@@ -25,7 +25,7 @@ exports.getNewBlogName = function () {
 
 exports.getExpectedFreeAddresses = async function ( searchTerm ) {
 	const suffixes = [ '.wordpress.com', 'blog.wordpress.com', 'site.wordpress.com', '.home.blog' ];
-	return map( suffixes, ( suffix ) => {
+	return suffixes.map( ( suffix ) => {
 		return searchTerm + suffix;
 	} );
 };

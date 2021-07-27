@@ -17,7 +17,7 @@ const SiteImporterImportableContent = ( { translate, importData = {} } ) => (
 			<Fragment>
 				<p>{ translate( 'We will import:' ) }</p>
 				<ul>
-					{ map( importData.supported, ( supportedApp, index ) => (
+					{ importData.supported.map( ( supportedApp, index ) => (
 						<li key={ index + supportedApp }>{ supportedApp }</li>
 					) ) }
 				</ul>

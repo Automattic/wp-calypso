@@ -44,7 +44,7 @@ class RecentPostsDropdown extends PureComponent {
 
 	render() {
 		const { exclude, posts, siteId, translate } = this.props;
-		const options = map( posts, ( { slug, title } ) => ( { label: title, value: slug } ) );
+		const options = posts.map( ( { slug, title } ) => ( { label: title, value: slug } ) );
 
 		const className = 'zoninator__recent-posts-dropdown';
 

@@ -331,7 +331,7 @@ class P2Site extends React.Component {
 			return;
 		}
 
-		return map( messages, ( message, error_code ) => {
+		return messages.map( ( message, error_code ) => {
 			if ( error_code === 'blog_name_reserved' ) {
 				return (
 					<span>
@@ -435,7 +435,7 @@ class P2Site extends React.Component {
 
 		return (
 			<div className="p2-site__subdomain-suggestions">
-				{ map( suggestedSubdomains, ( suggestion, index ) => {
+				{ suggestedSubdomains.map( ( suggestion, index ) => {
 					return (
 						<button
 							key={ index }

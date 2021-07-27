@@ -76,7 +76,7 @@ class CacheStats extends Component {
 						</tr>
 					</thead>
 					<tbody>
-						{ map( files, ( { files: count, lower_age, upper_age }, url ) => (
+						{ files.map( ( { files: count, lower_age, upper_age }, url ) => (
 							<tr className="wp-super-cache__stat" key={ url }>
 								<td className="wp-super-cache__stat-dir">{ url }</td>
 								<td>{ count }</td>

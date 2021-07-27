@@ -23,7 +23,7 @@ export const bypassDataLayer = ( action ) => extendAction( action, doBypassDataL
  */
 export function convertKeysBy( obj, fn ) {
 	if ( Array.isArray( obj ) ) {
-		return map( obj, ( v ) => convertKeysBy( v, fn ) );
+		return obj.map( ( v ) => convertKeysBy( v, fn ) );
 	}
 
 	if ( isPlainObject( obj ) ) {

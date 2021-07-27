@@ -56,7 +56,7 @@ export class CommentRepliesList extends Component {
 						</NoticeAction>
 					</Notice>
 				) }
-				{ map( repliesToShow, ( { commentId } ) => (
+				{ repliesToShow.map( ( { commentId } ) => (
 					<Comment
 						commentId={ commentId }
 						isAtMaxDepth={ depth >= maxDepth }

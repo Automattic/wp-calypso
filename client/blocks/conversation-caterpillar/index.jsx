@@ -65,7 +65,7 @@ class ConversationCaterpillarComponent extends React.Component {
 		this.props.expandComments( {
 			siteId: blogId,
 			postId,
-			commentIds: compact( map( commentsToExpand, ( c ) => get( c, 'parent.ID', null ) ) ),
+			commentIds: compact( commentsToExpand.map( ( c ) => get( c, 'parent.ID', null ) ) ),
 			displayType: POST_COMMENT_DISPLAY_TYPES.excerpt,
 		} );
 		recordAction( 'comment_caterpillar_click' );

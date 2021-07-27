@@ -64,7 +64,7 @@ export class RecommendedPosts extends React.PureComponent {
 					{ this.props.translate( 'Recommended Posts' ) }
 				</h1>
 				<ul className="reader-stream__recommended-posts-list">
-					{ map( posts, ( post, index ) => {
+					{ posts.map( ( post, index ) => {
 						const uiIndex = this.props.index + index;
 						return (
 							<li

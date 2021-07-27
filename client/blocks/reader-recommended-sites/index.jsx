@@ -69,7 +69,7 @@ export class RecommendedSites extends React.PureComponent {
 					{ this.props.translate( 'Recommended sites' ) }
 				</h2>
 				<ul className="reader-recommended-sites__list">
-					{ map( sites, ( site, index ) => {
+					{ sites.map( ( site, index ) => {
 						const siteId = site.siteId || site.blogId;
 						return (
 							<li

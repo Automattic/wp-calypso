@@ -28,7 +28,7 @@ export default class ReaderListItemExample extends PureComponent {
 	render() {
 		return (
 			<Card>
-				{ map( sites, ( site ) => (
+				{ sites.map( ( site ) => (
 					<ConnectedReaderListItem key={ site.feedId || site.siteId } { ...site } />
 				) ) }
 				<ReaderListItemPlaceholder />

@@ -132,8 +132,8 @@ const Collection = ( {
 
 			{ examples.slice( 0, examplesToMount ) }
 
-			{ map( chunk( examples.slice( examplesToMount ), examplesToMount ), ( exampleGroup ) => {
-				const groupKey = map( exampleGroup, ( example ) => example.key ).join( '_' );
+			{ chunk( examples.slice( examplesToMount ).map( examplesToMount ), ( exampleGroup ) => {
+				const groupKey = exampleGroup.map( ( example ) => example.key ).join( '_' );
 				return (
 					<LazyRender key={ groupKey }>
 						{ ( shouldRender ) =>

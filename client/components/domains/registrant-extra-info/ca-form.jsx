@@ -85,7 +85,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 			} ),
 			MAJ: translate( 'Her Majesty the Queen' ),
 		};
-		const legalTypeOptions = map( legalTypes, ( text, optionValue ) => (
+		const legalTypeOptions = legalTypes.map( ( text, optionValue ) => (
 			<option value={ optionValue } key={ optionValue }>
 				{ text }
 			</option>

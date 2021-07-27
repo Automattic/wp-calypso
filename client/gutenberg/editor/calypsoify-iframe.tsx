@@ -557,7 +557,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 	closeMediaModal = ( media: { items: Parameters< typeof mediaCalypsoToGutenberg >[] } ) => {
 		if ( ! this.state.classicBlockEditorId && media && this.mediaSelectPort ) {
 			const { multiple } = this.state;
-			const formattedMedia = map( media.items, ( item ) => mediaCalypsoToGutenberg( item ) );
+			const formattedMedia = media.items.map( ( item ) => mediaCalypsoToGutenberg( item ) );
 			const payload = multiple ? formattedMedia : formattedMedia[ 0 ];
 
 			this.mediaSelectPort.postMessage( payload );

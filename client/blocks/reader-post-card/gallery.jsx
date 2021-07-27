@@ -31,7 +31,7 @@ function getGalleryWorthyImages( post ) {
 
 const PostGallery = ( { post, children, isDiscover } ) => {
 	const imagesToDisplay = getGalleryWorthyImages( post );
-	const listItems = map( imagesToDisplay, ( image, index ) => {
+	const listItems = imagesToDisplay.map( ( image, index ) => {
 		const imageUrl = resizeImageUrl( image.src, {
 			w: READER_CONTENT_WIDTH / imagesToDisplay.length,
 		} );

@@ -353,7 +353,7 @@ const getItemsForCart = (
 		( groupedUsers ) => groupedUsers.map( transformUserForCart )
 	);
 
-	return map( usersGroupedByDomain, ( groupedUsers: GSuiteProductUser[], domainName: string ) => {
+	return usersGroupedByDomain.map( ( groupedUsers: GSuiteProductUser[], domainName: string ) => {
 		const properties = { domain: domainName, users: groupedUsers };
 
 		const domain = find( domains, [ 'name', domainName ] );

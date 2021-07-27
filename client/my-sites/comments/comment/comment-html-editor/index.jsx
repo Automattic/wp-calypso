@@ -205,7 +205,7 @@ export class CommentHtmlEditor extends Component {
 		return (
 			<div className="comment-html-editor">
 				<div className="comment-html-editor__toolbar">
-					{ map( buttons, ( { disabled, label, onClick }, tag ) => (
+					{ buttons.map( ( { disabled, label, onClick }, tag ) => (
 						<Button
 							borderless
 							className={ classNames( `comment-html-editor__toolbar-button-${ tag }`, {

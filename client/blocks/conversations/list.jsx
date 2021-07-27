@@ -159,7 +159,7 @@ export class ConversationCommentList extends React.Component {
 		}
 
 		const withParents = filter( commentIds, ( id ) => this.commentHasParent( commentsTree, id ) );
-		const parentIds = map( withParents, ( id ) => this.getParentId( commentsTree, id ) );
+		const parentIds = withParents.map( ( id ) => this.getParentId( commentsTree, id ) );
 
 		const [ accessible, inaccessible ] = partition( parentIds, ( id ) =>
 			this.commentIsLoaded( commentsTree, id )
@@ -245,7 +245,7 @@ export class ConversationCommentList extends React.Component {
 							commentsToShow={ commentsToShow }
 						/>
 					) }
-					{ map( commentsTree.children, ( commentId ) => {
+					{ commentsTree.children.map( ( commentId ) => {
 						return (
 							<PostComment
 								showNestingReplyArrow

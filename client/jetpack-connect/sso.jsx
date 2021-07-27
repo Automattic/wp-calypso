@@ -325,7 +325,7 @@ class JetpackSsoForm extends Component {
 		return (
 			<table className="jetpack-connect__sso-shared-details-table">
 				<tbody>
-					{ map( sharedDetails, ( value, key ) => {
+					{ sharedDetails.map( ( value, key ) => {
 						return (
 							<tr key={ key } className="jetpack-connect__sso-shared-detail-row">
 								<td className="jetpack-connect__sso-shared-detail-label">

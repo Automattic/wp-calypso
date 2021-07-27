@@ -396,7 +396,7 @@ function handleUpdateImageBlocks( calypsoPort ) {
 		}
 
 		preloadImage( image.url ).then( () => {
-			updatedImages = map( currentImages, ( currentImage ) => {
+			updatedImages = currentImages.map( ( currentImage ) => {
 				const currentImageId = parseInt( currentImage.id, 10 );
 				if ( currentImageId !== image.id && currentImageId !== image.transientId ) {
 					return currentImage;

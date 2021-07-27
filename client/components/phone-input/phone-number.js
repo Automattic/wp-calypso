@@ -53,7 +53,7 @@ export function findCountryFromNumber( inputNumber ) {
 
 		if ( ! prefixMatch.length && lastExactMatch ) {
 			// the one with high priority
-			return map( lastExactMatch, ( key ) => countries[ key ] )[ 0 ];
+			return lastExactMatch.map( ( key ) => countries[ key ] )[ 0 ];
 		}
 
 		if ( prefixMatch.length === 1 ) {
@@ -63,7 +63,7 @@ export function findCountryFromNumber( inputNumber ) {
 	}
 
 	if ( lastExactMatch ) {
-		return map( lastExactMatch, ( key ) => countries[ key ] )[ 0 ];
+		return lastExactMatch.map( ( key ) => countries[ key ] )[ 0 ];
 	}
 
 	return null;

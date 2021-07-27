@@ -43,7 +43,7 @@ export function receiveTagsSuccess( action, tags ) {
 	const resetFollowingData = isFollowedTags;
 
 	if ( isFollowedTags ) {
-		tags = map( tags, ( tag ) => ( { ...tag, isFollowing: true } ) );
+		tags = tags.map( ( tag ) => ( { ...tag, isFollowing: true } ) );
 	}
 
 	return receiveTags( { payload: tags, resetFollowingData } );

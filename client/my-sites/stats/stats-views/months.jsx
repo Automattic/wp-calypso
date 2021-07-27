@@ -96,7 +96,7 @@ const StatsViewsMonths = ( props ) => {
 
 	const allMonths = flatten(
 		map( data, ( year, yearNumber ) => {
-			return map( year, ( month, monthIndex ) => {
+			return year.map( ( month, monthIndex ) => {
 				// keep track of earliest date to fill in zeros when applicable
 				const momentMonth = momentFromMonthYear( monthIndex, yearNumber );
 				if ( momentMonth.isBefore( earliestDate ) ) {
@@ -127,8 +127,8 @@ const StatsViewsMonths = ( props ) => {
 		monthsCount: merge( {}, monthsObject ),
 	};
 
-	const years = map( data, ( item, year ) => {
-		const cells = map( range( 0, 12 ), ( month ) => {
+	const years = data.map( ( item, year ) => {
+		const cells = range( 0, 12 ).map( ( month ) => {
 			let value = item[ month ] ? item[ month ][ dataKey ] : null;
 			let displayValue;
 			const momentMonth = momentFromMonthYear( month, year );

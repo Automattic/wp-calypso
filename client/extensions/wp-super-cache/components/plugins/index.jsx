@@ -81,7 +81,7 @@ class PluginsTab extends Component {
 
 				<SectionHeader label={ translate( 'Plugins' ) } />
 				<Card>
-					{ map( plugins, ( { desc, enabled, key, title, toggling, url } ) => {
+					{ plugins.map( ( { desc, enabled, key, title, toggling, url } ) => {
 						return (
 							<div key={ key }>
 								<ToggleControl

@@ -32,7 +32,7 @@ export default function getTimezones( state ) {
 		return null;
 	}
 
-	return map( Object.entries( continents ), ( zones ) => [
+	return Object.entries( continents ).map( ( zones ) => [
 		zones[ 0 ],
 		map( zones[ 1 ], ( value ) => [ value, getTimezonesLabel( state, value ) ] ),
 	] );

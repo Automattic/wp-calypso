@@ -30,7 +30,7 @@ const Navigation = ( { activeTab, pluginVersion, siteSlug, translate } ) => (
 		</HeaderCake>
 		<SectionNav selectedText="Settings">
 			<SectionNavTabs>
-				{ map( Tabs, ( { label, slug: tabSlug, minVersion } ) => {
+				{ Tabs.map( ( { label, slug: tabSlug, minVersion } ) => {
 					if ( ! versionCompare( minVersion, pluginVersion, '<=' ) ) {
 						return null;
 					}

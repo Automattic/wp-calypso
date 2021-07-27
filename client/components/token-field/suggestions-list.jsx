@@ -87,7 +87,7 @@ class SuggestionsList extends React.PureComponent {
 	}
 
 	_renderSuggestions = () => {
-		return map( this.props.suggestions, ( suggestion, index ) => {
+		return this.props.suggestions.map( ( suggestion, index ) => {
 			const match = this._computeSuggestionMatch( suggestion );
 			const classes = classNames( 'token-field__suggestion', {
 				'is-selected': index === this.props.selectedIndex,

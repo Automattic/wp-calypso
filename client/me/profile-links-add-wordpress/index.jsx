@@ -84,9 +84,8 @@ class ProfileLinksAddWordPress extends Component {
 			( inputValue, inputName ) => 'site-' === inputName.substr( 0, 5 ) && inputValue
 		);
 
-		const profileLinks = map( links, ( inputValue, inputName ) =>
-			parseInt( inputName.substr( 5 ), 10 )
-		)
+		const profileLinks = links
+			.map( ( inputValue, inputName ) => parseInt( inputName.substr( 5 ), 10 ) )
 			.map( ( siteId ) => find( sites, [ 'ID', siteId ] ) )
 			.map( ( site ) => ( {
 				title: site.name,

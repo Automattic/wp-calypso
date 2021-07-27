@@ -60,7 +60,7 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 			OTHER: translate( 'UK Entity that does not fit another category' ),
 			FOTHER: translate( 'Non-UK Entity that does not fit another category' ),
 		};
-		this.registrantTypeOptions = map( registrantTypes, ( text, optionValue ) => (
+		this.registrantTypeOptions = registrantTypes.map( ( text, optionValue ) => (
 			<option value={ optionValue } key={ optionValue }>
 				{ text }
 			</option>

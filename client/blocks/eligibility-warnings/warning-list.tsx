@@ -30,7 +30,7 @@ export const WarningList = ( { context, translate, warnings }: Props ) => (
 			</div>
 		</div>
 
-		{ map( warnings, ( { name, description, supportUrl }, index ) => (
+		{ warnings.map( ( { name, description, supportUrl }, index ) => (
 			<div className="eligibility-warnings__warning" key={ index }>
 				<div className="eligibility-warnings__message">
 					<span className="eligibility-warnings__message-title">{ name }</span>

@@ -35,7 +35,7 @@ export default createSelector(
 		}
 
 		const appGroups = groupBy( transactions, 'service' );
-		return map( appGroups, ( appGroup, app ) => ( {
+		return appGroups.map( ( appGroup, app ) => ( {
 			title: app,
 			value: app,
 			count: appGroup.length,

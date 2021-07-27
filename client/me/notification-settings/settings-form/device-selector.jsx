@@ -31,7 +31,7 @@ class NotificationSettingsFormDeviceSelector extends PureComponent {
 			<div className="notification-settings-form-header">
 				<div className="notification-settings-form-header__title">
 					<FormSelect value={ this.props.selectedDeviceId } onChange={ this.props.onChange }>
-						{ map( devices, ( { id, name } ) => (
+						{ devices.map( ( { id, name } ) => (
 							<option key={ id } value={ id }>
 								{ name }
 							</option>

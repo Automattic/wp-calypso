@@ -207,7 +207,7 @@ class Site extends React.Component {
 			return;
 		}
 
-		return map( messages, ( message, error_code ) => {
+		return messages.map( ( message, error_code ) => {
 			if ( error_code === 'blog_name_reserved' ) {
 				return (
 					<span>

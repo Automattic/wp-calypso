@@ -493,7 +493,7 @@ class SignupForm extends Component {
 			return;
 		}
 
-		return map( messages, ( message, error_code ) => {
+		return messages.map( ( message, error_code ) => {
 			if ( error_code === 'taken' ) {
 				const fieldValue = formState.getFieldValue( this.state.form, fieldName );
 				const link = addQueryArgs( { email_address: fieldValue }, this.getLoginLink() );
