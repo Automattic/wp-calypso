@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -78,8 +79,34 @@ class PostsMain extends React.Component {
 					headerText={ translate( 'Posts' ) }
 					subHeaderText={
 						siteId
-							? translate( 'Create, edit, and manage the posts on your site.' )
-							: translate( 'Create, edit, and manage the posts on your sites.' )
+							? translate(
+									'Create, edit, and manage the posts on your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+									{
+										components: {
+											learnMoreLink: (
+												<InlineSupportLink
+													supportLink="https://wordpress.com/support/posts/"
+													supportPostId={ 84 }
+													showIcon={ false }
+												/>
+											),
+										},
+									}
+							  )
+							: translate(
+									'Create, edit, and manage the posts on your sites. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+									{
+										components: {
+											learnMoreLink: (
+												<InlineSupportLink
+													supportLink="https://wordpress.com/support/posts/"
+													supportPostId={ 84 }
+													showIcon={ false }
+												/>
+											),
+										},
+									}
+							  )
 					}
 					align="left"
 					hasScreenOptions
