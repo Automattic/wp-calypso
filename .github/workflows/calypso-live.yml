@@ -14,7 +14,7 @@ jobs:
     steps:
       - name: Build calypso.live link.
         run: |
-          echo '::set-output name=LINK::https://calypso.live?image=registry.a8c.com/calypso/commit:${{ github.event.pull_request.head.sha }}'
+          echo '::set-output name=LINK::https://calypso.live?image=registry.a8c.com/calypso/app:commit-${{ github.event.pull_request.head.sha }}'
         id: build_link
 
       - name: Post comment on PR
