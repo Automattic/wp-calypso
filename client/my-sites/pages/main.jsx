@@ -6,10 +6,10 @@ import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { Experiment } from 'calypso/lib/explat';
 import { mapPostStatus } from 'calypso/lib/route';
 import urlSearch from 'calypso/lib/url-search';
 import PostTypeFilter from 'calypso/my-sites/post-type-filter';
@@ -91,8 +91,34 @@ class PagesMain extends React.Component {
 					headerText={ translate( 'Pages' ) }
 					subHeaderText={
 						siteId
-							? translate( 'Create, edit, and manage the pages on your site.' )
-							: translate( 'Create, edit, and manage the pages on your sites.' )
+							? translate(
+									'Create, edit, and manage the pages on your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+									{
+										components: {
+											learnMoreLink: (
+												<InlineSupportLink
+													supportLink="https://wordpress.com/support/pages/"
+													supportPostId={ 86 }
+													showIcon={ false }
+												/>
+											),
+										},
+									}
+							  )
+							: translate(
+									'Create, edit, and manage the pages on your sites. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+									{
+										components: {
+											learnMoreLink: (
+												<InlineSupportLink
+													supportLink="https://wordpress.com/support/pages/"
+													supportPostId={ 86 }
+													showIcon={ false }
+												/>
+											),
+										},
+									}
+							  )
 					}
 					align="left"
 					hasScreenOptions
