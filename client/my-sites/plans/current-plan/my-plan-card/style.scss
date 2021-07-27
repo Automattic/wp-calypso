@@ -1,8 +1,11 @@
 // My Plan Card
 .my-plan-card.card {
 	@include breakpoint-deprecated( '>960px' ) {
+		padding: 24px;
+
 		display: flex;
 		flex-flow: row nowrap;
+		align-items: flex-start;
 		justify-content: space-between;
 	}
 }
@@ -35,7 +38,6 @@
 	font-size: $font-title-small;
 	font-weight: 400;
 	line-height: 29px;
-	margin: 8px 0;
 	color: var( --color-neutral-100 );
 
 	.is-placeholder & {
@@ -62,7 +64,7 @@
 	flex: 0 0 auto;
 	width: 64px;
 	height: 64px;
-	margin: 8px 20px 16px 0;
+	margin-inline-end: 20px;
 
 	@include breakpoint-deprecated( '<660px' ) {
 		display: none;
