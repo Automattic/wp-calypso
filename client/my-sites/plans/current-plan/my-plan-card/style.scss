@@ -171,3 +171,50 @@
 		margin-left: 8px;
 	}
 }
+
+.my-plan-card__header .backup-storage-space.card {
+	margin: 24px 0;
+	padding: 0;
+	box-shadow: none;
+
+	@include breakpoint-deprecated( '>960px' ) {
+		max-width: 540px;
+		margin-block-end: 16px;
+	}
+
+	.backup-storage-space__divider,
+	.backup-storage-space-upsell__title-text {
+		display: none;
+	}
+
+	.backup-storage-space__progress-bar-container {
+		align-items: start;
+		row-gap: 8px;
+		column-gap: 16px;
+		margin-block-end: 24px;
+
+		flex-direction: column;
+		@include breakpoint-deprecated( '>1040px' ) {
+			flex-direction: row;
+		}
+	}
+
+	.backup-storage-space__progress-heading {
+		font-weight: 600;
+	}
+
+	.backup-storage-space__progress-usage-text {
+		text-align: right;
+		color: var( --color-text-subtle );
+	}
+
+	.backup-storage-space__progress-bar {
+		padding: 0;
+		align-self: stretch;
+
+		@include breakpoint-deprecated( '>1040px' ) {
+			align-self: initial;
+			flex: 1 0 100px;
+		}
+	}
+}
