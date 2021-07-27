@@ -133,7 +133,7 @@ function is_theme_supported() {
 	}
 	// Use un-normalized theme slug because get_theme requires the full string.
 	$theme = wp_get_theme( get_theme_slug() );
-	return ! $theme->errors() && in_array( 'full-site-editing', $theme->tags, true );
+	return ! $theme->errors() && in_array( 'wpcom-fse', $theme->tags, true );
 }
 
 /**
