@@ -33,7 +33,7 @@ export default function Browsehappy( { from } ) {
 			<main className="browsehappy__main" role="main">
 				<img src={ illustrationURL } alt="" />
 				<h1>Unsupported Browser</h1>
-				<p>Unfortunately this page cannot be viewed by your browser.</p>
+				<p>Unfortunately this page may not work correctly in your browser.</p>
 				<Button isPrimary href={ SUPPORTED_BROWSERS_LINK }>
 					View supported browsers
 				</Button>
