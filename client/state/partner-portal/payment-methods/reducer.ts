@@ -30,7 +30,7 @@ export const fields: Reducer< Record< string, unknown >, AnyAction > = (
 				...state,
 				[ action.payload.key ]: {
 					value: maskField( action.payload.key, state[ action.payload.key ], action.payload.value ),
-					isTouched: true, // mark whether the field has been touched
+					isTouched: true, // mark whether the HTML input has been touched, so we only show errors if the input is touched and its value is not valid
 					errors: [],
 				},
 			};
@@ -47,7 +47,7 @@ export const fields: Reducer< Record< string, unknown >, AnyAction > = (
 			return Object.entries( state ).reduce( ( obj, [ key, value ] ) => {
 				obj[ key ] = {
 					value: value.value,
-					isTouched: true, // mark whether the field has been touched
+					isTouched: true, // mark whether the HTML input has been touched, so we only show errors if the input is touched and its value is not valid
 				};
 				return obj;
 			}, {} );
