@@ -510,7 +510,7 @@ export function CheckoutStepArea( {
 			setSubmitWrapperHeight( submitWrapperRef.current.offsetHeight );
 		}
 		setInitialVw( window.innerWidth );
-	}, [ setSubmitWrapperHeight, submitWrapperRef, setInitialVw ] );
+	}, [ setSubmitWrapperHeight, setInitialVw ] );
 
 	// Then update `CheckoutStepAreaWrapper` bottom margin on mobile, so that there's
 	// enough room to show the `SubmitButtonWrapper` without hidding the page content.
@@ -518,7 +518,7 @@ export function CheckoutStepArea( {
 		if ( initialVw && submitWrapperHeight && initialVw < tabletBp && rootRef.current ) {
 			rootRef.current.style.marginBottom = `${ submitWrapperHeight }px`;
 		}
-	}, [ initialVw, submitWrapperHeight, tabletBp, rootRef ] );
+	}, [ initialVw, submitWrapperHeight, tabletBp ] );
 
 	return (
 		<CheckoutStepAreaWrapper className={ classNames } ref={ rootRef }>
