@@ -8,6 +8,7 @@ import VideoEditor from 'calypso/blocks/video-editor';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryMedia from 'calypso/components/data/query-media';
 import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import accept from 'calypso/lib/accept';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -364,7 +365,18 @@ class Media extends Component {
 					className="media__page-heading"
 					headerText={ translate( 'Media' ) }
 					subHeaderText={ translate(
-						'Manage all the media on your site, including images, video, and more.'
+						'Manage all the media on your site, including images, video, and more. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: (
+									<InlineSupportLink
+										supportLink="https://wordpress.com/support/media/"
+										supportPostId={ 853 }
+										showIcon={ false }
+									/>
+								),
+							},
+						}
 					) }
 					align="left"
 					hasScreenOptions
