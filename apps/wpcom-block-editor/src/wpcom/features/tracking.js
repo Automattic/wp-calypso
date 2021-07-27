@@ -396,7 +396,9 @@ const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
 			// Template Part
 			name === 'core/template-part' ||
 			// Reusable Block
-			name === 'core/block'
+			name === 'core/block' ||
+			// Post Content
+			name === 'core/post-content'
 		) {
 			return;
 		}
