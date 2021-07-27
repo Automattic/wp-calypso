@@ -128,3 +128,19 @@ export function findProductDefinition(
 	}
 	return productDefinition;
 }
+
+/**
+ * Get the first found product in the collection when product/product group slug not clearly available
+ *
+ * @returns {object} The product slug and group slug
+ */
+export function getFirstProductFound(): {
+	productGroupSlug: keyof IProductGroupCollection;
+	productSlug: keyof IProductCollection;
+} | null {
+	const productGroupSlug: keyof IProductGroupCollection = Object.keys( productGroups )[ 0 ];
+	const products = productGroups[ productGroupSlug ]?.products;
+	const productSlug: keyof IProductCollection = products && Object.keys( products )[ 0 ];
+
+	return { productGroupSlug, productSlug };
+}

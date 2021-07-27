@@ -13,9 +13,27 @@ import MarketplaceDomainUpsell from 'calypso/my-sites/marketplace/pages/marketpl
 import MarketplacePluginSetup from 'calypso/my-sites/marketplace/pages/marketplace-plugin-setup-status';
 import MarketplaceStandaloneThankYou from 'calypso/my-sites/marketplace/pages/marketplace-stand-alone-thank-you';
 import MarketplaceTest from 'calypso/my-sites/marketplace/pages/marketplace-test';
-import { getDefaultProductInProductGroup } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
+import {
+	getDefaultProductInProductGroup,
+	getFirstProductFound,
+} from 'calypso/my-sites/marketplace/marketplace-product-definitions';
 import { navigate } from 'calypso/lib/navigate';
 import { marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';
+import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
+import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+
+export function enforceSiteEnding( context, next ) {
+	const siteId = getSiteFragment( context.path );
+	if ( ! siteId ) {
+		if ( context ) {
+			// if we are redirecting we need to retain our intended layout-focus
+			const currentLayoutFocus = getCurrentLayoutFocus( context.store.getState() );
+			context.store.dispatch( setNextLayoutFocus( currentLayoutFocus ) );
+		}
+		page( '/marketplace/product/details' );
+	}
+	next();
+}
 
 export function renderMarketplaceProduct( context, next ) {
 	const siteFragment = getSiteFragment( context.path );
@@ -26,8 +44,17 @@ export function renderMarketplaceProduct( context, next ) {
 		: null;
 
 	if ( ! productGroupSlug && ! productSlug ) {
-		marketplaceDebugger( 'The productSlug and productGroupSlug were note set' );
-		return navigate( `/home/${ siteFragment }` );
+		const {
+			productGroupSlug: firstProductGroupSlugFound,
+			productSlug: firstProductSlugFound,
+		} = getFirstProductFound( productGroupSlug );
+
+		marketplaceDebugger(
+			`The productSlug and productGroupSlug were note set, showing product pages of : ${ firstProductGroupSlugFound } ${ firstProductSlugFound }`
+		);
+		return navigate(
+			`/marketplace/product/details/${ firstProductGroupSlugFound }/${ firstProductSlugFound }/${ siteFragment }`
+		);
 	} else if ( ! productSlug ) {
 		productSlug = getDefaultProductInProductGroup( productGroupSlug );
 		return navigate(
