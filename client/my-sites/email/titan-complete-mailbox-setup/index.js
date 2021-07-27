@@ -4,6 +4,7 @@
 import { Button, Card } from '@automattic/components';
 import page from 'page';
 import React, { useCallback, useState } from 'react';
+import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
@@ -170,6 +171,12 @@ const SetupForm = ( { goToEmail, selectedDomainName, siteDomainsAreLoaded } ) =>
 	);
 };
 
+SetupForm.propType = {
+	selectedDomainName: PropTypes.string.isRequired,
+	siteDomainsAreLoaded: PropTypes.object.isRequired,
+	goToEmail: PropTypes.func.isRequired,
+};
+
 const TitanCompleteMailboxSetup = ( { selectedDomainName } ) => {
 	const selectedSite = useSelector( getSelectedSite );
 
@@ -231,6 +238,10 @@ const TitanCompleteMailboxSetup = ( { selectedDomainName } ) => {
 			</Main>
 		</>
 	);
+};
+
+TitanCompleteMailboxSetup.propType = {
+	selectedDomainName: PropTypes.string.isRequired,
 };
 
 export default TitanCompleteMailboxSetup;
