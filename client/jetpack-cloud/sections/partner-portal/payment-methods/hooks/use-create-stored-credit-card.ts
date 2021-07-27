@@ -7,7 +7,7 @@ import type { PaymentMethod } from '@automattic/composite-checkout';
 import { createStoredCreditCardMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/stored-credit-card-method';
 import { createStoredCreditCardPaymentMethodStore } from 'calypso/state/partner-portal/payment-methods/';
 
-export function useCreateStoredCreditCard( {
+export function useCreateStoredCreditCardMethod( {
 	isStripeLoading,
 	stripeLoadingError,
 	stripeConfiguration,

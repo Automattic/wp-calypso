@@ -30,7 +30,7 @@ export const fields: Reducer< Record< string, unknown >, AnyAction > = (
 				...state,
 				[ action.payload.key ]: {
 					value: maskField( action.payload.key, state[ action.payload.key ], action.payload.value ),
-					isTouched: true,
+					isTouched: true, // mark whether the field has been touched
 					errors: [],
 				},
 			};
@@ -47,7 +47,7 @@ export const fields: Reducer< Record< string, unknown >, AnyAction > = (
 			return Object.entries( state ).reduce( ( obj, [ key, value ] ) => {
 				obj[ key ] = {
 					value: value.value,
-					isTouched: true,
+					isTouched: true, // mark whether the field has been touched
 				};
 				return obj;
 			}, {} );
