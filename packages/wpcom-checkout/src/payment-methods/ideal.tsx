@@ -1,46 +1,71 @@
-import styled from '@emotion/styled';
+import {
+	Button,
+	FormStatus,
+	useLineItems,
+	useFormStatus,
+	registerStore,
+	useSelect,
+	useDispatch,
+} from '@automattic/composite-checkout';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import React from 'react';
-import Button from '../../components/button';
-import Field from '../../components/field';
-import { registerStore, useSelect, useDispatch } from '../../lib/registry';
-import { FormStatus, useLineItems } from '../../public-api';
-import { useFormStatus } from '../form-status';
-import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
-import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
+import Field from '../field';
+import { PaymentMethodLogos } from '../payment-method-logos';
+import styled from '../styled';
+import { SummaryLine, SummaryDetails } from '../summary-details';
+import type {
+	PaymentMethodStore,
+	StoreSelectors,
+	StoreSelectorsWithState,
+	StoreActions,
+	StoreState,
+} from '../payment-method-store';
+import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
 
-const debug = debugFactory( 'composite-checkout:ideal-payment-method' );
+const debug = debugFactory( 'wpcom-checkout:ideal-payment-method' );
 
-export function createIdealPaymentMethodStore() {
+// Disabling this to make migration easier
+/* eslint-disable @typescript-eslint/no-use-before-define */
+
+type StoreKey = 'ideal';
+type NounsInStore = 'customerName' | 'customerBank';
+type IdealStore = PaymentMethodStore< NounsInStore >;
+
+declare module '@wordpress/data' {
+	function select( key: StoreKey ): StoreSelectors< NounsInStore >;
+	function dispatch( key: StoreKey ): StoreActions< NounsInStore >;
+}
+
+const actions: StoreActions< NounsInStore > = {
+	changeCustomerName( payload ) {
+		return { type: 'CUSTOMER_NAME_SET', payload };
+	},
+	changeCustomerBank( payload ) {
+		return { type: 'CUSTOMER_BANK_SET', payload };
+	},
+};
+
+const selectors: StoreSelectorsWithState< NounsInStore > = {
+	getCustomerName( state ) {
+		return state.customerName || '';
+	},
+	getCustomerBank( state ) {
+		return state.customerBank || '';
+	},
+};
+
+export function createIdealPaymentMethodStore(): IdealStore {
 	debug( 'creating a new ideal payment method store' );
-	const actions = {
-		changeCustomerName( payload ) {
-			return { type: 'CUSTOMER_NAME_SET', payload };
-		},
-		changeCustomerBank( payload ) {
-			return { type: 'CUSTOMER_BANK_SET', payload };
-		},
-	};
-
-	const selectors = {
-		getCustomerName( state ) {
-			return state.customerName || '';
-		},
-		getCustomerBank( state ) {
-			return state.customerBank || '';
-		},
-	};
-
 	const store = registerStore( 'ideal', {
 		reducer(
-			state = {
+			state: StoreState< NounsInStore > = {
 				customerName: { value: '', isTouched: false },
 				customerBank: { value: '', isTouched: false },
 			},
 			action
-		) {
+		): StoreState< NounsInStore > {
 			switch ( action.type ) {
 				case 'CUSTOMER_NAME_SET':
 					return { ...state, customerName: { value: action.payload, isTouched: true } };
@@ -53,21 +78,15 @@ export function createIdealPaymentMethodStore() {
 		selectors,
 	} );
 
-	return { ...store, actions, selectors };
+	return store;
 }
 
-export function createIdealMethod( { store, stripe, stripeConfiguration } ) {
+export function createIdealMethod( { store }: { store: IdealStore } ): PaymentMethod {
 	return {
 		id: 'ideal',
 		label: <IdealLabel />,
-		activeContent: <IdealFields stripe={ stripe } stripeConfiguration={ stripeConfiguration } />,
-		submitButton: (
-			<IdealPayButton
-				store={ store }
-				stripe={ stripe }
-				stripeConfiguration={ stripeConfiguration }
-			/>
-		),
+		activeContent: <IdealFields />,
+		submitButton: <IdealPayButton store={ store } />,
 		inactiveContent: <IdealSummary />,
 		getAriaLabel: ( __ ) => __( 'iDEAL' ),
 	};
@@ -108,14 +127,28 @@ function IdealFields() {
 	);
 }
 
-function BankSelector( { id, value, onChange, label, isError, errorMessage, disabled } ) {
+function BankSelector( {
+	id,
+	value,
+	onChange,
+	label,
+	isError,
+	errorMessage,
+	disabled,
+}: {
+	id: string;
+	value: string;
+	onChange: ( newId: string ) => void;
+	label: string;
+	isError: boolean;
+	errorMessage: string | null;
+	disabled?: boolean;
+} ) {
 	const { __ } = useI18n();
 	const bankOptions = getBankOptions( __ );
 	return (
 		<SelectWrapper>
-			<label htmlFor={ id } disabled={ disabled }>
-				{ label }
-			</label>
+			<label htmlFor={ id }>{ label }</label>
 			<select
 				id={ id }
 				value={ value }
@@ -131,18 +164,24 @@ function BankSelector( { id, value, onChange, label, isError, errorMessage, disa
 	);
 }
 
-function BankOption( { value, label } ) {
+function BankOption( { value, label }: { value: string; label: string } ) {
 	return <option value={ value }>{ label }</option>;
 }
 
-function ErrorMessage( { isError, errorMessage } ) {
+function ErrorMessage( {
+	isError,
+	errorMessage,
+}: {
+	isError: boolean;
+	errorMessage: string | null;
+} ) {
 	if ( isError ) {
 		return <Description isError={ isError }>{ errorMessage }</Description>;
 	}
 	return null;
 }
 
-const Description = styled.p`
+const Description = styled.p< { isError: boolean } >`
 	margin: 8px 0 0;
 	color: ${ ( props ) =>
 		props.isError ? props.theme.colors.error : props.theme.colors.textColorLight };
@@ -187,11 +226,28 @@ const SelectWrapper = styled.div`
 	}
 `;
 
-function IdealPayButton( { disabled, onClick, store, stripe, stripeConfiguration } ) {
+function IdealPayButton( {
+	disabled,
+	onClick,
+	store,
+}: {
+	disabled?: boolean;
+	onClick?: ProcessPayment;
+	store: IdealStore;
+} ) {
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
 	const customerName = useSelect( ( select ) => select( 'ideal' ).getCustomerName() );
 	const customerBank = useSelect( ( select ) => select( 'ideal' ).getCustomerBank() );
+
+	// This must be typed as optional because it's injected by cloning the
+	// element in CheckoutSubmitButton, but the uncloned element does not have
+	// this prop yet.
+	if ( ! onClick ) {
+		throw new Error(
+			'Missing onClick prop; IdealPayButton must be used as a payment button in CheckoutSubmitButton'
+		);
+	}
 
 	return (
 		<Button
@@ -200,12 +256,10 @@ function IdealPayButton( { disabled, onClick, store, stripe, stripeConfiguration
 				if ( isFormValid( store ) ) {
 					debug( 'submitting ideal payment' );
 					onClick( 'ideal', {
-						stripe,
 						name: customerName?.value,
 						idealBank: customerBank?.value,
 						items,
 						total,
-						stripeConfiguration,
 					} );
 				}
 			} }
@@ -218,16 +272,16 @@ function IdealPayButton( { disabled, onClick, store, stripe, stripeConfiguration
 	);
 }
 
-function ButtonContents( { formStatus, total } ) {
+function ButtonContents( { formStatus, total }: { formStatus: FormStatus; total: LineItem } ) {
 	const { __ } = useI18n();
 	if ( formStatus === FormStatus.SUBMITTING ) {
-		return __( 'Processing…' );
+		return <>{ __( 'Processing…' ) }</>;
 	}
 	if ( formStatus === FormStatus.READY ) {
 		/* translators: %s is the total to be paid in localized currency */
-		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
+		return <>{ sprintf( __( 'Pay %s' ), total.amount.displayValue ) }</>;
 	}
-	return __( 'Please wait…' );
+	return <>{ __( 'Please wait…' ) }</>;
 }
 
 function IdealSummary() {
@@ -242,17 +296,17 @@ function IdealSummary() {
 	);
 }
 
-function isFormValid( store ) {
-	const customerName = store.selectors.getCustomerName( store.getState() );
-	const customerBank = store.selectors.getCustomerBank( store.getState() );
+function isFormValid( store: IdealStore ) {
+	const customerName = selectors.getCustomerName( store.getState() );
+	const customerBank = selectors.getCustomerBank( store.getState() );
 
 	if ( ! customerName?.value.length ) {
 		// Touch the field so it displays a validation error
-		store.dispatch( store.actions.changeCustomerName( '' ) );
+		store.dispatch( actions.changeCustomerName( '' ) );
 	}
 	if ( ! customerBank?.value.length ) {
 		// Touch the field so it displays a validation error
-		store.dispatch( store.actions.changeCustomerBank( '' ) );
+		store.dispatch( actions.changeCustomerBank( '' ) );
 	}
 	if ( ! customerName?.value.length || ! customerBank?.value.length ) {
 		return false;
@@ -276,7 +330,7 @@ const IdealLogo = styled( IdealLogoSvg )`
 	width: 28px;
 `;
 
-function IdealLogoSvg( { className } ) {
+function IdealLogoSvg( { className }: { className?: string } ) {
 	return (
 		<svg
 			className={ className }
@@ -295,7 +349,7 @@ function IdealLogoSvg( { className } ) {
 	);
 }
 
-function getBankOptions( __ ) {
+function getBankOptions( __: ReturnType< typeof useI18n >[ '__' ] ) {
 	// Source https://stripe.com/docs/sources/ideal
 	const banks = [
 		{ value: 'abn_amro', label: 'ABN AMRO' },
