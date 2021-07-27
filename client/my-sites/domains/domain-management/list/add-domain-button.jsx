@@ -109,6 +109,7 @@ class AddDomainButton extends React.Component {
 					onClose={ this.closeAddMenu }
 					context={ this.addDomainButtonRef.current }
 					position="bottom"
+					relativePosition={ { left: -162 } }
 				>
 					{ this.renderOptions() }
 				</PopoverMenu>
