@@ -10,37 +10,59 @@ import type { Dispatch } from 'react';
 
 export * from './shopping-cart-endpoint';
 
-export interface ShoppingCartManagerArguments {
-	cartKey: string | undefined;
-	setCart: SetCart;
-	getCart: GetCart;
-	options?: ShoppingCartManagerOptions;
-}
+export type ShoppingCartReducerDispatch = ( action: ShoppingCartAction ) => void;
+
+export type ShoppingCartReducer = (
+	state: ShoppingCartState,
+	action: ShoppingCartAction
+) => ShoppingCartState;
 
 export type GetCart = ( cartKey: string ) => Promise< ResponseCart >;
-
 export type SetCart = ( cartKey: string, requestCart: RequestCart ) => Promise< ResponseCart >;
 
 export interface ShoppingCartManagerOptions {
 	refetchOnWindowFocus?: boolean;
+	defaultCartKey?: string;
 }
 
-export interface ShoppingCartManager {
+export type GetManagerForKey = ( cartKey: string | undefined ) => ShoppingCartManager;
+
+export interface ShoppingCartManagerClient {
+	forCartKey: GetManagerForKey;
+}
+
+export type UnsubscribeFunction = () => void;
+
+export type SubscribeCallback = () => void;
+
+export type ShoppingCartManagerSubscribe = ( callback: SubscribeCallback ) => UnsubscribeFunction;
+
+export interface SubscriptionManager {
+	subscribe: ShoppingCartManagerSubscribe;
+	notifySubscribers: () => void;
+}
+
+export interface ShoppingCartManagerState {
 	isLoading: boolean;
 	loadingError: string | null | undefined;
 	loadingErrorType: ShoppingCartError | undefined;
 	isPendingUpdate: boolean;
-	addProductsToCart: AddProductsToCart;
-	removeProductFromCart: RemoveProductFromCart;
-	applyCoupon: ApplyCouponToCart;
-	removeCoupon: RemoveCouponFromCart;
-	couponStatus: CouponStatus;
-	updateLocation: UpdateTaxLocationInCart;
-	replaceProductInCart: ReplaceProductInCart;
-	replaceProductsInCart: ReplaceProductsInCart;
-	reloadFromServer: ReloadCartFromServer;
 	responseCart: ResponseCart;
+	couponStatus: CouponStatus;
 }
+
+type WaitForReady = () => Promise< ResponseCart >;
+
+export type ShoppingCartManagerGetState = () => ShoppingCartManagerState;
+
+export interface ShoppingCartManager {
+	getState: ShoppingCartManagerGetState;
+	subscribe: ShoppingCartManagerSubscribe;
+	actions: ShoppingCartManagerActions;
+	fetchInitialCart: WaitForReady;
+}
+
+export type UseShoppingCart = ShoppingCartManagerActions & ShoppingCartManagerState;
 
 export type ReplaceProductInCart = (
 	uuidToReplace: string,
@@ -89,7 +111,6 @@ export type CacheStatus = 'fresh' | 'fresh-pending' | 'valid' | 'invalid' | 'pen
 export type CouponStatus = 'fresh' | 'pending' | 'applied' | 'rejected';
 
 export type ShoppingCartAction =
-	| { type: 'SYNC_CART_TO_SERVER' }
 	| { type: 'CLEAR_QUEUED_ACTIONS' }
 	| { type: 'REMOVE_CART_ITEM'; uuidToRemove: string }
 	| { type: 'CART_PRODUCTS_ADD'; products: RequestCartProduct[] }
@@ -109,6 +130,17 @@ export type ShoppingCartAction =
 	| { type: 'RECEIVE_UPDATED_RESPONSE_CART'; updatedResponseCart: ResponseCart }
 	| { type: 'RAISE_ERROR'; error: ShoppingCartError; message: string };
 
+export interface ShoppingCartManagerActions {
+	addProductsToCart: AddProductsToCart;
+	removeProductFromCart: RemoveProductFromCart;
+	applyCoupon: ApplyCouponToCart;
+	removeCoupon: RemoveCouponFromCart;
+	updateLocation: UpdateTaxLocationInCart;
+	replaceProductInCart: ReplaceProductInCart;
+	replaceProductsInCart: ReplaceProductsInCart;
+	reloadFromServer: ReloadCartFromServer;
+}
+
 export type ShoppingCartError = 'GET_SERVER_CART_ERROR' | 'SET_SERVER_CART_ERROR';
 
 export type ShoppingCartState = {
@@ -121,7 +153,7 @@ export type ShoppingCartState = {
 };
 
 export interface WithShoppingCartProps {
-	shoppingCartManager: ShoppingCartManager;
+	shoppingCartManager: UseShoppingCart;
 	cart: ResponseCart;
 }
 
@@ -129,8 +161,20 @@ export type CartValidCallback = ( cart: ResponseCart ) => void;
 
 export type DispatchAndWaitForValid = ( action: ShoppingCartAction ) => Promise< ResponseCart >;
 
-export type ShoppingCartMiddleware = (
-	action: ShoppingCartAction,
-	state: ShoppingCartState,
-	dispatch: Dispatch< ShoppingCartAction >
-) => void;
+export interface ActionPromises {
+	resolve: ( tempResponseCart: TempResponseCart ) => void;
+	add: ( resolve: ( value: ResponseCart ) => void ) => void;
+}
+
+export interface LastValidResponseCart {
+	get: () => ResponseCart;
+	update: ( tempResponseCart: TempResponseCart ) => void;
+}
+
+export interface CartSyncManager {
+	syncPendingCartToServer: (
+		state: ShoppingCartState,
+		dispatch: Dispatch< ShoppingCartAction >
+	) => void;
+	fetchInitialCartFromServer: ( dispatch: Dispatch< ShoppingCartAction > ) => void;
+}
