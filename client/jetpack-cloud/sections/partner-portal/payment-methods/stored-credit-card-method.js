@@ -28,6 +28,7 @@ export function createStoredCreditCardMethod( {
 				activeButtonText={ activePayButtonText }
 			/>
 		),
+		// these are not shown in the Partner Portal, but are required for CheckoutProvider
 		getAriaLabel: ( __ ) => __( 'Credit Card' ),
 		inactiveContent: ( __ ) => __( 'Credit Card' ),
 		label: ( __ ) => __( 'Credit Card' ),

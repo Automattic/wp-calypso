@@ -16,7 +16,7 @@ import Main from 'calypso/components/main';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
-import { useCreateStoredCreditCard } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/hooks/use-create-stored-credit-card';
+import { useCreateStoredCreditCardMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/hooks/use-create-stored-credit-card';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getAllStoredCards } from 'calypso/state/stored-cards/selectors';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
@@ -54,7 +54,7 @@ function PaymentMethodAdd(): ReactElement {
 	const storedCards = useSelector( getAllStoredCards );
 	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
 
-	const stripeMethod = useCreateStoredCreditCard( {
+	const stripeMethod = useCreateStoredCreditCardMethod( {
 		isStripeLoading,
 		stripeLoadingError,
 		stripeConfiguration,

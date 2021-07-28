@@ -8,13 +8,18 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { PaymentLogo } from '@automattic/composite-checkout';
+import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-export default function StoredCreditCard( props ): ReactElement {
+interface Props {
+	card: StoredCard;
+}
+
+export default function StoredCreditCard( props: Props ): ReactElement {
 	const translate = useTranslate();
 	const creditCard = props.card;
 
