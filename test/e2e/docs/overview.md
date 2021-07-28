@@ -33,12 +33,12 @@ These e2e tests use the same technology as the `wp-calypso` GitHub repository, n
 
 At the high level, each test file (or `spec`) fall under one of the following flows:
 
-| Flow                 | Directory             |
-| -------------------- | --------------------- |
-| Playwright              | `specs/specs-playwright` |
-| Calypso              | `specs/specs-calypso` |
-| Internationalization | `specs/specs-i18n`    |
-| Jetpack              | `specs/specs-jetpack` |
-| WordPress.com        | `specs/specs-wpcom`   |
+| Flow                 | Directory                |
+| -------------------- | ------------------------ |
+| Playwright           | `specs/specs-playwright` |
+| Calypso              | `specs/specs-calypso`    |
+| Internationalization | `specs/specs-i18n`       |
+| Jetpack              | `specs/specs-jetpack`    |
+| WordPress.com        | `specs/specs-wpcom`      |
 
 Core code for Jetpack, WooCommerce and Gutenberg are hosted in other repositories and they have separate e2e testing infrastructure. Tests within `test/e2e` are meant to test interactions between their respective components and Calypso.
