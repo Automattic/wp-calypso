@@ -206,6 +206,7 @@ module.exports = {
 				'packages/composite-checkout/**/*',
 				'packages/create-calypso-config/**/*',
 				'packages/data-stores/**/*',
+				'packages/design-picker/**/*',
 				'packages/domain-picker/**/*',
 				'packages/eslint-plugin-wpcalypso/**/*',
 				'packages/explat-client-react-helpers/**/*',

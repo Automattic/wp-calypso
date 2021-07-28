@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import type { Font } from './types';
 
 export const FONT_TITLES: Partial< Record< Font, string > > = {
