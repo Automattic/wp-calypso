@@ -45,13 +45,13 @@ export default function CalypsoShoppingCartProvider( {
 	const options = useMemo(
 		() => ( {
 			refetchOnWindowFocus: true,
+			defaultCartKey,
 		} ),
-		[]
+		[ defaultCartKey ]
 	);
 
 	return (
 		<ShoppingCartProvider
-			cartKey={ defaultCartKey }
 			getCart={ getCart || wpcomGetCart }
 			setCart={ wpcomSetCart }
 			options={ options }
