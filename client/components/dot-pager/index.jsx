@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { Children, useState } from 'react';
-import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { times } from 'lodash';
 import classnames from 'classnames';
@@ -72,7 +71,7 @@ const Controls = ( { showControlLabels = false, currentPage, numberOfPages, setC
 export const DotPager = ( { showControlLabels = false, children, className, ...props } ) => {
 	const [ currentPage, setCurrentPage ] = useState( 0 );
 	return (
-		<Card className={ className } { ...props }>
+		<div className={ className } { ...props }>
 			<Controls
 				showControlLabels={ showControlLabels }
 				currentPage={ currentPage }
@@ -93,7 +92,7 @@ export const DotPager = ( { showControlLabels = false, children, className, ...p
 					</div>
 				) ) }
 			</div>
-		</Card>
+		</div>
 	);
 };
 
