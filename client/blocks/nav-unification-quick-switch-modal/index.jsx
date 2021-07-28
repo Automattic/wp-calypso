@@ -25,8 +25,8 @@ import featureImage from 'calypso/assets/images/nav-unification-announcement/qui
  */
 import './style.scss';
 
-// User registered on 22nd July 2021
-const NEW_USER_THRESHOLD = 209270731;
+// User registered on 28 July 2021
+const NEW_USER_THRESHOLD = 209492113;
 
 const Page = ( { heading, content, image } ) => {
 	return (
