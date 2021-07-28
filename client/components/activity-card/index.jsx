@@ -60,17 +60,18 @@ class ActivityCard extends Component {
 	render() {
 		const {
 			activity,
-			shareable,
 			allowRestore,
 			applySiteOffset,
 			className,
+			moment,
+			shareable,
 			siteId,
 			summarize,
 		} = this.props;
 
 		const backupTimeDisplay = applySiteOffset
 			? applySiteOffset( activity.activityTs ).format( 'LT' )
-			: '';
+			: moment( activity.activityTs ).format( 'LT' );
 		const showStreamsContent = this.state.showContent && activity.streams;
 		const hasActivityFailed = activity.activityStatus === 'error';
 
