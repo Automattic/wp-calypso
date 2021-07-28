@@ -44,17 +44,13 @@ class EmailSignupTitanCard extends React.Component {
 		showChevron: false,
 	};
 
-	renderEmailSuggestion( customDomainName ) {
+	renderEmailSuggestion() {
 		const { salePrice, titanMonthlyRenewalCost, translate } = this.props;
 
 		return (
 			<div className="email-signup-titan-card__suggestion-content">
 				<h3 className="email-signup-titan-card__title">
-					{ translate( 'youremail@%(domainName)s', {
-						args: { domainName: customDomainName },
-						comment:
-							'This is a sample email address for the user at their domain; %(domainName)s is a domain name, e.g. example.com',
-					} ) }
+					{ translate( 'Your email is now ready to use' ) }
 				</h3>
 				<EmailProductPrice
 					price={ titanMonthlyRenewalCost }
@@ -83,10 +79,8 @@ class EmailSignupTitanCard extends React.Component {
 			onAddButtonClick,
 			onSkipButtonClick,
 			showChevron,
-			signupDependencies,
 			skipButtonTitle,
 		} = this.props;
-		const domainItem = signupDependencies.domainItem?.meta;
 		const classes = classNames( 'email-suggestion', extraClasses );
 
 		const wrapDivActionContainer = ( contentElement ) =>
@@ -101,7 +95,7 @@ class EmailSignupTitanCard extends React.Component {
 		return (
 			<>
 				<Card className={ classes } compact>
-					{ this.renderEmailSuggestion( domainItem ) }
+					{ this.renderEmailSuggestion() }
 					{ wrapDivActionContainer(
 						<>
 							<Button

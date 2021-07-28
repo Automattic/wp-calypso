@@ -8,30 +8,24 @@ import styled from '@emotion/styled';
 /**
  * Internal dependencies
  */
+import { CALYPSO_CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';
 import { MarketplaceThemeProps } from 'calypso/my-sites/marketplace/theme';
 import { MarketplaceHeaderTitle } from 'calypso/my-sites/marketplace/components';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import VerticalNav from 'calypso/components/vertical-nav';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 /**
  * style dependencies
  */
 import './style.scss';
 
-const MarketplaceThankYouContainer = styled.div< MarketplaceThemeProps >`
+const ThankYouContainer = styled.div< MarketplaceThemeProps >`
 	background-color: #fff;
-	overflow: scroll;
 	-ms-overflow-style: none;
-	scrollbar-width: none;
-	&::-webkit-scrollbar {
-		display: none;
-	}
-	margin-top: var( --masterbar-height );
-	height: calc( 100vh - var( --masterbar-height ) );
+	height: 100vh;
 `;
 
-const MarketplaceThankYouHeader = styled.div`
+const ThankYouHeader = styled.div`
     width: 100%;
     height: 240px;
     background-color: var( --studio-gray-0 );
@@ -39,7 +33,7 @@ const MarketplaceThankYouHeader = styled.div`
     justify-content: center;
 }`;
 
-const MarketplaceThankyouSection = styled.div`
+const ThankYouSectionContainer = styled.div`
     margin-bottom: 35px;
 }`;
 
@@ -118,13 +112,13 @@ const ThankYouSection = ( props: ThankYouSectionProps ) => {
 	) );
 
 	return (
-		<MarketplaceThankyouSection>
+		<ThankYouSectionContainer>
 			<MarketplaceHeaderTitle subtitle className="thank-you__body-header wp-brand-font">
 				{ sectionTitle }
 			</MarketplaceHeaderTitle>
 
 			<MarketplaceNextSteps>{ nextStepComponents }</MarketplaceNextSteps>
-		</MarketplaceThankyouSection>
+		</ThankYouSectionContainer>
 	);
 };
 
@@ -138,23 +132,23 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 	) );
 
 	return (
-		<MarketplaceThankYouContainer className="thank-you__container checkout-thank-you">
-			<MarketplaceThankYouHeader>
+		<ThankYouContainer className="thank-you__container checkout-thank-you">
+			<ThankYouHeader>
 				{ /* eslint-disable-next-line jsx-a11y/alt-text */ }
 				<img { ...thankYouImage } />
-			</MarketplaceThankYouHeader>
+			</ThankYouHeader>
 			<ThankYouBody>
 				<div>
-					<MarketplaceThankyouSection>
+					<ThankYouSectionContainer>
 						<MarketplaceHeaderTitle className="thank-you__body-header wp-brand-font">
 							{ thankYouTitle }
 						</MarketplaceHeaderTitle>
-					</MarketplaceThankyouSection>
+					</ThankYouSectionContainer>
 
 					{ thankYouSections }
 
 					{ showSupportSection && (
-						<MarketplaceThankyouSection>
+						<ThankYouSectionContainer>
 							<MarketplaceHeaderTitle subtitle className="thank-you__body-header wp-brand-font">
 								{ translate( 'How can we help?' ) }
 							</MarketplaceHeaderTitle>
@@ -164,17 +158,17 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 								) }
 							</p>
 							<VerticalNav>
-								<VerticalNavItem path={ '/help/contact' }>
+								<VerticalNavItem path={ CALYPSO_CONTACT }>
 									{ translate( 'Ask a question' ) }
 								</VerticalNavItem>
-								<VerticalNavItem path={ localizeUrl( 'https://wordpress.com/support' ) }>
+								<VerticalNavItem path={ SUPPORT_ROOT }>
 									{ translate( 'Support documentation' ) }
 								</VerticalNavItem>
 							</VerticalNav>
-						</MarketplaceThankyouSection>
+						</ThankYouSectionContainer>
 					) }
 				</div>
 			</ThankYouBody>
-		</MarketplaceThankYouContainer>
+		</ThankYouContainer>
 	);
 };

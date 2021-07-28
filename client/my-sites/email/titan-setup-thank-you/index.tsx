@@ -27,15 +27,14 @@ export const TitanSetupThankYou = ( props: TitanSetupThankYouProps ): JSX.Elemen
 	const currentRoute = useSelector( getCurrentRoute );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
-	const thankYouImageSrc = '/calypso/images/upgrades/thank-you.svg';
 
-	const { domainName, emailAddress = `youremail@${ domainName }` } = props;
+	const { domainName, emailAddress = domainName } = props;
 
 	const emailManagementPath = emailManagement( selectedSiteSlug, domainName, currentRoute );
 
 	const thankYouImage = {
 		alt: 'Thank you',
-		src: thankYouImageSrc,
+		src: '/calypso/images/upgrades/thank-you.svg',
 	};
 
 	const titanThankYouSection = {
@@ -72,7 +71,7 @@ export const TitanSetupThankYou = ( props: TitanSetupThankYouProps ): JSX.Elemen
 				stepKey: 'titan_whats_next_manage_email',
 				stepTitle: translate( 'Manage your email' ),
 				stepDescription: translate(
-					'Manage your emails, create new mailboxes, and import your emails, all within your dashboard.'
+					'Add or delete mailboxes, migrate existing emails, configure a catch-all email, and much more.'
 				),
 				stepCta: (
 					<FullWidthButton href={ emailManagementPath }>{ translate( 'Manage' ) }</FullWidthButton>
@@ -87,12 +86,7 @@ export const TitanSetupThankYou = ( props: TitanSetupThankYouProps ): JSX.Elemen
 				sections={ [ titanThankYouSection ] }
 				showSupportSection={ true }
 				thankYouImage={ thankYouImage }
-				thankYouTitle={ translate( '%(emailAddress)s is now ready to use', {
-					args: {
-						emailAddress,
-					},
-					comment: '%(emailAddress)s is an email address, e.g. info@example.com',
-				} ) }
+				thankYouTitle={ translate( 'Your email is now ready to use' ) }
 			/>
 		</ThemeProvider>
 	);
