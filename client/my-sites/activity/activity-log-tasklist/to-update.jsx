@@ -41,7 +41,7 @@ export default ( WrappedComponent ) => {
 			return {
 				plugins:
 					nextProps.siteId === prevState.siteId
-						? unionBySlug( nextProps.plugins ?? [], prevState?.plugins ?? [] )
+						? unionBySlug( nextProps.plugins ?? [], prevState.plugins ?? [] )
 						: emptyList,
 				siteId: nextProps.siteId,
 			};
