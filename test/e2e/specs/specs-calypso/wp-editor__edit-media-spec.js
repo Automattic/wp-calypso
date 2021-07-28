@@ -1,4 +1,5 @@
 import config from 'config';
+import GuideComponent from '../../lib/components/guide-component';
 import SideBarComponent from '../../lib/components/sidebar-component';
 import * as dataHelper from '../../lib/data-helper';
 import * as driverManager from '../../lib/driver-manager.js';
@@ -24,6 +25,10 @@ describe( `[${ host }] Media: Edit Media (${ screenSize }) @parallel @jetpack`, 
 	} );
 
 	it( 'Select a random media item and click edit', async function () {
+		// Makes sure that the Quick Switch modal will be dismissed.
+		const guideComponent = new GuideComponent( this.driver );
+		await guideComponent.dismiss( 1000, '.nav-unification-quick-switch-modal' );
+
 		const mediaPage = await MediaPage.Expect( this.driver );
 		await mediaPage.selectFirstImage();
 		await mediaPage.selectEditMedia();
