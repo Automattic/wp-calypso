@@ -287,7 +287,7 @@ class ThemesMagicSearchCard extends React.Component {
 		}
 
 		this.updateInput( searchInput + text );
-		this.setState( { isPopoverVisible: false } );
+		setTimeout( () => this.setState( { isPopoverVisible: false } ), 100 );
 	};
 
 	focusOnInput = () => {
