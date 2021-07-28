@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import {
@@ -12,9 +8,6 @@ import {
 	stripHtmlTags,
 } from '../helpers';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const URL_LENGTH = 68;

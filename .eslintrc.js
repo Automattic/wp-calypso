@@ -231,6 +231,7 @@ module.exports = {
 				'packages/request-external-access/**/*',
 				'packages/search/**/*',
 				'packages/shopping-cart/**/*',
+				'packages/social-previews/**/*',
 				'packages/spec-junit-reporter/**/*',
 				'packages/spec-xunit-reporter/**/*',
 				'packages/tree-select/**/*',
