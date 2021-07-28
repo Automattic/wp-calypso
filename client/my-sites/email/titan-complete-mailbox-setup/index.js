@@ -78,6 +78,9 @@ const useHandleSetupAction = ( goToEmail, mailboxes, onMailboxesChange ) => {
 
 	let isCheckingAvailability = isLoadingMailboxAvailability;
 
+	const dispatchCompleteSetupClick = ( canContinue ) =>
+		dispatch( recordCompleteSetupClickEvent( canContinue, mailbox ) );
+
 	const handleCompleteSetup = async () => {
 		const validatedMailboxes = validateMailboxes( mailboxes );
 		let mailboxIsValid = areAllMailboxesValid( validatedMailboxes );
@@ -103,11 +106,13 @@ const useHandleSetupAction = ( goToEmail, mailboxes, onMailboxesChange ) => {
 
 				onMailboxesChange( mailboxes );
 
+				dispatchCompleteSetupClick( mailboxIsValid );
+
 				return;
 			}
 		}
 
-		dispatch( recordCompleteSetupClickEvent( mailboxIsValid, mailboxes[ 0 ] ) );
+		dispatchCompleteSetupClick( mailboxIsValid );
 
 		if ( ! mailboxIsValid ) {
 			return;
@@ -148,26 +153,24 @@ const SetupForm = ( { goToEmail, selectedDomainName, siteDomainsAreLoaded } ) =>
 	}
 
 	return (
-		<>
-			<Card>
-				<TitanNewMailboxList
-					domain={ selectedDomainName }
-					mailboxes={ mailboxes }
-					onMailboxesChange={ onMailboxesChange }
-					supportsMultipleMailboxes={ false }
-					validatedMailboxUuids={ mailboxes.map( ( mailbox ) => mailbox.uid ) }
+		<Card>
+			<TitanNewMailboxList
+				domain={ selectedDomainName }
+				mailboxes={ mailboxes }
+				onMailboxesChange={ onMailboxesChange }
+				supportsMultipleMailboxes={ false }
+				validatedMailboxUuids={ mailboxes.map( ( mailbox ) => mailbox.uid ) }
+			>
+				<Button
+					className="titan-complete-mailbox-setup__action-continue"
+					primary
+					busy={ isBusy }
+					onClick={ handleCompleteSetup }
 				>
-					<Button
-						className="titan-complete-mailbox-setup__action-continue"
-						primary
-						busy={ isBusy }
-						onClick={ handleCompleteSetup }
-					>
-						{ translate( 'Complete setup' ) }
-					</Button>
-				</TitanNewMailboxList>
-			</Card>
-		</>
+					{ translate( 'Complete setup' ) }
+				</Button>
+			</TitanNewMailboxList>
+		</Card>
 	);
 };
 
