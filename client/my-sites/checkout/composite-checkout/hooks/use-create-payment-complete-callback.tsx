@@ -276,7 +276,7 @@ function displayRenewalSuccessNotice(
 		reduxDispatch(
 			successNotice(
 				translate(
-					'%(productName)s has been renewed and will now auto renew in the future. ' +
+					'%(productName)s has been renewed and will renew automatically in the future. ' +
 						'{{a}}Learn more{{/a}}',
 					{
 						args: {
