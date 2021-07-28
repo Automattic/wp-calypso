@@ -10,36 +10,65 @@ import type { Dispatch } from 'react';
 
 export * from './shopping-cart-endpoint';
 
-export interface ShoppingCartManagerArguments {
-	cartKey: string | undefined;
-	setCart: SetCart;
-	getCart: GetCart;
-	options?: ShoppingCartManagerOptions;
-}
+export type ShoppingCartReducerDispatch = ( action: ShoppingCartAction ) => void;
+
+export type ShoppingCartReducer = (
+	state: ShoppingCartState,
+	action: ShoppingCartAction
+) => ShoppingCartState;
 
 export type GetCart = ( cartKey: string ) => Promise< ResponseCart >;
-
 export type SetCart = ( cartKey: string, requestCart: RequestCart ) => Promise< ResponseCart >;
 
 export interface ShoppingCartManagerOptions {
 	refetchOnWindowFocus?: boolean;
+	defaultCartKey?: string | undefined;
 }
 
-export interface ShoppingCartManager {
+export type GetManagerForKey = ( cartKey: string | undefined ) => ShoppingCartManager;
+
+export interface ShoppingCartManagerClient {
+	forCartKey: GetManagerForKey;
+}
+
+export type UnsubscribeFunction = () => void;
+
+export type SubscribeCallback = () => void;
+
+export type ShoppingCartManagerSubscribe = ( callback: SubscribeCallback ) => UnsubscribeFunction;
+
+export interface SubscriptionManager {
+	subscribe: ShoppingCartManagerSubscribe;
+	notifySubscribers: () => void;
+}
+
+export interface ShoppingCartManagerState {
 	isLoading: boolean;
 	loadingError: string | null | undefined;
 	loadingErrorType: ShoppingCartError | undefined;
 	isPendingUpdate: boolean;
-	addProductsToCart: AddProductsToCart;
-	removeProductFromCart: RemoveProductFromCart;
-	applyCoupon: ApplyCouponToCart;
-	removeCoupon: RemoveCouponFromCart;
-	couponStatus: CouponStatus;
-	updateLocation: UpdateTaxLocationInCart;
-	replaceProductInCart: ReplaceProductInCart;
-	replaceProductsInCart: ReplaceProductsInCart;
-	reloadFromServer: ReloadCartFromServer;
 	responseCart: ResponseCart;
+	couponStatus: CouponStatus;
+}
+
+type WaitForReady = () => Promise< ResponseCart >;
+
+export type ShoppingCartManagerGetState = () => ShoppingCartManagerState;
+
+export interface ShoppingCartManager {
+	getState: ShoppingCartManagerGetState;
+	subscribe: ShoppingCartManagerSubscribe;
+	actions: ShoppingCartActionCreators;
+	waitForReady: WaitForReady;
+}
+
+export interface UseShoppingCart extends ShoppingCartActionCreators {
+	isLoading: boolean;
+	loadingError: string | null | undefined;
+	loadingErrorType: ShoppingCartError | undefined;
+	isPendingUpdate: boolean;
+	responseCart: ResponseCart;
+	couponStatus: CouponStatus;
 }
 
 export type ReplaceProductInCart = (
@@ -89,6 +118,7 @@ export type CacheStatus = 'fresh' | 'fresh-pending' | 'valid' | 'invalid' | 'pen
 export type CouponStatus = 'fresh' | 'pending' | 'applied' | 'rejected';
 
 export type ShoppingCartAction =
+	| { type: 'GET_CART_FROM_SERVER' }
 	| { type: 'SYNC_CART_TO_SERVER' }
 	| { type: 'CLEAR_QUEUED_ACTIONS' }
 	| { type: 'REMOVE_CART_ITEM'; uuidToRemove: string }
@@ -109,6 +139,17 @@ export type ShoppingCartAction =
 	| { type: 'RECEIVE_UPDATED_RESPONSE_CART'; updatedResponseCart: ResponseCart }
 	| { type: 'RAISE_ERROR'; error: ShoppingCartError; message: string };
 
+export interface ShoppingCartActionCreators {
+	addProductsToCart: AddProductsToCart;
+	removeProductFromCart: RemoveProductFromCart;
+	applyCoupon: ApplyCouponToCart;
+	removeCoupon: RemoveCouponFromCart;
+	updateLocation: UpdateTaxLocationInCart;
+	replaceProductInCart: ReplaceProductInCart;
+	replaceProductsInCart: ReplaceProductsInCart;
+	reloadFromServer: ReloadCartFromServer;
+}
+
 export type ShoppingCartError = 'GET_SERVER_CART_ERROR' | 'SET_SERVER_CART_ERROR';
 
 export type ShoppingCartState = {
@@ -121,7 +162,7 @@ export type ShoppingCartState = {
 };
 
 export interface WithShoppingCartProps {
-	shoppingCartManager: ShoppingCartManager;
+	shoppingCartManager: UseShoppingCart;
 	cart: ResponseCart;
 }
 
@@ -133,4 +174,8 @@ export type ShoppingCartMiddleware = (
 	action: ShoppingCartAction,
 	state: ShoppingCartState,
 	dispatch: Dispatch< ShoppingCartAction >
+) => void;
+
+export type AddActionPromise = (
+	resolve: ( value: ResponseCart | PromiseLike< ResponseCart > ) => void
 ) => void;
