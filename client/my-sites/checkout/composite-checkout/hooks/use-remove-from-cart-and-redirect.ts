@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useRef, useEffect } from 'react';
 import page from 'page';
 import debugFactory from 'debug';
 import { useShoppingCart } from '@automattic/shopping-cart';
@@ -58,6 +58,14 @@ export default function useRemoveFromCartAndRedirect(
 		}
 	}, [ createUserAndSiteBeforeTransaction, siteSlug, siteSlugLoggedOutCart, checkoutBackUrl ] );
 
+	const isMounted = useRef( true );
+	useEffect( () => {
+		isMounted.current = true;
+		return () => {
+			isMounted.current = false;
+		};
+	}, [] );
+
 	const [ isRemovingProductFromCart, setIsRemovingFromCart ] = useState< boolean >( false );
 	const removeProductFromCartAndMaybeRedirect = useCallback(
 		( uuid: string ) => {
@@ -68,7 +76,7 @@ export default function useRemoveFromCartAndRedirect(
 					// Don't turn off isRemovingProductFromCart if we are redirecting so that the loading page remains active.
 					return cart;
 				}
-				setIsRemovingFromCart( false );
+				isMounted.current && setIsRemovingFromCart( false );
 				return cart;
 			} );
 		},
