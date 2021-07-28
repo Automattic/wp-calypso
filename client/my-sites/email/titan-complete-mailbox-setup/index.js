@@ -189,9 +189,9 @@ const TitanCompleteMailboxSetup = ( { selectedDomainName } ) => {
 
 	const domains = useSelector( ( state ) => getDomainsBySiteId( state, siteId ) );
 
-	const selectedDomain = useSelector( () => getSelectedDomain( { domains, selectedDomainName } ) );
+	const selectedDomain = getSelectedDomain( { domains, selectedDomainName } );
 
-	const hasTitanSubscription = useSelector( () => hasTitanMailWithUs( selectedDomain ) );
+	const hasTitanSubscription = hasTitanMailWithUs( selectedDomain );
 
 	const siteDomainsAreLoaded = useSelector( ( state ) => hasLoadedSiteDomains( state, siteId ) );
 
@@ -219,7 +219,7 @@ const TitanCompleteMailboxSetup = ( { selectedDomainName } ) => {
 		<>
 			<PageViewTracker
 				path={ analyticsPath }
-				title="Email Management > Setup your Professional Email"
+				title="Email Management > Set up your Professional Email mailbox"
 			/>
 
 			{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
@@ -230,7 +230,7 @@ const TitanCompleteMailboxSetup = ( { selectedDomainName } ) => {
 				<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
 
 				<HeaderCake onClick={ goToEmail } backText={ translate( 'Email Management' ) }>
-					{ translate( 'Setup your Professional Email' ) }
+					{ translate( 'Set up your Professional Email mailbox' ) }
 				</HeaderCake>
 
 				<SetupForm
