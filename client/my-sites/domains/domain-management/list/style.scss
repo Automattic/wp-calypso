@@ -242,10 +242,11 @@
 .list__domains-header {
 	flex: 1;
 	margin-right: 8px;
+	font-size: $font-body-small;
 }
 
 .list__domain-options {
-	width: 65px;
+	width: 23px;
 	font-size: $font-body-small;
 	text-align: center;
 	button {
