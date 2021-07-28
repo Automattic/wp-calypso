@@ -1,5 +1,4 @@
 import debugFactory from 'debug';
-import { useReducer, useEffect, Dispatch, useCallback, useRef } from 'react';
 import {
 	removeItemFromResponseCart,
 	addItemsToResponseCart,
@@ -19,55 +18,14 @@ import type {
 	ShoppingCartReducerDispatch,
 	CouponStatus,
 	CacheStatus,
-	ShoppingCartMiddleware,
 } from './types';
 
 const debug = debugFactory( 'shopping-cart:use-shopping-cart-reducer' );
 const emptyResponseCart = getEmptyResponseCart();
 
-export default function useShoppingCartReducer(
-	middleware: ShoppingCartMiddleware[]
-): [ ShoppingCartState, Dispatch< ShoppingCartAction > ] {
-	const [ hookState, hookDispatch ] = useReducer(
-		shoppingCartReducer,
-		getInitialShoppingCartState()
-	);
-
-	// We need a copy of the state so that dispatchWithMiddleware does not need
-	// hookState as a dependency. Otherwise, dispatchWithMiddleware will change
-	// on every render, which can cause problems for other hooks that depend on
-	// it.
-	const cachedState = useRef< ShoppingCartState >( hookState );
-	cachedState.current = hookState;
-
-	useEffect( () => {
-		if ( hookState.queuedActions.length > 0 && hookState.cacheStatus === 'valid' ) {
-			debug( 'cart is loaded; playing queued actions', hookState.queuedActions );
-			hookDispatch( { type: 'CLEAR_QUEUED_ACTIONS' } );
-			hookState.queuedActions.forEach( ( action: ShoppingCartAction ) => {
-				hookDispatch( action );
-			} );
-			debug( 'cart is loaded; queued actions complete' );
-		}
-	}, [ hookState.queuedActions, hookState.cacheStatus ] );
-
-	const dispatchWithMiddleware = useCallback(
-		( action: ShoppingCartAction ) => {
-			// We want to defer the middleware actions just like the dispatcher is deferred.
-			setTimeout( () => {
-				middleware.forEach( ( middlewareFn ) =>
-					middlewareFn( action, cachedState.current, hookDispatch )
-				);
-			} );
-			hookDispatch( action );
-		},
-		[ middleware ]
-	);
-
-	return [ hookState, dispatchWithMiddleware ];
-}
-
 const alwaysAllowedActions = [
+	'SYNC_CART_TO_SERVER',
+	'GET_CART_FROM_SERVER',
 	'RECEIVE_INITIAL_RESPONSE_CART',
 	'RECEIVE_UPDATED_RESPONSE_CART',
 	'FETCH_INITIAL_RESPONSE_CART',
@@ -101,7 +59,7 @@ function shouldQueueReducerEvent( cacheStatus: CacheStatus, action: ShoppingCart
 	return false;
 }
 
-function shoppingCartReducer(
+export function shoppingCartReducer(
 	state: ShoppingCartState,
 	action: ShoppingCartAction
 ): ShoppingCartState {
@@ -284,11 +242,14 @@ function shoppingCartReducer(
 			return state;
 
 		default:
+			debug(
+				`no action taken for action "${ action.type }"; it might have been handled by middleware`
+			);
 			return state;
 	}
 }
 
-function getInitialShoppingCartState(): ShoppingCartState {
+export function getInitialShoppingCartState(): ShoppingCartState {
 	return {
 		responseCart: emptyResponseCart,
 		cacheStatus: 'fresh',
