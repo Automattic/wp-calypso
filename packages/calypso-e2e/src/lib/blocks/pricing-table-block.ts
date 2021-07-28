@@ -1,6 +1,4 @@
-import { Frame, Page } from 'playwright';
-// import { gutterValues, gutterValuesArray } from '../../types';
-import { BaseBlock } from '../base-block';
+import { Frame, Page, ElementHandle } from 'playwright';
 
 // Workaround to get a type from predefined array.
 // See https://stackoverflow.com/a/59857409.
@@ -16,10 +14,20 @@ const selectors = {
 /**
  * Represents the Pricing Table coblock.
  */
-export class PricingTableBlock extends BaseBlock {
+export class PricingTableBlock {
 	// Static properties.
 	static blockName = 'Pricing Table';
 	static gutterValues = gutterValuesArray;
+	block: ElementHandle;
+
+	/**
+	 * Constructs an instance of this block.
+	 *
+	 * @param {ElementHandle} block Handle referencing the block as inserted on the Gutenberg editor.
+	 */
+	constructor( block: ElementHandle ) {
+		this.block = block;
+	}
 
 	/**
 	 * Enters the price to the side chosen.

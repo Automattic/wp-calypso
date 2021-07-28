@@ -1,5 +1,4 @@
-import { Page } from 'playwright';
-import { BaseBlock } from '../base-block';
+import { Page, ElementHandle } from 'playwright';
 
 const selectors = {
 	block: '.wp-block-coblocks-dynamic-separator',
@@ -8,9 +7,19 @@ const selectors = {
 /**
  * Represents the Dynamic HR coblock.
  */
-export class DynamicHRBlock extends BaseBlock {
+export class DynamicHRBlock {
 	// Static properties.
 	static blockName = 'Dynamic HR';
+	block: ElementHandle;
+
+	/**
+	 * Constructs an instance of this block.
+	 *
+	 * @param {ElementHandle} block Handle referencing the block as inserted on the Gutenberg editor.
+	 */
+	constructor( block: ElementHandle ) {
+		this.block = block;
+	}
 
 	/**
 	 * Validates block on the page.

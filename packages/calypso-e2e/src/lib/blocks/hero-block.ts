@@ -1,5 +1,4 @@
-import { Page } from 'playwright';
-import { BaseBlock } from '../base-block';
+import { Page, ElementHandle } from 'playwright';
 
 const selectors = {
 	block: '.wp-block-coblocks-hero',
@@ -9,9 +8,19 @@ const selectors = {
 /**
  * Represents the Hero coblock.
  */
-export class HeroBlock extends BaseBlock {
+export class HeroBlock {
 	// Static properties.
 	static blockName = 'Hero';
+	block: ElementHandle;
+
+	/**
+	 * Constructs an instance of this block.
+	 *
+	 * @param {ElementHandle} block Handle referencing the block as inserted on the Gutenberg editor.
+	 */
+	constructor( block: ElementHandle ) {
+		this.block = block;
+	}
 
 	/**
 	 * Enters text into the heading of the Hero block.

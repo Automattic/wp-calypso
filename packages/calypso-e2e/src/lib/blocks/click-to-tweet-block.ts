@@ -1,5 +1,4 @@
-import { Page } from 'playwright';
-import { BaseBlock } from '../base-block';
+import { Page, ElementHandle } from 'playwright';
 
 const selectors = {
 	block: '.wp-block-coblocks-click-to-tweet',
@@ -9,9 +8,19 @@ const selectors = {
 /**
  * Represents the Click to Tweet coblock.
  */
-export class ClicktoTweetBlock extends BaseBlock {
+export class ClicktoTweetBlock {
 	// Static properties.
 	static blockName = 'Click to Tweet';
+	block: ElementHandle;
+
+	/**
+	 * Constructs an instance of this block.
+	 *
+	 * @param {ElementHandle} block Handle referencing the block as inserted on the Gutenberg editor.
+	 */
+	constructor( block: ElementHandle ) {
+		this.block = block;
+	}
 
 	/**
 	 * Given a text string, enters the text into the main tweet body.
