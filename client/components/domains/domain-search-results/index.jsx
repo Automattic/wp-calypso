@@ -145,22 +145,32 @@ class DomainSearchResults extends React.Component {
 			}
 
 			let domainUnavailableMessage = [ TLD_NOT_SUPPORTED, UNKNOWN ].includes( lastDomainStatus )
-				? translate( '.%(tld)s domains are not available for registration on WordPress.com.', {
-						args: { tld: getTld( domain ) },
-				  } )
-				: translate( '%(domain)s is already registered. {{a}}Do you own it?{{/a}}', {
-						args: { domain },
-						components: {
-							a: (
-								// eslint-disable-next-line jsx-a11y/anchor-is-valid
-								<a
-									href="#"
-									onClick={ this.props.onClickUseYourDomain }
-									data-tracks-button-click-source={ this.props.tracksButtonClickSource }
-								/>
-							),
-						},
-				  } );
+				? translate(
+						'{{strong}}.%(tld)s{{/strong}} domains are not available for registration on WordPress.com.',
+						{
+							args: { tld: getTld( domain ) },
+							components: {
+								strong: <strong />,
+							},
+						}
+				  )
+				: translate(
+						'{{strong}}%(domain)s{{/strong}} is already registered. {{a}}Do you own it?{{/a}}',
+						{
+							args: { domain },
+							components: {
+								strong: <strong />,
+								a: (
+									// eslint-disable-next-line jsx-a11y/anchor-is-valid
+									<a
+										href="#"
+										onClick={ this.props.onClickUseYourDomain }
+										data-tracks-button-click-source={ this.props.tracksButtonClickSource }
+									/>
+								),
+							},
+						}
+				  );
 
 			if ( TLD_NOT_SUPPORTED_TEMPORARILY === lastDomainStatus ) {
 				domainUnavailableMessage = translate(
@@ -177,14 +187,18 @@ class DomainSearchResults extends React.Component {
 				if ( this.props.siteDesignType !== DESIGN_TYPE_STORE && lastDomainIsTransferrable ) {
 					availabilityElement = (
 						<CompactCard className="domain-search-results__domain-available-notice">
-							<MaterialIcon icon="info" />
+							<span className="domain-search-results__domain-available-notice-icon">
+								<MaterialIcon icon="info" />
+							</span>
 							<span>{ domainUnavailableMessage }</span>
 						</CompactCard>
 					);
 				} else if ( lastDomainStatus !== MAPPED ) {
 					availabilityElement = (
 						<CompactCard className="domain-search-results__domain-available-notice">
-							<MaterialIcon icon="info" />
+							<span className="domain-search-results__domain-available-notice-icon">
+								<MaterialIcon icon="info" />
+							</span>
 							<span>
 								{ domainUnavailableMessage } { offer }
 							</span>
