@@ -2,9 +2,14 @@
  * External dependencies
  */
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import debugFactory from 'debug';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+
+/**
+ * Internal dependencies
+ */
 import {
 	FormStatus,
 	useLineItems,
@@ -13,10 +18,11 @@ import {
 	useSelect,
 } from '@automattic/composite-checkout';
 import { Button } from '@automattic/components';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 const debug = debugFactory( 'calypso:composite-checkout:credit-card' );
 
-export default function CreditCardPayButton( {
+export default function CreditCardSubmitButton( {
 	disabled,
 	onClick,
 	store,
@@ -25,6 +31,7 @@ export default function CreditCardPayButton( {
 	activeButtonText = undefined,
 } ) {
 	const { __ } = useI18n();
+	const dispatch = useDispatch();
 	const [ items, total ] = useLineItems();
 	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
 	const cardholderName = fields.cardholderName;
@@ -34,32 +41,33 @@ export default function CreditCardPayButton( {
 	const onEvent = useEvents();
 	const paymentPartner = 'stripe';
 
+	const onSubmitButtonClick = () => {
+		if ( isCreditCardFormValid( store, paymentPartner, __ ) && paymentPartner === 'stripe' ) {
+			debug( 'submitting stripe payment' );
+			dispatch(
+				recordTracksEvent( 'calypso_partner_portal_payment_method_card_submit_button_click' )
+			);
+			onEvent( { type: 'STRIPE_TRANSACTION_BEGIN' } );
+			onClick( 'card', {
+				stripe,
+				name: cardholderName?.value,
+				email: cardholderEmail?.value,
+				phone: cardholderPhone?.value,
+				items,
+				total,
+				stripeConfiguration,
+				paymentPartner,
+			} );
+			return;
+		}
+		throw new Error( `Unrecognized payment partner in submit handler: '${ paymentPartner }'` );
+	};
+
 	return (
 		<Button
 			primary
 			disabled={ disabled }
-			onClick={ () => {
-				if ( isCreditCardFormValid( store, paymentPartner, __ ) ) {
-					if ( paymentPartner === 'stripe' ) {
-						debug( 'submitting stripe payment' );
-						onEvent( { type: 'STRIPE_TRANSACTION_BEGIN' } );
-						onClick( 'card', {
-							stripe,
-							name: cardholderName?.value,
-							email: cardholderEmail?.value,
-							phone: cardholderPhone?.value,
-							items,
-							total,
-							stripeConfiguration,
-							paymentPartner,
-						} );
-						return;
-					}
-					throw new Error(
-						'Unrecognized payment partner in submit handler: "' + paymentPartner + '"'
-					);
-				}
-			} }
+			onClick={ onSubmitButtonClick }
 			busy={ FormStatus.SUBMITTING === formStatus }
 		>
 			<ButtonContents

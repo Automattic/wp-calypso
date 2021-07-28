@@ -29,6 +29,7 @@ import type { TranslateResult } from 'i18n-calypso';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import CreditCardLoading from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields/credit-card-loading';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -70,7 +71,7 @@ function PaymentMethodAdd(): ReactElement {
 	}, [ stripeLoadingError, dispatch ] );
 
 	const onGoToPaymentMethods = () => {
-		// record tracks events
+		dispatch( recordTracksEvent( 'calypso_partner_portal_payment_method_card_go_back_click' ) );
 	};
 
 	const showSuccessMessage = useCallback(
