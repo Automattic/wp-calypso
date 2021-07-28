@@ -203,6 +203,7 @@ module.exports = {
 				'packages/babel-plugin-i18n-calypso/**/*',
 				'packages/babel-plugin-transform-wpcalypso-async/**/*',
 				'packages/browser-data-collector/**/*',
+				'packages/calypso-analytics/**/*',
 				'packages/calypso-config/**/*',
 				'packages/calypso-e2e/**/*',
 				'packages/calypso-polyfills/**/*',
