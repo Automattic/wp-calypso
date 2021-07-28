@@ -1,31 +1,30 @@
+import debugFactory from 'debug';
 import React from 'react';
 import ShoppingCartContext from './shopping-cart-context';
-import useShoppingCartManager from './use-shopping-cart-manager';
-import type { RequestCart, ResponseCart, ShoppingCartManagerOptions } from './types';
+import ShoppingCartOptionsContext from './shopping-cart-options-context';
+import type { ShoppingCartManagerOptions, ShoppingCartManagerClient } from './types';
+
+const debug = debugFactory( 'shopping-cart:shopping-cart-provider' );
 
 export default function ShoppingCartProvider( {
-	cartKey,
-	setCart,
-	getCart,
+	managerClient,
 	options,
 	children,
 }: {
-	cartKey: string | undefined;
-	setCart: ( cartKey: string, requestCart: RequestCart ) => Promise< ResponseCart >;
-	getCart: ( cartKey: string ) => Promise< ResponseCart >;
+	managerClient: ShoppingCartManagerClient;
 	options?: ShoppingCartManagerOptions;
 	children: React.ReactNode;
 } ): JSX.Element {
-	const shoppingCartManager = useShoppingCartManager( {
-		cartKey,
-		setCart,
-		getCart,
-		options,
-	} );
+	if ( ! options ) {
+		options = {};
+	}
+	debug( 'rendering ShoppingCartProvider with options', options );
 
 	return (
-		<ShoppingCartContext.Provider value={ shoppingCartManager }>
-			{ children }
-		</ShoppingCartContext.Provider>
+		<ShoppingCartOptionsContext.Provider value={ options }>
+			<ShoppingCartContext.Provider value={ managerClient }>
+				{ children }
+			</ShoppingCartContext.Provider>
+		</ShoppingCartOptionsContext.Provider>
 	);
 }
