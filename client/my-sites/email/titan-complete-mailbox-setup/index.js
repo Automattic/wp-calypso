@@ -89,6 +89,7 @@ const useHandleSetupAction = ( goToEmail, mailboxes, onMailboxesChange ) => {
 			const {
 				isLoading: isReloadingMailboxAvailability,
 				data,
+				error,
 				isError,
 			} = await checkMailboxAvailability();
 
@@ -97,11 +98,13 @@ const useHandleSetupAction = ( goToEmail, mailboxes, onMailboxesChange ) => {
 			mailboxIsValid = data?.message === 'OK';
 
 			if ( isError ) {
+				// Display just a subset of error messages
+				const errorMessage = [ 400, 409 ].includes( error?.status ?? error?.statusCode )
+					? error.message
+					: translate( 'We were unable to check whether this mailbox already exists.' );
+
 				mailboxes = mailboxes.map( ( currentMailbox ) =>
-					decorateMailboxWithAvailabilityError(
-						currentMailbox,
-						translate( 'We were unable to check whether this mailbox already exists.' )
-					)
+					decorateMailboxWithAvailabilityError( currentMailbox, errorMessage )
 				);
 
 				onMailboxesChange( mailboxes );
