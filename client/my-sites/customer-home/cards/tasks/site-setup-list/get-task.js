@@ -45,7 +45,6 @@ const isTaskDisabled = (
 export const getTask = (
 	task,
 	{
-		domainName,
 		emailVerificationStatus,
 		isDomainUnverified,
 		isEmailUnverified,
@@ -207,13 +206,13 @@ export const getTask = (
 		case CHECKLIST_KNOWN_TASKS.PROFESSIONAL_EMAIL_MAILBOX_CREATED:
 			taskData = {
 				timing: 2,
-				title: translate( 'Setup your professional Email' ),
+				title: translate( 'Setup your Professional Email' ),
 				description: translate(
 					'Complete your Professional Email setup to start sending and receiving emails from your custom domain today.'
 				),
 				actionText: translate( 'Complete setup' ),
-				isSkippable: true,
-				actionUrl: emailManagement( siteSlug, domainName ),
+				isSkippable: false,
+				actionUrl: emailManagement( siteSlug, task.domainName ),
 			};
 			break;
 	}

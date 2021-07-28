@@ -8,7 +8,6 @@ import CardHeading from 'calypso/components/card-heading';
 import Spinner from 'calypso/components/spinner';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import { getTaskList } from 'calypso/lib/checklist';
-import { getSelectedDomain } from 'calypso/lib/domains';
 import { navigate } from 'calypso/lib/navigate';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestSiteChecklistTaskUpdate } from 'calypso/state/checklist/actions';
@@ -20,7 +19,6 @@ import getChecklistTaskUrls from 'calypso/state/selectors/get-checklist-task-url
 import getMenusUrl from 'calypso/state/selectors/get-menus-url';
 import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSiteOption, getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CurrentTaskItem from './current-task-item';
@@ -327,11 +325,6 @@ export default connect( ( state ) => {
 	const taskStatuses = siteChecklist?.tasks;
 	const siteIsUnlaunched = isUnlaunchedSite( state, siteId );
 	const siteSlug = getSiteSlug( state, siteId );
-	const domains = getDomainsBySiteId( state, siteId );
-	const domain = getSelectedDomain( {
-		domains,
-		selectedDomainName: siteSlug,
-	} );
 	const taskList = getTaskList( {
 		taskStatuses,
 		designType,
@@ -350,7 +343,6 @@ export default connect( ( state ) => {
 		isPodcastingSite: !! getSiteOption( state, siteId, 'anchor_podcast' ),
 		menusUrl: getMenusUrl( state, siteId ),
 		siteId,
-		domainName: domain.name,
 		siteSlug,
 		tasks: taskList.getAll(),
 		taskUrls: getChecklistTaskUrls( state, siteId ),
