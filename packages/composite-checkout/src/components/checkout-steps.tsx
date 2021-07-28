@@ -465,6 +465,15 @@ export const SubmitButtonWrapper = styled.div`
 	}
 `;
 
+// Set right padding so that text doesn't overlap with inline help floating button.
+export const SubmitFooterWrapper = styled.div`
+	padding-right: 42px;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		padding-right: 0;
+	}
+`;
+
 export function CheckoutStepArea( {
 	children,
 	className,
@@ -496,7 +505,7 @@ export function CheckoutStepArea( {
 	] );
 
 	const [ submitWrapperHeight, setSubmitWrapperHeight ] = useState( 0 );
-	const [ initialVw, setInitialVw ] = useState( 0 );
+	const [ vw, setVW ] = useState( 0 );
 	const tabletBp = useMemo(
 		() => parseInt( theme.breakpoints.tabletUp.replace( /^.*:/, '' ), 10 ),
 		[]
@@ -504,21 +513,35 @@ export function CheckoutStepArea( {
 	const rootRef = useRef< HTMLDivElement >( null );
 	const submitWrapperRef = useRef< HTMLDivElement >( null );
 
-	// Get `SubmitButtonWrapper` height and viewport width.
-	useEffect( () => {
+	const registerDimensions = useCallback( () => {
 		if ( submitWrapperRef.current ) {
 			setSubmitWrapperHeight( submitWrapperRef.current.offsetHeight );
 		}
-		setInitialVw( window.innerWidth );
-	}, [ setSubmitWrapperHeight, setInitialVw ] );
+		setVW( window.innerWidth );
+	}, [ setSubmitWrapperHeight, setVW ] );
+	const onResize = useCallback( () => registerDimensions(), [ registerDimensions ] );
 
-	// Then update `CheckoutStepAreaWrapper` bottom margin on mobile, so that there's
-	// enough room to show the `SubmitButtonWrapper` without hidding the page content.
+	// Get elements dimensions after initial rendering
 	useEffect( () => {
-		if ( initialVw && submitWrapperHeight && initialVw < tabletBp && rootRef.current ) {
-			rootRef.current.style.marginBottom = `${ submitWrapperHeight }px`;
+		registerDimensions();
+	}, [ registerDimensions ] );
+
+	// Get elements dimensions after resizing
+	useEffect( () => {
+		window.addEventListener( 'resize', onResize );
+
+		return () => {
+			window.removeEventListener( 'resize', onResize );
+		};
+	}, [ onResize ] );
+
+	// Update `CheckoutStepAreaWrapper` bottom margin, so that there's enough room to
+	// show the sticky `SubmitButtonWrapper` without hidding the page content.
+	useEffect( () => {
+		if ( vw && submitWrapperHeight && rootRef.current ) {
+			rootRef.current.style.marginBottom = `${ vw < tabletBp ? submitWrapperHeight : 100 }px`;
 		}
-	}, [ initialVw, submitWrapperHeight, tabletBp ] );
+	}, [ vw, submitWrapperHeight, tabletBp ] );
 
 	return (
 		<CheckoutStepAreaWrapper className={ classNames } ref={ rootRef }>
@@ -533,7 +556,7 @@ export function CheckoutStepArea( {
 					disabled={ isThereAnotherNumberedStep || disableSubmitButton }
 					onLoadError={ onSubmitButtonLoadError }
 				/>
-				{ submitButtonFooter || null }
+				<SubmitFooterWrapper>{ submitButtonFooter || null }</SubmitFooterWrapper>
 			</SubmitButtonWrapper>
 		</CheckoutStepAreaWrapper>
 	);
