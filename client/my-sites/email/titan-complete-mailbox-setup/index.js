@@ -63,7 +63,7 @@ const useHandleSetupAction = ( goToEmail, mailboxes, onMailboxesChange ) => {
 		refetch: checkMailboxAvailability,
 	} = useGetTitanMailboxAvailability(
 		getMailboxDomainName( mailbox ),
-		getMailboxUserName( mailboxes ),
+		getMailboxUserName( mailbox ),
 		{ enabled: false } // Delays the query, and returns a callback that can be called later
 	);
 
