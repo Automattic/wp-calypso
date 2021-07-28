@@ -34,7 +34,7 @@ function logmein_enqueue() {
 		'wpcom-logmein',
 		'wpcomLogmeinData',
 		array(
-			'enabled'  => apply_filters( 'wpcom_logmein_enable_etk', false ),
+			'enabled'  => apply_filters( 'wpcom_logmein_enable_etk', false ) ? 'enabled' : '',
 			'home_url' => home_url(),
 		)
 	);

@@ -1,7 +1,3 @@
-/**
- * global wpcomLogmein
- */
-
 // Used as default domain to detect when we're looking at a relative or invalid url
 const INVALID_URL = 'https://__domain__.invalid';
 
@@ -29,6 +25,7 @@ export function logmeinUrl( url: string ): string {
 	}
 
 	const homeUrl = new URL( String( wpcomLogmeinData?.home_url ), INVALID_URL );
+
 	// Fallback to url if we see invalid data
 	if ( homeUrl.origin === INVALID_URL ) {
 		return url;
