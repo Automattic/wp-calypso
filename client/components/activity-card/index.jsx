@@ -36,6 +36,7 @@ class ActivityCard extends Component {
 		allowRestore: PropTypes.bool.isRequired,
 		applySiteOffset: PropTypes.func,
 		className: PropTypes.string,
+		shareable: PropTypes.bool,
 		moment: PropTypes.func.isRequired,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string.isRequired,
@@ -45,6 +46,7 @@ class ActivityCard extends Component {
 
 	static defaultProps = {
 		summarize: false,
+		shareable: false,
 	};
 
 	constructor( props ) {
@@ -56,7 +58,15 @@ class ActivityCard extends Component {
 	}
 
 	render() {
-		const { activity, allowRestore, applySiteOffset, className, siteId, summarize } = this.props;
+		const {
+			activity,
+			shareable,
+			allowRestore,
+			applySiteOffset,
+			className,
+			siteId,
+			summarize,
+		} = this.props;
 
 		const backupTimeDisplay = applySiteOffset
 			? applySiteOffset( activity.activityTs ).format( 'LT' )
@@ -81,7 +91,7 @@ class ActivityCard extends Component {
 							<Gridicon icon={ activity.activityIcon } className="activity-card__time-icon" />
 							<div className="activity-card__time-text">{ backupTimeDisplay }</div>
 						</div>
-						{ isEnabled( 'jetpack/activity-log-sharing' ) && (
+						{ isEnabled( 'jetpack/activity-log-sharing' ) && shareable && (
 							<ShareActivity siteId={ siteId } activity={ activity } />
 						) }
 					</div>

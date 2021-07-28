@@ -101,7 +101,7 @@
 	width: calc( 100% - 32px - 16px );
 
 	// scooch secondary card elements over
-	> .activity-card__time,
+	> .activity-card__header,
 	> .card {
 		transform: translateX( 32px );
 	}
