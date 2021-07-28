@@ -174,10 +174,6 @@ body.is-section-home {
 .primary__customer-home-location-content .task {
 	box-shadow: none;
 
-	// Flush against the top and bottom
-	margin-top: 0;
-	margin-bottom: 0;
-
 	.task__text, .task__illustration {
 		padding-top: 0;
 		padding-bottom: 0;
@@ -215,11 +211,18 @@ body.is-section-home {
 }
 
 .primary__customer-home-location-content .card.site-setup-list {
+	// The checklist here goes flush against the top, bottom & right
 	margin: 0;
 	box-shadow: none;
 
 	.site-setup-list__task {
-		margin-top: 32px;
-		margin-bottom: 32px;
+		margin: 0;
+		padding: 32px;
+
+		// When the list switches to a single-column
+		@include breakpoint-deprecated( '<960px' ) {
+			// Less space at the top because the nav-item contributes
+			padding: 16px 32px 32px;
+		}
 	}
 }

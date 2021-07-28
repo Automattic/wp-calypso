@@ -9,7 +9,7 @@
 	// margin-bottom: 30px;
 
 	@include display-grid;
-	@include grid-template-columns( 12, 24px, 1fr );
+	@include grid-template-columns( 12, 0, 1fr );
 
 	@include breakpoint-deprecated( '>660px' ) {
 		// box-shadow: 0 0 0 1px var( --color-border-subtle );
