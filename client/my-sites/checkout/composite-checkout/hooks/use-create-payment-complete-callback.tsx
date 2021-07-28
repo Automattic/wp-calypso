@@ -277,7 +277,7 @@ function displayRenewalSuccessNotice(
 			successNotice(
 				translate(
 					'Success! You renewed %(productName)s for %(duration)s, and we sent your receipt to %(email)s. ' +
-						'{{a}}Learn more{{/a}}',
+						'{{a}}Learn more about renewals{{/a}}',
 					{
 						args: {
 							productName: renewalItem.product_name,
