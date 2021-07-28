@@ -36,14 +36,7 @@ describe( DataHelper.createSuiteTitle( 'WPCOM-specific gutter controls' ), () =>
 		await gutenbergEditorPage.openSettings();
 	} );
 
-	it.each`
-		value
-		${ 'None' }
-		${ 'Small' }
-		${ 'Medium' }
-		${ 'Large' }
-		${ 'Huge' }
-	`( 'Set gutter value to $value', async ( { value } ) => {
+	it.each( PricingTableBlock.gutterValues )( 'Set gutter value to %s', async ( value ) => {
 		await pricingTableBlock.setGutter( value );
 	} );
 } );

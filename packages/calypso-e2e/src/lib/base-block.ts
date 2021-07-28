@@ -5,7 +5,7 @@ import { ElementHandle } from 'playwright';
  */
 export class BaseBlock {
 	[ x: string ]: any;
-	static block: ElementHandle;
+	block: ElementHandle;
 
 	/**
 	 * Constructs a concrete instance of a block.

@@ -39,7 +39,7 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: CoBlocks' ), () => {
 		await gutenbergEditorPage.enterTitle( DataHelper.randomPhrase() );
 	} );
 
-	it( `Insert ${ PricingTableBlock.name } block and enter price to left table`, async function () {
+	it( `Insert ${ PricingTableBlock.blockName } block and enter price to left table`, async function () {
 		const blockHandle = await gutenbergEditorPage.addBlock( PricingTableBlock.blockName );
 		pricingTableBlock = new PricingTableBlock( blockHandle );
 		await pricingTableBlock.enterPrice( 1, pricingTableBlockPrice );
@@ -65,6 +65,7 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: CoBlocks' ), () => {
 		await gutenbergEditorPage.publish( { visit: true } );
 	} );
 
+	// Pass in a 1D array of values or text strings to validate each block.
 	it.each`
 		block                  | content
 		${ PricingTableBlock } | ${ [ pricingTableBlockPrice ] }
@@ -74,8 +75,7 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: CoBlocks' ), () => {
 	`(
 		`Confirm $block.blockName block is visible in published post`,
 		async ( { block, content } ) => {
-			// Passing in the actual object reference permits this call to succeed.
-			// Calling `eval(blockName)` or `global[blockName]` does not work here.
+			// Pass the Block object class here then call the static method to validate.
 			await block.validatePublishedContent( page, content );
 		}
 	);

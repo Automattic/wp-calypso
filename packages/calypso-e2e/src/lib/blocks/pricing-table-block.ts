@@ -1,6 +1,11 @@
 import { Frame, Page } from 'playwright';
-import { gutterValues } from '../../types';
+// import { gutterValues, gutterValuesArray } from '../../types';
 import { BaseBlock } from '../base-block';
+
+// Workaround to get a type from predefined array.
+// See https://stackoverflow.com/a/59857409.
+const gutterValuesArray = [ 'None', 'Small', 'Medium', 'Large', 'Huge' ] as const;
+export type gutterValues = typeof gutterValuesArray[ number ];
 
 const selectors = {
 	block: '.wp-block-coblocks-pricing-table',
@@ -14,6 +19,7 @@ const selectors = {
 export class PricingTableBlock extends BaseBlock {
 	// Static properties.
 	static blockName = 'Pricing Table';
+	static gutterValues = gutterValuesArray;
 
 	/**
 	 * Enters the price to the side chosen.
