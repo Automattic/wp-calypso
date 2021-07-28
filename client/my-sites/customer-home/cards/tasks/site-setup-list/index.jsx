@@ -1,8 +1,6 @@
 import { Card } from '@automattic/components';
 import { isDesktop, isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import classnames from 'classnames';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { getSelectedDomain } from 'calypso/lib/domains';
 import { translate } from 'i18n-calypso';
 import React, { useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
@@ -10,6 +8,7 @@ import CardHeading from 'calypso/components/card-heading';
 import Spinner from 'calypso/components/spinner';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import { getTaskList } from 'calypso/lib/checklist';
+import { getSelectedDomain } from 'calypso/lib/domains';
 import { navigate } from 'calypso/lib/navigate';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestSiteChecklistTaskUpdate } from 'calypso/state/checklist/actions';
@@ -21,6 +20,7 @@ import getChecklistTaskUrls from 'calypso/state/selectors/get-checklist-task-url
 import getMenusUrl from 'calypso/state/selectors/get-menus-url';
 import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSiteOption, getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CurrentTaskItem from './current-task-item';
