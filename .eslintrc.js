@@ -199,6 +199,7 @@ module.exports = {
 				'desktop/webpack.config.js',
 				'packages/accessible-focus/**/*',
 				'packages/babel-plugin-i18n-calypso/**/*',
+				'packages/babel-plugin-transform-wpcalypso-async/**/*',
 				'packages/browser-data-collector/**/*',
 				'packages/calypso-config/**/*',
 				'packages/calypso-e2e/**/*',
