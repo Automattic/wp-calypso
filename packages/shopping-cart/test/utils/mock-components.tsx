@@ -115,9 +115,9 @@ export function MockProvider( {
 		<ShoppingCartProvider
 			setCart={ setCartOverride ?? setCart }
 			getCart={ getCartOverride ?? getCart }
-			cartKey={ cartKeyOverride ?? mainCartKey }
 			options={ {
 				...( options ?? {} ),
+				defaultCartKey: cartKeyOverride ?? mainCartKey,
 			} }
 		>
 			{ children }
