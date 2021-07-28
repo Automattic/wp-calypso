@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getEffectiveType } from '../api/network-information';
 
 export const collector: Collector = ( report ) => {
