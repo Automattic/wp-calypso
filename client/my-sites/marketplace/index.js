@@ -52,25 +52,30 @@ export default function () {
 		page( '/marketplace/product/details', siteSelection, sites, makeLayout, clientRender );
 		page(
 			'/marketplace/product/details/:site?',
-			enforceSiteEnding,
 			navigation,
 			siteSelection,
 			renderMarketplaceProduct,
 			makeLayout,
 			clientRender
 		);
+
+		page( '/marketplace/product/details/:productGroupSlug', siteSelection, sites, clientRender );
 		page(
 			'/marketplace/product/details/:productGroupSlug/:site?',
-			enforceSiteEnding,
-			navigation,
 			siteSelection,
-			renderMarketplaceProduct,
+			sites,
 			makeLayout,
+			clientRender
+		);
+
+		page(
+			'/marketplace/product/details/:productGroupSlug/:productSlug',
+			siteSelection,
+			sites,
 			clientRender
 		);
 		page(
 			'/marketplace/product/details/:productGroupSlug/:productSlug/:site?',
-			enforceSiteEnding,
 			navigation,
 			siteSelection,
 			renderMarketplaceProduct,

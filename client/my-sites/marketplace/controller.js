@@ -47,7 +47,7 @@ export function renderMarketplaceProduct( context, next ) {
 		const {
 			productGroupSlug: firstProductGroupSlugFound,
 			productSlug: firstProductSlugFound,
-		} = getFirstProductFound( productGroupSlug );
+		} = getFirstProductFound();
 
 		marketplaceDebugger(
 			`The productSlug and productGroupSlug were note set, showing product pages of : ${ firstProductGroupSlugFound } ${ firstProductSlugFound }`
