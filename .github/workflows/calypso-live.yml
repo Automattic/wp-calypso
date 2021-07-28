@@ -1,0 +1,30 @@
+name: Calypso Live
+
+on:
+  pull_request:
+    types: ['opened']
+
+jobs:
+  calypso-live:
+    name: 'Links to a calypso.live instance for your branch'
+    runs-on: ubuntu-latest
+    # We only offer the Calypso.live link to PRs created from the Automattic organization.
+    if: github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
+    timeout-minutes: 10
+    steps:
+      - name: Build calypso.live link.
+        run: |
+          echo '::set-output name=LINK::https://calypso.live?image=registry.a8c.com/calypso/app:commit-${{ github.event.pull_request.head.sha }}'
+        id: build_link
+
+      - name: Post comment on PR
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '<!--calypso-live-watermark:apr@v1-->\nLink to Calypso live: ${{ steps.build_link.outputs.LINK }}\nLink to Jetpack Cloud live: ${{ steps.build_link.outputs.LINK }}&env=jetpack\n_(These links may take a few minutes to be available)_'
+            })
