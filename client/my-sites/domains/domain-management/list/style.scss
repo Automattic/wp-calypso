@@ -143,8 +143,12 @@
 	overflow: hidden;
 
 	.domain-notice {
-		display: block;
+		display: flex;
 		margin-top: 8px;
+
+		.gridicon {
+			transform: none;
+		}
 	}
 }
 

@@ -6,10 +6,20 @@
 		transform: translateY( 3.5px );
 		margin-right: 4px;
 	}
+
+	svg.material-icon {
+		width: 18px;
+		height: 18px;
+		margin-right: 4px;
+	}
 }
 
 .domain-notice__info,
 .domain-notice__success {
+	svg.material-icon {
+		fill: var( --color-success-50 );
+	}
+
 	svg,
 	strong {
 		color: var( --color-success-50 );
@@ -17,6 +27,10 @@
 }
 
 .domain-notice__verifying {
+	svg.material-icon {
+		fill: var( --color-success-60 );
+	}
+
 	svg,
 	strong {
 		color: var( --color-success-60 );
@@ -24,6 +38,10 @@
 }
 
 .domain-notice__warning {
+	svg.material-icon {
+		fill: var( --color-warning-40 );
+	}
+
 	svg,
 	strong {
 		color: var( --color-warning-40 );
@@ -31,6 +49,10 @@
 }
 
 .domain-notice__alert {
+	svg.material-icon {
+		fill: var( --color-error );
+	}
+
 	svg,
 	strong {
 		color: var( --color-error );

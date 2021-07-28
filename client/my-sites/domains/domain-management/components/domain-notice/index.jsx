@@ -10,6 +10,7 @@ import classnames from 'classnames';
  * Style dependencies
  */
 import './style.scss';
+import MaterialIcon from 'calypso/components/material-icon';
 
 export default class DomainNotice extends React.Component {
 	static propTypes = {
@@ -22,24 +23,32 @@ export default class DomainNotice extends React.Component {
 		status: 'info',
 	};
 
+	renderGridIcon( icon ) {
+		return <Gridicon icon={ icon } size={ 18 } />;
+	}
+
+	renderIcon() {
+		const { status } = this.props;
+		switch ( status ) {
+			case 'info':
+				return this.renderGridIcon( 'time' );
+			case 'success':
+				return this.renderGridIcon( 'checkmark' );
+			case 'verifying':
+				return <MaterialIcon icon="compare_arrows" />;
+			default:
+				return this.renderGridIcon( 'notice-outline' );
+		}
+	}
+
 	render() {
 		const { status, text, className } = this.props;
 
 		const classes = classnames( 'domain-notice', `domain-notice__${ status }`, className );
-		let icon = 'notice-outline';
-		if ( 'info' === status ) {
-			icon = 'time';
-		}
-		if ( 'success' === status ) {
-			icon = 'checkmark';
-		}
-		if ( 'verifying' === status ) {
-			icon = 'sync';
-		}
 
 		return (
 			<span className={ classes }>
-				<Gridicon icon={ icon } size={ 18 } />
+				{ this.renderIcon() }
 				{ text }
 			</span>
 		);
