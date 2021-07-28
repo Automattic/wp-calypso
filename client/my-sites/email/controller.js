@@ -15,7 +15,7 @@ import TitanAddMailboxes from 'calypso/my-sites/email/titan-add-mailboxes';
 import TitanControlPanelRedirect from 'calypso/my-sites/email/email-management/titan-control-panel-redirect';
 import TitanManageMailboxes from 'calypso/my-sites/email/email-management/titan-manage-mailboxes';
 import TitanManagementIframe from 'calypso/my-sites/email/email-management/titan-management-iframe';
-import { TitanSetupThankYou } from 'calypso/my-sites/email/titan-setup-thank-you';
+import TitanSetupThankYou from 'calypso/my-sites/email/titan-setup-thank-you';
 
 export default {
 	emailManagementAddGSuiteUsers( pageContext, next ) {
