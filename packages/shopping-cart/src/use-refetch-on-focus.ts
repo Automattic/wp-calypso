@@ -21,13 +21,9 @@ export default function useRefetchOnFocus( cartKey: string | undefined ): void {
 		throw new Error( 'useRefetchOnFocus must be used inside a ShoppingCartProvider' );
 	}
 
-	const {
-		isLoading,
-		isPendingUpdate,
-		loadingError,
-		responseCart: lastCart,
-		reloadFromServer,
-	} = managerClient.forCartKey( cartKey );
+	const manager = managerClient.forCartKey( cartKey );
+	const { isLoading, isPendingUpdate, loadingError, responseCart: lastCart } = manager.getState();
+	const { reloadFromServer } = manager.actions;
 	const { refetchOnWindowFocus } = useContext( ShoppingCartOptionsContext ) ?? {};
 
 	useEffect( () => {
