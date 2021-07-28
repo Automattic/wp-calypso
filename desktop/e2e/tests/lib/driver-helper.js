@@ -1,8 +1,8 @@
 /* eslint-disable jsdoc/check-tag-names */
 /** @format */
 
-const webdriver = require( 'selenium-webdriver' );
 const { forEach } = require( 'lodash' );
+const webdriver = require( 'selenium-webdriver' );
 
 const explicitWaitMS = 20000;
 const by = webdriver.By;
