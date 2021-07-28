@@ -9,11 +9,17 @@
 }
 
 .domain-notice__info,
-.domain-notice__success,
-.domain-notice__verifying {
+.domain-notice__success {
 	svg,
 	strong {
 		color: var( --color-success-50 );
+	}
+}
+
+.domain-notice__verifying {
+	svg,
+	strong {
+		color: var( --color-success-60 );
 	}
 }
 
