@@ -185,6 +185,7 @@ module.exports = {
 				'client/incoming-redirect/**/*',
 				'client/mailing-lists/**/*',
 				'client/my-sites/customer-home/**/*',
+				'client/notifications/**/*',
 				'client/sections-filter.js',
 				'client/sections-helper.js',
 				'client/sections-middleware.js',

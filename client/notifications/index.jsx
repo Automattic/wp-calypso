@@ -11,34 +11,24 @@
  * @module notifications
  */
 
-/**
- * External dependencies
- */
-import debugFactory from 'debug';
-import React, { Component } from 'react';
-import classNames from 'classnames';
-import page from 'page';
-import { connect } from 'react-redux';
+import config from '@automattic/calypso-config';
 import NotificationsPanel, {
 	refreshNotes,
 } from '@automattic/notifications/src/panel/Notifications';
-
-/**
- * Internal dependencies
- */
-import wpcom from 'calypso/lib/wp';
+import classNames from 'classnames';
+import debugFactory from 'debug';
+import page from 'page';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import config from '@automattic/calypso-config';
+import wpcom from 'calypso/lib/wp';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import { didForceRefresh } from 'calypso/state/notifications-panel/actions';
+import { shouldForceRefresh } from 'calypso/state/notifications-panel/selectors';
+import { setUnseenCount } from 'calypso/state/notifications/actions';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';
-import { setUnseenCount } from 'calypso/state/notifications/actions';
-import { shouldForceRefresh } from 'calypso/state/notifications-panel/selectors';
-import { didForceRefresh } from 'calypso/state/notifications-panel/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /**
