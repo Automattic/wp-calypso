@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
 const debug = debugFactory( 'lib/load-script/callback-handler' );
 
