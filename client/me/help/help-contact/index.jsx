@@ -294,7 +294,7 @@ class HelpContact extends React.Component {
 		if ( site || userDeclaredUrl ) {
 			const siteUrl = userDeclaredUrl ? userDeclaredUrl.trim() : site.URL;
 
-			blogHelpMessage = this.translateForForums( 'Site: %s.', {
+			blogHelpMessage = this.translateForForums( 'Site: %s', {
 				args: [ userRequestsHidingUrl ? 'help@' + withoutHttp( siteUrl ) : siteUrl ],
 			} );
 
