@@ -225,6 +225,7 @@ module.exports = {
 				'packages/language-picker/**/*',
 				'packages/languages/**/*',
 				'packages/launch/**/*',
+				'packages/load-script/**/*',
 				'packages/mocha-debug-reporter/**/*',
 				'packages/photon/**/*',
 				'packages/plans-grid/**/*',
