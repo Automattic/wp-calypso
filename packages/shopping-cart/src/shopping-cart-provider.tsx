@@ -10,7 +10,7 @@ export default function ShoppingCartProvider( {
 	options,
 	children,
 }: {
-	cartKey: string | number | null | undefined;
+	cartKey: string | undefined;
 	setCart: ( cartKey: string, requestCart: RequestCart ) => Promise< ResponseCart >;
 	getCart: ( cartKey: string ) => Promise< ResponseCart >;
 	options?: ShoppingCartManagerOptions;

@@ -11,7 +11,7 @@ import type { Dispatch } from 'react';
 export * from './shopping-cart-endpoint';
 
 export interface ShoppingCartManagerArguments {
-	cartKey: string | number | null | undefined;
+	cartKey: string | undefined;
 	setCart: ( cartKey: string, requestCart: RequestCart ) => Promise< ResponseCart >;
 	getCart: ( cartKey: string ) => Promise< ResponseCart >;
 	options?: ShoppingCartManagerOptions;

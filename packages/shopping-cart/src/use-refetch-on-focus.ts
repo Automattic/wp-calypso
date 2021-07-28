@@ -15,6 +15,7 @@ function convertMsToSecs( ms: number ): number {
 }
 
 export default function useRefetchOnFocus(
+	cartKey: string | undefined,
 	options: ShoppingCartManagerOptions,
 	cacheStatus: CacheStatus,
 	lastCart: ResponseCart,
@@ -83,5 +84,11 @@ export default function useRefetchOnFocus(
 			window.removeEventListener( 'focus', handleFocusChange );
 			window.removeEventListener( 'online', handleFocusChange );
 		};
-	}, [ options.refetchOnWindowFocus, lastCart.cart_generated_at_timestamp, refetch, cacheStatus ] );
+	}, [
+		cartKey,
+		options.refetchOnWindowFocus,
+		lastCart.cart_generated_at_timestamp,
+		refetch,
+		cacheStatus,
+	] );
 }
