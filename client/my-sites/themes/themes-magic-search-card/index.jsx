@@ -265,6 +265,10 @@ class ThemesMagicSearchCard extends React.Component {
 		}
 
 		this.updateInput( searchInput + text );
+		// Workaround for a strange bug: sometimes after clicking in the magic
+		// welcome bar, when findTextForSuggestions() was running, it would
+		// think the cursor is at the beginning of the input, causing no
+		// suggestions to appear. Delaying this state transition seems to fix it.
 		setTimeout( () => this.setState( { isPopoverVisible: false } ), 100 );
 	};
 
