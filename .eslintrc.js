@@ -190,6 +190,7 @@ module.exports = {
 				'client/sections-preloaders.js',
 				'client/sections.js',
 				'client/support/**/*',
+				'client/test-helpers/**/*',
 				'client/types.ts',
 				'client/webpack.config.desktop.js',
 				'client/webpack.config.js',
