@@ -1,6 +1,8 @@
 import { Card } from '@automattic/components';
 import { isDesktop, isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import classnames from 'classnames';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { getSelectedDomain } from 'calypso/lib/domains';
 import { translate } from 'i18n-calypso';
 import React, { useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
@@ -20,14 +22,15 @@ import getMenusUrl from 'calypso/state/selectors/get-menus-url';
 import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { getSiteOption, getSiteSlug } from 'calypso/state/sites/selectors';
-import { getSelectedSite, getSelectedSiteId } from "calypso/state/ui/selectors";
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CurrentTaskItem from './current-task-item';
 import { getTask } from './get-task';
 import NavItem from './nav-item';
 
+/**
+ * Import Styles
+ */
 import './style.scss';
-import { getDomainsBySiteId } from "calypso/state/sites/domains/selectors";
-import { getSelectedDomain } from "calypso/lib/domains";
 
 const startTask = ( dispatch, task, siteId, advanceToNextIncompleteTask, isPodcastingSite ) => {
 	dispatch(

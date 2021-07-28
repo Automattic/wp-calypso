@@ -198,7 +198,7 @@ export const getTask = (
 				description: translate(
 					'Complete your Professional Email setup to start sending and receiving emails from your custom domain today.'
 				),
-				actionText: translate( 'Complete Setup' ),
+				actionText: translate( 'Complete setup' ),
 				isSkippable: true,
 				actionUrl: emailManagement( siteSlug, domainName ),
 			};
