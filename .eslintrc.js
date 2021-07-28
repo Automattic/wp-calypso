@@ -226,6 +226,7 @@ module.exports = {
 				'packages/spec-junit-reporter/**/*',
 				'packages/spec-xunit-reporter/**/*',
 				'packages/tree-select/**/*',
+				'packages/viewport-react/**/*',
 				'packages/viewport/**/*',
 				'packages/webpack-config-flag-plugin/**/*',
 				'packages/webpack-inline-constant-exports-plugin/**/*',
