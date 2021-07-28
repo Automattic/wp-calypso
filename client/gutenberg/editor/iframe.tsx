@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import React, { forwardRef, useEffect, DetailedHTMLProps, IframeHTMLAttributes } from 'react';
 
 type IframeProps = DetailedHTMLProps<
