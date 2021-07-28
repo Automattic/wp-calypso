@@ -276,11 +276,14 @@ function displayRenewalSuccessNotice(
 		reduxDispatch(
 			successNotice(
 				translate(
-					'%(productName)s has been renewed and will renew automatically in the future. ' +
+					'Success! You renewed %(productName)s for %(duration)s, and we sent your receipt to %(email)s. ' +
 						'{{a}}Learn more{{/a}}',
 					{
 						args: {
 							productName: renewalItem.product_name,
+							duration: moment.duration( { days: renewalItem.bill_period } ).humanize(),
+							renewalDate: moment( product.expiry ).subtract( 31, 'days' ).format( 'LL' ),
+							email: product.user_email,
 						},
 						components: {
 							a: <a href={ AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />,
