@@ -11,15 +11,21 @@ import { localize } from 'i18n-calypso';
 import {
 	isJetpackBackupSlug,
 	isJetpackScanSlug,
-	isCompletePlan,
-	isPremiumPlan,
-	isSecurityDailyPlan,
-	isSecurityRealTimePlan,
-	isPersonalPlan,
-	isBusinessPlan,
-	isJetpackSearch,
 	isJetpackAntiSpamSlug,
 	isJetpackPlanSlug,
+	planHasFeature,
+	FEATURE_JETPACK_BACKUP_REALTIME,
+	FEATURE_JETPACK_BACKUP_DAILY,
+	FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+	FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+	FEATURE_JETPACK_SCAN_DAILY,
+	FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
+	FEATURE_JETPACK_SEARCH,
+	FEATURE_JETPACK_SEARCH_MONTHLY,
+	FEATURE_JETPACK_ANTI_SPAM,
+	FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+	JETPACK_SEARCH_PRODUCTS,
+	FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
 } from '@automattic/calypso-products';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
@@ -27,7 +33,6 @@ import JetpackBenefitsSiteVisits from 'calypso/blocks/jetpack-benefits/site-visi
 import JetpackBenefitsScanHistory from 'calypso/blocks/jetpack-benefits/scan-history';
 import JetpackBenefitsSiteBackups from 'calypso/blocks/jetpack-benefits/site-backups';
 import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
-import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { JetpackBenefitsCard } from 'calypso/blocks/jetpack-benefits/benefit-card';
 
 /**
@@ -35,68 +40,68 @@ import { JetpackBenefitsCard } from 'calypso/blocks/jetpack-benefits/benefit-car
  */
 import './style.scss';
 
-class JetpackBenefits extends React.Component {
+// named export for cleaner testing of class methods
+export class JetpackBenefits extends React.Component {
 	siteHasBackups() {
 		return 'unavailable' !== this.props.rewindState?.state;
-	}
-
-	productHasBackups() {
-		const { productSlug } = this.props;
-		// check that this product is standalone backups or a plan that contains backups
-		return (
-			isJetpackBackupSlug( productSlug ) ||
-			isPersonalPlan( productSlug ) ||
-			isPremiumPlan( productSlug ) ||
-			( ! isPremiumPlan && isBusinessPlan( productSlug ) ) || // Jetpack Professional
-			isSecurityDailyPlan( productSlug ) ||
-			isSecurityRealTimePlan( productSlug ) ||
-			isCompletePlan( productSlug )
-		);
 	}
 
 	siteHasScan() {
 		return 'unavailable' !== this.props.scanState?.state;
 	}
 
-	productHasScan() {
-		const { productSlug } = this.props;
-		// check that this product is standalone scan or a plan that contains it
+	productHasBackups = ( productSlug ) => {
 		return (
+			// standalone backup product
+			isJetpackBackupSlug( productSlug ) ||
+			// check plans for Jetpack backup features
+			( isJetpackPlanSlug( productSlug ) &&
+				( planHasFeature( productSlug, FEATURE_JETPACK_BACKUP_DAILY ) ||
+					planHasFeature( productSlug, FEATURE_JETPACK_BACKUP_DAILY_MONTHLY ) ||
+					planHasFeature( productSlug, FEATURE_JETPACK_BACKUP_REALTIME ) ||
+					planHasFeature( productSlug, FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY ) ) )
+		);
+	};
+
+	productHasScan( productSlug ) {
+		return (
+			// standalone scan product
 			isJetpackScanSlug( productSlug ) ||
-			isCompletePlan( productSlug ) ||
-			isPremiumPlan( productSlug ) ||
-			isSecurityDailyPlan( productSlug ) ||
-			isSecurityRealTimePlan( productSlug )
+			// check plans for Jetpack scan features
+			( isJetpackPlanSlug( productSlug ) &&
+				( planHasFeature( productSlug, FEATURE_JETPACK_SCAN_DAILY ) ||
+					planHasFeature( productSlug, FEATURE_JETPACK_SCAN_DAILY_MONTHLY ) ) )
 		);
 	}
 
-	productHasSearch() {
-		const { product, productSlug } = this.props;
-		// check that this product is a standalone search product or a plan that contains it
+	productHasSearch( productSlug ) {
 		return (
-			isJetpackSearch( product ) ||
-			isCompletePlan( productSlug ) ||
-			( ! isPremiumPlan && isBusinessPlan( productSlug ) ) // Jetpack Professional
+			// standalone search product
+			// there is not currently a isJetpackSearchSlug
+			JETPACK_SEARCH_PRODUCTS.includes( productSlug ) ||
+			// check plans for Jetpack search features
+			( isJetpackPlanSlug( productSlug ) &&
+				( planHasFeature( productSlug, FEATURE_JETPACK_SEARCH ) ||
+					planHasFeature( productSlug, FEATURE_JETPACK_SEARCH_MONTHLY ) ||
+					// This is a bit obscure - checks specifically for Jetpack Business (Professional)
+					// Is it an error that the plan spec in plans-list.js does not contain search features?
+					planHasFeature( productSlug, FEATURE_ALL_PREMIUM_FEATURES_JETPACK ) ) )
 		);
 	}
 
-	productHasAntiSpam() {
-		const { productSlug } = this.props;
+	productHasAntiSpam( productSlug ) {
 		// check that this product is standalone anti-spam or one of the plans that contains it
 		return (
+			// standalone anti-spam product
 			isJetpackAntiSpamSlug( productSlug ) ||
-			isPersonalPlan( productSlug ) ||
-			isPremiumPlan( productSlug ) ||
-			( ! isPremiumPlan && isBusinessPlan( productSlug ) ) || // Jetpack Professional
-			isSecurityDailyPlan( productSlug ) ||
-			isSecurityRealTimePlan( productSlug ) ||
-			isCompletePlan( productSlug )
+			// check plans for anti-spam features
+			( isJetpackPlanSlug( productSlug ) &&
+				( planHasFeature( productSlug, FEATURE_JETPACK_ANTI_SPAM ) ||
+					planHasFeature( productSlug, FEATURE_JETPACK_ANTI_SPAM_MONTHLY ) ) )
 		);
 	}
 
-	productHasActivityLog() {
-		const { productSlug } = this.props;
-
+	productHasActivityLog( productSlug ) {
 		return isJetpackPlanSlug( productSlug ) || isJetpackBackupSlug( productSlug );
 	}
 
@@ -137,15 +142,15 @@ class JetpackBenefits extends React.Component {
 						<JetpackBenefitsSiteVisits siteId={ this.props.siteId } />
 					) // only makes sense to show visits/ stats for plans
 				}
-				{ this.siteHasBackups() && this.productHasBackups() && (
+				{ this.siteHasBackups() && this.productHasBackups( productSlug ) && (
 					<JetpackBenefitsSiteBackups
 						siteId={ siteId }
 						isStandalone={ isJetpackBackupSlug( productSlug ) }
 					/>
 				) }
-				{ this.productHasSearch() && this.renderSiteSearch() }
-				{ this.productHasAntiSpam() && this.renderSiteAntiSpam() }
-				{ this.siteHasScan() && this.productHasScan() && (
+				{ this.productHasSearch( productSlug ) && this.renderSiteSearch() }
+				{ this.productHasAntiSpam( productSlug ) && this.renderSiteAntiSpam() }
+				{ this.siteHasScan() && this.productHasScan( productSlug ) && (
 					<React.Fragment>
 						<QueryJetpackScan siteId={ siteId } />
 						<JetpackBenefitsScanHistory
@@ -159,7 +164,7 @@ class JetpackBenefits extends React.Component {
 					 * could look to expand output by using requestActivityLogs to get this information,
 					 * there is also an endpoint for /activity/counts that has no matching state components that could get set up
 					 */
-					this.productHasActivityLog() && this.renderSiteActivity()
+					this.productHasActivityLog( productSlug ) && this.renderSiteActivity()
 				}
 			</React.Fragment>
 		);
@@ -167,11 +172,8 @@ class JetpackBenefits extends React.Component {
 }
 
 export default connect( ( state, { siteId, productSlug } ) => {
-	const product = getProductBySlug( state, productSlug );
-
 	return {
 		siteId: siteId,
-		product: product,
 		productSlug: productSlug,
 		rewindState: getRewindState( state, siteId ),
 		scanState: getSiteScanState( state, siteId ),
