@@ -163,7 +163,7 @@ const SetupForm = ( { goToEmail, selectedDomainName, siteDomainsAreLoaded } ) =>
 						busy={ isBusy }
 						onClick={ handleCompleteSetup }
 					>
-						{ translate( 'Complete Setup' ) }
+						{ translate( 'Complete setup' ) }
 					</Button>
 				</TitanNewMailboxList>
 			</Card>
