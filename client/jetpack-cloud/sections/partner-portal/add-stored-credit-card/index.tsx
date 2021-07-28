@@ -31,7 +31,7 @@ export default function AddStoredCreditCard(): ReactElement {
 	return (
 		<a
 			className="add-stored-credit-card"
-			href="/partner-portal/payment-method/add"
+			href="/partner-portal/payment-method/card"
 			onClick={ navigateToCreateMethod }
 		>
 			<div className="add-stored-credit-card__content">

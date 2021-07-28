@@ -76,7 +76,7 @@ export default function () {
 		);
 
 		page(
-			`/partner-portal/payment-method/add`,
+			`/partner-portal/payment-method/card`,
 			controller.requireAccessContext,
 			controller.requireTermsOfServiceConsentContext,
 			controller.requireSelectedPartnerKeyContext,
