@@ -235,7 +235,7 @@ class Layout extends Component {
 			[ 'is-group-' + this.props.sectionGroup ]: this.props.sectionGroup,
 			[ 'is-section-' + this.props.sectionName ]: this.props.sectionName,
 			'is-support-session': this.props.isSupportSession,
-			'has-no-sidebar': ! this.props.secondary,
+			'has-no-sidebar': ! this.props.secondary || isWcMobileApp(),
 			'is-inline-help-showing': this.shouldLoadInlineHelp(),
 			'is-happychat-button-showing': this.shouldShowHappyChatButton(),
 			'has-chat': this.props.chatIsOpen,
