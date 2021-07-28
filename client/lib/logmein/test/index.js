@@ -47,6 +47,10 @@ describe( 'logmein', () => {
 			expect( logmeinUrl( 'https://test.blog' ) ).toBe( 'https://test.blog/?logmein=direct' );
 		} );
 
+		it( 'respects protocol', () => {
+			expect( logmeinUrl( 'http://test.blog' ) ).toBe( 'http://test.blog/?logmein=direct' );
+		} );
+
 		it( 'works with other params', () => {
 			expect( logmeinUrl( 'https://test.blog/?test=1' ) ).toBe(
 				'https://test.blog/?test=1&logmein=direct'
@@ -186,10 +190,6 @@ describe( 'logmein', () => {
 			expect( logmeinUrl( 'https://atomic.domain' ) ).toBe( 'https://atomic.domain' );
 			expect( logmeinUrl( 'https://redirecting.domain' ) ).toBe( 'https://redirecting.domain' );
 			expect( logmeinUrl( 'https://wpcom.store' ) ).toBe( 'https://wpcom.store' );
-		} );
-
-		it( 'fallsback on url input when given http urls and does not replace http urls with https', () => {
-			expect( logmeinUrl( 'http://test.blog' ) ).toBe( 'http://test.blog' );
 		} );
 
 		it( 'fallsback on url input when given relative urls', () => {
