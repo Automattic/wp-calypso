@@ -4,11 +4,17 @@
 import { sprintf } from '@wordpress/i18n';
 import { Card, ProgressBar } from '@automattic/components';
 import React, { FunctionComponent } from 'react';
+import { useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { useTranslate } from 'i18n-calypso';
+import {
+	getSiteBackupStorageAvailable,
+	getSiteBackupStorageUsed,
+} from 'calypso/state/rewind/selectors';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import {
 	BackupStorageSpaceUpsell,
 	BackupStorageSpaceUpsellOptions,
@@ -32,12 +38,19 @@ const progressBarWarnings: Record< BackupStorageSpaceUpsellOptions, string > = {
 type Props = Record< string, never >;
 
 export const BackupStorageSpace: FunctionComponent< Props > = () => {
-	const storageLimit = 200;
-	const usedStorage = 200;
-
 	const translate = useTranslate();
 
-	const usedStorageFraction = usedStorage / storageLimit;
+	const siteId = useSelector( getSelectedSiteId ) as number;
+	const gigabytesAvailable = useSelector( ( state ) =>
+		getSiteBackupStorageAvailable( state, siteId )
+	);
+	const gigabytesUsed = useSelector( ( state ) => getSiteBackupStorageUsed( state, siteId ) );
+
+	if ( gigabytesAvailable === undefined || gigabytesUsed === undefined ) {
+		return null;
+	}
+
+	const usedStorageFraction = gigabytesAvailable === 0 ? 0 : gigabytesUsed / gigabytesAvailable;
 
 	let upsellOption: BackupStorageSpaceUpsellOptions = 'no_upsell';
 	if ( usedStorageFraction >= upsellLimit1 ) {
@@ -46,7 +59,7 @@ export const BackupStorageSpace: FunctionComponent< Props > = () => {
 	if ( usedStorageFraction >= upsellLimit2 ) {
 		upsellOption = 'second_upsell';
 	}
-	if ( usedStorage >= storageLimit ) {
+	if ( gigabytesUsed >= gigabytesAvailable ) {
 		upsellOption = 'out_of_storage';
 	}
 
@@ -55,7 +68,7 @@ export const BackupStorageSpace: FunctionComponent< Props > = () => {
 	const progressBarWarning = progressBarWarnings[ upsellOption ];
 
 	// TODO: account for MB/GB and translate once API data is available
-	const title = sprintf( '%1$sGB of %2$sGB used', usedStorage, storageLimit );
+	const title = sprintf( '%1$sGB of %2$sGB used', gigabytesUsed, gigabytesAvailable );
 
 	return (
 		<Card className="backup-storage-space">
@@ -66,8 +79,8 @@ export const BackupStorageSpace: FunctionComponent< Props > = () => {
 				<div className="backup-storage-space__progress-bar">
 					<ProgressBar
 						className={ progressBarWarning }
-						value={ usedStorage }
-						total={ storageLimit }
+						value={ gigabytesUsed }
+						total={ gigabytesAvailable }
 					/>
 				</div>
 				<div className="backup-storage-space__progress-usage-text">{ title }</div>
@@ -77,8 +90,8 @@ export const BackupStorageSpace: FunctionComponent< Props > = () => {
 					<div className="backup-storage-space__divider"></div>
 					<BackupStorageSpaceUpsell
 						upsellOption={ upsellOption }
-						storageLimit={ storageLimit }
-						usedStorage={ usedStorage }
+						usedStorage={ gigabytesUsed }
+						storageLimit={ gigabytesAvailable }
 						href="/pricing/backup"
 					/>
 				</>
