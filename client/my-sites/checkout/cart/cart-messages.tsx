@@ -105,6 +105,16 @@ function getBlockedPurchaseErrorMessage( {
 	);
 }
 
+function getNoDomainMappingForEmailErrorMessage( {
+	translate,
+}: {
+	translate: ReturnType< typeof useTranslate >;
+} ) {
+	return translate(
+		'We have removed an email product from your cart because you no longer have the domain it was using.'
+	);
+}
+
 function getInvalidMultisitePurchaseErrorMessage( {
 	translate,
 	message,
@@ -141,6 +151,9 @@ function getMessagePrettifier(
 
 			case 'invalid-product-multisite':
 				return getInvalidMultisitePurchaseErrorMessage( { translate, message: message.message } );
+
+			case 'no-domain-mapping':
+				return getNoDomainMappingForEmailErrorMessage( { translate } );
 
 			default:
 				return message.message;
