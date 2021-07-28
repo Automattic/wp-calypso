@@ -24,7 +24,6 @@ import { isOffline } from 'calypso/state/application/selectors';
 import {
 	getSelectedSiteId,
 	masterbarIsVisible,
-	getSelectedSite,
 	getSidebarIsCollapsed,
 } from 'calypso/state/ui/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -51,7 +50,7 @@ import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { withCurrentRoute } from 'calypso/components/route';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp, isWcMobileApp } from 'calypso/lib/mobile-app';
-import { getShouldShowAppBanner, handleScroll } from './utils';
+import { handleScroll } from './utils';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { isWithinBreakpoint } from '@automattic/viewport';
@@ -264,7 +263,6 @@ class Layout extends Component {
 				bodyClass,
 			};
 		};
-		const { shouldShowAppBanner } = this.props;
 
 		const loadInlineHelp = this.shouldLoadInlineHelp();
 
@@ -357,7 +355,7 @@ class Layout extends Component {
 				{ config.isEnabled( 'layout/support-article-dialog' ) && (
 					<AsyncLoad require="calypso/blocks/support-article-dialog" placeholder={ null } />
 				) }
-				{ shouldShowAppBanner && config.isEnabled( 'layout/app-banner' ) && (
+				{ config.isEnabled( 'layout/app-banner' ) && (
 					<AsyncLoad require="calypso/blocks/app-banner" placeholder={ null } />
 				) }
 				{ config.isEnabled( 'gdpr-banner' ) && (
@@ -377,7 +375,6 @@ export default compose(
 		const sectionGroup = currentSection?.group ?? null;
 		const sectionName = currentSection?.name ?? null;
 		const siteId = getSelectedSiteId( state );
-		const shouldShowAppBanner = getShouldShowAppBanner( getSelectedSite( state ) );
 		const sectionJitmPath = getMessagePathForJITM( currentRoute );
 		const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
 		const isJetpack =
@@ -422,7 +419,6 @@ export default compose(
 			sectionGroup,
 			sectionName,
 			sectionJitmPath,
-			shouldShowAppBanner,
 			isOffline: isOffline( state ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 			chatIsOpen: isHappychatOpen( state ),
