@@ -186,6 +186,7 @@ module.exports = {
 				'client/mailing-lists/**/*',
 				'client/my-sites/customer-home/**/*',
 				'client/notifications/**/*',
+				'client/root.js',
 				'client/sections-filter.js',
 				'client/sections-helper.js',
 				'client/sections-middleware.js',
