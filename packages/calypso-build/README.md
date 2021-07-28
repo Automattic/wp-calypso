@@ -10,7 +10,7 @@ It is designed in a way that in its simplest form is very easy to invoke, with v
 
 ## Usage
 
-Add add `@automattic/calypso-build` to your project's `devDependencies` by running
+Add `@automattic/calypso-build` to your project's `devDependencies` by running
 
 ```
 yarn add --dev @automattic/calypso-build
