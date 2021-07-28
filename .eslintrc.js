@@ -215,6 +215,7 @@ module.exports = {
 				'packages/explat-client-react-helpers/**/*',
 				'packages/explat-client/**/*',
 				'packages/format-currency/**/*',
+				'packages/i18n-calypso-cli/**/*',
 				'packages/i18n-utils/**/*',
 				'packages/js-utils/**/*',
 				'packages/language-picker/**/*',
