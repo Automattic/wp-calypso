@@ -1,13 +1,5 @@
-/**
- * External Dependencies
- */
-
-const { ipcMain } = require( 'electron' );
 const { expect } = require( 'chai' );
-
-/**
- * Internal dependencies
- */
+const { ipcMain } = require( 'electron' );
 const boot = require( '../desktop/app' );
 
 process.chdir( process.env.CALYPSO_PATH );

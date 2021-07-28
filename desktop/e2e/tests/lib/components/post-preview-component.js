@@ -2,9 +2,8 @@
 /** @format */
 
 const { By, until } = require( 'selenium-webdriver' );
-
-const AsyncBaseContainer = require( '../async-base-container' );
 const ViewPostPage = require( '../../lib/pages/view-post-page.js' );
+const AsyncBaseContainer = require( '../async-base-container' );
 const driverHelper = require( '../driver-helper.js' );
 
 class PostPreviewComponent extends AsyncBaseContainer {
