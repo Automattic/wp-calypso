@@ -78,7 +78,7 @@ export function rewindActivateFailure( siteId ) {
  * Share a rewind/activity-log event via email.
  *
  * @param {string|number} siteId Site ID
- * @param {number} rewindId Activity ID
+ * @param {string|number} rewindId Activity ID
  * @param {string} email Email address to send to
  * @returns {object} action object
  */
