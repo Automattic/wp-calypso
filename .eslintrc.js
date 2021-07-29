@@ -211,6 +211,7 @@ module.exports = {
 				'packages/calypso-polyfills/**/*',
 				'packages/calypso-products/**/*',
 				'packages/calypso-stripe/**/*',
+				'packages/calypso-url/**/*',
 				'packages/components/**/*',
 				'packages/composite-checkout/**/*',
 				'packages/create-calypso-config/**/*',
