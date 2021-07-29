@@ -233,7 +233,7 @@ const TitanCompleteMailboxSetup = ( { selectedDomainName } ) => {
 				<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
 
 				<HeaderCake onClick={ goToEmail } backText={ translate( 'Email Management' ) }>
-					{ translate( 'Set up your Professional Email mailbox' ) }
+					{ translate( 'Set up your Professional Email' ) }
 				</HeaderCake>
 
 				<SetupForm
