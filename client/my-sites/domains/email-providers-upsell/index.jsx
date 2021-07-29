@@ -17,13 +17,14 @@ import PromoCard from 'calypso/components/promo-section/promo-card';
  * Style dependencies
  */
 import emailIllustration from 'calypso/assets/images/email-providers/email-illustration.svg';
+import { domainAddNew } from '../paths';
 
 export default function EmailProvidersUpsell( { domain } ) {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
 
 	const handleGoBack = () => {
-		page( `/domains/add/${ selectedSiteSlug }` );
+		page( domainAddNew( selectedSiteSlug ) );
 	};
 
 	const translateArgs = {
