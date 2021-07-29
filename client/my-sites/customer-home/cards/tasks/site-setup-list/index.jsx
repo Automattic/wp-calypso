@@ -324,7 +324,6 @@ export default connect( ( state ) => {
 	const siteVerticals = siteChecklist?.vertical;
 	const taskStatuses = siteChecklist?.tasks;
 	const siteIsUnlaunched = isUnlaunchedSite( state, siteId );
-	const siteSlug = getSiteSlug( state, siteId );
 	const taskList = getTaskList( {
 		taskStatuses,
 		designType,
@@ -343,7 +342,7 @@ export default connect( ( state ) => {
 		isPodcastingSite: !! getSiteOption( state, siteId, 'anchor_podcast' ),
 		menusUrl: getMenusUrl( state, siteId ),
 		siteId,
-		siteSlug,
+		siteSlug: getSiteSlug( state, siteId ),
 		tasks: taskList.getAll(),
 		taskUrls: getChecklistTaskUrls( state, siteId ),
 		userEmail: user?.email,

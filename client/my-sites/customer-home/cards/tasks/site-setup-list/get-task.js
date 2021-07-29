@@ -193,13 +193,13 @@ export const getTask = (
 		case CHECKLIST_KNOWN_TASKS.PROFESSIONAL_EMAIL_MAILBOX_CREATED:
 			taskData = {
 				timing: 2,
-				title: translate( 'Setup your Professional Email' ),
+				title: translate( 'Set up your Professional Email' ),
 				description: translate(
 					'Complete your Professional Email setup to start sending and receiving emails from your custom domain today.'
 				),
 				actionText: translate( 'Complete setup' ),
 				isSkippable: false,
-				actionUrl: emailManagement( siteSlug, task.domainName ),
+				actionUrl: emailManagement( siteSlug, task.domain ),
 			};
 			break;
 	}
