@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { login, lostPassword } from 'calypso/lib/paths';
 import EmptyContent from 'calypso/components/empty-content';
 import RedirectWhenLoggedIn from 'calypso/components/redirect-when-logged-in';
-import { hideMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
+import { login, lostPassword } from 'calypso/lib/paths';
 import {
 	recordPageViewWithClientId as recordPageView,
 	enhanceWithSiteType,
 } from 'calypso/state/analytics/actions';
+import { hideMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
 import { withEnhancers } from 'calypso/state/utils';
 
 class EmailedLoginLinkExpired extends React.Component {
