@@ -33,6 +33,6 @@
 		"@testing-library/react-hooks": "7.0.1",
 		"react-dom": "^16.12.0",
 		"react-test-renderer": "^16.12.0",
-		"tslib": "^2.2.0"
+		"tslib": "^2.3.0"
 	}
 }
