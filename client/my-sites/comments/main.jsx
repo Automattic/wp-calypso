@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -71,7 +72,12 @@ export class CommentsManagement extends Component {
 						className="comments__page-heading"
 						headerText={ translate( 'Comments' ) }
 						subHeaderText={ translate(
-							'View, reply to, and manage all the comments across your site.'
+							'View, reply to, and manage all the comments across your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+							{
+								components: {
+									learnMoreLink: <InlineSupportLink supportContext="comments" showIcon={ false } />,
+								},
+							}
 						) }
 						align="left"
 						hasScreenOptions
