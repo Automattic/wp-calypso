@@ -237,7 +237,7 @@ function saveToLocalStorageAndProceed( state, domainItem, themeItem, newSitePara
 	);
 
 	try {
-		window.localStorage.setItem( 'shoppingCart', JSON.stringify( newCartItemsToAdd ) );
+		saveCartItemsToLocalStorage( newCartItemsToAdd );
 		window.localStorage.setItem( 'siteParams', JSON.stringify( newSiteParams ) );
 	} catch ( e ) {
 		throw new Error( 'An unexpected error occured while saving your cart: ' + e );
