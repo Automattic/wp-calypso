@@ -1,33 +1,21 @@
-/**
- * External dependencies
- */
-
+import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import page from 'page';
-
-/**
- * Internal dependencies
- */
-import { login } from 'calypso/lib/paths';
-import { Card } from '@automattic/components';
+import checkEmailImage from 'calypso/assets/images/illustrations/check-email.svg';
+import Gridicon from 'calypso/components/gridicon';
 import RedirectWhenLoggedIn from 'calypso/components/redirect-when-logged-in';
-import { hideMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
-import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import { login } from 'calypso/lib/paths';
 import {
 	recordPageViewWithClientId as recordPageView,
 	enhanceWithSiteType,
 } from 'calypso/state/analytics/actions';
-import { withEnhancers } from 'calypso/state/utils';
+import { hideMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Image dependencies
- */
-import checkEmailImage from 'calypso/assets/images/illustrations/check-email.svg';
+import { withEnhancers } from 'calypso/state/utils';
 
 class EmailedLoginLinkSuccessfully extends React.Component {
 	static propTypes = {

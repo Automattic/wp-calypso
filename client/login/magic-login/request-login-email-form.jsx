@@ -1,39 +1,31 @@
-/**
- * External dependencies
- */
-
+import { localize } from 'i18n-calypso';
+import { defer, get } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { defer, get } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import EmailedLoginLinkSuccessfully from './emailed-login-link-successfully';
-import EmailedLoginLinkSuccessfullyJetpackConnect from './emailed-login-link-successfully-jetpack-connect';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
-import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
-import getMagicLoginRequestedEmailSuccessfully from 'calypso/state/selectors/get-magic-login-requested-email-successfully';
-import getMagicLoginRequestEmailError from 'calypso/state/selectors/get-magic-login-request-email-error';
-import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic-login-email';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import Notice from 'calypso/components/notice';
-import { CHECK_YOUR_EMAIL_PAGE } from 'calypso/state/login/magic-login/constants';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
+import { sendEmailLogin } from 'calypso/state/auth/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { hideMagicLoginRequestNotice } from 'calypso/state/login/magic-login/actions';
+import { CHECK_YOUR_EMAIL_PAGE } from 'calypso/state/login/magic-login/constants';
 import {
 	getRedirectToOriginal,
 	getLastCheckedUsernameOrEmail,
 } from 'calypso/state/login/selectors';
-import { hideMagicLoginRequestNotice } from 'calypso/state/login/magic-login/actions';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
-import { sendEmailLogin } from 'calypso/state/auth/actions';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
+import getMagicLoginRequestEmailError from 'calypso/state/selectors/get-magic-login-request-email-error';
+import getMagicLoginRequestedEmailSuccessfully from 'calypso/state/selectors/get-magic-login-requested-email-successfully';
+import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic-login-email';
+import EmailedLoginLinkSuccessfully from './emailed-login-link-successfully';
+import EmailedLoginLinkSuccessfullyJetpackConnect from './emailed-login-link-successfully-jetpack-connect';
 
 class RequestLoginEmailForm extends React.Component {
 	static propTypes = {

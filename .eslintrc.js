@@ -185,6 +185,7 @@ module.exports = {
 				'client/document/**/*',
 				'client/gutenberg/**/*',
 				'client/incoming-redirect/**/*',
+				'client/login/**/*',
 				'client/mailing-lists/**/*',
 				'client/my-sites/customer-home/**/*',
 				'client/notifications/**/*',
