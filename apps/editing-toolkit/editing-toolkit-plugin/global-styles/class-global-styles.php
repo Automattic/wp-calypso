@@ -483,11 +483,18 @@ class Global_Styles {
 		}
 
 		if ( count( $font_list ) > 0 ) {
-			$font_list_str = '';
+			$expanded_font_list = array( 'Montserrat', 'Work Sans', 'Roboto' );
+			$font_list_str      = '';
 			foreach ( $font_list as $font ) {
-				// Some fonts lack italic variants,
-				// the API will return only the regular and bold CSS for those.
-				$font_list_str = $font_list_str . $font . ':regular,bold,italic,bolditalic|';
+				// Some fonts have more available styles than others,
+				// so return those if available.
+				if ( in_array( $font, $expanded_font_list, true ) ) {
+					$font_list_str = $font_list_str . $font . ':thin,extralight,light,regular,medium,semibold,bold,italic,bolditalic,extrabold,black|';
+				} else {
+					// Some fonts lack italic variants,
+					// the API will return only the regular and bold CSS for those.
+					$font_list_str = $font_list_str . $font . ':regular,bold,italic,bolditalic|';
+				}
 			}
 			$result = $result . "@import url('https://fonts.googleapis.com/css?family=" . $font_list_str . "');";
 		}
