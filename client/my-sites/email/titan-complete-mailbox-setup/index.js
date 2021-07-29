@@ -161,7 +161,7 @@ const SetupForm = ( { goToEmail, selectedDomainName, siteDomainsAreLoaded } ) =>
 				domain={ selectedDomainName }
 				mailboxes={ mailboxes }
 				onMailboxesChange={ onMailboxesChange }
-				supportsMultipleMailboxes={ false }
+				showAddAnotherMailboxButton={ false }
 				validatedMailboxUuids={ mailboxes.map( ( mailbox ) => mailbox.uid ) }
 			>
 				<Button
