@@ -276,13 +276,11 @@ function displayRenewalSuccessNotice(
 		reduxDispatch(
 			successNotice(
 				translate(
-					'Success! You renewed %(productName)s for %(duration)s, and we sent your receipt to %(email)s. ' +
-						'{{a}}Learn more about renewals{{/a}}',
+					'Success! You renewed %(productName)s for %(duration)s, and we sent your receipt to %(email)s. {{a}}Learn more about renewals{{/a}}',
 					{
 						args: {
 							productName: renewalItem.product_name,
 							duration: moment.duration( { days: renewalItem.bill_period } ).humanize(),
-							renewalDate: moment( product.expiry ).subtract( 31, 'days' ).format( 'LL' ),
 							email: product.user_email,
 						},
 						components: {
