@@ -20,8 +20,8 @@ import {
 } from 'calypso/state/ui/selectors';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import DomainSearch from './domain-search';
-import SiteRedirect from './domain-search/site-redirect';
 import EmailProvidersUpsell from './email-providers-upsell';
+import SiteRedirect from './domain-search/site-redirect';
 import MapDomain from 'calypso/my-sites/domains/map-domain';
 import TransferDomain from 'calypso/my-sites/domains/transfer-domain';
 import TransferDomainStep from 'calypso/components/domains/transfer-domain-step';
