@@ -3,7 +3,7 @@
  */
 import { sprintf } from '@wordpress/i18n';
 import { Card, ProgressBar } from '@automattic/components';
-import React, { FunctionComponent } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 
 /**
@@ -35,9 +35,7 @@ const progressBarWarnings: Record< BackupStorageSpaceUpsellOptions, string > = {
 	out_of_storage: 'red-warning',
 };
 
-type Props = Record< string, never >;
-
-export const BackupStorageSpace: FunctionComponent< Props > = () => {
+export const BackupStorageSpace: React.FC = () => {
 	const translate = useTranslate();
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
