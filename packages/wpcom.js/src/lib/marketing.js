@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import MarketingSurvey from './marketing.survey';
 
 export default class Marketing {

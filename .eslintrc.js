@@ -243,6 +243,7 @@ module.exports = {
 				'packages/whats-new/**/*',
 				'packages/wpcom-checkout/**/*',
 				'packages/wpcom-proxy-request/**/*',
+				'packages/wpcom.js/**/*',
 				'test/client/**/*',
 				'test/e2e/**/*',
 				'test/server/**/*',
