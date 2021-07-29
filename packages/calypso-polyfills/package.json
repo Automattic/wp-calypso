@@ -25,6 +25,7 @@
 	},
 	"dependencies": {
 		"core-js": "^3.6.3",
+		"element-closest": "^3.0.2",
 		"isomorphic-fetch": "^2.2.1",
 		"regenerator-runtime": "^0.13.3",
 		"svg4everybody": "^2.1.9"

@@ -47,7 +47,12 @@ import {
 	siteHasScanProductPurchase,
 } from 'calypso/state/purchases/selectors';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { getSiteSlug, getSiteTitle, isJetpackSite } from 'calypso/state/sites/selectors';
+import {
+	getSiteSlug,
+	getSiteTitle,
+	isJetpackSite,
+	isJetpackSiteSecondaryNetworkSite as getIsJetpackSiteSecondaryNetworkSite,
+} from 'calypso/state/sites/selectors';
 import {
 	recordTracksEvent as recordTracksEventAction,
 	withAnalytics,
@@ -126,6 +131,7 @@ class ActivityLog extends Component {
 		// localize
 		moment: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
+		isJetpackSiteSecondaryNetworkSite: PropTypes.bool,
 	};
 
 	componentDidMount() {
@@ -376,6 +382,7 @@ class ActivityLog extends Component {
 			isAtomic,
 			isJetpack,
 			isIntroDismissed,
+			isJetpackSiteSecondaryNetworkSite,
 		} = this.props;
 
 		const disableRestore =
@@ -439,7 +446,9 @@ class ActivityLog extends Component {
 					<RewindUnavailabilityNotice siteId={ siteId } />
 				) }
 				<IntroBanner siteId={ siteId } />
-				{ siteHasNoLog && isIntroDismissed && <UpgradeBanner siteId={ siteId } /> }
+				{ siteHasNoLog && isIntroDismissed && ! isJetpackSiteSecondaryNetworkSite && (
+					<UpgradeBanner siteId={ siteId } />
+				) }
 				{ siteId && isJetpack && <ActivityLogTasklist siteId={ siteId } /> }
 				{ this.renderErrorMessage() }
 				{ this.renderActionProgress() }
@@ -599,6 +608,7 @@ export default connect(
 			timezone,
 			siteHasNoLog,
 			isIntroDismissed: getPreference( state, 'dismissible-card-activity-introduction-banner' ),
+			isJetpackSiteSecondaryNetworkSite: getIsJetpackSiteSecondaryNetworkSite( state, siteId ),
 		};
 	},
 	{

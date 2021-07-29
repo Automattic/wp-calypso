@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { nock, useNock } from '../index.js';
 
 describe( 'useNock', () => {

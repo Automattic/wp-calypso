@@ -1,7 +1,6 @@
 import assert from 'assert';
-import { ElementHandle } from 'playwright';
+import { ElementHandle, Page } from 'playwright';
 import { BaseContainer } from '../base-container';
-import { SupportArticleComponent } from './support-article-component';
 
 const selectors = {
 	// Components
@@ -23,6 +22,8 @@ const selectors = {
 
 	// Article
 	readMoreButton: 'text=Read more',
+	visitArticleButton: 'text="Visit article"',
+	closeButton: 'button:text("Close")',
 };
 
 /**
@@ -182,8 +183,30 @@ export class SupportComponent extends BaseContainer {
 
 		await items[ target ].click();
 		await this.page.click( selectors.readMoreButton );
-		const supportArticleComponent = await SupportArticleComponent.Expect( this.page );
-		await supportArticleComponent.articleDisplayed();
+	}
+
+	/**
+	 * Visit the support article from the inline support popover.
+	 *
+	 * @returns {Promise<Page>} Reference to support page.
+	 */
+	async visitArticle(): Promise< Page > {
+		const browserContext = this.page.context();
+		const [ newPage ] = await Promise.all( [
+			browserContext.waitForEvent( 'page' ),
+			this.page.click( selectors.visitArticleButton ),
+		] );
+		await newPage.waitForLoadState( 'domcontentloaded' );
+		return newPage;
+	}
+
+	/**
+	 * Closes the support article displayed on screen.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async closeArticle(): Promise< void > {
+		await this.page.click( selectors.closeButton );
 	}
 
 	/**

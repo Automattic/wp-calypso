@@ -2,9 +2,9 @@
 /** @format */
 
 const webdriver = require( 'selenium-webdriver' );
+const AsyncBaseContainer = require( '../async-base-container.js' );
 const driverHelper = require( '../driver-helper.js' );
 
-const AsyncBaseContainer = require( '../async-base-container.js' );
 const by = webdriver.By;
 
 class EditorConfirmationSidebarComponent extends AsyncBaseContainer {

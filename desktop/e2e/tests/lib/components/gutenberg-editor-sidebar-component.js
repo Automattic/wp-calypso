@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 const webdriver = require( 'selenium-webdriver' );
-
-/**
- * Internal dependencies
- */
-const driverHelper = require( '../driver-helper' );
 const AsyncBaseContainer = require( '../async-base-container' );
+const driverHelper = require( '../driver-helper' );
 
 const By = webdriver.By;
 

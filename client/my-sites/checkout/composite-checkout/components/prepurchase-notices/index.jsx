@@ -19,6 +19,7 @@ import {
 	getSitePlan,
 	getSiteProducts,
 	isJetpackMinimumVersion,
+	getSiteOption,
 } from 'calypso/state/sites/selectors';
 import {
 	isPlanIncludingSiteBackup,
@@ -72,9 +73,19 @@ const PrePurchaseNotices = () => {
 	);
 
 	const BACKUP_MINIMUM_JETPACK_VERSION = '8.5';
-	const siteHasBackupMinimumPluginVersion = useSelector( ( state ) =>
-		isJetpackMinimumVersion( state, siteId, BACKUP_MINIMUM_JETPACK_VERSION )
-	);
+	const siteHasBackupMinimumPluginVersion = useSelector( ( state ) => {
+		const activeConnectedPlugins = getSiteOption(
+			state,
+			siteId,
+			'jetpack_connection_active_plugins'
+		);
+		const backupPluginActive =
+			Array.isArray( activeConnectedPlugins ) &&
+			activeConnectedPlugins.includes( 'jetpack-backup' );
+		return (
+			backupPluginActive || isJetpackMinimumVersion( state, siteId, BACKUP_MINIMUM_JETPACK_VERSION )
+		);
+	} );
 
 	// All these notices (and the selectors that drive them)
 	// require a site ID to work. We should *conceptually* always

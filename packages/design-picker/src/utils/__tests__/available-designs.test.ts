@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
 import '@automattic/calypso-config';
 
-/**
- * Internal dependencies
- */
 import '../../constants';
 import { getDesignUrl, getDesignImageUrl, getAvailableDesigns } from '../available-designs';
 import { availableDesignsConfig } from '../available-designs-config';
 import { shuffleArray } from '../shuffle';
-
 import type { Design } from '../../types';
 
 jest.mock( '@automattic/calypso-config', () => ( {

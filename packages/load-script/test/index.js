@@ -2,9 +2,6 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
 import { JQUERY_URL, loadjQueryDependentScript, loadScript } from '../src';
 import {
 	executeCallbacks,

@@ -87,25 +87,29 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 		[ translate, isFormDirty ]
 	);
 
-	const onUrlSubmit = useCallback( () => {
-		setIsFormDirty( true );
-		const siteUrl = addHttpIfMissing( siteInput );
-		setSiteInput( siteUrl );
+	const onUrlSubmit = useCallback(
+		( e ) => {
+			e.preventDefault();
+			setIsFormDirty( true );
+			const siteUrl = addHttpIfMissing( siteInput );
+			setSiteInput( siteUrl );
 
-		if ( ! resemblesUrl( siteUrl ) ) {
-			setError( translate( 'That is not a valid website URL.' ) );
-			return;
-		}
+			if ( ! resemblesUrl( siteUrl ) ) {
+				setError( translate( 'That is not a valid website URL.' ) );
+				return;
+			}
 
-		dispatch(
-			recordTracksEvent( 'calypso_siteless_checkout_submit_website_address', {
-				product_slug: productSlug,
-				site_url: siteUrl,
-				receipt_id: receiptId,
-			} )
-		);
-		dispatch( requestUpdateJetpackCheckoutSupportTicket( siteUrl, receiptId ) );
-	}, [ siteInput, dispatch, translate, productSlug, receiptId ] );
+			dispatch(
+				recordTracksEvent( 'calypso_siteless_checkout_submit_website_address', {
+					product_slug: productSlug,
+					site_url: siteUrl,
+					receipt_id: receiptId,
+				} )
+			);
+			dispatch( requestUpdateJetpackCheckoutSupportTicket( siteUrl, receiptId ) );
+		},
+		[ siteInput, dispatch, translate, productSlug, receiptId ]
+	);
 
 	const onScheduleClick = useCallback( () => {
 		if ( calendlyUrl !== null ) {
@@ -218,38 +222,41 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 									<br />
 									{ translate( 'Knowing this will allow us to jumpstart the activation process.' ) }
 								</p>
-								<FormLabel
-									className="jetpack-checkout-siteless-thank-you__form-label"
-									htmlFor="website-address-input"
-								>
-									Your website address:
-								</FormLabel>
-								<div className="jetpack-checkout-siteless-thank-you__form-group" role="group">
-									<FormTextInput
-										className={ classNames( 'jetpack-checkout-siteless-thank-you__form-input', {
-											'is-error': error,
-										} ) }
-										autoCapitalize="off"
-										value={ siteInput }
-										placeholder="https://yourjetpack.blog"
-										onChange={ onUrlChange }
-										autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
-									/>
-									<FormButton
-										className="jetpack-checkout-siteless-thank-you__form-submit"
-										disabled={ ! siteInput || supportTicketStatus === 'pending' }
-										busy={ supportTicketStatus === 'pending' }
-										onClick={ onUrlSubmit }
+								<form onSubmit={ onUrlSubmit }>
+									<FormLabel
+										className="jetpack-checkout-siteless-thank-you__form-label"
+										htmlFor="website-address-input"
 									>
-										{ translate( 'Continue' ) }
-									</FormButton>
-								</div>
-								{ error && (
-									<FormInputValidation
-										isError={ !! ( isFormDirty && error ) }
-										text={ error }
-									></FormInputValidation>
-								) }
+										Your website address:
+									</FormLabel>
+									<div className="jetpack-checkout-siteless-thank-you__form-group" role="group">
+										<FormTextInput
+											className={ classNames( 'jetpack-checkout-siteless-thank-you__form-input', {
+												'is-error': error,
+											} ) }
+											autoCapitalize="off"
+											value={ siteInput }
+											placeholder="https://yourjetpack.blog"
+											onChange={ onUrlChange }
+											autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
+										/>
+										<FormButton
+											className="jetpack-checkout-siteless-thank-you__form-submit"
+											disabled={ ! siteInput || supportTicketStatus === 'pending' }
+											busy={ supportTicketStatus === 'pending' }
+										>
+											{ supportTicketStatus === 'pending'
+												? translate( 'Saving…' )
+												: translate( 'Continue' ) }
+										</FormButton>
+									</div>
+									{ error && (
+										<FormInputValidation
+											isError={ !! ( isFormDirty && error ) }
+											text={ error }
+										></FormInputValidation>
+									) }
+								</form>
 							</div>
 						</div>
 					) }
