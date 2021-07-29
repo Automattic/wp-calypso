@@ -1,17 +1,8 @@
-/**
- * External dependencies
- *
- */
-
-import React from 'react';
-import classNames from 'classnames';
 import config from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
-import Head from 'calypso/components/head';
+import classNames from 'classnames';
+import React from 'react';
 import EmptyContent from 'calypso/components/empty-content';
+import Head from 'calypso/components/head';
 import { chunkCssLinks } from './utils';
 
 function NotFound( { entrypoint } ) {
