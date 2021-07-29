@@ -241,7 +241,7 @@ export const MarketingTools: FunctionComponent = () => {
 				<MarketingToolsFeature
 					title={ translate( 'Get help with content for your blog or website' ) }
 					description={ translate(
-						'Verblio makes blog and content creation happen. Its writers can help create high-powered content for your website that drives SEO.'
+						'Verblio makes blog and content creation happen. Its writers can help create high-powered content for your website that drives SEO. Get 35% off your first month today.'
 					) }
 					imagePath={ verblioLogo }
 				>
