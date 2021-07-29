@@ -30,6 +30,7 @@ import ThemesSearchCard from './themes-magic-search-card';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
 import {
 	getActiveTheme,
+	getCanonicalTheme,
 	getThemeFilterTerms,
 	getThemeFilterToTermTable,
 	getThemeShowcaseDescription,
@@ -80,16 +81,14 @@ class ThemeShowcase extends React.Component {
 				key: 'recommended',
 				text: props.translate( 'Recommended' ),
 				order: 1,
-				show: true,
 			},
-			TRENDING: { key: 'trending', text: props.translate( 'Trending' ), order: 2, show: true },
+			TRENDING: { key: 'trending', text: props.translate( 'Trending' ), order: 2 },
 			MYTHEMES: {
 				key: 'my-themes',
 				text: props.translate( 'My Themes' ),
 				order: 3,
-				show: this.props.isJetpackSite,
 			},
-			ALL: { key: 'all', text: props.translate( 'All Themes' ), order: 4, show: true },
+			ALL: { key: 'all', text: props.translate( 'All Themes' ), order: 4 },
 			FSE: {
 				key: 'fse',
 				text: (
@@ -101,7 +100,6 @@ class ThemeShowcase extends React.Component {
 					</span>
 				),
 				order: 5,
-				show: config.isEnabled( 'gutenboarding/site-editor' ),
 			},
 		};
 		this.state = {
@@ -266,6 +264,25 @@ class ThemeShowcase extends React.Component {
 		);
 	};
 
+	shouldShowTab = ( key ) => {
+		switch ( key ) {
+			case this.tabFilters.RECOMMENDED.key:
+			case this.tabFilters.TRENDING.key:
+			case this.tabFilters.ALL.key:
+				return true;
+			case this.tabFilters.MYTHEMES.key:
+				return this.props.isJetpackSite;
+			case this.tabFilters.FSE.key:
+				// Display FSE tab if feature flag is enabled or if current theme is already FSE-enabled.
+				return (
+					config.isEnabled( 'gutenboarding/site-editor' ) ||
+					this.props.currentTheme?.taxonomies?.theme_feature?.some(
+						( f ) => f.slug === 'block-templates'
+					)
+				);
+		}
+	};
+
 	render() {
 		const {
 			siteId,
@@ -384,7 +401,7 @@ class ThemeShowcase extends React.Component {
 									.sort( ( a, b ) => a.order - b.order )
 									.map(
 										( tabFilter ) =>
-											tabFilter.show && (
+											this.shouldShowTab( tabFilter.key ) && (
 												<NavItem
 													key={ tabFilter.key }
 													onClick={ () => this.onFilterClick( tabFilter ) }
@@ -415,16 +432,21 @@ class ThemeShowcase extends React.Component {
 	}
 }
 
-const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
-	currentThemeId: getActiveTheme( state, siteId ),
-	isLoggedIn: isUserLoggedIn( state ),
-	siteSlug: getSiteSlug( state, siteId ),
-	description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
-	title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),
-	subjects: getThemeFilterTerms( state, 'subject' ) || {},
-	filterString: prependThemeFilterKeys( state, filter ),
-	filterToTermTable: getThemeFilterToTermTable( state ),
-	themesBookmark: getThemesBookmark( state ),
-} );
+const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
+	const currentThemeId = getActiveTheme( state, siteId );
+	const currentTheme = getCanonicalTheme( state, siteId, currentThemeId );
+	return {
+		currentThemeId,
+		currentTheme,
+		isLoggedIn: isUserLoggedIn( state ),
+		siteSlug: getSiteSlug( state, siteId ),
+		description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
+		title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),
+		subjects: getThemeFilterTerms( state, 'subject' ) || {},
+		filterString: prependThemeFilterKeys( state, filter ),
+		filterToTermTable: getThemeFilterToTermTable( state ),
+		themesBookmark: getThemesBookmark( state ),
+	};
+};
 
 export default connect( mapStateToProps, null )( localize( ThemeShowcase ) );
