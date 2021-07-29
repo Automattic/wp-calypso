@@ -100,7 +100,7 @@ export const BackupStorageSpaceUpsell: FunctionComponent< Props > = ( {
 						<div className="backup-storage-space-upsell__status-text">{ statusText }</div>
 						<div className="backup-storage-space-upsell__action-text">{ actionText }</div>
 					</div>
-					<Gridicon icon="arrow-right" />
+					<span className="backup-storage-space-upsell__action-arrow">&#8594;</span>
 				</div>
 			</Button>
 		</>

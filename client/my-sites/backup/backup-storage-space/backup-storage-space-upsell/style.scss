@@ -9,15 +9,29 @@
 }
 
 .backup-storage-space-upsell__button {
-	border: 2px solid var( --color-primary );
-	border-radius: 2px;
+	border: 2px solid var( --studio-jetpack-green );
+	border-radius: 4px;
 	padding: 16px 24px;
 	width: 100%;
 	height: 100%;
 	font-size: $font-body;
 
-	&:hover {
-		background: var( --color-accent-0 );
+	&:hover,
+	&:focus {
+		background: none;
+
+		.backup-storage-space-upsell__action-text {
+			text-decoration: underline;
+			text-decoration-thickness: 2px;
+		}
+
+		.backup-storage-space-upsell__action-arrow {
+			transform: translateX( 8px );
+		}
+	}
+
+	&:focus {
+		box-shadow: none;
 	}
 }
 
@@ -39,4 +53,12 @@
 
 .backup-storage-space-upsell__action-text {
 	font-weight: bold;
+}
+
+.backup-storage-space-upsell__action-arrow {
+	transition: transform 0.15s ease-out;
+
+	color: var( --studio-jetpack-green );
+	font-size: $font-title-medium;
+	font-weight: 600;
 }
