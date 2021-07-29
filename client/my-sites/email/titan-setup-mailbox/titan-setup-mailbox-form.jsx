@@ -40,7 +40,12 @@ const recordCompleteSetupClickEvent = ( canContinue, mailbox ) => {
 	);
 };
 
-const useHandleSetupAction = ( mailboxes, onMailboxesChange, selectedDomainName ) => {
+const useHandleSetupAction = (
+	mailboxes,
+	onMailboxesChange,
+	selectedDomainName,
+	setValidatedMailboxUuids
+) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const mailbox = mailboxes[ 0 ];
@@ -80,11 +85,10 @@ const useHandleSetupAction = ( mailboxes, onMailboxesChange, selectedDomainName 
 		const validatedMailboxes = validateMailboxes( mailboxes );
 		let isMailboxValid = areAllMailboxesValid( validatedMailboxes );
 
+		setValidatedMailboxUuids( validatedMailboxes.map( ( _mailbox ) => _mailbox.uuid ) );
+
 		if ( ! isMailboxValid ) {
-			mailboxes = mailboxes.map( ( currentMailbox ) =>
-				decorateMailboxWithAvailabilityError( currentMailbox, 'Freaks' )
-			);
-			onMailboxesChange( mailboxes );
+			onMailboxesChange( validatedMailboxes );
 
 			dispatchCompleteSetupClick( isMailboxValid );
 
@@ -108,11 +112,11 @@ const useHandleSetupAction = ( mailboxes, onMailboxesChange, selectedDomainName 
 				? error.message
 				: translate( 'We were unable to check whether this mailbox already exists.' );
 
-			mailboxes = mailboxes.map( ( currentMailbox ) =>
-				decorateMailboxWithAvailabilityError( currentMailbox, errorMessage )
+			onMailboxesChange(
+				validatedMailboxes.map( ( currentMailbox ) =>
+					decorateMailboxWithAvailabilityError( currentMailbox, errorMessage )
+				)
 			);
-
-			onMailboxesChange( mailboxes );
 
 			dispatchCompleteSetupClick( isMailboxValid );
 
@@ -137,6 +141,8 @@ const TitanSetupMailboxForm = ( { selectedDomainName, siteDomainsAreLoaded } ) =
 		buildNewTitanMailbox( selectedDomainName, false ),
 	] );
 
+	const [ validatedMailboxUuids, setValidatedMailboxUuids ] = useState( [] );
+
 	const translate = useTranslate();
 
 	const onMailboxesChange = useCallback( ( updatedMailboxes ) => {
@@ -146,7 +152,8 @@ const TitanSetupMailboxForm = ( { selectedDomainName, siteDomainsAreLoaded } ) =
 	const { handleSetup, isBusy } = useHandleSetupAction(
 		mailboxes,
 		onMailboxesChange,
-		selectedDomainName
+		selectedDomainName,
+		setValidatedMailboxUuids
 	);
 
 	if ( ! siteDomainsAreLoaded ) {
@@ -160,7 +167,7 @@ const TitanSetupMailboxForm = ( { selectedDomainName, siteDomainsAreLoaded } ) =
 				mailboxes={ mailboxes }
 				onMailboxesChange={ onMailboxesChange }
 				showAddAnotherMailboxButton={ false }
-				validatedMailboxUuids={ mailboxes.map( ( mailbox ) => mailbox.uid ) }
+				validatedMailboxUuids={ validatedMailboxUuids }
 			>
 				<Button
 					className="titan-setup-mailbox__action-continue"
