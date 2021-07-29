@@ -20,5 +20,5 @@ body:
       label: Context
       description: Provide more context as applicable.
       placeholder: |
-        eg. nodeJS: 14.17.3
+        eg. nodeJS: 16.5.0
             browser: Firefox Nightly 92.0a1
