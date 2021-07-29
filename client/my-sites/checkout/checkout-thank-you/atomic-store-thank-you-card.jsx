@@ -94,7 +94,7 @@ class AtomicStoreThankYouCard extends Component {
 	};
 
 	renderAction = () => {
-		const { isEmailVerified, translate } = this.props;
+		const { isEmailVerified, translate, siteWooCommerceWizardUrl } = this.props;
 		const { resendStatus } = this.state;
 
 		if ( ! isEmailVerified ) {
@@ -116,7 +116,7 @@ class AtomicStoreThankYouCard extends Component {
 			<div className="checkout-thank-you__atomic-store-action-buttons">
 				<a
 					className={ classNames( 'button', 'thank-you-card__button' ) }
-					href={ this.props.siteWooCommerceWizardUrl }
+					href={ siteWooCommerceWizardUrl }
 				>
 					{ translate( 'Create your store!' ) }
 				</a>
