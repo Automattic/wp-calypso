@@ -9,6 +9,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { domainAddNew } from 'calypso/my-sites/domains/paths';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HeaderCake from 'calypso/components/header-cake';
 import PromoCard from 'calypso/components/promo-section/promo-card';
@@ -17,7 +18,6 @@ import PromoCard from 'calypso/components/promo-section/promo-card';
  * Style dependencies
  */
 import emailIllustration from 'calypso/assets/images/email-providers/email-illustration.svg';
-import { domainAddNew } from '../paths';
 
 export default function EmailProvidersUpsell( { domain } ) {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
