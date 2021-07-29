@@ -16,6 +16,7 @@
 	&.is-prev,
 	&.is-next {
 		opacity: 0;
+		position: absolute;
 	}
 
 	&.is-prev {
