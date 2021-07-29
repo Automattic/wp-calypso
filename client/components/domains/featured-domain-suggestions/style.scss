@@ -42,6 +42,10 @@
 	margin-top: 0;
 	width: 100%;
 
+	@include break-mobile {
+		flex-direction: row;
+	}
+
 	.button.domain-suggestion__action {
 		flex-grow: 0;
 		margin-left: 0;

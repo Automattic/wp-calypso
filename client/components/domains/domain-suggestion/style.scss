@@ -2,6 +2,13 @@
 @import '@wordpress/base-styles/mixins';
 
 .domain-suggestion {
+	flex-direction: column;
+
+	@include break-mobile {
+		flex-direction: row;
+		align-items: center;
+	}
+
 	&.is-clickable {
 		cursor: pointer;
 
@@ -187,12 +194,26 @@
 	}
 }
 
+.domain-suggestion__action-container {
+	flex: 0 0 auto;
+	width: 100%;
+
+	@include break-mobile {
+		width: auto;
+	}
+}
+
 .button.domain-suggestion__action {
+	width: 100%;
 	min-width: 66px;
 	text-align: center;
 	margin-top: 16px;
 	padding: 0.25em 3em;
 	transition: all 0.1s linear;
+
+	@include break-mobile {
+		width: auto;
+	}
 
 	&.is-primary {
 		@include breakpoint-deprecated( '>480px' ) {
@@ -372,10 +393,6 @@ body.is-section-signup.is-white-signup {
 
 			.domain-product-price__price:not( .domain-product-price__free-price ) {
 				font-size: $font-body-small;
-			}
-
-			.domain-suggestion__action-container {
-				flex: 0 0 auto;
 			}
 
 			.domain-suggestion__action:not( .is-borderless ) {
