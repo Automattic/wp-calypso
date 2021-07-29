@@ -3,6 +3,7 @@
 .dot-pager__pages {
 	overflow: hidden;
 	display: flex;
+	position: relative;
 }
 
 .dot-pager__page {
