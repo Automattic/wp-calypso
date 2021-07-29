@@ -19,13 +19,7 @@ function EmailHeader( { currentRoute, selectedSite } ) {
 					'Your home base for accessing, setting up, and managing your emails. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 					{
 						components: {
-							learnMoreLink: (
-								<InlineSupportLink
-									supportLink="https://wordpress.com/support/add-email/"
-									supportPostId={ 34087 }
-									showIcon={ false }
-								/>
-							),
+							learnMoreLink: <InlineSupportLink supportContext="emails" showIcon={ false } />,
 						},
 					}
 				) }
