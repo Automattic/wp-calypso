@@ -448,7 +448,7 @@ export class CheckoutThankYou extends React.Component {
 				<Main className="checkout-thank-you">
 					{ this.props.transferComplete && (
 						<WpAdminAutoLogin
-							site={ { URL: `https://${ this.props.site.wpcom_url }` } }
+							site={ { URL: `https://${ this.props.site?.wpcom_url }` } }
 							delay={ 0 }
 						/>
 					) }
