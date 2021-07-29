@@ -179,6 +179,7 @@ module.exports = {
 			files: [
 				'apps/editing-toolkit/**/*',
 				'apps/notifications/**/*',
+				'apps/o2-blocks/**/*',
 				'client/auth/**/*',
 				'client/boot/**/*',
 				'client/controller/**/*',
