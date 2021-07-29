@@ -84,7 +84,7 @@ import { isRebrandCitiesSiteUrl } from 'calypso/lib/rebrand-cities';
 import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
-import { getSiteHomeUrl, getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteHomeUrl, getSiteSlug, getSite } from 'calypso/state/sites/selectors';
 import { recordStartTransferClickInThankYou } from 'calypso/state/domains/actions';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getActiveTheme } from 'calypso/state/themes/selectors';
@@ -440,18 +440,18 @@ export class CheckoutThankYou extends React.Component {
 		} else if ( wasEcommercePlanPurchased ) {
 			if ( ! this.props.transferComplete ) {
 				return (
-					<>
-						<TransferPending
-							orderId={ this.props.receiptId }
-							siteId={ this.props.selectedSite.ID }
-						/>
-						<WpAdminAutoLogin site={ this.props.selectedSite } />
-					</>
+					<TransferPending orderId={ this.props.receiptId } siteId={ this.props.selectedSite.ID } />
 				);
 			}
 
 			return (
 				<Main className="checkout-thank-you">
+					{ this.props.transferComplete && (
+						<WpAdminAutoLogin
+							site={ { URL: `https://${ this.props.site.wpcom_url }` } }
+							delay={ 0 }
+						/>
+					) }
 					<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
 					<AtomicStoreThankYouCard siteId={ this.props.selectedSite.ID } />
 				</Main>
@@ -683,6 +683,7 @@ export default connect(
 			selectedSiteSlug: getSiteSlug( state, siteId ),
 			siteHomeUrl: getSiteHomeUrl( state, siteId ),
 			customizeUrl: getCustomizeOrEditFrontPageUrl( state, activeTheme, siteId ),
+			site: getSite( state, siteId ),
 		};
 	},
 	{
