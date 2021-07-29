@@ -12,7 +12,7 @@ const dynamicSelectors = {
 };
 
 /**
- * Page representing the cart checkout page for purchases made in Upgrades
+ * Page representing the cart checkout page for purchases made in Upgrades.
  */
 export class CartCheckoutPage {
 	private page: Page;
@@ -29,7 +29,7 @@ export class CartCheckoutPage {
 	/**
 	 * Validates that an item is in the cart with the expected text. Throws if it isn't.
 	 *
-	 * @param expectedCartItemName Expected text for the name of the item in the cart.
+	 * @param {string} expectedCartItemName Expected text for the name of the item in the cart.
 	 * @throws If the expected cart item is not found in the timeout period.
 	 */
 	async validateCartItem( expectedCartItemName: string ): Promise< void > {
@@ -39,7 +39,7 @@ export class CartCheckoutPage {
 	/**
 	 * Removes the specified cart item from the cart completely.
 	 *
-	 * @param cartItemName Name of the item to remove from the cart.
+	 * @param {string} cartItemName Name of the item to remove from the cart.
 	 */
 	async removeCartItem( cartItemName: string ): Promise< void > {
 		await this.page.click( dynamicSelectors.removeCartItemButton( cartItemName ) );

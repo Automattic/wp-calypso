@@ -35,7 +35,7 @@ export class PlansPage {
 	/**
 	 * Validates that the provided plan name is the title of the active plan in the My Plan tab of the Plans page. Throws if it isn't.
 	 *
-	 * @param expectedPlan Name of the expected plan.
+	 * @param {Plan} expectedPlan Name of the expected plan.
 	 * @throws If the expected plan title is not found in the timeout period.
 	 */
 	async validatePlanInMyPlan( expectedPlan: Plan ): Promise< void > {
@@ -45,7 +45,7 @@ export class PlansPage {
 	/**
 	 * Validates that the provided tab name is the the currently active tab in the wrapper Plans page. Throws if it isn't.
 	 *
-	 * @param expectedTab Name of the expected tab.
+	 * @param {PlansPageTab} expectedTab Name of the expected tab.
 	 * @throws If the expected tab name is not the active tab.
 	 */
 	async validateActiveNavigationTab( expectedTab: PlansPageTab ): Promise< void > {
@@ -55,7 +55,7 @@ export class PlansPage {
 	/**
 	 * Click on the provided tab name in the navigation tab at the top of the Plans activity
 	 *
-	 * @param targetTab Name of the navigation tab to click on
+	 * @param {PlansPageTab} targetTab Name of the navigation tab to click on
 	 */
 	async clickNavigationTab( targetTab: PlansPageTab ): Promise< void > {
 		await this.page.click( dynamicSelectors.navigationTab( targetTab ) );
@@ -64,9 +64,9 @@ export class PlansPage {
 	/**
 	 * Click a plan action button (on the plan cards on the "Plans" tab) based on expected plan name and button text.
 	 *
-	 * @param param0 Object containing plan name and button text
-	 * @param param0.plan Name of the plan (e.g. "Premium")
-	 * @param param0.buttonText Expected action button text (e.g. "Upgrade")
+	 * @param {object} param0 Object containing plan name and button text
+	 * @param {Plan} param0.plan Name of the plan (e.g. "Premium")
+	 * @param {PlanActionButton} param0.buttonText Expected action button text (e.g. "Upgrade")
 	 */
 	async clickPlanActionButton( {
 		plan,

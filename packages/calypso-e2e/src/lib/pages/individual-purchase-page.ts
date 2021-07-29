@@ -26,7 +26,7 @@ export class IndividualPurchasePage {
 	/**
 	 * Validates the title of the purchase that this purchase page is for. Throws if it is not the expected title.
 	 *
-	 * @param expectedPurchaseTitle Expected text for the title of the purchase.
+	 * @param {string} expectedPurchaseTitle Expected text for the title of the purchase.
 	 * @throws If the expected purchase title is not the title on the page.
 	 */
 	async validatePurchaseTitle( expectedPurchaseTitle: string ): Promise< void > {
