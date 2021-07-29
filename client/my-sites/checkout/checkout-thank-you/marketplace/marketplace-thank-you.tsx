@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { isDesktop } from '@automattic/viewport';
 import page from 'page';
 import React, { useEffect, useState } from 'react';
 import { ThemeProvider } from 'emotion-theming';
@@ -21,6 +20,7 @@ import {
 } from 'calypso/state/automated-transfer/selectors';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import Item from 'calypso/layout/masterbar/item';
+import Masterbar from 'calypso/layout/masterbar/masterbar';
 import theme from 'calypso/my-sites/marketplace/theme';
 import useSiteMenuItems from 'calypso/my-sites/sidebar-unified/use-site-menu-items';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
@@ -55,7 +55,6 @@ const MarketplaceThankYou = () => {
 		menuItems.find( ( { slug }: { slug: string } ) => slug === 'wpseo_dashboard' ) ?? {};
 
 	const translate = useTranslate();
-	const imageWidth = isDesktop() ? 200 : 150;
 
 	useEffect( () => {
 		if ( ! postsPageUrl || ! yoastSeoPageUrl ) {
@@ -85,19 +84,9 @@ const MarketplaceThankYou = () => {
 	] );
 
 	/* TODO: Make all these items product-dependent */
-	const masterbarItem = (
-		<Item
-			icon="cross"
-			onClick={ () => page( `/marketplace/product/details/wordpress-seo/${ selectedSiteSlug }` ) }
-			tooltip={ translate( 'Go to plugin' ) }
-			tipTarget="close"
-		/>
-	);
-
 	const thankYouImage = {
 		alt: 'yoast logo',
 		src: yoastInstalledImage,
-		width: imageWidth,
 	};
 
 	const yoastSetupSection = {
@@ -144,14 +133,26 @@ const MarketplaceThankYou = () => {
 	};
 
 	return (
-		<ThankYou
-			masterbarItem={ masterbarItem }
-			sections={ [ yoastSetupSection ] }
-			showSupportSection={ true }
-			thankYouImage={ thankYouImage }
-			/* TODO: Change thank you message to be dynamic according to product */
-			thankYouTitle={ translate( 'Yoast SEO Premium is installed' ) }
-		/>
+		<>
+			<Masterbar>
+				<Item
+					icon="cross"
+					onClick={ () =>
+						page( `/marketplace/product/details/wordpress-seo/${ selectedSiteSlug }` )
+					}
+					tooltip={ translate( 'Go to plugin' ) }
+					tipTarget="close"
+				/>
+			</Masterbar>
+			<ThankYou
+				containerClassName="marketplace-thank-you"
+				sections={ [ yoastSetupSection ] }
+				showSupportSection={ true }
+				thankYouImage={ thankYouImage }
+				/* TODO: Change thank you message to be dynamic according to product */
+				thankYouTitle={ translate( 'Yoast SEO Premium is installed' ) }
+			/>
+		</>
 	);
 };
 

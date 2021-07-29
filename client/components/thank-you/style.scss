@@ -1,8 +1,7 @@
-.layout__content {
-	padding-top: 0;
-	padding-bottom: 0;
-}
+.thank-you__container-header img {
+	max-width: 200px;
 
-.thank-you__container-header {
-	padding-top: 47px;
+	@media ( max-width: 782px ) {
+		max-width: 150px;
+	}
 }

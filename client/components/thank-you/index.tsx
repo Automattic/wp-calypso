@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import React from 'react';
 import styled from '@emotion/styled';
@@ -22,7 +23,12 @@ import './style.scss';
 const ThankYouContainer = styled.div< MarketplaceThemeProps >`
 	background-color: #fff;
 	-ms-overflow-style: none;
-	height: 100vh;
+	/* Negative value to counteract default content padding */
+	margin-top: calc( -79px + var( --masterbar-height ) );
+
+	@media screen and ( max-width: 782px ) {
+		margin-top: 0;
+	}
 `;
 
 const ThankYouHeader = styled.div`
@@ -79,13 +85,12 @@ export type ThankYouSectionProps = {
 };
 
 export type ThankYouProps = {
-	masterbarItem?: React.ReactNode | React.ReactFragment;
+	containerClassName?: string;
 	sections: ThankYouSectionProps[];
 	showSupportSection?: boolean;
 	thankYouImage: {
-		alt: string;
+		alt: string | TranslateResult;
 		src: string;
-		width?: number;
 	};
 	thankYouTitle: TranslateResult;
 };
@@ -125,14 +130,20 @@ const ThankYouSection = ( props: ThankYouSectionProps ) => {
 export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 	const translate = useTranslate();
 
-	const { sections, showSupportSection = true, thankYouTitle, thankYouImage } = props;
+	const {
+		containerClassName,
+		sections,
+		showSupportSection = true,
+		thankYouTitle,
+		thankYouImage,
+	} = props;
 
 	const thankYouSections = sections.map( ( sectionProps, index ) => (
 		<ThankYouSection key={ index } { ...sectionProps } />
 	) );
 
 	return (
-		<ThankYouContainer className="thank-you__container">
+		<ThankYouContainer className={ classNames( 'thank-you__container', containerClassName ) }>
 			<ThankYouHeader className="thank-you__container-header">
 				{ /* eslint-disable-next-line jsx-a11y/alt-text */ }
 				<img { ...thankYouImage } />
