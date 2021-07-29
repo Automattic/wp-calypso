@@ -194,6 +194,11 @@ function chooseAddHandler( {
 		return 'addProductFromSlug';
 	}
 
+	const savedCartItems = getCartFromLocalStorage();
+	if ( savedCartItems.length ) {
+		return 'addFromLocalStorage';
+	}
+
 	return 'doNotAdd';
 }
 
