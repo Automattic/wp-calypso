@@ -1,26 +1,16 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
-import { useI18n } from '@wordpress/react-i18n';
-import { useSelect } from '@wordpress/data';
 import { Title, SubTitle, ActionButtons, BackButton, NextButton } from '@automattic/onboarding';
-
-/**
- * Internal dependencies
- */
+import { useSelect } from '@wordpress/data';
+import { useI18n } from '@wordpress/react-i18n';
+import * as React from 'react';
+import { useIsAnchorFm } from '../../../gutenboarding/path';
+import useStepNavigation from '../../hooks/use-step-navigation';
+import { useTrackStep } from '../../hooks/use-track-step';
+import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import FontSelect from './font-select';
 import Preview from './preview';
 import ViewportSelect from './viewport-select';
-import FontSelect from './font-select';
-import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { useTrackStep } from '../../hooks/use-track-step';
-import useStepNavigation from '../../hooks/use-step-navigation';
 import type { Viewport } from './types';
-import { useIsAnchorFm } from '../../../gutenboarding/path';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const StylePreview: React.FunctionComponent = () => {

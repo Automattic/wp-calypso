@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { useI18n } from '@wordpress/react-i18n';
-import { Icon } from '@wordpress/icons';
-import classnames from 'classnames';
-import { useViewportMatch } from '@wordpress/compose';
 import config from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
-import { STORE_KEY } from '../../stores/onboard';
-import { recordSiteTitleSelection } from '../../lib/analytics';
-import tip from './tip';
-import AcquireIntentTextInput from './acquire-intent-text-input';
+import { useViewportMatch } from '@wordpress/compose';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { Icon } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
+import classnames from 'classnames';
+import * as React from 'react';
 import useTyper from '../../hooks/use-typer';
+import { recordSiteTitleSelection } from '../../lib/analytics';
 import { useIsAnchorFm } from '../../path';
+import { STORE_KEY } from '../../stores/onboard';
+import AcquireIntentTextInput from './acquire-intent-text-input';
+import tip from './tip';
 
 interface Props {
 	onSubmit: () => void;

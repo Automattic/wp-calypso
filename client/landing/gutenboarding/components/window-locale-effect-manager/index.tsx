@@ -1,10 +1,7 @@
-/**
- * External dependencies
- */
-import { switchWebpackCSS } from '../../../../lib/i18n-utils/switch-locale';
+import { useLocale } from '@automattic/i18n-utils';
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
-import { useLocale } from '@automattic/i18n-utils';
+import { switchWebpackCSS } from '../../../../lib/i18n-utils/switch-locale';
 
 export const WindowLocaleEffectManager: React.FunctionComponent = () => {
 	const { __, _x, isRTL } = useI18n();

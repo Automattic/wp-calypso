@@ -1,31 +1,17 @@
-/**
- * External dependencies
- */
+import LanguagePicker, { createLanguageGroups } from '@automattic/language-picker';
+import languages from '@automattic/languages';
+import { ActionButtons, BackButton } from '@automattic/onboarding';
+import { useSelect } from '@wordpress/data';
+import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
-import { useI18n } from '@wordpress/react-i18n';
-import { ActionButtons, BackButton } from '@automattic/onboarding';
-import languages from '@automattic/languages';
-import LanguagePicker, { createLanguageGroups } from '@automattic/language-picker';
-
-/**
- * WordPress dependencies
- */
-import { useSelect } from '@wordpress/data';
-import useLastLocation from '../../hooks/use-last-location';
-
-/**
- * Internal dependencies
- */
 import { ChangeLocaleContextConsumer } from '../../components/locale-context';
+import useLastLocation from '../../hooks/use-last-location';
+import { Step, usePath } from '../../path';
 import { I18N_STORE } from '../../stores/i18n';
 import { USER_STORE } from '../../stores/user';
-import { Step, usePath } from '../../path';
 import type { StepNameType } from '../../path';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const LOCALIZED_LANGUAGE_NAMES_FALLBACK_LOCALE = 'en';

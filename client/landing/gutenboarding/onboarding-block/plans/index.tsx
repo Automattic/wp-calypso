@@ -1,26 +1,19 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
-import { useHistory } from 'react-router-dom';
+import { useLocale } from '@automattic/i18n-utils';
+import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
+import PlansGrid from '@automattic/plans-grid';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import PlansGrid from '@automattic/plans-grid';
-import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
-import { useLocale } from '@automattic/i18n-utils';
-import type { Plans } from '@automattic/data-stores';
-
-/**
- * Internal dependencies
- */
-import { useTrackStep } from '../../hooks/use-track-step';
-import useStepNavigation from '../../hooks/use-step-navigation';
+import * as React from 'react';
+import { useHistory } from 'react-router-dom';
+import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
 import useLastLocation from '../../hooks/use-last-location';
+import useStepNavigation from '../../hooks/use-step-navigation';
+import { useTrackStep } from '../../hooks/use-track-step';
+import { Step, usePath } from '../../path';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { PLANS_STORE } from '../../stores/plans';
-import { Step, usePath } from '../../path';
-import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
+import type { Plans } from '@automattic/data-stores';
 
 interface Props {
 	isModal?: boolean;
