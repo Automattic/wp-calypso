@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import type { Reducer } from 'redux';
 
 type StorageKeyReducer< T extends Reducer > = T & {

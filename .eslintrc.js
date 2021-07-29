@@ -239,6 +239,7 @@ module.exports = {
 				'packages/social-previews/**/*',
 				'packages/spec-junit-reporter/**/*',
 				'packages/spec-xunit-reporter/**/*',
+				'packages/state-utils/**/*',
 				'packages/tree-select/**/*',
 				'packages/viewport-react/**/*',
 				'packages/viewport/**/*',
