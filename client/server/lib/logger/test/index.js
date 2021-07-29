@@ -12,7 +12,9 @@ beforeEach( () => {
 	( { getLogger } = require( '../index' ) );
 	mockStdout = mockProcessStdout();
 	mockFs( {
-		'/tmp': {},
+		'/tmp': {
+			'calypso.log': '',
+		},
 	} );
 } );
 
