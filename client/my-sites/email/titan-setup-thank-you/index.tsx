@@ -74,7 +74,7 @@ const TitanSetupThankYou = ( props: TitanSetupThankYouProps ): JSX.Element => {
 				stepCta: (
 					<FullWidthButton href={ getTitanEmailUrl( `email@${ domainName }` ) } primary>
 						{ translate( 'Go to Inbox' ) }
-						<Gridicon className={ 'titan-setup-thank-you__iconInbox' } icon="external" />
+						<Gridicon className={ 'titan-setup-thank-you__icon-inbox' } icon="external" />
 					</FullWidthButton>
 				),
 			},
