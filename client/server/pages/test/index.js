@@ -1423,7 +1423,8 @@ describe( 'main app', () => {
 					original_policy: 'default-src self; report-uri /cspreport',
 					blocked_uri: 'http://evilhackerscripts.com',
 				},
-				request
+				// Needs to be cloned as request objects are mutable. Node will replace existing request.headers with a getter/setter
+				cloneDeep( request )
 			);
 		} );
 
