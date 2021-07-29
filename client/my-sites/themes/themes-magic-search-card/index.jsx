@@ -348,31 +348,29 @@ class ThemesMagicSearchCard extends React.Component {
 						/>
 					</div>
 				) }
-				{ config.isEnabled( 'theme/showcase-revamp' ) && (
-					<div>
-						<Button
-							onClick={ this.togglePopover }
-							className="components-button themes-magic-search-card__advanced-toggle"
-							ref={ ( ref ) => ( this.popoverButtonRef = ref ) }
-						>
-							<Gridicon icon="cog" size={ 18 } />
-							{ translate( 'Filters' ) }
-						</Button>
-						<Popover
-							context={ this.popoverButtonRef }
-							isVisible={ isPopoverVisible }
-							onClose={ this.closePopover }
-							position="bottom"
-						>
-							<MagicSearchWelcome
-								ref={ this.setSuggestionsRefs( 'welcome' ) }
-								taxonomies={ filtersKeys }
-								topSearches={ [] }
-								suggestionsCallback={ this.welcomeBarAddText }
-							/>
-						</Popover>
-					</div>
-				) }
+				<div>
+					<Button
+						onClick={ this.togglePopover }
+						className="components-button themes-magic-search-card__advanced-toggle"
+						ref={ ( ref ) => ( this.popoverButtonRef = ref ) }
+					>
+						<Gridicon icon="cog" size={ 18 } />
+						{ translate( 'Filters' ) }
+					</Button>
+					<Popover
+						context={ this.popoverButtonRef }
+						isVisible={ isPopoverVisible }
+						onClose={ this.closePopover }
+						position="bottom"
+					>
+						<MagicSearchWelcome
+							ref={ this.setSuggestionsRefs( 'welcome' ) }
+							taxonomies={ filtersKeys }
+							topSearches={ [] }
+							suggestionsCallback={ this.welcomeBarAddText }
+						/>
+					</Popover>
+				</div>
 			</Search>
 		);
 
@@ -400,9 +398,6 @@ class ThemesMagicSearchCard extends React.Component {
 								initialSelected={ this.props.tier ? this.props.tier : 'all' }
 								options={ tiers }
 								onSelect={ this.props.select }
-								className={ classNames( {
-									'showcase-revamp': config.isEnabled( 'theme/showcase-revamp' ),
-								} ) }
 							/>
 						) }
 					</div>
@@ -412,16 +407,11 @@ class ThemesMagicSearchCard extends React.Component {
 	}
 }
 
-let allowSomeThemeFilters = ( x ) => x;
-let allowSomeAllValidFilters = ( x ) => x;
-
-if ( config.isEnabled( 'theme/showcase-revamp' ) ) {
-	// Magic Search only allows "feature", "column", "subject" theme attributes to be searched
-	// For simplicity and less user confusion.
-	allowSomeThemeFilters = ( { feature, column, subject } ) => ( { feature, column, subject } );
-	allowSomeAllValidFilters = ( filtersKeys ) =>
-		intersection( filtersKeys, [ 'feature', 'column', 'subject' ] );
-}
+// Magic Search only allows "feature", "column", "subject" theme attributes to be searched
+// For simplicity and less user confusion.
+const allowSomeThemeFilters = ( { feature, column, subject } ) => ( { feature, column, subject } );
+const allowSomeAllValidFilters = ( filtersKeys ) =>
+	intersection( filtersKeys, [ 'feature', 'column', 'subject' ] );
 
 export default compose(
 	connect( ( state ) => ( {
