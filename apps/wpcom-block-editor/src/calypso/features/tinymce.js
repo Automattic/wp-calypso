@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import tinymce from 'tinymce/tinymce';
-
-/**
- * Internal dependencies
- */
 import { inIframe, sendMessage } from '../../utils';
 
 function replaceMediaModalOnClassicBlocks() {

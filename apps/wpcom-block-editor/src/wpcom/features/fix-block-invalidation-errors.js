@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { select, dispatch } from '@wordpress/data';
 import { createBlock } from '@wordpress/blocks';
-
-/**
- * Internal dependencies
- */
+import { select, dispatch } from '@wordpress/data';
 import { isEditorReadyWithBlocks } from '../../utils';
 
 /**

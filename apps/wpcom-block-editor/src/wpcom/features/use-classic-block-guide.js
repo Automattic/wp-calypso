@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import { createInterpolateElement, useState } from '@wordpress/element';
+import url from 'url'; // eslint-disable-line no-restricted-imports
 import { Guide } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { createInterpolateElement, useState } from '@wordpress/element';
 // Disabling lint rule while trying to make an urgent fix -- feel free to update to lib/url later!
-import url from 'url'; // eslint-disable-line no-restricted-imports
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
-
-/**
- * Internal dependencies
- */
 import { ClassicBlockImage, InserterImage, InserterIconImage } from './images';
 
 const parsedEditorUrl = url.parse( globalThis.location.href, true );

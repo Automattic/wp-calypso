@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import tracksRecordEvent from './track-record-event';
 
 const getTabNameFromId = ( id ) => ( id?.endsWith?.( '-block' ) ? 'block-type' : 'root' );
