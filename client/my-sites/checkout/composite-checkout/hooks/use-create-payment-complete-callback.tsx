@@ -47,6 +47,7 @@ import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { recordCompositeCheckoutErrorDuringAnalytics } from '../lib/analytics';
+import { clearCartFromLocalStorage } from '../lib/cart-local-storage';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-on-payment-complete' );
 
@@ -200,7 +201,7 @@ export default function useCreatePaymentCompleteCallback( {
 
 			if ( createUserAndSiteBeforeTransaction ) {
 				try {
-					window.localStorage.removeItem( 'shoppingCart' );
+					clearCartFromLocalStorage();
 					window.localStorage.removeItem( 'siteParams' );
 				} catch ( err ) {
 					debug( 'error while clearing localStorage cart' );

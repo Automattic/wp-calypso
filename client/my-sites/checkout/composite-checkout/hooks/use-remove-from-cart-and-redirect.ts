@@ -12,6 +12,7 @@ import type { RemoveProductFromCart, ResponseCart } from '@automattic/shopping-c
  */
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import useValidCheckoutBackUrl from './use-valid-checkout-back-url';
+import { clearCartFromLocalStorage } from '../lib/cart-local-storage';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-redirect-if-cart-empty' );
 
@@ -41,7 +42,7 @@ export default function useRemoveFromCartAndRedirect(
 
 		if ( createUserAndSiteBeforeTransaction ) {
 			try {
-				window.localStorage.removeItem( 'shoppingCart' );
+				clearCartFromLocalStorage();
 				window.localStorage.removeItem( 'siteParams' );
 			} catch ( err ) {}
 
