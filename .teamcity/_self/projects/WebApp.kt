@@ -20,8 +20,8 @@ object WebApp : Project({
 	buildType(RunAllUnitTests)
 	buildType(CheckCodeStyleBranch)
 	buildType(BuildDockerImage)
-	buildType(RunCalypsoPlaywrightE2eDesktopTests)
-	buildType(RunCalypsoPlaywrightE2eMobileTests)
+	buildType(playwrightBuildType("desktop", "23cc069f-59e5-4a63-a131-539fb55264e7", "+:*"));
+	buildType(playwrightBuildType("mobile", "90fbd6b7-fddb-4668-9ed0-b32598143616", "+:trunk"));
 })
 
 object RunCalypsoE2eDesktopTests : BuildType({
@@ -753,11 +753,9 @@ object CheckCodeStyleBranch : BuildType({
 	}
 })
 
-buildType(playwrightBuildType("desktop", "23cc069f-59e5-4a63-a131-539fb55264e7", "+:*"));
-buildType(playwrightBuildType("mobile", "", "+:trunk"));
-
-fun playwrightBuildType( viewportName: String, buildUuid: String, branchFilter: String ): BuildType {
+fun playwrightBuildType( viewportName: String, buildUuid: String, filter: String ): BuildType {
 	return BuildType {
+		id("Calypso_E2E_Playwright_$viewportName")
 		uuid = buildUuid
 		name = "Playwright E2E Tests ($viewportName)"
 		description = "Runs Calypso e2e tests in $viewportName size using Playwright"
@@ -788,7 +786,6 @@ fun playwrightBuildType( viewportName: String, buildUuid: String, branchFilter: 
 
 					# Build packages
 					yarn workspace @automattic/calypso-e2e build
-					yarn workspace @automattic/mocha-debug-reporter build
 				"""
 				dockerImage = "%docker_image_e2e%"
 			}
@@ -839,7 +836,7 @@ fun playwrightBuildType( viewportName: String, buildUuid: String, branchFilter: 
 					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
 
 					# Run the test
-					export VIEWPORT_NAME=desktop
+					export VIEWPORT_NAME=$viewportName
 					export LOCALE=en
 					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 					export DEBUG=pw:api
@@ -890,17 +887,12 @@ fun playwrightBuildType( viewportName: String, buildUuid: String, branchFilter: 
 
 		triggers {
 			vcs {
-				branchFilter = """
-					$branchFilter
-				""".trimIndent()
+				branchFilter = filter
 			}
 		}
 
 		failureConditions {
 			executionTimeoutMin = 20
-			// TeamCity will mute a test if it fails and then succeeds within the same build. Otherwise TeamCity UI will not
-			// display a difference between real errors and retries, making it hard to understand what is actually failing.
-			supportTestRetry = true
 		}
 
 		dependencies {
