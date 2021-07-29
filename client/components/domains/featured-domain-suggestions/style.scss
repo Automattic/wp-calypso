@@ -4,6 +4,7 @@
 .featured-domain-suggestions {
 	display: flex;
 	flex-direction: column;
+	flex-wrap: wrap;
 
 	&.featured-domain-suggestions--has-match-reasons .featured-domain-suggestion {
 		.domain-registration-suggestion__match-reasons {
@@ -235,12 +236,6 @@ body.is-section-signup.is-white-signup .featured-domain-suggestions {
 	}
 }
 
-@include breakpoint-deprecated( '<660px' ) {
-	.featured-domain-suggestions {
-		flex-flow: wrap;
-	}
-}
-
 @include breakpoint-deprecated( '>660px' ) {
 	.domain-registration-suggestion__title {
 		.featured-domain-suggestions--title-in-18em & {
@@ -261,8 +256,6 @@ body.is-section-signup.is-white-signup .featured-domain-suggestions {
 	}
 
 	.featured-domain-suggestions--title-causes-overflow {
-		flex-wrap: wrap;
-
 		.featured-domain-suggestion {
 			margin-top: 0;
 		}
