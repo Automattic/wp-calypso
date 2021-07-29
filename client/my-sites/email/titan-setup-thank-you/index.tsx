@@ -22,14 +22,6 @@ import Gridicon from 'calypso/components/gridicon';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { getDomainsBySite } from 'calypso/state/sites/domains/selectors';
-import {
-	getEmailPurchaseByDomain,
-	hasEmailSubscription,
-} from 'calypso/my-sites/email/email-management/home/utils';
-import {
-	hasLoadedSitePurchasesFromServer,
-	isFetchingSitePurchases,
-} from 'calypso/state/purchases/selectors';
 import { SiteData } from 'calypso/state/ui/selectors/site-data';
 import { TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP } from 'calypso/lib/titan/constants';
 
@@ -129,10 +121,6 @@ export default connect( ( state, ownProps: TitanSetupThankYouProps ) => {
 	return {
 		currentRoute: getCurrentRoute( state ),
 		domain,
-		hasSubscription: hasEmailSubscription( domain ),
-		isLoadingPurchase:
-			isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
-		purchase: getEmailPurchaseByDomain( state, domain ),
 		selectedSite,
 	};
 } )( localize( TitanSetupThankYou ) );
