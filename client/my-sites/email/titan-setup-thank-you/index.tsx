@@ -40,7 +40,7 @@ import './style.scss';
 
 type TitanSetupThankYouProps = {
 	domainName: string;
-	emailAddress?: string;
+	emailAddress: string;
 };
 
 const TitanSetupThankYou = ( props: TitanSetupThankYouProps ): JSX.Element => {
@@ -48,7 +48,7 @@ const TitanSetupThankYou = ( props: TitanSetupThankYouProps ): JSX.Element => {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
 
-	const { domainName } = props;
+	const { domainName, emailAddress } = props;
 
 	const emailManagementPath = emailManagement( selectedSiteSlug, domainName, currentRoute );
 
@@ -72,7 +72,7 @@ const TitanSetupThankYou = ( props: TitanSetupThankYouProps ): JSX.Element => {
 				stepTitle: translate( 'Access your inbox' ),
 				stepDescription: translate( 'Access your email from anywhere with our built-in webmail.' ),
 				stepCta: (
-					<FullWidthButton href={ getTitanEmailUrl( `email@${ domainName }` ) } primary>
+					<FullWidthButton href={ getTitanEmailUrl( emailAddress ) } primary>
 						{ translate( 'Go to Inbox' ) }
 						<Gridicon className={ 'titan-setup-thank-you__icon-inbox' } icon="external" />
 					</FullWidthButton>
