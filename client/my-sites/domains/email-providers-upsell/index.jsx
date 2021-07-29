@@ -27,13 +27,6 @@ export default function EmailProvidersUpsell( { domain } ) {
 		page( domainAddNew( selectedSiteSlug ) );
 	};
 
-	const translateArgs = {
-		args: {
-			domainName: domain,
-		},
-		comment: '%(domainName)s is the domain name, e.g example.com',
-	};
-
 	const image = {
 		path: emailIllustration,
 		align: 'right',
@@ -47,7 +40,12 @@ export default function EmailProvidersUpsell( { domain } ) {
 
 			<PromoCard
 				isPrimary
-				title={ translate( 'Add a professional email address to %(domainName)s', translateArgs ) }
+				title={ translate( 'Add a professional email address to %(domainName)s', {
+					args: {
+						domainName: domain,
+					},
+					comment: '%(domainName)s is the domain name, e.g example.com',
+				} ) }
 				image={ image }
 				className="email-providers-upsell__action-panel"
 			>
