@@ -48,6 +48,7 @@ class PostsMain extends React.Component {
 	render() {
 		const { author, category, search, siteId, statusSlug, tag, translate } = this.props;
 		const status = mapPostStatus( statusSlug );
+		const allSites = siteId ? 1 : 2;
 		const query = {
 			author,
 			category,
@@ -77,37 +78,16 @@ class PostsMain extends React.Component {
 					brandFont
 					className="posts__page-heading"
 					headerText={ translate( 'Posts' ) }
-					subHeaderText={
-						siteId
-							? translate(
-									'Create, edit, and manage the posts on your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-									{
-										components: {
-											learnMoreLink: (
-												<InlineSupportLink
-													supportLink="https://wordpress.com/support/posts/"
-													supportPostId={ 84 }
-													showIcon={ false }
-												/>
-											),
-										},
-									}
-							  )
-							: translate(
-									'Create, edit, and manage the posts on your sites. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-									{
-										components: {
-											learnMoreLink: (
-												<InlineSupportLink
-													supportLink="https://wordpress.com/support/posts/"
-													supportPostId={ 84 }
-													showIcon={ false }
-												/>
-											),
-										},
-									}
-							  )
-					}
+					subHeaderText={ translate(
+						'Create, edit, and manage the posts on your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						'Create, edit, and manage the posts on your sites. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							count: allSites,
+							components: {
+								learnMoreLink: <InlineSupportLink supportContext="posts" showIcon={ false } />,
+							},
+						}
+					) }
 					align="left"
 					hasScreenOptions
 				/>
