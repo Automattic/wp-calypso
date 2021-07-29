@@ -207,6 +207,7 @@ module.exports = {
 				'packages/babel-plugin-transform-wpcalypso-async/**/*',
 				'packages/browser-data-collector/**/*',
 				'packages/calypso-analytics/**/*',
+				'packages/calypso-build/**/*',
 				'packages/calypso-config/**/*',
 				'packages/calypso-e2e/**/*',
 				'packages/calypso-polyfills/**/*',

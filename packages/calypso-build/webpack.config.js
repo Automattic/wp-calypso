@@ -3,23 +3,16 @@
  */
 /* eslint-disable import/no-nodejs-modules */
 
-/**
- * External dependencies
- */
 const fs = require( 'fs' );
 const path = require( 'path' );
 const process = require( 'process' );
-const webpack = require( 'webpack' );
+const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
+const webpack = require( 'webpack' );
 const FileConfig = require( './webpack/file-loader' );
 const Minify = require( './webpack/minify' );
 const SassConfig = require( './webpack/sass' );
 const TranspileConfig = require( './webpack/transpile' );
-const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
-
-/**
- * Internal dependencies
- */
 const { cssNameFromFilename, shouldTranspileDependency } = require( './webpack/util' );
 // const { workerCount } = require( './webpack.common' ); // todo: shard...
 
