@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
@@ -194,7 +195,14 @@ class EarningsMain extends Component {
 					brandFont
 					className="earn__page-header"
 					headerText={ translate( 'Earn' ) }
-					subHeaderText={ translate( 'Explore tools to earn money with your site.' ) }
+					subHeaderText={ translate(
+						'Explore tools to earn money with your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: <InlineSupportLink supportContext="ads" showIcon={ false } />,
+							},
+						}
+					) }
 					align="left"
 				/>
 				{ this.getHeaderCake() }
