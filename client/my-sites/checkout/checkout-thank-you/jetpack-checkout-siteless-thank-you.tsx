@@ -31,6 +31,7 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryProducts from 'calypso/components/data/query-products-list';
+import { addOnboardingCallInternalNote } from './utils';
 
 /**
  * Type dependencies
@@ -131,6 +132,30 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 			} );
 		}
 	}, [ calendlyUrl, currentUser, dispatch, productSlug ] );
+
+	// Update the ZD ticket linked to `receiptId` after the user has scheduled a call.
+	useEffect( () => {
+		const dispatchCalendlyEventScheduled = async ( e: { data: { event?: string } } ) => {
+			const isCalendlyEvent = e.data.event && e.data.event === 'calendly.event_scheduled';
+			if ( isCalendlyEvent ) {
+				const result = await addOnboardingCallInternalNote( receiptId );
+				if ( result ) {
+					dispatch(
+						recordTracksEvent( 'calypso_siteless_checkout_schedule_onboarding_call', {
+							product_slug: productSlug,
+							receipt_id: receiptId,
+						} )
+					);
+				}
+			}
+		};
+
+		window.addEventListener( 'message', dispatchCalendlyEventScheduled );
+
+		return () => {
+			window.removeEventListener( 'message', dispatchCalendlyEventScheduled );
+		};
+	}, [] );
 
 	useEffect( () => {
 		if ( supportTicketStatus === 'success' ) {
