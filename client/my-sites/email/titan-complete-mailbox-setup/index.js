@@ -228,7 +228,7 @@ const TitanCompleteMailboxSetup = ( { selectedDomainName } ) => {
 			{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
 			<Main wideLayout={ true }>
-				<DocumentHead title={ translate( 'Create A New Mailbox' ) } />
+				<DocumentHead title={ translate( 'Set up your Professional Email' ) } />
 
 				<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
 
