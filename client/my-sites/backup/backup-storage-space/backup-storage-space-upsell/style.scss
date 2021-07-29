@@ -1,19 +1,22 @@
-.backup-storage-space-upsell__title-text {
+.backup-storage-space-upsell__title {
 	font-size: 1rem;
 	font-weight: bold;
 	margin-bottom: 16px;
 }
 
-.backup-storage-space-upsell__button.components-button {
-	color: var( --color-text );
-}
-
-.backup-storage-space-upsell__button {
-	border: 2px solid var( --studio-jetpack-green );
-	border-radius: 4px;
-	padding: 16px 24px;
+.backup-storage-space-upsell__call-to-action.components-button {
 	width: 100%;
 	height: 100%;
+
+	flex-wrap: nowrap;
+	justify-content: space-between;
+	column-gap: 8px;
+
+	padding: 16px 24px;
+	border: 2px solid var( --studio-jetpack-green );
+	border-radius: 4px;
+
+	color: var( --color-text );
 	font-size: $font-body;
 
 	&:hover,
@@ -25,7 +28,7 @@
 			text-decoration-thickness: 2px;
 		}
 
-		.backup-storage-space-upsell__action-arrow {
+		.backup-storage-space-upsell__arrow {
 			transform: translateX( 8px );
 		}
 	}
@@ -35,19 +38,7 @@
 	}
 }
 
-.backup-storage-space-upsell__grid {
-	display: grid;
-	grid-template-columns: auto min-content;
-	align-items: center;
-	width: 100%;
-	text-align: left;
-
-	.gridicons-arrow-right {
-		color: var( --color-primary );
-	}
-}
-
-.backup-storage-space-upsell__status-text {
+.backup-storage-space-upsell__status {
 	margin-bottom: 0.25rem;
 }
 
@@ -55,7 +46,7 @@
 	font-weight: bold;
 }
 
-.backup-storage-space-upsell__action-arrow {
+.backup-storage-space-upsell__arrow {
 	transition: transform 0.15s ease-out;
 
 	color: var( --studio-jetpack-green );

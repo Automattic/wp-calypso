@@ -89,19 +89,17 @@ export const BackupStorageSpaceUpsell: FunctionComponent< Props > = ( {
 
 	return (
 		<>
-			{ titleText && <div className="backup-storage-space-upsell__title-text">{ titleText }</div> }
+			{ titleText && <div className="backup-storage-space-upsell__title">{ titleText }</div> }
 			<Button
-				className="backup-storage-space-upsell__button"
+				className="backup-storage-space-upsell__call-to-action"
 				href={ href }
 				onClick={ onUpsellClick }
 			>
-				<div className="backup-storage-space-upsell__grid">
-					<div>
-						<div className="backup-storage-space-upsell__status-text">{ statusText }</div>
-						<div className="backup-storage-space-upsell__action-text">{ actionText }</div>
-					</div>
-					<span className="backup-storage-space-upsell__action-arrow">&#8594;</span>
+				<div className="backup-storage-space-upsell__copy">
+					<div className="backup-storage-space-upsell__status">{ statusText }</div>
+					<div className="backup-storage-space-upsell__action-text">{ actionText }</div>
 				</div>
+				<span className="backup-storage-space-upsell__arrow">&#8594;</span>
 			</Button>
 		</>
 	);
