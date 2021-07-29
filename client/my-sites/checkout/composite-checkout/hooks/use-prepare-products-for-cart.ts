@@ -25,7 +25,7 @@ import { getProductsList, isProductsListFetching } from 'calypso/state/products-
 import useFetchProductsIfNotLoaded from './use-fetch-products-if-not-loaded';
 import doesValueExist from '../lib/does-value-exist';
 import useStripProductsFromUrl from './use-strip-products-from-url';
-import getCartFromLocalStorage from '../lib/get-cart-from-local-storage';
+import { getCartFromLocalStorage } from '../lib/cart-local-storage';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-prepare-products-for-cart' );
