@@ -2,7 +2,6 @@
 const INVALID_URL = 'https://__domain__.invalid';
 
 type LogmeinData = {
-	enabled: string;
 	home_url: string;
 };
 declare let wpcomLogmeinData: LogmeinData;
