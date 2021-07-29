@@ -236,7 +236,7 @@ export default function () {
 			navigation,
 			domainsController.redirectIfNoSite( '/domains/add' ),
 			domainsController.jetpackNoDomainsWarning,
-			domainsController.emailWithRegistration,
+			domainsController.emailUpsellForDomainRegistration,
 			makeLayout,
 			clientRender
 		);

@@ -213,7 +213,7 @@ const googleAppsWithRegistration = ( context, next ) => {
 	next();
 };
 
-const emailWithRegistration = ( context, next ) => {
+const emailUpsellForDomainRegistration = ( context, next ) => {
 	context.primary = (
 		<Main wideLayout>
 			<PageViewTracker
@@ -298,7 +298,7 @@ export default {
 	domainsAddHeader,
 	domainsAddRedirectHeader,
 	domainSearch,
-	emailWithRegistration,
+	emailUpsellForDomainRegistration,
 	jetpackNoDomainsWarning,
 	siteRedirect,
 	mapDomain,
