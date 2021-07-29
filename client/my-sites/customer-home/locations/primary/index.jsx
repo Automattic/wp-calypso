@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import DotPager from 'calypso/components/dot-pager';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import {
 	NOTICE_CELEBRATE_SITE_CREATION,
@@ -78,7 +79,7 @@ const Primary = ( { cards, trackCards } ) => {
 	}
 
 	return (
-		<>
+		<DotPager className="primary__customer-home-location-content" showControlLabels="true">
 			{ cards.map(
 				( card, index ) =>
 					cardComponents[ card ] &&
@@ -88,7 +89,7 @@ const Primary = ( { cards, trackCards } ) => {
 						card,
 					} )
 			) }
-		</>
+		</DotPager>
 	);
 };
 
