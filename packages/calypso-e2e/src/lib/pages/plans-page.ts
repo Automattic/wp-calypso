@@ -1,5 +1,6 @@
 import { Page } from 'playwright';
 import { getViewportName } from '../../browser-helper';
+import { viewportName } from '../../types';
 
 // Types to restrict the string arguments passed in. These are fixed sets of strings, so we can be more restrictive.
 export type Plan = 'Free' | 'Personal' | 'Premium' | 'Business' | 'eCommerce';
@@ -11,10 +12,18 @@ const dynamicSelectors = {
 	navigationTab: ( tabName: PlansPageTab ) => `.section-nav-tab:has-text("${ tabName }")`,
 	activeNavigationTab: ( tabName: PlansPageTab ) =>
 		`.is-selected.section-nav-tab:has-text("${ tabName }")`,
-	mobileActionButton: ( { plan, buttonText }: { plan: Plan; buttonText: PlanActionButton } ) =>
-		`.plan-features__mobile >> .plan-features__actions-button.is-${ plan.toLowerCase() }-plan:has-text("${ buttonText }")`,
-	desktopActionButton: ( { plan, buttonText }: { plan: Plan; buttonText: PlanActionButton } ) =>
-		`.plan-features__table >> .plan-features__actions-button.is-${ plan.toLowerCase() }-plan:has-text("${ buttonText }")`,
+	actionButton: ( {
+		viewport,
+		plan,
+		buttonText,
+	}: {
+		viewport: viewportName;
+		plan: Plan;
+		buttonText: PlanActionButton;
+	} ) => {
+		const viewportSuffix = viewport === 'mobile' ? 'mobile' : 'table';
+		return `.plan-features__${ viewportSuffix } >> .plan-features__actions-button.is-${ plan.toLowerCase() }-plan:has-text("${ buttonText }")`;
+	},
 };
 
 /**
@@ -75,11 +84,11 @@ export class PlansPage {
 		plan: Plan;
 		buttonText: PlanActionButton;
 	} ): Promise< void > {
-		const selector =
-			getViewportName() === 'mobile'
-				? dynamicSelectors.mobileActionButton( { plan: plan, buttonText: buttonText } )
-				: dynamicSelectors.desktopActionButton( { plan: plan, buttonText: buttonText } );
-
+		const selector = dynamicSelectors.actionButton( {
+			viewport: getViewportName(),
+			plan: plan,
+			buttonText: buttonText,
+		} );
 		// These action buttons trigger real page navigations.
 		await Promise.all( [ this.page.waitForNavigation(), this.page.click( selector ) ] );
 		await this.page.waitForLoadState( 'load' );
