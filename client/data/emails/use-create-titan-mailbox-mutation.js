@@ -9,11 +9,11 @@ import wpcom from 'calypso/lib/wp';
  * Creates a mailbox for a Professional Email (Titan) account
  *
  * @param {string} domainName The domain name of the mailbox
- * @param name {string} The name of the user associated with the mailbox
+ * @param  {string} name The name of the user associated with the mailbox
  * @param {string} mailboxName The mailbox name
- * @param password {string} The password to the mailbox
- * @param alternateEmailAddress {string} An alternate email address where password resets and correspondences are sent
- * @param isAdmin {boolean} The user has admin privileges on the account
+ * @param  {string} password The password to the mailbox
+ * @param {string} alternateEmailAddress An alternate email address where password resets and correspondences are sent
+ * @param {boolean} isAdmin The user has admin privileges on the account
  * @param {object} mutationOptions Mutation options passed on to `useMutation`
  * @returns {{ data, error, isLoading: boolean, createTitanMailbox: Function, ...}} Returns various parameters piped from `useMutation`
  */

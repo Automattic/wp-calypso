@@ -53,10 +53,18 @@ const recordCompleteSetupClickEvent = ( canContinue, mailbox ) => {
 	);
 };
 
-const useHandleSetupAction = ( goToEmail, mailboxes, onMailboxesChange ) => {
+const useHandleSetupAction = ( mailboxes, onMailboxesChange, selectedDomainName ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const mailbox = mailboxes[ 0 ];
+
+	const selectedSite = useSelector( getSelectedSite );
+	const currentRoute = useSelector( getCurrentRoute );
+
+	const goToThankYouPage = () => {
+		// TODO: Change the destination to the Thank You page once it's ready
+		page( emailManagement( selectedSite?.slug ?? null, selectedDomainName, currentRoute ) );
+	};
 
 	const {
 		isLoading: isLoadingMailboxAvailability,
@@ -124,7 +132,7 @@ const useHandleSetupAction = ( goToEmail, mailboxes, onMailboxesChange ) => {
 		try {
 			await createTitanMailbox();
 
-			goToEmail();
+			goToThankYouPage();
 		} catch ( error ) {
 			dispatch( errorNotice( error.message ) );
 		}
@@ -134,7 +142,7 @@ const useHandleSetupAction = ( goToEmail, mailboxes, onMailboxesChange ) => {
 	return { handleCompleteSetup, isBusy };
 };
 
-const SetupForm = ( { goToEmail, selectedDomainName, siteDomainsAreLoaded } ) => {
+const SetupForm = ( { selectedDomainName, siteDomainsAreLoaded } ) => {
 	const [ mailboxes, setMailboxes ] = useState( [
 		buildNewTitanMailbox( selectedDomainName, false ),
 	] );
@@ -146,9 +154,9 @@ const SetupForm = ( { goToEmail, selectedDomainName, siteDomainsAreLoaded } ) =>
 	}, [] );
 
 	const { handleCompleteSetup, isBusy } = useHandleSetupAction(
-		goToEmail,
 		mailboxes,
-		onMailboxesChange
+		onMailboxesChange,
+		selectedDomainName
 	);
 
 	if ( ! siteDomainsAreLoaded ) {
@@ -180,7 +188,6 @@ const SetupForm = ( { goToEmail, selectedDomainName, siteDomainsAreLoaded } ) =>
 SetupForm.propType = {
 	selectedDomainName: PropTypes.string.isRequired,
 	siteDomainsAreLoaded: PropTypes.object.isRequired,
-	goToEmail: PropTypes.func.isRequired,
 };
 
 const TitanCompleteMailboxSetup = ( { selectedDomainName } ) => {
@@ -206,14 +213,14 @@ const TitanCompleteMailboxSetup = ( { selectedDomainName } ) => {
 
 	const siteSlug = selectedSite?.slug ?? null;
 
-	const goToEmail = useCallback( () => {
-		page( emailManagement( siteSlug, selectedDomainName || null, currentRoute ) );
+	const goToEmailPlan = useCallback( () => {
+		page( emailManagement( siteSlug, selectedDomainName, currentRoute ) );
 	}, [ currentRoute, selectedDomainName, siteSlug ] );
 
 	const translate = useTranslate();
 
 	if ( siteDomainsAreLoaded && ! hasTitanSubscription ) {
-		goToEmail();
+		goToEmailPlan();
 
 		return null;
 	}
@@ -232,12 +239,11 @@ const TitanCompleteMailboxSetup = ( { selectedDomainName } ) => {
 
 				<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
 
-				<HeaderCake onClick={ goToEmail } backText={ translate( 'Email Management' ) }>
+				<HeaderCake onClick={ goToEmailPlan }>
 					{ translate( 'Set up your Professional Email' ) }
 				</HeaderCake>
 
 				<SetupForm
-					goToEmail={ goToEmail }
 					siteDomainsAreLoaded={ siteDomainsAreLoaded }
 					selectedDomainName={ selectedDomainName }
 				/>
