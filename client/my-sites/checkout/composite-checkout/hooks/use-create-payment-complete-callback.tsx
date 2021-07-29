@@ -298,8 +298,7 @@ function displayRenewalSuccessNotice(
 	reduxDispatch(
 		successNotice(
 			translate(
-				'Success! You renewed %(productName)s for %(duration)s, until %(date)s. ' +
-					'We sent your receipt to %(email)s.',
+				'Success! You renewed %(productName)s for %(duration)s, until %(date)s. We sent your receipt to %(email)s.',
 				{
 					args: {
 						productName: renewalItem.product_name,
