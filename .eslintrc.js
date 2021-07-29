@@ -227,6 +227,7 @@ module.exports = {
 				'packages/launch/**/*',
 				'packages/load-script/**/*',
 				'packages/mocha-debug-reporter/**/*',
+				'packages/onboarding/**/*',
 				'packages/photon/**/*',
 				'packages/plans-grid/**/*',
 				'packages/popup-monitor/**/*',
