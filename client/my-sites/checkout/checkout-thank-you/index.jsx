@@ -446,7 +446,7 @@ export class CheckoutThankYou extends React.Component {
 
 			return (
 				<Main className="checkout-thank-you">
-					<WpAdminAutoLogin site={ this.props.selectedSite } />
+					<WpAdminAutoLogin site={ this.props.selectedSite } delay={ 0 } />
 					<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
 					<AtomicStoreThankYouCard siteId={ this.props.selectedSite.ID } />
 				</Main>
