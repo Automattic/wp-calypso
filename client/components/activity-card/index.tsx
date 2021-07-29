@@ -58,10 +58,11 @@ const useBackupTimeDisplay = ( activityTs: number ) => {
 type OwnProps = {
 	className?: string;
 	summarize?: boolean;
+	shareable?: boolean;
 	activity: Activity;
 };
 
-const ActivityCard: React.FC< OwnProps > = ( { className, summarize, activity } ) => {
+const ActivityCard: React.FC< OwnProps > = ( { className, summarize, shareable, activity } ) => {
 	const [ showContent, toggleShowContent ] = useToggleContent();
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
@@ -86,7 +87,7 @@ const ActivityCard: React.FC< OwnProps > = ( { className, summarize, activity } 
 						/>
 						<div className="activity-card__time-text">{ backupTimeDisplay }</div>
 					</div>
-					{ isEnabled( 'jetpack/activity-log-sharing' ) && (
+					{ isEnabled( 'jetpack/activity-log-sharing' ) && shareable && (
 						<ShareActivity siteId={ siteId } activity={ activity } />
 					) }
 				</div>
