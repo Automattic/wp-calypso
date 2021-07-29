@@ -35,13 +35,7 @@ function Types( {
 			'Create and manage all the testimonials on your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 			{
 				components: {
-					learnMoreLink: (
-						<InlineSupportLink
-							supportLink="https://wordpress.com/support/testimonials/"
-							supportPostId={ 97757 }
-							showIcon={ false }
-						/>
-					),
+					learnMoreLink: <InlineSupportLink supportContext="testimonials" showIcon={ false } />,
 				},
 			}
 		);
@@ -50,13 +44,7 @@ function Types( {
 			'Create, edit, and manage the portfolio projects on your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 			{
 				components: {
-					learnMoreLink: (
-						<InlineSupportLink
-							supportLink="https://wordpress.com/support/portfolios/"
-							supportPostId={ 84808 }
-							showIcon={ false }
-						/>
-					),
+					learnMoreLink: <InlineSupportLink supportContext="portfolios" showIcon={ false } />,
 				},
 			}
 		);
