@@ -65,6 +65,10 @@ export class SidebarComponent {
 		let selector;
 		const viewportName = getViewportName();
 
+		// Especially on mobile devices, there can be a race condition in clicking on "My Sites" button to slide in the sidebar,
+		// and that sidebar actually being initialized! So we want to wait and make sure the sidebar is actually in the DOM before proceeding.
+		const sidebar = await this.selectSidebar();
+
 		// If mobile, sidebar is hidden by default and focus is on the content.
 		// The sidebar must be first brought into view.
 		if ( viewportName === 'mobile' ) {
@@ -83,7 +87,6 @@ export class SidebarComponent {
 
 		if ( subitem ) {
 			subitem = toTitleCase( subitem ).trim();
-			const sidebar = await this.selectSidebar();
 			// If there is a subheading, by definition the expanded menu element will always be present.
 			await sidebar.waitForSelector( selectors.expandedMenu );
 			// Explicitly select only the child headings and combine with the text matching engine.
