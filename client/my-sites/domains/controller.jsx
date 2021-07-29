@@ -222,7 +222,7 @@ const emailUpsellForDomainRegistration = ( context, next ) => {
 			/>
 			<DocumentHead
 				title={ translate( 'Register %(domain)s', {
-					args: { domain: context.params.registerDomain },
+					args: { domain: context.params.domain },
 				} ) }
 			/>
 			<EmailProvidersUpsell domain={ context.params.domain } />
