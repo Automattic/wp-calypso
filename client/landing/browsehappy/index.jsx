@@ -22,7 +22,7 @@ import illustrationURL from './illustration.svg';
 const SUPPORTED_BROWSERS_LINK = 'https://wordpress.com/support/browser-issues/#supported-browsers';
 
 export default function Browsehappy( { from } ) {
-	const continueUrl = addQueryArgs( { bypassTargetRedirection: true }, from );
+	const continueUrl = addQueryArgs( { bypassTargetRedirection: true }, from ?? '/' );
 
 	return (
 		<body className="browsehappy__body">
@@ -38,13 +38,11 @@ export default function Browsehappy( { from } ) {
 				<Button isPrimary href={ SUPPORTED_BROWSERS_LINK }>
 					{ __( 'View supported browsers' ) }
 				</Button>
-				{ from && (
-					<p>
-						<a className="browsehappy__anyway" href={ continueUrl }>
-							{ __( 'Continue loading the page anyway' ) }
-						</a>
-					</p>
-				) }
+				<p>
+					<a className="browsehappy__anyway" href={ continueUrl }>
+						{ __( 'Continue loading the page anyway' ) }
+					</a>
+				</p>
 				<Circle color="yellow" position="1" />
 				<Circle color="red" position="2" />
 				<Circle color="gray" position="3" />
