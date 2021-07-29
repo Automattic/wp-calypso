@@ -2,6 +2,13 @@
 /**
  * Logmein
  *
+ * This module adds logmein support to the editor.
+ *
+ * When a user clicks on a link in the editor, if it is pointing at a mapped domain,
+ * a query param of `logmein=direct` will be appended to the url. This parameter is
+ * recognized by wordpress.com hosted sites and will take the user through a login flow
+ * before landing them back on the original url in a logged in state.
+ *
  * @package A8C\FSE
  */
 
@@ -11,7 +18,12 @@ namespace A8C\FSE\Logmein;
  * Init
  */
 function logmein_init() {
-	add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\logmein_enqueue', 100 );
+	/**
+	 * This filter prevents loading logmein on sites where logmein isn't supported.
+	 */
+	if ( apply_filters( 'wpcom_logmein_enable_etk', false ) ) {
+		add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\logmein_enqueue', 100 );
+	}
 }
 add_action( 'init', __NAMESPACE__ . '\logmein_init' );
 
@@ -34,7 +46,6 @@ function logmein_enqueue() {
 		'wpcom-logmein',
 		'wpcomLogmeinData',
 		array(
-			'enabled'  => apply_filters( 'wpcom_logmein_enable_etk', false ) ? 'enabled' : '',
 			'home_url' => home_url(),
 		)
 	);

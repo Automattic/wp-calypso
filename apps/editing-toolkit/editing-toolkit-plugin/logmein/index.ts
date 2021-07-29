@@ -7,20 +7,21 @@ type LogmeinData = {
 };
 declare let wpcomLogmeinData: LogmeinData;
 
+/**
+ * logmeinUrl attempts to append the ?logmein=direct parameter to the url its given.
+ *
+ * It will only append when the url is pointing to the home_url of this site.
+ *
+ * This parameter tirggers a redirect login flow for the site it points to before returning the user to the original url.
+ *
+ * @param url The url to append to
+ * @returns string
+ */
 export function logmeinUrl( url: string ): string {
-	if ( wpcomLogmeinData?.enabled !== 'enabled' ) {
-		return url;
-	}
-
 	const newUrl = new URL( String( url ), INVALID_URL );
 
 	// Ignore and passthrough invalid or /relative/urls that have no host or protocol specified
 	if ( newUrl.origin === INVALID_URL ) {
-		return url;
-	}
-
-	// Only mapped domains need logmein, skip rewrite for wpcom subdomains
-	if ( newUrl.host.match( /^.*\.wordpress.com/ ) ) {
 		return url;
 	}
 
@@ -31,13 +32,20 @@ export function logmeinUrl( url: string ): string {
 		return url;
 	}
 
-	// Fallback if the url we're clicking on isn't pointing to our site that needs logging into
+	// We only want to rewrite urls pointing to the home_url
 	if ( homeUrl.host !== newUrl.host ) {
 		return url;
 	}
 
-	// Set the param
-	newUrl.searchParams.set( 'logmein', 'direct' );
+	// If you're already on the home_url you don't need logging in
+	if ( homeUrl.host === window.location.host ) {
+		return url;
+	}
+
+	// Set the param, but only if one isn't already set
+	if ( newUrl.searchParams.get( 'logmein' ) === null ) {
+		newUrl.searchParams.set( 'logmein', 'direct' );
+	}
 
 	return newUrl.toString();
 }
