@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import qs from 'qs';
 import debugFactory from 'debug';
+import qs from 'qs';
 
 const debug = debugFactory( 'wpcom:send-request' );
 const debug_res = debugFactory( 'wpcom:send-request:res' );

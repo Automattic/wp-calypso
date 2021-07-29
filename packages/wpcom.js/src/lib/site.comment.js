@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import commentLike from './site.comment.like';
 
 /**
