@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 const path = require( 'path' );
-
-/**
- * Internal dependencies
- */
 const defaultPreset = require( './default' );
 
 /**

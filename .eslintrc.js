@@ -246,6 +246,7 @@ module.exports = {
 				'packages/webpack-config-flag-plugin/**/*',
 				'packages/webpack-inline-constant-exports-plugin/**/*',
 				'packages/whats-new/**/*',
+				'packages/wp-babel-makepot/**/*',
 				'packages/wpcom-checkout/**/*',
 				'packages/wpcom-proxy-request/**/*',
 				'packages/wpcom.js/**/*',
