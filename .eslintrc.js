@@ -208,6 +208,7 @@ module.exports = {
 				'packages/browser-data-collector/**/*',
 				'packages/calypso-analytics/**/*',
 				'packages/calypso-build/**/*',
+				'packages/calypso-codemods/**/*',
 				'packages/calypso-config/**/*',
 				'packages/calypso-e2e/**/*',
 				'packages/calypso-polyfills/**/*',
