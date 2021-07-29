@@ -182,6 +182,7 @@ module.exports = {
 				'client/auth/**/*',
 				'client/boot/**/*',
 				'client/controller/**/*',
+				'client/gutenberg/**/*',
 				'client/incoming-redirect/**/*',
 				'client/mailing-lists/**/*',
 				'client/my-sites/customer-home/**/*',
