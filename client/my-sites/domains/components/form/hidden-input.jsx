@@ -14,7 +14,7 @@ export class HiddenInput extends PureComponent {
 	constructor( props, context ) {
 		super( props, context );
 		this.state = {
-			wasClicked: false,
+			wasClicked: ! isEmpty( props.value ),
 			toggled: ! isEmpty( props.value ),
 		};
 		this.inputField = null;
