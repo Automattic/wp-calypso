@@ -20,7 +20,7 @@ describe( DataHelper.createSuiteTitle( 'SEO Preview Page' ), function () {
 	} );
 
 	it( 'Navigate to Tools > Marketing page', async function () {
-		const sidebarComponent = await SidebarComponent.Expect( page );
+		const sidebarComponent = new SidebarComponent( page );
 		await sidebarComponent.gotoMenu( { item: 'Tools', subitem: 'Marketing' } );
 	} );
 
