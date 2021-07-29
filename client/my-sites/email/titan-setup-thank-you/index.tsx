@@ -53,11 +53,11 @@ const TitanSetupThankYou = ( props: TitanSetupThankYouProps ): JSX.Element => {
 	const emailManagementPath = emailManagement( selectedSiteSlug, domainName, currentRoute );
 
 	const thankYouImage = {
-		alt: 'Thank you',
+		alt: translate( 'Thank you' ),
 		src: '/calypso/images/upgrades/thank-you.svg',
 	};
 
-	const getPath = ( context: string ) => {
+	const getControlPanelUrl = ( context: string ) => {
 		return emailManagementTitanControlPanelRedirect( selectedSiteSlug, domainName, currentRoute, {
 			context,
 		} );
@@ -70,7 +70,7 @@ const TitanSetupThankYou = ( props: TitanSetupThankYouProps ): JSX.Element => {
 			{
 				stepKey: 'titan_whats_next_view_inbox',
 				stepTitle: translate( 'Access your inbox' ),
-				stepDescription: translate( 'Access your email from anywhere with our built-in webmail.' ),
+				stepDescription: translate( 'Access your email from anywhere with our webmail.' ),
 				stepCta: (
 					<FullWidthButton href={ getTitanEmailUrl( emailAddress ) } primary>
 						{ translate( 'Go to Inbox' ) }
@@ -85,8 +85,10 @@ const TitanSetupThankYou = ( props: TitanSetupThankYouProps ): JSX.Element => {
 					"Access your email on the go with Titan's Android and iOS apps."
 				),
 				stepCta: (
-					<FullWidthButton href={ getPath( TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP ) }>
-						{ translate( 'Get the app' ) }
+					<FullWidthButton
+						href={ getControlPanelUrl( TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP ) }
+					>
+						{ translate( 'Get app' ) }
 					</FullWidthButton>
 				),
 			},

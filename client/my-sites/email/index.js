@@ -143,7 +143,7 @@ export default function () {
 		],
 		handlers: [
 			...commonHandlers,
-			controller.emailManagementTitanSetupThankYouPage,
+			controller.emailManagementTitanSetupThankYou,
 			makeLayout,
 			clientRender,
 		],

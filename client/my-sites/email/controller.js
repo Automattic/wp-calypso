@@ -87,7 +87,7 @@ export default {
 		next();
 	},
 
-	emailManagementTitanSetupThankYouPage( pageContext, next ) {
+	emailManagementTitanSetupThankYou( pageContext, next ) {
 		pageContext.primary = (
 			<TitanSetupThankYou
 				domainName={ pageContext.params.domain }

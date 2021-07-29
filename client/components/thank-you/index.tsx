@@ -51,7 +51,7 @@ const ThankYouBody = styled.div`
 	}
 `;
 
-const MarketplaceNextSteps = styled.div< MarketplaceThemeProps >`
+const ThankYouNextSteps = styled.div< MarketplaceThemeProps >`
 	h3 {
 		font-weight: ${ ( { theme } ) => theme?.weights.bold };
 	}
@@ -117,7 +117,7 @@ const ThankYouSection = ( props: ThankYouSectionProps ) => {
 				{ sectionTitle }
 			</MarketplaceHeaderTitle>
 
-			<MarketplaceNextSteps>{ nextStepComponents }</MarketplaceNextSteps>
+			<ThankYouNextSteps>{ nextStepComponents }</ThankYouNextSteps>
 		</ThankYouSectionContainer>
 	);
 };
@@ -132,8 +132,8 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 	) );
 
 	return (
-		<ThankYouContainer className="thank-you__container checkout-thank-you">
-			<ThankYouHeader>
+		<ThankYouContainer className="thank-you__container">
+			<ThankYouHeader className="thank-you__container-header">
 				{ /* eslint-disable-next-line jsx-a11y/alt-text */ }
 				<img { ...thankYouImage } />
 			</ThankYouHeader>
