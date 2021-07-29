@@ -17,6 +17,7 @@ import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
 import Gridicon from 'calypso/components/gridicon';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import LanguagePicker from 'calypso/components/language-picker';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
@@ -568,7 +569,12 @@ export class SiteSettingsFormGeneral extends Component {
 					isSaving={ isSavingSettings }
 					onButtonClick={ handleSubmitForm }
 					showButton
-					title={ translate( 'Privacy', { context: 'Privacy Settings header' } ) }
+					title={ translate( 'Privacy {{learnMoreLink}}{{/learnMoreLink}}', {
+						components: {
+							learnMoreLink: <InlineSupportLink supportContext="privacy" showText={ false } />,
+						},
+						context: 'Privacy Settings header',
+					} ) }
 				/>
 				<Card>
 					<form> { this.visibilityOptionsComingSoon() }</form>
