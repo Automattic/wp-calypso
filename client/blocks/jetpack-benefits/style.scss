@@ -41,6 +41,10 @@
 		margin-bottom: 0;
 		margin-right: 1.5rem;
 	}
+
+	&--placeholder {
+		@include placeholder();
+	}
 }
 
 .jetpack-benefits__stat-block {
@@ -49,6 +53,10 @@
 
 	@include break-medium {
 		flex-direction: row-reverse;
+	}
+
+	&--placeholder {
+		@include placeholder();
 	}
 }
 

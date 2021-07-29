@@ -14,9 +14,14 @@ export const JetpackBenefitsCard = ( props ) => {
 		<div className="jetpack-benefits__card card">
 			<div className="jetpack-benefits__card-content">
 				<p className="jetpack-benefits__card-headline">{ props.headline }</p>
-				<div className="jetpack-benefits__stat-block">
+				<div
+					className={
+						'jetpack-benefits__stat-block ' +
+						( props.placeholder === true ? 'jetpack-benefits__stat-block--placeholder' : '' )
+					}
+				>
 					{ getStat() }
-					<span>{ props.description }</span>
+					<div>{ props.description }</div>
 				</div>
 			</div>
 		</div>
