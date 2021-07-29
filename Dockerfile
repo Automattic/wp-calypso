@@ -83,4 +83,4 @@ COPY --from=builder --chown=nobody:nobody /calypso/package.json /calypso/package
 
 USER nobody
 ENTRYPOINT ["/sbin/tini", "--"]
-CMD ["node", "build/server.js"]
+CMD ["node", "--unhandled-rejections=warn", "build/server.js"]
