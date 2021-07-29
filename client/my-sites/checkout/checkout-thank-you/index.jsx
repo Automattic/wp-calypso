@@ -440,13 +440,18 @@ export class CheckoutThankYou extends React.Component {
 		} else if ( wasEcommercePlanPurchased ) {
 			if ( ! this.props.transferComplete ) {
 				return (
-					<TransferPending orderId={ this.props.receiptId } siteId={ this.props.selectedSite.ID } />
+					<>
+						<TransferPending
+							orderId={ this.props.receiptId }
+							siteId={ this.props.selectedSite.ID }
+						/>
+						<WpAdminAutoLogin site={ this.props.selectedSite } />
+					</>
 				);
 			}
 
 			return (
 				<Main className="checkout-thank-you">
-					<WpAdminAutoLogin site={ this.props.selectedSite } delay={ 0 } />
 					<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
 					<AtomicStoreThankYouCard siteId={ this.props.selectedSite.ID } />
 				</Main>
