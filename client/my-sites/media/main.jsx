@@ -368,13 +368,7 @@ class Media extends Component {
 						'Manage all the media on your site, including images, video, and more. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
 							components: {
-								learnMoreLink: (
-									<InlineSupportLink
-										supportLink="https://wordpress.com/support/media/"
-										supportPostId={ 853 }
-										showIcon={ false }
-									/>
-								),
+								learnMoreLink: <InlineSupportLink supportContext="media" showIcon={ false } />,
 							},
 						}
 					) }
