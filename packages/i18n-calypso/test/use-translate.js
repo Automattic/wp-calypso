@@ -1,16 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-/**
- * External dependencies
- */
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { act } from 'react-dom/test-utils';
-
-/**
- * Internal dependencies
- */
 import i18n, { useTranslate } from '../src';
 
 function Label() {

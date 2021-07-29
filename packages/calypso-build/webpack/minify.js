@@ -1,11 +1,8 @@
-/**
- * External Dependencies
- */
-const TerserPlugin = require( 'terser-webpack-plugin' );
-const browserslist = require( 'browserslist' );
 const babelPlugins = require( '@babel/compat-data/plugins' );
-const semver = require( 'semver' );
+const browserslist = require( 'browserslist' );
 const CssMinimizerPlugin = require( 'css-minimizer-webpack-plugin' );
+const semver = require( 'semver' );
+const TerserPlugin = require( 'terser-webpack-plugin' );
 
 const supportedBrowsers = browserslist();
 

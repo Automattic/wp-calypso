@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
 /* eslint-disable import/no-nodejs-modules */
 import { readFile } from 'fs/promises';
 /* eslint-enable import/no-nodejs-modules */
-
-/**
- * Internal dependencies
- */
 import getAssetFilePath from 'calypso/lib/get-asset-file-path';
 import { getLanguage } from 'calypso/lib/i18n-utils';
-import { setLocaleRawData } from 'calypso/state/ui/language/actions';
 import config from 'calypso/server/config';
+import { setLocaleRawData } from 'calypso/state/ui/language/actions';
 
 export function ssrSetupLocaleMiddleware() {
 	const translationsCache = {};

@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { MShotsImage } from '@automattic/design-picker';
 
 interface PatternSelectorItemProps {

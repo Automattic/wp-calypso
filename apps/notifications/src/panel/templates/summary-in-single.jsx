@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { html } from '../indices-to-html';
 import { linkProps } from './functions';
 

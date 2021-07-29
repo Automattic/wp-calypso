@@ -2,16 +2,9 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { render, fireEvent, screen } from '@testing-library/react';
 import { registerBlockType, unregisterBlockType } from '@wordpress/blocks';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import PagePatternModal from '../page-pattern-modal';
 
 const noop = () => undefined;

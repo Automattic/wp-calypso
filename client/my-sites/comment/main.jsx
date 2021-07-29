@@ -21,7 +21,7 @@ import CommentDeleteWarning from 'calypso/my-sites/comment/comment-delete-warnin
 import CommentListHeader from 'calypso/my-sites/comments/comment-list/comment-list-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { preventWidows } from 'calypso/lib/formatting';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteComment } from 'calypso/state/comments/selectors';
 import { getSiteId } from 'calypso/state/sites/selectors';
 

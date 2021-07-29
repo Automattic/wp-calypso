@@ -114,6 +114,7 @@ class ActivityCardList extends Component {
 					<div className="activity-card-list__date-group-content">
 						{ dateLogs.map( ( activity ) => (
 							<ActivityCard
+								shareable={ isActivityBackup( activity ) }
 								activity={ activity }
 								className={
 									isActivityBackup( activity )

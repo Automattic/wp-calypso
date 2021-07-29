@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { sortGroupNames } from '../group-utils';
 
 describe( 'sortGroupNames', () => {

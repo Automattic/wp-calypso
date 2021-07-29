@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { isBlankCanvasDesign } from '../available-designs';
 
 jest.mock( '@automattic/calypso-config', () => ( {

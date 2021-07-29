@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { Provider as ReduxProvider } from 'react-redux';
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { getLocaleSlug } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { makeLayoutMiddleware } from './shared.js';
-import { ssrSetupLocaleMiddleware } from './ssr-setup-locale.js';
-import { getLanguageSlugs } from 'calypso/lib/i18n-utils';
-import LayoutLoggedOut from 'calypso/layout/logged-out';
+import React from 'react';
+import { Provider as ReduxProvider } from 'react-redux';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import { RouteProvider } from 'calypso/components/route';
+import LayoutLoggedOut from 'calypso/layout/logged-out';
+import { getLanguageSlugs } from 'calypso/lib/i18n-utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setDocumentHeadLink } from 'calypso/state/document-head/actions';
+import { makeLayoutMiddleware } from './shared.js';
+import { ssrSetupLocaleMiddleware } from './ssr-setup-locale.js';
 
 /**
  * Re-export

@@ -450,7 +450,8 @@ $plan-features-sidebar-width: 272px;
 	font-weight: 400;
 	color: var( --color-text-subtle );
 	line-height: normal;
-
+	display: flex;
+	align-items: baseline;
 	&.is-placeholder {
 		@include placeholder( --color-neutral-10 );
 		width: 140px;

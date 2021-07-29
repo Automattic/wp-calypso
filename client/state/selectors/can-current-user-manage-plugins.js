@@ -8,7 +8,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { createSelector } from '@automattic/state-utils';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 
 /**
  * Returns true if user can manage plugins for at least one site and returns false otherwise

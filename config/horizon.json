@@ -13,7 +13,7 @@
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"rebrand_cities_prefix": "rebrandcitiestestsite",
 	"livechat_support_locales": [ "en", "es", "pt-br" ],
-	"calendly_jetpack_appointment_url": "https://calendly.com/jetpack-com/onboarding-call",
+	"calendly_jetpack_appointment_url": "https://calendly.com/jetpack-com/jetpack-onboarding-call-test",
 	"features": {
 		"automated-transfer": true,
 		"async-payments": false,
@@ -114,8 +114,7 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"use-translation-chunks": true,
 		"wpcom-user-bootstrap": true,
-		"wordpress-action-search": false,
-		"nav-unification/switcher": true
+		"wordpress-action-search": false
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import React, { Component } from 'react';
-
-/**
- * Internal dependencies
- */
 import { bumpStat } from '../rest-client/bump-stat';
 
 // from $wpnc__title-bar-height in boot/sizes.scss

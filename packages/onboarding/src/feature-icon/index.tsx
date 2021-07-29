@@ -1,9 +1,6 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
 import { SVG, Path } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
+import * as React from 'react';
 import type { WPCOMFeatures } from '@automattic/data-stores';
 
 export const iconList: Record< WPCOMFeatures.FeatureId, React.ReactElement > = {

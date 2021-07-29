@@ -17,7 +17,7 @@ import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selecto
 import getSiteBySlug from 'calypso/state/sites/selectors/get-site-by-slug';
 import { hasFeature, getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
 import EmptyContent from 'calypso/components/empty-content';

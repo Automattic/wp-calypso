@@ -2,9 +2,9 @@
 /** @format */
 
 const webdriver = require( 'selenium-webdriver' );
+const AsyncBaseContainer = require( '../async-base-container' );
 const driverHelper = require( '../driver-helper.js' );
 
-const AsyncBaseContainer = require( '../async-base-container' );
 const by = webdriver.By;
 
 class NavBarComponent extends AsyncBaseContainer {

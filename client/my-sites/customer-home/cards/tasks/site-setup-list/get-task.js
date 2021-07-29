@@ -125,6 +125,19 @@ export const getTask = (
 				isSkippable: true,
 			};
 			break;
+		case CHECKLIST_KNOWN_TASKS.WOOCOMMERCE_SETUP:
+			taskData = {
+				timing: 7,
+				title: translate( 'Finish store setup' ),
+				description: translate(
+					'Add your store details, add products, configure shipping, so you can begin to collect orders!'
+				),
+				actionText: translate( 'Finish store setup' ),
+				actionUrl: taskUrls?.woocommerce_setup,
+				actionDisableOnComplete: false,
+				isSkippable: true,
+			};
+			break;
 		case CHECKLIST_KNOWN_TASKS.SITE_LAUNCHED:
 			taskData = {
 				timing: 1,

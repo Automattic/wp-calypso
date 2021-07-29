@@ -1,9 +1,6 @@
-/**
- * External dependencies
- */
 import debug from 'debug';
-import nock from 'nock';
 import { partial } from 'lodash';
+import nock from 'nock';
 
 export { nock };
 

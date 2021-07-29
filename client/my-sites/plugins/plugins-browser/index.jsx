@@ -24,7 +24,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import urlSearch from 'calypso/lib/url-search';
 import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
 import getRecommendedPlugins from 'calypso/state/selectors/get-recommended-plugins';
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';

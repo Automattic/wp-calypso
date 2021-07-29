@@ -12,7 +12,7 @@ msgid \\"Prop string\\"
 msgstr \\"\\"
 
 #: test/examples/translate-1.js:2
-#: test/examples/translate-2.js:7
+#: test/examples/translate-2.js:4
 #: test/examples/wordpress-i18n.js:2
 #. Second occurrence of \`Simple string\` should also be extracted.
 msgid \\"Simple string\\"
@@ -35,27 +35,27 @@ msgid_plural \\"Plural with comment\\"
 msgstr[0] \\"\\"
 msgstr[1] \\"\\"
 
-#: test/examples/translate-2.js:11
-#: test/examples/translate-2.js:12
+#: test/examples/translate-2.js:8
+#: test/examples/translate-2.js:9
 #. First comment
 #. Second comment
 msgid \\"Stack comments\\"
 msgstr \\"\\"
 
+#: test/examples/translate-2.js:12
 #: test/examples/translate-2.js:15
-#: test/examples/translate-2.js:18
 #. Extract from leading comment first
 #. Extract from leading comment second
 msgid \\"Extract from leading comment\\"
 msgstr \\"\\"
 
-#: test/examples/translate-2.js:20
+#: test/examples/translate-2.js:17
 msgid \\"Exrract _x as alias for translate\\"
 msgid_plural \\"Second param should be extracted as plural instead of context\\"
 msgstr[0] \\"\\"
 msgstr[1] \\"\\"
 
-#: test/examples/typescript-react.tsx:11
+#: test/examples/typescript-react.tsx:8
 msgid \\"Typescript react component string\\"
 msgstr \\"\\"
 
@@ -88,7 +88,7 @@ msgid \\"\\"
 msgstr \\"Content-Type: text/plain; charset=utf-8\\\\n\\"
 
 #: test/examples/translate-1.js:2
-#: test/examples/translate-2.js:7
+#: test/examples/translate-2.js:4
 #: test/examples/wordpress-i18n.js:2
 #. Second occurrence of \`Simple string\` should also be extracted.
 msgid \\"Simple string\\"
@@ -184,26 +184,26 @@ exports[`makePot pot files should match their snapshots 5`] = `
 "msgid \\"\\"
 msgstr \\"Content-Type: text/plain; charset=utf-8\\\\n\\"
 
-#: test/examples/translate-2.js:7
+#: test/examples/translate-2.js:4
 #. Second occurrence of \`Simple string\` should also be extracted.
 msgid \\"Simple string\\"
 msgstr \\"\\"
 
-#: test/examples/translate-2.js:11
-#: test/examples/translate-2.js:12
+#: test/examples/translate-2.js:8
+#: test/examples/translate-2.js:9
 #. First comment
 #. Second comment
 msgid \\"Stack comments\\"
 msgstr \\"\\"
 
+#: test/examples/translate-2.js:12
 #: test/examples/translate-2.js:15
-#: test/examples/translate-2.js:18
 #. Extract from leading comment first
 #. Extract from leading comment second
 msgid \\"Extract from leading comment\\"
 msgstr \\"\\"
 
-#: test/examples/translate-2.js:20
+#: test/examples/translate-2.js:17
 msgid \\"Exrract _x as alias for translate\\"
 msgid_plural \\"Second param should be extracted as plural instead of context\\"
 msgstr[0] \\"\\"
@@ -214,7 +214,7 @@ exports[`makePot pot files should match their snapshots 6`] = `
 "msgid \\"\\"
 msgstr \\"Content-Type: text/plain; charset=utf-8\\\\n\\"
 
-#: test/examples/typescript-react.tsx:11
+#: test/examples/typescript-react.tsx:8
 msgid \\"Typescript react component string\\"
 msgstr \\"\\""
 `;

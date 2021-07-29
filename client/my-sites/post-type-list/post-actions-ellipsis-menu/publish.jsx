@@ -14,7 +14,7 @@ import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { bumpStatGenerator } from './utils';
 import { getPost } from 'calypso/state/posts/selectors';
 import { savePost } from 'calypso/state/posts/actions';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 
 class PostActionsEllipsisMenuPublish extends Component {
 	static propTypes = {

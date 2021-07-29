@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import * as types from '../action-types';
 
 export const addNotes = ( notes ) => ( {

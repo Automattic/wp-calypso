@@ -1,19 +1,10 @@
-/**
- * External dependencies
- *
- */
-
-import React from 'react';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import EnvironmentBadge, { Branch, DevDocsLink } from 'calypso/components/environment-badge';
 import Head from 'calypso/components/head';
-import { chunkCssLinks } from './utils';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
+import { chunkCssLinks } from './utils';
 
 class Desktop extends React.Component {
 	render() {

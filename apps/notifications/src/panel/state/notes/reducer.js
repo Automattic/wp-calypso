@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { combineReducers } from 'redux';
-
-/**
- * Internal dependencies
- */
 import * as types from '../action-types';
 
 export const allNotes = ( state = {}, { type, notes, noteIds } ) => {

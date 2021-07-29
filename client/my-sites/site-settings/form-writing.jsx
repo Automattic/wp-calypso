@@ -12,8 +12,6 @@ import { flowRight, get, pick } from 'lodash';
 import wrapSettingsForm from './wrap-settings-form';
 import config from '@automattic/calypso-config';
 import PressThis from './press-this';
-import QueryTaxonomies from 'calypso/components/data/query-taxonomies';
-import TaxonomyCard from './taxonomies/taxonomy-card';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { requestPostTypes } from 'calypso/state/post-types/actions';
@@ -29,8 +27,6 @@ import Widgets from './widgets';
 import PublishingTools from './publishing-tools';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
-import { getPreference } from 'calypso/state/preferences/selectors';
 
 class SiteSettingsFormWriting extends Component {
 	isMobile() {
@@ -58,7 +54,6 @@ class SiteSettingsFormWriting extends Component {
 			translate,
 			siteIsAutomatedTransfer,
 			updateFields,
-			showAdvancedDashboard,
 		} = this.props;
 
 		return (
@@ -67,17 +62,6 @@ class SiteSettingsFormWriting extends Component {
 				onSubmit={ handleSubmitForm }
 				className="site-settings__writing-settings"
 			>
-				{
-					// Only show taxonomy management for non-advanced dashboard user setting
-					! showAdvancedDashboard && (
-						<div className="site-settings__taxonomies">
-							<QueryTaxonomies siteId={ siteId } postType="post" />
-							<TaxonomyCard taxonomy="category" postType="post" />
-							<TaxonomyCard taxonomy="post_tag" postType="post" />
-						</div>
-					)
-				}
-
 				<SettingsSectionHeader
 					disabled={ isRequestingSettings || isSavingSettings }
 					isSaving={ isSavingSettings }
@@ -202,8 +186,6 @@ const connectComponent = connect(
 		const siteIsJetpack = isJetpackSite( state, siteId );
 		const siteIsAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
 		const isPodcastingSupported = ! siteIsJetpack || siteIsAutomatedTransfer;
-		const isNavUnification = isNavUnificationEnabled( state );
-		const showAdvancedDashboard = isNavUnification && getPreference( state, 'linkDestination' );
 
 		return {
 			siteIsJetpack,
@@ -213,7 +195,6 @@ const connectComponent = connect(
 				// Masterbar can't be turned off on Atomic sites - don't show the toggle in that case
 				! siteIsAutomatedTransfer,
 			isPodcastingSupported,
-			showAdvancedDashboard,
 			siteIsAutomatedTransfer,
 		};
 	},

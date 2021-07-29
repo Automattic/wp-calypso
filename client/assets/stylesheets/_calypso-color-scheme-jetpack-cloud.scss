@@ -65,18 +65,21 @@
 	--color-masterbar-item-hover-background: var( --studio-gray-60 );
 	--color-masterbar-item-active-background: var( --studio-gray-40 );
 
-	--color-sidebar-background: var( --studio-gray-0 );
-	--color-sidebar-background-rgb: var( --studio-gray-0-rgb );
+	--color-sidebar-background: var( --studio-white );
+	--color-sidebar-background-rgb: var( --studio-white-rgb );
 	--color-sidebar-border: var( --studio-gray-5 );
 	--color-sidebar-text: var( --studio-gray-60 );
-	--color-sidebar-text-alternative: var( --studio-gray-70 );
+	--color-sidebar-text-rgb: var( --studio-gray-60-rgb );
+	--color-sidebar-text-alternative: var( --studio-gray-60 );
 	--color-sidebar-gridicon-fill: var( --studio-gray-60 );
-	--color-sidebar-menu-selected-background: var( --studio-jetpack-green-10 );
-	--color-sidebar-menu-selected-background-rgb: var( --studio-jetpack-green-10-rgb );
-	--color-sidebar-menu-selected-text: var( --studio-jetpack-green-50 );
-	--color-sidebar-menu-hover-background: var( --studio-gray-5 );
-	--color-sidebar-menu-hover-background-rgb: var( --studio-gray-5-rgb );
-	--color-sidebar-menu-hover-text: var( --studio-gray-70 );
+	--color-sidebar-menu-selected-text: var( --studio-gray-90 );
+	--color-sidebar-menu-selected-text-rgb: var( --studio-gray-90-rgb );
+	--color-sidebar-menu-selected-background: var( --studio-gray-0 );
+	--color-sidebar-menu-selected-background-rgb: var( --studio-gray-0-rgb );
+	--color-sidebar-menu-selected-gridicon-fill: var( --studio-jetpack-green-50 );
+	--color-sidebar-menu-hover-text: var( --studio-gray-90 );
+	--color-sidebar-menu-hover-background: var( --studio-gray-0 );
+	--color-sidebar-menu-hover-background-rgb: var( --studio-gray-0-rgb );
 
 	--color-threat-found: var( --studio-red-50 );
 	--color-threat-fixed: var( --studio-jetpack-green-40 );

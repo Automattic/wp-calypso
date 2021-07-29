@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
+import { BlockInstance, parse as parseBlocks } from '@wordpress/blocks';
+import { Button, MenuItem, Modal, NavigableMenu, VisuallyHidden } from '@wordpress/components';
+import { withInstanceId } from '@wordpress/compose';
+import { Component } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
 import { memoize } from 'lodash';
-import { __ } from '@wordpress/i18n';
-import { Button, MenuItem, Modal, NavigableMenu, VisuallyHidden } from '@wordpress/components';
-import { Component } from '@wordpress/element';
-import { BlockInstance, parse as parseBlocks } from '@wordpress/blocks';
-import { withInstanceId } from '@wordpress/compose';
-
-/**
- * Internal dependencies
- */
-import PatternSelectorControl from './pattern-selector-control';
-import { trackDismiss, trackSelection, trackView } from '../utils/tracking';
-import replacePlaceholders from '../utils/replace-placeholders';
-import mapBlocksRecursively from '../utils/map-blocks-recursively';
 import containsMissingBlock from '../utils/contains-missing-block';
 import { sortGroupNames } from '../utils/group-utils';
+import mapBlocksRecursively from '../utils/map-blocks-recursively';
+import replacePlaceholders from '../utils/replace-placeholders';
+import { trackDismiss, trackSelection, trackView } from '../utils/tracking';
+import PatternSelectorControl from './pattern-selector-control';
 import type { PatternCategory, PatternDefinition } from '../pattern-definition';
 
 interface PagePatternModalProps {

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 const path = require( 'path' );
-
-/**
- * Internal dependencies
- */
 const i18n = require( '..' );
 
 // generate allowed file

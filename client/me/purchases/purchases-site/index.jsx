@@ -10,6 +10,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import { isEnabled } from '@automattic/calypso-config';
 import AsyncLoad from 'calypso/components/async-load';
 import { getSite } from 'calypso/state/sites/selectors';
 import {
@@ -61,6 +62,9 @@ const PurchasesSite = ( {
 					isDisconnectedSite={ ! site }
 					purchase={ purchase }
 					isJetpack={ isJetpackPlan( purchase ) || isJetpackProduct( purchase ) }
+					isJetpackTemporarySite={
+						purchase.domain === 'siteless.jetpack.com' && isEnabled( 'jetpack/siteless-checkout' )
+					}
 					site={ site }
 					showSite={ showSite }
 					name={ name }

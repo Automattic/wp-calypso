@@ -1,4 +1,3 @@
-import GuideComponent from '../components/guide-component.js';
 import NavBarComponent from '../components/nav-bar-component.js';
 import SidebarComponent from '../components/sidebar-component.js';
 import * as dataHelper from '../data-helper';
@@ -86,12 +85,6 @@ export default class LoginFlow {
 		}
 
 		await loginPage.login( this.account.email || this.account.username, this.account.password );
-
-		if ( process.env.FLAGS === 'nav-unification' ) {
-			// Makes sure that the nav-unification welcome modal will be dismissed.
-			const guideComponent = new GuideComponent( this.driver );
-			await guideComponent.dismiss( 1000, '.nav-unification-modal' );
-		}
 
 		return await loginCookieHelper.saveLogin( this.driver, this.account.username );
 	}

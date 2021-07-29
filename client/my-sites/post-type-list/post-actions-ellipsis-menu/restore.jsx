@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import { bumpStat as bumpAnalyticsStat } from 'calypso/state/analytics/actions';
 import { bumpStatGenerator } from './utils';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getPost } from 'calypso/state/posts/selectors';
 import { restorePost } from 'calypso/state/posts/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';

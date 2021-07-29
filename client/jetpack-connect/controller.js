@@ -41,7 +41,7 @@ import {
 	storePlan,
 } from './persistence-utils';
 import { startAuthorizeStep } from 'calypso/state/jetpack-connect/actions';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
@@ -421,8 +421,14 @@ export function redirectToSiteLessCheckout( context, next ) {
 
 	const planSlug = getPlanSlugFromFlowType( type, interval );
 
+	const urlQueryArgs = context.query;
+
 	if ( config.isEnabled( 'jetpack/siteless-checkout' ) ) {
-		page( addQueryArgs( context.query, `/checkout/jetpack/${ planSlug }` ) );
+		if ( ! urlQueryArgs?.checkoutBackUrl ) {
+			urlQueryArgs.checkoutBackUrl = 'https://jetpack.com';
+		}
+
+		page( addQueryArgs( urlQueryArgs, `/checkout/jetpack/${ planSlug }` ) );
 		return;
 	}
 

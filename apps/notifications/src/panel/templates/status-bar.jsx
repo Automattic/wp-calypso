@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import Gridicon from './gridicons';
 
 export class StatusBar extends React.Component {
