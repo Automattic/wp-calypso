@@ -1,3 +1,4 @@
+@import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
 .domain-management-list__notice {
@@ -341,11 +342,14 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	margin-top: 32px;
+	margin-bottom: 32px;
 
 	h2 {
 		@extend .wp-brand-font;
 		color: var( --color-neutral-70 );
-		font-size: $font-headline-small;
+		font-size: $font-title-large;
+		margin-top: 24px;
 	}
 
 	h3 {
@@ -355,7 +359,7 @@
 
 	.empty-domains-list-card__text {
 		text-align: center;
-		margin-bottom: 30px;
+		margin-bottom: 10px;
 	}
 
 	.empty-domains-list-card__content {
@@ -367,33 +371,42 @@
 	.empty-domains-list-card__actions {
 		text-align: center;
 		& > .button {
-			margin: 10px 10px 0 0;
+			margin: 16px 16px 0 0;
+		}
+		& > .button:last-child {
+			margin-right: 0;
 		}
 	}
 
-	&.is-compact {
-		flex-direction: row-reverse;
+	@include break-small {
+		&.is-compact {
+			flex-direction: row-reverse;
+			margin-top: 0;
+			margin-bottom: 0;
 
-		h2 {
-			font-size: $font-title-medium;
-		}
+			h2 {
+				font-size: $font-title-medium;
+				margin-top: 0;
+			}
 
-		> .empty-domains-list-card__illustration {
-			margin-left: 40px;
-		}
+			> .empty-domains-list-card__illustration {
+				margin-left: 40px;
+				margin-right: 24px;
+			}
 
-		.empty-domains-list-card__text {
-			margin-bottom: 10px;
-			text-align: initial;
-		}
+			.empty-domains-list-card__text {
+				margin-bottom: 10px;
+				text-align: initial;
+			}
 
-		.empty-domains-list-card__actions {
-			text-align: initial;
-		}
+			.empty-domains-list-card__actions {
+				text-align: initial;
+			}
 
-		.empty-domains-list-card__content {
-			align-items: normal;
-			width: 100%;
+			.empty-domains-list-card__content {
+				align-items: normal;
+				width: 100%;
+			}
 		}
 	}
 }
