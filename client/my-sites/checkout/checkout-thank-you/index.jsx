@@ -92,6 +92,7 @@ import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customiz
 import getCheckoutUpgradeIntent from 'calypso/state/selectors/get-checkout-upgrade-intent';
 import { isProductsListFetching } from 'calypso/state/products-list/selectors';
 import AsyncLoad from 'calypso/components/async-load';
+import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
 
 /**
  * Style dependencies
@@ -445,6 +446,7 @@ export class CheckoutThankYou extends React.Component {
 
 			return (
 				<Main className="checkout-thank-you">
+					<WpAdminAutoLogin site={ this.props.selectedSite } />
 					<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
 					<AtomicStoreThankYouCard siteId={ this.props.selectedSite.ID } />
 				</Main>

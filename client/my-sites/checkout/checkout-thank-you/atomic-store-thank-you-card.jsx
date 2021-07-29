@@ -116,7 +116,7 @@ class AtomicStoreThankYouCard extends Component {
 			<div className="checkout-thank-you__atomic-store-action-buttons">
 				<a
 					className={ classNames( 'button', 'thank-you-card__button' ) }
-					href={ site.URL + '/wp-admin/admin.php?page=wc-admin&path=%2Fsetup-wizard' }
+					href={ site.URL + '/wp-admin/admin.php?page=wc-admin&from-calypso&path=%2Fsetup-wizard' }
 				>
 					{ translate( 'Create your store!' ) }
 				</a>
