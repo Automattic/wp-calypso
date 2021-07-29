@@ -4,6 +4,7 @@ import QueryKeyringConnections from 'calypso/components/data/query-keyring-conne
 import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
 import QueryP2Connections from 'calypso/components/data/query-p2-connections';
 import QueryPublicizeConnections from 'calypso/components/data/query-publicize-connections';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import SharingServicesGroup from './services-group';
 
@@ -15,7 +16,14 @@ const SharingConnections = ( { translate, isP2Hub, siteId } ) => (
 		{ ! isP2Hub && <QueryKeyringConnections /> }
 		{ ! isP2Hub && <QueryPublicizeConnections selectedSite /> }
 		{ ! isP2Hub && (
-			<SharingServicesGroup type="publicize" title={ translate( 'Publicize posts' ) } />
+			<SharingServicesGroup
+				type="publicize"
+				title={ translate( 'Publicize posts {{learnMoreLink}}{{/learnMoreLink}}', {
+					components: {
+						learnMoreLink: <InlineSupportLink supportContext="publicize" showText={ false } />,
+					},
+				} ) }
+			/>
 		) }
 
 		<QueryKeyringServices />
