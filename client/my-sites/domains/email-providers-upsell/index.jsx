@@ -2,7 +2,7 @@
  * External dependencies
  */
 import page from 'page';
-import React, { Fragment } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
@@ -40,7 +40,7 @@ export default function EmailProvidersUpsell( { domain } ) {
 	};
 
 	return (
-		<Fragment>
+		<>
 			<HeaderCake onClick={ handleGoBack }>
 				{ translate( 'Register %(domain)s', { args: { domain } } ) }
 			</HeaderCake>
@@ -53,6 +53,6 @@ export default function EmailProvidersUpsell( { domain } ) {
 			>
 				<p>{ translate( 'No setup or software required. Easy to manage from your dashboard.' ) }</p>
 			</PromoCard>
-		</Fragment>
+		</>
 	);
 }
