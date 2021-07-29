@@ -1,11 +1,8 @@
 import { Page } from 'playwright';
 
-const staticSelectors = {
-	renewNowCardButton: 'button.card:has-text("Renew Now")',
-};
-
-const dynamicSelectors = {
+const selectors = {
 	purchaseTitle: ( title: string ) => `.manage-purchase__title:has-text("${ title }")`,
+	renewNowCardButton: 'button.card:has-text("Renew Now")',
 };
 
 /**
@@ -31,7 +28,7 @@ export class IndividualPurchasePage {
 	 */
 	async validatePurchaseTitle( expectedPurchaseTitle: string ): Promise< void > {
 		// TODO: there's a bug making a web requests on this page go really slow (~35 seconds) -- see issue #55028. Remove extra timeout once fixed.
-		await this.page.waitForSelector( dynamicSelectors.purchaseTitle( expectedPurchaseTitle ), {
+		await this.page.waitForSelector( selectors.purchaseTitle( expectedPurchaseTitle ), {
 			timeout: 60 * 1000,
 		} );
 	}
@@ -43,7 +40,7 @@ export class IndividualPurchasePage {
 		// This triggers a real navigation.
 		await Promise.all( [
 			this.page.waitForNavigation(),
-			this.page.click( staticSelectors.renewNowCardButton ),
+			this.page.click( selectors.renewNowCardButton ),
 		] );
 
 		// We're landing on the cart page, which has a lot of async loading, so let's make sure we let everything settle.

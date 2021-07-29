@@ -7,7 +7,7 @@ export type Plan = 'Free' | 'Personal' | 'Premium' | 'Business' | 'eCommerce';
 export type PlansPageTab = 'My Plan' | 'Plans';
 export type PlanActionButton = 'Manage plan' | 'Upgrade';
 
-const dynamicSelectors = {
+const selectors = {
 	myPlanTitle: ( planName: Plan ) => `.my-plan-card__title:has-text("${ planName }")`,
 	navigationTab: ( tabName: PlansPageTab ) => `.section-nav-tab:has-text("${ tabName }")`,
 	activeNavigationTab: ( tabName: PlansPageTab ) =>
@@ -48,7 +48,7 @@ export class PlansPage {
 	 * @throws If the expected plan title is not found in the timeout period.
 	 */
 	async validatePlanInMyPlan( expectedPlan: Plan ): Promise< void > {
-		await this.page.waitForSelector( dynamicSelectors.myPlanTitle( expectedPlan ) );
+		await this.page.waitForSelector( selectors.myPlanTitle( expectedPlan ) );
 	}
 
 	/**
@@ -58,7 +58,7 @@ export class PlansPage {
 	 * @throws If the expected tab name is not the active tab.
 	 */
 	async validateActiveNavigationTab( expectedTab: PlansPageTab ): Promise< void > {
-		await this.page.waitForSelector( dynamicSelectors.activeNavigationTab( expectedTab ) );
+		await this.page.waitForSelector( selectors.activeNavigationTab( expectedTab ) );
 	}
 
 	/**
@@ -67,7 +67,9 @@ export class PlansPage {
 	 * @param {PlansPageTab} targetTab Name of the navigation tab to click on
 	 */
 	async clickNavigationTab( targetTab: PlansPageTab ): Promise< void > {
-		await this.page.click( dynamicSelectors.navigationTab( targetTab ) );
+		await this.page.click( selectors.navigationTab( targetTab ) );
+		// make sure it actually got marked as active!
+		await this.validateActiveNavigationTab( targetTab );
 	}
 
 	/**
@@ -84,7 +86,7 @@ export class PlansPage {
 		plan: Plan;
 		buttonText: PlanActionButton;
 	} ): Promise< void > {
-		const selector = dynamicSelectors.actionButton( {
+		const selector = selectors.actionButton( {
 			viewport: getViewportName(),
 			plan: plan,
 			buttonText: buttonText,

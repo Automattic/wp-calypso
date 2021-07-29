@@ -1,10 +1,7 @@
 import { Page } from 'playwright';
 
-const staticSelectors = {
+const selectors = {
 	modalContinueButton: 'button:text("Continue")',
-};
-
-const dynamicSelectors = {
 	cartItem: ( itemName: string ) =>
 		`[data-testid="review-order-step--visible"] .checkout-line-item >> text=${ itemName.trim() }`,
 	removeCartItemButton: ( itemName: string ) =>
@@ -33,7 +30,7 @@ export class CartCheckoutPage {
 	 * @throws If the expected cart item is not found in the timeout period.
 	 */
 	async validateCartItem( expectedCartItemName: string ): Promise< void > {
-		await this.page.waitForSelector( dynamicSelectors.cartItem( expectedCartItemName ) );
+		await this.page.waitForSelector( selectors.cartItem( expectedCartItemName ) );
 	}
 
 	/**
@@ -42,7 +39,7 @@ export class CartCheckoutPage {
 	 * @param {string} cartItemName Name of the item to remove from the cart.
 	 */
 	async removeCartItem( cartItemName: string ): Promise< void > {
-		await this.page.click( dynamicSelectors.removeCartItemButton( cartItemName ) );
-		await this.page.click( staticSelectors.modalContinueButton );
+		await this.page.click( selectors.removeCartItemButton( cartItemName ) );
+		await this.page.click( selectors.modalContinueButton );
 	}
 }
