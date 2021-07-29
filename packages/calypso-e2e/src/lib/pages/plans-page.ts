@@ -1,16 +1,20 @@
 import { Page } from 'playwright';
 import { getViewportName } from '../../browser-helper';
 
+// Types to restrict the string arguments passed in. These are fixed sets of strings, so we can be more restrictive.
 export type Plan = 'Free' | 'Personal' | 'Premium' | 'Business' | 'eCommerce';
 export type PlansPageTab = 'My Plan' | 'Plans';
 export type PlanActionButton = 'Manage plan' | 'Upgrade';
 
-const selectors = {
-	myPlanTitle: '.my-plan-card__title',
-	navigationTab: '.section-nav-tab',
-	activeNavigationTab: '.is-selected.section-nav-tab',
-	mobileActionButton: '.plan-features__mobile >> .plan-features__actions-button',
-	desktopActionButtion: '.plan-features__table >> .plan-features__actions-button',
+const dynamicSelectors = {
+	myPlanTitle: ( planName: Plan ) => `.my-plan-card__title:has-text("${ planName }")`,
+	navigationTab: ( tabName: PlansPageTab ) => `.section-nav-tab:has-text("${ tabName }")`,
+	activeNavigationTab: ( tabName: PlansPageTab ) =>
+		`.is-selected.section-nav-tab:has-text("${ tabName }")`,
+	mobileActionButton: ( { plan, buttonText }: { plan: Plan; buttonText: PlanActionButton } ) =>
+		`.plan-features__mobile >> .plan-features__actions-button.is-${ plan.toLowerCase() }-plan:has-text("${ buttonText }")`,
+	desktopActionButton: ( { plan, buttonText }: { plan: Plan; buttonText: PlanActionButton } ) =>
+		`.plan-features__table >> .plan-features__actions-button.is-${ plan.toLowerCase() }-plan:has-text("${ buttonText }")`,
 };
 
 /**
@@ -35,7 +39,7 @@ export class PlansPage {
 	 * @throws If the expected plan title is not found in the timeout period.
 	 */
 	async validatePlanInMyPlan( expectedPlan: Plan ): Promise< void > {
-		await this.page.waitForSelector( `${ selectors.myPlanTitle }:has-text("${ expectedPlan }")` );
+		await this.page.waitForSelector( dynamicSelectors.myPlanTitle( expectedPlan ) );
 	}
 
 	/**
@@ -45,9 +49,7 @@ export class PlansPage {
 	 * @throws If the expected tab name is not the active tab.
 	 */
 	async validateActiveNavigationTab( expectedTab: PlansPageTab ): Promise< void > {
-		await this.page.waitForSelector(
-			`${ selectors.activeNavigationTab }:has-text("${ expectedTab }")`
-		);
+		await this.page.waitForSelector( dynamicSelectors.activeNavigationTab( expectedTab ) );
 	}
 
 	/**
@@ -56,7 +58,7 @@ export class PlansPage {
 	 * @param targetTab Name of the navigation tab to click on
 	 */
 	async clickNavigationTab( targetTab: PlansPageTab ): Promise< void > {
-		await this.page.click( `${ selectors.navigationTab }:has-text("${ targetTab }")` );
+		await this.page.click( dynamicSelectors.navigationTab( targetTab ) );
 	}
 
 	/**
@@ -73,13 +75,13 @@ export class PlansPage {
 		plan: Plan;
 		buttonText: PlanActionButton;
 	} ): Promise< void > {
-		const baseSelector =
+		const selector =
 			getViewportName() === 'mobile'
-				? selectors.mobileActionButton
-				: selectors.desktopActionButtion;
+				? dynamicSelectors.mobileActionButton( { plan: plan, buttonText: buttonText } )
+				: dynamicSelectors.desktopActionButton( { plan: plan, buttonText: buttonText } );
 
-		const fullButtonSelector = `${ baseSelector }.is-${ plan.toLowerCase() }-plan:has-text("${ buttonText }")`;
-		await Promise.all( [ this.page.waitForNavigation(), this.page.click( fullButtonSelector ) ] );
+		// These action buttons trigger real page navigations.
+		await Promise.all( [ this.page.waitForNavigation(), this.page.click( selector ) ] );
 		await this.page.waitForLoadState( 'load' );
 	}
 }

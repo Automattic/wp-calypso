@@ -54,6 +54,8 @@ describe( DataHelper.createSuiteTitle( 'Plans: Purchases' ), function () {
 	describe( 'Manage current plan', function () {
 		const cartItemForPremiumPlan = 'WordPress.com Premium';
 		it( 'Click on "Manage Plan" button for the active Premium plan', async function () {
+			// This navigation also validates that we correctly identify the active plan in the Plans table.
+			// The button text won't be correct if Premium isn't the active plan.
 			await plansPage.clickPlanActionButton( { plan: 'Premium', buttonText: 'Manage plan' } );
 		} );
 
@@ -81,13 +83,14 @@ describe( DataHelper.createSuiteTitle( 'Plans: Purchases' ), function () {
 
 		it( 'Automatically land back on "Plans" tab of Plans page', async function () {
 			await page.waitForLoadState( 'load' );
+			plansPage = new PlansPage( page );
 			await plansPage.validateActiveNavigationTab( 'Plans' );
 		} );
 	} );
 
 	describe( 'Plan upgrade', function () {
 		const cartItemForBusinessPlan = 'WordPress.com Business';
-		it( 'Click on "Upgrade" button for the active Business plan', async function () {
+		it( 'Click on "Upgrade" button for a Business plan', async function () {
 			await plansPage.clickPlanActionButton( { plan: 'Business', buttonText: 'Upgrade' } );
 		} );
 
@@ -106,6 +109,7 @@ describe( DataHelper.createSuiteTitle( 'Plans: Purchases' ), function () {
 
 		it( 'Automatically land back on "Plans" tab of Plans page', async function () {
 			await page.waitForLoadState( 'load' );
+			plansPage = new PlansPage( page );
 			await plansPage.validateActiveNavigationTab( 'Plans' );
 		} );
 	} );

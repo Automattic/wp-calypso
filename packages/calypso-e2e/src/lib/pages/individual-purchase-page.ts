@@ -1,8 +1,11 @@
 import { Page } from 'playwright';
 
-const selectors = {
-	purchaseTitle: '.manage-purchase__title',
+const staticSelectors = {
 	renewNowCardButton: 'button.card:has-text("Renew Now")',
+};
+
+const dynamicSelectors = {
+	purchaseTitle: ( title: string ) => `.manage-purchase__title:has-text("${ title }")`,
 };
 
 /**
@@ -21,27 +24,29 @@ export class IndividualPurchasePage {
 	}
 
 	/**
-	 * Validates the title of purchase that this purchase page is for.
+	 * Validates the title of the purchase that this purchase page is for. Throws if it is not the expected title.
 	 *
-	 * @param expectedPurchaseTitle Expected text for the title of the purchase
+	 * @param expectedPurchaseTitle Expected text for the title of the purchase.
+	 * @throws If the expected purchase title is not the title on the page.
 	 */
 	async validatePurchaseTitle( expectedPurchaseTitle: string ): Promise< void > {
-		await this.page.waitForSelector(
-			`${ selectors.purchaseTitle }:has-text("${ expectedPurchaseTitle }")`
-		);
+		// TODO: there's a bug making a web requests on this page go really slow (~35 seconds) -- see issue #55028. Remove extra timeout once fixed.
+		await this.page.waitForSelector( dynamicSelectors.purchaseTitle( expectedPurchaseTitle ), {
+			timeout: 60 * 1000,
+		} );
 	}
 
 	/**
-	 * Renew purchase by clicking on the "Renew Now" card button (as opposed to the inline "Renew now" button)
+	 * Renew purchase by clicking on the "Renew Now" card button (as opposed to the inline "Renew now" button).
 	 */
 	async clickRenewNowCardButton(): Promise< void > {
-		// This triggers a real navigation
+		// This triggers a real navigation.
 		await Promise.all( [
-			await this.page.waitForNavigation(),
-			await this.page.click( selectors.renewNowCardButton ),
+			this.page.waitForNavigation(),
+			this.page.click( staticSelectors.renewNowCardButton ),
 		] );
 
-		// we're landing on the cart page, which has a lot of async-like requests
+		// We're landing on the cart page, which has a lot of async loading, so let's make sure we let everything settle.
 		await this.page.waitForLoadState( 'networkidle' );
 	}
 }

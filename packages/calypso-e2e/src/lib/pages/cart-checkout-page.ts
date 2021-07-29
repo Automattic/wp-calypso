@@ -1,8 +1,14 @@
 import { Page } from 'playwright';
 
-const selectors = {
-	cartItem: '[data-testid="review-order-step--visible"] .checkout-line-item',
+const staticSelectors = {
 	modalContinueButton: 'button:text("Continue")',
+};
+
+const dynamicSelectors = {
+	cartItem: ( itemName: string ) =>
+		`[data-testid="review-order-step--visible"] .checkout-line-item >> text=${ itemName.trim() }`,
+	removeCartItemButton: ( itemName: string ) =>
+		`[data-testid="review-order-step--visible"] button[aria-label*="Remove ${ itemName.trim() } from cart"]`,
 };
 
 /**
@@ -21,23 +27,22 @@ export class CartCheckoutPage {
 	}
 
 	/**
-	 * Validates the title of purchase that this purchase page is for.
+	 * Validates that an item is in the cart with the expected text. Throws if it isn't.
 	 *
-	 * @param expectedCartItemName Expected text for the title of the purchase
+	 * @param expectedCartItemName Expected text for the name of the item in the cart.
+	 * @throws If the expected cart item is not found in the timeout period.
 	 */
 	async validateCartItem( expectedCartItemName: string ): Promise< void > {
-		await this.page.waitForSelector( `${ selectors.cartItem } >> text=${ expectedCartItemName }` );
+		await this.page.waitForSelector( dynamicSelectors.cartItem( expectedCartItemName ) );
 	}
 
 	/**
-	 * Removes the specified cart item from the cart completely
+	 * Removes the specified cart item from the cart completely.
 	 *
-	 * @param cartItemName Name of the item to remove from the cart
+	 * @param cartItemName Name of the item to remove from the cart.
 	 */
 	async removeCartItem( cartItemName: string ): Promise< void > {
-		await this.page.click(
-			`[data-testid="review-order-step--visible"] button[aria-label*="Remove ${ cartItemName.trim() } from cart"]`
-		);
-		await this.page.click( selectors.modalContinueButton );
+		await this.page.click( dynamicSelectors.removeCartItemButton( cartItemName ) );
+		await this.page.click( staticSelectors.modalContinueButton );
 	}
 }
