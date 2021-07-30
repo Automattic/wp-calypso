@@ -7,50 +7,70 @@ import React from 'react';
  * Internal Dependencies
  */
 import { shallow } from 'enzyme';
-import { JetpackBenefitsScanHistory } from '../scan-history';
+import JetpackBenefitsScanHistory from '../scan-history';
 import { JetpackBenefitsStandaloneCard } from 'calypso/blocks/jetpack-benefits/standalone-benefit-card';
+import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
+import isRequestingJetpackScan from 'calypso/state/selectors/is-requesting-jetpack-scan';
+import { JetpackBenefitsCard } from 'calypso/blocks/jetpack-benefits/benefit-card';
+
+/**
+ * Mock dependencies
+ */
+jest.mock( 'react-redux', () => ( {
+	...jest.requireActual( 'react-redux' ),
+	useDispatch: jest.fn().mockImplementation( () => {} ),
+	useSelector: jest.fn().mockImplementation( ( selector ) => selector() ),
+} ) );
+
+jest.mock( 'calypso/state/selectors/get-site-scan-state' );
+jest.mock( 'calypso/state/selectors/is-requesting-jetpack-scan' );
+jest.mock( 'calypso/state/selectors/is-requesting-jetpack-scan-threat-counts' );
+jest.mock( 'calypso/state/selectors/get-site-scan-progress' );
 
 describe( 'Scan History Jetpack Benefit Block', () => {
-	// swap relevant methods with a mocked ones
-	JetpackBenefitsScanHistory.prototype.renderScanningNow = jest.fn();
-	JetpackBenefitsScanHistory.prototype.renderScanningProvisioning = jest.fn();
-	JetpackBenefitsScanHistory.prototype.renderScanLoading = jest.fn();
-	JetpackBenefitsScanHistory.prototype.renderScanError = jest.fn();
+	const getBenefitsCard = () => {
+		const element = shallow( <JetpackBenefitsScanHistory /> );
+		return element.find( 'JetpackBenefitsScanHistory' ).dive().find( JetpackBenefitsCard );
+	};
+
+	beforeEach( () => {
+		getSiteScanState.mockReset();
+		isRequestingJetpackScan.mockReset();
+	} );
 
 	test( 'When the scan state is actively scanning, show a scanning message', () => {
-		shallow( <JetpackBenefitsScanHistory siteScanState={ { state: 'scanning' } } /> );
-		expect( JetpackBenefitsScanHistory.prototype.renderScanningNow ).toHaveBeenCalled();
+		const scanState = { state: 'scanning' };
+		getSiteScanState.mockReturnValue( scanState );
+		expect( getBenefitsCard().props() ).toHaveProperty( 'jestMarker', 'scanning' );
 	} );
 
 	test( 'When the scan state is provisioning, show a preparing message', () => {
-		shallow( <JetpackBenefitsScanHistory siteScanState={ { state: 'provisioning' } } /> );
-		expect( JetpackBenefitsScanHistory.prototype.renderScanningProvisioning ).toHaveBeenCalled();
+		const scanState = { state: 'provisioning' };
+		getSiteScanState.mockReturnValue( scanState );
+		expect( getBenefitsCard().props() ).toHaveProperty( 'jestMarker', 'provisioning' );
 	} );
 
 	test( 'When the scan state is still loading, show a loading placeholder', () => {
-		shallow( <JetpackBenefitsScanHistory siteScanState={ {} } requestingScanState={ true } /> );
-		expect( JetpackBenefitsScanHistory.prototype.renderScanLoading ).toHaveBeenCalled();
+		getSiteScanState.mockReturnValue( null );
+		isRequestingJetpackScan.mockReturnValue( true );
+		expect( getBenefitsCard().props() ).toHaveProperty( 'jestMarker', 'loading' );
 	} );
 
 	test( 'When the scan state is not present and not loading, show an error', () => {
-		shallow( <JetpackBenefitsScanHistory siteScanState={ {} } requestingScanState={ false } /> );
-		expect( JetpackBenefitsScanHistory.prototype.renderScanError ).toHaveBeenCalled();
+		getSiteScanState.mockReturnValue( null );
+		isRequestingJetpackScan.mockReturnValue( false );
+		expect( getBenefitsCard().props() ).toHaveProperty( 'jestMarker', 'error' );
 	} );
 
 	test( 'If product is standalone scan, the expanded standalone card is rendered', () => {
-		const component = shallow(
-			<JetpackBenefitsScanHistory
-				siteScanState={ {
-					state: 'idle',
-					mostRecent: {
-						timestamp: '',
-					},
-				} }
-				requestingScanState={ false }
-				isStandalone={ true }
-			/>
-		);
+		getSiteScanState.mockReturnValue( { state: 'idle', mostRecent: { timestamp: '' } } );
+		isRequestingJetpackScan.mockReturnValue( false );
 
-		expect( component.find( JetpackBenefitsStandaloneCard ) ).toHaveLength( 1 );
+		const standaloneCard = shallow( <JetpackBenefitsScanHistory isStandalone={ true } /> )
+			.find( 'JetpackBenefitsScanHistory' )
+			.dive()
+			.find( JetpackBenefitsStandaloneCard );
+
+		expect( standaloneCard ).toHaveLength( 1 );
 	} );
 } );
