@@ -57,7 +57,14 @@ class DomainSuggestion extends React.Component {
 	}
 
 	render() {
-		const { children, extraClasses, isAdded, isFeatured, showStrikedOutPrice } = this.props;
+		const {
+			children,
+			extraClasses,
+			isAdded,
+			isFeatured,
+			showStrikedOutPrice,
+			isReskinned,
+		} = this.props;
 		const classes = classNames(
 			'domain-suggestion',
 			'card',
@@ -85,9 +92,9 @@ class DomainSuggestion extends React.Component {
 			>
 				<div className={ contentClassName }>
 					{ children }
-					{ ! isFeatured && this.renderPrice() }
+					{ ( isReskinned || ! isFeatured ) && this.renderPrice() }
 				</div>
-				{ isFeatured && (
+				{ ! isReskinned && isFeatured && (
 					<div className="domain-suggestion__price-container">{ this.renderPrice() }</div>
 				) }
 				<div className="domain-suggestion__action-container">

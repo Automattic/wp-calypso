@@ -10,6 +10,10 @@
 	@include breakpoint-deprecated( '>660px' ) {
 		align-items: flex-end;
 		font-size: $font-body;
+
+		.is-white-signup & {
+			align-items: flex-start;
+		}
 	}
 	
 	@include breakpoint-deprecated( '<660px' ) {
