@@ -102,7 +102,7 @@ export function emailManagementTitanSetupThankYouPage(
 	return emailManagementEdit(
 		siteName,
 		domainName,
-		'titan/thank-you',
+		'titan/setup-mailbox/thank-you',
 		relativeTo,
 		emailAddress ? { email: emailAddress } : {}
 	);

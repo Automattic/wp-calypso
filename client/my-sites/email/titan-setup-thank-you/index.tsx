@@ -9,13 +9,11 @@ import { localize, useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { ThankYou } from 'calypso/components/thank-you';
-import theme from 'calypso/my-sites/marketplace/theme';
-import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import {
 	emailManagement,
 	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
+import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getTitanEmailUrl } from 'calypso/lib/titan';
 import Gridicon from 'calypso/components/gridicon';
@@ -23,6 +21,8 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { getDomainsBySite } from 'calypso/state/sites/domains/selectors';
 import { SiteData } from 'calypso/state/ui/selectors/site-data';
+import { ThankYou } from 'calypso/components/thank-you';
+import theme from 'calypso/my-sites/marketplace/theme';
 import { TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP } from 'calypso/lib/titan/constants';
 
 /**
@@ -32,7 +32,7 @@ import './style.scss';
 
 type TitanSetupThankYouProps = {
 	domainName: string;
-	emailAddress: string;
+	emailAddress?: string;
 };
 
 const TitanSetupThankYou = ( props: TitanSetupThankYouProps ): JSX.Element => {
@@ -49,11 +49,14 @@ const TitanSetupThankYou = ( props: TitanSetupThankYouProps ): JSX.Element => {
 		src: '/calypso/images/upgrades/thank-you.svg',
 	};
 
-	const getControlPanelUrl = ( context: string ) => {
-		return emailManagementTitanControlPanelRedirect( selectedSiteSlug, domainName, currentRoute, {
-			context,
-		} );
-	};
+	const titanControlPanelUrl = emailManagementTitanControlPanelRedirect(
+		selectedSiteSlug,
+		domainName,
+		currentRoute,
+		{
+			context: TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP,
+		}
+	);
 
 	const titanThankYouSection = {
 		sectionKey: 'titan_whats_next',
@@ -77,9 +80,7 @@ const TitanSetupThankYou = ( props: TitanSetupThankYouProps ): JSX.Element => {
 					"Access your email on the go with Titan's Android and iOS apps."
 				),
 				stepCta: (
-					<FullWidthButton
-						href={ getControlPanelUrl( TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP ) }
-					>
+					<FullWidthButton href={ titanControlPanelUrl }>
 						{ translate( 'Get app' ) }
 					</FullWidthButton>
 				),

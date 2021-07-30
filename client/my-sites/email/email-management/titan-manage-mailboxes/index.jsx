@@ -134,7 +134,7 @@ class TitanManageMailboxes extends Component {
 
 						<VerticalNavItemEnhanced
 							description={ translate(
-								"Download Titan's Android and iOS apps to access your emails on the go"
+								'Download our Android and iOS apps to access your emails on the go'
 							) }
 							external={ true }
 							materialIcon="smartphone"

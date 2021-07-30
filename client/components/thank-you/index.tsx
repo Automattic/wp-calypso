@@ -2,7 +2,8 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { TranslateResult, useTranslate } from 'i18n-calypso';
+import type { TranslateResult } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import styled from '@emotion/styled';
 
