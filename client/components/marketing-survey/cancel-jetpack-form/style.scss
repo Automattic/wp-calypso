@@ -27,3 +27,36 @@
 	font-size: 1.25rem;
 	margin-bottom: 0.5rem;
 }
+
+.jetpack-cancellation-survey {
+	&__content {
+		width: 1128px;
+		padding: 3rem 12rem;
+		box-sizing: border-box;
+	}
+
+	&__card {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 1rem;
+		width: 100%;
+		font-weight: 600;
+		color: var( --studio-black );
+		border: 1px solid var( --studio-white );
+		transition: border 0.2s ease-in-out;
+
+		&:hover, &:focus {
+			box-shadow: 0 0 0 1px var( --studio-gray-50 );
+		}
+
+		&.is-selected {
+			box-shadow: 0 0 0 1px var( --studio-black );
+			border: 1px solid var( --studio-black );
+		}
+
+		& > svg {
+			margin-left: auto;
+		}
+	}
+}
