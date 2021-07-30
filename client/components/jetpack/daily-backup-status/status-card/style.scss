@@ -102,7 +102,11 @@
 
 /* Buttons */
 .daily-backup-status .form-button.status-card__support-button {
-	margin: 32px 0;
+	margin: 32px auto;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin: 32px 0;
+	}
 }
 
 /* Status-specific rules */
