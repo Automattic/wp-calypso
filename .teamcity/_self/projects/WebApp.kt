@@ -753,7 +753,7 @@ object CheckCodeStyleBranch : BuildType({
 	}
 })
 
-fun playwrightBuildType( viewportName: String, buildUuid: String, filter: String ): BuildType {
+fun playwrightBuildType( viewportName: String, buildUuid: String ): BuildType {
 	return BuildType {
 		id("Calypso_E2E_Playwright_$viewportName")
 		uuid = buildUuid
