@@ -71,11 +71,14 @@
 }
 
 .status-card__label {
-	max-width: 500px;
 	margin-top: 24px;
 
 	color: var( --studio-gray-80 );
 	text-align: left;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		max-width: 500px;
+	}
 }
 
 .status-card__meta {
