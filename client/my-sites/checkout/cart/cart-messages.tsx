@@ -6,7 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import type { TranslateResult } from 'i18n-calypso';
 import { useDisplayCartMessages } from '@automattic/wpcom-checkout';
-import type { ResponseCart, ResponseCartMessage } from '@automattic/shopping-cart';
+import { useShoppingCart } from '@automattic/shopping-cart';
+import type { ResponseCartMessage } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -26,13 +27,8 @@ function CartMessage( { message }: { message: ResponseCartMessage } ): JSX.Eleme
 	return <>{ getPrettyMessage( message ) }</>;
 }
 
-export default function CartMessages( {
-	cart,
-	isLoadingCart,
-}: {
-	cart: ResponseCart;
-	isLoadingCart: boolean;
-} ): null {
+export default function CartMessages(): null {
+	const { responseCart: cart, isLoading: isLoadingCart } = useShoppingCart();
 	const reduxDispatch = useDispatch();
 
 	const showErrorMessages = useCallback(
