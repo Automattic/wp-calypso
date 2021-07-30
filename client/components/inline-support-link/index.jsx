@@ -22,6 +22,7 @@ import {
 	withAnalytics,
 } from 'calypso/state/analytics/actions';
 import { isDefaultLocale, localizeUrl } from 'calypso/lib/i18n-utils';
+import { getContextLinks } from './context-links';
 
 /**
  * Style dependencies
@@ -123,13 +124,6 @@ class InlineSupportLink extends Component {
 		);
 	}
 }
-
-const getContextLinks = () => ( {
-	pages: {
-		link: 'https://wordpress.com/support/pages/',
-		post_id: 86,
-	},
-} );
 
 const getLinkData = ( ownProps ) => {
 	const { supportContext } = ownProps;
