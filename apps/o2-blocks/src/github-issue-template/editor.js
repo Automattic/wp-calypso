@@ -1,12 +1,9 @@
-/**
- * External dependencies
- */
-import { __ } from '@wordpress/i18n';
 import { registerBlockType } from '@wordpress/blocks';
 import { TextControl, TextareaControl } from '@wordpress/components';
-import * as createIssueUrl from 'new-github-issue-url';
+import { __ } from '@wordpress/i18n';
 import { SVG, Rect, Path } from '@wordpress/primitives';
 import classNames from 'classnames';
+import * as createIssueUrl from 'new-github-issue-url';
 
 import './editor.scss';
 
