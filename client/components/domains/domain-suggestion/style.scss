@@ -7,7 +7,6 @@
 	@include break-mobile {
 		flex-direction: row;
 		align-items: center;
-		padding: 15px 20px;
 	}
 
 	.domain-suggestion__content-domain {
@@ -30,6 +29,12 @@
 .domain-suggestion:not( .featured-domain-suggestion ) {
 	display: flex;
 	flex-direction: column;
+
+	@include break-mobile {
+		flex-direction: row;
+		align-items: center;
+		padding: 15px 20px;
+	}
 
 	.is-section-signup & {
 		@include breakpoint-deprecated( '>480px' ) {
