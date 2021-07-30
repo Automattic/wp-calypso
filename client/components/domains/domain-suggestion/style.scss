@@ -7,6 +7,7 @@
 	@include break-mobile {
 		flex-direction: row;
 		align-items: center;
+		padding: 15px 20px;
 	}
 
 	.domain-suggestion__content-domain {
@@ -29,10 +30,6 @@
 .domain-suggestion:not( .featured-domain-suggestion ) {
 	display: flex;
 	flex-direction: column;
-
-	@include breakpoint-deprecated( '>660px' ) {
-		padding: 15px 20px;
-	}
 
 	.is-section-signup & {
 		@include breakpoint-deprecated( '>480px' ) {
@@ -202,6 +199,10 @@
 	@include break-mobile {
 		width: auto;
 	}
+}
+
+.domain-suggestion__price-container {
+	padding-right: 1em;
 }
 
 .button.domain-suggestion__action {

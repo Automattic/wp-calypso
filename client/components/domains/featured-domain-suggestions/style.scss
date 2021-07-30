@@ -48,11 +48,8 @@
 
 	.button.domain-suggestion__action {
 		flex-grow: 0;
-		margin-left: 0;
 		text-align: center;
-		padding: 0.5em 3em;
 		transition: all 0.1s linear;
-		width: 100%;
 
 		.is-placeholder & {
 			animation: loading-fade 1.6s ease-in-out infinite;
