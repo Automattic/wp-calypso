@@ -1,9 +1,6 @@
-/**
- * External dependencies
- */
+import { recordTracksPageViewWithPageParams } from '@automattic/calypso-analytics';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { recordTracksPageViewWithPageParams } from '@automattic/calypso-analytics';
 
 export function usePageViewTracksEvents() {
 	const { pathname } = useLocation();

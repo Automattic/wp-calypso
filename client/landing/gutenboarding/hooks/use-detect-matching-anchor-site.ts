@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
 import { useSelect } from '@wordpress/data';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import * as React from 'react';
 import wpcom from 'calypso/lib/wp';
-import { USER_STORE } from '../stores/user';
 import { useIsAnchorFm, useAnchorFmParams } from '../path';
+import { USER_STORE } from '../stores/user';
 
 interface AnchorEndpointResult {
 	location: string | false;

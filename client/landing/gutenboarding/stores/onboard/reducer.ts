@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
+import type { OnboardAction } from './actions';
+import type { SiteVertical } from './types';
 import type { DomainSuggestions, WPCOMFeatures } from '@automattic/data-stores';
 import type { Design, FontPair } from '@automattic/design-picker';
-
-/**
- * Internal dependencies
- */
-import type { SiteVertical } from './types';
-import type { OnboardAction } from './actions';
+import type { Reducer } from 'redux';
 
 type FeatureId = WPCOMFeatures.FeatureId;
 
