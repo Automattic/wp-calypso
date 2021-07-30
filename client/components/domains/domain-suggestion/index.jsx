@@ -86,8 +86,11 @@ class DomainSuggestion extends React.Component {
 			>
 				<div className={ contentClassName }>
 					{ children }
-					{ this.renderPrice() }
+					{ ! isFeatured && this.renderPrice() }
 				</div>
+				{ isFeatured && (
+					<div className="domain-suggestion__price-container">{ this.renderPrice() }</div>
+				) }
 				<div className="domain-suggestion__action-container">
 					<Button className="domain-suggestion__action" { ...this.props.buttonStyles }>
 						{ this.props.buttonContent }
