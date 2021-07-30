@@ -1,5 +1,4 @@
-import { ElementHandle } from 'playwright';
-import { BaseContainer } from '../base-container';
+import { ElementHandle, Page } from 'playwright';
 
 const selectors = {
 	comment: '.wpnc__comment',
@@ -7,10 +6,19 @@ const selectors = {
 };
 /**
  * Component representing the notifications panel and notifications themselves.
- *
- * @augments {BaseContainer}
  */
-export class NotificationsComponent extends BaseContainer {
+export class NotificationsComponent {
+	private page: Page;
+
+	/**
+	 * Constructs an instance of the component.
+	 *
+	 * @param {Page} page The underlying page.
+	 */
+	constructor( page: Page ) {
+		this.page = page;
+	}
+
 	/**
 	 * Locates and returns an ElementHandle to the notification.
 	 *

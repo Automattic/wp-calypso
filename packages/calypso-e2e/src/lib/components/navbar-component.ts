@@ -1,4 +1,4 @@
-import { BaseContainer } from '../base-container';
+import { Page } from 'playwright';
 
 const selectors = {
 	mySiteButton: 'text=My Site',
@@ -10,16 +10,35 @@ const selectors = {
 };
 /**
  * Component representing the navbar/masterbar at top of WPCOM.
- *
- * @augments {BaseContainer}
  */
-export class NavbarComponent extends BaseContainer {
+export class NavbarComponent {
+	private page: Page;
+
+	/**
+	 * Constructs an instance of the component.
+	 *
+	 * @param {Page} page The underlying page.
+	 */
+	constructor( page: Page ) {
+		this.page = page;
+	}
+
+	/**
+	 * Call to ensure the component is loaded before proceeding.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async waitUntilLoaded(): Promise< void > {
+		await this.page.waitForLoadState( 'load' );
+	}
+
 	/**
 	 * Locates and clicks on the new post button on the nav bar.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickNewPost(): Promise< void > {
+		await this.waitUntilLoaded();
 		await this.page.click( selectors.writeButton );
 	}
 
@@ -29,6 +48,7 @@ export class NavbarComponent extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickMySites(): Promise< void > {
+		await this.waitUntilLoaded();
 		await this.page.click( selectors.mySiteButton );
 	}
 
@@ -44,6 +64,7 @@ export class NavbarComponent extends BaseContainer {
 	async openNotificationsPanel( {
 		useKeyboard = false,
 	}: { useKeyboard?: boolean } = {} ): Promise< void > {
+		await this.waitUntilLoaded();
 		const notificationsButton = await this.page.waitForSelector( selectors.notificationsButton, {
 			state: 'visible',
 		} );
