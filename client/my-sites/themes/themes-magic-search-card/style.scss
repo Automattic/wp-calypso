@@ -3,6 +3,8 @@
  */
 .themes-magic-search {
 	margin-top: 24px;
+	position: relative;
+	z-index: z-index( 'root', '.themes-magic-search' );
 }
 
 .themes-magic-search-card {
