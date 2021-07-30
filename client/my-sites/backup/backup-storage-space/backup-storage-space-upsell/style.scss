@@ -14,7 +14,7 @@
 
 	padding: 16px 24px;
 	border: 2px solid var( --studio-jetpack-green );
-	border-radius: 4px;
+	border-radius: calc( 2 * 2px );
 
 	color: var( --color-text );
 	font-size: $font-body;
@@ -31,10 +31,6 @@
 		.backup-storage-space-upsell__arrow {
 			transform: translateX( 8px );
 		}
-	}
-
-	&:focus {
-		box-shadow: none;
 	}
 }
 
