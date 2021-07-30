@@ -67,9 +67,9 @@ const TitanSetupThankYou = ( props: TitanSetupThankYouProps ): JSX.Element => {
 				stepTitle: translate( 'Access your inbox' ),
 				stepDescription: translate( 'Access your email from anywhere with our webmail.' ),
 				stepCta: (
-					<FullWidthButton href={ getTitanEmailUrl( emailAddress ) } primary>
+					<FullWidthButton href={ getTitanEmailUrl( emailAddress ) } primary target="_blank">
 						{ translate( 'Go to Inbox' ) }
-						<Gridicon className={ 'titan-setup-thank-you__icon-inbox' } icon="external" />
+						<Gridicon className="titan-setup-thank-you__icon-external" icon="external" />
 					</FullWidthButton>
 				),
 			},
@@ -80,8 +80,9 @@ const TitanSetupThankYou = ( props: TitanSetupThankYouProps ): JSX.Element => {
 					"Access your email on the go with Titan's Android and iOS apps."
 				),
 				stepCta: (
-					<FullWidthButton href={ titanControlPanelUrl }>
+					<FullWidthButton href={ titanControlPanelUrl } target="_blank">
 						{ translate( 'Get app' ) }
+						<Gridicon className="titan-setup-thank-you__icon-external" icon="external" />
 					</FullWidthButton>
 				),
 			},
