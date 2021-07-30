@@ -2,11 +2,17 @@
  * External dependencies
  */
 import { useQuery } from 'react-query';
-
 /**
  * Internal dependencies
  */
 import wpcom from 'calypso/lib/wp';
+
+/**
+ * A list of error statuses that are seen as final and shouldn't be retried for this query
+ *
+ * @type {number[]}
+ */
+const finalErrorStatuses = [ 400, 401, 403, 409 ];
 
 /**
  * Checks whether a mailbox name/domain i.e. email address is available for creation.
@@ -26,6 +32,9 @@ export const useGetTitanMailboxAvailability = ( domainName, mailboxName, queryOp
 				) }/check-mailbox-availability/${ encodeURIComponent( mailboxName ) }`,
 				apiNamespace: 'wpcom/v2',
 			} ),
-		queryOptions
+		{
+			...queryOptions,
+			retry: ( count, { message: status } ) => finalErrorStatuses.includes( status ),
+		}
 	);
 };

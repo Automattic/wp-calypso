@@ -59,7 +59,7 @@ const TitanSetupMailbox = ( { selectedDomainName } ) => {
 		<>
 			<PageViewTracker
 				path={ analyticsPath }
-				title="Email Management > Set up your Professional Email mailbox"
+				title="Email Management > Set up your Professional Email"
 			/>
 
 			{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
