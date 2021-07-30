@@ -95,7 +95,7 @@ export class LoginForm extends Component {
 		const { disableAutoFocus } = this.props;
 		// eslint-disable-next-line react/no-did-mount-set-state
 		this.setState( { isFormDisabledWhileLoading: false }, () => {
-			! disableAutoFocus && this.usernameOrEmail && this.usernameOrEmail.focus();
+			! disableAutoFocus && defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
 		} );
 	}
 
