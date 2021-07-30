@@ -2,6 +2,7 @@ import { Card } from '@automattic/components';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import QueryActivityLogRetentionPolicy from 'calypso/components/data/query-activity-log-retention-policy';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { Interval, EVERY_SECOND } from 'calypso/lib/interval';
@@ -10,6 +11,7 @@ import {
 	isSuccessfulRealtimeBackup,
 } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
+import { useIsDateBeyondRetentionPeriod } from 'calypso/my-sites/backup/status/hooks';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import { getInProgressBackupForSite, siteHasRealtimeBackups } from 'calypso/state/rewind/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
@@ -18,6 +20,7 @@ import BackupInProgress from './status-card/backup-in-progress';
 import BackupJustCompleted from './status-card/backup-just-completed';
 import BackupScheduled from './status-card/backup-scheduled';
 import BackupSuccessful from './status-card/backup-successful';
+import BeyondRetentionPeriod from './status-card/beyond-retention-period';
 import NoBackupsOnSelectedDate from './status-card/no-backups-on-selected-date';
 import NoBackupsYet from './status-card/no-backups-yet';
 
@@ -49,6 +52,15 @@ const DailyBackupStatus = ( { selectedDate, lastBackupDate, backup, deltas } ) =
 			backupPreviouslyInProgress.current = backupCurrentlyInProgress;
 		}
 	}, [ backupCurrentlyInProgress ] );
+
+	// If retention policies are enabled,
+	// and we're looking at a date beyond this site's retention period,
+	// display a status to reflect this.
+	const isDateBeyondRetentionPeriod = useIsDateBeyondRetentionPeriod( siteId );
+	const beyondRetentionPeriod = isDateBeyondRetentionPeriod( selectedDate );
+	if ( beyondRetentionPeriod ) {
+		return <BeyondRetentionPeriod selectedDate={ selectedDate } />;
+	}
 
 	// The backup "period" property is represented by
 	// an integer number of seconds since the Unix epoch
@@ -125,6 +137,7 @@ const Wrapper = ( props ) => {
 	// to see if there's a backup currently in progress
 	return (
 		<Card className="daily-backup-status">
+			<QueryActivityLogRetentionPolicy siteId={ siteId } />
 			<QueryRewindBackups siteId={ siteId } />
 			<DailyBackupStatus { ...props } />
 		</Card>
