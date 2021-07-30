@@ -20,8 +20,8 @@ object WebApp : Project({
 	buildType(RunAllUnitTests)
 	buildType(CheckCodeStyleBranch)
 	buildType(BuildDockerImage)
-	buildType(playwrightBuildType("desktop", "23cc069f-59e5-4a63-a131-539fb55264e7", "+:*"));
-	buildType(playwrightBuildType("mobile", "90fbd6b7-fddb-4668-9ed0-b32598143616", "+:trunk"));
+	buildType(playwrightBuildType("desktop", "23cc069f-59e5-4a63-a131-539fb55264e7"));
+	buildType(playwrightBuildType("mobile", "90fbd6b7-fddb-4668-9ed0-b32598143616"));
 })
 
 object RunCalypsoE2eDesktopTests : BuildType({
@@ -887,7 +887,10 @@ fun playwrightBuildType( viewportName: String, buildUuid: String, filter: String
 
 		triggers {
 			vcs {
-				branchFilter = filter
+				branchFilter = """
+					+:*
+					-:pull*
+				""".trimIndent()
 			}
 		}
 
