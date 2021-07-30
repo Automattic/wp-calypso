@@ -12,6 +12,9 @@ const selectors = {
 	heading: '.sidebar > li',
 	subheading: '.sidebar__menu-item--child',
 	expandedMenu: '.sidebar__menu.is-toggle-open',
+
+	// Sidebar regions
+	currentSiteCard: '.card.current-site',
 };
 
 /**
@@ -20,15 +23,6 @@ const selectors = {
  */
 export class SidebarComponent {
 	private page: Page;
-
-	/**
-	 * Waits for the wrapper of the sidebar to be initialized on the page, then returns the element handle for that sidebar
-	 *
-	 * @returns the ElementHandle for the sidebar
-	 */
-	async waitForSidebarInitialization(): Promise< ElementHandle > {
-		return await this.page.waitForSelector( selectors.sidebar );
-	}
 
 	/**
 	 * Constructs an instance of the component.
@@ -61,13 +55,14 @@ export class SidebarComponent {
 	 * @param {string} param0.subitem Plaintext representation of the child level heading.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async gotoMenu( { item, subitem }: { item?: string; subitem?: string } ): Promise< void > {
+	async gotoMenu( { item, subitem }: { item: string; subitem?: string } ): Promise< void > {
 		let selector;
 		const viewportName = getViewportName();
 
-		// Especially on mobile devices, there can be a race condition in clicking on "My Sites" button to slide in the sidebar,
-		// and that sidebar actually being initialized! So we want to wait and make sure the sidebar is actually in the DOM before proceeding.
-		const sidebar = await this.waitForSidebarInitialization();
+		// Especially on mobile devices, there can be a race condition in clicking on "My Sites" button
+		// to slide in the sidebar, and that sidebar actually being initialized! So we want to wait
+		// and make sure the sidebar is actually in the DOM before proceeding.
+		await this.page.waitForSelector( selectors.sidebar );
 
 		// If mobile, sidebar is hidden by default and focus is on the content.
 		// The sidebar must be first brought into view.
@@ -75,20 +70,20 @@ export class SidebarComponent {
 			await this._openMobileSidebar();
 		}
 
-		if ( item ) {
-			item = toTitleCase( item ).trim();
-			// This will exclude entries where the `heading` term matches multiple times
-			// eg. `Settings` but they are sub-headings in reality, such as Jetpack > Settings.
-			// Since the sub-headings are always hidden unless heading is selected, this works to
-			// our advantage by specifying to match only visible text.
-			selector = `${ selectors.heading } span:has-text("${ item }"):visible`;
-			await this._click( selector );
-		}
+		// Wait for the sidebar to finish loading all elements, including asynchronously loaded
+		// offers and notices that may appear in the Current Site Card.
+		await this._waitUntilMenuItemsLoaded( 50 );
+
+		item = toTitleCase( item ).trim();
+		// This will exclude entries where the `heading` term matches multiple times
+		// eg. `Settings` but they are sub-headings in reality, such as Jetpack > Settings.
+		// Since the sub-headings are always hidden unless heading is selected, this works to
+		// our advantage by specifying to match only visible text.
+		selector = `${ selectors.heading } span:has-text("${ item }"):visible`;
+		await this._click( selector );
 
 		if ( subitem ) {
 			subitem = toTitleCase( subitem ).trim();
-			// If there is a subheading, by definition the expanded menu element will always be present.
-			await sidebar.waitForSelector( selectors.expandedMenu );
 			// Explicitly select only the child headings and combine with the text matching engine.
 			// This works better than using CSS pseudo-classes like `:has-text` or `:text-matches` for text
 			// matching.
@@ -98,6 +93,41 @@ export class SidebarComponent {
 
 		// Confirm the focus is now back to the content, not the sidebar.
 		await this.page.waitForSelector( `${ selectors.layout }.focus-content` );
+	}
+
+	/**
+	 * Waits for the sidebar menu items to finish loading.
+	 *
+	 * The bounding box of the Current Site card (located at top of the sidebar) is compared
+	 * every 250ms to determine whether loading has completed.
+	 *
+	 * On some sites, typically atomic, the sidebar undergoes multiple mutations of its structure:
+	 * 	1. Shell of the sidebar gets created and remains static throughout the entire loading process.
+	 * 	2. First version of the sidebar gets created and has only the original basic menu items.
+	 * 	3. The mostly final version of the sidebar gets created. The parent element looks exactly the same
+	 * 		but it is a new node that is attached in the DOM to replace the old one. This final version has
+	 * 		all the menus from different plugins.
+	 *	4. Offers and notices are loaded in a banner that pop in on the top of the sidebar. This does not
+	 *		detach the parent sidebar, or any of the other elements, from the DOM. However, they do shift
+	 *		down slightly on the page.
+	 *
+	 * The bounding box of the Current Site card is one of the last elements to stabilize in the loading
+	 * process and its stability is a good indicator of the page stability.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	private async _waitUntilMenuItemsLoaded( delay: number ): Promise< void > {
+		let loaded = false;
+		while ( ! loaded ) {
+			const elementHandle = await this.page.waitForSelector( selectors.currentSiteCard );
+			const startingBoundingBox = await elementHandle.boundingBox();
+			await new Promise( ( resolve ) => setTimeout( resolve, delay ) );
+			const currentBoundingBox = await elementHandle.boundingBox();
+			// Height is the only factor that changes in the bounding box.
+			if ( startingBoundingBox!.height === currentBoundingBox!.height ) {
+				loaded = true;
+			}
+		}
 	}
 
 	/**
