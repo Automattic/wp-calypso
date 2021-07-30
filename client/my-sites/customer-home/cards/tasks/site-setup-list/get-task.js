@@ -37,6 +37,8 @@ const isTaskDisabled = (
 			return 'requesting' === emailVerificationStatus || ! isEmailUnverified;
 		case CHECKLIST_KNOWN_TASKS.SITE_LAUNCHED:
 			return isDomainUnverified;
+		case CHECKLIST_KNOWN_TASKS.PROFESSIONAL_EMAIL_MAILBOX_CREATED:
+			return task.isCompleted;
 		default:
 			return false;
 	}
