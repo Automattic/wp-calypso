@@ -37,6 +37,18 @@ import { addOnboardingCallInternalNote } from './utils';
  * Type dependencies
  */
 import type { UserData } from 'calypso/lib/user/user';
+
+interface CalendlyEvent {
+	data: {
+		event: string;
+		payload: {
+			event: {
+				uri: string;
+			};
+		};
+	};
+}
+
 interface Props {
 	forScheduling: boolean;
 	productSlug: string | 'no_product';
@@ -146,15 +158,18 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 
 	// Update the ZD ticket linked to `receiptId` after the user has scheduled a call.
 	useEffect( () => {
-		const dispatchCalendlyEventScheduled = async ( e: { data: { event?: string } } ) => {
-			const isCalendlyEvent = e.data.event && e.data.event === 'calendly.event_scheduled';
-			if ( isCalendlyEvent ) {
-				const result = await addOnboardingCallInternalNote( receiptId );
+		const dispatchCalendlyEventScheduled = async ( event: CalendlyEvent ) => {
+			if ( event && event.data?.event === 'calendly.event_scheduled' ) {
+				const eventUri = event.data.payload?.event?.uri || '';
+				// The last part of the pathname is the ID of the Calendly event
+				const eventId = new URL( eventUri ).pathname.split( '/' ).pop();
+				const result = await addOnboardingCallInternalNote( receiptId, eventId );
 				if ( result ) {
 					dispatch(
 						recordTracksEvent( 'calypso_siteless_checkout_schedule_onboarding_call', {
 							product_slug: productSlug,
 							receipt_id: receiptId,
+							event_id: eventId,
 						} )
 					);
 				}
