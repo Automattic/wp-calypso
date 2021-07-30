@@ -1,4 +1,3 @@
-import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import React from 'react';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -24,9 +23,13 @@ export default function Browsehappy( { from } ) {
 				<img src={ illustrationURL } alt="" />
 				<h1>{ __( 'Unsupported Browser' ) }</h1>
 				<p>{ __( 'Unfortunately this page may not work correctly in your browser.' ) }</p>
-				<Button isPrimary href={ SUPPORTED_BROWSERS_LINK }>
+				{ /* TODO: This mimics @wordpress/components button. Currently, wp components
+				does not compile in the server build because it is missing a peer dependency.
+				That problem will be resolved once the latest version of @wordpress/components
+				available in Calypso. We should switch to the Button component at that time. */ }
+				<a class="components-button is-primary" href={ SUPPORTED_BROWSERS_LINK }>
 					{ __( 'View supported browsers' ) }
-				</Button>
+				</a>
 				<p>
 					<a className="browsehappy__anyway" href={ continueUrl }>
 						{ __( 'Continue loading the page anyway' ) }
