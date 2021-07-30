@@ -5,6 +5,7 @@ import {
 	ThemesPage,
 	PreviewComponent,
 	setupHooks,
+	SiteSelectComponent,
 } from '@automattic/calypso-e2e';
 
 describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
@@ -13,6 +14,7 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 	let previewComponent;
 	// This test will use this specific theme as it will never be active.
 	const themeName = 'Twenty Seventeen';
+	const user = 'defaultUser';
 	let page;
 
 	setupHooks( ( args ) => {
@@ -20,8 +22,16 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 	} );
 
 	it( 'Log In', async function () {
-		const loginFlow = new LoginFlow( page );
+		const loginFlow = new LoginFlow( page, user );
 		await loginFlow.logIn();
+	} );
+
+	it( 'Select test site', async function () {
+		const siteSelectComponent = new SiteSelectComponent( page );
+		await page.pause();
+		await siteSelectComponent.selectSite(
+			DataHelper.getAccountSiteURL( user, { protocol: false } )
+		);
 	} );
 
 	it( 'Navigate to Themes', async function () {
