@@ -53,10 +53,7 @@ export class LoginPage extends BaseContainer {
 		await this.page.fill( selectors.username, username );
 		await this.page.keyboard.press( 'Enter' );
 		await this.page.fill( selectors.password, password );
-		await Promise.all( [
-			this.page.waitForNavigation(),
-			this.page.click( selectors.loginButton ),
-		] );
+		await this.page.click( selectors.loginButton );
 		// make sure after logging in that everything stablizes, so we can continue with the next action!
 		await this.page.waitForLoadState( 'load' );
 	}
