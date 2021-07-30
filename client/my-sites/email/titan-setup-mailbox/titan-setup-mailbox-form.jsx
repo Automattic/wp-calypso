@@ -136,7 +136,7 @@ const useHandleSetupAction = (
 	return { handleSetup, isBusy };
 };
 
-const TitanSetupMailboxForm = ( { selectedDomainName, siteDomainsAreLoaded } ) => {
+const TitanSetupMailboxForm = ( { areSiteDomainsLoaded, selectedDomainName } ) => {
 	const [ mailboxes, setMailboxes ] = useState( [
 		buildNewTitanMailbox( selectedDomainName, false ),
 	] );
@@ -156,7 +156,7 @@ const TitanSetupMailboxForm = ( { selectedDomainName, siteDomainsAreLoaded } ) =
 		setValidatedMailboxUuids
 	);
 
-	if ( ! siteDomainsAreLoaded ) {
+	if ( ! areSiteDomainsLoaded ) {
 		return <AddEmailAddressesCardPlaceholder />;
 	}
 
@@ -183,8 +183,8 @@ const TitanSetupMailboxForm = ( { selectedDomainName, siteDomainsAreLoaded } ) =
 };
 
 TitanSetupMailboxForm.propType = {
+	areSiteDomainsLoaded: PropTypes.object.isRequired,
 	selectedDomainName: PropTypes.string.isRequired,
-	siteDomainsAreLoaded: PropTypes.object.isRequired,
 };
 
 export default TitanSetupMailboxForm;

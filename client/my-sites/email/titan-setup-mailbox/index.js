@@ -12,7 +12,10 @@ import { useTranslate } from 'i18n-calypso';
  */
 import DocumentHead from 'calypso/components/data/document-head';
 import EmailHeader from 'calypso/my-sites/email/email-header';
-import { emailManagement, emailManagementTitanSetupMailbox } from 'calypso/my-sites/email/paths';
+import {
+	emailManagementPurchaseNewEmailAccount,
+	emailManagementTitanSetupMailbox,
+} from 'calypso/my-sites/email/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedDomain } from 'calypso/lib/domains';
@@ -50,7 +53,7 @@ const TitanSetupMailbox = ( { selectedDomainName } ) => {
 	const translate = useTranslate();
 
 	if ( areSiteDomainsLoaded && ! hasTitanSubscription ) {
-		page( emailManagement( siteSlug, selectedDomainName, currentRoute ) );
+		page( emailManagementPurchaseNewEmailAccount( siteSlug, selectedDomainName, currentRoute ) );
 
 		return null;
 	}
@@ -74,7 +77,7 @@ const TitanSetupMailbox = ( { selectedDomainName } ) => {
 				</HeaderCake>
 
 				<TitanSetupMailboxForm
-					siteDomainsAreLoaded={ areSiteDomainsLoaded }
+					areSiteDomainsLoaded={ areSiteDomainsLoaded }
 					selectedDomainName={ selectedDomainName }
 				/>
 			</Main>
