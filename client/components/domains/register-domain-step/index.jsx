@@ -1453,9 +1453,7 @@ class RegisterDomainStep extends React.Component {
 				offerUnavailableOption={ this.props.offerUnavailableOption }
 				placeholderQuantity={ PAGE_SIZE }
 				isSignupStep={ this.props.isSignupStep }
-				showStrikedOutPrice={
-					this.props.isSignupStep && ! this.props.forceHideFreeDomainExplainerAndStrikeoutUi
-				}
+				showStrikedOutPrice={ ! this.props.forceHideFreeDomainExplainerAndStrikeoutUi }
 				railcarId={ this.state.railcarId }
 				fetchAlgo={ this.getFetchAlgo() }
 				cart={ this.props.cart }

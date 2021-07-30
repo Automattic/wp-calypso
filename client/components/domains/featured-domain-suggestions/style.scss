@@ -49,7 +49,6 @@
 	.button.domain-suggestion__action {
 		flex-grow: 0;
 		margin-left: 0;
-		margin-top: 1em;
 		text-align: center;
 		padding: 0.5em 3em;
 		transition: all 0.1s linear;
@@ -121,7 +120,6 @@
 		align-items: center;
 		display: flex;
 		font-size: $font-body-extra-small;
-		margin-top: 10px;
 		order: 2;
 
 		.progress-bar {
@@ -151,6 +149,17 @@
 		.domain-registration-suggestion__progress-bar,
 		.domain-registration-suggestion__match-reasons {
 			display: none;
+		}
+	}
+}
+
+.featured-domain-suggestion.card {
+	.domain-registration-suggestion__title-wrapper {
+		flex-wrap: nowrap;
+		flex-direction: column-reverse;
+
+		@include break-xlarge {
+			flex-direction: row;
 		}
 	}
 }

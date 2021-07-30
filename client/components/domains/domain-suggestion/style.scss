@@ -279,6 +279,19 @@
 	}
 }
 
+.domain-registration-suggestion__progress-bar {
+	align-self: center;
+	margin-left: 0;
+	margin-top: 0;
+	margin-bottom: 10px;
+
+	.badge {
+		border-radius: 4px; /* stylelint-disable-line */
+		font-size: 0.75rem;
+		font-weight: 500; /* stylelint-disable-line */
+	}
+}
+
 body.is-section-signup.is-white-signup {
 	.domain-registration-suggestion__progress-bar {
 		align-self: center;
