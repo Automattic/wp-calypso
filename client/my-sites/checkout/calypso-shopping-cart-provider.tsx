@@ -1,10 +1,5 @@
-import {
-	ShoppingCartProvider,
-	useShoppingCart,
-	ShoppingCartProvider,
-	useShoppingCart,
-} from '@automattic/shopping-cart';
-import React, { useMemo, useMemo } from 'react';
+import { ShoppingCartProvider } from '@automattic/shopping-cart';
+import React, { useMemo } from 'react';
 import CartMessages from 'calypso/my-sites/checkout/cart/cart-messages';
 import { cartManagerClient } from './cart-manager-client';
 import useCartKey from './use-cart-key';
@@ -29,13 +24,8 @@ export default function CalypsoShoppingCartProvider( {
 
 	return (
 		<ShoppingCartProvider managerClient={ cartManagerClient } options={ options }>
-			<CalypsoShoppingCartMessages />
+			<CartMessages />
 			{ children }
 		</ShoppingCartProvider>
 	);
-}
-
-function CalypsoShoppingCartMessages() {
-	const { responseCart, isLoading } = useShoppingCart();
-	return <CartMessages cart={ responseCart } isLoadingCart={ isLoading } />;
 }
