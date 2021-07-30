@@ -9,6 +9,21 @@
 	padding-top: 2em;
 	font-family: var( --p2-font-inter );
 
+	.invite-accept__form {
+		max-width: unset;
+	}
+
+	.invite-accept-logged-in__invite-container {
+		max-width: 400px;
+		margin: 0 auto;
+	}
+
+	.invite-accept-logged-in__header {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
 	button {
 		border-radius: 20px; /* stylelint-disable-line */
 		margin: 10px 0;
@@ -52,36 +67,6 @@
 	.invite-form-header__explanation {
 		font-size: 1.25rem;
 		line-height: 1.5;
-	}
-
-	/* invite-accept-logged-in */
-	.invite-accept-logged-in__join-as {
-		display: flex;
-		align-items: center;
-		margin: 2rem 0;
-
-		.gravatar {
-			margin: 0 1rem 0 0;
-			width: 48px;
-			height: 48px;
-		}
-	}
-
-	.invite-accept-logged-in__join-as-text-container {
-		text-align: left;
-
-		.logged-out-form__links {
-			text-align: left;
-
-			&::before {
-				height: 0;
-				margin: 0;
-			}
-		}
-
-		.logged-out-form__link-item {
-			padding: 0;
-		}
 	}
 
 	.invite-accept-logged-in__buttons {

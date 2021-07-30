@@ -8,7 +8,6 @@ import React from 'react';
  */
 import { Button } from '@automattic/components';
 import Gravatar from 'calypso/components/gravatar';
-import InviteFormHeader from 'calypso/my-sites/invites/invite-form-header';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 
@@ -23,20 +22,46 @@ export function renderInviteAcceptForP2( props ) {
 			<div className="invite-accept-logged-in__p2-logo">
 				<img src="/calypso/images/p2/logo.png" width="67" height="32" alt="P2 logo" />
 			</div>
+			<div className="invite-accept-logged-in__p2-learn-more">
+				<a href="https://p2help.wordpress.com">
+					{ props.translate( 'Learn more about P2', { context: 'link' } ) }
+				</a>
+			</div>
 
-			<div className="invite-accept-logged-in__card">
-				<InviteFormHeader { ...props.invite } user={ props.user } />
-				<div className="invite-accept-logged-in__join-as">
-					<Gravatar user={ props.user } size={ 72 } />
-					<div className="invite-accept-logged-in__join-as-text-container">
-						{ props.joinAsText }
-						<LoggedOutFormLinks>
-							<LoggedOutFormLinkItem onClick={ props.signIn } href={ props.signInLink }>
-								{ props.translate( 'Sign in as a different user' ) }
-							</LoggedOutFormLinkItem>
-						</LoggedOutFormLinks>
+			<div className="invite-accept-logged-in__invite-container">
+				<div className="invite-accept-logged-in__header">
+					<div className="invite-accept-logged-in__site-icon">
+						<img src={ props.invite.site.icon.img } width="64" height="64" alt="P2 logo" />
+					</div>
+					<div className="invite-accept-logged-in__join-p2-title">
+						{ props.translate( 'Join %(siteName)s on P2', {
+							args: {
+								siteName: props.invite.site.title,
+							},
+						} ) }
+					</div>
+					<div className="invite-accept-logged-in__join-p2-text">
+						{ props.translate(
+							"You've been invited to join %(siteName)s on P2, a platform for teams to share, discuss, and collaborate openly, without interruption.",
+							{
+								args: {
+									siteName: props.invite.site.title,
+								},
+							}
+						) }
 					</div>
 				</div>
+
+				<div className="invite-accept-logged-in__join-as">
+					<Gravatar user={ props.user } size={ 72 } />
+					<div className="invite-accept-logged-in__join-as-text">{ props.joinAsText }</div>
+					<LoggedOutFormLinks>
+						<LoggedOutFormLinkItem onClick={ props.signIn } href={ props.signInLink }>
+							{ props.translate( 'Sign in as a different user' ) }
+						</LoggedOutFormLinkItem>
+					</LoggedOutFormLinks>
+				</div>
+
 				<div className="invite-accept-logged-in__buttons">
 					<Button
 						primary
