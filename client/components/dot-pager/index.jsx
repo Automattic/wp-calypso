@@ -77,6 +77,7 @@ export const DotPager = ( {
 	...props
 } ) => {
 	const [ currentPage, setCurrentPage ] = useState( 0 );
+	const [ pagesStyle, setPagesStyle ] = useState();
 	const pagesRef = useRef();
 	const [ resizeObserver, sizes ] = useResizeObserver();
 
@@ -87,11 +88,8 @@ export const DotPager = ( {
 
 		const targetHeight = pagesRef.current?.children[ currentPage ]?.offsetHeight;
 
-		pagesRef.current.style.setProperty(
-			'height',
-			targetHeight ? `${ targetHeight }px` : undefined
-		);
-	}, [ hasDynamicHeight, currentPage, sizes.width ] );
+		setPagesStyle( targetHeight ? { height: targetHeight } : undefined );
+	}, [ hasDynamicHeight, currentPage, sizes.width, setPagesStyle ] );
 
 	return (
 		<div className={ className } { ...props }>
@@ -102,7 +100,7 @@ export const DotPager = ( {
 				numberOfPages={ Children.count( children ) }
 				setCurrentPage={ setCurrentPage }
 			/>
-			<div className="dot-pager__pages" ref={ pagesRef }>
+			<div className="dot-pager__pages" ref={ pagesRef } style={ pagesStyle }>
 				{ Children.map( children, ( child, index ) => (
 					<div
 						className={ classnames( 'dot-pager__page', {
