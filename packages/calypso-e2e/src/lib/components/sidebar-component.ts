@@ -34,6 +34,15 @@ export class SidebarComponent {
 	}
 
 	/**
+	 * Waits for the wrapper of the sidebar to be initialized on the page, then returns the element handle for that sidebar
+	 *
+	 * @returns the ElementHandle for the sidebar
+	 */
+	async waitForSidebarInitialization(): Promise< ElementHandle > {
+		return await this.page.waitForSelector( selectors.sidebar );
+	}
+
+	/**
 	 * Given heading and subheading, or any combination of the two, locate and click on the items on the sidebar.
 	 *
 	 * This method supports any of the following use cases:
@@ -62,7 +71,7 @@ export class SidebarComponent {
 		// Especially on mobile devices, there can be a race condition in clicking on "My Sites" button
 		// to slide in the sidebar, and that sidebar actually being initialized! So we want to wait
 		// and make sure the sidebar is actually in the DOM before proceeding.
-		await this.page.waitForSelector( selectors.sidebar );
+		await this.waitForSidebarInitialization();
 
 		// If mobile, sidebar is hidden by default and focus is on the content.
 		// The sidebar must be first brought into view.
