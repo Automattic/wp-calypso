@@ -8,6 +8,7 @@ import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 import { useTranslate } from 'i18n-calypso';
 import { CheckoutProvider, CheckoutSubmitButton } from '@automattic/composite-checkout';
 import { Button, Card } from '@automattic/components';
+import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 
 /**
  * Internal dependencies
@@ -29,6 +30,7 @@ import type { TranslateResult } from 'i18n-calypso';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import CreditCardLoading from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields/credit-card-loading';
+import DeletePaymentMethodDialog from 'calypso/jetpack-cloud/sections/partner-portal/delete-payment-method-dialog';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
@@ -52,8 +54,19 @@ function onPaymentSelectComplete( {
 function PaymentMethodAdd(): ReactElement {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const storedCards = useSelector( getAllStoredCards );
 	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
+	const detailsId = getQueryArg( window.location.href, 'details_id' );
+	const storedCards = useSelector( getAllStoredCards );
+	const currentCard = storedCards.find( ( card ) => detailsId === card.stored_details_id );
+	const isEditing = detailsId && currentCard;
+
+	useEffect( () => {
+		if ( detailsId && ! currentCard ) {
+			page.redirect(
+				removeQueryArgs( window.location.pathname + window.location.search, 'details_id' )
+			);
+		}
+	}, [] );
 
 	const stripeMethod = useCreateStoredCreditCardMethod( {
 		isStripeLoading,
@@ -101,6 +114,18 @@ function PaymentMethodAdd(): ReactElement {
 	);
 
 	const assignAllSubscriptionsText = String( translate( 'Set as primary payment method' ) );
+
+	const [ isDeleteDialogOpen, setIsDeleteDialogOpen ] = useState( false );
+
+	const openDeleteDialog = useCallback( () => {
+		setIsDeleteDialogOpen( true );
+		dispatch( recordTracksEvent( 'calypso_partner_portal_license_details_revoke_dialog_open' ) );
+	}, [ dispatch, setIsDeleteDialogOpen ] );
+
+	const closeDeleteDialog = useCallback( () => {
+		setIsDeleteDialogOpen( false );
+		dispatch( recordTracksEvent( 'calypso_partner_portal_license_details_revoke_dialog_close' ) );
+	}, [ dispatch, setIsDeleteDialogOpen ] );
 
 	return (
 		<Main wideLayout className="payment-method-add">
@@ -167,10 +192,31 @@ function PaymentMethodAdd(): ReactElement {
 						>
 							{ translate( 'Go back' ) }
 						</Button>
-						<CheckoutSubmitButton className="payment-method-add__submit-button" />
+						<CheckoutSubmitButton
+							className="payment-method-add__submit-button"
+							disabled={ isEditing }
+						/>
 					</div>
+					{ isEditing && (
+						<Button
+							className="payment-method-add__delete-button"
+							scary
+							borderless
+							onClick={ openDeleteDialog }
+						>
+							{ translate( 'Delete Payment Method' ) }
+						</Button>
+					) }
 				</Card>
 			</CheckoutProvider>
+
+			{ isDeleteDialogOpen && (
+				<DeletePaymentMethodDialog
+					availableCards={ storedCards }
+					cardToDelete={ currentCard }
+					onClose={ closeDeleteDialog }
+				/>
+			) }
 		</Main>
 	);
 }

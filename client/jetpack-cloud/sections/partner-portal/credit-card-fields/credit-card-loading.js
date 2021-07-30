@@ -22,9 +22,7 @@ export default function CreditCardLoading() {
 		<div className="credit-card-fields credit-card-fields--placeholder">
 			<div className="credit-card-fields__form">
 				<div className="credit-card-fields__field"></div>
-
 				<div className="credit-card-fields__field"></div>
-
 				<div className="credit-card-fields__field"></div>
 
 				<div className="credit-card-fields__field-block">

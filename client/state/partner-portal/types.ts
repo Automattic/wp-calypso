@@ -141,6 +141,25 @@ export interface LicenseCounts {
 	not_revoked: number;
 }
 
+export interface CreditCard {
+	added: string;
+	allStoredDetailsIds: string[];
+	card: string;
+	card_type: string;
+	email: string;
+	expiry: string;
+	is_expired: boolean;
+	last_service: string;
+	last_used: string;
+	meta: Record< string, unknown >[];
+	mp_ref: string;
+	name: string;
+	payment_partner: string;
+	remember: string;
+	stored_details_id: string;
+	user_id: string;
+}
+
 export interface LicensesStore {
 	hasFetched: boolean;
 	isFetching: boolean;

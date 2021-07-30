@@ -22,7 +22,7 @@ export default function AddStoredCreditCard(): ReactElement {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const navigateToCreateAddCard = () => {
+	const navigateToAddCard = () => {
 		dispatch( recordTracksEvent( 'calypso_partner_portal_payment_method_add_new_card_click' ) );
 	};
 
@@ -30,7 +30,7 @@ export default function AddStoredCreditCard(): ReactElement {
 		<a
 			className="add-stored-credit-card"
 			href="/partner-portal/payment-method/card"
-			onClick={ navigateToCreateAddCard }
+			onClick={ navigateToAddCard }
 		>
 			<div className="add-stored-credit-card__content">
 				<CardHeading className="add-stored-credit-card__title" tagName="h3">
