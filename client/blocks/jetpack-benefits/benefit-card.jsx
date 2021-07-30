@@ -21,7 +21,7 @@ export const JetpackBenefitsCard = ( props ) => {
 					}
 				>
 					{ getStat() }
-					<div>{ props.description }</div>
+					<div className="jetpack-benefits__card-description">{ props.description }</div>
 				</div>
 			</div>
 		</div>
