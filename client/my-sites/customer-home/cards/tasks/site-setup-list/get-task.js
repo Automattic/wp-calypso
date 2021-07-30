@@ -100,9 +100,9 @@ export const getTask = (
 		case CHECKLIST_KNOWN_TASKS.BLOGNAME_SET:
 			taskData = {
 				timing: 1,
-				title: translate( 'Name your site' ),
+				title: translate( 'Give your site a name' ),
 				description: translate(
-					'Give your new site a title to let people know what your site is about. A good title introduces your brand and the primary topics of your site.'
+					'Give your new site a title to let people know what your site is about.'
 				),
 				actionText: translate( 'Name your site' ),
 				actionUrl: `/settings/general/${ siteSlug }`,
@@ -112,7 +112,7 @@ export const getTask = (
 		case CHECKLIST_KNOWN_TASKS.MOBILE_APP_INSTALLED:
 			taskData = {
 				timing: 3,
-				title: translate( 'Get the WordPress app' ),
+				title: translate( 'Try the WordPress app' ),
 				description: translate(
 					'Download the WordPress app to your mobile device to manage your site and follow your stats on the go.'
 				),
@@ -141,7 +141,7 @@ export const getTask = (
 		case CHECKLIST_KNOWN_TASKS.SITE_LAUNCHED:
 			taskData = {
 				timing: 1,
-				title: translate( 'Launch your site' ),
+				title: translate( 'Launch your site to the world' ),
 				description: translate(
 					"Your site is private and only visible to you. When you're ready, launch your site to make it public."
 				),
@@ -165,7 +165,7 @@ export const getTask = (
 		case CHECKLIST_KNOWN_TASKS.SITE_MENU_UPDATED:
 			taskData = {
 				timing: 10,
-				title: translate( 'Edit the site menu' ),
+				title: translate( 'Customize your site menu' ),
 				description: translate(
 					"Building an effective navigation menu makes it easier for someone to find what they're looking for and improve search engine rankings."
 				),
