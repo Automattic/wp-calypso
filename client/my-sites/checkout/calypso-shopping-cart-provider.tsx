@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { useMemo } from 'react';
-import { ShoppingCartProvider, useShoppingCart } from '@automattic/shopping-cart';
+import { ShoppingCartProvider } from '@automattic/shopping-cart';
 
 /**
  * Internal Dependencies
@@ -31,13 +31,8 @@ export default function CalypsoShoppingCartProvider( {
 
 	return (
 		<ShoppingCartProvider managerClient={ cartManagerClient } options={ options }>
-			<CalypsoShoppingCartMessages />
+			<CartMessages />
 			{ children }
 		</ShoppingCartProvider>
 	);
-}
-
-function CalypsoShoppingCartMessages() {
-	const { responseCart, isLoading } = useShoppingCart();
-	return <CartMessages cart={ responseCart } isLoadingCart={ isLoading } />;
 }
