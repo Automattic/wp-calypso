@@ -154,7 +154,6 @@
 		"site-indicator": true,
 		"memberships": true,
 		"support-user": true,
-		"theme/showcase-revamp": true,
 		"titan/iframe-control-panel": false,
 		"tools/migrate": true,
 		"upgrades/checkout": true,
