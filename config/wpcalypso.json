@@ -116,6 +116,7 @@
 		"settings/theme-setup": true,
 		"sign-in-with-apple": true,
 		"sign-in-with-apple/redirect": true,
+		"signup/professional-email-step": true,
 		"signup/reskin": true,
 		"signup/social": true,
 		"site-indicator": true,
