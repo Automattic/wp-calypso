@@ -14,7 +14,7 @@ const config = require( path.join( __dirname, 'config' ) );
 const transformsDir = path.join( __dirname, './transforms' );
 
 const jscodeshiftBin = require( 'module' )
-	.createRequireFromPath( require.resolve( 'jscodeshift' ) )
+	.createRequire( require.resolve( 'jscodeshift' ) )
 	.resolve( require( 'jscodeshift/package.json' ).bin.jscodeshift );
 
 function getLocalCodemodFileNames() {
