@@ -120,6 +120,23 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
+			paths.emailManagementTitanSetupMailbox(
+				':site',
+				':domain',
+				paths.emailManagementAllSitesPrefix
+			),
+			paths.emailManagementTitanSetupMailbox( ':site', ':domain' ),
+		],
+		handlers: [
+			...commonHandlers,
+			controller.emailManagementTitanSetupMailbox,
+			makeLayout,
+			clientRender,
+		],
+	} );
+
+	registerMultiPage( {
+		paths: [
 			paths.emailManagementTitanControlPanelRedirect(
 				':site',
 				':domain',

@@ -78,6 +78,10 @@ export function emailManagementNewTitanAccount( siteName, domainName, relativeTo
 	return emailManagementEdit( siteName, domainName, 'titan/new', relativeTo );
 }
 
+export function emailManagementTitanSetupMailbox( siteName, domainName, relativeTo = null ) {
+	return emailManagementEdit( siteName, domainName, 'titan/setup-mailbox', relativeTo );
+}
+
 export function emailManagementTitanControlPanelRedirect(
 	siteName,
 	domainName,
