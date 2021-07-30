@@ -1,0 +1,7 @@
+.thank-you__container-header img {
+	max-width: 200px;
+
+	@media ( max-width: 782px ) {
+		max-width: 150px;
+	}
+}
