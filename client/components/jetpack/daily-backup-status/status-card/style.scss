@@ -1,3 +1,37 @@
+.beyond-retention-period {
+	text-align: center;
+
+	.status-card__message-head {
+		margin-block-end: 24px;
+	}
+
+	.status-card__label {
+		text-align: center;
+	}
+
+	.status-card__button.form-button {
+		max-width: 240px;
+		margin: 32px auto;
+	}
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-block-end: initial;
+		text-align: initial;
+
+		.status-card__message-head {
+			margin-block-end: initial;
+		}
+
+		.status-card__label {
+			text-align: initial;
+		}
+
+		.status-card__button.form-button {
+			margin: 32px 0;
+		}
+	}
+}
+
 .status-card__message-head {
 	color: var( --studio-gray-80 );
 
