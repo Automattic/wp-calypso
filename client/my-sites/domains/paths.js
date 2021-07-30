@@ -60,6 +60,10 @@ export function domainAddNew( siteName, searchTerm ) {
 	return path;
 }
 
+export function domainAddEmailUpsell( siteName, domainName ) {
+	return `/domains/add/${ siteName }/email/${ domainName }`;
+}
+
 export function domainManagementAllRoot() {
 	return '/domains/manage/all';
 }
