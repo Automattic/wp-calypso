@@ -10,9 +10,24 @@ let cartProductsFallbackStorage: Partial< RequestCartProduct >[] = [];
 
 const localStorageKey = 'automatticShoppingCartProducts';
 
-// Used by signup; see https://github.com/Automattic/wp-calypso/pull/44206
-// These products are likely missing product_id.
+function isLocalStorageAvailable(): boolean {
+	try {
+		const storage = window.localStorage;
+		const x = '__storage_test__';
+		storage.setItem( x, x );
+		const y = storage.getItem( x );
+		storage.removeItem( x );
+		return x === y;
+	} catch {
+		return false;
+	}
+}
+
 export function getCartFromLocalStorage(): Partial< RequestCartProduct >[] {
+	if ( ! isLocalStorageAvailable() ) {
+		debug( 'localStorage not available for getting; using fallback' );
+		return cartProductsFallbackStorage;
+	}
 	try {
 		const products = JSON.parse( window.localStorage.getItem( localStorageKey ) || '[]' );
 		if ( Array.isArray( products ) ) {
@@ -32,6 +47,10 @@ export function addCartItemsToLocalStorage( newItems: Partial< RequestCartProduc
 export function saveCartItemsToLocalStorage( newItems: Partial< RequestCartProduct >[] ): void {
 	debug( 'saving cart items to localStorage', newItems );
 	cartProductsFallbackStorage = newItems;
+	if ( ! isLocalStorageAvailable() ) {
+		debug( 'localStorage not available for saving; using fallback' );
+		return;
+	}
 	try {
 		window.localStorage.setItem( localStorageKey, JSON.stringify( newItems ) );
 	} catch ( err ) {
@@ -42,6 +61,10 @@ export function saveCartItemsToLocalStorage( newItems: Partial< RequestCartProdu
 export function clearCartFromLocalStorage(): void {
 	debug( 'clearing cart items from localStorage' );
 	cartProductsFallbackStorage = [];
+	if ( ! isLocalStorageAvailable() ) {
+		debug( 'localStorage not available for clearing; using fallback' );
+		return;
+	}
 	try {
 		window.localStorage.removeItem( localStorageKey );
 	} catch ( err ) {
