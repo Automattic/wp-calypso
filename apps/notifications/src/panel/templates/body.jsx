@@ -84,6 +84,7 @@ export class NoteBody extends React.Component {
 		for ( i = 0; i < blocks.length; i++ ) {
 			const block = blocks[ i ];
 			const blockKey = 'block-' + this.props.note.id + '-' + i;
+			let slideCount = 0;
 
 			if ( block.block.actions && 'user' !== block.signature.type ) {
 				actions = (
@@ -114,7 +115,7 @@ export class NoteBody extends React.Component {
 					);
 					break;
 				case 'post':
-					let slideCount = 0;
+					slideCount = 0;
 					for ( i = 0; i < block.block.ranges.length; i++ ) {
 						if ( block.block.ranges[ i ].type === 'figcaption' ) {
 							block.block.ranges[ i ].style += 'display:none;';
