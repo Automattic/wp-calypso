@@ -16,6 +16,7 @@ const FindSuccess = () => {
 			links={ [
 				{
 					externalLink: true,
+					// Not using localizeUrl() because this page doesn't exist on translated versions of the /go site
 					url:
 						'https://wordpress.com/go/tips-and-tricks/10-ways-to-find-success-with-your-new-small-business-website/',
 					text: translate( 'Learn more' ),

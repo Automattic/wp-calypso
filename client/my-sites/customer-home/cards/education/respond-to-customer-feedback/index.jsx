@@ -16,6 +16,7 @@ const RespondToCustomerFeedback = () => {
 			links={ [
 				{
 					externalLink: true,
+					// Not using localizeUrl() because this page doesn't exist on translated versions of the /go site
 					url: 'https://wordpress.com/go/content-blogging/how-to-respond-to-customer-feedback/',
 					text: translate( 'Learn more' ),
 				},
