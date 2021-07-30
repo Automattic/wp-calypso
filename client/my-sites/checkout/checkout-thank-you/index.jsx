@@ -439,7 +439,9 @@ export class CheckoutThankYou extends React.Component {
 			);
 		} else if ( wasEcommercePlanPurchased ) {
 			if ( ! this.props.transferComplete ) {
-				return <TransferPending siteId={ this.props.selectedSite.ID } />;
+				return (
+					<TransferPending orderId={ this.props.receiptId } siteId={ this.props.selectedSite.ID } />
+				);
 			}
 
 			return (

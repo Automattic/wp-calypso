@@ -1,14 +1,19 @@
 /**
  * External dependencies
  */
+import page from 'page';
 import * as React from 'react';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { transferStates } from 'calypso/state/atomic-transfer/constants';
 import { hideMasterbar, showMasterbar } from 'calypso/state/ui/masterbar-visibility/actions';
 import { useInterval } from '../../../../lib/interval/use-interval';
 
@@ -20,17 +25,25 @@ import './style.scss';
 // Total time to perform "loading"
 const DURATION_IN_MS = 60000;
 
+// Props type
+interface Props {
+	siteId: number;
+	orderId: number;
+}
+
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-const TransferPending: React.FunctionComponent = () => {
+const TransferPending: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
+	const { siteId, orderId } = props;
 	const dispatch = useDispatch();
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+	const transfer = useSelector( ( state ) => getAtomicTransfer( state, siteId ) );
 
 	const steps = React.useRef< string[] >( [
 		__( 'Upgrading your site' ),
 		__( 'Installing plugin' ),
 		__( 'Activating plugin' ),
 	] );
-	// add more steps
 
 	const totalSteps = steps.current.length;
 
@@ -62,6 +75,33 @@ const TransferPending: React.FunctionComponent = () => {
 			dispatch( showMasterbar() );
 		};
 	}, [ dispatch ] );
+
+	// Redirect based on transfer status
+	React.useEffect( () => {
+		const retryOnError = () => {
+			page( `/stats/${ siteSlug }` );
+
+			dispatch(
+				errorNotice( __( "Sorry, we couldn't process your transfer. Please try again later." ) )
+			);
+		};
+
+		if ( transfer ) {
+			if ( transferStates.COMPLETED === transfer.status ) {
+				page( `/checkout/thank-you/${ siteSlug }/${ orderId }` );
+
+				return;
+			}
+
+			// If the processing status indicates that there was something wrong.
+			if ( transferStates.ERROR === transfer.status ) {
+				// Redirect users back to the stats page so they can try again.
+				retryOnError();
+
+				return;
+			}
+		}
+	}, [ transfer, dispatch, siteSlug, __, orderId ] );
 
 	return (
 		<div className="transfer-pending">
