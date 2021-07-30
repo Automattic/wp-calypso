@@ -114,6 +114,31 @@ export class NoteBody extends React.Component {
 					);
 					break;
 				case 'post':
+					let slideCount = 0;
+					for ( i = 0; i < block.block.ranges.length; i++ ) {
+						if ( block.block.ranges[ i ].type === 'figcaption' ) {
+							block.block.ranges[ i ].style += 'display:none;';
+						}
+
+						if (
+							block.block.ranges[ i ].class &&
+							block.block.ranges[ i ].class.includes( 'wp-block-jetpack-slideshow_slide' )
+						) {
+							slideCount++;
+							block.block.ranges[ i ].style = 'display:flex;height:100%;width:100%;padding:2px;';
+							if ( slideCount > 4 ) {
+								block.block.ranges[ i ].style += 'display:none;';
+							}
+						}
+
+						if (
+							block.block.ranges[ i ].class &&
+							block.block.ranges[ i ].class.includes( 'wp-block-jetpack-slideshow_container' )
+						) {
+							block.block.ranges[ i ].style = 'width:100%';
+						}
+					}
+
 					body.push(
 						<Post key={ blockKey } block={ block.block } meta={ this.props.note.meta } />
 					);
