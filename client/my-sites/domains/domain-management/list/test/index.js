@@ -2,7 +2,11 @@
  * @jest-environment jsdom
  */
 
-import { ShoppingCartProvider, getEmptyResponseCart } from '@automattic/shopping-cart';
+import {
+	ShoppingCartProvider,
+	getEmptyResponseCart,
+	createShoppingCartManagerClient,
+} from '@automattic/shopping-cart';
 import deepFreeze from 'deep-freeze';
 import { shallow, mount } from 'enzyme';
 import React from 'react';
@@ -30,9 +34,14 @@ function setCart() {
 	return Promise.resolve( emptyResponseCart );
 }
 
-function TestProvider( { store, children } ) {
+function TestProvider( { store, cartManagerClient, children } ) {
 	return (
-		<ShoppingCartProvider cartKey="1" getCart={ getCart } setCart={ setCart }>
+		<ShoppingCartProvider
+			options={ {
+				defaultCartKey: '1',
+			} }
+			managerClient={ cartManagerClient }
+		>
 			<ReduxProvider store={ store }>{ children }</ReduxProvider>
 		</ShoppingCartProvider>
 	);
@@ -94,9 +103,10 @@ describe( 'index', () => {
 				return state;
 			}
 		);
+		const cartManagerClient = createShoppingCartManagerClient( { getCart, setCart } );
 		return mount( <DomainList { ...props } />, {
 			wrappingComponent: TestProvider,
-			wrappingComponentProps: { store },
+			wrappingComponentProps: { store, cartManagerClient },
 		} );
 	}
 
