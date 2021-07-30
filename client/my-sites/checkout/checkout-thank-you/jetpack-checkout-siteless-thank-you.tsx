@@ -41,12 +41,14 @@ interface Props {
 	forScheduling: boolean;
 	productSlug: string | 'no_product';
 	receiptId?: number;
+	source?: string;
 }
 
 const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 	forScheduling,
 	productSlug,
 	receiptId = 0,
+	source = 'onboarding-calypso-ui',
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -107,9 +109,9 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 					receipt_id: receiptId,
 				} )
 			);
-			dispatch( requestUpdateJetpackCheckoutSupportTicket( siteUrl, receiptId ) );
+			dispatch( requestUpdateJetpackCheckoutSupportTicket( siteUrl, receiptId, source ) );
 		},
-		[ siteInput, dispatch, translate, productSlug, receiptId ]
+		[ siteInput, dispatch, translate, productSlug, receiptId, source ]
 	);
 
 	const onScheduleClick = useCallback( () => {
