@@ -1,5 +1,4 @@
-import { ElementHandle } from 'playwright';
-import { BaseContainer } from '../base-container';
+import { ElementHandle, Page } from 'playwright';
 
 const selectors = {
 	// Comment
@@ -15,10 +14,19 @@ const selectors = {
 
 /**
  * Represents the comments section of a post.
- *
- * @augments {BaseContainer}
  */
-export class CommentsComponent extends BaseContainer {
+export class CommentsComponent {
+	private page: Page;
+
+	/**
+	 * Constructs an instance of the component.
+	 *
+	 * @param {Page} page The underlying page.
+	 */
+	constructor( page: Page ) {
+		this.page = page;
+	}
+
 	/**
 	 * Fills and posts a comment in the post's comment section.
 	 *
@@ -60,32 +68,29 @@ export class CommentsComponent extends BaseContainer {
 	 * @throws {Error} If selector was not supplied or supplied selector did not resolve to a comment.
 	 */
 	async _click( selector: string | number ): Promise< ElementHandle > {
-		let commentToLike!: ElementHandle;
+		let commentSelector!: string;
 
 		// Retrieve the nth comment on the page.
 		if ( typeof selector === 'number' ) {
-			commentToLike = await this.page.waitForSelector(
-				`:nth-match(${ selectors.comments }, ${ selector })`
-			);
+			commentSelector = `:nth-match(${ selectors.comments }, ${ selector })`;
 		}
 
 		// Retrieve the comment by the body.
 		if ( typeof selector === 'string' ) {
 			selector = selector.trim();
-			commentToLike = await this.page.waitForSelector(
-				`.comment-content:has-text("${ selector }")`,
-				{ state: 'visible' }
-			);
+			commentSelector = `.comment-content:has-text("${ selector }")`;
 		}
 
-		// Retrieve the like/unlike button for the comment to interact with, click on it and
-		// wait until the `load` event is fired confirming the end of the sequence.
-		const likeButton = await commentToLike.waitForSelector( selectors.likeButton );
+		// Click on the like button for the comment then wait for the like button animation to
+		// complete.
+		const likeButton = await this.page.waitForSelector(
+			`${ commentSelector } ${ selectors.likeButton }`
+		);
 		await likeButton.click();
-		await this.page.waitForLoadState( 'load' );
+		await likeButton.waitForElementState( 'stable' );
 
 		// Return the comment to the caller for further processing.
-		return commentToLike;
+		return await this.page.waitForSelector( commentSelector! );
 	}
 
 	/**
