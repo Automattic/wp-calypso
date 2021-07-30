@@ -10,6 +10,7 @@ import { useDispatch } from 'react-redux';
  */
 import { PaymentLogo } from '@automattic/composite-checkout';
 import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies

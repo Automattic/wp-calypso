@@ -30,12 +30,8 @@ import type { TranslateResult } from 'i18n-calypso';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import CreditCardLoading from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields/credit-card-loading';
+import DeletePaymentMethodDialog from 'calypso/jetpack-cloud/sections/partner-portal/delete-payment-method-dialog';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-
-/**
- * Style dependencies
- */
-import './style.scss';
 
 /**
  * Style dependencies
@@ -58,7 +54,6 @@ function onPaymentSelectComplete( {
 function PaymentMethodAdd(): ReactElement {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const storedCards = useSelector( getAllStoredCards );
 	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
 	const detailsId = getQueryArg( window.location.href, 'details_id' );
 	const storedCards = useSelector( getAllStoredCards );
