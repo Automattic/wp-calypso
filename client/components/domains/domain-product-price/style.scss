@@ -10,14 +10,6 @@
 	@include breakpoint-deprecated( '>660px' ) {
 		align-items: flex-end;
 		font-size: $font-body;
-
-		.featured-domain-suggestions & {
-			align-items: flex-start;
-		}
-
-		&.domain-product-price__domain-step-signup-flow {
-			align-items: flex-start;
-		}
 	}
 	
 	@include breakpoint-deprecated( '<660px' ) {
@@ -42,7 +34,7 @@
 	.is-section-domains & {
 		@include breakpoint-deprecated( '>800px' ) {
 			padding-left: 1em;
-			padding-right: 2em;
+			padding-right: 1em;
 		}
 	}
 
@@ -83,7 +75,7 @@
 
 		.domain-product-price__price,
 		.domain-product-price__renewal-price {
-			font-size: 80%;
+			font-size: 80%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 			color: var( --color-text-subtle );
 		}
 
