@@ -6,22 +6,26 @@ An older version of this interface exists in calypso's `lib/cart` directory, but
 
 This package provides the following API, as well as a comprehensive set of TypeScript types for the data passed through the cart. Notably, the whole cart object itself is a `ResponseCart` containing `ResponseCartProduct` objects. If adding a new product, the `RequestCart` and `RequestCartProduct` can be used instead (they have fewer required properties).
 
+Every cart is keyed by a cart key; usually this is the WordPress.com site ID (preferred, because it is always unique) or site slug. It can also be `'no-site'` or `'no-user'`. If `undefined`, the cart will not be loaded and the `isLoading` value will be permanently `true`; this can be used to temporarily disable the cart.
+
 ## ShoppingCartProvider
 
 A React context provider component which should be used near the top level of the render tree to grant access to the shopping cart to the components in the tree via the [useShoppingCart](#useShoppingCart) hook or the [withShoppingCart](#withShoppingCart) higher-order-component.
 
-It requires three props:
+It requires the following props:
 
-- `cartKey: string | number | undefined | null`. Every cart is keyed by a cart key; usually this is the WordPress.com site ID (preferred, because it is always unique) or site slug. It can also be `'no-site'` or `'no-user'`. If `undefined` or `null`, the cart will not be loaded and the `isLoading` value will be `true`; this can be used to temporarily disable the cart.
-- `getCart: ( cartKey: string ) => Promise< ResponseCart >`. This is an async function that will fetch the cart from the server.
-- `setCart: ( cartKey: string, requestCart: RequestCart ) => Promise< ResponseCart >`. This is an async function that will send an updated cart to the server.
-- `options?: { refetchOnWindowFocus?: boolean }`. Optional. Can be used to trigger `getCart` when the window or tab is hidden and then refocused.
+- `managerClient: ShoppingCartManagerClient`. The cart manager system. Create one with [createShoppingCartManagerClient](#createShoppingCartManagerClient).
+- `options?: { refetchOnWindowFocus?: boolean, defaultCartKey?: string | undefined }`. Optional. `refetchOnWindowFocus` can be used to trigger `getCart` when the window or tab is hidden and then refocused. `defaultCartKey` can be used to provide a cart key that will be used instead of `undefined` when no cart key is passed to `useShoppingCart` or `withShoppingCart`.
 
 ## useShoppingCart
 
-This is a React hook that can be used in any child component under [ShoppingCartProvider](#ShoppingCartProvider) to return a `ShoppingCartManager` object. That object contains the following properties. Note that the action functions in this object are requests only; they do not guarantee that the request will be fulfilled by the shopping cart API.
+This is a React hook that can be used in any child component under [ShoppingCartProvider](#ShoppingCartProvider) to return a `UseShoppingCart` object. `useShoppingCart` requires one argument:
 
-- `responseCart: ResponseCart`. The full cart object itself. For this object's API, see the TypeScript type. This object should be considered **read-only**. To make changes to the cart, use the action functions in `ShoppingCartManager` like `addProductsToCart`.
+- `cartKey: string | undefined`. The current cart key to use. If undefined, the cart will not be loaded, although an empty cart and noop functions will still be provided as a return value.
+
+The `UseShoppingCart` object contains the following properties. Note that the action functions in this object are requests only; they do not guarantee that the request will be fulfilled by the shopping cart API.
+
+- `responseCart: ResponseCart`. The full cart object itself. For this object's API, see the TypeScript type. This object should be considered **read-only**. To make changes to the cart, use the action functions in `UseShoppingCart` like `addProductsToCart`.
 - `isLoading: boolean`. True if the cart is still loading from the server. This will only be true during the initial load for a `cartKey` or when the `cartKey` is `undefined|null`. When updating an existing cart, `isPendingUpdate` will be true instead.
 - `isPendingUpdate: boolean`. True if the cart is loading in any way, either during its initial load, when a `cartKey` changes, or when a modification request is pending.
 - `loadingError: string | null | undefined`. If fetching or updating the cart causes an error, this will be a string that contains the error message.
@@ -41,7 +45,17 @@ The following actions are also properties. Each one returns a Promise that resol
 
 ## withShoppingCart
 
-A React HOC (higher order component) that can be used to inject the `ShoppingCartManager` into another component as a prop called `shoppingCartManager`. For convenience, since the most common use-case for accessing this package is to get a copy of the cart, it also adds a prop called `cart`, which is equal to `shoppingCartManager.responseCart`.
+A React HOC (higher order component) that can be used to inject the `UseShoppingCart` into another component for use when `useShoppingCart` cannot be used (ie: in a class component).
+
+A component wrapped by this HOC will receive the following additional props:
+
+- `shoppingCartManager: UseShoppingCart`. This object is the same as the value returned by [useShoppingCart](#useShoppingCart).
+- `cart: ResponseCart`. A convenience prop which is equal to `shoppingCartManager.responseCart`.
+
+The HOC has the following arguments. In order to set the cart key, you must provide the second argument to the HOC, `mapPropsToCartKey`.
+
+- `Component: React.ComponentType< P >`. The component to wrap; it will receive the additional props above.
+- `mapPropsToCartKey?: ( props: P ) => string | undefined`. A function that can be used to set the current cart key based on the component's props.
 
 ## createRequestCartProduct
 
@@ -60,3 +74,23 @@ A function that returns an empty but valid `ResponseCartProduct` object. Useful 
 ## convertResponseCartToRequestCart
 
 A function that converts a `ResponseCart` to a `RequestCart`. Usually this should be handled by the shopping cart manager but if you need to manupulate a cart object manually this may be helpful.
+
+## createShoppingCartManagerClient
+
+A function to create a `ShoppingCartManagerClient` which is the state management system used by the `shopping-cart` package. It's recommended to create this as a singleton and share it across your entire application.
+
+It requires an object to be passed in with the following properties:
+
+- `getCart: ( cartKey: string ) => Promise< ResponseCart >`. This is an async function that will fetch the cart from the server.
+- `setCart: ( cartKey: string, requestCart: RequestCart ) => Promise< ResponseCart >`. This is an async function that will send an updated cart to the server.
+
+Once created, the `ShoppingCartManagerClient` has two properties:
+
+- `forCartKey: (cartKey: string| undefined) => ShoppingCartManager`. A function to return a `ShoppingCartManager` for a given cart key. If provided an `undefined` cart key, a `ShoppingCartManager` will still be returned, but its cart will always be loading and empty and its actions will do nothing.
+
+A `ShoppingCartManager` has the following properties:
+
+- `getState: () => ShoppingCartManagerState`. A function to return the current state of the cart. This includes all the state properties returned by [useShoppingCart](#useShoppingCart).
+- `actions: ShoppingCartActionCreators`. An object whose properties are the various actions that can be taken on the cart. They are the same as the actions returned by [useShoppingCart](#useShoppingCart).
+- `subscribe: ( callback: () => void ) => () => void`. A function to subscribe to updates to a `ShoppingCartManager` for a given cart key. The `callback` will be called any time the `ShoppingCartManager` changes for that key. The return value of the function is an unsubscribe function.
+- `waitForReady: () => Promise<ResponseCart>`. A function that can be used to determine when any cart action has completed. This is especially useful for loading the initial cart, but normally it should be unnecessary because any dispatched action will be queued automatically if the cart is still loading.
