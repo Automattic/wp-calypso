@@ -9,6 +9,10 @@
 		align-items: center;
 	}
 
+	.domain-suggestion__content-domain {
+		justify-content: space-between;
+	}
+
 	&.is-clickable {
 		cursor: pointer;
 
@@ -74,10 +78,6 @@
 	@include breakpoint-deprecated( '>660px' ) {
 		display: flex;
 		justify-content: space-between;
-
-		&.domain-suggestion__content-domain {
-			justify-content: initial;
-		}
 	}
 
 	.notice.is-compact {
