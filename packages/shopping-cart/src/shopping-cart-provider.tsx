@@ -1,5 +1,5 @@
 import debugFactory from 'debug';
-import React from 'react';
+import React, { useMemo } from 'react';
 import ShoppingCartContext from './shopping-cart-context';
 import ShoppingCartOptionsContext from './shopping-cart-options-context';
 import type { ShoppingCartManagerOptions, ShoppingCartManagerClient } from './types';
@@ -20,8 +20,19 @@ export default function ShoppingCartProvider( {
 	}
 	debug( 'rendering ShoppingCartProvider with options', options );
 
+	// Memoize a copy of the options object to prevent re-renders if the values
+	// did not change.
+	const { refetchOnWindowFocus, defaultCartKey } = options;
+	const memoizedOptions = useMemo(
+		() => ( {
+			refetchOnWindowFocus,
+			defaultCartKey,
+		} ),
+		[ refetchOnWindowFocus, defaultCartKey ]
+	);
+
 	return (
-		<ShoppingCartOptionsContext.Provider value={ options }>
+		<ShoppingCartOptionsContext.Provider value={ memoizedOptions }>
 			<ShoppingCartContext.Provider value={ managerClient }>
 				{ children }
 			</ShoppingCartContext.Provider>
