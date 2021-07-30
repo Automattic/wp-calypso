@@ -106,28 +106,37 @@ export class JetpackBenefits extends React.Component {
 	}
 
 	renderSiteSearch() {
+		const { translate } = this.props;
 		return (
 			<JetpackBenefitsCard
-				headline="Search"
-				description="You will lose access to Jetpack's improved site search"
+				headline={ translate( 'Search' ) }
+				description={ translate(
+					'Jetpack Search helps your visitors instantly find the right content – right when they need it.'
+				) }
 			/>
 		);
 	}
 
 	renderSiteAntiSpam() {
+		const { translate } = this.props;
 		return (
 			<JetpackBenefitsCard
-				headline="Anti-spam"
-				description="You will no longer have spam comment protection/ filtering."
+				headline={ translate( 'Anti-spam' ) }
+				description={ translate(
+					'Jetpack anti-spam automatically clears spam from comments and forms.'
+				) }
 			/>
 		);
 	}
 
 	renderSiteActivity() {
+		const { translate } = this.props;
 		return (
 			<JetpackBenefitsCard
-				headline="Activity Log"
-				description="You will not be able to view your site's activity log any longer."
+				headline={ translate( 'Activity Log' ) }
+				description={ translate(
+					'The Activity Log shows a list of management events that have occurred on your site.'
+				) }
 			/>
 		);
 	}
@@ -140,7 +149,7 @@ export class JetpackBenefits extends React.Component {
 				{
 					isJetpackPlanSlug( productSlug ) && (
 						<JetpackBenefitsSiteVisits siteId={ this.props.siteId } />
-					) // only makes sense to show visits/ stats for plans
+					) // makes the most sense to show visits/ stats for plans
 				}
 				{ this.siteHasBackups() && this.productHasBackups( productSlug ) && (
 					<JetpackBenefitsSiteBackups

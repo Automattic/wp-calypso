@@ -2,13 +2,12 @@
  * External dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import moment from 'moment';
 
 /**
  * Internal dependencies
  */
-import { localize } from 'i18n-calypso';
 import QueryJetpackScanThreatCounts from 'calypso/components/data/query-jetpack-scan-threat-counts';
 import isRequestingJetpackScan from 'calypso/state/selectors/is-requesting-jetpack-scan';
 import isRequestingJetpackScanThreatCounts from 'calypso/state/selectors/is-requesting-jetpack-scan-threat-counts';
@@ -17,148 +16,141 @@ import { JetpackBenefitsStandaloneCard } from 'calypso/blocks/jetpack-benefits/s
 import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
 import getSiteScanProgress from 'calypso/state/selectors/get-site-scan-progress';
 import { ProgressBar } from '@automattic/components';
+import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
+import { useTranslate } from 'i18n-calypso';
 
-export class JetpackBenefitsScanHistory extends React.Component {
-	getThreatsFixedCount() {
-		const { threatCounts } = this.props;
+const JetpackBenefitsScanHistory = ( props ) => {
+	const { siteId, isStandalone } = props;
+	const translate = useTranslate();
+	const siteScanState = useSelector( ( state ) => {
+		return getSiteScanState( state, siteId );
+	} );
+	const siteScanProgress = useSelector( ( state ) => {
+		return getSiteScanProgress( state, siteId );
+	} );
+	const requestingScanState = useSelector( ( state ) => {
+		return isRequestingJetpackScan( state, siteId );
+	} );
+	const requestingThreats = useSelector( ( state ) => {
+		return isRequestingJetpackScanThreatCounts( state, siteId );
+	} );
+	const threatCounts = useSelector( ( state ) => {
+		return state?.jetpackScan?.threatCounts?.data?.[ siteId ];
+	} );
 
-		if ( threatCounts ) {
-			return threatCounts.fixed;
-		}
+	// site scan state can be provisioning, scanning or idle. If missing from the state after request is ended, can assume an error
+	const scanState = siteScanState?.state;
+	const threatsFixedCount = threatCounts ? threatCounts.fixed : 0;
 
-		return 0;
-	}
-
-	renderScanningNow() {
-		const { siteScanProgress } = this.props;
+	// scan is running now
+	if ( scanState === 'scanning' ) {
 		return (
 			<JetpackBenefitsCard
-				headline="Site Scan"
+				jestMarker="scanning"
+				headline={ translate( 'Site Scan' ) }
 				description={ <ProgressBar value={ siteScanProgress } total={ 100 } color="#069E08" /> }
-				stat="In Progress"
+				stat={ translate( 'In Progress' ) }
 			/>
 		);
 	}
 
-	renderScanningProvisioning() {
+	// scan getting ready to start
+	if ( scanState === 'provisioning' ) {
 		return (
 			<JetpackBenefitsCard
-				headline="Site Scan"
-				description="Jetpack is preparing to scan your site."
+				jestMarker="provisioning"
+				headline={ translate( 'Site Scan' ) }
+				description={ translate( 'Jetpack is preparing to scan your site.' ) }
 				stat="Preparing"
 			/>
 		);
 	}
 
-	renderScanError() {
+	// still requesting scan state
+	if ( requestingScanState ) {
 		return (
 			<JetpackBenefitsCard
-				headline="Site Scan"
-				description="Jetpack is having trouble scanning your site."
-			/>
-		);
-	}
-
-	renderScanLoading() {
-		return (
-			<JetpackBenefitsCard
-				headline="Site Scan"
-				description="Waiting for scan status"
-				stat="Loading"
+				jestMarker="loading"
+				headline={ translate( 'Site Scan' ) }
+				description={ translate( 'Waiting for scan status' ) }
+				stat={ translate( 'Loading' ) }
 				placeholder={ true }
 			/>
 		);
 	}
 
-	renderScanData() {
-		const { siteScanState, requestingScanState, isStandalone } = this.props;
-
-		// site scan state can be provisioning, scanning or idle. If missing from the state after request is ended, can assume an error
-		const scanState = siteScanState?.state;
-
-		// scan is running now
-		if ( scanState === 'scanning' ) {
-			return this.renderScanningNow();
-		}
-
-		// scan getting ready to start
-		if ( scanState === 'provisioning' ) {
-			return this.renderScanningProvisioning();
-		}
-
-		// still requesting scan state
-		if ( requestingScanState ) {
-			return this.renderScanLoading();
-		}
-
-		// something went wrong getting the scan state
-		if ( ! scanState ) {
-			return this.renderScanError();
-		}
-
-		const { threats, mostRecent } = siteScanState;
-		const mostRecentScanAgo = moment.utc( mostRecent.timestamp ).fromNow();
-
-		// show expended output for standalone scan products
-		if ( isStandalone ) {
-			return (
-				<JetpackBenefitsStandaloneCard
-					title="Scan"
-					summary={ {
-						title: 'Last Scan',
-						stat: mostRecentScanAgo,
-					} }
-					stats={ [
-						{
-							title: 'Threats Found',
-							stat: threats ? threats.length : '...',
-						},
-						{
-							title: 'Threats Fixed (Lifetime)',
-							stat: this.getThreatsFixedCount(),
-						},
-					] }
-				/>
-			);
-		}
-
-		let cardStat = '';
-		let cardDescription = '';
-		if ( threats.length > 0 ) {
-			cardStat = threats.length + ' threat' + ( threats.count > 1 ? 's' : '' ) + ' found';
-			cardDescription = 'Jetpack has identified some threats on your site.';
-		} else {
-			cardStat = this.getThreatsFixedCount() > 0 ? this.getThreatsFixedCount() : mostRecentScanAgo;
-			cardDescription =
-				this.getThreatsFixedCount > 0
-					? 'Security threats fixed by Jetpack'
-					: 'Jetpack has recently completed a security scan of your site';
-		}
-
+	// something went wrong getting the scan state
+	if ( ! scanState ) {
 		return (
-			<JetpackBenefitsCard headline="Site Scan" description={ cardDescription } stat={ cardStat } />
+			<JetpackBenefitsCard
+				jestMarker="error"
+				headline={ translate( 'Site Scan' ) }
+				description={ translate( 'Jetpack is having trouble scanning your site.' ) }
+			/>
 		);
 	}
 
-	render() {
-		const { siteId } = this.props;
+	const { threats, mostRecent } = siteScanState;
+	const mostRecentScanAgo = moment.utc( mostRecent.timestamp ).fromNow();
 
+	// show expended output for standalone scan products
+	if ( isStandalone ) {
 		return (
-			<React.Fragment>
-				<QueryJetpackScanThreatCounts siteId={ siteId } />
-				{ this.renderScanData() }
-			</React.Fragment>
+			<JetpackBenefitsStandaloneCard
+				title={ translate( 'Site Scan' ) }
+				summary={ {
+					title: translate( 'Last Scan' ),
+					stat: mostRecentScanAgo,
+				} }
+				stats={ [
+					{
+						title: translate( 'Threats Found' ),
+						stat: threats ? threats.length : '...',
+					},
+					{
+						title: translate( 'Threats Fixed (Lifetime)' ),
+						stat: requestingThreats ? '...' : threatsFixedCount,
+					},
+				] }
+			/>
 		);
 	}
-}
 
-export default connect( ( state, { siteId } ) => {
-	// maybe these need their own selector methods in /client/state/jetpack-scan
-	return {
-		requestingThreats: isRequestingJetpackScanThreatCounts( state, siteId ),
-		requestingScanState: isRequestingJetpackScan( state, siteId ),
-		siteScanState: getSiteScanState( state, siteId ),
-		siteScanProgress: getSiteScanProgress( state, siteId ),
-		threatCounts: state.jetpackScan.threatCounts?.data?.[ siteId ],
-	};
-}, {} )( localize( JetpackBenefitsScanHistory ) );
+	let cardStat = '';
+	let cardDescription = '';
+	if ( threats.length > 0 ) {
+		cardStat = translate( '%(number)d %(threatMaybePlural)s found', {
+			args: {
+				number: threats.length,
+				threatMaybePlural: 'threat' + threats.count > 1 ? 's' : '',
+			},
+		} );
+		cardDescription = translate( 'Jetpack has identified some threats on your site.' );
+	} else {
+		cardStat = threatsFixedCount > 0 ? threatsFixedCount : mostRecentScanAgo;
+		cardDescription =
+			threatsFixedCount > 0
+				? translate( 'Security threats fixed by Jetpack' )
+				: translate( 'Jetpack has recently completed a security scan of your site' );
+	}
+
+	return (
+		<JetpackBenefitsCard
+			jestMarker="default"
+			headline={ translate( 'Site Scan' ) }
+			description={ cardDescription }
+			stat={ cardStat }
+		/>
+	);
+};
+
+export default ( props ) => {
+	const { siteId } = props;
+	return (
+		<>
+			<QueryJetpackScan siteId={ siteId } />
+			<QueryJetpackScanThreatCounts siteId={ siteId } />
+			<JetpackBenefitsScanHistory { ...props } />
+		</>
+	);
+};
