@@ -47,7 +47,7 @@ export class PlansPage {
 	 * @param {Plan} expectedPlan Name of the expected plan.
 	 * @throws If the expected plan title is not found in the timeout period.
 	 */
-	async validatePlanInMyPlan( expectedPlan: Plan ): Promise< void > {
+	async validateActivePlanInMyPlanTab( expectedPlan: Plan ): Promise< void > {
 		await this.page.waitForSelector( selectors.myPlanTitle( expectedPlan ) );
 	}
 

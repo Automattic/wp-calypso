@@ -39,7 +39,7 @@ describe( DataHelper.createSuiteTitle( 'Plans: Purchases' ), function () {
 		} );
 
 		it( 'The Premium plan is listed as current plan on "My Plan" tab', async function () {
-			await plansPage.validatePlanInMyPlan( 'Premium' );
+			await plansPage.validateActivePlanInMyPlanTab( 'Premium' );
 		} );
 
 		it( 'Click on the "Plans" navigation tab', async function () {
