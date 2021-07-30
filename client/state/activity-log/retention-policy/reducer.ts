@@ -14,7 +14,7 @@ import {
  */
 import type { AppState } from 'calypso/types';
 
-export const requestStatus = ( state: AppState = {}, { type } ): AppState | string => {
+export const requestStatus = ( state: AppState = null, { type } ): AppState | string => {
 	switch ( type ) {
 		case ACTIVITY_LOG_RETENTION_POLICY_REQUEST:
 			return 'pending';
@@ -28,7 +28,7 @@ export const requestStatus = ( state: AppState = {}, { type } ): AppState | stri
 };
 
 export const days = (
-	state: AppState = {},
+	state: AppState = null,
 	{ type, retentionPolicy }
 ): AppState | number | undefined => {
 	if ( type !== ACTIVITY_LOG_RETENTION_POLICY_SET ) {
