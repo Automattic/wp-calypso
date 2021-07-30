@@ -3,6 +3,7 @@ import React from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
+import { emailManagement } from 'calypso/my-sites/email/paths';
 import { requestSiteChecklistTaskUpdate } from 'calypso/state/checklist/actions';
 import { verifyEmail } from 'calypso/state/current-user/email-verification/actions';
 import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
@@ -200,6 +201,18 @@ export const getTask = (
 				actionText: translate( 'Choose a theme' ),
 				isSkippable: false,
 				actionUrl: `/themes/${ siteSlug }`,
+			};
+			break;
+		case CHECKLIST_KNOWN_TASKS.PROFESSIONAL_EMAIL_MAILBOX_CREATED:
+			taskData = {
+				timing: 2,
+				title: translate( 'Set up your Professional Email' ),
+				description: translate(
+					'Complete your Professional Email setup to start sending and receiving emails from your custom domain today.'
+				),
+				actionText: translate( 'Complete setup' ),
+				isSkippable: false,
+				actionUrl: emailManagement( siteSlug, task.domain ),
 			};
 			break;
 	}
