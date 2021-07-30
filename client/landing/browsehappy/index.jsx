@@ -1,23 +1,12 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import React from 'react';
 import { addQueryArgs } from 'calypso/lib/url';
 import Circle from './circle';
+import illustrationURL from './illustration.svg';
 import Logo from './logo-wide';
-
-/**
- * Style dependencies
- */
 import 'calypso/assets/stylesheets/style.scss';
 import './style.scss';
-import illustrationURL from './illustration.svg';
 
 const SUPPORTED_BROWSERS_LINK = 'https://wordpress.com/support/browser-issues/#supported-browsers';
 
