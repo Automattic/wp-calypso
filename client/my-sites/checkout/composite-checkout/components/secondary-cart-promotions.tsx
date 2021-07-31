@@ -14,14 +14,10 @@ import CartFreeUserPlanUpsell from 'calypso/my-sites/checkout/cart/cart-free-use
 import UpcomingRenewalsReminder from 'calypso/my-sites/checkout/cart/upcoming-renewals-reminder';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-type PartialCart = Pick< ResponseCart, 'products' >;
+export type PartialCart = Pick< ResponseCart, 'products' >;
 interface Props {
 	responseCart: PartialCart;
 	addItemToCart: ( item: RequestCartProduct ) => void;
-}
-
-export interface MockResponseCart extends PartialCart {
-	hasLoadedFromServer: boolean;
 }
 
 type DivProps = {
@@ -85,12 +81,6 @@ const SecondaryCartPromotions: FunctionComponent< Props > = ( { responseCart, ad
 		[ responseCart ]
 	);
 
-	// By this point we have definitely loaded the cart using useShoppingCart
-	// so we mock the loaded property the CartStore would inject.
-	const mockCart = useMemo( () => ( { ...responseCart, hasLoadedFromServer: true } ), [
-		responseCart,
-	] );
-
 	if (
 		config.isEnabled( 'upgrades/upcoming-renewals-notices' ) &&
 		isPurchaseRenewal &&
@@ -98,14 +88,14 @@ const SecondaryCartPromotions: FunctionComponent< Props > = ( { responseCart, ad
 	) {
 		return (
 			<UpsellWrapper>
-				<UpcomingRenewalsReminder cart={ mockCart } addItemToCart={ addItemToCart } />
+				<UpcomingRenewalsReminder cart={ responseCart } addItemToCart={ addItemToCart } />
 			</UpsellWrapper>
 		);
 	}
 
 	return (
 		<UpsellWrapper>
-			<CartFreeUserPlanUpsell cart={ mockCart } addItemToCart={ addItemToCart } />
+			<CartFreeUserPlanUpsell cart={ responseCart } addItemToCart={ addItemToCart } />
 		</UpsellWrapper>
 	);
 };
