@@ -18,6 +18,7 @@ export type PartialCart = Pick< ResponseCart, 'products' >;
 interface Props {
 	responseCart: PartialCart;
 	addItemToCart: ( item: RequestCartProduct ) => void;
+	isCartPendingUpdate: boolean;
 }
 
 type DivProps = {
@@ -74,7 +75,11 @@ const UpsellWrapper = styled.div< DivProps >`
 	}
 `;
 
-const SecondaryCartPromotions: FunctionComponent< Props > = ( { responseCart, addItemToCart } ) => {
+const SecondaryCartPromotions: FunctionComponent< Props > = ( {
+	responseCart,
+	addItemToCart,
+	isCartPendingUpdate,
+} ) => {
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) as number );
 	const isPurchaseRenewal = useMemo(
 		() => responseCart?.products?.some?.( ( product ) => product.is_renewal ),
@@ -95,7 +100,11 @@ const SecondaryCartPromotions: FunctionComponent< Props > = ( { responseCart, ad
 
 	return (
 		<UpsellWrapper>
-			<CartFreeUserPlanUpsell cart={ responseCart } addItemToCart={ addItemToCart } />
+			<CartFreeUserPlanUpsell
+				cart={ responseCart }
+				addItemToCart={ addItemToCart }
+				isCartPendingUpdate={ isCartPendingUpdate }
+			/>
 		</UpsellWrapper>
 	);
 };

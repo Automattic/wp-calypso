@@ -447,6 +447,7 @@ export default function WPCheckout( {
 						<SecondaryCartPromotions
 							responseCart={ responseCart }
 							addItemToCart={ addItemToCart }
+							isCartPendingUpdate={ isCartPendingUpdate }
 						/>
 						<CheckoutHelpLink />
 					</CheckoutSummaryBody>
