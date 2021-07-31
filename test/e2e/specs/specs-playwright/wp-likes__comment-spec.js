@@ -30,28 +30,31 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 			await loginFlow.logIn();
 		} );
 
-		it( 'Start new post', async function () {
-			const newPostFlow = new NewPostFlow( page );
-			await newPostFlow.newPostFromNavbar();
-		} );
+		// it( 'Start new post', async function () {
+		// 	const newPostFlow = new NewPostFlow( page );
+		// 	await newPostFlow.newPostFromNavbar();
+		// } );
 
-		it( 'Enter post title', async function () {
-			gutenbergEditorPage = await GutenbergEditorPage.Expect( page );
-			const title = DataHelper.randomPhrase();
-			await gutenbergEditorPage.enterTitle( title );
-		} );
+		// it( 'Enter post title', async function () {
+		// 	gutenbergEditorPage = await GutenbergEditorPage.Expect( page );
+		// 	const title = DataHelper.randomPhrase();
+		// 	await gutenbergEditorPage.enterTitle( title );
+		// } );
 
-		it( 'Enter post text', async function () {
-			await gutenbergEditorPage.enterText( quote );
-		} );
+		// it( 'Enter post text', async function () {
+		// 	await gutenbergEditorPage.enterText( quote );
+		// } );
 
-		it( 'Publish and visit post', async function () {
-			publishedURL = await gutenbergEditorPage.publish( { visit: true } );
-			assert.strictEqual( publishedURL, await page.url() );
-			await PublishedPostPage.Expect( page );
-		} );
+		// it( 'Publish and visit post', async function () {
+		// 	publishedURL = await gutenbergEditorPage.publish( { visit: true } );
+		// 	assert.strictEqual( publishedURL, await page.url() );
+		// 	await PublishedPostPage.Expect( page );
+		// } );
 
 		it( 'Post a comment', async function () {
+			await page.goto(
+				'https://e2eflowtestinggutenbergsimple.wordpress.com/2021/07/31/10-sassy-crows-laugh-ably/'
+			);
 			commentsComponent = new CommentsComponent( page );
 			await commentsComponent.postComment( comment );
 		} );

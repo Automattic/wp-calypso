@@ -86,8 +86,8 @@ export class CommentsComponent {
 		const likeButton = await this.page.waitForSelector(
 			`${ commentSelector } ${ selectors.likeButton }`
 		);
-		await likeButton.click();
-		await likeButton.waitForElementState( 'stable' );
+		// Once the animation is done, it emits a `load` state.
+		await Promise.all( [ this.page.waitForLoadState( 'load' ), likeButton.click() ] );
 
 		// Return the comment to the caller for further processing.
 		return await this.page.waitForSelector( commentSelector! );
