@@ -455,7 +455,7 @@ class TransferDomainStep extends React.Component {
 			<div className={ 'transfer-domain-step__domain-availability' }>
 				<DomainRegistrationSuggestion
 					cart={ this.props.cart }
-					isCartPendingUpdate={ this.props.cart.hasPendingServerUpdates }
+					isCartPendingUpdate={ this.props.shoppingCartManager.isPendingUpdate }
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					key={ suggestion.domain_name }
 					onButtonClick={ this.registerSuggestedDomain }
