@@ -9,11 +9,26 @@
 		margin-left: 12px;
 	}
 
-	.wpcom-domain-item__primary-badge {
+	&__primary-badge {
 		font-size: $font-body-extra-small;
+		border-radius: 4px; /* stylelint-disable-line */
+		font-weight: 500; /* stylelint-disable-line */
 	}
 
-	.wpcom-domain-item__manage-button {
+	&__manage-button {
 		background: none;
+	}
+
+	.wpcom-domain-item__description {
+		font-size: $font-body-small;
+		color: var( --studio-gray-60 );
+	}
+
+	.gridicon {
+		margin-left: 5px;
+	}
+
+	&__popover {
+		margin-top: 5px;
 	}
 }

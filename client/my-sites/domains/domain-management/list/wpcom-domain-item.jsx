@@ -4,6 +4,7 @@
 import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { __, sprintf } from '@wordpress/i18n';
+import { createInterpolateElement } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -19,7 +20,6 @@ import { domainManagementChangeSiteAddress } from 'calypso/my-sites/domains/path
  * Style dependencies
  */
 import './wpcom-domain-item.scss';
-import { createInterpolateElement } from '@wordpress/element';
 
 export default function WpcomDomainItem( {
 	currentRoute,
