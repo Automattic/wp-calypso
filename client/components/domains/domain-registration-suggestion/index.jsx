@@ -304,7 +304,6 @@ class DomainRegistrationSuggestion extends React.Component {
 			suggestion: { isRecommended, isBestAlternative },
 			translate,
 			isFeatured,
-			showStrikedOutPrice,
 		} = this.props;
 
 		if ( ! isFeatured ) {
@@ -313,7 +312,7 @@ class DomainRegistrationSuggestion extends React.Component {
 
 		let title;
 		if ( isRecommended ) {
-			title = showStrikedOutPrice ? translate( 'Recommended' ) : translate( 'Best Match' );
+			title = translate( 'Recommended' );
 		}
 
 		if ( isBestAlternative ) {
