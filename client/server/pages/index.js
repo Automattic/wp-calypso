@@ -624,8 +624,6 @@ export default function pages() {
 					);
 				} else {
 					res.redirect( 'https://wordpress.com/pricing' );
-				} else {
-					next();
 				}
 			} else {
 				next();
