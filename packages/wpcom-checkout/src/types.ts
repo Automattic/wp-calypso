@@ -360,6 +360,7 @@ export type ManagedContactDetailsUpdaters = {
 		arg0: ManagedContactDetails,
 		arg1: ManagedContactDetailsErrors
 	) => ManagedContactDetails;
+	clearErrorMessages: ( arg0: ManagedContactDetails ) => ManagedContactDetails;
 	populateCountryCodeFromGeoIP: (
 		arg0: ManagedContactDetails,
 		arg1: string

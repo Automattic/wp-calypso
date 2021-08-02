@@ -56,7 +56,7 @@
 		]
 	},
 	"engines": {
-		"node": "^14.17.3",
+		"node": "^16.5.0",
 		"yarn": "^1.22.10"
 	},
 	"scripts": {
@@ -133,9 +133,6 @@
 		"test": "run-s -s test-client test-packages test-server test-build-tools",
 		"test-client": "TZ=UTC jest -c=test/client/jest.config.js",
 		"test-client:watch": "yarn run -s test-client --watch",
-		"test-e2e": "cd test/e2e && yarn install --frozen-lockfile --ignore-scripts && yarn run test",
-		"encrypt-e2e-config": "openssl enc -md sha1 -aes-256-cbc -pass env:CONFIG_KEY -out ./test/e2e/config/encrypted.enc -in ./test/e2e/config/local-$NODE_ENV.json",
-		"decrypt-e2e-config": "openssl enc -md sha1 -aes-256-cbc -d -pass env:CONFIG_KEY -in ./test/e2e/config/encrypted.enc -out ./test/e2e/config/local-$NODE_ENV.json",
 		"test-integration": "jest -c=test/integration/jest.config.js",
 		"test-integration:watch": "yarn run -s test-integration --watch",
 		"test-packages": "jest -c=test/packages/jest.config.js",
@@ -164,7 +161,7 @@
 	"dependencies": {
 		"@automattic/babel-plugin-i18n-calypso": "^1.2.0",
 		"@automattic/babel-plugin-transform-wpcalypso-async": "^1.0.1",
-		"@automattic/calypso-build": "^8.0.0",
+		"@automattic/calypso-build": "^9.0.0",
 		"@automattic/calypso-color-schemes": "^2.1.1",
 		"@automattic/calypso-doctor": "^0.1.0",
 		"@automattic/calypso-polyfills": "^1.0.0",
@@ -303,11 +300,11 @@
 		"source-map": "^0.7.3",
 		"stackframe": "^1.1.1",
 		"style-loader": "^1.2.1",
-		"stylelint": "^13.7.0",
+		"stylelint": "^13.13.1",
 		"svgstore-cli": "^1.3.1",
 		"terser": "^5.5.1",
 		"terser-webpack-plugin": "^5.1.1",
-		"tslib": "^2.2.0",
+		"tslib": "^2.3.0",
 		"typescript": "^4.3.5",
 		"webpack": "^5.46.0",
 		"webpack-bundle-analyzer": "^4.4.2",

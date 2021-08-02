@@ -1,21 +1,13 @@
 #!/usr/bin/env node
 
-/**
- * External dependencies
- */
-const fs = require( 'fs' );
-const path = require( 'path' );
 const child_process = require( 'child_process' );
-
-/**
- * Internal dependencies
- */
+const fs = require( 'fs' );
+const jscodeshiftBin = require( 'module' )
+	.createRequire( require.resolve( 'jscodeshift' ) )
+	.resolve( require( 'jscodeshift/package.json' ).bin.jscodeshift );
+const path = require( 'path' );
 const config = require( path.join( __dirname, 'config' ) );
 const transformsDir = path.join( __dirname, './transforms' );
-
-const jscodeshiftBin = require( 'module' )
-	.createRequireFromPath( require.resolve( 'jscodeshift' ) )
-	.resolve( require( 'jscodeshift/package.json' ).bin.jscodeshift );
 
 function getLocalCodemodFileNames() {
 	const jsFiles = fs

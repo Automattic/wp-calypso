@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { useEffect, useState } from 'react';
 import apiFetch from '@wordpress/api-fetch';
-
-/**
- * Internal dependencies
- */
+import { useEffect, useState } from 'react';
 import { useAnchorFmParams } from '../path';
 
 export default function usePodcastTitle(): string | null {

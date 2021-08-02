@@ -2,23 +2,16 @@
  * Global polyfills
  */
 import 'calypso/boot/polyfills';
-import { render } from 'calypso/controller/web-util';
 
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import createStore from './store';
-import { setupMiddlewares, configureReduxStore } from './common';
-import initLoginSection from 'calypso/login';
-import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { setupLocale } from 'calypso/boot/locale';
+import { render } from 'calypso/controller/web-util';
+import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
+import initLoginSection from 'calypso/login';
 import { setStore } from 'calypso/state/redux-store';
+import { setupMiddlewares, configureReduxStore } from './common';
+import createStore from './store';
 
 const debug = debugFactory( 'calypso' );
 

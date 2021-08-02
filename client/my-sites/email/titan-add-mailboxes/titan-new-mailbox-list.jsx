@@ -26,6 +26,7 @@ const TitanNewMailboxList = ( {
 	mailboxes,
 	onMailboxesChange,
 	onReturnKeyPress = noop,
+	showAddAnotherMailboxButton = true,
 	showLabels = true,
 	validatedMailboxUuids = [],
 } ) => {
@@ -83,10 +84,12 @@ const TitanNewMailboxList = ( {
 			) ) }
 
 			<div className="titan-new-mailbox-list__actions">
-				<Button className="titan-new-mailbox-list__add-mailbox-button" onClick={ onMailboxAdd }>
-					<Gridicon icon="plus" />
-					<span>{ translate( 'Add another mailbox' ) }</span>
-				</Button>
+				{ showAddAnotherMailboxButton && (
+					<Button className="titan-new-mailbox-list__add-mailbox-button" onClick={ onMailboxAdd }>
+						<Gridicon icon="plus" />
+						<span>{ translate( 'Add another mailbox' ) }</span>
+					</Button>
+				) }
 
 				{ children }
 			</div>
@@ -100,6 +103,7 @@ TitanNewMailboxList.propTypes = {
 	mailboxes: PropTypes.arrayOf( getMailboxPropTypeShape() ).isRequired,
 	onMailboxesChange: PropTypes.func.isRequired,
 	onReturnKeyPress: PropTypes.func,
+	showAddAnotherMailboxButton: PropTypes.bool,
 	showLabels: PropTypes.bool,
 };
 

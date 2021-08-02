@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { get, includes, reduce } from 'lodash';
-
-/**
- * WordPress dependencies
- */
 import { parseWithAttributeSchema } from '@wordpress/blocks';
+import { get, includes, reduce } from 'lodash';
 
 /**
  * Convert the Calypso Media Modal output to the format expected by Gutenberg

@@ -1,21 +1,14 @@
-/**
- * External Dependencies
- */
 const { dialog } = require( 'electron' );
-
-/**
- * Internal dependencies
- */
+const { getUpdater } = require( '../../app-handlers/updater' );
+const AppQuit = require( '../../lib/app-quit' );
 const ipc = require( '../../lib/calypso-commands' );
 const Config = require( '../../lib/config' );
+const isCalypso = require( '../../lib/is-calypso' );
+const log = require( '../../lib/logger' )( 'desktop:menu' );
+const platform = require( '../../lib/platform' );
 const Settings = require( '../../lib/settings' );
 const WindowManager = require( '../../lib/window-manager' );
-const platform = require( '../../lib/platform' );
-const AppQuit = require( '../../lib/app-quit' );
 const debugMenu = require( './debug-menu' );
-const { getUpdater } = require( '../../app-handlers/updater' );
-const log = require( '../../lib/logger' )( 'desktop:menu' );
-const isCalypso = require( '../../lib/is-calypso' );
 
 /**
  * Module variables

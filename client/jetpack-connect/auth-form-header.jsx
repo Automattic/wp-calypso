@@ -1,24 +1,17 @@
-/**
- * External dependencies
- */
+import { CompactCard } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
-import FormattedHeader from 'calypso/components/formatted-header';
-import safeImageUrl from 'calypso/lib/safe-image-url';
 import Site from 'calypso/blocks/site';
-import versionCompare from 'calypso/lib/version-compare';
-import { authQueryPropTypes } from './utils';
+import FormattedHeader from 'calypso/components/formatted-header';
 import { decodeEntities } from 'calypso/lib/formatting';
-import { getAuthorizationData } from 'calypso/state/jetpack-connect/selectors';
+import safeImageUrl from 'calypso/lib/safe-image-url';
+import versionCompare from 'calypso/lib/version-compare';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getAuthorizationData } from 'calypso/state/jetpack-connect/selectors';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
+import { authQueryPropTypes } from './utils';
 
 export class AuthFormHeader extends Component {
 	static propTypes = {

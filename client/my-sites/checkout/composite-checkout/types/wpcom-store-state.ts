@@ -261,6 +261,10 @@ function touchField( oldData: ManagedValue ): ManagedValue {
 	return { ...oldData, isTouched: true };
 }
 
+function clearFieldErrors( oldData: ManagedValue ): ManagedValue {
+	return { ...oldData, errors: [] };
+}
+
 function touchIfDifferent(
 	newValue: undefined | string,
 	oldData: ManagedValue | undefined
@@ -768,6 +772,10 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 		errors: ManagedContactDetailsErrors
 	): ManagedContactDetails => {
 		return setManagedContactDetailsErrors( errors, oldDetails );
+	},
+
+	clearErrorMessages: ( oldDetails: ManagedContactDetails ): ManagedContactDetails => {
+		return mapManagedContactDetailsShape( clearFieldErrors, oldDetails );
 	},
 
 	populateCountryCodeFromGeoIP: (

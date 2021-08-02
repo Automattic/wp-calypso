@@ -116,11 +116,11 @@
 		"settings/theme-setup": true,
 		"sign-in-with-apple": true,
 		"sign-in-with-apple/redirect": true,
+		"signup/professional-email-step": true,
 		"signup/reskin": true,
 		"signup/social": true,
 		"site-indicator": true,
 		"support-user": true,
-		"theme/showcase-revamp": true,
 		"tools/migrate": true,
 		"upgrades/checkout": true,
 		"upgrades/domain-search": true,
@@ -136,7 +136,8 @@
 		"woocommerce/extension-referrers": false,
 		"woocommerce/store-on-non-atomic-sites": true,
 		"wpcom-user-bootstrap": true,
-		"wordpress-action-search": false
+		"wordpress-action-search": false,
+		"redirect-fallback-browsers": true
 	},
 	"siftscience_key": "e00e878351",
 	"oauth_client_id": "39911",

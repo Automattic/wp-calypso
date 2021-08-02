@@ -3,6 +3,7 @@ import { BaseContainer } from '../base-container';
 
 const selectors = {
 	loginContainer: '.wp-login__container',
+	loginButton: 'button:has-text("Log In")',
 	username: '#usernameOrEmail',
 	password: '#password',
 	changeAccountButton: '#loginAsAnotherUser',
@@ -52,8 +53,8 @@ export class LoginPage extends BaseContainer {
 		await this.page.fill( selectors.username, username );
 		await this.page.keyboard.press( 'Enter' );
 		await this.page.fill( selectors.password, password );
-
-		// Enter submits the form and initiates the log in process.
-		await this.page.keyboard.press( 'Enter' );
+		await this.page.click( selectors.loginButton );
+		// make sure after logging in that everything stablizes, so we can continue with the next action!
+		await this.page.waitForLoadState( 'load' );
 	}
 }

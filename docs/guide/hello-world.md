@@ -71,14 +71,7 @@ touch client/my-sites/hello-world/index.js
 Here we'll import the `page` module, the My Sites controller and our own controller, and write our main route handler:
 
 ```javascript
-/**
- * External dependencies
- */
 import page from 'page';
-
-/**
- * Internal dependencies
- */
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection } from 'calypso/my-sites/controller';
 import { helloWorld } from './controller';
@@ -154,14 +147,7 @@ touch client/my-sites/hello-world/main.jsx
 Start by importing React as an external dependency at the top, then import the internal "Main" UI component from `components/main`. We'll use it to set up our view tree. Finally, create and export a new React Component.
 
 ```javascript
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import Main from 'calypso/components/main';
 
 export default class HelloWorld extends React.Component {}
@@ -223,9 +209,6 @@ export default class HelloWorld extends React.Component {
 We need to do one more step to import the component's style file in the component's JavaScript source file. It's done by adding an import statement block to the `main.jsx` file:
 
 ```jsx
-/**
- * Style dependencies
- */
 import './style.scss';
 ```
 
@@ -237,14 +220,7 @@ Time to hook this up with our controller function. Open `/hello-world/controller
 Import React and your new component at the top of the file:
 
 ```javascript
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import HelloWorld from 'calypso/my-sites/hello-world/main';
 ```
 

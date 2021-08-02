@@ -82,6 +82,11 @@
 	}
 }
 
-.theme-showcase__badge-beta {
+.section-nav__mobile-header-text .theme-showcase__badge-beta,
+.section-nav-tab__text .theme-showcase__badge-beta {
 	margin-left: 6px;
+	line-height: 12px;
+	height: 13px;
+	padding-left: 8px;
+	padding-right: 8px;
 }

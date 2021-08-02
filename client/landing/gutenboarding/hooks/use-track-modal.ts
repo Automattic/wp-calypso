@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { useEffect } from 'react';
-
-/**
- * Internal dependencies
- */
-import { useOnUnmount } from './use-on-unmount';
 import { recordEnterModal, recordCloseModal } from '../lib/analytics';
+import { useOnUnmount } from './use-on-unmount';
 import type { TracksEventProperties } from '../lib/analytics/types';
 
 /**

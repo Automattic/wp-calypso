@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
 import { loadScript } from '@automattic/load-script';
+import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:analytics:recaptcha' );
 

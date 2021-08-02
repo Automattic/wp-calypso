@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import { get } from 'lodash';
 import { getLocaleSlug } from 'i18n-calypso';
+import { get } from 'lodash';
 import moment from 'moment';
 
 export function getMaintenanceMessageFromError( error, translate ) {

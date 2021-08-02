@@ -276,11 +276,12 @@ function displayRenewalSuccessNotice(
 		reduxDispatch(
 			successNotice(
 				translate(
-					'%(productName)s has been renewed and will now auto renew in the future. ' +
-						'{{a}}Learn more{{/a}}',
+					'Success! You renewed %(productName)s for %(duration)s, and we sent your receipt to %(email)s. {{a}}Learn more about renewals{{/a}}',
 					{
 						args: {
 							productName: renewalItem.product_name,
+							duration: moment.duration( { days: renewalItem.bill_period } ).humanize(),
+							email: product.user_email,
 						},
 						components: {
 							a: <a href={ AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />,
@@ -297,8 +298,7 @@ function displayRenewalSuccessNotice(
 	reduxDispatch(
 		successNotice(
 			translate(
-				'Success! You renewed %(productName)s for %(duration)s, until %(date)s. ' +
-					'We sent your receipt to %(email)s.',
+				'Success! You renewed %(productName)s for %(duration)s, until %(date)s. We sent your receipt to %(email)s.',
 				{
 					args: {
 						productName: renewalItem.product_name,

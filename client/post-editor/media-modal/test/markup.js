@@ -2,15 +2,8 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import ReactDomServer from 'react-dom/server';
-
-/**
- * Internal dependencies
- */
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import markup from '../markup';
 

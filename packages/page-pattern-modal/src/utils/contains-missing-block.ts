@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import type { BlockInstance } from '@wordpress/blocks';
 
 // Once parsed, missing Blocks have a name prop of `core/missing`.

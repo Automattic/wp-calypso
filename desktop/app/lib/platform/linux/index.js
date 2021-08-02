@@ -1,11 +1,4 @@
-/**
- * External Dependencies
- */
 const { app } = require( 'electron' );
-
-/**
- * Internal dependencies
- */
 const log = require( '../../../lib/logger' )( 'platform:linux' );
 
 /**

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { jsonStringifyForHtml } from '..';
 
 describe( 'jsonStringifyForHtml', () => {

@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { SVG, Path } from '@wordpress/components';
+import React from 'react';
 
 const Arrow: React.FunctionComponent< React.SVGProps< SVGSVGElement > > = ( props ) => (
 	<SVG

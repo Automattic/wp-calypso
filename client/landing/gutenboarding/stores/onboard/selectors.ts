@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import type { State } from './reducer';
 import { isGoodDefaultDomainQuery } from '@automattic/domain-picker';
+import type { State } from './reducer';
 
 export const getIsRedirecting = ( state: State ) => state.isRedirecting;
 export const getPlanProductId = ( state: State ) => state.planProductId;

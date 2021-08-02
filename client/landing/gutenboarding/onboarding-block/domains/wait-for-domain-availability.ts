@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { subscribe, select } from '@wordpress/data';
-import type { DomainSuggestions } from '@automattic/data-stores';
-
-/**
- * Internal dependencies
- */
 import { DOMAIN_SUGGESTIONS_STORE } from '../../stores/domain-suggestions';
+import type { DomainSuggestions } from '@automattic/data-stores';
 
 type DomainAvailability = DomainSuggestions.DomainAvailability;
 

@@ -1,10 +1,10 @@
 import { By } from 'selenium-webdriver';
-import AsyncBaseContainer from '../async-base-container';
 import * as driverHelper from '../driver-helper';
 import * as driverManager from '../driver-manager';
 import GutenbergEditorComponent from '../gutenberg/gutenberg-editor-component';
+import AbstractEditorComponent from './abstract-editor-component';
 
-export default class SiteEditorComponent extends AsyncBaseContainer {
+export default class SiteEditorComponent extends AbstractEditorComponent {
 	constructor( driver, url, editorType = 'iframe' ) {
 		super( driver, By.css( '.edit-site-header' ), url );
 		this.editorType = editorType;
@@ -243,33 +243,6 @@ export default class SiteEditorComponent extends AsyncBaseContainer {
 		}
 
 		await driverHelper.waitUntilElementNotLocated( this.driver, snackbarNoticeLocator );
-	}
-
-	async insertBlockOrPatternViaBlockAppender( name, container = 'Group' ) {
-		const containerBlockId = await this.addBlock( container );
-		await this.runInCanvas( async () => {
-			const blockAppenderLocator = By.css(
-				`#${ containerBlockId } .block-editor-button-block-appender`
-			);
-			await driverHelper.clickWhenClickable( this.driver, blockAppenderLocator );
-		} );
-
-		// @todo Remove this fallback and its reference below in the `By.css` call
-		// once Gutenberg v11.1.0 is in production. This is here to support GB
-		// versions < 11.1.0, which is still the case at the moment as v11.1.0 is
-		// on edge sites.
-		const quickInserterSearchInputDeprecatedSelector =
-			'.block-editor-inserter__quick-inserter .block-editor-inserter__search-input';
-		const quickInserterSearchInputLocator = By.css(
-			`.block-editor-inserter__quick-inserter .components-search-control__input, ${ quickInserterSearchInputDeprecatedSelector }`
-		);
-
-		const patternItemLocator = By.css(
-			'.block-editor-inserter__quick-inserter .block-editor-block-types-list__item, .block-editor-inserter__quick-inserter .block-editor-block-patterns-list__item'
-		);
-
-		await driverHelper.setWhenSettable( this.driver, quickInserterSearchInputLocator, name );
-		await driverHelper.clickWhenClickable( this.driver, patternItemLocator );
 	}
 
 	async toggleNavigationSidebar() {

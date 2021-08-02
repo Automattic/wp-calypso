@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import React from 'react';
 import ReactDomServer from 'react-dom/server';
-
-/**
- * Internal dependencies
- */
-import data from './data';
 import i18n, { numberFormat, translate } from '../src';
+import data from './data';
 
 /**
  * Pass in a react-generated html string to remove react-specific attributes

@@ -1,15 +1,8 @@
 /* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["expect", "localRequest.*.expect"] }] */
 
-/**
- * External dependencies
- */
+import unmodifiedConfig from '@automattic/calypso-config';
 import request from 'superagent';
 import supertest from 'supertest';
-import unmodifiedConfig from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'api', () => {

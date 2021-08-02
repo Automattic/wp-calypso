@@ -1,27 +1,17 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { useI18n } from '@wordpress/react-i18n';
+import DesignPicker from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
-import DesignPicker from '@automattic/design-picker';
-import type { Design } from '@automattic/design-picker';
-
-/**
- * Internal dependencies
- */
+import { useDispatch, useSelect } from '@wordpress/data';
+import { useI18n } from '@wordpress/react-i18n';
+import React from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo'; // @TODO: extract to @automattic package
 import Badge from '../../components/badge';
-import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { useTrackStep } from '../../hooks/use-track-step';
 import useStepNavigation from '../../hooks/use-step-navigation';
+import { useTrackStep } from '../../hooks/use-track-step';
 import { useIsAnchorFm } from '../../path';
+import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import type { Design } from '@automattic/design-picker';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const Designs: React.FunctionComponent = () => {

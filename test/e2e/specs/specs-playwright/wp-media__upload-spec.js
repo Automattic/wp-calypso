@@ -34,7 +34,7 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 		} );
 
 		it( 'Navigate to Media', async function () {
-			const sidebarComponent = await SidebarComponent.Expect( page );
+			const sidebarComponent = new SidebarComponent( page );
 			await sidebarComponent.gotoMenu( { item: 'Media' } );
 		} );
 

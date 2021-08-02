@@ -7,12 +7,14 @@ import React, {
 	useCallback,
 	useContext,
 	useEffect,
+	useRef,
+	useMemo,
 	useState,
 } from 'react';
 import { useFormStatus } from '../lib/form-status';
 import joinClasses from '../lib/join-classes';
 import styled from '../lib/styled';
-import { Theme } from '../lib/theme';
+import theme from '../lib/theme';
 import {
 	getDefaultOrderReviewStep,
 	getDefaultOrderSummary,
@@ -28,6 +30,7 @@ import CheckoutNextStepButton from './checkout-next-step-button';
 import CheckoutSubmitButton from './checkout-submit-button';
 import LoadingContent from './loading-content';
 import { CheckIcon } from './shared-icons';
+import type { Theme } from '../lib/theme';
 
 const debug = debugFactory( 'composite-checkout:checkout' );
 
@@ -447,6 +450,7 @@ export const SubmitButtonWrapper = styled.div`
 
 	.checkout-button {
 		width: calc( 100% - 60px );
+		margin: 0 auto;
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
@@ -461,15 +465,26 @@ export const SubmitButtonWrapper = styled.div`
 	}
 `;
 
+// Set right padding so that text doesn't overlap with inline help floating button.
+export const SubmitFooterWrapper = styled.div`
+	padding-right: 42px;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		padding-right: 0;
+	}
+`;
+
 export function CheckoutStepArea( {
 	children,
 	className,
 	submitButtonHeader,
+	submitButtonFooter,
 	disableSubmitButton,
 }: {
 	children: React.ReactNode;
 	className?: string;
 	submitButtonHeader?: React.ReactNode;
+	submitButtonFooter?: React.ReactNode;
 	disableSubmitButton?: boolean;
 } ): JSX.Element {
 	const onEvent = useEvents();
@@ -489,16 +504,59 @@ export function CheckoutStepArea( {
 		...( ! isThereAnotherNumberedStep ? [ 'checkout__step-wrapper--last-step' ] : [] ),
 	] );
 
+	const [ submitWrapperHeight, setSubmitWrapperHeight ] = useState( 0 );
+	const [ vw, setVW ] = useState( 0 );
+	const tabletBp = useMemo(
+		() => parseInt( theme.breakpoints.tabletUp.replace( /^.*:/, '' ), 10 ),
+		[]
+	);
+	const rootRef = useRef< HTMLDivElement >( null );
+	const submitWrapperRef = useRef< HTMLDivElement >( null );
+
+	const registerDimensions = useCallback( () => {
+		if ( submitWrapperRef.current ) {
+			setSubmitWrapperHeight( submitWrapperRef.current.offsetHeight );
+		}
+		setVW( window.innerWidth );
+	}, [ setSubmitWrapperHeight, setVW ] );
+	const onResize = useCallback( () => registerDimensions(), [ registerDimensions ] );
+
+	// Get elements dimensions after initial rendering
+	useEffect( () => {
+		registerDimensions();
+	}, [ registerDimensions ] );
+
+	// Get elements dimensions after resizing
+	useEffect( () => {
+		window.addEventListener( 'resize', onResize );
+
+		return () => {
+			window.removeEventListener( 'resize', onResize );
+		};
+	}, [ onResize ] );
+
+	// Update `CheckoutStepAreaWrapper` bottom margin, so that there's enough room to
+	// show the sticky `SubmitButtonWrapper` without hidding the page content.
+	useEffect( () => {
+		if ( vw && submitWrapperHeight && rootRef.current ) {
+			rootRef.current.style.marginBottom = `${ vw < tabletBp ? submitWrapperHeight : 100 }px`;
+		}
+	}, [ vw, submitWrapperHeight, tabletBp ] );
+
 	return (
-		<CheckoutStepAreaWrapper className={ classNames }>
+		<CheckoutStepAreaWrapper className={ classNames } ref={ rootRef }>
 			{ children }
 
-			<SubmitButtonWrapper className="checkout-steps__submit-button-wrapper">
-				{ submitButtonHeader ? submitButtonHeader : null }
+			<SubmitButtonWrapper
+				className="checkout-steps__submit-button-wrapper"
+				ref={ submitWrapperRef }
+			>
+				{ submitButtonHeader || null }
 				<CheckoutSubmitButton
 					disabled={ isThereAnotherNumberedStep || disableSubmitButton }
 					onLoadError={ onSubmitButtonLoadError }
 				/>
+				<SubmitFooterWrapper>{ submitButtonFooter || null }</SubmitFooterWrapper>
 			</SubmitButtonWrapper>
 		</CheckoutStepAreaWrapper>
 	);

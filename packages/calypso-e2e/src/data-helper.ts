@@ -2,6 +2,8 @@ import phrase from 'asana-phrase';
 import config from 'config';
 import { getViewportName } from './browser-helper';
 
+export { config };
+
 /**
  * Generate a pseudo-random integer, inclusive on the lower bound and exclusive on the upper bound.
  *

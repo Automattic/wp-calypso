@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { Frame } from 'playwright';
+import { Frame, ElementHandle } from 'playwright';
 import { BaseContainer } from '../base-container';
 
 const selectors = {
@@ -8,12 +8,23 @@ const selectors = {
 	editorTitle: '.editor-post-title__input',
 	editorBody: '.edit-post-visual-editor',
 
-	// Editor body
+	// Block inserter
+	blockInserterToggle: 'button.edit-post-header-toolbar__inserter-toggle',
+	blockInserterPanel: '.block-editor-inserter__content',
+	blockSearch: '[placeholder="Search"]',
+	blockInserterResultItem: '.block-editor-block-types-list__list-item',
+
+	// Within the editor body.
 	blockAppender: '.block-editor-default-block-appender',
 	paragraphBlocks: 'p.block-editor-rich-text__editable',
 
-	// Top bar
+	// Top bar selectors.
 	editPostHeader: '.edit-post-header',
+	publishPanelToggle: '.editor-post-publish-panel__toggle',
+	settingsToggle: '[aria-label="Settings"]',
+
+	// Settings sidebar.
+	settingsPanel: '.interface-complementary-area',
 
 	// Publish panel (including post-publish)
 	publishPanel: '.editor-post-publish-panel',
@@ -141,6 +152,60 @@ export class GutenbergEditorPage extends BaseContainer {
 
 		// Strip out falsey values.
 		return lines.filter( Boolean ).join( '\n' );
+	}
+
+	/**
+	 * Given a name, adds the Gutenberg block matching the name.
+	 *
+	 * The name is expected to be formatted in the same manner as it
+	 * appears on the label when visible in the block inserter panel.
+	 *
+	 * Example:
+	 * 		- Click to Tweet
+	 * 		- Pay with Paypal
+	 * 		- SyntaxHighlighter Code
+	 *
+	 * @param {string} blockName Name of the block to be inserted.
+	 */
+	async addBlock( blockName: string ): Promise< ElementHandle > {
+		// Click on the editor title. This has the effect of dismissing the block inserter
+		// if open, and restores focus back to the editor root container, allowing insertion
+		// of blocks.
+		await this.frame.click( selectors.editorTitle );
+		await this.openBlockInserter();
+		await this.frame.fill( selectors.blockSearch, blockName );
+		await this.frame.click( `${ selectors.blockInserterResultItem }:has-text("${ blockName }")` );
+		// Confirm the block has been added to the editor body.
+		return await this.frame.waitForSelector( `[aria-label="Block: ${ blockName }"]` );
+	}
+
+	/**
+	 * Open the block inserter panel.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async openBlockInserter(): Promise< void > {
+		await this.frame.click( selectors.blockInserterToggle );
+		await this.frame.waitForSelector( selectors.blockInserterPanel );
+	}
+
+	/**
+	 * Opens the settings sidebar.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async openSettings(): Promise< void > {
+		const isSidebarOpen = await this.frame.$eval( selectors.settingsToggle, ( element ) =>
+			element.classList.contains( 'is-pressed' )
+		);
+		if ( ! isSidebarOpen ) {
+			await this.frame.click( selectors.settingsToggle );
+		}
+		const settingsToggle = await this.frame.waitForSelector( selectors.settingsToggle );
+		await this.frame.waitForFunction(
+			( element ) => element.getAttribute( 'aria-pressed' ) === 'true',
+			settingsToggle
+		);
 	}
 
 	/**

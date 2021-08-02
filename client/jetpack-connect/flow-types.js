@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { JETPACK_RESET_PLANS, JETPACK_PRODUCTS_LIST } from '@automattic/calypso-products';
 import { UPSELL_PRODUCT_MATRIX } from 'calypso/my-sites/plans/jetpack-plans/constants';
 

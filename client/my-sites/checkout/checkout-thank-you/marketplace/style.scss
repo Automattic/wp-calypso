@@ -21,5 +21,10 @@
 				text-align: left;
 			}
 		}
+		.marketplace-thank-you {
+			height: calc( 100vh - var( --masterbar-height ) );
+			margin-top: var( --masterbar-height );
+			overflow-y: auto;
+		}
 	}
 }

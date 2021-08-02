@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { select, subscribe } from '@wordpress/data';
 
 /**

@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { merge } from 'lodash';
 import type { Action, AnyAction } from 'redux';
 import type { ThunkAction, ThunkDispatch } from 'redux-thunk';

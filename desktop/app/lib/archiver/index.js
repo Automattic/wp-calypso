@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 const fs = require( 'fs' ); // eslint-disable-line import/no-nodejs-modules
 const path = require( 'path' );
 const archiver = require( 'archiver' );
-
-/**
- * Internal dependencies
- */
 const log = require( '../../lib/logger' )( 'desktop:lib:archiver' );
 
 module.exports = {

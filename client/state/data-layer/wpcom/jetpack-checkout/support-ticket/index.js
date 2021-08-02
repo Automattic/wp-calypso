@@ -12,13 +12,14 @@ import {
 } from 'calypso/state/action-types';
 
 const updateSupportTicket = ( action ) => {
-	const { siteUrl, receiptId } = action;
+	const { siteUrl, receiptId, source } = action;
 	return http(
 		{
 			method: 'POST',
 			path: '/jetpack-checkout/support-ticket',
 			apiNamespace: 'wpcom/v2',
 			body: { site_url: siteUrl, receipt_id: receiptId },
+			query: { source },
 		},
 		action
 	);

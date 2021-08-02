@@ -1,17 +1,8 @@
-/**
- * External dependencies
- *
- */
-
-import React from 'react';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import Head from 'calypso/components/head';
-import { chunkCssLinks } from './utils';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
+import { chunkCssLinks } from './utils';
 
 function DomainsLanding( {
 	branchName,
