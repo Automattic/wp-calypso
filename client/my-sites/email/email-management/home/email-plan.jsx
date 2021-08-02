@@ -27,7 +27,6 @@ import {
 import EmailPlanHeader from 'calypso/my-sites/email/email-management/home/email-plan-header';
 import EmailPlanMailboxesList from 'calypso/my-sites/email/email-management/home/email-plan-mailboxes-list';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getEmailForwards } from 'calypso/state/selectors/get-email-forwards';
 import {
 	getEmailPurchaseByDomain,
@@ -46,15 +45,14 @@ import {
 	hasLoadedSitePurchasesFromServer,
 	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
-import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import HeaderCake from 'calypso/components/header-cake';
 import isRequestingEmailForwards from 'calypso/state/selectors/is-requesting-email-forwards';
 import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL } from 'calypso/lib/titan/constants';
-import { useEmailAccountsQuery } from 'calypso/data/emails/use-emails-query';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import { useEmailAccountsQuery } from 'calypso/data/emails/use-emails-query';
 
 const UpgradeNavItem = ( { currentRoute, domain, selectedSiteSlug } ) => {
 	const translate = useTranslate();
@@ -288,7 +286,6 @@ const EmailPlan = ( props ) => {
 		hasSubscription,
 		purchase,
 		isLoadingPurchase,
-		domains,
 	} = props;
 
 	// Ensure we check for email forwarding additions and removals
@@ -298,21 +295,6 @@ const EmailPlan = ( props ) => {
 		retry: false,
 	} );
 
-	function shouldHideHeaderCake() {
-		const domainHasEmail = ( itemDomain ) =>
-			hasTitanMailWithUs( itemDomain ) ||
-			hasGSuiteWithUs( itemDomain ) ||
-			hasEmailForwards( itemDomain );
-		const nonWpcomDomains = domains.filter( ( itemDomain ) => ! itemDomain.isWPCOMDomain );
-		const domainsWithEmail = nonWpcomDomains.filter( domainHasEmail );
-		const domainsWithNoEmail = nonWpcomDomains.filter(
-			( itemDomain ) => ! domainHasEmail( itemDomain )
-		);
-
-		const hideHeaderCake = domainsWithEmail.length === 1 && domainsWithNoEmail.length === 0;
-		return hideHeaderCake;
-	}
-
 	return (
 		<>
 			{ selectedSite && hasSubscription && <QuerySitePurchases siteId={ selectedSite.ID } /> }
@@ -321,9 +303,7 @@ const EmailPlan = ( props ) => {
 
 			<DocumentHead title={ titleCase( getHeaderText() ) } />
 
-			{ ! shouldHideHeaderCake() && (
-				<HeaderCake onClick={ handleBack }>{ getHeaderText() }</HeaderCake>
-			) }
+			<HeaderCake onClick={ handleBack }>{ getHeaderText() }</HeaderCake>
 
 			<EmailPlanHeader
 				domain={ domain }
@@ -383,6 +363,5 @@ export default connect( ( state, ownProps ) => {
 			isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 		purchase: getEmailPurchaseByDomain( state, ownProps.domain ),
 		hasSubscription: hasEmailSubscription( ownProps.domain ),
-		domains: getDomainsBySiteId( state, ownProps.selectedSite.ID ),
 	};
 } )( localize( EmailPlan ) );
