@@ -12,6 +12,7 @@ interface Variables {
 
 interface Result extends UseMutationResult< void, unknown, Variables > {
 	skipCurrentView: ( reminder: ReminderDuration ) => void;
+	skipCard: ( card, reminder: ReminderDuration ) => void;
 }
 
 function useSkipCurrentViewMutation( siteId: number ): Result {
@@ -19,7 +20,7 @@ function useSkipCurrentViewMutation( siteId: number ): Result {
 	const query = useHomeLayoutQueryParams();
 
 	const mutation = useMutation< void, unknown, Variables >(
-		async ( { reminder } ) => {
+		async ( { reminder, card } ) => {
 			const data = await queryClient.fetchQuery(
 				getCacheKey( siteId ),
 				() => fetchHomeLayout( siteId, query ),
@@ -31,14 +32,31 @@ function useSkipCurrentViewMutation( siteId: number ): Result {
 					path: `/sites/${ siteId }/home/layout/skip`,
 					apiNamespace: 'wpcom/v2',
 				},
-				{ dev: query.dev },
+				{ query },
 				{
 					view: ( data as any ).view_name,
+					card,
 					...( reminder && { reminder } ),
 				}
 			);
 		},
 		{
+			onMutate( { card } ) {
+				const cachedData: Record< string, unknown > | undefined = queryClient.getQueryData(
+					getCacheKey( siteId )
+				);
+				const optimisticUpdate = {
+					...cachedData,
+					primary: cachedData.primary.filter( ( c ) => c !== card ),
+				};
+
+				queryClient.setQueryData( getCacheKey( siteId ), optimisticUpdate );
+			},
+			onError(/* err, _data, cachedData */) {
+				// We can revert the change if there's an error here, but do
+				// we actually want to?
+				// queryClient.setQueryData( getCacheKey( siteId ), cachedData );
+			},
 			onSuccess( data ) {
 				queryClient.setQueryData( getCacheKey( siteId ), data );
 			},
@@ -51,7 +69,12 @@ function useSkipCurrentViewMutation( siteId: number ): Result {
 		mutate,
 	] );
 
-	return { skipCurrentView, ...mutation };
+	const skipCard = useCallback(
+		( card, reminder: ReminderDuration ) => mutate( { reminder, card } ),
+		[ mutate ]
+	);
+
+	return { skipCurrentView, skipCard, ...mutation };
 }
 
 export default useSkipCurrentViewMutation;
