@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import Spinner from 'calypso/components/spinner';
-import MediaImage from 'calypso/my-sites/media-library/media-image';
 import { url, isItemBeingUploaded } from 'calypso/lib/media/utils';
+import MediaImage from 'calypso/my-sites/media-library/media-image';
 
 const noop = () => {};
 

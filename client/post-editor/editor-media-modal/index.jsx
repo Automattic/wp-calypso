@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
+import { partial, map, get } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { partial, map, get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import MediaModal from 'calypso/post-editor/media-modal';
 import { generateGalleryShortcode } from 'calypso/lib/media/utils';
+import MediaModal from 'calypso/post-editor/media-modal';
 import markup from 'calypso/post-editor/media-modal/markup';
 import { bumpStat } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';

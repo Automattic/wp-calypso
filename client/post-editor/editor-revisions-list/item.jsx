@@ -1,20 +1,12 @@
-/**
- * External dependencies
- */
-
-import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
+import TimeSince from 'calypso/components/time-since';
 import { selectPostRevision } from 'calypso/state/posts/revisions/actions';
 import { getPostRevisionAuthor } from 'calypso/state/posts/revisions/authors/selectors';
 import { isSingleUserSite } from 'calypso/state/sites/selectors';
-import TimeSince from 'calypso/components/time-since';
 
 class EditorRevisionsListItem extends PureComponent {
 	selectRevision = () => {
