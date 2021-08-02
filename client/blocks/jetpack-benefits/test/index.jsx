@@ -19,7 +19,7 @@ import {
 	PLAN_JETPACK_SECURITY_REALTIME,
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 } from '@automattic/calypso-products';
-import { JetpackBenefits } from '../index';
+import { productHasAntiSpam, productHasBackups, productHasSearch, productHasScan } from '../index';
 
 describe( 'JetpackBenefits Feature Checks', () => {
 	// this method is here for debugging
@@ -58,10 +58,9 @@ describe( 'JetpackBenefits Feature Checks', () => {
 			PLAN_JETPACK_SECURITY_REALTIME,
 			PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 		];
-		const benefits = new JetpackBenefits( {} );
 
 		plansWithBackup.forEach( ( plan ) => {
-			expect( benefits.productHasBackups( plan ) ).toBe( true );
+			expect( productHasBackups( plan ) ).toBe( true );
 		} );
 	} );
 
@@ -72,10 +71,9 @@ describe( 'JetpackBenefits Feature Checks', () => {
 			...JETPACK_ANTI_SPAM_PRODUCTS,
 			...JETPACK_SEARCH_PRODUCTS,
 		];
-		const benefits = new JetpackBenefits( {} );
 
 		plansWithoutBackup.forEach( ( plan ) => {
-			expect( benefits.productHasBackups( plan ) ).toBe( false );
+			expect( productHasBackups( plan ) ).toBe( false );
 		} );
 	} );
 
@@ -94,10 +92,9 @@ describe( 'JetpackBenefits Feature Checks', () => {
 			PLAN_JETPACK_SECURITY_REALTIME,
 			PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 		];
-		const benefits = new JetpackBenefits( {} );
 
 		plansWithScan.forEach( ( plan ) => {
-			expect( benefits.productHasScan( plan ) ).toBe( true );
+			expect( productHasScan( plan ) ).toBe( true );
 		} );
 	} );
 
@@ -110,10 +107,8 @@ describe( 'JetpackBenefits Feature Checks', () => {
 			PLAN_JETPACK_PERSONAL_MONTHLY,
 		];
 
-		const benefits = new JetpackBenefits( {} );
-
 		plansWithoutScan.forEach( ( plan ) => {
-			expect( benefits.productHasScan( plan ) ).toBe( false );
+			expect( productHasScan( plan ) ).toBe( false );
 		} );
 	} );
 
@@ -135,10 +130,8 @@ describe( 'JetpackBenefits Feature Checks', () => {
 			PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 		];
 
-		const benefits = new JetpackBenefits( {} );
-
 		plansWithAntiSpam.forEach( ( plan ) => {
-			expect( benefits.productHasAntiSpam( plan ) ).toBe( true );
+			expect( productHasAntiSpam( plan ) ).toBe( true );
 		} );
 	} );
 
@@ -149,10 +142,8 @@ describe( 'JetpackBenefits Feature Checks', () => {
 			...JETPACK_SEARCH_PRODUCTS,
 		];
 
-		const benefits = new JetpackBenefits( {} );
-
 		plansWithoutAntiSpam.forEach( ( plan ) => {
-			expect( benefits.productHasAntiSpam( plan ) ).toBe( false );
+			expect( productHasAntiSpam( plan ) ).toBe( false );
 		} );
 	} );
 
@@ -166,10 +157,8 @@ describe( 'JetpackBenefits Feature Checks', () => {
 			PLAN_JETPACK_COMPLETE_MONTHLY,
 		];
 
-		const benefits = new JetpackBenefits( {} );
-
 		plansWithSearch.forEach( ( plan ) => {
-			expect( benefits.productHasSearch( plan ) ).toBe( true );
+			expect( productHasSearch( plan ) ).toBe( true );
 		} );
 	} );
 
@@ -188,10 +177,8 @@ describe( 'JetpackBenefits Feature Checks', () => {
 			PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 		];
 
-		const benefits = new JetpackBenefits( {} );
-
 		plansWithoutSearch.forEach( ( plan ) => {
-			expect( benefits.productHasSearch( plan ) ).toBe( false );
+			expect( productHasSearch( plan ) ).toBe( false );
 		} );
 	} );
 } );
