@@ -293,3 +293,33 @@ export const linkProps = ( note, block ) => {
 			return {};
 	}
 };
+
+export function fixBlockFormatting( block ) {
+	let slideCount = 0;
+	let i = 0;
+	for ( i = 0; i < block.ranges.length; i++ ) {
+		if ( block.ranges[ i ].type === 'figcaption' ) {
+			block.ranges[ i ].style += 'display:none;';
+		}
+
+		if (
+			block.ranges[ i ].class &&
+			block.ranges[ i ].class.includes( 'wp-block-jetpack-slideshow_slide' )
+		) {
+			slideCount++;
+			block.ranges[ i ].style = 'display:flex;height:100%;width:100%;padding:2px;';
+			if ( slideCount > 4 ) {
+				block.ranges[ i ].style += 'display:none;';
+			}
+		}
+
+		if (
+			block.ranges[ i ].class &&
+			block.ranges[ i ].class.includes( 'wp-block-jetpack-slideshow_container' )
+		) {
+			block.ranges[ i ].style = 'width:100%';
+		}
+	}
+
+	return block;
+}

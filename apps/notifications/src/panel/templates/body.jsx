@@ -7,7 +7,7 @@ import NoteActions from './actions';
 import Comment from './block-comment';
 import Post from './block-post';
 import User from './block-user';
-import { p, zipWithSignature } from './functions';
+import { p, zipWithSignature, fixBlockFormatting } from './functions';
 import NotePreface from './preface';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -84,7 +84,6 @@ export class NoteBody extends React.Component {
 		for ( i = 0; i < blocks.length; i++ ) {
 			const block = blocks[ i ];
 			const blockKey = 'block-' + this.props.note.id + '-' + i;
-			let slideCount = 0;
 
 			if ( block.block.actions && 'user' !== block.signature.type ) {
 				actions = (
@@ -115,33 +114,12 @@ export class NoteBody extends React.Component {
 					);
 					break;
 				case 'post':
-					slideCount = 0;
-					for ( i = 0; i < block.block.ranges.length; i++ ) {
-						if ( block.block.ranges[ i ].type === 'figcaption' ) {
-							block.block.ranges[ i ].style += 'display:none;';
-						}
-
-						if (
-							block.block.ranges[ i ].class &&
-							block.block.ranges[ i ].class.includes( 'wp-block-jetpack-slideshow_slide' )
-						) {
-							slideCount++;
-							block.block.ranges[ i ].style = 'display:flex;height:100%;width:100%;padding:2px;';
-							if ( slideCount > 4 ) {
-								block.block.ranges[ i ].style += 'display:none;';
-							}
-						}
-
-						if (
-							block.block.ranges[ i ].class &&
-							block.block.ranges[ i ].class.includes( 'wp-block-jetpack-slideshow_container' )
-						) {
-							block.block.ranges[ i ].style = 'width:100%';
-						}
-					}
-
 					body.push(
-						<Post key={ blockKey } block={ block.block } meta={ this.props.note.meta } />
+						<Post
+							key={ blockKey }
+							block={ fixBlockFormatting( block.block ) }
+							meta={ this.props.note.meta }
+						/>
 					);
 					break;
 				case 'reply':
