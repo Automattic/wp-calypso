@@ -111,7 +111,7 @@ function getNoDomainMappingForEmailErrorMessage( {
 	translate: ReturnType< typeof useTranslate >;
 } ) {
 	return translate(
-		'We have removed an email product from your cart because you no longer have the domain it was using.'
+		'We have removed an email product from your cart because you no longer have the domain it depends on.'
 	);
 }
 
