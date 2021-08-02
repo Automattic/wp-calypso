@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import wpLib from 'calypso/lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	IMPORTS_AUTHORS_SET_MAPPING,
 	IMPORTS_AUTHORS_START_MAPPING,
@@ -25,8 +25,6 @@ import { fromApi, toApi } from './api';
  * Redux dependencies
  */
 import 'calypso/state/imports/init';
-
-const wpcom = wpLib.undocumented();
 
 const ID_GENERATOR_PREFIX = 'local-generated-id-';
 
@@ -56,6 +54,13 @@ const createImportOrder = ( importerStatus ) =>
 		...importerStatus,
 		importerState: appStates.IMPORTING,
 	} );
+
+function updateImporter( siteId, importerStatus ) {
+	return wpcom.req.post( {
+		path: `/sites/${ siteId }/imports/${ importerStatus.importerId }`,
+		formData: [ [ 'importStatus', JSON.stringify( importerStatus ) ] ],
+	} );
+}
 
 export const lockImport = ( importerId ) => ( {
 	type: IMPORTS_IMPORT_LOCK,
@@ -88,12 +93,12 @@ export const cancelImport = ( siteId, importerId ) => async ( dispatch ) => {
 		return;
 	}
 
-	const data = await wpcom.updateImporter( siteId, createCancelOrder( siteId, importerId ) );
+	const data = await updateImporter( siteId, createCancelOrder( siteId, importerId ) );
 	dispatch( receiveImporterStatus( data ) );
 };
 
 export const fetchImporterState = ( siteId ) => async ( dispatch ) => {
-	const data = await wpcom.fetchImporterState( siteId );
+	const data = await wpcom.req.get( `/sites/${ siteId }/imports` );
 	dispatch( receiveImporterStatus( data ) );
 };
 
@@ -121,7 +126,7 @@ export const resetImport = ( siteId, importerId ) => async ( dispatch ) => {
 	};
 	dispatch( resetImportAction );
 
-	const data = await wpcom.updateImporter( siteId, createExpiryOrder( siteId, importerId ) );
+	const data = await updateImporter( siteId, createExpiryOrder( siteId, importerId ) );
 	dispatch( receiveImporterStatus( data ) );
 };
 
@@ -136,7 +141,7 @@ export const clearImport = ( siteId, importerId ) => async ( dispatch ) => {
 	};
 	dispatch( resetImportAction );
 
-	const data = await wpcom.updateImporter( siteId, createClearOrder( siteId, importerId ) );
+	const data = await updateImporter( siteId, createClearOrder( siteId, importerId ) );
 	dispatch( receiveImporterStatus( data ) );
 };
 
@@ -179,7 +184,7 @@ export const startImporting = ( importerStatus ) => ( dispatch ) => {
 	};
 	dispatch( startImportingAction );
 
-	return wpcom.updateImporter( siteId, createImportOrder( importerStatus ) );
+	return updateImporter( siteId, createImportOrder( importerStatus ) );
 };
 
 export const setUploadStartState = ( importerId, filenameOrUrl ) => ( {
@@ -196,33 +201,39 @@ export const startUpload = ( importerStatus, file, url = undefined ) => ( dispat
 
 	dispatch( setUploadStartState( importerId, file.name ) );
 
-	return wpcom
-		.uploadExportFile( siteId, {
-			importStatus: toApi( importerStatus ),
-			file,
-			url,
-			onprogress: ( event ) => {
-				dispatch(
-					setUploadProgress( importerId, {
-						uploadLoaded: event.loaded,
-						uploadTotal: event.total,
-					} )
-				);
-			},
-			onabort: () => {
-				dispatch( cancelImport( siteId, importerId ) );
-			},
-		} )
+	const formData = [
+		[ 'importStatus', JSON.stringify( toApi( importerStatus ) ) ],
+		[ 'import', file ],
+	];
+
+	if ( url ) {
+		formData.push( [ 'url', url ] );
+	}
+
+	const req = wpcom.req.post( { path: `/sites/${ siteId }/imports/new`, formData } );
+
+	req.upload.onprogress = ( event ) => {
+		dispatch(
+			setUploadProgress( importerId, {
+				uploadLoaded: event.loaded,
+				uploadTotal: event.total,
+			} )
+		);
+	};
+
+	req.onabort = () => {
+		dispatch( cancelImport( siteId, importerId ) );
+	};
+
+	return req
 		.then( ( data ) => {
 			dispatch( finishUpload( importerId, fromApi( data ) ) );
 		} )
 		.catch( ( error ) => {
-			const failUploadAction = {
+			dispatch( {
 				type: IMPORTS_UPLOAD_FAILED,
 				importerId,
 				error: error.message,
-			};
-
-			dispatch( failUploadAction );
+			} );
 		} );
 };

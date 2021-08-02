@@ -82,9 +82,11 @@ class ImportURLStepComponent extends Component {
 			urlValidationMessage: '',
 		} );
 
-		wpcom
-			.undocumented()
-			.isSiteImportable( urlInputValue )
+		wpcom.req
+			.get( '/imports/is-site-importable', {
+				apiNamespace: 'wpcom/v2',
+				site_url: urlInputValue,
+			} )
 			.then(
 				( {
 					site_engine: siteEngine,

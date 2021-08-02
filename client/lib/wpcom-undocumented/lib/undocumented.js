@@ -3,7 +3,6 @@
  */
 import debugFactory from 'debug';
 import { camelCase, isPlainObject, omit, pick, snakeCase, set } from 'lodash';
-import { stringify } from 'qs';
 
 /**
  * Internal dependencies.
@@ -1837,76 +1836,6 @@ Undocumented.prototype.resetPasswordForMailbox = function ( domainName, mailbox,
 		},
 		fn
 	);
-};
-
-Undocumented.prototype.isSiteImportable = function ( site_url ) {
-	debug( `/wpcom/v2/imports/is-site-importable?${ site_url }` );
-
-	return this.wpcom.req.get(
-		{ path: '/imports/is-site-importable', apiNamespace: 'wpcom/v2' },
-		{ site_url }
-	);
-};
-
-Undocumented.prototype.fetchImporterState = function ( siteId ) {
-	debug( `/sites/${ siteId }/importer/` );
-
-	return this.wpcom.req.get( { path: `/sites/${ siteId }/imports/` } );
-};
-
-Undocumented.prototype.updateImporter = function ( siteId, importerStatus ) {
-	debug( `/sites/${ siteId }/imports/${ importerStatus.importId }` );
-
-	return this.wpcom.req.post( {
-		path: `/sites/${ siteId }/imports/${ importerStatus.importerId }`,
-		formData: [ [ 'importStatus', JSON.stringify( importerStatus ) ] ],
-	} );
-};
-
-Undocumented.prototype.importWithSiteImporter = function (
-	siteId,
-	importerStatus,
-	params,
-	targetUrl
-) {
-	debug( `/sites/${ siteId }/site-importer/import-site?${ stringify( params ) }` );
-
-	return this.wpcom.req.post( {
-		path: `/sites/${ siteId }/site-importer/import-site?${ stringify( params ) }`,
-		apiNamespace: 'wpcom/v2',
-		formData: [
-			[ 'import_status', JSON.stringify( importerStatus ) ],
-			[ 'site_url', targetUrl ],
-		],
-	} );
-};
-
-Undocumented.prototype.uploadExportFile = function ( siteId, params ) {
-	return new Promise( ( resolve, rejectPromise ) => {
-		const resolver = ( error, data ) => {
-			error ? rejectPromise( error ) : resolve( data );
-		};
-
-		const formData = [
-			[ 'importStatus', JSON.stringify( params.importStatus ) ],
-			[ 'import', params.file ],
-		];
-
-		if ( params.url ) {
-			formData.push( [ 'url', params.url ] );
-		}
-
-		const req = this.wpcom.req.post(
-			{
-				path: `/sites/${ siteId }/imports/new`,
-				formData,
-			},
-			resolver
-		);
-
-		req.upload.onprogress = params.onprogress;
-		req.onabort = params.onabort;
-	} );
 };
 
 /**
