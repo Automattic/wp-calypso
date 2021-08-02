@@ -213,6 +213,10 @@
 
 .domain-suggestion__price-container {
 	padding-right: 1em;
+	margin-top: 10px;
+	@include break-mobile {
+		margin-top: 0;
+	}
 }
 
 .button.domain-suggestion__action {
