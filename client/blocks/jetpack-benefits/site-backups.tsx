@@ -18,10 +18,10 @@ import { EVERY_SECOND, Interval } from 'calypso/lib/interval';
 import { ProgressBar } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 
-type Props = {
+interface Props {
 	siteId: number;
 	isStandalone: boolean;
-};
+}
 
 interface Backup {
 	stats: {

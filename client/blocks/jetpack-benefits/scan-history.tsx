@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { DefaultRootState, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import moment from 'moment';
 
 /**
@@ -19,10 +19,10 @@ import { ProgressBar } from '@automattic/components';
 import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 
-type Props = {
+interface Props {
 	siteId: number;
 	isStandalone: boolean;
-};
+}
 
 const JetpackBenefitsScanHistory: React.FC< Props > = ( { siteId, isStandalone } ) => {
 	const translate = useTranslate();
