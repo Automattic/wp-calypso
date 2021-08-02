@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import { NoJetpackSitesMessage } from 'calypso/components/jetpack/no-jetpack-sites-message';
 import { makeLayout, render as clientRender, setSectionMiddleware } from 'calypso/controller';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
@@ -22,10 +15,6 @@ import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteId, getSiteSlug } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions';
-
-/**
- * Type dependencies
- */
 import type { UserData } from 'calypso/lib/user/user';
 import type PageJS from 'page';
 

@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import page from 'page';
-
-/**
- * Internal dependencies
- */
-import { connect, tokenRedirect } from './controller';
-import { makeLayout, render as clientRender } from 'calypso/controller';
 import config from '@automattic/calypso-config';
+import page from 'page';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { connect, tokenRedirect } from './controller';
 
 export default (): void => {
 	if ( config.isEnabled( 'jetpack-cloud' ) ) {

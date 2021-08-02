@@ -1,24 +1,13 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import { localize, translate as TranslateType } from 'i18n-calypso';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize, translate as TranslateType } from 'i18n-calypso';
-import config from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import SidebarRegion from 'calypso/layout/sidebar/region';
 import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
-
-/**
- * Style dependencies
- */
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import 'calypso/components/jetpack/sidebar/style.scss';
 
 interface Props {

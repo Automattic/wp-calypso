@@ -1,8 +1,4 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
 import './style.scss';
 
 const AdvancedCredentialsLoadingPlaceholder: React.FC = () => (

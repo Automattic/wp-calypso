@@ -189,6 +189,7 @@ module.exports = {
 				'client/document/**/*',
 				'client/gutenberg/**/*',
 				'client/incoming-redirect/**/*',
+				'client/jetpack-cloud/**/*',
 				'client/jetpack-connect/**/*',
 				'client/landing/**/*',
 				'client/login/**/*',

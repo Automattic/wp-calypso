@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
+import { addQueryArgs } from 'calypso/lib/route';
 import { hideMasterbar } from 'calypso/state/ui/actions';
+import { setLocale } from 'calypso/state/ui/language/actions';
 import Header from './header';
 import JetpackComFooter from './jpcom-footer';
-import { setLocale } from 'calypso/state/ui/language/actions';
-import { addQueryArgs } from 'calypso/lib/route';
 
 export function jetpackPricingContext( context: PageJS.Context, next: () => void ): void {
 	const urlQueryArgs = context.query;

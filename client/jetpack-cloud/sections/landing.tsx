@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
-import { useSelector } from 'react-redux';
 import page from 'page';
 import React, { useEffect } from 'react';
-
-/**
- * Internal dependencies
- */
-import { AppState } from 'calypso/types';
+import { useSelector } from 'react-redux';
 import QueryRewindCapabilities from 'calypso/components/data/query-rewind-capabilities';
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
+import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
+import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
-import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
-import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
+import { AppState } from 'calypso/types';
 
 const siteIsEligible = ( state: AppState, siteId: number | null ) =>
 	siteId

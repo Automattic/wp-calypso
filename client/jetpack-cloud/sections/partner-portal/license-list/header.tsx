@@ -1,30 +1,19 @@
-/**
- * External dependencies
- */
-import React, { PropsWithChildren, ReactElement, useCallback, useContext } from 'react';
-import { useDispatch } from 'react-redux';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import React, { PropsWithChildren, ReactElement, useCallback, useContext } from 'react';
+import { useDispatch } from 'react-redux';
+import Gridicon from 'calypso/components/gridicon';
+import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
+import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';
 import {
 	LicenseFilter,
 	LicenseSortDirection,
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';
-import Gridicon from 'calypso/components/gridicon';
-import { addQueryArgs } from 'calypso/lib/route';
 import { internalToPublicLicenseSortField } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
-import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
+import { addQueryArgs } from 'calypso/lib/route';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function setSortingConfig(

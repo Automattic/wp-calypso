@@ -2,16 +2,9 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
+import { render } from 'config/testing-library';
 import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
-
-/**
- * Internal dependencies
- */
-import { render } from 'config/testing-library';
 import AdvancedCredentialsLoadingPlaceholder from '../index';
 
 describe( 'AdvancedCredentialsLoadingPlaceholder', () => {

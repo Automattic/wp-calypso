@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
+import { isEnabled } from '@automattic/calypso-config';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
 	settings,
 	advancedCredentials,
 	showNotAuthorizedForNonAdmins,
 } from 'calypso/jetpack-cloud/sections/settings/controller';
-import { settingsPath } from 'calypso/lib/jetpack/paths';
-import { isEnabled } from '@automattic/calypso-config';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { settingsPath } from 'calypso/lib/jetpack/paths';
+import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 
 export default function () {
 	if ( isJetpackCloud() ) {
