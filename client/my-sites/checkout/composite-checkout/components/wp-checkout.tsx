@@ -175,9 +175,12 @@ export default function WPCheckout( {
 
 	const contactInfo: ManagedContactDetails =
 		useSelect( ( sel ) => sel( 'wpcom' ).getContactInfo() ) || {};
-	const { setSiteId, touchContactFields, applyDomainContactValidationResults } = useDispatch(
-		'wpcom'
-	);
+	const {
+		setSiteId,
+		touchContactFields,
+		applyDomainContactValidationResults,
+		clearDomainContactErrorMessages,
+	} = useDispatch( 'wpcom' );
 
 	const [
 		shouldShowContactDetailsValidationErrors,
@@ -243,6 +246,7 @@ export default function WPCheckout( {
 				paymentMethodId: activePaymentMethod?.id ?? '',
 				validationResult,
 				applyDomainContactValidationResults,
+				clearDomainContactErrorMessages,
 			} );
 			const isSignupValidationValid = isContactValidationResponseValid(
 				validationResult,
@@ -263,6 +267,7 @@ export default function WPCheckout( {
 				paymentMethodId: activePaymentMethod?.id ?? '',
 				validationResult,
 				applyDomainContactValidationResults,
+				clearDomainContactErrorMessages,
 			} );
 			return isContactValidationResponseValid( validationResult, contactInfo );
 		} else if ( contactDetailsType === 'domain' ) {
@@ -277,6 +282,7 @@ export default function WPCheckout( {
 				paymentMethodId: activePaymentMethod?.id ?? '',
 				validationResult,
 				applyDomainContactValidationResults,
+				clearDomainContactErrorMessages,
 			} );
 			return isContactValidationResponseValid( validationResult, contactInfo );
 		} else if ( contactDetailsType === 'gsuite' ) {
@@ -291,6 +297,7 @@ export default function WPCheckout( {
 				paymentMethodId: activePaymentMethod?.id ?? '',
 				validationResult,
 				applyDomainContactValidationResults,
+				clearDomainContactErrorMessages,
 			} );
 			return isContactValidationResponseValid( validationResult, contactInfo );
 		}
