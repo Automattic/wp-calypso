@@ -114,16 +114,15 @@ export class List extends React.Component {
 		}
 	}
 
-	filterOutWpcomDomains( domains ) {
-		return domains.filter(
-			( domain ) => domain.type !== type.WPCOM || domain.isWpcomStagingDomain
-		);
-	}
-
 	renderNewDesign() {
 		const { selectedSite, domains, currentRoute, translate } = this.props;
+		const { changePrimaryDomainModeEnabled, settingPrimaryDomain } = this.state;
+		const disabled = settingPrimaryDomain || changePrimaryDomainModeEnabled;
 
-		const nonWpcomDomains = this.filterOutWpcomDomains( domains );
+		const nonWpcomDomains = filterOutWpcomDomains( domains );
+		const wpcomDomain = domains.find(
+			( domain ) => domain.type === type.WPCOM || domain.isWpcomStagingDomain
+		);
 
 		return (
 			<>
@@ -163,6 +162,18 @@ export class List extends React.Component {
 				) }
 
 				<DomainToPlanNudge />
+
+				{ wpcomDomain && (
+					<WpcomDomainItem
+						key="wpcom-domain-item"
+						currentRoute={ currentRoute }
+						domain={ wpcomDomain }
+						disabled={ disabled }
+						isBusy={ settingPrimaryDomain }
+						site={ selectedSite }
+						onMakePrimary={ this.handleUpdatePrimaryDomainWpcom }
+					/>
+				) }
 			</>
 		);
 	}
@@ -433,9 +444,6 @@ export class List extends React.Component {
 
 		const domains = filterOutWpcomDomains( this.props.domains );
 		const disabled = settingPrimaryDomain || changePrimaryDomainModeEnabled;
-		const wpcomDomain = this.props.domains.find(
-			( domain ) => domain.type === type.WPCOM || domain.isWpcomStagingDomain
-		);
 
 		const domainListItems = domains.map( ( domain, index ) => (
 			<DomainItem
@@ -477,17 +485,6 @@ export class List extends React.Component {
 			/>,
 			...domainListItems,
 			manageAllDomainsLink,
-			wpcomDomain && (
-				<WpcomDomainItem
-					key="wpcom-domain-item"
-					currentRoute={ currentRoute }
-					domain={ wpcomDomain }
-					disabled={ disabled }
-					isBusy={ settingPrimaryDomain }
-					site={ selectedSite }
-					onMakePrimary={ this.handleUpdatePrimaryDomainWpcom }
-				/>
-			),
 		];
 	}
 

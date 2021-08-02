@@ -57,5 +57,5 @@ export const showUpdatePrimaryDomainErrorNotice = ( errorMessage ) => {
 };
 
 export const filterOutWpcomDomains = ( domains ) => {
-	return domains.filter( ( domain ) => domain.type !== type.WPCOM || domain.isWpcomStagingDomain );
+	return domains.filter( ( domain ) => domain.type !== type.WPCOM );
 };
