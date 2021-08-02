@@ -12,12 +12,6 @@
 		}
 	}
 
-	&.featured-domain-suggestions__is-domain-management .featured-domain-suggestion {
-		.domain-suggestion__action {
-			font-size: $font-body;
-		}
-	}
-
 	.is-section-signup & {
 		@include breakpoint-deprecated( '>480px' ) {
 			flex-direction: row;
@@ -44,6 +38,10 @@
 
 	@include break-mobile {
 		flex-direction: row;
+		/* using .is-compact to increase specificity */
+		&.is-compact {
+			padding: 15px 20px;
+		}
 	}
 
 	.button.domain-suggestion__action {
@@ -173,6 +171,7 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 	align-items: center;
 	background: #ffffff;
 	border-bottom: 1px solid rgba( 220, 220, 222, 0.64 );
+	padding: 16px 24px;
 
 	@include break-mobile {
 		margin-bottom: 12px;
