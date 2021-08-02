@@ -94,10 +94,10 @@ export const productHasActivityLog = ( productSlug: string ) => {
 	return isJetpackPlanSlug( productSlug ) || isJetpackBackupSlug( productSlug );
 };
 
-type Props = {
+interface Props {
 	siteId: number;
 	productSlug: string;
-};
+}
 
 // named export for cleaner testing of class methods
 const JetpackBenefits: React.FC< Props > = ( { siteId, productSlug } ) => {
