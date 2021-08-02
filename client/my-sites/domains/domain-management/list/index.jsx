@@ -120,35 +120,6 @@ export class List extends React.Component {
 		);
 	}
 
-	domainCreditsInfoNotice() {
-		if ( ! this.props.hasDomainCredit ) {
-			return null;
-		}
-
-		const { translate } = this.props;
-
-		return (
-			<Notice
-				status="is-success"
-				showDismiss={ false }
-				text={ translate( 'Free domain available' ) }
-				icon="info-outline"
-				className="domain-management__claim-free-domain"
-			>
-				<NoticeAction
-					onClick={ this.props.clickClaimDomainNotice }
-					href={ `/domains/add/${ this.props.selectedSite.slug }` }
-				>
-					{ translate( 'Claim Free Domain' ) }
-					<TrackComponentView
-						eventName={ 'calypso_domain_credit_reminder_impression' }
-						eventProperties={ { cta_name: 'domain_info_notice' } }
-					/>
-				</NoticeAction>
-			</Notice>
-		);
-	}
-
 	renderNewDesign() {
 		const { selectedSite, domains, currentRoute, translate } = this.props;
 
