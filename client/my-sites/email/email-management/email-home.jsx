@@ -3,7 +3,7 @@
  */
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import page from "page";
+import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
 import titleCase from 'to-title-case';
@@ -18,7 +18,7 @@ import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import EmailListActive from 'calypso/my-sites/email/email-management/home/email-list-active';
 import EmailListInactive from 'calypso/my-sites/email/email-management/home/email-list-inactive';
-import { emailManagement } from 'calypso/my-sites/email/paths';
+import { emailManagementTitanSetupMailbox } from 'calypso/my-sites/email/paths';
 import EmailNoDomain from 'calypso/my-sites/email/email-management/home/email-no-domain';
 import EmailPlan from 'calypso/my-sites/email/email-management/home/email-plan';
 import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
@@ -118,9 +118,11 @@ class EmailManagementHome extends React.Component {
 		if (
 			domainsWithEmail.length === 1 &&
 			domainsWithNoEmail.length === 0 &&
-			domainsWithEmail[ 0 ].domain === selectedSite.domain
+			domainsWithEmail[ 0 ].domain === selectedSite.domain &&
+			domainsWithEmail[ 0 ].titanMailSubscription?.maximumMailboxCount > 0 &&
+			domainsWithEmail[ 0 ].titanMailSubscription?.numberOfMailboxes === 0
 		) {
-			page( emailManagement( selectedSite.slug, selectedSite.domain ) );
+			page( emailManagementTitanSetupMailbox( selectedSite.slug, selectedSite.domain ) );
 		}
 
 		return this.renderContentWithHeader(
