@@ -80,6 +80,10 @@
 		width: 100%;
 	}
 
+	.domain-registration-suggestion__progress-bar {
+		align-self: initial;
+	}
+
 	.domain-registration-suggestion__title-wrapper .domain-registration-suggestion__title {
 		width: auto;
 	}
@@ -210,6 +214,7 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 	.domain-registration-suggestion__title-wrapper {
 		flex-wrap: nowrap;
 		flex-direction: column-reverse;
+		margin-bottom: initial;
 
 		@include break-xlarge {
 			flex-direction: row;
