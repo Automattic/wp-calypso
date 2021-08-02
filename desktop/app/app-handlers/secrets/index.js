@@ -1,11 +1,4 @@
-/**
- * External Dependencies
- */
 const { ipcMain: ipc } = require( 'electron' );
-
-/**
- * Internal dependencies
- */
 const WindowManager = require( '../../lib/window-manager' );
 
 ipc.on( 'secrets', function ( ev, which ) {
