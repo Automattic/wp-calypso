@@ -180,6 +180,7 @@ module.exports = {
 				'apps/editing-toolkit/**/*',
 				'apps/notifications/**/*',
 				'apps/o2-blocks/**/*',
+				'apps/wpcom-block-editor/**/*',
 				'client/auth/**/*',
 				'client/boot/**/*',
 				'client/controller/**/*',

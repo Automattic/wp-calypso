@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import tracksRecordEvent from './track-record-event';
 
 /**
