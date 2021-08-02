@@ -1,37 +1,30 @@
-/**
- * External dependencies
- */
+import fs from 'fs';
+import path from 'path';
+import config from '@automattic/calypso-config';
+import debugFactory from 'debug';
+import { get, pick } from 'lodash';
+import Lru from 'lru';
 import React from 'react';
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
-import Lru from 'lru';
-import { get, pick } from 'lodash';
-import debugFactory from 'debug';
-import path from 'path';
-import fs from 'fs';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
 import { isDefaultLocale, isLocaleRtl, isTranslatedIncompletely } from 'calypso/lib/i18n-utils';
 import {
 	getLanguageFileUrl,
 	getLanguageManifestFileUrl,
 	getTranslationChunkFileUrl,
 } from 'calypso/lib/i18n-utils/switch-locale';
+import { getNormalizedPath } from 'calypso/server/isomorphic-routing';
+import stateCache from 'calypso/server/state-cache';
 import {
 	getDocumentHeadFormattedTitle,
 	getDocumentHeadMeta,
 	getDocumentHeadLink,
 } from 'calypso/state/document-head/selectors';
+import { logToLogstash } from 'calypso/state/logstash/actions';
+import initialReducer from 'calypso/state/reducer';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';
-import initialReducer from 'calypso/state/reducer';
 import { serialize } from 'calypso/state/utils';
-import { logToLogstash } from 'calypso/state/logstash/actions';
-import stateCache from 'calypso/server/state-cache';
-import { getNormalizedPath } from 'calypso/server/isomorphic-routing';
 
 const debug = debugFactory( 'calypso:server-render' );
 const HOUR_IN_MS = 3600000;

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import querystring from 'querystring';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
 
 const getWordPressOptions = ( environmentUrlSuffix ) => ( {

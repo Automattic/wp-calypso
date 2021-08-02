@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
 import { expect } from 'chai';
 import sinon from 'sinon';
 import superagent from 'superagent';
-
-/**
- * Internal dependencies
- */
 import { statsdTimingUrl, statsdCountingUrl } from 'calypso/lib/analytics/statsd-utils';
 import analytics from '../index';
-import config from '@automattic/calypso-config';
 jest.mock( '@automattic/calypso-config', () => require( 'sinon' ).stub() );
 jest.mock( 'calypso/lib/analytics/statsd-utils', () => ( {
 	statsdTimingUrl: require( 'sinon' ).stub(),
