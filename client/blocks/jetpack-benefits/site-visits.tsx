@@ -24,15 +24,25 @@ const memoizedQuery = memoizeLast( ( period, unit, quantity, endOf ) => ( {
 	date: endOf,
 } ) );
 
-const JetpackBenefitsSiteVisits = ( props ) => {
-	const { siteId, statType, query } = props;
+interface Props {
+	siteId: number;
+	statType: string;
+	query: {
+		period: string;
+		unit: string;
+		quantity: number;
+		date: string;
+	};
+}
+
+const JetpackBenefitsSiteVisits: React.FC< Props > = ( { siteId, statType, query } ) => {
 	const translate = useTranslate();
 
 	const isRequestingStats = useSelector( ( state ) => {
 		return isRequestingSiteStatsForQuery( state, siteId, statType, query );
 	} );
 
-	const data = useSelector( ( state ) => {
+	const data: [ { views: number } ] = useSelector( ( state ) => {
 		return getSiteStatsNormalizedData( state, siteId, statType, query );
 	} );
 
@@ -67,7 +77,7 @@ const JetpackBenefitsSiteVisits = ( props ) => {
 	);
 };
 
-export default ( props ) => {
+export default ( props: { siteId: number } ) => {
 	const { siteId } = props;
 	const today = moment().locale( 'en' );
 	const statType = 'statsVisits';

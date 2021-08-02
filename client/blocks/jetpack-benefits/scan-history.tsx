@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { DefaultRootState, useSelector } from 'react-redux';
 import moment from 'moment';
 
 /**
@@ -17,10 +17,14 @@ import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
 import getSiteScanProgress from 'calypso/state/selectors/get-site-scan-progress';
 import { ProgressBar } from '@automattic/components';
 import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
-import { useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 
-const JetpackBenefitsScanHistory = ( props ) => {
-	const { siteId, isStandalone } = props;
+type Props = {
+	siteId: number;
+	isStandalone: boolean;
+};
+
+const JetpackBenefitsScanHistory: React.FC< Props > = ( { siteId, isStandalone } ) => {
 	const translate = useTranslate();
 	const siteScanState = useSelector( ( state ) => {
 		return getSiteScanState( state, siteId );
@@ -116,13 +120,13 @@ const JetpackBenefitsScanHistory = ( props ) => {
 		);
 	}
 
-	let cardStat = '';
-	let cardDescription = '';
+	let cardStat: TranslateResult = '';
+	let cardDescription: TranslateResult = '';
 	if ( threats.length > 0 ) {
 		cardStat = translate( '%(number)d %(threatMaybePlural)s found', {
 			args: {
 				number: threats.length,
-				threatMaybePlural: 'threat' + threats.count > 1 ? 's' : '',
+				threatMaybePlural: 'threat' + ( threats.length > 1 ) ? 's' : '',
 			},
 		} );
 		cardDescription = translate( 'Jetpack has identified some threats on your site.' );
@@ -144,7 +148,7 @@ const JetpackBenefitsScanHistory = ( props ) => {
 	);
 };
 
-export default ( props ) => {
+export default ( props: Props ) => {
 	const { siteId } = props;
 	return (
 		<>
