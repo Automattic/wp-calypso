@@ -66,7 +66,6 @@ class OptionsDomainButton extends React.Component {
 					onClose={ this.closeOptionsMenu }
 					context={ this.optionsDomainButtonRef.current }
 					position="bottom"
-					relativePosition={ { left: -70 } }
 				>
 					<PopoverMenuItem href={ domainManagementAllRoot() } onClick={ this.trackMenuClick }>
 						{ translate( 'Manage all domains' ) }
