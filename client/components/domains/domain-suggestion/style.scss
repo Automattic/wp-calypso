@@ -7,6 +7,10 @@
 	@include break-mobile {
 		flex-direction: row;
 		align-items: center;
+
+		.badge {
+			margin-left: 4px;
+		}
 	}
 
 	.domain-suggestion__content-domain {
@@ -26,6 +30,13 @@
 	}
 
 	.domain-registration-suggestion__domain-title-tld {
+		font-weight: 500; /* stylelint-disable-line */
+	}
+
+	.badge {
+		margin-left: 0;
+		border-radius: 4px; /* stylelint-disable-line */
+		font-size: 0.75rem;
 		font-weight: 500; /* stylelint-disable-line */
 	}
 }
@@ -298,12 +309,6 @@
 .domain-registration-suggestion__progress-bar {
 	align-self: center;
 	margin: 0 0 10px;
-
-	.badge {
-		border-radius: 4px; /* stylelint-disable-line */
-		font-size: 0.75rem;
-		font-weight: 500; /* stylelint-disable-line */
-	}
 
 	@include break-mobile {
 		margin: 0 0 0 4px;
