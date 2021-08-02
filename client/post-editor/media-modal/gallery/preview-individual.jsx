@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import markup from '../markup';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import markup from '../markup';
 
 class EditorMediaModalGalleryPreviewIndividual extends React.Component {
 	static propTypes = {

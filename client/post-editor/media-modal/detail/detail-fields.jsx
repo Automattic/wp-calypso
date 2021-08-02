@@ -1,29 +1,22 @@
-/**
- * External dependencies
- */
-import ReactDom from 'react-dom';
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { debounce, get, noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { debounce, get, noop } from 'lodash';
-import { localize } from 'i18n-calypso';
+import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import TrackInputChanges from 'calypso/components/track-input-changes';
+import { FormCheckbox } from 'calypso/devdocs/design/playground-scope';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { getMimePrefix, url } from 'calypso/lib/media/utils';
-import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
-import FormTextarea from 'calypso/components/forms/form-textarea';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import TrackInputChanges from 'calypso/components/track-input-changes';
-import EditorMediaModalFieldset from '../fieldset';
 import { updateMedia } from 'calypso/state/media/thunks';
-import FormLabel from 'calypso/components/forms/form-label';
-import { FormCheckbox } from 'calypso/devdocs/design/playground-scope';
-import classnames from 'classnames';
-import FormRadio from 'calypso/components/forms/form-radio';
+import EditorMediaModalFieldset from '../fieldset';
 
 class EditorMediaModalDetailFields extends Component {
 	static propTypes = {
