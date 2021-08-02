@@ -30,15 +30,16 @@ We specify an [EditorConfig](http://editorconfig.org/) configuration and encoura
 Object declarations can be made on a single line if they are short (remember the line length guidelines). When an object declaration is too long to fit on one line, there must be one property per line. Property names only need to be quoted if they are reserved words or contain special characters:
 
 ```js
-/* eslint-disable */
+// prettier-ignore
 // Bad
-const labels = { facebook: 'Facebook',
-	twitter: 'Twitter', 'google-plus': 'Google Plus' };
+const labels = { facebook: 'Facebook', twitter: 'Twitter', 'google-plus': 'Google Plus', 'discord': 'Discord', 'github': 'GitHub'  };
 ```
+
 ```js
 // Acceptable for small objects
 const labels = { 'google-plus': 'Google Plus' };
 ```
+
 ```js
 // Good
 const labels = {
@@ -133,6 +134,7 @@ function isFreshData( data ) {
 	return isFresh;
 }
 ```
+
 ```js
 // Good
 function isFreshData( data ) {
@@ -171,6 +173,7 @@ function getStatusLabel() {
 	}
 }
 ```
+
 ```js
 // Good
 function getStatusLabel() {
@@ -187,24 +190,26 @@ function getStatusLabel() {
 When a statement is too long to fit on one line, line breaks must occur after an operator.
 
 ```js
-/* eslint-disable */
 // Bad
+// prettier-ignore
 const sumLabel = 'The sum of ' + a + ' and ' + b + ' plus ' + c
 	+ ' is ' + ( a + b + c );
 ```
 ```js
-/* eslint-disable */
 // Good
-const sumLabel = 'The sum of ' + a + ' and ' + b + ' plus ' + c +
-	' is ' + ( a + b + c );
+const sumLabel = 'The sum of ' + a + ' and ' + b + ' plus ' + c + ' is ' + ( a + b + c );
 ```
 
 When a conditional is too long to fit on one line, successive lines should be indented one extra level to distinguish them from the body.
 
 ```js
-/* eslint-disable */
-if ( firstCondition() && secondCondition() &&
-		thirdCondition() ) {
+if (
+	firstCondition() &&
+	secondCondition() &&
+	thirdCondition() &&
+	fourthCondition() &&
+	fifthCondition()
+) {
 	doStuff();
 }
 ```
@@ -250,6 +255,7 @@ Variable and function names should be full words, using camel case with a lowerc
 let userIDToDelete;
 let siteURL;
 ```
+
 ```js
 // Good
 let userIdToDelete;
@@ -470,6 +476,7 @@ const component = <div className="post"></div>;
 // Before
 const sumLabel = 'The sum of ' + a + ' and ' + b + ' plus ' + c + ' is ' + ( a + b + c );
 ```
+
 ```js
 // After
 const sumLabel = `The sum of ${ a } and ${ b } plus ${ c } is ${ a + b + c }`;
@@ -511,6 +518,7 @@ You can prefix a variable with verb only for boolean values when it makes code e
 // Bad
 const play = false;
 ```
+
 ```js
 // Good
 const name = 'John';
@@ -528,6 +536,7 @@ function name() {
 	return 'John';
 }
 ```
+
 ```js
 // Good
 function getName() {
@@ -684,8 +693,8 @@ These important statements are part of the abstraction. As for the side effects:
 - If you find that your render logic becomes complex, it might be a sign that you should split the component into separate individual components.
 
 ```jsx
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 export default class Link extends Component {
 	static propTypes = {

@@ -206,6 +206,7 @@ module.exports = {
 				'client/webpack.config.node.js',
 				'desktop/e2e/**/*',
 				'desktop/webpack.config.js',
+				'docs/**/*',
 				'packages/accessible-focus/**/*',
 				'packages/babel-plugin-i18n-calypso/**/*',
 				'packages/babel-plugin-transform-wpcalypso-async/**/*',
