@@ -25,6 +25,9 @@ import CurrentTaskItem from './current-task-item';
 import { getTask } from './get-task';
 import NavItem from './nav-item';
 
+/**
+ * Import Styles
+ */
 import './style.scss';
 
 const startTask = ( dispatch, task, siteId, advanceToNextIncompleteTask, isPodcastingSite ) => {
