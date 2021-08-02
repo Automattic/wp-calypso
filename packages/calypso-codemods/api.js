@@ -3,7 +3,7 @@
 const child_process = require( 'child_process' );
 const fs = require( 'fs' );
 const jscodeshiftBin = require( 'module' )
-	.createRequireFromPath( require.resolve( 'jscodeshift' ) )
+	.createRequire( require.resolve( 'jscodeshift' ) )
 	.resolve( require( 'jscodeshift/package.json' ).bin.jscodeshift );
 const path = require( 'path' );
 const config = require( path.join( __dirname, 'config' ) );

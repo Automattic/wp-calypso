@@ -1,3 +1,5 @@
+import { IncomingMessage } from 'http';
+
 jest.mock( 'browserslist-useragent', () => ( {
 	matchesUA: jest.fn(),
 } ) );
@@ -312,7 +314,7 @@ const buildApp = ( environment ) => {
 		},
 		run( { request = {}, response = {} } = {} ) {
 			return new Promise( ( resolve ) => {
-				const mockRequest = {
+				const mockRequest = Object.assign( new IncomingMessage(), {
 					body: {},
 					cookies: defaultCookies,
 					query: {},
@@ -332,7 +334,7 @@ const buildApp = ( environment ) => {
 						error: jest.fn(),
 					},
 					...request,
-				};
+				} );
 
 				// Using cloneDeep to capture the state of the request/response objects right now, in case
 				// an async middleware changes them _after_ the request handler has been executed
