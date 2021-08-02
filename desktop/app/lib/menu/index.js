@@ -1,14 +1,7 @@
-/**
- * External Dependencies
- */
 const { Menu } = require( 'electron' );
-
-/**
- * Internal dependencies
- */
-const template = require( './main-menu' );
-const menuSetter = require( '../../lib/menu-setter' );
 const log = require( '../../lib/logger' )( 'desktop:menu' );
+const menuSetter = require( '../../lib/menu-setter' );
+const template = require( './main-menu' );
 
 /**
  * Module variables

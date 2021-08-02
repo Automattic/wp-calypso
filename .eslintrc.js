@@ -208,6 +208,7 @@ module.exports = {
 				'client/webpack.config.desktop.js',
 				'client/webpack.config.js',
 				'client/webpack.config.node.js',
+				'desktop/app/**/*',
 				'desktop/e2e/**/*',
 				'desktop/webpack.config.js',
 				'docs/**/*',

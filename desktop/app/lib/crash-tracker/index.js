@@ -1,17 +1,10 @@
-/**
- * External Dependencies
- */
+const path = require( 'path' );
 const { app } = require( 'electron' );
 // eslint-disable-next-line no-restricted-modules
 const request = require( 'superagent' );
-const path = require( 'path' );
-
-/**
- * Internal dependencies
- */
 const config = require( '../../lib/config' );
-const system = require( '../../lib/system' );
 const log = require( '../../lib/logger' )( 'desktop:crash-tracker' );
+const system = require( '../../lib/system' );
 
 function finished( error, response, cb ) {
 	if ( error ) {
