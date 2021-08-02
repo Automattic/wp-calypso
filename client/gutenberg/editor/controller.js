@@ -192,8 +192,8 @@ export const redirect = async ( context, next ) => {
 		return next();
 	}
 
-	if ( ! shouldLoadGutenframe( state, siteId ) ) {
-		const postType = determinePostType( context );
+	const postType = determinePostType( context );
+	if ( ! shouldLoadGutenframe( state, siteId, postType ) ) {
 		const postId = getPostID( context );
 
 		const url =

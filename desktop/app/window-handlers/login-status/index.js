@@ -1,16 +1,9 @@
-/**
- * External Dependencies
- */
 const { app } = require( 'electron' );
-
-/**
- * Internal dependencies
- */
-const menu = require( '../../lib/menu' );
 const Config = require( '../../lib/config' );
+const menu = require( '../../lib/menu' );
+const WPNotificationsAPI = require( '../../lib/notifications/api' );
 const platform = require( '../../lib/platform' );
 const SessionManager = require( '../../lib/session' );
-const WPNotificationsAPI = require( '../../lib/notifications/api' );
 
 module.exports = function ( appWindow ) {
 	menu.set( app, appWindow );

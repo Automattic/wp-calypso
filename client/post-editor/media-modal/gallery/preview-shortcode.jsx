@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-
+import classNames from 'classnames';
+import { some } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { some } from 'lodash';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { generateGalleryShortcode } from 'calypso/lib/media/utils';
 import GalleryShortcode from 'calypso/components/gallery-shortcode';
+import { generateGalleryShortcode } from 'calypso/lib/media/utils';
 
 export default class EditorMediaModalGalleryPreviewShortcode extends React.Component {
 	static propTypes = {

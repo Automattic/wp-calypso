@@ -10,15 +10,18 @@ interface UpdateJetpackCheckoutSupportTicketActionType {
 	type: typeof JETPACK_CHECKOUT_UPDATE_SUPPORT_TICKET_REQUEST;
 	siteUrl: string;
 	receiptId: number;
+	source?: string;
 }
 
 export function requestUpdateJetpackCheckoutSupportTicket(
 	siteUrl: string,
-	receiptId: number
+	receiptId: number,
+	source: string
 ): UpdateJetpackCheckoutSupportTicketActionType {
 	return {
 		type: JETPACK_CHECKOUT_UPDATE_SUPPORT_TICKET_REQUEST,
 		siteUrl,
 		receiptId,
+		source,
 	};
 }

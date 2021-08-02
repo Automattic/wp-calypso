@@ -2,6 +2,9 @@ import { Frame } from 'playwright';
 import { BaseContainer } from '../../base-container';
 
 const selectors = {
+	// Post body
+	postBody: '.entry-content',
+
 	// Like Widget
 	likeWidget: 'iframe.post-likes-widget',
 	likeButton: 'a.like',

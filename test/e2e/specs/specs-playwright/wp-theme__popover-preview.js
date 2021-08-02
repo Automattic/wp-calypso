@@ -25,7 +25,7 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 	} );
 
 	it( 'Navigate to Themes', async function () {
-		sidebarComponent = await SidebarComponent.Expect( page );
+		sidebarComponent = new SidebarComponent( page );
 		await sidebarComponent.gotoMenu( { item: 'Appearance', subitem: 'Themes' } );
 	} );
 

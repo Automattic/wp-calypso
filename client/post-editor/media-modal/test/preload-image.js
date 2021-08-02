@@ -2,16 +2,9 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import preloadImage from '../preload-image';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import preloadImage from '../preload-image';
 
 describe( '#preloadImage()', () => {
 	let sandbox;

@@ -1,15 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-/**
- * External dependencies
- */
+
 import page from 'page';
 import { navigate } from 'calypso/lib/navigate';
-
-/**
- * Internal dependencies
- */
+import { JPC_PATH_PLANS, JPC_PATH_REMOTE_INSTALL, REMOTE_PATH_AUTH } from '../constants';
 import {
 	addCalypsoEnvQueryArg,
 	cleanUrl,
@@ -17,8 +12,6 @@ import {
 	parseAuthorizationQuery,
 	redirect,
 } from '../utils';
-
-import { JPC_PATH_PLANS, JPC_PATH_REMOTE_INSTALL, REMOTE_PATH_AUTH } from '../constants';
 
 jest.mock( '@automattic/calypso-config', () => ( input ) => {
 	const lookupTable = {

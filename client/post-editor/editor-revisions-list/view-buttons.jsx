@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
+import { useTranslate } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import SegmentedControl from 'calypso/components/segmented-control';
 import {
 	splitPostRevisionsDiffView,

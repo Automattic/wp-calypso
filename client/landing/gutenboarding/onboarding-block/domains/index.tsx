@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { useI18n } from '@wordpress/react-i18n';
 import DomainPicker, { getDomainSuggestionsVendor } from '@automattic/domain-picker';
-import type { DomainSuggestions } from '@automattic/data-stores';
+import { useLocale } from '@automattic/i18n-utils';
 import {
 	Title,
 	SubTitle,
@@ -14,24 +8,20 @@ import {
 	NextButton,
 	SkipButton,
 } from '@automattic/onboarding';
-import { useLocale } from '@automattic/i18n-utils';
-
-/**
- * Internal dependencies
- */
-import { useTrackStep } from '../../hooks/use-track-step';
-import useStepNavigation from '../../hooks/use-step-navigation';
-import useLastLocation from '../../hooks/use-last-location';
-import { trackEventWithFlow } from '../../lib/analytics';
-import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { DOMAIN_SUGGESTIONS_STORE } from '../../stores/domain-suggestions';
-import { USER_STORE } from '../../stores/user';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { useI18n } from '@wordpress/react-i18n';
+import * as React from 'react';
 import { FLOW_ID, domainIsAvailableStatus } from '../../constants';
+import useLastLocation from '../../hooks/use-last-location';
+import useStepNavigation from '../../hooks/use-step-navigation';
+import { useTrackStep } from '../../hooks/use-track-step';
+import { trackEventWithFlow } from '../../lib/analytics';
+import { DOMAIN_SUGGESTIONS_STORE } from '../../stores/domain-suggestions';
+import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import { USER_STORE } from '../../stores/user';
 import waitForDomainAvailability from './wait-for-domain-availability';
+import type { DomainSuggestions } from '@automattic/data-stores';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;

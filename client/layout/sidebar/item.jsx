@@ -12,6 +12,7 @@ import Gridicon from 'calypso/components/gridicon';
 import { isExternal } from 'calypso/lib/url';
 import MaterialIcon from 'calypso/components/material-icon';
 import Count from 'calypso/components/count';
+import Badge from 'calypso/components/badge';
 import { preload } from 'calypso/sections-helper';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
@@ -23,7 +24,7 @@ export default function SidebarItem( props ) {
 		selected: props.selected,
 		'has-unseen': props.hasUnseen,
 	} );
-	const { materialIcon, materialIconStyle, icon, customIcon, count } = props;
+	const { materialIcon, materialIconStyle, icon, customIcon, count, badge } = props;
 
 	let _preloaded = false;
 
@@ -76,6 +77,11 @@ export default function SidebarItem( props ) {
 							: props.label
 					}
 					{ !! count && <Count count={ count } /> }
+					{ !! badge && (
+						<Badge type="warning-clear" className="sidebar__menu-link-badge">
+							{ badge }
+						</Badge>
+					) }
 				</span>
 				{ showAsExternal && <Gridicon icon="external" size={ 24 } /> }
 				{ props.children }
@@ -100,4 +106,5 @@ SidebarItem.propTypes = {
 	testTarget: PropTypes.string,
 	tipTarget: PropTypes.string,
 	count: PropTypes.number,
+	badge: PropTypes.string,
 };

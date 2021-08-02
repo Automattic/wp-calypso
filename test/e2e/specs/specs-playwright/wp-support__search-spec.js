@@ -26,7 +26,7 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 		} );
 
 		it( 'Open Settings page', async function () {
-			const sidebarComponent = await SidebarComponent.Expect( page );
+			const sidebarComponent = new SidebarComponent( page );
 			await sidebarComponent.gotoMenu( { item: 'Settings', subitem: 'General' } );
 		} );
 
@@ -81,7 +81,7 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 		} );
 
 		it( 'Open Settings page', async function () {
-			const sidebarComponent = await SidebarComponent.Expect( page );
+			const sidebarComponent = new SidebarComponent( page );
 			await sidebarComponent.gotoMenu( { item: 'Settings', subitem: 'General' } );
 		} );
 

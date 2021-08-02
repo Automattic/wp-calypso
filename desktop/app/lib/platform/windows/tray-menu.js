@@ -1,11 +1,4 @@
-/**
- * External Dependencies
- */
 const { app } = require( 'electron' );
-
-/**
- * Internal dependencies
- */
 const AppQuit = require( '../../../lib/app-quit' );
 
 module.exports = function ( restoreApp ) {

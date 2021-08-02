@@ -54,7 +54,10 @@ function useLearnGrowCards() {
 	const siteId = useSelector( getSelectedSiteId );
 	const { data: layout } = useHomeLayoutQuery( siteId, { enabled: false } );
 
-	return layout?.[ 'secondary.learn-grow' ] ?? [];
+	const allCards = layout?.[ 'secondary.learn-grow' ] ?? [];
+
+	// Remove cards we don't know how to deal with on the client-side
+	return allCards.filter( ( card ) => !! cardComponents[ card ] );
 }
 
 function trackCardImpressions( cards ) {

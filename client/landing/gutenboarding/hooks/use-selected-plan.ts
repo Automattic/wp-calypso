@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
 import { Site } from '@automattic/data-stores';
-import { useSelect } from '@wordpress/data';
 import { useLocale } from '@automattic/i18n-utils';
-
-/**
- * Internal dependencies
- */
+import { useSelect } from '@wordpress/data';
+import { usePlanRouteParam } from '../path';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { PLANS_STORE } from '../stores/plans';
 import { WPCOM_FEATURES_STORE } from '../stores/wpcom-features';
-import { usePlanRouteParam } from '../path';
-
 import type { Plan } from '../stores/plans';
 
 /**

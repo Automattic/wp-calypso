@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
 import classNames from 'classnames';
+import * as React from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface Props {

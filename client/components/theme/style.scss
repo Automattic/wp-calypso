@@ -33,6 +33,11 @@ $theme-info-height: 54px;
 		.price {
 			color: var( --color-text-inverted );
 		}
+
+		.theme__badge-beta {
+			color: var( --color-text-inverted );
+			border-color: var( --color-text-inverted );
+		}
 	}
 
 	&.is-actionable {
@@ -132,6 +137,10 @@ $theme-info-height: 54px;
 	text-transform: uppercase;
 	font-size: $font-body-extra-small;
 	font-weight: 600;
+}
+
+.theme__badge-beta {
+	margin-left: 6px;
 }
 
 .theme__thumbnail {

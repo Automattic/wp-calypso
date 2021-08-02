@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import fs from 'fs';
 import path from 'path';
 import { defaults, groupBy, flatten } from 'lodash';

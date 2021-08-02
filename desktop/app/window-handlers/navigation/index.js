@@ -1,17 +1,10 @@
-/**
- * External Dependencies
- */
 const { ipcMain, systemPreferences } = require( 'electron' );
+const ipc = require( '../../lib/calypso-commands' );
 const Config = require( '../../lib/config' );
 const isCalypso = require( '../../lib/is-calypso' );
-const ipc = require( '../../lib/calypso-commands' );
+const log = require( '../../lib/logger' )( 'desktop:navigation' );
 
 const webBase = Config.baseURL();
-
-/**
- * Internal dependencies
- */
-const log = require( '../../lib/logger' )( 'desktop:navigation' );
 
 module.exports = function ( { view, window } ) {
 	ipcMain.on( 'back-button-clicked', () => {

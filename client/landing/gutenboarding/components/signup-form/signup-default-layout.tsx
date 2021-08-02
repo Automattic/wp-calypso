@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { Button, TextControl, Modal, Notice } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import type { WPElement } from '@wordpress/element';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import ModalSubmitButton from '../modal-submit-button';
 import './style.scss';
 import SignupFormHeader from './header';
+import type { WPElement } from '@wordpress/element';
 
 interface Props {
 	closeModal: () => void;

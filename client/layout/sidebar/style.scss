@@ -156,6 +156,13 @@
 		margin: -7px 0 -8px;
 	}
 
+	.sidebar__menu-link-badge {
+		margin-left: 8px;
+		color: var( --color-warning-light );
+		padding: 1px 6px;
+		font-size: $font-body-extra-small;
+	}
+
 	.selected &,
 	.selected &:hover {
 		color: var( --color-sidebar-menu-selected-text );
@@ -276,4 +283,16 @@
 
 .sidebar__menu-wrapper {
 	border-top: 1px solid var( --color-sidebar-border );
+}
+
+.sidebar__menu-link-badge {
+	display: inline-block;
+	padding: 1px 6px;
+	border: solid 1px var( --color-warning );
+	border-radius: 12px;
+	font-size: $font-body-extra-small;
+	line-height: 14px;
+	text-align: center;
+	color: var( --color-warning-light );
+	margin-left: 8px;
 }

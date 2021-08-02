@@ -1,11 +1,7 @@
-/**
- * External dependencies
- */
-
+import classNames from 'classnames';
+import { get, keys } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { get, keys } from 'lodash';
-import classNames from 'classnames';
 
 /**
  * Module variables

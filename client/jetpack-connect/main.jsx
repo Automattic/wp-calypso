@@ -1,29 +1,22 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { concat, flowRight, includes } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { concat, flowRight, includes } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
+import { FLOW_TYPES } from 'calypso/jetpack-connect/flow-types';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { checkUrl } from 'calypso/state/jetpack-connect/actions';
+import { getJetpackSiteByUrl } from 'calypso/state/jetpack-connect/selectors';
+import { isRequestingSites } from 'calypso/state/sites/selectors';
+import jetpackConnection from './jetpack-connection';
 import MainHeader from './main-header';
 import MainWrapper from './main-wrapper';
+import { persistSession } from './persistence-utils';
 import SiteUrlInput from './site-url-input';
 import { cleanUrl } from './utils';
-import { checkUrl } from 'calypso/state/jetpack-connect/actions';
-import { FLOW_TYPES } from 'calypso/jetpack-connect/flow-types';
-import { getJetpackSiteByUrl } from 'calypso/state/jetpack-connect/selectors';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { isRequestingSites } from 'calypso/state/sites/selectors';
-import { persistSession } from './persistence-utils';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import jetpackConnection from './jetpack-connection';
 
 export class JetpackConnectMain extends Component {
 	static propTypes = {

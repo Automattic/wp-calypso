@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-
 import { memoize } from 'lodash';
 
 export default memoize( function ( src ) {

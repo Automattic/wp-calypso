@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
 import { useCallback } from 'react';
 import { useMutation, useQueryClient, UseMutationResult } from 'react-query';
-
-/**
- * Internal dependencies
- */
 import wp from 'calypso/lib/wp';
-import { useHomeLayoutQueryParams } from './use-home-layout-query-params';
 import { fetchHomeLayout, getCacheKey } from './use-home-layout-query';
+import { useHomeLayoutQueryParams } from './use-home-layout-query-params';
 
 type ReminderDuration = '1d' | '1w' | null;
 

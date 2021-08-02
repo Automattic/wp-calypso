@@ -12,15 +12,8 @@
  * (instead of the `LOG_NAMESPACES` variable used in winston-namespace).
  */
 
-/**
- * External dependencies
- */
 const path = require( 'path' );
 const { createLogger, format, transports } = require( 'winston' );
-
-/**
- * Internal dependencies
- */
 const state = require( '../../lib/state' );
 const namespaces = require( './namespaces' );
 

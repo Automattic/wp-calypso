@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import classnames from 'classnames';
 
 const save = ( { attributes } ) => {

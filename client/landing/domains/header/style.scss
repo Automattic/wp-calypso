@@ -14,12 +14,12 @@
 .header__logo {
 	fill: var( --color-primary );
 
-	@include breakpoint-deprecated('<960px') {
+	@include breakpoint-deprecated( '<960px' ) {
 		width: 39px;
 		height: 39px;
 	}
 
-	@include breakpoint-deprecated('<660px') {
+	@include breakpoint-deprecated( '<660px' ) {
 		width: 24px;
 		height: 24px;
 	}

@@ -1,16 +1,10 @@
-/**
- * External dependencies
- */
-
-const webpackMiddleware = require( 'webpack-dev-middleware' );
-const webpack = require( 'webpack' );
-const hotMiddleware = require( 'webpack-hot-middleware' );
-
-const chalk = require( 'chalk' );
-const webpackConfig = require( 'calypso/webpack.config' );
 const { execSync } = require( 'child_process' );
-
 const config = require( '@automattic/calypso-config' );
+const chalk = require( 'chalk' );
+const webpack = require( 'webpack' );
+const webpackMiddleware = require( 'webpack-dev-middleware' );
+const hotMiddleware = require( 'webpack-hot-middleware' );
+const webpackConfig = require( 'calypso/webpack.config' );
 
 const protocol = config( 'protocol' );
 const host = config( 'hostname' );
