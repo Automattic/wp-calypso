@@ -121,10 +121,7 @@ export function getSignupUrl(
 		signupUrl = `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
 	}
 
-	if (
-		includes( get( currentQuery, 'redirect_to' ), 'action=jetpack-sso' ) &&
-		includes( get( currentQuery, 'redirect_to' ), 'sso_nonce=' )
-	) {
+	if ( includes( redirectTo, 'action=jetpack-sso' ) && includes( redirectTo, 'sso_nonce=' ) ) {
 		const params = new URLSearchParams( {
 			redirect_to: redirectTo,
 		} );
