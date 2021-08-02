@@ -24,6 +24,10 @@
 			z-index: z-index( 'root', '.domain-suggestion.is-clickable:hover' );
 		}
 	}
+
+	.domain-registration-suggestion__domain-title-tld {
+		font-weight: 500; /* stylelint-disable-line */
+	}
 }
 
 .domain-suggestion:not( .featured-domain-suggestion ) {

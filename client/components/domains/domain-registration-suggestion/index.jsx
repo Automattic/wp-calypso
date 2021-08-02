@@ -230,7 +230,6 @@ class DomainRegistrationSuggestion extends React.Component {
 			premiumDomain,
 			suggestion: { domain_name: domain, is_premium: isPremium },
 			translate,
-			isReskinned,
 		} = this.props;
 
 		let isAvailable = false;
@@ -241,9 +240,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		}
 
 		let title = isAvailable ? translate( '%s is available!', { args: domain } ) : domain;
-		if ( isReskinned ) {
-			title = this.renderDomainParts( domain );
-		}
+		title = this.renderDomainParts( domain );
 
 		const paidDomain = isPaidDomain( this.getPriceRule() );
 		const saleBadgeText = translate( 'Sale', {
