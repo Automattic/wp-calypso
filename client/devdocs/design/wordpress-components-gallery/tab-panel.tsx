@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * WordPress dependencies
- */
 import { TabPanel } from '@wordpress/components';
+import React from 'react';
 
 const TabPanelExample = () => (
 	<TabPanel

@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import page from 'page';
 import { map } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
 import { stringify } from 'qs';
-
-/**
- * Internal dependencies
- */
+import React, { Component } from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 import SearchCard from 'calypso/components/search-card';
 import { addQueryArgs } from 'calypso/lib/url';

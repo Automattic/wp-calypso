@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
-
-/**
- * WordPress dependencies
- */
 import { FocalPointPicker } from '@wordpress/components';
+import React, { useState } from 'react';
 
 const FocalPointPickerExample = () => {
 	const url = 'https://interactive-examples.mdn.mozilla.net/media/examples/flower.webm';

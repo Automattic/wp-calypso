@@ -1,23 +1,11 @@
-/**
- * External dependencies
- */
-
+import { Card } from '@automattic/components';
 import debug from 'debug';
 import PropTypes from 'prop-types';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import DocService from './service';
 import DocumentHead from 'calypso/components/data/document-head';
-import { Card } from '@automattic/components';
 import Main from 'calypso/components/main';
 import SearchCard from 'calypso/components/search-card';
-
-/**
- * Style dependencies
- */
+import DocService from './service';
 import './style.scss';
 
 /**
