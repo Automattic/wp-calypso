@@ -40,9 +40,9 @@ const TransferPending: React.FunctionComponent< Props > = ( props ) => {
 	const transfer = useSelector( ( state ) => getAtomicTransfer( state, siteId ) );
 
 	const steps = React.useRef< string[] >( [
-		__( 'Upgrading your site' ),
-		__( 'Installing plugin' ),
-		__( 'Activating plugin' ),
+		__( 'Setting up your site' ),
+		__( 'Upgrading infrastructure' ),
+		__( 'Preparing WooCommerce' ),
 	] );
 
 	const totalSteps = steps.current.length;
