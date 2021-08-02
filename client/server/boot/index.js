@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
 import path from 'path';
 import chalk from 'chalk';
-import express from 'express';
 import cookieParser from 'cookie-parser';
+import express from 'express';
 import userAgent from 'express-useragent';
-
-/**
- * Internal dependencies
- */
-import analytics from 'calypso/server/lib/analytics';
-import config from 'calypso/server/config';
 import api from 'calypso/server/api';
+import config from 'calypso/server/config';
+import analytics from 'calypso/server/lib/analytics';
+import loggerMiddleware from 'calypso/server/middleware/logger';
 import pages from 'calypso/server/pages';
 import pwa from 'calypso/server/pwa';
-import loggerMiddleware from 'calypso/server/middleware/logger';
 
 /**
  * Returns the server HTTP request handler "app".

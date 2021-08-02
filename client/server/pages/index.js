@@ -1,29 +1,27 @@
-/**
- * External dependencies
- */
-import express from 'express';
+import { execSync } from 'child_process';
+import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
-import { stringify } from 'qs';
-import crypto from 'crypto';
-import { execSync } from 'child_process';
+import config from '@automattic/calypso-config';
+import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
+import express from 'express';
 import { get, includes, pick, snakeCase } from 'lodash';
-import bodyParser from 'body-parser';
+import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
-import sanitize from 'calypso/server/sanitize';
-import { pathToRegExp } from 'calypso/utils';
+import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
+import { GUTENBOARDING_SECTION_DEFINITION } from 'calypso/landing/gutenboarding/section';
+import { getLanguage, filterLanguageRevisions } from 'calypso/lib/i18n-utils';
+import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { login } from 'calypso/lib/paths';
+import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import sections from 'calypso/sections';
 import isSectionEnabled from 'calypso/sections-filter';
-import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import { serverRouter, getNormalizedPath } from 'calypso/server/isomorphic-routing';
+import analytics from 'calypso/server/lib/analytics';
+import isWpMobileApp from 'calypso/server/lib/is-wp-mobile-app';
 import {
 	serverRender,
 	renderJsx,
@@ -31,26 +29,21 @@ import {
 	attachHead,
 	attachI18n,
 } from 'calypso/server/render';
+import sanitize from 'calypso/server/sanitize';
 import stateCache from 'calypso/server/state-cache';
 import getBootstrappedUser from 'calypso/server/user-bootstrap';
-import isWpMobileApp from 'calypso/server/lib/is-wp-mobile-app';
 import { createReduxStore } from 'calypso/state';
-import { setDocumentHeadLink } from 'calypso/state/document-head/actions';
-import { setStore } from 'calypso/state/redux-store';
-import initialReducer from 'calypso/state/reducer';
 import { LOCALE_SET } from 'calypso/state/action-types';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
-import { login } from 'calypso/lib/paths';
-import { logSectionResponse } from './analytics';
-import analytics from 'calypso/server/lib/analytics';
-import { getLanguage, filterLanguageRevisions } from 'calypso/lib/i18n-utils';
-import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
-import { GUTENBOARDING_SECTION_DEFINITION } from 'calypso/landing/gutenboarding/section';
-import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
+import { setDocumentHeadLink } from 'calypso/state/document-head/actions';
+import initialReducer from 'calypso/state/reducer';
+import { setStore } from 'calypso/state/redux-store';
 import { deserialize } from 'calypso/state/utils';
-import middlewareBuildTarget from '../middleware/build-target.js';
+import { pathToRegExp } from 'calypso/utils';
 import middlewareAssets from '../middleware/assets.js';
+import middlewareBuildTarget from '../middleware/build-target.js';
 import middlewareCache from '../middleware/cache.js';
+import { logSectionResponse } from './analytics';
 
 const debug = debugFactory( 'calypso:pages' );
 

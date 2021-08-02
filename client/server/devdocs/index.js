@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
-import express from 'express';
 import fs from 'fs';
 import fspath from 'path';
-import marked from 'marked';
-import lunr from 'lunr';
+import config from '@automattic/calypso-config';
+import express from 'express';
 import { escapeRegExp, find, escape as escapeHTML, once } from 'lodash';
+import lunr from 'lunr';
+import marked from 'marked';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-jsx';
 import 'prismjs/components/prism-json';
 import 'prismjs/components/prism-scss';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
 import searchSelectors from './selectors';
 
 const loadSearchIndex = once( async () => {

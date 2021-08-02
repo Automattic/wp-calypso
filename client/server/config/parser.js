@@ -2,13 +2,10 @@
  * WARNING: ES5 code only here. Used by un-transpiled script!
  */
 
-/**
- * Module dependencies
- */
 const fs = require( 'fs' );
 const path = require( 'path' );
-const { assignWith } = require( 'lodash' );
 const debug = require( 'debug' )( 'config' );
+const { assignWith } = require( 'lodash' );
 
 function getDataFromFile( file ) {
 	let fileData = {};

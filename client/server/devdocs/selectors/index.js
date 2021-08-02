@@ -1,10 +1,7 @@
-/**
- * External dependencies
- */
-import { once } from 'lodash';
 import fs from 'fs';
 import path from 'path';
 import Fuse from 'fuse.js';
+import { once } from 'lodash';
 
 const loadSearchIndex = once( async () => {
 	const searchIndexPath = path.resolve(

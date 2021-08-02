@@ -199,6 +199,7 @@ module.exports = {
 				'client/sections-middleware.js',
 				'client/sections-preloaders.js',
 				'client/sections.js',
+				'client/server/**/*',
 				'client/support/**/*',
 				'client/test-helpers/**/*',
 				'client/types.ts',

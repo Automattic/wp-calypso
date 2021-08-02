@@ -1,4 +1,7 @@
 import { IncomingMessage } from 'http';
+import cloneDeep from 'lodash/cloneDeep';
+import mockFs from 'mock-fs';
+import sections from 'calypso/sections';
 
 jest.mock( 'browserslist-useragent', () => ( {
 	matchesUA: jest.fn(),
@@ -24,6 +27,7 @@ jest.mock( 'calypso/server/bundler/utils', () => ( {
 } ) );
 
 jest.mock( 'calypso/sections', () => {
+	// eslint-disable-next-line no-shadow
 	const sections = jest.requireActual( 'calypso/sections' );
 	sections
 		.filter( ( section ) => section.isomorphic )
@@ -113,17 +117,6 @@ jest.mock( 'calypso/landing/gutenboarding/section', () => ( {
 		enableLoggedOut: true,
 	},
 } ) );
-
-/**
- * External dependencies
- */
-import mockFs from 'mock-fs';
-import cloneDeep from 'lodash/cloneDeep';
-
-/**
- * Internal dependencies
- */
-import sections from 'calypso/sections';
 
 /**
  * Builds an app for an specific environment.
