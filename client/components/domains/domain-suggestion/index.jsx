@@ -34,6 +34,7 @@ class DomainSuggestion extends React.Component {
 			salePrice,
 			isSignupStep,
 			showStrikedOutPrice,
+			isReskinned,
 		} = this.props;
 
 		if ( hidePrice ) {
@@ -51,7 +52,7 @@ class DomainSuggestion extends React.Component {
 				rule={ priceRule }
 				isSignupStep={ isSignupStep }
 				showStrikedOutPrice={ showStrikedOutPrice }
-				isReskinned={ true }
+				isReskinned={ isReskinned }
 			/>
 		);
 	}

@@ -22,6 +22,11 @@ import {
 	hasDomainInCart,
 	isPaidDomain,
 } from 'calypso/lib/cart-values/cart-items';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import {
+	parseMatchReasons,
+	VALID_MATCH_REASONS,
+} from 'calypso/components/domains/domain-registration-suggestion/utility';
 import { getDomainPrice, getDomainSalePrice, getTld, isHstsRequired } from 'calypso/lib/domains';
 import { HTTPS_SSL } from 'calypso/lib/url/support';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -29,8 +34,6 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import PremiumBadge from '../premium-badge';
-
-const NOTICE_GREEN = '#4ab866';
 
 class DomainRegistrationSuggestion extends React.Component {
 	static propTypes = {
@@ -256,7 +259,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		return (
 			<div className={ titleWrapperClassName }>
 				<h3 className="domain-registration-suggestion__title">{ title }</h3>
-				{ this.renderProgressBar() }
+				{ this.renderBadges() }
 				{ isPremium && (
 					<PremiumBadge restrictedPremium={ premiumDomain?.is_price_limit_exceeded } />
 				) }
@@ -296,9 +299,9 @@ class DomainRegistrationSuggestion extends React.Component {
 		);
 	}
 
-	renderProgressBar() {
+	renderBadges() {
 		const {
-			suggestion: { isRecommended, isBestAlternative, match_reasons: matchReasons },
+			suggestion: { isRecommended, isBestAlternative },
 			translate,
 			isFeatured,
 			showStrikedOutPrice,
@@ -308,48 +311,24 @@ class DomainRegistrationSuggestion extends React.Component {
 			return null;
 		}
 
-		const isExactFullMatch =
-			matchReasons &&
-			matchReasons.includes( SLD_EXACT_MATCH ) &&
-			matchReasons.includes( TLD_EXACT_MATCH );
 		let title;
-		let progressBarProps;
 		if ( isRecommended ) {
 			title = showStrikedOutPrice ? translate( 'Recommended' ) : translate( 'Best Match' );
-
-			progressBarProps = {
-				color: NOTICE_GREEN,
-				title,
-				value: isExactFullMatch ? 100 : 90,
-			};
 		}
 
 		if ( isBestAlternative ) {
 			title = translate( 'Best Alternative' );
-			progressBarProps = {
-				title,
-				value: isExactFullMatch ? 100 : 82,
-			};
 		}
 
 		if ( title ) {
-			if ( showStrikedOutPrice ) {
-				const badgeClassName = classNames( '', {
-					'info-green': isRecommended,
-					'info-purple': isBestAlternative,
-				} );
-
-				return (
-					<div className="domain-registration-suggestion__progress-bar">
-						<Badge type={ badgeClassName }>{ title }</Badge>
-					</div>
-				);
-			}
+			const badgeClassName = classNames( '', {
+				'info-green': isRecommended,
+				'info-purple': isBestAlternative,
+			} );
 
 			return (
 				<div className="domain-registration-suggestion__progress-bar">
-					<ProgressBar { ...progressBarProps } />
-					<span className="domain-registration-suggestion__progress-bar-text">{ title }</span>
+					<Badge type={ badgeClassName }>{ title }</Badge>
 				</div>
 			);
 		}
