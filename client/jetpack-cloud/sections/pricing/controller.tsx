@@ -23,6 +23,11 @@ export function jetpackPricingContext( context: PageJS.Context, next: () => void
 		return;
 	}
 
+	if ( context.pathname.endsWith( '/pricing' ) && urlQueryArgs.site ) {
+		page.redirect( addQueryArgs( urlQueryArgs, `${ context.pathname }/${ urlQueryArgs.site }` ) );
+		return;
+	}
+
 	context.store.dispatch( hideMasterbar() );
 	context.header = <Header urlQueryArgs={ urlQueryArgs } />;
 	context.footer = <JetpackComFooter />;
