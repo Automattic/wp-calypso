@@ -18,6 +18,7 @@
 		padding: 0 1em;
 		transition: 0.1s all linear;
 		width: 100%;
+		color: var( --color-text );
 
 		@include break-mobile {
 			min-width: 120px;
@@ -151,15 +152,10 @@
 	}
 	.token-field__remove-token {
 		border-left: none;
-
-		&:hover {
-			background: var( --color-neutral-10 );
-			color: var( --color-neutral-50 );
-		}
 	}
 
 	.token-field__input-container {
-		margin: 5px 5px 5px 10px;
+		margin: 5px 5px 5px 16px;
 	}
 
 	input[type='text'].token-field__input {
@@ -183,9 +179,8 @@
 		&.is-selected span {
 			color: var( --color-text-inverted );
 		}
-		&.is-label {
-			padding-top: 16px;
-			padding-bottom: 12px;
+		&:first-child {
+			padding-top: 12px;
 		}
 	}
 }
