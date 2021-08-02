@@ -287,19 +287,21 @@ export class List extends React.Component {
 
 		this.props.changePrimary( domainName, 'wpcom_domain_manage_click' );
 
-		this.setState( { settingPrimaryDomain: true } );
+		const currentPrimaryIndex = findIndex( this.props.domains, { isPrimary: true } );
+		this.setState( { settingPrimaryDomain: true, primaryDomainIndex: -1 } );
 
 		return this.setPrimaryDomain( domainName )
 			.then(
 				() => {
-					this.setState( { primaryDomainIndex: null } );
+					this.setState( { primaryDomainIndex: -1 } );
 					showUpdatePrimaryDomainSuccessNotice( domainName );
 				},
 				( error ) => {
 					showUpdatePrimaryDomainErrorNotice( error.message );
+					this.setState( { primaryDomainIndex: currentPrimaryIndex } );
 				}
 			)
-			.then( () => this.setState( { settingPrimaryDomain: false } ) );
+			.finally( () => this.setState( { settingPrimaryDomain: false } ) );
 	};
 
 	handleUpdatePrimaryDomainOptionClick = ( index, domain ) => {
