@@ -148,10 +148,6 @@
 		display: inline-block;
 		margin-top: 16px;
 
-		@include break-mobile {
-			display: flex;
-		}
-
 		.gridicon {
 			transform: none;
 		}
