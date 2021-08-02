@@ -56,7 +56,7 @@ export class LoginFlow {
 	 */
 	async logIn(): Promise< void > {
 		await this.page.goto( getCalypsoURL( 'log-in' ) );
-		await this.baseflow();
+		await Promise.all( [ this.page.waitForNavigation(), this.baseflow() ] );
 	}
 
 	/**
