@@ -7,10 +7,6 @@
 	@include break-mobile {
 		flex-direction: row;
 		align-items: center;
-
-		.badge {
-			margin-left: 4px;
-		}
 	}
 
 	.domain-suggestion__content-domain {
@@ -38,6 +34,10 @@
 		border-radius: 4px; /* stylelint-disable-line */
 		font-size: 0.75rem;
 		font-weight: 500; /* stylelint-disable-line */
+
+		@include break-mobile {
+			margin-left: 4px;
+		}
 	}
 }
 

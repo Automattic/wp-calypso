@@ -175,13 +175,14 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 	align-items: center;
 	background: #ffffff;
 	border-bottom: 1px solid rgba( 220, 220, 222, 0.64 );
-	padding: 16px 24px;
+	padding: 16px;
 
 	@include break-mobile {
 		margin-bottom: 12px;
 		box-sizing: border-box;
 		border: 1px solid #e2e4e7;
 		background: var( --color-surface );
+		padding: 16px 24px;
 	}
 
 	.domain-suggestion__action-container {
