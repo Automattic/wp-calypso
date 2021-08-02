@@ -43,6 +43,7 @@ import { pathToRegExp } from 'calypso/utils';
 import middlewareAssets from '../middleware/assets.js';
 import middlewareBuildTarget from '../middleware/build-target.js';
 import middlewareCache from '../middleware/cache.js';
+import middlewareUnsupportedBrowser from '../middleware/unsupported-browser.js';
 import { logSectionResponse } from './analytics';
 
 const debug = debugFactory( 'calypso:pages' );
@@ -144,7 +145,10 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		featuresHelper: !! config.isEnabled( 'dev/features-helper' ),
 		devDocsURL: '/devdocs',
 		store: reduxStore,
-		addEvergreenCheck: target === 'evergreen' && calypsoEnv !== 'development',
+		addEvergreenCheck:
+			request.query.bypassTargetRedirection !== 'true' &&
+			target === 'evergreen' &&
+			calypsoEnv !== 'development',
 		target: target || 'fallback',
 		useTranslationChunks:
 			config.isEnabled( 'use-translation-chunks' ) ||
@@ -554,6 +558,7 @@ export default function pages() {
 	app.use( middlewareCache() );
 	app.use( setupLoggedInContext );
 	app.use( handleLocaleSubdomains );
+	app.use( middlewareUnsupportedBrowser() );
 
 	// redirect homepage if the Reader is disabled
 	app.get( '/', function ( request, response, next ) {
@@ -619,10 +624,12 @@ export default function pages() {
 					);
 				} else if ( ! config.isEnabled( 'jetpack-cloud/connect' ) ) {
 					res.redirect( 'https://wordpress.com/pricing' );
+				} else {
+					next();
 				}
+			} else {
+				next();
 			}
-
-			next();
 		} );
 	}
 
@@ -740,15 +747,9 @@ export default function pages() {
 		}
 	);
 
-	app.get( '/browsehappy', setupDefaultContext(), setUpRoute, function ( req, res ) {
-		const wpcomRe = /^https?:\/\/[A-z0-9_-]+\.wordpress\.com$/;
-		const primaryBlogUrl = get( req, 'context.user.primary_blog_url', '' );
-		const isWpcom = wpcomRe.test( primaryBlogUrl );
-
-		req.context.dashboardUrl = isWpcom
-			? primaryBlogUrl + '/wp-admin'
-			: 'https://dashboard.wordpress.com/wp-admin/';
-
+	app.get( '/browsehappy', ( req, res ) => {
+		req.context.entrypoint = req.getFilesForEntrypoint( 'entry-browsehappy' );
+		req.context.from = req.query.from;
 		res.send( renderJsx( 'browsehappy', req.context ) );
 	} );
 
