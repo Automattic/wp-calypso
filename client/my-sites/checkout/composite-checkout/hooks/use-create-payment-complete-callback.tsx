@@ -95,6 +95,15 @@ export default function useCreatePaymentCompleteCallback( {
 		( { paymentMethodId, transactionLastResponse }: PaymentCompleteCallbackArguments ): void => {
 			debug( 'payment completed successfully' );
 			const transactionResult = normalizeTransactionResponse( transactionLastResponse );
+
+			// In the case of a Jetpack product site-less purchase, we need to include the blog ID of the
+			// created site in the Thank You page URL.
+			let jetpackTemporarySiteId;
+			if ( isJetpackCheckout && ! siteSlug && responseCart.create_new_blog ) {
+				jetpackTemporarySiteId =
+					transactionResult.purchases && Object.keys( transactionResult.purchases ).pop();
+			}
+
 			const getThankYouPageUrlArguments = {
 				siteSlug: siteSlug || undefined,
 				adminUrl,
@@ -110,6 +119,7 @@ export default function useCreatePaymentCompleteCallback( {
 				hideNudge: isComingFromUpsell,
 				isInEditor,
 				isJetpackCheckout,
+				jetpackTemporarySiteId,
 			};
 			debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
 			const url = getThankYouPageUrl( getThankYouPageUrlArguments );
