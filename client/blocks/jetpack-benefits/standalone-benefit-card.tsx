@@ -2,24 +2,37 @@
  * External Dependencies
  */
 import React from 'react';
+import { TranslateResult } from 'i18n-calypso';
 
-export const JetpackBenefitsStandaloneCard = ( props ) => {
+interface Props {
+	title: TranslateResult;
+	summary: {
+		title: TranslateResult;
+		stat: string;
+	};
+	stats: Array< {
+		title: TranslateResult;
+		stat: string;
+	} >;
+}
+
+export const JetpackBenefitsStandaloneCard: React.FC< Props > = ( { summary, stats, title } ) => {
 	const getSummary = () => {
-		if ( props.summary ) {
+		if ( summary ) {
 			return (
 				<div className="jetpack-benefits__standalone-summary">
-					<span className="jetpack-benefits__stat-title">{ props.summary.title }</span>
-					<p className="jetpack-benefits__card-stat">{ props.summary.stat }</p>
+					<span className="jetpack-benefits__stat-title">{ summary.title }</span>
+					<p className="jetpack-benefits__card-stat">{ summary.stat }</p>
 				</div>
 			);
 		}
 	};
 
 	const getStats = () => {
-		if ( props.stats ) {
+		if ( stats ) {
 			return (
 				<ul className="jetpack-benefits__standalone-stats">
-					{ props.stats.map( ( stat, idx ) => {
+					{ stats.map( ( stat, idx ) => {
 						return (
 							<li key={ idx }>
 								<span className="jetpack-benefits__stat-title">{ stat.title }</span>
@@ -34,7 +47,7 @@ export const JetpackBenefitsStandaloneCard = ( props ) => {
 
 	return (
 		<div className="jetpack-benefits__card jetpack-benefits__card--standalone card">
-			<p className="jetpack-benefits__card-headline">{ props.title }</p>
+			<p className="jetpack-benefits__card-headline">{ title }</p>
 			<div className="jetpack-benefits__card-content">
 				{ getSummary() }
 				{ getStats() }

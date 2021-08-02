@@ -23,6 +23,19 @@ type Props = {
 	isStandalone: boolean;
 };
 
+interface Backup {
+	stats: {
+		prefix: string;
+		tables: {
+			[ key: string ]: {
+				post_published: string;
+				published: string;
+			};
+		};
+		[ key: string ]: any;
+	};
+}
+
 const JetpackBenefitsSiteBackups: React.FC< Props > = ( { siteId, isStandalone } ) => {
 	const translate = useTranslate();
 	const backups = useSelector( ( state ) => {
@@ -45,7 +58,7 @@ const JetpackBenefitsSiteBackups: React.FC< Props > = ( { siteId, isStandalone }
 		return moment.utc( backup.last_updated ).fromNow();
 	};
 
-	const getPostCountForBackup = ( backup ) => {
+	const getPostCountForBackup = ( backup: Backup ) => {
 		const stats = backup.stats;
 		return (
 			stats.tables[ stats.prefix + 'posts' ].post_published ??
@@ -53,7 +66,7 @@ const JetpackBenefitsSiteBackups: React.FC< Props > = ( { siteId, isStandalone }
 		);
 	};
 
-	const getStatForBackup = ( backup, statName: string ) => {
+	const getStatForBackup = ( backup: Backup, statName: string ) => {
 		const stats = backup.stats;
 		return stats[ statName ] ? stats[ statName ].count : 0;
 	};
