@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import page from 'page';
-import { get } from 'lodash';
 import { parse } from 'qs';
 import { connect } from 'react-redux';
 
@@ -48,7 +47,7 @@ class DomainConnectMapping extends React.Component {
 
 	isDomainConnectComplete = () => {
 		const queryObject = parse( window.location.search.replace( '?', '' ) );
-		const status = get( queryObject, 'status', null );
+		const status = queryObject?.status;
 		const redirectUriStatusString = this.getRedirectUriStatusString();
 
 		// Some domain providers return the status string as a key rather than the value of
@@ -203,8 +202,8 @@ class DomainConnectMapping extends React.Component {
 			)
 			.then(
 				( data ) => {
-					const success = get( data, 'success', false );
-					const syncUxUrl = get( data, 'sync_ux_apply_url', null );
+					const success = data?.success;
+					const syncUxUrl = data?.sync_ux_apply_url;
 
 					if ( success && syncUxUrl ) {
 						this.props.recordConfigureYourDomainRedirect(
