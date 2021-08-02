@@ -190,6 +190,7 @@ module.exports = {
 				'client/incoming-redirect/**/*',
 				'client/jetpack-connect/**/*',
 				'client/landing/**/*',
+				'client/layout/**/*',
 				'client/login/**/*',
 				'client/mailing-lists/**/*',
 				'client/my-sites/customer-home/**/*',

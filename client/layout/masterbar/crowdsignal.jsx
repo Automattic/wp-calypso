@@ -1,18 +1,7 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import React, { Component } from 'react';
 import WordPressLogo from 'calypso/components/wordpress-logo';
-
-/**
- * Style dependencies
- */
 import './crowdsignal.scss';
 
 class CrowdsignalOauthMasterbar extends Component {
