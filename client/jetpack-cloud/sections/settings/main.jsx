@@ -1,35 +1,24 @@
-/**
- * External dependencies
- */
+import { Card } from '@automattic/components';
+import { localize, useTranslate } from 'i18n-calypso';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { localize, useTranslate } from 'i18n-calypso';
-import { Card } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
+import connectedIcon from 'calypso/assets/images/jetpack/connected.svg';
+import disconnectedIcon from 'calypso/assets/images/jetpack/disconnected.svg';
 import DocumentHead from 'calypso/components/data/document-head';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import ServerCredentialsForm from 'calypso/components/jetpack/server-credentials-form';
-import FoldableCard from 'calypso/components/foldable-card';
-import getRewindState from 'calypso/state/selectors/get-rewind-state';
-import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
-import getSiteCredentials from 'calypso/state/selectors/get-jetpack-credentials';
 import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
-import Main from 'calypso/components/main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import ExternalLink from 'calypso/components/external-link';
-
-/**
- * Style dependencies
- */
+import FoldableCard from 'calypso/components/foldable-card';
+import ServerCredentialsForm from 'calypso/components/jetpack/server-credentials-form';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import getSiteCredentials from 'calypso/state/selectors/get-jetpack-credentials';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
-import connectedIcon from 'calypso/assets/images/jetpack/connected.svg';
-import disconnectedIcon from 'calypso/assets/images/jetpack/disconnected.svg';
 
 const connectedProps = ( translate, connectedMessage ) => ( {
 	iconPath: connectedIcon,

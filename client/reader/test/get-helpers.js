@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { getSiteUrl, getSiteName } from '../get-helpers';
 
 describe( '#getSiteUrl', () => {

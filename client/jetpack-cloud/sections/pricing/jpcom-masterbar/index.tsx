@@ -1,24 +1,12 @@
-/**
- * External dependencies
- */
-import React, { useCallback, useState } from 'react';
+import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
+import React, { useCallback, useState } from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import Gridicon from 'calypso/components/gridicon';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-
-/**
- * Style dependencies
- */
 import './style.scss';
-
 import antiSpamIcon from './assets/icons/anti-spam.svg';
 import backupIcon from './assets/icons/backup.svg';
 import boostIcon from './assets/icons/boost.svg';

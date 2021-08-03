@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import React from 'react';
 
 class PostPlaceholder extends React.PureComponent {
 	render() {

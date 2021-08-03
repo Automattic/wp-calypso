@@ -1,32 +1,21 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
 import React, { ReactElement } from 'react';
 import { useDispatch } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
-import Main from 'calypso/components/main';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
-import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
+import Main from 'calypso/components/main';
 import LicenseList from 'calypso/jetpack-cloud/sections/partner-portal/license-list';
+import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
+import LicenseStateFilter from 'calypso/jetpack-cloud/sections/partner-portal/license-state-filter';
+import SelectPartnerKeyDropdown from 'calypso/jetpack-cloud/sections/partner-portal/select-partner-key-dropdown';
+import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
 import {
 	LicenseFilter,
 	LicenseSortDirection,
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import LicenseStateFilter from 'calypso/jetpack-cloud/sections/partner-portal/license-state-filter';
-import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
-import SelectPartnerKeyDropdown from 'calypso/jetpack-cloud/sections/partner-portal/select-partner-key-dropdown';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface Props {

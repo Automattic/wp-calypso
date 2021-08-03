@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
+import AsyncLoad from 'calypso/components/async-load';
 import { sectionify } from 'calypso/lib/route';
 import { trackPageLoad, setPageTitle } from 'calypso/reader/controller-helper';
-import AsyncLoad from 'calypso/components/async-load';
 
 const analyticsPageTitle = 'Reader';
 

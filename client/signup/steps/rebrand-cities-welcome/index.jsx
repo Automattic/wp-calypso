@@ -1,23 +1,11 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import StepWrapper from 'calypso/signup/step-wrapper';
-import { generateUniqueRebrandCitiesSiteUrl } from 'calypso/lib/rebrand-cities';
 import FormTextInputWithAction from 'calypso/components/forms/form-text-input-with-action';
-import { setSiteTitle } from 'calypso/state/signup/steps/site-title/actions';
+import { generateUniqueRebrandCitiesSiteUrl } from 'calypso/lib/rebrand-cities';
+import StepWrapper from 'calypso/signup/step-wrapper';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-
-/**
- * Style dependencies
- */
+import { setSiteTitle } from 'calypso/state/signup/steps/site-title/actions';
 import './style.scss';
 
 class RebrandCitiesWelcomeStep extends Component {

@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * WordPress dependencies
- */
 import { QueryControls } from '@wordpress/components';
 import { withState } from '@wordpress/compose';
+import React from 'react';
 
 const QueryControlsExample = withState( {
 	orderBy: 'title',

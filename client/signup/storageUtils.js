@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import cookie from 'cookie';
-
-/**
- * Internal dependencies
- */
 
 export const persistSignupDestination = ( url ) => {
 	const DAY_IN_SECONDS = 3600 * 24;

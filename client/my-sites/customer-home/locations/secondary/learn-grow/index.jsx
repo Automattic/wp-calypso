@@ -38,7 +38,7 @@ const LearnGrow = () => {
 	}
 
 	return (
-		<DotPager className="learn-grow__content customer-home__card">
+		<DotPager className="learn-grow__content customer-home__card" hasDynamicHeight>
 			{ cards.map(
 				( card, index ) =>
 					cardComponents[ card ] &&

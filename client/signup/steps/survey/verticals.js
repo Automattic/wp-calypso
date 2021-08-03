@@ -1,9 +1,5 @@
-/**
- * External dependencies
- */
-
-import { shuffle } from 'lodash';
 import { translate } from 'i18n-calypso';
+import { shuffle } from 'lodash';
 
 const verticals = [
 	{ value: 'a8c.14.7', label: () => translate( 'Wedding' ) },

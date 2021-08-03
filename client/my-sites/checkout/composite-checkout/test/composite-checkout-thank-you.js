@@ -1003,5 +1003,26 @@ describe( 'getThankYouPageUrl', () => {
 			} );
 			expect( url ).toBe( '/checkout/jetpack/thank-you/no-site/jetpack_backup_daily' );
 		} );
+
+		it( 'redirects with jetpackTemporarySiteId query param when available', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: 'jetpack_backup_daily',
+					},
+				],
+			};
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: undefined,
+				cart,
+				isJetpackCheckout: true,
+				receiptId: 80023,
+				jetpackTemporarySiteId: 123456789,
+			} );
+			expect( url ).toBe(
+				'/checkout/jetpack/thank-you/no-site/jetpack_backup_daily?receiptId=80023&jetpackTemporarySiteId=123456789'
+			);
+		} );
 	} );
 } );

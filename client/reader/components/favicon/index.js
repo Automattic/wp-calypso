@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import React, { useState } from 'react';
 import Gridicon from 'calypso/components/gridicon';
 

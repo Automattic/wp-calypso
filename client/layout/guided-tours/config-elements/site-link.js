@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-
+import { Button } from '@automattic/components';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import { contextTypes } from '../context-types';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { Button } from '@automattic/components';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { contextTypes } from '../context-types';
 
 class SiteLink extends Component {
 	static propTypes = {

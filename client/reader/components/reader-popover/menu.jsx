@@ -1,14 +1,7 @@
-/**
- * External Dependencies
- */
-import React from 'react';
 import { omit } from 'lodash';
-
-/**
- * Internal Dependencies
- */
-import ReaderPopover from 'calypso/reader/components/reader-popover';
+import React from 'react';
 import PopoverMenu from 'calypso/components/popover/menu';
+import ReaderPopover from 'calypso/reader/components/reader-popover';
 
 const ReaderPopoverMenu = ( props ) => {
 	const popoverProps = omit( props, 'popoverComponent' );

@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
-import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
+import { useTranslate } from 'i18n-calypso';
+import * as React from 'react';
 import FormButton from 'calypso/components/forms/form-button';
+import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';

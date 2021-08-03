@@ -1,22 +1,11 @@
-/**
- * External dependencies
- */
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { fillGap } from 'calypso/state/reader/streams/actions';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-
-/**
- * Style dependencies
- */
+import { fillGap } from 'calypso/state/reader/streams/actions';
 import './style.scss';
 
 class Gap extends React.Component {

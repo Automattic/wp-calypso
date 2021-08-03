@@ -2,16 +2,6 @@ jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
 
-/**
- * External dependencies
- */
-import { shallow } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { siteHasPaidPlan, SitePickerSubmit } from '../site-picker-submit';
 import {
 	PLAN_FREE,
 	PLAN_ECOMMERCE,
@@ -33,6 +23,9 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
+import { shallow } from 'enzyme';
+import React from 'react';
+import { siteHasPaidPlan, SitePickerSubmit } from '../site-picker-submit';
 
 const noop = () => {};
 const props = {

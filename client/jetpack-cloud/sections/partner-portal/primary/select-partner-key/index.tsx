@@ -1,15 +1,13 @@
-/**
- * External dependencies
- */
-import React, { ReactElement } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { PartnerKey } from 'calypso/state/partner-portal/types';
+import React, { ReactElement } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import CardHeading from 'calypso/components/card-heading';
+import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
+import Main from 'calypso/components/main';
+import Spinner from 'calypso/components/spinner';
+import { useReturnUrl } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setActivePartnerKey } from 'calypso/state/partner-portal/partner/actions';
 import {
 	isFetchingPartner,
@@ -17,16 +15,7 @@ import {
 	hasActivePartnerKey,
 	hasFetchedPartner,
 } from 'calypso/state/partner-portal/partner/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
-import Main from 'calypso/components/main';
-import CardHeading from 'calypso/components/card-heading';
-import Spinner from 'calypso/components/spinner';
-import { useReturnUrl } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
-
-/**
- * Style dependencies
- */
+import { PartnerKey } from 'calypso/state/partner-portal/types';
 import './style.scss';
 
 export default function SelectPartnerKey(): ReactElement | null {

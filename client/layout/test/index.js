@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import React from 'react';
-import { Provider } from 'react-redux';
 import { renderToString } from 'react-dom/server';
-
-/**
- * Internal dependencies
- */
+import { Provider } from 'react-redux';
 import LayoutLoggedOut from '../logged-out';
 
 jest.mock( 'calypso/lib/signup/step-actions', () => ( {} ) );

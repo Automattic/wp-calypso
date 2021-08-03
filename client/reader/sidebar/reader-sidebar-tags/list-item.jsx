@@ -1,22 +1,11 @@
-/**
- * External dependencies
- */
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import ReaderSidebarHelper from '../helper';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-
-/**
- * Style dependencies
- */
+import ReaderSidebarHelper from '../helper';
 import '../style.scss';
 
 export class ReaderSidebarTagsListItem extends Component {

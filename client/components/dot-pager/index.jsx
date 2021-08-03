@@ -1,11 +1,12 @@
 /**
  * External dependencies
  */
-import React, { Children, useState } from 'react';
+import React, { Children, useState, useEffect, useRef } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { times } from 'lodash';
 import classnames from 'classnames';
 import { Icon, arrowRight } from '@wordpress/icons';
+import { useResizeObserver } from '@wordpress/compose';
 
 /**
  * Style dependencies
@@ -68,17 +69,38 @@ const Controls = ( { showControlLabels = false, currentPage, numberOfPages, setC
 	);
 };
 
-export const DotPager = ( { showControlLabels = false, children, className, ...props } ) => {
+export const DotPager = ( {
+	showControlLabels = false,
+	hasDynamicHeight = false,
+	children,
+	className,
+	...props
+} ) => {
 	const [ currentPage, setCurrentPage ] = useState( 0 );
+	const [ pagesStyle, setPagesStyle ] = useState();
+	const pagesRef = useRef();
+	const [ resizeObserver, sizes ] = useResizeObserver();
+
+	useEffect( () => {
+		if ( ! hasDynamicHeight ) {
+			return;
+		}
+
+		const targetHeight = pagesRef.current?.children[ currentPage ]?.offsetHeight;
+
+		setPagesStyle( targetHeight ? { height: targetHeight } : undefined );
+	}, [ hasDynamicHeight, currentPage, sizes.width, setPagesStyle ] );
+
 	return (
 		<div className={ className } { ...props }>
+			{ resizeObserver }
 			<Controls
 				showControlLabels={ showControlLabels }
 				currentPage={ currentPage }
 				numberOfPages={ Children.count( children ) }
 				setCurrentPage={ setCurrentPage }
 			/>
-			<div className="dot-pager__pages">
+			<div className="dot-pager__pages" ref={ pagesRef } style={ pagesStyle }>
 				{ Children.map( children, ( child, index ) => (
 					<div
 						className={ classnames( 'dot-pager__page', {

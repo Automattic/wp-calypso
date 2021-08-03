@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
-import DocsSelectorsSingle from './single';
-import DocsSelectorsSearch from './search';
 import DocumentHead from 'calypso/components/data/document-head';
+import Main from 'calypso/components/main';
 import ReadmeViewer from 'calypso/components/readme-viewer';
+import DocsSelectorsSearch from './search';
+import DocsSelectorsSingle from './single';
 
 export default class DocsSelectors extends PureComponent {
 	static propTypes = {

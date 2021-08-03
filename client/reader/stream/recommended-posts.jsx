@@ -1,23 +1,16 @@
-/**
- * External Dependencies
- */
+import { Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { map, partial } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { map, partial } from 'lodash';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal Dependencies
- */
 import { RelatedPostCard } from 'calypso/blocks/reader-related-card';
-import { recordAction, recordTrackForPost } from 'calypso/reader/stats';
-import { Button } from '@automattic/components';
-import { dismissPost } from 'calypso/state/reader/site-dismissals/actions';
-import { keyForPost } from 'calypso/reader/post-key';
 import QueryReaderPost from 'calypso/components/data/query-reader-post';
+import Gridicon from 'calypso/components/gridicon';
+import { keyForPost } from 'calypso/reader/post-key';
+import { recordAction, recordTrackForPost } from 'calypso/reader/stats';
 import { getPostsByKeys } from 'calypso/state/reader/posts/selectors';
+import { dismissPost } from 'calypso/state/reader/site-dismissals/actions';
 
 function dismissPostAnalytics( uiIndex, storeId, post ) {
 	recordTrackForPost( 'calypso_reader_recommended_post_dismissed', post, {

@@ -1,7 +1,5 @@
 /* eslint-disable quote-props*/
-/**
- * External dependencies
- */
+
 import { cloneDeep } from 'lodash';
 
 export const discoverSiteId = 53424024;

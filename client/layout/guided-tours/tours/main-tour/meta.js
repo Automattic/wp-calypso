@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { and } from 'calypso/layout/guided-tours/utils';
 import { isNewUser, isEnabled } from 'calypso/state/guided-tours/contexts';
 

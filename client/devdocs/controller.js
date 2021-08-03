@@ -1,26 +1,19 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { stringify } from 'qs';
 import { debounce } from 'lodash';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import { stringify } from 'qs';
+import React from 'react';
+import EmptyContent from 'calypso/components/empty-content';
+import { login } from 'calypso/lib/paths';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 // This is a custom AsyncLoad component for devdocs that includes a
 // `props.component`-aware placeholder. It still needs to be imported as
 // `AsyncLoad` though–see https://github.com/Automattic/babel-plugin-transform-wpcalypso-async/blob/HEAD/index.js#L12
 import AsyncLoad from './devdocs-async-load';
-import DocsComponent from './main';
-import { login } from 'calypso/lib/paths';
 import SingleDocComponent from './doc';
-import DevWelcome from './welcome';
+import DocsComponent from './main';
 import Sidebar from './sidebar';
-import EmptyContent from 'calypso/components/empty-content';
+import DevWelcome from './welcome';
 import WizardComponent from './wizard-component';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 const devdocs = {
 	/*

@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { RelatedPostCard } from 'calypso/blocks/reader-related-card';
-import { recordTrackForPost, recordAction } from 'calypso/reader/stats';
 import { EMPTY_SEARCH_RECOMMENDATIONS } from 'calypso/reader/follow-sources';
+import { recordTrackForPost, recordAction } from 'calypso/reader/stats';
 
 export default function EmptySearchRecommendedPost( { post } ) {
 	function handlePostClick() {

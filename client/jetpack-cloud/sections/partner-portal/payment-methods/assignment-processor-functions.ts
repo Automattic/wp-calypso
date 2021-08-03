@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import { createStripeSetupIntent } from '@automattic/calypso-stripe';
-import type { Stripe, StripeConfiguration, StripeSetupIntent } from '@automattic/calypso-stripe';
 import { makeSuccessResponse, makeErrorResponse } from '@automattic/composite-checkout';
-import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal Dependencies
- */
 import { saveCreditCard } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/stored-payment-method-api';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import type { Stripe, StripeConfiguration, StripeSetupIntent } from '@automattic/calypso-stripe';
+import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 
 interface Props {
 	useAsPrimaryPaymentMethod?: boolean;

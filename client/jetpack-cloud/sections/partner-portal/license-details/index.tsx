@@ -1,23 +1,12 @@
-/**
- * External dependencies
- */
-import React, { ReactElement } from 'react';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { getLicenseState, noop } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
-import { LicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { Card } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
+import React, { ReactElement } from 'react';
+import FormattedDate from 'calypso/components/formatted-date';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import Gridicon from 'calypso/components/gridicon';
-import FormattedDate from 'calypso/components/formatted-date';
 import LicenseDetailsActions from 'calypso/jetpack-cloud/sections/partner-portal/license-details/actions';
-
-/**
- * Style dependencies
- */
+import { LicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import { getLicenseState, noop } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import './style.scss';
 
 interface Props {

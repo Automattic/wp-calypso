@@ -1,16 +1,7 @@
-/**
- * External dependencies
- */
-import React, { ReactNode } from 'react';
-
-/**
- * WordPress dependencies
- */
+import { isEnabled } from '@automattic/calypso-config';
 import { Card, CardHeader, CardBody, Flex, FlexItem } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
+import React, { ReactNode } from 'react';
+import ColorSchemePicker from 'calypso/blocks/color-scheme-picker/docs/example';
 import AnglePickerControlExample from './angle-picker-control';
 import AnimateExample from './animate';
 import BaseControlExample from './base-control';
@@ -49,8 +40,6 @@ import ToolbarExample from './toolbar';
 import TooltipExample from './tooltip';
 import TreeSelectExample from './tree-select';
 import VisuallyHiddenExample from './visually-hidden';
-import { isEnabled } from '@automattic/calypso-config';
-import ColorSchemePicker from 'calypso/blocks/color-scheme-picker/docs/example';
 
 import './style.scss';
 

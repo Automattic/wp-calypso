@@ -1,11 +1,7 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { sidebar, updateLastRoute } from 'calypso/reader/controller';
 import {
 	createList,
 	deleteList,
@@ -14,9 +10,6 @@ import {
 	exportList,
 	listListing,
 } from './controller';
-import { sidebar, updateLastRoute } from 'calypso/reader/controller';
-import { makeLayout, render as clientRender } from 'calypso/controller';
-import config from '@automattic/calypso-config';
 
 export default function () {
 	if ( config.isEnabled( 'reader/list-management' ) ) {

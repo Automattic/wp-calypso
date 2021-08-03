@@ -38,6 +38,13 @@ export default function useAddProductsFromUrl( {
 	addProductsToCart: AddProductsToCart;
 	replaceProductsInCart: ReplaceProductsInCart;
 } ): isPendingAddingProductsFromUrl {
+	const isMounted = useRef( true );
+	useEffect( () => {
+		isMounted.current = true;
+		return () => {
+			isMounted.current = false;
+		};
+	}, [] );
 	const [ isLoading, setIsLoading ] = useState< boolean >( true );
 	const hasRequestedInitialProducts = useRef< boolean >( false );
 
@@ -55,7 +62,7 @@ export default function useAddProductsFromUrl( {
 			! isCartPendingUpdate
 		) {
 			debug( 'no products or coupons to add; skipping initial cart requests' );
-			setIsLoading( false );
+			isMounted.current && setIsLoading( false );
 			return;
 		}
 	}, [
@@ -100,7 +107,7 @@ export default function useAddProductsFromUrl( {
 		}
 		Promise.all( cartPromises ).then( () => {
 			debug( 'initial cart requests have completed' );
-			setIsLoading( false );
+			isMounted.current && setIsLoading( false );
 		} );
 		hasRequestedInitialProducts.current = true;
 	}, [

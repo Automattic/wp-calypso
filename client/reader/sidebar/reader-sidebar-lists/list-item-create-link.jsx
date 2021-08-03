@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import React from 'react';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import Gridicon from 'calypso/components/gridicon';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
-import ReaderSidebarHelper from '../helper';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import ReaderSidebarHelper from '../helper';
 
 const ReaderSidebarListsListItemCreateLink = ( props ) => {
 	const dispatch = useDispatch();
