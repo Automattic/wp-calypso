@@ -107,7 +107,7 @@ class AutoRenewDisablingDialog extends Component {
 			case 'atomic':
 				return translate(
 					'By canceling auto-renewal, your %(planName)s plan for %(siteDomain)s will expire on %(expiryDate)s. ' +
-						'When it does, you will lose plugins, themes, design customizations, and possibly some content. ' +
+						'When it expires, plugins, themes and design customizations will be deactivated. ' +
 						'To avoid that, turn auto-renewal back on or manually renew your plan before the expiration date.',
 					{
 						args: {
@@ -239,12 +239,12 @@ class AutoRenewDisablingDialog extends Component {
 		const buttons = [
 			{
 				action: 'close',
-				label: translate( "I'll keep it" ),
+				label: translate( 'Keep auto-renew on' ),
 				onClick: this.closeAndCleanup,
 			},
 			{
 				action: 'confirm',
-				label: translate( 'Confirm cancellation' ),
+				label: translate( 'Turn off auto-renew' ),
 				onClick: this.onClickGeneralConfirm,
 				isPrimary: true,
 			},
