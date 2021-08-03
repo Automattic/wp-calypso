@@ -8,6 +8,7 @@ type ReminderDuration = '1d' | '1w' | null;
 
 interface Variables {
 	reminder: ReminderDuration;
+	card?: string;
 }
 
 interface Result extends UseMutationResult< void, unknown, Variables > {
@@ -42,15 +43,24 @@ function useSkipCurrentViewMutation( siteId: number ): Result {
 		},
 		{
 			onMutate( { card } ) {
-				const cachedData: Record< string, unknown > | undefined = queryClient.getQueryData(
-					getCacheKey( siteId )
-				);
-				const optimisticUpdate = {
-					...cachedData,
-					primary: cachedData.primary.filter( ( c ) => c !== card ),
-				};
+				// Allow half a second for animation to run and then update
+				// optimistically & idempotently
+				setTimeout( () => {
+					const cachedData: Record< string, any > | undefined = queryClient.getQueryData(
+						getCacheKey( siteId )
+					);
 
-				queryClient.setQueryData( getCacheKey( siteId ), optimisticUpdate );
+					if ( ! cachedData?.primary?.indexOf || cachedData.primary.indexOf( card ) === -1 ) {
+						return;
+					}
+
+					const optimisticUpdate = {
+						...cachedData,
+						primary: cachedData.primary.filter( ( v: string ) => v !== card ),
+					};
+
+					queryClient.setQueryData( getCacheKey( siteId ), optimisticUpdate );
+				}, 500 );
 			},
 			onError(/* err, _data, cachedData */) {
 				// We can revert the change if there's an error here, but do
