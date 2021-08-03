@@ -18,7 +18,7 @@ import {
 	decorateMailboxWithAvailabilityError,
 	validateMailboxes,
 } from 'calypso/lib/titan/new-mailbox';
-import { emailManagementTitanSetupThankYouPage } from 'calypso/my-sites/email/paths';
+import { emailManagementTitanSetupThankYou } from 'calypso/my-sites/email/paths';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -54,7 +54,7 @@ const useHandleSetupAction = (
 
 	const goToThankYouPage = ( emailAddress ) => {
 		page(
-			emailManagementTitanSetupThankYouPage(
+			emailManagementTitanSetupThankYou(
 				selectedSite?.slug ?? null,
 				selectedDomainName,
 				emailAddress

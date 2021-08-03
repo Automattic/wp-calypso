@@ -150,13 +150,13 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagementTitanSetupThankYouPage(
+			paths.emailManagementTitanSetupThankYou(
 				':site',
 				':domain',
 				null,
 				paths.emailManagementAllSitesPrefix
 			),
-			paths.emailManagementTitanSetupThankYouPage( ':site', ':domain' ),
+			paths.emailManagementTitanSetupThankYou( ':site', ':domain' ),
 		],
 		handlers: [
 			...commonHandlers,
