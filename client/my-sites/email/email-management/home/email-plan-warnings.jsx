@@ -11,7 +11,6 @@ import React from 'react';
  * Internal dependencies
  */
 import { emailManagementTitanSetupMailbox } from 'calypso/my-sites/email/paths';
-import { getConfiguredTitanMailboxCount, getMaxTitanMailboxCount } from 'calypso/lib/titan';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getGoogleAdminUrl } from 'calypso/lib/gsuite';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -39,9 +38,7 @@ class EmailPlanWarnings extends React.Component {
 
 		return (
 			<Button compact primary href={ setupMailboxUrl }>
-				{ translate( 'Activate Mailbox', 'Activate Mailboxes', {
-					count: getMaxTitanMailboxCount( domain ) - getConfiguredTitanMailboxCount( domain ),
-				} ) }
+				{ translate( 'Set Up Mailbox' ) }
 			</Button>
 		);
 	}
