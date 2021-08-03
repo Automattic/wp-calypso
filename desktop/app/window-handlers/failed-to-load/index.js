@@ -14,6 +14,7 @@ const NETWORK_FAILED_FILE = 'file://' + assets.getPath( 'network-failed.html' );
 // Full list of error codes here: https://code.google.com/p/chromium/codesearch#chromium/src/net/base/net_error_list.h
 const ERRORS_TO_IGNORE = [
 	-3, // ABORTED
+	-27, // BLOCKED_BY_RESPONSE
 	-30, // ERR_BLOCKED_BY_CSP
 	-102, // CONNECTION_REFUSED
 	-109, // ADDRESS_UNREACHABLE
