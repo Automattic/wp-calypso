@@ -26,6 +26,11 @@ import TitanNewMailboxList from 'calypso/my-sites/email/titan-add-mailboxes/tita
 import { useCreateTitanMailboxMutation } from 'calypso/data/emails/use-create-titan-mailbox-mutation';
 import { useGetTitanMailboxAvailability } from 'calypso/data/emails/use-get-titan-mailbox-availability';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const getMailboxDomainName = ( mailbox ) => mailbox?.domain?.value;
 const getMailboxUserName = ( mailbox ) => mailbox?.mailbox?.value;
 
@@ -178,12 +183,12 @@ const TitanSetupMailboxForm = ( { areSiteDomainsLoaded, selectedDomainName } ) =
 				validatedMailboxUuids={ validatedMailboxUuids }
 			>
 				<Button
-					className="titan-setup-mailbox__action-continue"
+					className="titan-setup-mailbox-form__button"
 					primary
 					busy={ isBusy }
 					onClick={ handleSetup }
 				>
-					{ translate( 'Complete Setup' ) }
+					{ translate( 'Complete setup' ) }
 				</Button>
 			</TitanNewMailboxList>
 		</Card>
