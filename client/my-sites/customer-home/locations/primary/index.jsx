@@ -79,7 +79,11 @@ const Primary = ( { cards, trackCards } ) => {
 	}
 
 	return (
-		<DotPager className="primary__customer-home-location-content" showControlLabels="true">
+		<DotPager
+			className="primary__customer-home-location-content"
+			showControlLabels="true"
+			hasDynamicHeight
+		>
 			{ cards.map(
 				( card, index ) =>
 					cardComponents[ card ] &&

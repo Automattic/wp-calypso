@@ -3,7 +3,10 @@
 .dot-pager__pages {
 	overflow: hidden;
 	display: flex;
+	align-items: flex-start;
 	position: relative;
+	transition: height 0.5s ease-in-out;
+	@include reduce-motion( 'transition' );
 }
 
 .dot-pager__page {
@@ -17,7 +20,6 @@
 	&.is-prev,
 	&.is-next {
 		opacity: 0;
-		position: absolute;
 	}
 
 	&.is-prev {
@@ -65,7 +67,7 @@
 }
 
 .dot-pager__control-prev,
-.dot-pager__control-next, {
+.dot-pager__control-next {
 	display: inline-flex;
 
 	svg {
