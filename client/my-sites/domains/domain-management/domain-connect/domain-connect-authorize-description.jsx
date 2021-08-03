@@ -38,7 +38,7 @@ class DomainConnectAuthorizeDescription extends Component {
 		const templateDescription = {
 			'g-suite': translate(
 				'Howdy! It looks like you want to make your domain work with ' +
-					"{{strong}}Google's G Suite email service{{/strong}}.",
+					'{{strong}}Google Workspace{{/strong}}.',
 				{
 					components: {
 						strong: <strong />,
