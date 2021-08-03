@@ -6,7 +6,7 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { ADMIN_MENU_REQUEST } from 'calypso/state/action-types';
 import { receiveAdminMenu } from 'calypso/state/admin-menu/actions';
-import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import { getSiteAdminUrl, getSiteUrl } from 'calypso/state/sites/selectors';
 import { addQueryArgs } from 'calypso/lib/url';
 
 export const requestFetchAdminMenu = ( action ) =>
@@ -19,12 +19,15 @@ export const requestFetchAdminMenu = ( action ) =>
 		action
 	);
 
-const sanitizeUrl = ( url, wpAdminUrl ) => {
+const sanitizeUrl = ( url, wpAdminUrl, siteUrl ) => {
 	const isSafeInternalUrl = new RegExp( '^/' ).test( url );
 	// The replace function removes the protocol.
 	const isSafeWpAdminUrl = new RegExp( `^${ wpAdminUrl?.replace( /^https?:\/\//, '' ) }` ).test(
 		url?.replace( /^https?:\/\//, '' )
 	);
+	const isSafeJetpackRedirectUrl =
+		new RegExp( '^https://jetpack.com/redirect/' ) &&
+		url?.includes( `site=${ siteUrl.replace( /^https?:\/\//, '' ) }` );
 
 	if ( isSafeWpAdminUrl ) {
 		url = addQueryArgs(
@@ -35,14 +38,14 @@ const sanitizeUrl = ( url, wpAdminUrl ) => {
 		);
 	}
 
-	if ( isSafeInternalUrl || isSafeWpAdminUrl ) {
+	if ( isSafeInternalUrl || isSafeWpAdminUrl || isSafeJetpackRedirectUrl ) {
 		return url;
 	}
 
 	return '';
 };
 
-const sanitizeMenuItem = ( menuItem, wpAdminUrl ) => {
+const sanitizeMenuItem = ( menuItem, wpAdminUrl, siteUrl ) => {
 	if ( ! menuItem ) {
 		return menuItem;
 	}
@@ -50,13 +53,13 @@ const sanitizeMenuItem = ( menuItem, wpAdminUrl ) => {
 	let sanitizedChildren;
 	if ( Array.isArray( menuItem.children ) ) {
 		sanitizedChildren = menuItem.children.map( ( subMenuItem ) =>
-			sanitizeMenuItem( subMenuItem, wpAdminUrl )
+			sanitizeMenuItem( subMenuItem, wpAdminUrl, siteUrl )
 		);
 	}
 
 	return {
 		...menuItem,
-		url: sanitizeUrl( menuItem.url, wpAdminUrl ),
+		url: sanitizeUrl( menuItem.url, wpAdminUrl, siteUrl ),
 		...( sanitizedChildren ? { children: sanitizedChildren } : {} ),
 	};
 };
@@ -67,11 +70,12 @@ export const handleSuccess = ( { siteId }, menuData ) => ( dispatch, getState ) 
 	}
 
 	// Sanitize menu data.
+	const siteUrl = getSiteUrl( getState(), siteId );
 	const wpAdminUrl = getSiteAdminUrl( getState(), siteId );
 	return dispatch(
 		receiveAdminMenu(
 			siteId,
-			menuData.map( ( menuItem ) => sanitizeMenuItem( menuItem, wpAdminUrl ) )
+			menuData.map( ( menuItem ) => sanitizeMenuItem( menuItem, wpAdminUrl, siteUrl ) )
 		)
 	);
 };
