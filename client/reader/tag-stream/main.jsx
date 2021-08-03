@@ -1,31 +1,20 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
+import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { find } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import Stream from 'calypso/reader/stream';
 import DocumentHead from 'calypso/components/data/document-head';
-import EmptyContent from './empty';
-import TagStreamHeader from './header';
-import { recordAction, recordGaEvent } from 'calypso/reader/stats';
-import HeaderBack from 'calypso/reader/header-back';
-import { getReaderTags, getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
-import { requestFollowTag, requestUnfollowTag } from 'calypso/state/reader/tags/items/actions';
 import QueryReaderFollowedTags from 'calypso/components/data/query-reader-followed-tags';
 import QueryReaderTag from 'calypso/components/data/query-reader-tag';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import HeaderBack from 'calypso/reader/header-back';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import Stream from 'calypso/reader/stream';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-
-/**
- * Style dependencies
- */
+import { requestFollowTag, requestUnfollowTag } from 'calypso/state/reader/tags/items/actions';
+import { getReaderTags, getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
+import EmptyContent from './empty';
+import TagStreamHeader from './header';
 import './style.scss';
 
 class TagStream extends React.Component {

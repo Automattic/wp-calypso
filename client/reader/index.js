@@ -1,11 +1,7 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import { addMiddleware } from 'redux-dynamic-middlewares';
+import { makeLayout, render as clientRender } from 'calypso/controller';
 import {
 	blogListing,
 	feedDiscovery,
@@ -19,13 +15,7 @@ import {
 	sidebar,
 	updateLastRoute,
 } from './controller';
-import config from '@automattic/calypso-config';
-import { makeLayout, render as clientRender } from 'calypso/controller';
-import { addMiddleware } from 'redux-dynamic-middlewares';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function forceTeamA8C( context, next ) {

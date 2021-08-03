@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Style dependencies
- */
+import React from 'react';
 import './style.scss';
 
 class ReadingTime extends React.PureComponent {

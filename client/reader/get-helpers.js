@@ -1,16 +1,9 @@
-/**
- * External Dependencies
- */
+import config from '@automattic/calypso-config';
+import { getUrlParts } from '@automattic/calypso-url';
 import { translate } from 'i18n-calypso';
 import { trim } from 'lodash';
-
-/**
- * Internal Dependencies
- */
 import { decodeEntities } from 'calypso/lib/formatting';
 import { isSiteDescriptionBlocked } from 'calypso/reader/lib/site-description-blocklist';
-import { getUrlParts } from '@automattic/calypso-url';
-import config from '@automattic/calypso-config';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 
 /**

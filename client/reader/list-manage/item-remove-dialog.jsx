@@ -1,13 +1,6 @@
-/**
- * External Dependencies
- */
-import React from 'react';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Dialog } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
+import React from 'react';
 import Gridicon from 'calypso/components/gridicon';
 
 export default function ItemRemoveDialog( props ) {

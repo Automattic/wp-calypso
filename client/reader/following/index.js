@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import { followingManage } from './controller';
-import { updateLastRoute, sidebar } from 'calypso/reader/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
+import { updateLastRoute, sidebar } from 'calypso/reader/controller';
+import { followingManage } from './controller';
 
 export default function () {
 	page( '/following/manage', updateLastRoute, sidebar, followingManage, makeLayout, clientRender );
