@@ -70,12 +70,17 @@ const Controls = ( { showControlLabels = false, currentPage, numberOfPages, setC
 
 export const DotPager = ( { showControlLabels = false, children, className, ...props } ) => {
 	const [ currentPage, setCurrentPage ] = useState( 0 );
+	const numPages = Children.count( children );
+	if ( currentPage >= numPages ) {
+		setCurrentPage( numPages - 1 );
+	}
+
 	return (
 		<div className={ className } { ...props }>
 			<Controls
 				showControlLabels={ showControlLabels }
 				currentPage={ currentPage }
-				numberOfPages={ Children.count( children ) }
+				numberOfPages={ numPages }
 				setCurrentPage={ setCurrentPage }
 			/>
 			<div className="dot-pager__pages">
