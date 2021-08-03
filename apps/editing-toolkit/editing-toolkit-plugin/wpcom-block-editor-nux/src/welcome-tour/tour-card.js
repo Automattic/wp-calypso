@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isMobile } from '@automattic/viewport';
 import { Button, Card, CardBody, CardFooter, CardMedia, Flex } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
@@ -127,9 +128,12 @@ function CardOverlayControls( { onMinimize, onDismiss, slideNumber } ) {
 			slide_number: slideNumber,
 		} );
 	};
+	const buttonClasses = classNames( 'welcome-tour-card__overlay-controls', {
+		'welcome-tour-card__overlay-controls-visible': isMobile(),
+	} );
 
 	return (
-		<div className="welcome-tour-card__overlay-controls">
+		<div className={ buttonClasses }>
 			<Flex>
 				<Button
 					label={ __( 'Minimize Tour', 'full-site-editing' ) }
