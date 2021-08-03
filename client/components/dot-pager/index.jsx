@@ -89,7 +89,7 @@ export const DotPager = ( {
 		const targetHeight = pagesRef.current?.children[ currentPage ]?.offsetHeight;
 
 		setPagesStyle( targetHeight ? { height: targetHeight } : undefined );
-	}, [ hasDynamicHeight, currentPage, sizes.width, setPagesStyle ] );
+	}, [ hasDynamicHeight, currentPage, sizes.width, setPagesStyle, children ] );
 
 	return (
 		<div className={ className } { ...props }>
