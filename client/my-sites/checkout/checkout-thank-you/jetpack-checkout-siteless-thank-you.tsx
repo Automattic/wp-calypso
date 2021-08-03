@@ -42,6 +42,7 @@ interface Props {
 	productSlug: string | 'no_product';
 	receiptId?: number;
 	source?: string;
+	jetpackTemporarySiteId?: number;
 }
 
 const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
@@ -49,6 +50,7 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 	productSlug,
 	receiptId = 0,
 	source = 'onboarding-calypso-ui',
+	jetpackTemporarySiteId = 0,
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -109,9 +111,16 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 					receipt_id: receiptId,
 				} )
 			);
-			dispatch( requestUpdateJetpackCheckoutSupportTicket( siteUrl, receiptId, source ) );
+			dispatch(
+				requestUpdateJetpackCheckoutSupportTicket(
+					siteUrl,
+					receiptId,
+					source,
+					jetpackTemporarySiteId
+				)
+			);
 		},
-		[ siteInput, dispatch, translate, productSlug, receiptId, source ]
+		[ siteInput, dispatch, translate, productSlug, receiptId, source, jetpackTemporarySiteId ]
 	);
 
 	const onScheduleClick = useCallback( () => {
