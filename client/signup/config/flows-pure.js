@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import { translate } from 'i18n-calypso';
 import { isEnabled } from '@automattic/calypso-config';
+import { translate } from 'i18n-calypso';
 
 const noop = () => {};
 

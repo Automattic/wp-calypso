@@ -1,19 +1,8 @@
-/**
- * External dependencies
- */
-import React, { memo, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { defaultRegistry } from '@automattic/composite-checkout';
-
-/**
- * Internal dependencies
- */
-import { initGoogleRecaptcha } from 'calypso/lib/analytics/recaptcha';
 import config from '@automattic/calypso-config';
-
-/**
- * Style dependencies
- */
+import { defaultRegistry } from '@automattic/composite-checkout';
+import PropTypes from 'prop-types';
+import React, { memo, useEffect } from 'react';
+import { initGoogleRecaptcha } from 'calypso/lib/analytics/recaptcha';
 import './style.scss';
 
 function Recaptcha( { badgePosition } ) {

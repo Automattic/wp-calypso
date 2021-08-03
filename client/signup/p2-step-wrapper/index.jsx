@@ -1,18 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React from 'react';
 import StepWrapper from 'calypso/signup/step-wrapper';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function P2StepWrapper( { flowName, stepName, headerText, positionInFlow, children } ) {

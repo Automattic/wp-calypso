@@ -1,31 +1,20 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { find, get } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import page from 'page';
-import { find, get } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import StepWrapper from 'calypso/signup/step-wrapper';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import verticals from './verticals';
-import { Button } from '@automattic/components';
-import { getStepUrl } from 'calypso/signup/utils';
 import FormTextInputWithAction from 'calypso/components/forms/form-text-input-with-action';
-import { setSurvey } from 'calypso/state/signup/steps/survey/actions';
+import Gridicon from 'calypso/components/gridicon';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import { getStepUrl } from 'calypso/signup/utils';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-
-/**
- * Style dependencies
- */
+import { setSurvey } from 'calypso/state/signup/steps/survey/actions';
+import verticals from './verticals';
 import './style.scss';
 
 class SurveyStep extends React.Component {

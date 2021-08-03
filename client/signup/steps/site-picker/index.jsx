@@ -1,20 +1,8 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
-import SitePickerSubmit from './site-picker-submit';
+import React, { Component } from 'react';
 import SiteSelector from 'calypso/components/site-selector';
 import StepWrapper from 'calypso/signup/step-wrapper';
-
-/**
- * Style dependencies
- */
+import SitePickerSubmit from './site-picker-submit';
 import './style.scss';
 
 class SitePicker extends Component {

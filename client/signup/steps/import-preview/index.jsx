@@ -1,24 +1,13 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
+import { Button, Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
+import { isEmpty } from 'lodash';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'calypso/components/gridicon';
-import { isEmpty } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import importerConfig from 'calypso/lib/importer/importer-config';
-import { Button, Card } from '@automattic/components';
 import ImporterLogo from 'calypso/my-sites/importer/importer-logo';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import StepWrapper from '../../step-wrapper';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class ImportPreview extends Component {

@@ -1,18 +1,14 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import SiteVerticalsSuggestionSearch from 'calypso/components/site-verticals-suggestion-search';
+import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { setSiteVertical } from 'calypso/state/signup/steps/site-vertical/actions';
 import {
 	getSiteVerticalName,
@@ -22,14 +18,7 @@ import {
 	getSiteVerticalParentId,
 	getSiteVerticalSuggestedTheme,
 } from 'calypso/state/signup/steps/site-vertical/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { getVerticals } from 'calypso/state/signup/verticals/selectors';
-import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class SiteTopicForm extends Component {

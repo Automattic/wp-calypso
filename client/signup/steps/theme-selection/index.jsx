@@ -1,29 +1,18 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import SignupThemesList from './signup-themes-list';
-import StepWrapper from 'calypso/signup/step-wrapper';
-import { Button } from '@automattic/components';
 import { themes } from 'calypso/lib/signup/themes-data';
+import StepWrapper from 'calypso/signup/step-wrapper';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { getSurveyVertical } from 'calypso/state/signup/steps/survey/selectors';
-import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-
-/**
- * Style dependencies
- */
+import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
+import { getSurveyVertical } from 'calypso/state/signup/steps/survey/selectors';
+import SignupThemesList from './signup-themes-list';
 import './style.scss';
 
 class ThemeSelectionStep extends Component {

@@ -1,74 +1,63 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { defer, get, isEmpty } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
+import { defer, get, isEmpty } from 'lodash';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import MapDomainStep from 'calypso/components/domains/map-domain-step';
+import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
+import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
+import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
 import TransferDomainStep from 'calypso/components/domains/transfer-domain-step';
 import UseYourDomainStep from 'calypso/components/domains/use-your-domain-step';
-import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
-import { getStepUrl } from 'calypso/signup/utils';
-import StepWrapper from 'calypso/signup/step-wrapper';
+import Notice from 'calypso/components/notice';
 import {
 	domainRegistration,
 	themeItem,
 	domainMapping,
 	domainTransfer,
 } from 'calypso/lib/cart-values/cart-items';
+import { getDomainProductSlug, TRUENAME_COUPONS, TRUENAME_TLDS } from 'calypso/lib/domains';
+import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
+import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
+import { getStepModuleName } from 'calypso/signup/config/step-components';
+import { isDomainStepSkippable } from 'calypso/signup/config/steps';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import { getStepUrl } from 'calypso/signup/utils';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	recordAddDomainButtonClick,
 	recordAddDomainButtonClickInMapDomain,
 	recordAddDomainButtonClickInTransferDomain,
 	recordAddDomainButtonClickInUseYourDomain,
 } from 'calypso/state/domains/actions';
-import {
-	composeAnalytics,
-	recordGoogleEvent,
-	recordTracksEvent,
-} from 'calypso/state/analytics/actions';
-import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
-import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
-import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
-import Notice from 'calypso/components/notice';
-import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
-import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
-import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
-import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
-import { getDomainProductSlug, TRUENAME_COUPONS, TRUENAME_TLDS } from 'calypso/lib/domains';
-import QueryProductsList from 'calypso/components/data/query-products-list';
 import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
-import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { getVerticalForDomainSuggestions } from 'calypso/state/signup/steps/site-vertical/selectors';
-import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
+import getSitesItems from 'calypso/state/selectors/get-sites-items';
+import { fetchUsernameSuggestion } from 'calypso/state/signup/optional-dependencies/actions';
+import { hideSitePreview, showSitePreview } from 'calypso/state/signup/preview/actions';
+import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
 import {
 	removeStep,
 	saveSignupStep,
 	submitSignupStep,
 } from 'calypso/state/signup/progress/actions';
-import { isDomainStepSkippable } from 'calypso/signup/config/steps';
-import { fetchUsernameSuggestion } from 'calypso/state/signup/optional-dependencies/actions';
-import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
-import { hideSitePreview, showSitePreview } from 'calypso/state/signup/preview/actions';
-import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import { isPlanStepExistsAndSkipped } from 'calypso/state/signup/progress/selectors';
-import { getStepModuleName } from 'calypso/signup/config/step-components';
+import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
+import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
+import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
+import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
+import { getVerticalForDomainSuggestions } from 'calypso/state/signup/steps/site-vertical/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getExternalBackUrl } from './utils';
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class DomainsStep extends React.Component {

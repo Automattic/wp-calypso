@@ -1,13 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-/**
- * External dependencies
- */
 
-/**
- * Internal dependencies
- */
+import flows from 'calypso/signup/config/flows';
 import {
 	canResumeFlow,
 	getCompletedSteps,
@@ -17,7 +12,6 @@ import {
 	getFlowName,
 	getFilteredSteps,
 } from '../utils';
-import flows from 'calypso/signup/config/flows';
 
 jest.mock( 'calypso/signup/config/flows-pure', () => ( {
 	generateFlows: () => require( './fixtures/flows' ).default,

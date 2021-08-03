@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import StepWrapper from 'calypso/signup/step-wrapper';
 import SubmitStepButton from 'calypso/signup/submit-step-button';
 
