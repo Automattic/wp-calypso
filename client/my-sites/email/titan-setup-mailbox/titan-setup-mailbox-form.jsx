@@ -183,7 +183,7 @@ const TitanSetupMailboxForm = ( { areSiteDomainsLoaded, selectedDomainName } ) =
 					busy={ isBusy }
 					onClick={ handleSetup }
 				>
-					{ translate( 'Set Up' ) }
+					{ translate( 'Complete Setup' ) }
 				</Button>
 			</TitanNewMailboxList>
 		</Card>

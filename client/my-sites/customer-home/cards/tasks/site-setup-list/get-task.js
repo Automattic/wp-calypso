@@ -212,7 +212,7 @@ export const getTask = (
 				description: translate(
 					'Complete your Professional Email setup to start sending and receiving emails from your custom domain today.'
 				),
-				actionText: translate( 'Complete setup' ),
+				actionText: translate( 'Set up mailbox' ),
 				isSkippable: false,
 				actionUrl: emailManagementTitanSetupMailbox( siteSlug, task.domain ),
 			};
