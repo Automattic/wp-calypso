@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { get } from 'lodash';
-import { getCurrencyObject } from '@automattic/format-currency';
+import { getCurrencyDefaults, getCurrencyObject } from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
 import { withShoppingCart } from '@automattic/shopping-cart';
 
@@ -61,7 +61,8 @@ export class CartItem extends React.Component {
 			return this.getDomainPlanPrice( cartItem );
 		}
 
-		const cost = cartItem.cost * cartItem.volume;
+		const unformattedCost = cartItem.cost * cartItem.volume;
+		const cost = unformattedCost.toFixed( getCurrencyDefaults( cartItem.currency ).precision );
 
 		if ( 0 === cost ) {
 			return <span className="cart__free-text">{ translate( 'Free' ) }</span>;
