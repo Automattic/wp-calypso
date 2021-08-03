@@ -41,7 +41,7 @@ export const defaultStepsDefinition = {
 		mode: modeType.SUGGESTED,
 		step: stepType.CONNECTED,
 		component: ConnectDomainStepDone,
-		prev: { [ modeType.ADVANCED ]: stepSlug.SUGGESTED_UPDATE },
+		prev: stepSlug.SUGGESTED_UPDATE,
 	},
 	[ stepSlug.SUGGESTED_VERIFYING ]: {
 		mode: modeType.SUGGESTED,

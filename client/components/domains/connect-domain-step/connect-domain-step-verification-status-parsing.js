@@ -79,9 +79,7 @@ export function getMappingVerificationErrorMessage( mode, verificationStatus ) {
 }
 
 export function isMappingVerificationSuccess( mode, verificationStatus ) {
-	const { data, error } = verificationStatus;
-
-	if ( ! data || error ) {
+	if ( Object.keys( verificationStatus ).length === 0 ) {
 		return false;
 	}
 
@@ -90,7 +88,7 @@ export function isMappingVerificationSuccess( mode, verificationStatus ) {
 		has_wpcom_ip_addresses: hasWpcomIpAddresses,
 		has_cloudflare_ip_addresses: hasCloudflareIpAddresses,
 		resolves_to_wpcom: resolvesToWpcom,
-	} = data || {};
+	} = verificationStatus || {};
 
 	if ( modeType.SUGGESTED === mode && hasWpcomNameservers ) {
 		return true;
