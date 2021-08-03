@@ -54,6 +54,7 @@
 		"jetpack/features-section/atomic": true,
 		"jetpack/features-section/jetpack": true,
 		"jetpack/happychat": true,
+		"jetpack/product-cancellation-flow": true,
 		"jitms": true,
 		"lasagna": false,
 		"layout/app-banner": true,
