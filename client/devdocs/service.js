@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { stringify } from 'qs';
 
 async function fetchDocsEndpoint( endpoint, params, callback ) {

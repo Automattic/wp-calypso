@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * WordPress dependencies
- */
 import { Button, ButtonGroup } from '@wordpress/components';
+import React from 'react';
 
 const ButtonGroupExample = () => {
 	const style = { margin: '0 4px' };

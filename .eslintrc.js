@@ -185,6 +185,7 @@ module.exports = {
 				'client/boot/**/*',
 				'client/controller/**/*',
 				'client/data/**/*',
+				'client/devdocs/**/*',
 				'client/document/**/*',
 				'client/gutenberg/**/*',
 				'client/incoming-redirect/**/*',

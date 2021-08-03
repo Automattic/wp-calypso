@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
-
-/**
- * WordPress dependencies
- */
 import { ToggleControl } from '@wordpress/components';
+import React, { useState } from 'react';
 
 const ToggleControlExample = () => {
 	const [ hasFixedBackground, setHasFixedBackground ] = useState( true );

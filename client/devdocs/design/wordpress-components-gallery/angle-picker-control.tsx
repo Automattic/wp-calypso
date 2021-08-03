@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
-
-/**
- * WordPress dependencies
- */
 import { AnglePickerControl } from '@wordpress/components';
+import React, { useState } from 'react';
 
 const AnglePickerControlExample = () => {
 	const [ angle, setAngle ] = useState();

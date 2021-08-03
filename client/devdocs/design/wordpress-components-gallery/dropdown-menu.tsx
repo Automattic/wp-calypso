@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
-
-/**
- * WordPress dependencies
- */
-import { Fragment } from '@wordpress/element';
 import { DropdownMenu, MenuGroup, MenuItem, MenuItemsChoice } from '@wordpress/components';
+import { Fragment } from '@wordpress/element';
 import { more, arrowUp, arrowDown, trash } from '@wordpress/icons';
+import React, { useState } from 'react';
 
 const DropdownMenuExample = () => {
 	const [ mode, setMode ] = useState( 'visual' );

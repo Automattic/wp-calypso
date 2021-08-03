@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * WordPress dependencies
- */
 import {
 	Button,
 	Card,
@@ -16,6 +8,7 @@ import {
 	FlexBlock,
 	FlexItem,
 } from '@wordpress/components';
+import React from 'react';
 
 const CardExample = () => (
 	<Card isElevated>

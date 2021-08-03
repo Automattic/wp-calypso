@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
+import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
+import Gridicon from 'calypso/components/gridicon';
 import DocsExampleWrapper from 'calypso/devdocs/docs-example/wrapper';
 
 class ComponentPlayground extends Component {

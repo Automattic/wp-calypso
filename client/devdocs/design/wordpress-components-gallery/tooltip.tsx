@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * WordPress dependencies
- */
 import { Tooltip } from '@wordpress/components';
+import React from 'react';
 
 const TooltipExample = () => (
 	<Tooltip text="More information" position="top center">

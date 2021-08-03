@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
-
-/**
- * WordPress dependencies
- */
 import { RadioControl } from '@wordpress/components';
+import React, { useState } from 'react';
 
 const options = [
 	{ label: 'Public', value: 'public' },
