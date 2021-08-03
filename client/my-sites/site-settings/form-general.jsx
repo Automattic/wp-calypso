@@ -569,7 +569,7 @@ export class SiteSettingsFormGeneral extends Component {
 					isSaving={ isSavingSettings }
 					onButtonClick={ handleSubmitForm }
 					showButton
-					title={ translate( 'Privacy {{learnMoreLink}}{{/learnMoreLink}}', {
+					title={ translate( 'Privacy {{learnMoreLink/}}', {
 						components: {
 							learnMoreLink: <InlineSupportLink supportContext="privacy" showText={ false } />,
 						},

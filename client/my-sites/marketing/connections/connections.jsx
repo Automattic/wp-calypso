@@ -18,7 +18,7 @@ const SharingConnections = ( { translate, isP2Hub, siteId } ) => (
 		{ ! isP2Hub && (
 			<SharingServicesGroup
 				type="publicize"
-				title={ translate( 'Publicize posts {{learnMoreLink}}{{/learnMoreLink}}', {
+				title={ translate( 'Publicize posts {{learnMoreLink/}}', {
 					components: {
 						learnMoreLink: <InlineSupportLink supportContext="publicize" showText={ false } />,
 					},

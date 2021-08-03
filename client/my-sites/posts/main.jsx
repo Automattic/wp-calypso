@@ -48,7 +48,8 @@ class PostsMain extends React.Component {
 	render() {
 		const { author, category, search, siteId, statusSlug, tag, translate } = this.props;
 		const status = mapPostStatus( statusSlug );
-		const allSites = siteId ? 1 : 2;
+		/* Check if All Sites Mode */
+		const isAllSites = siteId ? 1 : 0;
 		const query = {
 			author,
 			category,
@@ -82,7 +83,7 @@ class PostsMain extends React.Component {
 						'Create, edit, and manage the posts on your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						'Create, edit, and manage the posts on your sites. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
-							count: allSites,
+							count: isAllSites,
 							components: {
 								learnMoreLink: <InlineSupportLink supportContext="posts" showIcon={ false } />,
 							},

@@ -65,7 +65,8 @@ class PagesMain extends React.Component {
 	render() {
 		const { siteId, search, status, translate, queryType, author } = this.props;
 		const postStatus = mapPostStatus( status );
-		const allSites = siteId ? 1 : 2;
+		/* Check if All Sites Mode */
+		const isAllSites = siteId ? 1 : 0;
 		const query = {
 			number: 20, // all-sites mode, i.e the /me/posts endpoint, only supports up to 20 results at a time
 			search,
@@ -93,7 +94,7 @@ class PagesMain extends React.Component {
 						'Create, edit, and manage the pages on your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						'Create, edit, and manage the pages on your sites. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
-							count: allSites,
+							count: isAllSites,
 							components: {
 								learnMoreLink: <InlineSupportLink supportContext="pages" showIcon={ false } />,
 							},
