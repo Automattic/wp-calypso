@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import classNames from 'classnames';
+import React from 'react';
 import SidebarRegion from './region';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const Sidebar = ( { children, onClick, className, ...props } ) => {

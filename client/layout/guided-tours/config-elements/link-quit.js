@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { translate } from 'i18n-calypso';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import classNames from 'classnames';
+import { translate } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { contextTypes } from '../context-types';
 
 export default class LinkQuit extends Component {

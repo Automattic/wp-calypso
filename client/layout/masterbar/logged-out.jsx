@@ -1,27 +1,20 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import { getLocaleSlug, localize } from 'i18n-calypso';
+import { get, includes, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { getLocaleSlug, localize } from 'i18n-calypso';
-import { get, includes, startsWith } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
-import Masterbar from './masterbar';
-import Item from './item';
+import AsyncLoad from 'calypso/components/async-load';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import WordPressWordmark from 'calypso/components/wordpress-wordmark';
+import { isDomainConnectAuthorizePath } from 'calypso/lib/domains/utils';
+import { isDefaultLocale, addLocaleToPath } from 'calypso/lib/i18n-utils';
+import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { login } from 'calypso/lib/paths';
-import { isDomainConnectAuthorizePath } from 'calypso/lib/domains/utils';
-import { isDefaultLocale, addLocaleToPath } from 'calypso/lib/i18n-utils';
-import AsyncLoad from 'calypso/components/async-load';
+import Item from './item';
+import Masterbar from './masterbar';
 
 class MasterbarLoggedOut extends React.Component {
 	static propTypes = {

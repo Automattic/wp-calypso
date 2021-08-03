@@ -1,7 +1,4 @@
-/**
- * Internal dependencies
- */
-
+import combineTours from './config-elements/combine-tours';
 import { ChecklistSiteTitleTour } from './tours/checklist-site-title-tour';
 import { JetpackChecklistTour } from './tours/jetpack-checklist-tour';
 import { JetpackLazyImagesTour } from './tours/jetpack-lazy-images-tour';
@@ -15,7 +12,6 @@ import { MainTour } from './tours/main-tour';
 import { marketingConnectionsTour } from './tours/marketing-connections-tour';
 import { MediaBasicsTour } from './tours/media-basics-tour';
 import { TutorialSitePreviewTour } from './tours/tutorial-site-preview-tour';
-import combineTours from './config-elements/combine-tours';
 
 export default combineTours( {
 	checklistSiteTitle: ChecklistSiteTitleTour,

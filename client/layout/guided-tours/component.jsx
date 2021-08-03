@@ -1,30 +1,19 @@
-/**
- * External dependencies
- */
+import { RootChild } from '@automattic/components';
+import { defer } from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { defer } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import AllTours from './all-tours';
 import QueryPreferences from 'calypso/components/data/query-preferences';
-import { RootChild } from '@automattic/components';
-import { getGuidedTourState } from 'calypso/state/guided-tours/selectors';
-import { getLastAction } from 'calypso/state/ui/action-log/selectors';
-import { getSectionName, isSectionLoading } from 'calypso/state/ui/selectors';
-import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	nextGuidedTourStep,
 	quitGuidedTour,
 	resetGuidedToursHistory,
 } from 'calypso/state/guided-tours/actions';
-
-/**
- * Style dependencies
- */
+import { getGuidedTourState } from 'calypso/state/guided-tours/selectors';
+import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import { getLastAction } from 'calypso/state/ui/action-log/selectors';
+import { getSectionName, isSectionLoading } from 'calypso/state/ui/selectors';
+import AllTours from './all-tours';
 import './style.scss';
 
 class GuidedToursComponent extends Component {

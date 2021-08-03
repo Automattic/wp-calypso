@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import AsyncLoad from 'calypso/components/async-load';
 import { getGuidedTourState } from 'calypso/state/guided-tours/selectors';
 

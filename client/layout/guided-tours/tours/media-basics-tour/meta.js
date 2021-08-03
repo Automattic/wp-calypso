@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { isDesktop } from '@automattic/viewport';
-
-/**
- * Internal dependencies
- */
 import { and } from 'calypso/layout/guided-tours/utils';
 import { isNewUser } from 'calypso/state/guided-tours/contexts';
 

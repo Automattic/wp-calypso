@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 class SkipNavigation extends React.Component {
 	static propTypes = {
