@@ -1,4 +1,5 @@
 import i18nCalypso, { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import { debounce } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
 import anchorLogoIcon from 'calypso/assets/images/customer-home/anchor-logo-grey.svg';
@@ -43,14 +44,17 @@ export const QuickLinks = ( {
 	trackAddEmailAction,
 	trackAddDomainAction,
 	isExpanded,
-	expand,
-	collapse,
+	updateHomeQuickLinksToggleStatus,
 	isUnifiedNavEnabled,
 	siteAdminUrl,
 	editHomePageUrl,
 	siteSlug,
 } ) => {
 	const translate = useTranslate();
+	const debouncedUpdateHomeQuickLinksToggleStatus = debounce(
+		updateHomeQuickLinksToggleStatus,
+		1000
+	);
 
 	const quickLinks = (
 		<div className="quick-links__boxes">
@@ -186,8 +190,8 @@ export const QuickLinks = ( {
 			header={ translate( 'Quick links' ) }
 			clickableHeader
 			expanded={ isExpanded }
-			onOpen={ expand }
-			onClose={ collapse }
+			onOpen={ () => debouncedUpdateHomeQuickLinksToggleStatus( 'expanded' ) }
+			onClose={ () => debouncedUpdateHomeQuickLinksToggleStatus( 'collapsed' ) }
 		>
 			{ quickLinks }
 		</FoldableCard>
@@ -353,8 +357,8 @@ const mapDispatchToProps = {
 	trackAnchorPodcastAction,
 	trackAddEmailAction,
 	trackAddDomainAction,
-	expand: () => savePreference( 'homeQuickLinksToggleStatus', 'expanded' ),
-	collapse: () => savePreference( 'homeQuickLinksToggleStatus', 'collapsed' ),
+	updateHomeQuickLinksToggleStatus: ( status ) =>
+		savePreference( 'homeQuickLinksToggleStatus', status ),
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
