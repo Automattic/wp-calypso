@@ -114,6 +114,8 @@ const mapDomain = ( context, next ) => {
 };
 
 const mapDomainSetup = ( context, next ) => {
+	const showErrors = context.query?.showErrors === 'true' || context.query?.showErrors === '1';
+
 	context.primary = (
 		<Main wideLayout>
 			<PageViewTracker
@@ -122,7 +124,11 @@ const mapDomainSetup = ( context, next ) => {
 			/>
 			<DocumentHead title={ translate( 'Connect a Domain Setup' ) } />
 			<CalypsoShoppingCartProvider>
-				<ConnectDomainStep domain={ context.params.domain } initialStep={ context.query.step } />
+				<ConnectDomainStep
+					domain={ context.params.domain }
+					initialStep={ context.query.step }
+					showErrors={ showErrors }
+				/>
 			</CalypsoShoppingCartProvider>
 		</Main>
 	);

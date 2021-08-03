@@ -28,6 +28,7 @@ export default function ConnectDomainStepAdvancedRecords( {
 	mode,
 	onVerifyConnection,
 	progressStepList,
+	showErrors,
 	verificationInProgress,
 	verificationStatus,
 } ) {
@@ -119,10 +120,12 @@ export default function ConnectDomainStepAdvancedRecords( {
 
 	const stepContent = (
 		<div className={ className + '__advanced-records' }>
-			<ConnectDomainStepVerificationNotice
-				mode={ mode }
-				verificationStatus={ verificationStatus }
-			/>
+			{ showErrors && (
+				<ConnectDomainStepVerificationNotice
+					mode={ mode }
+					verificationStatus={ verificationStatus }
+				/>
+			) }
 			<p className={ className + '__text' }>
 				{ __( 'Find the root A records on your domain’s settings page.' ) }
 				<br />
@@ -170,6 +173,7 @@ ConnectDomainStepAdvancedRecords.propTypes = {
 	mode: PropTypes.oneOf( Object.values( modeType ) ).isRequired,
 	onVerifyConnection: PropTypes.func.isRequired,
 	progressStepList: PropTypes.object.isRequired,
+	showErrors: PropTypes.bool.isRequired,
 	verificationInProgress: PropTypes.bool,
 	verificationStatus: PropTypes.object.isRequired,
 };

@@ -26,6 +26,7 @@ export default function ConnectDomainStepSuggestedRecords( {
 	mode,
 	onVerifyConnection,
 	progressStepList,
+	showErrors,
 	verificationInProgress,
 	verificationStatus,
 } ) {
@@ -34,10 +35,12 @@ export default function ConnectDomainStepSuggestedRecords( {
 
 	const stepContent = (
 		<div className={ className + '__suggested-records' }>
-			<ConnectDomainStepVerificationNotice
-				mode={ mode }
-				verificationStatus={ verificationStatus }
-			/>
+			{ showErrors && (
+				<ConnectDomainStepVerificationNotice
+					mode={ mode }
+					verificationStatus={ verificationStatus }
+				/>
+			) }
 			<p className={ className + '__text' }>
 				{ __( 'Find the name servers on your domain’s settings page.' ) }
 				<br />
@@ -88,6 +91,7 @@ ConnectDomainStepSuggestedRecords.propTypes = {
 	mode: PropTypes.oneOf( Object.values( modeType ) ).isRequired,
 	onVerifyConnection: PropTypes.func.isRequired,
 	progressStepList: PropTypes.object.isRequired,
+	showErrors: PropTypes.bool.isRequired,
 	verificationInProgress: PropTypes.bool,
 	verificationStatus: PropTypes.object.isRequired,
 };

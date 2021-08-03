@@ -33,7 +33,7 @@ import { isMappingVerificationSuccess } from './connect-domain-step-verification
  */
 import './style.scss';
 
-function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialStep } ) {
+function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialStep, showErrors } ) {
 	const [ mode, setMode ] = useState( modeType.SUGGESTED );
 	const [ step, setStep ] = useState( stepType.START );
 	const [ currentPageSlug, setCurrentPageSlug ] = useState( stepSlug.SUGGESTED_START );
@@ -48,6 +48,8 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 	const baseClassName = 'connect-domain-step';
 	const StepsComponent = stepsDefinition?.[ currentPageSlug ].component;
 	const isStepStart = stepType.START === step;
+
+	const statusRef = useRef( {} );
 
 	const setPage = useCallback(
 		( pageStepSlug ) => {
@@ -89,29 +91,35 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 		setProgressStepList( getProgressStepList( mode, stepsDefinition ) );
 	}, [ mode, stepsDefinition ] );
 
-	const verifyConnection = () => {
-		setVerificationStatus( {} );
-		setVerificationInProgress( true );
-		wp.undocumented()
-			.getMappingStatus( domain )
-			.then( ( data ) => {
-				setVerificationStatus( { data } );
-				if ( isMappingVerificationSuccess( mode, data ) ) {
-					setStep( stepType.CONNECTED );
-				} else {
-					setStep( stepType.VERIFYING );
-				}
-			} )
-			.catch( ( error ) => {
-				setVerificationStatus( { error } );
-				setStep( stepType.VERIFYING );
-			} )
-			.finally( () => setVerificationInProgress( false ) );
-	};
+	const verifyConnection = useCallback(
+		( setStepAfterVerify = true ) => {
+			setVerificationStatus( {} );
+			setVerificationInProgress( true );
+			wp.undocumented()
+				.getMappingStatus( domain )
+				.then( ( data ) => {
+					setVerificationStatus( { data } );
+					if ( setStepAfterVerify ) {
+						if ( isMappingVerificationSuccess( mode, data ) ) {
+							setStep( stepType.CONNECTED );
+						} else {
+							setStep( stepType.VERIFYING );
+						}
+					}
+				} )
+				.catch( ( error ) => {
+					setVerificationStatus( { error } );
+					if ( setStepAfterVerify ) {
+						setStep( stepType.VERIFYING );
+					}
+				} )
+				.finally( () => setVerificationInProgress( false ) );
+		},
+		[ mode, domain ]
+	);
 
-	const hasLoadedDomainSetupInfo = useRef( null );
 	useEffect( () => {
-		if ( domain === hasLoadedDomainSetupInfo.current || loadingDomainSetupInfo ) {
+		if ( statusRef.current?.hasLoadedStatusInfo?.[ domain ] || loadingDomainSetupInfo ) {
 			return;
 		}
 
@@ -122,12 +130,21 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 				.getMappingSetupInfo( selectedSite.ID, domain )
 				.then( ( data ) => {
 					setDomainSetupInfo( { data } );
-					hasLoadedDomainSetupInfo.current = domain;
+					statusRef.current.hasLoadedStatusInfo = { [ domain ]: true };
 				} )
 				.catch( ( error ) => setDomainSetupInfoError( { error } ) )
 				.finally( () => setLoadingDomainSetupInfo( false ) );
 		} )();
 	}, [ domain, domainSetupInfo, initialSetupInfo, loadingDomainSetupInfo, selectedSite.ID ] );
+
+	useEffect( () => {
+		if ( ! showErrors || statusRef.current?.hasFetchedVerificationStatus ) {
+			return;
+		}
+
+		statusRef.current.hasFetchedVerificationStatus = true;
+		verifyConnection( false );
+	}, [ showErrors, verifyConnection ] );
 
 	const goBack = () => {
 		const prevPageSlug = stepsDefinition[ currentPageSlug ]?.prev;
@@ -172,6 +189,7 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 				onSwitchToSuggestedSetup={ switchToSuggestedSetup }
 				progressStepList={ progressStepList }
 				currentPageSlug={ currentPageSlug }
+				showErrors={ showErrors }
 			/>
 			{ isStepStart && <DomainTransferRecommendation /> }
 			<ConnectDomainStepSupportInfoLink baseClassName={ baseClassName } mode={ mode } />
@@ -191,6 +209,7 @@ ConnectDomainStep.propTypes = {
 	domain: PropTypes.string.isRequired,
 	selectedSite: PropTypes.object,
 	initialStep: PropTypes.string,
+	showErrors: PropTypes.bool,
 };
 
 export default connect( ( state ) => ( { selectedSite: getSelectedSite( state ) } ) )(
