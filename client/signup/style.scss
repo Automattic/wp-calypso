@@ -400,7 +400,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 			color: $gray-100;
 			letter-spacing: 0.2px;
 			font-size: 2.25rem; /* stylelint-disable-line */
-			text-align: center;
+			text-align: left;
 			padding: 0 20px;
 
 			@include break-xlarge {
@@ -412,7 +412,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 		.formatted-header__subtitle {
 			color: $gray-60;
 			font-size: 1rem;
-			text-align: center;
+			text-align: left;
 			padding: 0 20px;
 
 			@include break-xlarge {
