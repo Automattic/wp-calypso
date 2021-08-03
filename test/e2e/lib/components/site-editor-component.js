@@ -69,20 +69,6 @@ export default class SiteEditorComponent extends AbstractEditorComponent {
 		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, inserterMenuLocator );
 	}
 
-	async openBlockInserterAndSearch( searchTerm ) {
-		await this.runInCanvas( async () => {
-			await driverHelper.scrollIntoView(
-				this.driver,
-				By.css( '.block-editor-writing-flow' ),
-				'start'
-			);
-		} );
-
-		await this.openBlockInserter();
-		const inserterSearchInputLocator = By.css( 'input.block-editor-inserter__search-input' );
-		await driverHelper.setWhenSettable( this.driver, inserterSearchInputLocator, searchTerm );
-	}
-
 	async insertPattern( category, name ) {
 		await this.openBlockInserter();
 
