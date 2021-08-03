@@ -202,7 +202,7 @@
 		"resize-observer-polyfill": "^1.5.1",
 		"rtlcss": "^3.1.2",
 		"semver": "^7.3.2",
-		"sinon": "^11.1.1",
+		"sinon": "^11.1.2",
 		"social-logos": "^2.1.0",
 		"socket.io-client": "^2.3.0",
 		"source-map-support": "^0.5.19",
