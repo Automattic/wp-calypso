@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import wp from 'calypso/lib/wp';
 import {
 	WP_SUPER_CACHE_RECEIVE_STATUS,

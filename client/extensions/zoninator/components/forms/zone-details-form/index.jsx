@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { mapValues, trim } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
-import FormTextarea from 'calypso/components/forms/form-textarea';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormTextarea from 'calypso/components/forms/form-textarea';
 import SectionHeader from 'calypso/components/section-header';
-import { CompactCard } from '@automattic/components';
 
 class ZoneDetailsForm extends Component {
 	static propTypes = {

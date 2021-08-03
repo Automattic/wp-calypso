@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { Suggestions } from '@automattic/components';
 import { find, map } from 'lodash';
-
-/**
- * Internal depencencies
- */
+import PropTypes from 'prop-types';
+import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import QueryPosts from 'calypso/components/data/query-posts';
 import { getPostsForQuery } from 'calypso/state/posts/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { Suggestions } from '@automattic/components';
 
 class PostSuggestions extends Component {
 	static propTypes = {

@@ -1,10 +1,6 @@
-/**
- * Internal dependencies
- */
-
-import lyrics from './lyrics';
-import { HELLO_DOLLY_NEXT_LYRIC } from './action-types';
 import { ROUTE_SET, SECTION_SET, SITE_SETTINGS_SAVE } from 'calypso/state/action-types';
+import { HELLO_DOLLY_NEXT_LYRIC } from './action-types';
+import lyrics from './lyrics';
 
 export default function lyricIndex( state = 0, action ) {
 	switch ( action.type ) {

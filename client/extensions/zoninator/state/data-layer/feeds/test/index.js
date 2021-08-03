@@ -1,12 +1,9 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
 import { omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import { updateFeed } from 'zoninator/state/feeds/actions';
+import { resetLock } from 'zoninator/state/locks/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import {
 	announceSuccess,
 	announceFailure,
@@ -16,10 +13,6 @@ import {
 	updateZoneFeed,
 } from '../';
 import { fromApi, toApi } from '../util';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
-import { updateFeed } from 'zoninator/state/feeds/actions';
-import { resetLock } from 'zoninator/state/locks/actions';
 
 const dummyAction = {
 	type: 'DUMMY_ACTION',

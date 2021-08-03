@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { Button, Card } from '@automattic/components';
+import { pick } from 'lodash';
+import React from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';

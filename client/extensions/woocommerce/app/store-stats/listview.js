@@ -1,25 +1,17 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { getQueries } from './utils';
-import JetpackColophon from 'calypso/components/jetpack-colophon';
-import List from './store-stats-list';
-import Main from 'calypso/components/main';
-import Module from './store-stats-module';
-import { topProducts, topCategories, topCoupons } from 'woocommerce/app/store-stats/constants';
-import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import StoreStatsPeriodNav from 'woocommerce/app/store-stats/store-stats-period-nav';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import titlecase from 'to-title-case';
+import { topProducts, topCategories, topCoupons } from 'woocommerce/app/store-stats/constants';
+import StoreStatsPeriodNav from 'woocommerce/app/store-stats/store-stats-period-nav';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import JetpackColophon from 'calypso/components/jetpack-colophon';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import List from './store-stats-list';
+import Module from './store-stats-module';
+import { getQueries } from './utils';
 
 const listType = {
 	products: topProducts,

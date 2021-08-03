@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import getRequest from 'calypso/state/selectors/get-request';
 import { requestLock, resetLock } from '../../../state/locks/actions';
 import { created, expires, maxLockPeriod } from '../../../state/locks/selectors';

@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { CompactCard } from '@automattic/components';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { settingsPath } from '../../../app/util';
 

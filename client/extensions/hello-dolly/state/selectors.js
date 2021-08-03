@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
 import lyrics from './lyrics';
 
 export const getCurrentLyric = ( lines ) => ( reduxState ) => {

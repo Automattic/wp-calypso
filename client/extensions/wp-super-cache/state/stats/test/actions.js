@@ -1,11 +1,6 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
+import useNock from 'calypso/test-helpers/use-nock';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import {
 	WP_SUPER_CACHE_DELETE_FILE,
 	WP_SUPER_CACHE_DELETE_FILE_FAILURE,
@@ -15,8 +10,6 @@ import {
 	WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
 } from '../../action-types';
 import { deleteFile, generateStats } from '../actions';
-import useNock from 'calypso/test-helpers/use-nock';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;

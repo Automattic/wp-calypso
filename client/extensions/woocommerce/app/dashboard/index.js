@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import ActionHeader from 'woocommerce/components/action-header';
 import Main from 'calypso/components/main';
 import StoreMoveNoticeView from './store-move-notice-view';

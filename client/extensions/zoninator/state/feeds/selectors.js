@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-
 import { get } from 'lodash';
 
 const getFeedsState = ( state ) => get( state, 'extensions.zoninator.feeds', {} );

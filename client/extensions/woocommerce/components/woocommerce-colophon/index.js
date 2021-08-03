@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import ExternalLink from 'calypso/components/external-link';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-
 import WooCommerceLogo from '../woocommerce-logo';
 
 class WooCommerceColophon extends React.Component {

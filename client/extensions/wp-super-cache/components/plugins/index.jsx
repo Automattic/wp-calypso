@@ -1,24 +1,17 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { flowRight, map, mapValues, pick } from 'lodash';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
+import { flowRight, map, mapValues, pick } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
-import SectionHeader from 'calypso/components/section-header';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import WrapSettingsForm from '../wrap-settings-form';
-import QueryPlugins from '../data/query-plugins';
+import SectionHeader from 'calypso/components/section-header';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { togglePlugin } from '../../state/plugins/actions';
 import { isRequestingPlugins, isTogglingPlugin, getPlugins } from '../../state/plugins/selectors';
+import QueryPlugins from '../data/query-plugins';
+import WrapSettingsForm from '../wrap-settings-form';
 
 class PluginsTab extends Component {
 	static propTypes = {

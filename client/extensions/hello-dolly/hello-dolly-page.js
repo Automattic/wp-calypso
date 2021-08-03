@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-
-/**
- * Internal Dependencies
- */
-import Main from 'calypso/components/main';
 import { Button, Card } from '@automattic/components';
-import SectionHeader from 'calypso/components/section-header';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import FAQ from 'calypso/components/faq';
 import FAQItem from 'calypso/components/faq/faq-item';
-import getLyric from './state/selectors';
+import Main from 'calypso/components/main';
+import SectionHeader from 'calypso/components/section-header';
 import { nextLyric } from './state/actions';
+import getLyric from './state/selectors';
 
 class HelloDollyPage extends Component {
 	static propTypes = {

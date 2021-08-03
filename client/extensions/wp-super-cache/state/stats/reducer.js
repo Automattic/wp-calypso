@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import { statsSchema } from './schema';
 import {
 	WP_SUPER_CACHE_DELETE_CACHE_SUCCESS,
 	WP_SUPER_CACHE_DELETE_FILE,
@@ -17,6 +9,7 @@ import {
 	WP_SUPER_CACHE_GENERATE_STATS_FAILURE,
 	WP_SUPER_CACHE_GENERATE_STATS_SUCCESS,
 } from '../action-types';
+import { statsSchema } from './schema';
 
 /**
  * Returns the updated generating state after an action has been dispatched.

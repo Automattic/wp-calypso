@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { Card } from '@automattic/components';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { getWidgetPath } from 'woocommerce/app/store-stats/utils';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
-import { Card } from '@automattic/components';
-import ErrorPanel from 'calypso/my-sites/stats/stats-error';
-import { getWidgetPath } from 'woocommerce/app/store-stats/utils';
-import Pagination from 'calypso/components/pagination';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Pagination from 'calypso/components/pagination';
+import ErrorPanel from 'calypso/my-sites/stats/stats-error';
 import getStoreReferrersByDate from 'calypso/state/selectors/get-store-referrers-by-date';
 
 class StoreStatsReferrerWidgetBase extends Component {

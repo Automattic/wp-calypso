@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
+import { serialize, deserialize } from 'calypso/state/utils';
 import {
 	ZONINATOR_ADD_ZONE,
 	ZONINATOR_REQUEST_ERROR,
@@ -17,7 +11,6 @@ import {
 	ZONINATOR_UPDATE_ZONES,
 } from '../../action-types';
 import reducer, { requesting, items, saving } from '../reducer';
-import { serialize, deserialize } from 'calypso/state/utils';
 
 describe( 'reducer', () => {
 	const primarySiteId = 123456;

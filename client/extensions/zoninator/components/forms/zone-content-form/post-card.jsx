@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
+import { setUrlScheme } from 'calypso/lib/url';
 import { getEditorPath } from 'calypso/state/editor/selectors';
 import { getPostPreviewUrl } from 'calypso/state/posts/selectors';
 import { isSitePreviewable } from 'calypso/state/sites/selectors';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { setPreviewUrl } from 'calypso/state/ui/preview/actions';
-import { setUrlScheme } from 'calypso/lib/url';
 
 class PostCard extends Component {
 	static propTypes = {

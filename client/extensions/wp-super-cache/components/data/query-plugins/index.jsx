@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
-import { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { isRequestingPlugins } from '../../../state/plugins/selectors';
 import { requestPlugins } from '../../../state/plugins/actions';
+import { isRequestingPlugins } from '../../../state/plugins/selectors';
 
 class QueryPlugins extends Component {
 	UNSAFE_componentWillMount() {

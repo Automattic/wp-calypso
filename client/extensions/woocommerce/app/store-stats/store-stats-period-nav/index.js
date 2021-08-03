@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
-import React, { Fragment } from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+import PropTypes from 'prop-types';
 import qs from 'qs';
-
-/**
- * Internal dependencies
- */
+import React, { Fragment } from 'react';
+import { getWidgetPath } from 'woocommerce/app/store-stats/utils';
+import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import HeaderCake from 'calypso/components/header-cake';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import StatsPeriodNavigation from 'calypso/my-sites/stats/stats-period-navigation';
-import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import DatePicker from 'calypso/my-sites/stats/stats-date-picker';
-import { getWidgetPath } from 'woocommerce/app/store-stats/utils';
+import StatsPeriodNavigation from 'calypso/my-sites/stats/stats-period-navigation';
 
 const goBack = ( unit, slug, queryParams ) => {
 	const { startDate } = queryParams;
