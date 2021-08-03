@@ -19,7 +19,12 @@ import {
 	PLAN_JETPACK_SECURITY_REALTIME,
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 } from '@automattic/calypso-products';
-import { productHasAntiSpam, productHasBackups, productHasSearch, productHasScan } from '../index';
+import {
+	productHasAntiSpam,
+	productHasBackups,
+	productHasSearch,
+	productHasScan,
+} from '../feature-checks';
 
 describe( 'JetpackBenefits Feature Checks', () => {
 	// this method is here for debugging

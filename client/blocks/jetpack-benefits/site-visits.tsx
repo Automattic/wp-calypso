@@ -42,7 +42,7 @@ const JetpackBenefitsSiteVisits: React.FC< Props > = ( { siteId, statType, query
 		return isRequestingSiteStatsForQuery( state, siteId, statType, query );
 	} );
 
-	const data: [ { views: number } ] = useSelector( ( state ) => {
+	const data = useSelector( ( state ) => {
 		return getSiteStatsNormalizedData( state, siteId, statType, query );
 	} );
 
@@ -57,10 +57,9 @@ const JetpackBenefitsSiteVisits: React.FC< Props > = ( { siteId, statType, query
 		);
 	}
 
-	let countVisits = 0;
-	data.map( ( monthPeriod ) => {
-		countVisits += monthPeriod.views;
-	} );
+	const countVisits = data.reduce( ( count: number, monthPeriod: { views: number } ) => {
+		return count + monthPeriod.views;
+	}, 0 );
 
 	return (
 		<React.Fragment>

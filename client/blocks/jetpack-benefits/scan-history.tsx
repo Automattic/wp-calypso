@@ -108,7 +108,7 @@ const JetpackBenefitsScanHistory: React.FC< Props > = ( { siteId, isStandalone }
 				} }
 				stats={ [
 					{
-						title: translate( 'Threats Found' ),
+						title: translate( 'Malware Threats Found' ),
 						stat: threats ? threats.length : '...',
 					},
 					{
