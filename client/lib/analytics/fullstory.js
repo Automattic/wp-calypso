@@ -42,6 +42,10 @@ export function recordFullStoryEvent( name, _props ) {
 }
 
 function maybeAddFullStoryScript() {
+	if ( document?.location?.pathname.includes( 'log-in' ) ) {
+		return;
+	}
+
 	if (
 		fullStoryScriptLoaded ||
 		! config.isEnabled( 'fullstory' ) ||
