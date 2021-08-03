@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import { isMobile } from '@automattic/viewport';
-import React, { Fragment } from 'react';
-import store from 'store';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import AsyncLoad from 'calypso/components/async-load';
-import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import config from '@automattic/calypso-config';
+import { isMobile } from '@automattic/viewport';
+import { localize } from 'i18n-calypso';
+import React, { Fragment } from 'react';
+import { connect } from 'react-redux';
+import store from 'store';
+import AsyncLoad from 'calypso/components/async-load';
+import QueryUserSettings from 'calypso/components/data/query-user-settings';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 
 export const ReaderSidebarPromo = ( { currentUserLocale, shouldRenderAppPromo } ) => {

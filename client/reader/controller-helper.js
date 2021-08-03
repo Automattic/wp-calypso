@@ -1,15 +1,8 @@
-/**
- * External Dependencies
- */
 import i18n from 'i18n-calypso';
 import moment from 'moment';
-
-/**
- * Internal Dependencies
- */
-import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat } from 'calypso/lib/analytics/mc';
+import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { recordTrack } from 'calypso/reader/stats';
 import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 

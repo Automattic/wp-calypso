@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { expect, assert } from 'chai';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
 import { sameDay, sameSite, combine, combineCards, injectRecommendations } from '../utils';
 
 describe( 'reader stream', () => {

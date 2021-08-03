@@ -1,24 +1,18 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-/**
- * External dependencies
- */
+
+import { Button, Card } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
-import Gridicon from 'calypso/components/gridicon';
-import { Item, Feed, FeedError, List } from './types';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
+import Gridicon from 'calypso/components/gridicon';
+import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { addReaderListFeed, deleteReaderListFeed } from 'calypso/state/reader/lists/actions';
 import { getMatchingItem } from 'calypso/state/reader/lists/selectors';
 import ItemRemoveDialog from './item-remove-dialog';
+import { Item, Feed, FeedError, List } from './types';
 
 function isFeedError( feed: Feed | FeedError ): feed is FeedError {
 	return 'errors' in feed;

@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import FormSelect from 'calypso/components/forms/form-select';
 
 const noop = () => {};

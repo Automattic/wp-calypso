@@ -1,28 +1,13 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
+import charactersImage from 'calypso/assets/images/reader/reader-conversations-characters.svg';
 import QueryPreferences from 'calypso/components/data/query-preferences';
+import Gridicon from 'calypso/components/gridicon';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-
-/**
- * Asset dependencies
- */
-import charactersImage from 'calypso/assets/images/reader/reader-conversations-characters.svg';
-
-/**
- * Style dependencies
- */
 import './intro.scss';
 
 const getPreferenceName = ( isInternal ) =>
