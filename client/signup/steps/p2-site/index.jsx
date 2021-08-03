@@ -1,30 +1,19 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
+import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { includes, isEmpty, map, deburr, get } from 'lodash';
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import wpcom from 'calypso/lib/wp';
+import React from 'react';
+import { connect } from 'react-redux';
+import FormButton from 'calypso/components/forms/form-button';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formState from 'calypso/lib/form-state';
 import { login } from 'calypso/lib/paths';
-import ValidationFieldset from 'calypso/signup/validation-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormButton from 'calypso/components/forms/form-button';
-import FormTextInput from 'calypso/components/forms/form-text-input';
+import wpcom from 'calypso/lib/wp';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
-import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { logToLogstash } from 'calypso/state/logstash/actions';
-
-/**
- * Style dependencies
- */
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import './style.scss';
 
 const debug = debugFactory( 'calypso:steps:p2-site' );

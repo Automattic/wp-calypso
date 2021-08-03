@@ -1,16 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-
-/**
- * Style dependencies
- */
+import React from 'react';
 import './style.scss';
 
 function P2SignupProcessingScreen() {

@@ -1,23 +1,12 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useTranslate } from 'i18n-calypso';
-import PropTypes from 'prop-types';
-import page from 'page';
-
-/**
- * Internal dependencies
- */
-import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import { Button } from '@automattic/components';
-import { login } from 'calypso/lib/paths';
-import { getStepUrl } from 'calypso/signup/utils';
+import { useTranslate } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-
-/**
- * Style dependencies
- */
+import { login } from 'calypso/lib/paths';
+import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
+import { getStepUrl } from 'calypso/signup/utils';
 import './style.scss';
 
 function getRedirectToAfterLoginUrl( { flowName } ) {

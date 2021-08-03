@@ -1,33 +1,21 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import { find } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { find } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
+import { getSiteStyleOptions } from 'calypso/lib/signup/site-styles';
+import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { setSiteStyle } from 'calypso/state/signup/steps/site-style/actions';
 import { getSiteStyle } from 'calypso/state/signup/steps/site-style/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
-import { getSiteStyleOptions } from 'calypso/lib/signup/site-styles';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
-import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class SiteStyleStep extends Component {

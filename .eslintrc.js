@@ -203,6 +203,7 @@ module.exports = {
 				'client/sections-preloaders.js',
 				'client/sections.js',
 				'client/server/**/*',
+				'client/signup/**/*',
 				'client/support/**/*',
 				'client/test-helpers/**/*',
 				'client/types.ts',
