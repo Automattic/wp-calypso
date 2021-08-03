@@ -64,10 +64,7 @@ const TitanSetupMailbox = ( { selectedDomainName } ) => {
 
 	return (
 		<>
-			<PageViewTracker
-				path={ analyticsPath }
-				title="Email Management > Set Up Titan Mailbox"
-			/>
+			<PageViewTracker path={ analyticsPath } title="Email Management > Set Up Titan Mailbox" />
 
 			{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
@@ -80,7 +77,7 @@ const TitanSetupMailbox = ( { selectedDomainName } ) => {
 					{ getTitanProductName() + ': ' + selectedDomainName }
 				</HeaderCake>
 
-				<SectionHeader label={ translate( 'Set Up Mailbox') } />
+				<SectionHeader label={ translate( 'Set Up Mailbox' ) } />
 
 				<TitanSetupMailboxForm
 					areSiteDomainsLoaded={ areSiteDomainsLoaded }
