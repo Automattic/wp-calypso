@@ -17,12 +17,8 @@ import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import Gridicon from 'calypso/components/gridicon';
 import { composeAnalytics, recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { domainAddNew, domainManagementAllRoot } from 'calypso/my-sites/domains/paths';
+import { domainAddNew } from 'calypso/my-sites/domains/paths';
 
-/**
- * Style dependencies
- */
-import './options-domain-button.scss';
 class AddDomainButton extends React.Component {
 	static propTypes = {
 		selectedSiteSlug: PropTypes.string,
@@ -58,33 +54,29 @@ class AddDomainButton extends React.Component {
 
 		return (
 			<React.Fragment>
-				<Button
-					compact
-					className="add-domain-button"
-					onClick={ this.toggleAddMenu }
-					ref={ this.addDomainButtonRef }
-				>
-					{ translate( 'Other domain options' ) }
-					<Gridicon icon="chevron-down" />
+				<Button primary compact className="add-domain-button" onClick={ this.toggleAddMenu }>
+					{ translate( 'Add a domain' ) }
+					<Gridicon icon="chevron-down" ref={ this.addDomainButtonRef } />
 				</Button>
 				<PopoverMenu
-					className="add-domain-button__popover"
 					isVisible={ this.state.isAddMenuVisible }
 					onClose={ this.closeAddMenu }
 					context={ this.addDomainButtonRef.current }
 					position="bottom"
 				>
-					<PopoverMenuItem href={ domainManagementAllRoot() } onClick={ this.trackMenuClick }>
-						{ translate( 'Manage all domains' ) }
-					</PopoverMenuItem>
+					{ this.props.selectedSiteSlug && (
+						<PopoverMenuItem onClick={ this.clickAddDomain }>
+							{ translate( 'to this site' ) }
+						</PopoverMenuItem>
+					) }
 					<PopoverMenuItem href="/new" onClick={ this.trackMenuClick }>
-						{ translate( 'Add a domain to a new site' ) }
+						{ translate( 'to a new site' ) }
 					</PopoverMenuItem>
 					<PopoverMenuItem href="/domains/add" onClick={ this.trackMenuClick }>
-						{ translate( 'Add a domain to a different site' ) }
+						{ translate( 'to a different site' ) }
 					</PopoverMenuItem>
 					<PopoverMenuItem href="/start/domain" onClick={ this.trackMenuClick }>
-						{ translate( 'Add a domain without a site' ) }
+						{ translate( 'without a site' ) }
 					</PopoverMenuItem>
 				</PopoverMenu>
 			</React.Fragment>
