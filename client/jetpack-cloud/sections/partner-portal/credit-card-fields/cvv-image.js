@@ -1,9 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
+import React from 'react';
 
 function CVV( { className } ) {
 	const { __ } = useI18n();

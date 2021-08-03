@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import React, { FunctionComponent } from 'react';
 
 interface Props {

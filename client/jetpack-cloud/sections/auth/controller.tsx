@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import debugFactory from 'debug';
 import React from 'react';
 import store from 'store';
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
 import Connect from './connect';
 
 const WP_AUTHORIZE_ENDPOINT = 'https://public-api.wordpress.com/oauth2/authorize';

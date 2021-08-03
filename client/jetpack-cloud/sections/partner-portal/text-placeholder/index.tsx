@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import React, { ReactElement } from 'react';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default function TextPlaceholder(): ReactElement {
