@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { useQuery } from 'react-query';
-
 /**
  * Internal dependencies
  */
