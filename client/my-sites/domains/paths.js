@@ -174,6 +174,14 @@ export function domainMapping( siteName, domain = '' ) {
 	return path;
 }
 
+export function domainMappingSetup( siteName, domainName, step = '' ) {
+	let path = `/domains/mapping/${ siteName }/setup/${ domainName }`;
+	if ( step ) {
+		path += `?step=${ step }`;
+	}
+	return path;
+}
+
 /**
  * Return the path to start an inbound domain transfer to WordPress.com.
  *
