@@ -46,9 +46,9 @@ export class GutenbergEditorPage {
 	}
 
 	/**
-	 * Initialization steps.
+	 * Initialization steps to ensure the page is fully loaded.
 	 *
-	 * @returns {Promise<void>} No return value.
+	 * @returns {Promise<Frame>} iframe holding the editor.
 	 */
 	async waitUntilLoaded(): Promise< Frame > {
 		const frame = await this.getEditorFrame();

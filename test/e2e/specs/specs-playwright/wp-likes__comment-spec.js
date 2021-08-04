@@ -50,7 +50,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 		} );
 
 		it( 'Post a comment', async function () {
-			commentsComponent = await CommentsComponent( page );
+			commentsComponent = new CommentsComponent( page );
 			await commentsComponent.postComment( comment );
 		} );
 
