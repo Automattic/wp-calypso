@@ -11,8 +11,7 @@ import styled from '@emotion/styled';
  * Internal dependencies
  */
 import { CALYPSO_CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';
-import { MarketplaceThemeProps } from 'calypso/my-sites/marketplace/theme';
-import { MarketplaceHeaderTitle } from 'calypso/my-sites/marketplace/components';
+import { ThankYouThemeProps } from './theme';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import VerticalNav from 'calypso/components/vertical-nav';
 
@@ -21,7 +20,7 @@ import VerticalNav from 'calypso/components/vertical-nav';
  */
 import './style.scss';
 
-const ThankYouContainer = styled.div< MarketplaceThemeProps >`
+const ThankYouContainer = styled.div< ThankYouThemeProps >`
 	background-color: #fff;
 	-ms-overflow-style: none;
 	/* Negative value to counteract default content padding */
@@ -39,6 +38,11 @@ const ThankYouHeader = styled.div`
     display: flex;
     justify-content: center;
 }`;
+
+const ThankYouHeaderTitle = styled.h1`
+	font-size: ${ ( { subtitle = false } ) => ( subtitle ? '1.5em' : '2em' ) };
+	margin-bottom: 8px;
+`;
 
 const ThankYouSectionContainer = styled.div`
     margin-bottom: 35px;
@@ -58,7 +62,7 @@ const ThankYouBody = styled.div`
 	}
 `;
 
-const ThankYouNextSteps = styled.div< MarketplaceThemeProps >`
+const ThankYouNextSteps = styled.div< ThankYouThemeProps >`
 	h3 {
 		font-weight: ${ ( { theme } ) => theme?.weights.bold };
 	}
@@ -119,9 +123,9 @@ const ThankYouSection = ( props: ThankYouSectionProps ) => {
 
 	return (
 		<ThankYouSectionContainer>
-			<MarketplaceHeaderTitle subtitle className="thank-you__body-header wp-brand-font">
+			<ThankYouHeaderTitle subtitle className="thank-you__body-header wp-brand-font">
 				{ sectionTitle }
-			</MarketplaceHeaderTitle>
+			</ThankYouHeaderTitle>
 
 			<ThankYouNextSteps>{ nextStepComponents }</ThankYouNextSteps>
 		</ThankYouSectionContainer>
@@ -152,18 +156,18 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 			<ThankYouBody>
 				<div>
 					<ThankYouSectionContainer>
-						<MarketplaceHeaderTitle className="thank-you__body-header wp-brand-font">
+						<ThankYouHeaderTitle className="thank-you__body-header wp-brand-font">
 							{ thankYouTitle }
-						</MarketplaceHeaderTitle>
+						</ThankYouHeaderTitle>
 					</ThankYouSectionContainer>
 
 					{ thankYouSections }
 
 					{ showSupportSection && (
 						<ThankYouSectionContainer>
-							<MarketplaceHeaderTitle subtitle className="thank-you__body-header wp-brand-font">
+							<ThankYouHeaderTitle subtitle className="thank-you__body-header wp-brand-font">
 								{ translate( 'How can we help?' ) }
-							</MarketplaceHeaderTitle>
+							</ThankYouHeaderTitle>
 							<p>
 								{ translate(
 									'Our Happiness Engineers are here if you need help, or if you have any questions.'
