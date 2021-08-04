@@ -15,8 +15,6 @@ object WebApp : Project({
 	id("WebApp")
 	name = "Web app"
 
-	buildType(RunCalypsoE2eDesktopTests)
-	buildType(RunCalypsoE2eMobileTests)
 	buildType(RunAllUnitTests)
 	buildType(CheckCodeStyleBranch)
 	buildType(BuildDockerImage)
