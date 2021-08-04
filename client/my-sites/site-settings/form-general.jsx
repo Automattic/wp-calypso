@@ -573,7 +573,7 @@ export class SiteSettingsFormGeneral extends Component {
 						components: {
 							learnMoreLink: <InlineSupportLink supportContext="privacy" showText={ false } />,
 						},
-						context: 'Privacy Settings header',
+						comment: 'Privacy Settings header',
 					} ) }
 				/>
 				<Card>
