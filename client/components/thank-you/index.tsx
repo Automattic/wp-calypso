@@ -2,7 +2,6 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import type { TranslateResult } from 'i18n-calypso';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import styled from '@emotion/styled';
@@ -11,7 +10,12 @@ import styled from '@emotion/styled';
  * Internal dependencies
  */
 import { CALYPSO_CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';
-import { ThankYouThemeProps } from './theme';
+import {
+	ThankYouNextStepProps,
+	ThankYouProps,
+	ThankYouSectionProps,
+	ThankYouThemeProps,
+} from 'calypso/components/thank-you/types';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import VerticalNav from 'calypso/components/vertical-nav';
 
@@ -32,12 +36,12 @@ const ThankYouContainer = styled.div< ThankYouThemeProps >`
 `;
 
 const ThankYouHeader = styled.div`
-    width: 100%;
-    height: 240px;
-    background-color: var( --studio-gray-0 );
-    display: flex;
-    justify-content: center;
-}`;
+	width: 100%;
+	height: 240px;
+	background-color: var( --studio-gray-0 );
+	display: flex;
+	justify-content: center;
+`;
 
 const ThankYouHeaderTitle = styled.h1`
 	font-size: ${ ( { subtitle = false } ) => ( subtitle ? '1.5em' : '2em' ) };
@@ -45,8 +49,8 @@ const ThankYouHeaderTitle = styled.h1`
 `;
 
 const ThankYouSectionContainer = styled.div`
-    margin-bottom: 35px;
-}`;
+	margin-bottom: 35px;
+`;
 
 const ThankYouBody = styled.div`
 	width: 100%;
@@ -75,30 +79,6 @@ const ThankYouNextSteps = styled.div< ThankYouThemeProps >`
 		display: flex;
 	}
 `;
-
-export type ThankYouNextStepProps = {
-	stepCta: React.ReactNode | React.ReactFragment;
-	stepDescription: TranslateResult;
-	stepKey: string;
-	stepTitle: TranslateResult;
-};
-
-export type ThankYouSectionProps = {
-	nextSteps: ThankYouNextStepProps[];
-	sectionKey: string;
-	sectionTitle: TranslateResult;
-};
-
-export type ThankYouProps = {
-	containerClassName?: string;
-	sections: ThankYouSectionProps[];
-	showSupportSection?: boolean;
-	thankYouImage: {
-		alt: string | TranslateResult;
-		src: string;
-	};
-	thankYouTitle: TranslateResult;
-};
 
 const ThankYouNextStep = ( props: ThankYouNextStepProps ) => {
 	const { stepCta, stepDescription, stepKey, stepTitle } = props;
