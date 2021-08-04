@@ -9,20 +9,10 @@ import { connect } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import Gridicon from 'calypso/components/gridicon';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
-<<<<<<< HEAD
 import { isDomainConnectAuthorizePath } from 'calypso/lib/domains/utils';
-import { getSignupUrl, getLoginLinkPageUrl } from 'calypso/lib/login';
-import {
-	isCrowdsignalOAuth2Client,
-	isJetpackCloudOAuth2Client,
-	isWooOAuth2Client,
-} from 'calypso/lib/oauth2-clients';
-import { login, lostPassword } from 'calypso/lib/paths';
-=======
 import { getSignupUrl, getLoginLinkPageUrl, canDoMagicLogin } from 'calypso/lib/login';
 import { isCrowdsignalOAuth2Client, isJetpackCloudOAuth2Client } from 'calypso/lib/oauth2-clients';
-import { getUrlParts } from '@automattic/calypso-url';
->>>>>>> 00d97f7d99 (Update rendering logic for magic login link)
+import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
