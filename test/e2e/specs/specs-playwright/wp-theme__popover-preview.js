@@ -41,7 +41,8 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 	} );
 
 	it( 'Preview theme', async function () {
-		previewComponent = await PreviewComponent.Expect( page );
+		previewComponent = new PreviewComponent( page );
+		await previewComponent.previewReady();
 	} );
 
 	it( 'Close preview', async function () {
