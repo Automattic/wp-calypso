@@ -7,12 +7,10 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { popover, ui, requesting, search } from '../reducer';
+import { popover, requesting, search } from '../reducer';
 import {
 	INLINE_HELP_POPOVER_SHOW,
 	INLINE_HELP_POPOVER_HIDE,
-	INLINE_HELP_SHOW,
-	INLINE_HELP_HIDE,
 	INLINE_HELP_SEARCH_REQUEST,
 	INLINE_HELP_SEARCH_REQUEST_SUCCESS,
 	INLINE_HELP_SEARCH_REQUEST_FAILURE,
@@ -69,36 +67,6 @@ describe( 'reducer', () => {
 			const original = deepFreeze( { isVisible: true } );
 			const state = popover( original, {
 				type: INLINE_HELP_POPOVER_HIDE,
-			} );
-
-			expect( state ).to.eql( {
-				isVisible: false,
-			} );
-		} );
-	} );
-
-	describe( '#ui()', () => {
-		test( 'should return the initial state', () => {
-			const state = ui( undefined, {} );
-
-			expect( state ).to.eql( {
-				isVisible: true,
-			} );
-		} );
-		test( 'should correct set isVisible prop to true', () => {
-			const state = ui( undefined, {
-				type: INLINE_HELP_SHOW,
-			} );
-
-			expect( state ).to.eql( {
-				isVisible: true,
-			} );
-		} );
-
-		test( 'should correct set isVisible prop to false', () => {
-			const original = deepFreeze( { isVisible: true } );
-			const state = ui( original, {
-				type: INLINE_HELP_HIDE,
 			} );
 
 			expect( state ).to.eql( {
