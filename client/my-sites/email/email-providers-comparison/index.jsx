@@ -97,6 +97,8 @@ class EmailProvidersComparison extends React.Component {
 		titanMailProduct: PropTypes.object,
 		isEmailForwardingCardShown: PropTypes.bool,
 		isEmailHeaderShown: PropTypes.bool,
+		headerTitle: PropTypes.func,
+		headerDescription: PropTypes.func,
 	};
 
 	isMounted = false;
@@ -506,6 +508,8 @@ class EmailProvidersComparison extends React.Component {
 			skipHeaderElement,
 			translate,
 			isEmailHeaderShown = true,
+			headerTitle,
+			headerDescription,
 		} = this.props;
 
 		const image = {
@@ -541,21 +545,25 @@ class EmailProvidersComparison extends React.Component {
 				<PromoCard
 					isPrimary
 					title={
-						this.isUpgrading()
+						headerTitle?.( selectedDomainName ) ??
+						( this.isUpgrading()
 							? translate( 'Upgrade to start sending emails from %(domainName)s', translateArgs )
-							: translate( 'Get your own @%(domainName)s email address', translateArgs )
+							: translate( 'Get your own @%(domainName)s email address', translateArgs ) )
 					}
 					image={ image }
 					className="email-providers-comparison__action-panel"
 				>
 					<p>
-						{ this.isUpgrading()
-							? translate( 'Pick from one of our flexible options to unlock full email features.' )
-							: translate(
-									'Pick one of our flexible options to connect your domain with email ' +
-										'and start getting emails @%(domainName)s today.',
-									translateArgs
-							  ) }
+						{ headerDescription?.( selectedDomainName ) ??
+							( this.isUpgrading()
+								? translate(
+										'Pick from one of our flexible options to unlock full email features.'
+								  )
+								: translate(
+										'Pick one of our flexible options to connect your domain with email ' +
+											'and start getting emails @%(domainName)s today.',
+										translateArgs
+								  ) ) }
 					</p>
 				</PromoCard>
 			</>
