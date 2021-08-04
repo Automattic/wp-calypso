@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get, map } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 import HeaderCake from 'calypso/components/header-cake';
 import SectionNav from 'calypso/components/section-nav';
-import SectionNavTabs from 'calypso/components/section-nav/tabs';
 import SectionNavTabItem from 'calypso/components/section-nav/item';
+import SectionNavTabs from 'calypso/components/section-nav/tabs';
 import { addSiteFragment } from 'calypso/lib/route';
 import versionCompare from 'calypso/lib/version-compare';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { Tabs } from '../../app/constants';
 
 const Navigation = ( { activeTab, pluginVersion, siteSlug, translate } ) => (

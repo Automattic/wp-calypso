@@ -1,26 +1,19 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { UNITS, chartTabs as tabs } from 'woocommerce/app/store-stats/constants';
 import StoreStatsChart from 'woocommerce/app/store-stats/store-stats-chart';
+import { formatValue } from 'woocommerce/app/store-stats/utils';
 import Delta from 'woocommerce/components/delta';
-import { getPeriodFormat } from 'calypso/state/stats/lists/utils';
-import { getDelta } from '../utils';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Tabs from 'calypso/my-sites/stats/stats-tabs';
+import Tab from 'calypso/my-sites/stats/stats-tabs/tab';
 import {
 	getSiteStatsNormalizedData,
 	isRequestingSiteStatsForQuery,
 } from 'calypso/state/stats/lists/selectors';
-import Tabs from 'calypso/my-sites/stats/stats-tabs';
-import Tab from 'calypso/my-sites/stats/stats-tabs/tab';
-import { UNITS, chartTabs as tabs } from 'woocommerce/app/store-stats/constants';
-import { formatValue } from 'woocommerce/app/store-stats/utils';
+import { getPeriodFormat } from 'calypso/state/stats/lists/utils';
+import { getDelta } from '../utils';
 
 class StoreStatsOrdersChart extends Component {
 	static propTypes = {

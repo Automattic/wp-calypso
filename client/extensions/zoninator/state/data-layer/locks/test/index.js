@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { fetch, onSuccess, onError } from '../';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { requestLock, requestLockError, updateLock } from 'zoninator/state/locks/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { fetch, onSuccess, onError } from '../';
 
 describe( 'handlers', () => {
 	describe( '#fetch()', () => {

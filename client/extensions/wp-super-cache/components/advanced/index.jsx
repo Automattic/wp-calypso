@@ -1,14 +1,10 @@
-/**
- * External dependencies
- */
-
+import { flowRight, pick } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { flowRight, pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getStatus } from '../../state/status/selectors';
+import QueryStatus from '../data/query-status';
+import WrapSettingsForm from '../wrap-settings-form';
 import AcceptedFilenames from './accepted-filenames';
 import Advanced from './advanced';
 import CacheLocation from './cache-location';
@@ -18,11 +14,7 @@ import ExpiryTime from './expiry-time';
 import FixConfig from './fix-config';
 import LockDown from './lock-down';
 import Miscellaneous from './miscellaneous';
-import QueryStatus from '../data/query-status';
 import RejectedUserAgents from './rejected-user-agents';
-import WrapSettingsForm from '../wrap-settings-form';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getStatus } from '../../state/status/selectors';
 
 const AdvancedTab = ( {
 	fields: { is_cache_enabled, is_super_cache_enabled },

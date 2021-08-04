@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-
+import { Card } from '@automattic/components';
 import page from 'page';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { navigation, siteSelection } from 'calypso/my-sites/controller';
 import Main from 'calypso/components/main';
-import { Card } from '@automattic/components';
 import SectionHeader from 'calypso/components/section-header';
 import { makeLayout, render as clientRender } from 'calypso/controller';
+import { navigation, siteSelection } from 'calypso/my-sites/controller';
 
 const render = ( context, next ) => {
 	context.primary = (

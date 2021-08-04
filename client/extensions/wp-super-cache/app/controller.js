@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import i18n from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
+import React from 'react';
 import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 import WPSuperCache from './main';
 

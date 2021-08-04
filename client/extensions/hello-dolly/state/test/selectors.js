@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { getCurrentLyric } from '../selectors';
 
 describe( 'selectors', () => {

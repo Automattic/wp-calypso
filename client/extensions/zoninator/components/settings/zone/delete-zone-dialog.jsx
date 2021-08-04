@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Button, Dialog } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 const DeleteZoneDialog = ( { onCancel, onConfirm, translate, zoneName } ) => {
 	const buttons = [

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import {
 	ZONINATOR_ADD_ZONE,
 	ZONINATOR_DELETE_ZONE,

@@ -1,20 +1,12 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { referrerChartTabs as tabs } from 'woocommerce/app/store-stats/constants';
 import StoreStatsChart from 'woocommerce/app/store-stats/store-stats-chart';
+import { formatValue } from 'woocommerce/app/store-stats/utils';
 import Tabs from 'calypso/my-sites/stats/stats-tabs';
 import Tab from 'calypso/my-sites/stats/stats-tabs/tab';
-import { formatValue } from 'woocommerce/app/store-stats/utils';
-import { referrerChartTabs as tabs } from 'woocommerce/app/store-stats/constants';
 import getStoreReferrersByReferrer from 'calypso/state/selectors/get-store-referrers-by-referrer';
 
 class Chart extends Component {

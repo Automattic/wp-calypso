@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-
 import page from 'page';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import reducer from './state/reducer';
-import HelloDollyPage from './hello-dolly-page';
-import { navigation, siteSelection } from 'calypso/my-sites/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
+import { navigation, siteSelection } from 'calypso/my-sites/controller';
+import HelloDollyPage from './hello-dolly-page';
+import reducer from './state/reducer';
 
 const render = ( context, next ) => {
 	context.primary = <HelloDollyPage />;

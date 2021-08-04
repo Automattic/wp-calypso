@@ -1,13 +1,7 @@
-/**
- * External dependencies
- */
-
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import wp from 'calypso/lib/wp';
+import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { getSiteTitle } from 'calypso/state/sites/selectors';
 import {
 	WP_SUPER_CACHE_RECEIVE_SETTINGS,
 	WP_SUPER_CACHE_REQUEST_SETTINGS,
@@ -20,10 +14,8 @@ import {
 	WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE,
 	WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
 } from '../action-types';
-import { normalizeSettings, sanitizeSettings } from './utils';
 import { requestStatus } from '../status/actions';
-import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
-import { getSiteTitle } from 'calypso/state/sites/selectors';
+import { normalizeSettings, sanitizeSettings } from './utils';
 
 /**
  * Returns an action object to be used in signalling that settings have been received.

@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-
 import { translate } from 'i18n-calypso';
 
 const sparkWidgetList1 = [

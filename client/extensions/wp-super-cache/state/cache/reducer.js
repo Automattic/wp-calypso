@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import { combineReducers } from 'calypso/state/utils';
 import {
 	WP_SUPER_CACHE_DELETE_CACHE,

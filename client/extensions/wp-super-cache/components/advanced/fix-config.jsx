@@ -1,20 +1,12 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { Button, Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
-import { restoreSettings } from '../../state/settings/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { restoreSettings } from '../../state/settings/actions';
 import { isRestoringSettings } from '../../state/settings/selectors';
 
 class FixConfig extends Component {

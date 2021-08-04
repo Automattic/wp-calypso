@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { requestFeed } from '../../../state/feeds/actions';
 import { requestLock, resetLock } from '../../../state/locks/actions';
-import { requestZones } from '../../../state/zones/actions';
 import { blocked } from '../../../state/locks/selectors';
+import { requestZones } from '../../../state/zones/actions';
 
 class ZoneLockWarningNotice extends PureComponent {
 	static propTypes = {

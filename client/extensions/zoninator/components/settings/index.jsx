@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
+import { connect } from 'react-redux';
 import ExtensionRedirect from 'calypso/blocks/extension-redirect';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';

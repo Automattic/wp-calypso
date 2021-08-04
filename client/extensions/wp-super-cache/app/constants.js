@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import { translate } from 'i18n-calypso';
 
 export const WPSC_MIN_VERSION = '1.5.4';
