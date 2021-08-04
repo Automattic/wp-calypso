@@ -40,7 +40,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 		} );
 
 		it( 'Enter post title', async function () {
-			gutenbergEditorPage = await GutenbergEditorPage.Expect( page );
+			gutenbergEditorPage = new GutenbergEditorPage( page );
 			const title = DataHelper.randomPhrase();
 			await gutenbergEditorPage.enterTitle( title );
 		} );

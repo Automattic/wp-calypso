@@ -39,7 +39,7 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 	} );
 
 	it( 'Comment on the post', async function () {
-		const commentsComponent = await CommentsComponent.Expect( page );
+		const commentsComponent = new CommentsComponent( page );
 		await commentsComponent.postComment( comment );
 	} );
 

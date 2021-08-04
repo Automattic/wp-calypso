@@ -35,7 +35,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 		} );
 
 		it( 'Enter post title', async function () {
-			gutenbergEditorPage = await GutenbergEditorPage.Expect( page );
+			gutenbergEditorPage = new GutenbergEditorPage( page );
 			const title = DataHelper.randomPhrase();
 			await gutenbergEditorPage.enterTitle( title );
 		} );
@@ -50,7 +50,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 		} );
 
 		it( 'Post a comment', async function () {
-			commentsComponent = await CommentsComponent.Expect( page );
+			commentsComponent = await CommentsComponent( page );
 			await commentsComponent.postComment( comment );
 		} );
 

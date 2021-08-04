@@ -28,6 +28,7 @@ export class NewPostFlow {
 		await new SidebarComponent( this.page ).waitForSidebarInitialization();
 		const navbarComponent = new NavbarComponent( this.page );
 		await navbarComponent.clickNewPost();
-		await GutenbergEditorPage.Expect( this.page );
+		const gutenbergEditorPage = new GutenbergEditorPage( this.page );
+		await gutenbergEditorPage.waitUntilLoaded();
 	}
 }

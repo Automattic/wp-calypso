@@ -1,6 +1,5 @@
 import assert from 'assert';
-import { Frame, ElementHandle } from 'playwright';
-import { BaseContainer } from '../base-container';
+import { Page, Frame, ElementHandle } from 'playwright';
 
 const selectors = {
 	// iframe and editor
@@ -33,19 +32,26 @@ const selectors = {
 
 /**
  * Represents an instance of the WPCOM's Gutenberg editor page.
- *
- * @augments {BaseContainer}
  */
-export class GutenbergEditorPage extends BaseContainer {
-	frame!: Frame;
+export class GutenbergEditorPage {
+	private page: Page;
+	private frame!: Frame;
+
 	/**
-	 * Overrides the function of same name defined in the base class.
-	 * This ensures the iframe containing the editor is is fully loaded prior to
-	 * continuing with the test.
+	 * Constructs an instance of the component.
+	 *
+	 * @param {Page} page The underlying page.
+	 */
+	constructor( page: Page ) {
+		this.page = page;
+	}
+
+	/**
+	 * Initialization steps.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
-	async _postInit(): Promise< void > {
+	async waitUntilLoaded(): Promise< void > {
 		const elementHandle = await this.page.waitForSelector( selectors.editorFrame );
 		this.frame = ( await elementHandle.contentFrame() ) as Frame;
 		await this.page.waitForLoadState( 'networkidle' );
@@ -60,6 +66,8 @@ export class GutenbergEditorPage extends BaseContainer {
 	 * @throws {assert.AssertionError} If text entered and text read back do not match.
 	 */
 	async enterTitle( title: string ): Promise< void > {
+		await this.waitUntilLoaded();
+
 		const sanitizedTitle = title.trim();
 		await this.setTitle( sanitizedTitle );
 		const readBack = await this.getTitle();
@@ -96,6 +104,8 @@ export class GutenbergEditorPage extends BaseContainer {
 	 * @throws {assert.AssertionError} If text entered and text read back do not match.
 	 */
 	async enterText( text: string ): Promise< void > {
+		await this.waitUntilLoaded();
+
 		await this.setText( text );
 		const readBack = await this.getText();
 		assert.strictEqual( readBack, text );
@@ -168,6 +178,8 @@ export class GutenbergEditorPage extends BaseContainer {
 	 * @param {string} blockName Name of the block to be inserted.
 	 */
 	async addBlock( blockName: string ): Promise< ElementHandle > {
+		await this.waitUntilLoaded();
+
 		// Click on the editor title. This has the effect of dismissing the block inserter
 		// if open, and restores focus back to the editor root container, allowing insertion
 		// of blocks.
@@ -185,6 +197,8 @@ export class GutenbergEditorPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async openBlockInserter(): Promise< void > {
+		await this.waitUntilLoaded();
+
 		await this.frame.click( selectors.blockInserterToggle );
 		await this.frame.waitForSelector( selectors.blockInserterPanel );
 	}
@@ -195,6 +209,8 @@ export class GutenbergEditorPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async openSettings(): Promise< void > {
+		await this.waitUntilLoaded();
+
 		const isSidebarOpen = await this.frame.$eval( selectors.settingsToggle, ( element ) =>
 			element.classList.contains( 'is-pressed' )
 		);
@@ -215,6 +231,8 @@ export class GutenbergEditorPage extends BaseContainer {
 	 * @returns {Promise<void} No return value.
 	 */
 	async publish( { visit = false }: { visit?: boolean } = {} ): Promise< string > {
+		await this.waitUntilLoaded();
+
 		await this.frame.click( `${ selectors.editPostHeader } >> text=Publish` );
 		await this.frame.click( `${ selectors.publishPanel } >> text=Publish` );
 		const viewPublishedArticleButton = await this.frame.waitForSelector( selectors.viewButton );
