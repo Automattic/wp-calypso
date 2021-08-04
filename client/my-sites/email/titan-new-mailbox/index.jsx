@@ -112,7 +112,7 @@ const TitanNewMailbox = ( {
 					<FormLabel>
 						{ showLabels && translate( 'Email address' ) }
 						<FormTextInputWithAffixes
-							placeholder={ translate( 'Email' ) }
+							placeholder={ translate( 'Email address' ) }
 							value={ mailbox }
 							isError={ hasMailboxError }
 							onChange={ ( event ) => {
