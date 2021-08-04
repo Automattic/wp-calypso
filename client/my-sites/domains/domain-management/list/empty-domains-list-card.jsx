@@ -38,10 +38,6 @@ function EmptyDomainsListCard( {
 	const siteHasPaidPlan =
 		selectedSite?.plan?.product_slug && ! isFreePlan( selectedSite.plan.product_slug );
 
-	if ( siteHasPaidPlan && ! hasDomainCredit ) {
-		return null;
-	}
-
 	let title = translate( 'Get your domain' );
 	let line = translate( 'Get a free one-year domain registration or transfer with any paid plan.' );
 	let action = translate( 'Upgrade to a plan' );
@@ -49,6 +45,16 @@ function EmptyDomainsListCard( {
 	let secondaryAction = translate( 'Just search for a domain' );
 	let secondaryActionURL = domainAddNew( selectedSite.slug );
 	let contentType = 'no_plan';
+
+	if ( siteHasPaidPlan && ! hasDomainCredit ) {
+		title = translate( 'Get your domain' );
+		line = translate( 'Search for a domain or transfer one for your site.' );
+		action = translate( 'Search for a domain' );
+		actionURL = domainAddNew( selectedSite.slug );
+		secondaryAction = translate( 'I have a domain' );
+		secondaryActionURL = domainUseYourDomain( selectedSite.slug );
+		contentType = 'paid_plan_with_no_free_domain_credits';
+	}
 
 	if ( siteHasPaidPlan && hasDomainCredit ) {
 		title = translate( 'Claim your free domain' );
