@@ -45,9 +45,38 @@
 	}
 }
 
+.site-selector .all-sites.is-clickable {
+	background: var( --color-sidebar-background );
+	box-shadow: none;
+	border-bottom: 1px solid var( --color-sidebar-border );
+	color: var( --color-sidebar-text );
+	font-size: $font-body-small;
+
+	.card__link-indicator {
+		color: var( --color-sidebar-text );
+	}
+
+	&:hover {
+		background: var( --color-sidebar-menu-hover-background );
+		color: var( --color-sidebar-menu-hover-text );
+
+		.card__link-indicator {
+			color: var( --color-sidebar-menu-hover-text );
+		}
+	}
+
+	&.is-selected {
+		background-color: var( --color-sidebar-menu-selected-background );
+		color: var( --color-sidebar-menu-selected-text );
+
+		.card__link-indicator {
+			color: var( --color-sidebar-menu-selected-text );
+		}
+	}
+}
+
 // Styles for Site elements within the Selector
-.site-selector .site,
-.site-selector .all-sites {
+.site-selector .site {
 	font-size: $font-body-small;
 
 	// Highlight selected site
@@ -76,8 +105,7 @@
 
 .notouch .site-selector.is-hover-enabled .site:hover,
 .notouch .site-selector.is-hover-enabled .all-sites:hover
-.site-selector .site.is-highlighted,
-.site-selector .all-sites.is-highlighted {
+.site-selector .site.is-highlighted {
 	background-color: var( --color-neutral-5 );
 	cursor: pointer;
 
@@ -96,8 +124,7 @@
 // Highlight & hover effects
 .notouch .layout__secondary .site-selector.is-hover-enabled .site:hover,
 .notouch .layout__secondary .site-selector.is-hover-enabled .all-sites:hover
-.layout__secondary .site-selector .site.is-highlighted,
-.layout__secondary .site-selector .all-sites.is-highlighted {
+.layout__secondary .site-selector .site.is-highlighted {
 	background: var( --color-sidebar-menu-hover-background );
 
 	.site__badge {
@@ -216,10 +243,6 @@
 // Containers in the list of sites are larger
 .site-selector .site-action {
 	padding-top: 15px;
-}
-
-.site-selector .all-sites {
-	border-bottom: 1px solid var( --color-neutral-10 );
 }
 
 .site-selector__recent {

@@ -24,7 +24,6 @@ import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-
 import getSites from 'calypso/state/selectors/get-sites';
 import getVisibleSites from 'calypso/state/selectors/get-visible-sites';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
-import AllSites from 'calypso/blocks/all-sites';
 import Site from 'calypso/blocks/site';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import Search from 'calypso/components/search';
@@ -33,6 +32,7 @@ import SiteSelectorAddSite from './add-site';
 import searchSites from 'calypso/components/search-sites';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { getUrlParts, getUrlFromParts, determineUrlType, format } from '@automattic/calypso-url';
+import { CompactCard } from '@automattic/components';
 
 /**
  * Style dependencies
@@ -311,23 +311,28 @@ class SiteSelector extends Component {
 	}
 
 	renderAllSites() {
-		if ( ! this.props.showAllSites || this.props.sitesFound || ! this.props.allSitesPath ) {
+		const { allSitesPath, showAllSites, sitesFound, translate } = this.props;
+
+		if ( ! showAllSites || sitesFound || ! allSitesPath ) {
 			return null;
 		}
 
 		this.visibleSites.push( ALL_SITES );
 
-		const isHighlighted = this.isHighlighted( ALL_SITES );
+		const classes = classNames( 'all-sites', {
+			'is-selected': this.isSelected( ALL_SITES ),
+		} );
 
 		return (
-			<AllSites
+			<CompactCard
+				className={ classes }
+				displayAsLink
 				key="selector-all-sites"
-				sites={ this.props.sites }
-				onSelect={ this.onAllSitesSelect }
+				onClick={ this.onAllSitesSelect }
 				onMouseEnter={ this.onAllSitesHover }
-				isHighlighted={ isHighlighted }
-				isSelected={ this.isSelected( ALL_SITES ) }
-			/>
+			>
+				{ translate( 'Manage All My Sites' ) }
+			</CompactCard>
 		);
 	}
 
