@@ -204,7 +204,6 @@ export default function WPCheckout( {
 		reduxDispatch(
 			recordTracksEvent( 'calypso_checkout_wpcom_email_exists', {
 				email: emailAddress,
-				checkout_flow: isJetpackCheckout ? 'site_only_checkout' : 'wpcom_registrationless',
 			} )
 		);
 
@@ -218,9 +217,6 @@ export default function WPCheckout( {
 								reduxDispatch(
 									recordTracksEvent( 'calypso_checkout_composite_login_click', {
 										email: emailAddress,
-										checkout_flow: isJetpackCheckout
-											? 'site_only_checkout'
-											: 'wpcom_registrationless',
 									} )
 								)
 							}

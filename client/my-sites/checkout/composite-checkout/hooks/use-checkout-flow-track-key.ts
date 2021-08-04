@@ -33,7 +33,7 @@ export default function useCheckoutFlowTrackKey( {
 		if ( isLoggedOutCart ) {
 			return 'wpcom_registrationless';
 		}
-		return isJetpackNotAtomic ? 'jetpack-checkout' : 'wpcom-checkout';
+		return isJetpackNotAtomic ? 'jetpack_checkout' : 'wpcom_checkout';
 	}, [
 		hasJetpackSiteSlug,
 		isJetpackCheckout,
