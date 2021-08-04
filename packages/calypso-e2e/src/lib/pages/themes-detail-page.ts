@@ -31,7 +31,8 @@ export class ThemesDetailPage extends BaseContainer {
 	 */
 	async preview(): Promise< void > {
 		await this.page.click( selectors.demoPane );
-		await PreviewComponent.Expect( this.page );
+		const previewComponent = new PreviewComponent( this.page );
+		await previewComponent.previewReady();
 	}
 
 	/**
