@@ -1,4 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
+import { debounce } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
 import FoldableCard from 'calypso/components/foldable-card';
@@ -30,12 +31,15 @@ export const QuickLinks = ( {
 	trackEditMenusAction,
 	trackCustomizeThemeAction,
 	isExpanded,
-	expand,
-	collapse,
+	updateHomeQuickLinksToggleStatus,
 	editHomePageUrl,
 	siteSlug,
 } ) => {
 	const translate = useTranslate();
+	const debouncedUpdateHomeQuickLinksToggleStatus = debounce(
+		updateHomeQuickLinksToggleStatus,
+		1000
+	);
 
 	const quickLinks = (
 		<div className="wp-for-teams-quick-links__boxes quick-links__boxes">
@@ -116,8 +120,8 @@ export const QuickLinks = ( {
 			header={ translate( 'Quick Links' ) }
 			clickableHeader
 			expanded={ isExpanded }
-			onOpen={ expand }
-			onClose={ collapse }
+			onOpen={ () => debouncedUpdateHomeQuickLinksToggleStatus( 'expanded' ) }
+			onClose={ () => debouncedUpdateHomeQuickLinksToggleStatus( 'collapsed' ) }
 		>
 			{ quickLinks }
 		</FoldableCard>
@@ -212,8 +216,8 @@ const mapDispatchToProps = {
 	trackManageCommentsAction,
 	trackEditMenusAction,
 	trackCustomizeThemeAction,
-	expand: () => savePreference( 'homeQuickLinksToggleStatus', 'expanded' ),
-	collapse: () => savePreference( 'homeQuickLinksToggleStatus', 'collapsed' ),
+	updateHomeQuickLinksToggleStatus: ( status ) =>
+		savePreference( 'homeQuickLinksToggleStatus', status ),
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
