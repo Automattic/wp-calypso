@@ -73,7 +73,7 @@ function ScanUpsellBody() {
 			bodyText={ translate(
 				'Automatic scanning and one-click fixes keep your site one step ahead of security threats.'
 			) }
-			buttonLink={ `https://wordpress.com/checkout/jetpack_scan/${ selectedSiteSlug }` }
+			buttonLink={ `https://jetpack.com/upgrade/scan/?site=${ selectedSiteSlug }` }
 			onClick={ () => dispatch( recordTracksEvent( 'calypso_jetpack_scan_upsell_click' ) ) }
 			openButtonLinkOnNewTab={ false }
 			iconComponent={
