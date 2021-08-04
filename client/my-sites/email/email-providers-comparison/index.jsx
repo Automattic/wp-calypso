@@ -79,6 +79,8 @@ import HeaderCake from 'calypso/components/header-cake';
  */
 import './style.scss';
 
+const noop = () => {};
+
 const identityMap = ( item ) => item;
 
 class EmailProvidersComparison extends React.Component {
@@ -97,8 +99,11 @@ class EmailProvidersComparison extends React.Component {
 		titanMailProduct: PropTypes.object,
 		isEmailForwardingCardShown: PropTypes.bool,
 		isEmailHeaderShown: PropTypes.bool,
+		isSkippable: PropTypes.bool,
+		onSkipClick: PropTypes.func,
 		headerTitle: PropTypes.func,
-		headerDescription: PropTypes.func,
+		promoHeaderTitle: PropTypes.func,
+		promoHeaderDescription: PropTypes.func,
 	};
 
 	isMounted = false;
@@ -508,8 +513,11 @@ class EmailProvidersComparison extends React.Component {
 			skipHeaderElement,
 			translate,
 			isEmailHeaderShown = true,
+			isSkippable,
+			onSkipClick,
 			headerTitle,
-			headerDescription,
+			promoHeaderTitle,
+			promoHeaderDescription,
 		} = this.props;
 
 		const image = {
@@ -524,12 +532,20 @@ class EmailProvidersComparison extends React.Component {
 			comment: '%(domainName)s is the domain name, e.g example.com',
 		};
 
-		const title = this.isUpgrading()
-			? translate( 'Upgrade to a hosted email' )
-			: translate( 'Add email' );
+		const title =
+			headerTitle?.( selectedDomainName ) ??
+			( this.isUpgrading() ? translate( 'Upgrade to a hosted email' ) : translate( 'Add email' ) );
 
 		const headerContent = skipHeaderElement ? null : (
-			<HeaderCake onClick={ this.handleBack }>{ title }</HeaderCake>
+			<HeaderCake
+				onClick={ this.handleBack }
+				actionOnClick={ isSkippable ? onSkipClick : noop }
+				actionText={ isSkippable ? translate( 'Skip' ) : undefined }
+				actionIcon={ isSkippable ? 'arrow-right' : undefined }
+				alwaysShowActionText
+			>
+				{ title }
+			</HeaderCake>
 		);
 
 		return (
@@ -545,7 +561,7 @@ class EmailProvidersComparison extends React.Component {
 				<PromoCard
 					isPrimary
 					title={
-						headerTitle?.( selectedDomainName ) ??
+						promoHeaderTitle?.( selectedDomainName ) ??
 						( this.isUpgrading()
 							? translate( 'Upgrade to start sending emails from %(domainName)s', translateArgs )
 							: translate( 'Get your own @%(domainName)s email address', translateArgs ) )
@@ -554,7 +570,7 @@ class EmailProvidersComparison extends React.Component {
 					className="email-providers-comparison__action-panel"
 				>
 					<p>
-						{ headerDescription?.( selectedDomainName ) ??
+						{ promoHeaderDescription?.( selectedDomainName ) ??
 							( this.isUpgrading()
 								? translate(
 										'Pick from one of our flexible options to unlock full email features.'
