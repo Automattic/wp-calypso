@@ -1,7 +1,6 @@
 import path from 'path';
 import { ElementHandle, Page } from 'playwright';
 import { waitForElementEnabled } from '../../element-helper';
-import { BaseContainer } from '../base-container';
 
 const selectors = {
 	// Navigation tabs
@@ -31,25 +30,25 @@ const selectors = {
 
 /**
  * Represents an instance of the WPCOM Media library page.
- *
- * @augments {BaseContainer}
  */
-export class MediaPage extends BaseContainer {
+export class MediaPage {
+	private page: Page;
+
 	/**
-	 * Constructs an instance of the MediaPage object.
+	 * Constructs an instance of the component.
 	 *
-	 * @param {Page} page Underlying page on which interactions take place.
+	 * @param {Page} page The underlying page.
 	 */
 	constructor( page: Page ) {
-		super( page, selectors.gallery );
+		this.page = page;
 	}
 
 	/**
-	 * Post-initialization steps.
+	 * Initialization steps.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
-	async _postInit(): Promise< void > {
+	async waitUntilLoaded(): Promise< void > {
 		await this.page.waitForLoadState( 'domcontentloaded' );
 	}
 
@@ -84,6 +83,8 @@ export class MediaPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickTab( name: 'All' | 'Images' | 'Documents' | 'Videos' | 'Audio' ): Promise< void > {
+		await this.waitUntilLoaded();
+
 		const navTabs = await this.page.waitForSelector( selectors.navTabs );
 		const gallery = await this.page.waitForSelector( selectors.gallery );
 		const isDropdown = await navTabs
@@ -144,6 +145,8 @@ export class MediaPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async upload( fullPath: string ): Promise< ElementHandle > {
+		await this.waitUntilLoaded();
+
 		const filename = path.basename( fullPath );
 		const itemSelector = `figure[title="${ filename }"]`;
 

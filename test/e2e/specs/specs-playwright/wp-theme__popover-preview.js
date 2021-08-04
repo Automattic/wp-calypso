@@ -30,7 +30,7 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 	} );
 
 	it( `Search for free theme with keyword ${ themeName }`, async function () {
-		themesPage = await ThemesPage.Expect( page );
+		themesPage = new ThemesPage( page );
 		await themesPage.filterThemes( 'Free' );
 		await themesPage.search( themeName );
 	} );

@@ -1,5 +1,4 @@
-import { ElementHandle } from 'playwright';
-import { BaseContainer } from '../base-container';
+import { ElementHandle, Page } from 'playwright';
 
 const selectors = {
 	// Main themes listing
@@ -22,16 +21,25 @@ const selectors = {
 
 /**
  * Component representing the Apperance > Themes page.
- *
- * @augments {BaseContainer}
  */
-export class ThemesPage extends BaseContainer {
+export class ThemesPage {
+	private page: Page;
+
 	/**
-	 * Post initialization steps.
+	 * Constructs an instance of the component.
+	 *
+	 * @param {Page} page The underlying page.
+	 */
+	constructor( page: Page ) {
+		this.page = page;
+	}
+
+	/**
+	 * Initialization steps.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
-	async _postInit(): Promise< void > {
+	async waitUntilLoaded(): Promise< void > {
 		await Promise.all( [
 			this.page.waitForSelector( selectors.spinner, { state: 'hidden' } ),
 			this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } ),
@@ -45,6 +53,8 @@ export class ThemesPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async filterThemes( type: 'All' | 'Free' | 'Premium' ): Promise< void > {
+		await this.waitUntilLoaded();
+
 		const selector = `a[role="radio"]:has-text("${ type }")`;
 		await this.page.click( selector );
 		const button = await this.page.waitForSelector( selector );
@@ -61,6 +71,8 @@ export class ThemesPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async search( keyword: string ): Promise< void > {
+		await this.waitUntilLoaded();
+
 		const searchInput = await this.page.waitForSelector( selectors.searchInput );
 		await Promise.all( [ this.page.waitForNavigation(), searchInput.fill( keyword ) ] );
 		await this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } );

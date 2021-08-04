@@ -31,10 +31,10 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 	it( 'View site', async function () {
 		const siteURL = `https://${ DataHelper.config.get( 'testSiteForNotifications' ) }`;
 		await page.goto( siteURL );
-		publishedPostsListPage = await PublishedPostsListPage.Expect( page );
 	} );
 
 	it( 'View first post', async function () {
+		publishedPostsListPage = new PublishedPostsListPage( page );
 		publishedPostsListPage.visitPost( 1 );
 	} );
 

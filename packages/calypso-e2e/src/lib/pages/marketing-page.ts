@@ -1,5 +1,5 @@
+import { Page } from 'playwright';
 import { toTitleCase } from '../../data-helper';
-import { BaseContainer } from '../base-container';
 
 const selectors = {
 	content: '#primary',
@@ -15,10 +15,28 @@ const selectors = {
 
 /**
  * Page representing the Tools > Marketing page.
- *
- * @augments {BaseContainer}
  */
-export class MarketingPage extends BaseContainer {
+export class MarketingPage {
+	private page: Page;
+
+	/**
+	 * Constructs an instance of the component.
+	 *
+	 * @param {Page} page The underlying page.
+	 */
+	constructor( page: Page ) {
+		this.page = page;
+	}
+
+	/**
+	 * Initialization steps.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async waitUntilLoaded(): Promise< void > {
+		await this.page.waitForLoadState( 'load' );
+	}
+
 	/**
 	 * Given a string, clicks on the tab matching the string at top of the page.
 	 *
@@ -26,6 +44,8 @@ export class MarketingPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickTabItem( name: string ): Promise< void > {
+		await this.waitUntilLoaded();
+
 		const navTabs = await this.page.waitForSelector( selectors.navTabs );
 		const isDropdown = await navTabs
 			.getAttribute( 'class' )

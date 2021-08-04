@@ -1,5 +1,4 @@
-import { ElementHandle } from 'playwright';
-import { BaseContainer } from '../base-container';
+import { Page, ElementHandle } from 'playwright';
 
 const selectors = {
 	// Comment
@@ -15,10 +14,28 @@ const selectors = {
 
 /**
  * Represents the comments section of a post.
- *
- * @augments {BaseContainer}
  */
-export class CommentsComponent extends BaseContainer {
+export class CommentsComponent {
+	private page: Page;
+
+	/**
+	 * Constructs an instance of the component.
+	 *
+	 * @param {Page} page The underlying page.
+	 */
+	constructor( page: Page ) {
+		this.page = page;
+	}
+
+	/**
+	 * Initialization steps.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async waitUntilLoaded(): Promise< void > {
+		await this.page.waitForLoadState( 'load' );
+	}
+
 	/**
 	 * Fills and posts a comment in the post's comment section.
 	 *
@@ -61,6 +78,8 @@ export class CommentsComponent extends BaseContainer {
 	 */
 	async _click( selector: string | number ): Promise< ElementHandle > {
 		let commentToLike!: ElementHandle;
+
+		await this.waitUntilLoaded();
 
 		// Retrieve the nth comment on the page.
 		if ( typeof selector === 'number' ) {
