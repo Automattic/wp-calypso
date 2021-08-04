@@ -93,6 +93,23 @@ class Sites extends Component {
 
 		const { translate } = this.props;
 
+		if ( 'home' === path ) {
+			return translate(
+				'Select a site to edit and view its dashboard. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+				{
+					components: {
+						learnMoreLink: (
+							<InlineSupportLink
+								supportLink="https://wordpress.com/support/admin-bar/#switch-site"
+								supportPostId={ 20787 }
+								showIcon={ false }
+							/>
+						),
+					},
+				}
+			);
+		}
+
 		// nicer wording for editor routes
 		const editorRouters = [ 'page', 'post', 'edit', 'block-editor' ];
 		if ( editorRouters.includes( path ) ) {
@@ -123,9 +140,6 @@ class Sites extends Component {
 				break;
 			case 'settings':
 				path = translate( 'Settings' );
-				break;
-			case 'home':
-				path = translate( 'My Home' );
 				break;
 			case 'hosting-config':
 				path = translate( 'Hosting Configuration' );
