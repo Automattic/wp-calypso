@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import { filter, flowRight, get, partial, some, values, xor } from 'lodash';
+import { filter, flowRight, get, some, values, xor } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -218,7 +218,9 @@ class SharingButtonsOptions extends Component {
 	getSharingShowOptionsElement = () => {
 		const { initialized, settings, translate } = this.props;
 
-		const changeSharingPostTypes = partial( this.handleMultiCheckboxChange, 'sharing_show' );
+		const changeSharingPostTypes = ( event ) =>
+			this.handleMultiCheckboxChange( 'sharing_show', event );
+
 		return (
 			<FormFieldset className="sharing-buttons__fieldset">
 				<legend className="sharing-buttons__fieldset-heading">
