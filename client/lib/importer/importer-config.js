@@ -186,7 +186,7 @@ function getConfig( { siteTitle = '' } = {} ) {
 				args: { exampleUrl: 'https://example-newsletter.substack.com/' },
 			} ),
 			validate: ( urlInput ) => {
-				return /^(http|https):\/\/[^ "]+$/.test( urlInput.trim() ) && urlInput.length <= 255;
+				return /^(https):\/\/[^ "]+$/.test( urlInput.trim() ) && urlInput.length <= 255;
 			},
 		},
 		weight: 0,
