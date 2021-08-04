@@ -55,7 +55,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 		} );
 
 		it( 'Like post', async function () {
-			publishedPostPage = await PublishedPostPage.Expect( page );
+			publishedPostPage = new PublishedPostPage( page );
 			await publishedPostPage.likePost();
 		} );
 
@@ -68,7 +68,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 		} );
 
 		it( `Like post as ${ anotherUser }`, async function () {
-			publishedPostPage = await PublishedPostPage.Expect( page );
+			publishedPostPage = new PublishedPostPage( page );
 
 			const loginFlow = new LoginFlow( page, anotherUser );
 

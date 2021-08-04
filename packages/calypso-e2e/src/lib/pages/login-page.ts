@@ -1,5 +1,4 @@
 import { Page } from 'playwright';
-import { BaseContainer } from '../base-container';
 
 const selectors = {
 	loginContainer: '.wp-login__container',
@@ -11,23 +10,24 @@ const selectors = {
 
 /**
  * Represents an instance of the calypso Login page.
- *
- * @augments {BaseContainer}
  */
-export class LoginPage extends BaseContainer {
+export class LoginPage {
+	private page: Page;
 	/**
-	 * Creates an instance of the Login page.
+	 * Constructs an instance of the component.
 	 *
-	 * @param {Page} page Playwright page on which actions are executed.
+	 * @param {Page} page The underlying page.
 	 */
 	constructor( page: Page ) {
-		super( page, selectors.loginContainer );
+		this.page = page;
 	}
 
 	/**
-	 * Post-initialization steps.
+	 * Initialization steps for the page.
+	 *
+	 * @returns {Promise<void>} No return value.
 	 */
-	async _postInit(): Promise< void > {
+	async waitUntilLoaded(): Promise< void > {
 		await this.page.waitForLoadState( 'networkidle' );
 		const container = await this.page.waitForSelector( selectors.loginContainer );
 		await container.waitForElementState( 'stable' );
@@ -40,9 +40,11 @@ export class LoginPage extends BaseContainer {
 	 * @param {string} param0.username Username of the user.
 	 * @param {string} param0.password Password of the user.
 	 * @returns {Promise<void>} No return value.
-	 * @throws {Error} If the log in process was unsuccessful for any reason.
 	 */
 	async login( { username, password }: { username: string; password: string } ): Promise< void > {
+		await this.waitUntilLoaded();
+
+		// By default, log out of the existing account (even if test steps end up logging back in).
 		const alreadyLoggedIn = await this.page.$( selectors.changeAccountButton );
 		if ( alreadyLoggedIn ) {
 			console.log( 'already logged in, selecting "change account' );
@@ -54,7 +56,7 @@ export class LoginPage extends BaseContainer {
 		await this.page.keyboard.press( 'Enter' );
 		await this.page.fill( selectors.password, password );
 		await this.page.click( selectors.loginButton );
-		// make sure after logging in that everything stablizes, so we can continue with the next action!
+		// Make sure after logging in that everything stablizes, so we can continue with the next action!
 		await this.page.waitForLoadState( 'load' );
 	}
 }
