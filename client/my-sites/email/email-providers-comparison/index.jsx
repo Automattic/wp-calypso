@@ -70,7 +70,7 @@ import forwardingIcon from 'calypso/assets/images/email-providers/forwarding.svg
 import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
-import TitanNewMailboxList from 'calypso/my-sites/email/titan-add-mailboxes/titan-new-mailbox-list';
+import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import HeaderCake from 'calypso/components/header-cake';
 

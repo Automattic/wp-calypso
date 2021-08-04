@@ -16,7 +16,12 @@ import {
 } from 'calypso/lib/titan/new-mailbox';
 import { Button } from '@automattic/components';
 import Gridicon from 'calypso/components/gridicon';
-import TitanNewMailbox from './titan-new-mailbox';
+import TitanNewMailbox from 'calypso/my-sites/email/titan-new-mailbox';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const noop = () => {};
 

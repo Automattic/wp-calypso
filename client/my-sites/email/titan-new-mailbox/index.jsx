@@ -20,6 +20,11 @@ import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-w
 import Gridicon from 'calypso/components/gridicon';
 import { getMailboxPropTypeShape } from 'calypso/lib/titan/new-mailbox';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const noop = () => {};
 
 const TitanNewMailbox = ( {
@@ -67,11 +72,11 @@ const TitanNewMailbox = ( {
 	return (
 		<>
 			<div
-				className={ classNames( 'titan-add-mailboxes__new-mailbox', {
+				className={ classNames( 'titan-new-mailbox', {
 					'show-labels': showLabels,
 				} ) }
 			>
-				<div className="titan-add-mailboxes__new-mailbox-name-and-remove">
+				<div className="titan-new-mailbox__name-and-remove">
 					<FormFieldset>
 						<FormLabel>
 							{ showLabels && translate( 'Full name' ) }
@@ -95,7 +100,7 @@ const TitanNewMailbox = ( {
 
 					{ showTrashButton && (
 						<Button
-							className="titan-add-mailboxes__new-mailbox-remove-mailbox-button"
+							className="titan-new-mailbox__remove-mailbox-button"
 							onClick={ onMailboxRemove }
 						>
 							<Gridicon icon="trash" />
@@ -187,7 +192,7 @@ const TitanNewMailbox = ( {
 					) }
 				</FormFieldset>
 			</div>
-			<hr className="titan-add-mailboxes__new-mailbox-separator" />
+			<hr className="titan-new-mailbox__new-mailbox-separator" />
 		</>
 	);
 };
