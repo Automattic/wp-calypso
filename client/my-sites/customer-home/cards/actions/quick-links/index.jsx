@@ -1,7 +1,7 @@
 import i18nCalypso, { getLocaleSlug, useTranslate } from 'i18n-calypso';
-import { debounce } from 'lodash';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import { useDebouncedCallback } from 'use-debounce';
 import anchorLogoIcon from 'calypso/assets/images/customer-home/anchor-logo-grey.svg';
 import fiverrIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
 import FoldableCard from 'calypso/components/foldable-card';
@@ -51,7 +51,7 @@ export const QuickLinks = ( {
 	siteSlug,
 } ) => {
 	const translate = useTranslate();
-	const debouncedUpdateHomeQuickLinksToggleStatus = debounce(
+	const [ debouncedUpdateHomeQuickLinksToggleStatus ] = useDebouncedCallback(
 		updateHomeQuickLinksToggleStatus,
 		1000
 	);
@@ -183,6 +183,12 @@ export const QuickLinks = ( {
 			/>
 		</div>
 	);
+
+	useEffect( () => {
+		return () => {
+			debouncedUpdateHomeQuickLinksToggleStatus.flush();
+		};
+	}, [ debouncedUpdateHomeQuickLinksToggleStatus ] );
 
 	return (
 		<FoldableCard

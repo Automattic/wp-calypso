@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
-import { debounce } from 'lodash';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import { useDebouncedCallback } from 'use-debounce';
 import FoldableCard from 'calypso/components/foldable-card';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
@@ -36,7 +36,7 @@ export const QuickLinks = ( {
 	siteSlug,
 } ) => {
 	const translate = useTranslate();
-	const debouncedUpdateHomeQuickLinksToggleStatus = debounce(
+	const [ debouncedUpdateHomeQuickLinksToggleStatus ] = useDebouncedCallback(
 		updateHomeQuickLinksToggleStatus,
 		1000
 	);
@@ -114,6 +114,13 @@ export const QuickLinks = ( {
 			) }
 		</div>
 	);
+
+	useEffect( () => {
+		return () => {
+			debouncedUpdateHomeQuickLinksToggleStatus.flush();
+		};
+	}, [ debouncedUpdateHomeQuickLinksToggleStatus ] );
+
 	return (
 		<FoldableCard
 			className="wp-for-teams-quick-links quick-links"
