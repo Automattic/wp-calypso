@@ -26,7 +26,7 @@ const EditorTemplateClasses = withSelect( ( select ) => {
 } )( ( { templateClasses } ) => {
 	useEffect( () => {
 		// templateClasses will be an array with an undefined element when loading.
-		if ( ! templateClasses.some( ( templateClass ) => undefined !== templateClass ) ) {
+		if ( ! templateClasses.some( ( templateClass ) => templateClass ) ) {
 			return;
 		}
 
