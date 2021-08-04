@@ -226,10 +226,6 @@ class SiteSelector extends Component {
 		}
 	};
 
-	onAllSitesSelect = ( event ) => {
-		this.onSiteSelect( event, ALL_SITES );
-	};
-
 	onSiteHover = ( event, siteId ) => {
 		if ( this.lastMouseHover !== siteId ) {
 			debug( `${ siteId } hovered` );
@@ -326,9 +322,8 @@ class SiteSelector extends Component {
 		return (
 			<CompactCard
 				className={ classes }
-				displayAsLink
+				href="/home"
 				key="selector-all-sites"
-				onClick={ this.onAllSitesSelect }
 				onMouseEnter={ this.onAllSitesHover }
 			>
 				{ translate( 'Manage All My Sites' ) }
