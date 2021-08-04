@@ -13,7 +13,11 @@ export default function EmailProvidersUpsell( { domain } ) {
 	return (
 		<>
 			<CalypsoShoppingCartProvider>
-				<EmailProvidersComparison selectedDomainName={ domain } />
+				<EmailProvidersComparison
+					selectedDomainName={ domain }
+					isEmailForwardingCardShown={ false }
+					isEmailHeaderShown={ false }
+				/>
 			</CalypsoShoppingCartProvider>
 		</>
 	);
