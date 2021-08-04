@@ -47,10 +47,11 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 	it( 'Preview theme', async function () {
 		themesDetailPage = await ThemesDetailPage.Expect( page );
 		await themesDetailPage.preview();
+		previewComponent = new PreviewComponent( page );
+		await previewComponent.previewReady();
 	} );
 
 	it( 'Close theme preview', async function () {
-		previewComponent = await PreviewComponent.Expect( page );
 		await previewComponent.closePreview();
 	} );
 
