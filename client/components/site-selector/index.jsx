@@ -10,6 +10,7 @@ import page from 'page';
 import classNames from 'classnames';
 import { filter, find, flow, get, includes, isEmpty } from 'lodash';
 import debugFactory from 'debug';
+import { Icon, grid, listView } from '@wordpress/icons';
 
 /**
  * Internal dependencies
@@ -405,14 +406,16 @@ class SiteSelector extends Component {
 				<SegmentedControl.Item
 					selected={ this.state.displayMode === 'grid' }
 					onClick={ () => this.onDisplayToggleClick( 'grid' ) }
+					title={ this.props.translate( 'Grid View' ) }
 				>
-					{ this.props.translate( 'Grid' ) }
+					<Icon icon={ grid } size={ 20 } />
 				</SegmentedControl.Item>
 				<SegmentedControl.Item
 					selected={ this.state.displayMode === 'list' }
 					onClick={ () => this.onDisplayToggleClick( 'list' ) }
+					title={ this.props.translate( 'List View' ) }
 				>
-					{ this.props.translate( 'List' ) }
+					<Icon icon={ listView } size={ 20 } />
 				</SegmentedControl.Item>
 			</SegmentedControl>
 		);

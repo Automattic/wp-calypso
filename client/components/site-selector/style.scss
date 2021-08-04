@@ -30,12 +30,16 @@
 			margin-right: 16px;
 
 			.search {
+				height: 40px;
 				margin: 0 16px 0 0;
-				width: 80%;
 			}
 
 			.segmented-control {
-				width: 20%;
+				width: 100px;
+			}
+
+			.segmented-control__link {
+				line-height: 1;
 			}
 		}
 	}
@@ -126,6 +130,7 @@
 }
 
 .site-selector .search {
+	box-sizing: border-box;
 	margin: 8px;
 	height: 33px;
 	border: 1px solid var( --color-neutral-10 );
