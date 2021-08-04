@@ -6,7 +6,7 @@ import {
 	getLoginLinkPageUrl,
 	getSignupUrl,
 	getSocialServiceFromClientId,
-} from '..';
+} from 'calypso/lib/login';
 import { login } from 'calypso/lib/paths';
 import config from '@automattic/calypso-config';
 
