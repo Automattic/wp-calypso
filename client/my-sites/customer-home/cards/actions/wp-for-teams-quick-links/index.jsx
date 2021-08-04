@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import { useDebouncedCallback } from 'use-debounce';
 import FoldableCard from 'calypso/components/foldable-card';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
@@ -30,12 +31,16 @@ export const QuickLinks = ( {
 	trackEditMenusAction,
 	trackCustomizeThemeAction,
 	isExpanded,
-	expand,
-	collapse,
+	updateHomeQuickLinksToggleStatus,
 	editHomePageUrl,
 	siteSlug,
 } ) => {
 	const translate = useTranslate();
+	const [
+		debouncedUpdateHomeQuickLinksToggleStatus,
+		,
+		flushDebouncedUpdateHomeQuickLinksToggleStatus,
+	] = useDebouncedCallback( updateHomeQuickLinksToggleStatus, 1000 );
 
 	const quickLinks = (
 		<div className="wp-for-teams-quick-links__boxes quick-links__boxes">
@@ -110,14 +115,21 @@ export const QuickLinks = ( {
 			) }
 		</div>
 	);
+
+	useEffect( () => {
+		return () => {
+			flushDebouncedUpdateHomeQuickLinksToggleStatus();
+		};
+	}, [] );
+
 	return (
 		<FoldableCard
 			className="wp-for-teams-quick-links quick-links"
 			header={ translate( 'Quick Links' ) }
 			clickableHeader
 			expanded={ isExpanded }
-			onOpen={ expand }
-			onClose={ collapse }
+			onOpen={ () => debouncedUpdateHomeQuickLinksToggleStatus( 'expanded' ) }
+			onClose={ () => debouncedUpdateHomeQuickLinksToggleStatus( 'collapsed' ) }
 		>
 			{ quickLinks }
 		</FoldableCard>
@@ -212,8 +224,8 @@ const mapDispatchToProps = {
 	trackManageCommentsAction,
 	trackEditMenusAction,
 	trackCustomizeThemeAction,
-	expand: () => savePreference( 'homeQuickLinksToggleStatus', 'expanded' ),
-	collapse: () => savePreference( 'homeQuickLinksToggleStatus', 'collapsed' ),
+	updateHomeQuickLinksToggleStatus: ( status ) =>
+		savePreference( 'homeQuickLinksToggleStatus', status ),
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
