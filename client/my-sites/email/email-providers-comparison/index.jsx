@@ -93,17 +93,17 @@ class EmailProvidersComparison extends React.Component {
 		currentRoute: PropTypes.string,
 		domain: PropTypes.object,
 		gSuiteProduct: PropTypes.object,
-		isGSuiteSupported: PropTypes.bool.isRequired,
-		productsList: PropTypes.object.isRequired,
-		selectedSite: PropTypes.object,
-		titanMailProduct: PropTypes.object,
+		headerTitle: PropTypes.func,
 		isEmailForwardingCardShown: PropTypes.bool,
 		isEmailHeaderShown: PropTypes.bool,
+		isGSuiteSupported: PropTypes.bool.isRequired,
 		isSkippable: PropTypes.bool,
 		onSkipClick: PropTypes.func,
-		headerTitle: PropTypes.func,
-		promoHeaderTitle: PropTypes.func,
+		productsList: PropTypes.object.isRequired,
 		promoHeaderDescription: PropTypes.func,
+		promoHeaderTitle: PropTypes.func,
+		selectedSite: PropTypes.object,
+		titanMailProduct: PropTypes.object,
 	};
 
 	isMounted = false;
@@ -502,16 +502,16 @@ class EmailProvidersComparison extends React.Component {
 	renderHeader() {
 		const {
 			currentRoute,
+			headerTitle,
+			isEmailHeaderShown = true,
+			isSkippable,
+			onSkipClick,
+			promoHeaderDescription,
+			promoHeaderTitle,
 			selectedDomainName,
 			selectedSite,
 			skipHeaderElement,
 			translate,
-			isEmailHeaderShown = true,
-			isSkippable,
-			onSkipClick,
-			headerTitle,
-			promoHeaderTitle,
-			promoHeaderDescription,
 		} = this.props;
 
 		const image = {
@@ -532,12 +532,12 @@ class EmailProvidersComparison extends React.Component {
 
 		const headerContent = skipHeaderElement ? null : (
 			<HeaderCake
-				onClick={ this.handleBack }
 				actionIcon={ isSkippable ? 'arrow-right' : undefined }
 				actionIconPosition="right"
 				actionOnClick={ isSkippable ? onSkipClick : noop }
 				actionText={ isSkippable ? translate( 'Skip' ) : undefined }
 				alwaysShowActionText
+				onClick={ this.handleBack }
 			>
 				{ title }
 			</HeaderCake>
@@ -622,10 +622,10 @@ class EmailProvidersComparison extends React.Component {
 	render() {
 		const {
 			domainsWithForwards,
+			isEmailForwardingCardShown = true,
 			isGSuiteSupported,
 			selectedDomainName,
 			selectedSite,
-			isEmailForwardingCardShown = true,
 		} = this.props;
 
 		return (
