@@ -196,7 +196,7 @@ export default function WPCheckout( {
 		// checkout -> login -> checkout.
 		const currentURLQueryParameters = Object.fromEntries( new URL( href ).searchParams.entries() );
 		const redirectTo = isJetpackCheckout
-			? addQueryArgs( { ...currentURLQueryParameters, flow: 'logged-out-checkout' }, pathname )
+			? addQueryArgs( { ...currentURLQueryParameters, flow: 'coming_from_login' }, pathname )
 			: '/checkout/no-site?cart=no-user';
 
 		const loginUrl = login( { redirectTo, emailAddress } );

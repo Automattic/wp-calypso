@@ -50,6 +50,7 @@ export function checkoutSiteless( context, next ) {
 	const state = context.store.getState();
 	const isLoggedOut = ! isUserLoggedIn( state );
 	const { productSlug: product } = context.params;
+	const isUserComingFromLoginForm = context.query?.flow === 'coming_from_login';
 
 	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
@@ -68,6 +69,7 @@ export function checkoutSiteless( context, next ) {
 			isLoggedOutCart={ isLoggedOut }
 			isNoSiteCart={ true }
 			isJetpackCheckout={ true }
+			isUserComingFromLoginForm={ isUserComingFromLoginForm }
 		/>
 	);
 
@@ -87,7 +89,7 @@ export function checkout( context, next ) {
 		( isLoggedOut || ! hasSite || isDomainOnlyFlow );
 	const jetpackPurchaseToken = context.query.purchasetoken;
 	const jetpackPurchaseNonce = context.query.purchaseNonce;
-	const isUserComingFromLoginForm = context.query?.flow === 'logged-out-checkout';
+	const isUserComingFromLoginForm = context.query?.flow === 'coming_from_login';
 	const isUserComingFromPlansPage = [ 'jetpack-plans', 'jetpack-connect-plans' ].includes(
 		context.query?.source
 	);
