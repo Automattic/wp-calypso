@@ -41,7 +41,9 @@ const EditorTemplateClasses = withSelect( ( select ) => {
 				...templateClasses
 			);
 		} );
-	}, [ ...templateClasses ] );
+
+		return () => clearInterval( blockListInception );
+	}, [ ...templateClasses ] ); // eslint-disable-line react-hooks/exhaustive-deps
 	return null;
 } );
 
