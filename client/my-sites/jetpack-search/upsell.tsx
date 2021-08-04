@@ -22,7 +22,9 @@ export default function JetpackSearchUpsell(): ReactElement {
 	const onUpgradeClick = useTrackCallback( undefined, 'calypso_jetpack_search_upsell' );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
-	const upgradeUrl = 'https://jetpack.com/upgrade/search/?site=' + siteSlug;
+	const upgradeUrl =
+		'https://jetpack.com/upgrade/search/?utm_campaign=my-sites-jetpack-search&utm_source=calypso&site=' +
+		siteSlug;
 
 	return (
 		<Main className="jetpack-search">
