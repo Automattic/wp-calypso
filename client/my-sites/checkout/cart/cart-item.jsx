@@ -61,7 +61,7 @@ export class CartItem extends React.Component {
 			return this.getDomainPlanPrice( cartItem );
 		}
 
-		if ( 0 === cartItem.cost ) {
+		if ( 0 === cartItem.cost * cartItem.volume ) {
 			return <span className="cart__free-text">{ translate( 'Free' ) }</span>;
 		}
 
