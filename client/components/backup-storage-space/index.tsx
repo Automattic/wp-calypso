@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux';
  * Internal dependencies
  */
 import { useTranslate } from 'i18n-calypso';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	getSiteBackupStorageAvailable,
 	getSiteBackupStorageUsed,
@@ -90,7 +91,7 @@ export const BackupStorageSpace: React.FC = () => {
 						upsellOption={ upsellOption }
 						usedStorage={ gigabytesUsed }
 						storageLimit={ gigabytesAvailable }
-						href="/pricing/backup"
+						href={ isJetpackCloud() ? '/pricing/backup' : '/plans' }
 					/>
 				</>
 			) }
