@@ -26,29 +26,31 @@ const EditorTemplateClasses = withSelect( ( select ) => {
 } )( ( { templateClasses } ) => {
 	useEffect( () => {
 		// templateClasses will be an array with an undefined element when loading.
-		if ( templateClasses.some( ( templateClass ) => undefined !== templateClass ) ) {
-			const blockListInception = setInterval( () => {
-				const blockListParent = document.querySelector(
-					'.editor-styles-wrapper > .block-editor-block-list__layout'
-				);
-
-				if ( ! blockListParent ) {
-					return;
-				}
-
-				clearInterval( blockListInception );
-
-				if ( ! blockListParent.className.includes( 'a8c-template-editor fse-template-part' ) ) {
-					blockListParent.className = classNames(
-						blockListParent.className,
-						'a8c-template-editor fse-template-part',
-						...templateClasses
-					);
-				}
-			}, 100 );
-
-			return () => clearInterval( blockListInception );
+		if ( ! templateClasses.some( ( templateClass ) => undefined !== templateClass ) ) {
+			return;
 		}
+
+		const blockListInception = setInterval( () => {
+			const blockListParent = document.querySelector(
+				'.editor-styles-wrapper > .block-editor-block-list__layout'
+			);
+
+			if ( ! blockListParent ) {
+				return;
+			}
+
+			clearInterval( blockListInception );
+
+			if ( ! blockListParent.className.includes( 'a8c-template-editor fse-template-part' ) ) {
+				blockListParent.className = classNames(
+					blockListParent.className,
+					'a8c-template-editor fse-template-part',
+					...templateClasses
+				);
+			}
+		}, 100 );
+
+		return () => clearInterval( blockListInception );
 	}, [ ...templateClasses ] ); // eslint-disable-line react-hooks/exhaustive-deps
 	return null;
 } );
