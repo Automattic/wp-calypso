@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import {
 	isBusinessPlan,
 	isCompletePlan,
@@ -22,7 +22,13 @@ import {
  * These can vary by plan, but we do not need to get any data about the site to show these
  * This is similar to the disconnection flow where some plan benefits are listed if a user is disconnecting Jetpack
  */
-const JetpackGeneralBenefits = ( props ) => {
+
+interface Props {
+	productSlug: string;
+}
+
+const JetpackGeneralBenefits: React.FC< Props > = ( props ) => {
+	const translate = useTranslate();
 	const { productSlug } = props;
 	const benefits = [];
 
@@ -37,7 +43,14 @@ const JetpackGeneralBenefits = ( props ) => {
 	) {
 		benefits.push(
 			<React.Fragment>
-				<strong>Priority support</strong> from Jetpack’s WordPress and security experts
+				{ translate(
+					"{{strong}}Priority support{{/strong}} from Jetpack's WordPress and security experts.",
+					{
+						components: {
+							strong: <strong />,
+						},
+					}
+				) }
 			</React.Fragment>
 		);
 	}
@@ -54,17 +67,29 @@ const JetpackGeneralBenefits = ( props ) => {
 	) {
 		benefits.push(
 			<React.Fragment>
-				Ability to <strong>collect payments</strong>.
+				{ translate( 'Ability to {{strong}}collect payments{{/strong}}.', {
+					components: {
+						strong: <strong />,
+					},
+				} ) }
 			</React.Fragment>
 		);
 		benefits.push(
 			<React.Fragment>
-				The <strong>Ad program</strong> for WordPress.
+				{ translate( 'The {{strong}}Ad program{{/strong}} for WordPress.', {
+					components: {
+						strong: <strong />,
+					},
+				} ) }
 			</React.Fragment>
 		);
 		benefits.push(
 			<React.Fragment>
-				The <strong>Google Analytics</strong> integration.
+				{ translate( 'The {{strong}}Google Analytics{{/strong}} integration.', {
+					components: {
+						strong: <strong />,
+					},
+				} ) }
 			</React.Fragment>
 		);
 	}
@@ -73,7 +98,11 @@ const JetpackGeneralBenefits = ( props ) => {
 	if ( isPremiumPlan( productSlug ) || isSecurityDailyPlan( productSlug ) ) {
 		benefits.push(
 			<React.Fragment>
-				Up to 13GB of <strong>high-speed-video hosting</strong>.
+				{ translate( 'Up to 13GB of {{strong}}high-speed-video hosting{{/strong}}.', {
+					components: {
+						strong: <strong />,
+					},
+				} ) }
 			</React.Fragment>
 		);
 	}
@@ -86,7 +115,11 @@ const JetpackGeneralBenefits = ( props ) => {
 	) {
 		benefits.push(
 			<React.Fragment>
-				Unlimited <strong>high-speed video hosting</strong>.
+				{ translate( 'Unlimited {{strong}}high-speed-video hosting{{/strong}}.', {
+					components: {
+						strong: <strong />,
+					},
+				} ) }
 			</React.Fragment>
 		);
 	}
@@ -95,12 +128,23 @@ const JetpackGeneralBenefits = ( props ) => {
 	if ( isJetpackPlanSlug( productSlug ) ) {
 		benefits.push(
 			<React.Fragment>
-				Brute force <strong>attack protection</strong> and <strong>downtime monitoring</strong>.
+				{ translate(
+					'Brute force {{strong}}attack protection{{/strong}} and {{strong}}downtime monitoring{{/strong}}.',
+					{
+						components: {
+							strong: <strong />,
+						},
+					}
+				) }
 			</React.Fragment>
 		);
 		benefits.push(
 			<React.Fragment>
-				Unlimited, <strong>high-speed image hosting</strong>.
+				{ translate( 'Unlimited {{strong}}high-speed image{{/strong}} hosting.', {
+					components: {
+						strong: <strong />,
+					},
+				} ) }
 			</React.Fragment>
 		);
 	}
@@ -118,4 +162,4 @@ const JetpackGeneralBenefits = ( props ) => {
 	return null;
 };
 
-export default localize( JetpackGeneralBenefits );
+export default JetpackGeneralBenefits;
