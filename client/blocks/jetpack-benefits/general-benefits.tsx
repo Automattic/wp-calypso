@@ -30,16 +30,23 @@ interface Props {
 const JetpackGeneralBenefits: React.FC< Props > = ( props ) => {
 	const translate = useTranslate();
 	const { productSlug } = props;
+	const hasSecurityDailyPlan = isSecurityDailyPlan( productSlug );
+	const hasSecurityRealTimePlan = isSecurityRealTimePlan( productSlug );
+	const hasCompletePlan = isCompletePlan( productSlug );
+	const hasPersonalPlan = isPersonalPlan( productSlug );
+	const hasPremiumPlan = isPremiumPlan( productSlug );
+	const hasBusinessPlan = isBusinessPlan( productSlug );
+	const hasJetpackPlanSlug = isJetpackPlanSlug( productSlug );
 	const benefits = [];
 
 	// Priority Support
 	if (
-		isSecurityDailyPlan( productSlug ) ||
-		isSecurityRealTimePlan( productSlug ) ||
-		isCompletePlan( productSlug ) ||
-		isPersonalPlan( productSlug ) ||
-		isPremiumPlan( productSlug ) ||
-		isBusinessPlan( productSlug )
+		hasSecurityDailyPlan ||
+		hasSecurityRealTimePlan ||
+		hasCompletePlan ||
+		hasPersonalPlan ||
+		hasPremiumPlan ||
+		hasBusinessPlan
 	) {
 		benefits.push(
 			<React.Fragment>
@@ -59,11 +66,11 @@ const JetpackGeneralBenefits: React.FC< Props > = ( props ) => {
 	// Ad Program
 	// Google Analytics
 	if (
-		isSecurityDailyPlan( productSlug ) ||
-		isSecurityRealTimePlan( productSlug ) ||
-		isCompletePlan( productSlug ) ||
-		isPremiumPlan( productSlug ) ||
-		isBusinessPlan( productSlug )
+		hasSecurityDailyPlan ||
+		hasSecurityRealTimePlan ||
+		hasCompletePlan ||
+		hasPremiumPlan ||
+		hasBusinessPlan
 	) {
 		benefits.push(
 			<React.Fragment>
@@ -95,7 +102,7 @@ const JetpackGeneralBenefits: React.FC< Props > = ( props ) => {
 	}
 
 	// 13GB of video hosting
-	if ( isPremiumPlan( productSlug ) || isSecurityDailyPlan( productSlug ) ) {
+	if ( hasPremiumPlan || hasSecurityDailyPlan ) {
 		benefits.push(
 			<React.Fragment>
 				{ translate( 'Up to 13GB of {{strong}}high-speed-video hosting{{/strong}}.', {
@@ -108,11 +115,7 @@ const JetpackGeneralBenefits: React.FC< Props > = ( props ) => {
 	}
 
 	// Unlimited Video Hosting
-	if (
-		isBusinessPlan( productSlug ) ||
-		isSecurityRealTimePlan( productSlug ) ||
-		isCompletePlan( productSlug )
-	) {
+	if ( hasBusinessPlan || hasSecurityRealTimePlan || hasCompletePlan ) {
 		benefits.push(
 			<React.Fragment>
 				{ translate( 'Unlimited {{strong}}high-speed-video hosting{{/strong}}.', {
@@ -125,7 +128,7 @@ const JetpackGeneralBenefits: React.FC< Props > = ( props ) => {
 	}
 
 	// General benefits of all Jetpack Plans (brute force protection, CDN)
-	if ( isJetpackPlanSlug( productSlug ) ) {
+	if ( hasJetpackPlanSlug ) {
 		benefits.push(
 			<React.Fragment>
 				{ translate(
