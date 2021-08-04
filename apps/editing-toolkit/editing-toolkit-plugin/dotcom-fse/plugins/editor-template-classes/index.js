@@ -4,6 +4,7 @@ import { withSelect } from '@wordpress/data';
 import { registerPlugin } from '@wordpress/plugins';
 import classNames from 'classnames';
 import { get, map } from 'lodash';
+import { useEffect } from 'react';
 
 const EditorTemplateClasses = withSelect( ( select ) => {
 	const { getEntityRecord } = select( 'core' );
@@ -23,22 +24,24 @@ const EditorTemplateClasses = withSelect( ( select ) => {
 	} );
 	return { templateClasses };
 } )( ( { templateClasses } ) => {
-	const blockListInception = setInterval( () => {
-		const blockListParent = document.querySelector(
-			'.editor-styles-wrapper > .block-editor-block-list__layout'
-		);
+	useEffect( () => {
+		const blockListInception = setInterval( () => {
+			const blockListParent = document.querySelector(
+				'.editor-styles-wrapper > .block-editor-block-list__layout'
+			);
 
-		if ( ! blockListParent ) {
-			return;
-		}
-		clearInterval( blockListInception );
+			if ( ! blockListParent ) {
+				return;
+			}
+			clearInterval( blockListInception );
 
-		blockListParent.className = classNames(
-			'a8c-template-editor fse-template-part',
-			...templateClasses
-		);
-	} );
-
+			blockListParent.className = classNames(
+				blockListParent.className,
+				'a8c-template-editor fse-template-part',
+				...templateClasses
+			);
+		} );
+	}, [ ...templateClasses ] );
 	return null;
 } );
 
