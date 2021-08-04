@@ -172,6 +172,18 @@ class DomainSearchResults extends React.Component {
 						}
 				  );
 
+			if ( ! selectedSite ) {
+				domainUnavailableMessage = translate(
+					'{{strong}}%(domain)s{{/strong}} is already registered. Please try another search.',
+					{
+						args: { domain },
+						components: {
+							strong: <strong />,
+						},
+					}
+				);
+			}
+
 			if ( TLD_NOT_SUPPORTED_TEMPORARILY === lastDomainStatus ) {
 				domainUnavailableMessage = translate(
 					'{{strong}}.%(tld)s{{/strong}} domains are temporarily not offered on WordPress.com. ' +
