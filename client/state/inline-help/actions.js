@@ -59,7 +59,7 @@ function mapWithSupportTypeProp( collection, support_type ) {
  * @returns {Function}        Action thunk
  */
 export function requestInlineHelpSearchResults( searchQuery = '' ) {
-	return ( dispatch, getState ) => {
+	return async ( dispatch, getState ) => {
 		const state = getState();
 		const contextualResults = mapWithSupportTypeProp(
 			getContextualHelpResults( state ),
@@ -94,54 +94,55 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 			searchQuery,
 		} );
 
-		wpcom
-			.undocumented()
-			.getHelpLinks( searchQuery )
-			.then( ( { wordpress_support_links: searchResults } ) => {
-				// Searches will either:
-				//
-				// 1. return results from the search API endpoint
-				// ...or...
-				// 2. return hard-coded results based on the current route.
-				//
-				// A INLINE_HELP_SEARCH_REQUEST_API_RESULTS action indicates
-				// whether the search results came from the API or not. This
-				// enables UI to indicate a "no results" status and indicate
-				// that the results are contextual (if required).
-
-				const hasAPIResults = !! ( searchResults && searchResults.length );
-
-				dispatch( {
-					type: INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
-					hasAPIResults,
-				} );
-
-				dispatch( {
-					type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
-					searchQuery,
-					searchResults: hasAPIResults
-						? [
-								...mapWithSupportTypeProp( searchResults, SUPPORT_TYPE_API_HELP ),
-								...helpAdminResults,
-						  ]
-						: [ ...contextualResults, ...helpAdminResults ],
-				} );
-			} )
-			.catch( ( error ) => {
-				dispatch( {
-					type: INLINE_HELP_SEARCH_REQUEST_FAILURE,
-					searchQuery,
-					error,
-				} );
-
-				// Force reset flag for no API results
-				dispatch( {
-					type: INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
-					hasAPIResults: false,
-				} );
+		try {
+			const { wordpress_support_links: searchResults } = await wpcom.req.get( '/help/search', {
+				query: searchQuery,
+				include_post_id: 1,
 			} );
+			// Searches will either:
+			//
+			// 1. return results from the search API endpoint
+			// ...or...
+			// 2. return hard-coded results based on the current route.
+			//
+			// A INLINE_HELP_SEARCH_REQUEST_API_RESULTS action indicates
+			// whether the search results came from the API or not. This
+			// enables UI to indicate a "no results" status and indicate
+			// that the results are contextual (if required).
+
+			const hasAPIResults = !! ( searchResults && searchResults.length );
+
+			dispatch( {
+				type: INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
+				hasAPIResults,
+			} );
+
+			dispatch( {
+				type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
+				searchQuery,
+				searchResults: hasAPIResults
+					? [
+							...mapWithSupportTypeProp( searchResults, SUPPORT_TYPE_API_HELP ),
+							...helpAdminResults,
+					  ]
+					: [ ...contextualResults, ...helpAdminResults ],
+			} );
+		} catch ( error ) {
+			dispatch( {
+				type: INLINE_HELP_SEARCH_REQUEST_FAILURE,
+				searchQuery,
+				error,
+			} );
+
+			// Force reset flag for no API results
+			dispatch( {
+				type: INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
+				hasAPIResults: false,
+			} );
+		}
 	};
 }
+
 /**
  * Selects a specific result in the inline help results list.
  *
