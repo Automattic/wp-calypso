@@ -25,6 +25,7 @@ export default class HeaderCake extends Component {
 			actionButton,
 			actionText,
 			actionIcon,
+			actionIconPosition = 'left',
 			actionHref,
 			actionOnClick,
 			alwaysShowActionText,
@@ -43,6 +44,7 @@ export default class HeaderCake extends Component {
 
 				{ actionButton || (
 					<HeaderCakeBack
+						position={ actionIconPosition }
 						text={ actionText || backText }
 						href={ actionHref || backHref }
 						onClick={ actionOnClick }
@@ -67,6 +69,7 @@ HeaderCake.propTypes = {
 	actionText: PropTypes.string,
 	actionHref: PropTypes.string,
 	actionIcon: PropTypes.string,
+	actionIconPosition: PropTypes.string,
 	actionOnClick: PropTypes.func,
 	alwaysShowActionText: PropTypes.bool,
 };

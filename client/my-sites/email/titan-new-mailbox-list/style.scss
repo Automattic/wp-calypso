@@ -8,7 +8,7 @@
 
 	.titan-new-mailbox-list__actions {
 		display: flex;
-		flex-direction: column;
+		flex-direction: column-reverse;
 
 		@include break-mobile {
 			flex-direction: row;
@@ -30,4 +30,8 @@
 			}
 		}
 	}
+}
+
+.titan-new-mailbox-list__new-mailbox-separator {
+	margin-top: 1.5em;
 }

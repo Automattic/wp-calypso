@@ -192,7 +192,6 @@ const TitanNewMailbox = ( {
 					) }
 				</FormFieldset>
 			</div>
-			<hr className="titan-new-mailbox__new-mailbox-separator" />
 		</>
 	);
 };

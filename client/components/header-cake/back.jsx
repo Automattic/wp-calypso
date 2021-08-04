@@ -34,6 +34,7 @@ class HeaderCakeBack extends Component {
 		text: PropTypes.string,
 		spacer: PropTypes.bool,
 		alwaysShowActionText: PropTypes.bool,
+		position: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -75,7 +76,7 @@ class HeaderCakeBack extends Component {
 	}
 
 	render() {
-		const { href, icon, onClick, spacer, text, translate } = this.props;
+		const { href, icon, onClick, position, spacer, text, translate } = this.props;
 		const backText = text === undefined ? translate( 'Back' ) : text;
 		const linkClasses = classNames( {
 			'header-cake__back': true,
@@ -92,8 +93,9 @@ class HeaderCakeBack extends Component {
 				onClick={ onClick }
 				disabled={ spacer }
 			>
-				<Gridicon icon={ icon || 'arrow-left' } size={ 18 } />
+				{ position === 'left' && <Gridicon icon={ icon || 'arrow-left' } size={ 18 } /> }
 				{ ! this.hideText( backText ) && backText }
+				{ position === 'right' && <Gridicon icon={ icon || 'arrow-left' } size={ 18 } /> }
 			</Button>
 		);
 	}

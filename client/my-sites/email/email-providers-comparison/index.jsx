@@ -450,13 +450,7 @@ class EmailProvidersComparison extends React.Component {
 					comment:
 						'%(titanProductName) is the name of the product, which should be "Professional Email" translated',
 			  } )
-			: translate( 'Add %(titanProductName)s', {
-					args: {
-						titanProductName: getTitanProductName(),
-					},
-					comment:
-						'%(titanProductName) is the name of the product, which should be "Professional Email" translated',
-			  } );
+			: translate( 'Add Email' );
 
 		const formFields = (
 			<TitanNewMailboxList
@@ -539,9 +533,10 @@ class EmailProvidersComparison extends React.Component {
 		const headerContent = skipHeaderElement ? null : (
 			<HeaderCake
 				onClick={ this.handleBack }
+				actionIcon={ isSkippable ? 'arrow-right' : undefined }
+				actionIconPosition="right"
 				actionOnClick={ isSkippable ? onSkipClick : noop }
 				actionText={ isSkippable ? translate( 'Skip' ) : undefined }
-				actionIcon={ isSkippable ? 'arrow-right' : undefined }
 				alwaysShowActionText
 			>
 				{ title }
