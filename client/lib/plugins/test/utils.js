@@ -2,14 +2,7 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { assert } from 'chai';
-
-/**
- * Internal dependencies
- */
 import * as PluginUtils from '../utils';
 
 describe( 'Plugins Utils', () => {

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { startPerformanceTracking } from './lib';
 
 export const performanceTrackerStart = ( pageName ) => {

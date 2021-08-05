@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	EMAIL_ACCOUNT_TYPE_TITAN_MAIL,
 	EMAIL_ACCOUNT_TYPE_TITAN_MAIL_EXTERNAL,

@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { find, get } from 'lodash';
 
 export function isHstsRequired( productSlug, productsList ) {

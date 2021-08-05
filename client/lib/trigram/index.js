@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import LRU from 'lru';
 
 /**

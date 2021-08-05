@@ -2,15 +2,8 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
-import highlight from '../';
-
-/**
- * External dependencies
- */
 import { expect } from 'chai';
+import highlight from '../';
 
 describe( 'highlight', () => {
 	describe( 'unit test', () => {

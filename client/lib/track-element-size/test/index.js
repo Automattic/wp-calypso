@@ -2,14 +2,10 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import React, { useCallback } from 'react';
 import ReactDOM from 'react-dom';
 import { act } from 'react-dom/test-utils';
 import { useFakeTimers } from 'sinon';
-
 import { useWindowResizeCallback, useWindowResizeRect, THROTTLE_RATE } from '..';
 
 const initialRect = { width: 10, height: 10 };

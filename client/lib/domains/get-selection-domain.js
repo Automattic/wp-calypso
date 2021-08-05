@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { find } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { type as domainTypes } from './constants';
 
 export function getSelectedDomain( { domains, selectedDomainName, isSiteRedirect = false } ) {

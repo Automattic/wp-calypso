@@ -1,12 +1,9 @@
-/**
- * Internal dependencies
- */
+import { getDoNotTrack } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import debug from './debug';
-import isUrlExcludedForPerformance from './is-url-excluded-for-performance';
 import isPiiUrl from './is-pii-url';
+import isUrlExcludedForPerformance from './is-url-excluded-for-performance';
 import mayWeTrackCurrentUserGdpr from './may-we-track-current-user-gdpr';
-import { getDoNotTrack } from '@automattic/calypso-analytics';
 /**
  * Returns whether ad tracking is allowed.
  *

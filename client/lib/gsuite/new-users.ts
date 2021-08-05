@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
 import emailValidator from 'email-validator';
 import { translate, TranslateResult } from 'i18n-calypso';
 import { countBy, find, includes, groupBy, map, mapValues } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
-import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
 import { googleApps, googleAppsExtraLicenses } from 'calypso/lib/cart-values/cart-items';
 import {
 	getGSuiteMailboxCount,
@@ -17,6 +9,7 @@ import {
 	isGoogleWorkspaceProductSlug,
 	isGSuiteProductSlug,
 } from 'calypso/lib/gsuite';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 // exporting these in the big export below causes trouble
 export interface GSuiteNewUserField {

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { decodeURIIfValid, decodeURIComponentIfValid } from '../decode-utils';
 
 describe( 'decodeURIIfValid', () => {

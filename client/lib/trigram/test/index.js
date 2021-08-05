@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { cosineSimilarity, trigrams, gramsToLookup, lookupToMagnitude } from '../';
 
 describe( 'trigram: cosineSimilarity()', () => {

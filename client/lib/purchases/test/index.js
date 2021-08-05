@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import moment from 'moment';
 import page from 'page';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-
-/**
- * Internal dependencies
- */
 import {
 	isRemovable,
 	isCancelable,
@@ -19,7 +12,6 @@ import {
 	handleRenewMultiplePurchasesClick,
 	shouldRenderMonthlyRenewalOption,
 } from '../index';
-
 import data from './data';
 const {
 	DOMAIN_PURCHASE,

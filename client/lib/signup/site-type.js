@@ -4,10 +4,6 @@
 import i18n from 'i18n-calypso';
 import { find, get } from 'lodash';
 
-/**
- * Internal dependencies
- */
-
 const getSiteTypePropertyDefaults = ( propertyKey ) =>
 	get(
 		{

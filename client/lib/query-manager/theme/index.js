@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
 import PaginatedQueryManager from '../paginated';
-import ThemeQueryKey from './key';
 import { DEFAULT_THEME_QUERY } from './constants';
+import ThemeQueryKey from './key';
 
 /**
  * ThemeQueryManager manages themes which can be queried

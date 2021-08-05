@@ -2,13 +2,6 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-
-/**
- * Internal dependencies
- */
 import {
 	isEbanxCreditCardProcessingEnabledForCountry,
 	isValidCPF,

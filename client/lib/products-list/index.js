@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
 import debugFactory from 'debug';
+import Emitter from 'calypso/lib/mixins/emitter';
+import wpcom from 'calypso/lib/wp';
 
 const debug = debugFactory( 'calypso:ProductsList' );
-
-/**
- * Internal dependencies
- */
-import wpcom from 'calypso/lib/wp';
-import Emitter from 'calypso/lib/mixins/emitter';
 
 /**
  * Initialize a new list of products.
@@ -108,7 +100,7 @@ ProductsList.prototype.fetch = function () {
  * Initializes data with a list of products.
  *
  * @param {object} productsList The list of products
- **/
+ */
 ProductsList.prototype.initialize = function ( productsList ) {
 	this.data = productsList;
 	this.initialized = true;

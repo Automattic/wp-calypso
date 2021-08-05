@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-
 import { parse, stringify } from 'qs';
 import store from 'store';
 

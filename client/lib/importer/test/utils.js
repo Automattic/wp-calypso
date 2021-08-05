@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { suggestDomainFromImportUrl } from '../utils';
 
 describe( 'suggestDomainFromImportUrl', () => {

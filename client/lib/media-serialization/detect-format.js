@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
 import { includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { Formats, MediaTypes } from './constants';
 import { getMimePrefix } from 'calypso/lib/media/utils';
+import { Formats, MediaTypes } from './constants';
 
 /**
  * Module variables

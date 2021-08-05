@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { URL as URLString, SiteSlug, SiteId } from 'calypso/types';
-
-/**
- * Internal Dependencies
- */
 import { trailingslashit, untrailingslashit } from './index';
 
 /**
