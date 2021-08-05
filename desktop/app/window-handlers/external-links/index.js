@@ -1,4 +1,6 @@
+// eslint-disable-next-line import/order
 const log = require( '../../lib/logger' )( 'desktop:external-links' );
+const assets = require( '../../lib/assets' );
 
 let targetURL = '';
 
@@ -11,6 +13,17 @@ module.exports = function ( { view } ) {
 		log.info( `Navigating to URL: '${ urlToLoad }'` );
 
 		event.preventDefault();
+		view.webContents.loadURL( urlToLoad );
+		return;
+	} );
+
+	// Magic links aren't supported in the app currently. Instead we'll show a message about how
+	// to set a password on the account to log in that way.
+	view.webContents.on( 'will-navigate', function ( event, url ) {
+		const urlToLoad =
+			url === 'https://wordpress.com/log-in/link'
+				? 'file://' + assets.getPath( 'magic-links-unsupported.html' )
+				: url;
 		view.webContents.loadURL( urlToLoad );
 		return;
 	} );

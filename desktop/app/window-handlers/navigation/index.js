@@ -1,4 +1,5 @@
-const { ipcMain, systemPreferences } = require( 'electron' );
+const { ipcMain, shell, systemPreferences } = require( 'electron' );
+const { stubObject } = require( 'lodash' );
 const ipc = require( '../../lib/calypso-commands' );
 const Config = require( '../../lib/config' );
 const isCalypso = require( '../../lib/is-calypso' );
@@ -24,6 +25,10 @@ module.exports = function ( { view, window } ) {
 		} else {
 			view.webContents.loadURL( webBase + 'stats/day' );
 		}
+	} );
+
+	ipcMain.on( 'magic-link-set-password', () => {
+		shell.openExternal( 'https://wordpress.com/me/security' );
 	} );
 
 	if ( process.platform === 'darwin' ) {
