@@ -10,8 +10,9 @@ import { useSelector } from 'react-redux';
  * Internal dependencies
  */
 import { preventWidows } from 'calypso/lib/formatting/prevent-widows';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import getSiteActivityLogRetentionDays from 'calypso/state/selectors/get-site-activity-log-retention-days';
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ActivityCard from 'calypso/components/activity-card';
 import { useTrackUpsellView, useTrackUpgradeClick } from './hooks';
 
@@ -43,6 +44,7 @@ const RetentionLimitUpsell: React.FC = ( { cardClassName } ) => {
 		getSiteActivityLogRetentionDays( state, siteId )
 	);
 	const trackUpgradeClick = useTrackUpgradeClick( siteId );
+	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	const upsellRef = useTrackUpsellView( siteId );
 
@@ -85,7 +87,7 @@ const RetentionLimitUpsell: React.FC = ( { cardClassName } ) => {
 					ref={ upsellRef }
 					className="retention-limit-upsell__call-to-action-button"
 					onClick={ trackUpgradeClick }
-					href="/pricing"
+					href={ isJetpackCloud() ? `/pricing/${ siteSlug }` : `/plans/${ siteSlug }` }
 				>
 					{ translate( 'Upgrade storage' ) }
 				</Button>
