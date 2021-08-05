@@ -375,7 +375,7 @@ class TokenField extends PureComponent {
 		let preventDefault = false;
 		const selectedSuggestion = this._getSelectedSuggestion();
 
-		if ( selectedSuggestion ) {
+		if ( selectedSuggestion && ! isSuggestionLabel( selectedSuggestion ) ) {
 			this._addNewToken( selectedSuggestion );
 			preventDefault = true;
 		} else if ( this._inputHasValidValue() ) {
