@@ -87,13 +87,11 @@ const TitanNewMailboxList = ( {
 						</CardHeading>
 					) }
 					<TitanNewMailbox
-						onMailboxRemove={ onMailboxRemove( mailboxes, mailbox.uuid ) }
 						onMailboxValueChange={ onMailboxValueChange( mailbox.uuid ) }
 						mailbox={ mailbox }
 						onReturnKeyPress={ onReturnKeyPress }
 						showAllErrors={ validatedMailboxUuids.includes( mailbox.uuid ) }
 						showLabels={ showLabels }
-						showTrashButton={ false }
 					/>
 
 					<div className="titan-new-mailbox-list__actions">
