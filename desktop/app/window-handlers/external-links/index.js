@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/order
 const log = require( '../../lib/logger' )( 'desktop:external-links' );
 const assets = require( '../../lib/assets' );
 
