@@ -70,7 +70,7 @@
 	}
 
 	.domain-registration-suggestion__title,
-	.domain-registration-suggestion__progress-bar,
+	.domain-registration-suggestion__badges,
 	.domain-product-price,
 	.domain-registration-suggestion__match-reasons {
 		flex: 0 0 auto;
@@ -126,7 +126,7 @@
 		}
 	}
 
-	.domain-registration-suggestion__progress-bar {
+	.domain-registration-suggestion__badges {
 		align-self: flex-start;
 		align-items: center;
 		display: flex;
@@ -161,7 +161,7 @@
 	}
 
 	&.is-unavailable {
-		.domain-registration-suggestion__progress-bar,
+		.domain-registration-suggestion__badges,
 		.domain-registration-suggestion__match-reasons {
 			display: none;
 		}

@@ -336,7 +336,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		}
 
 		if ( badges.length > 0 ) {
-			return <div className="domain-registration-suggestion__progress-bar">{ badges }</div>;
+			return <div className="domain-registration-suggestion__badges">{ badges }</div>;
 		}
 	}
 
