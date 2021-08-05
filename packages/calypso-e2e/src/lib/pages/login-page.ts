@@ -28,9 +28,10 @@ export class LoginPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	private async pageSettled(): Promise< void > {
-		await this.page.waitForLoadState( 'load' );
-		// The login container can fade in or shift, so wait for that to complete.
+		// Needs to be `networkidle`, otherwise switching accounts will fail.
+		await this.page.waitForLoadState( 'networkidle' );
 		const container = await this.page.waitForSelector( selectors.loginContainer );
+		// The login container can fade in or shift, so wait for that to complete.
 		await container.waitForElementState( 'stable' );
 	}
 
