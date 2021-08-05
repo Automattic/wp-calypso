@@ -1,6 +1,55 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
+.register-domain-step:not( .register-domain-step__signup ) {
+	display: block;
+	position: relative;
+	margin: 0 auto 10px;
+	padding: 24px;
+	box-sizing: border-box;
+	background: var( --color-surface );
+	box-shadow: 0 0 0 1px var( --color-border-subtle );
+
+	.card {
+		background: none;
+		box-shadow: none;
+		border-bottom: 1px solid var( --color-border-subtle );
+		padding-left: 0;
+		padding-right: 0;
+	}
+
+	.domain-search-results__domain-available-notice,
+	.search-component {
+		border-bottom: none;
+	}
+
+	.domain-search-results__domain-available-notice {
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+
+	.search-component {
+		border: 1px solid var( --color-border-subtle );
+		border-radius: 4px; /* stylelint-disable-line */
+	}
+
+	.search-component.is-open {
+		border: 1px solid #a7aaad;
+		border-radius: 4px; /* stylelint-disable-line */
+		height: 48px;
+	}
+
+	.search-component.is-open.has-focus {
+		border-color: #646970;
+		background: var( --color-surface );
+		box-shadow: none;
+
+		.search-component__input {
+			background: var( --color-surface );
+		}
+	}
+}
+
 .register-domain-step__search {
 	padding-bottom: 12px;
 
@@ -25,6 +74,7 @@
 		padding: 0;
 		display: flex;
 		align-items: center;
+		border-bottom: none;
 	}
 
 	.search {

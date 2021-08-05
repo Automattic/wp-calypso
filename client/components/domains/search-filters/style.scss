@@ -5,12 +5,10 @@
 	align-items: center;
 	height: 51px; // same as .search
 	z-index: z-index( 'root', '.search' );
-	/*!rtl:ignore*/
-	border-left: 1px solid var( --color-neutral-10 );
+	margin-left: 16px;
 
 	.button {
 		align-items: center;
-		border-radius: 0 3px 3px 0; /* stylelint-disable-line */
 		display: flex;
 		font-weight: normal;
 		height: 100%;
@@ -24,11 +22,15 @@
 			min-width: 120px;
 		}
 
+		background-color: var( --studio-white );
+
+		border: 1px solid var( --color-neutral-20 );
+		border-radius: 4px; /* stylelint-disable-line */
+
 		&.is-borderless {
 			&:hover,
 			&:focus {
-				border-color: transparent;
-				box-shadow: 0 0 0 3px var( --color-accent-light ), -1px 0 0 3px var( --color-accent-light );
+				border-color: var( --color-neutral );
 			}
 		}
 
