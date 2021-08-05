@@ -27,8 +27,9 @@ export class LoginPage {
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
-	async waitUntilLoaded(): Promise< void > {
-		await this.page.waitForLoadState( 'networkidle' );
+	private async pageSettled(): Promise< void > {
+		await this.page.waitForLoadState( 'load' );
+		// The login container can fade in or shift, so wait for that to complete.
 		const container = await this.page.waitForSelector( selectors.loginContainer );
 		await container.waitForElementState( 'stable' );
 	}
@@ -42,7 +43,7 @@ export class LoginPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async login( { username, password }: { username: string; password: string } ): Promise< void > {
-		await this.waitUntilLoaded();
+		await this.pageSettled();
 
 		// By default, log out of the existing account (even if test steps end up logging back in).
 		const alreadyLoggedIn = await this.page.$( selectors.changeAccountButton );

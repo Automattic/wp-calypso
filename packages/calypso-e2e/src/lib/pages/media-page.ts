@@ -44,15 +44,6 @@ export class MediaPage {
 	}
 
 	/**
-	 * Initialization steps.
-	 *
-	 * @returns {Promise<void>} No return value.
-	 */
-	async waitUntilLoaded(): Promise< void > {
-		await this.page.waitForLoadState( 'domcontentloaded' );
-	}
-
-	/**
 	 * Given a 1-indexed number `n`, click and select the nth item in the media gallery.
 	 *
 	 * Note that if the media gallery has been filtered (eg. Images only), this method
@@ -83,13 +74,14 @@ export class MediaPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickTab( name: 'All' | 'Images' | 'Documents' | 'Videos' | 'Audio' ): Promise< void > {
-		await this.waitUntilLoaded();
-
 		const navTabs = await this.page.waitForSelector( selectors.navTabs );
 		const gallery = await this.page.waitForSelector( selectors.gallery );
+
+		// Similar to Marketing Page, in the mobile viewport this is compressed down to a pseudo-dropdown.
 		const isDropdown = await navTabs
 			.getAttribute( 'class' )
 			.then( ( value ) => value?.includes( 'is-dropdown' ) );
+
 		if ( isDropdown ) {
 			// Mobile view - navtabs become a dropdown.
 			await navTabs.click();
@@ -98,6 +90,7 @@ export class MediaPage {
 			// Desktop view - navtabs are constantly visible tabs.
 			await this.page.click( `${ selectors.navTabs } >> text=${ name }` );
 		}
+
 		// Wait for all placeholders to disappear.
 		// Alternatively, waiting for `networkidle` will achieve the same objective
 		// at the cost of much longer resolving time (~20s).
@@ -145,11 +138,10 @@ export class MediaPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async upload( fullPath: string ): Promise< ElementHandle > {
-		await this.waitUntilLoaded();
-
 		const filename = path.basename( fullPath );
 		const itemSelector = `figure[title="${ filename }"]`;
 
+		await this.page.waitForSelector( selectors.fileInput );
 		// Simulate the action of user selecting a file then clicking confirm.
 		await this.page.setInputFiles( selectors.fileInput, fullPath );
 

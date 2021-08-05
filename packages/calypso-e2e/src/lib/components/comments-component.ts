@@ -28,15 +28,6 @@ export class CommentsComponent {
 	}
 
 	/**
-	 * Initialization steps.
-	 *
-	 * @returns {Promise<void>} No return value.
-	 */
-	async waitUntilLoaded(): Promise< void > {
-		await this.page.waitForLoadState( 'load' );
-	}
-
-	/**
 	 * Fills and posts a comment in the post's comment section.
 	 *
 	 * @param {string} comment Text to be entered as a comment.
@@ -79,7 +70,7 @@ export class CommentsComponent {
 	async _click( selector: string | number ): Promise< ElementHandle > {
 		let commentToLike!: ElementHandle;
 
-		await this.waitUntilLoaded();
+		await this.page.waitForLoadState( 'load' );
 
 		// Retrieve the nth comment on the page.
 		if ( typeof selector === 'number' ) {

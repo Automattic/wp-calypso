@@ -39,7 +39,7 @@ export class ThemesPage {
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
-	async waitUntilLoaded(): Promise< void > {
+	private async pageSettled(): Promise< void > {
 		await Promise.all( [
 			this.page.waitForSelector( selectors.spinner, { state: 'hidden' } ),
 			this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } ),
@@ -53,7 +53,7 @@ export class ThemesPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async filterThemes( type: 'All' | 'Free' | 'Premium' ): Promise< void > {
-		await this.waitUntilLoaded();
+		await this.pageSettled();
 
 		const selector = `a[role="radio"]:has-text("${ type }")`;
 		await this.page.click( selector );
@@ -71,7 +71,7 @@ export class ThemesPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async search( keyword: string ): Promise< void > {
-		await this.waitUntilLoaded();
+		await this.pageSettled();
 
 		const searchInput = await this.page.waitForSelector( selectors.searchInput );
 		await Promise.all( [ this.page.waitForNavigation(), searchInput.fill( keyword ) ] );

@@ -14,13 +14,4 @@ export class SettingsPage {
 	constructor( page: Page ) {
 		this.page = page;
 	}
-
-	/**
-	 * Initialization steps.
-	 *
-	 * @returns {Promise<void>} No return value.
-	 */
-	async waitUntilLoaded(): Promise< void > {
-		await this.page.waitForLoadState( 'load' );
-	}
 }

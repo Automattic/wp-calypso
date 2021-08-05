@@ -29,24 +29,15 @@ export class MarketingPage {
 	}
 
 	/**
-	 * Initialization steps.
-	 *
-	 * @returns {Promise<void>} No return value.
-	 */
-	async waitUntilLoaded(): Promise< void > {
-		await this.page.waitForLoadState( 'load' );
-	}
-
-	/**
 	 * Given a string, clicks on the tab matching the string at top of the page.
 	 *
 	 * @param {string} name Name of the tab to click on the top of the page.
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickTabItem( name: string ): Promise< void > {
-		await this.waitUntilLoaded();
-
 		const navTabs = await this.page.waitForSelector( selectors.navTabs );
+
+		// When in mobile viewport, the tab items are changed to a pseudo-dropdown.
 		const isDropdown = await navTabs
 			.getAttribute( 'class' )
 			.then( ( value ) => value?.includes( 'is-dropdown' ) );
@@ -54,7 +45,7 @@ export class MarketingPage {
 
 		if ( isDropdown ) {
 			await navTabs.click();
-			await this.page.click( `${ selectors.navTabsDropdownOption } >> text=${ name }` );
+			await this.page.click( `${ selectors.navTabsDropdownOption } >> text=${ sanitizedName }` );
 		} else {
 			await this.page.click( `text=${ sanitizedName }` );
 		}
