@@ -11,7 +11,7 @@ const FAILED_FILE = 'file://' + assets.getPath( FAIL_TO_LOAD_FILE );
 const NETWORK_FAILED_FILE = 'file://' + assets.getPath( 'network-failed.html' );
 
 // Error codes we might get in the course of using the app and should not result in an error page
-// Full list of error codes here: https://code.google.com/p/chromium/codesearch#chromium/src/net/base/net_error_list.h
+// Full list of error codes here: https://source.chromium.org/chromium/chromium/src/+/main:net/base/net_error_list.h
 const ERRORS_TO_IGNORE = [
 	-3, // ABORTED
 	-27, // BLOCKED_BY_RESPONSE
