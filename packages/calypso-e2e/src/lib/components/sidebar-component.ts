@@ -106,7 +106,7 @@ export class SidebarComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async _openMobileSidebar(): Promise< void > {
-		const navbarComponent = await NavbarComponent.Expect( this.page );
+		const navbarComponent = new NavbarComponent( this.page );
 		await navbarComponent.clickMySites();
 		// `focus-sidebar` attribute is added once the sidebar is opened and focused in mobile view.
 		const layoutElement = await this.page.waitForSelector( `${ selectors.layout }.focus-sidebar` );

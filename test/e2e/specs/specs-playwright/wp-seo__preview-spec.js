@@ -25,7 +25,7 @@ describe( DataHelper.createSuiteTitle( 'SEO Preview Page' ), function () {
 	} );
 
 	it( 'Click on Traffic tab', async function () {
-		marketingPage = await MarketingPage.Expect( page );
+		marketingPage = new MarketingPage( page );
 		await marketingPage.clickTabItem( 'Traffic' );
 	} );
 

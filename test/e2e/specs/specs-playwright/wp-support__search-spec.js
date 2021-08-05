@@ -31,7 +31,7 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 		} );
 
 		it( 'Open support popover', async function () {
-			supportComponent = await SupportComponent.Expect( page );
+			supportComponent = new SupportComponent( page );
 			await supportComponent.clickSupportButton();
 		} );
 
@@ -86,7 +86,7 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 		} );
 
 		it( 'Open support popover', async function () {
-			supportComponent = await SupportComponent.Expect( page );
+			supportComponent = new SupportComponent( page );
 			await supportComponent.clickSupportButton();
 		} );
 
