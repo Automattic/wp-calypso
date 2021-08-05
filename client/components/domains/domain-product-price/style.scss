@@ -64,7 +64,8 @@
 	}
 
 	.domain-product-price__free-price {
-		color: var( --color-success );
+		color: var( --studio-green-60 );
+		font-weight: 500; /* stylelint-disable-line scales/font-weights */
 	}
 
 	.domain-product-price__price,
@@ -79,7 +80,7 @@
 
 		.domain-product-price__price,
 		.domain-product-price__renewal-price {
-			font-size: 80%; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font-size: $font-body-small;
 			color: var( --color-text-subtle );
 		}
 

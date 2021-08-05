@@ -24,31 +24,22 @@ class DomainProductPrice extends React.Component {
 	};
 
 	renderFreeWithPlanText() {
-		const { isMappingProduct, showStrikedOutPrice, translate } = this.props;
+		const { isMappingProduct, translate } = this.props;
 
 		let message;
 		switch ( this.props.rule ) {
 			case 'FREE_WITH_PLAN':
-				message = translate( 'First year free with your plan' );
 				if ( isMappingProduct ) {
 					message = translate( 'Free with your plan' );
+				} else {
+					return this.renderReskinFreeWithPlanText();
 				}
 				break;
 			case 'INCLUDED_IN_HIGHER_PLAN':
-				if ( showStrikedOutPrice ) {
-					message = translate( 'Registration fee: {{del}}%(cost)s{{/del}} {{span}}Free{{/span}}', {
-						args: { cost: this.props.price },
-						components: {
-							del: <del />,
-							span: <span className="domain-product-price__free-price" />,
-						},
-					} );
-				} else {
-					message = translate( 'First year included in paid plans' );
-				}
-
 				if ( isMappingProduct ) {
 					message = translate( 'Included in paid plans' );
+				} else {
+					return this.renderReskinFreeWithPlanText();
 				}
 				break;
 			case 'UPGRADE_TO_HIGHER_PLAN_TO_BUY':
@@ -63,17 +54,7 @@ class DomainProductPrice extends React.Component {
 		if ( this.props.isMappingProduct ) {
 			return;
 		}
-
-		const priceText = this.props.showStrikedOutPrice
-			? this.props.translate( 'Renews at %(cost)s / year', {
-					args: { cost: this.props.price },
-			  } )
-			: this.props.translate( 'Renewal: %(cost)s {{small}}/year{{/small}}', {
-					args: { cost: this.props.price },
-					components: { small: <small /> },
-			  } );
-
-		return <div className="domain-product-price__price">{ priceText }</div>;
+		return this.renderReskinDomainPrice();
 	}
 
 	renderReskinFreeWithPlanText() {
