@@ -185,9 +185,6 @@ function getConfig( { siteTitle = '' } = {} ) {
 			invalidDescription: translate( 'Enter a valid Substack Newsletter URL (%(exampleUrl)s).', {
 				args: { exampleUrl: 'https://newsletter.substack.com/' },
 			} ),
-			validate: ( urlInput ) => {
-				return /^(https):\/\/[^ "]+$/.test( urlInput.trim() ) && urlInput.length <= 255;
-			},
 		},
 		weight: 0,
 	};
