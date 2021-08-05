@@ -2,6 +2,9 @@
 
 ## trunk
 
+- Droped `cache-loader`, as it is not compatible with Webpack 5.
+- Dropped `cacheDirectory` option in Sass loader
+
 ## 9.0.0
 
 - Added new, extensible TypeScript config for modern TS and JS packages in `./typescript/[tj]-package.json`

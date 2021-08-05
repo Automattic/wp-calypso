@@ -223,11 +223,6 @@ const webpackConfig = {
 					].filter( Boolean ),
 				},
 				prelude: `@import '${ path.join( __dirname, 'assets/stylesheets/shared/_utils.scss' ) }';`,
-				...( shouldUsePersistentCache
-					? {}
-					: {
-							cacheDirectory: path.resolve( cachePath, 'css-loader' ),
-					  } ),
 			} ),
 			{
 				include: path.join( __dirname, 'sections.js' ),
