@@ -15,6 +15,7 @@
 
 	.card-heading {
 		font-weight: 600;
+		margin: 0 0 4px;
 	}
 
 	.badge {
@@ -22,11 +23,13 @@
 		border-radius: 4px; /* stylelint-disable-line */
 		font-size: $font-body-extra-small;
 		font-weight: 500; /* stylelint-disable-line */
+		position: relative;
+		bottom: 2px;
 	}
 
 	&__message {
 		font-size: $font-body-small;
-		color: var( --studio-gray-60 );
+		color: var( --color-text-subtle );
 		max-width: 660px;
 	}
 
