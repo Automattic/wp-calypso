@@ -1,5 +1,5 @@
-const log = require( '../../lib/logger' )( 'desktop:external-links' );
 const assets = require( '../../lib/assets' );
+const log = require( '../../lib/logger' )( 'desktop:external-links' );
 
 let targetURL = '';
 
