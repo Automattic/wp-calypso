@@ -340,7 +340,6 @@ body.is-section-signup.is-white-signup {
 	}
 
 	.domain-registration-suggestion__progress-bar {
-		align-self: center;
 		margin-left: 0;
 		margin-top: 0;
 		margin-bottom: 10px;
@@ -352,6 +351,7 @@ body.is-section-signup.is-white-signup {
 		}
 
 		@include break-xlarge {
+			align-self: center;
 			margin-left: 12px;
 			margin-bottom: 0;
 		}
@@ -372,6 +372,10 @@ body.is-section-signup.is-white-signup {
 
 		@include break-large {
 			margin: 0;
+		}
+
+		button.info-popover {
+			padding: 0;
 		}
 
 		& .domain-suggestion__content-domain {
