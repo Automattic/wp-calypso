@@ -37,7 +37,7 @@ export default class HeaderCake extends Component {
 		return (
 			<Card className={ classes }>
 				<HeaderCakeBack
-					position="left"
+					iconPosition="left"
 					text={ backText }
 					href={ backHref }
 					onClick={ this.props.onClick }
@@ -49,11 +49,11 @@ export default class HeaderCake extends Component {
 
 				{ actionButton || (
 					<HeaderCakeBack
-						position={ actionIconPosition }
 						text={ actionText || backText }
 						href={ actionHref || backHref }
 						onClick={ actionOnClick }
 						icon={ actionIcon }
+						iconPosition={ actionIconPosition }
 						alwaysShowActionText={ alwaysShowActionText }
 						spacer={ ! actionOnClick }
 					/>
