@@ -78,10 +78,6 @@
 		width: 100%;
 	}
 
-	.domain-registration-suggestion__progress-bar {
-		align-self: initial;
-	}
-
 	.domain-registration-suggestion__title-wrapper {
 		margin-bottom: 8px;
 	}
@@ -131,10 +127,15 @@
 	}
 
 	.domain-registration-suggestion__progress-bar {
+		align-self: flex-start;
 		align-items: center;
 		display: flex;
 		font-size: $font-body-extra-small;
 		order: 2;
+
+		@include break-mobile {
+			align-self: center;
+		}
 
 		.progress-bar {
 			width: 25%;
