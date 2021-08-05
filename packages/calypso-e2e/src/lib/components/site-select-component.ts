@@ -22,6 +22,16 @@ export class SiteSelectComponent {
 	}
 
 	/**
+	 * Check if the Site Selector page is shown.
+	 *
+	 * @returns {Promise<boolean>} Whether the site selector is shown.
+	 */
+	async siteSelectorShown(): Promise< boolean > {
+		await this.page.waitForLoadState( 'load' );
+		return await this.page.isVisible( ':has-text("Select a site")' );
+	}
+
+	/**
 	 * Given a site URL, search for and select the matching site.
 	 *
 	 * This method will forcibly navigate the page to the /home endpoint with no site forming

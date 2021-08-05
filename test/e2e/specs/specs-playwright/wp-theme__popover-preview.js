@@ -26,16 +26,19 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 		await loginFlow.logIn();
 	} );
 
-	it( 'Select test site', async function () {
-		const siteSelectComponent = new SiteSelectComponent( page );
-		await siteSelectComponent.selectSite(
-			DataHelper.getAccountSiteURL( user, { protocol: false } )
-		);
-	} );
-
 	it( 'Navigate to Themes', async function () {
 		sidebarComponent = new SidebarComponent( page );
 		await sidebarComponent.gotoMenu( { item: 'Appearance', subitem: 'Themes' } );
+	} );
+
+	it( 'Select test site', async function () {
+		const siteSelectComponent = new SiteSelectComponent( page );
+
+		if ( await SiteSelectComponent.siteSelectorShown() ) {
+			await siteSelectComponent.selectSite(
+				DataHelper.getAccountSiteURL( user, { protocol: false } )
+			);
+		}
 	} );
 
 	it( `Search for free theme with keyword ${ themeName }`, async function () {
