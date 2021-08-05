@@ -3,6 +3,7 @@ const ipc = require( '../../lib/calypso-commands' );
 const Config = require( '../../lib/config' );
 const isCalypso = require( '../../lib/is-calypso' );
 const log = require( '../../lib/logger' )( 'desktop:navigation' );
+const session = require( '../../lib/session' );
 
 const webBase = Config.baseURL();
 
@@ -19,10 +20,14 @@ module.exports = function ( { view, window } ) {
 
 	ipcMain.on( 'home-button-clicked', () => {
 		log.info( `User clicked 'go home'...` );
-		if ( isCalypso( view ) ) {
-			ipc.showMySites( view );
+		if ( session.isLoggedIn() ) {
+			if ( isCalypso( view ) ) {
+				ipc.showMySites( view );
+			} else {
+				view.webContents.loadURL( webBase + 'stats/day' );
+			}
 		} else {
-			view.webContents.loadURL( webBase + 'stats/day' );
+			view.webContents.loadURL( Config.loginURL() );
 		}
 	} );
 
