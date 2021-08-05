@@ -89,15 +89,22 @@ body:
       label: Console and/or error logs
       description: If there are any console logs or errors, paste it below.
   - type: dropdown
-    id: impact
+    id: users-affected
     attributes:
-      label: Level of impact
-      description: Does it block a core feature? Does it impact more than one site?
+      label: Number of Users Impacted
+      description: How many users do you think might encounter this bug? Best guesses are fine!
       options:
-        - Low
-        - Normal
-        - High
-        - Blocker
+        - One user
+        - Some users (<50%)
+        - Most users (>50%)
+        - All users
+  - type: textarea
+    id: workarounds
+    attributes:
+      label: Available Workarounds
+      description: Are there any workarounds to this bug? How difficult are those workarounds?
+      placeholder: |
+        eg. There is alternative access to this setting in the sidebar, but it's not readily apparent.
   - type: dropdown
     id: reproducibility
     attributes:
