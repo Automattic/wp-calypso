@@ -1060,6 +1060,43 @@ Undocumented.prototype.saveSharingButtons = function ( siteId, buttons, fn ) {
 };
 
 /**
+ * Return a list of P2's connected services
+ *
+ * @param {number} hubId ???
+ * @param {Function} fn The callback function
+ * @returns {Promise} A Promise to resolve when complete.
+ */
+Undocumented.prototype.p2KeyringConnections = function ( hubId, fn ) {
+	debug( 'get: /p2/connections/items' );
+
+	return this.wpcom.req.get(
+		{ path: '/p2/connections/items', apiNamespace: 'wpcom/v2' },
+		{ hub_id: hubId },
+		fn
+	);
+};
+
+/**
+ * Deletes a single keyring P2 connection
+ *
+ * @param {number} keyringConnectionId The keyring connection ID to remove
+ * @param {number} hubId The hub Id.
+ * @param {Function} fn Method to invoke when request is complete
+ */
+Undocumented.prototype.deleteP2KeyringConnection = function ( keyringConnectionId, hubId, fn ) {
+	debug( 'delete: /p2/connections/items/:keyring_connection_id' );
+	return this.wpcom.req.get(
+		{
+			path: '/p2/connections/items/' + keyringConnectionId,
+			apiNamespace: 'wpcom/v2',
+			method: 'DELETE',
+		},
+		{ hub_id: hubId },
+		fn
+	);
+};
+
+/**
  * Return a list of user's connected services
  *
  * @param {*} forceExternalUsersRefetch ???

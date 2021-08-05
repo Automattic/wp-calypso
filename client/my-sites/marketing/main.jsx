@@ -25,6 +25,7 @@ import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { FEATURE_NO_ADS } from '@automattic/calypso-products';
+import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 
 /**
  * Style Dependencies
@@ -40,12 +41,13 @@ export const Sharing = ( {
 	showBusinessTools,
 	siteId,
 	isJetpack,
+	isP2Hub,
 	isVip,
 	siteSlug,
 	translate,
 } ) => {
 	const pathSuffix = siteSlug ? '/' + siteSlug : '';
-	const filters = [];
+	let filters = [];
 
 	filters.push( {
 		id: 'marketing-tools',
@@ -65,12 +67,13 @@ export const Sharing = ( {
 
 	// Include Connections link if all sites are selected. Otherwise,
 	// verify that the required Jetpack module is active
+	const connectionsFilter = {
+		id: 'sharing-connections',
+		route: '/marketing/connections' + pathSuffix,
+		title: translate( 'Connections' ),
+	};
 	if ( showConnections ) {
-		filters.push( {
-			id: 'sharing-connections',
-			route: '/marketing/connections' + pathSuffix,
-			title: translate( 'Connections' ),
-		} );
+		filters.push( connectionsFilter );
 	}
 
 	// Include Sharing Buttons link if a site is selected and the
@@ -93,20 +96,29 @@ export const Sharing = ( {
 		} );
 	}
 
+	// For p2 hub sites show only connections tab
+	let titleHeader = translate( 'Marketing and Integrations' );
+	let description = translate(
+		'Explore tools to build your audience, market your site, and engage your visitors.'
+	);
+	if ( isP2Hub ) {
+		filters = [ connectionsFilter ];
+		titleHeader = translate( 'Integrations' );
+		description = translate( 'Explore tools to connect to your P2.' );
+	}
+
 	const selected = find( filters, { route: pathname } );
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<Main wideLayout className="sharing">
-			<DocumentHead title={ translate( 'Marketing and Integrations' ) } />
+			<DocumentHead title={ titleHeader } />
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 			<SidebarNavigation />
 			<FormattedHeader
 				brandFont
 				className="marketing__page-heading"
-				headerText={ translate( 'Marketing and Integrations' ) }
-				subHeaderText={ translate(
-					'Explore tools to build your audience, market your site, and engage your visitors.'
-				) }
+				headerText={ titleHeader }
+				subHeaderText={ description }
 				align="left"
 			/>
 			{ filters.length > 0 && (
@@ -156,6 +168,7 @@ export default connect( ( state ) => {
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 
 	return {
+		isP2Hub: isSiteP2Hub( state, siteId ),
 		showButtons: siteId && canManageOptions,
 		showConnections: !! siteId,
 		showTraffic: canManageOptions && !! siteId,

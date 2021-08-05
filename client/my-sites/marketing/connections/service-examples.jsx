@@ -37,6 +37,7 @@ const SERVICES_WITH_EXAMPLES = [
 	'twitter',
 	'google_photos',
 	'mailchimp',
+	'slack',
 ];
 
 class SharingServiceExamples extends Component {
@@ -284,6 +285,20 @@ class SharingServiceExamples extends Component {
 						},
 					}
 				),
+			},
+		];
+	}
+
+	slack() {
+		return [
+			{
+				image: {
+					src: '/calypso/images/sharing/slack-screenshot.png',
+					alt: this.props.translate( 'Get slack notifications on new P2 posts.', {
+						textOnly: true,
+					} ),
+				},
+				label: this.props.translate( 'Get slack notifications on new P2 posts.' ),
 			},
 		];
 	}

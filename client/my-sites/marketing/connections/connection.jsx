@@ -51,6 +51,7 @@ class SharingConnection extends Component {
 		userId: 0,
 		defaultServiceIcon: {
 			google_my_business: 'institution',
+			slack: 'link',
 		},
 	};
 
