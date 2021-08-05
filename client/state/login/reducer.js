@@ -84,6 +84,8 @@ export const redirectTo = combineReducers( {
 				const { path, query } = action;
 				if ( startsWith( path, '/log-in' ) ) {
 					return query.redirect_to || state;
+				} else if ( startsWith( path, '/start/account' ) ) {
+					return query.redirect_to || state;
 				} else if ( '/jetpack/connect/authorize' === path ) {
 					return addQueryArgs( query, path );
 				}

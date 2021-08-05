@@ -138,6 +138,7 @@ export function generateSteps( {
 				'username',
 				'marketing_price_group',
 				'plans_reorder_abtest_variation',
+				'redirect',
 			],
 			optionalDependencies: [ 'plans_reorder_abtest_variation' ],
 			props: {
