@@ -68,6 +68,14 @@
 		font-weight: 500; /* stylelint-disable-line scales/font-weights */
 	}
 
+	.domain-product-price__price {
+		font-weight: 500; /* stylelint-disable-line scales/font-weights */
+
+		small {
+			font-size: $font-body-small;
+		}
+	}
+
 	.domain-product-price__price,
 	.domain-product-price__renewal-price {
 		margin: auto 0;
