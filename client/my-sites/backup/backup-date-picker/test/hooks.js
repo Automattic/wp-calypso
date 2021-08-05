@@ -126,4 +126,26 @@ describe( 'useCanGoToDate', () => {
 
 		expect( canGoToDate( theUnixEpoch ) ).toEqual( true );
 	} );
+
+	test( 'Allows backward navigation to one day past the retention period', () => {
+		const today = moment().startOf( 'day' );
+
+		useIsDateBeyondRetentionPeriod.mockImplementation( () => ( date ) => date.isBefore( today ) );
+		const canGoToDate = useCanGoToDate( 0, today );
+
+		const yesterday = moment( today ).subtract( 1, 'day' );
+		expect( canGoToDate( yesterday ) ).toEqual( true );
+	} );
+
+	test( 'Disallows backward navigation to >1 day past the retention period', () => {
+		const today = moment().startOf( 'day' );
+
+		useIsDateBeyondRetentionPeriod.mockImplementation( () => ( date ) =>
+			date.isSameOrBefore( today )
+		);
+		const canGoToDate = useCanGoToDate( 0, today );
+
+		const yesterday = moment( today ).subtract( 1, 'day' );
+		expect( canGoToDate( yesterday ) ).toEqual( false );
+	} );
 } );
