@@ -108,8 +108,8 @@ export const getProgressStepList = ( mode, stepsDefinition ) => {
 		)
 	);
 
-	let [ , step ] = Object.entries( modeSteps ).find(
-		( [ , pageDefinition ] ) => pageDefinition.step === stepType.START
+	let step = Object.values( modeSteps ).find(
+		( pageDefinition ) => pageDefinition.step === stepType.START
 	);
 
 	const stepList = [];
