@@ -226,9 +226,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		const {
 			isFeatured,
 			showHstsNotice,
-			productSaleCost,
-			premiumDomain,
-			suggestion: { domain_name: domain, is_premium: isPremium },
+			suggestion: { domain_name: domain },
 			translate,
 		} = this.props;
 
@@ -242,10 +240,6 @@ class DomainRegistrationSuggestion extends React.Component {
 		let title = isAvailable ? translate( '%s is available!', { args: domain } ) : domain;
 		title = this.renderDomainParts( domain );
 
-		const paidDomain = isPaidDomain( this.getPriceRule() );
-		const saleBadgeText = translate( 'Sale', {
-			comment: 'Shown next to a domain that has a special discounted sale price',
-		} );
 		const infoPopoverSize = isFeatured ? 22 : 18;
 
 		const titleWrapperClassName = classNames( 'domain-registration-suggestion__title-wrapper', {
@@ -257,10 +251,6 @@ class DomainRegistrationSuggestion extends React.Component {
 			<div className={ titleWrapperClassName }>
 				<h3 className="domain-registration-suggestion__title">{ title }</h3>
 				{ this.renderBadges() }
-				{ isPremium && (
-					<PremiumBadge restrictedPremium={ premiumDomain?.is_price_limit_exceeded } />
-				) }
-				{ productSaleCost && paidDomain && <Badge>{ saleBadgeText }</Badge> }
 				{ showHstsNotice && (
 					<InfoPopover
 						className="domain-registration-suggestion__hsts-tooltip"
@@ -298,35 +288,34 @@ class DomainRegistrationSuggestion extends React.Component {
 
 	renderBadges() {
 		const {
-			suggestion: { isRecommended, isBestAlternative },
+			suggestion: { isRecommended, isBestAlternative, is_premium: isPremium },
 			translate,
 			isFeatured,
+			productSaleCost,
+			premiumDomain,
 		} = this.props;
+		const badges = [];
 
-		if ( ! isFeatured ) {
-			return null;
+		if ( isRecommended && isFeatured ) {
+			badges.push( <Badge type="info-green">{ translate( 'Recommended' ) }</Badge> );
+		} else if ( isBestAlternative && isFeatured ) {
+			badges.push( <Badge type="info-purple">{ translate( 'Best Alternative' ) }</Badge> );
 		}
 
-		let title;
-		if ( isRecommended ) {
-			title = translate( 'Recommended' );
-		}
-
-		if ( isBestAlternative ) {
-			title = translate( 'Best Alternative' );
-		}
-
-		if ( title ) {
-			const badgeClassName = classNames( '', {
-				'info-green': isRecommended,
-				'info-purple': isBestAlternative,
+		const paidDomain = isPaidDomain( this.getPriceRule() );
+		if ( productSaleCost && paidDomain ) {
+			const saleBadgeText = translate( 'Sale', {
+				comment: 'Shown next to a domain that has a special discounted sale price',
 			} );
+			badges.push( <Badge>{ saleBadgeText }</Badge> );
+		}
 
-			return (
-				<div className="domain-registration-suggestion__progress-bar">
-					<Badge type={ badgeClassName }>{ title }</Badge>
-				</div>
-			);
+		if ( isPremium ) {
+			badges.push( <PremiumBadge restrictedPremium={ premiumDomain?.is_price_limit_exceeded } /> );
+		}
+
+		if ( badges.length > 0 ) {
+			return <div className="domain-registration-suggestion__progress-bar">{ badges }</div>;
 		}
 	}
 
