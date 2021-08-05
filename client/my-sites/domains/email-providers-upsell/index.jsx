@@ -9,6 +9,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { domainAddNew } from 'calypso/my-sites/domains/paths';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -23,12 +24,16 @@ export default function EmailProvidersUpsell( { domain } ) {
 		<>
 			<CalypsoShoppingCartProvider>
 				<EmailProvidersComparison
-					selectedDomainName={ domain }
-					isEmailForwardingCardShown={ false }
-					isEmailHeaderShown={ false }
+					backPath={ domainAddNew( selectedSiteSlug ) }
 					headerTitle={ ( domainName ) =>
 						translate( 'Register %(domainName)s', { args: { domainName }, comment } )
 					}
+					isEmailHeaderShown={ false }
+					isEmailForwardingCardShown={ false }
+					isSkippable
+					onSkipClick={ () => {
+						page( `/checkout/${ selectedSiteSlug }` );
+					} }
 					promoHeaderTitle={ ( domainName ) =>
 						translate( 'Add a professional email address to %(domainName)s', {
 							args: {
@@ -48,10 +53,7 @@ export default function EmailProvidersUpsell( { domain } ) {
 							}
 						)
 					}
-					isSkippable
-					onSkipClick={ () => {
-						page( `/checkout/${ selectedSiteSlug }` );
-					} }
+					selectedDomainName={ domain }
 				/>
 			</CalypsoShoppingCartProvider>
 		</>
