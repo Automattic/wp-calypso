@@ -68,7 +68,7 @@ const Task = ( {
 	};
 
 	const skipTask = ( reminder = null ) => {
-		// setIsLoading( true );
+		setIsLoading( true );
 		setSkipOptionsVisible( false );
 
 		skipCard( taskId, reminder );
