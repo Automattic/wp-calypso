@@ -47,8 +47,8 @@ function EmptyDomainsListCard( {
 	let contentType = 'no_plan';
 
 	if ( siteHasPaidPlan && ! hasDomainCredit ) {
-		title = translate( 'Get your domain' );
-		line = translate( 'Search for a domain or transfer one for your site.' );
+		title = translate( 'Add your domain' );
+		line = translate( 'You have no domains added to this site.' );
 		action = translate( 'Search for a domain' );
 		actionURL = domainAddNew( selectedSite.slug );
 		secondaryAction = translate( 'I have a domain' );
