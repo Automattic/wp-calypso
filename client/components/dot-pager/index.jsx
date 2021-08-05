@@ -68,6 +68,7 @@ export const DotPager = ( {
 	hasDynamicHeight = false,
 	children,
 	className,
+	onSetCurrentPage,
 	...props
 } ) => {
 	const [ currentPage, setCurrentPage ] = useState( 0 );
@@ -75,6 +76,10 @@ export const DotPager = ( {
 	const pagesRef = useRef();
 	const [ resizeObserver, sizes ] = useResizeObserver();
 	const numPages = Children.count( children );
+
+	useEffect( () => {
+		onSetCurrentPage && onSetCurrentPage( currentPage );
+	}, [ currentPage, onSetCurrentPage ] );
 
 	useEffect( () => {
 		if ( ! hasDynamicHeight ) {

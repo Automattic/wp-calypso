@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import DotPager from 'calypso/components/dot-pager';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
@@ -68,12 +68,20 @@ const cardComponents = {
 	[ TASK_VERIFY_EMAIL ]: VerifyEmail,
 };
 
-const Primary = ( { cards, trackCards } ) => {
+const Primary = ( { cards, trackCard } ) => {
+	const [ currentPage, setCurrentPage ] = useState( 0 );
+	const [ viewedCards, setViewedCards ] = useState( {} );
+
 	useEffect( () => {
-		if ( cards && cards.length ) {
-			trackCards( cards );
+		const currentCard = cards && cards[ currentPage ];
+		if ( ! viewedCards[ currentCard ] ) {
+			setViewedCards( {
+				...viewedCards,
+				[ currentCard ]: true,
+			} );
+			trackCard( currentCard );
 		}
-	}, [ cards, trackCards ] );
+	}, [ currentPage, cards.length, trackCard ] );
 
 	if ( ! cards || ! cards.length ) {
 		return null;
@@ -88,6 +96,7 @@ const Primary = ( { cards, trackCards } ) => {
 			} ) }
 			showControlLabels="true"
 			hasDynamicHeight
+			onSetCurrentPage={ setCurrentPage }
 		>
 			{ cards.map(
 				( card, index ) =>
@@ -102,17 +111,13 @@ const Primary = ( { cards, trackCards } ) => {
 	);
 };
 
-const trackCardImpressions = ( cards ) => {
-	const analyticsEvents = cards.reduce( ( events, card ) => {
-		return [
-			...events,
-			recordTracksEvent( 'calypso_customer_home_card_impression', { card } ),
-			bumpStat( 'calypso_customer_home_card_impression', card ),
-		];
-	}, [] );
-	return composeAnalytics( ...analyticsEvents );
+const trackCardImpression = ( card ) => {
+	return composeAnalytics(
+		recordTracksEvent( 'calypso_customer_home_card_impression', { card } ),
+		bumpStat( 'calypso_customer_home_card_impression', card )
+	);
 };
 
 export default withPerformanceTrackerStop(
-	connect( null, { trackCards: trackCardImpressions } )( Primary )
+	connect( null, { trackCard: trackCardImpression } )( Primary )
 );
