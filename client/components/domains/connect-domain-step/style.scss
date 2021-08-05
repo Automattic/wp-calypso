@@ -3,6 +3,10 @@
 @import '@wordpress/base-styles/mixins';
 
 .connect-domain-step {
+	&.card {
+		margin-bottom: 16px;
+	}
+
 	& &__heading {
 		font-size: $font-title-medium;
 		font-weight: 500; /* stylelint-disable-line */
@@ -327,7 +331,11 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		padding: 56px;
+		padding: 40px 16px;
+
+		@include break-mobile {
+			padding: 56px;
+		}
 
 		&-illustration {
 			margin-bottom: 24px;
@@ -368,6 +376,6 @@ button.action_buttons__button.action-buttons__back.connect-domain-step__go-back 
 		margin: 0 0 18px;
 	}
 
-	margin: 16px;
+	margin: 16px 0 0 16px;
 	text-decoration: none;
 }
