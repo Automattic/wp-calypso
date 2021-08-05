@@ -45,17 +45,17 @@ function useSkipCurrentViewMutation( siteId: number ): Result {
 				const cachedData: Record< string, unknown > | undefined = queryClient.getQueryData(
 					getCacheKey( siteId )
 				);
+
+				if ( ! cachedData?.primary?.indexOf || cachedData.primary.indexOf( card ) === -1 ) {
+					return;
+				}
+
 				const optimisticUpdate = {
 					...cachedData,
-					primary: cachedData.primary.filter( ( c ) => c !== card ),
+					primary: cachedData.primary.filter( ( v: string ) => v !== card ),
 				};
 
 				queryClient.setQueryData( getCacheKey( siteId ), optimisticUpdate );
-			},
-			onError(/* err, _data, cachedData */) {
-				// We can revert the change if there's an error here, but do
-				// we actually want to?
-				// queryClient.setQueryData( getCacheKey( siteId ), cachedData );
 			},
 			onSuccess( data ) {
 				queryClient.setQueryData( getCacheKey( siteId ), data );
