@@ -101,10 +101,14 @@
 			@include break-mobile {
 				font-size: $font-title-medium;
 			}
-		}
 
-		.domain-registration-suggestion__domain-title-tld {
-			font-weight: normal;
+			.domain-registration-suggestion__domain-title-name {
+				color: var( --studio-gray-90 );
+			}
+
+			.domain-registration-suggestion__domain-title-tld {
+				font-weight: normal;
+			}
 		}
 	}
 
