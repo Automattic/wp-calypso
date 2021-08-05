@@ -224,7 +224,6 @@ class DomainRegistrationSuggestion extends React.Component {
 
 	renderDomain() {
 		const {
-			isFeatured,
 			showHstsNotice,
 			suggestion: { domain_name: domain },
 			translate,
@@ -240,8 +239,6 @@ class DomainRegistrationSuggestion extends React.Component {
 		let title = isAvailable ? translate( '%s is available!', { args: domain } ) : domain;
 		title = this.renderDomainParts( domain );
 
-		const infoPopoverSize = isFeatured ? 22 : 18;
-
 		const titleWrapperClassName = classNames( 'domain-registration-suggestion__title-wrapper', {
 			'domain-registration-suggestion__title-domain':
 				this.props.showStrikedOutPrice && ! this.props.isFeatured,
@@ -249,40 +246,52 @@ class DomainRegistrationSuggestion extends React.Component {
 
 		return (
 			<div className={ titleWrapperClassName }>
-				<h3 className="domain-registration-suggestion__title">{ title }</h3>
+				<h3 className="domain-registration-suggestion__title">
+					{ title } { showHstsNotice && this.renderInfoBubble() }
+				</h3>
 				{ this.renderBadges() }
-				{ showHstsNotice && (
-					<InfoPopover
-						className="domain-registration-suggestion__hsts-tooltip"
-						iconSize={ infoPopoverSize }
-						position={ 'right' }
-					>
-						{ translate(
-							'All domains ending in {{strong}}%(tld)s{{/strong}} require an SSL certificate ' +
-								'to host a website. When you host this domain at WordPress.com an SSL ' +
-								'certificate is included. {{a}}Learn more{{/a}}.',
-							{
-								args: {
-									tld: '.' + getTld( domain ),
-								},
-								components: {
-									a: (
-										<a
-											href={ HTTPS_SSL }
-											target="_blank"
-											rel="noopener noreferrer"
-											onClick={ ( event ) => {
-												event.stopPropagation();
-											} }
-										/>
-									),
-									strong: <strong />,
-								},
-							}
-						) }
-					</InfoPopover>
-				) }
 			</div>
+		);
+	}
+
+	renderInfoBubble() {
+		const {
+			isFeatured,
+			suggestion: { domain_name: domain },
+			translate,
+		} = this.props;
+
+		const infoPopoverSize = isFeatured ? 22 : 18;
+		return (
+			<InfoPopover
+				className="domain-registration-suggestion__hsts-tooltip"
+				iconSize={ infoPopoverSize }
+				position={ 'right' }
+			>
+				{ translate(
+					'All domains ending in {{strong}}%(tld)s{{/strong}} require an SSL certificate ' +
+						'to host a website. When you host this domain at WordPress.com an SSL ' +
+						'certificate is included. {{a}}Learn more{{/a}}.',
+					{
+						args: {
+							tld: '.' + getTld( domain ),
+						},
+						components: {
+							a: (
+								<a
+									href={ HTTPS_SSL }
+									target="_blank"
+									rel="noopener noreferrer"
+									onClick={ ( event ) => {
+										event.stopPropagation();
+									} }
+								/>
+							),
+							strong: <strong />,
+						},
+					}
+				) }
+			</InfoPopover>
 		);
 	}
 
@@ -297,9 +306,17 @@ class DomainRegistrationSuggestion extends React.Component {
 		const badges = [];
 
 		if ( isRecommended && isFeatured ) {
-			badges.push( <Badge type="info-green">{ translate( 'Recommended' ) }</Badge> );
+			badges.push(
+				<Badge key="recommended" type="info-green">
+					{ translate( 'Recommended' ) }
+				</Badge>
+			);
 		} else if ( isBestAlternative && isFeatured ) {
-			badges.push( <Badge type="info-purple">{ translate( 'Best Alternative' ) }</Badge> );
+			badges.push(
+				<Badge key="best-alternative" type="info-purple">
+					{ translate( 'Best Alternative' ) }
+				</Badge>
+			);
 		}
 
 		const paidDomain = isPaidDomain( this.getPriceRule() );
@@ -307,11 +324,13 @@ class DomainRegistrationSuggestion extends React.Component {
 			const saleBadgeText = translate( 'Sale', {
 				comment: 'Shown next to a domain that has a special discounted sale price',
 			} );
-			badges.push( <Badge>{ saleBadgeText }</Badge> );
+			badges.push( <Badge key="sale">{ saleBadgeText }</Badge> );
 		}
 
 		if ( isPremium ) {
-			badges.push( <PremiumBadge restrictedPremium={ premiumDomain?.is_price_limit_exceeded } /> );
+			badges.push(
+				<PremiumBadge key="premium" restrictedPremium={ premiumDomain?.is_price_limit_exceeded } />
+			);
 		}
 
 		if ( badges.length > 0 ) {
