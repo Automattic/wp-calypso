@@ -34,7 +34,7 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 	it( 'Select test site', async function () {
 		const siteSelectComponent = new SiteSelectComponent( page );
 
-		if ( await SiteSelectComponent.siteSelectorShown() ) {
+		if ( await siteSelectComponent.siteSelectorShown() ) {
 			await siteSelectComponent.selectSite(
 				DataHelper.getAccountSiteURL( user, { protocol: false } )
 			);
