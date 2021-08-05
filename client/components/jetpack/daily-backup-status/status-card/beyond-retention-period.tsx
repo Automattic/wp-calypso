@@ -8,12 +8,13 @@ import { useDispatch, useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import getSiteActivityLogRetentionDays from 'calypso/state/selectors/get-site-activity-log-retention-days';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import Button from 'calypso/components/forms/form-button';
 
 /**
@@ -67,6 +68,8 @@ const BeyondRetentionPeriod: React.FC< OwnProps > = ( { selectedDate } ) => {
 		);
 	}, [ dispatch, siteId ] );
 
+	const siteSlug = useSelector( getSelectedSiteSlug );
+
 	return (
 		<div className="beyond-retention-period">
 			<div className="status-card__message-head">
@@ -90,7 +93,7 @@ const BeyondRetentionPeriod: React.FC< OwnProps > = ( { selectedDate } ) => {
 				</p>
 				<Button
 					className="status-card__button"
-					href={ '/pricing' }
+					href={ isJetpackCloud() ? `/pricing/${ siteSlug }` : `/plans/${ siteSlug }` }
 					onClick={ recordUpsellButtonClick }
 				>
 					{ translate( 'Upgrade storage' ) }
