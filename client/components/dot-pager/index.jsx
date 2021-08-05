@@ -80,6 +80,7 @@ export const DotPager = ( {
 	const [ pagesStyle, setPagesStyle ] = useState();
 	const pagesRef = useRef();
 	const [ resizeObserver, sizes ] = useResizeObserver();
+	const numPages = Children.count( children );
 
 	useEffect( () => {
 		if ( ! hasDynamicHeight ) {
@@ -91,10 +92,11 @@ export const DotPager = ( {
 		setPagesStyle( targetHeight ? { height: targetHeight } : undefined );
 	}, [ hasDynamicHeight, currentPage, sizes.width, setPagesStyle, children ] );
 
-	const numPages = Children.count( children );
-	if ( currentPage >= numPages ) {
-		setCurrentPage( numPages - 1 );
-	}
+	useEffect( () => {
+		if ( currentPage >= numPages ) {
+			setCurrentPage( numPages - 1 );
+		}
+	}, [ numPages ] );
 
 	return (
 		<div className={ className } { ...props }>
