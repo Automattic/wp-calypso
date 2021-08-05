@@ -1,11 +1,15 @@
 /**
  * External dependencies
  */
-import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
+
+/**
+ * Internal dependencies
+ */
+import isSuggestionLabel from './helpers';
 
 class SuggestionsList extends React.PureComponent {
 	static propTypes = {
@@ -86,12 +90,42 @@ class SuggestionsList extends React.PureComponent {
 		);
 	}
 
+	_removeEmptyLabelsFromSuggestions( suggestions ) {
+		const filteredSuggestions = [];
+		for ( let i = 0; i < suggestions.length; i++ ) {
+			const [ currentSuggestion, nextSuggestion ] = [ suggestions[ i ], suggestions?.[ i + 1 ] ];
+
+			if (
+				isSuggestionLabel( currentSuggestion ) &&
+				( ! nextSuggestion || isSuggestionLabel( nextSuggestion ) )
+			) {
+				continue;
+			}
+			filteredSuggestions.push( suggestions[ i ] );
+		}
+		return filteredSuggestions;
+	}
+
 	_renderSuggestions = () => {
-		return map( this.props.suggestions, ( suggestion, index ) => {
-			const match = this._computeSuggestionMatch( suggestion );
+		const filteredSuggestions = this._removeEmptyLabelsFromSuggestions( this.props.suggestions );
+
+		return filteredSuggestions.map( ( suggestion, index ) => {
+			const isLabel = isSuggestionLabel( suggestion );
+
 			const classes = classNames( 'token-field__suggestion', {
 				'is-selected': index === this.props.selectedIndex,
+				'is-label': isLabel,
 			} );
+
+			if ( isLabel ) {
+				return (
+					<li className={ classes } key={ `label_${ suggestion.label }` }>
+						{ suggestion.label }
+					</li>
+				);
+			}
+
+			const match = this._computeSuggestionMatch( suggestion );
 
 			return (
 				// eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
