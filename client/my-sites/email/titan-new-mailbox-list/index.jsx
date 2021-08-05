@@ -96,19 +96,13 @@ const TitanNewMailboxList = ( {
 
 					<div className="titan-new-mailbox-list__actions">
 						{ showAddAnotherMailboxButton && (
-							<Button
-								className="titan-new-mailbox-list__add-mailbox-button"
-								onClick={ () => onMailboxAdd( index ) }
-							>
+							<Button onClick={ () => onMailboxAdd( index ) }>
 								<Gridicon icon="plus" />
 								<span>{ translate( 'Add another mailbox' ) }</span>
 							</Button>
 						) }
 						{ index > 0 && (
-							<Button
-								className="titan-new-mailbox-list__add-mailbox-button"
-								onClick={ onMailboxRemove( mailboxes, mailbox.uuid ) }
-							>
+							<Button onClick={ onMailboxRemove( mailboxes, mailbox.uuid ) }>
 								<Gridicon icon="trash" />
 								<span>{ translate( 'Remove this mailbox' ) }</span>
 							</Button>
