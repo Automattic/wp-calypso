@@ -43,7 +43,7 @@ export default function ConnectDomainStepSuggestedStart( {
 					}
 				) }
 			</p>
-			<CardHeading className={ className + '__sub-heading' }>
+			<CardHeading tagName="h2" className={ className + '__sub-heading' }>
 				<MaterialIcon className={ className + '__sub-heading-icon' } size={ 24 } icon="timer" />
 				{ __( 'How long will it take?' ) }
 			</CardHeading>

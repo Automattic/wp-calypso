@@ -3,13 +3,14 @@
 @import '@wordpress/base-styles/mixins';
 
 .connect-domain-step {
-	&__heading {
+	& &__heading {
 		font-size: $font-title-medium;
 		font-weight: 500; /* stylelint-disable-line */
+		margin-top: 0;
 		margin-bottom: 18px;
 	}
 
-	&__sub-heading {
+	& &__sub-heading {
 		font-size: $font-title-small;
 		font-weight: 500; /* stylelint-disable-line */
 
@@ -21,8 +22,8 @@
 		}
 	}
 
-	&__text {
-		color: var( --studio-gray-60 );
+	& &__text {
+		color: var( --color-text );
 		max-width: 660px;
 	}
 
@@ -32,6 +33,7 @@
 		}
 
 		font-size: $font-body-small;
+		color: var( --color-text-subtle );
 		padding: 0 16px;
 
 		@include break-mobile {
@@ -41,10 +43,12 @@
 		&-icon {
 			position: relative;
 			bottom: -3px;
+			fill: var( --studio-gray-50 );
+			margin-right: 4px;
 		}
 	}
 
-	&__progress {
+	& &__progress {
 		margin-bottom: 26px;
 		display: flex;
 		flex-direction: column;
