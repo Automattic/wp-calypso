@@ -138,7 +138,11 @@ class DomainProductPrice extends React.Component {
 
 		return (
 			<div className={ className }>
-				<div className="domain-product-price__sale-price">{ salePrice }</div>
+				<div className="domain-product-price__sale-price">
+					{ translate( '%(salePrice)s for the first year', {
+						args: { salePrice },
+					} ) }
+				</div>
 				<div className="domain-product-price__renewal-price">
 					{ translate( 'Renews at: %(cost)s {{small}}/year{{/small}}', {
 						args: { cost: price },
