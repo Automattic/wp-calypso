@@ -166,8 +166,10 @@ class DomainRegistrationSuggestion extends React.Component {
 			buttonContent = translate( 'Unavailable', {
 				context: 'Domain suggestion is not available for registration',
 			} );
-		} else if ( pendingCheckSuggestion || this.props.isCartPendingUpdate ) {
+		} else if ( pendingCheckSuggestion?.domain_name === domain ) {
 			buttonStyles = { ...buttonStyles, busy: true, disabled: true };
+		} else if ( pendingCheckSuggestion || this.props.isCartPendingUpdate ) {
+			buttonStyles = { ...buttonStyles, disabled: true };
 		}
 		return {
 			buttonContent,
