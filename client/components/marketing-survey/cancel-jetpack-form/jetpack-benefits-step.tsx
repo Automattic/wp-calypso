@@ -47,7 +47,7 @@ const JetpackBenefitsStep: React.FC< Props > = ( props ) => {
 
 		if ( timeRemaining.months() >= 1 ) {
 			const timeRemainingNumber = timeRemaining.months();
-			const periodName = translate( 'month', 'months', { count: timeRemaining.months() } );
+			const periodName = translate( 'month', 'months', { count: timeRemainingNumber } );
 
 			return { timeRemainingNumber, periodName };
 		} else if ( timeRemaining.weeks() >= 1 ) {
@@ -117,17 +117,17 @@ const JetpackBenefitsStep: React.FC< Props > = ( props ) => {
 	const getCancelConsequenceByProduct = ( productSlug: string ) => {
 		if ( isJetpackScanSlug( productSlug ) ) {
 			return translate(
-				'Once you cancel your site will no longer have automatic protection from threats.'
+				'Once you cancel, your site will no longer have automatic protection from threats.'
 			);
 		} else if ( isJetpackBackupSlug( productSlug ) ) {
-			return translate( 'Once you cancel you will lose access to your site backups.' );
+			return translate( 'Once you cancel, you will lose access to your site backups.' );
 		} else if ( isJetpackSearch( productSlug ) ) {
 			return translate(
-				"Once you cancel you will no longer have Jetpack's enhanced search experience."
+				"Once you cancel, you will no longer have Jetpack's enhanced search experience."
 			);
 		}
 
-		return translate( 'Once you cancel you will lose access to the following:' );
+		return translate( 'Once you cancel, you will lose access to the following:' );
 	};
 
 	return (
