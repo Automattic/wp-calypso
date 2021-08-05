@@ -36,7 +36,12 @@ export default class HeaderCake extends Component {
 
 		return (
 			<Card className={ classes }>
-				<HeaderCakeBack text={ backText } href={ backHref } onClick={ this.props.onClick } />
+				<HeaderCakeBack
+					position="left"
+					text={ backText }
+					href={ backHref }
+					onClick={ this.props.onClick }
+				/>
 
 				<div className="header-cake__title" role="presentation" onClick={ this.props.onTitleClick }>
 					{ this.props.children }
