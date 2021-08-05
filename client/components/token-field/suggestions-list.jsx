@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
@@ -94,10 +93,11 @@ class SuggestionsList extends React.PureComponent {
 	_removeEmptyLabelsFromSuggestions( suggestions ) {
 		const filteredSuggestions = [];
 		for ( let i = 0; i < suggestions.length; i++ ) {
+			const [ currentSuggestion, nextSuggestion ] = [ suggestions[ i ], suggestions?.[ i + 1 ] ];
+
 			if (
-				isSuggestionLabel( suggestions[ i ] ) &&
-				( ( suggestions?.[ i + 1 ] && isSuggestionLabel( suggestions[ i + 1 ] ) ) ||
-					! suggestions?.[ i + 1 ] )
+				isSuggestionLabel( currentSuggestion ) &&
+				( ! nextSuggestion || isSuggestionLabel( nextSuggestion ) )
 			) {
 				continue;
 			}
@@ -109,7 +109,7 @@ class SuggestionsList extends React.PureComponent {
 	_renderSuggestions = () => {
 		const filteredSuggestions = this._removeEmptyLabelsFromSuggestions( this.props.suggestions );
 
-		return map( filteredSuggestions, ( suggestion, index ) => {
+		return filteredSuggestions.map( ( suggestion, index ) => {
 			const isLabel = isSuggestionLabel( suggestion );
 
 			const classes = classNames( 'token-field__suggestion', {
