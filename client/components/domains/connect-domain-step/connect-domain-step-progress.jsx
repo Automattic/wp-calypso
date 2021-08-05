@@ -35,6 +35,10 @@ export default function ConnectDomainStepProgress( { baseClassName, steps, curre
 						'completed-step': stepCompleted,
 					} );
 
+					const stepNameClasses = classNames( baseClassName + '__progress-step-name', {
+						'current-step': currentStepNumber === stepNumber,
+					} );
+
 					const stepNumberContent = stepCompleted ? (
 						<Gridicon
 							className={ baseClassName + '__progress-number-checkmark' }
@@ -48,7 +52,7 @@ export default function ConnectDomainStepProgress( { baseClassName, steps, curre
 					return (
 						<div className={ baseClassName + '__progress-step' } key={ 'step-' + stepNumber }>
 							<span className={ stepNumberClasses }>{ stepNumberContent }</span>
-							<span className={ baseClassName + '__progress-step-name' }>{ stepName }</span>
+							<span className={ stepNameClasses }>{ stepName }</span>
 						</div>
 					);
 				} )

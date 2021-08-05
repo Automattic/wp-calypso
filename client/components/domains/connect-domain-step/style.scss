@@ -49,9 +49,10 @@
 	}
 
 	& &__progress {
-		margin-bottom: 26px;
+		margin-bottom: 24px;
 		display: flex;
 		flex-direction: column;
+		padding-top: 6px;
 
 		@include break-mobile {
 			flex-direction: row;
@@ -89,6 +90,9 @@
 			width: 24px;
 			display: inline-block;
 			text-align: center;
+			font-size: $font-body-small;
+			color: var( --color-text-subtle );
+			box-sizing: border-box;
 			border-radius: 50%; /* stylelint-disable-line */
 			flex-shrink: 0;
 
@@ -106,14 +110,21 @@
 
 			&-checkmark {
 				position: relative;
-				bottom: -2px;
+				bottom: -3px;
 			}
 		}
 
 		&-step-name {
 			font-size: $font-body-small;
 			font-weight: 500; /* stylelint-disable-line */
+			color: var( --color-text-subtle );
 			margin-left: 8px;
+			position: relative;
+			bottom: -1px;
+
+			&.current-step {
+				color: initial;
+			}
 		}
 	}
 
