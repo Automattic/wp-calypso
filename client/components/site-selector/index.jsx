@@ -83,7 +83,7 @@ class SiteSelector extends Component {
 	};
 
 	state = {
-		displayMode: 'list',
+		displayMode: 'grid',
 		highlightedIndex: -1,
 		showSearch: false,
 		isKeyboardEngaged: false,
