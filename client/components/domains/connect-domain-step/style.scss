@@ -275,12 +275,15 @@
 
 		@include break-mobile {
 			flex-direction: row;
+			align-items: center;
 		}
 
 		.notice__action {
 			padding-left: 0;
+			padding-bottom: 0;
 
 			@include break-mobile {
+				padding-top: 0;
 				padding-left: initial;
 			}
 
