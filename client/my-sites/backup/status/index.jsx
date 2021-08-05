@@ -13,11 +13,8 @@ import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import BackupDelta from 'calypso/components/jetpack/backup-delta';
 import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
 import MostRecentStatus from 'calypso/components/jetpack/daily-backup-status';
-import {
-	useIsDateBeyondRetentionPeriod,
-	useDailyBackupStatus,
-	useRealtimeBackupStatus,
-} from './hooks';
+import { useIsDateBeyondRetentionPeriod } from '../hooks';
+import { useDailyBackupStatus, useRealtimeBackupStatus } from './hooks';
 
 /**
  * Style dependencies

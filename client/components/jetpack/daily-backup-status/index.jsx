@@ -11,7 +11,7 @@ import {
 	isSuccessfulRealtimeBackup,
 } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
-import { useIsDateBeyondRetentionPeriod } from 'calypso/my-sites/backup/status/hooks';
+import { useIsDateBeyondRetentionPeriod } from 'calypso/my-sites/backup/hooks';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import { getInProgressBackupForSite, siteHasRealtimeBackups } from 'calypso/state/rewind/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';

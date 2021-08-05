@@ -1,15 +1,12 @@
 /**
  * External dependencies
  */
-import { isEnabled } from '@automattic/calypso-config';
-import { useCallback, useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useMemo } from 'react';
 
 /**
  * Internal dependencies
  */
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { applySiteOffset } from 'calypso/lib/site/timezone';
 import {
 	DELTA_ACTIVITIES,
 	getDeltaActivities,
@@ -17,41 +14,7 @@ import {
 	isActivityBackup,
 	isSuccessfulRealtimeBackup,
 } from 'calypso/lib/jetpack/backup-utils';
-import getSiteActivityLogRetentionDays from 'calypso/state/selectors/get-site-activity-log-retention-days';
-import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
-import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import { useActivityLogs, useFirstMatchingBackupAttempt } from '../hooks';
-
-/**
- * A React hook that creates a callback to test whether or not a given date is
- * within a site's Backup retention period (if retention periods are enabled).
- *
- * @param {number|null} siteId The site whose retention period we'll be testing against.
- * @returns A callback that returns true if a given date is outside the site's retention period, and false otherwise.
- */
-export const useIsDateBeyondRetentionPeriod = ( siteId ) => {
-	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
-	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
-	const retentionDays = useSelector( ( state ) =>
-		getSiteActivityLogRetentionDays( state, siteId )
-	);
-
-	return useCallback(
-		( date ) => {
-			if ( ! isEnabled( 'activity-log/retention-policies' ) ) {
-				return false;
-			}
-
-			if ( retentionDays === undefined ) {
-				return false;
-			}
-
-			const today = applySiteOffset( Date.now(), { gmtOffset, timezone } ).startOf( 'day' );
-			return today.diff( date, 'days' ) > retentionDays;
-		},
-		[ gmtOffset, timezone, retentionDays ]
-	);
-};
 
 const useLatestBackupAttempt = ( siteId, { before, after, successOnly = false } = {} ) => {
 	return useFirstMatchingBackupAttempt( siteId, {
