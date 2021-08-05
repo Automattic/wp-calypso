@@ -8,11 +8,12 @@ type ReminderDuration = '1d' | '1w' | null;
 
 interface Variables {
 	reminder: ReminderDuration;
+	card?: string;
 }
 
 interface Result extends UseMutationResult< void, unknown, Variables > {
 	skipCurrentView: ( reminder: ReminderDuration ) => void;
-	skipCard: ( card, reminder: ReminderDuration ) => void;
+	skipCard: ( card: string, reminder: ReminderDuration ) => void;
 }
 
 function useSkipCurrentViewMutation( siteId: number ): Result {
@@ -35,28 +36,13 @@ function useSkipCurrentViewMutation( siteId: number ): Result {
 				{ query },
 				{
 					view: ( data as any ).view_name,
-					card,
+					// temporarily prevent single card views from returning themself after skipping
+					card: ( data as any ).view_name === 'VIEW_POST_LAUNCH' ? card : undefined,
 					...( reminder && { reminder } ),
 				}
 			);
 		},
 		{
-			onMutate( { card } ) {
-				const cachedData: Record< string, unknown > | undefined = queryClient.getQueryData(
-					getCacheKey( siteId )
-				);
-
-				if ( ! cachedData?.primary?.indexOf || cachedData.primary.indexOf( card ) === -1 ) {
-					return;
-				}
-
-				const optimisticUpdate = {
-					...cachedData,
-					primary: cachedData.primary.filter( ( v: string ) => v !== card ),
-				};
-
-				queryClient.setQueryData( getCacheKey( siteId ), optimisticUpdate );
-			},
 			onSuccess( data ) {
 				queryClient.setQueryData( getCacheKey( siteId ), data );
 			},
