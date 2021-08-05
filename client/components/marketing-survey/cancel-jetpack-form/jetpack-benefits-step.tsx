@@ -47,20 +47,20 @@ const JetpackBenefitsStep: React.FC< Props > = ( props ) => {
 
 		if ( timeRemaining.months() >= 1 ) {
 			const timeRemainingNumber = timeRemaining.months();
-			const periodName = translate( 'month', 'months', { count: timeRemainingNumber } );
+			const unitOfTime = translate( 'month', 'months', { count: timeRemainingNumber } );
 
-			return { timeRemainingNumber, periodName };
+			return { timeRemainingNumber, unitOfTime };
 		} else if ( timeRemaining.weeks() >= 1 ) {
 			const timeRemainingNumber = timeRemaining.weeks();
-			const periodName = translate( 'week', 'weeks', { count: timeRemainingNumber } );
+			const unitOfTime = translate( 'week', 'weeks', { count: timeRemainingNumber } );
 
-			return { timeRemainingNumber, periodName };
+			return { timeRemainingNumber, unitOfTime };
 		}
 
 		const timeRemainingNumber = timeRemaining.days();
-		const periodName = translate( 'day', 'days', { count: timeRemainingNumber } );
+		const unitOfTime = translate( 'day', 'days', { count: timeRemainingNumber } );
 
-		return { timeRemainingNumber, periodName };
+		return { timeRemainingNumber, unitOfTime };
 	};
 
 	const renderTimeRemainingString = ( product: ResponseCartProduct | null, purchase: Purchase ) => {
@@ -95,11 +95,11 @@ const JetpackBenefitsStep: React.FC< Props > = ( props ) => {
 		return (
 			<React.Fragment>
 				{ translate(
-					'You still have {{strong}}%(timeRemaining)d %(period)s{{/strong}} left on your {{strong}}%(productName)s{{/strong}} subscription. {{br/}}',
+					'You still have {{strong}}%(timeRemaining)d %(unitOfTime)s{{/strong}} left on your {{strong}}%(productName)s{{/strong}} subscription. {{br/}}',
 					{
 						args: {
 							timeRemaining: translatedPeriod.timeRemainingNumber,
-							period: translatedPeriod.periodName,
+							unitOfTime: translatedPeriod.unitOfTime,
 							productName: product.product_name,
 						},
 						components: {
@@ -107,7 +107,7 @@ const JetpackBenefitsStep: React.FC< Props > = ( props ) => {
 							br: <br />,
 						},
 						comment:
-							"'period' is either one of 'day', 'week', 'month', or their plural form. 'timeRemaining' is a number representing the time left that will be used with the 'period'.",
+							"'unitOfTime' is either one of 'day', 'week', 'month', or their plural form. 'timeRemaining' is a number representing the time left that will be used with the 'unitOfTime'.",
 					}
 				) }
 			</React.Fragment>
