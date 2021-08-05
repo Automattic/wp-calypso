@@ -1,0 +1,67 @@
+@import '@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.use-my-domain {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+
+	& &__domain-illustration {
+		margin-top: 56px;
+	}
+
+	& &__domain-input-fieldset {
+		position: relative;
+
+		button.use-my-domain__domain-input-clear {
+			position: absolute;
+			right: 10px;
+			top: -1px;
+
+			.gridicon.use-my-domain__domain-input-clear-icon {
+				fill: var( --studio-gray-50 );
+				width: 18px;
+				height: 18px;
+			}
+		}
+	}
+
+	& &__domain-input {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+		align-content: stretch;
+
+		@include break-mobile {
+			flex-direction: row;
+		}
+
+
+			&-fieldset {
+			flex-grow: 1;
+		}
+
+		&-button {
+			flex-grow: 0;
+			height: fit-content;
+			width: 100%;
+
+			@include break-mobile {
+				margin-left: 16px;
+				width: initial;
+			}
+		}
+	}
+}
+
+button.action_buttons__button.action-buttons__back.use-my-domain__go-back {
+	@include break-mobile {
+		margin: 0 0 18px;
+	}
+
+	margin: 16px 0 0 16px;
+	text-decoration: none;
+}
+
+
