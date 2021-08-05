@@ -36,7 +36,11 @@ const PLACEHOLDER_ACTIVITY = {
 	activityDescription: [],
 };
 
-const RetentionLimitUpsell: React.FC = ( { cardClassName } ) => {
+type OwnProps = {
+	cardClassName?: string;
+};
+
+const RetentionLimitUpsell: React.FC< OwnProps > = ( { cardClassName } ) => {
 	const translate = useTranslate();
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
