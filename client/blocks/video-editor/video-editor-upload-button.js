@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import FilePicker from 'calypso/components/file-picker';
 
 const noop = () => {};

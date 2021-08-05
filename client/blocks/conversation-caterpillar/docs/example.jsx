@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { Card } from '@automattic/components';
 import { size } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import { ConversationCaterpillar } from 'calypso/blocks/conversation-caterpillar';
 import { comments, commentsTree } from 'calypso/blocks/conversation-caterpillar/docs/fixtures';
-import { Card } from '@automattic/components';
 
 const ConversationCaterpillarExample = () => {
 	return (

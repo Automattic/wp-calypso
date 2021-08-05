@@ -1,20 +1,9 @@
-/**
- * External dependencies
- */
-
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import Gridicon from 'calypso/components/gridicon';
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import TimeSince from 'calypso/components/time-since';
 
-/**
- * Style dependencies
- */
 import './post-comment.scss'; // yes, this is intentional. they share styles.
 
 function unescape( str ) {

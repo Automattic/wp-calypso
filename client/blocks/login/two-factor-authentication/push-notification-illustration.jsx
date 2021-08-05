@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import colorStudio from '@automattic/color-studio';
+import React from 'react';
 
-/**
- * Style dependencies
- */
 import './push-notification-illustration.scss';
 
 /**

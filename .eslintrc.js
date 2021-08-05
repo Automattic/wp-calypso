@@ -182,6 +182,7 @@ module.exports = {
 				'apps/o2-blocks/**/*',
 				'apps/wpcom-block-editor/**/*',
 				'client/auth/**/*',
+				'client/blocks/**/*',
 				'client/boot/**/*',
 				'client/controller/**/*',
 				'client/data/**/*',

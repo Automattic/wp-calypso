@@ -2,9 +2,6 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { shallow, mount } from 'enzyme';
 import React from 'react';

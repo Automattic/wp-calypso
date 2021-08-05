@@ -1,32 +1,22 @@
-/**
- * External dependencies
- */
+import { getPlan, PLAN_PERSONAL, FEATURE_NO_ADS } from '@automattic/calypso-products';
+import formatCurrency from '@automattic/format-currency';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import formatCurrency from '@automattic/format-currency';
-
-/**
- * Internal dependencies
- */
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSite } from 'calypso/state/sites/selectors';
-import { getPlan, PLAN_PERSONAL, FEATURE_NO_ADS } from '@automattic/calypso-products';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import isEligibleForDomainToPaidPlanUpsell from 'calypso/state/selectors/is-eligible-for-domain-to-paid-plan-upsell';
 import {
 	getSitePlanRawPrice,
 	getPlanDiscountedRawPrice,
 	getPlanRawDiscount,
 	getPlansBySiteId,
 } from 'calypso/state/sites/plans/selectors';
-import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import isEligibleForDomainToPaidPlanUpsell from 'calypso/state/selectors/is-eligible-for-domain-to-paid-plan-upsell';
+import { getSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class DomainToPlanNudge extends Component {

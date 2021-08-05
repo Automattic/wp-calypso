@@ -1,14 +1,7 @@
-/**
- * External Dependencies
- */
+import classnames from 'classnames';
+import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { debounce } from 'lodash';
-import classnames from 'classnames';
-
-/**
- * Internal Dependencies
- */
 import AutoDirection from 'calypso/components/auto-direction';
 import Emojify from 'calypso/components/emojify';
 import cssSafeUrl from 'calypso/lib/css-safe-url';

@@ -1,40 +1,30 @@
-/**
- * External dependencies
- */
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDom from 'react-dom';
-import PropTypes from 'prop-types';
-import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import getEditorUrl from 'calypso/state/selectors/get-editor-url';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getNormalizedPost } from 'calypso/state/posts/selectors';
-import { isSingleUserSite } from 'calypso/state/sites/selectors';
-import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
-import { canCurrentUserEditPost } from 'calypso/state/posts/selectors/can-current-user-edit-post';
-import { isSharePanelOpen } from 'calypso/state/ui/post-type-list/selectors';
-import { hideActiveSharePanel } from 'calypso/state/ui/post-type-list/actions';
-import { bumpStat } from 'calypso/state/analytics/actions';
-import ExternalLink from 'calypso/components/external-link';
 import PostShare from 'calypso/blocks/post-share';
-import PostTypeListPostThumbnail from 'calypso/my-sites/post-type-list/post-thumbnail';
+import ExternalLink from 'calypso/components/external-link';
+import PostRelativeTimeStatus from 'calypso/my-sites/post-relative-time-status';
 import PostActionCounts from 'calypso/my-sites/post-type-list/post-action-counts';
 import PostActionsEllipsisMenu from 'calypso/my-sites/post-type-list/post-actions-ellipsis-menu';
 import PostActionsEllipsisMenuEdit from 'calypso/my-sites/post-type-list/post-actions-ellipsis-menu/edit';
 import PostActionsEllipsisMenuTrash from 'calypso/my-sites/post-type-list/post-actions-ellipsis-menu/trash';
-import PostTypeSiteInfo from 'calypso/my-sites/post-type-list/post-type-site-info';
+import PostTypeListPostThumbnail from 'calypso/my-sites/post-type-list/post-thumbnail';
 import PostTypePostAuthor from 'calypso/my-sites/post-type-list/post-type-post-author';
+import PostTypeSiteInfo from 'calypso/my-sites/post-type-list/post-type-site-info';
 import { preloadEditor } from 'calypso/sections-preloaders';
-import PostRelativeTimeStatus from 'calypso/my-sites/post-relative-time-status';
+import { bumpStat } from 'calypso/state/analytics/actions';
+import { getNormalizedPost } from 'calypso/state/posts/selectors';
+import { canCurrentUserEditPost } from 'calypso/state/posts/selectors/can-current-user-edit-post';
+import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
+import { isSingleUserSite } from 'calypso/state/sites/selectors';
+import { hideActiveSharePanel } from 'calypso/state/ui/post-type-list/actions';
+import { isSharePanelOpen } from 'calypso/state/ui/post-type-list/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class PostItem extends React.Component {
