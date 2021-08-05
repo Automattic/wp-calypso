@@ -1,5 +1,4 @@
 const { ipcMain, shell, systemPreferences } = require( 'electron' );
-const { stubObject } = require( 'lodash' );
 const ipc = require( '../../lib/calypso-commands' );
 const Config = require( '../../lib/config' );
 const isCalypso = require( '../../lib/is-calypso' );
