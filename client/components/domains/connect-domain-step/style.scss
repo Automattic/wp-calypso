@@ -123,7 +123,7 @@
 			bottom: -1px;
 
 			&.current-step {
-				color: initial;
+				color: var( --color-text );
 			}
 		}
 	}
@@ -255,6 +255,7 @@
 
 		&-text {
 			font-size: $font-body;
+			color: var( --color-text );
 			line-height: 24px;
 			white-space: nowrap;
 			overflow: hidden;
