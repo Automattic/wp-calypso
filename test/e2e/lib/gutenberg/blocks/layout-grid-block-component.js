@@ -33,7 +33,7 @@ class LayoutGridBlockComponent extends GutenbergBlockComponent {
 	 *
 	 * @param { Function } blockClass A block class that responds to blockTitle and blockName
 	 * @returns { GutenbergBlockComponent } instance of the added block
-	 **/
+	 */
 	async insertBlock( blockClass ) {
 		if ( ! this.columns ) {
 			throw new Error( 'You need to run setupColumns before inserting an inner block.' );
@@ -52,7 +52,7 @@ class LayoutGridBlockComponent extends GutenbergBlockComponent {
 		await driverHelper.clickWhenClickable( this.driver, columnLocator );
 		await driverHelper.clickWhenClickable( this.driver, addBlockButtonLocator );
 
-		const inserterSearchInputLocator = By.css( 'input.block-editor-inserter__search-input' );
+		const inserterSearchInputLocator = By.css( 'input.components-search-control__input' );
 
 		await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
