@@ -59,7 +59,7 @@ export default function getThankYouPageUrl( {
 	isInEditor,
 	isJetpackCheckout = false,
 	jetpackTemporarySiteId,
-	activeJetpackPlugins,
+	adminPageRedirect,
 }: {
 	siteSlug: string | undefined;
 	adminUrl: string | undefined;
@@ -78,7 +78,7 @@ export default function getThankYouPageUrl( {
 	isInEditor?: boolean;
 	isJetpackCheckout?: boolean;
 	jetpackTemporarySiteId?: string;
-	activeJetpackPlugins?: Array< string >;
+	adminPageRedirect?: string;
 } ): string {
 	debug( 'starting getThankYouPageUrl' );
 
@@ -167,7 +167,7 @@ export default function getThankYouPageUrl( {
 		cart,
 		isJetpackNotAtomic: Boolean( isJetpackNotAtomic ),
 		productAliasFromUrl,
-		activeJetpackPlugins,
+		adminPageRedirect,
 	} );
 	debug( 'fallbackUrl is', fallbackUrl );
 
@@ -275,7 +275,7 @@ function getFallbackDestination( {
 	cart,
 	isJetpackNotAtomic,
 	productAliasFromUrl,
-	activeJetpackPlugins,
+	adminPageRedirect,
 }: {
 	pendingOrReceiptId: string;
 	siteSlug: string | undefined;
@@ -284,7 +284,7 @@ function getFallbackDestination( {
 	cart: ResponseCart | undefined;
 	isJetpackNotAtomic: boolean;
 	productAliasFromUrl: string | undefined;
-	activeJetpackPlugins?: Array< string >;
+	adminPageRedirect?: string;
 } ): string {
 	const isCartEmpty = cart ? getAllCartItems( cart ).length === 0 : true;
 	const isReceiptEmpty = ':receiptId' === pendingOrReceiptId;
@@ -317,14 +317,7 @@ function getFallbackDestination( {
 		if ( isJetpackNotAtomic && purchasedProduct ) {
 			debug( 'the site is jetpack and bought a jetpack product', siteSlug, purchasedProduct );
 
-			let adminPath = 'admin.php?page=jetpack#/recommendations';
-			if ( adminUrl && activeJetpackPlugins ) {
-				if ( ! activeJetpackPlugins.includes( 'jetpack' ) ) {
-					if ( activeJetpackPlugins.includes( 'jetpack-backup' ) ) {
-						adminPath = 'admin.php?page=jetpack-backup';
-					}
-				}
-			}
+			let adminPath = adminPageRedirect || 'admin.php?page=jetpack#/recommendations';
 
 			// Jetpack Cloud will either redirect to wp-admin (if JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN
 			// flag is set), or otherwise will redirect to a Jetpack Redirect API url (source=jetpack-checkout-thankyou)

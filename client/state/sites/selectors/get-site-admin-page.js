@@ -1,0 +1,29 @@
+/**
+ * Internal dependencies
+ */
+import getSiteOption from './get-site-option';
+
+/**
+ * Returns a site's wp-admin plugin page depending on which plugin is active.
+ *
+ * @param  {object}  state  Global state tree
+ * @param  {?number}  siteId Site ID
+ * @returns {string}        Jetpack or standalone plugin page name
+ */
+export default function getSiteAdminPage( state, siteId ) {
+	const activeConnectedPlugins = getSiteOption(
+		state,
+		siteId,
+		'jetpack_connection_active_plugins'
+	);
+
+	var pluginPage = 'jetpack';
+	if (
+		Array.isArray( activeConnectedPlugins ) &&
+		! activeConnectedPlugins.includes( 'jetpack' ) &&
+		activeConnectedPlugins.includes( 'jetpack-backup' )
+	) {
+		pluginPage = 'jetpack-backup';
+	}
+	return pluginPage;
+}

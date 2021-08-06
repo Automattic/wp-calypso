@@ -10,11 +10,13 @@ export { default as canJetpackSiteAutoUpdateCore } from './can-jetpack-site-auto
 export { default as canJetpackSiteAutoUpdateFiles } from './can-jetpack-site-auto-update-files';
 export { default as canJetpackSiteUpdateFiles } from './can-jetpack-site-update-files';
 export { default as getCustomizerUrl } from './get-customizer-url';
+export { default as getJetpackCheckoutRedirectUrl } from './get-jetpack-checkout-redirect-url';
 export { default as getJetpackComputedAttributes } from './get-jetpack-computed-attributes';
 export { default as getSeoTitle } from './get-seo-title';
 export { default as getSeoTitleFormats } from './get-seo-title-formats';
 export { default as getSeoTitleFormatsForSite } from './get-seo-title-formats-for-site';
 export { default as getSite } from './get-site';
+export { default as getSiteAdminPage } from './get-site-admin-page';
 export { default as getSiteAdminUrl } from './get-site-admin-url';
 export { default as getSiteBySlug } from './get-site-by-slug';
 export { default as getSiteByUrl } from './get-site-by-url';

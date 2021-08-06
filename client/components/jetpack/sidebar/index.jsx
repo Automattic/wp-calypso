@@ -14,6 +14,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import CurrentSite from 'calypso/my-sites/current-site';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
+import getSiteAdminPage from 'calypso/state/sites/selectors/get-site-admin-page';
 import JetpackCloudSidebarMenuItems from './menu-items/jetpack-cloud';
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
@@ -85,7 +86,7 @@ const getJetpackAdminUrl = ( state, siteId ) => {
 	}
 
 	const parts = getUrlParts( siteAdminUrl + 'admin.php' );
-	parts.searchParams.set( 'page', 'jetpack' );
+	parts.searchParams.set( 'page', getSiteAdminPage( state, siteId ) );
 
 	return formatUrl( getUrlFromParts( parts ) );
 };

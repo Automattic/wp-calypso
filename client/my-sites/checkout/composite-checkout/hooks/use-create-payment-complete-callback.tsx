@@ -44,7 +44,7 @@ import normalizeTransactionResponse from '../lib/normalize-transaction-response'
 import getThankYouPageUrl from './use-get-thank-you-url/get-thank-you-page-url';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
-import { isJetpackSite, getSiteOption } from 'calypso/state/sites/selectors';
+import { isJetpackSite, getJetpackCheckoutRedirectUrl } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { recordCompositeCheckoutErrorDuringAnalytics } from '../lib/analytics';
 
@@ -90,8 +90,8 @@ export default function useCreatePaymentCompleteCallback( {
 		useSelector(
 			( state ) => siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
 		) || false;
-	const activeJetpackPlugins = useSelector( ( state ) =>
-		getSiteOption( state, siteId, 'jetpack_connection_active_plugins' )
+	const jetpackRedirectUrl = useSelector( ( state ) =>
+		getJetpackCheckoutRedirectUrl( state, siteId )
 	);
 
 	return useCallback(
@@ -123,7 +123,7 @@ export default function useCreatePaymentCompleteCallback( {
 				isInEditor,
 				isJetpackCheckout,
 				jetpackTemporarySiteId,
-				activeJetpackPlugins,
+				jetpackRedirectUrl,
 			};
 			debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
 			const url = getThankYouPageUrl( getThankYouPageUrlArguments );
@@ -250,6 +250,7 @@ export default function useCreatePaymentCompleteCallback( {
 			isFocusedLaunch,
 			isJetpackCheckout,
 			checkoutFlow,
+			jetpackRedirectUrl,
 		]
 	);
 }
