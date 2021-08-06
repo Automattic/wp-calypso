@@ -26,6 +26,8 @@ export const JetpackBenefitsStandaloneCard: React.FC< Props > = ( { summary, sta
 				</div>
 			);
 		}
+
+		return null;
 	};
 
 	const getStats = () => {
@@ -43,6 +45,8 @@ export const JetpackBenefitsStandaloneCard: React.FC< Props > = ( { summary, sta
 				</ul>
 			);
 		}
+
+		return null;
 	};
 
 	return (
