@@ -173,9 +173,7 @@ class UploadingPane extends React.PureComponent {
 	};
 
 	validateUrl = ( urlInput ) => {
-		const validationFn = this.props.optionalUrl.validate;
-
-		return ! urlInput || urlInput === '' || ( validationFn ? validationFn( urlInput ) : true );
+		return ! urlInput || urlInput === '' || this.props.optionalUrl.validate( urlInput );
 	};
 
 	setUrl = ( event ) => {
