@@ -41,7 +41,6 @@ import {
 import { requestSite } from 'calypso/state/sites/actions';
 import isShowingQandAInlineHelpContactForm from 'calypso/state/selectors/is-showing-q-and-a-inline-help-contact-form';
 import { showQandAOnInlineHelpContactForm } from 'calypso/state/inline-help/actions';
-import { getNpsSurveyFeedback } from 'calypso/state/nps-survey/selectors';
 import { resemblesUrl } from 'calypso/lib/url';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { generateSubjectFromMessage } from './utils';
@@ -109,7 +108,6 @@ export class HelpContactForm extends React.PureComponent {
 			value: PropTypes.any,
 			requestChange: PropTypes.func.isRequired,
 		} ),
-		npsSurveyFeedback: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -128,7 +126,6 @@ export class HelpContactForm extends React.PureComponent {
 		},
 		showingQandAStep: false,
 		showQandAOnInlineHelpContactForm: () => {},
-		npsSurveyFeedback: '',
 	};
 
 	/**
@@ -148,17 +145,6 @@ export class HelpContactForm extends React.PureComponent {
 		userRequestsHidingUrl: false,
 		qanda: [],
 	};
-
-	UNSAFE_componentWillMount() {
-		const { npsSurveyFeedback, translate } = this.props;
-
-		if ( npsSurveyFeedback ) {
-			this.state.message =
-				'\n' +
-				translate( 'The comment below is copied from your survey response:' ) +
-				`\n--------------------\n${ npsSurveyFeedback }`;
-		}
-	}
 
 	componentDidMount() {
 		this.debouncedQandA = debounce( this.doQandASearch, 500 );
@@ -206,16 +192,16 @@ export class HelpContactForm extends React.PureComponent {
 				? new URL( this.state.userDeclaredUrl ).hostname
 				: new URL( 'http://' + this.state.userDeclaredUrl ).hostname;
 
-			const request = ( query ) =>
+			const request = ( q ) =>
 				this.props
-					.requestSite( query )
+					.requestSite( q )
 					.then( ( siteData ) =>
 						this.setState( { siteData, errorData: null, hasRetriedRequest: false } )
 					)
 					.catch( ( error ) => {
 						if ( url.includes( 'www.' ) && ! this.state.hasRetriedRequest ) {
 							this.setState( { hasRetriedRequest: true } );
-							return request( query.replace( 'www.', '' ) );
+							return request( q.replace( 'www.', '' ) );
 						}
 						this.setState( { errorData: error.error, siteData: null, hasRetriedRequest: false } );
 					} );
@@ -778,7 +764,6 @@ const mapStateToProps = ( state ) => ( {
 	helpSite: getHelpSelectedSite( state ),
 	helpSiteId: getHelpSelectedSiteId( state ),
 	showingQandAStep: isShowingQandAInlineHelpContactForm( state ),
-	npsSurveyFeedback: getNpsSurveyFeedback( state ),
 } );
 
 const mapDispatchToProps = {

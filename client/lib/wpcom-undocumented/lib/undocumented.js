@@ -2278,66 +2278,6 @@ Undocumented.prototype.transferStatus = function ( siteId, transferId ) {
 };
 
 /**
- * Submit a response to the NPS Survey.
- *
- * @param {string}     surveyName     The name of the NPS survey being submitted
- * @param {number}        score          The value for the survey response
- * @param {Function}   fn             The callback function
- * @returns {Promise} A promise representing the request.
- */
-Undocumented.prototype.submitNPSSurvey = function ( surveyName, score, fn ) {
-	return this.wpcom.req.post(
-		{ path: `/nps/${ surveyName }` },
-		{ apiVersion: '1.2' },
-		{ score },
-		fn
-	);
-};
-
-/**
- * Dismiss the NPS Survey.
- *
- * @param {string}     surveyName     The name of the NPS survey being submitted
- * @param {Function}   fn             The callback function
- * @returns {Promise} A promise representing the request.
- */
-Undocumented.prototype.dismissNPSSurvey = function ( surveyName, fn ) {
-	return this.wpcom.req.post(
-		{ path: `/nps/${ surveyName }` },
-		{ apiVersion: '1.2' },
-		{ dismissed: true },
-		fn
-	);
-};
-
-/**
- * Check the eligibility status for the NPS Survey.
- *
- * @param {Function}   fn             The callback function
- * @returns {Promise} A promise representing the request.
- */
-Undocumented.prototype.checkNPSSurveyEligibility = function ( fn ) {
-	return this.wpcom.req.get( { path: '/nps' }, { apiVersion: '1.2' }, {}, fn );
-};
-
-/**
- * Send the optional feedback for the NPS Survey.
- *
- * @param {string}   surveyName   The name of the NPS survey being submitted
- * @param {string}   feedback     The content
- * @param {Function} fn           The callback function
- * @returns {Promise} A promise representing the request.
- */
-Undocumented.prototype.sendNPSSurveyFeedback = function ( surveyName, feedback, fn ) {
-	return this.wpcom.req.post(
-		{ path: `/nps/${ surveyName }` },
-		{ apiVersion: '1.2' },
-		{ feedback },
-		fn
-	);
-};
-
-/**
  * Get OAuth2 Client data for a given client ID
  *
  * @param {string}     clientId       The client ID
