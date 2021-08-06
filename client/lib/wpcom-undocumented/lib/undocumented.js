@@ -1788,7 +1788,7 @@ Undocumented.prototype.addDomainMapping = function ( siteId, domainName, fn ) {
 /**
  * Add domain mapping for VIP clients.
  *
- * @param {number} [siteId] The site ID
+ * @param {number} siteId The site ID
  * @param {string} [domainName] Name of the domain mapping
  * @param {Function} fn The callback function
  * @returns {Promise} A promise that resolves when the request completes
