@@ -133,7 +133,7 @@ export default function ConnectDomainStepAdvancedRecords( {
 			</p>
 			{ renderRecordsList( aRecords ) }
 			<p className={ className + '__text' }>
-				{ __( 'Next fnd the CNAME records on your domain’s settings page.' ) }
+				{ __( 'Next find the CNAME records on your domain’s settings page.' ) }
 				<br />
 				{ __( 'Replace the "www" CNAME record of your domain to use the following values:' ) }
 			</p>
