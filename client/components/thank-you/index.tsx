@@ -15,7 +15,7 @@ import {
 	ThankYouProps,
 	ThankYouSectionProps,
 	ThankYouThemeProps,
-} from 'calypso/components/thank-you/types';
+} from './types';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import VerticalNav from 'calypso/components/vertical-nav';
 
