@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { isBlogger } from '@automattic/calypso-products';
 import { Button, CompactCard } from '@automattic/components';
-import Search from '@automattic/search';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { Icon } from '@wordpress/icons';
 import classNames from 'classnames';
@@ -86,6 +85,7 @@ import {
 } from 'calypso/state/domains/suggestions/selectors';
 import { hideSitePreview, showSitePreview } from 'calypso/state/signup/preview/actions';
 import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
+import Search from './search';
 import tip from './tip';
 
 import './style.scss';
@@ -402,13 +402,6 @@ class RegisterDomainStep extends React.Component {
 		return suggestions;
 	}
 
-	getPlaceholderText() {
-		const { isSignupStep, translate } = this.props;
-		return isSignupStep
-			? translate( 'Type the domain you want here' )
-			: translate( 'Enter a name or keyword' );
-	}
-
 	render() {
 		const queryObject = getQueryObject( this.props );
 		const {
@@ -460,7 +453,6 @@ class RegisterDomainStep extends React.Component {
 							onBlur={ this.save }
 							onSearch={ this.onSearch }
 							onSearchChange={ this.onSearchChange }
-							placeholder={ this.getPlaceholderText() }
 							ref={ this.bindSearchCardReference }
 							isReskinned={ this.props.isReskinned }
 						>
