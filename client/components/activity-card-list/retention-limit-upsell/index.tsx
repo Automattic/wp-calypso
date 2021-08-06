@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
