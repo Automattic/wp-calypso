@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux';
 import * as steps from './steps';
 import { Button, Dialog } from '@automattic/components';
 import { Button as ButtonType } from '@automattic/components/dist/types/dialog/button-bar';
+import type { Purchase } from 'calypso/lib/purchases/types';
 import { getName } from 'calypso/lib/purchases';
 import { useTranslate } from 'i18n-calypso';
 import nextStep from '../cancel-purchase-form/next-step';
@@ -25,7 +26,7 @@ import './style.scss';
 
 interface Props {
 	disableButtons?: boolean;
-	purchase: Record< string, unknown >;
+	purchase: Purchase;
 	selectedSite: { slug: string; ID: number };
 	isVisible: boolean;
 	onClose: () => void;
@@ -198,7 +199,13 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, selectedSite
 		if ( steps.FEATURES_LOST_STEP === cancellationStep ) {
 			// show the user what features they will lose if they cancel the Jetpack plan/ product
 			// this differs a bit depending on the product/ what JP modules are active
-			return <JetpackBenefitsStep siteId={ selectedSite.ID } purchase={ purchase } />;
+			return (
+				<JetpackBenefitsStep
+					siteId={ selectedSite.ID }
+					purchase={ purchase }
+					productSlug={ purchase.productSlug }
+				/>
+			);
 		}
 
 		// Step 2: Survey Question - where will this get sent?
