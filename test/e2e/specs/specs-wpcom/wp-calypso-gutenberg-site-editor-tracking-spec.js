@@ -756,9 +756,8 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 			it( 'Tracks "wpcom_block_editor_template_part_choose_existing"', async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
-				// Undo the template part creation to go back to the placeholder.  Use store api to
-				// trigger undo since the UI is not present in mobile viewport.
-				await this.driver.executeScript( `return window.wp.data.dispatch( 'core' ).undo()` );
+
+				await editor.addBlock( 'Header', 'template-part\\/header', 'Block: Template Part' );
 
 				await editor.runInCanvas( async () => {
 					const chooseExistingHeaderLocator = driverHelper.createTextLocator(
