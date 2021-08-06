@@ -37,7 +37,9 @@ class WebpackRTLPlugin {
 
 								// Compute the filename
 								const baseName = path.basename( asset, '.css' );
-								const filename = asset.replace( baseName, `${ baseName }.rtl` );
+								const dirName = path.dirname( asset );
+								const filename = path.join( dirName, baseName + '.rtl.css' );
+
 								const assetInstance = assets[ asset ];
 								chunk.files.add( filename );
 
