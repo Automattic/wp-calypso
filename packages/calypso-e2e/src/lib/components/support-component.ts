@@ -7,6 +7,7 @@ const selectors = {
 	supportPopover: '.inline-help__popover',
 	searchInput: '[aria-label="Search"]',
 	spinner: '.spinner',
+	placeholder: '.inline-help__results-placeholder-item',
 	clearSearch: '[aria-label="Close Search"]',
 
 	// Results
@@ -246,11 +247,15 @@ export class SupportComponent {
 			// resulting in a spinner. The spinner will then disappear when either the results are
 			// displayed, or no results are found.
 			await this.page.waitForSelector( selectors.spinner );
-			await this.page.waitForSelector( selectors.spinner, { state: 'hidden', timeout: 60000 } );
+			await Promise.all( [
+				this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } ),
+				this.page.waitForSelector( selectors.spinner, { state: 'hidden' } ),
+			] );
 		}
 
+		// await this.page.waitForSelector( selectors.spinner, { state: 'hidden', timeout: 60000 } );
 		// In all cases, wait for the 'load' state to be fired to add a brief (~1ms) wait between actions.
-		await this.page.waitForLoadState( 'load' );
+		await this.page.waitForLoadState( 'networkidle' );
 	}
 
 	/**
