@@ -28,6 +28,7 @@ import { stringify } from 'qs';
 import React from 'react';
 import { connect } from 'react-redux';
 import { v4 as uuid } from 'uuid';
+import Illustration from 'calypso/assets/images/customer-home/illustration--task-find-domain.svg';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
 import QueryDomainsSuggestions from 'calypso/components/data/query-domains-suggestions';
 import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
@@ -63,6 +64,7 @@ import {
 } from 'calypso/components/domains/register-domain-step/utility';
 import { DropdownFilters, FilterResetNotice } from 'calypso/components/domains/search-filters';
 import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
+import EmptyContent from 'calypso/components/empty-content';
 import Notice from 'calypso/components/notice';
 import StickyPanel from 'calypso/components/sticky-panel';
 import { hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
@@ -436,6 +438,8 @@ class RegisterDomainStep extends React.Component {
 			'register-domain-step__search-domain-step': this.props.isSignupStep,
 		} );
 
+		const isSearching = this.state.lastQuery !== '' || this.state.loadingResults;
+
 		return (
 			<div className="register-domain-step">
 				<StickyPanel className={ searchBoxClassName }>
@@ -479,10 +483,20 @@ class RegisterDomainStep extends React.Component {
 						showDismiss={ false }
 					/>
 				) }
-
-				{ this.renderContent() }
-				{ this.renderFilterResetNotice() }
-				{ this.renderPaginationControls() }
+				{ ! isSearching && (
+					<EmptyContent
+						title=""
+						className="register-domain-step__placeholder"
+						illustration={ Illustration }
+					/>
+				) }
+				{ isSearching && (
+					<>
+						{ this.renderContent() }
+						{ this.renderFilterResetNotice() }
+						{ this.renderPaginationControls() }
+					</>
+				) }
 				{ this.renderSideContent() }
 				{ queryObject && <QueryDomainsSuggestions { ...queryObject } /> }
 				<QueryContactDetailsCache />
