@@ -22,11 +22,11 @@ import ConnectDomainStepSwitchSetupInfoLink from './connect-domain-step-switch-s
 import ConnectDomainStepSupportInfoLink from 'calypso/components/domains/connect-domain-step/connect-domain-step-support-info-link';
 import DomainTransferRecommendation from 'calypso/components/domains/domain-transfer-recommendation';
 import Gridicon from 'calypso/components/gridicon';
-import wp from 'calypso/lib/wp';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { isMappingVerificationSuccess } from './connect-domain-step-verification-status-parsing.js';
+import wpcom from 'calypso/lib/wp';
 
 /**
  * Style dependencies
@@ -95,8 +95,9 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 		( setStepAfterVerify = true ) => {
 			setVerificationStatus( {} );
 			setVerificationInProgress( true );
-			wp.undocumented()
-				.getMappingStatus( domain )
+			wpcom
+				.domain()
+				.mappingStatus( domain )
 				.then( ( data ) => {
 					setVerificationStatus( { data } );
 					if ( setStepAfterVerify ) {
@@ -126,8 +127,9 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 		( () => {
 			setDomainSetupInfoError( {} );
 			setLoadingDomainSetupInfo( true );
-			wp.undocumented()
-				.getMappingSetupInfo( selectedSite.ID, domain )
+			wpcom
+				.domain()
+				.mappingSetupInfo( selectedSite.ID, domain )
 				.then( ( data ) => {
 					setDomainSetupInfo( { data } );
 					statusRef.current.hasLoadedStatusInfo = { [ domain ]: true };
