@@ -421,6 +421,7 @@ class RegisterDomainStep extends React.Component {
 			suggestionErrorData,
 			suggestionErrorDomain,
 			trademarkClaimsNoticeInfo,
+			isQueryInvalid,
 		} = this.state;
 
 		if ( trademarkClaimsNoticeInfo ) {
@@ -467,6 +468,14 @@ class RegisterDomainStep extends React.Component {
 						</Search>
 					</CompactCard>
 				</StickyPanel>
+				{ isQueryInvalid && (
+					<Notice
+						className="register-domain-step__notice"
+						text={ `Please search for domains with more than ${ MIN_QUERY_LENGTH } characters length.` }
+						status={ `is-info` }
+						showDismiss={ false }
+					/>
+				) }
 				{ availabilityMessage && (
 					<Notice
 						className="register-domain-step__notice"
@@ -782,6 +791,7 @@ class RegisterDomainStep extends React.Component {
 				availabilityErrorDomain: null,
 				exactMatchDomain: null,
 				lastDomainSearched: null,
+				isQueryInvalid: false,
 				lastQuery: cleanedQuery,
 				loadingResults,
 				loadingSubdomainResults: loadingResults,
@@ -1162,6 +1172,7 @@ class RegisterDomainStep extends React.Component {
 		);
 
 		if ( domain === '' ) {
+			this.setState( { isQueryInvalid: searchQuery !== domain } );
 			debug( 'onSearch handler was terminated by an empty domain input' );
 			return;
 		}
@@ -1172,7 +1183,12 @@ class RegisterDomainStep extends React.Component {
 		);
 
 		this.setState(
-			{ lastDomainSearched: domain, railcarId: this.getNewRailcarId(), loadingResults: true },
+			{
+				isQueryInvalid: false,
+				lastDomainSearched: domain,
+				railcarId: this.getNewRailcarId(),
+				loadingResults: true,
+			},
 			() => {
 				const timestamp = Date.now();
 
