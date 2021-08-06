@@ -1,13 +1,10 @@
-/**
- * Internal dependencies
- */
+import { LANGUAGE_GROUPS, DEFAULT_LANGUAGE_GROUP } from '../constants';
 import {
 	getLanguageGroupById,
 	getLanguageGroupFromTerritoryId,
 	getLanguageGroupByCountryCode,
 	getLanguageCodeLabels,
 } from '../utils';
-import { LANGUAGE_GROUPS, DEFAULT_LANGUAGE_GROUP } from '../constants';
 
 describe( 'language picker utils', () => {
 	describe( 'getLanguageGroupById()', () => {

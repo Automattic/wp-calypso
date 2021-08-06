@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import classnames from 'classnames';
 import React from 'react';
 import spritePath from 'social-logos/svg-sprite/social-logos.svg';

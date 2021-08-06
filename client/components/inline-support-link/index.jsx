@@ -1,32 +1,22 @@
-/**
- * External dependencies
- */
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import ExternalLink from 'calypso/components/external-link';
 import QuerySupportArticleAlternates from 'calypso/components/data/query-support-article-alternates';
-import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
-import { openSupportArticleDialog } from 'calypso/state/inline-support-article/actions';
+import ExternalLink from 'calypso/components/external-link';
+import Gridicon from 'calypso/components/gridicon';
+import { isDefaultLocale, localizeUrl } from 'calypso/lib/i18n-utils';
 import {
 	bumpStat,
 	composeAnalytics,
 	recordTracksEvent,
 	withAnalytics,
 } from 'calypso/state/analytics/actions';
-import { isDefaultLocale, localizeUrl } from 'calypso/lib/i18n-utils';
+import { openSupportArticleDialog } from 'calypso/state/inline-support-article/actions';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import { getContextLinks } from './context-links';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class InlineSupportLink extends Component {

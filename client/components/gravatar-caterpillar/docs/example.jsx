@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import GravatarCaterpillar from 'calypso/components/gravatar-caterpillar';
 import { users } from './fixtures';
 

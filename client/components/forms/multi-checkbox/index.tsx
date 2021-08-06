@@ -1,17 +1,7 @@
-/**
- * External dependencies
- */
 import React, { useCallback, useRef } from 'react';
-
-/**
- * Internal dependencies
- */
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function

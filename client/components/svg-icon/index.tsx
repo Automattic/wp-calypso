@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import classnames from 'classnames';
 import React from 'react';
 import { Assign } from 'utility-types';

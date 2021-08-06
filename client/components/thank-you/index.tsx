@@ -1,24 +1,14 @@
-/**
- * External dependencies
- */
+import styled from '@emotion/styled';
 import classNames from 'classnames';
-import type { TranslateResult } from 'i18n-calypso';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
-import styled from '@emotion/styled';
-
-/**
- * Internal dependencies
- */
-import { CALYPSO_CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';
-import { MarketplaceThemeProps } from 'calypso/my-sites/marketplace/theme';
-import { MarketplaceHeaderTitle } from 'calypso/my-sites/marketplace/components';
-import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import VerticalNav from 'calypso/components/vertical-nav';
+import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import { CALYPSO_CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';
+import { MarketplaceHeaderTitle } from 'calypso/my-sites/marketplace/components';
+import { MarketplaceThemeProps } from 'calypso/my-sites/marketplace/theme';
+import type { TranslateResult } from 'i18n-calypso';
 
-/**
- * style dependencies
- */
 import './style.scss';
 
 const ThankYouContainer = styled.div< MarketplaceThemeProps >`

@@ -1,19 +1,8 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-
-/**
- * Internal Dependencies
- */
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import SegmentedControl from 'calypso/components/segmented-control';
 
-/**
- * Style dependencies
- */
 import './segmented.scss';
 
 class NavSegmented extends Component {

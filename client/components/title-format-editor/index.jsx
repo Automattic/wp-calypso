@@ -1,25 +1,15 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
-import moment from 'moment';
-
-/**
- * Internal dependencies
- */
 import { CompositeDecorator, Editor, EditorState, Modifier, SelectionState } from 'draft-js';
-import { fromEditor, mapTokenTitleForEditor, toEditor } from './parser';
-import Token from './token';
+import { localize } from 'i18n-calypso';
+import moment from 'moment';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { buildSeoTitle } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { localize } from 'i18n-calypso';
+import { fromEditor, mapTokenTitleForEditor, toEditor } from './parser';
+import Token from './token';
 
-/**
- * Style dependencies
- */
 import 'draft-js/dist/Draft.css';
 import './style.scss';
 

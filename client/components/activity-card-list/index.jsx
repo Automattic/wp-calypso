@@ -1,32 +1,22 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
+import { withMobileBreakpoint } from '@automattic/viewport-react';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { isActivityBackup } from 'calypso/lib/jetpack/backup-utils';
-import { updateFilter } from 'calypso/state/activity-log/actions';
-import { withApplySiteOffset } from 'calypso/components/site-offset';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { withMobileBreakpoint } from '@automattic/viewport-react';
+import { connect } from 'react-redux';
 import ActivityCard from 'calypso/components/activity-card';
-import Filterbar from 'calypso/my-sites/activity/filterbar';
-import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
-import Pagination from 'calypso/components/pagination';
 import QueryRewindCapabilities from 'calypso/components/data/query-rewind-capabilities';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Pagination from 'calypso/components/pagination';
+import { withApplySiteOffset } from 'calypso/components/site-offset';
+import { isActivityBackup } from 'calypso/lib/jetpack/backup-utils';
+import Filterbar from 'calypso/my-sites/activity/filterbar';
+import { updateFilter } from 'calypso/state/activity-log/actions';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class ActivityCardList extends Component {

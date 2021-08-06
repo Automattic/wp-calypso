@@ -2,18 +2,11 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import React from 'react';
-import TestUtils from 'react-dom/test-utils';
 import ReactDom from 'react-dom';
+import TestUtils from 'react-dom/test-utils';
 import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
 import { DropZone } from '../';
 
 class Wrapper extends React.Component {

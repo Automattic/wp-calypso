@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { find, startsWith } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { domainAvailability } from 'calypso/lib/domains/constants';
 
 function moveArrayElement( array, from, to ) {

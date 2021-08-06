@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import React, { ChangeEvent } from 'react';
-
-/**
- * Internal dependencies
- */
 import FormSelect from 'calypso/components/forms/form-select';
 
 interface Props {

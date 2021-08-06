@@ -183,6 +183,7 @@ module.exports = {
 				'apps/wpcom-block-editor/**/*',
 				'client/auth/**/*',
 				'client/boot/**/*',
+				'client/components/**/*',
 				'client/controller/**/*',
 				'client/data/**/*',
 				'client/devdocs/**/*',

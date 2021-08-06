@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
-import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
-import React, { ChangeEvent, FunctionComponent, useState } from 'react';
-import { useTranslate, TranslateResult } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
-import GSuiteDomainsSelect from './domains-select';
+import classNames from 'classnames';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
+import React, { ChangeEvent, FunctionComponent, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import Gridicon from 'calypso/components/gridicon';
 import { GSuiteNewUser as NewUser } from 'calypso/lib/gsuite/new-users';
+import GSuiteDomainsSelect from './domains-select';
 
 interface LabelWrapperProps {
 	label: TranslateResult;

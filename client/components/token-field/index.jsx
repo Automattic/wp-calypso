@@ -1,23 +1,13 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { clone, difference, forEach, last, map, some, take } from 'lodash';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import { clone, difference, forEach, last, map, some, take } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import isSuggestionLabel from './helpers';
 import SuggestionsList from './suggestions-list';
 import Token from './token';
 import TokenInput from './token-input';
-import isSuggestionLabel from './helpers';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const debug = debugFactory( 'calypso:token-field' );

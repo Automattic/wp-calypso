@@ -1,21 +1,11 @@
-/**
- * External dependencies
- */
 import classNames from 'classnames';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import FeaturedDomainSuggestionsPlaceholder from './placeholder';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
+import FeaturedDomainSuggestionsPlaceholder from './placeholder';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class FeaturedDomainSuggestions extends Component {

@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import TokenField from 'calypso/components/token-field';
 import { Card } from '@automattic/components';
+import React from 'react';
+import TokenField from 'calypso/components/token-field';
 
 /**
  * Module variables

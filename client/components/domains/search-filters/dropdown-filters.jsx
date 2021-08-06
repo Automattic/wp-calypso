@@ -1,26 +1,19 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import { Button } from '@automattic/components';
 import classNames from 'classnames';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { includes, isEqual, pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
-import TokenField from 'calypso/components/token-field';
-import ValidationFieldset from 'calypso/signup/validation-fieldset';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormLabel from 'calypso/components/forms/form-label';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import Count from 'calypso/components/count';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import Popover from 'calypso/components/popover';
-import { Button } from '@automattic/components';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import MaterialIcon from 'calypso/components/material-icon';
-import Count from 'calypso/components/count';
+import Popover from 'calypso/components/popover';
+import TokenField from 'calypso/components/token-field';
+import ValidationFieldset from 'calypso/signup/validation-fieldset';
 
 const HANDLED_FILTER_KEYS = [ 'tlds', 'includeDashes', 'maxCharacters', 'exactSldMatchesOnly' ];
 

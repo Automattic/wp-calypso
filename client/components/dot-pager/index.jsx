@@ -1,16 +1,10 @@
-/**
- * External dependencies
- */
-import React, { Children, useState, useEffect, useRef } from 'react';
+import { useResizeObserver } from '@wordpress/compose';
+import { Icon, arrowRight } from '@wordpress/icons';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { times } from 'lodash';
-import classnames from 'classnames';
-import { Icon, arrowRight } from '@wordpress/icons';
-import { useResizeObserver } from '@wordpress/compose';
+import React, { Children, useState, useEffect, useRef } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const Controls = ( { showControlLabels = false, currentPage, numberOfPages, setCurrentPage } ) => {

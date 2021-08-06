@@ -1,18 +1,11 @@
-/**
- * External Dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
-import HappychatButton from 'calypso/components/happychat/button';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { hasIncludedDomain } from 'calypso/lib/purchases';
 import { isDomainRegistration, isPlan } from '@automattic/calypso-products';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import HappychatButton from 'calypso/components/happychat/button';
+import { hasIncludedDomain } from 'calypso/lib/purchases';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import './style.scss';
 
 class PrecancellationChatButton extends Component {

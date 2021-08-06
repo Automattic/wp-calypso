@@ -1,26 +1,16 @@
-/**
- * External dependencies
- */
+import { extent as d3Extent } from 'd3-array';
+import { axisBottom as d3AxisBottom, axisRight as d3AxisRight } from 'd3-axis';
+import { scaleLinear as d3ScaleLinear, scaleTime as d3TimeScale } from 'd3-scale';
+import { select as d3Select, mouse as d3Mouse } from 'd3-selection';
+import { line as d3Line, area as d3Area, curveMonotoneX as d3MonotoneXCurve } from 'd3-shape';
+import { concat, last, throttle } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { extent as d3Extent } from 'd3-array';
-import { line as d3Line, area as d3Area, curveMonotoneX as d3MonotoneXCurve } from 'd3-shape';
-import { scaleLinear as d3ScaleLinear, scaleTime as d3TimeScale } from 'd3-scale';
-import { axisBottom as d3AxisBottom, axisRight as d3AxisRight } from 'd3-axis';
-import { select as d3Select, mouse as d3Mouse } from 'd3-selection';
-import { concat, last, throttle } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import D3Base from 'calypso/components/d3-base';
-import Tooltip from 'calypso/components/tooltip';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Tooltip from 'calypso/components/tooltip';
 import LineChartLegend from './legend';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const CHART_MARGIN = 0.01;

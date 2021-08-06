@@ -2,18 +2,11 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import Label from '../label';
 import SortedGrid from '../';
+import Label from '../label';
 
 describe( 'SortedGrid', () => {
 	const nullfunc = () => {};

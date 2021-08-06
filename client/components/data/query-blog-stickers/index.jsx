@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import getBlogStickers from 'calypso/state/selectors/get-blog-stickers';
 import { listBlogStickers } from 'calypso/state/sites/blog-stickers/actions';
 

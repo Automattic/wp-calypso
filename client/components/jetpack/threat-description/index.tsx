@@ -1,19 +1,9 @@
-/**
- * External dependencies
- */
-import React, { ReactNode } from 'react';
 import { translate, TranslateResult } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import React, { ReactNode } from 'react';
+import DiffViewer from 'calypso/components/diff-viewer';
 import { ThreatStatus } from 'calypso/components/jetpack/threat-item/types';
 import MarkedLines from 'calypso/components/marked-lines';
-import DiffViewer from 'calypso/components/diff-viewer';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export interface Props {
