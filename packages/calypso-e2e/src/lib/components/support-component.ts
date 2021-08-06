@@ -242,14 +242,8 @@ export class SupportComponent {
 	 */
 	async search( text: string ): Promise< void > {
 		if ( text.trim() ) {
-			// If there is valid search string, then there should be a network request made
-			// resulting in a spinner. The spinner will then disappear when either the results are
-			// displayed, or no results are found.
-			// await this.page.waitForSelector( selectors.spinner );
-			// await Promise.all( [
-			// 	this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } ),
-			// 	this.page.waitForSelector( selectors.spinner, { state: 'hidden' } ),
-			// ] );
+			// If there is valid search string, then there should be a network request made.
+			// Wait for the response to the request and ensure the status is HTTP 200.
 			await Promise.all( [
 				this.page.waitForResponse(
 					( response ) => response.url().includes( 'search?' ) && response.status() === 200
@@ -257,11 +251,11 @@ export class SupportComponent {
 				this.page.fill( selectors.searchInput, text ),
 			] );
 		} else {
+			// If invalid search string (eg. '     '), then no request is made.
 			await this.page.fill( selectors.searchInput, text );
 		}
 
-		// await this.page.waitForSelector( selectors.spinner, { state: 'hidden', timeout: 60000 } );
-		// In all cases, wait for the 'load' state to be fired to add a brief (~1ms) wait between actions.
+		// In all cases, wait for the 'load' state to be fired.
 		await this.page.waitForLoadState( 'load' );
 	}
 
