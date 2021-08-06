@@ -15,7 +15,7 @@ import { bumpStatGenerator } from './utils';
 import { getPost } from 'calypso/state/posts/selectors';
 import { toggleSharePanel } from 'calypso/state/ui/post-type-list/actions';
 import isPublicizeEnabled from 'calypso/state/selectors/is-publicize-enabled';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class PostActionsEllipsisMenuShare extends Component {

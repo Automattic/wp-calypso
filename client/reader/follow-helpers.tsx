@@ -1,11 +1,4 @@
-/**
- * External Dependencies
- */
 import { escapeRegExp } from 'lodash';
-
-/**
- * Internal Dependencies
- */
 import {
 	getSiteName,
 	getSiteUrl,

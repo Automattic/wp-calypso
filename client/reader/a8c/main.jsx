@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { localize } from 'i18n-calypso';
-import { connect, useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import Stream from 'calypso/reader/stream';
 import { Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import React from 'react';
+import { connect, useDispatch } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
-import { requestMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
+import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
+import Stream from 'calypso/reader/stream';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { SECTION_A8C_FOLLOWING } from 'calypso/state/reader/seen-posts/constants';
 import { AUTOMATTIC_ORG_ID } from 'calypso/state/reader/organizations/constants';
 import { getReaderOrganizationFeedsInfo } from 'calypso/state/reader/organizations/selectors';
+import { requestMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
+import { SECTION_A8C_FOLLOWING } from 'calypso/state/reader/seen-posts/constants';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
-import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 
 const A8CFollowing = ( props ) => {
 	const { translate, teams } = props;

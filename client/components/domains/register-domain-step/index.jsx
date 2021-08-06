@@ -664,6 +664,7 @@ class RegisterDomainStep extends React.Component {
 			availabilityErrorDomain: null,
 			exactMatchDomain: null,
 			lastDomainSearched: null,
+			lastFilters: this.state.filters,
 			loadingResults,
 			loadingSubdomainResults: loadingResults,
 			showAvailabilityNotice: false,

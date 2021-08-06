@@ -1,9 +1,5 @@
-/**
- * External dependencies
- */
-
-import { Children } from 'react';
 import { flatMap } from 'lodash';
+import { Children } from 'react';
 
 /*
  * Transforms a React `Children` object into an array. The children of a `Step` are

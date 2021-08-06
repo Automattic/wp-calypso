@@ -22,6 +22,7 @@ import {
 	withAnalytics,
 } from 'calypso/state/analytics/actions';
 import { isDefaultLocale, localizeUrl } from 'calypso/lib/i18n-utils';
+import { getContextLinks } from './context-links';
 
 /**
  * Style dependencies
@@ -39,6 +40,7 @@ class InlineSupportLink extends Component {
 		supportLink: PropTypes.string,
 		showText: PropTypes.bool,
 		showIcon: PropTypes.bool,
+		supportContext: PropTypes.string,
 		iconSize: PropTypes.number,
 		tracksEvent: PropTypes.string,
 		tracksOptions: PropTypes.object,
@@ -106,7 +108,7 @@ class InlineSupportLink extends Component {
 			<LinkComponent
 				className={ classnames( 'inline-support-link', className ) }
 				href={ url }
-				onClick={ openDialog }
+				onClick={ ( event ) => openDialog( event, supportPostId, supportLink ) }
 				onMouseEnter={
 					! isDefaultLocale( localeSlug ) && ! shouldLazyLoadAlternates
 						? this.loadAlternates
@@ -123,23 +125,30 @@ class InlineSupportLink extends Component {
 	}
 }
 
-const mapStateToProps = ( state ) => {
+const getLinkData = ( ownProps ) => {
+	const { supportContext } = ownProps;
+	const contextLinks = getContextLinks();
+	const linkData = contextLinks[ supportContext ];
+	if ( ! linkData ) {
+		return {};
+	}
+	return {
+		supportPostId: linkData.post_id,
+		supportLink: linkData.link,
+	};
+};
+
+const mapStateToProps = ( state, ownProps ) => {
 	return {
 		localeSlug: getCurrentLocaleSlug( state ),
+		...getLinkData( ownProps ),
 	};
 };
 
 const mapDispatchToProps = ( dispatch, ownProps ) => {
-	const {
-		tracksEvent,
-		tracksOptions,
-		statsGroup,
-		statsName,
-		supportPostId,
-		supportLink,
-	} = ownProps;
+	const { tracksEvent, tracksOptions, statsGroup, statsName } = ownProps;
 	return {
-		openDialog: ( event ) => {
+		openDialog: ( event, supportPostId, supportLink ) => {
 			if ( ! supportPostId ) {
 				return;
 			}

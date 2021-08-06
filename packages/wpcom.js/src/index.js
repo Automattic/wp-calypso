@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
 import debugModule from 'debug';
-
-/**
- * Internal dependencies
- */
 import Batch from './lib/batch';
 import Domain from './lib/domain';
 import Domains from './lib/domains';
 import Marketing from './lib/marketing';
 import Me from './lib/me';
-import Pinghub from './lib/util/pinghub';
 import Plans from './lib/plans';
-import Request from './lib/util/request';
 import Site from './lib/site';
 import Users from './lib/users';
+import Pinghub from './lib/util/pinghub';
+import Request from './lib/util/request';
 import sendRequest from './lib/util/send-request';
 
 /**

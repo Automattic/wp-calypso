@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { combineReducers, keyedReducer } from 'calypso/state/utils';
 import {
 	ZONINATOR_REQUEST_LOCK_ERROR,

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getUi from './get-ui';
 
 export const getIsLoading = ( uiState ) => uiState.isLoading;

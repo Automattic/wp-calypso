@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
 import { useEffect } from 'react';
-
-/**
- * Internal dependencies
- */
-import { useOnUnmount } from './use-on-unmount';
 import { recordEnterStep, recordLeaveStep } from '../lib/analytics';
-import type { StepNameType } from '../path';
+import { useOnUnmount } from './use-on-unmount';
 import type { TracksEventProperties } from '../lib/analytics/types';
+import type { StepNameType } from '../path';
 
 /**
  * Records an event in tracks on entering and leaving the step.

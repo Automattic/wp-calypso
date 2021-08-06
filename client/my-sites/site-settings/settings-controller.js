@@ -7,7 +7,7 @@ import page from 'page';
  * Internal Dependencies
  */
 import { recordPageView } from 'calypso/lib/analytics/page-view';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import titlecase from 'to-title-case';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { sectionify } from 'calypso/lib/route';

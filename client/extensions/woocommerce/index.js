@@ -1,29 +1,17 @@
-/**
- * External dependencies
- */
-
+import { translate } from 'i18n-calypso';
 import page from 'page';
 import React from 'react';
-import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import EmptyContent from 'calypso/components/empty-content';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
+import isSiteStore from 'calypso/state/selectors/is-site-store';
+import { getSiteOption } from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import App from './app';
 import Dashboard from './app/dashboard';
-import EmptyContent from 'calypso/components/empty-content';
-import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import StatsController from './app/store-stats/controller';
-import StoreSidebar from './store-sidebar';
 import { bumpStat } from './lib/analytics';
-import { makeLayout, render as clientRender } from 'calypso/controller';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { getSiteOption } from 'calypso/state/sites/selectors';
-import isSiteStore from 'calypso/state/selectors/is-site-store';
-
-/**
- * Style dependencies
- */
+import StoreSidebar from './store-sidebar';
 import './style.scss';
 
 const getStorePages = () => {

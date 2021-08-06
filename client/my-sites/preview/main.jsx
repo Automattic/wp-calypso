@@ -15,7 +15,7 @@ import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteOption, isSitePreviewable } from 'calypso/state/sites/selectors';
 import { addQueryArgs } from 'calypso/lib/route';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { Button } from '@automattic/components';
 import DocumentHead from 'calypso/components/data/document-head';

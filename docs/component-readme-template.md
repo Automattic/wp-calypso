@@ -12,8 +12,8 @@ Example:
 First, display a `jsx` code block to show an example of usage, including import statements and a React component.
 
 ```jsx
-import Gridicon from 'calypso/components/gridicons';
 import { Button } from '@automattic/components';
+import Gridicon from 'calypso/components/gridicons';
 
 export default function RockOnButton() {
 	return (

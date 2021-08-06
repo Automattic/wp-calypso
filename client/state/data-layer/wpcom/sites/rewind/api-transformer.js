@@ -25,6 +25,7 @@ const transformDownload = ( data ) =>
 	Object.assign(
 		{
 			downloadId: data.downloadId,
+			bytesFormatted: data.bytesFormatted,
 			rewindId: data.rewindId,
 			backupPoint: new Date( data.backupPoint * 1000 ),
 			startedAt: new Date( data.startedAt * 1000 ),

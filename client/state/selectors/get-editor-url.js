@@ -9,7 +9,7 @@ import { addQueryArgs } from 'calypso/lib/route';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 
 export const getEditorUrl = ( state, siteId, postId = null, postType = 'post' ) => {
-	if ( ! shouldLoadGutenframe( state, siteId ) ) {
+	if ( ! shouldLoadGutenframe( state, siteId, postType ) ) {
 		const siteAdminUrl = getSiteAdminUrl( state, siteId );
 		let url = `${ siteAdminUrl }post-new.php?post_type=${ postType }`;
 

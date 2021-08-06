@@ -21,5 +21,9 @@
 
 	.section-nav-tab__link {
 		padding: 14px 16px 11px;
+
+		&:hover {
+			background-color: var( --studio-gray-0 );
+		}
 	}
 }

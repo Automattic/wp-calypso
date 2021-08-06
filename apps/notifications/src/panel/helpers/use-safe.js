@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { useCallback, useRef, useLayoutEffect } from 'react';
 
 /**

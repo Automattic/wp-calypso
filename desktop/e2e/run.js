@@ -3,11 +3,11 @@
 /* eslint-disable no-process-exit*/
 /* eslint-disable import/no-nodejs-modules*/
 
-const path = require( 'path' );
-const electron = require( 'electron' );
-const { promisify } = require( 'util' );
-const { openSync, mkdirSync } = require( 'fs' );
 const { execSync, spawn } = require( 'child_process' );
+const { openSync, mkdirSync } = require( 'fs' );
+const path = require( 'path' );
+const { promisify } = require( 'util' );
+const electron = require( 'electron' );
 const videoRecorder = require( './tests/lib/video-recorder' );
 
 const PROJECT_DIR = path.join( __dirname, '../' );

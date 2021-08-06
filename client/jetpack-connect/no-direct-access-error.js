@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
-import HelpButton from './help-button';
-import JetpackConnectHappychatButton from './happychat-button';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import Main from 'calypso/components/main';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import JetpackConnectHappychatButton from './happychat-button';
+import HelpButton from './help-button';
 
 class NoDirectAccessError extends PureComponent {
 	static propTypes = {

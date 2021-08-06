@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import page from 'page';
 import { startsWith } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { tagListing } from './controller';
-import { sidebar, updateLastRoute } from 'calypso/reader/controller';
+import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
+import { sidebar, updateLastRoute } from 'calypso/reader/controller';
+import { tagListing } from './controller';
 
 const redirectHashtaggedTags = ( context, next ) => {
 	if ( context.hashstring && startsWith( context.pathname, '/tag/#' ) ) {

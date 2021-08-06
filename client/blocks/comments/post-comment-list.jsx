@@ -33,7 +33,7 @@ import Gridicon from 'calypso/components/gridicon';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**

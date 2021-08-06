@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 const crypto = require( 'crypto' );
 const fs = require( 'fs' );
 const qs = require( 'qs' );

@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-import React, { Children, useState } from 'react';
-import { Card } from '@automattic/components';
+import React, { Children, useState, useEffect, useRef } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { times } from 'lodash';
 import classnames from 'classnames';
 import { Icon, arrowRight } from '@wordpress/icons';
+import { useResizeObserver } from '@wordpress/compose';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const Controls = ( { currentPage, numberOfPages, setCurrentPage } ) => {
+const Controls = ( { showControlLabels = false, currentPage, numberOfPages, setCurrentPage } ) => {
 	const translate = useTranslate();
 	if ( numberOfPages < 2 ) {
 		return null;
@@ -26,7 +26,9 @@ const Controls = ( { currentPage, numberOfPages, setCurrentPage } ) => {
 				<li key={ `page-${ page }` } aria-current={ page === currentPage ? 'page' : undefined }>
 					<button
 						key={ page.toString() }
-						className={ classnames( { 'dot-pager__control-current': page === currentPage } ) }
+						className={ classnames( 'dot-pager__control-choose-page', {
+							'dot-pager__control-current': page === currentPage,
+						} ) }
 						disabled={ page === currentPage }
 						aria-label={ translate( 'Page %(page)d of %(numberOfPages)d', {
 							args: { page: page + 1, numberOfPages },
@@ -49,6 +51,7 @@ const Controls = ( { currentPage, numberOfPages, setCurrentPage } ) => {
 						fill="currentColor"
 						style={ { transform: 'scaleX(-1)' } }
 					/>
+					{ showControlLabels && translate( 'Previous' ) }
 				</button>
 			</li>
 			<li key="dot-pager-next">
@@ -58,6 +61,7 @@ const Controls = ( { currentPage, numberOfPages, setCurrentPage } ) => {
 					aria-label={ translate( 'Next' ) }
 					onClick={ () => setCurrentPage( currentPage + 1 ) }
 				>
+					{ showControlLabels && translate( 'Next' ) }
 					<Icon icon={ arrowRight } size={ 18 } fill="currentColor" />
 				</button>
 			</li>
@@ -65,16 +69,45 @@ const Controls = ( { currentPage, numberOfPages, setCurrentPage } ) => {
 	);
 };
 
-export const DotPager = ( { children, className } ) => {
+export const DotPager = ( {
+	showControlLabels = false,
+	hasDynamicHeight = false,
+	children,
+	className,
+	...props
+} ) => {
 	const [ currentPage, setCurrentPage ] = useState( 0 );
+	const [ pagesStyle, setPagesStyle ] = useState();
+	const pagesRef = useRef();
+	const [ resizeObserver, sizes ] = useResizeObserver();
+	const numPages = Children.count( children );
+
+	useEffect( () => {
+		if ( ! hasDynamicHeight ) {
+			return;
+		}
+
+		const targetHeight = pagesRef.current?.children[ currentPage ]?.offsetHeight;
+
+		setPagesStyle( targetHeight ? { height: targetHeight } : undefined );
+	}, [ hasDynamicHeight, currentPage, sizes.width, setPagesStyle, children ] );
+
+	useEffect( () => {
+		if ( currentPage >= numPages ) {
+			setCurrentPage( numPages - 1 );
+		}
+	}, [ numPages ] );
+
 	return (
-		<Card className={ className }>
+		<div className={ className } { ...props }>
+			{ resizeObserver }
 			<Controls
+				showControlLabels={ showControlLabels }
 				currentPage={ currentPage }
-				numberOfPages={ Children.count( children ) }
+				numberOfPages={ numPages }
 				setCurrentPage={ setCurrentPage }
 			/>
-			<div className="dot-pager__pages">
+			<div className="dot-pager__pages" ref={ pagesRef } style={ pagesStyle }>
 				{ Children.map( children, ( child, index ) => (
 					<div
 						className={ classnames( 'dot-pager__page', {
@@ -88,7 +121,7 @@ export const DotPager = ( { children, className } ) => {
 					</div>
 				) ) }
 			</div>
-		</Card>
+		</div>
 	);
 };
 

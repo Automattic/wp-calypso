@@ -15,9 +15,10 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import Gridicon from 'calypso/components/gridicon';
 import PopoverMenu from 'calypso/components/popover/menu';
 
-type Activity = {
-	rewindId: number;
-};
+/**
+ * Type dependencies
+ */
+import type { Activity } from './types';
 
 type OwnProps = {
 	siteId: number;
@@ -77,7 +78,7 @@ const SharePopover: React.FC< SharePopoverProps > = ( {
 						site_id: siteId,
 						rewind_id: activity.rewindId,
 					} ),
-					rewindShareRequest( siteId, activity.rewindId, email )
+					rewindShareRequest( siteId, activity.rewindId as string, email )
 				)
 			);
 

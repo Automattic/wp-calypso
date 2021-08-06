@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 export { default as ActionCard } from 'calypso/components/action-card/docs/example';
 export { default as Animate } from 'calypso/components/animate/docs/example';
 export { default as BackButton } from 'calypso/components/back-button/docs/example';

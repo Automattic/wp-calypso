@@ -4,16 +4,9 @@
 
 /* eslint-disable jest/no-conditional-expect */
 
-/**
- * External dependencies
- */
-import React from 'react';
-import moment from 'moment';
 import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
+import moment from 'moment';
+import React from 'react';
 import {
 	FacebookPreview as Facebook,
 	TwitterPreview as Twitter,

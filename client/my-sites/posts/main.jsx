@@ -21,7 +21,6 @@ import { POST_STATUSES } from 'calypso/state/posts/constants';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { mapPostStatus } from 'calypso/lib/route';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
-import config from '@automattic/calypso-config';
 
 class PostsMain extends React.Component {
 	getAnalyticsPath() {
@@ -91,7 +90,7 @@ class PostsMain extends React.Component {
 							: translate( 'Create, edit, and manage the posts on your sites.' )
 					}
 					align="left"
-					hasScreenOptions={ config.isEnabled( 'nav-unification/switcher' ) }
+					hasScreenOptions
 				/>
 				<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ statusSlug } />
 				<PostTypeList

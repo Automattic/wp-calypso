@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import { partial, pick } from 'lodash';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { partial, pick } from 'lodash';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat, bumpStatWithPageView } from 'calypso/lib/analytics/mc';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 const debug = debugFactory( 'calypso:reader:stats' );
 

@@ -44,7 +44,7 @@ const JetpackDisconnectedWPCOM: FunctionComponent = () => {
 			<p>
 				{ preventWidows(
 					translate(
-						'Please visit {{siteUrl/}} to ensure your site loading correctly and reconnect Jetpack if necessary.',
+						'Please visit {{siteUrl/}} to ensure your site is loading correctly and reconnect Jetpack if necessary.',
 						{
 							components: {
 								siteUrl: <ExternalLink href={ siteUrl }>{ siteUrl }</ExternalLink>,

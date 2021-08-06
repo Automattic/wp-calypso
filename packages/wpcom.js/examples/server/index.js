@@ -1,15 +1,6 @@
-/**
- * Module dependencies.
- */
-
-const express = require( 'express' );
 const path = require( 'path' );
+const express = require( 'express' );
 const WPCOM = require( '../../' );
-
-/**
- * wpcon app data
- */
-
 const wpapp = require( '../../test/config' );
 
 /**

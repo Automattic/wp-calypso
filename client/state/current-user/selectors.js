@@ -133,25 +133,6 @@ export const getCurrentUserEmail = createCurrentUserSelector( 'email' );
 export const getCurrentUserDisplayName = createCurrentUserSelector( 'display_name' );
 
 /**
- * Returns true if the capability name is valid for the current user on a given
- * site, false if capabilities are known for the site but the name is invalid,
- * or null if capabilities are not known for the site.
- *
- * @param  {object}   state      Global state tree
- * @param  {number}   siteId     Site ID
- * @param  {string}   capability Capability name
- * @returns {?boolean}            Whether capability name is valid
- */
-export function isValidCapability( state, siteId, capability ) {
-	const capabilities = state.currentUser.capabilities[ siteId ];
-	if ( ! capabilities ) {
-		return null;
-	}
-
-	return capabilities.hasOwnProperty( capability );
-}
-
-/**
  * Returns true if the specified flag is enabled for the user
  *
  * @param  {object}   state      Global state tree

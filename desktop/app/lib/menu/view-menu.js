@@ -1,10 +1,6 @@
 const { BrowserWindow } = require( 'electron' );
-
-/**
- * Internal dependencies
- */
-const debugMenu = require( './debug-menu' );
 const platform = require( '../../lib/platform' );
+const debugMenu = require( './debug-menu' );
 
 /**
  * Module variables

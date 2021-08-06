@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { compact, omit, reduce, get, partial } from 'lodash';
+import { compact, omit, reduce, get } from 'lodash';
 import { localize } from 'i18n-calypso';
 import config from '@automattic/calypso-config';
 
@@ -270,7 +270,7 @@ export default connect(
 	( state, { siteId } ) => ( {
 		allSingleSites: areAllSitesSingleUser( state ),
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-		canCurrentUser: partial( canCurrentUserStateSelector, state, siteId ),
+		canCurrentUser: ( capability ) => canCurrentUserStateSelector( state, siteId, capability ),
 		isJetpack: isJetpackSite( state, siteId ),
 		isSiteAtomic: isSiteWpcomAtomic( state, siteId ),
 		isSingleUser: isSingleUserSite( state, siteId ),

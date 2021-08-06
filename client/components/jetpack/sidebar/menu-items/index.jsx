@@ -12,7 +12,7 @@ import { backupPath, scanPath } from 'calypso/lib/jetpack/paths';
 import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 import getSiteScanProgress from 'calypso/state/selectors/get-site-scan-progress';
@@ -22,8 +22,6 @@ import QueryScanState from 'calypso/components/data/query-jetpack-scan';
 import ScanBadge from 'calypso/components/jetpack/scan-badge';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { isEnabled } from '@automattic/calypso-config';
 
 export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 	const translate = useTranslate();
@@ -91,19 +89,17 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 					<ScanBadge progress={ scanProgress } numberOfThreatsFound={ scanThreats?.length ?? 0 } />
 				</SidebarItem>
 			) }
-			{ ( ! isJetpackCloud() || isEnabled( 'jetpack-cloud/search' ) ) && (
-				<SidebarItem
-					tipTarget="jetpack-search"
-					icon={ showIcons ? 'search' : undefined }
-					label={ translate( 'Search', {
-						comment: 'Jetpack sidebar menu item',
-					} ) }
-					link={ `/jetpack-search/${ siteSlug }` }
-					onNavigate={ onNavigate( tracksEventNames.activityClicked ) }
-					selected={ currentPathMatches( `/jetpack-search/${ siteSlug }` ) }
-					expandSection={ expandSection }
-				/>
-			) }
+			<SidebarItem
+				tipTarget="jetpack-search"
+				icon={ showIcons ? 'search' : undefined }
+				label={ translate( 'Search', {
+					comment: 'Jetpack sidebar menu item',
+				} ) }
+				link={ `/jetpack-search/${ siteSlug }` }
+				onNavigate={ onNavigate( tracksEventNames.activityClicked ) }
+				selected={ currentPathMatches( `/jetpack-search/${ siteSlug }` ) }
+				expandSection={ expandSection }
+			/>
 		</>
 	);
 };

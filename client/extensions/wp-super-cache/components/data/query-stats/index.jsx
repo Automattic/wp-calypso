@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
-import { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { isGeneratingStats } from '../../../state/stats/selectors';
 import { generateStats } from '../../../state/stats/actions';
+import { isGeneratingStats } from '../../../state/stats/selectors';
 
 class QueryStats extends Component {
 	UNSAFE_componentWillMount() {

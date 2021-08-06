@@ -157,21 +157,29 @@ class ThemesMagicSearchCard extends React.Component {
 	findTextForSuggestions = ( input ) => {
 		const val = input;
 		window.requestAnimationFrame( () => {
-			this.setState( {
-				cursorPosition: val.slice( 0, this.searchInputRef.searchInput.selectionStart ).length,
-			} );
-			const tokens = input.split( /(\s+)/ );
-
-			// Get rid of empty match at end
-			tokens[ tokens.length - 1 ] === '' && tokens.splice( tokens.length - 1, 1 );
-			if ( tokens.length === 0 ) {
-				this.setState( { editedSearchElement: '' } );
-				return;
-			}
-			const tokenIndex = this.findEditedTokenIndex( tokens, this.state.cursorPosition );
-			const text = tokens[ tokenIndex ].trim();
-			this.setState( { editedSearchElement: text } );
+			const selectionStart = this.searchInputRef.searchInput.selectionStart;
+			const [ editedSearchElement, cursorPosition ] = this.computeEditedSearchElement(
+				val,
+				selectionStart
+			);
+			this.setState( { editedSearchElement, cursorPosition } );
 		} );
+	};
+
+	computeEditedSearchElement = ( searchText, selectionStart ) => {
+		const cursorPosition = searchText.slice( 0, selectionStart ).length;
+		const tokens = searchText.split( /(\s+)/ );
+
+		let editedSearchElement = '';
+
+		// Get rid of empty match at end
+		tokens[ tokens.length - 1 ] === '' && tokens.splice( tokens.length - 1, 1 );
+		if ( tokens.length === 0 ) {
+			return [ editedSearchElement, cursorPosition ];
+		}
+		const tokenIndex = this.findEditedTokenIndex( tokens, cursorPosition );
+		editedSearchElement = tokens[ tokenIndex ].trim();
+		return [ editedSearchElement, cursorPosition ];
 	};
 
 	insertSuggestion = ( suggestion ) => {
@@ -184,12 +192,6 @@ class ThemesMagicSearchCard extends React.Component {
 			tokens[ tokenIndex + 1 ] && tokens[ tokenIndex + 1 ][ 0 ] === ' ';
 		tokens[ tokenIndex ] = hasNextTokenFirstSpace ? suggestion : suggestion + ' ';
 		return tokens.join( '' );
-	};
-
-	insertTextAtCursor = ( text ) => {
-		const input = this.state.searchInput;
-		const position = this.state.cursorPosition;
-		return input.slice( 0, position ) + text + input.slice( position );
 	};
 
 	onSearchChange = ( input ) => {
@@ -243,22 +245,31 @@ class ThemesMagicSearchCard extends React.Component {
 	suggest = ( suggestion ) => {
 		const updatedInput = this.insertSuggestion( suggestion );
 		this.updateInput( updatedInput );
+		this.focusOnInput();
 	};
 
+	// User has clicked on an item in the "Magic Welcome Bar" to add something like
+	// "feature:" to their search text, which causes autocompletions to display.
 	welcomeBarAddText = ( text ) => {
-		if ( config.isEnabled( 'theme/showcase-revamp' ) ) {
-			// Add an extra leading space sometimes. If the user has "abcd" in
-			// their bar and they click to add "feature:", we want "abcd feature:",
-			// not "abcdfeature:".
-			const { searchInput, cursorPosition } = this.state;
-			if ( searchInput[ cursorPosition - 1 ] !== ' ' ) {
-				text = ' ' + text;
-			}
+		let { searchInput } = this.state;
+		// Since we are adding an unfinished feature to the search, like "feature:" or "column:",
+		// remove other unfinished features from the search. The user doesn't want to have their
+		// search bar reading "feature: column:" after clicking feature, then column.
+		searchInput = searchInput.replace( /(feature|column|subject):(\s|$)/i, '' );
+
+		// Add an extra leading space sometimes. If the user has "abcd" in
+		// their bar and they click to add "feature:", we want "abcd feature:",
+		// not "abcdfeature:".
+		if ( searchInput.length > 0 && searchInput.slice( -1 ) !== ' ' ) {
+			text = ' ' + text;
 		}
 
-		const updatedInput = this.insertTextAtCursor( text );
-		this.updateInput( updatedInput );
-		this.setState( { isPopoverVisible: false } );
+		this.updateInput( searchInput + text );
+		// Workaround for a strange bug: sometimes after clicking in the magic
+		// welcome bar, when findTextForSuggestions() was running, it would
+		// think the cursor is at the beginning of the input, causing no
+		// suggestions to appear. Delaying this state transition seems to fix it.
+		setTimeout( () => this.setState( { isPopoverVisible: false } ), 100 );
 	};
 
 	focusOnInput = () => {
@@ -337,31 +348,29 @@ class ThemesMagicSearchCard extends React.Component {
 						/>
 					</div>
 				) }
-				{ config.isEnabled( 'theme/showcase-revamp' ) && (
-					<div>
-						<Button
-							onClick={ this.togglePopover }
-							className="components-button themes-magic-search-card__advanced-toggle"
-							ref={ ( ref ) => ( this.popoverButtonRef = ref ) }
-						>
-							<Gridicon icon="cog" size={ 18 } />
-							{ translate( 'Filters' ) }
-						</Button>
-						<Popover
-							context={ this.popoverButtonRef }
-							isVisible={ isPopoverVisible }
-							onClose={ this.closePopover }
-							position="bottom"
-						>
-							<MagicSearchWelcome
-								ref={ this.setSuggestionsRefs( 'welcome' ) }
-								taxonomies={ filtersKeys }
-								topSearches={ [] }
-								suggestionsCallback={ this.welcomeBarAddText }
-							/>
-						</Popover>
-					</div>
-				) }
+				<div>
+					<Button
+						onClick={ this.togglePopover }
+						className="components-button themes-magic-search-card__advanced-toggle"
+						ref={ ( ref ) => ( this.popoverButtonRef = ref ) }
+					>
+						<Gridicon icon="cog" size={ 18 } />
+						{ translate( 'Filters' ) }
+					</Button>
+					<Popover
+						context={ this.popoverButtonRef }
+						isVisible={ isPopoverVisible }
+						onClose={ this.closePopover }
+						position="bottom"
+					>
+						<MagicSearchWelcome
+							ref={ this.setSuggestionsRefs( 'welcome' ) }
+							taxonomies={ filtersKeys }
+							topSearches={ [] }
+							suggestionsCallback={ this.welcomeBarAddText }
+						/>
+					</Popover>
+				</div>
 			</Search>
 		);
 
@@ -386,12 +395,9 @@ class ThemesMagicSearchCard extends React.Component {
 						{ isPremiumThemesEnabled && showTierThemesControl && (
 							<SimplifiedSegmentedControl
 								key={ this.props.tier }
-								initialSelected={ this.props.tier }
+								initialSelected={ this.props.tier ? this.props.tier : 'all' }
 								options={ tiers }
 								onSelect={ this.props.select }
-								className={ classNames( {
-									'showcase-revamp': config.isEnabled( 'theme/showcase-revamp' ),
-								} ) }
 							/>
 						) }
 					</div>
@@ -401,16 +407,11 @@ class ThemesMagicSearchCard extends React.Component {
 	}
 }
 
-let allowSomeThemeFilters = ( x ) => x;
-let allowSomeAllValidFilters = ( x ) => x;
-
-if ( config.isEnabled( 'theme/showcase-revamp' ) ) {
-	// Magic Search only allows "feature", "column", "subject" theme attributes to be searched
-	// For simplicity and less user confusion.
-	allowSomeThemeFilters = ( { feature, column, subject } ) => ( { feature, column, subject } );
-	allowSomeAllValidFilters = ( filtersKeys ) =>
-		intersection( filtersKeys, [ 'feature', 'column', 'subject' ] );
-}
+// Magic Search only allows "feature", "column", "subject" theme attributes to be searched
+// For simplicity and less user confusion.
+const allowSomeThemeFilters = ( { feature, column, subject } ) => ( { feature, column, subject } );
+const allowSomeAllValidFilters = ( filtersKeys ) =>
+	intersection( filtersKeys, [ 'feature', 'column', 'subject' ] );
 
 export default compose(
 	connect( ( state ) => ( {

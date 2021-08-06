@@ -17,6 +17,7 @@ import '../../jetpack-connect/style.scss';
 export default function () {
 	page(
 		'/purchase-product/:type(jetpack_search|wpcom_search)/:interval(yearly|monthly)?',
+		controller.redirectToSitelessCheckout,
 		controller.redirectToLogin,
 		controller.persistMobileAppFlow,
 		controller.setMasterbar,

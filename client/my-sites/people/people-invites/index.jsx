@@ -23,7 +23,7 @@ import QuerySiteInvites from 'calypso/components/data/query-site-invites';
 import InvitesListEnd from './invites-list-end';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import {
 	isRequestingInvitesForSite,

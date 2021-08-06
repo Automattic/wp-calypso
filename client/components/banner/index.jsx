@@ -26,7 +26,7 @@ import {
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { Button, Card } from '@automattic/components';
 import DismissibleCard from 'calypso/blocks/dismissible-card';
 import PlanPrice from 'calypso/my-sites/plan-price';

@@ -1,16 +1,13 @@
-/**
- * Internal dependencies
- */
-import type { ExperimentAssignment, Config } from './types';
-import * as ExperimentAssignments from './internal/experiment-assignments';
-import * as Request from './internal/requests';
 import {
 	retrieveExperimentAssignment,
 	storeExperimentAssignment,
 } from './internal/experiment-assignment-store';
+import * as ExperimentAssignments from './internal/experiment-assignments';
+import { createFallbackExperimentAssignment as createFallbackExperimentAssignment } from './internal/experiment-assignments';
+import * as Request from './internal/requests';
 import * as Timing from './internal/timing';
 import * as Validation from './internal/validations';
-import { createFallbackExperimentAssignment as createFallbackExperimentAssignment } from './internal/experiment-assignments';
+import type { ExperimentAssignment, Config } from './types';
 
 /**
  * The number of milliseconds before we abandon fetching an experiment

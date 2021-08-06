@@ -6,6 +6,8 @@
 	margin-left: -1px;
 	overflow-y: auto;
 	max-height: 50vh;
+	border: 1px solid var( --color-neutral-10 );
+	border-top: 0;
 }
 
 .keyed-suggestions__suggestions {
@@ -15,8 +17,8 @@
 
 .keyed-suggestions__category {
 	background-color: var( --color-neutral-0 );
-	border: 1px solid var( --color-neutral-5 );
-	border-top: 0;
+	border: 0;
+	border-bottom: 1px solid var( --color-neutral-5 );
 	padding: 4px 8px;
 	font-size: $font-body-small;
 	display: flex;
@@ -44,8 +46,8 @@
 	display: flex;
 	padding: 10px;
 	background: var( --color-surface );
-	border: 1px solid var( --color-neutral-5 );
-	border-top: 0;
+	border: 0;
+	border-bottom: 1px solid var( --color-neutral-5 );
 	font-size: $font-body;
 	cursor: pointer;
 

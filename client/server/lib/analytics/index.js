@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
+import config from '@automattic/calypso-config';
+import { omit, get, has } from 'lodash';
 import superagent from 'superagent';
 import { v4 as uuid } from 'uuid';
-import { omit, get, has } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
 import { statsdTimingUrl, statsdCountingUrl } from 'calypso/lib/analytics/statsd-utils';
 const URL = require( 'url' );
 

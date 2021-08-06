@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import { addQueryArgs } from '@wordpress/url';
 import { isEnabled } from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
-import { availableDesignsConfig } from './available-designs-config';
+import { addQueryArgs } from '@wordpress/url';
 import { DESIGN_IMAGE_FOLDER } from '../constants';
+import { availableDesignsConfig } from './available-designs-config';
 import { shuffleArray } from './shuffle';
 import type { MShotsOptions } from '../components/mshots-image';
 import type { Design } from '../types';

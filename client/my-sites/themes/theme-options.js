@@ -33,7 +33,7 @@ import {
 
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import { isJetpackSite, isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 const identity = ( theme ) => theme;

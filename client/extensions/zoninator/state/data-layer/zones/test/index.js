@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { zoneFromApi, zonesListFromApi } from '../utils';
 
 test( 'should convert zones list response to a zones list object', () => {

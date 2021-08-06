@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import { current as currentPage } from 'page';
-
-/**
- * Internal dependencies
- */
 import {
 	addPlanToCart,
 	createAccount,

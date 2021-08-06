@@ -2,21 +2,48 @@
 
 ## trunk
 
+## 9.0.0
+
+- Added new, extensible TypeScript config for modern TS and JS packages in `./typescript/[tj]-package.json`
 - Breaking: Changed `webpack/file-loader` to internally use the new `asset/resource` modules (the former is deprecated in
   webpack 5). The semantics of the options have changed, now the final asset URL is `${publichPath}${outputPath}/${fileName}`,
   before it didn't include the `outputPath` part.
-- Switched from `node-sass` to `sass` (Dart Sass) for processing Sass files.
-  - Removed dependency `node-sass`
-  - Added dependency `sass ^1.32.13`
-- Updated dependencies
+- Switched from `node-sass` to `sass` (Dart Sass) for processing Sass files:
+- Removed dependencies:
+  - node-sass
+  - file-loader
+- Added dependencies:
+  - sass ^1.32.13
+- Updated dependencies:
+  - @babel/cli to ^7.14.8
+  - @babel/compat-data to ^7.14.7
+  - @babel/core to ^7.14.8
+  - @babel/helpers to ^7.14.8
+  - @babel/plugin-proposal-class-properties to ^7.14.5
+  - @babel/plugin-transform-react-jsx to ^7.14.5
+  - @babel/plugin-transform-runtime to ^7.14.5
+  - @babel/preset-env to ^7.14.8
+  - @babel/preset-react to ^7.14.5
+  - @babel/preset-typescript to ^7.14.5
+  - @types/webpack-env to ^1.16.2
+  - @wordpress/babel-plugin-import-jsx-pragma to ^3.0.3
+  - @wordpress/browserslist-config to ^3.0.3
+  - @wordpress/dependency-extraction-webpack-plugin to ^3.1.2
   - autoprefixer to ^10.2.5
+  - babel-jest to ^27.0.6
   - css-loader to ^5.2.4
+  - jest-config to ^27.0.6
   - mini-css-extract-plugin to ^1.6.0
-  - node-sass to ^6.0.0
-  - postcss to ^8.2.15
   - postcss-loader to ^5.3.0
+  - sass to ^1.32.13
   - sass-loader to ^11.1.1
   - thread-loader to ^3.0.4
+  - typescript to ^4.3.5
+  - webpack-cli to ^4.7.2
+- Updated peer dependencies:
+  - jest to >=27.0.6
+  - postcss to ^8.2.15
+  - webpack to ^5.46.0
 
 ## 8.0.0
 

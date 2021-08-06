@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import DomainsLandingHeader from '../header';
-import DomainsLandingContentCard from '../content-card';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wp from 'calypso/lib/wp';
-import { getMaintenanceMessageFromError } from '../utils';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
+import DomainsLandingContentCard from '../content-card';
+import DomainsLandingHeader from '../header';
+import { getMaintenanceMessageFromError } from '../utils';
 
 const wpcom = wp.undocumented();
 
@@ -54,17 +47,20 @@ class RegistrantVerificationPage extends Component {
 	getVerificationSuccessState = ( domains ) => {
 		const { translate } = this.props;
 
-		const verifiedDomains = domains.join( ', ' );
+		const DomainLinks = domains.map( ( domain, index ) => [
+			index > 0 && ', ',
+			<a key={ domain } href={ `https://${ domain }?logmein=1` }>
+				{ domain }
+			</a>,
+		] );
 
 		return {
 			title: translate( 'Success!' ),
 			message: translate(
-				'Thank your for verifying your contact information for:{{br /}}{{strong}}%(domain)s{{/strong}}.',
+				'Thank your for verifying your contact information for:{{br /}}{{strong}}{{domainLinks /}}{{/strong}}.',
 				{
-					args: {
-						domain: verifiedDomains,
-					},
 					components: {
+						domainLinks: DomainLinks,
 						strong: <strong />,
 						br: <br />,
 					},
@@ -130,7 +126,7 @@ class RegistrantVerificationPage extends Component {
 			return {
 				title: translate( 'Already verified.' ),
 				message: translate(
-					"You've already verified {{strong}}%(email)s{{/strong}} for:{{br /}}{{strong}}%(domain)s{{/strong}}.",
+					"You've already verified {{strong}}%(email)s{{/strong}} for:{{br /}}{{strong}}{{a}}%(domain)s{{/a}}{{/strong}}.",
 					{
 						args: {
 							email: email,
@@ -139,6 +135,7 @@ class RegistrantVerificationPage extends Component {
 						components: {
 							strong: <strong />,
 							br: <br />,
+							a: <a href={ `https://${ domain }?logmein=1` } />,
 						},
 					}
 				),

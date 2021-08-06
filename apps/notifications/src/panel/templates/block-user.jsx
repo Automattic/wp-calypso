@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
+import { connect } from 'react-redux';
 import getIsNoteApproved from '../state/selectors/get-is-note-approved';
-import { linkProps } from './functions';
 import FollowLink from './follow-link';
+import { linkProps } from './functions';
 
 function getDisplayURL( url ) {
 	const parser = document.createElement( 'a' );

@@ -34,7 +34,12 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	}
 
 	.components-modal__header {
-		display: none;
+		position: absolute;
+		max-width: 90%;
+		left: 5%;
+		@media ( min-width: $wpcom-modal-breakpoint ) {
+			display: none;
+		}
 	}
 
 	.components-guide__container {
@@ -62,8 +67,13 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	.components-guide__page {
 		position: absolute;
 		width: 100%;
+		max-width: 90vw;
 		height: 100%;
 		justify-content: start;
+
+		@media ( min-width: $wpcom-modal-breakpoint ) {
+			max-width: 100%;
+		}
 	}
 
 	.components-guide__page-control {
@@ -100,12 +110,14 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	justify-content: flex-end;
 	background: white;
 	width: 100%;
-	height: 100%;
+	height: 90%;
+	max-width: 90vw;
 
 	@media ( min-width: $wpcom-modal-breakpoint ) {
 		flex-direction: row;
 		justify-content: flex-start;
 		position: absolute;
+		max-width: 100%;
 		min-height: $wpcom-modal-content-min-height;
 		bottom: 0;
 	}

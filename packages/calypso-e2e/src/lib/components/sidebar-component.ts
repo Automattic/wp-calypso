@@ -1,7 +1,6 @@
 import { ElementHandle, Page } from 'playwright';
 import { getViewportName } from '../../browser-helper';
 import { toTitleCase } from '../../data-helper';
-import { BaseContainer } from '../base-container';
 import { NavbarComponent } from './navbar-component';
 
 const selectors = {
@@ -18,10 +17,18 @@ const selectors = {
 /**
  * Component representing the sidebar on the dashboard of WPCOM.
  *
- * @augments {BaseContainer}
  */
-export class SidebarComponent extends BaseContainer {
-	sidebar!: ElementHandle;
+export class SidebarComponent {
+	private page: Page;
+
+	/**
+	 * Waits for the wrapper of the sidebar to be initialized on the page, then returns the element handle for that sidebar
+	 *
+	 * @returns the ElementHandle for the sidebar
+	 */
+	async waitForSidebarInitialization(): Promise< ElementHandle > {
+		return await this.page.waitForSelector( selectors.sidebar );
+	}
 
 	/**
 	 * Constructs an instance of the component.
@@ -29,17 +36,7 @@ export class SidebarComponent extends BaseContainer {
 	 * @param {Page} page The underlying page.
 	 */
 	constructor( page: Page ) {
-		super( page, selectors.sidebar );
-	}
-
-	/**
-	 * Post-initialization steps of this object.
-	 *
-	 * @returns {Promise<void>} No return value.
-	 */
-	async _postInit(): Promise< void > {
-		await this.page.waitForLoadState( 'domcontentloaded' );
-		this.sidebar = await this.page.waitForSelector( selectors.sidebar );
+		this.page = page;
 	}
 
 	/**
@@ -68,6 +65,10 @@ export class SidebarComponent extends BaseContainer {
 		let selector;
 		const viewportName = getViewportName();
 
+		// Especially on mobile devices, there can be a race condition in clicking on "My Sites" button to slide in the sidebar,
+		// and that sidebar actually being initialized! So we want to wait and make sure the sidebar is actually in the DOM before proceeding.
+		const sidebar = await this.waitForSidebarInitialization();
+
 		// If mobile, sidebar is hidden by default and focus is on the content.
 		// The sidebar must be first brought into view.
 		if ( viewportName === 'mobile' ) {
@@ -87,7 +88,7 @@ export class SidebarComponent extends BaseContainer {
 		if ( subitem ) {
 			subitem = toTitleCase( subitem ).trim();
 			// If there is a subheading, by definition the expanded menu element will always be present.
-			await this.sidebar.waitForSelector( selectors.expandedMenu );
+			await sidebar.waitForSelector( selectors.expandedMenu );
 			// Explicitly select only the child headings and combine with the text matching engine.
 			// This works better than using CSS pseudo-classes like `:has-text` or `:text-matches` for text
 			// matching.
@@ -105,7 +106,7 @@ export class SidebarComponent extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async _openMobileSidebar(): Promise< void > {
-		const navbarComponent = await NavbarComponent.Expect( this.page );
+		const navbarComponent = new NavbarComponent( this.page );
 		await navbarComponent.clickMySites();
 		// `focus-sidebar` attribute is added once the sidebar is opened and focused in mobile view.
 		const layoutElement = await this.page.waitForSelector( `${ selectors.layout }.focus-sidebar` );
@@ -149,6 +150,6 @@ export class SidebarComponent extends BaseContainer {
 		// See https://github.com/microsoft/playwright/issues/6244#issuecomment-824384845.
 		await this.page.click( selector );
 
-		await this.page.waitForLoadState( 'domcontentloaded' );
+		await this.page.waitForLoadState( 'load' );
 	}
 }

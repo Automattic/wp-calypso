@@ -14,7 +14,7 @@ import { preventWidows } from 'calypso/lib/formatting';
  */
 import EmptyContent from 'calypso/components/empty-content';
 import { Button } from '@automattic/components';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class MediaLibraryListPlanPromo extends React.Component {

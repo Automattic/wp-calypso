@@ -45,7 +45,7 @@ import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-act
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import EmptyContent from 'calypso/components/empty-content';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import Banner from 'calypso/components/banner';
 import isVipSite from 'calypso/state/selectors/is-vip-site';

@@ -40,7 +40,7 @@ import {
 	isEcommerce,
 	isSecurityDaily,
 } from '@automattic/calypso-products';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { isSiteWordadsUnsafe } from 'calypso/state/wordads/status/selectors';
 import { wordadsUnsafeValues } from 'calypso/state/wordads/status/schema';
 import {

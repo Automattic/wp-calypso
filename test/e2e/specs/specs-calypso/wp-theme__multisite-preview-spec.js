@@ -1,5 +1,6 @@
 import assert from 'assert';
 import config from 'config';
+import GuideComponent from '../../lib/components/guide-component';
 import SidebarComponent from '../../lib/components/sidebar-component';
 import * as dataHelper from '../../lib/data-helper';
 import * as driverManager from '../../lib/driver-manager.js';
@@ -40,6 +41,10 @@ describe( `[${ host }] Themes: Preview a theme, all sites (${ screenSize }) @par
 	} );
 
 	it( 'can search for free themes', async function () {
+		// Makes sure that the Quick Switch modal will be dismissed.
+		const guideComponent = new GuideComponent( this.driver );
+		await guideComponent.dismiss( 1000, '.nav-unification-quick-switch-modal' );
+
 		this.themesPage = await ThemesPage.Expect( this.driver );
 		await this.themesPage.waitUntilThemesLoaded();
 		await this.themesPage.showOnlyFreeThemes();

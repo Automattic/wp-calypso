@@ -17,7 +17,6 @@ import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
 import WritingForm from 'calypso/my-sites/site-settings/form-writing';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
-import config from '@automattic/calypso-config';
 
 const SiteSettingsWriting = ( { site, translate } ) => (
 	<Main className="settings-writing site-settings">
@@ -33,7 +32,7 @@ const SiteSettingsWriting = ( { site, translate } ) => (
 				"Manage categories, tags, and other settings related to your site's content."
 			) }
 			align="left"
-			hasScreenOptions={ config.isEnabled( 'nav-unification/switcher' ) }
+			hasScreenOptions
 		/>
 		<SiteSettingsNavigation site={ site } section="writing" />
 		<WritingForm />

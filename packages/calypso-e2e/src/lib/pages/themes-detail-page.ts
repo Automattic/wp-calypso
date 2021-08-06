@@ -1,5 +1,4 @@
 import { Page } from 'playwright';
-import { BaseContainer } from '../base-container';
 import { PreviewComponent } from '../components';
 
 const selectors = {
@@ -20,10 +19,19 @@ const selectors = {
 
 /**
  * Component representing the Apperance > Themes page.
- *
- * @augments {BaseContainer}
  */
-export class ThemesDetailPage extends BaseContainer {
+export class ThemesDetailPage {
+	private page: Page;
+
+	/**
+	 * Constructs an instance of the component.
+	 *
+	 * @param {Page} page The underlying page.
+	 */
+	constructor( page: Page ) {
+		this.page = page;
+	}
+
 	/**
 	 * Launches the live preview of the theme.
 	 *
@@ -31,7 +39,8 @@ export class ThemesDetailPage extends BaseContainer {
 	 */
 	async preview(): Promise< void > {
 		await this.page.click( selectors.demoPane );
-		await PreviewComponent.Expect( this.page );
+		const previewComponent = new PreviewComponent( this.page );
+		await previewComponent.previewReady();
 	}
 
 	/**

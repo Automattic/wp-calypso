@@ -22,7 +22,7 @@ import {
 	hasDomainCredit,
 	isCurrentUserCurrentPlanOwner,
 } from 'calypso/state/sites/plans/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isEligibleForFreeToPaidUpsell from 'calypso/state/selectors/is-eligible-for-free-to-paid-upsell';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

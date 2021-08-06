@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import React, { ReactNode, useCallback, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
 import RenderSwitch from 'calypso/components/jetpack/render-switch';
 import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';

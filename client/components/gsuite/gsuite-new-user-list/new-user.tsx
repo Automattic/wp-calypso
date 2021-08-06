@@ -139,44 +139,46 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 			className={ classNames( 'gsuite-new-user-list__new-user', { 'show-labels': showLabels } ) }
 		>
 			<FormFieldset>
-				<LabelWrapper label={ translate( 'First name' ) } showLabel={ showLabels }>
-					<FormTextInput
-						autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
-						placeholder={ translate( 'First name' ) }
-						value={ firstName }
-						maxLength={ 60 }
-						isError={ hasFirstNameError }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-							onUserValueChange( 'firstName', event.target.value, mailBoxFieldTouched );
-						} }
-						onBlur={ () => {
-							setFirstNameFieldTouched( wasValidated );
-						} }
-						onKeyUp={ onReturnKeyPress }
-					/>
-				</LabelWrapper>
+				<div className="gsuite-new-user-list__new-user-name-container">
+					<LabelWrapper label={ translate( 'First name' ) } showLabel={ showLabels }>
+						<FormTextInput
+							autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
+							placeholder={ translate( 'First name' ) }
+							value={ firstName }
+							maxLength={ 60 }
+							isError={ hasFirstNameError }
+							onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+								onUserValueChange( 'firstName', event.target.value, mailBoxFieldTouched );
+							} }
+							onBlur={ () => {
+								setFirstNameFieldTouched( wasValidated );
+							} }
+							onKeyUp={ onReturnKeyPress }
+						/>
+					</LabelWrapper>
 
-				{ hasFirstNameError && <FormInputValidation text={ firstNameError } isError /> }
-			</FormFieldset>
+					{ hasFirstNameError && <FormInputValidation text={ firstNameError } isError /> }
+				</div>
 
-			<FormFieldset>
-				<LabelWrapper label={ translate( 'Last name' ) } showLabel={ showLabels }>
-					<FormTextInput
-						placeholder={ translate( 'Last name' ) }
-						value={ lastName }
-						maxLength={ 60 }
-						isError={ hasLastNameError }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-							onUserValueChange( 'lastName', event.target.value );
-						} }
-						onBlur={ () => {
-							setLastNameFieldTouched( wasValidated );
-						} }
-						onKeyUp={ onReturnKeyPress }
-					/>
-				</LabelWrapper>
+				<div className="gsuite-new-user-list__new-user-name-container">
+					<LabelWrapper label={ translate( 'Last name' ) } showLabel={ showLabels }>
+						<FormTextInput
+							placeholder={ translate( 'Last name' ) }
+							value={ lastName }
+							maxLength={ 60 }
+							isError={ hasLastNameError }
+							onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+								onUserValueChange( 'lastName', event.target.value );
+							} }
+							onBlur={ () => {
+								setLastNameFieldTouched( wasValidated );
+							} }
+							onKeyUp={ onReturnKeyPress }
+						/>
+					</LabelWrapper>
 
-				{ hasLastNameError && <FormInputValidation text={ lastNameError } isError /> }
+					{ hasLastNameError && <FormInputValidation text={ lastNameError } isError /> }
+				</div>
 
 				{ showTrashButton && (
 					<Button
@@ -197,28 +199,28 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 
 					{ hasMailBoxError && <FormInputValidation text={ mailBoxError } isError /> }
 				</div>
-			</FormFieldset>
 
-			<FormFieldset>
-				<LabelWrapper label={ translate( 'Password' ) } showLabel={ showLabels }>
-					<FormPasswordInput
-						autoCapitalize="off"
-						autoCorrect="off"
-						placeholder={ translate( 'Password' ) }
-						value={ password }
-						maxLength={ 100 }
-						isError={ hasPasswordError }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-							onUserValueChange( 'password', event.target.value );
-						} }
-						onBlur={ () => {
-							setPasswordFieldTouched( wasValidated );
-						} }
-						onKeyUp={ onReturnKeyPress }
-					/>
-				</LabelWrapper>
+				<div className="gsuite-new-user-list__new-user-password-container">
+					<LabelWrapper label={ translate( 'Password' ) } showLabel={ showLabels }>
+						<FormPasswordInput
+							autoCapitalize="off"
+							autoCorrect="off"
+							placeholder={ translate( 'Password' ) }
+							value={ password }
+							maxLength={ 100 }
+							isError={ hasPasswordError }
+							onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+								onUserValueChange( 'password', event.target.value );
+							} }
+							onBlur={ () => {
+								setPasswordFieldTouched( wasValidated );
+							} }
+							onKeyUp={ onReturnKeyPress }
+						/>
+					</LabelWrapper>
 
-				{ hasPasswordError && <FormInputValidation text={ passwordError } isError /> }
+					{ hasPasswordError && <FormInputValidation text={ passwordError } isError /> }
+				</div>
 			</FormFieldset>
 		</div>
 	);

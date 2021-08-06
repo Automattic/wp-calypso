@@ -33,7 +33,7 @@ import AutoRenewToggle from './auto-renew-toggle';
 import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import UserItem from 'calypso/components/user';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { canEditPaymentDetails } from '../utils';
+import { canEditPaymentDetails, isJetpackTemporarySitePurchase } from '../utils';
 import {
 	getPlan,
 	TERM_BIENNIALLY,
@@ -324,6 +324,10 @@ function RenewErrorMessage( { purchase, translate, site } ) {
 	}
 
 	const isJetpack = purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) );
+
+	if ( isJetpackTemporarySitePurchase( purchase.domain ) ) {
+		return null;
+	}
 
 	if ( isJetpack ) {
 		return (

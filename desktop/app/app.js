@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 require( './env' ); // Must come first to setup the environment
 const log = require( './lib/logger' )( 'desktop:index' );
 

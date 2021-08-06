@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 export {
 	Button,
 	Card,

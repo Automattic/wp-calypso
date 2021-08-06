@@ -25,12 +25,12 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 	} );
 
 	it( 'Navigate to Themes', async function () {
-		sidebarComponent = await SidebarComponent.Expect( page );
+		sidebarComponent = new SidebarComponent( page );
 		await sidebarComponent.gotoMenu( { item: 'Appearance', subitem: 'Themes' } );
 	} );
 
 	it( `Search for free theme with keyword ${ themeName }`, async function () {
-		themesPage = await ThemesPage.Expect( page );
+		themesPage = new ThemesPage( page );
 		await themesPage.filterThemes( 'Free' );
 		await themesPage.search( themeName );
 	} );
@@ -41,7 +41,8 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 	} );
 
 	it( 'Preview theme', async function () {
-		previewComponent = await PreviewComponent.Expect( page );
+		previewComponent = new PreviewComponent( page );
+		await previewComponent.previewReady();
 	} );
 
 	it( 'Close preview', async function () {

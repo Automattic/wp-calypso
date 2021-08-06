@@ -86,7 +86,6 @@
 		"signup/social": true,
 		"site-indicator": true,
 		"support-user": true,
-		"theme/showcase-revamp": true,
 		"upgrades/checkout": true,
 		"upgrades/domain-search": true,
 		"upgrades/redirect-payments": true,
@@ -94,7 +93,6 @@
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
 		"wpcom-user-bootstrap": false,
-		"wordpress-action-search": false,
-		"nav-unification/switcher": true
+		"wordpress-action-search": false
 	}
 }

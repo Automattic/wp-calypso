@@ -6,14 +6,16 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isEligibleForFreeToPaidUpsell from '../is-eligible-for-free-to-paid-upsell';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isMappedDomainSite from 'calypso/state/selectors/is-mapped-domain-site';
 import isSiteOnFreePlan from 'calypso/state/selectors/is-site-on-free-plan';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 
-jest.mock( 'calypso/state/selectors/can-current-user', () => require( 'sinon' ).stub() );
+jest.mock( 'calypso/state/selectors/can-current-user', () => ( {
+	canCurrentUser: require( 'sinon' ).stub(),
+} ) );
 jest.mock( 'calypso/state/sites/selectors', () => ( {
 	isJetpackSite: require( 'sinon' ).stub(),
 } ) );

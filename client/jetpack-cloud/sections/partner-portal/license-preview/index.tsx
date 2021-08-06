@@ -1,32 +1,21 @@
-/**
- * External dependencies
- */
-import React, { ReactElement, useCallback, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { getUrlParts } from '@automattic/calypso-url';
+import { Button } from '@automattic/components';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
-import { useTranslate } from 'i18n-calypso';
 import classnames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getUrlParts } from '@automattic/calypso-url';
-import { infoNotice } from 'calypso/state/notices/actions';
-import { getLicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
-import { LicenseState, LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import { Button } from '@automattic/components';
+import React, { ReactElement, useCallback, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import FormattedDate from 'calypso/components/formatted-date';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import Gridicon from 'calypso/components/gridicon';
-import FormattedDate from 'calypso/components/formatted-date';
-import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';
 import LicenseDetails from 'calypso/jetpack-cloud/sections/partner-portal/license-details';
-
-/**
- * Style dependencies
- */
+import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';
+import { LicenseState, LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import { getLicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { infoNotice } from 'calypso/state/notices/actions';
 import './style.scss';
 
 interface Props {

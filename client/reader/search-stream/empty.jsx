@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import EmptyContent from 'calypso/components/empty-content';
-import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 class SearchEmptyContent extends React.Component {

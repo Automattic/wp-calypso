@@ -1,20 +1,13 @@
-/**
- * External Dependencies
- */
 const { app, BrowserWindow, BrowserView, ipcMain: ipc } = require( 'electron' );
-
-/**
- * Internal dependencies
- */
+const appInstance = require( '../lib/app-instance' );
+const { getPath } = require( '../lib/assets' );
 const Config = require( '../lib/config' );
+const log = require( '../lib/logger' )( 'desktop:runapp' );
+const platform = require( '../lib/platform' );
+const SessionManager = require( '../lib/session' );
 const Settings = require( '../lib/settings' );
 const settingConstants = require( '../lib/settings/constants' );
-const SessionManager = require( '../lib/session' );
-const appInstance = require( '../lib/app-instance' );
-const platform = require( '../lib/platform' );
 const System = require( '../lib/system' );
-const log = require( '../lib/logger' )( 'desktop:runapp' );
-const { getPath } = require( '../lib/assets' );
 
 /**
  * Module variables

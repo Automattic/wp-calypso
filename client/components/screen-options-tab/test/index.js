@@ -16,6 +16,11 @@ import { render as rtlRender } from 'config/testing-library';
 import { reducer as ui } from 'calypso/state/ui/reducer';
 import jetpack from 'calypso/state/jetpack/reducer';
 
+jest.mock( 'calypso/state/preferences/selectors', () => ( {
+	hasReceivedRemotePreferences: jest.fn( () => true ),
+	getPreference: jest.fn( () => true ),
+} ) );
+
 jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
 	useDispatch: jest.fn( () => () => {} ),

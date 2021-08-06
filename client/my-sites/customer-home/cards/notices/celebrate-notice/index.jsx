@@ -7,7 +7,6 @@ import fireworksIllustration from 'calypso/assets/images/customer-home/illustrat
 import Spinner from 'calypso/components/spinner';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import { composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { savePreference } from 'calypso/state/preferences/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const CelebrateNotice = ( {
@@ -23,15 +22,8 @@ const CelebrateNotice = ( {
 	tracksEventExtras = {},
 } ) => {
 	const [ isLoading, setIsLoading ] = useState( false );
-	const [ isVisible, setIsVisible ] = useState( true );
 	const dispatch = useDispatch();
 	const { skipCurrentView } = useSkipCurrentViewMutation( siteId );
-
-	if ( ! isVisible ) {
-		return null;
-	}
-
-	const dismissalPreferenceKey = `dismissible-card-${ noticeId }-${ siteId }`;
 
 	const showNextTask = () => {
 		setIsLoading( true );
@@ -48,8 +40,8 @@ const CelebrateNotice = ( {
 	};
 
 	const skip = () => {
-		setIsVisible( false );
-		dispatch( savePreference( dismissalPreferenceKey, true ) );
+		setIsLoading( true );
+		skipCurrentView();
 		onSkip && onSkip();
 
 		dispatch(

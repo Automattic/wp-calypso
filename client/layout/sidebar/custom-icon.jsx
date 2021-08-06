@@ -8,9 +8,6 @@
  *   source other than grid icons or material icons.
  **/
 
-/**
- * External dependencies
- */
 import React from 'react';
 
 const SidebarCustomIcon = ( { icon, ...rest } ) => {

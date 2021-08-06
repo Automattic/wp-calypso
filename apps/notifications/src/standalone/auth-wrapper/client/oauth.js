@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import wpcom from 'wpcom';
 import wpcomXhrRequest from 'wpcom-xhr-request';
 

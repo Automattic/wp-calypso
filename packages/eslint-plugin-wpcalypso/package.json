@@ -22,16 +22,16 @@
 		"node": ">=10"
 	},
 	"peerDependencies": {
-		"@babel/core": ">=7.14.0",
+		"@babel/core": ">=7.14.8",
 		"eslint": ">=7.31.0",
 		"eslint-plugin-react-hooks": "^4.2.0",
 		"eslint-plugin-inclusive-language": "^2.1.1",
-		"eslint-plugin-jsdoc": "^35.5.1"
+		"eslint-plugin-jsdoc": "^36.0.6"
 	},
 	"devDependencies": {
-		"@babel/core": "^7.14.0",
-		"@babel/eslint-parser": "^7.13.14",
-		"@babel/parser": "^7.14.1",
+		"@babel/core": "^7.14.8",
+		"@babel/eslint-parser": "^7.14.9",
+		"@babel/parser": "^7.14.9",
 		"eslint": ">=7.31.0"
 	}
 }

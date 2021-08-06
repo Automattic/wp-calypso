@@ -16,6 +16,7 @@ import photon from 'photon';
  */
 import { Card, Ribbon, Button } from '@automattic/components';
 import ThemeMoreButton from './more-button';
+import Badge from 'calypso/components/badge';
 import PulsingDot from 'calypso/components/pulsing-dot';
 import InfoPopover from 'calypso/components/info-popover';
 import { decodeEntities } from 'calypso/lib/formatting';
@@ -117,6 +118,12 @@ export class Theme extends Component {
 		const { theme } = this.props;
 		const skillLevels = get( theme, [ 'taxonomies', 'theme_skill-level' ] );
 		return some( skillLevels, { slug: 'beginner' } );
+	}
+
+	isFullSiteEditingTheme() {
+		const { theme } = this.props;
+		const features = get( theme, [ 'taxonomies', 'theme_feature' ] );
+		return some( features, { slug: 'block-templates' } );
 	}
 
 	renderPlaceholder() {
@@ -248,7 +255,14 @@ export class Theme extends Component {
 					</a>
 
 					<div className="theme__info">
-						<h2 className="theme__info-title">{ name }</h2>
+						<h2 className="theme__info-title">
+							{ name }
+							{ this.isFullSiteEditingTheme() && (
+								<Badge type="warning-clear" className="theme__badge-beta">
+									{ translate( 'Beta' ) }
+								</Badge>
+							) }
+						</h2>
 						{ active && (
 							<span className="theme__badge-active">
 								{ translate( 'Active', {

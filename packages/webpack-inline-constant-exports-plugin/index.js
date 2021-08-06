@@ -1,6 +1,6 @@
+const ConstDependency = require( 'webpack/lib/dependencies/ConstDependency' );
 const HarmonyImportSideEffectDependency = require( 'webpack/lib/dependencies/HarmonyImportSideEffectDependency' );
 const HarmonyImportSpecifierDependency = require( 'webpack/lib/dependencies/HarmonyImportSpecifierDependency' );
-const ConstDependency = require( 'webpack/lib/dependencies/ConstDependency' );
 
 function addConstantExport( module, name, value ) {
 	if ( ! module.constantExports ) {

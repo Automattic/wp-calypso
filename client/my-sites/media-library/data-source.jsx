@@ -19,7 +19,7 @@ import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import GooglePhotosIcon from './google-photos-icon';
 import config from '@automattic/calypso-config';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 
 export class MediaLibraryDataSource extends Component {
 	static propTypes = {

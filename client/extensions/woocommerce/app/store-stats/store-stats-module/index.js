@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { isEqual } from 'lodash';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import classnames from 'classnames';
+import { isEqual } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import ErrorPanel from 'calypso/my-sites/stats/stats-error';
+import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
-import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
-import ErrorPanel from 'calypso/my-sites/stats/stats-error';
 
 class StoreStatsModule extends Component {
 	static propTypes = {

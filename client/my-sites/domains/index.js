@@ -231,6 +231,17 @@ export default function () {
 		);
 
 		page(
+			'/domains/add/:domain/email/:siteSlug',
+			siteSelection,
+			navigation,
+			domainsController.redirectIfNoSite( '/domains/add' ),
+			domainsController.jetpackNoDomainsWarning,
+			domainsController.emailUpsellForDomainRegistration,
+			makeLayout,
+			clientRender
+		);
+
+		page(
 			'/domains/add/suggestion/:suggestion/:domain',
 			siteSelection,
 			navigation,

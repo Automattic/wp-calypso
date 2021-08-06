@@ -13,8 +13,10 @@ import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-com
 import GSuiteAddUsers from 'calypso/my-sites/email/gsuite-add-users';
 import TitanAddMailboxes from 'calypso/my-sites/email/titan-add-mailboxes';
 import TitanControlPanelRedirect from 'calypso/my-sites/email/email-management/titan-control-panel-redirect';
+import TitanSetupMailbox from 'calypso/my-sites/email/titan-setup-mailbox';
 import TitanManageMailboxes from 'calypso/my-sites/email/email-management/titan-manage-mailboxes';
 import TitanManagementIframe from 'calypso/my-sites/email/email-management/titan-management-iframe';
+import TitanSetupThankYou from 'calypso/my-sites/email/titan-setup-thank-you';
 
 export default {
 	emailManagementAddGSuiteUsers( pageContext, next ) {
@@ -64,6 +66,16 @@ export default {
 		next();
 	},
 
+	emailManagementTitanSetupMailbox( pageContext, next ) {
+		pageContext.primary = (
+			<CalypsoShoppingCartProvider>
+				<TitanSetupMailbox selectedDomainName={ pageContext.params.domain } />
+			</CalypsoShoppingCartProvider>
+		);
+
+		next();
+	},
+
 	emailManagementPurchaseNewEmailAccount( pageContext, next ) {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
@@ -80,6 +92,17 @@ export default {
 				domainName={ pageContext.params.domain }
 				siteSlug={ pageContext.params.site }
 				context={ pageContext.query.context }
+			/>
+		);
+
+		next();
+	},
+
+	emailManagementTitanSetupThankYou( pageContext, next ) {
+		pageContext.primary = (
+			<TitanSetupThankYou
+				domainName={ pageContext.params.domain }
+				emailAddress={ pageContext.query.email }
 			/>
 		);
 

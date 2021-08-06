@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import SiteTaxonomyTerm from './site.taxonomy.term';
 
 /**

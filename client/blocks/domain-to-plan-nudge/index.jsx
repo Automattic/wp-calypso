@@ -71,7 +71,7 @@ class DomainToPlanNudge extends Component {
 				href={ `/checkout/${ siteId }/personal` }
 				list={ [
 					translate( 'Remove WordPress.com Ads' ),
-					translate( 'Access unlimited email support' ),
+					translate( 'Access unlimited customer support via email' ),
 					translate( 'Use with your Current Custom Domain' ),
 				] }
 				plan={ PLAN_PERSONAL }

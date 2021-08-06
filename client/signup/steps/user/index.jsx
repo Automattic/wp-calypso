@@ -1,50 +1,39 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import classNames from 'classnames';
+import i18n, { localize } from 'i18n-calypso';
+import { isEmpty, omit, get } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import i18n, { localize } from 'i18n-calypso';
-import { isEmpty, omit, get } from 'lodash';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import SignupForm from 'calypso/blocks/signup-form';
+import AsyncLoad from 'calypso/components/async-load';
+import JetpackLogo from 'calypso/components/jetpack-logo';
+import WooCommerceConnectCartHeader from 'calypso/extensions/woocommerce/components/woocommerce-connect-cart-header';
+import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
+import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,
 	isJetpackCloudOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
-import StepWrapper from 'calypso/signup/step-wrapper';
+import { login } from 'calypso/lib/paths';
+import { WPCC } from 'calypso/lib/url/support';
 import flows from 'calypso/signup/config/flows';
-import SignupForm from 'calypso/blocks/signup-form';
+import StepWrapper from 'calypso/signup/step-wrapper';
 import {
 	getFlowSteps,
 	getNextStepName,
 	getPreviousStepName,
 	getStepUrl,
 } from 'calypso/signup/utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getSuggestedUsername } from 'calypso/state/signup/optional-dependencies/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { WPCC } from 'calypso/lib/url/support';
-import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
-import config from '@automattic/calypso-config';
-import AsyncLoad from 'calypso/components/async-load';
-import WooCommerceConnectCartHeader from 'calypso/extensions/woocommerce/components/woocommerce-connect-cart-header';
-import { getSocialServiceFromClientId } from 'calypso/lib/login';
-import JetpackLogo from 'calypso/components/jetpack-logo';
-import { login } from 'calypso/lib/paths';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class UserStep extends Component {

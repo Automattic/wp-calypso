@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -65,7 +64,7 @@ const Home = ( { canUserUseCustomerHome, site, siteId, trackViewSiteAction, noti
 				headerText={ translate( 'My Home' ) }
 				subHeaderText={ translate( 'Your hub for posting, editing, and growing your site.' ) }
 				align="left"
-				hasScreenOptions={ config.isEnabled( 'nav-unification/switcher' ) }
+				hasScreenOptions
 			/>
 			<div className="customer-home__view-site-button">
 				<Button href={ site.URL } onClick={ trackViewSiteAction }>

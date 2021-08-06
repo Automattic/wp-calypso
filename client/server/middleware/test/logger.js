@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import EventEmitter from 'events';
-
-/**
- * Internal dependencies
- */
-import loggerMiddleware from '../logger';
 import config from '@automattic/calypso-config';
+import loggerMiddleware from '../logger';
 
 const requestLogger = {
 	info: jest.fn(),

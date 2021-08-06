@@ -1,9 +1,6 @@
-/**
- * External dependencies
- */
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import Gridicon from 'calypso/components/gridicon';
-import { useTranslate } from 'i18n-calypso';
 
 // Returns React component with a localized label and optional icon
 function button( label, icon ) {

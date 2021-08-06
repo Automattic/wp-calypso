@@ -78,6 +78,10 @@ export function emailManagementNewTitanAccount( siteName, domainName, relativeTo
 	return emailManagementEdit( siteName, domainName, 'titan/new', relativeTo );
 }
 
+export function emailManagementTitanSetupMailbox( siteName, domainName, relativeTo = null ) {
+	return emailManagementEdit( siteName, domainName, 'titan/setup-mailbox', relativeTo );
+}
+
 export function emailManagementTitanControlPanelRedirect(
 	siteName,
 	domainName,
@@ -90,6 +94,21 @@ export function emailManagementTitanControlPanelRedirect(
 		'titan/control-panel',
 		relativeTo,
 		urlParameters
+	);
+}
+
+export function emailManagementTitanSetupThankYouPage(
+	siteName,
+	domainName,
+	emailAddress = null,
+	relativeTo = null
+) {
+	return emailManagementEdit(
+		siteName,
+		domainName,
+		'titan/setup-mailbox/thank-you',
+		relativeTo,
+		emailAddress ? { email: emailAddress } : {}
 	);
 }
 

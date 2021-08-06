@@ -12,7 +12,6 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { translate } from 'i18n-calypso';
 import InstallThemeButton from './install-theme-button';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
-import config from '@automattic/calypso-config';
 
 /**
  * Style dependencies
@@ -29,7 +28,7 @@ const ThemesHeader = () => {
 				headerText={ translate( 'Themes' ) }
 				subHeaderText={ translate( 'Select or update the visual design for your site.' ) }
 				align="left"
-				hasScreenOptions={ config.isEnabled( 'nav-unification/switcher' ) }
+				hasScreenOptions
 			/>
 			<div className="themes__install-theme-button-container">
 				<InstallThemeButton />

@@ -56,7 +56,10 @@ class ActivityCardList extends Component {
 		let logsAdded = 0;
 
 		for ( const log of logs ) {
-			const activityDateMoment = applySiteOffset( moment( log.activityDate ) );
+			const activityDateMoment = applySiteOffset
+				? applySiteOffset( moment( log.activityDate ) )
+				: moment( log.activityDate );
+
 			if ( logsAdded >= pageSize ) {
 				if ( lastDate && lastDate.isSame( activityDateMoment, 'day' ) ) {
 					logsByDate[ logsByDate.length - 1 ].hasMore = true;
@@ -114,6 +117,7 @@ class ActivityCardList extends Component {
 					<div className="activity-card-list__date-group-content">
 						{ dateLogs.map( ( activity ) => (
 							<ActivityCard
+								shareable={ isActivityBackup( activity ) }
 								activity={ activity }
 								className={
 									isActivityBackup( activity )
@@ -242,14 +246,14 @@ class ActivityCardList extends Component {
 	}
 
 	render() {
-		const { applySiteOffset, siteId, logs } = this.props;
+		const { siteId, logs } = this.props;
 
 		return (
 			<>
 				<QueryRewindCapabilities siteId={ siteId } />
 				<QueryRewindState siteId={ siteId } />
 				{ ! logs && this.renderLoading() }
-				{ logs && applySiteOffset && this.renderData() }
+				{ logs && this.renderData() }
 			</>
 		);
 	}

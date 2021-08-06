@@ -69,10 +69,10 @@ over the course of a series of commits, the snapshot diffs record the evolution 
 structure. Pretty cool 😎
 
 ```js
-import React from 'react';
 import { shallow } from 'enzyme';
-import MyComponent from '../my-component';
+import React from 'react';
 import LocaleSuggestions from '../locale-suggestions';
+import MyComponent from '../my-component';
 
 describe( 'MyComponent', () => {
 	test( 'should render', () => {

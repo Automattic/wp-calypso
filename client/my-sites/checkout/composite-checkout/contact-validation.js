@@ -61,6 +61,7 @@ export function handleContactValidationResult( {
 	paymentMethodId,
 	validationResult,
 	applyDomainContactValidationResults,
+	clearDomainContactErrorMessages,
 } ) {
 	recordEvent( {
 		type: 'VALIDATE_DOMAIN_CONTACT_INFO',
@@ -82,9 +83,13 @@ export function handleContactValidationResult( {
 			)
 		);
 	}
-	applyDomainContactValidationResults(
-		formatDomainContactValidationResponse( validationResult ?? {} )
-	);
+	if ( validationResult?.success ) {
+		clearDomainContactErrorMessages();
+	} else {
+		applyDomainContactValidationResults(
+			formatDomainContactValidationResponse( validationResult ?? {} )
+		);
+	}
 }
 
 export function isContactValidationResponseValid( data, contactDetails ) {

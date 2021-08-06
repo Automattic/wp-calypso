@@ -1,19 +1,16 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { connect } from 'react-redux';
-import { get, startsWith, flowRight as compose } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import AsyncLoad from 'calypso/components/async-load';
 import config from '@automattic/calypso-config';
+import classNames from 'classnames';
+import { get, startsWith, flowRight as compose } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import GdprBanner from 'calypso/blocks/gdpr-banner';
+import AsyncLoad from 'calypso/components/async-load';
+import { withCurrentRoute } from 'calypso/components/route';
+import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
+import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import {
 	getCurrentOAuth2Client,
@@ -23,14 +20,6 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
-import GdprBanner from 'calypso/blocks/gdpr-banner';
-import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
-import { withCurrentRoute } from 'calypso/components/route';
-import { isWpMobileApp } from 'calypso/lib/mobile-app';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const LayoutLoggedOut = ( {

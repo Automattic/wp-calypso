@@ -1,50 +1,4 @@
-/**
- * External Dependencies
- */
-import React from 'react';
-import Debug from 'debug';
-import page from 'page';
-import { get, some } from 'lodash';
-
-/**
- * Internal Dependencies
- */
-import { recordPageView } from 'calypso/lib/analytics/page-view';
 import config from '@automattic/calypso-config';
-import InstallInstructions from './install-instructions';
-import JetpackAuthorize from './authorize';
-import JetpackConnect from './main';
-import JetpackSignup from './signup';
-import JetpackSsoForm from './sso';
-import NoDirectAccessError from './no-direct-access-error';
-import OrgCredentialsForm from './remote-credentials';
-import SearchPurchase from './search';
-import StoreHeader from './store-header';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getLocaleFromPath, removeLocaleFromPath } from 'calypso/lib/i18n-utils';
-import { hideMasterbar, showMasterbar } from 'calypso/state/ui/actions';
-import { OFFER_RESET_FLOW_TYPES } from './flow-types';
-import {
-	ALLOWED_MOBILE_APP_REDIRECT_URL_LIST,
-	CALYPSO_PLANS_PAGE,
-	CALYPSO_REDIRECTION_PAGE,
-	JETPACK_ADMIN_PATH,
-} from './constants';
-import { login } from 'calypso/lib/paths';
-import { parseAuthorizationQuery } from './utils';
-import {
-	clearPlan,
-	isCalypsoStartedConnection,
-	persistMobileRedirect,
-	retrieveMobileRedirect,
-	retrievePlan,
-	storePlan,
-} from './persistence-utils';
-import { startAuthorizeStep } from 'calypso/state/jetpack-connect/actions';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
@@ -67,8 +21,47 @@ import {
 	getProductFromSlug,
 	getJetpackProductDisplayName,
 } from '@automattic/calypso-products';
+import Debug from 'debug';
+import { get, some } from 'lodash';
+import page from 'page';
+import React from 'react';
+import { recordPageView } from 'calypso/lib/analytics/page-view';
+import { getLocaleFromPath, removeLocaleFromPath } from 'calypso/lib/i18n-utils';
 import { navigate } from 'calypso/lib/navigate';
+import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { startAuthorizeStep } from 'calypso/state/jetpack-connect/actions';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
+import { hideMasterbar, showMasterbar } from 'calypso/state/ui/actions';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import JetpackAuthorize from './authorize';
+import {
+	ALLOWED_MOBILE_APP_REDIRECT_URL_LIST,
+	CALYPSO_PLANS_PAGE,
+	CALYPSO_REDIRECTION_PAGE,
+	JETPACK_ADMIN_PATH,
+} from './constants';
+import { OFFER_RESET_FLOW_TYPES } from './flow-types';
+import InstallInstructions from './install-instructions';
+import JetpackConnect from './main';
+import NoDirectAccessError from './no-direct-access-error';
+import {
+	clearPlan,
+	isCalypsoStartedConnection,
+	persistMobileRedirect,
+	retrieveMobileRedirect,
+	retrievePlan,
+	storePlan,
+} from './persistence-utils';
+import OrgCredentialsForm from './remote-credentials';
+import SearchPurchase from './search';
+import JetpackSignup from './signup';
+import JetpackSsoForm from './sso';
+import StoreHeader from './store-header';
+import { parseAuthorizationQuery } from './utils';
 
 /**
  * Module variables
@@ -421,8 +414,14 @@ export function redirectToSiteLessCheckout( context, next ) {
 
 	const planSlug = getPlanSlugFromFlowType( type, interval );
 
+	const urlQueryArgs = context.query;
+
 	if ( config.isEnabled( 'jetpack/siteless-checkout' ) ) {
-		page( addQueryArgs( context.query, `/checkout/jetpack/${ planSlug }` ) );
+		if ( ! urlQueryArgs?.checkoutBackUrl ) {
+			urlQueryArgs.checkoutBackUrl = 'https://jetpack.com';
+		}
+
+		page( addQueryArgs( urlQueryArgs, `/checkout/jetpack/${ planSlug }` ) );
 		return;
 	}
 

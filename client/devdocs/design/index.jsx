@@ -1,25 +1,17 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import page from 'page';
-import classnames from 'classnames';
-import { slugToCamelCase } from 'calypso/devdocs/docs-example/util';
-import { trim } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
-import DocumentHead from 'calypso/components/data/document-head';
-import HeaderCake from 'calypso/components/header-cake';
-import Main from 'calypso/components/main';
-import ReadmeViewer from 'calypso/components/readme-viewer';
-import SearchCard from 'calypso/components/search-card';
-
-/**
- * Docs examples
- */
+import Buttons from '@automattic/components/src/button/docs/example';
+import Cards from '@automattic/components/src/card/docs/example';
+import ProductIcon from '@automattic/components/src/product-icon/docs/example';
+import ProgressBar from '@automattic/components/src/progress-bar/docs/example';
+import Ribbon from '@automattic/components/src/ribbon/docs/example';
+import ScreenReaderTextExample from '@automattic/components/src/screen-reader-text/docs/example';
+import Suggestions from '@automattic/components/src/suggestions/docs/example';
+import classnames from 'classnames';
+import { trim } from 'lodash';
+import page from 'page';
+import React from 'react';
+import ColorSchemePicker from 'calypso/blocks/color-scheme-picker/docs/example';
+import JetpackReviewPromptExample from 'calypso/blocks/jetpack-review-prompt/docs/example';
 import ActionCard from 'calypso/components/action-card/docs/example';
 import ActionPanel from 'calypso/components/action-panel/docs/example';
 import Animate from 'calypso/components/animate/docs/example';
@@ -28,17 +20,12 @@ import Badge from 'calypso/components/badge/docs/example';
 import Banner from 'calypso/components/banner/docs/example';
 import BulkSelect from 'calypso/components/bulk-select/docs/example';
 import ButtonGroups from 'calypso/components/button-group/docs/example';
-import Buttons from '@automattic/components/src/button/docs/example';
 import CardHeading from 'calypso/components/card-heading/docs/example';
-import Cards from '@automattic/components/src/card/docs/example';
 import Chart from 'calypso/components/chart/docs/example';
 import Checklist from 'calypso/components/checklist/docs/example';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input/docs/example';
-import ClipboardButtons from 'calypso/components/forms/clipboard-button/docs/example';
-import Collection from 'calypso/devdocs/design/search-collection';
-import ColorSchemePicker from 'calypso/blocks/color-scheme-picker/docs/example';
 import Count from 'calypso/components/count/docs/example';
-import CountedTextareas from 'calypso/components/forms/counted-textarea/docs/example';
+import DocumentHead from 'calypso/components/data/document-head';
 import DatePicker from 'calypso/components/date-picker/docs/example';
 import DateRange from 'calypso/components/date-range/docs/example';
 import DiffViewerExample from 'calypso/components/diff-viewer/docs/example';
@@ -56,15 +43,19 @@ import FoldableCard from 'calypso/components/foldable-card/docs/example';
 import FoldableFAQ from 'calypso/components/foldable-faq/docs/example';
 import FormattedDate from 'calypso/components/formatted-date/docs/example';
 import FormattedHeader from 'calypso/components/formatted-header/docs/example';
+import ClipboardButtons from 'calypso/components/forms/clipboard-button/docs/example';
+import CountedTextareas from 'calypso/components/forms/counted-textarea/docs/example';
 import FormFields from 'calypso/components/forms/docs/example';
+import Ranges from 'calypso/components/forms/range/docs/example';
 import Gauge from 'calypso/components/gauge/docs/example';
 import GlobalNotices from 'calypso/components/global-notices/docs/example';
-import Gravatar from 'calypso/components/gravatar/docs/example';
 import GravatarCaterpillar from 'calypso/components/gravatar-caterpillar/docs/example';
+import Gravatar from 'calypso/components/gravatar/docs/example';
 import Gridicon from 'calypso/components/gridicon/docs/example';
 import GSuiteExamples from 'calypso/components/gsuite/docs/example';
 import HappinessEngineersTray from 'calypso/components/happiness-engineers-tray/docs/example';
 import HeaderButton from 'calypso/components/header-button/docs/example';
+import HeaderCake from 'calypso/components/header-cake';
 import Headers from 'calypso/components/header-cake/docs/example';
 import ImagePreloader from 'calypso/components/image-preloader/docs/example';
 import InfoPopover from 'calypso/components/info-popover/docs/example';
@@ -74,10 +65,10 @@ import JetpackColophonExample from 'calypso/components/jetpack-colophon/docs/exa
 import JetpackHeaderExample from 'calypso/components/jetpack-header/docs/example';
 import JetpackLogoExample from 'calypso/components/jetpack-logo/docs/example';
 import LanguagePicker from 'calypso/components/language-picker/docs/example';
-import JetpackReviewPromptExample from 'calypso/blocks/jetpack-review-prompt/docs/example';
 import LayoutExample from 'calypso/components/layout/docs/example';
 import LineChart from 'calypso/components/line-chart/docs/example';
 import ListEnd from 'calypso/components/list-end/docs/example';
+import Main from 'calypso/components/main';
 import MarkedLinesExample from 'calypso/components/marked-lines/docs/example';
 import MultipleChoiceQuestionExample from 'calypso/components/multiple-choice-question/docs/example';
 import Notices from 'calypso/components/notice/docs/example';
@@ -88,14 +79,11 @@ import PodcastIndicator from 'calypso/components/podcast-indicator/docs/example'
 import Popovers from 'calypso/components/popover/docs/example';
 import ProductCard from 'calypso/components/product-card/docs/example';
 import ProductExpiration from 'calypso/components/product-expiration/docs/example';
-import ProductIcon from '@automattic/components/src/product-icon/docs/example';
-import ProgressBar from '@automattic/components/src/progress-bar/docs/example';
 import PromoSection from 'calypso/components/promo-section/docs/example';
 import PromoCard from 'calypso/components/promo-section/promo-card/docs/example';
-import Ranges from 'calypso/components/forms/range/docs/example';
 import Rating from 'calypso/components/rating/docs/example';
-import Ribbon from '@automattic/components/src/ribbon/docs/example';
-import ScreenReaderTextExample from '@automattic/components/src/screen-reader-text/docs/example';
+import ReadmeViewer from 'calypso/components/readme-viewer';
+import SearchCard from 'calypso/components/search-card';
 import SearchDemo from 'calypso/components/search/docs/example';
 import SectionHeader from 'calypso/components/section-header/docs/example';
 import SectionNav from 'calypso/components/section-nav/docs/example';
@@ -103,19 +91,18 @@ import SegmentedControl from 'calypso/components/segmented-control/docs/example'
 import SelectDropdown from 'calypso/components/select-dropdown/docs/example';
 import ShareButton from 'calypso/components/share-button/docs/example';
 import SocialLogos from 'calypso/components/social-logo/docs/example';
-import Spinner from 'calypso/components/spinner/docs/example';
 import SpinnerButton from 'calypso/components/spinner-button/docs/example';
 import SpinnerLine from 'calypso/components/spinner-line/docs/example';
+import Spinner from 'calypso/components/spinner/docs/example';
 import SplitButton from 'calypso/components/split-button/docs/example';
 import StepProgress from 'calypso/components/step-progress/docs/example';
-import Suggestions from '@automattic/components/src/suggestions/docs/example';
 import SuggestionSearchExample from 'calypso/components/suggestion-search/docs/example';
 import SupportInfoExample from 'calypso/components/support-info/docs/example';
-import TextareaAutosize from 'calypso/components/textarea-autosize/docs/example';
 import TextDiff from 'calypso/components/text-diff/docs/example';
+import TextareaAutosize from 'calypso/components/textarea-autosize/docs/example';
 import TileGrid from 'calypso/components/tile-grid/docs/example';
-import Timeline from 'calypso/components/timeline/docs/example';
 import TimeSince from 'calypso/components/time-since/docs/example';
+import Timeline from 'calypso/components/timeline/docs/example';
 import Timezone from 'calypso/components/timezone/docs/example';
 import TokenFields from 'calypso/components/token-field/docs/example';
 import Tooltip from 'calypso/components/tooltip/docs/example';
@@ -123,9 +110,11 @@ import UserItem from 'calypso/components/user/docs/example';
 import Version from 'calypso/components/version/docs/example';
 import VerticalMenu from 'calypso/components/vertical-menu/docs/example';
 import VerticalNav from 'calypso/components/vertical-nav/docs/example';
-import Wizard from 'calypso/components/wizard/docs/example';
 import WizardProgressBar from 'calypso/components/wizard-progress-bar/docs/example';
+import Wizard from 'calypso/components/wizard/docs/example';
 import WpcomColophon from 'calypso/components/wpcom-colophon/docs/example';
+import Collection from 'calypso/devdocs/design/search-collection';
+import { slugToCamelCase } from 'calypso/devdocs/docs-example/util';
 
 export default class DesignAssets extends React.Component {
 	static displayName = 'DesignAssets';

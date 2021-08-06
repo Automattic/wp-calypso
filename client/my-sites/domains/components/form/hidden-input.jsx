@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 /**
  * External dependencies
  */
@@ -13,9 +14,21 @@ export class HiddenInput extends PureComponent {
 	constructor( props, context ) {
 		super( props, context );
 		this.state = {
+			wasClicked: ! isEmpty( props.value ),
 			toggled: ! isEmpty( props.value ),
 		};
 		this.inputField = null;
+	}
+
+	static getDerivedStateFromProps( props, state ) {
+		if ( props.toggled === undefined ) return null;
+
+		const toggled = !! props.toggled;
+		if ( state.toggled !== toggled ) {
+			return { ...state, toggled };
+		}
+
+		return null;
 	}
 
 	handleClick = ( event ) => {
@@ -24,6 +37,7 @@ export class HiddenInput extends PureComponent {
 		this.setState(
 			{
 				toggled: true,
+				wasClicked: true,
 			},
 			() => {
 				this.inputField && this.inputField.focus();
@@ -39,7 +53,7 @@ export class HiddenInput extends PureComponent {
 	};
 
 	render() {
-		if ( this.state.toggled ) {
+		if ( this.state.toggled || this.state.wasClicked ) {
 			return <Input ref={ this.assignInputFieldRef } { ...this.props } />;
 		}
 

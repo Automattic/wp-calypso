@@ -23,7 +23,7 @@ import {
 import Banner from 'calypso/components/banner';
 import { addQueryArgs } from 'calypso/lib/url';
 import { hasFeature } from 'calypso/state/sites/plans/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';

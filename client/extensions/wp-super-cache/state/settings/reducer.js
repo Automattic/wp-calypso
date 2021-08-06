@@ -1,8 +1,4 @@
-/**
- * Internal dependencies
- */
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import { itemsSchema } from './schema';
 import {
 	WP_SUPER_CACHE_PRELOAD_CACHE_SUCCESS,
 	WP_SUPER_CACHE_RECEIVE_SETTINGS,
@@ -16,6 +12,7 @@ import {
 	WP_SUPER_CACHE_SAVE_SETTINGS_FAILURE,
 	WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
 } from '../action-types';
+import { itemsSchema } from './schema';
 
 /**
  * Returns the updated requesting state after an action has been dispatched.

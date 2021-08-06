@@ -120,6 +120,23 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
+			paths.emailManagementTitanSetupMailbox(
+				':site',
+				':domain',
+				paths.emailManagementAllSitesPrefix
+			),
+			paths.emailManagementTitanSetupMailbox( ':site', ':domain' ),
+		],
+		handlers: [
+			...commonHandlers,
+			controller.emailManagementTitanSetupMailbox,
+			makeLayout,
+			clientRender,
+		],
+	} );
+
+	registerMultiPage( {
+		paths: [
 			paths.emailManagementTitanControlPanelRedirect(
 				':site',
 				':domain',
@@ -129,6 +146,24 @@ export default function () {
 		],
 		// Note that we don't have the commonHandlers here, as we want to avoid the nav bar etc
 		handlers: [ controller.emailManagementTitanControlPanelRedirect, makeLayout, clientRender ],
+	} );
+
+	registerMultiPage( {
+		paths: [
+			paths.emailManagementTitanSetupThankYouPage(
+				':site',
+				':domain',
+				null,
+				paths.emailManagementAllSitesPrefix
+			),
+			paths.emailManagementTitanSetupThankYouPage( ':site', ':domain' ),
+		],
+		handlers: [
+			...commonHandlers,
+			controller.emailManagementTitanSetupThankYou,
+			makeLayout,
+			clientRender,
+		],
 	} );
 
 	registerMultiPage( {

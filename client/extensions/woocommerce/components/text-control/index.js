@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
 import classNames from 'classnames';
+import React, { Component } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
-
-/**
- * Internal dependencies
- */
 import FormLabel from 'calypso/components/forms/form-label';
 
 /*

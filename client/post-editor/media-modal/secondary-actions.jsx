@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { canUserDeleteItem } from 'calypso/lib/media/utils';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import { Button } from '@automattic/components';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 
 const noop = () => {};
 

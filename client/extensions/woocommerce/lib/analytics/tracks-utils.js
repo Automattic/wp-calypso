@@ -1,12 +1,5 @@
-/**
- * Internal dependencies
- */
-import { bumpStat } from 'calypso/state/analytics/actions';
-
-/**
- * External dependencies
- */
 import { startsWith } from 'lodash';
+import { bumpStat } from 'calypso/state/analytics/actions';
 
 export const recordTrack = ( tracks, debug ) => ( eventName, eventProperties ) => {
 	if ( ! startsWith( eventName, 'calypso_woocommerce_' ) ) {

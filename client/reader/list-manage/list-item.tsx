@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { Item, List } from './types';
 import FeedItem from './feed-item';
 import SiteItem from './site-item';
 import TagItem from './tag-item';
+import { Item, List } from './types';
 
 export default function ListItem( props: {
 	hideIfInList?: boolean;

@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import AsyncLoad from 'calypso/components/async-load';
-import QueryPostCounts from 'calypso/components/data/query-post-counts';
-import { Button } from '@automattic/components';
 import Count from 'calypso/components/count';
+import QueryPostCounts from 'calypso/components/data/query-post-counts';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getMyPostCount } from 'calypso/state/posts/counts/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const MasterbarDraftsPopover = ( props ) => (
 	<AsyncLoad { ...props } require="calypso/layout/masterbar/drafts-popover" placeholder={ null } />

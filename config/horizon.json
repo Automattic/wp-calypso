@@ -98,12 +98,12 @@
 		"settings/security/monitor": true,
 		"settings/theme-setup": false,
 		"sign-in-with-apple": false,
+		"signup/professional-email-step": true,
 		"signup/reskin": true,
 		"signup/social": true,
 		"site-indicator": true,
 		"memberships": true,
 		"support-user": true,
-		"theme/showcase-revamp": true,
 		"upgrades/checkout": true,
 		"upgrades/domain-search": true,
 		"upgrades/redirect-payments": true,
@@ -115,7 +115,7 @@
 		"use-translation-chunks": true,
 		"wpcom-user-bootstrap": true,
 		"wordpress-action-search": false,
-		"nav-unification/switcher": true
+		"redirect-fallback-browsers": true
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",

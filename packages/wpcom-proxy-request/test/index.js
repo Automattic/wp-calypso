@@ -1,13 +1,6 @@
 /* eslint-disable no-console */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import proxy, { reloadProxy } from '../';
 
 /**

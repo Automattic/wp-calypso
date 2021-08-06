@@ -1,9 +1,6 @@
-/**
- * External dependencies
- */
 import { Button } from '@wordpress/components';
-import { Link as RouterLink, LinkProps } from 'react-router-dom';
 import React, { forwardRef, FunctionComponent } from 'react';
+import { Link as RouterLink, LinkProps } from 'react-router-dom';
 import type { Assign } from 'utility-types';
 
 interface LinkButtonProps extends Button.AnchorProps {

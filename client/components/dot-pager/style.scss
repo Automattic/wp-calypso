@@ -3,6 +3,10 @@
 .dot-pager__pages {
 	overflow: hidden;
 	display: flex;
+	align-items: flex-start;
+	position: relative;
+	transition: height 0.5s ease-in-out;
+	@include reduce-motion( 'transition' );
 }
 
 .dot-pager__page {
@@ -50,38 +54,47 @@
 	.dot-pager__control-gap {
 		margin-left: auto;
 	}
+}
 
-	button {
-		width: 6px;
-		height: 6px;
-		// Drawing a CSS circle
-		// stylelint-disable-next-line  declaration-property-unit-allowed-list
-		border-radius: 50%;
-		cursor: pointer;
-		background-color: var( --color-neutral-10 );
+.dot-pager__control-prev,
+.dot-pager__control-next,
+.dot-pager__control-choose-page {
+	cursor: pointer;
 
-		&:hover {
-			background-color: var( --studio-gray-20 );
-		}
+	&:disabled {
+		cursor: default;
+	}
+}
 
-		&:disabled {
-			cursor: default;
-		}
+.dot-pager__control-prev,
+.dot-pager__control-next {
+	display: inline-flex;
 
-		&.dot-pager__control-current {
-			background-color: var( --studio-gray-80 );
-		}
+	svg {
+		width: 18px;
+		height: 18px;
+	}
+	background-color: transparent;
+	color: var( --studio-gray-80 );
 
-		&.dot-pager__control-prev,
-		&.dot-pager__control-next {
-			width: 18px;
-			height: 18px;
-			background-color: transparent;
-			color: var( --studio-gray-80 );
+	&[disabled] {
+		color: var( --studio-gray-10 );
+	}
+}
 
-			&[disabled] {
-				color: var( --studio-gray-10 );
-			}
-		}
+.dot-pager__control-choose-page {
+	// Drawing a CSS circle
+	// stylelint-disable-next-line  declaration-property-unit-allowed-list
+	border-radius: 50%;
+	width: 6px;
+	height: 6px;
+	background-color: var( --color-neutral-10 );
+
+	&:hover {
+		background-color: var( --studio-gray-20 );
+	}
+
+	&.dot-pager__control-current {
+		background-color: var( --studio-gray-80 );
 	}
 }

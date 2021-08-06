@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
 const WebpackRTLPlugin = require( '@automattic/webpack-rtl-plugin' );
-
-/**
- * Internal dependencies
- */
+const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
 const MiniCSSWithRTLPlugin = require( './mini-css-with-rtl' );
 
 /**

@@ -1,26 +1,19 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import siteGetMethods from './runtime/site.get';
 import Category from './site.category';
 import Comment from './site.comment';
+import SiteCreditVouchers from './site.credit-vouchers';
+import SiteDomain from './site.domain';
 import Follow from './site.follow';
 import Media from './site.media';
-import Post from './site.post';
-import Tag from './site.tag';
-import SitePostType from './site.post-type';
-import SiteDomain from './site.domain';
 import SitePlugin from './site.plugin';
+import Post from './site.post';
+import SitePostType from './site.post-type';
 import SiteSettings from './site.settings';
+import Tag from './site.tag';
 import SiteTaxonomy from './site.taxonomy';
-import SiteCreditVouchers from './site.credit-vouchers';
 import SiteWordAds from './site.wordads';
 import SiteWPComPlugin from './site.wpcom-plugin';
-import siteGetMethods from './runtime/site.get';
 import runtimeBuilder from './util/runtime-builder';
 
 /**

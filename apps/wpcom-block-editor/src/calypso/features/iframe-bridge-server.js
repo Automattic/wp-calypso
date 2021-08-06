@@ -1,32 +1,24 @@
 /* global calypsoifyGutenberg, Image, MessageChannel, MessagePort, requestAnimationFrame */
 
-/**
- * External dependencies
- */
-import $ from 'jquery';
-import { filter, find, forEach, get, map, partialRight } from 'lodash';
-import { dispatch, select, subscribe, use } from '@wordpress/data';
 import { createBlock, parse } from '@wordpress/blocks';
-import { addAction, addFilter, doAction, removeAction } from '@wordpress/hooks';
-import { addQueryArgs, getQueryArg } from '@wordpress/url';
-import { registerPlugin } from '@wordpress/plugins';
-import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/edit-post';
 import {
 	Button,
 	__experimentalNavigationBackButton as NavigationBackButton,
 } from '@wordpress/components';
+import { dispatch, select, subscribe, use } from '@wordpress/data';
+import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/edit-post';
+import { addAction, addFilter, doAction, removeAction } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
+import { registerPlugin } from '@wordpress/plugins';
+import { addQueryArgs, getQueryArg } from '@wordpress/url';
+import debugFactory from 'debug';
+import $ from 'jquery';
+import { filter, find, forEach, get, map, partialRight } from 'lodash';
 import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
-import debugFactory from 'debug';
 import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../editing-toolkit/editing-toolkit-plugin/wpcom-block-editor-nav-sidebar/src/constants';
-
-/**
- * Internal dependencies
- */
 import { inIframe, isEditorReadyWithBlocks, sendMessage, getPages } from '../../utils';
-
 /**
  * Conditional dependency.  We cannot use the standard 'import' since this package is
  * not available in the post editor and causes WSOD in that case.  Instead, we can
@@ -78,7 +70,7 @@ function handlePostTrash( calypsoPort ) {
 				 * More context:
 				 * - https://github.com/WordPress/gutenberg/issues/27088;
 				 * - https://github.com/WordPress/gutenberg/pull/32153.
-				 **/
+				 */
 				const namespace = store.name ?? store;
 				const actions = { ...registry.dispatch( namespace ) };
 
@@ -1050,27 +1042,6 @@ function getCalypsoUrlInfo( calypsoPort ) {
 	);
 }
 
-/**
- * Passes uncaught errors in window.onerror to Calypso for logging.
- *
- * @param {MessagePort} calypsoPort Port used for communication with parent frame.
- */
-function handleUncaughtErrors( calypsoPort ) {
-	window.onerror = ( ...error ) => {
-		// Since none of Error's properties are enumerable, JSON.stringify does not work on it.
-		// We therefore stringify the error with a custom replacer containing the object's properties.
-		const errorObject = error[ 4 ]; // the 5th argument is the error object
-		error[ 4 ] =
-			errorObject && JSON.stringify( errorObject, Object.getOwnPropertyNames( errorObject ) );
-
-		// The other parameters don't need encoded since they are numbers or strings.
-		calypsoPort.postMessage( {
-			action: 'logError',
-			payload: { error },
-		} );
-	};
-}
-
 async function handleEditorLoaded( calypsoPort ) {
 	await isEditorReadyWithBlocks();
 	const isNew = select( 'core/editor' ).isCleanNewPost();
@@ -1269,8 +1240,6 @@ function initPort( message ) {
 		getNavSidebarLabels( calypsoPort );
 
 		getCalypsoUrlInfo( calypsoPort );
-
-		handleUncaughtErrors( calypsoPort );
 
 		handleEditorLoaded( calypsoPort );
 

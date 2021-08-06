@@ -12,7 +12,7 @@ import { get } from 'lodash';
  */
 import PostLikesPopover from 'calypso/blocks/post-likes/popover';
 import { getNormalizedPost } from 'calypso/state/posts/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteSlug, isJetpackModuleActive, isJetpackSite } from 'calypso/state/sites/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getRecentViewsForPost } from 'calypso/state/stats/recent-post-views/selectors';

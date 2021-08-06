@@ -1,9 +1,11 @@
-import { Frame } from 'playwright';
-import { BaseContainer } from '../../base-container';
+import { Frame, Page } from 'playwright';
 
 const selectors = {
+	// Post body
+	postBody: '.entry-content',
+
 	// Like Widget
-	likeWidget: 'iframe.post-likes-widget',
+	likeWidget: 'iframe[title="Like or Reblog"]',
 	likeButton: 'a.like',
 	unlikeButton: 'a.liked',
 	likedText: 'text=Liked',
@@ -12,34 +14,33 @@ const selectors = {
 
 /**
  * Represents the published site's post listings page.
- *
- * @augments {BaseContainer}
  */
-export class PublishedPostPage extends BaseContainer {
-	frame!: Frame;
+export class PublishedPostPage {
+	private page: Page;
 
 	/**
-	 * Performs the click action on the post's like button.
+	 * Constructs an instance of the component.
 	 *
-	 * This helper method does not check whether the button state has changed.
-	 * To ensure the state changed to the expected value, the caller should perform additional
-	 * checks.
-	 *
-	 * @param {string} selector Element to click on the frame.
-	 * @returns {Promise<void>} No return value.
+	 * @param {Page} page The underlying page.
 	 */
-	async _click( selector: string ): Promise< void > {
-		if ( ! this.frame ) {
-			// Obtain the ElementHandle for the widget containing the like/unlike button.
-			const elementHandle = await this.page.waitForSelector( selectors.likeWidget );
-			// Obtain the Frame object from the elementHandleHandle. This represents the widget iframe.
-			this.frame = ( await elementHandle.contentFrame() ) as Frame;
-			// Wait until the widget element is stable in the DOM.
-			await elementHandle.waitForElementState( 'stable' );
-		}
+	constructor( page: Page ) {
+		this.page = page;
+	}
 
-		const button = await this.frame.waitForSelector( selector );
-		await button.click();
+	/**
+	 * Returns the frame which holds the Like widget.
+	 *
+	 * @returns {Promise<Frame>} Frame holding the like widget on page.
+	 */
+	private async getFrame(): Promise< Frame > {
+		// Obtain the ElementHandle for the widget containing the like/unlike button.
+		const elementHandle = await this.page.waitForSelector( selectors.likeWidget );
+		// Obtain the Frame object from the elementHandleHandle. This represents the widget iframe.
+		const frame = ( await elementHandle.contentFrame() ) as Frame;
+		// Wait until the widget element is stable in the DOM.
+		await elementHandle.waitForElementState( 'stable' );
+
+		return frame;
 	}
 
 	/**
@@ -51,8 +52,9 @@ export class PublishedPostPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async likePost(): Promise< void > {
-		await this._click( selectors.likeButton );
-		await this.frame.waitForSelector( selectors.likedText, { state: 'visible' } );
+		const frame = await this.getFrame();
+		await frame.click( selectors.likeButton );
+		await frame.waitForSelector( selectors.likedText, { state: 'visible' } );
 	}
 
 	/**
@@ -64,7 +66,8 @@ export class PublishedPostPage extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async unlikePost(): Promise< void > {
-		await this._click( selectors.unlikeButton );
-		await this.frame.waitForSelector( selectors.notLikedText, { state: 'visible' } );
+		const frame = await this.getFrame();
+		await frame.click( selectors.unlikeButton );
+		await frame.waitForSelector( selectors.notLikedText, { state: 'visible' } );
 	}
 }

@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { useEffect, useState } from 'react';
 
 const setTracksUser = ( client ) =>

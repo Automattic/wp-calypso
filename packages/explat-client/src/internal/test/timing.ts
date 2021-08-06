@@ -1,14 +1,8 @@
-/**
- * External dependencies
- */
 // This is required to fix the "regeneratorRuntime is not defined" error
 import '@automattic/calypso-polyfills';
 
-/**
- * Internal dependencies
- */
-import * as Timing from '../timing';
 import { delayedValue } from '../test-common';
+import * as Timing from '../timing';
 
 jest.useFakeTimers();
 

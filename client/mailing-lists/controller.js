@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal Dependencies
- */
 import MainComponent from './main';
 
 export default {

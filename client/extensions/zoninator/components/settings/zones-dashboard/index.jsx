@@ -1,25 +1,17 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { flowRight, times } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 import HeaderCake from 'calypso/components/header-cake';
 import SectionHeader from 'calypso/components/section-header';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { settingsPath } from '../../../app/util';
+import { getZones, isRequestingZones } from '../../../state/zones/selectors';
 import ZoneItem from './zone-item';
 import ZonePlaceholder from './zone-placeholder';
-import { getZones, isRequestingZones } from '../../../state/zones/selectors';
-import { settingsPath } from '../../../app/util';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
 const placeholderCount = 5;
 

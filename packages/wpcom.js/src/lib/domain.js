@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import DomainEmail from './domain.email';
 import DomainDns from './domain.dns';
+import DomainEmail from './domain.email';
 
 const root = '/domains/';
 

@@ -180,14 +180,11 @@ function getConfig( { siteTitle = '' } = {} ) {
 		optionalUrl: {
 			title: translate( 'Substack Newsletter URL' ),
 			description: translate(
-				'An optional Substack Newsletter URL to import comments and author information.'
+				'Recommended: A Substack Newsletter URL to import comments and author information.'
 			),
 			invalidDescription: translate( 'Enter a valid Substack Newsletter URL (%(exampleUrl)s).', {
-				args: { exampleUrl: 'https://newsletter.substack.com/' },
+				args: { exampleUrl: 'https://example-newsletter.substack.com/' },
 			} ),
-			validate: ( urlInput ) => {
-				return /^https:\/\/[\w-]+\.substack\.com\/?$/.test( urlInput.trim() );
-			},
 		},
 		weight: 0,
 	};

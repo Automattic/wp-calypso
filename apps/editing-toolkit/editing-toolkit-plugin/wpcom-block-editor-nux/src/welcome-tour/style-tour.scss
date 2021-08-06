@@ -64,6 +64,7 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 
 .welcome-tour-card {
 	width: 400px;
+	max-width: 92vw;
 
 	&.welcome-tour-card.is-elevated {
 		box-shadow: rgba( 0, 0, 0, 0.1 ) 0 0 0 1px, rgba( 0, 0, 0, 0.1 ) 0 2px 4px 0;
@@ -155,11 +156,13 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 	}
 }
 
-.wpcom-editor-welcome-tour-frame:hover .welcome-tour-card__overlay-controls .components-button {
+.wpcom-editor-welcome-tour-frame:hover .welcome-tour-card__overlay-controls .components-button,
+.welcome-tour-card__overlay-controls-visible .components-button {
 	opacity: 0.7;
 }
 
-.wpcom-editor-welcome-tour-frame .welcome-tour-card__overlay-controls .components-button:hover {
+.wpcom-editor-welcome-tour-frame .welcome-tour-card__overlay-controls .components-button:hover,
+.welcome-tour-card__overlay-controls-visible .components-button:hover {
 	opacity: 0.9;
 }
 

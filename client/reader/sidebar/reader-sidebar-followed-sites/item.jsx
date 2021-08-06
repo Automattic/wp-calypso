@@ -1,22 +1,11 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import ReaderSidebarHelper from '../helper';
-import { recordAction, recordGaEvent } from 'calypso/reader/stats';
-import Count from 'calypso/components/count';
-import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
-import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { useDispatch } from 'react-redux';
+import Count from 'calypso/components/count';
 import Favicon from 'calypso/reader/components/favicon';
-
-/**
- * Style dependencies
- */
+import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import ReaderSidebarHelper from '../helper';
 import '../style.scss';
 
 const ReaderSidebarFollowingItem = ( props ) => {

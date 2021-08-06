@@ -1,14 +1,7 @@
-/**
- * External Dependencies
- */
 const { app, dialog } = require( 'electron' );
-
-/**
- * Internal dependencies
- */
-const settings = require( '../../lib/settings' );
 const assets = require( '../../lib/assets' );
 const log = require( '../../lib/logger' )( 'desktop:failed-to-load' );
+const settings = require( '../../lib/settings' );
 
 /**
  * Module variables

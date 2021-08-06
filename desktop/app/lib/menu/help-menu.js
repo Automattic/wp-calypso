@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 const { shell } = require( 'electron' );
-
-/**
- * Internal dependencies
- */
-const session = require( '../../lib/session' );
-const platform = require( '../../lib/platform' );
-const WindowManager = require( '../../lib/window-manager' );
-const log = require( '../../lib/logger' )( 'desktop:menu:help' );
 const ipc = require( '../../lib/calypso-commands' );
-const zipLogs = require( '../../window-handlers/get-logs' );
 const isCalypso = require( '../../lib/is-calypso' );
+const log = require( '../../lib/logger' )( 'desktop:menu:help' );
+const platform = require( '../../lib/platform' );
+const session = require( '../../lib/session' );
+const WindowManager = require( '../../lib/window-manager' );
+const zipLogs = require( '../../window-handlers/get-logs' );
 
 const menuItems = [];
 

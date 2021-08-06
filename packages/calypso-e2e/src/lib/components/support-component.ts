@@ -1,7 +1,5 @@
 import assert from 'assert';
-import { ElementHandle } from 'playwright';
-import { BaseContainer } from '../base-container';
-import { SupportArticleComponent } from './support-article-component';
+import { ElementHandle, Page } from 'playwright';
 
 const selectors = {
 	// Components
@@ -23,14 +21,25 @@ const selectors = {
 
 	// Article
 	readMoreButton: 'text=Read more',
+	visitArticleButton: 'text="Visit article"',
+	closeButton: 'button:text("Close")',
 };
 
 /**
  * Represents the Support popover available on most WPCOM screens.
- *
- * @augments {BaseContainer}
  */
-export class SupportComponent extends BaseContainer {
+export class SupportComponent {
+	private page: Page;
+
+	/**
+	 * Constructs an instance of the component.
+	 *
+	 * @param {Page} page The underlying page.
+	 */
+	constructor( page: Page ) {
+		this.page = page;
+	}
+
 	/**
 	 * Click on the support button (?).
 	 * This method will toggle the status of the support popover.
@@ -182,8 +191,30 @@ export class SupportComponent extends BaseContainer {
 
 		await items[ target ].click();
 		await this.page.click( selectors.readMoreButton );
-		const supportArticleComponent = await SupportArticleComponent.Expect( this.page );
-		await supportArticleComponent.articleDisplayed();
+	}
+
+	/**
+	 * Visit the support article from the inline support popover.
+	 *
+	 * @returns {Promise<Page>} Reference to support page.
+	 */
+	async visitArticle(): Promise< Page > {
+		const browserContext = this.page.context();
+		const [ newPage ] = await Promise.all( [
+			browserContext.waitForEvent( 'page' ),
+			this.page.click( selectors.visitArticleButton ),
+		] );
+		await newPage.waitForLoadState( 'domcontentloaded' );
+		return newPage;
+	}
+
+	/**
+	 * Closes the support article displayed on screen.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async closeArticle(): Promise< void > {
+		await this.page.click( selectors.closeButton );
 	}
 
 	/**

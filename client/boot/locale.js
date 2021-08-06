@@ -1,15 +1,12 @@
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
 import {
 	getLanguageSlugs,
 	isDefaultLocale,
 	isTranslatedIncompletely,
 } from 'calypso/lib/i18n-utils';
+import { initLanguageEmpathyMode } from 'calypso/lib/i18n-utils/empathy-mode';
 import { loadUserUndeployedTranslations } from 'calypso/lib/i18n-utils/switch-locale';
 import { setLocale, setLocaleRawData } from 'calypso/state/ui/language/actions';
-import { initLanguageEmpathyMode } from 'calypso/lib/i18n-utils/empathy-mode';
 
 function getLocaleFromPathname() {
 	const pathname = window.location.pathname.replace( /\/$/, '' );

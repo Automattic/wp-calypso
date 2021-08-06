@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { useCallback } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
-
-/**
- * Internal dependencies
- */
 import wp from 'calypso/lib/wp';
 
 function useRemoveFollowerMutation() {

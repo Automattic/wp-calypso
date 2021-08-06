@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import sitePostGetMethods from './runtime/site.post.get';
+import Comment from './site.comment';
 import Like from './site.post.like';
 import Reblog from './site.post.reblog';
-import Comment from './site.comment';
 import Subscriber from './site.post.subscriber';
 import runtimeBuilder from './util/runtime-builder';
-import sitePostGetMethods from './runtime/site.post.get';
 
 /**
  * Module vars

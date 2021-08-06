@@ -5,13 +5,10 @@
  * It is smart enough to retain whether or not a docblock should keep a prettier/formatter pragma
  */
 
-/**
- * External dependencies
- */
 const fs = require( 'fs' );
 const path = require( 'path' );
-const _ = require( 'lodash' );
 const nodeJsDeps = require( 'repl' )._builtinLibs;
+const _ = require( 'lodash' );
 
 function findPkgJson( target ) {
 	let root = path.dirname( target );

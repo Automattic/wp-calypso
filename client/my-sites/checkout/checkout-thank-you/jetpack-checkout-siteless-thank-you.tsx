@@ -3,7 +3,7 @@
  */
 import React, { FC, useState, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import page from 'page';
 import classNames from 'classnames';
 import { Button, Card } from '@automattic/components';
@@ -12,7 +12,8 @@ import { openPopupWidget } from 'react-calendly';
 /**
  * Internal dependencies
  */
-import { cleanUrl } from 'calypso/jetpack-connect/utils.js';
+import { resemblesUrl } from 'calypso/lib/url';
+import { addHttpIfMissing } from 'calypso/my-sites/checkout/utils';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
 	isProductsListFetching as getIsProductListFetching,
@@ -30,21 +31,38 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryProducts from 'calypso/components/data/query-products-list';
+import { addOnboardingCallInternalNote } from './utils';
 
 /**
  * Type dependencies
  */
 import type { UserData } from 'calypso/lib/user/user';
+
+interface CalendlyEvent {
+	data: {
+		event: string;
+		payload: {
+			event: {
+				uri: string;
+			};
+		};
+	};
+}
+
 interface Props {
 	forScheduling: boolean;
 	productSlug: string | 'no_product';
 	receiptId?: number;
+	source?: string;
+	jetpackTemporarySiteId?: number;
 }
 
 const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 	forScheduling,
 	productSlug,
 	receiptId = 0,
+	source = 'onboarding-calypso-ui',
+	jetpackTemporarySiteId = 0,
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -65,18 +83,39 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 	);
 
 	const jetpackInstallInstructionsLink =
-		'https://jetpack.com/support/getting-started-with-jetpack/';
+		'https://jetpack.com/support/install-jetpack-and-connect-your-new-plan/';
 
 	const [ siteInput, setSiteInput ] = useState( '' );
+	const [ isFormDirty, setIsFormDirty ] = useState( false );
+	const [ error, setError ] = useState< TranslateResult | false >( false );
 
-	const onUrlChange = useCallback( ( e ) => {
-		const siteUrl = e.target.value;
-		setSiteInput( siteUrl );
-	}, [] );
+	const onUrlChange = useCallback(
+		( e ) => {
+			const siteUrl = e.target.value;
+			setSiteInput( siteUrl );
+			if ( isFormDirty ) {
+				if ( ! resemblesUrl( addHttpIfMissing( siteUrl ) ) ) {
+					setError( translate( 'That is not a valid website URL.' ) );
+				} else {
+					setError( false );
+				}
+			}
+		},
+		[ translate, isFormDirty ]
+	);
 
-	const onUrlSubmit = useCallback( () => {
-		const siteUrl = cleanUrl( siteInput );
-		if ( siteUrl ) {
+	const onUrlSubmit = useCallback(
+		( e ) => {
+			e.preventDefault();
+			setIsFormDirty( true );
+			const siteUrl = addHttpIfMissing( siteInput );
+			setSiteInput( siteUrl );
+
+			if ( ! resemblesUrl( siteUrl ) ) {
+				setError( translate( 'That is not a valid website URL.' ) );
+				return;
+			}
+
 			dispatch(
 				recordTracksEvent( 'calypso_siteless_checkout_submit_website_address', {
 					product_slug: productSlug,
@@ -84,9 +123,17 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 					receipt_id: receiptId,
 				} )
 			);
-			dispatch( requestUpdateJetpackCheckoutSupportTicket( siteUrl, receiptId ) );
-		}
-	}, [ siteInput, dispatch, productSlug, receiptId ] );
+			dispatch(
+				requestUpdateJetpackCheckoutSupportTicket(
+					siteUrl,
+					receiptId,
+					source,
+					jetpackTemporarySiteId
+				)
+			);
+		},
+		[ siteInput, dispatch, translate, productSlug, receiptId, source, jetpackTemporarySiteId ]
+	);
 
 	const onScheduleClick = useCallback( () => {
 		if ( calendlyUrl !== null ) {
@@ -109,11 +156,42 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 		}
 	}, [ calendlyUrl, currentUser, dispatch, productSlug ] );
 
+	// Update the ZD ticket linked to `receiptId` after the user has scheduled a call.
 	useEffect( () => {
-		if ( supportTicketStatus && supportTicketStatus === 'success' ) {
+		const dispatchCalendlyEventScheduled = async ( event: CalendlyEvent ) => {
+			if ( event && event.data?.event === 'calendly.event_scheduled' ) {
+				const eventUri = event.data.payload?.event?.uri || '';
+				// The last part of the pathname is the ID of the Calendly event
+				const eventId = new URL( eventUri ).pathname.split( '/' ).pop();
+				const result = await addOnboardingCallInternalNote( receiptId, eventId );
+				if ( result ) {
+					dispatch(
+						recordTracksEvent( 'calypso_siteless_checkout_schedule_onboarding_call', {
+							product_slug: productSlug,
+							receipt_id: receiptId,
+							event_id: eventId,
+						} )
+					);
+				}
+			}
+		};
+
+		window.addEventListener( 'message', dispatchCalendlyEventScheduled );
+
+		return () => {
+			window.removeEventListener( 'message', dispatchCalendlyEventScheduled );
+		};
+	}, [] );
+
+	useEffect( () => {
+		if ( supportTicketStatus === 'success' ) {
 			page( `/checkout/jetpack/thank-you-completed/no-site/${ productSlug }` );
+		} else if ( supportTicketStatus === 'failed' ) {
+			setError(
+				translate( 'There was a problem submitting your website address, please try again.' )
+			);
 		}
-	}, [ supportTicketStatus, productSlug, receiptId ] );
+	}, [ supportTicketStatus, productSlug, translate ] );
 
 	useEffect( () => {
 		if ( forScheduling ) {
@@ -195,40 +273,41 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 									<br />
 									{ translate( 'Knowing this will allow us to jumpstart the activation process.' ) }
 								</p>
-								<FormLabel
-									className="jetpack-checkout-siteless-thank-you__form-label"
-									htmlFor="website-address-input"
-								>
-									Your website address:
-								</FormLabel>
-								<div className="jetpack-checkout-siteless-thank-you__form-group" role="group">
-									<FormTextInput
-										className={ classNames( 'jetpack-checkout-siteless-thank-you__form-input', {
-											'is-error': supportTicketStatus && supportTicketStatus === 'failed',
-										} ) }
-										autoCapitalize="off"
-										value={ siteInput }
-										placeholder="https://yourjetpack.blog"
-										onChange={ onUrlChange }
-										autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
-									/>
-									<FormButton
-										className="jetpack-checkout-siteless-thank-you__form-submit"
-										disabled={ ! siteInput || supportTicketStatus === 'pending' }
-										busy={ supportTicketStatus === 'pending' }
-										onClick={ onUrlSubmit }
+								<form onSubmit={ onUrlSubmit }>
+									<FormLabel
+										className="jetpack-checkout-siteless-thank-you__form-label"
+										htmlFor="website-address-input"
 									>
-										{ translate( 'Continue' ) }
-									</FormButton>
-								</div>
-								{ supportTicketStatus && supportTicketStatus === 'failed' && (
-									<FormInputValidation
-										isError
-										text={ translate(
-											'There was a problem submitting your website address, please try again.'
-										) }
-									></FormInputValidation>
-								) }
+										Your website address:
+									</FormLabel>
+									<div className="jetpack-checkout-siteless-thank-you__form-group" role="group">
+										<FormTextInput
+											className={ classNames( 'jetpack-checkout-siteless-thank-you__form-input', {
+												'is-error': error,
+											} ) }
+											autoCapitalize="off"
+											value={ siteInput }
+											placeholder="https://yourjetpack.blog"
+											onChange={ onUrlChange }
+											autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
+										/>
+										<FormButton
+											className="jetpack-checkout-siteless-thank-you__form-submit"
+											disabled={ ! siteInput || supportTicketStatus === 'pending' }
+											busy={ supportTicketStatus === 'pending' }
+										>
+											{ supportTicketStatus === 'pending'
+												? translate( 'Saving…' )
+												: translate( 'Continue' ) }
+										</FormButton>
+									</div>
+									{ error && (
+										<FormInputValidation
+											isError={ !! ( isFormDirty && error ) }
+											text={ error }
+										></FormInputValidation>
+									) }
+								</form>
 							</div>
 						</div>
 					) }

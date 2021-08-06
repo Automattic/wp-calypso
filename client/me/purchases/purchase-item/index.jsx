@@ -55,7 +55,16 @@ class PurchaseItem extends Component {
 	}
 
 	getStatus() {
-		const { purchase, translate, locale, moment, name, isJetpack, isDisconnectedSite } = this.props;
+		const {
+			purchase,
+			translate,
+			locale,
+			moment,
+			name,
+			isJetpack,
+			isJetpackTemporarySite,
+			isDisconnectedSite,
+		} = this.props;
 		const expiry = moment( purchase.expiryDate );
 
 		if ( purchase && isPartnerPurchase( purchase ) ) {
@@ -67,6 +76,12 @@ class PurchaseItem extends Component {
 		}
 
 		if ( isDisconnectedSite ) {
+			if ( isJetpackTemporarySite ) {
+				return (
+					<span className="purchase-item__is-error">{ translate( 'Awaiting site URL' ) }</span>
+				);
+			}
+
 			if ( isJetpack ) {
 				return (
 					<span className="purchase-item__is-error">
@@ -258,9 +273,20 @@ class PurchaseItem extends Component {
 	}
 
 	getPurchaseType() {
-		const { purchase, site, translate, slug, showSite, isDisconnectedSite } = this.props;
-		const productType = purchaseType( purchase );
+		const {
+			purchase,
+			site,
+			translate,
+			slug,
+			showSite,
+			isDisconnectedSite,
+			isJetpackTemporarySite,
+		} = this.props;
+		if ( isJetpackTemporarySite ) {
+			return null;
+		}
 
+		const productType = purchaseType( purchase );
 		if ( showSite && site ) {
 			if ( productType ) {
 				return translate( '%(purchaseType)s for {{button}}%(site)s{{/button}}', {
@@ -448,6 +474,7 @@ PurchaseItem.propTypes = {
 	getManagePurchaseUrlFor: PropTypes.func,
 	isDisconnectedSite: PropTypes.bool,
 	isJetpack: PropTypes.bool,
+	isJetpackTemporarySite: PropTypes.bool,
 	isPlaceholder: PropTypes.bool,
 	purchase: PropTypes.object,
 	showSite: PropTypes.bool,

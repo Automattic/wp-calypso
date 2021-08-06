@@ -10,7 +10,7 @@ const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' 
 /**
  * Internal dependencies
  */
-import { isExternal, resemblesUrl, urlToSlug } from 'calypso/lib/url';
+import { addQueryArgs, isExternal, resemblesUrl, urlToSlug } from 'calypso/lib/url';
 import config from '@automattic/calypso-config';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
@@ -58,6 +58,7 @@ export default function getThankYouPageUrl( {
 	hideNudge,
 	isInEditor,
 	isJetpackCheckout = false,
+	jetpackTemporarySiteId,
 }: {
 	siteSlug: string | undefined;
 	adminUrl: string | undefined;
@@ -75,6 +76,7 @@ export default function getThankYouPageUrl( {
 	hideNudge?: boolean;
 	isInEditor?: boolean;
 	isJetpackCheckout?: boolean;
+	jetpackTemporarySiteId?: string;
 } ): string {
 	debug( 'starting getThankYouPageUrl' );
 
@@ -146,10 +148,13 @@ export default function getThankYouPageUrl( {
 		}`;
 
 		const isValidReceiptId = ! isNaN( parseInt( pendingOrReceiptId ) );
-
-		return isValidReceiptId
-			? `${ thankYouUrlSiteLess }?receiptId=${ pendingOrReceiptId }`
-			: thankYouUrlSiteLess;
+		return addQueryArgs(
+			{
+				receiptId: isValidReceiptId ? pendingOrReceiptId : undefined,
+				jetpackTemporarySiteId: jetpackTemporarySiteId && parseInt( jetpackTemporarySiteId ),
+			},
+			thankYouUrlSiteLess
+		);
 	}
 
 	const fallbackUrl = getFallbackDestination( {

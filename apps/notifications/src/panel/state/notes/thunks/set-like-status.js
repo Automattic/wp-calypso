@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
-import { likeNote } from '../actions';
-import { wpcom } from '../../../rest-client/wpcom';
 import { recordTracksEvent } from '../../../helpers/stats';
+import { wpcom } from '../../../rest-client/wpcom';
+import { likeNote } from '../actions';
 import bumpStat from '../utils/bump-stat';
 
 // getNote() updates the redux store with a fresh object from the API

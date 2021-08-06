@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { camelCase, debounce, difference, get, isEmpty, keys, map, pick } from 'lodash';
+import { camelCase, difference, get, isEmpty, keys, map, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,11 +19,8 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
-import { Input } from 'calypso/my-sites/domains/components/form';
 import { disableSubmitButton } from './with-contact-details-validation';
-import wp from 'calypso/lib/wp';
 
-const wpcom = wp.undocumented();
 const ciraAgreementUrl = 'https://cira.ca/agree';
 const defaultValues = {
 	lang: 'EN',
@@ -95,7 +92,6 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		this.state = {
 			errorMessages: {},
 		};
-		this.validateContactDetails = debounce( this.validateContactDetails, 333 );
 	}
 
 	componentDidMount() {
@@ -125,33 +121,19 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		this.props.onContactDetailsChange?.( payload );
 	}
 
-	validateContactDetails = ( contactDetails ) => {
-		wpcom.validateDomainContactInformation(
-			contactDetails,
-			this.props.getDomainNames(),
-			( error, data ) => {
-				this.setState( {
-					errorMessages: ( data && data.messages ) || {},
-				} );
-			}
-		);
-	};
-
 	handleChangeEvent = ( event ) => {
-		const { value, name, checked, type, id } = event.target;
+		const { value, checked, type, id } = event.target;
 		const newContactDetails = {};
 
-		if ( name === 'organization' ) {
-			newContactDetails[ name ] = value;
-			this.validateContactDetails( {
-				...this.props.contactDetails,
-				[ name ]: value,
+		if ( id === 'legal-type' ) {
+			this.props.updateRequiredDomainFields( {
+				organization: this.isCorporationLegalType( value ),
 			} );
-		} else {
-			newContactDetails.extra = {
-				ca: { [ camelCase( id ) ]: type === 'checkbox' ? checked : value },
-			};
 		}
+
+		newContactDetails.extra = {
+			ca: { [ camelCase( id ) ]: type === 'checkbox' ? checked : value },
+		};
 
 		this.props.updateContactDetailsCache( { ...newContactDetails } );
 
@@ -160,8 +142,12 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		}
 	};
 
+	isCorporationLegalType( legalType ) {
+		return legalType === 'CCO';
+	}
+
 	needsOrganization() {
-		return get( this.props.ccTldDetails, 'legalType' ) === 'CCO';
+		return this.isCorporationLegalType( this.props.ccTldDetails?.legalType );
 	}
 
 	organizationFieldIsValid() {
@@ -189,28 +175,6 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		}
 
 		return this.props.translate( 'Required' );
-	}
-
-	renderOrganizationField() {
-		const { translate, contactDetails } = this.props;
-		const label = {
-			label: translate( 'Organization' ),
-			...( this.needsOrganization() ? {} : { labelProps: { optional: true } } ),
-		};
-
-		return (
-			<FormFieldset>
-				<Input
-					name="organization"
-					className="registrant-extra-info__organization"
-					value={ contactDetails.organization || '' }
-					isError={ ! this.organizationFieldIsValid() }
-					errorMessage={ this.getOrganizationErrorMessage() }
-					{ ...label }
-					onChange={ this.handleChangeEvent }
-				/>
-			</FormFieldset>
-		);
 	}
 
 	render() {
@@ -266,7 +230,6 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 						) }
 					</FormLabel>
 				</FormFieldset>
-				{ this.renderOrganizationField() }
 				{ validatingSubmitButton }
 			</form>
 		);

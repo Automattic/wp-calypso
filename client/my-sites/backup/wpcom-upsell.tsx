@@ -21,7 +21,7 @@ import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import Gridicon from 'calypso/components/gridicon';
 import { getSitePlan } from 'calypso/state/sites/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
 import { preventWidows } from 'calypso/lib/formatting';

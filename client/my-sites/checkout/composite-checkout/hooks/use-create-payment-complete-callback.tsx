@@ -95,6 +95,15 @@ export default function useCreatePaymentCompleteCallback( {
 		( { paymentMethodId, transactionLastResponse }: PaymentCompleteCallbackArguments ): void => {
 			debug( 'payment completed successfully' );
 			const transactionResult = normalizeTransactionResponse( transactionLastResponse );
+
+			// In the case of a Jetpack product site-less purchase, we need to include the blog ID of the
+			// created site in the Thank You page URL.
+			let jetpackTemporarySiteId;
+			if ( isJetpackCheckout && ! siteSlug && responseCart.create_new_blog ) {
+				jetpackTemporarySiteId =
+					transactionResult.purchases && Object.keys( transactionResult.purchases ).pop();
+			}
+
 			const getThankYouPageUrlArguments = {
 				siteSlug: siteSlug || undefined,
 				adminUrl,
@@ -110,6 +119,7 @@ export default function useCreatePaymentCompleteCallback( {
 				hideNudge: isComingFromUpsell,
 				isInEditor,
 				isJetpackCheckout,
+				jetpackTemporarySiteId,
 			};
 			debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
 			const url = getThankYouPageUrl( getThankYouPageUrlArguments );
@@ -276,11 +286,12 @@ function displayRenewalSuccessNotice(
 		reduxDispatch(
 			successNotice(
 				translate(
-					'%(productName)s has been renewed and will now auto renew in the future. ' +
-						'{{a}}Learn more{{/a}}',
+					'Success! You renewed %(productName)s for %(duration)s, and we sent your receipt to %(email)s. {{a}}Learn more about renewals{{/a}}',
 					{
 						args: {
 							productName: renewalItem.product_name,
+							duration: moment.duration( { days: renewalItem.bill_period } ).humanize(),
+							email: product.user_email,
 						},
 						components: {
 							a: <a href={ AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />,
@@ -297,8 +308,7 @@ function displayRenewalSuccessNotice(
 	reduxDispatch(
 		successNotice(
 			translate(
-				'Success! You renewed %(productName)s for %(duration)s, until %(date)s. ' +
-					'We sent your receipt to %(email)s.',
+				'Success! You renewed %(productName)s for %(duration)s, until %(date)s. We sent your receipt to %(email)s.',
 				{
 					args: {
 						productName: renewalItem.product_name,

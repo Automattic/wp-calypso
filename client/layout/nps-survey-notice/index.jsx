@@ -1,26 +1,22 @@
-/**
- * External dependencies
- */
+import { isBusinessPlan } from '@automattic/calypso-products';
+import { Dialog } from '@automattic/components';
+import { get } from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { Dialog } from '@automattic/components';
-import QuerySites from 'calypso/components/data/query-sites';
 import NpsSurvey from 'calypso/blocks/nps-survey';
-import {
-	setNpsSurveyDialogShowing,
-	setupNpsSurveyDevTrigger,
-} from 'calypso/state/nps-survey/notice/actions';
-import { isNpsSurveyDialogShowing } from 'calypso/state/nps-survey/notice/selectors';
+import QuerySites from 'calypso/components/data/query-sites';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	submitNpsSurveyWithNoScore,
 	setupNpsSurveyEligibility,
 	markNpsSurveyShownThisSession,
 } from 'calypso/state/nps-survey/actions';
+import {
+	setNpsSurveyDialogShowing,
+	setupNpsSurveyDevTrigger,
+} from 'calypso/state/nps-survey/notice/actions';
+import { isNpsSurveyDialogShowing } from 'calypso/state/nps-survey/notice/selectors';
 import {
 	getNpsSurveyScore,
 	hasAnsweredNpsSurvey,
@@ -28,15 +24,8 @@ import {
 	isSectionAndSessionEligibleForNpsSurvey,
 	wasNpsSurveyShownThisSession,
 } from 'calypso/state/nps-survey/selectors';
-import { isSupportSession } from 'calypso/state/support/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
-import { isBusinessPlan } from '@automattic/calypso-products';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { bumpStat } from 'calypso/lib/analytics/mc';
-
-/**
- * Style dependencies
- */
+import { isSupportSession } from 'calypso/state/support/selectors';
 import './style.scss';
 
 const SURVEY_NAME = 'calypso-global-notice-radio-buttons-v1';
