@@ -15,20 +15,6 @@
 			"features": []
 		},
 		{
-			"title": "Twenty Twenty One",
-			"slug": "tt1-blocks",
-			"template": "tt1-blocks",
-			"theme": "tt1-blocks",
-			"fonts": {
-				"headings": "Playfair Display",
-				"base": "Fira Sans"
-			},
-			"categories": [ "featured" ],
-			"is_premium": false,
-			"is_fse": true,
-			"features": []
-		},
-		{
 			"title": "Cassel",
 			"slug": "cassel",
 			"template": "cassel",
