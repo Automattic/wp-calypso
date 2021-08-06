@@ -10,10 +10,10 @@ import moment from 'moment';
  * Internal Dependencies
  */
 import {
+	JETPACK_SEARCH_PRODUCTS,
 	isJetpackPlanSlug,
 	isJetpackBackupSlug,
 	isJetpackScanSlug,
-	isJetpackSearch,
 } from '@automattic/calypso-products';
 
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
@@ -130,7 +130,7 @@ const JetpackBenefitsStep: React.FC< Props > = ( props ) => {
 			);
 		} else if ( isJetpackBackupSlug( productSlug ) ) {
 			return translate( 'Once you cancel, you will lose access to your site backups.' );
-		} else if ( isJetpackSearch( productSlug ) ) {
+		} else if ( JETPACK_SEARCH_PRODUCTS.includes( productSlug ) ) {
 			return translate(
 				"Once you cancel, you will no longer have Jetpack's enhanced search experience."
 			);
