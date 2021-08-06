@@ -2,6 +2,7 @@
 
 const path = require( 'path' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config' );
+const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
 const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 const webpack = require( 'webpack' );
 
@@ -53,7 +54,7 @@ function generateEntry( entries ) {
 
 		// The path to the output must be in the entry name or webpack will output
 		// to the wrong directory.
-		const entryOutput = `editing-toolkit-plugin/${ packageName }/dist/${ entryName }`;
+		const entryOutput = `${ packageName }/dist/${ entryName }`;
 
 		if ( acc[ entryOutput ] ) {
 			throw new Error( `The entry ${ entryOutput } has already been defined.` );
@@ -91,9 +92,20 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 		...webpackConfig,
 		output: {
 			library: 'EditingToolkit',
-			path: __dirname,
+			path: path.join( __dirname, 'editing-toolkit-plugin' ),
 		},
 		entry: generateEntry( ETK_ENTRYPOINTS ),
+		module: {
+			...webpackConfig.module,
+			rules: [
+				// Remove the default asset loader.
+				...webpackConfig.module.rules.filter( ( rule ) => rule.type !== 'asset/resource' ),
+				// Add our own asset loader, placing images in a more appropriate location.
+				FileConfig.loader( {
+					outputPath: 'dist/images',
+				} ),
+			],
+		},
 		optimization: {
 			...webpackConfig.optimization,
 			// disable module concatenation so that instances of `__()` are not renamed
