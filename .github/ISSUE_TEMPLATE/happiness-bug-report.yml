@@ -63,14 +63,15 @@ body:
       options:
         - Chrome/Chromium
         - Firefox
-        - Safari
+        - Microsoft Edge
         - Microsoft Edge (legacy)
+        - Safari
       multiple: true
     validations:
       required: true
   - type: input
     attributes:
-      label: Browser Version
+      label: Browser Version(s)
   - type: input
     id: theme
     attributes:
