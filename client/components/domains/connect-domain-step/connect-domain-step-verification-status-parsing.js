@@ -16,7 +16,7 @@ export function getMappingVerificationErrorMessage( mode, verificationStatus ) {
 		return;
 	}
 
-	if ( isMappingVerificationSuccess( mode, verificationStatus ) ) {
+	if ( isMappingVerificationSuccess( mode, data ) ) {
 		return;
 	}
 
