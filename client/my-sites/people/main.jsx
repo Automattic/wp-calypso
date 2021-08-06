@@ -13,6 +13,8 @@ import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
+import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 import FollowersList from './followers-list';
@@ -49,6 +51,24 @@ class People extends React.Component {
 			default:
 				return translate( 'Invite contributors to your site and manage their access settings.' );
 		}
+	}
+
+	renderHeaderText() {
+		const { site, isWPForTeamsSite, isP2HubSite, translate } = this.props;
+
+		if ( isWPForTeamsSite ) {
+			if ( isP2HubSite ) {
+				return translate( 'People in %(sitename)s', {
+					args: {
+						sitename: site.name,
+						context: 'People page for P2 hubs.',
+					},
+				} );
+			}
+			return translate( 'People in this space' );
+		}
+
+		return translate( 'People' );
 	}
 
 	render() {
@@ -90,7 +110,7 @@ class People extends React.Component {
 				<FormattedHeader
 					brandFont
 					className="people__page-heading"
-					headerText={ translate( 'People' ) }
+					headerText={ this.renderHeaderText() }
 					subHeaderText={ this.renderSubheaderText() }
 					align="left"
 					hasScreenOptions
@@ -123,5 +143,7 @@ export default connect( ( state ) => {
 		isPrivate: isPrivateSite( state, siteId ),
 		canViewPeople: canCurrentUser( state, siteId, 'list_users' ),
 		isComingSoon: isSiteComingSoon( state, siteId ),
+		isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
+		isP2HubSite: isSiteP2Hub( state, siteId ),
 	};
 } )( localize( People ) );

@@ -8,7 +8,6 @@ export default function () {
 		'/people/:filter(team|followers|email-followers|viewers)',
 		siteSelection,
 		sites,
-		p2RedirectToHub,
 		makeLayout,
 		clientRender
 	);
@@ -18,7 +17,6 @@ export default function () {
 		peopleController.enforceSiteEnding,
 		siteSelection,
 		navigation,
-		p2RedirectToHub,
 		peopleController.people,
 		makeLayout,
 		clientRender
