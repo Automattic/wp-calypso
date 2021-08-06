@@ -5,7 +5,7 @@ import page from 'page';
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
+import i18nCalypso, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -62,6 +62,11 @@ const TitanSetupMailbox = ( { selectedDomainName } ) => {
 		return null;
 	}
 
+	const title =
+		'en' === getLocaleSlug() || i18nCalypso.hasTranslation( 'Set up mailbox' )
+			? translate( 'Set up mailbox' )
+			: translate( 'Set up your Professional Email' );
+
 	return (
 		<>
 			<PageViewTracker path={ analyticsPath } title="Email Management > Set Up Titan Mailbox" />
@@ -69,7 +74,7 @@ const TitanSetupMailbox = ( { selectedDomainName } ) => {
 			{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
 			<Main wideLayout={ true }>
-				<DocumentHead title={ translate( 'Set Up Mailbox' ) } />
+				<DocumentHead title={ title } />
 
 				<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
 
@@ -77,7 +82,7 @@ const TitanSetupMailbox = ( { selectedDomainName } ) => {
 					{ getTitanProductName() + ': ' + selectedDomainName }
 				</HeaderCake>
 
-				<SectionHeader label={ translate( 'Set Up Mailbox' ) } />
+				<SectionHeader label={ title } />
 
 				<TitanSetupMailboxForm
 					areSiteDomainsLoaded={ areSiteDomainsLoaded }
