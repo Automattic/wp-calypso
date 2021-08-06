@@ -46,9 +46,8 @@ export function setupNpsSurveyEligibility() {
 	return ( dispatch ) => {
 		debug( 'Checking NPS eligibility...' );
 
-		return wpcom
-			.undocumented()
-			.checkNPSSurveyEligibility()
+		return wpcom.req
+			.get( '/nps', { apiVersion: '1.2' } )
 			.then( ( data ) => {
 				debug( '...Eligibility returned from endpoint.', data );
 				dispatch( setNpsSurveyEligibility( data.display_survey ) );
@@ -76,9 +75,8 @@ export function submitNpsSurvey( surveyName, score ) {
 		bumpStat( 'calypso_nps_survey', 'survey_submitted' );
 		recordTracksEvent( 'calypso_nps_survey_submitted' );
 
-		return wpcom
-			.undocumented()
-			.submitNPSSurvey( surveyName, score )
+		return wpcom.req
+			.post( `/nps/${ surveyName }`, { apiVersion: '1.2' }, { score } )
 			.then( () => {
 				debug( '...Successfully submitted NPS survey.' );
 				dispatch( submitNpsSurveyRequestSuccess() );
@@ -98,9 +96,8 @@ export function submitNpsSurveyWithNoScore( surveyName ) {
 		bumpStat( 'calypso_nps_survey', 'survey_dismissed' );
 		recordTracksEvent( 'calypso_nps_survey_dismissed' );
 
-		return wpcom
-			.undocumented()
-			.dismissNPSSurvey( surveyName )
+		return wpcom.req
+			.post( `/nps/${ surveyName }`, { apiVersion: '1.2' }, { dismissed: true } )
 			.then( () => {
 				debug( '...Successfully submitted NPS survey with no score.' );
 				dispatch( submitNpsSurveyWithNoScoreRequestSuccess() );
@@ -120,9 +117,8 @@ export function sendNpsSurveyFeedback( surveyName, feedback ) {
 		bumpStat( 'calypso_nps_survey', 'feedback_submitted' );
 		recordTracksEvent( 'calypso_nps_survey_feedback_submitted' );
 
-		return wpcom
-			.undocumented()
-			.sendNPSSurveyFeedback( surveyName, feedback )
+		return wpcom.req
+			.post( `/nps/${ surveyName }`, { apiVersion: '1.2' }, { feedback } )
 			.then( () => {
 				debug( '...Successfully sent NPS survey feedback.' );
 				dispatch( sendNpsSurveyFeedbackSuccess() );

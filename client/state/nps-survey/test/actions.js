@@ -19,12 +19,10 @@ import {
 
 // mock modules
 jest.mock( 'calypso/lib/wp', () => ( {
-	undocumented: () => ( {
-		// TODO: use mockResolvedValue instead when we update jest to 22.2 or later
-		submitNPSSurvey: jest.fn().mockReturnValue( Promise.resolve() ),
-		dismissNPSSurvey: jest.fn().mockReturnValue( Promise.resolve() ),
-		sendNPSSurveyFeedback: jest.fn().mockReturnValue( Promise.resolve() ),
-	} ),
+	req: {
+		get: jest.fn().mockResolvedValue(),
+		post: jest.fn().mockResolvedValue(),
+	},
 } ) );
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: jest.fn(),
