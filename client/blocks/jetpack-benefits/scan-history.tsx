@@ -123,10 +123,10 @@ const JetpackBenefitsScanHistory: React.FC< Props > = ( { siteId, isStandalone }
 	let cardStat: TranslateResult = '';
 	let cardDescription: TranslateResult = '';
 	if ( threats.length > 0 ) {
-		cardStat = translate( '%(number)d %(threatMaybePlural)s found', {
+		cardStat = translate( '%(threatCount)d threat found', '%(threatCount)d threats found', {
+			count: threats.length,
 			args: {
-				number: threats.length,
-				threatMaybePlural: 'threat' + ( threats.length > 1 ) ? 's' : '',
+				threatCount: threats.length,
 			},
 		} );
 		cardDescription = translate( 'Jetpack has identified some threats on your site.' );

@@ -27,7 +27,9 @@ export const JetpackBenefitsCard: React.FC< Props > = ( {
 		if ( stat ) {
 			return <span className="jetpack-benefits__card-stat">{ stat }</span>;
 		}
+		return null;
 	};
+
 	const statBlockClassNames = classNames( 'jetpack-benefits__stat-block ', {
 		'jetpack-benefits__stat-block--placeholder': placeholder,
 	} );

@@ -108,7 +108,7 @@ const JetpackBenefitsSiteBackups: React.FC< Props > = ( { siteId, isStandalone }
 	}
 
 	// now that backups are loaded and any in progress are complete, get the most recent one
-	const mostRecentBackup = backups.length > 0 ? backups[ 0 ] : null;
+	const mostRecentBackup = backups?.[ 0 ] || null;
 
 	// no backups taken yet
 	if ( ! mostRecentBackup ) {

@@ -73,5 +73,7 @@ export const productHasAntiSpam = ( productSlug: string ) => {
 };
 
 export const productHasActivityLog = ( productSlug: string ) => {
+	// Any site with Jetpack free will have the activity log
+	// Highlighting the log here just for backup products or paid plans, since there are more benefits in these cases (more history, finding previous backups)
 	return isJetpackPlanSlug( productSlug ) || isJetpackBackupSlug( productSlug );
 };
