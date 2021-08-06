@@ -40,7 +40,7 @@ class EmailPlanWarnings extends React.Component {
 			<Button compact primary href={ setupMailboxUrl }>
 				{ 'en' === getLocaleSlug() || i18nCalypso.hasTranslation( 'Set up mailbox' )
 					? translate( 'Set up mailbox' )
-					: translate( 'Activate mailbox' ) }
+					: translate( 'Activate Mailbox' ) }
 			</Button>
 		);
 	}
