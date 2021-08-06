@@ -10,7 +10,7 @@ import { READER_EXPORT_TYPE_SUBSCRIPTIONS } from 'calypso/blocks/reader-export-b
 import ReaderImportButton from 'calypso/blocks/reader-import-button';
 import SyncReaderFollows from 'calypso/components/data/sync-reader-follows';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { addQueryArgs } from 'calypso/lib/url';
 import UrlSearch from 'calypso/lib/url-search';
 import InfiniteStream from 'calypso/reader/components/reader-infinite-stream';

@@ -1,8 +1,8 @@
+import { Popover } from '@automattic/components';
 import classnames from 'classnames';
 import { omit } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import Popover from 'calypso/components/popover';
 import { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
 import { getPostLikes } from 'calypso/state/posts/selectors/get-post-likes';
 import PostLikes from './index';

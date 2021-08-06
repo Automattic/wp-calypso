@@ -1,9 +1,9 @@
+import { Popover } from '@automattic/components';
 import React, { PureComponent } from 'react';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
-import Popover from 'calypso/components/popover';
-import PopoverMenu from 'calypso/components/popover/menu';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import PopoverMenu from 'calypso/components/popover-menu';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 
 const customPosition = { top: 300, left: 500 };
 

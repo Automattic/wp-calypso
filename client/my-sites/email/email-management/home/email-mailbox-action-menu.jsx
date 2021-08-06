@@ -16,7 +16,7 @@ import titanContactsIcon from 'calypso/assets/images/email-providers/titan/servi
 import titanMailIcon from 'calypso/assets/images/email-providers/titan/services/flat/mail.svg';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import MaterialIcon from 'calypso/components/material-icon';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { useRemoveTitanMailboxMutation } from 'calypso/data/emails/use-remove-titan-mailbox-mutation';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import {

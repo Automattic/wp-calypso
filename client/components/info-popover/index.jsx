@@ -1,9 +1,9 @@
+import { Popover } from '@automattic/components';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import Gridicon from 'calypso/components/gridicon';
-import Popover from 'calypso/components/popover';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
 import './style.scss';

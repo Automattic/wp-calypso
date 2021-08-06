@@ -5,8 +5,8 @@ import PropTypes from 'prop-types';
 import React, { useRef, useState } from 'react';
 import Badge from 'calypso/components/badge';
 import Gridicon from 'calypso/components/gridicon';
-import PopoverMenu from 'calypso/components/popover/menu';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import PopoverMenu from 'calypso/components/popover-menu';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { domainManagementChangeSiteAddress } from 'calypso/my-sites/domains/paths';
 
 import './wpcom-domain-item.scss';
