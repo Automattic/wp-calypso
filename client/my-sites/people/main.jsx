@@ -39,7 +39,11 @@ class People extends React.Component {
 	}
 
 	renderSubheaderText() {
-		const { translate, filter } = this.props;
+		const { isWPForTeamsSite, translate, filter } = this.props;
+
+		if ( isWPForTeamsSite ) {
+			return this.getSubheaderTextForP2();
+		}
 
 		switch ( filter ) {
 			case 'followers':
@@ -49,8 +53,18 @@ class People extends React.Component {
 			case 'email-followers':
 				return translate( 'People who have subscribed to your site using their email address.' );
 			default:
-				return translate( 'Invite contributors to your site and manage their access settings.' );
+				return isWPForTeamsSite
+					? this.getSubheaderTextForP2()
+					: translate( 'Invite contributors to your site and manage their access settings.' );
 		}
+	}
+
+	getSubheaderTextForP2() {
+		const { isP2HubSite, translate } = this.props;
+		if ( isP2HubSite ) {
+			return translate( 'Invite members to your P2 and manage their access setting.' );
+		}
+		return translate( 'Invite members and guests to this space and manage their access settings.' );
 	}
 
 	renderHeaderText() {
