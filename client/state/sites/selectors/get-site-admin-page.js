@@ -17,7 +17,7 @@ export default function getSiteAdminPage( state, siteId ) {
 		'jetpack_connection_active_plugins'
 	);
 
-	var pluginPage = 'jetpack';
+	let pluginPage = 'jetpack';
 	if (
 		Array.isArray( activeConnectedPlugins ) &&
 		! activeConnectedPlugins.includes( 'jetpack' ) &&

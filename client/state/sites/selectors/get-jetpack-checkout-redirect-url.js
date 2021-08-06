@@ -23,7 +23,7 @@ export default function getJetpackCheckoutRedirectUrl( state, siteId ) {
 	};
 
 	// Higher values are prioritized
-	let priority = {
+	const priority = {
 		jetpack: 1,
 		'jetpack-backup': 0,
 	};

@@ -317,7 +317,7 @@ function getFallbackDestination( {
 		if ( isJetpackNotAtomic && purchasedProduct ) {
 			debug( 'the site is jetpack and bought a jetpack product', siteSlug, purchasedProduct );
 
-			let adminPath = adminPageRedirect || 'admin.php?page=jetpack#/recommendations';
+			const adminPath = adminPageRedirect || 'admin.php?page=jetpack#/recommendations';
 
 			// Jetpack Cloud will either redirect to wp-admin (if JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN
 			// flag is set), or otherwise will redirect to a Jetpack Redirect API url (source=jetpack-checkout-thankyou)
