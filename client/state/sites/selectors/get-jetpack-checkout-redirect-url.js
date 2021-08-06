@@ -4,7 +4,7 @@
 import getSiteOption from './get-site-option';
 
 /**
- * Returns a site's wp-admin plugin page depending on which plugin is active.
+ * Returns a jetpack plugin admin page depending on which plugin is active.
  *
  * @param  {object}  state  Global state tree
  * @param  {?number}  siteId Site ID
@@ -32,7 +32,7 @@ export default function getJetpackCheckoutRedirectUrl( state, siteId ) {
 
 	if ( activeConnectedPlugins ) {
 		activeConnectedPlugins.forEach( ( plugin ) => {
-			if ( redirectMap[ plugin ] ) {
+			if ( redirectMap.hasOwnProperty( plugin ) ) {
 				if ( ! bestMatchingPlugin || priority[ plugin ] > priority[ bestMatchingPlugin ] ) {
 					bestMatchingPlugin = plugin;
 				}

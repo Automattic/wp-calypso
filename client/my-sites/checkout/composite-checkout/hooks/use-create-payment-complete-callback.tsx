@@ -90,7 +90,7 @@ export default function useCreatePaymentCompleteCallback( {
 		useSelector(
 			( state ) => siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
 		) || false;
-	const jetpackRedirectUrl = useSelector( ( state ) =>
+	const adminPageRedirect = useSelector( ( state ) =>
 		getJetpackCheckoutRedirectUrl( state, siteId )
 	);
 
@@ -123,7 +123,7 @@ export default function useCreatePaymentCompleteCallback( {
 				isInEditor,
 				isJetpackCheckout,
 				jetpackTemporarySiteId,
-				jetpackRedirectUrl,
+				adminPageRedirect,
 			};
 			debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
 			const url = getThankYouPageUrl( getThankYouPageUrlArguments );
@@ -250,7 +250,7 @@ export default function useCreatePaymentCompleteCallback( {
 			isFocusedLaunch,
 			isJetpackCheckout,
 			checkoutFlow,
-			jetpackRedirectUrl,
+			adminPageRedirect,
 		]
 	);
 }
