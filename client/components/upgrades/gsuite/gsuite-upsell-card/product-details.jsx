@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { connect } from 'react-redux';
+import googleWorkspaceLogo from 'calypso/assets/images/email-providers/google-workspace/logo.svg';
+import GSuiteCompactFeatures from 'calypso/components/gsuite/gsuite-features/compact';
+import GSuitePrice from 'calypso/components/gsuite/gsuite-price';
+import { isGoogleWorkspaceProductSlug } from 'calypso/lib/gsuite';
+import { GSUITE_SLUG_PROP_TYPES } from 'calypso/lib/gsuite/constants';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
-import googleWorkspaceLogo from 'calypso/assets/images/email-providers/google-workspace/logo.svg';
-import GSuitePrice from 'calypso/components/gsuite/gsuite-price';
-import GSuiteCompactFeatures from 'calypso/components/gsuite/gsuite-features/compact';
-import { GSUITE_SLUG_PROP_TYPES } from 'calypso/lib/gsuite/constants';
-import { isGoogleWorkspaceProductSlug } from 'calypso/lib/gsuite';
 
 function GSuiteUpsellProductDetails( { currencyCode, domain, product, productSlug } ) {
 	const translate = useTranslate();

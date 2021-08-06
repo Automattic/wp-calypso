@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { isRequestingActivePromotions } from 'calypso/state/active-promotions/selectors';
 import { requestActivePromotions } from 'calypso/state/active-promotions/actions';
+import { isRequestingActivePromotions } from 'calypso/state/active-promotions/selectors';
 
 const request = () => ( dispatch, getState ) => {
 	if ( ! isRequestingActivePromotions( getState() ) ) {

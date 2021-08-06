@@ -1,19 +1,8 @@
-/**
- * External dependencies
- */
-
+import { Card } from '@automattic/components';
+import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import classnames from 'classnames';
 
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
-
-/**
- * Style dependencies
- */
 import './footer.scss';
 
 class LoggedOutFormFooter extends Component {

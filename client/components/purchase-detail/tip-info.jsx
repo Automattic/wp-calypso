@@ -1,14 +1,8 @@
-/**
- * External dependencies
- */
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
 import Gridicon from 'calypso/components/gridicon';
-import classNames from 'classnames';
 
-/**
- * Style dependencies
- */
 import './tip-info.scss';
 
 const TipInfo = ( { info = '', className } ) => {

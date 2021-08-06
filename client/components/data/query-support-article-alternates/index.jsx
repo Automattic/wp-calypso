@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { SUPPORT_BLOG_ID } from 'calypso/blocks/inline-help/constants';
+import { isPostKeyLike } from 'calypso/reader/post-key';
 import { fetchAlternates } from 'calypso/state/support-articles-alternates/actions';
 import { shouldRequestSupportArticleAlternates } from 'calypso/state/support-articles-alternates/selectors';
-import { isPostKeyLike } from 'calypso/reader/post-key';
 
 class QuerySupportArticleAlternates extends Component {
 	static propTypes = {

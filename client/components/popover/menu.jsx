@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
+import React, { Component } from 'react';
 import Popover from 'calypso/components/popover';
 
 const isInvalidTarget = ( target ) => {

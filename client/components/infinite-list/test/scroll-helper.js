@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { range } from 'lodash';
 import { assert } from 'chai';
-
-/**
- * Internal dependencies
- */
+import { range } from 'lodash';
 import ScrollHelper from '../scroll-helper';
 
 function getItemRef( item ) {

@@ -2,23 +2,20 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import React from 'react';
 import { shallow } from 'enzyme';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
+import {
+	isSuccessfulDailyBackup,
+	isSuccessfulRealtimeBackup,
+} from 'calypso/lib/jetpack/backup-utils';
+import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
 import DailyBackupStatus from '..';
-
 import BackupFailed from '../status-card/backup-failed';
 import BackupScheduled from '../status-card/backup-scheduled';
 import BackupSuccessful from '../status-card/backup-successful';
-import NoBackupsYet from '../status-card/no-backups-yet';
 import NoBackupsOnSelectedDate from '../status-card/no-backups-on-selected-date';
+import NoBackupsYet from '../status-card/no-backups-yet';
 
 /**
  * Mock dependencies
@@ -35,13 +32,8 @@ jest.mock( 'calypso/state/selectors/get-site-gmt-offset' );
 
 jest.mock( 'calypso/state/selectors/get-rewind-backups' );
 jest.mock( 'calypso/state/selectors/get-rewind-capabilities' );
-import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
 
 jest.mock( 'calypso/lib/jetpack/backup-utils' );
-import {
-	isSuccessfulDailyBackup,
-	isSuccessfulRealtimeBackup,
-} from 'calypso/lib/jetpack/backup-utils';
 
 const ARBITRARY_DATE = moment( '2019-01-01' );
 

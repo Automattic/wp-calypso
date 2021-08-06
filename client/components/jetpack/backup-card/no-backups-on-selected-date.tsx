@@ -1,31 +1,18 @@
-/**
- * External dependencies
- */
+import { Button, Card } from '@automattic/components';
+import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { backupMainPath } from 'calypso/my-sites/backup/paths';
-import { Button, Card } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
-import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
-import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-/**
- * Style dependencies
- */
-import './style.scss';
 import cloudWarningIcon from 'calypso/components/jetpack/daily-backup-status/status-card/icons/cloud-warning-orange-30.svg';
-
-/**
- * Type dependencies
- */
+import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
+import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
+import { backupMainPath } from 'calypso/my-sites/backup/paths';
+import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import type { Moment } from 'moment';
+
+import './style.scss';
 
 type Props = { selectedDate: Moment; isFeatured: boolean };
 

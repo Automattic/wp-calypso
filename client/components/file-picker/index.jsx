@@ -1,10 +1,6 @@
-/**
- * External dependencies
- */
-
+import pick from 'component-file-picker';
 import PropTypes from 'prop-types';
 import React from 'react';
-import pick from 'component-file-picker';
 
 const noop = () => {};
 

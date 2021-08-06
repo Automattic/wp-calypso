@@ -1,21 +1,11 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React, { Component, Fragment } from 'react';
 import Gridicon from 'calypso/components/gridicon';
 import Popover from 'calypso/components/popover';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default class InfoPopover extends Component {

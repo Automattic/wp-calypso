@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import { fetchUserPurchases } from 'calypso/state/purchases/actions';
 import {
 	hasLoadedUserPurchasesFromServer,
 	isFetchingUserPurchases,
 } from 'calypso/state/purchases/selectors';
-import { fetchUserPurchases } from 'calypso/state/purchases/actions';
 
 class QueryUserPurchases extends Component {
 	requestUserPurchases( nextProps ) {

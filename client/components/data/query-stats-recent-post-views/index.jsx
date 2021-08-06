@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
-import { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { chunk, isEqual } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import { requestRecentPostViews } from 'calypso/state/stats/recent-post-views/actions';
 
 class QueryRecentPostViews extends Component {

@@ -1,23 +1,15 @@
-/**
- * External dependencies
- */
-
+import { localize } from 'i18n-calypso';
+import { camelCase, difference, filter, get, isEmpty, keys, map, pick } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { camelCase, difference, filter, get, isEmpty, keys, map, pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
-import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
+import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
 import WithContactDetailsValidation, {
 	disableSubmitButton,
 } from './with-contact-details-validation';

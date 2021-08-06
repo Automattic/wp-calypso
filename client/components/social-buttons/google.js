@@ -1,28 +1,18 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { connect } from 'react-redux';
 import { loadScript } from '@automattic/load-script';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import GoogleIcon from 'calypso/components/social-icons/google';
+import PropTypes from 'prop-types';
+import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import Popover from 'calypso/components/popover';
+import GoogleIcon from 'calypso/components/social-icons/google';
 import { preventWidows } from 'calypso/lib/formatting';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isFormDisabled } from 'calypso/state/login/selectors';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 let auth2InitDone = false;
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

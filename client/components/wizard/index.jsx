@@ -1,20 +1,9 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { compact, get } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import NavigationLink from './navigation-link';
 import ProgressIndicator from './progress-indicator';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class Wizard extends Component {

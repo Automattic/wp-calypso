@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 

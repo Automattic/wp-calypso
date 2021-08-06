@@ -1,24 +1,14 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { Button } from '@automattic/components';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
+import React from 'react';
 import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Style dependencies
- */
-import './style.scss';
-import ThreatItemHeader from 'calypso/components/jetpack/threat-item-header';
 import ServerCredentialsWizardDialog from 'calypso/components/jetpack/server-credentials-wizard-dialog';
+import ThreatItemHeader from 'calypso/components/jetpack/threat-item-header';
 import { Threat } from 'calypso/components/jetpack/threat-item/types';
 import { getThreatFix } from 'calypso/components/jetpack/threat-item/utils';
+
+import './style.scss';
 
 interface Props {
 	threat: Threat;

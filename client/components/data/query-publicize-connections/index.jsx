@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { isFetchingConnections as isRequestingConnections } from 'calypso/state/sharing/publicize/selectors';
 import { fetchConnections as requestConnections } from 'calypso/state/sharing/publicize/actions';
+import { isFetchingConnections as isRequestingConnections } from 'calypso/state/sharing/publicize/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class QueryPublicizeConnections extends Component {

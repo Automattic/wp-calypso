@@ -184,6 +184,7 @@ module.exports = {
 				'client/auth/**/*',
 				'client/blocks/**/*',
 				'client/boot/**/*',
+				'client/components/**/*',
 				'client/controller/**/*',
 				'client/data/**/*',
 				'client/devdocs/**/*',

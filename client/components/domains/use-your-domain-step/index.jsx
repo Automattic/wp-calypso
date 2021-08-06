@@ -1,60 +1,46 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
+import { isPlan } from '@automattic/calypso-products';
+import { Card, Button } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
+import { withShoppingCart } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
 import page from 'page';
+import PropTypes from 'prop-types';
 import { stringify } from 'qs';
-import formatCurrency from '@automattic/format-currency';
-
-/**
- * Internal dependencies
- */
-import { getProductsList } from 'calypso/state/products-list/selectors';
-import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { Card, Button } from '@automattic/components';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import {
-	CALYPSO_CONTACT,
-	INCOMING_DOMAIN_TRANSFER,
-	MAP_EXISTING_DOMAIN,
-} from 'calypso/lib/url/support';
-import HeaderCake from 'calypso/components/header-cake';
-import { errorNotice } from 'calypso/state/notices/actions';
+import React from 'react';
+import { connect } from 'react-redux';
+import migratingHostImage from 'calypso/assets/images/illustrations/migrating-host-diy.svg';
+import themesImage from 'calypso/assets/images/illustrations/themes.svg';
 import QueryProducts from 'calypso/components/data/query-products-list';
+import Gridicon from 'calypso/components/gridicon';
+import HeaderCake from 'calypso/components/header-cake';
+import {
+	isDomainBundledWithPlan,
+	isDomainMappingFree,
+	isNextDomainFree,
+} from 'calypso/lib/cart-values/cart-items';
 import {
 	getDomainPrice,
 	getDomainProductSlug,
 	getDomainTransferSalePrice,
 } from 'calypso/lib/domains';
 import {
-	isDomainBundledWithPlan,
-	isDomainMappingFree,
-	isNextDomainFree,
-} from 'calypso/lib/cart-values/cart-items';
-import { isPlan } from '@automattic/calypso-products';
+	CALYPSO_CONTACT,
+	INCOMING_DOMAIN_TRANSFER,
+	MAP_EXISTING_DOMAIN,
+} from 'calypso/lib/url/support';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import {
 	DOMAINS_WITH_PLANS_ONLY,
 	NON_PRIMARY_DOMAINS_TO_FREE_USERS,
 } from 'calypso/state/current-user/constants';
-import { withShoppingCart } from '@automattic/shopping-cart';
+import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { getProductsList } from 'calypso/state/products-list/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
-
-/**
- * Image dependencies
- */
-import themesImage from 'calypso/assets/images/illustrations/themes.svg';
-import migratingHostImage from 'calypso/assets/images/illustrations/migrating-host-diy.svg';
 
 const noop = () => {};
 

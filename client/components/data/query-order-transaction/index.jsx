@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { fetchOrderTransaction } from 'calypso/state/order-transactions/actions';
 import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
 import isFetchingOrderTransaction from 'calypso/state/selectors/is-fetching-order-transaction';

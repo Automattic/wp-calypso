@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export { default as LegendItemPlaceholder } from './placeholder';

@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { shouldFeedBeFetched } from 'calypso/state/reader/feeds/selectors';
 import { requestFeed } from 'calypso/state/reader/feeds/actions';
+import { shouldFeedBeFetched } from 'calypso/state/reader/feeds/selectors';
 
 class QueryReaderFeed extends Component {
 	UNSAFE_componentWillMount() {

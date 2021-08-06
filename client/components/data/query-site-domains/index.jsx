@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
+import { isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 
 const request = ( siteId ) => ( dispatch, getState ) => {
 	if ( siteId && ! isRequestingSiteDomains( getState(), siteId ) ) {

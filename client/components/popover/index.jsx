@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
+import { RootChild } from '@automattic/components';
+import classNames from 'classnames';
+import debugFactory from 'debug';
+import { useRtl } from 'i18n-calypso';
+import { defer } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
-import debugFactory from 'debug';
-import classNames from 'classnames';
-import { defer } from 'lodash';
-import { useRtl } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { RootChild } from '@automattic/components';
 import {
 	bindWindowListeners,
 	unbindWindowListeners,
@@ -21,9 +14,6 @@ import {
 	offset,
 } from './util';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /**

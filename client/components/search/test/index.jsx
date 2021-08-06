@@ -2,17 +2,10 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import React from 'react';
 import TestUtils from 'react-dom/test-utils';
 import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
 import searchClass from '../';
 
 jest.mock( 'calypso/lib/analytics/ga', () => ( {} ) );

@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { isEmpty } from 'lodash';
-import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
 import { Dialog, Button } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { isEmpty } from 'lodash';
+import React, { Component } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import Gridicon from 'calypso/components/gridicon';
 import TranslatableTextarea from './translatable-textarea';
 import TranslatedSuccess from './translated-success';
 import { getSingleTranslationData, getTranslationPermaLink, submitTranslation } from './utils.js';

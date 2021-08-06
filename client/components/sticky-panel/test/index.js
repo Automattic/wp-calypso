@@ -2,11 +2,7 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import ReactDom from 'react-dom';
-
 import { calculateOffset, getBlockStyle, getDimensions, getDimensionUpdates } from '..';
 
 beforeAll( () => {

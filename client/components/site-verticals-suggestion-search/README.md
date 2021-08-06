@@ -41,17 +41,16 @@ Returns _{object}_:
 
 ```json
 {
-  "vertical_name": "Restaurant",
-  "vertical_slug": "Restaurant",
-  "vertical_id": "p1",
-  "preview": {
-    "cover_image": "https://…",
-    "cover_image_text": "Yum yum foods here.",
-    "headline": "About us",
-    "text": "Nothing but yum yum foods here."
-  }
+	"vertical_name": "Restaurant",
+	"vertical_slug": "Restaurant",
+	"vertical_id": "p1",
+	"preview": {
+		"cover_image": "https://…",
+		"cover_image_text": "Yum yum foods here.",
+		"headline": "About us",
+		"text": "Nothing but yum yum foods here."
+	}
 }
-
 ```
 
 ### _(Boolean)_ `showPopular`

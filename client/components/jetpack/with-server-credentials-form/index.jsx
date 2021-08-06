@@ -1,19 +1,15 @@
 /**
  * External dependendies
  */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
 import { deleteCredentials, updateCredentials } from 'calypso/state/jetpack/credentials/actions';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
 import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
 import getJetpackCredentialsUpdateStatus from 'calypso/state/selectors/get-jetpack-credentials-update-status';
-import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 const INITIAL_FORM_STATE = {
 	protocol: 'ssh',

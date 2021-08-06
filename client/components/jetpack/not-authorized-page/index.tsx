@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
+import React from 'react';
 import EmptyContent from 'calypso/components/empty-content';
+import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 
 const NotAuthorizedPage: React.FC = () => {
