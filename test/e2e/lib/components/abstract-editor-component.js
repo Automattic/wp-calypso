@@ -35,11 +35,7 @@ export default class AbstractEditorComponent extends AsyncBaseContainer {
 
 	async openBlockInserterAndSearch( searchTerm ) {
 		await this.runInCanvas( async () => {
-			await driverHelper.scrollIntoView(
-				this.driver,
-				By.css( '.block-editor-writing-flow' ),
-				'start'
-			);
+			await driverHelper.scrollIntoView( this.driver, By.css( '.editor-styles-wrapper' ), 'start' );
 		} );
 
 		await this.openBlockInserter();
