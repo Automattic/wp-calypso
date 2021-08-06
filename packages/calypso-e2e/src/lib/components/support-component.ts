@@ -86,6 +86,7 @@ export class SupportComponent {
 	 */
 	async showSupportCard(): Promise< void > {
 		const elementHandle = await this.page.waitForSelector( '.card.help-search' );
+		await elementHandle.waitForElementState( 'stable' );
 		await elementHandle.scrollIntoViewIfNeeded();
 	}
 
@@ -240,22 +241,28 @@ export class SupportComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async search( text: string ): Promise< void > {
-		await this.page.fill( selectors.searchInput, text );
-
 		if ( text.trim() ) {
 			// If there is valid search string, then there should be a network request made
 			// resulting in a spinner. The spinner will then disappear when either the results are
 			// displayed, or no results are found.
-			await this.page.waitForSelector( selectors.spinner );
+			// await this.page.waitForSelector( selectors.spinner );
+			// await Promise.all( [
+			// 	this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } ),
+			// 	this.page.waitForSelector( selectors.spinner, { state: 'hidden' } ),
+			// ] );
 			await Promise.all( [
-				this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } ),
-				this.page.waitForSelector( selectors.spinner, { state: 'hidden' } ),
+				this.page.waitForResponse(
+					( response ) => response.url().includes( 'search?' ) && response.status() === 200
+				),
+				this.page.fill( selectors.searchInput, text ),
 			] );
+		} else {
+			await this.page.fill( selectors.searchInput, text );
 		}
 
 		// await this.page.waitForSelector( selectors.spinner, { state: 'hidden', timeout: 60000 } );
 		// In all cases, wait for the 'load' state to be fired to add a brief (~1ms) wait between actions.
-		await this.page.waitForLoadState( 'networkidle' );
+		await this.page.waitForLoadState( 'load' );
 	}
 
 	/**
