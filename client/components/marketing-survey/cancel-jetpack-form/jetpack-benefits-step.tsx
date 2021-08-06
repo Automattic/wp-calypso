@@ -10,10 +10,10 @@ import moment from 'moment';
  * Internal Dependencies
  */
 import {
+	JETPACK_SEARCH_PRODUCTS,
 	isJetpackPlanSlug,
 	isJetpackBackupSlug,
 	isJetpackScanSlug,
-	isJetpackSearch,
 } from '@automattic/calypso-products';
 
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
@@ -47,18 +47,27 @@ const JetpackBenefitsStep: React.FC< Props > = ( props ) => {
 
 		if ( timeRemaining.months() >= 1 ) {
 			const timeRemainingNumber = timeRemaining.months();
-			const unitOfTime = translate( 'month', 'months', { count: timeRemainingNumber } );
+			const unitOfTime = translate( 'month', 'months', {
+				count: timeRemainingNumber,
+				context: 'unit of time',
+			} );
 
 			return { timeRemainingNumber, unitOfTime };
 		} else if ( timeRemaining.weeks() >= 1 ) {
 			const timeRemainingNumber = timeRemaining.weeks();
-			const unitOfTime = translate( 'week', 'weeks', { count: timeRemainingNumber } );
+			const unitOfTime = translate( 'week', 'weeks', {
+				count: timeRemainingNumber,
+				context: 'unit of time',
+			} );
 
 			return { timeRemainingNumber, unitOfTime };
 		}
 
 		const timeRemainingNumber = timeRemaining.days();
-		const unitOfTime = translate( 'day', 'days', { count: timeRemainingNumber } );
+		const unitOfTime = translate( 'day', 'days', {
+			count: timeRemainingNumber,
+			context: 'unit of time',
+		} );
 
 		return { timeRemainingNumber, unitOfTime };
 	};
@@ -121,7 +130,7 @@ const JetpackBenefitsStep: React.FC< Props > = ( props ) => {
 			);
 		} else if ( isJetpackBackupSlug( productSlug ) ) {
 			return translate( 'Once you cancel, you will lose access to your site backups.' );
-		} else if ( isJetpackSearch( productSlug ) ) {
+		} else if ( JETPACK_SEARCH_PRODUCTS.includes( productSlug ) ) {
 			return translate(
 				"Once you cancel, you will no longer have Jetpack's enhanced search experience."
 			);
