@@ -1,7 +1,8 @@
 import { DataHelper, LoginFlow, SupportComponent, setupHooks } from '@automattic/calypso-e2e';
+import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
-	let page;
+	let page: Page;
 
 	setupHooks( ( args ) => {
 		page = args.page;
@@ -11,7 +12,7 @@ describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
 		{ siteType: 'Simple', user: 'defaultUser' },
 		{ siteType: 'Atomic', user: 'wooCommerceUser' },
 	] )( 'Search from Support Card ($siteType)', function ( { user } ) {
-		let supportComponent;
+		let supportComponent: SupportComponent;
 
 		it( 'Log in', async function () {
 			const loginFlow = new LoginFlow( page, user );
