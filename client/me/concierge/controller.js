@@ -76,7 +76,7 @@ const siteSelector = ( context, next ) => {
 };
 
 const redirectToQuickStart = ( context, next ) => {
-	const newPath = context.path.replace( '/me/concierge/', '/me/quickstart/' );
+	const newPath = context.path.replace( '/me/concierge', '/me/quickstart' );
 	page.redirect( newPath );
 	next();
 };

@@ -18,7 +18,7 @@ const redirectToBooking = ( context ) => {
 export default () => {
 	page( '/me/concierge', controller.redirectToQuickStart, makeLayout, clientRender );
 	page( '/me/concierge/:siteSlug', redirectToBooking );
-	page( '/me/concierge/:siteSlug?/*', controller.redirectToQuickStart, makeLayout, clientRender );
+	page( '/me/concierge/:siteSlug/*', controller.redirectToQuickStart, makeLayout, clientRender );
 	page( '/me/quickstart', controller.siteSelector, siteSelection, sites, makeLayout, clientRender );
 
 	// redirect to booking page after site selection
