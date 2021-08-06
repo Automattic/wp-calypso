@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
@@ -8,6 +9,7 @@ import { useSelector } from 'react-redux';
 import ActivityCard from 'calypso/components/activity-card';
 import { preventWidows } from 'calypso/lib/formatting/prevent-widows';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import ActivityLogItem from 'calypso/my-sites/activity/activity-log-item';
 import getSiteActivityLogRetentionDays from 'calypso/state/selectors/get-site-activity-log-retention-days';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useTrackUpsellView, useTrackUpgradeClick } from './hooks';
@@ -27,6 +29,7 @@ const PLACEHOLDER_ACTIVITY = {
 	activityTs: 1609459200000,
 	activityGroup: 'rewind',
 	activityIcon: 'cloud',
+	activityStatus: 'success',
 	activityType: 'Backup',
 	activityTitle: '',
 	activityDescription: [],
@@ -52,11 +55,20 @@ const RetentionLimitUpsell: React.FC< OwnProps > = ( { cardClassName } ) => {
 		return null;
 	}
 
+	const card =
+		isJetpackCloud() || isEnabled( 'activity-log/v2' ) ? (
+			<ActivityCard className={ cardClassName } activity={ PLACEHOLDER_ACTIVITY } />
+		) : (
+			<ActivityLogItem
+				className={ cardClassName }
+				siteId={ siteId }
+				activity={ PLACEHOLDER_ACTIVITY }
+			/>
+		);
+
 	return (
 		<div className="retention-limit-upsell">
-			<div className="retention-limit-upsell__next-activity">
-				<ActivityCard className={ cardClassName } activity={ PLACEHOLDER_ACTIVITY } />
-			</div>
+			<div className="retention-limit-upsell__next-activity">{ card }</div>
 			<div className="retention-limit-upsell__call-to-action">
 				<h3 className="retention-limit-upsell__call-to-action-header">
 					{ preventWidows(
