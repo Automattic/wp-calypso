@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
+import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
-import styled from '@emotion/styled';
-
 /**
  * Internal dependencies
  */
+import VerticalNav from 'calypso/components/vertical-nav';
+import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { CALYPSO_CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';
 import {
 	ThankYouNextStepProps,
@@ -16,8 +17,6 @@ import {
 	ThankYouSectionProps,
 	ThankYouThemeProps,
 } from './types';
-import VerticalNavItem from 'calypso/components/vertical-nav/item';
-import VerticalNav from 'calypso/components/vertical-nav';
 
 /**
  * style dependencies

@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-
 import { get, values } from 'lodash';
 
 const getZonesState = ( state ) => state.extensions.zoninator.zones;

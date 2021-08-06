@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import React, { PureComponent } from 'react';
-
-/**
- * Internal dependencies
- */
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import Popover from 'calypso/components/popover';

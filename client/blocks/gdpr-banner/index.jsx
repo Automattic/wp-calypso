@@ -1,26 +1,16 @@
-/**
- * External dependencies
- */
+import { Button, Card } from '@automattic/components';
 import classNames from 'classnames';
 import cookie from 'cookie';
 import { useTranslate } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { isCurrentUserMaybeInGdprZone } from 'calypso/lib/analytics/utils';
+import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
+import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 
-/**
- * Internal dependencies
- */
 import './style.scss';
 
 const noop = () => {};

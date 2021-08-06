@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { isRequestingActiveTheme } from 'calypso/state/themes/selectors';
 

@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
+import { difference, isEmpty, keys } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { difference, isEmpty, keys } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import getValidationSchemas from 'calypso/state/selectors/get-validation-schemas';
 import { requestValidationSchemas } from 'calypso/state/domains/management/validation-schemas/actions';
+import getValidationSchemas from 'calypso/state/selectors/get-validation-schemas';
 
 export class QueryTldValidationSchemas extends Component {
 	static propTypes = {

@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import { Component } from 'react';
-import { connect } from 'react-redux';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import { requestVerticals } from 'calypso/state/signup/verticals/actions';
 import { getVerticals } from 'calypso/state/signup/verticals/selectors';
 

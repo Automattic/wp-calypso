@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import React, { PureComponent } from 'react';
-
-/**
- * Internal dependencies
- */
 import JetpackHeader from '..';
 
 export default class JetpackHeaderExample extends PureComponent {

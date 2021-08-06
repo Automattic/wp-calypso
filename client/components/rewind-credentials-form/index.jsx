@@ -1,35 +1,28 @@
 /**
  * External dependendies
  */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { get, isEmpty } from 'lodash';
-import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormSelect from 'calypso/components/forms/form-select';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormTextArea from 'calypso/components/forms/form-textarea';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
-import FormPasswordInput from 'calypso/components/forms/form-password-input';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import Gridicon from 'calypso/components/gridicon';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { get, isEmpty } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormPasswordInput from 'calypso/components/forms/form-password-input';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormTextArea from 'calypso/components/forms/form-textarea';
+import Gridicon from 'calypso/components/gridicon';
 import { deleteCredentials, updateCredentials } from 'calypso/state/jetpack/credentials/actions';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
 import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
 import getJetpackCredentialsUpdateStatus from 'calypso/state/selectors/get-jetpack-credentials-update-status';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class RewindCredentialsForm extends Component {

@@ -2,9 +2,6 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
 import { getiOSDeepLink, buildDeepLinkFragment } from 'calypso/blocks/app-banner';
 import { EDITOR, NOTES, READER, STATS, getCurrentSection } from 'calypso/blocks/app-banner/utils';
 

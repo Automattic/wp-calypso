@@ -1,8 +1,4 @@
-/**
- * Internal dependencies
- */
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import { itemsSchema } from './schema';
 import {
 	ZONINATOR_ADD_ZONE,
 	ZONINATOR_REQUEST_ERROR,
@@ -12,6 +8,7 @@ import {
 	ZONINATOR_UPDATE_ZONE_ERROR,
 	ZONINATOR_UPDATE_ZONES,
 } from '../action-types';
+import { itemsSchema } from './schema';
 
 export const requesting = ( state = {}, action ) => {
 	switch ( action.type ) {

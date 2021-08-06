@@ -1,20 +1,8 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
+import appsImage from 'calypso/assets/images/illustrations/apps.svg';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import { addQueryArgs } from 'calypso/lib/route';
-
-/**
- * Image dependencies
- */
-import appsImage from 'calypso/assets/images/illustrations/apps.svg';
 
 const noop = () => {};
 

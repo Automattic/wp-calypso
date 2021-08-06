@@ -1,27 +1,17 @@
-/**
- * External Dependencies
- */
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { connect, useDispatch } from 'react-redux';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getTopJITM } from 'calypso/state/jitm/selectors';
-import { dismissJITM, setupDevTool } from 'calypso/state/jitm/actions';
+import PropTypes from 'prop-types';
+import React, { useEffect } from 'react';
+import { connect, useDispatch } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryJITM from 'calypso/components/data/query-jitm';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { dismissJITM, setupDevTool } from 'calypso/state/jitm/actions';
+import { getTopJITM } from 'calypso/state/jitm/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import 'calypso/state/data-layer/wpcom/marketing';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const debug = debugFactory( 'calypso:jitm' );

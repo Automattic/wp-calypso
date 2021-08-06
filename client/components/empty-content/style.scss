@@ -39,6 +39,10 @@
 
 .empty-content__action {
 	margin: 0 0 10px 10px;
+	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .empty-content.is-compact {

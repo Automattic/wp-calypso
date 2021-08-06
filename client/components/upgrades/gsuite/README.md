@@ -6,9 +6,9 @@ GSuiteUpgrade is a React component used to add G Suite email addresses to domain
 
 ```jsx
 import React from 'react';
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import GSuiteUpgrade from 'calypso/components/upgrades/gsuite';
 import productsListFactory from 'calypso/lib/products-list';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 
 const productsList = productsListFactory();
 

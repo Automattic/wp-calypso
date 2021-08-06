@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import ActionPanel from 'calypso/components/action-panel';
-import ActionPanelTitle from 'calypso/components/action-panel/title';
-import ActionPanelBody from 'calypso/components/action-panel/body';
-import ActionPanelFigure from 'calypso/components/action-panel/figure';
-import ActionPanelCta from 'calypso/components/action-panel/cta';
-import ActionPanelFooter from 'calypso/components/action-panel/footer';
 import { Button } from '@automattic/components';
+import React from 'react';
+import ActionPanel from 'calypso/components/action-panel';
+import ActionPanelBody from 'calypso/components/action-panel/body';
+import ActionPanelCta from 'calypso/components/action-panel/cta';
+import ActionPanelFigure from 'calypso/components/action-panel/figure';
+import ActionPanelFooter from 'calypso/components/action-panel/footer';
+import ActionPanelTitle from 'calypso/components/action-panel/title';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const ActionPanelExample = () => (

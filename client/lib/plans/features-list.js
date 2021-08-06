@@ -328,7 +328,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_EMAIL_SUPPORT_SIGNUP ]: {
 		getSlug: () => FEATURE_EMAIL_SUPPORT_SIGNUP,
-		getTitle: () => i18n.translate( 'Unlimited email support' ),
+		getTitle: () => i18n.translate( 'Unlimited customer support via email' ),
 		getDescription: () =>
 			i18n.translate( 'Email us any time, any day of the week for personalized, expert support.' ),
 	},
@@ -736,7 +736,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_EMAIL_SUPPORT ]: {
 		getSlug: () => FEATURE_EMAIL_SUPPORT,
-		getTitle: () => i18n.translate( 'Unlimited email support' ),
+		getTitle: () => i18n.translate( 'Unlimited customer support via email' ),
 		getDescription: () =>
 			i18n.translate( 'Email us any time, any day of the week for personalized, expert support.' ),
 	},

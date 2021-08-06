@@ -1,25 +1,18 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent } from 'react';
-import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import { Button } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { preventWidows } from 'calypso/lib/formatting';
-import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
+import { useTranslate } from 'i18n-calypso';
+import React, { FunctionComponent } from 'react';
+import { useSelector } from 'react-redux';
+import JetpackDisconnected from 'calypso/assets/images/jetpack/disconnected.svg';
 import ExternalLink from 'calypso/components/external-link';
 import PromoCard from 'calypso/components/promo-section/promo-card';
+import { preventWidows } from 'calypso/lib/formatting';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 /**
  * Asset dependencies
  */
-import JetpackDisconnected from 'calypso/assets/images/jetpack/disconnected.svg';
 import './style.scss';
 
 const JetpackDisconnectedWPCOM: FunctionComponent = () => {

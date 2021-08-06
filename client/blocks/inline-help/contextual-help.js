@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import { compact, get } from 'lodash';
 import i18n, { translate } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
-import { RESULT_TOUR, RESULT_VIDEO } from './constants';
+import { compact, get } from 'lodash';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { RESULT_TOUR, RESULT_VIDEO } from './constants';
 
 /**
  * Module variables

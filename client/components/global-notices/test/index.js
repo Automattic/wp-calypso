@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { shallow } from 'enzyme';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal Dependencies
- */
-import { GlobalNotices } from '..';
+import { shallow } from 'enzyme';
+import React from 'react';
 import Notice from 'calypso/components/notice';
+import { GlobalNotices } from '..';
 
 const baseProps = deepFreeze( {
 	storeNotices: [],

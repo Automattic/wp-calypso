@@ -1,26 +1,16 @@
-/**
- * External dependencies
- */
+import { StripeHookProvider } from '@automattic/calypso-stripe';
+import { Modal } from '@wordpress/components';
+import { Icon, wordpress } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Icon, wordpress } from '@wordpress/icons';
-import { Modal } from '@wordpress/components';
-import { StripeHookProvider } from '@automattic/calypso-stripe';
-import { useTranslate } from 'i18n-calypso';
-import type { RequestCart } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
-import { fetchStripeConfiguration } from 'calypso/my-sites/checkout/composite-checkout/payment-method-helpers';
-import CompositeCheckout from 'calypso/my-sites/checkout/composite-checkout/composite-checkout';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 import wp from 'calypso/lib/wp';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import CompositeCheckout from 'calypso/my-sites/checkout/composite-checkout/composite-checkout';
+import { fetchStripeConfiguration } from 'calypso/my-sites/checkout/composite-checkout/payment-method-helpers';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import type { RequestCart } from '@automattic/shopping-cart';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function fetchStripeConfigurationWpcom( args: Record< string, unknown > ) {

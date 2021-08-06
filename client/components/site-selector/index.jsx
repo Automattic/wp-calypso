@@ -1,40 +1,30 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
+import { getUrlParts, getUrlFromParts, determineUrlType, format } from '@automattic/calypso-url';
+import classNames from 'classnames';
+import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
+import { filter, find, flow, get, includes, isEmpty } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import page from 'page';
-import classNames from 'classnames';
-import { filter, find, flow, get, includes, isEmpty } from 'lodash';
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import { getUserSiteCountForPlatform, getUserVisibleSiteCountForPlatform } from './utils';
-import { getPreference } from 'calypso/state/preferences/selectors';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { getSite, hasAllSitesList } from 'calypso/state/sites/selectors';
-import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
-import getSites from 'calypso/state/selectors/get-sites';
-import getVisibleSites from 'calypso/state/selectors/get-visible-sites';
-import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import AllSites from 'calypso/blocks/all-sites';
 import Site from 'calypso/blocks/site';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import Search from 'calypso/components/search';
-import SiteSelectorAddSite from './add-site';
 import searchSites from 'calypso/components/search-sites';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
-import { getUrlParts, getUrlFromParts, determineUrlType, format } from '@automattic/calypso-url';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getPreference } from 'calypso/state/preferences/selectors';
+import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
+import getSites from 'calypso/state/selectors/get-sites';
+import getVisibleSites from 'calypso/state/selectors/get-visible-sites';
+import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
+import { getSite, hasAllSitesList } from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import SiteSelectorAddSite from './add-site';
+import { getUserSiteCountForPlatform, getUserVisibleSiteCountForPlatform } from './utils';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const ALL_SITES = 'ALL_SITES';

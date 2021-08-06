@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
-import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import DisplayTypes from 'calypso/state/reader/posts/display-types';
+import React, { PureComponent } from 'react';
 import ReaderPostCard from 'calypso/blocks/reader-post-card';
+import DisplayTypes from 'calypso/state/reader/posts/display-types';
 
 export class ReaderPreview extends PureComponent {
 	render() {

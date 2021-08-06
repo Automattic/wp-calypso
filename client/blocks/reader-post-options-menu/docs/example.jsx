@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import ReaderPostOptionsMenu from 'calypso/blocks/reader-post-options-menu';
 
 export default class ReaderPostOptionsMenuExample extends React.Component {

@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import { concat, filter, flow, map, sortBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import PaymentLogo, { POSSIBLE_TYPES } from '../index';
 
 const genVendors = flow(

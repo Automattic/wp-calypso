@@ -1,29 +1,22 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Notice from 'calypso/components/notice';
-import QueryProductsList from 'calypso/components/data/query-products-list';
-import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import {
 	isJetpackProduct,
 	planHasFeature,
 	planHasSuperiorFeature,
 } from '@automattic/calypso-products';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+import QueryProductsList from 'calypso/components/data/query-products-list';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import Notice from 'calypso/components/notice';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 

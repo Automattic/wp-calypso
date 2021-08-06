@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
+import { FEATURE_CUSTOM_DOMAIN, isFreePlanProduct } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
-
-/**
- * Internal dependencies
- */
-import { getSite, getSiteSlug } from 'calypso/state/sites/selectors';
-import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
-import { getDomainsSuggestions } from 'calypso/state/domains/suggestions/selectors';
-import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
-import QueryDomainsSuggestions from 'calypso/components/data/query-domains-suggestions';
-import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
+import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { FEATURE_CUSTOM_DOMAIN, isFreePlanProduct } from '@automattic/calypso-products';
+import QueryDomainsSuggestions from 'calypso/components/data/query-domains-suggestions';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
+import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
+import { getDomainsSuggestions } from 'calypso/state/domains/suggestions/selectors';
+import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
+import { getSite, getSiteSlug } from 'calypso/state/sites/selectors';
 
 function getQueryObject( site, siteSlug, vendor ) {
 	if ( ! site || ! siteSlug ) {

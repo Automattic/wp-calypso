@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
 import { shallow } from 'enzyme';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import ButtonGroup from '..';
 
 describe( 'ButtonGroup', () => {

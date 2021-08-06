@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
+import { numberFormat } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { useLayoutEffect, useState } from 'react';
-import { numberFormat } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import Label from './label';
 
 const ModuleChartXAxis = ( { data, isRtl, labelWidth, chartWidth } ) => {

@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { shallow } from 'enzyme';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import ExternalLink from 'calypso/components/external-link';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
 
 describe( 'PopoverMenuItem', () => {
 	test( 'should be a button by default', () => {

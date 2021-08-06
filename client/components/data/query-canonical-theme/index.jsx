@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import QueryTheme from 'calypso/components/data/query-theme';
 import { isWpcomTheme, isWporgTheme } from 'calypso/state/themes/selectors';
 

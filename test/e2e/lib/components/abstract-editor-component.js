@@ -33,6 +33,20 @@ export default class AbstractEditorComponent extends AsyncBaseContainer {
 		await driverHelper.clickWhenClickable( this.driver, patternItemLocator );
 	}
 
+	async openBlockInserterAndSearch( searchTerm ) {
+		await this.runInCanvas( async () => {
+			await driverHelper.scrollIntoView(
+				this.driver,
+				By.css( '.block-editor-writing-flow' ),
+				'start'
+			);
+		} );
+
+		await this.openBlockInserter();
+		const inserterSearchInputLocator = By.css( 'input.components-search-control__input' );
+		await driverHelper.setWhenSettable( this.driver, inserterSearchInputLocator, searchTerm );
+	}
+
 	/**
 	 * Set the running context for operating on the DOM, i.e switch to the right
 	 * iframe. By default, it's defined here as a noop, but can be overriden in

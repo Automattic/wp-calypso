@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import classnames from 'classnames';
-import page from 'page';
-import { findIndex, find } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import classnames from 'classnames';
+import { findIndex, find } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { UNITS } from 'woocommerce/app/store-stats/constants';
+import { getWidgetPath, formatValue } from 'woocommerce/app/store-stats/utils';
+import { recordTrack } from 'woocommerce/lib/analytics';
 import ElementChart from 'calypso/components/chart';
 import Legend from 'calypso/components/chart/legend';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { recordTrack } from 'woocommerce/lib/analytics';
-import { getWidgetPath, formatValue } from 'woocommerce/app/store-stats/utils';
-import { UNITS } from 'woocommerce/app/store-stats/constants';
 
 class StoreStatsChart extends Component {
 	static propTypes = {

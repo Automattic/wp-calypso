@@ -1,16 +1,5 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { preventWidows } from 'calypso/lib/formatting';
-
-/**
- * Type dependencies
- */
 import type { ProductCardFeaturesItem } from './types';
 
 interface Props {

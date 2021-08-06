@@ -2,16 +2,9 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { shallow, mount } from 'enzyme';
-import React from 'react';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import { NpsSurvey } from '../';
 
 jest.mock( 'react-redux', () => ( {

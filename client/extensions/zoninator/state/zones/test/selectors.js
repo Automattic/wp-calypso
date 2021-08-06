@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { getZone, getZones, isRequestingZones, isSavingZone } from '../selectors';
 
 describe( 'selectors', () => {

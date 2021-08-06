@@ -1,8 +1,7 @@
-/**
- * External dependencies
- */
-import React, { Component, useEffect } from 'react';
-import { connect } from 'react-redux';
+import { Button } from '@automattic/components';
+import classNames from 'classnames';
+import debugModule from 'debug';
+import { localize } from 'i18n-calypso';
 import {
 	camelCase,
 	find,
@@ -18,48 +17,39 @@ import {
 	omitBy,
 	snakeCase,
 } from 'lodash';
-import debugModule from 'debug';
-import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
-import wpcom from 'calypso/lib/wp';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { Button } from '@automattic/components';
+import React, { Component, useEffect } from 'react';
+import { connect } from 'react-redux';
+import FormButton from 'calypso/components/forms/form-button';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormButton from 'calypso/components/forms/form-button';
-import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import Notice from 'calypso/components/notice';
 import LoggedOutForm from 'calypso/components/logged-out-form';
-import { login, lostPassword } from 'calypso/lib/paths';
-import { addQueryArgs } from 'calypso/lib/url';
-import formState from 'calypso/lib/form-state';
-import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
-import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
-import CrowdsignalSignupForm from './crowdsignal';
-import SocialSignupForm from './social';
+import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
+import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
+import Notice from 'calypso/components/notice';
+import TextControl from 'calypso/extensions/woocommerce/components/text-control';
+import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import formState from 'calypso/lib/form-state';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { login, lostPassword } from 'calypso/lib/paths';
+import { addQueryArgs } from 'calypso/lib/url';
+import wpcom from 'calypso/lib/wp';
 import { recordTracksEventWithClientId } from 'calypso/state/analytics/actions';
 import { createSocialUserFailed } from 'calypso/state/login/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getSectionName } from 'calypso/state/ui/selectors';
-import TextControl from 'calypso/extensions/woocommerce/components/text-control';
-import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
+import CrowdsignalSignupForm from './crowdsignal';
+import SocialSignupForm from './social';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 2000;

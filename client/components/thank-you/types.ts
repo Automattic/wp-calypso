@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
+import { TranslateResult } from 'i18n-calypso';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import { TranslateResult } from 'i18n-calypso';
 
 export type ThankYouNextStepProps = {
 	stepCta: React.ReactNode | React.ReactFragment;

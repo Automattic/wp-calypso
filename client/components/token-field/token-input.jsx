@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
+import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import FormTextInput from 'calypso/components/forms/form-text-input';
 
 const noop = () => {};

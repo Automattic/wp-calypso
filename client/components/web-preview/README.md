@@ -7,7 +7,7 @@ This component facilitates the display of iframed content. See the `propTypes` f
 	showPreview={ this.showPreview() }
 	onClose={ this.hidePreview }
 	previewUrl={ this.getUrlToIframe() }
-/>;
+/>
 ```
 
 ---
@@ -31,7 +31,7 @@ With those constraints in mind, usage is the following:
 			View Site
 		</Button>
 	) }
-</WithPreviewProps>;
+</WithPreviewProps>
 ```
 
 `isPreviewable` should be a boolean to determine whether the URL should be loaded in WebPreview or externally. Bear in mind that not all front-end links are previewable — Jetpack sites, for instance, may not be supported for a number of reasons, including absent HTTPS support. As of this writing, a suggestion is to rely on the `getSite` (state/sites/selectors) selector, which relies on `lib/site/computed-attributes` to return a `is_previewable` attribute:

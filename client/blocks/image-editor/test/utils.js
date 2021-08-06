@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
 import { getDefaultAspectRatio } from '../utils';
 

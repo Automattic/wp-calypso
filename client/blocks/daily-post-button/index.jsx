@@ -1,32 +1,22 @@
-/**
- * External Dependencies
- */
-import React from 'react';
+import { Button } from '@automattic/components';
 import classnames from 'classnames';
+import { translate } from 'i18n-calypso';
+import { get, defer } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
-import { get, defer } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
+import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal Dependencies
- */
 import AsyncLoad from 'calypso/components/async-load';
-import { translate } from 'i18n-calypso';
-import { preloadEditor } from 'calypso/sections-preloaders';
-import { Button } from '@automattic/components';
-import { markPostSeen } from 'calypso/state/reader/posts/actions';
+import Gridicon from 'calypso/components/gridicon';
 import { recordGaEvent, recordAction, recordTrackForPost } from 'calypso/reader/stats';
-import { getDailyPostType } from './helper';
+import { preloadEditor } from 'calypso/sections-preloaders';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { markPostSeen } from 'calypso/state/reader/posts/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getDailyPostType } from './helper';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function getPingbackAttributes( post ) {

@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import React from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function FAQ( { translate, heading = translate( 'Frequently Asked Questions' ), children } ) {

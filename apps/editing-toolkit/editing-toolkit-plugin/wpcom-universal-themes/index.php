@@ -195,6 +195,10 @@ function hide_fse_blocks( $editor_settings ) {
  * @return void
  */
 function hide_template_cpts() {
+	// This can interfere with Legacy FSE, bail if it's active.
+	if ( is_full_site_editing_active() ) {
+		return;
+	}
 	global $wp_post_types;
 	if ( isset( $wp_post_types['wp_template'] ) ) {
 		$wp_post_types['wp_template']->show_ui = false;

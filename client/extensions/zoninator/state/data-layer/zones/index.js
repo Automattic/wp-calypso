@@ -1,12 +1,11 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import {
+	ZONINATOR_ADD_ZONE,
+	ZONINATOR_DELETE_ZONE,
+	ZONINATOR_REQUEST_ZONES,
+	ZONINATOR_SAVE_ZONE,
+} from 'zoninator/state/action-types';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
@@ -19,12 +18,6 @@ import {
 	updateZones,
 } from '../../zones/actions';
 import { zoneFromApi, zonesListFromApi } from './utils';
-import {
-	ZONINATOR_ADD_ZONE,
-	ZONINATOR_DELETE_ZONE,
-	ZONINATOR_REQUEST_ZONES,
-	ZONINATOR_SAVE_ZONE,
-} from 'zoninator/state/action-types';
 
 const settingsPath = '/extensions/zoninator';
 

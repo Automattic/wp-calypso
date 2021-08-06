@@ -1,22 +1,12 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
 import classNames from 'classnames';
-import React from 'react';
-import PropTypes from 'prop-types';
-import { isEmpty, throttle } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { isEmpty, throttle } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import { withScrollbleed } from './scrollbleed';
-import { Button } from '@automattic/components';
 
-/**
- * Style dependencies
- */
 import './composer.scss';
 
 const sendThrottledTyping = throttle(

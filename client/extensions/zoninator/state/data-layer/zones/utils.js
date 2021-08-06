@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { keyBy, map, unescape } from 'lodash';
 
 const convertZone = ( zone ) => ( {

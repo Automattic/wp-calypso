@@ -61,9 +61,7 @@ export class CartItem extends React.Component {
 			return this.getDomainPlanPrice( cartItem );
 		}
 
-		const cost = cartItem.cost * cartItem.volume;
-
-		if ( 0 === cost ) {
+		if ( 0 === cartItem.cost * cartItem.volume ) {
 			return <span className="cart__free-text">{ translate( 'Free' ) }</span>;
 		}
 
@@ -71,6 +69,7 @@ export class CartItem extends React.Component {
 			const {
 				cost_before_coupon: costPerProductBeforeCoupon,
 				is_sale_coupon_applied: isSaleCouponApplied,
+				item_subtotal_display: cost,
 			} = cartItem;
 			const costBeforeCoupon = costPerProductBeforeCoupon * cartItem.volume;
 
@@ -81,9 +80,7 @@ export class CartItem extends React.Component {
 					<div className="cart__gsuite-discount">
 						<span className="cart__gsuite-discount-regular-price">{ costBeforeCoupon }</span>
 
-						<span className="cart__gsuite-discount-discounted-price">
-							{ cost } { cartItem.currency }
-						</span>
+						<span className="cart__gsuite-discount-discounted-price">{ cost }</span>
 
 						<span className="cart__gsuite-discount-text">
 							{ isCouponApplied
@@ -95,12 +92,7 @@ export class CartItem extends React.Component {
 			}
 		}
 
-		return translate( '%(cost)s %(currency)s', {
-			args: {
-				cost: cost,
-				currency: cartItem.currency,
-			},
-		} );
+		return cartItem.item_subtotal_display;
 	}
 
 	monthlyPrice() {

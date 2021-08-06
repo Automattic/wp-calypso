@@ -7,12 +7,11 @@
 Render the component, passing `siteId`. It does not accept any children, nor does it render any elements to the page. You can use it adjacent to other sibling components which make use of the fetched data made available through the global application state.
 
 ```jsx
+import { map } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { map } from 'lodash';
-
-import getJetpackSettings from 'calypso/state/selectors/get-jetpack-settings';
 import QueryJetpackSettings from 'calypso/components/data/query-jetpack-settings';
+import getJetpackSettings from 'calypso/state/selectors/get-jetpack-settings';
 
 function MyJetpackSettings( { settings, siteId } ) {
 	const query = {

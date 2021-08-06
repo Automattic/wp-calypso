@@ -1,10 +1,12 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import { isBlogger } from '@automattic/calypso-products';
+import { Button, CompactCard } from '@automattic/components';
+import Search from '@automattic/search';
+import { withShoppingCart } from '@automattic/shopping-cart';
+import { Icon } from '@wordpress/icons';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import React from 'react';
-import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import {
 	compact,
 	find,
@@ -21,56 +23,20 @@ import {
 	times,
 } from 'lodash';
 import page from 'page';
-import { v4 as uuid } from 'uuid';
+import PropTypes from 'prop-types';
 import { stringify } from 'qs';
+import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { withShoppingCart } from '@automattic/shopping-cart';
-import { Icon } from '@wordpress/icons';
-import Search from '@automattic/search';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
-import wpcom from 'calypso/lib/wp';
-import { Button, CompactCard } from '@automattic/components';
-import Notice from 'calypso/components/notice';
-import StickyPanel from 'calypso/components/sticky-panel';
-import {
-	checkDomainAvailability,
-	getFixedDomainSearch,
-	getAvailableTlds,
-	getDomainSuggestionSearch,
-	getTld,
-} from 'calypso/lib/domains';
-import { domainAvailability } from 'calypso/lib/domains/constants';
-import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
-import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
-import DomainTransferSuggestion from 'calypso/components/domains/domain-transfer-suggestion';
-import DomainSkipSuggestion from 'calypso/components/domains/domain-skip-suggestion';
-import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
-import DomainSearchResults from 'calypso/components/domains/domain-search-results';
-import ExampleDomainSuggestions from 'calypso/components/domains/example-domain-suggestions';
-import FreeDomainExplainer from 'calypso/components/domains/free-domain-explainer';
-import { DropdownFilters, FilterResetNotice } from 'calypso/components/domains/search-filters';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { v4 as uuid } from 'uuid';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
 import QueryDomainsSuggestions from 'calypso/components/data/query-domains-suggestions';
-import { hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
-import {
-	getDomainsSuggestions,
-	getDomainsSuggestionsError,
-} from 'calypso/state/domains/suggestions/selectors';
-import {
-	getStrippedDomainBase,
-	getTldWeightOverrides,
-	isNumberString,
-	isUnknownSuggestion,
-	isUnsupportedPremiumSuggestion,
-	isMissingVendor,
-	markFeaturedSuggestions,
-} from 'calypso/components/domains/register-domain-step/utility';
+import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
+import DomainSearchResults from 'calypso/components/domains/domain-search-results';
+import DomainSkipSuggestion from 'calypso/components/domains/domain-skip-suggestion';
+import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
+import DomainTransferSuggestion from 'calypso/components/domains/domain-transfer-suggestion';
+import ExampleDomainSuggestions from 'calypso/components/domains/example-domain-suggestions';
+import FreeDomainExplainer from 'calypso/components/domains/free-domain-explainer';
 import {
 	recordDomainAvailabilityReceive,
 	recordDomainAddAvailabilityPreCheck,
@@ -86,16 +52,40 @@ import {
 	resetSearchCount,
 	enqueueSearchStatReport,
 } from 'calypso/components/domains/register-domain-step/analytics';
-import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { isBlogger } from '@automattic/calypso-products';
+import {
+	getStrippedDomainBase,
+	getTldWeightOverrides,
+	isNumberString,
+	isUnknownSuggestion,
+	isUnsupportedPremiumSuggestion,
+	isMissingVendor,
+	markFeaturedSuggestions,
+} from 'calypso/components/domains/register-domain-step/utility';
+import { DropdownFilters, FilterResetNotice } from 'calypso/components/domains/search-filters';
 import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
-import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
+import Notice from 'calypso/components/notice';
+import StickyPanel from 'calypso/components/sticky-panel';
+import { hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
+import {
+	checkDomainAvailability,
+	getFixedDomainSearch,
+	getAvailableTlds,
+	getDomainSuggestionSearch,
+	getTld,
+} from 'calypso/lib/domains';
+import { domainAvailability } from 'calypso/lib/domains/constants';
+import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
+import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import wpcom from 'calypso/lib/wp';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import {
+	getDomainsSuggestions,
+	getDomainsSuggestionsError,
+} from 'calypso/state/domains/suggestions/selectors';
 import { hideSitePreview, showSitePreview } from 'calypso/state/signup/preview/actions';
+import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
 import tip from './tip';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const debug = debugFactory( 'calypso:domains:register-domain-step' );
@@ -664,6 +654,7 @@ class RegisterDomainStep extends React.Component {
 			availabilityErrorDomain: null,
 			exactMatchDomain: null,
 			lastDomainSearched: null,
+			lastFilters: this.state.filters,
 			loadingResults,
 			loadingSubdomainResults: loadingResults,
 			showAvailabilityNotice: false,

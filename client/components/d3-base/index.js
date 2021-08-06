@@ -1,11 +1,8 @@
-/**
- * External dependencies
- */
 import classNames from 'classnames';
+import { select as d3Select } from 'd3-selection';
+import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { isEmpty } from 'lodash';
-import { select as d3Select } from 'd3-selection';
 
 /**
  * Provides foundation to use D3 within React.

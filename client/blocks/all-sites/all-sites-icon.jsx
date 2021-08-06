@@ -1,17 +1,7 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import SiteIcon from 'calypso/blocks/site-icon';
 
-/**
- * Style dependencies
- */
 import './all-sites-icon.scss';
 
 const MAX_ICONS = 10;

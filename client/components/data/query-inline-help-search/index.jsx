@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { requestInlineHelpSearchResults } from 'calypso/state/inline-help/actions';
 import isRequestingInlineHelpSearchResultsForQuery from 'calypso/state/inline-help/selectors/is-requesting-inline-help-search-results-for-query';
 

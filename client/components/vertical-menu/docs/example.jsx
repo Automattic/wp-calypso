@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import VerticalMenu from '../index';
 import { SocialItem } from '../items';
 

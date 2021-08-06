@@ -1,23 +1,13 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import DayPicker from 'react-day-picker';
-import { merge, map, filter, get, debounce } from 'lodash';
-import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { localize } from 'i18n-calypso';
+import { merge, map, filter, get, debounce } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import DayPicker from 'react-day-picker';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import DayItem from './day';
 import DatePickerNavBar from './nav-bar';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

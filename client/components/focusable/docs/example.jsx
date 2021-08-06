@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import DocsExample from 'calypso/devdocs/docs-example';
 import Focusable from 'calypso/components/focusable';
+import DocsExample from 'calypso/devdocs/docs-example';
 
 const noop = () => {};
 
