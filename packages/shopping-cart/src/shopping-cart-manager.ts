@@ -1,4 +1,5 @@
 import debugFactory from 'debug';
+import { cartKeysThatDoNotAllowFetch } from './cart-keys';
 import { getEmptyResponseCart } from './empty-carts';
 import {
 	getShoppingCartManagerState,
@@ -29,7 +30,6 @@ import type {
 const debug = debugFactory( 'shopping-cart:shopping-cart-manager' );
 const emptyCart = getEmptyResponseCart();
 const getEmptyCart = () => Promise.resolve( emptyCart );
-const cartKeysThatDoNotAllowInitialFetch = [ 'no-site', 'no-user' ];
 
 function createDispatchAndWaitForValid(
 	dispatch: ShoppingCartReducerDispatch,
@@ -52,14 +52,14 @@ function createShoppingCartManager(
 ): ShoppingCartManager {
 	let state = getInitialShoppingCartState();
 
-	const shouldNotFetchRealCart = cartKeysThatDoNotAllowInitialFetch.includes( cartKey );
+	const shouldNotFetchRealCart = cartKeysThatDoNotAllowFetch.includes( cartKey );
 
-	const setServerCart = ( cartParam: RequestCart ) => setCart( String( cartKey ), cartParam );
+	const setServerCart = ( cartParam: RequestCart ) => setCart( cartKey, cartParam );
 	const getServerCart = () => {
 		if ( shouldNotFetchRealCart ) {
 			return getEmptyCart();
 		}
-		return getCart( String( cartKey ) );
+		return getCart( cartKey );
 	};
 
 	const syncCartToServer = createCartSyncMiddleware( setServerCart );

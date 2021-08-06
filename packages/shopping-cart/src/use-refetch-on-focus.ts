@@ -1,5 +1,6 @@
 import debugFactory from 'debug';
 import { useEffect, useContext } from 'react';
+import { cartKeysThatDoNotAllowFetch } from './cart-keys';
 import ShoppingCartContext from './shopping-cart-context';
 import ShoppingCartOptionsContext from './shopping-cart-options-context';
 
@@ -8,8 +9,6 @@ const debug = debugFactory( 'shopping-cart:use-refetch-on-focus' );
 // The number of seconds within that must have passed before we allow an
 // automatic refetch on focus.
 const minimumFetchInterval = 60;
-
-const cartKeysThatDoNotAllowRefetch = [ 'no-site', 'no-user' ];
 
 function convertMsToSecs( ms: number ): number {
 	return Math.floor( ms / 1000 );
@@ -35,8 +34,8 @@ export default function useRefetchOnFocus( cartKey: string | undefined ): void {
 			debug( 'cartKey falsy; not listening' );
 			return;
 		}
-		if ( cartKeysThatDoNotAllowRefetch.includes( cartKey ) ) {
-			debug( 'cartKey not allowed; not listening' );
+		if ( cartKeysThatDoNotAllowFetch.includes( cartKey ) ) {
+			debug( 'cartKey not fetchable; not listening' );
 			return;
 		}
 
@@ -55,7 +54,8 @@ export default function useRefetchOnFocus( cartKey: string | undefined ): void {
 		function isOffline(): boolean {
 			try {
 				return ! window.navigator.onLine;
-			} catch {
+			} catch ( err ) {
+				debug( 'failed to check onLine status with error', err );
 				return true;
 			}
 		}
