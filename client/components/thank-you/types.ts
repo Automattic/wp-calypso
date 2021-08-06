@@ -34,7 +34,7 @@ export type ThankYouProps = {
 
 export type ThankYouThemeProps = { theme?: ThankYouThemeType };
 
-export type ThankYouThemeType = {
+type ThankYouThemeType = {
 	colors: { textColorLight: string; borderColorLight: string; studioGrey: string };
 	breakpoints: {
 		desktopUp?: string;
