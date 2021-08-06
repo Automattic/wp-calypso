@@ -1,23 +1,13 @@
-/**
- * External dependencies
- */
-import ReactDom from 'react-dom';
-import React from 'react';
-import PropTypes from 'prop-types';
+import { RootChild } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { includes, without } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { RootChild } from '@automattic/components';
+import PropTypes from 'prop-types';
+import React from 'react';
+import ReactDom from 'react-dom';
 import Gridicon from 'calypso/components/gridicon';
 import TranslatableString from 'calypso/components/translatable/proptype';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

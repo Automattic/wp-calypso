@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
-import React, { PureComponent } from 'react';
+import { Card } from '@automattic/components';
 import { map } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import React, { PureComponent } from 'react';
 import ConnectedReaderListItem from 'calypso/blocks/reader-list-item/connected';
 import ReaderListItemPlaceholder from 'calypso/blocks/reader-list-item/placeholder';
-import { Card } from '@automattic/components';
 
 const sites = {
 	longreads: { siteId: 70135762 },

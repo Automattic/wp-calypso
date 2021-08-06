@@ -1,30 +1,23 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
 import { format as formatUrl, getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import CurrentSite from 'calypso/my-sites/current-site';
-import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
-import getSiteAdminPage from 'calypso/state/sites/selectors/get-site-admin-page';
-import JetpackCloudSidebarMenuItems from './menu-items/jetpack-cloud';
+import { connect } from 'react-redux';
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import SidebarRegion from 'calypso/layout/sidebar/region';
+import CurrentSite from 'calypso/my-sites/current-site';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getSiteAdminPage from 'calypso/state/sites/selectors/get-site-admin-page';
+import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import JetpackCloudSidebarMenuItems from './menu-items/jetpack-cloud';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class JetpackCloudSidebar extends Component {

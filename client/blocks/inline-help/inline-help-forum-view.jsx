@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
 import { Button } from '@automattic/components';
-import { preventWidows } from 'calypso/lib/formatting';
+import { localize } from 'i18n-calypso';
+import React from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { preventWidows } from 'calypso/lib/formatting';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 const trackForumOpen = () =>

@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { requestCommentsList } from 'calypso/state/comments/actions';
 
 export class QuerySiteCommentsList extends PureComponent {

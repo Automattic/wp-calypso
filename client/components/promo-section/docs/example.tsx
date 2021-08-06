@@ -1,19 +1,8 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
-
-/**
- * Image dependencies
- */
 import earnSectionImage from 'calypso/assets/images/earn/earn-section.svg';
 import recurringImage from 'calypso/assets/images/earn/recurring.svg';
 import simplePaymentsImage from 'calypso/assets/images/earn/simple-payments.svg';
+import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const PromoSectionExample = () => {

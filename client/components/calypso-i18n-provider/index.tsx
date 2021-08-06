@@ -1,11 +1,8 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
+import { LocaleProvider, i18nDefaultLocaleSlug } from '@automattic/i18n-utils';
 import { defaultI18n } from '@wordpress/i18n';
 import { I18nProvider } from '@wordpress/react-i18n';
 import i18n from 'i18n-calypso';
-import { LocaleProvider, i18nDefaultLocaleSlug } from '@automattic/i18n-utils';
+import * as React from 'react';
 
 const CalypsoI18nProvider: React.FunctionComponent = ( { children } ) => {
 	const [ localeSlug, setLocaleSlug ] = React.useState( i18n.getLocaleSlug() );

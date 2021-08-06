@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 export default function useGetDisplayDate() {
 	const translate = useTranslate();

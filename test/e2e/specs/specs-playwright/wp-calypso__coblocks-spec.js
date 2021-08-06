@@ -32,7 +32,7 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: CoBlocks' ), () => {
 	it( 'Start new post', async function () {
 		const newPostFlow = new NewPostFlow( page );
 		await newPostFlow.newPostFromNavbar();
-		gutenbergEditorPage = await GutenbergEditorPage.Expect( page );
+		gutenbergEditorPage = new GutenbergEditorPage( page );
 	} );
 
 	it( 'Enter post title', async function () {

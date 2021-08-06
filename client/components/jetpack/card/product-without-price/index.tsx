@@ -1,18 +1,8 @@
-/**
- * External dependencies
- */
 import { Button } from '@automattic/components';
 import classnames from 'classnames';
 import React, { FC, useMemo } from 'react';
-
-/**
- * Type dependencies
- */
 import type { TranslateResult } from 'i18n-calypso';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 type OwnProps = {

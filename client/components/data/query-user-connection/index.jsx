@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { isRequestingSite } from 'calypso/state/sites/selectors';
 import { isUserConnected } from 'calypso/state/jetpack-connect/actions';
+import { isRequestingSite } from 'calypso/state/sites/selectors';
 
 class QueryUserConnection extends Component {
 	UNSAFE_componentWillMount() {

@@ -1,7 +1,6 @@
 import path from 'path';
 import { ElementHandle, Page } from 'playwright';
 import { waitForElementEnabled } from '../../element-helper';
-import { BaseContainer } from '../base-container';
 
 const selectors = {
 	// Navigation tabs
@@ -31,26 +30,17 @@ const selectors = {
 
 /**
  * Represents an instance of the WPCOM Media library page.
- *
- * @augments {BaseContainer}
  */
-export class MediaPage extends BaseContainer {
-	/**
-	 * Constructs an instance of the MediaPage object.
-	 *
-	 * @param {Page} page Underlying page on which interactions take place.
-	 */
-	constructor( page: Page ) {
-		super( page, selectors.gallery );
-	}
+export class MediaPage {
+	private page: Page;
 
 	/**
-	 * Post-initialization steps.
+	 * Constructs an instance of the component.
 	 *
-	 * @returns {Promise<void>} No return value.
+	 * @param {Page} page The underlying page.
 	 */
-	async _postInit(): Promise< void > {
-		await this.page.waitForLoadState( 'domcontentloaded' );
+	constructor( page: Page ) {
+		this.page = page;
 	}
 
 	/**
@@ -86,9 +76,12 @@ export class MediaPage extends BaseContainer {
 	async clickTab( name: 'All' | 'Images' | 'Documents' | 'Videos' | 'Audio' ): Promise< void > {
 		const navTabs = await this.page.waitForSelector( selectors.navTabs );
 		const gallery = await this.page.waitForSelector( selectors.gallery );
+
+		// Similar to Marketing Page, in the mobile viewport this is compressed down to a pseudo-dropdown.
 		const isDropdown = await navTabs
 			.getAttribute( 'class' )
 			.then( ( value ) => value?.includes( 'is-dropdown' ) );
+
 		if ( isDropdown ) {
 			// Mobile view - navtabs become a dropdown.
 			await navTabs.click();
@@ -97,6 +90,7 @@ export class MediaPage extends BaseContainer {
 			// Desktop view - navtabs are constantly visible tabs.
 			await this.page.click( `${ selectors.navTabs } >> text=${ name }` );
 		}
+
 		// Wait for all placeholders to disappear.
 		// Alternatively, waiting for `networkidle` will achieve the same objective
 		// at the cost of much longer resolving time (~20s).
@@ -147,6 +141,7 @@ export class MediaPage extends BaseContainer {
 		const filename = path.basename( fullPath );
 		const itemSelector = `figure[title="${ filename }"]`;
 
+		await this.page.waitForSelector( selectors.fileInput );
 		// Simulate the action of user selecting a file then clicking confirm.
 		await this.page.setInputFiles( selectors.fileInput, fullPath );
 

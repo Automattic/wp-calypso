@@ -2,18 +2,11 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import AutoDirection from '..';
 import Emojify from 'calypso/components/emojify';
+import AutoDirection from '..';
 
 describe( 'AutoDirection', () => {
 	describe( 'component rendering', () => {

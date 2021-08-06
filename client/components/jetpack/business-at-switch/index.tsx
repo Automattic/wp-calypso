@@ -1,24 +1,14 @@
-/**
- * External dependencies
- */
+import { translate } from 'i18n-calypso';
 import React, { ReactElement, Component } from 'react';
 import { useSelector } from 'react-redux';
-import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WPCOMBusinessAT from 'calypso/components/jetpack/wpcom-business-at';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import Main from 'calypso/components/main';
 import isSiteOnAtomicPlan from 'calypso/state/selectors/is-site-on-atomic-plan';
-import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 type Props = {

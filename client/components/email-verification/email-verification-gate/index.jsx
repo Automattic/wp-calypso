@@ -1,26 +1,14 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-
-import EmailUnverifiedNotice from './email-unverified-notice.jsx';
 import {
 	getCurrentUserEmail,
 	isCurrentUserEmailVerified,
 } from 'calypso/state/current-user/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import EmailUnverifiedNotice from './email-unverified-notice.jsx';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class EmailVerificationGate extends React.Component {

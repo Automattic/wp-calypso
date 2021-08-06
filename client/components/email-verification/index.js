@@ -1,15 +1,6 @@
-/**
- * External dependencies
- */
-
 import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-
-import { successNotice } from 'calypso/state/notices/actions';
 import { sendVerificationSignal } from 'calypso/lib/user/verification-checker';
+import { successNotice } from 'calypso/state/notices/actions';
 
 /**
  * Page middleware

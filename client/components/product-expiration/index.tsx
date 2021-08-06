@@ -1,9 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { Moment } from 'moment';
+import React from 'react';
 
 interface Props extends LocalizeProps {
 	dateFormat?: string;

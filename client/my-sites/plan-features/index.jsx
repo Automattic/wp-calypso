@@ -295,7 +295,9 @@ export class PlanFeatures extends Component {
 			isLandingPage,
 			isJetpack,
 			planProperties,
+			purchaseId,
 			selectedPlan,
+			selectedSiteSlug,
 			translate,
 			showPlanCreditsApplied,
 			isLaunchPage,
@@ -384,6 +386,11 @@ export class PlanFeatures extends Component {
 						isInSignup={ isInSignup }
 						isLandingPage={ isLandingPage }
 						isLaunchPage={ isLaunchPage }
+						manageHref={
+							purchaseId
+								? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
+								: `/plans/my-plan/${ selectedSiteSlug }`
+						}
 						isPlaceholder={ isPlaceholder }
 						isPopular={ popular }
 						onUpgradeClick={ () => this.handleUpgradeClick( properties ) }

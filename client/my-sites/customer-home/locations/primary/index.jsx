@@ -1,3 +1,4 @@
+import classnames from 'classnames';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import DotPager from 'calypso/components/dot-pager';
@@ -78,9 +79,13 @@ const Primary = ( { cards, trackCards } ) => {
 		return null;
 	}
 
+	const isUrgent = cards.length === 1 && cards[ 0 ] === TASK_RENEW_EXPIRED_PLAN;
+
 	return (
 		<DotPager
-			className="primary__customer-home-location-content"
+			className={ classnames( 'primary__customer-home-location-content', {
+				'primary__is-urgent': isUrgent,
+			} ) }
 			showControlLabels="true"
 			hasDynamicHeight
 		>

@@ -1,35 +1,30 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import classNames from 'classnames';
-import PropTypes from 'prop-types';
-import ReactDom from 'react-dom';
-import { capitalize, defer, includes, get } from 'lodash';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import page from 'page';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
-import Divider from './divider';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
-import FormPasswordInput from 'calypso/components/forms/form-password-input';
+import { Button, Card } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { capitalize, defer, includes, get } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Component, Fragment } from 'react';
+import ReactDom from 'react-dom';
+import { connect } from 'react-redux';
+import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
 import FormsButton from 'calypso/components/forms/form-button';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
+import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import Gridicon from 'calypso/components/gridicon';
 import Notice from 'calypso/components/notice';
-import SocialLoginForm from './social';
 import TextControl from 'calypso/extensions/woocommerce/components/text-control';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
-import { Button, Card } from '@automattic/components';
-import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import { preventWidows } from 'calypso/lib/formatting';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { getSignupUrl } from 'calypso/lib/login';
+import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { addQueryArgs } from 'calypso/lib/url';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
+import { sendEmailLogin } from 'calypso/state/auth/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
 	formUpdate,
@@ -46,15 +41,13 @@ import {
 	getSocialAccountLinkService,
 	isFormDisabled as isFormDisabledSelector,
 } from 'calypso/state/login/selectors';
-import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
-import { getSignupUrl } from 'calypso/lib/login';
 import { isRegularAccount } from 'calypso/state/login/utils';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-import { preventWidows } from 'calypso/lib/formatting';
-import { addQueryArgs } from 'calypso/lib/url';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
-import { sendEmailLogin } from 'calypso/state/auth/actions';
-import JetpackConnectSiteOnly from 'calypso/blocks/jetpack-connect-site-only';
+import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import Divider from './divider';
+import SocialLoginForm from './social';
 
 export class LoginForm extends Component {
 	static propTypes = {

@@ -1,28 +1,18 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { map, partial, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { map, partial, isEmpty } from 'lodash';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import ConnectedListItem from 'calypso/blocks/reader-list-item/connected';
+import Gridicon from 'calypso/components/gridicon';
 import {
 	recordAction,
 	recordTrackWithRailcar,
 	recordTracksRailcarRender,
 } from 'calypso/reader/stats';
-import { Button } from '@automattic/components';
 import { dismissSite } from 'calypso/state/reader/site-dismissals/actions';
-import ConnectedListItem from 'calypso/blocks/reader-list-item/connected';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class RecommendedSites extends React.PureComponent {

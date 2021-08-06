@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
+import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 
 const request = ( siteId ) => ( dispatch, getState ) => {
 	if ( siteId && ! isRequestingSitePlans( getState(), siteId ) ) {

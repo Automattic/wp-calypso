@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
+import { escapeRegExp, findIndex, get, throttle, pick } from 'lodash';
 import React, { Fragment } from 'react';
 import getCaretCoordinates from 'textarea-caret';
-import { escapeRegExp, findIndex, get, throttle, pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import UserMentionSuggestionList from './suggestion-list';
 
 const keys = { tab: 9, enter: 13, esc: 27, spaceBar: 32, upArrow: 38, downArrow: 40 };

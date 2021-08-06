@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
+import Gridicon from 'calypso/components/gridicon';
 
 const noop = () => {};
 

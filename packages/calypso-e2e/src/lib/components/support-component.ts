@@ -1,6 +1,5 @@
 import assert from 'assert';
 import { ElementHandle, Page } from 'playwright';
-import { BaseContainer } from '../base-container';
 
 const selectors = {
 	// Components
@@ -28,10 +27,19 @@ const selectors = {
 
 /**
  * Represents the Support popover available on most WPCOM screens.
- *
- * @augments {BaseContainer}
  */
-export class SupportComponent extends BaseContainer {
+export class SupportComponent {
+	private page: Page;
+
+	/**
+	 * Constructs an instance of the component.
+	 *
+	 * @param {Page} page The underlying page.
+	 */
+	constructor( page: Page ) {
+		this.page = page;
+	}
+
 	/**
 	 * Click on the support button (?).
 	 * This method will toggle the status of the support popover.

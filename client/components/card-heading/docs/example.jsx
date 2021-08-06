@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-
-import React, { PureComponent } from 'react';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import React, { PureComponent } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 
 export default class CardHeadingExample extends PureComponent {

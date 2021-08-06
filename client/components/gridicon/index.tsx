@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import classnames from 'classnames';
 import {
 	iconsThatNeedOffset,
@@ -9,6 +5,7 @@ import {
 	iconsThatNeedOffsetY,
 } from 'gridicons/dist/util/icons-offset';
 import spritePath from 'gridicons/svg-sprite/gridicons.svg';
+import React from 'react';
 import { Assign } from 'utility-types';
 
 function needsOffset( name: string, icons: string[] ) {

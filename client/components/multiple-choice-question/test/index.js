@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import React from 'react';
 import renderer from 'react-test-renderer';
-
-/**
- * Internal dependencies
- */
 import MultipleChoiceQuestion from '../';
 
 const noop = () => {};

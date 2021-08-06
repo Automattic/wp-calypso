@@ -176,14 +176,19 @@ const testGlobalStylesColorAndTypography = async ( driver, blocksLevel = false )
 	}
 
 	// Update link color option.
-	await changeGlobalStylesColor( driver, 3, 2 );
+	await changeGlobalStylesColor( driver, 3, 1 );
 	// The last sleep before accessing the event stack must be longer to ensure there is
 	// enough time for the function to retrieve entities and compare.
 	await driver.sleep( 500 );
 
 	let updateEvents = await getGlobalStylesUpdateEvents( driver );
 
-	assert.strictEqual( updateEvents.length, 3 );
+	// Due to variation in test speed combined with the debouncing of events the step to update the
+	// fontSize input can trigger anywhere between 1 and 3 events.  Thus we expect to see between 3
+	// and 5 events total.
+	assert( updateEvents.length >= 3, 'There should be at least 3 update events' );
+	assert( updateEvents.length <= 5, 'There should be no more than 5 update events' );
+
 	assert(
 		updateEvents.some( ( event ) => {
 			const { block_type, section, field, field_value, element_type, palette_slug } = event[ 1 ];
@@ -194,7 +199,7 @@ const testGlobalStylesColorAndTypography = async ( driver, blocksLevel = false )
 				element_type === undefined &&
 				palette_slug === undefined &&
 				typeof field_value === 'string' &&
-				field_value[ 0 ] === '#'
+				( field_value[ 0 ] === '#' || field_value.startsWith( 'var' ) )
 			);
 		} )
 	);
@@ -221,7 +226,7 @@ const testGlobalStylesColorAndTypography = async ( driver, blocksLevel = false )
 				element_type === 'link' &&
 				palette_slug === undefined &&
 				typeof field_value === 'string' &&
-				field_value[ 0 ] === '#'
+				( field_value[ 0 ] === '#' || field_value.startsWith( 'var' ) )
 			);
 		} )
 	);
@@ -751,9 +756,8 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 			it( 'Tracks "wpcom_block_editor_template_part_choose_existing"', async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
-				// Undo the template part creation to go back to the placeholder.  Use store api to
-				// trigger undo since the UI is not present in mobile viewport.
-				await this.driver.executeScript( `return window.wp.data.dispatch( 'core' ).undo()` );
+
+				await editor.addBlock( 'Header', 'template-part\\/header', 'Block: Template Part' );
 
 				await editor.runInCanvas( async () => {
 					const chooseExistingHeaderLocator = driverHelper.createTextLocator(
@@ -1149,7 +1153,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 					);
 				} );
 				const quickInserterSearchInputLocator = By.css(
-					'.block-editor-inserter__quick-inserter .block-editor-inserter__search-input'
+					'.block-editor-inserter__quick-inserter .components-search-control__input'
 				);
 				const blockItemLocator = By.css(
 					'.block-editor-inserter__quick-inserter .block-editor-block-types-list__item'

@@ -1,23 +1,12 @@
-/**
- * External dependencies
- */
-
+import { Card } from '@automattic/components';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
 import QueryPreferences from 'calypso/components/data/query-preferences';
+import Gridicon from 'calypso/components/gridicon';
 import { savePreference, setPreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const PREFERENCE_PREFIX = 'dismissible-card-';

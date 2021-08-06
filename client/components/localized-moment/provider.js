@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
+import debugFactory from 'debug';
+import moment from 'moment';
 import React from 'react';
 import { connect } from 'react-redux';
-import moment from 'moment';
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import MomentContext from './context';
 

@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
-import { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import isRequestingSharingButtons from 'calypso/state/selectors/is-requesting-sharing-buttons';
 import { requestSharingButtons } from 'calypso/state/sites/sharing-buttons/actions';
 

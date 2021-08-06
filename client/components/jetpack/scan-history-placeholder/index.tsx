@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import React, { FunctionComponent } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const ScanHistoryPlaceholder: FunctionComponent = () => {

@@ -1,16 +1,6 @@
-/**
- * External dependencies
- */
 import React, { PureComponent } from 'react';
-
-/**
- * Internal dependencies
- */
 import TimelineEvent from './timeline-event.jsx';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default class Timeline extends PureComponent {

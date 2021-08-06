@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { TimeMismatchWarning } from 'calypso/blocks/time-mismatch-warning';
 
 const TimeMismatchWarningExample = () => {

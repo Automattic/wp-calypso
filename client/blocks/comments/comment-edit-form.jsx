@@ -1,26 +1,16 @@
-/**
- * External dependencies
- */
+import { isEnabled } from '@automattic/calypso-config';
+import classNames from 'classnames';
+import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { isEnabled } from '@automattic/calypso-config';
+import AsyncLoad from 'calypso/components/async-load';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import Notice from 'calypso/components/notice';
-import { editComment } from 'calypso/state/comments/actions';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import { editComment } from 'calypso/state/comments/actions';
 import AutoresizingFormTextarea from './autoresizing-form-textarea';
-import AsyncLoad from 'calypso/components/async-load';
 
-/**
- * Style dependencies
- */
 import './comment-edit-form.scss';
 
 const noop = () => {};

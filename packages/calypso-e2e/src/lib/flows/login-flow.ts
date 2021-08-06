@@ -42,7 +42,7 @@ export class LoginFlow {
 			page = this.page;
 		}
 
-		const loginPage = await LoginPage.Expect( page );
+		const loginPage = new LoginPage( page );
 		await loginPage.login( { username: this.username, password: this.password } );
 	}
 

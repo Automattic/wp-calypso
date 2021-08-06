@@ -7,8 +7,8 @@ This component is used to display accordian style/dropdown FAQ questions & answe
 ## How to use
 
 ```js
-import FoldableFAQ from 'calypso/components/foldable-faq';
 import { useTranslate } from 'i18n-calypso';
+import FoldableFAQ from 'calypso/components/foldable-faq';
 
 export default function FoldableFAQExample() {
 	const translate = useTranslate();

@@ -1,12 +1,5 @@
-/**
- * External Dependencies
- */
-import React from 'react';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 
 export default function DefaultTemplate( {

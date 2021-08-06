@@ -1,13 +1,9 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import { AutoSizer, List } from '@automattic/react-virtualized';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { AutoSizer, List } from '@automattic/react-virtualized';
 import { debounce, range } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 const noop = () => {};
 

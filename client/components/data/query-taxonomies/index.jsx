@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { requestPostTypeTaxonomies } from 'calypso/state/post-types/taxonomies/actions';
 import { isRequestingPostTypeTaxonomies } from 'calypso/state/post-types/taxonomies/selectors';
 

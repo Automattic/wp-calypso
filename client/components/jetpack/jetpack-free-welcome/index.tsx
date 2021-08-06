@@ -1,22 +1,12 @@
-/**
- * External dependencies
- */
+import { Card } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-import { Card } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
+import JetpackLogo from 'calypso/components/jetpack-logo';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import JetpackLogo from 'calypso/components/jetpack-logo';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const JetpackFreeWelcome: FC = () => {
