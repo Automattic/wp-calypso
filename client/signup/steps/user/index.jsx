@@ -224,8 +224,6 @@ export class UserStep extends Component {
 		if ( oauth2Signup ) {
 			dependencies.oauth2_client_id = data.queryArgs.oauth2_client_id;
 			dependencies.oauth2_redirect = data.queryArgs.oauth2_redirect;
-		} else if ( data.queryArgs.redirect_to ) {
-			dependencies.redirect = data.queryArgs.redirect_to;
 		}
 
 		this.props.submitSignupStep(
@@ -383,9 +381,6 @@ export class UserStep extends Component {
 			this.isOauth2RedirectValid( this.props.initialContext.query.oauth2_redirect )
 		) {
 			return this.props.initialContext.query.oauth2_redirect;
-		}
-		if ( this.props.initialContext?.canonicalPath?.startsWith( '/start/account' ) ) {
-			return this.props.initialContext.query.redirect_to;
 		}
 
 		const stepAfterRedirect =
