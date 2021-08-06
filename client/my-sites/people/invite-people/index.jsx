@@ -727,7 +727,11 @@ class InvitePeople extends React.Component {
 
 				<SidebarNavigation />
 				<HeaderCake isCompact onClick={ this.goBack }>
-					{ translate( 'Invite People' ) }
+					{ translate( 'Invite People to %(sitename)s', {
+						args: {
+							sitename: site.name,
+						},
+					} ) }
 				</HeaderCake>
 				{ this.renderInviteForm() }
 				{ isWPForTeamsSite && (
