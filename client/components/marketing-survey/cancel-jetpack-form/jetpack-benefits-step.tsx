@@ -47,18 +47,27 @@ const JetpackBenefitsStep: React.FC< Props > = ( props ) => {
 
 		if ( timeRemaining.months() >= 1 ) {
 			const timeRemainingNumber = timeRemaining.months();
-			const unitOfTime = translate( 'month', 'months', { count: timeRemainingNumber } );
+			const unitOfTime = translate( 'month', 'months', {
+				count: timeRemainingNumber,
+				context: 'unit of time',
+			} );
 
 			return { timeRemainingNumber, unitOfTime };
 		} else if ( timeRemaining.weeks() >= 1 ) {
 			const timeRemainingNumber = timeRemaining.weeks();
-			const unitOfTime = translate( 'week', 'weeks', { count: timeRemainingNumber } );
+			const unitOfTime = translate( 'week', 'weeks', {
+				count: timeRemainingNumber,
+				context: 'unit of time',
+			} );
 
 			return { timeRemainingNumber, unitOfTime };
 		}
 
 		const timeRemainingNumber = timeRemaining.days();
-		const unitOfTime = translate( 'day', 'days', { count: timeRemainingNumber } );
+		const unitOfTime = translate( 'day', 'days', {
+			count: timeRemainingNumber,
+			context: 'unit of time',
+		} );
 
 		return { timeRemainingNumber, unitOfTime };
 	};
