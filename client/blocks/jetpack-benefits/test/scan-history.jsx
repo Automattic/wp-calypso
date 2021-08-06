@@ -62,6 +62,13 @@ describe( 'Scan History Jetpack Benefit Block', () => {
 		expect( getBenefitsCard().props() ).toHaveProperty( 'jestMarker', 'error' );
 	} );
 
+	test( 'When the scan state is idle, but there is not a recent scan, indicate that a scan is scheduled', () => {
+		const scanState = { state: 'idle' };
+		getSiteScanState.mockReturnValue( scanState );
+		isRequestingJetpackScan.mockReturnValue( false );
+		expect( getBenefitsCard().props() ).toHaveProperty( 'jestMarker', 'scheduled' );
+	} );
+
 	test( 'If product is standalone scan, the expanded standalone card is rendered', () => {
 		getSiteScanState.mockReturnValue( { state: 'idle', mostRecent: { timestamp: '' } } );
 		isRequestingJetpackScan.mockReturnValue( false );

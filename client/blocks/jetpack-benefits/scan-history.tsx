@@ -95,7 +95,20 @@ const JetpackBenefitsScanHistory: React.FC< Props > = ( { siteId, isStandalone }
 	}
 
 	const { threats, mostRecent } = siteScanState;
-	const mostRecentScanAgo = moment.utc( mostRecent.timestamp ).fromNow();
+
+	// there is no most recent scan - for some reason, scan has not run yet
+	if ( ! mostRecent ) {
+		return (
+			<JetpackBenefitsCard
+				jestMarker="scheduled"
+				headline={ translate( 'Site Scan' ) }
+				description={ translate( 'Jetpack will scan your site for threats soon.' ) }
+				stat="Scheduled"
+			/>
+		);
+	}
+
+	const mostRecentScanAgo = mostRecent ? moment.utc( mostRecent.timestamp ).fromNow() : '';
 
 	// show expended output for standalone scan products
 	if ( isStandalone ) {
