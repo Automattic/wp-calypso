@@ -9,6 +9,7 @@ const selectors = {
 	spinner: '.spinner',
 	placeholder: '.inline-help__results-placeholder-item',
 	clearSearch: '[aria-label="Close Search"]',
+	supportCard: '.card.help-search',
 
 	// Results
 	resultsList: '.inline-help__results',
@@ -80,12 +81,12 @@ export class SupportComponent {
 	}
 
 	/**
-	 * Scroll to expose the Support card, present only on My Home.
+	 * Wait for and scroll to expose the Support card, present only on My Home.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
 	async showSupportCard(): Promise< void > {
-		const elementHandle = await this.page.waitForSelector( '.card.help-search' );
+		const elementHandle = await this.page.waitForSelector( selectors.supportCard );
 		await elementHandle.waitForElementState( 'stable' );
 		await elementHandle.scrollIntoViewIfNeeded();
 	}
