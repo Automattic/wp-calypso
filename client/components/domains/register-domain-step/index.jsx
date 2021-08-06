@@ -1154,7 +1154,7 @@ class RegisterDomainStep extends React.Component {
 
 		this.setState(
 			{
-				lastQuery: searchQuery,
+				lastQuery: domain,
 				lastVertical: this.props.vertical,
 				lastFilters: this.state.filters,
 			},
