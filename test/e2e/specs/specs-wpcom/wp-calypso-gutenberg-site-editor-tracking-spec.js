@@ -1153,7 +1153,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 					);
 				} );
 				const quickInserterSearchInputLocator = By.css(
-					'.block-editor-inserter__quick-inserter .block-editor-inserter__search-input'
+					'.block-editor-inserter__quick-inserter .components-search-control__input'
 				);
 				const blockItemLocator = By.css(
 					'.block-editor-inserter__quick-inserter .block-editor-block-types-list__item'
