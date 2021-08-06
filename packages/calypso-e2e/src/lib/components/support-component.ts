@@ -5,7 +5,7 @@ const selectors = {
 	// Components
 	supportButton: '.inline-help__button',
 	supportPopover: '.inline-help__popover',
-	searchInput: '[placeholder="Search for help…"]',
+	searchInput: '[aria-label="Search"]',
 	spinner: '.spinner',
 	clearSearch: '[aria-label="Close Search"]',
 
@@ -77,6 +77,18 @@ export class SupportComponent {
 		await this.page.click( selectors.supportButton );
 		await this.page.waitForSelector( selectors.supportPopover, { state: 'hidden' } );
 	}
+
+	/**
+	 * Scroll to expose the Support card, present only on My Home.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async showSupportCard(): Promise< void > {
+		const elementHandle = await this.page.waitForSelector( '.card.help-search' );
+		await elementHandle.scrollIntoViewIfNeeded();
+	}
+
+	/* Result methods */
 
 	/**
 	 * Given a selector, returns an array of ElementHandles that match the given selector.
@@ -170,6 +182,7 @@ export class SupportComponent {
 		await this.page.waitForSelector( selectors.emptyResults );
 	}
 
+	/* Interaction with results */
 	/**
 	 * Click on the nth result specified by the target value.
 	 *
@@ -216,6 +229,8 @@ export class SupportComponent {
 	async closeArticle(): Promise< void > {
 		await this.page.click( selectors.closeButton );
 	}
+
+	/* Search input */
 
 	/**
 	 * Fills the support popover search input and waits for the query to complete.
