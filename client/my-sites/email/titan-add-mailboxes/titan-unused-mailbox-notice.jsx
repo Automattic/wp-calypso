@@ -33,19 +33,21 @@ const TitanUnusedMailboxesNotice = ( { domain, maxTitanMailboxCount, onFinishSet
 		comment: 'This refers to the number of mailboxes purchased that have not been set up yet',
 	};
 
-	const text = i18nCalypso.hasTranslation(
-		'You have %(numberOfMailboxes)d unused mailbox. Do you want to set it up now instead of purchasing new ones?'
-	)
-		? translate(
-				'You have %(numberOfMailboxes)d unused mailbox. Do you want to set it up now instead of purchasing new ones?',
-				'You have %(numberOfMailboxes)d unused mailboxes. Do you want to set one of them up now instead of purchasing new ones?',
-				translateOptions
-		  )
-		: translate(
-				'You have %(numberOfMailboxes)d unused mailbox. Do you want to configure it now instead?',
-				'You have %(numberOfMailboxes)d unused mailboxes. Do you want to configure them now instead?',
-				translateOptions
-		  );
+	const text =
+		'en' === getLocaleSlug() ||
+		i18nCalypso.hasTranslation(
+			'You have %(numberOfMailboxes)d unused mailbox. Do you want to set it up now instead of purchasing new ones?'
+		)
+			? translate(
+					'You have %(numberOfMailboxes)d unused mailbox. Do you want to set it up now instead of purchasing new ones?',
+					'You have %(numberOfMailboxes)d unused mailboxes. Do you want to set one of them up now instead of purchasing new ones?',
+					translateOptions
+			  )
+			: translate(
+					'You have %(numberOfMailboxes)d unused mailbox. Do you want to configure it now instead?',
+					'You have %(numberOfMailboxes)d unused mailboxes. Do you want to configure them now instead?',
+					translateOptions
+			  );
 
 	const ctaText =
 		'en' === getLocaleSlug() || i18nCalypso.hasTranslation( 'Set up mailbox' )
