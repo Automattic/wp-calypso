@@ -12,7 +12,7 @@ import { openPopupWidget } from 'react-calendly';
 /**
  * Internal dependencies
  */
-import { resemblesUrl } from 'calypso/lib/url';
+import { addQueryArgs, resemblesUrl } from 'calypso/lib/url';
 import { addHttpIfMissing } from 'calypso/my-sites/checkout/utils';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
@@ -31,23 +31,12 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryProducts from 'calypso/components/data/query-products-list';
-import { addOnboardingCallInternalNote } from './utils';
+import { useSetCalendlyListenerEffect } from './hooks';
 
 /**
  * Type dependencies
  */
 import type { UserData } from 'calypso/lib/user/user';
-
-interface CalendlyEvent {
-	data: {
-		event: string;
-		payload: {
-			event: {
-				uri: string;
-			};
-		};
-	};
-}
 
 interface Props {
 	forScheduling: boolean;
@@ -157,41 +146,25 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 	}, [ calendlyUrl, currentUser, dispatch, productSlug ] );
 
 	// Update the ZD ticket linked to `receiptId` after the user has scheduled a call.
-	useEffect( () => {
-		const dispatchCalendlyEventScheduled = async ( event: CalendlyEvent ) => {
-			if ( event && event.data?.event === 'calendly.event_scheduled' ) {
-				const eventUri = event.data.payload?.event?.uri || '';
-				// The last part of the pathname is the ID of the Calendly event
-				const eventId = new URL( eventUri ).pathname.split( '/' ).pop();
-				const result = await addOnboardingCallInternalNote( receiptId, eventId );
-				if ( result ) {
-					dispatch(
-						recordTracksEvent( 'calypso_siteless_checkout_schedule_onboarding_call', {
-							product_slug: productSlug,
-							receipt_id: receiptId,
-							event_id: eventId,
-						} )
-					);
-				}
-			}
-		};
-
-		window.addEventListener( 'message', dispatchCalendlyEventScheduled );
-
-		return () => {
-			window.removeEventListener( 'message', dispatchCalendlyEventScheduled );
-		};
-	}, [] );
+	useSetCalendlyListenerEffect( { productSlug, receiptId, jetpackTemporarySiteId } );
 
 	useEffect( () => {
 		if ( supportTicketStatus === 'success' ) {
-			page( `/checkout/jetpack/thank-you-completed/no-site/${ productSlug }` );
+			const thankYouCompletedUrl = addQueryArgs(
+				{
+					jetpackTemporarySiteId,
+					productSlug,
+					receiptId,
+				},
+				`/checkout/jetpack/thank-you-completed/no-site/${ productSlug }`
+			);
+			page( thankYouCompletedUrl );
 		} else if ( supportTicketStatus === 'failed' ) {
 			setError(
 				translate( 'There was a problem submitting your website address, please try again.' )
 			);
 		}
-	}, [ supportTicketStatus, productSlug, translate ] );
+	}, [ jetpackTemporarySiteId, receiptId, supportTicketStatus, productSlug, translate ] );
 
 	useEffect( () => {
 		if ( forScheduling ) {
