@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import connectUserMentions from './connect';
+import React from 'react';
 import addUserMentions from './add';
+import connectUserMentions from './connect';
 
 /**
  * withUserMentions is a higher-order component that adds connected user mention support to whatever input it wraps.

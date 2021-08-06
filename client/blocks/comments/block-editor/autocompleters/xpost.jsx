@@ -1,12 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-/**
- * External dependencies
- */
-import React from 'react';
 
-/**
- * Internal dependencies
- */
+import React from 'react';
 import wpcom from 'calypso/lib/wp';
 
 export default () => ( {

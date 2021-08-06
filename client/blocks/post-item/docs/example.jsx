@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
-
+import { get } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import QueryPosts from 'calypso/components/data/query-posts';
 import QuerySites from 'calypso/components/data/query-sites';
-import PostItem from '../';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSitePosts } from 'calypso/state/posts/selectors';
+import PostItem from '../';
 
 function PostItemExample( { primarySiteId, globalId } ) {
 	return (

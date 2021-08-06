@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-
-/**
- * Internal dependencies
- */
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 
 class InlineHelpCompactResult extends Component {

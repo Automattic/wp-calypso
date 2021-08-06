@@ -1,34 +1,23 @@
-/**
- * External dependencies
- */
-
+import { localize } from 'i18n-calypso';
+import { get, find, map } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { get, find, map } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { getPostImage, getExcerptForPost, getSummaryForPost } from './utils';
-import FacebookSharePreview from 'calypso/components/share/facebook-share-preview';
-import LinkedinSharePreview from 'calypso/components/share/linkedin-share-preview';
-import TwitterSharePreview from 'calypso/components/share/twitter-share-preview';
-import TumblrSharePreview from 'calypso/components/share/tumblr-share-preview';
-import VerticalMenu from 'calypso/components/vertical-menu';
-import { SocialItem } from 'calypso/components/vertical-menu/items';
-import { getSitePost } from 'calypso/state/posts/selectors';
-import { getSeoTitle, getSite, getSiteSlug } from 'calypso/state/sites/selectors';
-import { getSiteUserConnections } from 'calypso/state/sharing/publicize/selectors';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import FacebookSharePreview from 'calypso/components/share/facebook-share-preview';
+import LinkedinSharePreview from 'calypso/components/share/linkedin-share-preview';
+import TumblrSharePreview from 'calypso/components/share/tumblr-share-preview';
+import TwitterSharePreview from 'calypso/components/share/twitter-share-preview';
+import VerticalMenu from 'calypso/components/vertical-menu';
+import { SocialItem } from 'calypso/components/vertical-menu/items';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getSitePost } from 'calypso/state/posts/selectors';
 import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
+import { getSiteUserConnections } from 'calypso/state/sharing/publicize/selectors';
+import { getSeoTitle, getSite, getSiteSlug } from 'calypso/state/sites/selectors';
+import { getPostImage, getExcerptForPost, getSummaryForPost } from './utils';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const serviceNames = {

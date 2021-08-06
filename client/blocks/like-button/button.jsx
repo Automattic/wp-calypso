@@ -1,21 +1,10 @@
-/**
- * External dependencies
- */
-
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { omitBy } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import classNames from 'classnames';
-import { omitBy } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import LikeIcons from './icons';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class LikeButton extends PureComponent {

@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
+import { localize } from 'i18n-calypso';
+import { range } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import { range } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import RecommendationOption from './recommendation-option';
 
 class RecommendationSelect extends PureComponent {

@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { times } from 'lodash';
+import React from 'react';
 
 export default ( { lines = 4 } ) => (
 	<div className="inline-help__results-placeholder">

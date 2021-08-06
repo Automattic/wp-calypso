@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React from 'react';
+import Emojify from 'calypso/components/emojify';
 import { getStreamUrl } from 'calypso/reader/route';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
-import Emojify from 'calypso/components/emojify';
 
 class ReaderSiteStreamLink extends React.Component {
 	static propTypes = {

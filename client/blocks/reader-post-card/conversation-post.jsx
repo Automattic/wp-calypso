@@ -1,12 +1,5 @@
-/**
- * External Dependencies
- */
-import React from 'react';
 import PropTypes from 'prop-types';
-
-/**
- * Internal Dependencies
- */
+import React from 'react';
 import ConversationPostList from 'calypso/blocks/conversations/list';
 import CompactPostCard from 'calypso/blocks/reader-post-card/compact';
 

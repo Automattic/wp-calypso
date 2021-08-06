@@ -1,17 +1,7 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import ExternalLink from 'calypso/components/external-link';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

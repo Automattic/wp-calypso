@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
-import React, { PureComponent } from 'react';
-
-/**
- * Internal dependencies
- */
-import ReaderRecommendedSites from '../';
 import { Card } from '@automattic/components';
+import React, { PureComponent } from 'react';
+import ReaderRecommendedSites from '../';
 
 const sites = {
 	longreads: { siteId: 70135762 },
