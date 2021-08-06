@@ -69,7 +69,23 @@ menuItems.push(
 	{
 		type: 'separator',
 	},
-	...debugMenu
+	{
+		label: 'Reload',
+		accelerator: 'CommandOrControl+R',
+		visible: true,
+		click: function () {
+			const window = BrowserWindow.getFocusedWindow();
+			const view = window.getBrowserView();
+			view.webContents.reload();
+		},
+	},
+	{
+		type: 'separator',
+	},
+	{
+		label: 'Developer',
+		submenu: debugMenu,
+	}
 );
 
 module.exports = menuItems;
