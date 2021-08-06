@@ -22,13 +22,8 @@ const CelebrateNotice = ( {
 	tracksEventExtras = {},
 } ) => {
 	const [ isLoading, setIsLoading ] = useState( false );
-	const [ isVisible, setIsVisible ] = useState( true );
 	const dispatch = useDispatch();
 	const { skipCurrentView } = useSkipCurrentViewMutation( siteId );
-
-	if ( ! isVisible ) {
-		return null;
-	}
 
 	const showNextTask = () => {
 		setIsLoading( true );
@@ -45,7 +40,7 @@ const CelebrateNotice = ( {
 	};
 
 	const skip = () => {
-		setIsVisible( false );
+		setIsLoading( true );
 		skipCurrentView();
 		onSkip && onSkip();
 
