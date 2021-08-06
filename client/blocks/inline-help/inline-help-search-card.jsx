@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
+import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import debugFactory from 'debug';
-
-/**
- * Internal Dependencies
- */
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import SearchCard from 'calypso/components/search-card';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { setInlineHelpSearchQuery } from 'calypso/state/inline-help/actions';
 import getInlineHelpCurrentlySelectedLink from 'calypso/state/inline-help/selectors/get-inline-help-currently-selected-link';
 import isRequestingInlineHelpSearchResultsForQuery from 'calypso/state/inline-help/selectors/is-requesting-inline-help-search-results-for-query';
-import { setInlineHelpSearchQuery } from 'calypso/state/inline-help/actions';
 
 /**
  * Module variables

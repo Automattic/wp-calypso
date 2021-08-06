@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-
-/**
- * Internal dependencies
- */
+import { connect } from 'react-redux';
 import { startPollAppPushAuth, stopPollAppPushAuth } from 'calypso/state/login/actions';
 import { getTwoFactorPushPollSuccess } from 'calypso/state/login/selectors';
 

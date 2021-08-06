@@ -1,20 +1,10 @@
-/**
- * External Dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { intervals } from './constants';
+import PropTypes from 'prop-types';
+import React from 'react';
 import SegmentedControl from 'calypso/components/segmented-control';
+import { intervals } from './constants';
 
-/**
- * Style dependencies
- */
 import './intervals.scss';
 
 const Intervals = ( props ) => {

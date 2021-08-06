@@ -8,10 +8,12 @@ type ReminderDuration = '1d' | '1w' | null;
 
 interface Variables {
 	reminder: ReminderDuration;
+	card?: string;
 }
 
 interface Result extends UseMutationResult< void, unknown, Variables > {
 	skipCurrentView: ( reminder: ReminderDuration ) => void;
+	skipCard: ( card: string, reminder: ReminderDuration ) => void;
 }
 
 function useSkipCurrentViewMutation( siteId: number ): Result {
@@ -19,7 +21,7 @@ function useSkipCurrentViewMutation( siteId: number ): Result {
 	const query = useHomeLayoutQueryParams();
 
 	const mutation = useMutation< void, unknown, Variables >(
-		async ( { reminder } ) => {
+		async ( { reminder, card } ) => {
 			const data = await queryClient.fetchQuery(
 				getCacheKey( siteId ),
 				() => fetchHomeLayout( siteId, query ),
@@ -31,9 +33,11 @@ function useSkipCurrentViewMutation( siteId: number ): Result {
 					path: `/sites/${ siteId }/home/layout/skip`,
 					apiNamespace: 'wpcom/v2',
 				},
-				{ dev: query.dev },
+				{ query },
 				{
 					view: ( data as any ).view_name,
+					// temporarily prevent single card views from returning themself after skipping
+					card: ( data as any ).view_name === 'VIEW_POST_LAUNCH' ? card : undefined,
 					...( reminder && { reminder } ),
 				}
 			);
@@ -51,7 +55,12 @@ function useSkipCurrentViewMutation( siteId: number ): Result {
 		mutate,
 	] );
 
-	return { skipCurrentView, ...mutation };
+	const skipCard = useCallback(
+		( card, reminder: ReminderDuration ) => mutate( { reminder, card } ),
+		[ mutate ]
+	);
+
+	return { skipCurrentView, skipCard, ...mutation };
 }
 
 export default useSkipCurrentViewMutation;

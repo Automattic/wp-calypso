@@ -1,24 +1,13 @@
-/**
- * External dependencies
- */
-
+import classNames from 'classnames';
+import { translate } from 'i18n-calypso';
+import { startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { startsWith } from 'lodash';
-import { translate } from 'i18n-calypso';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import TranslatableString from 'calypso/components/translatable/proptype';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import TranslatableString from 'calypso/components/translatable/proptype';
 
-/**
- * Style dependencies
- */
 import './apps-badge.scss';
 
 // the locale slugs for each stores' image paths follow different rules

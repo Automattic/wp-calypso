@@ -1,30 +1,19 @@
-/**
- * External dependencies
- */
-
+import classNames from 'classnames';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
-import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import Image from 'calypso/components/image';
-import MediaImage from 'calypso/my-sites/media-library/media-image';
-import Spinner from 'calypso/components/spinner';
 import QuerySites from 'calypso/components/data/query-sites';
-import { getSite } from 'calypso/state/sites/selectors';
+import Gridicon from 'calypso/components/gridicon';
+import Image from 'calypso/components/image';
+import Spinner from 'calypso/components/spinner';
+import resizeImageUrl from 'calypso/lib/resize-image-url';
+import MediaImage from 'calypso/my-sites/media-library/media-image';
 import getSiteIconId from 'calypso/state/selectors/get-site-icon-id';
 import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
 import isTransientMedia from 'calypso/state/selectors/is-transient-media';
-import resizeImageUrl from 'calypso/lib/resize-image-url';
+import { getSite } from 'calypso/state/sites/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function SiteIcon( { siteId, site, iconUrl, size, imgSize, isTransientIcon } ) {

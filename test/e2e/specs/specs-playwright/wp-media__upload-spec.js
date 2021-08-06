@@ -39,7 +39,7 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 		} );
 
 		it( 'See media gallery', async function () {
-			mediaPage = await MediaPage.Expect( page );
+			mediaPage = new MediaPage( page );
 		} );
 
 		it.each( testFiles )(

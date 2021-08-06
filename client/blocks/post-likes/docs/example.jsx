@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-
+import { Button } from '@automattic/components';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import FormLabel from 'calypso/components/forms/form-label';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
 import PostLikes from '../';
 import PostLikesPopover from '../popover';
-import { Button } from '@automattic/components';
 
 class PostLikesExample extends React.PureComponent {
 	popoverContext = React.createRef();

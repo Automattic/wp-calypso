@@ -1,16 +1,9 @@
-/**
- * External Dependencies
- */
+import { get, partial } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { get, partial } from 'lodash';
-
-/**
- * Internal Dependencies
- */
+import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import AutoDirection from 'calypso/components/auto-direction';
 import Emojify from 'calypso/components/emojify';
-import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import FeaturedAsset from './featured-asset';
 
 const StandardPost = ( { post, children, isDiscover, expandCard, postKey, isExpanded, site } ) => {

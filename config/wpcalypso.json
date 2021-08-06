@@ -14,7 +14,11 @@
 	"facebook_api_key": "249643311490",
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"rebrand_cities_prefix": "rebrandcitiestestsite",
-	"livechat_support_locales": [ "en", "es", "pt-br" ],
+	"livechat_support_locales": [
+		"en",
+		"es",
+		"pt-br"
+	],
 	"features": {
 		"ad-tracking": false,
 		"async-payments": false,
@@ -85,8 +89,8 @@
 		"keyboard-shortcuts": true,
 		"mailchimp": true,
 		"manage/export/guided-transfer": true,
-		"marketplace-test": false,
-		"marketplace-yoast": false,
+		"marketplace-test": true,
+		"marketplace-yoast": true,
 		"me/account-close": true,
 		"me/account/color-scheme-picker": true,
 		"me/vat-details": true,

@@ -1,23 +1,12 @@
-/**
- * External dependencies
- */
-
+import { pick } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
-import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import Popover from 'calypso/components/popover';
 import PostSchedule from 'calypso/components/post-schedule';
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

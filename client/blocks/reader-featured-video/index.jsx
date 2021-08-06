@@ -1,30 +1,16 @@
-/**
- * External Dependencies
- */
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { throttle } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { connect } from 'react-redux';
-import { throttle } from 'lodash';
 import ReactDom from 'react-dom';
-import { localize } from 'i18n-calypso';
-import classnames from 'classnames';
-
-/**
- * Internal Dependencies
- */
-import EmbedHelper from 'calypso/reader/embed-helper';
-import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
-import { getThumbnailForIframe } from 'calypso/state/reader/thumbnails/selectors';
-import QueryReaderThumbnail from 'calypso/components/data/query-reader-thumbnails';
-
-/**
- * Image dependencies
- */
+import { connect } from 'react-redux';
 import playIconImage from 'calypso/assets/images/reader/play-icon.png';
+import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
+import QueryReaderThumbnail from 'calypso/components/data/query-reader-thumbnails';
+import EmbedHelper from 'calypso/reader/embed-helper';
+import { getThumbnailForIframe } from 'calypso/state/reader/thumbnails/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

@@ -1,20 +1,10 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
+import React, { Component } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { addQueryArgs } from 'calypso/lib/route';
 import { urlToSlug } from 'calypso/lib/url';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class JetpackConnectSiteOnly extends Component {

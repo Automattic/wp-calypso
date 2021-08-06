@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import ReaderFeaturedVideoBlock from 'calypso/blocks/reader-featured-video';
 
 const exampleVideo = {

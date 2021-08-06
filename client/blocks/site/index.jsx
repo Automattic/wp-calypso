@@ -1,29 +1,19 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { isEnabled } from '@automattic/calypso-config';
 import classnames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { isEnabled } from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
+import Gridicon from 'calypso/components/gridicon';
 import SiteIndicator from 'calypso/my-sites/site-indicator';
-import { getSite, getSiteSlug, isSitePreviewable } from 'calypso/state/sites/selectors';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
-import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import isAtomicAndEditingToolkitPluginDeactivated from 'calypso/state/selectors/is-atomic-and-editing-toolkit-plugin-deactivated';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
+import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import { getSite, getSiteSlug, isSitePreviewable } from 'calypso/state/sites/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

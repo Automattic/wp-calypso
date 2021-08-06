@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Image dependencies
- */
+import React from 'react';
 import getAppsImage from 'calypso/assets/images/illustrations/get-apps-banner.svg';
 
 const GetAppsIllustration = ( { translate } ) => (

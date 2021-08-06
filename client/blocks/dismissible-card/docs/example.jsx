@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
 import React from 'react';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
-import DismissibleCard from '../';
 import { savePreference } from 'calypso/state/preferences/actions';
+import DismissibleCard from '../';
 
 function DismissibleCardExample() {
 	const dispatch = useDispatch();

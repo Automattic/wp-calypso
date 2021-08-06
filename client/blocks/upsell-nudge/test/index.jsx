@@ -1,13 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
-import { UpsellNudge } from '../index';
 import {
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
@@ -22,6 +12,9 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
+import { shallow } from 'enzyme';
+import React from 'react';
+import { UpsellNudge } from '../index';
 
 const props = {
 	callToAction: null,

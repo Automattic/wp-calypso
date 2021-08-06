@@ -4,7 +4,6 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import { includes, isEqual, pick } from 'lodash';
 
@@ -20,6 +19,8 @@ import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import Popover from 'calypso/components/popover';
 import { Button } from '@automattic/components';
+import MaterialIcon from 'calypso/components/material-icon';
+import Count from 'calypso/components/count';
 
 const HANDLED_FILTER_KEYS = [ 'tlds', 'includeDashes', 'maxCharacters', 'exactSldMatchesOnly' ];
 
@@ -75,6 +76,7 @@ export class DropdownFilters extends Component {
 
 	getFiltercounts() {
 		return (
+			( this.props.lastFilters.tlds?.length || 0 ) +
 			( this.props.lastFilters.includeDashes && 1 ) +
 			( this.props.lastFilters.exactSldMatchesOnly && 1 ) +
 			( this.props.lastFilters.maxCharacters !== '' && 1 )
@@ -142,17 +144,6 @@ export class DropdownFilters extends Component {
 		);
 	}
 
-	renderFilterIcon() {
-		return (
-			<>
-				<Gridicon icon="cog" size={ 12 } />
-				<span className="search-filters__dropdown-filters-button-text">
-					{ this.props.translate( 'Filters' ) }
-				</span>
-			</>
-		);
-	}
-
 	render() {
 		const hasFilterValues = this.getFiltercounts() > 0;
 
@@ -171,7 +162,11 @@ export class DropdownFilters extends Component {
 					ref={ this.button }
 					onClick={ this.togglePopover }
 				>
-					{ this.renderFilterIcon() }
+					<MaterialIcon icon="filter_list" />
+					<span className="search-filters__dropdown-filters-button-text">
+						{ this.props.translate( 'Filter' ) }
+						{ hasFilterValues && <Count primary count={ this.getFiltercounts() } /> }
+					</span>
 				</Button>
 
 				{ this.state.showPopover && this.renderPopover() }
@@ -182,6 +177,21 @@ export class DropdownFilters extends Component {
 	handleTokenChange = ( newTlds ) => {
 		const tlds = newTlds.filter( ( tld ) => includes( this.props.availableTlds, tld ) );
 		this.props.onChange( { tlds } );
+	};
+
+	/**
+	 * Show the first 5 TLDs from the TLD endpoint as recommended and sort the rest alphabetically
+	 *
+	 * @param availableTlds array of TLDs
+	 */
+	addTldsLabels = ( availableTlds ) => {
+		const { translate } = this.props;
+		return [
+			{ label: translate( 'Recommended endings' ) },
+			...availableTlds.slice( 0, 5 ),
+			{ label: translate( 'Explore more endings' ) },
+			...availableTlds.slice( 5 ).sort(),
+		];
 	};
 
 	renderPopover() {
@@ -230,17 +240,14 @@ export class DropdownFilters extends Component {
 
 				{ showTldFilter && (
 					<ValidationFieldset className="search-filters__tld-filters">
-						<FormLabel className="search-filters__label" htmlFor="search-filters-max-characters">
-							{ translate( 'Extensions', { context: 'domain extension, like .com' } ) }:
-						</FormLabel>
 						<TokenField
 							isExpanded
 							displayTransform={ ( item ) => `.${ item }` }
 							saveTransform={ ( query ) => ( query[ 0 ] === '.' ? query.substr( 1 ) : query ) }
 							maxSuggestions={ 500 }
 							onChange={ this.handleTokenChange }
-							placeholder={ translate( 'Select an extension' ) }
-							suggestions={ [ ...this.props.availableTlds ].sort() }
+							placeholder={ translate( 'Search for an ending' ) }
+							suggestions={ this.addTldsLabels( this.props.availableTlds ) }
 							tokenizeOnSpace
 							value={ this.props.filters.tlds }
 						/>
@@ -289,10 +296,10 @@ export class DropdownFilters extends Component {
 					errorMessages={ this.getOverallValidationErrors() }
 				>
 					<div className="search-filters__buttons">
+						<Button onClick={ this.handleFiltersReset }>{ translate( 'Clear' ) }</Button>
 						<Button primary onClick={ this.handleFiltersSubmit }>
 							{ translate( 'Apply' ) }
 						</Button>
-						<Button onClick={ this.handleFiltersReset }>{ translate( 'Reset' ) }</Button>
 					</div>
 				</ValidationFieldset>
 			</Popover>
