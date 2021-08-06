@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -5,6 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import ActivityCard from 'calypso/components/activity-card';
+import QueryActivityLogRetentionPolicy from 'calypso/components/data/query-activity-log-retention-policy';
 import QueryRewindCapabilities from 'calypso/components/data/query-rewind-capabilities';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -15,9 +17,19 @@ import Filterbar from 'calypso/my-sites/activity/filterbar';
 import { updateFilter } from 'calypso/state/activity-log/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
+import getSiteActivityLogRetentionDays from 'calypso/state/selectors/get-site-activity-log-retention-days';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import RetentionLimitUpsell from './retention-limit-upsell';
 
 import './style.scss';
+
+const getRetentionPolicyRequestStatus = ( state, siteId ) => {
+	if ( ! Number.isInteger( siteId ) ) {
+		return undefined;
+	}
+
+	return state.activityLog.retentionPolicy[ siteId ]?.requestStatus;
+};
 
 class ActivityCardList extends Component {
 	static propTypes = {
@@ -69,15 +81,8 @@ class ActivityCardList extends Component {
 		return logsByDate;
 	}
 
-	renderLogs( actualPage ) {
-		const {
-			applySiteOffset,
-			logs,
-			pageSize,
-			showDateSeparators,
-			translate,
-			userLocale,
-		} = this.props;
+	renderLogs( pageLogs ) {
+		const { applySiteOffset, showDateSeparators, translate, userLocale } = this.props;
 
 		const today = applySiteOffset ? applySiteOffset() : null;
 
@@ -93,38 +98,36 @@ class ActivityCardList extends Component {
 
 		const dateFormat = userLocale === 'en' ? 'MMM Do' : 'LL';
 
-		return this.splitLogsByDate( logs.slice( ( actualPage - 1 ) * pageSize ) ).map(
-			( { date, logs: dateLogs, hasMore }, index ) => (
-				<div key={ `activity-card-list__date-group-${ index }` }>
-					{ showDateSeparators && (
-						<div className="activity-card-list__date-group-date">
-							{ date &&
-								( today?.isSame( date, 'day' )
-									? translate( 'Today' )
-									: date.format( dateFormat ) ) }
-						</div>
-					) }
-					<div className="activity-card-list__date-group-content">
-						{ dateLogs.map( ( activity ) => (
-							<ActivityCard
-								shareable={ isActivityBackup( activity ) }
-								activity={ activity }
-								className={
-									isActivityBackup( activity )
-										? getPrimaryCardClassName( hasMore, dateLogs.length )
-										: getSecondaryCardClassName( hasMore )
-								}
-								key={ activity.activityId }
-							/>
-						) ) }
+		return pageLogs.map( ( { date, logs: dateLogs, hasMore }, index ) => (
+			<div key={ `activity-card-list__date-group-${ index }` }>
+				{ showDateSeparators && (
+					<div className="activity-card-list__date-group-date">
+						{ date &&
+							( today?.isSame( date, 'day' ) ? translate( 'Today' ) : date.format( dateFormat ) ) }
 					</div>
+				) }
+				<div className="activity-card-list__date-group-content">
+					{ dateLogs.map( ( activity ) => (
+						<ActivityCard
+							activity={ activity }
+							className={
+								isActivityBackup( activity )
+									? getPrimaryCardClassName( hasMore, dateLogs.length )
+									: getSecondaryCardClassName( hasMore )
+							}
+							key={ activity.activityId }
+						/>
+					) ) }
 				</div>
-			)
-		);
+			</div>
+		) );
 	}
 
 	renderData() {
 		const {
+			applySiteOffset,
+			retentionPoliciesEnabled,
+			retentionDays,
 			filter,
 			isBreakpointActive: isMobile,
 			logs,
@@ -133,12 +136,25 @@ class ActivityCardList extends Component {
 			showPagination,
 			siteId,
 		} = this.props;
-		const { page: requestedPage } = filter;
 
-		const actualPage = Math.max(
-			1,
-			Math.min( requestedPage, Math.ceil( logs.length / pageSize ) )
+		const retentionLimitCutoffDate = retentionPoliciesEnabled
+			? applySiteOffset().subtract( retentionDays, 'days' )
+			: null;
+		const logsWithRetention = retentionPoliciesEnabled
+			? logs.filter( ( log ) =>
+					applySiteOffset( log.activityDate ).isSameOrAfter( retentionLimitCutoffDate, 'day' )
+			  )
+			: logs;
+
+		const { page: requestedPage } = filter;
+		const pageCount = Math.ceil( logsWithRetention.length / pageSize );
+		const actualPage = Math.max( 1, Math.min( requestedPage, pageCount ) );
+
+		const pageLogs = this.splitLogsByDate(
+			logsWithRetention.slice( ( actualPage - 1 ) * pageSize )
 		);
+		const showRetentionLimitUpsell =
+			retentionPoliciesEnabled && logsWithRetention.length < logs.length && actualPage >= pageCount;
 
 		return (
 			<div className="activity-card-list">
@@ -162,10 +178,13 @@ class ActivityCardList extends Component {
 						pageClick={ this.changePage }
 						perPage={ pageSize }
 						prevLabel={ 'Newer' }
-						total={ logs.length }
+						total={ logsWithRetention.length }
 					/>
 				) }
-				{ this.renderLogs( actualPage ) }
+				{ this.renderLogs( pageLogs ) }
+				{ showRetentionLimitUpsell && (
+					<RetentionLimitUpsell cardClassName="activity-card-list__primary-card-with-more" />
+				) }
 				{ showPagination && (
 					<Pagination
 						compact={ isMobile }
@@ -176,7 +195,7 @@ class ActivityCardList extends Component {
 						pageClick={ this.changePage }
 						perPage={ pageSize }
 						prevLabel={ 'Newer' }
-						total={ logs.length }
+						total={ logsWithRetention.length }
 					/>
 				) }
 			</div>
@@ -236,13 +255,26 @@ class ActivityCardList extends Component {
 	}
 
 	render() {
-		const { siteId, logs } = this.props;
+		const {
+			retentionPoliciesEnabled,
+			requestingRetentionPolicy,
+			retentionPolicyRequestError,
+			siteId,
+			logs,
+		} = this.props;
+
+		if ( retentionPoliciesEnabled && retentionPolicyRequestError ) {
+			return this.renderLoading();
+		}
 
 		return (
 			<>
+				{ retentionPoliciesEnabled && <QueryActivityLogRetentionPolicy siteId={ siteId } /> }
 				<QueryRewindCapabilities siteId={ siteId } />
 				<QueryRewindState siteId={ siteId } />
-				{ ! logs && this.renderLoading() }
+
+				{ ( ! logs || ( retentionPoliciesEnabled && requestingRetentionPolicy ) ) &&
+					this.renderLoading() }
 				{ logs && this.renderData() }
 			</>
 		);
@@ -252,11 +284,19 @@ class ActivityCardList extends Component {
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
+
 	const filter = getActivityLogFilter( state, siteId );
 	const userLocale = getCurrentUserLocale( state );
+	const retentionDays = getSiteActivityLogRetentionDays( state, siteId );
+
+	const retentionPolicyRequestStatus = getRetentionPolicyRequestStatus( state, siteId );
 
 	return {
 		filter,
+		retentionPoliciesEnabled: isEnabled( 'activity-log/retention-policies' ),
+		requestingRetentionPolicy: retentionPolicyRequestStatus === 'pending',
+		retentionPolicyRequestError: retentionPolicyRequestStatus === 'failure',
+		retentionDays,
 		siteId,
 		siteSlug,
 		userLocale,
