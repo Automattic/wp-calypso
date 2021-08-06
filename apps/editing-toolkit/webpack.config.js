@@ -1,6 +1,3 @@
-/**
- * WARNING: No ES6 modules here. Not transpiled! *
- */
 /* eslint-disable import/no-nodejs-modules */
 
 const path = require( 'path' );
@@ -8,13 +5,7 @@ const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config'
 const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 const webpack = require( 'webpack' );
 
-const FSE_MODULE_PREFIX = 'a8c-fse';
-
-/**
- * Internal variables
- */
-const isDevelopment = process.env.NODE_ENV !== 'production';
-
+// Modify this list to add new entrypoints.
 const ETK_ENTRYPOINTS = [
 	'dotcom-fse',
 	'posts-list-block',
@@ -40,27 +31,36 @@ const ETK_ENTRYPOINTS = [
 	'whats-new',
 ];
 
+const ETK_MODULE_PREFIX = 'a8c-fse';
+const isDevelopment = process.env.NODE_ENV !== 'production';
+
 /**
- * Generates the webpack entry object.
+ * Generates a webpack entry object to accomplish the following goal:
  *
- * @param {Array<string>} entries A list of paths to entrypoints.
+ * Given a path to a source entry (`package-dir/example/entryname`), resolve the
+ * entry: `package-dir/example/entryname.(j|t)sx?` or `package-dir/example/entryname/index.(j|t)sx?`.
+ * Then, place the entry output at `package-dir/dist/entryname.(js|css|asset.php|rtl.css)`.
+ *
+ * @param {Array<string>} entries A list of paths to entrypoints relative to ./editing-toolkit-plugin.
+ * @returns {Object} The webpack entry object.
  */
 function generateEntry( entries ) {
-	return entries.reduce( ( acc, source ) => {
-		// If the source is 'test-package/foo/my-feat', the containing package is "test-package" and the scriptname is "my-feat".
-		// This will resolve "scriptname.(j|t)s(x)" or "scriptname/index(j|t)s(x)"
-		const sourceSegments = source.split( path.sep );
-		const scriptName =
-			sourceSegments.length > 1 ? sourceSegments.slice( sourceSegments.length - 1 ) : source;
-		// The containing package.
-		const packageName = sourceSegments[ 0 ];
-		const bundleLocation = `editing-toolkit-plugin/${ packageName }/dist/${ scriptName }`;
+	return entries.reduce( ( acc, entry ) => {
+		// If the source is 'test-package/foo/my-feat', the containing package is "test-package", and the entry name is "my-feat".
+		const entrySegments = entry.split( path.sep );
+		const entryName = entrySegments[ entrySegments.length - 1 ];
+		const packageName = entrySegments[ 0 ];
 
-		if ( acc[ bundleLocation ] ) {
-			throw new Error( 'The bundle ' + bundleLocation + ' has already been defined.' );
+		// The path to the output must be in the entry name or webpack will output
+		// to the wrong directory.
+		const entryOutput = `editing-toolkit-plugin/${ packageName }/dist/${ entryName }`;
+
+		if ( acc[ entryOutput ] ) {
+			throw new Error( `The entry ${ entryOutput } has already been defined.` );
 		}
-		acc[ bundleLocation ] = {
-			import: `./editing-toolkit-plugin/${ source }`,
+
+		acc[ entryOutput ] = {
+			import: `./editing-toolkit-plugin/${ entry }`,
 			filename: '[name].js',
 		};
 
@@ -109,7 +109,7 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 			new DependencyExtractionWebpackPlugin( {
 				injectPolyfill: true,
 				requestToExternal( request ) {
-					if ( request.startsWith( FSE_MODULE_PREFIX ) ) {
+					if ( request.startsWith( ETK_MODULE_PREFIX ) ) {
 						switch ( request ) {
 							// This is not a real module, it is a placeholder that corresponds to a WordPress script handle registered with the same name.
 							// This allows us to import the module, declaring the dependency via JavaScript.
@@ -129,7 +129,6 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 		stats: 'minimal',
 	};
 
-	console.log( config );
 	return config;
 }
 
