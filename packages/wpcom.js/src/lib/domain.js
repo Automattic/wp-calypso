@@ -8,7 +8,7 @@ class Domain {
 	 * `Domain` constructor.
 	 *
 	 * @param {string} id - domain identifier
-	 * @param {WPCOM} wpcom - wpcom instance
+	 * @param wpcom - wpcom instance
 	 * @returns {undefined} undefined
 	 */
 	constructor( id, wpcom ) {
