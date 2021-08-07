@@ -1,31 +1,18 @@
-/**
- *WARNING: No ES6 modules here. Not transpiled! ****
- */
 /* eslint-disable import/no-nodejs-modules */
 /* eslint-disable no-console */
 /* eslint-disable no-process-exit */
 const { spawn } = require( 'child_process' );
+const path = require( 'path' );
+
+const cwd = path.resolve( __dirname, '..' );
+const env = { env: { ...process.env, BROWSERSLIST_ENV: 'wpcom' }, cwd, stdio: 'inherit' };
+
+spawn( 'yarn', [ 'calypso-build' ], env );
+
 const args = process.argv.slice( 2 );
-
-const argsToCommands = {
-	'--build': 'BROWSERSLIST_ENV=wpcom NODE_ENV=production yarn calypso-build --env',
-	'--dev': 'BROWSERSLIST_ENV=wpcom yarn calypso-build --env',
-	'--sync': 'yarn wpcom-sync',
-};
-
-NODE_ENV = production;
-const commands = args.map( ( arg ) => argsToCommands[ arg ] );
-
-console.log( `Running the following commands: ${ commands.toString() }` );
-
-const runOptions = {
-	parallel: true,
-	stdout: process.stdout,
-	stderr: process.stderr,
-	printLabel: true,
-};
-
-spawn( '' );
+if ( args.includes( '--sync' ) ) {
+	spawn( 'yarn', [ 'wpcom-sync' ], env );
+}
 // runAll( commands, runOptions )
 // 	.then( () => {
 // 		console.log( 'Finished running commands!' );
