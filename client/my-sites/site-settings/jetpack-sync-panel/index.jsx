@@ -167,7 +167,7 @@ class JetpackSyncPanel extends React.Component {
 		const { translate } = this.props;
 		return (
 			<CompactCard className="jetpack-sync-panel">
-				<div className="jetpack-sync-panel__action">
+				<div className="jetpack-sync-panel__action" id="jetpackSyncPanelAction">
 					{ translate(
 						'Jetpack Sync keeps your WordPress.com dashboard up to date. ' +
 							'Data is sent from your site to the WordPress.com dashboard regularly to provide a faster experience. '
@@ -178,7 +178,9 @@ class JetpackSyncPanel extends React.Component {
 							'If you suspect some data is missing, you can {{link}}initiate a sync manually{{/link}}.',
 							{
 								components: {
-									link: <a href="" onClick={ this.onSyncRequestButtonClick } />,
+									link: (
+										<a href="#jetpackSyncPanelAction" onClick={ this.onSyncRequestButtonClick } />
+									),
 								},
 							}
 						) }
