@@ -7,12 +7,16 @@
 	&.register-domain-step__search-domain-step:not( .is-sticky ) {
 		padding-bottom: 24px;
 
+		.is-white-signup & {
+			padding-bottom: 16px;
+		}
+
 		@include breakpoint-deprecated( '>660px' ) {
 			padding-top: 18px;
 
 			.is-white-signup & {
 				padding-top: 0;
-				padding-bottom: 20px;
+				padding-bottom: 16px;
 			}
 		}
 	}
@@ -139,6 +143,11 @@ body.is-section-signup.is-white-signup {
 		box-shadow: none;
 		padding: 0;
 		margin-bottom: 24px;
+		margin-left: 20px;
+
+		@include break-mobile {
+			margin-left: 0;
+		}
 	}
 	.domain-search-results__domain-availability svg,
 	.register-domain-step__notice svg {
