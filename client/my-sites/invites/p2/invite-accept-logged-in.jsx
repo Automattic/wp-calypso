@@ -22,7 +22,7 @@ export function renderInviteAcceptForP2( props ) {
 	return (
 		<div>
 			{ renderInviteAcceptP2Logo( { translate: props.translate } ) }
-			<div className="invite-accept-logged-in__invite-container">
+			<div className="invite-accept-logged-in__form-container">
 				{ renderInviteAcceptFormHeader( { site: props.invite.site, translate: props.translate } ) }
 				<div className="invite-accept-logged-in__join-as">
 					<Gravatar user={ props.user } size={ 72 } />
