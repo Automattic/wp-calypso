@@ -118,7 +118,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		const newContactDetails = {};
 
 		if ( id === 'legal-type' ) {
-			this.props.updateRequiredDomainFields( {
+			this.props.updateRequiredDomainFields?.( {
 				organization: this.isCorporationLegalType( value ),
 			} );
 		}
