@@ -12,10 +12,14 @@ export * from './shopping-cart-endpoint';
 
 export interface ShoppingCartManagerArguments {
 	cartKey: string | undefined;
-	setCart: ( cartKey: string, requestCart: RequestCart ) => Promise< ResponseCart >;
-	getCart: ( cartKey: string ) => Promise< ResponseCart >;
+	setCart: SetCart;
+	getCart: GetCart;
 	options?: ShoppingCartManagerOptions;
 }
+
+export type GetCart = ( cartKey: string ) => Promise< ResponseCart >;
+
+export type SetCart = ( cartKey: string, requestCart: RequestCart ) => Promise< ResponseCart >;
 
 export interface ShoppingCartManagerOptions {
 	refetchOnWindowFocus?: boolean;
