@@ -48,7 +48,7 @@
 }
 
 .activity-log-item .foldable-card__secondary {
-	flex-grow: 0;
+	flex-grow: 1;
 
 	.foldable-card__summary {
 		display: flex;
@@ -323,20 +323,12 @@
 		margin-top: 16px;
 		text-align: left;
 	}
+}
 
-	.ellipsis-menu {
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		right: 0;
-
-		.button {
-			position: relative;
-			top: 50%;
-			width: 48px;
-			transform: translateY( -50% );
-		}
-	}
+// When showing the "Add server credentials" button, stack the buttons
+// instead of showing them side-by-side.
+.activity-log-item__action-credentials {
+	flex-direction: column;
 }
 
 .activity-log-item__clone-action {
@@ -454,5 +446,23 @@
 	}
 	100% {
 		opacity: 0;
+	}
+}
+
+.activity-log-item .foldable-card__action {
+	display: flex;
+	align-items: center;
+	position: static;
+}
+
+.activity-log-item {
+	a.button, button {
+		margin-right: 8px;
+	}
+	.activity-log-item__action-credentials {
+		a.button, button {
+			margin-top: 4px;
+			margin-right: 0;
+		}
 	}
 }

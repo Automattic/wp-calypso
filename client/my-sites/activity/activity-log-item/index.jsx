@@ -20,13 +20,10 @@ import ActivityDescription from './activity-description';
 import ActivityMedia from './activity-media';
 import ActivityIcon from './activity-icon';
 import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
-import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import Gridicon from 'calypso/components/gridicon';
 import HappychatButton from 'calypso/components/happychat/button';
 import { Button } from '@automattic/components';
 import FoldableCard from 'calypso/components/foldable-card';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import PopoverMenuSeparator from 'calypso/components/popover/menu-separator';
 import {
 	rewindBackup,
 	rewindBackupDismiss,
@@ -235,14 +232,14 @@ class ActivityLogItem extends Component {
 
 	performCloneAction = () => this.props.cloneOnClick( this.props.activity.activityTs );
 
-	renderRewindAction() {
+	renderRewindAction = () => {
 		const {
 			activity,
 			canAutoconfigure,
 			createBackup,
 			createRewind,
-			disableRestore,
 			disableBackup,
+			disableRestore,
 			missingRewindCredentials,
 			siteId,
 			siteSlug,
@@ -254,40 +251,40 @@ class ActivityLogItem extends Component {
 			return null;
 		}
 
+		const showCredentialsButton = disableRestore && missingRewindCredentials;
+
+		const classes = classNames( 'activity-log-item__action', {
+			'activity-log-item__action-credentials': showCredentialsButton,
+		} );
+
 		return (
-			<div className="activity-log-item__action">
-				<EllipsisMenu>
-					<PopoverMenuItem disabled={ disableRestore } icon="history" onClick={ createRewind }>
-						{ translate( 'Restore to this point' ) }
-					</PopoverMenuItem>
+			<div className={ classes }>
+				{ ! showCredentialsButton && (
+					<Button disabled={ disableRestore } onClick={ createRewind }>
+						<Gridicon icon="history" size={ 18 } /> { translate( 'Restore' ) }
+					</Button>
+				) }
 
-					{ disableRestore && missingRewindCredentials && (
-						<PopoverMenuItem
-							icon="plus"
-							href={
-								canAutoconfigure
-									? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
-									: `${ settingsPath( siteSlug ) }#credentials`
-							}
-							onClick={ trackAddCreds }
-						>
-							{ translate( 'Add server credentials to enable restoring' ) }
-						</PopoverMenuItem>
-					) }
-
-					<PopoverMenuSeparator />
-
-					<PopoverMenuItem
-						disabled={ disableBackup }
-						icon="cloud-download"
-						onClick={ createBackup }
+				{ disableRestore && missingRewindCredentials && (
+					<Button
+						href={
+							canAutoconfigure
+								? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
+								: `${ settingsPath( siteSlug ) }#credentials`
+						}
+						onClick={ trackAddCreds }
 					>
-						{ translate( 'Download backup' ) }
-					</PopoverMenuItem>
-				</EllipsisMenu>
+						<Gridicon icon="plus" size={ 18 } />{ ' ' }
+						{ translate( 'Add server credentials to enable restoring' ) }
+					</Button>
+				) }
+
+				<Button disabled={ disableBackup } onClick={ createBackup }>
+					<Gridicon icon="cloud-download" size={ 18 } /> { translate( 'Download' ) }
+				</Button>
 			</div>
 		);
-	}
+	};
 
 	/**
 	 * Displays a button for users to get help. Tracks button click.
