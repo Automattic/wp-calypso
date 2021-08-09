@@ -11,9 +11,6 @@ import SignupForm from 'calypso/blocks/signup-form';
 export function renderInviteAcceptForP2( props ) {
 	return (
 		<div>
-			<div className="invite-accept-logged-out__p2-logo">
-				<img src="/calypso/images/p2/logo.png" width="67" height="32" alt="P2 logo" />
-			</div>
 			<SignupForm
 				redirectToAfterLoginUrl={ window.location.href }
 				disabled={ props.isSubmitting }

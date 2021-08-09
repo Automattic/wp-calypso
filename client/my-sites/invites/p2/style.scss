@@ -14,12 +14,12 @@
 		padding: 0 2em;
 	}
 
-	.invite-accept-logged-in__p2-logo-bar {
+	.invite-accept-logo-line {
 		display: flex;
 		justify-content: space-between;
 	}
 
-	.invite-accept-logged-in__p2-learn-more a {
+	.invite-accept-logo-line__learn-more a {
 		color: var( --p2-color-link );
 		font-size: 0.875rem;
 
@@ -28,18 +28,13 @@
 		}
 	}
 
-	.invite-accept-logged-in__invite-container {
-		max-width: 500px;
-		margin: 3em auto 0;
-	}
-
-	.invite-accept-logged-in__header {
+	.invite-accept-form-header {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 	}
 
-	.invite-accept-logged-in__site-icon {
+	.invite-accept-form-header__site-icon {
 		width: 60px;
 		height: 60px;
 		font-size: 1.5rem;
@@ -52,17 +47,22 @@
 		font-weight: 600;
 	}
 
-	.invite-accept-logged-in__join-p2-title {
+	.invite-accept-form-header__join-site-title {
 		font-size: 1.5rem;
 		font-weight: 700;
 		margin: 1em 0;
 		text-align: center;
 	}
 
-	.invite-accept-logged-in__join-p2-text {
+	.invite-accept-form-header__join-site-text {
 		text-align: center;
 		max-width: 400px;
 		font-size: 0.875rem;
+	}
+
+	.invite-accept-logged-in__invite-container {
+		max-width: 500px;
+		margin: 3em auto 0;
 	}
 
 	.invite-accept-logged-in__join-as {
