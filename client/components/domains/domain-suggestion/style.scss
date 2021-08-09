@@ -418,6 +418,7 @@ body.is-section-signup.is-white-signup {
 
 		& .domain-product-price__free-price {
 			font-size: $font-body-small;
+			font-weight: initial;
 			color: var( --studio-green-60 );
 			line-height: 20px;
 			letter-spacing: 0.2px;
