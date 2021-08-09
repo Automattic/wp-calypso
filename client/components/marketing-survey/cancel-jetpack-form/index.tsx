@@ -12,12 +12,15 @@ import { Button, Dialog } from '@automattic/components';
 import { Button as ButtonType } from '@automattic/components/dist/types/dialog/button-bar';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import { getName } from 'calypso/lib/purchases';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import nextStep from '../cancel-purchase-form/next-step';
 import previousStep from '../cancel-purchase-form/previous-step';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import JetpackBenefitsStep from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-benefits-step';
+import JetpackCancellationSurvey from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-cancellation-survey';
+import { submitSurvey } from 'calypso/lib/purchases/actions';
+import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
 
 /**
  * Style dependencies
@@ -37,9 +40,10 @@ interface Props {
 }
 
 const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, selectedSite, ...props } ) => {
-	const [ cancellationStep, setCancellationStep ] = useState( steps.FEATURES_LOST_STEP ); // set initial state
-	const [ surveyResponse, setSurveyResponse ] = useState( false );
 	const translate = useTranslate();
+	const [ cancellationStep, setCancellationStep ] = useState( steps.FEATURES_LOST_STEP ); // set initial state
+	const [ surveyAnswerId, setSurveyAnswerId ] = useState< string | null >( null );
+	const [ surveyAnswerText, setSurveyAnswerText ] = useState< TranslateResult | string >( '' );
 
 	const isAtomicSite = useSelector( ( state ) => {
 		return isSiteAutomatedTransfer( state, selectedSite.ID );
@@ -51,7 +55,8 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, selectedSite
 	 */
 	const resetSurveyState = () => {
 		setCancellationStep( steps.FEATURES_LOST_STEP );
-		setSurveyResponse( false );
+		setSurveyAnswerId( null );
+		setSurveyAnswerText( '' );
 	};
 
 	// Record an event for Tracks
@@ -117,7 +122,22 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, selectedSite
 	};
 
 	const onSubmit = () => {
-		// TODO: handle survey submission - probably using the existing submitSurvey method
+		if ( surveyAnswerId ) {
+			const { purchase } = props;
+			const surveyData = {
+				'why-cancel': {
+					response: surveyAnswerId,
+					text: surveyAnswerText,
+				},
+				type: 'cancel',
+			};
+
+			submitSurvey(
+				'calypso-cancel-jetpack',
+				selectedSite.ID,
+				enrichedSurveyData( surveyData, purchase )
+			);
+		}
 
 		// call back to the parent component to actually cancel the subscription
 		props.onClickFinalConfirm();
@@ -126,6 +146,17 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, selectedSite
 		// this uses the same event name as the main product cancellation form
 		// this way, all cancellation stats can be viewed together
 		recordEvent( 'calypso_purchases_cancel_form_submit' );
+	};
+
+	const onSurveyAnswerChange = ( answerId: string, answerText: TranslateResult | string ) => {
+		if ( answerId !== surveyAnswerId ) {
+			recordTracksEvent( 'calypso_purchases_cancel_jetpack_survey_answer_change', {
+				answer_id: answerId,
+			} );
+		}
+
+		setSurveyAnswerId( answerId );
+		setSurveyAnswerText( answerText );
 	};
 
 	/**
@@ -213,7 +244,7 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, selectedSite
 			// ask for brief feedback on why the user is cancelling the plan
 			// follow similar pattern used in the Jetpack disconnection flow
 			// make sure the user has the ability to skip the question
-			return 'Survey Question';
+			return <JetpackCancellationSurvey onAnswerChange={ onSurveyAnswerChange } />;
 		}
 
 		// default output just in case
