@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DotPager from 'calypso/components/dot-pager';
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
@@ -32,19 +32,30 @@ const cardComponents = {
 const LearnGrow = () => {
 	const cards = useLearnGrowCards();
 	const dispatch = useDispatch();
+	const viewedCards = useRef( new Set() );
 
-	useEffect( () => {
-		if ( cards && cards.length ) {
-			dispatch( trackCardImpressions( cards ) );
+	const handlePageSelected = ( index ) => {
+		const selectedCard = cards && cards[ index ];
+		if ( viewedCards.current.has( selectedCard ) ) {
+			return;
 		}
-	}, [ cards, dispatch ] );
+
+		viewedCards.current.add( selectedCard );
+		dispatch( trackCardImpression( selectedCard ) );
+	};
+
+	useEffect( () => handlePageSelected( 0 ) );
 
 	if ( ! cards || ! cards.length ) {
 		return null;
 	}
 
 	return (
-		<DotPager className="learn-grow__content customer-home__card" hasDynamicHeight>
+		<DotPager
+			className="learn-grow__content customer-home__card"
+			hasDynamicHeight
+			onPageSelected={ handlePageSelected }
+		>
 			{ cards.map(
 				( card, index ) =>
 					cardComponents[ card ] &&
@@ -66,15 +77,11 @@ function useLearnGrowCards() {
 	return allCards.filter( ( card ) => !! cardComponents[ card ] );
 }
 
-function trackCardImpressions( cards ) {
-	const analyticsEvents = cards.reduce( ( events, card ) => {
-		return [
-			...events,
-			recordTracksEvent( 'calypso_customer_home_card_impression', { card } ),
-			bumpStat( 'calypso_customer_home_card_impression', card ),
-		];
-	}, [] );
-	return composeAnalytics( ...analyticsEvents );
+function trackCardImpression( card ) {
+	return composeAnalytics(
+		recordTracksEvent( 'calypso_customer_home_card_impression', { card } ),
+		bumpStat( 'calypso_customer_home_card_impression', card )
+	);
 }
 
 export default LearnGrow;
