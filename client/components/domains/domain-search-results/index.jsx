@@ -275,10 +275,9 @@ class DomainSearchResults extends React.Component {
 					key="featured"
 					onButtonClick={ this.props.onClickResult }
 					premiumDomains={ this.props.premiumDomains }
-					primarySuggestion={ bestMatchSuggestions[ 0 ] }
+					featuredSuggestions={ [ bestMatchSuggestions[ 0 ], bestAlternativeSuggestions[ 0 ] ] }
 					query={ this.props.lastDomainSearched }
 					railcarId={ this.props.railcarId }
-					secondarySuggestion={ bestAlternativeSuggestions[ 0 ] }
 					selectedSite={ this.props.selectedSite }
 					pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 					unavailableDomains={ this.props.unavailableDomains }
