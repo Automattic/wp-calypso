@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
 .cancel-jetpack-form__section-header {
 	text-align: center;
 	margin-bottom: 2rem;
@@ -30,9 +33,16 @@
 
 .jetpack-cancellation-survey {
 	&__content {
-		width: 1128px;
-		padding: 3rem 12rem;
 		box-sizing: border-box;
+
+		@include break-medium {
+			padding: 1rem 4rem;
+		}
+
+		@include break-wide {
+			width: 1128px;
+			padding: 3rem 12rem;
+		}
 	}
 
 	&__card {
