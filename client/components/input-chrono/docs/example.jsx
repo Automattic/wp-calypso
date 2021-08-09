@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import InputChrono from 'calypso/components/input-chrono';
 import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import React from 'react';
+import InputChrono from 'calypso/components/input-chrono';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 // Date Picker Demo

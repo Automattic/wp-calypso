@@ -1,20 +1,9 @@
-/**
- * External dependencies
- */
-
+import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import Button from 'calypso/components/forms/form-button';
 import Spinner from 'calypso/components/spinner';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default class extends React.Component {

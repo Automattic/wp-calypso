@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { isRequestingDomainsSuggestions } from 'calypso/state/domains/suggestions/selectors';
 import { requestDomainsSuggestions } from 'calypso/state/domains/suggestions/actions';
+import { isRequestingDomainsSuggestions } from 'calypso/state/domains/suggestions/selectors';
 
 function getQueryObject( props ) {
 	return {

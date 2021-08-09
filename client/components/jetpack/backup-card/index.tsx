@@ -1,37 +1,23 @@
-/**
- * External dependencies
- */
+import { Button, Card } from '@automattic/components';
 import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import React, { useRef, FunctionComponent, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import ActivityActor, { SIZE_S } from 'calypso/components/activity-card/activity-actor';
 import ActivityDescription from 'calypso/components/activity-card/activity-description';
 import ActivityMedia from 'calypso/components/activity-card/activity-media';
 import Badge from 'calypso/components/badge';
+import cloudIcon from 'calypso/components/jetpack/daily-backup-status/status-card/icons/cloud-success.svg';
 import useGetDisplayDate from 'calypso/components/jetpack/daily-backup-status/use-get-display-date';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Tooltip from 'calypso/components/tooltip';
 import { backupDownloadPath, backupRestorePath } from 'calypso/my-sites/backup/paths';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-
-/**
- * Style dependencies
- */
-import './style.scss';
-import cloudIcon from 'calypso/components/jetpack/daily-backup-status/status-card/icons/cloud-success.svg';
-
-/**
- * Type dependencies
- */
 import type { Activity } from 'calypso/state/activity-log/types';
+
+import './style.scss';
 
 type Props = {
 	activity: Activity;

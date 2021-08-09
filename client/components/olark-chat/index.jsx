@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import React, { Component } from 'react';
 
 class OlarkChat extends Component {

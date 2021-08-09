@@ -1,18 +1,21 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
+import classnames from 'classnames';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { isOutsideCalypso } from 'calypso/lib/url';
 // actions
+// selectors
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { sendMessage, sendNotTyping, sendTyping } from 'calypso/state/happychat/connection/actions';
+import canUserSendMessages from 'calypso/state/happychat/selectors/can-user-send-messages';
+import getHappychatChatStatus from 'calypso/state/happychat/selectors/get-happychat-chat-status';
+import getHappychatConnectionStatus from 'calypso/state/happychat/selectors/get-happychat-connection-status';
+import getCurrentMessage from 'calypso/state/happychat/selectors/get-happychat-current-message';
+import getHappychatTimeline from 'calypso/state/happychat/selectors/get-happychat-timeline';
+import isHappychatMinimizing from 'calypso/state/happychat/selectors/is-happychat-minimizing';
+import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
+import isHappychatServerReachable from 'calypso/state/happychat/selectors/is-happychat-server-reachable';
 import {
 	blur,
 	focus,
@@ -21,26 +24,13 @@ import {
 	minimizedChat,
 	setCurrentMessage,
 } from 'calypso/state/happychat/ui/actions';
-// selectors
-import canUserSendMessages from 'calypso/state/happychat/selectors/can-user-send-messages';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import getCurrentMessage from 'calypso/state/happychat/selectors/get-happychat-current-message';
-import getHappychatChatStatus from 'calypso/state/happychat/selectors/get-happychat-chat-status';
-import getHappychatConnectionStatus from 'calypso/state/happychat/selectors/get-happychat-connection-status';
-import getHappychatTimeline from 'calypso/state/happychat/selectors/get-happychat-timeline';
-import isHappychatMinimizing from 'calypso/state/happychat/selectors/is-happychat-minimizing';
-import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
-import isHappychatServerReachable from 'calypso/state/happychat/selectors/is-happychat-server-reachable';
 // UI components
-import HappychatConnection from './connection-connected';
-import Title from './title';
 import Composer from './composer';
+import HappychatConnection from './connection-connected';
 import Notices from './notices';
 import Timeline from './timeline';
+import Title from './title';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /*

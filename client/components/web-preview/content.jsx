@@ -1,31 +1,24 @@
-/**
- * External dependencies
- */
+import { parse as parseUrl } from 'url';
 import { isWithinBreakpoint } from '@automattic/viewport';
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
 import debugModule from 'debug';
-import page from 'page';
-import { v4 as uuid } from 'uuid';
-import { addQueryArgs } from 'calypso/lib/route';
-
-/**
- * Internal dependencies
- */
-import Toolbar from './toolbar';
-import { hasTouch } from 'calypso/lib/touch-detect';
 import { localize } from 'i18n-calypso';
-import SpinnerLine from 'calypso/components/spinner-line';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { v4 as uuid } from 'uuid';
 import SeoPreviewPane from 'calypso/components/seo-preview-pane';
+import SpinnerLine from 'calypso/components/spinner-line';
+import { addQueryArgs } from 'calypso/lib/route';
+import { hasTouch } from 'calypso/lib/touch-detect';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isInlineHelpPopoverVisible from 'calypso/state/inline-help/selectors/is-inline-help-popover-visible';
-import { parse as parseUrl } from 'url';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import Toolbar from './toolbar';
 
 const debug = debugModule( 'calypso:web-preview' );
 const noop = () => {};

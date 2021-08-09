@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
+import { Button, CompactCard } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { trademarkNoticeText } from './trademark-constants';
-import { Button, CompactCard } from '@automattic/components';
 import TrademarkClaim from './trademark-claim';
+import { trademarkNoticeText } from './trademark-constants';
 
 class TrademarkNotice extends React.Component {
 	static propTypes = {

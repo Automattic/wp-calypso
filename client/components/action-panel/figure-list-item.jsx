@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import classnames from 'classnames';
+import React from 'react';
 
 const ActionPanelFigureListItem = ( { children, className } ) => {
 	return (

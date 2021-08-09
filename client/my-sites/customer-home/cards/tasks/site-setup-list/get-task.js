@@ -1,4 +1,4 @@
-import { translate } from 'i18n-calypso';
+import i18nCalypso, { getLocaleSlug, translate } from 'i18n-calypso';
 import React from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
@@ -214,7 +214,11 @@ export const getTask = (
 				description: translate(
 					'Complete your Professional Email setup to start sending and receiving emails from your custom domain today.'
 				),
-				actionText: translate( 'Complete setup' ),
+				/* Make sure we show a translated string while we wait for the new string to be translated. */
+				actionText:
+					'en' === getLocaleSlug() || i18nCalypso.hasTranslation( 'Set up mailbox' )
+						? translate( 'Set up mailbox' )
+						: translate( 'Complete setup' ),
 				isSkippable: false,
 				actionUrl: emailManagementTitanSetupMailbox( siteSlug, task.domain ),
 			};

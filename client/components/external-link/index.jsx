@@ -1,22 +1,12 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import classnames from 'classnames';
-import { omit } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
-import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { ScreenReaderText } from '@automattic/components';
+import classnames from 'classnames';
+import { translate } from 'i18n-calypso';
+import { omit } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import Gridicon from 'calypso/components/gridicon';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class ExternalLink extends Component {

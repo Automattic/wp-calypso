@@ -1,18 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { map, size, filter, uniqBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React from 'react';
 import Gravatar from 'calypso/components/gravatar';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

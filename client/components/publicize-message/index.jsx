@@ -1,24 +1,13 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import CountedTextarea from 'calypso/components/forms/counted-textarea';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import InfoPopover from 'calypso/components/info-popover';
 import TrackInputChanges from 'calypso/components/track-input-changes';
 import { recordEditorStat, recordEditorEvent } from 'calypso/state/posts/stats';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

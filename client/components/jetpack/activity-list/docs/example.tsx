@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import React, { PureComponent, ReactNode } from 'react';
-
-/**
- * Internal dependencies
- */
 import ActivityList from '../';
 import { LogData } from '../types';
 

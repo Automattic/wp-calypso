@@ -44,9 +44,10 @@ const JetpackCheckoutSitelessThankYouCompleted: FC< Props > = ( { productSlug } 
 	return (
 		<Main wideLayout className="jetpack-checkout-siteless-thank-you-completed">
 			<PageViewTracker
+				options={ { useJetpackGoogleAnalytics: true } }
 				path="/checkout/jetpack/thank-you-completed/no-site/:product"
-				title="Checkout > Jetpack Siteless Thank You Completed"
 				properties={ { product_slug: productSlug } }
+				title="Checkout > Jetpack Siteless Thank You Completed"
 			/>
 			<Card className="jetpack-checkout-siteless-thank-you-completed__card">
 				<div className="jetpack-checkout-siteless-thank-you-completed__card-main">

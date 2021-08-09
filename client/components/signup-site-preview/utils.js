@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 // Detect IE 11 and below
 export function isIE() {
 	const ua = window.navigator.userAgent;

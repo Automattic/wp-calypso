@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { find, get, includes } from 'lodash';
 import { LANGUAGE_GROUPS, DEFAULT_LANGUAGE_GROUP } from './constants';
 

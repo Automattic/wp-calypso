@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import Spinner from 'calypso/components/spinner';
 
 export default class extends React.PureComponent {

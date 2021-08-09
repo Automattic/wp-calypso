@@ -50,7 +50,6 @@ class LayoutGridBlockComponent extends GutenbergBlockComponent {
 		// We need to click through the layers until the appender is clickable:
 		await driverHelper.clickWhenClickable( this.driver, blockLocator );
 		await driverHelper.clickWhenClickable( this.driver, columnLocator );
-		await driverHelper.clickWhenClickable( this.driver, addBlockButtonLocator );
 
 		const inserterSearchInputLocator = By.css( 'input.components-search-control__input' );
 

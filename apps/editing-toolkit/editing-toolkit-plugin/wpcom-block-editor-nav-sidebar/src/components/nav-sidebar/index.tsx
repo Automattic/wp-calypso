@@ -298,7 +298,7 @@ function useNavItems(): NavItemRecord {
 			getCurrentPostType,
 			getEditedPostAttribute,
 		} = select( 'core/editor' );
-		const statuses = select( 'core' ).getEntityRecords( 'root', 'status' );
+		const statuses = select( 'core' ).getEntityRecords( 'root', 'status', { context: 'edit' } );
 
 		if ( ! statuses ) {
 			return { current: [], drafts: [], recent: [] };

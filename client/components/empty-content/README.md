@@ -60,7 +60,7 @@ The component also supports a secondary action. This should be used sparingly.
 
 ### Example: Sites
 
-```jsx
+```js
 <EmptyContentComponent
 	title="You don't have any WordPress sites yet."
 	line="Would you like to start one?"

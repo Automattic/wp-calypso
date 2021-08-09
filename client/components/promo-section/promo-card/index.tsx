@@ -1,24 +1,14 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent, ReactElement } from 'react';
+import classNames from 'classnames';
 import { TranslateResult } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import React, { FunctionComponent, ReactElement } from 'react';
 import ActionPanel from 'calypso/components/action-panel';
+import ActionPanelBody from 'calypso/components/action-panel/body';
 import ActionPanelFigure from 'calypso/components/action-panel/figure';
 import ActionPanelTitle from 'calypso/components/action-panel/title';
-import ActionPanelBody from 'calypso/components/action-panel/body';
-import PromoCardCta from './cta';
-import classNames from 'classnames';
 import Badge from 'calypso/components/badge';
 import Gridicon from 'calypso/components/gridicon';
+import PromoCardCta from './cta';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export interface Image {

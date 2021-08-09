@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-
-/**
- * Internal dependencies
- */
 import LegendItem from 'calypso/components/legend-item';
 
 const NUM_SERIES = 3;
