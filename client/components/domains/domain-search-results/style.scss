@@ -54,10 +54,6 @@
 
 body.is-section-signup.is-white-signup {
 	.domain-search-results {
-		@include break-medium {
-			margin-left: 20px;
-		}
-
 		@include break-xlarge {
 			margin-left: 0;
 		}
