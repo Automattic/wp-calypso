@@ -1,15 +1,25 @@
 import Search from '@automattic/search';
 import { createHigherOrderComponent } from '@wordpress/compose';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import useTyper from 'calypso/landing/gutenboarding/hooks/use-typer';
+import { getAvailableTlds } from 'calypso/lib/domains';
 
 const withUseTyper = createHigherOrderComponent( ( SearchComponent ) => {
 	return ( props ) => {
-		const placeholder = useTyper( [ '.com', '.com.br', '.net', '.org' ], true, {
+		const [ tlds, setTlds ] = useState( [] );
+
+		useEffect( () => {
+			async function updateAvailableTlds() {
+				const availableTlds = await getAvailableTlds();
+				setTlds( availableTlds );
+			}
+			updateAvailableTlds();
+		}, [] );
+		const placeholder = useTyper( tlds, true, {
 			delayBetweenCharacters: 130,
 		} );
 
-		return <SearchComponent { ...props } placeholder={ 'mydomain' + placeholder } />;
+		return <SearchComponent { ...props } placeholder={ 'mydomain.' + placeholder } />;
 	};
 }, 'withUseTyper' );
 
