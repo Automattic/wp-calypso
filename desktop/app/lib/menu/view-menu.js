@@ -6,6 +6,7 @@ const debugMenu = require( './debug-menu' );
  * Module variables
  */
 const menuItems = [];
+const ZOOMFACTOR = 0.2;
 
 menuItems.push(
 	{
@@ -26,51 +27,98 @@ menuItems.push(
 		type: 'separator',
 	},
 	{
-		role: 'zoomIn',
+		label: 'Zoom In',
+		visible: true,
+		acceleratorWorksWhenHidden: true,
+		accelerator: 'CommandOrControl+Shift+=',
+		click: zoomIn,
 	},
 	{
 		// enable ZoomIn shortcut to work both with and without Shift
 		// the default accelerator added by Electron is CommandOrControl+Shift+=
-		role: 'zoomIn',
+		label: 'Zoom In',
 		visible: false,
 		acceleratorWorksWhenHidden: true,
 		accelerator: 'CommandOrControl+=',
+		click: zoomIn,
 	},
 	{
-		role: 'zoomOut',
+		label: 'Zoom Out',
+		visible: true,
+		acceleratorWorksWhenHidden: true,
+		accelerator: 'CommandOrControl+-',
+		click: zoomOut,
 	},
 	{
-		role: 'resetZoom',
+		label: 'Reset Zoom',
+		visible: true,
+		acceleratorWorksWhenHidden: true,
+		accelerator: 'CommandOrControl+0',
+		click: resetZoom,
 	},
 	// backup shortcuts for numeric keypad,
 	// see https://github.com/electron/electron/issues/5256#issuecomment-692068367
 	{
-		role: 'zoomIn',
+		label: 'Numberic Keypad: Zoom In',
 		visible: false,
 		acceleratorWorksWhenHidden: true,
 		accelerator: 'CommandOrControl+numadd',
+		click: zoomIn,
 	},
 	{
-		role: 'zoomOut',
+		label: 'Numeric Keypad: Zoom Out',
 		visible: false,
 		acceleratorWorksWhenHidden: true,
 		accelerator: 'CommandOrControl+numsub',
+		click: zoomOut,
 	},
 	{
-		role: 'resetZoom',
+		label: 'Numeric Keypad: Reset Zoom',
 		visible: false,
 		acceleratorWorksWhenHidden: true,
 		accelerator: 'CommandOrControl+num0',
+		click: resetZoom,
+	},
+	{
+		type: 'separator',
+	},
+	{
+		label: 'Reload',
+		accelerator: 'CommandOrControl+R',
+		visible: true,
+		click: function () {
+			const window = BrowserWindow.getFocusedWindow();
+			const view = window.getBrowserView();
+			view.webContents.reload();
+		},
+	},
+	{
+		type: 'separator',
+	},
+	{
+		label: 'Developer',
+		submenu: debugMenu,
 	}
 );
 
-if ( process.env.WP_DESKTOP_DEBUG ) {
-	menuItems.push(
-		{
-			type: 'separator',
-		},
-		...debugMenu
-	);
+function zoomIn() {
+	const window = BrowserWindow.getFocusedWindow();
+	const view = window.getBrowserView();
+	const zoom = view.webContents.getZoomLevel();
+	view.webContents.setZoomLevel( Math.min( zoom + ZOOMFACTOR, 3 ) );
+}
+
+function zoomOut() {
+	const window = BrowserWindow.getFocusedWindow();
+	const view = window.getBrowserView();
+	const zoom = view.webContents.getZoomLevel();
+	view.webContents.setZoomLevel( Math.max( zoom - ZOOMFACTOR, -1.0 ) );
+}
+
+function resetZoom() {
+	const window = BrowserWindow.getFocusedWindow();
+	const view = window.getBrowserView();
+	view.webContents.setZoomLevel( 0 );
 }
 
 module.exports = menuItems;
