@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import DotPager from 'calypso/components/dot-pager';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
@@ -69,19 +69,19 @@ const cardComponents = {
 };
 
 const Primary = ( { cards, trackCard } ) => {
-	const [ currentPage, setCurrentPage ] = useState( 0 );
-	const [ viewedCards, setViewedCards ] = useState( {} );
+	const viewedCards = useRef( new Set() );
 
-	useEffect( () => {
-		const currentCard = cards && cards[ currentPage ];
-		if ( ! viewedCards[ currentCard ] ) {
-			setViewedCards( {
-				...viewedCards,
-				[ currentCard ]: true,
-			} );
-			trackCard( currentCard );
+	const handlePageSelected = ( index ) => {
+		const selectedCard = cards && cards[ index ];
+		if ( viewedCards.current.has( selectedCard ) ) {
+			return;
 		}
-	}, [ currentPage, cards.length, trackCard ] );
+
+		viewedCards.current.add( selectedCard );
+		trackCard( selectedCard );
+	};
+
+	useEffect( () => handlePageSelected( 0 ) );
 
 	if ( ! cards || ! cards.length ) {
 		return null;
@@ -96,7 +96,7 @@ const Primary = ( { cards, trackCard } ) => {
 			} ) }
 			showControlLabels="true"
 			hasDynamicHeight
-			onSetCurrentPage={ setCurrentPage }
+			onPageSelected={ handlePageSelected }
 		>
 			{ cards.map(
 				( card, index ) =>
