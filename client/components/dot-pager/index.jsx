@@ -68,6 +68,7 @@ export const DotPager = ( {
 	hasDynamicHeight = false,
 	children,
 	className,
+	onPageSelected,
 	...props
 } ) => {
 	const [ currentPage, setCurrentPage ] = useState( 0 );
@@ -99,7 +100,10 @@ export const DotPager = ( {
 				showControlLabels={ showControlLabels }
 				currentPage={ currentPage }
 				numberOfPages={ numPages }
-				setCurrentPage={ setCurrentPage }
+				setCurrentPage={ ( index ) => {
+					onPageSelected && onPageSelected( index );
+					setCurrentPage( index );
+				} }
 			/>
 			<div className="dot-pager__pages" ref={ pagesRef } style={ pagesStyle }>
 				{ Children.map( children, ( child, index ) => (

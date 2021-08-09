@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import DotPager from 'calypso/components/dot-pager';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
@@ -68,12 +68,20 @@ const cardComponents = {
 	[ TASK_VERIFY_EMAIL ]: VerifyEmail,
 };
 
-const Primary = ( { cards, trackCards } ) => {
-	useEffect( () => {
-		if ( cards && cards.length ) {
-			trackCards( cards );
+const Primary = ( { cards, trackCard } ) => {
+	const viewedCards = useRef( new Set() );
+
+	const handlePageSelected = ( index ) => {
+		const selectedCard = cards && cards[ index ];
+		if ( viewedCards.current.has( selectedCard ) ) {
+			return;
 		}
-	}, [ cards, trackCards ] );
+
+		viewedCards.current.add( selectedCard );
+		trackCard( selectedCard );
+	};
+
+	useEffect( () => handlePageSelected( 0 ) );
 
 	if ( ! cards || ! cards.length ) {
 		return null;
@@ -88,6 +96,7 @@ const Primary = ( { cards, trackCards } ) => {
 			} ) }
 			showControlLabels="true"
 			hasDynamicHeight
+			onPageSelected={ handlePageSelected }
 		>
 			{ cards.map(
 				( card, index ) =>
@@ -102,17 +111,13 @@ const Primary = ( { cards, trackCards } ) => {
 	);
 };
 
-const trackCardImpressions = ( cards ) => {
-	const analyticsEvents = cards.reduce( ( events, card ) => {
-		return [
-			...events,
-			recordTracksEvent( 'calypso_customer_home_card_impression', { card } ),
-			bumpStat( 'calypso_customer_home_card_impression', card ),
-		];
-	}, [] );
-	return composeAnalytics( ...analyticsEvents );
+const trackCardImpression = ( card ) => {
+	return composeAnalytics(
+		recordTracksEvent( 'calypso_customer_home_card_impression', { card } ),
+		bumpStat( 'calypso_customer_home_card_impression', card )
+	);
 };
 
 export default withPerformanceTrackerStop(
-	connect( null, { trackCards: trackCardImpressions } )( Primary )
+	connect( null, { trackCard: trackCardImpression } )( Primary )
 );
