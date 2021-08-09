@@ -2,11 +2,16 @@
  * External dependencies
  */
 import React from 'react';
-import { useSelect, useDispatch } from '@automattic/composite-checkout';
+import { useSelect } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import type { DomainContactDetails as DomainContactDetailsData } from '@automattic/shopping-cart';
-import type { DomainContactDetailsErrors, ManagedValue } from '@automattic/wpcom-checkout';
+import type {
+	DomainContactDetailsErrors,
+	ManagedContactDetails,
+	ManagedContactDetailsRequiredMask,
+	ManagedValue,
+} from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
@@ -25,6 +30,7 @@ export default function DomainContactDetails( {
 	contactDetails,
 	contactDetailsErrors,
 	updateDomainContactFields,
+	updateRequiredDomainFields,
 	shouldShowContactDetailsValidationErrors,
 	isDisabled,
 	isLoggedOutCart,
@@ -34,6 +40,10 @@ export default function DomainContactDetails( {
 	contactDetails: DomainContactDetailsData;
 	contactDetailsErrors: DomainContactDetailsErrors;
 	updateDomainContactFields: ( details: DomainContactDetailsData ) => void;
+	updateRequiredDomainFields?: (
+		details: ManagedContactDetails,
+		requiredMask: ManagedContactDetailsRequiredMask
+	) => ManagedContactDetails;
 	shouldShowContactDetailsValidationErrors: boolean;
 	isDisabled: boolean;
 	isLoggedOutCart: boolean;
@@ -48,7 +58,6 @@ export default function DomainContactDetails( {
 	const getIsFieldDisabled = () => isDisabled;
 	const needsAlternateEmailForGSuite = needsOnlyGoogleAppsDetails;
 	const tlds = getAllTopLevelTlds( domainNames );
-	const { updateRequiredDomainFields } = useDispatch( 'wpcom' );
 	const contactInfo = useSelect< Record< string, ManagedValue > >( ( select ) =>
 		select( 'wpcom' ).getContactInfo()
 	);
