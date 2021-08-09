@@ -9,6 +9,7 @@ import React from 'react';
 import SignupForm from 'calypso/blocks/signup-form';
 import { renderInviteAcceptP2Logo } from './invite-accept-logo-line';
 import { renderInviteAcceptFormHeader } from './invite-accept-form-header';
+import { renderInviteAcceptFooter } from './invite-accept-footer';
 
 export function renderInviteAcceptForP2( props ) {
 	return (
@@ -34,6 +35,7 @@ export function renderInviteAcceptForP2( props ) {
 				/>
 				{ props.userData && props.loginUser() }
 			</div>
+			{ renderInviteAcceptFooter( { translate: props.translate } ) }
 		</div>
 	);
 }

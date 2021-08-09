@@ -2,12 +2,14 @@
 	position: fixed;
 	top: 0;
 	left: 0;
-	height: 100vh;
+	bottom: 0;
 	width: 100vw;
 	z-index: 200;
 	background: #fff;
 	padding-top: 2em;
 	font-family: var( --p2-font-inter );
+	overflow-y: scroll;
+	overflow-x: hidden;
 
 	.invite-accept__form {
 		max-width: unset;
@@ -21,7 +23,7 @@
 
 	.invite-accept-logo-line__learn-more a {
 		color: var( --p2-color-link );
-		font-size: 0.875rem;
+		font-size: var( --p2-font-size-form-xs );
 
 		&:hover {
 			color: var( --p2-color-link-dark );
@@ -48,7 +50,7 @@
 	}
 
 	.invite-accept-form-header__join-site-title {
-		font-size: 1.5rem;
+		font-size: var( --p2-font-size-form-xl );
 		font-weight: 700;
 		margin: 1em 0;
 		text-align: center;
@@ -57,7 +59,7 @@
 	.invite-accept-form-header__join-site-text {
 		text-align: center;
 		max-width: 400px;
-		font-size: 0.875rem;
+		font-size: var( --p2-font-size-form-s );
 	}
 
 	button {
@@ -90,6 +92,23 @@
 					background: url( 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggb3BhY2l0eT0iMC4yIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTEyIDIxLjYzNjRDMTcuMzIyIDIxLjYzNjQgMjEuNjM2MyAxNy4zMjIgMjEuNjM2MyAxMkMyMS42MzYzIDYuNjc4IDE3LjMyMiAyLjM2MzY1IDEyIDIuMzYzNjVDNi42Nzc5MyAyLjM2MzY1IDIuMzYzNTkgNi42NzggMi4zNjM1OSAxMkMyLjM2MzU5IDE3LjMyMiA2LjY3NzkzIDIxLjYzNjQgMTIgMjEuNjM2NFpNMTIgMjMuNjM2NEMxOC40MjY1IDIzLjYzNjQgMjMuNjM2MyAxOC40MjY2IDIzLjYzNjMgMTJDMjMuNjM2MyA1LjU3MzQzIDE4LjQyNjUgMC4zNjM2NDcgMTIgMC4zNjM2NDdDNS41NzMzNiAwLjM2MzY0NyAwLjM2MzU4NiA1LjU3MzQzIDAuMzYzNTg2IDEyQzAuMzYzNTg2IDE4LjQyNjYgNS41NzMzNiAyMy42MzY0IDEyIDIzLjYzNjRaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMi4zNjM2NUM2LjY3NzkzIDIuMzYzNjUgMi4zNjM1OSA2LjY3OCAyLjM2MzU5IDEySDAuMzYzNTg2QzAuMzYzNTg2IDUuNTczNDMgNS41NzMzNiAwLjM2MzY0NyAxMiAwLjM2MzY0N1YyLjM2MzY1WiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+' ) no-repeat 0 0;
 				}
 			}
+		}
+	}
+
+	.invite-accept-footer {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin: 2rem 0;
+
+		.invite-accept-footer__w-logo {
+			width: 20px;
+			height: 20px;
+			margin-right: 8px;
+		}
+
+		.invite-accept-footer__footer-text {
+			font-size: var( --p2-font-size-form-xs );
 		}
 	}
 

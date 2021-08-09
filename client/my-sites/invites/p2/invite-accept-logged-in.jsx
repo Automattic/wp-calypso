@@ -12,6 +12,7 @@ import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import { renderInviteAcceptP2Logo } from './invite-accept-logo-line';
 import { renderInviteAcceptFormHeader } from './invite-accept-form-header';
+import { renderInviteAcceptFooter } from './invite-accept-footer';
 
 /**
  * Style dependencies
@@ -58,6 +59,7 @@ export function renderInviteAcceptForP2( props ) {
 					</Button>
 				</div>
 			</div>
+			{ renderInviteAcceptFooter( { translate: props.translate } ) }
 		</div>
 	);
 }
