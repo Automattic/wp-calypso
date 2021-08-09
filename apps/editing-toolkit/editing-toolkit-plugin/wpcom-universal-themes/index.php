@@ -87,8 +87,14 @@ function unload_core_fse() {
 	remove_action( 'admin_menu', 'gutenberg_remove_legacy_pages' );
 	remove_action( 'admin_bar_menu', 'gutenberg_adminbar_items', 50 );
 	remove_filter( 'menu_order', 'gutenberg_menu_order' );
-	add_action( 'init', __NAMESPACE__ . '\hide_template_cpts', 11 );
-	add_action( 'restapi_theme_init', __NAMESPACE__ . '\hide_template_cpts', 11 );
+	if ( defined( 'REST_API_REQUEST' ) && true === REST_API_REQUEST ) {
+		// Do not hook to init during the REST API requests, as it causes PHP warnings
+		// while loading the alloptions (unable to access wp_0_ prefixed tables).
+		// Use the restapi_theme_init hook instead.
+		add_action( 'restapi_theme_init', __NAMESPACE__ . '\hide_template_cpts', 11 );
+	} else {
+		add_action( 'init', __NAMESPACE__ . '\hide_template_cpts', 11 );
+	}
 	add_filter( 'block_editor_settings_all', __NAMESPACE__ . '\hide_fse_blocks' );
 }
 
