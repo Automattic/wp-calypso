@@ -252,6 +252,7 @@ class ActivityLogItem extends Component {
 		}
 
 		const showCredentialsButton = disableRestore && missingRewindCredentials;
+		const isCompact = showCredentialsButton;
 
 		const classes = classNames( 'activity-log-item__action', {
 			'activity-log-item__action-credentials': showCredentialsButton,
@@ -260,13 +261,14 @@ class ActivityLogItem extends Component {
 		return (
 			<div className={ classes }>
 				{ ! showCredentialsButton && (
-					<Button disabled={ disableRestore } onClick={ createRewind }>
+					<Button compact={ isCompact } disabled={ disableRestore } onClick={ createRewind }>
 						<Gridicon icon="history" size={ 18 } /> { translate( 'Restore' ) }
 					</Button>
 				) }
 
 				{ disableRestore && missingRewindCredentials && (
 					<Button
+						compact={ isCompact }
 						href={
 							canAutoconfigure
 								? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
@@ -279,7 +281,7 @@ class ActivityLogItem extends Component {
 					</Button>
 				) }
 
-				<Button disabled={ disableBackup } onClick={ createBackup }>
+				<Button compact={ isCompact } disabled={ disableBackup } onClick={ createBackup }>
 					<Gridicon icon="cloud-download" size={ 18 } /> { translate( 'Download' ) }
 				</Button>
 			</div>
