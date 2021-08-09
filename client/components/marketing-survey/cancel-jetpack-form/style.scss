@@ -59,4 +59,16 @@
 			margin-left: auto;
 		}
 	}
+
+	&__card-content {
+		display: flex;
+		align-items: center;
+		width: 100%;
+	}
+}
+
+input[type='text'].form-text-input.jetpack-cancellation-survey__choice-item-text-input {
+	border: none;
+	padding: 0;
+	margin-left: 1rem;
 }
