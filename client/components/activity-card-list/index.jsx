@@ -58,9 +58,7 @@ class ActivityCardList extends Component {
 		let logsAdded = 0;
 
 		for ( const log of logs ) {
-			const activityDateMoment = applySiteOffset
-				? applySiteOffset( moment( log.activityDate ) )
-				: moment( log.activityDate );
+			const activityDateMoment = ( applySiteOffset ?? moment )( log.activityDate );
 
 			if ( logsAdded >= pageSize ) {
 				if ( lastDate && lastDate.isSame( activityDateMoment, 'day' ) ) {
@@ -82,9 +80,9 @@ class ActivityCardList extends Component {
 	}
 
 	renderLogs( pageLogs ) {
-		const { applySiteOffset, showDateSeparators, translate, userLocale } = this.props;
+		const { applySiteOffset, moment, showDateSeparators, translate, userLocale } = this.props;
 
-		const today = applySiteOffset ? applySiteOffset() : null;
+		const today = ( applySiteOffset ?? moment )();
 
 		const getPrimaryCardClassName = ( hasMore, dateLogsLength ) =>
 			hasMore && dateLogsLength === 1
@@ -126,6 +124,7 @@ class ActivityCardList extends Component {
 	renderData() {
 		const {
 			applySiteOffset,
+			moment,
 			retentionPoliciesEnabled,
 			retentionDays,
 			filter,
@@ -138,11 +137,14 @@ class ActivityCardList extends Component {
 		} = this.props;
 
 		const retentionLimitCutoffDate = retentionPoliciesEnabled
-			? applySiteOffset().subtract( retentionDays, 'days' )
+			? ( applySiteOffset ?? moment )().subtract( retentionDays, 'days' )
 			: null;
 		const logsWithRetention = retentionPoliciesEnabled
 			? logs.filter( ( log ) =>
-					applySiteOffset( log.activityDate ).isSameOrAfter( retentionLimitCutoffDate, 'day' )
+					( applySiteOffset ?? moment )( log.activityDate ).isSameOrAfter(
+						retentionLimitCutoffDate,
+						'day'
+					)
 			  )
 			: logs;
 
