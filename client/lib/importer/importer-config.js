@@ -40,8 +40,8 @@ function getConfig( { siteTitle = '' } = {} ) {
 				components: {
 					supportLink: (
 						<InlineSupportLink
-							supportPostId={ 67084 }
-							supportLink="https://wordpress.com/support/coming-from-self-hosted/"
+							supportPostId={ 102755 }
+							supportLink="https://wordpress.com/support/moving-from-self-hosted-wordpress-to-wordpress-com/"
 							showIcon={ false }
 						>
 							{ translate( 'Need help exporting your content?' ) }
