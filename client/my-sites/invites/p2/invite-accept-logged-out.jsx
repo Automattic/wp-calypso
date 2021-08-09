@@ -20,11 +20,11 @@ export function renderInviteAcceptForP2( props ) {
 				<SignupForm
 					redirectToAfterLoginUrl={ window.location.href }
 					disabled={ props.isSubmitting }
-					formHeader={ '' }
+					formHeader=""
 					submitting={ props.isSubmitting }
 					save={ props.save }
 					submitForm={ props.submitForm }
-					submitButtonText={ props.isSubmitting ? '' : props.submitButtonText }
+					submitButtonText={ props.isSubmitting ? '' : props.translate( 'Sign up and join' ) }
 					footerLink={ props.footerLink }
 					email={ props.invite.sentTo || '' }
 					suggestedUsername=""
