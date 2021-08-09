@@ -14,6 +14,7 @@ import { CompactCard } from '@automattic/components';
 import AddDomainButton from 'calypso/my-sites/domains/domain-management/list/add-domain-button';
 import { ListAllActions } from 'calypso/my-sites/domains/domain-management/list/utils';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import SectionHeader from 'calypso/components/section-header';
 
 /**
  * Style dependencies
@@ -58,24 +59,22 @@ class ListHeader extends React.PureComponent {
 
 	renderDefaultHeaderContent() {
 		return (
-			<>
-				<span className="list__domains-header">
-					{ this.props.translate( 'Your site domains' ) }
-				</span>
+			<SectionHeader label={ this.props.translate( 'Your site domains' ) }>
 				{ ! this.props.isManagingAllSites && this.renderAddDomainToThisSiteButton() }
-			</>
+			</SectionHeader>
 		);
 	}
 
-	renderHeaderContent() {
-		const { isChecked, disabled, isBusy, translate } = this.props;
+	render() {
+		const { isChecked, disabled, isBusy, headerClasses, translate } = this.props;
 
 		if (
 			ListAllActions.editContactInfo === this.props?.action ||
 			ListAllActions.editContactEmail === this.props?.action
 		) {
+			const listHeaderClasses = classNames( 'list-header', headerClasses );
 			return (
-				<>
+				<CompactCard className={ listHeaderClasses }>
 					<FormCheckbox
 						className="list__checkbox"
 						onChange={ this.onToggle }
@@ -86,21 +85,11 @@ class ListHeader extends React.PureComponent {
 					<strong>
 						{ translate( 'Update the selected domains with the contact information above.' ) }
 					</strong>
-				</>
+				</CompactCard>
 			);
 		}
 
 		return this.renderDefaultHeaderContent();
-	}
-
-	render() {
-		const { headerClasses } = this.props;
-
-		const listHeaderClasses = classNames( 'list-header', headerClasses );
-
-		return (
-			<CompactCard className={ listHeaderClasses }>{ this.renderHeaderContent() }</CompactCard>
-		);
 	}
 }
 
