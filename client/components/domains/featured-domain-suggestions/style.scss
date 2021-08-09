@@ -64,7 +64,7 @@
 		display: flex;
 		flex-basis: auto;
 		flex-direction: column;
-		justify-content: flex-start;
+		justify-content: center;
 		flex-grow: 1;
 		margin-top: 0;
 	}
@@ -78,10 +78,6 @@
 		width: 100%;
 	}
 
-	.domain-registration-suggestion__title-wrapper {
-		margin-bottom: 8px;
-	}
-
 	.domain-registration-suggestion__title {
 		font-size: $font-title-small;
 		font-weight: 400;
@@ -90,7 +86,7 @@
 		width: auto;
 
 		@include break-mobile {
-			margin-bottom: 0.125em;
+			margin-bottom: 0;
 		}
 
 		.domain-registration-suggestion__domain-title {
@@ -137,6 +133,7 @@
 	}
 
 	.domain-registration-suggestion__match-reasons {
+		margin-top: 8px;
 		order: 3;
 	}
 
