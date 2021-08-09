@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { useSelect } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import type { DomainContactDetails as DomainContactDetailsData } from '@automattic/shopping-cart';
@@ -10,7 +9,6 @@ import type {
 	DomainContactDetailsErrors,
 	ManagedContactDetails,
 	ManagedContactDetailsRequiredMask,
-	ManagedValue,
 } from '@automattic/wpcom-checkout';
 
 /**
@@ -31,6 +29,7 @@ export default function DomainContactDetails( {
 	contactDetailsErrors,
 	updateDomainContactFields,
 	updateRequiredDomainFields,
+	getIsFieldRequired,
 	shouldShowContactDetailsValidationErrors,
 	isDisabled,
 	isLoggedOutCart,
@@ -44,6 +43,9 @@ export default function DomainContactDetails( {
 		details: ManagedContactDetails,
 		requiredMask: ManagedContactDetailsRequiredMask
 	) => ManagedContactDetails;
+	getIsFieldRequired?: (
+		field: Exclude< keyof ManagedContactDetails, 'tldExtraFields' >
+	) => boolean;
 	shouldShowContactDetailsValidationErrors: boolean;
 	isDisabled: boolean;
 	isLoggedOutCart: boolean;
@@ -58,10 +60,6 @@ export default function DomainContactDetails( {
 	const getIsFieldDisabled = () => isDisabled;
 	const needsAlternateEmailForGSuite = needsOnlyGoogleAppsDetails;
 	const tlds = getAllTopLevelTlds( domainNames );
-	const contactInfo = useSelect< Record< string, ManagedValue > >( ( select ) =>
-		select( 'wpcom' ).getContactInfo()
-	);
-	const getIsFieldRequired = ( field: string ) => contactInfo[ field ].isRequired;
 
 	return (
 		<React.Fragment>

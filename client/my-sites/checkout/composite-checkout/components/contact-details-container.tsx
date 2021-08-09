@@ -77,6 +77,9 @@ export default function ContactDetailsContainer( {
 		} );
 	};
 
+	const getIsFieldRequired = ( field: Exclude< keyof ManagedContactDetails, 'tldExtraFields' > ) =>
+		contactInfo[ field ]?.isRequired ?? false;
+
 	switch ( contactDetailsType ) {
 		case 'domain':
 			return (
@@ -92,6 +95,7 @@ export default function ContactDetailsContainer( {
 						contactDetailsErrors={ contactDetailsErrors }
 						updateDomainContactFields={ updateDomainContactRelatedData }
 						updateRequiredDomainFields={ updateRequiredDomainFields }
+						getIsFieldRequired={ getIsFieldRequired }
 						shouldShowContactDetailsValidationErrors={ shouldShowContactDetailsValidationErrors }
 						isDisabled={ isDisabled }
 						isLoggedOutCart={ isLoggedOutCart }
