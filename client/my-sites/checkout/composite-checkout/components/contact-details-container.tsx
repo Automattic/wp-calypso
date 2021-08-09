@@ -91,6 +91,7 @@ export default function ContactDetailsContainer( {
 						contactDetails={ contactDetails }
 						contactDetailsErrors={ contactDetailsErrors }
 						updateDomainContactFields={ updateDomainContactRelatedData }
+						updateRequiredDomainFields={ updateRequiredDomainFields }
 						shouldShowContactDetailsValidationErrors={ shouldShowContactDetailsValidationErrors }
 						isDisabled={ isDisabled }
 						isLoggedOutCart={ isLoggedOutCart }
