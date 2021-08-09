@@ -132,21 +132,23 @@ class DomainProductPrice extends React.Component {
 	renderSalePrice() {
 		const { price, salePrice, translate } = this.props;
 
-		const className = classnames( 'domain-product-price', 'is-free-domain', {
+		const className = classnames( 'domain-product-price', 'is-free-domain', 'is-sale-domain', {
 			'domain-product-price__domain-step-signup-flow': this.props.showStrikedOutPrice,
 		} );
 
 		return (
 			<div className={ className }>
 				<div className="domain-product-price__sale-price">
-					{ translate( '%(salePrice)s for the first year', {
+					{ translate( '%(salePrice)s {{small}}for the first year{{/small}}', {
 						args: { salePrice },
+						components: { small: <small /> },
 					} ) }
 				</div>
 				<div className="domain-product-price__renewal-price">
-					{ translate( 'Renews at: %(cost)s {{small}}/year{{/small}}', {
+					{ translate( '%(cost)s {{small}}/year{{/small}}', {
 						args: { cost: price },
 						components: { small: <small /> },
+						comment: '%(cost)s is the annual renewal price of a domain currently on sale',
 					} ) }
 				</div>
 			</div>

@@ -59,6 +59,10 @@
 	.domain-product-price__sale-price {
 		color: var( --studio-orange-50 );
 		font-weight: 600;
+		small {
+			color: var( --studio-orange-50 );
+			font-size: $font-body-small;
+		}
 	}
 
 	&.no-price .domain-product-price__free-text,
@@ -71,10 +75,11 @@
 	.domain-product-price__free-price {
 		color: var( --studio-green-60 );
 		font-weight: 500; /* stylelint-disable-line scales/font-weights */
+		font-size: $font-body-small;
 	}
 
 	.domain-product-price__price {
-		font-weight: 500; /* stylelint-disable-line scales/font-weights */
+		font-weight: 400;
 
 		small {
 			font-size: $font-body-small;
@@ -95,6 +100,10 @@
 		.domain-product-price__renewal-price {
 			font-size: $font-body-small;
 			color: var( --color-text-subtle );
+		}
+
+		.domain-product-price__renewal-price {
+			text-decoration: line-through;
 		}
 
 		@include breakpoint-deprecated( '>660px' ) {

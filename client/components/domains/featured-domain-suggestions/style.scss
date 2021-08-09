@@ -117,13 +117,6 @@
 			align-items: flex-start;
 			margin-top: 12px;
 		}
-
-		&.is-free-domain,
-		&.is-sale-domain {
-			small {
-				font-size: 0.9em; /* stylelint-disable-line */
-			}
-		}
 	}
 
 	.domain-registration-suggestion__badges {
