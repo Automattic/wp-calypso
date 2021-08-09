@@ -1,3 +1,7 @@
+@import url( 'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap' );
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .is-p2.invite-accept {
 	position: fixed;
 	top: 0;
@@ -6,8 +10,9 @@
 	width: 100vw;
 	z-index: 200;
 	background: #fff;
-	padding-top: 2em;
+	color: var( --p2-color-text );
 	font-family: var( --p2-font-inter );
+	letter-spacing: -0.01em;
 	overflow-y: scroll;
 	overflow-x: hidden;
 
@@ -21,12 +26,19 @@
 
 	.invite-accept__form {
 		max-width: unset;
-		padding: 0 2em;
+		padding: 2rem 2rem 0;
+		height: calc( 100% - 2rem );
+
+		> div {
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+		}
 	}
 
 	.invite-accept-logo-line {
 		display: flex;
-		justify-content: space-between;
+		justify-content: flex-end;
 	}
 
 	.invite-accept-logo-line__learn-more a {
@@ -45,47 +57,64 @@
 	}
 
 	.invite-accept-form-header__site-icon {
-		width: 60px;
-		height: 60px;
-		font-size: 1.5rem;
-		background-color: var( --p2-color-link );
-		color: var( --p2-color-text-white );
+		width: 56px;
+		height: 56px;
+		background-color: var( --p2-color-text );
 		border-radius: 2px;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		font-weight: 600;
+		margin-bottom: 2rem;
+		background: url( 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTYiIGhlaWdodD0iNTYiIHZpZXdCb3g9IjAgMCA1NiA1NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTAgMS41QzAgMC42NzE1NzQgMC42NzE1NzMgMCAxLjUgMEg1NC41QzU1LjMyODQgMCA1NiAwLjY3MTU3MyA1NiAxLjVWNTQuNUM1NiA1NS4zMjg0IDU1LjMyODQgNTYgNTQuNSA1NkgxLjVDMC42NzE1NzQgNTYgMCA1NS4zMjg0IDAgNTQuNVYxLjVaIiBmaWxsPSIjMDAxMDFDIi8+CjxwYXRoIGQ9Ik0zOS42NjY4IDE0SDE2LjMzMzVWMjhIMzkuNjY2OFYxNFoiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik0zMC4zMzM1IDMyLjY2NjdIMTYuMzMzNVY0MkgzMC4zMzM1VjMyLjY2NjdaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4=' ) no-repeat 0 0;
+
+		span {
+			display: none;
+		}
 	}
 
 	.invite-accept-form-header__join-site-title {
 		font-size: var( --p2-font-size-form-xl );
-		font-weight: 700;
-		margin: 1em 0;
+		font-weight: 900; /* stylelint-disable-line */
+		margin: 0 0 1.5rem;
+		letter-spacing: -0.02em;
+		line-height: 1.35;
 		text-align: center;
+
+		@include break-mobile {
+			font-size: var( --p2-font-size-form-xxl );
+		}
 	}
 
 	.invite-accept-form-header__join-site-text {
 		text-align: center;
-		max-width: 400px;
 		font-size: var( --p2-font-size-form-s );
+		letter-spacing: -0.01em;
+		line-height: 1.8;
+		margin-bottom: 2.5rem;
+		max-width: 400px;
 	}
 
 	button {
-		border-radius: 20px; /* stylelint-disable-line */
-		margin: 10px 0;
+		border-radius: 50px; /* stylelint-disable-line */
+		margin: 0 0 12px;
 		width: 100%;
-		padding: 12px 0;
 		display: flex;
 		justify-content: center;
+		font-size: var( --p2-font-size-form-s );
+		background-color: var( --p2-color-button );
+		color: var( --p2-color-text );
+		border: none;
+		padding: 16px 24px;
+		line-height: 1.3;
+		transition: 0.2s ease-in-out;
+
+		&:hover {
+			background-color: var( --p2-color-button-dark );
+		}
 
 		&.is-primary {
 			color: #fff;
 			background-color: var( --p2-color-link );
-			border-color: var( --p2-color-link );
 
 			&:hover {
 				background-color: var( --p2-color-link-dark );
-				border-color: var( --p2-color-link-dark );
 			}
 
 			&.is-busy {
@@ -107,7 +136,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		margin: 2rem 0;
+		padding: 2rem 0;
 
 		.invite-accept-footer__w-logo {
 			width: 20px;
@@ -120,43 +149,140 @@
 		}
 	}
 
+	.signup-form {
+		max-width: 360px;
+		width: 100%;
+		margin: 0 1.5rem 2rem;
+	}
+
+	.form-label {
+		font-size: var( --p2-font-size-form-xs );
+		font-weight: 600;
+	}
+
+	input[type='text'].form-text-input,
+	input[type='email'].form-text-input,
+	input[type='password'].form-text-input {
+		background: #fff;
+		color: var( --p2-color-text );
+		font-family: var( --p2-font-inter );
+		font-size: var( --p2-font-size-form-s );
+		line-height: 1.5;
+		padding: 14px 16px;
+		border-color: var( --p2-color-border );
+		border-radius: 2px;
+
+		&:hover,
+		&:focus {
+			border-color: var( --p2-color-link );
+		}
+
+		&:focus,
+		&:focus:hover {
+			box-shadow: 0 0 0 1px var( --p2-color-link );
+		}
+
+		&.is-error {
+			border-color: var( --p2-color-error );
+
+			&:focus,
+			&:focus:hover {
+				box-shadow: 0 0 0 1px var( --p2-color-error );
+			}
+		}
+	}
+
+	.form-input-validation {
+		font-size: var( --p2-font-size-form-xs );
+		line-height: 1.5;
+		padding: 8px 0 0 2px;
+		margin-bottom: 1rem;
+
+		svg {
+			display: none;
+		}
+
+		&.is-error {
+			color: var( --p2-color-error );
+		}
+	}
+
+	.form-password-input .form-password-input__toggle-visibility {
+		top: 14px;
+		right: 14px;
+	}
+
 	// invite-accept-logged-in
+	.invite-accept-logged-in > div {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+	}
 	.invite-accept-logged-in__form-container {
 		max-width: 500px;
 		margin: 3em auto 0;
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
 	}
 
 	.invite-accept-logged-in__join-as {
-		margin: 1.2em 0;
+		margin: 0 0 2.5rem;
 
 		.gravatar {
 			width: 48px;
 			height: 48px;
+			margin-bottom: 0.5rem;
 		}
+	}
+
+	.invite-accept-logged-in__join-as-text {
+		color: var( --p2-color-text );
+		font-size: var( --p2-font-size-form-s );
+	}
+
+	.invite-accept-logged-in__join-as-username {
+		font-weight: 600;
 	}
 
 	.invite-accept-logged-in__buttons {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		max-width: 300px;
+		max-width: 360px;
+		width: 100%;
 		margin: 0 auto;
 	}
 
 	// invite-accept-logged-out
 	.invite-accept-logged-out__form-container {
 		max-width: 500px;
-		margin: 1em auto 0;
-	}
-
-	.signup-form {
-		max-width: 350px;
-		margin: 2rem auto;
+		margin: 2rem auto 0;
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
 	}
 
 	.logged-out-form {
 		padding: unset;
 		box-shadow: none;
+		margin: 0;
+		max-width: none;
+
+		> form > div {
+			margin-bottom: 2.5rem;
+		}
+	}
+
+	.logged-out-form__footer {
+		margin: 0;
+		padding: 0;
+	}
+
+	.signup-form__terms-of-service-link {
+		margin-bottom: 1rem;
 	}
 
 	.invite-accept-logged-out__footer-link {
@@ -168,6 +294,11 @@
 
 	.logged-out-form__links::before {
 		display: none;
+	}
+
+	.logged-out-form__link-item {
+		padding-top: 4px;
+		padding-bottom: 4px;
 	}
 }
 
