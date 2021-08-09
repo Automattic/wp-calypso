@@ -59,6 +59,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import PromoCard from 'calypso/components/promo-section/promo-card';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import Gridicon from 'calypso/components/gridicon';
@@ -600,6 +601,8 @@ class EmailProvidersComparison extends React.Component {
 
 		return (
 			<Main wideLayout>
+				<QueryProductsList />
+
 				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
 				<QueryEmailForwards domainName={ selectedDomainName } />
