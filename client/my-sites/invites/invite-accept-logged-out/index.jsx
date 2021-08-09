@@ -161,7 +161,7 @@ class InviteAcceptLoggedOut extends React.Component {
 		if ( this.props.invite?.site?.is_wpforteams_site ) {
 			return renderInviteAcceptForP2( {
 				...this.props,
-				footerLink: this.renderFooterLink(),
+				onClickSignInLink: this.clickSignInLink,
 				isSubmitting: this.state.submitting,
 				save: this.save,
 				submitForm: this.submitForm,

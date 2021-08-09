@@ -11,6 +11,14 @@
 	overflow-y: scroll;
 	overflow-x: hidden;
 
+	a {
+		color: var( --p2-color-link );
+
+		&:hover {
+			color: var( --p2-color-link-dark );
+		}
+	}
+
 	.invite-accept__form {
 		max-width: unset;
 		padding: 0 2em;
@@ -125,20 +133,6 @@
 			width: 48px;
 			height: 48px;
 		}
-
-		.logged-out-form__links {
-			&::before {
-				display: none;
-			}
-
-			a.logged-out-form__link-item {
-				color: var( --p2-color-link );
-
-				&:hover {
-					color: var( --p2-color-link-dark );
-				}
-			}
-		}
 	}
 
 	.invite-accept-logged-in__buttons {
@@ -163,6 +157,17 @@
 	.logged-out-form {
 		padding: unset;
 		box-shadow: none;
+	}
+
+	.invite-accept-logged-out__footer-link {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		font-size: var( --p2-font-size-form-xs );
+	}
+
+	.logged-out-form__links::before {
+		display: none;
 	}
 }
 
