@@ -115,7 +115,7 @@ async function run() {
 		const requiredENVs = [ 'E2EGUTENBERGUSER', 'E2EPASSWORD' ];
 		if ( process.env.TEAMCITY_PROJECT_NAME !== undefined ) {
 			// Override base URL in TeamCity PRs.
-			requiredENVs.push( cleanBaseURL( 'WP_DESKTOP_BASE_URL' ) );
+			requiredENVs.push( 'WP_DESKTOP_BASE_URL' );
 		}
 		const missingENVs = requiredENVs.filter(
 			( name ) => ! process.env[ name ] || process.env[ name ] === ''
@@ -135,6 +135,9 @@ async function run() {
 			WP_DEBUG_LOG: appLog.path,
 			DEBUG: true,
 			...parentEnv,
+			...( process.env.WP_DESKTOP_BASE_URL !== undefined && {
+				WP_DESKTOP_BASE_URL: cleanBaseURL( process.env.WP_DESKTOP_BASE_URL ),
+			} ),
 		} );
 
 		await delay( 5000 );
