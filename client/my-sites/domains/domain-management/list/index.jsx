@@ -399,13 +399,15 @@ export class List extends React.Component {
 
 		return [
 			<QuerySitePurchases key="query-purchases" siteId={ selectedSite.ID } />,
-			<ListHeader
-				key="domains-header"
-				headerClasses={ {
-					'domain-item__enable-selection': this.state.changePrimaryDomainModeEnabled,
-				} }
-				isManagingAllSites={ false }
-			/>,
+			domains.length > 0 && (
+				<ListHeader
+					key="domains-header"
+					headerClasses={ {
+						'domain-item__enable-selection': this.state.changePrimaryDomainModeEnabled,
+					} }
+					isManagingAllSites={ false }
+				/>
+			),
 			...domainListItems,
 			manageAllDomainsLink,
 		];
