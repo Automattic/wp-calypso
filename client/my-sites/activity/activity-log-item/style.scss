@@ -468,6 +468,9 @@
 	}
 	.activity-log-item__description-actions {
 		padding-top: 8px;
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
 	}
 
 	@include break-wide {
@@ -478,6 +481,7 @@
 		}
 		.activity-log-item__description-actions {
 			padding-top: 0;
+			justify-content: flex-end;
 		}
 	}
 }
