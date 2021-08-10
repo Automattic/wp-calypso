@@ -20,6 +20,10 @@ import FormInputValidation from 'calypso/components/forms/form-input-validation'
 import FormButton from 'calypso/components/forms/form-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import page from 'page';
+import { domainUseYourDomain } from 'calypso/my-sites/domains/paths';
+import { checkDomainAvailability } from 'calypso/lib/domains';
+import { domainAvailability } from 'calypso/lib/domains/constants';
+import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
 
 /**
  * Style dependencies
@@ -30,10 +34,12 @@ import './style.scss';
  * Image dependencies
  */
 import domainIllustration from 'calypso/assets/images/illustrations/domain.svg';
-import { domainUseYourDomain } from 'calypso/my-sites/domains/paths';
+
+// function isMappableOrTransferrabl
 
 function UseMyDomain( { goBack, initialQuery, selectedSite } ) {
 	const [ domainName, setDomainName ] = useState( initialQuery ?? '' );
+	const [ isFetchingAvailability, setIsFetchingAvailability ] = useState( false );
 	const [ domainNameValidationError, setDomainNameValidationError ] = useState();
 	const domainNameInput = useRef( null );
 	const initialValidation = useRef( null );
@@ -80,10 +86,35 @@ function UseMyDomain( { goBack, initialQuery, selectedSite } ) {
 	}, [ initialQuery, validateDomainName ] );
 
 	const onNext = () => {
+		setIsFetchingAvailability( true );
+
 		if ( validateDomainName() ) {
 			// TODO: Redirect to the new Transfer or Connect page
 			// This is just a placeholder to test with the existing page
-			page( domainUseYourDomain( selectedSite.slug, domainName ) );
+
+			checkDomainAvailability(
+				{
+					domainName,
+					blogId: selectedSite.ID,
+					isCartPreCheck: false,
+				},
+				( error, data ) => {
+					if ( error ) {
+						setDomainNameValidationError( error );
+						return;
+					}
+
+					console.log( error );
+					console.log( data );
+					// const status = data && data?.status;
+
+					const message = getAvailabilityNotice( domainName, data?.status, {} );
+					console.log( message );
+
+					setIsFetchingAvailability( false );
+				}
+			);
+			// page( domainUseYourDomain( selectedSite.slug, domainName ) );
 		}
 	};
 
@@ -154,6 +185,8 @@ function UseMyDomain( { goBack, initialQuery, selectedSite } ) {
 					<FormButton
 						className={ baseClassName + '__domain-input-button' }
 						primary
+						busy={ isFetchingAvailability }
+						disabled={ isFetchingAvailability }
 						onClick={ onNext }
 					>
 						{ __( 'Next' ) }

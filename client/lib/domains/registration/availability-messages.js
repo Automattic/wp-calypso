@@ -36,6 +36,8 @@ function getAvailabilityNotice( domain, error, errorData ) {
 	let message;
 	let severity = 'error';
 
+	console.log( error );
+
 	switch ( error ) {
 		case domainAvailability.REGISTERED:
 			message = translate(
