@@ -19,8 +19,7 @@ import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings'
 import DomainOnly from './domain-only';
 import ListItemPlaceholder from './item-placeholder';
 import Main from 'calypso/components/main';
-import { domainManagementRoot, domainManagementList } from 'calypso/my-sites/domains/paths';
-import { Card } from '@automattic/components';
+import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
 import EmptyContent from 'calypso/components/empty-content';
@@ -360,7 +359,7 @@ export class List extends React.Component {
 			return times( 3, ( n ) => <ListItemPlaceholder key={ `item-${ n }` } /> );
 		}
 
-		const { currentRoute, translate, selectedSite, hasSingleSite } = this.props;
+		const { currentRoute, selectedSite } = this.props;
 
 		const { changePrimaryDomainModeEnabled, primaryDomainIndex, settingPrimaryDomain } = this.state;
 
@@ -391,12 +390,6 @@ export class List extends React.Component {
 			/>
 		) );
 
-		const manageAllDomainsLink = hasSingleSite ? null : (
-			<Card className="list__view-all" key="manage-all-domains" href={ domainManagementRoot() }>
-				{ translate( 'Manage all your domains' ) }
-			</Card>
-		);
-
 		return [
 			<QuerySitePurchases key="query-purchases" siteId={ selectedSite.ID } />,
 			domains.length > 0 && (
@@ -409,7 +402,6 @@ export class List extends React.Component {
 				/>
 			),
 			...domainListItems,
-			manageAllDomainsLink,
 		];
 	}
 
