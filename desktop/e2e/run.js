@@ -106,6 +106,10 @@ process.on( 'exit', handleExit );
 async function run() {
 	try {
 		const requiredENVs = [ 'E2EGUTENBERGUSER', 'E2EPASSWORD' ];
+		if ( process.env.TEAMCITY_PROJECT_NAME !== undefined ) {
+			// Override base URL in TeamCity PRs.
+			requiredENVs.push( 'WP_DESKTOP_BASE_URL' );
+		}
 		const missingENVs = requiredENVs.filter(
 			( name ) => ! process.env[ name ] || process.env[ name ] === ''
 		);
