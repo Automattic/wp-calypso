@@ -216,6 +216,7 @@ class GSuiteAddUsers extends React.Component {
 							selectedDomainName={ getEligibleGSuiteDomain( selectedDomainName, domains ) }
 							users={ users }
 							onReturnKeyPress={ this.handleReturnKeyPress }
+							showLabels={ true }
 						>
 							<div className="gsuite-add-users__buttons">
 								<Button onClick={ this.handleCancel }>{ translate( 'Cancel' ) }</Button>

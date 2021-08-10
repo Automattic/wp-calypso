@@ -10,7 +10,7 @@ import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopp
 import EmailForwarding from 'calypso/my-sites/email/email-forwarding';
 import EmailManagementHome from 'calypso/my-sites/email/email-management/email-home';
 import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
-import GSuiteAddUsers from 'calypso/my-sites/email/gsuite-add-users';
+import GSuiteAddUsers from 'calypso/my-sites/email/google-workspace-add-users';
 import TitanAddMailboxes from 'calypso/my-sites/email/titan-add-mailboxes';
 import TitanControlPanelRedirect from 'calypso/my-sites/email/email-management/titan-control-panel-redirect';
 import TitanManageMailboxes from 'calypso/my-sites/email/email-management/titan-manage-mailboxes';
