@@ -18,7 +18,7 @@ const SidebarHeading = ( { children, onClick, ...props } ) => {
 	/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 	return (
 		<li>
-			<h2
+			<a
 				tabIndex={ tabIndex }
 				className="sidebar__heading"
 				onKeyDown={ onKeyDown }
@@ -26,7 +26,7 @@ const SidebarHeading = ( { children, onClick, ...props } ) => {
 				{ ...props }
 			>
 				{ children }
-			</h2>
+			</a>
 		</li>
 	);
 };

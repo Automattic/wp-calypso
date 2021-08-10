@@ -51,7 +51,7 @@ import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import SectionHeader from 'calypso/components/section-header';
 import TitanMailboxPricingNotice from 'calypso/my-sites/email/titan-add-mailboxes/titan-mailbox-pricing-notice';
 import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
-import TitanNewMailboxList from 'calypso/my-sites/email/titan-add-mailboxes/titan-new-mailbox-list';
+import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
 import TitanUnusedMailboxesNotice from 'calypso/my-sites/email/titan-add-mailboxes/titan-unused-mailbox-notice';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
