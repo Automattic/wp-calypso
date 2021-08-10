@@ -72,6 +72,7 @@ class DomainSearchResults extends React.Component {
 			lastDomainSearched,
 			selectedSite,
 			translate,
+			isDomainOnly,
 		} = this.props;
 		const availabilityElementClasses = classNames( {
 			'domain-search-results__domain-is-available': availableDomain,
@@ -162,7 +163,7 @@ class DomainSearchResults extends React.Component {
 						}
 				  );
 
-			if ( ! selectedSite ) {
+			if ( isDomainOnly && ! [ TLD_NOT_SUPPORTED, UNKNOWN ].includes( lastDomainStatus ) ) {
 				domainUnavailableMessage = translate(
 					'{{strong}}%(domain)s{{/strong}} is already registered. Please try another search.',
 					{
