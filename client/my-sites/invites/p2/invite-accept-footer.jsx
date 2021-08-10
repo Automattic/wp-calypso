@@ -8,7 +8,7 @@ import React from 'react';
  */
 import './style.scss';
 
-export function renderInviteAcceptFooter( props ) {
+const P2InviteAcceptFooter = ( props ) => {
 	return (
 		<div className="invite-accept-footer">
 			<img
@@ -21,4 +21,6 @@ export function renderInviteAcceptFooter( props ) {
 			</span>
 		</div>
 	);
-}
+};
+
+export default P2InviteAcceptFooter;

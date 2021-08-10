@@ -22,7 +22,7 @@ import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item'
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { Card } from '@automattic/components';
 import FormButton from 'calypso/components/forms/form-button';
-import { renderInviteAcceptForP2 } from 'calypso/my-sites/invites/p2/invite-accept-logged-out';
+import P2InviteAcceptLoggedOut from 'calypso/my-sites/invites/p2/invite-accept-logged-out';
 
 /**
  * Module variables
@@ -159,7 +159,7 @@ class InviteAcceptLoggedOut extends React.Component {
 		}
 
 		if ( this.props.invite?.site?.is_wpforteams_site ) {
-			return renderInviteAcceptForP2( {
+			return P2InviteAcceptLoggedOut( {
 				...this.props,
 				onClickSignInLink: this.clickSignInLink,
 				isSubmitting: this.state.submitting,

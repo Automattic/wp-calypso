@@ -10,19 +10,19 @@ import { Button } from '@automattic/components';
 import Gravatar from 'calypso/components/gravatar';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
-import { renderInviteAcceptFormHeader } from './invite-accept-form-header';
-import { renderInviteAcceptFooter } from './invite-accept-footer';
+import P2InviteAcceptHeader from './invite-accept-header';
+import P2InviteAcceptFooter from './invite-accept-footer';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-export function renderInviteAcceptForP2( props ) {
+const P2InviteAcceptLoggedIn = ( props ) => {
 	return (
 		<div>
 			<div className="invite-accept-logged-in__form-container">
-				{ renderInviteAcceptFormHeader( { site: props.invite.site, translate: props.translate } ) }
+				{ P2InviteAcceptHeader( { site: props.invite.site, translate: props.translate } ) }
 				<div className="invite-accept-logged-in__join-as">
 					<Gravatar user={ props.user } size={ 72 } />
 					<div className="invite-accept-logged-in__join-as-text">
@@ -57,7 +57,9 @@ export function renderInviteAcceptForP2( props ) {
 					</Button>
 				</div>
 			</div>
-			{ renderInviteAcceptFooter( { translate: props.translate } ) }
+			{ P2InviteAcceptFooter( { translate: props.translate } ) }
 		</div>
 	);
-}
+};
+
+export default P2InviteAcceptLoggedIn;

@@ -7,8 +7,8 @@ import React from 'react';
  * Internal dependencies
  */
 import SignupForm from 'calypso/blocks/signup-form';
-import { renderInviteAcceptFormHeader } from './invite-accept-form-header';
-import { renderInviteAcceptFooter } from './invite-accept-footer';
+import P2InviteAcceptHeader from './invite-accept-header';
+import P2InviteAcceptFooter from './invite-accept-footer';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 
@@ -25,11 +25,11 @@ function renderFooterLink( props ) {
 	);
 }
 
-export function renderInviteAcceptForP2( props ) {
+const P2InviteAcceptLoggedOut = ( props ) => {
 	return (
 		<div>
 			<div className="invite-accept-logged-out__form-container">
-				{ renderInviteAcceptFormHeader( { site: props.invite.site, translate: props.translate } ) }
+				{ P2InviteAcceptHeader( { site: props.invite.site, translate: props.translate } ) }
 				<SignupForm
 					redirectToAfterLoginUrl={ window.location.href }
 					disabled={ props.isSubmitting }
@@ -45,10 +45,13 @@ export function renderInviteAcceptForP2( props ) {
 					disableEmailExplanation={ props.translate( 'This invite is only valid for %(email)s.', {
 						args: { email: props.invite.sentTo },
 					} ) }
+					className={ props.isSubmitting ? 'is-busy' : '' }
 				/>
 				{ props.userData && props.loginUser() }
 			</div>
-			{ renderInviteAcceptFooter( { translate: props.translate } ) }
+			{ P2InviteAcceptFooter( { translate: props.translate } ) }
 		</div>
 	);
-}
+};
+
+export default P2InviteAcceptLoggedOut;

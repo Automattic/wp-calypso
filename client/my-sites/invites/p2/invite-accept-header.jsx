@@ -8,20 +8,20 @@ import React from 'react';
  */
 import './style.scss';
 
-export function renderInviteAcceptFormHeader( props ) {
+const P2InviteAcceptHeader = ( props ) => {
 	return (
-		<div className="invite-accept-form-header">
-			<div className="invite-accept-form-header__site-icon">
+		<div className="invite-accept-header">
+			<div className="invite-accept-header__site-icon">
 				<span>P2</span>
 			</div>
-			<div className="invite-accept-form-header__join-site-title">
+			<div className="invite-accept-header__join-site-title">
 				{ props.translate( 'Join %(siteName)s on P2', {
 					args: {
 						siteName: props.site.title,
 					},
 				} ) }
 			</div>
-			<div className="invite-accept-form-header__join-site-text">
+			<div className="invite-accept-header__join-site-text">
 				{ props.translate(
 					'P2 is a platform for teams to share, discuss, and collaborate openly, without interruption. {{linkWrap}}Learn more.{{/linkWrap}}',
 					{
@@ -33,4 +33,6 @@ export function renderInviteAcceptFormHeader( props ) {
 			</div>
 		</div>
 	);
-}
+};
+
+export default P2InviteAcceptHeader;
