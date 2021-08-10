@@ -90,6 +90,8 @@
 		}
 
 		.domain-registration-suggestion__domain-title {
+			font-size: $font-title-small;
+
 			@include break-mobile {
 				font-size: $font-title-medium;
 			}
