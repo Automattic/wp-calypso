@@ -8,8 +8,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
 	getBlockingMessages,
 	getBlockingMessages,
+	getBlockingMessages,
 } from 'calypso/blocks/eligibility-warnings/hold-list';
 import {
+	isAtomicSiteWithoutBusinessPlan,
 	isAtomicSiteWithoutBusinessPlan,
 	isAtomicSiteWithoutBusinessPlan,
 } from 'calypso/blocks/eligibility-warnings/utils';
@@ -18,10 +20,15 @@ import CardHeading from 'calypso/components/card-heading';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import Notice from 'calypso/components/notice';
 import useWPCOMPlugins from 'calypso/data/marketplace/use-wpcom-plugins-query';
-import { YOAST, WOO, YOAST } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
+import {
+	YOAST,
+	WOO,
+	YOAST,
+	YOAST,
+} from 'calypso/my-sites/marketplace/marketplace-product-definitions';
 import AdminMenuFetch from 'calypso/my-sites/marketplace/pages/marketplace-test/admin-menu-fetch';
 import ComponentDemo from 'calypso/my-sites/marketplace/pages/marketplace-test/component-demo';
-import PluginItem from 'calypso/my-sites/plugins/plugin-item/plugin-item';
+import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
 	fetchAutomatedTransferStatus,
@@ -127,18 +134,14 @@ export default function MarketplaceTest(): JSX.Element {
 			{ selectedSiteId && <QueryJetpackPlugins siteIds={ [ selectedSiteId ] } /> }
 			<SidebarNavigation />
 			<Card key="wpcom-plugins">
-				{ data.map( ( plugin ) => {
-					return (
-						<PluginItem
-							key={ plugin.slug }
-							plugin={ plugin }
-							sites={ [] }
-							pluginLink={ `/marketplace/product/details/${ encodeURIComponent(
-								plugin.slug
-							) }/${ selectedSiteSlug }` }
-						/>
-					);
-				} ) }
+				<PluginsBrowserList
+					plugins={ data }
+					listName={ 'paid' }
+					title={ 'Paid Plugins' }
+					site={ selectedSiteSlug }
+					showPlaceholders={ isFetching }
+					currentSites={ null }
+				/>
 			</Card>
 			<Card key="heading">
 				<CardHeading key="title" tagName="h1" size={ 24 }>
