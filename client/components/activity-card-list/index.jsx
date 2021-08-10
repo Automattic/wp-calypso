@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import ActivityCard from 'calypso/components/activity-card';
-import QueryActivityLogRetentionPolicy from 'calypso/components/data/query-activity-log-retention-policy';
+import QueryActivityLogDisplayRules from 'calypso/components/data/query-activity-log-display-rules';
 import QueryRewindCapabilities from 'calypso/components/data/query-rewind-capabilities';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -264,7 +264,7 @@ class ActivityCardList extends Component {
 
 		return (
 			<>
-				{ displayRulesEnabled && <QueryActivityLogRetentionPolicy siteId={ siteId } /> }
+				{ displayRulesEnabled && <QueryActivityLogDisplayRules siteId={ siteId } /> }
 				<QueryRewindCapabilities siteId={ siteId } />
 				<QueryRewindState siteId={ siteId } />
 

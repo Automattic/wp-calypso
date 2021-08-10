@@ -2,7 +2,7 @@ import { Card } from '@automattic/components';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import QueryActivityLogRetentionPolicy from 'calypso/components/data/query-activity-log-retention-policy';
+import QueryActivityLogDisplayRules from 'calypso/components/data/query-activity-log-display-rules';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { Interval, EVERY_SECOND } from 'calypso/lib/interval';
@@ -137,7 +137,7 @@ const Wrapper = ( props ) => {
 	// to see if there's a backup currently in progress
 	return (
 		<Card className="daily-backup-status">
-			<QueryActivityLogRetentionPolicy siteId={ siteId } />
+			<QueryActivityLogDisplayRules siteId={ siteId } />
 			<QueryRewindBackups siteId={ siteId } />
 			<DailyBackupStatus { ...props } />
 		</Card>

@@ -32,7 +32,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import Pagination from 'calypso/components/pagination';
 import ProgressBanner from '../activity-log-banner/progress-banner';
 import RewindAlerts from './rewind-alerts';
-import QueryActivityLogRetentionPolicy from 'calypso/components/data/query-activity-log-retention-policy';
+import QueryActivityLogDisplayRules from 'calypso/components/data/query-activity-log-display-rules';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -557,7 +557,7 @@ class ActivityLog extends Component {
 				<QuerySitePurchases siteId={ siteId } />
 				<PageViewTracker path="/activity-log/:site" title="Activity" />
 				<DocumentHead title={ translate( 'Activity' ) } />
-				{ siteId && <QueryActivityLogRetentionPolicy siteId={ siteId } /> }
+				{ siteId && <QueryActivityLogDisplayRules siteId={ siteId } /> }
 				{ siteId && <QueryRewindState siteId={ siteId } /> }
 				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 				{ siteId && <TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } /> }

@@ -15,7 +15,7 @@ import isRequestingSiteRetentionPolicy from 'calypso/state/selectors/is-requesti
  */
 import { AppState } from 'calypso/types';
 
-const useRequestActivityLogRetentionPolicy = ( siteId: number ) => {
+const useRequestActivityLogDisplayRules = ( siteId: number ) => {
 	const dispatch = useDispatch();
 	const requesting = useSelector( ( state: AppState ) =>
 		isRequestingSiteRetentionPolicy( state, siteId )
@@ -39,14 +39,14 @@ const useRequestActivityLogRetentionPolicy = ( siteId: number ) => {
 };
 
 // TODO: Remove this component once ActivityCardList can call hooks,
-// then extract `useRequestActivityLogRetentionPolicy` into its own file
+// then extract `useRequestActivityLogDisplayRules` into its own file
 type OwnProps = {
 	siteId: number;
 };
 
-const QueryActivityLogRetentionPolicy: React.FC< OwnProps > = ( { siteId } ) => {
-	useRequestActivityLogRetentionPolicy( siteId );
+const QueryActivityLogDisplayRules: React.FC< OwnProps > = ( { siteId } ) => {
+	useRequestActivityLogDisplayRules( siteId );
 	return null;
 };
 
-export default QueryActivityLogRetentionPolicy;
+export default QueryActivityLogDisplayRules;
