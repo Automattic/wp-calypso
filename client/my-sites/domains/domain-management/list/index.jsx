@@ -54,9 +54,9 @@ import DomainItem from './domain-item';
 import ListHeader from './list-header';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
-import AddDomainButton from 'calypso/my-sites/domains/domain-management/list/add-domain-button';
 import EmptyDomainsListCard from 'calypso/my-sites/domains/domain-management/list/empty-domains-list-card';
 import WpcomDomainItem from 'calypso/my-sites/domains/domain-management/list/wpcom-domain-item';
+import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
 
 /**
  * Style dependencies
@@ -133,8 +133,11 @@ export class List extends React.Component {
 						align="left"
 					/>
 					<div className="domains__header-buttons">
-						<HeaderCart selectedSite={ selectedSite } currentRoute={ currentRoute } />
-						{ this.addDomainButton() }
+						<HeaderCart
+							selectedSite={ this.props.selectedSite }
+							currentRoute={ this.props.currentRoute }
+						/>
+						{ this.optionsDomainButton() }
 					</div>
 				</div>
 
@@ -247,12 +250,12 @@ export class List extends React.Component {
 		);
 	}
 
-	addDomainButton() {
+	optionsDomainButton() {
 		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
 			return null;
 		}
 
-		return <AddDomainButton />;
+		return <OptionsDomainButton />;
 	}
 
 	setPrimaryDomain( domainName ) {

@@ -8,7 +8,7 @@ export default class DomainsPage extends AsyncBaseContainer {
 	}
 
 	async clickAddDomain() {
-		return await driverHelper.clickWhenClickable( this.driver, By.css( '.add-domain-button' ) );
+		return await driverHelper.clickWhenClickable( this.driver, By.css( '.options-domain-button' ) );
 	}
 
 	async clickPopoverItem( name ) {
