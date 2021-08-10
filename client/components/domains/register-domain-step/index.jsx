@@ -99,6 +99,7 @@ const domains = wpcom.domains();
 // max amount of domain suggestions we should fetch/display
 const INITIAL_SUGGESTION_QUANTITY = 2;
 const PAGE_SIZE = 10;
+const EXACT_MATCH_PAGE_SIZE = 4;
 const MAX_PAGES = 3;
 const SUGGESTION_QUANTITY = isPaginationEnabled ? PAGE_SIZE * MAX_PAGES : PAGE_SIZE;
 const MIN_QUERY_LENGTH = 2;
@@ -236,6 +237,7 @@ class RegisterDomainStep extends React.Component {
 			loadingSubdomainResults:
 				( props.includeWordPressDotCom || props.includeDotBlogSubdomain ) && loadingResults,
 			pageNumber: 1,
+			pageSize: PAGE_SIZE,
 			premiumDomains: {},
 			promoTldsAdded: false,
 			searchResults: null,
@@ -374,13 +376,13 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	getSuggestionsFromProps() {
-		const { pageNumber } = this.state;
+		const { pageNumber, pageSize } = this.state;
 		const searchResults = this.state.searchResults || [];
 		const isKrackenUi = isPaginationEnabled;
 
 		let suggestions;
 		if ( isKrackenUi ) {
-			suggestions = searchResults.slice( 0, pageNumber * PAGE_SIZE );
+			suggestions = searchResults.slice( 0, pageNumber * pageSize );
 		} else {
 			suggestions = [ ...searchResults ];
 		}
@@ -566,7 +568,7 @@ class RegisterDomainStep extends React.Component {
 			return null;
 		}
 
-		const { searchResults, pageNumber, loadingResults: isLoading } = this.state;
+		const { searchResults, pageNumber, pageSize, loadingResults: isLoading } = this.state;
 
 		if ( searchResults === null ) {
 			return null;
@@ -576,7 +578,7 @@ class RegisterDomainStep extends React.Component {
 			return null;
 		}
 
-		if ( searchResults.length <= pageNumber * PAGE_SIZE ) {
+		if ( searchResults.length <= pageNumber * pageSize ) {
 			return null;
 		}
 
@@ -1022,12 +1024,18 @@ class RegisterDomainStep extends React.Component {
 			isUnsupportedPremiumSuggestion
 		);
 
+		const hasAvailableFQDNSearch = [
+			domainAvailability.AVAILABLE,
+			domainAvailability.AVAILABLE_PREMIUM,
+		].includes( suggestions?.[ 0 ]?.status );
+
 		const markedSuggestions = markFeaturedSuggestions(
 			suggestions,
 			this.state.exactMatchDomain,
 			getStrippedDomainBase( domain ),
 			true,
-			this.props.deemphasiseTlds
+			this.props.deemphasiseTlds,
+			hasAvailableFQDNSearch
 		);
 
 		const premiumDomains = {};
@@ -1042,6 +1050,7 @@ class RegisterDomainStep extends React.Component {
 		this.setState(
 			{
 				premiumDomains,
+				pageSize: hasAvailableFQDNSearch ? EXACT_MATCH_PAGE_SIZE : PAGE_SIZE,
 				searchResults: markedSuggestions,
 				loadingResults: false,
 			},
@@ -1186,7 +1195,7 @@ class RegisterDomainStep extends React.Component {
 			this.props.analyticsSection
 		);
 
-		this.setState( { pageNumber }, this.save );
+		this.setState( { pageNumber, pageSize: PAGE_SIZE }, this.save );
 	};
 
 	renderInitialSuggestions() {

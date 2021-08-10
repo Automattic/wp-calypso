@@ -12,7 +12,8 @@ export function markFeaturedSuggestions(
 	exactMatchDomain,
 	strippedDomainBase,
 	featuredSuggestionsAtTop = false,
-	avoidTlds = []
+	avoidTlds = [],
+	markOnlyRecommended = false
 ) {
 	function isExactMatchBeforeTld( suggestion ) {
 		return (
@@ -39,8 +40,9 @@ export function markFeaturedSuggestions(
 	}
 
 	const bestAlternativeSuggestion =
-		( featuredSuggestionsAtTop ? null : find( outputWithoutTlds, isBestAlternative ) ) ||
-		outputWithoutTlds[ 1 ];
+		! markOnlyRecommended &&
+		( ( featuredSuggestionsAtTop ? null : find( outputWithoutTlds, isBestAlternative ) ) ||
+			outputWithoutTlds[ 1 ] );
 
 	if ( bestAlternativeSuggestion ) {
 		bestAlternativeSuggestion.isBestAlternative = true;
