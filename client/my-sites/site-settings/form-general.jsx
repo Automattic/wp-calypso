@@ -30,6 +30,8 @@ import { isBusiness, FEATURE_NO_BRANDING, PLAN_BUSINESS } from '@automattic/caly
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import { isJetpackSite, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -312,13 +314,9 @@ export class SiteSettingsFormGeneral extends Component {
 		} = this.props;
 
 		const blogPublic = parseInt( fields.blog_public, 10 );
-		const wpcomComingSoon = 1 === parseInt( fields.wpcom_coming_soon, 10 );
 		const wpcomPublicComingSoon = 1 === parseInt( fields.wpcom_public_coming_soon, 10 );
-		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
-		const isPrivateAndUnlaunched = -1 === blogPublic && this.props.isUnlaunchedSite;
 		const isNonAtomicJetpackSite = siteIsJetpack && ! siteIsAtomic;
-		const isAnyComingSoonEnabled =
-			( 0 === blogPublic && wpcomPublicComingSoon ) || isPrivateAndUnlaunched || wpcomComingSoon;
+		const isAnyComingSoonEnabled = fields.wpcom_coming_soon || fields.wpcom_public_coming_soon;
 		const isComingSoonDisabled = isRequestingSettings || isAtomicAndEditingToolkitDeactivated;
 		const comingSoonFormLabelClasses = classNames(
 			'site-settings__visibility-label is-coming-soon',
@@ -413,10 +411,7 @@ export class SiteSettingsFormGeneral extends Component {
 							<FormRadio
 								name="blog_public"
 								value="-1"
-								checked={
-									( -1 === blogPublic && ! wpcomComingSoon && ! isPrivateAndUnlaunched ) ||
-									( wpcomComingSoon && isAtomicAndEditingToolkitDeactivated )
-								}
+								checked={ -1 === blogPublic }
 								onChange={ () =>
 									this.handleVisibilityOptionChange( {
 										blog_public: -1,
@@ -504,6 +499,7 @@ export class SiteSettingsFormGeneral extends Component {
 			isPaidPlan,
 			isComingSoon,
 			fields,
+			isSiteUnlaunched,
 		} = this.props;
 
 		const launchSiteClasses = classNames( 'site-settings__general-settings-launch-site-button', {
@@ -528,7 +524,7 @@ export class SiteSettingsFormGeneral extends Component {
 
 		const blogPublic = parseInt( fields.blog_public, 10 );
 		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
-		const isPrivateAndUnlaunched = -1 === blogPublic && this.props.isUnlaunchedSite;
+		const isPrivateAndUnlaunched = -1 === blogPublic && isSiteUnlaunched;
 
 		return (
 			<>
@@ -591,10 +587,12 @@ export class SiteSettingsFormGeneral extends Component {
 			isSavingSettings,
 			site,
 			siteIsJetpack,
+			isSitePrivate,
 			siteIsVip,
 			siteSlug,
 			translate,
 			isWPForTeamsSite,
+			isSiteUnlaunched,
 		} = this.props;
 
 		const classes = classNames( 'site-settings__general-settings', {
@@ -623,7 +621,7 @@ export class SiteSettingsFormGeneral extends Component {
 					</form>
 				</Card>
 
-				{ this.props.isUnlaunchedSite ? this.renderLaunchSite() : this.privacySettings() }
+				{ isSiteUnlaunched && isSitePrivate ? this.renderLaunchSite() : this.privacySettings() }
 
 				{ ! isWPForTeamsSite && ! siteIsJetpack && (
 					<div className="site-settings__footer-credit-container">
@@ -683,8 +681,9 @@ const connectComponent = connect( ( state ) => {
 	const selectedSite = getSelectedSite( state );
 
 	return {
-		isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
+		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 		isComingSoon: isSiteComingSoon( state, siteId ),
+		isSitePrivate: isPrivateSite( state, siteId ),
 		siteIsJetpack,
 		siteIsVip: isVipSite( state, siteId ),
 		siteSlug: getSelectedSiteSlug( state ),
