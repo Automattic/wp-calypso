@@ -5,15 +5,23 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getBlockingMessages } from 'calypso/blocks/eligibility-warnings/hold-list';
-import { isAtomicSiteWithoutBusinessPlan } from 'calypso/blocks/eligibility-warnings/utils';
+import {
+	getBlockingMessages,
+	getBlockingMessages,
+} from 'calypso/blocks/eligibility-warnings/hold-list';
+import {
+	isAtomicSiteWithoutBusinessPlan,
+	isAtomicSiteWithoutBusinessPlan,
+} from 'calypso/blocks/eligibility-warnings/utils';
 import { WarningList } from 'calypso/blocks/eligibility-warnings/warning-list';
 import CardHeading from 'calypso/components/card-heading';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import Notice from 'calypso/components/notice';
-import { YOAST, WOO } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
+import useWPCOMPlugins from 'calypso/data/marketplace/use-wpcom-plugins-query';
+import { YOAST, WOO, YOAST } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
 import AdminMenuFetch from 'calypso/my-sites/marketplace/pages/marketplace-test/admin-menu-fetch';
 import ComponentDemo from 'calypso/my-sites/marketplace/pages/marketplace-test/component-demo';
+import PluginItem from 'calypso/my-sites/plugins/plugin-item/plugin-item';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
 	fetchAutomatedTransferStatus,
@@ -54,6 +62,8 @@ export default function MarketplaceTest(): JSX.Element {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const isAtomicSite = useSelector( ( state ) => isSiteWpcomAtomic( state, selectedSiteId ?? 0 ) );
 	const pluginDetails = useSelector( ( state ) => getPlugins( state, [ selectedSiteId ] ) );
+	const { data = [], isFetching } = useWPCOMPlugins( 'all' );
+	console.log( data, isFetching );
 
 	const isRequestingForSite = useSelector( ( state ) =>
 		isRequestingForSites( state, [ selectedSiteId ] )
@@ -116,6 +126,20 @@ export default function MarketplaceTest(): JSX.Element {
 		<Container>
 			{ selectedSiteId && <QueryJetpackPlugins siteIds={ [ selectedSiteId ] } /> }
 			<SidebarNavigation />
+			<Card key="wpcom-plugins">
+				{ data.map( ( plugin ) => {
+					return (
+						<PluginItem
+							key={ plugin.slug }
+							plugin={ plugin }
+							sites={ [] }
+							pluginLink={ `/marketplace/product/details/${ encodeURIComponent(
+								plugin.slug
+							) }/${ selectedSiteSlug }` }
+						/>
+					);
+				} ) }
+			</Card>
 			<Card key="heading">
 				<CardHeading key="title" tagName="h1" size={ 24 }>
 					Marketplace Test Page
