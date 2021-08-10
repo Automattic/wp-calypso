@@ -324,14 +324,6 @@
 	}
 }
 
-// When showing the "Add server credentials" button, stack the buttons
-// instead of showing them side-by-side.
-// But only on wide widths, when the buttons are to the right
-// of the description
-// .activity-log-item__action-credentials {
-// 	flex-direction: column;
-// }
-
 .activity-log-item__clone-action {
 	flex-shrink: 0;
 }
@@ -460,12 +452,6 @@
 	a.button, button {
 		margin-right: 8px;
 	}
-	// .activity-log-item__action-credentials {
-	// 	a.button, button {
-	// 		margin-top: 4px;
-	// 		margin-right: 0;
-	// 	}
-	// }
 }
 
 .activity-log-item__description {

@@ -267,12 +267,8 @@ class ActivityLogItem extends Component {
 		const showCredentialsButton = this.showCredentialsButton();
 		const isCompact = showCredentialsButton;
 
-		const classes = classNames( 'activity-log-item__action', {
-			'activity-log-item__action-credentials': showCredentialsButton,
-		} );
-
 		return (
-			<div className={ classes }>
+			<div className="activity-log-item__action">
 				{ ! showCredentialsButton && (
 					<Button compact={ isCompact } disabled={ disableRestore } onClick={ createRewind }>
 						<Gridicon icon="history" size={ 18 } /> { translate( 'Restore' ) }
