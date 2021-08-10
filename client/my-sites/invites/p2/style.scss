@@ -36,20 +36,6 @@
 		}
 	}
 
-	.invite-accept-logo-line {
-		display: flex;
-		justify-content: flex-end;
-	}
-
-	.invite-accept-logo-line__learn-more a {
-		color: var( --p2-color-link );
-		font-size: var( --p2-font-size-form-xs );
-
-		&:hover {
-			color: var( --p2-color-link-dark );
-		}
-	}
-
 	.invite-accept-form-header {
 		display: flex;
 		flex-direction: column;
@@ -218,6 +204,7 @@
 		flex-direction: column;
 		height: 100%;
 	}
+
 	.invite-accept-logged-in__form-container {
 		max-width: 500px;
 		margin: 3em auto 0;

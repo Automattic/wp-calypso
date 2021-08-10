@@ -10,7 +10,6 @@ import { Button } from '@automattic/components';
 import Gravatar from 'calypso/components/gravatar';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
-import { renderInviteAcceptP2Logo } from './invite-accept-logo-line';
 import { renderInviteAcceptFormHeader } from './invite-accept-form-header';
 import { renderInviteAcceptFooter } from './invite-accept-footer';
 
@@ -22,7 +21,6 @@ import './style.scss';
 export function renderInviteAcceptForP2( props ) {
 	return (
 		<div>
-			{ renderInviteAcceptP2Logo( { translate: props.translate } ) }
 			<div className="invite-accept-logged-in__form-container">
 				{ renderInviteAcceptFormHeader( { site: props.invite.site, translate: props.translate } ) }
 				<div className="invite-accept-logged-in__join-as">

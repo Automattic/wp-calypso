@@ -7,7 +7,6 @@ import React from 'react';
  * Internal dependencies
  */
 import SignupForm from 'calypso/blocks/signup-form';
-import { renderInviteAcceptP2Logo } from './invite-accept-logo-line';
 import { renderInviteAcceptFormHeader } from './invite-accept-form-header';
 import { renderInviteAcceptFooter } from './invite-accept-footer';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
@@ -29,7 +28,6 @@ function renderFooterLink( props ) {
 export function renderInviteAcceptForP2( props ) {
 	return (
 		<div>
-			{ renderInviteAcceptP2Logo( { translate: props.translate } ) }
 			<div className="invite-accept-logged-out__form-container">
 				{ renderInviteAcceptFormHeader( { site: props.invite.site, translate: props.translate } ) }
 				<SignupForm

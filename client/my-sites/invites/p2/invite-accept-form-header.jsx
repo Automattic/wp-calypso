@@ -23,7 +23,12 @@ export function renderInviteAcceptFormHeader( props ) {
 			</div>
 			<div className="invite-accept-form-header__join-site-text">
 				{ props.translate(
-					'P2 is a platform for teams to share, discuss, and collaborate openly, without interruption.'
+					'P2 is a platform for teams to share, discuss, and collaborate openly, without interruption. {{linkWrap}}Learn more.{{/linkWrap}}',
+					{
+						components: {
+							linkWrap: <a href="https://wordpress.com/p2" target="_blank" rel="noreferrer" />,
+						},
+					}
 				) }
 			</div>
 		</div>
