@@ -11,7 +11,6 @@ const config = {
 	readerFollowingSource: 'desktop',
 	boom_analytics_key: 'desktop',
 	google_recaptcha_site_key: '6LdoXcAUAAAAAM61KvdgP8xwnC19YuzAiOWn5Wtn',
-	'redirect-fallback-browsers': false,
 };
 
 const features = {
@@ -20,6 +19,7 @@ const features = {
 	'sign-in-with-apple': false,
 	'signup/social': false,
 	'login/magic-login': false,
+	'redirect-fallback-browsers': false,
 };
 
 export default ( data: ConfigData ): ConfigData => {
