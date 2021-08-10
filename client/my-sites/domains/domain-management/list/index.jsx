@@ -143,6 +143,7 @@ export class List extends React.Component {
 					<EmptyDomainsListCard
 						selectedSite={ selectedSite }
 						hasDomainCredit={ this.props.hasDomainCredit }
+						hasNonWpcomDomains={ false }
 					/>
 				) }
 
@@ -153,6 +154,7 @@ export class List extends React.Component {
 						selectedSite={ selectedSite }
 						hasDomainCredit={ this.props.hasDomainCredit }
 						isCompact={ true }
+						hasNonWpcomDomains={ true }
 					/>
 				) }
 
