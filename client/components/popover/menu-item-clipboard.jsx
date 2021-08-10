@@ -7,6 +7,7 @@ const noop = () => {};
 
 function PopoverMenuItemClipboard( {
 	className,
+	children,
 	text,
 	onCopy = noop,
 	icon = 'clipboard',
@@ -16,6 +17,7 @@ function PopoverMenuItemClipboard( {
 		<PopoverMenuItem
 			itemComponent={ ClipboardButton }
 			className={ className }
+			children={ children }
 			icon={ icon }
 			text={ text }
 			onCopy={ onCopy }
@@ -26,6 +28,7 @@ function PopoverMenuItemClipboard( {
 
 PopoverMenuItemClipboard.propTypes = {
 	className: PropTypes.string,
+	children: PropTypes.node,
 	icon: PropTypes.string,
 	onCopy: PropTypes.func,
 	text: PropTypes.string,
