@@ -86,7 +86,7 @@ object E2ETests : BuildType({
 			name = "Run tests (linux)"
 			scriptContent = """
 				export WP_DESKTOP_BASE_URL="%dep.${BuildDockerImage}.calypso_live_url%"
-"
+
 				export E2EGUTENBERGUSER="%E2EGUTENBERGUSER%"
 				export E2EPASSWORD="%E2EPASSWORD%"
 				export CI=true
