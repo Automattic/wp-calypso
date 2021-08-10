@@ -85,7 +85,7 @@ object E2ETests : BuildType({
 		bashNodeScript {
 			name = "Run tests (linux)"
 			scriptContent = """
-				export WP_DESKTOP_BASE_URL="%dep.${BuildDockerImage}.calypso_live_url%"
+				export WP_DESKTOP_BASE_URL="%dep.calypso_BuildBaseImages.calypso_live_url%"
 
 				export E2EGUTENBERGUSER="%E2EGUTENBERGUSER%"
 				export E2EPASSWORD="%E2EPASSWORD%"
