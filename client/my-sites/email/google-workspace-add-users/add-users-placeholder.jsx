@@ -11,7 +11,7 @@ import VerticalNavItem from 'calypso/components/vertical-nav/item';
 
 const AddEmailAddressesCardPlaceholder = () => {
 	return (
-		<VerticalNav className="gsuite-add-users__placeholder">
+		<VerticalNav className="google-workspace-add-users__placeholder">
 			<VerticalNavItem isPlaceholder />
 			<VerticalNavItem isPlaceholder />
 			<VerticalNavItem isPlaceholder />
