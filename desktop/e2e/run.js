@@ -95,6 +95,13 @@ function handleExit() {
 	}
 }
 
+function cleanBaseURL( url ) {
+	if ( url.endsWith( '/' ) ) {
+		return cleanBaseURL( url.replace( /\/$/, '' ) );
+	}
+	return url;
+}
+
 // Handle both user-initiated (SIGINT) and normal termination.
 process.on( 'SIGINT', function () {
 	handleExit();
@@ -108,7 +115,7 @@ async function run() {
 		const requiredENVs = [ 'E2EGUTENBERGUSER', 'E2EPASSWORD' ];
 		if ( process.env.TEAMCITY_PROJECT_NAME !== undefined ) {
 			// Override base URL in TeamCity PRs.
-			requiredENVs.push( 'WP_DESKTOP_BASE_URL' );
+			requiredENVs.push( cleanBaseURL( 'WP_DESKTOP_BASE_URL' ) );
 		}
 		const missingENVs = requiredENVs.filter(
 			( name ) => ! process.env[ name ] || process.env[ name ] === ''
