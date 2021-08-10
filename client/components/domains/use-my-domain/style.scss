@@ -14,7 +14,11 @@
 
 	& &__domain-input-fieldset {
 		position: relative;
-		margin: 0;
+		margin: 0 0 20px;
+
+		@include break-mobile {
+			margin: 0;
+		}
 
 		button.use-my-domain__domain-input-clear {
 			position: absolute;
