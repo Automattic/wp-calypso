@@ -13,9 +13,12 @@
         - [Engine](#engine)
         - [Naming](#naming)
         - [Stability](#stability)
+        - [Dynamic Selectors](#dynamic-selectors)
     - [Test steps](#test-steps)
         - [Naming](#naming)
         - [Step size](#step-size)
+    - [Maximum 1 top-level describe block](#maximum-1-top-level-describe-block)
+    - [Destructure parameters](#destructure-parameters)
 
 <!-- /TOC -->
 
@@ -144,8 +147,6 @@ A well-implemented page object will abstract complex interactions on the page to
 - **maintainability**: if a page changes, update the page object at one spot.
 - **readability**: named variables and functions are much easier to decipher than series of strings.
 
-On many pages of WPCOM elements will load asynchronously. This leads to issues when initializing page objects as constructors cannot be asynchronous. To address this, page objects almost always inherit from the `BaseContainer` class as it provides asynchronous initialization of the page object through use of static method `Expect`. Only use synchronous class constructor if the page in question does not require any post-initialization setup.
-
 Some in-repo example pages:
 
 - [Login Page](packages/calypso-e2e/src/lib/pages/login-page.ts)
@@ -162,10 +163,8 @@ const selectors = {
 
 /**
  * JSDoc is expected for Class definitions.
- *
- * @augments {BaseContainer}
  */
-export class SomePage extends BaseContainer {
+export class SomePage {
 	/**
 	 * JSDoc is expected for constructor.
 	 *
@@ -193,7 +192,7 @@ export class SomePage extends BaseContainer {
 // Then, in a test file...
 
 it('Test case', async function() {
-	const somePage = await SomePage.Expect( this.page );
+	const somePage = new SomePage( this.page );
 	await somePage.enterText( 'blah' );
 })
 
@@ -227,17 +226,17 @@ export class SomeFlow {
 	 * JSDoc is expected for methods.
 	 */
 	async executeFlow(): Promise< void > {
-		const componentA = await ComponentA.Expect( this.page );
+		const componentA = new ComponentA( page );
 		await componentA.clickOnSomething();
-		const componentB = await ComponentB.Expect( this.page );
-		const componentC = await ComponentC.Expect( this.page );
+		const componentB = new ComponentB( page );
+		const componentC = new ComponentC( page );
 		await componentC.doFinalSomething();
 	}
 }
 
 // Then in a test file...
 
-const someFlow = await SomeFlow( this.page );
+const someFlow = new SomeFlow( page );
 await someFlow.executeFlow();
 ```
 
@@ -393,7 +392,7 @@ Avoid appending the term 'Selector' or something similar to the selector name. I
 
 **Avoid**:
 
-```
+```typescript
 const selectors = {
 	contactButtonOnHeaderPane: '.button contact-us',
 	secondButtonOnPopupSelector: '.button send-form',
@@ -403,7 +402,7 @@ const selectors = {
 
 **Instead**:
 
-```
+```typescript
 const selectors = {
 	contactUsButton: '.button contact-us',
 	submitFormButton: '.button send-form',
@@ -421,15 +420,28 @@ Furthermore, where possible, only involve selectors that are required for the te
 
 **Avoid**:
 
-```
+```typescript
 await this.page.waitForSelector( '.some-unnecessary-selector-not-related-to-the-test-flow' );
 await this.page.fill( '.someclass__form-input .is-selected' );
 ```
 
 **Instead**:
 
-```
+```typescript
 await this.page.fill( 'input[aria-placeholder="Enter contact details"]' );
+```
+
+### Dynamic Selectors
+
+Define dynamic selectors as follows:
+
+```typescript
+const selectors = {
+	isVisible: (viewport) => {
+		const suffix = viewport === 'mobile' ? '.is-mobile' : '.is-desktop';
+		return 'div span${suffix}`;
+	}
+}
 ```
 
 ---
@@ -444,7 +456,7 @@ Avoid the use of modal verbs such as `can`, `should`, `could` or `must`.
 
 **Avoid**:
 
-```
+```typescript
 it( 'Can log in' )
 
 it( 'Should be able to start new post' )
@@ -452,7 +464,7 @@ it( 'Should be able to start new post' )
 
 **Instead**:
 
-```
+```typescript
 it( 'Log In' )
 
 it( 'Start new post' )
@@ -464,17 +476,53 @@ Prefer more of smaller steps.
 
 **Avoid**:
 
-```
+```typescript
 it( 'Log in, select home page and start a search')
 
 ```
 
 **Instead**:
 
-```
+```typescript
 it( 'Log In' )
 
 it( 'Navigate to home page' )
 
 it( 'Search for ${string}' )
 ```
+
+---
+
+## Maximum 1 top-level describe block
+
+Each test file should only contain at most 1 top-level `describe` block.
+
+There is no restriction on the number `describe` blocks that are not top-level, nor a restriction on the depth of `describe` blocks.
+
+---
+
+## Destructure parameters
+
+Use destructuring for default values as this makes calling the function explicit and avoids boolean traps.
+
+**Avoid**:
+
+```typescript
+constructor( selector: string, visit:boolean = true, culture:string = 'en', flow:string = '', domainFirst:boolean = false, domainFirstDomain:string = '' ) {}
+
+// In another file
+
+const startPage = new StartPage( selector, true, 'en', '', true, '' ).displayed();
+```
+
+**Instead**:
+
+```typescript
+constructor( selector: string, { visit = true, culture = 'en', flow = '', domainFirst = false, domainFirstDomain = '' }: {visit: boolean, culture: string, flow: string, domainFirst: boolean, domainFirstDomain: string} = {} ) {}
+
+// In another file
+
+const startPage = new StartPage( selector, { visit: true, domainFirst: true } ).displayed();
+```
+
+---

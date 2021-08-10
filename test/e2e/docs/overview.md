@@ -27,7 +27,10 @@ To accelerate development by being a force for continuous improvement, and help 
 
 ## Technology
 
-These e2e tests use the same technology as the `wp-calypso` GitHub repository, notably JavaScript on Node. User interaction is simulated using the [selenium-webdriver](https://www.selenium.dev/projects/) library, althought there is an active project under way to migrate to Playwright.
+These e2e tests use the same stack as the `wp-calypso` GitHub repository, but there are two parallel suites:
+
+- legacy: Selenium WebDriver, JavaScript and Mocha + Magellan test runner.
+- active: Playwright, JavaScript/TypeScript and Jest test runner.
 
 ## What is tested?
 

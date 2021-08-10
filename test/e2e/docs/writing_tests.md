@@ -2,7 +2,7 @@
 
 This document will outline tips to write successful tests for both Selenium and Playwright suites.
 
-Refer to the [style guide](docs/style-guide.md) for coding style information.
+Refer to the [Selenium style guide](docs/style-guide-selenium.md) or [Playwright style guide](docs/style-guide-playwright.md) for more information.
 
 ## Table of contents
 
@@ -125,14 +125,14 @@ Variables that derive from a page/component object (eg. SidebarComponent) should
 **Avoid**:
 
 ```typescript
-const sidebar = SidebarComponent.Expect( page );
-const mhp = MyHomePage.Expect( page );
+const bar = new SidebarComponent( page );
+const mhp = new MyHomePage( page );
 ```
 
 **Instead**:
 
 ```typescript
-const sidebarComponent = SidebarComponent.Expect( page );
-const myHomePage = MyHomePage.Expect( page );
+const sidebarComponent = new SidebarComponent( page );
+const myHomePage = new MyHomePage( page );
 ```
 
