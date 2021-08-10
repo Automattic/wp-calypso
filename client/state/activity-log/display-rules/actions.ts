@@ -23,12 +23,12 @@ type RequestActionType = Action< typeof ACTIVITY_LOG_DISPLAY_RULES_REQUEST > &
 	};
 
 /**
- * Send an API request for information about a site's Activity Log retention policy.
+ * Send an API request for information about a site's Activity Log display rules.
  *
  * @param	{number|null} siteId	Site ID
  * @returns	{RequestActionType}		Action object
  */
-export const requestSiteRetentionPolicy = ( siteId: number | null ): RequestActionType =>
+export const requestDisplayRules = ( siteId: number | null ): RequestActionType =>
 	( {
 		type: ACTIVITY_LOG_DISPLAY_RULES_REQUEST,
 		siteId,

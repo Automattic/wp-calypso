@@ -3,7 +3,7 @@
  */
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { requestSiteRetentionPolicy } from 'calypso/state/activity-log/display-rules/actions';
+import { requestDisplayRules } from 'calypso/state/activity-log/display-rules/actions';
 import isRequestingActivityLogDisplayRules from 'calypso/state/selectors/is-requesting-activity-log-display-rules';
 import type { AppState } from 'calypso/types';
 
@@ -19,7 +19,7 @@ const useRequestActivityLogDisplayRules = ( siteId: number ) => {
 				return;
 			}
 
-			dispatch( requestSiteRetentionPolicy( siteId ) );
+			dispatch( requestDisplayRules( siteId ) );
 		},
 
 		// `requesting` is technically a dependency but we exclude it here;
