@@ -5,9 +5,11 @@ const selectors = {
 	// Components
 	supportButton: '.inline-help__button',
 	supportPopover: '.inline-help__popover',
-	searchInput: '[placeholder="Search for help…"]',
+	searchInput: '[aria-label="Search"]',
 	spinner: '.spinner',
+	placeholder: '.inline-help__results-placeholder-item',
 	clearSearch: '[aria-label="Close Search"]',
+	supportCard: '.card.help-search',
 
 	// Results
 	resultsList: '.inline-help__results',
@@ -77,6 +79,19 @@ export class SupportComponent {
 		await this.page.click( selectors.supportButton );
 		await this.page.waitForSelector( selectors.supportPopover, { state: 'hidden' } );
 	}
+
+	/**
+	 * Wait for and scroll to expose the Support card, present only on My Home.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async showSupportCard(): Promise< void > {
+		const elementHandle = await this.page.waitForSelector( selectors.supportCard );
+		await elementHandle.waitForElementState( 'stable' );
+		await elementHandle.scrollIntoViewIfNeeded();
+	}
+
+	/* Result methods */
 
 	/**
 	 * Given a selector, returns an array of ElementHandles that match the given selector.
@@ -170,6 +185,7 @@ export class SupportComponent {
 		await this.page.waitForSelector( selectors.emptyResults );
 	}
 
+	/* Interaction with results */
 	/**
 	 * Click on the nth result specified by the target value.
 	 *
@@ -217,6 +233,8 @@ export class SupportComponent {
 		await this.page.click( selectors.closeButton );
 	}
 
+	/* Search input */
+
 	/**
 	 * Fills the support popover search input and waits for the query to complete.
 	 *
@@ -224,17 +242,21 @@ export class SupportComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async search( text: string ): Promise< void > {
-		await this.page.fill( selectors.searchInput, text );
-
 		if ( text.trim() ) {
-			// If there is valid search string, then there should be a network request made
-			// resulting in a spinner. The spinner will then disappear when either the results are
-			// displayed, or no results are found.
-			await this.page.waitForSelector( selectors.spinner );
-			await this.page.waitForSelector( selectors.spinner, { state: 'hidden', timeout: 60000 } );
+			// If there is valid search string, then there should be a network request made.
+			// Wait for the response to the request and ensure the status is HTTP 200.
+			await Promise.all( [
+				this.page.waitForResponse(
+					( response ) => response.url().includes( 'search?' ) && response.status() === 200
+				),
+				this.page.fill( selectors.searchInput, text ),
+			] );
+		} else {
+			// If invalid search string (eg. '     '), then no request is made.
+			await this.page.fill( selectors.searchInput, text );
 		}
 
-		// In all cases, wait for the 'load' state to be fired to add a brief (~1ms) wait between actions.
+		// In all cases, wait for the 'load' state to be fired.
 		await this.page.waitForLoadState( 'load' );
 	}
 
