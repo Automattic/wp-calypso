@@ -5,7 +5,12 @@ import config from '@automattic/calypso-config';
 import { addQueryArgs } from 'calypso/lib/url';
 
 export default () => ( req, res, next ) => {
-	if ( ! config.isEnabled( 'redirect-fallback-browsers' ) || config.isEnabled( 'desktop' ) ) {
+	if ( ! config.isEnabled( 'redirect-fallback-browsers' ) ) {
+		next();
+		return;
+	}
+
+	if ( config.isEnabled( 'desktop' ) ) {
 		next();
 		return;
 	}
