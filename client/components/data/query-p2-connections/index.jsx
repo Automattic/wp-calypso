@@ -5,12 +5,11 @@
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
 /**
  * Internal dependencies
  */
-import { isKeyringConnectionsFetching } from 'calypso/state/sharing/keyring/selectors';
 import { requestP2KeyringConnections } from 'calypso/state/sharing/keyring/actions';
+import { isKeyringConnectionsFetching } from 'calypso/state/sharing/keyring/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class QueryP2Connections extends Component {
