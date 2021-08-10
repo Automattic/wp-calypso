@@ -451,7 +451,7 @@ $signup-sans: 'Noto Sans', $sans;
 		// Apply max-width to floated items that have no intrinsic width.
 		&.alignleft,
 		&.alignright {
-			max-width: $content-width / 2;
+			max-width: $content-width * 0.5;
 			width: 100%;
 		}
 	
