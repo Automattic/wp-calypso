@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { ACTIVITY_LOG_DISPLAY_RULES_REQUEST } from 'calypso/state/action-types';
-import 'calypso/state/data-layer/wpcom/activity-log/get-retention-policy';
+import 'calypso/state/data-layer/wpcom/activity-log/get-display-rules';
 
 /**
  * Type dependencies

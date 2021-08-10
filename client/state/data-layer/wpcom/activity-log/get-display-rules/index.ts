@@ -41,7 +41,7 @@ const onError = ( { siteId } ) => ( {
 	siteId,
 } );
 
-registerHandlers( 'state/data-layer/wpcom/activity-log/get-retention-policy', {
+registerHandlers( 'state/data-layer/wpcom/activity-log/get-display-rules', {
 	[ ACTIVITY_LOG_DISPLAY_RULES_REQUEST ]: [
 		dispatchRequest( {
 			fetch,
