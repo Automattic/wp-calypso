@@ -222,7 +222,7 @@ const webpackConfig = {
 							postcssCustomPropertiesPlugin( { importFrom: [ calypsoColorSchemes ] } ),
 					].filter( Boolean ),
 				},
-				prelude: `@import '${ path.join( __dirname, 'assets/stylesheets/shared/_utils.scss' ) }';`,
+				prelude: `@use '${ path.join( __dirname, 'assets/stylesheets/shared/_utils.scss' ) }';`,
 			} ),
 			{
 				include: path.join( __dirname, 'sections.js' ),
