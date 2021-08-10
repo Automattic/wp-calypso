@@ -155,6 +155,13 @@ class ActivityLogItem extends Component {
 				isBreakpointActive: isDesktop,
 			},
 		} = this.props;
+
+		const rewindAction = this.renderRewindAction();
+
+		const descriptionClasses = classNames( 'activity-log-item__description', {
+			'activity-log-item__description-credentials': this.showCredentialsButton(),
+		} );
+
 		return (
 			<div className="activity-log-item__card-header">
 				<ActivityActor { ...{ actorAvatarUrl, actorName, actorRole, actorType } } />
@@ -171,14 +178,19 @@ class ActivityLogItem extends Component {
 						fullImage={ false }
 					/>
 				) }
-				<div className="activity-log-item__description">
-					<div className="activity-log-item__description-content">
-						<ActivityDescription
-							activity={ this.props.activity }
-							rewindIsActive={ this.props.rewindIsActive }
-						/>
+				<div className={ descriptionClasses }>
+					<div className="activity-log-item__description-text">
+						<div className="activity-log-item__description-content">
+							<ActivityDescription
+								activity={ this.props.activity }
+								rewindIsActive={ this.props.rewindIsActive }
+							/>
+						</div>
+						<div className="activity-log-item__description-summary">{ activityTitle }</div>
 					</div>
-					<div className="activity-log-item__description-summary">{ activityTitle }</div>
+					{ rewindAction && (
+						<div className="activity-log-item__description-actions">{ rewindAction }</div>
+					) }
 				</div>
 				{ activityMedia && ! isDesktop && (
 					<ActivityMedia
@@ -232,6 +244,8 @@ class ActivityLogItem extends Component {
 
 	performCloneAction = () => this.props.cloneOnClick( this.props.activity.activityTs );
 
+	showCredentialsButton = () => this.props.disableRestore && this.props.missingRewindCredentials;
+
 	renderRewindAction = () => {
 		const {
 			activity,
@@ -240,7 +254,6 @@ class ActivityLogItem extends Component {
 			createRewind,
 			disableBackup,
 			disableRestore,
-			missingRewindCredentials,
 			siteId,
 			siteSlug,
 			trackAddCreds,
@@ -251,7 +264,7 @@ class ActivityLogItem extends Component {
 			return null;
 		}
 
-		const showCredentialsButton = disableRestore && missingRewindCredentials;
+		const showCredentialsButton = this.showCredentialsButton();
 		const isCompact = showCredentialsButton;
 
 		const classes = classNames( 'activity-log-item__action', {
@@ -266,7 +279,7 @@ class ActivityLogItem extends Component {
 					</Button>
 				) }
 
-				{ disableRestore && missingRewindCredentials && (
+				{ showCredentialsButton && (
 					<Button
 						compact={ isCompact }
 						href={
@@ -409,7 +422,7 @@ class ActivityLogItem extends Component {
 						className="activity-log-item__card"
 						expandedSummary={ this.renderItemAction() }
 						header={ this.renderHeader() }
-						actionButton={ this.renderRewindAction() }
+						actionButton={ null }
 						summary={ this.renderItemAction() }
 					/>
 				</div>
