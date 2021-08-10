@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { ACTIVITY_LOG_RETENTION_POLICY_REQUEST } from 'calypso/state/action-types';
+import { ACTIVITY_LOG_DISPLAY_RULES_REQUEST } from 'calypso/state/action-types';
 import 'calypso/state/data-layer/wpcom/activity-log/get-retention-policy';
 
 /**
@@ -17,7 +17,7 @@ const trackRequests = {
 	},
 };
 
-type RequestActionType = Action< typeof ACTIVITY_LOG_RETENTION_POLICY_REQUEST > &
+type RequestActionType = Action< typeof ACTIVITY_LOG_DISPLAY_RULES_REQUEST > &
 	typeof trackRequests & {
 		siteId: number | null;
 	};
@@ -30,7 +30,7 @@ type RequestActionType = Action< typeof ACTIVITY_LOG_RETENTION_POLICY_REQUEST > 
  */
 export const requestSiteRetentionPolicy = ( siteId: number | null ): RequestActionType =>
 	( {
-		type: ACTIVITY_LOG_RETENTION_POLICY_REQUEST,
+		type: ACTIVITY_LOG_DISPLAY_RULES_REQUEST,
 		siteId,
 		...trackRequests,
 	} as const );

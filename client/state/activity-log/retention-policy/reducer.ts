@@ -3,10 +3,10 @@
  */
 import { combineReducers, keyedReducer } from 'calypso/state/utils';
 import {
-	ACTIVITY_LOG_RETENTION_POLICY_REQUEST,
-	ACTIVITY_LOG_RETENTION_POLICY_REQUEST_FAILURE,
-	ACTIVITY_LOG_RETENTION_POLICY_REQUEST_SUCCESS,
-	ACTIVITY_LOG_RETENTION_POLICY_SET,
+	ACTIVITY_LOG_DISPLAY_RULES_REQUEST,
+	ACTIVITY_LOG_DISPLAY_RULES_REQUEST_FAILURE,
+	ACTIVITY_LOG_DISPLAY_RULES_REQUEST_SUCCESS,
+	ACTIVITY_LOG_DISPLAY_RULES_SET,
 } from 'calypso/state/action-types';
 
 /**
@@ -16,11 +16,11 @@ import type { AppState } from 'calypso/types';
 
 export const requestStatus = ( state: AppState = null, { type } ): AppState | string => {
 	switch ( type ) {
-		case ACTIVITY_LOG_RETENTION_POLICY_REQUEST:
+		case ACTIVITY_LOG_DISPLAY_RULES_REQUEST:
 			return 'pending';
-		case ACTIVITY_LOG_RETENTION_POLICY_REQUEST_FAILURE:
+		case ACTIVITY_LOG_DISPLAY_RULES_REQUEST_FAILURE:
 			return 'failure';
-		case ACTIVITY_LOG_RETENTION_POLICY_REQUEST_SUCCESS:
+		case ACTIVITY_LOG_DISPLAY_RULES_REQUEST_SUCCESS:
 			return 'success';
 	}
 
@@ -31,7 +31,7 @@ export const days = (
 	state: AppState = null,
 	{ type, retentionPolicy }
 ): AppState | number | undefined => {
-	if ( type !== ACTIVITY_LOG_RETENTION_POLICY_SET ) {
+	if ( type !== ACTIVITY_LOG_DISPLAY_RULES_SET ) {
 		return state;
 	}
 
