@@ -485,11 +485,15 @@ class RegisterDomainStep extends React.Component {
 					/>
 				) }
 				{ ! isSearching && (
-					<EmptyContent
-						title=""
-						className="register-domain-step__placeholder"
-						illustration={ Illustration }
-					/>
+					<>
+						{ this.renderBestNamesPrompt() }
+						<EmptyContent
+							title=""
+							className="register-domain-step__placeholder"
+							illustration={ Illustration }
+							illustrationWidth={ 180 }
+						/>
+					</>
 				) }
 				{ isSearching && (
 					<>
@@ -1279,10 +1283,19 @@ class RegisterDomainStep extends React.Component {
 		);
 	}
 
+	renderBestNamesPrompt() {
+		const { translate } = this.props;
+		return (
+			<div className="register-domain-step__example-prompt">
+				<Icon icon={ tip } size={ 20 } />
+				{ translate( 'The best names are short and memorable' ) }
+			</div>
+		);
+	}
+
 	renderExampleSuggestions() {
 		const {
 			isReskinned,
-			translate,
 			domainsWithPlansOnly,
 			offerUnavailableOption,
 			products,
@@ -1290,12 +1303,7 @@ class RegisterDomainStep extends React.Component {
 		} = this.props;
 
 		if ( isReskinned ) {
-			return (
-				<div className="register-domain-step__example-prompt">
-					<Icon icon={ tip } size={ 20 } />
-					{ translate( 'The best names are short and memorable' ) }
-				</div>
-			);
+			return this.renderBestNamesPrompt();
 		}
 
 		return (
