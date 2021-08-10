@@ -7,7 +7,7 @@ import ActivityCard from 'calypso/components/activity-card';
 import { preventWidows } from 'calypso/lib/formatting/prevent-widows';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import ActivityLogItem from 'calypso/my-sites/activity/activity-log-item';
-import getSiteActivityLogRetentionDays from 'calypso/state/selectors/get-site-activity-log-retention-days';
+import getActivityLogVisibleDays from 'calypso/state/selectors/get-activity-log-visible-days';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useTrackUpsellView, useTrackUpgradeClick } from './hooks';
 
@@ -40,15 +40,13 @@ const RetentionLimitUpsell: React.FC< OwnProps > = ( { cardClassName } ) => {
 	const translate = useTranslate();
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const retentionDays = useSelector( ( state ) =>
-		getSiteActivityLogRetentionDays( state, siteId )
-	);
+	const visibleDays = useSelector( ( state ) => getActivityLogVisibleDays( state, siteId ) );
 	const trackUpgradeClick = useTrackUpgradeClick( siteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	const upsellRef = useTrackUpsellView( siteId );
 
-	if ( ! Number.isInteger( retentionDays ) ) {
+	if ( ! Number.isInteger( visibleDays ) ) {
 		return null;
 	}
 
@@ -70,11 +68,11 @@ const RetentionLimitUpsell: React.FC< OwnProps > = ( { cardClassName } ) => {
 				<h3 className="retention-limit-upsell__call-to-action-header">
 					{ preventWidows(
 						translate(
-							'Restore backups older than %(retentionDays)d day',
-							'Restore backups older than %(retentionDays)d days',
+							'Restore backups older than %(visibleDays)d day',
+							'Restore backups older than %(visibleDays)d days',
 							{
-								count: retentionDays as number,
-								args: { retentionDays },
+								count: visibleDays as number,
+								args: { visibleDays },
 							}
 						)
 					) }
@@ -82,11 +80,11 @@ const RetentionLimitUpsell: React.FC< OwnProps > = ( { cardClassName } ) => {
 				<p className="retention-limit-upsell__call-to-action-copy">
 					{ preventWidows(
 						translate(
-							'Your activity log spans more than %(retentionDays)d day. Upgrade your backup storage to access activity older than %(retentionDays)d day.',
-							'Your activity log spans more than %(retentionDays)d days. Upgrade your backup storage to access activity older than %(retentionDays)d days.',
+							'Your activity log spans more than %(visibleDays)d day. Upgrade your backup storage to access activity older than %(visibleDays)d day.',
+							'Your activity log spans more than %(visibleDays)d days. Upgrade your backup storage to access activity older than %(visibleDays)d days.',
 							{
-								count: retentionDays as number,
-								args: { retentionDays },
+								count: visibleDays as number,
+								args: { visibleDays },
 							}
 						)
 					) }

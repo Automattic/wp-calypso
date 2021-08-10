@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
  * Internal dependencies
  */
 import { applySiteOffset } from 'calypso/lib/site/timezone';
-import getSiteActivityLogRetentionDays from 'calypso/state/selectors/get-site-activity-log-retention-days';
+import getActivityLogVisibleDays from 'calypso/state/selectors/get-activity-log-visible-days';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import { getHttpData } from 'calypso/state/data-layer/http-data';
@@ -158,9 +158,7 @@ export const useFirstMatchingBackupAttempt = (
 export const useIsDateBeyondRetentionPeriod = ( siteId ) => {
 	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
 	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
-	const retentionDays = useSelector( ( state ) =>
-		getSiteActivityLogRetentionDays( state, siteId )
-	);
+	const visibleDays = useSelector( ( state ) => getActivityLogVisibleDays( state, siteId ) );
 
 	return useCallback(
 		( date ) => {
@@ -168,13 +166,13 @@ export const useIsDateBeyondRetentionPeriod = ( siteId ) => {
 				return false;
 			}
 
-			if ( retentionDays === undefined ) {
+			if ( visibleDays === undefined ) {
 				return false;
 			}
 
 			const today = applySiteOffset( Date.now(), { gmtOffset, timezone } ).startOf( 'day' );
-			return today.diff( date, 'days' ) > retentionDays;
+			return today.diff( date, 'days' ) > visibleDays;
 		},
-		[ gmtOffset, timezone, retentionDays ]
+		[ gmtOffset, timezone, visibleDays ]
 	);
 };

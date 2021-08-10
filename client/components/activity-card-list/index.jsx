@@ -18,7 +18,7 @@ import { updateFilter } from 'calypso/state/activity-log/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import getActivityLogDisplayRulesRequestStatus from 'calypso/state/selectors/get-activity-log-display-rules-request-status';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
-import getSiteActivityLogRetentionDays from 'calypso/state/selectors/get-site-activity-log-retention-days';
+import getActivityLogVisibleDays from 'calypso/state/selectors/get-activity-log-visible-days';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import RetentionLimitUpsell from './retention-limit-upsell';
 
@@ -119,7 +119,7 @@ class ActivityCardList extends Component {
 			applySiteOffset,
 			moment,
 			displayRulesEnabled,
-			retentionDays,
+			visibleDays,
 			filter,
 			isBreakpointActive: isMobile,
 			logs,
@@ -130,7 +130,7 @@ class ActivityCardList extends Component {
 		} = this.props;
 
 		const retentionLimitCutoffDate = displayRulesEnabled
-			? ( applySiteOffset ?? moment )().subtract( retentionDays, 'days' )
+			? ( applySiteOffset ?? moment )().subtract( visibleDays, 'days' )
 			: null;
 		const logsWithRetention = displayRulesEnabled
 			? logs.filter( ( log ) =>
@@ -282,7 +282,7 @@ const mapStateToProps = ( state ) => {
 
 	const filter = getActivityLogFilter( state, siteId );
 	const userLocale = getCurrentUserLocale( state );
-	const retentionDays = getSiteActivityLogRetentionDays( state, siteId );
+	const visibleDays = getActivityLogVisibleDays( state, siteId );
 
 	const displayRulesRequestStatus = getActivityLogDisplayRulesRequestStatus( state, siteId );
 
@@ -291,7 +291,7 @@ const mapStateToProps = ( state ) => {
 		displayRulesEnabled: isEnabled( 'activity-log/display-rules' ),
 		requestingRetentionPolicy: displayRulesRequestStatus === 'pending',
 		retentionPolicyRequestError: displayRulesRequestStatus === 'failure',
-		retentionDays,
+		visibleDays,
 		siteId,
 		siteSlug,
 		userLocale,

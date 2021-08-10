@@ -68,7 +68,7 @@ import {
 	updateFilter,
 } from 'calypso/state/activity-log/actions';
 import getActivityLogDisplayRulesRequestStatus from 'calypso/state/selectors/get-activity-log-display-rules-request-status';
-import getSiteActivityLogRetentionDays from 'calypso/state/selectors/get-site-activity-log-retention-days';
+import getActivityLogVisibleDays from 'calypso/state/selectors/get-activity-log-visible-days';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import getBackupProgress from 'calypso/state/selectors/get-backup-progress';
 import getRequestedBackup from 'calypso/state/selectors/get-requested-backup';
@@ -596,13 +596,13 @@ export default connect(
 		const displayRulesLoaded = displayRulesEnabled
 			? getActivityLogDisplayRulesRequestStatus( state, siteId ) === 'success'
 			: true;
-		const retentionDays = displayRulesEnabled
-			? getSiteActivityLogRetentionDays( state, siteId )
+		const visibleDays = displayRulesEnabled
+			? getActivityLogVisibleDays( state, siteId )
 			: undefined;
 		const retentionLimitCutoffDate =
-			displayRulesEnabled && Number.isFinite( retentionDays )
+			displayRulesEnabled && Number.isFinite( visibleDays )
 				? applySiteOffset( Date.now(), { gmtOffset, timezone } )
-						.subtract( retentionDays, 'days' )
+						.subtract( visibleDays, 'days' )
 						.startOf( 'day' )
 				: undefined;
 

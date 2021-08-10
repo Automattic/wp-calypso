@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
-import getSiteActivityLogRetentionDays from 'calypso/state/selectors/get-site-activity-log-retention-days';
+import getActivityLogVisibleDays from 'calypso/state/selectors/get-activity-log-visible-days';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -54,8 +54,8 @@ const BeyondRetentionPeriod: React.FC< OwnProps > = ( { selectedDate } ) => {
 	const displayDate = useDisplayDate( selectedDate );
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const retentionDays = useSelector( ( state ) =>
-		getSiteActivityLogRetentionDays( state, siteId )
+	const visibleDays = useSelector( ( state ) =>
+		getActivityLogVisibleDays( state, siteId )
 	) as number;
 
 	const dispatch = useDispatch();
@@ -80,7 +80,7 @@ const BeyondRetentionPeriod: React.FC< OwnProps > = ( { selectedDate } ) => {
 				{ translate(
 					'Restore backups older than %(days)d day',
 					'Restore backups older than %(days)d days',
-					{ count: retentionDays, args: { days: retentionDays } }
+					{ count: visibleDays, args: { days: visibleDays } }
 				) }
 			</div>
 			<div className="status-card__label">
@@ -88,7 +88,7 @@ const BeyondRetentionPeriod: React.FC< OwnProps > = ( { selectedDate } ) => {
 					{ translate(
 						'Your activity log spans more than %(days)d day. Upgrade your backup storage to access activity older than %(days)d day.',
 						'Your activity log spans more than %(days)d days. Upgrade your backup storage to access activity older than %(days)d days.',
-						{ count: retentionDays, args: { days: retentionDays } }
+						{ count: visibleDays, args: { days: visibleDays } }
 					) }
 				</p>
 				<Button
