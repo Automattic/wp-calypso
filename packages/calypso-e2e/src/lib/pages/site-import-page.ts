@@ -39,21 +39,29 @@ export class SiteImportPage {
 	 * @param {SourceService} service Allowed list of services.
 	 */
 	async selectService( service: SourceService ): Promise< void > {
-		await this.page.click( selectors.service( service ) );
-		await this.page.waitForLoadState( 'load' );
+		await Promise.all( [
+			this.page.waitForLoadState( 'load' ),
+			this.page.click( selectors.service( service ) ),
+		] );
 	}
 
 	/**
 	 * Verify the importer screen is shown.
 	 *
+	 * Note, there are two types of importers available in WPCOM:
+	 * 	- URL based importer, where the target service's site URL is pasted.
+	 * 	- File based importer, where the target service's file export is uploaded.
+	 *
 	 * @param {SourceService} service Allowed list of services.
 	 */
 	async verifyImporter( service: SourceService ): Promise< void > {
+		//
 		if ( [ 'WordPress', 'Wix' ].includes( service ) ) {
 			await this.page.waitForSelector( selectors.siteInput );
 			await this.page.waitForSelector( selectors.continueButton );
 		} else {
 			await this.page.waitForSelector( selectors.fileInputText );
+			// Description text for the file uploader.
 			await this.page.waitForSelector( `:has-text("from a ${ service } export file")` );
 		}
 	}
@@ -62,8 +70,6 @@ export class SiteImportPage {
 	 * Cancel the import process and return to the main Site Import screen.
 	 */
 	async cancel(): Promise< void > {
-		await this.page.waitForLoadState( 'load' );
-
 		if ( await this.page.isVisible( selectors.backButton ) ) {
 			await this.page.click( selectors.backButton );
 		} else {
