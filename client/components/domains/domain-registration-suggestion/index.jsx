@@ -1,4 +1,3 @@
-import { ProgressBar } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, includes } from 'lodash';
@@ -9,8 +8,6 @@ import { connect } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import {
 	parseMatchReasons,
-	SLD_EXACT_MATCH,
-	TLD_EXACT_MATCH,
 	VALID_MATCH_REASONS,
 } from 'calypso/components/domains/domain-registration-suggestion/utility';
 import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
@@ -22,11 +19,6 @@ import {
 	hasDomainInCart,
 	isPaidDomain,
 } from 'calypso/lib/cart-values/cart-items';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import {
-	parseMatchReasons,
-	VALID_MATCH_REASONS,
-} from 'calypso/components/domains/domain-registration-suggestion/utility';
 import { getDomainPrice, getDomainSalePrice, getTld, isHstsRequired } from 'calypso/lib/domains';
 import { HTTPS_SSL } from 'calypso/lib/url/support';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
