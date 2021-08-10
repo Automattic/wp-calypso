@@ -12,7 +12,7 @@ import getSiteOption from './get-site-option';
  */
 export default function isBackupPluginActive( state, siteId ) {
 	const activeJetpackPlugins = getSiteOption( state, siteId, 'jetpack_connection_active_plugins' );
-	if ( activeJetpackPlugins && activeJetpackPlugins.contains( 'jetpack-backup' ) ) {
+	if ( activeJetpackPlugins && activeJetpackPlugins.includes( 'jetpack-backup' ) ) {
 		return true;
 	}
 
