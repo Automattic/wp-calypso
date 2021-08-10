@@ -1,5 +1,9 @@
 import React, { useEffect } from 'react';
-import { useShoppingCart, ShoppingCartProvider } from '../../src/index';
+import {
+	useShoppingCart,
+	ShoppingCartProvider,
+	createShoppingCartManagerClient,
+} from '../../src/index';
 import { getCart, setCart, mainCartKey } from './mock-cart-api';
 import type {
 	RequestCartProduct,
@@ -83,14 +87,17 @@ export function MockProvider( {
 	options?: ShoppingCartManagerOptions;
 	cartKeyOverride?: string | undefined;
 } ): JSX.Element {
+	const managerClient = createShoppingCartManagerClient( {
+		getCart: getCartOverride ?? getCart,
+		setCart: setCartOverride ?? setCart,
+	} );
 	return (
 		<ShoppingCartProvider
-			setCart={ setCartOverride ?? setCart }
-			getCart={ getCartOverride ?? getCart }
 			options={ {
 				...( options ?? {} ),
 				defaultCartKey: cartKeyOverride ?? mainCartKey,
 			} }
+			managerClient={ managerClient }
 		>
 			{ children }
 		</ShoppingCartProvider>
