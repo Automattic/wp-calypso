@@ -2,17 +2,10 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import React from 'react';
-import update from 'immutability-helper';
 import { shallow } from 'enzyme';
+import update from 'immutability-helper';
 import { omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import { ContactDetailsFormFields } from '../';
 import FormButton from '../../../../components/forms/form-button';
 

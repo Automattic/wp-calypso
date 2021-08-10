@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import WpcomColophon from 'calypso/components/wpcom-colophon';
 
 export default function WpcomColophonExample() {

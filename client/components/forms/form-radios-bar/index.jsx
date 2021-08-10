@@ -1,20 +1,10 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React from 'react';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormRadioWithThumbnail from 'calypso/components/forms/form-radio-with-thumbnail';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const FormRadiosBar = ( { isThumbnail, checked, onChange, items, disabled } ) => {

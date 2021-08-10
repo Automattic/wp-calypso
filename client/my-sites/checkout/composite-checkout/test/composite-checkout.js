@@ -1083,20 +1083,6 @@ describe( 'CompositeCheckout', () => {
 		} );
 		expect( screen.getByText( 'Loading checkout' ) ).toBeInTheDocument();
 	} );
-
-	it( 'does not display loading when old cart store has pending updates and then they complete', async () => {
-		let renderResult;
-		let additionalProps = { cart: { hasLoadedFromServer: true, hasPendingServerUpdates: true } };
-		await act( async () => {
-			renderResult = render( <MyCheckout additionalProps={ additionalProps } />, container );
-		} );
-		const { queryByText, rerender } = renderResult;
-		additionalProps = { cart: { hasLoadedFromServer: true, hasPendingServerUpdates: false } };
-		await act( async () => {
-			rerender( <MyCheckout additionalProps={ additionalProps } />, container );
-		} );
-		expect( queryByText( 'Loading checkout' ) ).not.toBeInTheDocument();
-	} );
 } );
 
 async function mockSetCartEndpoint( _, requestCart ) {

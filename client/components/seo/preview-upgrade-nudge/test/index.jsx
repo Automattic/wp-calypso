@@ -4,11 +4,6 @@ jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
 jest.mock( 'calypso/lib/analytics/track-component-view', () => 'TrackComponentView' );
 jest.mock( 'calypso/blocks/upsell-nudge', () => 'UpsellNudge' );
 
-/**
- * External dependencies
- */
-import { shallow } from 'enzyme';
-import React from 'react';
 import {
 	PLAN_FREE,
 	PLAN_BUSINESS,
@@ -28,10 +23,8 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
+import { shallow } from 'enzyme';
+import React from 'react';
 import { SeoPreviewNudge } from '../index';
 
 const props = {

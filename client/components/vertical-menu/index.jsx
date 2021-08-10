@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import { partial } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

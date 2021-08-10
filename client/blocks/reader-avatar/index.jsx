@@ -1,22 +1,12 @@
-/**
- * External dependencies
- */
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { startsWith, get } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { startsWith, get } from 'lodash';
-import { localize } from 'i18n-calypso';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import Gravatar from 'calypso/components/gravatar';
 import SiteIcon from 'calypso/blocks/site-icon';
+import Gravatar from 'calypso/components/gravatar';
 import safeImageUrl from 'calypso/lib/safe-image-url';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

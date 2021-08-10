@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import LoginBlock from 'calypso/blocks/login';
 
 const LoginExample = () => (

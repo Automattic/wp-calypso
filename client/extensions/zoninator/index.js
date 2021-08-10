@@ -1,24 +1,12 @@
-/**
- * External dependencies
- */
-
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, sites, siteSelection } from 'calypso/my-sites/controller';
 import { renderTab } from './app/controller';
-import ZoneCreator from './components/settings/zone-creator';
 import Zone from './components/settings/zone';
+import ZoneCreator from './components/settings/zone-creator';
 import ZonesDashboard from './components/settings/zones-dashboard';
 import installActionHandlers from './state/data-layer';
-import { makeLayout, render as clientRender } from 'calypso/controller';
 import reducer from './state/reducer';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default async function ( _, addReducer ) {

@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { assert } from 'chai';
 import { shallow } from 'enzyme';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import Sparkline from '../index';
 
 describe( 'Sparkline', () => {

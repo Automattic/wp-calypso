@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import Settings from '../components/settings';
 
 export const renderTab = ( component ) => ( context, next ) => {

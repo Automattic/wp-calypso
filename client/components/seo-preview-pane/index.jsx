@@ -1,31 +1,21 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
+import { FacebookPreview, TwitterPreview, SearchPreview } from '@automattic/social-previews';
 import { localize } from 'i18n-calypso';
 import { compact, find, get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { hasSiteSeoFeature } from './utils';
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import SeoPreviewUpgradeNudge from 'calypso/components/seo/preview-upgrade-nudge';
 import ReaderPreview from 'calypso/components/seo/reader-preview';
-import { FacebookPreview, TwitterPreview, SearchPreview } from '@automattic/social-previews';
 import VerticalMenu from 'calypso/components/vertical-menu';
-import { formatExcerpt } from 'calypso/lib/post-normalizer/rule-create-better-excerpt';
-import { parseHtml } from 'calypso/lib/formatting';
 import { SocialItem } from 'calypso/components/vertical-menu/items';
+import { parseHtml } from 'calypso/lib/formatting';
+import { formatExcerpt } from 'calypso/lib/post-normalizer/rule-create-better-excerpt';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getEditorPostId } from 'calypso/state/editor/selectors';
 import { getSitePost } from 'calypso/state/posts/selectors';
 import { getSeoTitle } from 'calypso/state/sites/selectors';
 import { getSectionName, getSelectedSite } from 'calypso/state/ui/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { hasSiteSeoFeature } from './utils';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const PREVIEW_IMAGE_WIDTH = 512;

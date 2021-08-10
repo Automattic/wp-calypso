@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import React from 'react';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { requestSupportHistory } from 'calypso/state/help/actions';
 
 export default function QuerySupportHistory( { email } ) {

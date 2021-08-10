@@ -1,10 +1,5 @@
 jest.mock( 'calypso/components/purchase-detail', () => 'PurchaseDetail' );
 
-/**
- * External dependencies
- */
-import { shallow } from 'enzyme';
-import React from 'react';
 import {
 	PLAN_FREE,
 	PLAN_BUSINESS,
@@ -23,10 +18,8 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
+import { shallow } from 'enzyme';
+import React from 'react';
 import { VideoAudioPosts } from '../video-audio-posts';
 
 describe( 'VideoAudioPosts basic tests', () => {

@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import { find, flatten, includes, map, startsWith } from 'lodash';
 import debugFactory from 'debug';
+import { find, flatten, includes, map, startsWith } from 'lodash';
 import { countries, dialCodeMap } from 'calypso/components/phone-input/data';
-
-/**
- * Internal Dependencies
- */
 
 const debug = debugFactory( 'phone-input:metadata' );
 

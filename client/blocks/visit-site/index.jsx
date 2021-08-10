@@ -1,17 +1,7 @@
-/**
- * External dependencies
- */
-import React, { useState, useEffect } from 'react';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
+import React, { useState, useEffect } from 'react';
 import wpcom from 'calypso/lib/wp';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function useSite( siteSlug ) {

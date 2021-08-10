@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import FormSelect from 'calypso/components/forms/form-select';
 
 const SelectOptGroups = ( props ) => {

@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import PodcastIndicator from '../index';
 
 class PodcastIndicatorExample extends React.PureComponent {

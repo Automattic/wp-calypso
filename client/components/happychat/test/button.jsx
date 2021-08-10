@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { HappychatButton } from '../button';
 
 describe( 'Button', () => {

@@ -18,6 +18,7 @@ import {
 	getProductName,
 } from 'calypso/state/products-list/selectors';
 import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
 interface Props {
 	site: number | string;
@@ -79,6 +80,12 @@ const JetpackCheckoutThankYou: FunctionComponent< Props > = ( {
 
 	return (
 		<Main className="jetpack-checkout-thank-you">
+			<PageViewTracker
+				options={ { useJetpackGoogleAnalytics: true } }
+				path="/checkout/jetpack/thank-you/:site/:product"
+				properties={ { product_slug: productSlug } }
+				title="Checkout > Jetpack Thank You"
+			/>
 			<Card className="jetpack-checkout-thank-you__card">
 				<JetpackLogo full size={ 45 } />
 				{ hasProductInfo && <QueryProducts type="jetpack" /> }

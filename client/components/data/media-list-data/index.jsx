@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
-
 import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import passToChildren from 'calypso/lib/react-pass-to-children';
-import utils from './utils';
 import { setQuery } from 'calypso/state/media/actions';
 import { fetchNextMediaPage } from 'calypso/state/media/thunks';
 import getMediaSortedByDate from 'calypso/state/selectors/get-media-sorted-by-date';
 import hasNextMediaPage from 'calypso/state/selectors/has-next-media-page';
+import utils from './utils';
 
 export class MediaListData extends React.Component {
 	static displayName = 'MediaListData';

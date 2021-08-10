@@ -132,17 +132,18 @@ class JetpackSyncPanel extends React.Component {
 
 		const finished = get( this.props, 'syncStatus.finished' );
 		const { isPendingSyncStart, isFullSyncing, moment, translate } = this.props;
-		const finishedTimestamp = moment( parseInt( finished, 10 ) * 1000 );
+		const finishedTimestamp = parseInt( finished, 10 ) * 1000;
+		const finishedTimestampObj = moment( finishedTimestamp );
 
 		let text = '';
 		if ( isPendingSyncStart ) {
 			text = translate( 'Full sync will begin shortly' );
 		} else if ( isFullSyncing ) {
 			text = translate( 'Full sync in progress' );
-		} else if ( finishedTimestamp.isValid() ) {
+		} else if ( finishedTimestamp > 1000 && finishedTimestampObj.isValid() ) {
 			text = translate( 'Last fully synced %(ago)s', {
 				args: {
-					ago: finishedTimestamp.fromNow(),
+					ago: finishedTimestampObj.fromNow(),
 				},
 			} );
 		}
@@ -166,7 +167,7 @@ class JetpackSyncPanel extends React.Component {
 		const { translate } = this.props;
 		return (
 			<CompactCard className="jetpack-sync-panel">
-				<div className="jetpack-sync-panel__action">
+				<div className="jetpack-sync-panel__action" id="jetpackSyncPanelAction">
 					{ translate(
 						'Jetpack Sync keeps your WordPress.com dashboard up to date. ' +
 							'Data is sent from your site to the WordPress.com dashboard regularly to provide a faster experience. '
@@ -177,7 +178,9 @@ class JetpackSyncPanel extends React.Component {
 							'If you suspect some data is missing, you can {{link}}initiate a sync manually{{/link}}.',
 							{
 								components: {
-									link: <a href="" onClick={ this.onSyncRequestButtonClick } />,
+									link: (
+										<a href="#jetpackSyncPanelAction" onClick={ this.onSyncRequestButtonClick } />
+									),
 								},
 							}
 						) }

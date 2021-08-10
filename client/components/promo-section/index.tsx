@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent } from 'react';
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { TranslateResult } from 'i18n-calypso';
+import { get } from 'lodash';
+import React, { FunctionComponent } from 'react';
 import PromoCard, { Props as PromoCardProps } from './promo-card';
 import PromoCardCta, { Props as PromoCardCtaProps } from './promo-card/cta';
 
@@ -21,9 +14,6 @@ export interface Props {
 	promos: PromoSectionCardProps[];
 }
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const PromoSectionCard: FunctionComponent< PromoSectionCardProps > = ( {

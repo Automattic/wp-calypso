@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { getSelectedSiteWithFallback } from 'calypso/state/sites/selectors';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import SidebarSeparator from 'calypso/layout/sidebar/separator';
+import { getSelectedSiteWithFallback } from 'calypso/state/sites/selectors';
 import StoreGroundControl from './store-ground-control';
 
 class StoreSidebar extends Component {

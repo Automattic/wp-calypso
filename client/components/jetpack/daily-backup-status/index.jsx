@@ -1,36 +1,26 @@
-/**
- * External dependencies
- */
 import { Card } from '@automattic/components';
+import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
+import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { Interval, EVERY_SECOND } from 'calypso/lib/interval';
 import {
 	isSuccessfulDailyBackup,
 	isSuccessfulRealtimeBackup,
 } from 'calypso/lib/jetpack/backup-utils';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { getInProgressBackupForSite, siteHasRealtimeBackups } from 'calypso/state/rewind/selectors';
+import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
+import { getInProgressBackupForSite, siteHasRealtimeBackups } from 'calypso/state/rewind/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import BackupFailed from './status-card/backup-failed';
-import BackupJustCompleted from './status-card/backup-just-completed';
 import BackupInProgress from './status-card/backup-in-progress';
+import BackupJustCompleted from './status-card/backup-just-completed';
 import BackupScheduled from './status-card/backup-scheduled';
 import BackupSuccessful from './status-card/backup-successful';
 import NoBackupsOnSelectedDate from './status-card/no-backups-on-selected-date';
 import NoBackupsYet from './status-card/no-backups-yet';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const DailyBackupStatus = ( { selectedDate, lastBackupDate, backup, deltas } ) => {

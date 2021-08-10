@@ -1,0 +1,122 @@
+name: Happiness Bug Report
+description: Helps us improve our product!
+labels: "User Report, [Type] Bug"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for contributing to calypso! Pick a clear title and proceed.
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      placeholder: |
+        1. Start at /home.
+        2. Click on View Site.
+        3. Click on 'Like' button.
+        ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What I expected to happen
+      placeholder: |
+        eg. Post should be liked.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What actually happened
+      placeholder: |
+        eg. Clicking the button does nothing visibly.
+    validations:
+      required: true
+  - type: textarea
+    id: issue_context
+    attributes:
+      label: Context
+      placeholder: |
+        eg. Customer report, exploratory testing...
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating System
+      options:
+        - Windows
+        - macOS
+        - Linux
+      multiple: true
+    validations:
+      required: true
+  - type: input
+    id: os_version
+    attributes:
+      label: OS Version
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser
+      options:
+        - Chrome/Chromium
+        - Firefox
+        - Microsoft Edge
+        - Microsoft Edge (legacy)
+        - Safari
+      multiple: true
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Browser Version(s)
+  - type: input
+    id: theme
+    attributes:
+      label: Is this specific to applied theme? If so, what is the theme name?
+  - type: dropdown
+    id: site-type
+    attributes:
+      label: Simple, Atomic or both?
+      options:
+        - Simple
+        - Atomic
+      multiple: true
+  - type: textarea
+    id: errors
+    attributes:
+      label: Console and/or error logs
+      description: If there are any console logs or errors, paste it below.
+  - type: dropdown
+    id: users-affected
+    attributes:
+      label: Number of Users Impacted
+      description: How many users do you think might encounter this bug? Best guesses are fine!
+      options:
+        - One user
+        - Some users (<50%)
+        - Most users (>50%)
+        - All users
+  - type: textarea
+    id: workarounds
+    attributes:
+      label: Available Workarounds
+      description: Are there any workarounds to this bug? How difficult are those workarounds?
+      placeholder: |
+        eg. There is alternative access to this setting in the sidebar, but it's not readily apparent.
+  - type: dropdown
+    id: reproducibility
+    attributes:
+      label: Reproducibility
+      options:
+        - Consistent
+        - Intermittent
+        - Once
+        - Never
+  - type: textarea
+    id: other
+    attributes:
+      label: Other information
+      placeholder: additional logs, notes, etc.

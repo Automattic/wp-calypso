@@ -24,7 +24,7 @@ describe( DataHelper.createSuiteTitle( 'WPCOM-specific gutter controls' ), () =>
 	it( 'Start new post', async function () {
 		const newPostFlow = new NewPostFlow( page );
 		await newPostFlow.newPostFromNavbar();
-		gutenbergEditorPage = await GutenbergEditorPage.Expect( page );
+		gutenbergEditorPage = new GutenbergEditorPage( page );
 	} );
 
 	it( 'Insert Pricing Table block', async function () {

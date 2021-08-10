@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import AuthorCompactProfile from 'calypso/blocks/author-compact-profile';
 import { Card } from '@automattic/components';
+import React from 'react';
+import AuthorCompactProfile from 'calypso/blocks/author-compact-profile';
 
 export default class AuthorCompactProfileExample extends React.Component {
 	static displayName = 'AuthorCompactProfileExample';

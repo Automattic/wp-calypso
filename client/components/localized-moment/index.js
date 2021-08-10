@@ -3,12 +3,8 @@
  *
  */
 
-import React from 'react';
 import { createHigherOrderComponent } from '@wordpress/compose';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import MomentContext from './context';
 
 export const withLocalizedMoment = createHigherOrderComponent( ( Wrapped ) => {

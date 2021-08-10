@@ -10,3 +10,4 @@ export * from './media-page';
 export * from './plans-page';
 export * from './individual-purchase-page';
 export * from './cart-checkout-page';
+export * from './stats-page';

@@ -12,13 +12,17 @@
 		align-items: center;
 		border-radius: 0 3px 3px 0; /* stylelint-disable-line */
 		display: flex;
-		flex-direction: column;
 		font-weight: normal;
 		height: 100%;
 		justify-content: center;
 		padding: 0 1em;
 		transition: 0.1s all linear;
 		width: 100%;
+		color: var( --color-text );
+
+		@include break-mobile {
+			min-width: 120px;
+		}
 
 		&.is-borderless {
 			&:hover,
@@ -28,17 +32,20 @@
 			}
 		}
 
-		.gridicon {
+		.material-icon {
 			top: 0;
-			margin-right: 0;
+			margin-right: 4px;
 
 			@include breakpoint-deprecated( '<660px' ) {
 				top: 2px;
 			}
 		}
 
+		.count {
+			margin-left: 6px;
+		}
+
 		.search-filters__dropdown-filters-button-text {
-			line-height: 1.2;
 			white-space: nowrap;
 
 			@include breakpoint-deprecated( '<660px' ) {
@@ -52,8 +59,13 @@
 	}
 
 	&.search-filters__dropdown-filters--has-filter-values {
-		.button.is-borderless {
-			color: var( --color-accent );
+		.material-icon {
+			fill: var( --color-accent );
+		}
+		@include break-mobile {
+			.material-icon {
+				fill: initial;
+			}
 		}
 	}
 }
@@ -127,9 +139,7 @@
 
 .search-filters__tld-filters {
 	.token-field__token {
-		&:first-child {
-			margin-left: 0;
-		}
+		margin: 4px 8px 4px 0;
 	}
 	.token-field__token-text,
 	.token-field__remove-token {
@@ -142,25 +152,21 @@
 	}
 	.token-field__remove-token {
 		border-left: none;
-
-		&:hover {
-			background: var( --color-neutral-10 );
-			color: var( --color-neutral-50 );
-		}
 	}
 
 	.token-field__input-container {
-		margin-left: 0.4em;
-		margin-right: 0.4em;
+		margin: 5px 5px 5px 16px;
 	}
 
 	input[type='text'].token-field__input {
 		margin-left: 0;
+		padding-left: 0;
 	}
 
 	.token-field__suggestions-list.is-expanded {
 		padding-top: 0;
 		overflow-y: scroll;
+		max-height: 18.5em;
 	}
 
 	.token-field__suggestion-match {
@@ -168,9 +174,13 @@
 	}
 
 	.token-field__suggestion {
+		padding: 6px 8px 6px 16px;
 		color: var( --color-neutral-70 );
 		&.is-selected span {
 			color: var( --color-text-inverted );
+		}
+		&:first-child {
+			padding-top: 12px;
 		}
 	}
 }

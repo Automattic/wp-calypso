@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import ActionPanelCta from './cta';
 
 const ActionPanelFooter = ( { children } ) => {

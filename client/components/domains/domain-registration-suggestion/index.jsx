@@ -1,41 +1,34 @@
-/**
- * External dependencies
- */
+import { ProgressBar } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { get, includes } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { get, includes } from 'lodash';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-import classNames from 'classnames';
-import page from 'page';
-
-/**
- * Internal dependencies
- */
-import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
-import {
-	shouldBundleDomainWithPlan,
-	getDomainPriceRule,
-	hasDomainInCart,
-	isPaidDomain,
-} from 'calypso/lib/cart-values/cart-items';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import Badge from 'calypso/components/badge';
 import {
 	parseMatchReasons,
 	SLD_EXACT_MATCH,
 	TLD_EXACT_MATCH,
 	VALID_MATCH_REASONS,
 } from 'calypso/components/domains/domain-registration-suggestion/utility';
-import { ProgressBar } from '@automattic/components';
+import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
+import Gridicon from 'calypso/components/gridicon';
+import InfoPopover from 'calypso/components/info-popover';
+import {
+	shouldBundleDomainWithPlan,
+	getDomainPriceRule,
+	hasDomainInCart,
+	isPaidDomain,
+} from 'calypso/lib/cart-values/cart-items';
 import { getDomainPrice, getDomainSalePrice, getTld, isHstsRequired } from 'calypso/lib/domains';
+import { HTTPS_SSL } from 'calypso/lib/url/support';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
-import Badge from 'calypso/components/badge';
-import PremiumBadge from '../premium-badge';
-import InfoPopover from 'calypso/components/info-popover';
-import { HTTPS_SSL } from 'calypso/lib/url/support';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
+import PremiumBadge from '../premium-badge';
 
 const NOTICE_GREEN = '#4ab866';
 

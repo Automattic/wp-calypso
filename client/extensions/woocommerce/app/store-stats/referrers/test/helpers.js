@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { assert } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { sortBySales } from '../helpers';
 
 describe( 'sortBySales', () => {

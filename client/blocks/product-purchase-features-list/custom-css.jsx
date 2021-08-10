@@ -1,19 +1,7 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import PurchaseDetail from 'calypso/components/purchase-detail';
-
-/**
- * Image dependencies
- */
+import React from 'react';
 import customizeImage from 'calypso/assets/images/illustrations/dashboard.svg';
+import PurchaseDetail from 'calypso/components/purchase-detail';
 
 function getEditCSSLink( selectedSite ) {
 	return '/customize/custom-css/' + selectedSite.slug;

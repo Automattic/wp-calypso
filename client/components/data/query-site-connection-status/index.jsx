@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import isRequestingSiteConnectionStatus from 'calypso/state/selectors/is-requesting-site-connection-status';
 import { requestConnectionStatus } from 'calypso/state/sites/connection/actions';
 

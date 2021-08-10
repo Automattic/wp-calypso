@@ -1,35 +1,25 @@
-/**
- * External dependencies
- */
+import { CompactCard, ScreenReaderText } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { get, times } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
-import { get, times } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
-import DomainTransferSuggestion from 'calypso/components/domains/domain-transfer-suggestion';
+import DomainSkipSuggestion from 'calypso/components/domains/domain-skip-suggestion';
 import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
+import DomainTransferSuggestion from 'calypso/components/domains/domain-transfer-suggestion';
 import FeaturedDomainSuggestions from 'calypso/components/domains/featured-domain-suggestions';
-import { isDomainMappingFree, isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
+import MaterialIcon from 'calypso/components/material-icon';
 import Notice from 'calypso/components/notice';
-import { CompactCard, ScreenReaderText } from '@automattic/components';
+import { isDomainMappingFree, isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
 import { getTld } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
-import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { DESIGN_TYPE_STORE } from 'calypso/signup/constants';
 import { hideSitePreview } from 'calypso/state/signup/preview/actions';
 import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
-import DomainSkipSuggestion from 'calypso/components/domains/domain-skip-suggestion';
-import MaterialIcon from 'calypso/components/material-icon';
+import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class DomainSearchResults extends React.Component {
@@ -82,6 +72,7 @@ class DomainSearchResults extends React.Component {
 			lastDomainSearched,
 			selectedSite,
 			translate,
+			isDomainOnly,
 		} = this.props;
 		const availabilityElementClasses = classNames( {
 			'domain-search-results__domain-is-available': availableDomain,
@@ -171,6 +162,18 @@ class DomainSearchResults extends React.Component {
 							},
 						}
 				  );
+
+			if ( isDomainOnly && ! [ TLD_NOT_SUPPORTED, UNKNOWN ].includes( lastDomainStatus ) ) {
+				domainUnavailableMessage = translate(
+					'{{strong}}%(domain)s{{/strong}} is already registered. Please try another search.',
+					{
+						args: { domain },
+						components: {
+							strong: <strong />,
+						},
+					}
+				);
+			}
 
 			if ( TLD_NOT_SUPPORTED_TEMPORARILY === lastDomainStatus ) {
 				domainUnavailableMessage = translate(

@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { find, flowRight, map } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import QueryPosts from 'calypso/components/data/query-posts';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { getPostsForQuery } from 'calypso/state/posts/selectors';

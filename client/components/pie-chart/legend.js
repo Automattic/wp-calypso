@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
+import { sortBy } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { sortBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import DataType from './data-type';
 import LegendItem from 'calypso/components/legend-item';
+import DataType from './data-type';
 
 const NUM_COLOR_SECTIONS = 3;
 

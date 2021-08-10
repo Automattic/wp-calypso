@@ -1,24 +1,13 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent } from 'react';
 import { useTranslate } from 'i18n-calypso';
+import React, { FunctionComponent } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import JetpackDisconnectedSVG from 'calypso/assets/images/jetpack/disconnected-gray.svg';
 import ExternalLink from 'calypso/components/external-link';
 import Upsell from 'calypso/components/jetpack/upsell';
 import { preventWidows } from 'calypso/lib/formatting';
 import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-
-/**
- * Style dependencies
- */
-import JetpackDisconnectedSVG from 'calypso/assets/images/jetpack/disconnected-gray.svg';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 const JetpackDisconnectedIcon = () => (

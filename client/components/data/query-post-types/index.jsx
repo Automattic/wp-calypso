@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-
+import { isEqual, pick } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { isEqual, pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { getSiteOption } from 'calypso/state/sites/selectors';
-import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 import { requestPostTypes } from 'calypso/state/post-types/actions';
+import { getSiteSettings } from 'calypso/state/site-settings/selectors';
+import { getSiteOption } from 'calypso/state/sites/selectors';
 
 // list of site settings properties that trigger a new query when they change
 const POST_TYPE_SETTINGS = [ 'jetpack_portfolio', 'jetpack_testimonial' ];

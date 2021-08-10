@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { debounce, forEach } from 'lodash';
 import isShallowEqual from '@wordpress/is-shallow-equal';
-
-/**
- * Internal dependencies
- */
+import { debounce, forEach } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import {
 	createPreviewDocumentTitle,
 	getIframeSource,

@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { shallow } from 'enzyme';
-import React from 'react';
-import moment from 'moment';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import moment from 'moment';
+import React from 'react';
 import { ProductExpiration } from '../index';
 
 describe( 'ProductExpiration', () => {

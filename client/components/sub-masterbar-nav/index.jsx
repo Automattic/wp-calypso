@@ -1,20 +1,9 @@
-/**
- * External dependencies
- */
-
+import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { find } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import Navbar from './navbar';
 import Dropdown from './dropdown';
+import Navbar from './navbar';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const OptionShape = PropTypes.shape( {

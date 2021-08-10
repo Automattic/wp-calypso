@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import isRequestingJetpackSettings from 'calypso/state/selectors/is-requesting-jetpack-settings';
 import { requestJetpackSettings } from 'calypso/state/jetpack/settings/actions';
+import isRequestingJetpackSettings from 'calypso/state/selectors/is-requesting-jetpack-settings';
 
 class QueryJetpackSettings extends Component {
 	static propTypes = {

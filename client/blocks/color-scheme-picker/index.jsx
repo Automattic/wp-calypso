@@ -1,24 +1,14 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import { find } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import QueryPreferences from 'calypso/components/data/query-preferences';
+import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 import { savePreference, setPreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import getColorSchemesData from './constants';
-import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class ColorSchemePicker extends PureComponent {

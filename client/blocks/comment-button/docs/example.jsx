@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import CommentButton from 'calypso/blocks/comment-button';
 import { Card } from '@automattic/components';
+import React from 'react';
+import CommentButton from 'calypso/blocks/comment-button';
 
 export default class CommentButtonExample extends React.Component {
 	static displayName = 'CommentButtonExample';

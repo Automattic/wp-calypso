@@ -1,19 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { Button, Dialog } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Button, Dialog } from '@automattic/components';
+import React from 'react';
 import ResizableIframe from 'calypso/components/resizable-iframe';
 
-/**
- * Style dependencies
- */
 import './dialog.scss';
 
 function InlineHelpDialog( { dialogType, videoLink, onClose, translate } ) {

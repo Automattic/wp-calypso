@@ -6,7 +6,6 @@ import {
 	PlansPage,
 	IndividualPurchasePage,
 	CartCheckoutPage,
-	BrowserHelper,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
@@ -47,10 +46,7 @@ describe( DataHelper.createSuiteTitle( 'Plans: Purchases' ), function () {
 		} );
 	} );
 
-	const describeDesktopOnly =
-		BrowserHelper.getViewportName() === 'desktop' ? describe : describe.skip;
-	// The manage button is currently broken on mobile - see issue #55046. TODO: remove the if check when that issue is fixed.
-	describeDesktopOnly( 'Manage current plan (Premium)', function () {
+	describe( 'Manage current plan (Premium)', function () {
 		const cartItemForPremiumPlan = 'WordPress.com Premium';
 		it( 'Click on "Manage Plan" button for the active Premium plan', async function () {
 			// This navigation also validates that we correctly identify the active plan in the Plans table.

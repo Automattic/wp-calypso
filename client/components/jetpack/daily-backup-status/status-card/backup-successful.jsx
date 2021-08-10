@@ -1,33 +1,23 @@
-/**
- * External dependencies
- */
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { applySiteOffset } from 'calypso/lib/site/timezone';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
-import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
-import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
 import ActivityCard from 'calypso/components/activity-card';
+import ExternalLink from 'calypso/components/external-link';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { preventWidows } from 'calypso/lib/formatting';
 import { useActionableRewindId } from 'calypso/lib/jetpack/actionable-rewind-id';
+import { applySiteOffset } from 'calypso/lib/site/timezone';
+import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
+import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ActionButtons from '../action-buttons';
 import BackupChanges from '../backup-changes';
 import useGetDisplayDate from '../use-get-display-date';
-import ExternalLink from 'calypso/components/external-link';
-import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
-import { preventWidows } from 'calypso/lib/formatting';
-
-/**
- * Style dependencies
- */
-import './style.scss';
 import cloudSuccessIcon from './icons/cloud-success.svg';
+
+import './style.scss';
 
 const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 	const translate = useTranslate();

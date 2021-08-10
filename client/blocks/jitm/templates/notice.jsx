@@ -1,11 +1,4 @@
-/**
- * External Dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 
 export default function NoticeTemplate( { id, CTA, tracks, ...props } ) {

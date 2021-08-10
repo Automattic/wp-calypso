@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
+import isShallowEqual from '@wordpress/is-shallow-equal';
+import { defer } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import isShallowEqual from '@wordpress/is-shallow-equal';
-import { defer } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { requestSiteStats } from 'calypso/state/stats/lists/actions';
 import { isRequestingSiteStatsForQuery } from 'calypso/state/stats/lists/selectors';
 import { isAutoRefreshAllowedForQuery } from 'calypso/state/stats/lists/utils';

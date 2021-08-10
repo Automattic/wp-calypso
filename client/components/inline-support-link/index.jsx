@@ -1,31 +1,22 @@
-/**
- * External dependencies
- */
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import ExternalLink from 'calypso/components/external-link';
 import QuerySupportArticleAlternates from 'calypso/components/data/query-support-article-alternates';
-import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
-import { openSupportArticleDialog } from 'calypso/state/inline-support-article/actions';
+import ExternalLink from 'calypso/components/external-link';
+import Gridicon from 'calypso/components/gridicon';
+import { isDefaultLocale, localizeUrl } from 'calypso/lib/i18n-utils';
 import {
 	bumpStat,
 	composeAnalytics,
 	recordTracksEvent,
 	withAnalytics,
 } from 'calypso/state/analytics/actions';
-import { isDefaultLocale, localizeUrl } from 'calypso/lib/i18n-utils';
+import { openSupportArticleDialog } from 'calypso/state/inline-support-article/actions';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import { getContextLinks } from './context-links';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class InlineSupportLink extends Component {
@@ -39,6 +30,7 @@ class InlineSupportLink extends Component {
 		supportLink: PropTypes.string,
 		showText: PropTypes.bool,
 		showIcon: PropTypes.bool,
+		supportContext: PropTypes.string,
 		iconSize: PropTypes.number,
 		tracksEvent: PropTypes.string,
 		tracksOptions: PropTypes.object,
@@ -106,7 +98,7 @@ class InlineSupportLink extends Component {
 			<LinkComponent
 				className={ classnames( 'inline-support-link', className ) }
 				href={ url }
-				onClick={ openDialog }
+				onClick={ ( event ) => openDialog( event, supportPostId, supportLink ) }
 				onMouseEnter={
 					! isDefaultLocale( localeSlug ) && ! shouldLazyLoadAlternates
 						? this.loadAlternates
@@ -123,23 +115,30 @@ class InlineSupportLink extends Component {
 	}
 }
 
-const mapStateToProps = ( state ) => {
+const getLinkData = ( ownProps ) => {
+	const { supportContext } = ownProps;
+	const contextLinks = getContextLinks();
+	const linkData = contextLinks[ supportContext ];
+	if ( ! linkData ) {
+		return {};
+	}
+	return {
+		supportPostId: linkData.post_id,
+		supportLink: linkData.link,
+	};
+};
+
+const mapStateToProps = ( state, ownProps ) => {
 	return {
 		localeSlug: getCurrentLocaleSlug( state ),
+		...getLinkData( ownProps ),
 	};
 };
 
 const mapDispatchToProps = ( dispatch, ownProps ) => {
-	const {
-		tracksEvent,
-		tracksOptions,
-		statsGroup,
-		statsName,
-		supportPostId,
-		supportLink,
-	} = ownProps;
+	const { tracksEvent, tracksOptions, statsGroup, statsName } = ownProps;
 	return {
-		openDialog: ( event ) => {
+		openDialog: ( event, supportPostId, supportLink ) => {
 			if ( ! supportPostId ) {
 				return;
 			}

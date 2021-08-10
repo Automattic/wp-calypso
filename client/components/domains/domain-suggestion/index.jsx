@@ -1,21 +1,10 @@
-/**
- * External dependencies
- */
-
+import { Button } from '@automattic/components';
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import classNames from 'classnames';
+import DomainProductPrice from 'calypso/components/domains/domain-product-price';
 import Gridicon from 'calypso/components/gridicon';
 
-/**
- * Internal dependencies
- */
-import DomainProductPrice from 'calypso/components/domains/domain-product-price';
-import { Button } from '@automattic/components';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class DomainSuggestion extends React.Component {

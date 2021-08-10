@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import isRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 

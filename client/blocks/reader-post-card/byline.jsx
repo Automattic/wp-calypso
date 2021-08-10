@@ -1,28 +1,21 @@
-/**
- * External Dependencies
- */
+import { get, map, take, values } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { get, map, take, values } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal Dependencies
- */
+import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
+import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
+import Gridicon from 'calypso/components/gridicon';
 import TimeSince from 'calypso/components/time-since';
+import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
 import { getSiteName } from 'calypso/reader/get-helpers';
+import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
+import { getStreamUrl } from 'calypso/reader/route';
 import {
 	recordAction,
 	recordGaEvent,
 	recordTrackForPost,
 	recordPermalinkClick,
 } from 'calypso/reader/stats';
-import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
-import { getStreamUrl } from 'calypso/reader/route';
-import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
-import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
-import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
 
 const TAGS_TO_SHOW = 3;
 

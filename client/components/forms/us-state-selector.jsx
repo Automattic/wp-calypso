@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import SelectOptGroups from 'calypso/components/forms/select-opt-groups';
 
 const USStateSelector = ( props ) => {

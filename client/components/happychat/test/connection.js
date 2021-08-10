@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { HappychatConnection } from '../connection';
 
 describe( 'Connection', () => {

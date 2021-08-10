@@ -1,19 +1,7 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import PurchaseDetail from 'calypso/components/purchase-detail';
-
-/**
- * Image dependencies
- */
+import React from 'react';
 import premiumThemesImage from 'calypso/assets/images/illustrations/themes.svg';
+import PurchaseDetail from 'calypso/components/purchase-detail';
 
 export default localize( ( { selectedSite, translate } ) => {
 	return (

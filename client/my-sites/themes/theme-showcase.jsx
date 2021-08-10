@@ -231,6 +231,7 @@ class ThemeShowcase extends React.Component {
 	};
 
 	onFilterClick = ( tabFilter ) => {
+		const scrollPos = window.pageYOffset;
 		trackClick( 'section nav filter', tabFilter );
 		this.setState( { tabFilter } );
 
@@ -238,7 +239,10 @@ class ThemeShowcase extends React.Component {
 		// In this state: tabFilter = [ Recommended | ##All(1)## ]  tier = [ All(2) | Free | ##Premium## ]
 		// Clicking "Recommended" forces tier to be "all", since Recommend themes cannot filter on tier.
 		if ( tabFilter.key !== this.tabFilters.ALL.key && 'all' !== this.props.tier ) {
-			callback = () => this.onTierSelect( { value: 'all' } );
+			callback = () => {
+				this.onTierSelect( { value: 'all' } );
+				window.scrollTo( 0, scrollPos );
+			};
 		}
 		this.setState( { tabFilter }, callback );
 	};

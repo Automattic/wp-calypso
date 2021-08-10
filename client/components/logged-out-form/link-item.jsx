@@ -1,13 +1,7 @@
-/**
- * External dependencies
- */
+import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import classnames from 'classnames';
 
-/**
- * Style dependencies
- */
 import './link-item.scss';
 
 export default function LoggedOutFormLinkItem( props ) {

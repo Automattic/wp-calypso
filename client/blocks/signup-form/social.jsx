@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import AppleLoginButton from 'calypso/components/social-buttons/apple';
-import config from '@automattic/calypso-config';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import GoogleLoginButton from 'calypso/components/social-buttons/google';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { preventWidows } from 'calypso/lib/formatting';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 class SocialSignupForm extends Component {
 	static propTypes = {

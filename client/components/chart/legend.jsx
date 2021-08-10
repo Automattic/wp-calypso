@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
+import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { find } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import ChartLegendItem from './legend-item';
 
 const noop = () => {};

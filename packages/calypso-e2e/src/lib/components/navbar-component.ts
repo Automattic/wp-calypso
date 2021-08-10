@@ -1,25 +1,42 @@
-import { BaseContainer } from '../base-container';
+import { Page } from 'playwright';
 
 const selectors = {
+	// Buttons on navbar
 	mySiteButton: 'text=My Site',
 	writeButton: '*css=a >> text=Write',
 	notificationsButton: 'a[href="/notifications"]',
-
-	// Notification pane
-	notificationsPane: '#wpnc-panel',
 };
 /**
  * Component representing the navbar/masterbar at top of WPCOM.
- *
- * @augments {BaseContainer}
  */
-export class NavbarComponent extends BaseContainer {
+export class NavbarComponent {
+	private page: Page;
+
+	/**
+	 * Constructs an instance of the component.
+	 *
+	 * @param {Page} page The underlying page.
+	 */
+	constructor( page: Page ) {
+		this.page = page;
+	}
+
+	/**
+	 * Wait for load state of the page.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	private async pageSettled(): Promise< void > {
+		await this.page.waitForLoadState( 'load' );
+	}
+
 	/**
 	 * Locates and clicks on the new post button on the nav bar.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickNewPost(): Promise< void > {
+		await this.pageSettled();
 		await this.page.click( selectors.writeButton );
 	}
 
@@ -29,6 +46,7 @@ export class NavbarComponent extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickMySites(): Promise< void > {
+		await this.pageSettled();
 		await this.page.click( selectors.mySiteButton );
 	}
 
@@ -44,6 +62,8 @@ export class NavbarComponent extends BaseContainer {
 	async openNotificationsPanel( {
 		useKeyboard = false,
 	}: { useKeyboard?: boolean } = {} ): Promise< void > {
+		await this.pageSettled();
+
 		const notificationsButton = await this.page.waitForSelector( selectors.notificationsButton, {
 			state: 'visible',
 		} );
@@ -51,10 +71,11 @@ export class NavbarComponent extends BaseContainer {
 			this.page.waitForLoadState( 'networkidle' ),
 			notificationsButton.waitForElementState( 'stable' ),
 		] );
+
 		if ( useKeyboard ) {
 			return await this.page.keyboard.type( 'n' );
 		}
 
-		await this.page.click( selectors.notificationsButton );
+		return await this.page.click( selectors.notificationsButton );
 	}
 }

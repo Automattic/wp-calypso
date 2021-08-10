@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import isFetchingPublicizeShareActionsScheduled from 'calypso/state/selectors/is-fetching-publicize-share-actions-scheduled';
 import isFetchingPublicizeShareActionsPublished from 'calypso/state/selectors/is-fetching-publicize-share-actions-published';
+import isFetchingPublicizeShareActionsScheduled from 'calypso/state/selectors/is-fetching-publicize-share-actions-scheduled';
 import {
 	fetchPostShareActionsScheduled,
 	fetchPostShareActionsPublished,

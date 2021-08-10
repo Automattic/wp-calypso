@@ -1,12 +1,8 @@
-/**
- * External dependencies
- */
-
-import ReactDom from 'react-dom';
-import PropTypes from 'prop-types';
-import React from 'react';
 import debugFactory from 'debug';
 import { omit } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import ReactDom from 'react-dom';
 
 /**
  * Globals
