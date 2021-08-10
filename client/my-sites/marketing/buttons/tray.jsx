@@ -165,13 +165,17 @@ class SharingButtonsTray extends React.Component {
 				<p className="sharing-buttons-preview__panel-notice">
 					<em>
 						{ this.props.translate(
-							'It looks like your site is Private. To get more sharing options make your site Public.',
+							'It looks like your site is Private. Make it Public to take advantage of more sharing options.',
 							{
 								context: 'Sharing: Buttons',
 							}
 						) }
 					</em>
-					<a href="https://wordpress.com/support/settings/privacy-settings/">
+					<a
+						href="https://wordpress.com/support/settings/privacy-settings/"
+						target="_blank"
+						rel="noreferrer"
+					>
 						{ this.props.translate( 'Check out our guide for more details.', {
 							context: 'Sharing: Buttons',
 						} ) }
