@@ -511,7 +511,7 @@ fun seleniumBuildType( viewportName: String, buildUuid: String): BuildType  {
 					# mocha-teamcity-reporter to work.
 					export MAGELLANDEBUG=true
 
-					URL="${BuildDockerImage.depParamRefs.calypso_live_url}"
+					URL="%dep.${BuildDockerImage}.calypso_live_url%"
 
 					# Decrypt config
 					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
@@ -654,7 +654,7 @@ fun playwrightBuildType( viewportName: String, buildUuid: String ): BuildType {
 					export PLAYWRIGHT_BROWSERS_PATH=0
 					export TEAMCITY_VERSION=2021
 
-					URL="${BuildDockerImage.depParamRefs.calypso_live_url}"
+					URL="%dep.${BuildDockerImage}.calypso_live_url%"
 
 					# Decrypt config
 					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
