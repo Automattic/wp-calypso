@@ -3,7 +3,7 @@
  */
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { requestSiteRetentionPolicy } from 'calypso/state/activity-log/retention-policy/actions';
+import { requestSiteRetentionPolicy } from 'calypso/state/activity-log/display-rules/actions';
 import isRequestingActivityLogDisplayRules from 'calypso/state/selectors/is-requesting-activity-log-display-rules';
 import type { AppState } from 'calypso/types';
 

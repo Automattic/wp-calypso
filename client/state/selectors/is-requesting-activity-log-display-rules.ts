@@ -16,7 +16,7 @@ const isRequestingActivityLogDisplayRules = ( state: AppState, siteId: number | 
 		return false;
 	}
 
-	return state.activityLog.retentionPolicy[ siteId as number ]?.requestStatus === 'pending';
+	return state.activityLog.displayRules[ siteId as number ]?.requestStatus === 'pending';
 };
 
 export default isRequestingActivityLogDisplayRules;

@@ -252,13 +252,13 @@ class ActivityCardList extends Component {
 	render() {
 		const {
 			displayRulesEnabled,
-			requestingRetentionPolicy,
-			retentionPolicyRequestError,
+			requestingDisplayRules,
+			displayRulesRequestError,
 			siteId,
 			logs,
 		} = this.props;
 
-		if ( displayRulesEnabled && retentionPolicyRequestError ) {
+		if ( displayRulesEnabled && displayRulesRequestError ) {
 			return this.renderLoading();
 		}
 
@@ -268,8 +268,7 @@ class ActivityCardList extends Component {
 				<QueryRewindCapabilities siteId={ siteId } />
 				<QueryRewindState siteId={ siteId } />
 
-				{ ( ! logs || ( displayRulesEnabled && requestingRetentionPolicy ) ) &&
-					this.renderLoading() }
+				{ ( ! logs || ( displayRulesEnabled && requestingDisplayRules ) ) && this.renderLoading() }
 				{ logs && this.renderData() }
 			</>
 		);
@@ -289,8 +288,8 @@ const mapStateToProps = ( state ) => {
 	return {
 		filter,
 		displayRulesEnabled: isEnabled( 'activity-log/display-rules' ),
-		requestingRetentionPolicy: displayRulesRequestStatus === 'pending',
-		retentionPolicyRequestError: displayRulesRequestStatus === 'failure',
+		requestingDisplayRules: displayRulesRequestStatus === 'pending',
+		displayRulesRequestError: displayRulesRequestStatus === 'failure',
 		visibleDays,
 		siteId,
 		siteSlug,
