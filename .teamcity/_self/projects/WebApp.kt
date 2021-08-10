@@ -133,6 +133,7 @@ object BuildDockerImage : BuildType({
 				fi
 
 				echo "##teamcity[setParameter name='calypso_live_url' value='${'$'}URL']"
+				echo "Calypso.live URL is: ${'$'}URL$"
 			"""
 		}
 
