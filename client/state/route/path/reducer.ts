@@ -1,4 +1,12 @@
+/**
+ * External dependencies
+ */
+import { Reducer, AnyAction } from 'redux';
+/**
+ * Internal dependencies
+ */
 import { ROUTE_SET } from 'calypso/state/action-types';
+import { PathState } from 'calypso/state/route/types';
 
 const initialState = {
 	initial: '',
@@ -6,7 +14,7 @@ const initialState = {
 	previous: '',
 };
 
-export const pathReducer = ( state = initialState, action ) => {
+export const pathReducer: Reducer< PathState, AnyAction > = ( state = initialState, action ) => {
 	const { path, type } = action;
 	switch ( type ) {
 		case ROUTE_SET:
