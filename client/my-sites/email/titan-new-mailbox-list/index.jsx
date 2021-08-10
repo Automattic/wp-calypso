@@ -16,7 +16,12 @@ import {
 } from 'calypso/lib/titan/new-mailbox';
 import { Button } from '@automattic/components';
 import Gridicon from 'calypso/components/gridicon';
-import TitanNewMailbox from './titan-new-mailbox';
+import TitanNewMailbox from 'calypso/my-sites/email/titan-new-mailbox';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const noop = () => {};
 
@@ -85,7 +90,7 @@ const TitanNewMailboxList = ( {
 
 			<div className="titan-new-mailbox-list__actions">
 				{ showAddAnotherMailboxButton && (
-					<Button className="titan-new-mailbox-list__add-mailbox-button" onClick={ onMailboxAdd }>
+					<Button onClick={ onMailboxAdd }>
 						<Gridicon icon="plus" />
 						<span>{ translate( 'Add another mailbox' ) }</span>
 					</Button>

@@ -22,7 +22,7 @@ import { emailManagementTitanSetupThankYou } from 'calypso/my-sites/email/paths'
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import TitanNewMailboxList from 'calypso/my-sites/email/titan-add-mailboxes/titan-new-mailbox-list';
+import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
 import { useCreateTitanMailboxMutation } from 'calypso/data/emails/use-create-titan-mailbox-mutation';
 import { useGetTitanMailboxAvailability } from 'calypso/data/emails/use-get-titan-mailbox-availability';
 
