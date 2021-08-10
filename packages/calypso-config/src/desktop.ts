@@ -11,6 +11,7 @@ const config = {
 	readerFollowingSource: 'desktop',
 	boom_analytics_key: 'desktop',
 	google_recaptcha_site_key: '6LdoXcAUAAAAAM61KvdgP8xwnC19YuzAiOWn5Wtn',
+	'redirect-fallback-browsers': false,
 };
 
 const features = {
