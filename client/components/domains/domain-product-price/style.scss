@@ -104,6 +104,10 @@
 
 		.domain-product-price__renewal-price {
 			text-decoration: line-through;
+
+			small {
+				font-size: $font-body-small;
+			}
 		}
 
 		@include breakpoint-deprecated( '>660px' ) {
