@@ -281,6 +281,16 @@ export default function () {
 		);
 
 		page(
+			paths.domainMappingSetup( ':site', ':domain' ),
+			siteSelection,
+			navigation,
+			domainsController.jetpackNoDomainsWarning,
+			domainsController.mapDomainSetup,
+			makeLayout,
+			clientRender
+		);
+
+		page(
 			'/domains/add/site-redirect/:domain',
 			siteSelection,
 			navigation,
