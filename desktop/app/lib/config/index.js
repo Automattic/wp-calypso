@@ -8,6 +8,10 @@ config.version = pkg.version;
 config.author = pkg.author;
 
 config.loginURL = function () {
+	if ( process.env.WP_DESKTOP_BASE_URL ) {
+		return `${ process.env.WP_DESKTOP_BASE_URL }/log-in`;
+	}
+
 	if ( process.env.WP_DESKTOP_DEBUG_LOCALHOST !== undefined ) {
 		return 'http://calypso.localhost:3000/log-in';
 	}
@@ -15,6 +19,10 @@ config.loginURL = function () {
 };
 
 config.baseURL = function () {
+	if ( process.env.WP_DESKTOP_BASE_URL ) {
+		return `${ process.env.WP_DESKTOP_BASE_URL }/`;
+	}
+
 	if ( process.env.WP_DESKTOP_DEBUG_LOCALHOST !== undefined ) {
 		return 'http://calypso.localhost:3000/';
 	}
