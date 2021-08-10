@@ -10,7 +10,7 @@
 	& &__heading {
 		font-size: $font-title-medium;
 		font-weight: 500; /* stylelint-disable-line */
-		margin: 0;
+		margin: 0 0 16px;
 	}
 
 	& &__sub-heading {
@@ -55,7 +55,6 @@
 		margin-bottom: 24px;
 		display: flex;
 		flex-direction: column;
-		padding-top: 6px;
 
 		@include break-mobile {
 			flex-direction: row;
@@ -344,8 +343,6 @@
 			margin-top: 0;
 			margin-bottom: 16px;
 			text-align: center;
-			font-weight: 400;
-			color: var( --color-text );
 
 			&-checkmark {
 				fill: var( --studio-green-50 );
@@ -359,9 +356,9 @@
 			margin-bottom: 32px;
 
 			&-text {
-				color: var( --studio-gray-60 );
+				font-weight: 400;
+				color: var( --color-text );
 				font-size: $font-body;
-				font-weight: 500; /* stylelint-disable-line */
 				text-align: center;
 
 				& + & {
