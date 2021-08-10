@@ -22,7 +22,7 @@ import { getSelectedDomain } from 'calypso/lib/domains';
 import { getDomainsBySite } from 'calypso/state/sites/domains/selectors';
 import { SiteData } from 'calypso/state/ui/selectors/site-data';
 import { ThankYou } from 'calypso/components/thank-you';
-import theme from 'calypso/my-sites/marketplace/theme';
+import theme from './theme';
 import { TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP } from 'calypso/lib/titan/constants';
 
 /**
@@ -46,7 +46,7 @@ const TitanSetupThankYou = ( props: TitanSetupThankYouProps ): JSX.Element => {
 
 	const thankYouImage = {
 		alt: translate( 'Thank you' ),
-		src: '/calypso/images/upgrades/thank-you.svg',
+		src: '/calypso/images/illustrations/thank-you-professional-email-logo.svg',
 	};
 
 	const titanControlPanelUrl = emailManagementTitanControlPanelRedirect(
@@ -102,6 +102,7 @@ const TitanSetupThankYou = ( props: TitanSetupThankYouProps ): JSX.Element => {
 	return (
 		<ThemeProvider theme={ theme }>
 			<ThankYou
+				headerClassName={ 'titan-setup-thank-you__header' }
 				sections={ [ titanThankYouSection ] }
 				showSupportSection={ true }
 				thankYouImage={ thankYouImage }

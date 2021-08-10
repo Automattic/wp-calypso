@@ -23,6 +23,7 @@ export type ThankYouSectionProps = {
 
 export type ThankYouProps = {
 	containerClassName?: string;
+	headerClassName?: string;
 	sections: ThankYouSectionProps[];
 	showSupportSection?: boolean;
 	thankYouImage: {

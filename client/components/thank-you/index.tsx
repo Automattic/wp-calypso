@@ -37,7 +37,6 @@ const ThankYouContainer = styled.div< ThankYouThemeProps >`
 const ThankYouHeader = styled.div`
 	width: 100%;
 	height: 240px;
-	background-color: var( --studio-gray-0 );
 	display: flex;
 	justify-content: center;
 `;
@@ -115,6 +114,7 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 	const translate = useTranslate();
 
 	const {
+		headerClassName,
 		containerClassName,
 		sections,
 		showSupportSection = true,
@@ -128,7 +128,7 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 
 	return (
 		<ThankYouContainer className={ classNames( 'thank-you__container', containerClassName ) }>
-			<ThankYouHeader className="thank-you__container-header">
+			<ThankYouHeader className={ classNames( 'thank-you__container-header', headerClassName ) }>
 				{ /* eslint-disable-next-line jsx-a11y/alt-text */ }
 				<img { ...thankYouImage } />
 			</ThankYouHeader>
