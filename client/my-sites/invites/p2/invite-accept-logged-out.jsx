@@ -15,7 +15,7 @@ import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item'
 function renderFooterLink( props ) {
 	return (
 		<div className="invite-accept-logged-out__footer-link">
-			<div>{ props.translate( 'Already have a WordPress.com account? ' ) }</div>
+			<div>{ props.translate( 'Already have a WordPress.com account?' ) }</div>
 			<LoggedOutFormLinks>
 				<LoggedOutFormLinkItem onClick={ props.onClickSignInLink }>
 					{ props.translate( 'Log in instead.' ) }
