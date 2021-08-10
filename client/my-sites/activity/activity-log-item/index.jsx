@@ -158,10 +158,6 @@ class ActivityLogItem extends Component {
 
 		const rewindAction = this.renderRewindAction();
 
-		const descriptionClasses = classNames( 'activity-log-item__description', {
-			'activity-log-item__description-credentials': this.showCredentialsButton(),
-		} );
-
 		return (
 			<div className="activity-log-item__card-header">
 				<ActivityActor { ...{ actorAvatarUrl, actorName, actorRole, actorType } } />
@@ -178,7 +174,7 @@ class ActivityLogItem extends Component {
 						fullImage={ false }
 					/>
 				) }
-				<div className={ descriptionClasses }>
+				<div className="activity-log-item__description">
 					<div className="activity-log-item__description-text">
 						<div className="activity-log-item__description-content">
 							<ActivityDescription
