@@ -164,7 +164,7 @@ export const useIsDateBeyondRetentionPeriod = ( siteId ) => {
 
 	return useCallback(
 		( date ) => {
-			if ( ! isEnabled( 'activity-log/retention-policies' ) ) {
+			if ( ! isEnabled( 'activity-log/display-rules' ) ) {
 				return false;
 			}
 

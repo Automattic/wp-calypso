@@ -592,15 +592,15 @@ export default connect(
 			! siteHasScanProductPurchase( state, siteId );
 		const isJetpack = isJetpackSite( state, siteId );
 
-		const retentionPoliciesEnabled = isEnabled( 'activity-log/retention-policies' );
-		const retentionPolicyLoaded = retentionPoliciesEnabled
+		const displayRulesEnabled = isEnabled( 'activity-log/display-rules' );
+		const retentionPolicyLoaded = displayRulesEnabled
 			? getSiteActivityLogRetentionPolicyRequestStatus( state, siteId ) === 'success'
 			: true;
-		const retentionDays = retentionPoliciesEnabled
+		const retentionDays = displayRulesEnabled
 			? getSiteActivityLogRetentionDays( state, siteId )
 			: undefined;
 		const retentionLimitCutoffDate =
-			retentionPoliciesEnabled && Number.isFinite( retentionDays )
+			displayRulesEnabled && Number.isFinite( retentionDays )
 				? applySiteOffset( Date.now(), { gmtOffset, timezone } )
 						.subtract( retentionDays, 'days' )
 						.startOf( 'day' )
@@ -609,7 +609,7 @@ export default connect(
 		const logs = siteId && requestActivityLogs( siteId, filter );
 		const logEntries = logs?.data ?? emptyList;
 		const logEntriesWithRetention =
-			retentionPoliciesEnabled && retentionLimitCutoffDate
+			displayRulesEnabled && retentionLimitCutoffDate
 				? // This could slightly degrade performance, but it's likely
 				  // this entire component tree gets refactored or removed soon,
 				  // in favor of calypso/my-sites/activity/activity-log-v2.
@@ -623,7 +623,7 @@ export default connect(
 				  )
 				: logEntries;
 
-		const logsLimitedByRetentionPolicy = retentionPoliciesEnabled
+		const logsLimitedByRetentionPolicy = displayRulesEnabled
 			? logEntriesWithRetention.length < logEntries.length
 			: false;
 
