@@ -37,7 +37,7 @@ function ConnectDomainStepDone( { className, domain, step, selectedSiteSlug } ) 
 				icon="checkmark"
 				size={ 24 }
 			/>
-			{ __( 'Your domain is connected' ) } )
+			{ __( 'Your domain is connected' ) }
 		</>
 	);
 

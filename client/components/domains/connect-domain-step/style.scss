@@ -10,8 +10,7 @@
 	& &__heading {
 		font-size: $font-title-medium;
 		font-weight: 500; /* stylelint-disable-line */
-		margin-top: 0;
-		margin-bottom: 18px;
+		margin: 0;
 	}
 
 	& &__sub-heading {
@@ -345,6 +344,8 @@
 			margin-top: 0;
 			margin-bottom: 16px;
 			text-align: center;
+			font-weight: 400;
+			color: var( --color-text );
 
 			&-checkmark {
 				fill: var( --studio-green-50 );
