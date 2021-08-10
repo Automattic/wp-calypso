@@ -19,6 +19,7 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 	// This test will use partial matching names to cycle between available themes.
 	const themeName = 'Twenty Twen';
 	const user = 'defaultUser';
+	const siteURL = DataHelper.getAccountSiteURL( user, { protocol: false } );
 
 	setupHooks( ( args ) => {
 		page = args.page;
@@ -34,13 +35,11 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 		await sidebarComponent.gotoMenu( { item: 'Appearance', subitem: 'Themes' } );
 	} );
 
-	it( 'Select test site', async function () {
+	it( `Choose test site ${ siteURL } if Site Selector is shown`, async function () {
 		const siteSelectComponent = new SiteSelectComponent( page );
 
 		if ( await siteSelectComponent.isSiteSelectorVisible() ) {
-			await siteSelectComponent.selectSite(
-				DataHelper.getAccountSiteURL( user, { protocol: false } )
-			);
+			await siteSelectComponent.selectSite( siteURL );
 		}
 	} );
 

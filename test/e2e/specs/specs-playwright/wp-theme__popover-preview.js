@@ -12,10 +12,11 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 	let sidebarComponent;
 	let themesPage;
 	let previewComponent;
+	let page;
 	// This test will use this specific theme as it will never be active.
 	const themeName = 'Twenty Seventeen';
 	const user = 'defaultUser';
-	let page;
+	const siteURL = DataHelper.getAccountSiteURL( user, { protocol: false } );
 
 	setupHooks( ( args ) => {
 		page = args.page;
@@ -31,13 +32,11 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 		await sidebarComponent.gotoMenu( { item: 'Appearance', subitem: 'Themes' } );
 	} );
 
-	it( 'Select test site', async function () {
+	it( `Choose test site ${ siteURL } if Site Selector is shown`, async function () {
 		const siteSelectComponent = new SiteSelectComponent( page );
 
 		if ( await siteSelectComponent.isSiteSelectorVisible() ) {
-			await siteSelectComponent.selectSite(
-				DataHelper.getAccountSiteURL( user, { protocol: false } )
-			);
+			await siteSelectComponent.selectSite( siteURL );
 		}
 	} );
 
