@@ -56,6 +56,10 @@
 .activity-log-item .foldable-card__secondary {
 	display: none;
 }
+// Therefore, we no longer need to reserve 36px for the main section
+.activity-log-item .foldable-card__main {
+	max-width: 100%;
+}
 
 .activity-log-item__type {
 	display: flex;
@@ -474,18 +478,6 @@
 		}
 		.activity-log-item__description-actions {
 			padding-top: 0;
-		}
-	}
-
-	&.activity-log-item__description-credentials {
-		// When long button exists: "Add server credentials to enable restoring":
-		// Always put under description, no matter screen size
-		flex-direction: column;
-		.activity-log-item__action {
-			justify-content: normal;
-		}
-		.activity-log-item__description-actions {
-			padding-top: 8px;
 		}
 	}
 }
