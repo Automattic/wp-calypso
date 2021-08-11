@@ -404,6 +404,8 @@ class RegisterDomainStep extends React.Component {
 
 	render() {
 		const queryObject = getQueryObject( this.props );
+		const { isSignupStep } = this.props;
+
 		const {
 			availabilityError,
 			availabilityErrorData,
@@ -432,8 +434,6 @@ class RegisterDomainStep extends React.Component {
 			'register-domain-step__search-domain-step': this.props.isSignupStep,
 		} );
 
-		const isSearching = this.state.lastQuery !== '' || this.state.loadingResults;
-
 		return (
 			<div className="register-domain-step">
 				<StickyPanel className={ searchBoxClassName }>
@@ -460,7 +460,7 @@ class RegisterDomainStep extends React.Component {
 						</Search>
 					</CompactCard>
 				</StickyPanel>
-				{ isQueryInvalid && (
+				{ ! isSignupStep && isQueryInvalid && (
 					<Notice
 						className="register-domain-step__notice"
 						text={ `Please search for domains with more than ${ MIN_QUERY_LENGTH } characters length.` }
@@ -484,24 +484,7 @@ class RegisterDomainStep extends React.Component {
 						showDismiss={ false }
 					/>
 				) }
-				{ ! isSearching && (
-					<>
-						{ this.renderBestNamesPrompt() }
-						<EmptyContent
-							title=""
-							className="register-domain-step__placeholder"
-							illustration={ Illustration }
-							illustrationWidth={ 180 }
-						/>
-					</>
-				) }
-				{ isSearching && (
-					<>
-						{ this.renderContent() }
-						{ this.renderFilterResetNotice() }
-						{ this.renderPaginationControls() }
-					</>
-				) }
+				{ this.renderFilterContent() }
 				{ this.renderSideContent() }
 				{ queryObject && <QueryDomainsSuggestions { ...queryObject } /> }
 				<QueryContactDetailsCache />
@@ -623,6 +606,33 @@ class RegisterDomainStep extends React.Component {
 
 		this.setState( { clickedExampleSuggestion: true } );
 	};
+
+	renderFilterContent() {
+		const { isSignupStep } = this.props;
+		const isSearching = this.state.lastQuery !== '' || this.state.loadingResults;
+
+		if ( isSignupStep || isSearching ) {
+			return (
+				<>
+					{ this.renderContent() }
+					{ this.renderFilterResetNotice() }
+					{ this.renderPaginationControls() }
+				</>
+			);
+		}
+
+		return (
+			<>
+				{ this.renderBestNamesPrompt() }
+				<EmptyContent
+					title=""
+					className="register-domain-step__placeholder"
+					illustration={ Illustration }
+					illustrationWidth={ 180 }
+				/>
+			</>
+		);
+	}
 
 	renderContent() {
 		if ( Array.isArray( this.state.searchResults ) || this.state.loadingResults ) {
