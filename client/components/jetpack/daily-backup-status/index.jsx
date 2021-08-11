@@ -11,7 +11,7 @@ import {
 	isSuccessfulRealtimeBackup,
 } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
-import { useIsDateBeyondRetentionPeriod } from 'calypso/my-sites/backup/hooks';
+import { useIsDateVisible } from 'calypso/my-sites/backup/hooks';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import { getInProgressBackupForSite, siteHasRealtimeBackups } from 'calypso/state/rewind/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
@@ -53,12 +53,11 @@ const DailyBackupStatus = ( { selectedDate, lastBackupDate, backup, deltas } ) =
 		}
 	}, [ backupCurrentlyInProgress ] );
 
-	// If retention policies are enabled,
-	// and we're looking at a date beyond this site's retention period,
+	// If display rules are enabled,
+	// and we're looking at a date that should not be visible,
 	// display a status to reflect this.
-	const isDateBeyondRetentionPeriod = useIsDateBeyondRetentionPeriod( siteId );
-	const beyondRetentionPeriod = isDateBeyondRetentionPeriod( selectedDate );
-	if ( beyondRetentionPeriod ) {
+	const isDateVisible = useIsDateVisible( siteId );
+	if ( ! isDateVisible( selectedDate ) ) {
 		return <BeyondRetentionPeriod selectedDate={ selectedDate } />;
 	}
 

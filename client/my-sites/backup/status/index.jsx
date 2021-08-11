@@ -13,7 +13,7 @@ import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import BackupDelta from 'calypso/components/jetpack/backup-delta';
 import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
 import MostRecentStatus from 'calypso/components/jetpack/daily-backup-status';
-import { useIsDateBeyondRetentionPeriod } from '../hooks';
+import { useIsDateVisible } from '../hooks';
 import { useDailyBackupStatus, useRealtimeBackupStatus } from './hooks';
 
 /**
@@ -57,7 +57,7 @@ export const DailyStatus = ( { selectedDate } ) => {
 
 export const RealtimeStatus = ( { selectedDate } ) => {
 	const siteId = useSelector( getSelectedSiteId );
-	const isDateBeyondRetentionPeriod = useIsDateBeyondRetentionPeriod( siteId );
+	const isDateVisible = useIsDateVisible( siteId );
 
 	const moment = useLocalizedMoment();
 
@@ -91,7 +91,7 @@ export const RealtimeStatus = ( { selectedDate } ) => {
 				} }
 			/>
 
-			{ ! isDateBeyondRetentionPeriod( selectedDate ) && lastBackupAttemptOnDate && (
+			{ isDateVisible( selectedDate ) && lastBackupAttemptOnDate && (
 				<BackupDelta
 					{ ...{
 						realtimeBackups: backupAttemptsOnDate,

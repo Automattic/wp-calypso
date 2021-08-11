@@ -149,13 +149,13 @@ export const useFirstMatchingBackupAttempt = (
 };
 
 /**
- * A React hook that creates a callback to test whether or not a given date is
- * within a site's Backup retention period (if retention periods are enabled).
+ * A React hook that creates a callback to test whether or not a given date
+ * should be visible in the Backup UI (if display rules are enabled).
  *
- * @param {number|null} siteId The site whose retention period we'll be testing against.
- * @returns A callback that returns true if a given date is outside the site's retention period, and false otherwise.
+ * @param {number|null} siteId The site whose display rules we'll be testing against.
+ * @returns A callback that returns true if a given date should be visible, and false otherwise.
  */
-export const useIsDateBeyondRetentionPeriod = ( siteId ) => {
+export const useIsDateVisible = ( siteId ) => {
 	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
 	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
 	const visibleDays = useSelector( ( state ) => getActivityLogVisibleDays( state, siteId ) );
@@ -171,7 +171,7 @@ export const useIsDateBeyondRetentionPeriod = ( siteId ) => {
 			}
 
 			const today = applySiteOffset( Date.now(), { gmtOffset, timezone } ).startOf( 'day' );
-			return today.diff( date, 'days' ) > visibleDays;
+			return today.diff( date, 'days' ) <= visibleDays;
 		},
 		[ gmtOffset, timezone, visibleDays ]
 	);
