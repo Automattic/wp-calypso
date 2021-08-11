@@ -28,7 +28,6 @@
 	"rebrand_cities_prefix": "rebrandcitiesdevelopmentsite",
 	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"calendly_jetpack_appointment_url": "https://calendly.com/jetpack-com/jetpack-onboarding-call-test",
-	"site_filter": [ "wpcom", "atomic", "jetpack-full" ],
 	"features": {
 		"activity-log/retention-policies": false,
 		"ad-tracking": false,
