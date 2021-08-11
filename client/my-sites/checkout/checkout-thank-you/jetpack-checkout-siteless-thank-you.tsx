@@ -153,7 +153,6 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 			const thankYouCompletedUrl = addQueryArgs(
 				{
 					jetpackTemporarySiteId,
-					productSlug,
 					receiptId,
 				},
 				`/checkout/jetpack/thank-you-completed/no-site/${ productSlug }`
