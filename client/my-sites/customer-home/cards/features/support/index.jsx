@@ -8,7 +8,6 @@ import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { composeAnalytics, recordTracksEvent, bumpStat } from 'calypso/state/analytics/actions';
-import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -44,10 +43,7 @@ const Support = ( { trackContactAction, trackDocsAction } ) => {
 
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
-	const isStaticHomePage =
-		! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' );
-
+	const isStaticHomePage = 'page' === getSiteOption( state, siteId, 'show_on_front' );
 	return {
 		isStaticHomePage,
 	};

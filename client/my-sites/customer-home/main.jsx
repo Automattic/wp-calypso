@@ -18,7 +18,6 @@ import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice } from 'calypso/state/notices/actions';
-import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import { canCurrentUserUseCustomerHome, getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -110,14 +109,12 @@ Home.propTypes = {
 
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
 
 	return {
 		site: getSelectedSite( state ),
 		siteId,
 		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
-		isStaticHomePage:
-			! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' ),
+		isStaticHomePage: 'page' === getSiteOption( state, siteId, 'show_on_front' ),
 	};
 };
 
