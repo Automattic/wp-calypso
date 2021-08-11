@@ -49,22 +49,28 @@ function getLoginLink( props ) {
 	} );
 }
 
-function getRedirectToAfterLoginUrl( props ) {
+function getRedirectToAfterLoginUrl( {
+	oauth2Signup,
+	initialContext,
+	flowName,
+	stepName,
+	userLoggedIn,
+} ) {
 	if (
-		props.oauth2Signup &&
-		props.initialContext?.query?.oauth2_redirect &&
-		isOauth2RedirectValid( props.initialContext.query.oauth2_redirect )
+		oauth2Signup &&
+		initialContext?.query?.oauth2_redirect &&
+		isOauth2RedirectValid( initialContext.query.oauth2_redirect )
 	) {
-		return props.initialContext.query.oauth2_redirect;
+		return initialContext.query.oauth2_redirect;
 	}
 
 	const stepAfterRedirect =
-		getNextStepName( props.flowName, props.stepName, props.userLoggedIn ) ||
-		getPreviousStepName( props.flowName, props.stepName, props.userLoggedIn );
-	const queryArgs = new URLSearchParams( props.initialContext?.query );
+		getNextStepName( flowName, stepName, userLoggedIn ) ||
+		getPreviousStepName( flowName, stepName, userLoggedIn );
+	const queryArgs = new URLSearchParams( initialContext?.query );
 	const queryArgsString = queryArgs.toString() ? '?' + queryArgs.toString() : '';
 
-	return window.location.origin + getStepUrl( props.flowName, stepAfterRedirect ) + queryArgsString;
+	return window.location.origin + getStepUrl( flowName, stepAfterRedirect ) + queryArgsString;
 }
 
 function isOauth2RedirectValid( oauth2Redirect ) {
