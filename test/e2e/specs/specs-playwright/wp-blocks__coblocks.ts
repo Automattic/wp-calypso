@@ -1,6 +1,7 @@
 import {
 	setupHooks,
 	DataHelper,
+	MediaHelper,
 	LoginFlow,
 	NewPostFlow,
 	GutenbergEditorPage,
@@ -8,17 +9,22 @@ import {
 	DynamicHRBlock,
 	HeroBlock,
 	ClicktoTweetBlock,
+	LogosBlock
 } from '@automattic/calypso-e2e';
+import path from 'path';
+import {Page} from 'playwright';
 
-describe( DataHelper.createSuiteTitle( 'Gutenberg: CoBlocks' ), () => {
-	let gutenbergEditorPage;
-	let pricingTableBlock;
-	let page;
+describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), () => {
+	let gutenbergEditorPage: GutenbergEditorPage;
+	let pricingTableBlock: PricingTableBlock;
+	let page: Page;
 
+	// Test data
 	const pricingTableBlockPrice = 888;
 	const heroBlockHeading = 'Hero heading';
 	const clicktoTweetBlockTweet =
 		'The foolish man seeks happiness in the distance. The wise grows it under his feet. — James Oppenheim';
+	const logoImage = MediaHelper.createTestImage();
 
 	setupHooks( ( args ) => {
 		page = args.page;
@@ -61,6 +67,12 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: CoBlocks' ), () => {
 		await clickToTweetBlock.enterTweetContent( clicktoTweetBlockTweet );
 	} );
 
+	it( `Insert ${ LogosBlock.blockName } block and set image`, async function () {
+		const blockHandle = await gutenbergEditorPage.addBlock( LogosBlock.blockName );
+		const logosBlock = new LogosBlock( blockHandle );
+		await logosBlock.upload( logoImage );
+	} );
+
 	it( 'Publish and visit post', async function () {
 		await gutenbergEditorPage.publish( { visit: true } );
 	} );
@@ -72,6 +84,7 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: CoBlocks' ), () => {
 		${ DynamicHRBlock }    | ${ null }
 		${ HeroBlock }         | ${ [ heroBlockHeading ] }
 		${ ClicktoTweetBlock } | ${ [ clicktoTweetBlockTweet ] }
+		${ LogosBlock } | ${ [ path.parse( logoImage ).name ] }
 	`(
 		`Confirm $block.blockName block is visible in published post`,
 		async ( { block, content } ) => {
