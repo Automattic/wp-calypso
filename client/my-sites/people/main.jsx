@@ -25,6 +25,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import titlecase from 'to-title-case';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import P2TeamBanner from 'calypso/my-sites/people/p2-team-banner';
 
 class People extends React.Component {
 	renderPeopleList() {
@@ -103,6 +104,7 @@ class People extends React.Component {
 					align="left"
 					hasScreenOptions
 				/>
+				<P2TeamBanner />
 				<div>
 					{
 						<PeopleSectionNav
