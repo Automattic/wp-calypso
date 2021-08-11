@@ -9,7 +9,7 @@ export default function FeaturedDomainSuggestionsPlaceholder() {
 			<div className="domain-suggestion__content">
 				<div className="domain-registration-suggestion__title" />
 				<div className="domain-product-price" />
-				<div className="domain-registration-suggestion__progress-bar" />
+				<div className="domain-registration-suggestion__badges" />
 				<div className="domain-registration-suggestion__match-reasons" />
 			</div>
 			<div className="domain-suggestion__action" />
