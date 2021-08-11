@@ -1,22 +1,11 @@
-/**
- * External dependencies
- */
-
+import { useTranslate } from 'i18n-calypso';
+import { omitBy } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-import { omitBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import Gridicon from 'calypso/components/gridicon';
 import { getPostTotalCommentsCount } from 'calypso/state/comments/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

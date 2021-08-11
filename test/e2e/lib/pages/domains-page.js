@@ -4,7 +4,7 @@ import * as driverHelper from '../driver-helper.js';
 
 export default class DomainsPage extends AsyncBaseContainer {
 	constructor( driver ) {
-		super( driver, By.css( '.domain-management-list__items' ) );
+		super( driver, By.css( '.empty-domains-list-card' ) );
 	}
 
 	async clickAddDomain() {

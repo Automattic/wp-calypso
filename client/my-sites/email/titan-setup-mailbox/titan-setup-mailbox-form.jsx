@@ -18,13 +18,18 @@ import {
 	decorateMailboxWithAvailabilityError,
 	validateMailboxes,
 } from 'calypso/lib/titan/new-mailbox';
-import { emailManagementTitanSetupThankYouPage } from 'calypso/my-sites/email/paths';
+import { emailManagementTitanSetupThankYou } from 'calypso/my-sites/email/paths';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
 import { useCreateTitanMailboxMutation } from 'calypso/data/emails/use-create-titan-mailbox-mutation';
 import { useGetTitanMailboxAvailability } from 'calypso/data/emails/use-get-titan-mailbox-availability';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const getMailboxDomainName = ( mailbox ) => mailbox?.domain?.value;
 const getMailboxUserName = ( mailbox ) => mailbox?.mailbox?.value;
@@ -54,7 +59,7 @@ const useHandleSetupAction = (
 
 	const goToThankYouPage = ( emailAddress ) => {
 		page(
-			emailManagementTitanSetupThankYouPage(
+			emailManagementTitanSetupThankYou(
 				selectedSite?.slug ?? null,
 				selectedDomainName,
 				emailAddress
@@ -178,12 +183,12 @@ const TitanSetupMailboxForm = ( { areSiteDomainsLoaded, selectedDomainName } ) =
 				validatedMailboxUuids={ validatedMailboxUuids }
 			>
 				<Button
-					className="titan-setup-mailbox__action-continue"
+					className="titan-setup-mailbox-form__button"
 					primary
 					busy={ isBusy }
 					onClick={ handleSetup }
 				>
-					{ translate( 'Set Up' ) }
+					{ translate( 'Complete setup' ) }
 				</Button>
 			</TitanNewMailboxList>
 		</Card>

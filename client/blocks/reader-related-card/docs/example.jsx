@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-
+import { Card } from '@automattic/components';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import {
 	RelatedPostsFromSameSite,
 	RelatedPostsFromOtherSites,
 } from 'calypso/components/related-posts';
-import { Card } from '@automattic/components';
 
 const LONGREADS_SITE_ID = 70135762;
 const LONGREADS_POST_ID = 65877;

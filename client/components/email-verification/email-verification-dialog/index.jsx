@@ -1,27 +1,16 @@
-/**
- * External dependencies
- */
-
+import { Dialog, Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { get, includes } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { get, includes } from 'lodash';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { Dialog, Button } from '@automattic/components';
 import Spinner from 'calypso/components/spinner';
-import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import {
 	verifyEmail,
 	resetVerifyEmailState,
 } from 'calypso/state/current-user/email-verification/actions';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

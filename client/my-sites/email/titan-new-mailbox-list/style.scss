@@ -8,18 +8,10 @@
 
 	.titan-new-mailbox-list__actions {
 		display: flex;
-		flex-direction: column-reverse;
+		flex-direction: column;
 
 		@include break-mobile {
 			flex-direction: row;
-
-			.titan-add-mailboxes__action-cancel {
-				margin-left: auto;
-			}
-
-			.titan-add-mailboxes__action-continue {
-				margin-left: 1.5em;
-			}
 		}
 
 		> button {
@@ -32,6 +24,6 @@
 	}
 }
 
-.titan-new-mailbox-list__new-mailbox-separator {
+.titan-new-mailbox-list__separator {
 	margin-top: 1.5em;
 }

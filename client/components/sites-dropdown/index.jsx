@@ -1,26 +1,15 @@
-/**
- * External dependencies
- */
-
+import classNames from 'classnames';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
-import { get } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
 import Site from 'calypso/blocks/site';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
+import Gridicon from 'calypso/components/gridicon';
 import SiteSelector from 'calypso/components/site-selector';
-import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

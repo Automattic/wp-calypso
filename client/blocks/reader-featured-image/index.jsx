@@ -1,19 +1,9 @@
-/**
- * External dependencies
- */
+import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import cssSafeUrl from 'calypso/lib/css-safe-url';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

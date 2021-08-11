@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 
 const Label = ( { itemsCount, itemsPerRow, lastInRow, scale, text = '' } ) => {
 	const margin = ( ( 1 % scale ) / ( itemsPerRow - 1 ) ) * 100 || 0;

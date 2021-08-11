@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import LikeButton from 'calypso/blocks/like-button/button';
 import { CompactCard as Card } from '@automattic/components';
+import React from 'react';
+import LikeButton from 'calypso/blocks/like-button/button';
 
 class SimpleLikeButtonContainer extends React.PureComponent {
 	state = {

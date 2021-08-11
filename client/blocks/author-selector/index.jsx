@@ -1,18 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import SwitcherShell from './switcher-shell';
+import React from 'react';
 import useUsersQuery from 'calypso/data/users/use-users-query';
+import SwitcherShell from './switcher-shell';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const AuthorSelector = ( {

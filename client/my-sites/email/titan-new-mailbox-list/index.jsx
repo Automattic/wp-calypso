@@ -109,7 +109,7 @@ const TitanNewMailboxList = ( {
 						) }
 					</div>
 
-					<hr className="titan-new-mailbox-list__new-mailbox-separator" />
+					<hr className="titan-new-mailbox-list__separator" />
 				</React.Fragment>
 			) ) }
 

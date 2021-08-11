@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { requestSettings } from 'calypso/state/mailchimp/settings/actions';
 
 class QueryMailchimpSettings extends Component {

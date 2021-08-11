@@ -26,8 +26,9 @@ export class NewPostFlow {
 		// Clicking on Nav bar buttons before we have a full sidebar will actually "swallow" the click without doing anything!
 		// So it's important to make sure the sidebar is there first to avoid a race condition.
 		await new SidebarComponent( this.page ).waitForSidebarInitialization();
-		const navbarComponent = await NavbarComponent.Expect( this.page );
+		const navbarComponent = new NavbarComponent( this.page );
 		await navbarComponent.clickNewPost();
-		await GutenbergEditorPage.Expect( this.page );
+		const gutenbergEditorPage = new GutenbergEditorPage( this.page );
+		await gutenbergEditorPage.waitUntilLoaded();
 	}
 }

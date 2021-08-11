@@ -1,26 +1,16 @@
-/**
- * External dependencies
- */
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { useSelector, useDispatch } from 'react-redux';
+import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent, useCallback, useEffect } from 'react';
-
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
+import { useSelector, useDispatch } from 'react-redux';
+import QueryPreferences from 'calypso/components/data/query-preferences';
+import Gridicon from 'calypso/components/gridicon';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { preventWidows } from 'calypso/lib/formatting';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { dismiss } from 'calypso/state/jetpack-review-prompt/actions';
 import { getIsDismissed, getValidFromDate } from 'calypso/state/jetpack-review-prompt/selectors';
 import { hasReceivedRemotePreferences as getHasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
-import { preventWidows } from 'calypso/lib/formatting';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import Gridicon from 'calypso/components/gridicon';
-import QueryPreferences from 'calypso/components/data/query-preferences';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface Props {

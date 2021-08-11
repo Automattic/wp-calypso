@@ -22,7 +22,7 @@ import {
 	transferStatus,
 	gdprConsentStatus,
 } from 'calypso/lib/domains/constants';
-import { hasPendingGSuiteUsers } from 'calypso/lib/gsuite';
+import { hasPendingGSuiteUsers, isPendingGSuiteTOSAcceptance } from 'calypso/lib/gsuite';
 import { isSubdomain } from 'calypso/lib/domains';
 import {
 	CHANGE_NAME_SERVERS,
@@ -821,17 +821,22 @@ export class DomainWarnings extends React.PureComponent {
 	};
 
 	pendingGSuiteTosAcceptanceDomains = () => {
-		const pendingDomains = this.getDomains().filter( hasPendingGSuiteUsers );
+		const domains = this.getDomains().filter(
+			( domain ) => hasPendingGSuiteUsers( domain ) || isPendingGSuiteTOSAcceptance( domain )
+		);
+
+		if ( domains.length === 0 ) {
+			return null;
+		}
+
 		return (
-			pendingDomains.length !== 0 && (
-				<PendingGSuiteTosNotice
-					isCompact={ this.props.isCompact }
-					key="pending-gsuite-tos-notice"
-					siteSlug={ this.props.selectedSite && this.props.selectedSite.slug }
-					domains={ pendingDomains }
-					section="domain-management"
-				/>
-			)
+			<PendingGSuiteTosNotice
+				isCompact={ this.props.isCompact }
+				key="pending-gsuite-tos-notice"
+				siteSlug={ this.props.selectedSite && this.props.selectedSite.slug }
+				domains={ domains }
+				section="domain-management"
+			/>
 		);
 	};
 

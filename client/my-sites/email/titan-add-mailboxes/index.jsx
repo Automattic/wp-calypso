@@ -5,7 +5,6 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
-import { isEnabled } from '@automattic/calypso-config';
 import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
@@ -24,9 +23,8 @@ import DocumentHead from 'calypso/components/data/document-head';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import {
 	emailManagement,
-	emailManagementManageTitanAccount,
 	emailManagementNewTitanAccount,
-	emailManagementTitanControlPanelRedirect,
+	emailManagementTitanSetupMailbox,
 } from 'calypso/my-sites/email/paths';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import {
@@ -49,10 +47,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
-import {
-	TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL,
-	TITAN_MAIL_MONTHLY_SLUG,
-} from 'calypso/lib/titan/constants';
+import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import SectionHeader from 'calypso/components/section-header';
 import TitanMailboxPricingNotice from 'calypso/my-sites/email/titan-add-mailboxes/titan-mailbox-pricing-notice';
 import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
@@ -190,22 +185,12 @@ class TitanAddMailboxes extends React.Component {
 
 		this.recordClickEvent( 'calypso_email_management_titan_add_mailboxes_create_mailbox_click' );
 
-		const domainName = isSelectedDomainNameValid ? selectedDomainName : null;
-
-		if ( isEnabled( 'titan/iframe-control-panel' ) ) {
-			page(
-				emailManagementManageTitanAccount( selectedSite.slug, domainName, currentRoute, {
-					context: TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL,
-				} )
-			);
-
-			return;
-		}
-
-		window.open(
-			emailManagementTitanControlPanelRedirect( selectedSite.slug, domainName, currentRoute, {
-				context: TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL,
-			} )
+		page(
+			emailManagementTitanSetupMailbox(
+				selectedSite.slug,
+				isSelectedDomainNameValid ? selectedDomainName : null,
+				currentRoute
+			)
 		);
 	};
 
@@ -267,7 +252,6 @@ class TitanAddMailboxes extends React.Component {
 		}
 
 		const analyticsPath = emailManagementNewTitanAccount( ':site', ':domain', currentRoute );
-		const finishSetupLinkIsExternal = ! isEnabled( 'titan/iframe-control-panel' );
 
 		return (
 			<>
@@ -289,11 +273,11 @@ class TitanAddMailboxes extends React.Component {
 					{ selectedDomain && (
 						<TitanUnusedMailboxesNotice
 							domain={ selectedDomain }
-							linkIsExternal={ finishSetupLinkIsExternal }
 							maxTitanMailboxCount={ maxTitanMailboxCount }
 							onFinishSetupClick={ this.handleUnusedMailboxFinishSetupClick }
 						/>
 					) }
+
 					{ selectedDomain && titanMonthlyProduct && (
 						<TitanMailboxPricingNotice
 							domain={ selectedDomain }

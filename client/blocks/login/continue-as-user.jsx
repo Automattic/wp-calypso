@@ -1,23 +1,13 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
+import { get } from 'lodash';
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
-import { useTranslate } from 'i18n-calypso';
-import { Button } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
+import Gravatar from 'calypso/components/gravatar';
 import wpcom from 'calypso/lib/wp';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
-import Gravatar from 'calypso/components/gravatar';
 
-/**
- * Style dependencies
- */
 import './continue-as-user.scss';
 
 // Validate redirect URL using the REST endpoint.

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import JetpackLogo from 'calypso/components/jetpack-logo';
 
 export default function JetpackLogoExample() {

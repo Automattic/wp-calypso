@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { requestRecommendedSites } from 'calypso/state/reader/recommended-sites/actions';
 
 class QueryReaderRecommendedSites extends Component {

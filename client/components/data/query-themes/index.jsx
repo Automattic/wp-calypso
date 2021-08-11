@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
+import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { isEqual } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { requestThemes } from 'calypso/state/themes/actions';
 import { getThemesForQuery, isRequestingThemesForQuery } from 'calypso/state/themes/selectors';
 

@@ -3,10 +3,6 @@
  *
  */
 import { includes, get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { AspectRatios, AspectRatiosValues } from 'calypso/state/editor/image-editor/constants';
 
 /**

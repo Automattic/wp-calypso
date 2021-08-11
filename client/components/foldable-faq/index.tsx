@@ -1,17 +1,7 @@
-/**
- * External dependencies
- */
-import React, { useRef, useState, useCallback, useLayoutEffect } from 'react';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import React, { useRef, useState, useCallback, useLayoutEffect } from 'react';
 import Gridicon from 'calypso/components/gridicon';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface FAQProps {

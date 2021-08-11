@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
-import { RegistrantExtraInfoUkForm } from '../uk-form';
+import React from 'react';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import { RegistrantExtraInfoUkForm } from '../uk-form';
 
 const mockProps = {
 	contactDetails: {},

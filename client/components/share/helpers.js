@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-
 import { find } from 'lodash';
 
 //Mostly copied from Seo Preview

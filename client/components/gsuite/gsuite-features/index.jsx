@@ -1,26 +1,16 @@
-/**
- * External dependencies
- */
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
+import googleDocsIcon from 'calypso/assets/images/email-providers/google-workspace/services/docs.svg';
+import googleDriveIcon from 'calypso/assets/images/email-providers/google-workspace/services/drive.svg';
+import gmailIcon from 'calypso/assets/images/email-providers/google-workspace/services/gmail.svg';
 import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 	GSUITE_BASIC_SLUG,
 	GSUITE_BUSINESS_SLUG,
 } from 'calypso/lib/gsuite/constants';
 import GSuiteSingleFeature from './single-feature';
-import googleDocsIcon from 'calypso/assets/images/email-providers/google-workspace/services/docs.svg';
-import googleDriveIcon from 'calypso/assets/images/email-providers/google-workspace/services/drive.svg';
-import gmailIcon from 'calypso/assets/images/email-providers/google-workspace/services/gmail.svg';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const GSuiteFeatures = ( { compact, domainName, productSlug, type } ) => {

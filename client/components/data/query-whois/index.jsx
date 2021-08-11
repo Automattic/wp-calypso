@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import isRequestingWhois from 'calypso/state/selectors/is-requesting-whois';
 import { requestWhois } from 'calypso/state/domains/management/actions';
+import isRequestingWhois from 'calypso/state/selectors/is-requesting-whois';
 
 class QueryWhois extends Component {
 	UNSAFE_componentWillMount() {

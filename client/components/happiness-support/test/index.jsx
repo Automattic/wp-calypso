@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import React from 'react';
 import { spy } from 'sinon';
-
-/**
- * Internal dependencies
- */
-import { HappinessSupport } from '..';
 import HappychatButton from 'calypso/components/happychat/button';
 import HappychatConnection from 'calypso/components/happychat/connection-connected';
 import {
@@ -18,6 +10,7 @@ import {
 	JETPACK_SUPPORT,
 	SUPPORT_ROOT,
 } from 'calypso/lib/url/support';
+import { HappinessSupport } from '..';
 
 const noop = () => {};
 

@@ -7,7 +7,7 @@ import {
 	setupHooks,
 } from '@automattic/calypso-e2e';
 
-describe( DataHelper.createSuiteTitle( 'Support' ), function () {
+describe( DataHelper.createSuiteTitle( 'Support: Popover' ), function () {
 	let page;
 
 	setupHooks( ( args ) => {
@@ -31,7 +31,7 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 		} );
 
 		it( 'Open support popover', async function () {
-			supportComponent = await SupportComponent.Expect( page );
+			supportComponent = new SupportComponent( page );
 			await supportComponent.clickSupportButton();
 		} );
 
@@ -86,7 +86,7 @@ describe( DataHelper.createSuiteTitle( 'Support' ), function () {
 		} );
 
 		it( 'Open support popover', async function () {
-			supportComponent = await SupportComponent.Expect( page );
+			supportComponent = new SupportComponent( page );
 			await supportComponent.clickSupportButton();
 		} );
 

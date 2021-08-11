@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { filterListBySearchTerm } from 'calypso/blocks/inline-help/admin-sections';
 
 describe( 'filterListBySearchTerm()', () => {

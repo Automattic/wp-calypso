@@ -93,7 +93,6 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 	};
 
 	compactNotice() {
-		const severity = this.getNoticeSeverity();
 		const href =
 			this.props.domains.length === 1
 				? emailManagement( this.props.siteSlug, this.props.domains[ 0 ].name )
@@ -102,7 +101,7 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 		return (
 			<Notice
 				isCompact={ this.props.isCompact }
-				status={ `is-${ severity }` }
+				status={ `is-${ this.getNoticeSeverity() }` }
 				showDismiss={ false }
 				key="pending-gapps-tos-acceptance-domain-compact"
 				text={ this.props.translate( 'Email requires action', 'Emails require action', {
@@ -110,7 +109,7 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 				} ) }
 			>
 				<NoticeAction href={ href } onClick={ this.finishSetupClickHandler }>
-					{ this.props.translate( 'Finish Setup' ) }
+					{ this.props.translate( 'Go' ) }
 				</NoticeAction>
 			</Notice>
 		);

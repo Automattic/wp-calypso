@@ -1,18 +1,7 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import ActivityCard from '.';
 import ActivityMedia from './activity-media';
-
-/**
- * Type dependencies
- */
 import { Activity } from './types';
+import ActivityCard from '.';
 
 type OwnProps = {
 	streams: Activity[];

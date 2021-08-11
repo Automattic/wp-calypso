@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import isRequestingEmailForwards from 'calypso/state/selectors/is-requesting-email-forwards';
 import { getEmailForwards } from 'calypso/state/email-forwarding/actions';
+import isRequestingEmailForwards from 'calypso/state/selectors/is-requesting-email-forwards';
 
 class QueryEmailForwards extends PureComponent {
 	static propTypes = {

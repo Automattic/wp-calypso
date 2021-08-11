@@ -5,17 +5,6 @@
 	font-weight: normal;
 }
 
-.titan-new-mailbox.show-labels {
-	.form-fieldset .form-label {
-		color: var( --color-text );
-
-		> div,
-		> input {
-			margin-top: 5px;
-		}
-	}
-}
-
 .titan-new-mailbox__name-and-remove {
 	display: flex;
 	flex-direction: column-reverse;
@@ -26,8 +15,23 @@
 		.form-fieldset:first-child {
 			flex-grow: 2;
 		}
+
+		.titan-new-mailbox__remove-mailbox-button {
+			height: 40px;
+			margin-left: 1em;
+			width: 50px;
+
+			.gridicon {
+				margin-right: 0;
+			}
+
+			span {
+				display: none;
+			}
+		}
 	}
 
+	.titan-new-mailbox__remove-mailbox-button,
 	.form-fieldset:not( :first-child ) {
 		margin-bottom: 1em;
 		margin-left: 1em;
@@ -39,6 +43,17 @@
 	}
 }
 
-.titan-new-mailbox__new-mailbox-separator {
-	margin-top: 1.5em;
+.titan-new-mailbox.show-labels {
+	.form-fieldset .form-label {
+		color: var( --color-text );
+
+		> div,
+		> input {
+			margin-top: 5px;
+		}
+	}
+
+	.titan-new-mailbox__remove-mailbox-button {
+		margin-top: calc( 1.5em + 5px );
+	}
 }

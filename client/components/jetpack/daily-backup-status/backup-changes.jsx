@@ -1,18 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Image dependencies
- */
+import React from 'react';
 import mediaImage from 'calypso/assets/images/illustrations/media.svg';
+import Gridicon from 'calypso/components/gridicon';
 
 // const renderMetaDiff = ( metaDiff ) => {
 // 	const metas = [];

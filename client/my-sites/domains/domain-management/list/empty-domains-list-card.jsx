@@ -24,6 +24,7 @@ function EmptyDomainsListCard( {
 	hasDomainCredit,
 	isCompact,
 	dispatchRecordTracksEvent,
+	hasNonWpcomDomains,
 } ) {
 	const translate = useTranslate();
 
@@ -38,10 +39,6 @@ function EmptyDomainsListCard( {
 	const siteHasPaidPlan =
 		selectedSite?.plan?.product_slug && ! isFreePlan( selectedSite.plan.product_slug );
 
-	if ( siteHasPaidPlan && ! hasDomainCredit ) {
-		return null;
-	}
-
 	let title = translate( 'Get your domain' );
 	let line = translate( 'Get a free one-year domain registration or transfer with any paid plan.' );
 	let action = translate( 'Upgrade to a plan' );
@@ -49,6 +46,19 @@ function EmptyDomainsListCard( {
 	let secondaryAction = translate( 'Just search for a domain' );
 	let secondaryActionURL = domainAddNew( selectedSite.slug );
 	let contentType = 'no_plan';
+
+	if ( siteHasPaidPlan && ! hasDomainCredit ) {
+		if ( hasNonWpcomDomains ) {
+			return null;
+		}
+		title = translate( 'Add your domain' );
+		line = translate( 'You have no domains added to this site.' );
+		action = translate( 'Search for a domain' );
+		actionURL = domainAddNew( selectedSite.slug );
+		secondaryAction = translate( 'I have a domain' );
+		secondaryActionURL = domainUseYourDomain( selectedSite.slug );
+		contentType = 'paid_plan_with_no_free_domain_credits';
+	}
 
 	if ( siteHasPaidPlan && hasDomainCredit ) {
 		title = translate( 'Claim your free domain' );
@@ -67,9 +77,9 @@ function EmptyDomainsListCard( {
 	);
 
 	return (
-		<Card>
+		<Card className="empty-domains-list-card">
 			<div
-				className={ classNames( 'empty-domains-list-card', {
+				className={ classNames( 'empty-domains-list-card__wrapper', {
 					'is-compact': isCompact,
 					'has-title-only': title && ! line,
 				} ) }
@@ -111,6 +121,7 @@ EmptyDomainsListCard.propTypes = {
 	isCompact: PropTypes.bool,
 	domains: PropTypes.array,
 	dispatchRecordTracksEvent: PropTypes.func,
+	hasNonWpcomDomains: PropTypes.bool,
 };
 
 export default connect( null, { dispatchRecordTracksEvent: recordTracksEvent } )(

@@ -1,22 +1,11 @@
-/**
- * External dependencies
- */
-
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
+import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class DomainProductPrice extends React.Component {

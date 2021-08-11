@@ -1,23 +1,13 @@
-/**
- * External dependencies
- */
 import { getWindowInnerWidth } from '@automattic/viewport';
-import React, { Component } from 'react';
-import ReactDom from 'react-dom';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { debounce } from 'lodash';
-
-/**
- * Internal Dependencies
- */
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import ReactDom from 'react-dom';
 import SelectDropdown from 'calypso/components/select-dropdown';
-import afterLayoutFlush from 'calypso/lib/after-layout-flush';
 import TranslatableString from 'calypso/components/translatable/proptype';
+import afterLayoutFlush from 'calypso/lib/after-layout-flush';
 
-/**
- * Style dependencies
- */
 import './tabs.scss';
 
 /**

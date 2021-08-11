@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import SegmentedControl from 'calypso/components/segmented-control';
 import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 

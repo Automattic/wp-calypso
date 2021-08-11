@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { equal, ok, deepStrictEqual } from 'assert';
 import { groupBy, pickBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { countries } from '../data';
 import {
 	findCountryFromNumber,

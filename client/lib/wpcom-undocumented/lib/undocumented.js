@@ -1909,17 +1909,6 @@ Undocumented.prototype.uploadExportFile = function ( siteId, params ) {
 	} );
 };
 
-/**
- * GET help links
- *
- * @param {string} searchQuery User input for help search
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.getHelpLinks = function ( searchQuery, fn ) {
-	debug( 'help-search/ searchQuery' );
-	return this.wpcom.req.get( '/help/search', { query: searchQuery, include_post_id: 1 }, fn );
-};
-
 Undocumented.prototype.getQandA = function ( query, site, fn ) {
 	debug( 'help-contact-qanda/ searchQuery {query}' );
 

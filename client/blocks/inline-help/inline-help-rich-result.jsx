@@ -1,17 +1,16 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
+import classNames from 'classnames';
+import { localize, getLocaleSlug } from 'i18n-calypso';
+import { get, omitBy } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize, getLocaleSlug } from 'i18n-calypso';
-import classNames from 'classnames';
-import { get, omitBy } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal Dependencies
- */
+import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { requestGuidedTour } from 'calypso/state/guided-tours/actions';
+import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
+import { openSupportArticleDialog } from 'calypso/state/inline-support-article/actions';
 import {
 	RESULT_ARTICLE,
 	RESULT_DESCRIPTION,
@@ -21,12 +20,6 @@ import {
 	RESULT_TYPE,
 	RESULT_VIDEO,
 } from './constants';
-import { Button } from '@automattic/components';
-import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
-import { requestGuidedTour } from 'calypso/state/guided-tours/actions';
-import { openSupportArticleDialog } from 'calypso/state/inline-support-article/actions';
 
 class InlineHelpRichResult extends Component {
 	static propTypes = {

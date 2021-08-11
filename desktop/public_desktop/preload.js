@@ -18,6 +18,7 @@ const sendChannels = [
 	'secrets',
 	'toggle-dev-tools',
 	'title-bar-double-click',
+	'magic-link-set-password',
 ];
 
 // Incoming IPC message channels from Main process to Renderer.

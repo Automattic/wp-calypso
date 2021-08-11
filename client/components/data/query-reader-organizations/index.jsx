@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import React from 'react';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { requestOrganizations } from 'calypso/state/reader/organizations/actions';
 
 export default function QueryReaderOrganizations() {

@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
 import { keys } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import React, { PureComponent } from 'react';
 import ShareButton from '../';
 import services from '../services';
 

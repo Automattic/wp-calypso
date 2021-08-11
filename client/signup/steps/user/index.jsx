@@ -36,6 +36,44 @@ import { getSuggestedUsername } from 'calypso/state/signup/optional-dependencies
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import './style.scss';
 
+function getRedirectToAfterLoginUrl( {
+	oauth2Signup,
+	initialContext,
+	flowName,
+	stepName,
+	userLoggedIn,
+} ) {
+	if (
+		oauth2Signup &&
+		initialContext?.query?.oauth2_redirect &&
+		isOauth2RedirectValid( initialContext.query.oauth2_redirect )
+	) {
+		return initialContext.query.oauth2_redirect;
+	}
+
+	const stepAfterRedirect =
+		getNextStepName( flowName, stepName, userLoggedIn ) ||
+		getPreviousStepName( flowName, stepName, userLoggedIn );
+	const queryArgs = new URLSearchParams( initialContext?.query );
+	const queryArgsString = queryArgs.toString() ? '?' + queryArgs.toString() : '';
+
+	return window.location.origin + getStepUrl( flowName, stepAfterRedirect ) + queryArgsString;
+}
+
+function isOauth2RedirectValid( oauth2Redirect ) {
+	// Allow Google sign-up to work.
+	// See: https://github.com/Automattic/wp-calypso/issues/49572
+	if ( oauth2Redirect === undefined ) {
+		return true;
+	}
+
+	try {
+		const url = new URL( oauth2Redirect );
+		return url.host === 'public-api.wordpress.com';
+	} catch {
+		return false;
+	}
+}
 export class UserStep extends Component {
 	static propTypes = {
 		flowName: PropTypes.string,
@@ -94,21 +132,19 @@ export class UserStep extends Component {
 		this.setSubHeaderText( this.props );
 	};
 
-	getLoginLink() {
-		// TODO: If Reskin signup experiment wins, then refactor to remove duplicate definition of this function
-		// in <SignupForm> component
-		return login( {
-			isJetpack: 'jetpack-connect' === this.props.sectionName,
-			from: this.props.from,
-			redirectTo: this.getRedirectToAfterLoginUrl(),
-			locale: this.props.locale,
-			oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
-			wccomFrom: this.props.wccomFrom,
-		} );
-	}
-
 	setSubHeaderText( props ) {
-		const { flowName, oauth2Client, positionInFlow, translate, userLoggedIn, wccomFrom } = props;
+		const {
+			flowName,
+			oauth2Client,
+			positionInFlow,
+			translate,
+			userLoggedIn,
+			wccomFrom,
+			isReskinned,
+			sectionName,
+			from,
+			locale,
+		} = props;
 
 		let subHeaderText = props.subHeaderText;
 
@@ -166,8 +202,16 @@ export class UserStep extends Component {
 		if ( positionInFlow === 0 && flowName === 'onboarding' ) {
 			subHeaderText = translate( 'First, create your WordPress.com account.' );
 
-			if ( this.props.isReskinned ) {
-				const loginUrl = this.getLoginLink();
+			if ( isReskinned ) {
+				const loginUrl = login( {
+					isJetpack: 'jetpack-connect' === sectionName,
+					from,
+					redirectTo: getRedirectToAfterLoginUrl( props ),
+					locale,
+					oauth2ClientId: oauth2Client?.id,
+					wccomFrom,
+				} );
+
 				subHeaderText = translate(
 					'First, create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
 					{
@@ -202,21 +246,6 @@ export class UserStep extends Component {
 			form,
 		} );
 	};
-
-	isOauth2RedirectValid( oauth2Redirect ) {
-		// Allow Google sign-up to work.
-		// See: https://github.com/Automattic/wp-calypso/issues/49572
-		if ( oauth2Redirect === undefined ) {
-			return true;
-		}
-
-		try {
-			const url = new URL( oauth2Redirect );
-			return url.host === 'public-api.wordpress.com';
-		} catch {
-			return false;
-		}
-	}
 
 	submit = ( data ) => {
 		const { flowName, stepName, oauth2Signup } = this.props;
@@ -274,7 +303,7 @@ export class UserStep extends Component {
 		this.submit( {
 			userData,
 			form: formWithoutPassword,
-			queryArgs: ( this.props.initialContext && this.props.initialContext.query ) || {},
+			queryArgs: this.props.initialContext?.query || {},
 			recaptchaDidntLoad,
 			recaptchaFailed,
 			recaptchaToken: recaptchaToken || undefined,
@@ -291,9 +320,9 @@ export class UserStep extends Component {
 	 * @param {object} userData     (Optional) extra user information that can be used to create a new account
 	 */
 	handleSocialResponse = ( service, access_token, id_token = null, userData = null ) => {
-		const { translate } = this.props;
+		const { translate, initialContext } = this.props;
 
-		if ( ! this.isOauth2RedirectValid( this.props.initialContext.query.oauth2_redirect ) ) {
+		if ( ! isOauth2RedirectValid( initialContext?.query?.oauth2_redirect ) ) {
 			this.props.errorNotice(
 				translate( 'An unexpected error occurred. Please try again later.' )
 			);
@@ -305,7 +334,7 @@ export class UserStep extends Component {
 			access_token,
 			id_token,
 			userData,
-			queryArgs: ( this.props.initialContext && this.props.initialContext.query ) || {},
+			queryArgs: initialContext?.query || {},
 		} );
 	};
 
@@ -373,29 +402,6 @@ export class UserStep extends Component {
 		return headerText;
 	}
 
-	getRedirectToAfterLoginUrl() {
-		if (
-			this.props.oauth2Signup &&
-			this.props.initialContext &&
-			this.props.initialContext.query.oauth2_redirect &&
-			this.isOauth2RedirectValid( this.props.initialContext.query.oauth2_redirect )
-		) {
-			return this.props.initialContext.query.oauth2_redirect;
-		}
-
-		const stepAfterRedirect =
-			getNextStepName( this.props.flowName, this.props.stepName, this.props.userLoggedIn ) ||
-			getPreviousStepName( this.props.flowName, this.props.stepName, this.props.userLoggedIn );
-		const queryArgs = new URLSearchParams( this.props?.initialContext?.query );
-		const queryArgsString = queryArgs.toString() ? '?' + queryArgs.toString() : '';
-
-		return (
-			window.location.origin +
-			getStepUrl( this.props.flowName, stepAfterRedirect ) +
-			queryArgsString
-		);
-	}
-
 	submitButtonText() {
 		const { translate } = this.props;
 
@@ -433,7 +439,7 @@ export class UserStep extends Component {
 			<>
 				<SignupForm
 					{ ...omit( this.props, [ 'translate' ] ) }
-					redirectToAfterLoginUrl={ this.getRedirectToAfterLoginUrl() }
+					redirectToAfterLoginUrl={ getRedirectToAfterLoginUrl( this.props ) }
 					disabled={ this.userCreationStarted() }
 					submitting={ this.userCreationStarted() }
 					save={ this.save }

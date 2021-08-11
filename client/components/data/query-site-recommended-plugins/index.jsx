@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { fetchRecommendedPlugins } from 'calypso/state/plugins/recommended/actions';
 
 class QuerySiteRecommendedPlugins extends Component {

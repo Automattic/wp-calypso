@@ -1,26 +1,19 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import page from 'page';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { getHappychatAuth } from 'calypso/state/happychat/utils';
-import hasUnreadMessages from 'calypso/state/happychat/selectors/has-unread-messages';
+import { initConnection } from 'calypso/state/happychat/connection/actions';
 import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
+import hasUnreadMessages from 'calypso/state/happychat/selectors/has-unread-messages';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import isHappychatConnectionUninitialized from 'calypso/state/happychat/selectors/is-happychat-connection-uninitialized';
-import { initConnection } from 'calypso/state/happychat/connection/actions';
 import { openChat } from 'calypso/state/happychat/ui/actions';
-import { Button } from '@automattic/components';
+import { getHappychatAuth } from 'calypso/state/happychat/utils';
 
 const noop = () => {};
 

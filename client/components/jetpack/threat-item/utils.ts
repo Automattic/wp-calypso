@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Threat, ThreatFix, ThreatType } from './types';
 
 export function getThreatType( threat: Threat ): ThreatType {

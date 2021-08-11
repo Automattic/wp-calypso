@@ -42,7 +42,7 @@ const Task = ( {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const skipButtonRef = useRef( null );
-	const { skipCurrentView } = useSkipCurrentViewMutation( siteId );
+	const { skipCard } = useSkipCurrentViewMutation( siteId );
 	const instanceId = useInstanceId( Task );
 
 	useEffect( () => setIsLoading( forceIsLoading ), [ forceIsLoading ] );
@@ -54,7 +54,7 @@ const Task = ( {
 
 		if ( completeOnStart ) {
 			setIsLoading( true );
-			skipCurrentView();
+			skipCard( taskId );
 		}
 
 		dispatch(
@@ -71,7 +71,7 @@ const Task = ( {
 		setIsLoading( true );
 		setSkipOptionsVisible( false );
 
-		skipCurrentView( reminder );
+		skipCard( taskId, reminder );
 
 		dispatch(
 			composeAnalytics(

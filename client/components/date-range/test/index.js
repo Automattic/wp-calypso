@@ -2,24 +2,17 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { shallow } from 'enzyme';
-import React from 'react';
-import MockDate from 'mockdate';
 import { translate } from 'i18n-calypso';
+import MockDate from 'mockdate';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
-import { DateRange } from '../index.js';
+import React from 'react';
 import DatePicker from 'calypso/components/date-picker';
-import DateRangeTrigger from 'calypso/components/date-range/trigger';
-import DateRangeInputs from 'calypso/components/date-range/inputs';
 import DateRangeHeader from 'calypso/components/date-range/header';
+import DateRangeInputs from 'calypso/components/date-range/inputs';
+import DateRangeTrigger from 'calypso/components/date-range/trigger';
 import Popover from 'calypso/components/popover';
+import { DateRange } from '../index.js';
 
 function dateToLocaleString( date ) {
 	return moment.isDate( date ) || moment.isMoment( date ) ? moment( date ).format( 'L' ) : date;

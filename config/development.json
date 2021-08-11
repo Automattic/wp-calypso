@@ -29,6 +29,7 @@
 	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"calendly_jetpack_appointment_url": "https://calendly.com/jetpack-com/jetpack-onboarding-call-test",
 	"features": {
+		"activity-log/retention-policies": false,
 		"ad-tracking": false,
 		"async-payments": false,
 		"automated-transfer": true,
@@ -148,7 +149,7 @@
 		"settings/theme-setup": true,
 		"sign-in-with-apple": true,
 		"sign-in-with-apple/redirect": true,
-		"signup/professional-email-step": true,
+		"signup/professional-email-step": false,
 		"signup/reskin": true,
 		"signup/social": true,
 		"site-indicator": true,
