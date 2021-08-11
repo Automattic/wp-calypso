@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { isBlogger } from '@automattic/calypso-products';
 import { Button, CompactCard } from '@automattic/components';
+import Search from '@automattic/search';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { Icon } from '@wordpress/icons';
 import classNames from 'classnames';
@@ -85,7 +86,7 @@ import {
 } from 'calypso/state/domains/suggestions/selectors';
 import { hideSitePreview, showSitePreview } from 'calypso/state/signup/preview/actions';
 import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
-import Search from './search';
+import SearchWithTyper from './search';
 import tip from './tip';
 
 import './style.scss';
@@ -438,26 +439,7 @@ class RegisterDomainStep extends React.Component {
 			<div className="register-domain-step">
 				<StickyPanel className={ searchBoxClassName }>
 					<CompactCard className="register-domain-step__search-card">
-						<Search
-							className={ this.state.clickedExampleSuggestion ? 'is-refocused' : undefined }
-							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
-							delaySearch={ true }
-							delayTimeout={ 1000 }
-							describedBy={ 'step-header' }
-							dir="ltr"
-							defaultValue={ this.state.lastQuery }
-							value={ this.state.lastQuery }
-							inputLabel={ this.props.translate( 'What would you like your domain name to be?' ) }
-							minLength={ MIN_QUERY_LENGTH }
-							maxLength={ 60 }
-							onBlur={ this.save }
-							onSearch={ this.onSearch }
-							onSearchChange={ this.onSearchChange }
-							ref={ this.bindSearchCardReference }
-							isReskinned={ this.props.isReskinned }
-						>
-							{ this.renderSearchFilters() }
-						</Search>
+						{ this.renderSearchBar() }
 					</CompactCard>
 				</StickyPanel>
 				{ ! isSignupStep && isQueryInvalid && (
@@ -522,6 +504,34 @@ class RegisterDomainStep extends React.Component {
 				/>
 			)
 		);
+	}
+
+	renderSearchBar() {
+		const { isSignupStep } = this.props;
+		const componentProps = {
+			className: this.state.clickedExampleSuggestion ? 'is-refocused' : undefined,
+			autoFocus: true,
+			delaySearch: true,
+			delayTimeout: 1000,
+			describedBy: 'step-header',
+			dir: 'ltr',
+			defaultValue: this.state.lastQuery,
+			value: this.state.lastQuery,
+			inputLabel: this.props.translate( 'What would you like your domain name to be?' ),
+			minLength: MIN_QUERY_LENGTH,
+			maxLength: 60,
+			onBlur: this.save,
+			onSearch: this.onSearch,
+			onSearchChange: this.onSearchChange,
+			ref: this.bindSearchCardReference,
+			isReskinned: this.props.isReskinned,
+		};
+
+		if ( isSignupStep ) {
+			return <Search { ...componentProps }>{ this.renderSearchFilters() }</Search>;
+		}
+
+		return <SearchWithTyper { ...componentProps }>{ this.renderSearchFilters() }</SearchWithTyper>;
 	}
 
 	rejectTrademarkClaim = () => {
