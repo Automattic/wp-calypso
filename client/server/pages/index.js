@@ -745,8 +745,14 @@ export default function pages() {
 		}
 	);
 
-	app.get( '/browsehappy', ( req, res ) => {
-		req.context.entrypoint = req.getFilesForEntrypoint( 'entry-browsehappy' );
+	app.get( '/browsehappy', setupDefaultContext( 'entry-browsehappy' ), setUpRoute, ( req, res ) => {
+		const wpcomRe = /^https?:\/\/[A-z0-9_-]+\.wordpress\.com$/;
+		const primaryBlogUrl = req.context.user?.primary_blog_url ?? '';
+		const isWpcom = wpcomRe.test( primaryBlogUrl );
+
+		req.context.dashboardUrl = isWpcom
+			? primaryBlogUrl + '/wp-admin'
+			: 'https://dashboard.wordpress.com/wp-admin/';
 		res.send( renderJsx( 'browsehappy', req.context ) );
 	} );
 

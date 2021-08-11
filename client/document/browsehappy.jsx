@@ -3,11 +3,11 @@ import Head from 'calypso/components/head';
 import BrowsehappyBody from 'calypso/landing/browsehappy';
 import { chunkCssLinks } from './utils';
 
-export default function Browsehappy( { entrypoint } ) {
+export default function Browsehappy( { dashboardUrl, entrypoint } ) {
 	return (
 		<html lang="en">
 			<Head title="Unsupported Browser — WordPress.com">{ chunkCssLinks( entrypoint ) }</Head>
-			<BrowsehappyBody />
+			<BrowsehappyBody dashboardUrl={ dashboardUrl } />
 		</html>
 	);
 }

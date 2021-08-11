@@ -9,8 +9,8 @@ import './style.scss';
 
 const SUPPORTED_BROWSERS_LINK = 'https://wordpress.com/support/browser-issues/#supported-browsers';
 
-export default function Browsehappy() {
-	const continueUrl = addQueryArgs( { bypassTargetRedirection: true }, '/' );
+export default function Browsehappy( { dashboardUrl } ) {
+	const continueUrl = addQueryArgs( { bypassTargetRedirection: true }, dashboardUrl ?? '/' );
 
 	return (
 		<body className="browsehappy__body">
