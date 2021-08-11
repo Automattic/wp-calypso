@@ -28,10 +28,8 @@ export class AudioBlock {
 	 * @param {string} path Path to the file on disk.
 	 */
 	async upload( path: string ): Promise< void > {
-		// The `input` element has a display:none style set and it cannot be found normally even if
-		// waitForSelector({state: 'hidden'}) is used.
-		const input = ( await this.block.$( selectors.fileInput ) ) as ElementHandle;
-		await input?.setInputFiles( path );
+		const input = await this.block.waitForSelector( selectors.fileInput, { state: 'attached' } );
+		await input.setInputFiles( path );
 		await Promise.all( [
 			this.block.waitForSelector( selectors.spinner, { state: 'hidden' } ),
 			this.block.waitForElementState( 'stable' ),

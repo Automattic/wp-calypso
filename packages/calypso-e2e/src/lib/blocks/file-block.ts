@@ -33,9 +33,7 @@ export class FileBlock {
 		const frame = ( await this.block.ownerFrame() ) as Frame;
 		const page = frame.page() as Page;
 
-		// The `input` element has a display:none style set and it cannot be found normally even if
-		// waitForSelector({state: 'hidden'}) is used.
-		const input = ( await this.block.$( selectors.fileInput ) ) as ElementHandle;
+		const input = await this.block.waitForSelector( selectors.fileInput, { state: 'attached' } );
 		// Wait for the request complete instead of looking for the spinner and/or loading animation.
 		// Waiting on the animation class to be detached is not a reliable method for this block.
 		// It can lead to the filename placeholder text not being replaced with the uploaded file name.
