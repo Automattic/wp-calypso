@@ -45,7 +45,6 @@ describe( `[${ host }] Manage Domains - Add a Domain: (${ screenSize }) @paralle
 	it( 'Add a domain', async function () {
 		const domainsPage = await DomainsPage.Expect( this.driver );
 		await domainsPage.clickAddDomain();
-		await domainsPage.clickPopoverItem( 'to this site' );
 	} );
 
 	it( 'Search for a blog name', async function () {
