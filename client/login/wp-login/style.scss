@@ -310,12 +310,10 @@ $image-height: 47px;
 		@include onboarding-heading-text-mobile;
 		margin-bottom: 0;
 		text-align: left;
-		width: 60%;
 
 		@include break-mobile {
 			@include onboarding-heading-text;
 			text-align: center;
-			width: 100%;
 		}
 	}
 
@@ -452,13 +450,18 @@ $image-height: 47px;
 	}
 
 	.layout__primary {
-		margin-top: 88px;
+		margin-top: 40px;
 
 		/* START - Note: Patches below needed to continue using the current Divider in the form for both reskin and old versions.
 		We can remove when we refactor the Divider itself (or rethink current usage), and leave the default card styles intact.
 		Ideally, the Divider used in Login should be consolidated with the inline Separator's styles used in Signup (see `.signup-form__separator`) */
 		padding-left: 20px;
 		padding-right: 20px;
+
+		@include break-mobile {
+			margin-top: 64px;
+		}
+
 		form {
 			.login__divider span {
 				/* Note: Same as `.signup-form__separator-text` */
