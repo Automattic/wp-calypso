@@ -535,7 +535,7 @@ export class PlanFeatures extends Component {
 		} );
 	}
 
-	handleUpgradeClick( singlePlanProperties ) {
+	handleUpgradeClick = ( singlePlanProperties ) => {
 		const {
 			isInSignup,
 			onUpgradeClick: ownPropsOnUpgradeClick,
@@ -610,7 +610,7 @@ export class PlanFeatures extends Component {
 		);
 
 		page( checkoutUrlWithArgs );
-	}
+	};
 
 	renderTopButtons() {
 		const {
