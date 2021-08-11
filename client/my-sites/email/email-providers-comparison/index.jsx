@@ -80,8 +80,6 @@ import HeaderCake from 'calypso/components/header-cake';
  */
 import './style.scss';
 
-const noop = () => {};
-
 const identityMap = ( item ) => item;
 
 class EmailProvidersComparison extends React.Component {
@@ -505,8 +503,6 @@ class EmailProvidersComparison extends React.Component {
 			currentRoute,
 			headerTitle,
 			isEmailHeaderShown = true,
-			isSkippable,
-			onSkipClick,
 			promoHeaderDescription,
 			promoHeaderTitle,
 			selectedDomainName,
@@ -533,10 +529,7 @@ class EmailProvidersComparison extends React.Component {
 
 		const headerContent = skipHeaderElement ? null : (
 			<HeaderCake
-				actionIcon={ isSkippable ? 'arrow-right' : undefined }
-				actionIconPosition="right"
-				actionOnClick={ isSkippable ? onSkipClick : noop }
-				actionText={ isSkippable ? translate( 'Skip' ) : undefined }
+				actionButton={ this.renderSkipButton() }
 				alwaysShowActionText
 				onClick={ this.handleBack }
 			>
@@ -579,6 +572,21 @@ class EmailProvidersComparison extends React.Component {
 					</p>
 				</PromoCard>
 			</>
+		);
+	}
+
+	renderSkipButton() {
+		const { isSkippable, onSkipClick, translate } = this.props;
+
+		if ( ! isSkippable ) {
+			return null;
+		}
+
+		return (
+			<Button compact borderless onClick={ onSkipClick }>
+				{ translate( 'Skip' ) }
+				<Gridicon icon={ 'arrow-right' } size={ 18 } />
+			</Button>
 		);
 	}
 

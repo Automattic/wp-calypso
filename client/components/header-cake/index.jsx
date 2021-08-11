@@ -14,7 +14,6 @@ export default class HeaderCake extends Component {
 			actionButton,
 			actionText,
 			actionIcon,
-			actionIconPosition = 'left',
 			actionHref,
 			actionOnClick,
 			alwaysShowActionText,
@@ -25,12 +24,7 @@ export default class HeaderCake extends Component {
 
 		return (
 			<Card className={ classes }>
-				<HeaderCakeBack
-					iconPosition="left"
-					text={ backText }
-					href={ backHref }
-					onClick={ this.props.onClick }
-				/>
+				<HeaderCakeBack text={ backText } href={ backHref } onClick={ this.props.onClick } />
 
 				<div className="header-cake__title" role="presentation" onClick={ this.props.onTitleClick }>
 					{ this.props.children }
@@ -42,7 +36,6 @@ export default class HeaderCake extends Component {
 						href={ actionHref || backHref }
 						onClick={ actionOnClick }
 						icon={ actionIcon }
-						iconPosition={ actionIconPosition }
 						alwaysShowActionText={ alwaysShowActionText }
 						spacer={ ! actionOnClick }
 					/>
@@ -63,7 +56,6 @@ HeaderCake.propTypes = {
 	actionText: PropTypes.string,
 	actionHref: PropTypes.string,
 	actionIcon: PropTypes.string,
-	actionIconPosition: PropTypes.string,
 	actionOnClick: PropTypes.func,
 	alwaysShowActionText: PropTypes.bool,
 };
