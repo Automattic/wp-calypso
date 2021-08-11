@@ -113,7 +113,7 @@ export class FeaturedDomainSuggestions extends Component {
 						uiPosition={ index }
 						premiumDomain={ this.props.premiumDomains[ suggestion.domain_name ] }
 						fetchAlgo={ this.getFetchAlgorithm( suggestion ) }
-						buttonStyles={ 0 === index || { primary: true } }
+						buttonStyles={ { primary: true } }
 						isReskinned={ this.props.isReskinned }
 						{ ...childProps }
 					/>
