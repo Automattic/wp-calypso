@@ -24,7 +24,7 @@ const fetch = ( action ) =>
 		action
 	);
 
-const onSuccess = ( { siteId }, { retention_policy: retentionPolicy } ) => [
+const onSuccess = ( { siteId }, { retention_policy: displayRules } ) => [
 	{
 		type: ACTIVITY_LOG_DISPLAY_RULES_REQUEST_SUCCESS,
 		siteId,
@@ -32,7 +32,7 @@ const onSuccess = ( { siteId }, { retention_policy: retentionPolicy } ) => [
 	{
 		type: ACTIVITY_LOG_DISPLAY_RULES_SET,
 		siteId,
-		retentionPolicy,
+		displayRules,
 	},
 ];
 

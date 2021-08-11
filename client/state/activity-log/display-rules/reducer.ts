@@ -29,13 +29,13 @@ export const requestStatus = ( state: AppState = null, { type } ): AppState | st
 
 export const days = (
 	state: AppState = null,
-	{ type, retentionPolicy }
+	{ type, displayRules }
 ): AppState | number | undefined => {
 	if ( type !== ACTIVITY_LOG_DISPLAY_RULES_SET ) {
 		return state;
 	}
 
-	return retentionPolicy.days;
+	return displayRules.days;
 };
 
 export default keyedReducer(
