@@ -43,11 +43,24 @@ const receiveChannels = [
 	'toggle-notification-bar',
 ];
 
+function fflagOverrides() {
+	const payload = {};
+	let fflags = process.env.WP_DESKTOP_DEBUG_FEATURES;
+	if ( fflags !== undefined ) {
+		fflags = fflags.split( ',' );
+		for ( let i = 0; i < fflags.length; i++ ) {
+			payload[ fflags[ i ] ] = true;
+		}
+	}
+	return payload;
+}
+
 ( async () => {
 	const config = await ipcRenderer.invoke( 'get-config' );
 	const styles = {
 		titleBarPaddingLeft: process.platform !== 'darwin' ? '0px' : '77px',
 	};
+	const features = fflagOverrides();
 	contextBridge.exposeInMainWorld( 'electron', {
 		send: ( channel, ...args ) => {
 			if ( sendChannels.includes( channel ) ) {
@@ -76,5 +89,6 @@ const receiveChannels = [
 		},
 		config,
 		styles,
+		features,
 	} );
 } )();
