@@ -233,14 +233,19 @@ class InviteAccept extends React.Component {
 	};
 
 	render() {
-		const formClasses = classNames( 'invite-accept__form', {
-			'is-error': !! this.isInvalidInvite(),
-		} );
 		const { invite } = this.state;
 		const { user } = this.props;
 
+		const containerClasses = classNames( 'invite-accept', {
+			'is-p2': !! invite?.site?.is_wpforteams_site,
+		} );
+
+		const formClasses = classNames( 'invite-accept__form', {
+			'is-error': !! this.isInvalidInvite(),
+		} );
+
 		return (
-			<div className="invite-accept">
+			<div className={ containerClasses }>
 				{ this.localeSuggestions() }
 				<div className={ formClasses }>
 					{ this.isMatchEmailError() && user && (
