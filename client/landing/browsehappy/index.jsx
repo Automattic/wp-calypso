@@ -11,6 +11,7 @@ const SUPPORTED_BROWSERS_LINK = 'https://wordpress.com/support/browser-issues/#s
 
 export default function Browsehappy( { from } ) {
 	const continueUrl = addQueryArgs( { bypassTargetRedirection: true }, from ?? '/' );
+	const isValidUrl = /^(https?:\/\/|\/)/.test( from );
 
 	return (
 		<body className="browsehappy__body">
@@ -30,11 +31,13 @@ export default function Browsehappy( { from } ) {
 				<a class="components-button is-primary" href={ SUPPORTED_BROWSERS_LINK }>
 					{ __( 'View supported browsers' ) }
 				</a>
-				<p>
-					<a className="browsehappy__anyway" href={ continueUrl }>
-						{ __( 'Continue loading the page anyway' ) }
-					</a>
-				</p>
+				{ isValidUrl && (
+					<p>
+						<a className="browsehappy__anyway" href={ continueUrl }>
+							{ __( 'Continue loading the page anyway' ) }
+						</a>
+					</p>
+				) }
 				<Circle color="yellow" position="1" />
 				<Circle color="red" position="2" />
 				<Circle color="gray" position="3" />
