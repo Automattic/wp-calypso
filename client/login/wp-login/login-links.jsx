@@ -10,14 +10,14 @@ import ExternalLink from 'calypso/components/external-link';
 import Gridicon from 'calypso/components/gridicon';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import { isDomainConnectAuthorizePath } from 'calypso/lib/domains/utils';
-import { getSignupUrl } from 'calypso/lib/login';
+import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
 	isJetpackCloudOAuth2Client,
 	isWooOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
-import { addQueryArgs, pathWithLeadingSlash } from 'calypso/lib/url';
+import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';

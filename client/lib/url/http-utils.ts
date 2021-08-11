@@ -1,3 +1,5 @@
+/* eslint-disable jsdoc/require-param */
+
 /**
  * Internal dependencies
  */
@@ -47,12 +49,4 @@ export function urlToSlug( url: TypedURL | Falsy ): SiteSlug | null {
  */
 export function urlToDomainAndPath( urlToConvert: TypedURL ): TypedURL {
 	return withoutHttp( urlToConvert ).replace( /\/$/, '' );
-}
-
-export function pathWithLeadingSlash( path: string ): string | null {
-	if ( ! path ) {
-		return null;
-	}
-
-	return `/${ path.replace( /^\/+/, '' ) }`;
 }

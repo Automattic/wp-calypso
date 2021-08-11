@@ -20,9 +20,9 @@ import TextControl from 'calypso/extensions/woocommerce/components/text-control'
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { preventWidows } from 'calypso/lib/formatting';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
-import { getSignupUrl } from 'calypso/lib/login';
+import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
-import { addQueryArgs, pathWithLeadingSlash } from 'calypso/lib/url';
+import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';

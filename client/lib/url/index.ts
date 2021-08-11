@@ -2,7 +2,7 @@
  * Re-exports
  */
 export { default as addQueryArgs } from './add-query-args';
-export { withoutHttp, urlToSlug, urlToDomainAndPath, pathWithLeadingSlash } from './http-utils';
+export { withoutHttp, urlToSlug, urlToDomainAndPath } from './http-utils';
 export { default as omitUrlParams } from './omit-url-params';
 export { default as isExternal } from './is-external';
 export { default as resemblesUrl } from './resembles-url';
