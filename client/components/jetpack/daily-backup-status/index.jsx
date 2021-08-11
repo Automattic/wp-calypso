@@ -20,9 +20,9 @@ import BackupInProgress from './status-card/backup-in-progress';
 import BackupJustCompleted from './status-card/backup-just-completed';
 import BackupScheduled from './status-card/backup-scheduled';
 import BackupSuccessful from './status-card/backup-successful';
-import BeyondRetentionPeriod from './status-card/beyond-retention-period';
 import NoBackupsOnSelectedDate from './status-card/no-backups-on-selected-date';
 import NoBackupsYet from './status-card/no-backups-yet';
+import VisibleDaysLimit from './status-card/visible-days-limit';
 
 import './style.scss';
 
@@ -58,7 +58,7 @@ const DailyBackupStatus = ( { selectedDate, lastBackupDate, backup, deltas } ) =
 	// display a status to reflect this.
 	const isDateVisible = useIsDateVisible( siteId );
 	if ( ! isDateVisible( selectedDate ) ) {
-		return <BeyondRetentionPeriod selectedDate={ selectedDate } />;
+		return <VisibleDaysLimit selectedDate={ selectedDate } />;
 	}
 
 	// The backup "period" property is represented by

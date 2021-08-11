@@ -2,12 +2,14 @@
  * External dependencies
  */
 import { useTranslate } from 'i18n-calypso';
+import { MomentInput } from 'moment';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import Button from 'calypso/components/forms/form-button';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
@@ -15,12 +17,10 @@ import getActivityLogVisibleDays from 'calypso/state/selectors/get-activity-log-
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import Button from 'calypso/components/forms/form-button';
 
 /**
  * Type dependencies
  */
-import { MomentInput } from 'moment';
 
 /**
  * Style dependencies
@@ -49,7 +49,7 @@ const useDisplayDate = ( date: MomentInput ) => {
 	}, [ date, gmtOffset, timezone ] );
 };
 
-const BeyondRetentionPeriod: React.FC< OwnProps > = ( { selectedDate } ) => {
+const VisibleDaysLimit: React.FC< OwnProps > = ( { selectedDate } ) => {
 	const translate = useTranslate();
 	const displayDate = useDisplayDate( selectedDate );
 
@@ -71,7 +71,7 @@ const BeyondRetentionPeriod: React.FC< OwnProps > = ( { selectedDate } ) => {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	return (
-		<div className="beyond-retention-period">
+		<div className="visible-days-limit">
 			<div className="status-card__message-head">
 				<img src={ cloudSuccessIcon } alt="" role="presentation" />
 				<div>{ displayDate }</div>
@@ -103,4 +103,4 @@ const BeyondRetentionPeriod: React.FC< OwnProps > = ( { selectedDate } ) => {
 	);
 };
 
-export default BeyondRetentionPeriod;
+export default VisibleDaysLimit;
