@@ -122,7 +122,8 @@ export function generateFlows( {
 			name: 'onboarding-with-email',
 			steps: [ 'user', 'domains', 'emails', 'plans' ],
 			destination: getSignupDestination,
-			description: 'Copy of the onboarding flow that includes an email step',
+			description:
+				'Copy of the onboarding flow that always includes an email step; the flow is used by the Professional Email landing page',
 			lastModified: '2021-08-11',
 			showRecaptcha: true,
 		},
