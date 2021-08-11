@@ -5,7 +5,7 @@
 /**
  * Internal dependencies
  */
-import { withoutHttp, urlToSlug, urlToDomainAndPath } from '../http-utils';
+import { withoutHttp, urlToSlug, urlToDomainAndPath, pathWithLeadingSlash } from '../http-utils';
 
 describe( 'withoutHttp', () => {
 	test( 'should return null if URL is not provided', () => {
@@ -121,5 +121,23 @@ describe( 'urlToDomainAndPath', () => {
 		const urlEmptyString = '';
 
 		expect( urlToDomainAndPath( urlEmptyString ) ).toEqual( '' );
+	} );
+} );
+
+describe( 'pathWithLeadingSlash', () => {
+	test( 'should return null if URL is not provided', () => {
+		expect( pathWithLeadingSlash() ).toBeNull();
+	} );
+
+	test( 'should add leading slash', () => {
+		expect( pathWithLeadingSlash( 'foo' ) ).toEqual( '/foo' );
+	} );
+
+	test( 'should return path with a single leading slash', () => {
+		expect( pathWithLeadingSlash( '///foo' ) ).toEqual( '/foo' );
+	} );
+
+	test( 'should return empty string if path is empty string', () => {
+		expect( urlToDomainAndPath( '' ) ).toEqual( '' );
 	} );
 } );

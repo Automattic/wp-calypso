@@ -17,7 +17,7 @@ import {
 	isWooOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
-import { addQueryArgs } from 'calypso/lib/url';
+import { addQueryArgs, pathWithLeadingSlash } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
@@ -289,7 +289,7 @@ export class LoginLinks extends React.Component {
 
 		// use '?signup_url' if explicitly passed as URL query param
 		const signupUrl = this.props.signupUrl
-			? `${ window.location.origin }/${ this.props.signupUrl.replace( /^\//, '' ) }`
+			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
 			: getSignupUrl( query, currentRoute, oauth2Client, locale, pathname, isGutenboarding );
 
 		if ( isJetpackCloudOAuth2Client( oauth2Client ) && '/log-in/authenticator' !== currentRoute ) {

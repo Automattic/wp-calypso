@@ -8,6 +8,7 @@ const urlWithoutHttpRegex = /^https?:\/\//;
 
 /**
  * Returns the supplied URL without the initial http(s).
+ *
  * @param  url The URL to remove http(s) from
  * @returns     URL without the initial http(s)
  */
@@ -46,4 +47,12 @@ export function urlToSlug( url: TypedURL | Falsy ): SiteSlug | null {
  */
 export function urlToDomainAndPath( urlToConvert: TypedURL ): TypedURL {
 	return withoutHttp( urlToConvert ).replace( /\/$/, '' );
+}
+
+export function pathWithLeadingSlash( path: string ): string | null {
+	if ( ! path ) {
+		return null;
+	}
+
+	return `/${ path.replace( /^\/+/, '' ) }`;
 }
