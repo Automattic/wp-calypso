@@ -11,12 +11,14 @@ import { Card } from '@automattic/components';
  */
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	isProductsListFetching as getIsProductListFetching,
 	getProductName,
 } from 'calypso/state/products-list/selectors';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import { useSetCalendlyListenerEffect } from './hooks';
 
 /**
  * Style dependencies
@@ -25,9 +27,15 @@ import './style.scss';
 
 interface Props {
 	productSlug: string | 'no_product';
+	receiptId?: number;
+	jetpackTemporarySiteId?: number;
 }
 
-const JetpackCheckoutSitelessThankYouCompleted: FC< Props > = ( { productSlug } ) => {
+const JetpackCheckoutSitelessThankYouCompleted: FC< Props > = ( {
+	productSlug,
+	receiptId = 0,
+	jetpackTemporarySiteId = 0,
+} ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -39,7 +47,19 @@ const JetpackCheckoutSitelessThankYouCompleted: FC< Props > = ( { productSlug } 
 
 	const isProductListFetching = useSelector( ( state ) => getIsProductListFetching( state ) );
 
-	const happinessAppointmentLink = '/checkout/jetpack/schedule-happiness-appointment';
+	const happinessAppointmentLink = addQueryArgs(
+		{
+			receiptId,
+			siteId: jetpackTemporarySiteId,
+		},
+		'/checkout/jetpack/schedule-happiness-appointment'
+	);
+
+	useSetCalendlyListenerEffect( {
+		productSlug,
+		receiptId,
+		jetpackTemporarySiteId,
+	} );
 
 	return (
 		<Main wideLayout className="jetpack-checkout-siteless-thank-you-completed">
