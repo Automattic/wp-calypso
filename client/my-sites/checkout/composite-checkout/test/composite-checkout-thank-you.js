@@ -1021,7 +1021,7 @@ describe( 'getThankYouPageUrl', () => {
 				jetpackTemporarySiteId: 123456789,
 			} );
 			expect( url ).toBe(
-				'/checkout/jetpack/thank-you/no-site/jetpack_backup_daily?receiptId=80023&jetpackTemporarySiteId=123456789'
+				'/checkout/jetpack/thank-you/no-site/jetpack_backup_daily?receiptId=80023&siteId=123456789'
 			);
 		} );
 	} );
