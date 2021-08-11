@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { translate } from 'i18n-calypso';
-import { trim, get } from 'lodash';
+import { trim } from 'lodash';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { isSiteDescriptionBlocked } from 'calypso/reader/lib/site-description-blocklist';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
@@ -172,8 +172,8 @@ export const getFeaturedImageAlt = ( post ) => {
 	// Each post can have multiple images attached. To make sure we are selecting
 	// the alt text of the correct image attachment, we get the ID of the post thumbnail first
 	// and then use it to get the alt text of the Featured image.
-	const postThumbnailId = get( post, 'post_thumbnail.ID' );
-	const featuredImageAlt = get( post, 'attachments.' + postThumbnailId + '.alt' );
+	const postThumbnailId = post?.post_thumbnail?.ID;
+	const featuredImageAlt = post?.attachments?.[ postThumbnailId ]?.alt;
 	const postTitle = post.title;
 
 	// If there is no Featured image alt text available, return post title instead.
