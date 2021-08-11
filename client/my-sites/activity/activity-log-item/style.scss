@@ -179,7 +179,7 @@
 
 .activity-log-item__card-header {
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	width: 100%;
 	min-width: 0;
 	@include break-wide {
