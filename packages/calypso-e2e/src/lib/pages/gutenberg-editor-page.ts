@@ -247,13 +247,12 @@ export class GutenbergEditorPage {
 	}: { visit?: boolean; saveDraft?: boolean } = {} ): Promise< string > {
 		const frame = await this.getEditorFrame();
 
-		await this.page.pause();
 		if ( saveDraft ) {
 			await this.saveDraft();
 		}
 
-		await frame.click( `${ selectors.postToolbar } button:text("Publish")` );
-		await frame.click( `${ selectors.publishPanel } button:text("Publish")` );
+		await frame.click( `${ selectors.postToolbar } button:text("Publish")[aria-disabled=false]` );
+		await frame.click( `${ selectors.publishPanel } button:text("Publish")[aria-disabled=false]` );
 		const viewPublishedArticleButton = await frame.waitForSelector( selectors.viewButton );
 		const publishedURL = ( await viewPublishedArticleButton.getAttribute( 'href' ) ) as string;
 
