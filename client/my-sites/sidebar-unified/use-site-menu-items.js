@@ -58,7 +58,7 @@ const useSiteMenuItems = () => {
 
 	const isP2 = useSelector( ( state ) => !! isSiteWPForTeams( state, selectedSiteId ) );
 
-	const shouldShowBetaTesting = ! isJetpack && ! isP2;
+	const shouldShowBetaTesting = ! isP2;
 
 	/**
 	 * When no site domain is provided, lets show only menu items that support all sites screens.
