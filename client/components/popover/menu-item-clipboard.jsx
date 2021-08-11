@@ -1,36 +1,34 @@
-import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
-import Gridicon from 'calypso/components/gridicon';
+import PopoverMenuItem from './menu-item';
 
 const noop = () => {};
 
 function PopoverMenuItemClipboard( {
-	children,
 	className,
+	children,
 	text,
 	onCopy = noop,
 	icon = 'clipboard',
 	...rest
 } ) {
 	return (
-		<ClipboardButton
+		<PopoverMenuItem
+			itemComponent={ ClipboardButton }
+			className={ className }
+			children={ children }
+			icon={ icon }
 			text={ text }
 			onCopy={ onCopy }
-			role="menuitem"
-			tabIndex="-1"
-			className={ classNames( 'popover__menu-item', className ) }
 			{ ...rest }
-		>
-			<Gridicon icon={ icon } size={ 18 } />
-			{ children }
-		</ClipboardButton>
+		/>
 	);
 }
 
 PopoverMenuItemClipboard.propTypes = {
 	className: PropTypes.string,
+	children: PropTypes.node,
 	icon: PropTypes.string,
 	onCopy: PropTypes.func,
 	text: PropTypes.string,
