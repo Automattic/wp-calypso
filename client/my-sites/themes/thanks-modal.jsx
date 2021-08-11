@@ -11,7 +11,6 @@ import Gridicon from 'calypso/components/gridicon';
  * Internal dependencies
  */
 import { Dialog } from '@automattic/components';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import PulsingDot from 'calypso/components/pulsing-dot';
 import { trackClick } from './helpers';
 import {
@@ -21,12 +20,10 @@ import {
 	getThemeForumUrl,
 	isActivatingTheme,
 	hasActivatedTheme,
-	isThemeGutenbergFirst,
 	isWpcomTheme,
 } from 'calypso/state/themes/selectors';
 import { clearActivated } from 'calypso/state/themes/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import { requestSite } from 'calypso/state/sites/actions';
 import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customize-or-edit-front-page-url';
 import shouldCustomizeHomepageWithGutenberg from 'calypso/state/selectors/should-customize-homepage-with-gutenberg';
