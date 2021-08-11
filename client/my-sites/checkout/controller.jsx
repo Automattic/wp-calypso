@@ -292,7 +292,7 @@ export function jetpackCheckoutThankYou( context, next ) {
 	const isSitelessCheckoutFlow =
 		context.path.includes( '/checkout/jetpack/thank-you/no-site' ) || forSitelessScheduling;
 
-	const { receiptId, source, jetpackTemporarySiteId } = context.query;
+	const { receiptId, source, siteId } = context.query;
 
 	context.primary = isSitelessCheckoutFlow ? (
 		<JetpackCheckoutSitelessThankYou
@@ -300,7 +300,7 @@ export function jetpackCheckoutThankYou( context, next ) {
 			receiptId={ receiptId }
 			forScheduling={ forSitelessScheduling }
 			source={ source }
-			jetpackTemporarySiteId={ jetpackTemporarySiteId }
+			jetpackTemporarySiteId={ siteId }
 		/>
 	) : (
 		<JetpackCheckoutThankYou
@@ -314,11 +314,11 @@ export function jetpackCheckoutThankYou( context, next ) {
 }
 
 export function jetpackCheckoutThankYouCompleted( context, next ) {
-	const { jetpackTemporarySiteId, receiptId } = context.query;
+	const { siteId, receiptId } = context.query;
 	context.primary = (
 		<JetpackCheckoutSitelessThankYouCompleted
 			productSlug={ context.params.product }
-			jetpackTemporarySiteId={ jetpackTemporarySiteId }
+			jetpackTemporarySiteId={ siteId }
 			receiptId={ receiptId }
 		/>
 	);

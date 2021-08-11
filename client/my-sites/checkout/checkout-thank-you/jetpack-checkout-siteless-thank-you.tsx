@@ -152,7 +152,7 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 		if ( supportTicketStatus === 'success' ) {
 			const thankYouCompletedUrl = addQueryArgs(
 				{
-					jetpackTemporarySiteId,
+					siteId: jetpackTemporarySiteId,
 					receiptId,
 				},
 				`/checkout/jetpack/thank-you-completed/no-site/${ productSlug }`

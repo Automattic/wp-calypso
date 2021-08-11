@@ -50,7 +50,7 @@ const JetpackCheckoutSitelessThankYouCompleted: FC< Props > = ( {
 	const happinessAppointmentLink = addQueryArgs(
 		{
 			receiptId,
-			jetpackTemporarySiteId,
+			siteId: jetpackTemporarySiteId,
 		},
 		'/checkout/jetpack/schedule-happiness-appointment'
 	);

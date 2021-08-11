@@ -151,7 +151,7 @@ export default function getThankYouPageUrl( {
 		return addQueryArgs(
 			{
 				receiptId: isValidReceiptId ? pendingOrReceiptId : undefined,
-				jetpackTemporarySiteId: jetpackTemporarySiteId && parseInt( jetpackTemporarySiteId ),
+				siteId: jetpackTemporarySiteId && parseInt( jetpackTemporarySiteId ),
 			},
 			thankYouUrlSiteLess
 		);
