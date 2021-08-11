@@ -20,7 +20,7 @@ const selectors = {
 	// Top bar selectors.
 	postToolbar: '.edit-post-header',
 	settingsToggle: '[aria-label="Settings"]',
-	saveDraftButton: '[aria-label="Save draft"]',
+	saveDraftButton: '.editor-post-save-draft',
 
 	// Settings panel.
 	settingsPanel: '.interface-complementary-area',
