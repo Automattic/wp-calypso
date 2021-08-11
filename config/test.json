@@ -25,7 +25,6 @@
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"rebrand_cities_prefix": "rebrandcitiestestsite",
 	"livechat_support_locales": [ "en", "es", "pt-br" ],
-	"site_filter": [ "wpcom", "atomic", "jetpack-full" ],
 	"features": {
 		"ad-tracking": false,
 		"async-payments": false,
