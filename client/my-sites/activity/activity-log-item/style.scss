@@ -182,7 +182,9 @@
 	align-items: center;
 	width: 100%;
 	min-width: 0;
-	padding-left: 56px;
+	@include break-wide {
+		padding-left: 56px;
+	}
 
 	@include breakpoint-deprecated( '<960px' ) {
 		flex-direction: column;
