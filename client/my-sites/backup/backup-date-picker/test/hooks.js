@@ -7,6 +7,10 @@ jest.mock( 'react', () => ( {
 } ) );
 jest.mock( 'calypso/components/localized-moment' );
 jest.mock( 'calypso/lib/jetpack/hooks/use-date-with-offset' );
+jest.mock( 'calypso/my-sites/backup/hooks', () => ( {
+	...jest.requireActual( 'calypso/my-sites/backup/hooks' ),
+	useIsDateBeyondRetentionPeriod: jest.fn(),
+} ) );
 
 /**
  * External dependencies
@@ -19,6 +23,7 @@ import { useCallback } from 'react';
  */
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
+import { useIsDateBeyondRetentionPeriod } from 'calypso/my-sites/backup/hooks';
 import { useCanGoToDate } from '../hooks';
 
 describe( 'useCanGoToDate', () => {
@@ -28,6 +33,7 @@ describe( 'useCanGoToDate', () => {
 		useCallback.mockImplementation( ( fn ) => fn );
 		useLocalizedMoment.mockImplementation( () => moment );
 		useDateWithOffset.mockImplementation( ( date ) => date );
+		useIsDateBeyondRetentionPeriod.mockImplementation( () => () => false );
 	} );
 
 	test( 'Allows both forward and backward navigation between the oldest date and the present (inclusive)', () => {
@@ -40,7 +46,7 @@ describe( 'useCanGoToDate', () => {
 		// The selected date is a week before now;
 		// the furthest back we can go is a year before now,
 		// and the furthest forward is, of course, the present
-		const canGoToDate = useCanGoToDate( aWeekAgo, aYearAgo );
+		const canGoToDate = useCanGoToDate( 0, aWeekAgo, aYearAgo );
 
 		expect( canGoToDate( today ) ).toEqual( true );
 		expect( canGoToDate( aDayAgo ) ).toEqual( true );
@@ -57,7 +63,7 @@ describe( 'useCanGoToDate', () => {
 		// The selected date is currently one week in the future... somehow.
 		// Really this should never happen, but sometimes people try to
 		// play around by changing the browser URL, etc.
-		const canGoToDate = useCanGoToDate( oneWeekInTheFuture );
+		const canGoToDate = useCanGoToDate( 0, oneWeekInTheFuture );
 
 		// We can move in the correct direction (backward) toward a valid date,
 		// but no further away (forward) than we are right now.
@@ -75,7 +81,7 @@ describe( 'useCanGoToDate', () => {
 		// The selected date is currently one week prior to the oldest valid
 		// date... somehow. Really this should never happen, but sometimes
 		// people try to play around by changing the browser URL, etc.
-		const canGoToDate = useCanGoToDate( aWeekBeforeThat, oldestDate );
+		const canGoToDate = useCanGoToDate( 0, aWeekBeforeThat, oldestDate );
 
 		// We can move in the correct direction (forward) toward a valid date,
 		// but no further away (backward) than we are right now.
@@ -92,7 +98,7 @@ describe( 'useCanGoToDate', () => {
 		// No matter what the currently selected date is,
 		// if we're inside the valid range of dates (oldestAvailable to now),
 		// navigation into the future isn't allowed
-		const canGoToDate = useCanGoToDate( anArbitraryDate );
+		const canGoToDate = useCanGoToDate( 0, anArbitraryDate );
 
 		expect( canGoToDate( today ) ).toEqual( true );
 		expect( canGoToDate( tomorrow ) ).toEqual( false );
@@ -107,7 +113,7 @@ describe( 'useCanGoToDate', () => {
 		// and we can go as far back as a week;
 		// if we attempt to go back any further,
 		// the function should return false
-		const canGoToDate = useCanGoToDate( today, oneWeekAgo );
+		const canGoToDate = useCanGoToDate( 0, today, oneWeekAgo );
 
 		expect( canGoToDate( oneWeekAgo ) ).toEqual( true );
 		expect( canGoToDate( aDayBeforeThat ) ).toEqual( false );
@@ -116,8 +122,30 @@ describe( 'useCanGoToDate', () => {
 	test( 'Always allows backward navigation if no oldest date is known', () => {
 		const theUnixEpoch = moment( 0 );
 
-		const canGoToDate = useCanGoToDate( moment() );
+		const canGoToDate = useCanGoToDate( 0, moment() );
 
 		expect( canGoToDate( theUnixEpoch ) ).toEqual( true );
+	} );
+
+	test( 'Allows backward navigation to one day past the retention period', () => {
+		const today = moment().startOf( 'day' );
+
+		useIsDateBeyondRetentionPeriod.mockImplementation( () => ( date ) => date.isBefore( today ) );
+		const canGoToDate = useCanGoToDate( 0, today );
+
+		const yesterday = moment( today ).subtract( 1, 'day' );
+		expect( canGoToDate( yesterday ) ).toEqual( true );
+	} );
+
+	test( 'Disallows backward navigation to >1 day past the retention period', () => {
+		const today = moment().startOf( 'day' );
+
+		useIsDateBeyondRetentionPeriod.mockImplementation( () => ( date ) =>
+			date.isSameOrBefore( today )
+		);
+		const canGoToDate = useCanGoToDate( 0, today );
+
+		const yesterday = moment( today ).subtract( 1, 'day' );
+		expect( canGoToDate( yesterday ) ).toEqual( false );
 	} );
 } );
