@@ -88,7 +88,7 @@ import { applySiteOffset } from 'calypso/lib/site/timezone';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
-import RetentionLimitUpsell from 'calypso/components/activity-card-list/retention-limit-upsell';
+import VisibleDaysLimitUpsell from 'calypso/components/activity-card-list/visible-days-limit-upsell';
 
 /**
  * Style dependencies
@@ -423,7 +423,7 @@ class ActivityLog extends Component {
 			};
 		} )();
 
-		const showRetentionLimitUpsell = logsLimitedByRetentionPolicy && actualPage >= pageCount;
+		const showVisibleDaysLimitUpsell = logsLimitedByRetentionPolicy && actualPage >= pageCount;
 
 		return (
 			<>
@@ -503,8 +503,8 @@ class ActivityLog extends Component {
 								)
 							) }
 						</section>
-						{ showRetentionLimitUpsell && (
-							<RetentionLimitUpsell cardClassName="activity-log-item__card" />
+						{ showVisibleDaysLimitUpsell && (
+							<VisibleDaysLimitUpsell cardClassName="activity-log-item__card" />
 						) }
 						{ siteHasNoLog && ! isIntroDismissed && <UpgradeBanner siteId={ siteId } /> }
 						<Pagination

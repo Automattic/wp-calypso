@@ -20,7 +20,7 @@ import getActivityLogDisplayRulesRequestStatus from 'calypso/state/selectors/get
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import getActivityLogVisibleDays from 'calypso/state/selectors/get-activity-log-visible-days';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import RetentionLimitUpsell from './retention-limit-upsell';
+import VisibleDaysLimitUpsell from './visible-days-limit-upsell';
 
 import './style.scss';
 
@@ -129,13 +129,13 @@ class ActivityCardList extends Component {
 			siteId,
 		} = this.props;
 
-		const retentionLimitCutoffDate = displayRulesEnabled
+		const visibleLimitCutoffDate = displayRulesEnabled
 			? ( applySiteOffset ?? moment )().subtract( visibleDays, 'days' )
 			: null;
 		const logsWithRetention = displayRulesEnabled
 			? logs.filter( ( log ) =>
 					( applySiteOffset ?? moment )( log.activityDate ).isSameOrAfter(
-						retentionLimitCutoffDate,
+						visibleLimitCutoffDate,
 						'day'
 					)
 			  )
@@ -148,7 +148,7 @@ class ActivityCardList extends Component {
 		const pageLogs = this.splitLogsByDate(
 			logsWithRetention.slice( ( actualPage - 1 ) * pageSize )
 		);
-		const showRetentionLimitUpsell =
+		const showLimitUpsell =
 			displayRulesEnabled && logsWithRetention.length < logs.length && actualPage >= pageCount;
 
 		return (
@@ -177,8 +177,8 @@ class ActivityCardList extends Component {
 					/>
 				) }
 				{ this.renderLogs( pageLogs ) }
-				{ showRetentionLimitUpsell && (
-					<RetentionLimitUpsell cardClassName="activity-card-list__primary-card-with-more" />
+				{ showLimitUpsell && (
+					<VisibleDaysLimitUpsell cardClassName="activity-card-list__primary-card-with-more" />
 				) }
 				{ showPagination && (
 					<Pagination
