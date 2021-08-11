@@ -16,9 +16,9 @@ import { isActivityBackup } from 'calypso/lib/jetpack/backup-utils';
 import Filterbar from 'calypso/my-sites/activity/filterbar';
 import { updateFilter } from 'calypso/state/activity-log/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import getActivityLogDisplayRulesRequestStatus from 'calypso/state/selectors/get-activity-log-display-rules-request-status';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import getSiteActivityLogRetentionDays from 'calypso/state/selectors/get-site-activity-log-retention-days';
-import getSiteActivityLogRetentionPolicyRequestStatus from 'calypso/state/selectors/get-site-activity-log-retention-policy-request-status';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import RetentionLimitUpsell from './retention-limit-upsell';
 
@@ -284,16 +284,13 @@ const mapStateToProps = ( state ) => {
 	const userLocale = getCurrentUserLocale( state );
 	const retentionDays = getSiteActivityLogRetentionDays( state, siteId );
 
-	const retentionPolicyRequestStatus = getSiteActivityLogRetentionPolicyRequestStatus(
-		state,
-		siteId
-	);
+	const displayRulesRequestStatus = getActivityLogDisplayRulesRequestStatus( state, siteId );
 
 	return {
 		filter,
 		displayRulesEnabled: isEnabled( 'activity-log/display-rules' ),
-		requestingRetentionPolicy: retentionPolicyRequestStatus === 'pending',
-		retentionPolicyRequestError: retentionPolicyRequestStatus === 'failure',
+		requestingRetentionPolicy: displayRulesRequestStatus === 'pending',
+		retentionPolicyRequestError: displayRulesRequestStatus === 'failure',
 		retentionDays,
 		siteId,
 		siteSlug,

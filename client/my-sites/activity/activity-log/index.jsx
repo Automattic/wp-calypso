@@ -67,7 +67,7 @@ import {
 	rewindBackup,
 	updateFilter,
 } from 'calypso/state/activity-log/actions';
-import getSiteActivityLogRetentionPolicyRequestStatus from 'calypso/state/selectors/get-site-activity-log-retention-policy-request-status';
+import getActivityLogDisplayRulesRequestStatus from 'calypso/state/selectors/get-activity-log-display-rules-request-status';
 import getSiteActivityLogRetentionDays from 'calypso/state/selectors/get-site-activity-log-retention-days';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import getBackupProgress from 'calypso/state/selectors/get-backup-progress';
@@ -593,8 +593,8 @@ export default connect(
 		const isJetpack = isJetpackSite( state, siteId );
 
 		const displayRulesEnabled = isEnabled( 'activity-log/display-rules' );
-		const retentionPolicyLoaded = displayRulesEnabled
-			? getSiteActivityLogRetentionPolicyRequestStatus( state, siteId ) === 'success'
+		const displayRulesLoaded = displayRulesEnabled
+			? getActivityLogDisplayRulesRequestStatus( state, siteId ) === 'success'
 			: true;
 		const retentionDays = displayRulesEnabled
 			? getSiteActivityLogRetentionDays( state, siteId )
@@ -637,7 +637,7 @@ export default connect(
 			isJetpack,
 			logs: logEntriesWithRetention,
 			logsLimitedByRetentionPolicy,
-			logLoadingState: retentionPolicyLoaded && logs && logs.state,
+			logLoadingState: displayRulesLoaded && logs && logs.state,
 			requestedRestore: find( logs, { activityId: requestedRestoreId } ),
 			requestedRestoreId,
 			requestedBackup: find( logs, { activityId: requestedBackupId } ),
