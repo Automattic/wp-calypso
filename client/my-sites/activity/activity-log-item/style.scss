@@ -179,10 +179,12 @@
 
 .activity-log-item__card-header {
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	width: 100%;
 	min-width: 0;
-	padding-left: 56px;
+	@include break-wide {
+		padding-left: 56px;
+	}
 
 	@include breakpoint-deprecated( '<960px' ) {
 		flex-direction: column;
