@@ -747,7 +747,6 @@ export default function pages() {
 
 	app.get( '/browsehappy', ( req, res ) => {
 		req.context.entrypoint = req.getFilesForEntrypoint( 'entry-browsehappy' );
-		req.context.from = req.query.from;
 		res.send( renderJsx( 'browsehappy', req.context ) );
 	} );
 

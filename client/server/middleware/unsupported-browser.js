@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import config from '@automattic/calypso-config';
-import { addQueryArgs } from 'calypso/lib/url';
 
 export default () => ( req, res, next ) => {
 	if ( ! config.isEnabled( 'redirect-fallback-browsers' ) ) {
@@ -36,5 +35,5 @@ export default () => ( req, res, next ) => {
 		return;
 	}
 
-	res.redirect( addQueryArgs( { from: req.url }, '/browsehappy' ) );
+	res.redirect( '/browsehappy' );
 };
