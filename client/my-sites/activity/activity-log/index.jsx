@@ -379,7 +379,7 @@ class ActivityLog extends Component {
 			enableRewind,
 			filter: { page: requestedPage },
 			logs,
-			logsLimitedByRetentionPolicy,
+			allLogsVisible,
 			moment,
 			rewindState,
 			siteId,
@@ -423,7 +423,7 @@ class ActivityLog extends Component {
 			};
 		} )();
 
-		const showVisibleDaysLimitUpsell = logsLimitedByRetentionPolicy && actualPage >= pageCount;
+		const showVisibleDaysLimitUpsell = ! allLogsVisible && actualPage >= pageCount;
 
 		return (
 			<>
@@ -599,7 +599,7 @@ export default connect(
 		const visibleDays = displayRulesEnabled
 			? getActivityLogVisibleDays( state, siteId )
 			: undefined;
-		const retentionLimitCutoffDate =
+		const oldestVisibleDate =
 			displayRulesEnabled && Number.isFinite( visibleDays )
 				? applySiteOffset( Date.now(), { gmtOffset, timezone } )
 						.subtract( visibleDays, 'days' )
@@ -607,24 +607,24 @@ export default connect(
 				: undefined;
 
 		const logs = siteId && requestActivityLogs( siteId, filter );
-		const logEntries = logs?.data ?? emptyList;
-		const logEntriesWithRetention =
-			displayRulesEnabled && retentionLimitCutoffDate
+		const allLogEntries = logs?.data ?? emptyList;
+		const visibleLogEntries =
+			displayRulesEnabled && oldestVisibleDate
 				? // This could slightly degrade performance, but it's likely
 				  // this entire component tree gets refactored or removed soon,
 				  // in favor of calypso/my-sites/activity/activity-log-v2.
 				  //
 				  // eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-				  logEntries.filter( ( log ) =>
+				  allLogEntries.filter( ( log ) =>
 						applySiteOffset( log.activityDate, { gmtOffset, timezone } ).isSameOrAfter(
-							retentionLimitCutoffDate,
+							oldestVisibleDate,
 							'day'
 						)
 				  )
-				: logEntries;
+				: allLogEntries;
 
-		const logsLimitedByRetentionPolicy = displayRulesEnabled
-			? logEntriesWithRetention.length < logEntries.length
+		const allLogsVisible = displayRulesEnabled
+			? visibleLogEntries.length < allLogEntries.length
 			: false;
 
 		return {
@@ -635,8 +635,8 @@ export default connect(
 			filter,
 			isAtomic: isAtomicSite( state, siteId ),
 			isJetpack,
-			logs: logEntriesWithRetention,
-			logsLimitedByRetentionPolicy,
+			logs: visibleLogEntries,
+			allLogsVisible,
 			logLoadingState: displayRulesLoaded && logs && logs.state,
 			requestedRestore: find( logs, { activityId: requestedRestoreId } ),
 			requestedRestoreId,
