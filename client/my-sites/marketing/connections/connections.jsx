@@ -14,11 +14,11 @@ import QueryKeyringServices from 'calypso/components/data/query-keyring-services
 import QueryPublicizeConnections from 'calypso/components/data/query-publicize-connections';
 import SharingServicesGroup from './services-group';
 
-const SharingConnections = ( { translate, isP2Hub } ) => (
+const SharingConnections = ( { translate, isP2Hub, siteId } ) => (
 	<div className="connections__sharing-settings connections__sharing-connections">
 		<PageViewTracker path="/marketing/connections/:site" title="Marketing > Connections" />
 
-		{ isP2Hub && <QueryP2Connections /> }
+		{ isP2Hub && <QueryP2Connections siteId={ siteId } /> }
 		{ ! isP2Hub && <QueryKeyringConnections /> }
 		{ ! isP2Hub && <QueryPublicizeConnections selectedSite /> }
 		{ ! isP2Hub && (

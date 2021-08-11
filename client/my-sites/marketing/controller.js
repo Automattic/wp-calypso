@@ -92,7 +92,7 @@ export const connections = ( context, next ) => {
 		);
 	}
 
-	context.contentComponent = createElement( SharingConnections, { isP2Hub } );
+	context.contentComponent = createElement( SharingConnections, { isP2Hub, siteId } );
 
 	next();
 };
