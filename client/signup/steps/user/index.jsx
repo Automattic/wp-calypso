@@ -36,19 +36,6 @@ import { getSuggestedUsername } from 'calypso/state/signup/optional-dependencies
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import './style.scss';
 
-function getLoginLink( props ) {
-	// TODO: If Reskin signup experiment wins, then refactor to remove duplicate definition of this function
-	// in <SignupForm> component
-	return login( {
-		isJetpack: 'jetpack-connect' === props.sectionName,
-		from: props.from,
-		redirectTo: getRedirectToAfterLoginUrl( props ),
-		locale: props.locale,
-		oauth2ClientId: props.oauth2Client?.id,
-		wccomFrom: props.wccomFrom,
-	} );
-}
-
 function getRedirectToAfterLoginUrl( {
 	oauth2Signup,
 	initialContext,
@@ -154,6 +141,9 @@ export class UserStep extends Component {
 			userLoggedIn,
 			wccomFrom,
 			isReskinned,
+			sectionName,
+			from,
+			locale,
 		} = props;
 
 		let subHeaderText = props.subHeaderText;
@@ -213,7 +203,15 @@ export class UserStep extends Component {
 			subHeaderText = translate( 'First, create your WordPress.com account.' );
 
 			if ( isReskinned ) {
-				const loginUrl = getLoginLink( props );
+				const loginUrl = login( {
+					isJetpack: 'jetpack-connect' === sectionName,
+					from,
+					redirectTo: getRedirectToAfterLoginUrl( props ),
+					locale,
+					oauth2ClientId: oauth2Client?.id,
+					wccomFrom,
+				} );
+
 				subHeaderText = translate(
 					'First, create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
 					{
