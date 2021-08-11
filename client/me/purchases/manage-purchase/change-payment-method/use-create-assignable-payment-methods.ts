@@ -51,6 +51,8 @@ export default function useCreateAssignablePaymentMethods(
 
 	const storedCards = useSelector( getStoredCards );
 	const existingCardMethods = useCreateExistingCards( {
+		isStripeLoading,
+		stripeLoadingError,
 		storedCards,
 		activePayButtonText: String( translate( 'Use this card' ) ),
 	} );
