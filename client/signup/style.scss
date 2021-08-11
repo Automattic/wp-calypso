@@ -97,6 +97,12 @@ body.is-section-signup .layout.gravatar {
 
 	// If there's an error lets make it look a little better
 	// on the primary colored background.
+	.register-domain-step .empty-content {
+		.empty-content__illustration {
+			background: transparent;
+		}
+	}
+
 	.empty-content {
 		.empty-content__illustration {
 			background: var( --color-surface );

@@ -121,6 +121,10 @@
 	.button.is-active {
 		background: var( --color-neutral-0 );
 	}
+
+	&__placeholder.empty-content .empty-content__illustration {
+		background: transparent;
+	}
 }
 
 button.register-domain-step__next-page-button {
@@ -171,5 +175,9 @@ body.is-section-signup.is-white-signup {
 				padding: 0.65em 2.8em;
 			}
 		}
+	}
+
+	.register-domain-step__example-prompt {
+		color: var( --studio-gray-60 );
 	}
 }
