@@ -121,9 +121,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 	};
 
 	return (
-		<div
-			className={ classNames( 'gsuite-new-user-list__new-user' ) }
-		>
+		<div className={ classNames( 'gsuite-new-user-list__new-user' ) }>
 			<FormFieldset>
 				<div className="gsuite-new-user-list__new-user-name-container">
 					<LabelWrapper label={ translate( 'First name' ) }>
