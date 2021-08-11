@@ -5,11 +5,11 @@
 <!-- TOC -->
 
 - [Overview](#overview)
-  - [Table of contents](#table-of-contents)
-  - [What is this?](#what-is-this)
-  - [Our Goals](#our-goals)
-  - [Technology](#technology)
-  - [What is tested?](#what-is-tested)
+    - [Table of contents](#table-of-contents)
+    - [What is this?](#what-is-this)
+    - [Our Goals](#our-goals)
+    - [Technology](#technology)
+    - [What is tested?](#what-is-tested)
 
 <!-- /TOC -->
 
@@ -27,17 +27,21 @@ To accelerate development by being a force for continuous improvement, and help 
 
 ## Technology
 
-These e2e tests use the same technology as the `wp-calypso` GitHub repository, notably JavaScript on Node. User interaction is simulated using the [selenium-webdriver](https://www.selenium.dev/projects/) library, althought there is an active project under way to migrate to using Playwright.
+These e2e tests use the same stack as the `wp-calypso` GitHub repository, but there are two parallel suites:
+
+- legacy: Selenium WebDriver, JavaScript and Mocha + Magellan test runner.
+- active: Playwright, JavaScript/TypeScript and Jest test runner.
 
 ## What is tested?
 
 At the high level, each test file (or `spec`) fall under one of the following flows:
 
-| Flow                 | Directory             |
-| -------------------- | --------------------- |
-| Calypso              | `specs/specs-calypso` |
-| Internationalization | `specs/specs-i18n`    |
-| Jetpack              | `specs/specs-jetpack` |
-| WordPress.com        | `specs/specs-wpcom`   |
+| Flow                 | Directory                |
+| -------------------- | ------------------------ |
+| Playwright           | `specs/specs-playwright` |
+| Calypso              | `specs/specs-calypso`    |
+| Internationalization | `specs/specs-i18n`       |
+| Jetpack              | `specs/specs-jetpack`    |
+| WordPress.com        | `specs/specs-wpcom`      |
 
-Core code for Jetpack, WooCommerce and Gutenberg are hosted in other repositories and they have separate e2e testing infrastructure. Tests here are meant to test interactions between their respective components and Calypso.
+Core code for Jetpack, WooCommerce and Gutenberg are hosted in other repositories and they have separate e2e testing infrastructure. Tests within `test/e2e` are meant to test interactions between their respective components and Calypso.
