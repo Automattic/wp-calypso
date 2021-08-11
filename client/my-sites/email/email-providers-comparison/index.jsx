@@ -88,6 +88,7 @@ class EmailProvidersComparison extends React.Component {
 		selectedDomainName: PropTypes.string.isRequired,
 
 		// Props injected via connect()
+		cartDomainName: PropTypes.string,
 		currencyCode: PropTypes.string,
 		currentRoute: PropTypes.string,
 		domain: PropTypes.object,
@@ -174,7 +175,7 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	onTitanConfirmNewMailboxes = () => {
-		const { domain } = this.props;
+		const { domain, domainName } = this.props;
 		const { titanMailboxes } = this.state;
 
 		const validatedTitanMailboxes = validateTitanMailboxes( titanMailboxes );
@@ -207,7 +208,7 @@ class EmailProvidersComparison extends React.Component {
 		const { productsList, selectedSite, shoppingCartManager } = this.props;
 
 		const cartItem = titanMailMonthly( {
-			domain: domain.name,
+			domain: domainName,
 			quantity: validatedTitanMailboxes.length,
 			extra: {
 				email_users: validatedTitanMailboxes.map( transformMailboxForCart ),
@@ -601,7 +602,7 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	renderDomainEligibilityNotice() {
-		const { domain } = this.props;
+		const { domain, domainName } = this.props;
 
 		if ( this.isDomainEligibleForEmail( domain ) ) {
 			return null;
@@ -617,7 +618,7 @@ class EmailProvidersComparison extends React.Component {
 				<TrackComponentView
 					eventName="calypso_email_providers_comparison_page_domain_not_eligible_error_impression"
 					eventProperties={ {
-						domain: domain.name,
+						domain: domainName,
 						error_code: cannotAddEmailReason.code,
 					} }
 				/>
@@ -681,6 +682,8 @@ export default connect(
 			selectedDomainName: ownProps.selectedDomainName,
 		} );
 
+		const domainName = ownProps.cartDomainName ?? domain.name;
+
 		const isGSuiteSupported = domain
 			? canUserPurchaseGSuite( state ) && hasGSuiteSupportedDomain( [ domain ] )
 			: true;
@@ -689,6 +692,7 @@ export default connect(
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			currentRoute: getCurrentRoute( state ),
 			domain,
+			domainName,
 			domainsWithForwards: getDomainsWithForwards( state, domains ),
 			gSuiteProduct: getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY ),
 			isGSuiteSupported,

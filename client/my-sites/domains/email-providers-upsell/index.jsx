@@ -25,6 +25,7 @@ export default function EmailProvidersUpsell( { domain } ) {
 			<CalypsoShoppingCartProvider>
 				<EmailProvidersComparison
 					backPath={ domainAddNew( selectedSiteSlug ) }
+					cartDomainName={ domain }
 					headerTitle={ ( domainName ) =>
 						translate( 'Register %(domainName)s', { args: { domainName }, comment } )
 					}
