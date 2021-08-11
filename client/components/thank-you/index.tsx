@@ -34,11 +34,27 @@ const ThankYouContainer = styled.div< ThankYouThemeProps >`
 	}
 `;
 
-const ThankYouHeader = styled.div`
+const ThankYouHeader = styled.div< ThankYouThemeProps >`
 	width: 100%;
-	height: 240px;
 	display: flex;
 	justify-content: center;
+	background-color: ${ ( props ) => props.theme.colors.backgroundColorHeader };
+	height: 352px;
+	img {
+		width: auto;
+		height: 200px;
+		margin-bottom: 14px;
+	}
+`;
+
+const ThankYouFooterContainer = styled.div< ThankYouThemeProps >`
+	h1 {
+		font-size: ${ ( { subtitle = false } ) => ( subtitle ? '1.5em' : '2em' ) };
+	}
+	h2 {
+		margin-bottom: 16px;
+	}
+	color: ${ ( props ) => props.theme.colors.textHeaderColor };
 `;
 
 const ThankYouHeaderTitle = styled.h1`
@@ -56,7 +72,7 @@ const ThankYouBody = styled.div`
 	justify-content: center;
 	margin-top: 50px;
 	> div {
-		width: 460px;
+		width: 600px;
 		padding: 0 35px;
 	}
 	div {
@@ -83,10 +99,12 @@ const ThankYouNextStep = ( props: ThankYouNextStepProps ) => {
 
 	return (
 		<React.Fragment key={ stepKey }>
-			<h3>{ stepTitle }</h3>
-			<div>
-				<p>{ stepDescription }</p>
-				<div>{ stepCta }</div>
+			<div className="thank-you__steps">
+				<div>
+					<h3>{ stepTitle }</h3>
+					<p>{ stepDescription }</p>
+				</div>
+				<div className="thank-you__steps-buttons">{ stepCta }</div>
 			</div>
 		</React.Fragment>
 	);
@@ -120,6 +138,8 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 		showSupportSection = true,
 		thankYouTitle,
 		thankYouImage,
+		thankYouImageFooter,
+		thankYouImageFooterSubtitle,
 	} = props;
 
 	const thankYouSections = sections.map( ( sectionProps, index ) => (
@@ -131,14 +151,20 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 			<ThankYouHeader className={ classNames( 'thank-you__container-header', headerClassName ) }>
 				{ /* eslint-disable-next-line jsx-a11y/alt-text */ }
 				<img { ...thankYouImage } />
+				<ThankYouFooterContainer>
+					<h1> { thankYouImageFooter } </h1>
+					<h2> { thankYouImageFooterSubtitle } </h2>
+				</ThankYouFooterContainer>
 			</ThankYouHeader>
 			<ThankYouBody>
 				<div>
-					<ThankYouSectionContainer>
-						<ThankYouHeaderTitle className="thank-you__body-header wp-brand-font">
-							{ thankYouTitle }
-						</ThankYouHeaderTitle>
-					</ThankYouSectionContainer>
+					{ thankYouTitle && (
+						<ThankYouSectionContainer>
+							<ThankYouHeaderTitle className="thank-you__body-header wp-brand-font">
+								{ thankYouTitle }
+							</ThankYouHeaderTitle>
+						</ThankYouSectionContainer>
+					) }
 
 					{ thankYouSections }
 

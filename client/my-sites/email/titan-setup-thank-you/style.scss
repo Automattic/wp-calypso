@@ -2,6 +2,7 @@
 	margin-left: 4px;
 }
 
-.layout__content, .titan-setup-thank-you__header {
+.layout__content {
+	padding: 79px 0 32px calc( var( --sidebar-width-max ) );
 	background-color: white;
 }

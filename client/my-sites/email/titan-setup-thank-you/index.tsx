@@ -106,7 +106,10 @@ const TitanSetupThankYou = ( props: TitanSetupThankYouProps ): JSX.Element => {
 				sections={ [ titanThankYouSection ] }
 				showSupportSection={ true }
 				thankYouImage={ thankYouImage }
-				thankYouTitle={ translate( 'Your email is now ready to use' ) }
+				thankYouImageFooter={ translate( 'Congratulations on your purchase!' ) }
+				thankYouImageFooterSubtitle={ translate(
+					'You will receive an email confirmation shortly for your purchase.'
+				) }
 			/>
 		</ThemeProvider>
 	);
