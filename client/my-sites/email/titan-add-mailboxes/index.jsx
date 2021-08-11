@@ -10,7 +10,7 @@ import { withShoppingCart } from '@automattic/shopping-cart';
 /**
  * Internal dependencies
  */
-import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/google-workspace-add-users/add-users-placeholder';
+import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/gsuite-add-users/add-users-placeholder';
 import {
 	areAllMailboxesValid,
 	areAllMailboxesAvailable,

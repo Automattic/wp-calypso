@@ -11,7 +11,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/google-workspace-add-users/add-users-placeholder';
+import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/gsuite-add-users/add-users-placeholder';
 import {
 	areAllMailboxesValid,
 	buildNewTitanMailbox,

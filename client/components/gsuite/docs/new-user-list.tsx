@@ -59,7 +59,6 @@ const GSuiteNewUserListExample = (): React.FunctionComponent => {
 				onUsersChange={ ( changedUsers ) => setUsers( changedUsers ) }
 				users={ users }
 				onReturnKeyPress={ () => void 0 }
-				showLabels={ true }
 			>
 				{ areAllUsersValid( users ) ? (
 					<span>

@@ -52,7 +52,7 @@ import { getProductsList } from 'calypso/state/products-list/selectors/get-produ
  */
 import './style.scss';
 
-class GoogleWorkspaceAddUsers extends React.Component {
+class GSuiteAddUsers extends React.Component {
 	state = {
 		users: [],
 	};
@@ -216,9 +216,8 @@ class GoogleWorkspaceAddUsers extends React.Component {
 							selectedDomainName={ getEligibleGSuiteDomain( selectedDomainName, domains ) }
 							users={ users }
 							onReturnKeyPress={ this.handleReturnKeyPress }
-							showLabels={ true }
 						>
-							<div className="google-workspace-add-users__buttons">
+							<div className="gsuite-add-users__buttons">
 								<Button onClick={ this.handleCancel }>{ translate( 'Cancel' ) }</Button>
 								<Button primary disabled={ ! canContinue } onClick={ this.handleContinue }>
 									{ translate( 'Continue' ) }
@@ -277,7 +276,7 @@ class GoogleWorkspaceAddUsers extends React.Component {
 	}
 }
 
-GoogleWorkspaceAddUsers.propTypes = {
+GSuiteAddUsers.propTypes = {
 	currentRoute: PropTypes.string,
 	domains: PropTypes.array.isRequired,
 	gsuiteUsers: PropTypes.array,
@@ -307,4 +306,4 @@ export default connect(
 		};
 	},
 	{ recordTracksEvent: recordTracksEventAction }
-)( withShoppingCart( localize( GoogleWorkspaceAddUsers ) ) );
+)( withShoppingCart( localize( GSuiteAddUsers ) ) );
