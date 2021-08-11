@@ -1,6 +1,5 @@
 import { __ } from '@wordpress/i18n';
 import React from 'react';
-import { addQueryArgs } from 'calypso/lib/url';
 import Circle from './circle';
 import illustrationURL from './illustration.svg';
 import Logo from './logo-wide';
@@ -9,10 +8,7 @@ import './style.scss';
 
 const SUPPORTED_BROWSERS_LINK = 'https://wordpress.com/support/browser-issues/#supported-browsers';
 
-export default function Browsehappy( { from } ) {
-	const isValidUrl = /^(https?:\/\/|\/)/.test( from );
-	const continueUrl = addQueryArgs( { bypassTargetRedirection: true }, isValidUrl ? from : '/' );
-
+export default function Browsehappy() {
 	return (
 		<body className="browsehappy__body">
 			<nav className="browsehappy__nav">
@@ -31,11 +27,6 @@ export default function Browsehappy( { from } ) {
 				<a class="components-button is-primary" href={ SUPPORTED_BROWSERS_LINK }>
 					{ __( 'View supported browsers' ) }
 				</a>
-				<p>
-					<a className="browsehappy__anyway" href={ continueUrl }>
-						{ __( 'Continue loading the page anyway' ) }
-					</a>
-				</p>
 				<Circle color="yellow" position="1" />
 				<Circle color="red" position="2" />
 				<Circle color="gray" position="3" />
