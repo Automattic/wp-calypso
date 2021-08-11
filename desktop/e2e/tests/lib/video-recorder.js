@@ -57,11 +57,6 @@ exports.createDir = function ( dir ) {
 };
 
 exports.isVideoEnabled = function () {
-	if ( process.platform !== 'darwin' ) {
-		// Enable on Mac only as there are issues with xfvb in
-		// TeamCity's linux container.
-		return false;
-	}
 	const video = process.env.CI;
 	return video === 'true';
 };
