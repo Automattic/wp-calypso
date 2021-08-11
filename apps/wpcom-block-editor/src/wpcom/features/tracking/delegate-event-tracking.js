@@ -5,6 +5,7 @@ import wpcomBlockEditorCloseClick from './wpcom-block-editor-close-click';
 import wpcomBlockEditorDetailsOpen from './wpcom-block-editor-details-open';
 import wpcomBlockEditorGlobalStylesTabSelected from './wpcom-block-editor-global-styles-tab-selected';
 import wpcomBlockEditorListViewSelect from './wpcom-block-editor-list-view-select';
+import wpcomBlockEditorTagEducationClick from './wpcom-block-editor-tag-education-click';
 import wpcomBlockEditorTemplatePartDetachBlocks from './wpcom-block-editor-template-part-detach-blocks';
 import wpcomBlockPremiumContentPlanUpgrade from './wpcom-block-premium-content-plan-upgrade';
 import wpcomBlockPremiumContentStripeConnect from './wpcom-block-premium-content-stripe-connect';
@@ -56,6 +57,7 @@ const EVENTS_MAPPING = [
 	wpcomTemplatePartReplaceBubble(),
 	wpcomTemplatePartChooseExisting(),
 	wpcomBlockEditorListViewSelect(),
+	wpcomBlockEditorTagEducationClick(),
 	wpcomBlockEditorTemplatePartDetachBlocks(),
 ];
 const EVENTS_MAPPING_CAPTURE = EVENTS_MAPPING.filter( ( { capture } ) => capture );
