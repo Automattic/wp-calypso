@@ -18,11 +18,11 @@ const selectors = {
 	paragraphBlocks: 'p.block-editor-rich-text__editable',
 
 	// Top bar selectors.
-	editPostHeader: '.edit-post-header',
-	publishPanelToggle: '.editor-post-publish-panel__toggle',
+	postToolbar: '.edit-post-header',
 	settingsToggle: '[aria-label="Settings"]',
+	saveDraftButton: '[aria-label="Save draft"]',
 
-	// Settings sidebar.
+	// Settings panel.
 	settingsPanel: '.interface-complementary-area',
 
 	// Publish panel (including post-publish)
@@ -247,12 +247,13 @@ export class GutenbergEditorPage {
 	}: { visit?: boolean; saveDraft?: boolean } = {} ): Promise< string > {
 		const frame = await this.getEditorFrame();
 
+		await this.page.pause();
 		if ( saveDraft ) {
 			await this.saveDraft();
 		}
 
-		await frame.click( `${ selectors.editPostHeader } >> text=Publish` );
-		await frame.click( `${ selectors.publishPanel } >> text=Publish` );
+		await frame.click( `${ selectors.postToolbar } button:text("Publish")` );
+		await frame.click( `${ selectors.publishPanel } button:text("Publish")` );
 		const viewPublishedArticleButton = await frame.waitForSelector( selectors.viewButton );
 		const publishedURL = ( await viewPublishedArticleButton.getAttribute( 'href' ) ) as string;
 
@@ -268,8 +269,10 @@ export class GutenbergEditorPage {
 	async saveDraft() {
 		const frame = await this.getEditorFrame();
 
-		await frame.click( `${ selectors.editPostHeader } >> text="Save draft"` );
-		await frame.waitForSelector( `${ selectors.editPostHeader } :text("Saved")` );
+		await frame.click( selectors.saveDraftButton );
+		await frame.waitForSelector(
+			`${ selectors.postToolbar } button:text("Publish")[aria-disabled=false]`
+		);
 	}
 
 	/**
