@@ -27,7 +27,7 @@ export const requestStatus = ( state: AppState = null, { type } ): AppState | st
 	return state;
 };
 
-export const days = (
+export const visibleDays = (
 	state: AppState = null,
 	{ type, displayRules }
 ): AppState | number | undefined => {
@@ -42,6 +42,6 @@ export default keyedReducer(
 	'siteId',
 	combineReducers( {
 		requestStatus,
-		days,
+		visibleDays,
 	} )
 );
