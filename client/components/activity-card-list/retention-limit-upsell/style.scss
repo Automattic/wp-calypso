@@ -21,7 +21,8 @@
 	// This is a placeholder activity card with no information,
 	// and including the time would only disrupt the timeline's
 	// chronological sort, so don't show the time at all
-	.activity-card .activity-card__time-text {
+	.activity-card .activity-card__time-text,
+	.activity-log-item__time {
 		display: none;
 	}
 
