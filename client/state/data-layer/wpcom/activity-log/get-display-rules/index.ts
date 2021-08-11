@@ -16,7 +16,7 @@ const fetch = ( action ) =>
 		{
 			apiNamespace: 'wpcom/v2',
 			method: 'GET',
-			path: `/sites/${ action.siteId }/activity/retention-policy`,
+			path: `/sites/${ action.siteId }/activity/display-rules`,
 			query: {
 				force: 'wpcom',
 			},
@@ -24,7 +24,7 @@ const fetch = ( action ) =>
 		action
 	);
 
-const onSuccess = ( { siteId }, { retention_policy: displayRules } ) => [
+const onSuccess = ( { siteId }, { display_rules: displayRules } ) => [
 	{
 		type: ACTIVITY_LOG_DISPLAY_RULES_REQUEST_SUCCESS,
 		siteId,
