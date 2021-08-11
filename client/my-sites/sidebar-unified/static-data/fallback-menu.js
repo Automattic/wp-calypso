@@ -40,6 +40,7 @@ export default function buildFallbackResponse( {
 	shouldShowApperanceBackground = false,
 	shouldShowAdControl = false,
 	shouldShowAMP = false,
+	shouldShowBetaTesting = false,
 } = {} ) {
 	const fallbackResponse = [
 		{
@@ -574,13 +575,17 @@ export default function buildFallbackResponse( {
 					},
 			  ]
 			: [] ),
-		{
-			icon: BETA_TESTING_ICON,
-			slug: 'beta-testing',
-			title: translate( 'Beta Testing', { context: 'Plugin Installer' } ),
-			type: 'menu-item',
-			url: `/beta-testing/${ siteDomain }`,
-		},
+		...( shouldShowBetaTesting
+			? [
+					{
+						icon: BETA_TESTING_ICON,
+						slug: 'beta-testing',
+						title: translate( 'Beta Testing', { context: 'Plugin Installer' } ),
+						type: 'menu-item',
+						url: `/beta-testing/${ siteDomain }`,
+					},
+			  ]
+			: [] ),
 	];
 
 	return fallbackResponse;
