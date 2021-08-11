@@ -197,9 +197,9 @@ export class GutenbergEditorPage {
 		await frame.click( selectors.editorTitle );
 		await this.openBlockInserter();
 		await frame.fill( selectors.blockSearch, blockName );
-		await frame.click( `${ selectors.blockInserterResultItem }:has-text("${ blockName }")` );
+		await frame.click( `${ selectors.blockInserterResultItem } span:text("${ blockName }")` );
 		// Confirm the block has been added to the editor body.
-		return await frame.waitForSelector( `[aria-label="Block: ${ blockName }"]` );
+		return await frame.waitForSelector( `*[aria-label="Block: ${ blockName }"].is-selected` );
 	}
 
 	/**
