@@ -1,39 +1,33 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useState, useRef } from 'react';
-import { __, sprintf } from '@wordpress/i18n';
-import { connect } from 'react-redux';
 import { Card, Button } from '@automattic/components';
 import { BackButton } from '@automattic/onboarding';
 import { createElement, createInterpolateElement } from '@wordpress/element';
-
+import { __, sprintf } from '@wordpress/i18n';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
+import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import Gridicon from 'calypso/components/gridicon';
+import domainIllustration from 'calypso/assets/images/illustrations/domain.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
+import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
-import FormButton from 'calypso/components/forms/form-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import page from 'page';
-import { domainAddNew, domainUseYourDomain } from 'calypso/my-sites/domains/paths';
+import Gridicon from 'calypso/components/gridicon';
 import { checkDomainAvailability } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
-
+import { domainAddNew, domainUseYourDomain } from 'calypso/my-sites/domains/paths';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 /**
  * Style dependencies
  */
-
 import './style.scss';
-/**
- * Image dependencies
- */
-import domainIllustration from 'calypso/assets/images/illustrations/domain.svg';
 
 function UseMyDomain( { goBack, initialQuery, selectedSite } ) {
 	const [ domainName, setDomainName ] = useState( initialQuery ?? '' );
