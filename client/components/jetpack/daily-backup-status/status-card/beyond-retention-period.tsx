@@ -60,11 +60,11 @@ const BeyondRetentionPeriod: React.FC< OwnProps > = ( { selectedDate } ) => {
 
 	const dispatch = useDispatch();
 	useEffect( () => {
-		dispatch( recordTracksEvent( 'calypso_backup_retentionlimit_view', { site_id: siteId } ) );
+		dispatch( recordTracksEvent( 'calypso_backup_visiblelimit_upsell_view', { site_id: siteId } ) );
 	}, [ dispatch, siteId ] );
 	const recordUpsellButtonClick = useCallback( () => {
 		dispatch(
-			recordTracksEvent( 'calypso_backup_retentionlimit_upgrade_click', { site_id: siteId } )
+			recordTracksEvent( 'calypso_backup_visiblelimit_upsell_click', { site_id: siteId } )
 		);
 	}, [ dispatch, siteId ] );
 

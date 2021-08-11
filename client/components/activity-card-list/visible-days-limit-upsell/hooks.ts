@@ -41,7 +41,7 @@ export const useTrackUpsellView = (
 			}
 
 			dispatch(
-				recordTracksEvent( 'calypso_activitylog_retentionlimit_view', {
+				recordTracksEvent( 'calypso_activitylog_visiblelimit_upsell_view', {
 					site_id: siteId ?? undefined,
 				} )
 			);
@@ -67,7 +67,7 @@ export const useTrackUpgradeClick = ( siteId: number | null ): ( () => void ) =>
 
 	return useCallback( () => {
 		dispatch(
-			recordTracksEvent( 'calypso_activitylog_retentionlimit_upgrade_click', {
+			recordTracksEvent( 'calypso_activitylog_visiblelimit_upsell_click', {
 				site_id: siteId ?? undefined,
 			} )
 		);
