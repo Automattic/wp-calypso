@@ -119,6 +119,14 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
+			name: 'onboarding-with-email',
+			steps: [ 'user', 'domains', 'emails', 'plans' ],
+			destination: getSignupDestination,
+			description: 'Copy of the onboarding flow that includes an email step',
+			lastModified: '2021-08-11',
+			showRecaptcha: true,
+		},
+		{
 			name: 'onboarding-registrationless',
 			steps: [ 'domains', 'plans-new', 'user-new' ],
 			destination: getSignupDestination,
