@@ -461,14 +461,9 @@ export class LoginForm extends Component {
 		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
 
-		const signupUrl = getSignupUrl(
-			currentQuery,
-			currentRoute,
-			oauth2Client,
-			locale,
-			pathname,
-			isGutenboarding
-		);
+		const signupUrl =
+			this.props.signupUrl ||
+			getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname, isGutenboarding );
 
 		if ( isJetpackWooCommerceFlow ) {
 			return this.renderWooCommerce();
