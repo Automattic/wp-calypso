@@ -220,11 +220,6 @@ const buildApp = ( environment ) => {
 							...assets.map( ( asset ) => asset.replace( 'entry-main', 'entry-gutenboarding' ) ),
 						],
 					},
-					'entry-browsehappy': {
-						assets: [
-							...assets.map( ( asset ) => asset.replace( 'entry-main', 'entry-browsehappy' ) ),
-						],
-					},
 				},
 				chunks: [
 					...sections.map( ( section ) => ( {
@@ -387,7 +382,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		app.withConfigEnabled( { 'use-translation-chunks': true } );
 		app.withServerRender( '' );
 		app.withMockFilesystem();
-		app.withEvergreenBrowser();
 	} );
 
 	afterEach( () => {
@@ -462,13 +456,7 @@ const assertDefaultContext = ( { url, entry } ) => {
 
 	it( 'sets the manifest for non-evergreen browsers', async () => {
 		app.withNonEvergreenBrowser();
-		const { request } = await app.run( {
-			request: {
-				query: {
-					bypassTargetRedirection: 'true',
-				},
-			},
-		} );
+		const { request } = await app.run();
 		expect( request.context.manifests ).toEqual( [
 			'/* webpack manifest for fallback */',
 			'/* webpack runtime for fallback */',
@@ -514,13 +502,7 @@ const assertDefaultContext = ( { url, entry } ) => {
 
 		it( 'uses the value from DEV_TARGET', async () => {
 			app.withMockedVariable( process.env, 'DEV_TARGET', 'fallback' );
-			const { request } = await app.run( {
-				request: {
-					query: {
-						bypassTargetRedirection: 'true',
-					},
-				},
-			} );
+			const { request } = await app.run();
 			expect( request.context.target ).toEqual( 'fallback' );
 		} );
 
@@ -537,7 +519,7 @@ const assertDefaultContext = ( { url, entry } ) => {
 
 		it( 'uses fallback if forceFallback is provided as query', async () => {
 			const { request } = await app.run( {
-				request: { query: { forceFallback: true, bypassTargetRedirection: 'true' } },
+				request: { query: { forceFallback: true } },
 			} );
 			expect( request.context.target ).toEqual( 'fallback' );
 		} );
@@ -550,13 +532,7 @@ const assertDefaultContext = ( { url, entry } ) => {
 
 		it( 'serves fallback if the browser is not evergreen', async () => {
 			app.withNonEvergreenBrowser();
-			const { request } = await app.run( {
-				request: {
-					query: {
-						bypassTargetRedirection: 'true',
-					},
-				},
-			} );
+			const { request } = await app.run();
 			expect( request.context.target ).toEqual( 'fallback' );
 		} );
 	} );
@@ -607,7 +583,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		const customApp = buildApp( 'development' );
 		customApp.withServerRender( '' );
 		customApp.withMockFilesystem();
-		customApp.withEvergreenBrowser();
 		const { request } = await customApp.run();
 		expect( request.context.app.isDebug ).toEqual( true );
 	} );
@@ -616,7 +591,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		const customApp = buildApp( 'jetpack-cloud-development' );
 		customApp.withServerRender( '' );
 		customApp.withMockFilesystem();
-		customApp.withEvergreenBrowser();
 		const { request } = await customApp.run();
 		expect( request.context.app.isDebug ).toEqual( true );
 	} );
@@ -631,7 +605,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		beforeEach( () => {
 			customApp.withServerRender( '' );
 			customApp.withMockFilesystem();
-			customApp.withEvergreenBrowser();
 		} );
 
 		afterEach( () => {
@@ -673,7 +646,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		beforeEach( () => {
 			customApp.withServerRender( '' );
 			customApp.withMockFilesystem();
-			customApp.withEvergreenBrowser();
 		} );
 
 		afterEach( () => {
@@ -701,7 +673,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		beforeEach( () => {
 			customApp.withServerRender( '' );
 			customApp.withMockFilesystem();
-			customApp.withEvergreenBrowser();
 		} );
 
 		afterEach( () => {
@@ -731,7 +702,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		beforeEach( () => {
 			customApp.withServerRender( '' );
 			customApp.withMockFilesystem();
-			customApp.withEvergreenBrowser();
 			customApp.withExecCommands( {
 				'git rev-parse --abbrev-ref HEAD': 'my-branch',
 				'git rev-parse --short HEAD': 'abcd0123',
@@ -780,7 +750,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		beforeEach( () => {
 			customApp.withServerRender( '' );
 			customApp.withMockFilesystem();
-			customApp.withEvergreenBrowser();
 		} );
 
 		afterEach( () => {
@@ -810,7 +779,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		beforeEach( () => {
 			customApp.withServerRender( '' );
 			customApp.withMockFilesystem();
-			customApp.withEvergreenBrowser();
 			customApp.withExecCommands( {
 				'git rev-parse --abbrev-ref HEAD': 'my-branch',
 				'git rev-parse --short HEAD': 'abcd0123',
@@ -858,7 +826,6 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 		app.withConfigEnabled( { 'use-translation-chunks': true } );
 		app.withServerRender( '' );
 		app.withMockFilesystem();
-		app.withEvergreenBrowser();
 	} );
 
 	afterEach( () => {
@@ -885,13 +852,7 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 			} );
 		} );
 		it( 'do not set chunkFiles for sections with associated entrypoints for non-evergreen browsers', async () => {
-			const { request } = await app.withNonEvergreenBrowser().run( {
-				request: {
-					query: {
-						bypassTargetRedirection: 'true',
-					},
-				},
-			} );
+			const { request } = await app.withNonEvergreenBrowser().run();
 			expect( request.context.chunkFiles ).toEqual( {
 				'css.ltr': [],
 				'css.rtl': [],
@@ -908,13 +869,7 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 			} );
 		} );
 		it( 'sets chunkFiles for non-evergreen browsers', async () => {
-			const { request } = await app.withNonEvergreenBrowser().run( {
-				request: {
-					query: {
-						bypassTargetRedirection: 'true',
-					},
-				},
-			} );
+			const { request } = await app.withNonEvergreenBrowser().run();
 			expect( request.context.chunkFiles ).toEqual( {
 				'css.ltr': [ `/calypso/fallback/${ sectionName }.css` ],
 				'css.rtl': [ `/calypso/fallback/${ sectionName }.rtl.css` ],
@@ -966,13 +921,7 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 
 		it( 'sets language revisions for non-evergreen browsers', async () => {
 			app.withNonEvergreenBrowser();
-			const { request } = await app.run( {
-				request: {
-					query: {
-						bypassTargetRedirection: 'true',
-					},
-				},
-			} );
+			const { request } = await app.run();
 			expect( request.context.languageRevisions ).toEqual( { en: 1234 } );
 		} );
 
@@ -1064,13 +1013,7 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 
 		it( 'sets language revisions for non-evergreen browsers', async () => {
 			app.withNonEvergreenBrowser();
-			const { request } = await app.run( {
-				request: {
-					query: {
-						bypassTargetRedirection: 'true',
-					},
-				},
-			} );
+			const { request } = await app.run();
 			expect( request.context.languageRevisions ).toEqual( { en: 1234 } );
 		} );
 	} );
@@ -1092,7 +1035,6 @@ describe( 'main app', () => {
 		app.withConfigEnabled( { 'use-translation-chunks': true } );
 		app.withServerRender( '' );
 		app.withMockFilesystem();
-		app.withEvergreenBrowser();
 	} );
 
 	afterEach( async () => {
@@ -1217,10 +1159,8 @@ describe( 'main app', () => {
 				'https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2Fplans'
 			);
 		} );
+
 		it( 'redirects to public pricing page', async () => {
-			app.withConfigEnabled( {
-				'jetpack-cloud/connect': false,
-			} );
 			const { response } = await app.run( { request: { url: '/plans' } } );
 			expect( response.redirect ).toHaveBeenCalledWith( 'https://wordpress.com/pricing' );
 		} );
@@ -1494,6 +1434,32 @@ describe( 'main app', () => {
 	describe( 'Route /browsehappy', () => {
 		beforeEach( () => {
 			app.withRenderJSX( 'content' );
+			app.withConfigEnabled( {
+				'wpcom-user-bootstrap': true,
+				'use-translation-chunks': true,
+			} );
+			app.withReduxStore( { dispatch: jest.fn() } );
+		} );
+
+		it( 'sets the dashboard url by default', async () => {
+			const { request } = await app.run( { request: { url: '/browsehappy' } } );
+			expect( request.context.dashboardUrl ).toEqual( 'https://dashboard.wordpress.com/wp-admin/' );
+		} );
+
+		it( 'sets the dashboard url when the primary blog url is from wordpress.com', async () => {
+			app.withBootstrapUser( { primary_blog_url: 'https://test.wordpress.com' } );
+			const { request } = await app.run( {
+				request: { url: '/browsehappy', cookies: { wordpress_logged_in: true } },
+			} );
+			expect( request.context.dashboardUrl ).toEqual( 'https://test.wordpress.com/wp-admin' );
+		} );
+
+		it( 'sets the dashboard url when the primary blog url is not from wordpress.com', async () => {
+			app.withBootstrapUser( { primary_blog_url: 'https://test.blog' } );
+			const { request } = await app.run( {
+				request: { url: '/browsehappy', cookies: { wordpress_logged_in: true } },
+			} );
+			expect( request.context.dashboardUrl ).toEqual( 'https://dashboard.wordpress.com/wp-admin/' );
 		} );
 
 		it( 'renders the content', async () => {
@@ -1563,7 +1529,6 @@ describe( 'main app', () => {
 		it( 'renders authorized page in development mode', async () => {
 			const customApp = buildApp( 'development' );
 			customApp.withRenderJSX( 'content' );
-			customApp.withEvergreenBrowser();
 
 			const { response } = await customApp.run( {
 				request: {
