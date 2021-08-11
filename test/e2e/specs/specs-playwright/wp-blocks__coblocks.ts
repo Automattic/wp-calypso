@@ -1,3 +1,4 @@
+import path from 'path';
 import {
 	setupHooks,
 	DataHelper,
@@ -9,10 +10,9 @@ import {
 	DynamicHRBlock,
 	HeroBlock,
 	ClicktoTweetBlock,
-	LogosBlock
+	LogosBlock,
 } from '@automattic/calypso-e2e';
-import path from 'path';
-import {Page} from 'playwright';
+import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), () => {
 	let gutenbergEditorPage: GutenbergEditorPage;
@@ -74,7 +74,10 @@ describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), () => {
 	} );
 
 	it( 'Publish and visit post', async function () {
-		await gutenbergEditorPage.publish( { visit: true } );
+		// Must save as draft first to bypass issue with post-publish panel being auto-dismissed when
+		// ClickToTweet and Logos blocks are present.
+		// See https://github.com/Automattic/wp-calypso/issues/54421.
+		await gutenbergEditorPage.publish( { visit: true, saveDraft: true } );
 	} );
 
 	// Pass in a 1D array of values or text strings to validate each block.
@@ -84,7 +87,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), () => {
 		${ DynamicHRBlock }    | ${ null }
 		${ HeroBlock }         | ${ [ heroBlockHeading ] }
 		${ ClicktoTweetBlock } | ${ [ clicktoTweetBlockTweet ] }
-		${ LogosBlock } | ${ [ path.parse( logoImage ).name ] }
+		${ LogosBlock }        | ${ [ path.parse( logoImage ).name ] }
 	`(
 		`Confirm $block.blockName block is visible in published post`,
 		async ( { block, content } ) => {

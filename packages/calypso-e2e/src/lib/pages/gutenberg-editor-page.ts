@@ -241,8 +241,15 @@ export class GutenbergEditorPage {
 	 * @param {boolean} visit Whether to then visit the page.
 	 * @returns {Promise<void} No return value.
 	 */
-	async publish( { visit = false }: { visit?: boolean } = {} ): Promise< string > {
+	async publish( {
+		visit = false,
+		saveDraft = false,
+	}: { visit?: boolean; saveDraft?: boolean } = {} ): Promise< string > {
 		const frame = await this.getEditorFrame();
+
+		if ( saveDraft ) {
+			await this.saveDraft();
+		}
 
 		await frame.click( `${ selectors.editPostHeader } >> text=Publish` );
 		await frame.click( `${ selectors.publishPanel } >> text=Publish` );
@@ -253,6 +260,16 @@ export class GutenbergEditorPage {
 			await this._visitPublishedEntryFromPublishPane();
 		}
 		return publishedURL;
+	}
+
+	/**
+	 * Saves the currently open post as draft.
+	 */
+	async saveDraft() {
+		const frame = await this.getEditorFrame();
+
+		await frame.click( `${ selectors.editPostHeader } >> text="Save draft"` );
+		await frame.waitForSelector( `${ selectors.editPostHeader } :text("Saved")` );
 	}
 
 	/**
