@@ -36,5 +36,12 @@ export default () => ( req, res, next ) => {
 		return;
 	}
 
-	res.redirect( addQueryArgs( { from: req.url }, '/browsehappy' ) );
+	// We need to verify in browsehappy that the "from" param actually comes
+	// from calypso, so we need to include everything in the URL.
+	const protocol = process.env.PROTOCOL || config( 'protocol' );
+	const hostname = process.env.HOST || config( 'hostname' );
+	const port = process.env.PORT || config( 'port' );
+	const from = `${ protocol }://${ hostname }${ port ? ':' + port : '' }${ req.originalUrl }`;
+
+	res.redirect( addQueryArgs( { from }, '/browsehappy' ) );
 };
