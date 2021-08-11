@@ -26,6 +26,7 @@ import MapDomain from 'calypso/my-sites/domains/map-domain';
 import TransferDomain from 'calypso/my-sites/domains/transfer-domain';
 import TransferDomainStep from 'calypso/components/domains/transfer-domain-step';
 import UseYourDomainStep from 'calypso/components/domains/use-your-domain-step';
+import DomainTransferOrConnect from 'calypso/components/domains/transfer-or-connect';
 import GSuiteUpgrade from 'calypso/components/upgrades/gsuite';
 import {
 	domainManagementTransferIn,
@@ -33,6 +34,7 @@ import {
 	domainMapping,
 	domainMappingSetup,
 	domainTransferIn,
+	domainTransferOrConnect,
 	domainUseYourDomain,
 } from 'calypso/my-sites/domains/paths';
 import { isATEnabled } from 'calypso/lib/automated-transfer';
@@ -178,6 +180,34 @@ const useYourDomain = ( context, next ) => {
 				<UseYourDomainStep
 					basePath={ sectionify( context.path ) }
 					initialQuery={ context.query.initialQuery }
+					goBack={ handleGoBack }
+				/>
+			</CalypsoShoppingCartProvider>
+		</Main>
+	);
+	next();
+};
+
+const transferOrConnect = ( context, next ) => {
+	const handleGoBack = () => {
+		console.log( context.params );
+		page( domainUseYourDomain( context.params.site, context.params.domain ) );
+	};
+	context.primary = (
+		<Main wideLayout>
+			<PageViewTracker
+				path={ domainTransferOrConnect( ':site', ':domain' ) }
+				title="Domain Search > Use Your Own Domain"
+			/>
+			<DocumentHead
+				title={ translate( 'Use a domain I own: %(domain)s', {
+					args: { domain: context.params.domain },
+				} ) }
+			/>
+			<CalypsoShoppingCartProvider>
+				<DomainTransferOrConnect
+					basePath={ sectionify( context.path ) }
+					domain={ context.params.domain }
 					goBack={ handleGoBack }
 				/>
 			</CalypsoShoppingCartProvider>
@@ -333,5 +363,6 @@ export default {
 	redirectToUseYourDomainIfVipSite,
 	transferDomain,
 	transferDomainPrecheck,
+	transferOrConnect,
 	useYourDomain,
 };

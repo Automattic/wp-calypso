@@ -240,6 +240,10 @@ export function domainUseYourDomain( siteName, domain ) {
 	return path;
 }
 
+export function domainTransferOrConnect( siteName, domain ) {
+	return `/domains/add/${ siteName }/transfer-or-connect/${ domain }`;
+}
+
 export function getSectionName( pathname ) {
 	const regExp = new RegExp( '^' + domainManagementRoot() + '/[^/]+/([^/]+)', 'g' );
 	const matches = regExp.exec( pathname );

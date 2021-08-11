@@ -333,6 +333,17 @@ export default function () {
 			makeLayout,
 			clientRender
 		);
+
+		page(
+			paths.domainTransferOrConnect( ':site', ':domain' ),
+			siteSelection,
+			navigation,
+			domainsController.redirectIfNoSite( '/domains/add' ),
+			domainsController.jetpackNoDomainsWarning,
+			domainsController.transferOrConnect,
+			makeLayout,
+			clientRender
+		);
 	}
 
 	page(
