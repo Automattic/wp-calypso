@@ -20,7 +20,7 @@ import FormInputValidation from 'calypso/components/forms/form-input-validation'
 import FormButton from 'calypso/components/forms/form-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import page from 'page';
-import { domainUseYourDomain } from 'calypso/my-sites/domains/paths';
+import { domainAddNew, domainUseYourDomain } from 'calypso/my-sites/domains/paths';
 import { checkDomainAvailability } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
@@ -34,8 +34,6 @@ import './style.scss';
  * Image dependencies
  */
 import domainIllustration from 'calypso/assets/images/illustrations/domain.svg';
-
-// function isMappableOrTransferrabl
 
 function UseMyDomain( { goBack, initialQuery, selectedSite } ) {
 	const [ domainName, setDomainName ] = useState( initialQuery ?? '' );
@@ -56,7 +54,11 @@ function UseMyDomain( { goBack, initialQuery, selectedSite } ) {
 			return false;
 		}
 
-		if ( ! /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/.test( domainName ) ) {
+		if (
+			! /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9])*(?:\.[a-zA-Z]{2,})+$/.test(
+				domainName
+			)
+		) {
 			const errorMessage = createInterpolateElement(
 				sprintf(
 					/* translators: %s - the string the user entered in the domain name field */
@@ -76,46 +78,75 @@ function UseMyDomain( { goBack, initialQuery, selectedSite } ) {
 		return true;
 	}, [ domainName ] );
 
-	useEffect( () => {
-		! initialQuery && domainNameInput.current.focus();
-	}, [ initialQuery, domainNameInput ] );
+	const goToSearchPage = () => {
+		page( domainAddNew( selectedSite.slug, domainName ) );
+	};
 
-	useEffect( () => {
-		! initialValidation.current && initialQuery && validateDomainName();
-		initialValidation.current = true;
-	}, [ initialQuery, validateDomainName ] );
+	const getAvailabilityErrorMessage = ( availabilityData ) => {
+		const { status, mappable, maintenance_end_time, other_site_domain } = availabilityData;
 
-	const onNext = () => {
-		setIsFetchingAvailability( true );
-
-		if ( validateDomainName() ) {
-			// TODO: Redirect to the new Transfer or Connect page
-			// This is just a placeholder to test with the existing page
-
-			checkDomainAvailability(
+		if ( domainAvailability.AVAILABLE === status ) {
+			return createInterpolateElement(
+				__( "This domain isn't registered. Did you mean to <a>search for a domain</a> instead?" ),
 				{
-					domainName,
-					blogId: selectedSite.ID,
-					isCartPreCheck: false,
-				},
-				( error, data ) => {
-					if ( error ) {
-						setDomainNameValidationError( error );
-						return;
-					}
-
-					console.log( error );
-					console.log( data );
-					// const status = data && data?.status;
-
-					const message = getAvailabilityNotice( domainName, data?.status, {} );
-					console.log( message );
-
-					setIsFetchingAvailability( false );
+					a: createElement( 'a', { href: '#', onClick: goToSearchPage } ),
 				}
 			);
-			// page( domainUseYourDomain( selectedSite.slug, domainName ) );
 		}
+
+		if (
+			! [
+				domainAvailability.AVAILABILITY_CHECK_ERROR,
+				domainAvailability.NOT_REGISTRABLE,
+			].includes( status ) &&
+			[ domainAvailability.MAPPABLE, domainAvailability.UNKNOWN ].includes( mappable )
+		) {
+			return null;
+		}
+
+		const availabilityStatus = domainAvailability.MAPPED === mappable ? status : mappable;
+		const maintenanceEndTime = maintenance_end_time ?? null;
+		const site = other_site_domain ?? selectedSite.slug;
+
+		const errorData = getAvailabilityNotice( domainName, availabilityStatus, {
+			site,
+			maintenanceEndTime,
+		} );
+		return errorData?.message || null;
+	};
+
+	const onNext = () => {
+		if ( ! validateDomainName() ) {
+			return;
+		}
+
+		setIsFetchingAvailability( true );
+
+		checkDomainAvailability(
+			{
+				domainName,
+				blogId: selectedSite.ID,
+				isCartPreCheck: false,
+			},
+			( error, data ) => {
+				setIsFetchingAvailability( false );
+
+				if ( error ) {
+					setDomainNameValidationError( error );
+					return;
+				}
+
+				const availabilityMessage = getAvailabilityErrorMessage( data );
+
+				if ( availabilityMessage ) {
+					setDomainNameValidationError( availabilityMessage );
+					return;
+				}
+
+				// TODO: This is just a placeholder until the connect or transfer page is completed.
+				page( domainUseYourDomain( selectedSite.slug, domainName ) );
+			}
+		);
 	};
 
 	const onDomainNameChange = ( event ) => {
@@ -129,7 +160,7 @@ function UseMyDomain( { goBack, initialQuery, selectedSite } ) {
 
 	const keyDown = ( event ) => {
 		if ( event.key === 'Enter' ) {
-			onNext();
+			! isFetchingAvailability && onNext();
 			return;
 		}
 
@@ -140,6 +171,15 @@ function UseMyDomain( { goBack, initialQuery, selectedSite } ) {
 
 		domainNameValidationError && setDomainNameValidationError();
 	};
+
+	useEffect( () => {
+		! initialQuery && domainNameInput.current.focus();
+	}, [ initialQuery, domainNameInput ] );
+
+	useEffect( () => {
+		! initialValidation.current && initialQuery && onNext();
+		initialValidation.current = true;
+	}, [ initialQuery, validateDomainName ] );
 
 	return (
 		<>
