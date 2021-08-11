@@ -188,6 +188,13 @@ body.is-section-domains {
 	}
 }
 
+body.is-section-signup:not( .is-white-signup ) {
+	.register-domain-step__search-card {
+		background: none;
+		box-shadow: none;
+	}
+}
+
 body.is-section-signup.is-white-signup {
 	.domain-search-results__domain-availability .card {
 		box-shadow: none;

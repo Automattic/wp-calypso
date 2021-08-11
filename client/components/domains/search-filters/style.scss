@@ -187,6 +187,13 @@
 	}
 }
 
+body.is-section-signup:not( .is-white-signup ) {
+	.search-filters__dropdown-filters > button:hover,
+	.search-filters__dropdown-filters > button:active {
+		background-color: #fdfdfd;
+	}
+}
+
 body.is-section-signup.is-white-signup {
 	$accent-blue: #117ac9;
 
