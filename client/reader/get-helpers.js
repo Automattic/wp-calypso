@@ -164,7 +164,7 @@ export const canBeMarkedAsSeen = ( { post = null, posts = [], currentRoute = '' 
 /**
  * Return Featured image alt text.
  *
- * @param {Object} post
+ * @param {Object} post object containing post information
  *
  * @returns {string} Featured image alt text
  */
