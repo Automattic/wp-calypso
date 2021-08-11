@@ -52,10 +52,7 @@ export class FileBlock {
 	 * @param {(string|number)} contents Contents used to validate the block.
 	 * @returns {Promise<void>} No return value.
 	 */
-	static async validatePublishedContent(
-		page: Page,
-		contents: ( string | number )[]
-	): Promise< void > {
+	static async validatePublishedContent( page: Page, contents: string[] ): Promise< void > {
 		await page.waitForSelector( 'a:text("Download")' );
 		for await ( const content of contents ) {
 			await page.waitForSelector( `a:has-text("${ content }")` );

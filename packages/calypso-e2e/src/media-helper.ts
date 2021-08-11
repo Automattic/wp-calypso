@@ -113,8 +113,8 @@ export function deleteFile( filePath: string ): void {
  * Creates a temporary test file by cloning a source file under a new name.
  *
  * @param {{[key: string]: string}} param0 Parameter object.
- * @param {string} param0.testFileName Basename of the test file to be generated.
  * @param {string} param0.sourceFileName Basename of the source file to be cloned.
+ * @param {string} [param0.testFileName] Basename of the test file to be generated.
  * @returns {string} Full path to the generated test file.
  */
 export function createTestFile( {
@@ -124,9 +124,11 @@ export function createTestFile( {
 	sourceFileName: string;
 	testFileName?: string;
 } ): string {
+	let fileName = createTimestamp();
 	// If the output `testFileName` is defined, use that as part of the final filename.
-	let fileName =
-		testFileName === undefined ? createTimestamp() : `${ createTimestamp() }-${ testFileName }`;
+	if ( testFileName ) {
+		fileName += `-${ testFileName }`;
+	}
 
 	// Reassign the variable with the final name to be used, including the extension.
 	fileName = `${ fileName }.${ sourceFileName.split( '.' ).pop() }`;
