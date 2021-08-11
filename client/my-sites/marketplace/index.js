@@ -10,7 +10,7 @@ import { navigation, siteSelection } from 'calypso/my-sites/controller';
 import config from '@automattic/calypso-config';
 import {
 	renderDomainsPage,
-	renderMarketplacePlugin,
+	renderMarketplaceProduct,
 	renderMarketplaceTestPage,
 	renderMarketplaceThankYou,
 	renderPluginsSetupStatusPage,
@@ -40,10 +40,18 @@ export default function () {
 			clientRender
 		);
 		page(
-			'/marketplace/product/details/:plugin/:site?',
+			'/marketplace/product/details/:productGroupSlug/:site?',
 			navigation,
 			siteSelection,
-			renderMarketplacePlugin,
+			renderMarketplaceProduct,
+			makeLayout,
+			clientRender
+		);
+		page(
+			'/marketplace/product/details/:productGroupSlug/:productSlug/:site?',
+			navigation,
+			siteSelection,
+			renderMarketplaceProduct,
 			makeLayout,
 			clientRender
 		);

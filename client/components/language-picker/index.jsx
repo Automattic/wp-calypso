@@ -1,23 +1,12 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Fragment, PureComponent } from 'react';
+import config from '@automattic/calypso-config';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
+import PropTypes from 'prop-types';
+import React, { Fragment, PureComponent } from 'react';
 import LanguagePickerModal from './modal';
 import { getLanguageCodeLabels } from './utils';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

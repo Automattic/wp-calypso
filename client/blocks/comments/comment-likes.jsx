@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
+import { translate } from 'i18n-calypso';
+import { get, pick } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { get, pick } from 'lodash';
 import { connect } from 'react-redux';
-import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import LikeButton from 'calypso/blocks/like-button/button';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { likeComment, unlikeComment } from 'calypso/state/comments/actions';

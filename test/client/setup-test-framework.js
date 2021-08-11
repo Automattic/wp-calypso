@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 const nock = require( 'nock' );
 
 // Disables all network requests for all tests.

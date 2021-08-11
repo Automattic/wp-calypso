@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import page from 'page';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
+import page from 'page';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { requestSite } from 'calypso/state/sites/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import { requestSite } from 'calypso/state/sites/actions';
 import { canCurrentUserUseCustomerHome, getSite, getSiteSlug } from 'calypso/state/sites/selectors';
 
 export default function () {

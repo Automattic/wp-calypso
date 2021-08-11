@@ -1,6 +1,6 @@
-import { Page } from 'playwright';
+import path from 'path';
+import { ElementHandle, Page } from 'playwright';
 import { waitForElementEnabled } from '../../element-helper';
-import { BaseContainer } from '../base-container';
 
 const selectors = {
 	// Navigation tabs
@@ -12,6 +12,8 @@ const selectors = {
 	items: '.media-library__list-item',
 	placeholder: '.is-placeholder',
 	editButton: 'button[data-e2e-button="edit"]',
+	fileInput: 'input.media-library__upload-button-input',
+	uploadRejectionNotice: 'text=/could not be uploaded/i',
 
 	// Modal view
 	mediaModal: '.editor-media-modal__content',
@@ -28,26 +30,17 @@ const selectors = {
 
 /**
  * Represents an instance of the WPCOM Media library page.
- *
- * @augments {BaseContainer}
  */
-export class MediaPage extends BaseContainer {
-	/**
-	 * Constructs an instance of the MediaPage object.
-	 *
-	 * @param {Page} page Underlying page on which interactions take place.
-	 */
-	constructor( page: Page ) {
-		super( page, selectors.gallery );
-	}
+export class MediaPage {
+	private page: Page;
 
 	/**
-	 * Post-initialization steps.
+	 * Constructs an instance of the component.
 	 *
-	 * @returns {Promise<void>} No return value.
+	 * @param {Page} page The underlying page.
 	 */
-	async _postInit(): Promise< void > {
-		await this.page.waitForLoadState( 'domcontentloaded' );
+	constructor( page: Page ) {
+		this.page = page;
 	}
 
 	/**
@@ -83,9 +76,12 @@ export class MediaPage extends BaseContainer {
 	async clickTab( name: 'All' | 'Images' | 'Documents' | 'Videos' | 'Audio' ): Promise< void > {
 		const navTabs = await this.page.waitForSelector( selectors.navTabs );
 		const gallery = await this.page.waitForSelector( selectors.gallery );
+
+		// Similar to Marketing Page, in the mobile viewport this is compressed down to a pseudo-dropdown.
 		const isDropdown = await navTabs
 			.getAttribute( 'class' )
 			.then( ( value ) => value?.includes( 'is-dropdown' ) );
+
 		if ( isDropdown ) {
 			// Mobile view - navtabs become a dropdown.
 			await navTabs.click();
@@ -94,6 +90,7 @@ export class MediaPage extends BaseContainer {
 			// Desktop view - navtabs are constantly visible tabs.
 			await this.page.click( `${ selectors.navTabs } >> text=${ name }` );
 		}
+
 		// Wait for all placeholders to disappear.
 		// Alternatively, waiting for `networkidle` will achieve the same objective
 		// at the cost of much longer resolving time (~20s).
@@ -132,5 +129,39 @@ export class MediaPage extends BaseContainer {
 	async cancelImageEdit(): Promise< void > {
 		await this.page.click( selectors.imageEditorCancelButton );
 		await this.page.waitForSelector( selectors.mediaModal );
+	}
+
+	/**
+	 * Uploads the file to the Media gallery.
+	 *
+	 * @param {string} fullPath Full path to the file on disk.
+	 * @returns {Promise<void>} No return value.
+	 */
+	async upload( fullPath: string ): Promise< ElementHandle > {
+		const filename = path.basename( fullPath );
+		const itemSelector = `figure[title="${ filename }"]`;
+
+		await this.page.waitForSelector( selectors.fileInput );
+		// Simulate the action of user selecting a file then clicking confirm.
+		await this.page.setInputFiles( selectors.fileInput, fullPath );
+
+		// Wait until the spinner for the file being uploaded is hidden.
+		// This is necessary as Simple and Atomic sites behave slightly differently when rejecting.
+		// For Atomic, a figure and associated spinner are shown briefly in the gallery before rejection.
+		await this.page.waitForSelector( `${ itemSelector } .media-library__list-item-spinner`, {
+			state: 'hidden',
+		} );
+
+		// At this point, if the rejection notice is visible, it means the file was not a supported
+		// file type. Throw the error containing the rejection banner text for handling.
+		if ( await this.page.isVisible( selectors.uploadRejectionNotice ) ) {
+			throw new Error(
+				await this.page
+					.waitForSelector( selectors.uploadRejectionNotice )
+					.then( ( element ) => element.innerText() )
+			);
+		} else {
+			return await this.page.waitForSelector( itemSelector );
+		}
 	}
 }

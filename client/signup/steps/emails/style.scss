@@ -1,0 +1,96 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.emails__step-section-wrapper {
+	margin: 0 auto;
+	max-width: 720px;
+}
+
+.is-section-signup .emails__step-content {
+	margin-bottom: 50px;
+
+	&.emails__step-content-email-step {
+		margin-bottom: 20px;
+	}
+}
+
+.signup__step.is-emails {
+	.emails__register-email-step--domain-name {
+		word-break: break-all;
+	}
+}
+
+/**
+ * Styles for design reskin
+ * The `is-white-signup` class is attached to the body when the user is assigned the `reskinned` group of the `reskinSignupFlow` a/b test
+ */
+body.is-section-signup.is-white-signup {
+	$light-white: #f3f4f5;
+
+	.emails__step-content {
+		display: flex;
+
+		.emails__email-side-content-container {
+			flex-direction: column;
+			width: 100vw;
+			margin-top: 40px;
+			display: none;
+
+			@include break-large {
+				width: 30vw;
+				margin-top: 0;
+				flex-direction: column;
+				display: flex;
+			}
+
+			@include break-wide {
+				width: 350px;
+			}
+		}
+
+		.register-email-step .emails__email-side-content-container {
+			display: flex;
+
+			@include break-small {
+				flex-direction: row;
+
+				.emails__email-side-content {
+					padding-top: 0;
+					border-bottom: none;
+				}
+			}
+
+			@include break-large {
+				display: none;
+			}
+		}
+
+		.emails__email-side-content {
+			border-bottom: 1px solid;
+			border-bottom-color: var( --studio-gray-5 );
+			padding: 20px 0;
+			margin: 0 20px;
+
+			@include break-large {
+				margin: 0 20px 0 40px;
+				padding: 40px 0;
+			}
+
+			@include break-wide {
+				margin: 0 0 0 80px;
+			}
+		}
+
+		.emails__email-side-content:first-of-type {
+			padding-top: 0;
+		}
+
+		.emails__email-side-content:last-of-type {
+			border-bottom: none;
+		}
+
+		.emails__register-email-step {
+			flex: 1;
+		}
+	}
+}

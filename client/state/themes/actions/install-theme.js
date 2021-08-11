@@ -9,6 +9,7 @@ import {
 } from 'calypso/state/themes/action-types';
 import { receiveTheme } from 'calypso/state/themes/actions/receive-theme';
 import { getWpcomParentThemeId } from 'calypso/state/themes/selectors';
+import { requestThemes } from 'calypso/state/themes/actions';
 
 import 'calypso/state/themes/init';
 
@@ -51,6 +52,7 @@ export function installTheme( themeId, siteId ) {
 					}
 				}
 			} )
+			.then( () => dispatch( requestThemes( siteId, {} ) ) )
 			.catch( ( error ) => {
 				dispatch( {
 					type: THEME_INSTALL_FAILURE,

@@ -13,7 +13,7 @@ set -eou pipefail
 DIR="$1"
 
 function removeComments {
-	perl -0777 -pi -e "s/\/\*\*\n \* (External|Internal|WordPress|Module|Type) dependencies\n \*\///g" "$1"
+	perl -0777 -pi -e "s/\/\*\*\n \* (External|Internal|WordPress|Module|Type|Image|Style) dependencies\n \*\///gi" "$1"
 }
 
 function prettify {

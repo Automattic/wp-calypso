@@ -2,15 +2,8 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { assert } from 'chai';
 import { get, omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import * as helper from '../helper';
 import * as fixtures from './fixtures';
 jest.mock( '@automattic/calypso-config', () => {

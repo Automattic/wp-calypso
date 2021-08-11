@@ -1,6 +1,4 @@
-/**
- * External dependencies
- */
+import { isEnabled } from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 
 const noop = () => {};
@@ -112,7 +110,9 @@ export function generateFlows( {
 		},
 		{
 			name: 'onboarding',
-			steps: [ 'user', 'domains', 'plans' ],
+			steps: isEnabled( 'signup/professional-email-step' )
+				? [ 'user', 'domains', 'emails', 'plans' ]
+				: [ 'user', 'domains', 'plans' ],
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
 			lastModified: '2020-12-10',
@@ -357,15 +357,6 @@ export function generateFlows( {
 			description: 'Allow users to select a plan without a domain',
 			lastModified: '2020-08-11',
 			showRecaptcha: true,
-		},
-		{
-			name: 'new-launch',
-			steps: [ 'domains-launch', 'plans-launch', 'launch' ],
-			destination: getLaunchDestination,
-			description: 'Launch flow for a site created from /new',
-			lastModified: '2020-04-28',
-			pageTitle: translate( 'Launch your site' ),
-			providesDependenciesInQuery: [ 'siteSlug', 'source' ],
 		},
 		{
 			name: 'launch-only',

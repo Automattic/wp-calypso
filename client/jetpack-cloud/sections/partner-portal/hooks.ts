@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import { useEffect } from 'react';
-import page from 'page';
 import { getQueryArg } from '@wordpress/url';
-
-/**
- * Internal dependencies
- */
+import page from 'page';
+import { useEffect } from 'react';
 import { ensurePartnerPortalReturnUrl } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 
 /**

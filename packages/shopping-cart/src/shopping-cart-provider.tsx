@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import type { RequestCart, ResponseCart, ShoppingCartManagerOptions } from './types';
-import useShoppingCartManager from './use-shopping-cart-manager';
 import ShoppingCartContext from './shopping-cart-context';
+import useShoppingCartManager from './use-shopping-cart-manager';
+import type { RequestCart, ResponseCart, ShoppingCartManagerOptions } from './types';
 
 export default function ShoppingCartProvider( {
 	cartKey,
@@ -17,7 +10,7 @@ export default function ShoppingCartProvider( {
 	options,
 	children,
 }: {
-	cartKey: string | number | null | undefined;
+	cartKey: string | undefined;
 	setCart: ( cartKey: string, requestCart: RequestCart ) => Promise< ResponseCart >;
 	getCart: ( cartKey: string ) => Promise< ResponseCart >;
 	options?: ShoppingCartManagerOptions;

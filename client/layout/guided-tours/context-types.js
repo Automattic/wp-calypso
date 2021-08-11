@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
 
 // Shape of context provided by the `makeTour` context provider.

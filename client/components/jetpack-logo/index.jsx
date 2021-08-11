@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
 import colorStudio from '@automattic/color-studio';
-import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React from 'react';
 import useAriaProps from 'calypso/lib/a11y/use-aria-props';
 
 /**
  * Module constants
  */
 const PALETTE = colorStudio.colors;
-const COLOR_JETPACK = PALETTE[ 'Jetpack Green 50' ];
+const COLOR_JETPACK = PALETTE[ 'Jetpack Green 40' ];
 const COLOR_WHITE = PALETTE[ 'White' ]; // eslint-disable-line dot-notation
 
 const LogoPathSize32 = ( { monochrome = false } ) => {

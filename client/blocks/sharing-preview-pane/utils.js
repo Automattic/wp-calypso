@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { get, find, trim } from 'lodash';
 import striptags from 'striptags';
-
-/**
- * Internal dependencies
- */
-import { formatExcerpt } from 'calypso/lib/post-normalizer/rule-create-better-excerpt';
 import { parseHtml } from 'calypso/lib/formatting';
+import { formatExcerpt } from 'calypso/lib/post-normalizer/rule-create-better-excerpt';
 
 const PREVIEW_IMAGE_WIDTH = 512;
 

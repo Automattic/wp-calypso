@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
-import { SiteVerticalsSuggestionSearch } from '../';
-import SuggestionSearch from 'calypso/components/suggestion-search';
+import React from 'react';
 import PopularTopics from 'calypso/components/site-verticals-suggestion-search/popular-topics';
+import SuggestionSearch from 'calypso/components/suggestion-search';
+import { SiteVerticalsSuggestionSearch } from '../';
 
 jest.mock( 'uuid', () => ( {
 	v4: () => 'fake-uuid',

@@ -18,7 +18,12 @@ const useValidCheckoutBackUrl = ( siteSlug: string | undefined ): string | undef
 			return undefined;
 		}
 
-		const allowedHosts = [ 'jetpack.cloud.localhost', 'cloud.jetpack.com', siteSlug ];
+		const allowedHosts = [
+			'jetpack.com',
+			'jetpack.cloud.localhost',
+			'cloud.jetpack.com',
+			siteSlug,
+		];
 
 		let parsedUrl;
 		try {

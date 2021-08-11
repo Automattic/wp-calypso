@@ -177,7 +177,12 @@ class PurchasesList extends Component {
 				<PageViewTracker path="/me/purchases" title="Purchases" />
 				<MeSidebarNavigation />
 
-				<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+				<FormattedHeader
+					brandFont
+					headerText={ titles.sectionTitle }
+					subHeaderText={ translate( 'View, manage, or cancel your plan and other purchases.' ) }
+					align="left"
+				/>
 				<PurchasesNavigation section="activeUpgrades" />
 				{ content }
 				{ this.renderMembershipSubscriptions() }

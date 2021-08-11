@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
 import { useSelect, useDispatch } from '@wordpress/data';
-import type { DataStatus } from '@automattic/data-stores/src/domain-suggestions/constants';
-import type { DomainSuggestion } from '@automattic/data-stores/src/domain-suggestions/types';
 import { useDebounce } from 'use-debounce';
-
-/**
- * Internal dependencies
- */
 import {
 	DOMAIN_SUGGESTIONS_STORE,
 	DOMAIN_SEARCH_DEBOUNCE_INTERVAL,
 	DOMAIN_QUERY_MINIMUM_LENGTH,
 } from '../constants';
+import type { DataStatus } from '@automattic/data-stores/src/domain-suggestions/constants';
+import type { DomainSuggestion } from '@automattic/data-stores/src/domain-suggestions/types';
 
 type DomainSuggestionsResult = {
 	allDomainSuggestions: DomainSuggestion[] | undefined;

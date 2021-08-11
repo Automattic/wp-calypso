@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
+import { RootChild } from '@automattic/components';
+import classNames from 'classnames';
+import debugFactory from 'debug';
+import { useRtl } from 'i18n-calypso';
+import { defer } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
-import debugFactory from 'debug';
-import classNames from 'classnames';
-import { defer } from 'lodash';
-import { useRtl } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { RootChild } from '@automattic/components';
 import {
 	bindWindowListeners,
 	unbindWindowListeners,
@@ -21,9 +14,6 @@ import {
 	offset,
 } from './util';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /**
@@ -40,8 +30,9 @@ class PopoverInner extends Component {
 		className: '',
 		closeOnEsc: true,
 		isRtl: false,
-		isFocusEnabled: true,
+		focusOnShow: true,
 		position: 'top',
+		onShow: noop,
 		onClose: noop,
 		onMouseEnter: noop,
 		onMouseLeave: noop,
@@ -73,7 +64,8 @@ class PopoverInner extends Component {
 
 	componentDidMount() {
 		this.bindListeners();
-		this.setPositionAndFocus();
+		this.setPosition();
+		this.show();
 	}
 
 	componentDidUpdate() {
@@ -191,13 +183,6 @@ class PopoverInner extends Component {
 	onWindowChange = () => {
 		this.setPosition();
 	};
-
-	setPositionAndFocus() {
-		this.setPosition();
-		if ( this.props.isFocusEnabled ) {
-			this.focusPopover();
-		}
-	}
 
 	focusPopover() {
 		// Defer the focus a bit to make sure that the popover already has the final position.
@@ -325,6 +310,14 @@ class PopoverInner extends Component {
 		return { left, top };
 	}
 
+	show() {
+		if ( this.props.focusOnShow ) {
+			this.focusPopover();
+		}
+
+		this.props.onShow();
+	}
+
 	close( wasCanceled = false ) {
 		this.props.onClose( wasCanceled );
 	}
@@ -433,7 +426,7 @@ Popover.propTypes = {
 	context: PropTypeElement,
 	ignoreContext: PropTypeElement,
 	isVisible: PropTypes.bool,
-	isFocusEnabled: PropTypes.bool,
+	focusOnShow: PropTypes.bool,
 	position: PropTypes.oneOf( [
 		'top',
 		'top right',
@@ -445,6 +438,7 @@ Popover.propTypes = {
 		'top left',
 	] ),
 	showDelay: PropTypes.number,
+	onShow: PropTypes.func,
 	onClose: PropTypes.func,
 	relativePosition: PropTypes.shape( { left: PropTypes.number } ),
 	// Bypass position calculations and provide custom position values

@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
-import { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { isRequestingSiteKeyrings } from 'calypso/state/site-keyrings/selectors';
 import { requestSiteKeyrings } from 'calypso/state/site-keyrings/actions';
+import { isRequestingSiteKeyrings } from 'calypso/state/site-keyrings/selectors';
 
 class QuerySiteKeyrings extends Component {
 	static propTypes = {

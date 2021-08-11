@@ -52,7 +52,7 @@ describe( 'isFeaturedImageInContent', () => {
 	test( 'should understand photon urls embed the hostname when comparing', () => {
 		const post = {
 			post_thumbnail: {
-				URL: 'http://i2.wp.com/example2.com/image.jpg',
+				URL: 'http://i0.wp.com/example2.com/image.jpg',
 			},
 			images: [ { src: 'http://example.com/image.jpg' }, { src: 'http://example.com/image.jpg' } ],
 		};

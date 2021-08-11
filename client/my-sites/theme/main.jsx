@@ -4,7 +4,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { localize, getLocaleSlug } from 'i18n-calypso';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import config from '@automattic/calypso-config';
 import titlecase from 'to-title-case';
@@ -744,8 +745,6 @@ class ThemeSheet extends React.Component {
 
 		const className = classNames( 'theme__sheet', { 'is-with-upsell-banner': hasUpsellBanner } );
 
-		const links = [ { rel: 'canonical', href: canonicalUrl } ];
-
 		return (
 			<Main className={ className }>
 				<QueryCanonicalTheme themeId={ this.props.id } siteId={ siteId } />
@@ -756,7 +755,7 @@ class ThemeSheet extends React.Component {
 					) /* TODO: Make QuerySitePurchases handle falsey siteId */
 				}
 				<QuerySitePlans siteId={ siteId } />
-				<DocumentHead title={ title } meta={ metas } link={ links } />
+				<DocumentHead title={ title } meta={ metas } />
 				<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />
 				{ this.renderBar() }
 				<QueryActiveTheme siteId={ siteId } />
@@ -840,6 +839,7 @@ export default connect(
 		const theme = getCanonicalTheme( state, siteId, id );
 		const siteIdOrWpcom = siteId || 'wpcom';
 		const error = theme ? false : getThemeRequestErrors( state, id, siteIdOrWpcom );
+		const englishUrl = 'https://wordpress.com' + getThemeDetailsUrl( state, id );
 
 		return {
 			...theme,
@@ -861,8 +861,8 @@ export default connect(
 			forumUrl: getThemeForumUrl( state, id, siteId ),
 			hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
 			canUserUploadThemes: hasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),
-			// No siteId specified since we want the *canonical* URL :-)
-			canonicalUrl: 'https://wordpress.com' + getThemeDetailsUrl( state, id ),
+			// Remove the trailing slash because the page URL doesn't have one either.
+			canonicalUrl: localizeUrl( englishUrl, getLocaleSlug(), false ).replace( /\/$/, '' ),
 			demoUrl: getThemeDemoUrl( state, id, siteId ),
 			previousRoute: getPreviousRoute( state ),
 		};

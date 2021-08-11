@@ -1,32 +1,25 @@
-/**
- * External dependencies
- */
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import wpcom from 'calypso/lib/wp';
-import ImageEditorCrop from './image-editor-crop';
 import { mediaURLToProxyConfig, canvasToBlob } from 'calypso/lib/media/utils';
+import wpcom from 'calypso/lib/wp';
+import {
+	setImageEditorCropBounds,
+	setImageEditorImageHasLoaded,
+} from 'calypso/state/editor/image-editor/actions';
 import {
 	getImageEditorTransform,
 	getImageEditorFileInfo,
 	getImageEditorCrop,
 	isImageEditorImageLoaded,
 } from 'calypso/state/editor/image-editor/selectors';
-import {
-	setImageEditorCropBounds,
-	setImageEditorImageHasLoaded,
-} from 'calypso/state/editor/image-editor/actions';
 import getImageEditorIsGreaterThanMinimumDimensions from 'calypso/state/selectors/get-image-editor-is-greater-than-minimum-dimensions';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
+import ImageEditorCrop from './image-editor-crop';
 
 const noop = () => {};
 

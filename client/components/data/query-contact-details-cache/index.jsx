@@ -1,19 +1,10 @@
-/**
- * External dependencies
- */
-
+import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { isEmpty } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
-
-import isRequestingContactDetailsCache from 'calypso/state/selectors/is-requesting-contact-details-cache';
 import { requestContactDetailsCache } from 'calypso/state/domains/management/actions';
+import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
+import isRequestingContactDetailsCache from 'calypso/state/selectors/is-requesting-contact-details-cache';
 
 class QueryContactDetailsCache extends Component {
 	UNSAFE_componentWillMount() {

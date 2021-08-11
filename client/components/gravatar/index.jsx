@@ -1,16 +1,3 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { get } from 'lodash';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import safeImageURL from 'calypso/lib/safe-image-url';
 import {
 	getUrlParts,
 	getUrlFromParts,
@@ -18,11 +5,14 @@ import {
 	URL_TYPE,
 	format as formatUrl,
 } from '@automattic/calypso-url';
+import classnames from 'classnames';
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import safeImageURL from 'calypso/lib/safe-image-url';
 import { getUserTempGravatar } from 'calypso/state/current-user/gravatar-status/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class Gravatar extends Component {

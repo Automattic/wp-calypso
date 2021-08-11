@@ -1,17 +1,6 @@
-/**
- * External dependencies
- */
-import React, { ReactElement } from 'react';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { PaymentLogo } from '@automattic/composite-checkout';
-
-/**
- * Style dependencies
- */
+import { useTranslate } from 'i18n-calypso';
+import React, { ReactElement } from 'react';
 import './style.scss';
 
 export default function StoredCreditCard( props ): ReactElement {

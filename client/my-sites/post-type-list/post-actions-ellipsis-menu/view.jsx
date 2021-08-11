@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -67,7 +66,7 @@ class PostActionsEllipsisMenuView extends Component {
 				target="_blank"
 				rel="noopener noreferrer"
 			>
-				{ includes( [ 'publish', 'private' ], status )
+				{ [ 'publish', 'private' ].includes( status )
 					? translate( 'View', { context: 'verb' } )
 					: translate( 'Preview', { context: 'verb' } ) }
 			</PopoverMenuItem>

@@ -17,20 +17,26 @@
 
 ## Tests
 
-Tests for Playwright E2E continue to be written in JavaScript.
+Tests for Playwright E2E can be written in either JavaScript or in TypeScipt - both are supported!
 
 There should only be [one top-level describe block](style-guide.md#maximum-1-top-level-describe-block) per file.
 
 <details>
 <summary>Example Test File</summary>
 
-```javascript
+```typescript
 describe( 'Feature: @parallel', function () {
+	let page: Page;
+
+	setupHooks( ( args ) => {
+		page = args.page;
+	} );
+
 	describe( 'Test case 1', function () {
-		let someComponent;
+		let someComponent: SomeComponent;
 
 		it( 'Check title', async function () {
-			someComponent = await SomeComponent.Expect( this.page );
+			someComponent = await SomeComponent.Expect( page );
 			await someComponent.clickMyPages();
 			const resultValue = await someComponent.getTitle();
 			assert( resultValue === expectedValue );
@@ -38,10 +44,10 @@ describe( 'Feature: @parallel', function () {
 	} );
 
 	describe( 'Test case 2', function () {
-		let anotherComponent;
+		let anotherComponent: AnotherComponent;
 
 		before( 'Set up before all test steps', async function () {
-			anotherComponent = await AnotherComponent.Expect( this.page, 'param' );
+			anotherComponent = await AnotherComponent.Expect( page, 'param' );
 		} );
 
 		it( 'Test step', async function () {
@@ -52,6 +58,14 @@ describe( 'Feature: @parallel', function () {
 ```
 
 </details>
+
+### Other Notes on TypeScript Test Scripts
+
+Because Jest, the test runner, is already to configured to use Babel as a transpiler before executing scripts, there is no extra pre-build command you need to execute to run TypeScript test scripts. You can simply just have Jest run all the scripts in the `specs/specs-playwright` directory, and it will automatically take care of running both `.js` and `.ts` files.
+
+Please note: [Babel does not do type-checking as it runs](https://jestjs.io/docs/getting-started#using-typescript), so if you want to do a specific type-check for your test scripts, you can use the local `tsconfig.json` by running `yarn tsc --project ./tsconfig.json`. We run this as part of the Playwright CI script, so all types will be checked before tests are run on TeamCity.
+
+The local `tsconfig.json` also adds global Jest typings, so you do **not** need to explicitly import `describe` or `it` into your TypeScript testing files.
 
 ---
 

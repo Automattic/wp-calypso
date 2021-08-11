@@ -1,15 +1,9 @@
-/**
- * External dependencies
- */
-import { registerPlugin } from '@wordpress/plugins';
-import { dispatch } from '@wordpress/data';
 import { initializeTracksWithIdentity, PatternDefinition } from '@automattic/page-pattern-modal';
+import { dispatch } from '@wordpress/data';
 import React from '@wordpress/element';
-
-/**
- * Internal dependencies
- */
+import { registerPlugin } from '@wordpress/plugins';
 import { PagePatternsPlugin } from './page-patterns-plugin';
+
 import './store';
 import './index.scss';
 

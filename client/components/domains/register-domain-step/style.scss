@@ -7,12 +7,16 @@
 	&.register-domain-step__search-domain-step:not( .is-sticky ) {
 		padding-bottom: 24px;
 
+		.is-white-signup & {
+			padding-bottom: 16px;
+		}
+
 		@include breakpoint-deprecated( '>660px' ) {
 			padding-top: 18px;
 
 			.is-white-signup & {
 				padding-top: 0;
-				padding-bottom: 20px;
+				padding-bottom: 16px;
 			}
 		}
 	}
@@ -108,6 +112,7 @@
 }
 
 .register-domain-step__next-page {
+	color: var( --color-link );
 	display: flex;
 	justify-content: center;
 }
@@ -118,7 +123,37 @@
 	}
 }
 
+button.register-domain-step__next-page-button {
+	font-size: 0.875rem;
+	font-weight: 500; /* stylelint-disable-line */
+}
+
+body.is-section-domains {
+	.register-domain-step {
+		button.register-domain-step__next-page-button {
+			color: var( --color-link );
+			border: none;
+			box-shadow: none;
+		}
+	}
+}
+
 body.is-section-signup.is-white-signup {
+	.domain-search-results__domain-availability .card {
+		box-shadow: none;
+		padding: 0;
+		margin-bottom: 24px;
+		margin-left: 20px;
+
+		@include break-mobile {
+			margin-left: 0;
+		}
+	}
+	.domain-search-results__domain-availability svg,
+	.register-domain-step__notice svg {
+		margin: 0;
+		padding: 0;
+	}
 	.register-domain-step__next-page {
 		background: none;
 		box-shadow: none;
@@ -127,8 +162,6 @@ body.is-section-signup.is-white-signup {
 			padding: 0.57em 1.17em;
 			border-radius: 4px; /* stylelint-disable-line */
 
-			font-size: 0.875rem;
-			font-weight: 500; /* stylelint-disable-line */
 			letter-spacing: 0.32px;
 			line-height: 1.25rem;
 

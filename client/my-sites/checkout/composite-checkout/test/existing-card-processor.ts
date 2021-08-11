@@ -125,13 +125,6 @@ describe( 'existingCardProcessor', () => {
 		);
 	} );
 
-	it( 'throws an error if there is no name passed', async () => {
-		const submitData = { storedDetailsId: 'stored-details-id' };
-		await expect( existingCardProcessor( submitData, options ) ).rejects.toThrowError(
-			/requires cardholder name and none was provided/
-		);
-	} );
-
 	it( 'throws an error if there is no paymentMethodToken passed', async () => {
 		const submitData = {
 			storedDetailsId: 'stored-details-id',
@@ -171,6 +164,31 @@ describe( 'existingCardProcessor', () => {
 			} )
 		).resolves.toStrictEqual( expected );
 		expect( transactionsEndpoint ).toHaveBeenCalledWith( basicExpectedStripeRequest );
+	} );
+
+	it( 'sends the correct data to the endpoint with no site and one product and no name', async () => {
+		const submitData = {
+			storedDetailsId: 'stored-details-id',
+			paymentMethodToken: 'stripe-token',
+			paymentPartnerProcessorId: 'IE',
+		};
+		const expected = { payload: 'success', type: 'SUCCESS' };
+		await expect(
+			existingCardProcessor( submitData, {
+				...options,
+				contactDetails: {
+					countryCode,
+					postalCode,
+				},
+			} )
+		).resolves.toStrictEqual( expected );
+		expect( transactionsEndpoint ).toHaveBeenCalledWith( {
+			...basicExpectedStripeRequest,
+			payment: {
+				...basicExpectedStripeRequest.payment,
+				name: '',
+			},
+		} );
 	} );
 
 	it( 'returns an explicit error response if the transaction fails', async () => {

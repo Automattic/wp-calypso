@@ -69,7 +69,7 @@ export function Purchases(): JSX.Element {
 				className="purchases__page-heading"
 				headerText={ titles.sectionTitle }
 				subHeaderText={ translate(
-					'View, manage, or cancel your WordPress.com plan and other purchases.'
+					'View, manage, or cancel your plan and other purchases for this site.'
 				) }
 				align="left"
 			/>

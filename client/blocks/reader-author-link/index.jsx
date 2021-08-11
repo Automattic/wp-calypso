@@ -1,21 +1,11 @@
-/**
- * External dependencies
- */
+import classnames from 'classnames';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { get } from 'lodash';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import Emojify from 'calypso/components/emojify';
 import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
 import * as stats from 'calypso/reader/stats';
-import Emojify from 'calypso/components/emojify';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

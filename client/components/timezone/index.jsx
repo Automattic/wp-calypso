@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { map } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import FormSelect from 'calypso/components/forms/form-select';
+import { map } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import QueryTimezones from 'calypso/components/data/query-timezones';
+import FormSelect from 'calypso/components/forms/form-select';
 import getRawOffsets from 'calypso/state/selectors/get-raw-offsets';
 import getTimezones from 'calypso/state/selectors/get-timezones';
 

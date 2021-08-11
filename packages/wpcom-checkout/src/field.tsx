@@ -105,7 +105,7 @@ Field.propTypes = {
 	placeholder: PropTypes.string,
 	tabIndex: PropTypes.string,
 	description: PropTypes.string,
-	errorMessage: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
+	errorMessage: PropTypes.node,
 	autoComplete: PropTypes.string,
 	disabled: PropTypes.bool,
 };

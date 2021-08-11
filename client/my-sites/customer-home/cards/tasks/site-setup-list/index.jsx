@@ -1,39 +1,32 @@
-/**
- * External dependencies
- */
 import { Card } from '@automattic/components';
 import { isDesktop, isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
+import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import React, { useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import CardHeading from 'calypso/components/card-heading';
 import Spinner from 'calypso/components/spinner';
+import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import { getTaskList } from 'calypso/lib/checklist';
 import { navigate } from 'calypso/lib/navigate';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestSiteChecklistTaskUpdate } from 'calypso/state/checklist/actions';
 import { resetVerifyEmailState } from 'calypso/state/current-user/email-verification/actions';
 import { getCurrentUser, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
+import { requestGuidedTour } from 'calypso/state/guided-tours/actions';
 import getChecklistTaskUrls from 'calypso/state/selectors/get-checklist-task-urls';
+import getMenusUrl from 'calypso/state/selectors/get-menus-url';
 import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
-import getMenusUrl from 'calypso/state/selectors/get-menus-url';
 import { getSiteOption, getSiteSlug } from 'calypso/state/sites/selectors';
-import { requestGuidedTour } from 'calypso/state/guided-tours/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import NavItem from './nav-item';
 import CurrentTaskItem from './current-task-item';
-import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 import { getTask } from './get-task';
-import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
+import NavItem from './nav-item';
 
 /**
- * Style dependencies
+ * Import Styles
  */
 import './style.scss';
 

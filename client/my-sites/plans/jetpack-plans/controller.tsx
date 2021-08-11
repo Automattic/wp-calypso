@@ -14,6 +14,7 @@ import SelectorPage from './selector';
 import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getMonthlySlugFromYearly, getYearlySlugFromMonthly } from './convert-slug-terms';
+import JetpackFreeWelcomePage from 'calypso/components/jetpack/jetpack-free-welcome';
 
 /**
  * Type dependencies
@@ -84,3 +85,8 @@ export const productSelect = ( rootUrl: string ): PageJS.Callback => ( context, 
 
 	next();
 };
+
+export function jetpackFreeWelcome( context: PageJS.Context, next: () => void ): void {
+	context.primary = <JetpackFreeWelcomePage />;
+	next();
+}

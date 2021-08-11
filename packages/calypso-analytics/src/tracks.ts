@@ -1,20 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-/**
- * External dependencies
- */
-import { includes, omitBy, times } from 'lodash';
-import cookie from 'cookie';
 import { EventEmitter } from 'events';
 import { loadScript } from '@automattic/load-script';
-
-/**
- * Internal Dependencies
- */
-import { getCurrentUser, setCurrentUser } from './utils/current-user';
-import getDoNotTrack from './utils/do-not-track';
+import cookie from 'cookie';
+import { includes, omitBy, times } from 'lodash';
 import { getPageViewParams } from './page-view-params';
+import { getCurrentUser, setCurrentUser } from './utils/current-user';
 import debug from './utils/debug';
+import getDoNotTrack from './utils/do-not-track';
 
 declare global {
 	interface Window {

@@ -1,19 +1,8 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent } from 'react';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Main from 'calypso/components/main';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface Props {

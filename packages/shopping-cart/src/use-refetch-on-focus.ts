@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { useEffect } from 'react';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import { useEffect } from 'react';
 import type { CacheStatus, ShoppingCartManagerOptions, ResponseCart } from './types';
 
 const debug = debugFactory( 'shopping-cart:use-refetch-on-focus' );
@@ -15,11 +8,14 @@ const debug = debugFactory( 'shopping-cart:use-refetch-on-focus' );
 // automatic refetch on focus.
 const minimumFetchInterval = 60;
 
+const cartKeysThatDoNotAllowRefetch = [ 'no-site', 'no-user' ];
+
 function convertMsToSecs( ms: number ): number {
 	return Math.floor( ms / 1000 );
 }
 
 export default function useRefetchOnFocus(
+	cartKey: string | undefined,
 	options: ShoppingCartManagerOptions,
 	cacheStatus: CacheStatus,
 	lastCart: ResponseCart,
@@ -29,6 +25,13 @@ export default function useRefetchOnFocus(
 		if ( ! options.refetchOnWindowFocus ) {
 			return;
 		}
+		if ( ! cartKey ) {
+			return;
+		}
+		if ( cartKeysThatDoNotAllowRefetch.includes( cartKey ) ) {
+			return;
+		}
+
 		// Refresh only if the cart is not pending any other operations
 		if ( cacheStatus !== 'valid' && cacheStatus !== 'error' ) {
 			return;
@@ -81,5 +84,11 @@ export default function useRefetchOnFocus(
 			window.removeEventListener( 'focus', handleFocusChange );
 			window.removeEventListener( 'online', handleFocusChange );
 		};
-	}, [ options.refetchOnWindowFocus, lastCart.cart_generated_at_timestamp, refetch, cacheStatus ] );
+	}, [
+		cartKey,
+		options.refetchOnWindowFocus,
+		lastCart.cart_generated_at_timestamp,
+		refetch,
+		cacheStatus,
+	] );
 }

@@ -42,12 +42,12 @@
 		"@wordpress/react-i18n": "^1.0.3",
 		"classnames": "^2.3.1",
 		"lodash": "^4.17.21",
-		"tslib": "^2.2.0",
+		"tslib": "^2.3.0",
 		"use-debounce": "^3.1.0",
 		"uuid": "^8.3.2"
 	},
 	"devDependencies": {
-		"@testing-library/jest-dom": "^5.11.10",
+		"@testing-library/jest-dom": "^5.14.1",
 		"@testing-library/react": "^12.0.0",
 		"react": "^16.12.0",
 		"react-dom": "^16.12.0"

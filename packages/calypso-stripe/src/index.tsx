@@ -1,9 +1,6 @@
-/**
- * External dependencies
- */
+import { loadScript } from '@automattic/load-script';
 import debugFactory from 'debug';
 import React, { useRef, useEffect, useCallback, useState, useContext, createContext } from 'react';
-import { loadScript } from '@automattic/load-script';
 // We are several versions old for react-stripe-elements, and probably should
 // actually upgrade to the new Stripe.js anyway. Trying to use the actual types
 // for this package causes all sorts of errors because, I think, they assume

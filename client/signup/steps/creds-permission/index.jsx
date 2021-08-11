@@ -1,24 +1,13 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import StepWrapper from 'calypso/signup/step-wrapper';
 import { Card, Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import QuerySites from 'calypso/components/data/query-sites';
-import { autoConfigCredentials } from 'calypso/state/jetpack/credentials/actions';
+import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { autoConfigCredentials } from 'calypso/state/jetpack/credentials/actions';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class CredsPermissionStep extends Component {

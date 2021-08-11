@@ -1,3 +1,0 @@
-{
-	"extends": "@automattic/calypso-build/typescript/js-package.json",
-}

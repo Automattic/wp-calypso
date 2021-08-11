@@ -1,22 +1,12 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 /* global fullSiteEditing */
-/**
- * External dependencies
- */
-import classNames from 'classnames';
 
-/**
- * WordPress dependencies
- */
 import { AlignmentToolbar, BlockControls } from '@wordpress/block-editor';
 import { SelectControl } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
 import { Fragment } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-
-/**
- * Internal dependencies
- */
+import classNames from 'classnames';
 import { withSiteOptions } from '../../lib';
 import { RenderedCreditChoice } from './footer-credit-choices';
 

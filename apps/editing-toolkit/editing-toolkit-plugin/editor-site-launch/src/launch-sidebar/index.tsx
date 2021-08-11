@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { __ } from '@wordpress/i18n';
-import { useSelect, useDispatch } from '@wordpress/data';
 import { Title, SubTitle, ActionButtons, NextButton } from '@automattic/onboarding';
-
-/**
- * Internal dependencies
- */
+import { useSelect, useDispatch } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
+import React from 'react';
 import LaunchMenu from '../launch-menu';
 import { LAUNCH_STORE } from '../stores';
 

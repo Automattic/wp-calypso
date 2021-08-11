@@ -1,24 +1,11 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { Card, Button } from '@automattic/components';
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-
-import { Card, Button } from '@automattic/components';
-import { getSelectedSiteWithFallback } from 'calypso/state/sites/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-/**
- * Image dependencies
- */
-
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import megaphoneImage from 'calypso/assets/images/woocommerce/megaphone.svg';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteWithFallback } from 'calypso/state/sites/selectors';
 
 class StoreMoveNoticeView extends Component {
 	trackTryWooCommerceClick = () => {

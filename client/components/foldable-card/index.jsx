@@ -1,21 +1,10 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Card, CompactCard, ScreenReaderText } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
-import { Card, CompactCard, ScreenReaderText } from '@automattic/components';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import Gridicon from 'calypso/components/gridicon';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
@@ -24,19 +13,19 @@ class FoldableCard extends Component {
 	static displayName = 'FoldableCard';
 
 	static propTypes = {
-		actionButton: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
-		actionButtonExpanded: PropTypes.element,
+		actionButton: PropTypes.node,
+		actionButtonExpanded: PropTypes.node,
 		cardKey: PropTypes.string,
 		compact: PropTypes.bool,
 		disabled: PropTypes.bool,
-		expandedSummary: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+		expandedSummary: PropTypes.node,
 		expanded: PropTypes.bool,
 		icon: PropTypes.string,
 		onClick: PropTypes.func,
 		onClose: PropTypes.func,
 		onOpen: PropTypes.func,
 		screenReaderText: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
-		summary: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+		summary: PropTypes.node,
 		highlight: PropTypes.string,
 	};
 

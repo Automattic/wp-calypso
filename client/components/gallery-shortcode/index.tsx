@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
 import classNames from 'classnames';
 import debugModule from 'debug';
 import { pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import React, { Component } from 'react';
 import Shortcode from 'calypso/blocks/shortcode';
-import { parse as parseShortcode } from 'calypso/lib/shortcode';
-import { generateGalleryShortcode } from 'calypso/lib/media/utils';
 import { GalleryDefaultAttrs } from 'calypso/lib/media/constants';
+import { generateGalleryShortcode } from 'calypso/lib/media/utils';
+import { parse as parseShortcode } from 'calypso/lib/shortcode';
 import { SiteId } from 'calypso/types';
 
 /**

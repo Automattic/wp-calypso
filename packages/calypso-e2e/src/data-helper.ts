@@ -2,6 +2,21 @@ import phrase from 'asana-phrase';
 import config from 'config';
 import { getViewportName } from './browser-helper';
 
+export { config };
+
+/**
+ * Generate a pseudo-random integer, inclusive on the lower bound and exclusive on the upper bound.
+ *
+ * @param {number} min Minimum value, inclusive.
+ * @param {number} max Maximum value, exclusive.
+ * @returns {number} Generated pseudo-random integer.
+ */
+export function getRandomInteger( min: number, max: number ): number {
+	min = Math.ceil( min );
+	max = Math.floor( max );
+	return Math.floor( Math.random() * ( max - min ) + min );
+}
+
 /**
  * Assembles and returns the URL to a specific route/asset/query in Calypso.
  *

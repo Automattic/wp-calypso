@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import * as nock from 'nock';
 import chai from 'chai';
+import * as nock from 'nock';
 import sinonChai from 'sinon-chai';
 
 chai.use( sinonChai );

@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isMappedDomainSite from 'calypso/state/selectors/is-mapped-domain-site';

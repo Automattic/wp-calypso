@@ -35,13 +35,5 @@ export const launchSiteOrRedirectToLaunchSignupFlow = ( siteId ) => ( dispatch, 
 	const siteSlug = getSiteSlug( getState(), siteId );
 
 	// TODO: consider using the `page` library instead of calling using `location.href` here
-
-	const isGutenboarding = [ 'gutenboarding', 'gutenboarding-site-editor' ].includes(
-		getSiteOption( getState(), siteId, 'site_creation_flow' )
-	);
-	if ( isGutenboarding ) {
-		window.location.href = `/start/new-launch?siteSlug=${ siteSlug }&source=home`;
-	} else {
-		window.location.href = `/start/launch-site?siteSlug=${ siteSlug }`;
-	}
+	window.location.href = `/start/launch-site?siteSlug=${ siteSlug }`;
 };

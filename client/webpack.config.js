@@ -4,40 +4,33 @@
 
 /* eslint-disable import/no-nodejs-modules */
 
-/**
- * External dependencies
- */
 const path = require( 'path' );
-const webpack = require( 'webpack' );
-const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
-const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
-const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
 const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
-const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' );
-const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
 const Minify = require( '@automattic/calypso-build/webpack/minify' );
 const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
-const calypsoColorSchemes = require( '@automattic/calypso-color-schemes/js' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
 const {
 	cssNameFromFilename,
 	shouldTranspileDependency,
 } = require( '@automattic/calypso-build/webpack/util' );
+const calypsoColorSchemes = require( '@automattic/calypso-color-schemes/js' );
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
+const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
 const autoprefixerPlugin = require( 'autoprefixer' );
-const postcssCustomPropertiesPlugin = require( 'postcss-custom-properties' );
+const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
+const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
+const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' );
 const pkgDir = require( 'pkg-dir' );
-
-/**
- * Internal dependencies
- */
+const postcssCustomPropertiesPlugin = require( 'postcss-custom-properties' );
+const webpack = require( 'webpack' );
+const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const cacheIdentifier = require( '../build-tools/babel/babel-loader-cache-identifier' );
+const AssetsWriter = require( '../build-tools/webpack/assets-writer-plugin.js' );
+const getAliasesForExtensions = require( '../build-tools/webpack/extensions' );
+const GenerateChunksMapPlugin = require( '../build-tools/webpack/generate-chunks-map-plugin' );
+const RequireChunkCallbackPlugin = require( '../build-tools/webpack/require-chunk-callback-plugin' );
 const config = require( './server/config' );
 const { workerCount } = require( './webpack.common' );
-const getAliasesForExtensions = require( '../build-tools/webpack/extensions' );
-const RequireChunkCallbackPlugin = require( '../build-tools/webpack/require-chunk-callback-plugin' );
-const GenerateChunksMapPlugin = require( '../build-tools/webpack/generate-chunks-map-plugin' );
-const AssetsWriter = require( '../build-tools/webpack/assets-writer-plugin.js' );
 
 /**
  * Internal variables
@@ -162,6 +155,7 @@ const webpackConfig = {
 		'entry-domains-landing': [ path.join( __dirname, 'landing', 'domains' ) ],
 		'entry-login': [ path.join( __dirname, 'landing', 'login' ) ],
 		'entry-gutenboarding': [ path.join( __dirname, 'landing', 'gutenboarding' ) ],
+		'entry-browsehappy': [ path.join( __dirname, 'landing', 'browsehappy' ) ],
 	} ),
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: process.env.SOURCEMAP || ( isDevelopment ? 'eval' : false ),
@@ -252,6 +246,7 @@ const webpackConfig = {
 	resolve: {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 		mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
+		conditionNames: [ 'calypso:src', 'import', 'module', 'require' ],
 		alias: Object.assign(
 			{
 				debug: path.resolve( __dirname, '../node_modules/debug' ),

@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { useEffect, useRef } from 'react';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import { useEffect, useRef } from 'react';
 import { convertRawResponseCartToResponseCart } from './cart-functions';
 import type { ResponseCart, RequestCart, CacheStatus, ShoppingCartAction } from './types';
 

@@ -1,20 +1,12 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import ReactDom from 'react-dom';
-import PropTypes from 'prop-types';
+import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { debounce } from 'lodash';
-
-/**
- * Internal Dependencies
- */
-import afterLayoutFlush from 'calypso/lib/after-layout-flush';
-import { Button } from '@automattic/components';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import ReactDom from 'react-dom';
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import SplitButton from 'calypso/components/split-button';
+import afterLayoutFlush from 'calypso/lib/after-layout-flush';
 
 class ActionButtons extends Component {
 	static propTypes = {

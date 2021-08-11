@@ -9,7 +9,7 @@ import { ToggleControl } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import { hasSiteAnalyticsFeature } from '../utils';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import wrapSettingsForm from '../wrap-settings-form';
 import { CompactCard } from '@automattic/components';
 import { getPlugins } from 'calypso/state/plugins/installed/selectors';
@@ -27,6 +27,7 @@ import {
 	findFirstSimilarPlanKey,
 	TYPE_PREMIUM,
 	FEATURE_CLOUDFLARE_ANALYTICS,
+	FEATURE_GOOGLE_ANALYTICS,
 } from '@automattic/calypso-products';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 
@@ -244,7 +245,7 @@ export function CloudflareAnalyticsSettings( {
 const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
-	const isAnalyticsEligible = hasSiteAnalyticsFeature( site );
+	const isAnalyticsEligible = hasActiveSiteFeature( state, siteId, FEATURE_GOOGLE_ANALYTICS );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const sitePlugins = site ? getPlugins( state, [ site.ID ] ) : [];
 	const path = getCurrentRouteParameterized( state, siteId );

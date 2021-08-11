@@ -7,9 +7,9 @@
 Render the component, passing `siteId`. It does not accept any children, nor does it render any elements to the page. You can use it adjacent to other sibling components which make use of the fetched data made available through the global application state.
 
 ```jsx
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import QuerySiteMonitorSettings from 'calypso/components/data/query-site-monitor-settings';
 import getSiteMonitorSettings from 'calypso/state/selectors/get-site-monitor-settings';
 

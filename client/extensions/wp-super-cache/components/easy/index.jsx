@@ -1,28 +1,21 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { flowRight, get, isEmpty, pick } from 'lodash';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import { isHttps } from 'calypso/lib/url';
 import { Button, Card } from '@automattic/components';
-import Notice from 'calypso/components/notice';
+import { ToggleControl } from '@wordpress/components';
+import { flowRight, get, isEmpty, pick } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import Gridicon from 'calypso/components/gridicon';
-import QueryStatus from '../data/query-status';
+import Notice from 'calypso/components/notice';
 import SectionHeader from 'calypso/components/section-header';
-import WrapSettingsForm from '../wrap-settings-form';
-import { testCache } from '../../state/cache/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isHttps } from 'calypso/lib/url';
 import { getSiteTitle } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { testCache } from '../../state/cache/actions';
 import { getCacheTestResults, isTestingCache } from '../../state/cache/selectors';
 import { getStatus } from '../../state/status/selectors';
+import QueryStatus from '../data/query-status';
+import WrapSettingsForm from '../wrap-settings-form';
 
 class EasyTab extends Component {
 	static propTypes = {

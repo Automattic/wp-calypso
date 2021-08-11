@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 import events from 'events';
+import { expect } from 'chai';
 import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
-import analytics from '../../lib/analytics';
 import { logSectionResponse } from 'calypso/server/pages/analytics';
 import { useFakeTimers } from 'calypso/test-helpers/use-sinon';
+import analytics from '../../lib/analytics';
 
 const TWO_SECONDS = 2000;
 const noop = () => {};

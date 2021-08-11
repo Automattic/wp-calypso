@@ -32,13 +32,10 @@
  *
  */
 
-/**
- * External dependencies
- */
+const { existsSync, mkdirSync, writeFileSync } = require( 'fs' );
+const { relative, sep } = require( 'path' );
 const { po } = require( 'gettext-parser' );
 const { merge, isEmpty, forEach } = require( 'lodash' );
-const { relative, sep } = require( 'path' );
-const { existsSync, mkdirSync, writeFileSync } = require( 'fs' );
 
 /**
  * Default output headers if none specified in plugin options.

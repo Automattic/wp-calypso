@@ -48,11 +48,11 @@
 		"react-stripe-elements": "^4.0.2"
 	},
 	"devDependencies": {
-		"@automattic/calypso-build": "^8.0.0",
+		"@automattic/calypso-build": "^9.0.0",
 		"@automattic/calypso-polyfills": "^1.0.0",
 		"@storybook/addon-actions": "^6.1.10",
 		"@storybook/preset-scss": "^1.0.3",
-		"@testing-library/jest-dom": "^5.11.10",
+		"@testing-library/jest-dom": "^5.14.1",
 		"@testing-library/react": "^12.0.0",
 		"enzyme": "^3.11.0",
 		"jest": "^27.0.6",
@@ -60,7 +60,7 @@
 		"react": "^16.12.0",
 		"react-dom": "^16.12.0",
 		"sass-loader": "^10.1.1",
-		"webpack": "^5.36.2"
+		"webpack": "^5.46.0"
 	},
 	"peerDependencies": {
 		"react": "^16.12.0",

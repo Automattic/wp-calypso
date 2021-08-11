@@ -1,27 +1,16 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useTranslate } from 'i18n-calypso';
 import { Button, Card } from '@automattic/components';
-import { connect } from 'react-redux';
-import 'moment-timezone';
+import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import HappinessEngineersTray from 'calypso/components/happiness-engineers-tray';
+import React from 'react';
+import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
-import { composeAnalytics, recordTracksEvent, bumpStat } from 'calypso/state/analytics/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
-import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
+import HappinessEngineersTray from 'calypso/components/happiness-engineers-tray';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-
-/**
- * Style dependencies
- */
+import { composeAnalytics, recordTracksEvent, bumpStat } from 'calypso/state/analytics/actions';
+import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import 'moment-timezone';
 import './style.scss';
 
 const QuickStart = ( { nextSession, reschedule, siteId, siteSlug, viewDetails } ) => {

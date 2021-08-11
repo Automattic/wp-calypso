@@ -1,24 +1,14 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
+import { useSelector } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
+import JetpackLogo from 'calypso/components/jetpack-logo';
+import ProfileDropdown from 'calypso/components/jetpack/profile-dropdown';
+import Masterbar from 'calypso/layout/masterbar/masterbar';
 import { getDocumentHeadTitle } from 'calypso/state/document-head/selectors/get-document-head-title';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { useSelector } from 'react-redux';
-import JetpackLogo from 'calypso/components/jetpack-logo';
-import Masterbar from 'calypso/layout/masterbar/masterbar';
-import ProfileDropdown from 'calypso/components/jetpack/profile-dropdown';
-import { useBreakpoint } from '@automattic/viewport-react';
-import AsyncLoad from 'calypso/components/async-load';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const JetpackCloudMasterBar: React.FC = () => {

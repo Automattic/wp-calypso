@@ -1,21 +1,16 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-/**
- * External dependencies
- */
+
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Guide, GuidePage } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
-
-/**
- * Internal dependencies
- */
-import './style.scss';
 import blockPickerImage from './images/block-picker.svg';
 import editorImage from './images/editor.svg';
 import previewImage from './images/preview.svg';
 import privateImage from './images/private.svg';
+
+import './style.scss';
 
 function WpcomNux() {
 	const { show, isNewPageLayoutModalOpen, isManuallyOpened } = useSelect( ( select ) => ( {

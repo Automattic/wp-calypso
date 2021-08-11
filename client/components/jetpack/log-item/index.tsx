@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { ReactNode } from 'react';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import React, { ReactNode } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import FoldableCard from 'calypso/components/foldable-card';
 

@@ -12,7 +12,6 @@ import moment from 'moment';
  */
 import { getSiteFragment, getStatsDefaultSitePage } from 'calypso/lib/route';
 import { bumpStat } from 'calypso/lib/analytics/mc';
-import { recordPlaceholdersTiming } from 'calypso/lib/perfmon';
 import { getSite, getSiteOption } from 'calypso/state/sites/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
@@ -250,7 +249,6 @@ export function site( context, next ) {
 	const numPeriodAgo = parsedPeriod ? ( parsedPeriod > 9 ? '10plus' : '-' + parsedPeriod ) : '';
 
 	bumpStat( 'calypso_stats_site_period', activeFilter.period + numPeriodAgo );
-	recordPlaceholdersTiming();
 
 	const validTabs = [ 'views', 'visitors', 'likes', 'comments' ];
 	const chartTab = validTabs.includes( queryOptions.tab ) ? queryOptions.tab : 'views';

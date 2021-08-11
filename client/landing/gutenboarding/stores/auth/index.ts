@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { Auth } from '@automattic/data-stores';
-
-/**
- * Internal dependencies
- */
 import config from '../../../../config';
 
 export const AUTH_STORE = Auth.register( {

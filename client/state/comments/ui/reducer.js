@@ -74,7 +74,7 @@ export const queries = ( state = {}, action ) => {
 				COMMENTS_CHANGE_STATUS === action.type &&
 				'all' === status &&
 				includes( comments, action.commentId ) && // if the comment is not in the current view this is an undo
-				includes( [ 'approved', 'unapproved' ], action.status )
+				[ 'approved', 'unapproved' ].includes( action.status )
 			) {
 				// No-op when status changes from `approved` or `unapproved` in the All tab
 				return state;
@@ -82,7 +82,7 @@ export const queries = ( state = {}, action ) => {
 
 			if (
 				status === action.status ||
-				( status === 'all' && includes( [ 'approved', 'unapproved' ], action.status ) )
+				( status === 'all' && [ 'approved', 'unapproved' ].includes( action.status ) )
 			) {
 				//with undo, we should add this back to the list
 				const sortedList = [ action.commentId ]

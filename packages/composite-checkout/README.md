@@ -27,7 +27,6 @@ It's also possible to build an entirely custom form using the other components e
 
 Most components of this package require being inside a [CheckoutProvider](#checkoutprovider). That component requires an array of [Payment Method objects](#payment-methods) which define the available payment methods (stripe credit cards, apple pay, paypal, credits, etc.) that will be displayed in the form. While you can create these objects manually, the package provides many pre-defined payment method objects that can be created by using the following functions:
 
-- [createExistingCardMethod](#createExistingCardMethod)
 - [createStripeMethod](#createStripeMethod)
 
 Any component which is a child of `CheckoutProvider` gets access to the following custom hooks:
@@ -220,6 +219,7 @@ Creates the Checkout form and provides a wrapper for [CheckoutStep](#CheckoutSte
 This component's props are:
 
 - `submitButtonHeader: React.ReactNode`. Displays with the Checkout submit button.
+- `submitButtonFooter: React.ReactNode`. Displays with the Checkout submit button.
 - `disableSubmitButton: boolean`. If true, the submit button will always be disabled. If false (the default), the submit button will be enabled only on the last step and only if the [formStatus](#useFormStatus) is [`.READY`](#FormStatus).
 
 ## CheckoutStepAreaWrapper

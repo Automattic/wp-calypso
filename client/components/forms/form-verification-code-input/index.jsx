@@ -1,19 +1,9 @@
-/**
- * External dependencies
- */
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import constants from 'calypso/me/constants';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default class FormVerificationCodeInput extends React.Component {

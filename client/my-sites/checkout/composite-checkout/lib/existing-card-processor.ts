@@ -29,7 +29,7 @@ type ExistingCardTransactionRequest = Partial< Omit< TransactionRequest, 'paymen
 	Required<
 		Pick<
 			TransactionRequest,
-			'name' | 'storedDetailsId' | 'paymentMethodToken' | 'paymentPartnerProcessorId'
+			'storedDetailsId' | 'paymentMethodToken' | 'paymentPartnerProcessorId'
 		>
 	>;
 
@@ -51,20 +51,22 @@ export default async function existingCardProcessor(
 		throw new Error( 'Stripe configuration is required' );
 	}
 
+	const domainDetails = getDomainDetails( contactDetails, {
+		includeDomainDetails,
+		includeGSuiteDetails,
+	} );
 	debug( 'formatting existing card transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...transactionData,
+		name: transactionData.name ?? '',
 		siteId: dataForProcessor.siteId ? String( dataForProcessor.siteId ) : undefined,
 		country: contactDetails?.countryCode?.value ?? '',
 		postalCode: getPostalCode( contactDetails ),
 		subdivisionCode: contactDetails?.state?.value,
-		domainDetails: getDomainDetails( contactDetails, {
-			includeDomainDetails,
-			includeGSuiteDetails,
-		} ),
+		domainDetails,
 		cart: createTransactionEndpointCartFromResponseCart( {
 			siteId: dataForProcessor.siteId ? String( dataForProcessor.siteId ) : undefined,
-			contactDetails: transactionData.domainDetails ?? null,
+			contactDetails: domainDetails ?? null,
 			responseCart: dataForProcessor.responseCart,
 		} ),
 		paymentMethodType: 'WPCOM_Billing_MoneyPress_Stored',
@@ -109,9 +111,6 @@ function isValidTransactionData(
 	// a better localized error message than we can provide.
 	if ( ! data.storedDetailsId ) {
 		throw new Error( 'Transaction requires saved card information and none was provided' );
-	}
-	if ( ! data.name ) {
-		throw new Error( 'Transaction requires cardholder name and none was provided' );
 	}
 	if ( ! data.paymentMethodToken ) {
 		throw new Error( 'Transaction requires a Stripe token and none was provided' );

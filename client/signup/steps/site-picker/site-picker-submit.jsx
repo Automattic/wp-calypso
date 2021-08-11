@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
+import { isFreePlan } from '@automattic/calypso-products';
 import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { isFreePlan } from '@automattic/calypso-products';
-import { getSite } from 'calypso/state/sites/selectors';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { getSite } from 'calypso/state/sites/selectors';
 
 export const siteHasPaidPlan = ( selectedSite ) =>
 	selectedSite && selectedSite.plan && ! isFreePlan( selectedSite.plan.product_slug );

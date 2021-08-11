@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
-import { TASK_WP_COURSES } from 'calypso/my-sites/customer-home/cards/constants';
 import coursesLogo from 'calypso/assets/images/customer-home/courses-logo.png';
+import { TASK_WP_COURSES } from 'calypso/my-sites/customer-home/cards/constants';
+import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 
 const WPCourses = () => {
 	return (

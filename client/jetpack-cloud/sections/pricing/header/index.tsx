@@ -1,20 +1,9 @@
-/**
- * External dependencies
- */
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import JetpackComMasterbar from '../jpcom-masterbar';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { preventWidows } from 'calypso/lib/formatting';
 import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner';
-
-/**
- * Style dependencies
- */
+import { preventWidows } from 'calypso/lib/formatting';
+import JetpackComMasterbar from '../jpcom-masterbar';
 import './style.scss';
 
 const Header: React.FC< Props > = () => {

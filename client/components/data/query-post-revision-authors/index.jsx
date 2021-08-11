@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import isShallowEqual from '@wordpress/is-shallow-equal';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
 import { requestPostRevisionAuthors } from 'calypso/state/posts/revisions/authors/actions';
 
 class QueryPostRevisionAuthors extends Component {

@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useDispatch } from 'react-redux';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
+import { useDispatch } from 'react-redux';
 import Gridicon from 'calypso/components/gridicon';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 

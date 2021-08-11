@@ -354,6 +354,7 @@ class ListAll extends Component {
 					isContactEmailEditContext &&
 					( ( isChecked && isSavingContactInfo ) || isLoadingDomainDetails )
 				}
+				isManagingAllSites={ true }
 			/>
 		);
 	}

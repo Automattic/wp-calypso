@@ -18,7 +18,7 @@ import { getSiteHomeUrl } from 'calypso/state/sites/selectors';
 import { requestKeyringServices } from 'calypso/state/sharing/services/actions';
 import { requestSiteKeyrings } from 'calypso/state/site-keyrings/actions';
 import { getSiteKeyringsForService } from 'calypso/state/site-keyrings/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
 
 /**

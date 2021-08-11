@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
+import { Dialog } from '@automattic/components';
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { Dialog } from '@automattic/components';
 import SharingPreviewPane from 'calypso/blocks/sharing-preview-pane';
+import Gridicon from 'calypso/components/gridicon';
 
 const SharingPreviewModal = ( props ) => {
 	const { isVisible, onClose, ...previewProps } = props;

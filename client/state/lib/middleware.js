@@ -7,7 +7,6 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import config from '@automattic/calypso-config';
 import {
 	NOTIFICATIONS_PANEL_TOGGLE,
 	ROUTE_SET,
@@ -18,10 +17,9 @@ import {
 import hasSitePendingAutomatedTransfer from 'calypso/state/selectors/has-site-pending-automated-transfer';
 import { isFetchingAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import keyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
-import getGlobalKeyboardShortcuts from 'calypso/lib/keyboard-shortcuts/global';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import {
 	createImmediateLoginMessage,
@@ -29,16 +27,6 @@ import {
 } from 'calypso/state/immediate-login/utils';
 import { saveImmediateLoginInformation } from 'calypso/state/immediate-login/actions';
 import { successNotice } from 'calypso/state/notices/actions';
-
-/**
- * Module variables
- */
-const globalKeyBoardShortcutsEnabled = config.isEnabled( 'keyboard-shortcuts' );
-let globalKeyboardShortcuts;
-
-if ( globalKeyBoardShortcutsEnabled ) {
-	globalKeyboardShortcuts = getGlobalKeyboardShortcuts();
-}
 
 /**
  * Notifies user about the fact that they were automatically logged in
@@ -83,19 +71,6 @@ const notifyAboutImmediateLoginLinkEffects = once( ( dispatch, action, getState 
 } );
 
 /**
- * Sets the selectedSite for lib/keyboard-shortcuts/global
- *
- * @param {Function} dispatch - redux dispatch function
- * @param {object}   action   - the dispatched action
- * @param {Function} getState - redux getState function
- */
-const updatedSelectedSiteForKeyboardShortcuts = ( dispatch, action, getState ) => {
-	const state = getState();
-	const selectedSite = getSelectedSite( state );
-	globalKeyboardShortcuts.setSelectedSite( selectedSite );
-};
-
-/**
  * Sets isNotificationOpen for lib/keyboard-shortcuts
  *
  * @param {Function} dispatch - redux dispatch function
@@ -132,10 +107,6 @@ const handler = ( dispatch, action, getState ) => {
 		case SITES_RECEIVE:
 			// Wait a tick for the reducer to update the state tree
 			setTimeout( () => {
-				if ( globalKeyBoardShortcutsEnabled ) {
-					updatedSelectedSiteForKeyboardShortcuts( dispatch, action, getState );
-				}
-
 				fetchAutomatedTransferStatusForSelectedSite( dispatch, getState );
 			}, 0 );
 			return;

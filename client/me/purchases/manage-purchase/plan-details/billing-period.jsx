@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -25,6 +24,7 @@ import {
 } from 'calypso/lib/purchases';
 import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isJetpackTemporarySitePurchase } from '../../utils';
 
 export class PlanBillingPeriod extends Component {
 	static propTypes = {
@@ -95,6 +95,8 @@ export class PlanBillingPeriod extends Component {
 			return;
 		}
 
+		const isJetpackTemporarySite = isJetpackTemporarySitePurchase( purchase.domain );
+
 		return (
 			<React.Fragment>
 				<FormSettingExplanation>
@@ -105,7 +107,7 @@ export class PlanBillingPeriod extends Component {
 						</Button>
 					) }
 				</FormSettingExplanation>
-				{ ! site && (
+				{ ! site && ! isJetpackTemporarySite && (
 					<FormSettingExplanation>
 						{ translate(
 							'To manage your plan, please {{supportPageLink}}reconnect{{/supportPageLink}} your site.',

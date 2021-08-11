@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import React, { Fragment } from 'react';
 
 // Note: Please don't change the text in this file as it is specified in the RPM-Requirements of the

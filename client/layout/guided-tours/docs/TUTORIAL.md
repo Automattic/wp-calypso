@@ -58,9 +58,6 @@ First we'll need to create a directory tour, under `tours`. In there, we create 
 `meta.js` contains the metadata for a tour. Here's an empty boilerplate:
 
 ```javascript
-/**
- * Internal dependencies
- */
 import { and } from 'calypso/layout/guided-tours/utils';
 
 export default {};
@@ -69,14 +66,7 @@ export default {};
 For `index.js`, this is the essential boilerplate, which comprises the imports and the `makeTour` wrapping:
 
 ```javascript
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import meta from './meta';
 import {
 	makeTour,

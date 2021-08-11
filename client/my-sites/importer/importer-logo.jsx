@@ -3,7 +3,6 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,7 +18,7 @@ import SocialLogo from 'calypso/components/social-logo';
 import './importer-logo.scss';
 
 const ImporterLogo = ( { icon } ) => {
-	if ( includes( [ 'wordpress', 'blogger-alt', 'squarespace' ], icon ) ) {
+	if ( [ 'wordpress', 'blogger-alt', 'squarespace' ].includes( icon ) ) {
 		return <SocialLogo className="importer__service-icon" icon={ icon } size={ 48 } />;
 	}
 

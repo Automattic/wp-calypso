@@ -38,6 +38,7 @@ interface BackupProgress {
 	progress?: number;
 	rewindId: string;
 	url?: string;
+	bytesFormatted: string;
 }
 
 const BackupDownloadFlow: FunctionComponent< Props > = ( {
@@ -58,6 +59,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 
 	const downloadId = backupProgress?.downloadId;
 	const downloadUrl = backupProgress?.url;
+	const downloadSize = backupProgress?.bytesFormatted;
 	const downloadProgress =
 		backupProgress && backupProgress.progress !== undefined && ! isNaN( backupProgress.progress )
 			? backupProgress.progress
@@ -209,7 +211,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 				className="rewind-flow__primary-button"
 				onClick={ trackFileDownload }
 			>
-				{ translate( 'Download file' ) }
+				{ translate( 'Download file' ) } ({ downloadSize })
 			</Button>
 			<CheckYourEmail
 				message={ translate(

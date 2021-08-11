@@ -1,18 +1,12 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { useSite } from '@automattic/launch';
+import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
+import PlansGrid from '@automattic/plans-grid';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
-import PlansGrid from '@automattic/plans-grid';
-import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
-import { useSite } from '@automattic/launch';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
 import { LAUNCH_STORE } from '../../stores';
+
 import './styles.scss';
 
 const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onNextStep } ) => {

@@ -24,7 +24,7 @@ type Host = string;
 
 let reduxStore: Store;
 
-export function logmeinUrl( url: string ): string {
+export function logmeinUrl( url: string, redirectTo = '' ): string {
 	// Disable feature if not enabled
 	if ( ! isEnabled( 'logmein' ) ) {
 		return url;
@@ -53,7 +53,7 @@ export function logmeinUrl( url: string ): string {
 	// using INVALID_URL here to prevent the possibility of exceptions, if site.URL ever contains an invalid url
 	// the filtering will fail
 	const isValid = sites.some( ( site ) => {
-		return isValidLogmeinSite( site ) && new URL( site.URL, INVALID_URL ).host === newurl.host;
+		return new URL( site.URL, INVALID_URL ).host === newurl.host && isValidLogmeinSite( site );
 	} );
 	if ( ! isValid ) {
 		return url;
@@ -64,6 +64,7 @@ export function logmeinUrl( url: string ): string {
 
 	// Set the param
 	newurl.searchParams.set( 'logmein', 'direct' );
+	redirectTo && newurl.searchParams.set( 'redirect_to', redirectTo );
 
 	return newurl.toString();
 }

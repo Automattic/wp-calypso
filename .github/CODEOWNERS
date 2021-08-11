@@ -94,6 +94,10 @@
 /packages/explat-* @Automattic/experimentation-platform
 
 # Framework
+/client/boot @Automattic/team-calypso-frameworks
+/client/controller @Automattic/team-calypso-frameworks
+/client/layout @Automattic/team-calypso-frameworks
+/client/server @Automattic/team-calypso-frameworks
 /packages/js-utils @Automattic/team-calypso-frameworks
 
 # Jetpack Search

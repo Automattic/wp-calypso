@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { map, times } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import SortableList from 'calypso/components/forms/sortable-list';
-import PostCard from './post-card';
-import PostPlaceholder from './post-placeholder';
 import RecentPostsDropdown from '../../recent-posts-dropdown';
 import SearchAutocomplete from './../../search-autocomplete';
+import PostCard from './post-card';
+import PostPlaceholder from './post-placeholder';
 
 class PostsList extends Component {
 	static propTypes = {

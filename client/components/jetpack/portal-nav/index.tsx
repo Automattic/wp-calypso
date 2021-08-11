@@ -1,29 +1,19 @@
-/**
- * External dependencies
- */
-import React, { ReactElement } from 'react';
 import classnames from 'classnames';
-import { useSelector, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import React, { ReactElement } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
+import SectionNav from 'calypso/components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
 import { isSectionNameEnabled } from 'calypso/sections-filter';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	getCurrentPartner,
 	hasFetchedPartner,
 } from 'calypso/state/partner-portal/partner/selectors';
 import { isPartnerPortal } from 'calypso/state/partner-portal/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
-import SectionNav from 'calypso/components/section-nav';
-import NavTabs from 'calypso/components/section-nav/tabs';
-import NavItem from 'calypso/components/section-nav/item';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface Props {

@@ -6,16 +6,6 @@ jest.mock( 'i18n-calypso', () => ( {
 	translate: ( s ) => s,
 } ) );
 
-/**
- * External dependencies
- */
-import { shallow } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { PlansAtomicStoreStep } from '../index';
 import {
 	PLAN_FREE,
 	PLAN_ECOMMERCE,
@@ -36,6 +26,9 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
+import { shallow } from 'enzyme';
+import React from 'react';
+import { PlansAtomicStoreStep } from '../index';
 
 const noop = () => {};
 const props = {

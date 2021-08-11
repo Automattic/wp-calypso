@@ -1,25 +1,15 @@
-/**
- * External dependencies
- */
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { useTranslate } from 'i18n-calypso';
-import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
-import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
-import { backupMainPath } from 'calypso/my-sites/backup/paths';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
 import Button from 'calypso/components/forms/form-button';
-
-/**
- * Style dependencies
- */
-import './style.scss';
+import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
+import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
+import { backupMainPath } from 'calypso/my-sites/backup/paths';
+import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import cloudWarningIcon from './icons/cloud-warning.svg';
+
+import './style.scss';
 
 const NoBackupsOnSelectedDate = ( { selectedDate } ) => {
 	const translate = useTranslate();

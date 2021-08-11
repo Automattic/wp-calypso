@@ -1,26 +1,16 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import classnames from 'classnames';
-import { Card, Button } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
+import { Card, Button } from '@automattic/components';
+import classnames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
+import React from 'react';
+import { connect } from 'react-redux';
 import AppsBadge from 'calypso/blocks/get-apps/apps-badge';
-import userAgent from 'calypso/lib/user-agent';
 import CardHeading from 'calypso/components/card-heading';
-import { sendEmailLogin } from 'calypso/state/auth/actions';
+import userAgent from 'calypso/lib/user-agent';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import { sendEmailLogin } from 'calypso/state/auth/actions';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export const GoMobile = ( { email, sendMobileLoginEmail } ) => {

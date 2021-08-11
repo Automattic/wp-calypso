@@ -1,30 +1,20 @@
-/**
- * External Dependencies
- */
+import { CompactCard as Card } from '@automattic/components';
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { get, partial } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
-import { get, partial } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
-import { getPostById } from 'calypso/state/reader/posts/selectors';
-import { getSite } from 'calypso/state/reader/sites/selectors';
+import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
+import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
+import ReaderFeaturedVideo from 'calypso/blocks/reader-featured-video';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
-import { CompactCard as Card } from '@automattic/components';
 import Gravatar from 'calypso/components/gravatar';
+import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
 import FollowButton from 'calypso/reader/follow-button';
 import { getPostUrl, getStreamUrl } from 'calypso/reader/route';
-import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
-import ReaderFeaturedVideo from 'calypso/blocks/reader-featured-video';
-import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
-import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
+import { getPostById } from 'calypso/state/reader/posts/selectors';
+import { getSite } from 'calypso/state/reader/sites/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const RELATED_IMAGE_WIDTH = 385; // usual width of featured images in related post card

@@ -2,12 +2,9 @@
 /* eslint-disable jsdoc/check-tag-names */
 /** @format */
 
-/**
- * External dependencies
- */
-const path = require( 'path' );
-const fs = require( 'fs' );
 const child_process = require( 'child_process' );
+const fs = require( 'fs' );
+const path = require( 'path' );
 const ffmpeg = require( 'ffmpeg-static' );
 
 const E2E_DIR = path.resolve( __dirname, '../../' );

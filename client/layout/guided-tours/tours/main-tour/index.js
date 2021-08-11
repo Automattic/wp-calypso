@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import React, { Fragment } from 'react';
-
-/**
- * Internal dependencies
- */
-import meta from './meta';
+import { ViewSiteButton } from 'calypso/layout/guided-tours/button-labels';
 import {
 	makeTour,
 	Tour,
@@ -17,13 +10,13 @@ import {
 	Continue,
 	Link,
 } from 'calypso/layout/guided-tours/config-elements';
+import { getScrollableSidebar } from 'calypso/layout/guided-tours/positioning';
+import scrollTo from 'calypso/lib/scroll-to';
 import {
 	isSelectedSitePreviewable,
 	isSelectedSiteCustomizable,
 } from 'calypso/state/guided-tours/contexts';
-import { getScrollableSidebar } from 'calypso/layout/guided-tours/positioning';
-import scrollTo from 'calypso/lib/scroll-to';
-import { ViewSiteButton } from 'calypso/layout/guided-tours/button-labels';
+import meta from './meta';
 
 const scrollSidebarToTop = () => scrollTo( { y: 0, container: getScrollableSidebar() } );
 

@@ -21,7 +21,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { setExpandedService } from 'calypso/state/sharing/actions';
 
 export const redirectConnections = ( context ) => {

@@ -1,0 +1,143 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.email-suggestion {
+	display: flex;
+	flex-direction: column;
+
+	@include breakpoint-deprecated( '>480px' ) {
+		align-items: center;
+		flex-direction: row;
+	}
+
+	@include breakpoint-deprecated( '>660px' ) {
+		padding: 15px 20px;
+	}
+}
+
+.email-signup-titan-card__suggestion-content {
+	flex-direction: column;
+	min-height: 32px;
+	width: 100%;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	> h3 {
+		word-break: break-all;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			flex-grow: 2;
+		}
+	}
+}
+
+.email-signup-titan-card__title {
+	font-size: 1.375rem; /* stylelint-disable-line */
+	line-height: 30px;
+	max-width: 100%;
+	padding-right: 0.2em;
+	width: auto;
+	word-break: break-all;
+
+	@include break-mobile {
+		font-size: 1.625rem; /* stylelint-disable-line */
+	}
+
+	@include breakpoint-deprecated( '>480px' ) {
+		padding-right: 2em;
+	}
+}
+
+.button.email-signup-titan-card__suggestion-action {
+	min-width: 66px;
+	text-align: center;
+	margin-top: 16px;
+	padding: 0.25em 3em;
+	transition: all 0.1s linear;
+
+	@include breakpoint-deprecated( '>480px' ) {
+		flex: 1 0 auto;
+		margin-left: 1em;
+		margin-top: 0;
+	}
+}
+
+.email-signup-titan-card__suggestion-chevron {
+	color: var( --color-neutral-light );
+	display: none;
+	flex: 1 0 auto;
+	margin-left: 10px;
+
+	@include breakpoint-deprecated( '>480px' ) {
+		display: block;
+	}
+}
+
+body.is-section-signup.is-white-signup {
+	.email-suggestion {
+		background: none;
+		border-bottom: 1px solid #e2e4e7;
+		border-top: 1px solid #e2e4e7;
+		box-shadow: none;
+		flex-direction: column;
+		padding-left: 24px;
+		padding-right: 24px;
+
+		@include break-mobile {
+			border: 1px solid #e2e4e7;
+			border-radius: 4px; /* stylelint-disable-line */
+			flex-direction: row;
+			margin: 0 20px;
+		}
+
+		@include break-large {
+			margin: 0;
+		}
+
+		.email-product-price {
+			@include break-mobile {
+				margin-top: 12px;
+			}
+		}
+
+		.email-signup-titan-card__suggestion-action-container {
+			flex: 0 0 auto;
+		}
+
+		.email-signup-titan-card__suggestion-action {
+			border: 1px solid #c3c4c7;
+			border-radius: 4px; /* stylelint-disable-line */
+			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
+			font-size: 0.875rem;
+			font-weight: 500; /* stylelint-disable-line */
+			padding: 0.57em 1.17em;
+			width: 100%;
+
+			@include break-mobile {
+				padding: 0.65em 2.8em;
+				width: auto;
+			}
+		}
+	}
+}
+
+.email-signup-titan-card__example-prompt {
+	font-size: 0.875rem;
+	line-height: 20px;
+	color: var( --studio-gray-40 );
+	display: flex;
+	align-items: center;
+	margin: 0 20px;
+	padding-top: 24px;
+	svg {
+		fill: #a7aaad;
+		margin-right: 13px;
+	}
+
+	@include break-xlarge {
+		margin: 0;
+	}
+}

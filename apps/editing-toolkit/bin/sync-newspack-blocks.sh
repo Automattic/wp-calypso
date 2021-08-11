@@ -117,8 +117,8 @@ mkdir -p $TARGET/components
 mkdir -p $TARGET/shared
 
 # copy files and directories
-cp $CODE/class-newspack-blocks-api.php $TARGET/
-cp $CODE/class-newspack-blocks.php $TARGET/
+cp $CODE/includes/class-newspack-blocks-api.php $TARGET/
+cp $CODE/includes/class-newspack-blocks.php $TARGET/
 cp -R $CODE/src/blocks/homepage-articles $TARGET/blocks/
 cp -R $CODE/src/blocks/carousel $TARGET/blocks/
 cp -R $CODE/src/shared $TARGET/

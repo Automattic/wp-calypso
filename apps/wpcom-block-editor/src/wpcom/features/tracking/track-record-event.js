@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import { omitBy } from 'lodash';
-import debug from 'debug';
 import { select } from '@wordpress/data';
-
-/**
- * Internal dependencies
- */
+import debug from 'debug';
+import { omitBy } from 'lodash';
 import { isE2ETest } from '../../../utils';
 import { getEditorType } from '../utils';
 

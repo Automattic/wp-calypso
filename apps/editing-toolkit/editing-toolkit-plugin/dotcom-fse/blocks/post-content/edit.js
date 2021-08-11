@@ -1,18 +1,11 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-/**
- * External dependencies
- */
-import classNames from 'classnames';
-
-/**
- * WordPress dependencies
- */
+import { InnerBlocks } from '@wordpress/block-editor';
 import { compose, withState } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
 import { PostTitle } from '@wordpress/editor';
-import { InnerBlocks } from '@wordpress/block-editor';
 import { Component, Fragment } from '@wordpress/element';
+import classNames from 'classnames';
 
 class PostContentEdit extends Component {
 	toggleEditing() {

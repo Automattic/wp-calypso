@@ -231,6 +231,17 @@ export default function () {
 		);
 
 		page(
+			'/domains/add/:domain/email/:siteSlug',
+			siteSelection,
+			navigation,
+			domainsController.redirectIfNoSite( '/domains/add' ),
+			domainsController.jetpackNoDomainsWarning,
+			domainsController.emailUpsellForDomainRegistration,
+			makeLayout,
+			clientRender
+		);
+
+		page(
 			'/domains/add/suggestion/:suggestion/:domain',
 			siteSelection,
 			navigation,
@@ -265,6 +276,16 @@ export default function () {
 			domainsController.redirectIfNoSite( '/domains/add/mapping' ),
 			domainsController.jetpackNoDomainsWarning,
 			domainsController.mapDomain,
+			makeLayout,
+			clientRender
+		);
+
+		page(
+			paths.domainMappingSetup( ':site', ':domain' ),
+			siteSelection,
+			navigation,
+			domainsController.jetpackNoDomainsWarning,
+			domainsController.mapDomainSetup,
 			makeLayout,
 			clientRender
 		);

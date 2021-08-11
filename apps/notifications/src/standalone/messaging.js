@@ -4,14 +4,7 @@
  * @module boot/messaging
  */
 
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
 import { parseJson } from '../panel/utils/parse-json';
 
 const debug = debugFactory( 'notifications:messaging' );

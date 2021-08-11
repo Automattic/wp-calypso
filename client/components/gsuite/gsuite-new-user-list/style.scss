@@ -53,7 +53,6 @@
 .gsuite-new-user-list__new-user {
 	.form-fieldset .form-label {
 		color: var( --color-text );
-		margin-bottom: 0;
 
 		.form-text-input-with-affixes__suffix {
 			font-weight: normal;
@@ -106,7 +105,6 @@
 	}
 
 	@include breakpoint-deprecated( '>800px' ) {
-		flex-direction: row;
 
 		input[type='text'].form-text-input {
 			margin: 0;
@@ -121,36 +119,10 @@
 	}
 }
 
+.gsuite-new-user-list__new-user-email-container,
+.gsuite-new-user-list__new-user-password-container,
 .gsuite-new-user-list__new-user-name-container {
 	display: flex;
 	flex-direction: column;
 	margin-bottom: 15px;
-
-	@include breakpoint-deprecated( '>800px' ) {
-		margin-bottom: 20px;
-		width: 50%;
-	}
-}
-
-.gsuite-new-user-list__new-user-email-container,
-.gsuite-new-user-list__new-user-password-container {
-	@include breakpoint-deprecated( '>800px' ) {
-		margin-bottom: 0;
-	}
-}
-
-.gsuite-new-user-list__new-user-email-container {
-	@include breakpoint-deprecated( '>800px' ) {
-		width: 100%;
-	}
-}
-
-.gsuite-new-user-list__new-user-password-container {
-	margin-top: 15px;
-
-	@include breakpoint-deprecated( '>800px' ) {
-		margin-right: 0;
-		margin-top: 0;
-		width: 50%;
-	}
 }

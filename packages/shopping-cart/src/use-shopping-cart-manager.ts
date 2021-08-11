@@ -1,12 +1,12 @@
-/**
- * External dependencies
- */
-import { useCallback, useMemo, useEffect, useRef } from 'react';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import { useCallback, useMemo, useEffect, useRef } from 'react';
+import { convertTempResponseCartToResponseCart } from './cart-functions';
+import { createRequestCartProducts } from './create-request-cart-product';
+import { createCartSyncMiddleware } from './sync';
+import useCartUpdateAndRevalidate from './use-cart-update-and-revalidate';
+import useInitializeCartFromServer from './use-initialize-cart-from-server';
+import useRefetchOnFocus from './use-refetch-on-focus';
+import useShoppingCartReducer from './use-shopping-cart-reducer';
 import type {
 	TempResponseCart,
 	ResponseCart,
@@ -27,13 +27,6 @@ import type {
 	CartValidCallback,
 	DispatchAndWaitForValid,
 } from './types';
-import { convertTempResponseCartToResponseCart } from './cart-functions';
-import useShoppingCartReducer from './use-shopping-cart-reducer';
-import useInitializeCartFromServer from './use-initialize-cart-from-server';
-import useCartUpdateAndRevalidate from './use-cart-update-and-revalidate';
-import { createRequestCartProducts } from './create-request-cart-product';
-import useRefetchOnFocus from './use-refetch-on-focus';
-import { createCartSyncMiddleware } from './sync';
 
 const debug = debugFactory( 'shopping-cart:use-shopping-cart-manager' );
 
@@ -58,7 +51,7 @@ export default function useShoppingCartManager( {
 	const cartMiddleware = useMemo( () => [ syncCartToServer ], [ syncCartToServer ] );
 	const [ hookState, hookDispatch ] = useShoppingCartReducer( cartMiddleware );
 
-	const responseCart: TempResponseCart = hookState.responseCart;
+	const tempResponseCart: TempResponseCart = hookState.responseCart;
 	const couponStatus: CouponStatus = hookState.couponStatus;
 	const cacheStatus: CacheStatus = hookState.cacheStatus;
 	const loadingError: string | undefined = hookState.loadingError;
@@ -96,7 +89,7 @@ export default function useShoppingCartManager( {
 				cartValidCallbacks.current.push( resolve );
 			} );
 		},
-		[ hookDispatch, isMounted ]
+		[ hookDispatch ]
 	);
 
 	const addProductsToCart: AddProductsToCart = useCallback(
@@ -158,16 +151,14 @@ export default function useShoppingCartManager( {
 		hookState.queuedActions.length > 0 || cacheStatus !== 'valid' || ! cartKey;
 
 	const responseCartWithoutTempProducts = useMemo(
-		() => convertTempResponseCartToResponseCart( responseCart ),
-		[ responseCart ]
+		() => convertTempResponseCartToResponseCart( tempResponseCart ),
+		[ tempResponseCart ]
 	);
-	const lastValidResponseCart = useRef< ResponseCart >( responseCartWithoutTempProducts );
-	if ( cacheStatus === 'valid' ) {
-		lastValidResponseCart.current = responseCartWithoutTempProducts;
-	}
+	const responseCart = useLastValidCart( responseCartWithoutTempProducts, cacheStatus );
 
 	// Refetch when the window is refocused
 	useRefetchOnFocus(
+		cartKey,
 		options ?? {},
 		cacheStatus,
 		responseCartWithoutTempProducts,
@@ -181,12 +172,10 @@ export default function useShoppingCartManager( {
 		debug( `cacheStatus changed to ${ cacheStatus } and cartValidCallbacks exist` );
 		if ( hookState.queuedActions.length === 0 && cacheStatus === 'valid' ) {
 			debug( 'calling cartValidCallbacks' );
-			cartValidCallbacks.current.forEach( ( callback ) =>
-				callback( lastValidResponseCart.current )
-			);
+			cartValidCallbacks.current.forEach( ( callback ) => callback( responseCart ) );
 			cartValidCallbacks.current = [];
 		}
-	}, [ hookState.queuedActions, cacheStatus ] );
+	}, [ hookState.queuedActions, cacheStatus, responseCart ] );
 
 	const shoppingCartManager = useMemo(
 		() => ( {
@@ -203,10 +192,10 @@ export default function useShoppingCartManager( {
 			replaceProductInCart,
 			replaceProductsInCart,
 			reloadFromServer,
-			responseCart: lastValidResponseCart.current,
+			responseCart,
 		} ),
 		[
-			lastValidResponseCart,
+			responseCart,
 			isLoading,
 			isPendingUpdate,
 			loadingErrorForManager,
@@ -228,4 +217,15 @@ export default function useShoppingCartManager( {
 	}, [ shoppingCartManager ] );
 
 	return shoppingCartManager;
+}
+
+function useLastValidCart(
+	currentResponseCart: ResponseCart,
+	cacheStatus: CacheStatus
+): ResponseCart {
+	const lastValidResponseCart = useRef< ResponseCart >( currentResponseCart );
+	if ( cacheStatus === 'valid' ) {
+		lastValidResponseCart.current = currentResponseCart;
+	}
+	return lastValidResponseCart.current;
 }

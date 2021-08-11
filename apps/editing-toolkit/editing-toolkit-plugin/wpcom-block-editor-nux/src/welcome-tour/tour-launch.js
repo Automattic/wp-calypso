@@ -1,21 +1,15 @@
-/**
- * Internal dependencies
- */
-import WelcomeTourCard from './tour-card';
-import getTourContent from './tour-content';
-import maximize from './icons/maximize';
-import './style-tour.scss';
-
-/**
- * External dependencies
- */
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useLocale } from '@automattic/i18n-utils';
 import { Button, Flex } from '@wordpress/components';
-import { Icon } from '@wordpress/icons';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useState, useRef } from '@wordpress/element';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { __ } from '@wordpress/i18n';
-import { useLocale } from '@automattic/i18n-utils';
+import { Icon } from '@wordpress/icons';
+import maximize from './icons/maximize';
+import WelcomeTourCard from './tour-card';
+import getTourContent from './tour-content';
+
+import './style-tour.scss';
 
 function LaunchWpcomWelcomeTour() {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;

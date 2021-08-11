@@ -1,24 +1,16 @@
-/**
- * External Dependencies
- */
-import React, { useState, useRef, useEffect } from 'react';
-import classNames from 'classnames';
 import { useI18n } from '@wordpress/react-i18n';
-import { useSelector } from 'react-redux';
-import config from '@automattic/calypso-config';
-
-/**
- * Internal Dependencies
- */
-import ScreenSwitcher, { DEFAULT_VIEW } from './screen-switcher';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isJetpackSite, getSiteOption } from 'calypso/state/sites/selectors';
-import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import classNames from 'classnames';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import QuickSwitchModal from 'calypso/blocks/nav-unification-quick-switch-modal';
 import versionCompare from 'calypso/lib/version-compare';
+import { fetchModuleList } from 'calypso/state/jetpack/modules/actions';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { isJetpackSite, getSiteOption } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import ScreenSwitcher, { DEFAULT_VIEW } from './screen-switcher';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const isBoolean = ( val ) => 'boolean' === typeof val;
@@ -27,6 +19,7 @@ const ScreenOptionsTab = ( { wpAdminPath } ) => {
 	const ref = useRef( null );
 	const [ isOpen, setIsOpen ] = useState( false );
 	const { __ } = useI18n();
+	const dispatch = useDispatch();
 
 	const siteId = useSelector( getSelectedSiteId );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
@@ -34,29 +27,39 @@ const ScreenOptionsTab = ( { wpAdminPath } ) => {
 	const jetpackVersion = useSelector( ( state ) =>
 		getSiteOption( state, siteId, 'jetpack_version' )
 	);
+	const isSsoActive = useSelector( ( state ) => isJetpackModuleActive( state, siteId, 'sso' ) );
 
-	const handleToggle = ( bool ) => {
-		if ( isBoolean( bool ) ) {
-			setIsOpen( bool );
-		} else {
-			setIsOpen( ! isOpen );
-		}
-	};
+	const handleToggle = useCallback(
+		( bool ) => {
+			if ( isBoolean( bool ) ) {
+				setIsOpen( bool );
+			} else {
+				setIsOpen( ! isOpen );
+			}
+		},
+		[ isOpen ]
+	);
 
-	const handleClosing = ( e ) => {
-		if ( e instanceof KeyboardEvent ) {
-			if ( e.key === 'Escape' ) {
+	const handleClosing = useCallback(
+		( e ) => {
+			if ( e instanceof KeyboardEvent ) {
+				if ( e.key === 'Escape' ) {
+					handleToggle( false );
+				}
+				return;
+			}
+
+			if ( ref.current && ! ref.current.contains( e.target ) ) {
 				handleToggle( false );
 			}
-			return;
-		}
-
-		if ( ref.current && ! ref.current.contains( e.target ) ) {
-			handleToggle( false );
-		}
-	};
+		},
+		[ handleToggle ]
+	);
 
 	useEffect( () => {
+		if ( isAtomic ) {
+			dispatch( fetchModuleList( siteId ) );
+		}
 		// Close the component when a click outside happens or users clicks Esc key.
 		document.addEventListener( 'click', handleClosing, true );
 		document.addEventListener( 'keydown', handleClosing, true );
@@ -66,11 +69,7 @@ const ScreenOptionsTab = ( { wpAdminPath } ) => {
 			document.removeEventListener( 'click', handleClosing, true );
 			document.removeEventListener( 'keydown', handleClosing, true );
 		};
-	}, [] );
-
-	if ( ! config.isEnabled( 'nav-unification/switcher' ) ) {
-		return null;
-	}
+	}, [ siteId, isAtomic, dispatch, handleClosing ] );
 
 	// Only visible on single-site screens of WordPress.com Simple and Atomic sites.
 	if ( ! wpAdminPath || ! siteId || ( isJetpack && ! isAtomic ) ) {
@@ -82,6 +81,11 @@ const ScreenOptionsTab = ( { wpAdminPath } ) => {
 		return null;
 	}
 
+	// Hide the quick switcher when SSO is inactive, since Nav Unification is disabled on WP Admin.
+	if ( isAtomic && ! isSsoActive ) {
+		return null;
+	}
+
 	const onSwitchView = ( view ) => {
 		if ( view === DEFAULT_VIEW ) {
 			setIsOpen( false );
@@ -90,6 +94,7 @@ const ScreenOptionsTab = ( { wpAdminPath } ) => {
 
 	return (
 		<div className="screen-options-tab" ref={ ref } data-testid="screen-options-tab">
+			<QuickSwitchModal />
 			<button className="screen-options-tab__button" onClick={ handleToggle }>
 				<span className="screen-options-tab__label">{ __( 'Screen Options' ) }</span>
 				<span

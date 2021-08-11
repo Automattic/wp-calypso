@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-
-import React, { Fragment, Component } from 'react';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import React, { Fragment, Component } from 'react';
 import DateRange from '../index.js';
 
 /*

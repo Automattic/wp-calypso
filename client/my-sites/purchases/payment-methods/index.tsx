@@ -72,6 +72,7 @@ export function PaymentMethods( { siteSlug }: { siteSlug: string } ): JSX.Elemen
 				brandFont
 				className="payment-methods__page-heading"
 				headerText={ titles.sectionTitle }
+				subHeaderText={ translate( 'Add or delete payment methods for your account.' ) }
 				align="left"
 			/>
 			<PurchasesNavigation sectionTitle={ 'Payment Methods' } siteSlug={ siteSlug } />

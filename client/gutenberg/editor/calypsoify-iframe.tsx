@@ -1,21 +1,42 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
-import { map, partial, pickBy, flowRight } from 'lodash';
+
 /* eslint-disable no-restricted-imports */
 import url from 'url';
+import config from '@automattic/calypso-config';
+import { getQueryArg } from '@wordpress/url';
 import { localize, LocalizeProps } from 'i18n-calypso';
-import type { RequestCart } from '@automattic/shopping-cart';
+import { map, partial, pickBy, flowRight } from 'lodash';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import WebPreview from 'calypso/components/web-preview';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { navigate } from 'calypso/lib/navigate';
+import {
+	withStopPerformanceTrackingProp,
+	PerformanceTrackProps,
+} from 'calypso/lib/performance-tracking';
+import { protectForm, ProtectedFormProps } from 'calypso/lib/protect-form';
+import { addQueryArgs } from 'calypso/lib/route';
+import wpcom from 'calypso/lib/wp';
+import EditorDocumentHead from 'calypso/post-editor/editor-document-head';
+import { setEditorIframeLoaded, startEditingPost } from 'calypso/state/editor/actions';
+import { getEditorPostId } from 'calypso/state/editor/selectors';
+import { selectMediaItems } from 'calypso/state/media/actions';
+import { fetchMediaItem, getMediaItem } from 'calypso/state/media/thunks';
+import { editPost, trashPost } from 'calypso/state/posts/actions';
+import { openPostRevisionsDialog } from 'calypso/state/posts/revisions/actions';
+import { clearLastNonEditorRoute, setRoute } from 'calypso/state/route/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import getEditorCloseConfig from 'calypso/state/selectors/get-editor-close-config';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
+import getPostTypeTrashUrl from 'calypso/state/selectors/get-post-type-trash-url';
+import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
+import getSiteUrl from 'calypso/state/selectors/get-site-url';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import { updateSiteFrontPage } from 'calypso/state/sites/actions';
 import {
 	getCustomizerUrl,
 	getSiteOption,
@@ -24,46 +45,13 @@ import {
 	isJetpackSite,
 	getSite,
 } from 'calypso/state/sites/selectors';
-import { addQueryArgs } from 'calypso/lib/route';
-import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
-import { clearLastNonEditorRoute, setRoute } from 'calypso/state/route/actions';
-import { updateSiteFrontPage } from 'calypso/state/sites/actions';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import getPostTypeTrashUrl from 'calypso/state/selectors/get-post-type-trash-url';
-import getEditorUrl from 'calypso/state/selectors/get-editor-url';
-import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
-import getEditorCloseConfig from 'calypso/state/selectors/get-editor-close-config';
-import wpcom from 'calypso/lib/wp';
-import { openPostRevisionsDialog } from 'calypso/state/posts/revisions/actions';
-import { setEditorIframeLoaded, startEditingPost } from 'calypso/state/editor/actions';
-import { Placeholder } from './placeholder';
-import WebPreview from 'calypso/components/web-preview';
-import { editPost, trashPost } from 'calypso/state/posts/actions';
-import { getEditorPostId } from 'calypso/state/editor/selectors';
-import { protectForm, ProtectedFormProps } from 'calypso/lib/protect-form';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import getSiteUrl from 'calypso/state/selectors/get-site-url';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import config from '@automattic/calypso-config';
-import EditorDocumentHead from 'calypso/post-editor/editor-document-head';
-import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
-import {
-	withStopPerformanceTrackingProp,
-	PerformanceTrackProps,
-} from 'calypso/lib/performance-tracking';
-import { selectMediaItems } from 'calypso/state/media/actions';
-import { fetchMediaItem, getMediaItem } from 'calypso/state/media/thunks';
-import { navigate } from 'calypso/lib/navigate';
-import Iframe from './iframe';
-
-/**
- * Types
- */
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import * as T from 'calypso/types';
+import Iframe from './iframe';
+import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
+import { Placeholder } from './placeholder';
+import type { RequestCart } from '@automattic/shopping-cart';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -127,7 +115,6 @@ enum EditorActions {
 	GetTemplateEditorUrl = 'getTemplateEditorUrl',
 	OpenTemplatePart = 'openTemplatePart',
 	GetCloseButtonUrl = 'getCloseButtonUrl',
-	LogError = 'logError',
 	GetGutenboardingStatus = 'getGutenboardingStatus',
 	ToggleInlineHelpButton = 'toggleInlineHelpButton',
 	GetNavSidebarLabels = 'getNavSidebarLabels',
@@ -278,7 +265,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 			// Notify external listeners that the iframe has loaded
 			this.props.setEditorIframeLoaded( true, this.iframePort );
 
-			window.performance?.mark( 'iframe_loaded' );
+			window.performance?.mark?.( 'iframe_loaded' );
 			this.setState( { isIframeLoaded: true, currentIFrameUrl: this.props.iframeUrl } );
 
 			return;
@@ -486,16 +473,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 				origin: window.location.origin,
 				siteSlug: this.props.siteSlug,
 			} );
-		}
-
-		// Pipes errors in the iFrame context to the Calypso error handler if it exists:
-		if ( EditorActions.LogError === action ) {
-			const { error } = payload;
-			if ( Array.isArray( error ) && error.length > 4 && window.onerror ) {
-				const errorObject = error[ 4 ];
-				error[ 4 ] = errorObject && JSON.parse( errorObject );
-				window.onerror( ...error );
-			}
 		}
 
 		if ( EditorActions.PostStatusChange === action ) {
@@ -866,6 +843,7 @@ const mapStateToProps = (
 		'new-homepage': creatingNewHomepage,
 		...( !! stripeConnectSuccess && { stripe_connect_success: stripeConnectSuccess } ),
 		...anchorFmData,
+		openSidebar: getQueryArg( window.location.href, 'openSidebar' ),
 	} );
 
 	// needed for loading the editor in SU sessions

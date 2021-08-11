@@ -1909,17 +1909,6 @@ Undocumented.prototype.uploadExportFile = function ( siteId, params ) {
 	} );
 };
 
-/**
- * GET help links
- *
- * @param {string} searchQuery User input for help search
- * @param {Function} fn The callback function
- */
-Undocumented.prototype.getHelpLinks = function ( searchQuery, fn ) {
-	debug( 'help-search/ searchQuery' );
-	return this.wpcom.req.get( '/help/search', { query: searchQuery, include_post_id: 1 }, fn );
-};
-
 Undocumented.prototype.getQandA = function ( query, site, fn ) {
 	debug( 'help-contact-qanda/ searchQuery {query}' );
 
@@ -2132,22 +2121,6 @@ Undocumented.prototype.getSiteConnectInfo = function ( inputUrl ) {
 };
 
 /**
- * Exports the user's Reader subscriptions as an OPML XML file.
- * A JSON object is returned with the XML given as a String
- * in the `opml` field.
- *
- * @param  {Function} 	fn      The callback function
- * @returns {Promise}  	promise
- */
-Undocumented.prototype.exportReaderSubscriptions = function ( fn ) {
-	debug( '/read/following/mine/export' );
-	const query = {
-		apiVersion: '1.2',
-	};
-	return this.wpcom.req.get( '/read/following/mine/export', query, fn );
-};
-
-/**
  * Imports given XML file into the user's Reader feed.
  * XML file is expected to be in OPML format.
  *
@@ -2168,19 +2141,6 @@ Undocumented.prototype.importReaderFeed = function ( file, fn ) {
 		apiVersion: '1.2',
 	};
 	return this.wpcom.req.post( params, query, null, fn );
-};
-
-/**
- * Exports a Reader list as an OPML XML file.
- * A JSON object is returned with the XML given as a String
- * in the `opml` field.
- *
- * @param 	{number}	listId	The list ID
- * @param  	{Function} 	fn      The callback function
- * @returns {Promise}  	promise
- */
-Undocumented.prototype.exportReaderList = function ( listId, fn ) {
-	return this.wpcom.req.get( `/read/lists/${ listId }/export`, { apiNamespace: 'wpcom/v2' }, fn );
 };
 
 /**

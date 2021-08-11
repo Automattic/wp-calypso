@@ -1,11 +1,8 @@
 // Note: This is used by env.js and so do not require( 'debug' ) in the global context otherwise it prevents env.js setting debug up
 
-/**
- * Internal dependencies
- */
 const Config = require( '../config' );
-const settingsFile = require( './settings-file' );
 const constants = require( './constants' );
+const settingsFile = require( './settings-file' );
 
 /**
  * Module variables

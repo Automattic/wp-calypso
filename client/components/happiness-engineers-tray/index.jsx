@@ -1,18 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { shuffle } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import useHappinessEngineersQuery from 'calypso/data/happiness-engineers/use-happiness-engineers-query';
+import React from 'react';
 import Gravatar from 'calypso/components/gravatar';
+import useHappinessEngineersQuery from 'calypso/data/happiness-engineers/use-happiness-engineers-query';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const HappinessEngineersTray = () => {

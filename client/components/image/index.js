@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
 import classnames from 'classnames';
+import React, { Component } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default class Image extends Component {

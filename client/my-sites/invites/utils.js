@@ -5,6 +5,12 @@ import React from 'react';
 import { get } from 'lodash';
 import i18n from 'i18n-calypso';
 
+/**
+ * Internal dependencies
+ */
+
+import { logmeinUrl } from 'calypso/lib/logmein';
+
 export function acceptedNotice( invite, displayOnNextPage = true ) {
 	const site = (
 		<a href={ get( invite, 'site.URL' ) } className="invites__notice-site-link">
@@ -158,6 +164,13 @@ export function getRedirectAfterAccept( invite ) {
 
 	const readerPath = '/read';
 	const postsListPath = '/posts/' + invite.site.ID;
+	const getDestinationUrl = ( redirect ) => {
+		const remoteLoginHost = `https://${ invite.site.domain }`;
+		const remoteLoginBackUrl = ( destinationPath ) => `https://wordpress.com${ destinationPath }`;
+		const destination = logmeinUrl( remoteLoginHost, remoteLoginBackUrl( redirect ) );
+		const isMissingLogmein = destination === remoteLoginHost;
+		return isMissingLogmein ? redirect : destination;
+	};
 
 	if ( invite.site.is_vip ) {
 		switch ( invite.role ) {
@@ -173,9 +186,9 @@ export function getRedirectAfterAccept( invite ) {
 	switch ( invite.role ) {
 		case 'viewer':
 		case 'follower':
-			return readerPath;
+			return getDestinationUrl( readerPath );
 
 		default:
-			return postsListPath;
+			return getDestinationUrl( postsListPath );
 	}
 }

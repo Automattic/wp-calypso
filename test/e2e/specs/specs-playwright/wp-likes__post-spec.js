@@ -1,10 +1,10 @@
+import assert from 'assert';
 import {
 	DataHelper,
+	BrowserManager,
 	LoginFlow,
 	NewPostFlow,
 	GutenbergEditorPage,
-	MyHomePage,
-	PublishedPostsListPage,
 	PublishedPostPage,
 	setupHooks,
 } from '@automattic/calypso-e2e';
@@ -17,6 +17,8 @@ const quote =
 
 describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 	let page;
+	const mainUser = 'gutenbergSimpleSiteUser';
+	const anotherUser = 'defaultUser';
 
 	setupHooks( ( args ) => {
 		page = args.page;
@@ -25,9 +27,10 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 	describe( 'Like a new post', function () {
 		let publishedPostPage;
 		let gutenbergEditorPage;
+		let publishedURL;
 
 		it( 'Log in', async function () {
-			const loginFlow = new LoginFlow( page, 'gutenbergSimpleSiteUser' );
+			const loginFlow = new LoginFlow( page, mainUser );
 			await loginFlow.logIn();
 		} );
 
@@ -37,7 +40,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 		} );
 
 		it( 'Enter post title', async function () {
-			gutenbergEditorPage = await GutenbergEditorPage.Expect( page );
+			gutenbergEditorPage = new GutenbergEditorPage( page );
 			const title = DataHelper.randomPhrase();
 			await gutenbergEditorPage.enterTitle( title );
 		} );
@@ -47,44 +50,32 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 		} );
 
 		it( 'Publish and visit post', async function () {
-			await gutenbergEditorPage.publish( { visit: true } );
+			publishedURL = await gutenbergEditorPage.publish( { visit: true } );
+			assert.strictEqual( publishedURL, await page.url() );
 		} );
 
 		it( 'Like post', async function () {
-			publishedPostPage = await PublishedPostPage.Expect( page );
+			publishedPostPage = new PublishedPostPage( page );
 			await publishedPostPage.likePost();
 		} );
 
 		it( 'Unlike post', async function () {
 			await publishedPostPage.unlikePost();
 		} );
-	} );
 
-	describe( 'Like an existing post', function () {
-		let publishedPostPage;
-
-		it( 'Log in', async function () {
-			const loginFlow = new LoginFlow( page, 'gutenbergSimpleSiteUser' );
-			await loginFlow.logIn();
+		it( 'Clear cookies', async function () {
+			await BrowserManager.clearAuthenticationState( page );
 		} );
 
-		it( 'Visit site', async function () {
-			const myHomePage = await MyHomePage.Expect( page );
-			await myHomePage.visitSite();
-		} );
+		it( `Like post as ${ anotherUser }`, async function () {
+			publishedPostPage = new PublishedPostPage( page );
 
-		it( 'Click on first post', async function () {
-			const publishedPostsListPage = await PublishedPostsListPage.Expect( page );
-			await publishedPostsListPage.visitPost( 1 );
-		} );
+			const loginFlow = new LoginFlow( page, anotherUser );
 
-		it( 'Like post', async function () {
-			publishedPostPage = await PublishedPostPage.Expect( page );
-			await publishedPostPage.likePost();
-		} );
-
-		it( 'Unlike post', async function () {
-			await publishedPostPage.unlikePost();
+			// Clicking the Like button will bring up a new popup.
+			// `loginFromPopup` will observe for a popup event, grab the new popup and
+			// execute the login process on that page.
+			await Promise.all( [ loginFlow.logInFromPopup(), publishedPostPage.likePost() ] );
 		} );
 	} );
 } );

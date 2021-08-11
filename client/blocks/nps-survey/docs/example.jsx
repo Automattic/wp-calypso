@@ -1,17 +1,14 @@
-/**
- * External dependencies
- */
-
+import { translate } from 'i18n-calypso';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
-import { NpsSurvey } from '../';
+import { successNotice } from 'calypso/state/notices/actions';
+import {
+	submitNpsSurvey,
+	submitNpsSurveyWithNoScore,
+	sendNpsSurveyFeedback,
+} from 'calypso/state/nps-survey/actions';
 import {
 	isNpsSurveySubmitted,
 	isNpsSurveySubmitFailure,
@@ -21,12 +18,7 @@ import {
 	getNpsSurveyScore,
 	getNpsSurveyFeedback,
 } from 'calypso/state/nps-survey/selectors';
-import {
-	submitNpsSurvey,
-	submitNpsSurveyWithNoScore,
-	sendNpsSurveyFeedback,
-} from 'calypso/state/nps-survey/actions';
-import { successNotice } from 'calypso/state/notices/actions';
+import { NpsSurvey } from '../';
 
 const noop = () => {};
 

@@ -1,43 +1,29 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
 import i18nCalypso, { getLocaleSlug, useTranslate } from 'i18n-calypso';
-import page from 'page';
-
-/**
- * Internal dependencies
- */
-import ActionBox from './action-box';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { canCurrentUserAddEmail } from 'calypso/lib/domains';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
+import { useDebouncedCallback } from 'use-debounce';
+import anchorLogoIcon from 'calypso/assets/images/customer-home/anchor-logo-grey.svg';
+import fiverrIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
 import FoldableCard from 'calypso/components/foldable-card';
+import { canCurrentUserAddEmail } from 'calypso/lib/domains';
+import { hasPaidEmailWithUs } from 'calypso/lib/emails';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
+import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
+import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
 	getSiteFrontPage,
 	getCustomizerUrl,
 	getSiteOption,
 	isNewSite,
 } from 'calypso/state/sites/selectors';
-import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { hasPaidEmailWithUs } from 'calypso/lib/emails';
-import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
-import { savePreference } from 'calypso/state/preferences/actions';
-import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import ActionBox from './action-box';
 
-/**
- * Image dependencies
- */
-import fiverrIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
-import anchorLogoIcon from 'calypso/assets/images/customer-home/anchor-logo-grey.svg';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export const QuickLinks = ( {
@@ -46,62 +32,80 @@ export const QuickLinks = ( {
 	showCustomizer,
 	canAddEmail,
 	menusUrl,
-	editHomepageAction,
-	writePostAction,
-	addPageAction,
-	manageCommentsAction,
+	trackEditHomepageAction,
+	trackWritePostAction,
+	trackAddPageAction,
+	trackManageCommentsAction,
 	trackEditMenusAction,
 	trackCustomizeThemeAction,
-	changeThemeAction,
+	trackChangeThemeAction,
 	trackDesignLogoAction,
 	trackAnchorPodcastAction,
-	addEmailAction,
-	addDomainAction,
+	trackAddEmailAction,
+	trackAddDomainAction,
 	isExpanded,
-	expand,
-	collapse,
+	updateHomeQuickLinksToggleStatus,
 	isUnifiedNavEnabled,
 	siteAdminUrl,
+	editHomePageUrl,
+	siteSlug,
 } ) => {
 	const translate = useTranslate();
+	const [
+		debouncedUpdateHomeQuickLinksToggleStatus,
+		,
+		flushDebouncedUpdateHomeQuickLinksToggleStatus,
+	] = useDebouncedCallback( updateHomeQuickLinksToggleStatus, 1000 );
 
 	const quickLinks = (
 		<div className="quick-links__boxes">
 			{ isStaticHomePage ? (
 				<ActionBox
-					onClick={ editHomepageAction }
+					href={ editHomePageUrl }
+					hideLinkIndicator
+					onClick={ trackEditHomepageAction }
 					label={ translate( 'Edit homepage' ) }
 					materialIcon="laptop"
 				/>
 			) : (
 				<ActionBox
-					onClick={ writePostAction }
+					href={ `/post/${ siteSlug }` }
+					hideLinkIndicator
+					onClick={ trackWritePostAction }
 					label={ translate( 'Write blog post' ) }
 					materialIcon="edit"
 				/>
 			) }
 			{ isStaticHomePage ? (
 				<ActionBox
-					onClick={ addPageAction }
+					href={ `/page/${ siteSlug }` }
+					hideLinkIndicator
+					onClick={ trackAddPageAction }
 					label={ translate( 'Add a page' ) }
 					materialIcon="insert_drive_file"
 				/>
 			) : (
 				<ActionBox
-					onClick={ manageCommentsAction }
+					href={ `/comments/${ siteSlug }` }
+					hideLinkIndicator
+					onClick={ trackManageCommentsAction }
 					label={ translate( 'Manage comments' ) }
 					materialIcon="mode_comment"
 				/>
 			) }
 			{ isStaticHomePage ? (
 				<ActionBox
-					onClick={ writePostAction }
+					href={ `/post/${ siteSlug }` }
+					hideLinkIndicator
+					onClick={ trackWritePostAction }
 					label={ translate( 'Write blog post' ) }
 					materialIcon="edit"
 				/>
 			) : (
 				<ActionBox
-					onClick={ addPageAction }
+					href={ `/page/${ siteSlug }` }
+					hideLinkIndicator
+					onClick={ trackAddPageAction }
 					label={ translate( 'Add a page' ) }
 					materialIcon="insert_drive_file"
 				/>
@@ -125,19 +129,25 @@ export const QuickLinks = ( {
 				/>
 			) }
 			<ActionBox
-				onClick={ changeThemeAction }
+				href={ `/themes/${ siteSlug }` }
+				hideLinkIndicator
+				onClick={ trackChangeThemeAction }
 				label={ translate( 'Change theme' ) }
 				materialIcon="view_quilt"
 			/>
 			{ canAddEmail ? (
 				<ActionBox
-					onClick={ addEmailAction }
+					href={ `/email/${ siteSlug }` }
+					hideLinkIndicator
+					onClick={ trackAddEmailAction }
 					label={ translate( 'Add email' ) }
 					materialIcon="email"
 				/>
 			) : (
 				<ActionBox
-					onClick={ addDomainAction }
+					href={ `/domains/add/${ siteSlug }` }
+					hideLinkIndicator
+					onClick={ trackAddDomainAction }
 					label={ translate( 'Add a domain' ) }
 					gridicon="domains"
 				/>
@@ -175,21 +185,27 @@ export const QuickLinks = ( {
 		</div>
 	);
 
+	useEffect( () => {
+		return () => {
+			flushDebouncedUpdateHomeQuickLinksToggleStatus();
+		};
+	}, [] );
+
 	return (
 		<FoldableCard
 			className="quick-links"
 			header={ translate( 'Quick links' ) }
 			clickableHeader
 			expanded={ isExpanded }
-			onOpen={ expand }
-			onClose={ collapse }
+			onOpen={ () => debouncedUpdateHomeQuickLinksToggleStatus( 'expanded' ) }
+			onClose={ () => debouncedUpdateHomeQuickLinksToggleStatus( 'collapsed' ) }
 		>
 			{ quickLinks }
 		</FoldableCard>
 	);
 };
 
-const editHomepageAction = ( editHomePageUrl, isStaticHomePage ) => ( dispatch ) => {
+const trackEditHomepageAction = ( isStaticHomePage ) => ( dispatch ) => {
 	dispatch(
 		composeAnalytics(
 			recordTracksEvent( 'calypso_customer_home_my_site_edit_homepage_click', {
@@ -198,10 +214,9 @@ const editHomepageAction = ( editHomePageUrl, isStaticHomePage ) => ( dispatch )
 			bumpStat( 'calypso_customer_home', 'my_site_edit_homepage' )
 		)
 	);
-	page( editHomePageUrl );
 };
 
-const writePostAction = ( siteSlug, isStaticHomePage ) => ( dispatch ) => {
+const trackWritePostAction = ( isStaticHomePage ) => ( dispatch ) => {
 	dispatch(
 		composeAnalytics(
 			recordTracksEvent( 'calypso_customer_home_my_site_write_post_click', {
@@ -210,10 +225,9 @@ const writePostAction = ( siteSlug, isStaticHomePage ) => ( dispatch ) => {
 			bumpStat( 'calypso_customer_home', 'my_site_write_post' )
 		)
 	);
-	page( `/post/${ siteSlug }` );
 };
 
-const addPageAction = ( siteSlug, isStaticHomePage ) => ( dispatch ) => {
+const trackAddPageAction = ( isStaticHomePage ) => ( dispatch ) => {
 	dispatch(
 		composeAnalytics(
 			recordTracksEvent( 'calypso_customer_home_my_site_add_page_click', {
@@ -222,10 +236,9 @@ const addPageAction = ( siteSlug, isStaticHomePage ) => ( dispatch ) => {
 			bumpStat( 'calypso_customer_home', 'my_site_add_page' )
 		)
 	);
-	page( `/page/${ siteSlug }` );
 };
 
-const manageCommentsAction = ( siteSlug, isStaticHomePage ) => ( dispatch ) => {
+const trackManageCommentsAction = ( isStaticHomePage ) => ( dispatch ) => {
 	dispatch(
 		composeAnalytics(
 			recordTracksEvent( 'calypso_customer_home_my_site_manage_comments_click', {
@@ -234,7 +247,6 @@ const manageCommentsAction = ( siteSlug, isStaticHomePage ) => ( dispatch ) => {
 			bumpStat( 'calypso_customer_home', 'my_site_manage_comments' )
 		)
 	);
-	page( `/comments/${ siteSlug }` );
 };
 
 const trackEditMenusAction = ( isStaticHomePage ) =>
@@ -253,7 +265,7 @@ const trackCustomizeThemeAction = ( isStaticHomePage ) =>
 		bumpStat( 'calypso_customer_home', 'my_site_customize_theme' )
 	);
 
-const changeThemeAction = ( siteSlug, isStaticHomePage ) => ( dispatch ) => {
+const trackChangeThemeAction = ( isStaticHomePage ) => ( dispatch ) => {
 	dispatch(
 		composeAnalytics(
 			recordTracksEvent( 'calypso_customer_home_my_site_change_theme_click', {
@@ -262,7 +274,6 @@ const changeThemeAction = ( siteSlug, isStaticHomePage ) => ( dispatch ) => {
 			bumpStat( 'calypso_customer_home', 'my_site_change_theme' )
 		)
 	);
-	page( `/themes/${ siteSlug }` );
 };
 
 const trackDesignLogoAction = ( isStaticHomePage ) =>
@@ -281,7 +292,7 @@ const trackAnchorPodcastAction = ( isStaticHomePage ) =>
 		bumpStat( 'calypso_customer_home', 'my_site_anchor_podcast' )
 	);
 
-const addEmailAction = ( siteSlug, isStaticHomePage ) => ( dispatch ) => {
+const trackAddEmailAction = ( isStaticHomePage ) => ( dispatch ) => {
 	dispatch(
 		composeAnalytics(
 			recordTracksEvent( 'calypso_customer_home_my_site_add_email_click', {
@@ -290,10 +301,9 @@ const addEmailAction = ( siteSlug, isStaticHomePage ) => ( dispatch ) => {
 			bumpStat( 'calypso_customer_home', 'my_site_add_email' )
 		)
 	);
-	page( `/email/${ siteSlug }` );
 };
 
-const addDomainAction = ( siteSlug, isStaticHomePage ) => ( dispatch ) => {
+const trackAddDomainAction = ( isStaticHomePage ) => ( dispatch ) => {
 	dispatch(
 		composeAnalytics(
 			recordTracksEvent( 'calypso_customer_home_my_site_add_domain_click', {
@@ -302,7 +312,6 @@ const addDomainAction = ( siteSlug, isStaticHomePage ) => ( dispatch ) => {
 			bumpStat( 'calypso_customer_home', 'my_site_add_domain' )
 		)
 	);
-	page( `/domains/add/${ siteSlug }` );
 };
 
 /**
@@ -344,37 +353,37 @@ const mapStateToProps = ( state ) => {
 };
 
 const mapDispatchToProps = {
-	editHomepageAction,
-	writePostAction,
-	addPageAction,
-	manageCommentsAction,
+	trackEditHomepageAction,
+	trackWritePostAction,
+	trackAddPageAction,
+	trackManageCommentsAction,
 	trackEditMenusAction,
 	trackCustomizeThemeAction,
-	changeThemeAction,
+	trackChangeThemeAction,
 	trackDesignLogoAction,
 	trackAnchorPodcastAction,
-	addEmailAction,
-	addDomainAction,
-	expand: () => savePreference( 'homeQuickLinksToggleStatus', 'expanded' ),
-	collapse: () => savePreference( 'homeQuickLinksToggleStatus', 'collapsed' ),
+	trackAddEmailAction,
+	trackAddDomainAction,
+	updateHomeQuickLinksToggleStatus: ( status ) =>
+		savePreference( 'homeQuickLinksToggleStatus', status ),
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const { editHomePageUrl, isStaticHomePage, siteSlug } = stateProps;
+	const { isStaticHomePage } = stateProps;
 	return {
 		...stateProps,
 		...dispatchProps,
-		editHomepageAction: () => dispatchProps.editHomepageAction( editHomePageUrl, isStaticHomePage ),
-		writePostAction: () => dispatchProps.writePostAction( siteSlug, isStaticHomePage ),
-		addPageAction: () => dispatchProps.addPageAction( siteSlug, isStaticHomePage ),
-		manageCommentsAction: () => dispatchProps.manageCommentsAction( siteSlug, isStaticHomePage ),
+		trackEditHomepageAction: () => dispatchProps.trackEditHomepageAction( isStaticHomePage ),
+		trackWritePostAction: () => dispatchProps.trackWritePostAction( isStaticHomePage ),
+		trackAddPageAction: () => dispatchProps.trackAddPageAction( isStaticHomePage ),
+		trackManageCommentsAction: () => dispatchProps.trackManageCommentsAction( isStaticHomePage ),
 		trackEditMenusAction: () => dispatchProps.trackEditMenusAction( isStaticHomePage ),
 		trackCustomizeThemeAction: () => dispatchProps.trackCustomizeThemeAction( isStaticHomePage ),
-		changeThemeAction: () => dispatchProps.changeThemeAction( siteSlug, isStaticHomePage ),
+		trackChangeThemeAction: () => dispatchProps.trackChangeThemeAction( isStaticHomePage ),
 		trackDesignLogoAction: () => dispatchProps.trackDesignLogoAction( isStaticHomePage ),
 		trackAnchorPodcastAction: () => dispatchProps.trackAnchorPodcastAction( isStaticHomePage ),
-		addEmailAction: () => dispatchProps.addEmailAction( siteSlug, isStaticHomePage ),
-		addDomainAction: () => dispatchProps.addDomainAction( siteSlug, isStaticHomePage ),
+		trackAddEmailAction: () => dispatchProps.trackAddEmailAction( isStaticHomePage ),
+		trackAddDomainAction: () => dispatchProps.trackAddDomainAction( isStaticHomePage ),
 		...ownProps,
 	};
 };

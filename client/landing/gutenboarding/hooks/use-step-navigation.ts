@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import { useHistory, useLocation } from 'react-router-dom';
-import { useSelect, useDispatch } from '@wordpress/data';
 import { useLocale } from '@automattic/i18n-utils';
-
-/**
- * Internal dependencies
- */
+import { useSelect, useDispatch } from '@wordpress/data';
+import { useHistory, useLocation } from 'react-router-dom';
 import { GutenLocationStateType, Step, usePath, useCurrentStep, useAnchorFmParams } from '../path';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';

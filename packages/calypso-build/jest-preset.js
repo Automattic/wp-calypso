@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 const path = require( 'path' );
 const { defaults } = require( 'jest-config' );
 

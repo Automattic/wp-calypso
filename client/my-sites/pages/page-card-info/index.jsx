@@ -11,7 +11,7 @@ import Gridicon from 'calypso/components/gridicon';
  */
 import { isFrontPage, isPostsPage } from 'calypso/state/pages/selectors';
 import PostRelativeTimeStatus from 'calypso/my-sites/post-relative-time-status';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { getTheme } from 'calypso/state/themes/selectors';
 import { getThemeIdFromStylesheet } from 'calypso/state/themes/utils';

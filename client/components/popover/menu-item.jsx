@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
 import classnames from 'classnames';
 import { omit } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import ExternalLink from 'calypso/components/external-link';
+import Gridicon from 'calypso/components/gridicon';
 
 const noop = () => {};
 
@@ -71,10 +63,10 @@ export default class PopoverMenuItem extends Component {
 		return (
 			<ItemComponent
 				role="menuitem"
-				onMouseOver={ this.handleMouseOver }
 				tabIndex="-1"
 				className={ classes }
 				{ ...itemProps }
+				onMouseOver={ this.handleMouseOver }
 			>
 				{ icon && <Gridicon icon={ icon } size={ 18 } /> }
 				{ children }

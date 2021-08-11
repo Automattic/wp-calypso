@@ -1,20 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-import EducationalContent from '../educational-content';
-import { EDUCATION_FREE_PHOTO_LIBRARY } from 'calypso/my-sites/customer-home/cards/constants';
-
-/**
- * Image dependencies
- */
+import React from 'react';
 import freePhotoLibraryVideoPrompt from 'calypso/assets/images/customer-home/illustration--secondary-free-photo-library.svg';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { EDUCATION_FREE_PHOTO_LIBRARY } from 'calypso/my-sites/customer-home/cards/constants';
+import EducationalContent from '../educational-content';
 
 const FreePhotoLibrary = () => {
 	const translate = useTranslate();

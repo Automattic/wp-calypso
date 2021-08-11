@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,7 +14,7 @@ import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { bumpStatGenerator } from './utils';
 import { getPost } from 'calypso/state/posts/selectors';
 import { savePost } from 'calypso/state/posts/actions';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 
 class PostActionsEllipsisMenuPublish extends Component {
 	static propTypes = {
@@ -47,7 +46,7 @@ class PostActionsEllipsisMenuPublish extends Component {
 
 	render() {
 		const { translate, status, canPublish } = this.props;
-		if ( ! canPublish || ! includes( [ 'pending', 'draft' ], status ) ) {
+		if ( ! canPublish || ! [ 'pending', 'draft' ].includes( status ) ) {
 			return null;
 		}
 

@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import React, { Fragment } from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import StoreStatsReferrerWidgetBase from '../store-stats-referrer-widget-base';
-import TableRow from 'woocommerce/components/table/table-row';
-import TableItem from 'woocommerce/components/table/table-item';
+import React, { Fragment } from 'react';
 import { formatValue } from 'woocommerce/app/store-stats/utils';
+import TableItem from 'woocommerce/components/table/table-item';
+import TableRow from 'woocommerce/components/table/table-row';
+import StoreStatsReferrerWidgetBase from '../store-stats-referrer-widget-base';
 
 const StoreStatsReferrerWidget = ( props ) => {
 	const { translate } = props;

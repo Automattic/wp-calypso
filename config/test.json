@@ -6,7 +6,6 @@
 	"hostname": "calypso.localhost",
 	"port": 3000,
 	"i18n_default_locale_slug": "en",
-	"rtl": false,
 	"siftscience_key": "e00e878351",
 	"oauth_client_id": "39911",
 	"wpcom_signup_id": "39911",
@@ -43,7 +42,6 @@
 		"fullstory": true,
 		"gdpr-banner": false,
 		"google-my-business": false,
-		"gutenboarding/new-launch-mobile": true,
 		"gutenboarding/mshot-preview": true,
 		"gutenboarding/landscape-preview": true,
 		"gutenboarding/long-previews": true,
@@ -88,7 +86,6 @@
 		"signup/social": true,
 		"site-indicator": true,
 		"support-user": true,
-		"theme/showcase-revamp": true,
 		"upgrades/checkout": true,
 		"upgrades/domain-search": true,
 		"upgrades/redirect-payments": true,
@@ -96,7 +93,6 @@
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
 		"wpcom-user-bootstrap": false,
-		"wordpress-action-search": false,
-		"nav-unification/switcher": true
+		"wordpress-action-search": false
 	}
 }

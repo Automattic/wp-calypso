@@ -29,7 +29,7 @@ const SecurityCheckupNavigationItemContents = function ( props ) {
 
 class SecurityCheckupNavigationItem extends React.Component {
 	static propTypes = {
-		description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
+		description: PropTypes.node,
 		external: PropTypes.bool,
 		isPlaceholder: PropTypes.bool,
 		materialIcon: PropTypes.string,

@@ -36,7 +36,7 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isSidebarSectionOpen } from 'calypso/state/my-sites/sidebar/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';

@@ -1,20 +1,14 @@
-/**
- * External dependencies
- */
+import { ToggleControl } from '@wordpress/components';
+import { localize } from 'i18n-calypso';
+import { find, get } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { find, get } from 'lodash';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import { localize } from 'i18n-calypso';
+import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import Gridicon from 'calypso/components/gridicon';
-import ReaderPopover from 'calypso/reader/components/reader-popover';
 import SegmentedControl from 'calypso/components/segmented-control';
-import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
+import ReaderPopover from 'calypso/reader/components/reader-popover';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	subscribeToNewPostEmail,
 	updateNewPostEmailSubscription,
@@ -24,13 +18,9 @@ import {
 	subscribeToNewPostNotifications,
 	unsubscribeToNewPostNotifications,
 } from 'calypso/state/reader/follows/actions';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import QueryUserSettings from 'calypso/components/data/query-user-settings';
+import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class ReaderSiteNotificationSettings extends Component {

@@ -5,10 +5,9 @@ import {
 	makeLayout,
 	redirectLoggedOut,
 	redirectWithoutLocaleParamIfLoggedIn,
-	selectSiteIfLoggedIn,
 } from 'calypso/controller';
 import { details, fetchThemeDetailsData } from './controller';
-import { createNavigation, siteSelection } from 'calypso/my-sites/controller';
+import { createNavigation, selectSiteIfLoggedIn, siteSelection } from 'calypso/my-sites/controller';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
 import { translate } from 'i18n-calypso';

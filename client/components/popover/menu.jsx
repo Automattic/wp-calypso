@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
+import React, { Component } from 'react';
 import Popover from 'calypso/components/popover';
 
 const isInvalidTarget = ( target ) => {
@@ -17,25 +10,34 @@ class PopoverMenu extends Component {
 	static propTypes = {
 		autoPosition: PropTypes.bool,
 		isVisible: PropTypes.bool.isRequired,
+		focusOnShow: PropTypes.bool,
 		onClose: PropTypes.func.isRequired,
 		position: PropTypes.string,
 		className: PropTypes.string,
 		popoverComponent: PropTypes.elementType,
 		popoverTitle: PropTypes.string, // used by ReaderPopover
 		customPosition: PropTypes.object,
+		relativePosition: PropTypes.object,
 	};
 
 	static defaultProps = {
 		autoPosition: true,
+		focusOnShow: true,
 		position: 'top',
 		popoverComponent: Popover,
 	};
 
 	menu = React.createRef();
 
+	delayedFocus = null;
+
 	componentWillUnmount() {
 		// Make sure we don't hold on to reference to the DOM reference
 		this._previouslyFocusedElement = null;
+
+		if ( this.delayedFocus !== null ) {
+			window.clearTimeout( this.delayedFocus );
+		}
 	}
 
 	render() {
@@ -45,10 +47,11 @@ class PopoverMenu extends Component {
 			className,
 			context,
 			customPosition,
+			relativePosition,
 			isVisible,
-			isFocusEnabled,
 			popoverTitle,
 			position,
+			id,
 		} = this.props;
 
 		return (
@@ -59,13 +62,16 @@ class PopoverMenu extends Component {
 				className={ className }
 				context={ context }
 				customPosition={ customPosition }
+				relativePosition={ relativePosition }
 				isVisible={ isVisible }
-				isFocusEnabled={ isFocusEnabled }
+				// Make sure we focus on PopoverMenu so that we can control PopoverMenuItem by keyboard
+				focusOnShow={ false }
 				popoverTitle={ popoverTitle }
 				position={ position }
 			>
 				<div
 					ref={ this.menu }
+					id={ id }
 					role="menu"
 					className="popover__menu"
 					onKeyDown={ this._onKeyDown }
@@ -94,12 +100,25 @@ class PopoverMenu extends Component {
 	};
 
 	_onShow = () => {
-		const elementToFocus = this.menu.current;
+		if ( ! this.props.focusOnShow ) {
+			return;
+		}
+
+		// When a menu opens, or when a menubar receives focus, keyboard focus is placed on the first item
+		// See: https://www.w3.org/TR/wai-aria-practices/#keyboard-interaction-12
+		const elementToFocus = this.menu.current.firstChild;
 
 		this._previouslyFocusedElement = document.activeElement;
 
 		if ( elementToFocus ) {
-			elementToFocus.focus();
+			// Defer the focus a bit to make sure that the popover already has the final position.
+			// Initially, after first render, the popover is positioned outside the screen, at
+			// { top: -9999, left: -9999 } where it already has dimensions. These dimensions are measured
+			// and used to calculate the final position.
+			// Focusing the element while it's off the screen would cause unwanted scrolling.
+			this.delayedFocus = setTimeout( () => {
+				elementToFocus.focus();
+			}, 1 );
 		}
 	};
 
@@ -140,7 +159,7 @@ class PopoverMenu extends Component {
 
 		switch ( event.keyCode ) {
 			case 9: // tab
-				this.props.onClose();
+				this._onClose();
 				handled = true;
 				break;
 			case 38: // up arrow

@@ -76,6 +76,7 @@ export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 				brandFont
 				className="billing-history__page-heading"
 				headerText={ titles.sectionTitle }
+				subHeaderText={ translate( 'View, print, and email your receipts for this site.' ) }
 				align="left"
 			/>
 			<PurchasesNavigation sectionTitle={ 'Billing History' } siteSlug={ siteSlug } />

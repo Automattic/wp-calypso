@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { wpcom } from '../rest-client/wpcom';
-import { bumpStat } from '../rest-client/bump-stat';
-import Gridicon from './gridicons';
 import useSafe from '../helpers/use-safe';
+import { bumpStat } from '../rest-client/bump-stat';
+import { wpcom } from '../rest-client/wpcom';
+import Gridicon from './gridicons';
 
 const followStatTypes = {
 	comment: 'note_commented_post',

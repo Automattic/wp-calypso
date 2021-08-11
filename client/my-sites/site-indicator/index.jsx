@@ -22,7 +22,7 @@ import {
 } from 'calypso/state/analytics/actions';
 import QuerySiteConnectionStatus from 'calypso/components/data/query-site-connection-status';
 import { getUpdatesBySiteId, isJetpackSite } from 'calypso/state/sites/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 

@@ -1,25 +1,15 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import { partial } from 'lodash';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { partial } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import DetailItem from './detail-item';
-import { getMimePrefix, filterItemsByMimePrefix, url } from 'calypso/lib/media/utils';
 import HeaderCake from 'calypso/components/header-cake';
-import preloadImage from '../preload-image';
-import { ModalViews } from 'calypso/state/ui/media-modal/constants';
+import { getMimePrefix, filterItemsByMimePrefix, url } from 'calypso/lib/media/utils';
 import { setEditorMediaModalView } from 'calypso/state/editor/actions';
+import { ModalViews } from 'calypso/state/ui/media-modal/constants';
+import preloadImage from '../preload-image';
+import DetailItem from './detail-item';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

@@ -1,16 +1,10 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { __ } from '@wordpress/i18n';
-import { TextControl, Tip } from '@wordpress/components';
-import { Title, SubTitle, ActionButtons, BackButton, NextButton } from '@automattic/onboarding';
-
-/**
- * Internal dependencies
- */
-import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
 import { useTitle } from '@automattic/launch';
+import { Title, SubTitle, ActionButtons, BackButton, NextButton } from '@automattic/onboarding';
+import { TextControl, Tip } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
+import React from 'react';
+import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
+
 import './styles.scss';
 
 const NameStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onNextStep } ) => {

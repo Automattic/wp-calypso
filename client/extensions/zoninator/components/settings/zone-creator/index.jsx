@@ -1,23 +1,15 @@
-/**
- * External dependencies
- */
-
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import HeaderCake from 'calypso/components/header-cake';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { settingsPath } from '../../../app/util';
+import { addZone } from '../../../state/zones/actions';
 import { isSavingZone } from '../../../state/zones/selectors';
 import ZoneDetailsForm from '../../forms/zone-details-form';
-import { addZone } from '../../../state/zones/actions';
-import { settingsPath } from '../../../app/util';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
 class ZoneCreator extends PureComponent {
 	static propTypes = {

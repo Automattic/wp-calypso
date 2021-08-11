@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find, includes } from 'lodash';
+import { find } from 'lodash';
 import moment from 'moment';
 import page from 'page';
 import i18n from 'i18n-calypso';
@@ -285,7 +285,7 @@ function isExpired( purchase ) {
 }
 
 function isExpiring( purchase ) {
-	return includes( [ 'manualRenew', 'expiring' ], purchase.expiryStatus );
+	return [ 'manualRenew', 'expiring' ].includes( purchase.expiryStatus );
 }
 
 function isIncludedWithPlan( purchase ) {
@@ -559,7 +559,7 @@ function isRenewal( purchase ) {
 }
 
 function isRenewing( purchase ) {
-	return includes( [ 'active', 'autoRenewing' ], purchase.expiryStatus );
+	return [ 'active', 'autoRenewing' ].includes( purchase.expiryStatus );
 }
 
 function isWithinIntroductoryOfferPeriod( purchase ) {

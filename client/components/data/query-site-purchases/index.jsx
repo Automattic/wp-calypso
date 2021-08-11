@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import { useSelector, useDispatch } from 'react-redux';
-import { useEffect, useRef } from 'react';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import { isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
+import PropTypes from 'prop-types';
+import { useEffect, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { fetchSitePurchases } from 'calypso/state/purchases/actions';
+import { isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 
 const debug = debugFactory( 'calypso:query-site-purchases' );
 

@@ -1,28 +1,17 @@
-/**
- * External dependencies
- */
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { connect, useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import launchedIllustration from 'calypso/assets/images/customer-home/illustration--rocket.svg';
+import {
+	NOTICE_CELEBRATE_SITE_LAUNCH,
+	NOTICE_CELEBRATE_SITE_SETUP_COMPLETE,
+} from 'calypso/my-sites/customer-home/cards/constants';
+import CelebrateNotice from 'calypso/my-sites/customer-home/cards/notices/celebrate-notice';
 import { requestSiteChecklistTaskUpdate } from 'calypso/state/checklist/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import getSiteTaskList from 'calypso/state/selectors/get-site-task-list';
 import isSiteChecklistComplete from 'calypso/state/selectors/is-site-checklist-complete';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import CelebrateNotice from 'calypso/my-sites/customer-home/cards/notices/celebrate-notice';
-import {
-	NOTICE_CELEBRATE_SITE_LAUNCH,
-	NOTICE_CELEBRATE_SITE_SETUP_COMPLETE,
-} from 'calypso/my-sites/customer-home/cards/constants';
-
-/**
- * Image dependencies
- */
-import launchedIllustration from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 
 const CelebrateSiteLaunch = ( { isSiteSetupComplete, pendingSiteSetupTasks, siteId } ) => {
 	const translate = useTranslate();

@@ -1,15 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-/**
- * External dependencies
- */
-import React from 'react';
-import { shallow } from 'enzyme';
-/**
- * Internal dependencies
- */
 
+import { shallow } from 'enzyme';
+import React from 'react';
 import { Translatable } from '../translatable';
 
 const defaultProps = {

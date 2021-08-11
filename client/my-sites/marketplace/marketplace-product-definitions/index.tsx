@@ -19,16 +19,17 @@ import { marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';
  * */
 export const YOAST = 'YOAST';
 
-// TODO: Integrate this data structure with marketplace code
 export const productGroups: IProductGroupCollection = {
 	[ YOAST ]: {
 		products: {
 			[ YOAST_PREMIUM ]: {
+				productName: 'Yoast Premium',
 				defaultPluginSlug: 'wordpress-seo',
 				pluginsToBeInstalled: [ 'wordpress-seo-premium', 'wordpress-seo', 'yoast-test-helper' ],
 				isPurchasableProduct: true,
 			},
 			[ YOAST_FREE ]: {
+				productName: 'Yoast Free',
 				defaultPluginSlug: 'wordpress-seo',
 				pluginsToBeInstalled: [ 'wordpress-seo' ],
 				isPurchasableProduct: false,
@@ -36,6 +37,11 @@ export const productGroups: IProductGroupCollection = {
 		},
 	},
 };
+
+export const getAllProducts = (): IProductCollection =>
+	Object.values( productGroups )
+		.map( ( productGroup ) => productGroup.products )
+		.reduce( ( productsMap, curr ) => ( { ...productsMap, ...curr } ), {} );
 
 /**
  * Provides the plugin that needs to be installed for a given product
@@ -101,6 +107,23 @@ export function getProductDefinition(
 		marketplaceDebugger(
 			`Product does not exist for provided parameters: ${ productGroupSlug }, ${ productSlug }`
 		);
+		return null;
+	}
+	return productDefinition;
+}
+
+/**
+ * Do a simple search of all the products for a given product slug
+ *
+ * @param {string} productSlug The product slug
+ * @returns {string} The product details
+ */
+export function findProductDefinition(
+	productSlug: keyof IProductCollection
+): IProductDefinition | null {
+	const productDefinition = getAllProducts()[ productSlug ];
+	if ( ! productDefinition ) {
+		marketplaceDebugger( `Product does not exist for provided parameters: ${ productSlug }` );
 		return null;
 	}
 	return productDefinition;

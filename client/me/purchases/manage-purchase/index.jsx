@@ -43,6 +43,7 @@ import {
 	canEditPaymentDetails,
 	getAddNewPaymentMethodPath,
 	getChangePaymentMethodPath,
+	isJetpackTemporarySitePurchase,
 } from '../utils';
 import {
 	getByPurchaseId,
@@ -132,6 +133,7 @@ class ManagePurchase extends Component {
 		hasLoadedPurchasesFromServer: PropTypes.bool.isRequired,
 		hasNonPrimaryDomainsFlag: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
+		isJetpackTemporarySite: PropTypes.bool,
 		renewableSitePurchases: PropTypes.arrayOf( PropTypes.object ),
 		purchase: PropTypes.object,
 		purchaseAttachedTo: PropTypes.object,
@@ -713,6 +715,7 @@ class ManagePurchase extends Component {
 		const {
 			purchase,
 			translate,
+			isJetpackTemporarySite,
 			isProductOwner,
 			getManagePurchaseUrlFor,
 			siteSlug,
@@ -793,10 +796,13 @@ class ManagePurchase extends Component {
 					! preventRenewal &&
 					renderMonthlyRenewalOption &&
 					this.renderRenewMonthlyNavItem() }
-				{ isProductOwner && ! preventRenewal && this.renderUpgradeNavItem() }
+				{ isProductOwner &&
+					! preventRenewal &&
+					! isJetpackTemporarySite &&
+					this.renderUpgradeNavItem() }
 				{ isProductOwner && this.renderEditPaymentMethodNavItem() }
 				{ isProductOwner && this.renderCancelPurchaseNavItem() }
-				{ isProductOwner && this.renderRemovePurchaseNavItem() }
+				{ isProductOwner && ! isJetpackTemporarySite && this.renderRemovePurchaseNavItem() }
 			</Fragment>
 		);
 	}
@@ -938,5 +944,6 @@ export default connect( ( state, props ) => {
 		userId,
 		relatedMonthlyPlanSlug,
 		relatedMonthlyPlanPrice,
+		isJetpackTemporarySite: purchase && isJetpackTemporarySitePurchase( purchase.domain ),
 	};
 } )( localize( ManagePurchase ) );

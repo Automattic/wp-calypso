@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import classNames from 'classnames';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default class Spinner extends PureComponent {

@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { PLAN_PREMIUM, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { getSitePlan } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -25,5 +17,5 @@ export const hasSelectedSitePremiumOrBusinessPlan = ( state ) => {
 	if ( ! sitePlan ) {
 		return false;
 	}
-	return includes( [ PLAN_PREMIUM, PLAN_BUSINESS ], sitePlan.product_slug );
+	return [ PLAN_PREMIUM, PLAN_BUSINESS ].includes( sitePlan.product_slug );
 };

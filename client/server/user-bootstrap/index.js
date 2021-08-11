@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import superagent from 'superagent';
-import debugFactory from 'debug';
 import crypto from 'crypto';
-
-/**
- * Internal dependencies
- */
-import { filterUserObject } from 'calypso/lib/user/shared-utils';
 import config from '@automattic/calypso-config';
+import debugFactory from 'debug';
+import superagent from 'superagent';
+import { filterUserObject } from 'calypso/lib/user/shared-utils';
 
 const debug = debugFactory( 'calypso:bootstrap' );
 const AUTH_COOKIE_NAME = 'wordpress_logged_in';

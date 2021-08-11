@@ -1,8 +1,5 @@
 /* global fullSiteEditing */
 
-/**
- * External dependencies
- */
 import { use } from '@wordpress/data';
 
 // The purpose of this override is to prevent trash action from deleting template CPTs.

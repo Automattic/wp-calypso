@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-
 import '@testing-library/jest-dom/extend-expect';
 
 // hack until we can upgrade to react@16.9.0

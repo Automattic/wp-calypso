@@ -33,17 +33,10 @@ The rest of the attributes handle different configuration settings: `group` is u
 `index.js` will be assumed to be the entry point to your extension. That file should export a function that sets up routing for your plugin extension:
 
 ```js
-/**
- * External dependencies
- */
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import { helloWorld } from './controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection } from 'calypso/my-sites/controller';
-import { helloWorld } from './controller';
 
 export default () => {
 	page( '/hello-world', siteSelection, navigation, helloWorld, makeLayout, clientRender );

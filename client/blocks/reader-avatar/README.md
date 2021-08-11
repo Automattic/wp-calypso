@@ -7,7 +7,7 @@ If both a feed/site icon and author Gravatar are available, they will be overlai
 ## Example
 
 ```html
-<ReaderAvatar author={ author } siteIcon={ siteIcon } isCompact={ true } />
+<ReaderAvatar author="{" author } siteIcon="{" siteIcon } isCompact="{" true } />
 ```
 
 ## Props

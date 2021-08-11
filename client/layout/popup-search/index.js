@@ -1,29 +1,19 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/interactive-supports-focus */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-/**
- * External dependencies
- */
-import React from 'react';
+
 import { localize, useTranslate } from 'i18n-calypso';
+import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import HelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getInlineHelpAdminSectionSearchResultsForQuery from 'calypso/state/inline-help/selectors/get-inline-help-admin-section-search-results-query';
-import hasInlineHelpAPIResults from 'calypso/state/selectors/has-inline-help-api-results';
-import { selectResult } from 'calypso/state/inline-help/actions';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import QueryInlineHelpSearch from 'calypso/components/data/query-inline-help-search';
-
-/**
- * Style dependencies
- */
-import './style.scss';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { selectResult } from 'calypso/state/inline-help/actions';
+import getInlineHelpAdminSectionSearchResultsForQuery from 'calypso/state/inline-help/selectors/get-inline-help-admin-section-search-results-query';
 import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
+import hasInlineHelpAPIResults from 'calypso/state/selectors/has-inline-help-api-results';
+import './style.scss';
 
 export function PopUpSearch( props ) {
 	const translate = useTranslate();

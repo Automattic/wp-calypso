@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import proxy from 'wpcom-proxy-request';
-import wpcomOAuthFactory from 'wpcom-oauth-cors';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import wpcomOAuthFactory from 'wpcom-oauth-cors';
+import proxy from 'wpcom-proxy-request';
 import wpcomFactory from '../../';
 
 const debug = debugFactory( 'media-editor' );

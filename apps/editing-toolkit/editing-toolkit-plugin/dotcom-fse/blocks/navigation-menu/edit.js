@@ -1,11 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-/**
- * WordPress dependencies
- */
-import ServerSideRender from '@wordpress/server-side-render';
-import { Fragment } from '@wordpress/element';
-import { compose } from '@wordpress/compose';
-import { __ } from '@wordpress/i18n';
+
 import {
 	AlignmentToolbar,
 	BlockControls,
@@ -17,11 +11,11 @@ import {
 	withFontSizes,
 } from '@wordpress/block-editor';
 import { PanelBody } from '@wordpress/components';
+import { compose } from '@wordpress/compose';
 import { withSelect } from '@wordpress/data';
-
-/**
- * Internal dependencies
- */
+import { Fragment } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import ServerSideRender from '@wordpress/server-side-render';
 
 const NavigationMenuEdit = ( {
 	attributes,

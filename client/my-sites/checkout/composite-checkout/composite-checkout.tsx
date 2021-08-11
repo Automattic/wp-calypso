@@ -43,6 +43,7 @@ import QueryPlans from 'calypso/components/data/query-plans';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import filterAppropriatePaymentMethods from './lib/filter-appropriate-payment-methods';
 import useStoredCards from './hooks/use-stored-cards';
+import useCheckoutFlowTrackKey from './hooks/use-checkout-flow-track-key';
 import usePrepareProductsForCart from './hooks/use-prepare-products-for-cart';
 import useCreatePaymentMethods from './hooks/use-create-payment-methods';
 import webPayProcessor from './lib/web-pay-processor';
@@ -155,6 +156,7 @@ export default function CompositeCheckout( {
 		createAnalyticsEventHandler( reduxDispatch ),
 		[]
 	);
+	const isJetpackSitelessCheckout = isJetpackCheckout && ! jetpackSiteSlug;
 	const updatedSiteSlug = isJetpackCheckout ? jetpackSiteSlug : siteSlug;
 
 	const showErrorMessage = useCallback(
@@ -197,17 +199,13 @@ export default function CompositeCheckout( {
 		[ reduxDispatch ]
 	);
 
-	const checkoutFlow: string = useMemo( () => {
-		if ( isLoggedOutCart ) {
-			if ( isJetpackCheckout ) {
-				return isUserComingFromLoginForm
-					? 'jetpack_site_only_coming_from_login'
-					: 'jetpack_site_only';
-			}
-			return 'wpcom_registrationless';
-		}
-		return isJetpackNotAtomic ? 'jetpack_checkout' : 'wpcom_checkout';
-	}, [ isLoggedOutCart, isJetpackCheckout, isUserComingFromLoginForm, isJetpackNotAtomic ] );
+	const checkoutFlow = useCheckoutFlowTrackKey( {
+		hasJetpackSiteSlug: !! jetpackSiteSlug,
+		isJetpackCheckout,
+		isJetpackNotAtomic,
+		isLoggedOutCart,
+		isUserComingFromLoginForm,
+	} );
 
 	const countriesList = useCountryList( overrideCountryList || [] );
 
@@ -234,6 +232,7 @@ export default function CompositeCheckout( {
 		applyCoupon,
 		updateLocation,
 		replaceProductInCart,
+		replaceProductsInCart,
 		isLoading: isLoadingCart,
 		isPendingUpdate: isCartPendingUpdate,
 		responseCart,
@@ -250,11 +249,13 @@ export default function CompositeCheckout( {
 	const isInitialCartLoading = useAddProductsFromUrl( {
 		isLoadingCart,
 		isCartPendingUpdate,
+		isJetpackSitelessCheckout,
 		productsForCart,
 		areCartProductsPreparing,
 		couponCodeFromUrl: couponCodeFromUrl || maybeJetpackIntroCouponCode,
 		applyCoupon,
 		addProductsToCart,
+		replaceProductsInCart,
 	} );
 
 	useRecordCartLoaded( {

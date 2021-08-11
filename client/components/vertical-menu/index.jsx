@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import { partial } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
@@ -17,7 +10,7 @@ export class VerticalMenu extends PureComponent {
 	static propTypes = {
 		onClick: PropTypes.func,
 		initalItemIndex: PropTypes.number,
-		children: PropTypes.arrayOf( PropTypes.element ),
+		children: PropTypes.node,
 	};
 
 	static defaultProps = {

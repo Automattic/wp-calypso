@@ -7,7 +7,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get, includes, isEmpty, isEqual } from 'lodash';
+import { find, get, isEmpty, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -47,7 +47,12 @@ import {
 	siteHasScanProductPurchase,
 } from 'calypso/state/purchases/selectors';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { getSiteSlug, getSiteTitle, isJetpackSite } from 'calypso/state/sites/selectors';
+import {
+	getSiteSlug,
+	getSiteTitle,
+	isJetpackSite,
+	isJetpackSiteSecondaryNetworkSite as getIsJetpackSiteSecondaryNetworkSite,
+} from 'calypso/state/sites/selectors';
 import {
 	recordTracksEvent as recordTracksEventAction,
 	withAnalytics,
@@ -126,6 +131,7 @@ class ActivityLog extends Component {
 		// localize
 		moment: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
+		isJetpackSiteSecondaryNetworkSite: PropTypes.bool,
 	};
 
 	componentDidMount() {
@@ -376,11 +382,12 @@ class ActivityLog extends Component {
 			isAtomic,
 			isJetpack,
 			isIntroDismissed,
+			isJetpackSiteSecondaryNetworkSite,
 		} = this.props;
 
 		const disableRestore =
 			! enableRewind ||
-			includes( [ 'queued', 'running' ], get( this.props, [ 'restoreProgress', 'status' ] ) ) ||
+			[ 'queued', 'running' ].includes( get( this.props, [ 'restoreProgress', 'status' ] ) ) ||
 			'active' !== rewindState.state;
 		const disableBackup = 0 <= get( this.props, [ 'backupProgress', 'progress' ], -Infinity );
 
@@ -439,7 +446,9 @@ class ActivityLog extends Component {
 					<RewindUnavailabilityNotice siteId={ siteId } />
 				) }
 				<IntroBanner siteId={ siteId } />
-				{ siteHasNoLog && isIntroDismissed && <UpgradeBanner siteId={ siteId } /> }
+				{ siteHasNoLog && isIntroDismissed && ! isJetpackSiteSecondaryNetworkSite && (
+					<UpgradeBanner siteId={ siteId } />
+				) }
 				{ siteId && isJetpack && <ActivityLogTasklist siteId={ siteId } /> }
 				{ this.renderErrorMessage() }
 				{ this.renderActionProgress() }
@@ -531,7 +540,7 @@ class ActivityLog extends Component {
 
 		const rewindNoThanks = get( context, 'query.rewind-redirect', '' );
 		const rewindIsNotReady =
-			includes( [ 'uninitialized', 'awaitingCredentials' ], rewindState.state ) ||
+			[ 'uninitialized', 'awaitingCredentials' ].includes( rewindState.state ) ||
 			'vp_can_transfer' === rewindState.reason;
 
 		return (
@@ -599,6 +608,7 @@ export default connect(
 			timezone,
 			siteHasNoLog,
 			isIntroDismissed: getPreference( state, 'dismissible-card-activity-introduction-banner' ),
+			isJetpackSiteSecondaryNetworkSite: getIsJetpackSiteSecondaryNetworkSite( state, siteId ),
 		};
 	},
 	{

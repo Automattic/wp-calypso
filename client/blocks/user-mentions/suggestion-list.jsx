@@ -1,19 +1,9 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
+import UserMentionsSuggestion from 'calypso/blocks/user-mentions/suggestion';
 import PopoverMenu from 'calypso/components/popover/menu';
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import UserMentionsSuggestion from 'calypso/blocks/user-mentions/suggestion';
 
-/**
- * Style dependencies
- */
 import './suggestion-list.scss';
 
 const UserMentionsSuggestionList = ( {
@@ -29,7 +19,7 @@ const UserMentionsSuggestionList = ( {
 		className="user-mentions__suggestions"
 		context={ popoverContext }
 		isVisible={ true }
-		isFocusEnabled={ false }
+		focusOnShow={ false }
 		autoPosition={ false }
 		position="bottom right"
 		onClose={ onClose }

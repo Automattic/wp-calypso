@@ -4,7 +4,6 @@
 import { connect } from 'react-redux';
 import React from 'react';
 import page from 'page';
-import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -88,7 +87,7 @@ class Edit extends React.Component {
 		const { MAINTENANCE } = registrarNames;
 		const { REGISTERED, TRANSFER } = domainTypes;
 
-		if ( includes( [ REGISTERED, TRANSFER ], domain.type ) && domain.registrar === MAINTENANCE ) {
+		if ( [ REGISTERED, TRANSFER ].includes( domain.type ) && domain.registrar === MAINTENANCE ) {
 			return (
 				<MaintenanceCard
 					selectedDomainName={ this.props.selectedDomainName }

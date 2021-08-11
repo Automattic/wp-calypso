@@ -1,12 +1,7 @@
-/**
- * External dependencies
- */
+/* eslint-disable jsdoc/no-undefined-types */
+
 import { createHigherOrderComponent, pure } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
-
-/**
- * Internal dependencies
- */
 import { useSiteOptions } from './use-site-options';
 
 /**
@@ -30,14 +25,12 @@ import { useSiteOptions } from './use-site-options';
  *                         whih contains `optionName`, the actual name of the
  *                         WordPress option to fetch, and `defaultValue`, the
  *                         value to use while the option is fetching.
- *
  * @returns {Component} The higher order component.
  *
  * In the following example, withSiteOptions is called with an object mapping a
  * name for the option to some information about it. In particular, optionName
  * needs to match the name of the option in WordPress, and defaultValue is used
  * while the option is loading from the API.
- *
  * @example
  * function Component( { mySiteOption } ) {
  *   const { value, updateValue } = mySiteOption;
@@ -50,7 +43,6 @@ import { useSiteOptions } from './use-site-options';
  *     mySiteOption: { optionName: 'title', defaultValue: __( 'Site title loading…' ) },
  * 	} ),
  * ] )( Component );
- *
  */
 export const withSiteOptions = ( options ) =>
 	createHigherOrderComponent(

@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * WordPress dependencies
- */
 import { Snackbar } from '@wordpress/components';
+import React from 'react';
 
 const SnackbarExample = () => {
 	const content = 'Use Snackbars with an action link to an external page.';

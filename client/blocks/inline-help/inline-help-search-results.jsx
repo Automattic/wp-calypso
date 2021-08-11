@@ -1,39 +1,32 @@
-/**
- * External dependencies
- */
-import React, { Fragment, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { debounce, isEmpty } from 'lodash';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
-import page from 'page';
 import { speak } from '@wordpress/a11y';
-
-/**
- * Internal Dependencies
- */
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { debounce, isEmpty } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Fragment, useEffect } from 'react';
+import { connect } from 'react-redux';
 import QueryInlineHelpSearch from 'calypso/components/data/query-inline-help-search';
-import PlaceholderLines from './placeholder-lines';
-import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import { getSectionName } from 'calypso/state/ui/selectors';
-import getSearchResultsByQuery from 'calypso/state/inline-help/selectors/get-inline-help-search-results-for-query';
-import getSelectedResultIndex from 'calypso/state/inline-help/selectors/get-selected-result-index';
-import getInlineHelpCurrentlySelectedResult from 'calypso/state/inline-help/selectors/get-inline-help-currently-selected-result';
-import isRequestingInlineHelpSearchResultsForQuery from 'calypso/state/inline-help/selectors/is-requesting-inline-help-search-results-for-query';
-import hasInlineHelpAPIResults from 'calypso/state/selectors/has-inline-help-api-results';
-import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
+import Gridicon from 'calypso/components/gridicon';
+import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { selectResult } from 'calypso/state/inline-help/actions';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-import Gridicon from 'calypso/components/gridicon';
+import getInlineHelpCurrentlySelectedResult from 'calypso/state/inline-help/selectors/get-inline-help-currently-selected-result';
+import getSearchResultsByQuery from 'calypso/state/inline-help/selectors/get-inline-help-search-results-for-query';
+import getSelectedResultIndex from 'calypso/state/inline-help/selectors/get-selected-result-index';
+import isRequestingInlineHelpSearchResultsForQuery from 'calypso/state/inline-help/selectors/is-requesting-inline-help-search-results-for-query';
+import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
+import hasInlineHelpAPIResults from 'calypso/state/selectors/has-inline-help-api-results';
+import { getSectionName } from 'calypso/state/ui/selectors';
 import {
 	SUPPORT_TYPE_ADMIN_SECTION,
 	SUPPORT_TYPE_API_HELP,
 	SUPPORT_TYPE_CONTEXTUAL_HELP,
 } from './constants';
+import PlaceholderLines from './placeholder-lines';
 
 const noop = () => {};
 

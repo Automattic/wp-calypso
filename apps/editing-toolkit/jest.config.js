@@ -11,10 +11,10 @@
  * config file for e2e tests.
  */
 
+const path = require( 'path' );
 // @wordpress/scripts manually adds additional Jest config ontop of
 // @wordpress/jest-preset-default so we pull in this file to extend it
 const defaults = require( '@wordpress/scripts/config/jest-unit.config.js' );
-const path = require( 'path' );
 
 // Basically, CWD, so 'apps/editing-toolkit'.
 // Without this, it tries to use 'apps/editing-toolkit/bin'

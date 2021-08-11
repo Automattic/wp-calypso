@@ -114,11 +114,23 @@ export async function close(): Promise< void > {
 }
 
 /**
- * Given a page, this will clear the cookies for the context to which the page belongs.
+ * Given a page, this will clear all cookies, local storage and reset permissions for the
+ * Browser Context to which the page belongs.
  *
  * @param {Page} page Object representing a page launched by Playwright.
  * @returns {Promise<void>} No return value.
  */
-export async function clearCookies( page: Page ): Promise< void > {
-	await page.context().clearCookies();
+export async function clearAuthenticationState( page: Page ): Promise< void > {
+	// Save references to the BrowserContext and the current URL the page is on.
+	const browserContext = page.context();
+	const currentURL = page.url();
+
+	// Navigate to the WordPress.com base URL.
+	await page.goto( 'https://r-login.wordpress.com/' );
+	// Clear local storage.
+	await page.evaluate( 'localStorage.clear();' );
+	// Lastly, clear the cookies using built-in method.
+	await browserContext.clearCookies();
+	// Previous steps navigated page away from target page. Return page to the original URL.
+	await page.goto( currentURL );
 }

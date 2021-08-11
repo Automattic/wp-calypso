@@ -22,7 +22,7 @@ import {
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import wpcom from 'calypso/lib/wp';
-import { showMasterbar } from 'calypso/state/ui/masterbar-visibility/actions';
+import { getSiteWooCommerceWizardUrl } from 'calypso/state/sites/selectors';
 
 const VERIFY_EMAIL_ERROR_NOTICE = 'ecommerce-verify-email-error';
 const RESEND_ERROR = 'RESEND_ERROR';
@@ -94,7 +94,7 @@ class AtomicStoreThankYouCard extends Component {
 	};
 
 	renderAction = () => {
-		const { isEmailVerified, site, translate } = this.props;
+		const { isEmailVerified, translate, siteWooCommerceWizardUrl } = this.props;
 		const { resendStatus } = this.state;
 
 		if ( ! isEmailVerified ) {
@@ -116,7 +116,7 @@ class AtomicStoreThankYouCard extends Component {
 			<div className="checkout-thank-you__atomic-store-action-buttons">
 				<a
 					className={ classNames( 'button', 'thank-you-card__button' ) }
-					href={ site.URL + '/wp-admin/admin.php?page=wc-admin&path=%2Fsetup-wizard' }
+					href={ siteWooCommerceWizardUrl }
 				>
 					{ translate( 'Create your store!' ) }
 				</a>
@@ -175,6 +175,7 @@ export default connect(
 		const planClass = plan && plan.productSlug ? getPlanClass( plan.productSlug ) : '';
 		const emailAddress = getCurrentUserEmail( state );
 		const isEmailVerified = isCurrentUserEmailVerified( state );
+		const siteWooCommerceWizardUrl = getSiteWooCommerceWizardUrl( state, siteId );
 
 		return {
 			siteId,
@@ -182,7 +183,8 @@ export default connect(
 			emailAddress,
 			isEmailVerified,
 			planClass,
+			siteWooCommerceWizardUrl,
 		};
 	},
-	{ errorNotice, fetchCurrentUser, removeNotice, showMasterbar }
+	{ errorNotice, fetchCurrentUser, removeNotice }
 )( localize( AtomicStoreThankYouCard ) );

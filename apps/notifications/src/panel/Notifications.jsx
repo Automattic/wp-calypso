@@ -1,28 +1,15 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { Provider } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import repliesCache from './comment-replies-cache';
+import RestClient from './rest-client';
+import { init as initAPI } from './rest-client/wpcom';
 import { init as initStore, store } from './state';
 import { mergeHandlers } from './state/action-middleware/utils';
 import { SET_IS_SHOWING } from './state/action-types';
 import actions from './state/actions';
-
-import RestClient from './rest-client';
-import repliesCache from './comment-replies-cache';
-
-import { init as initAPI } from './rest-client/wpcom';
-
 import Layout from './templates';
 
-/**
- * Style dependencies
- */
 import './boot/stylesheets/style.scss';
 
 let client;

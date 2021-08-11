@@ -1,19 +1,13 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { Gravatar } from '../';
 
 describe( 'Gravatar', () => {
 	/**
 	 * Gravatar URLs use email hashes
 	 * Here we're hashing MyEmailAddress@example.com
+	 *
 	 * @see https://en.gravatar.com/site/implement/hash/
 	 */
 	const gravatarHash = 'f9879d71855b5ff21e4963273a886bfc';
@@ -130,7 +124,7 @@ describe( 'Gravatar', () => {
 
 			expect( img.length ).to.equal( 1 );
 			expect( img.prop( 'src' ) ).to.equal(
-				'https://i2.wp.com/www.example.com/avatar?resize=96%2C96'
+				'https://i0.wp.com/www.example.com/avatar?resize=96%2C96'
 			);
 			expect( img.hasClass( 'gravatar' ) ).to.equal( true );
 			expect( img.prop( 'width' ) ).to.equal( 32 );

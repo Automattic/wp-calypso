@@ -6,12 +6,16 @@
 
 - [Debugging](#debugging)
   - [Table of contents](#table-of-contents)
-  - [Visual Studio Code](#visual-studio-code)
-  - [Enable Mocha Debug Output](#enable-mocha-debug-output)
+  - [Mocha and Selenium](#mocha-and-selenium)
+    - [Visual Studio Code](#visual-studio-code)
+    - [Enable Mocha Debug Output](#enable-mocha-debug-output)
+  - [Jest and Playwright](#jest-and-playwright)
 
 <!-- /TOC -->
 
-## Visual Studio Code
+## Mocha and Selenium
+
+### Visual Studio Code
 
 For users of Visual Studio Code (VSCode), it is possible to attach to `mocha` while it is executing and step through the e2e tests.
 
@@ -43,7 +47,7 @@ Entrypoint for the debugger is `mocha/cli.js`.
 
 Set breakpoints in your test cases and flows, page objects and components to step through the execution.
 
-## Enable Mocha Debug Output
+### Enable Mocha Debug Output
 
 To set verbose output for `mocha`, prepend the command as follows:
 
@@ -56,3 +60,12 @@ eg.
 ```
 DEBUG=mocha:* node_modules/.bin/mocha specs/wp-manage-domains-spec.js
 ```
+
+## Jest and Playwright
+
+Our Playwright E2E tests run on Jest. Fortunately, Jest has fanstastic documentation on setting up debuggers, which can be found here: [https://jestjs.io/docs/troubleshooting](https://jestjs.io/docs/troubleshooting).
+
+A couple notes:
+
+- If using VSCode, setting up the debugger using the attaching method is often easier (as opposed to directly launching Jest in the `launch.json`). The attach configuration gives you more control over which script you want to run.
+- The E2E tests use the Jest binary that is installed at the root level of the repo. Put all together, if you were currently in the `e2e` directory, the command to run a single spec would look like `node --inspect-brk ../../node_modules/.bin/jest --runInBand specs/specs-playwright/wp-auth__canary-spec.ts`

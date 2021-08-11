@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-
-/**
- * Internal dependencies
- */
+import { isAnchorPodcastIdValid } from '../path';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import usePodcastTitle from './use-podcast-title';
-import { isAnchorPodcastIdValid } from '../path';
 
 export default function useSiteTitle(): void {
 	const { setSiteTitle } = useDispatch( ONBOARD_STORE );

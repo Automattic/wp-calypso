@@ -1,21 +1,11 @@
-/**
- * External dependencies
- */
 import { isMobile } from '@automattic/viewport';
+import classNames from 'classnames';
 import { throttle, defer } from 'lodash';
 import PropTypes from 'prop-types';
-import ReactDom from 'react-dom';
 import React from 'react';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import ReactDom from 'react-dom';
 import afterLayoutFlush from 'calypso/lib/after-layout-flush';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const RESIZE_RATE_IN_MS = 200;

@@ -1,11 +1,3 @@
-// This is required to fix the "regeneratorRuntime is not defined" error
-import '@automattic/calypso-polyfills';
-
-/**
- * External dependencies
- */
-import React, { useEffect, useRef } from 'react';
-import '@testing-library/jest-dom/extend-expect';
 import {
 	screen,
 	render,
@@ -13,19 +5,23 @@ import {
 	fireEvent,
 	waitForElementToBeRemoved,
 } from '@testing-library/react';
-
-/**
- * Internal dependencies
- */
-import { useShoppingCart, ShoppingCartProvider } from '../src/index';
+import React, { useEffect, useRef } from 'react';
 import { getEmptyResponseCart } from '../src/empty-carts';
+import { useShoppingCart, ShoppingCartProvider } from '../src/index';
 import type {
 	RequestCartProduct,
 	ResponseCartProduct,
 	RequestCart,
 	ResponseCart,
 	MinimalRequestCartProduct,
+	GetCart,
+	SetCart,
+	ShoppingCartManagerOptions,
 } from '../src/types';
+
+// This is required to fix the "regeneratorRuntime is not defined" error
+import '@automattic/calypso-polyfills';
+import '@testing-library/jest-dom/extend-expect';
 
 const planOne: ResponseCartProduct = {
 	time_added_to_cart: Date.now(),
@@ -127,10 +123,11 @@ function createProduct( productProps: RequestCartProduct ): ResponseCartProduct 
 }
 
 async function setCart( cartKey: string, newCart: RequestCart ): Promise< ResponseCart > {
-	if ( cartKey === mainCartKey ) {
+	if ( [ 'no-site', 'no-user', mainCartKey ].includes( cartKey ) ) {
 		// Mock the shopping-cart endpoint response here
 		return {
 			...emptyResponseCart,
+			cart_key: cartKey,
 			products: newCart.products.map( createProduct ),
 			coupon: newCart.coupon,
 			is_coupon_applied: !! newCart.coupon,
@@ -152,7 +149,13 @@ function ProductList( {
 	initialProductsForReplace?: MinimalRequestCartProduct[];
 	initialCoupon?: string;
 } ) {
-	const { responseCart, addProductsToCart, replaceProductsInCart, applyCoupon } = useShoppingCart();
+	const {
+		isPendingUpdate,
+		responseCart,
+		addProductsToCart,
+		replaceProductsInCart,
+		applyCoupon,
+	} = useShoppingCart();
 	const hasAddedProduct = useRef( false );
 	useEffect( () => {
 		if ( initialProducts && ! hasAddedProduct.current ) {
@@ -174,7 +177,7 @@ function ProductList( {
 		}
 	}, [ applyCoupon, initialCoupon ] );
 	if ( responseCart.products.length === 0 ) {
-		return null;
+		return <div>No products</div>;
 	}
 	const coupon = responseCart.is_coupon_applied ? <div>Coupon: { responseCart.coupon }</div> : null;
 	const location = responseCart.tax.location.postal_code ? (
@@ -185,6 +188,7 @@ function ProductList( {
 	) : null;
 	return (
 		<ul data-testid="product-list">
+			{ isPendingUpdate && <div>Loading...</div> }
 			{ coupon }
 			{ location }
 			{ responseCart.products.map( ( product ) => {
@@ -199,9 +203,26 @@ function ProductList( {
 	);
 }
 
-function MockProvider( { children } ) {
+function MockProvider( {
+	children,
+	setCartOverride,
+	getCartOverride,
+	options,
+	cartKeyOverride,
+}: {
+	children: React.ReactNode;
+	setCartOverride?: SetCart;
+	getCartOverride?: GetCart;
+	options?: ShoppingCartManagerOptions;
+	cartKeyOverride?: string | undefined;
+} ) {
 	return (
-		<ShoppingCartProvider cartKey={ mainCartKey } getCart={ getCart } setCart={ setCart }>
+		<ShoppingCartProvider
+			setCart={ setCartOverride ?? setCart }
+			getCart={ getCartOverride ?? getCart }
+			cartKey={ cartKeyOverride ?? mainCartKey }
+			options={ options }
+		>
 			{ children }
 		</ShoppingCartProvider>
 	);
@@ -642,4 +663,200 @@ describe( 'useShoppingCart', () => {
 			} );
 		} );
 	} );
+
+	describe( 'when refetchOnWindowFocus is disabled', () => {
+		const mockGetCart = jest.fn();
+
+		it( 'does not trigger a refetch when the window is focused', async () => {
+			mockGetCart.mockResolvedValue( { ...emptyResponseCart, products: [ planOne ] } );
+
+			render(
+				<MockProvider getCartOverride={ mockGetCart } options={ { refetchOnWindowFocus: false } }>
+					<ProductList />
+				</MockProvider>
+			);
+
+			await waitFor( () => screen.getByTestId( 'product-list' ) );
+
+			mockGetCart.mockResolvedValue( { ...emptyResponseCart, products: [ planTwo ] } );
+
+			fireEvent( window, new Event( 'focus' ) );
+
+			await waitFor( () => {
+				expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
+			} );
+		} );
+	} );
+
+	describe( 'when refetchOnWindowFocus is enabled', () => {
+		const mockGetCart = jest.fn();
+
+		beforeEach( () => {
+			mockGetCart.mockReset();
+			jest.restoreAllMocks();
+		} );
+
+		it( 'triggers a refetch when the window is focused', async () => {
+			mockGetCart.mockResolvedValue( { ...emptyResponseCart, products: [ planOne ] } );
+
+			render(
+				<MockProvider getCartOverride={ mockGetCart } options={ { refetchOnWindowFocus: true } }>
+					<ProductList />
+				</MockProvider>
+			);
+
+			await waitFor( () => screen.getByTestId( 'product-list' ) );
+
+			mockGetCart.mockResolvedValue( { ...emptyResponseCart, products: [ planTwo ] } );
+
+			fireEvent( window, new Event( 'focus' ) );
+
+			await waitFor( () => {
+				expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planTwo.product_name );
+			} );
+		} );
+
+		it( 'triggers only one refetch when the window is focused and there are multiple consumers', async () => {
+			mockGetCart.mockResolvedValue( { ...emptyResponseCart, products: [ planOne ] } );
+
+			render(
+				<MockProvider getCartOverride={ mockGetCart } options={ { refetchOnWindowFocus: true } }>
+					<ProductList />
+					<ProductList />
+					<ProductList />
+					<ProductList />
+				</MockProvider>
+			);
+
+			await waitFor( () => screen.getAllByTestId( 'product-list' ) );
+
+			mockGetCart.mockResolvedValue( { ...emptyResponseCart, products: [ planTwo ] } );
+
+			mockGetCart.mockClear();
+			fireEvent( window, new Event( 'focus' ) );
+
+			await verifyThatNever( () => expect( mockGetCart.mock.calls.length ).toBeGreaterThan( 1 ) );
+			expect( mockGetCart ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'does not trigger a refetch when the window is focused and the last fetch was very recent', async () => {
+			const recentTime = convertMsToSecs( Date.now() );
+			mockGetCart.mockResolvedValue( {
+				...emptyResponseCart,
+				products: [ planOne ],
+				cart_generated_at_timestamp: recentTime,
+			} );
+
+			render(
+				<MockProvider getCartOverride={ mockGetCart } options={ { refetchOnWindowFocus: true } }>
+					<ProductList />
+				</MockProvider>
+			);
+
+			await waitFor( () => screen.getByTestId( 'product-list' ) );
+
+			mockGetCart.mockResolvedValue( {
+				...emptyResponseCart,
+				products: [ planTwo ],
+				cart_generated_at_timestamp: recentTime,
+			} );
+
+			fireEvent( window, new Event( 'focus' ) );
+
+			await verifyThatTextNeverAppears( planTwo.product_name );
+			await waitFor( () => {
+				expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
+			} );
+		} );
+
+		it( 'does not trigger a refetch when the window is focused and the cart key is no-site', async () => {
+			mockGetCart.mockResolvedValue( emptyResponseCart );
+
+			render(
+				<MockProvider
+					getCartOverride={ mockGetCart }
+					cartKeyOverride="no-site"
+					options={ { refetchOnWindowFocus: true } }
+				>
+					<ProductList initialProducts={ [ planOne ] } />
+				</MockProvider>
+			);
+
+			await waitFor( () => screen.getByTestId( 'product-list' ) );
+
+			mockGetCart.mockResolvedValue( { ...emptyResponseCart, products: [ planTwo ] } );
+
+			fireEvent( window, new Event( 'focus' ) );
+
+			await verifyThatTextNeverAppears( planTwo.product_name );
+			await waitFor( () => {
+				expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
+			} );
+		} );
+
+		it( 'does not trigger a refetch when the window is focused and the cart key is no-user', async () => {
+			mockGetCart.mockResolvedValue( emptyResponseCart );
+
+			render(
+				<MockProvider
+					getCartOverride={ mockGetCart }
+					cartKeyOverride="no-user"
+					options={ { refetchOnWindowFocus: true } }
+				>
+					<ProductList initialProducts={ [ planOne ] } />
+				</MockProvider>
+			);
+
+			await waitFor( () => screen.getByTestId( 'product-list' ) );
+
+			mockGetCart.mockResolvedValue( { ...emptyResponseCart, products: [ planTwo ] } );
+
+			fireEvent( window, new Event( 'focus' ) );
+
+			await verifyThatTextNeverAppears( planTwo.product_name );
+			await waitFor( () => {
+				expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
+			} );
+		} );
+
+		it( 'does not trigger a refetch when the window is focused and the network is offline', async () => {
+			mockGetCart.mockResolvedValue( emptyResponseCart );
+
+			render(
+				<MockProvider getCartOverride={ mockGetCart } options={ { refetchOnWindowFocus: true } }>
+					<ProductList initialProducts={ [ planOne ] } />
+				</MockProvider>
+			);
+
+			await waitFor( () => screen.getByTestId( 'product-list' ) );
+
+			mockGetCart.mockResolvedValue( { ...emptyResponseCart, products: [ planTwo ] } );
+
+			jest.spyOn( navigator, 'onLine', 'get' ).mockReturnValueOnce( false );
+			fireEvent( window, new Event( 'focus' ) );
+
+			await verifyThatTextNeverAppears( planTwo.product_name );
+			await waitFor( () => {
+				expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
+			} );
+		} );
+	} );
 } );
+
+function convertMsToSecs( ms: number ): number {
+	return Math.floor( ms / 1000 );
+}
+
+// This is a little tricky because we need to verify that text never appears,
+// even after some time passes, so we use this slightly convoluted technique:
+// https://stackoverflow.com/a/68318058/2615868
+async function verifyThatTextNeverAppears( text: string ) {
+	await expect( screen.findByText( text ) ).rejects.toThrow();
+}
+
+// This is a little tricky because we need to verify something never happens,
+// even after some time passes, so we use this slightly convoluted technique:
+// https://stackoverflow.com/a/68318058/2615868
+async function verifyThatNever( expectCallback: () => void ) {
+	await expect( waitFor( expectCallback ) ).rejects.toThrow();
+}

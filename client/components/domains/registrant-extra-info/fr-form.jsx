@@ -1,25 +1,17 @@
-/**
- * External dependencies
- */
-
+import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
+import { defaults, get, isEmpty, map, set } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import debugFactory from 'debug';
-import { defaults, get, isEmpty, map, set } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
-import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
+import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
 import validateContactDetails from './fr-validate-contact-details';
 import { disableSubmitButton } from './with-contact-details-validation';
 

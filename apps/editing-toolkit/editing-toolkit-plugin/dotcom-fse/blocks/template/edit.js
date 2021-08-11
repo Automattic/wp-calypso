@@ -1,26 +1,17 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 /* global fullSiteEditing */
-/**
- * External dependencies
- */
-import classNames from 'classnames';
-import { get } from 'lodash';
 
-/**
- * WordPress dependencies
- */
-import { parse, createBlock } from '@wordpress/blocks';
 import { BlockEdit } from '@wordpress/block-editor';
+import { parse, createBlock } from '@wordpress/blocks';
 import { Button, Placeholder, Spinner, Disabled } from '@wordpress/components';
 import { compose, withState } from '@wordpress/compose';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { Fragment, useEffect, useState, createRef } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
+import classNames from 'classnames';
+import { get } from 'lodash';
 
-/**
- * Internal dependencies
- */
 import './style.scss';
 
 const noop = () => {};

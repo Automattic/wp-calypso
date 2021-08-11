@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-
 import { get } from 'lodash';
 
 function getSettingsState( state ) {

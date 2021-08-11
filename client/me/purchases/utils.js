@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { isEnabled } from '@automattic/calypso-config';
+
+/**
  * Internal dependencies
  */
 import { addPaymentMethod, changePaymentMethod, addNewPaymentMethod } from './paths';
@@ -39,9 +44,14 @@ function getAddNewPaymentMethodPath() {
 	return addNewPaymentMethod;
 }
 
+function isJetpackTemporarySitePurchase( domain ) {
+	return 'siteless.jetpack.com' === domain && isEnabled( 'jetpack/siteless-checkout' );
+}
+
 export {
 	canEditPaymentDetails,
 	getChangePaymentMethodPath,
 	getAddNewPaymentMethodPath,
 	isDataLoading,
+	isJetpackTemporarySitePurchase,
 };

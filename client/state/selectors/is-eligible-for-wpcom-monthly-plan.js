@@ -20,6 +20,9 @@ export default createSelector(
 		}
 
 		const currentPlanSlug = getCurrentPlan( state, siteId )?.productSlug;
+		if ( typeof currentPlanSlug === 'undefined' ) {
+			return true;
+		}
 
 		return (
 			( isAtomicSite( state, siteId ) && currentPlanSlug === 'jetpack_free' ) ||

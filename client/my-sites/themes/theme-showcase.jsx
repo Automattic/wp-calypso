@@ -18,7 +18,7 @@ import { addTracking, trackClick, localizeThemesPath } from './helpers';
 import DocumentHead from 'calypso/components/data/document-head';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import ThemePreview from './theme-preview';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
@@ -30,6 +30,7 @@ import ThemesSearchCard from './themes-magic-search-card';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
 import {
 	getActiveTheme,
+	getCanonicalTheme,
 	getThemeFilterTerms,
 	getThemeFilterToTermTable,
 	getThemeShowcaseDescription,
@@ -41,6 +42,9 @@ import SectionNav from 'calypso/components/section-nav';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import NavItem from 'calypso/components/section-nav/item';
 import RecommendedThemes from './recommended-themes';
+import TrendingThemes from './trending-themes';
+import FseThemes from './fse-themes';
+import Badge from 'calypso/components/badge';
 
 /**
  * Style dependencies
@@ -72,11 +76,37 @@ class ThemeShowcase extends React.Component {
 		super( props );
 		this.scrollRef = React.createRef();
 		this.bookmarkRef = React.createRef();
+		this.tabFilters = {
+			RECOMMENDED: {
+				key: 'recommended',
+				text: props.translate( 'Recommended' ),
+				order: 1,
+			},
+			TRENDING: { key: 'trending', text: props.translate( 'Trending' ), order: 2 },
+			MYTHEMES: {
+				key: 'my-themes',
+				text: props.translate( 'My Themes' ),
+				order: 3,
+			},
+			ALL: { key: 'all', text: props.translate( 'All Themes' ), order: 4 },
+			FSE: {
+				key: 'fse',
+				text: (
+					<span>
+						{ props.translate( 'Full Site Editing' ) }
+						<Badge type="warning-clear" className="theme-showcase__badge-beta">
+							{ props.translate( 'Beta' ) }
+						</Badge>
+					</span>
+				),
+				order: 5,
+			},
+		};
 		this.state = {
 			tabFilter:
 				this.props.loggedOutComponent || this.props.search || this.props.filter || this.props.tier
-					? 'all'
-					: 'recommended',
+					? this.tabFilters.ALL
+					: this.tabFilters.RECOMMENDED,
 		};
 	}
 
@@ -152,7 +182,7 @@ class ThemeShowcase extends React.Component {
 			// Strip filters and excess whitespace
 			searchString: searchBoxContent.replace( filterRegex, '' ).replace( /\s+/g, ' ' ).trim(),
 		} );
-		this.setState( { tabFilter: 'all' } );
+		this.setState( { tabFilter: this.tabFilters.ALL } );
 		page( url );
 		this.scrollToSearchInput();
 	};
@@ -191,8 +221,8 @@ class ThemeShowcase extends React.Component {
 	onTierSelect = ( { value: tier } ) => {
 		// In this state: tabFilter = [ ##Recommended## | All(1) ]   tier = [ All(2) | Free | Premium ]
 		// Clicking "Free" or "Premium" forces tabFilter from "Recommended" to "All"
-		if ( tier !== '' && tier !== 'all' && this.state.tabFilter === 'recommended' ) {
-			this.setState( { tabFilter: 'all' } );
+		if ( tier !== '' && tier !== 'all' && this.state.tabFilter.key !== this.tabFilters.ALL.key ) {
+			this.setState( { tabFilter: this.tabFilters.ALL } );
 		}
 		trackClick( 'search bar filter', tier );
 		const url = this.constructUrl( { tier } );
@@ -201,21 +231,64 @@ class ThemeShowcase extends React.Component {
 	};
 
 	onFilterClick = ( tabFilter ) => {
+		const scrollPos = window.pageYOffset;
 		trackClick( 'section nav filter', tabFilter );
 		this.setState( { tabFilter } );
 
 		let callback = () => null;
 		// In this state: tabFilter = [ Recommended | ##All(1)## ]  tier = [ All(2) | Free | ##Premium## ]
 		// Clicking "Recommended" forces tier to be "all", since Recommend themes cannot filter on tier.
-		if ( 'recommended' === tabFilter && 'all' !== this.props.tier ) {
-			callback = () => this.onTierSelect( { value: 'all' } );
+		if ( tabFilter.key !== this.tabFilters.ALL.key && 'all' !== this.props.tier ) {
+			callback = () => {
+				this.onTierSelect( { value: 'all' } );
+				window.scrollTo( 0, scrollPos );
+			};
 		}
 		this.setState( { tabFilter }, callback );
 	};
 
+	expertsBanner = () => {
+		const { currentThemeId, loggedOutComponent, siteId, isLoggedIn } = this.props;
+		const showBanners = currentThemeId || ! siteId || ! isLoggedIn;
+		if ( loggedOutComponent || ! showBanners ) {
+			return;
+		}
+		return <UpworkBanner location={ 'theme-banner' } />;
+	};
+
+	allThemes = ( { themeProps } ) => {
+		const { isJetpackSite, children } = this.props;
+		if ( isJetpackSite ) {
+			return children;
+		}
+		return (
+			<div className="theme-showcase__all-themes">
+				<ThemesSelection { ...themeProps } />
+			</div>
+		);
+	};
+
+	shouldShowTab = ( key ) => {
+		switch ( key ) {
+			case this.tabFilters.RECOMMENDED.key:
+			case this.tabFilters.TRENDING.key:
+			case this.tabFilters.ALL.key:
+				return true;
+			case this.tabFilters.MYTHEMES.key:
+				return this.props.isJetpackSite;
+			case this.tabFilters.FSE.key:
+				// Display FSE tab if feature flag is enabled or if current theme is already FSE-enabled.
+				return (
+					config.isEnabled( 'gutenboarding/site-editor' ) ||
+					this.props.currentTheme?.taxonomies?.theme_feature?.some(
+						( f ) => f.slug === 'block-templates'
+					)
+				);
+		}
+	};
+
 	render() {
 		const {
-			currentThemeId,
 			siteId,
 			options,
 			getScreenshotOption,
@@ -228,7 +301,6 @@ class ThemeShowcase extends React.Component {
 			filterString,
 			isMultisite,
 			locale,
-			isJetpackSite,
 		} = this.props;
 		const tier = config.isEnabled( 'upgrades/premium-themes' ) ? this.props.tier : 'free';
 
@@ -241,8 +313,6 @@ class ThemeShowcase extends React.Component {
 			{ property: 'og:type', content: 'website' },
 			{ property: 'og:site_name', content: 'WordPress.com' },
 		];
-
-		const links = [ { rel: 'canonical', href: canonicalUrl } ];
 
 		const headerIcons = [
 			{
@@ -265,12 +335,49 @@ class ThemeShowcase extends React.Component {
 				.sort( ( a, b ) => a.order - b.order )
 		);
 
-		const showBanners = currentThemeId || ! siteId || ! isLoggedIn;
+		const themeProps = {
+			filter: filter,
+			vertical: this.props.vertical,
+			siteId: this.props.siteId,
+			upsellUrl: this.props.upsellUrl,
+			search: search,
+			tier: this.props.tier,
+			defaultOption: this.props.defaultOption,
+			secondaryOption: this.props.secondaryOption,
+			placeholderCount: this.props.placeholderCount,
+			bookmarkRef: this.bookmarkRef,
+			getScreenshotUrl: ( theme ) => {
+				if ( ! getScreenshotOption( theme ).getUrl ) {
+					return null;
+				}
+
+				return localizeThemesPath(
+					getScreenshotOption( theme ).getUrl( theme ),
+					locale,
+					! isLoggedIn
+				);
+			},
+			onScreenshotClick: ( themeId ) => {
+				if ( ! getScreenshotOption( themeId ).action ) {
+					return;
+				}
+				getScreenshotOption( themeId ).action( themeId );
+			},
+			getActionLabel: ( theme ) => getScreenshotOption( theme ).label,
+			trackScrollPage: this.props.trackScrollPage,
+			emptyContent: this.props.emptyContent,
+			scrollToSearchInput: this.scrollToSearchInput,
+			getOptions: ( theme ) =>
+				pickBy(
+					addTracking( options ),
+					( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
+				),
+		};
 
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<div>
-				<DocumentHead title={ title } meta={ metas } link={ links } />
+				<DocumentHead title={ title } meta={ metas } />
 				<PageViewTracker
 					path={ this.props.analyticsPath }
 					title={ this.props.analyticsPageTitle }
@@ -292,126 +399,32 @@ class ThemeShowcase extends React.Component {
 						select={ this.onTierSelect }
 					/>
 					{ isLoggedIn && (
-						<SectionNav
-							className="themes__section-nav"
-							selectedText={
-								'recommended' === this.state.tabFilter
-									? translate( 'Recommended' )
-									: translate( 'All Themes' )
-							}
-						>
+						<SectionNav className="themes__section-nav" selectedText={ this.state.tabFilter.text }>
 							<NavTabs>
-								<NavItem
-									onClick={ () => this.onFilterClick( 'recommended' ) }
-									selected={ 'recommended' === this.state.tabFilter }
-								>
-									{ translate( 'Recommended' ) }
-								</NavItem>
-								<NavItem
-									onClick={ () => this.onFilterClick( 'all' ) }
-									selected={ 'all' === this.state.tabFilter }
-								>
-									{ translate( 'All Themes' ) }
-								</NavItem>
+								{ Object.values( this.tabFilters )
+									.sort( ( a, b ) => a.order - b.order )
+									.map(
+										( tabFilter ) =>
+											this.shouldShowTab( tabFilter.key ) && (
+												<NavItem
+													key={ tabFilter.key }
+													onClick={ () => this.onFilterClick( tabFilter ) }
+													selected={ tabFilter.key === this.state.tabFilter.key }
+												>
+													{ tabFilter.text }
+												</NavItem>
+											)
+									) }
 							</NavTabs>
 						</SectionNav>
 					) }
-
 					{ this.props.upsellBanner }
-
-					{ 'recommended' === this.state.tabFilter && (
-						<RecommendedThemes
-							upsellUrl={ this.props.upsellUrl }
-							search={ search }
-							tier={ this.props.tier }
-							filter={ filter }
-							vertical={ this.props.vertical }
-							siteId={ this.props.siteId }
-							listLabel={ ' ' }
-							defaultOption={ this.props.defaultOption }
-							secondaryOption={ this.props.secondaryOption }
-							placeholderCount={ this.props.placeholderCount }
-							getScreenshotUrl={ function ( theme ) {
-								if ( ! getScreenshotOption( theme ).getUrl ) {
-									return null;
-								}
-
-								return localizeThemesPath(
-									getScreenshotOption( theme ).getUrl( theme ),
-									locale,
-									! isLoggedIn
-								);
-							} }
-							onScreenshotClick={ function ( themeId ) {
-								if ( ! getScreenshotOption( themeId ).action ) {
-									return;
-								}
-								getScreenshotOption( themeId ).action( themeId );
-							} }
-							getActionLabel={ function ( theme ) {
-								return getScreenshotOption( theme ).label;
-							} }
-							getOptions={ function ( theme ) {
-								return pickBy(
-									addTracking( options ),
-									( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
-								);
-							} }
-							trackScrollPage={ this.props.trackScrollPage }
-							emptyContent={ this.props.emptyContent }
-							scrollToSearchInput={ this.scrollToSearchInput }
-							bookmarkRef={ this.bookmarkRef }
-						/>
-					) }
-					{ 'all' === this.state.tabFilter && (
-						<div className="theme-showcase__all-themes">
-							{ ! this.props.loggedOutComponent && showBanners && (
-								<UpworkBanner location={ 'theme-banner' } />
-							) }
-							<ThemesSelection
-								upsellUrl={ this.props.upsellUrl }
-								search={ search }
-								tier={ this.props.tier }
-								filter={ filter }
-								vertical={ this.props.vertical }
-								siteId={ this.props.siteId }
-								listLabel={ this.props.listLabel }
-								defaultOption={ this.props.defaultOption }
-								secondaryOption={ this.props.secondaryOption }
-								placeholderCount={ this.props.placeholderCount }
-								getScreenshotUrl={ function ( theme ) {
-									if ( ! getScreenshotOption( theme ).getUrl ) {
-										return null;
-									}
-
-									return localizeThemesPath(
-										getScreenshotOption( theme ).getUrl( theme ),
-										locale,
-										! isLoggedIn
-									);
-								} }
-								onScreenshotClick={ function ( themeId ) {
-									if ( ! getScreenshotOption( themeId ).action ) {
-										return;
-									}
-									getScreenshotOption( themeId ).action( themeId );
-								} }
-								getActionLabel={ function ( theme ) {
-									return getScreenshotOption( theme ).label;
-								} }
-								getOptions={ function ( theme ) {
-									return pickBy(
-										addTracking( options ),
-										( option ) => ! ( option.hideForTheme && option.hideForTheme( theme, siteId ) )
-									);
-								} }
-								trackScrollPage={ this.props.trackScrollPage }
-								emptyContent={ this.props.emptyContent }
-								bookmarkRef={ this.bookmarkRef }
-							/>
-							{ isJetpackSite && this.props.children }
-						</div>
-					) }
+					{ 'recommended' === this.state.tabFilter.key && <RecommendedThemes { ...themeProps } /> }
+					{ 'all' === this.state.tabFilter.key && this.expertsBanner() }
+					{ 'all' === this.state.tabFilter.key && this.allThemes( { themeProps } ) }
+					{ 'my-themes' === this.state.tabFilter.key && <ThemesSelection { ...themeProps } /> }
+					{ 'trending' === this.state.tabFilter.key && <TrendingThemes { ...themeProps } /> }
+					{ 'fse' === this.state.tabFilter.key && <FseThemes { ...themeProps } /> }
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 					<ThanksModal source={ 'list' } />
@@ -423,16 +436,21 @@ class ThemeShowcase extends React.Component {
 	}
 }
 
-const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
-	currentThemeId: getActiveTheme( state, siteId ),
-	isLoggedIn: !! getCurrentUserId( state ),
-	siteSlug: getSiteSlug( state, siteId ),
-	description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
-	title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),
-	subjects: getThemeFilterTerms( state, 'subject' ) || {},
-	filterString: prependThemeFilterKeys( state, filter ),
-	filterToTermTable: getThemeFilterToTermTable( state ),
-	themesBookmark: getThemesBookmark( state ),
-} );
+const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
+	const currentThemeId = getActiveTheme( state, siteId );
+	const currentTheme = getCanonicalTheme( state, siteId, currentThemeId );
+	return {
+		currentThemeId,
+		currentTheme,
+		isLoggedIn: isUserLoggedIn( state ),
+		siteSlug: getSiteSlug( state, siteId ),
+		description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
+		title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),
+		subjects: getThemeFilterTerms( state, 'subject' ) || {},
+		filterString: prependThemeFilterKeys( state, filter ),
+		filterToTermTable: getThemeFilterToTermTable( state ),
+		themesBookmark: getThemesBookmark( state ),
+	};
+};
 
 export default connect( mapStateToProps, null )( localize( ThemeShowcase ) );

@@ -1,21 +1,11 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
+import { Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
+import PropTypes from 'prop-types';
+import React from 'react';
 import Gridicon from 'calypso/components/gridicon';
 import ProductCardPriceGroup from './price-group';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function ProductCard( {
@@ -73,7 +63,7 @@ function ProductCard( {
 ProductCard.propTypes = {
 	billingTimeFrame: PropTypes.string,
 	currencyCode: PropTypes.string,
-	description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] ),
+	description: PropTypes.node,
 	discountedPrice: PropTypes.oneOfType( [
 		PropTypes.number,
 		PropTypes.arrayOf( PropTypes.number ),
@@ -81,8 +71,8 @@ ProductCard.propTypes = {
 	fullPrice: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
 	isPlaceholder: PropTypes.bool,
 	purchase: PropTypes.object,
-	subtitle: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element, PropTypes.node ] ),
-	title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+	subtitle: PropTypes.node,
+	title: PropTypes.node,
 };
 
 export default localize( ProductCard );

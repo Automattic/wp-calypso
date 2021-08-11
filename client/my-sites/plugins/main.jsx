@@ -28,7 +28,7 @@ import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/ac
 import PluginsBrowser from './plugins-browser';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import NoPermissionsError from './no-permissions-error';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import getUpdateableJetpackSites from 'calypso/state/selectors/get-updateable-jetpack-sites';

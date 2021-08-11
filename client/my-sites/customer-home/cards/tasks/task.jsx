@@ -1,28 +1,19 @@
-/**
- * External dependencies
- */
-import React, { useEffect, useRef, useState } from 'react';
-import { useTranslate } from 'i18n-calypso';
-import { connect, useDispatch } from 'react-redux';
 import { Button } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
+import { useInstanceId } from '@wordpress/compose';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { useTranslate } from 'i18n-calypso';
+import React, { useEffect, useRef, useState } from 'react';
+import { connect, useDispatch } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import Gridicon from 'calypso/components/gridicon';
 import PopoverMenu from 'calypso/components/popover/menu';
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import Spinner from 'calypso/components/spinner';
+import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const Task = ( {
@@ -51,7 +42,8 @@ const Task = ( {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const skipButtonRef = useRef( null );
-	const { skipCurrentView } = useSkipCurrentViewMutation( siteId );
+	const { skipCard } = useSkipCurrentViewMutation( siteId );
+	const instanceId = useInstanceId( Task );
 
 	useEffect( () => setIsLoading( forceIsLoading ), [ forceIsLoading ] );
 
@@ -62,7 +54,7 @@ const Task = ( {
 
 		if ( completeOnStart ) {
 			setIsLoading( true );
-			skipCurrentView();
+			skipCard( taskId );
 		}
 
 		dispatch(
@@ -79,7 +71,7 @@ const Task = ( {
 		setIsLoading( true );
 		setSkipOptionsVisible( false );
 
-		skipCurrentView( reminder );
+		skipCard( taskId, reminder );
 
 		dispatch(
 			composeAnalytics(
@@ -147,6 +139,11 @@ const Task = ( {
 							className="task__skip is-link"
 							ref={ skipButtonRef }
 							onClick={ () => ( enableSkipOptions ? setSkipOptionsVisible( true ) : skipTask() ) }
+							aria-haspopup
+							// The WAI recommendation is to not present the aria-expanded attribute when the menu is hidden.
+							// See: https://www.w3.org/TR/wai-aria-practices/#wai-aria-roles-states-and-properties-14
+							aria-expanded={ enableSkipOptions && areSkipOptionsVisible ? true : undefined }
+							aria-controls={ `popover-menu-${ instanceId }` }
 						>
 							{ enableSkipOptions ? translate( 'Hide this' ) : translate( 'Dismiss' ) }
 							{ enableSkipOptions && <Gridicon icon="dropdown" size={ 18 } /> }
@@ -154,6 +151,7 @@ const Task = ( {
 					) }
 					{ showSkip && enableSkipOptions && areSkipOptionsVisible && (
 						<PopoverMenu
+							id={ `popover-menu-${ instanceId }` }
 							context={ skipButtonRef.current }
 							isVisible={ areSkipOptionsVisible }
 							onClose={ () => setSkipOptionsVisible( false ) }

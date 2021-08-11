@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { flatMap, last } from 'lodash';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
 import { isDiscoverBlog, isDiscoverFeed } from 'calypso/reader/discover/helper';
 
 export function isDiscoverPostKey( postKey ) {

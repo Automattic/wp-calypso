@@ -67,7 +67,7 @@ describe( 'Purchase Flow states test suite', () => {
 		expectedState = {
 			...defaultMarketPlaceState,
 			pluginInstallationStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.ERROR,
-			reasonForPluginInstallationStatus: 'NOT_PROVIDED',
+			reasonForPluginInstallationStatus: 'Not provided.',
 		};
 		expect( receivedState ).toEqual( expectedState );
 	} );
@@ -88,7 +88,7 @@ describe( 'Purchase Flow states test suite', () => {
 		expectedState = {
 			...defaultMarketPlaceState,
 			siteTransferStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.ERROR,
-			reasonForSiteTransferStatus: 'NOT_PROVIDED',
+			reasonForSiteTransferStatus: 'Not provided.',
 		};
 		expect( receivedState ).toEqual( expectedState );
 	} );

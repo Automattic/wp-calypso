@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
+import { Button, CompactCard, ScreenReaderText } from '@automattic/components';
 import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Fragment, PureComponent } from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Button, CompactCard, ScreenReaderText } from '@automattic/components';
+import Gridicon from 'calypso/components/gridicon';
 import Notice from 'calypso/components/notice';
 import Spinner from 'calypso/components/spinner';
 

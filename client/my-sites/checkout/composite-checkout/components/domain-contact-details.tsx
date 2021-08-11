@@ -5,7 +5,11 @@ import React from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import type { DomainContactDetails as DomainContactDetailsData } from '@automattic/shopping-cart';
-import type { DomainContactDetailsErrors } from '@automattic/wpcom-checkout';
+import type {
+	DomainContactDetailsErrors,
+	ManagedContactDetails,
+	ManagedContactDetailsRequiredMask,
+} from '@automattic/wpcom-checkout';
 
 /**
  * Internal dependencies
@@ -24,6 +28,8 @@ export default function DomainContactDetails( {
 	contactDetails,
 	contactDetailsErrors,
 	updateDomainContactFields,
+	updateRequiredDomainFields,
+	getIsFieldRequired,
 	shouldShowContactDetailsValidationErrors,
 	isDisabled,
 	isLoggedOutCart,
@@ -33,6 +39,13 @@ export default function DomainContactDetails( {
 	contactDetails: DomainContactDetailsData;
 	contactDetailsErrors: DomainContactDetailsErrors;
 	updateDomainContactFields: ( details: DomainContactDetailsData ) => void;
+	updateRequiredDomainFields?: (
+		details: ManagedContactDetails,
+		requiredMask: ManagedContactDetailsRequiredMask
+	) => ManagedContactDetails;
+	getIsFieldRequired?: (
+		field: Exclude< keyof ManagedContactDetails, 'tldExtraFields' >
+	) => boolean;
 	shouldShowContactDetailsValidationErrors: boolean;
 	isDisabled: boolean;
 	isLoggedOutCart: boolean;
@@ -58,6 +71,7 @@ export default function DomainContactDetails( {
 					shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
 				}
 				onContactDetailsChange={ updateDomainContactFields }
+				getIsFieldRequired={ getIsFieldRequired }
 				getIsFieldDisabled={ getIsFieldDisabled }
 				isLoggedOutCart={ isLoggedOutCart }
 				emailOnly={ emailOnly }
@@ -67,6 +81,7 @@ export default function DomainContactDetails( {
 					contactDetails={ contactDetails }
 					ccTldDetails={ contactDetails?.extra?.ca ?? {} }
 					onContactDetailsChange={ updateDomainContactFields }
+					updateRequiredDomainFields={ updateRequiredDomainFields }
 					contactDetailsValidationErrors={
 						shouldShowContactDetailsValidationErrors ? contactDetailsErrors : {}
 					}

@@ -7,7 +7,6 @@ import classNames from 'classnames';
 import { includes, isEqual, some } from 'lodash';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { FEATURE_VIDEO_UPLOADS } from '@automattic/calypso-products';
 
 /**
  * Internal dependencies
@@ -26,10 +25,10 @@ import {
 	getKeyringConnections,
 } from 'calypso/state/sharing/keyring/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
+import hasAvailableSiteFeature from 'calypso/state/selectors/has-available-site-feature';
 import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
 import { selectMediaItems } from 'calypso/state/media/actions';
-import { hasSiteFeature } from 'calypso/lib/site/utils';
 
 /**
  * Style dependencies
@@ -131,7 +130,14 @@ class MediaLibrary extends Component {
 	};
 
 	filterRequiresUpgrade() {
-		const { filter, site, source, isJetpack, isAtomic, hasVideoUploadFeature } = this.props;
+		const {
+			filter,
+			site,
+			source,
+			isJetpack,
+			hasVideoUploadFeature,
+			hasVideoUploadAvailableFeature,
+		} = this.props;
 		if ( source ) {
 			return false;
 		}
@@ -141,11 +147,7 @@ class MediaLibrary extends Component {
 				return ! ( ( site && site.options.upgraded_filetypes_enabled ) || isJetpack );
 
 			case 'videos':
-				return ! (
-					( site && site.options.videopress_enabled ) ||
-					( isJetpack && ! isAtomic ) ||
-					( isAtomic && hasVideoUploadFeature )
-				);
+				return ! hasVideoUploadFeature && !! hasVideoUploadAvailableFeature;
 		}
 
 		return false;
@@ -223,8 +225,12 @@ export default connect(
 		needsKeyring: needsKeyring( state, source ),
 		selectedItems: getMediaLibrarySelectedItems( state, site?.ID ),
 		isJetpack: isJetpackSite( state, site?.ID ),
-		isAtomic: isAtomicSite( state, site?.ID ),
-		hasVideoUploadFeature: hasSiteFeature( site, FEATURE_VIDEO_UPLOADS ),
+		hasVideoUploadFeature: hasActiveSiteFeature( state, site?.ID, 'upload-video-files' ),
+		hasVideoUploadAvailableFeature: hasAvailableSiteFeature(
+			state,
+			site?.ID,
+			'upload-video-files'
+		),
 	} ),
 	{
 		requestKeyringConnections,

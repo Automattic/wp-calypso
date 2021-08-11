@@ -1,17 +1,12 @@
 /* global fullSiteEditing */
 
-/**
- * External dependencies
- */
-import domReady from '@wordpress/dom-ready';
-import ReactDOM from 'react-dom';
-import { __ } from '@wordpress/i18n';
+// eslint-disable-next-line no-restricted-imports
 import { Button, Dashicon } from '@wordpress/components';
+import domReady from '@wordpress/dom-ready';
 import { useState } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import ReactDOM from 'react-dom';
 
-/**
- * Internal dependencies
- */
 import './style.scss';
 
 function BackButtonOverride( { defaultLabel, defaultUrl } ) {

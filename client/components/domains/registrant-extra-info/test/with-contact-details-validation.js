@@ -2,17 +2,10 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import React from 'react';
-import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { difference, set } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
+import { Provider } from 'react-redux';
 import { ValidatedRegistrantExtraInfoUkForm, RegistrantExtraInfoUkForm } from '../uk-form';
 
 jest.mock( 'calypso/state/selectors/get-validation-schemas', () => () => ( {

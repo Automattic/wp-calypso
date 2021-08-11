@@ -60,6 +60,10 @@ export function domainAddNew( siteName, searchTerm ) {
 	return path;
 }
 
+export function domainAddEmailUpsell( siteName, domainName ) {
+	return `/domains/add/${ siteName }/email/${ domainName }`;
+}
+
 export function domainManagementAllRoot() {
 	return '/domains/manage/all';
 }
@@ -165,6 +169,34 @@ export function domainMapping( siteName, domain = '' ) {
 	let path = `/domains/add/mapping/${ siteName }`;
 	if ( domain ) {
 		path += `?initialQuery=${ domain }`;
+	}
+
+	return path;
+}
+
+/**
+ *
+ * @param { string } siteName	The slug for the site.
+ * @param { string } domainName	The domain name to map.
+ * @param { string } step		The step slug to start from (optional)
+ * @param { boolean } showErrors Whether to show the mapping setup errors.
+ * @returns {string} Path to the mapping setup flow.
+ */
+export function domainMappingSetup( siteName, domainName, step = '', showErrors = false ) {
+	let path = `/domains/mapping/${ siteName }/setup/${ domainName }`;
+	const params = {};
+
+	if ( step ) {
+		params.step = step;
+	}
+
+	if ( showErrors ) {
+		params[ 'show-errors' ] = true;
+	}
+
+	const queryString = stringify( params );
+	if ( queryString ) {
+		path += '?' + queryString;
 	}
 
 	return path;

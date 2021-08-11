@@ -10,6 +10,8 @@ import { removeQueryArgs } from '@wordpress/url';
 /**
  * Internal Dependencies
  */
+import { composeHandlers } from 'calypso/controller/shared';
+import { render } from 'calypso/controller/web-util';
 import { cloudSiteSelection } from 'calypso/jetpack-cloud/controller';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { requestSite } from 'calypso/state/sites/actions';
@@ -35,7 +37,7 @@ import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selec
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 import {
 	domainManagementContactsPrivacy,
@@ -353,8 +355,9 @@ export function noSite( context, next ) {
 	const currentUser = getCurrentUser( getState() );
 	const hasSite = currentUser && currentUser.visible_site_count >= 1;
 	const isDomainOnlyFlow = context.query?.isDomainOnly === '1';
+	const isJetpackCheckoutFlow = context.pathname.includes( '/checkout/jetpack' );
 
-	if ( ! isDomainOnlyFlow && hasSite ) {
+	if ( ! isDomainOnlyFlow && ! isJetpackCheckoutFlow && hasSite ) {
 		siteSelection( context, next );
 	} else {
 		context.store.dispatch( setSelectedSiteId( null ) );
@@ -675,4 +678,17 @@ export function getJetpackAuthorizeURL( context, site ) {
 		},
 		trailingslashit( site?.URL ) + 'wp-admin/'
 	);
+}
+
+export function selectSiteIfLoggedIn( context, next ) {
+	const state = context.store.getState();
+	if ( ! isUserLoggedIn( state ) ) {
+		next();
+		return;
+	}
+
+	// Logged in: Terminate the regular handler path by not calling next()
+	// and render the site selection screen, redirecting the user if they
+	// only have one site.
+	composeHandlers( siteSelection, sites, makeLayout, render )( context );
 }

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { blocked, created, expires, maxLockPeriod } from '../selectors';
 
 describe( 'selectors', () => {

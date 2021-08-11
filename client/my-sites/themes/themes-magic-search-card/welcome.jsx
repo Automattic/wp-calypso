@@ -110,15 +110,25 @@ class MagicSearchWelcome extends React.Component {
 				key={ taxonomy }
 				data-key={ taxonomy }
 			>
-				<Gridicon
-					icon={ taxonomyToGridicon( taxonomy ) }
-					className="themes-magic-search-card__welcome-taxonomy-icon"
-					size={ 18 }
-				/>
-				{ taxonomyTranslations[ taxonomy ] ||
-					i18n.translate( 'Unknown', {
-						context: 'Theme Showcase filter name',
-					} ) }
+				<span
+					className="themes-magic-search-card__welcome-taxonomy-icon-container"
+					data-key={ taxonomy }
+				>
+					<Gridicon
+						icon={ taxonomyToGridicon( taxonomy ) }
+						className="themes-magic-search-card__welcome-taxonomy-icon"
+						size={ 18 }
+					/>{ ' ' }
+				</span>
+				<span
+					className="themes-magic-search-card__welcome-taxonomy-text-container"
+					data-key={ taxonomy }
+				>
+					{ taxonomyTranslations[ taxonomy ] ||
+						i18n.translate( 'Unknown', {
+							context: 'Theme Showcase filter name',
+						} ) }
+				</span>
 			</div>
 		);
 	};

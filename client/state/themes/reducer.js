@@ -17,6 +17,9 @@ import {
 	RECOMMENDED_THEMES_FAIL,
 	RECOMMENDED_THEMES_FETCH,
 	RECOMMENDED_THEMES_SUCCESS,
+	TRENDING_THEMES_FAIL,
+	TRENDING_THEMES_FETCH,
+	TRENDING_THEMES_SUCCESS,
 	THEME_ACTIVATE,
 	THEME_ACTIVATE_SUCCESS,
 	THEME_ACTIVATE_FAILURE,
@@ -335,7 +338,13 @@ const queriesReducer = ( state = {}, action ) => {
 				siteId,
 				// Always 'patch' to avoid overwriting existing fields when receiving
 				// from a less rich endpoint such as /mine
-				( m ) => m.receive( map( themes, fromApi ), { query, found, patch: true } ),
+				( m ) =>
+					m.receive( map( themes, fromApi ), {
+						query,
+						found,
+						patch: true,
+						dontShareQueryResultsWhenQueriesAreDifferent: true,
+					} ),
 				() => new ThemeQueryManager( null, { itemKey: 'id' } )
 			);
 		}
@@ -491,6 +500,27 @@ export function recommendedThemes( state = {}, action ) {
 	return state;
 }
 
+/**
+ * Returns updated state for trending themes after
+ * corresponding actions have been dispatched.
+ *
+ * @param   {object} state  Current state
+ * @param   {object} action Action payload
+ * @returns {object}        Updated state
+ */
+export function trendingThemes( state = {}, action ) {
+	switch ( action.type ) {
+		case TRENDING_THEMES_FETCH:
+			return { ...state, isLoading: true, themes: [] };
+		case TRENDING_THEMES_SUCCESS:
+			return { ...state, isLoading: false, themes: action.payload.themes };
+		case TRENDING_THEMES_FAIL:
+			return { ...state, isLoading: false, themes: [] };
+	}
+
+	return state;
+}
+
 const combinedReducer = combineReducers( {
 	queries,
 	queryRequests,
@@ -509,6 +539,7 @@ const combinedReducer = combineReducers( {
 	themePreviewVisibility,
 	themeFilters,
 	recommendedThemes,
+	trendingThemes,
 	themeHasAutoLoadingHomepageWarning,
 } );
 const themesReducer = withStorageKey( 'themes', combinedReducer );

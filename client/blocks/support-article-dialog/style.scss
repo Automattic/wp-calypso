@@ -18,13 +18,6 @@
 		bottom: 5%;
 		width: 90%;
 		height: 90%;
-	}
-
-	@include breakpoint-deprecated( '>860px' ) {
-		max-width: 860px;
-	}
-
-	@include breakpoint-deprecated( '>960px' ) {
 		max-width: 860px;
 	}
 }

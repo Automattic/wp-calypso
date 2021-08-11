@@ -23,6 +23,7 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import SupportInfo from 'calypso/components/support-info';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 
 /**
  * Style dependencies
@@ -30,14 +31,20 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import './style.scss';
 
 class CustomContentTypes extends Component {
-	componentDidUpdate() {
+	componentDidUpdate( prevProps ) {
 		const {
 			activatingCustomContentTypesModule,
 			customContentTypesModuleActive,
 			fields,
+			isSavingSettings,
 			siteId,
 			siteIsJetpack,
 		} = this.props;
+
+		// Refresh menu after settings are saved in case CPTs have been registered or unregistered.
+		if ( ! isSavingSettings && prevProps.isSavingSettings ) {
+			this.props.requestAdminMenu( siteId );
+		}
 
 		if ( ! siteIsJetpack ) {
 			return;
@@ -245,5 +252,6 @@ export default connect(
 	},
 	{
 		activateModule,
+		requestAdminMenu,
 	}
 )( localize( CustomContentTypes ) );

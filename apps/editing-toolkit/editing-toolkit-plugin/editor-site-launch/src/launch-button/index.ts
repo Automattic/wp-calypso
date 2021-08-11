@@ -1,18 +1,12 @@
-/**
- * External dependencies
- */
-import { __ } from '@wordpress/i18n';
-import domReady from '@wordpress/dom-ready';
-import { dispatch } from '@wordpress/data';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import 'a8c-fse-common-data-stores';
-import '@wordpress/editor';
-
-/**
- * Internal dependencies
- */
+import { dispatch } from '@wordpress/data';
+import domReady from '@wordpress/dom-ready';
+import { __ } from '@wordpress/i18n';
 import { inIframe } from '../../../block-inserter-modifications/contextual-tips/utils';
 import { GUTENBOARDING_LAUNCH_FLOW } from '../constants';
+
+import 'a8c-fse-common-data-stores';
+import '@wordpress/editor';
 import './styles.scss';
 
 let handled = false;

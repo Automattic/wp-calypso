@@ -1,15 +1,15 @@
 import assert from 'assert';
-import { ElementHandle } from 'playwright';
-import { BaseContainer } from '../base-container';
-import { SupportArticleComponent } from './support-article-component';
+import { ElementHandle, Page } from 'playwright';
 
 const selectors = {
 	// Components
 	supportButton: '.inline-help__button',
 	supportPopover: '.inline-help__popover',
-	searchInput: '[placeholder="Search for help…"]',
+	searchInput: '[aria-label="Search"]',
 	spinner: '.spinner',
+	placeholder: '.inline-help__results-placeholder-item',
 	clearSearch: '[aria-label="Close Search"]',
+	supportCard: '.card.help-search',
 
 	// Results
 	resultsList: '.inline-help__results',
@@ -23,14 +23,25 @@ const selectors = {
 
 	// Article
 	readMoreButton: 'text=Read more',
+	visitArticleButton: 'text="Visit article"',
+	closeButton: 'button:text("Close")',
 };
 
 /**
  * Represents the Support popover available on most WPCOM screens.
- *
- * @augments {BaseContainer}
  */
-export class SupportComponent extends BaseContainer {
+export class SupportComponent {
+	private page: Page;
+
+	/**
+	 * Constructs an instance of the component.
+	 *
+	 * @param {Page} page The underlying page.
+	 */
+	constructor( page: Page ) {
+		this.page = page;
+	}
+
 	/**
 	 * Click on the support button (?).
 	 * This method will toggle the status of the support popover.
@@ -68,6 +79,19 @@ export class SupportComponent extends BaseContainer {
 		await this.page.click( selectors.supportButton );
 		await this.page.waitForSelector( selectors.supportPopover, { state: 'hidden' } );
 	}
+
+	/**
+	 * Wait for and scroll to expose the Support card, present only on My Home.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async showSupportCard(): Promise< void > {
+		const elementHandle = await this.page.waitForSelector( selectors.supportCard );
+		await elementHandle.waitForElementState( 'stable' );
+		await elementHandle.scrollIntoViewIfNeeded();
+	}
+
+	/* Result methods */
 
 	/**
 	 * Given a selector, returns an array of ElementHandles that match the given selector.
@@ -161,6 +185,7 @@ export class SupportComponent extends BaseContainer {
 		await this.page.waitForSelector( selectors.emptyResults );
 	}
 
+	/* Interaction with results */
 	/**
 	 * Click on the nth result specified by the target value.
 	 *
@@ -182,9 +207,33 @@ export class SupportComponent extends BaseContainer {
 
 		await items[ target ].click();
 		await this.page.click( selectors.readMoreButton );
-		const supportArticleComponent = await SupportArticleComponent.Expect( this.page );
-		await supportArticleComponent.articleDisplayed();
 	}
+
+	/**
+	 * Visit the support article from the inline support popover.
+	 *
+	 * @returns {Promise<Page>} Reference to support page.
+	 */
+	async visitArticle(): Promise< Page > {
+		const browserContext = this.page.context();
+		const [ newPage ] = await Promise.all( [
+			browserContext.waitForEvent( 'page' ),
+			this.page.click( selectors.visitArticleButton ),
+		] );
+		await newPage.waitForLoadState( 'domcontentloaded' );
+		return newPage;
+	}
+
+	/**
+	 * Closes the support article displayed on screen.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async closeArticle(): Promise< void > {
+		await this.page.click( selectors.closeButton );
+	}
+
+	/* Search input */
 
 	/**
 	 * Fills the support popover search input and waits for the query to complete.
@@ -193,17 +242,21 @@ export class SupportComponent extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async search( text: string ): Promise< void > {
-		await this.page.fill( selectors.searchInput, text );
-
 		if ( text.trim() ) {
-			// If there is valid search string, then there should be a network request made
-			// resulting in a spinner. The spinner will then disappear when either the results are
-			// displayed, or no results are found.
-			await this.page.waitForSelector( selectors.spinner );
-			await this.page.waitForSelector( selectors.spinner, { state: 'hidden', timeout: 60000 } );
+			// If there is valid search string, then there should be a network request made.
+			// Wait for the response to the request and ensure the status is HTTP 200.
+			await Promise.all( [
+				this.page.waitForResponse(
+					( response ) => response.url().includes( 'search?' ) && response.status() === 200
+				),
+				this.page.fill( selectors.searchInput, text ),
+			] );
+		} else {
+			// If invalid search string (eg. '     '), then no request is made.
+			await this.page.fill( selectors.searchInput, text );
 		}
 
-		// In all cases, wait for the 'load' state to be fired to add a brief (~1ms) wait between actions.
+		// In all cases, wait for the 'load' state to be fired.
 		await this.page.waitForLoadState( 'load' );
 	}
 

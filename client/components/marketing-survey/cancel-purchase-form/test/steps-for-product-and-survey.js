@@ -1,13 +1,3 @@
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import * as steps from '../steps';
-import stepsForProductAndSurvey from '../steps-for-product-and-survey';
 import {
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
@@ -16,6 +6,9 @@ import {
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
 } from '@automattic/calypso-products';
+import { expect } from 'chai';
+import * as steps from '../steps';
+import stepsForProductAndSurvey from '../steps-for-product-and-survey';
 
 const PLAN_SURVEY_STEPS = [ steps.INITIAL_STEP, steps.FINAL_STEP ];
 const DEFAULT_STEPS_WITH_UPGRADE_AT_STEP = [

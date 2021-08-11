@@ -1,17 +1,7 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-
-/**
- * Internal dependencies
- */
 import { Tweet } from './tweet';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class TwitterPreview extends PureComponent {

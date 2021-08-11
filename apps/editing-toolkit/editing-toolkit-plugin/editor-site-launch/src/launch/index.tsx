@@ -1,15 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { useSelect, useDispatch } from '@wordpress/data';
-/**
- * Internal dependencies
- */
-import NameStep from '../launch-steps/name-step';
+import React from 'react';
 import DomainStep from '../launch-steps/domain-step';
-import PlanStep from '../launch-steps/plan-step';
 import FinalStep from '../launch-steps/final-step';
+import NameStep from '../launch-steps/name-step';
+import PlanStep from '../launch-steps/plan-step';
 import { LAUNCH_STORE } from '../stores';
 
 import './styles.scss';

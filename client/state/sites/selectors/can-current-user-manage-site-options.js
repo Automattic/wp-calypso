@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 
 /**
  * Whether the user can manage site options.

@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { useTranslate } from 'i18n-calypso';
+import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
+import { TASK_EARN_FEATURES } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { TASK_EARN_FEATURES } from 'calypso/my-sites/customer-home/cards/constants';
-import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
 
 const EarnFeatures = ( { siteSlug } ) => {
 	const translate = useTranslate();

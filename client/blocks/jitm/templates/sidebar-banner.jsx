@@ -1,17 +1,7 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { preventWidows } from 'calypso/lib/formatting';
 
-/**
- * Style dependencies
- */
 import './sidebar-banner.scss';
 
 export default function SidebarBannerTemplate( {

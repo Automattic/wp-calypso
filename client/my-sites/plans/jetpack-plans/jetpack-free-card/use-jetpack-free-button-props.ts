@@ -3,6 +3,7 @@
  */
 import { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import config from '@automattic/calypso-config';
 
 /**
  * Internal dependencies
@@ -64,12 +65,15 @@ const buildHref = (
 	// Jetpack Connect flow uses `url` instead of `site` as the query parameter for a site URL
 	const { site: url, ...restQueryArgs } = urlQueryArgs;
 
-	return isJetpackCloud() && ! isSiteinContext
-		? addQueryArgs(
-				{ url, ...restQueryArgs, plan: PLAN_JETPACK_FREE },
-				`https://wordpress.com${ JPC_PATH_BASE }`
-		  )
-		: wpAdminUrl || jetpackAdminUrlFromQuery || JPC_PATH_BASE;
+	if ( isJetpackCloud() && ! isSiteinContext ) {
+		return config.isEnabled( 'jetpack/siteless-checkout' )
+			? '/pricing/jetpack-free/welcome'
+			: addQueryArgs(
+					{ url, ...restQueryArgs, plan: PLAN_JETPACK_FREE },
+					`https://wordpress.com${ JPC_PATH_BASE }`
+			  );
+	}
+	return wpAdminUrl || jetpackAdminUrlFromQuery || JPC_PATH_BASE;
 };
 
 export default function useJetpackFreeButtonProps(

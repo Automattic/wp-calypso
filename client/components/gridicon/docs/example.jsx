@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import Gridicon from '../index';
 
 const icons = [

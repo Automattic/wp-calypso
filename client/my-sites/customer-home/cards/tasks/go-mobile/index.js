@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
-import { preventWidows } from 'calypso/lib/formatting';
+import React from 'react';
 import AppsBadge from 'calypso/blocks/get-apps/apps-badge';
+import { preventWidows } from 'calypso/lib/formatting';
 import {
 	TASK_GO_MOBILE_ANDROID,
 	TASK_GO_MOBILE_IOS,
 } from 'calypso/my-sites/customer-home/cards/constants';
+import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 
 const GoMobile = ( { isIos } ) => {
 	const translate = useTranslate();

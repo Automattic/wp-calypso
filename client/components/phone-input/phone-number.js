@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import { find, flatten, includes, map, startsWith } from 'lodash';
 import debugFactory from 'debug';
+import { find, flatten, includes, map, startsWith } from 'lodash';
 import { countries, dialCodeMap } from 'calypso/components/phone-input/data';
-
-/**
- * Internal Dependencies
- */
 
 const debug = debugFactory( 'phone-input:metadata' );
 
@@ -234,7 +227,7 @@ export function formatNumber( inputNumber, country ) {
 	const { nationalNumber, prefix } = processNumber( inputNumber, country );
 
 	const patterns =
-		( includes( [ '+', '1' ], inputNumber[ 0 ] ) && country.internationalPatterns ) ||
+		( [ '+', '1' ].includes( inputNumber[ 0 ] ) && country.internationalPatterns ) ||
 		country.patterns ||
 		[];
 	const pattern = findPattern( nationalNumber, patterns );

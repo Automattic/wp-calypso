@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
 import canJetpackSiteAutoUpdateFiles from './can-jetpack-site-auto-update-files';
 import canJetpackSiteUpdateFiles from './can-jetpack-site-update-files';
 import isJetpackSite from './is-jetpack-site';
@@ -17,6 +16,5 @@ export default function getJetpackComputedAttributes( state, siteId ) {
 		canUpdateFiles: canJetpackSiteUpdateFiles( state, siteId ),
 		isMainNetworkSite: isJetpackSiteMainNetworkSite( state, siteId ),
 		isSecondaryNetworkSite: isJetpackSiteSecondaryNetworkSite( state, siteId ),
-		isSiteUpgradeable: isSiteUpgradeable( state, siteId ),
 	};
 }

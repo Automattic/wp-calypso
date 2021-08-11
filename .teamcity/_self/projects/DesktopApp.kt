@@ -26,6 +26,11 @@ object E2ETests : BuildType({
 	name = "Run e2e tests"
 	description = "Run wp-desktop e2e tests in Linux"
 
+	dependencies {
+		snapshot(BuildDockerImage) {
+		}
+	}
+
 	artifactRules = """
 		desktop/release => release
 		desktop/e2e/logs => logs

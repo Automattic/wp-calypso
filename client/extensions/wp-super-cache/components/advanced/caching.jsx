@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { includes, pick } from 'lodash';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
 import { Button, Card } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
+import { pick } from 'lodash';
+import React from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -84,7 +77,7 @@ const Caching = ( {
 					<FormFieldset className="wp-super-cache__cache-type-fieldset">
 						<FormLabel>
 							<FormRadio
-								checked={ includes( [ 'PHP', 'wpcache' ], cache_type ) /* wpcache is legacy */ }
+								checked={ [ 'PHP', 'wpcache' ].includes( cache_type ) /* wpcache is legacy */ }
 								disabled={ isDisabled || ! is_cache_enabled }
 								name="cache_type"
 								onChange={ handleRadio }

@@ -52,6 +52,9 @@
 		"global-styles": "BROWSERSLIST_ENV=wpcom calypso-build --env source='global-styles'",
 		"build:global-styles": "NODE_ENV=production yarn run global-styles",
 		"dev:global-styles": "yarn run global-styles",
+		"global-styles-customizer-fonts": "BROWSERSLIST_ENV=wpcom calypso-build --env source='global-styles/customizer-fonts'",
+		"build:global-styles-customizer-fonts": "NODE_ENV=production yarn run global-styles-customizer-fonts",
+		"dev:global-styles-customizer-fonts": "yarn run global-styles-customizer-fonts",
 		"jetpack-timeline": "BROWSERSLIST_ENV=wpcom calypso-build --env source='jetpack-timeline'",
 		"dev:jetpack-timeline": "yarn run jetpack-timeline",
 		"build:jetpack-timeline": "NODE_ENV=production yarn run jetpack-timeline",
@@ -88,7 +91,7 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-analytics": "^1.0.0-alpha.1",
-		"@automattic/calypso-build": "^8.0.0",
+		"@automattic/calypso-build": "^9.0.0",
 		"@automattic/composite-checkout": "^1.0.0",
 		"@automattic/data-stores": "^2.0.0",
 		"@automattic/domain-picker": "^1.0.0-alpha.0",
@@ -99,7 +102,7 @@
 		"@automattic/page-pattern-modal": "^1.0.0-alpha.0",
 		"@automattic/plans-grid": "^1.0.0-alpha.0",
 		"@automattic/typography": "^1.0.0",
-		"@babel/core": "^7.14.0",
+		"@babel/core": "^7.14.8",
 		"@wordpress/a11y": "^2.15.3",
 		"@wordpress/api-fetch": "^4.0.0",
 		"@wordpress/base-styles": "^3.4.3",
@@ -133,11 +136,11 @@
 		"classnames": "^2.3.1",
 		"emotion-theming": "^10.0.27",
 		"enzyme": "^3.11.0",
-		"eslint": "^7.28.0",
+		"eslint": "^7.31.0",
 		"jest": "^26.4.0",
 		"lodash": "^4.17.21",
 		"moment": "^2.26.0",
-		"newspack-blocks": "github:Automattic/newspack-blocks#v1.21.0",
+		"newspack-blocks": "github:Automattic/newspack-blocks#v1.30.0",
 		"npm-run-all": "^4.1.5",
 		"puppeteer": "^3.0.4",
 		"react": "^16.12.0",
@@ -146,13 +149,13 @@
 		"utility-types": "^3.10.0"
 	},
 	"devDependencies": {
-		"@babel/preset-typescript": "^7.13.0",
-		"@testing-library/jest-dom": "^5.11.10",
+		"@babel/preset-typescript": "^7.14.5",
+		"@testing-library/jest-dom": "^5.14.1",
 		"@testing-library/react": "^12.0.0",
 		"@types/wordpress__plugins": "^2.3.7",
 		"@wordpress/eslint-plugin": "^9.0.4",
 		"babel-jest": "^26.3.0",
 		"wait-for-expect": "^3.0.2",
-		"webpack": "^5.36.2"
+		"webpack": "^5.46.0"
 	}
 }

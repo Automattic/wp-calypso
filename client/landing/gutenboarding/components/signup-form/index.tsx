@@ -1,19 +1,17 @@
-/**
- * External dependencies
- */
-import React, { useState, useEffect } from 'react';
+import config from '@automattic/calypso-config';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { ExternalLink } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import { useLocalizeUrl } from '@automattic/i18n-utils';
-
-/**
- * Internal dependencies
- */
-import { USER_STORE } from '../../stores/user';
-import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import React, { useState, useEffect } from 'react';
+import { useTrackModal } from '../../hooks/use-track-modal';
+import {
+	initGoogleRecaptcha,
+	recordGoogleRecaptchaAction,
+	recordOnboardingError,
+} from '../../lib/analytics';
 import {
 	useLangRouteParam,
 	usePath,
@@ -22,16 +20,11 @@ import {
 	useAnchorFmParams,
 	useIsAnchorFm,
 } from '../../path';
+import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import { USER_STORE } from '../../stores/user';
 import './style.scss';
-import {
-	initGoogleRecaptcha,
-	recordGoogleRecaptchaAction,
-	recordOnboardingError,
-} from '../../lib/analytics';
-import { useTrackModal } from '../../hooks/use-track-modal';
-import config from '@automattic/calypso-config';
-import SignupDefaultLayout from './signup-default-layout';
 import SignupAnchorLayout from './signup-anchor-layout';
+import SignupDefaultLayout from './signup-default-layout';
 
 interface Props {
 	onRequestClose: () => void;

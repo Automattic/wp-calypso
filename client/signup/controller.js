@@ -1,19 +1,32 @@
-/**
- * External dependencies
- */
-import debugModule from 'debug';
-import React from 'react';
-import page from 'page';
-import { isEmpty } from 'lodash';
-
-/**
- * Internal Dependencies
- */
 import config from '@automattic/calypso-config';
-import { sectionify } from 'calypso/lib/route';
+import debugModule from 'debug';
+import { isEmpty } from 'lodash';
+import page from 'page';
+import React from 'react';
+import store from 'store';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
-import SignupComponent from './main';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
+import { login } from 'calypso/lib/paths';
+import { sectionify } from 'calypso/lib/route';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
+import { setCurrentFlowName, setPreviousFlowName } from 'calypso/state/signup/flow/actions';
+import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
+import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
+import { setSiteType } from 'calypso/state/signup/steps/site-type/actions';
+import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
+import { setSiteVertical } from 'calypso/state/signup/steps/site-vertical/actions';
+import {
+	getSiteVerticalId,
+	getSiteVerticalIsUserInput,
+} from 'calypso/state/signup/steps/site-vertical/selectors';
+import { requestSite } from 'calypso/state/sites/actions';
+import { getSiteId } from 'calypso/state/sites/selectors';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { getDotBlogVerticalId } from './config/dotblog-verticals';
 import { getStepComponent } from './config/step-components';
+import SignupComponent from './main';
 import {
 	getStepUrl,
 	canResumeFlow,
@@ -24,26 +37,6 @@ import {
 	getFlowPageTitle,
 	shouldForceLogin,
 } from './utils';
-import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-import store from 'store';
-import { setCurrentFlowName, setPreviousFlowName } from 'calypso/state/signup/flow/actions';
-import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
-import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
-import {
-	getSiteVerticalId,
-	getSiteVerticalIsUserInput,
-} from 'calypso/state/signup/steps/site-vertical/selectors';
-import { setSiteVertical } from 'calypso/state/signup/steps/site-vertical/actions';
-import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
-import { setSiteType } from 'calypso/state/signup/steps/site-type/actions';
-import { login } from 'calypso/lib/paths';
-import { getDotBlogVerticalId } from './config/dotblog-verticals';
-import { getSiteId } from 'calypso/state/sites/selectors';
-import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
-import { requestSite } from 'calypso/state/sites/actions';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
 
 const debug = debugModule( 'calypso:signup' );
 
@@ -101,11 +94,7 @@ export default {
 	redirectTests( context, next ) {
 		const isLoggedIn = isUserLoggedIn( context.store.getState() );
 		const currentFlowName = getFlowName( context.params, isLoggedIn );
-		if ( context.pathname.indexOf( 'new-launch' ) >= 0 ) {
-			// For 'new-launch' flow, 'is-white-signup' class name is being removed in client/signup/main.jsx
-			// Don't remove it here to prevent the flash of blue while the component is mounted
-			next();
-		} else if (
+		if (
 			config( 'reskinned_flows' ).includes( currentFlowName ) &&
 			config.isEnabled( 'signup/reskin' )
 		) {
@@ -312,7 +301,7 @@ export default {
 		context.store.dispatch( setLayoutFocus( 'content' ) );
 		context.store.dispatch( setCurrentFlowName( flowName ) );
 
-		if ( ! [ 'launch-site', 'new-launch' ].includes( flowName ) ) {
+		if ( ! [ 'launch-site' ].includes( flowName ) ) {
 			context.store.dispatch( setSelectedSiteId( null ) );
 		}
 
@@ -328,6 +317,9 @@ export default {
 				actualFlowName = 'with-design-picker';
 			}
 		}
+
+		// ExPlat: Temporarily testing out the effects of prefetching experiments. Delete after 2021 week 31.
+		loadExperimentAssignment( 'explat_test_aa_weekly_calypso_2021_week_31' );
 
 		context.primary = React.createElement( SignupComponent, {
 			store: context.store,

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { select } from '@wordpress/data';
-
-/**
- * Internal dependencies
- */
 import tracksRecordEvent from './track-record-event';
 
 // Used to store data between capture and bubble handlers.

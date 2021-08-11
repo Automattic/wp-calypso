@@ -1,16 +1,15 @@
-/**
- * External dependencies
- */
+import classNames from 'classnames';
+import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { isEqual } from 'lodash';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import Draggable from 'calypso/components/draggable';
+import {
+	imageEditorCrop,
+	imageEditorComputedCrop,
+} from 'calypso/state/editor/image-editor/actions';
+import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
+import { defaultCrop } from 'calypso/state/editor/image-editor/reducer';
 import {
 	getImageEditorCropBounds,
 	getImageEditorAspectRatio,
@@ -18,12 +17,6 @@ import {
 	getImageEditorCrop,
 	imageEditorHasChanges,
 } from 'calypso/state/editor/image-editor/selectors';
-import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
-import {
-	imageEditorCrop,
-	imageEditorComputedCrop,
-} from 'calypso/state/editor/image-editor/actions';
-import { defaultCrop } from 'calypso/state/editor/image-editor/reducer';
 import getImageEditorOriginalAspectRatio from 'calypso/state/selectors/get-image-editor-original-aspect-ratio';
 
 const noop = () => {};
