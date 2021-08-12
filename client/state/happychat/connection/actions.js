@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { v4 as uuid } from 'uuid';
-
-/**
- * Internal dependencies
- */
 import {
 	HAPPYCHAT_IO_INIT,
 	HAPPYCHAT_IO_RECEIVE_ACCEPT,

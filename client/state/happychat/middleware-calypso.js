@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { has } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	ANALYTICS_EVENT_RECORD,
 	HELP_CONTACT_FORM_SITE_SELECT,
@@ -25,28 +18,28 @@ import {
 	PURCHASE_REMOVE_COMPLETED,
 	SITE_SETTINGS_SAVE_SUCCESS,
 } from 'calypso/state/action-types';
-import { JETPACK_CONNECT_AUTHORIZE } from 'calypso/state/jetpack-connect/action-types';
-import {
-	HAPPYCHAT_CHAT_STATUS_ASSIGNED,
-	HAPPYCHAT_CHAT_STATUS_PENDING,
-} from 'calypso/state/happychat/constants';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import {
 	sendEvent,
 	sendLog,
 	sendPreferences,
 	setChatCustomFields,
 } from 'calypso/state/happychat/connection/actions';
-import getHappychatChatStatus from 'calypso/state/happychat/selectors/get-happychat-chat-status';
+import {
+	HAPPYCHAT_CHAT_STATUS_ASSIGNED,
+	HAPPYCHAT_CHAT_STATUS_PENDING,
+} from 'calypso/state/happychat/constants';
 import getGroups from 'calypso/state/happychat/selectors/get-groups';
+import getHappychatChatStatus from 'calypso/state/happychat/selectors/get-happychat-chat-status';
 import getSkills from 'calypso/state/happychat/selectors/get-skills';
 import isHappychatChatAssigned from 'calypso/state/happychat/selectors/is-happychat-chat-assigned';
 import isHappychatClientConnected from 'calypso/state/happychat/selectors/is-happychat-client-connected';
-import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import { getHelpSelectedSiteId } from 'calypso/state/help/selectors';
-import getSectionName from 'calypso/state/ui/selectors/get-section-name';
+import { JETPACK_CONNECT_AUTHORIZE } from 'calypso/state/jetpack-connect/action-types';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getSitePlanSlug from 'calypso/state/sites/selectors/get-site-plan-slug';
+import getSectionName from 'calypso/state/ui/selectors/get-section-name';
 
 const noop = () => {};
 
