@@ -220,6 +220,7 @@ module.exports = {
 				'client/state/editor/**/*',
 				'client/state/google-my-business/**/*',
 				'client/state/happychat/**/*',
+				'client/state/help/**/*',
 				'client/support/**/*',
 				'client/test-helpers/**/*',
 				'client/types.ts',
