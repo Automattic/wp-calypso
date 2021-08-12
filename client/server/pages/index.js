@@ -749,10 +749,7 @@ export default function pages() {
 		// This URL will be compared against query param `from` in the component.
 		// Though we set `from` in the unsupported-browser middleware, it is possible
 		// for someone to manually set the `from` query parameter.
-		const protocol = process.env.PROTOCOL || config( 'protocol' );
-		const hostname = process.env.HOST || config( 'hostname' );
-		const port = process.env.PORT || config( 'port' );
-		const wpcomRootUrl = `${ protocol }://${ hostname }${ port ? ':' + port : '' }/`;
+		const wpcomRootUrl = `${ config.get( 'calypsoBaseURL' ) }/`;
 
 		req.context.entrypoint = req.getFilesForEntrypoint( 'entry-browsehappy' );
 		req.context.from = req.query.from;
