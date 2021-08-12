@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	VIDEO_EDITOR_SET_POSTER_URL,
 	VIDEO_EDITOR_SHOW_ERROR,

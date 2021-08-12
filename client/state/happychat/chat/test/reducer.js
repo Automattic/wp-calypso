@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { lastActivityTimestamp } from '../reducer';
 import {
 	HAPPYCHAT_IO_RECEIVE_INIT,
 	HAPPYCHAT_IO_RECEIVE_MESSAGE,
 	HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE,
 } from 'calypso/state/action-types';
+import { lastActivityTimestamp } from '../reducer';
 
 // Simulate the time Feb 27, 2017 05:25 UTC
 const NOW = 1488173100125;

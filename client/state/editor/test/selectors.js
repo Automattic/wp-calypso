@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
+import PostQueryManager from 'calypso/lib/query-manager/post';
 import {
 	getEditorPostId,
 	isEditorNewPost,
 	getEditorNewPostPath,
 	getEditorPath,
 } from '../selectors';
-import PostQueryManager from 'calypso/lib/query-manager/post';
 
 describe( 'selectors', () => {
 	describe( '#getEditorPostId()', () => {

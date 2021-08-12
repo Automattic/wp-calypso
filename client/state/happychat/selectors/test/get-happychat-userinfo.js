@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
 import getUserInfo from 'calypso/state/happychat/selectors/get-happychat-userinfo';
 
 describe( 'HAPPYCHAT_IO_SEND_MESSAGE_USERINFO action', () => {

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { HAPPYCHAT_CONNECTION_ERROR_PING_TIMEOUT } from 'calypso/state/happychat/constants';
 
 import 'calypso/state/happychat/init';
