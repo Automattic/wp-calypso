@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-import { socketMiddleware as middleware } from '../middleware';
 import { HAPPYCHAT_IO_SET_CUSTOM_FIELDS } from 'calypso/state/action-types';
 import {
 	initConnection,
@@ -15,7 +11,6 @@ import {
 	sendNotTyping,
 	setChatCustomFields,
 } from 'calypso/state/happychat/connection/actions';
-import { blur, focus } from 'calypso/state/happychat/ui/actions';
 import {
 	HAPPYCHAT_CHAT_STATUS_ABANDONED,
 	HAPPYCHAT_CHAT_STATUS_ASSIGNED,
@@ -33,6 +28,8 @@ import {
 	HAPPYCHAT_CONNECTION_STATUS_UNAUTHORIZED,
 	HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED,
 } from 'calypso/state/happychat/constants';
+import { blur, focus } from 'calypso/state/happychat/ui/actions';
+import { socketMiddleware as middleware } from '../middleware';
 
 describe( 'middleware', () => {
 	let actionMiddleware;

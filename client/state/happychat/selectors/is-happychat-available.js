@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import isHappychatClientConnected from 'calypso/state/happychat/selectors/is-happychat-client-connected';
 
 import 'calypso/state/happychat/init';

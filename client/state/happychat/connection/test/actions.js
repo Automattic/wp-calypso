@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { HAPPYCHAT_IO_RECEIVE_INIT } from 'calypso/state/action-types';
 import { receiveInit } from '../actions';
 

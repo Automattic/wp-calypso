@@ -25,9 +25,6 @@ jest.mock( '@automattic/calypso-products', () => ( {
 	},
 } ) );
 
-/**
- * Internal dependencies
- */
 import { getActivePromotions, isRequestingActivePromotions } from '../selectors';
 import { ACTIVE_PROMOTIONS, getStateInstance } from './fixture';
 
