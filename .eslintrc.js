@@ -218,6 +218,7 @@ module.exports = {
 				'client/state/checklist/**/*',
 				'client/state/data-getters/**/*',
 				'client/state/editor/**/*',
+				'client/state/google-my-business/**/*',
 				'client/support/**/*',
 				'client/test-helpers/**/*',
 				'client/types.ts',
