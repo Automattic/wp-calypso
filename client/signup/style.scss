@@ -712,6 +712,13 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 
 	.signup__step.is-domains,
 	.signup__step.is-emails {
+		@include break-large {
+			margin: 0 0 0 20px;
+		}
+
+		@include break-wide {
+			padding-left: 20px;
+		}
 		.is-wide-layout {
 			max-width: 1280px;
 		}
