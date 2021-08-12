@@ -174,7 +174,7 @@
 	flex-direction: column-reverse;
 	flex-wrap: nowrap;
 
-	@include break-xlarge {
+	@include break-mobile {
 		flex-direction: row;
 	}
 
