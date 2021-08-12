@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
-import React, { Component, Fragment } from 'react';
+import React, { Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { get } from 'lodash';
 import { recordTrack } from 'calypso/reader/stats';
 import page from 'page';
 import { decodeEntities } from 'calypso/lib/formatting';
+import { useEffect, useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -22,10 +22,15 @@ import { requestExternalContributors } from 'calypso/state/data-getters';
  */
 import './style.scss';
 
-class PeopleProfile extends Component {
-	getRole = () => {
-		const { invite, user } = this.props;
+const PeopleProfile = ( { invite, user, type, moment, translate, siteId } ) => {
+	const [ isExternalContributor, setIsExternalContributor ] = useState( false );
 
+	useEffect( () => {
+		const externalContributors = requestExternalContributors( siteId ).data || [];
+		setIsExternalContributor( externalContributors.includes( user?.linked_user_ID ?? user?.ID ) );
+	}, [ siteId, user ] );
+
+	const getRole = () => {
 		if ( invite && invite.role ) {
 			return invite.role;
 		}
@@ -41,43 +46,43 @@ class PeopleProfile extends Component {
 		return;
 	};
 
-	getRoleBadgeText = ( role ) => {
+	const getRoleBadgeText = ( role ) => {
 		let text;
-		role = 'undefined' === typeof role ? this.getRole() : role;
+		role = 'undefined' === typeof role ? getRole() : role;
 
 		switch ( role ) {
 			case 'super admin':
-				text = this.props.translate( 'Super Admin', {
+				text = translate( 'Super Admin', {
 					context: 'Noun: A user role displayed in a badge',
 				} );
 				break;
 			case 'administrator':
-				text = this.props.translate( 'Admin', {
+				text = translate( 'Admin', {
 					context: 'Noun: A user role displayed in a badge',
 				} );
 				break;
 			case 'editor':
-				text = this.props.translate( 'Editor', {
+				text = translate( 'Editor', {
 					context: 'Noun: A user role displayed in a badge',
 				} );
 				break;
 			case 'author':
-				text = this.props.translate( 'Author', {
+				text = translate( 'Author', {
 					context: 'Noun: A user role displayed in a badge',
 				} );
 				break;
 			case 'contributor':
-				text = this.props.translate( 'Contributor', {
+				text = translate( 'Contributor', {
 					context: 'Noun: A user role displayed in a badge',
 				} );
 				break;
 			case 'subscriber':
-				text = this.props.translate( 'Subscriber', {
+				text = translate( 'Subscriber', {
 					context: 'Noun: A user role displayed in a badge',
 				} );
 				break;
 			case 'follower':
-				text = this.props.translate( 'Follower' );
+				text = translate( 'Follower' );
 				break;
 			default:
 				text = role;
@@ -86,12 +91,12 @@ class PeopleProfile extends Component {
 		return text;
 	};
 
-	getRoleBadgeClass = ( role ) => {
-		role = 'undefined' === typeof role ? this.getRole() : role;
+	const getRoleBadgeClass = ( role ) => {
+		role = 'undefined' === typeof role ? getRole() : role;
 		return 'role-' + role;
 	};
 
-	handleLinkToReaderSiteStream = ( event ) => {
+	const handleLinkToReaderSiteStream = ( event ) => {
 		const modifierPressed =
 			event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey;
 
@@ -103,7 +108,7 @@ class PeopleProfile extends Component {
 			return;
 		}
 
-		const blogId = get( this.props.user, 'follow_data.params.blog_id', false );
+		const blogId = get( user, 'follow_data.params.blog_id', false );
 
 		if ( ! blogId ) {
 			return;
@@ -113,9 +118,7 @@ class PeopleProfile extends Component {
 		page( `/read/blogs/${ blogId }` );
 	};
 
-	renderNameOrEmail = () => {
-		const { translate, type, user } = this.props;
-
+	const renderNameOrEmail = () => {
 		let name;
 		let userTitle = null;
 		if ( ! user ) {
@@ -147,7 +150,7 @@ class PeopleProfile extends Component {
 		return (
 			<div className="people-profile__username" title={ userTitle }>
 				{ blogId ? (
-					<a href={ user.url } onClick={ this.handleLinkToReaderSiteStream }>
+					<a href={ user.url } onClick={ handleLinkToReaderSiteStream }>
 						{ decodeEntities( name ) }
 					</a>
 				) : (
@@ -157,14 +160,14 @@ class PeopleProfile extends Component {
 		);
 	};
 
-	renderLogin = () => {
+	const renderLogin = () => {
 		let login;
-		if ( ! this.props.user ) {
-			login = this.props.translate( 'Loading Users', {
+		if ( ! user ) {
+			login = translate( 'Loading Users', {
 				context: 'Placeholder text while fetching users.',
 			} );
-		} else if ( this.props.user.login ) {
-			login = this.props.user.login;
+		} else if ( user.login ) {
+			login = user.login;
 		}
 
 		if ( login ) {
@@ -178,9 +181,7 @@ class PeopleProfile extends Component {
 		return login;
 	};
 
-	renderRole = () => {
-		const { isExternalContributor, translate, user } = this.props;
-
+	const renderRole = () => {
 		let contractorBadge;
 		let superAdminBadge;
 		let roleBadge;
@@ -188,15 +189,15 @@ class PeopleProfile extends Component {
 		if ( user && user.is_super_admin ) {
 			superAdminBadge = (
 				<div className="people-profile__role-badge role-super-admin">
-					{ this.getRoleBadgeText( 'super admin' ) }
+					{ getRoleBadgeText( 'super admin' ) }
 				</div>
 			);
 		}
 
-		if ( this.getRole() ) {
+		if ( getRole() ) {
 			roleBadge = (
-				<div className={ classNames( 'people-profile__role-badge', this.getRoleBadgeClass() ) }>
-					{ this.getRoleBadgeText() }
+				<div className={ classNames( 'people-profile__role-badge', getRoleBadgeClass() ) }>
+					{ getRoleBadgeText() }
 				</div>
 			);
 		}
@@ -231,52 +232,43 @@ class PeopleProfile extends Component {
 		);
 	};
 
-	renderSubscribedDate = () => {
-		if ( ! this.props.user || ! this.props.user.date_subscribed ) {
+	const renderSubscribedDate = () => {
+		if ( ! user || ! user.date_subscribed ) {
 			return;
 		}
 
 		return (
 			<div className="people-profile__subscribed">
-				{ this.props.translate( 'Since %(formattedDate)s', {
+				{ translate( 'Since %(formattedDate)s', {
 					context: 'How long a user has been subscribed to a blog. Example: "Since Sep 16, 2015"',
 					args: {
-						formattedDate: this.props.moment( this.props.user.date_subscribed ).format( 'll' ),
+						formattedDate: moment( user.date_subscribed ).format( 'll' ),
 					},
 				} ) }
 			</div>
 		);
 	};
 
-	isFollowerType = () => {
-		return this.props.user && ! this.props.user.roles && this.props.user.date_subscribed;
+	const isFollowerType = () => {
+		return user && ! user.roles && user.date_subscribed;
 	};
 
-	render() {
-		const { user } = this.props;
+	const classes = classNames( 'people-profile', {
+		'is-placeholder': ! user,
+	} );
 
-		const classes = classNames( 'people-profile', {
-			'is-placeholder': ! user,
-		} );
-
-		return (
-			<div className={ classes }>
-				<div className="people-profile__gravatar">
-					<Gravatar user={ user } size={ 72 } />
-				</div>
-				<div className="people-profile__detail">
-					{ this.renderNameOrEmail() }
-					{ this.renderLogin() }
-					{ this.isFollowerType() ? this.renderSubscribedDate() : this.renderRole() }
-				</div>
+	return (
+		<div className={ classes }>
+			<div className="people-profile__gravatar">
+				<Gravatar user={ user } size={ 72 } />
 			</div>
-		);
-	}
-}
+			<div className="people-profile__detail">
+				{ renderNameOrEmail() }
+				{ renderLogin() }
+				{ isFollowerType() ? renderSubscribedDate() : renderRole() }
+			</div>
+		</div>
+	);
+};
 
-export default connect( ( _state, { siteId, user } ) => {
-	const externalContributors = ( siteId && requestExternalContributors( siteId ).data ) || [];
-	return {
-		isExternalContributor: externalContributors.includes( user?.linked_user_ID ?? user?.ID ),
-	};
-} )( localize( withLocalizedMoment( PeopleProfile ) ) );
+export default localize( withLocalizedMoment( PeopleProfile ) );
