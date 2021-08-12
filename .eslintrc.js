@@ -212,6 +212,7 @@ module.exports = {
 				'client/signup/**/*',
 				'client/state/account-recovery/**/*',
 				'client/state/account/**/*',
+				'client/state/action-log/**/*',
 				'client/support/**/*',
 				'client/test-helpers/**/*',
 				'client/types.ts',
