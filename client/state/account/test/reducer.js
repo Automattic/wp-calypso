@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import { isClosed } from '../reducer';
 import { ACCOUNT_CLOSE_SUCCESS } from 'calypso/state/action-types';
+import { isClosed } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#isClosed()', () => {
