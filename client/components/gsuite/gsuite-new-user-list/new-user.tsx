@@ -163,16 +163,6 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 
 					{ hasLastNameError && <FormInputValidation text={ lastNameError } isError /> }
 				</div>
-
-				{ showTrashButton && (
-					<Button
-						className="gsuite-new-user-list__new-user-remove-user-button"
-						onClick={ onUserRemove }
-					>
-						<Gridicon icon="trash" />
-						<span>{ translate( 'Remove user' ) }</span>
-					</Button>
-				) }
 			</FormFieldset>
 
 			<FormFieldset>
@@ -205,6 +195,16 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 
 					{ hasPasswordError && <FormInputValidation text={ passwordError } isError /> }
 				</div>
+
+				{ showTrashButton && (
+					<Button
+						className="gsuite-new-user-list__new-user-remove-user-button"
+						onClick={ onUserRemove }
+					>
+						<Gridicon icon="trash" />
+						<span>{ translate( 'Remove user' ) }</span>
+					</Button>
+				) }
 			</FormFieldset>
 		</div>
 	);
