@@ -247,7 +247,8 @@ export class SupportComponent {
 			// Wait for the response to the request and ensure the status is HTTP 200.
 			await Promise.all( [
 				this.page.waitForResponse(
-					( response ) => response.url().includes( 'search?' ) && response.status() === 200
+					( response ) => response.url().includes( 'search?' ) && response.status() === 200,
+					{ timeout: 60000 }
 				),
 				this.page.fill( selectors.searchInput, text ),
 			] );
