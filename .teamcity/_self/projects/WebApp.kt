@@ -148,7 +148,7 @@ object BuildDockerImage : BuildType({
 				export GH_TOKEN="%matticbot_oauth_token%"
 				chmod +x ./bin/add-pr-comment.sh
 				./bin/add-pr-comment.sh "%teamcity.build.branch%" "calypso-live" <<- EOF || true
-				Link to Calypso live: https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%
+				Link to Calypso live: %calypso_live_url%
 				Link to Jetpack Cloud live: https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%&env=jetpack
 				EOF
 			"""
