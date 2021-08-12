@@ -19,6 +19,6 @@
 
 ## v1.0.0
 
-- Initial release. This actually didn't work outside of the monorepo because of an invalid TS configuration (see https://github.com/Automattic/wp-calypso/pull/51519)
+- Initial release. This actually didn't work outside of the monorepo because of an invalid TS configuration.
 
 
