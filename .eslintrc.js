@@ -213,6 +213,7 @@ module.exports = {
 				'client/state/account-recovery/**/*',
 				'client/state/account/**/*',
 				'client/state/action-log/**/*',
+				'client/state/action-watchers/**/*',
 				'client/support/**/*',
 				'client/test-helpers/**/*',
 				'client/types.ts',
