@@ -32,7 +32,7 @@ function getTourContent( localeSlug ) {
 		{
 			heading: __( 'Everything is a block', 'full-site-editing' ),
 			description: __(
-				'In the WordPress Editor, paragraphs, images, and videos are all blocks.',
+				'In the WordPress Editor, paragraphs, images, videos and audios are all blocks.',
 				'full-site-editing'
 			),
 			imgSrc: allBlocks,
