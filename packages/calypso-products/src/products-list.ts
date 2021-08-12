@@ -33,10 +33,10 @@ import {
 	PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY,
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
-	PRODUCT_JETPACK_BACKUP,
-	PRODUCT_JETPACK_BACKUP_MONTHLY,
-	PRODUCT_JETPACK_BACKUP_PRO,
-	PRODUCT_JETPACK_BACKUP_PRO_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
+	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
+	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
 } from './constants';
 import { getJetpackProductsShortNames } from './translations';
 import type { ProductSlug, JetpackProductSlug, WPComProductSlug, Product } from './types';
@@ -182,10 +182,10 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 			FEATURE_ADVANCED_STATS_V2,
 		],
 	},
-	[ PRODUCT_JETPACK_BACKUP ]: {
+	[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: {
 		product_name: 'Backup', // TODO: switch to translated string once official copy is known
-		product_slug: PRODUCT_JETPACK_BACKUP,
-		type: PRODUCT_JETPACK_BACKUP,
+		product_slug: PRODUCT_JETPACK_BACKUP_T1_YEARLY,
+		type: PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 		term: TERM_ANNUALLY,
 		bill_period: PLAN_ANNUAL_PERIOD,
 		getFeatures: () => [
@@ -195,10 +195,10 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 			FEATURE_ACTIVITY_LOG_1_YEAR_V2,
 		],
 	},
-	[ PRODUCT_JETPACK_BACKUP_MONTHLY ]: {
+	[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: {
 		product_name: 'Backup', // TODO: switch to translated string once official copy is known
-		product_slug: PRODUCT_JETPACK_BACKUP_MONTHLY,
-		type: PRODUCT_JETPACK_BACKUP,
+		product_slug: PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
+		type: PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 		term: TERM_MONTHLY,
 		bill_period: PLAN_MONTHLY_PERIOD,
 		getFeatures: () => [
@@ -208,10 +208,10 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 			FEATURE_ACTIVITY_LOG_1_YEAR_V2,
 		],
 	},
-	[ PRODUCT_JETPACK_BACKUP_PRO ]: {
+	[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: {
 		product_name: 'Backup Pro', // TODO: switch to translated string once official copy is known
-		product_slug: PRODUCT_JETPACK_BACKUP_PRO,
-		type: PRODUCT_JETPACK_BACKUP_PRO,
+		product_slug: PRODUCT_JETPACK_BACKUP_T2_YEARLY,
+		type: PRODUCT_JETPACK_BACKUP_T2_YEARLY,
 		term: TERM_ANNUALLY,
 		bill_period: PLAN_ANNUAL_PERIOD,
 		getFeatures: () => [
@@ -221,10 +221,10 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 			FEATURE_ACTIVITY_LOG_1_YEAR_V2,
 		],
 	},
-	[ PRODUCT_JETPACK_BACKUP_PRO_MONTHLY ]: {
+	[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: {
 		product_name: 'Backup Pro', // TODO: switch to translated string once official copy is known
-		product_slug: PRODUCT_JETPACK_BACKUP_PRO_MONTHLY,
-		type: PRODUCT_JETPACK_BACKUP_PRO,
+		product_slug: PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
+		type: PRODUCT_JETPACK_BACKUP_T2_YEARLY,
 		term: TERM_MONTHLY,
 		bill_period: PLAN_MONTHLY_PERIOD,
 		getFeatures: () => [
