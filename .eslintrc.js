@@ -214,6 +214,7 @@ module.exports = {
 				'client/state/account/**/*',
 				'client/state/action-log/**/*',
 				'client/state/action-watchers/**/*',
+				'client/state/active-promotions/**/*',
 				'client/support/**/*',
 				'client/test-helpers/**/*',
 				'client/types.ts',

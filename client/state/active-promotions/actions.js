@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	ACTIVE_PROMOTIONS_RECEIVE,
 	ACTIVE_PROMOTIONS_REQUEST,
