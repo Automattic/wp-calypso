@@ -219,6 +219,7 @@ module.exports = {
 				'client/state/data-getters/**/*',
 				'client/state/editor/**/*',
 				'client/state/google-my-business/**/*',
+				'client/state/happychat/**/*',
 				'client/support/**/*',
 				'client/test-helpers/**/*',
 				'client/types.ts',

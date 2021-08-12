@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import buildConnection from 'calypso/lib/happychat/connection-async';
 import {
 	HAPPYCHAT_BLUR,
 	HAPPYCHAT_FOCUS,
@@ -20,9 +14,8 @@ import {
 	HAPPYCHAT_IO_SET_CUSTOM_FIELDS,
 } from 'calypso/state/action-types';
 import { sendEvent, setChatCustomFields } from 'calypso/state/happychat/connection/actions';
-import buildConnection from 'calypso/lib/happychat/connection-async';
-import isHappychatClientConnected from 'calypso/state/happychat/selectors/is-happychat-client-connected';
 import isHappychatChatAssigned from 'calypso/state/happychat/selectors/is-happychat-chat-assigned';
+import isHappychatClientConnected from 'calypso/state/happychat/selectors/is-happychat-client-connected';
 
 const noop = () => {};
 const eventMessage = {

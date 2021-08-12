@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
 import { getSectionName } from 'calypso/state/ui/selectors';
 

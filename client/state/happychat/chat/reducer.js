@@ -1,12 +1,6 @@
 /* eslint-disable no-case-declarations */
-/**
- * External dependencies
- */
-import { concat, filter, find, findIndex, map, get, sortBy } from 'lodash';
 
-/**
- * Internal dependencies
- */
+import { concat, filter, find, findIndex, map, get, sortBy } from 'lodash';
 import {
 	HAPPYCHAT_IO_RECEIVE_MESSAGE,
 	HAPPYCHAT_IO_RECEIVE_MESSAGE_UPDATE,

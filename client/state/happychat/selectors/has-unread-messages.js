@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { get, last } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
+import { get, last } from 'lodash';
 import getHappychatTimeline from 'calypso/state/happychat/selectors/get-happychat-timeline';
 import getLostFocusTimestamp from 'calypso/state/happychat/selectors/get-lostfocus-timestamp';
 
