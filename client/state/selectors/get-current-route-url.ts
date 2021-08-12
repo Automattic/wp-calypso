@@ -17,7 +17,7 @@ export default createSelector(
 	( state: AppState ): string | undefined => {
 		const route = getCurrentRoute( state );
 		const { _timestamp, ...queryArgs } = { ...getCurrentQueryArguments( state ) };
-		const queryString = new URLSearchParams( queryArgs ).toString();
+		const queryString = new URLSearchParams( queryArgs as Record< string, string > ).toString();
 
 		if ( ! route ) {
 			return;
