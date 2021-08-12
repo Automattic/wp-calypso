@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
 import {
 	EDITOR_IFRAME_LOADED,
@@ -10,8 +7,8 @@ import {
 } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 import imageEditor from './image-editor/reducer';
-import videoEditor from './video-editor/reducer';
 import lastDraft from './last-draft/reducer';
+import videoEditor from './video-editor/reducer';
 
 /**
  * Returns the updated editor post ID state after an action has been

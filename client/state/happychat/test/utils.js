@@ -1,10 +1,7 @@
-/**
- * Internal dependencies
- */
-import { getHappychatAuth } from '../utils';
 import config from '@automattic/calypso-config';
 import * as wpcom from 'calypso/lib/wp';
 import * as selectedSite from 'calypso/state/help/selectors';
+import { getHappychatAuth } from '../utils';
 
 jest.mock( 'calypso/state/help/selectors', () => ( {
 	getHelpSelectedSite: jest.fn(),

@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
 import { filter } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { EDITOR_IFRAME_LOADED, EDITOR_START, EDITOR_STOP } from 'calypso/state/action-types';
-import { ModalViews } from 'calypso/state/ui/media-modal/constants';
-import { setMediaModalView } from 'calypso/state/ui/media-modal/actions';
 import { withAnalytics, bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
+import { setMediaModalView } from 'calypso/state/ui/media-modal/actions';
+import { ModalViews } from 'calypso/state/ui/media-modal/constants';
 
 import 'calypso/state/editor/init';
 import 'calypso/state/ui/init';

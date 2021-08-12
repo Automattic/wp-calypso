@@ -1,23 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import { AspectRatios } from '../constants';
-import reducer, {
-	hasChanges,
-	fileInfo,
-	transform,
-	cropBounds,
-	crop,
-	aspectRatio,
-	imageIsLoading,
-	originalAspectRatio,
-} from '../reducer';
 import {
 	IMAGE_EDITOR_CROP,
 	IMAGE_EDITOR_COMPUTED_CROP,
@@ -31,6 +13,17 @@ import {
 	IMAGE_EDITOR_STATE_RESET_ALL,
 	IMAGE_EDITOR_IMAGE_HAS_LOADED,
 } from 'calypso/state/action-types';
+import { AspectRatios } from '../constants';
+import reducer, {
+	hasChanges,
+	fileInfo,
+	transform,
+	cropBounds,
+	crop,
+	aspectRatio,
+	imageIsLoading,
+	originalAspectRatio,
+} from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {

@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { forEach } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { MODAL_VIEW_STATS, setEditorMediaModalView } from '../actions';
 import { ANALYTICS_STAT_BUMP } from 'calypso/state/action-types';
 import { setMediaModalView } from 'calypso/state/ui/media-modal/actions';
+import { MODAL_VIEW_STATS, setEditorMediaModalView } from '../actions';
 
 describe( 'actions', () => {
 	describe( 'setEditorMediaModalView()', () => {
