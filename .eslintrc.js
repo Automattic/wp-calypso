@@ -217,6 +217,7 @@ module.exports = {
 				'client/state/active-promotions/**/*',
 				'client/state/checklist/**/*',
 				'client/state/data-getters/**/*',
+				'client/state/editor/**/*',
 				'client/support/**/*',
 				'client/test-helpers/**/*',
 				'client/types.ts',
