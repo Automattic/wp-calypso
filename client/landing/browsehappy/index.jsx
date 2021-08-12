@@ -26,10 +26,9 @@ export default function Browsehappy( { from } ) {
 				<h1>{ __( 'Unsupported Browser' ) }</h1>
 				<p>{ __( 'Unfortunately this page may not work correctly in your browser.' ) }</p>
 				{ /* TODO: This mimics @wordpress/components button. Currently, wp components
-				does not compile in the server build because it is missing a peer dependency.
-				That problem will be resolved once the latest version of @wordpress/components
-				available in Calypso. We should switch to the Button component at that time. */ }
-				<a class="components-button is-primary" href={ SUPPORTED_BROWSERS_LINK }>
+				does not compile for SSR pages, but the style properties still exist. */ }
+				{ /*eslint-disable-next-line wpcalypso/jsx-classname-namespace*/ }
+				<a className="components-button is-primary" href={ SUPPORTED_BROWSERS_LINK }>
 					{ __( 'View supported browsers' ) }
 				</a>
 				<p>
