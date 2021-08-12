@@ -1,12 +1,5 @@
-/**
- * Internal dependencies
- */
 import { ACTIVITY_LOG_RETENTION_POLICY_REQUEST } from 'calypso/state/action-types';
 import 'calypso/state/data-layer/wpcom/activity-log/get-retention-policy';
-
-/**
- * Type dependencies
- */
 import type { Action } from 'redux';
 
 const trackRequests = {
