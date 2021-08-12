@@ -210,6 +210,7 @@ module.exports = {
 				'client/sections.js',
 				'client/server/**/*',
 				'client/signup/**/*',
+				'client/state/account-recovery/**/*',
 				'client/support/**/*',
 				'client/test-helpers/**/*',
 				'client/types.ts',
