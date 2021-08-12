@@ -56,3 +56,5 @@ If you have any problems running the app please see the [most common issues](doc
 ## License
 
 WordPress.com for Desktop is licensed under [GNU General Public License v2 (or later)](LICENSE.md).
+
+Try: CI run 2
