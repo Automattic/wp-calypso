@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { EDITOR_LAST_DRAFT_SET } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 
