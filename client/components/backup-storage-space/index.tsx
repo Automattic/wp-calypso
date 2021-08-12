@@ -10,11 +10,12 @@ import { useSelector } from 'react-redux';
  * Internal dependencies
  */
 import { useTranslate } from 'i18n-calypso';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	getSiteBackupStorageAvailable,
 	getSiteBackupStorageUsed,
 } from 'calypso/state/rewind/selectors';
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	BackupStorageSpaceUpsell,
 	BackupStorageSpaceUpsellOptions,
@@ -39,6 +40,8 @@ export const BackupStorageSpace: React.FC = () => {
 	const translate = useTranslate();
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
+	const siteSlug = useSelector( getSelectedSiteSlug );
+
 	const gigabytesAvailable = useSelector( ( state ) =>
 		getSiteBackupStorageAvailable( state, siteId )
 	);
@@ -90,7 +93,7 @@ export const BackupStorageSpace: React.FC = () => {
 						upsellOption={ upsellOption }
 						usedStorage={ gigabytesUsed }
 						storageLimit={ gigabytesAvailable }
-						href="/pricing/backup"
+						href={ isJetpackCloud() ? `/pricing/backup/${ siteSlug }` : `/plans/${ siteSlug }` }
 					/>
 				</>
 			) }

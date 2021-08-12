@@ -15,7 +15,16 @@ import { Card, ProductIcon } from '@automattic/components';
  */
 import './style.scss';
 
-const MyPlanCard = ( { action, isError, isPlaceholder, details, product, tagline, title } ) => {
+const MyPlanCard = ( {
+	action,
+	isError,
+	isPlaceholder,
+	details,
+	product,
+	tagline,
+	title,
+	headerChildren,
+} ) => {
 	const cardClassNames = classNames( 'my-plan-card', {
 		'is-placeholder': isPlaceholder,
 		'has-action-only': action && ! details && ! isPlaceholder,
@@ -31,6 +40,7 @@ const MyPlanCard = ( { action, isError, isPlaceholder, details, product, tagline
 				<div className="my-plan-card__header">
 					{ title && <h2 className="my-plan-card__title">{ title }</h2> }
 					{ tagline && <p className="my-plan-card__tagline">{ tagline }</p> }
+					{ headerChildren }
 				</div>
 			</div>
 			{ ( details || action || isPlaceholder ) && (
