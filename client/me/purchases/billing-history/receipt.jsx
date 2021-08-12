@@ -318,7 +318,7 @@ function ReceiptLineItems( { transaction } ) {
 				<tfoot>
 					<tr>
 						<td className="billing-history__receipt-desc">
-							<strong>{ translate( 'Total' ) }:</strong>
+							<strong>{ translate( 'Total Paid' ) }:</strong>
 						</td>
 						<td
 							className={
