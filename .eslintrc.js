@@ -211,6 +211,7 @@ module.exports = {
 				'client/server/**/*',
 				'client/signup/**/*',
 				'client/state/account-recovery/**/*',
+				'client/state/account/**/*',
 				'client/support/**/*',
 				'client/test-helpers/**/*',
 				'client/types.ts',
