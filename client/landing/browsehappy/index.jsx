@@ -9,14 +9,10 @@ import './style.scss';
 
 const SUPPORTED_BROWSERS_LINK = 'https://wordpress.com/support/browser-issues/#supported-browsers';
 
-export default function Browsehappy( { from, wpcomRootUrl } ) {
-	// Both from and wpcomRootUrl are passed into the component by SSR. `from`
-	// comes from the `from` query param, but `wpcomRootUrl` is generated on the
-	// server. As a result, we can ensure that we only redirect to "from" if "from"
-	// starts with the wpcom root URL for this calypso environment. This prevents
-	// us from redirecting to arbitrary domains.
-	const isValidUrl = new RegExp( '^' + wpcomRootUrl ).test( from );
-	const continueUrl = addQueryArgs( { bypassTargetRedirection: true }, isValidUrl ? from : '/' );
+export default function Browsehappy( { from } ) {
+	// `from` is passed into the component via server-side-render. Since the query
+	// param is sanitized and validated on the server, we can trust it here.
+	const continueUrl = addQueryArgs( { bypassTargetRedirection: true }, from );
 
 	return (
 		<body className="browsehappy__body">

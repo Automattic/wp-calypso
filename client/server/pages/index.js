@@ -746,14 +746,25 @@ export default function pages() {
 	);
 
 	app.get( '/browsehappy', ( req, res ) => {
-		// This URL will be compared against query param `from` in the component.
-		// Though we set `from` in the unsupported-browser middleware, it is possible
-		// for someone to manually set the `from` query parameter.
-		const wpcomRootUrl = `${ config.get( 'calypsoBaseURL' ) }/`;
+		// We only want to allow a redirect
+		// We need to verify in browsehappy that the "from" param actually comes
+		// from calypso, so we need to include everything in the URL.
+		const protocol = process.env.PROTOCOL || config( 'protocol' );
+		const hostname = process.env.HOST || config( 'hostname' );
+		const port = process.env.PORT || config( 'port' );
+		const serverURL = `${ protocol }://${ hostname }${ port ? ':' + port : '' }`;
+
+		// Matches URLs which begin with exactly "https://wordpress.com/" (or other calypso domains.)
+		const baseURLMatcher = new RegExp( `^${ serverURL }/` );
+
+		const from = req.query.from;
+		let redirectLocation = '/';
+		if ( from && baseURLMatcher.test( from ) ) {
+			redirectLocation = from.replace( baseURLMatcher, '/' );
+		}
 
 		req.context.entrypoint = req.getFilesForEntrypoint( 'entry-browsehappy' );
-		req.context.from = req.query.from;
-		req.context.wpcomRootUrl = wpcomRootUrl;
+		req.context.from = redirectLocation;
 
 		res.send( renderJsx( 'browsehappy', req.context ) );
 	} );

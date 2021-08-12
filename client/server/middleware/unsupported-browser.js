@@ -36,10 +36,17 @@ export default () => ( req, res, next ) => {
 		return;
 	}
 
-	// We need to verify in browsehappy that the "from" param actually comes
-	// from calypso, so we need to include everything in the URL.
-	const baseUrl = config.get( 'calypsoBaseURL' );
-	const from = `${ baseUrl }${ req.originalUrl }`;
+	// When loading browsehappy, we need to verify that the "from" parameter was
+	// passed by the calypso server and not by a 3rd party. We add the base URL
+	// as a way to identify whether the URL will be safe to load. The server handling
+	// the redirect will construct the base URL in the same way. Then we know
+	// that the redirect is from the same origin.
+	const protocol = process.env.PROTOCOL || config( 'protocol' );
+	const hostname = process.env.HOST || config( 'hostname' );
+	const port = process.env.PORT || config( 'port' );
+	const serverURL = `${ protocol }://${ hostname }${ port ? ':' + port : '' }`;
+
+	const from = `${ serverURL }${ req.url }`;
 
 	res.redirect( addQueryArgs( { from }, '/browsehappy' ) );
 };
