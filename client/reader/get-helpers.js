@@ -179,7 +179,8 @@ export const getFeaturedImageAlt = ( post ) => {
 	// If there is no Featured image alt text available, return post title instead.
 	// This will make sure that the featured image has at least some relevant alt text.
 	if ( ! featuredImageAlt ) {
-		return postTitle;
+		// translators: Adds explanation to the Featured image alt text in Reader
+		return translate( '%(postTitle)s - featured image', { args: { postTitle } } );
 	}
 
 	return featuredImageAlt;
