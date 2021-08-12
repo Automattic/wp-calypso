@@ -45,12 +45,12 @@ const receiveChannels = [
 
 function fflagOverrides() {
 	const payload = {};
-	let fflags = process.env.WP_DESKTOP_DEBUG_FEATURES;
-	if ( fflags !== undefined ) {
-		fflags = fflags.split( ',' );
-		for ( let i = 0; i < fflags.length; i++ ) {
-			payload[ fflags[ i ] ] = true;
-		}
+	const fflags = process.env.WP_DESKTOP_DEBUG_FEATURES
+		? process.env.WP_DESKTOP_DEBUG_FEATURES.split( ',' )
+		: [];
+	for ( let i = 0; i < fflags.length; i++ ) {
+		const kv = fflags[ i ].split( ':' );
+		payload[ kv[ 0 ] ] = kv[ 1 ] === 'true' ? true : false;
 	}
 	return payload;
 }
