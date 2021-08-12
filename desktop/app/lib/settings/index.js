@@ -33,10 +33,6 @@ Settings.prototype.isDebug = function () {
  * If no default setting then fall back to false
  */
 Settings.prototype.getSetting = function ( setting ) {
-	if ( process.env.WP_DESKTOP_BASE_URL && setting === constants.LAST_LOCATION ) {
-		return process.env.WP_DESKTOP_BASE_URL;
-	}
-
 	if ( USE_LOCALHOST && setting === constants.LAST_LOCATION ) {
 		return 'http://calypso.localhost:3000';
 	}
