@@ -45,10 +45,13 @@ body:
     id: os
     attributes:
       label: Operating System
+      description: Multiple selection is supported.
       options:
         - Windows
         - macOS
         - Linux
+        - Android
+        - iOS
       multiple: true
     validations:
       required: true
@@ -60,6 +63,7 @@ body:
     id: browser
     attributes:
       label: Browser
+      description: Multiple selection is supported.
       options:
         - Chrome/Chromium
         - Firefox
@@ -79,7 +83,8 @@ body:
   - type: dropdown
     id: site-type
     attributes:
-      label: Simple, Atomic or both?
+      label: Simple/Atomic
+      description: Multiple selection is supported.
       options:
         - Simple
         - Atomic
