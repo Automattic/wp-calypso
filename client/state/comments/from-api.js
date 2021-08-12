@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { pickBy } from 'lodash';
 
 export const toAuthor = ( { avatar_URL, email, ID, name } ) => {
