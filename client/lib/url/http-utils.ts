@@ -1,5 +1,3 @@
-/* eslint-disable jsdoc/require-param */
-
 /**
  * Internal dependencies
  */
