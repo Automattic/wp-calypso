@@ -532,10 +532,20 @@ class RegisterDomainStep extends React.Component {
 		};
 
 		if ( isSignupStep ) {
-			return <Search { ...componentProps }>{ this.renderSearchFilters() }</Search>;
+			return (
+				<>
+					<Search { ...componentProps }></Search>
+					{ this.renderSearchFilters() }
+				</>
+			);
 		}
 
-		return <SearchWithTyper { ...componentProps }>{ this.renderSearchFilters() }</SearchWithTyper>;
+		return (
+			<>
+				<SearchWithTyper { ...componentProps }></SearchWithTyper>
+				{ this.renderSearchFilters() }
+			</>
+		);
 	}
 
 	rejectTrademarkClaim = () => {
