@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { localizedSupport } from '../reducer';
 import {
 	HAPPYCHAT_IO_RECEIVE_INIT,
 	HAPPYCHAT_IO_RECEIVE_LOCALIZED_SUPPORT,
 } from 'calypso/state/action-types';
+import { localizedSupport } from '../reducer';
 
 describe( 'reducers', () => {
 	describe( '#localizedSupport', () => {

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	HAPPYCHAT_IO_RECEIVE_INIT,
 	HAPPYCHAT_ELIGIBILITY_SET,
