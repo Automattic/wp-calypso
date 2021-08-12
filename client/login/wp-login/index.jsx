@@ -250,6 +250,7 @@ export class Login extends React.Component {
 				footer={ footer }
 				locale={ locale }
 				handleUsernameChange={ this.handleUsernameChange.bind( this ) }
+				signupUrl={ signupUrl }
 			/>
 		);
 	}
