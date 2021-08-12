@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { requestHttpData } from 'calypso/state/data-layer/http-data';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { fromActivityApi } from 'calypso/state/data-layer/wpcom/sites/activity/from-api';
 import getRequestActivityId from './get-request-activity-id';
 

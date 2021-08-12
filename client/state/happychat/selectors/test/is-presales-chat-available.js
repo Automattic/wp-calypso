@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import isPresalesChatAvailable from '../is-presales-chat-available';
 
 describe( '#isPresalesChatAvailable()', () => {
