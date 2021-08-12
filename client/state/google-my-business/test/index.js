@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import googleMyBusinessReducer from '../reducer';
 import {
 	GOOGLE_MY_BUSINESS_STATS_RECEIVE,
 	GOOGLE_MY_BUSINESS_STATS_REQUEST,
 } from 'calypso/state/action-types';
+import googleMyBusinessReducer from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#stats', () => {

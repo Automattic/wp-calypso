@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
+import { createSelector } from '@automattic/state-utils';
 import { includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	HAPPYCHAT_CHAT_STATUS_BLOCKED,
 	HAPPYCHAT_CHAT_STATUS_CLOSED,
 	HAPPYCHAT_CHAT_STATUS_DEFAULT,
 	HAPPYCHAT_CHAT_STATUS_NEW,
 } from 'calypso/state/happychat/constants';
-import { createSelector } from '@automattic/state-utils';
 
 import 'calypso/state/happychat/init';
 
