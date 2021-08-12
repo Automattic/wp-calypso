@@ -134,6 +134,7 @@ async function run() {
 		app = spawnDetached( CWD, SPAWN_CMD, APP_ARGS, electronLog.fd, {
 			WP_DEBUG_LOG: appLog.path,
 			DEBUG: true,
+			CI: true,
 			...parentEnv,
 			...( process.env.WP_DESKTOP_BASE_URL !== undefined && {
 				WP_DESKTOP_BASE_URL: cleanBaseURL( process.env.WP_DESKTOP_BASE_URL ),
