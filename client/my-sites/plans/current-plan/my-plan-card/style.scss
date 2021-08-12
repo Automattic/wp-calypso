@@ -1,5 +1,9 @@
 // My Plan Card
 .my-plan-card.card {
+	&::after {
+		content: none;
+	}
+
 	@include breakpoint-deprecated( '>960px' ) {
 		padding: 24px;
 
@@ -7,6 +11,7 @@
 		flex-flow: row nowrap;
 		align-items: flex-start;
 		justify-content: space-between;
+		column-gap: 56px;
 	}
 }
 
@@ -98,7 +103,7 @@
 		flex-flow: column nowrap;
 		justify-content: center;
 		align-items: flex-end;
-		padding: 0 0 0 24px;
+		padding: initial;
 	}
 
 	&::before {
@@ -168,7 +173,7 @@
 	}
 
 	.button ~ .button {
-		margin-left: 8px;
+		margin-inline-start: 8px;
 	}
 }
 
@@ -178,7 +183,6 @@
 	box-shadow: none;
 
 	@include breakpoint-deprecated( '>960px' ) {
-		max-width: 540px;
 		margin-block-end: 16px;
 	}
 
@@ -188,33 +192,47 @@
 	}
 
 	.backup-storage-space__progress-bar-container {
-		align-items: start;
-		row-gap: 8px;
-		column-gap: 16px;
 		margin-block-end: 24px;
 
-		flex-direction: column;
-		@include breakpoint-deprecated( '>1040px' ) {
-			flex-direction: row;
-		}
+		display: grid;
+		column-gap: 16px;
 	}
 
 	.backup-storage-space__progress-heading {
+		margin-block-end: 8px;
+
 		font-weight: 600;
+		white-space: nowrap;
+
+		grid-row: 1 / 1;
+		grid-column: 1 / 1;
+
+		@include breakpoint-deprecated( '>1040px' ) {
+			margin-block-end: initial;
+		}
 	}
 
 	.backup-storage-space__progress-usage-text {
-		text-align: right;
+		grid-row: 3;
+		grid-column: 1 / 1;
+
 		color: var( --color-text-subtle );
+		white-space: nowrap;
+
+		@include breakpoint-deprecated( '>1040px' ) {
+			grid-row: 1;
+			grid-column: 2;
+
+			text-align: end;
+		}
 	}
 
 	.backup-storage-space__progress-bar {
 		padding: 0;
-		align-self: stretch;
+		grid-row: 2;
 
 		@include breakpoint-deprecated( '>1040px' ) {
-			align-self: initial;
-			flex: 1 0 100px;
+			grid-column: 1 / span 2;
 		}
 	}
 }
