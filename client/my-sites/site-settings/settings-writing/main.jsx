@@ -28,9 +28,7 @@ const SiteSettingsWriting = ( { site, translate } ) => (
 			brandFont
 			className="settings-writing__page-heading"
 			headerText={ translate( 'Writing Settings' ) }
-			subHeaderText={ translate(
-				"Manage categories, tags, and other settings related to your site's content."
-			) }
+			subHeaderText={ translate( "Manage settings related to your site's content." ) }
 			align="left"
 			hasScreenOptions
 		/>
