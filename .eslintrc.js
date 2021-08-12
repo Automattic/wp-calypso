@@ -216,6 +216,7 @@ module.exports = {
 				'client/state/action-watchers/**/*',
 				'client/state/active-promotions/**/*',
 				'client/state/checklist/**/*',
+				'client/state/data-getters/**/*',
 				'client/support/**/*',
 				'client/test-helpers/**/*',
 				'client/types.ts',

@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { requestHttpData } from 'calypso/state/data-layer/http-data';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import requestExternalContributorsId from './request-external-contributors-id';
 
 const requestExternalContributorsAddition = ( siteId, userId ) => {
