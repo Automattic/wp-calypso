@@ -1,9 +1,17 @@
 // My Plan Card
 .my-plan-card.card {
+	&::after {
+		content: none;
+	}
+
 	@include breakpoint-deprecated( '>960px' ) {
+		padding: 24px;
+
 		display: flex;
 		flex-flow: row nowrap;
+		align-items: flex-start;
 		justify-content: space-between;
+		column-gap: 56px;
 	}
 }
 
@@ -35,7 +43,6 @@
 	font-size: $font-title-small;
 	font-weight: 400;
 	line-height: 29px;
-	margin: 8px 0;
 	color: var( --color-neutral-100 );
 
 	.is-placeholder & {
@@ -62,7 +69,7 @@
 	flex: 0 0 auto;
 	width: 64px;
 	height: 64px;
-	margin: 8px 20px 16px 0;
+	margin-inline-end: 20px;
 
 	@include breakpoint-deprecated( '<660px' ) {
 		display: none;
@@ -96,7 +103,7 @@
 		flex-flow: column nowrap;
 		justify-content: center;
 		align-items: flex-end;
-		padding: 0 0 0 24px;
+		padding: initial;
 	}
 
 	&::before {
@@ -166,6 +173,66 @@
 	}
 
 	.button ~ .button {
-		margin-left: 8px;
+		margin-inline-start: 8px;
+	}
+}
+
+.my-plan-card__header .backup-storage-space.card {
+	margin: 24px 0;
+	padding: 0;
+	box-shadow: none;
+
+	@include breakpoint-deprecated( '>960px' ) {
+		margin-block-end: 16px;
+	}
+
+	.backup-storage-space__divider,
+	.backup-storage-space-upsell__title-text {
+		display: none;
+	}
+
+	.backup-storage-space__progress-bar-container {
+		margin-block-end: 24px;
+
+		display: grid;
+		column-gap: 16px;
+	}
+
+	.backup-storage-space__progress-heading {
+		margin-block-end: 8px;
+
+		font-weight: 600;
+		white-space: nowrap;
+
+		grid-row: 1 / 1;
+		grid-column: 1 / 1;
+
+		@include breakpoint-deprecated( '>1040px' ) {
+			margin-block-end: initial;
+		}
+	}
+
+	.backup-storage-space__progress-usage-text {
+		grid-row: 3;
+		grid-column: 1 / 1;
+
+		color: var( --color-text-subtle );
+		white-space: nowrap;
+
+		@include breakpoint-deprecated( '>1040px' ) {
+			grid-row: 1;
+			grid-column: 2;
+
+			text-align: end;
+		}
+	}
+
+	.backup-storage-space__progress-bar {
+		padding: 0;
+		grid-row: 2;
+
+		@include breakpoint-deprecated( '>1040px' ) {
+			grid-column: 1 / span 2;
+		}
 	}
 }

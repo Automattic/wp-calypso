@@ -20,7 +20,7 @@ import TextControl from 'calypso/extensions/woocommerce/components/text-control'
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { preventWidows } from 'calypso/lib/formatting';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
-import { getSignupUrl } from 'calypso/lib/login';
+import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -461,14 +461,9 @@ export class LoginForm extends Component {
 		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
 
-		const signupUrl = getSignupUrl(
-			currentQuery,
-			currentRoute,
-			oauth2Client,
-			locale,
-			pathname,
-			isGutenboarding
-		);
+		const signupUrl = this.props.signupUrl
+			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
+			: getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname, isGutenboarding );
 
 		if ( isJetpackWooCommerceFlow ) {
 			return this.renderWooCommerce();

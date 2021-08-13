@@ -6,6 +6,7 @@ import {
 	PreviewComponent,
 	ThemesPage,
 	ThemesDetailPage,
+	SiteSelectComponent,
 } from '@automattic/calypso-e2e';
 
 describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
@@ -18,6 +19,7 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 	// This test will use partial matching names to cycle between available themes.
 	const themeName = 'Twenty Twen';
 	const user = 'defaultUser';
+	const siteURL = DataHelper.getAccountSiteURL( user, { protocol: false } );
 
 	setupHooks( ( args ) => {
 		page = args.page;
@@ -31,6 +33,14 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 	it( 'Navigate to Appearance > Themes', async function () {
 		sidebarComponent = new SidebarComponent( page );
 		await sidebarComponent.gotoMenu( { item: 'Appearance', subitem: 'Themes' } );
+	} );
+
+	it( `Choose test site ${ siteURL } if Site Selector is shown`, async function () {
+		const siteSelectComponent = new SiteSelectComponent( page );
+
+		if ( await siteSelectComponent.isSiteSelectorVisible() ) {
+			await siteSelectComponent.selectSite( siteURL );
+		}
 	} );
 
 	it( `Search for free theme with keyword ${ themeName }`, async function () {

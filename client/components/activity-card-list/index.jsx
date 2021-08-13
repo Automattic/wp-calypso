@@ -18,18 +18,11 @@ import { updateFilter } from 'calypso/state/activity-log/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import getSiteActivityLogRetentionDays from 'calypso/state/selectors/get-site-activity-log-retention-days';
+import getSiteActivityLogRetentionPolicyRequestStatus from 'calypso/state/selectors/get-site-activity-log-retention-policy-request-status';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import RetentionLimitUpsell from './retention-limit-upsell';
 
 import './style.scss';
-
-const getRetentionPolicyRequestStatus = ( state, siteId ) => {
-	if ( ! Number.isInteger( siteId ) ) {
-		return undefined;
-	}
-
-	return state.activityLog.retentionPolicy[ siteId ]?.requestStatus;
-};
 
 class ActivityCardList extends Component {
 	static propTypes = {
@@ -291,7 +284,10 @@ const mapStateToProps = ( state ) => {
 	const userLocale = getCurrentUserLocale( state );
 	const retentionDays = getSiteActivityLogRetentionDays( state, siteId );
 
-	const retentionPolicyRequestStatus = getRetentionPolicyRequestStatus( state, siteId );
+	const retentionPolicyRequestStatus = getSiteActivityLogRetentionPolicyRequestStatus(
+		state,
+		siteId
+	);
 
 	return {
 		filter,

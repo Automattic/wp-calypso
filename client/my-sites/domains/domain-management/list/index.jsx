@@ -19,8 +19,7 @@ import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings'
 import DomainOnly from './domain-only';
 import ListItemPlaceholder from './item-placeholder';
 import Main from 'calypso/components/main';
-import { domainManagementRoot, domainManagementList } from 'calypso/my-sites/domains/paths';
-import { Card } from '@automattic/components';
+import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
 import EmptyContent from 'calypso/components/empty-content';
@@ -54,9 +53,9 @@ import DomainItem from './domain-item';
 import ListHeader from './list-header';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
-import AddDomainButton from 'calypso/my-sites/domains/domain-management/list/add-domain-button';
 import EmptyDomainsListCard from 'calypso/my-sites/domains/domain-management/list/empty-domains-list-card';
 import WpcomDomainItem from 'calypso/my-sites/domains/domain-management/list/wpcom-domain-item';
+import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
 
 /**
  * Style dependencies
@@ -133,8 +132,11 @@ export class List extends React.Component {
 						align="left"
 					/>
 					<div className="domains__header-buttons">
-						<HeaderCart selectedSite={ selectedSite } currentRoute={ currentRoute } />
-						{ this.addDomainButton() }
+						<HeaderCart
+							selectedSite={ this.props.selectedSite }
+							currentRoute={ this.props.currentRoute }
+						/>
+						{ this.optionsDomainButton() }
 					</div>
 				</div>
 
@@ -247,12 +249,12 @@ export class List extends React.Component {
 		);
 	}
 
-	addDomainButton() {
+	optionsDomainButton() {
 		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
 			return null;
 		}
 
-		return <AddDomainButton />;
+		return <OptionsDomainButton />;
 	}
 
 	setPrimaryDomain( domainName ) {
@@ -362,7 +364,7 @@ export class List extends React.Component {
 			return times( 3, ( n ) => <ListItemPlaceholder key={ `item-${ n }` } /> );
 		}
 
-		const { currentRoute, translate, selectedSite, hasSingleSite } = this.props;
+		const { currentRoute, selectedSite } = this.props;
 
 		const { changePrimaryDomainModeEnabled, primaryDomainIndex, settingPrimaryDomain } = this.state;
 
@@ -393,12 +395,6 @@ export class List extends React.Component {
 			/>
 		) );
 
-		const manageAllDomainsLink = hasSingleSite ? null : (
-			<Card className="list__view-all" key="manage-all-domains" href={ domainManagementRoot() }>
-				{ translate( 'Manage all your domains' ) }
-			</Card>
-		);
-
 		return [
 			<QuerySitePurchases key="query-purchases" siteId={ selectedSite.ID } />,
 			domains.length > 0 && (
@@ -411,7 +407,6 @@ export class List extends React.Component {
 				/>
 			),
 			...domainListItems,
-			manageAllDomainsLink,
 		];
 	}
 

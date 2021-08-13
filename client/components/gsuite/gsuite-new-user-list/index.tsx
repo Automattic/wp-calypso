@@ -18,7 +18,6 @@ interface Props {
 	domains?: string[];
 	extraValidation: ( user: NewUser ) => NewUser;
 	selectedDomainName: string;
-	showLabels?: boolean;
 	onUsersChange: ( users: NewUser[] ) => void;
 	onReturnKeyPress: ( event: Event ) => void;
 	users: NewUser[];
@@ -33,7 +32,6 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 	users,
 	onReturnKeyPress,
 	autoFocus = false,
-	showLabels = false,
 } ) => {
 	const translate = useTranslate();
 
@@ -80,7 +78,6 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 						onUserValueChange={ onUserValueChange( user.uuid ) }
 						onUserRemove={ onUserRemove( user.uuid ) }
 						onReturnKeyPress={ onReturnKeyPress }
-						showLabels={ showLabels }
 						showTrashButton={ index > 0 }
 					/>
 

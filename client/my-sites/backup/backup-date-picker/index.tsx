@@ -55,7 +55,7 @@ const BackupDatePicker: React.FC< Props > = ( { selectedDate, onDateChange } ) =
 		{ shouldExecute: !! firstKnownBackupAttempt.backupAttempt }
 	);
 
-	const canGoToDate = useCanGoToDate( selectedDate, oldestDateAvailable );
+	const canGoToDate = useCanGoToDate( siteId, selectedDate, oldestDateAvailable );
 
 	const { previousDisplayDate, nextDisplayDate } = useMemo( () => {
 		const yesterday = moment( today ).subtract( 1, 'day' );
