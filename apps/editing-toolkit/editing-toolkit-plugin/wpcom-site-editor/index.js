@@ -1,4 +1,5 @@
 import { select, dispatch, subscribe } from '@wordpress/data';
+import './style.scss';
 
 // Temporary change that prevents opening the Site Editor's navigation sidebar,
 // and instead simply navigates back home on click.
