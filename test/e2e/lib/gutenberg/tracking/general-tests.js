@@ -365,4 +365,19 @@ export function createGeneralTests( { it, editorType, postType, baseContext = un
 			assert.strictEqual( toggleEvents.length, 1 );
 		} );
 	}
+
+	// This test should be last because it navigates the browser to another url
+	if ( ! isSiteEditor ) {
+		it( 'Tracks "wpcom_block_editor_post_publish_add_new_click" event', async function () {
+			const editor = await EditorComponent.Expect( this.driver, gutenbergEditorType );
+
+			await editor.publish( { addNew: true, waitForNavigation: false } );
+
+			const eventsStack = await getEventsStack( this.driver );
+			const clickEvents = eventsStack.filter(
+				( [ eventName ] ) => eventName === 'wpcom_block_editor_post_publish_add_new_click'
+			);
+			assert.strictEqual( clickEvents.length, 1 );
+		} );
+	}
 }

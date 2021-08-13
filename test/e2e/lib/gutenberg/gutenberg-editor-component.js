@@ -53,11 +53,14 @@ export default class GutenbergEditorComponent extends AbstractEditorComponent {
 		return await this.closeSidebar();
 	}
 
-	async publish( { visit = false } = {} ) {
+	async publish( { visit = false, addNew = false, waitForNavigation = true } = {} ) {
 		await driverHelper.clickWhenClickable( this.driver, this.prePublishButtonLocator );
 		await driverHelper.clickWhenClickable( this.driver, this.publishButtonLocator );
 
 		const publishedPostLinkLocator = By.css( '.post-publish-panel__postpublish-header a' );
+		const addNewPostLinkLocator = By.css(
+			'.post-publish-panel__postpublish-buttons [href*="post-new.php"]'
+		);
 		const publishedPostLinkElement = await driverHelper.waitUntilElementLocatedAndVisible(
 			this.driver,
 			publishedPostLinkLocator
@@ -67,9 +70,16 @@ export default class GutenbergEditorComponent extends AbstractEditorComponent {
 
 		if ( visit ) {
 			await driverHelper.clickWhenClickable( this.driver, publishedPostLinkLocator );
-			await driverHelper.waitUntilElementLocatedAndVisible( this.driver, By.css( '#page' ) );
+			if ( waitForNavigation ) {
+				await driverHelper.waitUntilElementLocatedAndVisible( this.driver, By.css( '#page' ) );
+			}
+		} else if ( addNew ) {
+			await driverHelper.clickWhenClickable( this.driver, addNewPostLinkLocator );
+			if ( waitForNavigation ) {
+				await driverHelper.waitUntilElementLocatedAndVisible( this.driver, By.css( '#page' ) );
+			}
 		} else {
-			// Close the panel if we're not visiting the published page
+			// Close the panel if we're not visiting the published page or starting a new post
 			await driverHelper.clickWhenClickable(
 				this.driver,
 				By.css( 'button[aria-label="Close panel"]' )
