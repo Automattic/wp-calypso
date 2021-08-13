@@ -32,7 +32,7 @@ describe( DataHelper.createSuiteTitle( 'Widgets' ), function () {
 		}
 	} );
 
-	describe( 'Regression: Verify that the visibility option is visible', function () {
+	describe( 'Regression: Verify that the visibility option is present', function () {
 		it( 'Insert a Legacy Widget', async function () {
 			await page.click( 'button[aria-label="Add block"]' );
 			await page.fill( 'input[placeholder="Search"]', 'Top Posts and Pages' );
