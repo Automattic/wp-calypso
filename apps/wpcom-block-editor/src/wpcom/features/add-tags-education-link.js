@@ -1,8 +1,8 @@
-import { localizeUrl } from '@automattic/i18n-utils';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { ExternalLink } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { addFilter } from '@wordpress/hooks';
-import { useTranslate } from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
 import tracksRecordEvent from './tracking/track-record-event';
 
 const trackTagsEducationLinkClick = () =>
@@ -10,7 +10,7 @@ const trackTagsEducationLinkClick = () =>
 
 const addTagsEducationLink = createHigherOrderComponent( ( PostTaxonomyType ) => {
 	return ( props ) => {
-		const translate = useTranslate();
+		const localizeUrl = useLocalizeUrl();
 
 		if ( props.slug !== 'post_tag' ) {
 			return <PostTaxonomyType { ...props } />;
@@ -23,7 +23,7 @@ const addTagsEducationLink = createHigherOrderComponent( ( PostTaxonomyType ) =>
 					href={ localizeUrl( 'https://wordpress.com/support/posts/tags/' ) }
 					onClick={ trackTagsEducationLinkClick }
 				>
-					{ translate( 'Build your audience with tags' ) }
+					{ __( 'Build your audience with tags' ) }
 				</ExternalLink>
 			</>
 		);
