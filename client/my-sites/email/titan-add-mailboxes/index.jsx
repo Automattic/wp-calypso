@@ -55,6 +55,11 @@ import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
 import TitanUnusedMailboxesNotice from 'calypso/my-sites/email/titan-add-mailboxes/titan-unused-mailbox-notice';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class TitanAddMailboxes extends React.Component {
 	state = {
 		mailboxes: [ buildNewTitanMailbox( this.props.selectedDomainName, false ) ],
