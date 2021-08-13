@@ -46,6 +46,7 @@ export class InvitePeoplePage {
 		message?: string;
 	} ): Promise< void > {
 		await this.page.fill( selectors.emailInput, email );
+		await this.page.press( selectors.emailInput, 'Enter' );
 		await this.page.check( selectors.roleRadio( role ) );
 		if ( message ) {
 			await this.page.fill( selectors.messageInput, message );

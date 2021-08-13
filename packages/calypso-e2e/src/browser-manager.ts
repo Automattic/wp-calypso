@@ -131,7 +131,6 @@ export async function clearAuthenticationState( page: Page ): Promise< void > {
 	await page.evaluate( 'localStorage.clear();' );
 	// Lastly, clear the cookies using built-in method.
 	await browserContext.clearCookies();
-	await page.waitForTimeout( 1000 );
 	// Previous steps navigated page away from target page. Return page to the original URL.
 	await page.goto( currentURL );
 }
