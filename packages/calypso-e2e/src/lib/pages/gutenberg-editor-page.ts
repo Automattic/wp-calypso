@@ -21,6 +21,8 @@ const selectors = {
 	postToolbar: '.edit-post-header',
 	settingsToggle: '[aria-label="Settings"]',
 	saveDraftButton: '.editor-post-save-draft',
+	publishButton: ( parentSelector: string ) =>
+		`${ parentSelector } button:text("Publish")[aria-disabled=false]`,
 
 	// Settings panel.
 	settingsPanel: '.interface-complementary-area',
@@ -251,8 +253,8 @@ export class GutenbergEditorPage {
 			await this.saveDraft();
 		}
 
-		await frame.click( `${ selectors.postToolbar } button:text("Publish")[aria-disabled=false]` );
-		await frame.click( `${ selectors.publishPanel } button:text("Publish")[aria-disabled=false]` );
+		await frame.click( selectors.publishButton( selectors.postToolbar ) );
+		await frame.click( selectors.publishButton( selectors.publishPanel ) );
 		const viewPublishedArticleButton = await frame.waitForSelector( selectors.viewButton );
 		const publishedURL = ( await viewPublishedArticleButton.getAttribute( 'href' ) ) as string;
 
@@ -269,9 +271,10 @@ export class GutenbergEditorPage {
 		const frame = await this.getEditorFrame();
 
 		await frame.click( selectors.saveDraftButton );
-		await frame.waitForSelector(
-			`${ selectors.postToolbar } button:text("Publish")[aria-disabled=false]`
-		);
+		// Once the Save draft button is clicked, buttons on the post toolbar
+		// are disabled while the post is saved. Wait for the state of
+		// Publish button to return to 'enabled' before proceeding.
+		await frame.waitForSelector( selectors.publishButton( selectors.postToolbar ) );
 	}
 
 	/**
