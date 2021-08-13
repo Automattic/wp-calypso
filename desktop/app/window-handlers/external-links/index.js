@@ -21,7 +21,7 @@ module.exports = function ( { view } ) {
 	// to set a password on the account to log in that way.
 	view.webContents.on( 'will-navigate', function ( event, url ) {
 		const urlToLoad =
-			url === Config.loginURL() + 'link'
+			url === Config.baseURL() + 'log-in/link'
 				? 'file://' + assets.getPath( 'magic-links-unsupported.html' )
 				: url;
 		view.webContents.loadURL( urlToLoad );
