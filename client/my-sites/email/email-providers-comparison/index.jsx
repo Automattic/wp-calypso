@@ -98,6 +98,7 @@ class EmailProvidersComparison extends React.Component {
 		currencyCode: PropTypes.string,
 		currentRoute: PropTypes.string,
 		domain: PropTypes.object,
+		domainName: PropTypes.string,
 		gSuiteProduct: PropTypes.object,
 		isGSuiteSupported: PropTypes.bool.isRequired,
 		productsList: PropTypes.object.isRequired,
