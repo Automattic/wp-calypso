@@ -89,10 +89,10 @@ class EmailProvidersComparison extends React.Component {
 		headerTitle: PropTypes.string,
 		hideEmailForwardingCard: PropTypes.bool,
 		hideEmailHeader: PropTypes.bool,
-		isSkippable: PropTypes.bool,
 		onSkipClick: PropTypes.func,
 		promoHeaderTitle: PropTypes.string,
 		selectedDomainName: PropTypes.string.isRequired,
+		showSkipButton: PropTypes.bool,
 
 		// Props injected via connect()
 		currencyCode: PropTypes.string,
@@ -580,18 +580,14 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	renderSkipButton() {
-		const { isSkippable, onSkipClick, translate } = this.props;
+		const { showSkipButton, onSkipClick, translate } = this.props;
 
-		if ( ! isSkippable ) {
-			return null;
-		}
-
-		return (
+		return showSkipButton ? (
 			<Button compact borderless onClick={ onSkipClick }>
 				{ translate( 'Skip' ) }
 				<Gridicon icon={ 'arrow-right' } size={ 18 } />
 			</Button>
-		);
+		) : null;
 	}
 
 	isDomainEligibleForEmail( domain ) {

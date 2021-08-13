@@ -31,7 +31,7 @@ export default function EmailProvidersUpsell( { domain } ) {
 				} ) }
 				hideEmailHeader
 				hideEmailForwardingCard
-				isSkippable
+				showSkipButton
 				onSkipClick={ () => {
 					page( `/checkout/${ selectedSiteSlug }` );
 				} }
