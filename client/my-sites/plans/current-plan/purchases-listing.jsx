@@ -43,15 +43,22 @@ import {
 	isJetpackBackup,
 	isJetpackScan,
 	getPlan,
+	isPlan,
 	planHasFeature,
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PRODUCT_JETPACK_SCAN,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
+	JETPACK_BACKUP_PRODUCTS,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
 import Gridicon from 'calypso/components/gridicon';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
+import {
+	getForCurrentCROIteration,
+	Iterations,
+} from 'calypso/my-sites/plans/jetpack-plans/iterations';
+import { BackupStorageSpace } from 'calypso/components/backup-storage-space';
 
 class PurchasesListing extends Component {
 	static propTypes = {
@@ -296,6 +303,26 @@ class PurchasesListing extends Component {
 		);
 	}
 
+	getHeaderChildren( purchase ) {
+		const includesBackup =
+			isJetpackBackup( purchase ) ||
+			( isPlan( purchase ) &&
+				JETPACK_BACKUP_PRODUCTS.some( ( feature ) =>
+					planHasFeature( purchase.productSlug, feature )
+				) );
+
+		// Only Backup-inclusive products and plans have this section for now
+		if ( ! includesBackup ) {
+			return null;
+		}
+
+		return (
+			getForCurrentCROIteration( {
+				[ Iterations.ONLY_REALTIME_PRODUCTS ]: <BackupStorageSpace />,
+			} ) ?? null
+		);
+	}
+
 	renderPlan() {
 		const { currentPlan, isPlanExpiring, translate } = this.props;
 
@@ -314,6 +341,7 @@ class PurchasesListing extends Component {
 						product={ currentPlan.productSlug }
 						tagline={ this.getPlanTagline( currentPlan ) }
 						title={ this.getTitle( currentPlan ) }
+						headerChildren={ this.getHeaderChildren( currentPlan ) }
 					/>
 				) }
 			</Fragment>
@@ -345,6 +373,7 @@ class PurchasesListing extends Component {
 						product={ purchase.productSlug }
 						tagline={ getJetpackProductTagline( purchase, true ) }
 						title={ this.getTitle( purchase ) }
+						headerChildren={ this.getHeaderChildren( purchase ) }
 					/>
 				) ) }
 			</Fragment>

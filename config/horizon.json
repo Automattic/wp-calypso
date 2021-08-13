@@ -98,7 +98,7 @@
 		"settings/security/monitor": true,
 		"settings/theme-setup": false,
 		"sign-in-with-apple": false,
-		"signup/professional-email-step": true,
+		"signup/professional-email-step": false,
 		"signup/reskin": true,
 		"signup/social": true,
 		"site-indicator": true,

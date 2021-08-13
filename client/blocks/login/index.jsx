@@ -69,6 +69,7 @@ class Login extends Component {
 		userEmail: PropTypes.string,
 		onSocialConnectStart: PropTypes.func,
 		onTwoFactorRequested: PropTypes.func,
+		signupUrl: PropTypes.string,
 	};
 
 	state = {
@@ -425,6 +426,7 @@ class Login extends Component {
 			locale,
 			userEmail,
 			handleUsernameChange,
+			signupUrl,
 		} = this.props;
 
 		if ( socialConnect ) {
@@ -469,6 +471,7 @@ class Login extends Component {
 				locale={ locale }
 				userEmail={ userEmail }
 				handleUsernameChange={ handleUsernameChange }
+				signupUrl={ signupUrl }
 			/>
 		);
 	}

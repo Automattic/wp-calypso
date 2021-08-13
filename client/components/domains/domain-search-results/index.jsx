@@ -259,10 +259,10 @@ class DomainSearchResults extends React.Component {
 			const regularSuggestions = suggestions.filter(
 				( suggestion ) => ! suggestion.isRecommended && ! suggestion.isBestAlternative
 			);
-			const bestMatchSuggestions = suggestions.filter( ( suggestion ) => suggestion.isRecommended );
-			const bestAlternativeSuggestions = suggestions.filter(
-				( suggestion ) => suggestion.isBestAlternative
+			const featuredSuggestions = suggestions.filter(
+				( suggestion ) => suggestion.isRecommended || suggestion.isBestAlternative
 			);
+
 			featuredSuggestionElement = (
 				<FeaturedDomainSuggestions
 					cart={ this.props.cart }
@@ -275,10 +275,9 @@ class DomainSearchResults extends React.Component {
 					key="featured"
 					onButtonClick={ this.props.onClickResult }
 					premiumDomains={ this.props.premiumDomains }
-					primarySuggestion={ bestMatchSuggestions[ 0 ] }
+					featuredSuggestions={ featuredSuggestions }
 					query={ this.props.lastDomainSearched }
 					railcarId={ this.props.railcarId }
-					secondarySuggestion={ bestAlternativeSuggestions[ 0 ] }
 					selectedSite={ this.props.selectedSite }
 					pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 					unavailableDomains={ this.props.unavailableDomains }

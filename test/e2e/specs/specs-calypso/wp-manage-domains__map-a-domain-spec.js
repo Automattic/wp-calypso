@@ -23,7 +23,6 @@ describe( `[${ host }] Manage Domains - Map a Domain: (${ screenSize }) @paralle
 	it( 'Add a domain', async function () {
 		const domainsPage = await DomainsPage.Expect( this.driver );
 		await domainsPage.clickAddDomain();
-		await domainsPage.clickPopoverItem( 'to this site' );
 	} );
 
 	it( 'Use own domain', async function () {

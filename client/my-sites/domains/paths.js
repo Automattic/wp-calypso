@@ -175,6 +175,34 @@ export function domainMapping( siteName, domain = '' ) {
 }
 
 /**
+ *
+ * @param { string } siteName	The slug for the site.
+ * @param { string } domainName	The domain name to map.
+ * @param { string } step		The step slug to start from (optional)
+ * @param { boolean } showErrors Whether to show the mapping setup errors.
+ * @returns {string} Path to the mapping setup flow.
+ */
+export function domainMappingSetup( siteName, domainName, step = '', showErrors = false ) {
+	let path = `/domains/mapping/${ siteName }/setup/${ domainName }`;
+	const params = {};
+
+	if ( step ) {
+		params.step = step;
+	}
+
+	if ( showErrors ) {
+		params[ 'show-errors' ] = true;
+	}
+
+	const queryString = stringify( params );
+	if ( queryString ) {
+		path += '?' + queryString;
+	}
+
+	return path;
+}
+
+/**
  * Return the path to start an inbound domain transfer to WordPress.com.
  *
  * @param { string } siteName         The slug for the site.
@@ -205,6 +233,15 @@ export function domainTransferIn( siteName, domain, useStandardBack ) {
 
 export function domainUseYourDomain( siteName, domain ) {
 	let path = `/domains/add/use-your-domain/${ siteName }`;
+	if ( domain ) {
+		path += `?initialQuery=${ domain }`;
+	}
+
+	return path;
+}
+
+export function domainUseMyDomain( siteName, domain ) {
+	let path = `/domains/add/use-my-domain/${ siteName }`;
 	if ( domain ) {
 		path += `?initialQuery=${ domain }`;
 	}

@@ -7,7 +7,7 @@ import {
 	setupHooks,
 } from '@automattic/calypso-e2e';
 
-describe( DataHelper.createSuiteTitle( 'Support' ), function () {
+describe( DataHelper.createSuiteTitle( 'Support: Popover' ), function () {
 	let page;
 
 	setupHooks( ( args ) => {

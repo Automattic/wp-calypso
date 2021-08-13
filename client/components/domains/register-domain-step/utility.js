@@ -1,4 +1,3 @@
-import { find, startsWith } from 'lodash';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 
 function moveArrayElement( array, from, to ) {
@@ -12,12 +11,13 @@ export function markFeaturedSuggestions(
 	exactMatchDomain,
 	strippedDomainBase,
 	featuredSuggestionsAtTop = false,
-	avoidTlds = []
+	avoidTlds = [],
+	markOnlyRecommended = false
 ) {
 	function isExactMatchBeforeTld( suggestion ) {
 		return (
 			suggestion.domain_name === exactMatchDomain ||
-			startsWith( suggestion.domain_name, `${ strippedDomainBase }.` )
+			suggestion.domain_name?.startsWith( `${ strippedDomainBase }.` )
 		);
 	}
 
@@ -29,7 +29,7 @@ export function markFeaturedSuggestions(
 	let outputWithoutTlds = filterOutDomainsWithTlds( output, avoidTlds );
 
 	const recommendedSuggestion =
-		( featuredSuggestionsAtTop ? null : find( outputWithoutTlds, isExactMatchBeforeTld ) ) ||
+		( featuredSuggestionsAtTop ? null : outputWithoutTlds.find( isExactMatchBeforeTld ) ) ||
 		outputWithoutTlds[ 0 ];
 
 	if ( recommendedSuggestion ) {
@@ -39,8 +39,9 @@ export function markFeaturedSuggestions(
 	}
 
 	const bestAlternativeSuggestion =
-		( featuredSuggestionsAtTop ? null : find( outputWithoutTlds, isBestAlternative ) ) ||
-		outputWithoutTlds[ 1 ];
+		! markOnlyRecommended &&
+		( ( featuredSuggestionsAtTop ? null : outputWithoutTlds.find( isBestAlternative ) ) ||
+			outputWithoutTlds[ 1 ] );
 
 	if ( bestAlternativeSuggestion ) {
 		bestAlternativeSuggestion.isBestAlternative = true;

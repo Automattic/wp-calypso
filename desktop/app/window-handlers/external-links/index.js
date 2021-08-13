@@ -1,4 +1,5 @@
 const assets = require( '../../lib/assets' );
+const Config = require( '../../lib/config' );
 const log = require( '../../lib/logger' )( 'desktop:external-links' );
 
 let targetURL = '';
@@ -20,7 +21,7 @@ module.exports = function ( { view } ) {
 	// to set a password on the account to log in that way.
 	view.webContents.on( 'will-navigate', function ( event, url ) {
 		const urlToLoad =
-			url === 'https://wordpress.com/log-in/link'
+			url === Config.loginURL() + 'link'
 				? 'file://' + assets.getPath( 'magic-links-unsupported.html' )
 				: url;
 		view.webContents.loadURL( urlToLoad );

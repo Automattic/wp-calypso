@@ -24,6 +24,7 @@ function EmptyDomainsListCard( {
 	hasDomainCredit,
 	isCompact,
 	dispatchRecordTracksEvent,
+	hasNonWpcomDomains,
 } ) {
 	const translate = useTranslate();
 
@@ -47,6 +48,9 @@ function EmptyDomainsListCard( {
 	let contentType = 'no_plan';
 
 	if ( siteHasPaidPlan && ! hasDomainCredit ) {
+		if ( hasNonWpcomDomains ) {
+			return null;
+		}
 		title = translate( 'Add your domain' );
 		line = translate( 'You have no domains added to this site.' );
 		action = translate( 'Search for a domain' );
@@ -73,9 +77,9 @@ function EmptyDomainsListCard( {
 	);
 
 	return (
-		<Card>
+		<Card className="empty-domains-list-card">
 			<div
-				className={ classNames( 'empty-domains-list-card', {
+				className={ classNames( 'empty-domains-list-card__wrapper', {
 					'is-compact': isCompact,
 					'has-title-only': title && ! line,
 				} ) }
@@ -117,6 +121,7 @@ EmptyDomainsListCard.propTypes = {
 	isCompact: PropTypes.bool,
 	domains: PropTypes.array,
 	dispatchRecordTracksEvent: PropTypes.func,
+	hasNonWpcomDomains: PropTypes.bool,
 };
 
 export default connect( null, { dispatchRecordTracksEvent: recordTracksEvent } )(
