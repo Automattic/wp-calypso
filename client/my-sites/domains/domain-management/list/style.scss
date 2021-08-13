@@ -90,8 +90,7 @@
 	}
 }
 
-.domain-management-list-item__upsell,
-.domain-item__upsell {
+.domain-management-list-item__upsell {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -274,12 +273,6 @@
 	@include placeholder( --color-neutral-5 );
 }
 
-.domain-item__enable-selection {
-	> .list__domain-options {
-		visibility: hidden;
-	}
-}
-
 .domain-item__overlay {
 	z-index: 2;
 	background-color: rgba( 255, 255, 255, 0.8 );
@@ -297,10 +290,6 @@
 		font-size: $font-body-small;
 		margin-left: auto;
 		margin-right: 5px;
-	}
-
-	.domain-item__upsell {
-		margin-left: auto;
 	}
 }
 

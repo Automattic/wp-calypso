@@ -76,14 +76,11 @@ export class List extends React.Component {
 	};
 
 	static defaultProps = {
-		enablePrimaryDomainMode: noop,
-		disablePrimaryDomainMode: noop,
 		changePrimary: noop,
 	};
 
 	state = {
 		settingPrimaryDomain: false,
-		changePrimaryDomainModeEnabled: false,
 		primaryDomainIndex: -1,
 	};
 
@@ -113,8 +110,8 @@ export class List extends React.Component {
 
 	renderNewDesign() {
 		const { selectedSite, domains, currentRoute, translate } = this.props;
-		const { changePrimaryDomainModeEnabled, settingPrimaryDomain } = this.state;
-		const disabled = settingPrimaryDomain || changePrimaryDomainModeEnabled;
+		const { settingPrimaryDomain } = this.state;
+		const disabled = settingPrimaryDomain;
 
 		const nonWpcomDomains = filterOutWpcomDomains( domains );
 		const wpcomDomain = domains.find(
@@ -309,9 +306,6 @@ export class List extends React.Component {
 
 		if ( domain.name === currentPrimaryName ) {
 			// user clicked the current primary domain
-			this.setState( {
-				changePrimaryDomainModeEnabled: false,
-			} );
 			return;
 		}
 
@@ -324,7 +318,6 @@ export class List extends React.Component {
 			() => {
 				this.setState( {
 					settingPrimaryDomain: false,
-					changePrimaryDomainModeEnabled: false,
 				} );
 
 				showUpdatePrimaryDomainSuccessNotice( domain.name );
@@ -365,11 +358,10 @@ export class List extends React.Component {
 		}
 
 		const { currentRoute, selectedSite } = this.props;
-
-		const { changePrimaryDomainModeEnabled, primaryDomainIndex, settingPrimaryDomain } = this.state;
+		const { primaryDomainIndex, settingPrimaryDomain } = this.state;
 
 		const domains = filterOutWpcomDomains( this.props.domains );
-		const disabled = settingPrimaryDomain || changePrimaryDomainModeEnabled;
+		const disabled = settingPrimaryDomain;
 
 		const domainListItems = domains.map( ( domain, index ) => (
 			<DomainItem
@@ -381,31 +373,19 @@ export class List extends React.Component {
 				isManagingAllSites={ false }
 				onClick={ settingPrimaryDomain ? noop : this.goToEditDomainRoot }
 				isBusy={ settingPrimaryDomain && index === primaryDomainIndex }
-				isChecked={ changePrimaryDomainModeEnabled && index === primaryDomainIndex }
 				busyMessage={ this.props.translate( 'Setting Primary Domain…', {
 					context: 'Shows up when the primary domain is changing and the user is waiting',
 				} ) }
 				disabled={ disabled }
-				enableSelection={ changePrimaryDomainModeEnabled && domain.canSetAsPrimary }
 				selectionIndex={ index }
 				onMakePrimaryClick={ this.handleUpdatePrimaryDomainOptionClick }
-				onSelect={ this.handleUpdatePrimaryDomain }
-				onUpgradeClick={ this.goToPlans }
 				shouldUpgradeToMakePrimary={ this.shouldUpgradeToMakeDomainPrimary( domain ) }
 			/>
 		) );
 
 		return [
 			<QuerySitePurchases key="query-purchases" siteId={ selectedSite.ID } />,
-			domains.length > 0 && (
-				<ListHeader
-					key="domains-header"
-					headerClasses={ {
-						'domain-item__enable-selection': this.state.changePrimaryDomainModeEnabled,
-					} }
-					isManagingAllSites={ false }
-				/>
-			),
+			domains.length > 0 && <ListHeader key="domains-header" isManagingAllSites={ false } />,
 			...domainListItems,
 		];
 	}
@@ -414,36 +394,7 @@ export class List extends React.Component {
 		const { selectedSite, currentRoute } = this.props;
 		page( getDomainManagementPath( domain.name, domain.type, selectedSite.slug, currentRoute ) );
 	};
-
-	goToPlans = () => {
-		this.props.upsellUpgradeClick();
-		page( `/plans/${ this.props.selectedSite.slug }` );
-	};
 }
-
-const addDomainClick = () =>
-	composeAnalytics(
-		recordGoogleEvent( 'Domain Management', 'Clicked "Add Domain" Button in List' ),
-		recordTracksEvent( 'calypso_domain_management_list_add_domain_click' )
-	);
-
-const enablePrimaryDomainMode = () =>
-	composeAnalytics(
-		recordGoogleEvent( 'Domain Management', 'Clicked "Change Primary" button in List' ),
-		recordTracksEvent( 'calypso_domain_management_list_enable_primary_domain_mode_click' )
-	);
-
-const disablePrimaryDomainMode = () =>
-	composeAnalytics(
-		recordGoogleEvent(
-			'Domain Management',
-			'Clicked "X" button to disable change primary mode in List'
-		),
-		recordTracksEvent( 'calypso_domain_management_list_disable_primary_mode_click' )
-	);
-
-const upsellUpgradeClick = () =>
-	recordTracksEvent( 'calypso_domain_management_make_primary_plan_upgrade_click' );
 
 const changePrimary = ( domain, mode ) =>
 	composeAnalytics(
@@ -483,20 +434,10 @@ export default connect(
 	},
 	( dispatch ) => {
 		return {
-			clickClaimDomainNotice: () =>
-				dispatch(
-					recordTracksEvent( 'calypso_domain_credit_reminder_click', {
-						cta_name: 'domain_info_notice',
-					} )
-				),
 			setPrimaryDomain: ( ...props ) => setPrimaryDomain( ...props )( dispatch ),
-			addDomainClick: () => dispatch( addDomainClick() ),
-			enablePrimaryDomainMode: () => dispatch( enablePrimaryDomainMode() ),
-			disablePrimaryDomainMode: () => dispatch( disablePrimaryDomainMode() ),
 			changePrimary: ( domain, mode ) => dispatch( changePrimary( domain, mode ) ),
 			successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
 			errorNotice: ( text, options ) => dispatch( errorNotice( text, options ) ),
-			upsellUpgradeClick: () => dispatch( upsellUpgradeClick() ),
 		};
 	}
 )( localize( withLocalizedMoment( List ) ) );
