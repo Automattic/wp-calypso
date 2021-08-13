@@ -9,8 +9,8 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { domainAddNew } from 'calypso/my-sites/domains/paths';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import { domainAddNew } from 'calypso/my-sites/domains/paths';
 import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
