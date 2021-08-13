@@ -21,40 +21,37 @@ export default function EmailProvidersUpsell( { domain } ) {
 	const comment = '%(domainName)s is the domain name, e.g example.com';
 
 	return (
-			<CalypsoShoppingCartProvider>
-				<EmailProvidersComparison
-					backPath={ domainAddNew( selectedSiteSlug ) }
-					cartDomainName={ domain }
-					headerTitle={ ( domainName ) =>
-						translate( 'Register %(domainName)s', { args: { domainName }, comment } )
+		<CalypsoShoppingCartProvider>
+			<EmailProvidersComparison
+				backPath={ domainAddNew( selectedSiteSlug ) }
+				cartDomainName={ domain }
+				headerTitle={ translate( 'Register %(domainName)s', {
+					args: { domainName: domain },
+					comment,
+				} ) }
+				isEmailHeaderShown={ false }
+				isEmailForwardingCardShown={ false }
+				isSkippable
+				onSkipClick={ () => {
+					page( `/checkout/${ selectedSiteSlug }` );
+				} }
+				promoHeaderTitle={ translate( 'Add a professional email address to %(domainName)s', {
+					args: {
+						domainName: domain,
+					},
+					comment,
+				} ) }
+				promoHeaderDescription={ translate(
+					'Pick from one of our flexible options to connect your domain with email and start getting emails @%(domainName)s today.',
+					{
+						args: {
+							domainName: domain,
+						},
+						comment,
 					}
-					isEmailHeaderShown={ false }
-					isEmailForwardingCardShown={ false }
-					isSkippable
-					onSkipClick={ () => {
-						page( `/checkout/${ selectedSiteSlug }` );
-					} }
-					promoHeaderTitle={ ( domainName ) =>
-						translate( 'Add a professional email address to %(domainName)s', {
-							args: {
-								domainName,
-							},
-							comment,
-						} )
-					}
-					promoHeaderDescription={ ( domainName ) =>
-						translate(
-							'Pick from one of our flexible options to connect your domain with email and start getting emails @%(domainName)s today.',
-							{
-								args: {
-									domainName,
-								},
-								comment,
-							}
-						)
-					}
-					selectedDomainName={ domain }
-				/>
-			</CalypsoShoppingCartProvider>
+				) }
+				selectedDomainName={ domain }
+			/>
+		</CalypsoShoppingCartProvider>
 	);
 }

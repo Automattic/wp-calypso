@@ -93,15 +93,15 @@ class EmailProvidersComparison extends React.Component {
 		currentRoute: PropTypes.string,
 		domain: PropTypes.object,
 		gSuiteProduct: PropTypes.object,
-		headerTitle: PropTypes.func,
+		headerTitle: PropTypes.string,
 		isEmailForwardingCardShown: PropTypes.bool,
 		isEmailHeaderShown: PropTypes.bool,
 		isGSuiteSupported: PropTypes.bool.isRequired,
 		isSkippable: PropTypes.bool,
 		onSkipClick: PropTypes.func,
 		productsList: PropTypes.object.isRequired,
-		promoHeaderDescription: PropTypes.func,
-		promoHeaderTitle: PropTypes.func,
+		promoHeaderDescription: PropTypes.string,
+		promoHeaderTitle: PropTypes.string,
 		selectedSite: PropTypes.object,
 		titanMailProduct: PropTypes.object,
 	};
@@ -533,7 +533,7 @@ class EmailProvidersComparison extends React.Component {
 		};
 
 		const title =
-			headerTitle?.( selectedDomainName ) ??
+			headerTitle ??
 			( this.isUpgrading() ? translate( 'Upgrade to a hosted email' ) : translate( 'Add email' ) );
 
 		const headerContent = skipHeaderElement ? null : (
@@ -559,7 +559,7 @@ class EmailProvidersComparison extends React.Component {
 				<PromoCard
 					isPrimary
 					title={
-						promoHeaderTitle?.( selectedDomainName ) ??
+						promoHeaderTitle ??
 						( this.isUpgrading()
 							? translate( 'Upgrade to start sending emails from %(domainName)s', translateArgs )
 							: translate( 'Get your own @%(domainName)s email address', translateArgs ) )
@@ -568,7 +568,7 @@ class EmailProvidersComparison extends React.Component {
 					className="email-providers-comparison__action-panel"
 				>
 					<p>
-						{ promoHeaderDescription?.( selectedDomainName ) ??
+						{ promoHeaderDescription ??
 							( this.isUpgrading()
 								? translate(
 										'Pick from one of our flexible options to unlock full email features.'
