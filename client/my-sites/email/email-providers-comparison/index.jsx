@@ -87,8 +87,8 @@ class EmailProvidersComparison extends React.Component {
 		// Props passed to this component
 		cartDomainName: PropTypes.string,
 		headerTitle: PropTypes.string,
-		isEmailForwardingCardShown: PropTypes.bool,
-		isEmailHeaderShown: PropTypes.bool,
+		hideEmailForwardingCard: PropTypes.bool,
+		hideEmailHeader: PropTypes.bool,
 		isSkippable: PropTypes.bool,
 		onSkipClick: PropTypes.func,
 		promoHeaderDescription: PropTypes.string,
@@ -511,7 +511,7 @@ class EmailProvidersComparison extends React.Component {
 		const {
 			currentRoute,
 			headerTitle,
-			isEmailHeaderShown = true,
+			hideEmailHeader,
 			promoHeaderDescription,
 			promoHeaderTitle,
 			selectedDomainName,
@@ -550,7 +550,7 @@ class EmailProvidersComparison extends React.Component {
 			<>
 				<DocumentHead title={ titleCase( title ) } />
 
-				{ isEmailHeaderShown && (
+				{ ! hideEmailHeader && (
 					<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
 				) }
 
@@ -646,7 +646,7 @@ class EmailProvidersComparison extends React.Component {
 	render() {
 		const {
 			domainsWithForwards,
-			isEmailForwardingCardShown = true,
+			hideEmailForwardingCard,
 			isGSuiteSupported,
 			selectedDomainName,
 			selectedSite,
@@ -658,7 +658,7 @@ class EmailProvidersComparison extends React.Component {
 
 				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
-				{ isEmailForwardingCardShown && <QueryEmailForwards domainName={ selectedDomainName } /> }
+				{ ! hideEmailForwardingCard && <QueryEmailForwards domainName={ selectedDomainName } /> }
 
 				{ this.renderHeader() }
 
@@ -673,7 +673,7 @@ class EmailProvidersComparison extends React.Component {
 
 				{ this.renderGoogleCard() }
 
-				{ isEmailForwardingCardShown && this.renderEmailForwardingCard() }
+				{ ! hideEmailForwardingCard && this.renderEmailForwardingCard() }
 
 				<TrackComponentView
 					eventName="calypso_email_providers_comparison_page_view"

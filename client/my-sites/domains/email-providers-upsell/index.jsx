@@ -29,8 +29,8 @@ export default function EmailProvidersUpsell( { domain } ) {
 					args: { domainName: domain },
 					comment,
 				} ) }
-				isEmailHeaderShown={ false }
-				isEmailForwardingCardShown={ false }
+				hideEmailHeader
+				hideEmailForwardingCard
 				isSkippable
 				onSkipClick={ () => {
 					page( `/checkout/${ selectedSiteSlug }` );
