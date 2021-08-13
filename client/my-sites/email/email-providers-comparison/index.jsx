@@ -100,6 +100,7 @@ class EmailProvidersComparison extends React.Component {
 		domain: PropTypes.object,
 		domainName: PropTypes.string,
 		gSuiteProduct: PropTypes.object,
+		hasCartDomain: PropTypes.bool,
 		isGSuiteSupported: PropTypes.bool.isRequired,
 		productsList: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object,
@@ -159,9 +160,9 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	isUpgrading = () => {
-		const { cartDomainName, domain } = this.props;
+		const { hasCartDomain, domain } = this.props;
 
-		return ! cartDomainName && hasEmailForwards( domain );
+		return ! hasCartDomain && hasEmailForwards( domain );
 	};
 
 	onTitanMailboxesChange = ( updatedMailboxes ) =>
@@ -175,13 +176,13 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	onTitanConfirmNewMailboxes = () => {
-		const { cartDomainName, domain, domainName } = this.props;
+		const { hasCartDomain, domain, domainName } = this.props;
 		const { titanMailboxes } = this.state;
 
 		const validatedTitanMailboxes = validateTitanMailboxes( titanMailboxes );
 
 		const mailboxesAreValid = areAllMailboxesValid( validatedTitanMailboxes );
-		const userCanAddEmail = Boolean( cartDomainName ) || canCurrentUserAddEmail( domain );
+		const userCanAddEmail = hasCartDomain || canCurrentUserAddEmail( domain );
 		const userCannotAddEmailReason = userCanAddEmail
 			? null
 			: getCurrentUserCannotAddEmailReason( domain );
@@ -245,11 +246,11 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	onGoogleConfirmNewUsers = () => {
-		const { cartDomainName, domain, gSuiteProduct } = this.props;
+		const { cartDomainName, domain, gSuiteProduct, hasCartDomain } = this.props;
 		const { googleUsers } = this.state;
 
 		const usersAreValid = areAllUsersValid( googleUsers );
-		const userCanAddEmail = Boolean( cartDomainName ) || canCurrentUserAddEmail( domain );
+		const userCanAddEmail = hasCartDomain || canCurrentUserAddEmail( domain );
 
 		recordTracksEvent( 'calypso_email_providers_add_click', {
 			mailbox_count: googleUsers.length,
@@ -317,7 +318,7 @@ class EmailProvidersComparison extends React.Component {
 
 	renderGoogleCard() {
 		const {
-			cartDomainName,
+			hasCartDomain,
 			currencyCode,
 			domain,
 			gSuiteProduct,
@@ -377,7 +378,7 @@ class EmailProvidersComparison extends React.Component {
 		const domainList = domain ? [ domain ] : null;
 
 		const formFields =
-			cartDomainName || domain ? (
+			hasCartDomain || domain ? (
 				<FormFieldset>
 					<GSuiteNewUserList
 						extraValidation={ identityMap }
@@ -423,9 +424,9 @@ class EmailProvidersComparison extends React.Component {
 
 	renderTitanCard() {
 		const {
-			cartDomainName,
 			currencyCode,
 			domain,
+			hasCartDomain,
 			selectedDomainName,
 			titanMailProduct,
 			translate,
@@ -438,8 +439,9 @@ class EmailProvidersComparison extends React.Component {
 			comment: '{{price/}} is the formatted price, e.g. $20',
 		} );
 
-		const isEligibleForFreeTrial = domain?.titanMailSubscription?.isEligibleForIntroductoryOffer;
-		const discount = cartDomainName || isEligibleForFreeTrial ? translate( '3 months free' ) : null;
+		const isEligibleForFreeTrial =
+			hasCartDomain || domain?.titanMailSubscription?.isEligibleForIntroductoryOffer;
+		const discount = isEligibleForFreeTrial ? translate( '3 months free' ) : null;
 
 		const logo = (
 			<Gridicon
@@ -594,9 +596,9 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	isDomainEligibleForEmail( domain ) {
-		const { cartDomainName } = this.props;
+		const { hasCartDomain } = this.props;
 
-		if ( cartDomainName ) {
+		if ( hasCartDomain ) {
 			return true;
 		}
 
@@ -691,6 +693,7 @@ export default connect(
 		} );
 
 		const domainName = ownProps.cartDomainName ?? domain.name;
+		const hasCartDomain = Boolean( ownProps.cartDomainName );
 
 		const isGSuiteSupported = domain
 			? canUserPurchaseGSuite( state ) && hasGSuiteSupportedDomain( [ domain ] )
@@ -703,6 +706,7 @@ export default connect(
 			domainName,
 			domainsWithForwards: getDomainsWithForwards( state, domains ),
 			gSuiteProduct: getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY ),
+			hasCartDomain,
 			isGSuiteSupported,
 			productsList: getProductsList( state ),
 			selectedSite,
