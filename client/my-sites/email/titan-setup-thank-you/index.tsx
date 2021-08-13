@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { ThemeProvider } from 'emotion-theming';
 import { connect, useSelector } from 'react-redux';
 import { localize, useTranslate } from 'i18n-calypso';
 
@@ -22,7 +21,6 @@ import { getSelectedDomain } from 'calypso/lib/domains';
 import { getDomainsBySite } from 'calypso/state/sites/domains/selectors';
 import { SiteData } from 'calypso/state/ui/selectors/site-data';
 import { ThankYou } from 'calypso/components/thank-you';
-import theme from 'calypso/my-sites/email/titan-setup-thank-you/theme';
 import { TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP } from 'calypso/lib/titan/constants';
 
 /**

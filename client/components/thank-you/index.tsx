@@ -11,11 +11,7 @@ import React from 'react';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { CALYPSO_CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';
-import {
-	ThankYouNextStepProps,
-	ThankYouProps,
-	ThankYouSectionProps,
-} from './types';
+import { ThankYouNextStepProps, ThankYouProps, ThankYouSectionProps } from './types';
 
 /**
  * style dependencies
