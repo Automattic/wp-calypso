@@ -21,7 +21,6 @@ export default function EmailProvidersUpsell( { domain } ) {
 	const comment = '%(domainName)s is the domain name, e.g example.com';
 
 	return (
-		<>
 			<CalypsoShoppingCartProvider>
 				<EmailProvidersComparison
 					backPath={ domainAddNew( selectedSiteSlug ) }
@@ -57,6 +56,5 @@ export default function EmailProvidersUpsell( { domain } ) {
 					selectedDomainName={ domain }
 				/>
 			</CalypsoShoppingCartProvider>
-		</>
 	);
 }
