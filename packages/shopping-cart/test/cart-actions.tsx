@@ -7,7 +7,7 @@ import {
 } from '@testing-library/react';
 import React, { useEffect, useRef } from 'react';
 import { getEmptyResponseCart } from '../src/empty-carts';
-import { useShoppingCart, ShoppingCartProvider } from '../src/index';
+import { useShoppingCart, withShoppingCart, ShoppingCartProvider } from '../src/index';
 import type {
 	RequestCartProduct,
 	ResponseCartProduct,
@@ -16,6 +16,7 @@ import type {
 	MinimalRequestCartProduct,
 	GetCart,
 	SetCart,
+	WithShoppingCartProps,
 	ShoppingCartManagerOptions,
 } from '../src/types';
 
@@ -199,6 +200,30 @@ function ProductList( {
 					</li>
 				);
 			} ) }
+		</ul>
+	);
+}
+function ProductListWithoutHook( {
+	shoppingCartManager,
+	cart,
+	productsToAddOnClick,
+}: { productsToAddOnClick: RequestCartProduct[] } & WithShoppingCartProps ) {
+	const { isPendingUpdate, addProductsToCart } = shoppingCartManager;
+	const onClick = () => {
+		addProductsToCart( productsToAddOnClick );
+	};
+	return (
+		<ul data-testid="product-list">
+			{ isPendingUpdate && <div>Loading...</div> }
+			{ cart.products.map( ( product ) => {
+				return (
+					<li key={ product.uuid }>
+						<span>{ product.product_slug }</span>
+						<span>{ product.product_name }</span>
+					</li>
+				);
+			} ) }
+			<button onClick={ onClick }>Click me</button>
 		</ul>
 	);
 }
@@ -839,6 +864,29 @@ describe( 'useShoppingCart', () => {
 			await waitFor( () => {
 				expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
 			} );
+		} );
+	} );
+} );
+
+describe( 'withShoppingCart', () => {
+	it( 'provides both shoppingCartManager and cart props to the wrapped component', async () => {
+		const WrappedProductsList = withShoppingCart( ProductListWithoutHook );
+		const TestComponent = () => {
+			return (
+				<div>
+					<WrappedProductsList productsToAddOnClick={ [ planOne ] } />
+				</div>
+			);
+		};
+
+		render(
+			<MockProvider>
+				<TestComponent />
+			</MockProvider>
+		);
+		fireEvent.click( screen.getByText( 'Click me' ) );
+		await waitFor( () => {
+			expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
 		} );
 	} );
 } );
