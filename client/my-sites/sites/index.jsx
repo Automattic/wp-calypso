@@ -38,6 +38,14 @@ class Sites extends Component {
 	}
 
 	filterSites = ( site ) => {
+		// only show Jetpack sites with the full Plugin
+		if (
+			site.jetpack &&
+			! ( site?.options?.jetpack_connection_active_plugins ?? [] ).includes( 'jetpack' )
+		) {
+			return false;
+		}
+
 		const path = this.props.siteBasePath;
 
 		// Domains can be managed on Simple and Atomic sites.
