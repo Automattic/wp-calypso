@@ -91,7 +91,6 @@ class EmailProvidersComparison extends React.Component {
 		hideEmailHeader: PropTypes.bool,
 		isSkippable: PropTypes.bool,
 		onSkipClick: PropTypes.func,
-		promoHeaderDescription: PropTypes.string,
 		promoHeaderTitle: PropTypes.string,
 		selectedDomainName: PropTypes.string.isRequired,
 
@@ -159,9 +158,9 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	isUpgrading = () => {
-		const { domain } = this.props;
+		const { cartDomainName, domain } = this.props;
 
-		return hasEmailForwards( domain );
+		return ! cartDomainName && hasEmailForwards( domain );
 	};
 
 	onTitanMailboxesChange = ( updatedMailboxes ) =>
@@ -512,7 +511,6 @@ class EmailProvidersComparison extends React.Component {
 			currentRoute,
 			headerTitle,
 			hideEmailHeader,
-			promoHeaderDescription,
 			promoHeaderTitle,
 			selectedDomainName,
 			selectedSite,
@@ -568,16 +566,13 @@ class EmailProvidersComparison extends React.Component {
 					className="email-providers-comparison__action-panel"
 				>
 					<p>
-						{ promoHeaderDescription ??
-							( this.isUpgrading()
-								? translate(
-										'Pick from one of our flexible options to unlock full email features.'
-								  )
-								: translate(
-										'Pick one of our flexible options to connect your domain with email ' +
-											'and start getting emails @%(domainName)s today.',
-										translateArgs
-								  ) ) }
+						{ this.isUpgrading()
+							? translate( 'Pick from one of our flexible options to unlock full email features.' )
+							: translate(
+									'Pick one of our flexible options to connect your domain with email ' +
+										'and start getting emails @%(domainName)s today.',
+									translateArgs
+							  ) }
 					</p>
 				</PromoCard>
 			</>
