@@ -14,7 +14,6 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import isSiteEligibleForFullSiteEditing from 'calypso/state/selectors/is-site-eligible-for-full-site-editing';
-import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor.js';
 
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
@@ -47,12 +46,10 @@ registerHandlers( 'state/data-layer/wpcom/theme-filters/index.js', {
 			const state = store.getState();
 			const selectedSiteId = getSelectedSiteId( state );
 			const isFse = isSiteEligibleForFullSiteEditing( state, selectedSiteId );
-			const isCoreFse = isSiteUsingCoreSiteEditor( state, selectedSiteId );
 
 			return themeFiltersHandlers( store, {
 				...action,
 				isFse,
-				isCoreFse,
 			} );
 		},
 	],
