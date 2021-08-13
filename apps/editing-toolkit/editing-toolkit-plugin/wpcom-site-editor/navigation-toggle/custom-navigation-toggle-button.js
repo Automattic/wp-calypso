@@ -30,7 +30,7 @@ export default function CustomNavigationToggleButton() {
 
 	return (
 		<Button
-			className="edit-site-navigation-toggle__button has-icon"
+			className="edit-site-navigation-toggle__button wpcom-edit-site-navigation-toggle__button has-icon"
 			label={ __( 'Back to Dashboard', 'full-site-editing' ) }
 			onClick={ onClick }
 			showTooltip

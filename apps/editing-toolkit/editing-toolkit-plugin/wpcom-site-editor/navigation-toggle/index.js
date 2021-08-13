@@ -3,15 +3,11 @@ import { render } from '@wordpress/element';
 import CustomNavigationToggleButton from './custom-navigation-toggle-button';
 import './style.scss';
 
-const CUSTOM_NAVIGATION_TOGGLE_CLASS_NAME = '.wpcom-edit-site-navigation-toggle__button';
-const NAVIGATION_TOGGLE_CLASS_NAME = '.edit-site-navigation-toggle';
-const NAVIGATION_TOGGLE_BUTTON_CLASS_NAME = '.edit-site-navigation-toggle__button';
-
 function injectNavigationToggleButton() {
-	if ( document.querySelector( CUSTOM_NAVIGATION_TOGGLE_CLASS_NAME ) ) {
+	if ( document.querySelector( '.wpcom-edit-site-navigation-toggle__button' ) ) {
 		return;
 	}
-	const toggle = document.querySelector( NAVIGATION_TOGGLE_CLASS_NAME );
+	const toggle = document.querySelector( '.edit-site-navigation-toggle' );
 	if ( ! toggle ) {
 		return;
 	}
@@ -27,7 +23,7 @@ domReady( () => {
 	}
 
 	const waitForNavigationToggleButton = setInterval( () => {
-		const toggleButton = document.querySelector( NAVIGATION_TOGGLE_BUTTON_CLASS_NAME );
+		const toggleButton = document.querySelector( '.edit-site-navigation-toggle__button' );
 		if ( ! toggleButton ) {
 			return;
 		}
