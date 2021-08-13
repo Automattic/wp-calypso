@@ -356,7 +356,7 @@ export class List extends React.Component {
 			return [
 				<ListItemPlaceholder key="item-1" />,
 				<ListItemPlaceholder key="item-2" />,
-				<ListItemPlaceholder key="item-2" />,
+				<ListItemPlaceholder key="item-3" />,
 			];
 		}
 
