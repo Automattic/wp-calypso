@@ -8,8 +8,8 @@ import {
 import React from 'react';
 import { getEmptyResponseCart } from '../src/empty-carts';
 import { useShoppingCart } from '../src/index';
-import { planOne, planTwo, renewalOne, renewalTwo } from './utils/mock-cart-api';
-import { ProductList, MockProvider } from './utils/mock-components';
+import { planOne, planTwo, renewalOne, renewalTwo, mainCartKey } from './utils/mock-cart-api';
+import { ProductList, MockProvider, ProductListWithoutHook } from './utils/mock-components';
 import { convertMsToSecs, verifyThatNever, verifyThatTextNeverAppears } from './utils/utils';
 
 import '@testing-library/jest-dom/extend-expect';
@@ -50,6 +50,30 @@ describe( 'useShoppingCart', () => {
 			fireEvent.click( screen.getByText( 'Click me' ) );
 			await waitFor( () => screen.getByTestId( 'product-list' ) );
 			expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
+		} );
+
+		it( 'allows setting the cart key via the optional argument', async () => {
+			const TestComponentWithKey = () => {
+				const shoppingCartManager = useShoppingCart( mainCartKey );
+				return (
+					<div>
+						<ProductListWithoutHook
+							productsToAddOnClick={ [ planOne ] }
+							shoppingCartManager={ shoppingCartManager }
+							cart={ shoppingCartManager.responseCart }
+						/>
+					</div>
+				);
+			};
+			render(
+				<MockProvider cartKeyOverride="asdjalkjdaldjsalkjdslka">
+					<TestComponentWithKey />
+				</MockProvider>
+			);
+			fireEvent.click( screen.getByText( 'Click me' ) );
+			await waitFor( () => {
+				expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
+			} );
 		} );
 
 		it( 'throws an error if the product is missing a product_id', async () => {
