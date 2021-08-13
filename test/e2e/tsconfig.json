@@ -2,7 +2,7 @@
 	"extends": "@automattic/calypso-build/typescript/ts-package.json",
 	"compilerOptions": {
 		"noEmit": true, // just type checking, no output. The output is handled by babel.
-        "types": [ "jest" ] // no mocha - we are only using TypeScript for the new Playwright scripts
+        "types": [ "jest", "node" ] // no mocha - we are only using TypeScript for the new Playwright scripts
     },
 	"include": [ "specs/specs-playwright" ] // TypeScript is scoped only for the new Playwright scripts
 }
