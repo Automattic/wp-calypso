@@ -374,12 +374,14 @@ class EmailProvidersComparison extends React.Component {
 					comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
 			  } );
 
+		const domainList = domain ? [ domain ] : null;
+
 		const formFields =
 			cartDomainName || domain ? (
 				<FormFieldset>
 					<GSuiteNewUserList
 						extraValidation={ identityMap }
-						domains={ [ cartDomainName || domain ] }
+						domains={ domainList }
 						onUsersChange={ this.onGoogleUsersChange }
 						selectedDomainName={ selectedDomainName }
 						users={ googleUsers }
