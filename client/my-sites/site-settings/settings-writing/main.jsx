@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import i18nCalypso, { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -18,7 +18,7 @@ import WritingForm from 'calypso/my-sites/site-settings/form-writing';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 
-const SiteSettingsWriting = ( { site, translate } ) => (
+const SiteSettingsWriting = ( { site, locale, translate } ) => (
 	<Main className="settings-writing site-settings">
 		<ScreenOptionsTab wpAdminPath="options-writing.php" />
 		<DocumentHead title={ translate( 'Writing Settings' ) } />
@@ -28,7 +28,16 @@ const SiteSettingsWriting = ( { site, translate } ) => (
 			brandFont
 			className="settings-writing__page-heading"
 			headerText={ translate( 'Writing Settings' ) }
-			subHeaderText={ translate( "Manage settings related to your site's content." ) }
+			subHeaderText={
+				// TODO: Remove fallback after translation is ready
+				locale === 'en' ||
+				locale === 'en-gb' ||
+				i18nCalypso.hasTranslation( "Manage settings related to your site's content." )
+					? translate( "Manage settings related to your site's content." )
+					: translate(
+							"Manage categories, tags, and other settings related to your site's content."
+					  )
+			}
 			align="left"
 			hasScreenOptions
 		/>
