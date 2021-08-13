@@ -20,7 +20,7 @@ import type {
 	CacheStatus,
 } from './types';
 
-const debug = debugFactory( 'shopping-cart:use-shopping-cart-reducer' );
+const debug = debugFactory( 'shopping-cart:shopping-cart-reducer' );
 const emptyResponseCart = getEmptyResponseCart();
 
 const alwaysAllowedActions = [
