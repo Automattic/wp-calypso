@@ -1,5 +1,5 @@
 import debugFactory from 'debug';
-import { playQueuedActions } from './use-shopping-cart-reducer';
+import { playQueuedActions } from './shopping-cart-reducer';
 import type { ShoppingCartState, ShoppingCartReducerDispatch, CacheStatus } from './types';
 
 const debug = debugFactory( 'shopping-cart:state-based-actions' );

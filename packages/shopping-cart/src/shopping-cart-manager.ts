@@ -9,9 +9,9 @@ import {
 	noopManager,
 } from './managers';
 import { createActionCreators } from './shopping-cart-actions';
+import { getInitialShoppingCartState, shoppingCartReducer } from './shopping-cart-reducer';
 import { createTakeActionsBasedOnState } from './state-based-actions';
 import { createCartSyncMiddleware, createCartInitMiddleware } from './sync';
-import { getInitialShoppingCartState, shoppingCartReducer } from './use-shopping-cart-reducer';
 import type {
 	GetCart,
 	SetCart,
