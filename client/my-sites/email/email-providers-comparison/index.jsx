@@ -85,23 +85,23 @@ const identityMap = ( item ) => item;
 class EmailProvidersComparison extends React.Component {
 	static propTypes = {
 		// Props passed to this component
+		cartDomainName: PropTypes.string,
+		headerTitle: PropTypes.string,
+		isEmailForwardingCardShown: PropTypes.bool,
+		isEmailHeaderShown: PropTypes.bool,
+		isSkippable: PropTypes.bool,
+		onSkipClick: PropTypes.func,
+		promoHeaderDescription: PropTypes.string,
+		promoHeaderTitle: PropTypes.string,
 		selectedDomainName: PropTypes.string.isRequired,
 
 		// Props injected via connect()
-		cartDomainName: PropTypes.string,
 		currencyCode: PropTypes.string,
 		currentRoute: PropTypes.string,
 		domain: PropTypes.object,
 		gSuiteProduct: PropTypes.object,
-		headerTitle: PropTypes.string,
-		isEmailForwardingCardShown: PropTypes.bool,
-		isEmailHeaderShown: PropTypes.bool,
 		isGSuiteSupported: PropTypes.bool.isRequired,
-		isSkippable: PropTypes.bool,
-		onSkipClick: PropTypes.func,
 		productsList: PropTypes.object.isRequired,
-		promoHeaderDescription: PropTypes.string,
-		promoHeaderTitle: PropTypes.string,
 		selectedSite: PropTypes.object,
 		titanMailProduct: PropTypes.object,
 	};
