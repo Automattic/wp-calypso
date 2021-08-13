@@ -15,7 +15,6 @@ import {
 	ThankYouNextStepProps,
 	ThankYouProps,
 	ThankYouSectionProps,
-	ThankYouThemeProps,
 } from './types';
 
 /**
@@ -23,7 +22,7 @@ import {
  */
 import './style.scss';
 
-const ThankYouContainer = styled.div< ThankYouThemeProps >`
+const ThankYouContainer = styled.div`
 	background-color: #fff;
 	-ms-overflow-style: none;
 	/* Negative value to counteract default content padding */
@@ -34,31 +33,8 @@ const ThankYouContainer = styled.div< ThankYouThemeProps >`
 	}
 `;
 
-const ThankYouHeader = styled.div< ThankYouThemeProps >`
-	width: 100%;
-	display: flex;
-	justify-content: center;
-	background-color: ${ ( props ) => props.theme.colors.backgroundColorHeader };
-	height: 352px;
-	img {
-		width: auto;
-		height: 200px;
-		margin-bottom: 14px;
-	}
-`;
-
-const ThankYouFooterContainer = styled.div< ThankYouThemeProps >`
-	h1 {
-		font-size: ${ ( { subtitle = false } ) => ( subtitle ? '1.5em' : '2em' ) };
-	}
-	h2 {
-		margin-bottom: 16px;
-	}
-	color: ${ ( props ) => props.theme.colors.textHeaderColor };
-`;
-
 const ThankYouHeaderTitle = styled.h1`
-	font-size: ${ ( { subtitle = false } ) => ( subtitle ? '1.5em' : '2em' ) };
+	font-size: 2em;
 	margin-bottom: 8px;
 `;
 
@@ -80,9 +56,9 @@ const ThankYouBody = styled.div`
 	}
 `;
 
-const ThankYouNextSteps = styled.div< ThankYouThemeProps >`
+const ThankYouNextSteps = styled.div`
 	h3 {
-		font-weight: ${ ( { theme } ) => theme?.weights.bold };
+		font-weight: 600;
 	}
 
 	p {
@@ -99,12 +75,12 @@ const ThankYouNextStep = ( props: ThankYouNextStepProps ) => {
 
 	return (
 		<React.Fragment key={ stepKey }>
-			<div className="thank-you__steps">
+			<div className="thank-you__step">
 				<div>
 					<h3>{ stepTitle }</h3>
 					<p>{ stepDescription }</p>
 				</div>
-				<div className="thank-you__steps-buttons">{ stepCta }</div>
+				<div className="thank-you__step-cta">{ stepCta }</div>
 			</div>
 		</React.Fragment>
 	);
@@ -119,7 +95,7 @@ const ThankYouSection = ( props: ThankYouSectionProps ) => {
 
 	return (
 		<ThankYouSectionContainer>
-			<ThankYouHeaderTitle subtitle className="thank-you__body-header wp-brand-font">
+			<ThankYouHeaderTitle className="thank-you__body-header wp-brand-font">
 				{ sectionTitle }
 			</ThankYouHeaderTitle>
 
@@ -137,10 +113,34 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 		sections,
 		showSupportSection = true,
 		thankYouTitle,
+		thankYouSubtitle,
 		thankYouImage,
-		thankYouImageFooter,
-		thankYouImageFooterSubtitle,
+		headerTextColor,
+		headerBackgroundColor,
 	} = props;
+
+	const ThankYouTitleContainer = styled.div`
+		h1 {
+			font-size: 2em;
+		}
+		h2 {
+			margin-bottom: 16px;
+		}
+		color: ${ headerTextColor };
+	`;
+
+	const ThankYouHeader = styled.div`
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		background-color: ${ headerBackgroundColor };
+		min-height: 352px;
+		img {
+			width: auto;
+			height: 200px;
+			margin-bottom: 14px;
+		}
+	`;
 
 	const thankYouSections = sections.map( ( sectionProps, index ) => (
 		<ThankYouSection key={ index } { ...sectionProps } />
@@ -151,26 +151,20 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 			<ThankYouHeader className={ classNames( 'thank-you__container-header', headerClassName ) }>
 				{ /* eslint-disable-next-line jsx-a11y/alt-text */ }
 				<img { ...thankYouImage } />
-				<ThankYouFooterContainer>
-					<h1> { thankYouImageFooter } </h1>
-					<h2> { thankYouImageFooterSubtitle } </h2>
-				</ThankYouFooterContainer>
+				{ thankYouTitle && (
+					<ThankYouTitleContainer>
+						<h1 className="thank-you wp-brand-font"> { thankYouTitle } </h1>
+						<h2> { thankYouSubtitle } </h2>
+					</ThankYouTitleContainer>
+				) }
 			</ThankYouHeader>
 			<ThankYouBody>
 				<div>
-					{ thankYouTitle && (
-						<ThankYouSectionContainer>
-							<ThankYouHeaderTitle className="thank-you__body-header wp-brand-font">
-								{ thankYouTitle }
-							</ThankYouHeaderTitle>
-						</ThankYouSectionContainer>
-					) }
-
 					{ thankYouSections }
 
 					{ showSupportSection && (
 						<ThankYouSectionContainer>
-							<ThankYouHeaderTitle subtitle className="thank-you__body-header wp-brand-font">
+							<ThankYouHeaderTitle className="thank-you__body-header wp-brand-font">
 								{ translate( 'How can we help?' ) }
 							</ThankYouHeaderTitle>
 							<p>

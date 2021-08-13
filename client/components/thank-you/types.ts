@@ -30,32 +30,8 @@ export type ThankYouProps = {
 		alt: string | TranslateResult;
 		src: string;
 	};
-	thankYouImageFooter?: string | TranslateResult;
-	thankYouImageFooterSubtitle?: string | TranslateResult;
-	thankYouTitle?: TranslateResult;
-};
-
-export type ThankYouThemeProps = { theme?: ThankYouThemeType };
-
-type ThankYouThemeType = {
-	colors: {
-		textColorLight: string;
-		borderColorLight: string;
-		backgroundColorHeader: string;
-		textHeaderColor: string;
-	};
-	breakpoints: {
-		desktopUp?: string;
-		tabletUp?: string;
-		bigPhoneUp?: string;
-		smallPhoneUp?: string;
-		tabletDown: string;
-	};
-	weights: {
-		bold: string;
-		normal: string;
-	};
-	fontSize: {
-		small: string;
-	};
+	thankYouTitle?: string | TranslateResult;
+	thankYouSubtitle?: string | TranslateResult;
+	headerBackgroundColor: string;
+	headerTextColor: string;
 };

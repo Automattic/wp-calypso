@@ -100,18 +100,18 @@ const TitanSetupThankYou = ( props: TitanSetupThankYouProps ): JSX.Element => {
 	};
 
 	return (
-		<ThemeProvider theme={ theme }>
-			<ThankYou
-				headerClassName={ 'titan-setup-thank-you__header' }
-				sections={ [ titanThankYouSection ] }
-				showSupportSection={ true }
-				thankYouImage={ thankYouImage }
-				thankYouImageFooter={ translate( 'Congratulations on your purchase!' ) }
-				thankYouImageFooterSubtitle={ translate(
-					'You will receive an email confirmation shortly for your purchase.'
-				) }
-			/>
-		</ThemeProvider>
+		<ThankYou
+			headerClassName={ 'titan-setup-thank-you__header' }
+			sections={ [ titanThankYouSection ] }
+			showSupportSection={ true }
+			thankYouImage={ thankYouImage }
+			thankYouTitle={ translate( 'Congratulations on your purchase!' ) }
+			thankYouSubtitle={ translate(
+				'You will receive an email confirmation shortly for your purchase.'
+			) }
+			headerBackgroundColor={ '#0675C4' }
+			headerTextColor={ 'white' }
+		/>
 	);
 };
 
