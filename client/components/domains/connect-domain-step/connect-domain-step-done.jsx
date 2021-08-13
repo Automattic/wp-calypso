@@ -1,27 +1,25 @@
 /**
  * External dependencies
  */
+import { Button, Card } from '@automattic/components';
+import { createElement, createInterpolateElement } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { __, sprintf } from '@wordpress/i18n';
-import { Button, Card } from '@automattic/components';
-
 /**
  * Internal dependencies
  */
+import domainConnectedIllustration from 'calypso/assets/images/illustrations/domain-connected.svg';
 import CardHeading from 'calypso/components/card-heading';
 import Gridicon from 'calypso/components/gridicon';
-import domainConnectedIllustration from 'calypso/assets/images/illustrations/domain-connected.svg';
-import { stepType } from './constants';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
-
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { stepType } from './constants';
 /**
  * Style dependencies
  */
 import './style.scss';
-import { createElement, createInterpolateElement } from '@wordpress/element';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 function ConnectDomainStepDone( { className, domain, step, selectedSiteSlug } ) {
 	const siteDomainsUrl = domainManagementList( selectedSiteSlug );
@@ -44,7 +42,7 @@ function ConnectDomainStepDone( { className, domain, step, selectedSiteSlug } ) 
 	let contentLines = [
 		sprintf(
 			/* translators: %s: the domain name that was connected to the user's site (ex.: example.com) */
-			__( "That's it %s has been successfully connected." ),
+			__( "That's it. %s has been successfully connected." ),
 			domain
 		),
 	];
