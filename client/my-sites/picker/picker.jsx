@@ -85,8 +85,8 @@ class SitePicker extends React.Component {
 	};
 
 	filterSites = ( site ) => {
-		return site.jetpack
-			? ( site?.options?.jetpack_connection_active_plugins ?? [] ).includes( 'jetpack' )
+		return site?.options?.jetpack_connection_active_plugins
+			? site.options.jetpack_connection_active_plugins.includes( 'jetpack' )
 			: true;
 	};
 

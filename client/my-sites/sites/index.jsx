@@ -40,8 +40,8 @@ class Sites extends Component {
 	filterSites = ( site ) => {
 		// only show Jetpack sites with the full Plugin
 		if (
-			site.jetpack &&
-			! ( site?.options?.jetpack_connection_active_plugins ?? [] ).includes( 'jetpack' )
+			site?.options?.jetpack_connection_active_plugins &&
+			site.options.jetpack_connection_active_plugins.includes( 'jetpack' )
 		) {
 			return false;
 		}
