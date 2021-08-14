@@ -24,10 +24,10 @@ describe( DataHelper.createSuiteTitle( 'Widgets' ), function () {
 
 	it( 'Dismiss the Welcome Guide Notice', async function () {
 		await page.waitForLoadState( 'networkidle' );
-		const btnSelector = 'button:text("Got it")';
+		const button = 'button:text("Got it")';
 
-		if ( await page.isVisible( btnSelector ) ) {
-			await page.click( btnSelector );
+		if ( await page.isVisible( button ) ) {
+			await page.click( button );
 		}
 	} );
 
