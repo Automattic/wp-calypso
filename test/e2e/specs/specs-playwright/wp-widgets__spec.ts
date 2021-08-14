@@ -1,7 +1,7 @@
 import { DataHelper, LoginFlow, SidebarComponent, setupHooks } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
-const user = 'defaultUser';
+const user = 'gutenbergSimpleSiteUser';
 
 describe( DataHelper.createSuiteTitle( 'Widgets' ), function () {
 	let sidebarComponent: SidebarComponent;
