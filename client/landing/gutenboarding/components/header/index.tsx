@@ -74,7 +74,7 @@ const Header: React.FunctionComponent = () => {
 				</div>
 				<div
 					className="gutenboarding__header-section-item gutenboarding__header-site-title-section"
-					data-e2e-string={ ! siteTitle && 'Start your website' }
+					data-e2e-string={ ! siteTitle && siteTitleDefault ? 'Start your website' : null }
 				>
 					<div className="gutenboarding__header-site-title">
 						{ siteTitle ? siteTitle : siteTitleDefault }
