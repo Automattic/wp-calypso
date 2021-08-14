@@ -1,8 +1,7 @@
 import { DataHelper, LoginFlow, SidebarComponent, setupHooks } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
-const gutenbergUser =
-	process.env.GUTENBERG_EDGE === 'true' ? 'gutenbergSimpleSiteEdgeUser' : 'gutenbergSimpleSiteUser';
+const user = 'defaultUser';
 
 describe( DataHelper.createSuiteTitle( 'Widgets' ), function () {
 	let sidebarComponent: SidebarComponent;
@@ -13,7 +12,7 @@ describe( DataHelper.createSuiteTitle( 'Widgets' ), function () {
 	} );
 
 	it( 'Log in', async function () {
-		const loginFlow = new LoginFlow( page, gutenbergUser );
+		const loginFlow = new LoginFlow( page, user );
 		await loginFlow.logIn();
 	} );
 
@@ -23,7 +22,7 @@ describe( DataHelper.createSuiteTitle( 'Widgets' ), function () {
 		await sidebarComponent.navigate( 'Appearance', 'Widgets' );
 	} );
 
-	it( 'Dismiss the Welcome Gudie Notice', async function () {
+	it( 'Dismiss the Welcome Guide Notice', async function () {
 		await page.waitForLoadState( 'networkidle' );
 		const btnSelector = 'button:text("Got it")';
 
