@@ -1,4 +1,6 @@
+import { sprintf } from '@wordpress/i18n';
 import config from 'config';
+import request from 'request-promise';
 import {
 	By,
 	Condition,
@@ -9,12 +11,6 @@ import {
 	WebElement,
 	WebElementCondition,
 } from 'selenium-webdriver';
-import request from 'request-promise';
-import { sprintf } from '@wordpress/i18n';
-
-/**
- * Internal dependencies
- */
 import * as dataHelper from './data-helper';
 import * as driverManager from './driver-manager';
 

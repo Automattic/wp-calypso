@@ -1,11 +1,4 @@
-/**
- * External Dependencies
- */
 import config from 'config';
-
-/**
- * Internal Dependencies
- */
 import LanguagePickerComponent from '../../lib/components/gutenboarding-language-picker';
 import * as dataHelper from '../../lib/data-helper.js';
 import * as driverHelper from '../../lib/driver-helper.js';
@@ -19,7 +12,6 @@ import PlansPage from '../../lib/pages/gutenboarding/plans-page.js';
 import StylePreviewPage from '../../lib/pages/gutenboarding/style-preview-page.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
-const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 
 const locale = driverManager.currentLocale();
 
