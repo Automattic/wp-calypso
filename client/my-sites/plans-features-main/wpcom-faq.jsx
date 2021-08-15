@@ -27,8 +27,7 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 						'That includes new domains purchased through WordPress.com or your own existing domain that you can map' +
 						' to your WordPress.com site. Does not apply to premium domains. Domain name should be' +
 						' registered within one year of the purchase of the plan to use this promotion. Registered' +
-						' domain names will renew at regular prices. The domain credit for a free domain for the' +
-						' first year is only included with the annual or two-year plans. {{a}}Find out more about domains.{{/a}}',
+						' domain names will renew at regular prices. {{a}}Find out more about domains.{{/a}}',
 					{
 						components: {
 							a: (
