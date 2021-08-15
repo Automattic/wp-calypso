@@ -165,6 +165,10 @@ describe( 'useShoppingCart', () => {
 			);
 		};
 
+		afterEach( () => {
+			jest.restoreAllMocks();
+		} );
+
 		it( 'adds a product to the cart if the cart is empty', async () => {
 			render(
 				<MockProvider>
@@ -177,6 +181,7 @@ describe( 'useShoppingCart', () => {
 		} );
 
 		it( 'throws an error if the product is missing a product_id', async () => {
+			jest.spyOn( console, 'error' ).mockImplementation( () => undefined );
 			expect( () => {
 				render(
 					<MockProvider>
@@ -312,6 +317,10 @@ describe( 'useShoppingCart', () => {
 			);
 		};
 
+		afterEach( () => {
+			jest.restoreAllMocks();
+		} );
+
 		it( 'replaces all products in the cart', async () => {
 			render(
 				<MockProvider>
@@ -326,6 +335,7 @@ describe( 'useShoppingCart', () => {
 		} );
 
 		it( 'throws an error if a product is missing a product_id', async () => {
+			jest.spyOn( console, 'error' ).mockImplementation( () => undefined );
 			expect( () => {
 				render(
 					<MockProvider>
