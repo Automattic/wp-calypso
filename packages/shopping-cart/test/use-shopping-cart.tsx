@@ -8,8 +8,8 @@ import {
 import React from 'react';
 import { getEmptyResponseCart } from '../src/empty-carts';
 import { useShoppingCart } from '../src/index';
-import { planOne, planTwo, renewalOne, renewalTwo } from './utils/mock-cart-api';
-import { ProductList, MockProvider } from './utils/mock-components';
+import { planOne, planTwo, renewalOne, renewalTwo, mainCartKey } from './utils/mock-cart-api';
+import { ProductList, MockProvider, ProductListWithoutHook } from './utils/mock-components';
 import { convertMsToSecs, verifyThatNever, verifyThatTextNeverAppears } from './utils/utils';
 
 import '@testing-library/jest-dom/extend-expect';
@@ -44,6 +44,20 @@ describe( 'useShoppingCart', () => {
 			);
 		};
 
+		it( 'does nothing and rejects if the cart key is undefined', async () => {
+			render(
+				<MockProvider useUndefinedCartKey>
+					<TestComponent products={ [ planOne ] } />
+				</MockProvider>
+			);
+			fireEvent.click( screen.getByText( 'Click me' ) );
+			await waitFor( () => {
+				expect( testRunErrors ).toHaveLength( 1 );
+				expect( String( testRunErrors[ 0 ] ) ).toMatch( /cart key/ );
+			} );
+			expect( screen.getByText( 'No products' ) ).toBeInTheDocument();
+		} );
+
 		it( 'adds a product to the cart if the cart is empty', async () => {
 			render(
 				<MockProvider>
@@ -51,8 +65,33 @@ describe( 'useShoppingCart', () => {
 				</MockProvider>
 			);
 			fireEvent.click( screen.getByText( 'Click me' ) );
-			await waitFor( () => screen.getByTestId( 'product-list' ) );
-			expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
+			await waitFor( () => {
+				expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
+			} );
+		} );
+
+		it( 'allows setting the cart key via the optional argument', async () => {
+			const TestComponentWithKey = () => {
+				const shoppingCartManager = useShoppingCart( mainCartKey );
+				return (
+					<div>
+						<ProductListWithoutHook
+							productsToAddOnClick={ [ planOne ] }
+							shoppingCartManager={ shoppingCartManager }
+							cart={ shoppingCartManager.responseCart }
+						/>
+					</div>
+				);
+			};
+			render(
+				<MockProvider cartKeyOverride="asdjalkjdaldjsalkjdslka">
+					<TestComponentWithKey />
+				</MockProvider>
+			);
+			fireEvent.click( screen.getByText( 'Click me' ) );
+			await waitFor( () => {
+				expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
+			} );
 		} );
 
 		it( 'throws an error if the product is missing a product_id', async () => {
@@ -171,6 +210,20 @@ describe( 'useShoppingCart', () => {
 			);
 		};
 
+		it( 'does nothing and rejects if the cart key is undefined', async () => {
+			render(
+				<MockProvider useUndefinedCartKey>
+					<TestComponent />
+				</MockProvider>
+			);
+			fireEvent.click( screen.getByText( 'Click me' ) );
+			await waitFor( () => {
+				expect( testRunErrors ).toHaveLength( 1 );
+				expect( String( testRunErrors[ 0 ] ) ).toMatch( /cart key/ );
+			} );
+			expect( screen.getByText( 'No products' ) ).toBeInTheDocument();
+		} );
+
 		it( 'removes a product from the cart', async () => {
 			mockGetCart.mockResolvedValue( {
 				...emptyResponseCart,
@@ -223,6 +276,20 @@ describe( 'useShoppingCart', () => {
 				</div>
 			);
 		};
+
+		it( 'does nothing and rejects if the cart key is undefined', async () => {
+			render(
+				<MockProvider useUndefinedCartKey>
+					<TestComponent products={ [ planTwo ] } />
+				</MockProvider>
+			);
+			fireEvent.click( screen.getByText( 'Click me' ) );
+			await waitFor( () => {
+				expect( testRunErrors ).toHaveLength( 1 );
+				expect( String( testRunErrors[ 0 ] ) ).toMatch( /cart key/ );
+			} );
+			expect( screen.getByText( 'No products' ) ).toBeInTheDocument();
+		} );
 
 		it( 'replaces all products in the cart', async () => {
 			mockGetCart.mockResolvedValue( {
@@ -299,6 +366,20 @@ describe( 'useShoppingCart', () => {
 			);
 		};
 
+		it( 'does nothing and rejects if the cart key is undefined', async () => {
+			render(
+				<MockProvider useUndefinedCartKey>
+					<TestComponent />
+				</MockProvider>
+			);
+			fireEvent.click( screen.getByText( 'Click me' ) );
+			await waitFor( () => {
+				expect( testRunErrors ).toHaveLength( 1 );
+				expect( String( testRunErrors[ 0 ] ) ).toMatch( /cart key/ );
+			} );
+			expect( screen.getByText( 'No products' ) ).toBeInTheDocument();
+		} );
+
 		it( 'updates a product in the cart', async () => {
 			mockGetCart.mockResolvedValue( {
 				...emptyResponseCart,
@@ -351,6 +432,20 @@ describe( 'useShoppingCart', () => {
 				</div>
 			);
 		};
+
+		it( 'does nothing and rejects if the cart key is undefined', async () => {
+			render(
+				<MockProvider useUndefinedCartKey>
+					<TestComponent />
+				</MockProvider>
+			);
+			fireEvent.click( screen.getByText( 'Click me' ) );
+			await waitFor( () => {
+				expect( testRunErrors ).toHaveLength( 1 );
+				expect( String( testRunErrors[ 0 ] ) ).toMatch( /cart key/ );
+			} );
+			expect( screen.getByText( 'No products' ) ).toBeInTheDocument();
+		} );
 
 		it( 'adds a coupon to the cart', async () => {
 			mockGetCart.mockResolvedValue( {
@@ -405,6 +500,20 @@ describe( 'useShoppingCart', () => {
 				</div>
 			);
 		};
+
+		it( 'does nothing and rejects if the cart key is undefined', async () => {
+			render(
+				<MockProvider useUndefinedCartKey>
+					<TestComponent />
+				</MockProvider>
+			);
+			fireEvent.click( screen.getByText( 'Click me' ) );
+			await waitFor( () => {
+				expect( testRunErrors ).toHaveLength( 1 );
+				expect( String( testRunErrors[ 0 ] ) ).toMatch( /cart key/ );
+			} );
+			expect( screen.getByText( 'No products' ) ).toBeInTheDocument();
+		} );
 
 		it( 'removes a coupon from the cart', async () => {
 			mockGetCart.mockResolvedValue( {
@@ -467,6 +576,20 @@ describe( 'useShoppingCart', () => {
 			);
 		};
 
+		it( 'does nothing and rejects if the cart key is undefined', async () => {
+			render(
+				<MockProvider useUndefinedCartKey>
+					<TestComponent />
+				</MockProvider>
+			);
+			fireEvent.click( screen.getByText( 'Click me' ) );
+			await waitFor( () => {
+				expect( testRunErrors ).toHaveLength( 1 );
+				expect( String( testRunErrors[ 0 ] ) ).toMatch( /cart key/ );
+			} );
+			expect( screen.getByText( 'No products' ) ).toBeInTheDocument();
+		} );
+
 		it( 'adds a location to the cart', async () => {
 			mockGetCart.mockResolvedValue( {
 				...emptyResponseCart,
@@ -521,6 +644,16 @@ describe( 'useShoppingCart', () => {
 				</div>
 			);
 		};
+
+		it( 'does nothing if the cart key is undefined', async () => {
+			render(
+				<MockProvider useUndefinedCartKey>
+					<TestComponent />
+				</MockProvider>
+			);
+			fireEvent.click( screen.getByText( 'Click me' ) );
+			expect( screen.getByText( 'No products' ) ).toBeInTheDocument();
+		} );
 
 		it( 'reloads the cart from the server', async () => {
 			mockGetCart.mockResolvedValue( {
