@@ -10,7 +10,6 @@ import { hasPaidEmailWithUs } from 'calypso/lib/emails';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
-import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -327,10 +326,8 @@ const getDomainsThatCanAddEmail = ( domains ) =>
 
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
 	const domains = getDomainsBySiteId( state, siteId );
-	const isStaticHomePage =
-		! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' );
+	const isStaticHomePage = 'page' === getSiteOption( state, siteId, 'show_on_front' );
 	const siteSlug = getSelectedSiteSlug( state );
 	const staticHomePageId = getSiteFrontPage( state, siteId );
 	const editHomePageUrl = isStaticHomePage && `/page/${ siteSlug }/${ staticHomePageId }`;

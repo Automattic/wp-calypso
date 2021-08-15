@@ -7,9 +7,7 @@ import { EDITOR_START, POST_EDIT } from 'calypso/state/action-types';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { getAdminMenu, getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { stopEditingPost } from 'calypso/state/editor/actions';
-import { requestSelectedEditor } from 'calypso/state/selected-editor/actions';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
-import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor';
@@ -53,28 +51,6 @@ function getPostID( context ) {
 
 	// both post and site are in the path
 	return parseInt( context.params.post, 10 );
-}
-
-function waitForSiteIdAndSelectedEditor( context ) {
-	return new Promise( ( resolve ) => {
-		const unsubscribe = context.store.subscribe( () => {
-			const state = context.store.getState();
-			const siteId = getSelectedSiteId( state );
-			if ( ! siteId ) {
-				return;
-			}
-			const selectedEditor = getSelectedEditor( state, siteId );
-			if ( ! selectedEditor ) {
-				return;
-			}
-			unsubscribe();
-			resolve();
-		} );
-		// Trigger a `store.subscribe()` callback
-		context.store.dispatch(
-			requestSelectedEditor( getSelectedSiteId( context.store.getState() ) )
-		);
-	} );
 }
 
 function isPreferredEditorViewAvailable( state ) {
@@ -173,11 +149,7 @@ export const redirect = async ( context, next ) => {
 		store: { getState },
 	} = context;
 	const tmpState = getState();
-	const selectedEditor = getSelectedEditor( tmpState, getSelectedSiteId( tmpState ) );
 	const checkPromises = [];
-	if ( ! selectedEditor ) {
-		checkPromises.push( waitForSiteIdAndSelectedEditor( context ) );
-	}
 	if ( ! isPreferredEditorViewAvailable( tmpState ) ) {
 		checkPromises.push( waitForPreferredEditorView( context ) );
 	}
