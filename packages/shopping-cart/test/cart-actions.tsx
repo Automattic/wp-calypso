@@ -17,6 +17,7 @@ import {
 	renewalTwo,
 	mainCartKey,
 } from './utils/mock-cart-api';
+import { convertMsToSecs, verifyThatNever, verifyThatTextNeverAppears } from './utils/utils';
 import type {
 	RequestCartProduct,
 	MinimalRequestCartProduct,
@@ -791,21 +792,3 @@ describe( 'withShoppingCart', () => {
 		} );
 	} );
 } );
-
-function convertMsToSecs( ms: number ): number {
-	return Math.floor( ms / 1000 );
-}
-
-// This is a little tricky because we need to verify that text never appears,
-// even after some time passes, so we use this slightly convoluted technique:
-// https://stackoverflow.com/a/68318058/2615868
-async function verifyThatTextNeverAppears( text: string ) {
-	await expect( screen.findByText( text ) ).rejects.toThrow();
-}
-
-// This is a little tricky because we need to verify something never happens,
-// even after some time passes, so we use this slightly convoluted technique:
-// https://stackoverflow.com/a/68318058/2615868
-async function verifyThatNever( expectCallback: () => void ) {
-	await expect( waitFor( expectCallback ) ).rejects.toThrow();
-}
