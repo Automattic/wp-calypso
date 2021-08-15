@@ -16,6 +16,7 @@ import type {
 	ResponseCart,
 	ShoppingCartState,
 	ShoppingCartAction,
+	ShoppingCartReducerDispatch,
 	CouponStatus,
 	CacheStatus,
 	ShoppingCartMiddleware,
@@ -74,6 +75,21 @@ const alwaysAllowedActions = [
 ];
 
 const cacheStatusesForQueueing: CacheStatus[] = [ 'fresh', 'pending', 'fresh-pending' ];
+
+export function playQueuedActions(
+	state: ShoppingCartState,
+	dispatch: ShoppingCartReducerDispatch
+): void {
+	const { queuedActions, cacheStatus } = state;
+	if ( queuedActions.length > 0 && cacheStatus === 'valid' ) {
+		debug( 'cart is loaded; playing queued actions', queuedActions );
+		dispatch( { type: 'CLEAR_QUEUED_ACTIONS' } );
+		queuedActions.forEach( ( action: ShoppingCartAction ) => {
+			dispatch( action );
+		} );
+		debug( 'cart is loaded; queued actions are dispatched' );
+	}
+}
 
 function shouldQueueReducerEvent( cacheStatus: CacheStatus, action: ShoppingCartAction ): boolean {
 	if ( alwaysAllowedActions.includes( action.type ) ) {
