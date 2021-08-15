@@ -25,6 +25,7 @@ import {
 	hasBusinessPlan,
 	hasEcommercePlan,
 	hasMonthlyCartItem,
+	hasBiennialCartItem,
 	hasTrafficGuide,
 } from 'calypso/lib/cart-values/cart-items';
 import { managePurchase } from 'calypso/me/purchases/paths';
@@ -376,7 +377,15 @@ function maybeShowPlanBumpOffer( {
 		return;
 	}
 	if ( hasPremiumPlan( cart ) ) {
-		const upgradeItem = hasMonthlyCartItem( cart ) ? 'business-monthly' : 'business';
+		const upgradeItem = ( () => {
+			if ( hasMonthlyCartItem( cart ) ) {
+				return 'business-monthly';
+			}
+			if ( hasBiennialCartItem( cart ) ) {
+				return 'business-2-years';
+			}
+			return 'business';
+		} )();
 		return `/checkout/${ siteSlug }/offer-plan-upgrade/${ upgradeItem }/${ pendingOrReceiptId }`;
 	}
 
