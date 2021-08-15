@@ -5,145 +5,16 @@ import {
 	fireEvent,
 	waitForElementToBeRemoved,
 } from '@testing-library/react';
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { getEmptyResponseCart } from '../src/empty-carts';
-import { useShoppingCart, withShoppingCart, ShoppingCartProvider } from '../src/index';
-import {
-	getCart,
-	setCart,
-	planOne,
-	planTwo,
-	renewalOne,
-	renewalTwo,
-	mainCartKey,
-} from './utils/mock-cart-api';
+import { useShoppingCart } from '../src/index';
+import { planOne, planTwo, renewalOne, renewalTwo } from './utils/mock-cart-api';
+import { ProductList, MockProvider } from './utils/mock-components';
 import { convertMsToSecs, verifyThatNever, verifyThatTextNeverAppears } from './utils/utils';
-import type {
-	RequestCartProduct,
-	MinimalRequestCartProduct,
-	GetCart,
-	SetCart,
-	WithShoppingCartProps,
-	ShoppingCartManagerOptions,
-} from '../src/types';
 
-// This is required to fix the "regeneratorRuntime is not defined" error
-import '@automattic/calypso-polyfills';
 import '@testing-library/jest-dom/extend-expect';
 
 const emptyResponseCart = getEmptyResponseCart();
-
-function ProductList( {
-	initialProducts,
-	initialProductsForReplace,
-	initialCoupon,
-}: {
-	initialProducts?: MinimalRequestCartProduct[];
-	initialProductsForReplace?: MinimalRequestCartProduct[];
-	initialCoupon?: string;
-} ) {
-	const {
-		isPendingUpdate,
-		responseCart,
-		addProductsToCart,
-		replaceProductsInCart,
-		applyCoupon,
-	} = useShoppingCart();
-	const hasAddedProduct = useRef( false );
-	useEffect( () => {
-		if ( initialProducts && ! hasAddedProduct.current ) {
-			hasAddedProduct.current = true;
-			addProductsToCart( initialProducts );
-		}
-	}, [ addProductsToCart, initialProducts ] );
-	useEffect( () => {
-		if ( initialProductsForReplace && ! hasAddedProduct.current ) {
-			hasAddedProduct.current = true;
-			replaceProductsInCart( initialProductsForReplace );
-		}
-	}, [ replaceProductsInCart, initialProductsForReplace ] );
-	const hasAddedCoupon = useRef( false );
-	useEffect( () => {
-		if ( initialCoupon && ! hasAddedCoupon.current ) {
-			hasAddedCoupon.current = true;
-			applyCoupon( initialCoupon );
-		}
-	}, [ applyCoupon, initialCoupon ] );
-	if ( responseCart.products.length === 0 ) {
-		return <div>No products</div>;
-	}
-	const coupon = responseCart.is_coupon_applied ? <div>Coupon: { responseCart.coupon }</div> : null;
-	const location = responseCart.tax.location.postal_code ? (
-		<div>
-			Location: { responseCart.tax.location.postal_code },{ ' ' }
-			{ responseCart.tax.location.country_code }, { responseCart.tax.location.subdivision_code }
-		</div>
-	) : null;
-	return (
-		<ul data-testid="product-list">
-			{ isPendingUpdate && <div>Loading...</div> }
-			{ coupon }
-			{ location }
-			{ responseCart.products.map( ( product ) => {
-				return (
-					<li key={ product.uuid }>
-						<span>{ product.product_slug }</span>
-						<span>{ product.product_name }</span>
-					</li>
-				);
-			} ) }
-		</ul>
-	);
-}
-function ProductListWithoutHook( {
-	shoppingCartManager,
-	cart,
-	productsToAddOnClick,
-}: { productsToAddOnClick: RequestCartProduct[] } & WithShoppingCartProps ) {
-	const { isPendingUpdate, addProductsToCart } = shoppingCartManager;
-	const onClick = () => {
-		addProductsToCart( productsToAddOnClick );
-	};
-	return (
-		<ul data-testid="product-list">
-			{ isPendingUpdate && <div>Loading...</div> }
-			{ cart.products.map( ( product ) => {
-				return (
-					<li key={ product.uuid }>
-						<span>{ product.product_slug }</span>
-						<span>{ product.product_name }</span>
-					</li>
-				);
-			} ) }
-			<button onClick={ onClick }>Click me</button>
-		</ul>
-	);
-}
-
-function MockProvider( {
-	children,
-	setCartOverride,
-	getCartOverride,
-	options,
-	cartKeyOverride,
-}: {
-	children: React.ReactNode;
-	setCartOverride?: SetCart;
-	getCartOverride?: GetCart;
-	options?: ShoppingCartManagerOptions;
-	cartKeyOverride?: string | undefined;
-} ) {
-	return (
-		<ShoppingCartProvider
-			setCart={ setCartOverride ?? setCart }
-			getCart={ getCartOverride ?? getCart }
-			cartKey={ cartKeyOverride ?? mainCartKey }
-			options={ options }
-		>
-			{ children }
-		</ShoppingCartProvider>
-	);
-}
 
 describe( 'useShoppingCart', () => {
 	const markUpdateComplete = jest.fn();
@@ -766,29 +637,6 @@ describe( 'useShoppingCart', () => {
 			await waitFor( () => {
 				expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
 			} );
-		} );
-	} );
-} );
-
-describe( 'withShoppingCart', () => {
-	it( 'provides both shoppingCartManager and cart props to the wrapped component', async () => {
-		const WrappedProductsList = withShoppingCart( ProductListWithoutHook );
-		const TestComponent = () => {
-			return (
-				<div>
-					<WrappedProductsList productsToAddOnClick={ [ planOne ] } />
-				</div>
-			);
-		};
-
-		render(
-			<MockProvider>
-				<TestComponent />
-			</MockProvider>
-		);
-		fireEvent.click( screen.getByText( 'Click me' ) );
-		await waitFor( () => {
-			expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
 		} );
 	} );
 } );
