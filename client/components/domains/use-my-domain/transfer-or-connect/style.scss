@@ -1,0 +1,163 @@
+@import '@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.domain-transfer-or-connect {
+	& header.domain-transfer-or-connect__page-heading {
+		margin-bottom: 24px;
+	}
+
+	&__content {
+		display: flex;
+		flex-direction: column;
+		padding: 0 24px;
+
+		.option-content {
+			+ .option-content {
+				border-top: 1px solid var( --studio-gray-5 );
+			}
+
+			display: flex;
+			flex-direction: column;
+
+			padding: 40px 0 40px 16px;
+
+			@include break-mobile {
+				flex-direction: row;
+			}
+
+			&__illustration {
+				flex-grow: 0;
+			}
+
+			&__header {
+				display: flex;
+				flex-direction: column;
+				align-items: flex-start;
+				margin-bottom: 24px;
+				color: var( --color-text );
+
+				@include break-mobile {
+					flex-direction: row;
+					align-items: center;
+					margin-bottom: 4px;
+					position: relative;
+					bottom: 2px;
+				}
+
+				h2 {
+					font-weight: 500; /* stylelint-disable-line */
+					font-size: $font-title-medium;
+				}
+
+				.badge {
+					border-radius: 4px; /* stylelint-disable-line */
+					font-size: $font-body-extra-small;
+					font-weight: 500; /* stylelint-disable-line */
+
+					@include break-mobile {
+						margin-left: 8px;
+					}
+				}
+			}
+
+			&__main {
+				flex-grow: 1;
+				margin-bottom: 24px;
+				color: var( --color-text-subtle );
+
+				@include break-mobile {
+					margin: 0 40px 16px;
+				}
+
+				.option-content__learn-more {
+					font-size: $font-body-small;
+				}
+
+				.option-content__benefits {
+					margin: 16px 0 0;
+
+					&-item {
+						display: flex;
+						flex-direction: row;
+
+						.gridicon {
+							margin-right: 8px;
+							fill: var( --studio-green-50 );
+							position: relative;
+							bottom: -4px;
+						}
+					}
+				}
+
+				.option-content__pricing {
+					margin: 16px 0 0;
+					font-size: $font-body-small;
+
+					&-text {
+						font-weight: 500; /* stylelint-disable-line */
+						color: var( --color-text );
+
+						&.is-free {
+							color: var( --studio-green-60 );
+						}
+					}
+
+					&-cost {
+						font-weight: 400;
+
+						&.is-sale-price {
+							color: var( --studio-orange-50 );
+							font-weight: 600;
+
+							.badge {
+								font-weight: 500; /* stylelint-disable-line */
+								border-radius: 4px; /* stylelint-disable-line */
+								margin: 0 0 0 4px;
+							}
+						}
+					}
+				}
+			}
+
+			&__message {
+				font-size: $font-body;
+				color: var( --color-text-subtle );
+
+				&-list,
+				&-link {
+					font-size: $font-body-small;
+				}
+			}
+
+			&__action {
+				flex-grow: 0;
+				display: flex;
+				align-items: center;
+
+				.button {
+					padding: 8px 39px;
+				}
+			}
+		}
+	}
+
+	&__support-link {
+		font-size: $font-body-small;
+		color: var( --color-text-subtle );
+		margin: 0 0 24px;
+
+		@include break-mobile {
+			margin: 24px 0;
+		}
+	}
+}
+
+button.action_buttons__button.action-buttons__back.domain-transfer-or-connect__go-back {
+	@include break-mobile {
+		margin: 0 0 18px;
+	}
+
+	margin: 16px 0 0 16px;
+	text-decoration: none;
+}
