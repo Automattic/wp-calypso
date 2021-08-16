@@ -35,4 +35,11 @@ module.exports = function ( { view } ) {
 	view.webContents.on( 'update-target-url', function ( event, url ) {
 		targetURL = url;
 	} );
+
+	view.webContents.on( 'will-redirect', function ( _, url ) {
+		if ( url.includes( 'https://wordpress.com/log-in/apple/callback' ) ) {
+			log.info( 'Redirecting to URL: ', url );
+			view.webContents.loadURL( url );
+		}
+	} );
 };

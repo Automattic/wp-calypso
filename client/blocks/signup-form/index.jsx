@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import debugModule from 'debug';
@@ -978,11 +979,13 @@ class SignupForm extends Component {
 					{ this.props.formFooter || this.formFooter() }
 				</LoggedOutForm>
 
-				{ this.props.horizontal && ! this.userCreationComplete() && (
-					<div className="signup-form__separator">
-						<div className="signup-form__separator-text">{ this.props.translate( 'or' ) }</div>
-					</div>
-				) }
+				{ ! config.isEnabled( 'desktop' ) &&
+					this.props.horizontal &&
+					! this.userCreationComplete() && (
+						<div className="signup-form__separator">
+							<div className="signup-form__separator-text">{ this.props.translate( 'or' ) }</div>
+						</div>
+					) }
 
 				{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
 					<SocialSignupForm
