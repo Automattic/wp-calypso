@@ -1,16 +1,24 @@
 /**
  * External dependencies
  */
+import { BackButton } from '@automattic/onboarding';
+import { __, sprintf } from '@wordpress/i18n';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { __, sprintf } from '@wordpress/i18n';
 import { connect } from 'react-redux';
-import page from 'page';
-import { BackButton } from '@automattic/onboarding';
-
 /**
  * Internal dependencies
  */
+import ConnectDomainStepSupportInfoLink from 'calypso/components/domains/connect-domain-step/connect-domain-step-support-info-link';
+import DomainTransferRecommendation from 'calypso/components/domains/domain-transfer-recommendation';
+import FormattedHeader from 'calypso/components/formatted-header';
+import Gridicon from 'calypso/components/gridicon';
+import wpcom from 'calypso/lib/wp';
+import { domainManagementList } from 'calypso/my-sites/domains/paths';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import ConnectDomainStepSwitchSetupInfoLink from './connect-domain-step-switch-setup-info-link';
+import { isMappingVerificationSuccess } from './connect-domain-step-verification-status-parsing.js';
 import { modeType, stepType, stepSlug, defaultDomainSetupInfo } from './constants';
 import {
 	defaultStepsDefinition,
@@ -18,16 +26,6 @@ import {
 	getProgressStepList,
 	getStepsDefinition,
 } from './page-definitions';
-import ConnectDomainStepSwitchSetupInfoLink from './connect-domain-step-switch-setup-info-link';
-import ConnectDomainStepSupportInfoLink from 'calypso/components/domains/connect-domain-step/connect-domain-step-support-info-link';
-import DomainTransferRecommendation from 'calypso/components/domains/domain-transfer-recommendation';
-import Gridicon from 'calypso/components/gridicon';
-import FormattedHeader from 'calypso/components/formatted-header';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { domainManagementList } from 'calypso/my-sites/domains/paths';
-import { isMappingVerificationSuccess } from './connect-domain-step-verification-status-parsing.js';
-import wpcom from 'calypso/lib/wp';
-
 /**
  * Style dependencies
  */
@@ -96,8 +94,8 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 			setVerificationStatus( {} );
 			setVerificationInProgress( true );
 			wpcom
-				.domain()
-				.mappingStatus( domain )
+				.domain( domain )
+				.mappingStatus()
 				.then( ( data ) => {
 					setVerificationStatus( { data } );
 					if ( setStepAfterVerify ) {
