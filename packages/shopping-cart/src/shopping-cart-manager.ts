@@ -135,15 +135,17 @@ function createShoppingCartManager(
 		false
 	);
 	let lastState: ShoppingCartState = state;
+	let lastActionsPending = actionsPending;
 
 	const getCachedManagerState = (): ShoppingCartManagerState => {
-		if ( lastState !== state ) {
+		if ( lastState !== state || lastActionsPending !== actionsPending ) {
 			cachedManagerState = getShoppingCartManagerState(
 				state,
 				getLastValidResponseCart(),
 				actionsPending > 0
 			);
 			lastState = state;
+			lastActionsPending = actionsPending;
 		}
 		return cachedManagerState;
 	};
