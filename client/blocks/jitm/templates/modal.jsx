@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { Guide } from '@wordpress/components';
-import React from 'react';
+import React, { useState } from 'react';
 import './modal-style.scss';
 import Visual from './plans-visual.svg';
 
@@ -11,14 +11,21 @@ export default function ModalTemplate( {
 	description,
 	onClick,
 	onDismiss,
+	messageExpiration,
 } ) {
 	trackImpression && trackImpression();
 
-	return (
+	// technically, non-dismissable jitms are authorable, however, that doesn't make any sense as a modal.
+	const [ isDismissed, setDismissed ] = useState( false );
+
+	return isDismissed ? null : (
 		<Guide
 			className="modal__main"
 			contentLabel={ message }
-			onFinish={ onDismiss }
+			onFinish={ () => {
+				onDismiss();
+				setDismissed( true );
+			} }
 			pages={ [
 				{
 					content: (
@@ -30,15 +37,24 @@ export default function ModalTemplate( {
 								<p className="modal__text">
 									{ description }
 									<br />
-									<Button primary={ true } onClick={ onClick }>
+									<Button
+										primary={ true }
+										onClick={ () => {
+											onClick();
+											// todo: is this the best way in calypso???
+											location.href = CTA.link;
+										} }
+									>
 										{ CTA.message }
 									</Button>
 								</p>
+								{ messageExpiration ? (
+									<p className="modal__disclaimer">
+										Offer valid to { messageExpiration.format( 'LLL' ) }
+									</p>
+								) : null }
 								<p className="modal__disclaimer">
 									{ /* todo: allow specifying disclaimer text via jitm configuration */ }
-									Offer valid to [whenever] [figure out time in local zone]
-								</p>
-								<p className="modal__disclaimer">
 									Promotion only valid for the initial subscription purchased during this sale.
 								</p>
 							</div>
