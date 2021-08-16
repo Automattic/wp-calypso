@@ -16,6 +16,14 @@
 
 	.search-filters__dropdown-filters {
 		height: 50px;
+		@include break-mobile {
+			min-width: 120px;
+		}
+	}
+
+	.button.domain-suggestion__action {
+		min-width: 120px;
+		padding: 0;
 	}
 
 	.card {
