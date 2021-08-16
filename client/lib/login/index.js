@@ -35,6 +35,20 @@ export function getSocialServiceFromClientId( clientId ) {
 	return null;
 }
 
+/**
+ * Adds/ensures a leading slash to any string intended to be used as an absolute path.
+ *
+ * @param path The path to encode with a leading slash.
+ */
+export function pathWithLeadingSlash( path ) {
+	// Note: Check for string type to ensure sanity. Technically the type here may be `unknown`.
+	if ( 'string' !== typeof path ) {
+		return '';
+	}
+
+	return path ? `/${ path.replace( /^\/+/, '' ) }` : '';
+}
+
 export function getSignupUrl(
 	currentQuery,
 	currentRoute,

@@ -11,7 +11,7 @@ import classNames from 'classnames';
  */
 import config from '@automattic/calypso-config';
 import { CompactCard } from '@automattic/components';
-import AddDomainButton from 'calypso/my-sites/domains/domain-management/list/add-domain-button';
+import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
 import { ListAllActions } from 'calypso/my-sites/domains/domain-management/list/utils';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import SectionHeader from 'calypso/components/section-header';
@@ -54,7 +54,7 @@ class ListHeader extends React.PureComponent {
 		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
 			return null;
 		}
-		return <AddDomainButton specificSiteActions={ true } />;
+		return <OptionsDomainButton specificSiteActions={ true } />;
 	}
 
 	renderDefaultHeaderContent() {

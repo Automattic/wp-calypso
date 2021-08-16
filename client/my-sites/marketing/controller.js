@@ -23,6 +23,7 @@ import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { setExpandedService } from 'calypso/state/sharing/actions';
+import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 
 export const redirectConnections = ( context ) => {
 	const serviceParam = context.params.service ? `?service=${ context.params.service }` : '';
@@ -83,6 +84,7 @@ export const connections = ( context, next ) => {
 
 	const state = store.getState();
 	const siteId = getSelectedSiteId( state );
+	const isP2Hub = isSiteP2Hub( state, siteId );
 
 	if ( siteId && ! canCurrentUser( state, siteId, 'publish_posts' ) ) {
 		dispatch(
@@ -90,7 +92,7 @@ export const connections = ( context, next ) => {
 		);
 	}
 
-	context.contentComponent = createElement( SharingConnections );
+	context.contentComponent = createElement( SharingConnections, { isP2Hub, siteId } );
 
 	next();
 };

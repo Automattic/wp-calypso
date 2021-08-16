@@ -2,6 +2,9 @@ import { format as formatUrl, getUrlParts, getUrlFromParts } from '@automattic/c
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+/**
+ * Internal dependencies
+ */
 import { connect } from 'react-redux';
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
@@ -10,6 +13,7 @@ import SidebarMenu from 'calypso/layout/sidebar/menu';
 import SidebarRegion from 'calypso/layout/sidebar/region';
 import CurrentSite from 'calypso/my-sites/current-site';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getSiteAdminPage from 'calypso/state/sites/selectors/get-site-admin-page';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import JetpackCloudSidebarMenuItems from './menu-items/jetpack-cloud';
@@ -75,7 +79,7 @@ const getJetpackAdminUrl = ( state, siteId ) => {
 	}
 
 	const parts = getUrlParts( siteAdminUrl + 'admin.php' );
-	parts.searchParams.set( 'page', 'jetpack' );
+	parts.searchParams.set( 'page', getSiteAdminPage( state, siteId ) );
 
 	return formatUrl( getUrlFromParts( parts ) );
 };

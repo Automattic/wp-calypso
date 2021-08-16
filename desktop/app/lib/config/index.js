@@ -8,16 +8,14 @@ config.version = pkg.version;
 config.author = pkg.author;
 
 config.loginURL = function () {
-	if ( process.env.WP_DESKTOP_DEBUG_LOCALHOST !== undefined ) {
-		return 'http://calypso.localhost:3000/log-in';
-	}
-	return 'https://wordpress.com/log-in';
+	return this.baseURL() + 'log-in';
 };
 
 config.baseURL = function () {
-	if ( process.env.WP_DESKTOP_DEBUG_LOCALHOST !== undefined ) {
-		return 'http://calypso.localhost:3000/';
+	if ( process.env.WP_DESKTOP_BASE_URL !== undefined ) {
+		return `${ process.env.WP_DESKTOP_BASE_URL }/`;
 	}
+
 	return 'https://wordpress.com/';
 };
 

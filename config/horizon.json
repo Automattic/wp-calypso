@@ -70,7 +70,6 @@
 		"lasagna": true,
 		"layout/app-banner": true,
 		"layout/guided-tours": true,
-		"layout/nps-survey-notice": true,
 		"layout/support-article-dialog": true,
 		"layout/query-selected-editor": true,
 		"legal-updates-banner": false,

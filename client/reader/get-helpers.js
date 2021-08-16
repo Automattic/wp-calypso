@@ -160,3 +160,28 @@ export const canBeMarkedAsSeen = ( { post = null, posts = [], currentRoute = '' 
 
 	return false;
 };
+
+/**
+ * Return Featured image alt text.
+ *
+ * @param {Object} post object containing post information
+ *
+ * @returns {string} Featured image alt text
+ */
+export const getFeaturedImageAlt = ( post ) => {
+	// Each post can have multiple images attached. To make sure we are selecting
+	// the alt text of the correct image attachment, we get the ID of the post thumbnail first
+	// and then use it to get the alt text of the Featured image.
+	const postThumbnailId = post?.post_thumbnail?.ID;
+	const featuredImageAlt = post?.attachments?.[ postThumbnailId ]?.alt;
+	const postTitle = post.title;
+
+	// If there is no Featured image alt text available, return post title instead.
+	// This will make sure that the featured image has at least some relevant alt text.
+	if ( ! featuredImageAlt ) {
+		// translators: Adds explanation to the Featured image alt text in Reader
+		return translate( '%(postTitle)s - featured image', { args: { postTitle } } );
+	}
+
+	return featuredImageAlt;
+};

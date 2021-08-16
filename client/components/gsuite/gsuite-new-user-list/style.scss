@@ -63,7 +63,7 @@
 		}
 	}
 
-	&.show-labels .gsuite-new-user-list__new-user-remove-user-button {
+	&.gsuite-new-user-list__new-user-remove-user-button {
 		@include breakpoint-deprecated( '>800px' ) {
 			margin-top: calc( 1.5em + 5px );
 		}

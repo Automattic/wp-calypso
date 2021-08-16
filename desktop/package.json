@@ -21,7 +21,7 @@
 	],
 	"scripts": {
 		"dev": "cross-env NODE_ENV=development DEBUG=1 WP_DESKTOP_DEBUG=1 electron app/index.js",
-		"dev:localhost": "cross-env WP_DESKTOP_DEBUG_LOCALHOST=1 yarn run dev",
+		"dev:localhost": "cross-env WP_DESKTOP_BASE_URL=\"http://calypso.localhost:3000\" yarn run dev",
 		"ci:build-mac": "yarn run build:main && node bin/build-mac-ci",
 		"build": "yarn run build:main && ELECTRON_BUILDER_ARGS=${ELECTRON_BUILDER_ARGS} yarn run build:app",
 		"build:app": "yarn electron-builder ${ELECTRON_BUILDER_ARGS} build --publish never",

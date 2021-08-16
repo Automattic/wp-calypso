@@ -15,6 +15,12 @@ import {
 	KEYRING_CONNECTIONS_REQUEST,
 	KEYRING_CONNECTIONS_REQUEST_FAILURE,
 	KEYRING_CONNECTIONS_REQUEST_SUCCESS,
+	P2_CONNECTIONS_RECEIVE,
+	P2_CONNECTIONS_REQUEST,
+	P2_CONNECTIONS_REQUEST_FAILURE,
+	P2_CONNECTIONS_REQUEST_SUCCESS,
+	P2_CONNECTION_DELETE,
+	P2_CONNECTION_DELETE_FAILURE,
 } from 'calypso/state/action-types';
 
 import 'calypso/state/sharing/init';
@@ -109,6 +115,89 @@ export function deleteStoredKeyringConnection( connection ) {
 
 				dispatch( {
 					type: KEYRING_CONNECTION_DELETE_FAILURE,
+					error: { ...error, label: connection.label },
+				} );
+
+				dispatch(
+					errorNotice(
+						translate( 'The %(service)s account was unable to be disconnected.', {
+							args: { service: error.label },
+							context: 'Sharing: Publicize connection confirmation',
+						} ),
+						{ id: 'publicize' }
+					)
+				);
+			} );
+}
+
+/**
+ * Triggers a network request for a P2's connected services.
+ *
+ * @param {number} hubId P2 hub identifier
+ *
+ * @returns {Function} Action thunk
+ */
+export function requestP2KeyringConnections( hubId ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: P2_CONNECTIONS_REQUEST,
+		} );
+
+		return wpcom
+			.undocumented()
+			.p2KeyringConnections( hubId )
+			.then( ( { connections } ) => {
+				dispatch( {
+					type: P2_CONNECTIONS_RECEIVE,
+					connections,
+				} );
+				dispatch( {
+					type: P2_CONNECTIONS_REQUEST_SUCCESS,
+				} );
+			} )
+			.catch( ( error ) =>
+				dispatch( {
+					type: P2_CONNECTIONS_REQUEST_FAILURE,
+					error,
+				} )
+			);
+	};
+}
+
+/**
+ * Triggers a network request to delete a P2 Keyring connection from the server-side.
+ *
+ * @param  {object} connection         Connection to be deleted.
+ * @param  {number} connection.ID      ID of the connection to be deleted.
+ * @param  {string} connection.label   Name of the service that was connected.
+ * @param  {number} siteId             Selected site id.
+ * @returns {Function}                 Action thunk
+ */
+export function deleteP2KeyringConnection( connection, siteId ) {
+	return ( dispatch ) =>
+		wpcom
+			.undocumented()
+			.deleteP2KeyringConnection( connection.ID, siteId )
+			.then( () => {
+				dispatch( {
+					type: P2_CONNECTION_DELETE,
+					connection,
+				} );
+				dispatch( deleteKeyringConnectionSuccess( connection ) );
+			} )
+			.catch( ( error ) => {
+				if ( error && 404 === error.statusCode ) {
+					// If the connection cannot be found, we infer that it must have been deleted since the original
+					// connections were retrieved, so pass along the cached connection.
+					dispatch( {
+						type: P2_CONNECTION_DELETE,
+						connection,
+					} );
+					dispatch( deleteKeyringConnectionSuccess( connection ) );
+				}
+
+				dispatch( {
+					type: P2_CONNECTION_DELETE_FAILURE,
 					error: { ...error, label: connection.label },
 				} );
 

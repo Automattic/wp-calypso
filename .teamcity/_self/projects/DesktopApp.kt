@@ -85,6 +85,8 @@ object E2ETests : BuildType({
 		bashNodeScript {
 			name = "Run tests (linux)"
 			scriptContent = """
+				export WP_DESKTOP_BASE_URL="%dep.calypso_BuildDockerImage.calypso_live_url%"
+
 				export E2EGUTENBERGUSER="%E2EGUTENBERGUSER%"
 				export E2EPASSWORD="%E2EPASSWORD%"
 				export CI=true
@@ -92,6 +94,7 @@ object E2ETests : BuildType({
 				# Start framebuffer
 				Xvfb ${'$'}{DISPLAY} -screen 0 1280x1024x24 &
 
+				echo "Base URL is '${'$'}WP_DESKTOP_BASE_URL'"
 				# Run tests
 				yarn run test-desktop:e2e
 			"""

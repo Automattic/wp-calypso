@@ -11,15 +11,11 @@
 		align-items: flex-end;
 		font-size: $font-body;
 
-		.featured-domain-suggestions & {
-			align-items: flex-start;
-		}
-
-		&.domain-product-price__domain-step-signup-flow {
+		.is-white-signup & {
 			align-items: flex-start;
 		}
 	}
-	
+
 	@include breakpoint-deprecated( '<660px' ) {
 		display: inline-block;
 		font-size: $font-body-small;
@@ -42,7 +38,7 @@
 	.is-section-domains & {
 		@include breakpoint-deprecated( '>800px' ) {
 			padding-left: 1em;
-			padding-right: 2em;
+			padding-right: 1em;
 		}
 	}
 
@@ -60,6 +56,15 @@
 		display: block;
 	}
 
+	.domain-product-price__sale-price {
+		color: var( --studio-orange-50 );
+		font-weight: 600;
+		small {
+			color: var( --studio-orange-50 );
+			font-size: $font-body-small;
+		}
+	}
+
 	&.no-price .domain-product-price__free-text,
 	&.no-price .domain-product-price__sale-price {
 		@include breakpoint-deprecated( '>660px' ) {
@@ -68,7 +73,17 @@
 	}
 
 	.domain-product-price__free-price {
-		color: var( --color-success );
+		color: var( --studio-green-60 );
+		font-weight: 500; /* stylelint-disable-line scales/font-weights */
+		font-size: $font-body-small;
+	}
+
+	.domain-product-price__price {
+		font-weight: 400;
+
+		small {
+			font-size: $font-body-small;
+		}
 	}
 
 	.domain-product-price__price,
@@ -83,8 +98,16 @@
 
 		.domain-product-price__price,
 		.domain-product-price__renewal-price {
-			font-size: 80%;
+			font-size: $font-body-small;
 			color: var( --color-text-subtle );
+		}
+
+		.domain-product-price__renewal-price {
+			text-decoration: line-through;
+
+			small {
+				font-size: $font-body-small;
+			}
 		}
 
 		@include breakpoint-deprecated( '>660px' ) {
