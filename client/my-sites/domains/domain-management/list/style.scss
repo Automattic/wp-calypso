@@ -6,11 +6,6 @@
 	margin-bottom: 0;
 }
 
-.domain-management-list__cancel-change-primary-button {
-	margin-top: 1px;
-	margin-bottom: 2px;
-}
-
 .domain-management-list-item {
 	&.busy {
 		background-color: var( --color-neutral-0 );
@@ -87,28 +82,6 @@
 		@include placeholder( --color-neutral-10 );
 		display: inline-block;
 		width: 40%;
-	}
-}
-
-.domain-management-list-item__upsell,
-.domain-item__upsell {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-	span {
-		margin-right: 16px;
-		flex: 1;
-	}
-}
-
-.list-all__container .list-all__site {
-	margin-bottom: 10px;
-}
-
-.domain-management__claim-free-domain {
-	@include breakpoint-deprecated( '>660px' ) {
-		display: none;
 	}
 }
 
@@ -247,12 +220,6 @@
 	}
 }
 
-.list__domains-header {
-	flex: 1;
-	margin-right: 8px;
-	font-size: $font-body-small;
-}
-
 .list__domain-options {
 	width: 23px;
 	font-size: $font-body-small;
@@ -262,22 +229,8 @@
 	}
 }
 
-.domain-item__icon {
-	fill: var( --color-text-subtle );
-}
-
-.list__view-all {
-	margin-top: 24px;
-}
-
 .list__action_item_placeholder {
 	@include placeholder( --color-neutral-5 );
-}
-
-.domain-item__enable-selection {
-	> .list__domain-options {
-		visibility: hidden;
-	}
 }
 
 .domain-item__overlay {
@@ -297,10 +250,6 @@
 		font-size: $font-body-small;
 		margin-left: auto;
 		margin-right: 5px;
-	}
-
-	.domain-item__upsell {
-		margin-left: auto;
 	}
 }
 
