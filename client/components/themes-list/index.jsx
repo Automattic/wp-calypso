@@ -6,8 +6,10 @@ import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Theme from 'calypso/components/theme';
+import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 import './style.scss';
 
@@ -88,6 +90,7 @@ export class ThemesList extends React.Component {
 				installing={ this.props.isInstalling( theme.id ) }
 				upsellUrl={ this.props.upsellUrl }
 				bookmarkRef={ bookmarkRef }
+				isSiteFSE={ this.props.isSiteFSE }
 			/>
 		);
 	}
@@ -139,8 +142,12 @@ export class ThemesList extends React.Component {
 	}
 }
 
-const mapStateToProps = ( state ) => ( {
-	themesBookmark: getThemesBookmark( state ),
-} );
+const mapStateToProps = ( state ) => {
+	const siteId = getSelectedSiteId( state );
+	return {
+		isSiteFSE: isSiteUsingCoreSiteEditor( state, siteId ),
+		themesBookmark: getThemesBookmark( state ),
+	};
+};
 
 export default connect( mapStateToProps )( localize( ThemesList ) );

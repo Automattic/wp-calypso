@@ -70,6 +70,7 @@ export class Theme extends Component {
 			PropTypes.func,
 			PropTypes.shape( { current: PropTypes.any } ),
 		] ),
+		isSiteFSE: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -78,6 +79,7 @@ export class Theme extends Component {
 		onMoreButtonClick: noop,
 		actionLabel: '',
 		active: false,
+		isSiteFSE: false,
 	};
 
 	shouldComponentUpdate( nextProps ) {
@@ -113,6 +115,10 @@ export class Theme extends Component {
 		const { theme } = this.props;
 		const features = get( theme, [ 'taxonomies', 'theme_feature' ] );
 		return some( features, { slug: 'block-templates' } );
+	}
+
+	shouldShowBetaBadge() {
+		return this.props.isSiteFSE && this.isFullSiteEditingTheme();
 	}
 
 	renderPlaceholder() {
@@ -246,7 +252,7 @@ export class Theme extends Component {
 					<div className="theme__info">
 						<h2 className="theme__info-title">
 							{ name }
-							{ this.isFullSiteEditingTheme() && (
+							{ this.shouldShowBetaBadge() && (
 								<Badge type="warning-clear" className="theme__badge-beta">
 									{ translate( 'Beta' ) }
 								</Badge>
