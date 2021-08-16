@@ -19,7 +19,7 @@ class Tags_Education {
 	private static $instance = null;
 
 	/**
-	 * WPCOM_Tags_Education constructor.
+	 * Tags_Education constructor.
 	 */
 	public function __construct() {
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script' ), 100 );

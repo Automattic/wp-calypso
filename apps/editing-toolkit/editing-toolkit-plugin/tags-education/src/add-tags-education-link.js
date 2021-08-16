@@ -20,7 +20,7 @@ const addTagsEducationLink = createHigherOrderComponent( ( PostTaxonomyType ) =>
 			<>
 				<PostTaxonomyType { ...props } />
 				<ExternalLink
-					href={ localizeUrl( 'https://wordpress.com/support/posts/tags/123' ) }
+					href={ localizeUrl( 'https://wordpress.com/support/posts/tags' ) }
 					onClick={ trackTagsEducationLinkClick }
 				>
 					{ __( 'Build your audience with tags', 'full-site-editing' ) }
