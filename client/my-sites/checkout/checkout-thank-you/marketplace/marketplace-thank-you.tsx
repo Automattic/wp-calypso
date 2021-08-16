@@ -151,6 +151,8 @@ const MarketplaceThankYou = () => {
 				thankYouImage={ thankYouImage }
 				/* TODO: Change thank you message to be dynamic according to product */
 				thankYouTitle={ translate( 'Yoast SEO Premium is installed' ) }
+				headerBackgroundColor={ '#f5f7f7' }
+				headerTextColor={ 'black' }
 			/>
 		</>
 	);

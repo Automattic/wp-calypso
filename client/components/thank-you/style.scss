@@ -41,3 +41,17 @@
 	border-color: var( --color-accent );
 	color: var( --color-accent );
 }
+
+.thank-you__help-link {
+	display: flex;
+	svg.thank-you__icon-external {
+		height: 16px;
+		width: auto;
+		padding-top: 3px;
+		margin-left: 4px;
+	}
+}
+
+.thank-you__help-title {
+	margin-bottom: 0.5em;
+}

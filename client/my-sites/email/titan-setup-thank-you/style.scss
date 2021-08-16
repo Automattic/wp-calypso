@@ -1,8 +1,13 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .titan-setup-thank-you__icon-external {
 	margin-left: 4px;
 }
 
-div.layout__content {
-	padding: 79px 0 32px calc( var( --sidebar-width-max ) );
-	background-color: white;
+.thank-you__container {
+	margin: -32px -32px -33px -34px;
+	@media ( max-width: 660px ) {
+		padding: 0 32px 0 34px;
+	}
 }

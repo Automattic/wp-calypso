@@ -8,11 +8,13 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import VerticalNav from 'calypso/components/vertical-nav';
-import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import Gridicon from 'calypso/components/gridicon';
 import { CALYPSO_CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';
-import { ThankYouNextStepProps, ThankYouProps, ThankYouSectionProps } from './types';
-
+import type {
+	ThankYouNextStepProps,
+	ThankYouProps,
+	ThankYouSectionProps,
+} from 'calypso/components/thank-you/types';
 /**
  * style dependencies
  */
@@ -23,14 +25,10 @@ const ThankYouContainer = styled.div`
 	-ms-overflow-style: none;
 	/* Negative value to counteract default content padding */
 	margin-top: calc( -79px + var( --masterbar-height ) );
-
-	@media screen and ( max-width: 782px ) {
-		margin-top: 0;
-	}
 `;
 
-const ThankYouHeaderTitle = styled.h1`
-	font-size: 2em;
+const ThankYouSectionTitle = styled.h1`
+	font-size: 1.5em;
 	margin-bottom: 8px;
 `;
 
@@ -70,15 +68,13 @@ const ThankYouNextStep = ( props: ThankYouNextStepProps ) => {
 	const { stepCta, stepDescription, stepKey, stepTitle } = props;
 
 	return (
-		<React.Fragment key={ stepKey }>
-			<div className="thank-you__step">
-				<div>
-					<h3>{ stepTitle }</h3>
-					<p>{ stepDescription }</p>
-				</div>
-				<div className="thank-you__step-cta">{ stepCta }</div>
+		<div className="thank-you__step" key={ stepKey }>
+			<div>
+				<h3>{ stepTitle }</h3>
+				<p>{ stepDescription }</p>
 			</div>
-		</React.Fragment>
+			<div className="thank-you__step-cta">{ stepCta }</div>
+		</div>
 	);
 };
 
@@ -91,9 +87,9 @@ const ThankYouSection = ( props: ThankYouSectionProps ) => {
 
 	return (
 		<ThankYouSectionContainer>
-			<ThankYouHeaderTitle className="thank-you__body-header wp-brand-font">
+			<ThankYouSectionTitle className="thank-you__body-header wp-brand-font">
 				{ sectionTitle }
-			</ThankYouHeaderTitle>
+			</ThankYouSectionTitle>
 
 			<ThankYouNextSteps>{ nextStepComponents }</ThankYouNextSteps>
 		</ThankYouSectionContainer>
@@ -104,15 +100,15 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 	const translate = useTranslate();
 
 	const {
+		headerBackgroundColor = '#0675C4',
 		headerClassName,
+		headerTextColor = 'white',
 		containerClassName,
 		sections,
 		showSupportSection = true,
 		thankYouTitle,
 		thankYouSubtitle,
 		thankYouImage,
-		headerTextColor,
-		headerBackgroundColor,
 	} = props;
 
 	const ThankYouTitleContainer = styled.div`
@@ -149,8 +145,8 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 				<img { ...thankYouImage } />
 				{ thankYouTitle && (
 					<ThankYouTitleContainer>
-						<h1 className="thank-you wp-brand-font"> { thankYouTitle } </h1>
-						<h2> { thankYouSubtitle } </h2>
+						<h1 className="thank-you__header-title wp-brand-font">{ thankYouTitle }</h1>
+						{ thankYouSubtitle && <h2>{ thankYouSubtitle }</h2> }
 					</ThankYouTitleContainer>
 				) }
 			</ThankYouHeader>
@@ -160,22 +156,32 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 
 					{ showSupportSection && (
 						<ThankYouSectionContainer>
-							<ThankYouHeaderTitle className="thank-you__body-header wp-brand-font">
+							<ThankYouSectionTitle className="thank-you__body-header wp-brand-font">
 								{ translate( 'How can we help?' ) }
-							</ThankYouHeaderTitle>
-							<p>
+							</ThankYouSectionTitle>
+							<p className="thank-you__help-title">
 								{ translate(
 									'Our Happiness Engineers are here if you need help, or if you have any questions.'
 								) }
 							</p>
-							<VerticalNav>
-								<VerticalNavItem path={ CALYPSO_CONTACT }>
-									{ translate( 'Ask a question' ) }
-								</VerticalNavItem>
-								<VerticalNavItem path={ SUPPORT_ROOT }>
-									{ translate( 'Support documentation' ) }
-								</VerticalNavItem>
-							</VerticalNav>
+							<a
+								className="thank-you__help-link"
+								href={ CALYPSO_CONTACT }
+								target="_blank"
+								rel="noreferrer noopener"
+							>
+								{ translate( 'Ask a question' ) }
+								<Gridicon className="thank-you__icon-external" icon="external" />
+							</a>
+							<a
+								className="thank-you__help-link"
+								href={ SUPPORT_ROOT }
+								target="_blank"
+								rel="noreferrer noopener"
+							>
+								{ translate( 'Support documentation' ) }
+								<Gridicon className="thank-you__icon-external" icon="external" />
+							</a>
 						</ThankYouSectionContainer>
 					) }
 				</div>

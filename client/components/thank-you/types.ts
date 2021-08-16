@@ -23,7 +23,9 @@ export type ThankYouSectionProps = {
 
 export type ThankYouProps = {
 	containerClassName?: string;
+	headerBackgroundColor?: string;
 	headerClassName?: string;
+	headerTextColor?: string;
 	sections: ThankYouSectionProps[];
 	showSupportSection?: boolean;
 	thankYouImage: {
@@ -32,6 +34,4 @@ export type ThankYouProps = {
 	};
 	thankYouTitle?: string | TranslateResult;
 	thankYouSubtitle?: string | TranslateResult;
-	headerBackgroundColor: string;
-	headerTextColor: string;
 };

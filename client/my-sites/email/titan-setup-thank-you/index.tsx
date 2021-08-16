@@ -104,11 +104,6 @@ const TitanSetupThankYou = ( props: TitanSetupThankYouProps ): JSX.Element => {
 			showSupportSection={ true }
 			thankYouImage={ thankYouImage }
 			thankYouTitle={ translate( 'Congratulations on your purchase!' ) }
-			thankYouSubtitle={ translate(
-				'You will receive an email confirmation shortly for your purchase.'
-			) }
-			headerBackgroundColor={ '#0675C4' }
-			headerTextColor={ 'white' }
 		/>
 	);
 };
