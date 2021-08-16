@@ -12,7 +12,6 @@ const System = require( '../lib/system' );
 /**
  * Module variables
  */
-const USE_LOCALHOST = process.env.WP_DESKTOP_DEBUG_LOCALHOST !== undefined;
 const TITLE_BAR_HEIGHT = 38;
 
 let mainWindow = null;
@@ -21,9 +20,12 @@ function showAppWindow() {
 	const preloadFile = getPath( 'preload.js' );
 	let appUrl = Config.loginURL();
 
-	const lastLocation = Settings.getSetting( settingConstants.LAST_LOCATION );
-	if ( lastLocation && lastLocation.startsWith( 'http' ) ) {
-		appUrl = lastLocation;
+	if ( ! process.env.CI && ! process.env.WP_DESKTOP_DEBUG ) {
+		log.info( 'Overriding window with last location...' );
+		const lastLocation = Settings.getSetting( settingConstants.LAST_LOCATION );
+		if ( lastLocation && lastLocation.startsWith( 'http' ) ) {
+			appUrl = lastLocation;
+		}
 	}
 	log.info( 'Loading app (' + appUrl + ') in mainWindow' );
 
@@ -36,7 +38,8 @@ function showAppWindow() {
 		...Settings.getSettingGroup( {}, 'window', [ 'x', 'y', 'width', 'height' ] ),
 	};
 
-	if ( USE_LOCALHOST ) {
+	// Allow insecure content only in debug mode
+	if ( process.env.WP_DESKTOP_DEBUG ) {
 		windowConfig.webPreferences.allowRunningInsecureContent = true;
 	}
 
@@ -100,7 +103,7 @@ function showAppWindow() {
 
 	mainView.webContents.session.webRequest.onBeforeRequest( function ( details, callback ) {
 		if (
-			! USE_LOCALHOST &&
+			! process.env.WP_DESKTOP_DEBUG &&
 			details.resourceType === 'script' &&
 			details.url.startsWith( 'http://' )
 		) {

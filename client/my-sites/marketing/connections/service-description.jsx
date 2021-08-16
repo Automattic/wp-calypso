@@ -143,6 +143,17 @@ class SharingServiceDescription extends Component {
 					comment: 'Description for Google My Business when no account is connected',
 				} );
 			},
+			slack: function () {
+				if ( this.props.numberOfConnections > 0 ) {
+					return this.props.translate( 'Connected this P2 to your Slack Workspace.', {
+						comment: 'Get slack notifications on new P2 posts.',
+					} );
+				}
+
+				return this.props.translate( 'Connect your Slack Workspace to this P2.', {
+					comment: 'Get slack notifications on new P2 posts.',
+				} );
+			},
 		} ),
 		numberOfConnections: 0,
 	};

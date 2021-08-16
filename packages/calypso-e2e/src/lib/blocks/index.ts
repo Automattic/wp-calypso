@@ -5,3 +5,4 @@ export * from './hero-block';
 export * from './image-block';
 export * from './audio-block';
 export * from './file-block';
+export * from './logos-block';

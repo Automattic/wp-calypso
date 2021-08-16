@@ -1022,6 +1022,7 @@ class RegisterDomainStep extends React.Component {
 				} else if ( error && error.error ) {
 					this.showSuggestionErrorMessage( domain, error.error, {
 						maintenanceEndTime: get( error, 'data.maintenance_end_time', null ),
+						site: this.props?.selectedSite,
 					} );
 				}
 

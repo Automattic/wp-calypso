@@ -374,7 +374,6 @@ class EmailProvidersComparison extends React.Component {
 					selectedDomainName={ selectedDomainName }
 					users={ googleUsers }
 					onReturnKeyPress={ this.onGoogleFormReturnKeyPress }
-					showLabels={ true }
 				>
 					<Button
 						className="email-providers-comparison__gsuite-user-list-action-continue"

@@ -174,7 +174,7 @@
 	flex-direction: column-reverse;
 	flex-wrap: nowrap;
 
-	@include break-xlarge {
+	@include break-mobile {
 		flex-direction: row;
 	}
 
@@ -256,13 +256,9 @@
 
 	@include break-mobile {
 		width: auto;
-	}
-
-	&.is-primary {
-		@include breakpoint-deprecated( '>480px' ) {
-			margin-left: 1em;
-			margin-top: 0;
-		}
+		flex: 1 0 auto;
+		margin-left: 1em;
+		margin-top: 0;
 	}
 
 	.is-placeholder & {
@@ -279,22 +275,6 @@
 		color: var( --color-primary );
 		margin-top: 0;
 		padding: 0;
-	}
-
-	.is-section-signup & {
-		@include breakpoint-deprecated( '>480px' ) {
-			flex: 1 0 auto;
-			margin-left: 1em;
-			margin-top: 0;
-		}
-	}
-
-	.is-section-domains & {
-		@include breakpoint-deprecated( '>800px' ) {
-			flex: 1 0 auto;
-			margin-left: 1em;
-			margin-top: 0;
-		}
 	}
 }
 

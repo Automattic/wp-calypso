@@ -18,11 +18,13 @@ const selectors = {
 	paragraphBlocks: 'p.block-editor-rich-text__editable',
 
 	// Top bar selectors.
-	editPostHeader: '.edit-post-header',
-	publishPanelToggle: '.editor-post-publish-panel__toggle',
+	postToolbar: '.edit-post-header',
 	settingsToggle: '[aria-label="Settings"]',
+	saveDraftButton: '.editor-post-save-draft',
+	publishButton: ( parentSelector: string ) =>
+		`${ parentSelector } button:text("Publish")[aria-disabled=false]`,
 
-	// Settings sidebar.
+	// Settings panel.
 	settingsPanel: '.interface-complementary-area',
 
 	// Publish panel (including post-publish)
@@ -241,11 +243,18 @@ export class GutenbergEditorPage {
 	 * @param {boolean} visit Whether to then visit the page.
 	 * @returns {Promise<void} No return value.
 	 */
-	async publish( { visit = false }: { visit?: boolean } = {} ): Promise< string > {
+	async publish( {
+		visit = false,
+		saveDraft = false,
+	}: { visit?: boolean; saveDraft?: boolean } = {} ): Promise< string > {
 		const frame = await this.getEditorFrame();
 
-		await frame.click( `${ selectors.editPostHeader } >> text=Publish` );
-		await frame.click( `${ selectors.publishPanel } >> text=Publish` );
+		if ( saveDraft ) {
+			await this.saveDraft();
+		}
+
+		await frame.click( selectors.publishButton( selectors.postToolbar ) );
+		await frame.click( selectors.publishButton( selectors.publishPanel ) );
 		const viewPublishedArticleButton = await frame.waitForSelector( selectors.viewButton );
 		const publishedURL = ( await viewPublishedArticleButton.getAttribute( 'href' ) ) as string;
 
@@ -253,6 +262,19 @@ export class GutenbergEditorPage {
 			await this._visitPublishedEntryFromPublishPane();
 		}
 		return publishedURL;
+	}
+
+	/**
+	 * Saves the currently open post as draft.
+	 */
+	async saveDraft() {
+		const frame = await this.getEditorFrame();
+
+		await frame.click( selectors.saveDraftButton );
+		// Once the Save draft button is clicked, buttons on the post toolbar
+		// are disabled while the post is saved. Wait for the state of
+		// Publish button to return to 'enabled' before proceeding.
+		await frame.waitForSelector( selectors.publishButton( selectors.postToolbar ) );
 	}
 
 	/**

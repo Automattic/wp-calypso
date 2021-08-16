@@ -1,3 +1,4 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
  */
@@ -161,11 +162,25 @@ class SharingButtonsTray extends React.Component {
 	getLimitedButtonsNoticeElement = () => {
 		if ( this.props.limited ) {
 			return (
-				<em className="sharing-buttons-preview__panel-notice">
-					{ this.props.translate( 'Sharing options are limited on private sites.', {
-						context: 'Sharing: Buttons',
-					} ) }
-				</em>
+				<p className="sharing-buttons-preview__panel-notice">
+					<em>
+						{ this.props.translate(
+							'It looks like your site is Private. Make it Public to take advantage of more sharing options.',
+							{
+								context: 'Sharing: Buttons',
+							}
+						) }
+					</em>
+					<a
+						href="https://wordpress.com/support/settings/privacy-settings/"
+						target="_blank"
+						rel="noreferrer"
+					>
+						{ this.props.translate( 'Check out our guide for more details.', {
+							context: 'Sharing: Buttons',
+						} ) }
+					</a>
+				</p>
 			);
 		}
 	};

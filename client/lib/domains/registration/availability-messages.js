@@ -382,6 +382,18 @@ function getAvailabilityNotice( domain, error, errorData ) {
 			);
 			break;
 
+		case 'blocked':
+			const supportURL = 'https://wordpress.com/error-report/?url=495@' + ( site?.slug || '' );
+			message = translate(
+				"You're blocked from purchasing domains on WordPress.com. Please {{a}}contact our support{{/a}} to find out why.",
+				{
+					components: {
+						a: <a rel="noopener noreferrer" href={ supportURL } />,
+					},
+				}
+			);
+			break;
+
 		default:
 			message = translate(
 				'Sorry, there was a problem processing your request. Please try again in a few minutes.'
