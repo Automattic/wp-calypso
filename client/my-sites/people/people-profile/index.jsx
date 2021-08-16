@@ -9,6 +9,8 @@ import { recordTrack } from 'calypso/reader/stats';
 import page from 'page';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { useEffect, useState } from '@wordpress/element';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -16,19 +18,27 @@ import { useEffect, useState } from '@wordpress/element';
 import Gravatar from 'calypso/components/gravatar';
 import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { requestExternalContributors } from 'calypso/state/data-getters';
+import useExternalContributorsQuery from 'calypso/data/external-contributors/use-external-contributors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const PeopleProfile = ( { invite, user, type, moment, translate, siteId } ) => {
+const PeopleProfile = ( { siteId, type, user, invite, moment, translate } ) => {
 	const [ isExternalContributor, setIsExternalContributor ] = useState( false );
+	const { data: externalContributors } = useExternalContributorsQuery( siteId );
 
 	useEffect( () => {
-		const externalContributors = requestExternalContributors( siteId ).data || [];
-		setIsExternalContributor( externalContributors.includes( user?.linked_user_ID ?? user?.ID ) );
-	}, [ siteId, user ] );
+		if (
+			externalContributors &&
+			user?.ID &&
+			externalContributors.includes( user?.linked_user_ID ?? user.ID )
+		) {
+			setIsExternalContributor( true );
+		}
+	}, [ user, externalContributors ] );
 
 	const getRole = () => {
 		if ( invite && invite.role ) {
@@ -271,4 +281,19 @@ const PeopleProfile = ( { invite, user, type, moment, translate, siteId } ) => {
 	);
 };
 
-export default localize( withLocalizedMoment( PeopleProfile ) );
+PeopleProfile.propType = {
+	siteId: PropTypes.number.isRequired,
+	translate: PropTypes.func.isRequired,
+	moment: PropTypes.func.isRequired,
+	user: PropTypes.object,
+	type: PropTypes.string,
+	invite: PropTypes.object,
+};
+
+export default connect( ( state, ownProps ) => {
+	const siteId = getSelectedSiteId( state );
+	return {
+		...ownProps,
+		siteId,
+	};
+} )( localize( withLocalizedMoment( PeopleProfile ) ) );
