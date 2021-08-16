@@ -82,7 +82,11 @@ const TitanNewMailboxList = ( {
 			{ mailboxes.map( ( mailbox, index ) => (
 				<React.Fragment key={ `${ index }:${ mailbox.uuid }` }>
 					{ index > 0 && (
-						<CardHeading tagName="h3" size={ 20 }>
+						<CardHeading
+							className="titan-new-mailbox-list__numbered-heading"
+							tagName="h3"
+							size={ 20 }
+						>
 							Mailbox { String( index + 1 ).padStart( 2, '0' ) }
 						</CardHeading>
 					) }
