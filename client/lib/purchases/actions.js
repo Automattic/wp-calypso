@@ -16,7 +16,13 @@ export function cancelPurchase( purchaseId, onComplete ) {
 }
 
 export function cancelAndRefundPurchase( purchaseId, data, onComplete ) {
-	wpcom.undocumented().cancelAndRefundPurchase( purchaseId, data, onComplete );
+	wpcom.req.post(
+		{
+			path: `/upgrades/${ purchaseId }/cancel`,
+			body: data,
+		},
+		onComplete
+	);
 }
 
 export function submitSurvey( surveyName, siteID, surveyData ) {
