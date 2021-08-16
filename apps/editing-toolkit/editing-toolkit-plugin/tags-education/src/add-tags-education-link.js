@@ -20,7 +20,15 @@ const addTagsEducationLink = createHigherOrderComponent( ( PostTaxonomyType ) =>
 			<>
 				<PostTaxonomyType { ...props } />
 				<ExternalLink
-					href={ localizeUrl( 'https://wordpress.com/support/posts/tags' ) }
+					href={ localizeUrl(
+						'https://wordpress.com/support/posts/tags',
+						// TODO: remove tagsEducationLocale after fixing useLocalizeUrl.
+						// `useLocalizeUrl` will try to get the current locale slug from the @wordpress/i18n locale data if missing `LocaleProvider`
+						// However, if we have any string without translation in `default` domain, the configure block will be overwritten by empty locale data
+						// so that we cannot get the correct locale from the @wordpress/i18n locale data.
+						// Also, the format of current locale slug is not ISO 639 and it makes localizeUrl not work correctly.
+						window.tagsEducationLocale
+					) }
 					onClick={ trackTagsEducationLinkClick }
 				>
 					{ __( 'Build your audience with tags', 'full-site-editing' ) }
