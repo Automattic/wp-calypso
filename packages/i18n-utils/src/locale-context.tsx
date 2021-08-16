@@ -1,6 +1,7 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
 import * as i18n from '@wordpress/i18n';
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { Locale } from './locales';
 
 export const localeContext = createContext< string | null >( null );
 
@@ -17,6 +18,22 @@ export const LocaleProvider: React.FC< Props > = ( { children, localeSlug } ) =>
  */
 function getWpI18nLocaleSlug(): string | undefined {
 	return i18n.getLocaleData && i18n.getLocaleData()?.[ '' ]?.language;
+}
+
+/**
+ * Returns ISO 639 conforming locale string.
+ *
+ * @param {string} locale locale to be converted e.g. "en_US".
+ * @returns string ISO 639 locale string e.g. "en"
+ */
+function formatLocale( locale: Locale = '' ): Locale {
+	const TARGET_LOCALES = [ 'pt_br', 'pt-br', 'zh_tw', 'zh-tw', 'zh_cn', 'zh-cn' ];
+	const lowerCaseLocale = locale.toLowerCase();
+	const formattedLocale = TARGET_LOCALES.includes( lowerCaseLocale )
+		? lowerCaseLocale.replace( '_', '-' )
+		: lowerCaseLocale.replace( /([-_].*)$/i, '' );
+
+	return formattedLocale || 'en';
 }
 
 /**
@@ -52,7 +69,7 @@ export function useLocale(): string {
 		} );
 	}, [ providerHasLocale ] );
 
-	return fromProvider || fromWpI18n || 'en';
+	return fromProvider || formatLocale( fromWpI18n ) || 'en';
 }
 
 /**
