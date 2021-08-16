@@ -56,9 +56,6 @@ const DomainMappingThankYou = ( { translate } ) => {
 									className={ 'domain-mapping-thank-you__button' }
 									primary
 									busy={ false }
-									// TODO: Menu links are not properly loading on initial request, post transfer so yoastSeoPageUrl will remain empty post transfer
-									// This should be fixed with perhaps a work around to periodically poll for the menu with various domains until it loads
-									// or maybe blocking the user from entering this flow until a domain acquires SSL
 									disabled={ false }
 								>
 									{ translate( 'Go to setup' ) }
@@ -76,9 +73,6 @@ const DomainMappingThankYou = ( { translate } ) => {
 									href={ '#' }
 									className={ 'domain-mapping-thank-you__button' }
 									busy={ false }
-									// TODO: Menu links are not properly loading on initial request, post transfer so yoastSeoPageUrl will remain empty post transfer
-									// This should be fixed with perhaps a work around to periodically poll for the menu with various domains until it loads
-									// or maybe blocking the user from entering this flow until a domain acquires SSL
 									disabled={ false }
 								>
 									{ translate( 'Get email' ) }
@@ -91,7 +85,6 @@ const DomainMappingThankYou = ( { translate } ) => {
 			showSupportSection={ true }
 			customSupportSection={ customSupportSection }
 			thankYouImage={ { alt: '', src: '' } }
-			/* TODO: Change thank you message to be dynamic according to product */
 			thankYouTitle={ translate( 'Congratulations on your purchase!' ) }
 		/>
 	);
