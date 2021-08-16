@@ -860,9 +860,9 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 	],
 } );
 
-const getPlanJetpackSecurityDetails = () => ( {
+const getPlanJetpackSecurityT1Details = () => ( {
 	group: GROUP_JETPACK,
-	type: TYPE_SECURITY,
+	type: TYPE_SECURITY_T1,
 	getTitle: () => translate( 'Security' ),
 	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
 	getDescription: () =>
@@ -901,9 +901,9 @@ const getPlanJetpackSecurityDetails = () => ( {
 	],
 } );
 
-const getPlanJetpackSecurityProDetails = () => ( {
+const getPlanJetpackSecurityT2Details = () => ( {
 	group: GROUP_JETPACK,
-	type: TYPE_SECURITY_PRO,
+	type: TYPE_SECURITY_T2,
 	getTitle: () => translate( 'Security Pro' ),
 	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
 	getDescription: () =>
@@ -1451,47 +1451,35 @@ export const PLANS_LIST = {
 	},
 
 	[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: {
-		...getPlanJetpackSecurityDetails(),
-		// TODO: resolve these
-		group: GROUP_JETPACK,
-		type: TYPE_SECURITY_T1,
+		...getPlanJetpackSecurityT1Details(),
 		...getAnnualTimeframe(),
-		getStoreSlug: () => PLAN_JETPACK_SECURITY,
+		getStoreSlug: () => PLAN_JETPACK_SECURITY_T1_YEARLY,
 		getPathSlug: () => 'security', // TODO: verify slug
-		getProductId: () => null, // TODO: add product ID when it exists
+		getProductId: () => 2016,
 	},
 
 	[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: {
-		...getPlanJetpackSecurityDetails(),
-		// TODO: resolve these
-		group: GROUP_JETPACK,
-		type: TYPE_SECURITY_T1,
+		...getPlanJetpackSecurityT1Details(),
 		...getMonthlyTimeframe(),
-		getStoreSlug: () => PLAN_JETPACK_SECURITY_MONTHLY,
+		getStoreSlug: () => PLAN_JETPACK_SECURITY_T1_MONTHLY,
 		getPathSlug: () => 'security-monthly', // TODO: verify slug
-		getProductId: () => null, // TODO: add product ID when it exists
+		getProductId: () => 2017,
 	},
 
 	[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: {
-		...getPlanJetpackSecurityProDetails(),
-		// TODO: resolve these
-		group: GROUP_JETPACK,
-		type: TYPE_SECURITY_T2,
+		...getPlanJetpackSecurityT2Details(),
 		...getAnnualTimeframe(),
-		getStoreSlug: () => PLAN_JETPACK_SECURITY_PRO,
+		getStoreSlug: () => PLAN_JETPACK_SECURITY_T2_YEARLY,
 		getPathSlug: () => 'security-pro', // TODO: verify slug
-		getProductId: () => null, // TODO: add product ID when it exists
+		getProductId: () => 2019,
 	},
 
 	[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: {
-		...getPlanJetpackSecurityProDetails(),
-		// TODO: resolve these
-		group: GROUP_JETPACK,
-		type: TYPE_SECURITY_T2,
+		...getPlanJetpackSecurityT2Details(),
 		...getMonthlyTimeframe(),
-		getStoreSlug: () => PLAN_JETPACK_SECURITY_PRO_MONTHLY,
+		getStoreSlug: () => PLAN_JETPACK_SECURITY_T2_MONTHLY,
 		getPathSlug: () => 'security-pro-monthly', // TODO: verify slug
-		getProductId: () => null, // TODO: add product ID when it exists
+		getProductId: () => 2020,
 	},
 
 	[ PLAN_P2_PLUS ]: {
