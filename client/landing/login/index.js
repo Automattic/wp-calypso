@@ -3,7 +3,6 @@
  */
 import 'calypso/boot/polyfills';
 
-import debugFactory from 'debug';
 import page from 'page';
 import { setupLocale } from 'calypso/boot/locale';
 import { render } from 'calypso/controller/web-util';
@@ -13,19 +12,13 @@ import { setStore } from 'calypso/state/redux-store';
 import { setupMiddlewares, configureReduxStore } from './common';
 import createStore from './store';
 
-const debug = debugFactory( 'calypso' );
-
 import 'calypso/assets/stylesheets/style.scss';
 // goofy import for environment badge, which is SSR'd
 import 'calypso/components/environment-badge/style.scss';
 
-// Create Redux store
-const store = createStore();
-setStore( store );
-
 const boot = ( currentUser ) => {
-	debug( "Starting Calypso. Let's do this." );
-
+	const store = createStore();
+	setStore( store, currentUser?.ID );
 	configureReduxStore( currentUser, store );
 	setupMiddlewares( currentUser, store );
 	setupLocale( currentUser, store );

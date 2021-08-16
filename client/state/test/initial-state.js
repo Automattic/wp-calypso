@@ -894,7 +894,8 @@ describe( 'loading stored state with dynamic reducers', () => {
 
 		// load initial state and create Redux store with it
 		await loadAllState();
-		const state = getInitialState( reducer, 123456789 );
+		const userId = 123456789;
+		const state = getInitialState( reducer, userId );
 		const store = createReduxStore( state, reducer );
 
 		// verify that the initial Redux store loaded state only for `currentUser`
@@ -906,7 +907,7 @@ describe( 'loading stored state with dynamic reducers', () => {
 
 		// load a reducer dynamically
 		const aReducer = withStorageKey( 'A', withKeyPrefix( 'A' ) );
-		addReducerToStore( store )( [ 'a' ], aReducer );
+		addReducerToStore( store, userId )( [ 'a' ], aReducer );
 
 		// verify that the Redux store contains the stored state for `A` now
 		expect( store.getState() ).toEqual( {
@@ -928,7 +929,8 @@ describe( 'loading stored state with dynamic reducers', () => {
 
 		// load initial state and create Redux store with it
 		await loadAllState();
-		const state = getInitialState( reducer, 123456789 );
+		const userId = 123456789;
+		const state = getInitialState( reducer, userId );
 		const store = createReduxStore( state, reducer );
 
 		// verify that the initial Redux store loaded state only for `currentUser`
@@ -940,7 +942,7 @@ describe( 'loading stored state with dynamic reducers', () => {
 
 		// load a reducer dynamically
 		const cdReducer = withStorageKey( 'CD', withKeyPrefix( 'CD' ) );
-		addReducerToStore( store )( [ 'c', 'd' ], cdReducer );
+		addReducerToStore( store, userId )( [ 'c', 'd' ], cdReducer );
 
 		// verify that the Redux store contains the stored state for `A` now
 		expect( store.getState() ).toEqual( {
@@ -964,7 +966,8 @@ describe( 'loading stored state with dynamic reducers', () => {
 
 		// load initial state and create Redux store with it
 		await loadAllState();
-		const state = getInitialState( reducer, 123456789 );
+		const userId = 123456789;
+		const state = getInitialState( reducer, userId );
 		const store = createReduxStore( state, reducer );
 
 		// verify that the initial Redux store loaded state only for `currentUser`
@@ -976,8 +979,8 @@ describe( 'loading stored state with dynamic reducers', () => {
 
 		// load a reducer dynamically
 		const eReducer = withStorageKey( 'E', withKeyPrefix( 'E' ) );
-		addReducerToStore( store )( [ 'e' ], eReducer );
-		addReducerToStore( store )( [ 'e' ], eReducer );
+		addReducerToStore( store, userId )( [ 'e' ], eReducer );
+		addReducerToStore( store, userId )( [ 'e' ], eReducer );
 
 		// verify that the Redux store contains the stored state for `E` now
 		expect( store.getState() ).toEqual( {
@@ -999,7 +1002,8 @@ describe( 'loading stored state with dynamic reducers', () => {
 
 		// load initial state and create Redux store with it
 		await loadAllState();
-		const state = getInitialState( reducer, 123456789 );
+		const userId = 123456789;
+		const state = getInitialState( reducer, userId );
 		const store = createReduxStore( state, reducer );
 
 		// verify that the initial Redux store loaded state only for `currentUser`
@@ -1014,8 +1018,8 @@ describe( 'loading stored state with dynamic reducers', () => {
 		const cReducer = withStorageKey( 'C', withKeyPrefix( 'C' ) );
 
 		expect( () => {
-			addReducerToStore( store )( [ 'b' ], bReducer );
-			addReducerToStore( store )( [ 'b' ], cReducer );
+			addReducerToStore( store, userId )( [ 'b' ], bReducer );
+			addReducerToStore( store, userId )( [ 'b' ], cReducer );
 		} ).toThrow();
 	} );
 } );
