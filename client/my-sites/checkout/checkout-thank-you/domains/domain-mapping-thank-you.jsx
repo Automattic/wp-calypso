@@ -11,6 +11,8 @@ import { CALYPSO_CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';
 import { Button } from '@automattic/components';
 import ExternalLink from 'calypso/components/external-link';
 
+import './style.scss';
+
 const SupportLink = ( { href, title } ) => {
 	const translation = useTranslate();
 	return (

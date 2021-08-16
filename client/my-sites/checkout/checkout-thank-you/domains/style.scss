@@ -1,0 +1,13 @@
+@import '@automattic/typography/styles/variables';
+
+.is-section-checkout-thank-you .layout__content {
+    padding: 0;
+}
+
+.checkout-thank-you__domains {
+	.thank-you__container {
+		&-header {
+			background-color: var( --studio-blue-50 );
+		}
+	}
+}
