@@ -103,19 +103,8 @@ export async function clearAllState() {
 	await clearStorage();
 }
 
-function getPersistenceKey( subkey, currentUserId ) {
-	return getReduxStateKey( currentUserId ) + ( subkey ? ':' + subkey : '' );
-}
-
-function getReduxStateKey( currentUserId = null ) {
-	return getReduxStateKeyForUserId( currentUserId );
-}
-
-function getReduxStateKeyForUserId( userId ) {
-	if ( ! userId ) {
-		return 'redux-state-logged-out';
-	}
-	return 'redux-state-' + userId;
+function getPersistenceKey( userId, subkey ) {
+	return 'redux-state-' + userId ?? 'logged-out' + ( subkey ? ':' + subkey : '' );
 }
 
 async function persistentStoreState( reduxStateKey, storageKey, state, _timestamp ) {
@@ -147,7 +136,7 @@ export function persistOnChange( reduxStore, currentUserId ) {
 
 			const serializedState = serialize( reduxStore.getCurrentReducer(), state );
 			const _timestamp = Date.now();
-			const reduxStateKey = getReduxStateKey( currentUserId );
+			const reduxStateKey = getPersistenceKey( currentUserId );
 
 			const storeTasks = map( serializedState.get(), ( data, storageKey ) =>
 				persistentStoreState( reduxStateKey, storageKey, data, _timestamp )
@@ -258,7 +247,7 @@ function getStateFromPersistence( reducer, subkey, currentUserId ) {
 // This function handles both legacy and modularized Redux state.
 // `loadAllState` must have completed first.
 export function getStateFromCache( reducer, subkey, currentUserId ) {
-	let reduxStateKey = getPersistenceKey( subkey, currentUserId );
+	let reduxStateKey = getPersistenceKey( currentUserId, subkey );
 
 	let serverState = null;
 
@@ -270,7 +259,7 @@ export function getStateFromCache( reducer, subkey, currentUserId ) {
 
 	// Special case for handling signup flows where the user logs in halfway through.
 	if ( ! persistedState && subkey === 'signup' ) {
-		reduxStateKey = getPersistenceKey( subkey, null );
+		reduxStateKey = getPersistenceKey( null, subkey );
 		persistedState = stateCache[ reduxStateKey ] ?? null;
 
 		// If we are logged in, we no longer need the 'user' step in signup progress tree.
