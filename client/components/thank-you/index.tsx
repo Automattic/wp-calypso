@@ -151,7 +151,7 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 					</ThankYouTitleContainer>
 				) }
 			</ThankYouHeader>
-			<ThankYouBody>
+			<ThankYouBody className="thank-you__body">
 				<div>
 					{ thankYouSections }
 
