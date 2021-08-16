@@ -3,7 +3,7 @@
  */
 import { Button } from '@automattic/components';
 import { connect } from 'react-redux';
-import i18nCalypso, { getLocaleSlug, localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -38,9 +38,7 @@ class EmailPlanWarnings extends React.Component {
 
 		return (
 			<Button compact primary href={ setupMailboxUrl }>
-				{ 'en' === getLocaleSlug() || i18nCalypso.hasTranslation( 'Set up mailbox' )
-					? translate( 'Set up mailbox' )
-					: translate( 'Activate Mailbox' ) }
+				{ translate( 'Set up mailbox' ) }
 			</Button>
 		);
 	}

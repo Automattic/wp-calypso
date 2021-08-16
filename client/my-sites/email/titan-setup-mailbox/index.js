@@ -5,7 +5,7 @@ import page from 'page';
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
-import i18nCalypso, { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -62,10 +62,7 @@ const TitanSetupMailbox = ( { selectedDomainName } ) => {
 		return null;
 	}
 
-	const title =
-		'en' === getLocaleSlug() || i18nCalypso.hasTranslation( 'Set up mailbox' )
-			? translate( 'Set up mailbox' )
-			: translate( 'Set up your Professional Email' );
+	const title = translate( 'Set up mailbox' );
 
 	return (
 		<>
