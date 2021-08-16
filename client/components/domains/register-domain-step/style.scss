@@ -5,10 +5,14 @@
 	display: block;
 	position: relative;
 	margin: 0 auto 10px;
-	padding: 24px;
+	padding: 16px;
 	box-sizing: border-box;
 	background: var( --color-surface );
 	box-shadow: 0 0 0 1px var( --color-border-subtle );
+
+	@include break-mobile {
+		padding: 24px;
+	}
 
 	.card {
 		background: none;
@@ -21,6 +25,14 @@
 	.domain-search-results__domain-available-notice,
 	.search-component {
 		border-bottom: none;
+	}
+
+	.register-domain-step__next-page {
+		border-bottom: none;
+		padding-bottom: 0;
+		.register-domain-step__next-page-button {
+			padding-bottom: 0;
+		}
 	}
 
 	.domain-search-results__domain-available-notice {
