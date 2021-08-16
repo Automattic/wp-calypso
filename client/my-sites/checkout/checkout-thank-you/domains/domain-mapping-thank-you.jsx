@@ -10,6 +10,7 @@ import { ThankYou } from 'calypso/components/thank-you';
 import { CALYPSO_CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';
 import { Button } from '@automattic/components';
 import ExternalLink from 'calypso/components/external-link';
+import domainConnectedSuccess from 'calypso/assets/images/illustrations/domain-connected-success.svg';
 
 import './style.scss';
 
@@ -84,7 +85,7 @@ const DomainMappingThankYou = ( { translate } ) => {
 			] }
 			showSupportSection={ true }
 			customSupportSection={ customSupportSection }
-			thankYouImage={ { alt: '', src: '' } }
+			thankYouImage={ { alt: 'Domain Connected', src: domainConnectedSuccess } }
 			thankYouTitle={ translate( 'Congratulations on your purchase!' ) }
 		/>
 	);
