@@ -33,7 +33,7 @@ function initializeState(
 	store: Store & WithAddReducer,
 	storageKey: string,
 	reducer: Reducer & OptionalStorageKey,
-	currentUserId: number
+	currentUserId: number | undefined
 ) {
 	const storedState = getStateFromCache( reducer, storageKey, currentUserId );
 
@@ -46,7 +46,7 @@ function initializeState(
 // and loads (asynchronously) and applies the persisted state for it.
 export const addReducerToStore = < T extends Reducer & OptionalStorageKey >(
 	store: Store & WithAddReducer,
-	currentUserId: number
+	currentUserId: number | undefined
 ) => ( key: string[], reducer: T ): void => {
 	const storageKey: string | undefined = reducer.storageKey;
 	const normalizedKey = normalizeKey( key );

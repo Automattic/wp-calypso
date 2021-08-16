@@ -15,10 +15,10 @@ export type ReduxDispatch = ThunkDispatch< ReturnType< typeof getInitialState >,
 type QueueEntry = [ string[], Reducer ];
 
 let applicationStore: ( Store & WithAddReducer ) | undefined;
-let applicationUserId: number | null;
+let applicationUserId: number | undefined;
 const reducerRegistrationQueue: QueueEntry[] = [];
 
-export function setStore( store: Store & WithAddReducer, currentUserId: number | null ): void {
+export function setStore( store: Store & WithAddReducer, currentUserId: number | undefined ): void {
 	// Clear any previously added reducers when replacing an existing store.
 	if ( applicationStore ) {
 		clearReducers();
