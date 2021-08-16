@@ -16,7 +16,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 .modal__main {
 	&.components-modal__frame {
 		overflow: visible;
-		height: 65vh;
+		height: 40vh;
 		top: calc( 17.5vh - #{$wpcom-modal-footer-height / 2} );
 
 		@media ( max-width: $wpcom-modal-breakpoint ) {
