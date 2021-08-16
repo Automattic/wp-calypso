@@ -49,8 +49,8 @@ export const sortPagesHierarchically = ( pages, homepageId = 0 ) => {
 	} );
 
 	// Places the Homepage at the top of the list.
-	if ( homepageId !== 0 ) {
-		const homepage = sortedPages.findIndex( ( page ) => page.ID == homepageId );
+	const homepage = sortedPages.findIndex( ( page ) => page.ID === homepageId );
+	if ( homepage !== -1 ) {
 		sortedPages.unshift( sortedPages.splice( homepage, 1 )[ 0 ] );
 	}
 
