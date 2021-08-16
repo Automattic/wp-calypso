@@ -29,11 +29,19 @@
 	text-align: left;
 	font-size: 1rem;
 
-    .masterbar-cart__title {
+    .masterbar-cart__content-header {
         border-bottom: 1px solid #ccc;
-        font-weight: 600;
         padding-bottom: 12px;
-        text-align: center;
+        text-align: left;
+    }
+
+    .masterbar-cart__title {
+        font-weight: 600;
+    }
+
+    .masterbar-cart__site-title {
+        color: var( --color-neutral-50 );
+        font-size: 0.875rem;
     }
 
     .order-review-line-items {

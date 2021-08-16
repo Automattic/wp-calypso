@@ -119,7 +119,14 @@ function MasterbarCartContents( { selectedSiteSlug }: { selectedSiteSlug: string
 		>
 			<CartMessages isLoadingCart={ isLoading } cart={ responseCart } />
 			<div className="masterbar-cart__content-wrapper">
-				<h2 className="masterbar-cart__title">{ translate( 'Cart' ) }</h2>
+				<div className="masterbar-cart__content-header">
+					<h2 className="masterbar-cart__title">{ translate( 'Cart' ) }</h2>
+					<span className="masterbar-cart__site-title">
+						{ translate( 'Site: %s', {
+							args: selectedSiteSlug,
+						} ) }
+					</span>
+				</div>
 				<WPOrderReviewLineItems
 					removeCoupon={ removeCoupon }
 					removeProductFromCart={ removeProductFromCart }
