@@ -4,7 +4,16 @@ import React from 'react';
 import './modal-style.scss';
 import Visual from './plans-visual.svg';
 
-export default function ModalTemplate( { CTA, message, description, onClick, onDismiss } ) {
+export default function ModalTemplate( {
+	CTA,
+	trackImpression,
+	message,
+	description,
+	onClick,
+	onDismiss,
+} ) {
+	trackImpression && trackImpression();
+
 	return (
 		<Guide
 			className="modal__main"
