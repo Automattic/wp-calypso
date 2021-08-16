@@ -15,7 +15,6 @@ import {
 	validateMailboxes,
 } from 'calypso/lib/titan/new-mailbox';
 import { Button } from '@automattic/components';
-import CardHeading from 'calypso/components/card-heading';
 import Gridicon from 'calypso/components/gridicon';
 import TitanNewMailbox from 'calypso/my-sites/email/titan-new-mailbox';
 
@@ -59,12 +58,8 @@ const TitanNewMailboxList = ( {
 		onMailboxesChange( validateMailboxes( updatedMailboxes ) );
 	};
 
-	const onMailboxAdd = ( afterIndex ) => {
-		onMailboxesChange( [
-			...mailboxes.slice( 0, afterIndex + 1 ),
-			buildNewTitanMailbox( domain, false ),
-			...mailboxes.slice( afterIndex + 1 ),
-		] );
+	const onMailboxAdd = () => {
+		onMailboxesChange( [ ...mailboxes, buildNewTitanMailbox( domain, false ) ] );
 	};
 
 	const onMailboxRemove = ( currentMailboxes, uuid ) => () => {
@@ -80,40 +75,29 @@ const TitanNewMailboxList = ( {
 	return (
 		<div className="titan-new-mailbox-list__main">
 			{ mailboxes.map( ( mailbox, index ) => (
-				<React.Fragment key={ `${ mailbox.uuid }:${ index }` }>
-					{ index > 0 && (
-						<CardHeading tagName="h3" size={ 20 }>
-							Mailbox { String( index + 1 ).padStart( 2, '0' ) }
-						</CardHeading>
-					) }
-					<TitanNewMailbox
-						onMailboxValueChange={ onMailboxValueChange( mailbox.uuid ) }
-						mailbox={ mailbox }
-						onReturnKeyPress={ onReturnKeyPress }
-						showAllErrors={ validatedMailboxUuids.includes( mailbox.uuid ) }
-						showLabels={ showLabels }
-					/>
-
-					<div className="titan-new-mailbox-list__actions">
-						{ showAddAnotherMailboxButton && (
-							<Button onClick={ () => onMailboxAdd( index ) }>
-								<Gridicon icon="plus" />
-								<span>{ translate( 'Add another mailbox' ) }</span>
-							</Button>
-						) }
-						{ index > 0 && (
-							<Button onClick={ onMailboxRemove( mailboxes, mailbox.uuid ) }>
-								<Gridicon icon="trash" />
-								<span>{ translate( 'Remove this mailbox' ) }</span>
-							</Button>
-						) }
-					</div>
-
-					<hr className="titan-new-mailbox-list__separator" />
-				</React.Fragment>
+				<TitanNewMailbox
+					key={ mailbox.uuid }
+					onMailboxAdd={ onMailboxAdd }
+					onMailboxRemove={ onMailboxRemove( mailboxes, mailbox.uuid ) }
+					onMailboxValueChange={ onMailboxValueChange( mailbox.uuid ) }
+					mailbox={ mailbox }
+					onReturnKeyPress={ onReturnKeyPress }
+					showAllErrors={ validatedMailboxUuids.includes( mailbox.uuid ) }
+					showLabels={ showLabels }
+					showTrashButton={ index > 0 }
+				/>
 			) ) }
 
-			{ children }
+			<div className="titan-new-mailbox-list__actions">
+				{ showAddAnotherMailboxButton && (
+					<Button onClick={ onMailboxAdd }>
+						<Gridicon icon="plus" />
+						<span>{ translate( 'Add another mailbox' ) }</span>
+					</Button>
+				) }
+
+				{ children }
+			</div>
 		</div>
 	);
 };
