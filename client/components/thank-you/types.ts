@@ -21,6 +21,17 @@ export type ThankYouSectionProps = {
 	sectionTitle: TranslateResult;
 };
 
+export type ThankYouSupportLink = {
+	href: string;
+	title: TranslateResult;
+};
+
+export type ThankYouSupportSectionProps = {
+	links: ThankYouSupportLink[];
+	description: TranslateResult;
+	title: TranslateResult;
+};
+
 export type ThankYouProps = {
 	containerClassName?: string;
 	headerBackgroundColor?: string;
@@ -28,6 +39,7 @@ export type ThankYouProps = {
 	headerTextColor?: string;
 	sections: ThankYouSectionProps[];
 	showSupportSection?: boolean;
+	customSupportSection?: ThankYouSupportSectionProps;
 	thankYouImage: {
 		alt: string | TranslateResult;
 		src: string;

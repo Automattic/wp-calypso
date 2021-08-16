@@ -6,7 +6,23 @@ import React from 'react';
 import { localize } from 'i18n-calypso';
 
 import { ThankYou } from 'calypso/components/thank-you';
+import { CALYPSO_CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';
 import { Button } from '@automattic/components';
+
+const customSupportSection = {
+	links: [
+		{
+			href: CALYPSO_CONTACT,
+			title: 'Ask a question',
+		},
+		{
+			href: SUPPORT_ROOT,
+			title: 'View support documentation',
+		},
+	],
+	title: 'How can we help?',
+	description: 'Have questions? Our Happiness Engineers are here if you need help.',
+};
 
 const DomainMappingThankYou = ( { translate } ) => {
 	return (
@@ -62,6 +78,7 @@ const DomainMappingThankYou = ( { translate } ) => {
 				},
 			] }
 			showSupportSection={ true }
+			customSupportSection={ customSupportSection }
 			thankYouImage={ { alt: '', src: '' } }
 			/* TODO: Change thank you message to be dynamic according to product */
 			thankYouTitle={ translate( 'Congratulations on your purchase!' ) }
