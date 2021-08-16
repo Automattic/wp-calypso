@@ -3,23 +3,32 @@
  */
 
 import React from 'react';
-import { localize } from 'i18n-calypso';
+import { localize, useTranslate } from 'i18n-calypso';
 
 import { ThankYou } from 'calypso/components/thank-you';
+
 import { CALYPSO_CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';
 import { Button } from '@automattic/components';
+import ExternalLink from 'calypso/components/external-link';
+
+const SupportLink = ( { href, title } ) => {
+	const translation = useTranslate();
+	return (
+		<p>
+			<ExternalLink icon={ true } href={ href }>
+				{ translation( title ) }
+			</ExternalLink>
+		</p>
+	);
+};
 
 const customSupportSection = {
-	links: [
-		{
-			href: CALYPSO_CONTACT,
-			title: 'Ask a question',
-		},
-		{
-			href: SUPPORT_ROOT,
-			title: 'View support documentation',
-		},
-	],
+	customNavSection: (
+		<>
+			<SupportLink href={ CALYPSO_CONTACT } title={ 'Ask a question' } />
+			<SupportLink href={ SUPPORT_ROOT } title={ 'View support documentation' } />
+		</>
+	),
 	title: 'How can we help?',
 	description: 'Have questions? Our Happiness Engineers are here if you need help.',
 };

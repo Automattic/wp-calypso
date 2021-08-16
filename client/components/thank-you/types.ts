@@ -27,9 +27,9 @@ export type ThankYouSupportLink = {
 };
 
 export type ThankYouSupportSectionProps = {
-	links: ThankYouSupportLink[];
 	description: TranslateResult;
 	title: TranslateResult;
+	links: ThankYouSupportLink[];
 };
 
 export type ThankYouProps = {
