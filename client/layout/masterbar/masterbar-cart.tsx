@@ -1,31 +1,27 @@
 /**
  * External dependencies
  */
-import React, { useRef, useState, useCallback } from 'react';
-import page from 'page';
-import { useSelector, useDispatch } from 'react-redux';
-import { useShoppingCart } from '@automattic/shopping-cart';
 import { CheckoutProvider, CheckoutErrorBoundary, Button } from '@automattic/composite-checkout';
-import { styled } from '@automattic/wpcom-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
-
+import page from 'page';
+import React, { useRef, useState, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 /**
  * Internal dependencies
  */
-import MasterbarItem from './item';
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 import Popover from 'calypso/components/popover';
-import { WPOrderReviewLineItems } from 'calypso/my-sites/checkout/composite-checkout/components/wp-order-review-line-items';
-import { CheckoutSummaryTotal } from 'calypso/my-sites/checkout/composite-checkout/components/wp-checkout-order-summary';
-import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import CartMessages from 'calypso/my-sites/checkout/cart/cart-messages';
+import { CheckoutSummaryTotal } from 'calypso/my-sites/checkout/composite-checkout/components/wp-checkout-order-summary';
+import { WPOrderReviewLineItems } from 'calypso/my-sites/checkout/composite-checkout/components/wp-order-review-line-items';
+import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import MasterbarItem from './item';
+
+import './masterbar-cart-style.scss';
 
 type MasterbarCartProps = { tooltip: string; children: React.ReactNode };
-
-const MasterbarCartOuterWrapper = styled.div`
-	display: flex;
-`;
 
 function MasterbarCart( { children, tooltip }: MasterbarCartProps ): JSX.Element | null {
 	const { responseCart, reloadFromServer } = useShoppingCart();
@@ -48,7 +44,7 @@ function MasterbarCart( { children, tooltip }: MasterbarCartProps ): JSX.Element
 	const onClose = () => setIsActive( false );
 
 	return (
-		<MasterbarCartOuterWrapper className="masterbar__cart" ref={ masterbarButtonRef }>
+		<div className="masterbar-cart__outer-wrapper" ref={ masterbarButtonRef }>
 			<CheckoutErrorBoundary errorMessage="Error">
 				<MasterbarItem icon="cart" tooltip={ tooltip } onClick={ onClick }>
 					{ children }
@@ -63,53 +59,17 @@ function MasterbarCart( { children, tooltip }: MasterbarCartProps ): JSX.Element
 					<MasterbarCartContents selectedSiteSlug={ selectedSite.slug } />
 				</Popover>
 			</CheckoutErrorBoundary>
-		</MasterbarCartOuterWrapper>
+		</div>
 	);
 }
 
 function noop() {} // eslint-disable-line @typescript-eslint/no-empty-function
 
-const MasterbarCartCountWrapper = styled.div`
-	position: relative;
-`;
-
-const MasterbarCartCountContainer = styled.span`
-	display: inline-block;
-	padding: 1px 6px;
-	border: 1px solid var( --color-accent );
-	border-radius: 12px;
-	font-size: 0.75rem;
-	font-weight: 600;
-	line-height: 14px;
-	text-align: center;
-	position: absolute;
-	top: 2px;
-	right: 2px;
-	color: var( --color-text-inverted );
-	background-color: var( --color-accent );
-`;
-
-const MasterbarCartContentsWrapper = styled.div`
-	margin: 10px;
-	text-align: left;
-	font-size: 16px;
-`;
-
-const ButtonSection = styled.div`
-	margin-top: 10px;
-`;
-
-const MasterbarCartTitle = styled.h2`
-	text-align: center;
-	border-bottom: 1px solid #ccc;
-	padding-bottom: 10px;
-`;
-
 function MasterbarCartCount( { productsInCart }: { productsInCart: number } ): JSX.Element {
 	return (
-		<MasterbarCartCountWrapper>
-			<MasterbarCartCountContainer>{ productsInCart }</MasterbarCartCountContainer>
-		</MasterbarCartCountWrapper>
+		<div className="masterbar-cart__count-wrapper">
+			<span className="masterbar-cart__count-container">{ productsInCart }</span>
+		</div>
 	);
 }
 
@@ -158,15 +118,15 @@ function MasterbarCartContents( { selectedSiteSlug }: { selectedSiteSlug: string
 			showSuccessMessage={ showSuccessMessage }
 		>
 			<CartMessages isLoadingCart={ isLoading } cart={ responseCart } />
-			<MasterbarCartContentsWrapper>
-				<MasterbarCartTitle>{ translate( 'Cart' ) }</MasterbarCartTitle>
+			<div className="masterbar-cart__content-wrapper">
+				<h2 className="masterbar-cart__title">{ translate( 'Cart' ) }</h2>
 				<WPOrderReviewLineItems
 					removeCoupon={ removeCoupon }
 					removeProductFromCart={ removeProductFromCart }
 					isCompact
 				/>
 				<CheckoutSummaryTotal />
-				<ButtonSection>
+				<div className="masterbar-cart__content-footer">
 					<Button
 						buttonType={ 'primary' }
 						fullWidth
@@ -176,8 +136,8 @@ function MasterbarCartContents( { selectedSiteSlug }: { selectedSiteSlug: string
 					>
 						{ translate( 'Checkout' ) }
 					</Button>
-				</ButtonSection>
-			</MasterbarCartContentsWrapper>
+				</div>
+			</div>
 		</CheckoutProvider>
 	);
 }
