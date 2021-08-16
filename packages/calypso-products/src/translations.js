@@ -7,10 +7,10 @@ import {
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
-	PRODUCT_JETPACK_BACKUP,
-	PRODUCT_JETPACK_BACKUP_MONTHLY,
-	PRODUCT_JETPACK_BACKUP_PRO,
-	PRODUCT_JETPACK_BACKUP_PRO_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
+	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
+	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
 	PRODUCT_JETPACK_SCAN,
 	PRODUCT_JETPACK_SCAN_MONTHLY,
 	PRODUCT_JETPACK_SCAN_REALTIME,
@@ -171,19 +171,19 @@ export const getJetpackProductsTaglines = () => {
 			owned: backupOwnedTagline,
 		},
 		// TODO: get taglines specifically for the new Jetpack Backup products
-		[ PRODUCT_JETPACK_BACKUP ]: {
+		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: {
 			default: backupRealtimeTagline,
 			owned: backupOwnedTagline,
 		},
-		[ PRODUCT_JETPACK_BACKUP_MONTHLY ]: {
+		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: {
 			default: backupRealtimeTagline,
 			owned: backupOwnedTagline,
 		},
-		[ PRODUCT_JETPACK_BACKUP_PRO ]: {
+		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: {
 			default: backupRealtimeTagline,
 			owned: backupOwnedTagline,
 		},
-		[ PRODUCT_JETPACK_BACKUP_PRO_MONTHLY ]: {
+		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: {
 			default: backupRealtimeTagline,
 			owned: backupOwnedTagline,
 		},
