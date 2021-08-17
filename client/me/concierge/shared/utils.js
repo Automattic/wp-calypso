@@ -12,7 +12,7 @@ import { CompactCard } from '@automattic/components';
 export const renderDisallowed = ( translate, siteSlug ) => {
 	return (
 		<>
-			<HeaderCake backHref={ `/me/concierge/${ siteSlug }/book` }>
+			<HeaderCake backHref={ `/me/quickstart/${ siteSlug }/book` }>
 				{ translate( 'Reschedule or cancel' ) }
 			</HeaderCake>
 			<CompactCard>
