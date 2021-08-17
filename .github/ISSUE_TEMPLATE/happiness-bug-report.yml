@@ -7,6 +7,10 @@ body:
       value: |
         Thanks for contributing to calypso! Pick a clear title and proceed.
   - type: textarea
+    id: summary
+    attributes:
+        label: Summary
+  - type: textarea
     id: steps
     attributes:
       label: Steps to Reproduce
@@ -39,8 +43,6 @@ body:
       label: Context
       placeholder: |
         eg. Customer report, exploratory testing...
-    validations:
-      required: true
   - type: dropdown
     id: os
     attributes:
@@ -53,12 +55,6 @@ body:
         - Android
         - iOS
       multiple: true
-    validations:
-      required: true
-  - type: input
-    id: os_version
-    attributes:
-      label: OS Version
   - type: dropdown
     id: browser
     attributes:
@@ -71,8 +67,6 @@ body:
         - Microsoft Edge (legacy)
         - Safari
       multiple: true
-    validations:
-      required: true
   - type: input
     attributes:
       label: Browser Version(s)
@@ -90,10 +84,10 @@ body:
         - Atomic
       multiple: true
   - type: textarea
-    id: errors
+    id: other_notes
     attributes:
-      label: Console and/or error logs
-      description: If there are any console logs or errors, paste it below.
+      label: Other notes
+      description: Logs, console errors, notes, observations, etc.
   - type: dropdown
     id: users-affected
     attributes:
@@ -120,8 +114,3 @@ body:
         - Intermittent
         - Once
         - Never
-  - type: textarea
-    id: other
-    attributes:
-      label: Other information
-      placeholder: additional logs, notes, etc.
