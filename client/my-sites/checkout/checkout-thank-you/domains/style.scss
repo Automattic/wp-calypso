@@ -9,6 +9,10 @@
 	.thank-you__container {
 		&-header {
 			background-color: var( --studio-blue-50 );
+
+			img {
+				max-width: 260px;
+			}
 		}
 	}
 }
