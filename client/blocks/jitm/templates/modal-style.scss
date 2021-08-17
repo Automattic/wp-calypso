@@ -4,11 +4,11 @@
 @import '@automattic/onboarding/styles/mixins';
 @import '@automattic/calypso-color-schemes';
 
-$wpcom-modal-breakpoint: 660px;
+$wpcom-modal-breakpoint: 600px;
 
 $wpcom-modal-padding-v: 30px;
 $wpcom-modal-padding-h: 25px;
-$wpcom-modal-content-min-height: 430px;
+$wpcom-modal-content-min-height: 420px;
 $wpcom-modal-footer-padding-v: 20px;
 $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 
@@ -89,7 +89,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	background: var( --studio-white );
 	width: 100%;
 	height: 100%;
-	padding-left: 8%;
+	padding-left: 7%;
 
 	:last-child {
 		margin-bottom: 5%;
@@ -120,24 +120,26 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	padding: 1em 2em 1em 0;
 	margin: 0;
 	font-family: $serif;
-	font-size: $font-body;
+	font-size: $font-body-small;
 
 	button {
 		margin-top: 13%;
+		padding: 10px 24px;
 	}
 }
 
 .modal__disclaimer {
 	margin: 0;
-	font-size: $font-body-extra-small;
+	font-size: calc( #{$font-body-extra-small} * 0.65 );
 	color: var( --color-text-subtle );
 }
 
 .modal__limited-offer {
 	margin-bottom: 0.7rem;
-	color: var( --studio-blue-30 );
-	font-size: $font-body-extra-small;
-	font-weight: 400;
+	color: var( --studio-blue-40 );
+	font-size: calc( #{$font-body-extra-small} * 0.9 );
+	font-weight: bold;
+	letter-spacing: 0.1rem;
 }
 
 .modal__visual {
@@ -184,7 +186,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 		display: block;
 		background-color: var( --studio-blue-5 );
 		height: 100%;
-		width: 70%;
+		width: 90%;
 		position: relative;
 		overflow: hidden;
 	}
