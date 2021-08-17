@@ -122,7 +122,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	font-family: $serif;
 	font-size: $font-body-small;
 
-	button {
+	button,a {
 		margin-top: 13%;
 		padding: 10px 24px;
 	}

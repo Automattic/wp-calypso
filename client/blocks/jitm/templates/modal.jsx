@@ -1,10 +1,10 @@
-import { Button } from '@automattic/components';
-import { Guide } from '@wordpress/components';
+import { Button, Guide } from '@wordpress/components';
 import React, { useState } from 'react';
 import './modal-style.scss';
 import Visual from './plans-visual.svg';
 
 export default function ModalTemplate( {
+	featureClass,
 	CTA,
 	trackImpression,
 	message,
@@ -16,15 +16,15 @@ export default function ModalTemplate( {
 	trackImpression && trackImpression();
 
 	// technically, non-dismissable jitms are authorable, however, that doesn't make any sense as a modal.
-	const [ isDismissed, setDismissed ] = useState( false );
+	const [ isDismissed, setDismissed ] = useState( [] );
 
-	return isDismissed ? null : (
+	return isDismissed.includes( featureClass ) ? null : (
 		<Guide
 			className="modal__main"
 			contentLabel={ message }
 			onFinish={ () => {
 				onDismiss();
-				setDismissed( true );
+				setDismissed( isDismissed.concat( [ featureClass ] ) );
 			} }
 			pages={ [
 				{
@@ -38,11 +38,11 @@ export default function ModalTemplate( {
 									{ description }
 									<br />
 									<Button
-										primary={ true }
+										href={ CTA.link }
+										isPrimary={ true }
 										onClick={ () => {
 											onClick();
-											// todo: is this the best way in calypso???
-											location.href = CTA.link;
+											setDismissed( isDismissed.concat( [ featureClass ] ) );
 										} }
 									>
 										{ CTA.message }
