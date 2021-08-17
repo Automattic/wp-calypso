@@ -22,7 +22,7 @@ export type SetCart = ( cartKey: string, requestCart: RequestCart ) => Promise< 
 
 export interface ShoppingCartManagerOptions {
 	refetchOnWindowFocus?: boolean;
-	defaultCartKey?: string | undefined;
+	defaultCartKey?: string;
 }
 
 export type GetManagerForKey = ( cartKey: string | undefined ) => ShoppingCartManager;
@@ -62,14 +62,7 @@ export interface ShoppingCartManager {
 	waitForReady: WaitForReady;
 }
 
-export interface UseShoppingCart extends ShoppingCartActionCreators {
-	isLoading: boolean;
-	loadingError: string | null | undefined;
-	loadingErrorType: ShoppingCartError | undefined;
-	isPendingUpdate: boolean;
-	responseCart: ResponseCart;
-	couponStatus: CouponStatus;
-}
+export type UseShoppingCart = ShoppingCartActionCreators & ShoppingCartManagerState;
 
 export type ReplaceProductInCart = (
 	uuidToReplace: string,
