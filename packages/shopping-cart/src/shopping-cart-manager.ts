@@ -150,6 +150,8 @@ function createShoppingCartManager(
 		return cachedManagerState;
 	};
 
+	const getUseShoppingCart = () => ( { ...actionCreators, ...getCachedManagerState() } );
+
 	// Kick off initial actions to load the cart.
 	takeActionsBasedOnState( state, dispatch, false );
 
@@ -158,6 +160,7 @@ function createShoppingCartManager(
 		actions: actionCreators,
 		getState: getCachedManagerState,
 		waitForReady,
+		getUseShoppingCart,
 	};
 }
 
