@@ -163,11 +163,11 @@ export const useIsDateVisible = ( siteId ) => {
 	return useCallback(
 		( date ) => {
 			if ( ! isEnabled( 'activity-log/display-rules' ) ) {
-				return false;
+				return true;
 			}
 
 			if ( visibleDays === undefined ) {
-				return false;
+				return true;
 			}
 
 			const today = applySiteOffset( Date.now(), { gmtOffset, timezone } ).startOf( 'day' );
