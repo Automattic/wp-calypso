@@ -96,11 +96,12 @@ export default function JetpackCancellationSurvey( {
 	};
 
 	return (
-		<div className="jetpack-cancellation-survey__content">
+		<React.Fragment>
 			<FormattedHeader
 				headerText={ translate( 'Before you go, help us improve Jetpack' ) }
 				subHeaderText={ translate( 'Please let us know why you are cancelling.' ) }
 				align="center"
+				isSecondary={ true }
 			/>
 			{ choices.map( renderChoiceCard ) }
 
@@ -128,6 +129,6 @@ export default function JetpackCancellationSurvey( {
 				</div>
 				<Gridicon icon="chevron-right" size={ 12 } />
 			</Card>
-		</div>
+		</React.Fragment>
 	);
 }
