@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Fragment } from 'react';
+import React from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { get } from 'lodash';
@@ -214,7 +214,7 @@ const PeopleProfile = ( { siteId, type, user, invite, moment, translate } ) => {
 
 		if ( isExternalContributor ) {
 			contractorBadge = (
-				<Fragment>
+				<>
 					<div className="people-profile__role-badge role-contractor">
 						{ translate( 'Contractor', {
 							context: 'Noun: A user role',
@@ -225,7 +225,7 @@ const PeopleProfile = ( { siteId, type, user, invite, moment, translate } ) => {
 							{ translate( 'This user is a freelancer, consultant, or agency.' ) }
 						</InfoPopover>
 					</div>
-				</Fragment>
+				</>
 			);
 		}
 
