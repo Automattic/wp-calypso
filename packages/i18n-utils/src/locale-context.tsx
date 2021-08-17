@@ -14,26 +14,32 @@ export const LocaleProvider: React.FC< Props > = ( { children, localeSlug } ) =>
 );
 
 /**
- * Get the current locale slug from the @wordpress/i18n locale data
- */
-function getWpI18nLocaleSlug(): string | undefined {
-	return i18n.getLocaleData && i18n.getLocaleData()?.[ '' ]?.language;
-}
-
-/**
- * Returns ISO 639 conforming locale string.
+ * Returns locale slug
  *
  * @param {string} locale locale to be converted e.g. "en_US".
- * @returns string ISO 639 locale string e.g. "en"
+ * @returns locale string e.g. "en"
  */
-function formatLocale( locale: Locale = '' ): Locale {
-	const TARGET_LOCALES = [ 'pt_br', 'pt-br', 'zh_tw', 'zh-tw', 'zh_cn', 'zh-cn' ];
+function mapWpI18nLangToLocaleSlug( locale: Locale = '' ): Locale {
+	if ( ! locale ) {
+		return '';
+	}
+
+	const TARGET_LOCALES = [ 'pt_br', 'pt-br', 'zh_tw', 'zh-tw', 'zh_cn', 'zh-cn', 'zh_sg', 'zh-sg' ];
 	const lowerCaseLocale = locale.toLowerCase();
 	const formattedLocale = TARGET_LOCALES.includes( lowerCaseLocale )
 		? lowerCaseLocale.replace( '_', '-' )
 		: lowerCaseLocale.replace( /([-_].*)$/i, '' );
 
 	return formattedLocale || 'en';
+}
+
+/**
+ * Get the current locale slug from the @wordpress/i18n locale data
+ */
+function getWpI18nLocaleSlug(): string | undefined {
+	const language = i18n.getLocaleData ? i18n.getLocaleData()?.[ '' ]?.language : '';
+
+	return mapWpI18nLangToLocaleSlug( language );
 }
 
 /**
@@ -69,7 +75,7 @@ export function useLocale(): string {
 		} );
 	}, [ providerHasLocale ] );
 
-	return fromProvider || formatLocale( fromWpI18n ) || 'en';
+	return fromProvider || fromWpI18n || 'en';
 }
 
 /**
