@@ -273,7 +273,7 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, selectedSite
 			isVisible={ isVisible }
 			className="cancel-jetpack-form__dialog"
 		>
-			{ renderCurrentStep() }
+			<div className="cancel-jetpack-form__dialog-content">{ renderCurrentStep() }</div>
 		</Dialog>
 	);
 };
