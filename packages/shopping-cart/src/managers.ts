@@ -12,6 +12,7 @@ import type {
 	SubscriptionManager,
 	AddActionPromise,
 	ShoppingCartActionCreators,
+	UseShoppingCart,
 } from './types';
 
 const debug = debugFactory( 'shopping-cart:managers' );
@@ -122,14 +123,15 @@ export function createActionPromisesManager(): {
 const emptyCart = getEmptyResponseCart();
 const noopCartAction = (): ReturnType< ShoppingCartActionCreators[ 'addProductsToCart' ] > =>
 	Promise.reject( 'Cart actions cannot be taken without a cart key.' );
-const noopGetState: ShoppingCartManagerGetState = () => ( {
+const noopState: ShoppingCartManagerState = {
 	isLoading: true,
 	loadingError: undefined,
 	loadingErrorType: undefined,
 	isPendingUpdate: true,
 	couponStatus: 'fresh',
 	responseCart: emptyCart,
-} );
+};
+const noopGetState: ShoppingCartManagerGetState = () => noopState;
 const noopActions: ShoppingCartActionCreators = {
 	addProductsToCart: noopCartAction,
 	removeProductFromCart: noopCartAction,
@@ -140,10 +142,11 @@ const noopActions: ShoppingCartActionCreators = {
 	replaceProductsInCart: noopCartAction,
 	reloadFromServer: () => Promise.resolve( emptyCart ),
 };
+const noopUseShoppingCart: UseShoppingCart = { ...noopActions, ...noopState };
 export const noopManager: ShoppingCartManager = {
 	actions: noopActions,
 	getState: noopGetState,
 	subscribe: () => () => null,
 	waitForReady: () => Promise.resolve( emptyCart ),
-	getUseShoppingCart: () => ( { ...noopActions, ...noopGetState() } ),
+	getUseShoppingCart: () => noopUseShoppingCart,
 };
