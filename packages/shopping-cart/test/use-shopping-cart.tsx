@@ -44,10 +44,6 @@ describe( 'useShoppingCart', () => {
 			);
 		};
 
-		afterEach( () => {
-			jest.restoreAllMocks();
-		} );
-
 		it( 'adds a product to the cart if the cart is empty', async () => {
 			render(
 				<MockProvider>
@@ -83,9 +79,10 @@ describe( 'useShoppingCart', () => {
 				</MockProvider>
 			);
 			fireEvent.click( screen.getByText( 'Click me' ) );
-			await waitFor( () => screen.getByTestId( 'product-list' ) );
-			expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
-			expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planTwo.product_name );
+			await waitFor( () => {
+				expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
+				expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planTwo.product_name );
+			} );
 		} );
 
 		it( 'adds a product to the cart if the existing products are renewals and the new products are also', async () => {
@@ -99,9 +96,10 @@ describe( 'useShoppingCart', () => {
 				</MockProvider>
 			);
 			fireEvent.click( screen.getByText( 'Click me' ) );
-			await waitFor( () => screen.getByTestId( 'product-list' ) );
-			expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( renewalTwo.product_name );
-			expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( renewalOne.product_name );
+			await waitFor( () => {
+				expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( renewalTwo.product_name );
+				expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( renewalOne.product_name );
+			} );
 		} );
 
 		it( 'replaces the cart if the existing products are not renewals and any of the new products is a renewal', async () => {
@@ -115,9 +113,12 @@ describe( 'useShoppingCart', () => {
 				</MockProvider>
 			);
 			fireEvent.click( screen.getByText( 'Click me' ) );
-			await waitFor( () => screen.getByTestId( 'product-list' ) );
-			expect( screen.getByTestId( 'product-list' ) ).not.toHaveTextContent( planOne.product_name );
-			expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( renewalTwo.product_name );
+			await waitFor( () => {
+				expect( screen.getByTestId( 'product-list' ) ).not.toHaveTextContent(
+					planOne.product_name
+				);
+				expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( renewalTwo.product_name );
+			} );
 		} );
 
 		it( 'replaces the cart if any of the existing products is a renewal and the new products are not', async () => {
@@ -131,11 +132,12 @@ describe( 'useShoppingCart', () => {
 				</MockProvider>
 			);
 			fireEvent.click( screen.getByText( 'Click me' ) );
-			await waitFor( () => screen.getByTestId( 'product-list' ) );
-			expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
-			expect( screen.getByTestId( 'product-list' ) ).not.toHaveTextContent(
-				renewalTwo.product_name
-			);
+			await waitFor( () => {
+				expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
+				expect( screen.getByTestId( 'product-list' ) ).not.toHaveTextContent(
+					renewalTwo.product_name
+				);
+			} );
 		} );
 
 		it( 'returns a Promise that resolves after the update completes', async () => {
@@ -146,8 +148,9 @@ describe( 'useShoppingCart', () => {
 			);
 			fireEvent.click( screen.getByText( 'Click me' ) );
 			expect( markUpdateComplete ).not.toHaveBeenCalled();
-			await waitFor( () => screen.getByTestId( 'product-list' ) );
-			expect( markUpdateComplete ).toHaveBeenCalled();
+			await waitFor( () => {
+				expect( markUpdateComplete ).toHaveBeenCalled();
+			} );
 		} );
 	} );
 
@@ -220,10 +223,6 @@ describe( 'useShoppingCart', () => {
 				</div>
 			);
 		};
-
-		afterEach( () => {
-			jest.restoreAllMocks();
-		} );
 
 		it( 'replaces all products in the cart', async () => {
 			mockGetCart.mockResolvedValue( {
@@ -590,13 +589,6 @@ describe( 'useShoppingCart', () => {
 	} );
 
 	describe( 'when refetchOnWindowFocus is enabled', () => {
-		const mockGetCart = jest.fn();
-
-		beforeEach( () => {
-			mockGetCart.mockReset();
-			jest.restoreAllMocks();
-		} );
-
 		it( 'triggers a refetch when the window is focused', async () => {
 			mockGetCart.mockResolvedValue( { ...emptyResponseCart, products: [ planOne ] } );
 
