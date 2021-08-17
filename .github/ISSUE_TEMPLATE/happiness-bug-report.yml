@@ -90,8 +90,9 @@ body:
         - Atomic
       multiple: true
   - type: markdown
-        attributes:
-          value: Reproducibility Information
+    attributes:
+      value: |
+        Reproducibility Information
   - type: dropdown
     id: reproducibility
     attributes:
