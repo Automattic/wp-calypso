@@ -17,14 +17,14 @@ export function createActionCreators(
 	dispatch: DispatchAndWaitForValid
 ): ShoppingCartActionCreators {
 	const removeCoupon: RemoveCouponFromCart = () => dispatch( { type: 'REMOVE_COUPON' } );
-	const addProductsToCart: AddProductsToCart = ( products ) =>
+	const addProductsToCart: AddProductsToCart = async ( products ) =>
 		dispatch( {
 			type: 'CART_PRODUCTS_ADD',
 			products: createRequestCartProducts( products ),
 		} );
 	const removeProductFromCart: RemoveProductFromCart = ( uuidToRemove ) =>
 		dispatch( { type: 'REMOVE_CART_ITEM', uuidToRemove } );
-	const replaceProductsInCart: ReplaceProductsInCart = ( products ) =>
+	const replaceProductsInCart: ReplaceProductsInCart = async ( products ) =>
 		dispatch( {
 			type: 'CART_PRODUCTS_REPLACE_ALL',
 			products: createRequestCartProducts( products ),
