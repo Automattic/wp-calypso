@@ -68,6 +68,7 @@ body:
         - Safari
       multiple: true
   - type: input
+    id: browser_versions
     attributes:
       label: Browser Version(s)
   - type: input
@@ -88,6 +89,9 @@ body:
         - Simple
         - Atomic
       multiple: true
+  - type: markdown
+        attributes:
+          value: Reproducibility Information
   - type: dropdown
     id: reproducibility
     attributes:
