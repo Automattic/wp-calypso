@@ -24,6 +24,8 @@ export function getOptionInfo( {
 	currencyCode,
 	domain,
 	isSignupStep,
+	onConnect,
+	onTransfer,
 	primaryWithPlansOnly,
 	productsList,
 	selectedSite,
@@ -83,6 +85,7 @@ export function getOptionInfo( {
 			transferContent = {
 				...optionInfo.transferSupported,
 				pricing: transferPricing,
+				onSelect: onTransfer,
 				primary: true,
 			};
 			break;
@@ -107,7 +110,11 @@ export function getOptionInfo( {
 
 	let connectContent;
 	if ( domainAvailability.MAPPABLE === availability.mappable ) {
-		connectContent = { ...optionInfo.connectSupported, pricing: mappingPricing };
+		connectContent = {
+			...optionInfo.connectSupported,
+			onSelect: onConnect,
+			pricing: mappingPricing,
+		};
 	} else {
 		switch ( availability.status ) {
 			case domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE:

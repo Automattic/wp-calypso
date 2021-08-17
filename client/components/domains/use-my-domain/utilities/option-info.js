@@ -26,7 +26,6 @@ export const optionInfo = {
 			__( "We'll renew your domain for another year" ),
 			__( 'Private domain registration and SSL certificate included for free' ),
 		],
-		onSelect: () => {},
 	},
 	transferNotSupported: {
 		illustration: transferIllustration,
@@ -40,7 +39,6 @@ export const optionInfo = {
 		topText: __( 'Keep your domain with your current provider and point it to WordPress.com' ),
 		learnMoreLink: MAP_EXISTING_DOMAIN,
 		benefits: [ __( 'Keep your current provider' ), __( 'SSL certificate included for free' ) ],
-		onSelect: () => {},
 	},
 	connectNotSupported: {
 		illustration: connectIllustration,

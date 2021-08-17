@@ -34,14 +34,28 @@ function DomainTransferOrConnect( {
 	isSignupStep,
 	primaryWithPlansOnly,
 	productsList,
+	recordMappingButtonClickInUseYourDomain,
+	recordTransferButtonClickInUseYourDomain,
 	selectedSite,
 } ) {
+	const onConnect = () => {
+		recordMappingButtonClickInUseYourDomain( domain );
+		// TODO: Go to the next step in mapping the domain
+	};
+
+	const onTransfer = () => {
+		recordTransferButtonClickInUseYourDomain( domain );
+		// TODO: Go to the next step in transferring the domain
+	};
+
 	const content = getOptionInfo( {
 		availability,
 		cart,
 		currencyCode,
 		domain,
 		isSignupStep,
+		onConnect,
+		onTransfer,
 		primaryWithPlansOnly,
 		productsList,
 		selectedSite,
