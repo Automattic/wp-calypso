@@ -299,13 +299,10 @@
 	}
 
 	.empty-domains-list-card__actions {
-		text-align: center;
-		& > .button {
-			margin: 16px 16px 0 0;
-		}
-		& > .button:last-child {
-			margin-right: 0;
-		}
+		display: inline-flex;
+		justify-content: center;
+		flex-wrap: wrap;
+		gap: 16px;
 	}
 
 	@include break-small {
