@@ -38,12 +38,12 @@ function DomainTransferOrConnect( {
 	recordTransferButtonClickInUseYourDomain,
 	selectedSite,
 } ) {
-	const onConnect = () => {
+	const handleConnect = () => {
 		recordMappingButtonClickInUseYourDomain( domain );
 		// TODO: Go to the next step in mapping the domain
 	};
 
-	const onTransfer = () => {
+	const handleTransfer = () => {
 		recordTransferButtonClickInUseYourDomain( domain );
 		// TODO: Go to the next step in transferring the domain
 	};
@@ -54,8 +54,8 @@ function DomainTransferOrConnect( {
 		currencyCode,
 		domain,
 		isSignupStep,
-		onConnect,
-		onTransfer,
+		onConnect: handleConnect,
+		onTransfer: handleTransfer,
 		primaryWithPlansOnly,
 		productsList,
 		selectedSite,
