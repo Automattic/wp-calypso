@@ -66,25 +66,53 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 
 	const backupProductsToShow: string[] = [];
 
-	const ownsDaily =
-		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_DAILY ) ||
-		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY );
-	const ownsRealtime =
-		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_REALTIME ) ||
-		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY );
+	doForCurrentCROIteration( ( key ) => {
+		if ( Iterations.ONLY_REALTIME_PRODUCTS === key ) {
+			const ownsBackupT1 =
+				ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T1_YEARLY ) ||
+				ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T1_MONTHLY );
+			const ownsBackupT2 =
+				ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T2_YEARLY ) ||
+				ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T2_MONTHLY );
 
-	// Show the Backup product the site owns, and the one it doesn't own.
-	// In other words, always show both Backup Daily and Backup Real-time.
-	if ( ! ownsDaily ) {
-		backupProductsToShow.push( PRODUCT_JETPACK_BACKUP_DAILY, PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY );
-	}
+			if ( ! ownsBackupT1 ) {
+				backupProductsToShow.push(
+					PRODUCT_JETPACK_BACKUP_T1_YEARLY,
+					PRODUCT_JETPACK_BACKUP_T1_MONTHLY
+				);
+			}
 
-	if ( ! ownsRealtime ) {
-		backupProductsToShow.push(
-			PRODUCT_JETPACK_BACKUP_REALTIME,
-			PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY
-		);
-	}
+			if ( ! ownsBackupT2 ) {
+				backupProductsToShow.push(
+					PRODUCT_JETPACK_BACKUP_T2_YEARLY,
+					PRODUCT_JETPACK_BACKUP_T2_MONTHLY
+				);
+			}
+		} else {
+			const ownsDaily =
+				ownedProducts.includes( PRODUCT_JETPACK_BACKUP_DAILY ) ||
+				ownedProducts.includes( PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY );
+			const ownsRealtime =
+				ownedProducts.includes( PRODUCT_JETPACK_BACKUP_REALTIME ) ||
+				ownedProducts.includes( PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY );
+
+			// Show the Backup product the site owns, and the one it doesn't own.
+			// In other words, always show both Backup Daily and Backup Real-time.
+			if ( ! ownsDaily ) {
+				backupProductsToShow.push(
+					PRODUCT_JETPACK_BACKUP_DAILY,
+					PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY
+				);
+			}
+
+			if ( ! ownsRealtime ) {
+				backupProductsToShow.push(
+					PRODUCT_JETPACK_BACKUP_REALTIME,
+					PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY
+				);
+			}
+		}
+	} );
 
 	availableProducts = [ ...availableProducts, ...backupProductsToShow ];
 
@@ -107,31 +135,6 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 	) {
 		availableProducts = [ ...availableProducts, ...JETPACK_ANTI_SPAM_PRODUCTS ];
 	}
-
-	// Replace backup products with their new versions for the ONLY_REALTIME_PRODUCTS iteration
-	doForCurrentCROIteration( ( key ) => {
-		if ( Iterations.ONLY_REALTIME_PRODUCTS === key ) {
-			const backupReplacement: { [ key: string ]: string } = {
-				[ PRODUCT_JETPACK_BACKUP_DAILY ]: PRODUCT_JETPACK_BACKUP_T1_YEARLY,
-				[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
-				[ PRODUCT_JETPACK_BACKUP_REALTIME ]: PRODUCT_JETPACK_BACKUP_T2_YEARLY,
-				[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
-			};
-
-			for ( const oldBackupProduct in backupReplacement ) {
-				for ( const productsArray of [
-					availableProducts,
-					purchasedProducts,
-					includedInPlanProducts,
-				] ) {
-					const index = productsArray.indexOf( oldBackupProduct );
-					if ( -1 !== index ) {
-						productsArray[ index ] = backupReplacement[ oldBackupProduct ];
-					}
-				}
-			}
-		}
-	} );
 
 	return {
 		availableProducts: availableProducts.map( slugToSelectorProduct ) as SelectorProduct[],
