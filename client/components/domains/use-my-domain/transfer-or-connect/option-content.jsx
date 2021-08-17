@@ -86,13 +86,13 @@ export default function OptionContent( {
 }
 
 OptionContent.propTypes = {
+	benefits: PropTypes.array,
 	illustration: PropTypes.string.isRequired,
+	learnMoreLink: PropTypes.string.isRequired,
 	onSelect: PropTypes.func,
+	pricing: PropTypes.object,
 	primary: PropTypes.bool,
 	recommended: PropTypes.bool,
 	titleText: PropTypes.string.isRequired,
-	topText: PropTypes.string.isRequired,
-	learnMoreLink: PropTypes.string.isRequired,
-	benefits: PropTypes.array,
-	pricing: PropTypes.object,
+	topText: PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ).isRequired,
 };

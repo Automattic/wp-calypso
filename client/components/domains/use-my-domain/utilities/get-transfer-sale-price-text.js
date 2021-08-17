@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 /**
  * Internal dependencies
@@ -24,6 +25,9 @@ export function getTransferSalePriceText( { cart, currencyCode, domain, products
 		return;
 	}
 
-	/* translators: %s is the cost of the domain transfer formatted in the user's currency. */
-	return sprintf( __( '%s for the first year' ), domainProductSalePrice );
+	return createInterpolateElement(
+		/* translators: %s is the cost of the domain transfer formatted in the user's currency. */
+		sprintf( __( '%s <small>for the first year</small>' ), domainProductSalePrice ),
+		{ small: createElement( 'small' ) }
+	);
 }

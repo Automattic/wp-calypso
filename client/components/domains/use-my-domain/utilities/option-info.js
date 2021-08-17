@@ -42,4 +42,10 @@ export const optionInfo = {
 		benefits: [ __( 'Keep your current provider' ), __( 'SSL certificate included for free' ) ],
 		onSelect: () => {},
 	},
+	connectNotSupported: {
+		illustration: connectIllustration,
+		titleText: optionTitleText.connect,
+		topText: __( 'This domain cannot be connected.' ),
+		learnMoreLink: MAP_EXISTING_DOMAIN,
+	},
 };

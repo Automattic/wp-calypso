@@ -31,10 +31,10 @@ function DomainTransferOrConnect( {
 	cart,
 	currencyCode,
 	domain,
-	selectedSite,
-	primaryWithPlansOnly,
 	isSignupStep,
+	primaryWithPlansOnly,
 	productsList,
+	selectedSite,
 } ) {
 	const content = getOptionInfo( {
 		availability,
@@ -68,8 +68,8 @@ function DomainTransferOrConnect( {
 }
 
 DomainTransferOrConnect.propTypes = {
-	domain: PropTypes.string.isRequired,
 	availability: PropTypes.object.isRequired,
+	domain: PropTypes.string.isRequired,
 	selectedSite: PropTypes.object.isRequired,
 };
 

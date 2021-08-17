@@ -1,6 +1,12 @@
 /**
+ * External dependencies
+ */
+import { createElement, createInterpolateElement } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
+/**
  * Internal dependencies
  */
+import { getTld } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import {
 	getMappingFreeText,
@@ -59,33 +65,68 @@ export function getOptionInfo( {
 	} );
 
 	const transferPricing = {
-		isFree: isFreeTransfer( { cart, domain } ),
-		text: transferFreeText,
-		sale: transferSalePriceText,
 		cost: transferPriceText,
+		isFree: isFreeTransfer( { cart, domain } ),
+		sale: transferSalePriceText,
+		text: transferFreeText,
 	};
 
 	const mappingPricing = {
-		text: mappingFreeText,
 		cost: mappingPriceText,
+		text: mappingFreeText,
 	};
 
 	let transferContent;
 	switch ( availability.status ) {
 		case domainAvailability.TRANSFERRABLE:
+		case domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE:
 			transferContent = {
 				...optionInfo.transferSupported,
 				pricing: transferPricing,
+				primary: true,
+			};
+			break;
+		case domainAvailability.TLD_NOT_SUPPORTED:
+			transferContent = {
+				...optionInfo.transferNotSupported,
+				topText: createInterpolateElement(
+					sprintf(
+						/* translators: %s - the TLD extension of the domain the user wanted to transfer (ex.: com, net, org, etc.) */
+						__(
+							"We don't support transfers for domains ending with <strong>.%s</strong>, but you can connect it instead."
+						),
+						getTld( domain )
+					),
+					{ strong: createElement( 'strong' ) }
+				),
 			};
 			break;
 		default:
 			transferContent = optionInfo.transferNotSupported;
 	}
 
-	const connectContent = { ...optionInfo.connectSupported, pricing: mappingPricing };
+	let connectContent;
+	if ( domainAvailability.MAPPABLE === availability.mappable ) {
+		connectContent = { ...optionInfo.connectSupported, pricing: mappingPricing };
+	} else {
+		switch ( availability.status ) {
+			case domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE:
+				connectContent = {
+					...optionInfo.connectNotSupported,
+					topText: __(
+						'This domain is already connected to your site, but you can still transfer it.'
+					),
+				};
+				break;
+			default:
+				connectContent = optionInfo.connectNotSupported;
+		}
+	}
 
-	if ( domainAvailability.TRANSFERRABLE === availability.status ) {
-		return [ { ...transferContent, primary: true }, connectContent ];
+	connectContent.primary = ! transferContent?.primary;
+
+	if ( transferContent?.primary ) {
+		return [ transferContent, connectContent ];
 	}
 
 	return [ { ...connectContent, primary: true }, transferContent ];

@@ -20,7 +20,7 @@ export function getTransferPriceText( { cart, currencyCode, domain, productsList
 		domainProductPrice &&
 		( isNextDomainFree( cart ) ||
 			isDomainBundledWithPlan( cart, domain ) ||
-			getDomainTransferSalePrice( productSlug, productsList, currencyCode ) )
+			! getDomainTransferSalePrice( productSlug, productsList, currencyCode ) )
 	) {
 		/* translators: %s - the domain renewal price formatted in the user's currency */
 		return sprintf( __( 'Renews at %s' ), domainProductPrice );
@@ -28,6 +28,6 @@ export function getTransferPriceText( { cart, currencyCode, domain, productsList
 
 	if ( domainProductPrice ) {
 		/* translators: %s - the domain price formatted in the user's currency */
-		return sprintf( __( '%s per year' ), domainProductPrice );
+		return sprintf( __( '%s/year' ), domainProductPrice );
 	}
 }

@@ -86,6 +86,7 @@
 							fill: var( --studio-green-50 );
 							position: relative;
 							bottom: -4px;
+							flex-shrink: 0;
 						}
 					}
 				}
@@ -109,12 +110,22 @@
 						&.is-sale-price {
 							color: var( --studio-orange-50 );
 							font-weight: 600;
+							font-size: $font-body;
+
+							small {
+								font-size: $font-body-small;
+							}
 
 							.badge {
+								font-size: $font-body-extra-small;
 								font-weight: 500; /* stylelint-disable-line */
 								border-radius: 4px; /* stylelint-disable-line */
 								margin: 0 0 0 4px;
 							}
+						}
+
+						&.has-sale-price {
+							text-decoration: line-through;
 						}
 					}
 				}

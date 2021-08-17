@@ -23,16 +23,21 @@ export function getAvailabilityErrorMessage( { availabilityData, domainName, sel
 		);
 	}
 
-	if (
-		! [ domainAvailability.AVAILABILITY_CHECK_ERROR, domainAvailability.NOT_REGISTRABLE ].includes(
-			status
-		) &&
-		[ domainAvailability.MAPPABLE, domainAvailability.UNKNOWN ].includes( mappable )
-	) {
+	const isMappable = domainAvailability.MAPPABLE === mappable;
+	const isTransferable = [
+		domainAvailability.TRANSFERRABLE,
+		domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE,
+	].includes( status );
+	const isError = [
+		domainAvailability.AVAILABILITY_CHECK_ERROR,
+		domainAvailability.UNKNOWN,
+	].includes( status );
+
+	if ( ( isMappable || isTransferable ) && ! isError ) {
 		return null;
 	}
 
-	const availabilityStatus = domainAvailability.MAPPED === mappable ? status : mappable;
+	const availabilityStatus = domainAvailability.MAPPABLE === mappable ? status : mappable;
 	const maintenanceEndTime = maintenance_end_time ?? null;
 	const site = other_site_domain ?? selectedSite.slug;
 
