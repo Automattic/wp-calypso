@@ -44,6 +44,10 @@
 		padding-bottom: 0;
 		.register-domain-step__next-page-button {
 			padding-bottom: 0;
+			padding-top: 0;
+			@include break-mobile {
+				padding-top: 8px;
+			}
 		}
 	}
 
