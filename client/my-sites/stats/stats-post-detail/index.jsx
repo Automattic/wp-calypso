@@ -18,7 +18,7 @@ import PostMonths from '../stats-detail-months';
 import PostWeeks from '../stats-detail-weeks';
 import StatsPlaceholder from '../stats-module/placeholder';
 import HeaderCake from 'calypso/components/header-cake';
-import { decodeEntities } from 'calypso/lib/formatting';
+import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import Main from 'calypso/components/main';
 import titlecase from 'to-title-case';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -103,7 +103,7 @@ class StatsPostDetail extends Component {
 		let title;
 		if ( postOnRecord ) {
 			if ( typeof post.title === 'string' && post.title.length ) {
-				title = <Emojify>{ decodeEntities( post.title ) }</Emojify>;
+				title = <Emojify>{ decodeEntities( stripHTML( post.title ) ) }</Emojify>;
 			}
 		}
 
