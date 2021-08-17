@@ -436,12 +436,12 @@ const recordMappingButtonClickInUseYourDomain = ( domain_name ) =>
 
 export default connect(
 	( state ) => ( {
-		currencyCode: getCurrentUserCurrencyCode( state ),
 		currentUser: getCurrentUser( state ),
+		currencyCode: getCurrentUserCurrencyCode( state ),
 		domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 		primaryWithPlansOnly: currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS ),
-		productsList: getProductsList( state ),
 		selectedSite: getSelectedSite( state ),
+		productsList: getProductsList( state ),
 	} ),
 	{
 		errorNotice,
