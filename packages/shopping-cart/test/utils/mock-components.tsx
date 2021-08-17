@@ -80,22 +80,30 @@ export function MockProvider( {
 	getCartOverride,
 	options,
 	cartKeyOverride,
+	useUndefinedCartKey,
 }: {
 	children: React.ReactNode;
 	setCartOverride?: SetCart;
 	getCartOverride?: GetCart;
 	options?: ShoppingCartManagerOptions;
 	cartKeyOverride?: string | undefined;
+	useUndefinedCartKey?: boolean;
 } ): JSX.Element {
 	const managerClient = createShoppingCartManagerClient( {
 		getCart: getCartOverride ?? getCart,
 		setCart: setCartOverride ?? setCart,
 	} );
+	const defaultCartKey = ( () => {
+		if ( useUndefinedCartKey ) {
+			return undefined;
+		}
+		return cartKeyOverride ?? mainCartKey;
+	} )();
 	return (
 		<ShoppingCartProvider
 			options={ {
 				...( options ?? {} ),
-				defaultCartKey: cartKeyOverride ?? mainCartKey,
+				defaultCartKey,
 			} }
 			managerClient={ managerClient }
 		>
