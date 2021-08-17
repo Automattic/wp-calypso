@@ -68,10 +68,6 @@ body:
         - Safari
       multiple: true
   - type: input
-    id: browser_versions
-    attributes:
-      label: Browser Version(s)
-  - type: input
     id: theme
     attributes:
       label: Is this specific to applied theme? If so, what is the theme name?
