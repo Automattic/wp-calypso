@@ -160,7 +160,7 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	isUpgrading = () => {
-		const { hasCartDomain, domain } = this.props;
+		const { domain, hasCartDomain } = this.props;
 
 		return ! hasCartDomain && hasEmailForwards( domain );
 	};
@@ -176,7 +176,7 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	onTitanConfirmNewMailboxes = () => {
-		const { hasCartDomain, domain, domainName } = this.props;
+		const { domain, domainName, hasCartDomain } = this.props;
 		const { titanMailboxes } = this.state;
 
 		const validatedTitanMailboxes = validateTitanMailboxes( titanMailboxes );
@@ -246,7 +246,7 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	onGoogleConfirmNewUsers = () => {
-		const { cartDomainName, domain, gSuiteProduct, hasCartDomain } = this.props;
+		const { domain, gSuiteProduct, hasCartDomain } = this.props;
 		const { googleUsers } = this.state;
 
 		const usersAreValid = areAllUsersValid( googleUsers );
@@ -318,10 +318,10 @@ class EmailProvidersComparison extends React.Component {
 
 	renderGoogleCard() {
 		const {
-			hasCartDomain,
 			currencyCode,
 			domain,
 			gSuiteProduct,
+			hasCartDomain,
 			isGSuiteSupported,
 			selectedDomainName,
 			translate,
