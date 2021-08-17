@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import ShoppingCartContext from './shopping-cart-context';
+import React from 'react';
+import useManagerClient from './use-manager-client';
 import useShoppingCart from './use-shopping-cart';
 import type { WithShoppingCartProps } from './types';
 
@@ -12,10 +12,7 @@ export default function withShoppingCart< ComponentProps >(
 
 		// Even though managerClient isn't used here this guard will provide a
 		// better error message than waiting for the one in useShoppingCart.
-		const managerClient = useContext( ShoppingCartContext );
-		if ( ! managerClient ) {
-			throw new Error( 'withShoppingCart must be used inside a ShoppingCartProvider' );
-		}
+		useManagerClient( 'withShoppingCart' );
 
 		const shoppingCartManager = useShoppingCart( cartKey );
 		return (
