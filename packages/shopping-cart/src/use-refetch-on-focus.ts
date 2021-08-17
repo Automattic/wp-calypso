@@ -14,13 +14,24 @@ function convertMsToSecs( ms: number ): number {
 	return Math.floor( ms / 1000 );
 }
 
+function isFocused(): boolean {
+	return [ undefined, 'visible', 'prerender' ].includes( document.visibilityState );
+}
+
+function isOffline(): boolean {
+	try {
+		return ! window.navigator.onLine;
+	} catch ( err ) {
+		debug( 'failed to check onLine status; ignoring check', err );
+		return false;
+	}
+}
+
 export default function useRefetchOnFocus( cartKey: string | undefined ): void {
 	const managerClient = useManagerClient( 'useRefetchOnFocus' );
 
 	const manager = managerClient.forCartKey( cartKey );
-	const { isLoading, isPendingUpdate, loadingError, responseCart: lastCart } = manager.getState();
-	const { reloadFromServer } = manager.actions;
-	const { refetchOnWindowFocus } = useContext( ShoppingCartOptionsContext ) ?? {};
+	const { refetchOnWindowFocus } = useContext( ShoppingCartOptionsContext );
 
 	useEffect( () => {
 		if ( ! refetchOnWindowFocus ) {
@@ -36,29 +47,9 @@ export default function useRefetchOnFocus( cartKey: string | undefined ): void {
 			return;
 		}
 
-		// Refresh only if the cart is not pending any other operations
-		const isCartInvalid = isLoading || isPendingUpdate;
-		const isError = !! loadingError;
-		if ( isCartInvalid && ! isError ) {
-			debug( 'cart not in valid or error state; not listening' );
-			return;
-		}
-
-		function isFocused(): boolean {
-			return [ undefined, 'visible', 'prerender' ].includes( document.visibilityState );
-		}
-
-		function isOffline(): boolean {
-			try {
-				return ! window.navigator.onLine;
-			} catch ( err ) {
-				debug( 'failed to check onLine status with error', err );
-				return true;
-			}
-		}
-
 		function wasLastFetchRecent(): boolean {
 			const nowInSeconds = convertMsToSecs( Date.now() );
+			const { responseCart: lastCart } = manager.getState();
 			const lastRefreshTime = lastCart.cart_generated_at_timestamp;
 			const secondsSinceLastFetch = nowInSeconds - lastRefreshTime;
 			debug( 'last fetch was', secondsSinceLastFetch, 'seconds ago' );
@@ -80,7 +71,7 @@ export default function useRefetchOnFocus( cartKey: string | undefined ): void {
 			}
 
 			debug( 'window was refocused; refetching' );
-			reloadFromServer();
+			manager.actions.reloadFromServer();
 		}
 
 		debug( 'adding focus listeners' );
@@ -94,13 +85,5 @@ export default function useRefetchOnFocus( cartKey: string | undefined ): void {
 			window.removeEventListener( 'focus', handleFocusChange );
 			window.removeEventListener( 'online', handleFocusChange );
 		};
-	}, [
-		cartKey,
-		refetchOnWindowFocus,
-		lastCart.cart_generated_at_timestamp,
-		reloadFromServer,
-		isLoading,
-		isPendingUpdate,
-		loadingError,
-	] );
+	}, [ cartKey, refetchOnWindowFocus, manager ] );
 }
