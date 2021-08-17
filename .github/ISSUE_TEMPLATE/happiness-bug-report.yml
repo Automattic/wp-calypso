@@ -71,7 +71,7 @@ body:
     id: theme
     attributes:
       label: Is this specific to applied theme? If so, what is the theme name?
-  - type: textareas
+  - type: textarea
     id: other_notes
     attributes:
       label: Other notes
