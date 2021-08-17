@@ -60,6 +60,7 @@ export interface ShoppingCartManager {
 	subscribe: ShoppingCartManagerSubscribe;
 	actions: ShoppingCartActionCreators;
 	waitForReady: WaitForReady;
+	getUseShoppingCart: () => UseShoppingCart;
 }
 
 export type UseShoppingCart = ShoppingCartActionCreators & ShoppingCartManagerState;
