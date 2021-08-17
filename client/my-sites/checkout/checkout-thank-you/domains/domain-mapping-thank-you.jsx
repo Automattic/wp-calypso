@@ -37,6 +37,11 @@ const customSupportSection = {
 };
 
 const DomainMappingThankYou = ( { translate } ) => {
+	const customHeader = {
+		title: translate( 'Congratulations on your purchase!' ),
+		description: translate( 'You can now connect travelingwithkids.com to your site' ),
+	};
+
 	return (
 		<ThankYou
 			containerClassName="checkout-thank-you__domains"
@@ -86,6 +91,7 @@ const DomainMappingThankYou = ( { translate } ) => {
 			showSupportSection={ true }
 			customSupportSection={ customSupportSection }
 			thankYouImage={ { alt: 'Domain Connected', src: domainConnectedSuccess } }
+			customHeader={ customHeader }
 			thankYouTitle={ translate( 'Congratulations on your purchase!' ) }
 		/>
 	);

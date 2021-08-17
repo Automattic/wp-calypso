@@ -133,6 +133,7 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 		thankYouSubtitle,
 		thankYouImage,
 		customSupportSection,
+		customHeader,
 	} = props;
 
 	const ThankYouTitleContainer = styled.div`
