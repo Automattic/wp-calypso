@@ -264,7 +264,7 @@ class EmailProvidersComparison extends React.Component {
 		}
 
 		const { productsList, selectedSite, shoppingCartManager } = this.props;
-		const domains = [ cartDomainName ?? domain ];
+		const domains = domain ? [ domain ] : [];
 
 		this.setState( { addingToCart: true } );
 
