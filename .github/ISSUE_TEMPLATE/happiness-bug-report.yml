@@ -43,6 +43,10 @@ body:
       label: Context
       placeholder: |
         eg. Customer report, exploratory testing...
+  - type: markdown
+    attributes:
+      value: |
+        ----
   - type: dropdown
     id: os
     attributes:
