@@ -17,21 +17,28 @@ import '@testing-library/jest-dom/extend-expect';
 const emptyResponseCart = getEmptyResponseCart();
 
 describe( 'useShoppingCart', () => {
+	const mockGetCart = jest.fn();
 	const markUpdateComplete = jest.fn();
+	let testRunErrors = [];
 
 	beforeEach( () => {
+		mockGetCart.mockReset();
 		markUpdateComplete.mockClear();
+		jest.restoreAllMocks();
+		testRunErrors = [];
 	} );
 
 	describe( 'addProductsToCart', () => {
-		const TestComponent = ( { initialProducts = undefined, products = undefined } ) => {
+		const TestComponent = ( { products = undefined } ) => {
 			const { addProductsToCart } = useShoppingCart();
 			const onClick = () => {
-				products && addProductsToCart( products ).then( () => markUpdateComplete() );
+				addProductsToCart( products )
+					.then( () => markUpdateComplete() )
+					.catch( ( err ) => testRunErrors.push( err ) );
 			};
 			return (
 				<div>
-					<ProductList initialProducts={ initialProducts } />
+					<ProductList />
 					<button onClick={ onClick }>Click me</button>
 				</div>
 			);
@@ -53,20 +60,26 @@ describe( 'useShoppingCart', () => {
 		} );
 
 		it( 'throws an error if the product is missing a product_id', async () => {
-			jest.spyOn( console, 'error' ).mockImplementation( () => undefined );
-			expect( () => {
-				render(
-					<MockProvider>
-						<TestComponent initialProducts={ [ { product_slug: planOne.product_slug } ] } />
-					</MockProvider>
-				);
-			} ).toThrow( /product_id/ );
+			render(
+				<MockProvider>
+					<TestComponent products={ [ { product_slug: planOne.product_slug } ] } />
+				</MockProvider>
+			);
+			fireEvent.click( screen.getByText( 'Click me' ) );
+			await waitFor( () => {
+				expect( testRunErrors ).toHaveLength( 1 );
+				expect( String( testRunErrors[ 0 ] ) ).toMatch( /product_id/ );
+			} );
 		} );
 
 		it( 'adds a product to the cart if the existing products are not renewals and the new products are also', async () => {
+			mockGetCart.mockResolvedValue( {
+				...emptyResponseCart,
+				products: [ planTwo ],
+			} );
 			render(
-				<MockProvider>
-					<TestComponent initialProducts={ [ planTwo ] } products={ [ planOne ] } />
+				<MockProvider getCartOverride={ mockGetCart }>
+					<TestComponent products={ [ planOne ] } />
 				</MockProvider>
 			);
 			fireEvent.click( screen.getByText( 'Click me' ) );
@@ -76,9 +89,13 @@ describe( 'useShoppingCart', () => {
 		} );
 
 		it( 'adds a product to the cart if the existing products are renewals and the new products are also', async () => {
+			mockGetCart.mockResolvedValue( {
+				...emptyResponseCart,
+				products: [ renewalTwo ],
+			} );
 			render(
-				<MockProvider>
-					<TestComponent initialProducts={ [ renewalTwo ] } products={ [ renewalOne ] } />
+				<MockProvider getCartOverride={ mockGetCart }>
+					<TestComponent products={ [ renewalOne ] } />
 				</MockProvider>
 			);
 			fireEvent.click( screen.getByText( 'Click me' ) );
@@ -88,9 +105,13 @@ describe( 'useShoppingCart', () => {
 		} );
 
 		it( 'replaces the cart if the existing products are not renewals and any of the new products is a renewal', async () => {
+			mockGetCart.mockResolvedValue( {
+				...emptyResponseCart,
+				products: [ planOne ],
+			} );
 			render(
-				<MockProvider>
-					<TestComponent initialProducts={ [ planOne ] } products={ [ renewalTwo ] } />
+				<MockProvider getCartOverride={ mockGetCart }>
+					<TestComponent products={ [ renewalTwo ] } />
 				</MockProvider>
 			);
 			fireEvent.click( screen.getByText( 'Click me' ) );
@@ -100,9 +121,13 @@ describe( 'useShoppingCart', () => {
 		} );
 
 		it( 'replaces the cart if any of the existing products is a renewal and the new products are not', async () => {
+			mockGetCart.mockResolvedValue( {
+				...emptyResponseCart,
+				products: [ renewalTwo ],
+			} );
 			render(
-				<MockProvider>
-					<TestComponent initialProducts={ [ renewalTwo ] } products={ [ planOne ] } />
+				<MockProvider getCartOverride={ mockGetCart }>
+					<TestComponent products={ [ planOne ] } />
 				</MockProvider>
 			);
 			fireEvent.click( screen.getByText( 'Click me' ) );
@@ -131,21 +156,25 @@ describe( 'useShoppingCart', () => {
 			const { removeProductFromCart, responseCart } = useShoppingCart();
 			const onClick = () => {
 				const uuid = responseCart.products.length ? responseCart.products[ 0 ].uuid : null;
-				if ( uuid ) {
-					removeProductFromCart( uuid ).then( () => markUpdateComplete() );
-				}
+				removeProductFromCart( uuid )
+					.then( () => markUpdateComplete() )
+					.catch( ( err ) => testRunErrors.push( err ) );
 			};
 			return (
 				<div>
-					<ProductList initialProducts={ [ planOne ] } />
+					<ProductList />
 					<button onClick={ onClick }>Click me</button>
 				</div>
 			);
 		};
 
 		it( 'removes a product from the cart', async () => {
+			mockGetCart.mockResolvedValue( {
+				...emptyResponseCart,
+				products: [ planOne ],
+			} );
 			render(
-				<MockProvider>
+				<MockProvider getCartOverride={ mockGetCart }>
 					<TestComponent />
 				</MockProvider>
 			);
@@ -156,8 +185,12 @@ describe( 'useShoppingCart', () => {
 		} );
 
 		it( 'returns a Promise that resolves after the update completes', async () => {
+			mockGetCart.mockResolvedValue( {
+				...emptyResponseCart,
+				products: [ planOne ],
+			} );
 			render(
-				<MockProvider>
+				<MockProvider getCartOverride={ mockGetCart }>
 					<TestComponent />
 				</MockProvider>
 			);
@@ -173,17 +206,16 @@ describe( 'useShoppingCart', () => {
 	} );
 
 	describe( 'replaceProductsInCart', () => {
-		const TestComponent = ( { initialProductsForReplace = undefined } ) => {
+		const TestComponent = ( { products } ) => {
 			const { replaceProductsInCart } = useShoppingCart();
 			const onClick = () => {
-				replaceProductsInCart( [ planTwo ] ).then( () => markUpdateComplete() );
+				replaceProductsInCart( products )
+					.then( () => markUpdateComplete() )
+					.catch( ( err ) => testRunErrors.push( err ) );
 			};
 			return (
 				<div>
-					<ProductList
-						initialProducts={ initialProductsForReplace ? undefined : [ planOne ] }
-						initialProductsForReplace={ initialProductsForReplace }
-					/>
+					<ProductList />
 					<button onClick={ onClick }>Click me</button>
 				</div>
 			);
@@ -194,9 +226,13 @@ describe( 'useShoppingCart', () => {
 		} );
 
 		it( 'replaces all products in the cart', async () => {
+			mockGetCart.mockResolvedValue( {
+				...emptyResponseCart,
+				products: [ planOne ],
+			} );
 			render(
-				<MockProvider>
-					<TestComponent />
+				<MockProvider getCartOverride={ mockGetCart }>
+					<TestComponent products={ [ planTwo ] } />
 				</MockProvider>
 			);
 			await waitFor( () => screen.getByTestId( 'product-list' ) );
@@ -207,22 +243,33 @@ describe( 'useShoppingCart', () => {
 		} );
 
 		it( 'throws an error if a product is missing a product_id', async () => {
-			jest.spyOn( console, 'error' ).mockImplementation( () => undefined );
-			expect( () => {
-				render(
-					<MockProvider>
-						<TestComponent
-							initialProductsForReplace={ [ { product_slug: planOne.product_slug } ] }
-						/>
-					</MockProvider>
-				);
-			} ).toThrow( /product_id/ );
+			mockGetCart.mockResolvedValue( {
+				...emptyResponseCart,
+				products: [ planOne ],
+			} );
+			render(
+				<MockProvider getCartOverride={ mockGetCart }>
+					<TestComponent products={ [ { product_slug: planTwo.product_slug } ] } />
+				</MockProvider>
+			);
+			await waitFor( () => screen.getByTestId( 'product-list' ) );
+			expect( screen.getByText( planOne.product_name ) ).toBeInTheDocument();
+			fireEvent.click( screen.getByText( 'Click me' ) );
+			await waitFor( () => {
+				expect( testRunErrors ).toHaveLength( 1 );
+				expect( String( testRunErrors[ 0 ] ) ).toMatch( /product_id/ );
+			} );
+			expect( screen.getByText( planOne.product_name ) ).toBeInTheDocument();
 		} );
 
 		it( 'returns a Promise that resolves after the update completes', async () => {
+			mockGetCart.mockResolvedValue( {
+				...emptyResponseCart,
+				products: [ planOne ],
+			} );
 			render(
-				<MockProvider>
-					<TestComponent />
+				<MockProvider getCartOverride={ mockGetCart }>
+					<TestComponent products={ [ planTwo ] } />
 				</MockProvider>
 			);
 
@@ -240,23 +287,26 @@ describe( 'useShoppingCart', () => {
 			const { replaceProductInCart, responseCart } = useShoppingCart();
 			const onClick = () => {
 				const uuid = responseCart.products.length ? responseCart.products[ 0 ].uuid : null;
-				if ( uuid ) {
-					replaceProductInCart( uuid, { product_id: planTwo.product_id } ).then( () =>
-						markUpdateComplete()
-					);
-				}
+				replaceProductInCart( uuid, { product_id: planTwo.product_id } )
+					.then( () => markUpdateComplete() )
+
+					.catch( ( err ) => testRunErrors.push( err ) );
 			};
 			return (
 				<div>
-					<ProductList initialProducts={ [ planOne ] } />
+					<ProductList />
 					<button onClick={ onClick }>Click me</button>
 				</div>
 			);
 		};
 
 		it( 'updates a product in the cart', async () => {
+			mockGetCart.mockResolvedValue( {
+				...emptyResponseCart,
+				products: [ planOne ],
+			} );
 			render(
-				<MockProvider>
+				<MockProvider getCartOverride={ mockGetCart }>
 					<TestComponent />
 				</MockProvider>
 			);
@@ -268,8 +318,12 @@ describe( 'useShoppingCart', () => {
 		} );
 
 		it( 'returns a Promise that resolves after the update completes', async () => {
+			mockGetCart.mockResolvedValue( {
+				...emptyResponseCart,
+				products: [ planOne ],
+			} );
 			render(
-				<MockProvider>
+				<MockProvider getCartOverride={ mockGetCart }>
 					<TestComponent />
 				</MockProvider>
 			);
@@ -287,19 +341,25 @@ describe( 'useShoppingCart', () => {
 		const TestComponent = () => {
 			const { applyCoupon } = useShoppingCart();
 			const onClick = () => {
-				applyCoupon( 'ABCD' ).then( () => markUpdateComplete() );
+				applyCoupon( 'ABCD' )
+					.then( () => markUpdateComplete() )
+					.catch( ( err ) => testRunErrors.push( err ) );
 			};
 			return (
 				<div>
-					<ProductList initialProducts={ [ planOne ] } />
+					<ProductList />
 					<button onClick={ onClick }>Click me</button>
 				</div>
 			);
 		};
 
 		it( 'adds a coupon to the cart', async () => {
+			mockGetCart.mockResolvedValue( {
+				...emptyResponseCart,
+				products: [ planOne ],
+			} );
 			render(
-				<MockProvider>
+				<MockProvider getCartOverride={ mockGetCart }>
 					<TestComponent />
 				</MockProvider>
 			);
@@ -312,8 +372,12 @@ describe( 'useShoppingCart', () => {
 		} );
 
 		it( 'returns a Promise that resolves after the update completes', async () => {
+			mockGetCart.mockResolvedValue( {
+				...emptyResponseCart,
+				products: [ planOne ],
+			} );
 			render(
-				<MockProvider>
+				<MockProvider getCartOverride={ mockGetCart }>
 					<TestComponent />
 				</MockProvider>
 			);
@@ -331,19 +395,27 @@ describe( 'useShoppingCart', () => {
 		const TestComponent = () => {
 			const { removeCoupon } = useShoppingCart();
 			const onClick = () => {
-				removeCoupon().then( () => markUpdateComplete() );
+				removeCoupon()
+					.then( () => markUpdateComplete() )
+					.catch( ( err ) => testRunErrors.push( err ) );
 			};
 			return (
 				<div>
-					<ProductList initialProducts={ [ planOne ] } initialCoupon="ABCD" />
+					<ProductList />
 					<button onClick={ onClick }>Click me</button>
 				</div>
 			);
 		};
 
 		it( 'removes a coupon from the cart', async () => {
+			mockGetCart.mockResolvedValue( {
+				...emptyResponseCart,
+				products: [ planOne ],
+				is_coupon_applied: true,
+				coupon: 'ABCD',
+			} );
 			render(
-				<MockProvider>
+				<MockProvider getCartOverride={ mockGetCart }>
 					<TestComponent />
 				</MockProvider>
 			);
@@ -354,8 +426,14 @@ describe( 'useShoppingCart', () => {
 		} );
 
 		it( 'returns a Promise that resolves after the update completes', async () => {
+			mockGetCart.mockResolvedValue( {
+				...emptyResponseCart,
+				products: [ planOne ],
+				is_coupon_applied: true,
+				coupon: 'ABCD',
+			} );
 			render(
-				<MockProvider>
+				<MockProvider getCartOverride={ mockGetCart }>
 					<TestComponent />
 				</MockProvider>
 			);
@@ -377,19 +455,26 @@ describe( 'useShoppingCart', () => {
 					countryCode: 'US',
 					postalCode: '10001',
 					subdivisionCode: 'NY',
-				} ).then( () => markUpdateComplete() );
+				} )
+					.then( () => markUpdateComplete() )
+
+					.catch( ( err ) => testRunErrors.push( err ) );
 			};
 			return (
 				<div>
-					<ProductList initialProducts={ [ planOne ] } initialCoupon="ABCD" />
+					<ProductList />
 					<button onClick={ onClick }>Click me</button>
 				</div>
 			);
 		};
 
 		it( 'adds a location to the cart', async () => {
+			mockGetCart.mockResolvedValue( {
+				...emptyResponseCart,
+				products: [ planOne ],
+			} );
 			render(
-				<MockProvider>
+				<MockProvider getCartOverride={ mockGetCart }>
 					<TestComponent />
 				</MockProvider>
 			);
@@ -403,8 +488,12 @@ describe( 'useShoppingCart', () => {
 		} );
 
 		it( 'returns a Promise that resolves after the update completes', async () => {
+			mockGetCart.mockResolvedValue( {
+				...emptyResponseCart,
+				products: [ planOne ],
+			} );
 			render(
-				<MockProvider>
+				<MockProvider getCartOverride={ mockGetCart }>
 					<TestComponent />
 				</MockProvider>
 			);
@@ -422,24 +511,36 @@ describe( 'useShoppingCart', () => {
 		const TestComponent = () => {
 			const { reloadFromServer } = useShoppingCart();
 			const onClick = () => {
-				reloadFromServer().then( () => markUpdateComplete() );
+				reloadFromServer()
+					.then( () => markUpdateComplete() )
+					.catch( ( err ) => testRunErrors.push( err ) );
 			};
 			return (
 				<div>
-					<ProductList initialProducts={ [ planOne ] } />
+					<ProductList />
 					<button onClick={ onClick }>Click me</button>
 				</div>
 			);
 		};
 
 		it( 'reloads the cart from the server', async () => {
+			mockGetCart.mockResolvedValue( {
+				...emptyResponseCart,
+				products: [ planOne ],
+			} );
 			render(
-				<MockProvider>
+				<MockProvider getCartOverride={ mockGetCart }>
 					<TestComponent />
 				</MockProvider>
 			);
 			await waitFor( () => screen.getByTestId( 'product-list' ) );
 			expect( screen.getByText( planOne.product_name ) ).toBeInTheDocument();
+
+			mockGetCart.mockResolvedValue( {
+				...emptyResponseCart,
+				products: [ planTwo ],
+			} );
+
 			fireEvent.click( screen.getByText( 'Click me' ) );
 			await waitFor( () => {
 				expect( screen.queryByText( planOne.product_name ) ).not.toBeInTheDocument();
@@ -447,8 +548,12 @@ describe( 'useShoppingCart', () => {
 		} );
 
 		it( 'returns a Promise that resolves after the update completes', async () => {
+			mockGetCart.mockResolvedValue( {
+				...emptyResponseCart,
+				products: [ planOne ],
+			} );
 			render(
-				<MockProvider>
+				<MockProvider getCartOverride={ mockGetCart }>
 					<TestComponent />
 				</MockProvider>
 			);
@@ -463,8 +568,6 @@ describe( 'useShoppingCart', () => {
 	} );
 
 	describe( 'when refetchOnWindowFocus is disabled', () => {
-		const mockGetCart = jest.fn();
-
 		it( 'does not trigger a refetch when the window is focused', async () => {
 			mockGetCart.mockResolvedValue( { ...emptyResponseCart, products: [ planOne ] } );
 
