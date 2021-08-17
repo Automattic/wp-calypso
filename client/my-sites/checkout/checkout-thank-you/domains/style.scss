@@ -1,4 +1,6 @@
 @import '@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .is-section-checkout-thank-you .layout__content {
     padding-right: 0;
@@ -6,11 +8,22 @@
 }
 
 .checkout-thank-you__domains {
-	.thank-you__container {
-		&-header {
+	.thank-you {
+		&__body {
+			div {
+				min-width: unset;
+			}
+
+			.domain-mapping-thank-you__button {
+				width: 144px;
+			}
+		}
+		&__container-header {
 			width: auto;
 			background-color: var( --studio-blue-50 );
 			padding: 50px 20px;
+			text-align: center;
+			height: auto;
 
 			img {
 				max-width: 260px;
