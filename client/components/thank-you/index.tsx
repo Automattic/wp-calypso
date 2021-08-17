@@ -15,6 +15,7 @@ import type {
 	ThankYouProps,
 	ThankYouSectionProps,
 } from 'calypso/components/thank-you/types';
+
 /**
  * style dependencies
  */
@@ -159,7 +160,7 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 							<ThankYouSectionTitle className="thank-you__body-header wp-brand-font">
 								{ translate( 'How can we help?' ) }
 							</ThankYouSectionTitle>
-							<p className="thank-you__help-title">
+							<p className="thank-you__help-text">
 								{ translate(
 									'Our Happiness Engineers are here if you need help, or if you have any questions.'
 								) }
@@ -179,7 +180,7 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 								target="_blank"
 								rel="noreferrer noopener"
 							>
-								{ translate( 'Support documentation' ) }
+								{ translate( 'View support documentation' ) }
 								<Gridicon className="thank-you__icon-external" icon="external" />
 							</a>
 						</ThankYouSectionContainer>

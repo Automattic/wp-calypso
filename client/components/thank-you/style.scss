@@ -44,14 +44,18 @@
 
 .thank-you__help-link {
 	display: flex;
+	font-size: $font-body-small;
 	svg.thank-you__icon-external {
 		height: 16px;
 		width: auto;
 		padding-top: 3px;
 		margin-left: 4px;
 	}
+	+.thank-you__help-link {
+		margin-top: 0.25em;
+	}
 }
 
-.thank-you__help-title {
+.thank-you__help-text {
 	margin-bottom: 0.5em;
 }

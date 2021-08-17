@@ -103,7 +103,7 @@ const TitanSetupThankYou = ( props: TitanSetupThankYouProps ): JSX.Element => {
 			sections={ [ titanThankYouSection ] }
 			showSupportSection={ true }
 			thankYouImage={ thankYouImage }
-			thankYouTitle={ translate( 'Congratulations on your purchase!' ) }
+			thankYouTitle={ translate( 'Your email is now ready to use' ) }
 		/>
 	);
 };
