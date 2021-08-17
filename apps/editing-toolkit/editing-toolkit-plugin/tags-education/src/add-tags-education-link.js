@@ -23,6 +23,7 @@ const addTagsEducationLink = createHigherOrderComponent( ( PostTaxonomyType ) =>
 					href={ localizeUrl(
 						'https://wordpress.com/support/posts/tags',
 						// TODO: remove tagsEducationLocale after fixing useLocalizeUrl.
+						// See https://github.com/Automattic/wp-calypso/pull/55527.
 						// `useLocalizeUrl` will try to get the current locale slug from the @wordpress/i18n locale data if missing `LocaleProvider`
 						// However, if we have any string without translation in `default` domain, the configure block will be overwritten by empty locale data
 						// so that we cannot get the correct locale from the @wordpress/i18n locale data.

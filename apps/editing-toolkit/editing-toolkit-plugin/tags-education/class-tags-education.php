@@ -54,6 +54,7 @@ class Tags_Education {
 		);
 
 		// TODO: remove tagsEducationLocale after fixing useLocalizeUrl.
+		// See https://github.com/Automattic/wp-calypso/pull/55527.
 		wp_localize_script(
 			'tags-education-script',
 			'tagsEducationLocale',
