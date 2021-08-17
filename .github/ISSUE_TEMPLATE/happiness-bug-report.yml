@@ -74,6 +74,11 @@ body:
     id: theme
     attributes:
       label: Is this specific to applied theme? If so, what is the theme name?
+  - type: textareas
+    id: other_notes
+    attributes:
+      label: Other notes
+      description: Logs, console errors, notes, observations, etc.
   - type: dropdown
     id: site-type
     attributes:
@@ -83,11 +88,15 @@ body:
         - Simple
         - Atomic
       multiple: true
-  - type: textarea
-    id: other_notes
+  - type: dropdown
+    id: reproducibility
     attributes:
-      label: Other notes
-      description: Logs, console errors, notes, observations, etc.
+      label: Reproducibility
+      options:
+        - Consistent
+        - Intermittent
+        - Once
+        - Never
   - type: dropdown
     id: users-affected
     attributes:
@@ -105,12 +114,3 @@ body:
       description: Are there any workarounds to this bug? How difficult are those workarounds?
       placeholder: |
         eg. There is alternative access to this setting in the sidebar, but it's not readily apparent.
-  - type: dropdown
-    id: reproducibility
-    attributes:
-      label: Reproducibility
-      options:
-        - Consistent
-        - Intermittent
-        - Once
-        - Never
