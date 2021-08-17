@@ -7,7 +7,7 @@ import * as dataHelper from '../../lib/data-helper.js';
 import * as driverHelper from '../../lib/driver-helper.js';
 import * as driverManager from '../../lib/driver-manager.js';
 import LoginFlow from '../../lib/flows/login-flow.js';
-import { createGeneralTests } from '../../lib/gutenberg/tracking/general-tests.js';
+import { createGeneralTests } from '../../lib/gutenberg/tracking/general-tests-spec.js';
 import { clearEventsStack, getEventsStack } from '../../lib/gutenberg/tracking/utils.js';
 import SiteEditorPage from '../../lib/pages/site-editor-page.js';
 
