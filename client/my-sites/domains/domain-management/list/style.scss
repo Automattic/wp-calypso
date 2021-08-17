@@ -302,7 +302,9 @@
 		display: inline-flex;
 		justify-content: center;
 		flex-wrap: wrap;
-		gap: 16px;
+		& > .button {
+			margin: 16px 8px 0;
+		}
 	}
 
 	@include break-small {
