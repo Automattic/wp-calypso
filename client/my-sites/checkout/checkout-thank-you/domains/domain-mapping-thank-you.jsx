@@ -36,10 +36,15 @@ const customSupportSection = {
 	description: 'Have questions? Our Happiness Engineers are here if you need help.',
 };
 
-const DomainMappingThankYou = ( { translate } ) => {
+const DomainMappingThankYou = ( { domain, translate } ) => {
 	const customHeader = {
 		title: translate( 'Congratulations on your purchase!' ),
-		description: translate( 'You can now connect travelingwithkids.com to your site' ),
+		description: translate( 'You can now connect {{strong}}%(domain)s{{/strong}} to your site', {
+			args: {
+				domain,
+			},
+			components: { strong: <strong /> },
+		} ),
 	};
 
 	return (
@@ -72,7 +77,12 @@ const DomainMappingThankYou = ( { translate } ) => {
 							stepKey: 'domain_mapping_whats_next_view_posts',
 							stepTitle: translate( 'Get a profesional email' ),
 							stepDescription: translate(
-								'Add a custom email address to send and receive emails from travelingwithkids.com today.'
+								'Add a custom email address to send and receive emails from %(domain)s today.',
+								{
+									args: {
+										domain,
+									},
+								}
 							),
 							stepCta: (
 								<Button
