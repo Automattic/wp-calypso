@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect, useRef, useMemo } from 'react';
+import { useContext, useState, useEffect, useRef } from 'react';
 import ShoppingCartOptionsContext from './shopping-cart-options-context';
 import useManagerClient from './use-manager-client';
 import useRefetchOnFocus from './use-refetch-on-focus';
@@ -7,11 +7,12 @@ import type { UseShoppingCart } from './types';
 export default function useShoppingCart( cartKey?: string ): UseShoppingCart {
 	const managerClient = useManagerClient( 'useShoppingCart' );
 
-	const { defaultCartKey } = useContext( ShoppingCartOptionsContext ) ?? {};
+	const { defaultCartKey } = useContext( ShoppingCartOptionsContext );
 	const finalCartKey = cartKey ?? defaultCartKey;
 	const manager = managerClient.forCartKey( finalCartKey );
 
-	// Re-render when the cart changes
+	useRefetchOnFocus( finalCartKey );
+
 	const isMounted = useRef( true );
 	useEffect( () => {
 		isMounted.current = true;
@@ -19,20 +20,14 @@ export default function useShoppingCart( cartKey?: string ): UseShoppingCart {
 			isMounted.current = false;
 		};
 	}, [] );
-	const [ cartState, setCartState ] = useState( manager.getState() );
+
+	// Re-render when the cart changes
+	const [ cartState, setCartState ] = useState( manager.getUseShoppingCart() );
 	useEffect( () => {
 		return manager.subscribe( () => {
-			isMounted.current && setCartState( manager.getState() );
+			isMounted.current && setCartState( manager.getUseShoppingCart() );
 		} );
 	}, [ manager ] );
 
-	useRefetchOnFocus( finalCartKey );
-
-	return useMemo(
-		() => ( {
-			...cartState,
-			...manager.actions,
-		} ),
-		[ cartState, manager ]
-	);
+	return cartState;
 }
