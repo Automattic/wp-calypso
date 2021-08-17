@@ -832,7 +832,8 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 			} );
 		} );
 
-		describe( 'Navigation sidebar', function () {
+		// Skip theses tests as nav sidebar is temporarily disabled on dotcom.
+		describe.skip( 'Navigation sidebar', function () {
 			it( 'should track "wpcom_block_editor_nav_sidebar_open" when sidebar is opened', async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
 
