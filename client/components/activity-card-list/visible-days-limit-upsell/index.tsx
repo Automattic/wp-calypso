@@ -68,11 +68,11 @@ const VisibleDaysLimitUpsell: React.FC< OwnProps > = ( { cardClassName } ) => {
 				<h3 className="visible-days-limit-upsell__call-to-action-header">
 					{ preventWidows(
 						translate(
-							'Restore backups older than %(visibleDays)d day',
-							'Restore backups older than %(visibleDays)d days',
+							'Restore backups older than %(retentionDays)d day',
+							'Restore backups older than %(retentionDays)d days',
 							{
 								count: visibleDays as number,
-								args: { visibleDays },
+								args: { retentionDays: visibleDays },
 							}
 						)
 					) }
@@ -80,11 +80,11 @@ const VisibleDaysLimitUpsell: React.FC< OwnProps > = ( { cardClassName } ) => {
 				<p className="visible-days-limit-upsell__call-to-action-copy">
 					{ preventWidows(
 						translate(
-							'Your activity log spans more than %(visibleDays)d day. Upgrade your backup storage to access activity older than %(visibleDays)d day.',
-							'Your activity log spans more than %(visibleDays)d days. Upgrade your backup storage to access activity older than %(visibleDays)d days.',
+							'Your activity log spans more than %(retentionDays)d day. Upgrade your backup storage to access activity older than %(retentionDays)d day.',
+							'Your activity log spans more than %(retentionDays)d days. Upgrade your backup storage to access activity older than %(retentionDays)d days.',
 							{
 								count: visibleDays as number,
-								args: { visibleDays },
+								args: { retentionDays: visibleDays },
 							}
 						)
 					) }
