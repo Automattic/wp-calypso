@@ -9,6 +9,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { JITM_DISMISS, JITM_FETCH } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import moment from 'moment/moment';
 
 const noop = () => {};
 
@@ -44,6 +45,7 @@ const transformApiRequest = ( { data: jitms } ) =>
 		template: jitm.template,
 		id: jitm.id,
 		isDismissible: jitm.is_dismissible,
+		messageExpiration: jitm.message_expiration ? moment( jitm.message_expiration ) : null,
 	} ) );
 
 /**
