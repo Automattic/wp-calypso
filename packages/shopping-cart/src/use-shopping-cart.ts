@@ -1,14 +1,11 @@
 import { useContext, useState, useEffect, useRef, useMemo } from 'react';
-import ShoppingCartContext from './shopping-cart-context';
 import ShoppingCartOptionsContext from './shopping-cart-options-context';
+import useManagerClient from './use-manager-client';
 import useRefetchOnFocus from './use-refetch-on-focus';
 import type { UseShoppingCart } from './types';
 
 export default function useShoppingCart( cartKey?: string ): UseShoppingCart {
-	const managerClient = useContext( ShoppingCartContext );
-	if ( ! managerClient ) {
-		throw new Error( 'useShoppingCart must be used inside a ShoppingCartProvider' );
-	}
+	const managerClient = useManagerClient( 'useShoppingCart' );
 
 	const { defaultCartKey } = useContext( ShoppingCartOptionsContext ) ?? {};
 	const finalCartKey = cartKey ?? defaultCartKey;

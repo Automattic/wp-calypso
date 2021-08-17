@@ -1,8 +1,8 @@
 import debugFactory from 'debug';
 import { useEffect, useContext } from 'react';
 import { cartKeysThatDoNotAllowFetch } from './cart-keys';
-import ShoppingCartContext from './shopping-cart-context';
 import ShoppingCartOptionsContext from './shopping-cart-options-context';
+import useManagerClient from './use-manager-client';
 
 const debug = debugFactory( 'shopping-cart:use-refetch-on-focus' );
 
@@ -15,10 +15,7 @@ function convertMsToSecs( ms: number ): number {
 }
 
 export default function useRefetchOnFocus( cartKey: string | undefined ): void {
-	const managerClient = useContext( ShoppingCartContext );
-	if ( ! managerClient ) {
-		throw new Error( 'useRefetchOnFocus must be used inside a ShoppingCartProvider' );
-	}
+	const managerClient = useManagerClient( 'useRefetchOnFocus' );
 
 	const manager = managerClient.forCartKey( cartKey );
 	const { isLoading, isPendingUpdate, loadingError, responseCart: lastCart } = manager.getState();
