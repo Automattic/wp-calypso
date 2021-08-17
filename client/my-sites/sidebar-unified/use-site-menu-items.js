@@ -17,6 +17,7 @@ import buildFallbackResponse from './static-data/fallback-menu';
 import allSitesMenu from './static-data/all-sites-menu';
 import jetpackMenu from './static-data/jetpack-fallback-menu';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { fetchPlugins } from 'calypso/state/plugins/installed/actions';
@@ -55,6 +56,10 @@ const useSiteMenuItems = () => {
 		canCurrentUser( state, selectedSiteId, 'edit_theme_options' )
 	);
 
+	const isP2 = useSelector( ( state ) => !! isSiteWPForTeams( state, selectedSiteId ) );
+
+	const shouldShowBetaTesting = ! isJetpack && ! isP2;
+
 	/**
 	 * When no site domain is provided, lets show only menu items that support all sites screens.
 	 */
@@ -78,6 +83,7 @@ const useSiteMenuItems = () => {
 		siteDomain,
 		shouldShowWooCommerce,
 		shouldShowThemes,
+		shouldShowBetaTesting,
 	};
 
 	return menuItems ?? buildFallbackResponse( fallbackDataOverides );
