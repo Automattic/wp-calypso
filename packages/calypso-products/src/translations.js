@@ -229,7 +229,12 @@ export const getJetpackProductsDescriptions = () => {
 	);
 	const backupT1Description = backupDailyDescription;
 	const backupT2Description = translate(
-		'Go back in time and recover all your information for up to a year, with 2TB storage space.'
+		'Go back in time and recover all your information for up to a year, with %(storageAmount)dTB storage space.',
+		{
+			args: {
+				storageAmount: 1,
+			},
+		}
 	);
 	const searchDescription = translate(
 		'Help your site visitors find answers instantly so they keep reading and buying. Great for sites with a lot of content.'
