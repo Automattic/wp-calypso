@@ -101,8 +101,14 @@ const ThankYouSection = ( props: ThankYouSectionProps ) => {
 const ThankYouSupportSection = ( props: ThankYouSupportSectionProps ) => {
 	const { links, title, description } = props;
 
-	const supportLinks = links.map( ( { href, title } ) => (
-		<a href={ href } className="thank-you__help-link" target="_blank" rel="noreferrer noopener">
+	const supportLinks = links.map( ( { href, title }, index ) => (
+		<a
+			key={ index }
+			href={ href }
+			className="thank-you__help-link"
+			target="_blank"
+			rel="noreferrer noopener"
+		>
 			{ title }
 			<Gridicon className="thank-you__icon-external" icon="external" />
 		</a>
@@ -133,7 +139,6 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 		thankYouSubtitle,
 		thankYouImage,
 		customSupportSection,
-		customHeader,
 	} = props;
 
 	const ThankYouTitleContainer = styled.div`
