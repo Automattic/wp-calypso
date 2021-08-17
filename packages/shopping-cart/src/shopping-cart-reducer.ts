@@ -34,6 +34,13 @@ const alwaysAllowedActions = [
 
 const cacheStatusesForQueueing: CacheStatus[] = [ 'fresh', 'pending', 'fresh-pending' ];
 
+const cacheStatusesForIgnoringReload: CacheStatus[] = [
+	'invalid',
+	'fresh',
+	'pending',
+	'fresh-pending',
+];
+
 export function playQueuedActions(
 	state: ShoppingCartState,
 	dispatch: ShoppingCartReducerDispatch
@@ -65,15 +72,19 @@ export function shoppingCartReducer(
 ): ShoppingCartState {
 	const couponStatus = state.couponStatus;
 
+	if (
+		cacheStatusesForIgnoringReload.includes( state.cacheStatus ) &&
+		action.type === 'CART_RELOAD'
+	) {
+		debug( 'cart is pending an operation; ignoring reload action' );
+		return state;
+	}
+
 	// If the cacheStatus is 'fresh' or 'pending', then the initial cart has not
 	// yet loaded and so we cannot make changes to it yet. We therefore will
 	// queue any action that comes through during that time except for
 	// 'RECEIVE_INITIAL_RESPONSE_CART' or 'RAISE_ERROR'.
 	if ( shouldQueueReducerEvent( state.cacheStatus, action ) ) {
-		if ( action.type === 'CART_RELOAD' ) {
-			debug( 'cart has not yet loaded; ignoring reload action', action );
-			return state;
-		}
 		debug( 'cart has not yet loaded; queuing requested action', action );
 		return {
 			...state,
