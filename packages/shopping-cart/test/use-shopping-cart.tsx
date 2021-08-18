@@ -65,8 +65,9 @@ describe( 'useShoppingCart', () => {
 				</MockProvider>
 			);
 			fireEvent.click( screen.getByText( 'Click me' ) );
-			await waitFor( () => screen.getByTestId( 'product-list' ) );
-			expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
+			await waitFor( () => {
+				expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
+			} );
 		} );
 
 		it( 'allows setting the cart key via the optional argument', async () => {
