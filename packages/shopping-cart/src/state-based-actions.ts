@@ -3,8 +3,11 @@ import { playQueuedActions } from './shopping-cart-reducer';
 import type {
 	ShoppingCartState,
 	ShoppingCartReducerDispatch,
+	LastValidResponseCart,
+	ActionPromises,
 	CacheStatus,
 	CartSyncManager,
+	SubscriptionManager,
 } from './types';
 
 const debug = debugFactory( 'shopping-cart:state-based-actions' );
@@ -37,8 +40,15 @@ function prepareInvalidCartForSync(
 	}
 }
 
+function isStatePendingUpdate( state: ShoppingCartState ) {
+	return state.queuedActions.length > 0 || state.cacheStatus !== 'valid';
+}
+
 export function createTakeActionsBasedOnState(
-	syncManager: CartSyncManager
+	lastValidResponseCart: LastValidResponseCart,
+	actionPromises: ActionPromises,
+	syncManager: CartSyncManager,
+	subscriptionManager: SubscriptionManager
 ): ( state: ShoppingCartState, dispatch: ShoppingCartReducerDispatch ) => void {
 	let lastCacheStatus: CacheStatus | '' = '';
 
@@ -54,9 +64,18 @@ export function createTakeActionsBasedOnState(
 		syncManager.fetchInitialCartFromServer( state, dispatch );
 		syncManager.syncPendingCartToServer( state, dispatch );
 
+		if ( ! isStatePendingUpdate( state ) ) {
+			debug( 'updating lastValidResponseCart and resolving action promises' );
+			lastValidResponseCart.update( state.responseCart );
+			actionPromises.resolve( state.responseCart );
+		}
+
 		playQueuedActions( state, dispatch );
 
 		lastCacheStatus = cacheStatus;
+
+		subscriptionManager.notifySubscribers();
+
 		debug( 'running state-based-actions complete' );
 	};
 	return takeActionsBasedOnState;

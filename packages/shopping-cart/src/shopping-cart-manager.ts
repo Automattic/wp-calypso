@@ -48,7 +48,7 @@ function createShoppingCartManager(
 ): ShoppingCartManager {
 	let state = getInitialShoppingCartState();
 
-	const { subscribe, notifySubscribers } = createSubscriptionManager( cartKey );
+	const subscriptionManager = createSubscriptionManager( cartKey );
 
 	// When an action is dispatched that modifies the cart (eg:
 	// addProductsToCart), the reducer modifies the `responseCart` stored in
@@ -64,7 +64,12 @@ function createShoppingCartManager(
 
 	const syncManager = createCartSyncManager( cartKey, getCart, setCart );
 	const actionPromises = createActionPromisesManager();
-	const takeActionsBasedOnState = createTakeActionsBasedOnState( syncManager );
+	const takeActionsBasedOnState = createTakeActionsBasedOnState(
+		lastValidResponseCart,
+		actionPromises,
+		syncManager,
+		subscriptionManager
+	);
 
 	// This is the main dispatcher for shopping cart actions. Dispatched actions
 	// are synchronous, but they cannot be trusted until validated by a server
@@ -86,15 +91,6 @@ function createShoppingCartManager(
 		deferredStateCheck = setTimeout( () => {
 			takeActionsBasedOnState( state, dispatch );
 		} );
-
-		if ( ! isStatePendingUpdate( state ) ) {
-			debug( 'updating lastValidResponseCart and resolving action promises' );
-			lastValidResponseCart.update( state.responseCart );
-			actionPromises.resolve( state.responseCart );
-		}
-
-		// Notify subscribers of every state change.
-		notifySubscribers();
 	};
 
 	// `dispatchAndWaitForValid` enhances the action dispatcher to return a
@@ -131,7 +127,7 @@ function createShoppingCartManager(
 	};
 
 	return {
-		subscribe,
+		subscribe: subscriptionManager.subscribe,
 		actions,
 		getState: getCachedManagerState,
 		fetchInitialCart: initialFetch,
@@ -165,8 +161,4 @@ export function createShoppingCartManagerClient( {
 	return {
 		forCartKey,
 	};
-}
-
-function isStatePendingUpdate( state: ShoppingCartState ) {
-	return state.queuedActions.length > 0 || state.cacheStatus !== 'valid';
 }
