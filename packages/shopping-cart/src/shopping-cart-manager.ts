@@ -25,7 +25,6 @@ import type {
 	DispatchAndWaitForValid,
 	ActionPromises,
 	ShoppingCartState,
-	UseShoppingCart,
 } from './types';
 
 const debug = debugFactory( 'shopping-cart:shopping-cart-manager' );
@@ -146,17 +145,6 @@ function createShoppingCartManager(
 		return cachedManagerState;
 	};
 
-	let cachedUseShoppingCart: UseShoppingCart = { ...actions, ...getCachedManagerState() };
-	let lastManagerState = cachedManagerState;
-	const getUseShoppingCart = () => {
-		const managerState = getCachedManagerState();
-		if ( lastManagerState !== managerState ) {
-			cachedUseShoppingCart = { ...actions, ...managerState };
-			lastManagerState = managerState;
-		}
-		return cachedUseShoppingCart;
-	};
-
 	// Kick off initial actions to load the cart.
 	takeActionsBasedOnState( state, dispatch, false );
 
@@ -165,7 +153,6 @@ function createShoppingCartManager(
 		actions,
 		getState: getCachedManagerState,
 		waitForReady,
-		getUseShoppingCart,
 	};
 }
 
