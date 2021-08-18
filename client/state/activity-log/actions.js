@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import { addQueryArgs } from 'calypso/lib/url';
 import {
 	ACTIVITY_LOG_FILTER_SET,
 	ACTIVITY_LOG_FILTER_UPDATE,
@@ -31,9 +25,8 @@ import {
 	REWIND_BACKUP_UPDATE_PROGRESS,
 	REWIND_BACKUP_DISMISS_PROGRESS,
 } from 'calypso/state/action-types';
-import { addQueryArgs } from 'calypso/lib/url';
-import { filterStateToQuery } from './utils';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
+import { filterStateToQuery } from './utils';
 
 import 'calypso/state/data-layer/wpcom/activity-log/activate';
 import 'calypso/state/data-layer/wpcom/activity-log/deactivate';

@@ -215,6 +215,7 @@ module.exports = {
 				'client/state/action-log/**/*',
 				'client/state/action-watchers/**/*',
 				'client/state/active-promotions/**/*',
+				'client/state/activity-log/**/*',
 				'client/state/checklist/**/*',
 				'client/state/data-getters/**/*',
 				'client/state/editor/**/*',
