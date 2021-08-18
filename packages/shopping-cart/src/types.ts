@@ -171,11 +171,11 @@ export type ShoppingCartMiddleware = (
 ) => void;
 
 export interface ActionPromises {
-	resolveIfValid: ( state: ShoppingCartState, areActionsPending: boolean ) => void;
+	resolve: ( tempResponseCart: TempResponseCart ) => void;
 	add: ( resolve: ( value: ResponseCart ) => void ) => void;
 }
 
 export interface LastValidResponseCart {
 	get: () => ResponseCart;
-	update: ( state: ShoppingCartState, areActionsPending: boolean ) => void;
+	update: ( tempResponseCart: TempResponseCart ) => void;
 }
