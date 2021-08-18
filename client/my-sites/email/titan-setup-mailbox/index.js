@@ -4,6 +4,7 @@
 import page from 'page';
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
+import titleCase from 'to-title-case';
 import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
@@ -18,11 +19,13 @@ import {
 } from 'calypso/my-sites/email/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { hasTitanMailWithUs } from 'calypso/lib/titan';
+import { hasTitanMailWithUs, getTitanProductName } from 'calypso/lib/titan';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
+import SectionHeader from 'calypso/components/section-header';
 import TitanSetupMailboxForm from 'calypso/my-sites/email/titan-setup-mailbox/titan-setup-mailbox-form';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
@@ -31,6 +34,8 @@ const TitanSetupMailbox = ( { selectedDomainName } ) => {
 	const selectedSite = useSelector( getSelectedSite );
 
 	const currentRoute = useSelector( getCurrentRoute );
+
+	const previousRoute = useSelector( getPreviousRoute );
 
 	const siteId = selectedSite?.ID ?? null;
 
@@ -46,9 +51,9 @@ const TitanSetupMailbox = ( { selectedDomainName } ) => {
 
 	const siteSlug = selectedSite?.slug ?? null;
 
-	const goToCustomerHome = useCallback( () => {
-		page.redirect( `/home/${ siteSlug }` );
-	}, [ siteSlug ] );
+	const handleBack = useCallback( () => {
+		page( previousRoute );
+	}, [ previousRoute ] );
 
 	const translate = useTranslate();
 
@@ -58,23 +63,24 @@ const TitanSetupMailbox = ( { selectedDomainName } ) => {
 		return null;
 	}
 
+	const title = translate( 'Set up mailbox' );
+
 	return (
 		<>
-			<PageViewTracker
-				path={ analyticsPath }
-				title="Email Management > Set up your Professional Email"
-			/>
+			<PageViewTracker path={ analyticsPath } title="Email Management > Set Up Titan Mailbox" />
 
 			{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
 			<Main wideLayout={ true }>
-				<DocumentHead title={ translate( 'Set up your Professional Email' ) } />
+				<DocumentHead title={ titleCase( title ) } />
 
 				<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
 
-				<HeaderCake onClick={ goToCustomerHome }>
-					{ translate( 'Set up your Professional Email' ) }
+				<HeaderCake onClick={ handleBack }>
+					{ getTitanProductName() + ': ' + selectedDomainName }
 				</HeaderCake>
+
+				<SectionHeader label={ title } className="titan-setup-mailbox__section-header" />
 
 				<TitanSetupMailboxForm
 					areSiteDomainsLoaded={ areSiteDomainsLoaded }

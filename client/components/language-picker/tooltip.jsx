@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
+import React, { useState, useRef } from 'react';
 import Gridicon from 'calypso/components/gridicon';
 import Tooltip from 'calypso/components/tooltip';
 

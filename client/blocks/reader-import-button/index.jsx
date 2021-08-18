@@ -1,22 +1,12 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import wpcom from 'calypso/lib/wp';
 import FilePicker from 'calypso/components/file-picker';
+import Gridicon from 'calypso/components/gridicon';
+import wpcom from 'calypso/lib/wp';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

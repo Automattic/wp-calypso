@@ -1,9 +1,4 @@
-/**
- * Internal dependencies
- */
-
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import { itemsSchema } from './schema';
 import {
 	WP_SUPER_CACHE_RECEIVE_PLUGINS,
 	WP_SUPER_CACHE_REQUEST_PLUGINS,
@@ -13,6 +8,7 @@ import {
 	WP_SUPER_CACHE_TOGGLE_PLUGIN_FAILURE,
 	WP_SUPER_CACHE_TOGGLE_PLUGIN_SUCCESS,
 } from '../action-types';
+import { itemsSchema } from './schema';
 
 /**
  * Returns the updated plugins requesting state after an action has been dispatched.

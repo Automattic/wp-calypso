@@ -1,4 +1,4 @@
-import { BaseContainer } from '../base-container';
+import { Page } from 'playwright';
 
 const selectors = {
 	visitSiteButton: '.button >> text=Visit site',
@@ -6,10 +6,19 @@ const selectors = {
 
 /**
  * Page representing the WPCOM home dashboard.
- *
- * @augments {BaseContainer}
  */
-export class MyHomePage extends BaseContainer {
+export class MyHomePage {
+	private page: Page;
+
+	/**
+	 * Constructs an instance of the component.
+	 *
+	 * @param {Page} page The underlying page.
+	 */
+	constructor( page: Page ) {
+		this.page = page;
+	}
+
 	/**
 	 * Click on the Visit Site button on the home dashboard.
 	 *

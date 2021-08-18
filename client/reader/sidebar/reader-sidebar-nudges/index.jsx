@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
+import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
 import React, { Fragment } from 'react';
 import { connect, useDispatch } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import isEligibleForFreeToPaidUpsell from 'calypso/state/selectors/is-eligible-for-free-to-paid-upsell';
-import getSites from 'calypso/state/selectors/get-sites';
+import { clickUpgradeNudge } from 'calypso/state/marketing/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
-import { clickUpgradeNudge } from 'calypso/state/marketing/actions';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import getSites from 'calypso/state/selectors/get-sites';
+import isEligibleForFreeToPaidUpsell from 'calypso/state/selectors/is-eligible-for-free-to-paid-upsell';
 
 const debug = debugFactory( 'calypso:reader:sidebar-nudges' );
 

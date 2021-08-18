@@ -39,6 +39,7 @@ import { getAllCartItems } from '../../../lib/cart-values/cart-items';
 class CartFreeUserPlanUpsell extends React.Component {
 	static propTypes = {
 		cart: PropTypes.object,
+		isCartPendingUpdate: PropTypes.bool.isRequired,
 		addItemToCart: PropTypes.func.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		hasPaidPlan: PropTypes.bool,
@@ -53,8 +54,7 @@ class CartFreeUserPlanUpsell extends React.Component {
 	};
 
 	isLoading() {
-		const { cart } = this.props;
-		const isLoadingCart = ! cart.hasLoadedFromServer || cart.hasPendingServerUpdates;
+		const { isCartPendingUpdate: isLoadingCart } = this.props;
 		const isLoadingPlans = this.props.isPlansListFetching;
 		const isLoadingSitePlans = this.props.isSitePlansListFetching;
 		return isLoadingCart || isLoadingPlans || isLoadingSitePlans;

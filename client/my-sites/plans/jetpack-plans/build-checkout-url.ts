@@ -70,7 +70,7 @@ export default function buildCheckoutURL(
 		? `/checkout/${ siteSlug }/${ productsString }`
 		: `/jetpack/connect/${ productsString }`;
 
-	return isJetpackCloud() && ! config.isEnabled( 'jetpack-cloud/connect' )
+	return isJetpackCloud()
 		? addQueryArgs( urlQueryArgs, `https://wordpress.com${ path }` )
 		: addQueryArgs( urlQueryArgs, path );
 }

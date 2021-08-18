@@ -1,17 +1,10 @@
-/**
- * External Dependencies
- */
 const { app, shell } = require( 'electron' );
 const fetch = require( 'electron-fetch' ).default;
 const yaml = require( 'js-yaml' );
 const semver = require( 'semver' );
-
-/**
- * Internal dependencies
- */
-const Updater = require( '../../../lib/updater' );
-const log = require( '../../../lib/logger' )( 'desktop:updater:manual' );
 const { bumpStat, sanitizeVersion, getPlatform } = require( '../../../lib/desktop-analytics' );
+const log = require( '../../../lib/logger' )( 'desktop:updater:manual' );
+const Updater = require( '../../../lib/updater' );
 
 const statsPlatform = getPlatform( process.platform );
 const sanitizedVersion = sanitizeVersion( app.getVersion() );

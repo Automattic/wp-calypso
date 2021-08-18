@@ -1,37 +1,23 @@
-/**
- * External dependencies
- */
+import { TERM_ANNUALLY } from '@automattic/calypso-products';
+import { Button, ProductIcon } from '@automattic/components';
 import classNames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import React, { createElement, ReactNode, useEffect, useRef } from 'react';
-import { TERM_ANNUALLY } from '@automattic/calypso-products';
-import { Button, ProductIcon } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
 import Gridicon from 'calypso/components/gridicon';
-import { preventWidows } from 'calypso/lib/formatting';
-import JetpackProductCardTimeFrame from './time-frame';
-import PlanPrice from 'calypso/my-sites/plan-price';
-import JetpackProductCardFeatures, { Props as FeaturesProps } from './features';
 import InfoPopover from 'calypso/components/info-popover';
+import { preventWidows } from 'calypso/lib/formatting';
+import PlanPrice from 'calypso/my-sites/plan-price';
 import { INTRO_PRICING_DISCOUNT_PERCENTAGE } from 'calypso/my-sites/plans/jetpack-plans/constants';
-
-/**
- * Type dependencies
- */
-import type { Moment } from 'moment';
+import starIcon from './assets/star.svg';
+import JetpackProductCardFeatures, { Props as FeaturesProps } from './features';
+import JetpackProductCardTimeFrame from './time-frame';
 import type {
 	Duration,
 	ScrollCardIntoViewCallback,
 } from 'calypso/my-sites/plans/jetpack-plans/types';
+import type { Moment } from 'moment';
 
-/**
- * Style dependencies
- */
 import './style.scss';
-import starIcon from './assets/star.svg';
 
 type OwnProps = {
 	iconSlug?: string;

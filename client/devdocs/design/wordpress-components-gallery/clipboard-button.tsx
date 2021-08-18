@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
-
-/**
- * WordPress dependencies
- */
 import { ClipboardButton } from '@wordpress/components';
+import React, { useState } from 'react';
 
 const ClipboardButtonExample = () => {
 	const [ isCopied, setCopied ] = useState( false );

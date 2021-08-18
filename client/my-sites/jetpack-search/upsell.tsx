@@ -23,9 +23,8 @@ export default function JetpackSearchUpsell(): ReactElement {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
 	const upgradeUrl =
-		'/checkout/' +
-		siteSlug +
-		'/jetpack_search_monthly?utm_campaign=my-sites-jetpack-search&utm_source=calypso';
+		'https://jetpack.com/upgrade/search/?utm_campaign=my-sites-jetpack-search&utm_source=calypso&site=' +
+		siteSlug;
 
 	return (
 		<Main className="jetpack-search">

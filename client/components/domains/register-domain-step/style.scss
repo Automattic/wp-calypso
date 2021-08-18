@@ -1,18 +1,99 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
+.register-domain-step:not( .register-domain-step__signup ) {
+	display: block;
+	position: relative;
+	margin: 0 auto 10px;
+	padding: 16px;
+	box-sizing: border-box;
+	background: var( --color-surface );
+	box-shadow: 0 0 0 1px var( --color-border-subtle );
+
+	@include break-mobile {
+		padding: 24px;
+	}
+
+	.search-filters__dropdown-filters {
+		height: 50px;
+		@include break-mobile {
+			min-width: 120px;
+		}
+	}
+
+	.button.domain-suggestion__action {
+		min-width: 120px;
+		padding: 0;
+	}
+
+	.card {
+		background: none;
+		box-shadow: none;
+		border-bottom: 1px solid var( --color-border-subtle );
+		padding-left: 0;
+		padding-right: 0;
+	}
+
+	.domain-search-results__domain-available-notice,
+	.search-component {
+		border-bottom: none;
+	}
+
+	.register-domain-step__next-page {
+		border-bottom: none;
+		padding-bottom: 0;
+		.register-domain-step__next-page-button {
+			padding-bottom: 0;
+			padding-top: 0;
+			@include break-mobile {
+				padding-top: 8px;
+			}
+		}
+	}
+
+	.domain-search-results__domain-available-notice {
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+
+	.search-component {
+		border: 1px solid var( --color-border-subtle );
+		border-radius: 4px; /* stylelint-disable-line */
+	}
+
+	.search-component.is-open {
+		border: 1px solid #a7aaad;
+		border-radius: 4px; /* stylelint-disable-line */
+		height: 48px;
+	}
+
+	.search-component.is-open.has-focus {
+		border-color: #646970;
+		background: var( --color-surface );
+		box-shadow: none;
+
+		.search-component__input {
+			background: var( --color-surface );
+		}
+	}
+}
+
 .register-domain-step__search {
 	padding-bottom: 12px;
 
 	&.register-domain-step__search-domain-step:not( .is-sticky ) {
 		padding-bottom: 24px;
 
+		.is-white-signup & {
+			padding-bottom: 16px;
+		}
+
 		@include breakpoint-deprecated( '>660px' ) {
 			padding-top: 18px;
 
 			.is-white-signup & {
 				padding-top: 0;
-				padding-bottom: 20px;
+				padding-bottom: 16px;
 			}
 		}
 	}
@@ -21,6 +102,7 @@
 		padding: 0;
 		display: flex;
 		align-items: center;
+		border-bottom: none;
 	}
 
 	.search {
@@ -124,7 +206,6 @@ button.register-domain-step__next-page-button {
 	font-weight: 500; /* stylelint-disable-line */
 }
 
-
 body.is-section-domains {
 	.register-domain-step {
 		button.register-domain-step__next-page-button {
@@ -135,7 +216,29 @@ body.is-section-domains {
 	}
 }
 
+body.is-section-signup:not( .is-white-signup ) {
+	.register-domain-step__search-card {
+		background: none;
+		box-shadow: none;
+	}
+}
+
 body.is-section-signup.is-white-signup {
+	.domain-search-results__domain-availability .card {
+		box-shadow: none;
+		padding: 0;
+		margin-bottom: 24px;
+		margin-left: 20px;
+
+		@include break-mobile {
+			margin-left: 0;
+		}
+	}
+	.domain-search-results__domain-availability svg,
+	.register-domain-step__notice svg {
+		margin: 0;
+		padding: 0;
+	}
 	.register-domain-step__next-page {
 		background: none;
 		box-shadow: none;
@@ -155,4 +258,3 @@ body.is-section-signup.is-white-signup {
 		}
 	}
 }
-

@@ -35,7 +35,6 @@
 		"i18n/community-translator": false,
 		"ive/use-external-assignment": true,
 		"jetpack-cloud": true,
-		"jetpack-cloud/connect": false,
 		"jetpack/backups-date-picker": true,
 		"jetpack/only-realtime-products": false,
 		"jetpack/pricing-page": true,
@@ -45,7 +44,6 @@
 		"jetpack/userless-checkout": true,
 		"layout/app-banner": false,
 		"layout/guided-tours": false,
-		"layout/nps-survey-notice": false,
 		"layout/query-selected-editor": false,
 		"layout/support-article-dialog": false,
 		"marketplace-test": false,
@@ -66,6 +64,7 @@
 		"jetpack-cloud-settings": true,
 		"jetpack-cloud-partner-portal": true,
 		"jetpack-cloud": true,
+		"jetpack-search": true,
 		"scan": true
 	},
 	"site_filter": [ "jetpack" ],

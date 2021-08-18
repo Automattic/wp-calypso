@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarHeading from 'calypso/layout/sidebar/heading';
-import SidebarMenu from 'calypso/layout/sidebar/menu';
 import SidebarItem from 'calypso/layout/sidebar/item';
+import SidebarMenu from 'calypso/layout/sidebar/menu';
 
 export default class DevdocsSidebar extends React.PureComponent {
 	static displayName = 'DevdocsSidebar';

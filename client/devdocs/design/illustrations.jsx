@@ -1,25 +1,23 @@
-/**
- * External dependencies
- */
-
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import DocumentHead from 'calypso/components/data/document-head';
-import Main from 'calypso/components/main';
-
-/**
- * Illustrations
- */
+import customerHomeIllustrationBusiness from 'calypso/assets/images/customer-home/illustration--business.svg';
+import customerHomeIllustrationChecklistComplete from 'calypso/assets/images/customer-home/illustration--checklist-complete.svg';
+import customerHomeIllustrationFireworks from 'calypso/assets/images/customer-home/illustration--fireworks-v2.svg';
+import customerHomeIllustrationImportComplete from 'calypso/assets/images/customer-home/illustration--import-complete.svg';
+import customerHomeIllustrationRocket from 'calypso/assets/images/customer-home/illustration--rocket.svg';
+import customerHomeIllustrationSecondaryEarn from 'calypso/assets/images/customer-home/illustration--secondary-earn.svg';
+import customerHomeIllustrationSecondaryFreePhoto from 'calypso/assets/images/customer-home/illustration--secondary-free-photo-library.svg';
+import customerHomeIllustrationSecondaryGutenberg from 'calypso/assets/images/customer-home/illustration--secondary-gutenberg.svg';
+import customerHomeIllustrationTaskConnect from 'calypso/assets/images/customer-home/illustration--task-connect-social-accounts.svg';
+import customerHomeIllustrationTaskEarn from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
+import customerHomeIllustrationTaskFindDomain from 'calypso/assets/images/customer-home/illustration--task-find-domain.svg';
+import customerHomeIllustrationWebinars from 'calypso/assets/images/customer-home/illustration-webinars.svg';
 import adwordsGoogle from 'calypso/assets/images/illustrations/adwords-google.svg';
 import apps from 'calypso/assets/images/illustrations/apps.svg';
 import blockEditorFade from 'calypso/assets/images/illustrations/block-editor-fade.svg';
 import builderReferral from 'calypso/assets/images/illustrations/builder-referral.svg';
 import checkEmail from 'calypso/assets/images/illustrations/check-email.svg';
-import customDomain from 'calypso/assets/images/illustrations/custom-domain.svg';
 import customDomainBlogger from 'calypso/assets/images/illustrations/custom-domain-blogger.svg';
+import customDomain from 'calypso/assets/images/illustrations/custom-domain.svg';
 import dashboard from 'calypso/assets/images/illustrations/dashboard.svg';
 import dotcomSupport from 'calypso/assets/images/illustrations/dotcom-support.svg';
 import dotcomWordAds from 'calypso/assets/images/illustrations/dotcom-wordads.svg';
@@ -27,6 +25,11 @@ import fireworks from 'calypso/assets/images/illustrations/fireworks.svg';
 import getAppsBanner from 'calypso/assets/images/illustrations/get-apps-banner.svg';
 import googleAnalytics from 'calypso/assets/images/illustrations/google-analytics.svg';
 import googleMyBusinessFeature from 'calypso/assets/images/illustrations/google-my-business-feature.svg';
+import helpDomains from 'calypso/assets/images/illustrations/help-domains.svg';
+import helpGetStarted from 'calypso/assets/images/illustrations/help-getstarted.svg';
+import helpPlugins from 'calypso/assets/images/illustrations/help-plugins.svg';
+import helpPrivacy from 'calypso/assets/images/illustrations/help-privacy.svg';
+import helpWebsite from 'calypso/assets/images/illustrations/help-website.svg';
 import jetpackBackup from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 import jetpackConcierge from 'calypso/assets/images/illustrations/jetpack-concierge.svg';
 import jetpackScan from 'calypso/assets/images/illustrations/jetpack-scan.svg';
@@ -44,23 +47,8 @@ import themes from 'calypso/assets/images/illustrations/themes.svg';
 import updates from 'calypso/assets/images/illustrations/updates.svg';
 import videoHosting from 'calypso/assets/images/illustrations/video-hosting.svg';
 import whoops from 'calypso/assets/images/illustrations/whoops.svg';
-import helpDomains from 'calypso/assets/images/illustrations/help-domains.svg';
-import helpGetStarted from 'calypso/assets/images/illustrations/help-getstarted.svg';
-import helpPlugins from 'calypso/assets/images/illustrations/help-plugins.svg';
-import helpWebsite from 'calypso/assets/images/illustrations/help-website.svg';
-import helpPrivacy from 'calypso/assets/images/illustrations/help-privacy.svg';
-import customerHomeIllustrationBusiness from 'calypso/assets/images/customer-home/illustration--business.svg';
-import customerHomeIllustrationChecklistComplete from 'calypso/assets/images/customer-home/illustration--checklist-complete.svg';
-import customerHomeIllustrationFireworks from 'calypso/assets/images/customer-home/illustration--fireworks-v2.svg';
-import customerHomeIllustrationImportComplete from 'calypso/assets/images/customer-home/illustration--import-complete.svg';
-import customerHomeIllustrationRocket from 'calypso/assets/images/customer-home/illustration--rocket.svg';
-import customerHomeIllustrationSecondaryEarn from 'calypso/assets/images/customer-home/illustration--secondary-earn.svg';
-import customerHomeIllustrationSecondaryFreePhoto from 'calypso/assets/images/customer-home/illustration--secondary-free-photo-library.svg';
-import customerHomeIllustrationSecondaryGutenberg from 'calypso/assets/images/customer-home/illustration--secondary-gutenberg.svg';
-import customerHomeIllustrationTaskConnect from 'calypso/assets/images/customer-home/illustration--task-connect-social-accounts.svg';
-import customerHomeIllustrationTaskEarn from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
-import customerHomeIllustrationTaskFindDomain from 'calypso/assets/images/customer-home/illustration--task-find-domain.svg';
-import customerHomeIllustrationWebinars from 'calypso/assets/images/customer-home/illustration-webinars.svg';
+import DocumentHead from 'calypso/components/data/document-head';
+import Main from 'calypso/components/main';
 
 export default class Illustrations extends React.PureComponent {
 	render() {

@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import { find, includes, forEach, findIndex, round } from 'lodash';
+import formatCurrency from '@automattic/format-currency';
 import classnames from 'classnames';
 import { translate, numberFormat } from 'i18n-calypso';
-import qs from 'qs';
-import formatCurrency from '@automattic/format-currency';
+import { find, includes, forEach, findIndex, round } from 'lodash';
 import moment from 'moment'; // No localization needed in this file.
-
-/**
- * Internal dependencies
- */
+import qs from 'qs';
 import { UNITS } from './constants';
 
 /**

@@ -1,25 +1,18 @@
-/**
- * External dependencies
- */
+import { get } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import ReaderPostCard from 'calypso/blocks/reader-post-card';
-import { getSite } from 'calypso/state/reader/sites/selectors';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
-import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
+import QueryReaderPost from 'calypso/components/data/query-reader-post';
+import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import {
 	getSourceData as getDiscoverSourceData,
 	discoverBlogId,
 } from 'calypso/reader/discover/helper';
+import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
+import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
-import QueryReaderPost from 'calypso/components/data/query-reader-post';
+import { getSite } from 'calypso/state/reader/sites/selectors';
 
 class ReaderPostCardAdapter extends React.Component {
 	static displayName = 'ReaderPostCardAdapter';

@@ -1,30 +1,20 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import { Button, RootChild } from '@automattic/components';
+import { isWithinBreakpoint } from '@automattic/viewport';
+import classNames from 'classnames';
+import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
-import debugFactory from 'debug';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal Dependencies
- */
-import config from '@automattic/calypso-config';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getGlobalKeyboardShortcuts from 'calypso/lib/keyboard-shortcuts/global';
-import { Button, RootChild } from '@automattic/components';
-import { isWithinBreakpoint } from '@automattic/viewport';
-import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
 import AsyncLoad from 'calypso/components/async-load';
+import Gridicon from 'calypso/components/gridicon';
+import getGlobalKeyboardShortcuts from 'calypso/lib/keyboard-shortcuts/global';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
 import { showInlineHelpPopover, hideInlineHelpPopover } from 'calypso/state/inline-help/actions';
 import isInlineHelpPopoverVisible from 'calypso/state/inline-help/selectors/is-inline-help-popover-visible';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /**

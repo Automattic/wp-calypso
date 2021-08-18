@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { isProductsListFetching } from 'calypso/state/products-list/selectors';
 import { requestProductsList } from 'calypso/state/products-list/actions';
+import { isProductsListFetching } from 'calypso/state/products-list/selectors';
 
 const request = ( props ) => ( dispatch, getState ) => {
 	if ( isProductsListFetching( getState() ) ) {

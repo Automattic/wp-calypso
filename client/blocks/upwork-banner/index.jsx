@@ -1,21 +1,11 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-
-/**
- * Internal dependencies
- */
+import { connect } from 'react-redux';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class UpworkBanner extends PureComponent {

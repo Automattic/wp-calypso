@@ -1,11 +1,8 @@
-/**
- * External dependencies
- */
 import { useMemo } from 'react';
-import type { StripeConfiguration, Stripe, StripeLoadingError } from '@automattic/calypso-stripe';
-import type { PaymentMethod } from '@automattic/composite-checkout';
 import { createStoredCreditCardMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/stored-credit-card-method';
 import { createStoredCreditCardPaymentMethodStore } from 'calypso/state/partner-portal/payment-methods/';
+import type { StripeConfiguration, Stripe, StripeLoadingError } from '@automattic/calypso-stripe';
+import type { PaymentMethod } from '@automattic/composite-checkout';
 
 export function useCreateStoredCreditCardMethod( {
 	isStripeLoading,

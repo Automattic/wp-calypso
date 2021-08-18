@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
-
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 const noop = () => {};
 

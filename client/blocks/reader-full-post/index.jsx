@@ -1,93 +1,88 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import classNames from 'classnames';
+import { translate } from 'i18n-calypso';
+import { get, startsWith, pickBy } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { translate } from 'i18n-calypso';
-import classNames from 'classnames';
-import { get, startsWith, pickBy } from 'lodash';
-import config from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
-import AutoDirection from 'calypso/components/auto-direction';
-import ReaderMain from 'calypso/reader/components/reader-main';
-import EmbedContainer from 'calypso/components/embed-container';
-import PostExcerpt from 'calypso/components/post-excerpt';
-import { markPostSeen } from 'calypso/state/reader/posts/actions';
-import ReaderFullPostHeader from './header';
 import AuthorCompactProfile from 'calypso/blocks/author-compact-profile';
-import LikeButton from 'calypso/reader/like-button';
-import { isDiscoverPost, isDiscoverSitePick } from 'calypso/reader/discover/helper';
-import DiscoverSiteAttribution from 'calypso/reader/discover/site-attribution';
+import CommentButton from 'calypso/blocks/comment-button';
+import Comments from 'calypso/blocks/comments';
+import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
+import { shouldShowComments } from 'calypso/blocks/comments/helper';
 import DailyPostButton from 'calypso/blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'calypso/blocks/daily-post-button/helper';
+import FeaturedImage from 'calypso/blocks/reader-full-post/featured-image';
+import WPiFrameResize from 'calypso/blocks/reader-full-post/wp-iframe-resize';
+import ReaderPostActions from 'calypso/blocks/reader-post-actions';
+import AutoDirection from 'calypso/components/auto-direction';
+import BackButton from 'calypso/components/back-button';
+import DocumentHead from 'calypso/components/data/document-head';
+import QueryPostLikes from 'calypso/components/data/query-post-likes';
+import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
+import QueryReaderPost from 'calypso/components/data/query-reader-post';
+import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
+import EmbedContainer from 'calypso/components/embed-container';
+import Emojify from 'calypso/components/emojify';
+import ExternalLink from 'calypso/components/external-link';
+import Gridicon from 'calypso/components/gridicon';
+import PostExcerpt from 'calypso/components/post-excerpt';
+import {
+	RelatedPostsFromSameSite,
+	RelatedPostsFromOtherSites,
+} from 'calypso/components/related-posts';
+import KeyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
+import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
+import scrollTo from 'calypso/lib/scroll-to';
+import ReaderMain from 'calypso/reader/components/reader-main';
+import { isDiscoverPost, isDiscoverSitePick } from 'calypso/reader/discover/helper';
+import DiscoverSiteAttribution from 'calypso/reader/discover/site-attribution';
+import { READER_FULL_POST } from 'calypso/reader/follow-sources';
+import {
+	canBeMarkedAsSeen,
+	getSiteName,
+	isEligibleForUnseen,
+	getFeaturedImageAlt,
+} from 'calypso/reader/get-helpers';
+import LikeButton from 'calypso/reader/like-button';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
-import { shouldShowComments } from 'calypso/blocks/comments/helper';
-import CommentButton from 'calypso/blocks/comment-button';
+import PostExcerptLink from 'calypso/reader/post-excerpt-link';
+import { keyForPost } from 'calypso/reader/post-key';
+import { getStreamUrlFromPost } from 'calypso/reader/route';
 import {
 	recordAction,
 	recordGaEvent,
 	recordTrackForPost,
 	recordPermalinkClick,
 } from 'calypso/reader/stats';
-import Comments from 'calypso/blocks/comments';
-import scrollTo from 'calypso/lib/scroll-to';
-import PostExcerptLink from 'calypso/reader/post-excerpt-link';
-import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
-import KeyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
-import ReaderPostActions from 'calypso/blocks/reader-post-actions';
-import {
-	RelatedPostsFromSameSite,
-	RelatedPostsFromOtherSites,
-} from 'calypso/components/related-posts';
-import { getStreamUrlFromPost } from 'calypso/reader/route';
-import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
-import FeaturedImage from 'calypso/blocks/reader-full-post/featured-image';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
-import { getSite } from 'calypso/state/reader/sites/selectors';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
-import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
-import QueryReaderPost from 'calypso/components/data/query-reader-post';
-import ExternalLink from 'calypso/components/external-link';
-import DocumentHead from 'calypso/components/data/document-head';
-import ReaderFullPostUnavailable from './unavailable';
-import BackButton from 'calypso/components/back-button';
-import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
-import ReaderFullPostContentPlaceholder from './placeholders/content';
-import { keyForPost } from 'calypso/reader/post-key';
 import { showSelectedPost } from 'calypso/reader/utils';
-import Emojify from 'calypso/components/emojify';
-import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
-import { READER_FULL_POST } from 'calypso/reader/follow-sources';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
+import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
-import QueryPostLikes from 'calypso/components/data/query-post-likes';
-import getCurrentStream from 'calypso/state/selectors/get-reader-current-stream';
-import {
-	setViewingFullPostKey,
-	unsetViewingFullPostKey,
-} from 'calypso/state/reader/viewing/actions';
-import { getNextItem, getPreviousItem } from 'calypso/state/reader/streams/selectors';
+import { getFeed } from 'calypso/state/reader/feeds/selectors';
+import { markPostSeen } from 'calypso/state/reader/posts/actions';
+import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import {
 	requestMarkAsSeen,
 	requestMarkAsUnseen,
 	requestMarkAsSeenBlog,
 	requestMarkAsUnseenBlog,
 } from 'calypso/state/reader/seen-posts/actions';
-import Gridicon from 'calypso/components/gridicon';
-import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
-import { getReaderTeams } from 'calypso/state/teams/selectors';
-import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import { getSite } from 'calypso/state/reader/sites/selectors';
+import { getNextItem, getPreviousItem } from 'calypso/state/reader/streams/selectors';
+import {
+	setViewingFullPostKey,
+	unsetViewingFullPostKey,
+} from 'calypso/state/reader/viewing/actions';
+import getCurrentStream from 'calypso/state/selectors/get-reader-current-stream';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
-import WPiFrameResize from 'calypso/blocks/reader-full-post/wp-iframe-resize';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
+import ReaderFullPostHeader from './header';
+import ReaderFullPostContentPlaceholder from './placeholders/content';
+import ReaderFullPostUnavailable from './unavailable';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class FullPostView extends React.Component {
@@ -421,6 +416,7 @@ export class FullPostView extends React.Component {
 		const startingCommentId = this.getCommentIdFromUrl();
 		const commentCount = get( post, 'discussion.comment_count' );
 		const postKey = { blogId, feedId, postId };
+		const featuredImageAlt = getFeaturedImageAlt( post );
 
 		/*eslint-disable react/no-danger */
 		/*eslint-disable react/jsx-no-target-blank */
@@ -499,7 +495,7 @@ export class FullPostView extends React.Component {
 							<ReaderFullPostHeader post={ post } referralPost={ referralPost } />
 
 							{ post.featured_image && ! isFeaturedImageInContent( post ) && (
-								<FeaturedImage src={ post.featured_image } />
+								<FeaturedImage src={ post.featured_image } alt={ featuredImageAlt } />
 							) }
 							{ isLoading && <ReaderFullPostContentPlaceholder /> }
 							{ post.use_excerpt ? (

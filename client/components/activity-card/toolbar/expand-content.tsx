@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
-import Gridicon from 'calypso/components/gridicon';
 import Button from 'calypso/components/forms/form-button';
+import Gridicon from 'calypso/components/gridicon';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 
 type OwnProps = {
 	isExpanded?: boolean;

@@ -1,28 +1,14 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { Guide } from '@wordpress/components';
 import { Title } from '@automattic/onboarding';
-import { useSelector, useDispatch } from 'react-redux';
+import { Guide } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import featureImage from 'calypso/assets/images/nav-unification-announcement/quick-switch-feature-no-text.png';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import isNewUserId from 'calypso/state/selectors/is-new-user-id';
 
-/**
- * Image dependencies
- */
-import featureImage from 'calypso/assets/images/nav-unification-announcement/quick-switch-feature-no-text.png';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 // User registered on 28 July 2021

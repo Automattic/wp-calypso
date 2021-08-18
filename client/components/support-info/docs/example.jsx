@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import SupportInfo from 'calypso/components/support-info';
 
 export default class extends React.PureComponent {

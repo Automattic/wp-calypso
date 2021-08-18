@@ -1,19 +1,9 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import InfoPopover from 'calypso/components/info-popover';
 import ExternalLink from 'calypso/components/external-link';
+import InfoPopover from 'calypso/components/info-popover';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class SupportInfo extends Component {

@@ -2,19 +2,12 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import React from 'react';
-import { createStore } from 'redux';
 import { mount } from 'enzyme';
 import globalMoment from 'moment';
-
-/**
- * Internal dependencies
- */
-import MomentProvider from '../provider';
+import React from 'react';
+import { createStore } from 'redux';
 import { withLocalizedMoment, useLocalizedMoment } from '..';
+import MomentProvider from '../provider';
 
 // helper to create state object with specified `languageSlug`
 const createState = ( localeSlug ) => ( { ui: { language: { localeSlug } } } );

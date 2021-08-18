@@ -1,26 +1,15 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
 import { defer } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
-import EmailStepSideBar from 'calypso/components/emails/email-step-side-bar';
 import EmailSignupTitanCard from 'calypso/components/emails/email-signup-titan-card';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
-import StepWrapper from 'calypso/signup/step-wrapper';
+import EmailStepSideBar from 'calypso/components/emails/email-step-side-bar';
 import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
-
-/**
- * Style dependencies
- */
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import './style.scss';
 
 class EmailsStep extends React.Component {
@@ -137,7 +126,7 @@ class EmailsStep extends React.Component {
 			'Add a custom email address to start sending and receiving emails from {{strong}}%(domainName)s{{/strong}} today.',
 			{
 				args: { domainName },
-				components: { strong: <strong /> },
+				components: { strong: <strong className="emails__register-email-step--domain-name" /> },
 				comment: '%(domainName)s is a domain name chosen by the user',
 			}
 		);

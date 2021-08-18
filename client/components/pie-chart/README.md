@@ -14,15 +14,8 @@ This component renders a dataset as a pie chart. A separate `PieChartLegend` sub
 ## Usage
 
 ```jsx
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import React, { Component } from 'react';
 import PieChart from 'calypso/components/pie-chart';
 import PieChartLegend from 'calypso/components/pie-chart/legend';
 

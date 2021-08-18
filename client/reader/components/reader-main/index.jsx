@@ -1,17 +1,6 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
 import SyncReaderFollows from 'calypso/components/data/sync-reader-follows';
-
-/**
- * Style dependencies
- */
+import Main from 'calypso/components/main';
 import './style.scss';
 
 /*

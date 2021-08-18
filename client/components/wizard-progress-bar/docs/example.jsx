@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import React, { Component } from 'react';
-
-/**
- * Internal dependencies
- */
 import WizardProgressBar from '../index';
 
 export default class WizardProgressBarExample extends Component {

@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import React, { Component } from 'react';
-
-/**
- * Internal dependencies
- */
 import ExternalLink from 'calypso/components/external-link';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 

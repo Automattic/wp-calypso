@@ -72,7 +72,7 @@ class ConciergeBanner extends Component {
 					}
 				);
 				buttonText = translate( 'Session dashboard' );
-				buttonHref = '/me/concierge';
+				buttonHref = '/me/quickstart';
 				illustrationUrl = conciergeImage;
 				break;
 
@@ -87,7 +87,7 @@ class ConciergeBanner extends Component {
 					}
 				);
 				buttonText = translate( 'Schedule now' );
-				buttonHref = '/me/concierge';
+				buttonHref = '/me/quickstart';
 				illustrationUrl = conciergeImage;
 				break;
 
@@ -98,7 +98,7 @@ class ConciergeBanner extends Component {
 						'Quick Start Session is a one-on-one video session between the user and our support staff.',
 				} );
 				buttonText = translate( 'Schedule now' );
-				buttonHref = '/me/concierge';
+				buttonHref = '/me/quickstart';
 				illustrationUrl = conciergeImage;
 				break;
 

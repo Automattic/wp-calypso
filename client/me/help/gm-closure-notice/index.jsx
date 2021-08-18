@@ -89,7 +89,7 @@ const GMClosureNotice = ( {
 	const MAIN_MESSAGES = {
 		before: {
 			hasPlan: translate(
-				'Live chat support will be closed from %(closes_at)s until %(reopens_at)s. Email support will remain open.',
+				'Live chat support will be closed from %(closes_at)s until %(reopens_at)s. Customer support via email will remain open.',
 				{ args: mainMessageArgs }
 			),
 			nonPlan: translate(

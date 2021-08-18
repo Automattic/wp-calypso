@@ -3,8 +3,6 @@
  */
 .themes-magic-search {
 	margin-top: 24px;
-	position: relative;
-	z-index: z-index( 'root', '.themes-magic-search' );
 }
 
 .themes-magic-search-card {
@@ -258,6 +256,7 @@
 }
 
 .button.themes-magic-search-card__advanced-toggle {
+	display: flex;
 	font-size: 0.75rem;
 	white-space: nowrap;
 	border: 0;

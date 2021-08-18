@@ -1,20 +1,9 @@
-/**
- * External dependencies
- */
-
+import classNames from 'classnames';
+import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { includes } from 'lodash';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import { preventWidows } from 'calypso/lib/formatting';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 //Sizes 47, 21, and 11 are deprecated; use the nearest equivalent

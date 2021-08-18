@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import DocService from './service';
-import Error from './error';
 import DocumentHead from 'calypso/components/data/document-head';
 import highlight from 'calypso/lib/highlight';
+import Error from './error';
+import DocService from './service';
 
 export default class extends React.Component {
 	static displayName = 'SingleDocument';

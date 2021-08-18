@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import ReaderMain from 'calypso/reader/components/reader-main';
-import MobileBackToSidebar from 'calypso/components/mobile-back-to-sidebar';
 import EmptyContent from 'calypso/components/empty-content';
+import MobileBackToSidebar from 'calypso/components/mobile-back-to-sidebar';
+import ReaderMain from 'calypso/reader/components/reader-main';
 import { recordTrack as recordReaderTrack } from 'calypso/reader/stats';
 import { bumpStat, recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { unblockSite } from 'calypso/state/reader/site-blocks/actions';

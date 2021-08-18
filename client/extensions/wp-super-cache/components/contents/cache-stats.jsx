@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { flowRight, get, map } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import FoldableCard from 'calypso/components/foldable-card';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { deleteFile } from '../../state/stats/actions';
 import { isDeletingFile } from '../../state/stats/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 function getAge( lower, upper ) {
 	if ( lower && upper ) {

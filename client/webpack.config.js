@@ -155,6 +155,7 @@ const webpackConfig = {
 		'entry-domains-landing': [ path.join( __dirname, 'landing', 'domains' ) ],
 		'entry-login': [ path.join( __dirname, 'landing', 'login' ) ],
 		'entry-gutenboarding': [ path.join( __dirname, 'landing', 'gutenboarding' ) ],
+		'entry-browsehappy': [ path.join( __dirname, 'landing', 'browsehappy' ) ],
 	} ),
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: process.env.SOURCEMAP || ( isDevelopment ? 'eval' : false ),
@@ -245,6 +246,7 @@ const webpackConfig = {
 	resolve: {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 		mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
+		conditionNames: [ 'calypso:src', 'import', 'module', 'require' ],
 		alias: Object.assign(
 			{
 				debug: path.resolve( __dirname, '../node_modules/debug' ),

@@ -52,7 +52,7 @@ The `FormInputValidation` component is used to display a validation notice to th
 		text="Usernames can only contain lowercase letters (a-z) and numbers."
 	/>
 	<FormInputValidation text="That username is valid." />
-</>;
+</>
 ```
 
 ### MultiCheckbox

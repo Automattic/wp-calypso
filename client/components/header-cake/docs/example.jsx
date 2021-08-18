@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import React from 'react';
 import HeaderCake from 'calypso/components/header-cake';
 
 /**

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
 
 export function recordAuthorClick( author ) {

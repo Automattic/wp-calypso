@@ -71,7 +71,7 @@ export default function safeImageUrl( url ) {
 	}
 
 	// If there's a query string, bail out because Photon doesn't support them on external URLs
-	if ( parsedUrl.search ) {
+	if ( parsedUrl.search && ( parsedUrl.host || parsedUrl.hostname || parsedUrl.origin ) ) {
 		// If it's just size parameters, let's remove them
 		SIZE_PARAMS.forEach( ( param ) => parsedUrl.searchParams.delete( param ) );
 

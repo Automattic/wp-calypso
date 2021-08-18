@@ -1,24 +1,16 @@
-/**
- * External dependencies
- */
-
+import classNames from 'classnames';
+import { partial } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component, createRef } from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
-import { partial } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import MasterbarItem from './item';
-import AsyncLoad from 'calypso/components/async-load';
 import store from 'store';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
-import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
+import AsyncLoad from 'calypso/components/async-load';
 import TranslatableString from 'calypso/components/translatable/proptype';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import hasUnseenNotifications from 'calypso/state/selectors/has-unseen-notifications';
+import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
+import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
+import MasterbarItem from './item';
 
 class MasterbarItemNotifications extends Component {
 	static propTypes = {

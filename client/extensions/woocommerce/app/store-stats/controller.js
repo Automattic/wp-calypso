@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import page from 'page';
-import { includes } from 'lodash';
+import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
+import { includes } from 'lodash';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
+import page from 'page';
+import React from 'react';
+import { recordTrack } from 'woocommerce/lib/analytics';
 import AsyncLoad from 'calypso/components/async-load';
 import StatsPagePlaceholder from 'calypso/my-sites/stats/stats-page-placeholder';
 import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 import { getQueryDate, getQueries } from './utils';
-import { recordTrack } from 'woocommerce/lib/analytics';
-import config from '@automattic/calypso-config';
 
 function isValidParameters( context ) {
 	const validParameters = {

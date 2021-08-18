@@ -1,19 +1,12 @@
-/**
- * External Dependencies
- */
+import { map, take, filter } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { map, take, filter } from 'lodash';
-
-/**
- * Internal Dependencies
- */
+import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import AutoDirection from 'calypso/components/auto-direction';
 import Emojify from 'calypso/components/emojify';
-import resizeImageUrl from 'calypso/lib/resize-image-url';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
 import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
-import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
+import resizeImageUrl from 'calypso/lib/resize-image-url';
 import { imageIsBigEnoughForGallery } from 'calypso/state/reader/posts/normalization-rules';
 import { READER_CONTENT_WIDTH } from 'calypso/state/reader/posts/sizes';
 

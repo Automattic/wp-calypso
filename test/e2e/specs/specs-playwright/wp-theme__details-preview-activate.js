@@ -6,6 +6,7 @@ import {
 	PreviewComponent,
 	ThemesPage,
 	ThemesDetailPage,
+	SiteSelectComponent,
 } from '@automattic/calypso-e2e';
 
 describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
@@ -18,6 +19,7 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 	// This test will use partial matching names to cycle between available themes.
 	const themeName = 'Twenty Twen';
 	const user = 'defaultUser';
+	const siteURL = DataHelper.getAccountSiteURL( user, { protocol: false } );
 
 	setupHooks( ( args ) => {
 		page = args.page;
@@ -33,8 +35,16 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 		await sidebarComponent.gotoMenu( { item: 'Appearance', subitem: 'Themes' } );
 	} );
 
+	it( `Choose test site ${ siteURL } if Site Selector is shown`, async function () {
+		const siteSelectComponent = new SiteSelectComponent( page );
+
+		if ( await siteSelectComponent.isSiteSelectorVisible() ) {
+			await siteSelectComponent.selectSite( siteURL );
+		}
+	} );
+
 	it( `Search for free theme with keyword ${ themeName }`, async function () {
-		themesPage = await ThemesPage.Expect( page );
+		themesPage = new ThemesPage( page );
 		await themesPage.filterThemes( 'Free' );
 		await themesPage.search( themeName );
 	} );
@@ -45,12 +55,13 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 	} );
 
 	it( 'Preview theme', async function () {
-		themesDetailPage = await ThemesDetailPage.Expect( page );
+		themesDetailPage = new ThemesDetailPage( page );
 		await themesDetailPage.preview();
+		previewComponent = new PreviewComponent( page );
+		await previewComponent.previewReady();
 	} );
 
 	it( 'Close theme preview', async function () {
-		previewComponent = await PreviewComponent.Expect( page );
 		await previewComponent.closePreview();
 	} );
 

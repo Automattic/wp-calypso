@@ -2,12 +2,8 @@
  * External dependencies
  *
  */
-import React from 'react';
 import { createHigherOrderComponent } from '@wordpress/compose';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import { SiteOffsetContext, contextTypeLoaded } from './context';
 
 export const withApplySiteOffset = createHigherOrderComponent( ( WrappedComponent ) => {

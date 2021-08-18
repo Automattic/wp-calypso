@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-
 import React, { Fragment } from 'react';
-
-/**
- * Internal dependencies
- */
-import meta from './meta';
+import { ViewSiteButton } from 'calypso/layout/guided-tours/button-labels';
 import {
 	makeTour,
 	Tour,
@@ -16,7 +8,7 @@ import {
 	Quit,
 	Continue,
 } from 'calypso/layout/guided-tours/config-elements';
-import { ViewSiteButton } from 'calypso/layout/guided-tours/button-labels';
+import meta from './meta';
 
 export const TutorialSitePreviewTour = makeTour(
 	<Tour { ...meta }>

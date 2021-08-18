@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import PostEditButton from 'calypso/blocks/post-edit-button';
 
 export default class PostEditButtonExample extends React.PureComponent {

@@ -71,7 +71,6 @@
 		"lasagna": true,
 		"layout/app-banner": true,
 		"layout/guided-tours": true,
-		"layout/nps-survey-notice": true,
 		"layout/support-article-dialog": true,
 		"layout/query-selected-editor": true,
 		"legal-updates-banner": false,
@@ -99,6 +98,7 @@
 		"settings/security/monitor": true,
 		"settings/theme-setup": false,
 		"sign-in-with-apple": false,
+		"signup/professional-email-step": false,
 		"signup/reskin": true,
 		"signup/social": true,
 		"site-indicator": true,
@@ -114,7 +114,8 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"use-translation-chunks": true,
 		"wpcom-user-bootstrap": true,
-		"wordpress-action-search": false
+		"wordpress-action-search": false,
+		"redirect-fallback-browsers": true
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",

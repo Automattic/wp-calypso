@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { isExternal } from 'calypso/lib/url';
-import MaterialIcon from 'calypso/components/material-icon';
-import Count from 'calypso/components/count';
+import PropTypes from 'prop-types';
+import React, { useEffect } from 'react';
 import Badge from 'calypso/components/badge';
-import { preload } from 'calypso/sections-helper';
+import Count from 'calypso/components/count';
+import Gridicon from 'calypso/components/gridicon';
+import MaterialIcon from 'calypso/components/material-icon';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
+import { isExternal } from 'calypso/lib/url';
+import { preload } from 'calypso/sections-helper';
 
 export default function SidebarItem( props ) {
 	const isExternalLink = isExternal( props.link );

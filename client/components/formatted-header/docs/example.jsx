@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import React, { Fragment, PureComponent } from 'react';
-
-/**
- * Internal dependencies
- */
 import FormattedHeader from 'calypso/components/formatted-header';
 
 export default class FormattedHeaderExample extends PureComponent {

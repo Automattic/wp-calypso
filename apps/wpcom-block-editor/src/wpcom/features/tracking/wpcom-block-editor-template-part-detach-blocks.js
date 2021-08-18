@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { select } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { getFlattenedBlockNames } from '../utils';
-
-/**
- * Internal dependencies
- */
 import tracksRecordEvent from './track-record-event';
 
 /**

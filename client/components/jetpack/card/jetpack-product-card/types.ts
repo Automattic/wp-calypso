@@ -1,10 +1,3 @@
-/**
- * Internal dependencies
- */
-
-/**
- * Type dependencies
- */
 import type {
 	SelectorProductFeaturesItem,
 	SelectorProductFeatures,

@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -59,11 +58,10 @@ class MagicLogin extends React.Component {
 			isJetpack: this.props.isJetpackLogin,
 			isGutenboarding: this.props.isGutenboardingLogin,
 			locale: this.props.locale,
+			emailAddress: this.props.query?.email_address,
+			signupUrl: this.props.query?.signup_url,
 		};
-		const emailAddress = get( this.props, [ 'query', 'email_address' ] );
-		if ( emailAddress ) {
-			loginParameters.emailAddress = emailAddress;
-		}
+
 		page( login( loginParameters ) );
 	};
 
@@ -88,6 +86,7 @@ class MagicLogin extends React.Component {
 			isJetpack: isJetpackLogin,
 			isGutenboarding: isGutenboardingLogin,
 			locale: locale,
+			signupUrl: this.props.query?.signup_url,
 		};
 
 		return (
@@ -141,7 +140,7 @@ class MagicLogin extends React.Component {
 		return (
 			<Main
 				className={ classNames( 'magic-login', 'magic-login__request-link', {
-					'is-gutenboarding-login': this.props.isGutenboardingLogin,
+					'is-white-login': this.props.isGutenboardingLogin,
 				} ) }
 			>
 				{ this.props.isJetpackLogin && <JetpackHeader /> }

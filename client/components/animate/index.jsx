@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const Animate = ( { type, children } ) => (

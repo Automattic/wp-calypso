@@ -29,6 +29,7 @@
 	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"calendly_jetpack_appointment_url": "https://calendly.com/jetpack-com/jetpack-onboarding-call-test",
 	"features": {
+		"activity-log/retention-policies": false,
 		"ad-tracking": false,
 		"async-payments": false,
 		"automated-transfer": true,
@@ -101,7 +102,6 @@
 		"lasagna": true,
 		"layout/app-banner": true,
 		"layout/guided-tours": true,
-		"layout/nps-survey-notice": true,
 		"layout/support-article-dialog": true,
 		"layout/query-selected-editor": true,
 		"legal-updates-banner": true,
@@ -119,8 +119,6 @@
 		"me/vat-details": true,
 		"my-sites/checkout/web-payment/apple-pay": true,
 		"my-sites/checkout/web-payment/basic-card": false,
-		"nps-survey/devdocs": true,
-		"nps-survey/dev-trigger": true,
 		"network-connection": true,
 		"oauth": false,
 		"p2/p2-plus": true,
@@ -149,7 +147,7 @@
 		"settings/theme-setup": true,
 		"sign-in-with-apple": true,
 		"sign-in-with-apple/redirect": true,
-		"signup/professional-email-step": true,
+		"signup/professional-email-step": false,
 		"signup/reskin": true,
 		"signup/social": true,
 		"site-indicator": true,
@@ -171,6 +169,7 @@
 		"woocommerce/extension-referrers": true,
 		"woocommerce/store-on-non-atomic-sites": true,
 		"wpcom-user-bootstrap": false,
-		"wordpress-action-search": false
+		"wordpress-action-search": false,
+		"redirect-fallback-browsers": true
 	}
 }

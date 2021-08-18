@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
 import {
 	PLAN_PERSONAL,
@@ -22,6 +14,7 @@ import {
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
 } from '@automattic/calypso-products';
+import i18n from 'i18n-calypso';
 
 const noop = () => {};
 

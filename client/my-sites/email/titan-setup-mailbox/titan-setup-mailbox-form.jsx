@@ -18,16 +18,21 @@ import {
 	decorateMailboxWithAvailabilityError,
 	validateMailboxes,
 } from 'calypso/lib/titan/new-mailbox';
-import { emailManagement } from 'calypso/my-sites/email/paths';
+import { emailManagementTitanSetupThankYou } from 'calypso/my-sites/email/paths';
 import { errorNotice } from 'calypso/state/notices/actions';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-const getMailboxDomainName = ( mailbox ) => mailbox?.domain?.value;
-const getMailboxUserName = ( mailbox ) => mailbox?.mailbox?.value;
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import TitanNewMailboxList from 'calypso/my-sites/email/titan-add-mailboxes/titan-new-mailbox-list';
+import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
 import { useCreateTitanMailboxMutation } from 'calypso/data/emails/use-create-titan-mailbox-mutation';
 import { useGetTitanMailboxAvailability } from 'calypso/data/emails/use-get-titan-mailbox-availability';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+const getMailboxDomainName = ( mailbox ) => mailbox?.domain?.value;
+const getMailboxUserName = ( mailbox ) => mailbox?.mailbox?.value;
 
 const recordCompleteSetupClickEvent = ( canContinue, mailbox ) => {
 	return recordTracksEvent(
@@ -51,11 +56,15 @@ const useHandleSetupAction = (
 	const mailbox = mailboxes[ 0 ];
 
 	const selectedSite = useSelector( getSelectedSite );
-	const currentRoute = useSelector( getCurrentRoute );
 
-	const goToThankYouPage = () => {
-		// TODO: Change the destination to the Thank You page once it's ready
-		page( emailManagement( selectedSite?.slug ?? null, selectedDomainName, currentRoute ) );
+	const goToThankYouPage = ( emailAddress ) => {
+		page(
+			emailManagementTitanSetupThankYou(
+				selectedSite?.slug ?? null,
+				selectedDomainName,
+				emailAddress
+			)
+		);
 	};
 
 	const {
@@ -126,7 +135,11 @@ const useHandleSetupAction = (
 		try {
 			await createTitanMailbox();
 
-			goToThankYouPage();
+			const emailAddress = `${ getMailboxUserName( mailbox ) }@${ getMailboxDomainName(
+				mailbox
+			) }`;
+
+			goToThankYouPage( emailAddress );
 		} catch ( createError ) {
 			dispatch( errorNotice( createError.message ) );
 		}
@@ -170,12 +183,12 @@ const TitanSetupMailboxForm = ( { areSiteDomainsLoaded, selectedDomainName } ) =
 				validatedMailboxUuids={ validatedMailboxUuids }
 			>
 				<Button
-					className="titan-setup-mailbox__action-continue"
+					className="titan-setup-mailbox-form__button"
 					primary
 					busy={ isBusy }
 					onClick={ handleSetup }
 				>
-					{ translate( 'Set Up' ) }
+					{ translate( 'Complete setup' ) }
 				</Button>
 			</TitanNewMailboxList>
 		</Card>

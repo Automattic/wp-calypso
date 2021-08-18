@@ -1,9 +1,6 @@
-/**
- * External dependencies
- */
+import fs from 'fs';
 import { mockProcessStdout } from 'jest-mock-process';
 import mockFs from 'mock-fs';
-import fs from 'fs';
 
 let mockStdout;
 let getLogger;
@@ -12,7 +9,9 @@ beforeEach( () => {
 	( { getLogger } = require( '../index' ) );
 	mockStdout = mockProcessStdout();
 	mockFs( {
-		'/tmp': {},
+		'/tmp': {
+			'calypso.log': '',
+		},
 	} );
 } );
 

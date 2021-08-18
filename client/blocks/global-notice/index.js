@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
-import { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { infoNotice, removeNotice } from 'calypso/state/notices/actions';
 
 export class GlobalNotice extends Component {

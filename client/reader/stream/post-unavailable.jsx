@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { localize } from 'i18n-calypso';
 import config from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import React from 'react';
 
 class PostUnavailable extends React.PureComponent {
 	componentDidMount() {

@@ -1,24 +1,16 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { debounce, get, isEmpty } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
-import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
-import ConfirmationDialog from './dialog';
+import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
+import Gridicon from 'calypso/components/gridicon';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -30,12 +22,10 @@ import { getSiteAddressAvailabilityPending } from 'calypso/state/site-address-ch
 import { getSiteAddressValidationError } from 'calypso/state/site-address-change/selectors/get-site-address-validation-error';
 import { isRequestingSiteAddressChange } from 'calypso/state/site-address-change/selectors/is-requesting-site-address-change';
 import { isSiteAddressValidationAvailable } from 'calypso/state/site-address-change/selectors/is-site-address-validation-available';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import ConfirmationDialog from './dialog';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const SUBDOMAIN_LENGTH_MINIMUM = 4;

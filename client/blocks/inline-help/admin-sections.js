@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import { intersection, words, memoize } from 'lodash';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
-import { getCustomizerUrl } from 'calypso/state/sites/selectors';
-import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
-import { getLocaleSlug } from 'calypso/lib/i18n-utils';
-import { SUPPORT_TYPE_ADMIN_SECTION } from './constants';
+import { intersection, words, memoize } from 'lodash';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
+import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
+import { getCustomizerUrl } from 'calypso/state/sites/selectors';
+import { SUPPORT_TYPE_ADMIN_SECTION } from './constants';
 
 /**
  * Returns admin section items with site-based urls.

@@ -13,11 +13,13 @@ export function getDomainManagementUrl( { slug }, domain ) {
  * Send a POST request to update the ZD ticket linked to the given receiptId.
  *
  * @param receiptId number – Receipt unique identifier.
+ * @param jetpackTemporarySiteId number – Receipt unique identifier.
+ * @param eventId number – Calendly event unique identifier.
  */
-export async function addOnboardingCallInternalNote( receiptId ) {
+export async function addOnboardingCallInternalNote( receiptId, jetpackTemporarySiteId, eventId ) {
 	return await wpcom.req.post( {
 		path: addQueryArgs(
-			{ receipt_id: receiptId },
+			{ receipt_id: receiptId, temporary_blog_id: jetpackTemporarySiteId, event_id: eventId },
 			'/jetpack-checkout/support-ticket/onboarding-call'
 		),
 		apiNamespace: 'wpcom/v2',

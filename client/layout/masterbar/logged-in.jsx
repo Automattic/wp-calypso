@@ -1,46 +1,39 @@
-/**
- * External dependencies
- */
-import { parse } from 'qs';
-import { connect } from 'react-redux';
+import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import { parse } from 'qs';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import Masterbar from './masterbar';
-import Item from './item';
-import Notifications from './notifications';
-import Gravatar from 'calypso/components/gravatar';
-import config from '@automattic/calypso-config';
-import { preload } from 'calypso/sections-helper';
-import { getCurrentUserSiteCount, getCurrentUser } from 'calypso/state/current-user/selectors';
-import { isSupportSession } from 'calypso/state/support/selectors';
+import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
-import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
-import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
-import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
-import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
-import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
-import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
-import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
+import Gravatar from 'calypso/components/gravatar';
 import { getStatsPathForTab } from 'calypso/lib/route';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
-import getSiteMigrationStatus from 'calypso/state/selectors/get-site-migration-status';
-import { updateSiteMigrationMeta } from 'calypso/state/sites/actions';
+import { preload } from 'calypso/sections-helper';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserSiteCount, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { requestHttpData } from 'calypso/state/data-layer/http-data';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { hasUnseen } from 'calypso/state/reader-ui/seen-posts/selectors';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path.js';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import getSiteMigrationStatus from 'calypso/state/selectors/get-site-migration-status';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
+import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
+import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
+import { updateSiteMigrationMeta } from 'calypso/state/sites/actions';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
+import { isSupportSession } from 'calypso/state/support/selectors';
+import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PopUpSearch from '../popup-search';
+import Item from './item';
+import Masterbar from './masterbar';
+import Notifications from './notifications';
 
 class MasterbarLoggedIn extends React.Component {
 	state = {

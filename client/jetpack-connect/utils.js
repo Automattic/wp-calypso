@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
+import config, { isCalypsoLive } from '@automattic/calypso-config';
 import { includes, isEmpty } from 'lodash';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import config, { isCalypsoLive } from '@automattic/calypso-config';
+import PropTypes from 'prop-types';
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
-import { addQueryArgs, untrailingslashit } from 'calypso/lib/route';
 import { navigate } from 'calypso/lib/navigate';
+import { addQueryArgs, untrailingslashit } from 'calypso/lib/route';
 import { urlToSlug } from 'calypso/lib/url';
 import {
 	JPC_PATH_PLANS,

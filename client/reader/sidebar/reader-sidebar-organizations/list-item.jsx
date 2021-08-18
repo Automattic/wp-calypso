@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import ReaderSidebarHelper from '../helper';
-import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import Count from 'calypso/components/count';
 import Favicon from 'calypso/reader/components/favicon';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import ReaderSidebarHelper from '../helper';
 
 /**
  * Styles

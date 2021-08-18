@@ -175,9 +175,12 @@ export default function WPCheckout( {
 
 	const contactInfo: ManagedContactDetails =
 		useSelect( ( sel ) => sel( 'wpcom' ).getContactInfo() ) || {};
-	const { setSiteId, touchContactFields, applyDomainContactValidationResults } = useDispatch(
-		'wpcom'
-	);
+	const {
+		setSiteId,
+		touchContactFields,
+		applyDomainContactValidationResults,
+		clearDomainContactErrorMessages,
+	} = useDispatch( 'wpcom' );
 
 	const [
 		shouldShowContactDetailsValidationErrors,
@@ -193,7 +196,7 @@ export default function WPCheckout( {
 		// checkout -> login -> checkout.
 		const currentURLQueryParameters = Object.fromEntries( new URL( href ).searchParams.entries() );
 		const redirectTo = isJetpackCheckout
-			? addQueryArgs( { ...currentURLQueryParameters, flow: 'logged-out-checkout' }, pathname )
+			? addQueryArgs( { ...currentURLQueryParameters, flow: 'coming_from_login' }, pathname )
 			: '/checkout/no-site?cart=no-user';
 
 		const loginUrl = login( { redirectTo, emailAddress } );
@@ -201,7 +204,6 @@ export default function WPCheckout( {
 		reduxDispatch(
 			recordTracksEvent( 'calypso_checkout_wpcom_email_exists', {
 				email: emailAddress,
-				checkout_flow: isJetpackCheckout ? 'site_only_checkout' : 'wpcom_registrationless',
 			} )
 		);
 
@@ -215,9 +217,6 @@ export default function WPCheckout( {
 								reduxDispatch(
 									recordTracksEvent( 'calypso_checkout_composite_login_click', {
 										email: emailAddress,
-										checkout_flow: isJetpackCheckout
-											? 'site_only_checkout'
-											: 'wpcom_registrationless',
 									} )
 								)
 							}
@@ -243,6 +242,7 @@ export default function WPCheckout( {
 				paymentMethodId: activePaymentMethod?.id ?? '',
 				validationResult,
 				applyDomainContactValidationResults,
+				clearDomainContactErrorMessages,
 			} );
 			const isSignupValidationValid = isContactValidationResponseValid(
 				validationResult,
@@ -263,6 +263,7 @@ export default function WPCheckout( {
 				paymentMethodId: activePaymentMethod?.id ?? '',
 				validationResult,
 				applyDomainContactValidationResults,
+				clearDomainContactErrorMessages,
 			} );
 			return isContactValidationResponseValid( validationResult, contactInfo );
 		} else if ( contactDetailsType === 'domain' ) {
@@ -277,6 +278,7 @@ export default function WPCheckout( {
 				paymentMethodId: activePaymentMethod?.id ?? '',
 				validationResult,
 				applyDomainContactValidationResults,
+				clearDomainContactErrorMessages,
 			} );
 			return isContactValidationResponseValid( validationResult, contactInfo );
 		} else if ( contactDetailsType === 'gsuite' ) {
@@ -291,6 +293,7 @@ export default function WPCheckout( {
 				paymentMethodId: activePaymentMethod?.id ?? '',
 				validationResult,
 				applyDomainContactValidationResults,
+				clearDomainContactErrorMessages,
 			} );
 			return isContactValidationResponseValid( validationResult, contactInfo );
 		}
@@ -447,6 +450,7 @@ export default function WPCheckout( {
 						<SecondaryCartPromotions
 							responseCart={ responseCart }
 							addItemToCart={ addItemToCart }
+							isCartPendingUpdate={ isCartPendingUpdate }
 						/>
 						<CheckoutHelpLink />
 					</CheckoutSummaryBody>

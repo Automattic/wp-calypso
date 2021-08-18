@@ -1,26 +1,17 @@
 /* eslint-disable react/no-string-refs */
 // TODO: remove string ref usage.
-/**
- * External dependencies
- */
+
 import debugFactory from 'debug';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDom from 'react-dom';
-
-/**
- * Internal dependencies
- */
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
-import ScrollStore from './scroll-store';
-import ScrollHelper from './scroll-helper';
-import scrollTo from 'calypso/lib/scroll-to';
 import smartSetState from 'calypso/lib/react-smart-set-state';
+import scrollTo from 'calypso/lib/scroll-to';
+import ScrollHelper from './scroll-helper';
+import ScrollStore from './scroll-store';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

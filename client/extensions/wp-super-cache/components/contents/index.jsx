@@ -1,24 +1,16 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { flowRight, get, isEmpty, pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { Button, Card } from '@automattic/components';
-import CacheStats from './cache-stats';
-import QueryStats from '../data/query-stats';
+import { flowRight, get, isEmpty, pick } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
-import WrapSettingsForm from '../wrap-settings-form';
+import { getSiteTitle, isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { generateStats } from '../../state/stats/actions';
-import { getSiteTitle, isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import { getStats, isGeneratingStats } from '../../state/stats/selectors';
+import QueryStats from '../data/query-stats';
+import WrapSettingsForm from '../wrap-settings-form';
+import CacheStats from './cache-stats';
 
 class ContentsTab extends Component {
 	static propTypes = {

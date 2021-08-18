@@ -35,6 +35,7 @@ import {
 	isTitanMail,
 	isP2Plus,
 	isMonthlyProduct,
+	isBiennially,
 	getTermDuration,
 	getPlan,
 	isBloggerPlan,
@@ -126,6 +127,10 @@ export function hasDomainCredit( cart ) {
 
 export function hasMonthlyCartItem( cart ) {
 	return getAllCartItems( cart ).some( isMonthlyProduct );
+}
+
+export function hasBiennialCartItem( cart ) {
+	return getAllCartItems( cart ).some( isBiennially );
 }
 
 /**

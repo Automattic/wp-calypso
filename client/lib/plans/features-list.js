@@ -264,9 +264,9 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Free domain for one year' ),
 		getDescription: () =>
 			i18n.translate(
-				'Get a free domain for one year. ' +
-					'Doesn’t apply to plan upgrades, renewals, or to premium domains. ' +
-					'After one year, domain renews at its {{a}}regular price{{/a}}.',
+				'All paid WordPress.com plans purchased for an annual term include one year of free domain registration. ' +
+					'Domains registered through this promotion will renew at our {{a}}standard rate{{/a}}, plus applicable taxes, after the first year.{{br}}{{br}}' +
+					'This offer is redeemable one time only, and does not apply to plan upgrades, renewals, or premium domains.',
 				{
 					components: {
 						a: (
@@ -276,6 +276,7 @@ export const FEATURES_LIST = {
 								rel="noopener noreferrer"
 							/>
 						),
+						br: <br />,
 					},
 				}
 			),
@@ -327,7 +328,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_EMAIL_SUPPORT_SIGNUP ]: {
 		getSlug: () => FEATURE_EMAIL_SUPPORT_SIGNUP,
-		getTitle: () => i18n.translate( 'Unlimited email support' ),
+		getTitle: () => i18n.translate( 'Unlimited customer support via email' ),
 		getDescription: () =>
 			i18n.translate( 'Email us any time, any day of the week for personalized, expert support.' ),
 	},
@@ -448,9 +449,9 @@ export const FEATURES_LIST = {
 			}
 
 			return i18n.translate(
-				'Get a free domain for one year. ' +
-					'Doesn’t apply to plan upgrades, renewals, or to premium domains. ' +
-					'After one year, domain renews at its {{a}}regular price{{/a}}.',
+				'All paid WordPress.com plans purchased for an annual term include one year of free domain registration. ' +
+					'Domains registered through this promotion will renew at our {{a}}standard rate{{/a}}, plus applicable taxes, after the first year.{{br /}}{{br /}}' +
+					'This offer is redeemable one time only, and does not apply to plan upgrades, renewals, or premium domains.',
 				{
 					components: {
 						a: (
@@ -460,6 +461,7 @@ export const FEATURES_LIST = {
 								rel="noopener noreferrer"
 							/>
 						),
+						br: <br />,
 					},
 				}
 			);
@@ -734,7 +736,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_EMAIL_SUPPORT ]: {
 		getSlug: () => FEATURE_EMAIL_SUPPORT,
-		getTitle: () => i18n.translate( 'Unlimited email support' ),
+		getTitle: () => i18n.translate( 'Unlimited customer support via email' ),
 		getDescription: () =>
 			i18n.translate( 'Email us any time, any day of the week for personalized, expert support.' ),
 	},

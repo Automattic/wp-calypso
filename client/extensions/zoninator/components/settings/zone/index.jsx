@@ -1,33 +1,25 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import HeaderCake from 'calypso/components/header-cake';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import DeleteZoneDialog from './delete-zone-dialog';
-import QueryFeed from '../../data/query-feed';
-import ZoneContentForm from '../../forms/zone-content-form';
-import ZoneDetailsForm from '../../forms/zone-details-form';
-import ZoneLock from '../../data/zone-lock';
-import ZoneLockWarningNotice from './zone-lock-warning-notice';
-import ZoneNotFound from './zone-not-found';
+import { settingsPath } from '../../../app/util';
 import { saveFeed } from '../../../state/feeds/actions';
-import { deleteZone, saveZone } from '../../../state/zones/actions';
 import { getFeed, isRequestingFeed, isSavingFeed } from '../../../state/feeds/selectors';
 import { blocked, expires } from '../../../state/locks/selectors';
+import { deleteZone, saveZone } from '../../../state/zones/actions';
 import { getZone, isRequestingZones, isSavingZone } from '../../../state/zones/selectors';
-import { settingsPath } from '../../../app/util';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import QueryFeed from '../../data/query-feed';
+import ZoneLock from '../../data/zone-lock';
+import ZoneContentForm from '../../forms/zone-content-form';
+import ZoneDetailsForm from '../../forms/zone-details-form';
+import DeleteZoneDialog from './delete-zone-dialog';
+import ZoneLockWarningNotice from './zone-lock-warning-notice';
+import ZoneNotFound from './zone-not-found';
 
 class Zone extends Component {
 	static propTypes = {

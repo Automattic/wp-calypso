@@ -2,19 +2,12 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import React from 'react';
-import { createStore } from 'redux';
-import { Provider } from 'react-redux';
 import { render, fireEvent } from '@testing-library/react';
-import * as actions from 'calypso/state/jetpack/credentials/actions';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
 import withServerCredentialsForm from 'calypso/components/jetpack/with-server-credentials-form';
+import * as actions from 'calypso/state/jetpack/credentials/actions';
 
 /**
  * Mocks

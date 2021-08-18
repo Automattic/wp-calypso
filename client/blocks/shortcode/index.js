@@ -1,19 +1,8 @@
-/**
- * External dependencies
- */
 import classNames from 'classnames';
+import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
-import { omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
-
-/**
- * Local dependencies
- */
 import ShortcodeFrame from './frame';
 
 function useRenderedShortcode( siteId, shortcode ) {

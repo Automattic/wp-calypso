@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import PropTypes from 'prop-types';
-import Gridicon from 'calypso/components/gridicon';
-import { times } from 'lodash';
 import classNames from 'classnames';
+import { times } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import Gridicon from 'calypso/components/gridicon';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default class Rating extends React.PureComponent {

@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
+import { Card } from '@automattic/components';
 import React, { PureComponent } from 'react';
-
-/**
- * Internal dependencies
- */
+import CardHeading from 'calypso/components/card-heading';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
-import CardHeading from 'calypso/components/card-heading';
-import { Card } from '@automattic/components';
 
 class LayoutExample extends PureComponent {
 	static displayName = 'LayoutExample';

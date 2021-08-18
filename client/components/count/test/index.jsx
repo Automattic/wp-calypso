@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import React from 'react';
 import { spy } from 'sinon';
-
-/**
- * Internal dependencies
- */
 import { Count } from '../';
 
 describe( 'Count', () => {

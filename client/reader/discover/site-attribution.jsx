@@ -1,27 +1,16 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { get } from 'lodash';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import SiteIcon from 'calypso/blocks/site-icon';
+import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import { getSiteUrl, getSourceFollowUrl, getSourceData } from 'calypso/reader/discover/helper';
 import FollowButton from 'calypso/reader/follow-button';
+import { getSite } from 'calypso/state/reader/sites/selectors';
 import { getLinkProps } from './helper';
 import { recordFollowToggle, recordSiteClick } from './stats';
-import { getSiteUrl, getSourceFollowUrl, getSourceData } from 'calypso/reader/discover/helper';
-import SiteIcon from 'calypso/blocks/site-icon';
-import { getSite } from 'calypso/state/reader/sites/selectors';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
-
-/**
- * Style dependencies
- */
 import './site-attribution.scss';
 
 class DiscoverSiteAttribution extends React.Component {

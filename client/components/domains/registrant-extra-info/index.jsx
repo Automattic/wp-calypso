@@ -3,21 +3,14 @@
  *
  */
 
-import React, { PureComponent } from 'react';
-import { keys, filter } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
+import { keys, filter } from 'lodash';
+import React, { PureComponent } from 'react';
+import { getTopLevelOfTld } from 'calypso/lib/domains';
 import ca from './ca-form';
 import fr from './fr-form';
 import uk from './uk-form';
-import { getTopLevelOfTld } from 'calypso/lib/domains';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const tldSpecificForms = {

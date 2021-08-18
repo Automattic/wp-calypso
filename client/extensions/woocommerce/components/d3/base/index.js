@@ -1,11 +1,7 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { select as d3Select } from 'd3-selection';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 export default class D3Base extends Component {
 	static propTypes = {

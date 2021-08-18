@@ -1,32 +1,24 @@
 /* global calypsoifyGutenberg, Image, MessageChannel, MessagePort, requestAnimationFrame */
 
-/**
- * External dependencies
- */
-import $ from 'jquery';
-import { filter, find, forEach, get, map, partialRight } from 'lodash';
-import { dispatch, select, subscribe, use } from '@wordpress/data';
 import { createBlock, parse } from '@wordpress/blocks';
-import { addAction, addFilter, doAction, removeAction } from '@wordpress/hooks';
-import { addQueryArgs, getQueryArg } from '@wordpress/url';
-import { registerPlugin } from '@wordpress/plugins';
-import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/edit-post';
 import {
 	Button,
 	__experimentalNavigationBackButton as NavigationBackButton,
 } from '@wordpress/components';
+import { dispatch, select, subscribe, use } from '@wordpress/data';
+import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/edit-post';
+import { addAction, addFilter, doAction, removeAction } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
+import { registerPlugin } from '@wordpress/plugins';
+import { addQueryArgs, getQueryArg } from '@wordpress/url';
+import debugFactory from 'debug';
+import $ from 'jquery';
+import { filter, find, forEach, get, map, partialRight } from 'lodash';
 import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
-import debugFactory from 'debug';
 import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../editing-toolkit/editing-toolkit-plugin/wpcom-block-editor-nav-sidebar/src/constants';
-
-/**
- * Internal dependencies
- */
 import { inIframe, isEditorReadyWithBlocks, sendMessage, getPages } from '../../utils';
-
 /**
  * Conditional dependency.  We cannot use the standard 'import' since this package is
  * not available in the post editor and causes WSOD in that case.  Instead, we can

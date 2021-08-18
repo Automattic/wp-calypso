@@ -151,10 +151,10 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_SECURITY_REALTIME,
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
-	PLAN_JETPACK_SECURITY,
-	PLAN_JETPACK_SECURITY_MONTHLY,
-	PLAN_JETPACK_SECURITY_PRO,
-	PLAN_JETPACK_SECURITY_PRO_MONTHLY,
+	PLAN_JETPACK_SECURITY_T1_YEARLY,
+	PLAN_JETPACK_SECURITY_T1_MONTHLY,
+	PLAN_JETPACK_SECURITY_T2_YEARLY,
+	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 	PLAN_P2_FREE,
 	PLAN_P2_PLUS,
 	PLAN_PERSONAL,
@@ -177,8 +177,8 @@ import {
 	TYPE_PREMIUM,
 	TYPE_SECURITY_DAILY,
 	TYPE_SECURITY_REALTIME,
-	TYPE_SECURITY,
-	TYPE_SECURITY_PRO,
+	TYPE_SECURITY_T1,
+	TYPE_SECURITY_T2,
 } from './constants';
 
 function compact( elements ) {
@@ -231,12 +231,12 @@ const getPlanBloggerDetails = () => ( {
 	getStoreAudience: () => i18n.translate( 'Best for bloggers' ),
 	getDescription: () =>
 		i18n.translate(
-			'{{strong}}Best for bloggers:{{/strong}} Brand your blog with a custom .blog domain name, and remove all WordPress.com advertising. Receive additional storage space and email support.',
+			'{{strong}}Best for bloggers:{{/strong}} Brand your blog with a custom .blog domain name, and remove all WordPress.com advertising. Receive additional storage space and customer support via email.',
 			plansDescriptionHeadingComponent
 		),
 	getShortDescription: () =>
 		i18n.translate(
-			'Brand your blog with a custom .blog domain name, and remove all WordPress.com advertising. Receive additional storage space and email support.'
+			'Brand your blog with a custom .blog domain name, and remove all WordPress.com advertising. Receive additional storage space and customer support via email.'
 		),
 	// }}}
 	getPlanCompareFeatures: () => [
@@ -284,13 +284,13 @@ const getPlanPersonalDetails = () => ( {
 		i18n.translate(
 			'{{strong}}Best for personal use:{{/strong}} Boost your' +
 				' website with a custom domain name, and remove all WordPress.com advertising. ' +
-				'Unlock unlimited, expert email support.',
+				'Unlock unlimited, expert customer support via email.',
 			plansDescriptionHeadingComponent
 		),
 	getShortDescription: () =>
 		i18n.translate(
 			'Boost your website with a custom domain name, and remove all WordPress.com advertising. ' +
-				'Unlock unlimited, expert email support.'
+				'Unlock unlimited, expert customer support via email.'
 		),
 	getPlanCompareFeatures: () => [
 		// pay attention to ordering, shared features should align on /plan page
@@ -1368,27 +1368,27 @@ export const PLANS_LIST = {
 		getProductId: () => 2015,
 	},
 
-	[ PLAN_JETPACK_SECURITY ]: {
+	[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: {
 		group: GROUP_JETPACK,
-		type: TYPE_SECURITY,
+		type: TYPE_SECURITY_T1,
 		...getAnnualTimeframe(),
 	},
 
-	[ PLAN_JETPACK_SECURITY_MONTHLY ]: {
+	[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: {
 		group: GROUP_JETPACK,
-		type: TYPE_SECURITY,
+		type: TYPE_SECURITY_T1,
 		...getMonthlyTimeframe(),
 	},
 
-	[ PLAN_JETPACK_SECURITY_PRO ]: {
+	[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: {
 		group: GROUP_JETPACK,
-		type: TYPE_SECURITY_PRO,
+		type: TYPE_SECURITY_T2,
 		...getAnnualTimeframe(),
 	},
 
-	[ PLAN_JETPACK_SECURITY_PRO_MONTHLY ]: {
+	[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: {
 		group: GROUP_JETPACK,
-		type: TYPE_SECURITY_PRO,
+		type: TYPE_SECURITY_T2,
 		...getMonthlyTimeframe(),
 	},
 

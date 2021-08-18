@@ -15,7 +15,7 @@ import ListPlanPromo from './list-plan-promo';
 
 function getTitle( filter, translate ) {
 	if ( filter === 'audio' ) {
-		return translate( 'Upgrade to the Premium Plan to Enable Audio Uploads' );
+		return translate( 'Upgrade to the Personal Plan to Enable Audio Uploads' );
 	}
 
 	return translate( 'Upgrade to the Premium Plan to Enable VideoPress' );
@@ -24,7 +24,7 @@ function getTitle( filter, translate ) {
 function getSubtitle( filter, translate ) {
 	if ( filter === 'audio' ) {
 		return translate(
-			"By upgrading to the Premium plan, you'll enable audio upload support on your site."
+			"By upgrading to the Personal plan, you'll enable audio upload support on your site."
 		);
 	}
 

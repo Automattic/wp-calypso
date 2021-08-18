@@ -1,15 +1,8 @@
-/**
- * External Dependencies
- */
-const { app, dialog, BrowserWindow } = require( 'electron' );
 const { EventEmitter } = require( 'events' );
-
-/**
- * Internal dependencies
- */
-const platform = require( '../../lib/platform' );
+const { app, dialog, BrowserWindow } = require( 'electron' );
 const config = require( '../../lib/config' );
 const log = require( '../../lib/logger' )( 'desktop:updater' );
+const platform = require( '../../lib/platform' );
 
 const isMacOSBigSur =
 	process.platform === 'darwin' && process.getSystemVersion().startsWith( '11' );

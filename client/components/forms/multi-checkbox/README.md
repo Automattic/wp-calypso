@@ -21,8 +21,20 @@ This code snippet will generate the following output:
 
 ```html
 <div>
-	<label class="form-label"><input type="checkbox" class="form-checkbox" name="favorite_numbers[]" value="1" checked="checked"><span>One</span></label>
-	<label class="form-label"><input type="checkbox" class="form-checkbox" name="favorite_numbers[]" value="2"><span>Two</span></label>
+	<label class="form-label"
+		><input
+			type="checkbox"
+			class="form-checkbox"
+			name="favorite_numbers[]"
+			value="1"
+			checked="checked"
+		/><span>One</span></label
+	>
+	<label class="form-label"
+		><input type="checkbox" class="form-checkbox" name="favorite_numbers[]" value="2" /><span
+			>Two</span
+		></label
+	>
 </div>
 ```
 

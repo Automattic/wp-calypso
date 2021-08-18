@@ -1,13 +1,6 @@
-/**
- * External Dependencies
- */
 const { app } = require( 'electron' );
-
-/**
- * Internal dependencies
- */
-const platform = require( '../../lib/platform' );
 const log = require( '../../lib/logger' )( 'desktop:app-instance' );
+const platform = require( '../../lib/platform' );
 
 function AppInstance() {}
 

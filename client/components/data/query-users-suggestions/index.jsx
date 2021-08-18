@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { isRequestingUserSuggestions as isRequesting } from 'calypso/state/user-suggestions/selectors';
 import { requestUserSuggestions } from 'calypso/state/user-suggestions/actions';
+import { isRequestingUserSuggestions as isRequesting } from 'calypso/state/user-suggestions/selectors';
 
 class QueryUsersSuggestions extends Component {
 	static propTypes = {

@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
-import SiteTypeForm from './form';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
-import { submitSiteType } from 'calypso/state/signup/steps/site-type/actions';
-import { saveSignupStep } from 'calypso/state/signup/progress/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
+import { saveSignupStep } from 'calypso/state/signup/progress/actions';
+import { submitSiteType } from 'calypso/state/signup/steps/site-type/actions';
+import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
+import SiteTypeForm from './form';
 
 const siteTypeToFlowname = {
 	import: 'import-onboarding',

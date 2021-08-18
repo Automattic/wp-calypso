@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { requestPostRevisions } from 'calypso/state/posts/revisions/actions';
 import { getEditedPostValue } from 'calypso/state/posts/selectors';
 

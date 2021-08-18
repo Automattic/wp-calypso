@@ -1,14 +1,8 @@
-/**
- * External dependencies
- */
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import classNames from 'classnames';
 import twemoji from 'twemoji';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default class Emojify extends PureComponent {

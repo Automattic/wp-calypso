@@ -5,22 +5,25 @@ import {
 	ThemesPage,
 	PreviewComponent,
 	setupHooks,
+	SiteSelectComponent,
 } from '@automattic/calypso-e2e';
 
 describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 	let sidebarComponent;
 	let themesPage;
 	let previewComponent;
+	let page;
 	// This test will use this specific theme as it will never be active.
 	const themeName = 'Twenty Seventeen';
-	let page;
+	const user = 'defaultUser';
+	const siteURL = DataHelper.getAccountSiteURL( user, { protocol: false } );
 
 	setupHooks( ( args ) => {
 		page = args.page;
 	} );
 
 	it( 'Log In', async function () {
-		const loginFlow = new LoginFlow( page );
+		const loginFlow = new LoginFlow( page, user );
 		await loginFlow.logIn();
 	} );
 
@@ -29,8 +32,16 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 		await sidebarComponent.gotoMenu( { item: 'Appearance', subitem: 'Themes' } );
 	} );
 
+	it( `Choose test site ${ siteURL } if Site Selector is shown`, async function () {
+		const siteSelectComponent = new SiteSelectComponent( page );
+
+		if ( await siteSelectComponent.isSiteSelectorVisible() ) {
+			await siteSelectComponent.selectSite( siteURL );
+		}
+	} );
+
 	it( `Search for free theme with keyword ${ themeName }`, async function () {
-		themesPage = await ThemesPage.Expect( page );
+		themesPage = new ThemesPage( page );
 		await themesPage.filterThemes( 'Free' );
 		await themesPage.search( themeName );
 	} );
@@ -41,7 +52,8 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 	} );
 
 	it( 'Preview theme', async function () {
-		previewComponent = await PreviewComponent.Expect( page );
+		previewComponent = new PreviewComponent( page );
+		await previewComponent.previewReady();
 	} );
 
 	it( 'Close preview', async function () {

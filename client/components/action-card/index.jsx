@@ -1,19 +1,9 @@
-/**
- * External dependencies
- */
+import { Card, Button } from '@automattic/components';
+import classnames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 import Gridicon from 'calypso/components/gridicon';
-import PropTypes from 'prop-types';
-import classnames from 'classnames';
 
-/**
- * Internal dependencies
- */
-import { Card, Button } from '@automattic/components';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const ActionCard = ( {

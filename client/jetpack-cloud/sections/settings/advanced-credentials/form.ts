@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { TranslateResult, translate } from 'i18n-calypso';
 
 export enum FormMode {

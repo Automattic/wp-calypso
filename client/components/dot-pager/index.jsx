@@ -1,15 +1,10 @@
-/**
- * External dependencies
- */
-import React, { Children, useState } from 'react';
+import { useResizeObserver } from '@wordpress/compose';
+import { Icon, arrowRight } from '@wordpress/icons';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { times } from 'lodash';
-import classnames from 'classnames';
-import { Icon, arrowRight } from '@wordpress/icons';
+import React, { Children, useState, useEffect, useRef } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const Controls = ( { showControlLabels = false, currentPage, numberOfPages, setCurrentPage } ) => {
@@ -68,17 +63,49 @@ const Controls = ( { showControlLabels = false, currentPage, numberOfPages, setC
 	);
 };
 
-export const DotPager = ( { showControlLabels = false, children, className, ...props } ) => {
+export const DotPager = ( {
+	showControlLabels = false,
+	hasDynamicHeight = false,
+	children,
+	className,
+	onPageSelected,
+	...props
+} ) => {
 	const [ currentPage, setCurrentPage ] = useState( 0 );
+	const [ pagesStyle, setPagesStyle ] = useState();
+	const pagesRef = useRef();
+	const [ resizeObserver, sizes ] = useResizeObserver();
+	const numPages = Children.count( children );
+
+	useEffect( () => {
+		if ( ! hasDynamicHeight ) {
+			return;
+		}
+
+		const targetHeight = pagesRef.current?.children[ currentPage ]?.offsetHeight;
+
+		setPagesStyle( targetHeight ? { height: targetHeight } : undefined );
+	}, [ hasDynamicHeight, currentPage, sizes.width, setPagesStyle, children ] );
+
+	useEffect( () => {
+		if ( currentPage >= numPages ) {
+			setCurrentPage( numPages - 1 );
+		}
+	}, [ numPages ] );
+
 	return (
 		<div className={ className } { ...props }>
+			{ resizeObserver }
 			<Controls
 				showControlLabels={ showControlLabels }
 				currentPage={ currentPage }
-				numberOfPages={ Children.count( children ) }
-				setCurrentPage={ setCurrentPage }
+				numberOfPages={ numPages }
+				setCurrentPage={ ( index ) => {
+					onPageSelected && onPageSelected( index );
+					setCurrentPage( index );
+				} }
 			/>
-			<div className="dot-pager__pages">
+			<div className="dot-pager__pages" ref={ pagesRef } style={ pagesStyle }>
 				{ Children.map( children, ( child, index ) => (
 					<div
 						className={ classnames( 'dot-pager__page', {

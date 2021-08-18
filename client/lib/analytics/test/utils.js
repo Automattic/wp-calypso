@@ -38,7 +38,7 @@ describe( '#shouldReportOmitBlogId', () => {
 		expect( shouldReportOmitBlogId( '/tag' ) ).toBe( true );
 	} );
 	test( 'always returns false when :site is in the path', () => {
-		expect( shouldReportOmitBlogId( '/me/concierge/:site/book' ) ).toBe( false );
+		expect( shouldReportOmitBlogId( '/me/quickstart/:site/book' ) ).toBe( false );
 		expect( shouldReportOmitBlogId( '/following/:site' ) ).toBe( false );
 	} );
 	test( 'always returns false when :site_id is in the path', () => {
@@ -46,10 +46,10 @@ describe( '#shouldReportOmitBlogId', () => {
 		expect( shouldReportOmitBlogId( '/sites/:site_id/external-media-upload' ) ).toBe( false );
 	} );
 	test( 'always returns false when :siteSlug is in the path', () => {
-		expect( shouldReportOmitBlogId( '/me/concierge/:siteSlug/:appointmentId/cancel' ) ).toBe(
+		expect( shouldReportOmitBlogId( '/me/quickstart/:siteSlug/:appointmentId/cancel' ) ).toBe(
 			false
 		);
-		expect( shouldReportOmitBlogId( '/me/concierge/:siteslug' ) ).toBe( false );
+		expect( shouldReportOmitBlogId( '/me/quickstart/:siteslug' ) ).toBe( false );
 	} );
 	test( 'always returns false when :siteId is in the path', () => {
 		expect( shouldReportOmitBlogId( '/jetpack/sso/:siteId?/:ssoNonce' ) ).toBe( false );

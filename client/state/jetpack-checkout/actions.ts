@@ -10,18 +10,21 @@ interface UpdateJetpackCheckoutSupportTicketActionType {
 	type: typeof JETPACK_CHECKOUT_UPDATE_SUPPORT_TICKET_REQUEST;
 	siteUrl: string;
 	receiptId: number;
-	source?: string;
+	source: string;
+	jetpackTemporarySiteId?: number;
 }
 
 export function requestUpdateJetpackCheckoutSupportTicket(
 	siteUrl: string,
 	receiptId: number,
-	source: string
+	source: string,
+	jetpackTemporarySiteId: number | undefined
 ): UpdateJetpackCheckoutSupportTicketActionType {
 	return {
 		type: JETPACK_CHECKOUT_UPDATE_SUPPORT_TICKET_REQUEST,
 		siteUrl,
 		receiptId,
 		source,
+		jetpackTemporarySiteId,
 	};
 }

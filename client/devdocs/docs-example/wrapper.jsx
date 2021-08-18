@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import DocsExampleError from 'calypso/devdocs/docs-example/error';
 
 const renderTitle = ( unique, name, url, onTitleClick ) =>

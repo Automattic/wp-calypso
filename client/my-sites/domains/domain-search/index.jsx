@@ -241,7 +241,9 @@ class DomainSearch extends Component {
 							<FormattedHeader
 								brandFont
 								headerText={
-									isManagingAllDomains ? translate( 'All Domains' ) : translate( 'Site Domains' )
+									isManagingAllDomains
+										? translate( 'All Domains' )
+										: translate( 'Search for a domain' )
 								}
 								align="left"
 							/>

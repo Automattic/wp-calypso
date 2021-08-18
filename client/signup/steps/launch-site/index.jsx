@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 
 class LaunchSiteComponent extends Component {

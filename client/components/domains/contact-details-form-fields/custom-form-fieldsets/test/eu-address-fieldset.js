@@ -2,16 +2,9 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import EuAddressFieldset from '../eu-address-fieldset';
 
 jest.mock( 'i18n-calypso', () => ( {

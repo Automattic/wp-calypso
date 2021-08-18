@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import isSurveyFilledIn from '../is-survey-filled-in';
 
 describe( 'isSurveyFilledIn', () => {

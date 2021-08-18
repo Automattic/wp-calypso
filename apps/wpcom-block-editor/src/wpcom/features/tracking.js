@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
 import { use, select } from '@wordpress/data';
-import { registerPlugin } from '@wordpress/plugins';
 import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
-import { find, isEqual } from 'lodash';
+import { registerPlugin } from '@wordpress/plugins';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import tracksRecordEvent from './tracking/track-record-event';
+import { find, isEqual } from 'lodash';
 import delegateEventTracking, {
 	registerSubscriber as registerDelegateEventSubscriber,
 } from './tracking/delegate-event-tracking';
+import tracksRecordEvent from './tracking/track-record-event';
 import { trackGlobalStylesTabSelected } from './tracking/wpcom-block-editor-global-styles-tab-selected';
 import {
 	buildGlobalStylesContentEvents,

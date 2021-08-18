@@ -1,65 +1,53 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { startsWith, flowRight as compose, some } from 'lodash';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import AsyncLoad from 'calypso/components/async-load';
-import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
-import JetpackCloudMasterbar from 'calypso/components/jetpack/masterbar';
-import EmptyMasterbar from 'calypso/layout/masterbar/empty';
-import HtmlIsIframeClassname from 'calypso/layout/html-is-iframe-classname';
 import config from '@automattic/calypso-config';
-import OfflineStatus from 'calypso/layout/offline-status';
+import { isWithinBreakpoint } from '@automattic/viewport';
+import { useBreakpoint } from '@automattic/viewport-react';
+import classnames from 'classnames';
+import { startsWith, flowRight as compose, some } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import SitePreview from 'calypso/blocks/site-preview';
+import AsyncLoad from 'calypso/components/async-load';
+import DocumentHead from 'calypso/components/data/document-head';
 import QueryPreferences from 'calypso/components/data/query-preferences';
-import QuerySites from 'calypso/components/data/query-sites';
+import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySiteSelectedEditor from 'calypso/components/data/query-site-selected-editor';
+import QuerySites from 'calypso/components/data/query-sites';
+import JetpackCloudMasterbar from 'calypso/components/jetpack/masterbar';
+import { withCurrentRoute } from 'calypso/components/route';
+import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-utils';
+import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
+import HtmlIsIframeClassname from 'calypso/layout/html-is-iframe-classname';
+import EmptyMasterbar from 'calypso/layout/masterbar/empty';
+import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
+import OfflineStatus from 'calypso/layout/offline-status';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import KeyboardShortcutsMenu from 'calypso/lib/keyboard-shortcuts/menu';
+import { isWpMobileApp, isWcMobileApp } from 'calypso/lib/mobile-app';
+import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { getMessagePathForJITM } from 'calypso/lib/route';
+import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { isOffline } from 'calypso/state/application/selectors';
+import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
+import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
+import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import { getPreference } from 'calypso/state/preferences/selectors';
+import isCommunityTranslatorEnabled from 'calypso/state/selectors/is-community-translator-enabled';
+import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isSupportSession } from 'calypso/state/support/selectors';
+import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
 	getSelectedSiteId,
 	masterbarIsVisible,
 	getSelectedSite,
 	getSidebarIsCollapsed,
 } from 'calypso/state/ui/selectors';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import UserVerificationChecker from 'calypso/lib/user/verification-checker';
-import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
-import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { isSupportSession } from 'calypso/state/support/selectors';
-import SitePreview from 'calypso/blocks/site-preview';
-import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
-import DocumentHead from 'calypso/components/data/document-head';
-import { getPreference } from 'calypso/state/preferences/selectors';
-import KeyboardShortcutsMenu from 'calypso/lib/keyboard-shortcuts/menu';
 import SupportUser from 'calypso/support/support-user';
-import isCommunityTranslatorEnabled from 'calypso/state/selectors/is-community-translator-enabled';
-import { isE2ETest } from 'calypso/lib/e2e';
-import { getMessagePathForJITM } from 'calypso/lib/route';
 import BodySectionCssClass from './body-section-css-class';
-import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-utils';
-import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
-import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import LayoutLoader from './loader';
-import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
-import { withCurrentRoute } from 'calypso/components/route';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { isWpMobileApp, isWcMobileApp } from 'calypso/lib/mobile-app';
 import { getShouldShowAppBanner, handleScroll } from './utils';
-import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
-import { useBreakpoint } from '@automattic/viewport-react';
-import { isWithinBreakpoint } from '@automattic/viewport';
-import QuerySiteFeatures from 'calypso/components/data/query-site-features';
-
-/**
- * Style dependencies
- */
 // goofy import for environment badge, which is SSR'd
 import 'calypso/components/environment-badge/style.scss';
 import './style.scss';
@@ -289,9 +277,6 @@ class Layout extends Component {
 				<UserVerificationChecker />
 				{ config.isEnabled( 'layout/guided-tours' ) && (
 					<AsyncLoad require="calypso/layout/guided-tours" placeholder={ null } />
-				) }
-				{ config.isEnabled( 'layout/nps-survey-notice' ) && ! isE2ETest() && (
-					<AsyncLoad require="calypso/layout/nps-survey-notice" placeholder={ null } />
 				) }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				{ this.renderMasterbar() }
