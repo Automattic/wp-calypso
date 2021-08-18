@@ -22,6 +22,7 @@ import JetpackGeneralBenefits from 'calypso/blocks/jetpack-benefits/general-bene
 import { isPartnerPurchase } from 'calypso/lib/purchases';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 interface Props {
 	siteId: number;
@@ -141,15 +142,17 @@ const JetpackBenefitsStep: React.FC< Props > = ( props ) => {
 
 	return (
 		<React.Fragment>
-			<div className="cancel-jetpack-form__section-header dialog__header">
-				<h2 className="cancel-jetpack-form__step-headline jetpack-benefits__section-title">
-					{ translate( 'Are you sure you want to cancel?' ) }
-				</h2>
-				<p className="cancel-jetpack-form__step-summary jetpack-benefits__section-description">
-					{ renderTimeRemainingString( product, purchase ) }
-					{ getCancelConsequenceByProduct( productSlug ) }
-				</p>
-			</div>
+			<FormattedHeader
+				headerText={ translate( 'Are you sure you want to cancel?' ) }
+				subHeaderText={
+					<React.Fragment>
+						{ renderTimeRemainingString( product, purchase ) }
+						{ getCancelConsequenceByProduct( productSlug ) }
+					</React.Fragment>
+				}
+				align="center"
+				isSecondary={ true }
+			/>
 
 			<JetpackBenefits siteId={ siteId } productSlug={ productSlug } />
 
