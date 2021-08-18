@@ -9,7 +9,7 @@ module.exports = function ( { view } ) {
 	// when Electron is updated to >= 13.x
 	view.webContents.on( 'new-window', function ( event, url ) {
 		// If the URL trying to open a new window is the Google Social login link, allow new window to open
-		if ( url.includes( 'https://accounts.google.com/o/oauth2/auth?redirect_uri=storagerelay' ) ) {
+		if ( url.includes( 'https://accounts.google.com/o/oauth2/auth' ) ) {
 			return;
 		}
 		// Check if the incoming URL is blank and if it is send to the targetURL instead
