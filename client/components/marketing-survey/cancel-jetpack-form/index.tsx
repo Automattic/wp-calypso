@@ -1,26 +1,19 @@
-/**
- * External Dependencies
- */
-import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-
-/**
- * Internal Dependencies
- */
-import * as steps from './steps';
 import { Button, Dialog } from '@automattic/components';
 import { Button as ButtonType } from '@automattic/components/dist/types/dialog/button-bar';
-import type { Purchase } from 'calypso/lib/purchases/types';
-import { getName } from 'calypso/lib/purchases';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
-import nextStep from '../cancel-purchase-form/next-step';
-import previousStep from '../cancel-purchase-form/previous-step';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import JetpackBenefitsStep from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-benefits-step';
 import JetpackCancellationSurvey from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-cancellation-survey';
-import { submitSurvey } from 'calypso/lib/purchases/actions';
 import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
+import { getName } from 'calypso/lib/purchases';
+import { submitSurvey } from 'calypso/lib/purchases/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import nextStep from '../cancel-purchase-form/next-step';
+import previousStep from '../cancel-purchase-form/previous-step';
+import * as steps from './steps';
+import type { Purchase } from 'calypso/lib/purchases/types';
 
 /**
  * Style dependencies
@@ -148,7 +141,10 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, selectedSite
 		recordEvent( 'calypso_purchases_cancel_form_submit' );
 	};
 
-	const onSurveyAnswerChange = ( answerId: string, answerText: TranslateResult | string ) => {
+	const onSurveyAnswerChange = (
+		answerId: string | null,
+		answerText: TranslateResult | string
+	) => {
 		if ( answerId !== surveyAnswerId ) {
 			recordTracksEvent( 'calypso_purchases_cancel_jetpack_survey_answer_change', {
 				answer_id: answerId,
@@ -244,7 +240,12 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, selectedSite
 			// ask for brief feedback on why the user is cancelling the plan
 			// follow similar pattern used in the Jetpack disconnection flow
 			// make sure the user has the ability to skip the question
-			return <JetpackCancellationSurvey onAnswerChange={ onSurveyAnswerChange } />;
+			return (
+				<JetpackCancellationSurvey
+					onAnswerChange={ onSurveyAnswerChange }
+					selectedAnswerId={ surveyAnswerId }
+				/>
+			);
 		}
 
 		// default output just in case
