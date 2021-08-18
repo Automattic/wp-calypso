@@ -4,7 +4,6 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { find, findIndex, get, times, isEmpty } from 'lodash';
 import page from 'page';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -213,7 +212,7 @@ export class List extends React.Component {
 				);
 			}
 
-			if ( isEmpty( filterOutWpcomDomains( this.props.domains ) ) ) {
+			if ( filterOutWpcomDomains( this.props.domains ).length === 0 ) {
 				return null;
 			}
 		}
@@ -234,7 +233,7 @@ export class List extends React.Component {
 	isFreshDomainOnlyRegistration() {
 		const domainName = this.props.selectedSite.domain;
 		const domain =
-			! this.isLoading() && find( this.props.domains, ( { name } ) => name === domainName );
+			! this.isLoading() && this.props.domains.find( ( { name } ) => name === domainName );
 
 		return (
 			domain &&
@@ -274,7 +273,7 @@ export class List extends React.Component {
 
 		this.props.changePrimary( domainName, 'wpcom_domain_manage_click' );
 
-		const currentPrimaryIndex = findIndex( this.props.domains, { isPrimary: true } );
+		const currentPrimaryIndex = this.props.domains.findIndex( ( { isPrimary } ) => isPrimary );
 		this.setState( { settingPrimaryDomain: true, primaryDomainIndex: -1 } );
 
 		return this.setPrimaryDomain( domainName )
@@ -301,7 +300,7 @@ export class List extends React.Component {
 		}
 
 		this.props.changePrimary( domain, mode );
-		const currentPrimaryIndex = findIndex( this.props.domains, { isPrimary: true } );
+		const currentPrimaryIndex = this.props.domains.findIndex( ( { isPrimary } ) => isPrimary );
 		const currentPrimaryName = this.props.domains[ currentPrimaryIndex ].name;
 
 		if ( domain.name === currentPrimaryName ) {
@@ -354,7 +353,11 @@ export class List extends React.Component {
 
 	listNewItems() {
 		if ( this.isLoading() ) {
-			return times( 3, ( n ) => <ListItemPlaceholder key={ `item-${ n }` } /> );
+			return [
+				<ListItemPlaceholder key="item-1" />,
+				<ListItemPlaceholder key="item-2" />,
+				<ListItemPlaceholder key="item-3" />,
+			];
 		}
 
 		const { currentRoute, selectedSite } = this.props;
@@ -412,11 +415,11 @@ const changePrimary = ( domain, mode ) =>
 
 export default connect(
 	( state, ownProps ) => {
-		const siteId = get( ownProps, 'selectedSite.ID', null );
+		const siteId = ownProps?.selectedSite?.ID || null;
 		const userCanManageOptions = canCurrentUser( state, siteId, 'manage_options' );
-		const selectedSite = get( ownProps, 'selectedSite', null );
-		const isOnFreePlan = get( selectedSite, 'plan.is_free', false );
-		const siteCount = get( getSites( state ), 'length', 0 );
+		const selectedSite = ownProps?.selectedSite || null;
+		const isOnFreePlan = selectedSite?.plan?.is_free || false;
+		const siteCount = getSites( state )?.length || 0;
 
 		return {
 			currentRoute: getCurrentRoute( state ),
