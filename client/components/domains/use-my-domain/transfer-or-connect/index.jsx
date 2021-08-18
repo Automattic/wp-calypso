@@ -73,7 +73,7 @@ function DomainTransferOrConnect( {
 				<div className={ baseClassName + '__support-link' }>
 					{ createInterpolateElement(
 						__( "Not sure what's best for you? <a>We're happy to help!</a>" ),
-						{ a: createElement( 'a', { href: CALYPSO_CONTACT } ) }
+						{ a: createElement( 'a', { target: '_blank', href: CALYPSO_CONTACT } ) }
 					) }
 				</div>
 			</Card>

@@ -45,7 +45,12 @@ export default function OptionContent( {
 					{ recommended && <Badge type="info-green">{ __( 'Recommended' ) }</Badge> }
 				</div>
 				<div className="option-content__top-text">{ topText }</div>
-				<a className="option-content__learn-more" href={ learnMoreLink }>
+				<a
+					className="option-content__learn-more"
+					target="_blank"
+					href={ learnMoreLink }
+					rel="noopener noreferrer"
+				>
 					{ __( 'Learn more' ) }
 				</a>
 				{ benefits && (

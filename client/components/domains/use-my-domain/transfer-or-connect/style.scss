@@ -20,10 +20,11 @@
 			display: flex;
 			flex-direction: column;
 
-			padding: 40px 0 40px 16px;
+			padding: 32px 0;
 
 			@include break-mobile {
 				flex-direction: row;
+				padding-left: 16px;
 			}
 
 			&__illustration {
@@ -34,31 +35,36 @@
 				display: flex;
 				flex-direction: column;
 				align-items: flex-start;
-				margin-bottom: 24px;
+				margin-bottom: 8px;
 				color: var( --color-text );
 
 				@include break-mobile {
 					flex-direction: row;
 					align-items: center;
-					margin-bottom: 4px;
+					margin-bottom: 0;
 					position: relative;
 					bottom: 2px;
 				}
 
 				h2 {
 					font-weight: 500; /* stylelint-disable-line */
-					font-size: $font-title-medium;
+					font-size: $font-title-small;
 				}
 
 				.badge {
 					border-radius: 4px; /* stylelint-disable-line */
 					font-size: $font-body-extra-small;
 					font-weight: 500; /* stylelint-disable-line */
+					margin-top: 8px;
 
 					@include break-mobile {
 						margin-left: 8px;
 					}
 				}
+			}
+
+			&__top-text {
+				color: var( --color-text );
 			}
 
 			&__main {
@@ -85,8 +91,12 @@
 							margin-right: 8px;
 							fill: var( --studio-green-50 );
 							position: relative;
-							bottom: -4px;
+							bottom: -3px;
 							flex-shrink: 0;
+						}
+
+						&-text {
+							font-size: $font-body-small;
 						}
 					}
 				}
@@ -148,6 +158,11 @@
 
 				.button {
 					padding: 8px 39px;
+					flex-grow: 1;
+
+					@include break-mobile {
+						flex-grow: 0;
+					}
 				}
 			}
 		}
