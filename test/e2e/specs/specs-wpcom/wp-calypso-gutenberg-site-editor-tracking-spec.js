@@ -833,6 +833,8 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 		} );
 
 		// Skip theses tests as nav sidebar is temporarily disabled on dotcom.
+		// Related Issue - https://github.com/Automattic/wp-calypso/issues/54460
+		// Related PR - https://github.com/Automattic/wp-calypso/pull/55471
 		describe.skip( 'Navigation sidebar', function () {
 			it( 'should track "wpcom_block_editor_nav_sidebar_open" when sidebar is opened', async function () {
 				const editor = await SiteEditorComponent.Expect( this.driver );
