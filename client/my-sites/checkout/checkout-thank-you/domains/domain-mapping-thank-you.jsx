@@ -26,7 +26,7 @@ const DomainMappingThankYou = ( { domain, translate } ) => {
 							stepKey: 'domain_mapping_whats_next_plugin_setup',
 							stepTitle: translate( 'Connect your domain' ),
 							stepDescription: translate(
-								'Setup your connection by following our suggested setup.'
+								'Set up your connection by following our suggested setup.'
 							),
 							stepCta: (
 								<Button
@@ -42,7 +42,7 @@ const DomainMappingThankYou = ( { domain, translate } ) => {
 						},
 						{
 							stepKey: 'domain_mapping_whats_next_view_posts',
-							stepTitle: translate( 'Get a profesional email' ),
+							stepTitle: translate( 'Add professional email' ),
 							stepDescription: translate(
 								'Add a custom email address to send and receive emails from %(domain)s today.',
 								{
@@ -58,7 +58,7 @@ const DomainMappingThankYou = ( { domain, translate } ) => {
 									busy={ false }
 									disabled={ false }
 								>
-									{ translate( 'Get email' ) }
+									{ translate( 'Add email' ) }
 								</Button>
 							),
 						},

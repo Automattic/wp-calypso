@@ -175,7 +175,7 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 			},
 			{
 				href: SUPPORT_ROOT,
-				title: translate( 'Support documentation' ),
+				title: translate( 'View support documentation' ),
 			},
 		],
 	};
