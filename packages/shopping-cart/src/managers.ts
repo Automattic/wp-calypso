@@ -122,5 +122,5 @@ export const noopManager: ShoppingCartManager = {
 	actions: noopActions,
 	getState: noopGetState,
 	subscribe: () => () => null,
-	waitForReady: () => Promise.resolve( emptyCart ),
+	fetchInitialCart: () => Promise.resolve( emptyCart ),
 };
