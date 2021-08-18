@@ -7,6 +7,7 @@ import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/ana
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
+import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
 import {
 	getSiteFrontPage,
@@ -16,24 +17,20 @@ import {
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ActionBox from '../quick-links/action-box';
-
 import '../quick-links/style.scss';
 
 export const QuickLinks = ( {
 	customizeUrl,
-	isStaticHomePage,
 	showCustomizer,
 	menusUrl,
-	trackEditHomepageAction,
 	trackWritePostAction,
-	trackAddPageAction,
-	trackManageCommentsAction,
 	trackEditMenusAction,
 	trackCustomizeThemeAction,
+	trackAddP2UsersAction,
 	isExpanded,
 	updateHomeQuickLinksToggleStatus,
-	editHomePageUrl,
 	siteSlug,
+	isP2Hub,
 } ) => {
 	const translate = useTranslate();
 	const [
@@ -44,74 +41,45 @@ export const QuickLinks = ( {
 
 	const quickLinks = (
 		<div className="wp-for-teams-quick-links__boxes quick-links__boxes">
-			{ isStaticHomePage ? (
-				<ActionBox
-					href={ editHomePageUrl }
-					hideLinkIndicator
-					onClick={ trackEditHomepageAction }
-					label={ translate( 'Edit homepage' ) }
-					materialIcon="laptop"
-				/>
-			) : (
-				<ActionBox
-					href={ `/post/${ siteSlug }` }
-					hideLinkIndicator
-					onClick={ trackWritePostAction }
-					label={ translate( 'Write blog post' ) }
-					materialIcon="edit"
-				/>
+			{ isP2Hub && (
+				<>
+					<ActionBox
+						href={ `/people/new/${ siteSlug }` }
+						hideLinkIndicator
+						onClick={ trackAddP2UsersAction }
+						label={ translate( 'Invite people to this workspace' ) }
+						materialIcon="person"
+					/>
+				</>
 			) }
-			{ isStaticHomePage ? (
-				<ActionBox
-					href={ `/page/${ siteSlug }` }
-					hideLinkIndicator
-					onClick={ trackAddPageAction }
-					label={ translate( 'Add a page' ) }
-					materialIcon="insert_drive_file"
-				/>
-			) : (
-				<ActionBox
-					href={ `/comments/${ siteSlug }` }
-					hideLinkIndicator
-					onClick={ trackManageCommentsAction }
-					label={ translate( 'Manage comments' ) }
-					materialIcon="mode_comment"
-				/>
-			) }
-			{ isStaticHomePage ? (
-				<ActionBox
-					href={ `/post/${ siteSlug }` }
-					hideLinkIndicator
-					onClick={ trackWritePostAction }
-					label={ translate( 'Write blog post' ) }
-					materialIcon="edit"
-				/>
-			) : (
-				<ActionBox
-					href={ `/page/${ siteSlug }` }
-					hideLinkIndicator
-					onClick={ trackAddPageAction }
-					label={ translate( 'Add a page' ) }
-					materialIcon="insert_drive_file"
-				/>
-			) }
-			{ showCustomizer && (
-				<ActionBox
-					href={ menusUrl }
-					hideLinkIndicator
-					onClick={ trackEditMenusAction }
-					label={ translate( 'Edit menus' ) }
-					materialIcon="list"
-				/>
-			) }
-			{ showCustomizer && (
-				<ActionBox
-					href={ customizeUrl }
-					hideLinkIndicator
-					onClick={ trackCustomizeThemeAction }
-					label={ translate( 'Customize theme' ) }
-					materialIcon="palette"
-				/>
+			{ ! isP2Hub && (
+				<>
+					<ActionBox
+						href={ `/post/${ siteSlug }` }
+						hideLinkIndicator
+						onClick={ trackWritePostAction }
+						label={ translate( 'Write post' ) }
+						materialIcon="edit"
+					/>
+					{ showCustomizer && (
+						<>
+							<ActionBox
+								href={ menusUrl }
+								hideLinkIndicator
+								onClick={ trackEditMenusAction }
+								label={ translate( 'Edit menus' ) }
+								materialIcon="list"
+							/>
+							<ActionBox
+								href={ customizeUrl }
+								hideLinkIndicator
+								onClick={ trackCustomizeThemeAction }
+								label={ translate( 'Customize theme' ) }
+								materialIcon="palette"
+							/>
+						</>
+					) }
+				</>
 			) }
 		</div>
 	);
@@ -136,17 +104,6 @@ export const QuickLinks = ( {
 	);
 };
 
-const trackEditHomepageAction = ( isStaticHomePage ) => ( dispatch ) => {
-	dispatch(
-		composeAnalytics(
-			recordTracksEvent( 'calypso_customer_home_my_site_edit_homepage_click', {
-				is_static_home_page: isStaticHomePage,
-			} ),
-			bumpStat( 'calypso_customer_home', 'my_site_edit_homepage' )
-		)
-	);
-};
-
 const trackWritePostAction = ( isStaticHomePage ) => ( dispatch ) => {
 	dispatch(
 		composeAnalytics(
@@ -154,28 +111,6 @@ const trackWritePostAction = ( isStaticHomePage ) => ( dispatch ) => {
 				is_static_home_page: isStaticHomePage,
 			} ),
 			bumpStat( 'calypso_customer_home', 'my_site_write_post' )
-		)
-	);
-};
-
-const trackAddPageAction = ( isStaticHomePage ) => ( dispatch ) => {
-	dispatch(
-		composeAnalytics(
-			recordTracksEvent( 'calypso_customer_home_my_site_add_page_click', {
-				is_static_home_page: isStaticHomePage,
-			} ),
-			bumpStat( 'calypso_customer_home', 'my_site_add_page' )
-		)
-	);
-};
-
-const trackManageCommentsAction = ( isStaticHomePage ) => ( dispatch ) => {
-	dispatch(
-		composeAnalytics(
-			recordTracksEvent( 'calypso_customer_home_my_site_manage_comments_click', {
-				is_static_home_page: isStaticHomePage,
-			} ),
-			bumpStat( 'calypso_customer_home', 'my_site_manage_comments' )
 		)
 	);
 };
@@ -196,6 +131,17 @@ const trackCustomizeThemeAction = ( isStaticHomePage ) =>
 		bumpStat( 'calypso_customer_home', 'my_site_customize_theme' )
 	);
 
+const trackAddP2UsersAction = ( isStaticHomePage ) => ( dispatch ) => {
+	dispatch(
+		composeAnalytics(
+			recordTracksEvent( 'calypso_customer_home_my_site_p2_invite_users_click', {
+				is_static_home_page: isStaticHomePage,
+			} ),
+			bumpStat( 'calypso_customer_home', 'my_site_p2_invite_users' )
+		)
+	);
+};
+
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
@@ -204,12 +150,14 @@ const mapStateToProps = ( state ) => {
 	const siteSlug = getSelectedSiteSlug( state );
 	const staticHomePageId = getSiteFrontPage( state, siteId );
 	const editHomePageUrl = isStaticHomePage && `/page/${ siteSlug }/${ staticHomePageId }`;
+	const isP2Hub = isSiteP2Hub( state, siteId );
 
 	return {
 		customizeUrl: getCustomizerUrl( state, siteId ),
 		menusUrl: getCustomizerUrl( state, siteId, 'menus' ),
 		isNewlyCreatedSite: isNewSite( state, siteId ),
 		showCustomizer: ! isSiteUsingFullSiteEditing( state, siteId ),
+		isP2Hub,
 		siteSlug,
 		isStaticHomePage,
 		editHomePageUrl,
@@ -218,12 +166,10 @@ const mapStateToProps = ( state ) => {
 };
 
 const mapDispatchToProps = {
-	trackEditHomepageAction,
 	trackWritePostAction,
-	trackAddPageAction,
-	trackManageCommentsAction,
 	trackEditMenusAction,
 	trackCustomizeThemeAction,
+	trackAddP2UsersAction,
 	updateHomeQuickLinksToggleStatus: ( status ) =>
 		savePreference( 'homeQuickLinksToggleStatus', status ),
 };
@@ -233,12 +179,10 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	return {
 		...stateProps,
 		...dispatchProps,
-		trackEditHomepageAction: () => dispatchProps.trackEditHomepageAction( isStaticHomePage ),
 		trackWritePostAction: () => dispatchProps.trackWritePostAction( isStaticHomePage ),
-		trackAddPageAction: () => dispatchProps.trackAddPageAction( isStaticHomePage ),
-		trackManageCommentsAction: () => dispatchProps.trackManageCommentsAction( isStaticHomePage ),
 		trackEditMenusAction: () => dispatchProps.trackEditMenusAction( isStaticHomePage ),
 		trackCustomizeThemeAction: () => dispatchProps.trackCustomizeThemeAction( isStaticHomePage ),
+		trackAddP2UsersAction: () => dispatchProps.trackAddP2UsersAction( isStaticHomePage ),
 		...ownProps,
 	};
 };
