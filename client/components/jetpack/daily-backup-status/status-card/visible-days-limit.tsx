@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { useTranslate } from 'i18n-calypso';
 import { MomentInput } from 'moment';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import Button from 'calypso/components/forms/form-button';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
@@ -17,14 +10,6 @@ import getActivityLogVisibleDays from 'calypso/state/selectors/get-activity-log-
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-
-/**
- * Type dependencies
- */
-
-/**
- * Style dependencies
- */
 import cloudSuccessIcon from './icons/cloud-success.svg';
 import './style.scss';
 

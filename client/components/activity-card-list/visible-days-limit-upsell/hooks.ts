@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { RefObject, useCallback, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 
 export const useTrackUpsellView = (
