@@ -118,11 +118,6 @@ function createShoppingCartManager(
 	// ShoppingCartManager's public API.
 	const dispatchAndWaitForValid = createDispatchAndWaitForValid( dispatch, actionPromises );
 	const actions = createActions( dispatchAndWaitForValid );
-	const waitForReady = () => {
-		return new Promise< ResponseCart >( ( resolve ) => {
-			actionPromises.add( resolve );
-		} );
-	};
 
 	let cachedManagerState: ShoppingCartManagerState = getShoppingCartManagerState(
 		state,
@@ -145,14 +140,18 @@ function createShoppingCartManager(
 		return cachedManagerState;
 	};
 
-	// Kick off initial actions to load the cart.
-	takeActionsBasedOnState( state, dispatch, false );
+	const fetchInitialCart = () => {
+		takeActionsBasedOnState( state, dispatch, false );
+		return new Promise< ResponseCart >( ( resolve ) => {
+			actionPromises.add( resolve );
+		} );
+	};
 
 	return {
 		subscribe,
 		actions,
 		getState: getCachedManagerState,
-		waitForReady,
+		fetchInitialCart,
 	};
 }
 
