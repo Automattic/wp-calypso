@@ -44,7 +44,12 @@ const receiveChannels = [
 ];
 
 function fflagOverrides() {
-	const payload = {};
+	// Manually overriding feature flags for features not available in older app versions.
+	// They aren't able to be added to the wp-calypso/packages/calypso-config/src/desktop.ts
+	// file as they would be applied to all app versions.
+	const payload = { 'sign-in-with-apple': true, 'signup/social': true };
+
+	// Override feature flags from enviroment variables at run time
 	const fflags = process.env.WP_DESKTOP_DEBUG_FEATURES
 		? process.env.WP_DESKTOP_DEBUG_FEATURES.split( ',' )
 		: [];
@@ -52,10 +57,6 @@ function fflagOverrides() {
 		const kv = fflags[ i ].split( ':' );
 		payload[ kv[ 0 ] ] = kv[ 1 ] === 'true' ? true : false;
 	}
-
-	// Manual override of feature flags for features not available in older app versions
-	payload[ 'sign-in-with-apple' ] = true;
-	payload[ 'signup/social' ] = true;
 	return payload;
 }
 
