@@ -36,12 +36,6 @@ function UseMyDomain( { goBack, initialQuery, selectedSite } ) {
 
 	const baseClassName = 'use-my-domain';
 
-	const validateDomainName = useCallback( () => {
-		const errorMessage = getDomainNameValidationErrorMessage( domainName );
-		setDomainNameValidationError( errorMessage );
-		return ! errorMessage;
-	}, [ domainName ] );
-
 	const onGoBack = () => {
 		if ( inputMode.domainInput === mode ) {
 			goBack();
@@ -50,7 +44,13 @@ function UseMyDomain( { goBack, initialQuery, selectedSite } ) {
 		setMode( inputMode.domainInput );
 	};
 
-	const onNext = () => {
+	const validateDomainName = useCallback( () => {
+		const errorMessage = getDomainNameValidationErrorMessage( domainName );
+		setDomainNameValidationError( errorMessage );
+		return ! errorMessage;
+	}, [ domainName ] );
+
+	const onNext = useCallback( () => {
 		if ( ! validateDomainName() ) {
 			return;
 		}
@@ -87,7 +87,7 @@ function UseMyDomain( { goBack, initialQuery, selectedSite } ) {
 				setDomainAvailabilityData( availabilityData );
 			}
 		);
-	};
+	}, [ domainName, inputMode.transferOrConnect, selectedSite, validateDomainName ] );
 
 	const onDomainNameChange = ( event ) => {
 		setDomainName( event.target.value );
@@ -100,9 +100,13 @@ function UseMyDomain( { goBack, initialQuery, selectedSite } ) {
 	};
 
 	useEffect( () => {
-		! initialValidation.current && initialQuery && onNext();
+		if ( ! initialQuery || initialValidation.current ) {
+			return;
+		}
+
 		initialValidation.current = true;
-	}, [ initialQuery, validateDomainName ] );
+		initialQuery && ! getDomainNameValidationErrorMessage( initialQuery ) && onNext();
+	}, [ initialQuery, onNext ] );
 
 	const renderDomainInput = () => {
 		return (
