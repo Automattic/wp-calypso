@@ -10,7 +10,7 @@ import type {
 
 const debug = debugFactory( 'shopping-cart:state-based-actions' );
 
-function fetchInitialCart(
+export function fetchInitialCart(
 	state: ShoppingCartState,
 	dispatch: ShoppingCartReducerDispatch,
 	lastCacheStatus: CacheStatus | ''

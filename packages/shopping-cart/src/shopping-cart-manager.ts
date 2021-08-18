@@ -10,7 +10,7 @@ import {
 } from './managers';
 import { createActions } from './shopping-cart-actions';
 import { getInitialShoppingCartState, shoppingCartReducer } from './shopping-cart-reducer';
-import { createTakeActionsBasedOnState } from './state-based-actions';
+import { createTakeActionsBasedOnState, fetchInitialCart } from './state-based-actions';
 import { createCartSyncMiddleware, createCartInitMiddleware } from './sync';
 import type {
 	GetCart,
@@ -140,8 +140,13 @@ function createShoppingCartManager(
 		return cachedManagerState;
 	};
 
-	const fetchInitialCart = () => {
-		takeActionsBasedOnState( state, dispatch, false );
+	let didInitialFetch = false;
+	const initialFetch = () => {
+		if ( didInitialFetch ) {
+			return Promise.resolve( lastValidResponseCart.get() );
+		}
+		didInitialFetch = true;
+		fetchInitialCart( state, dispatch, '' );
 		return new Promise< ResponseCart >( ( resolve ) => {
 			actionPromises.add( resolve );
 		} );
@@ -151,7 +156,7 @@ function createShoppingCartManager(
 		subscribe,
 		actions,
 		getState: getCachedManagerState,
-		fetchInitialCart,
+		fetchInitialCart: initialFetch,
 	};
 }
 
