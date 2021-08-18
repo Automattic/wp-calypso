@@ -217,6 +217,7 @@ module.exports = {
 				'client/state/active-promotions/**/*',
 				'client/state/activity-log/**/*',
 				'client/state/checklist/**/*',
+				'client/state/comments/**/*',
 				'client/state/data-getters/**/*',
 				'client/state/editor/**/*',
 				'client/state/google-my-business/**/*',

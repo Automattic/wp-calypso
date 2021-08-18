@@ -1,6 +1,4 @@
-/**
- * External dependencies
- */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	filter,
 	orderBy,
@@ -14,11 +12,6 @@ import {
 	omit,
 	startsWith,
 } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { withStorageKey } from '@automattic/state-utils';
 import {
 	COMMENT_COUNTS_UPDATE,
 	COMMENTS_CHANGE_STATUS,
