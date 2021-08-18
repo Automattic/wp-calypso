@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import React, { useState, useCallback, ReactElement } from 'react';
-import { useTranslate, TranslateResult } from 'i18n-calypso';
-import classnames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import classnames from 'classnames';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
+import React, { useState, useCallback, ReactElement } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import Gridicon from 'calypso/components/gridicon';
 
 interface Choice {
 	id: string;
@@ -20,14 +13,15 @@ interface Choice {
 }
 
 interface JetpackCancellationSurveyProps {
+	selectedAnswerId: string | null;
 	onAnswerChange: ( answerId: string | null, answerText: TranslateResult | string ) => void;
 }
 
 export default function JetpackCancellationSurvey( {
+	selectedAnswerId,
 	onAnswerChange,
 }: JetpackCancellationSurveyProps ): ReactElement {
 	const translate = useTranslate();
-	const [ selectedAnswerId, setSelectedAnswerId ] = useState< string | null >( null );
 	const [ customAnswerText, setCustomAnswerText ] = useState< string >( '' );
 	const customAnswerInputRef = React.useRef< HTMLInputElement | null >();
 
@@ -56,15 +50,14 @@ export default function JetpackCancellationSurvey( {
 	};
 
 	const selectAnswer = useCallback(
-		( answerId: string, answerText: TranslateResult | string ) => {
-			// prevent from changing the answer text to choiceOther.answerText just by clicking on it
+		( answerId: string ) => {
+			// prevent from sending the answer text if it's not a custom answer
 			const surveyAnswerText =
-				choiceOther.id === answerId && customAnswerText ? customAnswerText : answerText;
+				choiceOther.id === answerId && customAnswerText ? customAnswerText : '';
 
-			setSelectedAnswerId( answerId );
 			onAnswerChange( answerId, surveyAnswerText );
 		},
-		[ choiceOther.id, customAnswerText, onAnswerChange, setSelectedAnswerId ]
+		[ choiceOther.id, customAnswerText, onAnswerChange ]
 	);
 
 	const onChangeCustomAnswerText = useCallback(
@@ -84,7 +77,7 @@ export default function JetpackCancellationSurvey( {
 					'is-selected': choice.id === selectedAnswerId,
 				} ) }
 				tagName="button"
-				onClick={ () => selectAnswer( choice.id, choice.answerText ) }
+				onClick={ () => selectAnswer( choice.id ) }
 				key={ choice.id }
 			>
 				<div className="jetpack-cancellation-survey__card-content">
@@ -107,15 +100,15 @@ export default function JetpackCancellationSurvey( {
 
 			{ /* The card for the 'other' option */ }
 			<Card
+				key={ choiceOther.id }
 				className={ classnames( 'jetpack-cancellation-survey__card', {
 					'is-selected': choiceOther.id === selectedAnswerId,
 				} ) }
 				tagName="button"
 				onClick={ () => {
-					selectAnswer( choiceOther.id, choiceOther.answerText );
+					selectAnswer( choiceOther.id );
 					customAnswerInputRef?.current?.focus();
 				} }
-				key={ choiceOther.id }
 			>
 				<div className="jetpack-cancellation-survey__card-content">
 					<span>{ choiceOther.answerText }</span>
