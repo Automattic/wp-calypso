@@ -745,9 +745,29 @@ export default function pages() {
 		}
 	);
 
+	function validateRedirect( req, url ) {
+		if ( ! url ) {
+			return false;
+		}
+
+		try {
+			const serverOrigin = req.protocol + '://' + req.host;
+			return new URL( url, serverOrigin ).origin === serverOrigin;
+		} catch {
+			// if parsing the URL fails, it is not valid
+			return false;
+		}
+	}
+
 	app.get( '/browsehappy', ( req, res ) => {
+		// We only want to allow a redirect to Calypso routes, so we check that
+		// the `from` query param has the same origin.
+		const { from } = req.query;
+		const redirectLocation = from && validateRedirect( req, from ) ? from : '/';
+
 		req.context.entrypoint = req.getFilesForEntrypoint( 'entry-browsehappy' );
-		req.context.from = req.query.from;
+		req.context.from = redirectLocation;
+
 		res.send( renderJsx( 'browsehappy', req.context ) );
 	} );
 
