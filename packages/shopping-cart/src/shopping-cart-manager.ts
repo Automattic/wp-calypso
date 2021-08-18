@@ -11,7 +11,6 @@ import {
 import { createActionCreators } from './shopping-cart-actions';
 import { getInitialShoppingCartState, shoppingCartReducer } from './shopping-cart-reducer';
 import { createTakeActionsBasedOnState } from './state-based-actions';
-import { createCartSyncMiddleware, createCartInitMiddleware } from './sync';
 import type {
 	GetCart,
 	SetCart,
@@ -61,10 +60,6 @@ function createShoppingCartManager(
 		return getCart( cartKey );
 	};
 
-	const syncCartToServer = createCartSyncMiddleware( setServerCart );
-	const initializeCartFromServer = createCartInitMiddleware( getServerCart );
-	const middleware = [ initializeCartFromServer, syncCartToServer ];
-
 	const { subscribe, notifySubscribers } = createSubscriptionManager( cartKey );
 
 	// When an action is dispatched that modifies the cart (eg:
@@ -82,7 +77,9 @@ function createShoppingCartManager(
 	const actionPromises = createActionPromisesManager();
 	const takeActionsBasedOnState = createTakeActionsBasedOnState(
 		lastValidResponseCart,
-		actionPromises
+		actionPromises,
+		getServerCart,
+		setServerCart
 	);
 
 	// This is the main dispatcher for shopping cart actions. Dispatched actions
@@ -103,9 +100,6 @@ function createShoppingCartManager(
 		setTimeout( () => {
 			debug( `dispatching middleware action for cartKey ${ cartKey }`, action.type );
 			actionsPending--;
-			middleware.forEach( ( middlewareFn ) => {
-				middlewareFn( action, state, dispatch );
-			} );
 			debug( `dispatching action for cartKey ${ cartKey }`, action.type );
 			state = shoppingCartReducer( state, action );
 			takeActionsBasedOnState( state, dispatch, actionsPending > 0 );

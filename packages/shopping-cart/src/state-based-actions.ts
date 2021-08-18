@@ -1,11 +1,14 @@
 import debugFactory from 'debug';
 import { playQueuedActions } from './shopping-cart-reducer';
+import { syncCartToServer, initializeCartFromServer } from './sync';
 import type {
 	ActionPromises,
 	LastValidResponseCart,
 	ShoppingCartState,
 	ShoppingCartReducerDispatch,
 	CacheStatus,
+	RequestCart,
+	ResponseCart,
 } from './types';
 
 const debug = debugFactory( 'shopping-cart:state-based-actions' );
@@ -13,19 +16,21 @@ const debug = debugFactory( 'shopping-cart:state-based-actions' );
 function fetchInitialCart(
 	state: ShoppingCartState,
 	dispatch: ShoppingCartReducerDispatch,
+	getServerCart: () => Promise< ResponseCart >,
 	lastCacheStatus: CacheStatus | ''
 ): void {
 	const { cacheStatus } = state;
 	if ( cacheStatus === 'fresh' && cacheStatus !== lastCacheStatus ) {
 		debug( 'triggering fetch of initial cart' );
 		dispatch( { type: 'FETCH_INITIAL_RESPONSE_CART' } );
-		dispatch( { type: 'GET_CART_FROM_SERVER' } );
+		initializeCartFromServer( dispatch, getServerCart );
 	}
 }
 
 function prepareInvalidCartForSync(
 	state: ShoppingCartState,
 	dispatch: ShoppingCartReducerDispatch,
+	setServerCart: ( cart: RequestCart ) => Promise< ResponseCart >,
 	lastCacheStatus: CacheStatus | ''
 ): void {
 	const { queuedActions, cacheStatus } = state;
@@ -36,7 +41,7 @@ function prepareInvalidCartForSync(
 	) {
 		debug( 'triggering sync of cart to server' );
 		dispatch( { type: 'REQUEST_UPDATED_RESPONSE_CART' } );
-		dispatch( { type: 'SYNC_CART_TO_SERVER' } );
+		syncCartToServer( state, dispatch, setServerCart );
 	}
 }
 
@@ -46,7 +51,9 @@ function isStatePendingUpdate( state: ShoppingCartState, areActionsPending: bool
 
 export function createTakeActionsBasedOnState(
 	lastValidResponseCart: LastValidResponseCart,
-	actionPromises: ActionPromises
+	actionPromises: ActionPromises,
+	getServerCart: () => Promise< ResponseCart >,
+	setServerCart: ( cart: RequestCart ) => Promise< ResponseCart >
 ): (
 	state: ShoppingCartState,
 	dispatch: ShoppingCartReducerDispatch,
@@ -66,12 +73,12 @@ export function createTakeActionsBasedOnState(
 			'and areActionsPending is',
 			areActionsPending
 		);
-		fetchInitialCart( state, dispatch, lastCacheStatus );
+		fetchInitialCart( state, dispatch, getServerCart, lastCacheStatus );
 		if ( ! isStatePendingUpdate( state, areActionsPending ) ) {
 			lastValidResponseCart.update( state.responseCart );
 			actionPromises.resolve( state.responseCart );
 		}
-		prepareInvalidCartForSync( state, dispatch, lastCacheStatus );
+		prepareInvalidCartForSync( state, dispatch, setServerCart, lastCacheStatus );
 		playQueuedActions( state, dispatch );
 		lastCacheStatus = cacheStatus;
 		debug( 'running state-based-actions complete' );
