@@ -58,6 +58,7 @@
 					margin-top: 8px;
 
 					@include break-mobile {
+						margin-top: 0;
 						margin-left: 8px;
 					}
 				}
