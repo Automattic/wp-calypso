@@ -1,6 +1,5 @@
 import { ElementHandle, Page } from 'playwright';
 import { getViewportName } from '../../browser-helper';
-import { toTitleCase } from '../../data-helper';
 import { NavbarComponent } from './navbar-component';
 
 const selectors = {
@@ -43,21 +42,7 @@ export class SidebarComponent {
 	}
 
 	/**
-	 * Given heading and subheading, or any combination of the two, locate and click on the items on the sidebar.
-	 *
-	 * This method supports any of the following use cases:
-	 *   - heading only
-	 *   - subheading only
-	 *   - heading and subheading
-	 *
-	 * Heading is defined as the top-level menu item that is permanently visible on the sidebar, unless outside
-	 * of the viewport.
-	 *
-	 * Subheading is defined as the child-level menu item that is exposed only on hover or by toggling open the listing by clicking on the parent menu item.
-	 *
-	 * Note, in the current Nav Unification paradigm, clicking on certain combinations of sidebar menu items will trigger
-	 * navigation away to an entirely new page (eg. wp-admin). Attempting to reuse the SidebarComponent object
-	 * under this condition will throw an exception from the Playwright engine.
+	 * Navigates to given (sub)item of the sidebar navigation.
 	 *
 	 * @param {{[key: string]: string}} param0 Named object parameter.
 	 * @param {string} param0.item Plaintext representation of the top level heading.
@@ -65,77 +50,33 @@ export class SidebarComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async gotoMenu( { item, subitem }: { item: string; subitem?: string } ): Promise< void > {
-		let selector;
-		const viewportName = getViewportName();
-
-		// Especially on mobile devices, there can be a race condition in clicking on "My Sites" button
-		// to slide in the sidebar, and that sidebar actually being initialized! So we want to wait
-		// and make sure the sidebar is actually in the DOM before proceeding.
-		await this.waitForSidebarInitialization();
-
-		// If mobile, sidebar is hidden by default and focus is on the content.
-		// The sidebar must be first brought into view.
-		if ( viewportName === 'mobile' ) {
+		if ( getViewportName() === 'mobile' ) {
 			await this._openMobileSidebar();
 		}
 
-		// Wait for the sidebar to finish loading all elements, including asynchronously loaded
-		// offers and notices that may appear in the Current Site Card.
-		await this._waitUntilMenuItemsLoaded( 50 );
-
-		item = toTitleCase( item ).trim();
-		// This will exclude entries where the `heading` term matches multiple times
-		// eg. `Settings` but they are sub-headings in reality, such as Jetpack > Settings.
-		// Since the sub-headings are always hidden unless heading is selected, this works to
-		// our advantage by specifying to match only visible text.
-		selector = `${ selectors.heading } span:has-text("${ item }"):visible`;
-		await this._click( selector );
+		const itemSelector = `.sidebar >> text="${ item }"`;
+		await Promise.all( [ this.page.waitForNavigation(), this.page.click( itemSelector ) ] );
 
 		if ( subitem ) {
-			subitem = toTitleCase( subitem ).trim();
-			// Explicitly select only the child headings and combine with the text matching engine.
-			// This works better than using CSS pseudo-classes like `:has-text` or `:text-matches` for text
-			// matching.
-			selector = `${ selectors.subheading } >> text="${ subitem }"`;
-			await this._click( selector );
+			await Promise.all( [
+				this.page.waitForNavigation(),
+				this.page.click( `${ itemSelector } >> text="${ subitem }"` ),
+			] );
 		}
 
-		// Confirm the focus is now back to the content, not the sidebar.
-		await this.page.waitForSelector( `${ selectors.layout }.focus-content` );
-	}
-
-	/**
-	 * Waits for the sidebar menu items to finish loading.
-	 *
-	 * The bounding box of the Current Site card (located at top of the sidebar) is compared
-	 * every 250ms to determine whether loading has completed.
-	 *
-	 * On some sites, typically atomic, the sidebar undergoes multiple mutations of its structure:
-	 * 	1. Shell of the sidebar gets created and remains static throughout the entire loading process.
-	 * 	2. First version of the sidebar gets created and has only the original basic menu items.
-	 * 	3. The mostly final version of the sidebar gets created. The parent element looks exactly the same
-	 * 		but it is a new node that is attached in the DOM to replace the old one. This final version has
-	 * 		all the menus from different plugins.
-	 *	4. Offers and notices are loaded in a banner that pop in on the top of the sidebar. This does not
-	 *		detach the parent sidebar, or any of the other elements, from the DOM. However, they do shift
-	 *		down slightly on the page.
-	 *
-	 * The bounding box of the Current Site card is one of the last elements to stabilize in the loading
-	 * process and its stability is a good indicator of the page stability.
-	 *
-	 * @returns {Promise<void>} No return value.
-	 */
-	private async _waitUntilMenuItemsLoaded( delay: number ): Promise< void > {
-		let loaded = false;
-		while ( ! loaded ) {
-			const elementHandle = await this.page.waitForSelector( selectors.currentSiteCard );
-			const startingBoundingBox = await elementHandle.boundingBox();
-			await new Promise( ( resolve ) => setTimeout( resolve, delay ) );
-			const currentBoundingBox = await elementHandle.boundingBox();
-			// Height is the only factor that changes in the bounding box.
-			if ( startingBoundingBox!.height === currentBoundingBox!.height ) {
-				loaded = true;
-			}
+		/**
+		 * Retry if the click missed the expected item. This can happen because of
+		 * the lazy-loading nature of the sidenav items.
+		 */
+		try {
+			const selectedItemSelector = `.sidebar .selected >> text="${ subitem || item }"`;
+			await this.page.waitForSelector( selectedItemSelector, {
+				timeout: 3000,
+			} );
+			return;
+		} catch {
+			await this.page.reload();
+			return this.gotoMenu( { item, subitem } );
 		}
 	}
 
@@ -145,6 +86,7 @@ export class SidebarComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async _openMobileSidebar(): Promise< void > {
+		await this.waitForSidebarInitialization();
 		const navbarComponent = new NavbarComponent( this.page );
 		await navbarComponent.clickMySites();
 		// `focus-sidebar` attribute is added once the sidebar is opened and focused in mobile view.
