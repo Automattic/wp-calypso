@@ -3,7 +3,6 @@
  */
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import moment from 'moment';
 
 /**
  * Internal Dependencies
@@ -17,6 +16,7 @@ import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import { EVERY_SECOND, Interval } from 'calypso/lib/interval';
 import { ProgressBar } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 
 interface Props {
 	siteId: number;
@@ -38,9 +38,8 @@ interface Backup {
 
 const JetpackBenefitsSiteBackups: React.FC< Props > = ( { siteId, isStandalone } ) => {
 	const translate = useTranslate();
-	const backups = useSelector( ( state ) => {
-		return getRewindBackups( state, siteId );
-	} );
+	const moment = useLocalizedMoment();
+	const backups = useSelector( ( state ) => getRewindBackups( state, siteId ) );
 
 	const dispatch = useDispatch();
 	const refreshBackupProgress = useCallback( () => dispatch( requestRewindBackups( siteId ) ), [
@@ -49,10 +48,9 @@ const JetpackBenefitsSiteBackups: React.FC< Props > = ( { siteId, isStandalone }
 	] );
 
 	const loadingBackups = backups === null; // getRewindBackups returns null if there are no backups for the siteId
-
-	const backupCurrentlyInProgress = useSelector( ( state ) => {
-		return getInProgressBackupForSite( state, siteId );
-	} );
+	const backupCurrentlyInProgress = useSelector( ( state ) =>
+		getInProgressBackupForSite( state, siteId )
+	);
 
 	const getBackupTimeAgo = ( backup: { last_updated: string } ) => {
 		return moment.utc( backup.last_updated ).fromNow();

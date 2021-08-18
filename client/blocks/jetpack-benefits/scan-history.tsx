@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { useSelector } from 'react-redux';
-import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -18,6 +17,7 @@ import getSiteScanProgress from 'calypso/state/selectors/get-site-scan-progress'
 import { ProgressBar } from '@automattic/components';
 import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 
 interface Props {
 	siteId: number;
@@ -26,21 +26,16 @@ interface Props {
 
 const JetpackBenefitsScanHistory: React.FC< Props > = ( { siteId, isStandalone } ) => {
 	const translate = useTranslate();
-	const siteScanState = useSelector( ( state ) => {
-		return getSiteScanState( state, siteId );
-	} );
-	const siteScanProgress = useSelector( ( state ) => {
-		return getSiteScanProgress( state, siteId );
-	} );
-	const requestingScanState = useSelector( ( state ) => {
-		return isRequestingJetpackScan( state, siteId );
-	} );
-	const requestingThreats = useSelector( ( state ) => {
-		return isRequestingJetpackScanThreatCounts( state, siteId );
-	} );
-	const threatCounts = useSelector( ( state ) => {
-		return state?.jetpackScan?.threatCounts?.data?.[ siteId ];
-	} );
+	const moment = useLocalizedMoment();
+	const siteScanState = useSelector( ( state ) => getSiteScanState( state, siteId ) );
+	const siteScanProgress = useSelector( ( state ) => getSiteScanProgress( state, siteId ) );
+	const requestingScanState = useSelector( ( state ) => isRequestingJetpackScan( state, siteId ) );
+	const requestingThreats = useSelector( ( state ) =>
+		isRequestingJetpackScanThreatCounts( state, siteId )
+	);
+	const threatCounts = useSelector(
+		( state ) => state?.jetpackScan?.threatCounts?.data?.[ siteId ]
+	);
 
 	// site scan state can be provisioning, scanning or idle. If missing from the state after request is ended, can assume an error
 	const scanState = siteScanState?.state;
