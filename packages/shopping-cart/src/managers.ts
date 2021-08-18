@@ -19,13 +19,11 @@ const debug = debugFactory( 'shopping-cart:managers' );
 
 export function getShoppingCartManagerState(
 	state: ShoppingCartState,
-	lastValidResponseCart: ResponseCart,
-	areActionsPending: boolean
+	lastValidResponseCart: ResponseCart
 ): ShoppingCartManagerState {
 	const { cacheStatus, queuedActions, couponStatus, loadingErrorType, loadingError } = state;
 	const isLoading = cacheStatus === 'fresh' || cacheStatus === 'fresh-pending';
-	const isPendingUpdate =
-		queuedActions.length > 0 || cacheStatus !== 'valid' || areActionsPending !== false;
+	const isPendingUpdate = queuedActions.length > 0 || cacheStatus !== 'valid';
 	const loadingErrorForManager = cacheStatus === 'error' ? loadingError : null;
 	debug(
 		'manager isLoading',

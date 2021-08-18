@@ -1,6 +1,4 @@
 import debugFactory from 'debug';
-import { cartKeysThatDoNotAllowFetch } from './cart-keys';
-import { getEmptyResponseCart } from './empty-carts';
 import {
 	getShoppingCartManagerState,
 	createSubscriptionManager,
@@ -10,15 +8,17 @@ import {
 } from './managers';
 import { createActions } from './shopping-cart-actions';
 import { getInitialShoppingCartState, shoppingCartReducer } from './shopping-cart-reducer';
-import { createTakeActionsBasedOnState, fetchInitialCart } from './state-based-actions';
-import { createCartSyncMiddleware, createCartInitMiddleware } from './sync';
+import {
+	createTakeActionsBasedOnState,
+	prepareFreshCartForInitialFetch,
+} from './state-based-actions';
+import { createCartSyncManager } from './sync';
 import type {
 	GetCart,
 	SetCart,
 	ShoppingCartManagerClient,
 	ShoppingCartManagerState,
 	ShoppingCartManager,
-	RequestCart,
 	ShoppingCartAction,
 	ResponseCart,
 	ShoppingCartReducerDispatch,
@@ -28,8 +28,6 @@ import type {
 } from './types';
 
 const debug = debugFactory( 'shopping-cart:shopping-cart-manager' );
-const emptyCart = getEmptyResponseCart();
-const getEmptyCart = () => Promise.resolve( emptyCart );
 
 function createDispatchAndWaitForValid(
 	dispatch: ShoppingCartReducerDispatch,
@@ -50,20 +48,6 @@ function createShoppingCartManager(
 ): ShoppingCartManager {
 	let state = getInitialShoppingCartState();
 
-	const shouldNotFetchRealCart = cartKeysThatDoNotAllowFetch.includes( cartKey );
-
-	const setServerCart = ( cartParam: RequestCart ) => setCart( cartKey, cartParam );
-	const getServerCart = () => {
-		if ( shouldNotFetchRealCart ) {
-			return getEmptyCart();
-		}
-		return getCart( cartKey );
-	};
-
-	const syncCartToServer = createCartSyncMiddleware( setServerCart );
-	const initializeCartFromServer = createCartInitMiddleware( getServerCart );
-	const middleware = [ initializeCartFromServer, syncCartToServer ];
-
 	const { subscribe, notifySubscribers } = createSubscriptionManager( cartKey );
 
 	// When an action is dispatched that modifies the cart (eg:
@@ -78,38 +62,39 @@ function createShoppingCartManager(
 	// `isPendingUpdate` to know when the cart data is updating.
 	const lastValidResponseCart = createLastValidResponseCartManager( state );
 
+	const syncManager = createCartSyncManager( cartKey, getCart, setCart );
 	const actionPromises = createActionPromisesManager();
-	const takeActionsBasedOnState = createTakeActionsBasedOnState(
-		lastValidResponseCart,
-		actionPromises
-	);
+	const takeActionsBasedOnState = createTakeActionsBasedOnState( syncManager );
 
 	// This is the main dispatcher for shopping cart actions. Dispatched actions
-	// are async and non-blocking. Most consumers can use the `subscribe`
-	// callback to know when changes have been made but if a consumer needs to
-	// know when actions are complete, they can use `dispatchAndWaitForValid`
-	// which is the dispatcher exported with the ShoppingCartManager's action
-	// creators.
-	let actionsPending = 0;
+	// are synchronous, but they cannot be trusted until validated by a server
+	// call, which is async. Most consumers can use the `subscribe` callback
+	// combined with the `isPendingUpdate` flag to know when changes have been
+	// completed but if a consumer needs to do something directly (eg: redirect
+	// when cart changes are complete) , they can use `dispatchAndWaitForValid`
+	// which is the dispatcher exported with the ShoppingCartManager's actions.
+	let deferredStateCheck: ReturnType< typeof setTimeout >;
 	const dispatch = ( action: ShoppingCartAction ) => {
-		debug( `heard action request for cartKey ${ cartKey }`, action.type );
-		actionsPending++;
-		// setTimeout here defers the dispatch process until the next free cycle of
-		// the JS event loop so that dispatching actions is async and will not
-		// block any code that triggers them. Because we don't want to take certain
-		// actions if there are more pending events, we track actionsPending to be
-		// sure that all dispatched events eventually reach the reducer.
-		setTimeout( () => {
-			debug( `dispatching middleware action for cartKey ${ cartKey }`, action.type );
-			actionsPending--;
-			middleware.forEach( ( middlewareFn ) => {
-				middlewareFn( action, state, dispatch );
-			} );
-			debug( `dispatching action for cartKey ${ cartKey }`, action.type );
-			state = shoppingCartReducer( state, action );
-			takeActionsBasedOnState( state, dispatch, actionsPending > 0 );
-			notifySubscribers();
+		debug( `dispatching action for cartKey ${ cartKey }`, action.type );
+		state = shoppingCartReducer( state, action );
+
+		// We defer the state based actions so that multiple cart changes can be
+		// batched together during the same run of the event loop.
+		if ( deferredStateCheck ) {
+			clearTimeout( deferredStateCheck );
+		}
+		deferredStateCheck = setTimeout( () => {
+			takeActionsBasedOnState( state, dispatch );
 		} );
+
+		if ( ! isStatePendingUpdate( state ) ) {
+			debug( 'updating lastValidResponseCart and resolving action promises' );
+			lastValidResponseCart.update( state.responseCart );
+			actionPromises.resolve( state.responseCart );
+		}
+
+		// Notify subscribers of every state change.
+		notifySubscribers();
 	};
 
 	// `dispatchAndWaitForValid` enhances the action dispatcher to return a
@@ -121,21 +106,14 @@ function createShoppingCartManager(
 
 	let cachedManagerState: ShoppingCartManagerState = getShoppingCartManagerState(
 		state,
-		lastValidResponseCart.get(),
-		false
+		lastValidResponseCart.get()
 	);
 	let lastState: ShoppingCartState = state;
-	let lastActionsPending = actionsPending;
 
 	const getCachedManagerState = (): ShoppingCartManagerState => {
-		if ( lastState !== state || lastActionsPending !== actionsPending ) {
-			cachedManagerState = getShoppingCartManagerState(
-				state,
-				lastValidResponseCart.get(),
-				actionsPending > 0
-			);
+		if ( lastState !== state ) {
+			cachedManagerState = getShoppingCartManagerState( state, lastValidResponseCart.get() );
 			lastState = state;
-			lastActionsPending = actionsPending;
 		}
 		return cachedManagerState;
 	};
@@ -146,7 +124,7 @@ function createShoppingCartManager(
 			return Promise.resolve( lastValidResponseCart.get() );
 		}
 		didInitialFetch = true;
-		fetchInitialCart( state, dispatch, '' );
+		prepareFreshCartForInitialFetch( state, dispatch, '' );
 		return new Promise< ResponseCart >( ( resolve ) => {
 			actionPromises.add( resolve );
 		} );
@@ -187,4 +165,8 @@ export function createShoppingCartManagerClient( {
 	return {
 		forCartKey,
 	};
+}
+
+function isStatePendingUpdate( state: ShoppingCartState ) {
+	return state.queuedActions.length > 0 || state.cacheStatus !== 'valid';
 }
