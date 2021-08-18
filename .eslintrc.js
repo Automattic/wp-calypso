@@ -220,6 +220,7 @@ module.exports = {
 				'client/state/data-getters/**/*',
 				'client/state/editor/**/*',
 				'client/state/google-my-business/**/*',
+				'client/state/gsuite-users/**/*',
 				'client/state/happychat/**/*',
 				'client/support/**/*',
 				'client/test-helpers/**/*',

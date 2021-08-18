@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { usersReducer } from '../reducer';
-
 import { GSUITE_USERS_REQUEST_SUCCESS } from 'calypso/state/action-types';
+import { usersReducer } from '../reducer';
 
 describe( "gsuiteUsersReducer's", () => {
 	const account = {
