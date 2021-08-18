@@ -8,6 +8,10 @@ module.exports = function ( { view } ) {
 	// TODO: Replace the "new-window" event with webcontents.setWindowOpenHandler
 	// when Electron is updated to >= 13.x
 	view.webContents.on( 'new-window', function ( event, url ) {
+		// If the URL trying to open a new window is the Google Social login link, allow new window to open
+		if ( url.includes( 'https://accounts.google.com/o/oauth2/auth' ) ) {
+			return;
+		}
 		// Check if the incoming URL is blank and if it is send to the targetURL instead
 		const urlToLoad = url.includes( 'about:blank' ) || url === '' ? targetURL : url;
 		log.info( `Navigating to URL: '${ urlToLoad }'` );
@@ -20,11 +24,12 @@ module.exports = function ( { view } ) {
 	// Magic links aren't supported in the app currently. Instead we'll show a message about how
 	// to set a password on the account to log in that way.
 	view.webContents.on( 'will-navigate', function ( event, url ) {
-		const urlToLoad =
-			url === Config.baseURL() + 'log-in/link'
-				? 'file://' + assets.getPath( 'magic-links-unsupported.html' )
-				: url;
-		view.webContents.loadURL( urlToLoad );
+		if ( url === Config.baseURL() + 'log-in/link' ) {
+			const urlToLoad = 'file://' + assets.getPath( 'magic-links-unsupported.html' );
+			log.info( `Navigating to URL: '${ urlToLoad }'` );
+			view.webContents.loadURL( urlToLoad );
+		}
+
 		return;
 	} );
 
