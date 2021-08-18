@@ -58,7 +58,7 @@ export const QuickLinks = ( {
 						href={ `/post/${ siteSlug }` }
 						hideLinkIndicator
 						onClick={ trackWritePostAction }
-						label={ translate( 'Write post' ) }
+						label={ translate( 'Write a post' ) }
 						materialIcon="edit"
 					/>
 					{ showCustomizer && (
