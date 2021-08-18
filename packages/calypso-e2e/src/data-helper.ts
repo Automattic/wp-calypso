@@ -41,6 +41,15 @@ export function getDateString( format: DateFormat ): string | null {
 }
 
 /**
+ * Generates a new name for test blog with prefix `e2eflowtesting`.
+ *
+ * @returns {string} Generated blog name.
+ */
+export function getBlogName(): string {
+	return `e2eflowtesting${ getTimestamp() }${ getRandomInteger( 100, 999 ) }`;
+}
+
+/**
  * Assembles and returns the URL to a specific route/asset/query in Calypso.
  *
  * @param {string} route Additional state or page to build into the returned URL.

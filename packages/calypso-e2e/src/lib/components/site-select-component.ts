@@ -1,5 +1,4 @@
 import { Page } from 'playwright';
-import { getCalypsoURL } from '../../data-helper';
 
 const selectors = {
 	searchInput: '[aria-label="Search"]',
@@ -15,6 +14,10 @@ export class SiteSelectComponent {
 	/**
 	 * Creates an instance of the Site Select component.
 	 *
+	 * The site selector can be shown on either one of the following:
+	 * 	- in a pseudo-sidebar, replacing the navigation sidebar.
+	 * 	- as a standalone component on the main content portion of the page.
+	 *
 	 * @param {Page} page Object representing the base page.
 	 */
 	constructor( page: Page ) {
@@ -22,28 +25,13 @@ export class SiteSelectComponent {
 	}
 
 	/**
-	 * Check if the Site Selector page is shown.
+	 * Check if the Site Selector component is shown.
 	 *
 	 * @returns {Promise<boolean>} Whether the site selector is shown.
 	 */
 	async isSiteSelectorVisible(): Promise< boolean > {
 		await this.page.waitForLoadState( 'load' );
 		return await this.page.isVisible( ':has-text("Select a site")' );
-	}
-
-	/**
-	 * Navigate to the site selector endpoint.
-	 *
-	 * @returns {Promise<void>} No return value.
-	 */
-	async showSiteSelector(): Promise< void > {
-		// Wait for any preceding page load to finish first.
-		await this.page.waitForLoadState( 'load' );
-		// Obtain and navigate to the raw /home endpoint, which de-selects the
-		// currently selected site.
-		const homeURL = getCalypsoURL( 'home' );
-		await this.page.goto( homeURL );
-		await this.page.waitForLoadState( 'load' );
 	}
 
 	/**
@@ -67,5 +55,17 @@ export class SiteSelectComponent {
 
 		// Assert the resulting URL is in the form of <protocol><calypsoBaseURL>/home/<url>.
 		await this.page.waitForURL( `**/home/${ url }` );
+	}
+
+	/**
+	 * Clicks on the Add Site button at bottom of the site selector within the sidebar.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async addSite(): Promise< void > {
+		await Promise.all( [
+			this.page.waitForNavigation(),
+			this.page.click( 'a:text("Add New Site")' ),
+		] );
 	}
 }
