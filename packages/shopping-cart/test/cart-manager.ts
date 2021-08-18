@@ -9,7 +9,7 @@ describe( 'ShoppingCartManager', () => {
 				setCart,
 			} );
 			const manager = cartManagerClient.forCartKey( mainCartKey );
-			await manager.waitForReady();
+			await manager.fetchInitialCart();
 			const { responseCart } = manager.getState();
 			expect( responseCart.products.length ).toBe( 0 );
 			expect( responseCart.cart_key ).toBe( mainCartKey );
@@ -23,6 +23,7 @@ describe( 'ShoppingCartManager', () => {
 				setCart,
 			} );
 			const manager = cartManagerClient.forCartKey( mainCartKey );
+			manager.fetchInitialCart();
 			await manager.actions.addProductsToCart( [ planOne ] );
 			const { responseCart } = manager.getState();
 			expect( responseCart.products.length ).toBe( 1 );
