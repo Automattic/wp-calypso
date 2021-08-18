@@ -11,7 +11,7 @@ import type {
 	UnsubscribeFunction,
 	SubscriptionManager,
 	ActionPromises,
-	ShoppingCartActionCreators,
+	ShoppingCartManagerActions,
 	UseShoppingCart,
 	LastValidResponseCart,
 } from './types';
@@ -98,7 +98,7 @@ export function createActionPromisesManager(): ActionPromises {
 }
 
 const emptyCart = getEmptyResponseCart();
-const noopCartAction = (): ReturnType< ShoppingCartActionCreators[ 'addProductsToCart' ] > =>
+const noopCartAction = (): ReturnType< ShoppingCartManagerActions[ 'addProductsToCart' ] > =>
 	Promise.reject( 'Cart actions cannot be taken without a cart key.' );
 const noopState: ShoppingCartManagerState = {
 	isLoading: true,
@@ -109,7 +109,7 @@ const noopState: ShoppingCartManagerState = {
 	responseCart: emptyCart,
 };
 const noopGetState: ShoppingCartManagerGetState = () => noopState;
-const noopActions: ShoppingCartActionCreators = {
+const noopActions: ShoppingCartManagerActions = {
 	addProductsToCart: noopCartAction,
 	removeProductFromCart: noopCartAction,
 	applyCoupon: noopCartAction,

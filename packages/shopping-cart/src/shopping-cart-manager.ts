@@ -8,7 +8,7 @@ import {
 	createActionPromisesManager,
 	noopManager,
 } from './managers';
-import { createActionCreators } from './shopping-cart-actions';
+import { createActions } from './shopping-cart-actions';
 import { getInitialShoppingCartState, shoppingCartReducer } from './shopping-cart-reducer';
 import { createTakeActionsBasedOnState } from './state-based-actions';
 import { createCartSyncMiddleware, createCartInitMiddleware } from './sync';
@@ -118,7 +118,7 @@ function createShoppingCartManager(
 	// CacheStatus. This is the dispatcher used for all actions in the
 	// ShoppingCartManager's public API.
 	const dispatchAndWaitForValid = createDispatchAndWaitForValid( dispatch, actionPromises );
-	const actionCreators = createActionCreators( dispatchAndWaitForValid );
+	const actionCreators = createActions( dispatchAndWaitForValid );
 	const waitForReady = () => {
 		return new Promise< ResponseCart >( ( resolve ) => {
 			actionPromises.add( resolve );

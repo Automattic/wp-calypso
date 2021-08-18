@@ -10,12 +10,10 @@ import type {
 	ReloadCartFromServer,
 	RequestCartProduct,
 	DispatchAndWaitForValid,
-	ShoppingCartActionCreators,
+	ShoppingCartManagerActions,
 } from './types';
 
-export function createActionCreators(
-	dispatch: DispatchAndWaitForValid
-): ShoppingCartActionCreators {
+export function createActions( dispatch: DispatchAndWaitForValid ): ShoppingCartManagerActions {
 	const removeCoupon: RemoveCouponFromCart = () => dispatch( { type: 'REMOVE_COUPON' } );
 	const addProductsToCart: AddProductsToCart = async ( products ) =>
 		dispatch( {
