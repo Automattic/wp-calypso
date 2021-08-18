@@ -18,6 +18,10 @@
 			.domain-mapping-thank-you__button {
 				width: 144px;
 			}
+
+			& > div {
+				padding: 0 24px;
+			}
 		}
 
 		&__step {
