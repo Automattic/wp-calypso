@@ -7,7 +7,7 @@ import ActivityCard from 'calypso/components/activity-card';
 import { preventWidows } from 'calypso/lib/formatting/prevent-widows';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import ActivityLogItem from 'calypso/my-sites/activity/activity-log-item';
-import getSiteActivityLogRetentionDays from 'calypso/state/selectors/get-site-activity-log-retention-days';
+import getActivityLogVisibleDays from 'calypso/state/selectors/get-activity-log-visible-days';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useTrackUpsellView, useTrackUpgradeClick } from './hooks';
 
@@ -36,19 +36,17 @@ type OwnProps = {
 	cardClassName?: string;
 };
 
-const RetentionLimitUpsell: React.FC< OwnProps > = ( { cardClassName } ) => {
+const VisibleDaysLimitUpsell: React.FC< OwnProps > = ( { cardClassName } ) => {
 	const translate = useTranslate();
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const retentionDays = useSelector( ( state ) =>
-		getSiteActivityLogRetentionDays( state, siteId )
-	);
+	const visibleDays = useSelector( ( state ) => getActivityLogVisibleDays( state, siteId ) );
 	const trackUpgradeClick = useTrackUpgradeClick( siteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	const upsellRef = useTrackUpsellView( siteId );
 
-	if ( ! Number.isInteger( retentionDays ) ) {
+	if ( ! Number.isInteger( visibleDays ) ) {
 		return null;
 	}
 
@@ -64,29 +62,29 @@ const RetentionLimitUpsell: React.FC< OwnProps > = ( { cardClassName } ) => {
 		);
 
 	return (
-		<div className="retention-limit-upsell">
-			<div className="retention-limit-upsell__next-activity">{ card }</div>
-			<div className="retention-limit-upsell__call-to-action">
-				<h3 className="retention-limit-upsell__call-to-action-header">
+		<div className="visible-days-limit-upsell">
+			<div className="visible-days-limit-upsell__next-activity">{ card }</div>
+			<div className="visible-days-limit-upsell__call-to-action">
+				<h3 className="visible-days-limit-upsell__call-to-action-header">
 					{ preventWidows(
 						translate(
 							'Restore backups older than %(retentionDays)d day',
 							'Restore backups older than %(retentionDays)d days',
 							{
-								count: retentionDays as number,
-								args: { retentionDays },
+								count: visibleDays as number,
+								args: { retentionDays: visibleDays },
 							}
 						)
 					) }
 				</h3>
-				<p className="retention-limit-upsell__call-to-action-copy">
+				<p className="visible-days-limit-upsell__call-to-action-copy">
 					{ preventWidows(
 						translate(
 							'Your activity log spans more than %(retentionDays)d day. Upgrade your backup storage to access activity older than %(retentionDays)d day.',
 							'Your activity log spans more than %(retentionDays)d days. Upgrade your backup storage to access activity older than %(retentionDays)d days.',
 							{
-								count: retentionDays as number,
-								args: { retentionDays },
+								count: visibleDays as number,
+								args: { retentionDays: visibleDays },
 							}
 						)
 					) }
@@ -94,7 +92,7 @@ const RetentionLimitUpsell: React.FC< OwnProps > = ( { cardClassName } ) => {
 				<Button
 					primary
 					ref={ upsellRef }
-					className="retention-limit-upsell__call-to-action-button"
+					className="visible-days-limit-upsell__call-to-action-button"
 					onClick={ trackUpgradeClick }
 					href={ isJetpackCloud() ? `/pricing/${ siteSlug }` : `/plans/${ siteSlug }` }
 				>
@@ -105,4 +103,4 @@ const RetentionLimitUpsell: React.FC< OwnProps > = ( { cardClassName } ) => {
 	);
 };
 
-export default RetentionLimitUpsell;
+export default VisibleDaysLimitUpsell;

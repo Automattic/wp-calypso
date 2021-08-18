@@ -29,7 +29,7 @@
 	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"calendly_jetpack_appointment_url": "https://calendly.com/jetpack-com/jetpack-onboarding-call-test",
 	"features": {
-		"activity-log/retention-policies": false,
+		"activity-log/display-rules": false,
 		"ad-tracking": false,
 		"async-payments": false,
 		"automated-transfer": true,

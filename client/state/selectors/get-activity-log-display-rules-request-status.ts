@@ -3,7 +3,7 @@
  */
 import type { AppState } from 'calypso/types';
 
-const getSiteActivityLogRetentionPolicyRequestStatus = (
+const getActivityLogDisplayRulesRequestStatus = (
 	state: AppState,
 	siteId: number | null
 ): string | undefined => {
@@ -11,7 +11,7 @@ const getSiteActivityLogRetentionPolicyRequestStatus = (
 		return undefined;
 	}
 
-	return state.activityLog.retentionPolicy[ siteId as number ]?.requestStatus;
+	return state.activityLog.displayRules[ siteId as number ]?.requestStatus;
 };
 
-export default getSiteActivityLogRetentionPolicyRequestStatus;
+export default getActivityLogDisplayRulesRequestStatus;
