@@ -24,7 +24,6 @@ module.exports = function ( { view } ) {
 	// Magic links aren't supported in the app currently. Instead we'll show a message about how
 	// to set a password on the account to log in that way.
 	view.webContents.on( 'will-navigate', function ( event, url ) {
-		log.info( 'Will navigate: ' + url );
 		if ( url === Config.baseURL() + 'log-in/link' ) {
 			const urlToLoad = 'file://' + assets.getPath( 'magic-links-unsupported.html' );
 			log.info( `Navigating to URL: '${ urlToLoad }'` );
@@ -43,9 +42,8 @@ module.exports = function ( { view } ) {
 	} );
 
 	view.webContents.on( 'will-redirect', function ( _, url ) {
-		log.info( 'Will redirect: ' + url );
 		if ( url.includes( 'https://wordpress.com/log-in/apple/callback' ) ) {
-			//log.info( 'Redirecting to URL: ', url );
+			log.info( 'Redirecting to URL: ', url );
 			view.webContents.loadURL( url );
 		}
 	} );
