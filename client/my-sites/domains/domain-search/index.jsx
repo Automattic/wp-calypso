@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import config from '@automattic/calypso-config';
 import { connect } from 'react-redux';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -48,7 +49,7 @@ import EmailVerificationGate from 'calypso/components/email-verification/email-v
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
 import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
-import { domainMapping } from 'calypso/my-sites/domains/paths';
+import { domainAddEmailUpsell, domainMapping } from 'calypso/my-sites/domains/paths';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 
 /**
@@ -155,6 +156,11 @@ class DomainSearch extends Component {
 				fillInSingleCartItemAttributes( registration, this.props.productsList ),
 			] )
 			.then( () => {
+				if ( config.isEnabled( 'titan/upsell-email-domain-purchase' ) ) {
+					page( domainAddEmailUpsell( this.props.selectedSiteSlug, domain ) );
+					return;
+				}
+
 				if ( this.props.userCanPurchaseGSuite && canDomainAddGSuite( domain ) ) {
 					page(
 						'/domains/add/' +
