@@ -58,12 +58,12 @@ export type ShoppingCartManagerGetState = () => ShoppingCartManagerState;
 export interface ShoppingCartManager {
 	getState: ShoppingCartManagerGetState;
 	subscribe: ShoppingCartManagerSubscribe;
-	actions: ShoppingCartActionCreators;
+	actions: ShoppingCartManagerActions;
 	waitForReady: WaitForReady;
 	getUseShoppingCart: () => UseShoppingCart;
 }
 
-export type UseShoppingCart = ShoppingCartActionCreators & ShoppingCartManagerState;
+export type UseShoppingCart = ShoppingCartManagerActions & ShoppingCartManagerState;
 
 export type ReplaceProductInCart = (
 	uuidToReplace: string,
@@ -133,7 +133,7 @@ export type ShoppingCartAction =
 	| { type: 'RECEIVE_UPDATED_RESPONSE_CART'; updatedResponseCart: ResponseCart }
 	| { type: 'RAISE_ERROR'; error: ShoppingCartError; message: string };
 
-export interface ShoppingCartActionCreators {
+export interface ShoppingCartManagerActions {
 	addProductsToCart: AddProductsToCart;
 	removeProductFromCart: RemoveProductFromCart;
 	applyCoupon: ApplyCouponToCart;
