@@ -59,7 +59,7 @@ export interface ShoppingCartManager {
 	getState: ShoppingCartManagerGetState;
 	subscribe: ShoppingCartManagerSubscribe;
 	actions: ShoppingCartManagerActions;
-	waitForReady: WaitForReady;
+	fetchInitialCart: WaitForReady;
 }
 
 export type UseShoppingCart = ShoppingCartManagerActions & ShoppingCartManagerState;
