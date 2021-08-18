@@ -20,7 +20,7 @@ class ConfirmationStep extends Component {
 	handleClick = () => {
 		const { site } = this.props;
 
-		window.location.href = `/me/concierge/${ site.slug }/book`;
+		window.location.href = `/me/quickstart/${ site.slug }/book`;
 	};
 
 	render() {

@@ -365,7 +365,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 
 		//Maybe record tracks event
 
-		window.location.href = '/me/concierge/' + selectedSite.slug + '/book';
+		window.location.href = '/me/quickstart/' + selectedSite.slug + '/book';
 	};
 
 	visitTitanWebmail = ( event ) => {
