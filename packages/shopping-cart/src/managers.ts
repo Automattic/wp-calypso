@@ -72,14 +72,8 @@ export function createLastValidResponseCartManager(
 
 	return {
 		get: () => lastValidResponseCart,
-		update: ( state, areActionsPending ) => {
-			if (
-				state.queuedActions.length === 0 &&
-				state.cacheStatus === 'valid' &&
-				areActionsPending === false
-			) {
-				lastValidResponseCart = convertTempResponseCartToResponseCart( state.responseCart );
-			}
+		update: ( tempResponseCart ) => {
+			lastValidResponseCart = convertTempResponseCartToResponseCart( tempResponseCart );
 		},
 	};
 }
@@ -88,15 +82,10 @@ export function createActionPromisesManager(): ActionPromises {
 	let actionPromises: ( ( cart: ResponseCart ) => void )[] = [];
 
 	return {
-		resolveIfValid( state, areActionsPending ) {
-			if (
-				state.queuedActions.length === 0 &&
-				state.cacheStatus === 'valid' &&
-				actionPromises.length > 0 &&
-				areActionsPending === false
-			) {
+		resolve( tempResponseCart ) {
+			if ( actionPromises.length > 0 ) {
 				debug( `resolving ${ actionPromises.length } action promises` );
-				const responseCart = convertTempResponseCartToResponseCart( state.responseCart );
+				const responseCart = convertTempResponseCartToResponseCart( tempResponseCart );
 				actionPromises.forEach( ( callback ) => callback( responseCart ) );
 				actionPromises = [];
 			}

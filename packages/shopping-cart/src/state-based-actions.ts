@@ -40,6 +40,10 @@ function prepareInvalidCartForSync(
 	}
 }
 
+function isStatePendingUpdate( state: ShoppingCartState, areActionsPending: boolean ) {
+	return state.queuedActions.length > 0 || state.cacheStatus !== 'valid' || areActionsPending;
+}
+
 export function createTakeActionsBasedOnState(
 	lastValidResponseCart: LastValidResponseCart,
 	actionPromises: ActionPromises
@@ -63,8 +67,10 @@ export function createTakeActionsBasedOnState(
 			areActionsPending
 		);
 		fetchInitialCart( state, dispatch, lastCacheStatus );
-		lastValidResponseCart.update( state, areActionsPending );
-		actionPromises.resolveIfValid( state, areActionsPending );
+		if ( ! isStatePendingUpdate( state, areActionsPending ) ) {
+			lastValidResponseCart.update( state.responseCart );
+			actionPromises.resolve( state.responseCart );
+		}
 		prepareInvalidCartForSync( state, dispatch, lastCacheStatus );
 		playQueuedActions( state, dispatch );
 		lastCacheStatus = cacheStatus;
