@@ -9,6 +9,7 @@
 
 .checkout-thank-you__domains {
 	.thank-you {
+
 		&__body {
 			div {
 				min-width: unset;
@@ -18,6 +19,22 @@
 				width: 144px;
 			}
 		}
+
+		&__step {
+			padding-bottom: 24px;
+			align-items: center;
+
+			div > p {
+				@include break-mobile {
+					margin-bottom: 0;
+				}
+			}
+
+			&-cta {
+				margin-top: 0;
+			}
+		}
+
 		&__container-header {
 			width: auto;
 			background-color: var( --studio-blue-50 );
