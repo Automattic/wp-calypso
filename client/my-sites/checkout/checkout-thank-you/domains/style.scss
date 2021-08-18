@@ -2,9 +2,13 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-.is-section-checkout-thank-you .layout__content {
-    padding-right: 0;
-    padding-left: 0;
+.is-section-checkout-thank-you {
+	background: var( --studio-white );
+	
+	.layout__content {
+		padding-right: 0;
+		padding-left: 0;
+	}
 }
 
 .checkout-thank-you__domains {
