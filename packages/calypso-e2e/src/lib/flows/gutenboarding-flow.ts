@@ -183,9 +183,11 @@ export class GutenboardingFlow {
 				.waitForSelector( selectors.planName )
 				.then( ( el ) => el.innerText() );
 
+			console.log( planName );
 			if ( planName === name ) {
 				const button = await plan.waitForSelector( selectors.button( 'Select' ) );
-				await button.click();
+				await Promise.all( [ this.page.waitForNavigation(), button.click() ] );
+				return;
 			}
 		}
 	}
