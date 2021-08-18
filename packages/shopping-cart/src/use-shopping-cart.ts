@@ -14,6 +14,10 @@ export default function useShoppingCart( cartKey?: string ): UseShoppingCart {
 
 	useRefetchOnFocus( finalCartKey );
 
+	useEffect( () => {
+		manager.fetchInitialCart();
+	}, [ manager ] );
+
 	const isMounted = useRef( true );
 	useEffect( () => {
 		isMounted.current = true;
