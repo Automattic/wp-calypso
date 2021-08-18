@@ -1,16 +1,19 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { localize } from 'i18n-calypso';
-
-import { ThankYou } from 'calypso/components/thank-you';
-
-import { CALYPSO_CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';
 import { Button } from '@automattic/components';
+/**
+ * Internal dependencies
+ */
+import { ThankYou } from 'calypso/components/thank-you';
+import { CALYPSO_CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';
 import domainConnectedSuccess from 'calypso/assets/images/illustrations/domain-connected-success.svg';
 
+/**
+ * style dependencies
+ */
 import './style.scss';
 
 const DomainMappingThankYou = ( { domain, translate } ) => {
