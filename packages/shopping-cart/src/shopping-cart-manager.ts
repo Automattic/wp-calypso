@@ -23,7 +23,7 @@ import type {
 	ResponseCart,
 	ShoppingCartReducerDispatch,
 	DispatchAndWaitForValid,
-	AddActionPromise,
+	ActionPromises,
 	ShoppingCartState,
 	UseShoppingCart,
 } from './types';
@@ -34,16 +34,14 @@ const getEmptyCart = () => Promise.resolve( emptyCart );
 
 function createDispatchAndWaitForValid(
 	dispatch: ShoppingCartReducerDispatch,
-	addActionPromise: AddActionPromise
+	actionPromises: ActionPromises
 ): DispatchAndWaitForValid {
-	const dispatchAndWaitForValid: DispatchAndWaitForValid = ( action ) => {
+	return ( action ) => {
 		return new Promise< ResponseCart >( ( resolve ) => {
 			dispatch( action );
-			addActionPromise( resolve );
+			actionPromises.add( resolve );
 		} );
 	};
-
-	return dispatchAndWaitForValid;
 }
 
 function createShoppingCartManager(
@@ -79,15 +77,12 @@ function createShoppingCartManager(
 	// we keep a copy of the `responseCart` the last time the state had a `valid`
 	// CacheStatus and pass that to our consumers. The consumers can use
 	// `isPendingUpdate` to know when the cart data is updating.
-	const {
-		getLastValidResponseCart,
-		updateLastValidResponseCart,
-	} = createLastValidResponseCartManager( state );
+	const lastValidResponseCart = createLastValidResponseCartManager( state );
 
-	const { resolveActionPromisesIfValid, addActionPromise } = createActionPromisesManager();
+	const actionPromises = createActionPromisesManager();
 	const takeActionsBasedOnState = createTakeActionsBasedOnState(
-		updateLastValidResponseCart,
-		resolveActionPromisesIfValid
+		lastValidResponseCart,
+		actionPromises
 	);
 
 	// This is the main dispatcher for shopping cart actions. Dispatched actions
@@ -122,17 +117,17 @@ function createShoppingCartManager(
 	// Promise that will resolve when the cart next reaches a `valid`
 	// CacheStatus. This is the dispatcher used for all actions in the
 	// ShoppingCartManager's public API.
-	const dispatchAndWaitForValid = createDispatchAndWaitForValid( dispatch, addActionPromise );
+	const dispatchAndWaitForValid = createDispatchAndWaitForValid( dispatch, actionPromises );
 	const actionCreators = createActionCreators( dispatchAndWaitForValid );
 	const waitForReady = () => {
 		return new Promise< ResponseCart >( ( resolve ) => {
-			addActionPromise( resolve );
+			actionPromises.add( resolve );
 		} );
 	};
 
 	let cachedManagerState: ShoppingCartManagerState = getShoppingCartManagerState(
 		state,
-		getLastValidResponseCart(),
+		lastValidResponseCart.get(),
 		false
 	);
 	let lastState: ShoppingCartState = state;
@@ -142,7 +137,7 @@ function createShoppingCartManager(
 		if ( lastState !== state || lastActionsPending !== actionsPending ) {
 			cachedManagerState = getShoppingCartManagerState(
 				state,
-				getLastValidResponseCart(),
+				lastValidResponseCart.get(),
 				actionsPending > 0
 			);
 			lastState = state;

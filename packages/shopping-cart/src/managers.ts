@@ -10,9 +10,10 @@ import type {
 	SubscribeCallback,
 	UnsubscribeFunction,
 	SubscriptionManager,
-	AddActionPromise,
+	ActionPromises,
 	ShoppingCartActionCreators,
 	UseShoppingCart,
+	LastValidResponseCart,
 } from './types';
 
 const debug = debugFactory( 'shopping-cart:managers' );
@@ -65,59 +66,46 @@ export function createSubscriptionManager( cartKey: string | undefined ): Subscr
 }
 
 export function createLastValidResponseCartManager(
-	state: ShoppingCartState
-): {
-	getLastValidResponseCart: () => ResponseCart;
-	updateLastValidResponseCart: ( state: ShoppingCartState, areActionsPending: boolean ) => void;
-} {
-	const { responseCart: initialResponseCart } = state;
-	let lastValidResponseCart = convertTempResponseCartToResponseCart( initialResponseCart );
-
-	const updateLastValidResponseCart = (
-		updatedState: ShoppingCartState,
-		areActionsPending: boolean
-	): void => {
-		const { queuedActions, cacheStatus, responseCart: tempResponseCart } = updatedState;
-		if ( queuedActions.length === 0 && cacheStatus === 'valid' && areActionsPending === false ) {
-			const responseCart = convertTempResponseCartToResponseCart( tempResponseCart );
-			lastValidResponseCart = responseCart;
-		}
-	};
+	initialState: ShoppingCartState
+): LastValidResponseCart {
+	let lastValidResponseCart = convertTempResponseCartToResponseCart( initialState.responseCart );
 
 	return {
-		getLastValidResponseCart: () => lastValidResponseCart,
-		updateLastValidResponseCart,
+		get: () => lastValidResponseCart,
+		update: ( state, areActionsPending ) => {
+			if (
+				state.queuedActions.length === 0 &&
+				state.cacheStatus === 'valid' &&
+				areActionsPending === false
+			) {
+				lastValidResponseCart = convertTempResponseCartToResponseCart( state.responseCart );
+			}
+		},
 	};
 }
 
-export function createActionPromisesManager(): {
-	resolveActionPromisesIfValid: ( state: ShoppingCartState, areActionsPending: boolean ) => void;
-	addActionPromise: AddActionPromise;
-} {
+export function createActionPromisesManager(): ActionPromises {
 	let actionPromises: ( ( cart: ResponseCart ) => void )[] = [];
-	const resolveActionPromisesIfValid = (
-		state: ShoppingCartState,
-		areActionsPending: boolean
-	): void => {
-		const { queuedActions, cacheStatus, responseCart: tempResponseCart } = state;
-		if (
-			queuedActions.length === 0 &&
-			cacheStatus === 'valid' &&
-			actionPromises.length > 0 &&
-			areActionsPending === false
-		) {
-			debug( `resolving ${ actionPromises.length } action promises` );
-			const responseCart = convertTempResponseCartToResponseCart( tempResponseCart );
-			actionPromises.forEach( ( callback ) => callback( responseCart ) );
-			actionPromises = [];
-		}
-	};
 
-	const addActionPromise: AddActionPromise = ( resolve ) => {
-		actionPromises.push( resolve );
-	};
+	return {
+		resolveIfValid( state, areActionsPending ) {
+			if (
+				state.queuedActions.length === 0 &&
+				state.cacheStatus === 'valid' &&
+				actionPromises.length > 0 &&
+				areActionsPending === false
+			) {
+				debug( `resolving ${ actionPromises.length } action promises` );
+				const responseCart = convertTempResponseCartToResponseCart( state.responseCart );
+				actionPromises.forEach( ( callback ) => callback( responseCart ) );
+				actionPromises = [];
+			}
+		},
 
-	return { resolveActionPromisesIfValid, addActionPromise };
+		add( resolve ) {
+			actionPromises.push( resolve );
+		},
+	};
 }
 
 const emptyCart = getEmptyResponseCart();
