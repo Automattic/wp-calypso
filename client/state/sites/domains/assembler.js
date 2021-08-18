@@ -51,6 +51,7 @@ export const createSiteDomainObject = ( domain ) => {
 		blogId: Number( domain.blog_id ),
 		bundledPlanSubscriptionId: domain.bundled_plan_subscription_id,
 		canSetAsPrimary: Boolean( domain.can_set_as_primary ),
+		connectionMode: String( domain.connection_mode ),
 		contactInfoDisclosureAvailable: Boolean( domain.contact_info_disclosure_available ),
 		contactInfoDisclosed: Boolean( domain.contact_info_disclosed ),
 		currentUserCanAddEmail: Boolean( domain.current_user_can_add_email ),
