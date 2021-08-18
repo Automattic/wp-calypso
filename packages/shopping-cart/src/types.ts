@@ -182,3 +182,14 @@ export interface LastValidResponseCart {
 export interface ShoppingCartHookManager {
 	getState: () => UseShoppingCart;
 }
+
+export interface CartSyncManager {
+	syncPendingCartToServer: (
+		state: ShoppingCartState,
+		dispatch: Dispatch< ShoppingCartAction >
+	) => void;
+	fetchInitialCartFromServer: (
+		state: ShoppingCartState,
+		dispatch: Dispatch< ShoppingCartAction >
+	) => void;
+}
