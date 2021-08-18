@@ -143,11 +143,13 @@ export class GutenboardingFlow {
 	 *
 	 * @param {Features} features Array of features to select.
 	 */
-	async selectFeatures( features: Features ): Promise< void > {
+	async selectFeatures( features: Features[] ): Promise< void > {
 		for await ( const feature of features ) {
-			await this.page.click( `${ selectors.featureItem } ${ selectors.button( feature ) }` );
+			// Click on the feature to select, then make sure it is in fact selected by checking
+			// whether the attribute `is-selected` is present for the button with that feature.
+			await this.page.click( `${ selectors.featureItem } :text-is("${ feature }")` );
 			await this.page.waitForSelector(
-				`${ selectors.featureItem }.is-selected ${ selectors.button( feature ) }`
+				`${ selectors.featureItem }.is-selected :text-is("${ feature }")`
 			);
 		}
 	}
@@ -158,13 +160,23 @@ export class GutenboardingFlow {
 	 * @param {string} name Name of the plan.
 	 */
 	async selectPlan( name: Plans ): Promise< void > {
-		await this.page.click( `${ selectors.planItem } :text-is("${ name }")` );
+		await this.page.click( ':text-is("Show all plans")' );
 
-		await this.page.waitForSelector( `${ selectors.planItem }.is-open :text-is("${ name }")` );
 		await Promise.all( [
 			this.page.waitForNavigation(),
-			this.page.click( `${ selectors.planItem } ${ selectors.button( 'Select' ) }` ),
+			this.page.click( `div[role="button"]:has-text("${ name }")` ),
 		] );
+
+		// const elementHandle = await this.page.waitForSelector( `${ selectors.planItem }.is-open :text-is("${ name }")` );
+		// const selectButton = await elementHandle.waitForSelector( selectors.button( 'Select') );
+
+		// await Promise.all( [
+		// 	this.page.waitForNavigation(),
+		// 	selectButton.click()
+		// 	// this.page.click(
+		// 	// 	`${ selectors.planItem } :text-is("${ name }") ${ selectors.button( 'Select' ) }`
+		// 	// ),
+		// ] );
 	}
 
 	/**
