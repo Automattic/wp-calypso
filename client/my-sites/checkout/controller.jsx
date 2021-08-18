@@ -252,9 +252,10 @@ export function upsellNudge( context, next ) {
 
 		switch ( upgradeItem ) {
 			case 'business':
+			case 'business-2-years':
+			case 'business-monthly':
 				upsellType = BUSINESS_PLAN_UPGRADE_UPSELL;
 				break;
-
 			default:
 				upsellType = BUSINESS_PLAN_UPGRADE_UPSELL;
 		}
