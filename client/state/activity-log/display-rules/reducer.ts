@@ -12,9 +12,10 @@ import {
 /**
  * Type dependencies
  */
+import type { AnyAction } from 'redux';
 import type { AppState } from 'calypso/types';
 
-export const requestStatus = ( state: AppState = null, { type } ): AppState | string => {
+export const requestStatus = ( state: AppState = null, { type }: AnyAction ): AppState | string => {
 	switch ( type ) {
 		case ACTIVITY_LOG_DISPLAY_RULES_REQUEST:
 			return 'pending';
@@ -29,7 +30,7 @@ export const requestStatus = ( state: AppState = null, { type } ): AppState | st
 
 export const visibleDays = (
 	state: AppState = null,
-	{ type, displayRules }
+	{ type, displayRules }: AnyAction
 ): AppState | number | undefined => {
 	if ( type !== ACTIVITY_LOG_DISPLAY_RULES_SET ) {
 		return state;
