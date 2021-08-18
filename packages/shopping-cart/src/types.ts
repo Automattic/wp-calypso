@@ -60,7 +60,6 @@ export interface ShoppingCartManager {
 	subscribe: ShoppingCartManagerSubscribe;
 	actions: ShoppingCartManagerActions;
 	waitForReady: WaitForReady;
-	getUseShoppingCart: () => UseShoppingCart;
 }
 
 export type UseShoppingCart = ShoppingCartManagerActions & ShoppingCartManagerState;
@@ -178,4 +177,8 @@ export interface ActionPromises {
 export interface LastValidResponseCart {
 	get: () => ResponseCart;
 	update: ( tempResponseCart: TempResponseCart ) => void;
+}
+
+export interface ShoppingCartHookManager {
+	getState: () => UseShoppingCart;
 }
