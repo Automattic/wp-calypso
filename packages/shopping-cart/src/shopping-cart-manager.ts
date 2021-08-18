@@ -118,7 +118,7 @@ function createShoppingCartManager(
 	// CacheStatus. This is the dispatcher used for all actions in the
 	// ShoppingCartManager's public API.
 	const dispatchAndWaitForValid = createDispatchAndWaitForValid( dispatch, actionPromises );
-	const actionCreators = createActions( dispatchAndWaitForValid );
+	const actions = createActions( dispatchAndWaitForValid );
 	const waitForReady = () => {
 		return new Promise< ResponseCart >( ( resolve ) => {
 			actionPromises.add( resolve );
@@ -146,12 +146,12 @@ function createShoppingCartManager(
 		return cachedManagerState;
 	};
 
-	let cachedUseShoppingCart: UseShoppingCart = { ...actionCreators, ...getCachedManagerState() };
+	let cachedUseShoppingCart: UseShoppingCart = { ...actions, ...getCachedManagerState() };
 	let lastManagerState = cachedManagerState;
 	const getUseShoppingCart = () => {
 		const managerState = getCachedManagerState();
 		if ( lastManagerState !== managerState ) {
-			cachedUseShoppingCart = { ...actionCreators, ...managerState };
+			cachedUseShoppingCart = { ...actions, ...managerState };
 			lastManagerState = managerState;
 		}
 		return cachedUseShoppingCart;
@@ -162,7 +162,7 @@ function createShoppingCartManager(
 
 	return {
 		subscribe,
-		actions: actionCreators,
+		actions,
 		getState: getCachedManagerState,
 		waitForReady,
 		getUseShoppingCart,
