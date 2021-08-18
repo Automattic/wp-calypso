@@ -222,6 +222,7 @@ module.exports = {
 				'client/state/google-my-business/**/*',
 				'client/state/gsuite-users/**/*',
 				'client/state/happychat/**/*',
+				'client/state/help/**/*',
 				'client/support/**/*',
 				'client/test-helpers/**/*',
 				'client/types.ts',
