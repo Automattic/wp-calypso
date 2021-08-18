@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { Button } from '@automattic/components';
 /**
  * Internal dependencies
@@ -16,7 +16,8 @@ import domainConnectedSuccess from 'calypso/assets/images/illustrations/domain-c
  */
 import './style.scss';
 
-const DomainMappingThankYou = ( { domain, translate } ) => {
+const DomainMappingThankYou = ( { domain } ) => {
+	const translate = useTranslate();
 	return (
 		<ThankYou
 			containerClassName="checkout-thank-you__domains"
@@ -97,4 +98,4 @@ const DomainMappingThankYou = ( { domain, translate } ) => {
 	);
 };
 
-export default localize( DomainMappingThankYou );
+export default DomainMappingThankYou;
