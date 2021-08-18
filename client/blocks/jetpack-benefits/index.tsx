@@ -37,15 +37,9 @@ interface Props {
 	productSlug: string;
 }
 
-// named export for cleaner testing of class methods
 const JetpackBenefits: React.FC< Props > = ( { siteId, productSlug } ) => {
-	const rewindState = useSelector( ( state ) => {
-		return getRewindState( state, siteId );
-	} );
-
-	const scanState = useSelector( ( state ) => {
-		return getSiteScanState( state, siteId );
-	} );
+	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) );
+	const scanState = useSelector( ( state ) => getSiteScanState( state, siteId ) );
 	const translate = useTranslate();
 
 	const siteHasBackups = () => {
