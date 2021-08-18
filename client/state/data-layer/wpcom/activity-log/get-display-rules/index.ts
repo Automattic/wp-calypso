@@ -7,13 +7,24 @@ import {
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import fromApi from './from-api';
 
-const fetch = ( action ) =>
+/**
+ * Type dependencies
+ */
+import type { AnyAction } from 'redux';
+import type { DisplayRules } from 'calypso/state/activity-log/display-rules/types';
+
+type RequestActionType = AnyAction & {
+	siteId: number;
+};
+
+const fetch = ( action: RequestActionType ) =>
 	http(
 		{
 			apiNamespace: 'wpcom/v2',
 			method: 'GET',
-			path: `/sites/${ action.siteId }/activity/display-rules`,
+			path: `/sites/${ action.siteId }/rewind/policies`,
 			query: {
 				force: 'wpcom',
 			},
@@ -21,7 +32,7 @@ const fetch = ( action ) =>
 		action
 	);
 
-const onSuccess = ( { siteId }, { display_rules: displayRules } ) => [
+const onSuccess = ( { siteId }: RequestActionType, displayRules: DisplayRules ) => [
 	{
 		type: ACTIVITY_LOG_DISPLAY_RULES_REQUEST_SUCCESS,
 		siteId,
@@ -33,7 +44,7 @@ const onSuccess = ( { siteId }, { display_rules: displayRules } ) => [
 	},
 ];
 
-const onError = ( { siteId } ) => ( {
+const onError = ( { siteId }: RequestActionType ) => ( {
 	type: ACTIVITY_LOG_DISPLAY_RULES_REQUEST_FAILURE,
 	siteId,
 } );
@@ -42,6 +53,7 @@ registerHandlers( 'state/data-layer/wpcom/activity-log/get-display-rules', {
 	[ ACTIVITY_LOG_DISPLAY_RULES_REQUEST ]: [
 		dispatchRequest( {
 			fetch,
+			fromApi,
 			onSuccess,
 			onError,
 		} ),
