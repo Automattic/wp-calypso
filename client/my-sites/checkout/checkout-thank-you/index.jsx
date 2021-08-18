@@ -469,8 +469,10 @@ export class CheckoutThankYou extends React.Component {
 				</Main>
 			);
 		} else if ( wasDomainMappingOnlyProduct ) {
-			const [ , domain ] = findPurchaseAndDomain( purchases, isDomainMapping );
-			return <DomainMappingThankYou domain={ domain } />;
+			const [ , domainName ] = findPurchaseAndDomain( purchases, isDomainMapping );
+			return (
+				<DomainMappingThankYou domainName={ domainName } selectedSite={ this.props.selectedSite } />
+			);
 		}
 
 		if ( this.props.domainOnlySiteFlow && purchases.length > 0 && ! failedPurchases.length ) {

@@ -8,6 +8,8 @@ import { Button } from '@automattic/components';
  * Internal dependencies
  */
 import { ThankYou } from 'calypso/components/thank-you';
+import { domainMappingSetup } from 'calypso/my-sites/domains/paths';
+import { emailManagement } from 'calypso/my-sites/email/paths';
 import { CALYPSO_CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';
 import domainConnectedSuccess from 'calypso/assets/images/illustrations/domain-connected-success.svg';
 
@@ -16,7 +18,7 @@ import domainConnectedSuccess from 'calypso/assets/images/illustrations/domain-c
  */
 import './style.scss';
 
-const DomainMappingThankYou = ( { domain } ) => {
+const DomainMappingThankYou = ( { domainName: domain, selectedSite } ) => {
 	const translate = useTranslate();
 	return (
 		<ThankYou
@@ -34,7 +36,7 @@ const DomainMappingThankYou = ( { domain } ) => {
 							),
 							stepCta: (
 								<Button
-									href={ '#' }
+									href={ domainMappingSetup( selectedSite.slug, domain ) }
 									className={ 'domain-mapping-thank-you__button' }
 									primary
 									busy={ false }
@@ -57,7 +59,7 @@ const DomainMappingThankYou = ( { domain } ) => {
 							),
 							stepCta: (
 								<Button
-									href={ '#' }
+									href={ emailManagement( selectedSite.slug, domain.name ) }
 									className={ 'domain-mapping-thank-you__button' }
 									busy={ false }
 									disabled={ false }
