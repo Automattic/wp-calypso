@@ -152,6 +152,7 @@
 		"site-indicator": true,
 		"memberships": true,
 		"support-user": true,
+		"titan/upsell-email-domain-purchase": false,
 		"titan/iframe-control-panel": false,
 		"tools/migrate": true,
 		"upgrades/checkout": true,
