@@ -12,7 +12,6 @@ import type {
 	SubscriptionManager,
 	ActionPromises,
 	ShoppingCartManagerActions,
-	UseShoppingCart,
 	LastValidResponseCart,
 } from './types';
 
@@ -119,11 +118,9 @@ const noopActions: ShoppingCartManagerActions = {
 	replaceProductsInCart: noopCartAction,
 	reloadFromServer: () => Promise.resolve( emptyCart ),
 };
-const noopUseShoppingCart: UseShoppingCart = { ...noopActions, ...noopState };
 export const noopManager: ShoppingCartManager = {
 	actions: noopActions,
 	getState: noopGetState,
 	subscribe: () => () => null,
 	waitForReady: () => Promise.resolve( emptyCart ),
-	getUseShoppingCart: () => noopUseShoppingCart,
 };
