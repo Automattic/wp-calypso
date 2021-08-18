@@ -170,6 +170,12 @@ export type ShoppingCartMiddleware = (
 	dispatch: Dispatch< ShoppingCartAction >
 ) => void;
 
-export type AddActionPromise = (
-	resolve: ( value: ResponseCart | PromiseLike< ResponseCart > ) => void
-) => void;
+export interface ActionPromises {
+	resolveIfValid: ( state: ShoppingCartState, areActionsPending: boolean ) => void;
+	add: ( resolve: ( value: ResponseCart ) => void ) => void;
+}
+
+export interface LastValidResponseCart {
+	get: () => ResponseCart;
+	update: ( state: ShoppingCartState, areActionsPending: boolean ) => void;
+}

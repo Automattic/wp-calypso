@@ -1,6 +1,12 @@
 import debugFactory from 'debug';
 import { playQueuedActions } from './shopping-cart-reducer';
-import type { ShoppingCartState, ShoppingCartReducerDispatch, CacheStatus } from './types';
+import type {
+	ActionPromises,
+	LastValidResponseCart,
+	ShoppingCartState,
+	ShoppingCartReducerDispatch,
+	CacheStatus,
+} from './types';
 
 const debug = debugFactory( 'shopping-cart:state-based-actions' );
 
@@ -35,8 +41,8 @@ function prepareInvalidCartForSync(
 }
 
 export function createTakeActionsBasedOnState(
-	updateLastValidResponseCart: ( state: ShoppingCartState, areActionsPending: boolean ) => void,
-	resolveActionPromisesIfValid: ( state: ShoppingCartState, areActionsPending: boolean ) => void
+	lastValidResponseCart: LastValidResponseCart,
+	actionPromises: ActionPromises
 ): (
 	state: ShoppingCartState,
 	dispatch: ShoppingCartReducerDispatch,
@@ -57,8 +63,8 @@ export function createTakeActionsBasedOnState(
 			areActionsPending
 		);
 		fetchInitialCart( state, dispatch, lastCacheStatus );
-		updateLastValidResponseCart( state, areActionsPending );
-		resolveActionPromisesIfValid( state, areActionsPending );
+		lastValidResponseCart.update( state, areActionsPending );
+		actionPromises.resolveIfValid( state, areActionsPending );
 		prepareInvalidCartForSync( state, dispatch, lastCacheStatus );
 		playQueuedActions( state, dispatch );
 		lastCacheStatus = cacheStatus;
