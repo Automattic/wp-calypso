@@ -7,7 +7,7 @@ import page from 'page';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { Button, Card, CompactCard } from '@automattic/components';
-import { YOAST_PREMIUM, YOAST_FREE } from '@automattic/calypso-products';
+import { YOAST_PREMIUM, YOAST_FREE, UPS_SHIPPING_METHOD } from '@automattic/calypso-products';
 
 /**
  * Internal dependencies
@@ -37,7 +37,7 @@ import { isAtomicSiteWithoutBusinessPlan } from 'calypso/blocks/eligibility-warn
 import Notice from 'calypso/components/notice';
 import ComponentDemo from 'calypso/my-sites/marketplace/pages/marketplace-test/component-demo';
 import AdminMenuFetch from 'calypso/my-sites/marketplace/pages/marketplace-test/admin-menu-fetch';
-import { YOAST } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
+import { YOAST, WOOCOMMERCE } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
 
 export const Container = styled.div`
 	margin: 0 25px;
@@ -79,6 +79,10 @@ export default function MarketplaceTest(): JSX.Element {
 	const transferDetails = useSelector( ( state ) => getAutomatedTransfer( state, selectedSiteId ) );
 	const eligibilityDetails = useSelector( ( state ) => getEligibility( state, selectedSiteId ) );
 	const marketplacePages = [
+		{
+			name: 'UPS WooCommerce Shipping Details Page',
+			path: `/marketplace/product/details/${ WOOCOMMERCE }/${ UPS_SHIPPING_METHOD }`,
+		},
 		{
 			name: 'Yoast Premium Details Page',
 			path: `/marketplace/product/details/${ YOAST }/${ YOAST_PREMIUM }`,

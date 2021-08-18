@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { YOAST_PREMIUM, YOAST_FREE } from '@automattic/calypso-products';
+import { YOAST_PREMIUM, YOAST_FREE, UPS_SHIPPING_METHOD } from '@automattic/calypso-products';
 
 /**
  * Internal dependencies
@@ -16,8 +16,9 @@ import { marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';
 /**
  * A set of logical product groups, grouped by actual products, to be shown in one product (group) page
  * i.e. : YOAST_PREMIUM, YOAST_FREE are 2 products that belong to the product group YOAST
- * */
+ */
 export const YOAST = 'YOAST';
+export const WOOCOMMERCE = 'WOOCOMMERCE';
 
 export const productGroups: IProductGroupCollection = {
 	[ YOAST ]: {
@@ -33,6 +34,15 @@ export const productGroups: IProductGroupCollection = {
 				defaultPluginSlug: 'wordpress-seo',
 				pluginsToBeInstalled: [ 'wordpress-seo' ],
 				isPurchasableProduct: false,
+			},
+		},
+	},
+	[ WOOCOMMERCE ]: {
+		products: {
+			[ UPS_SHIPPING_METHOD ]: {
+				productName: 'UPS Shipping Method',
+				pluginsToBeInstalled: [ UPS_SHIPPING_METHOD ],
+				isPurchasableProduct: true,
 			},
 		},
 	},
