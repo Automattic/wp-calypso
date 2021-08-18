@@ -4,6 +4,7 @@
 import page from 'page';
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
+import titleCase from 'to-title-case';
 import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
@@ -71,7 +72,7 @@ const TitanSetupMailbox = ( { selectedDomainName } ) => {
 			{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
 			<Main wideLayout={ true }>
-				<DocumentHead title={ title } />
+				<DocumentHead title={ titleCase( title ) } />
 
 				<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
 

@@ -37,11 +37,9 @@ const TitanUnusedMailboxesNotice = ( { domain, maxTitanMailboxCount, onFinishSet
 		}
 	);
 
-	const ctaText = translate( 'Set up mailbox' );
-
 	return (
 		<Notice icon="notice" showDismiss={ false } status="is-warning" text={ text }>
-			<NoticeAction onClick={ onFinishSetupClick }>{ ctaText }</NoticeAction>
+			<NoticeAction onClick={ onFinishSetupClick }>{ translate( 'Set up mailbox' ) }</NoticeAction>
 		</Notice>
 	);
 };
