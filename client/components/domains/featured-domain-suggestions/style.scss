@@ -4,16 +4,11 @@
 .featured-domain-suggestions {
 	display: flex;
 	flex-direction: column;
+	flex-wrap: wrap;
 
 	&.featured-domain-suggestions--has-match-reasons .featured-domain-suggestion {
 		.domain-registration-suggestion__match-reasons {
 			min-height: 26px;
-		}
-	}
-
-	&.featured-domain-suggestions__is-domain-management .featured-domain-suggestion {
-		.domain-suggestion__action {
-			font-size: $font-body;
 		}
 	}
 
@@ -41,14 +36,18 @@
 	margin-top: 0;
 	width: 100%;
 
+	@include break-mobile {
+		flex-direction: row;
+		/* using .is-compact to increase specificity */
+		&.is-compact {
+			padding: 15px 20px;
+		}
+	}
+
 	.button.domain-suggestion__action {
 		flex-grow: 0;
-		margin-left: 0;
-		margin-top: 1em;
 		text-align: center;
-		padding: 0.5em 3em;
 		transition: all 0.1s linear;
-		width: 100%;
 
 		.is-placeholder & {
 			animation: loading-fade 1.6s ease-in-out infinite;
@@ -65,13 +64,13 @@
 		display: flex;
 		flex-basis: auto;
 		flex-direction: column;
-		justify-content: flex-start;
+		justify-content: center;
 		flex-grow: 1;
 		margin-top: 0;
 	}
 
 	.domain-registration-suggestion__title,
-	.domain-registration-suggestion__progress-bar,
+	.domain-registration-suggestion__badges,
 	.domain-product-price,
 	.domain-registration-suggestion__match-reasons {
 		flex: 0 0 auto;
@@ -79,19 +78,31 @@
 		width: 100%;
 	}
 
-	.domain-registration-suggestion__title-wrapper .domain-registration-suggestion__title {
-		width: auto;
-	}
-
 	.domain-registration-suggestion__title {
 		font-size: $font-title-small;
 		font-weight: 400;
 		line-height: 1.2;
 		margin-bottom: 0.25em;
+		width: auto;
 
-		@include breakpoint-deprecated( '>480px' ) {
-			font-size: $font-title-medium;
-			margin-bottom: 0.125em;
+		@include break-mobile {
+			margin-bottom: 0;
+		}
+
+		.domain-registration-suggestion__domain-title {
+			font-size: $font-title-small;
+
+			@include break-mobile {
+				font-size: $font-title-medium;
+			}
+
+			.domain-registration-suggestion__domain-title-name {
+				color: var( --studio-gray-90 );
+			}
+
+			.domain-registration-suggestion__domain-title-tld {
+				font-weight: normal;
+			}
 		}
 	}
 
@@ -101,23 +112,21 @@
 		justify-content: flex-start;
 
 		body.is-section-signup.is-white-signup & {
+			align-items: flex-start;
 			margin-top: 12px;
-		}
-
-		&.is-free-domain,
-		&.is-sale-domain {
-			small {
-				font-size: 0.9em; /* stylelint-disable-line */
-			}
 		}
 	}
 
-	.domain-registration-suggestion__progress-bar {
+	.domain-registration-suggestion__badges {
+		align-self: flex-start;
 		align-items: center;
 		display: flex;
 		font-size: $font-body-extra-small;
-		margin-top: 10px;
 		order: 2;
+
+		@include break-mobile {
+			align-self: center;
+		}
 
 		.progress-bar {
 			width: 25%;
@@ -126,12 +135,13 @@
 	}
 
 	.domain-registration-suggestion__match-reasons {
+		margin-top: 8px;
 		order: 3;
 	}
 
 	.domain-registration-suggestion__match-reason {
 		color: var( --color-text-subtle );
-		font-size: $font-body-extra-small;
+		font-size: $font-body-small;
 		padding: 0.125em 0;
 		display: flex;
 		align-items: center;
@@ -143,9 +153,20 @@
 	}
 
 	&.is-unavailable {
-		.domain-registration-suggestion__progress-bar,
+		.domain-registration-suggestion__badges,
 		.domain-registration-suggestion__match-reasons {
 			display: none;
+		}
+	}
+}
+
+.featured-domain-suggestion.card {
+	.domain-registration-suggestion__title-wrapper {
+		flex-wrap: nowrap;
+		flex-direction: column-reverse;
+
+		@include break-xlarge {
+			flex-direction: row;
 		}
 	}
 }
@@ -157,12 +178,14 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 	align-items: center;
 	background: #ffffff;
 	border-bottom: 1px solid rgba( 220, 220, 222, 0.64 );
+	padding: 16px;
 
 	@include break-mobile {
 		margin-bottom: 12px;
 		box-sizing: border-box;
 		border: 1px solid #e2e4e7;
 		background: var( --color-surface );
+		padding: 16px 24px;
 	}
 
 	.domain-suggestion__action-container {
@@ -179,6 +202,7 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 		border-radius: 4px; /* stylelint-disable-line */
 		box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
 		font-size: 0.875rem;
+		height: auto;
 
 		@include break-mobile {
 			margin-top: 0;
@@ -198,6 +222,7 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 	.domain-registration-suggestion__title-wrapper {
 		flex-wrap: nowrap;
 		flex-direction: column-reverse;
+		margin-bottom: initial;
 
 		@include break-xlarge {
 			flex-direction: row;
@@ -225,19 +250,9 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 
 body.is-section-signup.is-white-signup .featured-domain-suggestions {
 	margin: 0;
-
-	@include break-mobile {
+	
+	@include breakpoint-deprecated( '<960px' ) {
 		margin: 0 20px;
-	}
-
-	@include break-large {
-		margin: 0;
-	}
-}
-
-@include breakpoint-deprecated( '<660px' ) {
-	.featured-domain-suggestions {
-		flex-flow: wrap;
 	}
 }
 
@@ -261,8 +276,6 @@ body.is-section-signup.is-white-signup .featured-domain-suggestions {
 	}
 
 	.featured-domain-suggestions--title-causes-overflow {
-		flex-wrap: wrap;
-
 		.featured-domain-suggestion {
 			margin-top: 0;
 		}

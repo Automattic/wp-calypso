@@ -40,7 +40,12 @@ import ReaderMain from 'calypso/reader/components/reader-main';
 import { isDiscoverPost, isDiscoverSitePick } from 'calypso/reader/discover/helper';
 import DiscoverSiteAttribution from 'calypso/reader/discover/site-attribution';
 import { READER_FULL_POST } from 'calypso/reader/follow-sources';
-import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
+import {
+	canBeMarkedAsSeen,
+	getSiteName,
+	isEligibleForUnseen,
+	getFeaturedImageAlt,
+} from 'calypso/reader/get-helpers';
 import LikeButton from 'calypso/reader/like-button';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
 import PostExcerptLink from 'calypso/reader/post-excerpt-link';
@@ -411,6 +416,7 @@ export class FullPostView extends React.Component {
 		const startingCommentId = this.getCommentIdFromUrl();
 		const commentCount = get( post, 'discussion.comment_count' );
 		const postKey = { blogId, feedId, postId };
+		const featuredImageAlt = getFeaturedImageAlt( post );
 
 		/*eslint-disable react/no-danger */
 		/*eslint-disable react/jsx-no-target-blank */
@@ -489,7 +495,7 @@ export class FullPostView extends React.Component {
 							<ReaderFullPostHeader post={ post } referralPost={ referralPost } />
 
 							{ post.featured_image && ! isFeaturedImageInContent( post ) && (
-								<FeaturedImage src={ post.featured_image } />
+								<FeaturedImage src={ post.featured_image } alt={ featuredImageAlt } />
 							) }
 							{ isLoading && <ReaderFullPostContentPlaceholder /> }
 							{ post.use_excerpt ? (

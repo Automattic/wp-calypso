@@ -966,6 +966,62 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/jetpack/thank-you/foo.bar/no_product' );
 	} );
 
+	describe( 'Plan Upgrade Upsell Nudge', () => {
+		it( 'offers discounted business plan upgrade when premium plan is purchased.', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: 'value_bundle',
+						bill_period: 365,
+					},
+				],
+			};
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: 'foo.bar',
+				receiptId: '1234abcd',
+				cart,
+			} );
+			expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/business/1234abcd' );
+		} );
+
+		it( 'offers discounted biennial business plan upgrade when biennial premium plan is purchased.', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: 'value_bundle-2y',
+						bill_period: 730,
+					},
+				],
+			};
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: 'foo.bar',
+				receiptId: '1234abcd',
+				cart,
+			} );
+			expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/business-2-years/1234abcd' );
+		} );
+
+		it( 'offers discounted monthly business plan upgrade when monthly premium plan is purchased.', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: 'value_bundle_monthly',
+						bill_period: 31,
+					},
+				],
+			};
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: 'foo.bar',
+				receiptId: '1234abcd',
+				cart,
+			} );
+			expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/business-monthly/1234abcd' );
+		} );
+	} );
+
 	describe( 'Jetpack Siteless Checkout Thank You', () => {
 		it( 'redirects when jetpack checkout arg is set, but siteSlug is undefined.', () => {
 			const cart = {
@@ -1039,7 +1095,7 @@ describe( 'getThankYouPageUrl', () => {
 				jetpackTemporarySiteId: 123456789,
 			} );
 			expect( url ).toBe(
-				'/checkout/jetpack/thank-you/no-site/jetpack_backup_daily?receiptId=80023&jetpackTemporarySiteId=123456789'
+				'/checkout/jetpack/thank-you/no-site/jetpack_backup_daily?receiptId=80023&siteId=123456789'
 			);
 		} );
 	} );

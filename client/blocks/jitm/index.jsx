@@ -36,6 +36,14 @@ function renderTemplate( template, props ) {
 			);
 		case 'invisible':
 			return <>{ props.trackImpression && props.trackImpression() }</>;
+		case 'modal':
+			return (
+				<AsyncLoad
+					{ ...props }
+					require="calypso/blocks/jitm/templates/modal"
+					placeholder={ null }
+				/>
+			);
 		default:
 			return (
 				<AsyncLoad

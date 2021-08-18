@@ -218,27 +218,29 @@ class SocialLoginForm extends Component {
 		return (
 			<Card className="login__social">
 				<div className="login__social-buttons">
-					<GoogleLoginButton
-						clientId={ config( 'google_oauth_client_id' ) }
-						responseHandler={ this.handleGoogleResponse }
-						uxMode={ uxMode }
-						redirectUri={ this.getRedirectUrl( 'google' ) }
-						onClick={ this.trackLoginAndRememberRedirect.bind( null, 'google' ) }
-						socialServiceResponse={
-							this.props.socialService === 'google' ? this.props.socialServiceResponse : null
-						}
-					/>
+					<div className=" login__social-buttons-container">
+						<GoogleLoginButton
+							clientId={ config( 'google_oauth_client_id' ) }
+							responseHandler={ this.handleGoogleResponse }
+							uxMode={ uxMode }
+							redirectUri={ this.getRedirectUrl( 'google' ) }
+							onClick={ this.trackLoginAndRememberRedirect.bind( null, 'google' ) }
+							socialServiceResponse={
+								this.props.socialService === 'google' ? this.props.socialServiceResponse : null
+							}
+						/>
 
-					<AppleLoginButton
-						clientId={ config( 'apple_oauth_client_id' ) }
-						responseHandler={ this.handleAppleResponse }
-						uxMode={ uxModeApple }
-						redirectUri={ this.getRedirectUrl( 'apple' ) }
-						onClick={ this.trackLoginAndRememberRedirect.bind( null, 'apple' ) }
-						socialServiceResponse={
-							this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
-						}
-					/>
+						<AppleLoginButton
+							clientId={ config( 'apple_oauth_client_id' ) }
+							responseHandler={ this.handleAppleResponse }
+							uxMode={ uxModeApple }
+							redirectUri={ this.getRedirectUrl( 'apple' ) }
+							onClick={ this.trackLoginAndRememberRedirect.bind( null, 'apple' ) }
+							socialServiceResponse={
+								this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
+							}
+						/>
+					</div>
 
 					{ this.renderSocialTos() }
 				</div>

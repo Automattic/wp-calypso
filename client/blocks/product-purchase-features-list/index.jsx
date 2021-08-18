@@ -138,7 +138,7 @@ export class ProductPurchaseFeaturesList extends Component {
 					<BusinessOnboarding
 						isWpcomPlan
 						onClick={ this.handleBusinessOnboardingClick }
-						link={ `/me/concierge/${ selectedSite.slug }/book` }
+						link={ `/me/quickstart/${ selectedSite.slug }/book` }
 					/>
 				) }
 				{ isWordadsInstantActivationEligible( selectedSite ) && (

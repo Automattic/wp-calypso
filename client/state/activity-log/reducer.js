@@ -5,7 +5,7 @@ import { withStorageKey } from '@automattic/state-utils';
 import { ACTIVITY_LOG_FILTER_SET, ACTIVITY_LOG_FILTER_UPDATE } from 'calypso/state/action-types';
 import { combineReducers, keyedReducer } from 'calypso/state/utils';
 import { activationRequesting } from './activation/reducer';
-import retentionPolicy from './retention-policy/reducer';
+import displayRules from './display-rules/reducer';
 import { restoreProgress, restoreRequest } from './restore/reducer';
 import { backupRequest, backupProgress } from './backup/reducer';
 
@@ -29,7 +29,7 @@ export const filterState = ( state = emptyFilter, { type, filter } ) => {
 const combinedReducer = combineReducers( {
 	activationRequesting,
 	filter: keyedReducer( 'siteId', filterState ),
-	retentionPolicy,
+	displayRules,
 	restoreProgress,
 	restoreRequest,
 	backupProgress,

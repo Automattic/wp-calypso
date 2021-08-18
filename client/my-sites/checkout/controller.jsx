@@ -252,9 +252,10 @@ export function upsellNudge( context, next ) {
 
 		switch ( upgradeItem ) {
 			case 'business':
+			case 'business-2-years':
+			case 'business-monthly':
 				upsellType = BUSINESS_PLAN_UPGRADE_UPSELL;
 				break;
-
 			default:
 				upsellType = BUSINESS_PLAN_UPGRADE_UPSELL;
 		}
@@ -294,7 +295,7 @@ export function jetpackCheckoutThankYou( context, next ) {
 	const isSitelessCheckoutFlow =
 		context.path.includes( '/checkout/jetpack/thank-you/no-site' ) || forSitelessScheduling;
 
-	const { receiptId, source, jetpackTemporarySiteId } = context.query;
+	const { receiptId, source, siteId } = context.query;
 
 	context.primary = isSitelessCheckoutFlow ? (
 		<JetpackCheckoutSitelessThankYou
@@ -302,7 +303,7 @@ export function jetpackCheckoutThankYou( context, next ) {
 			receiptId={ receiptId }
 			forScheduling={ forSitelessScheduling }
 			source={ source }
-			jetpackTemporarySiteId={ jetpackTemporarySiteId }
+			jetpackTemporarySiteId={ siteId }
 		/>
 	) : (
 		<JetpackCheckoutThankYou
@@ -316,10 +317,11 @@ export function jetpackCheckoutThankYou( context, next ) {
 }
 
 export function jetpackCheckoutThankYouCompleted( context, next ) {
-	const { receiptId } = context.query;
+	const { siteId, receiptId } = context.query;
 	context.primary = (
 		<JetpackCheckoutSitelessThankYouCompleted
 			productSlug={ context.params.product }
+			jetpackTemporarySiteId={ siteId }
 			receiptId={ receiptId }
 		/>
 	);

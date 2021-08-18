@@ -45,7 +45,7 @@ import 'calypso/state/data-layer/wpcom/sites/rewind/downloads';
 import 'calypso/state/data-layer/wpcom/sites/rewind/restores';
 import 'calypso/state/activity-log/init';
 
-export * from './retention-policy/actions';
+export * from './display-rules/actions';
 
 /**
  * Turn the 'rewind' feature on for a site.

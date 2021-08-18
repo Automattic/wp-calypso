@@ -85,13 +85,22 @@ const identityMap = ( item ) => item;
 class EmailProvidersComparison extends React.Component {
 	static propTypes = {
 		// Props passed to this component
+		cartDomainName: PropTypes.string,
+		headerTitle: PropTypes.string,
+		hideEmailForwardingCard: PropTypes.bool,
+		hideEmailHeader: PropTypes.bool,
+		onSkipClick: PropTypes.func,
+		promoHeaderTitle: PropTypes.string,
 		selectedDomainName: PropTypes.string.isRequired,
+		showSkipButton: PropTypes.bool,
 
 		// Props injected via connect()
 		currencyCode: PropTypes.string,
 		currentRoute: PropTypes.string,
 		domain: PropTypes.object,
+		domainName: PropTypes.string,
 		gSuiteProduct: PropTypes.object,
+		hasCartDomain: PropTypes.bool,
 		isGSuiteSupported: PropTypes.bool.isRequired,
 		productsList: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object,
@@ -151,9 +160,9 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	isUpgrading = () => {
-		const { domain } = this.props;
+		const { domain, hasCartDomain } = this.props;
 
-		return hasEmailForwards( domain );
+		return ! hasCartDomain && hasEmailForwards( domain );
 	};
 
 	onTitanMailboxesChange = ( updatedMailboxes ) =>
@@ -167,13 +176,13 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	onTitanConfirmNewMailboxes = () => {
-		const { domain } = this.props;
+		const { domain, domainName, hasCartDomain } = this.props;
 		const { titanMailboxes } = this.state;
 
 		const validatedTitanMailboxes = validateTitanMailboxes( titanMailboxes );
 
 		const mailboxesAreValid = areAllMailboxesValid( validatedTitanMailboxes );
-		const userCanAddEmail = canCurrentUserAddEmail( domain );
+		const userCanAddEmail = hasCartDomain || canCurrentUserAddEmail( domain );
 		const userCannotAddEmailReason = userCanAddEmail
 			? null
 			: getCurrentUserCannotAddEmailReason( domain );
@@ -200,7 +209,7 @@ class EmailProvidersComparison extends React.Component {
 		const { productsList, selectedSite, shoppingCartManager } = this.props;
 
 		const cartItem = titanMailMonthly( {
-			domain: domain.name,
+			domain: domainName,
 			quantity: validatedTitanMailboxes.length,
 			extra: {
 				email_users: validatedTitanMailboxes.map( transformMailboxForCart ),
@@ -237,11 +246,11 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	onGoogleConfirmNewUsers = () => {
-		const { domain, gSuiteProduct } = this.props;
+		const { domain, gSuiteProduct, hasCartDomain } = this.props;
 		const { googleUsers } = this.state;
 
 		const usersAreValid = areAllUsersValid( googleUsers );
-		const userCanAddEmail = canCurrentUserAddEmail( domain );
+		const userCanAddEmail = hasCartDomain || canCurrentUserAddEmail( domain );
 
 		recordTracksEvent( 'calypso_email_providers_add_click', {
 			mailbox_count: googleUsers.length,
@@ -255,7 +264,7 @@ class EmailProvidersComparison extends React.Component {
 		}
 
 		const { productsList, selectedSite, shoppingCartManager } = this.props;
-		const domains = [ domain ];
+		const domains = domain ? [ domain ] : [];
 
 		this.setState( { addingToCart: true } );
 
@@ -312,6 +321,7 @@ class EmailProvidersComparison extends React.Component {
 			currencyCode,
 			domain,
 			gSuiteProduct,
+			hasCartDomain,
 			isGSuiteSupported,
 			selectedDomainName,
 			translate,
@@ -365,28 +375,30 @@ class EmailProvidersComparison extends React.Component {
 					comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
 			  } );
 
-		const formFields = domain ? (
-			<FormFieldset>
-				<GSuiteNewUserList
-					extraValidation={ identityMap }
-					domains={ [ domain ] }
-					onUsersChange={ this.onGoogleUsersChange }
-					selectedDomainName={ selectedDomainName }
-					users={ googleUsers }
-					onReturnKeyPress={ this.onGoogleFormReturnKeyPress }
-					showLabels={ true }
-				>
-					<Button
-						className="email-providers-comparison__gsuite-user-list-action-continue"
-						primary
-						busy={ this.state.addingToCart }
-						onClick={ this.onGoogleConfirmNewUsers }
+		const domainList = domain ? [ domain ] : null;
+
+		const formFields =
+			hasCartDomain || domain ? (
+				<FormFieldset>
+					<GSuiteNewUserList
+						extraValidation={ identityMap }
+						domains={ domainList }
+						onUsersChange={ this.onGoogleUsersChange }
+						selectedDomainName={ selectedDomainName }
+						users={ googleUsers }
+						onReturnKeyPress={ this.onGoogleFormReturnKeyPress }
 					>
-						{ buttonLabel }
-					</Button>
-				</GSuiteNewUserList>
-			</FormFieldset>
-		) : null;
+						<Button
+							className="email-providers-comparison__gsuite-user-list-action-continue"
+							primary
+							busy={ this.state.addingToCart }
+							onClick={ this.onGoogleConfirmNewUsers }
+						>
+							{ buttonLabel }
+						</Button>
+					</GSuiteNewUserList>
+				</FormFieldset>
+			) : null;
 
 		return (
 			<EmailProviderCard
@@ -411,7 +423,14 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	renderTitanCard() {
-		const { currencyCode, domain, selectedDomainName, titanMailProduct, translate } = this.props;
+		const {
+			currencyCode,
+			domain,
+			hasCartDomain,
+			selectedDomainName,
+			titanMailProduct,
+			translate,
+		} = this.props;
 
 		const formattedPrice = translate( '{{price/}} /user /month billed monthly', {
 			components: {
@@ -420,7 +439,8 @@ class EmailProvidersComparison extends React.Component {
 			comment: '{{price/}} is the formatted price, e.g. $20',
 		} );
 
-		const isEligibleForFreeTrial = domain?.titanMailSubscription?.isEligibleForIntroductoryOffer;
+		const isEligibleForFreeTrial =
+			hasCartDomain || domain?.titanMailSubscription?.isEligibleForIntroductoryOffer;
 		const discount = isEligibleForFreeTrial ? translate( '3 months free' ) : null;
 
 		const logo = (
@@ -500,6 +520,9 @@ class EmailProvidersComparison extends React.Component {
 	renderHeader() {
 		const {
 			currentRoute,
+			headerTitle,
+			hideEmailHeader,
+			promoHeaderTitle,
 			selectedDomainName,
 			selectedSite,
 			skipHeaderElement,
@@ -518,28 +541,37 @@ class EmailProvidersComparison extends React.Component {
 			comment: '%(domainName)s is the domain name, e.g example.com',
 		};
 
-		const title = this.isUpgrading()
-			? translate( 'Upgrade to a hosted email' )
-			: translate( 'Add email' );
+		const title =
+			headerTitle ??
+			( this.isUpgrading() ? translate( 'Upgrade to a hosted email' ) : translate( 'Add email' ) );
 
 		const headerContent = skipHeaderElement ? null : (
-			<HeaderCake onClick={ this.handleBack }>{ title }</HeaderCake>
+			<HeaderCake
+				actionButton={ this.renderSkipButton() }
+				alwaysShowActionText
+				onClick={ this.handleBack }
+			>
+				{ title }
+			</HeaderCake>
 		);
 
 		return (
 			<>
 				<DocumentHead title={ titleCase( title ) } />
 
-				<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
+				{ ! hideEmailHeader && (
+					<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
+				) }
 
 				{ headerContent }
 
 				<PromoCard
 					isPrimary
 					title={
-						this.isUpgrading()
+						promoHeaderTitle ??
+						( this.isUpgrading()
 							? translate( 'Upgrade to start sending emails from %(domainName)s', translateArgs )
-							: translate( 'Get your own @%(domainName)s email address', translateArgs )
+							: translate( 'Get your own @%(domainName)s email address', translateArgs ) )
 					}
 					image={ image }
 					className="email-providers-comparison__action-panel"
@@ -558,7 +590,24 @@ class EmailProvidersComparison extends React.Component {
 		);
 	}
 
+	renderSkipButton() {
+		const { showSkipButton, onSkipClick, translate } = this.props;
+
+		return showSkipButton ? (
+			<Button compact borderless onClick={ onSkipClick }>
+				{ translate( 'Skip' ) }
+				<Gridicon icon={ 'arrow-right' } size={ 18 } />
+			</Button>
+		) : null;
+	}
+
 	isDomainEligibleForEmail( domain ) {
+		const { hasCartDomain } = this.props;
+
+		if ( hasCartDomain ) {
+			return true;
+		}
+
 		const canUserAddEmail = canCurrentUserAddEmail( domain );
 		if ( canUserAddEmail ) {
 			return true;
@@ -569,7 +618,7 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	renderDomainEligibilityNotice() {
-		const { domain } = this.props;
+		const { domain, domainName } = this.props;
 
 		if ( this.isDomainEligibleForEmail( domain ) ) {
 			return null;
@@ -585,7 +634,7 @@ class EmailProvidersComparison extends React.Component {
 				<TrackComponentView
 					eventName="calypso_email_providers_comparison_page_domain_not_eligible_error_impression"
 					eventProperties={ {
-						domain: domain.name,
+						domain: domainName,
 						error_code: cannotAddEmailReason.code,
 					} }
 				/>
@@ -597,7 +646,13 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	render() {
-		const { domainsWithForwards, isGSuiteSupported, selectedDomainName, selectedSite } = this.props;
+		const {
+			domainsWithForwards,
+			hideEmailForwardingCard,
+			isGSuiteSupported,
+			selectedDomainName,
+			selectedSite,
+		} = this.props;
 
 		return (
 			<Main wideLayout>
@@ -605,7 +660,7 @@ class EmailProvidersComparison extends React.Component {
 
 				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
-				<QueryEmailForwards domainName={ selectedDomainName } />
+				{ ! hideEmailForwardingCard && <QueryEmailForwards domainName={ selectedDomainName } /> }
 
 				{ this.renderHeader() }
 
@@ -620,7 +675,7 @@ class EmailProvidersComparison extends React.Component {
 
 				{ this.renderGoogleCard() }
 
-				{ this.renderEmailForwardingCard() }
+				{ ! hideEmailForwardingCard && this.renderEmailForwardingCard() }
 
 				<TrackComponentView
 					eventName="calypso_email_providers_comparison_page_view"
@@ -643,6 +698,9 @@ export default connect(
 			selectedDomainName: ownProps.selectedDomainName,
 		} );
 
+		const domainName = ownProps.cartDomainName ?? domain.name;
+		const hasCartDomain = Boolean( ownProps.cartDomainName );
+
 		const isGSuiteSupported = domain
 			? canUserPurchaseGSuite( state ) && hasGSuiteSupportedDomain( [ domain ] )
 			: true;
@@ -651,8 +709,10 @@ export default connect(
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			currentRoute: getCurrentRoute( state ),
 			domain,
+			domainName,
 			domainsWithForwards: getDomainsWithForwards( state, domains ),
 			gSuiteProduct: getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY ),
+			hasCartDomain,
 			isGSuiteSupported,
 			productsList: getProductsList( state ),
 			selectedSite,

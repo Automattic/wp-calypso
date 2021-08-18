@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import { isEnabled } from '@automattic/calypso-config';
 import { isMobile } from '@automattic/viewport';
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
@@ -31,6 +32,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import Pagination from 'calypso/components/pagination';
 import ProgressBanner from '../activity-log-banner/progress-banner';
 import RewindAlerts from './rewind-alerts';
+import QueryActivityLogDisplayRules from 'calypso/components/data/query-activity-log-display-rules';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -65,6 +67,8 @@ import {
 	rewindBackup,
 	updateFilter,
 } from 'calypso/state/activity-log/actions';
+import getActivityLogDisplayRulesRequestStatus from 'calypso/state/selectors/get-activity-log-display-rules-request-status';
+import getActivityLogVisibleDays from 'calypso/state/selectors/get-activity-log-visible-days';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import getBackupProgress from 'calypso/state/selectors/get-backup-progress';
 import getRequestedBackup from 'calypso/state/selectors/get-requested-backup';
@@ -84,6 +88,7 @@ import { applySiteOffset } from 'calypso/lib/site/timezone';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
+import VisibleDaysLimitUpsell from 'calypso/components/activity-card-list/visible-days-limit-upsell';
 
 /**
  * Style dependencies
@@ -374,6 +379,7 @@ class ActivityLog extends Component {
 			enableRewind,
 			filter: { page: requestedPage },
 			logs,
+			allLogsVisible,
 			moment,
 			rewindState,
 			siteId,
@@ -391,10 +397,8 @@ class ActivityLog extends Component {
 			'active' !== rewindState.state;
 		const disableBackup = 0 <= get( this.props, [ 'backupProgress', 'progress' ], -Infinity );
 
-		const actualPage = Math.max(
-			1,
-			Math.min( requestedPage, Math.ceil( logs.length / PAGE_SIZE ) )
-		);
+		const pageCount = Math.ceil( logs.length / PAGE_SIZE );
+		const actualPage = Math.max( 1, Math.min( requestedPage, pageCount ) );
 		const theseLogs = logs.slice( ( actualPage - 1 ) * PAGE_SIZE, actualPage * PAGE_SIZE );
 
 		const timePeriod = ( () => {
@@ -418,6 +422,8 @@ class ActivityLog extends Component {
 				return null;
 			};
 		} )();
+
+		const showVisibleDaysLimitUpsell = ! allLogsVisible && actualPage >= pageCount;
 
 		return (
 			<>
@@ -497,6 +503,9 @@ class ActivityLog extends Component {
 								)
 							) }
 						</section>
+						{ showVisibleDaysLimitUpsell && (
+							<VisibleDaysLimitUpsell cardClassName="activity-log-item__card" />
+						) }
 						{ siteHasNoLog && ! isIntroDismissed && <UpgradeBanner siteId={ siteId } /> }
 						<Pagination
 							compact={ isMobile() }
@@ -548,6 +557,7 @@ class ActivityLog extends Component {
 				<QuerySitePurchases siteId={ siteId } />
 				<PageViewTracker path="/activity-log/:site" title="Activity" />
 				<DocumentHead title={ translate( 'Activity' ) } />
+				{ siteId && <QueryActivityLogDisplayRules siteId={ siteId } /> }
 				{ siteId && <QueryRewindState siteId={ siteId } /> }
 				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 				{ siteId && <TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } /> }
@@ -573,7 +583,6 @@ export default connect(
 		const rewindState = getRewindState( state, siteId );
 		const restoreStatus = rewindState.rewind && rewindState.rewind.status;
 		const filter = getActivityLogFilter( state, siteId );
-		const logs = siteId && requestActivityLogs( siteId, filter );
 		const siteIsOnFreePlan =
 			isFreePlan( get( getCurrentPlan( state, siteId ), 'productSlug' ) ) &&
 			! isVipSite( state, siteId );
@@ -583,6 +592,41 @@ export default connect(
 			! siteHasScanProductPurchase( state, siteId );
 		const isJetpack = isJetpackSite( state, siteId );
 
+		const displayRulesEnabled = isEnabled( 'activity-log/display-rules' );
+		const displayRulesLoaded = displayRulesEnabled
+			? getActivityLogDisplayRulesRequestStatus( state, siteId ) === 'success'
+			: true;
+		const visibleDays = displayRulesEnabled
+			? getActivityLogVisibleDays( state, siteId )
+			: undefined;
+		const oldestVisibleDate =
+			displayRulesEnabled && Number.isFinite( visibleDays )
+				? applySiteOffset( Date.now(), { gmtOffset, timezone } )
+						.subtract( visibleDays, 'days' )
+						.startOf( 'day' )
+				: undefined;
+
+		const logs = siteId && requestActivityLogs( siteId, filter );
+		const allLogEntries = logs?.data ?? emptyList;
+		const visibleLogEntries =
+			displayRulesEnabled && oldestVisibleDate
+				? // This could slightly degrade performance, but it's likely
+				  // this entire component tree gets refactored or removed soon,
+				  // in favor of calypso/my-sites/activity/activity-log-v2.
+				  //
+				  // eslint-disable-next-line wpcalypso/redux-no-bound-selectors
+				  allLogEntries.filter( ( log ) =>
+						applySiteOffset( log.activityDate, { gmtOffset, timezone } ).isSameOrAfter(
+							oldestVisibleDate,
+							'day'
+						)
+				  )
+				: allLogEntries;
+
+		const allLogsVisible = displayRulesEnabled
+			? visibleLogEntries.length < allLogEntries.length
+			: false;
+
 		return {
 			gmtOffset,
 			enableRewind:
@@ -591,8 +635,9 @@ export default connect(
 			filter,
 			isAtomic: isAtomicSite( state, siteId ),
 			isJetpack,
-			logs: ( siteId && logs.data ) || emptyList,
-			logLoadingState: logs && logs.state,
+			logs: visibleLogEntries,
+			allLogsVisible,
+			logLoadingState: displayRulesLoaded && logs && logs.state,
 			requestedRestore: find( logs, { activityId: requestedRestoreId } ),
 			requestedRestoreId,
 			requestedBackup: find( logs, { activityId: requestedBackupId } ),

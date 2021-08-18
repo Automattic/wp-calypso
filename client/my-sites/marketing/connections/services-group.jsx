@@ -61,6 +61,7 @@ const SharingServicesGroup = ( {
 	isPublicizeActive,
 	fetchServices,
 	activatePublicize,
+	numberOfPlaceholders = NUMBER_OF_PLACEHOLDERS,
 } ) => {
 	useEffect( () => {
 		if ( expandedService && ! isFetching ) {
@@ -105,7 +106,7 @@ const SharingServicesGroup = ( {
 			<SectionHeader label={ title } />
 			<ul className="sharing-services-group__services">
 				{ showPlaceholder &&
-					times( NUMBER_OF_PLACEHOLDERS, ( index ) => (
+					times( numberOfPlaceholders, ( index ) => (
 						<ServicePlaceholder key={ 'service-placeholder-' + index } />
 					) ) }
 				{ showPublicizeNotice && (

@@ -24,7 +24,6 @@ import {
 	hasPremiumPlan,
 	hasBusinessPlan,
 	hasEcommercePlan,
-	hasMonthlyCartItem,
 	hasTrafficGuide,
 } from 'calypso/lib/cart-values/cart-items';
 import { managePurchase } from 'calypso/me/purchases/paths';
@@ -33,7 +32,12 @@ import {
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_RESET_PLANS,
 	JETPACK_REDIRECT_URL,
+	PLAN_BUSINESS,
 	redirectCheckoutToWpAdmin,
+	findFirstSimilarPlanKey,
+	getPlan,
+	isPlan,
+	isWpComPremiumPlan,
 } from '@automattic/calypso-products';
 import { persistSignupDestination, retrieveSignupDestination } from 'calypso/signup/storageUtils';
 import { badNaiveClientSideRollout } from 'calypso/lib/naive-client-side-rollout';
@@ -153,7 +157,7 @@ export default function getThankYouPageUrl( {
 		return addQueryArgs(
 			{
 				receiptId: isValidReceiptId ? pendingOrReceiptId : undefined,
-				jetpackTemporarySiteId: jetpackTemporarySiteId && parseInt( jetpackTemporarySiteId ),
+				siteId: jetpackTemporarySiteId && parseInt( jetpackTemporarySiteId ),
 			},
 			thankYouUrlSiteLess
 		);
@@ -361,6 +365,30 @@ function getFallbackDestination( {
 	return '/';
 }
 
+/**
+ * This function returns the product slug of the next higher plan of the plan item in the cart.
+ * Currently, it only supports premium plans.
+ *
+ * @param {ResponseCart} cart the cart object
+ * @returns {string|undefined} the product slug of the next higher plan if it exists, undefined otherwise.
+ */
+function getNextHigherPlanSlug( cart: ResponseCart ): string | undefined {
+	const currentPlanSlug = cart && getAllCartItems( cart ).filter( isPlan )[ 0 ]?.product_slug;
+	if ( ! currentPlanSlug ) {
+		return;
+	}
+
+	const currentPlan = getPlan( currentPlanSlug );
+
+	if ( isWpComPremiumPlan( currentPlanSlug ) ) {
+		return getPlan(
+			findFirstSimilarPlanKey( PLAN_BUSINESS, { term: currentPlan.term } )
+		)?.getPathSlug();
+	}
+
+	return;
+}
+
 function maybeShowPlanBumpOffer( {
 	pendingOrReceiptId,
 	cart,
@@ -375,9 +403,11 @@ function maybeShowPlanBumpOffer( {
 	if ( orderId ) {
 		return;
 	}
-	if ( hasPremiumPlan( cart ) ) {
-		const upgradeItem = hasMonthlyCartItem( cart ) ? 'business-monthly' : 'business';
-		return `/checkout/${ siteSlug }/offer-plan-upgrade/${ upgradeItem }/${ pendingOrReceiptId }`;
+	if ( cart && hasPremiumPlan( cart ) ) {
+		const upgradeItem = getNextHigherPlanSlug( cart );
+		if ( upgradeItem ) {
+			return `/checkout/${ siteSlug }/offer-plan-upgrade/${ upgradeItem }/${ pendingOrReceiptId }`;
+		}
 	}
 
 	return;

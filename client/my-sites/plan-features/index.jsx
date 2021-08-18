@@ -1,3 +1,4 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
  */
@@ -80,6 +81,7 @@ import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import PlanFeaturesActionsWrapper from './plan-features-action-wrapper';
 
 /**
  * Style dependencies
@@ -533,7 +535,7 @@ export class PlanFeatures extends Component {
 		} );
 	}
 
-	handleUpgradeClick( singlePlanProperties ) {
+	handleUpgradeClick = ( singlePlanProperties ) => {
 		const {
 			isInSignup,
 			onUpgradeClick: ownPropsOnUpgradeClick,
@@ -608,7 +610,7 @@ export class PlanFeatures extends Component {
 		);
 
 		page( checkoutUrlWithArgs );
-	}
+	};
 
 	renderTopButtons() {
 		const {
@@ -617,73 +619,32 @@ export class PlanFeatures extends Component {
 			isInSignup,
 			isLandingPage,
 			isLaunchPage,
+			nonDotBlogDomains,
 			planProperties,
+			redirectToAddDomainFlow,
 			selectedPlan,
 			selectedSiteSlug,
 			purchaseId,
-			translate,
 		} = this.props;
 
-		return map( planProperties, ( properties ) => {
-			let { availableForPurchase } = properties;
-			const {
-				current,
-				planName,
-				primaryUpgrade,
-				isPlaceholder,
-				planConstantObj,
-				popular,
-			} = properties;
-
-			const classes = classNames(
-				'plan-features__table-item',
-				'has-border-bottom',
-				'is-top-buttons'
-			);
-
-			let forceDisplayButton = false;
-			let buttonText = null;
-
-			if ( this.props.redirectToAddDomainFlow ) {
-				buttonText = translate( 'Add to Cart' );
-				forceDisplayButton = true;
-			}
-
-			if ( disableBloggerPlanWithNonBlogDomain || this.props.nonDotBlogDomains.length > 0 ) {
-				if ( planMatches( planName, { type: TYPE_BLOGGER } ) ) {
-					availableForPurchase = false;
-					forceDisplayButton = true;
-					buttonText = translate( 'Only with .blog domains' );
-				}
-			}
-
+		return planProperties.map( ( planPropertiesPlan ) => {
 			return (
-				<td key={ planName } className={ classes }>
-					<PlanFeaturesActions
-						availableForPurchase={ availableForPurchase }
-						buttonText={ buttonText }
-						canPurchase={ canPurchase }
-						className={ getPlanClass( planName ) }
-						current={ current }
-						freePlan={ isFreePlan( planName ) }
-						forceDisplayButton={ forceDisplayButton }
-						isPlaceholder={ isPlaceholder }
-						isPopular={ popular }
-						isInSignup={ isInSignup }
-						isLandingPage={ isLandingPage }
-						isLaunchPage={ isLaunchPage }
-						manageHref={
-							purchaseId
-								? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
-								: `/plans/my-plan/${ selectedSiteSlug }`
-						}
-						onUpgradeClick={ () => this.handleUpgradeClick( properties ) }
-						planName={ planConstantObj.getTitle() }
-						planType={ planName }
-						primaryUpgrade={ primaryUpgrade }
-						selectedPlan={ selectedPlan }
-					/>
-				</td>
+				<PlanFeaturesActionsWrapper
+					canPurchase={ canPurchase }
+					className={ 'is-top-buttons' }
+					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
+					handleUpgradeClick={ this.handleUpgradeClick }
+					isInSignup={ isInSignup }
+					isLandingPage={ isLandingPage }
+					isLaunchPage={ isLaunchPage }
+					nonDotBlogDomains={ nonDotBlogDomains }
+					planPropertiesPlan={ planPropertiesPlan }
+					key={ planPropertiesPlan.productSlug }
+					redirectToAddDomainFlow={ redirectToAddDomainFlow }
+					selectedPlan={ selectedPlan }
+					selectedSiteSlug={ selectedSiteSlug }
+					purchaseId={ purchaseId }
+				/>
 			);
 		} );
 	}
@@ -788,69 +749,32 @@ export class PlanFeatures extends Component {
 			isInSignup,
 			isLandingPage,
 			isLaunchPage,
+			nonDotBlogDomains,
 			planProperties,
+			redirectToAddDomainFlow,
 			selectedPlan,
 			selectedSiteSlug,
 			purchaseId,
 		} = this.props;
 
-		return map( planProperties, ( properties ) => {
-			let { availableForPurchase } = properties;
-			const {
-				current,
-				planName,
-				primaryUpgrade,
-				isPlaceholder,
-				planConstantObj,
-				popular,
-			} = properties;
-			const classes = classNames(
-				'plan-features__table-item',
-				'has-border-bottom',
-				'is-bottom-buttons'
-			);
-
-			if ( disableBloggerPlanWithNonBlogDomain || this.props.nonDotBlogDomains.length > 0 ) {
-				if ( planMatches( planName, { type: TYPE_BLOGGER } ) ) {
-					availableForPurchase = false;
-				}
-			}
-
-			let buttonText;
-			let forceDisplayButton = false;
-
-			if ( this.props.redirectToAddDomainFlow ) {
-				buttonText = this.props.translate( 'Add to Cart' );
-				forceDisplayButton = true;
-			}
-
+		return planProperties.map( ( planPropertiesPlan ) => {
 			return (
-				<td key={ planName } className={ classes }>
-					<PlanFeaturesActions
-						availableForPurchase={ availableForPurchase }
-						forceDisplayButton={ forceDisplayButton }
-						buttonText={ buttonText }
-						canPurchase={ canPurchase }
-						className={ getPlanClass( planName ) }
-						current={ current }
-						freePlan={ isFreePlan( planName ) }
-						isInSignup={ isInSignup }
-						isLandingPage={ isLandingPage }
-						isLaunchPage={ isLaunchPage }
-						isPlaceholder={ isPlaceholder }
-						isPopular={ popular }
-						manageHref={
-							purchaseId
-								? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
-								: `/plans/my-plan/${ selectedSiteSlug }`
-						}
-						planName={ planConstantObj.getTitle() }
-						planType={ planName }
-						primaryUpgrade={ primaryUpgrade }
-						onUpgradeClick={ () => this.handleUpgradeClick( properties ) }
-						selectedPlan={ selectedPlan }
-					/>
-				</td>
+				<PlanFeaturesActionsWrapper
+					canPurchase={ canPurchase }
+					className={ 'is-bottom-buttons' }
+					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
+					handleUpgradeClick={ this.handleUpgradeClick }
+					isInSignup={ isInSignup }
+					isLandingPage={ isLandingPage }
+					isLaunchPage={ isLaunchPage }
+					nonDotBlogDomains={ nonDotBlogDomains }
+					planPropertiesPlan={ planPropertiesPlan }
+					key={ planPropertiesPlan.productSlug }
+					redirectToAddDomainFlow={ redirectToAddDomainFlow }
+					selectedPlan={ selectedPlan }
+					selectedSiteSlug={ selectedSiteSlug }
+					purchaseId={ purchaseId }
+				/>
 			);
 		} );
 	}

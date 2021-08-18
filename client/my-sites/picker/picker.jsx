@@ -84,6 +84,12 @@ class SitePicker extends React.Component {
 		this.closePicker( null );
 	};
 
+	filterSites = ( site ) => {
+		return site?.options?.jetpack_connection_active_plugins
+			? site.options.jetpack_connection_active_plugins.includes( 'jetpack' )
+			: true;
+	};
+
 	render() {
 		return (
 			<div>
@@ -95,9 +101,11 @@ class SitePicker extends React.Component {
 					showAllSites={ true }
 					allSitesPath={ this.props.allSitesPath }
 					siteBasePath={ this.props.siteBasePath }
+					/* eslint-disable-next-line jsx-a11y/no-autofocus */
 					autoFocus={ this.state.isAutoFocused }
 					onClose={ this.onClose }
 					groups={ true }
+					filter={ this.filterSites }
 				/>
 			</div>
 		);

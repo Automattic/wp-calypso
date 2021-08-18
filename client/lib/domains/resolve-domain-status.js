@@ -13,7 +13,7 @@ import { isExpiringSoon } from 'calypso/lib/domains/utils/is-expiring-soon';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils/is-recently-registered';
 import { hasPendingGSuiteUsers } from 'calypso/lib/gsuite';
 import { shouldRenderExpiringCreditCard } from 'calypso/lib/purchases';
-import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
+import { domainMappingSetup } from 'calypso/my-sites/domains/paths';
 
 export function resolveDomainStatus(
 	domain,
@@ -60,7 +60,7 @@ export function resolveDomainStatus(
 							strong: <strong />,
 							a: (
 								<a
-									href={ domainManagementEdit( siteSlug, domain.domain ) }
+									href={ domainMappingSetup( siteSlug, domain.domain, 'suggested_update' ) }
 									onClick={ ( e ) => e.stopPropagation() }
 								/>
 							),

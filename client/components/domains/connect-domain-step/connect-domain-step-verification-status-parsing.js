@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-import { __, sprintf } from '@wordpress/i18n';
 import { createElement, createInterpolateElement } from '@wordpress/element';
-
+import { __, sprintf } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
@@ -60,9 +59,7 @@ export function getMappingVerificationErrorMessage( mode, verificationStatus ) {
 		return createInterpolateElement(
 			sprintf(
 				/* translators: %s: the list of IP addresses. (Ex.: "192.168.0.1, 192.168.0.2") */
-				__(
-					'The name A records for your domain are set to: <em>%s</em>. Please try this step again.'
-				),
+				__( 'The A records for your domain are set to: <em>%s</em>. Please try this step again.' ),
 				hostIpAddresses.join( ', ' )
 			),
 			{ em: createElement( 'em' ) }

@@ -23,31 +23,15 @@ export type ThankYouSectionProps = {
 
 export type ThankYouProps = {
 	containerClassName?: string;
+	headerBackgroundColor?: string;
+	headerClassName?: string;
+	headerTextColor?: string;
 	sections: ThankYouSectionProps[];
 	showSupportSection?: boolean;
 	thankYouImage: {
 		alt: string | TranslateResult;
 		src: string;
 	};
-	thankYouTitle: TranslateResult;
-};
-
-export type ThankYouThemeProps = { theme?: ThankYouThemeType };
-
-type ThankYouThemeType = {
-	colors: { textColorLight: string; borderColorLight: string; studioGrey: string };
-	breakpoints: {
-		desktopUp?: string;
-		tabletUp?: string;
-		bigPhoneUp?: string;
-		smallPhoneUp?: string;
-		tabletDown: string;
-	};
-	weights: {
-		bold: string;
-		normal: string;
-	};
-	fontSize: {
-		small: string;
-	};
+	thankYouTitle?: string | TranslateResult;
+	thankYouSubtitle?: string | TranslateResult;
 };

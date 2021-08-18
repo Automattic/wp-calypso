@@ -73,8 +73,15 @@ async function wpcomPayPalExpress(
 	payload: PayPalExpressEndpointRequestPayload,
 	transactionOptions: PaymentProcessorOptions
 ) {
-	if ( transactionOptions && transactionOptions.createUserAndSiteBeforeTransaction ) {
-		return createAccount().then( ( response ) => {
+	const isJetpackUserLessCheckout =
+		payload.cart.is_jetpack_checkout && payload.cart.cart_key === 'no-user';
+
+	if ( transactionOptions.createUserAndSiteBeforeTransaction || isJetpackUserLessCheckout ) {
+		const createAccountOptions = isJetpackUserLessCheckout
+			? { signupFlowName: 'jetpack-userless-checkout' }
+			: { signupFlowName: 'onboarding-registrationless' };
+
+		return createAccount( createAccountOptions ).then( ( response ) => {
 			const siteIdFromResponse = response?.blog_details?.blogid;
 
 			// If the account is already created(as happens when we are reprocessing after a transaction error), then
@@ -87,7 +94,6 @@ async function wpcomPayPalExpress(
 					...payload.cart,
 					blog_id: siteId || '0',
 					cart_key: siteId || 'no-site',
-					create_new_blog: false,
 				},
 			};
 

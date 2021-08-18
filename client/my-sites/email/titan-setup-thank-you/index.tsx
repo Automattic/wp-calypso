@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { ThemeProvider } from 'emotion-theming';
 import { connect, useSelector } from 'react-redux';
 import { localize, useTranslate } from 'i18n-calypso';
 
@@ -22,7 +21,6 @@ import { getSelectedDomain } from 'calypso/lib/domains';
 import { getDomainsBySite } from 'calypso/state/sites/domains/selectors';
 import { SiteData } from 'calypso/state/ui/selectors/site-data';
 import { ThankYou } from 'calypso/components/thank-you';
-import theme from 'calypso/my-sites/marketplace/theme';
 import { TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP } from 'calypso/lib/titan/constants';
 
 /**
@@ -46,7 +44,7 @@ const TitanSetupThankYou = ( props: TitanSetupThankYouProps ): JSX.Element => {
 
 	const thankYouImage = {
 		alt: translate( 'Thank you' ),
-		src: '/calypso/images/upgrades/thank-you.svg',
+		src: '/calypso/images/illustrations/thank-you-email.svg',
 	};
 
 	const titanControlPanelUrl = emailManagementTitanControlPanelRedirect(
@@ -100,14 +98,13 @@ const TitanSetupThankYou = ( props: TitanSetupThankYouProps ): JSX.Element => {
 	};
 
 	return (
-		<ThemeProvider theme={ theme }>
-			<ThankYou
-				sections={ [ titanThankYouSection ] }
-				showSupportSection={ true }
-				thankYouImage={ thankYouImage }
-				thankYouTitle={ translate( 'Your email is now ready to use' ) }
-			/>
-		</ThemeProvider>
+		<ThankYou
+			headerClassName={ 'titan-setup-thank-you__header' }
+			sections={ [ titanThankYouSection ] }
+			showSupportSection={ true }
+			thankYouImage={ thankYouImage }
+			thankYouTitle={ translate( 'Your email is now ready to use' ) }
+		/>
 	);
 };
 
