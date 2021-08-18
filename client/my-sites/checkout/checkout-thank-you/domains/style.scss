@@ -56,6 +56,24 @@
 
 			&-cta {
 				margin-top: 0;
+
+				@include break-zoomed-in {
+					width: 100%;
+
+					.domain-mapping-thank-you__button {
+						margin-top: 4px;
+						width: 100%;
+					}
+				}
+				
+				@include break-mobile {
+					width: 144px;
+
+					.domain-mapping-thank-you__button {
+						margin-top: 0;
+						width: 144px;
+					}
+				}
 			}
 		}
 
