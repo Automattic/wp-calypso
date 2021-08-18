@@ -28,12 +28,14 @@ const selectors = {
 	fontPairingButton: ( platform: 'mobile' | 'desktop', fontName: string ) => {
 		return `.style-preview__font-options-${ platform } span:text("${ fontName }")`;
 	},
+	mobileFontPairingDropdown: `button.style-preview__font-option-select`,
 
 	// Features
 	featureItem: `button.features__item`,
 
 	// Plans
 	planItem: '.plans-accordion-item',
+	planName: '.plans-accordion-item__name',
 };
 
 /**
@@ -126,14 +128,22 @@ export class GutenboardingFlow {
 	 */
 	async selectFont( name: string ): Promise< void > {
 		// Font selector depends on the viewport name but lumps non-mobile into desktop.
-		const platform = getViewportName() === 'mobile' ? 'mobile' : 'desktop';
-		await this.page.click( selectors.fontPairingButton( platform, name ) );
+		const viewportName = getViewportName() === 'mobile' ? 'mobile' : 'desktop';
 
-		if ( platform === 'desktop' ) {
+		// Mobile viewport puts the buttons behind a dropdown.
+		if ( viewportName === 'mobile' ) {
+			await this.page.click( selectors.mobileFontPairingDropdown );
+		}
+
+		// Click on the desired font pairing.
+		await this.page.click( selectors.fontPairingButton( viewportName, name ) );
+
+		if ( viewportName === 'desktop' ) {
 			await this.page.waitForSelector( `button.is-selected span:text("${ name }")` );
 		} else {
 			await this.page.waitForSelector(
-				`button.is-selected-dropdown-option span:text("${ name }")`
+				`button.is-selected-dropdown-option span:text("${ name }")`,
+				{ state: 'hidden' }
 			);
 		}
 	}
@@ -160,23 +170,24 @@ export class GutenboardingFlow {
 	 * @param {string} name Name of the plan.
 	 */
 	async selectPlan( name: Plans ): Promise< void > {
+		// First, expand the accordion.
 		await this.page.click( ':text-is("Show all plans")' );
 
-		await Promise.all( [
-			this.page.waitForNavigation(),
-			this.page.click( `div[role="button"]:has-text("${ name }")` ),
-		] );
+		const plans = await this.page.$$( selectors.planItem );
 
-		// const elementHandle = await this.page.waitForSelector( `${ selectors.planItem }.is-open :text-is("${ name }")` );
-		// const selectButton = await elementHandle.waitForSelector( selectors.button( 'Select') );
+		// Iterate through the top-level container for each plan.
+		// Then, extract name of the plan and if it finds a match with the desired plan,
+		// click on the `Select` button within the container.
+		for await ( const plan of plans ) {
+			const planName = await plan
+				.waitForSelector( selectors.planName )
+				.then( ( el ) => el.innerText() );
 
-		// await Promise.all( [
-		// 	this.page.waitForNavigation(),
-		// 	selectButton.click()
-		// 	// this.page.click(
-		// 	// 	`${ selectors.planItem } :text-is("${ name }") ${ selectors.button( 'Select' ) }`
-		// 	// ),
-		// ] );
+			if ( planName === name ) {
+				const button = await plan.waitForSelector( selectors.button( 'Select' ) );
+				await button.click();
+			}
+		}
 	}
 
 	/**
