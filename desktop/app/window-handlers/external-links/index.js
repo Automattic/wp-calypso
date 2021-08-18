@@ -20,11 +20,11 @@ module.exports = function ( { view } ) {
 	// Magic links aren't supported in the app currently. Instead we'll show a message about how
 	// to set a password on the account to log in that way.
 	view.webContents.on( 'will-navigate', function ( event, url ) {
-		const urlToLoad =
-			url === Config.baseURL() + 'log-in/link'
-				? 'file://' + assets.getPath( 'magic-links-unsupported.html' )
-				: url;
-		view.webContents.loadURL( urlToLoad );
+		if ( url === Config.baseURL() + 'log-in/link' ) {
+			const urlToLoad = 'file://' + assets.getPath( 'magic-links-unsupported.html' );
+			log.info( `Navigating to URL: '${ urlToLoad }'` );
+			view.webContents.loadURL( urlToLoad );
+		}
 		return;
 	} );
 
