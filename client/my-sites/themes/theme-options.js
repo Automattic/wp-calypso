@@ -1,16 +1,13 @@
-/**
- * External dependencies
- */
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { has, mapValues, pickBy, flowRight as compose } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
+import { isJetpackSite, isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import {
 	activate as activateAction,
 	tryAndCustomize as tryAndCustomizeAction,
@@ -30,11 +27,6 @@ import {
 	isThemeGutenbergFirst,
 	isThemePremium,
 } from 'calypso/state/themes/selectors';
-
-import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
-import { isJetpackSite, isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 const identity = ( theme ) => theme;
 

@@ -1,18 +1,18 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
 import { Dialog } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import Gridicon from 'calypso/components/gridicon';
 import PulsingDot from 'calypso/components/pulsing-dot';
-import { trackClick } from './helpers';
+import { addQueryArgs } from 'calypso/lib/route';
+import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customize-or-edit-front-page-url';
+import getSiteUrl from 'calypso/state/selectors/get-site-url';
+import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import shouldCustomizeHomepageWithGutenberg from 'calypso/state/selectors/should-customize-homepage-with-gutenberg';
+import { requestSite } from 'calypso/state/sites/actions';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { clearActivated } from 'calypso/state/themes/actions';
 import {
 	getActiveTheme,
 	getCanonicalTheme,
@@ -22,19 +22,10 @@ import {
 	hasActivatedTheme,
 	isWpcomTheme,
 } from 'calypso/state/themes/selectors';
-import { clearActivated } from 'calypso/state/themes/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { requestSite } from 'calypso/state/sites/actions';
-import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customize-or-edit-front-page-url';
-import shouldCustomizeHomepageWithGutenberg from 'calypso/state/selectors/should-customize-homepage-with-gutenberg';
-import getSiteUrl from 'calypso/state/selectors/get-site-url';
-import { addQueryArgs } from 'calypso/lib/route';
-import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { themeHasAutoLoadingHomepage } from 'calypso/state/themes/selectors/theme-has-auto-loading-homepage';
-/**
- * Style dependencies
- */
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { trackClick } from './helpers';
+
 import './thanks-modal.scss';
 
 class ThanksModal extends Component {
