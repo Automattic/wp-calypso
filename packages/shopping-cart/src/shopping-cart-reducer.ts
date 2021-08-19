@@ -45,12 +45,12 @@ export function playQueuedActions(
 ): void {
 	const { queuedActions, cacheStatus } = state;
 	if ( queuedActions.length > 0 && cacheStatus === 'valid' ) {
-		debug( 'cart is loaded; playing queued actions', queuedActions );
-		dispatch( { type: 'CLEAR_QUEUED_ACTIONS' } );
+		debug( 'playing queued actions', queuedActions );
 		queuedActions.forEach( ( action: ShoppingCartAction ) => {
 			dispatch( action );
 		} );
-		debug( 'cart is loaded; queued actions are dispatched' );
+		dispatch( { type: 'CLEAR_QUEUED_ACTIONS' } );
+		debug( 'queued actions are dispatched and queue is cleared' );
 	}
 }
 

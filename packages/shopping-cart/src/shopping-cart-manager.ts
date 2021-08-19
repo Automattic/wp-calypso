@@ -7,7 +7,11 @@ import {
 	noopManager,
 } from './managers';
 import { createActions } from './shopping-cart-actions';
-import { getInitialShoppingCartState, shoppingCartReducer } from './shopping-cart-reducer';
+import {
+	playQueuedActions,
+	getInitialShoppingCartState,
+	shoppingCartReducer,
+} from './shopping-cart-reducer';
 import { createTakeActionsBasedOnState } from './state-based-actions';
 import { createCartSyncManager } from './sync';
 import type {
@@ -61,12 +65,7 @@ function createShoppingCartManager(
 
 	const syncManager = createCartSyncManager( cartKey, getCart, setCart );
 	const actionPromises = createActionPromisesManager();
-	const takeActionsBasedOnState = createTakeActionsBasedOnState(
-		lastValidResponseCart,
-		actionPromises,
-		syncManager,
-		subscriptionManager
-	);
+	const takeActionsBasedOnState = createTakeActionsBasedOnState( syncManager );
 
 	// This is the main dispatcher for shopping cart actions. Dispatched actions
 	// are synchronous, but they cannot be trusted until validated by a server
@@ -88,6 +87,15 @@ function createShoppingCartManager(
 		deferredStateCheck = setTimeout( () => {
 			takeActionsBasedOnState( state, dispatch );
 		} );
+
+		if ( ! isStatePendingUpdate( state ) ) {
+			debug( 'updating lastValidResponseCart and resolving action promises' );
+			lastValidResponseCart.update( state.responseCart );
+			actionPromises.resolve( state.responseCart );
+		}
+		playQueuedActions( state, dispatch );
+
+		subscriptionManager.notifySubscribers();
 	};
 
 	// `dispatchAndWaitForValid` enhances the action dispatcher to return a
@@ -158,4 +166,8 @@ export function createShoppingCartManagerClient( {
 	return {
 		forCartKey,
 	};
+}
+
+function isStatePendingUpdate( state: ShoppingCartState ) {
+	return state.queuedActions.length > 0 || state.cacheStatus !== 'valid';
 }
