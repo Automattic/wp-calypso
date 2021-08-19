@@ -138,7 +138,6 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 		thankYouTitle,
 		thankYouSubtitle,
 		thankYouImage,
-		customSupportSection,
 	} = props;
 
 	const ThankYouTitleContainer = styled.div`
@@ -200,9 +199,7 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 				<div>
 					{ thankYouSections }
 
-					{ showSupportSection && (
-						<ThankYouSupportSection { ...defaultSupportSectionProps } { ...customSupportSection } />
-					) }
+					{ showSupportSection && <ThankYouSupportSection { ...defaultSupportSectionProps } /> }
 				</div>
 			</ThankYouBody>
 		</ThankYouContainer>

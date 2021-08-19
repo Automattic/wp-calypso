@@ -10,7 +10,6 @@ import { Button } from '@automattic/components';
 import { ThankYou } from 'calypso/components/thank-you';
 import { domainMappingSetup } from 'calypso/my-sites/domains/paths';
 import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
-import { CALYPSO_CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';
 import domainConnectedSuccess from 'calypso/assets/images/illustrations/domain-connected-success.svg';
 
 /**
@@ -72,19 +71,6 @@ const DomainMappingThankYou = ( { domainName: domain, selectedSite } ) => {
 				},
 			] }
 			showSupportSection={ true }
-			customSupportSection={ {
-				description: 'Have questions? Our Happiness Engineers are here if you need help.',
-				links: [
-					{
-						href: CALYPSO_CONTACT,
-						title: 'Ask a question',
-					},
-					{
-						href: SUPPORT_ROOT,
-						title: 'View support documentation',
-					},
-				],
-			} }
 			thankYouImage={ { alt: translate( 'Domain Connected' ), src: domainConnectedSuccess } }
 			thankYouTitle={ translate( 'Congratulations on your purchase!' ) }
 			thankYouSubtitle={ translate(
