@@ -1,23 +1,15 @@
-/**
- * External dependencies
- */
-
+import config from '@automattic/calypso-config';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
 import QuerySiteGuidedTransfer from 'calypso/components/data/query-site-guided-transfer';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { isGuidedTransferInProgress } from 'calypso/state/sites/guided-transfer/selectors';
-import Notices from './notices';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ExportCard from './export-card';
 import ExportMediaCard from './export-media-card';
 import GuidedTransferCard from './guided-transfer-card';
 import InProgressCard from './guided-transfer-card/in-progress';
+import Notices from './notices';
 
 class ExporterContainer extends Component {
 	render() {
