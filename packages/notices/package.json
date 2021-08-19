@@ -1,0 +1,49 @@
+{
+	"name": "@automattic/notices",
+	"version": "1.0.0",
+	"description": "A notices/nudges compontent for WPCOM sites",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.ts",
+	"sideEffects": false,
+	"scripts": {
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch"
+	},
+	"files": [
+		"dist",
+		"src"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/notices"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"keywords": [
+		"notices"
+	],
+	"author": "Automattic Inc.",
+	"license": "GPL-2.0-or-later",
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/notices#readme",
+	"dependencies": {
+		"@automattic/react-i18n": "^1.0.0-alpha.0",
+		"prop-types": "^15.7.2"
+	},
+	"devDependencies": {
+		"react": "^16.12.0",
+		"react-dom": "^16.12.0",
+		"@automattic/calypso-build": "^7.0.0",
+		"@automattic/calypso-polyfills": "^1.0.0",
+		"@testing-library/jest-dom": "^5.9.0",
+		"@testing-library/react": "^10.0.5",
+		"webpack": "^5.24.4"
+	}
+}
