@@ -2,6 +2,7 @@
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/z-index';
+@import '@wordpress/base-styles/breakpoints';
 
 $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: replace with standard color
 
@@ -151,6 +152,13 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 		background: $welcome-tour-button-background-color;
 		opacity: 0;
 		transition: opacity 200ms;
+	}
+}
+
+@include break-mobile {
+	.wpcom-editor-welcome-tour-frame .welcome-tour-card__overlay-controls .components-button,
+	.welcome-tour-card__overlay-controls-visible .components-button {
+		opacity: 0.9 !important;
 	}
 }
 
