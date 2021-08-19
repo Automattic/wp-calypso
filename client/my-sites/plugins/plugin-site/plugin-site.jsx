@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
+import { get } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import PluginSiteJetpack from 'calypso/my-sites/plugins/plugin-site-jetpack';
 import PluginSiteNetwork from 'calypso/my-sites/plugins/plugin-site-network';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';

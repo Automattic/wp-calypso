@@ -1,26 +1,15 @@
-/**
- * External dependencies
- */
-
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
 import { ACTIVATE_PLUGIN, DEACTIVATE_PLUGIN } from 'calypso/lib/plugins/constants';
+import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { togglePluginActivation } from 'calypso/state/plugins/installed/actions';
 import { isPluginActionInProgress } from 'calypso/state/plugins/installed/selectors';
+import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const activationActions = [ ACTIVATE_PLUGIN, DEACTIVATE_PLUGIN ];

@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-
-import { find, get, includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
+import { find, get, includes } from 'lodash';
 import { getSections } from 'calypso/sections-helper';
 
 export function getExtensionSettingsPath( plugin ) {
