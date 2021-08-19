@@ -1,49 +1,39 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
+import { PLAN_BUSINESS, FEATURE_SFTP } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
+import React, { Component, Fragment } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { connect } from 'react-redux';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
+import FeatureExample from 'calypso/components/feature-example';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import isSiteOnAtomicPlan from 'calypso/state/selectors/is-site-on-atomic-plan';
-import canSiteViewAtomicHosting from 'calypso/state/selectors/can-site-view-atomic-hosting';
-import SFTPCard from './sftp-card';
-import PhpMyAdminCard from './phpmyadmin-card';
-import SupportCard from './support-card';
-import PhpVersionCard from './php-version-card';
-import SiteBackupCard from './site-backup-card';
-import MiscellaneousCard from './miscellaneous-card';
-import WebServerLogsCard from './web-server-logs-card';
-import NoticeAction from 'calypso/components/notice/notice-action';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
 import {
 	getAutomatedTransferStatus,
 	isAutomatedTransferActive,
 } from 'calypso/state/automated-transfer/selectors';
-import { transferStates } from 'calypso/state/automated-transfer/constants';
+import canSiteViewAtomicHosting from 'calypso/state/selectors/can-site-view-atomic-hosting';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteOnAtomicPlan from 'calypso/state/selectors/is-site-on-atomic-plan';
 import { requestSite } from 'calypso/state/sites/actions';
-import FeatureExample from 'calypso/components/feature-example';
-import { PLAN_BUSINESS, FEATURE_SFTP } from '@automattic/calypso-products';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import MiscellaneousCard from './miscellaneous-card';
+import PhpVersionCard from './php-version-card';
+import PhpMyAdminCard from './phpmyadmin-card';
+import SFTPCard from './sftp-card';
+import SiteBackupCard from './site-backup-card';
+import SupportCard from './support-card';
+import WebServerLogsCard from './web-server-logs-card';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class Hosting extends Component {
