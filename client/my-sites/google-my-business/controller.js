@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal Dependencies
- */
 import GoogleMyBusinessNewAccount from './new-account';
 import GoogleMyBusinessSelectBusinessType from './select-business-type';
 import GoogleMyBusinessSelectLocation from './select-location';
