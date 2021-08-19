@@ -70,13 +70,13 @@ export class SidebarComponent {
 			const selectedItemSelector = `${ selectors.sidebar } .selected :text("${ subitem || item }")`;
 			await this.page.waitForSelector( selectedItemSelector, {
 				timeout: 3000,
+				state: 'attached',
 			} );
 			return;
 		} catch {
 			if ( this.gotoItemRetryCount === 0 ) {
-				throw new Error(
-					`Couldn't navigate to ${ item } > ${ subitem }: Expected (sub)item was not active.`
-				);
+				const itemPath = subitem ? `${ item } > ${ subitem }` : item;
+				throw new Error( `Couldn't navigate to ${ itemPath }: Expected (sub)item was not active.` );
 			}
 			this.gotoItemRetryCount -= 1;
 			await this.page.reload();
