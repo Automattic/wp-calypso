@@ -171,10 +171,6 @@ export interface LastValidResponseCart {
 	update: ( tempResponseCart: TempResponseCart ) => void;
 }
 
-export interface ShoppingCartHookManager {
-	getState: () => UseShoppingCart;
-}
-
 export interface CartSyncManager {
 	syncPendingCartToServer: (
 		state: ShoppingCartState,
