@@ -92,11 +92,16 @@ body:
     id: other_notes
     attributes:
       label: Other notes
-      description: Logs, console errors, notes, observations, etc.
+      placeholder: |
+        Logs, console errors, notes, observations, etc.
   - type: markdown
     attributes:
       value: |
-        ----
+        <br>
+
+        ---
+
+        <br>
   - type: dropdown
     id: reproducibility
     attributes:
