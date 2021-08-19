@@ -191,7 +191,9 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 				{ thankYouTitle && (
 					<ThankYouTitleContainer>
 						<h1 className="thank-you__header-title wp-brand-font">{ thankYouTitle }</h1>
-						{ thankYouSubtitle && <h2>{ thankYouSubtitle }</h2> }
+						{ thankYouSubtitle && (
+							<h2 className="thank-you__header-subtitle">{ thankYouSubtitle }</h2>
+						) }
 					</ThankYouTitleContainer>
 				) }
 			</ThankYouHeader>
