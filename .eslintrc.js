@@ -198,7 +198,7 @@ module.exports = {
 				'client/layout/**/*',
 				'client/login/**/*',
 				'client/mailing-lists/**/*',
-				'client/my-sites/customer-home/**/*',
+				'client/my-sites/**/*',
 				'client/notifications/**/*',
 				'client/post-editor/**/*',
 				'client/reader/**/*',
