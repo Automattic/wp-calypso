@@ -47,7 +47,9 @@ body:
     attributes:
       value: |
         <br>
-        ----
+
+        ---
+
         <br>
   - type: dropdown
     id: os
