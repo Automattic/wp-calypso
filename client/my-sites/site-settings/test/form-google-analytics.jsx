@@ -6,11 +6,6 @@ jest.mock( 'calypso/blocks/upsell-nudge', () => 'UpsellNudge' );
 jest.mock( 'calypso/components/notice', () => 'Notice' );
 jest.mock( 'calypso/components/notice/notice-action', () => 'NoticeAction' );
 
-/**
- * External dependencies
- */
-import { shallow } from 'enzyme';
-import React from 'react';
 import {
 	PLAN_FREE,
 	PLAN_PREMIUM,
@@ -24,12 +19,10 @@ import {
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_SECURITY_DAILY,
 } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
-import GoogleAnalyticsSimpleForm from '../analytics/form-google-analytics-simple';
+import { shallow } from 'enzyme';
+import React from 'react';
 import GoogleAnalyticsJetpackForm from '../analytics/form-google-analytics-jetpack';
+import GoogleAnalyticsSimpleForm from '../analytics/form-google-analytics-simple';
 
 const props = {
 	site: {

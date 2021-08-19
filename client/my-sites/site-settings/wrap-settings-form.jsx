@@ -1,18 +1,25 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
-import { flowRight, isEqual, keys, omit, pick } from 'lodash';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import { localize } from 'i18n-calypso';
+import { flowRight, isEqual, keys, omit, pick } from 'lodash';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import QueryJetpackSettings from 'calypso/components/data/query-jetpack-settings';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import { protectForm } from 'calypso/lib/protect-form';
 import trackForm from 'calypso/lib/track-form';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { activateModule } from 'calypso/state/jetpack/modules/actions';
+import { saveJetpackSettings } from 'calypso/state/jetpack/settings/actions';
+import { removeNotice, successNotice, errorNotice } from 'calypso/state/notices/actions';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import getJetpackSettings from 'calypso/state/selectors/get-jetpack-settings';
+import getRequest from 'calypso/state/selectors/get-request';
+import isJetpackSettingsSaveFailure from 'calypso/state/selectors/is-jetpack-settings-save-failure';
+import isRequestingJetpackSettings from 'calypso/state/selectors/is-requesting-jetpack-settings';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isUpdatingJetpackSettings from 'calypso/state/selectors/is-updating-jetpack-settings';
+import { saveSiteSettings } from 'calypso/state/site-settings/actions';
 import {
 	isRequestingSiteSettings,
 	isSavingSiteSettings,
@@ -20,22 +27,8 @@ import {
 	getSiteSettingsSaveError,
 	getSiteSettings,
 } from 'calypso/state/site-settings/selectors';
-import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
-import getJetpackSettings from 'calypso/state/selectors/get-jetpack-settings';
-import isJetpackSettingsSaveFailure from 'calypso/state/selectors/is-jetpack-settings-save-failure';
-import isRequestingJetpackSettings from 'calypso/state/selectors/is-requesting-jetpack-settings';
-import isUpdatingJetpackSettings from 'calypso/state/selectors/is-updating-jetpack-settings';
-import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { saveSiteSettings } from 'calypso/state/site-settings/actions';
-import { saveJetpackSettings } from 'calypso/state/jetpack/settings/actions';
-import { removeNotice, successNotice, errorNotice } from 'calypso/state/notices/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import QuerySiteSettings from 'calypso/components/data/query-site-settings';
-import QueryJetpackSettings from 'calypso/components/data/query-jetpack-settings';
-import getRequest from 'calypso/state/selectors/get-request';
-import { activateModule } from 'calypso/state/jetpack/modules/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const debug = debugFactory( 'calypso:site-settings' );
 

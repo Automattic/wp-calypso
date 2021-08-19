@@ -1,39 +1,29 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import page from 'page';
+import { Button, Dialog } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import HeaderCake from 'calypso/components/header-cake';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import ActionPanel from 'calypso/components/action-panel';
-import ActionPanelTitle from 'calypso/components/action-panel/title';
 import ActionPanelBody from 'calypso/components/action-panel/body';
 import ActionPanelFigure from 'calypso/components/action-panel/figure';
 import ActionPanelFooter from 'calypso/components/action-panel/footer';
-import { Button, Dialog } from '@automattic/components';
-import Gridicon from 'calypso/components/gridicon';
-import DeleteSiteWarningDialog from 'calypso/my-sites/site-settings/delete-site-warning-dialog';
-import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { getSite, getSiteDomain } from 'calypso/state/sites/selectors';
-import Notice from 'calypso/components/notice';
+import ActionPanelTitle from 'calypso/components/action-panel/title';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import { deleteSite } from 'calypso/state/sites/actions';
-import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import Gridicon from 'calypso/components/gridicon';
+import HeaderCake from 'calypso/components/header-cake';
+import Notice from 'calypso/components/notice';
+import DeleteSiteWarningDialog from 'calypso/my-sites/site-settings/delete-site-warning-dialog';
+import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
 import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-site-purchases';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { deleteSite } from 'calypso/state/sites/actions';
+import { getSite, getSiteDomain } from 'calypso/state/sites/selectors';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class DeleteSite extends Component {

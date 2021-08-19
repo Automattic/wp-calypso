@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import FormLabel from 'calypso/components/forms/form-label';
 
 const RelatedContentPreview = ( { showHeadline, showThumbnails, translate } ) => {
