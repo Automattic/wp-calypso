@@ -30,11 +30,15 @@ export default () => ( req, res, next ) => {
 		return;
 	}
 
-	const isFallback = req.getTarget() === null;
+	const isFallback =
+		config.isEnabled( 'redirect-fallback-browsers/test' ) || req.getTarget() === null;
 	if ( ! isFallback ) {
 		next();
 		return;
 	}
 
-	res.redirect( addQueryArgs( { from: req.url }, '/browsehappy' ) );
+	// `req.originalUrl` contains the full path. It's tempting to use `req.url`, but that would
+	// fail in case of multiple Express.js routers nested with `app.use`, because `req.url` contains
+	// only the closest subpath.
+	res.redirect( addQueryArgs( { from: req.originalUrl }, '/browsehappy' ) );
 };

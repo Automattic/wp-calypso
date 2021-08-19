@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import { activationRequesting } from '../reducer';
 import {
 	REWIND_ACTIVATE_FAILURE,
 	REWIND_ACTIVATE_REQUEST,
 	REWIND_ACTIVATE_SUCCESS,
 } from 'calypso/state/action-types';
+import { activationRequesting } from '../reducer';
 
 /**
  * Constants

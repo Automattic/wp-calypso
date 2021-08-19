@@ -1,4 +1,4 @@
-.retention-limit-upsell__next-activity {
+.visible-days-limit-upsell__next-activity {
 	@include breakpoint-deprecated( '>660px' ) {
 		height: 80px;
 		padding: initial;
@@ -34,22 +34,22 @@
 	}
 }
 
-.retention-limit-upsell__call-to-action {
+.visible-days-limit-upsell__call-to-action {
 	margin-block-start: -24px;
 	padding: 0 32px 32px;
 	text-align: center;
 }
 
-.retention-limit-upsell__call-to-action-header {
+.visible-days-limit-upsell__call-to-action-header {
 	margin-block-end: 1.5rem;
 	font-size: $font-title-medium;
 }
 
-.retention-limit-upsell__call-to-action-copy {
+.visible-days-limit-upsell__call-to-action-copy {
 	margin-block-end: 2rem;
 	font-size: $font-body;
 }
 
-.retention-limit-upsell__call-to-action-button {
+.visible-days-limit-upsell__call-to-action-button {
 	font-size: $font-body;
 }

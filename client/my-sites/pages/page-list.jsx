@@ -27,7 +27,7 @@ import {
 	isRequestingPostsForQuery,
 	isPostsLastPageForQuery,
 } from 'calypso/state/posts/selectors';
-import { getSite } from 'calypso/state/sites/selectors';
+import { getSite, getSiteFrontPage } from 'calypso/state/sites/selectors';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import SectionHeader from 'calypso/components/section-header';
 import { Button } from '@automattic/components';
@@ -299,7 +299,7 @@ class Pages extends Component {
 	}
 
 	renderHierarchical( { pages, site, showPublishedStatus } ) {
-		pages = sortPagesHierarchically( pages );
+		pages = sortPagesHierarchically( pages, this.props.homepageId );
 		const rows = pages.map( function ( page ) {
 			return (
 				<Page
@@ -397,6 +397,7 @@ const mapState = ( state, { query, siteId } ) => ( {
 	hasSites: hasInitializedSites( state ),
 	loading: isRequestingPostsForQuery( state, siteId, query ),
 	lastPage: isPostsLastPageForQuery( state, siteId, query ),
+	homepageId: getSiteFrontPage( state, siteId ),
 	pages: getPostsForQueryIgnoringPage( state, siteId, query ) || [],
 	site: getSite( state, siteId ),
 	newPageLink: getEditorUrl( state, siteId, null, 'page' ),

@@ -303,12 +303,11 @@
 	}
 
 	.empty-domains-list-card__actions {
-		text-align: center;
+		display: inline-flex;
+		justify-content: center;
+		flex-wrap: wrap;
 		& > .button {
-			margin: 16px 16px 0 0;
-		}
-		& > .button:last-child {
-			margin-right: 0;
+			margin: 16px 8px 0;
 		}
 	}
 

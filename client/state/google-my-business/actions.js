@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	GOOGLE_MY_BUSINESS_STATS_FAILURE,
 	GOOGLE_MY_BUSINESS_STATS_RECEIVE,

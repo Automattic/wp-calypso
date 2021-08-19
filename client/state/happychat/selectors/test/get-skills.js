@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import {
 	HAPPYCHAT_GROUP_WPCOM,
 	HAPPYCHAT_GROUP_JPOP,

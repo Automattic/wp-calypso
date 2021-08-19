@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import i18nCalypso, { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -25,38 +25,21 @@ const TitanUnusedMailboxesNotice = ( { domain, maxTitanMailboxCount, onFinishSet
 		return null;
 	}
 
-	const translateOptions = {
-		count: numberOfUnusedMailboxes,
-		args: {
-			numberOfMailboxes: numberOfUnusedMailboxes,
-		},
-		comment: 'This refers to the number of mailboxes purchased that have not been set up yet',
-	};
-
-	const text =
-		'en' === getLocaleSlug() ||
-		i18nCalypso.hasTranslation(
-			'You have %(numberOfMailboxes)d unused mailbox. Do you want to set it up now instead of purchasing new ones?'
-		)
-			? translate(
-					'You have %(numberOfMailboxes)d unused mailbox. Do you want to set it up now instead of purchasing new ones?',
-					'You have %(numberOfMailboxes)d unused mailboxes. Do you want to set one of them up now instead of purchasing new ones?',
-					translateOptions
-			  )
-			: translate(
-					'You have %(numberOfMailboxes)d unused mailbox. Do you want to configure it now instead?',
-					'You have %(numberOfMailboxes)d unused mailboxes. Do you want to configure them now instead?',
-					translateOptions
-			  );
-
-	const ctaText =
-		'en' === getLocaleSlug() || i18nCalypso.hasTranslation( 'Set up mailbox' )
-			? translate( 'Set up mailbox' )
-			: translate( 'Finish Setup' );
+	const text = translate(
+		'You have %(numberOfMailboxes)d unused mailbox. Do you want to set it up now instead of purchasing new ones?',
+		'You have %(numberOfMailboxes)d unused mailboxes. Do you want to set one of them up now instead of purchasing new ones?',
+		{
+			count: numberOfUnusedMailboxes,
+			args: {
+				numberOfMailboxes: numberOfUnusedMailboxes,
+			},
+			comment: 'This refers to the number of mailboxes purchased that have not been set up yet',
+		}
+	);
 
 	return (
 		<Notice icon="notice" showDismiss={ false } status="is-warning" text={ text }>
-			<NoticeAction onClick={ onFinishSetupClick }>{ ctaText }</NoticeAction>
+			<NoticeAction onClick={ onFinishSetupClick }>{ translate( 'Set up mailbox' ) }</NoticeAction>
 		</Notice>
 	);
 };

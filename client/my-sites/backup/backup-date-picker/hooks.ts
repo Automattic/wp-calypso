@@ -9,7 +9,7 @@ import { useCallback } from 'react';
  */
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { useIsDateBeyondRetentionPeriod, useFirstMatchingBackupAttempt } from '../hooks';
+import { useIsDateVisible, useFirstMatchingBackupAttempt } from '../hooks';
 
 type CanGoToDateHook = (
 	siteId: number,
@@ -20,7 +20,7 @@ type CanGoToDateHook = (
 export const useCanGoToDate: CanGoToDateHook = ( siteId, selectedDate, oldestDateAvailable ) => {
 	const moment = useLocalizedMoment();
 	const today = useDateWithOffset( moment() );
-	const alreadyBeyondRetentionPeriod = useIsDateBeyondRetentionPeriod( siteId )( selectedDate );
+	const selectedDateIsVisible = useIsDateVisible( siteId )( selectedDate );
 
 	return useCallback(
 		( desiredDate ) => {
@@ -29,12 +29,12 @@ export const useCanGoToDate: CanGoToDateHook = ( siteId, selectedDate, oldestDat
 
 			if ( goingBackwardInTime ) {
 				// If we're already further back in time than this site's
-				// retention period allows, don't go any further
+				// display rules allow, don't go any further
 				//
 				// NOTE: We intentionally allow navigation to one day
-				// past the retention period, so we can show eligible
+				// past the limit of visible days, so we can show eligible
 				// users the opportunity to upgrade
-				if ( alreadyBeyondRetentionPeriod ) {
+				if ( ! selectedDateIsVisible ) {
 					return false;
 				}
 
@@ -58,7 +58,7 @@ export const useCanGoToDate: CanGoToDateHook = ( siteId, selectedDate, oldestDat
 			// then everything's fine (this should never happen)
 			return true;
 		},
-		[ alreadyBeyondRetentionPeriod, selectedDate, today, oldestDateAvailable ]
+		[ selectedDateIsVisible, selectedDate, today, oldestDateAvailable ]
 	);
 };
 

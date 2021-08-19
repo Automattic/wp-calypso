@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import reducer, { siteId, postId } from '../reducer';
 import { EDITOR_LAST_DRAFT_SET } from 'calypso/state/action-types';
+import reducer, { siteId, postId } from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {

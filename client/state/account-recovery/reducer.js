@@ -1,14 +1,11 @@
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
-import { combineReducers } from 'calypso/state/utils';
-import settings from './settings/reducer';
 import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH,
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
 } from 'calypso/state/action-types';
+import { combineReducers } from 'calypso/state/utils';
+import settings from './settings/reducer';
 
 const isFetchingSettings = ( state = false, action ) => {
 	switch ( action.type ) {

@@ -9,6 +9,7 @@ import {
 	isSuccessfulDailyBackup,
 	isSuccessfulRealtimeBackup,
 } from 'calypso/lib/jetpack/backup-utils';
+import { useIsDateVisible } from 'calypso/my-sites/backup/hooks';
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
 import DailyBackupStatus from '..';
 import BackupFailed from '../status-card/backup-failed';
@@ -16,6 +17,7 @@ import BackupScheduled from '../status-card/backup-scheduled';
 import BackupSuccessful from '../status-card/backup-successful';
 import NoBackupsOnSelectedDate from '../status-card/no-backups-on-selected-date';
 import NoBackupsYet from '../status-card/no-backups-yet';
+import VisibleDaysLimit from '../status-card/visible-days-limit';
 
 /**
  * Mock dependencies
@@ -24,6 +26,11 @@ jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
 	useDispatch: jest.fn().mockImplementation( () => {} ),
 	useSelector: jest.fn().mockImplementation( ( selector ) => selector() ),
+} ) );
+
+jest.mock( 'calypso/my-sites/backup/hooks', () => ( {
+	...jest.requireActual( 'calypso/my-sites/backup/hooks' ),
+	useIsDateVisible: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/state/ui/selectors/get-selected-site-id' );
@@ -49,6 +56,7 @@ describe( 'DailyBackupStatus', () => {
 	} );
 
 	beforeEach( () => {
+		useIsDateVisible.mockImplementation( () => () => true );
 		getRewindCapabilities.mockReset();
 		isSuccessfulDailyBackup.mockReset();
 		isSuccessfulRealtimeBackup.mockReset();
@@ -64,6 +72,13 @@ describe( 'DailyBackupStatus', () => {
 
 		const status = getStatus( <DailyBackupStatus selectedDate={ now } lastBackupDate={ {} } /> );
 		expect( status.type() ).toEqual( BackupScheduled );
+	} );
+
+	test( 'shows a visible limit status when the selected date does not fall within display rules', () => {
+		useIsDateVisible.mockImplementation( () => () => false );
+
+		const status = getStatus( <DailyBackupStatus selectedDate={ ARBITRARY_DATE } /> );
+		expect( status.type() ).toEqual( VisibleDaysLimit );
 	} );
 
 	test( 'shows "no backups on this date" when no backup is provided and the selected date is not today', () => {

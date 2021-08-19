@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import ActivityCard from 'calypso/components/activity-card';
-import QueryActivityLogRetentionPolicy from 'calypso/components/data/query-activity-log-retention-policy';
+import QueryActivityLogDisplayRules from 'calypso/components/data/query-activity-log-display-rules';
 import QueryRewindCapabilities from 'calypso/components/data/query-rewind-capabilities';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -16,11 +16,11 @@ import { isActivityBackup } from 'calypso/lib/jetpack/backup-utils';
 import Filterbar from 'calypso/my-sites/activity/filterbar';
 import { updateFilter } from 'calypso/state/activity-log/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import getActivityLogDisplayRulesRequestStatus from 'calypso/state/selectors/get-activity-log-display-rules-request-status';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
-import getSiteActivityLogRetentionDays from 'calypso/state/selectors/get-site-activity-log-retention-days';
-import getSiteActivityLogRetentionPolicyRequestStatus from 'calypso/state/selectors/get-site-activity-log-retention-policy-request-status';
+import getActivityLogVisibleDays from 'calypso/state/selectors/get-activity-log-visible-days';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import RetentionLimitUpsell from './retention-limit-upsell';
+import VisibleDaysLimitUpsell from './visible-days-limit-upsell';
 
 import './style.scss';
 
@@ -118,8 +118,8 @@ class ActivityCardList extends Component {
 		const {
 			applySiteOffset,
 			moment,
-			retentionPoliciesEnabled,
-			retentionDays,
+			displayRulesEnabled,
+			visibleDays,
 			filter,
 			isBreakpointActive: isMobile,
 			logs,
@@ -129,27 +129,25 @@ class ActivityCardList extends Component {
 			siteId,
 		} = this.props;
 
-		const retentionLimitCutoffDate = retentionPoliciesEnabled
-			? ( applySiteOffset ?? moment )().subtract( retentionDays, 'days' )
+		const visibleLimitCutoffDate = displayRulesEnabled
+			? ( applySiteOffset ?? moment )().subtract( visibleDays, 'days' )
 			: null;
-		const logsWithRetention = retentionPoliciesEnabled
+		const visibleLogs = displayRulesEnabled
 			? logs.filter( ( log ) =>
 					( applySiteOffset ?? moment )( log.activityDate ).isSameOrAfter(
-						retentionLimitCutoffDate,
+						visibleLimitCutoffDate,
 						'day'
 					)
 			  )
 			: logs;
 
 		const { page: requestedPage } = filter;
-		const pageCount = Math.ceil( logsWithRetention.length / pageSize );
+		const pageCount = Math.ceil( visibleLogs.length / pageSize );
 		const actualPage = Math.max( 1, Math.min( requestedPage, pageCount ) );
 
-		const pageLogs = this.splitLogsByDate(
-			logsWithRetention.slice( ( actualPage - 1 ) * pageSize )
-		);
-		const showRetentionLimitUpsell =
-			retentionPoliciesEnabled && logsWithRetention.length < logs.length && actualPage >= pageCount;
+		const pageLogs = this.splitLogsByDate( visibleLogs.slice( ( actualPage - 1 ) * pageSize ) );
+		const showLimitUpsell =
+			displayRulesEnabled && visibleLogs.length < logs.length && actualPage >= pageCount;
 
 		return (
 			<div className="activity-card-list">
@@ -173,12 +171,12 @@ class ActivityCardList extends Component {
 						pageClick={ this.changePage }
 						perPage={ pageSize }
 						prevLabel={ 'Newer' }
-						total={ logsWithRetention.length }
+						total={ visibleLogs.length }
 					/>
 				) }
 				{ this.renderLogs( pageLogs ) }
-				{ showRetentionLimitUpsell && (
-					<RetentionLimitUpsell cardClassName="activity-card-list__primary-card-with-more" />
+				{ showLimitUpsell && (
+					<VisibleDaysLimitUpsell cardClassName="activity-card-list__primary-card-with-more" />
 				) }
 				{ showPagination && (
 					<Pagination
@@ -190,7 +188,7 @@ class ActivityCardList extends Component {
 						pageClick={ this.changePage }
 						perPage={ pageSize }
 						prevLabel={ 'Newer' }
-						total={ logsWithRetention.length }
+						total={ visibleLogs.length }
 					/>
 				) }
 			</div>
@@ -251,25 +249,24 @@ class ActivityCardList extends Component {
 
 	render() {
 		const {
-			retentionPoliciesEnabled,
-			requestingRetentionPolicy,
-			retentionPolicyRequestError,
+			displayRulesEnabled,
+			requestingDisplayRules,
+			displayRulesRequestError,
 			siteId,
 			logs,
 		} = this.props;
 
-		if ( retentionPoliciesEnabled && retentionPolicyRequestError ) {
+		if ( displayRulesEnabled && displayRulesRequestError ) {
 			return this.renderLoading();
 		}
 
 		return (
 			<>
-				{ retentionPoliciesEnabled && <QueryActivityLogRetentionPolicy siteId={ siteId } /> }
+				{ displayRulesEnabled && <QueryActivityLogDisplayRules siteId={ siteId } /> }
 				<QueryRewindCapabilities siteId={ siteId } />
 				<QueryRewindState siteId={ siteId } />
 
-				{ ( ! logs || ( retentionPoliciesEnabled && requestingRetentionPolicy ) ) &&
-					this.renderLoading() }
+				{ ( ! logs || ( displayRulesEnabled && requestingDisplayRules ) ) && this.renderLoading() }
 				{ logs && this.renderData() }
 			</>
 		);
@@ -282,19 +279,16 @@ const mapStateToProps = ( state ) => {
 
 	const filter = getActivityLogFilter( state, siteId );
 	const userLocale = getCurrentUserLocale( state );
-	const retentionDays = getSiteActivityLogRetentionDays( state, siteId );
+	const visibleDays = getActivityLogVisibleDays( state, siteId );
 
-	const retentionPolicyRequestStatus = getSiteActivityLogRetentionPolicyRequestStatus(
-		state,
-		siteId
-	);
+	const displayRulesRequestStatus = getActivityLogDisplayRulesRequestStatus( state, siteId );
 
 	return {
 		filter,
-		retentionPoliciesEnabled: isEnabled( 'activity-log/retention-policies' ),
-		requestingRetentionPolicy: retentionPolicyRequestStatus === 'pending',
-		retentionPolicyRequestError: retentionPolicyRequestStatus === 'failure',
-		retentionDays,
+		displayRulesEnabled: isEnabled( 'activity-log/display-rules' ),
+		requestingDisplayRules: displayRulesRequestStatus === 'pending',
+		displayRulesRequestError: displayRulesRequestStatus === 'failure',
+		visibleDays,
 		siteId,
 		siteSlug,
 		userLocale,
