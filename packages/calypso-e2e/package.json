@@ -16,7 +16,7 @@
 	],
 	"license": "GPL-2.0-or-later",
 	"dependencies": {
-		"config": "^1.28.0",
+		"config": "^3.3.6",
 		"playwright": "1.14.0"
 	},
 	"devDependencies": {
@@ -25,7 +25,7 @@
 		"@types/jest": "^25.2.3",
 		"@types/node": "^15.0.2",
 		"asana-phrase": "^0.0.8",
-		"fs-extra": "^0.22.1",
+		"fs-extra": "^10.0.0",
 		"mockdate": "^3.0.5"
 	},
 	"scripts": {
