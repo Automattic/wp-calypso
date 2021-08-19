@@ -1,11 +1,10 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
+import {
+	hasGoogleAccountTOSWarning,
+	hasUnusedMailboxWarning,
+	hasUnverifiedEmailForward,
+} from 'calypso/lib/emails';
 import {
 	getGSuiteMailboxCount,
 	getGSuiteSubscriptionId,
@@ -20,13 +19,7 @@ import {
 	getTitanSubscriptionId,
 	hasTitanMailWithUs,
 } from 'calypso/lib/titan';
-import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
-import {
-	hasGoogleAccountTOSWarning,
-	hasUnusedMailboxWarning,
-	hasUnverifiedEmailForward,
-} from 'calypso/lib/emails';
 
 export function getNumberOfMailboxesText( domain ) {
 	if ( hasGSuiteWithUs( domain ) ) {

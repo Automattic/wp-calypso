@@ -1,34 +1,24 @@
-/**
- * External dependencies
- */
 import { Button, Card } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/gsuite-add-users/add-users-placeholder';
+import { useCreateTitanMailboxMutation } from 'calypso/data/emails/use-create-titan-mailbox-mutation';
+import { useGetTitanMailboxAvailability } from 'calypso/data/emails/use-get-titan-mailbox-availability';
 import {
 	areAllMailboxesValid,
 	buildNewTitanMailbox,
 	decorateMailboxWithAvailabilityError,
 	validateMailboxes,
 } from 'calypso/lib/titan/new-mailbox';
+import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/gsuite-add-users/add-users-placeholder';
 import { emailManagementTitanSetupThankYou } from 'calypso/my-sites/email/paths';
+import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
-import { useCreateTitanMailboxMutation } from 'calypso/data/emails/use-create-titan-mailbox-mutation';
-import { useGetTitanMailboxAvailability } from 'calypso/data/emails/use-get-titan-mailbox-availability';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const getMailboxDomainName = ( mailbox ) => mailbox?.domain?.value;

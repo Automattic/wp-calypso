@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
+import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
+import { connect } from 'react-redux';
+import Gridicon from 'calypso/components/gridicon';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
