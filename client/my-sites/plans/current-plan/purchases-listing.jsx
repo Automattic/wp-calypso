@@ -1,39 +1,3 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import {
-	getCurrentPlan,
-	isCurrentPlanExpiring,
-	isRequestingSitePlans,
-} from 'calypso/state/sites/plans/selectors';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
-import isJetpackCloudEligible from 'calypso/state/selectors/is-jetpack-cloud-eligible';
-import { Button, Card } from '@automattic/components';
-import MyPlanCard from './my-plan-card';
-import QuerySites from 'calypso/components/data/query-sites';
-import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import ProductExpiration from 'calypso/components/product-expiration';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { managePurchase } from 'calypso/me/purchases/paths';
-import {
-	isExpiring,
-	isPartnerPurchase,
-	shouldAddPaymentSourceInsteadOfRenewingNow,
-} from 'calypso/lib/purchases';
 import {
 	isFreeJetpackPlan,
 	isFreePlan,
@@ -51,14 +15,43 @@ import {
 	JETPACK_BACKUP_PRODUCTS,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
-import Gridicon from 'calypso/components/gridicon';
+import { Button, Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+import { BackupStorageSpace } from 'calypso/components/backup-storage-space';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
-import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import QuerySites from 'calypso/components/data/query-sites';
+import Gridicon from 'calypso/components/gridicon';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import ProductExpiration from 'calypso/components/product-expiration';
+import {
+	isExpiring,
+	isPartnerPurchase,
+	shouldAddPaymentSourceInsteadOfRenewingNow,
+} from 'calypso/lib/purchases';
+import { managePurchase } from 'calypso/me/purchases/paths';
 import {
 	getForCurrentCROIteration,
 	Iterations,
 } from 'calypso/my-sites/plans/jetpack-plans/iterations';
-import { BackupStorageSpace } from 'calypso/components/backup-storage-space';
+import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import isJetpackCloudEligible from 'calypso/state/selectors/is-jetpack-cloud-eligible';
+import {
+	getCurrentPlan,
+	isCurrentPlanExpiring,
+	isRequestingSitePlans,
+} from 'calypso/state/sites/plans/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import MyPlanCard from './my-plan-card';
 
 class PurchasesListing extends Component {
 	static propTypes = {

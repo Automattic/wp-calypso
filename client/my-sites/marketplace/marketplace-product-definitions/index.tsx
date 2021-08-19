@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
 import { YOAST_PREMIUM, YOAST_FREE } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
+import { marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';
 import {
 	IProductDefinition,
 	IProductCollection,
 	IProductGroupCollection,
 } from 'calypso/my-sites/marketplace/types';
-import { marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';
 
 /**
  * A set of logical product groups, grouped by actual products, to be shown in one product (group) page

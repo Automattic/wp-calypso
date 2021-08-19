@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import CartItems from 'calypso/my-sites/checkout/cart/cart-items';
 import CartTotal from 'calypso/my-sites/checkout/cart/cart-total';
 

@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
+import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
 import DnsRecordsList from '../dns-records/list';
 import DomainConnectDnsRecord from './domain-connect-dns-record';
 

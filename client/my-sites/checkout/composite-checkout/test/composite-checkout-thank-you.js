@@ -4,10 +4,6 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
-import getThankYouPageUrl from '../hooks/use-get-thank-you-url/get-thank-you-page-url';
 import { isEnabled } from '@automattic/calypso-config';
 import {
 	PLAN_ECOMMERCE,
@@ -15,6 +11,7 @@ import {
 	redirectCheckoutToWpAdmin,
 } from '@automattic/calypso-products';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import getThankYouPageUrl from '../hooks/use-get-thank-you-url/get-thank-you-page-url';
 
 jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud', () => jest.fn() );
 jest.mock( '@automattic/calypso-products', () => ( {

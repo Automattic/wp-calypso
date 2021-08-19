@@ -1,27 +1,20 @@
-/**
- * External dependencies
- */
+import { localize, useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { connect, useSelector } from 'react-redux';
-import { localize, useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import Gridicon from 'calypso/components/gridicon';
+import { ThankYou } from 'calypso/components/thank-you';
+import { getSelectedDomain } from 'calypso/lib/domains';
+import { getTitanEmailUrl } from 'calypso/lib/titan';
+import { TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP } from 'calypso/lib/titan/constants';
 import {
 	emailManagement,
 	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
-import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { getTitanEmailUrl } from 'calypso/lib/titan';
-import Gridicon from 'calypso/components/gridicon';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getSelectedDomain } from 'calypso/lib/domains';
 import { getDomainsBySite } from 'calypso/state/sites/domains/selectors';
+import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SiteData } from 'calypso/state/ui/selectors/site-data';
-import { ThankYou } from 'calypso/components/thank-you';
-import { TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP } from 'calypso/lib/titan/constants';
 
 /**
  * Import styles

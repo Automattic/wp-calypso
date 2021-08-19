@@ -1,28 +1,34 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import page from 'page';
-import { pick } from 'lodash';
-import { withShoppingCart, createRequestCartProduct } from '@automattic/shopping-cart';
+import { isMonthly, getPlanByPathSlug } from '@automattic/calypso-products';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
+import { CompactCard } from '@automattic/components';
+import { withShoppingCart, createRequestCartProduct } from '@automattic/shopping-cart';
 import { isURL } from '@wordpress/url';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
-import QuerySites from 'calypso/components/data/query-sites';
-import QueryStoredCards from 'calypso/components/data/query-stored-cards';
+import { localize } from 'i18n-calypso';
+import { pick } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import { CompactCard } from '@automattic/components';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import QuerySites from 'calypso/components/data/query-sites';
+import QueryStoredCards from 'calypso/components/data/query-stored-cards';
+import Gridicon from 'calypso/components/gridicon';
+import Main from 'calypso/components/main';
+import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import {
+	isContactValidationResponseValid,
+	getTaxValidationResult,
+} from 'calypso/my-sites/checkout/composite-checkout/contact-validation';
+import getThankYouPageUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url';
+import {
+	retrieveSignupDestination,
+	clearSignupDestinationCookie,
+} from 'calypso/signup/storageUtils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	getProductsList,
 	getProductDisplayCost,
@@ -30,43 +36,27 @@ import {
 	getProductBySlug,
 	isProductsListFetching,
 } from 'calypso/state/products-list/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { localize } from 'i18n-calypso';
+import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan-slug-from-path';
+import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
 import {
 	isRequestingSitePlans,
 	getPlansBySiteId,
 	getSitePlanRawPrice,
 	getPlanDiscountedRawPrice,
 } from 'calypso/state/sites/plans/selectors';
-import { ConciergeQuickstartSession } from './concierge-quickstart-session';
-import { ConciergeSupportSession } from './concierge-support-session';
-import { BusinessPlanUpgradeUpsell } from './business-plan-upgrade-upsell';
-import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan-slug-from-path';
-import PurchaseModal from './purchase-modal';
-import Gridicon from 'calypso/components/gridicon';
-import { isMonthly, getPlanByPathSlug } from '@automattic/calypso-products';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	isFetchingStoredCards,
 	getStoredCards,
 	hasLoadedStoredCardsFromServer,
 } from 'calypso/state/stored-cards/selectors';
-import getThankYouPageUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { BusinessPlanUpgradeUpsell } from './business-plan-upgrade-upsell';
+import { ConciergeQuickstartSession } from './concierge-quickstart-session';
+import { ConciergeSupportSession } from './concierge-support-session';
+import PurchaseModal from './purchase-modal';
 import { extractStoredCardMetaValue } from './purchase-modal/util';
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
-import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
-import {
-	retrieveSignupDestination,
-	clearSignupDestinationCookie,
-} from 'calypso/signup/storageUtils';
-import {
-	isContactValidationResponseValid,
-	getTaxValidationResult,
-} from 'calypso/my-sites/checkout/composite-checkout/contact-validation';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const debug = debugFactory( 'calypso:upsell-nudge' );

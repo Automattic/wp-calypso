@@ -1,19 +1,9 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent, ChangeEvent } from 'react';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import React, { FunctionComponent, ChangeEvent } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import { RewindConfig } from './types';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface Props {

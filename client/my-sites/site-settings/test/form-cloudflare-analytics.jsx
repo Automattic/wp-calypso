@@ -6,16 +6,9 @@ jest.mock( 'calypso/blocks/upsell-nudge', () => 'UpsellNudge' );
 jest.mock( 'calypso/components/notice', () => 'Notice' );
 jest.mock( 'calypso/components/notice/notice-action', () => 'NoticeAction' );
 
-/**
- * External dependencies
- */
+import { PLAN_FREE } from '@automattic/calypso-products';
 import { shallow } from 'enzyme';
 import React from 'react';
-import { PLAN_FREE } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
 import { CloudflareAnalyticsSettings } from '../analytics/form-cloudflare-analytics';
 
 const props = {

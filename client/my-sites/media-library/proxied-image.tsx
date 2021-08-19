@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { useEffect, useState } from 'react';
-
-/**
- * Internal dependencies
- */
 import debugFactory from 'debug';
+import React, { useEffect, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 
 const debug = debugFactory( 'calypso:my-sites:media-library:proxied-image' );

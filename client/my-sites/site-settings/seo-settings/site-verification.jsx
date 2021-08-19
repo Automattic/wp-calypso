@@ -1,40 +1,33 @@
-/**
- * External dependencies
- */
+import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { get, omit, partial } from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { get, omit, partial } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
-import SupportInfo from 'calypso/components/support-info';
-import ExternalLink from 'calypso/components/external-link';
-import InlineSupportLink from 'calypso/components/inline-support-link';
-import FormInput from 'calypso/components/forms/form-text-input-with-affixes';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
-import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
-import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import ExternalLink from 'calypso/components/external-link';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormInput from 'calypso/components/forms/form-text-input-with-affixes';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import SupportInfo from 'calypso/components/support-info';
+import { protectForm } from 'calypso/lib/protect-form';
 import versionCompare from 'calypso/lib/version-compare';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { requestSiteSettings, saveSiteSettings } from 'calypso/state/site-settings/actions';
 import {
 	isSiteSettingsSaveSuccessful,
 	getSiteSettingsSaveError,
 } from 'calypso/state/site-settings/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestSite } from 'calypso/state/sites/actions';
-import { requestSiteSettings, saveSiteSettings } from 'calypso/state/site-settings/actions';
-import { protectForm } from 'calypso/lib/protect-form';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import getSupportedServices from './services';
 
 class SiteVerification extends Component {

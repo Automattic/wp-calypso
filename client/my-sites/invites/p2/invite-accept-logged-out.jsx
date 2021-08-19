@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import SignupForm from 'calypso/blocks/signup-form';
-import P2InviteAcceptHeader from './invite-accept-header';
-import P2InviteAcceptFooter from './invite-accept-footer';
-import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
+import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
+import P2InviteAcceptFooter from './invite-accept-footer';
+import P2InviteAcceptHeader from './invite-accept-header';
 
 function renderFooterLink( props ) {
 	return (

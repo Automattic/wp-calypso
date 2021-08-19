@@ -1,13 +1,7 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-/**
- * Internal dependencies
- */
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import accept from 'calypso/lib/accept';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 

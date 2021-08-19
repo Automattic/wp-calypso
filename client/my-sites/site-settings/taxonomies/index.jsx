@@ -1,26 +1,15 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import page from 'page';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import HeaderCake from 'calypso/components/header-cake';
+import React from 'react';
+import { connect } from 'react-redux';
 import TaxonomyManager from 'calypso/blocks/taxonomy-manager';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getPostTypeTaxonomy } from 'calypso/state/post-types/taxonomies/selectors';
 import DocumentHead from 'calypso/components/data/document-head';
+import HeaderCake from 'calypso/components/header-cake';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import { getPostTypeTaxonomy } from 'calypso/state/post-types/taxonomies/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const Taxonomies = ( { translate, labels, postType, site, taxonomy } ) => {

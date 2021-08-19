@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { RefObject, useEffect, useRef, useState } from 'react';
 
 /**

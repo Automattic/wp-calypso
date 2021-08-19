@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { FunctionComponent } from 'react';
 import styled from '@emotion/styled';
-
-/**
- * Internal dependencies
- */
+import { FunctionComponent } from 'react';
 import CountrySpecificPaymentFieldsUnstyled from 'calypso/my-sites/checkout/checkout/country-specific-payment-fields';
 
 export type CountrySpecificPaymentFieldsProps = {

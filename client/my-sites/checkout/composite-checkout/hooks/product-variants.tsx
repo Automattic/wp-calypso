@@ -1,12 +1,3 @@
-/**
- * External dependencies
- */
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import { styled } from '@automattic/wpcom-checkout';
-import { useTranslate } from 'i18n-calypso';
-import { useSelector, useDispatch } from 'react-redux';
-import formatCurrency, { CURRENCIES } from '@automattic/format-currency';
-import debugFactory from 'debug';
 import {
 	getTermDuration,
 	getPlan,
@@ -18,16 +9,18 @@ import {
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
-import type { Plan } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
+import formatCurrency, { CURRENCIES } from '@automattic/format-currency';
+import { styled } from '@automattic/wpcom-checkout';
+import debugFactory from 'debug';
+import { useTranslate } from 'i18n-calypso';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { requestPlans } from 'calypso/state/plans/actions';
-import { computeProductsWithPrices } from 'calypso/state/products-list/selectors';
 import { requestProductsList } from 'calypso/state/products-list/actions';
+import { computeProductsWithPrices } from 'calypso/state/products-list/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import type { WPCOMProductVariant } from '../components/item-variation-picker';
+import type { Plan } from '@automattic/calypso-products';
 
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );
 

@@ -1,31 +1,21 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
-import page from 'page';
-import React from 'react';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import Gridicon from 'calypso/components/gridicon';
 import PopoverMenu from 'calypso/components/popover/menu';
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import Gridicon from 'calypso/components/gridicon';
-import { composeAnalytics, recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
 	domainAddNew,
 	domainManagementAllRoot,
 	domainUseYourDomain,
 } from 'calypso/my-sites/domains/paths';
+import { composeAnalytics, recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './options-domain-button.scss';
 class AddDomainButton extends React.Component {
 	static propTypes = {

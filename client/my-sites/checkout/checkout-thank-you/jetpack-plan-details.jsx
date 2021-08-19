@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import PurchaseDetail from 'calypso/components/purchase-detail';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { getSiteFileModDisableReason } from 'calypso/lib/site/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 class EnhancedDetails extends Component {
 	componentDidMount() {

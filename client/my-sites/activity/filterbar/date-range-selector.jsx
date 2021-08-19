@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
+import { Button } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
 import { isEmpty, flowRight as compose } from 'lodash';
+import React, { Component, Fragment } from 'react';
 import { DateUtils } from 'react-day-picker';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
+import { connect } from 'react-redux';
+import DateRangePicker from 'calypso/components/date-range';
+import Gridicon from 'calypso/components/gridicon';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { updateFilter } from 'calypso/state/activity-log/actions';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
-import DateRangePicker from 'calypso/components/date-range';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 

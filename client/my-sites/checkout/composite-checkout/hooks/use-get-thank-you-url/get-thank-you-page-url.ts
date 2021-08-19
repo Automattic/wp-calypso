@@ -1,18 +1,17 @@
-/**
- * External dependencies
- */
 import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
-import debugFactory from 'debug';
-import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
-
-const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' );
-
-/**
- * Internal dependencies
- */
-import { addQueryArgs, isExternal, resemblesUrl, urlToSlug } from 'calypso/lib/url';
 import config from '@automattic/calypso-config';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import {
+	JETPACK_PRODUCTS_LIST,
+	JETPACK_RESET_PLANS,
+	JETPACK_REDIRECT_URL,
+	PLAN_BUSINESS,
+	redirectCheckoutToWpAdmin,
+	findFirstSimilarPlanKey,
+	getPlan,
+	isPlan,
+	isWpComPremiumPlan,
+} from '@automattic/calypso-products';
+import debugFactory from 'debug';
 import {
 	hasRenewalItem,
 	getAllCartItems,
@@ -26,21 +25,15 @@ import {
 	hasEcommercePlan,
 	hasTrafficGuide,
 } from 'calypso/lib/cart-values/cart-items';
-import { managePurchase } from 'calypso/me/purchases/paths';
-import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
-import {
-	JETPACK_PRODUCTS_LIST,
-	JETPACK_RESET_PLANS,
-	JETPACK_REDIRECT_URL,
-	PLAN_BUSINESS,
-	redirectCheckoutToWpAdmin,
-	findFirstSimilarPlanKey,
-	getPlan,
-	isPlan,
-	isWpComPremiumPlan,
-} from '@automattic/calypso-products';
-import { persistSignupDestination, retrieveSignupDestination } from 'calypso/signup/storageUtils';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { badNaiveClientSideRollout } from 'calypso/lib/naive-client-side-rollout';
+import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
+import { addQueryArgs, isExternal, resemblesUrl, urlToSlug } from 'calypso/lib/url';
+import { managePurchase } from 'calypso/me/purchases/paths';
+import { persistSignupDestination, retrieveSignupDestination } from 'calypso/signup/storageUtils';
+import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
+
+const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' );
 
 type SaveUrlToCookie = ( url: string ) => void;
 type GetUrlFromCookie = () => string | undefined;

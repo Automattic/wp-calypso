@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { localize } from 'i18n-calypso';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { SETTING_PRIMARY_DOMAIN } from 'calypso/lib/url/support';
-import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteOnPaidPlan from 'calypso/state/selectors/is-site-on-paid-plan';
 import { getPlansBySite } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const NonPrimaryDomainPlanUpsell = ( {
 	domain,

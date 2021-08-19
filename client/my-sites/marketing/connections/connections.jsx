@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import QueryP2Connections from 'calypso/components/data/query-p2-connections';
+import React from 'react';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
 import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
+import QueryP2Connections from 'calypso/components/data/query-p2-connections';
 import QueryPublicizeConnections from 'calypso/components/data/query-publicize-connections';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import SharingServicesGroup from './services-group';
 
 const SharingConnections = ( { translate, isP2Hub, siteId } ) => (

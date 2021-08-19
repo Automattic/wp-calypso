@@ -1,18 +1,3 @@
-/**
- * External dependencies
- */
-import { useEffect, useMemo, useReducer } from 'react';
-import { useSelector } from 'react-redux';
-import debugFactory from 'debug';
-import { useTranslate } from 'i18n-calypso';
-import type { RequestCartProduct } from '@automattic/shopping-cart';
-import { createRequestCartProduct } from '@automattic/shopping-cart';
-import { decodeProductFromUrl } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	JETPACK_SEARCH_PRODUCTS,
 	PRODUCT_JETPACK_SEARCH,
@@ -21,12 +6,20 @@ import {
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
 	getPlanByPathSlug,
 } from '@automattic/calypso-products';
-import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
-import useFetchProductsIfNotLoaded from './use-fetch-products-if-not-loaded';
-import doesValueExist from '../lib/does-value-exist';
-import useStripProductsFromUrl from './use-strip-products-from-url';
-import getCartFromLocalStorage from '../lib/get-cart-from-local-storage';
+import { createRequestCartProduct } from '@automattic/shopping-cart';
+import { decodeProductFromUrl } from '@automattic/wpcom-checkout';
+import debugFactory from 'debug';
+import { useTranslate } from 'i18n-calypso';
+import { useEffect, useMemo, useReducer } from 'react';
+import { useSelector } from 'react-redux';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import doesValueExist from '../lib/does-value-exist';
+import getCartFromLocalStorage from '../lib/get-cart-from-local-storage';
+import useFetchProductsIfNotLoaded from './use-fetch-products-if-not-loaded';
+import useStripProductsFromUrl from './use-strip-products-from-url';
+import type { RequestCartProduct } from '@automattic/shopping-cart';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-prepare-products-for-cart' );
 

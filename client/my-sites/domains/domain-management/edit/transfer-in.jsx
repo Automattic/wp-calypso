@@ -4,10 +4,6 @@
  */
 
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import Edit from './index';
 
 class TransferIn extends React.PureComponent {

@@ -1,24 +1,16 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
+import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get, includes, isEqual, map } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import ButtonGroup from 'calypso/components/button-group';
 import Count from 'calypso/components/count';
-import CommentNavigationTab from './comment-navigation-tab';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import NavItem from 'calypso/components/section-nav/item';
-import NavTabs from 'calypso/components/section-nav/tabs';
+import Gridicon from 'calypso/components/gridicon';
 import Search from 'calypso/components/search';
 import SectionNav from 'calypso/components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
 import SegmentedControl from 'calypso/components/segmented-control';
 import UrlSearch from 'calypso/lib/url-search';
 import {
@@ -33,10 +25,11 @@ import {
 	requestCommentsList,
 	unlikeComment,
 } from 'calypso/state/comments/actions';
-import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSiteComment } from 'calypso/state/comments/selectors';
+import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 import hasPendingCommentRequests from 'calypso/state/selectors/has-pending-comment-requests';
 import { NEWEST_FIRST, OLDEST_FIRST } from '../constants';
+import CommentNavigationTab from './comment-navigation-tab';
 
 const bulkActions = {
 	unapproved: [ 'approve', 'spam', 'trash' ],

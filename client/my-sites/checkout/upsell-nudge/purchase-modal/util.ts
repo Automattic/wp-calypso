@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
+import { useProcessPayment, PaymentProcessorResponseType } from '@automattic/composite-checkout';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { useProcessPayment, PaymentProcessorResponseType } from '@automattic/composite-checkout';
-import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
-import type { ResponseCart } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
-import { errorNotice } from 'calypso/state/notices/actions';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { translateResponseCartToWPCOMCart } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-cart';
+import { errorNotice } from 'calypso/state/notices/actions';
+import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
+import type { ResponseCart } from '@automattic/shopping-cart';
 import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
 
 export function extractStoredCardMetaValue( card: StoredCard, key: string ): string | undefined {

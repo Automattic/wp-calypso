@@ -1,32 +1,22 @@
-/**
- * External dependencies
- */
-import React, { useState, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useStripe } from '@automattic/calypso-stripe';
 import { Dialog } from '@automattic/components';
 import { CheckoutProvider } from '@automattic/composite-checkout';
-import { useStripe } from '@automattic/calypso-stripe';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import type { ResponseCart } from '@automattic/shopping-cart';
-import type { ManagedValue } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import { useSubmitTransaction, extractStoredCardMetaValue } from './util';
-import { BEFORE_SUBMIT } from './constants';
-import Content from './content';
-import Placeholder from './placeholder';
+import React, { useState, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import useCreatePaymentCompleteCallback from 'calypso/my-sites/checkout/composite-checkout/hooks/use-create-payment-complete-callback';
 import existingCardProcessor from 'calypso/my-sites/checkout/composite-checkout/lib/existing-card-processor';
 import getContactDetailsType from 'calypso/my-sites/checkout/composite-checkout/lib/get-contact-details-type';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { BEFORE_SUBMIT } from './constants';
+import Content from './content';
+import Placeholder from './placeholder';
+import { useSubmitTransaction, extractStoredCardMetaValue } from './util';
+import type { ResponseCart } from '@automattic/shopping-cart';
+import type { ManagedValue } from '@automattic/wpcom-checkout';
 import type { PaymentProcessorOptions } from 'calypso/my-sites/checkout/composite-checkout/types/payment-processors';
 import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => null;

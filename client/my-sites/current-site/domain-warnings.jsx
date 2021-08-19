@@ -1,22 +1,14 @@
-/**
- * External dependencies
- */
-
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { connect } from 'react-redux';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
-import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteEligibleForFullSiteEditing from 'calypso/state/selectors/is-site-eligible-for-full-site-editing';
+import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const allowedRules = [
 	'unverifiedDomainsCanManage',

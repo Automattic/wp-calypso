@@ -1,40 +1,29 @@
-/**
- * External dependencies
- */
-
+import { CompactCard as Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { some } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
-import page from 'page';
-import { localize } from 'i18n-calypso';
-import { some } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import QueryDomainDns from 'calypso/components/data/query-domain-dns';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import Main from 'calypso/components/main';
+import VerticalNav from 'calypso/components/vertical-nav';
+import { getSelectedDomain, isMappedDomain, isRegisteredDomain } from 'calypso/lib/domains';
+import { domainConnect } from 'calypso/lib/domains/constants';
+import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
+import Header from 'calypso/my-sites/domains/domain-management/components/header';
+import { domainManagementEdit, domainManagementNameServers } from 'calypso/my-sites/domains/paths';
+import { getDomainDns } from 'calypso/state/domains/dns/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import DnsTemplates from '../name-servers/dns-templates';
 import DnsAddNew from './dns-add-new';
 import DnsDetails from './dns-details';
 import DnsList from './dns-list';
-import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
-import Header from 'calypso/my-sites/domains/domain-management/components/header';
-import Main from 'calypso/components/main';
-import { domainManagementEdit, domainManagementNameServers } from 'calypso/my-sites/domains/paths';
-import { getSelectedDomain, isMappedDomain, isRegisteredDomain } from 'calypso/lib/domains';
-import { CompactCard as Card } from '@automattic/components';
-import DnsTemplates from '../name-servers/dns-templates';
-import VerticalNav from 'calypso/components/vertical-nav';
 import DomainConnectRecord from './domain-connect-record';
-import { domainConnect } from 'calypso/lib/domains/constants';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { getDomainDns } from 'calypso/state/domains/dns/selectors';
-import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
-import QuerySiteDomains from 'calypso/components/data/query-site-domains';
-import QueryDomainDns from 'calypso/components/data/query-domain-dns';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class Dns extends React.Component {

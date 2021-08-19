@@ -1,24 +1,16 @@
-/**
- * External dependencies
- */
-
+import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_PREMIUM } from '@automattic/calypso-products';
 import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
-import CurrentTheme from 'calypso/my-sites/themes/current-theme';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import { connectOptions } from './theme-options';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_PREMIUM } from '@automattic/calypso-products';
+import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import CurrentTheme from 'calypso/my-sites/themes/current-theme';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { hasFeature, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { connectOptions } from './theme-options';
 import ThemeShowcase from './theme-showcase';
 import ThemesHeader from './themes-header';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
-import isVipSite from 'calypso/state/selectors/is-vip-site';
 
 const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 	const {

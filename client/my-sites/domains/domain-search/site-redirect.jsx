@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-
+import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import EmptyContent from 'calypso/components/empty-content';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
-import SiteRedirectStep from './site-redirect-step';
+import { getProductsList } from 'calypso/state/products-list/selectors';
 import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
@@ -23,8 +16,7 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import QueryProductsList from 'calypso/components/data/query-products-list';
-import { getProductsList } from 'calypso/state/products-list/selectors';
+import SiteRedirectStep from './site-redirect-step';
 
 class SiteRedirect extends Component {
 	static propTypes = {

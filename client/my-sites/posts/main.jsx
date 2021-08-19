@@ -1,26 +1,18 @@
-/**
- * External dependencies
- */
-
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import PostTypeFilter from 'calypso/my-sites/post-type-filter';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import titlecase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
-import PostTypeList from 'calypso/my-sites/post-type-list';
-import titlecase from 'to-title-case';
 import Main from 'calypso/components/main';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { mapPostStatus } from 'calypso/lib/route';
+import PostTypeFilter from 'calypso/my-sites/post-type-filter';
+import PostTypeList from 'calypso/my-sites/post-type-list';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { POST_STATUSES } from 'calypso/state/posts/constants';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { mapPostStatus } from 'calypso/lib/route';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 
 class PostsMain extends React.Component {
 	getAnalyticsPath() {

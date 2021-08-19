@@ -1,9 +1,24 @@
-/**
- * External dependencies
- */
 import { isEnabled } from '@automattic/calypso-config';
-import { translate } from 'i18n-calypso';
+import {
+	isPlan,
+	isDomainTransferProduct,
+	isDomainProduct,
+	isDotComPlan,
+	isGoogleWorkspaceExtraLicence,
+	isGSuiteOrGoogleWorkspace,
+	isTitanMail,
+	isP2Plus,
+	isJetpackSearch,
+} from '@automattic/calypso-products';
 import { getTotalLineItemFromCart, tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
+import { translate } from 'i18n-calypso';
+import { isRenewal } from 'calypso/lib/cart-values/cart-items';
+import { isGSuiteOrGoogleWorkspaceProductSlug } from 'calypso/lib/gsuite';
+import doesValueExist from './does-value-exist';
+import {
+	readWPCOMPaymentMethodClass,
+	translateWpcomPaymentMethodToCheckoutPaymentMethod,
+} from './translate-payment-method-names';
 import type { LineItem } from '@automattic/composite-checkout';
 import type {
 	ResponseCart,
@@ -17,28 +32,6 @@ import type {
 	TransactionRequest,
 	WPCOMCart,
 } from '@automattic/wpcom-checkout';
-import {
-	isPlan,
-	isDomainTransferProduct,
-	isDomainProduct,
-	isDotComPlan,
-	isGoogleWorkspaceExtraLicence,
-	isGSuiteOrGoogleWorkspace,
-	isTitanMail,
-	isP2Plus,
-	isJetpackSearch,
-} from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
-import {
-	readWPCOMPaymentMethodClass,
-	translateWpcomPaymentMethodToCheckoutPaymentMethod,
-} from './translate-payment-method-names';
-import { isRenewal } from 'calypso/lib/cart-values/cart-items';
-import doesValueExist from './does-value-exist';
-import { isGSuiteOrGoogleWorkspaceProductSlug } from 'calypso/lib/gsuite';
 
 /**
  * Translate a cart object as returned by the WPCOM cart endpoint to

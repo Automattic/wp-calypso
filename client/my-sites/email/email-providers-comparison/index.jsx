@@ -1,83 +1,73 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
+import { Button } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
+import { withShoppingCart } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 import titleCase from 'to-title-case';
-
-/**
- * Internal dependencies
- */
-import {
-	areAllMailboxesValid,
-	buildNewTitanMailbox,
-	transformMailboxForCart,
-	validateMailboxes as validateTitanMailboxes,
-} from 'calypso/lib/titan/new-mailbox';
-import { areAllUsersValid, getItemsForCart, newUsers } from 'calypso/lib/gsuite/new-users';
-import { Button } from '@automattic/components';
+import emailIllustration from 'calypso/assets/images/email-providers/email-illustration.svg';
+import forwardingIcon from 'calypso/assets/images/email-providers/forwarding.svg';
+import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
+import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan.svg';
+import DocumentHead from 'calypso/components/data/document-head';
+import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
+import QueryProductsList from 'calypso/components/data/query-products-list';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import Gridicon from 'calypso/components/gridicon';
+import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
+import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
+import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
+import PromoCard from 'calypso/components/promo-section/promo-card';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
 import {
 	canCurrentUserAddEmail,
 	getCurrentUserCannotAddEmailReason,
 	getSelectedDomain,
 } from 'calypso/lib/domains';
-import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
-import DocumentHead from 'calypso/components/data/document-head';
-import EmailHeader from 'calypso/my-sites/email/email-header';
-import EmailProviderCard from './email-provider-card';
-import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
-import {
-	getEmailForwardingFeatures,
-	getGoogleFeatures,
-	getTitanFeatures,
-} from 'calypso/my-sites/email/email-provider-features/list';
-import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
-import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from 'calypso/lib/gsuite/constants';
-import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
+import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import {
 	getAnnualPrice,
 	getGoogleMailServiceFamily,
 	getMonthlyPrice,
 	hasGSuiteSupportedDomain,
 } from 'calypso/lib/gsuite';
-import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
-import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from 'calypso/lib/gsuite/constants';
+import { areAllUsersValid, getItemsForCart, newUsers } from 'calypso/lib/gsuite/new-users';
 import { getTitanProductName } from 'calypso/lib/titan';
-import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
+import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
+import {
+	areAllMailboxesValid,
+	buildNewTitanMailbox,
+	transformMailboxForCart,
+	validateMailboxes as validateTitanMailboxes,
+} from 'calypso/lib/titan/new-mailbox';
+import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
+import EmailHeader from 'calypso/my-sites/email/email-header';
+import {
+	getEmailForwardingFeatures,
+	getGoogleFeatures,
+	getTitanFeatures,
+} from 'calypso/my-sites/email/email-provider-features/list';
 import { emailManagementForwarding, emailManagement } from 'calypso/my-sites/email/paths';
-import { errorNotice } from 'calypso/state/notices/actions';
-import Main from 'calypso/components/main';
-import Notice from 'calypso/components/notice';
-import PromoCard from 'calypso/components/promo-section/promo-card';
-import QueryProductsList from 'calypso/components/data/query-products-list';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import Gridicon from 'calypso/components/gridicon';
-import formatCurrency from '@automattic/format-currency';
-import emailIllustration from 'calypso/assets/images/email-providers/email-illustration.svg';
-import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan.svg';
-import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
-import forwardingIcon from 'calypso/assets/images/email-providers/forwarding.svg';
-import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
-import QuerySiteDomains from 'calypso/components/data/query-site-domains';
-import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
-import { withShoppingCart } from '@automattic/shopping-cart';
-import HeaderCake from 'calypso/components/header-cake';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
+import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import EmailProviderCard from './email-provider-card';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const identityMap = ( item ) => item;

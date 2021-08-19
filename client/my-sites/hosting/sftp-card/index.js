@@ -1,31 +1,17 @@
-/**
- * External dependencies
- */
+import { Card, Button } from '@automattic/components';
+import { PanelBody } from '@wordpress/components';
+import { localize } from 'i18n-calypso';
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * WordPress dependencies
- */
-import { PanelBody } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import { Card, Button } from '@automattic/components';
 import CardHeading from 'calypso/components/card-heading';
-import MaterialIcon from 'calypso/components/material-icon';
+import ExternalLink from 'calypso/components/external-link';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import MaterialIcon from 'calypso/components/material-icon';
 import Spinner from 'calypso/components/spinner';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import {
-	requestAtomicSftpUsers,
-	createAtomicSftpUser,
-	resetAtomicSftpPassword,
-	updateAtomicSftpUser,
-} from 'calypso/state/hosting/actions';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 import {
 	withAnalytics,
 	composeAnalytics,
@@ -33,16 +19,16 @@ import {
 	recordGoogleEvent,
 	bumpStat,
 } from 'calypso/state/analytics/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import {
+	requestAtomicSftpUsers,
+	createAtomicSftpUser,
+	resetAtomicSftpPassword,
+	updateAtomicSftpUser,
+} from 'calypso/state/hosting/actions';
 import { getAtomicHostingSftpUsers } from 'calypso/state/selectors/get-atomic-hosting-sftp-users';
-import ExternalLink from 'calypso/components/external-link';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const FILEZILLA_URL = 'https://filezilla-project.org/';

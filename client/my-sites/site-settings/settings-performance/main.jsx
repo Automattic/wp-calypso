@@ -1,37 +1,29 @@
-/**
- * External dependencies
- */
-
-import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
+import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { flowRight, partialRight, pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
+import DocumentHead from 'calypso/components/data/document-head';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import FormattedHeader from 'calypso/components/formatted-header';
+import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import AmpJetpack from 'calypso/my-sites/site-settings/amp/jetpack';
 import AmpWpcom from 'calypso/my-sites/site-settings/amp/wpcom';
 import Cloudflare from 'calypso/my-sites/site-settings/cloudflare';
-import DocumentHead from 'calypso/components/data/document-head';
-import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
-import Main from 'calypso/components/main';
 import MediaSettingsPerformance from 'calypso/my-sites/site-settings/media-settings-performance';
-import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
 import Search from 'calypso/my-sites/site-settings/search';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import FormattedHeader from 'calypso/components/formatted-header';
-import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
 import SpeedUpYourSite from 'calypso/my-sites/site-settings/speed-up-site-settings';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
-import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
-import config from '@automattic/calypso-config';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class SiteSettingsPerformance extends Component {
 	render() {

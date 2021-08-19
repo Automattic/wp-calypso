@@ -1,11 +1,7 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { recordSiftScienceUser } from 'calypso/lib/siftscience';
 import {
 	navigation,
 	siteSelection,
@@ -14,10 +10,7 @@ import {
 } from 'calypso/my-sites/controller';
 import domainsController from './controller';
 import domainManagementController from './domain-management/controller';
-import { recordSiftScienceUser } from 'calypso/lib/siftscience';
-import config from '@automattic/calypso-config';
 import * as paths from './paths';
-import { makeLayout, render as clientRender } from 'calypso/controller';
 
 function registerMultiPage( { paths: givenPaths, handlers } ) {
 	givenPaths.forEach( ( path ) => page( path, ...handlers ) );

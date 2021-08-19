@@ -1,45 +1,31 @@
-/**
- * External dependencies
- */
-import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
-import React, { useMemo, useRef, useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import ProductGridSection from './section';
-import PlansFilterBar from '../plans-filter-bar';
-import PlanUpgradeSection from '../plan-upgrade';
-import ProductCard from '../product-card';
-import { getProductPosition } from '../product-grid/products-order';
-import { getPlansToDisplay, getProductsToDisplay, isConnectionFlow } from './utils';
-import { getForCurrentCROIteration, Iterations } from '../iterations';
-import useGetPlansGridProducts from '../use-get-plans-grid-products';
-import JetpackFreeCard from '../jetpack-free-card';
-import JetpackCrmFreeCard from '../jetpack-crm-free-card';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 } from '@automattic/calypso-products';
+import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
+import React, { useMemo, useRef, useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import StoreFooter from 'calypso/jetpack-connect/store-footer';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import { getForCurrentCROIteration, Iterations } from '../iterations';
+import JetpackCrmFreeCard from '../jetpack-crm-free-card';
+import JetpackFreeCard from '../jetpack-free-card';
 import MoreInfoBox from '../more-info-box';
-import StoreFooter from 'calypso/jetpack-connect/store-footer';
-
-/**
- * Type dependencies
- */
-import type { AppState } from 'calypso/types';
+import PlanUpgradeSection from '../plan-upgrade';
+import PlansFilterBar from '../plans-filter-bar';
+import ProductCard from '../product-card';
+import { getProductPosition } from '../product-grid/products-order';
+import useGetPlansGridProducts from '../use-get-plans-grid-products';
+import ProductGridSection from './section';
+import { getPlansToDisplay, getProductsToDisplay, isConnectionFlow } from './utils';
 import type { ProductsGridProps, SelectorProduct } from '../types';
 import type { JetpackProductSlug, JetpackPlanSlug } from '@automattic/calypso-products';
+import type { AppState } from 'calypso/types';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const sortByGridPosition = ( items: SelectorProduct[] ) =>

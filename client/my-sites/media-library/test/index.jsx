@@ -2,18 +2,11 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { mount } from 'enzyme';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import MediaLibrary from '..';
 import { requestKeyringConnections as requestStub } from 'calypso/state/sharing/keyring/actions';
+import MediaLibrary from '..';
 
 jest.mock( 'calypso/components/data/query-preferences', () =>
 	require( 'calypso/components/empty-component' )

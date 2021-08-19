@@ -2,31 +2,21 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import accept from 'calypso/lib/accept';
-import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
 import ExternalLink from 'calypso/components/external-link';
-import { getSiteFileModDisableReason, isMainNetworkSite } from 'calypso/lib/site/utils';
+import Gridicon from 'calypso/components/gridicon';
+import accept from 'calypso/lib/accept';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { REMOVE_PLUGIN } from 'calypso/lib/plugins/constants';
-import { isPluginActionInProgress } from 'calypso/state/plugins/installed/selectors';
+import { getSiteFileModDisableReason, isMainNetworkSite } from 'calypso/lib/site/utils';
+import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
 import { removePlugin } from 'calypso/state/plugins/installed/actions';
+import { isPluginActionInProgress } from 'calypso/state/plugins/installed/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class PluginRemoveButton extends React.Component {

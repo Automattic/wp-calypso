@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { get } from 'lodash';
 import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-
+import { get } from 'lodash';
+import React from 'react';
 import { logmeinUrl } from 'calypso/lib/logmein';
 
 export function acceptedNotice( invite, displayOnNextPage = true ) {

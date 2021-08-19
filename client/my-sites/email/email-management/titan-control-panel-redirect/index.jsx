@@ -1,31 +1,24 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
+import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
-import EmptyContent from 'calypso/components/empty-content';
-import { errorNotice } from 'calypso/state/notices/actions';
-import { fetchTitanAutoLoginURL } from 'calypso/my-sites/email/email-management/titan-functions';
-import { getTitanMailOrderId, getTitanProductName, hasTitanMailWithUs } from 'calypso/lib/titan';
-import { getSelectedDomain } from 'calypso/lib/domains';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import getSiteBySlug from 'calypso/state/sites/selectors/get-site-by-slug';
+import { connect } from 'react-redux';
+import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan.svg';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySites from 'calypso/components/data/query-sites';
+import EmptyContent from 'calypso/components/empty-content';
 import Spinner from 'calypso/components/spinner';
+import { getSelectedDomain } from 'calypso/lib/domains';
+import { getTitanMailOrderId, getTitanProductName, hasTitanMailWithUs } from 'calypso/lib/titan';
+import { fetchTitanAutoLoginURL } from 'calypso/my-sites/email/email-management/titan-functions';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import getSiteBySlug from 'calypso/state/sites/selectors/get-site-by-slug';
 
 /**
  * Style and image dependencies
  */
 import './style.scss';
-import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan.svg';
 
 class TitanControlPanelRedirect extends React.Component {
 	static propTypes = {

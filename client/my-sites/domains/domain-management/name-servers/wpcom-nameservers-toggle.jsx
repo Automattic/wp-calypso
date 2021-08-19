@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
+import { Card } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
 import { CHANGE_NAME_SERVERS } from 'calypso/lib/url/support';
 import {
 	composeAnalytics,

@@ -1,37 +1,26 @@
-/**
- * External dependencies
- */
-
+import { useTranslate } from 'i18n-calypso';
+import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Fragment, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
-import { times } from 'lodash';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import SectionHeader from 'calypso/components/section-header';
+import { activateModule } from 'calypso/state/jetpack/modules/actions';
+import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { getExpandedService } from 'calypso/state/sharing/selectors';
+import { requestKeyringServices } from 'calypso/state/sharing/services/actions';
 import {
 	getEligibleKeyringServices,
 	isKeyringServicesFetching,
 } from 'calypso/state/sharing/services/selectors';
-import { getExpandedService } from 'calypso/state/sharing/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import Notice from 'calypso/components/notice';
-import SectionHeader from 'calypso/components/section-header';
-import Service from './service';
-import * as Components from './services';
-import ServicePlaceholder from './service-placeholder';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import NoticeAction from 'calypso/components/notice/notice-action';
-import { activateModule } from 'calypso/state/jetpack/modules/actions';
-import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
-import { requestKeyringServices } from 'calypso/state/sharing/services/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import Service from './service';
+import ServicePlaceholder from './service-placeholder';
+import * as Components from './services';
 
-/**
- * Style dependencies
- */
 import './services-group.scss';
 
 /**

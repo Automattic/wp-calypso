@@ -1,26 +1,16 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
+import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React from 'react';
+import Gridicon from 'calypso/components/gridicon';
 import {
 	buildNewTitanMailbox,
 	getMailboxPropTypeShape,
 	sanitizeEmailSuggestion,
 	validateMailboxes,
 } from 'calypso/lib/titan/new-mailbox';
-import { Button } from '@automattic/components';
-import Gridicon from 'calypso/components/gridicon';
 import TitanNewMailbox from 'calypso/my-sites/email/titan-new-mailbox';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

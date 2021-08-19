@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import Search from 'calypso/components/search';
 import urlSearch from 'calypso/lib/url-search';
 

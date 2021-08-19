@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import page from 'page';
 import React from 'react';
-
-/**
- * Internal Dependencies
- */
-import DomainManagement from '.';
 import DomainManagementData from 'calypso/components/data/domain-management';
+import { decodeURIComponentIfValid } from 'calypso/lib/url';
 import {
 	domainManagementChangeSiteAddress,
 	domainManagementContactsPrivacy,
@@ -32,7 +25,7 @@ import {
 } from 'calypso/my-sites/domains/paths';
 import { emailManagement, emailManagementForwarding } from 'calypso/my-sites/email/paths';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { decodeURIComponentIfValid } from 'calypso/lib/url';
+import DomainManagement from '.';
 
 export default {
 	domainManagementList( pageContext, next ) {

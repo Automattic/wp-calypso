@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { addOnboardingCallInternalNote } from './utils';
 

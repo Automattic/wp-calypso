@@ -1,24 +1,14 @@
-/**
- * External dependencies
- */
-import React, { useRef, useState } from 'react';
-import PropTypes from 'prop-types';
-import { __, sprintf } from '@wordpress/i18n';
-import { createInterpolateElement } from '@wordpress/element';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import { createInterpolateElement } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
+import React, { useRef, useState } from 'react';
 import Badge from 'calypso/components/badge';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import PopoverMenu from 'calypso/components/popover/menu';
 import Gridicon from 'calypso/components/gridicon';
+import PopoverMenu from 'calypso/components/popover/menu';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import { domainManagementChangeSiteAddress } from 'calypso/my-sites/domains/paths';
 
-/**
- * Style dependencies
- */
 import './wpcom-domain-item.scss';
 
 export default function WpcomDomainItem( {

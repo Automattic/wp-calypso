@@ -1,25 +1,15 @@
-/**
- * External dependencies
- */
-import page from 'page';
-import React from 'react';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import page from 'page';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { getSiteSlug } from 'calypso/state/sites/selectors';
-import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
-import { errorNotice } from 'calypso/state/notices/actions';
-import { transferStates } from 'calypso/state/atomic-transfer/constants';
-import { hideMasterbar, showMasterbar } from 'calypso/state/ui/masterbar-visibility/actions';
 import { useInterval } from 'calypso/lib/interval';
+import { transferStates } from 'calypso/state/atomic-transfer/constants';
+import { errorNotice } from 'calypso/state/notices/actions';
+import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { hideMasterbar, showMasterbar } from 'calypso/state/ui/masterbar-visibility/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 // Total time to perform "loading"

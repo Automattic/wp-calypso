@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
 import { CompactCard } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
+import React from 'react';
 
 export default function AccountLevelPurchaseLinks() {
 	const translate = useTranslate();

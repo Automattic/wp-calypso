@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { localize, translate } from 'i18n-calypso';
 import classNames from 'classnames';
+import { localize, translate } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import FormLabel from 'calypso/components/forms/form-label';
+import React from 'react';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
 class CountrySelect extends React.PureComponent {
 	recordCountrySelectClick = () => {

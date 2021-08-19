@@ -1,31 +1,21 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import Site from 'calypso/blocks/site';
 import FoldableCard from 'calypso/components/foldable-card';
+import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggle';
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
-import PluginUpdateIndicator from 'calypso/my-sites/plugins/plugin-site-update-indicator';
 import PluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button';
 import PluginRemoveButton from 'calypso/my-sites/plugins/plugin-remove-button';
-import Site from 'calypso/blocks/site';
-import { Button } from '@automattic/components';
+import PluginUpdateIndicator from 'calypso/my-sites/plugins/plugin-site-update-indicator';
 import {
 	getPluginOnSite,
 	isPluginActionInProgress,
 } from 'calypso/state/plugins/installed/selectors';
-import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class PluginSiteJetpack extends React.Component {

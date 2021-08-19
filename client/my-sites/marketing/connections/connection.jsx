@@ -1,26 +1,20 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import classNames from 'classnames';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 
-/**
- * Internal dependencies
- */
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { ScreenReaderText } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
-import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import Gridicon from 'calypso/components/gridicon';
 import useUsersQuery from 'calypso/data/users/use-users-query';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { ScreenReaderText } from '@automattic/components';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class SharingConnection extends Component {
 	static propTypes = {
