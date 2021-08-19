@@ -54,14 +54,19 @@ export class SidebarComponent {
 			await this._openMobileSidebar();
 		}
 
-		const itemSelector = `.sidebar >> text="${ item }"`;
-		await Promise.all( [ this.page.waitForNavigation(), this.page.click( itemSelector ) ] );
+		const itemSelector = `.sidebar :text("${ item }")`;
+		const itemElement = await this.scrollItemIntoViewIfNeeded( itemSelector );
 
 		if ( subitem ) {
-			await Promise.all( [
-				this.page.waitForNavigation(),
-				this.page.click( `${ itemSelector } >> text="${ subitem }"` ),
-			] );
+			// Click top-level item without waiting for navigation if targeting subitem.
+			await itemElement.click();
+
+			const subitemSelector = `.sidebar :text("${ subitem }"):below(${ itemSelector })`;
+			const subitemElement = await this.scrollItemIntoViewIfNeeded( subitemSelector );
+
+			await Promise.all( [ this.page.waitForNavigation(), subitemElement.click() ] );
+		} else {
+			await Promise.all( [ this.page.waitForNavigation(), itemElement.click() ] );
 		}
 
 		/**
@@ -95,42 +100,25 @@ export class SidebarComponent {
 	}
 
 	/**
-	 * Performs the underlying click action on a sidebar menu item.
+	 * Scrolls to reveal the target element if required. This workaround is necessary as the sidebar
+	 * is 'sticky' in calypso, so a traditional scroll behavior does not adequately expose the sidebar
+	 * element.
 	 *
-	 * This method ensures the sidebar is in a stable, consistent state prior to executing its actions,
-	 * scrolls the sidebar and main content to expose the target element in the viewport, then
-	 * executes a click.
-	 *
-	 * @param {string} selector Any selector supported by Playwright.
-	 * @returns {Promise<void>} No return value.
+	 * @param {string} selector Selector for for the target item.
+	 * @returns {Promise<ElementHandle>} The evaluated element's handle.
 	 */
-	async _click( selector: string ): Promise< void > {
-		await this.page.waitForLoadState( 'load' );
-
+	async scrollItemIntoViewIfNeeded( selector: string ): Promise< ElementHandle > {
 		const elementHandle = await this.page.waitForSelector( selector, { state: 'attached' } );
 
-		// Scroll to reveal the target element fully using a page function if required.
-		// This workaround is necessary as the sidebar is 'sticky' in calypso, so a traditional
-		// scroll behavior does not adequately expose the sidebar element.
-		await this.page.evaluate(
-			( [ element ] ) => {
-				const elementBottom = element.getBoundingClientRect().bottom;
-				const isOutsideViewport = window.innerHeight < elementBottom;
+		await this.page.evaluate( ( element ) => {
+			const elementBottom = element.getBoundingClientRect().bottom;
+			const isOutsideViewport = window.innerHeight < elementBottom;
 
-				if ( isOutsideViewport ) {
-					window.scrollTo( 0, elementBottom - window.innerHeight );
-				}
-			},
-			[ elementHandle ]
-		);
+			if ( isOutsideViewport ) {
+				window.scrollTo( 0, elementBottom - window.innerHeight );
+			}
+		}, elementHandle );
 
-		// Use page.click since if the ElementHandle moves or otherwise disappears from the original
-		// location in the DOM, it is no longer valid and will throw an error.
-		// For Atomic sites, sidebar items often shift soon after initial rendering as Atomic-specific
-		// features are loaded.
-		// See https://github.com/microsoft/playwright/issues/6244#issuecomment-824384845.
-		await this.page.click( selector );
-
-		await this.page.waitForLoadState( 'load' );
+		return elementHandle;
 	}
 }
