@@ -701,9 +701,9 @@ export default connect(
 		const domainName = ownProps.cartDomainName ?? domain.name;
 		const hasCartDomain = Boolean( ownProps.cartDomainName );
 
-		const isGSuiteSupported = domain
-			? canUserPurchaseGSuite( state ) && hasGSuiteSupportedDomain( [ domain ] )
-			: true;
+		const isGSuiteSupported =
+			canUserPurchaseGSuite( state ) &&
+			( hasCartDomain || ( domain && hasGSuiteSupportedDomain( [ domain ] ) ) );
 
 		return {
 			currencyCode: getCurrentUserCurrencyCode( state ),
