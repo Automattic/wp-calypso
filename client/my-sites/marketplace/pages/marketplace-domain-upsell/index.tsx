@@ -1,43 +1,33 @@
-/**
- * External dependencies
- */
-import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import page from 'page';
 import DomainPicker from '@automattic/domain-picker';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { ThemeProvider } from 'emotion-theming';
-import styled from '@emotion/styled';
-import { useTranslate } from 'i18n-calypso';
-import classnames from 'classnames';
 import { isDesktop } from '@automattic/viewport';
-import type { DomainSuggestions } from '@automattic/data-stores';
-
-/**
- * Internal dependencies
- */
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import styled from '@emotion/styled';
+import { HorizontalRule } from '@wordpress/components';
+import classnames from 'classnames';
+import { ThemeProvider } from 'emotion-theming';
+import { useTranslate } from 'i18n-calypso';
+import page from 'page';
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import ExternalLink from 'calypso/components/external-link';
+import Item from 'calypso/layout/masterbar/item';
+import Masterbar from 'calypso/layout/masterbar/masterbar';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import { MarketplaceHeaderTitle } from 'calypso/my-sites/marketplace/components';
+import MarketplaceShoppingCart from 'calypso/my-sites/marketplace/components/marketplace-shopping-cart';
 import {
 	MARKETPLACE_FLOW_ID,
 	ANALYTICS_UI_LOCATION_MARKETPLACE_DOMAIN_SELECTION,
 } from 'calypso/my-sites/marketplace/constants';
-import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
-import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import Masterbar from 'calypso/layout/masterbar/masterbar';
-import Item from 'calypso/layout/masterbar/item';
-import getPreviousPath from 'calypso/state/selectors/get-previous-path';
-import { HorizontalRule } from '@wordpress/components';
-import ExternalLink from 'calypso/components/external-link';
-import MarketplaceShoppingCart from 'calypso/my-sites/marketplace/components/marketplace-shopping-cart';
 import theme from 'calypso/my-sites/marketplace/theme';
-import { MarketplaceHeaderTitle } from 'calypso/my-sites/marketplace/components';
 import { setPrimaryDomainCandidate } from 'calypso/state/marketplace/purchase-flow/actions';
+import getPreviousPath from 'calypso/state/selectors/get-previous-path';
+import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
+import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import type { DomainSuggestions } from '@automattic/data-stores';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const MarketplaceHeaderSubTitle = styled.h2`
