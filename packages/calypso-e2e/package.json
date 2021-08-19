@@ -17,7 +17,7 @@
 	"license": "GPL-2.0-or-later",
 	"dependencies": {
 		"config": "^1.28.0",
-		"playwright": "1.11.0"
+		"playwright": "1.14.0"
 	},
 	"devDependencies": {
 		"@types/config": "^0.0.39",

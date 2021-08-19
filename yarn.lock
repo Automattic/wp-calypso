@@ -21493,10 +21493,10 @@ pkg-up@^2.0.0:
   dependencies:
     find-up "^2.1.0"
 
-playwright@1.11.0:
-  version "1.11.0"
-  resolved "https://registry.yarnpkg.com/playwright/-/playwright-1.11.0.tgz#0796cf08f4756e8187e01c705315d8e1fb48e25f"
-  integrity sha512-s3FQBRpu/pW/vZ/lFYhG/Q3WBUbT2rvMgrgy1PHDA7QtPN910C2rj9Ovd6A/m8yxuLnltd/OKqvlAGevWISHKw==
+playwright@1.14.0:
+  version "1.14.0"
+  resolved "https://registry.yarnpkg.com/playwright/-/playwright-1.14.0.tgz#18301b11f5278a446d36b5cf96f67db36ce2cd20"
+  integrity sha512-aR5oZ1iVsjQkGfYCjgYAmyMAVu0MQ0i8MgdnfdqDu9EVLfbnpuuFmTv/Rb7/Yjno1kOrDUP9+RyNC+zfG3wozA==
   dependencies:
     commander "^6.1.0"
     debug "^4.1.1"
@@ -21510,7 +21510,7 @@ playwright@1.11.0:
     proxy-from-env "^1.1.0"
     rimraf "^3.0.2"
     stack-utils "^2.0.3"
-    ws "^7.3.1"
+    ws "^7.4.6"
     yazl "^2.5.1"
 
 please-upgrade-node@^3.2.0:
@@ -29275,10 +29275,10 @@ ws@^6.2.1:
   dependencies:
     async-limiter "~1.0.0"
 
-ws@^7.1.2, ws@^7.2.3, ws@^7.3.1, ws@^7.4.5:
-  version "7.5.2"
-  resolved "https://registry.yarnpkg.com/ws/-/ws-7.5.2.tgz#09cc8fea3bec1bc5ed44ef51b42f945be36900f6"
-  integrity sha512-lkF7AWRicoB9mAgjeKbGqVUekLnSNO4VjKVnuPHpQeOxZOErX6BPXwJk70nFslRCEEA8EVW7ZjKwXaP9N+1sKQ==
+ws@^7.1.2, ws@^7.2.3, ws@^7.3.1, ws@^7.4.5, ws@^7.4.6:
+  version "7.5.3"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-7.5.3.tgz#160835b63c7d97bfab418fc1b8a9fced2ac01a74"
+  integrity sha512-kQ/dHIzuLrS6Je9+uv81ueZomEwH0qVYstcAQ4/Z93K8zeko9gtAbttJWzoC5ukqXY1PpoouV3+VSOqEAFt5wg==
 
 ws@~6.1.0:
   version "6.1.4"
