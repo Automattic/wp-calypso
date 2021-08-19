@@ -1,20 +1,9 @@
-/**
- * External dependencies
- */
-
+import { Button, Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import Gridicon from 'calypso/components/gridicon';
 
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
-import { localize } from 'i18n-calypso';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class ThemeDownloadCard extends React.PureComponent {
