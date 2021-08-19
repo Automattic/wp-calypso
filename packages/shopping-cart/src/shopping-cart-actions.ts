@@ -1,9 +1,5 @@
 import { createRequestCartProducts } from './create-request-cart-product';
-import type {
-	RequestCartProduct,
-	DispatchAndWaitForValid,
-	ShoppingCartManagerActions,
-} from './types';
+import type { DispatchAndWaitForValid, ShoppingCartManagerActions } from './types';
 
 export function createActions( dispatch: DispatchAndWaitForValid ): ShoppingCartManagerActions {
 	return {
@@ -21,10 +17,7 @@ export function createActions( dispatch: DispatchAndWaitForValid ): ShoppingCart
 				type: 'CART_PRODUCTS_REPLACE_ALL',
 				products: createRequestCartProducts( products ),
 			} ),
-		replaceProductInCart: (
-			uuidToReplace: string,
-			productPropertiesToChange: Partial< RequestCartProduct >
-		) =>
+		replaceProductInCart: ( uuidToReplace, productPropertiesToChange ) =>
 			dispatch( {
 				type: 'CART_PRODUCT_REPLACE',
 				uuidToReplace,
