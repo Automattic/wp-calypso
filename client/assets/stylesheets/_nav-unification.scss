@@ -83,12 +83,17 @@
 
 	// New post button
 	.masterbar__item-new {
-		padding: 0 10px;
+		padding: 0 8px;
 		font-size: $nav-unification-masterbar-font-size;
+		background: var( --studio-white );
 
 		&:hover {
-			background: #e9e9ea;
-			color: $nav-unification-primary;
+			background: var( --studio-white );
+
+			// Dim button contents, not the button itself
+			> * {
+				opacity: 0.8;
+			}
 		}
 
 		.masterbar__item-content {
@@ -101,8 +106,6 @@
 	.masterbar__toggle-drafts.button.is-borderless {
 		height: 24px;
 		margin: 4px 8px;
-		/* stylelint-disable-next-line scales/radii */
-		border-radius: 5px;
 	}
 
 	.masterbar__toggle-drafts.button.is-borderless {
