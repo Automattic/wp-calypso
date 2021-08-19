@@ -85,7 +85,9 @@ body:
   - type: input
     id: theme
     attributes:
-      label: Is this specific to applied theme? If so, what is the theme name?
+      label: Theme-specific issue?
+      placeholder: |
+        If yes - what is the theme name?
   - type: textarea
     id: other_notes
     attributes:
