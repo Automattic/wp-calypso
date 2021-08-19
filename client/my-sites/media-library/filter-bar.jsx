@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import SectionNav from 'calypso/components/section-nav';
-import SectionNavTabs from 'calypso/components/section-nav/tabs';
-import SectionNavTabItem from 'calypso/components/section-nav/item';
-import Search from 'calypso/components/search';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import React, { Component } from 'react';
 import PlanStorage from 'calypso/blocks/plan-storage';
+import Search from 'calypso/components/search';
+import SectionNav from 'calypso/components/section-nav';
+import SectionNavTabItem from 'calypso/components/section-nav/item';
+import SectionNavTabs from 'calypso/components/section-nav/tabs';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import DataSource from './data-source';
 
 // These source supply very large images, and there are instances such as

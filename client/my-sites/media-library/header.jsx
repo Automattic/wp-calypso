@@ -1,26 +1,19 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
+import { Card, Button, ScreenReaderText } from '@automattic/components';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import ButtonGroup from 'calypso/components/button-group';
+import Gridicon from 'calypso/components/gridicon';
 import PopoverMenu from 'calypso/components/popover/menu';
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import Gridicon from 'calypso/components/gridicon';
+import StickyPanel from 'calypso/components/sticky-panel';
+import { userCan } from 'calypso/lib/site/utils';
+import MediaModalSecondaryActions from 'calypso/post-editor/media-modal/secondary-actions';
+import { getSectionName } from 'calypso/state/ui/selectors';
 import MediaLibraryScale from './scale';
 import UploadButton from './upload-button';
 import MediaLibraryUploadUrl from './upload-url';
-import { userCan } from 'calypso/lib/site/utils';
-import MediaModalSecondaryActions from 'calypso/post-editor/media-modal/secondary-actions';
-import { Card, Button, ScreenReaderText } from '@automattic/components';
-import ButtonGroup from 'calypso/components/button-group';
-import StickyPanel from 'calypso/components/sticky-panel';
-import { getSectionName } from 'calypso/state/ui/selectors';
 
 class MediaLibraryHeader extends React.Component {
 	static displayName = 'MediaLibraryHeader';
