@@ -1,25 +1,16 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
-import React, { Component, Fragment } from 'react';
-import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import { recordTrack } from 'calypso/reader/stats';
 import page from 'page';
-import { decodeEntities } from 'calypso/lib/formatting';
-
-/**
- * Internal dependencies
- */
+import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import Gravatar from 'calypso/components/gravatar';
 import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { decodeEntities } from 'calypso/lib/formatting';
+import { recordTrack } from 'calypso/reader/stats';
 import { requestExternalContributors } from 'calypso/state/data-getters';
-/**
- * Style dependencies
- */
+
 import './style.scss';
 
 class PeopleProfile extends Component {

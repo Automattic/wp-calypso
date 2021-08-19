@@ -1,30 +1,22 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
-import FollowersList from './followers-list';
-import ViewersList from './viewers-list';
-import TeamList from 'calypso/my-sites/people/team-list';
+import titlecase from 'to-title-case';
 import EmptyContent from 'calypso/components/empty-content';
-import PeopleSectionNav from 'calypso/my-sites/people/people-section-nav';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import Main from 'calypso/components/main';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import PeopleSectionNav from 'calypso/my-sites/people/people-section-nav';
+import TeamList from 'calypso/my-sites/people/team-list';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import titlecase from 'to-title-case';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
+import FollowersList from './followers-list';
+import ViewersList from './viewers-list';
 
 class People extends React.Component {
 	renderPeopleList() {
