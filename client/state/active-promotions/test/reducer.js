@@ -1,12 +1,7 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
+import { serialize, deserialize } from 'calypso/state/utils';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import {
 	activePromotionsReceiveAction,
 	activePromotionsRequestSuccessAction,
@@ -18,10 +13,7 @@ import activePromotionsReducer, {
 	requesting as requestReducer,
 	error as errorReducer,
 } from '../reducer';
-
 import { WPCOM_RESPONSE } from './fixture';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
-import { serialize, deserialize } from 'calypso/state/utils';
 
 describe( 'reducer', () => {
 	let sandbox;

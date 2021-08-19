@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED } from 'calypso/state/happychat/constants';
 import getHappychatConnectionStatus from 'calypso/state/happychat/selectors/get-happychat-connection-status';
 

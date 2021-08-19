@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	HAPPYCHAT_OPEN,
 	HAPPYCHAT_MINIMIZING,

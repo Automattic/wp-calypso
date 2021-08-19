@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
 import { map, forEach } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	COMMENT_COUNTS_UPDATE,
 	COMMENTS_LIKE,

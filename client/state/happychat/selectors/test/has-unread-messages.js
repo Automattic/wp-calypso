@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
 import hasUnreadMessages from '../has-unread-messages';
 
 // Simulate the time Feb 27, 2017 05:25 UTC

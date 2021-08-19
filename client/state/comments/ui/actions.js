@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { COMMENTS_QUERY_UPDATE } from 'calypso/state/action-types';
 
 import 'calypso/state/comments/init';

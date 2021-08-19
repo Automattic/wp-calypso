@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
+import PostQueryManager from 'calypso/lib/query-manager/post';
 import {
 	getEditorLastDraftPost,
 	getEditorLastDraftSiteId,
 	getEditorLastDraftPostId,
 } from '../selectors';
-import PostQueryManager from 'calypso/lib/query-manager/post';
 
 describe( 'selectors', () => {
 	describe( '#getEditorLastDraftPost()', () => {

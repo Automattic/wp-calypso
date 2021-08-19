@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { sortBy } from 'lodash';
 
 const getRequestActivityLogsId = ( siteId, filter ) => {

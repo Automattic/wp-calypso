@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { find } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getSiteComments } from 'calypso/state/comments/selectors';
 
 import 'calypso/state/comments/init';
