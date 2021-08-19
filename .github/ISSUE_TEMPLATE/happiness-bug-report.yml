@@ -35,6 +35,8 @@ body:
       label: What actually happened
       placeholder: |
         eg. Clicking the button does nothing visibly.
+
+        Attach screenshot(s) or recording(s) by dragging into this field.
     validations:
       required: true
   - type: textarea
@@ -108,7 +110,6 @@ body:
         - Consistent
         - Intermittent
         - Once
-        - Never
   - type: dropdown
     id: users-affected
     attributes:
