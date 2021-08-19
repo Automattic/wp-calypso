@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
 import React, { ReactElement, Fragment } from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 export default function JetpackSearchFooter(): ReactElement | null {
 	const siteId = useSelector( getSelectedSiteId );
