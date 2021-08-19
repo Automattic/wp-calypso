@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import {
 	JETPACK_ANTI_SPAM_PRODUCTS,
 	PRODUCT_JETPACK_BACKUP_DAILY,
@@ -20,17 +12,14 @@ import {
 	JETPACK_CRM_FREE_PRODUCTS,
 	getPlan,
 } from '@automattic/calypso-products';
-import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
-import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
+import { useSelector } from 'react-redux';
 import {
 	getForCurrentCROIteration,
 	Iterations,
 } from 'calypso/my-sites/plans/jetpack-plans/iterations';
+import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
+import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import slugToSelectorProduct from './slug-to-selector-product';
-
-/**
- * Type dependencies
- */
 import type { PlanGridProducts, SelectorProduct } from './types';
 
 const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {

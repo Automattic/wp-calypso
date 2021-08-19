@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { JETPACK_SEARCH_PRODUCTS } from '@automattic/calypso-products';
 import { numberFormat, translate, TranslateResult } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { SelectorProduct, SiteProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 
 export default function productAboveButtonText(
