@@ -1,23 +1,6 @@
-import type {
-	UseShoppingCart,
-	ShoppingCartManagerState,
-	ShoppingCartManager,
-	ShoppingCartHookManager,
-} from './types';
+import type { UseShoppingCart, ShoppingCartManager } from './types';
 
-export function createShoppingCartHookManager(
-	manager: ShoppingCartManager
-): ShoppingCartHookManager {
-	let cachedUseShoppingCart: UseShoppingCart;
-	let lastManagerState: ShoppingCartManagerState;
-	return {
-		getState: () => {
-			const managerState = manager.getState();
-			if ( lastManagerState !== managerState ) {
-				cachedUseShoppingCart = { ...manager.actions, ...managerState };
-				lastManagerState = managerState;
-			}
-			return cachedUseShoppingCart;
-		},
-	};
+export function createUseShoppingCartState( manager: ShoppingCartManager ): UseShoppingCart {
+	const managerState = manager.getState();
+	return { ...manager.actions, ...managerState };
 }
