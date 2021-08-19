@@ -18,9 +18,11 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import isSiteOnPaidPlan from 'calypso/state/selectors/is-site-on-paid-plan';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getOptionInfo } from '../utilities/get-option-info';
 import OptionContent from './option-content';
+
 /**
  * Style dependencies
  */
@@ -37,6 +39,7 @@ function DomainTransferOrConnect( {
 	recordMappingButtonClickInUseYourDomain,
 	recordTransferButtonClickInUseYourDomain,
 	selectedSite,
+	siteIsOnPaidPlan,
 } ) {
 	const handleConnect = () => {
 		recordMappingButtonClickInUseYourDomain( domain );
@@ -59,6 +62,7 @@ function DomainTransferOrConnect( {
 		primaryWithPlansOnly,
 		productsList,
 		selectedSite,
+		siteIsOnPaidPlan,
 	} );
 
 	const baseClassName = 'domain-transfer-or-connect';
@@ -95,11 +99,13 @@ const recordMappingButtonClickInUseYourDomain = ( domain_name ) =>
 
 export default connect(
 	( state ) => {
+		const selectedSite = getSelectedSite( state );
 		return {
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			primaryWithPlansOnly: currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS ),
 			productsList: getProductsList( state ),
-			selectedSite: getSelectedSite( state ),
+			selectedSite,
+			siteIsOnPaidPlan: isSiteOnPaidPlan( state, selectedSite?.ID ),
 		};
 	},
 	{ recordTransferButtonClickInUseYourDomain, recordMappingButtonClickInUseYourDomain }

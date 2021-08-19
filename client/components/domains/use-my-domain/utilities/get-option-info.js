@@ -29,6 +29,7 @@ export function getOptionInfo( {
 	primaryWithPlansOnly,
 	productsList,
 	selectedSite,
+	siteIsOnPaidPlan,
 } ) {
 	const mappingFreeText = getMappingFreeText( {
 		cart,
@@ -49,7 +50,7 @@ export function getOptionInfo( {
 		cart,
 		domain,
 		isSignupStep,
-		selectedSite,
+		siteIsOnPaidPlan,
 	} );
 
 	const transferSalePriceText = getTransferSalePriceText( {
