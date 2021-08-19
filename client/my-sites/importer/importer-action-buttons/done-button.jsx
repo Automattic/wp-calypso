@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import page from 'page';
-
-/**
- * Internal dependencies
- */
-import ImporterActionButton from './action-button';
-import { resetImport } from 'calypso/state/imports/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { resetImport } from 'calypso/state/imports/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import ImporterActionButton from './action-button';
 
 export class DoneButton extends React.PureComponent {
 	static displayName = 'DoneButton';

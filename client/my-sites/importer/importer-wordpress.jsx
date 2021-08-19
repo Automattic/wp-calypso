@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import FileImporter from './file-importer';
 import importerConfig from 'calypso/lib/importer/importer-config';
+import FileImporter from './file-importer';
 
 class ImporterWordPress extends React.PureComponent {
 	static displayName = 'ImporterWordPress';
