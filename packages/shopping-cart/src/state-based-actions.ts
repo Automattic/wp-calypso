@@ -15,28 +15,26 @@ const debug = debugFactory( 'shopping-cart:state-based-actions' );
 export function prepareFreshCartForInitialFetch(
 	state: ShoppingCartState,
 	dispatch: ShoppingCartReducerDispatch,
-	lastCacheStatus: CacheStatus | ''
+	syncManager: CartSyncManager
 ): void {
 	const { cacheStatus } = state;
-	if ( cacheStatus === 'fresh' && cacheStatus !== lastCacheStatus ) {
+	if ( cacheStatus === 'fresh' ) {
 		debug( 'triggering fetch of initial cart' );
 		dispatch( { type: 'FETCH_INITIAL_RESPONSE_CART' } );
+		syncManager.fetchInitialCartFromServer( dispatch );
 	}
 }
 
 function prepareInvalidCartForSync(
 	state: ShoppingCartState,
 	dispatch: ShoppingCartReducerDispatch,
-	lastCacheStatus: CacheStatus | ''
+	syncManager: CartSyncManager
 ): void {
 	const { queuedActions, cacheStatus } = state;
-	if (
-		queuedActions.length === 0 &&
-		cacheStatus === 'invalid' &&
-		cacheStatus !== lastCacheStatus
-	) {
+	if ( queuedActions.length === 0 && cacheStatus === 'invalid' ) {
 		debug( 'triggering sync of cart to server' );
 		dispatch( { type: 'REQUEST_UPDATED_RESPONSE_CART' } );
+		syncManager.syncPendingCartToServer( state, dispatch );
 	}
 }
 
@@ -58,11 +56,10 @@ export function createTakeActionsBasedOnState(
 	) => {
 		const { cacheStatus } = state;
 		debug( 'cache status before state-based-actions is', cacheStatus );
-		prepareFreshCartForInitialFetch( state, dispatch, lastCacheStatus );
-		prepareInvalidCartForSync( state, dispatch, lastCacheStatus );
-
-		syncManager.fetchInitialCartFromServer( state, dispatch );
-		syncManager.syncPendingCartToServer( state, dispatch );
+		if ( lastCacheStatus !== cacheStatus ) {
+			prepareFreshCartForInitialFetch( state, dispatch, syncManager );
+			prepareInvalidCartForSync( state, dispatch, syncManager );
+		}
 
 		if ( ! isStatePendingUpdate( state ) ) {
 			debug( 'updating lastValidResponseCart and resolving action promises' );

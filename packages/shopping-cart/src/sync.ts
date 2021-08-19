@@ -39,13 +39,6 @@ export function createCartSyncManager(
 			state: ShoppingCartState,
 			dispatch: Dispatch< ShoppingCartAction >
 		): void {
-			if ( state.cacheStatus !== 'pending' ) {
-				debug(
-					`cache status (${ state.cacheStatus }) is not pending; not sending edited cart to server`
-				);
-				return;
-			}
-
 			const requestCart = convertResponseCartToRequestCart( state.responseCart );
 			debug( 'sending edited cart to server', requestCart );
 
@@ -67,16 +60,7 @@ export function createCartSyncManager(
 				} );
 		},
 
-		fetchInitialCartFromServer(
-			state: ShoppingCartState,
-			dispatch: Dispatch< ShoppingCartAction >
-		): void {
-			if ( state.cacheStatus !== 'fresh-pending' ) {
-				debug(
-					`cache status (${ state.cacheStatus }) is not fresh-pending; not fetching initial cart`
-				);
-				return;
-			}
+		fetchInitialCartFromServer( dispatch: Dispatch< ShoppingCartAction > ): void {
 			debug( 'fetching initial cart from server' );
 
 			getServerCart()
