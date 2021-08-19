@@ -113,9 +113,19 @@
 		color: $nav-unification-primary;
 		background: #fafafa;
 
+		.gridicon {
+			width: 14px;
+			margin-left: 4px;
+			color: var( --studio-gray-20 );
+		}
+
 		&:hover,
 		&[aria-expanded='true'] {
 			background: var( --studio-white );
+
+			.gridicon {
+				color: $nav-unification-primary;
+			}
 		}
 	}
 

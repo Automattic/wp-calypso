@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryPostCounts from 'calypso/components/data/query-post-counts';
+import Gridicon from 'calypso/components/gridicon';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -79,8 +80,11 @@ class MasterbarDrafts extends Component {
 				onTouchStart={ this.preload }
 				onMouseEnter={ this.preload }
 				ref={ this.setDraftsRef }
+				aria-haspopup
+				aria-expanded={ this.state.showDrafts || undefined }
 			>
 				{ this.props.numberFormat( this.props.draftCount ) }
+				<Gridicon icon={ this.state.showDrafts ? 'chevron-up' : 'chevron-down' } />
 			</Button>
 		);
 	}
