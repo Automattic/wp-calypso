@@ -230,7 +230,10 @@ export const getJetpackProductsDescriptions = () => {
 	const backupT1Description = backupDailyDescription;
 	const backupT2Description = translate(
 		'Go back in time and recover all your information for up to a year, with %(storageAmount)dTB storage space.',
+		'Go back in time and recover all your information for up to a year, with %(storageAmount)dTB storage space.',
 		{
+			comment: 'Plural string used in case TB needs to be pluralized',
+			count: 1,
 			args: {
 				storageAmount: 1,
 			},
