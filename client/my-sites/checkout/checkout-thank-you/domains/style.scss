@@ -26,6 +26,13 @@
 	}
 
 	.thank-you {
+
+		&__header {
+			&-title {
+				line-height: 40px;
+			}
+		}
+
 		&__body {
 			@include break-zoomed-in {
 				margin-top: 32px;
