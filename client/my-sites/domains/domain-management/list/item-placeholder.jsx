@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { CompactCard } from '@automattic/components';
+import React from 'react';
 
 class ListItemPlaceholder extends React.PureComponent {
 	render() {

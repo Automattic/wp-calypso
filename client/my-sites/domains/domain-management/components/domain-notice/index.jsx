@@ -1,16 +1,10 @@
-/**
- * External dependencies
- */
+import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
 import Gridicon from 'calypso/components/gridicon';
-import classnames from 'classnames';
-
-/**
- * Style dependencies
- */
-import './style.scss';
 import MaterialIcon from 'calypso/components/material-icon';
+
+import './style.scss';
 
 export default class DomainNotice extends React.Component {
 	static propTypes = {

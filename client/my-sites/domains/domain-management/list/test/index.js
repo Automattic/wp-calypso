@@ -2,20 +2,13 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
+import { ShoppingCartProvider, getEmptyResponseCart } from '@automattic/shopping-cart';
 import deepFreeze from 'deep-freeze';
+import { shallow, mount } from 'enzyme';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
-import { shallow, mount } from 'enzyme';
-import { ShoppingCartProvider, getEmptyResponseCart } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
-import { List as DomainList } from '..';
 import { createReduxStore } from 'calypso/state';
+import { List as DomainList } from '..';
 
 const noop = () => {};
 

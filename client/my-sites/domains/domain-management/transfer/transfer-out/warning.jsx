@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
 import { translate } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
 import {
 	domainManagementEditContactInfo,
 	domainManagementNameServers,
 } from 'calypso/my-sites/domains/paths';
-import { TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
 
 export default function TransferOutWarning( { domainName, selectedSiteSlug } ) {
 	return (

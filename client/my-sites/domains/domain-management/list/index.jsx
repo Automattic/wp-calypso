@@ -1,64 +1,54 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
-import page from 'page';
-import React from 'react';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
-import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
-import DomainOnly from './domain-only';
-import ListItemPlaceholder from './item-placeholder';
+import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
+import { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import DomainToPlanNudge from 'calypso/blocks/domain-to-plan-nudge';
+import DocumentHead from 'calypso/components/data/document-head';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import EmptyContent from 'calypso/components/empty-content';
+import FormattedHeader from 'calypso/components/formatted-header';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
+import { type } from 'calypso/lib/domains/constants';
+import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
+import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
+import EmptyDomainsListCard from 'calypso/my-sites/domains/domain-management/list/empty-domains-list-card';
+import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
+import WpcomDomainItem from 'calypso/my-sites/domains/domain-management/list/wpcom-domain-item';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
-import EmptyContent from 'calypso/components/empty-content';
-import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import DomainToPlanNudge from 'calypso/blocks/domain-to-plan-nudge';
-import { type } from 'calypso/lib/domains/constants';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
-import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { successNotice, errorNotice } from 'calypso/state/notices/actions';
-import getSites from 'calypso/state/selectors/get-sites';
-import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
-import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
+import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
+import getSites from 'calypso/state/selectors/get-sites';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
+import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
+import DomainItem from './domain-item';
+import DomainOnly from './domain-only';
+import ListItemPlaceholder from './item-placeholder';
+import ListHeader from './list-header';
 import {
 	filterOutWpcomDomains,
 	getDomainManagementPath,
 	showUpdatePrimaryDomainSuccessNotice,
 	showUpdatePrimaryDomainErrorNotice,
 } from './utils';
-import DomainItem from './domain-item';
-import ListHeader from './list-header';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
-import EmptyDomainsListCard from 'calypso/my-sites/domains/domain-management/list/empty-domains-list-card';
-import WpcomDomainItem from 'calypso/my-sites/domains/domain-management/list/wpcom-domain-item';
-import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 import 'calypso/my-sites/domains/style.scss';
 
