@@ -1,21 +1,11 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import classNames from 'classnames';
-import formatCurrency from '@automattic/format-currency';
-import { Button } from '@automattic/components';
 import { handleRenewNowClick, getRenewalPrice } from 'calypso/lib/purchases';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class RenewButton extends React.Component {

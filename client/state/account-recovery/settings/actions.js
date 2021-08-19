@@ -1,7 +1,15 @@
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
+import {
+	onAccountRecoveryPhoneValidationFailed,
+	onAccountRecoveryPhoneValidationSuccess,
+	onAccountRecoverySettingsDeleteFailed,
+	onAccountRecoverySettingsDeleteSuccess,
+	onAccountRecoverySettingsFetchFailed,
+	onAccountRecoverySettingsUpdateFailed,
+	onAccountRecoverySettingsUpdateSuccess,
+	onResentAccountRecoveryEmailValidationFailed,
+	onResentAccountRecoveryEmailValidationSuccess,
+} from 'calypso/state/account-recovery/settings/notices';
 import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH,
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
@@ -19,17 +27,6 @@ import {
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED,
 } from 'calypso/state/action-types';
-import {
-	onAccountRecoveryPhoneValidationFailed,
-	onAccountRecoveryPhoneValidationSuccess,
-	onAccountRecoverySettingsDeleteFailed,
-	onAccountRecoverySettingsDeleteSuccess,
-	onAccountRecoverySettingsFetchFailed,
-	onAccountRecoverySettingsUpdateFailed,
-	onAccountRecoverySettingsUpdateSuccess,
-	onResentAccountRecoveryEmailValidationFailed,
-	onResentAccountRecoveryEmailValidationSuccess,
-} from 'calypso/state/account-recovery/settings/notices';
 
 import 'calypso/state/account-recovery/init';
 

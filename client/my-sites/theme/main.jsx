@@ -1,47 +1,51 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import {
+	FEATURE_UNLIMITED_PREMIUM_THEMES,
+	FEATURE_UPLOAD_THEMES,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+} from '@automattic/calypso-products';
+import { Button, Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
+import classNames from 'classnames';
+import { localize, getLocaleSlug } from 'i18n-calypso';
+import page from 'page';
+import photon from 'photon';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize, getLocaleSlug } from 'i18n-calypso';
-import { localizeUrl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
-import config from '@automattic/calypso-config';
 import titlecase from 'to-title-case';
-import Gridicon from 'calypso/components/gridicon';
-import photon from 'photon';
-import page from 'page';
-
-/**
- * Internal dependencies
- */
-import AsyncLoad from 'calypso/components/async-load';
-import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
-import Main from 'calypso/components/main';
-import HeaderCake from 'calypso/components/header-cake';
-import SectionHeader from 'calypso/components/section-header';
-import ThemeDownloadCard from './theme-download-card';
-import ThemePreview from 'calypso/my-sites/themes/theme-preview';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { Button, Card } from '@automattic/components';
+import AsyncLoad from 'calypso/components/async-load';
+import DocumentHead from 'calypso/components/data/document-head';
+import QueryActiveTheme from 'calypso/components/data/query-active-theme';
+import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import Gridicon from 'calypso/components/gridicon';
+import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
+import SectionHeader from 'calypso/components/section-header';
 import SectionNav from 'calypso/components/section-nav';
-import NavTabs from 'calypso/components/section-nav/tabs';
 import NavItem from 'calypso/components/section-nav/item';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
-import isVipSite from 'calypso/state/selectors/is-vip-site';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
+import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
+import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
+import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
+import { connectOptions } from 'calypso/my-sites/themes/theme-options';
+import ThemePreview from 'calypso/my-sites/themes/theme-preview';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { isUserPaid } from 'calypso/state/purchases/selectors';
-import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
-import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
-
-import QueryActiveTheme from 'calypso/components/data/query-active-theme';
-import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import { connectOptions } from 'calypso/my-sites/themes/theme-options';
-import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { setThemePreviewOptions } from 'calypso/state/themes/actions';
 import {
 	isThemeActive,
 	isThemePremium,
@@ -55,26 +59,11 @@ import {
 	getThemeDemoUrl,
 } from 'calypso/state/themes/selectors';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import DocumentHead from 'calypso/components/data/document-head';
-import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { setThemePreviewOptions } from 'calypso/state/themes/actions';
-import ThemeNotFoundError from './theme-not-found-error';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import ThemeDownloadCard from './theme-download-card';
 import ThemeFeaturesCard from './theme-features-card';
-import {
-	FEATURE_UNLIMITED_PREMIUM_THEMES,
-	FEATURE_UPLOAD_THEMES,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-} from '@automattic/calypso-products';
-import { hasFeature } from 'calypso/state/sites/plans/selectors';
-import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
-import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import ThemeNotFoundError from './theme-not-found-error';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class ThemeSheet extends React.Component {

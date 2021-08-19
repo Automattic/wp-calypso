@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
 import React from 'react';
-
-/**
- * Internal dependencies
- */
+import PodcastingDetails from 'calypso/my-sites/site-settings/podcasting-details';
 import WritingMain from 'calypso/my-sites/site-settings/settings-writing/main';
 import Taxonomies from 'calypso/my-sites/site-settings/taxonomies';
-import PodcastingDetails from 'calypso/my-sites/site-settings/podcasting-details';
 
 export function writing( context, next ) {
 	context.primary = React.createElement( WritingMain );

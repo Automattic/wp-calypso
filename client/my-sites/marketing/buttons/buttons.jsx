@@ -1,44 +1,36 @@
-/**
- * External dependencies
- */
-
+import { localize } from 'i18n-calypso';
+import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { flowRight } from 'lodash';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import ButtonsAppearance from './appearance';
-import ButtonsOptions from './options';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
-import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import QuerySharingButtons from 'calypso/components/data/query-sharing-buttons';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { protectForm } from 'calypso/lib/protect-form';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { activateModule } from 'calypso/state/jetpack/modules/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import getSharingButtons from 'calypso/state/selectors/get-sharing-buttons';
+import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import isSavingSharingButtons from 'calypso/state/selectors/is-saving-sharing-buttons';
+import isSharingButtonsSaveSuccessful from 'calypso/state/selectors/is-sharing-buttons-save-successful';
 import { saveSiteSettings } from 'calypso/state/site-settings/actions';
-import { saveSharingButtons } from 'calypso/state/sites/sharing-buttons/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	getSiteSettings,
 	isSavingSiteSettings,
 	isSiteSettingsSaveSuccessful,
 } from 'calypso/state/site-settings/selectors';
-import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
-import getSharingButtons from 'calypso/state/selectors/get-sharing-buttons';
-import isSavingSharingButtons from 'calypso/state/selectors/is-saving-sharing-buttons';
-import isSharingButtonsSaveSuccessful from 'calypso/state/selectors/is-sharing-buttons-save-successful';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { successNotice, errorNotice } from 'calypso/state/notices/actions';
-import { activateModule } from 'calypso/state/jetpack/modules/actions';
-import { protectForm } from 'calypso/lib/protect-form';
-import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
-import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
+import { saveSharingButtons } from 'calypso/state/sites/sharing-buttons/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import ButtonsAppearance from './appearance';
+import ButtonsOptions from './options';
 
 class SharingButtons extends Component {
 	state = {

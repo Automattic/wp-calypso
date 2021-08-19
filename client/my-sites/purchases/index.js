@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import page from 'page';
-
-/**
- * Internal dependencies
- */
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {

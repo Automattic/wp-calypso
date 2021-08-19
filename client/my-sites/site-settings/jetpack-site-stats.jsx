@@ -1,33 +1,26 @@
-/**
- * External dependencies
- */
+import { CompactCard } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
+import { localize } from 'i18n-calypso';
+import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { includes } from 'lodash';
-import { localize } from 'i18n-calypso';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
+import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
 import FoldableCard from 'calypso/components/foldable-card';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import SupportInfo from 'calypso/components/support-info';
-import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
-import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import withSiteRoles from 'calypso/data/site-roles/with-site-roles';
 import { getStatsPathForTab } from 'calypso/lib/route';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
-import withSiteRoles from 'calypso/data/site-roles/with-site-roles';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 class JetpackSiteStats extends Component {
 	static defaultProps = {

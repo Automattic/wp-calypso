@@ -1,32 +1,24 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import { Card } from '@automattic/components';
 import classNames from 'classnames';
-import { flowRight } from 'lodash';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import compareProps from 'calypso/lib/compare-props';
+import { flowRight } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import Chart from 'calypso/components/chart';
 import Legend from 'calypso/components/chart/legend';
-import StatTabs from '../stats-tabs';
-import StatsModulePlaceholder from '../stats-module/placeholder';
-import { Card } from '@automattic/components';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import compareProps from 'calypso/lib/compare-props';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { getSiteOption } from 'calypso/state/sites/selectors';
 import {
 	getSiteStatsNormalizedData,
 	isRequestingSiteStatsForQuery,
 } from 'calypso/state/stats/lists/selectors';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { getSiteOption } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { formatDate, getQueryDate } from '../stats-chart-tabs/utility';
+import StatsModulePlaceholder from '../stats-module/placeholder';
+import StatTabs from '../stats-tabs';
 
 const ChartTabShape = PropTypes.shape( {
 	attr: PropTypes.string,

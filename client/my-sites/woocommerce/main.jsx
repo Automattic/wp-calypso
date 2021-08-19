@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import React from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
+import Main from 'calypso/components/main';
+import { isLoaded as arePluginsLoaded } from 'calypso/state/plugins/installed/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import RequiredPluginsInstallView from './dashboard/required-plugins-install-view';
 import WooCommerceColophon from './woocommerce-colophon';
-import Main from 'calypso/components/main';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isLoaded as arePluginsLoaded } from 'calypso/state/plugins/installed/selectors';
-import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 
 function WooCommerce() {
 	const siteId = useSelector( getSelectedSiteId );

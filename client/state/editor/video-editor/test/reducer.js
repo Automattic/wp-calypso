@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import reducer, { showError, uploadProgress, url } from '../reducer';
 import {
 	VIDEO_EDITOR_SET_POSTER_URL,
 	VIDEO_EDITOR_SHOW_ERROR,
 	VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
 } from 'calypso/state/action-types';
+import reducer, { showError, uploadProgress, url } from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {

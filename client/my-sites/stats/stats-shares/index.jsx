@@ -1,28 +1,20 @@
-/**
- * External dependencies
- */
-
+import { Card } from '@automattic/components';
+import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
-import StatsTabs from '../stats-tabs';
-import StatsTab from '../stats-tabs/tab';
-import ErrorPanel from '../stats-error';
-import SectionHeader from 'calypso/components/section-header';
-import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import QuerySharingButtons from 'calypso/components/data/query-sharing-buttons';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import SectionHeader from 'calypso/components/section-header';
 import getSharingButtons from 'calypso/state/selectors/get-sharing-buttons';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsForQuery,
 	hasSiteStatsQueryFailed,
 } from 'calypso/state/stats/lists/selectors';
-import { useTranslate } from 'i18n-calypso';
+import ErrorPanel from '../stats-error';
+import StatsTabs from '../stats-tabs';
+import StatsTab from '../stats-tabs/tab';
 
 const StatShares = ( { siteId } ) => {
 	const translate = useTranslate();

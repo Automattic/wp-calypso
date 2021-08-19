@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { SiteData } from 'calypso/state/ui/selectors/site-data';
 
 export default function getCartKey( {

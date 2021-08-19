@@ -1,27 +1,17 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import page from 'page';
-import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
-import moment from 'moment';
-
-/**
- * Internal dependencies
- */
 import { Button, CompactCard } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import moment from 'moment';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import Badge from 'calypso/components/badge';
-import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import DomainNotice from 'calypso/my-sites/domains/domain-management/components/domain-notice';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import InfoPopover from 'calypso/components/info-popover';
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'calypso/lib/gsuite';
-import { withoutHttp } from 'calypso/lib/url';
-import { type as domainTypes } from 'calypso/lib/domains/constants';
-import { handleRenewNowClick } from 'calypso/lib/purchases';
+import Spinner from 'calypso/components/spinner';
 import {
 	canCurrentUserAddEmail,
 	isDomainInGracePeriod,
@@ -29,8 +19,13 @@ import {
 	getDomainTypeText,
 	resolveDomainStatus,
 } from 'calypso/lib/domains';
-import InfoPopover from 'calypso/components/info-popover';
-import { emailManagement } from 'calypso/my-sites/email/paths';
+import { type as domainTypes } from 'calypso/lib/domains/constants';
+import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
+import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'calypso/lib/gsuite';
+import { handleRenewNowClick } from 'calypso/lib/purchases';
+import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
+import { withoutHttp } from 'calypso/lib/url';
+import DomainNotice from 'calypso/my-sites/domains/domain-management/components/domain-notice';
 import {
 	domainManagementChangeSiteAddress,
 	domainManagementContactsPrivacy,
@@ -39,10 +34,8 @@ import {
 	domainManagementDns,
 	domainManagementSecurity,
 } from 'calypso/my-sites/domains/paths';
-import Spinner from 'calypso/components/spinner';
+import { emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
-import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 
 class DomainItem extends PureComponent {
 	static propTypes = {

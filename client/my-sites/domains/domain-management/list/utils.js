@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { type } from 'calypso/lib/domains/constants';
+import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import {
 	domainManagementEdit,
 	domainManagementSiteRedirect,
 	domainManagementTransferIn,
 } from 'calypso/my-sites/domains/paths';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { reduxDispatch } from 'calypso/lib/redux-bridge';
 
 export const getDomainManagementPath = ( domainName, domainType, siteSlug, currentRoute ) => {
 	switch ( domainType ) {

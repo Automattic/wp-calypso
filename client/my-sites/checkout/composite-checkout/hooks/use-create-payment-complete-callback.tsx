@@ -1,56 +1,49 @@
-/**
- * External dependencies
- */
+import { useShoppingCart } from '@automattic/shopping-cart';
+import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
+import debugFactory from 'debug';
+import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import React, { useCallback } from 'react';
-import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch, useStore } from 'react-redux';
-import { useShoppingCart } from '@automattic/shopping-cart';
-import debugFactory from 'debug';
-import type {
-	PaymentCompleteCallback,
-	PaymentCompleteCallbackArguments,
-} from '@automattic/composite-checkout';
-import type { ResponseCart } from '@automattic/shopping-cart';
-import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
-import type { WPCOMTransactionEndpointResponse, Purchase } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import { infoNotice, successNotice } from 'calypso/state/notices/actions';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { recordPurchase } from 'calypso/lib/analytics/record-purchase';
 import {
 	hasRenewalItem,
 	getRenewalItems,
 	hasPlan,
 	hasEcommercePlan,
 } from 'calypso/lib/cart-values/cart-items';
-import { clearPurchases } from 'calypso/state/purchases/actions';
-import { fetchReceiptCompleted } from 'calypso/state/receipts/actions';
-import { requestSite } from 'calypso/state/sites/actions';
-import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
 import { getDomainNameFromReceiptOrCart } from 'calypso/lib/domains/cart-utils';
+import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
 import { AUTO_RENEWAL } from 'calypso/lib/url/support';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import {
 	retrieveSignupDestination,
 	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { recordPurchase } from 'calypso/lib/analytics/record-purchase';
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../lib/translate-payment-method-names';
-import normalizeTransactionResponse from '../lib/normalize-transaction-response';
-import getThankYouPageUrl from './use-get-thank-you-url/get-thank-you-page-url';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { infoNotice, successNotice } from 'calypso/state/notices/actions';
+import { clearPurchases } from 'calypso/state/purchases/actions';
+import { fetchReceiptCompleted } from 'calypso/state/receipts/actions';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { requestSite } from 'calypso/state/sites/actions';
 import {
 	isJetpackSite,
 	getJetpackCheckoutRedirectUrl,
 	isBackupPluginActive,
 } from 'calypso/state/sites/selectors';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { recordCompositeCheckoutErrorDuringAnalytics } from '../lib/analytics';
+import normalizeTransactionResponse from '../lib/normalize-transaction-response';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../lib/translate-payment-method-names';
+import getThankYouPageUrl from './use-get-thank-you-url/get-thank-you-page-url';
+import type {
+	PaymentCompleteCallback,
+	PaymentCompleteCallbackArguments,
+} from '@automattic/composite-checkout';
+import type { ResponseCart } from '@automattic/shopping-cart';
+import type { WPCOMTransactionEndpointResponse, Purchase } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-on-payment-complete' );
 

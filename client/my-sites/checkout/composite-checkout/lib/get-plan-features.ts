@@ -1,13 +1,4 @@
-/**
- * External dependencies
- */
-import { useTranslate } from 'i18n-calypso';
 import { isEnabled } from '@automattic/calypso-config';
-import type { ResponseCartProduct } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
 import {
 	isMonthly,
 	isWpComBusinessPlan,
@@ -15,7 +6,9 @@ import {
 	isWpComPersonalPlan,
 	isWpComPremiumPlan,
 } from '@automattic/calypso-products';
+import { useTranslate } from 'i18n-calypso';
 import doesValueExist from './does-value-exist';
+import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 export default function getPlanFeatures(
 	plan: ResponseCartProduct | undefined,

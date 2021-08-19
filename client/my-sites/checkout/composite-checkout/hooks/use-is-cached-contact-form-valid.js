@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import { useEffect, useRef, useState } from 'react';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
-import { useSelector } from 'react-redux';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import { useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-is-cached-contact-form-valid' );

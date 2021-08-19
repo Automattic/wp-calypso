@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import config from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { addQueryArgs } from 'calypso/lib/route';
 import { QueryArgs } from 'calypso/my-sites/plans/jetpack-plans/types';

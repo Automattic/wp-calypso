@@ -1,9 +1,6 @@
-/**
- * External dependencies
- */
 import classNames from 'classnames';
-import * as React from 'react';
 import { TranslateResult } from 'i18n-calypso';
+import * as React from 'react';
 
 type Props = {
 	title: TranslateResult;

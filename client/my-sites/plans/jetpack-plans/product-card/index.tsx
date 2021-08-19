@@ -1,17 +1,3 @@
-/**
- * External dependencies
- */
-import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
-import { TranslateResult, useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card';
-import PlanRenewalMessage from '../plan-renewal-message';
-import useItemPrice from '../use-item-price';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	planHasFeature,
 	TERM_MONTHLY,
@@ -21,20 +7,23 @@ import {
 	JETPACK_SCAN_PRODUCTS,
 	isJetpackPlanSlug,
 } from '@automattic/calypso-products';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
+import React, { useMemo } from 'react';
+import { useSelector } from 'react-redux';
+import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { isCloseToExpiration } from 'calypso/lib/purchases';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
-import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
-import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { getSiteAvailableProduct } from 'calypso/state/sites/products/selectors';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
+import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
+import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
+import PlanRenewalMessage from '../plan-renewal-message';
+import useItemPrice from '../use-item-price';
 import productAboveButtonText from './product-above-button-text';
 import productButtonLabel from './product-button-label';
 import productTooltip from './product-tooltip';
-
-/**
- * Type dependencies
- */
 import type {
 	Duration,
 	PurchaseCallback,

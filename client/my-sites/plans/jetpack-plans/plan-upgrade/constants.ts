@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import {
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,

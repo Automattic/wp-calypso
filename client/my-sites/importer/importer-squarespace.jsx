@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import FileImporter from './file-importer';
 import importerConfig from 'calypso/lib/importer/importer-config';
+import FileImporter from './file-importer';
 
 class ImporterSquarespace extends React.PureComponent {
 	static displayName = 'ImporterSquarespace';

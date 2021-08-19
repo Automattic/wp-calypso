@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import { CompactCard } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
+import { localize } from 'i18n-calypso';
+import { flowRight, pick } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { flowRight, pick } from 'lodash';
-import { localize } from 'i18n-calypso';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
-import config from '@automattic/calypso-config';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const ApiCache = ( {
 	fields,

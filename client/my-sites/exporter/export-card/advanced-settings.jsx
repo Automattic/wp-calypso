@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import PostTypeOptions from './post-type-options';
 import SpinnerButton from 'calypso/components/spinner-button';
 import { isDateRangeValid as isExportDateRangeValid } from 'calypso/state/exporter/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import PostTypeOptions from './post-type-options';
 
 /**
  * Displays additional options for customising an export

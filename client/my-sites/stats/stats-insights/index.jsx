@@ -1,39 +1,32 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import DocumentHead from 'calypso/components/data/document-head';
-import StatsNavigation from 'calypso/blocks/stats-navigation';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import FormattedHeader from 'calypso/components/formatted-header';
-import AllTime from 'calypso/my-sites/stats/all-time/';
-import Comments from '../stats-comments';
-import Reach from '../stats-reach';
-import PostingActivity from '../post-trends';
-import StatsModule from '../stats-module';
-import statsStrings from '../stats-strings';
-import MostPopular from 'calypso/my-sites/stats/most-popular';
-import LatestPostSummary from '../post-performance';
+import { flowRight } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 import DomainTip from 'calypso/blocks/domain-tip';
-import Main from 'calypso/components/main';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import SectionHeader from 'calypso/components/section-header';
-import StatsViews from '../stats-views';
-import Followers from '../stats-followers';
-import StatShares from '../stats-shares';
+import StatsNavigation from 'calypso/blocks/stats-navigation';
+import DocumentHead from 'calypso/components/data/document-head';
+import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
+import Main from 'calypso/components/main';
+import SectionHeader from 'calypso/components/section-header';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import AllTime from 'calypso/my-sites/stats/all-time/';
+import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
+import MostPopular from 'calypso/my-sites/stats/most-popular';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import LatestPostSummary from '../post-performance';
+import PostingActivity from '../post-trends';
+import Comments from '../stats-comments';
+import Followers from '../stats-followers';
+import StatsModule from '../stats-module';
+import Reach from '../stats-reach';
+import StatShares from '../stats-shares';
+import statsStrings from '../stats-strings';
+import StatsViews from '../stats-views';
 
 const StatsInsights = ( props ) => {
 	const { isJetpack, siteId, siteSlug, translate } = props;

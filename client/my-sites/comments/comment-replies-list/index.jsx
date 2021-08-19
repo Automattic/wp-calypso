@@ -1,26 +1,16 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { map, take } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import Comment from 'calypso/my-sites/comments/comment';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import Comment from 'calypso/my-sites/comments/comment';
 import {
 	getSiteCommentParentDepth,
 	getSiteCommentRepliesTree,
 } from 'calypso/state/comments/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class CommentRepliesList extends Component {

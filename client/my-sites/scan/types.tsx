@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { Threat } from 'calypso/components/jetpack/threat-item/types';
 
 type ScanState = 'unavailable' | 'provisioning' | 'idle' | 'scanning';

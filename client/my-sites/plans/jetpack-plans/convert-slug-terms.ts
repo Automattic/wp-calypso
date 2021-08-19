@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
 import {
 	JETPACK_PLANS_BY_TERM,
 	JETPACK_PRODUCTS_BY_TERM,
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
 import { Duration } from './types';
 
 function getSlugInTerm( yearlySlug: string | null, slugTerm: Duration ) {

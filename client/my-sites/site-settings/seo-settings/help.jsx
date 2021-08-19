@@ -1,24 +1,16 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { connect } from 'react-redux';
+import { FEATURE_ADVANCED_SEO } from '@automattic/calypso-products';
+import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
+import React from 'react';
+import { connect } from 'react-redux';
+import SupportInfo from 'calypso/components/support-info';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import SupportInfo from 'calypso/components/support-info';
 import getJetpackModules from 'calypso/state/selectors/get-jetpack-modules';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
-import { FEATURE_ADVANCED_SEO } from '@automattic/calypso-products';
 
 export const SeoSettingsHelpCard = ( {
 	disabled,

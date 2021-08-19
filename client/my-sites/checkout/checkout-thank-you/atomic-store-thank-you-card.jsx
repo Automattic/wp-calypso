@@ -1,28 +1,21 @@
-/**
- * External dependencies
- */
+import { getPlanClass } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { getPlanClass } from '@automattic/calypso-products';
+import wpcom from 'calypso/lib/wp';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import {
 	getCurrentUserEmail,
 	isCurrentUserEmailVerified,
 } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
-import { fetchCurrentUser } from 'calypso/state/current-user/actions';
-import wpcom from 'calypso/lib/wp';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSiteWooCommerceWizardUrl } from 'calypso/state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const VERIFY_EMAIL_ERROR_NOTICE = 'ecommerce-verify-email-error';
 const RESEND_ERROR = 'RESEND_ERROR';

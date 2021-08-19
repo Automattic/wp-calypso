@@ -1,14 +1,8 @@
-/**
- * External dependencies
- */
-import React, { Fragment } from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { isEmpty, map } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Fragment } from 'react';
 
-/**
- * Style dependencies
- */
 import './site-importer-importable-content.scss';
 
 const SiteImporterImportableContent = ( { translate, importData = {} } ) => (

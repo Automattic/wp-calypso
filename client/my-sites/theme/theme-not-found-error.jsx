@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
+import React from 'react';
 import EmptyContentComponent from 'calypso/components/empty-content';
+import Main from 'calypso/components/main';
 
 function ThemeNotFoundError( { translate } ) {
 	const emptyContentTitle = translate( 'Looking for great WordPress designs?', {

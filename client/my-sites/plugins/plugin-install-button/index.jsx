@@ -2,35 +2,25 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
-import InfoPopover from 'calypso/components/info-popover';
+import QuerySiteConnectionStatus from 'calypso/components/data/query-site-connection-status';
 import ExternalLink from 'calypso/components/external-link';
+import Gridicon from 'calypso/components/gridicon';
+import InfoPopover from 'calypso/components/info-popover';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { getSiteFileModDisableReason, isMainNetworkSite } from 'calypso/lib/site/utils';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
-import QuerySiteConnectionStatus from 'calypso/components/data/query-site-connection-status';
-import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
-import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-import { isCompatiblePlugin } from '../plugin-compatibility';
 import { installPlugin } from 'calypso/state/plugins/installed/actions';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
+import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { isCompatiblePlugin } from '../plugin-compatibility';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class PluginInstallButton extends Component {

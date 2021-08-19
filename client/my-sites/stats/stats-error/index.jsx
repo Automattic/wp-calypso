@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import React from 'react';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class StatsError extends React.PureComponent {

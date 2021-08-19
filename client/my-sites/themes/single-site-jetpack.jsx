@@ -1,37 +1,29 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { pickBy } from 'lodash';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
-import CurrentTheme from 'calypso/my-sites/themes/current-theme';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import { isPartnerPurchase } from 'calypso/lib/purchases';
-import { connectOptions } from './theme-options';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import {
 	FEATURE_UNLIMITED_PREMIUM_THEMES,
 	PLAN_JETPACK_SECURITY_REALTIME,
 } from '@automattic/calypso-products';
-import ThemeShowcase from './theme-showcase';
-import ThemesSelection from './themes-selection';
-import { addTracking } from './helpers';
+import { pickBy } from 'lodash';
+import React from 'react';
+import { connect } from 'react-redux';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import Main from 'calypso/components/main';
+import { isPartnerPurchase } from 'calypso/lib/purchases';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import CurrentTheme from 'calypso/my-sites/themes/current-theme';
+import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import {
 	getCurrentPlan,
 	hasFeature,
 	isRequestingSitePlans,
 } from 'calypso/state/sites/plans/selectors';
-import { getByPurchaseId } from 'calypso/state/purchases/selectors';
+import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import { getLastThemeQuery, getThemesFoundForQuery } from 'calypso/state/themes/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
+import { addTracking } from './helpers';
+import { connectOptions } from './theme-options';
+import ThemeShowcase from './theme-showcase';
 import ThemesHeader from './themes-header';
+import ThemesSelection from './themes-selection';
 
 const ConnectedThemesSelection = connectOptions( ( props ) => {
 	return (

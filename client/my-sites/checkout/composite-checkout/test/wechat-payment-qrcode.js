@@ -2,19 +2,12 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import React from 'react';
 import { shallow } from 'enzyme';
-import QRCode from 'qrcode.react';
-
-/**
- * Internal dependencies
- */
 import page from 'page';
-import { WechatPaymentQRCode } from '../payment-methods/wechat/wechat-payment-qrcode';
+import QRCode from 'qrcode.react';
+import React from 'react';
 import { ORDER_TRANSACTION_STATUS } from 'calypso/state/order-transactions/constants';
+import { WechatPaymentQRCode } from '../payment-methods/wechat/wechat-payment-qrcode';
 
 jest.mock( 'page', () => jest.fn() );
 

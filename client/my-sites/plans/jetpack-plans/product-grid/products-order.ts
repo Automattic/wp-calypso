@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import {
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
@@ -16,15 +13,10 @@ import {
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
 } from '@automattic/calypso-products';
-
 import {
 	getForCurrentCROIteration,
 	Iterations,
 } from 'calypso/my-sites/plans/jetpack-plans/iterations';
-
-/**
- * Type dependencies
- */
 import type { JetpackPlanSlug, JetpackProductSlug } from '@automattic/calypso-products';
 
 const setProductsInPosition = ( slugs: string[], position: number ) =>

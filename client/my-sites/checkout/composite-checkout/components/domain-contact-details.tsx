@@ -1,27 +1,20 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useTranslate } from 'i18n-calypso';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import type { DomainContactDetails as DomainContactDetailsData } from '@automattic/shopping-cart';
-import type {
-	DomainContactDetailsErrors,
-	ManagedContactDetails,
-	ManagedContactDetailsRequiredMask,
-} from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
+import { useTranslate } from 'i18n-calypso';
+import React from 'react';
+import ManagedContactDetailsFormFields from 'calypso/components/domains/contact-details-form-fields/managed-contact-details-form-fields';
+import RegistrantExtraInfoForm from 'calypso/components/domains/registrant-extra-info';
 import {
 	hasGoogleApps,
 	hasDomainRegistration,
 	hasTransferProduct,
 } from 'calypso/lib/cart-values/cart-items';
 import { getTopLevelOfTld } from 'calypso/lib/domains';
-import ManagedContactDetailsFormFields from 'calypso/components/domains/contact-details-form-fields/managed-contact-details-form-fields';
-import RegistrantExtraInfoForm from 'calypso/components/domains/registrant-extra-info';
+import type { DomainContactDetails as DomainContactDetailsData } from '@automattic/shopping-cart';
+import type {
+	DomainContactDetailsErrors,
+	ManagedContactDetails,
+	ManagedContactDetailsRequiredMask,
+} from '@automattic/wpcom-checkout';
 
 export default function DomainContactDetails( {
 	domainNames,

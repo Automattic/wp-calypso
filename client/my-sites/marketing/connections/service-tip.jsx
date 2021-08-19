@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
+import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { includes } from 'lodash';
-import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 /**

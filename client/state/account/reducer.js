@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
 import { ACCOUNT_CLOSE_SUCCESS } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';

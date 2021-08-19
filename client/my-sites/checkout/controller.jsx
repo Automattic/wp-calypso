@@ -1,48 +1,41 @@
-/**
- * External dependencies
- */
+import { isJetpackLegacyItem } from '@automattic/calypso-products';
+import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
-import React from 'react';
 import { get, isEmpty } from 'lodash';
 import page from 'page';
-import debugFactory from 'debug';
-import { isJetpackLegacyItem } from '@automattic/calypso-products';
-
-/**
- * Internal Dependencies
- */
-import { getDomainOrProductFromContext } from './utils';
-import {
-	COMPARE_PLANS_QUERY_PARAM,
-	LEGACY_TO_RECOMMENDED_MAP,
-} from '../plans/jetpack-plans/plan-upgrade/constants';
-import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
-import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
-import CheckoutSystemDecider from './checkout-system-decider';
-import CheckoutPendingComponent from './checkout-thank-you/pending';
-import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
-import JetpackCheckoutSitelessThankYou from './checkout-thank-you/jetpack-checkout-siteless-thank-you';
-import JetpackCheckoutSitelessThankYouCompleted from './checkout-thank-you/jetpack-checkout-siteless-thank-you-completed';
-import CheckoutThankYouComponent from './checkout-thank-you';
+import React from 'react';
 import { setSectionMiddleware } from 'calypso/controller';
+import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
+import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
+import { TRUENAME_COUPONS } from 'calypso/lib/domains';
 import { sites } from 'calypso/my-sites/controller';
-import {
-	getCurrentUserVisibleSiteCount,
-	isUserLoggedIn,
-} from 'calypso/state/current-user/selectors';
 import {
 	retrieveSignupDestination,
 	setSignupCheckoutPageUnloaded,
 } from 'calypso/signup/storageUtils';
+import {
+	getCurrentUserVisibleSiteCount,
+	isUserLoggedIn,
+} from 'calypso/state/current-user/selectors';
+import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import {
+	COMPARE_PLANS_QUERY_PARAM,
+	LEGACY_TO_RECOMMENDED_MAP,
+} from '../plans/jetpack-plans/plan-upgrade/constants';
+import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
+import CheckoutSystemDecider from './checkout-system-decider';
+import CheckoutThankYouComponent from './checkout-thank-you';
+import JetpackCheckoutSitelessThankYou from './checkout-thank-you/jetpack-checkout-siteless-thank-you';
+import JetpackCheckoutSitelessThankYouCompleted from './checkout-thank-you/jetpack-checkout-siteless-thank-you-completed';
+import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
+import CheckoutPendingComponent from './checkout-thank-you/pending';
 import UpsellNudge, {
 	BUSINESS_PLAN_UPGRADE_UPSELL,
 	CONCIERGE_SUPPORT_SESSION,
 	CONCIERGE_QUICKSTART_SESSION,
 } from './upsell-nudge';
-import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
-import { TRUENAME_COUPONS } from 'calypso/lib/domains';
+import { getDomainOrProductFromContext } from './utils';
 
 const debug = debugFactory( 'calypso:checkout-controller' );
 

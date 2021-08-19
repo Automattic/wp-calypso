@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getPostCommentsTree } from 'calypso/state/comments/selectors/get-post-comments-tree';
 
 import 'calypso/state/comments/init';

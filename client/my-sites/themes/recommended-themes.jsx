@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
 import React from 'react';
 import { connect } from 'react-redux';
-/**
- * Internal dependencies
- */
-import { ConnectedThemesSelection } from './themes-selection';
 import { getRecommendedThemes } from 'calypso/state/themes/actions';
-
 import {
 	getRecommendedThemes as getRecommendedThemesSelector,
 	areRecommendedThemesLoading,
 	getRecommendedThemesFilter,
 } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { ConnectedThemesSelection } from './themes-selection';
 
 class RecommendedThemes extends React.Component {
 	componentDidMount() {

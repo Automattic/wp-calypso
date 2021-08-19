@@ -1,11 +1,8 @@
-/**
- * Internal dependencies
- */
-import { getPreference } from 'calypso/state/preferences/selectors';
-import { getExistingPreference } from './selectors';
-import { PREFERENCE_NAME, PreferenceType } from './constants';
 import { savePreference } from 'calypso/state/preferences/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import { AppState } from 'calypso/types';
+import { PREFERENCE_NAME, PreferenceType } from './constants';
+import { getExistingPreference } from './selectors';
 
 const combineDismissPreference = (
 	state: AppState,

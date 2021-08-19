@@ -1,31 +1,24 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import React from 'react';
-import page from 'page';
-import { parse } from 'qs';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { Card, Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
+import { parse } from 'qs';
+import React from 'react';
+import { connect } from 'react-redux';
+import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
+import SectionHeader from 'calypso/components/section-header';
+import { getSelectedDomain } from 'calypso/lib/domains';
+import { navigate } from 'calypso/lib/navigate';
+import wp from 'calypso/lib/wp';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
-import Main from 'calypso/components/main';
 import {
 	domainManagementEdit,
 	domainManagementDomainConnectMapping,
 } from 'calypso/my-sites/domains/paths';
-import { getSelectedDomain } from 'calypso/lib/domains';
-import SectionHeader from 'calypso/components/section-header';
-import wp from 'calypso/lib/wp';
-import { navigate } from 'calypso/lib/navigate';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 const wpcom = wp.undocumented();
 

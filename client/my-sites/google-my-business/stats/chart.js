@@ -1,20 +1,11 @@
-/**
- * External dependencies
- */
+import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { flatten, partialRight } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { flatten, partialRight } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
 import CardHeading from 'calypso/components/card-heading';
 import FormSelect from 'calypso/components/forms/form-select';
-import getGoogleMyBusinessStats from 'calypso/state/selectors/get-google-my-business-stats';
-import getGoogleMyBusinessStatsError from 'calypso/state/selectors/get-google-my-business-stats-error';
 import LineChart from 'calypso/components/line-chart';
 import LineChartPlaceholder from 'calypso/components/line-chart/placeholder';
 import Notice from 'calypso/components/notice';
@@ -23,11 +14,13 @@ import PieChartLegend from 'calypso/components/pie-chart/legend';
 import PieChartLegendPlaceholder from 'calypso/components/pie-chart/legend-placeholder';
 import PieChartPlaceholder from 'calypso/components/pie-chart/placeholder';
 import SectionHeader from 'calypso/components/section-header';
-import { changeGoogleMyBusinessStatsInterval } from 'calypso/state/google-my-business/ui/actions';
 import { enhanceWithSiteType, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getStatsInterval } from 'calypso/state/google-my-business/ui/selectors';
 import { requestGoogleMyBusinessStats } from 'calypso/state/google-my-business/actions';
+import { changeGoogleMyBusinessStatsInterval } from 'calypso/state/google-my-business/ui/actions';
+import { getStatsInterval } from 'calypso/state/google-my-business/ui/selectors';
+import getGoogleMyBusinessStats from 'calypso/state/selectors/get-google-my-business-stats';
+import getGoogleMyBusinessStatsError from 'calypso/state/selectors/get-google-my-business-stats-error';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { withEnhancers } from 'calypso/state/utils';
 
 const withToolTip = ( WrappedComponent ) => ( props ) => {

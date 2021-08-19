@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
 import { JETPACK_PRODUCT_INSTALL_STATUS_RECEIVE } from 'calypso/state/action-types';
 import { keyedReducer } from 'calypso/state/utils';

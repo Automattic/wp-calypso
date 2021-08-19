@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { navigation, redirectWithoutSite, sites, siteSelection } from 'calypso/my-sites/controller';
 import {
 	ensureFeatureFlag,
 	migrateSite,
 	setSiteSelectionHeader,
 	setStep,
 } from 'calypso/my-sites/migrate/controller';
-import { makeLayout, render as clientRender } from 'calypso/controller';
-import { navigation, redirectWithoutSite, sites, siteSelection } from 'calypso/my-sites/controller';
 
 export default function () {
 	page(

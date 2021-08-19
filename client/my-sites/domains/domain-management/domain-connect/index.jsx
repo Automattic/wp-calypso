@@ -1,9 +1,5 @@
-/**
- * Internal dependencies
- */
-
-import { domainConnectAuthorize, notFoundError } from './controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
+import { domainConnectAuthorize, notFoundError } from './controller';
 
 export default ( router ) => {
 	router(

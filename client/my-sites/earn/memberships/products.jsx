@@ -1,30 +1,23 @@
-/**
- * External dependencies
- */
+import { Button, CompactCard } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
+import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import formatCurrency from '@automattic/format-currency';
-
-/**
- * Internal dependencies
- */
-import './style.scss';
+import QueryMembershipProducts from 'calypso/components/data/query-memberships';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import Gridicon from 'calypso/components/gridicon';
+import HeaderCake from 'calypso/components/header-cake';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import SectionHeader from 'calypso/components/section-header';
+import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
-import HeaderCake from 'calypso/components/header-cake';
-import SectionHeader from 'calypso/components/section-header';
-import { Button, CompactCard } from '@automattic/components';
-import QueryMembershipProducts from 'calypso/components/data/query-memberships';
-import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import Gridicon from 'calypso/components/gridicon';
 import RecurringPaymentsPlanAddEditModal from './add-edit-plan-modal';
 import RecurringPaymentsPlanDeleteModal from './delete-plan-modal';
+import './style.scss';
 
 class MembershipsProductsSection extends Component {
 	state = {

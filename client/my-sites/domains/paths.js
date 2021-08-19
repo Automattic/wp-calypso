@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { filter } from 'lodash';
 import { stringify } from 'qs';
 import { isUnderEmailManagementAll } from 'calypso/my-sites/email/paths';

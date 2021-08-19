@@ -1,6 +1,4 @@
-/**
- * External dependencies
- */
+import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
 import type {
 	DomainContactDetails,
 	CaDomainContactExtraDetails,
@@ -28,7 +26,6 @@ import type {
 	DomainContactValidationRequestExtraFields,
 	DomainContactValidationResponse,
 } from '@automattic/wpcom-checkout';
-import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
 
 /*
  * Asymmetrically combine two ManagedContactDetailsShape<T> objects 'update' and 'data'

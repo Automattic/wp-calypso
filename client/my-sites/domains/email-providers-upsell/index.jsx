@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
+import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { domainAddNew } from 'calypso/my-sites/domains/paths';
 import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';

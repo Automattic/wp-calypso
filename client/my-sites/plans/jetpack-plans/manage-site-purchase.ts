@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import page from 'page';
-
-/**
- * Internal dependencies
- */
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { managePurchase } from 'calypso/me/purchases/paths';
 

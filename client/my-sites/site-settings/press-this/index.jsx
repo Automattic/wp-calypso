@@ -1,24 +1,13 @@
-/**
- * External dependencies
- */
-
+import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
 import Gridicon from 'calypso/components/gridicon';
-import PressThisLink from './link';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import PressThisLink from './link';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class PressThis extends Component {

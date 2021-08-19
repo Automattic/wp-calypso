@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { HELP_COURSES_RECEIVE } from 'calypso/state/action-types';
 
 import 'calypso/state/help/init';

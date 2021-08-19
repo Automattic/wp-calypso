@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import ThankYou from './thank-you';
 
 const BackupProductThankYou = ( { translate } ) => (

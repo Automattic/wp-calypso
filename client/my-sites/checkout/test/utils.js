@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import configureStore from 'redux-mock-store';
-
-/**
- * Internal dependencies
- */
 import { getDomainOrProductFromContext } from '../utils';
 
 const mockStore = configureStore();

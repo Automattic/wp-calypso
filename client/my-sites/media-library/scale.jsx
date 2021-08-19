@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
-
+import { localize } from 'i18n-calypso';
+import { debounce, partial } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { debounce, partial } from 'lodash';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
 import FormRange from 'calypso/components/forms/range';
+import Gridicon from 'calypso/components/gridicon';
 import SegmentedControl from 'calypso/components/segmented-control';
-import { setPreference, savePreference } from 'calypso/state/preferences/actions';
 import { SCALE_CHOICES, SCALE_TOUCH_GRID } from 'calypso/lib/media/constants';
+import { setPreference, savePreference } from 'calypso/state/preferences/actions';
 
 /**
  * Constants

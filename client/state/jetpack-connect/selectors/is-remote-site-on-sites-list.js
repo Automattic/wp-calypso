@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getAuthorizationData } from 'calypso/state/jetpack-connect/selectors/get-authorization-data';
 import { getJetpackSiteByUrl } from 'calypso/state/jetpack-connect/selectors/get-jetpack-site-by-url';
 

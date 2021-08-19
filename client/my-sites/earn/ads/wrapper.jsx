@@ -1,36 +1,3 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { overSome } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import {
-	isWordadsInstantActivationEligible,
-	isWordadsInstantActivationEligibleButNotOwner,
-	canUpgradeToUseWordAds,
-	canAccessAds,
-} from 'calypso/lib/ads/utils';
-import FeatureExample from 'calypso/components/feature-example';
-import FormButton from 'calypso/components/forms/form-button';
-import { Card } from '@automattic/components';
-import EmptyContent from 'calypso/components/empty-content';
-import { requestWordAdsApproval, dismissWordAdsError } from 'calypso/state/wordads/approve/actions';
-import {
-	isRequestingWordAdsApprovalForSite,
-	getWordAdsErrorForSite,
-	getWordAdsSuccessForSite,
-} from 'calypso/state/wordads/approve/selectors';
-import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
-import QueryWordadsStatus from 'calypso/components/data/query-wordads-status';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import {
 	PLAN_PREMIUM,
 	PLAN_JETPACK_SECURITY_DAILY,
@@ -40,25 +7,43 @@ import {
 	isEcommerce,
 	isSecurityDaily,
 } from '@automattic/calypso-products';
+import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { overSome } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import wordAdsImage from 'calypso/assets/images/illustrations/dotcom-wordads.svg';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import ActionCard from 'calypso/components/action-card';
+import QueryWordadsStatus from 'calypso/components/data/query-wordads-status';
+import EmptyContent from 'calypso/components/empty-content';
+import FeatureExample from 'calypso/components/feature-example';
+import FormButton from 'calypso/components/forms/form-button';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import {
+	isWordadsInstantActivationEligible,
+	isWordadsInstantActivationEligibleButNotOwner,
+	canUpgradeToUseWordAds,
+	canAccessAds,
+} from 'calypso/lib/ads/utils';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { isSiteWordadsUnsafe } from 'calypso/state/wordads/status/selectors';
-import { wordadsUnsafeValues } from 'calypso/state/wordads/status/schema';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import ActionCard from 'calypso/components/action-card';
+import { requestWordAdsApproval, dismissWordAdsError } from 'calypso/state/wordads/approve/actions';
+import {
+	isRequestingWordAdsApprovalForSite,
+	getWordAdsErrorForSite,
+	getWordAdsSuccessForSite,
+} from 'calypso/state/wordads/approve/selectors';
+import { wordadsUnsafeValues } from 'calypso/state/wordads/status/schema';
+import { isSiteWordadsUnsafe } from 'calypso/state/wordads/status/selectors';
 
-/**
- * Image dependencies
- */
-import wordAdsImage from 'calypso/assets/images/illustrations/dotcom-wordads.svg';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 import 'calypso/my-sites/stats/stats-module/style.scss';
 

@@ -1,24 +1,14 @@
-/**
- * External dependencies
- */
 import React from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import BackupDelta from 'calypso/components/jetpack/backup-delta';
 import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
 import MostRecentStatus from 'calypso/components/jetpack/daily-backup-status';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { useIsDateVisible } from '../hooks';
 import { useDailyBackupStatus, useRealtimeBackupStatus } from './hooks';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export const DailyStatus = ( { selectedDate } ) => {

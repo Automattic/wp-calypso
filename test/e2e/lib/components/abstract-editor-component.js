@@ -34,10 +34,6 @@ export default class AbstractEditorComponent extends AsyncBaseContainer {
 	}
 
 	async openBlockInserterAndSearch( searchTerm ) {
-		await this.runInCanvas( async () => {
-			await driverHelper.scrollIntoView( this.driver, By.css( '.editor-styles-wrapper' ), 'start' );
-		} );
-
 		await this.openBlockInserter();
 		const inserterSearchInputLocator = By.css( 'input.components-search-control__input' );
 		await driverHelper.setWhenSettable( this.driver, inserterSearchInputLocator, searchTerm );

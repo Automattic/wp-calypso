@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 class SharingServiceDescription extends Component {
 	static propTypes = {

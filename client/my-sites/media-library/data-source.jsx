@@ -1,25 +1,17 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import config from '@automattic/calypso-config';
+import { Button, ScreenReaderText } from '@automattic/components';
+import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
 import { find, includes } from 'lodash';
 import PropTypes from 'prop-types';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { Button, ScreenReaderText } from '@automattic/components';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import Gridicon from 'calypso/components/gridicon';
 import PopoverMenu from 'calypso/components/popover/menu';
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import GooglePhotosIcon from './google-photos-icon';
-import config from '@automattic/calypso-config';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import GooglePhotosIcon from './google-photos-icon';
 
 export class MediaLibraryDataSource extends Component {
 	static propTypes = {

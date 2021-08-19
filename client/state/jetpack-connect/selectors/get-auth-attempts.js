@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { AUTH_ATTEMPS_TTL } from 'calypso/state/jetpack-connect/constants';
 import { isStale } from 'calypso/state/jetpack-connect/utils';
 

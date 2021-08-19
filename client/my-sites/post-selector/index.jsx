@@ -1,19 +1,8 @@
-/**
- * External dependencies
- */
-
+import { reduce, snakeCase } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { reduce, snakeCase } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import PostSelectorPosts from './selector';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default class extends React.PureComponent {

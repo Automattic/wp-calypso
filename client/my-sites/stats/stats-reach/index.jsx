@@ -1,26 +1,18 @@
-/**
- * External dependencies
- */
-
+import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { get, reduce } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { get, reduce } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
-import StatsTabs from '../stats-tabs';
-import StatsTab from '../stats-tabs/tab';
-import SectionHeader from 'calypso/components/section-header';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import SectionHeader from 'calypso/components/section-header';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import StatsTabs from '../stats-tabs';
+import StatsTab from '../stats-tabs/tab';
 
 export const StatsReach = ( props ) => {
 	const { translate, siteId, followData, publicizeData, isLoadingPublicize, siteSlug } = props;

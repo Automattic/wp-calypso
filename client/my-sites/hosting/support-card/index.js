@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useTranslate } from 'i18n-calypso';
 import { Button, Card } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
+import React from 'react';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import HappinessEngineersTray from 'calypso/components/happiness-engineers-tray';
 import CardHeading from 'calypso/components/card-heading';
+import HappinessEngineersTray from 'calypso/components/happiness-engineers-tray';
 import {
 	composeAnalytics,
 	recordTracksEvent,
@@ -18,9 +11,6 @@ import {
 	bumpStat,
 } from 'calypso/state/analytics/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function trackNavigateToContactSupport() {

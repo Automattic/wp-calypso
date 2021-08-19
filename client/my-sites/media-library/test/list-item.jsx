@@ -2,18 +2,11 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import fixtures from './fixtures';
 import ListItem from 'calypso/my-sites/media-library/list-item';
+import fixtures from './fixtures';
 
 describe( 'MediaLibraryListItem', () => {
 	let wrapper;

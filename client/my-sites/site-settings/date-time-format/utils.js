@@ -1,9 +1,5 @@
-/**
- * External dependencies
- */
-
-import moment from 'moment-timezone';
 import { has, startsWith } from 'lodash';
+import moment from 'moment-timezone';
 
 /**
  * Adjust the current date and time to the site settings timezone.

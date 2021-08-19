@@ -1,28 +1,18 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import classNames from 'classnames';
-import { isEmpty } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { CompactCard } from '@automattic/components';
-import CredentialsConfigured from './credentials-configured';
-import Notice from 'calypso/components/notice';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { isEmpty } from 'lodash';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
+import Notice from 'calypso/components/notice';
 import RewindCredentialsForm from 'calypso/components/rewind-credentials-form';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import CredentialsConfigured from './credentials-configured';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class JetpackCredentials extends Component {

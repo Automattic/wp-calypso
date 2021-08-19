@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import 'calypso/state/account-recovery/init';
 
 export const isAccountRecoverySettingsReady = ( state ) => {

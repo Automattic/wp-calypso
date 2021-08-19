@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { forEach, groupBy, includes, map, reduce, sortBy } from 'lodash';
 
 // Helpers used by sortPagesHierarchically but not exposed externally

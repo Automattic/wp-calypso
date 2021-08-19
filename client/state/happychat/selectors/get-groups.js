@@ -1,10 +1,7 @@
-/**
- * Internal dependencies
- */
-import { HAPPYCHAT_GROUP_WPCOM, HAPPYCHAT_GROUP_JPOP } from 'calypso/state/happychat/constants';
 import { isEnabled } from '@automattic/calypso-config';
-import { isJetpackSite, getSite } from 'calypso/state/sites/selectors';
 import { isATEnabled } from 'calypso/lib/automated-transfer';
+import { HAPPYCHAT_GROUP_WPCOM, HAPPYCHAT_GROUP_JPOP } from 'calypso/state/happychat/constants';
+import { isJetpackSite, getSite } from 'calypso/state/sites/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
 
 /**

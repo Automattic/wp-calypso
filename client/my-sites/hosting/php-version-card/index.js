@@ -1,28 +1,18 @@
-/**
- * External dependencies
- */
+import { Button, Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
 import CardHeading from 'calypso/components/card-heading';
-import FormSelect from 'calypso/components/forms/form-select';
+import QuerySitePhpVersion from 'calypso/components/data/query-site-php-version';
 import FormLabel from 'calypso/components/forms/form-label';
+import FormSelect from 'calypso/components/forms/form-select';
 import MaterialIcon from 'calypso/components/material-icon';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Spinner from 'calypso/components/spinner';
 import { updateAtomicPhpVersion } from 'calypso/state/hosting/actions';
 import { getAtomicHostingPhpVersion } from 'calypso/state/selectors/get-atomic-hosting-php-version';
-import QuerySitePhpVersion from 'calypso/components/data/query-site-php-version';
 import getRequest from 'calypso/state/selectors/get-request';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const PhpVersionCard = ( {

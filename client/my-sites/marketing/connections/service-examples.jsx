@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
+import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { includes } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import ServiceExample from './service-example';
-import GooglePlusDeprication from './google-plus-deprecation';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import GooglePlusDeprication from './google-plus-deprecation';
+import ServiceExample from './service-example';
 
 /**
  * Module constants

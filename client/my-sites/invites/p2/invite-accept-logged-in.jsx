@@ -1,21 +1,11 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import React from 'react';
 import Gravatar from 'calypso/components/gravatar';
-import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
-import P2InviteAcceptHeader from './invite-accept-header';
+import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import P2InviteAcceptFooter from './invite-accept-footer';
+import P2InviteAcceptHeader from './invite-accept-header';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const P2InviteAcceptLoggedIn = ( props ) => {

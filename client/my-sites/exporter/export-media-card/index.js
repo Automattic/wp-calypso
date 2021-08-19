@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import FoldableCard from 'calypso/components/foldable-card';
 import { Button } from '@automattic/components';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import QueryMediaStorage from 'calypso/components/data/query-media-storage';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import QueryMediaExport from 'calypso/components/data/query-media-export';
+import QueryMediaStorage from 'calypso/components/data/query-media-storage';
+import FoldableCard from 'calypso/components/foldable-card';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getMediaExportUrl from 'calypso/state/selectors/get-media-export-url';
 import getMediaStorageUsed from 'calypso/state/selectors/get-media-storage-used';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class ExportMediaCard extends Component {
 	static propTypes = {

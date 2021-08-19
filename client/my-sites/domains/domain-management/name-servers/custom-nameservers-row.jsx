@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-
+import { Button } from '@automattic/components';
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import { Button } from '@automattic/components';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import Gridicon from 'calypso/components/gridicon';
 import {
 	composeAnalytics,
 	recordGoogleEvent,

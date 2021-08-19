@@ -1,38 +1,30 @@
-/**
- * External dependencies
- */
-
+import config from '@automattic/calypso-config';
+import { Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { flowRight, isEqual, size, without } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { flowRight, isEqual, size, without } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import ListEnd from 'calypso/components/list-end';
 import QueryPosts from 'calypso/components/data/query-posts';
-import Page from './page';
-import { preloadEditor } from 'calypso/sections-preloaders';
-import InfiniteScroll from 'calypso/components/infinite-scroll';
 import EmptyContent from 'calypso/components/empty-content';
+import InfiniteScroll from 'calypso/components/infinite-scroll';
+import ListEnd from 'calypso/components/list-end';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import SectionHeader from 'calypso/components/section-header';
 import NoResults from 'calypso/my-sites/no-results';
-import Placeholder from './placeholder';
-import { sortPagesHierarchically } from './helpers';
-import BlogPostsPage from './blog-posts-page';
-import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
+import { preloadEditor } from 'calypso/sections-preloaders';
 import {
 	getPostsForQueryIgnoringPage,
 	isRequestingPostsForQuery,
 	isPostsLastPageForQuery,
 } from 'calypso/state/posts/selectors';
-import { getSite, getSiteFrontPage } from 'calypso/state/sites/selectors';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
-import SectionHeader from 'calypso/components/section-header';
-import { Button } from '@automattic/components';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import config from '@automattic/calypso-config';
+import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
+import { getSite, getSiteFrontPage } from 'calypso/state/sites/selectors';
+import BlogPostsPage from './blog-posts-page';
+import { sortPagesHierarchically } from './helpers';
+import Page from './page';
+import Placeholder from './placeholder';
 
 export default class PageList extends Component {
 	static propTypes = {

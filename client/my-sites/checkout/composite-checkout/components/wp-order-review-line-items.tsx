@@ -1,30 +1,3 @@
-/**
- * External dependencies
- */
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import styled from '@emotion/styled';
-import {
-	CheckoutModal,
-	FormStatus,
-	useFormStatus,
-	useEvents,
-	Button,
-} from '@automattic/composite-checkout';
-import type { Theme, LineItem as LineItemType } from '@automattic/composite-checkout';
-import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
-import { useShoppingCart } from '@automattic/shopping-cart';
-import type {
-	RemoveProductFromCart,
-	ResponseCartProduct,
-	RemoveCouponFromCart,
-} from '@automattic/shopping-cart';
-import {
-	getCouponLineItemFromCart,
-	getCreditsLineItemFromCart,
-	isWpComProductRenewal,
-} from '@automattic/wpcom-checkout';
 import {
 	isDomainRegistration,
 	isPlan,
@@ -35,31 +8,50 @@ import {
 	isWpComPlan,
 	isJetpackSearch,
 } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
-import joinClasses from './join-classes';
-import { ItemVariationPicker } from './item-variation-picker';
+import {
+	CheckoutModal,
+	FormStatus,
+	useFormStatus,
+	useEvents,
+	Button,
+} from '@automattic/composite-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
+import {
+	getCouponLineItemFromCart,
+	getCreditsLineItemFromCart,
+	isWpComProductRenewal,
+} from '@automattic/wpcom-checkout';
+import styled from '@emotion/styled';
+import { useTranslate } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import {
 	isGoogleWorkspaceProductSlug,
 	isGSuiteOrExtraLicenseProductSlug,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 } from 'calypso/lib/gsuite';
-import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
-import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
-import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
-import { getSublabel, getLabel } from '../lib/translate-cart';
-import { useGetProductVariants } from '../hooks/product-variants';
-import type { OnChangeItemVariant } from './item-variation-picker';
 import { getIntroductoryOfferIntervalDisplay } from 'calypso/lib/purchases/utils';
+import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
+import getPriceTierForUnits from 'calypso/my-sites/plans/jetpack-plans/get-price-tier-for-units';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
+import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
 	getProductDisplayCost,
 	getProductPriceTierList,
 } from 'calypso/state/products-list/selectors';
-import getPriceTierForUnits from 'calypso/my-sites/plans/jetpack-plans/get-price-tier-for-units';
-
+import { useGetProductVariants } from '../hooks/product-variants';
+import { getSublabel, getLabel } from '../lib/translate-cart';
 import deleteIcon from './delete-icon.svg';
+import { ItemVariationPicker } from './item-variation-picker';
+import joinClasses from './join-classes';
+import type { OnChangeItemVariant } from './item-variation-picker';
+import type { Theme, LineItem as LineItemType } from '@automattic/composite-checkout';
+import type {
+	RemoveProductFromCart,
+	ResponseCartProduct,
+	RemoveCouponFromCart,
+} from '@automattic/shopping-cart';
 
 const WPOrderReviewList = styled.ul< { theme?: Theme } >`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };

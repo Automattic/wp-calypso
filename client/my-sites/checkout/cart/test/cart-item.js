@@ -2,17 +2,7 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import { shallow } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { isEnabled } from '@automattic/calypso-config';
-import { CartItem } from '../cart-item';
 import {
 	isPlan,
 	isMonthly,
@@ -23,6 +13,9 @@ import {
 	calculateMonthlyPriceForPlan,
 	getBillingMonthsForPlan,
 } from '@automattic/calypso-products';
+import { shallow } from 'enzyme';
+import React from 'react';
+import { CartItem } from '../cart-item';
 
 jest.mock( '@automattic/calypso-config', () => {
 	const fn = () => {};

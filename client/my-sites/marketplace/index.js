@@ -1,13 +1,7 @@
-/**
- * External dependencies
- */
-import page from 'page';
-
-/**
- * Internal dependencies
- */
-import { navigation, siteSelection } from 'calypso/my-sites/controller';
 import config from '@automattic/calypso-config';
+import page from 'page';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { navigation, siteSelection } from 'calypso/my-sites/controller';
 import {
 	renderDomainsPage,
 	renderMarketplaceProduct,
@@ -16,7 +10,6 @@ import {
 	renderPluginsSetupStatusPage,
 	redirectToHome,
 } from './controller';
-import { makeLayout, render as clientRender } from 'calypso/controller';
 
 export default function () {
 	if ( config.isEnabled( 'marketplace-test' ) ) {

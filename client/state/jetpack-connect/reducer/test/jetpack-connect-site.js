@@ -1,13 +1,10 @@
-/**
- * Internal dependencies
- */
-import jetpackConnectSite from '../jetpack-connect-site';
 import {
 	JETPACK_CONNECT_CHECK_URL,
 	JETPACK_CONNECT_CHECK_URL_RECEIVE,
 	JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
 	JETPACK_CONNECT_DISMISS_URL_STATUS,
 } from 'calypso/state/jetpack-connect/action-types';
+import jetpackConnectSite from '../jetpack-connect-site';
 
 describe( '#jetpackConnectSite()', () => {
 	test( 'should default to an empty object', () => {
