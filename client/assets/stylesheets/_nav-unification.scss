@@ -94,14 +94,6 @@
 		.masterbar__item-content {
 			color: $nav-unification-primary;
 		}
-		.gridicon {
-			fill: $nav-unification-primary;
-			transform: translateX( 1px );
-
-			+ .masterbar__item-content {
-				padding: 0 1px 0 5px;
-			}
-		}
 	}
 
 	// client/layout/masterbar/style.scss

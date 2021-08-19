@@ -368,10 +368,6 @@ $autobar-height: 20px;
 		}
 	}
 
-	.gridicon {
-		fill: var( --color-primary ); // only because safari gets currentColor wrong
-	}
-
 	.masterbar__item-content {
 		color: var( --color-primary );
 		display: none;

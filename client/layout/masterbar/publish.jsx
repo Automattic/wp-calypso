@@ -16,6 +16,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import getSectionGroup from 'calypso/state/ui/selectors/get-section-group';
 import MasterbarDrafts from './drafts';
 import MasterbarItem from './item';
+import { WriteIcon } from './write-icon';
 
 class MasterbarItemNew extends React.Component {
 	static propTypes = {
@@ -90,7 +91,7 @@ class MasterbarItemNew extends React.Component {
 				<MasterbarItem
 					ref={ this.postButtonRef }
 					url={ this.props.editorUrl }
-					icon="create"
+					icon={ <WriteIcon /> }
 					onClick={ this.onClick }
 					isActive={ this.props.isActive }
 					tooltip={ this.props.tooltip }
