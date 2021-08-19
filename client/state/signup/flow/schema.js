@@ -5,3 +5,7 @@ export const currentFlowNameSchema = {
 export const previousFlowNameSchema = {
 	type: 'string',
 };
+
+export const excludedStepsSchema = {
+	type: 'array',
+};
