@@ -226,7 +226,6 @@
 }
 
 .inline-help__contact {
-
 	.inline-help__title {
 		@include hide-content-accessibly;
 	}
@@ -330,9 +329,7 @@
 	}
 }
 
-
 .inline-help__results {
-
 	padding: 8px 0;
 
 	.help-contact-form & {
@@ -412,7 +409,6 @@
 				color: var( --color-text-inverted );
 			}
 		}
-
 	}
 
 	.help-contact-form & {
@@ -451,7 +447,8 @@
 	border-radius: 16px; /* stylelint-disable-line scales/radii */
 	background-color: var( --color-neutral-0 );
 	color: transparent;
-	animation: inline-help__results-placeholder-loading 2s cubic-bezier( 0.175, 0.885, 0.32, 1.275 ) infinite;
+	animation: inline-help__results-placeholder-loading 2s cubic-bezier( 0.175, 0.885, 0.32, 1.275 )
+		infinite;
 	animation-delay: 0s;
 
 	&:nth-child( 1 ) {
@@ -492,4 +489,11 @@
 		opacity: 0.3;
 		width: 65%;
 	}
+}
+
+.inline-help__dotcom-fse-beta-contact-button {
+	.is-secondary-view-active & {
+		display: none;
+	}
+	padding-bottom: 16px;
 }

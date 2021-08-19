@@ -15,7 +15,10 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { selectResult, resetInlineHelpContactForm } from 'calypso/state/inline-help/actions';
 import getInlineHelpCurrentlySelectedResult from 'calypso/state/inline-help/selectors/get-inline-help-currently-selected-result';
 import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
-import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
+import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { VIEW_CONTACT, VIEW_DOTCOM_FSE_BETA_CONTACT, VIEW_RICH_RESULT } from './constants';
+import InlineHelpDotcomFseContactView from './inline-help-dotcom-fse-beta-contact-view';
 import InlineHelpRichResult from './inline-help-rich-result';
 import InlineHelpSearchCard from './inline-help-search-card';
 import InlineHelpSearchResults from './inline-help-search-results';
@@ -92,6 +95,10 @@ class InlineHelpPopover extends Component {
 		this.openSecondaryView( VIEW_CONTACT );
 	};
 
+	openDotcomFseBetaContactView = () => {
+		this.openSecondaryView( VIEW_DOTCOM_FSE_BETA_CONTACT );
+	};
+
 	renderPopoverFooter = () => {
 		const { translate } = this.props;
 		return (
@@ -140,6 +147,7 @@ class InlineHelpPopover extends Component {
 						searchQuery={ this.props.searchQuery }
 					/>
 				</div>
+				{ this.props.isUsingSiteEditor && this.renderDotcomFseBetaContactButton() }
 				{ this.renderSecondaryView() }
 			</Fragment>
 		);
@@ -170,11 +178,20 @@ class InlineHelpPopover extends Component {
 								closePopover={ onClose }
 							/>
 						),
+						[ VIEW_DOTCOM_FSE_BETA_CONTACT ]: <InlineHelpDotcomFseContactView />,
 					}[ this.state.activeSecondaryView ]
 				}
 			</section>
 		);
 	};
+
+	renderDotcomFseBetaContactButton = () => (
+		<div className="inline-help__dotcom-fse-beta-contact-button">
+			<Button primary onClick={ this.openDotcomFseBetaContactView }>
+				{ __( 'Leave Feedback' ) }
+			</Button>
+		</div>
+	);
 
 	render() {
 		const popoverClasses = {
@@ -197,7 +214,9 @@ class InlineHelpPopover extends Component {
 }
 
 function mapStateToProps( state ) {
+	const selectedSiteId = getSelectedSiteId( state );
 	return {
+		isUsingSiteEditor: isSiteUsingCoreSiteEditor( state, selectedSiteId ),
 		searchQuery: getSearchQuery( state ),
 		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
 	};
