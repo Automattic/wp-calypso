@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import classNames from 'classnames';
 import config from '@automattic/calypso-config';
-import { connect } from 'react-redux';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
+import { connect } from 'react-redux';
 import Gridicon from 'calypso/components/gridicon';
-import wpcom from 'calypso/lib/wp';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import wpcom from 'calypso/lib/wp';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class StatsActionFollow extends React.Component {
 	state = {

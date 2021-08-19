@@ -1,42 +1,34 @@
-/**
- * External dependencies
- */
-
+import { Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { flowRight } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import page from 'page';
-import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import Emojify from 'calypso/components/emojify';
-import PostSummary from '../stats-post-summary';
-import PostMonths from '../stats-detail-months';
-import PostWeeks from '../stats-detail-weeks';
-import StatsPlaceholder from '../stats-module/placeholder';
-import HeaderCake from 'calypso/components/header-cake';
-import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
-import Main from 'calypso/components/main';
 import titlecase from 'to-title-case';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import PostLikes from '../stats-post-likes';
-import QueryPosts from 'calypso/components/data/query-posts';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
+import QueryPosts from 'calypso/components/data/query-posts';
+import Emojify from 'calypso/components/emojify';
 import EmptyContent from 'calypso/components/empty-content';
-import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { Button } from '@automattic/components';
-import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'calypso/state/sites/selectors';
+import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
+import WebPreview from 'calypso/components/web-preview';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import {
 	getSitePost,
 	isRequestingSitePost,
 	getPostPreviewUrl,
 } from 'calypso/state/posts/selectors';
 import hasNavigated from 'calypso/state/selectors/has-navigated';
-import WebPreview from 'calypso/components/web-preview';
+import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'calypso/state/sites/selectors';
+import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import PostMonths from '../stats-detail-months';
+import PostWeeks from '../stats-detail-weeks';
+import StatsPlaceholder from '../stats-module/placeholder';
+import PostLikes from '../stats-post-likes';
+import PostSummary from '../stats-post-summary';
 
 class StatsPostDetail extends Component {
 	static propTypes = {
