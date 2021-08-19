@@ -48,7 +48,7 @@ const DomainMappingThankYou = ( { domainName: domain, selectedSite } ) => {
 						},
 						{
 							stepKey: 'domain_mapping_whats_next_view_posts',
-							stepTitle: translate( 'Add professional email' ),
+							stepTitle: translate( 'Add Professional Email' ),
 							stepDescription: translate(
 								'Add a custom email address to send and receive emails from %(domain)s today.',
 								{
