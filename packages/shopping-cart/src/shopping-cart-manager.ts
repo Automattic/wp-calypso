@@ -77,7 +77,11 @@ function createShoppingCartManager(
 	let deferredStateCheck: ReturnType< typeof setTimeout >;
 	const dispatch = ( action: ShoppingCartAction ) => {
 		debug( `dispatching action for cartKey ${ cartKey }`, action.type );
-		state = shoppingCartReducer( state, action );
+		const newState = shoppingCartReducer( state, action );
+		if ( newState === state ) {
+			return;
+		}
+		state = newState;
 
 		// We defer the state based actions so that multiple cart changes can be
 		// batched together during the same run of the event loop.
