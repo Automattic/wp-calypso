@@ -15,6 +15,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { selectResult, resetInlineHelpContactForm } from 'calypso/state/inline-help/actions';
 import getInlineHelpCurrentlySelectedResult from 'calypso/state/inline-help/selectors/get-inline-help-currently-selected-result';
 import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
+import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { VIEW_CONTACT, VIEW_DOTCOM_FSE_BETA_CONTACT, VIEW_RICH_RESULT } from './constants';
@@ -214,9 +215,12 @@ class InlineHelpPopover extends Component {
 }
 
 function mapStateToProps( state ) {
+	const currentRoute = getCurrentRoute( state );
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
-		isUsingSiteEditor: isSiteUsingCoreSiteEditor( state, selectedSiteId ),
+		isUsingSiteEditor:
+			isSiteUsingCoreSiteEditor( state, selectedSiteId ) &&
+			currentRoute.startsWith( '/site-editor/' ),
 		searchQuery: getSearchQuery( state ),
 		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
 	};
