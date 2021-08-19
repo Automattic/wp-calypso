@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for contributing to calypso! Pick a clear title and proceed.
+        ## Thanks for contributing to calypso! Pick a clear title and proceed.
   - type: textarea
     id: summary
     attributes:
@@ -46,11 +46,13 @@ body:
   - type: markdown
     attributes:
       value: |
+        <br>
         ----
+        <br>
   - type: dropdown
     id: os
     attributes:
-      label: Operating System
+      label: OS
       description: Multiple selection is supported.
       options:
         - Windows
@@ -71,15 +73,6 @@ body:
         - Microsoft Edge (legacy)
         - Safari
       multiple: true
-  - type: input
-    id: theme
-    attributes:
-      label: Is this specific to applied theme? If so, what is the theme name?
-  - type: textarea
-    id: other_notes
-    attributes:
-      label: Other notes
-      description: Logs, console errors, notes, observations, etc.
   - type: dropdown
     id: site-type
     attributes:
@@ -89,6 +82,15 @@ body:
         - Simple
         - Atomic
       multiple: true
+  - type: input
+    id: theme
+    attributes:
+      label: Is this specific to applied theme? If so, what is the theme name?
+  - type: textarea
+    id: other_notes
+    attributes:
+      label: Other notes
+      description: Logs, console errors, notes, observations, etc.
   - type: markdown
     attributes:
       value: |
