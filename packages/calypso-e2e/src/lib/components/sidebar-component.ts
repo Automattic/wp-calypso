@@ -35,14 +35,13 @@ export class SidebarComponent {
 	}
 
 	/**
-	 * Navigates to given (sub)item of the sidebar navigation.
+	 * Navigates to given (sub)item of the sidebar menu.
 	 *
-	 * @param {{[key: string]: string}} param0 Named object parameter.
-	 * @param {string} param0.item Plaintext representation of the top level heading.
-	 * @param {string} param0.subitem Plaintext representation of the child level heading.
+	 * @param {string} item Plaintext representation of the top level heading.
+	 * @param {string} subitem Plaintext representation of the child level heading.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async gotoMenu( { item, subitem }: { item: string; subitem?: string } ): Promise< void > {
+	async navigate( item: string, subitem?: string ): Promise< void > {
 		if ( getViewportName() === 'mobile' ) {
 			await this.openMobileSidebar();
 		}
@@ -80,7 +79,7 @@ export class SidebarComponent {
 			}
 			this.gotoItemRetryCount -= 1;
 			await this.page.reload();
-			return this.gotoMenu( { item, subitem } );
+			return this.navigate( item, subitem );
 		}
 	}
 
