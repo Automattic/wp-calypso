@@ -1,33 +1,3 @@
-/**
- * External dependencies
- */
-import classNames from 'classnames';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { compact, get, map, reduce } from 'lodash';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import PlanFeaturesComparisonActions from './actions';
-import PlanFeaturesComparisonHeader from './header';
-import { PlanFeaturesItem } from './item';
-import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import {
-	getPlan,
-	getPlanBySlug,
-	getPlanRawPrice,
-	getPlanSlug,
-	getDiscountedRawPrice,
-} from 'calypso/state/plans/selectors';
-import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
-import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
-import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import {
 	planMatches,
 	applyTestFiltersToPlansList,
@@ -40,15 +10,35 @@ import {
 	isMonthly,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { compact, get, map, reduce } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
+import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
+import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
+import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import {
+	getPlan,
+	getPlanBySlug,
+	getPlanRawPrice,
+	getPlanSlug,
+	getDiscountedRawPrice,
+} from 'calypso/state/plans/selectors';
+import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import {
 	getPlanDiscountedRawPrice,
 	getSitePlanRawPrice,
 } from 'calypso/state/sites/plans/selectors';
-import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
+import PlanFeaturesComparisonActions from './actions';
+import PlanFeaturesComparisonHeader from './header';
+import { PlanFeaturesItem } from './item';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
