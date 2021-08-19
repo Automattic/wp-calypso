@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { addQueryArgs } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';

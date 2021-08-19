@@ -1,20 +1,12 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { Dialog } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-
-/**
- * Internal Dependencies
- */
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import { getSite, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
-import { Dialog } from '@automattic/components';
-import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 
 class TransferConfirmationDialog extends React.PureComponent {
 	static propTypes = {

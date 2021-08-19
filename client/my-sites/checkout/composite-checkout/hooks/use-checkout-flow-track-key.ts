@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { useMemo } from 'react';
 
 interface Props {

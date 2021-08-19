@@ -1,12 +1,5 @@
 /* eslint-disable jsdoc/no-undefined-types */
 
-/**
- * Internal dependencies
- */
-
-/**
- * Type dependencies
- */
 import { Duration } from './types';
 
 type Params = {

@@ -1,20 +1,10 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import WixLogo from './logos/wix';
+import SocialLogo from 'calypso/components/social-logo';
 import MediumLogo from './logos/medium';
 import SubstackLogo from './logos/substack';
-import SocialLogo from 'calypso/components/social-logo';
+import WixLogo from './logos/wix';
 
-/**
- * Style dependencies
- */
 import './importer-logo.scss';
 
 const ImporterLogo = ( { icon } ) => {

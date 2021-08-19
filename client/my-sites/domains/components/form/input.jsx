@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import FormLabel from 'calypso/components/forms/form-label';
-import FormTextInput from 'calypso/components/forms/form-text-input';
+import React from 'react';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 
 export default class Input extends React.Component {
 	static defaultProps = { autoFocus: false, autoComplete: 'on' };

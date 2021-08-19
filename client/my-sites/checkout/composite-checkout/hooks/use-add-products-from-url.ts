@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import { useEffect, useRef, useState } from 'react';
 import debugFactory from 'debug';
+import { useEffect, useRef, useState } from 'react';
 import type {
 	RequestCartProduct,
 	ApplyCouponToCart,
@@ -10,9 +7,6 @@ import type {
 	ReplaceProductsInCart,
 } from '@automattic/shopping-cart';
 
-/**
- * Internal dependencies
- */
 const debug = debugFactory( 'calypso:composite-checkout:use-add-products-from-url' );
 
 export type isPendingAddingProductsFromUrl = boolean;

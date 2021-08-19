@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import React, { FunctionComponent } from 'react';
-
-/**
- * Internal dependencies
- */
 import Gridicon from 'calypso/components/gridicon';
 
 enum RewindFlowNoticeLevel {

@@ -1,34 +1,24 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
 import { isWithinBreakpoint, isMobile, isDesktop } from '@automattic/viewport';
-import { connect } from 'react-redux';
+import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { debounce, get } from 'lodash';
 import React from 'react';
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSiteOption, isSitePreviewable } from 'calypso/state/sites/selectors';
-import { addQueryArgs } from 'calypso/lib/route';
-import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import getEditorUrl from 'calypso/state/selectors/get-editor-url';
-import { Button } from '@automattic/components';
+import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import Gridicon from 'calypso/components/gridicon';
 import Main from 'calypso/components/main';
-import { showInlineHelpPopover } from 'calypso/state/inline-help/actions';
 import WebPreview from 'calypso/components/web-preview';
+import { addQueryArgs } from 'calypso/lib/route';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { showInlineHelpPopover } from 'calypso/state/inline-help/actions';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
+import { getSiteOption, isSitePreviewable } from 'calypso/state/sites/selectors';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Internal dependencies
- */
 import './style.scss';
 
 const debug = debugFactory( 'calypso:my-sites:preview' );

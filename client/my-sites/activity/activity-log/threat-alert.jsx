@@ -1,34 +1,24 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import Spinner from 'calypso/components/spinner';
-import { Interval, EVERY_TEN_SECONDS } from 'calypso/lib/interval';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import ActivityIcon from '../activity-log-item/activity-icon';
 import { Button, Card } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import DiffViewer from 'calypso/components/diff-viewer';
 import FoldableCard from 'calypso/components/foldable-card';
-import { JETPACK_CONTACT_SUPPORT } from 'calypso/lib/url/support';
 import InfoPopover from 'calypso/components/info-popover';
 import MarkedLines from 'calypso/components/marked-lines';
-import TimeSince from 'calypso/components/time-since';
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import Spinner from 'calypso/components/spinner';
 import SplitButton from 'calypso/components/split-button';
+import TimeSince from 'calypso/components/time-since';
+import { Interval, EVERY_TEN_SECONDS } from 'calypso/lib/interval';
+import { JETPACK_CONTACT_SUPPORT } from 'calypso/lib/url/support';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import { fixThreatAlert, ignoreThreatAlert } from 'calypso/state/jetpack/site-alerts/actions';
 import { requestRewindState } from 'calypso/state/rewind/state/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import ActivityIcon from '../activity-log-item/activity-icon';
 
-/**
- * Style dependencies
- */
 import './threat-alert.scss';
 
 export class ThreatAlert extends Component {

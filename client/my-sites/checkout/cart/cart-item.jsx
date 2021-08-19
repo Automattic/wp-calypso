@@ -1,19 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { get } from 'lodash';
-import { getCurrencyObject } from '@automattic/format-currency';
-import { localize } from 'i18n-calypso';
-import { withShoppingCart } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import { canRemoveFromCart } from 'calypso/lib/cart-values';
 import {
 	isCredits,
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
@@ -27,6 +11,15 @@ import {
 	calculateMonthlyPriceForPlan,
 	getBillingMonthsForPlan,
 } from '@automattic/calypso-products';
+import { getCurrencyObject } from '@automattic/format-currency';
+import { withShoppingCart } from '@automattic/shopping-cart';
+import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
+import React from 'react';
+import Gridicon from 'calypso/components/gridicon';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { canRemoveFromCart } from 'calypso/lib/cart-values';
 import { isGSuiteOrGoogleWorkspaceProductSlug } from 'calypso/lib/gsuite';
 import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,

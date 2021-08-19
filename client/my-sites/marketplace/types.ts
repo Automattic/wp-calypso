@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { YOAST_PREMIUM, YOAST_FREE } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
 import { YOAST } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
 export interface IProductDefinition {
 	productName: string;

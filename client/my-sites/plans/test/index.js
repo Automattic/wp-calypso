@@ -20,22 +20,7 @@ jest.mock( 'calypso/my-sites/controller', () => ( {
 } ) );
 jest.mock( 'calypso/my-sites/plans/jetpack-plans', () => jest.fn() );
 
-/**
- * External dependencies
- */
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import {
-	features,
-	plans,
-	redirectToCheckout,
-	redirectToPlans,
-	redirectToPlansIfNotJetpack,
-} from '../controller';
-import { currentPlan } from '../current-plan/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import {
 	navigation,
@@ -45,7 +30,14 @@ import {
 	p2RedirectToHubPlans,
 } from 'calypso/my-sites/controller';
 import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';
-
+import {
+	features,
+	plans,
+	redirectToCheckout,
+	redirectToPlans,
+	redirectToPlansIfNotJetpack,
+} from '../controller';
+import { currentPlan } from '../current-plan/controller';
 import router from '../index';
 
 const routes = {

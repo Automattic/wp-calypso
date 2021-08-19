@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
 import { isEnabled } from '@automattic/calypso-config';
 import { useCallback, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { applySiteOffset } from 'calypso/lib/site/timezone';
+import { getRequestActivityLogsId, requestActivityLogs } from 'calypso/state/data-getters';
+import { getHttpData } from 'calypso/state/data-layer/http-data';
+import { requestRewindCapabilities } from 'calypso/state/rewind/capabilities/actions';
 import getActivityLogVisibleDays from 'calypso/state/selectors/get-activity-log-visible-days';
+import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
-import { getHttpData } from 'calypso/state/data-layer/http-data';
-import { getRequestActivityLogsId, requestActivityLogs } from 'calypso/state/data-getters';
-import { requestRewindCapabilities } from 'calypso/state/rewind/capabilities/actions';
-import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
 
 const isLoading = ( response ) => [ 'uninitialized', 'pending' ].includes( response.state );
 

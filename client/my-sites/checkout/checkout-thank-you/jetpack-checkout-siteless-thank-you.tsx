@@ -1,41 +1,30 @@
-/**
- * External dependencies
- */
-import React, { FC, useState, useCallback, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { Button, Card } from '@automattic/components';
+import classNames from 'classnames';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import page from 'page';
-import classNames from 'classnames';
-import { Button, Card } from '@automattic/components';
+import React, { FC, useState, useCallback, useEffect } from 'react';
 import { openPopupWidget } from 'react-calendly';
-
-/**
- * Internal dependencies
- */
-import { addQueryArgs, resemblesUrl } from 'calypso/lib/url';
-import { addHttpIfMissing } from 'calypso/my-sites/checkout/utils';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import {
-	isProductsListFetching as getIsProductListFetching,
-	getProductName,
-} from 'calypso/state/products-list/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { requestUpdateJetpackCheckoutSupportTicket } from 'calypso/state/jetpack-checkout/actions';
+import { useSelector, useDispatch } from 'react-redux';
+import QueryProducts from 'calypso/components/data/query-products-list';
 import FormButton from 'calypso/components/forms/form-button';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import getCalendlyUrl from 'calypso/lib/jetpack/get-calendly-url';
-import getJetpackCheckoutSupportTicketStatus from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-status';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import QueryProducts from 'calypso/components/data/query-products-list';
+import getCalendlyUrl from 'calypso/lib/jetpack/get-calendly-url';
+import { addQueryArgs, resemblesUrl } from 'calypso/lib/url';
+import { addHttpIfMissing } from 'calypso/my-sites/checkout/utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { requestUpdateJetpackCheckoutSupportTicket } from 'calypso/state/jetpack-checkout/actions';
+import {
+	isProductsListFetching as getIsProductListFetching,
+	getProductName,
+} from 'calypso/state/products-list/selectors';
+import getJetpackCheckoutSupportTicketStatus from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-status';
 import { useSetCalendlyListenerEffect } from './hooks';
-
-/**
- * Type dependencies
- */
 import type { UserData } from 'calypso/lib/user/user';
 
 interface Props {

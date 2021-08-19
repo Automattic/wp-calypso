@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
+import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import React from 'react';
 import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
 

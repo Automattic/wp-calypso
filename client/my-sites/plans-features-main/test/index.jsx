@@ -18,15 +18,6 @@ jest.mock( 'calypso/my-sites/plan-features', () => 'PlanFeatures' );
 jest.mock( 'calypso/my-sites/plans-features-main/wpcom-faq', () => 'WpcomFAQ' );
 jest.mock( 'calypso/my-sites/plans-features-main/jetpack-faq', () => 'JetpackFAQ' );
 
-/**
- * External dependencies
- */
-import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
-import { PlansFeaturesMain } from '../index';
 import {
 	GROUP_WPCOM,
 	PLAN_FREE,
@@ -49,6 +40,8 @@ import {
 	TERM_ANNUALLY,
 	TYPE_PREMIUM,
 } from '@automattic/calypso-products';
+import { shallow } from 'enzyme';
+import { PlansFeaturesMain } from '../index';
 
 const props = {
 	selectedPlan: PLAN_FREE,

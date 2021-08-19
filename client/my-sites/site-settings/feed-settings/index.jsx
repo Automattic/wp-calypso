@@ -1,25 +1,15 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
 import { CompactCard } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
+import { localize } from 'i18n-calypso';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class FeedSettings extends Component {

@@ -1,25 +1,18 @@
-/**
- * External dependencies
- */
+import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
 import {
 	makeRedirectResponse,
 	makeManualResponse,
 	makeErrorResponse,
 } from '@automattic/composite-checkout';
-import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
-import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
-import type { WPCOMTransactionEndpointResponse } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
 import userAgent from 'calypso/lib/user-agent';
-import getPostalCode from '../lib/get-postal-code';
-import getDomainDetails from '../lib/get-domain-details';
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
+import getDomainDetails from '../lib/get-domain-details';
+import getPostalCode from '../lib/get-postal-code';
 import prepareRedirectTransaction from '../lib/prepare-redirect-transaction';
 import submitWpcomTransaction from './submit-wpcom-transaction';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
+import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
+import type { WPCOMTransactionEndpointResponse } from '@automattic/wpcom-checkout';
 
 type WeChatTransactionRequest = {
 	name: string | undefined;

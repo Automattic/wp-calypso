@@ -12,15 +12,8 @@ jest.mock( 'calypso/my-sites/backup/hooks', () => ( {
 	useIsDateVisible: jest.fn(),
 } ) );
 
-/**
- * External dependencies
- */
 import moment from 'moment';
 import { useCallback } from 'react';
-
-/**
- * Internal dependencies
- */
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { useIsDateVisible } from 'calypso/my-sites/backup/hooks';

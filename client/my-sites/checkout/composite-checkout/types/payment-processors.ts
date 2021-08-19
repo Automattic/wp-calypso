@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
 import { useDispatch } from 'react-redux';
+import type { GetThankYouUrl } from '../hooks/use-get-thank-you-url';
+import type { ReactStandardAction } from '../types/analytics';
 import type { StripeConfiguration } from '@automattic/calypso-stripe';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import type { ReactStandardAction } from '../types/analytics';
-import type { GetThankYouUrl } from '../hooks/use-get-thank-you-url';
 
 export interface PaymentProcessorOptions {
 	includeDomainDetails: boolean;

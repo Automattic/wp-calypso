@@ -1,24 +1,13 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
-import Main from 'calypso/components/main';
-import SiteSelector from 'calypso/components/site-selector';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import VisitSite from 'calypso/blocks/visit-site';
 import DocumentHead from 'calypso/components/data/document-head';
+import Main from 'calypso/components/main';
+import SiteSelector from 'calypso/components/site-selector';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class Sites extends Component {

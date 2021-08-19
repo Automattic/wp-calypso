@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import React from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const P2InviteAcceptFooter = ( props ) => {

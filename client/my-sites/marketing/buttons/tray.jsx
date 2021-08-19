@@ -1,20 +1,13 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-/**
- * External dependencies
- */
 
-import { filter, find } from 'lodash';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { filter, find } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import SortableList from 'calypso/components/forms/sortable-list';
-import ButtonsPreviewButtons from './preview-buttons';
 import ButtonsPreviewButton from './preview-button';
+import ButtonsPreviewButtons from './preview-buttons';
 
 class SharingButtonsTray extends React.Component {
 	static displayName = 'SharingButtonsTray';

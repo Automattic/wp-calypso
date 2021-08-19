@@ -1,33 +1,27 @@
 /**
  * @jest-environment jsdom
  */
-/**
- * External dependencies
- */
+
+import { StripeHookProvider } from '@automattic/calypso-stripe';
+import { ShoppingCartProvider } from '@automattic/shopping-cart';
+import { render, fireEvent, screen, within, waitFor, act } from '@testing-library/react';
 import page from 'page';
 import React from 'react';
+import { Provider as ReduxProvider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
-import { Provider as ReduxProvider } from 'react-redux';
 import '@testing-library/jest-dom/extend-expect';
-import { render, fireEvent, screen, within, waitFor, act } from '@testing-library/react';
-import { ShoppingCartProvider } from '@automattic/shopping-cart';
-import { StripeHookProvider } from '@automattic/calypso-stripe';
-
-/**
- * Internal dependencies
- */
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import CompositeCheckout from '../composite-checkout';
 
 /**
  * Mocked dependencies
  */
 jest.mock( 'calypso/state/sites/selectors' );
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
-import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 
 jest.mock( 'page', () => ( {
 	redirect: jest.fn(),

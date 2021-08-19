@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { useTranslate } from 'i18n-calypso';
+import React from 'react';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import SectionNav from 'calypso/components/section-nav';
-import NavTabs from 'calypso/components/section-nav/tabs';
-import NavItem from 'calypso/components/section-nav/item';
 import Search from 'calypso/components/search';
+import SectionNav from 'calypso/components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
 import { setQuery } from 'calypso/state/billing-transactions/ui/actions';
 
 export default function PurchasesNavigation( {

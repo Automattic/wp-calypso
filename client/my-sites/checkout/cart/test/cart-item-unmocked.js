@@ -2,10 +2,6 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
-import { CartItem } from '../cart-item';
 import {
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_JETPACK_PERSONAL,
@@ -13,6 +9,7 @@ import {
 	PLAN_BLOGGER,
 	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
+import { CartItem } from '../cart-item';
 
 jest.mock( '@automattic/calypso-config', () => {
 	const fn = () => {};

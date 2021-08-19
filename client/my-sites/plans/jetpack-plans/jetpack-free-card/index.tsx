@@ -1,19 +1,8 @@
-/**
- * External dependencies
- */
 import { useTranslate } from 'i18n-calypso';
 import React, { FC, useMemo } from 'react';
-
-/**
- * Internal dependencies
- */
 import ProductCardWithoutPrice from 'calypso/components/jetpack/card/product-without-price';
 import { getForCurrentCROIteration, Iterations } from '../iterations';
 import useJetpackFreeButtonProps from './use-jetpack-free-button-props';
-
-/**
- * Type dependencies
- */
 import type { JetpackFreeProps } from 'calypso/my-sites/plans/jetpack-plans/types';
 
 const JetpackFreeCard: FC< JetpackFreeProps > = ( { fullWidth, siteId, urlQueryArgs } ) => {

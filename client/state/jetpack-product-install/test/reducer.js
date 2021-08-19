@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import reducer from '../reducer';
 import { receiveJetpackProductInstallStatus } from '../actions';
+import reducer from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'should default to an empty object', () => {

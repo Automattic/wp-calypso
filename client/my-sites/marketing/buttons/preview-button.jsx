@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
+import classNames from 'classnames';
+import photon from 'photon';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
-import photon from 'photon';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import SocialLogo from 'calypso/components/social-logo';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import SocialLogo from 'calypso/components/social-logo';
 
 class SharingButtonsPreviewButton extends React.Component {
 	static propTypes = {

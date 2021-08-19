@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
 import { pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
-
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	JETPACK_CONNECT_CHECK_URL,

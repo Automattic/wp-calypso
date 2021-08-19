@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import { find, get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { find, get, includes } from 'lodash';
+import React, { Component } from 'react';
 import SectionNav from 'calypso/components/section-nav';
-import NavTabs from 'calypso/components/section-nav/tabs';
 import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
 import PeopleSearch from 'calypso/my-sites/people/people-section-nav/people-search';
 
 class PeopleNavTabs extends React.Component {

@@ -1,30 +1,22 @@
-/**
- * External dependencies
- */
-
+import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
 import DocumentHead from 'calypso/components/data/document-head';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import QueryPostTypes from 'calypso/components/data/query-post-types';
 import FormattedHeader from 'calypso/components/formatted-header';
+import Main from 'calypso/components/main';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PostTypeFilter from 'calypso/my-sites/post-type-filter';
 import PostTypeList from 'calypso/my-sites/post-type-list';
-import PostTypeUnsupported from './post-type-unsupported';
-import PostTypeForbidden from './post-type-forbidden';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { getPostType, isPostTypeSupported } from 'calypso/state/post-types/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getPostType, isPostTypeSupported } from 'calypso/state/post-types/selectors';
-import QueryPostTypes from 'calypso/components/data/query-post-types';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import PostTypeForbidden from './post-type-forbidden';
+import PostTypeUnsupported from './post-type-unsupported';
 
 function Types( {
 	siteId,

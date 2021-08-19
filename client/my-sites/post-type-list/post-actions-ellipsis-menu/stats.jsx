@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import { bumpStat as bumpAnalyticsStat, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { bumpStatGenerator } from './utils';
-import { getSiteSlug, isJetpackModuleActive } from 'calypso/state/sites/selectors';
 import { getPost } from 'calypso/state/posts/selectors';
+import { getSiteSlug, isJetpackModuleActive } from 'calypso/state/sites/selectors';
+import { bumpStatGenerator } from './utils';
 
 function PostActionsEllipsisMenuStats( {
 	translate,

@@ -1,34 +1,24 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import DeleteSiteWarningDialog from 'calypso/my-sites/site-settings/delete-site-warning-dialog';
-import config from '@automattic/calypso-config';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { localize } from 'i18n-calypso';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import SiteToolsLink from './link';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import isVipSite from 'calypso/state/selectors/is-vip-site';
-import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import DeleteSiteWarningDialog from 'calypso/my-sites/site-settings/delete-site-warning-dialog';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { errorNotice } from 'calypso/state/notices/actions';
 import {
 	hasLoadedSitePurchasesFromServer,
 	getPurchasesError,
 } from 'calypso/state/purchases/selectors';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-site-purchases';
-import { errorNotice } from 'calypso/state/notices/actions';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import SiteToolsLink from './link';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const trackDeleteSiteOption = ( option ) => {

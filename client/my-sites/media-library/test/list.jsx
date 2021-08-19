@@ -4,18 +4,11 @@
 
 /* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["expectSelectedItems", "expect"] }] */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { mount } from 'enzyme';
 import { defer } from 'lodash';
-import React from 'react';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import { MediaLibraryList as MediaList } from '../list';
 import fixtures from './fixtures';
 

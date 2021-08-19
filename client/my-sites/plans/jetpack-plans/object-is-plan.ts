@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { Plan } from '@automattic/calypso-products';
 
 export default function objectIsPlan( item: Record< string, unknown > | Plan ): item is Plan {

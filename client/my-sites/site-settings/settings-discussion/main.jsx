@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import DiscussionForm from 'calypso/my-sites/site-settings/form-discussion';
 import DocumentHead from 'calypso/components/data/document-head';
-import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
-import Main from 'calypso/components/main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
+import Main from 'calypso/components/main';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import DiscussionForm from 'calypso/my-sites/site-settings/form-discussion';
+import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
 import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 
 const SiteSettingsDiscussion = ( { site, translate } ) => (
 	<Main className="settings-discussion site-settings">

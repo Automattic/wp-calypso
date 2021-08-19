@@ -1,8 +1,8 @@
-/**
- * External dependencies
- */
 import { useRef } from 'react';
-import type { StoreConfig } from '@wordpress/data';
+import {
+	getInitialWpcomStoreState,
+	managedContactDetailsUpdaters as updaters,
+} from '../types/wpcom-store-state';
 import type { DomainContactDetails } from '@automattic/shopping-cart';
 import type {
 	PossiblyCompleteDomainContactDetails,
@@ -11,14 +11,7 @@ import type {
 	ManagedContactDetailsErrors,
 	ManagedContactDetailsRequiredMask,
 } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import {
-	getInitialWpcomStoreState,
-	managedContactDetailsUpdaters as updaters,
-} from '../types/wpcom-store-state';
+import type { StoreConfig } from '@wordpress/data';
 
 type WpcomStoreAction =
 	| {

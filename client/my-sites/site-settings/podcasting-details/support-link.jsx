@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 

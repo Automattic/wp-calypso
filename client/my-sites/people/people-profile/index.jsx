@@ -1,26 +1,16 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useTranslate } from 'i18n-calypso';
 import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
-import { recordTrack } from 'calypso/reader/stats';
 import page from 'page';
-import { decodeEntities } from 'calypso/lib/formatting';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import Gravatar from 'calypso/components/gravatar';
 import InfoPopover from 'calypso/components/info-popover';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useExternalContributorsQuery from 'calypso/data/external-contributors/use-external-contributors';
+import { decodeEntities } from 'calypso/lib/formatting';
+import { recordTrack } from 'calypso/reader/stats';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const PeopleProfile = ( { siteId, type, user, invite } ) => {

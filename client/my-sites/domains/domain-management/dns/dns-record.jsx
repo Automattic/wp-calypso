@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
-import DnsRecordsListItem from '../dns-records/item';
 import Gridicon from 'calypso/components/gridicon';
+import DnsRecordsListItem from '../dns-records/item';
 
 class DnsRecord extends React.Component {
 	static propTypes = {

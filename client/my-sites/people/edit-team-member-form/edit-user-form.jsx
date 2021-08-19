@@ -1,35 +1,25 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { localize } from 'i18n-calypso';
 import debugModule from 'debug';
+import { localize } from 'i18n-calypso';
+import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import ContractorSelect from 'calypso/my-sites/people/contractor-select';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
-import isVipSite from 'calypso/state/selectors/is-vip-site';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import ContractorSelect from 'calypso/my-sites/people/contractor-select';
 import RoleSelect from 'calypso/my-sites/people/role-select';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
 	requestExternalContributors,
 	requestExternalContributorsAddition,
 	requestExternalContributorsRemoval,
 } from 'calypso/state/data-getters';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
 import withUpdateUser from './with-update-user';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /**

@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import config from '@automattic/calypso-config';
-
-/**
  * Mock dependencies
  */
 jest.mock( 'react-redux', () => ( {
@@ -31,15 +26,9 @@ jest.mock( '@automattic/calypso-config', () => {
 } );
 const configMock = ( values ) => ( key ) => values[ key ];
 
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
 import { PLAN_JETPACK_FREE } from '@automattic/calypso-products';
 import { renderHook } from '@testing-library/react-hooks';
-
-/**
- * Internal dependencides
- */
 import { JPC_PATH_BASE } from 'calypso/jetpack-connect/constants';
 import { storePlan } from 'calypso/jetpack-connect/persistence-utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';

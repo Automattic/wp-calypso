@@ -1,32 +1,22 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import { Button } from '@automattic/components';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
-import React from 'react';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { intersection, difference, includes, flowRight as compose } from 'lodash';
 import PropTypes from 'prop-types';
+import React from 'react';
 import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
-import { intersection, difference, includes, flowRight as compose } from 'lodash';
-import classNames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
-import { Button } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
+import KeyedSuggestions from 'calypso/components/keyed-suggestions';
+import Popover from 'calypso/components/popover';
 import Search from 'calypso/components/search';
 import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
-import KeyedSuggestions from 'calypso/components/keyed-suggestions';
 import StickyPanel from 'calypso/components/sticky-panel';
-import config from '@automattic/calypso-config';
-import { localize } from 'i18n-calypso';
-import MagicSearchWelcome from './welcome';
 import { getThemeFilters, getThemeFilterToTermTable } from 'calypso/state/themes/selectors';
-import Popover from 'calypso/components/popover';
+import MagicSearchWelcome from './welcome';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 //We want those taxonomies if they are used to be presented in this order

@@ -1,39 +1,3 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { find, get } from 'lodash';
-import page from 'page';
-import PropTypes from 'prop-types';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { themeActivated } from 'calypso/state/themes/actions';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import WordPressLogo from 'calypso/components/wordpress-logo';
-import { Card } from '@automattic/components';
-import ChargebackDetails from './chargeback-details';
-import CheckoutThankYouFeaturesHeader from './features-header';
-import CheckoutThankYouHeader from './header';
-import DomainMappingDetails from './domain-mapping-details';
-import DomainRegistrationDetails from './domain-registration-details';
-import { fetchReceipt } from 'calypso/state/receipts/actions';
-import { fetchSitePlans, refreshSitePlans } from 'calypso/state/sites/plans/actions';
-import { getPlansBySite, getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
-import { getReceiptById } from 'calypso/state/receipts/selectors';
-import {
-	getCurrentUser,
-	getCurrentUserDate,
-	isCurrentUserEmailVerified,
-} from 'calypso/state/current-user/selectors';
-import GoogleAppsDetails from './google-apps-details';
-import GuidedTransferDetails from './guided-transfer-details';
-import HappinessSupport from 'calypso/components/happiness-support';
-import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
-import AtomicStoreThankYouCard from './atomic-store-thank-you-card';
 import {
 	isChargeback,
 	isDelayedDomainTransfer,
@@ -59,44 +23,70 @@ import {
 	shouldFetchSitePlans,
 	isMarketplaceProduct,
 } from '@automattic/calypso-products';
-import { isExternal } from 'calypso/lib/url';
-import JetpackPlanDetails from './jetpack-plan-details';
+import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { find, get } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
+import AsyncLoad from 'calypso/components/async-load';
+import HappinessSupport from 'calypso/components/happiness-support';
 import Main from 'calypso/components/main';
-import BloggerPlanDetails from './blogger-plan-details';
-import PersonalPlanDetails from './personal-plan-details';
-import PremiumPlanDetails from './premium-plan-details';
-import BusinessPlanDetails from './business-plan-details';
-import EcommercePlanDetails from './ecommerce-plan-details';
-import FailedPurchaseDetails from './failed-purchase-details';
-import TransferPending from './transfer-pending';
-import PurchaseDetail from 'calypso/components/purchase-detail';
-import { getFeatureByKey } from 'calypso/lib/plans/features-list';
-import RebrandCitiesThankYou from './rebrand-cities-thank-you';
-import SiteRedirectDetails from './site-redirect-details';
 import Notice from 'calypso/components/notice';
+import PurchaseDetail from 'calypso/components/purchase-detail';
+import WordPressLogo from 'calypso/components/wordpress-logo';
+import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getFeatureByKey } from 'calypso/lib/plans/features-list';
+import { isRebrandCitiesSiteUrl } from 'calypso/lib/rebrand-cities';
+import { isExternal } from 'calypso/lib/url';
 import {
 	domainManagementList,
 	domainManagementTransferInPrecheck,
 } from 'calypso/my-sites/domains/paths';
 import { emailManagement } from 'calypso/my-sites/email/paths';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isRebrandCitiesSiteUrl } from 'calypso/lib/rebrand-cities';
 import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
-import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
-import { getSiteHomeUrl, getSiteSlug, getSite } from 'calypso/state/sites/selectors';
+import {
+	getCurrentUser,
+	getCurrentUserDate,
+	isCurrentUserEmailVerified,
+} from 'calypso/state/current-user/selectors';
 import { recordStartTransferClickInThankYou } from 'calypso/state/domains/actions';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { getActiveTheme } from 'calypso/state/themes/selectors';
-import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customize-or-edit-front-page-url';
-import getCheckoutUpgradeIntent from 'calypso/state/selectors/get-checkout-upgrade-intent';
 import { isProductsListFetching } from 'calypso/state/products-list/selectors';
-import AsyncLoad from 'calypso/components/async-load';
-import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
+import { fetchReceipt } from 'calypso/state/receipts/actions';
+import { getReceiptById } from 'calypso/state/receipts/selectors';
+import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
+import getCheckoutUpgradeIntent from 'calypso/state/selectors/get-checkout-upgrade-intent';
+import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customize-or-edit-front-page-url';
+import { fetchSitePlans, refreshSitePlans } from 'calypso/state/sites/plans/actions';
+import { getPlansBySite, getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
+import { getSiteHomeUrl, getSiteSlug, getSite } from 'calypso/state/sites/selectors';
+import { themeActivated } from 'calypso/state/themes/actions';
+import { getActiveTheme } from 'calypso/state/themes/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import AtomicStoreThankYouCard from './atomic-store-thank-you-card';
+import BloggerPlanDetails from './blogger-plan-details';
+import BusinessPlanDetails from './business-plan-details';
+import ChargebackDetails from './chargeback-details';
+import DomainMappingDetails from './domain-mapping-details';
+import DomainRegistrationDetails from './domain-registration-details';
+import EcommercePlanDetails from './ecommerce-plan-details';
+import FailedPurchaseDetails from './failed-purchase-details';
+import CheckoutThankYouFeaturesHeader from './features-header';
+import GoogleAppsDetails from './google-apps-details';
+import GuidedTransferDetails from './guided-transfer-details';
+import CheckoutThankYouHeader from './header';
+import JetpackPlanDetails from './jetpack-plan-details';
+import PersonalPlanDetails from './personal-plan-details';
+import PremiumPlanDetails from './premium-plan-details';
+import RebrandCitiesThankYou from './rebrand-cities-thank-you';
+import SiteRedirectDetails from './site-redirect-details';
+import TransferPending from './transfer-pending';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function getPurchases( props ) {

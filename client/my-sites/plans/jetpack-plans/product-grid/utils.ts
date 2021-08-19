@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	JETPACK_RESET_PLANS,
 	getMonthlyPlanByYearly,
@@ -8,10 +5,6 @@ import {
 } from '@automattic/calypso-products';
 import { SELECTOR_PLANS } from '../constants';
 import slugToSelectorProduct from '../slug-to-selector-product';
-
-/**
- * Type dependencies
- */
 import type { Duration, SelectorProduct } from '../types';
 
 // Map over all plan slugs and convert them to SelectorProduct types.

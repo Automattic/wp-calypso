@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { getConfiguredTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
+import PropTypes from 'prop-types';
+import React from 'react';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import { getConfiguredTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
 
 const TitanUnusedMailboxesNotice = ( { domain, maxTitanMailboxCount, onFinishSetupClick } ) => {
 	const translate = useTranslate();

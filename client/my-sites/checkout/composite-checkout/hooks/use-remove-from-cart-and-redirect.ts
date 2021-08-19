@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import { useCallback, useState, useRef, useEffect } from 'react';
-import page from 'page';
-import debugFactory from 'debug';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import type { RemoveProductFromCart, ResponseCart } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
+import debugFactory from 'debug';
+import page from 'page';
+import { useCallback, useState, useRef, useEffect } from 'react';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import useValidCheckoutBackUrl from './use-valid-checkout-back-url';
+import type { RemoveProductFromCart, ResponseCart } from '@automattic/shopping-cart';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-redirect-if-cart-empty' );
 

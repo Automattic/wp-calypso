@@ -1,31 +1,21 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import EmptyContent from 'calypso/components/empty-content';
-import ExporterContainer from 'calypso/my-sites/exporter/container';
-import Main from 'calypso/components/main';
 import DocumentHead from 'calypso/components/data/document-head';
+import EmptyContent from 'calypso/components/empty-content';
+import FormattedHeader from 'calypso/components/formatted-header';
+import Main from 'calypso/components/main';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import ExporterContainer from 'calypso/my-sites/exporter/container';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import FormattedHeader from 'calypso/components/formatted-header';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const SectionExport = ( { isJetpack, canUserExport, site, translate } ) => {

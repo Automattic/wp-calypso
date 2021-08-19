@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { sortPagesHierarchically } from '../helpers';
 
 describe( 'helpers', () => {

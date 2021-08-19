@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import Gridicon from 'calypso/components/gridicon';
-import { range, round } from 'lodash';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import classNames from 'classnames';
+import { range, round } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import Gridicon from 'calypso/components/gridicon';
 
 const MIN_CELL_WIDTH = 240; // px
 const SIDE_PANE_RATIO = 0.12; // 12% of full width

@@ -1,32 +1,24 @@
-/**
- * External dependencies
- */
-
+import config from '@automattic/calypso-config';
+import { flowRight, get, pick } from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { flowRight, get, pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import wrapSettingsForm from './wrap-settings-form';
-import config from '@automattic/calypso-config';
-import PressThis from './press-this';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { requestPostTypes } from 'calypso/state/post-types/actions';
-import Composing from './composing';
-import CustomContentTypes from './custom-content-types';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import FeedSettings from 'calypso/my-sites/site-settings/feed-settings';
 import PodcastingLink from 'calypso/my-sites/site-settings/podcasting-details/link';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { requestPostTypes } from 'calypso/state/post-types/actions';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import Composing from './composing';
+import CustomContentTypes from './custom-content-types';
 import Masterbar from './masterbar';
 import MediaSettingsWriting from './media-settings-writing';
+import PressThis from './press-this';
+import PublishingTools from './publishing-tools';
 import ThemeEnhancements from './theme-enhancements';
 import Widgets from './widgets';
-import PublishingTools from './publishing-tools';
-import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import wrapSettingsForm from './wrap-settings-form';
 
 class SiteSettingsFormWriting extends Component {
 	isMobile() {

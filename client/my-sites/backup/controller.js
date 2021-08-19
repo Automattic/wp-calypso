@@ -1,32 +1,25 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import Debug from 'debug';
 import { isJetpackBackupSlug, JETPACK_BACKUP_PRODUCTS } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
-import BackupRewindFlow, { RewindFlowPurpose } from './rewind-flow';
-import BackupsPage from './main';
-import UpsellSwitch from 'calypso/components/jetpack/upsell-switch';
-import BackupUpsell from './backup-upsell';
-import WPCOMBackupUpsell from './wpcom-backup-upsell';
-import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
+import Debug from 'debug';
+import React from 'react';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import FormattedHeader from 'calypso/components/formatted-header';
+import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
+import HasVaultPressSwitch from 'calypso/components/jetpack/has-vaultpress-switch';
+import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user-admin-switch';
+import IsJetpackDisconnectedSwitch from 'calypso/components/jetpack/is-jetpack-disconnected-switch';
+import NotAuthorizedPage from 'calypso/components/jetpack/not-authorized-page';
+import UpsellSwitch from 'calypso/components/jetpack/upsell-switch';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { setFilter } from 'calypso/state/activity-log/actions';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import siteHasSubscription from 'calypso/state/selectors/site-has-subscription';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import QueryRewindState from 'calypso/components/data/query-rewind-state';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import HasVaultPressSwitch from 'calypso/components/jetpack/has-vaultpress-switch';
-import IsJetpackDisconnectedSwitch from 'calypso/components/jetpack/is-jetpack-disconnected-switch';
-import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user-admin-switch';
-import NotAuthorizedPage from 'calypso/components/jetpack/not-authorized-page';
-import siteHasSubscription from 'calypso/state/selectors/site-has-subscription';
+import BackupUpsell from './backup-upsell';
+import BackupsPage from './main';
+import BackupRewindFlow, { RewindFlowPurpose } from './rewind-flow';
+import WPCOMBackupUpsell from './wpcom-backup-upsell';
 
 const debug = new Debug( 'calypso:my-sites:backup:controller' );
 

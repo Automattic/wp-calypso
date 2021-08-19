@@ -1,11 +1,8 @@
-/**
- * External dependencies
- */
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import { notFound, makeLayout, render as clientRender } from 'calypso/controller';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import wpcomUpsellController from 'calypso/lib/jetpack/wpcom-upsell-controller';
+import wrapInSiteOffsetProvider from 'calypso/lib/wrap-in-site-offset';
 import {
 	backupDownload,
 	backupRestore,
@@ -16,15 +13,11 @@ import {
 	showUnavailableForVaultPressSites,
 	showUnavailableForMultisites,
 } from 'calypso/my-sites/backup/controller';
-import { backupMainPath, backupRestorePath, backupDownloadPath } from './paths';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
-import { notFound, makeLayout, render as clientRender } from 'calypso/controller';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
-import wpcomUpsellController from 'calypso/lib/jetpack/wpcom-upsell-controller';
 import WPCOMUpsellPage from 'calypso/my-sites/backup/wpcom-upsell';
-import wrapInSiteOffsetProvider from 'calypso/lib/wrap-in-site-offset';
+import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
+import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { backupMainPath, backupRestorePath, backupDownloadPath } from './paths';
 
 const notFoundIfNotEnabled = ( context, next ) => {
 	const state = context.store.getState();

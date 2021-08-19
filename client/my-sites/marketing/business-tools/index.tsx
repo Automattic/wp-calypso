@@ -1,39 +1,29 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
-import React, { Fragment, FunctionComponent } from 'react';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import MarketingBusinessToolsFeature from './feature';
-import MarketingBusinessToolsHeader from './header';
+import { useTranslate } from 'i18n-calypso';
+import React, { Fragment, FunctionComponent } from 'react';
+import { connect } from 'react-redux';
+import benchLogo from 'calypso/assets/images/illustrations/bench-logo.svg';
+import billcomLogo from 'calypso/assets/images/illustrations/billcom-logo.svg';
+import evernoteLogo from 'calypso/assets/images/illustrations/evernote-logo.svg';
+import mondayLogo from 'calypso/assets/images/illustrations/monday-logo.svg';
+import quickbooksLogo from 'calypso/assets/images/illustrations/quickbooks-logo.svg';
+import streakLogo from 'calypso/assets/images/illustrations/streak-logo.png';
+import todoistLogo from 'calypso/assets/images/illustrations/todoist-logo.svg';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import * as T from 'calypso/types';
+import MarketingBusinessToolsFeature from './feature';
+import MarketingBusinessToolsHeader from './header';
 
 /**
  * Images
  */
-import quickbooksLogo from 'calypso/assets/images/illustrations/quickbooks-logo.svg';
-import evernoteLogo from 'calypso/assets/images/illustrations/evernote-logo.svg';
-import mondayLogo from 'calypso/assets/images/illustrations/monday-logo.svg';
-import benchLogo from 'calypso/assets/images/illustrations/bench-logo.svg';
-import todoistLogo from 'calypso/assets/images/illustrations/todoist-logo.svg';
-import streakLogo from 'calypso/assets/images/illustrations/streak-logo.png';
-import billcomLogo from 'calypso/assets/images/illustrations/billcom-logo.svg';
 
 /**
  * Types
  */
-import * as T from 'calypso/types';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface Props {

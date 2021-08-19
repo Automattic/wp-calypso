@@ -1,50 +1,42 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import { getUrlParts } from '@automattic/calypso-url';
+import formatCurrency from '@automattic/format-currency/src';
+import { localize } from 'i18n-calypso';
+import { get, reject } from 'lodash';
+import moment from 'moment';
 import PropTypes from 'prop-types';
 import React from 'react';
-
-import moment from 'moment';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import config from '@automattic/calypso-config';
-import { get, reject } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { getUrlParts } from '@automattic/calypso-url';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import AsyncLoad from 'calypso/components/async-load';
+import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
+import QueryProductsList from 'calypso/components/data/query-products-list';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import getActiveDiscount from 'calypso/state/selectors/get-active-discount';
+import { getUnformattedDomainPrice, getUnformattedDomainSalePrice } from 'calypso/lib/domains';
+import { preventWidows } from 'calypso/lib/formatting';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { getTopJITM } from 'calypso/state/jitm/selectors';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
+import { getProductsList } from 'calypso/state/products-list/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getActiveDiscount from 'calypso/state/selectors/get-active-discount';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
+import isEligibleForFreeToPaidUpsell from 'calypso/state/selectors/is-eligible-for-free-to-paid-upsell';
+import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
+import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
 	hasDomainCredit,
 	isCurrentUserCurrentPlanOwner,
 } from 'calypso/state/sites/plans/selectors';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
-import isEligibleForFreeToPaidUpsell from 'calypso/state/selectors/is-eligible-for-free-to-paid-upsell';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { getProductsList } from 'calypso/state/products-list/selectors';
-import QueryProductsList from 'calypso/components/data/query-products-list';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getUnformattedDomainPrice, getUnformattedDomainSalePrice } from 'calypso/lib/domains';
-import formatCurrency from '@automattic/format-currency/src';
-import { getPreference } from 'calypso/state/preferences/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { savePreference } from 'calypso/state/preferences/actions';
-import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
-import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
 import { getSectionName } from 'calypso/state/ui/selectors';
-import { getTopJITM } from 'calypso/state/jitm/selectors';
-import AsyncLoad from 'calypso/components/async-load';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { preventWidows } from 'calypso/lib/formatting';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
 const DOMAIN_UPSELL_NUDGE_DISMISS_KEY = 'domain_upsell_nudge_dismiss';
 

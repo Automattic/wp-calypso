@@ -1,25 +1,17 @@
-/**
- * External dependencies
- */
-
+import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { dropRightWhile } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { dropRightWhile } from 'lodash';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
 import FormButton from 'calypso/components/forms/form-button';
-import CustomNameserversRow from './custom-nameservers-row';
 import { CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS } from 'calypso/lib/url/support';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
+import CustomNameserversRow from './custom-nameservers-row';
 
 const MIN_NAMESERVER_LENGTH = 2;
 const MAX_NAMESERVER_LENGTH = 4;

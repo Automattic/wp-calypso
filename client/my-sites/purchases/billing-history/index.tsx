@@ -1,38 +1,31 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import { CompactCard } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-import { CompactCard } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
-import MySitesSidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import Main from 'calypso/components/main';
 import DocumentHead from 'calypso/components/data/document-head';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import QueryBillingTransactions from 'calypso/components/data/query-billing-transactions';
-import { BillingHistoryContent } from 'calypso/me/purchases/billing-history/main';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import QueryBillingTransaction from 'calypso/components/data/query-billing-transaction';
-import getPastBillingTransaction from 'calypso/state/selectors/get-past-billing-transaction';
+import QueryBillingTransactions from 'calypso/components/data/query-billing-transactions';
+import FormattedHeader from 'calypso/components/formatted-header';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { BillingHistoryContent } from 'calypso/me/purchases/billing-history/main';
 import {
 	ReceiptBody,
 	ReceiptPlaceholder,
 	ReceiptTitle,
 } from 'calypso/me/purchases/billing-history/receipt';
-import FormattedHeader from 'calypso/components/formatted-header';
-import { getReceiptUrlFor, getBillingHistoryUrlFor } from '../paths';
 import titles from 'calypso/me/purchases/titles';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import useRedirectToHistoryPageOnInvalidTransaction from './use-redirect-to-history-page-on-invalid-transaction';
-import useRedirectToHistoryPageOnWrongSiteForTransaction from './use-redirect-to-history-page-on-wrong-site-for-transaction';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
 import SiteLevelPurchasesErrorBoundary from 'calypso/my-sites/purchases/site-level-purchases-error-boundary';
+import MySitesSidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { logToLogstash } from 'calypso/state/logstash/actions';
-import config from '@automattic/calypso-config';
+import getPastBillingTransaction from 'calypso/state/selectors/get-past-billing-transaction';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getReceiptUrlFor, getBillingHistoryUrlFor } from '../paths';
+import useRedirectToHistoryPageOnInvalidTransaction from './use-redirect-to-history-page-on-invalid-transaction';
+import useRedirectToHistoryPageOnWrongSiteForTransaction from './use-redirect-to-history-page-on-wrong-site-for-transaction';
 
 function useLogBillingHistoryError( message: string ) {
 	const reduxDispatch = useDispatch();

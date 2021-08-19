@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { JETPACK_CHECKOUT_UPDATE_SUPPORT_TICKET_REQUEST } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/jetpack-checkout/support-ticket';

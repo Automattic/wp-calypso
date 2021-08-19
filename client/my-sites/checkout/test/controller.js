@@ -2,23 +2,16 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import * as page from 'page';
-import configureStore from 'redux-mock-store';
 import {
 	PLAN_JETPACK_PERSONAL,
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_BACKUP_DAILY,
 } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
+import * as page from 'page';
+import configureStore from 'redux-mock-store';
+import { COMPARE_PLANS_QUERY_PARAM } from '../../plans/jetpack-plans/plan-upgrade/constants';
 import { redirectJetpackLegacyPlans } from '../controller';
 import * as utils from '../utils';
-import { COMPARE_PLANS_QUERY_PARAM } from '../../plans/jetpack-plans/plan-upgrade/constants';
 
 jest.mock( 'page' );
 jest.mock( '../utils' );

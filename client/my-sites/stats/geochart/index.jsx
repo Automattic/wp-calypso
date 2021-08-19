@@ -1,28 +1,18 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import { loadScript } from '@automattic/load-script';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { throttle, map } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import classNames from 'classnames';
-import { throttle, map } from 'lodash';
 import { connect } from 'react-redux';
-import { loadScript } from '@automattic/load-script';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import config from '@automattic/calypso-config';
-import StatsModulePlaceholder from '../stats-module/placeholder';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
+import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import StatsModulePlaceholder from '../stats-module/placeholder';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class StatsGeochart extends Component {

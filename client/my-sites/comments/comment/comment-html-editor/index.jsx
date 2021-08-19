@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
+import { Button } from '@automattic/components';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import { delay, get, map, reduce, reject } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import AddImageDialog from 'calypso/my-sites/comments/comment/comment-html-editor/add-image-dialog';
 import AddLinkDialog from 'calypso/my-sites/comments/comment/comment-html-editor/add-link-dialog';
-import FormTextarea from 'calypso/components/forms/form-textarea';
-import { Button } from '@automattic/components';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 export class CommentHtmlEditor extends Component {
 	static propTypes = {

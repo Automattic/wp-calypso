@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { getIsDismissed, getIsValid } from '../selectors';
 import { TIME_BETWEEN_PROMPTS } from '../constants';
+import { getIsDismissed, getIsValid } from '../selectors';
 
 const TEST_SITE_ID = 123456789;
 const reduxState = {

@@ -1,22 +1,12 @@
-/**
- * External dependencies
- */
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
-import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class SidebarBanner extends Component {

@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
+import { useDisplayCartMessages } from '@automattic/wpcom-checkout';
+import { useTranslate } from 'i18n-calypso';
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-import type { TranslateResult } from 'i18n-calypso';
-import { useDisplayCartMessages } from '@automattic/wpcom-checkout';
-import type { ResponseCart, ResponseCartMessage } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
+import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
+import type { ResponseCart, ResponseCartMessage } from '@automattic/shopping-cart';
+import type { TranslateResult } from 'i18n-calypso';
 
 function CartMessage( { message }: { message: ResponseCartMessage } ): JSX.Element {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );

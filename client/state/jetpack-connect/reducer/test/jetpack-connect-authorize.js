@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import jetpackConnectAuthorize from '../jetpack-connect-authorize.js';
+import { SITE_REQUEST_FAILURE } from 'calypso/state/action-types';
 import {
 	JETPACK_CONNECT_AUTHORIZE,
 	JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
@@ -14,9 +7,9 @@ import {
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 	JETPACK_CONNECT_QUERY_SET,
 } from 'calypso/state/jetpack-connect/action-types';
-import { SITE_REQUEST_FAILURE } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import jetpackConnectAuthorize from '../jetpack-connect-authorize.js';
 
 describe( '#jetpackConnectAuthorize()', () => {
 	useSandbox( ( sandbox ) => {

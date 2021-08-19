@@ -1,33 +1,26 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import page from 'page';
-import { connect } from 'react-redux';
-import { capitalize, find, flow, isEmpty } from 'lodash';
+import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { capitalize, find, flow, isEmpty } from 'lodash';
+import page from 'page';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
-import SectionNav from 'calypso/components/section-nav';
-import NavTabs from 'calypso/components/section-nav/tabs';
-import NavItem from 'calypso/components/section-nav/item';
-import Search from 'calypso/components/search';
-import urlSearch from 'calypso/lib/url-search';
+import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import EmptyContent from 'calypso/components/empty-content';
+import FormattedHeader from 'calypso/components/formatted-header';
+import Main from 'calypso/components/main';
+import Search from 'calypso/components/search';
+import SectionNav from 'calypso/components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import urlSearch from 'calypso/lib/url-search';
+import { getVisibleSites, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getPlugins, isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import PluginsList from './plugins-list';
-import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
-import PluginsBrowser from './plugins-browser';
-import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
-import NoPermissionsError from './no-permissions-error';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
@@ -43,13 +36,10 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import { getPlugins, isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
-import { Button } from '@automattic/components';
-import { getVisibleSites, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import NoPermissionsError from './no-permissions-error';
+import PluginsBrowser from './plugins-browser';
+import PluginsList from './plugins-list';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class PluginsMain extends Component {

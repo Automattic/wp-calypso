@@ -2,24 +2,17 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import page from 'page';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-
-/**
- * Internal dependencies
- */
+import * as pageView from 'calypso/lib/analytics/page-view';
+import { PREFERENCES_SET } from 'calypso/state/action-types';
 import {
 	updateRecentSitesPreferences,
 	recordNoSitesPageView,
 	recordNoVisibleSitesPageView,
 	redirectToPrimary,
 } from '../controller';
-import * as pageView from 'calypso/lib/analytics/page-view';
-import { PREFERENCES_SET } from 'calypso/state/action-types';
 
 const middlewares = [ thunk ];
 const mockStore = configureStore( middlewares );

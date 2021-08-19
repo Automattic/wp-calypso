@@ -1,34 +1,23 @@
-/**
- * External dependencies
- */
-
+import { Button } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
 import Animate from 'calypso/components/animate';
-import { Button } from '@automattic/components';
+import QuerySiteConnectionStatus from 'calypso/components/data/query-site-connection-status';
 import ExternalLink from 'calypso/components/external-link';
+import Gridicon from 'calypso/components/gridicon';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
-import QuerySiteConnectionStatus from 'calypso/components/data/query-site-connection-status';
-import { getUpdatesBySiteId, isJetpackSite } from 'calypso/state/sites/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { getUpdatesBySiteId, isJetpackSite } from 'calypso/state/sites/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const WPAdminLink = ( props ) => <ExternalLink icon iconSize={ 12 } target="_blank" { ...props } />;

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { useMemo } from 'react';
-
-/**
- * Internal dependencies
- */
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	DELTA_ACTIVITIES,

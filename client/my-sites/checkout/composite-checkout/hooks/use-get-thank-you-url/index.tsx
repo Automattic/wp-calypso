@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
+import debugFactory from 'debug';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import debugFactory from 'debug';
+import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import getThankYouPageUrl from './get-thank-you-page-url';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { WPCOMTransactionEndpointResponse } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
-import getThankYouPageUrl from './get-thank-you-page-url';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-get-thank-you-url' );
 

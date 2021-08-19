@@ -1,17 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import {
-	requestJetpackConnectionStatus,
-	requestJetpackUserConnectionData,
-	disconnect,
-} from '../actions';
-import { items as ITEMS_FIXTURE, dataItems as DATA_ITEMS_FIXTURE } from './fixture';
 import {
 	JETPACK_CONNECTION_STATUS_RECEIVE,
 	JETPACK_CONNECTION_STATUS_REQUEST,
@@ -25,6 +12,12 @@ import {
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import {
+	requestJetpackConnectionStatus,
+	requestJetpackUserConnectionData,
+	disconnect,
+} from '../actions';
+import { items as ITEMS_FIXTURE, dataItems as DATA_ITEMS_FIXTURE } from './fixture';
 
 describe( 'actions', () => {
 	const siteId = 12345678;

@@ -2,17 +2,10 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import React from 'react';
-import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
-import { MySitesSidebar } from '..';
 import config from '@automattic/calypso-config';
+import { shallow } from 'enzyme';
+import React from 'react';
+import { MySitesSidebar } from '..';
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );

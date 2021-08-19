@@ -1,34 +1,27 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { useShoppingCart } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
 import {
 	getProductFromSlug,
 	isJetpackBackup,
 	isJetpackBackupSlug,
 	isJetpackPlanSlug,
 } from '@automattic/calypso-products';
-import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
+import { useShoppingCart } from '@automattic/shopping-cart';
+import React from 'react';
+import { useSelector } from 'react-redux';
+import Notice from 'calypso/components/notice';
+import {
+	isPlanIncludingSiteBackup,
+	isBackupProductIncludedInSitePlan,
+} from 'calypso/state/sites/products/conflicts';
 import {
 	getSitePlan,
 	getSiteProducts,
 	isJetpackMinimumVersion,
 	getSiteOption,
 } from 'calypso/state/sites/selectors';
-import {
-	isPlanIncludingSiteBackup,
-	isBackupProductIncludedInSitePlan,
-} from 'calypso/state/sites/products/conflicts';
-import Notice from 'calypso/components/notice';
-import SitePlanIncludesCartProductNotice from './site-plan-includes-cart-product-notice';
+import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import CartPlanOverlapsOwnedProductNotice from './cart-plan-overlaps-owned-product-notice';
 import JetpackPluginRequiredVersionNotice from './jetpack-plugin-required-version-notice';
+import SitePlanIncludesCartProductNotice from './site-plan-includes-cart-product-notice';
 
 import './style.scss';
 

@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { localize } from 'i18n-calypso';
 import { Button, Card } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
+import { localize } from 'i18n-calypso';
+import React from 'react';
+import SectionHeader from 'calypso/components/section-header';
 import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
-import SectionHeader from 'calypso/components/section-header';
 
 class EmailListInactive extends React.Component {
 	render() {

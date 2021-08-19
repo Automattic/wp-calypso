@@ -1,20 +1,12 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import CloseOnEscape from 'calypso/components/close-on-escape';
 import SiteSelector from 'calypso/components/site-selector';
 import { hasTouch } from 'calypso/lib/touch-detect';
-import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 
 const noop = () => {};
 

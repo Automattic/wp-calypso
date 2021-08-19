@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
 import wpcom from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

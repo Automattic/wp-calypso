@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { find, isEmpty, includes, get } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
-import { StateSelect, Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
-import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from 'calypso/lib/checkout/constants';
 import InfoPopover from 'calypso/components/info-popover';
 import { paymentMethodName } from 'calypso/lib/cart-values';
+import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from 'calypso/lib/checkout/constants';
+import { StateSelect, Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
 
 export class CountrySpecificPaymentFields extends Component {
 	static propTypes = {
