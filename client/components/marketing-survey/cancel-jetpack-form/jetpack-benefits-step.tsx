@@ -1,28 +1,20 @@
-/**
- * External Dependencies
- */
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-import moment from 'moment';
-
-/**
- * Internal Dependencies
- */
 import {
 	JETPACK_SEARCH_PRODUCTS,
 	isJetpackPlanSlug,
 	isJetpackBackupSlug,
 	isJetpackScanSlug,
 } from '@automattic/calypso-products';
-
-import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import { useTranslate } from 'i18n-calypso';
+import moment from 'moment';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import JetpackBenefits from 'calypso/blocks/jetpack-benefits';
 import JetpackGeneralBenefits from 'calypso/blocks/jetpack-benefits/general-benefits';
-import { isPartnerPurchase } from 'calypso/lib/purchases';
-import type { Purchase } from 'calypso/lib/purchases/types';
-import type { ResponseCartProduct } from '@automattic/shopping-cart';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { isPartnerPurchase } from 'calypso/lib/purchases';
+import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import type { ResponseCartProduct } from '@automattic/shopping-cart';
+import type { Purchase } from 'calypso/lib/purchases/types';
 
 interface Props {
 	siteId: number;
