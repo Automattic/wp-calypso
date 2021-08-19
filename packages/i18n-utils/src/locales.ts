@@ -25,7 +25,7 @@ export const localesToSubdomains: Record< string, LocaleSubdomain > = {
 export const englishLocales: Locale[] = [ 'en', 'en-gb' ];
 
 // replaces config( 'livechat_support_locales' )
-export const livechatSupportLocales: Locale[] = [ 'en', 'es', 'pt-br' ];
+export const livechatSupportLocales: Locale[] = [ 'en' ];
 
 // replaces config( 'support_site_locales' )
 export const supportSiteLocales: Locale[] = [
