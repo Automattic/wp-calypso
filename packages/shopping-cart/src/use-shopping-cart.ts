@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect, useRef } from 'react';
-import { createShoppingCartHookManager } from './shopping-cart-hook-manager';
+import { createUseShoppingCartState } from './shopping-cart-hook-manager';
 import ShoppingCartOptionsContext from './shopping-cart-options-context';
 import useManagerClient from './use-manager-client';
 import useRefetchOnFocus from './use-refetch-on-focus';
@@ -11,7 +11,6 @@ export default function useShoppingCart( cartKey?: string ): UseShoppingCart {
 	const { defaultCartKey } = useContext( ShoppingCartOptionsContext );
 	const finalCartKey = cartKey ?? defaultCartKey;
 	const manager = managerClient.forCartKey( finalCartKey );
-	const hookManager = createShoppingCartHookManager( manager );
 
 	useRefetchOnFocus( finalCartKey );
 
@@ -28,12 +27,12 @@ export default function useShoppingCart( cartKey?: string ): UseShoppingCart {
 	}, [] );
 
 	// Re-render when the cart changes
-	const [ cartState, setCartState ] = useState( hookManager.getState() );
+	const [ cartState, setCartState ] = useState( createUseShoppingCartState( manager ) );
 	useEffect( () => {
 		return manager.subscribe( () => {
-			isMounted.current && setCartState( hookManager.getState() );
+			isMounted.current && setCartState( createUseShoppingCartState( manager ) );
 		} );
-	}, [ hookManager, manager ] );
+	}, [ manager ] );
 
 	return cartState;
 }
