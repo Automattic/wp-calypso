@@ -85,7 +85,7 @@ const DomainMappingThankYou = ( { domainName: domain, selectedSite } ) => {
 					},
 				],
 			} }
-			thankYouImage={ { alt: 'Domain Connected', src: domainConnectedSuccess } }
+			thankYouImage={ { alt: translate( 'Domain Connected' ), src: domainConnectedSuccess } }
 			thankYouTitle={ translate( 'Congratulations on your purchase!' ) }
 			thankYouSubtitle={ translate(
 				'You can now connect {{strong}}%(domain)s{{/strong}} to your site',
