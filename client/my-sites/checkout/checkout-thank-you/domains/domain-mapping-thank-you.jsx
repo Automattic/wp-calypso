@@ -1,20 +1,11 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useTranslate } from 'i18n-calypso';
 import { Button } from '@automattic/components';
-/**
- * Internal dependencies
- */
+import { useTranslate } from 'i18n-calypso';
+import React from 'react';
+import domainConnectedSuccess from 'calypso/assets/images/illustrations/domain-connected-success.svg';
 import { ThankYou } from 'calypso/components/thank-you';
 import { domainMappingSetup } from 'calypso/my-sites/domains/paths';
 import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
-import domainConnectedSuccess from 'calypso/assets/images/illustrations/domain-connected-success.svg';
 
-/**
- * style dependencies
- */
 import './style.scss';
 
 const DomainMappingThankYou = ( { domainName: domain, selectedSite } ) => {
