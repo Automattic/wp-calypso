@@ -1,35 +1,25 @@
-/**
- * External dependencies
- */
+import { FEATURE_NO_ADS } from '@automattic/calypso-products';
+import { localize } from 'i18n-calypso';
+import { find, get } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { find, get } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import isVipSite from 'calypso/state/selectors/is-vip-site';
-import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
-import SectionNav from 'calypso/components/section-nav';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import FormattedHeader from 'calypso/components/formatted-header';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { FEATURE_NO_ADS } from '@automattic/calypso-products';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-/**
- * Style Dependencies
- */
 import './style.scss';
 
 export const Sharing = ( {

@@ -1,9 +1,5 @@
-/**
- * External dependencies
- */
-
-import { stringify } from 'qs';
 import i18n from 'i18n-calypso';
+import { stringify } from 'qs';
 
 const baseUrl = '//widgets.wp.com/sharing-buttons-preview/';
 

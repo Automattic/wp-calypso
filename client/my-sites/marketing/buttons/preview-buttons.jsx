@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
-
-import { filter, isEqual } from 'lodash';
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
-import ReactDom from 'react-dom';
-import React from 'react';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import ButtonsPreviewButton from 'calypso/my-sites/marketing/buttons/preview-button';
+import { localize } from 'i18n-calypso';
+import { filter, isEqual } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import ReactDom from 'react-dom';
 import ResizableIframe from 'calypso/components/resizable-iframe';
-import previewWidget from './preview-widget';
 import { hasTouch } from 'calypso/lib/touch-detect';
+import ButtonsPreviewButton from 'calypso/my-sites/marketing/buttons/preview-button';
+import previewWidget from './preview-widget';
 
 class SharingButtonsPreviewButtons extends React.Component {
 	static displayName = 'SharingButtonsPreviewButtons';

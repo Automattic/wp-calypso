@@ -1,29 +1,22 @@
-/**
- * External dependencies
- */
-import { createElement } from 'react';
-import page from 'page';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
-import MarketingTools from './tools';
-import MarketingBusinessTools from './business-tools';
-import Sharing from './main';
-import SharingButtons from './buttons/buttons';
-import SharingConnections from './connections/connections';
-import Traffic from './traffic/';
-import UltimateTrafficGuide from './ultimate-traffic-guide';
-import { requestSite } from 'calypso/state/sites/actions';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import page from 'page';
+import { createElement } from 'react';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { setExpandedService } from 'calypso/state/sharing/actions';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import { setExpandedService } from 'calypso/state/sharing/actions';
+import { requestSite } from 'calypso/state/sites/actions';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import MarketingBusinessTools from './business-tools';
+import SharingButtons from './buttons/buttons';
+import SharingConnections from './connections/connections';
+import Sharing from './main';
+import MarketingTools from './tools';
+import Traffic from './traffic/';
+import UltimateTrafficGuide from './ultimate-traffic-guide';
 
 export const redirectConnections = ( context ) => {
 	const serviceParam = context.params.service ? `?service=${ context.params.service }` : '';
