@@ -28,6 +28,7 @@ export const getPlansToDisplay = ( {
 				// Don't include a plan the user already owns, regardless of the term
 				! currentPlanTerms.includes( product.productSlug )
 		);
+
 	if ( currentPlanSlug && JETPACK_RESET_PLANS.includes( currentPlanSlug ) ) {
 		const currentPlanSelectorProduct = slugToSelectorProduct( currentPlanSlug );
 		if ( currentPlanSelectorProduct ) {
