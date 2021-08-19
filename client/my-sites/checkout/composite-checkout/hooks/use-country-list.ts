@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import { useEffect, useState } from 'react';
 import debugFactory from 'debug';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import getCountries from 'calypso/state/selectors/get-countries';
 import { fetchPaymentCountries } from 'calypso/state/countries/actions';
+import getCountries from 'calypso/state/selectors/get-countries';
 import type { CountryListItem } from '../types/country-list-item';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-country-list' );

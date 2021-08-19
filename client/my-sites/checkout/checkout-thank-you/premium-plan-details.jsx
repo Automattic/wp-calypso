@@ -1,28 +1,17 @@
-/**
- * External dependencies
- */
+import { isPremium, isGSuiteOrExtraLicenseOrGoogleWorkspace } from '@automattic/calypso-products';
+import { useTranslate } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
-import GoogleAppsDetails from './google-apps-details';
-import { isPremium, isGSuiteOrExtraLicenseOrGoogleWorkspace } from '@automattic/calypso-products';
-import { newPost } from 'calypso/lib/paths';
-import PurchaseDetail from 'calypso/components/purchase-detail';
-
-/**
- * Image dependencies
- */
+import earnImage from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
 import analyticsImage from 'calypso/assets/images/illustrations/google-analytics.svg';
-import advertisingRemovedImage from 'calypso/assets/images/upgrades/removed-advertising.svg';
 import customizeThemeImage from 'calypso/assets/images/upgrades/customize-theme.svg';
 import mediaPostImage from 'calypso/assets/images/upgrades/media-post.svg';
-import earnImage from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
+import advertisingRemovedImage from 'calypso/assets/images/upgrades/removed-advertising.svg';
+import PurchaseDetail from 'calypso/components/purchase-detail';
+import { newPost } from 'calypso/lib/paths';
+import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
+import GoogleAppsDetails from './google-apps-details';
 
 const PremiumPlanDetails = ( {
 	selectedSite,

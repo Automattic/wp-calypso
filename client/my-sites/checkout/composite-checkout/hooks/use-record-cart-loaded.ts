@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { useRef, useEffect } from 'react';
-import type { ResponseCart, RequestCartProduct } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
 import { ReactStandardAction } from '../types/analytics';
+import type { ResponseCart, RequestCartProduct } from '@automattic/shopping-cart';
 
 export default function useRecordCartLoaded( {
 	recordEvent,

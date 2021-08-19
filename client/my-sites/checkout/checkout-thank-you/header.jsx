@@ -1,15 +1,3 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { connect } from 'react-redux';
-import page from 'page';
-
-/**
- * Internal dependencies
- */
 import {
 	isChargeback,
 	isDelayedDomainTransfer,
@@ -22,31 +10,33 @@ import {
 	isSiteRedirect,
 	isTitanMail,
 } from '@automattic/calypso-products';
-import { isGoogleWorkspaceExtraLicence } from 'calypso/lib/purchases';
+import { Button } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
+import Gridicon from 'calypso/components/gridicon';
+import { preventWidows } from 'calypso/lib/formatting';
 import {
 	isGSuiteExtraLicenseProductSlug,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 } from 'calypso/lib/gsuite';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { localize } from 'i18n-calypso';
-import { preventWidows } from 'calypso/lib/formatting';
+import { isGoogleWorkspaceExtraLicence } from 'calypso/lib/purchases';
+import { getTitanEmailUrl } from 'calypso/lib/titan';
 import {
 	domainManagementEdit,
 	domainManagementTransferInPrecheck,
 } from 'calypso/my-sites/domains/paths';
-import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
-import { recordStartTransferClickInThankYou } from 'calypso/state/domains/actions';
-import Gridicon from 'calypso/components/gridicon';
-import getCheckoutUpgradeIntent from '../../../state/selectors/get-checkout-upgrade-intent';
-import { Button } from '@automattic/components';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { downloadTrafficGuide } from 'calypso/my-sites/marketing/ultimate-traffic-guide';
 import { emailManagementEdit } from 'calypso/my-sites/email/paths';
-import { getTitanEmailUrl } from 'calypso/lib/titan';
+import { downloadTrafficGuide } from 'calypso/my-sites/marketing/ultimate-traffic-guide';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordStartTransferClickInThankYou } from 'calypso/state/domains/actions';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import getCheckoutUpgradeIntent from '../../../state/selectors/get-checkout-upgrade-intent';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class CheckoutThankYouHeader extends PureComponent {

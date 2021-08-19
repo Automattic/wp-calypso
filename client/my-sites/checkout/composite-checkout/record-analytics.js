@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import {
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 	translateCheckoutPaymentMethodToTracksPaymentMethod,
 } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
-
-/**
- * Internal dependencies
- */
-import { recordAddEvent } from 'calypso/lib/analytics/cart';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	logStashLoadErrorEventAction,
 	logStashEventAction,

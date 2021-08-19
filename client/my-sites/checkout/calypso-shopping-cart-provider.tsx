@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
-import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import {
 	ShoppingCartProvider,
 	useShoppingCart,
 	getEmptyResponseCart,
 } from '@automattic/shopping-cart';
-import type { RequestCart } from '@automattic/shopping-cart';
-
-/**
- * Internal Dependencies
- */
+import React, { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import wp from 'calypso/lib/wp';
-import useCartKey from './use-cart-key';
 import CartMessages from 'calypso/my-sites/checkout/cart/cart-messages';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import useCartKey from './use-cart-key';
+import type { RequestCart } from '@automattic/shopping-cart';
 
 const wpcomGetCart = ( cartKey: string ) => wp.req.get( `/me/shopping-cart/${ cartKey }` );
 const wpcomSetCart = ( cartKey: string, cartData: RequestCart ) =>

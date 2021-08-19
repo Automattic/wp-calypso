@@ -2,24 +2,17 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import { checkoutTheme } from '@automattic/composite-checkout';
 import { render, fireEvent } from '@testing-library/react';
-import { createStore, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk';
+import { ThemeProvider } from 'emotion-theming';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
-import { ThemeProvider } from 'emotion-theming';
-import '@testing-library/jest-dom/extend-expect';
-import { checkoutTheme } from '@automattic/composite-checkout';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
-import { responseCartWithRenewal, storeData } from './lib/fixtures';
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
 import SecondaryCartPromotions from '../secondary-cart-promotions';
+import { responseCartWithRenewal, storeData } from './lib/fixtures';
+import '@testing-library/jest-dom/extend-expect';
 
 const mockConfig = ( config as unknown ) as { isEnabled: jest.Mock };
 jest.mock( '@automattic/calypso-config', () => {

@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import { useRef } from 'react';
 import debugFactory from 'debug';
-import type { ResponseCart } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
-import type { StoredCard } from '../types/stored-cards';
+import { useRef } from 'react';
 import { hasRenewalItem } from 'calypso/lib/cart-values/cart-items';
 import { ReactStandardAction } from '../types/analytics';
+import type { StoredCard } from '../types/stored-cards';
+import type { ResponseCart } from '@automattic/shopping-cart';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-record-checkout-loaded' );
 

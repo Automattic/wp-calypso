@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { untrailingslashit } from 'calypso/lib/route';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 export function noop( context: PageJS.Context, next: () => void ): void {
 	next();
