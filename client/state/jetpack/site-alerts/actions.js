@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	JETPACK_SITE_ALERT_THREAT_FIX,
 	JETPACK_SITE_ALERT_THREAT_IGNORE,

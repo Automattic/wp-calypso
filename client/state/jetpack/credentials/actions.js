@@ -1,13 +1,9 @@
-/**
- * Internal dependencies
- */
 import {
 	JETPACK_CREDENTIALS_GET,
 	JETPACK_CREDENTIALS_AUTOCONFIGURE,
 	JETPACK_CREDENTIALS_DELETE,
 	JETPACK_CREDENTIALS_UPDATE,
 } from 'calypso/state/action-types';
-
 import 'calypso/state/data-layer/wpcom/activity-log/get-credentials';
 import { success as removeCredentialsFromState } from 'calypso/state/data-layer/wpcom/activity-log/delete-credentials';
 import 'calypso/state/data-layer/wpcom/activity-log/update-credentials';
