@@ -1,22 +1,21 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import { useTranslate } from 'i18n-calypso';
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
-import Subscriptions from './subscriptions';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
-import ManagePurchase from 'calypso/me/purchases/manage-purchase';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import CancelPurchase from 'calypso/me/purchases/cancel-purchase';
 import ConfirmCancelDomain from 'calypso/me/purchases/confirm-cancel-domain';
+import ManagePurchase from 'calypso/me/purchases/manage-purchase';
+import ChangePaymentMethod from 'calypso/me/purchases/manage-purchase/change-payment-method';
+import titles from 'calypso/me/purchases/titles';
+import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
+import SiteLevelPurchasesErrorBoundary from 'calypso/my-sites/purchases/site-level-purchases-error-boundary';
 import MySitesSidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { logToLogstash } from 'calypso/state/logstash/actions';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	getPurchaseListUrlFor,
 	getCancelPurchaseUrlFor,
@@ -24,14 +23,8 @@ import {
 	getManagePurchaseUrlFor,
 	getAddNewPaymentMethodUrlFor,
 } from './paths';
+import Subscriptions from './subscriptions';
 import { getChangeOrAddPaymentMethodUrlFor } from './utils';
-import ChangePaymentMethod from 'calypso/me/purchases/manage-purchase/change-payment-method';
-import titles from 'calypso/me/purchases/titles';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
-import SiteLevelPurchasesErrorBoundary from 'calypso/my-sites/purchases/site-level-purchases-error-boundary';
-import { logToLogstash } from 'calypso/state/logstash/actions';
-import config from '@automattic/calypso-config';
 
 function useLogPurchasesError( message: string ) {
 	const reduxDispatch = useDispatch();
