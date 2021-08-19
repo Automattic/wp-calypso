@@ -48,18 +48,18 @@ export class SidebarComponent {
 		}
 
 		const itemSelector = `${ selectors.sidebar } :text("${ item }")`;
-		const itemElement = await this.scrollItemIntoViewIfNeeded( itemSelector );
+		await this.scrollItemIntoViewIfNeeded( itemSelector );
 
 		if ( subitem ) {
 			// Click top-level item without waiting for navigation if targeting subitem.
-			await itemElement.click();
+			await this.page.click( itemSelector );
 
 			const subitemSelector = `${ selectors.sidebar } :text("${ subitem }"):below(${ itemSelector })`;
-			const subitemElement = await this.scrollItemIntoViewIfNeeded( subitemSelector );
+			await this.scrollItemIntoViewIfNeeded( subitemSelector );
 
-			await Promise.all( [ this.page.waitForNavigation(), subitemElement.click() ] );
+			await Promise.all( [ this.page.waitForNavigation(), this.page.click( subitemSelector ) ] );
 		} else {
-			await Promise.all( [ this.page.waitForNavigation(), itemElement.click() ] );
+			await Promise.all( [ this.page.waitForNavigation(), this.page.click( itemSelector ) ] );
 		}
 
 		/**
