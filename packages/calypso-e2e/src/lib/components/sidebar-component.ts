@@ -3,17 +3,7 @@ import { getViewportName } from '../../browser-helper';
 import { NavbarComponent } from './navbar-component';
 
 const selectors = {
-	// Mobile view
-	layout: '.layout',
-
-	// Sidebar
 	sidebar: '.sidebar',
-	heading: '.sidebar > li',
-	subheading: '.sidebar__menu-item--child',
-	expandedMenu: '.sidebar__menu.is-toggle-open',
-
-	// Sidebar regions
-	currentSiteCard: '.card.current-site',
 };
 
 /**
@@ -33,7 +23,8 @@ export class SidebarComponent {
 	}
 
 	/**
-	 * Waits for the wrapper of the sidebar to be initialized on the page, then returns the element handle for that sidebar
+	 * Waits for the wrapper of the sidebar to be initialized on the page, then returns the element
+	 * handle for that sidebar.
 	 *
 	 * @returns the ElementHandle for the sidebar
 	 */
@@ -51,17 +42,17 @@ export class SidebarComponent {
 	 */
 	async gotoMenu( { item, subitem }: { item: string; subitem?: string } ): Promise< void > {
 		if ( getViewportName() === 'mobile' ) {
-			await this._openMobileSidebar();
+			await this.openMobileSidebar();
 		}
 
-		const itemSelector = `.sidebar :text("${ item }")`;
+		const itemSelector = `${ selectors.sidebar } :text("${ item }")`;
 		const itemElement = await this.scrollItemIntoViewIfNeeded( itemSelector );
 
 		if ( subitem ) {
 			// Click top-level item without waiting for navigation if targeting subitem.
 			await itemElement.click();
 
-			const subitemSelector = `.sidebar :text("${ subitem }"):below(${ itemSelector })`;
+			const subitemSelector = `${ selectors.sidebar } :text("${ subitem }"):below(${ itemSelector })`;
 			const subitemElement = await this.scrollItemIntoViewIfNeeded( subitemSelector );
 
 			await Promise.all( [ this.page.waitForNavigation(), subitemElement.click() ] );
@@ -74,7 +65,7 @@ export class SidebarComponent {
 		 * the lazy-loading nature of the sidenav items.
 		 */
 		try {
-			const selectedItemSelector = `.sidebar .selected >> text="${ subitem || item }"`;
+			const selectedItemSelector = `${ selectors.sidebar } .selected :text("${ subitem || item }")`;
 			await this.page.waitForSelector( selectedItemSelector, {
 				timeout: 3000,
 			} );
@@ -83,20 +74,6 @@ export class SidebarComponent {
 			await this.page.reload();
 			return this.gotoMenu( { item, subitem } );
 		}
-	}
-
-	/**
-	 * Opens the sidebar into view for mobile viewports.
-	 *
-	 * @returns {Promise<void>} No return value.
-	 */
-	async _openMobileSidebar(): Promise< void > {
-		await this.waitForSidebarInitialization();
-		const navbarComponent = new NavbarComponent( this.page );
-		await navbarComponent.clickMySites();
-		// `focus-sidebar` attribute is added once the sidebar is opened and focused in mobile view.
-		const layoutElement = await this.page.waitForSelector( `${ selectors.layout }.focus-sidebar` );
-		await layoutElement.waitForElementState( 'stable' );
 	}
 
 	/**
@@ -120,5 +97,19 @@ export class SidebarComponent {
 		}, elementHandle );
 
 		return elementHandle;
+	}
+
+	/**
+	 * Opens the sidebar into view for mobile viewports.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async openMobileSidebar(): Promise< void > {
+		await this.waitForSidebarInitialization();
+		const navbarComponent = new NavbarComponent( this.page );
+		await navbarComponent.clickMySites();
+		// `focus-sidebar` attribute is added once the sidebar is opened and focused in mobile view.
+		const layoutElement = await this.page.waitForSelector( '.layout.focus-sidebar' );
+		await layoutElement.waitForElementState( 'stable' );
 	}
 }
