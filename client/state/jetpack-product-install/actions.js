@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	JETPACK_PRODUCT_INSTALL_REQUEST,
 	JETPACK_PRODUCT_INSTALL_STATUS_RECEIVE,

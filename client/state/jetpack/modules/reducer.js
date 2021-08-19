@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import { forEach, get, merge, pickBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	JETPACK_MODULE_ACTIVATE,
 	JETPACK_MODULE_ACTIVATE_FAILURE,

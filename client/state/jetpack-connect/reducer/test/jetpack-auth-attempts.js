@@ -1,11 +1,8 @@
-/**
- * Internal dependencies
- */
-import reducer, { authAttempts } from '../jetpack-auth-attempts';
 import {
 	JETPACK_CONNECT_COMPLETE_FLOW,
 	JETPACK_CONNECT_RETRY_AUTH,
 } from 'calypso/state/jetpack-connect/action-types';
+import reducer, { authAttempts } from '../jetpack-auth-attempts';
 
 describe( '#authAttempts()', () => {
 	test( 'should update the timestamp when adding an existent slug with stale timestamp', () => {

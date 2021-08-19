@@ -1,12 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-/**
- * Internal dependencies
- */
-import * as actions from '../actions';
-import useNock from 'calypso/test-helpers/use-nock';
+
 import wpcom from 'calypso/lib/wp';
+import { SITE_RECEIVE } from 'calypso/state/action-types';
 import {
 	JETPACK_CONNECT_AUTHORIZE,
 	JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
@@ -22,7 +19,8 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 } from 'calypso/state/jetpack-connect/action-types';
-import { SITE_RECEIVE } from 'calypso/state/action-types';
+import useNock from 'calypso/test-helpers/use-nock';
+import * as actions from '../actions';
 
 describe( '#confirmJetpackInstallStatus()', () => {
 	test( 'should dispatch confirm status action when called', () => {

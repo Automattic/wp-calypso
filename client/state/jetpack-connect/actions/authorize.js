@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
 import { pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
-import { fetchCurrentUser } from 'calypso/state/current-user/actions';
-import { receiveSite } from 'calypso/state/sites/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'calypso/state/sites/constants';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import {
 	JETPACK_CONNECT_AUTHORIZE,
 	JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 } from 'calypso/state/jetpack-connect/action-types';
+import { receiveSite } from 'calypso/state/sites/actions';
+import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'calypso/state/sites/constants';
 
 import 'calypso/state/jetpack-connect/init';
 

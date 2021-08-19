@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getAuthorizationData } from 'calypso/state/jetpack-connect/selectors/get-authorization-data';
 
 import 'calypso/state/jetpack-connect/init';
