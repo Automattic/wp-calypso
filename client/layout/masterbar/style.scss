@@ -344,6 +344,11 @@ $autobar-height: 20px;
 	margin: 5px 8px;
 	transition: all 0.2s ease-out;
 
+	&.has-drafts {
+		border-top-right-radius: 0;
+		border-bottom-right-radius: 0;
+	}
+
 	&:visited {
 		color: var( --color-primary );
 	}
@@ -536,18 +541,29 @@ $autobar-height: 20px;
 	height: 36px;
 	margin: 5px 8px 5px -10px;
 	padding: 0 8px;
-	border-radius: 2px;
+	border-radius: 0 2px 2px 0;
 	position: relative;
 	transition: all 0.2s ease-out;
 	font-weight: 600;
 	color: var( --color-text );
+	border-left: 1px solid var( --studio-gray-5 );
 
 	&:hover {
 		background-color: var( --color-neutral-0 );
 	}
 
 	.masterbar__publish & {
-		margin-left: -20px;
+		margin-left: -8px;
+	}
+
+	.gridicon {
+		width: 14px;
+		color: var( --studio-gray-20 );
+
+		&:hover,
+		&[aria-expanded='true'] {
+			color: var( --color-text );
+		}
 	}
 }
 

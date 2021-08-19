@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryPostCounts from 'calypso/components/data/query-post-counts';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getMyPostCount } from 'calypso/state/posts/counts/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const MasterbarDraftsPopover = ( props ) => (
@@ -15,6 +14,7 @@ const MasterbarDraftsPopover = ( props ) => (
 
 class MasterbarDrafts extends Component {
 	static propTypes = {
+		draftCount: PropTypes.number,
 		numberFormat: PropTypes.func,
 		selectedSiteId: PropTypes.number,
 	};
@@ -119,14 +119,8 @@ class MasterbarDrafts extends Component {
 }
 
 export default connect(
-	( state ) => {
-		const selectedSiteId = getSelectedSiteId( state );
-		const draftCount = getMyPostCount( state, selectedSiteId, 'post', 'draft' );
-
-		return {
-			selectedSiteId,
-			draftCount,
-		};
-	},
+	( state ) => ( {
+		selectedSiteId: getSelectedSiteId( state ),
+	} ),
 	{ recordTracksEvent }
 )( localize( MasterbarDrafts ) );

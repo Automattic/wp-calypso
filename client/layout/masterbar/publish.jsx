@@ -10,6 +10,7 @@ import { reduxGetState } from 'calypso/lib/redux-bridge';
 import { preloadEditor } from 'calypso/sections-preloaders';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserVisibleSiteCount } from 'calypso/state/current-user/selectors';
+import { getMyPostCount } from 'calypso/state/posts/counts/selectors';
 import { getEditorUrl } from 'calypso/state/selectors/get-editor-url';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -84,7 +85,9 @@ class MasterbarItemNew extends React.Component {
 	}
 
 	render() {
-		const classes = classNames( this.props.className );
+		const classes = classNames( this.props.className, {
+			'has-drafts': this.props.draftCount > 0,
+		} );
 
 		return (
 			<div className="masterbar__publish">
@@ -100,7 +103,7 @@ class MasterbarItemNew extends React.Component {
 				>
 					{ this.props.children }
 				</MasterbarItem>
-				<MasterbarDrafts />
+				<MasterbarDrafts draftCount={ this.props.draftCount } />
 				{ this.renderPopover() }
 			</div>
 		);
@@ -117,6 +120,7 @@ export default connect(
 		const selectedSiteId = getSelectedSiteId( state );
 		const isSitesGroup = getSectionGroup( state ) === 'sites';
 		const hasMoreThanOneVisibleSite = getCurrentUserVisibleSiteCount( state ) > 1;
+		const draftCount = getMyPostCount( state, selectedSiteId, 'post', 'draft' );
 
 		// the selector is shown only if it's not 100% clear which site we are on.
 		// I.e, when user has more than one site, is outside the My Sites group,
@@ -128,7 +132,7 @@ export default connect(
 		const siteId = selectedSiteId || getPrimarySiteId( state );
 		const editorUrl = getEditorUrl( state, siteId, null, 'post' );
 
-		return { shouldOpenSiteSelector, editorUrl };
+		return { shouldOpenSiteSelector, editorUrl, draftCount };
 	},
 	{ openEditor }
 )( MasterbarItemNew );
