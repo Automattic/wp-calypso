@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
-import Count from 'calypso/components/count';
 import QueryPostCounts from 'calypso/components/data/query-post-counts';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getMyPostCount } from 'calypso/state/posts/counts/selectors';
@@ -16,6 +15,7 @@ const MasterbarDraftsPopover = ( props ) => (
 
 class MasterbarDrafts extends Component {
 	static propTypes = {
+		numberFormat: PropTypes.func,
 		selectedSiteId: PropTypes.number,
 	};
 
@@ -80,7 +80,7 @@ class MasterbarDrafts extends Component {
 				onMouseEnter={ this.preload }
 				ref={ this.setDraftsRef }
 			>
-				<Count count={ this.props.draftCount } />
+				{ this.props.numberFormat( this.props.draftCount ) }
 			</Button>
 		);
 	}
