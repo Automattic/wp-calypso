@@ -17,6 +17,7 @@ const useExternalContributorsQuery = ( siteId, queryOptions = {} ) => {
 			} ),
 		{
 			...queryOptions,
+			enabled: !! siteId,
 			// The external contributors endpoint can be a little slow, so don't
 			// retry too soon if it is taking a while.
 			retryDelay: 2000,

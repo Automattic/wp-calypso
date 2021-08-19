@@ -2,14 +2,12 @@
  * External dependencies
  */
 import React from 'react';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import classNames from 'classnames';
 import { get } from 'lodash';
 import { recordTrack } from 'calypso/reader/stats';
 import page from 'page';
 import { decodeEntities } from 'calypso/lib/formatting';
-import { useEffect, useState } from '@wordpress/element';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 /**
@@ -17,28 +15,18 @@ import PropTypes from 'prop-types';
  */
 import Gravatar from 'calypso/components/gravatar';
 import InfoPopover from 'calypso/components/info-popover';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useExternalContributorsQuery from 'calypso/data/external-contributors/use-external-contributors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const PeopleProfile = ( { siteId, type, user, invite, moment, translate } ) => {
-	const [ isExternalContributor, setIsExternalContributor ] = useState( false );
+const PeopleProfile = ( { siteId, type, user, invite } ) => {
+	const translate = useTranslate();
+	const moment = useLocalizedMoment();
 	const { data: externalContributors } = useExternalContributorsQuery( siteId );
-
-	useEffect( () => {
-		if (
-			externalContributors &&
-			user?.ID &&
-			externalContributors.includes( user?.linked_user_ID ?? user.ID )
-		) {
-			setIsExternalContributor( true );
-		}
-	}, [ user, externalContributors ] );
 
 	const getRole = () => {
 		if ( invite && invite.role ) {
@@ -212,7 +200,10 @@ const PeopleProfile = ( { siteId, type, user, invite, moment, translate } ) => {
 			);
 		}
 
-		if ( isExternalContributor ) {
+		if (
+			externalContributors &&
+			externalContributors.includes( user?.linked_user_ID ?? user?.ID )
+		) {
 			contractorBadge = (
 				<>
 					<div className="people-profile__role-badge role-contractor">
@@ -290,10 +281,4 @@ PeopleProfile.propType = {
 	invite: PropTypes.object,
 };
 
-export default connect( ( state, ownProps ) => {
-	const siteId = getSelectedSiteId( state );
-	return {
-		...ownProps,
-		siteId,
-	};
-} )( localize( withLocalizedMoment( PeopleProfile ) ) );
+export default PeopleProfile;
