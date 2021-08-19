@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import {
 	PRODUCT_JETPACK_SCAN,
 	PRODUCT_JETPACK_SCAN_MONTHLY,
@@ -38,12 +30,9 @@ import {
 	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 	FEATURE_ACTIVITY_LOG,
 } from '@automattic/calypso-products';
+import { translate } from 'i18n-calypso';
 import buildCardFeaturesFromItem from './build-card-features-from-item';
 import { getForCurrentCROIteration, Iterations } from './iterations';
-
-/**
- * Type dependencies
- */
 import type { SelectorProduct } from './types';
 import type { JetpackPlanSlug } from '@automattic/calypso-products';
 
