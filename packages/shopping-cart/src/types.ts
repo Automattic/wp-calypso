@@ -180,8 +180,5 @@ export interface CartSyncManager {
 		state: ShoppingCartState,
 		dispatch: Dispatch< ShoppingCartAction >
 	) => void;
-	fetchInitialCartFromServer: (
-		state: ShoppingCartState,
-		dispatch: Dispatch< ShoppingCartAction >
-	) => void;
+	fetchInitialCartFromServer: ( dispatch: Dispatch< ShoppingCartAction > ) => void;
 }
