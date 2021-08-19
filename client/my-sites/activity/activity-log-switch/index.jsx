@@ -1,22 +1,12 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Card, Button } from '@automattic/components';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import { getSiteUrl } from 'calypso/state/sites/selectors';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class ActivityLogSwitch extends Component {

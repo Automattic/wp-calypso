@@ -1,19 +1,9 @@
-/**
- * External dependencies
- */
+import { Card, ScreenReaderText } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Card, ScreenReaderText } from '@automattic/components';
 import Gridicon from 'calypso/components/gridicon';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};
