@@ -1,38 +1,30 @@
-/**
- * External dependencies
- */
-
+import { localize } from 'i18n-calypso';
+import { capitalize, find } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { capitalize, find } from 'lodash';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import SectionNav from 'calypso/components/section-nav';
-import NavTabs from 'calypso/components/section-nav/tabs';
-import NavItem from 'calypso/components/section-nav/item';
+import DocumentHead from 'calypso/components/data/document-head';
+import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import FormattedHeader from 'calypso/components/formatted-header';
-import WordAdsEarnings from 'calypso/my-sites/stats/wordads/earnings';
+import SectionNav from 'calypso/components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import { canAccessAds } from 'calypso/lib/ads/utils';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import AdsSettings from 'calypso/my-sites/earn/ads/form-settings';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import WordAdsEarnings from 'calypso/my-sites/stats/wordads/earnings';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import DocumentHead from 'calypso/components/data/document-head';
-import Home from './home';
 import AdsWrapper from './ads/wrapper';
+import Home from './home';
 import MembershipsSection from './memberships';
 import MembershipsProductsSection from './memberships/products';
 import ReferAFriendSection from './refer-a-friend';
-import { canAccessAds } from 'calypso/lib/ads/utils';
 
 class EarningsMain extends Component {
 	static propTypes = {

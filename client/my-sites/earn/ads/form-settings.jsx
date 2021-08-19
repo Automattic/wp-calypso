@@ -1,39 +1,32 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import { Button, Card } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose, isEmpty } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
-import StateSelector from 'calypso/components/forms/us-state-selector';
-import isSavingWordadsSettings from 'calypso/state/selectors/is-saving-wordads-settings';
-import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import QueryWordadsSettings from 'calypso/components/data/query-wordads-settings';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormRadio from 'calypso/components/forms/form-radio';
-import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormSelect from 'calypso/components/forms/form-select';
-import FormTextarea from 'calypso/components/forms/form-textarea';
-import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import QueryWordadsSettings from 'calypso/components/data/query-wordads-settings';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import StateSelector from 'calypso/components/forms/us-state-selector';
 import SectionHeader from 'calypso/components/section-header';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getWordadsSettings } from 'calypso/state/selectors/get-wordads-settings';
-import { isJetpackSite, getCustomizerUrl } from 'calypso/state/sites/selectors';
-import { dismissWordAdsSuccess } from 'calypso/state/wordads/approve/actions';
-import { protectForm } from 'calypso/lib/protect-form';
-import { saveWordadsSettings } from 'calypso/state/wordads/settings/actions';
 import SupportInfo from 'calypso/components/support-info';
+import { protectForm } from 'calypso/lib/protect-form';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
+import { getWordadsSettings } from 'calypso/state/selectors/get-wordads-settings';
+import isSavingWordadsSettings from 'calypso/state/selectors/is-saving-wordads-settings';
+import { isJetpackSite, getCustomizerUrl } from 'calypso/state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { dismissWordAdsSuccess } from 'calypso/state/wordads/approve/actions';
+import { saveWordadsSettings } from 'calypso/state/wordads/settings/actions';
 
 class AdsFormSettings extends Component {
 	static propTypes = {
