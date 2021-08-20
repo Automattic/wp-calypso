@@ -6,7 +6,7 @@ import {
 	GutenbergEditorPage,
 	PricingTableBlock,
 } from '@automattic/calypso-e2e';
-import {Page} from 'playwright';
+import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( 'WPCOM-specific gutter controls' ), () => {
 	let gutenbergEditorPage: GutenbergEditorPage;
