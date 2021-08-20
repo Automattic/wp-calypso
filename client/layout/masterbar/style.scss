@@ -567,6 +567,25 @@ $autobar-height: 20px;
 	}
 }
 
+.masterbar__toggle-drafts-lg-label,
+.masterbar__toggle-drafts-sm-label {
+	margin-right: 4px;
+}
+
+.masterbar__toggle-drafts-lg-label {
+	display: none;
+
+	@include breakpoint-deprecated( '>960px' ) {
+		display: inline;
+	}
+}
+
+.masterbar__toggle-drafts-sm-label {
+	@include breakpoint-deprecated( '>960px' ) {
+		display: none;
+	}
+}
+
 .masterbar__recent-drafts.popover {
 	width: 310px;
 	max-width: calc( 100vw - 20px );

@@ -83,7 +83,17 @@ class MasterbarDrafts extends Component {
 				aria-haspopup
 				aria-expanded={ this.state.showDrafts || undefined }
 			>
-				{ this.props.numberFormat( this.props.draftCount ) }
+				<span className="masterbar__toggle-drafts-lg-label">
+					{ this.props.numberFormat( this.props.draftCount ) }
+				</span>
+
+				{ /* Don't display draft count on small screens when the count has more than 2 digits */ }
+				{ this.props.draftCount < 100 && (
+					<span className="masterbar__toggle-drafts-sm-label">
+						{ this.props.numberFormat( this.props.draftCount ) }
+					</span>
+				) }
+
 				<Gridicon icon={ this.state.showDrafts ? 'chevron-up' : 'chevron-down' } />
 			</Button>
 		);
