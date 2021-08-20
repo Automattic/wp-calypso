@@ -14,6 +14,7 @@ import type {
 	ThankYouNextStepProps,
 	ThankYouProps,
 	ThankYouSectionProps,
+	ThankYouSupportSectionProps,
 } from 'calypso/components/thank-you/types';
 
 /**
@@ -97,6 +98,33 @@ const ThankYouSection = ( props: ThankYouSectionProps ) => {
 	);
 };
 
+const ThankYouSupportSection = ( props: ThankYouSupportSectionProps ) => {
+	const { links, title, description } = props;
+
+	const supportLinks = links.map( ( { href, title }, index ) => (
+		<a
+			key={ index }
+			href={ href }
+			className="thank-you__help-link"
+			target="_blank"
+			rel="noreferrer noopener"
+		>
+			{ title }
+			<Gridicon className="thank-you__icon-external" icon="external" />
+		</a>
+	) );
+
+	return (
+		<ThankYouSectionContainer>
+			<ThankYouSectionTitle className="thank-you__body-header wp-brand-font">
+				{ title }
+			</ThankYouSectionTitle>
+			<p className="thank-you__help-text">{ description }</p>
+			<>{ supportLinks }</>
+		</ThankYouSectionContainer>
+	);
+};
+
 export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 	const translate = useTranslate();
 
@@ -134,6 +162,22 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 			margin-bottom: 14px;
 		}
 	`;
+	const defaultSupportSectionProps = {
+		title: translate( 'How can we help?' ),
+		description: translate(
+			'Our Happiness Engineers are here if you need help, or if you have any questions.'
+		),
+		links: [
+			{
+				href: CALYPSO_CONTACT,
+				title: translate( 'Ask a question' ),
+			},
+			{
+				href: SUPPORT_ROOT,
+				title: translate( 'View support documentation' ),
+			},
+		],
+	};
 
 	const thankYouSections = sections.map( ( sectionProps, index ) => (
 		<ThankYouSection key={ index } { ...sectionProps } />
@@ -147,44 +191,17 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 				{ thankYouTitle && (
 					<ThankYouTitleContainer>
 						<h1 className="thank-you__header-title wp-brand-font">{ thankYouTitle }</h1>
-						{ thankYouSubtitle && <h2>{ thankYouSubtitle }</h2> }
+						{ thankYouSubtitle && (
+							<h2 className="thank-you__header-subtitle">{ thankYouSubtitle }</h2>
+						) }
 					</ThankYouTitleContainer>
 				) }
 			</ThankYouHeader>
-			<ThankYouBody>
+			<ThankYouBody className="thank-you__body">
 				<div>
 					{ thankYouSections }
 
-					{ showSupportSection && (
-						<ThankYouSectionContainer>
-							<ThankYouSectionTitle className="thank-you__body-header wp-brand-font">
-								{ translate( 'How can we help?' ) }
-							</ThankYouSectionTitle>
-							<p className="thank-you__help-text">
-								{ translate(
-									'Our Happiness Engineers are here if you need help, or if you have any questions.'
-								) }
-							</p>
-							<a
-								className="thank-you__help-link"
-								href={ CALYPSO_CONTACT }
-								target="_blank"
-								rel="noreferrer noopener"
-							>
-								{ translate( 'Ask a question' ) }
-								<Gridicon className="thank-you__icon-external" icon="external" />
-							</a>
-							<a
-								className="thank-you__help-link"
-								href={ SUPPORT_ROOT }
-								target="_blank"
-								rel="noreferrer noopener"
-							>
-								{ translate( 'View support documentation' ) }
-								<Gridicon className="thank-you__icon-external" icon="external" />
-							</a>
-						</ThankYouSectionContainer>
-					) }
+					{ showSupportSection && <ThankYouSupportSection { ...defaultSupportSectionProps } /> }
 				</div>
 			</ThankYouBody>
 		</ThankYouContainer>
