@@ -56,7 +56,19 @@ export function createSubscriptionManager( cartKey: string | undefined ): Subscr
 	};
 	const notifySubscribers = () => {
 		debug( `notifying ${ subscribedClients.length } subscribers for cartKey ${ cartKey }` );
-		subscribedClients.forEach( ( clientCallback ) => clientCallback() );
+		subscribedClients.forEach( ( clientCallback ) => {
+			try {
+				clientCallback();
+			} catch ( err ) {
+				// eslint-disable-next-line no-console
+				console.error(
+					'An error ocurred while notifying a subscriber of a ShoppingCartManager change',
+					err.message
+				);
+				throw err;
+			}
+		} );
+		debug( `completed notification of subscribers for cartKey ${ cartKey }` );
 	};
 
 	return { subscribe, notifySubscribers };
