@@ -151,7 +151,7 @@ const JetpackBenefitsStep: React.FC< Props > = ( props ) => {
 			{ isJetpackPlanSlug( productSlug ) && ( // show general benefits for plans
 				<div className="cancel-jetpack-form__jetpack-general-benefits">
 					<p className="cancel-jetpack-form__jetpack-general-benefits-title">
-						{ translate( 'Additionally, you will loose access to:' ) }
+						{ translate( 'Additionally, you will lose access to:' ) }
 					</p>
 					<JetpackGeneralBenefits productSlug={ productSlug } />
 				</div>
