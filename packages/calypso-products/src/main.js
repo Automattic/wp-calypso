@@ -114,6 +114,33 @@ export function getPlanClass( planKey ) {
  * @returns {boolean}               Whether the specified plan has the specified feature.
  */
 export function planHasFeature( plan, feature ) {
+	const allFeatures = getAllFeaturesForPlan( plan );
+	return allFeatures.includes( feature );
+}
+
+/**
+ * Determine if a plan has at least one of several features.
+ *
+ *
+ * @param {object|string} plan	Plan object or plan name
+ * @param {[string]} features	Array of feature names
+ *
+ * @returns {boolean}			Whether or not the specified plan has one of the features
+ */
+export function planHasAtLeastOneFeature( plan, features ) {
+	const allFeatures = getAllFeaturesForPlan( plan );
+	return features.some( ( feature ) => allFeatures.includes( feature ) );
+}
+
+/**
+ * Get all features for a plan
+ *
+ * Collects features for a plan by calling all possible feature methods for the plan.
+ *
+ * @param {object|string} plan	Plan object or plan name.
+ * @returns {Array}				An array of all the plan features (may have duplicates)
+ */
+export function getAllFeaturesForPlan( plan ) {
 	const planConstantObj = getPlan( plan );
 
 	// Collect features from all plan methods (may have duplicates)
@@ -132,7 +159,7 @@ export function planHasFeature( plan, feature ) {
 		[]
 	);
 
-	return allFeatures.includes( feature );
+	return allFeatures;
 }
 
 /**
