@@ -49,7 +49,7 @@ const DomainMappingThankYou = ( { domainName: domain, selectedSite } ) => {
 							),
 							stepCta: (
 								<Button
-									href={ emailManagementPurchaseNewEmailAccount( selectedSite.slug, domain.name ) }
+									href={ emailManagementPurchaseNewEmailAccount( selectedSite.slug, domain ) }
 									className={ 'domain-mapping-thank-you__button' }
 									busy={ false }
 									disabled={ false }
