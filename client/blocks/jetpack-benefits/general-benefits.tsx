@@ -74,7 +74,7 @@ const JetpackGeneralBenefits: React.FC< Props > = ( props ) => {
 	) {
 		benefits.push(
 			<React.Fragment>
-				{ translate( 'Ability to {{strong}}collect payments{{/strong}}.', {
+				{ translate( 'The ability to {{strong}}collect payments{{/strong}}.', {
 					components: {
 						strong: <strong />,
 					},
@@ -105,7 +105,7 @@ const JetpackGeneralBenefits: React.FC< Props > = ( props ) => {
 	if ( hasPremiumPlan || hasSecurityDailyPlan ) {
 		benefits.push(
 			<React.Fragment>
-				{ translate( 'Up to 13GB of {{strong}}high-speed-video hosting{{/strong}}.', {
+				{ translate( 'Up to 13GB of {{strong}}high-speed video hosting{{/strong}}.', {
 					components: {
 						strong: <strong />,
 					},
@@ -118,7 +118,7 @@ const JetpackGeneralBenefits: React.FC< Props > = ( props ) => {
 	if ( hasBusinessPlan || hasSecurityRealTimePlan || hasCompletePlan ) {
 		benefits.push(
 			<React.Fragment>
-				{ translate( 'Unlimited {{strong}}high-speed-video hosting{{/strong}}.', {
+				{ translate( 'Unlimited {{strong}}high-speed video hosting{{/strong}}.', {
 					components: {
 						strong: <strong />,
 					},
@@ -139,15 +139,6 @@ const JetpackGeneralBenefits: React.FC< Props > = ( props ) => {
 						},
 					}
 				) }
-			</React.Fragment>
-		);
-		benefits.push(
-			<React.Fragment>
-				{ translate( 'Unlimited {{strong}}high-speed image{{/strong}} hosting.', {
-					components: {
-						strong: <strong />,
-					},
-				} ) }
 			</React.Fragment>
 		);
 	}
