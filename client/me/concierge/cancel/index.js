@@ -13,7 +13,7 @@ import HeaderCake from 'calypso/components/header-cake';
 import QuerySites from 'calypso/components/data/query-sites';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
 import QueryConciergeAppointmentDetails from 'calypso/components/data/query-concierge-appointment-details';
-import { Button, CompactCard } from '@automattic/components';
+import { Button } from '@automattic/components';
 import Main from 'calypso/components/main';
 import { localize } from 'i18n-calypso';
 import Confirmation from '../shared/confirmation';
@@ -25,6 +25,7 @@ import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedu
 import getConciergeSignupForm from 'calypso/state/selectors/get-concierge-signup-form';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { renderDisallowed } from '../shared/utils';
 
 class ConciergeCancel extends Component {
 	static propTypes = {
@@ -51,24 +52,6 @@ class ConciergeCancel extends Component {
 					<div className="cancel__placeholder-button is-placeholder" />
 				</div>
 			</div>
-		);
-	}
-
-	renderDisallowed() {
-		const { translate, siteSlug } = this.props;
-		return (
-			<>
-				<HeaderCake backHref={ `/me/quickstart/${ siteSlug }/book` }>
-					{ translate( 'Reschedule or cancel' ) }
-				</HeaderCake>
-				<CompactCard>
-					<div>
-						{ translate(
-							'Sorry, you cannot reschedule or cancel less than 60 minutes before the session.'
-						) }
-					</div>
-				</CompactCard>
-			</>
 		);
 	}
 
@@ -116,7 +99,7 @@ class ConciergeCancel extends Component {
 				const canChangeAppointment = appointmentDetails?.meta.canChangeAppointment;
 
 				if ( appointmentDetails && ! canChangeAppointment ) {
-					return this.renderDisallowed();
+					return renderDisallowed( translate, siteSlug );
 				}
 
 				return (
