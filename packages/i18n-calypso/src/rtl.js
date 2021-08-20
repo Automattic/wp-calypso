@@ -1,9 +1,6 @@
-/**
- * External dependencies
- */
+import { createHigherOrderComponent } from '@wordpress/compose';
 import React, { forwardRef } from 'react';
 import { useSubscription } from 'use-subscription';
-import { createHigherOrderComponent } from '@wordpress/compose';
 
 export default function rtlFactory( i18n ) {
 	// Subscription object (adapter) for the `useSubscription` hook

@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
-import existingCardProcessor from '../lib/existing-card-processor';
 import wp from 'calypso/lib/wp';
+import existingCardProcessor from '../lib/existing-card-processor';
 
 jest.mock( 'calypso/lib/wp' );
 

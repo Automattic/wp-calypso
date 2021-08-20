@@ -1,0 +1,25 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.titan-new-mailbox-list__main {
+	.form-fieldset .form-label {
+		margin-bottom: 0;
+	}
+
+	.titan-new-mailbox-list__actions {
+		display: flex;
+		flex-direction: column;
+
+		@include break-mobile {
+			flex-direction: row;
+		}
+
+		> button {
+			margin-bottom: 1em;
+
+			@include break-mobile {
+				margin-bottom: 0;
+			}
+		}
+	}
+}

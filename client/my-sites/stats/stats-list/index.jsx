@@ -1,20 +1,10 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import classNames from 'classnames';
 import debugFactory from 'debug';
+import React from 'react';
 const debug = debugFactory( 'calypso:stats:list' );
 
-/**
- * Internal dependencies
- */
 import StatsListItem from './stats-list-item';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default class extends React.Component {

@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
 const fs = require( 'fs' );
 const path = require( 'path' );
-const Xgettext = require( 'xgettext-js' );
 const debug = require( 'debug' )( 'i18n-calypso' );
-
-/**
- * Internal dependencies
- */
-const preProcessXGettextJSMatch = require( './preprocess-xgettextjs-match.js' );
+const Xgettext = require( 'xgettext-js' );
 const formatters = require( './formatters' );
+const preProcessXGettextJSMatch = require( './preprocess-xgettextjs-match.js' );
 
 module.exports = function i18nCalypso( config ) {
 	const keywords = config.keywords || [ 'translate' ];

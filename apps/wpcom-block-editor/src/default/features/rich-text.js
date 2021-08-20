@@ -1,8 +1,5 @@
 /* global wpcomGutenberg */
 
-/**
- * External dependencies
- */
 import { compose, ifCondition } from '@wordpress/compose';
 import { withSelect, withDispatch, select, subscribe } from '@wordpress/data';
 import { RichTextToolbarButton } from '@wordpress/editor';

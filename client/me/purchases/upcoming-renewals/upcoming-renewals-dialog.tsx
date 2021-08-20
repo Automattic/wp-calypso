@@ -52,7 +52,7 @@ interface Props {
 	onConfirm: ( purchases: Purchase[] ) => void;
 	submitButtonText?: string | TranslateResult;
 	showManagePurchaseLinks?: boolean;
-	getManagePurchaseUrlFor: ( siteSlug: string, purchaseId: number ) => string;
+	getManagePurchaseUrlFor?: ( siteSlug: string, purchaseId: number ) => string;
 }
 
 function getExpiresText(

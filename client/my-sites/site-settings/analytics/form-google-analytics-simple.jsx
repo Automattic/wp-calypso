@@ -1,31 +1,21 @@
-/**
- * External dependencies
- */
-import React, { useEffect } from 'react';
-import { CompactCard } from '@automattic/components';
 import {
 	findFirstSimilarPlanKey,
 	FEATURE_GOOGLE_ANALYTICS,
 	TYPE_PREMIUM,
 } from '@automattic/calypso-products';
+import { CompactCard } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import ExternalLink from 'calypso/components/external-link';
+import React, { useEffect } from 'react';
+import googleIllustration from 'calypso/assets/images/illustrations/google-analytics-logo.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import ExternalLink from 'calypso/components/external-link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormTextValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormTextValidation from 'calypso/components/forms/form-input-validation';
-import googleIllustration from 'calypso/assets/images/illustrations/google-analytics-logo.svg';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const GoogleAnalyticsSimpleForm = ( {

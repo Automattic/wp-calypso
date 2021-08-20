@@ -40,8 +40,8 @@ function getConfig( { siteTitle = '' } = {} ) {
 				components: {
 					supportLink: (
 						<InlineSupportLink
-							supportPostId={ 67084 }
-							supportLink="https://wordpress.com/support/coming-from-self-hosted/"
+							supportPostId={ 102755 }
+							supportLink="https://wordpress.com/support/moving-from-self-hosted-wordpress-to-wordpress-com/"
 							showIcon={ false }
 						>
 							{ translate( 'Need help exporting your content?' ) }
@@ -180,10 +180,10 @@ function getConfig( { siteTitle = '' } = {} ) {
 		optionalUrl: {
 			title: translate( 'Substack Newsletter URL' ),
 			description: translate(
-				'An optional Substack Newsletter URL to import comments and author information.'
+				'Recommended: A Substack Newsletter URL to import comments and author information.'
 			),
 			invalidDescription: translate( 'Enter a valid Substack Newsletter URL (%(exampleUrl)s).', {
-				args: { exampleUrl: 'https://newsletter.substack.com/' },
+				args: { exampleUrl: 'https://example-newsletter.substack.com/' },
 			} ),
 			validate: ( urlInput ) => {
 				return /^https:\/\/[\w-]+\.substack\.com\/?$/.test( urlInput.trim() );

@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { Button, Card } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
 import { pick } from 'lodash';
 import moment from 'moment';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
+import React from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';

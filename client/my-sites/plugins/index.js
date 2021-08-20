@@ -1,12 +1,7 @@
-/**
- * External dependencies
- */
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	browsePlugins,
 	browsePluginsOrPlugin,
@@ -18,8 +13,6 @@ import {
 	setupPlugins,
 	upload,
 } from './controller';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { makeLayout, render as clientRender } from 'calypso/controller';
 
 export default function () {
 	page(

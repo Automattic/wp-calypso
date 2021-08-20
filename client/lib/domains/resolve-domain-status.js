@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
 
@@ -12,11 +13,18 @@ import { isExpiringSoon } from 'calypso/lib/domains/utils/is-expiring-soon';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils/is-recently-registered';
 import { hasPendingGSuiteUsers } from 'calypso/lib/gsuite';
 import { shouldRenderExpiringCreditCard } from 'calypso/lib/purchases';
+import { domainMappingSetup } from 'calypso/my-sites/domains/paths';
 
 export function resolveDomainStatus(
 	domain,
 	purchase = null,
-	{ isJetpackSite = null, isSiteAutomatedTransfer = null, isDomainOnlySite = false } = {}
+	{
+		isJetpackSite = null,
+		isSiteAutomatedTransfer = null,
+		isDomainOnlySite = false,
+		hasMappingError = false,
+		siteSlug = null,
+	} = {}
 ) {
 	switch ( domain.type ) {
 		case domainTypes.MAPPED:
@@ -44,13 +52,45 @@ export function resolveDomainStatus(
 				};
 			}
 
-			if ( ( ! isJetpackSite || isSiteAutomatedTransfer ) && ! domain.pointsToWpcom ) {
+			if ( hasMappingError ) {
+				const status = translate(
+					"{{strong}}Connection error:{{/strong}} We couldn't verify your connection. Please {{a}}follow this setup again{{/a}}.",
+					{
+						components: {
+							strong: <strong />,
+							a: (
+								<a
+									href={ domainMappingSetup( siteSlug, domain.domain, 'suggested_update' ) }
+									onClick={ ( e ) => e.stopPropagation() }
+								/>
+							),
+						},
+					}
+				);
 				return {
-					statusText: translate( 'Complete setup' ),
-					statusClass: 'status-warning',
+					statusText: translate( 'Connection error' ),
+					statusClass: 'status-alert',
 					icon: 'info',
-					listStatusText: translate( 'Complete setup' ),
-					listStatusClass: 'warning',
+					listStatusText: status,
+					listStatusClass: 'alert',
+				};
+			}
+
+			if ( ( ! isJetpackSite || isSiteAutomatedTransfer ) && ! domain.pointsToWpcom ) {
+				const status = translate(
+					'{{strong}}Verifying connection:{{/strong}} You can continue to work on your site, but you domain won’t be reachable just yet.',
+					{
+						components: {
+							strong: <strong />,
+						},
+					}
+				);
+				return {
+					statusText: translate( 'Verifying connection' ),
+					statusClass: 'status-verifying',
+					icon: 'verifying',
+					listStatusText: status,
+					listStatusClass: 'verifying',
 				};
 			}
 

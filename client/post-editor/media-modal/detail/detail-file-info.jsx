@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import React from 'react';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { playtime } from 'calypso/lib/media/utils';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { playtime } from 'calypso/lib/media/utils';
 
 class EditorMediaModalDetailFileInfo extends React.Component {
 	static displayName = 'EditorMediaModalDetailFileInfo';
@@ -87,7 +80,7 @@ class EditorMediaModalDetailFileInfo extends React.Component {
 	renderFileSize = () => {
 		const fileSize = this.getItemValue( 'size' );
 
-		if ( ! fileSize || fileSize === 0 ) {
+		if ( ! fileSize || fileSize === 0 || fileSize === '0.00 B' ) {
 			return;
 		}
 

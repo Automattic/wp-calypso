@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { isRequestingGuidedTransferStatus } from 'calypso/state/sites/guided-transfer/selectors';
 import { requestGuidedTransferStatus } from 'calypso/state/sites/guided-transfer/actions';
+import { isRequestingGuidedTransferStatus } from 'calypso/state/sites/guided-transfer/selectors';
 
 class QuerySiteGuidedTransfer extends Component {
 	constructor( props ) {

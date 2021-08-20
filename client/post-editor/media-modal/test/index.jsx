@@ -2,21 +2,14 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import { translate } from 'i18n-calypso';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { EditorMediaModal } from '../';
 import accept from 'calypso/lib/accept';
 import { ModalViews } from 'calypso/state/ui/media-modal/constants';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { EditorMediaModal } from '../';
 
 jest.mock( 'component-closest', () => {} );
 jest.mock(

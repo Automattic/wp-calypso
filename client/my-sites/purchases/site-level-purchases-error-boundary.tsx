@@ -1,9 +1,6 @@
-/**
- * External dependencies
- */
-import React, { ErrorInfo } from 'react';
-import debugFactory from 'debug';
 import styled from '@emotion/styled';
+import debugFactory from 'debug';
+import React, { ErrorInfo } from 'react';
 
 const debug = debugFactory( 'calypso:site-level-purchases-error-boundary' );
 

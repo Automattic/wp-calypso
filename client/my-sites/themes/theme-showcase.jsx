@@ -1,53 +1,44 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import { localize } from 'i18n-calypso';
+import { compact, pickBy } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import page from 'page';
-import { compact, pickBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import ThemesSelection from './themes-selection';
-import SubMasterbarNav from 'calypso/components/sub-masterbar-nav';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { addTracking, trackClick, localizeThemesPath } from './helpers';
+import UpworkBanner from 'calypso/blocks/upwork-banner';
+import Badge from 'calypso/components/badge';
 import DocumentHead from 'calypso/components/data/document-head';
-import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import ThemePreview from './theme-preview';
-import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
-import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import config from '@automattic/calypso-config';
-import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
-import ThemesSearchCard from './themes-magic-search-card';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
+import SectionNav from 'calypso/components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import SubMasterbarNav from 'calypso/components/sub-masterbar-nav';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
+import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
+import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	getActiveTheme,
+	getCanonicalTheme,
 	getThemeFilterTerms,
 	getThemeFilterToTermTable,
 	getThemeShowcaseDescription,
 	getThemeShowcaseTitle,
 	prependThemeFilterKeys,
 } from 'calypso/state/themes/selectors';
-import UpworkBanner from 'calypso/blocks/upwork-banner';
-import SectionNav from 'calypso/components/section-nav';
-import NavTabs from 'calypso/components/section-nav/tabs';
-import NavItem from 'calypso/components/section-nav/item';
-import RecommendedThemes from './recommended-themes';
-import TrendingThemes from './trending-themes';
+import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import FseThemes from './fse-themes';
-import Badge from 'calypso/components/badge';
+import { addTracking, trackClick, localizeThemesPath } from './helpers';
+import RecommendedThemes from './recommended-themes';
+import ThemePreview from './theme-preview';
+import ThemesSearchCard from './themes-magic-search-card';
+import ThemesSelection from './themes-selection';
+import TrendingThemes from './trending-themes';
 
-/**
- * Style dependencies
- */
 import './theme-showcase.scss';
 
 const subjectsMeta = {
@@ -80,16 +71,14 @@ class ThemeShowcase extends React.Component {
 				key: 'recommended',
 				text: props.translate( 'Recommended' ),
 				order: 1,
-				show: true,
 			},
-			TRENDING: { key: 'trending', text: props.translate( 'Trending' ), order: 2, show: true },
+			TRENDING: { key: 'trending', text: props.translate( 'Trending' ), order: 2 },
 			MYTHEMES: {
 				key: 'my-themes',
 				text: props.translate( 'My Themes' ),
 				order: 3,
-				show: this.props.isJetpackSite,
 			},
-			ALL: { key: 'all', text: props.translate( 'All Themes' ), order: 4, show: true },
+			ALL: { key: 'all', text: props.translate( 'All Themes' ), order: 4 },
 			FSE: {
 				key: 'fse',
 				text: (
@@ -101,7 +90,6 @@ class ThemeShowcase extends React.Component {
 					</span>
 				),
 				order: 5,
-				show: config.isEnabled( 'gutenboarding/site-editor' ),
 			},
 		};
 		this.state = {
@@ -233,6 +221,7 @@ class ThemeShowcase extends React.Component {
 	};
 
 	onFilterClick = ( tabFilter ) => {
+		const scrollPos = window.pageYOffset;
 		trackClick( 'section nav filter', tabFilter );
 		this.setState( { tabFilter } );
 
@@ -240,7 +229,10 @@ class ThemeShowcase extends React.Component {
 		// In this state: tabFilter = [ Recommended | ##All(1)## ]  tier = [ All(2) | Free | ##Premium## ]
 		// Clicking "Recommended" forces tier to be "all", since Recommend themes cannot filter on tier.
 		if ( tabFilter.key !== this.tabFilters.ALL.key && 'all' !== this.props.tier ) {
-			callback = () => this.onTierSelect( { value: 'all' } );
+			callback = () => {
+				this.onTierSelect( { value: 'all' } );
+				window.scrollTo( 0, scrollPos );
+			};
 		}
 		this.setState( { tabFilter }, callback );
 	};
@@ -264,6 +256,25 @@ class ThemeShowcase extends React.Component {
 				<ThemesSelection { ...themeProps } />
 			</div>
 		);
+	};
+
+	shouldShowTab = ( key ) => {
+		switch ( key ) {
+			case this.tabFilters.RECOMMENDED.key:
+			case this.tabFilters.TRENDING.key:
+			case this.tabFilters.ALL.key:
+				return true;
+			case this.tabFilters.MYTHEMES.key:
+				return this.props.isJetpackSite;
+			case this.tabFilters.FSE.key:
+				// Display FSE tab if feature flag is enabled or if current theme is already FSE-enabled.
+				return (
+					config.isEnabled( 'gutenboarding/site-editor' ) ||
+					this.props.currentTheme?.taxonomies?.theme_feature?.some(
+						( f ) => f.slug === 'block-templates'
+					)
+				);
+		}
 	};
 
 	render() {
@@ -384,7 +395,7 @@ class ThemeShowcase extends React.Component {
 									.sort( ( a, b ) => a.order - b.order )
 									.map(
 										( tabFilter ) =>
-											tabFilter.show && (
+											this.shouldShowTab( tabFilter.key ) && (
 												<NavItem
 													key={ tabFilter.key }
 													onClick={ () => this.onFilterClick( tabFilter ) }
@@ -415,16 +426,21 @@ class ThemeShowcase extends React.Component {
 	}
 }
 
-const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
-	currentThemeId: getActiveTheme( state, siteId ),
-	isLoggedIn: isUserLoggedIn( state ),
-	siteSlug: getSiteSlug( state, siteId ),
-	description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
-	title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),
-	subjects: getThemeFilterTerms( state, 'subject' ) || {},
-	filterString: prependThemeFilterKeys( state, filter ),
-	filterToTermTable: getThemeFilterToTermTable( state ),
-	themesBookmark: getThemesBookmark( state ),
-} );
+const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
+	const currentThemeId = getActiveTheme( state, siteId );
+	const currentTheme = getCanonicalTheme( state, siteId, currentThemeId );
+	return {
+		currentThemeId,
+		currentTheme,
+		isLoggedIn: isUserLoggedIn( state ),
+		siteSlug: getSiteSlug( state, siteId ),
+		description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
+		title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),
+		subjects: getThemeFilterTerms( state, 'subject' ) || {},
+		filterString: prependThemeFilterKeys( state, filter ),
+		filterToTermTable: getThemeFilterToTermTable( state ),
+		themesBookmark: getThemesBookmark( state ),
+	};
+};
 
 export default connect( mapStateToProps, null )( localize( ThemeShowcase ) );

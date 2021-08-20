@@ -29,9 +29,6 @@
 //   ]
 //
 
-/**
- * External dependencies
- */
 import {
 	camelCase,
 	flowRight as compose,

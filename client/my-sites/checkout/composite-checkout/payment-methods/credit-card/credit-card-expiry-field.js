@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useTranslate } from 'i18n-calypso';
-import { CardExpiryElement } from 'react-stripe-elements';
 import { FormStatus, useFormStatus, useSelect } from '@automattic/composite-checkout';
-
-/**
- * Internal dependencies
- */
-import { Label, LabelText, StripeFieldWrapper, StripeErrorMessage } from './form-layout-components';
+import { useTranslate } from 'i18n-calypso';
+import React from 'react';
+import { CardExpiryElement } from 'react-stripe-elements';
 import { Input } from 'calypso/my-sites/domains/components/form';
+import { Label, LabelText, StripeFieldWrapper, StripeErrorMessage } from './form-layout-components';
 
 export default function CreditCardExpiryField( {
 	handleStripeFieldChange,

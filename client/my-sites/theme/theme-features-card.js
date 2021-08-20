@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
+import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { get, isEmpty } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { get, isEmpty } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
 import SectionHeader from 'calypso/components/section-header';
 import { isValidThemeFilterTerm } from 'calypso/state/themes/selectors';

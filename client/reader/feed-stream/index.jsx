@@ -1,26 +1,19 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import EmptyContent from './empty';
-import DocumentHead from 'calypso/components/data/document-head';
-import Stream from 'calypso/reader/stream';
-import FeedError from 'calypso/reader/feed-error';
 import ReaderFeedHeader from 'calypso/blocks/reader-feed-header';
-import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import DocumentHead from 'calypso/components/data/document-head';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
-import { getSite } from 'calypso/state/reader/sites/selectors';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
+import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import FeedError from 'calypso/reader/feed-error';
 import { getSiteName } from 'calypso/reader/get-helpers';
-import { isSiteBlocked } from 'calypso/state/reader/site-blocks/selectors';
 import SiteBlocked from 'calypso/reader/site-blocked';
+import Stream from 'calypso/reader/stream';
+import { getFeed } from 'calypso/state/reader/feeds/selectors';
+import { isSiteBlocked } from 'calypso/state/reader/site-blocks/selectors';
+import { getSite } from 'calypso/state/reader/sites/selectors';
+import EmptyContent from './empty';
 
 // If the blog_ID of a reader feed is 0, that means no site exists for it.
 const getReaderSiteId = ( feed ) => ( feed && feed.blog_ID === 0 ? null : feed && feed.blog_ID );

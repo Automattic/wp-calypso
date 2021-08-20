@@ -1,23 +1,15 @@
-/**
- * External dependencies
- */
-import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import {
 	ShoppingCartProvider,
 	useShoppingCart,
 	getEmptyResponseCart,
 } from '@automattic/shopping-cart';
-import type { RequestCart } from '@automattic/shopping-cart';
-
-/**
- * Internal Dependencies
- */
+import React, { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import wp from 'calypso/lib/wp';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import getCartKey from './get-cart-key';
 import CartMessages from 'calypso/my-sites/checkout/cart/cart-messages';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import useCartKey from './use-cart-key';
+import type { RequestCart } from '@automattic/shopping-cart';
 
 const wpcomGetCart = ( cartKey: string ) => wp.req.get( `/me/shopping-cart/${ cartKey }` );
 const wpcomSetCart = ( cartKey: string, cartData: RequestCart ) =>
@@ -31,8 +23,6 @@ export default function CalypsoShoppingCartProvider( {
 }: {
 	children: React.ReactNode;
 } ): JSX.Element {
-	const selectedSite = useSelector( getSelectedSite );
-	const cartKeysThatDoNotAllowRefetch = [ 'no-site', 'no-user' ];
 	const isLoggedOutCart = ! useSelector( isUserLoggedIn );
 	const currentUrlPath = window.location.pathname;
 	const searchParams = new URLSearchParams( window.location.search );
@@ -50,23 +40,18 @@ export default function CalypsoShoppingCartProvider( {
 
 	const getCart = isLoggedOutCart || isNoSiteCart ? () => Promise.resolve( emptyCart ) : undefined;
 
-	const finalCartKey = getCartKey( { selectedSite, isLoggedOutCart, isNoSiteCart } );
-
-	const refetchOnWindowFocus: boolean =
-		Boolean( selectedSite?.ID ) &&
-		Boolean( finalCartKey ) &&
-		! cartKeysThatDoNotAllowRefetch.includes( String( finalCartKey ) );
+	const defaultCartKey = useCartKey();
 
 	const options = useMemo(
 		() => ( {
-			refetchOnWindowFocus,
+			refetchOnWindowFocus: true,
 		} ),
-		[ refetchOnWindowFocus ]
+		[]
 	);
 
 	return (
 		<ShoppingCartProvider
-			cartKey={ finalCartKey }
+			cartKey={ defaultCartKey }
 			getCart={ getCart || wpcomGetCart }
 			setCart={ wpcomSetCart }
 			options={ options }

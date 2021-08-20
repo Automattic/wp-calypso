@@ -3,11 +3,11 @@
 /* eslint-disable no-process-exit*/
 /* eslint-disable import/no-nodejs-modules*/
 
-const path = require( 'path' );
-const electron = require( 'electron' );
-const { promisify } = require( 'util' );
-const { openSync, mkdirSync } = require( 'fs' );
 const { execSync, spawn } = require( 'child_process' );
+const { openSync, mkdirSync } = require( 'fs' );
+const path = require( 'path' );
+const { promisify } = require( 'util' );
+const electron = require( 'electron' );
 const videoRecorder = require( './tests/lib/video-recorder' );
 
 const PROJECT_DIR = path.join( __dirname, '../' );
@@ -95,6 +95,13 @@ function handleExit() {
 	}
 }
 
+function cleanBaseURL( url ) {
+	if ( url.endsWith( '/' ) ) {
+		return cleanBaseURL( url.replace( /\/$/, '' ) );
+	}
+	return url;
+}
+
 // Handle both user-initiated (SIGINT) and normal termination.
 process.on( 'SIGINT', function () {
 	handleExit();
@@ -106,6 +113,10 @@ process.on( 'exit', handleExit );
 async function run() {
 	try {
 		const requiredENVs = [ 'E2EGUTENBERGUSER', 'E2EPASSWORD' ];
+		if ( process.env.TEAMCITY_PROJECT_NAME !== undefined ) {
+			// Override base URL in TeamCity PRs.
+			requiredENVs.push( 'WP_DESKTOP_BASE_URL' );
+		}
 		const missingENVs = requiredENVs.filter(
 			( name ) => ! process.env[ name ] || process.env[ name ] === ''
 		);
@@ -123,7 +134,11 @@ async function run() {
 		app = spawnDetached( CWD, SPAWN_CMD, APP_ARGS, electronLog.fd, {
 			WP_DEBUG_LOG: appLog.path,
 			DEBUG: true,
+			CI: true,
 			...parentEnv,
+			...( process.env.WP_DESKTOP_BASE_URL !== undefined && {
+				WP_DESKTOP_BASE_URL: cleanBaseURL( process.env.WP_DESKTOP_BASE_URL ),
+			} ),
 		} );
 
 		await delay( 5000 );

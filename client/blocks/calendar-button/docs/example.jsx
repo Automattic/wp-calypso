@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import CalendarButton from 'calypso/blocks/calendar-button';
 
 const CalendarButtonExample = () => {

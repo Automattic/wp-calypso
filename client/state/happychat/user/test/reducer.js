@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { deserialize } from 'calypso/state/utils';
 import { HAPPYCHAT_IO_RECEIVE_INIT } from 'calypso/state/action-types';
+import { deserialize } from 'calypso/state/utils';
 import { geoLocation } from '../reducer';
 
 describe( '#geoLocation()', () => {

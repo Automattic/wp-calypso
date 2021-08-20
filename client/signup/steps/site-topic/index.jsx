@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import SiteTopicForm from './form';
-import StepWrapper from 'calypso/signup/step-wrapper';
-import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
-import { getSiteVerticalIsUserInput } from 'calypso/state/signup/steps/site-vertical/selectors';
-import { submitSiteVertical } from 'calypso/state/signup/steps/site-vertical/actions';
+import StepWrapper from 'calypso/signup/step-wrapper';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
+import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
+import { submitSiteVertical } from 'calypso/state/signup/steps/site-vertical/actions';
+import { getSiteVerticalIsUserInput } from 'calypso/state/signup/steps/site-vertical/selectors';
+import SiteTopicForm from './form';
 
 class SiteTopicStep extends Component {
 	static propTypes = {

@@ -1,10 +1,6 @@
-/**
- * External dependencies
- */
-
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import classNames from 'classnames';
 
 const ActionPanelFigure = ( { inlineBodyText, align, children } ) => {
 	const figureClasses = classNames( {

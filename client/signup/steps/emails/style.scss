@@ -14,6 +14,12 @@
 	}
 }
 
+.signup__step.is-emails {
+	.emails__register-email-step--domain-name {
+		word-break: break-all;
+	}
+}
+
 /**
  * Styles for design reskin
  * The `is-white-signup` class is attached to the body when the user is assigned the `reskinned` group of the `reskinSignupFlow` a/b test

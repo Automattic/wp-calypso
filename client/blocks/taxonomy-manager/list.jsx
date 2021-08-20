@@ -1,29 +1,21 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { CompactCard } from '@automattic/components';
+import { WindowScroller } from '@automattic/react-virtualized';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { includes, filter, map, reduce } from 'lodash';
-import { WindowScroller } from '@automattic/react-virtualized';
-
-/**
- * Internal dependencies
- */
-import VirtualList from 'calypso/components/virtual-list';
-import ListItem from './list-item';
-import { CompactCard } from '@automattic/components';
-import QueryTerms from 'calypso/components/data/query-terms';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import QueryTerms from 'calypso/components/data/query-terms';
+import VirtualList from 'calypso/components/virtual-list';
 import {
 	isRequestingTermsForQueryIgnoringPage,
 	getTermsLastPageForQuery,
 	getTermsForQueryIgnoringPage,
 } from 'calypso/state/terms/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import ListItem from './list-item';
 
 /**
  * Constants

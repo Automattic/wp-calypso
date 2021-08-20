@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { get, includes, reject } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import stepConfig from './steps';
-import { generateFlows } from 'calypso/signup/config/flows-pure';
 import { addQueryArgs } from 'calypso/lib/url';
+import { generateFlows } from 'calypso/signup/config/flows-pure';
+import stepConfig from './steps';
 
 function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 	let checkoutURL = `/checkout/${ dependencies.siteSlug }`;

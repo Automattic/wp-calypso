@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import React from 'react';
 
-/**
- * Internal dependencies
- */
 import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */

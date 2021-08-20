@@ -28,6 +28,7 @@ import {
 import AvailableTimePicker from '../shared/available-time-picker';
 import { CONCIERGE_STATUS_BOOKING, CONCIERGE_STATUS_BOOKED } from '../constants';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { renderDisallowed } from '../shared/utils';
 
 class CalendarStep extends Component {
 	static propTypes = {
@@ -88,6 +89,10 @@ class CalendarStep extends Component {
 			scheduleId,
 			translate,
 		} = this.props;
+		const canChangeAppointment = appointmentDetails?.meta.canChangeAppointment;
+		if ( appointmentDetails && ! canChangeAppointment ) {
+			return renderDisallowed( translate, site.slug );
+		}
 
 		return (
 			<div>

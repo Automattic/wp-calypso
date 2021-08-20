@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { requestSiteAlerts } from 'calypso/state/data-getters';
 import { getPluginsWithUpdates } from 'calypso/state/plugins/installed/selectors';
 import { isJetpackSiteSecondaryNetworkSite } from 'calypso/state/sites/selectors';
-import { requestSiteAlerts } from 'calypso/state/data-getters';
 
 const emptyList = [];
 
@@ -41,7 +34,7 @@ export default ( WrappedComponent ) => {
 			return {
 				plugins:
 					nextProps.siteId === prevState.siteId
-						? unionBySlug( nextProps.plugins, prevState.plugins )
+						? unionBySlug( nextProps.plugins ?? [], prevState.plugins ?? [] )
 						: emptyList,
 				siteId: nextProps.siteId,
 			};
@@ -61,7 +54,7 @@ export default ( WrappedComponent ) => {
 	}
 	return connect( ( state, { siteId } ) => {
 		const alertsData = requestSiteAlerts( siteId );
-		let pluginsWithUpdates = null;
+		let pluginsWithUpdates = emptyList;
 		if ( ! isJetpackSiteSecondaryNetworkSite( state, siteId ) ) {
 			pluginsWithUpdates = getPluginsWithUpdates( state, [ siteId ] );
 		}

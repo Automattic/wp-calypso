@@ -1,26 +1,19 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
+import { createSelector } from '@automattic/state-utils';
+import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { createSelector } from '@automattic/state-utils';
-import { newPost } from 'calypso/lib/paths';
-import Popover from 'calypso/components/popover';
 import Count from 'calypso/components/count';
+import QueryPosts from 'calypso/components/data/query-posts';
+import Popover from 'calypso/components/popover';
+import { newPost } from 'calypso/lib/paths';
+import Draft from 'calypso/my-sites/draft';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
 	getPostsForQueryIgnoringPage,
 	isRequestingPostsForQuery,
 } from 'calypso/state/posts/selectors';
-import Draft from 'calypso/my-sites/draft';
-import QueryPosts from 'calypso/components/data/query-posts';
-import { Button } from '@automattic/components';
 import { getSite } from 'calypso/state/sites/selectors';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 
 class MasterbarDraftsPopover extends Component {
 	render() {

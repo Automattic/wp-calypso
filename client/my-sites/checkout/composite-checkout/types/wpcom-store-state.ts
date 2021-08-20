@@ -1,6 +1,4 @@
-/**
- * External dependencies
- */
+import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
 import type {
 	DomainContactDetails,
 	CaDomainContactExtraDetails,
@@ -28,7 +26,6 @@ import type {
 	DomainContactValidationRequestExtraFields,
 	DomainContactValidationResponse,
 } from '@automattic/wpcom-checkout';
-import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
 
 /*
  * Asymmetrically combine two ManagedContactDetailsShape<T> objects 'update' and 'data'
@@ -259,6 +256,10 @@ function getInitialManagedValue( initialProperties?: {
 
 function touchField( oldData: ManagedValue ): ManagedValue {
 	return { ...oldData, isTouched: true };
+}
+
+function clearFieldErrors( oldData: ManagedValue ): ManagedValue {
+	return { ...oldData, errors: [] };
 }
 
 function touchIfDifferent(
@@ -768,6 +769,10 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 		errors: ManagedContactDetailsErrors
 	): ManagedContactDetails => {
 		return setManagedContactDetailsErrors( errors, oldDetails );
+	},
+
+	clearErrorMessages: ( oldDetails: ManagedContactDetails ): ManagedContactDetails => {
+		return mapManagedContactDetailsShape( clearFieldErrors, oldDetails );
 	},
 
 	populateCountryCodeFromGeoIP: (

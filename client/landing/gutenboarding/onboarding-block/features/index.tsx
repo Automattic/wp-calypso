@@ -1,11 +1,3 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { useI18n } from '@wordpress/react-i18n';
-import { Button } from '@wordpress/components';
-import type { WPCOMFeatures } from '@automattic/data-stores';
 import {
 	FeatureIcon,
 	Title,
@@ -15,19 +7,17 @@ import {
 	SkipButton,
 	NextButton,
 } from '@automattic/onboarding';
+import { Button } from '@wordpress/components';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { WPCOM_FEATURES_STORE } from '../../stores/wpcom-features';
+import * as React from 'react';
 import useStepNavigation from '../../hooks/use-step-navigation';
 import { useTrackStep } from '../../hooks/use-track-step';
+import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import { WPCOM_FEATURES_STORE } from '../../stores/wpcom-features';
+import type { WPCOMFeatures } from '@automattic/data-stores';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 type FeatureId = WPCOMFeatures.FeatureId;

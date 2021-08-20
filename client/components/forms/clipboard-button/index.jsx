@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import PropTypes from 'prop-types';
-import ReactDom from 'react-dom';
-import Clipboard from 'clipboard';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import classNames from 'classnames';
+import Clipboard from 'clipboard';
+import PropTypes from 'prop-types';
+import React from 'react';
+import ReactDom from 'react-dom';
 
 const noop = () => {};
 

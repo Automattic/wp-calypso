@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React from 'react';
 import Gridicon from 'calypso/components/gridicon';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default class extends React.Component {

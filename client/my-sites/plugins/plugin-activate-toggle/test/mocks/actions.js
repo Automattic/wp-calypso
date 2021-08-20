@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-
 import sinon from 'sinon';
 
 export default {

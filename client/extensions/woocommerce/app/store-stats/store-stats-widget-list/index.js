@@ -1,26 +1,19 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
-import { findIndex } from 'lodash';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import Delta from 'woocommerce/components/delta';
-import { formatValue, getDelta } from '../utils';
-import { getPeriodFormat } from 'calypso/state/stats/lists/utils';
-import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
+import { findIndex } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { UNITS } from 'woocommerce/app/store-stats/constants';
 import Sparkline from 'woocommerce/components/d3/sparkline';
+import Delta from 'woocommerce/components/delta';
 import Table from 'woocommerce/components/table';
 import TableItem from 'woocommerce/components/table/table-item';
 import TableRow from 'woocommerce/components/table/table-row';
-import { UNITS } from 'woocommerce/app/store-stats/constants';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
+import { getPeriodFormat } from 'calypso/state/stats/lists/utils';
+import { formatValue, getDelta } from '../utils';
 
 class StoreStatsWidgetList extends Component {
 	static propTypes = {

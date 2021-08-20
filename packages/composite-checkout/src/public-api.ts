@@ -44,7 +44,6 @@ import InvalidPaymentProcessorResponseError from './lib/invalid-payment-processo
 import { useLineItems, useTotal, useLineItemsOfType } from './lib/line-items';
 import { usePaymentMethod, usePaymentMethodId, useAllPaymentMethods } from './lib/payment-methods';
 import { createAlipayPaymentMethodStore, createAlipayMethod } from './lib/payment-methods/alipay';
-import { createIdealPaymentMethodStore, createIdealMethod } from './lib/payment-methods/ideal';
 import PaymentLogo from './lib/payment-methods/payment-logo';
 import { createSofortPaymentMethodStore, createSofortMethod } from './lib/payment-methods/sofort';
 import {
@@ -105,8 +104,6 @@ export {
 	checkoutTheme,
 	createAlipayMethod,
 	createAlipayPaymentMethodStore,
-	createIdealMethod,
-	createIdealPaymentMethodStore,
 	createRegistry,
 	createSofortMethod,
 	createSofortPaymentMethodStore,

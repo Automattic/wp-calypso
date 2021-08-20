@@ -1,19 +1,5 @@
-/**
- * External dependencies
- */
 import { assert } from 'chai';
 import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
-import {
-	ticketSupportConfigurationRequest,
-	ticketSupportConfigurationRequestSuccess,
-	ticketSupportConfigurationRequestFailure,
-	ticketSupportConfigurationDismissError,
-} from '../actions';
-import { dummyConfiguration, dummyError } from './test-data';
 import {
 	HELP_TICKET_CONFIGURATION_REQUEST,
 	HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,
@@ -22,6 +8,13 @@ import {
 } from 'calypso/state/action-types';
 import { useNock } from 'calypso/test-helpers/use-nock';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import {
+	ticketSupportConfigurationRequest,
+	ticketSupportConfigurationRequestSuccess,
+	ticketSupportConfigurationRequestFailure,
+	ticketSupportConfigurationDismissError,
+} from '../actions';
+import { dummyConfiguration, dummyError } from './test-data';
 
 describe( 'ticket-support/configuration actions', () => {
 	let spy;

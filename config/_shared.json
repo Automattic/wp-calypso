@@ -38,7 +38,7 @@
 	"google_oauth_client_id": "108380595987-j91sm1alavcdgd81i2655kp8q1lbtvrc.apps.googleusercontent.com",
 	"facebook_app_id": "611241942420191",
 	"rebrand_cities_prefix": "rebrandcitiestestsite",
-	"livechat_support_locales": [ "en", "es", "pt-br" ],
+	"livechat_support_locales": [ "en" ],
 	"support_site_locales": [
 		"ar",
 		"de",
@@ -149,7 +149,7 @@
 	],
 	"restricted_me_access": true,
 	"theme_color": "#055d9c",
-	"reskinned_flows": [ "onboarding", "launch-site" ],
+	"reskinned_flows": [ "launch-site", "onboarding", "onboarding-with-email" ],
 	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js",
 	"calendly_jetpack_appointment_url": ""
 }

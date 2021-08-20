@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { includes, some } from 'lodash';
 
 // Check if `path` starts with `pathPrefix` and the very next character

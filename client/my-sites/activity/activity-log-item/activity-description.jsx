@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import React, { Component } from 'react';
 import FormattedBlock from 'calypso/components/notes-formatted-block';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 class ActivityDescription extends Component {
 	trackContentLinkClick = ( {

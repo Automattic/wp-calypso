@@ -7,22 +7,25 @@ This document will cover the environment setup process to run the `wp-calypso` e
 <!-- TOC -->
 
 - [Setup](#setup)
-  - [Table of contents](#table-of-contents)
-  - [Software Environment](#software-environment)
-    - [Required software](#required-software)
-  - [Setup steps macOS 10.15 and 11.0](#setup-steps-macos-1015-and-110)
-    - [Intel architecture](#intel-architecture)
-    - [Apple Silicon architecture](#apple-silicon-architecture)
-  - [Environment Variables](#environment-variables)
-  - [Configuration File](#configuration-file)
-    - [Overview](#overview)
-    - [Quick start](#quick-start)
-    - [Custom configuration](#custom-configuration)
-  - [Credentials File](#credentials-file)
+    - [Table of contents](#table-of-contents)
+    - [Software Environment](#software-environment)
+        - [Required software](#required-software)
+    - [Setup steps macOS 10.15 and 11.0](#setup-steps-macos-1015-and-110)
+        - [Intel architecture](#intel-architecture)
+        - [Apple Silicon architecture](#apple-silicon-architecture)
+    - [Environment Variables](#environment-variables)
+    - [Configuration File](#configuration-file)
+        - [Overview](#overview)
+        - [Quick start](#quick-start)
+        - [Custom configuration](#custom-configuration)
+    - [Credentials File](#credentials-file)
 
 <!-- /TOC -->
 
 ## Software Environment
+
+The provided steps are for macOS 11.0 Big Sur. 
+It may work for Linux distributions and/or Windows but no guarantees are provided.
 
 ### Required software
 
@@ -45,18 +48,16 @@ Up-to-date instructions on installing individual pieces of required software can
 
 Once installed, open a Terminal instance and execute the following:
 
-1. install dependencies:
-
 ```
 yarn install
 ```
 
 ### Apple Silicon architecture
 
-It appears that as of 2021-01, key NodeJS modules do not support ARM64 yet, notably `mocha`.
+It appears that as of 2021-01, many key NodeJS modules do not support ARM64 yet.
 As with any cutting-edge software, this is subject to change in the coming weeks and months.
 
-To work around compatibility issues, we will install Intel architecture binaries.
+To work around compatibility issues, we will install Intel architecture binaries in emulation.
 
 1. install i386 Homebrew:
 
@@ -159,6 +160,6 @@ For the full list of possible configuration values, refer to the following page:
 
 ## Credentials File
 
-In addition to the configuration files, there is an encrypted file that holds test account credentials. This must be decrypted prior to use. For instructions on how to decrypt this file, please refer to the Field Guide page.
+Within `test/e2e/config` is an encrypted file that holds test account credentials. This must be decrypted prior to use. For instructions on how to decrypt this file, please refer to the Field Guide page.
 
 **Trialmatticians**: please contact a team member in your Slack chat for the decryption key.

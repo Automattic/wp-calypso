@@ -1,21 +1,9 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-
-import FormattedHeader from 'calypso/components/formatted-header';
 import { translate } from 'i18n-calypso';
-import InstallThemeButton from './install-theme-button';
+import React from 'react';
+import FormattedHeader from 'calypso/components/formatted-header';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import InstallThemeButton from './install-theme-button';
 
-/**
- * Style dependencies
- */
 import './themes-header.scss';
 
 const ThemesHeader = () => {

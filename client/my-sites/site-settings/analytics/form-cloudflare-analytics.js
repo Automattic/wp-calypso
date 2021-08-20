@@ -1,39 +1,29 @@
-/**
- * External dependencies
- */
-import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
-import { flowRight, partialRight, pick } from 'lodash';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
-import wrapSettingsForm from '../wrap-settings-form';
-import { CompactCard } from '@automattic/components';
-import { getPlugins } from 'calypso/state/plugins/installed/selectors';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormTextValidation from 'calypso/components/forms/form-input-validation';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudflare-logo-small.svg';
 import {
 	findFirstSimilarPlanKey,
 	TYPE_PREMIUM,
 	FEATURE_CLOUDFLARE_ANALYTICS,
 	FEATURE_GOOGLE_ANALYTICS,
 } from '@automattic/calypso-products';
+import { CompactCard } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
+import { flowRight, partialRight, pick } from 'lodash';
+import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudflare-logo-small.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormTextValidation from 'calypso/components/forms/form-input-validation';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getPlugins } from 'calypso/state/plugins/installed/selectors';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import wrapSettingsForm from '../wrap-settings-form';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const validateTrackingId = ( code ) =>

@@ -1,16 +1,14 @@
-/**
- * External dependencies
- */
-import { useEffect, useRef } from 'react';
+import { isEnabled } from '@automattic/calypso-config';
+import { useCallback, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { getHttpData } from 'calypso/state/data-layer/http-data';
+import { applySiteOffset } from 'calypso/lib/site/timezone';
 import { getRequestActivityLogsId, requestActivityLogs } from 'calypso/state/data-getters';
+import { getHttpData } from 'calypso/state/data-layer/http-data';
 import { requestRewindCapabilities } from 'calypso/state/rewind/capabilities/actions';
+import getActivityLogVisibleDays from 'calypso/state/selectors/get-activity-log-visible-days';
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 
 const isLoading = ( response ) => [ 'uninitialized', 'pending' ].includes( response.state );
 
@@ -141,4 +139,33 @@ export const useFirstMatchingBackupAttempt = (
 		isLoading: isLoadingActivityLogs,
 		backupAttempt: matchingAttempt || undefined,
 	};
+};
+
+/**
+ * A React hook that creates a callback to test whether or not a given date
+ * should be visible in the Backup UI (if display rules are enabled).
+ *
+ * @param {number|null} siteId The site whose display rules we'll be testing against.
+ * @returns A callback that returns true if a given date should be visible, and false otherwise.
+ */
+export const useIsDateVisible = ( siteId ) => {
+	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
+	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
+	const visibleDays = useSelector( ( state ) => getActivityLogVisibleDays( state, siteId ) );
+
+	return useCallback(
+		( date ) => {
+			if ( ! isEnabled( 'activity-log/display-rules' ) ) {
+				return true;
+			}
+
+			if ( visibleDays === undefined ) {
+				return true;
+			}
+
+			const today = applySiteOffset( Date.now(), { gmtOffset, timezone } ).startOf( 'day' );
+			return today.diff( date, 'days' ) <= visibleDays;
+		},
+		[ gmtOffset, timezone, visibleDays ]
+	);
 };

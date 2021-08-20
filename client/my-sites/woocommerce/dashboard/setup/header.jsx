@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
 
 const SetupHeader = ( { imageSource, imageWidth, subtitle, title, children } ) => {
 	const Tag = 'string' === typeof subtitle ? 'p' : 'div';

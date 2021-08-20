@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
+import { CompactCard as Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { CompactCard as Card } from '@automattic/components';
+import { connect } from 'react-redux';
 import { domainManagementDns } from 'calypso/my-sites/domains/paths';
 import getEmailForwardingMXServers from 'calypso/state/selectors/get-email-forwarding-mx-servers';
 

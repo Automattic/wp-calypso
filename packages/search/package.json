@@ -29,14 +29,14 @@
 	],
 	"types": "dist/types",
 	"dependencies": {
-		"@babel/runtime": "^7.14.0",
+		"@babel/runtime": "^7.14.8",
 		"@wordpress/compose": "^3.25.3",
 		"@wordpress/components": "^13.0.3",
 		"@wordpress/icons": "^2.10.3",
 		"@wordpress/react-i18n": "^1.0.3",
 		"classnames": "^2.3.1",
 		"lodash": "^4.17.21",
-		"tslib": "^2.2.0"
+		"tslib": "^2.3.0"
 	},
 	"peerDependencies": {
 		"react": "^16.8",

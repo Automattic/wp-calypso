@@ -1,28 +1,10 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import moment from 'moment';
+import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
-import StatsNavigation from 'calypso/blocks/stats-navigation';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import Chart from './store-stats-orders-chart';
-import StatsPeriodNavigation from 'calypso/my-sites/stats/stats-period-navigation';
-import DatePicker from 'calypso/my-sites/stats/stats-date-picker';
-import FormattedHeader from 'calypso/components/formatted-header';
-import Module from './store-stats-module';
-import List from './store-stats-list';
-import WidgetList from './store-stats-widget-list';
-import SectionHeader from 'calypso/components/section-header';
-import JetpackColophon from 'calypso/components/jetpack-colophon';
+import moment from 'moment';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import titlecase from 'to-title-case';
 import {
 	sparkWidgets,
 	topProducts,
@@ -30,12 +12,23 @@ import {
 	topCoupons,
 	noDataMsg,
 } from 'woocommerce/app/store-stats/constants';
-import { getEndPeriod, getQueries, getWidgetPath } from './utils';
+import StatsNavigation from 'calypso/blocks/stats-navigation';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import config from '@automattic/calypso-config';
-import StoreStatsReferrerWidget from './store-stats-referrer-widget';
+import FormattedHeader from 'calypso/components/formatted-header';
+import JetpackColophon from 'calypso/components/jetpack-colophon';
+import Main from 'calypso/components/main';
+import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import titlecase from 'to-title-case';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import DatePicker from 'calypso/my-sites/stats/stats-date-picker';
+import StatsPeriodNavigation from 'calypso/my-sites/stats/stats-period-navigation';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import List from './store-stats-list';
+import Module from './store-stats-module';
+import Chart from './store-stats-orders-chart';
+import StoreStatsReferrerWidget from './store-stats-referrer-widget';
+import WidgetList from './store-stats-widget-list';
+import { getEndPeriod, getQueries, getWidgetPath } from './utils';
 
 class StoreStats extends Component {
 	static propTypes = {

@@ -157,7 +157,7 @@ The following state tree demonstrates how users, sites, and posts may be interre
 			"2916284": {
 				"ID": 2916284,
 				"name": "WordPress.com Example Blog",
-				"description": "Just another WordPress.com weblog",
+				"description": "Just another WordPress.com weblog"
 			}
 		},
 		"siteUsers": {
@@ -233,8 +233,8 @@ It expects an array of `posts` passed as a prop, which it renders as a `ul`. The
 In the example above we only pass the first argument, `mapStateToProps`. As another example, consider a component which renders a Delete button for a given post. We want to display the post title as a label in the delete button, and allow the component to trigger the post deletion when clicked.
 
 ```jsx
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import React from 'react';
 
 const PostDeleteButton = ( { deleteHandler, label, translate } ) => (
 	<button onClick={ deleteHandler }>

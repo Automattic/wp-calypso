@@ -2,15 +2,8 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
 import { mount } from 'enzyme';
-
-/**
- * Internal dependencies
- */
+import React, { Component } from 'react';
 import { asyncLoader } from '../';
 
 const runAfterEvents = ( f ) =>

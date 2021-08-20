@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
-import { useDispatch, useSelect } from '@wordpress/data';
 import { createRequestCartProduct } from '@automattic/shopping-cart';
-import type { RequestCartProduct, ResponseCart } from '@automattic/shopping-cart';
+import { useDispatch, useSelect } from '@wordpress/data';
+import * as React from 'react';
 import wp from '../../../lib/wp';
-
-/**
- * Internal dependencies
- */
-import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
-import { USER_STORE } from '../stores/user';
-import { SITE_STORE } from '../stores/site';
-import { PLANS_STORE } from '../stores/plans';
 import { recordOnboardingComplete } from '../lib/analytics';
-import { useSelectedPlan, useShouldRedirectToEditorAfterCheckout } from './use-selected-plan';
 import { clearLastNonEditorRoute } from '../lib/clear-last-non-editor-route';
 import { useOnboardingFlow } from '../path';
+import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
+import { PLANS_STORE } from '../stores/plans';
+import { SITE_STORE } from '../stores/site';
+import { USER_STORE } from '../stores/user';
+import { useSelectedPlan, useShouldRedirectToEditorAfterCheckout } from './use-selected-plan';
+import type { RequestCartProduct, ResponseCart } from '@automattic/shopping-cart';
 
 const wpcom = wp.undocumented();
 

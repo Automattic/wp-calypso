@@ -1,16 +1,5 @@
-/**
- * External dependencies
- */
-import { useMemo } from 'react';
-
-/**
- * Internal dependencies
- */
 import { isJetpackProductSlug, isJetpackPlanSlug } from '@automattic/calypso-products';
-
-/**
- * Type dependencies
- */
+import { useMemo } from 'react';
 import type { RequestCartProduct } from '@automattic/shopping-cart';
 
 const JETPACK_INTRO_COUPON_CODE = 'FRESHPACK';

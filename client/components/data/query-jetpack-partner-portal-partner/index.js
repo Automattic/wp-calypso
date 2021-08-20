@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { fetchPartner } from 'calypso/state/partner-portal/partner/actions';
 import { hasFetchedPartner } from 'calypso/state/partner-portal/partner/selectors';
 

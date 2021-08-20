@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
+import { useShoppingCart } from '@automattic/shopping-cart';
+import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-import { useShoppingCart } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
+import HeaderCake from 'calypso/components/header-cake';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
 import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from 'calypso/lib/gsuite/constants';
-import GSuiteUpsellCard from './gsuite-upsell-card';
-import HeaderCake from 'calypso/components/header-cake';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
-import { getProductsList } from 'calypso/state/products-list/selectors/get-products-list';
 import { infoNotice } from 'calypso/state/notices/actions';
+import { getProductsList } from 'calypso/state/products-list/selectors/get-products-list';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import GSuiteUpsellCard from './gsuite-upsell-card';
 
 export default function GSuiteUpgrade( { domain } ) {
 	const { responseCart: cart, addProductsToCart, isLoading } = useShoppingCart();

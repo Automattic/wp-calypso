@@ -3,9 +3,6 @@
  *
  */
 
-/**
- * External dependencies
- */
 import debug from 'debug';
 
 /**

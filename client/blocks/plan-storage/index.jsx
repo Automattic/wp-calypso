@@ -1,32 +1,22 @@
-/**
- * External dependencies
- */
-import classNames from 'classnames';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import QueryMediaStorage from 'calypso/components/data/query-media-storage';
-import { getMediaStorage } from 'calypso/state/sites/media-storage/selectors';
-import { getSitePlanSlug, getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import {
 	FEATURE_UNLIMITED_STORAGE,
 	planHasFeature,
 	isBusinessPlan,
 	isEcommercePlan,
 } from '@automattic/calypso-products';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import QueryMediaStorage from 'calypso/components/data/query-media-storage';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { getMediaStorage } from 'calypso/state/sites/media-storage/selectors';
+import { getSitePlanSlug, getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import PlanStorageBar from './bar';
 import Tooltip from './tooltip';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class PlanStorage extends Component {

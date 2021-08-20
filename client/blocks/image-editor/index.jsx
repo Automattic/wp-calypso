@@ -1,23 +1,14 @@
-/**
- * External dependencies
- */
+import path from 'path';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { isEqual, partial } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { isEqual, partial } from 'lodash';
-import path from 'path';
-import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import CloseOnEscape from 'calypso/components/close-on-escape';
+import QuerySites from 'calypso/components/data/query-sites';
 import Notice from 'calypso/components/notice';
-import ImageEditorCanvas from './image-editor-canvas';
-import ImageEditorToolbar from './image-editor-toolbar';
-import ImageEditorButtons from './image-editor-buttons';
 import { getMimeType, url } from 'calypso/lib/media/utils';
 import {
 	resetImageEditorState,
@@ -25,19 +16,18 @@ import {
 	setImageEditorFileInfo,
 	setImageEditorDefaultAspectRatio,
 } from 'calypso/state/editor/image-editor/actions';
+import { AspectRatios, AspectRatiosValues } from 'calypso/state/editor/image-editor/constants';
 import {
 	getImageEditorFileInfo,
 	isImageEditorImageLoaded,
 } from 'calypso/state/editor/image-editor/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
-import QuerySites from 'calypso/components/data/query-sites';
-import { AspectRatios, AspectRatiosValues } from 'calypso/state/editor/image-editor/constants';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import ImageEditorButtons from './image-editor-buttons';
+import ImageEditorCanvas from './image-editor-canvas';
+import ImageEditorToolbar from './image-editor-toolbar';
 import { getDefaultAspectRatio } from './utils';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

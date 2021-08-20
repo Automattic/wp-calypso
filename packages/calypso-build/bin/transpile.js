@@ -3,8 +3,8 @@
 /* eslint-disable import/no-nodejs-modules,no-console */
 
 // find all the packages
-const path = require( 'path' );
 const { execSync } = require( 'child_process' );
+const path = require( 'path' );
 
 const dir = process.cwd();
 const root = path.dirname( __dirname );

@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import React from 'react';
 
 export default function TaskPlaceholder() {
 	return (

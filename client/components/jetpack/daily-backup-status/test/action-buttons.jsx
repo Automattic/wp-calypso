@@ -2,28 +2,17 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
+import { mount } from 'enzyme';
 import React from 'react';
 import { Provider } from 'react-redux';
-import { mount } from 'enzyme';
-
-/**
- * Internal dependencies
- */
+import * as record from 'calypso/state/analytics/actions/record';
+import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ActionButtons from '../action-buttons';
 
-/**
- * Mocked dependencies
- */
 jest.mock( 'calypso/state/ui/selectors' );
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-
 jest.mock( 'calypso/state/selectors/get-does-rewind-need-credentials' );
-import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
 
-import * as record from 'calypso/state/analytics/actions/record';
 const recordTracksEvent = jest.spyOn( record, 'recordTracksEvent' );
 
 function render( component ) {

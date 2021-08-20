@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import { preloadEditor } from 'calypso/sections-preloaders';
 import { bumpStat as bumpAnalyticsStat } from 'calypso/state/analytics/actions';
-import { bumpStatGenerator } from './utils';
 import { getPost } from 'calypso/state/posts/selectors';
 import { canCurrentUserEditPost } from 'calypso/state/posts/selectors/can-current-user-edit-post';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
-import { preloadEditor } from 'calypso/sections-preloaders';
+import { bumpStatGenerator } from './utils';
 
 function PostActionsEllipsisMenuEdit( { translate, canEdit, status, editUrl, bumpStat } ) {
 	if ( 'trash' === status || ! canEdit ) {

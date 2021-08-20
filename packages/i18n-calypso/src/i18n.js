@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import debugFactory from 'debug';
-import interpolateComponents from 'interpolate-components';
-import Tannin from 'tannin';
-import LRU from 'lru';
-import sha1 from 'hash.js/lib/hash/sha/1';
 import { EventEmitter } from 'events';
 import sprintf from '@tannin/sprintf';
-
-/**
- * Internal dependencies
- */
+import debugFactory from 'debug';
+import sha1 from 'hash.js/lib/hash/sha/1';
+import interpolateComponents from 'interpolate-components';
+import LRU from 'lru';
+import Tannin from 'tannin';
 import numberFormat from './number-format';
 
 /**

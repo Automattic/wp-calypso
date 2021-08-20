@@ -1,13 +1,6 @@
-/**
- * External Dependencies
- */
 import page from 'page';
-
-/**
- * Internal Dependencies
- */
-import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { reduxGetState } from 'calypso/lib/redux-bridge';
+import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 
 export function isSpecialClick( event ) {

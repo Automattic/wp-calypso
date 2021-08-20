@@ -2,16 +2,9 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
-import payPalExpressProcessor from '../lib/paypal-express-processor';
 import wp from 'calypso/lib/wp';
+import payPalExpressProcessor from '../lib/paypal-express-processor';
 
 jest.mock( 'calypso/lib/wp' );
 

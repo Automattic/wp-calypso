@@ -5,9 +5,8 @@ A Progress Bar for use with a custom wizard. It has buttons to go backward and f
 ## Usage
 
 ```jsx
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
+import React, { Component } from 'react';
 import WizardProgressBar from 'calypso/components/wizard-progress-bar';
 
 export default class WizardProgressBarExample extends Component {

@@ -113,19 +113,33 @@ export function deleteFile( filePath: string ): void {
  * Creates a temporary test file by cloning a source file under a new name.
  *
  * @param {{[key: string]: string}} param0 Parameter object.
- * @param {string} param0.testFileName Basename of the test file to be generated.
  * @param {string} param0.sourceFileName Basename of the source file to be cloned.
+ * @param {string} [param0.testFileName] Basename of the test file to be generated.
  * @returns {string} Full path to the generated test file.
  */
-export function createTestFile( { sourceFileName }: { sourceFileName: string } ): string {
-	const testFileName = `${ createTimestamp() }.${ sourceFileName.split( '.' ).pop() }`;
+export function createTestFile( {
+	sourceFileName,
+	testFileName,
+}: {
+	sourceFileName: string;
+	testFileName?: string;
+} ): string {
+	let fileName = createTimestamp();
+	// If the output `testFileName` is defined, use that as part of the final filename.
+	if ( testFileName ) {
+		fileName += `-${ testFileName }`;
+	}
+
+	// Reassign the variable with the final name to be used, including the extension.
+	fileName = `${ fileName }.${ sourceFileName.split( '.' ).pop() }`;
+
 	const sourceFileDir = path.join( __dirname, '../../../../../test/e2e/image-uploads/' );
 	const sourceFilePath = path.join( sourceFileDir, sourceFileName );
 
 	// Generated test file will also go under the source directory.
 	// Attempting to copy the file elsewhere will trigger the following error on TeamCity:
 	// EPERM: operation not permitted
-	const testFilePath = path.join( sourceFileDir, testFileName );
+	const testFilePath = path.join( sourceFileDir, fileName );
 	// Copy the source file specified to testFilePath, creating a clone differing only by name.
 	fs.copySync( sourceFilePath, testFilePath );
 

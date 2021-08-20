@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import { Button, CompactCard } from '@automattic/components';
+import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  *

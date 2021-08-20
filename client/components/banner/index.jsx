@@ -1,18 +1,3 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import classNames from 'classnames';
-import { size } from 'lodash';
-import Gridicon from 'calypso/components/gridicon';
-import JetpackLogo from 'calypso/components/jetpack-logo';
-
-/**
- * Internal dependencies
- */
 import {
 	planMatches,
 	isBloggerPlan,
@@ -23,20 +8,24 @@ import {
 	GROUP_JETPACK,
 	GROUP_WPCOM,
 } from '@automattic/calypso-products';
-import { addQueryArgs } from 'calypso/lib/url';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { Button, Card } from '@automattic/components';
+import classNames from 'classnames';
+import { size } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import DismissibleCard from 'calypso/blocks/dismissible-card';
-import PlanPrice from 'calypso/my-sites/plan-price';
+import Gridicon from 'calypso/components/gridicon';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { preventWidows } from 'calypso/lib/formatting';
+import { addQueryArgs } from 'calypso/lib/url';
+import PlanPrice from 'calypso/my-sites/plan-price';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 const Config = require( '../../lib/config' );
 
 const webBase = Config.baseURL();

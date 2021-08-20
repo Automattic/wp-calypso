@@ -1,19 +1,9 @@
-/**
- * External dependencies
- */
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import React from 'react';
-import PropTypes from 'prop-types';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React from 'react';
 import Popover from 'calypso/components/popover';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function Tooltip( props ) {

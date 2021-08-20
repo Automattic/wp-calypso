@@ -1,24 +1,14 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { shallow } from 'enzyme';
-
-/**
- * Mock dependencies
- */
-jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
+import React from 'react';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import * as Blocks from '../blocks';
+
+jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
 
 // NOTE: There's a repeating pattern in these tests that links to WordPress.com
 //       aren't rendered in the context of Jetpack Cloud. Best I can tell, this
 //       is to keep people inside the Jetpack Cloud experience, as opposed to
 //       "booting" them back into Calypso.
-
-/**
- * Internal dependencies
- */
-import * as Blocks from '../blocks';
 
 expect.extend( {
 	toBeTextNodeWithValue( received, val ) {

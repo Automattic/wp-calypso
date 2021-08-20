@@ -1,19 +1,9 @@
-/**
- * External dependencies
- */
-import { omit } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
+import { omit } from 'lodash';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import Gridicon from 'calypso/components/gridicon';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class FormPasswordInput extends React.Component {

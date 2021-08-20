@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
 import classNames from 'classnames';
-import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
+import { connect } from 'react-redux';
+import DocumentHead from 'calypso/components/data/document-head';
 import JetpackHeader from 'calypso/components/jetpack-header';
 import Main from 'calypso/components/main';
-import DocumentHead from 'calypso/components/data/document-head';
+import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
 import { retrieveMobileRedirect } from './persistence-utils';
 
 export class JetpackConnectMainWrapper extends PureComponent {

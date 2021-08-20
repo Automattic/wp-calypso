@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import QuerySites from 'calypso/components/data/query-sites';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import useSiteRolesQuery from 'calypso/data/site-roles/use-site-roles-query';
 import getWpcomFollowerRole from 'calypso/lib/get-wpcom-follower-role';
-import QuerySites from 'calypso/components/data/query-sites';
-import { ROLES_LIST } from './constants';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import useSiteRolesQuery from 'calypso/data/site-roles/use-site-roles-query';
+import { ROLES_LIST } from './constants';
 
 import './style.scss';
 

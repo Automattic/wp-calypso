@@ -1,21 +1,10 @@
-/**
- * External dependencies
- */
-
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import classNames from 'classnames';
-import { find } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import StatTab from './tab';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class StatsTabs extends React.Component {

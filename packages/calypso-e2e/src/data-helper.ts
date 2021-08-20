@@ -2,6 +2,8 @@ import phrase from 'asana-phrase';
 import config from 'config';
 import { getViewportName } from './browser-helper';
 
+export { config };
+
 /**
  * Generate a pseudo-random integer, inclusive on the lower bound and exclusive on the upper bound.
  *
@@ -60,11 +62,16 @@ export function getAccountCredential( accountType: string ): string[] {
  * Returns the site URL for a specified account from the secrets file.
  *
  * @param {string} accountType Type of the account for which the site URL is to be obtained.
+ * @param {{key: string}: boolean} param1 Keyed object parameter.
+ * @param {boolean} param1.protocol Whether to include the protocol in the returned URL. Defaults to true.
  * @returns {string} Site URL for the given username.
  * @throws {Error} If the accountType does not have a site URL defined, or accountType does not have an entry in the file.
  * @throws {ReferenceError} If URL is not defined for the accountType.
  */
-export function getAccountSiteURL( accountType: string ): string {
+export function getAccountSiteURL(
+	accountType: string,
+	{ protocol = true }: { protocol?: boolean } = {}
+): string {
 	const testAccounts: { [ key: string ]: string } = config.get( 'testAccounts' );
 	if ( ! Object.keys( testAccounts ).includes( accountType ) ) {
 		throw new Error( `Secrets file did not contain URL for requested user ${ accountType }.` );
@@ -75,7 +82,11 @@ export function getAccountSiteURL( accountType: string ): string {
 		throw new ReferenceError( `Secrets entry for ${ accountType } has no site URL defined.` );
 	}
 
-	return new URL( `https://${ url }` ).toString();
+	if ( protocol ) {
+		return new URL( `https://${ url }` ).toString();
+	}
+
+	return url.toString();
 }
 
 /**

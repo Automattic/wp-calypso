@@ -1,21 +1,10 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent } from 'react';
-
-/**
- * Internal dependencies
- */
-import type { BlockAttributes, SelectAttributes } from './types';
-
-/**
- * WordPress dependencies
- */
-import { __ } from '@wordpress/i18n';
 import { InspectorControls } from '@wordpress/block-editor';
-import type { BlockEditProps } from '@wordpress/blocks';
 import { CustomSelectControl, PanelBody, TextControl } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
+import React, { FunctionComponent } from 'react';
+import type { BlockAttributes, SelectAttributes } from './types';
+import type { BlockEditProps } from '@wordpress/blocks';
 
 import './editor.scss';
 

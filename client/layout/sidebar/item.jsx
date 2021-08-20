@@ -1,20 +1,14 @@
-/**
- * External dependencies
- */
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { isExternal } from 'calypso/lib/url';
-import MaterialIcon from 'calypso/components/material-icon';
+import PropTypes from 'prop-types';
+import React, { useEffect } from 'react';
+import Badge from 'calypso/components/badge';
 import Count from 'calypso/components/count';
-import { preload } from 'calypso/sections-helper';
+import Gridicon from 'calypso/components/gridicon';
+import MaterialIcon from 'calypso/components/material-icon';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
+import { isExternal } from 'calypso/lib/url';
+import { preload } from 'calypso/sections-helper';
 
 export default function SidebarItem( props ) {
 	const isExternalLink = isExternal( props.link );
@@ -23,7 +17,7 @@ export default function SidebarItem( props ) {
 		selected: props.selected,
 		'has-unseen': props.hasUnseen,
 	} );
-	const { materialIcon, materialIconStyle, icon, customIcon, count } = props;
+	const { materialIcon, materialIconStyle, icon, customIcon, count, badge } = props;
 
 	let _preloaded = false;
 
@@ -76,6 +70,11 @@ export default function SidebarItem( props ) {
 							: props.label
 					}
 					{ !! count && <Count count={ count } /> }
+					{ !! badge && (
+						<Badge type="warning-clear" className="sidebar__menu-link-badge">
+							{ badge }
+						</Badge>
+					) }
 				</span>
 				{ showAsExternal && <Gridicon icon="external" size={ 24 } /> }
 				{ props.children }
@@ -100,4 +99,5 @@ SidebarItem.propTypes = {
 	testTarget: PropTypes.string,
 	tipTarget: PropTypes.string,
 	count: PropTypes.number,
+	badge: PropTypes.string,
 };

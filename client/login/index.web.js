@@ -1,21 +1,7 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
-import {
-	login,
-	magicLogin,
-	magicLoginUse,
-	redirectJetpack,
-	redirectDefaultLocale,
-} from './controller';
-import { setShouldServerSideRenderLogin } from './ssr';
+import { RouteProvider } from 'calypso/components/route';
 import {
 	setLocaleMiddleware,
 	setSectionMiddleware,
@@ -23,8 +9,15 @@ import {
 } from 'calypso/controller/shared';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
 import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
-import { RouteProvider } from 'calypso/components/route';
+import {
+	login,
+	magicLogin,
+	magicLoginUse,
+	redirectJetpack,
+	redirectDefaultLocale,
+} from './controller';
 import redirectLoggedIn from './redirect-logged-in';
+import { setShouldServerSideRenderLogin } from './ssr';
 
 export const LOGIN_SECTION_DEFINITION = {
 	name: 'login',

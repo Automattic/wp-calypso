@@ -1,20 +1,9 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 import { getPost } from 'calypso/state/posts/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function PostTypePostAuthor( { name } ) {

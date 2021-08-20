@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
-import freePurchaseProcessor from '../lib/free-purchase-processor';
 import wp from 'calypso/lib/wp';
+import freePurchaseProcessor from '../lib/free-purchase-processor';
 
 jest.mock( 'calypso/lib/wp' );
 

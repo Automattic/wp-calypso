@@ -1,26 +1,17 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { Card, Button } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import React from 'react';
+import { connect } from 'react-redux';
 import Gravatar from 'calypso/components/gravatar';
-import InviteFormHeader from 'calypso/my-sites/invites/invite-form-header';
-import { acceptInvite } from 'calypso/state/invites/actions';
-import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
+import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { navigate } from 'calypso/lib/navigate';
+import InviteFormHeader from 'calypso/my-sites/invites/invite-form-header';
+import P2InviteAcceptLoggedIn from 'calypso/my-sites/invites/p2/invite-accept-logged-in';
+import { acceptInvite } from 'calypso/state/invites/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class InviteAcceptLoggedIn extends React.Component {
@@ -114,6 +105,18 @@ class InviteAcceptLoggedIn extends React.Component {
 	};
 
 	renderAccept = () => {
+		if ( this.props.invite?.site?.is_wpforteams_site ) {
+			return P2InviteAcceptLoggedIn( {
+				...this.props,
+				accept: this.accept,
+				decline: this.decline,
+				signIn: this.signInLink,
+				isSubmitting: this.state.submitting,
+				joinAsText: this.getJoinAsText(),
+				buttonText: this.getButtonText(),
+			} );
+		}
+
 		return (
 			<div>
 				<Card>

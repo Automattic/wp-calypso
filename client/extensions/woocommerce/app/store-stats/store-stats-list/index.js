@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 import Table from 'woocommerce/components/table';
-import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
+import TableRow from 'woocommerce/components/table/table-row';
+import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 import { formatValue } from '../utils';
 
 const StoreStatsList = ( { data, values } ) => {

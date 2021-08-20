@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
 import { useSelect, useDispatch } from '@wordpress/data';
-
-/**
- * Internal dependencies
- */
+import * as React from 'react';
 import { recordOnboardingStart } from '../lib/analytics';
-import { USER_STORE } from '../stores/user';
-import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { useOnboardingFlow } from '../path';
+import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
+import { USER_STORE } from '../stores/user';
 
 /**
  * Records an event in tracks on starting the onboarding flow, after trying to get the current user

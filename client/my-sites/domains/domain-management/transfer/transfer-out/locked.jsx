@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
+import { Card, Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Card, Button } from '@automattic/components';
 import { getSelectedDomain } from 'calypso/lib/domains';
+import { registrar as registrarNames } from 'calypso/lib/domains/constants';
 import { requestDomainTransferCode } from 'calypso/state/domains/transfer/actions';
 import { getDomainWapiInfoByDomainName } from 'calypso/state/domains/transfer/selectors';
 import TransferOutWarning from './warning.jsx';
-import { registrar as registrarNames } from 'calypso/lib/domains/constants';
 
 class Locked extends React.Component {
 	unlockAndRequestTransferCode = () => {

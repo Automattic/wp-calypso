@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { stringify } from 'qs';
-
-/**
- * Internal dependencies
- */
 import { isUnderDomainManagementAll, domainManagementRoot } from 'calypso/my-sites/domains/paths';
 
 export const emailManagementPrefix = '/email';
@@ -76,6 +69,25 @@ export function emailManagementManageTitanMailboxes(
 
 export function emailManagementNewTitanAccount( siteName, domainName, relativeTo = null ) {
 	return emailManagementEdit( siteName, domainName, 'titan/new', relativeTo );
+}
+
+export function emailManagementTitanSetupMailbox( siteName, domainName, relativeTo = null ) {
+	return emailManagementEdit( siteName, domainName, 'titan/setup-mailbox', relativeTo );
+}
+
+export function emailManagementTitanSetupThankYou(
+	siteName,
+	domainName,
+	emailAddress = null,
+	relativeTo = null
+) {
+	return emailManagementEdit(
+		siteName,
+		domainName,
+		'titan/setup-mailbox/thank-you',
+		relativeTo,
+		emailAddress ? { email: emailAddress } : {}
+	);
 }
 
 export function emailManagementTitanControlPanelRedirect(

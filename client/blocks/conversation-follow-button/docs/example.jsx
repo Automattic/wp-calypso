@@ -1,16 +1,9 @@
 /*
  */
 
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import ConversationFollowButton from 'calypso/blocks/conversation-follow-button/button';
 import { CompactCard as Card } from '@automattic/components';
+import React from 'react';
+import ConversationFollowButton from 'calypso/blocks/conversation-follow-button/button';
 
 export default class ConversationFollowButtonExample extends React.PureComponent {
 	static displayName = 'ConversationFollowButton';

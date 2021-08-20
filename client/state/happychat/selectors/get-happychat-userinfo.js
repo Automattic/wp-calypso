@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
 import getGeoLocation from 'calypso/state/happychat/selectors/get-geolocation';
 
 export default ( state ) => ( { site, howCanWeHelp, howYouFeel } ) => {

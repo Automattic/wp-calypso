@@ -1,13 +1,9 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import ExternalLink from 'calypso/components/external-link';
+import FoldableFAQ from 'calypso/components/foldable-faq';
+import { Notice } from 'calypso/components/notice';
 import { isSubdomain } from 'calypso/lib/domains';
 import {
 	MAP_DOMAIN_CHANGE_NAME_SERVERS,
@@ -15,13 +11,7 @@ import {
 	MAP_SUBDOMAIN_WITH_CNAME_RECORDS,
 } from 'calypso/lib/url/support';
 import { WPCOM_DEFAULT_NAMESERVERS } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
-import FoldableFAQ from 'calypso/components/foldable-faq';
-import { Notice } from 'calypso/components/notice';
-import ExternalLink from 'calypso/components/external-link';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class DomainMappingInstructions extends React.Component {

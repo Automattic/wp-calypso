@@ -1,27 +1,17 @@
-/**
- * External dependencies
- */
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackDisconnected from 'calypso/components/jetpack/jetpack-disconnected';
 import SecurityIcon from 'calypso/components/jetpack/security-icon';
-import Main from 'calypso/components/main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import Upsell from 'calypso/components/jetpack/upsell';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
-import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
 import './style.scss';
 
 function ScanMultisiteBody() {
@@ -73,7 +63,7 @@ function ScanUpsellBody() {
 			bodyText={ translate(
 				'Automatic scanning and one-click fixes keep your site one step ahead of security threats.'
 			) }
-			buttonLink={ `https://wordpress.com/checkout/jetpack_scan/${ selectedSiteSlug }` }
+			buttonLink={ `https://jetpack.com/upgrade/scan/?site=${ selectedSiteSlug }` }
 			onClick={ () => dispatch( recordTracksEvent( 'calypso_jetpack_scan_upsell_click' ) ) }
 			openButtonLinkOnNewTab={ false }
 			iconComponent={

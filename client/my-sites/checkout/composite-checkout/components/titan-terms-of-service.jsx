@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { hasTitanMail } from 'calypso/lib/cart-values/cart-items';
+import React from 'react';
 import Gridicon from 'calypso/components/gridicon';
+import { hasTitanMail } from 'calypso/lib/cart-values/cart-items';
 import { getTitanProductName } from 'calypso/lib/titan';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */

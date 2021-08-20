@@ -2,17 +2,10 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { mount } from 'enzyme';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import MediaLibraryDataSource from 'calypso/my-sites/media-library/data-source';
 import { createReduxStore } from 'calypso/state';
 import { setStore } from 'calypso/state/redux-store';

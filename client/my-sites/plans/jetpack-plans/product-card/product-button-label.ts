@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { planHasFeature } from '@automattic/calypso-products';
 import { translate, TranslateResult } from 'i18n-calypso';
 import { createElement, Fragment } from 'react';
-
-/**
- * Internal dependencies
- */
 import { ITEM_TYPE_PRODUCT } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 import { SitePlan } from 'calypso/state/sites/selectors/get-site-plan';

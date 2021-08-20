@@ -1,26 +1,15 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
+import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
+import readerBackground from 'calypso/assets/images/reader/reader-intro-background.svg';
+import readerImage from 'calypso/assets/images/reader/reader-intro-character.svg';
 import QueryPreferences from 'calypso/components/data/query-preferences';
+import Gridicon from 'calypso/components/gridicon';
+import cssSafeUrl from 'calypso/lib/css-safe-url';
+import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
-import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tours/contexts';
-import cssSafeUrl from 'calypso/lib/css-safe-url';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-
-/**
- * Asset dependencies
- */
-import readerImage from 'calypso/assets/images/reader/reader-intro-character.svg';
-import readerBackground from 'calypso/assets/images/reader/reader-intro-background.svg';
 
 class FollowingIntro extends React.Component {
 	componentDidMount() {

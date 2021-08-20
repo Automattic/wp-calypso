@@ -1,20 +1,9 @@
-/**
- * External dependencies
- */
-
 import React from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal Dependencies
- */
-import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function MobileBackToSidebar( {

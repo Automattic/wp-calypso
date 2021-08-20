@@ -1,31 +1,24 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
-import { flowRight as compose } from 'lodash';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
+import { Button } from '@automattic/components';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
 import { __ } from '@wordpress/i18n';
-
-/**
- * Internal Dependencies
- */
-import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
-import { selectResult, resetInlineHelpContactForm } from 'calypso/state/inline-help/actions';
-import { Button } from '@automattic/components';
-import Popover from 'calypso/components/popover';
-import InlineHelpSearchResults from './inline-help-search-results';
-import InlineHelpSearchCard from './inline-help-search-card';
-import InlineHelpRichResult from './inline-help-rich-result';
-import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
-import getInlineHelpCurrentlySelectedResult from 'calypso/state/inline-help/selectors/get-inline-help-currently-selected-result';
-import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { flowRight as compose } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import InlineHelpContactView from 'calypso/blocks/inline-help/inline-help-contact-view';
+import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
+import Gridicon from 'calypso/components/gridicon';
+import Popover from 'calypso/components/popover';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { selectResult, resetInlineHelpContactForm } from 'calypso/state/inline-help/actions';
+import getInlineHelpCurrentlySelectedResult from 'calypso/state/inline-help/selectors/get-inline-help-currently-selected-result';
+import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
+import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
+import InlineHelpRichResult from './inline-help-rich-result';
+import InlineHelpSearchCard from './inline-help-search-card';
+import InlineHelpSearchResults from './inline-help-search-results';
 
 const noop = () => {};
 

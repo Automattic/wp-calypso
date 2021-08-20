@@ -1,31 +1,18 @@
-/**
- * External dependencies
- */
 import { Button } from '@automattic/components';
-import { connect } from 'react-redux';
-import { isEnabled } from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import {
-	emailManagementManageTitanAccount,
-	emailManagementTitanControlPanelRedirect,
-} from 'calypso/my-sites/email/paths';
-import { getConfiguredTitanMailboxCount, getMaxTitanMailboxCount } from 'calypso/lib/titan';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getGoogleAdminUrl } from 'calypso/lib/gsuite';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { connect } from 'react-redux';
 import Gridicon from 'calypso/components/gridicon';
 import {
 	hasUnusedMailboxWarning,
 	hasGoogleAccountTOSWarning,
 	isTitanMailAccount,
 } from 'calypso/lib/emails';
-import { TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL } from 'calypso/lib/titan/constants';
+import { getGoogleAdminUrl } from 'calypso/lib/gsuite';
+import { emailManagementTitanSetupMailbox } from 'calypso/my-sites/email/paths';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 class EmailPlanWarnings extends React.Component {
 	static propTypes = {
@@ -36,26 +23,15 @@ class EmailPlanWarnings extends React.Component {
 	renderCTAForTitanUnusedMailboxes() {
 		const { currentRoute, domain, selectedSiteSlug, translate } = this.props;
 
-		const showExternalControlPanelLink = ! isEnabled( 'titan/iframe-control-panel' );
-		const controlPanelUrl = showExternalControlPanelLink
-			? emailManagementTitanControlPanelRedirect( selectedSiteSlug, domain.name, currentRoute, {
-					context: TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL,
-			  } )
-			: emailManagementManageTitanAccount( selectedSiteSlug, domain.name, currentRoute, {
-					context: TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL,
-			  } );
+		const setupMailboxUrl = emailManagementTitanSetupMailbox(
+			selectedSiteSlug,
+			domain.name,
+			currentRoute
+		);
 
 		return (
-			<Button
-				compact
-				primary
-				href={ controlPanelUrl }
-				target={ showExternalControlPanelLink ? '_blank' : null }
-			>
-				{ translate( 'Activate Mailbox', 'Activate Mailboxes', {
-					count: getMaxTitanMailboxCount( domain ) - getConfiguredTitanMailboxCount( domain ),
-				} ) }
-				{ showExternalControlPanelLink && <Gridicon icon="external" /> }
+			<Button compact primary href={ setupMailboxUrl }>
+				{ translate( 'Set up mailbox' ) }
 			</Button>
 		);
 	}

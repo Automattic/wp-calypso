@@ -6,7 +6,6 @@ Now if you’ve worked in a given Calypso section before, you’ve probably enco
 
 ```js
 import page from 'page';
-
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { siteSelection, navigation, sites } from 'calypso/my-sites/controller';
 import menus from './controller';

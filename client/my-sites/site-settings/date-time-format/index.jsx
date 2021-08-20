@@ -1,25 +1,15 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { capitalize, includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import FoldableCard from 'calypso/components/foldable-card';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import DateFormatOption from './date-format-option';
+import { getDefaultDateFormats, getDefaultTimeFormats } from './default-formats';
 import StartOfWeekOption from './start-of-week-option';
 import TimeFormatOption from './time-format-option';
-import { getDefaultDateFormats, getDefaultTimeFormats } from './default-formats';
 import { getLocalizedDate, phpToMomentDatetimeFormat } from './utils';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class DateTimeFormat extends Component {

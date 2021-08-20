@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import { Component } from 'react';
 import { map, mapValues } from 'lodash';
+import { Component } from 'react';
 
 export const asyncLoader = ( { promises, loading, success, failure } ) =>
 	class AsyncLoader extends Component {

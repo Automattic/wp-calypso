@@ -42,7 +42,7 @@ export class LoginFlow {
 			page = this.page;
 		}
 
-		const loginPage = await LoginPage.Expect( page );
+		const loginPage = new LoginPage( page );
 		await loginPage.login( { username: this.username, password: this.password } );
 	}
 
@@ -56,7 +56,7 @@ export class LoginFlow {
 	 */
 	async logIn(): Promise< void > {
 		await this.page.goto( getCalypsoURL( 'log-in' ) );
-		await this.baseflow();
+		await Promise.all( [ this.page.waitForNavigation(), this.baseflow() ] );
 	}
 
 	/**

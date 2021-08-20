@@ -1,24 +1,14 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'calypso/components/gridicon';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import QueryLanguageNames from 'calypso/components/data/query-language-names';
-import getLocalizedLanguageNames from 'calypso/state/selectors/get-localized-language-names';
-import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import Gridicon from 'calypso/components/gridicon';
 import { getCurrentNonDefaultLocale } from 'calypso/components/translator-invite/utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import getLocalizedLanguageNames from 'calypso/state/selectors/get-localized-language-names';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class TranslatorInvite extends Component {

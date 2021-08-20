@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
-import page from 'page';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { siteSelection, sites } from './controller';
+import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { getSiteBySlug, getSiteHomeUrl } from 'calypso/state/sites/selectors';
+import { siteSelection, sites } from './controller';
 
 export default function () {
 	page( '/sites/:site', ( context ) => {

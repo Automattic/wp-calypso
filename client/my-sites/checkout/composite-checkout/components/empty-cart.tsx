@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React, { useEffect } from 'react';
-import { useTranslate } from 'i18n-calypso';
 import { CheckoutStepBody } from '@automattic/composite-checkout';
+import { useTranslate } from 'i18n-calypso';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 

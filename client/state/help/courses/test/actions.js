@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { receiveHelpCourses } from '../actions';
 import { HELP_COURSES_RECEIVE } from 'calypso/state/action-types';
+import { receiveHelpCourses } from '../actions';
 
 describe( 'actions', () => {
 	const sampleCourseList = [

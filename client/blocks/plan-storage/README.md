@@ -6,7 +6,7 @@ will query media storage limits for you.
 ## Usage
 
 ```javascript
-<PlanStorage siteId={ this.props.siteId } />;
+<PlanStorage siteId={ this.props.siteId } />
 ```
 
 ## Props

@@ -1,28 +1,17 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
+import classnames from 'classnames';
+import { localize, getLocaleSlug } from 'i18n-calypso';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize, getLocaleSlug } from 'i18n-calypso';
-import { get } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import { getStepUrl, isFirstStepInFlow } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import { getFilteredSteps } from '../utils';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class NavigationLink extends Component {

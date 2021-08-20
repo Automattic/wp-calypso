@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import page from 'page';
-
-/**
- * Internal Dependencies
- */
-import MediaComponent from 'calypso/my-sites/media/main';
+import React from 'react';
 import { getSiteFragment } from 'calypso/lib/route';
+import MediaComponent from 'calypso/my-sites/media/main';
 
 export default {
 	media: function ( context, next ) {

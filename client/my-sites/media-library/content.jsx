@@ -1,51 +1,41 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
-import { groupBy, isEmpty, map, size, values } from 'lodash';
-import PropTypes from 'prop-types';
-import page from 'page';
+import { withMobileBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { withMobileBreakpoint } from '@automattic/viewport-react';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { groupBy, isEmpty, map, size, values } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import MediaListData from 'calypso/components/data/media-list-data';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import MediaListData from 'calypso/components/data/media-list-data';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 import {
 	ValidationErrors as MediaValidationErrors,
 	MEDIA_IMAGE_RESIZER,
 	MEDIA_IMAGE_THUMBNAIL,
 	SCALE_TOUCH_GRID,
 } from 'calypso/lib/media/constants';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
-import MediaLibraryHeader from './header';
-import MediaLibraryExternalHeader from './external-media-header';
-import MediaLibraryList from './list';
 import InlineConnection from 'calypso/my-sites/marketing/connections/inline-connection';
+import { pauseGuidedTour, resumeGuidedTour } from 'calypso/state/guided-tours/actions';
+import { getGuidedTourState } from 'calypso/state/guided-tours/selectors';
+import { clearMediaErrors, changeMediaSource } from 'calypso/state/media/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
+import { deleteKeyringConnection } from 'calypso/state/sharing/keyring/actions';
 import {
 	isKeyringConnectionsFetching,
 	getKeyringConnectionsByName,
 } from 'calypso/state/sharing/keyring/selectors';
-import { pauseGuidedTour, resumeGuidedTour } from 'calypso/state/guided-tours/actions';
-import { deleteKeyringConnection } from 'calypso/state/sharing/keyring/actions';
-import { getGuidedTourState } from 'calypso/state/guided-tours/selectors';
-import { clearMediaErrors, changeMediaSource } from 'calypso/state/media/actions';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-import { getPreference } from 'calypso/state/preferences/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import MediaLibraryExternalHeader from './external-media-header';
+import MediaLibraryHeader from './header';
+import MediaLibraryList from './list';
 
-/**
- * Style dependencies
- */
 import './content.scss';
 
 const noop = () => {};

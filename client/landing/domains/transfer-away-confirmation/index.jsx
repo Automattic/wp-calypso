@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import DomainsLandingHeader from '../header';
-import DomainsLandingContentCard from '../content-card';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wp from 'calypso/lib/wp';
+import DomainsLandingContentCard from '../content-card';
+import DomainsLandingHeader from '../header';
 import { getMaintenanceMessageFromError } from '../utils';
 
 const wpcom = wp.undocumented();

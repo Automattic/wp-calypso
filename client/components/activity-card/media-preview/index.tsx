@@ -1,18 +1,8 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import StreamsPreview from './streams';
 import SimplePreview from 'calypso/components/activity-card/activity-media';
+import StreamsPreview from './streams';
 import type { Activity } from '../types';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const MediaPreview: React.FC< { activity: Activity } > = ( { activity } ) => {

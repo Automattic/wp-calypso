@@ -1,20 +1,10 @@
-/**
- * External dependencies
- */
+import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { useTranslate } from 'i18n-calypso';
 import Banner from 'calypso/components/banner';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const EnableRestoresBanner: FunctionComponent = () => {

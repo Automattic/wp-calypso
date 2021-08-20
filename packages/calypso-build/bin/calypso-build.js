@@ -5,9 +5,6 @@
  */
 /* eslint-disable import/no-nodejs-modules */
 
-/**
- * External dependencies
- */
 const fs = require( 'fs' );
 const path = require( 'path' );
 

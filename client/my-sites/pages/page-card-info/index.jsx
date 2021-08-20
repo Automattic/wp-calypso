@@ -1,25 +1,15 @@
-/**
- * External dependencies
- */
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
+import QueryTheme from 'calypso/components/data/query-theme';
 import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { isFrontPage, isPostsPage } from 'calypso/state/pages/selectors';
 import PostRelativeTimeStatus from 'calypso/my-sites/post-relative-time-status';
+import { isFrontPage, isPostsPage } from 'calypso/state/pages/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { getTheme } from 'calypso/state/themes/selectors';
 import { getThemeIdFromStylesheet } from 'calypso/state/themes/utils';
-import QueryTheme from 'calypso/components/data/query-theme';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const getContentLink = ( state, siteId, page ) => {

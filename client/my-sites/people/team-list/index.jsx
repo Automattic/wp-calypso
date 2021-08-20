@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
 import { useDispatch } from 'react-redux';
-import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
-
-/**
- * Internal dependencies
- */
-import Team from './team';
 import useUsersQuery from 'calypso/data/users/use-users-query';
+import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
+import Team from './team';
 
 const useErrorNotice = ( error, refetch ) => {
 	const dispatch = useDispatch();

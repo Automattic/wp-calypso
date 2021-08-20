@@ -1,25 +1,14 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import page from 'page';
 import classnames from 'classnames';
-import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
 import { keys } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import * as componentExamples from 'calypso/devdocs/design/component-examples';
-import * as playgroundScope from 'calypso/devdocs/design/playground-scope';
+import page from 'page';
+import React from 'react';
+import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
 import SelectDropdown from 'calypso/components/select-dropdown';
+import * as componentExamples from 'calypso/devdocs/design/component-examples';
+import * as playgroundScope from 'calypso/devdocs/design/playground-scope';
 import { getExampleCodeFromComponent } from './playground-utils';
-
-/**
- * Style Dependencies
- */
 import './playground.scss';
 import './syntax.scss';
 

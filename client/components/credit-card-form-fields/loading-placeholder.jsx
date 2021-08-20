@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
 import React from 'react';
-
-/**
- * Internal Dependencies
- */
-import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormSelect from 'calypso/components/forms/form-select';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 
 const CreditCardFormLoadingPlaceholder = () => {
 	return (

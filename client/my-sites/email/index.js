@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import { makeLayout, render as clientRender } from 'calypso/controller';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import controller from './controller';
 import * as paths from './paths';
-import { makeLayout, render as clientRender } from 'calypso/controller';
 
 function registerMultiPage( { paths: givenPaths, handlers } ) {
 	givenPaths.forEach( ( path ) => page( path, ...handlers ) );
@@ -120,6 +113,23 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
+			paths.emailManagementTitanSetupMailbox(
+				':site',
+				':domain',
+				paths.emailManagementAllSitesPrefix
+			),
+			paths.emailManagementTitanSetupMailbox( ':site', ':domain' ),
+		],
+		handlers: [
+			...commonHandlers,
+			controller.emailManagementTitanSetupMailbox,
+			makeLayout,
+			clientRender,
+		],
+	} );
+
+	registerMultiPage( {
+		paths: [
 			paths.emailManagementTitanControlPanelRedirect(
 				':site',
 				':domain',
@@ -129,6 +139,24 @@ export default function () {
 		],
 		// Note that we don't have the commonHandlers here, as we want to avoid the nav bar etc
 		handlers: [ controller.emailManagementTitanControlPanelRedirect, makeLayout, clientRender ],
+	} );
+
+	registerMultiPage( {
+		paths: [
+			paths.emailManagementTitanSetupThankYou(
+				':site',
+				':domain',
+				null,
+				paths.emailManagementAllSitesPrefix
+			),
+			paths.emailManagementTitanSetupThankYou( ':site', ':domain' ),
+		],
+		handlers: [
+			...commonHandlers,
+			controller.emailManagementTitanSetupThankYou,
+			makeLayout,
+			clientRender,
+		],
 	} );
 
 	registerMultiPage( {

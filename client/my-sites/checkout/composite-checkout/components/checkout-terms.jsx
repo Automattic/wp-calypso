@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import React, { Fragment } from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import React, { Fragment } from 'react';
 import { hasRenewableSubscription } from 'calypso/lib/cart-values/cart-items';
 import AdditionalTermsOfServiceInCart from './additional-terms-of-service-in-cart';
-import TermsOfService from './terms-of-service';
+import BundledDomainNotice from './bundled-domain-notice';
+import ConciergeRefundPolicy from './concierge-refund-policy';
 import DomainRefundPolicy from './domain-refund-policy';
 import DomainRegistrationAgreement from './domain-registration-agreement';
 import DomainRegistrationHsts from './domain-registration-hsts';
-import ConciergeRefundPolicy from './concierge-refund-policy';
-import BundledDomainNotice from './bundled-domain-notice';
+import TermsOfService from './terms-of-service';
 import TitanTermsOfService from './titan-terms-of-service';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */

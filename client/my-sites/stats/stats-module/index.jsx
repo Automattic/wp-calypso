@@ -1,40 +1,30 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM } from '@automattic/calypso-products';
+import { Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import ErrorPanel from '../stats-error';
-import StatsModuleExpand from './expand';
-import StatsModuleAvailabilityWarning from './availability-warning';
-import StatsList from '../stats-list';
-import StatsListLegend from '../stats-list/legend';
-import DatePicker from '../stats-date-picker';
-import DownloadCsv from '../stats-download-csv';
-import { Card } from '@automattic/components';
-import StatsModulePlaceholder from './placeholder';
-import SectionHeader from 'calypso/components/section-header';
-import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import AllTimeNav from './all-time-nav';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import SectionHeader from 'calypso/components/section-header';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
-import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM } from '@automattic/calypso-products';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import DatePicker from '../stats-date-picker';
+import DownloadCsv from '../stats-download-csv';
+import ErrorPanel from '../stats-error';
+import StatsList from '../stats-list';
+import StatsListLegend from '../stats-list/legend';
+import AllTimeNav from './all-time-nav';
+import StatsModuleAvailabilityWarning from './availability-warning';
+import StatsModuleExpand from './expand';
+import StatsModulePlaceholder from './placeholder';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class StatsModule extends Component {

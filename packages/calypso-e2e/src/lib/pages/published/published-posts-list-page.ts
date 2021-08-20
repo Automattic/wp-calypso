@@ -1,4 +1,4 @@
-import { BaseContainer } from '../../base-container';
+import { Page } from 'playwright';
 
 const selectors = {
 	posts: '.type-post h2 a',
@@ -6,10 +6,18 @@ const selectors = {
 
 /**
  * Represents the published site's post list page.
- *
- * @augments {BaseContainer}
  */
-export class PublishedPostsListPage extends BaseContainer {
+export class PublishedPostsListPage {
+	private page: Page;
+	/**
+	 * Constructs an instance of the component.
+	 *
+	 * @param {Page} page The underlying page.
+	 */
+	constructor( page: Page ) {
+		this.page = page;
+	}
+
 	/**
 	 * Given 1-indexed post number n, visits the nth post on the published site's post listing.
 	 *

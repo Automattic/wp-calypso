@@ -1,9 +1,6 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
 import page from 'page';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
 
 export default class CommentLink extends PureComponent {
 	static propTypes = {

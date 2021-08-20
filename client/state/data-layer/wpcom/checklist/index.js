@@ -15,6 +15,7 @@ export const CHECKLIST_KNOWN_TASKS = {
 	EMAIL_VERIFIED: 'email_verified',
 	BLOGNAME_SET: 'blogname_set',
 	MOBILE_APP_INSTALLED: 'mobile_app_installed',
+	WOOCOMMERCE_SETUP: 'woocommerce_setup',
 	SITE_LAUNCHED: 'site_launched',
 	FRONT_PAGE_UPDATED: 'front_page_updated',
 	SITE_MENU_UPDATED: 'site_menu_updated',
@@ -27,6 +28,7 @@ export const CHECKLIST_KNOWN_TASKS = {
 	JETPACK_LAZY_IMAGES: 'jetpack_lazy_images',
 	JETPACK_VIDEO_HOSTING: 'jetpack_video_hosting',
 	JETPACK_SEARCH: 'jetpack_search',
+	PROFESSIONAL_EMAIL_MAILBOX_CREATED: 'professional_email_mailbox_created',
 };
 
 // Transform the response to a data / schema calypso understands, eg filter out unknown tasks

@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-import GridIcon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import FoldableCard from 'calypso/components/foldable-card';
+import GridIcon from 'calypso/components/gridicon';
 
 class SharingServicePlaceholder extends Component {
 	static propTypes = {

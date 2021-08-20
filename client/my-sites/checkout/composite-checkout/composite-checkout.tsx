@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
-import page from 'page';
-import React, { useCallback, useMemo } from 'react';
-import { useTranslate } from 'i18n-calypso';
-import debugFactory from 'debug';
-import { useSelector, useDispatch } from 'react-redux';
+import { useStripe } from '@automattic/calypso-stripe';
+import colorStudio from '@automattic/color-studio';
 import {
 	CheckoutProvider,
 	CheckoutStepAreaWrapper,
@@ -15,73 +9,72 @@ import {
 	defaultRegistry,
 	Button,
 } from '@automattic/composite-checkout';
-import { useIsWebPayAvailable } from '@automattic/wpcom-checkout';
-import { ThemeProvider } from 'emotion-theming';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import type { ResponseCart } from '@automattic/shopping-cart';
-import colorStudio from '@automattic/color-studio';
-import { useStripe } from '@automattic/calypso-stripe';
-import type { PaymentCompleteCallbackArguments } from '@automattic/composite-checkout';
-import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import wp from 'calypso/lib/wp';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
-import { getProductsList } from 'calypso/state/products-list/selectors';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+import { useIsWebPayAvailable } from '@automattic/wpcom-checkout';
+import debugFactory from 'debug';
+import { ThemeProvider } from 'emotion-theming';
+import { useTranslate } from 'i18n-calypso';
+import page from 'page';
+import React, { useCallback, useMemo } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
-import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QueryProducts from 'calypso/components/data/query-products-list';
-import filterAppropriatePaymentMethods from './lib/filter-appropriate-payment-methods';
-import useStoredCards from './hooks/use-stored-cards';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+import wp from 'calypso/lib/wp';
+import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
+import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
+import { getProductsList } from 'calypso/state/products-list/selectors';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import EmptyCart from './components/empty-cart';
+import WPCheckout from './components/wp-checkout';
+import useActOnceOnStrings from './hooks/use-act-once-on-strings';
+import useAddProductsFromUrl from './hooks/use-add-products-from-url';
+import useCachedDomainContactDetails from './hooks/use-cached-domain-contact-details';
 import useCheckoutFlowTrackKey from './hooks/use-checkout-flow-track-key';
-import usePrepareProductsForCart from './hooks/use-prepare-products-for-cart';
+import useCountryList from './hooks/use-country-list';
+import useCreatePaymentCompleteCallback from './hooks/use-create-payment-complete-callback';
 import useCreatePaymentMethods from './hooks/use-create-payment-methods';
-import webPayProcessor from './lib/web-pay-processor';
-import multiPartnerCardProcessor from './lib/multi-partner-card-processor';
+import useDetectedCountryCode from './hooks/use-detected-country-code';
+import useGetThankYouUrl from './hooks/use-get-thank-you-url';
+import useMaybeJetpackIntroCouponCode from './hooks/use-maybe-jetpack-intro-coupon-code';
+import usePrepareProductsForCart from './hooks/use-prepare-products-for-cart';
+import useRecordCartLoaded from './hooks/use-record-cart-loaded';
+import useRecordCheckoutLoaded from './hooks/use-record-checkout-loaded';
+import useRemoveFromCartAndRedirect from './hooks/use-remove-from-cart-and-redirect';
+import useStoredCards from './hooks/use-stored-cards';
+import { useWpcomStore } from './hooks/wpcom-store';
+import doesValueExist from './lib/does-value-exist';
+import existingCardProcessor from './lib/existing-card-processor';
+import filterAppropriatePaymentMethods from './lib/filter-appropriate-payment-methods';
 import freePurchaseProcessor from './lib/free-purchase-processor';
 import fullCreditsProcessor from './lib/full-credits-processor';
-import weChatProcessor from './lib/we-chat-processor';
 import genericRedirectProcessor from './lib/generic-redirect-processor';
-import existingCardProcessor from './lib/existing-card-processor';
+import getContactDetailsType from './lib/get-contact-details-type';
+import multiPartnerCardProcessor from './lib/multi-partner-card-processor';
 import payPalProcessor from './lib/paypal-express-processor';
-import useGetThankYouUrl from './hooks/use-get-thank-you-url';
-import createAnalyticsEventHandler from './record-analytics';
 import { translateResponseCartToWPCOMCart } from './lib/translate-cart';
-import useCountryList from './hooks/use-country-list';
-import useCachedDomainContactDetails from './hooks/use-cached-domain-contact-details';
-import useActOnceOnStrings from './hooks/use-act-once-on-strings';
-import useRemoveFromCartAndRedirect from './hooks/use-remove-from-cart-and-redirect';
-import useRecordCheckoutLoaded from './hooks/use-record-checkout-loaded';
-import useRecordCartLoaded from './hooks/use-record-cart-loaded';
-import useAddProductsFromUrl from './hooks/use-add-products-from-url';
-import useDetectedCountryCode from './hooks/use-detected-country-code';
-import WPCheckout from './components/wp-checkout';
-import { useWpcomStore } from './hooks/wpcom-store';
+import weChatProcessor from './lib/we-chat-processor';
+import webPayProcessor from './lib/web-pay-processor';
+import createAnalyticsEventHandler from './record-analytics';
+import { CountryListItem } from './types/country-list-item';
+import { StoredCard } from './types/stored-cards';
 import {
 	emptyManagedContactDetails,
 	applyContactDetailsRequiredMask,
 	domainRequiredContactDetails,
 	taxRequiredContactDetails,
 } from './types/wpcom-store-state';
-import { StoredCard } from './types/stored-cards';
-import { CountryListItem } from './types/country-list-item';
-import doesValueExist from './lib/does-value-exist';
-import EmptyCart from './components/empty-cart';
-import getContactDetailsType from './lib/get-contact-details-type';
 import type { ReactStandardAction } from './types/analytics';
-import useCreatePaymentCompleteCallback from './hooks/use-create-payment-complete-callback';
-import useMaybeJetpackIntroCouponCode from './hooks/use-maybe-jetpack-intro-coupon-code';
 import type { PaymentProcessorOptions } from './types/payment-processors';
+import type { PaymentCompleteCallbackArguments } from '@automattic/composite-checkout';
+import type { ResponseCart } from '@automattic/shopping-cart';
+import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 const { colors } = colorStudio;
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );

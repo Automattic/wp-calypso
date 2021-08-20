@@ -1,14 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { isEmpty, map, partialRight } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const addLinesToOperations = ( operations ) => {

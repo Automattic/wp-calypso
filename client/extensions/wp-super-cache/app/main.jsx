@@ -1,34 +1,26 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { find, get } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import titlecase from 'to-title-case';
 import ExtensionRedirect from 'calypso/blocks/extension-redirect';
+import Main from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import AdvancedTab from '../components/advanced';
 import CdnTab from '../components/cdn';
 import ContentsTab from '../components/contents';
+import QueryStatus from '../components/data/query-status';
 import DebugTab from '../components/debug';
 import EasyTab from '../components/easy';
-import Main from 'calypso/components/main';
 import Navigation from '../components/navigation';
-import Notice from 'calypso/components/notice';
 import PluginsTab from '../components/plugins';
 import PreloadTab from '../components/preload';
-import QueryStatus from '../components/data/query-status';
-import { Tabs, WPSC_MIN_VERSION } from './constants';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getStatus } from '../state/status/selectors';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import titlecase from 'to-title-case';
+import { Tabs, WPSC_MIN_VERSION } from './constants';
 
 class WPSuperCache extends Component {
 	static propTypes = {

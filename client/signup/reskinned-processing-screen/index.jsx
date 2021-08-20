@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import React from 'react';
 import { useInterval } from 'calypso/lib/interval/use-interval';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 // Total time to perform "loading"

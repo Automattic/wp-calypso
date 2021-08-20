@@ -5,6 +5,7 @@
 // browsers.
 
 import 'core-js/stable';
+import elementClosest from 'element-closest';
 import 'regenerator-runtime/runtime';
 import svg4everybody from 'svg4everybody';
 import 'isomorphic-fetch';
@@ -24,3 +25,4 @@ import 'isomorphic-fetch';
 } )();
 
 svg4everybody();
+elementClosest( window );

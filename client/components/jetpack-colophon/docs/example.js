@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 
 export default function JetpackColophonExample() {

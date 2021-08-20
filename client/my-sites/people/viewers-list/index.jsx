@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import React, { useEffect } from 'react';
 import { useTranslate } from 'i18n-calypso';
+import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import Viewers from './viewers';
-import useViewersQuery from 'calypso/data/viewers/use-viewers-query';
 import useRemoveViewer from 'calypso/data/viewers/use-remove-viewer-mutation';
+import useViewersQuery from 'calypso/data/viewers/use-viewers-query';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
+import Viewers from './viewers';
 
 const useErrorNotice = ( error, refetch ) => {
 	const dispatch = useDispatch();

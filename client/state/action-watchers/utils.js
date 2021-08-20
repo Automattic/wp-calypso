@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { mergeWith } from 'lodash';
 
 /**

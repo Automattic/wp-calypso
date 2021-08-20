@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
+import { isEnabled } from '@automattic/calypso-config';
 import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { isEnabled } from '@automattic/calypso-config';
 import ListItem from './list-item';
 import ListItemCreateLink from './list-item-create-link';
 

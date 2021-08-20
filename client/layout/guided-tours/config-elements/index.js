@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 export { default as ButtonRow } from './button-row';
 export { default as combineTours } from './combine-tours';
 export { default as ConditionalBlock } from './conditional-block';

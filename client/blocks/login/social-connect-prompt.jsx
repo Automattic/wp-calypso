@@ -1,31 +1,20 @@
-/**
- * External dependencies
- */
-
+import { Button, Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { capitalize } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { capitalize } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
+import AppleIcon from 'calypso/components/social-icons/apple';
+import GoogleIcon from 'calypso/components/social-icons/google';
+import SocialLogo from 'calypso/components/social-logo';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
+import { connectSocialUser } from 'calypso/state/login/actions';
 import {
 	getSocialAccountLinkAuthInfo,
 	getSocialAccountLinkService,
 	getRedirectToSanitized,
 } from 'calypso/state/login/selectors';
-import { connectSocialUser } from 'calypso/state/login/actions';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
-import SocialLogo from 'calypso/components/social-logo';
-import GoogleIcon from 'calypso/components/social-icons/google';
-import AppleIcon from 'calypso/components/social-icons/apple';
 
-/**
- * Style dependencies
- */
 import './social-connect-prompt.scss';
 
 class SocialConnectPrompt extends Component {

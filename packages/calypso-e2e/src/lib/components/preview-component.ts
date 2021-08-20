@@ -1,5 +1,4 @@
 import { Page } from 'playwright';
-import { BaseContainer } from '../base-container';
 
 const selectors = {
 	previewPane: '.web-preview',
@@ -11,17 +10,26 @@ const selectors = {
 
 /**
  * Component representing the site published preview component.
- *
- * @augments {BaseContainer}
  */
-export class PreviewComponent extends BaseContainer {
+export class PreviewComponent {
+	private page: Page;
+
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
 	 */
 	constructor( page: Page ) {
-		super( page, selectors.previewPane );
+		this.page = page;
+	}
+
+	/**
+	 * Waits for the preview pane to be visible.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async previewReady(): Promise< void > {
+		await this.page.waitForSelector( selectors.previewPane );
 	}
 
 	/**

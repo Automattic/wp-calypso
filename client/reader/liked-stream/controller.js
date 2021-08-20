@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { sectionify } from 'calypso/lib/route';
 import {
 	trackPageLoad,

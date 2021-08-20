@@ -1,22 +1,15 @@
-/**
- * External Dependencies
- */
-import React from 'react';
-import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
-
-/**
- * Internal Dependencies
- */
 import { Card } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import QueryReaderFeedsSearch from 'calypso/components/data/query-reader-feeds-search';
 import SyncReaderFollows from 'calypso/components/data/sync-reader-follows';
 import SearchInput from 'calypso/components/search';
 import { resemblesUrl } from 'calypso/lib/url';
 import { filterFollowsByQuery } from 'calypso/reader/follow-helpers';
+import { SORT_BY_RELEVANCE } from 'calypso/state/reader/feed-searches/actions';
 import { getReaderFeedsForQuery } from 'calypso/state/reader/feed-searches/selectors';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
-import { SORT_BY_RELEVANCE } from 'calypso/state/reader/feed-searches/actions';
 import FeedUrlAdder from './feed-url-adder';
 import ListItem from './list-item';
 

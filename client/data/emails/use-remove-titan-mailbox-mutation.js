@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
 import { useCallback } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { getCacheKey } from './use-emails-query';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import wp from 'calypso/lib/wp';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getCacheKey } from './use-emails-query';
 
 const invalidationDelayTimeout = 5000;
 const noop = () => {};

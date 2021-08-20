@@ -57,10 +57,7 @@ function castPath( path ) {
 /* FIXME: excluding these settings is a workaround which allows
 for those settings to be set if there's no default value; the API
 should provide a default value, which would make these lines obsolete */
-export const ALLOW_EMPTY_DEFAULTS = [
-	'calypso_preferences.colorScheme',
-	'calypso_preferences.linkDestination',
-];
+export const ALLOW_EMPTY_DEFAULTS = [ 'calypso_preferences.colorScheme' ];
 
 /**
  * Handles the storage and removal of changed setting that are pending

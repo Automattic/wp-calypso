@@ -1,38 +1,31 @@
-/**
- * External dependencies
- */
-import React, { useCallback, useMemo, useEffect } from 'react';
-import { useTranslate } from 'i18n-calypso';
-import { useDispatch, useSelector } from 'react-redux';
-import page from 'page';
-import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
-
-/**
- * Internal dependencies
- */
-import { errorNotice } from 'calypso/state/notices/actions';
-import MySitesSidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import Main from 'calypso/components/main';
-import DocumentHead from 'calypso/components/data/document-head';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import FormattedHeader from 'calypso/components/formatted-header';
-import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
-import PaymentMethodList from 'calypso/me/purchases/payment-methods/payment-method-list';
-import HeaderCake from 'calypso/components/header-cake';
-import { getAddNewPaymentMethodUrlFor, getPaymentMethodsUrlFor } from '../paths';
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
-import titles from 'calypso/me/purchases/titles';
-import SiteLevelPurchasesErrorBoundary from 'calypso/my-sites/purchases/site-level-purchases-error-boundary';
-import { logToLogstash } from 'calypso/state/logstash/actions';
 import config from '@automattic/calypso-config';
-import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
+import { useTranslate } from 'i18n-calypso';
+import page from 'page';
+import React, { useCallback, useMemo, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import DocumentHead from 'calypso/components/data/document-head';
+import FormattedHeader from 'calypso/components/formatted-header';
+import HeaderCake from 'calypso/components/header-cake';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
 import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
 import PaymentMethodSelector from 'calypso/me/purchases/manage-purchase/payment-method-selector';
+import PaymentMethodList from 'calypso/me/purchases/payment-methods/payment-method-list';
+import titles from 'calypso/me/purchases/titles';
 import { useCreateCreditCard } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-create-payment-methods';
-import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
 import doesValueExist from 'calypso/my-sites/checkout/composite-checkout/lib/does-value-exist';
+import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
+import SiteLevelPurchasesErrorBoundary from 'calypso/my-sites/purchases/site-level-purchases-error-boundary';
+import MySitesSidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { logToLogstash } from 'calypso/state/logstash/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { getAddNewPaymentMethodUrlFor, getPaymentMethodsUrlFor } from '../paths';
 
 function useLogPaymentMethodsError( message: string ) {
 	const reduxDispatch = useDispatch();

@@ -1,8 +1,5 @@
 #!/usr/bin/env node
 
-/**
- * Internal dependencies
- */
 const api = require( './api' );
 
 function main() {

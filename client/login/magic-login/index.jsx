@@ -1,42 +1,30 @@
-/**
- * External dependencies
- */
-
+import config from '@automattic/calypso-config';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
-import page from 'page';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
-import { login } from 'calypso/lib/paths';
-import { CHECK_YOUR_EMAIL_PAGE } from 'calypso/state/login/magic-login/constants';
-import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
-import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
-import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
-import { hideMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
+import GlobalNotices from 'calypso/components/global-notices';
+import Gridicon from 'calypso/components/gridicon';
+import JetpackHeader from 'calypso/components/jetpack-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
+import Main from 'calypso/components/main';
+import { login } from 'calypso/lib/paths';
 import {
 	recordTracksEventWithClientId as recordTracksEvent,
 	recordPageViewWithClientId as recordPageView,
 	enhanceWithSiteType,
 } from 'calypso/state/analytics/actions';
+import { hideMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
+import { CHECK_YOUR_EMAIL_PAGE } from 'calypso/state/login/magic-login/constants';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
+import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
 import { withEnhancers } from 'calypso/state/utils';
-import Main from 'calypso/components/main';
-import JetpackHeader from 'calypso/components/jetpack-header';
 import RequestLoginEmailForm from './request-login-email-form';
-import GlobalNotices from 'calypso/components/global-notices';
-import Gridicon from 'calypso/components/gridicon';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class MagicLogin extends React.Component {
@@ -70,11 +58,10 @@ class MagicLogin extends React.Component {
 			isJetpack: this.props.isJetpackLogin,
 			isGutenboarding: this.props.isGutenboardingLogin,
 			locale: this.props.locale,
+			emailAddress: this.props.query?.email_address,
+			signupUrl: this.props.query?.signup_url,
 		};
-		const emailAddress = get( this.props, [ 'query', 'email_address' ] );
-		if ( emailAddress ) {
-			loginParameters.emailAddress = emailAddress;
-		}
+
 		page( login( loginParameters ) );
 	};
 
@@ -99,6 +86,7 @@ class MagicLogin extends React.Component {
 			isJetpack: isJetpackLogin,
 			isGutenboarding: isGutenboardingLogin,
 			locale: locale,
+			signupUrl: this.props.query?.signup_url,
 		};
 
 		return (
@@ -152,7 +140,7 @@ class MagicLogin extends React.Component {
 		return (
 			<Main
 				className={ classNames( 'magic-login', 'magic-login__request-link', {
-					'is-gutenboarding-login': this.props.isGutenboardingLogin,
+					'is-white-login': this.props.isGutenboardingLogin,
 				} ) }
 			>
 				{ this.props.isJetpackLogin && <JetpackHeader /> }

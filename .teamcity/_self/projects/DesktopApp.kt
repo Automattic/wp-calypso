@@ -26,6 +26,11 @@ object E2ETests : BuildType({
 	name = "Run e2e tests"
 	description = "Run wp-desktop e2e tests in Linux"
 
+	dependencies {
+		snapshot(BuildDockerImage) {
+		}
+	}
+
 	artifactRules = """
 		desktop/release => release
 		desktop/e2e/logs => logs
@@ -80,6 +85,8 @@ object E2ETests : BuildType({
 		bashNodeScript {
 			name = "Run tests (linux)"
 			scriptContent = """
+				export WP_DESKTOP_BASE_URL="%dep.calypso_BuildDockerImage.calypso_live_url%"
+
 				export E2EGUTENBERGUSER="%E2EGUTENBERGUSER%"
 				export E2EPASSWORD="%E2EPASSWORD%"
 				export CI=true
@@ -87,6 +94,7 @@ object E2ETests : BuildType({
 				# Start framebuffer
 				Xvfb ${'$'}{DISPLAY} -screen 0 1280x1024x24 &
 
+				echo "Base URL is '${'$'}WP_DESKTOP_BASE_URL'"
 				# Run tests
 				yarn run test-desktop:e2e
 			"""

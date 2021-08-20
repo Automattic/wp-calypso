@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 
 /**

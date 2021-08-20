@@ -1,59 +1,48 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import page from 'page';
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import LazyRender from 'react-lazily-render';
-import { parse } from 'qs';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
 import { Button, Card } from '@automattic/components';
-
-import canCurrentUserForSites from 'calypso/state/selectors/can-current-user-for-sites';
+import { localize } from 'i18n-calypso';
+import page from 'page';
+import PropTypes from 'prop-types';
+import { parse } from 'qs';
+import React, { Component } from 'react';
+import LazyRender from 'react-lazily-render';
+import { connect } from 'react-redux';
+import CardHeading from 'calypso/components/card-heading';
+import DocumentHead from 'calypso/components/data/document-head';
+import QueryAllDomains from 'calypso/components/data/query-all-domains';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import EmptyContent from 'calypso/components/empty-content';
+import FormattedHeader from 'calypso/components/formatted-header';
+import Main from 'calypso/components/main';
+import { isDomainInGracePeriod, isDomainUpdateable } from 'calypso/lib/domains';
+import { type as domainTypes } from 'calypso/lib/domains/constants';
+import wpcom from 'calypso/lib/wp';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
-import DocumentHead from 'calypso/components/data/document-head';
-import DomainItem from './domain-item';
-import ListHeader from './list-header';
-import FormattedHeader from 'calypso/components/formatted-header';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
+import { getUserPurchases } from 'calypso/state/purchases/selectors';
+import canCurrentUserForSites from 'calypso/state/selectors/can-current-user-for-sites';
+import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
+import getSites from 'calypso/state/selectors/get-sites';
+import isRequestingAllDomains from 'calypso/state/selectors/is-requesting-all-domains';
 import {
 	getAllDomains,
 	getAllRequestingSiteDomains,
 	getFlatDomainsList,
 } from 'calypso/state/sites/domains/selectors';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
-import { getDomainManagementPath, ListAllActions } from './utils';
-import getSites from 'calypso/state/selectors/get-sites';
-import isRequestingAllDomains from 'calypso/state/selectors/is-requesting-all-domains';
-import ListItemPlaceholder from './item-placeholder';
-import Main from 'calypso/components/main';
-import { type as domainTypes } from 'calypso/lib/domains/constants';
-import QueryAllDomains from 'calypso/components/data/query-all-domains';
-import QuerySiteDomains from 'calypso/components/data/query-site-domains';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import { getUserPurchases } from 'calypso/state/purchases/selectors';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { hasAllSitesList } from 'calypso/state/sites/selectors';
-import EmptyContent from 'calypso/components/empty-content';
 import BulkEditContactInfo from './bulk-edit-contact-info';
-import CardHeading from 'calypso/components/card-heading';
-import { isDomainInGracePeriod, isDomainUpdateable } from 'calypso/lib/domains';
-import wpcom from 'calypso/lib/wp';
-import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
+import DomainItem from './domain-item';
+import ListItemPlaceholder from './item-placeholder';
+import ListHeader from './list-header';
+import { getDomainManagementPath, ListAllActions } from './utils';
 
-/**
- * Style dependencies
- */
 import './list-all.scss';
 
 class ListAll extends Component {
@@ -354,6 +343,7 @@ class ListAll extends Component {
 					isContactEmailEditContext &&
 					( ( isChecked && isSavingContactInfo ) || isLoadingDomainDetails )
 				}
+				isManagingAllSites={ true }
 			/>
 		);
 	}

@@ -184,6 +184,11 @@ input[type='text'].form-text-input.token-field__input {
 		background: var( --color-accent );
 		color: var( --color-text-inverted );
 	}
+	&.is-label {
+		font-size: $font-body-small;
+		font-weight: 600;
+		color: var( --color-text );
+	}
 }
 
 .token-field__suggestion-match {

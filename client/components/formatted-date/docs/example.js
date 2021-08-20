@@ -3,18 +3,14 @@
  *
  */
 
+import moment from 'moment';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import moment from 'moment';
-
-/**
- * Internal dependencies
- */
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormattedDate from '../';
-import { setLocale } from 'calypso/state/ui/language/actions';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import { setLocale } from 'calypso/state/ui/language/actions';
+import FormattedDate from '../';
 
 class FormattedDateExample extends PureComponent {
 	static displayName = 'FormattedDateExample';

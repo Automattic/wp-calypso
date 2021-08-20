@@ -1,18 +1,8 @@
-/**
- * External Dependencies
- */
 import PropTypes from 'prop-types';
 import React from 'react';
-
-/**
- * Internal Dependencies
- */
 import AutoDirection from 'calypso/components/auto-direction';
 import Emojify from 'calypso/components/emojify';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const ReaderExcerpt = ( { post, isDiscover } ) => {

@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
+import { isEnabled } from '@automattic/calypso-config';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import FAQ from 'calypso/components/faq';
 import FAQItem from 'calypso/components/faq/faq-item';
 import HappychatButton from 'calypso/components/happychat/button';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { purchasesRoot } from 'calypso/me/purchases/paths';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { isEnabled } from '@automattic/calypso-config';
-import { purchasesRoot } from 'calypso/me/purchases/paths';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 	const helpLink =
@@ -30,8 +23,8 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 			<FAQItem
 				question={ translate( 'Do you sell domains?' ) }
 				answer={ translate(
-					'Yes! The Personal, Premium, Business, and eCommerce plans include a free custom domain for one year. That includes new' +
-						' domains purchased through WordPress.com or your own existing domain that you can map' +
+					'Yes! Annual and biannual Personal, Premium, Business, and eCommerce plans include a free custom domain for one year. ' +
+						'That includes new domains purchased through WordPress.com or your own existing domain that you can map' +
 						' to your WordPress.com site. Does not apply to premium domains. Domain name should be' +
 						' registered within one year of the purchase of the plan to use this promotion. Registered' +
 						' domain names will renew at regular prices. {{a}}Find out more about domains.{{/a}}',

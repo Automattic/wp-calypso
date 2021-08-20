@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { filter } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
+import { filter } from 'lodash';
 import { getSiteCommentsTree } from 'calypso/state/comments/selectors';
 
 import 'calypso/state/comments/init';

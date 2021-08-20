@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { extent as d3Extent } from 'd3-array';
 import { scaleLinear as d3ScaleLinear } from 'd3-scale';
 import { line as d3Line } from 'd3-shape';
-import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React from 'react';
 import D3Base from 'woocommerce/components/d3/base';
-
-/**
- * Internal dependencies
- */
 
 const Sparkline = ( {
 	aspectRatio,

@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import ThemesList from 'calypso/components/themes-list';
 
 const demoThemes = [

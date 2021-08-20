@@ -1,54 +1,47 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import pageRouter from 'page';
-import { connect } from 'react-redux';
-import { get, partial } from 'lodash';
+import config from '@automattic/calypso-config';
+import { CompactCard } from '@automattic/components';
 import { saveAs } from 'browser-filesaver';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
-import Gridicon from 'calypso/components/gridicon';
+import { localize } from 'i18n-calypso';
+import { get, partial } from 'lodash';
+import pageRouter from 'page';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import SiteIcon from 'calypso/blocks/site-icon';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import PopoverMenuItemClipboard from 'calypso/components/popover/menu-item-clipboard';
+import Gridicon from 'calypso/components/gridicon';
+import InfoPopover from 'calypso/components/info-popover';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import SiteIcon from 'calypso/blocks/site-icon';
-import { statsLinkForPage } from '../helpers';
-import { getPreviewURL, userCan } from 'calypso/state/posts/utils';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import PopoverMenuItemClipboard from 'calypso/components/popover/menu-item-clipboard';
 import MenuSeparator from 'calypso/components/popover/menu-separator';
-import PageCardInfo from '../page-card-info';
-import InfoPopover from 'calypso/components/info-popover';
-import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import { preloadEditor } from 'calypso/sections-preloaders';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { getEditorDuplicatePostPath } from 'calypso/state/editor/selectors';
+import { infoNotice } from 'calypso/state/notices/actions';
+import { isFrontPage, isPostsPage } from 'calypso/state/pages/selectors';
+import { savePost, deletePost, trashPost, restorePost } from 'calypso/state/posts/actions';
+import { getPreviewURL, userCan } from 'calypso/state/posts/utils';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
+import { shouldLoadGutenframe } from 'calypso/state/selectors/should-load-gutenframe/';
+import { updateSiteFrontPage } from 'calypso/state/sites/actions';
 import {
 	getSite,
 	hasStaticFrontPage,
 	isJetpackSite,
 	isSitePreviewable,
 } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isFrontPage, isPostsPage } from 'calypso/state/pages/selectors';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { setPreviewUrl } from 'calypso/state/ui/preview/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-import { savePost, deletePost, trashPost, restorePost } from 'calypso/state/posts/actions';
-import { infoNotice } from 'calypso/state/notices/actions';
-import { shouldLoadGutenframe } from 'calypso/state/selectors/should-load-gutenframe/';
-import getEditorUrl from 'calypso/state/selectors/get-editor-url';
-import { getEditorDuplicatePostPath } from 'calypso/state/editor/selectors';
-import { updateSiteFrontPage } from 'calypso/state/sites/actions';
-import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
-import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import config from '@automattic/calypso-config';
+import { setPreviewUrl } from 'calypso/state/ui/preview/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { statsLinkForPage } from '../helpers';
+import PageCardInfo from '../page-card-info';
 
 const recordEvent = partial( recordGoogleEvent, 'Pages' );
 const noop = () => {};
@@ -771,7 +764,7 @@ const mapState = ( state, props ) => {
 		copyPagesModuleDisabled:
 			! isJetpackModuleActive( state, pageSiteId, 'copy-post' ) &&
 			isJetpackSite( state, pageSiteId ),
-		wpAdminGutenberg: ! shouldLoadGutenframe( state, pageSiteId ),
+		wpAdminGutenberg: ! shouldLoadGutenframe( state, pageSiteId, 'page' ),
 		duplicateUrl: getEditorDuplicatePostPath( state, props.page.site_ID, props.page.ID, 'page' ),
 		isFullSiteEditing: isSiteUsingFullSiteEditing( state, pageSiteId ),
 		canManageOptions: canCurrentUser( state, pageSiteId, 'manage_options' ),

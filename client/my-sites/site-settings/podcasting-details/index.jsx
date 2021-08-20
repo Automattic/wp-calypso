@@ -1,57 +1,47 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
+import { PLAN_PERSONAL, FEATURE_AUDIO_UPLOADS } from '@automattic/calypso-products';
+import { Button, Card } from '@automattic/components';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { map, pick, flowRight } from 'lodash';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { PLAN_PERSONAL, FEATURE_AUDIO_UPLOADS } from '@automattic/calypso-products';
-import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
-import { decodeEntities } from 'calypso/lib/formatting';
-import scrollTo from 'calypso/lib/scroll-to';
-import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
-import { Button, Card } from '@automattic/components';
+import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+import TermTreeSelector from 'calypso/blocks/term-tree-selector';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryTerms from 'calypso/components/data/query-terms';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormInput from 'calypso/components/forms/form-text-input';
 import FormLabel from 'calypso/components/forms/form-label';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormSelect from 'calypso/components/forms/form-select';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import HeaderCake from 'calypso/components/header-cake';
 import Notice from 'calypso/components/notice';
+import { decodeEntities } from 'calypso/lib/formatting';
+import scrollTo from 'calypso/lib/scroll-to';
 import PodcastCoverImageSetting from 'calypso/my-sites/site-settings/podcast-cover-image-setting';
+import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
+import { isSavingSiteSettings } from 'calypso/state/site-settings/selectors';
+import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isRequestingTermsForQueryIgnoringPage } from 'calypso/state/terms/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import PodcastFeedUrl from './feed-url';
-import PodcastingPrivateSiteMessage from './private-site';
 import PodcastingNoPermissionsMessage from './no-permissions';
 import PodcastingNotSupportedMessage from './not-supported';
+import PodcastingPrivateSiteMessage from './private-site';
 import PodcastingPublishNotice from './publish-notice';
 import PodcastingSupportLink from './support-link';
 import podcastingTopics from './topics';
-import TermTreeSelector from 'calypso/blocks/term-tree-selector';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
 
 /**
  * Selectors, actions, and query components
  */
-import QueryTerms from 'calypso/components/data/query-terms';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { isRequestingTermsForQueryIgnoringPage } from 'calypso/state/terms/selectors';
-import { isSavingSiteSettings } from 'calypso/state/site-settings/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class PodcastingDetails extends Component {

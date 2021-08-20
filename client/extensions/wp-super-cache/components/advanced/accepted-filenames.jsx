@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { get, pick } from 'lodash';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
 import { Button, Card } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
+import { get, pick } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextarea from 'calypso/components/forms/form-textarea';
-import FormLabel from 'calypso/components/forms/form-label';
 import SectionHeader from 'calypso/components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 

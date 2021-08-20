@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { intersection } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { isDefaultLocale } from 'calypso/lib/i18n-utils';
 
 /**

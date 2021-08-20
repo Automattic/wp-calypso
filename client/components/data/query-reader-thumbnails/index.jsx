@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { getThumbnailForIframe } from 'calypso/state/reader/thumbnails/selectors';
 import { requestThumbnail } from 'calypso/state/reader/thumbnails/actions';
+import { getThumbnailForIframe } from 'calypso/state/reader/thumbnails/selectors';
 
 class QueryReaderThumbnails extends Component {
 	UNSAFE_componentWillMount() {

@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import CommentLink from 'calypso/my-sites/comments/comment/comment-link';
 import QueryPosts from 'calypso/components/data/query-posts';
+import Gridicon from 'calypso/components/gridicon';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
+import CommentLink from 'calypso/my-sites/comments/comment/comment-link';
 import { getSiteComment } from 'calypso/state/comments/selectors';
 import { getSitePost } from 'calypso/state/posts/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';

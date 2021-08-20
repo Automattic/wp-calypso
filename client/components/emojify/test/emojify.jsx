@@ -2,17 +2,10 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
 import { expect } from 'chai';
 import { shallow, mount } from 'enzyme';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
 import Emojify from '..';
 
 describe( 'Emojify', () => {

@@ -2,21 +2,17 @@
  * External dependencies
  *
  */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import { bumpStat as bumpAnalyticsStat } from 'calypso/state/analytics/actions';
-import { bumpStatGenerator } from './utils';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { getPost } from 'calypso/state/posts/selectors';
-import { restorePost } from 'calypso/state/posts/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { restorePost } from 'calypso/state/posts/actions';
+import { getPost } from 'calypso/state/posts/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { bumpStatGenerator } from './utils';
 
 class PostActionsEllipsisMenuRestore extends Component {
 	static propTypes = {

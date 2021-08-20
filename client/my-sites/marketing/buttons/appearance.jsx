@@ -1,28 +1,20 @@
-/**
- * External dependencies
- */
-
+import { localize } from 'i18n-calypso';
+import { flowRight, partial } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { flowRight, partial } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import SupportInfo from 'calypso/components/support-info';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ButtonsPreview from './preview';
 import ButtonsPreviewPlaceholder from './preview-placeholder';
 import ButtonsStyle from './style';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
-import FormLabel from 'calypso/components/forms/form-label';
-import SupportInfo from 'calypso/components/support-info';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
-import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 
 class SharingButtonsAppearance extends Component {
 	static propTypes = {

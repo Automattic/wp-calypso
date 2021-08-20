@@ -24,7 +24,7 @@ The following components can be used to display rows of links.
 		path="https://wordpress.com"
 		text="Create new site"
 	/>
-</VerticalNav>;
+</VerticalNav>
 ```
 
 ## Props

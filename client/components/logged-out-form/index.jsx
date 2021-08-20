@@ -1,20 +1,9 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
+import { Card } from '@automattic/components';
 import classnames from 'classnames';
 import { omit } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default class LoggedOutForm extends React.Component {

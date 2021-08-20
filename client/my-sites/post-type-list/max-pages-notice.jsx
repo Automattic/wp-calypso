@@ -1,21 +1,10 @@
-/**
- * External dependencies
- */
-
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 
-/**
- * Style dependencies
- */
 import './max-pages-notice.scss';
 
 class PostTypeListMaxPagesNotice extends Component {

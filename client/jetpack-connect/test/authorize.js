@@ -2,16 +2,9 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-import React from 'react';
 import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import { JetpackAuthorize } from '../authorize';
 
 const noop = () => {};
@@ -254,6 +247,30 @@ describe( 'JetpackAuthorize', () => {
 			};
 
 			expect( isFromJetpackConnectionManager( props ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'isFromJetpackBackupPlugin', () => {
+		const isFromJetpackBackupPlugin = new JetpackAuthorize().isFromJetpackBackupPlugin;
+
+		test( 'is from backup plugin', () => {
+			const props = {
+				authQuery: {
+					from: 'jetpack-backup',
+				},
+			};
+
+			expect( isFromJetpackBackupPlugin( props ) ).toBe( true );
+		} );
+
+		test( 'is not from backup plugin', () => {
+			const props = {
+				authQuery: {
+					from: 'not-jetpack-backup',
+				},
+			};
+
+			expect( isFromJetpackBackupPlugin( props ) ).toBe( false );
 		} );
 	} );
 

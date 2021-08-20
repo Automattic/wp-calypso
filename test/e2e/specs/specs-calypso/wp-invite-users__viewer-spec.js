@@ -1,5 +1,6 @@
 import assert from 'assert';
 import config from 'config';
+import GuideComponent from '../../lib/components/guide-component';
 import NoticesComponent from '../../lib/components/notices-component.js';
 import * as dataHelper from '../../lib/data-helper.js';
 import * as driverManager from '../../lib/driver-manager.js';
@@ -43,6 +44,11 @@ describe.skip( `[${ host }] Invites - New user as Viewer: (${ screenSize }) @par
 
 	it( 'Can log in and navigate to Invite People page', async function () {
 		await new LoginFlow( this.driver, 'privateSiteUser' ).loginAndSelectPeople();
+
+		// Makes sure that the Quick Switch modal will be dismissed.
+		const guideComponent = new GuideComponent( this.driver );
+		await guideComponent.dismiss( 1000, '.nav-unification-quick-switch-modal' );
+
 		const peoplePage = await PeoplePage.Expect( this.driver );
 		return await peoplePage.inviteUser();
 	} );

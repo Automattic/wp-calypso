@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import config from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { addQueryArgs } from 'calypso/lib/route';
 import { QueryArgs } from 'calypso/my-sites/plans/jetpack-plans/types';
@@ -70,7 +63,7 @@ export default function buildCheckoutURL(
 		? `/checkout/${ siteSlug }/${ productsString }`
 		: `/jetpack/connect/${ productsString }`;
 
-	return isJetpackCloud() && ! config.isEnabled( 'jetpack-cloud/connect' )
+	return isJetpackCloud()
 		? addQueryArgs( urlQueryArgs, `https://wordpress.com${ path }` )
 		: addQueryArgs( urlQueryArgs, path );
 }

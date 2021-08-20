@@ -1,34 +1,22 @@
-/**
- * External dependencies
- */
-import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
-import React, { ChangeEvent, FunctionComponent, useState } from 'react';
-import { useTranslate, TranslateResult } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
-import GSuiteDomainsSelect from './domains-select';
+import classNames from 'classnames';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
+import React, { ChangeEvent, FunctionComponent, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import Gridicon from 'calypso/components/gridicon';
 import { GSuiteNewUser as NewUser } from 'calypso/lib/gsuite/new-users';
+import GSuiteDomainsSelect from './domains-select';
 
 interface LabelWrapperProps {
 	label: TranslateResult;
-	showLabel: boolean;
 }
 
-const LabelWrapper: FunctionComponent< LabelWrapperProps > = ( { label, showLabel, children } ) => {
-	if ( ! showLabel ) {
-		return <>{ children }</>;
-	}
-
+const LabelWrapper: FunctionComponent< LabelWrapperProps > = ( { label, children } ) => {
 	return (
 		<FormLabel>
 			{ label }
@@ -43,7 +31,6 @@ interface Props {
 	onUserRemove: () => void;
 	onUserValueChange: ( field: string, value: string ) => void;
 	onReturnKeyPress: ( event: Event ) => void;
-	showLabels: boolean;
 	showTrashButton: boolean;
 	user: NewUser;
 }
@@ -61,7 +48,6 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 		domain: { value: domain, error: domainError },
 		password: { value: password, error: passwordError },
 	},
-	showLabels = false,
 	showTrashButton = true,
 } ) => {
 	const translate = useTranslate();
@@ -89,7 +75,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 
 	const renderSingleDomain = () => {
 		return (
-			<LabelWrapper label={ emailAddressLabel } showLabel={ showLabels }>
+			<LabelWrapper label={ emailAddressLabel }>
 				<FormTextInputWithAffixes
 					placeholder={ emailAddressPlaceholder }
 					value={ mailBox }
@@ -109,7 +95,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 
 	const renderMultiDomain = () => {
 		return (
-			<LabelWrapper label={ emailAddressLabel } showLabel={ showLabels }>
+			<LabelWrapper label={ emailAddressLabel }>
 				<FormTextInput
 					placeholder={ emailAddressPlaceholder }
 					value={ mailBox }
@@ -135,58 +121,48 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 	};
 
 	return (
-		<div
-			className={ classNames( 'gsuite-new-user-list__new-user', { 'show-labels': showLabels } ) }
-		>
+		<div className={ classNames( 'gsuite-new-user-list__new-user' ) }>
 			<FormFieldset>
-				<LabelWrapper label={ translate( 'First name' ) } showLabel={ showLabels }>
-					<FormTextInput
-						autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
-						placeholder={ translate( 'First name' ) }
-						value={ firstName }
-						maxLength={ 60 }
-						isError={ hasFirstNameError }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-							onUserValueChange( 'firstName', event.target.value, mailBoxFieldTouched );
-						} }
-						onBlur={ () => {
-							setFirstNameFieldTouched( wasValidated );
-						} }
-						onKeyUp={ onReturnKeyPress }
-					/>
-				</LabelWrapper>
+				<div className="gsuite-new-user-list__new-user-name-container">
+					<LabelWrapper label={ translate( 'First name' ) }>
+						<FormTextInput
+							autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
+							placeholder={ translate( 'First name' ) }
+							value={ firstName }
+							maxLength={ 60 }
+							isError={ hasFirstNameError }
+							onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+								onUserValueChange( 'firstName', event.target.value, mailBoxFieldTouched );
+							} }
+							onBlur={ () => {
+								setFirstNameFieldTouched( wasValidated );
+							} }
+							onKeyUp={ onReturnKeyPress }
+						/>
+					</LabelWrapper>
 
-				{ hasFirstNameError && <FormInputValidation text={ firstNameError } isError /> }
-			</FormFieldset>
+					{ hasFirstNameError && <FormInputValidation text={ firstNameError } isError /> }
+				</div>
 
-			<FormFieldset>
-				<LabelWrapper label={ translate( 'Last name' ) } showLabel={ showLabels }>
-					<FormTextInput
-						placeholder={ translate( 'Last name' ) }
-						value={ lastName }
-						maxLength={ 60 }
-						isError={ hasLastNameError }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-							onUserValueChange( 'lastName', event.target.value );
-						} }
-						onBlur={ () => {
-							setLastNameFieldTouched( wasValidated );
-						} }
-						onKeyUp={ onReturnKeyPress }
-					/>
-				</LabelWrapper>
+				<div className="gsuite-new-user-list__new-user-name-container">
+					<LabelWrapper label={ translate( 'Last name' ) }>
+						<FormTextInput
+							placeholder={ translate( 'Last name' ) }
+							value={ lastName }
+							maxLength={ 60 }
+							isError={ hasLastNameError }
+							onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+								onUserValueChange( 'lastName', event.target.value );
+							} }
+							onBlur={ () => {
+								setLastNameFieldTouched( wasValidated );
+							} }
+							onKeyUp={ onReturnKeyPress }
+						/>
+					</LabelWrapper>
 
-				{ hasLastNameError && <FormInputValidation text={ lastNameError } isError /> }
-
-				{ showTrashButton && (
-					<Button
-						className="gsuite-new-user-list__new-user-remove-user-button"
-						onClick={ onUserRemove }
-					>
-						<Gridicon icon="trash" />
-						<span>{ translate( 'Remove user' ) }</span>
-					</Button>
-				) }
+					{ hasLastNameError && <FormInputValidation text={ lastNameError } isError /> }
+				</div>
 			</FormFieldset>
 
 			<FormFieldset>
@@ -197,28 +173,38 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 
 					{ hasMailBoxError && <FormInputValidation text={ mailBoxError } isError /> }
 				</div>
-			</FormFieldset>
 
-			<FormFieldset>
-				<LabelWrapper label={ translate( 'Password' ) } showLabel={ showLabels }>
-					<FormPasswordInput
-						autoCapitalize="off"
-						autoCorrect="off"
-						placeholder={ translate( 'Password' ) }
-						value={ password }
-						maxLength={ 100 }
-						isError={ hasPasswordError }
-						onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-							onUserValueChange( 'password', event.target.value );
-						} }
-						onBlur={ () => {
-							setPasswordFieldTouched( wasValidated );
-						} }
-						onKeyUp={ onReturnKeyPress }
-					/>
-				</LabelWrapper>
+				<div className="gsuite-new-user-list__new-user-password-container">
+					<LabelWrapper label={ translate( 'Password' ) }>
+						<FormPasswordInput
+							autoCapitalize="off"
+							autoCorrect="off"
+							placeholder={ translate( 'Password' ) }
+							value={ password }
+							maxLength={ 100 }
+							isError={ hasPasswordError }
+							onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+								onUserValueChange( 'password', event.target.value );
+							} }
+							onBlur={ () => {
+								setPasswordFieldTouched( wasValidated );
+							} }
+							onKeyUp={ onReturnKeyPress }
+						/>
+					</LabelWrapper>
 
-				{ hasPasswordError && <FormInputValidation text={ passwordError } isError /> }
+					{ hasPasswordError && <FormInputValidation text={ passwordError } isError /> }
+				</div>
+
+				{ showTrashButton && (
+					<Button
+						className="gsuite-new-user-list__new-user-remove-user-button"
+						onClick={ onUserRemove }
+					>
+						<Gridicon icon="trash" />
+						<span>{ translate( 'Remove user' ) }</span>
+					</Button>
+				) }
 			</FormFieldset>
 		</div>
 	);

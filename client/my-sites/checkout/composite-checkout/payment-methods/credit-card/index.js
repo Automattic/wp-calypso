@@ -1,27 +1,20 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import debugFactory from 'debug';
-import { useI18n } from '@wordpress/react-i18n';
 import { registerStore, useSelect, PaymentLogo } from '@automattic/composite-checkout';
-
-/**
- * Internal dependencies
- */
-import { PaymentMethodLogos } from 'calypso/my-sites/checkout/composite-checkout/components/payment-method-logos';
-import {
-	SummaryLine,
-	SummaryDetails,
-} from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
+import { useI18n } from '@wordpress/react-i18n';
+import debugFactory from 'debug';
+import React from 'react';
+import { maskField } from 'calypso/lib/checkout';
 import {
 	VisaLogo,
 	MastercardLogo,
 	AmexLogo,
 } from 'calypso/my-sites/checkout/composite-checkout/components/payment-logos';
+import { PaymentMethodLogos } from 'calypso/my-sites/checkout/composite-checkout/components/payment-method-logos';
+import {
+	SummaryLine,
+	SummaryDetails,
+} from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
 import CreditCardFields from './credit-card-fields';
 import CreditCardPayButton from './credit-card-pay-button';
-import { maskField } from 'calypso/lib/checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:credit-card' );
 

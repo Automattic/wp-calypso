@@ -1,46 +1,36 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
+import classnames from 'classnames';
+import debugModule from 'debug';
+import { localize } from 'i18n-calypso';
+import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { isEqual } from 'lodash';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import AsyncLoad from 'calypso/components/async-load';
-import { Button } from '@automattic/components';
-import EditorMediaModalDialog from 'calypso/post-editor/media-modal/dialog';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
-import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
-import getMediaItem from 'calypso/state/media/thunks/get-media-item';
 import Image from 'calypso/components/image';
-import { addMedia } from 'calypso/state/media/thunks';
-import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
+import Spinner from 'calypso/components/spinner';
+import { createTransientMediaId } from 'calypso/lib/media/utils';
+import resizeImageUrl from 'calypso/lib/resize-image-url';
+import EditorMediaModalDialog from 'calypso/post-editor/media-modal/dialog';
+import { setEditorMediaModalView } from 'calypso/state/editor/actions';
 import { resetAllImageEditorState } from 'calypso/state/editor/image-editor/actions';
+import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
 import {
 	getImageEditorCrop,
 	getImageEditorTransform,
 } from 'calypso/state/editor/image-editor/selectors';
-import { setEditorMediaModalView } from 'calypso/state/editor/actions';
+import { addMedia } from 'calypso/state/media/thunks';
+import getMediaItem from 'calypso/state/media/thunks/get-media-item';
+import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
 import { ModalViews } from 'calypso/state/ui/media-modal/constants';
-import resizeImageUrl from 'calypso/lib/resize-image-url';
-import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
-import Spinner from 'calypso/components/spinner';
-import { createTransientMediaId } from 'calypso/lib/media/utils';
+import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 
 /**
  * Debug
  */
-import debugModule from 'debug';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const debug = debugModule( 'calypso:podcast-image' );

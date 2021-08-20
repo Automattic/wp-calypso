@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
 import debug from 'debug';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { bumpStat } from 'calypso/lib/analytics/mc';
 import EmptyContent from 'calypso/components/empty-content';
 import { makeLayout, render as clientRender } from 'calypso/controller';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 import { setSection } from 'calypso/state/ui/section/actions';
 
 /**

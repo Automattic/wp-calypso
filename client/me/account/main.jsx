@@ -9,7 +9,6 @@ import debugFactory from 'debug';
 import emailValidator from 'email-validator';
 import { debounce, flowRight as compose, get, has, map, size } from 'lodash';
 import { connect } from 'react-redux';
-import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -42,7 +41,7 @@ import Main from 'calypso/components/main';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import ColorSchemePicker from 'calypso/blocks/color-scheme-picker';
 import { successNotice, errorNotice, removeNotice } from 'calypso/state/notices/actions';
-import { getLanguage, isLocaleVariant, canBeTranslated, localizeUrl } from 'calypso/lib/i18n-utils';
+import { getLanguage, isLocaleVariant, canBeTranslated } from 'calypso/lib/i18n-utils';
 import isRequestingMissingSites from 'calypso/state/selectors/is-requesting-missing-sites';
 import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -71,9 +70,7 @@ import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-set
 import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import { clearStore } from 'calypso/lib/user/store';
-import { getPreference } from 'calypso/state/preferences/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import isRequestingAllDomains from 'calypso/state/selectors/is-requesting-all-domains';
 import { getFlatDomainsList } from 'calypso/state/sites/domains/selectors';
@@ -90,7 +87,6 @@ const noticeOptions = {
  */
 import './style.scss';
 
-const linkDestinationKey = 'linkDestination';
 const colorSchemeKey = 'colorScheme';
 
 /**
@@ -1068,38 +1064,6 @@ class Account extends React.Component {
 
 						{ this.props.canDisplayCommunityTranslator && this.communityTranslator() }
 
-						{ this.props.isNavUnificationEnabled && (
-							<FormFieldset className="account__link-destination">
-								<FormLabel id="account__link_destination" htmlFor="link_destination">
-									{ translate( 'Dashboard appearance' ) }
-								</FormLabel>
-								<ToggleControl
-									checked={ this.props.linkDestination }
-									onChange={ this.props.saveLinkDestinationPreference }
-									disabled={ this.getDisabledState( INTERFACE_FORM_NAME ) }
-									label={
-										<>
-											{ translate(
-												'{{spanlead}}Show wp-admin pages if available{{/spanlead}} {{spanextra}}Replace your dashboard pages with more advanced wp-admin equivalents.{{/spanextra}}',
-												{
-													components: {
-														spanlead: <strong className="account__link-destination-label-lead" />,
-														spanextra: <span className="account__link-destination-label-extra" />,
-													},
-												}
-											) }
-											<InlineSupportLink
-												supportPostId={ 80368 }
-												supportLink={ localizeUrl(
-													'https://wordpress.com/support/account-settings/#dashboard-appearance'
-												) }
-											/>
-										</>
-									}
-								/>
-							</FormFieldset>
-						) }
-
 						{ config.isEnabled( 'me/account/color-scheme-picker' ) &&
 							supportsCssCustomProperties() && (
 								<FormFieldset>
@@ -1140,7 +1104,6 @@ export default compose(
 			visibleSiteCount: getCurrentUserVisibleSiteCount( state ),
 			onboardingUrl: getOnboardingUrl( state ),
 			isNavUnificationEnabled: isNavUnificationEnabled( state ),
-			linkDestination: getPreference( state, linkDestinationKey ),
 			requestingFlatDomains: isRequestingAllDomains( state ),
 			domainsList: getFlatDomainsList( state ),
 		} ),
@@ -1156,8 +1119,6 @@ export default compose(
 			saveUnsavedUserSettings,
 			setUserSetting,
 			successNotice,
-			saveLinkDestinationPreference: ( linkDestination ) =>
-				savePreference( linkDestinationKey, linkDestination ),
 			saveColorSchemePreference: ( newColorScheme ) =>
 				savePreference( colorSchemeKey, newColorScheme ),
 		}

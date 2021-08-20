@@ -1,25 +1,15 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
-import { useI18n } from '@wordpress/react-i18n';
-import { Icon, wordpress } from '@wordpress/icons';
-import { useSelect } from '@wordpress/data';
-import { Button } from '@wordpress/components';
 import { useLocale } from '@automattic/i18n-utils';
-
-/**
- * Internal dependencies
- */
+import { Button } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
+import { Icon, wordpress } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
+import * as React from 'react';
+import { useCurrentStep, useIsAnchorFm, usePath, Step } from '../../path';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import DomainPickerButton from '../domain-picker-button';
-import PlansButton from '../plans-button';
-import { useCurrentStep, useIsAnchorFm, usePath, Step } from '../../path';
 import Link from '../link';
+import PlansButton from '../plans-button';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const Header: React.FunctionComponent = () => {
