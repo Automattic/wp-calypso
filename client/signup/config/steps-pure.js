@@ -139,7 +139,7 @@ export function generateSteps( {
 				'marketing_price_group',
 				'plans_reorder_abtest_variation',
 			],
-			optionalDependencies: [ 'plans_reorder_abtest_variation' ],
+			optionalDependencies: [ 'plans_reorder_abtest_variation', 'redirect' ],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 			},
