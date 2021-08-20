@@ -142,10 +142,7 @@ class DomainSearch extends Component {
 			.addProductsToCart( [
 				fillInSingleCartItemAttributes( registration, this.props.productsList ),
 			] )
-			.then( () => {
-				page( domainAddEmailUpsell( this.props.selectedSiteSlug, domain ) );
-				return;
-			} );
+			.then( () => page( domainAddEmailUpsell( this.props.selectedSiteSlug, domain ) ) );
 	}
 
 	removeDomain( suggestion ) {
