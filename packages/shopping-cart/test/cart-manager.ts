@@ -1,6 +1,8 @@
 import { createShoppingCartManagerClient } from '../src/index';
 import { getCart, setCart, mainCartKey, planOne, planTwo } from './utils/mock-cart-api';
 
+/* eslint-disable jest/no-done-callback, jest/no-conditional-expect */
+
 describe( 'ShoppingCartManager', () => {
 	describe( 'getCart', () => {
 		it( 'returns the responseCart', async () => {
@@ -64,48 +66,65 @@ describe( 'ShoppingCartManager', () => {
 		} );
 	} );
 
-	it( 'notifies subscribers when queued actions are complete', async () => {
+	it( 'queues actions that occur while the initial cart is loading and plays them when the cart has loaded', ( done ) => {
 		const setCartSpy = jest.fn().mockImplementation( setCart );
 		const cartManagerClient = createShoppingCartManagerClient( {
 			getCart,
 			setCart: setCartSpy,
 		} );
 		const manager = cartManagerClient.forCartKey( mainCartKey );
-		let hasFirstCallbackBeenCalled = false;
-		const firstCallback = () => {
-			const state = manager.getState();
-			if ( state.isLoading || hasFirstCallbackBeenCalled ) {
-				return;
-			}
-			hasFirstCallbackBeenCalled = true;
-			manager.actions.addProductsToCart( [ planTwo ] );
-			manager.actions.updateLocation( {
-				postalCode: '10002',
-				countryCode: 'US',
-				subdivisionCode: null,
-			} );
-		};
-		let hasSecondCallbackBeenCalled = false;
-		const secondCallback = () => {
-			const state = manager.getState();
-			if ( state.isPendingUpdate ) {
-				return;
-			}
-			hasSecondCallbackBeenCalled = true;
-		};
-		manager.subscribe( firstCallback );
-		manager.subscribe( secondCallback );
 
+		const subscriberCallback = () => {
+			const state = manager.getState();
+			if ( ! state.isLoading && ! state.isPendingUpdate ) {
+				try {
+					expect( state.responseCart.products.map( ( prod ) => prod.product_slug ) ).toContain(
+						planOne.product_slug
+					);
+					done();
+				} catch ( error ) {
+					done( error );
+				}
+			}
+		};
+		manager.subscribe( subscriberCallback );
+
+		// Trigger the initial fetch; this is async
 		manager.fetchInitialCart();
-		const p1 = manager.actions.updateLocation( {
-			postalCode: '10001',
-			countryCode: 'US',
-			subdivisionCode: null,
+		// While the fetch is still in-progress, trigger an action
+		manager.actions.addProductsToCart( [ planOne ] );
+	} );
+
+	it( 'queues actions that occur after initial cart has loaded when queued actions remain and plays them when the cart is loaded', ( done ) => {
+		const setCartSpy = jest.fn().mockImplementation( setCart );
+		const cartManagerClient = createShoppingCartManagerClient( {
+			getCart,
+			setCart: setCartSpy,
 		} );
+		const manager = cartManagerClient.forCartKey( mainCartKey );
 
-		await p1;
+		let hasAddedSecondProduct = false;
+		const subscriberCallback = () => {
+			const state = manager.getState();
+			if ( ! state.isLoading && ! hasAddedSecondProduct ) {
+				manager.actions.addProductsToCart( [ planTwo ] );
+				hasAddedSecondProduct = true;
+			}
 
-		expect( hasFirstCallbackBeenCalled ).toBeTruthy();
-		expect( hasSecondCallbackBeenCalled ).toBeTruthy();
+			if ( ! state.isLoading && ! state.isPendingUpdate ) {
+				try {
+					const slugsInCart = state.responseCart.products.map( ( prod ) => prod.product_slug );
+					expect( slugsInCart ).toContain( planOne.product_slug );
+					expect( slugsInCart ).toContain( planTwo.product_slug );
+					done();
+				} catch ( err ) {
+					done( err );
+				}
+			}
+		};
+
+		manager.subscribe( subscriberCallback );
+		manager.fetchInitialCart();
+		manager.actions.addProductsToCart( [ planOne ] );
 	} );
 } );
