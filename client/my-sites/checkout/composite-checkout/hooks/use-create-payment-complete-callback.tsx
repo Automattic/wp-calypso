@@ -257,6 +257,7 @@ export default function useCreatePaymentCompleteCallback( {
 
 function performRedirect( url: string ): void {
 	try {
+		window.scrollTo( 0, 0 );
 		page( url );
 	} catch ( err ) {
 		window.location.href = url;
