@@ -386,7 +386,7 @@ export class CheckoutThankYou extends React.Component {
 		let wasEcommercePlanPurchased = false;
 		let wasMarketplaceProduct = false;
 		let delayedTransferPurchase = false;
-		let wasDomainMappingOnlyProduct = false;
+		let wasDomainMappingOrTransferProduct = false;
 
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			purchases = getPurchases( this.props );
@@ -395,7 +395,11 @@ export class CheckoutThankYou extends React.Component {
 			wasEcommercePlanPurchased = purchases.some( isEcommerce );
 			delayedTransferPurchase = find( purchases, isDelayedDomainTransfer );
 			wasMarketplaceProduct = purchases.some( isMarketplaceProduct );
-			wasDomainMappingOnlyProduct = purchases.length === 1 && purchases.some( isDomainMapping );
+			wasDomainMappingOrTransferProduct =
+				purchases.length === 1 &&
+				purchases.some(
+					( purchase ) => isDomainMapping( purchase ) || isDomainTransfer( purchase )
+				);
 		}
 
 		// this placeholder is using just wp logo here because two possible states do not share a common layout
@@ -468,7 +472,7 @@ export class CheckoutThankYou extends React.Component {
 					<PlanThankYouCard siteId={ this.props.selectedSite.ID } { ...planProps } />
 				</Main>
 			);
-		} else if ( wasDomainMappingOnlyProduct ) {
+		} else if ( wasDomainMappingOrTransferProduct ) {
 			const [ , domainName ] = findPurchaseAndDomain( purchases, isDomainMapping );
 			return (
 				<DomainMappingThankYou domainName={ domainName } selectedSite={ this.props.selectedSite } />
