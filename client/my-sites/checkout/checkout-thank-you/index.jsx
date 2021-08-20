@@ -74,7 +74,7 @@ import BusinessPlanDetails from './business-plan-details';
 import ChargebackDetails from './chargeback-details';
 import DomainMappingDetails from './domain-mapping-details';
 import DomainRegistrationDetails from './domain-registration-details';
-import DomainMappingThankYou from './domains/domain-mapping-thank-you';
+import DomainThankYou from './domains/domain-thank-you';
 import EcommercePlanDetails from './ecommerce-plan-details';
 import FailedPurchaseDetails from './failed-purchase-details';
 import CheckoutThankYouFeaturesHeader from './features-header';
@@ -474,9 +474,7 @@ export class CheckoutThankYou extends React.Component {
 			);
 		} else if ( wasDomainMappingOrTransferProduct ) {
 			const [ , domainName ] = findPurchaseAndDomain( purchases, isDomainMapping );
-			return (
-				<DomainMappingThankYou domainName={ domainName } selectedSite={ this.props.selectedSite } />
-			);
+			return <DomainThankYou domainName={ domainName } selectedSite={ this.props.selectedSite } />;
 		}
 
 		if ( this.props.domainOnlySiteFlow && purchases.length > 0 && ! failedPurchases.length ) {

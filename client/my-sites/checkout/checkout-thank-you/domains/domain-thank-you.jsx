@@ -8,7 +8,7 @@ import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/p
 
 import './style.scss';
 
-const DomainMappingThankYou = ( { domainName: domain, selectedSite } ) => {
+const DomainThankYou = ( { domainName: domain, selectedSite } ) => {
 	const translate = useTranslate();
 	return (
 		<ThankYou
@@ -27,7 +27,7 @@ const DomainMappingThankYou = ( { domainName: domain, selectedSite } ) => {
 							stepCta: (
 								<Button
 									href={ domainMappingSetup( selectedSite.slug, domain ) }
-									className={ 'domain-mapping-thank-you__button' }
+									className={ 'domain-thank-you__button' }
 									primary
 									busy={ false }
 									disabled={ false }
@@ -50,7 +50,7 @@ const DomainMappingThankYou = ( { domainName: domain, selectedSite } ) => {
 							stepCta: (
 								<Button
 									href={ emailManagementPurchaseNewEmailAccount( selectedSite.slug, domain ) }
-									className={ 'domain-mapping-thank-you__button' }
+									className={ 'domain-thank-you__button' }
 									busy={ false }
 									disabled={ false }
 								>
@@ -77,4 +77,4 @@ const DomainMappingThankYou = ( { domainName: domain, selectedSite } ) => {
 	);
 };
 
-export default DomainMappingThankYou;
+export default DomainThankYou;
