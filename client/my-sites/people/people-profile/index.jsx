@@ -34,10 +34,8 @@ const PeopleProfile = ( { siteId, type, user, invite } ) => {
 		return;
 	};
 
-	const getRoleBadgeText = ( role ) => {
+	const getRoleBadgeText = ( role = getRole() ) => {
 		let text;
-		role = 'undefined' === typeof role ? getRole() : role;
-
 		switch ( role ) {
 			case 'super admin':
 				text = translate( 'Super Admin', {
@@ -79,8 +77,7 @@ const PeopleProfile = ( { siteId, type, user, invite } ) => {
 		return text;
 	};
 
-	const getRoleBadgeClass = ( role ) => {
-		role = 'undefined' === typeof role ? getRole() : role;
+	const getRoleBadgeClass = ( role = getRole() ) => {
 		return 'role-' + role;
 	};
 
@@ -264,8 +261,6 @@ const PeopleProfile = ( { siteId, type, user, invite } ) => {
 
 PeopleProfile.propType = {
 	siteId: PropTypes.number.isRequired,
-	translate: PropTypes.func.isRequired,
-	moment: PropTypes.func.isRequired,
 	user: PropTypes.object,
 	type: PropTypes.string,
 	invite: PropTypes.object,
