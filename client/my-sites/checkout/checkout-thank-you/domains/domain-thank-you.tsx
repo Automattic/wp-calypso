@@ -8,6 +8,7 @@ import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/p
 
 import './style.scss';
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const DomainThankYou = ( { domainName: domain, selectedSite } ) => {
 	const translate = useTranslate();
 	return (
