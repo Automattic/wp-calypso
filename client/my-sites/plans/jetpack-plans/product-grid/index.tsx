@@ -1,6 +1,8 @@
 import {
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+	PLAN_JETPACK_SECURITY_T1_YEARLY,
+	PLAN_JETPACK_SECURITY_T1_MONTHLY,
 } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -162,6 +164,13 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 		[ onDurationChange, duration ]
 	);
 
+	const featuredPlans = getForCurrentCROIteration( {
+		[ Iterations.ONLY_REALTIME_PRODUCTS ]: [
+			PLAN_JETPACK_SECURITY_T1_YEARLY,
+			PLAN_JETPACK_SECURITY_T1_MONTHLY,
+		],
+	} ) ?? [ PLAN_JETPACK_SECURITY_DAILY, PLAN_JETPACK_SECURITY_DAILY_MONTHLY ];
+
 	return (
 		<>
 			{ planRecommendation && (
@@ -189,10 +198,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 								currencyCode={ currencyCode }
 								selectedTerm={ duration }
 								isAligned={ ! shouldWrapGrid }
-								featuredPlans={ [
-									PLAN_JETPACK_SECURITY_DAILY,
-									PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
-								] }
+								featuredPlans={ featuredPlans }
 								scrollCardIntoView={ scrollCardIntoView }
 								createButtonURL={ createButtonURL }
 							/>

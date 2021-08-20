@@ -860,6 +860,88 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 	],
 } );
 
+const getPlanJetpackSecurityT1Details = () => ( {
+	group: GROUP_JETPACK,
+	type: TYPE_SECURITY_T1,
+	getTitle: () => translate( 'Security' ),
+	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
+	getDescription: () =>
+		translate(
+			'Get next-level protection with real-time backups, real-time scan and all essential security tools.'
+		),
+	getTagline: () => translate( 'Best for sites with frequent updates' ), // TODO: new tagline
+	getPlanCardFeatures: () => [
+		FEATURE_PLAN_SECURITY_DAILY,
+		FEATURE_PRODUCT_BACKUP_REALTIME_V2,
+		FEATURE_PRODUCT_SCAN_REALTIME_V2,
+		FEATURE_ACTIVITY_LOG_1_YEAR_V2,
+	],
+	getHiddenFeatures: () => [
+		FEATURE_JETPACK_BACKUP_REALTIME,
+		FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+		FEATURE_JETPACK_SCAN_DAILY,
+		FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
+		FEATURE_JETPACK_ANTI_SPAM,
+		FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+		FEATURE_BACKUP_ARCHIVE_UNLIMITED,
+		FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+		FEATURE_REPUBLICIZE,
+		FEATURE_ADVANCED_SEO,
+		FEATURE_SEO_PREVIEW_TOOLS,
+		FEATURE_SIMPLE_PAYMENTS,
+		FEATURE_WORDADS_INSTANT,
+		FEATURE_GOOGLE_ANALYTICS,
+		FEATURE_UNLIMITED_PREMIUM_THEMES,
+		FEATURE_PREMIUM_SUPPORT,
+	],
+	getInferiorHiddenFeatures: () => [
+		FEATURE_JETPACK_BACKUP_DAILY,
+		FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		FEATURE_BACKUP_ARCHIVE_30,
+	],
+} );
+
+const getPlanJetpackSecurityT2Details = () => ( {
+	group: GROUP_JETPACK,
+	type: TYPE_SECURITY_T2,
+	getTitle: () => translate( 'Security Pro' ),
+	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
+	getDescription: () =>
+		translate(
+			'Get next-level protection with real-time backups, real-time scan and all essential security tools.'
+		),
+	getTagline: () => translate( 'Best for sites with frequent updates' ), // TODO: new tagline
+	getPlanCardFeatures: () => [
+		FEATURE_PLAN_SECURITY_DAILY,
+		FEATURE_PRODUCT_BACKUP_REALTIME_V2,
+		FEATURE_PRODUCT_SCAN_REALTIME_V2,
+		FEATURE_ACTIVITY_LOG_1_YEAR_V2,
+	],
+	getHiddenFeatures: () => [
+		FEATURE_JETPACK_BACKUP_REALTIME,
+		FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+		FEATURE_JETPACK_SCAN_DAILY,
+		FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
+		FEATURE_JETPACK_ANTI_SPAM,
+		FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+		FEATURE_BACKUP_ARCHIVE_UNLIMITED,
+		FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+		FEATURE_REPUBLICIZE,
+		FEATURE_ADVANCED_SEO,
+		FEATURE_SEO_PREVIEW_TOOLS,
+		FEATURE_SIMPLE_PAYMENTS,
+		FEATURE_WORDADS_INSTANT,
+		FEATURE_GOOGLE_ANALYTICS,
+		FEATURE_UNLIMITED_PREMIUM_THEMES,
+		FEATURE_PREMIUM_SUPPORT,
+	],
+	getInferiorHiddenFeatures: () => [
+		FEATURE_JETPACK_BACKUP_DAILY,
+		FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		FEATURE_BACKUP_ARCHIVE_30,
+	],
+} );
+
 const getPlanJetpackCompleteDetails = () => ( {
 	group: GROUP_JETPACK,
 	type: TYPE_ALL,
@@ -1369,27 +1451,35 @@ export const PLANS_LIST = {
 	},
 
 	[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: {
-		group: GROUP_JETPACK,
-		type: TYPE_SECURITY_T1,
+		...getPlanJetpackSecurityT1Details(),
 		...getAnnualTimeframe(),
+		getStoreSlug: () => PLAN_JETPACK_SECURITY_T1_YEARLY,
+		getPathSlug: () => 'security',
+		getProductId: () => 2016,
 	},
 
 	[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: {
-		group: GROUP_JETPACK,
-		type: TYPE_SECURITY_T1,
+		...getPlanJetpackSecurityT1Details(),
 		...getMonthlyTimeframe(),
+		getStoreSlug: () => PLAN_JETPACK_SECURITY_T1_MONTHLY,
+		getPathSlug: () => 'security-monthly',
+		getProductId: () => 2017,
 	},
 
 	[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: {
-		group: GROUP_JETPACK,
-		type: TYPE_SECURITY_T2,
+		...getPlanJetpackSecurityT2Details(),
 		...getAnnualTimeframe(),
+		getStoreSlug: () => PLAN_JETPACK_SECURITY_T2_YEARLY,
+		getPathSlug: () => 'security-pro',
+		getProductId: () => 2019,
 	},
 
 	[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: {
-		group: GROUP_JETPACK,
-		type: TYPE_SECURITY_T2,
+		...getPlanJetpackSecurityT2Details(),
 		...getMonthlyTimeframe(),
+		getStoreSlug: () => PLAN_JETPACK_SECURITY_T2_MONTHLY,
+		getPathSlug: () => 'security-pro-monthly',
+		getProductId: () => 2020,
 	},
 
 	[ PLAN_P2_PLUS ]: {
