@@ -85,7 +85,6 @@
 		"signup/social": true,
 		"site-indicator": true,
 		"support-user": true,
-		"titan/upsell-email-domain-purchase": false,
 		"upgrades/checkout": true,
 		"upgrades/domain-search": true,
 		"upgrades/redirect-payments": true,

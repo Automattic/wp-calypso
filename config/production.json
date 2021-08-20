@@ -111,7 +111,6 @@
 		"memberships": true,
 		"ssr/sample-log-cache-misses": true,
 		"support-user": true,
-		"titan/upsell-email-domain-purchase": false,
 		"tools/migrate": true,
 		"upgrades/checkout": true,
 		"upgrades/domain-search": true,

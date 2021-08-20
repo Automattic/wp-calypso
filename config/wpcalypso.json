@@ -120,7 +120,6 @@
 		"signup/social": true,
 		"site-indicator": true,
 		"support-user": true,
-		"titan/upsell-email-domain-purchase": false,
 		"tools/migrate": true,
 		"upgrades/checkout": true,
 		"upgrades/domain-search": true,
