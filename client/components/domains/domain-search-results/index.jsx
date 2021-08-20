@@ -41,6 +41,7 @@ class DomainSearchResults extends React.Component {
 		buttonLabel: PropTypes.string,
 		mappingSuggestionLabel: PropTypes.string,
 		offerUnavailableOption: PropTypes.bool,
+		showAlreadyOwnADomain: PropTypes.bool,
 		onClickResult: PropTypes.func.isRequired,
 		onAddMapping: PropTypes.func,
 		onAddTransfer: PropTypes.func,
@@ -186,7 +187,7 @@ class DomainSearchResults extends React.Component {
 				);
 			}
 
-			if ( this.props.offerUnavailableOption ) {
+			if ( this.props.offerUnavailableOption || this.props.showAlreadyOwnADomain ) {
 				if ( this.props.siteDesignType !== DESIGN_TYPE_STORE && lastDomainIsTransferrable ) {
 					availabilityElement = (
 						<CompactCard className="domain-search-results__domain-available-notice">

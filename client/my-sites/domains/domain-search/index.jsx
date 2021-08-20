@@ -260,7 +260,7 @@ class DomainSearch extends Component {
 								onAddMapping={ this.handleAddMapping }
 								onAddTransfer={ this.handleAddTransfer }
 								isCartPendingUpdate={ this.props.shoppingCartManager.isPendingUpdate }
-								offerUnavailableOption
+								showAlreadyOwnADomain
 								selectedSite={ selectedSite }
 								basePath={ this.props.basePath }
 								products={ this.props.productsList }
