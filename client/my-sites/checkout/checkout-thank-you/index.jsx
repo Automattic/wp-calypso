@@ -395,7 +395,7 @@ export class CheckoutThankYou extends React.Component {
 			wasEcommercePlanPurchased = purchases.some( isEcommerce );
 			delayedTransferPurchase = find( purchases, isDelayedDomainTransfer );
 			wasMarketplaceProduct = purchases.some( isMarketplaceProduct );
-			wasDomainMappingOnlyProduct = purchases.some( isDomainMapping );
+			wasDomainMappingOnlyProduct = purchases.length === 1 && purchases.some( isDomainMapping );
 		}
 
 		// this placeholder is using just wp logo here because two possible states do not share a common layout
