@@ -53,36 +53,30 @@ export function resolveDomainStatus(
 			}
 
 			if ( hasMappingError ) {
+				const setupStep =
+					domain.connectionMode === 'advanced' ? 'advanced_update' : 'suggested_update';
+				const options = {
+					components: {
+						strong: <strong />,
+						a: (
+							<a
+								href={ domainMappingSetup( siteSlug, domain.domain, setupStep ) }
+								onClick={ ( e ) => e.stopPropagation() }
+							/>
+						),
+					},
+				};
+
 				let status;
 				if ( domain?.connectionMode === 'advanced' ) {
 					status = translate(
 						'{{strong}}Connection error:{{/strong}} The A records are incorrect. Please {{a}}try this step{{/a}} again.',
-						{
-							components: {
-								strong: <strong />,
-								a: (
-									<a
-										href={ domainMappingSetup( siteSlug, domain.domain, 'advanced_update' ) }
-										onClick={ ( e ) => e.stopPropagation() }
-									/>
-								),
-							},
-						}
+						options
 					);
 				} else {
 					status = translate(
 						'{{strong}}Connection error:{{/strong}} The name servers are incorrect. Please {{a}}try this step{{/a}} again.',
-						{
-							components: {
-								strong: <strong />,
-								a: (
-									<a
-										href={ domainMappingSetup( siteSlug, domain.domain, 'suggested_update' ) }
-										onClick={ ( e ) => e.stopPropagation() }
-									/>
-								),
-							},
-						}
+						options
 					);
 				}
 				return {
