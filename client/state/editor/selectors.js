@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { addQueryArgs } from 'calypso/lib/route';
 import { getEditedPost } from 'calypso/state/posts/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
-import { addQueryArgs } from 'calypso/lib/route';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 import 'calypso/state/editor/init';
 

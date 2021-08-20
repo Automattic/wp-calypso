@@ -1,26 +1,19 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
-import page from 'page';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { withShoppingCart } from '@automattic/shopping-cart';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
-import { withShoppingCart } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
-import EmptyContent from 'calypso/components/empty-content';
-import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import QueryProductsList from 'calypso/components/data/query-products-list';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
-import Main from 'calypso/components/main';
+import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
+import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
-import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
-import { canDomainAddGSuite, getProductType } from 'calypso/lib/gsuite';
+import Main from 'calypso/components/main';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import {
 	hasPlan,
 	hasDomainInCart,
@@ -28,7 +21,21 @@ import {
 	domainRegistration,
 	updatePrivacyForDomain,
 } from 'calypso/lib/cart-values/cart-items';
+import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { canDomainAddGSuite, getProductType } from 'calypso/lib/gsuite';
+import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from 'calypso/lib/gsuite/constants';
+import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
+import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
+import { domainMapping } from 'calypso/my-sites/domains/paths';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
+import {
+	recordAddDomainButtonClick,
+	recordRemoveDomainButtonClick,
+} from 'calypso/state/domains/actions';
+import { getProductsList } from 'calypso/state/products-list/selectors';
+import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
@@ -36,24 +43,7 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from 'calypso/lib/gsuite/constants';
-import QueryProductsList from 'calypso/components/data/query-products-list';
-import QuerySiteDomains from 'calypso/components/data/query-site-domains';
-import { getProductsList } from 'calypso/state/products-list/selectors';
-import {
-	recordAddDomainButtonClick,
-	recordRemoveDomainButtonClick,
-} from 'calypso/state/domains/actions';
-import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
-import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
-import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
-import { domainMapping } from 'calypso/my-sites/domains/paths';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 import 'calypso/my-sites/domains/style.scss';
 

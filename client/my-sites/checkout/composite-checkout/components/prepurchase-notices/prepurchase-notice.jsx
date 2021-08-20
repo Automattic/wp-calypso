@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import React from 'react';
 
-/**
- * Internal dependencies
- */
 import './style.scss';
 
 const PrePurchaseNotice = ( { message, linkUrl, linkText } ) => (

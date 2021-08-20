@@ -1,45 +1,35 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
+import { planHasFeature, FEATURE_UPLOAD_THEMES_PLUGINS } from '@automattic/calypso-products';
+import { Button, Card, CompactCard, ProgressBar } from '@automattic/components';
 import { getLocaleSlug, localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import page from 'page';
 import { get, isEmpty, omit } from 'lodash';
 import moment from 'moment';
-import { Button, Card, CompactCard, ProgressBar } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
+import page from 'page';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Gridicon from 'calypso/components/gridicon';
 import Main from 'calypso/components/main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import Spinner from 'calypso/components/spinner';
-import { planHasFeature, FEATURE_UPLOAD_THEMES_PLUGINS } from '@automattic/calypso-products';
-import StepConfirmMigration from './step-confirm-migration';
-import StepImportOrMigrate from './step-import-or-migrate';
-import StepSourceSelect from './step-source-select';
-import StepUpgrade from './step-upgrade';
 import { Interval, EVERY_TEN_SECONDS } from 'calypso/lib/interval';
+import { urlToSlug } from 'calypso/lib/url';
+import wpcom from 'calypso/lib/wp';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import { getSite, getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { receiveSite, updateSiteMigrationMeta, requestSite } from 'calypso/state/sites/actions';
+import { getSite, getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import { urlToSlug } from 'calypso/lib/url';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import wpcom from 'calypso/lib/wp';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import StepConfirmMigration from './step-confirm-migration';
+import StepImportOrMigrate from './step-import-or-migrate';
+import StepSourceSelect from './step-source-select';
+import StepUpgrade from './step-upgrade';
 
-/**
- * Style dependencies
- */
 import './section-migrate.scss';
 
 const THIRTY_SECONDS = 30 * 1000;

@@ -2,16 +2,6 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import { shallow } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { PluginMeta } from '../';
 import {
 	PLAN_FREE,
 	PLAN_BUSINESS_MONTHLY,
@@ -25,6 +15,9 @@ import {
 	PLAN_BLOGGER,
 	PLAN_BLOGGER_2_YEARS,
 } from '@automattic/calypso-products';
+import { shallow } from 'enzyme';
+import React from 'react';
+import { PluginMeta } from '../';
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );

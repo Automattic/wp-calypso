@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-
+import page from 'page';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import page from 'page';
-
-/**
- * Internal dependencies
- */
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const redirectNonJetpack = ( redirectRoute ) => ( WrappedComponent ) => {
 	class RedirectNonJetpack extends Component {

@@ -1,14 +1,7 @@
-/**
- * Internal dependencies
- */
-import { getFeatureByKey } from 'calypso/lib/plans/features-list';
 import { Product } from '@automattic/calypso-products';
+import { getFeatureByKey } from 'calypso/lib/plans/features-list';
 import { getForCurrentCROIteration, Iterations } from './iterations';
 import objectIsPlan from './object-is-plan';
-
-/**
- * Type dependencies
- */
 import type { SelectorProductFeaturesItem, SelectorProductFeaturesSection } from './types';
 import type { Plan } from '@automattic/calypso-products';
 

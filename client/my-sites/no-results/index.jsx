@@ -1,16 +1,6 @@
-/**
- * External dependencies
- */
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 
-/**
- * Internal dependencies
- */
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default function NoResults( props ) {

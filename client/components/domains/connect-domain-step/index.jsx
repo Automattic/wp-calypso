@@ -95,7 +95,7 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 			setVerificationInProgress( true );
 			wpcom
 				.domain( domain )
-				.mappingStatus()
+				.updateConnectionModeAndGetMappingStatus( mode )
 				.then( ( data ) => {
 					setVerificationStatus( { data } );
 					if ( setStepAfterVerify ) {

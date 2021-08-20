@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
+import { Card, Dialog, Suggestions } from '@automattic/components';
+import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
+import { find, isEmpty, startsWith } from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { find, isEmpty, startsWith } from 'lodash';
-import { localize } from 'i18n-calypso';
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import { Card, Dialog, Suggestions } from '@automattic/components';
-import SearchCard from 'calypso/components/search-card';
 import FormButton from 'calypso/components/forms/form-button';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import SearchCard from 'calypso/components/search-card';
 import { saveDomainIpsTag } from 'calypso/state/domains/transfer/actions';
 import getGainingRegistrar from 'calypso/state/selectors/get-gaining-registrar';
 import getIpsTagSaveStatus from 'calypso/state/selectors/get-ips-tag-save-status';

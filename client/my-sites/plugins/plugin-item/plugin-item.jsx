@@ -1,22 +1,13 @@
-/**
- * External dependencies
- */
+import { CompactCard } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { uniqBy } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { uniqBy } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
-import { CompactCard } from '@automattic/components';
-import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
-import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggle';
-import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import Count from 'calypso/components/count';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
 import {
 	ACTIVATE_PLUGIN,
@@ -26,13 +17,12 @@ import {
 	REMOVE_PLUGIN,
 	UPDATE_PLUGIN,
 } from 'calypso/lib/plugins/constants';
-import { getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
+import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggle';
+import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
+import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class PluginItem extends Component {

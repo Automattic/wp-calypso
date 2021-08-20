@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-
 // import { getIsDismissed, getIsValid } from '../selectors';
 // import { TIME_BETWEEN_PROMPTS } from '../constants';
 import { combineDismissPreference, combineValidPreference } from '../actions';

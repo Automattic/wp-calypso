@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useI18n } from '@wordpress/react-i18n';
-import { CardNumberElement } from 'react-stripe-elements';
 import { FormStatus, useFormStatus, useSelect, PaymentLogo } from '@automattic/composite-checkout';
-
-/**
- * Internal dependencies
- */
+import { useI18n } from '@wordpress/react-i18n';
+import React from 'react';
+import { CardNumberElement } from 'react-stripe-elements';
 import CreditCardNumberInput from 'calypso/components/upgrades/credit-card-number-input';
 import { Label, LabelText, StripeFieldWrapper, StripeErrorMessage } from './form-layout-components';
 

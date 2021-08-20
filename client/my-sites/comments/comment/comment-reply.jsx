@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { Button } from '@automattic/components';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import AutoDirection from 'calypso/components/auto-direction';
 import FormTextarea from 'calypso/components/forms/form-textarea';
-import { Button } from '@automattic/components';
 import { decodeEntities } from 'calypso/lib/formatting';
 import {
 	bumpStat,
@@ -22,8 +15,8 @@ import {
 	withAnalytics,
 } from 'calypso/state/analytics/actions';
 import { changeCommentStatus, replyComment } from 'calypso/state/comments/actions';
-import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSiteComment } from 'calypso/state/comments/selectors';
+import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const TEXTAREA_HEIGHT_COLLAPSED = 47; // 1 line

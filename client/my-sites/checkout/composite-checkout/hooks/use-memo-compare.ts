@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { useRef, useEffect } from 'react';
 
 // See https://usehooks.com/useMemoCompare/

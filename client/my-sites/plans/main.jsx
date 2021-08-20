@@ -1,38 +1,31 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
+import { isEnabled } from '@automattic/calypso-config';
+import { getPlan, getIntervalTypeForTerm } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
-import page from 'page';
-import { isEnabled } from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
+import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import Main from 'calypso/components/main';
+import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
+import FormattedHeader from 'calypso/components/formatted-header';
+import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
+import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
+import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import FormattedHeader from 'calypso/components/formatted-header';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import PlansNavigation from 'calypso/my-sites/plans/navigation';
-import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
-import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
+import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import { getPlan, getIntervalTypeForTerm } from '@automattic/calypso-products';
-import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class Plans extends React.Component {
 	static propTypes = {

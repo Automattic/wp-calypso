@@ -1,36 +1,25 @@
-/**
- * External dependencies
- */
-
-import { connect } from 'react-redux';
 import { localize, getLocaleSlug } from 'i18n-calypso';
+import moment from 'moment';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
-import moment from 'moment';
-
-/**
- * Internal dependencies
- */
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import DocumentHead from 'calypso/components/data/document-head';
-import urlSearch from 'calypso/lib/url-search';
-import Main from 'calypso/components/main';
-import PostTypeFilter from 'calypso/my-sites/post-type-filter';
-import PageList from './page-list';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { mapPostStatus } from 'calypso/lib/route';
-import { POST_STATUSES } from 'calypso/state/posts/constants';
-import { getPostTypeLabel } from 'calypso/state/post-types/selectors';
+import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
-
-/**
- * Style dependencies
- */
-import './style.scss';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { Experiment } from 'calypso/lib/explat';
+import { mapPostStatus } from 'calypso/lib/route';
+import urlSearch from 'calypso/lib/url-search';
+import PostTypeFilter from 'calypso/my-sites/post-type-filter';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { getPostTypeLabel } from 'calypso/state/post-types/selectors';
+import { POST_STATUSES } from 'calypso/state/posts/constants';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import PageList from './page-list';
+
+import './style.scss';
 
 class PagesMain extends React.Component {
 	static displayName = 'Pages';

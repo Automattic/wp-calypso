@@ -1,26 +1,19 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
 import { isMobile } from '@automattic/viewport';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
-import { sectionify } from 'calypso/lib/route';
 import SectionNav from 'calypso/components/section-nav';
-import NavTabs from 'calypso/components/section-nav/tabs';
 import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import { sectionify } from 'calypso/lib/route';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import PopoverCart from 'calypso/my-sites/checkout/cart/popover-cart';
 import isSiteOnFreePlan from 'calypso/state/selectors/is-site-on-free-plan';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class PlansNavigation extends React.Component {
 	static propTypes = {

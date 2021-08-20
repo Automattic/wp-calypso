@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { setEditorLastDraft, resetEditorLastDraft } from '../actions';
 import { EDITOR_LAST_DRAFT_SET } from 'calypso/state/action-types';
+import { setEditorLastDraft, resetEditorLastDraft } from '../actions';
 
 describe( 'actions', () => {
 	describe( '#setEditorLastDraft()', () => {

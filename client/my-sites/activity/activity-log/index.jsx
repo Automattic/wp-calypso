@@ -1,64 +1,33 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-/**
- * External dependencies
- */
+
 import { isEnabled } from '@automattic/calypso-config';
+import { isFreePlan } from '@automattic/calypso-products';
 import { isMobile } from '@automattic/viewport';
-import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { find, get, isEmpty, isEqual } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import ActivityLogBanner from '../activity-log-banner';
-import ActivityLogExample from '../activity-log-example';
-import ActivityLogItem from '../activity-log-item';
-import ActivityLogAggregatedItem from '../activity-log-item/aggregated';
-import ActivityLogSwitch from '../activity-log-switch';
-import ActivityLogTasklist from '../activity-log-tasklist';
+import PropTypes from 'prop-types';
+import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
+import VisibleDaysLimitUpsell from 'calypso/components/activity-card-list/visible-days-limit-upsell';
 import DocumentHead from 'calypso/components/data/document-head';
-import EmptyContent from 'calypso/components/empty-content';
-import ErrorBanner from '../activity-log-banner/error-banner';
-import Filterbar from '../filterbar';
-import UpgradeBanner from '../activity-log-banner/upgrade-banner';
-import IntroBanner from '../activity-log-banner/intro-banner';
-import { isFreePlan } from '@automattic/calypso-products';
-import JetpackColophon from 'calypso/components/jetpack-colophon';
-import Main from 'calypso/components/main';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import Pagination from 'calypso/components/pagination';
-import ProgressBanner from '../activity-log-banner/progress-banner';
-import RewindAlerts from './rewind-alerts';
-import QueryActivityLogRetentionPolicy from 'calypso/components/data/query-activity-log-retention-policy';
+import QueryActivityLogDisplayRules from 'calypso/components/data/query-activity-log-display-rules';
+import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
+import QueryRewindBackupStatus from 'calypso/components/data/query-rewind-backup-status';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings'; // For site time offset
-import QueryRewindBackupStatus from 'calypso/components/data/query-rewind-backup-status';
-import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
-import SuccessBanner from '../activity-log-banner/success-banner';
-import RewindUnavailabilityNotice from './rewind-unavailability-notice';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import {
-	siteHasBackupProductPurchase,
-	siteHasScanProductPurchase,
-} from 'calypso/state/purchases/selectors';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import {
-	getSiteSlug,
-	getSiteTitle,
-	isJetpackSite,
-	isJetpackSiteSecondaryNetworkSite as getIsJetpackSiteSecondaryNetworkSite,
-} from 'calypso/state/sites/selectors';
-import {
-	recordTracksEvent as recordTracksEventAction,
-	withAnalytics,
-} from 'calypso/state/analytics/actions';
+import JetpackColophon from 'calypso/components/jetpack-colophon';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Main from 'calypso/components/main';
+import Pagination from 'calypso/components/pagination';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { applySiteOffset } from 'calypso/lib/site/timezone';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
 	getRewindRestoreProgress,
 	rewindRequestDismiss,
@@ -67,32 +36,54 @@ import {
 	rewindBackup,
 	updateFilter,
 } from 'calypso/state/activity-log/actions';
-import getSiteActivityLogRetentionPolicyRequestStatus from 'calypso/state/selectors/get-site-activity-log-retention-policy-request-status';
-import getSiteActivityLogRetentionDays from 'calypso/state/selectors/get-site-activity-log-retention-days';
+import { emptyFilter } from 'calypso/state/activity-log/reducer';
+import {
+	recordTracksEvent as recordTracksEventAction,
+	withAnalytics,
+} from 'calypso/state/analytics/actions';
+import { requestActivityLogs } from 'calypso/state/data-getters';
+import { getPreference } from 'calypso/state/preferences/selectors';
+import {
+	siteHasBackupProductPurchase,
+	siteHasScanProductPurchase,
+} from 'calypso/state/purchases/selectors';
+import getActivityLogDisplayRulesRequestStatus from 'calypso/state/selectors/get-activity-log-display-rules-request-status';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
+import getActivityLogVisibleDays from 'calypso/state/selectors/get-activity-log-visible-days';
 import getBackupProgress from 'calypso/state/selectors/get-backup-progress';
 import getRequestedBackup from 'calypso/state/selectors/get-requested-backup';
 import getRequestedRewind from 'calypso/state/selectors/get-requested-rewind';
 import getRestoreProgress from 'calypso/state/selectors/get-restore-progress';
 import getRewindBackups from 'calypso/state/selectors/get-rewind-backups';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
-import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
-import { requestActivityLogs } from 'calypso/state/data-getters';
-import { emptyFilter } from 'calypso/state/activity-log/reducer';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { applySiteOffset } from 'calypso/lib/site/timezone';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { getPreference } from 'calypso/state/preferences/selectors';
-import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
-import RetentionLimitUpsell from 'calypso/components/activity-card-list/retention-limit-upsell';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import {
+	getSiteSlug,
+	getSiteTitle,
+	isJetpackSite,
+	isJetpackSiteSecondaryNetworkSite as getIsJetpackSiteSecondaryNetworkSite,
+} from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import ActivityLogBanner from '../activity-log-banner';
+import ErrorBanner from '../activity-log-banner/error-banner';
+import IntroBanner from '../activity-log-banner/intro-banner';
+import ProgressBanner from '../activity-log-banner/progress-banner';
+import SuccessBanner from '../activity-log-banner/success-banner';
+import UpgradeBanner from '../activity-log-banner/upgrade-banner';
+import ActivityLogExample from '../activity-log-example';
+import ActivityLogItem from '../activity-log-item';
+import ActivityLogAggregatedItem from '../activity-log-item/aggregated';
+import ActivityLogSwitch from '../activity-log-switch';
+import ActivityLogTasklist from '../activity-log-tasklist';
+import Filterbar from '../filterbar';
+import RewindAlerts from './rewind-alerts';
+import RewindUnavailabilityNotice from './rewind-unavailability-notice';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const PAGE_SIZE = 20;
@@ -379,7 +370,7 @@ class ActivityLog extends Component {
 			enableRewind,
 			filter: { page: requestedPage },
 			logs,
-			logsLimitedByRetentionPolicy,
+			allLogsVisible,
 			moment,
 			rewindState,
 			siteId,
@@ -423,7 +414,7 @@ class ActivityLog extends Component {
 			};
 		} )();
 
-		const showRetentionLimitUpsell = logsLimitedByRetentionPolicy && actualPage >= pageCount;
+		const showVisibleDaysLimitUpsell = ! allLogsVisible && actualPage >= pageCount;
 
 		return (
 			<>
@@ -503,8 +494,8 @@ class ActivityLog extends Component {
 								)
 							) }
 						</section>
-						{ showRetentionLimitUpsell && (
-							<RetentionLimitUpsell cardClassName="activity-log-item__card" />
+						{ showVisibleDaysLimitUpsell && (
+							<VisibleDaysLimitUpsell cardClassName="activity-log-item__card" />
 						) }
 						{ siteHasNoLog && ! isIntroDismissed && <UpgradeBanner siteId={ siteId } /> }
 						<Pagination
@@ -557,7 +548,7 @@ class ActivityLog extends Component {
 				<QuerySitePurchases siteId={ siteId } />
 				<PageViewTracker path="/activity-log/:site" title="Activity" />
 				<DocumentHead title={ translate( 'Activity' ) } />
-				{ siteId && <QueryActivityLogRetentionPolicy siteId={ siteId } /> }
+				{ siteId && <QueryActivityLogDisplayRules siteId={ siteId } /> }
 				{ siteId && <QueryRewindState siteId={ siteId } /> }
 				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 				{ siteId && <TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } /> }
@@ -592,39 +583,39 @@ export default connect(
 			! siteHasScanProductPurchase( state, siteId );
 		const isJetpack = isJetpackSite( state, siteId );
 
-		const retentionPoliciesEnabled = isEnabled( 'activity-log/retention-policies' );
-		const retentionPolicyLoaded = retentionPoliciesEnabled
-			? getSiteActivityLogRetentionPolicyRequestStatus( state, siteId ) === 'success'
+		const displayRulesEnabled = isEnabled( 'activity-log/display-rules' );
+		const displayRulesLoaded = displayRulesEnabled
+			? getActivityLogDisplayRulesRequestStatus( state, siteId ) === 'success'
 			: true;
-		const retentionDays = retentionPoliciesEnabled
-			? getSiteActivityLogRetentionDays( state, siteId )
+		const visibleDays = displayRulesEnabled
+			? getActivityLogVisibleDays( state, siteId )
 			: undefined;
-		const retentionLimitCutoffDate =
-			retentionPoliciesEnabled && Number.isFinite( retentionDays )
+		const oldestVisibleDate =
+			displayRulesEnabled && Number.isFinite( visibleDays )
 				? applySiteOffset( Date.now(), { gmtOffset, timezone } )
-						.subtract( retentionDays, 'days' )
+						.subtract( visibleDays, 'days' )
 						.startOf( 'day' )
 				: undefined;
 
 		const logs = siteId && requestActivityLogs( siteId, filter );
-		const logEntries = logs?.data ?? emptyList;
-		const logEntriesWithRetention =
-			retentionPoliciesEnabled && retentionLimitCutoffDate
+		const allLogEntries = logs?.data ?? emptyList;
+		const visibleLogEntries =
+			displayRulesEnabled && oldestVisibleDate
 				? // This could slightly degrade performance, but it's likely
 				  // this entire component tree gets refactored or removed soon,
 				  // in favor of calypso/my-sites/activity/activity-log-v2.
 				  //
 				  // eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-				  logEntries.filter( ( log ) =>
+				  allLogEntries.filter( ( log ) =>
 						applySiteOffset( log.activityDate, { gmtOffset, timezone } ).isSameOrAfter(
-							retentionLimitCutoffDate,
+							oldestVisibleDate,
 							'day'
 						)
 				  )
-				: logEntries;
+				: allLogEntries;
 
-		const logsLimitedByRetentionPolicy = retentionPoliciesEnabled
-			? logEntriesWithRetention.length < logEntries.length
+		const allLogsVisible = displayRulesEnabled
+			? visibleLogEntries.length < allLogEntries.length
 			: false;
 
 		return {
@@ -635,9 +626,9 @@ export default connect(
 			filter,
 			isAtomic: isAtomicSite( state, siteId ),
 			isJetpack,
-			logs: logEntriesWithRetention,
-			logsLimitedByRetentionPolicy,
-			logLoadingState: retentionPolicyLoaded && logs && logs.state,
+			logs: visibleLogEntries,
+			allLogsVisible,
+			logLoadingState: displayRulesLoaded && logs && logs.state,
 			requestedRestore: find( logs, { activityId: requestedRestoreId } ),
 			requestedRestoreId,
 			requestedBackup: find( logs, { activityId: requestedBackupId } ),

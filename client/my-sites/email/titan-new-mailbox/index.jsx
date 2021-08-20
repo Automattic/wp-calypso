@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import classNames from 'classnames';
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import { useTranslate } from 'i18n-calypso';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
+import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -20,9 +13,6 @@ import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-w
 import Gridicon from 'calypso/components/gridicon';
 import { getMailboxPropTypeShape } from 'calypso/lib/titan/new-mailbox';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

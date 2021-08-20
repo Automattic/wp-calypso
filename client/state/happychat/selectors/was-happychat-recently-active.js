@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getHappychatLastActivityTimestamp from 'calypso/state/happychat/selectors/get-happychat-lastactivitytimestamp';
 
 // How much time needs to pass before we consider the session inactive:

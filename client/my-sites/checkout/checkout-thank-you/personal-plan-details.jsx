@@ -1,25 +1,13 @@
-/**
- * External dependencies
- */
-
+import { isPersonal, isGSuiteOrExtraLicenseOrGoogleWorkspace } from '@automattic/calypso-products';
+import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { isPersonal, isGSuiteOrExtraLicenseOrGoogleWorkspace } from '@automattic/calypso-products';
+import earnImage from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
+import adsRemovedImage from 'calypso/assets/images/illustrations/removed-ads.svg';
+import PurchaseDetail from 'calypso/components/purchase-detail';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
-import PurchaseDetail from 'calypso/components/purchase-detail';
-
-/**
- * Image dependencies
- */
-import adsRemovedImage from 'calypso/assets/images/illustrations/removed-ads.svg';
-import earnImage from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
 
 const PersonalPlanDetails = ( { translate, selectedSite, sitePlans, purchases } ) => {
 	const plan = find( sitePlans.data, isPersonal );

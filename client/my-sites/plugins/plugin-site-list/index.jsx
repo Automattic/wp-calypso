@@ -1,28 +1,18 @@
-/**
- * External dependencies
- */
 import classNames from 'classnames';
 import { compact } from 'lodash';
-import { connect } from 'react-redux';
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import getNetworkSites from 'calypso/state/selectors/get-network-sites';
-import isConnectedSecondaryNetworkSite from 'calypso/state/selectors/is-connected-secondary-network-site';
-import PluginSite from 'calypso/my-sites/plugins/plugin-site/plugin-site';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
+import PluginSite from 'calypso/my-sites/plugins/plugin-site/plugin-site';
+import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import {
 	getPluginOnSites,
 	getSiteObjectsWithPlugin,
 } from 'calypso/state/plugins/installed/selectors';
-import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import getNetworkSites from 'calypso/state/selectors/get-network-sites';
+import isConnectedSecondaryNetworkSite from 'calypso/state/selectors/is-connected-secondary-network-site';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class PluginSiteList extends Component {

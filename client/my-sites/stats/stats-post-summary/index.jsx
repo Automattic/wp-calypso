@@ -1,25 +1,15 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
+import { flatten, flowRight, get, range } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { flatten, flowRight, get, range } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import SummaryChart from '../stats-summary';
-import SectionNav from 'calypso/components/section-nav';
-import SegmentedControl from 'calypso/components/segmented-control';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import SectionNav from 'calypso/components/section-nav';
+import SegmentedControl from 'calypso/components/segmented-control';
 import { getPostStats, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
+import SummaryChart from '../stats-summary';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class StatsPostSummary extends Component {

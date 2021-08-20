@@ -1,34 +1,24 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
-import React from 'react';
-import page from 'page';
-
-/**
- * Internal dependencies
- */
-import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
-import { getSelectedDomain, getDomainTypeText } from 'calypso/lib/domains';
-import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import { localize } from 'i18n-calypso';
+import page from 'page';
+import React from 'react';
+import { connect } from 'react-redux';
 import Main from 'calypso/components/main';
-import MaintenanceCard from 'calypso/my-sites/domains/domain-management/components/domain/maintenance-card';
-import { domainManagementList } from 'calypso/my-sites/domains/paths';
+import { getSelectedDomain, getDomainTypeText } from 'calypso/lib/domains';
 import { registrar as registrarNames, type as domainTypes } from 'calypso/lib/domains/constants';
-import SiteRedirectType from './domain-types/site-redirect-type';
-import WpcomDomainType from './domain-types/wpcom-domain-type';
-import RegisteredDomainType from './domain-types/registered-domain-type';
-import MappedDomainType from './domain-types/mapped-domain-type';
-import TransferInDomainType from './domain-types/transfer-in-domain-type';
+import { getWpcomDomain } from 'calypso/lib/domains/get-wpcom-domain';
+import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
+import MaintenanceCard from 'calypso/my-sites/domains/domain-management/components/domain/maintenance-card';
+import Header from 'calypso/my-sites/domains/domain-management/components/header';
+import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
+import MappedDomainType from './domain-types/mapped-domain-type';
+import RegisteredDomainType from './domain-types/registered-domain-type';
+import SiteRedirectType from './domain-types/site-redirect-type';
+import TransferInDomainType from './domain-types/transfer-in-domain-type';
+import WpcomDomainType from './domain-types/wpcom-domain-type';
 
-/**
- * Style dependencies
- */
 import './style.scss';
-import { getWpcomDomain } from 'calypso/lib/domains/get-wpcom-domain';
 
 class Edit extends React.Component {
 	render() {

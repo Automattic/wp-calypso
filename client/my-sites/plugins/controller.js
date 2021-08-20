@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import page from 'page';
 import { includes, some } from 'lodash';
-
-/**
- * Internal Dependencies
- */
-import { getSiteFragment, sectionify } from 'calypso/lib/route';
+import page from 'page';
+import React from 'react';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { getSiteFragment, sectionify } from 'calypso/lib/route';
+import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PlanSetup from './jetpack-plugins-setup';
-import PluginEligibility from './plugin-eligibility';
 import PluginListComponent from './main';
 import PluginComponent from './plugin';
-import PluginBrowser from './plugins-browser';
+import PluginEligibility from './plugin-eligibility';
 import PluginUpload from './plugin-upload';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
+import PluginBrowser from './plugins-browser';
 /**
  * Module variables
  */

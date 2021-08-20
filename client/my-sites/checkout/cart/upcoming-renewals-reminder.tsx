@@ -1,34 +1,27 @@
-/**
- * External dependencies
- */
+import { isPlan, isDomainRegistration } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
+import styled from '@emotion/styled';
+import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent, useMemo, useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-import styled from '@emotion/styled';
-import type { RequestCartProduct } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
-import { ReduxDispatch } from 'calypso/state/redux-store';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import { Button } from '@automattic/components';
-import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
-import { getName, isExpired, isRenewing } from 'calypso/lib/purchases';
-import { isPlan, isDomainRegistration } from '@automattic/calypso-products';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import SectionHeader from 'calypso/components/section-header';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
+import { getName, isExpired, isRenewing } from 'calypso/lib/purchases';
+import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
+import { PartialCart } from 'calypso/my-sites/checkout/composite-checkout/components/secondary-cart-promotions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
 	getRenewableSitePurchases,
 	hasLoadedUserPurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
-import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
+import { ReduxDispatch } from 'calypso/state/redux-store';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import type { RequestCartProduct } from '@automattic/shopping-cart';
 import type { Purchase } from 'calypso/lib/purchases/types';
-import { PartialCart } from 'calypso/my-sites/checkout/composite-checkout/components/secondary-cart-promotions';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
 
 const OtherPurchasesLink = styled.button`
 	background: transparent;

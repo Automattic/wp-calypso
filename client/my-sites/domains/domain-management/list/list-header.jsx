@@ -1,24 +1,14 @@
-/**
- * External dependencies
- */
-import { localize } from 'i18n-calypso';
-import React from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
 import { CompactCard } from '@automattic/components';
-import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
-import { ListAllActions } from 'calypso/my-sites/domains/domain-management/list/utils';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import SectionHeader from 'calypso/components/section-header';
+import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
+import { ListAllActions } from 'calypso/my-sites/domains/domain-management/list/utils';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class ListHeader extends React.PureComponent {

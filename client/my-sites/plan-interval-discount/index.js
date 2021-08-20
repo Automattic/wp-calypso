@@ -1,19 +1,13 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
 import { plansLink } from '@automattic/calypso-products';
 import { getCurrencyObject } from '@automattic/format-currency';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal Dependencies
  **/
 
-/**
- * Style Dependencies
- */
 import './style.scss';
 
 class PlanIntervalDiscount extends Component {

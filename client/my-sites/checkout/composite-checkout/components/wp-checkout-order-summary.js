@@ -1,33 +1,26 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useSelector } from 'react-redux';
-import styled from '@emotion/styled';
-import { keyframes } from '@emotion/core';
+import { isPlan, isMonthly, getYearlyPlanByMonthly, getPlan } from '@automattic/calypso-products';
 import {
 	CheckoutCheckIcon,
 	CheckoutSummaryCard as CheckoutSummaryCardUnstyled,
 	FormStatus,
 	useFormStatus,
 } from '@automattic/composite-checkout';
-import { useTranslate } from 'i18n-calypso';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	getCouponLineItemFromCart,
 	getTaxBreakdownLineItemsFromCart,
 	getTotalLineItemFromCart,
 } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import { isPlan, isMonthly, getYearlyPlanByMonthly, getPlan } from '@automattic/calypso-products';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { keyframes } from '@emotion/core';
+import styled from '@emotion/styled';
+import { useTranslate } from 'i18n-calypso';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import Gridicon from 'calypso/components/gridicon';
-import getPlanFeatures from '../lib/get-plan-features';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import getPlanFeatures from '../lib/get-plan-features';
 
 export default function WPCheckoutOrderSummary( {
 	siteId,

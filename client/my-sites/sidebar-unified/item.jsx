@@ -5,20 +5,14 @@
  * This could be a top level item, or a child item nested under a top level menu.
  * These two cases might be to be split up?
  */
-/**
- * External dependencies
- */
+
+import PropTypes from 'prop-types';
 import React, { memo } from 'react';
 import { useDispatch } from 'react-redux';
-import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
-import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
-import MySitesSidebarUnifiedStatsSparkline from './sparkline';
+import SidebarItem from 'calypso/layout/sidebar/item';
 import { collapseAllMySitesSidebarSections } from 'calypso/state/my-sites/sidebar/actions';
+import MySitesSidebarUnifiedStatsSparkline from './sparkline';
 
 export const MySitesSidebarUnifiedItem = ( {
 	badge,

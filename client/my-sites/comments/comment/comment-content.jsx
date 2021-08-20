@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-import { get } from 'lodash';
 import DOMPurify from 'dompurify';
-
-/**
- * Internal dependencies
- */
+import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import AutoDirection from 'calypso/components/auto-direction';
+import QueryComment from 'calypso/components/data/query-comment';
+import Emojify from 'calypso/components/emojify';
+import Gridicon from 'calypso/components/gridicon';
+import { stripHTML, decodeEntities } from 'calypso/lib/formatting';
 import CommentLink from 'calypso/my-sites/comments/comment/comment-link';
 import CommentPostLink from 'calypso/my-sites/comments/comment/comment-post-link';
-import Emojify from 'calypso/components/emojify';
-import QueryComment from 'calypso/components/data/query-comment';
-import { stripHTML, decodeEntities } from 'calypso/lib/formatting';
 import { getParentComment, getSiteComment } from 'calypso/state/comments/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 

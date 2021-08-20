@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
+import { get } from 'lodash';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import CommentAuthor from 'calypso/my-sites/comments/comment/comment-author';
 import CommentAuthorMoreInfo from 'calypso/my-sites/comments/comment/comment-author-more-info';
-import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import { getSiteComment } from 'calypso/state/comments/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 

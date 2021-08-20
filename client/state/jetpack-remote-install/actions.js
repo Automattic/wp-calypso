@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	JETPACK_REMOTE_INSTALL,
 	JETPACK_REMOTE_INSTALL_FAILURE,

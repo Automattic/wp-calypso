@@ -2,26 +2,19 @@
  * External dependencies
  *
  */
-import { connect } from 'react-redux';
+import { Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
+import { connect } from 'react-redux';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	acceptDomainTransfer,
 	cancelDomainTransferRequest,
 } from 'calypso/state/domains/transfer/actions';
-import { getMaintenanceMessageFromError } from '../../../../../landing/domains/utils';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getDomainWapiInfoByDomainName } from 'calypso/state/domains/transfer/selectors';
+import { getMaintenanceMessageFromError } from '../../../../../landing/domains/utils';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class OutboundTransferConfirmation extends React.PureComponent {

@@ -1,26 +1,15 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import PurchaseDetail from 'calypso/components/purchase-detail';
-
-/**
- * Image dependencies
- */
-import customDomainImage from 'calypso/assets/images/illustrations/custom-domain.svg';
 import customDomainBloggerImage from 'calypso/assets/images/illustrations/custom-domain-blogger.svg';
-import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
-import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import customDomainImage from 'calypso/assets/images/illustrations/custom-domain.svg';
+import PurchaseDetail from 'calypso/components/purchase-detail';
 import { getRegisteredDomains } from 'calypso/lib/domains';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
+import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const CustomDomainPurchaseDetail = ( {
 	selectedSite,

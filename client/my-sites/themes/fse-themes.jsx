@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import React from 'react';
 import { useQuery } from 'react-query';
-
-/**
- * Internal dependencies
- */
 import EmptyContent from 'calypso/components/empty-content';
 import wpcom from 'calypso/lib/wp';
 import { ConnectedThemesSelection } from './themes-selection';

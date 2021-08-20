@@ -1,28 +1,18 @@
-/**
- * External dependencies
- */
+import { CompactCard, ProgressBar } from '@automattic/components';
+import debugModule from 'debug';
+import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import debugModule from 'debug';
-import { get } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { CompactCard, ProgressBar } from '@automattic/components';
-import Notice from 'calypso/components/notice';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import syncSelectors from 'calypso/state/jetpack-sync/selectors';
-import { getSyncStatus, scheduleJetpackFullysync } from 'calypso/state/jetpack-sync/actions';
-import { Interval, EVERY_TEN_SECONDS } from 'calypso/lib/interval';
-import NoticeAction from 'calypso/components/notice/notice-action';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { Interval, EVERY_TEN_SECONDS } from 'calypso/lib/interval';
+import { getSyncStatus, scheduleJetpackFullysync } from 'calypso/state/jetpack-sync/actions';
+import syncSelectors from 'calypso/state/jetpack-sync/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /*

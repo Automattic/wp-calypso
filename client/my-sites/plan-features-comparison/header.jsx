@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
+import { getPlans, getPlanClass } from '@automattic/calypso-products';
+import { getCurrencyObject } from '@automattic/format-currency';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import classNames from 'classnames';
-import { getCurrencyObject } from '@automattic/format-currency';
-
-/**
- * Internal Dependencies
- **/
-import { localize } from 'i18n-calypso';
-import PlanPrice from 'calypso/my-sites/plan-price';
 import PlanPill from 'calypso/components/plans/plan-pill';
-import { getPlans, getPlanClass } from '@automattic/calypso-products';
+import PlanPrice from 'calypso/my-sites/plan-price';
 
 const PLANS_LIST = getPlans();
 

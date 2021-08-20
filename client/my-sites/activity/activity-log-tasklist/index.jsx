@@ -1,35 +1,26 @@
 /* eslint-disable wpcalypso/i18n-mismatched-placeholders */
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+
+import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEmpty, get, includes, find } from 'lodash';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import ActivityLogTaskUpdate from './update';
-import WithItemsToUpdate from './to-update';
-import { Card } from '@automattic/components';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import SplitButton from 'calypso/components/split-button';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { getSite } from 'calypso/state/sites/selectors';
-import { updatePlugin } from 'calypso/state/plugins/installed/actions';
+import { decodeEntities } from 'calypso/lib/formatting';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getHttpData, requestHttpData } from 'calypso/state/data-layer/http-data';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { getStatusForPlugin } from 'calypso/state/plugins/installed/selectors';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { decodeEntities } from 'calypso/lib/formatting';
+import { updatePlugin } from 'calypso/state/plugins/installed/actions';
+import { getStatusForPlugin } from 'calypso/state/plugins/installed/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
+import WithItemsToUpdate from './to-update';
+import ActivityLogTaskUpdate from './update';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /**

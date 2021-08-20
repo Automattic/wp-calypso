@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
+import { connect } from 'react-redux';
+import { EMAIL_FORWARDING } from 'calypso/lib/url/support';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
-import { EMAIL_FORWARDING } from 'calypso/lib/url/support';
 
 class EmailForwardingDetails extends React.Component {
 	static propTypes = {

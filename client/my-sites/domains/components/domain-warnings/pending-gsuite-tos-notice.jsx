@@ -1,28 +1,18 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { emailManagement } from 'calypso/my-sites/email/paths';
-import PendingGSuiteTosNoticeAction from './pending-gsuite-tos-notice-action';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
+import PendingGSuiteTosNoticeAction from './pending-gsuite-tos-notice-action';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 const strong = <strong />;
 

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import type { PriceTierEntry } from 'calypso/state/products-list/selectors/get-product-price-tiers';
 
 export default function getPriceTierForUnits(

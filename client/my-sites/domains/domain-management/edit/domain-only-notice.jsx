@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React, { useCallback } from 'react';
+import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import { isExpiringSoon } from 'calypso/lib/domains/utils';
 import {
 	domainManagementNameServers,

@@ -1,19 +1,33 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
 import { isEnabled } from '@automattic/calypso-config';
 import { localize, useTranslate } from 'i18n-calypso';
-import { handleRenewNowClick, isExpired } from 'calypso/lib/purchases';
 import page from 'page';
 import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 import titleCase from 'to-title-case';
-
-/**
- * Internal dependencies
- */
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import HeaderCake from 'calypso/components/header-cake';
+import VerticalNav from 'calypso/components/vertical-nav';
+import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import { useEmailAccountsQuery } from 'calypso/data/emails/use-emails-query';
+import {
+	getGoogleAdminUrl,
+	getGoogleMailServiceFamily,
+	getGSuiteProductSlug,
+	getProductType,
+	hasGSuiteWithUs,
+} from 'calypso/lib/gsuite';
+import { handleRenewNowClick, isExpired } from 'calypso/lib/purchases';
+import { getTitanProductName, getTitanSubscriptionId, hasTitanMailWithUs } from 'calypso/lib/titan';
+import { TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL } from 'calypso/lib/titan/constants';
+import EmailPlanHeader from 'calypso/my-sites/email/email-management/home/email-plan-header';
+import EmailPlanMailboxesList from 'calypso/my-sites/email/email-management/home/email-plan-mailboxes-list';
+import {
+	getEmailPurchaseByDomain,
+	hasEmailSubscription,
+} from 'calypso/my-sites/email/email-management/home/utils';
 import {
 	emailManagement,
 	emailManagementAddGSuiteUsers,
@@ -24,35 +38,14 @@ import {
 	emailManagementPurchaseNewEmailAccount,
 	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
-import EmailPlanHeader from 'calypso/my-sites/email/email-management/home/email-plan-header';
-import EmailPlanMailboxesList from 'calypso/my-sites/email/email-management/home/email-plan-mailboxes-list';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getEmailForwards } from 'calypso/state/selectors/get-email-forwards';
-import {
-	getEmailPurchaseByDomain,
-	hasEmailSubscription,
-} from 'calypso/my-sites/email/email-management/home/utils';
-import {
-	getGoogleAdminUrl,
-	getGoogleMailServiceFamily,
-	getGSuiteProductSlug,
-	getProductType,
-	hasGSuiteWithUs,
-} from 'calypso/lib/gsuite';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
-import { getTitanProductName, getTitanSubscriptionId, hasTitanMailWithUs } from 'calypso/lib/titan';
 import {
 	hasLoadedSitePurchasesFromServer,
 	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
-import HeaderCake from 'calypso/components/header-cake';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { getEmailForwards } from 'calypso/state/selectors/get-email-forwards';
 import isRequestingEmailForwards from 'calypso/state/selectors/is-requesting-email-forwards';
-import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import { TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL } from 'calypso/lib/titan/constants';
-import VerticalNav from 'calypso/components/vertical-nav';
-import VerticalNavItem from 'calypso/components/vertical-nav/item';
-import { useEmailAccountsQuery } from 'calypso/data/emails/use-emails-query';
 
 const UpgradeNavItem = ( { currentRoute, domain, selectedSiteSlug } ) => {
 	const translate = useTranslate();

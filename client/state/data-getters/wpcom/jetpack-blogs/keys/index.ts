@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { empty, getHttpData, requestHttpData } from 'calypso/state/data-layer/http-data';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { SiteId } from 'calypso/types';

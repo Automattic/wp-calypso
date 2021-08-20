@@ -1,19 +1,14 @@
-/**
- * External dependencies
- */
-import { isEmpty } from 'lodash';
-import { translate } from 'i18n-calypso';
 import {
 	getDomain,
 	isDomainTransfer,
 	isDomainProduct,
 	isDomainMapping,
 } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
+import { translate } from 'i18n-calypso';
+import { isEmpty } from 'lodash';
 import { isGSuiteOrGoogleWorkspaceProductSlug } from 'calypso/lib/gsuite';
+import wp from 'calypso/lib/wp';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 import {
 	prepareDomainContactValidationRequest,
 	prepareGSuiteContactValidationRequest,
@@ -21,8 +16,6 @@ import {
 	getSignupValidationErrorResponse,
 	areRequiredFieldsNotEmpty,
 } from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
-import wp from 'calypso/lib/wp';
 
 const wpcom = wp.undocumented();
 

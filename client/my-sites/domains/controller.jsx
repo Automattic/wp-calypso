@@ -1,32 +1,21 @@
-/**
- * External dependencies
- */
-import page from 'page';
 import { translate } from 'i18n-calypso';
-import React from 'react';
 import { get, includes, map } from 'lodash';
-
-/**
- * Internal Dependencies
- */
+import page from 'page';
+import React from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { sectionify } from 'calypso/lib/route';
-import Main from 'calypso/components/main';
-import getSites from 'calypso/state/selectors/get-sites';
-import {
-	getSelectedSiteId,
-	getSelectedSite,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import DomainSearch from './domain-search';
-import EmailProvidersUpsell from './email-providers-upsell';
-import SiteRedirect from './domain-search/site-redirect';
-import MapDomain from 'calypso/my-sites/domains/map-domain';
-import TransferDomain from 'calypso/my-sites/domains/transfer-domain';
+import ConnectDomainStep from 'calypso/components/domains/connect-domain-step';
 import TransferDomainStep from 'calypso/components/domains/transfer-domain-step';
+import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import UseYourDomainStep from 'calypso/components/domains/use-your-domain-step';
+import EmptyContent from 'calypso/components/empty-content';
+import Main from 'calypso/components/main';
 import GSuiteUpgrade from 'calypso/components/upgrades/gsuite';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { isATEnabled } from 'calypso/lib/automated-transfer';
+import { sectionify } from 'calypso/lib/route';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import MapDomain from 'calypso/my-sites/domains/map-domain';
 import {
 	domainManagementTransferIn,
 	domainManagementTransferInPrecheck,
@@ -36,14 +25,18 @@ import {
 	domainUseMyDomain,
 	domainUseYourDomain,
 } from 'calypso/my-sites/domains/paths';
-import { isATEnabled } from 'calypso/lib/automated-transfer';
-import EmptyContent from 'calypso/components/empty-content';
-import { makeLayout, render as clientRender } from 'calypso/controller';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import TransferDomain from 'calypso/my-sites/domains/transfer-domain';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import ConnectDomainStep from 'calypso/components/domains/connect-domain-step';
-import UseMyDomain from 'calypso/components/domains/use-my-domain';
+import getSites from 'calypso/state/selectors/get-sites';
+import {
+	getSelectedSiteId,
+	getSelectedSite,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import DomainSearch from './domain-search';
+import SiteRedirect from './domain-search/site-redirect';
+import EmailProvidersUpsell from './email-providers-upsell';
 
 const noop = () => {};
 const domainsAddHeader = ( context, next ) => {

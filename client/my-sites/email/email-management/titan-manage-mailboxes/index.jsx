@@ -1,40 +1,18 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import titleCase from 'to-title-case';
-
-/**
- * Internal dependencies
- */
 import DocumentHead from 'calypso/components/data/document-head';
-import EmailHeader from 'calypso/my-sites/email/email-header';
-import {
-	emailManagement,
-	emailManagementManageTitanMailboxes,
-	emailManagementTitanControlPanelRedirect,
-} from 'calypso/my-sites/email/paths';
-import EmailPlanHeader from 'calypso/my-sites/email/email-management/home/email-plan-header';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import {
-	getEmailPurchaseByDomain,
-	hasEmailSubscription,
-} from 'calypso/my-sites/email/email-management/home/utils';
-import { getDomainsBySite } from 'calypso/state/sites/domains/selectors';
-import { getSelectedDomain } from 'calypso/lib/domains';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import {
-	hasLoadedSitePurchasesFromServer,
-	isFetchingSitePurchases,
-} from 'calypso/state/purchases/selectors';
-import HeaderCake from 'calypso/components/header-cake';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
+import VerticalNav from 'calypso/components/vertical-nav';
+import VerticalNavItemEnhanced from 'calypso/components/vertical-nav/item/enhanced';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getSelectedDomain } from 'calypso/lib/domains';
 import {
 	TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_CATCH_ALL_EMAIL,
 	TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_DESKTOP_APP,
@@ -42,9 +20,24 @@ import {
 	TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP,
 	TITAN_CONTROL_PANEL_CONTEXT_IMPORT_EMAIL_DATA,
 } from 'calypso/lib/titan/constants';
-import VerticalNav from 'calypso/components/vertical-nav';
-import VerticalNavItemEnhanced from 'calypso/components/vertical-nav/item/enhanced';
-import Main from 'calypso/components/main';
+import EmailHeader from 'calypso/my-sites/email/email-header';
+import EmailPlanHeader from 'calypso/my-sites/email/email-management/home/email-plan-header';
+import {
+	getEmailPurchaseByDomain,
+	hasEmailSubscription,
+} from 'calypso/my-sites/email/email-management/home/utils';
+import {
+	emailManagement,
+	emailManagementManageTitanMailboxes,
+	emailManagementTitanControlPanelRedirect,
+} from 'calypso/my-sites/email/paths';
+import {
+	hasLoadedSitePurchasesFromServer,
+	isFetchingSitePurchases,
+} from 'calypso/state/purchases/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { getDomainsBySite } from 'calypso/state/sites/domains/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 class TitanManageMailboxes extends Component {
 	static propTypes = {

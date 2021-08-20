@@ -1,13 +1,10 @@
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
-import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
 import {
 	GSUITE_USERS_REQUEST,
 	GSUITE_USERS_REQUEST_FAILURE,
 	GSUITE_USERS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
+import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
 import { usersSchema } from './schema';
 
 export const usersReducer = withSchemaValidation( usersSchema, ( state = null, action ) => {

@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import { IProductCollection, IProductGroupCollection } from 'calypso/my-sites/marketplace/types';
 import page from 'page';
+import { IProductCollection, IProductGroupCollection } from 'calypso/my-sites/marketplace/types';
 
 /**
  * Navigation functions

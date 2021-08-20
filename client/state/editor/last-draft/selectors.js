@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getEditedPost } from 'calypso/state/posts/selectors';
 
 import 'calypso/state/editor/init';

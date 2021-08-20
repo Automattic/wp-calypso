@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import page from 'page';
-
-/**
- * Internal Dependencies
- */
-import Hosting from './main';
-import HostingActivate from './hosting-activate';
+import React from 'react';
 import canSiteViewAtomicHosting from 'calypso/state/selectors/can-site-view-atomic-hosting';
+import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
+import HostingActivate from './hosting-activate';
+import Hosting from './main';
 
 function waitForState( context ) {
 	return new Promise( ( resolve ) => {

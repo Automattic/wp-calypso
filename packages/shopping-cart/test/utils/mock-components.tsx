@@ -1,9 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { useShoppingCart, ShoppingCartProvider } from '../../src/index';
 import { getCart, setCart, mainCartKey } from './mock-cart-api';
 import type {
 	RequestCartProduct,
-	MinimalRequestCartProduct,
 	GetCart,
 	SetCart,
 	WithShoppingCartProps,
@@ -12,40 +11,13 @@ import type {
 
 export function ProductList( {
 	initialProducts,
-	initialProductsForReplace,
-	initialCoupon,
 }: {
-	initialProducts?: MinimalRequestCartProduct[];
-	initialProductsForReplace?: MinimalRequestCartProduct[];
-	initialCoupon?: string;
+	initialProducts?: RequestCartProduct[];
 } ): JSX.Element {
-	const {
-		isPendingUpdate,
-		responseCart,
-		addProductsToCart,
-		replaceProductsInCart,
-		applyCoupon,
-	} = useShoppingCart();
-	const hasAddedProduct = useRef( false );
+	const { isPendingUpdate, responseCart, addProductsToCart } = useShoppingCart();
 	useEffect( () => {
-		if ( initialProducts && ! hasAddedProduct.current ) {
-			hasAddedProduct.current = true;
-			addProductsToCart( initialProducts );
-		}
+		initialProducts && addProductsToCart( initialProducts );
 	}, [ addProductsToCart, initialProducts ] );
-	useEffect( () => {
-		if ( initialProductsForReplace && ! hasAddedProduct.current ) {
-			hasAddedProduct.current = true;
-			replaceProductsInCart( initialProductsForReplace );
-		}
-	}, [ replaceProductsInCart, initialProductsForReplace ] );
-	const hasAddedCoupon = useRef( false );
-	useEffect( () => {
-		if ( initialCoupon && ! hasAddedCoupon.current ) {
-			hasAddedCoupon.current = true;
-			applyCoupon( initialCoupon );
-		}
-	}, [ applyCoupon, initialCoupon ] );
 	if ( responseCart.products.length === 0 ) {
 		return <div>No products</div>;
 	}

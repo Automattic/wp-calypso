@@ -1,6 +1,3 @@
-/**
- * External Dependencies
- */
 import moment from 'moment';
 
 export const responseCartWithRenewal = {

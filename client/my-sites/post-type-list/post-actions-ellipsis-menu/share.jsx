@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import { bumpStat as bumpAnalyticsStat } from 'calypso/state/analytics/actions';
-import { bumpStatGenerator } from './utils';
 import { getPost } from 'calypso/state/posts/selectors';
-import { toggleSharePanel } from 'calypso/state/ui/post-type-list/actions';
-import isPublicizeEnabled from 'calypso/state/selectors/is-publicize-enabled';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import isPublicizeEnabled from 'calypso/state/selectors/is-publicize-enabled';
+import { toggleSharePanel } from 'calypso/state/ui/post-type-list/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { bumpStatGenerator } from './utils';
 
 class PostActionsEllipsisMenuShare extends Component {
 	static propTypes = {

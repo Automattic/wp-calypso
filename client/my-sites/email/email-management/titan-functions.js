@@ -1,10 +1,3 @@
-/**
- * External dependencies
- */
-
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 
 export const fetchTitanAutoLoginURL = ( emailAccountId, context ) => {
