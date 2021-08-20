@@ -6,8 +6,6 @@ const selectors = {
 	supportButton: '.inline-help__button',
 	supportPopover: '.inline-help__popover',
 	searchInput: '[aria-label="Search"]',
-	spinner: '.spinner',
-	placeholder: '.inline-help__results-placeholder-item',
 	clearSearch: '[aria-label="Close Search"]',
 	supportCard: '.card.help-search',
 

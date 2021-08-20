@@ -39,39 +39,39 @@ describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
 			expect( adminCount ).toBe( 3 );
 		} );
 
-		// it( 'Clear keyword', async function () {
-		// 	await supportComponent.clearSearch();
-		// } );
+		it( 'Clear keyword', async function () {
+			await supportComponent.clearSearch();
+		} );
 
-		// it( 'Default entries are shown again', async function () {
-		// 	const defaultResults = await supportComponent.getOverallResultsCount();
-		// 	expect( defaultResults ).toBeGreaterThanOrEqual( 5 );
+		it( 'Default entries are shown again', async function () {
+			const defaultResults = await supportComponent.getOverallResultsCount();
+			expect( defaultResults ).toBeGreaterThanOrEqual( 5 );
 
-		// 	const supportResults = await supportComponent.getSupportResultsCount();
-		// 	expect( supportResults ).toBe( 0 );
+			const supportResults = await supportComponent.getSupportResultsCount();
+			expect( supportResults ).toBe( 0 );
 
-		// 	const adminResults = await supportComponent.getAdminResultsCount();
-		// 	expect( adminResults ).toBe( 0 );
-		// } );
+			const adminResults = await supportComponent.getAdminResultsCount();
+			expect( adminResults ).toBe( 0 );
+		} );
 
-		// it( 'Enter invalid search keyword', async function () {
-		// 	const keyword = ';;;ppp;;;';
-		// 	await supportComponent.search( keyword );
-		// } );
+		it( 'Enter invalid search keyword', async function () {
+			const keyword = ';;;ppp;;;';
+			await supportComponent.search( keyword );
+		} );
 
-		// it( 'No search results are shown', async function () {
-		// 	await supportComponent.noResults();
-		// } );
+		it( 'No search results are shown', async function () {
+			await supportComponent.noResults();
+		} );
 
-		// it( 'Enter empty search keyword', async function () {
-		// 	const keyword = '        ';
-		// 	await supportComponent.clearSearch();
-		// 	await supportComponent.search( keyword );
-		// } );
+		it( 'Enter empty search keyword', async function () {
+			const keyword = '        ';
+			await supportComponent.clearSearch();
+			await supportComponent.search( keyword );
+		} );
 
-		// it( 'Continues to display default results', async function () {
-		// 	const defaultResults = await supportComponent.getOverallResultsCount();
-		// 	expect( defaultResults ).toBeGreaterThanOrEqual( 5 );
-		// } );
+		it( 'Continues to display default results', async function () {
+			const defaultResults = await supportComponent.getOverallResultsCount();
+			expect( defaultResults ).toBeGreaterThanOrEqual( 5 );
+		} );
 	} );
 } );
