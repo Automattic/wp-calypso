@@ -458,13 +458,13 @@ function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
 			'event',
 			'conversion',
 			{
-				send_to: TRACKING_IDS.isJetpackGoogleAdsGtagEnabled,
+				send_to: TRACKING_IDS.jetpackGoogleAdsGtagPurchase,
 				value: wpcomJetpackCartInfo.jetpackCost,
 				currency: cart.currency,
 				transaction_id: orderId,
 			},
 		];
-		debug( 'recordOrderInGoogleAds: Record WPCom Purchase', params );
+		debug( 'recordOrderInGoogleAds: Record Jetpack Purchase', params );
 		window.gtag( ...params );
 	}
 }
