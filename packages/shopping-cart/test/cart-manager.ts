@@ -63,4 +63,49 @@ describe( 'ShoppingCartManager', () => {
 			expect( setCartSpy ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
+
+	it( 'notifies subscribers when queued actions are complete', async () => {
+		const setCartSpy = jest.fn().mockImplementation( setCart );
+		const cartManagerClient = createShoppingCartManagerClient( {
+			getCart,
+			setCart: setCartSpy,
+		} );
+		const manager = cartManagerClient.forCartKey( mainCartKey );
+		let hasFirstCallbackBeenCalled = false;
+		const firstCallback = () => {
+			const state = manager.getState();
+			if ( state.isLoading || hasFirstCallbackBeenCalled ) {
+				return;
+			}
+			hasFirstCallbackBeenCalled = true;
+			manager.actions.addProductsToCart( [ planTwo ] );
+			manager.actions.updateLocation( {
+				postalCode: '10002',
+				countryCode: 'US',
+				subdivisionCode: null,
+			} );
+		};
+		let hasSecondCallbackBeenCalled = false;
+		const secondCallback = () => {
+			const state = manager.getState();
+			if ( state.isPendingUpdate ) {
+				return;
+			}
+			hasSecondCallbackBeenCalled = true;
+		};
+		manager.subscribe( firstCallback );
+		manager.subscribe( secondCallback );
+
+		manager.fetchInitialCart();
+		const p1 = manager.actions.updateLocation( {
+			postalCode: '10001',
+			countryCode: 'US',
+			subdivisionCode: null,
+		} );
+
+		await p1;
+
+		expect( hasFirstCallbackBeenCalled ).toBeTruthy();
+		expect( hasSecondCallbackBeenCalled ).toBeTruthy();
+	} );
 } );
