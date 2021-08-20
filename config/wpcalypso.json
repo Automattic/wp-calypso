@@ -70,6 +70,7 @@
 		"jetpack/happychat": true,
 		"jetpack/only-realtime-products": false,
 		"jetpack/siteless-checkout": true,
+		"jetpack/user-licensing-m1": false,
 		"jetpack/userless-checkout": true,
 		"jitms": true,
 		"lasagna": true,

@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Card } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
@@ -281,6 +282,13 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 				{ calendlyUrl !== null && (
 					<div className="jetpack-checkout-siteless-thank-you__card-footer">
 						<div>
+							{ /* This is a feature-flag test and can be removed. Please remove me! */ }
+							{ isEnabled( 'jetpack/user-licensing-m1' ) && (
+								<p>
+									<code>jetpack/user-licensing-m1</code>:<br />
+									is enabled!
+								</p>
+							) }
 							<h2>{ translate( 'Do you need help?' ) }</h2>
 							<p>{ translate( 'Setup Jetpack with the help of our Happiness Engineers.' ) }</p>
 							<Button

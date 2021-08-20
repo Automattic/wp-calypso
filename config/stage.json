@@ -64,6 +64,7 @@
 		"jetpack/personal-plan": false,
 		"jetpack/redirect-legacy-plans": true,
 		"jetpack/siteless-checkout": true,
+		"jetpack/user-licensing-m1": false,
 		"jetpack/userless-checkout": true,
 		"jitms": true,
 		"lasagna": true,
