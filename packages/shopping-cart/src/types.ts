@@ -120,6 +120,11 @@ export type ShoppingCartState = {
 	queuedActions: ShoppingCartAction[];
 };
 
+export interface WithShoppingCartProps {
+	shoppingCartManager: ShoppingCartManager;
+	cart: ResponseCart;
+}
+
 export type CartValidCallback = ( cart: ResponseCart ) => void;
 
 export type DispatchAndWaitForValid = ( action: ShoppingCartAction ) => Promise< ResponseCart >;

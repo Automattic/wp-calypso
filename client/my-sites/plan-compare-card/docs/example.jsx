@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import PlanCompareCard from '../index';
 import PlanCompareCardItem from '../item';
 

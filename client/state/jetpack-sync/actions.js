@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import debugModule from 'debug';
 import { pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 import {
 	JETPACK_SYNC_START_REQUEST,

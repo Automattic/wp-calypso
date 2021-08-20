@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { createHigherOrderComponent } from '@wordpress/compose';
-import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React from 'react';
+import { useDispatch } from 'react-redux';
 import useDomainNameserversQuery from 'calypso/data/domains/nameservers/use-domain-nameservers-query';
 import useUpdateNameserversMutation from 'calypso/data/domains/nameservers/use-update-nameservers-mutation';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';

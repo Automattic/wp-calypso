@@ -32,23 +32,16 @@ jest.mock( '../hooks', () => ( {
 	useCanGoToDate: jest.fn(),
 } ) );
 
-/**
- * External dependencies
- */
+import { isEnabled } from '@automattic/calypso-config';
 import { shallow } from 'enzyme';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { isEnabled } from '@automattic/calypso-config';
-import { useCanGoToDate } from '../hooks';
-const realDateNow = Date.now;
-
-/**
- * Internal dependencies
- */
 import BackupDatePicker from '..';
+import { useCanGoToDate } from '../hooks';
 
+const realDateNow = Date.now;
 const getTracksEventName = ( event ) => event.meta.analytics[ 0 ].payload.name;
 
 describe( 'BackupDatePicker', () => {

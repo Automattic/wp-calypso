@@ -1,39 +1,32 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import formatCurrency from '@automattic/format-currency';
-import { Button } from '@automattic/components';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
-import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
-import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
-import {
-	hasDomainRegistration,
-	hasTransferProduct,
-	hasPlan,
-	planItem,
-} from 'calypso/lib/cart-values/cart-items';
-import SectionHeader from 'calypso/components/section-header';
-import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
-import { isRequestingPlans } from 'calypso/state/plans/selectors';
 import {
 	getPlan,
 	PLAN_PERSONAL,
 	isDomainRegistration,
 	isDomainTransfer,
 } from '@automattic/calypso-products';
-import { getPlanPrice } from 'calypso/state/products-list/selectors';
+import { Button } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
+import { localize } from 'i18n-calypso';
+import { find } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import SectionHeader from 'calypso/components/section-header';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import {
+	hasDomainRegistration,
+	hasTransferProduct,
+	hasPlan,
+	planItem,
+} from 'calypso/lib/cart-values/cart-items';
+import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
+import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
+import { isRequestingPlans } from 'calypso/state/plans/selectors';
+import { getPlanPrice } from 'calypso/state/products-list/selectors';
+import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getAllCartItems } from '../../../lib/cart-values/cart-items';
 
 class CartFreeUserPlanUpsell extends React.Component {

@@ -1,9 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { sprintf } from '@wordpress/i18n';
-import { useI18n } from '@wordpress/react-i18n';
 import {
 	Button,
 	FormStatus,
@@ -12,10 +6,9 @@ import {
 	useEvents,
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
+import React from 'react';
 import WordPressLogo from '../components/wordpress-logo';
 
 export function createFullCreditsMethod() {

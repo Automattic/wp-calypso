@@ -1,14 +1,4 @@
-/**
- * External dependencies
- */
 import { mapValues, merge } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
-import { jetpackSettingsSchema } from './schema';
-import { normalizeSettings } from './utils';
 import {
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
 	JETPACK_MODULE_DEACTIVATE_SUCCESS,
@@ -16,6 +6,9 @@ import {
 	JETPACK_SETTINGS_SAVE_SUCCESS,
 	JETPACK_SETTINGS_UPDATE,
 } from 'calypso/state/action-types';
+import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
+import { jetpackSettingsSchema } from './schema';
+import { normalizeSettings } from './utils';
 
 export const settingsReducer = keyedReducer(
 	'siteId',

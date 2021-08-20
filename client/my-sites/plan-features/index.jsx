@@ -1,59 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-/**
- * External dependencies
- */
-import classNames from 'classnames';
-import page from 'page';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
-import { compact, get, findIndex, last, map, reduce } from 'lodash';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import formatCurrency from '@automattic/format-currency';
-import { withShoppingCart } from '@automattic/shopping-cart';
 
-/**
- * Internal dependencies
- */
-import FoldableCard from 'calypso/components/foldable-card';
-import Notice from 'calypso/components/notice';
-import PlanFeaturesActions from './actions';
-import PlanFeaturesHeader from './header';
-import PlanFeaturesItem from './item';
-import SpinnerLine from 'calypso/components/spinner-line';
-import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import {
-	getPlan,
-	getPlanBySlug,
-	getPlanRawPrice,
-	getPlanSlug,
-	getDiscountedRawPrice,
-} from 'calypso/state/plans/selectors';
-import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
-import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
-import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
-import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
-import { getDiscountByName } from 'calypso/lib/discounts';
-import { addQueryArgs } from 'calypso/lib/url';
-import {
-	getPlanDiscountedRawPrice,
-	getSitePlanRawPrice,
-	getPlansBySiteId,
-	isCurrentUserCurrentPlanOwner,
-} from 'calypso/state/sites/plans/selectors';
-import {
-	getSitePlan,
-	getSiteSlug,
-	isCurrentPlanPaid,
-	isCurrentSitePlan,
-	isJetpackSite,
-} from 'calypso/state/sites/selectors';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import {
 	isBestValue,
 	isMonthly,
@@ -75,17 +21,62 @@ import {
 	isWpComBusinessPlan,
 	getPlanClass,
 } from '@automattic/calypso-products';
-import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
-import PlanFeaturesScroller from './scroller';
-import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
+import formatCurrency from '@automattic/format-currency';
+import { withShoppingCart } from '@automattic/shopping-cart';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { compact, get, findIndex, last, map, reduce } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import { connect } from 'react-redux';
+import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
+import FoldableCard from 'calypso/components/foldable-card';
+import Notice from 'calypso/components/notice';
+import SpinnerLine from 'calypso/components/spinner-line';
+import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
-import { getProductsList } from 'calypso/state/products-list/selectors';
+import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
+import { getDiscountByName } from 'calypso/lib/discounts';
+import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
+import { addQueryArgs } from 'calypso/lib/url';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import {
+	getPlan,
+	getPlanBySlug,
+	getPlanRawPrice,
+	getPlanSlug,
+	getDiscountedRawPrice,
+} from 'calypso/state/plans/selectors';
+import { getProductsList } from 'calypso/state/products-list/selectors';
+import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
+import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
+import {
+	getPlanDiscountedRawPrice,
+	getSitePlanRawPrice,
+	getPlansBySiteId,
+	isCurrentUserCurrentPlanOwner,
+} from 'calypso/state/sites/plans/selectors';
+import {
+	getSitePlan,
+	getSiteSlug,
+	isCurrentPlanPaid,
+	isCurrentSitePlan,
+	isJetpackSite,
+} from 'calypso/state/sites/selectors';
+import PlanFeaturesActions from './actions';
+import PlanFeaturesHeader from './header';
+import PlanFeaturesItem from './item';
 import PlanFeaturesActionsWrapper from './plan-features-action-wrapper';
+import PlanFeaturesScroller from './scroller';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

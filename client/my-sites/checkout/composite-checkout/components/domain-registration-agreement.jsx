@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React, { Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { get, map, reduce } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import React, { Fragment } from 'react';
 import Gridicon from 'calypso/components/gridicon';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import {
 	getDomainRegistrations,
 	getDomainTransfers,

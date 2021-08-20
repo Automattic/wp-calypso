@@ -1,24 +1,14 @@
-/**
- * External dependencies
- */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { flowRight } from 'lodash';
-import { connect } from 'react-redux';
-import { localize, withRtl } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
 import classNames from 'classnames';
+import { localize, withRtl } from 'i18n-calypso';
+import { flowRight } from 'lodash';
+import PropTypes from 'prop-types';
 import qs from 'qs';
-
-/**
- * Internal dependencies
- */
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
+import Gridicon from 'calypso/components/gridicon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordGoogleEvent as recordGoogleEventAction } from 'calypso/state/analytics/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class StatsPeriodNavigation extends PureComponent {

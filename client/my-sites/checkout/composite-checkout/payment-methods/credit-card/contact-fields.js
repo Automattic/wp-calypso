@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { FormStatus, useFormStatus, useSelect } from '@automattic/composite-checkout';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
+import TaxFields from 'calypso/my-sites/checkout/composite-checkout/components/tax-fields';
 import useCountryList from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
 import CountrySpecificPaymentFields from '../../components/country-specific-payment-fields';
-import TaxFields from 'calypso/my-sites/checkout/composite-checkout/components/tax-fields';
 
 export default function ContactFields( {
 	getFieldValue,

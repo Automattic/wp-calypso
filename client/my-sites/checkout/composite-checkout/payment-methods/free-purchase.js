@@ -1,8 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useI18n } from '@wordpress/react-i18n';
 import {
 	Button,
 	useFormStatus,
@@ -10,10 +5,8 @@ import {
 	useLineItems,
 	useEvents,
 } from '@automattic/composite-checkout';
-
-/**
- * Internal dependencies
- */
+import { useI18n } from '@wordpress/react-i18n';
+import React from 'react';
 import WordPressLogo from '../components/wordpress-logo';
 
 export function createFreePaymentMethod() {

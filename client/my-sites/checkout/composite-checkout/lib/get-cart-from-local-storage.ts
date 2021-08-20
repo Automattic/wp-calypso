@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import type { RequestCartProduct } from '@automattic/shopping-cart';
 
 // Used by signup; see https://github.com/Automattic/wp-calypso/pull/44206

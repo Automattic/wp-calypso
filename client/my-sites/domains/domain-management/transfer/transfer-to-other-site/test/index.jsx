@@ -2,9 +2,6 @@ jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
 
-/**
- * External dependencies
- */
 import {
 	PLAN_FREE,
 	PLAN_BUSINESS_MONTHLY,
@@ -26,10 +23,6 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
 import { TransferToOtherSite } from '../index';
 
 const site = {

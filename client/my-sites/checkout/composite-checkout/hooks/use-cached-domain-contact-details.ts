@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
+import { defaultRegistry } from '@automattic/composite-checkout';
+import debugFactory from 'debug';
 import { useEffect, useRef } from 'react';
 import { useSelector, useDispatch as useReduxDispatch } from 'react-redux';
-import { defaultRegistry } from '@automattic/composite-checkout';
-import type { UpdateTaxLocationInCart } from '@automattic/shopping-cart';
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
 import { requestContactDetailsCache } from 'calypso/state/domains/management/actions';
+import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
 import getCountries from 'calypso/state/selectors/get-countries';
+import type { UpdateTaxLocationInCart } from '@automattic/shopping-cart';
 
 const { dispatch } = defaultRegistry;
 

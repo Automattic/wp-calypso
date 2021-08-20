@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import chai from 'chai';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
 import { phpToMomentDatetimeFormat } from '../utils';
 
 describe( 'phpToMomentDatetimeFormat', () => {

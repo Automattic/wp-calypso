@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { isJetpackSearch, planHasJetpackSearch } from '@automattic/calypso-products';
 
 export const hasJetpackSearchPurchaseOrPlan = (

@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
 import { makeRedirectResponse, makeErrorResponse } from '@automattic/composite-checkout';
+import prepareRedirectTransaction from '../lib/prepare-redirect-transaction';
+import { recordTransactionBeginAnalytics } from './analytics';
+import getDomainDetails from './get-domain-details';
+import getPostalCode from './get-postal-code';
+import submitWpcomTransaction from './submit-wpcom-transaction';
+import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type {
 	WPCOMTransactionEndpointResponse,
 	CheckoutPaymentMethodSlug,
 } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import getPostalCode from './get-postal-code';
-import getDomainDetails from './get-domain-details';
-import { recordTransactionBeginAnalytics } from './analytics';
-import submitWpcomTransaction from './submit-wpcom-transaction';
-import prepareRedirectTransaction from '../lib/prepare-redirect-transaction';
-import type { PaymentProcessorOptions } from '../types/payment-processors';
 
 type RedirectTransactionRequest = {
 	name: string | undefined;

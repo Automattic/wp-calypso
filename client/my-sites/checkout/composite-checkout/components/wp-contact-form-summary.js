@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import styled from '@emotion/styled';
 import { useSelect } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
-import { SummaryLine, SummaryDetails } from './summary-details';
+import styled from '@emotion/styled';
+import React from 'react';
 import { hasOnlyRenewalItems } from 'calypso/lib/cart-values/cart-items';
+import { SummaryLine, SummaryDetails } from './summary-details';
 
 export default function WPContactFormSummary( {
 	areThereDomainProductsInCart,

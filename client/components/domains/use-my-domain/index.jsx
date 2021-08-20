@@ -1,120 +1,62 @@
 /**
  * External dependencies
  */
-import { Card, Button } from '@automattic/components';
 import { BackButton } from '@automattic/onboarding';
-import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import page from 'page';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import domainIllustration from 'calypso/assets/images/illustrations/domain.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
-import FormButton from 'calypso/components/forms/form-button';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
-import FormTextInput from 'calypso/components/forms/form-text-input';
 import Gridicon from 'calypso/components/gridicon';
 import { checkDomainAvailability } from 'calypso/lib/domains';
-import { domainAvailability } from 'calypso/lib/domains/constants';
-import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
-import { domainAddNew, domainUseYourDomain } from 'calypso/my-sites/domains/paths';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import UseMyDomainInput from './domain-input';
+import DomainTransferOrConnect from './transfer-or-connect';
+import { getAvailabilityErrorMessage, getDomainNameValidationErrorMessage } from './utilities';
 /**
  * Style dependencies
  */
 import './style.scss';
 
 function UseMyDomain( { goBack, initialQuery, selectedSite } ) {
+	const inputMode = {
+		domainInput: 'domain-input',
+		transferOrConnect: 'transfer-or-connect',
+	};
+
+	const [ domainAvailabilityData, setDomainAvailabilityData ] = useState( {} );
 	const [ domainName, setDomainName ] = useState( initialQuery ?? '' );
-	const [ isFetchingAvailability, setIsFetchingAvailability ] = useState( false );
 	const [ domainNameValidationError, setDomainNameValidationError ] = useState();
-	const domainNameInput = useRef( null );
+	const [ isFetchingAvailability, setIsFetchingAvailability ] = useState( false );
+	const [ mode, setMode ] = useState( inputMode.domainInput );
 	const initialValidation = useRef( null );
 
 	const baseClassName = 'use-my-domain';
 
-	const illustration = domainIllustration && (
-		<img src={ domainIllustration } alt="" width={ 160 } />
-	);
+	const onGoBack = () => {
+		if ( inputMode.domainInput === mode ) {
+			goBack();
+		}
+
+		setMode( inputMode.domainInput );
+	};
 
 	const validateDomainName = useCallback( () => {
-		if ( ! domainName ) {
-			setDomainNameValidationError( __( 'Please enter your domain before continuing.' ) );
-			return false;
-		}
-
-		if (
-			! /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9])*(?:\.[a-zA-Z]{2,})+$/.test(
-				domainName
-			)
-		) {
-			const errorMessage = createInterpolateElement(
-				sprintf(
-					/* translators: %s - the string the user entered in the domain name field */
-					__( 'Are you sure you mean <strong>%s</strong>? This is not a valid domain.' ),
-					domainName
-				),
-				{
-					strong: createElement( 'strong' ),
-				}
-			);
-
-			setDomainNameValidationError( errorMessage );
-			return false;
-		}
-
-		setDomainNameValidationError();
-		return true;
+		const errorMessage = getDomainNameValidationErrorMessage( domainName );
+		setDomainNameValidationError( errorMessage );
+		return ! errorMessage;
 	}, [ domainName ] );
 
-	const goToSearchPage = () => {
-		page( domainAddNew( selectedSite.slug, domainName ) );
-	};
-
-	const getAvailabilityErrorMessage = ( availabilityData ) => {
-		const { status, mappable, maintenance_end_time, other_site_domain } = availabilityData;
-
-		if ( domainAvailability.AVAILABLE === status ) {
-			return createInterpolateElement(
-				__( "This domain isn't registered. Did you mean to <a>search for a domain</a> instead?" ),
-				{
-					a: createElement( 'a', { href: '#', onClick: goToSearchPage } ),
-				}
-			);
-		}
-
-		if (
-			! [
-				domainAvailability.AVAILABILITY_CHECK_ERROR,
-				domainAvailability.NOT_REGISTRABLE,
-			].includes( status ) &&
-			[ domainAvailability.MAPPABLE, domainAvailability.UNKNOWN ].includes( mappable )
-		) {
-			return null;
-		}
-
-		const availabilityStatus = domainAvailability.MAPPED === mappable ? status : mappable;
-		const maintenanceEndTime = maintenance_end_time ?? null;
-		const site = other_site_domain ?? selectedSite.slug;
-
-		const errorData = getAvailabilityNotice( domainName, availabilityStatus, {
-			site,
-			maintenanceEndTime,
-		} );
-		return errorData?.message || null;
-	};
-
-	const onNext = () => {
+	const onNext = useCallback( () => {
 		if ( ! validateDomainName() ) {
 			return;
 		}
 
 		setIsFetchingAvailability( true );
+		setDomainAvailabilityData( {} );
 
 		checkDomainAvailability(
 			{
@@ -122,7 +64,7 @@ function UseMyDomain( { goBack, initialQuery, selectedSite } ) {
 				blogId: selectedSite.ID,
 				isCartPreCheck: false,
 			},
-			( error, data ) => {
+			( error, availabilityData ) => {
 				setIsFetchingAvailability( false );
 
 				if ( error ) {
@@ -130,21 +72,26 @@ function UseMyDomain( { goBack, initialQuery, selectedSite } ) {
 					return;
 				}
 
-				const availabilityMessage = getAvailabilityErrorMessage( data );
+				const availabilityErrorMessage = getAvailabilityErrorMessage( {
+					availabilityData,
+					domainName,
+					selectedSite,
+				} );
 
-				if ( availabilityMessage ) {
-					setDomainNameValidationError( availabilityMessage );
+				if ( availabilityErrorMessage ) {
+					setDomainNameValidationError( availabilityErrorMessage );
 					return;
 				}
 
-				// TODO: This is just a placeholder until the connect or transfer page is completed.
-				page( domainUseYourDomain( selectedSite.slug, domainName ) );
+				setMode( inputMode.transferOrConnect );
+				setDomainAvailabilityData( availabilityData );
 			}
 		);
-	};
+	}, [ domainName, inputMode.transferOrConnect, selectedSite, validateDomainName ] );
 
 	const onDomainNameChange = ( event ) => {
 		setDomainName( event.target.value );
+		domainNameValidationError && setDomainNameValidationError();
 	};
 
 	const onClearInput = () => {
@@ -152,81 +99,56 @@ function UseMyDomain( { goBack, initialQuery, selectedSite } ) {
 		setDomainNameValidationError();
 	};
 
-	const keyDown = ( event ) => {
-		if ( event.key === 'Enter' ) {
-			! isFetchingAvailability && onNext();
+	useEffect( () => {
+		if ( ! initialQuery || initialValidation.current ) {
 			return;
 		}
 
-		if ( event.key === 'Escape' ) {
-			onClearInput();
-			return;
-		}
+		initialValidation.current = true;
+		initialQuery && ! getDomainNameValidationErrorMessage( initialQuery ) && onNext();
+	}, [ initialQuery, onNext ] );
 
-		domainNameValidationError && setDomainNameValidationError();
+	const renderDomainInput = () => {
+		return (
+			<UseMyDomainInput
+				baseClassName={ baseClassName }
+				domainName={ domainName }
+				isBusy={ isFetchingAvailability }
+				onChange={ onDomainNameChange }
+				onClear={ onClearInput }
+				onNext={ onNext }
+				shouldSetFocus={ ! initialQuery }
+				validationError={ domainNameValidationError }
+			/>
+		);
 	};
 
-	useEffect( () => {
-		! initialQuery && domainNameInput.current.focus();
-	}, [ initialQuery, domainNameInput ] );
+	const renderTransferOrConnect = () => {
+		return (
+			<DomainTransferOrConnect domain={ domainName } availability={ domainAvailabilityData } />
+		);
+	};
 
-	useEffect( () => {
-		! initialValidation.current && initialQuery && onNext();
-		initialValidation.current = true;
-	}, [ initialQuery, validateDomainName ] );
+	const headerText =
+		mode === inputMode.domainInput
+			? __( 'Use a domain I own' )
+			: /* translators: %s - the name of the domain the user will add to their site */
+			  sprintf( __( 'Use a domain I own: %s' ), domainName );
 
 	return (
 		<>
-			<BackButton className={ baseClassName + '__go-back' } onClick={ goBack }>
+			<BackButton className={ baseClassName + '__go-back' } onClick={ onGoBack }>
 				<Gridicon icon="arrow-left" size={ 18 } />
 				{ __( 'Back' ) }
 			</BackButton>
 			<FormattedHeader
 				brandFont
 				className={ baseClassName + '__page-heading' }
-				headerText={ __( 'Use a domain I own' ) }
+				headerText={ headerText }
 				align="left"
 			/>
-			<Card className={ baseClassName }>
-				<div className={ baseClassName + '__domain-illustration' }>{ illustration }</div>
-				<div className={ baseClassName + '__domain-input' }>
-					<FormFieldset className={ baseClassName + '__domain-input-fieldset' }>
-						<FormTextInput
-							placeholder={ __( 'Enter your domain here' ) }
-							value={ domainName }
-							onChange={ onDomainNameChange }
-							onKeyDown={ keyDown }
-							isError={ !! domainNameValidationError }
-							ref={ domainNameInput }
-						/>
-						{ domainName && (
-							<Button
-								className={ baseClassName + '__domain-input-clear' }
-								borderless
-								onClick={ onClearInput }
-							>
-								<Gridicon
-									className={ baseClassName + '__domain-input-clear-icon' }
-									icon="cross"
-									size={ 12 }
-								/>
-							</Button>
-						) }
-						{ domainNameValidationError && (
-							<FormInputValidation isError text={ domainNameValidationError } icon="" />
-						) }
-					</FormFieldset>
-					<FormButton
-						className={ baseClassName + '__domain-input-button' }
-						primary
-						busy={ isFetchingAvailability }
-						disabled={ isFetchingAvailability }
-						onClick={ onNext }
-					>
-						{ __( 'Next' ) }
-					</FormButton>
-				</div>
-			</Card>
+			{ mode === inputMode.domainInput && renderDomainInput() }
+			{ mode === inputMode.transferOrConnect && renderTransferOrConnect() }
 		</>
 	);
 }

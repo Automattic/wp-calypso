@@ -1,17 +1,24 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import requestExternalAccess from '@automattic/request-external-access';
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { isEqual, find, some, get } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { isEqual, find, some, get } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import AccountDialog from './account-dialog';
+import FoldableCard from 'calypso/components/foldable-card';
+import Notice from 'calypso/components/notice';
+import SocialLogo from 'calypso/components/social-logo';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { successNotice, errorNotice, warningNotice } from 'calypso/state/notices/actions';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import getRemovableConnections from 'calypso/state/selectors/get-removable-connections';
+import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
+import {
+	getKeyringConnectionsByName,
+	getRefreshableKeyringConnections,
+} from 'calypso/state/sharing/keyring/selectors';
 import {
 	createSiteConnection,
 	deleteSiteConnection,
@@ -19,36 +26,22 @@ import {
 	fetchConnection,
 	updateSiteConnection,
 } from 'calypso/state/sharing/publicize/actions';
-import { successNotice, errorNotice, warningNotice } from 'calypso/state/notices/actions';
-import Connection from './connection';
-import FoldableCard from 'calypso/components/foldable-card';
-import Notice from 'calypso/components/notice';
-import { getAvailableExternalAccounts, isServiceExpanded } from 'calypso/state/sharing/selectors';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import {
-	getKeyringConnectionsByName,
-	getRefreshableKeyringConnections,
-} from 'calypso/state/sharing/keyring/selectors';
 import {
 	getBrokenSiteUserConnectionsForService,
 	getSiteUserConnectionsForService,
 	isFetchingConnections,
 } from 'calypso/state/sharing/publicize/selectors';
+import { getAvailableExternalAccounts, isServiceExpanded } from 'calypso/state/sharing/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
-import getRemovableConnections from 'calypso/state/selectors/get-removable-connections';
-import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
+import AccountDialog from './account-dialog';
+import Connection from './connection';
+import MailchimpSettings, { renderMailchimpLogo } from './mailchimp-settings';
+import PicasaMigration from './picasa-migration';
 import ServiceAction from './service-action';
 import ServiceConnectedAccounts from './service-connected-accounts';
 import ServiceDescription from './service-description';
 import ServiceExamples from './service-examples';
 import ServiceTip from './service-tip';
-import requestExternalAccess from '@automattic/request-external-access';
-import MailchimpSettings, { renderMailchimpLogo } from './mailchimp-settings';
-import config from '@automattic/calypso-config';
-import PicasaMigration from './picasa-migration';
-import SocialLogo from 'calypso/components/social-logo';
 
 /**
  * Check if the connection is broken or requires reauth.

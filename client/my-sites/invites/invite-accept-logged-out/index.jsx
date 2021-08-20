@@ -1,28 +1,21 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { Card } from '@automattic/components';
+import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
+import React from 'react';
 import { connect } from 'react-redux';
 import store from 'store';
-import debugModule from 'debug';
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { addQueryArgs } from 'calypso/lib/route';
 import SignupForm from 'calypso/blocks/signup-form';
-import InviteFormHeader from 'calypso/my-sites/invites/invite-form-header';
-import { login } from 'calypso/lib/paths';
-import { createAccount, acceptInvite } from 'calypso/state/invites/actions';
-import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
-import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
-import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { Card } from '@automattic/components';
 import FormButton from 'calypso/components/forms/form-button';
+import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
+import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { login } from 'calypso/lib/paths';
+import { addQueryArgs } from 'calypso/lib/route';
+import InviteFormHeader from 'calypso/my-sites/invites/invite-form-header';
 import P2InviteAcceptLoggedOut from 'calypso/my-sites/invites/p2/invite-accept-logged-out';
+import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
+import { createAccount, acceptInvite } from 'calypso/state/invites/actions';
 
 /**
  * Module variables

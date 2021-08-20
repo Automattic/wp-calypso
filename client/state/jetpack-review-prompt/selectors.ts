@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getPreference } from 'calypso/state/preferences/selectors';
 import {
 	emptyPreference,
@@ -10,10 +7,6 @@ import {
 	TIME_BETWEEN_PROMPTS,
 	SinglePreferenceType,
 } from './constants';
-
-/**
- * Type dependencies
- */
 import type { AppState } from 'calypso/types';
 
 const getExistingPreference = (

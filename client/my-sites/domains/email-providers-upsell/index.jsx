@@ -1,56 +1,41 @@
-/**
- * External dependencies
- */
+import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { domainAddNew } from 'calypso/my-sites/domains/paths';
+import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import HeaderCake from 'calypso/components/header-cake';
-import PromoCard from 'calypso/components/promo-section/promo-card';
-
-/**
- * Style dependencies
- */
-import emailIllustration from 'calypso/assets/images/email-providers/email-illustration.svg';
 
 export default function EmailProvidersUpsell( { domain } ) {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
 
-	const handleGoBack = () => {
-		page( domainAddNew( selectedSiteSlug ) );
-	};
-
-	const image = {
-		path: emailIllustration,
-		align: 'right',
-	};
+	const comment = '%(domainName)s is the domain name, e.g example.com';
 
 	return (
-		<>
-			<HeaderCake onClick={ handleGoBack }>
-				{ translate( 'Register %(domain)s', { args: { domain } } ) }
-			</HeaderCake>
-
-			<PromoCard
-				isPrimary
-				title={ translate( 'Add a professional email address to %(domainName)s', {
+		<CalypsoShoppingCartProvider>
+			<EmailProvidersComparison
+				backPath={ domainAddNew( selectedSiteSlug ) }
+				cartDomainName={ domain }
+				headerTitle={ translate( 'Register %(domainName)s', {
+					args: { domainName: domain },
+					comment,
+				} ) }
+				hideEmailHeader
+				hideEmailForwardingCard
+				showSkipButton
+				onSkipClick={ () => {
+					page( `/checkout/${ selectedSiteSlug }` );
+				} }
+				promoHeaderTitle={ translate( 'Add a professional email address to %(domainName)s', {
 					args: {
 						domainName: domain,
 					},
-					comment: '%(domainName)s is the domain name, e.g example.com',
+					comment,
 				} ) }
-				image={ image }
-				className="email-providers-upsell__action-panel"
-			>
-				<p>{ translate( 'No setup or software required. Easy to manage from your dashboard.' ) }</p>
-			</PromoCard>
-		</>
+				selectedDomainName={ domain }
+			/>
+		</CalypsoShoppingCartProvider>
 	);
 }

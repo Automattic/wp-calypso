@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getDomainTypeText } from 'calypso/lib/domains';
 import {
 	composeAnalytics,

@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
 import { assert } from 'chai';
-
-/**
- * Internal dependencies
- */
-import reducer from '../reducer';
 import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH,
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
 } from 'calypso/state/action-types';
+import reducer from '../reducer';
 
 describe( '#account-recovery/isFetchingSettings reducer :', () => {
 	test( 'should set isFetchingSettings flag.', () => {

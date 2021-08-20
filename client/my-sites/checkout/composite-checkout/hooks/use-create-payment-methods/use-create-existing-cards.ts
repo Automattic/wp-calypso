@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import { useMemo } from 'react';
 import { createExistingCardMethod } from '@automattic/wpcom-checkout';
-import type { PaymentMethod } from '@automattic/composite-checkout';
-
-/**
- * Internal dependencies
- */
+import { useMemo } from 'react';
 import useMemoCompare from '../use-memo-compare';
 import type { StoredCard } from '../../types/stored-cards';
+import type { PaymentMethod } from '@automattic/composite-checkout';
 
 export default function useCreateExistingCards( {
 	storedCards,

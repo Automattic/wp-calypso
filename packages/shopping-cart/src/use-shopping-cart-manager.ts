@@ -93,7 +93,7 @@ export default function useShoppingCartManager( {
 	);
 
 	const addProductsToCart: AddProductsToCart = useCallback(
-		( products ) =>
+		async ( products ) =>
 			dispatchAndWaitForValid( {
 				type: 'CART_PRODUCTS_ADD',
 				products: createRequestCartProducts( products ),
@@ -102,7 +102,7 @@ export default function useShoppingCartManager( {
 	);
 
 	const replaceProductsInCart: ReplaceProductsInCart = useCallback(
-		( products ) =>
+		async ( products ) =>
 			dispatchAndWaitForValid( {
 				type: 'CART_PRODUCTS_REPLACE_ALL',
 				products: createRequestCartProducts( products ),

@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
-import type {
-	TransactionRequest,
-	WPCOMTransactionEndpointRequestPayload,
-} from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from './translate-payment-method-names';
 import {
 	createTransactionEndpointRequestPayload,
 	createTransactionEndpointCartFromResponseCart,
 } from './translate-cart';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from './translate-payment-method-names';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
+import type {
+	TransactionRequest,
+	WPCOMTransactionEndpointRequestPayload,
+} from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:submit-redirect-transaction' );
 

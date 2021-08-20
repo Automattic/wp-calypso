@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import React, { useEffect, useCallback } from 'react';
 import { Button, Card } from '@automattic/components';
+import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import useSiteMenuItems from 'calypso/my-sites/sidebar-unified/use-site-menu-items';
-import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
-import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { level1ObjectMap } from 'calypso/my-sites/marketplace/pages/marketplace-test';
 import CardHeading from 'calypso/components/card-heading';
+import { level1ObjectMap } from 'calypso/my-sites/marketplace/pages/marketplace-test';
+import useSiteMenuItems from 'calypso/my-sites/sidebar-unified/use-site-menu-items';
+import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
+import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export default function AdminMenuFetch(): JSX.Element {
 	const menuItems = useSiteMenuItems();

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { filter, find, flatMap } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { deconstructStateKey, getErrorKey } from 'calypso/state/comments/utils';
 
 import 'calypso/state/comments/init';

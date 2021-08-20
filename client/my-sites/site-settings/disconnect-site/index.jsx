@@ -1,21 +1,11 @@
-/**
- * External dependencies
- */
+import { flowRight } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { flowRight } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import DownFlow from './down-flow';
 import redirectNonJetpack from 'calypso/my-sites/site-settings/redirect-non-jetpack';
-import SurveyFlow from './survey-flow';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import DownFlow from './down-flow';
+import SurveyFlow from './survey-flow';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const DisconnectSite = ( { reason, type, site } ) => {

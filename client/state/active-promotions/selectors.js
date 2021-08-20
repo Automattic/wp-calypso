@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import 'calypso/state/active-promotions/init';
 
 /**

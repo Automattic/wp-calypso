@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import page from 'page';
-
-/**
- * Internal Dependencies
- */
+import React from 'react';
 import Main from './main';
 
 export default {

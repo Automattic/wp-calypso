@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
 
 export const marketplaceDebugger = debugFactory( 'marketplace-debugger' );

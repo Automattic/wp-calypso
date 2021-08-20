@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { useSelector } from 'react-redux';
-
-/**
- * Internal Dependencies
- */
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import getCartKey from './get-cart-key';
 
 export default function useCartKey(): ReturnType< typeof getCartKey > {

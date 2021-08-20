@@ -1,24 +1,13 @@
-/**
- * External dependencies
- */
 import { isEnabled } from '@automattic/calypso-config';
 import { TERM_MONTHLY, TERM_ANNUALLY } from '@automattic/calypso-products';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import getParamsFromContext from './get-params-from-context';
-import { getPlanRecommendationFromContext } from './plan-upgrade/utils';
-import SelectorPage from './selector';
+import JetpackFreeWelcomePage from 'calypso/components/jetpack/jetpack-free-welcome';
 import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getMonthlySlugFromYearly, getYearlySlugFromMonthly } from './convert-slug-terms';
-import JetpackFreeWelcomePage from 'calypso/components/jetpack/jetpack-free-welcome';
-
-/**
- * Type dependencies
- */
+import getParamsFromContext from './get-params-from-context';
+import { getPlanRecommendationFromContext } from './plan-upgrade/utils';
+import SelectorPage from './selector';
 import type { Duration, QueryArgs } from './types';
 
 function stringToDuration( duration?: string ): Duration | undefined {

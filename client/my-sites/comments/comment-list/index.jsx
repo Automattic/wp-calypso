@@ -1,29 +1,21 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { find, get, isEqual, map } from 'lodash';
-import TransitionGroup from 'react-transition-group/TransitionGroup';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import CSSTransition from 'react-transition-group/CSSTransition';
-
-/**
- * Internal dependencies
- */
-import Comment from 'calypso/my-sites/comments/comment';
-import CommentListHeader from 'calypso/my-sites/comments/comment-list/comment-list-header';
-import CommentNavigation from 'calypso/my-sites/comments/comment-navigation';
-import EmptyContent from 'calypso/components/empty-content';
-import Pagination from 'calypso/components/pagination';
+import TransitionGroup from 'react-transition-group/TransitionGroup';
 import QuerySiteCommentCounts from 'calypso/components/data/query-site-comment-counts';
 import QuerySiteCommentsList from 'calypso/components/data/query-site-comments-list';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
-import getCommentsPage from 'calypso/state/selectors/get-comments-page';
-import { getSiteCommentCounts } from 'calypso/state/comments/selectors';
+import EmptyContent from 'calypso/components/empty-content';
+import Pagination from 'calypso/components/pagination';
+import Comment from 'calypso/my-sites/comments/comment';
+import CommentListHeader from 'calypso/my-sites/comments/comment-list/comment-list-header';
+import CommentNavigation from 'calypso/my-sites/comments/comment-navigation';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSiteCommentCounts } from 'calypso/state/comments/selectors';
+import getCommentsPage from 'calypso/state/selectors/get-comments-page';
 import { COMMENTS_PER_PAGE } from '../constants';
 
 const CommentTransition = ( props ) => (

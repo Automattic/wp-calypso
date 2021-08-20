@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import PropTypes from 'prop-types';
 import { last, isEqual } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { deleteP2KeyringConnection } from 'calypso/state/sharing/keyring/actions';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { SharingService, connectFor } from 'calypso/my-sites/marketing/connections/service';
+import { deleteP2KeyringConnection } from 'calypso/state/sharing/keyring/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export class Slack extends SharingService {

@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
+import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { isEmpty } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { getWhoisData } from 'calypso/state/domains/management/selectors';
-import { requestWhois } from 'calypso/state/domains/management/actions';
 import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
+import { requestWhois } from 'calypso/state/domains/management/actions';
+import { getWhoisData } from 'calypso/state/domains/management/selectors';
 
 class ContactDisplay extends React.PureComponent {
 	static propTypes = {

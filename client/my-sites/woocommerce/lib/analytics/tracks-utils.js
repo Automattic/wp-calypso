@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { startsWith } from 'lodash';
 
 export const recordTrack = ( tracks, debug ) => ( eventName, eventProperties ) => {

@@ -8,11 +8,6 @@ jest.mock( 'calypso/blocks/upsell-nudge', () => 'UpsellNudge' );
 jest.mock( 'calypso/components/notice', () => 'Notice' );
 jest.mock( 'calypso/components/notice/notice-action', () => 'NoticeAction' );
 
-/**
- * External dependencies
- */
-import { shallow } from 'enzyme';
-import React from 'react';
 import {
 	PLAN_FREE,
 	PLAN_BUSINESS,
@@ -24,10 +19,8 @@ import {
 	PLAN_BLOGGER,
 	PLAN_BLOGGER_2_YEARS,
 } from '@automattic/calypso-products';
-
-/**
- * Internal dependencies
- */
+import { shallow } from 'enzyme';
+import React from 'react';
 import { PluginsBrowser } from '../';
 
 const props = {

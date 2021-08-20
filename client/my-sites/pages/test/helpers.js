@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { sortPagesHierarchically } from '../helpers';
 
 describe( 'helpers', () => {
@@ -173,6 +166,112 @@ describe( 'helpers', () => {
 					menu_order: 2,
 					parent: {
 						ID: 3,
+					},
+				},
+			] );
+		} );
+
+		test( 'should place homepage at top', () => {
+			const testData = [
+				{
+					ID: 1,
+					menu_order: 0,
+					parent: false,
+				},
+				{
+					ID: 2,
+					menu_order: 5,
+					parent: {
+						ID: 1,
+					},
+				},
+				{
+					ID: 3,
+					menu_order: 2,
+					parent: {
+						ID: 1,
+					},
+				},
+				{
+					ID: 4,
+					menu_order: 6,
+					parent: false,
+				},
+			];
+
+			const homepageId = 4;
+			const sortedPages = sortPagesHierarchically( testData, 4 );
+
+			expect( sortedPages ).to.deep.equal( [
+				{
+					ID: 4,
+					menu_order: 6,
+					parent: false,
+				},
+				{
+					ID: 1,
+					menu_order: 0,
+					parent: false,
+				},
+				{
+					ID: 3,
+					indentLevel: 1,
+					menu_order: 2,
+					parent: {
+						ID: 1,
+					},
+				},
+				{
+					ID: 2,
+					indentLevel: 1,
+					menu_order: 5,
+					parent: {
+						ID: 1,
+					},
+				},
+			] );
+		} );
+
+		test( 'should still function without a valid homepage set', () => {
+			const testData = [
+				{
+					ID: 1,
+					parent: {
+						ID: 2,
+					},
+				},
+				{
+					ID: 2,
+					parent: false,
+				},
+				{
+					ID: 3,
+					parent: {
+						ID: 1,
+					},
+				},
+			];
+
+			const homepageId = 0;
+			const sortedPages = sortPagesHierarchically( testData, homepageId );
+
+			expect( sortedPages ).to.deep.equal( [
+				{
+					ID: 2,
+					parent: false,
+				},
+				{
+					ID: 1,
+					indentLevel: 1,
+					parent: {
+						ID: 2,
+					},
+				},
+				{
+					ID: 3,
+					indentLevel: 2,
+					parent: {
+						ID: 1,
 					},
 				},
 			] );

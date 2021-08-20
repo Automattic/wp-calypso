@@ -1,33 +1,23 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { localize, withRtl } from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import { isEnabled } from '@automattic/calypso-config';
 import { Button, Card } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
+import { localize, withRtl } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import AllSites from 'calypso/blocks/all-sites';
-import AsyncLoad from 'calypso/components/async-load';
 import Site from 'calypso/blocks/site';
+import AsyncLoad from 'calypso/components/async-load';
 import Gridicon from 'calypso/components/gridicon';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import { savePreference } from 'calypso/state/preferences/actions';
+import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
+import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
+import { hasAllSitesList } from 'calypso/state/sites/selectors';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
-import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { hasAllSitesList } from 'calypso/state/sites/selectors';
-import { savePreference } from 'calypso/state/preferences/actions';
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class CurrentSite extends Component {

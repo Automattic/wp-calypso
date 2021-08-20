@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize, translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 import PopoverMenuItemClipboard from 'calypso/components/popover/menu-item-clipboard';
-import { getPost } from 'calypso/state/posts/selectors';
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { bumpStatGenerator } from './utils';
 import { infoNotice } from 'calypso/state/notices/actions';
+import { getPost } from 'calypso/state/posts/selectors';
+import { bumpStatGenerator } from './utils';
 
 function PostActionsEllipsisMenuCopyLink( { onCopyLinkClick, copyLink } ) {
 	return (

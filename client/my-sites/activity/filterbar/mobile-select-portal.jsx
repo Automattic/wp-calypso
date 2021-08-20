@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { Component } from 'react';
 import ReactDOM from 'react-dom';
 

@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
+import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 export default function getPostalCode( contactDetails: ManagedContactDetails | undefined ): string {
 	if ( ! contactDetails ) {

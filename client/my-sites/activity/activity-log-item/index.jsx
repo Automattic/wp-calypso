@@ -1,29 +1,18 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
 import { withDesktopBreakpoint } from '@automattic/viewport-react';
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import scrollTo from 'calypso/lib/scroll-to';
-import { settingsPath } from 'calypso/lib/jetpack/paths';
-import { applySiteOffset } from 'calypso/lib/site/timezone';
-import ActivityActor from './activity-actor';
-import ActivityDescription from './activity-description';
-import ActivityMedia from './activity-media';
-import ActivityIcon from './activity-icon';
-import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import FoldableCard from 'calypso/components/foldable-card';
 import Gridicon from 'calypso/components/gridicon';
 import HappychatButton from 'calypso/components/happychat/button';
-import { Button } from '@automattic/components';
-import FoldableCard from 'calypso/components/foldable-card';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { settingsPath } from 'calypso/lib/jetpack/paths';
+import scrollTo from 'calypso/lib/scroll-to';
+import { applySiteOffset } from 'calypso/lib/site/timezone';
 import {
 	rewindBackup,
 	rewindBackupDismiss,
@@ -39,11 +28,12 @@ import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import { getSite } from 'calypso/state/sites/selectors';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
+import ActivityActor from './activity-actor';
+import ActivityDescription from './activity-description';
+import ActivityIcon from './activity-icon';
+import ActivityMedia from './activity-media';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class ActivityLogItem extends Component {

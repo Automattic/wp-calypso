@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
+import { MEDIA_IMAGE_THUMBNAIL, SCALE_CHOICES } from 'calypso/lib/media/constants';
 import { url as mediaUrl } from 'calypso/lib/media/utils';
 import MediaLibraryListItemFileDetails from './list-item-file-details';
 import MediaImage from './media-image';
-import { MEDIA_IMAGE_THUMBNAIL, SCALE_CHOICES } from 'calypso/lib/media/constants';
 
 export default class MediaLibraryListItemImage extends React.Component {
 	static propTypes = {

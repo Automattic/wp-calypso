@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import i18n from 'i18n-calypso';
 import { defaultRegistry } from '@automattic/composite-checkout';
-
-/**
- * Internal dependencies
- */
+import i18n from 'i18n-calypso';
+import { recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
 import wp from 'calypso/lib/wp';
 import { stringifyBody } from 'calypso/state/login/utils';
-import { recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
 
 const { select } = defaultRegistry;
 

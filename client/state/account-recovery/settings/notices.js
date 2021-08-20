@@ -1,18 +1,9 @@
-/**
- * External dependencies
- */
-
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { successNotice, errorNotice } from 'calypso/state/notices/actions';
-
 import {
 	getAccountRecoveryPhone,
 	getAccountRecoveryEmail,
 } from 'calypso/state/account-recovery/settings/selectors';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 
 const getUpdateSuccessMessage = ( target, getState ) => {
 	switch ( target ) {

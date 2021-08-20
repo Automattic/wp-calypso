@@ -1,25 +1,18 @@
-/**
- * External dependencies
- */
 import { Button } from '@automattic/components';
-import { connect } from 'react-redux';
-import i18nCalypso, { getLocaleSlug, localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { emailManagementTitanSetupMailbox } from 'calypso/my-sites/email/paths';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getGoogleAdminUrl } from 'calypso/lib/gsuite';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { connect } from 'react-redux';
 import Gridicon from 'calypso/components/gridicon';
 import {
 	hasUnusedMailboxWarning,
 	hasGoogleAccountTOSWarning,
 	isTitanMailAccount,
 } from 'calypso/lib/emails';
+import { getGoogleAdminUrl } from 'calypso/lib/gsuite';
+import { emailManagementTitanSetupMailbox } from 'calypso/my-sites/email/paths';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 class EmailPlanWarnings extends React.Component {
 	static propTypes = {
@@ -38,9 +31,7 @@ class EmailPlanWarnings extends React.Component {
 
 		return (
 			<Button compact primary href={ setupMailboxUrl }>
-				{ 'en' === getLocaleSlug() || i18nCalypso.hasTranslation( 'Set up mailbox' )
-					? translate( 'Set up mailbox' )
-					: translate( 'Activate Mailbox' ) }
+				{ translate( 'Set up mailbox' ) }
 			</Button>
 		);
 	}

@@ -1,18 +1,15 @@
-/**
- * Internal dependencies
- */
+import { translate } from 'i18n-calypso';
+import React from 'react';
 import {
 	makeLayout,
 	redirectLoggedOut,
 	redirectWithoutLocaleParamIfLoggedIn,
 } from 'calypso/controller';
-import { details, fetchThemeDetailsData } from './controller';
+import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
 import { createNavigation, selectSiteIfLoggedIn, siteSelection } from 'calypso/my-sites/controller';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
-import { translate } from 'i18n-calypso';
-import React from 'react';
 import { getCanonicalTheme } from 'calypso/state/themes/selectors';
+import { details, fetchThemeDetailsData } from './controller';
 
 function redirectToLoginIfSiteRequested( context, next ) {
 	if ( context.params.site_id ) {

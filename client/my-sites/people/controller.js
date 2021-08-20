@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import page from 'page';
 import i18n from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
-import PeopleList from './main';
-import EditTeamMember from './edit-team-member-form';
-import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
-import InvitePeople from './invite-people';
-import PeopleInvites from './people-invites';
-import PeopleInviteDetails from './people-invite-details';
-import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
-import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import page from 'page';
+import React from 'react';
 import { getSiteFragment } from 'calypso/lib/route';
+import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
+import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import EditTeamMember from './edit-team-member-form';
+import InvitePeople from './invite-people';
+import PeopleList from './main';
+import PeopleInviteDetails from './people-invite-details';
+import PeopleInvites from './people-invites';
 
 export default {
 	redirectToTeam,

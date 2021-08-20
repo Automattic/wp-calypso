@@ -1,29 +1,19 @@
-/**
- * External dependencies
- */
-import page from 'page';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
+import page from 'page';
 import { makeLayout } from 'calypso/controller';
 import { navigation, sites, siteSelection } from 'calypso/my-sites/controller';
-import { newAccount, selectBusinessType, selectLocation, stats } from './controller';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getGoogleMyBusinessLocations from 'calypso/state/selectors/get-google-my-business-locations';
 import isGoogleMyBusinessLocationConnected from 'calypso/state/selectors/is-google-my-business-location-connected';
 import isSiteGoogleMyBusinessEligible from 'calypso/state/selectors/is-site-google-my-business-eligible';
-import { getSiteHomeUrl } from 'calypso/state/sites/selectors';
+import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
 import { requestKeyringServices } from 'calypso/state/sharing/services/actions';
 import { requestSiteKeyrings } from 'calypso/state/site-keyrings/actions';
 import { getSiteKeyringsForService } from 'calypso/state/site-keyrings/selectors';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
+import { getSiteHomeUrl } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { newAccount, selectBusinessType, selectLocation, stats } from './controller';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const loadKeyringsMiddleware = ( context, next ) => {

@@ -1,29 +1,20 @@
-/**
- * External dependencies
- */
+import _debug from 'debug';
+import { localize } from 'i18n-calypso';
+import { intersection, map, find, get } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import _debug from 'debug';
-import { intersection, map, find, get } from 'lodash';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-
-/**
- * Internal Dependencies
- */
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import PendingGSuiteTosNotice from './pending-gsuite-tos-notice';
-import { purchasesRoot } from 'calypso/me/purchases/paths';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { isSubdomain } from 'calypso/lib/domains';
 import {
 	type as domainTypes,
 	transferStatus,
 	gdprConsentStatus,
 } from 'calypso/lib/domains/constants';
 import { hasPendingGSuiteUsers, isPendingGSuiteTOSAcceptance } from 'calypso/lib/gsuite';
-import { isSubdomain } from 'calypso/lib/domains';
 import {
 	CHANGE_NAME_SERVERS,
 	DOMAINS,
@@ -33,6 +24,7 @@ import {
 	SETTING_PRIMARY_DOMAIN,
 	MAP_DOMAIN_CHANGE_NAME_SERVERS,
 } from 'calypso/lib/url/support';
+import { purchasesRoot } from 'calypso/me/purchases/paths';
 import {
 	domainManagementEdit,
 	domainManagementList,
@@ -40,11 +32,9 @@ import {
 	domainManagementTransferIn,
 	domainManagementManageConsent,
 } from 'calypso/my-sites/domains/paths';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import PendingGSuiteTosNotice from './pending-gsuite-tos-notice';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const debug = _debug( 'calypso:domain-warnings' );

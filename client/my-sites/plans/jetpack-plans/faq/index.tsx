@@ -1,21 +1,11 @@
-/**
- * External dependencies
- */
+import { useTranslate } from 'i18n-calypso';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import FoldableFAQ from 'calypso/components/foldable-faq';
 import { getHelpLink } from 'calypso/my-sites/plans-features-main/jetpack-faq';
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const JetpackFAQ: React.FC = () => {

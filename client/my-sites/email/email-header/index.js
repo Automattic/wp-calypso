@@ -1,19 +1,9 @@
-/**
- * External dependencies
- */
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function EmailHeader( { currentRoute, selectedSite } ) {

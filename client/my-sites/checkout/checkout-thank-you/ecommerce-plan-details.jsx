@@ -1,27 +1,15 @@
-/**
- * External dependencies
- */
-
+import { isEcommerce, isGSuiteOrExtraLicenseOrGoogleWorkspace } from '@automattic/calypso-products';
+import i18n from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
-import GoogleAppsDetails from './google-apps-details';
-import { isEcommerce, isGSuiteOrExtraLicenseOrGoogleWorkspace } from '@automattic/calypso-products';
-import PurchaseDetail from 'calypso/components/purchase-detail';
-
-/**
- * Image dependencies
- */
 import analyticsImage from 'calypso/assets/images/illustrations/google-analytics.svg';
 import conciergeImage from 'calypso/assets/images/illustrations/jetpack-concierge.svg';
 import updatesImage from 'calypso/assets/images/illustrations/updates.svg';
+import PurchaseDetail from 'calypso/components/purchase-detail';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
+import GoogleAppsDetails from './google-apps-details';
 
 function trackOnboardingButtonClick() {
 	recordTracksEvent( 'calypso_checkout_thank_you_onboarding_click' );
@@ -48,7 +36,7 @@ const EcommercePlanDetails = ( { selectedSite, sitePlans, selectedFeature, purch
 						'your site and learn more about WordPress.com.'
 				) }
 				buttonText={ i18n.translate( 'Schedule a session' ) }
-				href={ `/me/concierge/${ selectedSite.slug }/book` }
+				href={ `/me/quickstart/${ selectedSite.slug }/book` }
 				onClick={ trackOnboardingButtonClick }
 			/>
 

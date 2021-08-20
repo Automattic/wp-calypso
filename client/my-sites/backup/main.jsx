@@ -1,20 +1,23 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useSelector } from 'react-redux';
-import page from 'page';
+import { isEnabled } from '@automattic/calypso-config';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { isEnabled } from '@automattic/calypso-config';
+import page from 'page';
+import React from 'react';
+import { useSelector } from 'react-redux';
+import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
+import { BackupStorageSpace } from 'calypso/components/backup-storage-space';
+import DocumentHead from 'calypso/components/data/document-head';
+import QueryRewindCapabilities from 'calypso/components/data/query-rewind-capabilities';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import FormattedHeader from 'calypso/components/formatted-header';
+import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
 import {
 	getForCurrentCROIteration,
 	Iterations,
@@ -24,19 +27,9 @@ import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewin
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
 import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import DocumentHead from 'calypso/components/data/document-head';
-import QueryRewindCapabilities from 'calypso/components/data/query-rewind-capabilities';
-import QueryRewindState from 'calypso/components/data/query-rewind-state';
-import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
-import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
-import FormattedHeader from 'calypso/components/formatted-header';
-import Main from 'calypso/components/main';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import SidebarNavigation from 'calypso/components/sidebar-navigation';
-import { BackupStorageSpace } from 'calypso/components/backup-storage-space';
-import { backupMainPath } from './paths';
 import BackupDatePicker from './backup-date-picker';
 import EnableRestoresBanner from './enable-restores-banner';
+import { backupMainPath } from './paths';
 import SearchResults from './search-results';
 import { DailyStatus, RealtimeStatus } from './status';
 import {
@@ -44,9 +37,6 @@ import {
 	RealtimeStatus as RealtimeStatusSimplifiedI4,
 } from './status/simplified-i4';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const BackupPage = ( { queryDate } ) => {

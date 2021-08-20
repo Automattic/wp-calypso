@@ -1,25 +1,15 @@
-/**
- * External dependencies
- */
+import classNames from 'classnames';
 import { isEqual } from 'lodash';
 import React from 'react';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import Spinner from 'calypso/components/spinner';
 import Gridicon from 'calypso/components/gridicon';
-import ListItemImage from './list-item-image';
-import ListItemVideo from './list-item-video';
-import ListItemAudio from './list-item-audio';
-import ListItemDocument from './list-item-document';
+import Spinner from 'calypso/components/spinner';
 import { getMimePrefix } from 'calypso/lib/media/utils';
 import EditorMediaModalGalleryHelp from 'calypso/post-editor/media-modal/gallery-help';
+import ListItemAudio from './list-item-audio';
+import ListItemDocument from './list-item-document';
+import ListItemImage from './list-item-image';
+import ListItemVideo from './list-item-video';
 
-/**
- * Style dependencies
- */
 import './list-item.scss';
 
 // TODO: move to lib/media/utils once it gets typed.

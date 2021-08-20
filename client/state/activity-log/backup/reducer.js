@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	REWIND_BACKUP,
 	REWIND_BACKUP_DISMISS,

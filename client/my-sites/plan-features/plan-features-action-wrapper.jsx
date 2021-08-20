@@ -1,12 +1,9 @@
-/**
- * Internal dependencies
- */
-import React from 'react';
-import PlanFeaturesActions from './actions';
-import classNames from 'classnames';
 import { TYPE_BLOGGER, planMatches, isFreePlan, getPlanClass } from '@automattic/calypso-products';
-import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import React from 'react';
+import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
+import PlanFeaturesActions from './actions';
 
 export default function PlanFeaturesActionsWrapper( {
 	canPurchase,

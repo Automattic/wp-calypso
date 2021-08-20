@@ -1,15 +1,6 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { omit, mapValues } from 'lodash';
 import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
-import { activateModule, deactivateModule, fetchModuleList } from '../actions';
-import { api_module_list_response as API_MODULE_LIST_RESPONSE_FIXTURE } from './fixture';
 import {
 	JETPACK_MODULE_ACTIVATE,
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
@@ -23,6 +14,8 @@ import {
 	JETPACK_MODULES_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
+import { activateModule, deactivateModule, fetchModuleList } from '../actions';
+import { api_module_list_response as API_MODULE_LIST_RESPONSE_FIXTURE } from './fixture';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();

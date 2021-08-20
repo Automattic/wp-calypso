@@ -1,27 +1,17 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
-import React from 'react';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import Spinner from 'calypso/components/spinner';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
-import ErrorPane from 'calypso/my-sites/importer/error-pane';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import Spinner from 'calypso/components/spinner';
 import { loadmShotsPreview } from 'calypso/lib/mshots';
-import ImportableContent from 'calypso/my-sites/importer/site-importer/site-importer-importable-content';
+import ErrorPane from 'calypso/my-sites/importer/error-pane';
 import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
 import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
+import ImportableContent from 'calypso/my-sites/importer/site-importer/site-importer-importable-content';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-/**
- * Style dependencies
- */
 import './site-importer-site-preview.scss';
 
 class SiteImporterSitePreview extends React.Component {

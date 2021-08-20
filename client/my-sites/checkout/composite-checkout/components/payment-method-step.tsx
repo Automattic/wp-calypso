@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import styled from '@emotion/styled';
 import {
 	getTotalLineItemFromCart,
 	getTaxBreakdownLineItemsFromCart,
 	getCreditsLineItemFromCart,
 	getSubtotalLineItemFromCart,
 } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
+import styled from '@emotion/styled';
+import React from 'react';
 import CheckoutTerms from '../components/checkout-terms';
 import { NonProductLineItem, WPOrderReviewSection } from './wp-order-review-line-items';
 

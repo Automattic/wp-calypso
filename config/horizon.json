@@ -12,7 +12,6 @@
 	"facebook_api_key": "249643311490",
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"rebrand_cities_prefix": "rebrandcitiestestsite",
-	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"calendly_jetpack_appointment_url": "https://calendly.com/jetpack-com/jetpack-onboarding-call-test",
 	"features": {
 		"automated-transfer": true,
@@ -70,7 +69,6 @@
 		"lasagna": true,
 		"layout/app-banner": true,
 		"layout/guided-tours": true,
-		"layout/nps-survey-notice": true,
 		"layout/support-article-dialog": true,
 		"layout/query-selected-editor": true,
 		"legal-updates-banner": false,

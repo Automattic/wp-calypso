@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
-import debugFactory from 'debug';
 import { makeRedirectResponse, makeErrorResponse } from '@automattic/composite-checkout';
 import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
+import debugFactory from 'debug';
+import wp from 'calypso/lib/wp';
+import { recordTransactionBeginAnalytics } from '../lib/analytics';
+import getDomainDetails from '../lib/get-domain-details';
+import { createTransactionEndpointCartFromResponseCart } from '../lib/translate-cart';
+import { createAccount } from '../payment-method-helpers';
+import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type { ResponseCart, DomainContactDetails } from '@automattic/shopping-cart';
 import type { PayPalExpressEndpointRequestPayload } from '@automattic/wpcom-checkout';
-
-/**
- * Internal dependencies
- */
-import { recordTransactionBeginAnalytics } from '../lib/analytics';
-import type { PaymentProcessorOptions } from '../types/payment-processors';
-import getDomainDetails from '../lib/get-domain-details';
-import { createAccount } from '../payment-method-helpers';
-import wp from 'calypso/lib/wp';
-import { createTransactionEndpointCartFromResponseCart } from '../lib/translate-cart';
 
 const debug = debugFactory( 'calypso:composite-checkout:paypal-express-processor' );
 
