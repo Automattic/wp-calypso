@@ -77,7 +77,9 @@ const TitanNewMailboxList = ( {
 							tagName="h3"
 							size={ 20 }
 						>
-							Mailbox { String( index + 1 ).padStart( 2, '0' ) }
+							{ translate( 'Mailbox %(index)s', {
+								args: { index: String( index + 1 ).padStart( 2, '0' ) },
+							} ) }
 						</CardHeading>
 					) }
 
