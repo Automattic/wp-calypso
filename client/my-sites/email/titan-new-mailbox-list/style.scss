@@ -14,11 +14,12 @@
 			flex-direction: row;
 		}
 
-		> button {
-			margin-bottom: 1em;
+		> button + button {
+			margin-top: 1em;
 
 			@include break-mobile {
-				margin-bottom: 0;
+				margin-top: 0;
+				margin-left: 1.5em;
 			}
 		}
 	}
