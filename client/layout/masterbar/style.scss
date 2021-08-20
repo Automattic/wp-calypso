@@ -344,6 +344,10 @@ $autobar-height: 20px;
 	margin: 5px 8px;
 	transition: all 0.2s ease-out;
 
+	@include breakpoint-deprecated( '<480px' ) {
+		padding: 0 8px;
+	}
+
 	&.has-drafts {
 		border-top-right-radius: 0;
 		border-bottom-right-radius: 0;
