@@ -15,7 +15,6 @@ import type {
 	ResponseCart,
 	ShoppingCartState,
 	ShoppingCartAction,
-	ShoppingCartReducerDispatch,
 	CouponStatus,
 	CacheStatus,
 } from './types';
@@ -39,19 +38,8 @@ const cacheStatusesForIgnoringReload: CacheStatus[] = [
 	'fresh-pending',
 ];
 
-export function playQueuedActions(
-	state: ShoppingCartState,
-	dispatch: ShoppingCartReducerDispatch
-): void {
-	const { queuedActions, cacheStatus } = state;
-	if ( queuedActions.length > 0 && cacheStatus === 'valid' ) {
-		debug( 'playing queued actions', queuedActions );
-		queuedActions.forEach( ( action: ShoppingCartAction ) => {
-			dispatch( action );
-		} );
-		dispatch( { type: 'CLEAR_QUEUED_ACTIONS' } );
-		debug( 'queued actions are dispatched and queue is cleared' );
-	}
+function shouldPlayQueuedActions( state: ShoppingCartState ): boolean {
+	return state.queuedActions.length > 0 && state.cacheStatus === 'valid';
 }
 
 function shouldQueueReducerEvent( cacheStatus: CacheStatus, action: ShoppingCartAction ): boolean {
@@ -64,12 +52,10 @@ function shouldQueueReducerEvent( cacheStatus: CacheStatus, action: ShoppingCart
 	return false;
 }
 
-export function shoppingCartReducer(
+export function reducerWithQueue(
 	state: ShoppingCartState,
 	action: ShoppingCartAction
 ): ShoppingCartState {
-	const couponStatus = state.couponStatus;
-
 	if (
 		cacheStatusesForIgnoringReload.includes( state.cacheStatus ) &&
 		action.type === 'CART_RELOAD'
@@ -90,7 +76,27 @@ export function shoppingCartReducer(
 		};
 	}
 
+	state = shoppingCartReducer( state, action );
+
+	if ( shouldPlayQueuedActions( state ) ) {
+		debug( 'playing queued actions', state.queuedActions );
+		const actions: ShoppingCartAction[] = [
+			...state.queuedActions,
+			{ type: 'CLEAR_QUEUED_ACTIONS' },
+		];
+		state = actions.reduce( shoppingCartReducer, state );
+		debug( 'queued actions are dispatched and queue is cleared' );
+	}
+
+	return state;
+}
+
+function shoppingCartReducer(
+	state: ShoppingCartState,
+	action: ShoppingCartAction
+): ShoppingCartState {
 	debug( 'processing requested action', action );
+	const couponStatus = state.couponStatus;
 	switch ( action.type ) {
 		case 'FETCH_INITIAL_RESPONSE_CART':
 			return { ...state, cacheStatus: 'fresh-pending' };
