@@ -8,18 +8,18 @@
 
 	.titan-new-mailbox-list__actions {
 		display: flex;
-		flex-direction: column;
+		flex-direction: column-reverse;
 
 		@include break-mobile {
 			flex-direction: row;
 		}
 
-		> button + button {
+		> button:not( :last-child ) {
 			margin-top: 1em;
 
 			@include break-mobile {
 				margin-top: 0;
-				margin-left: 1.5em;
+				margin-right: 1.5em;
 			}
 		}
 	}
