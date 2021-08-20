@@ -110,7 +110,7 @@ const TitanNewMailboxList = ( {
 				</React.Fragment>
 			) ) }
 
-			{ children }
+			<div className="titan-new-mailbox-list__parent-actions">{ children }</div>
 		</div>
 	);
 };

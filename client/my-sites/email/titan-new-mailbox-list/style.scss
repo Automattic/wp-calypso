@@ -6,9 +6,11 @@
 		margin-bottom: 0;
 	}
 
-	.titan-new-mailbox-list__actions {
+	.titan-new-mailbox-list__actions,
+	.titan-new-mailbox-list__parent-actions {
 		display: flex;
 		flex-direction: column-reverse;
+		justify-content: space-between;
 
 		@include break-mobile {
 			flex-direction: row;
@@ -22,6 +24,10 @@
 				margin-right: 1.5em;
 			}
 		}
+	}
+
+	.titan-new-mailbox-list__parent-actions {
+		justify-content: start;
 	}
 }
 
