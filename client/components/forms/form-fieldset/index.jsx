@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
 import classnames from 'classnames';
+import React from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const FormFieldset = ( { className, children, ...otherProps } ) => (

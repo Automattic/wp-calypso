@@ -59,6 +59,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import PromoCard from 'calypso/components/promo-section/promo-card';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import Gridicon from 'calypso/components/gridicon';
@@ -70,7 +71,7 @@ import forwardingIcon from 'calypso/assets/images/email-providers/forwarding.svg
 import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
-import TitanNewMailboxList from 'calypso/my-sites/email/titan-add-mailboxes/titan-new-mailbox-list';
+import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import HeaderCake from 'calypso/components/header-cake';
 
@@ -373,7 +374,6 @@ class EmailProvidersComparison extends React.Component {
 					selectedDomainName={ selectedDomainName }
 					users={ googleUsers }
 					onReturnKeyPress={ this.onGoogleFormReturnKeyPress }
-					showLabels={ true }
 				>
 					<Button
 						className="email-providers-comparison__gsuite-user-list-action-continue"
@@ -600,6 +600,8 @@ class EmailProvidersComparison extends React.Component {
 
 		return (
 			<Main wideLayout>
+				<QueryProductsList />
+
 				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
 				<QueryEmailForwards domainName={ selectedDomainName } />

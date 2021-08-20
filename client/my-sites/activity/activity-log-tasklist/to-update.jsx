@@ -41,7 +41,7 @@ export default ( WrappedComponent ) => {
 			return {
 				plugins:
 					nextProps.siteId === prevState.siteId
-						? unionBySlug( nextProps.plugins, prevState.plugins )
+						? unionBySlug( nextProps.plugins ?? [], prevState.plugins ?? [] )
 						: emptyList,
 				siteId: nextProps.siteId,
 			};
@@ -61,7 +61,7 @@ export default ( WrappedComponent ) => {
 	}
 	return connect( ( state, { siteId } ) => {
 		const alertsData = requestSiteAlerts( siteId );
-		let pluginsWithUpdates = null;
+		let pluginsWithUpdates = emptyList;
 		if ( ! isJetpackSiteSecondaryNetworkSite( state, siteId ) ) {
 			pluginsWithUpdates = getPluginsWithUpdates( state, [ siteId ] );
 		}

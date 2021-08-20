@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { requestMediaExport } from 'calypso/state/exporter/actions';
 import getMediaExportUrl from 'calypso/state/selectors/get-media-export-url';
 

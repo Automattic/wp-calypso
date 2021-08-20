@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { isRequestingMediaStorage } from 'calypso/state/sites/media-storage/selectors';
 import { requestMediaStorage } from 'calypso/state/sites/media-storage/actions';
+import { isRequestingMediaStorage } from 'calypso/state/sites/media-storage/selectors';
 
 class QueryMediaStorage extends Component {
 	componentDidMount() {

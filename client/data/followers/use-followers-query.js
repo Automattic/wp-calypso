@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { useInfiniteQuery } from 'react-query';
 import { uniqueBy } from '@automattic/js-utils';
-
-/**
- * Internal dependencies
- */
+import { useInfiniteQuery } from 'react-query';
 import wpcom from 'calypso/lib/wp';
 
 const MAX_FOLLOWERS = 10; // means pages (= 1000 followers);

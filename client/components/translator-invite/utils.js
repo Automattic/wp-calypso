@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { startsWith } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
+import { startsWith } from 'lodash';
 import { getLanguage, getLocaleFromPath } from 'calypso/lib/i18n-utils';
 
 /**

@@ -21,6 +21,7 @@ import MySitesSidebarUnifiedStatsSparkline from './sparkline';
 import { collapseAllMySitesSidebarSections } from 'calypso/state/my-sites/sidebar/actions';
 
 export const MySitesSidebarUnifiedItem = ( {
+	badge,
 	count,
 	icon,
 	isSubItem = false,
@@ -41,6 +42,7 @@ export const MySitesSidebarUnifiedItem = ( {
 
 	return (
 		<SidebarItem
+			badge={ badge }
 			count={ count }
 			label={ title }
 			link={ url }
@@ -56,6 +58,7 @@ export const MySitesSidebarUnifiedItem = ( {
 };
 
 MySitesSidebarUnifiedItem.propTypes = {
+	badge: PropTypes.string,
 	count: PropTypes.number,
 	icon: PropTypes.string,
 	sectionId: PropTypes.string,

@@ -1,22 +1,11 @@
-/**
- * External dependencies
- */
+import DesignPicker from '@automattic/design-picker';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import DesignPicker from '@automattic/design-picker';
-
-/**
- * Internal dependencies
- */
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class DesignPickerStep extends Component {

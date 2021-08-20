@@ -1,24 +1,14 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
 import React from 'react';
-
-/**
- * Internal Dependencies
- */
 import { connect } from 'react-redux';
-import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
-import QueryBlogStickers from 'calypso/components/data/query-blog-stickers';
-import getBlogStickers from 'calypso/state/selectors/get-blog-stickers';
-import { getReaderTeams } from 'calypso/state/teams/selectors';
 import BlogStickersList from 'calypso/blocks/blog-stickers/list';
+import QueryBlogStickers from 'calypso/components/data/query-blog-stickers';
+import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import InfoPopover from 'calypso/components/info-popover';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
+import getBlogStickers from 'calypso/state/selectors/get-blog-stickers';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const BlogStickers = ( { blogId, teams, stickers } ) => {

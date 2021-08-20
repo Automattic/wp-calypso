@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { map } from 'lodash';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import CardHeading from 'calypso/components/card-heading';
 import Gridicon from 'calypso/components/gridicon';
 import Notice from 'calypso/components/notice';

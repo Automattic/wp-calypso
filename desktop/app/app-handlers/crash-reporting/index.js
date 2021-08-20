@@ -1,11 +1,4 @@
-/**
- * External Dependencies
- */
 const { app, crashReporter } = require( 'electron' );
-
-/**
- * Internal dependencies
- */
 const Config = require( '../../lib/config' );
 const log = require( '../../lib/logger' )( 'desktop:crash-reporting' );
 

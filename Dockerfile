@@ -1,5 +1,5 @@
 ARG use_cache=false
-ARG node_version=14.17.3
+ARG node_version=16.5.0
 ARG base_image=registry.a8c.com/calypso/base:latest
 
 ###################
@@ -83,4 +83,4 @@ COPY --from=builder --chown=nobody:nobody /calypso/package.json /calypso/package
 
 USER nobody
 ENTRYPOINT ["/sbin/tini", "--"]
-CMD ["node", "build/server.js"]
+CMD ["node", "--unhandled-rejections=warn", "build/server.js"]

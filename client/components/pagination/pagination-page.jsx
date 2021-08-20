@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-
+import { Button } from '@automattic/components';
 import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
+import Gridicon from 'calypso/components/gridicon';
 
 class PaginationPage extends Component {
 	static propTypes = {

@@ -1,13 +1,7 @@
-/**
- * External dependencies
- */
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import GridIcon from 'calypso/components/gridicon';
-import { useTranslate } from 'i18n-calypso';
 
-/**
- * Style dependencies
- */
 import './title.scss';
 
 /*

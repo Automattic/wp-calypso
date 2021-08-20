@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getLanguage, getLanguageRouteParam } from 'calypso/lib/i18n-utils';
 
 export default function ( router ) {

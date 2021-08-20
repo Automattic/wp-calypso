@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import * as React from 'react';
 import { useSelect, useDispatch } from '@wordpress/data';
+import * as React from 'react';
 import { useHistory } from 'react-router-dom';
-
-/**
- * Internal dependencies
- */
+import { useIsAnchorFm } from '../path';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
-import { useIsAnchorFm } from '../path';
 
 /**
  * When a new user completes Gutenboarding, before creating a site we show signup dialog.

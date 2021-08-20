@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { getResources } from '../api/resources-timing';
 import { getDomContentLoadedEventStart, getNavigationStart } from '../api/performance-timing';
+import { getResources } from '../api/resources-timing';
 
 export const collector: Collector = ( report ) => {
 	const domContentLoaded = getDomContentLoadedEventStart() - getNavigationStart();

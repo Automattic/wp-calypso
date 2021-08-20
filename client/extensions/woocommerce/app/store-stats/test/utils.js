@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { assert, expect } from 'chai';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
 import { UNITS } from '../constants';
 import {
 	calculateDelta,

@@ -4,17 +4,10 @@
 
 jest.mock( 'calypso/components/data/document-head', () => 'DocumentHead' );
 
-/**
- * External dependencies
- */
-import React from 'react';
 import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
-import { JetpackConnectMainWrapper } from '../main-wrapper';
+import React from 'react';
 import Main from 'calypso/components/main';
+import { JetpackConnectMainWrapper } from '../main-wrapper';
 
 describe( 'JetpackConnectMainWrapper', () => {
 	const translate = ( string ) => string;

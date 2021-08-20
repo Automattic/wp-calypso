@@ -1,17 +1,9 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { get } from 'lodash';
 import { useRtl } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { get } from 'lodash';
+import React from 'react';
+import Emojify from 'calypso/components/emojify';
 import { stripHTML } from 'calypso/lib/formatting';
 import { isRTLCharacter, isLTRCharacter } from './direction';
-import Emojify from 'calypso/components/emojify';
 
 const MAX_LENGTH_OF_TEXT_TO_EXAMINE = 100;
 

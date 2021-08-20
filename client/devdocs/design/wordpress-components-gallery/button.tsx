@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * WordPress dependencies
- */
-import { more } from '@wordpress/icons';
 import { Button as InnerButton, Flex, FlexItem } from '@wordpress/components';
+import { more } from '@wordpress/icons';
+import React from 'react';
 
 const Button = ( props: InnerButton.Props ) => (
 	<FlexItem>

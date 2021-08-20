@@ -1,27 +1,21 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import wpcomBlockDonationsPlanUpgrade from './wpcom-block-donations-plan-upgrade';
+import wpcomBlockDonationsStripeConnect from './wpcom-block-donations-stripe-connect';
 import wpcomBlockEditorCloseClick from './wpcom-block-editor-close-click';
 import wpcomBlockEditorDetailsOpen from './wpcom-block-editor-details-open';
 import wpcomBlockEditorGlobalStylesTabSelected from './wpcom-block-editor-global-styles-tab-selected';
-import wpcomInserterInlineSearchTerm from './wpcom-inserter-inline-search-term';
-import wpcomInserterTabPanelSelected from './wpcom-inserter-tab-panel-selected';
-import wpcomBlockDonationsPlanUpgrade from './wpcom-block-donations-plan-upgrade';
-import wpcomBlockDonationsStripeConnect from './wpcom-block-donations-stripe-connect';
+import wpcomBlockEditorListViewSelect from './wpcom-block-editor-list-view-select';
+import wpcomBlockEditorPostPublishAddNewClick from './wpcom-block-editor-post-publish-add-new-click';
+import wpcomBlockEditorTemplatePartDetachBlocks from './wpcom-block-editor-template-part-detach-blocks';
 import wpcomBlockPremiumContentPlanUpgrade from './wpcom-block-premium-content-plan-upgrade';
 import wpcomBlockPremiumContentStripeConnect from './wpcom-block-premium-content-stripe-connect';
+import wpcomInserterInlineSearchTerm from './wpcom-inserter-inline-search-term';
+import wpcomInserterTabPanelSelected from './wpcom-inserter-tab-panel-selected';
+import wpcomTemplatePartChooseExisting from './wpcom-template-part-choose-existing';
 import {
 	wpcomTemplatePartReplaceCapture,
 	wpcomTemplatePartReplaceBubble,
 } from './wpcom-template-part-replace';
-import wpcomTemplatePartChooseExisting from './wpcom-template-part-choose-existing';
-import wpcomBlockEditorListViewSelect from './wpcom-block-editor-list-view-select';
-import wpcomBlockEditorTemplatePartDetachBlocks from './wpcom-block-editor-template-part-detach-blocks';
 
 // Debugger.
 const debug = debugFactory( 'wpcom-block-editor:tracking' );
@@ -64,6 +58,7 @@ const EVENTS_MAPPING = [
 	wpcomTemplatePartChooseExisting(),
 	wpcomBlockEditorListViewSelect(),
 	wpcomBlockEditorTemplatePartDetachBlocks(),
+	wpcomBlockEditorPostPublishAddNewClick(),
 ];
 const EVENTS_MAPPING_CAPTURE = EVENTS_MAPPING.filter( ( { capture } ) => capture );
 const EVENTS_MAPPING_NON_CAPTURE = EVENTS_MAPPING.filter( ( { capture } ) => ! capture );

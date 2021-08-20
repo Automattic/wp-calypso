@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { startsWith } from 'lodash';
 
 const schemeRegex = /^\w+:\/\//;

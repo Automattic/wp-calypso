@@ -36,6 +36,7 @@ type WpcomStoreAction =
 	| { type: 'UPDATE_POSTAL_CODE'; payload: string }
 	| { type: 'UPDATE_REQUIRED_DOMAIN_FIELDS'; payload: ManagedContactDetailsRequiredMask }
 	| { type: 'TOUCH_CONTACT_DETAILS' }
+	| { type: 'CLEAR_DOMAIN_CONTACT_ERROR_MESSAGES' }
 	| { type: 'UPDATE_COUNTRY_CODE'; payload: string }
 	| { type: 'LOAD_COUNTRY_CODE_FROM_GEOIP'; payload: string }
 	| {
@@ -80,6 +81,8 @@ export function useWpcomStore(
 				return updaters.updateCountryCode( state, action.payload );
 			case 'APPLY_DOMAIN_CONTACT_VALIDATION_RESULTS':
 				return updaters.setErrorMessages( state, action.payload );
+			case 'CLEAR_DOMAIN_CONTACT_ERROR_MESSAGES':
+				return updaters.clearErrorMessages( state );
 			case 'TOUCH_CONTACT_DETAILS':
 				return updaters.touchContactFields( state );
 			case 'LOAD_COUNTRY_CODE_FROM_GEOIP':
@@ -135,6 +138,10 @@ export function useWpcomStore(
 				payload: ManagedContactDetailsErrors
 			): WpcomStoreAction {
 				return { type: 'APPLY_DOMAIN_CONTACT_VALIDATION_RESULTS', payload };
+			},
+
+			clearDomainContactErrorMessages(): WpcomStoreAction {
+				return { type: 'CLEAR_DOMAIN_CONTACT_ERROR_MESSAGES' };
 			},
 
 			setSiteId( payload: string ): WpcomStoreAction {

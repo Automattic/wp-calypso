@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import NoticeAction from 'calypso/components/notice/notice-action';
 import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 
 class Notices extends React.PureComponent {
 	static displayName = 'Notice';

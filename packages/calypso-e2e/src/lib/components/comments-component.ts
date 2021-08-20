@@ -1,5 +1,4 @@
-import { ElementHandle } from 'playwright';
-import { BaseContainer } from '../base-container';
+import { Page, ElementHandle } from 'playwright';
 
 const selectors = {
 	// Comment
@@ -15,10 +14,19 @@ const selectors = {
 
 /**
  * Represents the comments section of a post.
- *
- * @augments {BaseContainer}
  */
-export class CommentsComponent extends BaseContainer {
+export class CommentsComponent {
+	private page: Page;
+
+	/**
+	 * Constructs an instance of the component.
+	 *
+	 * @param {Page} page The underlying page.
+	 */
+	constructor( page: Page ) {
+		this.page = page;
+	}
+
 	/**
 	 * Fills and posts a comment in the post's comment section.
 	 *
@@ -26,14 +34,22 @@ export class CommentsComponent extends BaseContainer {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async postComment( comment: string ): Promise< void > {
-		// Wait for the page to fully load. Otherwise, the Post Comment button may not
+		// Wait for all network connections to complete. Otherwise, the Post Comment button may not
 		// appear even if the text area is clicked on.
 		await this.page.waitForLoadState( 'networkidle' );
+		// Wait until the comment text area is fully stable on the page.
+		// This is to guard against long-loading pages (eg. notifications test) where all network
+		// requests may have completed but the page remains in a loading state.
+		const commentArea = await this.page.waitForSelector( selectors.commentTextArea );
+		await commentArea.waitForElementState( 'stable' );
 		// To simulate user action first click on the field. This also exposes the
 		// submit comment button.
 		await this.page.click( selectors.commentTextArea );
 		await this.page.fill( selectors.commentTextArea, comment );
-		await this.page.click( selectors.submitButton );
+		await Promise.all( [
+			this.page.waitForNavigation(),
+			this.page.click( selectors.submitButton ),
+		] );
 	}
 
 	/**
@@ -53,6 +69,8 @@ export class CommentsComponent extends BaseContainer {
 	 */
 	async _click( selector: string | number ): Promise< ElementHandle > {
 		let commentToLike!: ElementHandle;
+
+		await this.page.waitForLoadState( 'load' );
 
 		// Retrieve the nth comment on the page.
 		if ( typeof selector === 'number' ) {

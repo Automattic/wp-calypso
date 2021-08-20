@@ -1,3 +1,4 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
  */
@@ -51,6 +52,7 @@ class SharingConnection extends Component {
 		userId: 0,
 		defaultServiceIcon: {
 			google_my_business: 'institution',
+			slack: 'link',
 		},
 	};
 
@@ -100,6 +102,7 @@ class SharingConnection extends Component {
 			this.state.isSavingSitewide &&
 			this.props.connection.shared !== prevProps.connection.shared
 		) {
+			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( { isSavingSitewide: false } );
 		}
 	}
@@ -110,6 +113,7 @@ class SharingConnection extends Component {
 				<img
 					src={ this.props.connection.external_profile_picture }
 					alt={ this.props.connection.label }
+					// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 					className="sharing-connection__account-avatar"
 				/>
 			);
@@ -138,6 +142,7 @@ class SharingConnection extends Component {
 			this.props.userId === this.props.connection.keyring_connection_user_ID
 		) {
 			return (
+				// eslint-disable-next-line
 				<a onClick={ this.refresh } className="sharing-connection__account-action reconnect">
 					<Gridicon icon="notice" size={ 18 } />
 					{ this.props.translate( 'Reconnect' ) }
@@ -152,6 +157,7 @@ class SharingConnection extends Component {
 
 		if ( this.props.showDisconnect && userCanDelete ) {
 			return (
+				// eslint-disable-next-line
 				<a onClick={ this.disconnect } className="sharing-connection__account-action disconnect">
 					{ this.props.translate( 'Disconnect' ) }
 				</a>

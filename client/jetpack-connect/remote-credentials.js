@@ -1,32 +1,27 @@
 /**
  * Component which handle remote credentials for installing Jetpack
  */
-import classnames from 'classnames';
-import React, { Component, Fragment } from 'react';
-import page from 'page';
-import { connect } from 'react-redux';
-import { flowRight } from 'lodash';
-import { localize } from 'i18n-calypso';
-/**
- * External dependencies
- */
 import { Button, Card } from '@automattic/components';
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { flowRight } from 'lodash';
+import page from 'page';
+import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+import FormattedHeader from 'calypso/components/formatted-header';
 import FormButton from 'calypso/components/forms/form-button';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormattedHeader from 'calypso/components/formatted-header';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import Gridicon from 'calypso/components/gridicon';
-import HelpButton from './help-button';
-import JetpackConnectNotices from './jetpack-connect-notices';
-import JetpackRemoteInstallNotices from './jetpack-remote-install-notices';
-import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
-import MainWrapper from './main-wrapper';
+import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import Spinner from 'calypso/components/spinner';
-import { addCalypsoEnvQueryArg } from './utils';
+import WordPressLogo from 'calypso/components/wordpress-logo';
 import { addQueryArgs } from 'calypso/lib/route';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getConnectingSite } from 'calypso/state/jetpack-connect/selectors';
 import {
 	jetpackRemoteInstall,
 	jetpackRemoteInstallUpdateError,
@@ -34,9 +29,6 @@ import {
 import getJetpackRemoteInstallErrorCode from 'calypso/state/selectors/get-jetpack-remote-install-error-code';
 import getJetpackRemoteInstallErrorMessage from 'calypso/state/selectors/get-jetpack-remote-install-error-message';
 import isJetpackRemoteInstallComplete from 'calypso/state/selectors/is-jetpack-remote-install-complete';
-import { getConnectingSite } from 'calypso/state/jetpack-connect/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { REMOTE_PATH_AUTH } from './constants';
 import {
 	ACTIVATION_FAILURE,
 	ACTIVATION_RESPONSE_ERROR,
@@ -45,7 +37,12 @@ import {
 	INVALID_PERMISSIONS,
 	UNKNOWN_REMOTE_INSTALL_ERROR,
 } from './connection-notice-types';
-import WordPressLogo from 'calypso/components/wordpress-logo';
+import { REMOTE_PATH_AUTH } from './constants';
+import HelpButton from './help-button';
+import JetpackConnectNotices from './jetpack-connect-notices';
+import JetpackRemoteInstallNotices from './jetpack-remote-install-notices';
+import MainWrapper from './main-wrapper';
+import { addCalypsoEnvQueryArg } from './utils';
 
 export class OrgCredentialsForm extends Component {
 	state = {

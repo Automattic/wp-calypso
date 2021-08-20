@@ -158,6 +158,7 @@ export default function useShoppingCartManager( {
 
 	// Refetch when the window is refocused
 	useRefetchOnFocus(
+		cartKey,
 		options ?? {},
 		cacheStatus,
 		responseCartWithoutTempProducts,

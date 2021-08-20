@@ -479,6 +479,7 @@ export {
 	areAllMailboxesAvailable,
 	areAllMailboxesValid,
 	buildNewTitanMailbox,
+	decorateMailboxWithAvailabilityError,
 	getMailboxPropTypeShape,
 	sanitizeEmailSuggestion,
 	transformMailboxForCart,

@@ -1,17 +1,11 @@
-/**
- * External Dependencies
- */
 const { execSync } = require( 'child_process' ); // eslint-disable-line import/no-nodejs-modules
 const os = require( 'os' ); // eslint-disable-line import/no-nodejs-modules
-
-/**
- * Internal dependencies
- */
-const Platform = require( '../../lib/platform' );
 const config = require( '../../lib/config' );
-const SettingsFile = require( '../../lib/settings/settings-file' );
-const APPS_DIRECTORY = '/Applications';
 const log = require( '../../lib/logger' )( 'desktop:system' );
+const Platform = require( '../../lib/platform' );
+const SettingsFile = require( '../../lib/settings/settings-file' );
+
+const APPS_DIRECTORY = '/Applications';
 
 function isPinned() {
 	if ( Platform.isOSX() ) {

@@ -1,33 +1,19 @@
-/**
- * External dependencies
- */
 import { Dialog } from '@automattic/components';
-import { useI18n } from '@wordpress/react-i18n';
-import { sprintf } from '@wordpress/i18n';
-import type { I18n } from '@wordpress/i18n';
 import LanguagePicker, { createLanguageGroups } from '@automattic/language-picker';
-import type { Language, LocalizedLanguageNames } from '@automattic/language-picker';
+import { Button, Tooltip } from '@wordpress/components';
+import { sprintf } from '@wordpress/i18n';
+import { Icon, info } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * WordPress dependencies
- */
-import { Button, Tooltip } from '@wordpress/components';
-import { Icon, info } from '@wordpress/icons';
-
-/**
- * Internal dependencies
- */
 import QueryLanguageNames from 'calypso/components/data/query-language-names';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import getLocalizedLanguageNames from 'calypso/state/selectors/get-localized-language-names';
+import FormLabel from 'calypso/components/forms/form-label';
 import { isDefaultLocale, isTranslatedIncompletely } from 'calypso/lib/i18n-utils/utils';
+import getLocalizedLanguageNames from 'calypso/state/selectors/get-localized-language-names';
+import type { Language, LocalizedLanguageNames } from '@automattic/language-picker';
+import type { I18n } from '@wordpress/i18n';
 
-/**
- * Style dependencies
- */
 import './modal.scss';
 
 type CalypsoLanguage = Language & {

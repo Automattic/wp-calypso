@@ -1,8 +1,8 @@
 import { Page } from 'playwright';
-import { BaseContainer } from '../base-container';
 
 const selectors = {
 	loginContainer: '.wp-login__container',
+	loginButton: 'button:has-text("Log In")',
 	username: '#usernameOrEmail',
 	password: '#password',
 	changeAccountButton: '#loginAsAnotherUser',
@@ -10,25 +10,28 @@ const selectors = {
 
 /**
  * Represents an instance of the calypso Login page.
- *
- * @augments {BaseContainer}
  */
-export class LoginPage extends BaseContainer {
+export class LoginPage {
+	private page: Page;
 	/**
-	 * Creates an instance of the Login page.
+	 * Constructs an instance of the component.
 	 *
-	 * @param {Page} page Playwright page on which actions are executed.
+	 * @param {Page} page The underlying page.
 	 */
 	constructor( page: Page ) {
-		super( page, selectors.loginContainer );
+		this.page = page;
 	}
 
 	/**
-	 * Post-initialization steps.
+	 * Initialization steps for the page.
+	 *
+	 * @returns {Promise<void>} No return value.
 	 */
-	async _postInit(): Promise< void > {
+	private async pageSettled(): Promise< void > {
+		// Needs to be `networkidle`, otherwise switching accounts will fail.
 		await this.page.waitForLoadState( 'networkidle' );
 		const container = await this.page.waitForSelector( selectors.loginContainer );
+		// The login container can fade in or shift, so wait for that to complete.
 		await container.waitForElementState( 'stable' );
 	}
 
@@ -39,9 +42,11 @@ export class LoginPage extends BaseContainer {
 	 * @param {string} param0.username Username of the user.
 	 * @param {string} param0.password Password of the user.
 	 * @returns {Promise<void>} No return value.
-	 * @throws {Error} If the log in process was unsuccessful for any reason.
 	 */
 	async login( { username, password }: { username: string; password: string } ): Promise< void > {
+		await this.pageSettled();
+
+		// By default, log out of the existing account (even if test steps end up logging back in).
 		const alreadyLoggedIn = await this.page.$( selectors.changeAccountButton );
 		if ( alreadyLoggedIn ) {
 			console.log( 'already logged in, selecting "change account' );
@@ -52,8 +57,8 @@ export class LoginPage extends BaseContainer {
 		await this.page.fill( selectors.username, username );
 		await this.page.keyboard.press( 'Enter' );
 		await this.page.fill( selectors.password, password );
-
-		// Enter submits the form and initiates the log in process.
-		await this.page.keyboard.press( 'Enter' );
+		await this.page.click( selectors.loginButton );
+		// Make sure after logging in that everything stablizes, so we can continue with the next action!
+		await this.page.waitForLoadState( 'load' );
 	}
 }

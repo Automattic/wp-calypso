@@ -1,26 +1,16 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
+import { Button, CompactCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
-
-/**
- * Internal dependencies
- */
-import { Button, CompactCard } from '@automattic/components';
-import { areAllUsersValid, getItemsForCart, newUsers } from 'calypso/lib/gsuite/new-users';
-import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
-import GSuiteUpsellProductDetails from './product-details';
-import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
-import { GSUITE_SLUG_PROP_TYPES } from 'calypso/lib/gsuite/constants';
+import { connect } from 'react-redux';
 import QueryProducts from 'calypso/components/data/query-products-list';
+import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
+import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
+import { GSUITE_SLUG_PROP_TYPES } from 'calypso/lib/gsuite/constants';
+import { areAllUsersValid, getItemsForCart, newUsers } from 'calypso/lib/gsuite/new-users';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import GSuiteUpsellProductDetails from './product-details';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const GSuiteUpsellCard = ( {

@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { recordTrack } from 'calypso/reader/stats';
+import AsyncLoad from 'calypso/components/async-load';
 import {
 	trackPageLoad,
 	trackUpdatesLoaded,
 	trackScrollPage,
 } from 'calypso/reader/controller-helper';
-import AsyncLoad from 'calypso/components/async-load';
+import { recordTrack } from 'calypso/reader/stats';
 
 const analyticsPageTitle = 'Reader';
 

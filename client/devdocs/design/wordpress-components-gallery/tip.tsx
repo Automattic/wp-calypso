@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * WordPress dependencies
- */
 import { Tip } from '@wordpress/components';
+import React from 'react';
 
 const TipExample = () => <Tip>An example Tip</Tip>;
 

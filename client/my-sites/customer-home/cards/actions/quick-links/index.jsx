@@ -1,6 +1,7 @@
 import i18nCalypso, { getLocaleSlug, useTranslate } from 'i18n-calypso';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import { useDebouncedCallback } from 'use-debounce';
 import anchorLogoIcon from 'calypso/assets/images/customer-home/anchor-logo-grey.svg';
 import fiverrIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
 import FoldableCard from 'calypso/components/foldable-card';
@@ -43,14 +44,18 @@ export const QuickLinks = ( {
 	trackAddEmailAction,
 	trackAddDomainAction,
 	isExpanded,
-	expand,
-	collapse,
+	updateHomeQuickLinksToggleStatus,
 	isUnifiedNavEnabled,
 	siteAdminUrl,
 	editHomePageUrl,
 	siteSlug,
 } ) => {
 	const translate = useTranslate();
+	const [
+		debouncedUpdateHomeQuickLinksToggleStatus,
+		,
+		flushDebouncedUpdateHomeQuickLinksToggleStatus,
+	] = useDebouncedCallback( updateHomeQuickLinksToggleStatus, 1000 );
 
 	const quickLinks = (
 		<div className="quick-links__boxes">
@@ -180,14 +185,20 @@ export const QuickLinks = ( {
 		</div>
 	);
 
+	useEffect( () => {
+		return () => {
+			flushDebouncedUpdateHomeQuickLinksToggleStatus();
+		};
+	}, [] );
+
 	return (
 		<FoldableCard
 			className="quick-links"
 			header={ translate( 'Quick links' ) }
 			clickableHeader
 			expanded={ isExpanded }
-			onOpen={ expand }
-			onClose={ collapse }
+			onOpen={ () => debouncedUpdateHomeQuickLinksToggleStatus( 'expanded' ) }
+			onClose={ () => debouncedUpdateHomeQuickLinksToggleStatus( 'collapsed' ) }
 		>
 			{ quickLinks }
 		</FoldableCard>
@@ -353,8 +364,8 @@ const mapDispatchToProps = {
 	trackAnchorPodcastAction,
 	trackAddEmailAction,
 	trackAddDomainAction,
-	expand: () => savePreference( 'homeQuickLinksToggleStatus', 'expanded' ),
-	collapse: () => savePreference( 'homeQuickLinksToggleStatus', 'collapsed' ),
+	updateHomeQuickLinksToggleStatus: ( status ) =>
+		savePreference( 'homeQuickLinksToggleStatus', status ),
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {

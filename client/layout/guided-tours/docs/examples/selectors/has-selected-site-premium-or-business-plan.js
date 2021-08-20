@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { PLAN_PREMIUM, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { getSitePlan } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

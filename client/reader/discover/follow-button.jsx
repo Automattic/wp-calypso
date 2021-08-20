@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import FollowButton from 'calypso/reader/follow-button';
-import { recordFollowToggle } from './stats';
 import { DISCOVER_POST } from 'calypso/reader/follow-sources';
+import { recordFollowToggle } from './stats';
 
 class DiscoverFollowButton extends React.Component {
 	static propTypes = {

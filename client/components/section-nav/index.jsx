@@ -1,24 +1,13 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { includes } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal Dependencies
- */
-import CommentNavigationTab from 'calypso/my-sites/comments/comment-navigation/comment-navigation-tab';
-import NavTabs from 'calypso/components/section-nav/tabs';
-import NavItem from 'calypso/components/section-nav/item';
 import Search from 'calypso/components/search';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import CommentNavigationTab from 'calypso/my-sites/comments/comment-navigation/comment-navigation-tab';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class SectionNav extends Component {

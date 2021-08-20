@@ -1,18 +1,7 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
-
-/**
- * Internal dependencies
- */
+import React, { Component } from 'react';
 import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Style dependencies
- */
+import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import './style.scss';
 
 export class SignupProcessingScreen extends Component {

@@ -1,16 +1,7 @@
-/**
- * External dependencies
- *
- */
-import React from 'react';
-import classNames from 'classnames';
 import path from 'path';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
-import Head from 'calypso/components/head';
+import classNames from 'classnames';
+import React from 'react';
 import EnvironmentBadge, {
 	Branch,
 	AuthHelper,
@@ -18,11 +9,12 @@ import EnvironmentBadge, {
 	PreferencesHelper,
 	FeaturesHelper,
 } from 'calypso/components/environment-badge';
-import { chunkCssLinks } from './utils/chunk';
-import { isBilmurEnabled, getBilmurUrl } from './utils/bilmur';
+import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
+import { isBilmurEnabled, getBilmurUrl } from './utils/bilmur';
+import { chunkCssLinks } from './utils/chunk';
 
 class Document extends React.Component {
 	render() {

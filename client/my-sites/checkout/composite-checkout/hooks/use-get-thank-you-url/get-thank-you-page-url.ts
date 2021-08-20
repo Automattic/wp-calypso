@@ -10,7 +10,7 @@ const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' 
 /**
  * Internal dependencies
  */
-import { isExternal, resemblesUrl, urlToSlug } from 'calypso/lib/url';
+import { addQueryArgs, isExternal, resemblesUrl, urlToSlug } from 'calypso/lib/url';
 import config from '@automattic/calypso-config';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
@@ -58,6 +58,8 @@ export default function getThankYouPageUrl( {
 	hideNudge,
 	isInEditor,
 	isJetpackCheckout = false,
+	jetpackTemporarySiteId,
+	adminPageRedirect,
 }: {
 	siteSlug: string | undefined;
 	adminUrl: string | undefined;
@@ -75,6 +77,8 @@ export default function getThankYouPageUrl( {
 	hideNudge?: boolean;
 	isInEditor?: boolean;
 	isJetpackCheckout?: boolean;
+	jetpackTemporarySiteId?: string;
+	adminPageRedirect?: string;
 } ): string {
 	debug( 'starting getThankYouPageUrl' );
 
@@ -146,10 +150,13 @@ export default function getThankYouPageUrl( {
 		}`;
 
 		const isValidReceiptId = ! isNaN( parseInt( pendingOrReceiptId ) );
-
-		return isValidReceiptId
-			? `${ thankYouUrlSiteLess }?receiptId=${ pendingOrReceiptId }`
-			: thankYouUrlSiteLess;
+		return addQueryArgs(
+			{
+				receiptId: isValidReceiptId ? pendingOrReceiptId : undefined,
+				siteId: jetpackTemporarySiteId && parseInt( jetpackTemporarySiteId ),
+			},
+			thankYouUrlSiteLess
+		);
 	}
 
 	const fallbackUrl = getFallbackDestination( {
@@ -160,6 +167,7 @@ export default function getThankYouPageUrl( {
 		cart,
 		isJetpackNotAtomic: Boolean( isJetpackNotAtomic ),
 		productAliasFromUrl,
+		adminPageRedirect,
 	} );
 	debug( 'fallbackUrl is', fallbackUrl );
 
@@ -267,6 +275,7 @@ function getFallbackDestination( {
 	cart,
 	isJetpackNotAtomic,
 	productAliasFromUrl,
+	adminPageRedirect,
 }: {
 	pendingOrReceiptId: string;
 	siteSlug: string | undefined;
@@ -275,6 +284,7 @@ function getFallbackDestination( {
 	cart: ResponseCart | undefined;
 	isJetpackNotAtomic: boolean;
 	productAliasFromUrl: string | undefined;
+	adminPageRedirect?: string;
 } ): string {
 	const isCartEmpty = cart ? getAllCartItems( cart ).length === 0 : true;
 	const isReceiptEmpty = ':receiptId' === pendingOrReceiptId;
@@ -307,12 +317,14 @@ function getFallbackDestination( {
 		if ( isJetpackNotAtomic && purchasedProduct ) {
 			debug( 'the site is jetpack and bought a jetpack product', siteSlug, purchasedProduct );
 
+			const adminPath = adminPageRedirect || 'admin.php?page=jetpack#/recommendations';
+
 			// Jetpack Cloud will either redirect to wp-admin (if JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN
 			// flag is set), or otherwise will redirect to a Jetpack Redirect API url (source=jetpack-checkout-thankyou)
 			if ( isJetpackCloud() ) {
 				if ( redirectCheckoutToWpAdmin() && adminUrl ) {
 					debug( 'checkout is Jetpack Cloud, returning wp-admin url' );
-					return `${ adminUrl }admin.php?page=jetpack#/recommendations`;
+					return adminUrl + adminPath;
 				}
 				debug( 'checkout is Jetpack Cloud, returning Jetpack Redirect API url' );
 				return `${ JETPACK_REDIRECT_URL }&site=${ siteSlug }&query=${ encodeURIComponent(
@@ -321,7 +333,7 @@ function getFallbackDestination( {
 			}
 			// Otherwise if not Jetpack Cloud:
 			return redirectCheckoutToWpAdmin() && adminUrl
-				? `${ adminUrl }admin.php?page=jetpack#/recommendations`
+				? adminUrl + adminPath
 				: `/plans/my-plan/${ siteSlug }?thank-you=true&product=${ purchasedProduct }`;
 		}
 

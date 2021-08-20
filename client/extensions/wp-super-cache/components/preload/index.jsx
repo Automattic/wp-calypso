@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
+import { Button, Card } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
+import { flowRight, get, pick } from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { flowRight, get, pick } from 'lodash';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
@@ -17,13 +10,13 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
-import QueryStatus from '../data/query-status';
 import SectionHeader from 'calypso/components/section-header';
-import WrapSettingsForm from '../wrap-settings-form';
-import { cancelPreloadCache, preloadCache } from '../../state/cache/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { cancelPreloadCache, preloadCache } from '../../state/cache/actions';
 import { isPreloadingCache } from '../../state/cache/selectors';
 import { getStatus } from '../../state/status/selectors';
+import QueryStatus from '../data/query-status';
+import WrapSettingsForm from '../wrap-settings-form';
 
 /**
  * Render cache preload interval number input

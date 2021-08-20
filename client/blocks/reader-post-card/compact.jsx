@@ -1,16 +1,9 @@
-/**
- * External Dependencies
- */
 import PropTypes from 'prop-types';
 import React from 'react';
-
-/**
- * Internal Dependencies
- */
-import AutoDirection from 'calypso/components/auto-direction';
-import Emojify from 'calypso/components/emojify';
 import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import ReaderPostOptionsMenu from 'calypso/blocks/reader-post-options-menu';
+import AutoDirection from 'calypso/components/auto-direction';
+import Emojify from 'calypso/components/emojify';
 import FeaturedAsset from './featured-asset';
 
 const CompactPost = ( { post, postByline, children, isDiscover, onClick } ) => {

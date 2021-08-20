@@ -5,12 +5,9 @@
 	display: flex;
 	flex-direction: column;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		align-items: center;
 		flex-direction: row;
-	}
-
-	@include breakpoint-deprecated( '>660px' ) {
 		padding: 15px 20px;
 	}
 }
@@ -58,7 +55,7 @@
 	padding: 0.25em 3em;
 	transition: all 0.1s linear;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		flex: 1 0 auto;
 		margin-left: 1em;
 		margin-top: 0;
@@ -89,12 +86,19 @@ body.is-section-signup.is-white-signup {
 		@include break-mobile {
 			border: 1px solid #e2e4e7;
 			border-radius: 4px; /* stylelint-disable-line */
-			flex-direction: row;
 			margin: 0 20px;
+		}
+
+		@include break-small {
+			flex-direction: row;
 		}
 
 		@include break-large {
 			margin: 0;
+		}
+
+		@include breakpoint-deprecated( '<660px' ) {
+			flex-direction: column;
 		}
 
 		.email-product-price {

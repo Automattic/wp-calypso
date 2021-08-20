@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import React from 'react';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { fetchWapiDomainInfo } from 'calypso/state/domains/transfer/actions';
 
 export default function QueryDomainInfo( { domainName } ) {

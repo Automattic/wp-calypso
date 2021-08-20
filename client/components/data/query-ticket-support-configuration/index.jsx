@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { ticketSupportConfigurationRequest } from 'calypso/state/help/ticket/actions';
 import { isRequestingTicketSupportConfiguration } from 'calypso/state/help/ticket/selectors';
 

@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import React, { ReactElement, useEffect } from 'react';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
+import React, { ReactElement, useEffect } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
-import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
+import Main from 'calypso/components/main';
 import IssueLicenseForm from 'calypso/jetpack-cloud/sections/partner-portal/issue-license-form';
+import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
 
 export default function IssueLicense(): ReactElement {
 	const translate = useTranslate();

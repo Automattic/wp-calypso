@@ -1,40 +1,29 @@
-/**
- * External dependencies
- */
-import { useSelector, useDispatch } from 'react-redux';
+import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import React, { FunctionComponent, useCallback, useMemo, useState, useEffect } from 'react';
-
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
-import { ConnectionStatus, StatusState } from './connection-status';
-import { FormMode, FormState, INITIAL_FORM_ERRORS, INITIAL_FORM_STATE, validate } from './form';
-import Verification from './verification';
-import { deleteCredentials, updateCredentials } from 'calypso/state/jetpack/credentials/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { settingsPath } from 'calypso/lib/jetpack/paths';
-import CredentialsForm from './credentials-form';
+import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
+import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
+import Gridicon from 'calypso/components/gridicon';
+import Main from 'calypso/components/main';
+import StepProgress from 'calypso/components/step-progress';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { settingsPath } from 'calypso/lib/jetpack/paths';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { JETPACK_CREDENTIALS_UPDATE_RESET } from 'calypso/state/action-types';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { deleteCredentials, updateCredentials } from 'calypso/state/jetpack/credentials/actions';
 import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
 import getJetpackCredentialsUpdateError from 'calypso/state/selectors/get-jetpack-credentials-update-error';
 import getJetpackCredentialsUpdateStatus from 'calypso/state/selectors/get-jetpack-credentials-update-status';
 import isRequestingSiteCredentials from 'calypso/state/selectors/is-requesting-site-credentials';
-import { JETPACK_CREDENTIALS_UPDATE_RESET } from 'calypso/state/action-types';
-import Gridicon from 'calypso/components/gridicon';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { ConnectionStatus, StatusState } from './connection-status';
+import CredentialsForm from './credentials-form';
+import { FormMode, FormState, INITIAL_FORM_ERRORS, INITIAL_FORM_STATE, validate } from './form';
 import HostSelection from './host-selection';
-import Main from 'calypso/components/main';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import StepProgress from 'calypso/components/step-progress';
-
-/**
- * Style dependencies
- */
+import Verification from './verification';
 import './style.scss';
 
 enum Step {

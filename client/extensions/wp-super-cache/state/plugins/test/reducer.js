@@ -1,12 +1,7 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
+import { serialize, deserialize } from 'calypso/state/utils';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import {
 	WP_SUPER_CACHE_RECEIVE_PLUGINS,
 	WP_SUPER_CACHE_REQUEST_PLUGINS,
@@ -17,8 +12,6 @@ import {
 	WP_SUPER_CACHE_TOGGLE_PLUGIN_SUCCESS,
 } from '../../action-types';
 import { items, requesting, toggling } from '../reducer';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
-import { serialize, deserialize } from 'calypso/state/utils';
 
 describe( 'reducer', () => {
 	const primarySiteId = 123456;

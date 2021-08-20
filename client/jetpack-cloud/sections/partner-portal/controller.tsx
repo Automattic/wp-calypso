@@ -1,42 +1,35 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import page from 'page';
-import type PageJS from 'page';
-
-/**
- * Internal dependencies
- */
-import { addQueryArgs } from 'calypso/lib/route';
+import React from 'react';
+import BillingDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/billing-dashboard';
+import IssueLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license';
+import LandingPage from 'calypso/jetpack-cloud/sections/partner-portal/primary/landing-page';
+import Licenses from 'calypso/jetpack-cloud/sections/partner-portal/primary/licenses';
+import PartnerAccess from 'calypso/jetpack-cloud/sections/partner-portal/primary/partner-access';
+import PaymentMethodAdd from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-add';
+import PaymentMethodList from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-list';
+import SelectPartnerKey from 'calypso/jetpack-cloud/sections/partner-portal/primary/select-partner-key';
+import TermsOfServiceConsent from 'calypso/jetpack-cloud/sections/partner-portal/primary/terms-of-service-consent';
+import PartnerPortalSidebar from 'calypso/jetpack-cloud/sections/partner-portal/sidebar';
 import {
-	getCurrentPartner,
-	hasActivePartnerKey,
-} from 'calypso/state/partner-portal/partner/selectors';
+	LicenseFilter,
+	LicenseSortDirection,
+	LicenseSortField,
+} from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import {
 	publicToInternalLicenseFilter,
 	publicToInternalLicenseSortField,
 	valueToEnum,
 	ensurePartnerPortalReturnUrl,
 } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
-import Header from './header';
 import JetpackComFooter from 'calypso/jetpack-cloud/sections/pricing/jpcom-footer';
-import PartnerPortalSidebar from 'calypso/jetpack-cloud/sections/partner-portal/sidebar';
-import PartnerAccess from 'calypso/jetpack-cloud/sections/partner-portal/primary/partner-access';
-import TermsOfServiceConsent from 'calypso/jetpack-cloud/sections/partner-portal/primary/terms-of-service-consent';
-import SelectPartnerKey from 'calypso/jetpack-cloud/sections/partner-portal/primary/select-partner-key';
-import BillingDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/billing-dashboard';
-import Licenses from 'calypso/jetpack-cloud/sections/partner-portal/primary/licenses';
-import PaymentMethodList from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-list';
-import PaymentMethodAdd from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-add';
-import IssueLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license';
-import LandingPage from 'calypso/jetpack-cloud/sections/partner-portal/primary/landing-page';
+import { addQueryArgs } from 'calypso/lib/route';
 import {
-	LicenseFilter,
-	LicenseSortDirection,
-	LicenseSortField,
-} from 'calypso/jetpack-cloud/sections/partner-portal/types';
+	getCurrentPartner,
+	hasActivePartnerKey,
+} from 'calypso/state/partner-portal/partner/selectors';
 import { ToSConsent } from 'calypso/state/partner-portal/types';
+import Header from './header';
+import type PageJS from 'page';
 
 export function partnerContext( context: PageJS.Context, next: () => void ): void {
 	context.header = <Header />;

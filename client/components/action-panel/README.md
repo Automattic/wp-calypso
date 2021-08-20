@@ -5,13 +5,13 @@ This is a larger [`Card` component](../../components/card) that has a title, des
 ## Usage
 
 ```jsx
-import ActionPanel from 'calypso/components/action-panel';
-import ActionPanelTitle from 'calypso/components/action-panel/title';
-import ActionPanelBody from 'calypso/components/action-panel/body';
-import ActionPanelFigure from 'calypso/components/action-panel/figure';
-import ActionPanelCta from 'calypso/components/action-panel/cta';
-import ActionPanelFooter from 'calypso/components/action-panel/footer';
 import { Button } from '@automattic/components';
+import ActionPanel from 'calypso/components/action-panel';
+import ActionPanelBody from 'calypso/components/action-panel/body';
+import ActionPanelCta from 'calypso/components/action-panel/cta';
+import ActionPanelFigure from 'calypso/components/action-panel/figure';
+import ActionPanelFooter from 'calypso/components/action-panel/footer';
+import ActionPanelTitle from 'calypso/components/action-panel/title';
 
 const ActionPanelExample = ( { translate } ) => {
 	return (

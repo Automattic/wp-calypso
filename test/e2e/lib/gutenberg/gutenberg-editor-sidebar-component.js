@@ -126,7 +126,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 	async addNewCategory( category ) {
 		const addNewCategoryButtonLocator = By.css( '.editor-post-taxonomies__hierarchical-terms-add' );
 		const categoryNameInputLocator = By.css(
-			'input.editor-post-taxonomies__hierarchical-terms-input[type=text]'
+			'.editor-post-taxonomies__hierarchical-terms-input input[type=text]'
 		);
 		const saveCategoryButtonLocator = By.css(
 			'button.editor-post-taxonomies__hierarchical-terms-submit'

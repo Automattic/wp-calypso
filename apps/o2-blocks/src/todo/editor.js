@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import classnames from 'classnames';
-import { __ } from '@wordpress/i18n';
-import { Button, Dashicon } from '@wordpress/components';
-import { Component } from '@wordpress/element';
 import { registerBlockType } from '@wordpress/blocks';
+import { Button, Dashicon } from '@wordpress/components';
 import { RichText } from '@wordpress/editor';
-
-/**
- * Internal dependencies
- */
+import { Component } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import classnames from 'classnames';
 import { ItemEditor } from './item';
 
 import './editor.scss';

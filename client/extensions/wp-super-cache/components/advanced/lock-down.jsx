@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { pick } from 'lodash';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
-import SectionHeader from 'calypso/components/section-header';
-import Gridicon from 'calypso/components/gridicon';
+import { ToggleControl } from '@wordpress/components';
+import { pick } from 'lodash';
+import React from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import WrapSettingsForm from '../wrap-settings-form';
+import Gridicon from 'calypso/components/gridicon';
 import Notice from 'calypso/components/notice';
+import SectionHeader from 'calypso/components/section-header';
+import WrapSettingsForm from '../wrap-settings-form';
 
 const LockDown = ( {
 	fields: { cache_lock_down },

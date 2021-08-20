@@ -1,27 +1,16 @@
-/**
- * External dependencies
- */
-
+import { Button } from '@automattic/components';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import SearchCard from 'calypso/components/search-card';
-import { Button } from '@automattic/components';
-import TermsList from './list';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getPostTypeTaxonomy } from 'calypso/state/post-types/taxonomies/selectors';
-import QueryTaxonomies from 'calypso/components/data/query-taxonomies';
 import TermFormDialog from 'calypso/blocks/term-form-dialog';
+import QueryTaxonomies from 'calypso/components/data/query-taxonomies';
+import SearchCard from 'calypso/components/search-card';
 import { recordGoogleEvent, bumpStat } from 'calypso/state/analytics/actions';
+import { getPostTypeTaxonomy } from 'calypso/state/post-types/taxonomies/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import TermsList from './list';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export class TaxonomyManager extends Component {

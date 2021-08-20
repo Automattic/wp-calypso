@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 const os = require( 'os' ); // eslint-disable-line import/no-nodejs-modules
 
 /**

@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import React, { ReactElement, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import RenderSwitch from 'calypso/components/jetpack/render-switch';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
-import QueryRewindState from 'calypso/components/data/query-rewind-state';
-import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
-import RenderSwitch from 'calypso/components/jetpack/render-switch';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 const productStateImpliesVaultPress = ( productState?: { state?: string; reason?: string } ) => {
 	if ( ! productState ) {

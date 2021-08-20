@@ -1,29 +1,19 @@
-/**
- * External dependencies
- */
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import CommentButton from 'calypso/blocks/comment-button';
-import LikeButton from 'calypso/reader/like-button';
-import ShareButton from 'calypso/blocks/reader-share';
+import { shouldShowComments } from 'calypso/blocks/comments/helper';
 import PostEditButton from 'calypso/blocks/post-edit-button';
 import ReaderPostOptionsMenu from 'calypso/blocks/reader-post-options-menu';
-import { shouldShowComments } from 'calypso/blocks/comments/helper';
-import { shouldShowLikes } from 'calypso/reader/like-helper';
+import ShareButton from 'calypso/blocks/reader-share';
 import { shouldShowShare } from 'calypso/blocks/reader-share/helper';
-import { userCan } from 'calypso/state/posts/utils';
-import * as stats from 'calypso/reader/stats';
-import { localize } from 'i18n-calypso';
 import ReaderVisitLink from 'calypso/blocks/reader-visit-link';
+import LikeButton from 'calypso/reader/like-button';
+import { shouldShowLikes } from 'calypso/reader/like-helper';
+import * as stats from 'calypso/reader/stats';
+import { userCan } from 'calypso/state/posts/utils';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const ReaderPostActions = ( props ) => {

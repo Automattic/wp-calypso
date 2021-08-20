@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
+import React, { Component } from 'react';
 import Popover from 'calypso/components/popover';
 
 const isInvalidTarget = ( target ) => {
@@ -24,6 +17,7 @@ class PopoverMenu extends Component {
 		popoverComponent: PropTypes.elementType,
 		popoverTitle: PropTypes.string, // used by ReaderPopover
 		customPosition: PropTypes.object,
+		relativePosition: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -53,6 +47,7 @@ class PopoverMenu extends Component {
 			className,
 			context,
 			customPosition,
+			relativePosition,
 			isVisible,
 			popoverTitle,
 			position,
@@ -67,6 +62,7 @@ class PopoverMenu extends Component {
 				className={ className }
 				context={ context }
 				customPosition={ customPosition }
+				relativePosition={ relativePosition }
 				isVisible={ isVisible }
 				// Make sure we focus on PopoverMenu so that we can control PopoverMenuItem by keyboard
 				focusOnShow={ false }

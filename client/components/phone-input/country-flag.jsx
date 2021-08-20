@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal Dependencies
- */
 import Spinner from 'calypso/components/spinner';
 import { flagUrl } from 'calypso/lib/flags';
 

@@ -1,21 +1,11 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
+import { Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
+import PropTypes from 'prop-types';
+import React from 'react';
 import Gridicon from 'calypso/components/gridicon';
 import ProductCardPriceGroup from './price-group';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function ProductCard( {

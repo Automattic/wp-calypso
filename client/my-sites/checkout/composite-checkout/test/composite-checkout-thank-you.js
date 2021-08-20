@@ -262,7 +262,7 @@ describe( 'getThankYouPageUrl', () => {
 		);
 	} );
 
-	it( 'redirects to the sites wp-admin if checkout is on Jetpack Cloud and if redirectCheckoutToWpAdmin() flag is true and there is a non-atomic jetpack product', () => {
+	it( 'redirects to the sites wp-admin if checkout is on Jetpack Cloud and if redirectCheckoutToWpAdmin() flag is true and there is a non-atomic jetpack product and adminPageRedirect is omitted', () => {
 		isJetpackCloud.mockImplementation( () => true );
 		redirectCheckoutToWpAdmin.mockImplementation( () => true );
 		const adminUrl = 'https://my.site/wp-admin/';
@@ -276,6 +276,24 @@ describe( 'getThankYouPageUrl', () => {
 			adminUrl,
 		} );
 		expect( url ).toBe( `https://my.site/wp-admin/admin.php?page=jetpack#/recommendations` );
+	} );
+
+	it( 'redirects to the sites wp-admin with adminPageRedirect if checkout is on Jetpack Cloud and if redirectCheckoutToWpAdmin() flag is true and there is a non-atomic jetpack product and adminPageRedirect is supplied', () => {
+		isJetpackCloud.mockImplementation( () => true );
+		redirectCheckoutToWpAdmin.mockImplementation( () => true );
+		const adminUrl = 'https://my.site/wp-admin/';
+		const adminPageRedirect = 'admin.php?page=jetpack-backup';
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			isJetpackNotAtomic: true,
+			cart: {
+				products: [ { product_slug: 'jetpack_complete' } ],
+			},
+			adminUrl,
+			adminPageRedirect,
+		} );
+		expect( url ).toBe( `https://my.site/wp-admin/admin.php?page=jetpack-backup` );
 	} );
 
 	it( 'redirects to the plans page with thank-you query string if there is a non-atomic jetpack product', () => {
@@ -1002,6 +1020,27 @@ describe( 'getThankYouPageUrl', () => {
 				receiptId: 'invalid receipt ID',
 			} );
 			expect( url ).toBe( '/checkout/jetpack/thank-you/no-site/jetpack_backup_daily' );
+		} );
+
+		it( 'redirects with jetpackTemporarySiteId query param when available', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: 'jetpack_backup_daily',
+					},
+				],
+			};
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: undefined,
+				cart,
+				isJetpackCheckout: true,
+				receiptId: 80023,
+				jetpackTemporarySiteId: 123456789,
+			} );
+			expect( url ).toBe(
+				'/checkout/jetpack/thank-you/no-site/jetpack_backup_daily?receiptId=80023&siteId=123456789'
+			);
 		} );
 	} );
 } );

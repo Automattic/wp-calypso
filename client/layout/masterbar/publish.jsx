@@ -1,28 +1,21 @@
-/**
- * External dependencies
- */
 import { isMobile } from '@automattic/viewport';
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import AsyncLoad from 'calypso/components/async-load';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import MasterbarItem from './item';
-import { preloadEditor } from 'calypso/sections-preloaders';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getCurrentUserVisibleSiteCount } from 'calypso/state/current-user/selectors';
-import MasterbarDrafts from './drafts';
 import TranslatableString from 'calypso/components/translatable/proptype';
+import { navigate } from 'calypso/lib/navigate';
+import { reduxGetState } from 'calypso/lib/redux-bridge';
+import { preloadEditor } from 'calypso/sections-preloaders';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserVisibleSiteCount } from 'calypso/state/current-user/selectors';
 import { getEditorUrl } from 'calypso/state/selectors/get-editor-url';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import getSectionGroup from 'calypso/state/ui/selectors/get-section-group';
-import { reduxGetState } from 'calypso/lib/redux-bridge';
-import { navigate } from 'calypso/lib/navigate';
+import MasterbarDrafts from './drafts';
+import MasterbarItem from './item';
 
 class MasterbarItemNew extends React.Component {
 	static propTypes = {

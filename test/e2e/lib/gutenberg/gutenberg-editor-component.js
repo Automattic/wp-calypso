@@ -1,6 +1,6 @@
 import { kebabCase } from 'lodash';
 import webdriver, { By } from 'selenium-webdriver';
-import AsyncBaseContainer from '../async-base-container';
+import AbstractEditorComponent from '../components/abstract-editor-component';
 import GuideComponent from '../components/guide-component.js';
 import * as driverHelper from '../driver-helper';
 import * as driverManager from '../driver-manager.js';
@@ -9,7 +9,7 @@ import { FileBlockComponent } from './blocks/file-block-component';
 import { ImageBlockComponent } from './blocks/image-block-component';
 import { ShortcodeBlockComponent } from './blocks/shortcode-block-component';
 
-export default class GutenbergEditorComponent extends AsyncBaseContainer {
+export default class GutenbergEditorComponent extends AbstractEditorComponent {
 	constructor( driver, url, editorType = 'iframe' ) {
 		super( driver, By.css( '.edit-post-header' ), url );
 		this.editorType = editorType;
@@ -237,27 +237,6 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 		const inserterMenuLocator = By.css( '.block-editor-inserter__menu' );
 		await driverHelper.waitUntilElementLocatedAndVisible( this.driver, inserterMenuLocator );
-	}
-
-	async openBlockInserterAndSearch( searchTerm ) {
-		await driverHelper.scrollIntoView(
-			this.driver,
-			By.css( '.block-editor-writing-flow' ),
-			'start'
-		);
-
-		await this.openBlockInserter();
-
-		// @todo Remove this fallback and its reference below in the `By.css` call
-		// once Gutenberg v11.1.0 is in production. This is here to support GB
-		// versions < 11.1.0, which is still the case at the moment as v11.1.0 is
-		// on edge sites.
-		const inserterSearchInputDeprecatedSelector = 'input.block-editor-inserter__search-input';
-		const inserterSearchInputLocator = By.css(
-			`input.components-search-control__input, ${ inserterSearchInputDeprecatedSelector }`
-		);
-
-		await driverHelper.setWhenSettable( this.driver, inserterSearchInputLocator, searchTerm );
 	}
 
 	async insertPattern( category, name ) {
@@ -720,30 +699,5 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		const notices = await this.driver.findElements( locator );
 		await Promise.all( notices.map( ( notice ) => notice.click() ) );
 		await driverHelper.waitUntilElementNotLocated( this.driver, locator );
-	}
-
-	async insertBlockOrPatternViaBlockAppender( name, container = 'Group' ) {
-		const containerBlockId = await this.addBlock( container );
-		const blockAppenderLocator = By.css(
-			`#${ containerBlockId } .block-editor-button-block-appender`
-		);
-		await driverHelper.clickWhenClickable( this.driver, blockAppenderLocator );
-
-		// @todo Remove this fallback and its reference below in the `By.css` call
-		// once Gutenberg v11.1.0 is in production. This is here to support GB
-		// versions < 11.1.0, which is still the case at the moment as v11.1.0 is
-		// on edge sites.
-		const quickInserterSearchInputDeprecatedSelector =
-			'.block-editor-inserter__quick-inserter .block-editor-inserter__search-input';
-		const quickInserterSearchInputLocator = By.css(
-			`.block-editor-inserter__quick-inserter .components-search-control__input, ${ quickInserterSearchInputDeprecatedSelector }`
-		);
-
-		const patternItemLocator = By.css(
-			'.block-editor-inserter__quick-inserter .block-editor-block-types-list__item, .block-editor-inserter__quick-inserter .block-editor-block-patterns-list__item'
-		);
-
-		await driverHelper.setWhenSettable( this.driver, quickInserterSearchInputLocator, name );
-		await driverHelper.clickWhenClickable( this.driver, patternItemLocator );
 	}
 }

@@ -1,19 +1,9 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import React from 'react';
 import chrono from 'chrono-node';
-
-/**
- * Internal dependencies
- */
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /**

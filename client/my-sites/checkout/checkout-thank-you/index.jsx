@@ -84,7 +84,7 @@ import { isRebrandCitiesSiteUrl } from 'calypso/lib/rebrand-cities';
 import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
-import { getSiteHomeUrl, getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteHomeUrl, getSiteSlug, getSite } from 'calypso/state/sites/selectors';
 import { recordStartTransferClickInThankYou } from 'calypso/state/domains/actions';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getActiveTheme } from 'calypso/state/themes/selectors';
@@ -92,6 +92,7 @@ import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customiz
 import getCheckoutUpgradeIntent from 'calypso/state/selectors/get-checkout-upgrade-intent';
 import { isProductsListFetching } from 'calypso/state/products-list/selectors';
 import AsyncLoad from 'calypso/components/async-load';
+import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
 
 /**
  * Style dependencies
@@ -445,6 +446,12 @@ export class CheckoutThankYou extends React.Component {
 
 			return (
 				<Main className="checkout-thank-you">
+					{ this.props.transferComplete && this.props.isEmailVerified && (
+						<WpAdminAutoLogin
+							site={ { URL: `https://${ this.props.site?.wpcom_url }` } }
+							delay={ 0 }
+						/>
+					) }
 					<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
 					<AtomicStoreThankYouCard siteId={ this.props.selectedSite.ID } />
 				</Main>
@@ -676,6 +683,7 @@ export default connect(
 			selectedSiteSlug: getSiteSlug( state, siteId ),
 			siteHomeUrl: getSiteHomeUrl( state, siteId ),
 			customizeUrl: getCustomizeOrEditFrontPageUrl( state, activeTheme, siteId ),
+			site: getSite( state, siteId ),
 		};
 	},
 	{

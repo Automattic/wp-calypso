@@ -45,6 +45,8 @@ import 'calypso/state/data-layer/wpcom/sites/rewind/downloads';
 import 'calypso/state/data-layer/wpcom/sites/rewind/restores';
 import 'calypso/state/activity-log/init';
 
+export * from './retention-policy/actions';
+
 /**
  * Turn the 'rewind' feature on for a site.
  *
@@ -78,7 +80,7 @@ export function rewindActivateFailure( siteId ) {
  * Share a rewind/activity-log event via email.
  *
  * @param {string|number} siteId Site ID
- * @param {number} rewindId Activity ID
+ * @param {string|number} rewindId Activity ID
  * @param {string} email Email address to send to
  * @returns {object} action object
  */

@@ -1,20 +1,10 @@
-/**
- * External dependencies
- */
+import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import Popover from 'calypso/components/popover';
-import { hasTouch } from 'calypso/lib/touch-detect';
 import SiteSelector from 'calypso/components/site-selector';
+import { hasTouch } from 'calypso/lib/touch-detect';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const noop = () => {};

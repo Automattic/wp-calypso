@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import { filter, find, includes, isEmpty, pick, sortBy } from 'lodash';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import steps from 'calypso/signup/config/steps-pure';
+import { filter, find, includes, isEmpty, pick, sortBy } from 'lodash';
 import flows from 'calypso/signup/config/flows';
+import steps from 'calypso/signup/config/steps-pure';
 
 const { defaultFlowName } = flows;
 

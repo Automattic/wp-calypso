@@ -61,9 +61,11 @@ export class CommentHtmlEditor extends Component {
 		}
 	) => {
 		const element = document.createElement( tag );
-		Object.entries( attributes ).forEach( ( [ key, value ] ) =>
-			element.setAttribute( key, value )
-		);
+		if ( attributes ) {
+			Object.entries( attributes ).forEach( ( [ key, value ] ) =>
+				element.setAttribute( key, value )
+			);
+		}
 		element.innerHTML = '<!---->';
 		const fragments = element.outerHTML.split( '<!---->' );
 		const opener =

@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
+import { debounce, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { debounce, isEqual } from 'lodash';
-
-/**
- * Internal dependencies.
- */
-import { getDocumentHeadTitle } from 'calypso/state/document-head/selectors/get-document-head-title';
-import { getDocumentHeadFormattedTitle } from 'calypso/state/document-head/selectors/get-document-head-formatted-title';
+import TranslatableString from 'calypso/components/translatable/proptype';
 import {
 	setDocumentHeadTitle as setTitle,
 	setDocumentHeadLink as setLink,
 	setDocumentHeadMeta as setMeta,
 	setDocumentHeadUnreadCount as setUnreadCount,
 } from 'calypso/state/document-head/actions';
-import TranslatableString from 'calypso/components/translatable/proptype';
+import { getDocumentHeadFormattedTitle } from 'calypso/state/document-head/selectors/get-document-head-formatted-title';
+import { getDocumentHeadTitle } from 'calypso/state/document-head/selectors/get-document-head-title';
 
 class DocumentHead extends Component {
 	UNSAFE_componentWillMount() {

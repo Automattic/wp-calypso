@@ -1,18 +1,8 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import PostCommentForm from './form';
 
-/**
- * Style dependencies
- */
 import './post-comment.scss'; // intentional, shares styles
 import './post-comment-with-error.scss';
 

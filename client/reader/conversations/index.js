@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import { conversations, conversationsA8c } from './controller';
-import { sidebar, updateLastRoute } from 'calypso/reader/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
+import { sidebar, updateLastRoute } from 'calypso/reader/controller';
+import { conversations, conversationsA8c } from './controller';
 
 export default function () {
 	page( '/read/conversations', updateLastRoute, sidebar, conversations, makeLayout, clientRender );

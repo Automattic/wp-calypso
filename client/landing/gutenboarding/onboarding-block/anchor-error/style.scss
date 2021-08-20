@@ -35,10 +35,12 @@
 }
 
 .anchor-error__link {
-	&.components-button.is-link:not( :disabled ), &.components-button.is-link:not( :disabled ) {
+	&.components-button.is-link:not( :disabled ),
+	&.components-button.is-link:not( :disabled ) {
 		color: var( --studio-gray-40 );
 	}
-	&.components-button.is-link:hover:not( :disabled ), &.components-button.is-link:active:not( :disabled ) {
+	&.components-button.is-link:hover:not( :disabled ),
+	&.components-button.is-link:active:not( :disabled ) {
 		color: var( --studio-gray-60 );
 	}
 }

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	ZONINATOR_REQUEST_LOCK,
 	ZONINATOR_REQUEST_LOCK_ERROR,

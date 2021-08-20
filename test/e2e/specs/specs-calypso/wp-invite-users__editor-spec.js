@@ -1,5 +1,6 @@
 import assert from 'assert';
 import config from 'config';
+import GuideComponent from '../../lib/components/guide-component';
 import NavBarComponent from '../../lib/components/nav-bar-component.js';
 import NoSitesComponent from '../../lib/components/no-sites-component.js';
 import NoticesComponent from '../../lib/components/notices-component.js';
@@ -99,6 +100,10 @@ describe( `[${ host }] Invites - New user as Editor: (${ screenSize }) @parallel
 
 	it( 'As the original user can see and remove new user', async function () {
 		await new LoginFlow( this.driver ).loginAndSelectPeople();
+
+		// Makes sure that the Quick Switch modal will be dismissed.
+		const guideComponent = new GuideComponent( this.driver );
+		await guideComponent.dismiss( 1000, '.nav-unification-quick-switch-modal' );
 
 		const peoplePage = await PeoplePage.Expect( this.driver );
 		await peoplePage.selectTeam();

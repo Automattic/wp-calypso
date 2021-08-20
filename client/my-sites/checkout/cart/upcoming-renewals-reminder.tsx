@@ -27,7 +27,7 @@ import {
 } from 'calypso/state/purchases/selectors';
 import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
 import type { Purchase } from 'calypso/lib/purchases/types';
-import { MockResponseCart } from 'calypso/my-sites/checkout/composite-checkout/components/secondary-cart-promotions';
+import { PartialCart } from 'calypso/my-sites/checkout/composite-checkout/components/secondary-cart-promotions';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 
 const OtherPurchasesLink = styled.button`
@@ -55,7 +55,7 @@ interface SelectedSite {
 }
 
 interface Props {
-	cart: MockResponseCart;
+	cart: PartialCart;
 	addItemToCart: ( product: RequestCartProduct ) => void;
 }
 

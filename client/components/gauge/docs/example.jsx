@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import Gauge from 'calypso/components/gauge';
 
 export default class extends React.PureComponent {

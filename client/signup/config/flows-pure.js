@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import { translate } from 'i18n-calypso';
 import { isEnabled } from '@automattic/calypso-config';
+import { translate } from 'i18n-calypso';
 
 const noop = () => {};
 
@@ -119,6 +116,15 @@ export function generateFlows( {
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
 			lastModified: '2020-12-10',
+			showRecaptcha: true,
+		},
+		{
+			name: 'onboarding-with-email',
+			steps: [ 'user', 'domains', 'emails', 'plans' ],
+			destination: getSignupDestination,
+			description:
+				'Copy of the onboarding flow that always includes an email step; the flow is used by the Professional Email landing page',
+			lastModified: '2021-08-11',
 			showRecaptcha: true,
 		},
 		{

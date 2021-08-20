@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import EllipsisMenu from '../';
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import PopoverMenuSeparator from 'calypso/components/popover/menu-separator';
+import EllipsisMenu from '../';
 
 export default function EllipsisMenuExample() {
 	return (

@@ -1,36 +1,29 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import { getUrlParts } from '@automattic/calypso-url';
+import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
 import ExternalLink from 'calypso/components/external-link';
 import Gridicon from 'calypso/components/gridicon';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
-import { getSignupUrl } from 'calypso/lib/login';
+import { isDomainConnectAuthorizePath } from 'calypso/lib/domains/utils';
+import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
 	isJetpackCloudOAuth2Client,
 	isWooOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
-import { getUrlParts } from '@automattic/calypso-url';
+import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { login, lostPassword } from 'calypso/lib/paths';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
-import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
-import { isDomainConnectAuthorizePath } from 'calypso/lib/domains/utils';
 
 export class LoginLinks extends React.Component {
 	static propTypes = {
@@ -109,6 +102,7 @@ export class LoginLinks extends React.Component {
 		const loginParameters = {
 			locale: this.props.locale,
 			twoFactorAuthType: 'link',
+			signupUrl: this.props.query?.signup_url,
 		};
 
 		if ( this.props.currentRoute === '/log-in/jetpack' ) {
@@ -293,14 +287,10 @@ export class LoginLinks extends React.Component {
 			usernameOrEmail,
 		} = this.props;
 
-		const signupUrl = getSignupUrl(
-			query,
-			currentRoute,
-			oauth2Client,
-			locale,
-			pathname,
-			isGutenboarding
-		);
+		// use '?signup_url' if explicitly passed as URL query param
+		const signupUrl = this.props.signupUrl
+			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
+			: getSignupUrl( query, currentRoute, oauth2Client, locale, pathname, isGutenboarding );
 
 		if ( isJetpackCloudOAuth2Client( oauth2Client ) && '/log-in/authenticator' !== currentRoute ) {
 			return null;

@@ -199,7 +199,19 @@ function bindGetPremiumThemePrice( state, siteId ) {
 // Exporting this for use in customized themes lists (recommended-themes.jsx, etc.)
 // We do not want pagination triggered in that use of the component.
 export const ConnectedThemesSelection = connect(
-	( state, { filter, page, search, tier, vertical, siteId, source } ) => {
+	(
+		state,
+		{
+			filter,
+			page,
+			search,
+			tier,
+			vertical,
+			siteId,
+			source,
+			isLoading: isCustomizedThemeListLoading,
+		}
+	) => {
 		const isJetpack = isJetpackSite( state, siteId );
 		let sourceSiteId;
 		if ( source === 'wpcom' || source === 'wporg' ) {
@@ -220,14 +232,14 @@ export const ConnectedThemesSelection = connect(
 			filter: compact( [ filter, vertical ] ).join( ',' ),
 			number,
 		};
-
 		return {
 			query,
 			source: sourceSiteId,
 			siteSlug: getSiteSlug( state, siteId ),
 			themes: getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [],
 			themesCount: getThemesFoundForQuery( state, sourceSiteId, query ),
-			isRequesting: isRequestingThemesForQuery( state, sourceSiteId, query ),
+			isRequesting:
+				isCustomizedThemeListLoading || isRequestingThemesForQuery( state, sourceSiteId, query ),
 			isLastPage: isThemesLastPageForQuery( state, sourceSiteId, query ),
 			isLoggedIn: isUserLoggedIn( state ),
 			isThemeActive: bindIsThemeActive( state, siteId ),

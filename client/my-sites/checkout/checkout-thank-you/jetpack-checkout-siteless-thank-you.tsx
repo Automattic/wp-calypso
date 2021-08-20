@@ -12,7 +12,7 @@ import { openPopupWidget } from 'react-calendly';
 /**
  * Internal dependencies
  */
-import { resemblesUrl } from 'calypso/lib/url';
+import { addQueryArgs, resemblesUrl } from 'calypso/lib/url';
 import { addHttpIfMissing } from 'calypso/my-sites/checkout/utils';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
@@ -31,21 +31,27 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryProducts from 'calypso/components/data/query-products-list';
+import { useSetCalendlyListenerEffect } from './hooks';
 
 /**
  * Type dependencies
  */
 import type { UserData } from 'calypso/lib/user/user';
+
 interface Props {
 	forScheduling: boolean;
 	productSlug: string | 'no_product';
 	receiptId?: number;
+	source?: string;
+	jetpackTemporarySiteId?: number;
 }
 
 const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 	forScheduling,
 	productSlug,
 	receiptId = 0,
+	source = 'onboarding-calypso-ui',
+	jetpackTemporarySiteId = 0,
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -106,9 +112,16 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 					receipt_id: receiptId,
 				} )
 			);
-			dispatch( requestUpdateJetpackCheckoutSupportTicket( siteUrl, receiptId ) );
+			dispatch(
+				requestUpdateJetpackCheckoutSupportTicket(
+					siteUrl,
+					receiptId,
+					source,
+					jetpackTemporarySiteId
+				)
+			);
 		},
-		[ siteInput, dispatch, translate, productSlug, receiptId ]
+		[ siteInput, dispatch, translate, productSlug, receiptId, source, jetpackTemporarySiteId ]
 	);
 
 	const onScheduleClick = useCallback( () => {
@@ -132,15 +145,25 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 		}
 	}, [ calendlyUrl, currentUser, dispatch, productSlug ] );
 
+	// Update the ZD ticket linked to `receiptId` after the user has scheduled a call.
+	useSetCalendlyListenerEffect( { productSlug, receiptId, jetpackTemporarySiteId } );
+
 	useEffect( () => {
 		if ( supportTicketStatus === 'success' ) {
-			page( `/checkout/jetpack/thank-you-completed/no-site/${ productSlug }` );
+			const thankYouCompletedUrl = addQueryArgs(
+				{
+					siteId: jetpackTemporarySiteId,
+					receiptId,
+				},
+				`/checkout/jetpack/thank-you-completed/no-site/${ productSlug }`
+			);
+			page( thankYouCompletedUrl );
 		} else if ( supportTicketStatus === 'failed' ) {
 			setError(
 				translate( 'There was a problem submitting your website address, please try again.' )
 			);
 		}
-	}, [ supportTicketStatus, productSlug, translate ] );
+	}, [ jetpackTemporarySiteId, receiptId, supportTicketStatus, productSlug, translate ] );
 
 	useEffect( () => {
 		if ( forScheduling ) {
@@ -152,9 +175,14 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 	return (
 		<Main fullWidthLayout className="jetpack-checkout-siteless-thank-you">
 			<PageViewTracker
-				path="/checkout/jetpack/thank-you/no-site/:product"
-				title="Checkout > Jetpack Siteless Thank You"
+				options={ { useJetpackGoogleAnalytics: true } }
+				path={
+					forScheduling
+						? '/checkout/jetpack/schedule-happiness-appointment'
+						: '/checkout/jetpack/thank-you/no-site/:product'
+				}
 				properties={ { product_slug: productSlug } }
+				title="Checkout > Jetpack Siteless Thank You"
 			/>
 			<Card className="jetpack-checkout-siteless-thank-you__card">
 				<div className="jetpack-checkout-siteless-thank-you__card-main">

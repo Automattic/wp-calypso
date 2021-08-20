@@ -1,20 +1,9 @@
-/**
- * External dependencies
- */
-
+import { Button } from '@automattic/components';
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 
-/**
- * Style Dependencies
- */
 import './style.scss';
 
 class EmptyContent extends Component {

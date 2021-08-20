@@ -1,26 +1,19 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Button } from '@automattic/components';
 import FormattedHeader from 'calypso/components/formatted-header';
+import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
+import { navigate } from 'calypso/lib/navigate';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { confirmJetpackInstallStatus } from 'calypso/state/jetpack-connect/actions';
+import { getConnectingSite } from 'calypso/state/jetpack-connect/selectors';
+import { REMOTE_PATH_ACTIVATE, REMOTE_PATH_INSTALL } from './constants';
 import HelpButton from './help-button';
 import JetpackInstallStep from './install-step';
-import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import MainWrapper from './main-wrapper';
 import { addCalypsoEnvQueryArg } from './utils';
-import { confirmJetpackInstallStatus } from 'calypso/state/jetpack-connect/actions';
-import { navigate } from 'calypso/lib/navigate';
-import { getConnectingSite } from 'calypso/state/jetpack-connect/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { REMOTE_PATH_ACTIVATE, REMOTE_PATH_INSTALL } from './constants';
 
 class InstallInstructions extends Component {
 	static propTypes = {

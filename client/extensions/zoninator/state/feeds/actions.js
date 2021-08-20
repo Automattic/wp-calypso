@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import {
 	ZONINATOR_REQUEST_FEED,
 	ZONINATOR_REQUEST_FEED_ERROR,

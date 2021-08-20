@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
 import { shallow } from 'enzyme';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import DocsExample, { DocsExampleToggle } from '../index';
-import { Button } from '@automattic/components';
 
 const noop = () => {};
 

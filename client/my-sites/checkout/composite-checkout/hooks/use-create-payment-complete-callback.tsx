@@ -44,7 +44,11 @@ import normalizeTransactionResponse from '../lib/normalize-transaction-response'
 import getThankYouPageUrl from './use-get-thank-you-url/get-thank-you-page-url';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import {
+	isJetpackSite,
+	getJetpackCheckoutRedirectUrl,
+	isBackupPluginActive,
+} from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { recordCompositeCheckoutErrorDuringAnalytics } from '../lib/analytics';
 
@@ -88,13 +92,28 @@ export default function useCreatePaymentCompleteCallback( {
 	const isEligibleForSignupDestinationResult = isEligibleForSignupDestination( responseCart );
 	const isJetpackNotAtomic =
 		useSelector(
-			( state ) => siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
+			( state ) =>
+				siteId &&
+				( isJetpackSite( state, siteId ) || isBackupPluginActive( state, siteId ) ) &&
+				! isAtomicSite( state, siteId )
 		) || false;
+	const adminPageRedirect = useSelector( ( state ) =>
+		getJetpackCheckoutRedirectUrl( state, siteId )
+	);
 
 	return useCallback(
 		( { paymentMethodId, transactionLastResponse }: PaymentCompleteCallbackArguments ): void => {
 			debug( 'payment completed successfully' );
 			const transactionResult = normalizeTransactionResponse( transactionLastResponse );
+
+			// In the case of a Jetpack product site-less purchase, we need to include the blog ID of the
+			// created site in the Thank You page URL.
+			let jetpackTemporarySiteId;
+			if ( isJetpackCheckout && ! siteSlug && responseCart.create_new_blog ) {
+				jetpackTemporarySiteId =
+					transactionResult.purchases && Object.keys( transactionResult.purchases ).pop();
+			}
+
 			const getThankYouPageUrlArguments = {
 				siteSlug: siteSlug || undefined,
 				adminUrl,
@@ -110,6 +129,8 @@ export default function useCreatePaymentCompleteCallback( {
 				hideNudge: isComingFromUpsell,
 				isInEditor,
 				isJetpackCheckout,
+				jetpackTemporarySiteId,
+				adminPageRedirect,
 			};
 			debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
 			const url = getThankYouPageUrl( getThankYouPageUrlArguments );
@@ -236,6 +257,7 @@ export default function useCreatePaymentCompleteCallback( {
 			isFocusedLaunch,
 			isJetpackCheckout,
 			checkoutFlow,
+			adminPageRedirect,
 		]
 	);
 }
@@ -276,11 +298,12 @@ function displayRenewalSuccessNotice(
 		reduxDispatch(
 			successNotice(
 				translate(
-					'%(productName)s has been renewed and will now auto renew in the future. ' +
-						'{{a}}Learn more{{/a}}',
+					'Success! You renewed %(productName)s for %(duration)s, and we sent your receipt to %(email)s. {{a}}Learn more about renewals{{/a}}',
 					{
 						args: {
 							productName: renewalItem.product_name,
+							duration: moment.duration( { days: renewalItem.bill_period } ).humanize(),
+							email: product.user_email,
 						},
 						components: {
 							a: <a href={ AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />,
@@ -297,8 +320,7 @@ function displayRenewalSuccessNotice(
 	reduxDispatch(
 		successNotice(
 			translate(
-				'Success! You renewed %(productName)s for %(duration)s, until %(date)s. ' +
-					'We sent your receipt to %(email)s.',
+				'Success! You renewed %(productName)s for %(duration)s, until %(date)s. We sent your receipt to %(email)s.',
 				{
 					args: {
 						productName: renewalItem.product_name,

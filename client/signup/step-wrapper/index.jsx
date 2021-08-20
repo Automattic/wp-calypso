@@ -1,20 +1,9 @@
-/**
- * External dependencies
- */
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
 import FormattedHeader from 'calypso/components/formatted-header';
 import NavigationLink from 'calypso/signup/navigation-link';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class StepWrapper extends Component {
