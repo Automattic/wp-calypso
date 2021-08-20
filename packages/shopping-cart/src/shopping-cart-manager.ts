@@ -36,8 +36,8 @@ function createDispatchAndWaitForValid(
 ): DispatchAndWaitForValid {
 	return ( action ) => {
 		return new Promise< ResponseCart >( ( resolve ) => {
-			dispatch( action );
 			actionPromises.add( resolve );
+			dispatch( action );
 		} );
 	};
 }
