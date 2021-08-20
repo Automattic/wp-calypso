@@ -11,13 +11,6 @@
 		}
 
 		input[type='url']#{&},
-		input[type='password']#{&},
-		input[type='email']#{&} {
-			/*!rtl:ignore*/
-			direction: ltr;
-		}
-
-		input[type='url']#{&},
 		input[type='search']#{&} {
 			appearance: none;
 		}
