@@ -7,14 +7,16 @@ function AlreadyOwnADomain( { onClick } ) {
 	return (
 		<div className="already-own-a-domain">
 			<MaterialIcon icon="info" />
-			{ translate(
-				'Already own a domain? You can {{action}}use it as your site’s address{{/action}}',
-				{
-					components: {
-						action: <button onClick={ onClick } />,
-					},
-				}
-			) }
+			<span>
+				{ translate(
+					'Already own a domain? You can {{action}}use it as your site’s address{{/action}}',
+					{
+						components: {
+							action: <button onClick={ onClick } />,
+						},
+					}
+				) }
+			</span>
 		</div>
 	);
 }
