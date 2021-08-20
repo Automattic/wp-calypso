@@ -17,6 +17,7 @@ export const isFacebookEnabled = true;
 export const isBingEnabled = true;
 export const isGeminiEnabled = false;
 export const isWpcomGoogleAdsGtagEnabled = true;
+export const isJetpackGoogleAdsGtagEnabled = true;
 export const isQuantcastEnabled = false;
 export const isExperianEnabled = true;
 export const isOutbrainEnabled = true;
@@ -86,7 +87,8 @@ export const TRACKING_IDS = {
 	wpcomGoogleAdsGtagSignup: 'AW-946162814/5-NnCKy3xZQBEP6YlcMD', // "All Calypso Signups (WordPress.com)"
 	wpcomGoogleAdsGtagAddToCart: 'AW-946162814/MF4yCNi_kZYBEP6YlcMD', // "WordPress.com AddToCart"
 	wpcomGoogleAdsGtagPurchase: 'AW-946162814/taG8CPW8spQBEP6YlcMD', // "WordPress.com Purchase Gtag"
-	jetpackGoogleAnalyticsGtag: 'UA-52447-43', // Jetpack Gtag for use in Jetpack x WordPress.com Flows
+	jetpackGoogleAnalyticsGtag: 'UA-52447-43', // Jetpack Gtag (Analytics) for use in Jetpack x WordPress.com Flows
+	jetpackGoogleAdsPurchase: 'AW-946162814/kIF1CL3ApfsBEP6YlcMD',
 };
 // This name is something we created to store a session id for DCM Floodlight session tracking
 export const DCM_FLOODLIGHT_SESSION_COOKIE_NAME = 'dcmsid';
