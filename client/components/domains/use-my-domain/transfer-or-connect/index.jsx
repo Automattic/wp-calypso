@@ -20,7 +20,11 @@ import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import isSiteOnPaidPlan from 'calypso/state/selectors/is-site-on-paid-plan';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { getOptionInfo } from '../utilities/get-option-info';
+import {
+	getOptionInfo,
+	connectDomainAction,
+	transferDomainAction as defaultTransferHandler,
+} from '../utilities';
 import OptionContent from './option-content';
 
 /**
@@ -32,23 +36,31 @@ function DomainTransferOrConnect( {
 	availability,
 	cart,
 	currencyCode,
+	defaultConnectHandler,
 	domain,
 	isSignupStep,
+	onConnect,
+	onTransfer,
 	primaryWithPlansOnly,
 	productsList,
 	recordMappingButtonClickInUseYourDomain,
 	recordTransferButtonClickInUseYourDomain,
 	selectedSite,
 	siteIsOnPaidPlan,
+	transferDomainUrl,
 } ) {
 	const handleConnect = () => {
 		recordMappingButtonClickInUseYourDomain( domain );
-		// TODO: Go to the next step in mapping the domain
+
+		const connectHandler = onConnect ?? defaultConnectHandler;
+		connectHandler( { domain, selectedSite } );
 	};
 
 	const handleTransfer = () => {
 		recordTransferButtonClickInUseYourDomain( domain );
-		// TODO: Go to the next step in transferring the domain
+
+		const transferHandler = onTransfer ?? defaultTransferHandler;
+		transferHandler( { domain, selectedSite, transferDomainUrl } );
 	};
 
 	const content = getOptionInfo( {
@@ -63,6 +75,7 @@ function DomainTransferOrConnect( {
 		productsList,
 		selectedSite,
 		siteIsOnPaidPlan,
+		transferDomainUrl,
 	} );
 
 	const baseClassName = 'domain-transfer-or-connect';
@@ -87,8 +100,14 @@ function DomainTransferOrConnect( {
 
 DomainTransferOrConnect.propTypes = {
 	availability: PropTypes.object.isRequired,
+	defaultConnectHandler: PropTypes.func,
+	defaultTransferHandler: PropTypes.func,
 	domain: PropTypes.string.isRequired,
+	isSignupStep: PropTypes.bool,
+	onConnect: PropTypes.func,
+	onTransfer: PropTypes.func,
 	selectedSite: PropTypes.object.isRequired,
+	transferDomainUrl: PropTypes.string,
 };
 
 const recordTransferButtonClickInUseYourDomain = ( domain_name ) =>
@@ -108,5 +127,10 @@ export default connect(
 			siteIsOnPaidPlan: isSiteOnPaidPlan( state, selectedSite?.ID ),
 		};
 	},
-	{ recordTransferButtonClickInUseYourDomain, recordMappingButtonClickInUseYourDomain }
+	{
+		defaultConnectHandler: connectDomainAction,
+		// defaultTransferHandler: transferDomainAction,
+		recordTransferButtonClickInUseYourDomain,
+		recordMappingButtonClickInUseYourDomain,
+	}
 )( withShoppingCart( DomainTransferOrConnect ) );

@@ -30,7 +30,7 @@ class Site {
 	 * Create a Site instance
 	 *
 	 * @param {string} id - site id
-	 * @param {WPCOM} wpcom - wpcom instance
+	 * @param wpcom - wpcom instance
 	 * @returns {null} null
 	 */
 	constructor( id, wpcom ) {
@@ -248,7 +248,7 @@ class Site {
 	/**
 	 * Get number of posts in the post type groups by post status
 	 *
-	 * *Example:*
+	 * Example:*
 	 *   // Get number post of pages
 	 *    wpcom
 	 *    .site( 'my-blog.wordpress.com' )
@@ -387,7 +387,7 @@ class Site {
 	/**
 	 * Return a `SiteWordAds` instance.
 	 *
-	 * *Example:*
+	 * Example:*
 	 *    // Create a SiteWordAds instance
 	 *
 	 *    const wordAds = wpcom
@@ -398,6 +398,30 @@ class Site {
 	 */
 	wordAds() {
 		return new SiteWordAds( this._id, this.wpcom );
+	}
+
+	/**
+	 * Add a domain mapping to a site.
+	 *
+	 * @param {string} domain - donain to map
+	 * @param {object} [query] - query object parameter
+	 * @param {Function} fn - callback function
+	 * @returns {Function} request handler
+	 */
+	addDomainMapping( domain, query, fn ) {
+		return this.wpcom.req.post( `${ this.path }/add-domain-mapping`, query, { domain }, fn );
+	}
+
+	/**
+	 * Add a VIP domain mapping
+	 *
+	 * @param {string} domain - donain to map
+	 * @param {object} [query] - query object parameter
+	 * @param {Function} fn - callback function
+	 * @returns {Function} request handler
+	 */
+	addVipDomainMapping( domain, query, fn ) {
+		return this.wpcom.req.post( `${ this.path }/vip-domain-mapping`, query, { domain }, fn );
 	}
 }
 
