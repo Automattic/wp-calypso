@@ -3,71 +3,66 @@ import { translate } from 'i18n-calypso';
 import React from 'react';
 import domainConnectedSuccess from 'calypso/assets/images/illustrations/domain-connected-success.svg';
 import { ThankYouProps } from 'calypso/components/thank-you/types';
-import { domainMappingSetup } from 'calypso/my-sites/domains/paths';
-import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
+import { domainManagementList } from 'calypso/my-sites/domains/paths';
 
 type DomainThankYouProps = Required<
 	Pick< ThankYouProps, 'thankYouTitle' | 'thankYouSubtitle' | 'sections' | 'thankYouImage' >
 >;
 
-const domainMappingThankYouProps = (
+const domainTransferThankYouProps = (
 	selectedSiteSlug: string,
 	domain: string
 ): DomainThankYouProps => ( {
 	sections: [
 		{
-			sectionKey: 'domain_mapping_whats_next',
+			sectionKey: 'domain_transfer_whats_next',
 			sectionTitle: translate( 'What’s next?' ),
 			nextSteps: [
 				{
-					stepKey: 'domain_mapping_whats_next_plugin_setup',
-					stepTitle: translate( 'Connect your domain' ),
-					stepDescription: translate( 'Set up your connection by following our suggested setup.' ),
+					stepKey: 'domain_transfer_whats_next_wait_transfer',
+					stepTitle: translate( 'Wait for transfer to complete' ),
+					stepDescription: translate(
+						'We’ll send you an email to youremail@gmail.com when the transfer process is complete. You can always see the status in Site Domains.'
+					),
 					stepCta: (
 						<Button
-							href={ domainMappingSetup( selectedSiteSlug, domain ) }
+							href={ domainManagementList( selectedSiteSlug ) }
 							className={ 'domain-transfer__thank-you-button domain-thank-you__button' }
 							primary
 							busy={ false }
 							disabled={ false }
 						>
-							{ translate( 'Go to setup' ) }
+							{ translate( 'View site domains' ) }
 						</Button>
 					),
 				},
 				{
-					stepKey: 'domain_mapping_whats_next_view_posts',
-					stepTitle: translate( 'Add Professional Email' ),
+					stepKey: 'domain_transfer_whats_next_transfer_info',
+					stepTitle: translate( 'Connect the domain to your site' ),
 					stepDescription: translate(
-						'Add a custom email address to send and receive emails from %(domain)s today.',
+						'Once the transfer is done you can can point %(domain)s to your WordPress.com site.',
 						{
 							args: {
 								domain,
 							},
 						}
 					),
-					stepCta: (
-						<Button
-							href={ emailManagementPurchaseNewEmailAccount( selectedSiteSlug, domain ) }
-							className={ 'domain-transfer__thank-you-button domain-thank-you__button' }
-							busy={ false }
-							disabled={ false }
-						>
-							{ translate( 'Add email' ) }
-						</Button>
-					),
+					stepCta: null,
 				},
 			],
 		},
 	],
-	thankYouImage: { alt: translate( 'Domain Connected' ), src: domainConnectedSuccess },
+	thankYouImage: { alt: translate( 'Domain Transferred' ), src: domainConnectedSuccess },
 	thankYouTitle: translate( 'Congratulations on your purchase!' ),
-	thankYouSubtitle: translate( 'You can now connect {{strong}}%(domain)s{{/strong}} to your site', {
-		args: {
-			domain,
-		},
-		components: { strong: <strong /> },
-	} ),
+	thankYouSubtitle: translate(
+		'Your domain {{strong}}%(domain)s{{/strong}} is being transferred to your site',
+		{
+			args: {
+				domain,
+			},
+			components: { strong: <strong /> },
+		}
+	),
 } );
 
-export default domainMappingThankYouProps;
+export default domainTransferThankYouProps;
