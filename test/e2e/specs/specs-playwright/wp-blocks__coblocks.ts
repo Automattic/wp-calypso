@@ -42,7 +42,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), () => {
 	} );
 
 	it( 'Enter post title', async function () {
-		await gutenbergEditorPage.enterTitle( DataHelper.randomPhrase() );
+		await gutenbergEditorPage.enterTitle( DataHelper.getRandomPhrase() );
 	} );
 
 	it( `Insert ${ PricingTableBlock.blockName } block and enter price to left table`, async function () {

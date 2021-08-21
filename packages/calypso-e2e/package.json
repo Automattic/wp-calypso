@@ -25,8 +25,7 @@
 		"@types/jest": "^25.2.3",
 		"@types/node": "^15.0.2",
 		"asana-phrase": "^0.0.8",
-		"fs-extra": "3.0.1",
-		"mockdate": "^3.0.5"
+		"fs-extra": "3.0.1"
 	},
 	"scripts": {
 		"clean": "yarn build --clean && npx rimraf dist",
