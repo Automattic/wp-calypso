@@ -21,7 +21,7 @@ import type {
 	ShoppingCartMiddleware,
 } from './types';
 
-const debug = debugFactory( 'shopping-cart:use-shopping-cart-reducer' );
+const debug = debugFactory( 'shopping-cart:shopping-cart-reducer' );
 const emptyResponseCart = getEmptyResponseCart();
 
 export default function useShoppingCartReducer(
