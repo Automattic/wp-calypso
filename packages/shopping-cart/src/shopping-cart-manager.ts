@@ -66,13 +66,6 @@ function createShoppingCartManager(
 	const actionPromises = createActionPromisesManager();
 	const takeActionsBasedOnState = createTakeActionsBasedOnState( syncManager );
 
-	// This is the main dispatcher for shopping cart actions. Dispatched actions
-	// are synchronous, but they cannot be trusted until validated by a server
-	// call, which is async. Most consumers can use the `subscribe` callback
-	// combined with the `isPendingUpdate` flag to know when changes have been
-	// completed but if a consumer needs to do something directly (eg: redirect
-	// when cart changes are complete) , they can use `dispatchAndWaitForValid`
-	// which is the dispatcher exported with the ShoppingCartManager's actions.
 	let deferredStateCheck: ReturnType< typeof setTimeout >;
 	const dispatch = ( action: ShoppingCartAction ) => {
 		debug( `dispatching action for cartKey ${ cartKey }`, action.type );
@@ -92,8 +85,6 @@ function createShoppingCartManager(
 			clearTimeout( deferredStateCheck );
 		}
 		deferredStateCheck = setTimeout( () => {
-			// This may trigger new dispatches to lock the state and to update the
-			// cart from server data.
 			takeActionsBasedOnState( state, dispatch );
 		} );
 
@@ -103,8 +94,6 @@ function createShoppingCartManager(
 			actionPromises.resolve( state.responseCart );
 		}
 
-		// This may trigger new dispatches of actions so it must be done after all
-		// other operations for the current action are complete.
 		subscriptionManager.notifySubscribers();
 	};
 
@@ -149,8 +138,6 @@ function createShoppingCartManager(
 	};
 }
 
-// The ShoppingCartManagerClient allows returning a ShoppingCartManager for
-// each cart key and subscribing to changes on that manager.
 export function createShoppingCartManagerClient( {
 	getCart,
 	setCart,
