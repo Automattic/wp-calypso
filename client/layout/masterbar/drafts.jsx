@@ -4,10 +4,9 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
-import Count from 'calypso/components/count';
 import QueryPostCounts from 'calypso/components/data/query-post-counts';
+import Gridicon from 'calypso/components/gridicon';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getMyPostCount } from 'calypso/state/posts/counts/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const MasterbarDraftsPopover = ( props ) => (
@@ -16,6 +15,8 @@ const MasterbarDraftsPopover = ( props ) => (
 
 class MasterbarDrafts extends Component {
 	static propTypes = {
+		draftCount: PropTypes.number,
+		numberFormat: PropTypes.func,
 		selectedSiteId: PropTypes.number,
 	};
 
@@ -79,8 +80,21 @@ class MasterbarDrafts extends Component {
 				onTouchStart={ this.preload }
 				onMouseEnter={ this.preload }
 				ref={ this.setDraftsRef }
+				aria-haspopup
+				aria-expanded={ this.state.showDrafts || undefined }
 			>
-				<Count count={ this.props.draftCount } />
+				<span className="masterbar__toggle-drafts-lg-label">
+					{ this.props.numberFormat( this.props.draftCount ) }
+				</span>
+
+				{ /* Don't display draft count on small screens when the count has more than 2 digits */ }
+				{ this.props.draftCount < 100 && (
+					<span className="masterbar__toggle-drafts-sm-label">
+						{ this.props.numberFormat( this.props.draftCount ) }
+					</span>
+				) }
+
+				<Gridicon icon={ this.state.showDrafts ? 'chevron-up' : 'chevron-down' } />
 			</Button>
 		);
 	}
@@ -119,14 +133,8 @@ class MasterbarDrafts extends Component {
 }
 
 export default connect(
-	( state ) => {
-		const selectedSiteId = getSelectedSiteId( state );
-		const draftCount = getMyPostCount( state, selectedSiteId, 'post', 'draft' );
-
-		return {
-			selectedSiteId,
-			draftCount,
-		};
-	},
+	( state ) => ( {
+		selectedSiteId: getSelectedSiteId( state ),
+	} ),
 	{ recordTracksEvent }
 )( localize( MasterbarDrafts ) );
