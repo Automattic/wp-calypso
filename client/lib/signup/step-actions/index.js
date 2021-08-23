@@ -11,11 +11,11 @@ import {
 	planItem as getCartItemForPlan,
 } from 'calypso/lib/cart-values/cart-items';
 import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
-import { createCart, addToCart } from 'calypso/lib/signup/cart';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
 import { isValidLandingPageVertical } from 'calypso/lib/signup/verticals';
 import wpcom from 'calypso/lib/wp';
+import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import flows from 'calypso/signup/config/flows';
 import steps, { isDomainStepSkippable } from 'calypso/signup/config/steps';
 import { getCurrentUserName, isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -58,7 +58,11 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 		};
 
 		const domainChoiceCart = [ domainItem ].filter( Boolean );
-		createCart( cartKey, domainChoiceCart, ( error ) => callback( error, providedDependencies ) );
+		cartManagerClient
+			.forCartKey( cartKey )
+			.actions.replaceProductsInCart( domainChoiceCart )
+			.then( () => callback( undefined, providedDependencies ) )
+			.catch( ( error ) => callback( error ) );
 	} else if ( designType === 'existing-site' ) {
 		const providedDependencies = {
 			siteId,
@@ -70,9 +74,11 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 			dependencies.cartItem,
 		].filter( Boolean );
 
-		createCart( siteId, products, ( error ) => {
-			callback( error, providedDependencies );
-		} );
+		cartManagerClient
+			.forCartKey( siteId )
+			.actions.replaceProductsInCart( products )
+			.then( () => callback( undefined, providedDependencies ) )
+			.catch( ( error ) => callback( error ) );
 	} else {
 		const newSiteData = {
 			cartItem,
@@ -370,9 +376,11 @@ function processItemCart(
 		);
 
 		if ( newCartItemsToAdd.length ) {
-			addToCart( siteSlug, newCartItemsToAdd, function ( cartError ) {
-				callback( cartError, providedDependencies );
-			} );
+			cartManagerClient
+				.forCartKey( siteSlug )
+				.actions.addProductsToCart( newCartItemsToAdd )
+				.then( () => callback( undefined, providedDependencies ) )
+				.catch( ( error ) => callback( error ) );
 		} else {
 			callback( undefined, providedDependencies );
 		}
