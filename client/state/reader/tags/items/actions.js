@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { trim } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	READER_TAGS_REQUEST,
 	READER_TAGS_RECEIVE,

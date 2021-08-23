@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
 import deepfreeze from 'deep-freeze';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
+import { dismissPost } from 'calypso/state/reader/site-dismissals/actions';
 import {
 	receivePage,
 	selectItem,
@@ -15,7 +9,6 @@ import {
 	selectPrevItem,
 	requestPage,
 } from '../actions';
-import { dismissPost } from 'calypso/state/reader/site-dismissals/actions';
 import {
 	items,
 	selected,

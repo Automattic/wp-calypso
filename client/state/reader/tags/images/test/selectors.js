@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { getTagImages, shouldRequestTagImages } from '../selectors';
 
 describe( 'selectors', () => {

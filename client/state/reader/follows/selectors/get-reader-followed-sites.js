@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import { sortBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
-import 'calypso/state/reader/init';
+import { sortBy } from 'lodash';
 import { NO_ORG_ID } from 'calypso/state/reader/organizations/constants';
+import 'calypso/state/reader/init';
 
 export const sorter = ( blog ) => blog.name.toLowerCase();
 

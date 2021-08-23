@@ -1,11 +1,6 @@
-/**
- * External Dependencies
- */
 import { includes, keyBy, map, omit, omitBy, reduce, trim } from 'lodash';
-
-/**
- * Internal Dependencies
- */
+import { decodeEntities } from 'calypso/lib/formatting';
+import { withoutHttp } from 'calypso/lib/url';
 import {
 	READER_SITE_BLOCKS_RECEIVE,
 	READER_SITE_REQUEST,
@@ -15,8 +10,6 @@ import {
 } from 'calypso/state/reader/action-types';
 import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import { readerSitesSchema } from './schema';
-import { withoutHttp } from 'calypso/lib/url';
-import { decodeEntities } from 'calypso/lib/formatting';
 
 function handleRequestFailure( state, action ) {
 	// 410 means site moved - site used to be on wpcom but is no longer

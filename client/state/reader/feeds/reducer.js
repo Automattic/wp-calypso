@@ -1,11 +1,6 @@
-/**
- * External Dependencies
- */
 import { keyBy, map, omit, omitBy, reduce, merge, forEach } from 'lodash';
-
-/**
- * Internal Dependencies
- */
+import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
+import { safeLink } from 'calypso/lib/post-normalizer/utils';
 import {
 	READER_FEED_REQUEST,
 	READER_FEED_REQUEST_SUCCESS,
@@ -16,9 +11,7 @@ import {
 	READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE,
 } from 'calypso/state/reader/action-types';
 import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
-import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { itemsSchema } from './schema';
-import { safeLink } from 'calypso/lib/post-normalizer/utils';
 
 function handleRequestFailure( state, action ) {
 	// new object precedes current state to prevent new errors from overwriting existing values

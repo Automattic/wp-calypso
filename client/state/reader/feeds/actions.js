@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	READER_FEED_REQUEST,
 	READER_FEED_REQUEST_SUCCESS,

@@ -1,12 +1,6 @@
 /* eslint-disable no-case-declarations */
-/**
- * External dependencies
- */
-import { keyBy, get, forEach } from 'lodash';
 
-/**
- * Internal dependencies
- */
+import { keyBy, get, forEach } from 'lodash';
 import {
 	READER_POSTS_RECEIVE,
 	READER_POST_SEEN,
