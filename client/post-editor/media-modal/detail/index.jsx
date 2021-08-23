@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import { partial } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -106,7 +105,7 @@ export const EditorMediaModalDetail = localize( EditorMediaModalDetailBase );
 // (This is also the reason why we're `localize()`ing the named export.)
 // TODO: Fix this mess, rely on Redux state everywhere.
 export default connect( null, {
-	onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),
-	onEditImageItem: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
-	onEditVideoItem: partial( setEditorMediaModalView, ModalViews.VIDEO_EDITOR ),
+	onReturnToList: () => setEditorMediaModalView( ModalViews.LIST ),
+	onEditImageItem: () => setEditorMediaModalView( ModalViews.IMAGE_EDITOR ),
+	onEditVideoItem: () => setEditorMediaModalView( ModalViews.VIDEO_EDITOR ),
 } )( EditorMediaModalDetail );

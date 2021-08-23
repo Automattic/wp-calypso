@@ -5,7 +5,7 @@ import url from 'url';
 import config from '@automattic/calypso-config';
 import { getQueryArg } from '@wordpress/url';
 import { localize, LocalizeProps } from 'i18n-calypso';
-import { map, partial, pickBy, flowRight } from 'lodash';
+import { map, pickBy, flowRight } from 'lodash';
 import page from 'page';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -889,13 +889,8 @@ const mapStateToProps = (
 		siteUrl: getSiteUrl( state, siteId ),
 		customizerUrl: getCustomizerUrl( state, siteId ),
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-		getTemplateEditorUrl: partial(
-			getEditorUrl,
-			state,
-			siteId,
-			partial.placeholder,
-			'wp_template_part'
-		),
+		getTemplateEditorUrl: ( templateId ) =>
+			getEditorUrl( state, siteId, templateId, 'wp_template_part' ),
 		unmappedSiteUrl: getSiteOption( state, siteId, 'unmapped_url' ),
 		siteCreationFlow: getSiteOption( state, siteId, 'site_creation_flow' ),
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),

@@ -3,7 +3,7 @@ import { CompactCard } from '@automattic/components';
 import { saveAs } from 'browser-filesaver';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { get, partial } from 'lodash';
+import { get } from 'lodash';
 import pageRouter from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -43,7 +43,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { statsLinkForPage } from '../helpers';
 import PageCardInfo from '../page-card-info';
 
-const recordEvent = partial( recordGoogleEvent, 'Pages' );
+const recordEvent = ( event ) => recordGoogleEvent( 'Pages', event );
 const noop = () => {};
 
 function sleep( ms ) {
@@ -780,11 +780,11 @@ const mapDispatch = {
 	setPreviewUrl,
 	setLayoutFocus,
 	recordEvent,
-	recordMoreOptions: partial( recordEvent, 'Clicked More Options Menu' ),
-	recordPageTitle: partial( recordEvent, 'Clicked Page Title' ),
-	recordEditPage: partial( recordEvent, 'Clicked Edit Page' ),
-	recordViewPage: partial( recordEvent, 'Clicked View Page' ),
-	recordStatsPage: partial( recordEvent, 'Clicked Stats Page' ),
+	recordMoreOptions: () => recordEvent( 'Clicked More Options Menu' ),
+	recordPageTitle: () => recordEvent( 'Clicked Page Title' ),
+	recordEditPage: () => recordEvent( 'Clicked Edit Page' ),
+	recordViewPage: () => recordEvent( 'Clicked View Page' ),
+	recordStatsPage: () => recordEvent( 'Clicked Stats Page' ),
 	updateSiteFrontPage,
 };
 
