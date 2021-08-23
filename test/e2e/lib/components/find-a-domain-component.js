@@ -64,7 +64,7 @@ export default class FindADomainComponent extends AsyncBaseContainer {
 	}
 
 	async selectUseOwnDomain() {
-		const useOwnDomain = By.css( '.domain-suggestion.card.domain-transfer-suggestion' );
+		const useOwnDomain = By.css( '.already-own-a-domain > span > button' );
 		return await driverHelper.clickWhenClickable( this.driver, useOwnDomain, this.explicitWaitMS );
 	}
 
