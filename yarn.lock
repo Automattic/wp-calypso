@@ -8360,7 +8360,7 @@ browserify-zlib@^0.2.0, browserify-zlib@~0.2.0:
   dependencies:
     pako "~1.0.5"
 
-browserify@^16.7.0:
+browserify@^16.5.0:
   version "16.5.1"
   resolved "https://registry.yarnpkg.com/browserify/-/browserify-16.5.1.tgz#3c13c97436802930d5c3ae28658ddc33bfd37dc2"
   integrity sha512-EQX0h59Pp+0GtSRb5rL6OTfrttlzv+uyaUVlK6GX3w11SQ0jKPKyjC/54RhPR2ib2KmfcELM06e8FxcI5XNU2A==
@@ -29420,7 +29420,7 @@ xunit-viewer@^5.1.8:
     babel-core "^6.26.3"
     babel-preset-react-app "^9.0.2"
     babelify "^10.0.0"
-    browserify "^16.7.0"
+    browserify "^16.5.0"
     bulma "^0.8.0"
     chalk "^2.4.2"
     clone "^2.1.2"
