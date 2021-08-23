@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getSectionGroup from './get-section-group';
 
 /**

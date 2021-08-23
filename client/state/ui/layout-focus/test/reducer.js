@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import layoutFocus from '../reducer';
 import {
 	LAYOUT_FOCUS_SET,
 	LAYOUT_NEXT_FOCUS_SET,
 	LAYOUT_NEXT_FOCUS_ACTIVATE,
 } from 'calypso/state/action-types';
+import layoutFocus from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'starts with current focus set to "content"', () => {
