@@ -1,14 +1,4 @@
-/**
- * External dependencies
- */
 import { get, merge, omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
-import { validationSchemas } from './validation-schemas/reducer';
-import { domainWhoisSchema } from './schema';
 import {
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST,
@@ -24,7 +14,10 @@ import {
 	DOMAIN_MANAGEMENT_WHOIS_SAVE_SUCCESS,
 	DOMAIN_MANAGEMENT_WHOIS_UPDATE,
 } from 'calypso/state/action-types';
+import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
 import { whoisType } from '../../../lib/domains/whois/constants';
+import { domainWhoisSchema } from './schema';
+import { validationSchemas } from './validation-schemas/reducer';
 
 /**
  * Returns the updated requests state after an action has been dispatched. The

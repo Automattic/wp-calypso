@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { isEmpty } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { validateAllFields } from '../utils';
 
 describe( 'utils', () => {
