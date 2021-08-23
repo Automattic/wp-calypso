@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { dismissWordAdsError, dismissWordAdsSuccess, requestWordAdsApproval } from '../actions';
 import {
 	WORDADS_SITE_APPROVE_REQUEST,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
@@ -16,6 +8,7 @@ import {
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { dismissWordAdsError, dismissWordAdsSuccess, requestWordAdsApproval } from '../actions';
 
 describe( 'actions', () => {
 	let sandbox;
