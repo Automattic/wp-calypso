@@ -49,12 +49,8 @@ const TitanNewMailboxList = ( {
 		onMailboxesChange( validateMailboxes( updatedMailboxes ) );
 	};
 
-	const onMailboxAdd = ( afterIndex ) => {
-		onMailboxesChange( [
-			...mailboxes.slice( 0, afterIndex + 1 ),
-			buildNewTitanMailbox( domain, false ),
-			...mailboxes.slice( afterIndex + 1 ),
-		] );
+	const onMailboxAdd = () => {
+		onMailboxesChange( [ ...mailboxes, buildNewTitanMailbox( domain, false ) ] );
 	};
 
 	const onMailboxRemove = ( currentMailboxes, uuid ) => () => {
@@ -66,6 +62,8 @@ const TitanNewMailboxList = ( {
 				: [ buildNewTitanMailbox( domain, false ) ];
 		onMailboxesChange( updatedMailboxes );
 	};
+
+	const lastMailboxIndex = mailboxes.length - 1;
 
 	return (
 		<div className="titan-new-mailbox-list__main">
@@ -94,8 +92,8 @@ const TitanNewMailboxList = ( {
 					/>
 
 					<div className="titan-new-mailbox-list__actions">
-						{ showAddAnotherMailboxButton && (
-							<Button onClick={ () => onMailboxAdd( index ) }>
+						{ showAddAnotherMailboxButton && index === lastMailboxIndex && (
+							<Button onClick={ () => onMailboxAdd() }>
 								<Gridicon icon="plus" />
 								<span>{ translate( 'Add another mailbox' ) }</span>
 							</Button>
