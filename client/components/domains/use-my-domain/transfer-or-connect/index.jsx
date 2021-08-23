@@ -132,7 +132,6 @@ export default connect(
 	},
 	{
 		defaultConnectHandler: connectDomainAction,
-		// defaultTransferHandler: transferDomainAction,
 		recordTransferButtonClickInUseYourDomain,
 		recordMappingButtonClickInUseYourDomain,
 	}
