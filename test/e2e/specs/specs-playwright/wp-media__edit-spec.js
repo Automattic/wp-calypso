@@ -28,7 +28,7 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 
 			it( 'Navigate to Media', async function () {
 				const sidebarComponent = new SidebarComponent( page );
-				await sidebarComponent.gotoMenu( { item: 'Media' } );
+				await sidebarComponent.navigate( 'Media' );
 			} );
 
 			it( 'See media gallery', async function () {

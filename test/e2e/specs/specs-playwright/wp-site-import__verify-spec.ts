@@ -22,7 +22,7 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), function () {
 
 	it( 'Navigate to Tools > Import', async function () {
 		const sidebarComponent = new SidebarComponent( page );
-		await sidebarComponent.gotoMenu( { item: 'Tools', subitem: 'Import' } );
+		await sidebarComponent.navigate( 'Tools', 'Import' );
 	} );
 
 	it.each( SiteImportPage.services )( 'Select service provider: %s', async function ( service ) {
