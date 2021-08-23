@@ -5,6 +5,7 @@ import debugFactory from 'debug';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import {
 	updatePrivacyForDomain,
 	supportsPrivacyProtectionPurchase,
@@ -45,7 +46,10 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	const { siteId, siteSlug } = data;
 	const { cartItem, designType, siteUrl, themeSlugWithRepo } = dependencies;
 	const domainItem = dependencies.domainItem
-		? addPrivacyProtectionIfSupported( dependencies.domainItem, reduxStore.getState() )
+		? prepareItemForAddingToCart(
+				addPrivacyProtectionIfSupported( dependencies.domainItem, reduxStore.getState() ),
+				reduxStore.getState()
+		  )
 		: null;
 
 	if ( designType === 'domain' ) {
@@ -68,11 +72,9 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 			siteId,
 			siteSlug,
 		};
-		const products = [
-			dependencies.domainItem,
-			dependencies.privacyItem,
-			dependencies.cartItem,
-		].filter( Boolean );
+		const products = [ dependencies.domainItem, dependencies.privacyItem, dependencies.cartItem ]
+			.filter( Boolean )
+			.map( ( item ) => prepareItemForAddingToCart( item, reduxStore.getState() ) );
 
 		cartManagerClient
 			.forCartKey( siteId )
@@ -371,9 +373,9 @@ function processItemCart(
 ) {
 	const addToCartAndProceed = () => {
 		debug( 'adding cart items', newCartItems );
-		const newCartItemsToAdd = newCartItems.map( ( item ) =>
-			addPrivacyProtectionIfSupported( item, reduxStore.getState() )
-		);
+		const newCartItemsToAdd = newCartItems
+			.map( ( item ) => addPrivacyProtectionIfSupported( item, reduxStore.getState() ) )
+			.map( ( item ) => prepareItemForAddingToCart( item, reduxStore.getState() ) );
 
 		if ( newCartItemsToAdd.length ) {
 			cartManagerClient
@@ -401,6 +403,17 @@ function processItemCart(
 	} else {
 		addToCartAndProceed();
 	}
+}
+
+function prepareItemForAddingToCart( item, state ) {
+	const productsList = getProductsList( state );
+	return {
+		...fillInSingleCartItemAttributes( item, productsList ),
+		extra: {
+			...item.extra,
+			context: 'signup',
+		},
+	};
 }
 
 function addPrivacyProtectionIfSupported( item, state ) {
