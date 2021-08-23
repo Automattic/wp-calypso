@@ -15,15 +15,15 @@ import { hasTitanMailWithUs, getTitanProductName } from 'calypso/lib/titan';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import {
 	emailManagementPurchaseNewEmailAccount,
-	emailManagementTitanSetupMailbox,
+	emailManagementTitanSetUpMailbox,
 } from 'calypso/my-sites/email/paths';
-import TitanSetupMailboxForm from 'calypso/my-sites/email/titan-setup-mailbox/titan-setup-mailbox-form';
+import TitanSetUpMailboxForm from 'calypso/my-sites/email/titan-setup-mailbox/titan-setup-mailbox-form';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-const TitanSetupMailbox = ( { selectedDomainName } ) => {
+const TitanSetUpMailbox = ( { selectedDomainName } ) => {
 	const selectedSite = useSelector( getSelectedSite );
 
 	const currentRoute = useSelector( getCurrentRoute );
@@ -40,7 +40,7 @@ const TitanSetupMailbox = ( { selectedDomainName } ) => {
 
 	const areSiteDomainsLoaded = useSelector( ( state ) => hasLoadedSiteDomains( state, siteId ) );
 
-	const analyticsPath = emailManagementTitanSetupMailbox( ':site', ':domain', currentRoute );
+	const analyticsPath = emailManagementTitanSetUpMailbox( ':site', ':domain', currentRoute );
 
 	const siteSlug = selectedSite?.slug ?? null;
 
@@ -75,7 +75,7 @@ const TitanSetupMailbox = ( { selectedDomainName } ) => {
 
 				<SectionHeader label={ title } className="titan-setup-mailbox__section-header" />
 
-				<TitanSetupMailboxForm
+				<TitanSetUpMailboxForm
 					areSiteDomainsLoaded={ areSiteDomainsLoaded }
 					selectedDomainName={ selectedDomainName }
 				/>
@@ -84,8 +84,8 @@ const TitanSetupMailbox = ( { selectedDomainName } ) => {
 	);
 };
 
-TitanSetupMailbox.propType = {
+TitanSetUpMailbox.propType = {
 	selectedDomainName: PropTypes.string.isRequired,
 };
 
-export default TitanSetupMailbox;
+export default TitanSetUpMailbox;

@@ -33,7 +33,7 @@ import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/gsuite-add-
 import {
 	emailManagement,
 	emailManagementNewTitanAccount,
-	emailManagementTitanSetupMailbox,
+	emailManagementTitanSetUpMailbox,
 } from 'calypso/my-sites/email/paths';
 import TitanMailboxPricingNotice from 'calypso/my-sites/email/titan-add-mailboxes/titan-mailbox-pricing-notice';
 import TitanUnusedMailboxesNotice from 'calypso/my-sites/email/titan-add-mailboxes/titan-unused-mailbox-notice';
@@ -181,7 +181,7 @@ class TitanAddMailboxes extends React.Component {
 		this.recordClickEvent( 'calypso_email_management_titan_add_mailboxes_create_mailbox_click' );
 
 		page(
-			emailManagementTitanSetupMailbox(
+			emailManagementTitanSetUpMailbox(
 				selectedSite.slug,
 				isSelectedDomainNameValid ? selectedDomainName : null,
 				currentRoute

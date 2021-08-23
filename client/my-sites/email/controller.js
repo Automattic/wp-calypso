@@ -8,8 +8,8 @@ import TitanManagementIframe from 'calypso/my-sites/email/email-management/titan
 import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
 import GSuiteAddUsers from 'calypso/my-sites/email/gsuite-add-users';
 import TitanAddMailboxes from 'calypso/my-sites/email/titan-add-mailboxes';
-import TitanSetupMailbox from 'calypso/my-sites/email/titan-setup-mailbox';
-import TitanSetupThankYou from 'calypso/my-sites/email/titan-setup-thank-you';
+import TitanSetUpMailbox from 'calypso/my-sites/email/titan-setup-mailbox';
+import TitanSetUpThankYou from 'calypso/my-sites/email/titan-setup-thank-you';
 
 export default {
 	emailManagementAddGSuiteUsers( pageContext, next ) {
@@ -59,10 +59,10 @@ export default {
 		next();
 	},
 
-	emailManagementTitanSetupMailbox( pageContext, next ) {
+	emailManagementTitanSetUpMailbox( pageContext, next ) {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
-				<TitanSetupMailbox selectedDomainName={ pageContext.params.domain } />
+				<TitanSetUpMailbox selectedDomainName={ pageContext.params.domain } />
 			</CalypsoShoppingCartProvider>
 		);
 
@@ -91,9 +91,9 @@ export default {
 		next();
 	},
 
-	emailManagementTitanSetupThankYou( pageContext, next ) {
+	emailManagementTitanSetUpThankYou( pageContext, next ) {
 		pageContext.primary = (
-			<TitanSetupThankYou
+			<TitanSetUpThankYou
 				domainName={ pageContext.params.domain }
 				emailAddress={ pageContext.query.email }
 			/>

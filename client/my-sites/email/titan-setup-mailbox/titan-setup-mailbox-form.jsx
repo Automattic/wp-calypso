@@ -13,7 +13,7 @@ import {
 	validateMailboxes,
 } from 'calypso/lib/titan/new-mailbox';
 import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/gsuite-add-users/add-users-placeholder';
-import { emailManagementTitanSetupThankYou } from 'calypso/my-sites/email/paths';
+import { emailManagementTitanSetUpThankYou } from 'calypso/my-sites/email/paths';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -49,7 +49,7 @@ const useHandleSetupAction = (
 
 	const goToThankYouPage = ( emailAddress ) => {
 		page(
-			emailManagementTitanSetupThankYou(
+			emailManagementTitanSetUpThankYou(
 				selectedSite?.slug ?? null,
 				selectedDomainName,
 				emailAddress
@@ -139,7 +139,7 @@ const useHandleSetupAction = (
 	return { handleSetup, isBusy };
 };
 
-const TitanSetupMailboxForm = ( { areSiteDomainsLoaded, selectedDomainName } ) => {
+const TitanSetUpMailboxForm = ( { areSiteDomainsLoaded, selectedDomainName } ) => {
 	const [ mailboxes, setMailboxes ] = useState( [
 		buildNewTitanMailbox( selectedDomainName, false ),
 	] );
@@ -185,9 +185,9 @@ const TitanSetupMailboxForm = ( { areSiteDomainsLoaded, selectedDomainName } ) =
 	);
 };
 
-TitanSetupMailboxForm.propType = {
+TitanSetUpMailboxForm.propType = {
 	areSiteDomainsLoaded: PropTypes.object.isRequired,
 	selectedDomainName: PropTypes.string.isRequired,
 };
 
-export default TitanSetupMailboxForm;
+export default TitanSetUpMailboxForm;

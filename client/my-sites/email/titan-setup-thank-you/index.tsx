@@ -21,12 +21,12 @@ import { SiteData } from 'calypso/state/ui/selectors/site-data';
  */
 import './style.scss';
 
-type TitanSetupThankYouProps = {
+type TitanSetUpThankYouProps = {
 	domainName: string;
 	emailAddress?: string;
 };
 
-const TitanSetupThankYou = ( props: TitanSetupThankYouProps ): JSX.Element => {
+const TitanSetUpThankYou = ( props: TitanSetUpThankYouProps ): JSX.Element => {
 	const currentRoute = useSelector( getCurrentRoute );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
@@ -101,7 +101,7 @@ const TitanSetupThankYou = ( props: TitanSetupThankYouProps ): JSX.Element => {
 	);
 };
 
-export default connect( ( state, ownProps: TitanSetupThankYouProps ) => {
+export default connect( ( state, ownProps: TitanSetUpThankYouProps ) => {
 	const selectedSite = getSelectedSite( state ) as SiteData;
 
 	const domain = getSelectedDomain( {
@@ -115,4 +115,4 @@ export default connect( ( state, ownProps: TitanSetupThankYouProps ) => {
 		domain,
 		selectedSite,
 	};
-} )( localize( TitanSetupThankYou ) );
+} )( localize( TitanSetUpThankYou ) );
