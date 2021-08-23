@@ -261,7 +261,7 @@ body.is-section-signup.is-white-signup {
 
 .already-own-a-domain {
 	font-size: $font-body-small;
-	color: var( --color-neutral-60 );
+	color: var( --color-text-subtle );
 	display: flex;
 	align-items: center;
 	margin-top: 26px;
@@ -269,7 +269,7 @@ body.is-section-signup.is-white-signup {
 		align-self: flex-start;
 		width: 16px;
 		height: 16px;
-		fill: var( --color-neutral-40 );
+		fill: var( --color-text-subtle );
 		margin: 3px 8px 0;
 		@include break-mobile {
 			margin-left: 0;
