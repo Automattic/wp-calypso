@@ -72,7 +72,7 @@ export function emailManagementNewTitanAccount( siteName, domainName, relativeTo
 }
 
 export function emailManagementTitanSetUpMailbox( siteName, domainName, relativeTo = null ) {
-	return emailManagementEdit( siteName, domainName, 'titan/setup-mailbox', relativeTo );
+	return emailManagementEdit( siteName, domainName, 'titan/set-up-mailbox', relativeTo );
 }
 
 export function emailManagementTitanSetUpThankYou(
@@ -84,7 +84,7 @@ export function emailManagementTitanSetUpThankYou(
 	return emailManagementEdit(
 		siteName,
 		domainName,
-		'titan/setup-mailbox/thank-you',
+		'titan/set-up-mailbox/thank-you',
 		relativeTo,
 		emailAddress ? { email: emailAddress } : {}
 	);
