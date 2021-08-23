@@ -1,0 +1,55 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.blank-canvas {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	min-height: 100vh;
+	background: #fdfdfd;
+
+	// Hide masterbar behind.
+	z-index: z-index( 'root', '.masterbar' );
+
+	.blank-canvas__header {
+		padding: 1.5rem;
+		margin-bottom: 1.5rem;
+
+		.wordpress-logo {
+			width: 1.5rem;
+			height: 1.5rem;
+			fill: var( --color-text );
+			margin: 0 1.5rem 0 0;
+		}
+	}
+
+	.blank-canvas__back {
+		color: var( --color-text );
+		font-size: inherit;
+		padding: 0;
+
+		svg {
+			margin-right: 0.25rem;
+		}
+	}
+
+	.formatted-header {
+		margin-top: 3rem;
+		margin-bottom: 2.5rem;
+
+		.formatted-header__title {
+			color: var( --studio-gray-100 );
+			font-size: 2.25rem;
+		}
+
+		.formatted-header__subtitle {
+			color: var( --studio-gray-60 );
+			font-size: 1rem;
+		}
+	}
+}
+
+.has-blank-canvas .layout__content {
+	overflow: inherit;
+}

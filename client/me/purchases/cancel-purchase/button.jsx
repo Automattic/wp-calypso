@@ -52,8 +52,16 @@ class CancelPurchaseButton extends Component {
 	};
 
 	handleCancelPurchaseClick = () => {
-		if ( isDomainRegistration( this.props.purchase ) ) {
-			return this.goToCancelConfirmation();
+		const { purchase, siteSlug } = this.props;
+
+		if ( isDomainRegistration( purchase ) ) {
+			return this.goToCancelDomainConfirmation();
+		}
+
+		const variation = 'treatment';
+
+		if ( variation === 'treatment' ) {
+			return page( `/purchases/subscriptions/${ siteSlug }/${ purchase.id }/cancel/confirm` );
 		}
 
 		this.setState( {
@@ -67,7 +75,7 @@ class CancelPurchaseButton extends Component {
 		} );
 	};
 
-	goToCancelConfirmation = () => {
+	goToCancelDomainConfirmation = () => {
 		const { id } = this.props.purchase;
 		const slug = this.props.siteSlug;
 
