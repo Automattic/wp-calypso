@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import reducer, { requesting, counts } from '../reducer';
 import {
 	CURRENT_USER_RECEIVE,
 	POST_COUNTS_RECEIVE,
@@ -21,6 +13,7 @@ import {
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import reducer, { requesting, counts } from '../reducer';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {

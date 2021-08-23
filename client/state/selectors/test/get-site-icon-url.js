@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
 import MediaQueryManager from 'calypso/lib/query-manager/media';
+import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
 
 describe( 'getSiteIconUrl()', () => {
 	test( 'should return null if neither the site nor site settings are known', () => {

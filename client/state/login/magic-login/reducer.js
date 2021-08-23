@@ -1,15 +1,3 @@
-/**
- * Internal dependencies
- */
-
-import { combineReducers } from 'calypso/state/utils';
-import {
-	CHECK_YOUR_EMAIL_PAGE,
-	INTERSTITIAL_PAGE,
-	LINK_EXPIRED_PAGE,
-	REQUEST_FORM,
-} from './constants';
-
 import {
 	MAGIC_LOGIN_HIDE_REQUEST_FORM,
 	MAGIC_LOGIN_HIDE_REQUEST_NOTICE,
@@ -24,6 +12,13 @@ import {
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS,
 	MAGIC_LOGIN_RESET_REQUEST_FORM,
 } from 'calypso/state/action-types';
+import { combineReducers } from 'calypso/state/utils';
+import {
+	CHECK_YOUR_EMAIL_PAGE,
+	INTERSTITIAL_PAGE,
+	LINK_EXPIRED_PAGE,
+	REQUEST_FORM,
+} from './constants';
 
 export const currentView = ( state = null, action ) => {
 	switch ( action.type ) {

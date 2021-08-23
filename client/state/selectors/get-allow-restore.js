@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
+import { includes } from 'lodash';
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';

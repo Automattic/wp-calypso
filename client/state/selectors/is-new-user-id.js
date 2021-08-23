@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 
 export default ( state, thresholdUserId ) => {

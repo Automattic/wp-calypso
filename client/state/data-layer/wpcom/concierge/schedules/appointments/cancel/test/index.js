@@ -1,11 +1,8 @@
-/**
- * Internal dependencies
- */
+import { CONCIERGE_STATUS_CANCELLING } from 'calypso/me/concierge/constants';
+import { CONCIERGE_APPOINTMENT_CANCEL } from 'calypso/state/action-types';
+import { updateConciergeBookingStatus } from 'calypso/state/concierge/actions';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { cancelConciergeAppointment } from '../';
-import { updateConciergeBookingStatus } from 'calypso/state/concierge/actions';
-import { CONCIERGE_APPOINTMENT_CANCEL } from 'calypso/state/action-types';
-import { CONCIERGE_STATUS_CANCELLING } from 'calypso/me/concierge/constants';
 
 // we are mocking uuid.v4 here, so that conciergeShiftsFetchError() will contain the expected id in the tests
 jest.mock( 'uuid', () => ( {

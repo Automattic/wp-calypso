@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import { canJetpackSiteUpdateFiles } from 'calypso/state/sites/selectors';
 

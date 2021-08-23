@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import shouldShowVideoEditorError from 'calypso/state/selectors/should-show-video-editor-error';
 
 describe( 'shouldShowVideoEditorError()', () => {

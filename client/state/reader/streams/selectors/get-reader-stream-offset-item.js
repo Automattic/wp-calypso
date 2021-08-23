@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { findIndex } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { keysAreEqual } from 'calypso/reader/post-key';
 import getCurrentStream from 'calypso/state/selectors/get-reader-current-stream';
 

@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import isEligibleForFreeToPaidUpsell from '../is-eligible-for-free-to-paid-upsell';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isMappedDomainSite from 'calypso/state/selectors/is-mapped-domain-site';
 import isSiteOnFreePlan from 'calypso/state/selectors/is-site-on-free-plan';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import isEligibleForFreeToPaidUpsell from '../is-eligible-for-free-to-paid-upsell';
 
 jest.mock( 'calypso/state/selectors/can-current-user', () => ( {
 	canCurrentUser: require( 'sinon' ).stub(),

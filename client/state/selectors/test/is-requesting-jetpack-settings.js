@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
 import { getRequestKey } from 'calypso/state/data-layer/wpcom-http/utils';
-import isRequestingJetpackSettings from 'calypso/state/selectors/is-requesting-jetpack-settings';
 import { requestJetpackSettings } from 'calypso/state/jetpack/settings/actions';
+import isRequestingJetpackSettings from 'calypso/state/selectors/is-requesting-jetpack-settings';
 
 describe( 'isRequestingJetpackSettings()', () => {
 	test( 'should return true if settings are currently being requested', () => {

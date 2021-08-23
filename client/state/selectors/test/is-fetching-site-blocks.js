@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { isFetchingSiteBlocks } from 'calypso/state/reader/site-blocks/selectors';
 
 describe( 'isFetchingSiteBlocks()', () => {

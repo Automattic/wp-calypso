@@ -1,12 +1,14 @@
-/**
- * External dependencies
- */
+import {
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+	FEATURE_AUDIO_UPLOADS,
+	FEATURE_UNLIMITED_PREMIUM_THEMES,
+	FEATURE_BUSINESS_ONBOARDING,
+} from '@automattic/calypso-products';
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
+import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 import {
 	getSitePlan,
 	getSitePlanRawPrice,
@@ -22,15 +24,6 @@ import {
 	getSitePlanSlug,
 	hasFeature,
 } from '../selectors';
-import {
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-	FEATURE_AUDIO_UPLOADS,
-	FEATURE_UNLIMITED_PREMIUM_THEMES,
-	FEATURE_BUSINESS_ONBOARDING,
-} from '@automattic/calypso-products';
-import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 
 describe( 'selectors', () => {
 	describe( '#getPlansBySite()', () => {

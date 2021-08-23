@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getBlogStickers from 'calypso/state/selectors/get-blog-stickers';
 
 describe( 'getBlogStickers()', () => {

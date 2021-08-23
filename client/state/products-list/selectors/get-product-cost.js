@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getProductBySlug } from './get-product-by-slug';
 
 import 'calypso/state/products-list/init';

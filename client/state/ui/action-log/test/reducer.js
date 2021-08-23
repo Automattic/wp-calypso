@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import reducer from '../reducer';
 import { ROUTE_SET, COMMENTS_LIKE } from 'calypso/state/action-types';
 import { useFakeTimers } from 'calypso/test-helpers/use-sinon';
+import reducer from '../reducer';
 
 describe( 'reducer', () => {
 	useFakeTimers( 1337 );

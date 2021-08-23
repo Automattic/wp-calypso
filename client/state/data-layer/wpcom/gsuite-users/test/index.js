@@ -1,20 +1,12 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { getGSuiteUsers, getGSuiteUsersFailure, getGSuiteUsersSuccess } from '../';
 import {
 	GSUITE_USERS_REQUEST,
 	GSUITE_USERS_REQUEST_SUCCESS,
 	GSUITE_USERS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
-import { isErrorNotice } from '../test-utils';
-
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { getGSuiteUsers, getGSuiteUsersFailure, getGSuiteUsersSuccess } from '../';
+import { isErrorNotice } from '../test-utils';
 
 describe( 'wpcom-api', () => {
 	describe( 'g suite users get users request', () => {

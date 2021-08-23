@@ -1,12 +1,6 @@
 /* eslint-disable no-case-declarations */
-/**
- * External dependencies
- */
-import { pick } from 'lodash';
 
-/**
- * Internal dependencies
- */
+import { pick } from 'lodash';
 import {
 	SITE_MEDIA_STORAGE_RECEIVE,
 	SITE_MEDIA_STORAGE_REQUEST,

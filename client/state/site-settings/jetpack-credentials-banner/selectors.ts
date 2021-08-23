@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { DefaultRootState } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { getPreference } from 'calypso/state/preferences/selectors';
 import { Preference } from 'calypso/my-sites/site-settings/jetpack-credentials-banner/types';
+import { getPreference } from 'calypso/state/preferences/selectors';
 
 import 'calypso/state/site-settings/init';
 

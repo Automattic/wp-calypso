@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getMenusUrl from 'calypso/state/selectors/get-menus-url';
 
 const state = {

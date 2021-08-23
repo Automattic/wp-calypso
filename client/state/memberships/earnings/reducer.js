@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { MEMBERSHIPS_EARNINGS_RECEIVE } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 

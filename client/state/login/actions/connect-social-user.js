@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import wpcom from 'calypso/lib/wp';
 import {
 	SOCIAL_CONNECT_ACCOUNT_REQUEST,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { getErrorFromWPCOMError } from 'calypso/state/login/utils';
-import wpcom from 'calypso/lib/wp';
 
 import 'calypso/state/login/init';
 

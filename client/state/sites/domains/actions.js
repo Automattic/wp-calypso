@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
-import { map } from 'lodash';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { createSiteDomainObject } from './assembler';
+import { map } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import {
 	DOMAIN_PRIVACY_ENABLE,
@@ -21,6 +13,7 @@ import {
 	DOMAIN_CONTACT_INFO_REDACT,
 } from 'calypso/state/action-types';
 import { requestSite } from 'calypso/state/sites/actions';
+import { createSiteDomainObject } from './assembler';
 
 import 'calypso/state/data-layer/wpcom/domains/privacy/index.js';
 

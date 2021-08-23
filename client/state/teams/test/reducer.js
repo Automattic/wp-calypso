@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
 import { assert, expect } from 'chai';
 import deepfreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import { items, isRequesting } from '../reducer';
 import { TEAMS_REQUEST, TEAMS_RECEIVE } from 'calypso/state/teams/action-types';
 import { deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { items, isRequesting } from '../reducer';
 
 const TEAM1 = { slug: 'team one slug', title: 'team one title' };
 const TEAM2 = { slug: 'team two slug', title: 'team two title' };

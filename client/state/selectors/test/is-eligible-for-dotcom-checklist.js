@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import isEligibleForDotcomChecklist from '../is-eligible-for-dotcom-checklist';
 
 describe( 'isEligibleForDotcomChecklist()', () => {

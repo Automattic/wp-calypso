@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { NOTIFICATIONS_PANEL_TOGGLE } from 'calypso/state/action-types';
 
 import 'calypso/state/ui/init';

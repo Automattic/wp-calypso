@@ -1,16 +1,4 @@
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
-import eligibility from './eligibility/reducer';
-import {
-	combineReducers,
-	keyedReducer,
-	withSchemaValidation,
-	withPersistence,
-} from 'calypso/state/utils';
-import { transferStates } from './constants';
-import { automatedTransfer as schema } from './schema';
 import {
 	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE as ELIGIBILITY_UPDATE,
 	AUTOMATED_TRANSFER_STATUS_SET as SET_STATUS,
@@ -22,6 +10,15 @@ import {
 	THEME_TRANSFER_INITIATE_FAILURE as INITIATE_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE as TRANSFER_UPDATE,
 } from 'calypso/state/themes/action-types';
+import {
+	combineReducers,
+	keyedReducer,
+	withSchemaValidation,
+	withPersistence,
+} from 'calypso/state/utils';
+import { transferStates } from './constants';
+import eligibility from './eligibility/reducer';
+import { automatedTransfer as schema } from './schema';
 
 export const status = withPersistence( ( state = null, action ) => {
 	switch ( action.type ) {

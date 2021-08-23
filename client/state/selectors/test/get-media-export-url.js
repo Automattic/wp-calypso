@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getMediaExportUrl from 'calypso/state/selectors/get-media-export-url';
 
 describe( 'getMediaExportUrl()', () => {

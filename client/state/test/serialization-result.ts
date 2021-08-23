@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { SerializationResult } from 'calypso/state/serialization-result';
 
 describe( 'SerializationResult', () => {

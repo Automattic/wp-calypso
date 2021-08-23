@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 

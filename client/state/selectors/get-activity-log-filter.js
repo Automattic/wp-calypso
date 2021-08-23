@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { emptyFilter } from 'calypso/state/activity-log/reducer';
 
 import 'calypso/state/activity-log/init';

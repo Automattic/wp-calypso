@@ -1,17 +1,12 @@
-/**
- * Internal dependencies
- */
-
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { translate } from 'i18n-calypso';
 import {
 	EMAIL_VERIFY_REQUEST,
 	EMAIL_VERIFY_REQUEST_SUCCESS,
 	EMAIL_VERIFY_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
-
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import { translate } from 'i18n-calypso';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import {
 	infoNotice,
 	errorNotice,

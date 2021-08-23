@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import reducer from '../reducer';
 import { SIGNUP_STEPS_DESIGN_TYPE_SET } from 'calypso/state/action-types';
+import reducer from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'should update the design type', () => {

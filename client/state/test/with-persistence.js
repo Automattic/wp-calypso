@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { withPersistence, serialize, deserialize, combineReducers } from 'calypso/state/utils';
 
 describe( 'withPersistence', () => {

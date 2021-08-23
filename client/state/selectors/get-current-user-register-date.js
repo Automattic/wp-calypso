@@ -1,10 +1,3 @@
-/**
- * External dependencies
- */
-
-/**
- * Internal dependencies
- */
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 /**

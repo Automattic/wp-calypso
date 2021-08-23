@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { keyBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { receiveUnfollowTag, receiveTags } from '../actions';
 import items from '../reducer';
 

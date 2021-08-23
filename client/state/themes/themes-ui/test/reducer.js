@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import reducer, { backPath, themesBookmark } from '../reducer';
 import { THEMES_BOOKMARK_SET } from 'calypso/state/themes/action-types';
+import reducer, { backPath, themesBookmark } from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {

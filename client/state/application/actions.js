@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { CONNECTION_LOST, CONNECTION_RESTORED } from 'calypso/state/action-types';
 import { warningNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
 

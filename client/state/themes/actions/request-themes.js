@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
 import { map, property } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 import { fetchThemesList as fetchWporgThemesList } from 'calypso/lib/wporg';
-import { THEMES_REQUEST, THEMES_REQUEST_FAILURE } from 'calypso/state/themes/action-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { THEMES_REQUEST, THEMES_REQUEST_FAILURE } from 'calypso/state/themes/action-types';
 import { receiveThemes } from 'calypso/state/themes/actions/receive-themes';
 import { prependThemeFilterKeys } from 'calypso/state/themes/selectors';
 import {

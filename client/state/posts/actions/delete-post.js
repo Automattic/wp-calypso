@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
 import { truncate } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
-import { getSitePost } from 'calypso/state/posts/selectors';
 import { POST_DELETE_FAILURE, POST_DELETE_SUCCESS, POST_DELETE } from 'calypso/state/action-types';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { getSitePost } from 'calypso/state/posts/selectors';
 
 import 'calypso/state/posts/init';
 

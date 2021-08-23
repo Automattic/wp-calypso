@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { find } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 import { sortBySales } from 'woocommerce/app/store-stats/referrers/helpers';
+import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 
 import 'calypso/state/stats/init';
 

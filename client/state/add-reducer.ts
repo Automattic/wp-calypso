@@ -1,11 +1,4 @@
-/**
- * External Dependencies
- */
 import { Reducer, Store } from 'redux';
-
-/**
- * Internal Dependencies
- */
 import { APPLY_STORED_STATE } from 'calypso/state/action-types';
 import { getStateFromCache } from 'calypso/state/initial-state';
 

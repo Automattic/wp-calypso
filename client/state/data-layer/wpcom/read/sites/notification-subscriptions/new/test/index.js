@@ -1,18 +1,15 @@
-/**
- * Internal dependencies
- */
-import {
-	requestNotificationSubscription,
-	receiveNotificationSubscriptionError,
-	fromApi,
-} from '../';
+import { NOTICE_CREATE } from 'calypso/state/action-types';
 import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	subscribeToNewPostNotifications,
 	unsubscribeToNewPostNotifications,
 } from 'calypso/state/reader/follows/actions';
-import { NOTICE_CREATE } from 'calypso/state/action-types';
+import {
+	requestNotificationSubscription,
+	receiveNotificationSubscriptionError,
+	fromApi,
+} from '../';
 
 describe( 'notification-subscriptions-new', () => {
 	describe( 'requestNotificationSubscription', () => {

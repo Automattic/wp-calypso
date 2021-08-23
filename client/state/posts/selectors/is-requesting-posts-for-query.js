@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getSerializedPostsQuery } from 'calypso/state/posts/utils';
 
 import 'calypso/state/posts/init';

@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
 import versionCompare from 'calypso/lib/version-compare';
-import isJetpackSite from './is-jetpack-site';
 import getSiteOption from './get-site-option';
+import isJetpackSite from './is-jetpack-site';
 
 /**
  * Returns true if the Jetpack site is running a version meeting the specified

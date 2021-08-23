@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getSiteOption from './get-site-option';
 
 /**

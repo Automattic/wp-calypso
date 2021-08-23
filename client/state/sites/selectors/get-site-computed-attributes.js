@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { withoutHttp } from 'calypso/lib/url';
 import getRawSite from 'calypso/state/selectors/get-raw-site';
 import getSiteDomain from './get-site-domain';

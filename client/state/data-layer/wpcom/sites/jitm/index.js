@@ -1,15 +1,12 @@
-/**
- * Internal dependencies
- */
+import moment from 'moment/moment';
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
-import schema from './schema.json';
-import { clearJITM, insertJITM } from 'calypso/state/jitm/actions';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { JITM_DISMISS, JITM_FETCH } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import moment from 'moment/moment';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { clearJITM, insertJITM } from 'calypso/state/jitm/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import schema from './schema.json';
 
 const noop = () => {};
 

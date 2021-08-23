@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { stringify } from 'qs';
-
-/**
- * Internal dependencies
- */
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import getPreviousQuery from 'calypso/state/selectors/get-previous-query';
 /**

@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import { CONCIERGE_INITIAL_REQUEST, CONCIERGE_INITIAL_UPDATE } from 'calypso/state/action-types';
 
 export const availableTimes = ( state = null, action ) => {

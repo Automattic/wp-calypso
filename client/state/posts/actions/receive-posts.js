@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { POSTS_RECEIVE } from 'calypso/state/action-types';
 
 import 'calypso/state/posts/init';

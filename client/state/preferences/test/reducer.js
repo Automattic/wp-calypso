@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import reducer, { localValues, remoteValues, fetching } from '../reducer';
 import {
 	PREFERENCES_SET,
 	PREFERENCES_RECEIVE,
@@ -16,6 +8,7 @@ import {
 	PREFERENCES_FETCH_FAILURE,
 	PREFERENCES_SAVE_SUCCESS,
 } from 'calypso/state/action-types';
+import reducer, { localValues, remoteValues, fetching } from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {

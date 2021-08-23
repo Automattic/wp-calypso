@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { appStates } from 'calypso/state/imports/constants';
 
 // Left( UI ) - Right( API )

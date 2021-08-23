@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import {
 	GRAVATAR_UPLOAD_RECEIVE,
 	GRAVATAR_UPLOAD_REQUEST,

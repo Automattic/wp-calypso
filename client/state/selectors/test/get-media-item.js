@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import getMediaItem from 'calypso/state/selectors/get-media-item';
 import MediaQueryManager from 'calypso/lib/query-manager/media';
+import getMediaItem from 'calypso/state/selectors/get-media-item';
 
 describe( 'getMediaItem()', () => {
 	const siteId = 2916284;

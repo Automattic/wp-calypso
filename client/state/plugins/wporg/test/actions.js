@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
-
-/**
- * Internal dependencies
- */
+import * as wporg from 'calypso/lib/wporg';
+import { combineReducers } from 'calypso/state/utils';
 import { fetchPluginData } from '../actions';
 import wporgReducer from '../reducer';
-import { combineReducers } from 'calypso/state/utils';
-import * as wporg from 'calypso/lib/wporg';
 
 jest.mock( 'calypso/lib/wporg', () => ( {
 	fetchPluginInformation: jest.fn( ( slug ) => Promise.resolve( { slug } ) ),

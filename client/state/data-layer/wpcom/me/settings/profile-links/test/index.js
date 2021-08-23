@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
-import { handleRequestSuccess, requestUserProfileLinks } from '../';
 import { USER_PROFILE_LINKS_RECEIVE } from 'calypso/state/action-types';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { handleRequestSuccess, requestUserProfileLinks } from '../';
 
 const profileLinks = [
 	{

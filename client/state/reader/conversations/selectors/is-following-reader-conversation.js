@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { key } from 'calypso/state/reader/conversations/utils';
 import { CONVERSATION_FOLLOW_STATUS } from 'calypso/state/reader/conversations/follow-status';
+import { key } from 'calypso/state/reader/conversations/utils';
 
 import 'calypso/state/reader/init';
 

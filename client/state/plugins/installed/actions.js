@@ -1,8 +1,13 @@
-/**
- * Internal dependencies
- */
+import {
+	ACTIVATE_PLUGIN,
+	DEACTIVATE_PLUGIN,
+	UPDATE_PLUGIN,
+	ENABLE_AUTOUPDATE_PLUGIN,
+	DISABLE_AUTOUPDATE_PLUGIN,
+	INSTALL_PLUGIN,
+	REMOVE_PLUGIN,
+} from 'calypso/lib/plugins/constants';
 import wpcom from 'calypso/lib/wp';
-import getNetworkSites from 'calypso/state/selectors/get-network-sites';
 import {
 	PLUGINS_RECEIVE,
 	PLUGINS_REQUEST,
@@ -30,19 +35,11 @@ import {
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
 	PLUGIN_REMOVE_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
-import {
-	ACTIVATE_PLUGIN,
-	DEACTIVATE_PLUGIN,
-	UPDATE_PLUGIN,
-	ENABLE_AUTOUPDATE_PLUGIN,
-	DISABLE_AUTOUPDATE_PLUGIN,
-	INSTALL_PLUGIN,
-	REMOVE_PLUGIN,
-} from 'calypso/lib/plugins/constants';
-import { getSite } from 'calypso/state/sites/selectors';
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getNetworkSites from 'calypso/state/selectors/get-network-sites';
 import { sitePluginUpdated } from 'calypso/state/sites/actions';
+import { getSite } from 'calypso/state/sites/selectors';
 
 import 'calypso/state/plugins/init';
 

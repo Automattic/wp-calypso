@@ -1,20 +1,12 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { removeEmailForward, removeEmailForwardSuccess, removeEmailForwardFailure } from '../';
 import {
 	EMAIL_FORWARDING_REMOVE_REQUEST,
 	EMAIL_FORWARDING_REMOVE_REQUEST_SUCCESS,
 	EMAIL_FORWARDING_REMOVE_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
-import { isSuccessNotice, isErrorNotice, noticeHasText } from '../../test-utils';
-
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { removeEmailForward, removeEmailForwardSuccess, removeEmailForwardFailure } from '../';
+import { isSuccessNotice, isErrorNotice, noticeHasText } from '../../test-utils';
 
 describe( 'wpcom-api', () => {
 	describe( 'email forwarding remove forward request', () => {

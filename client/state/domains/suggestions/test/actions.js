@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { receiveDomainsSuggestions, requestDomainsSuggestions } from '../actions';
 import {
 	DOMAINS_SUGGESTIONS_RECEIVE,
 	DOMAINS_SUGGESTIONS_REQUEST,
@@ -15,6 +7,7 @@ import {
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { receiveDomainsSuggestions, requestDomainsSuggestions } from '../actions';
 
 describe( 'actions', () => {
 	let sandbox;

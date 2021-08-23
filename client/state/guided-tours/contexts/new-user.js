@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { isUserNewerThan } from './user-registration-time';
 
 export const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;

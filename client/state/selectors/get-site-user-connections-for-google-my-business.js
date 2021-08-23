@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { filter, last } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { getSiteKeyringsForService } from 'calypso/state/site-keyrings/selectors';
 import { getKeyringConnectionsByName } from 'calypso/state/sharing/keyring/selectors';
+import { getSiteKeyringsForService } from 'calypso/state/site-keyrings/selectors';
 
 function isConnected( keyringConnection, externalUser, siteKeyring ) {
 	return (

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { I18N_LANGUAGE_NAMES_REQUEST, I18N_LANGUAGE_NAMES_ADD } from 'calypso/state/action-types';
 
 import 'calypso/state/i18n/init';

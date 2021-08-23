@@ -1,16 +1,13 @@
-/**
- * Internal dependencies
- */
-import {
-	requestFeed,
-	receiveReaderFeedRequestSuccess,
-	receiveReaderFeedRequestFailure,
-} from '../actions';
 import {
 	READER_FEED_REQUEST,
 	READER_FEED_REQUEST_SUCCESS,
 	READER_FEED_REQUEST_FAILURE,
 } from 'calypso/state/reader/action-types';
+import {
+	requestFeed,
+	receiveReaderFeedRequestSuccess,
+	receiveReaderFeedRequestFailure,
+} from '../actions';
 
 describe( 'actions', () => {
 	describe( '#requestFeed', () => {

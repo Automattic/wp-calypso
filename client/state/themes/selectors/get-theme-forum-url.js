@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { isThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
 import { isWpcomTheme } from 'calypso/state/themes/selectors/is-wpcom-theme';
 import { isWporgTheme } from 'calypso/state/themes/selectors/is-wporg-theme';

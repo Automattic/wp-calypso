@@ -2,13 +2,10 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
-import getEditorCloseConfig from 'calypso/state/selectors/get-editor-close-config';
-import getPostTypeAllPostsUrl from 'calypso/state/selectors/get-post-type-all-posts-url';
-import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import PostQueryManager from 'calypso/lib/query-manager/post';
+import getEditorCloseConfig from 'calypso/state/selectors/get-editor-close-config';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
+import getPostTypeAllPostsUrl from 'calypso/state/selectors/get-post-type-all-posts-url';
 
 const postType = 'post';
 const pagePostType = 'page';

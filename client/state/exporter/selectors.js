@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { States } from './constants.js';
 import { get } from 'lodash';
+import { States } from './constants.js';
 
 import 'calypso/state/exporter/init';
 

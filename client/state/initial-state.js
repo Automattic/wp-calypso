@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
 import debugModule from 'debug';
 import { map, pick, throttle } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { APPLY_STORED_STATE } from 'calypso/state/action-types';
-import { serialize, deserialize } from 'calypso/state/utils';
 import { getAllStoredItems, setStoredItem, clearStorage } from 'calypso/lib/browser-storage';
 import { isSupportSession } from 'calypso/lib/user/support-user-interop';
-import config from '@automattic/calypso-config';
+import { APPLY_STORED_STATE } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
 
 /**
  * Module variables

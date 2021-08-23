@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get, includes, map, mapKeys, omit, omitBy, some, startsWith } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { DEFAULT_THEME_QUERY } from './constants';
 
 /**

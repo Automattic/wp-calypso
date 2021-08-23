@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import { find, get } from 'lodash';
 
-/**
- * Internal dependencies
- */
 import 'calypso/state/post-types/init';
 
 /**

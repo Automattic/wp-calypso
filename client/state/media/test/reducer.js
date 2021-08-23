@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import reducer, { errors, queries, selectedItems, transientItems, fetching } from '../reducer';
+import { ValidationErrors as MediaValidationErrors } from 'calypso/lib/media/constants';
 import MediaQueryManager from 'calypso/lib/query-manager/media';
 import {
 	MEDIA_DELETE,
@@ -30,7 +23,7 @@ import {
 	selectMediaItems,
 	successMediaItemRequest,
 } from '../actions';
-import { ValidationErrors as MediaValidationErrors } from 'calypso/lib/media/constants';
+import reducer, { errors, queries, selectedItems, transientItems, fetching } from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {

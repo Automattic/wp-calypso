@@ -2,20 +2,14 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
+import { withStorageKey } from '@automattic/state-utils';
 import { mapKeys } from 'lodash';
 import { useFakeTimers } from 'sinon';
-
-/**
- * Internal dependencies
- */
-import { withStorageKey } from '@automattic/state-utils';
 import * as browserStorage from 'calypso/lib/browser-storage';
 import { isSupportSession } from 'calypso/lib/user/support-user-interop';
 import { createReduxStore } from 'calypso/state';
-import signupReducer from 'calypso/state/signup/reducer';
+import { addReducerToStore } from 'calypso/state/add-reducer';
+import currentUser from 'calypso/state/current-user/reducer';
 import {
 	getInitialState,
 	getStateFromCache,
@@ -24,12 +18,10 @@ import {
 	MAX_AGE,
 	SERIALIZE_THROTTLE,
 } from 'calypso/state/initial-state';
-import { combineReducers, withPersistence } from 'calypso/state/utils';
-import { addReducerToStore } from 'calypso/state/add-reducer';
-
-import currentUser from 'calypso/state/current-user/reducer';
 import postTypes from 'calypso/state/post-types/reducer';
 import reader from 'calypso/state/reader/reducer';
+import signupReducer from 'calypso/state/signup/reducer';
+import { combineReducers, withPersistence } from 'calypso/state/utils';
 
 // Create a legacy initial reducer, with no modularization.
 const initialReducer = combineReducers( {

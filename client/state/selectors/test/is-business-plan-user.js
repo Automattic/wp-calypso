@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import isBusinessPlanUser from 'calypso/state/selectors/is-business-plan-user';
 import { PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS } from '@automattic/calypso-products';
+import deepFreeze from 'deep-freeze';
+import isBusinessPlanUser from 'calypso/state/selectors/is-business-plan-user';
 
 describe( 'isBusinessPlanUser()', () => {
 	test( 'should return true if any purchase is a business plan.', () => {

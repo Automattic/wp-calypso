@@ -1,13 +1,10 @@
-/**
- * Internal dependencies
- */
-import { requestUnfollow, receiveUnfollowTag, receiveError, fromApi } from '../';
 import { NOTICE_CREATE } from 'calypso/state/action-types';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	requestUnfollowTag as requestUnfollowAction,
 	receiveUnfollowTag as receiveUnfollowAction,
 } from 'calypso/state/reader/tags/items/actions';
+import { requestUnfollow, receiveUnfollowTag, receiveError, fromApi } from '../';
 
 const successfulUnfollowResponse = {
 	subscribed: false,

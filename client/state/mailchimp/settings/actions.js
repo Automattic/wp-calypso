@@ -1,6 +1,4 @@
-/**
- * Internal dependencies
- */
+import wpcom from 'calypso/lib/wp';
 import {
 	MAILCHIMP_SETTINGS_LIST,
 	MAILCHIMP_SETTINGS_RECEIVE,
@@ -8,7 +6,6 @@ import {
 	MAILCHIMP_SETTINGS_UPDATE_SUCCESS,
 	MAILCHIMP_SETTINGS_UPDATE_FAILURE,
 } from 'calypso/state/action-types';
-import wpcom from 'calypso/lib/wp';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/data-layer/wpcom/sites/mailchimp';

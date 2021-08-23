@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { find, forEach, get, isEqual, merge, omitBy, pickBy, reduce } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	READER_FOLLOW,
 	READER_UNFOLLOW,
@@ -28,8 +21,8 @@ import {
 	READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE,
 } from 'calypso/state/reader/action-types';
 import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
-import { prepareComparableUrl } from './utils';
 import { items as itemsSchema } from './schema';
+import { prepareComparableUrl } from './utils';
 
 function updateEmailSubscription( state, { payload, type } ) {
 	const follow = find( state, { blog_ID: +payload.blogId } );

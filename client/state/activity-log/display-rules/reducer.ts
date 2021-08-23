@@ -1,19 +1,12 @@
-/**
- * Internal dependencies
- */
-import { combineReducers, keyedReducer } from 'calypso/state/utils';
 import {
 	ACTIVITY_LOG_DISPLAY_RULES_REQUEST,
 	ACTIVITY_LOG_DISPLAY_RULES_REQUEST_FAILURE,
 	ACTIVITY_LOG_DISPLAY_RULES_REQUEST_SUCCESS,
 	ACTIVITY_LOG_DISPLAY_RULES_SET,
 } from 'calypso/state/action-types';
-
-/**
- * Type dependencies
- */
-import type { AnyAction } from 'redux';
+import { combineReducers, keyedReducer } from 'calypso/state/utils';
 import type { AppState } from 'calypso/types';
+import type { AnyAction } from 'redux';
 
 export const requestStatus = ( state: AppState = null, { type }: AnyAction ): AppState | string => {
 	switch ( type ) {

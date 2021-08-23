@@ -1,13 +1,4 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import { items, requests } from '../reducer';
-import { serialize, deserialize } from 'calypso/state/utils';
 import {
 	WORDADS_SETTINGS_RECEIVE,
 	WORDADS_SETTINGS_SAVE,
@@ -15,6 +6,8 @@ import {
 	WORDADS_SETTINGS_SAVE_SUCCESS,
 	WORDADS_SETTINGS_UPDATE,
 } from 'calypso/state/action-types';
+import { serialize, deserialize } from 'calypso/state/utils';
+import { items, requests } from '../reducer';
 
 describe( 'reducer', () => {
 	const originalConsoleWarn = global.console.warn;

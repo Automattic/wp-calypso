@@ -1,12 +1,9 @@
-/**
- * Internal dependencies
- */
+import { withStorageKey } from '@automattic/state-utils';
 import {
 	THEME_SETUP_REQUEST,
 	THEME_SETUP_RESULT,
 	THEME_SETUP_TOGGLE_DIALOG,
 } from 'calypso/state/themes/action-types';
-import { withStorageKey } from '@automattic/state-utils';
 
 const initialState = {
 	active: false,

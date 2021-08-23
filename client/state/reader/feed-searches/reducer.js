@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { uniqBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { combineReducers, keyedReducer } from 'calypso/state/utils';
 import { READER_FEED_SEARCH_RECEIVE } from 'calypso/state/reader/action-types';
+import { combineReducers, keyedReducer } from 'calypso/state/utils';
 
 /**
  * Tracks mappings between queries --> feed results

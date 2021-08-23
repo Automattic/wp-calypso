@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
+import {
+	NOTIFICATIONS_PANEL_TOGGLE,
+	SECTION_SET,
+	SELECTED_SITE_SET,
+} from 'calypso/state/action-types';
 import {
 	setAllSitesSelected,
 	setSection,
 	setSelectedSiteId,
 	toggleNotificationsPanel,
 } from '../actions';
-import {
-	NOTIFICATIONS_PANEL_TOGGLE,
-	SECTION_SET,
-	SELECTED_SITE_SET,
-} from 'calypso/state/action-types';
 
 describe( 'actions', () => {
 	describe( 'setAllSitesSelected()', () => {

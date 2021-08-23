@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	POST_REVISIONS_DIALOG_OPEN,
 	POST_REVISIONS_DIALOG_CLOSE,

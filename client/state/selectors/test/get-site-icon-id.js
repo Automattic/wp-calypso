@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getSiteIconId from 'calypso/state/selectors/get-site-icon-id';
 
 describe( 'getSiteIconId()', () => {

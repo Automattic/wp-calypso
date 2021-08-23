@@ -1,8 +1,4 @@
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
-import { combineReducers } from 'calypso/state/utils';
 import {
 	INLINE_HELP_SEARCH_REQUEST,
 	INLINE_HELP_SEARCH_REQUEST_FAILURE,
@@ -16,6 +12,7 @@ import {
 	INLINE_HELP_POPOVER_SHOW,
 	INLINE_HELP_SEARCH_RESET,
 } from 'calypso/state/action-types';
+import { combineReducers } from 'calypso/state/utils';
 
 export const popover = ( state = { isVisible: false }, action ) => {
 	switch ( action.type ) {

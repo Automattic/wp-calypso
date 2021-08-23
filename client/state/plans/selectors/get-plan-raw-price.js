@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
- * Internal Dependencies
- */
 import { calculateMonthlyPriceForPlan } from '@automattic/calypso-products';
+import { get } from 'lodash';
 import { getPlan } from './plan';
 
 import 'calypso/state/plans/init';

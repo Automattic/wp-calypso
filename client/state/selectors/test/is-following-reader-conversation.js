@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { isFollowingReaderConversation } from 'calypso/state/reader/conversations/selectors';
 
 describe( 'isFollowingReaderConversation()', () => {

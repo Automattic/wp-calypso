@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	CONNECTED_APPLICATION_DELETE,
 	CONNECTED_APPLICATION_DELETE_SUCCESS,
