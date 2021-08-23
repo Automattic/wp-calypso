@@ -99,6 +99,7 @@
 
 		.masterbar__item-content {
 			color: $nav-unification-primary;
+			font-weight: 500;
 		}
 	}
 
@@ -113,10 +114,12 @@
 		margin-left: -8px;
 		color: $nav-unification-primary;
 		background: #fafafa;
+		font-size: $nav-unification-masterbar-font-size;
 
 		.gridicon {
 			width: 14px;
 			color: var( --studio-gray-20 );
+			transform: translateY( -1px );
 		}
 
 		&:hover,
