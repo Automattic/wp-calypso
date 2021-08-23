@@ -73,7 +73,7 @@ const TitanSetUpMailbox = ( { selectedDomainName } ) => {
 					{ getTitanProductName() + ': ' + selectedDomainName }
 				</HeaderCake>
 
-				<SectionHeader label={ title } className="titan-setup-mailbox__section-header" />
+				<SectionHeader label={ title } className="titan-set-up-mailbox__section-header" />
 
 				<TitanSetUpMailboxForm
 					areSiteDomainsLoaded={ areSiteDomainsLoaded }

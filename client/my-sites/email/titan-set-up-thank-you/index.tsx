@@ -60,7 +60,7 @@ const TitanSetUpThankYou = ( props: TitanSetUpThankYouProps ): JSX.Element => {
 				stepCta: (
 					<FullWidthButton href={ getTitanEmailUrl( emailAddress ) } primary target="_blank">
 						{ translate( 'Go to Inbox' ) }
-						<Gridicon className="titan-setup-thank-you__icon-external" icon="external" />
+						<Gridicon className="titan-set-up-thank-you__icon-external" icon="external" />
 					</FullWidthButton>
 				),
 			},
@@ -73,7 +73,7 @@ const TitanSetUpThankYou = ( props: TitanSetUpThankYouProps ): JSX.Element => {
 				stepCta: (
 					<FullWidthButton href={ titanControlPanelUrl } target="_blank">
 						{ translate( 'Get app' ) }
-						<Gridicon className="titan-setup-thank-you__icon-external" icon="external" />
+						<Gridicon className="titan-set-up-thank-you__icon-external" icon="external" />
 					</FullWidthButton>
 				),
 			},
@@ -92,7 +92,7 @@ const TitanSetUpThankYou = ( props: TitanSetUpThankYouProps ): JSX.Element => {
 
 	return (
 		<ThankYou
-			headerClassName={ 'titan-setup-thank-you__header' }
+			headerClassName={ 'titan-set-up-thank-you__header' }
 			sections={ [ titanThankYouSection ] }
 			showSupportSection={ true }
 			thankYouImage={ thankYouImage }

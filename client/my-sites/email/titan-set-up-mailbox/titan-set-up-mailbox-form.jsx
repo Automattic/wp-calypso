@@ -173,7 +173,7 @@ const TitanSetUpMailboxForm = ( { areSiteDomainsLoaded, selectedDomainName } ) =
 				validatedMailboxUuids={ validatedMailboxUuids }
 			>
 				<Button
-					className="titan-setup-mailbox-form__button"
+					className="titan-set-up-mailbox-form__button"
 					primary
 					busy={ isBusy }
 					onClick={ handleSetup }
