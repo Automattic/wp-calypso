@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import React from 'react';
-import domainConnectedSuccess from 'calypso/assets/images/illustrations/domain-connected-success.svg';
+import domainTransferredSuccess from 'calypso/assets/images/illustrations/domain-transferred-success.svg';
 import { ThankYouProps } from 'calypso/components/thank-you/types';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 
@@ -52,7 +52,7 @@ const domainTransferThankYouProps = (
 			],
 		},
 	],
-	thankYouImage: { alt: translate( 'Domain Transferred' ), src: domainConnectedSuccess },
+	thankYouImage: { alt: translate( 'Domain Transferred' ), src: domainTransferredSuccess },
 	thankYouTitle: translate( 'Congratulations on your purchase!' ),
 	thankYouSubtitle: translate(
 		'Your domain {{strong}}%(domain)s{{/strong}} is being transferred to your site',
