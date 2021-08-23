@@ -10,7 +10,7 @@ import {
 	Button,
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { useIsWebPayAvailable } from '@automattic/wpcom-checkout';
+import { useIsWebPayAvailable, isValueTruthy } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { ThemeProvider } from 'emotion-theming';
 import { useTranslate } from 'i18n-calypso';
@@ -49,7 +49,6 @@ import useRecordCheckoutLoaded from './hooks/use-record-checkout-loaded';
 import useRemoveFromCartAndRedirect from './hooks/use-remove-from-cart-and-redirect';
 import useStoredCards from './hooks/use-stored-cards';
 import { useWpcomStore } from './hooks/wpcom-store';
-import doesValueExist from './lib/does-value-exist';
 import existingCardProcessor from './lib/existing-card-processor';
 import filterAppropriatePaymentMethods from './lib/filter-appropriate-payment-methods';
 import freePurchaseProcessor from './lib/free-purchase-processor';
@@ -299,13 +298,13 @@ export default function CompositeCheckout( {
 	useCachedDomainContactDetails( updateLocation );
 
 	// Record errors adding products to the cart
-	useActOnceOnStrings( [ cartProductPrepError ].filter( doesValueExist ), ( messages ) => {
+	useActOnceOnStrings( [ cartProductPrepError ].filter( isValueTruthy ), ( messages ) => {
 		messages.forEach( ( message ) =>
 			recordEvent( { type: 'PRODUCTS_ADD_ERROR', payload: message } )
 		);
 	} );
 
-	useActOnceOnStrings( [ cartLoadingError ].filter( doesValueExist ), ( messages ) => {
+	useActOnceOnStrings( [ cartLoadingError ].filter( isValueTruthy ), ( messages ) => {
 		messages.forEach( ( message ) =>
 			recordEvent( { type: 'CART_ERROR', payload: { type: cartLoadingErrorType, message } } )
 		);
@@ -318,7 +317,7 @@ export default function CompositeCheckout( {
 		cartLoadingError,
 		stripeLoadingError?.message,
 		cartProductPrepError,
-	].filter( doesValueExist );
+	].filter( isValueTruthy );
 	useActOnceOnStrings( errorsToDisplay, () => {
 		reduxDispatch(
 			errorNotice( errorsToDisplay.map( ( message ) => <p key={ message }>{ message }</p> ) )
@@ -327,7 +326,7 @@ export default function CompositeCheckout( {
 
 	const errors = responseCart.messages?.errors ?? [];
 	const areThereErrors =
-		[ ...errors, cartLoadingError, cartProductPrepError ].filter( doesValueExist ).length > 0;
+		[ ...errors, cartLoadingError, cartProductPrepError ].filter( isValueTruthy ).length > 0;
 
 	const siteSlugLoggedOutCart: string | undefined = select( 'wpcom' )?.getSiteSlug();
 	const {
@@ -344,7 +343,7 @@ export default function CompositeCheckout( {
 		Boolean( isLoggedOutCart )
 	);
 
-	useActOnceOnStrings( [ storedCardsError ].filter( doesValueExist ), ( messages ) => {
+	useActOnceOnStrings( [ storedCardsError ].filter( isValueTruthy ), ( messages ) => {
 		messages.forEach( ( message ) =>
 			recordEvent( { type: 'STORED_CARD_ERROR', payload: message } )
 		);

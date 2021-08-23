@@ -7,7 +7,7 @@ import {
 	getPlanByPathSlug,
 } from '@automattic/calypso-products';
 import { createRequestCartProduct } from '@automattic/shopping-cart';
-import { decodeProductFromUrl } from '@automattic/wpcom-checkout';
+import { decodeProductFromUrl, isValueTruthy } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useReducer } from 'react';
@@ -15,7 +15,6 @@ import { useSelector } from 'react-redux';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import doesValueExist from '../lib/does-value-exist';
 import getCartFromLocalStorage from '../lib/get-cart-from-local-storage';
 import useFetchProductsIfNotLoaded from './use-fetch-products-if-not-loaded';
 import useStripProductsFromUrl from './use-strip-products-from-url';
@@ -303,7 +302,7 @@ function useAddRenewalItems( {
 				}
 				return createRenewalItemToAddToCart( productSlug, product.product_id, subscriptionId );
 			} )
-			.filter( doesValueExist );
+			.filter( isValueTruthy );
 
 		if ( productsForCart.length < 1 ) {
 			debug( 'creating renewal products failed', productAlias );
@@ -380,7 +379,7 @@ function useAddProductFromSlug( {
 						? { ...validProduct, internal_product_alias: productAlias }
 						: undefined;
 				} )
-				.filter( doesValueExist ) ?? [],
+				.filter( isValueTruthy ) ?? [],
 		[ isJetpackNotAtomic, productAliasFromUrl, products ]
 	);
 
