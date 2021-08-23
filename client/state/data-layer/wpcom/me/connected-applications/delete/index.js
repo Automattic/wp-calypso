@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import { CONNECTED_APPLICATION_DELETE } from 'calypso/state/action-types';
 import { deleteConnectedApplicationSuccess } from 'calypso/state/connected-applications/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 /**
  * Dispatches a request to delete a connected application for the current user

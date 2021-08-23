@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { spy } from 'sinon';
-
-/**
- * Internal dependencies
- */
-import { writePostComment } from '../';
 import * as Utils from 'calypso/state/data-layer/wpcom/sites/utils';
+import { writePostComment } from '../';
 
 describe( '#writePostComment()', () => {
 	const action = {

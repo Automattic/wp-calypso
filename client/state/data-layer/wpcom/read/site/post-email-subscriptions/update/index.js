@@ -1,22 +1,14 @@
-/**
- * External Dependencies
- */
-import { get, merge } from 'lodash';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
-import { READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION } from 'calypso/state/reader/action-types';
+import { get, merge } from 'lodash';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { updateNewPostEmailSubscription } from 'calypso/state/reader/follows/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { buildBody } from '../utils';
-import { bypassDataLayer } from 'calypso/state/data-layer/utils';
+import { READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION } from 'calypso/state/reader/action-types';
+import { updateNewPostEmailSubscription } from 'calypso/state/reader/follows/actions';
 import { getReaderFollowForBlog } from 'calypso/state/reader/follows/selectors';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { buildBody } from '../utils';
 
 export function requestUpdatePostEmailSubscription( action ) {
 	return ( dispatch, getState ) => {

@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { SITE_FRONT_PAGE_UPDATE } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { updateSiteFrontPage } from 'calypso/state/sites/actions';
 
 const noop = () => {};

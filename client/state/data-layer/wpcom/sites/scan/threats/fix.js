@@ -1,15 +1,12 @@
-/**
- * Internal dependencies
- */
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { JETPACK_SCAN_THREAT_FIX } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import * as sitesAlertsFixHandlers from 'calypso/state/data-layer/wpcom/sites/alerts/fix';
 import {
 	updateThreat,
 	updateThreatCompleted,
 	getFixThreatsStatus,
 } from 'calypso/state/jetpack-scan/threats/actions';
-import * as sitesAlertsFixHandlers from 'calypso/state/data-layer/wpcom/sites/alerts/fix';
 
 export const request = ( action ) => {
 	const defaultActions = sitesAlertsFixHandlers.request( action );

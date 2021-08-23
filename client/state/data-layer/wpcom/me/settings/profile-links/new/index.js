@@ -1,9 +1,7 @@
-/**
- * Internal dependencies
- */
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { USER_PROFILE_LINKS_ADD } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import {
 	addUserProfileLinksDuplicate,
 	addUserProfileLinksError,
@@ -11,7 +9,6 @@ import {
 	addUserProfileLinksSuccess,
 	receiveUserProfileLinks,
 } from 'calypso/state/profile-links/actions';
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 import 'calypso/state/profile-links/init';
 

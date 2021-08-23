@@ -1,14 +1,11 @@
-/**
- * Internal dependencies
- */
 import {
 	EDITOR_TYPE_REQUEST,
 	EDITOR_TYPE_SET,
 	GUTENBERG_IFRAME_ELIGIBLE_SET,
 } from 'calypso/state/action-types';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
 import 'calypso/state/gutenberg-iframe-eligible/init';
 
