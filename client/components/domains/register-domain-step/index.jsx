@@ -79,6 +79,7 @@ import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import wpcom from 'calypso/lib/wp';
+import { domainUseMyDomain } from 'calypso/my-sites/domains/paths';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
 	getDomainsSuggestions,
@@ -1543,11 +1544,10 @@ class RegisterDomainStep extends React.Component {
 		if ( this.props.useYourDomainUrl ) {
 			useYourDomainUrl = this.props.useYourDomainUrl;
 		} else {
-			const query = stringify( { initialQuery: this.state.lastQuery.trim() } );
-			useYourDomainUrl = `${ this.props.basePath }/use-your-domain`;
-			if ( this.props.selectedSite ) {
-				useYourDomainUrl += `/${ this.props.selectedSite.slug }?${ query }`;
-			}
+			useYourDomainUrl = domainUseMyDomain(
+				this.props.selectedSite.slug,
+				this.state.lastQuery.trim()
+			);
 		}
 
 		return useYourDomainUrl;
