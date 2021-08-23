@@ -10,7 +10,6 @@
 	.titan-new-mailbox-list__parent-actions {
 		display: flex;
 		flex-direction: column-reverse;
-		justify-content: space-between;
 
 		@include break-mobile {
 			flex-direction: row;
@@ -26,8 +25,10 @@
 		}
 	}
 
-	.titan-new-mailbox-list__parent-actions {
-		justify-content: start;
+	.titan-new-mailbox-list__actions {
+		@include break-mobile {
+			justify-content: space-between;
+		}
 	}
 }
 
