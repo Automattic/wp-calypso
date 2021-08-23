@@ -1,6 +1,5 @@
 import { RootChild } from '@automattic/components';
 import classNames from 'classnames';
-import debugFactory from 'debug';
 import { useRtl } from 'i18n-calypso';
 import { defer } from 'lodash';
 import PropTypes from 'prop-types';
@@ -15,11 +14,6 @@ import {
 } from './util';
 
 import './style.scss';
-
-/**
- * Module variables
- */
-const debug = debugFactory( 'calypso:popover' );
 
 const noop = () => {};
 
@@ -128,7 +122,6 @@ class PopoverInner extends Component {
 		if ( event.keyCode === 27 ) {
 			const domContext = ReactDom.findDOMNode( this.props.context );
 			if ( domContext ) {
-				debug( 'Refocusing the previous active DOM node' );
 				domContext.focus();
 			}
 
@@ -192,7 +185,6 @@ class PopoverInner extends Component {
 		// Focusing the element while it's off the screen would cause unwanted scrolling.
 		this.scheduledFocus = defer( () => {
 			if ( this.popoverNodeRef.current ) {
-				debug( 'focusing the popover' );
 				this.popoverNodeRef.current.focus();
 			}
 			this.scheduledFocus = null;
@@ -251,21 +243,17 @@ class PopoverInner extends Component {
 		const domContext = ReactDom.findDOMNode( this.props.context );
 
 		if ( ! domContext ) {
-			debug( '[WARN] no DOM elements to work' );
 			return null;
 		}
 
 		let suggestedPosition = position;
-		debug( 'position: %o', suggestedPosition );
 
 		if ( this.props.autoRtl ) {
 			suggestedPosition = this.adjustRtlPosition( suggestedPosition );
-			debug( 'RTL adjusted position: %o', suggestedPosition );
 		}
 
 		if ( this.props.autoPosition ) {
 			suggestedPosition = suggestPosition( suggestedPosition, domContainer, domContext );
-			debug( 'suggested position: %o', suggestedPosition );
 		}
 
 		const reposition = Object.assign(
@@ -277,14 +265,10 @@ class PopoverInner extends Component {
 			{ positionClass: this.getPositionClass( suggestedPosition ) }
 		);
 
-		debug( 'updating reposition: ', reposition );
-
 		return reposition;
 	}
 
 	setPosition = () => {
-		debug( 'updating position' );
-
 		let position;
 
 		// Do we have a custom position provided?
@@ -336,7 +320,6 @@ class PopoverInner extends Component {
 
 	render() {
 		if ( ! this.props.context ) {
-			debug( 'No `context` to tie. return no render' );
 			return null;
 		}
 
@@ -380,7 +363,6 @@ function Popover( { isVisible = false, showDelay = 0, ...props } ) {
 	// happen immediately after the new value of `isVisible` is received.
 	React.useEffect( () => {
 		if ( showDelay > 0 && show !== isVisible && isVisible ) {
-			debug( `showing in ${ showDelay } ms` );
 			const showDelayTimer = setTimeout( () => {
 				setShow( true );
 			}, showDelay );
@@ -399,7 +381,6 @@ function Popover( { isVisible = false, showDelay = 0, ...props } ) {
 	}
 
 	if ( ! show ) {
-		debug( 'is hidden. return no render' );
 		return null;
 	}
 
