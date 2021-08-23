@@ -7,6 +7,7 @@ import {
 	fireGoogleAnalyticsEvent,
 	fireGoogleAnalyticsTiming,
 } from 'calypso/lib/analytics/ad-tracking';
+import { refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
 
 const gaDebug = debug( 'calypso:analytics:ga' );
 
@@ -102,7 +103,8 @@ export const gaRecordTiming = makeGoogleAnalyticsTrackingFunction( function reco
  * @returns {Function} Wrapped function
  */
 export function makeGoogleAnalyticsTrackingFunction( func ) {
-	return function ( ...args ) {
+	return async function ( ...args ) {
+		await refreshCountryCodeCookieGdpr();
 		if ( ! isGoogleAnalyticsAllowed() ) {
 			gaDebug( '[Disallowed] analytics %s( %o )', func.name, args );
 			return;
