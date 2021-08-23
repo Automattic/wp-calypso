@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { items } from '../reducer';
 import {
 	RECEIPT_FETCH,
 	RECEIPT_FETCH_COMPLETED,
 	RECEIPT_FETCH_FAILED,
 } from 'calypso/state/action-types';
+import { items } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {

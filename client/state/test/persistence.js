@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { createReduxStore } from 'calypso/state';
 import reducer from 'calypso/state/reducer';
 import { serialize, deserialize } from 'calypso/state/utils';

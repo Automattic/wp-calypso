@@ -1,13 +1,6 @@
-/**
- * External Dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import 'calypso/state/inline-help/init';
 import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
+import 'calypso/state/inline-help/init';
 
 /**
  * Returns an array of all search results for the current search query or an

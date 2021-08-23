@@ -1,12 +1,5 @@
-/**
- * External Dependencies
- */
-import Lasagna from '@automattic/lasagna';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
+import Lasagna from '@automattic/lasagna';
 import wpcom from 'calypso/lib/wp';
 import connectMiddleware from './connect/middleware';
 import postChannelMiddleware from './post-channel/middleware';

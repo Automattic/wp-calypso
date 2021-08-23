@@ -1,12 +1,6 @@
 /* eslint-disable no-case-declarations */
-/**
- * External dependencies
- */
-import { find } from 'lodash';
 
-/**
- * Internal dependencies
- */
+import { find } from 'lodash';
 import {
 	SITE_DOMAINS_RECEIVE,
 	SITE_DOMAINS_REQUEST,

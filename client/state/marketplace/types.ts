@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { IProductCollection, IProductGroupCollection } from 'calypso/my-sites/marketplace/types';
 
 export enum MARKETPLACE_ASYNC_PROCESS_STATUS {

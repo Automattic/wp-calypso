@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getDocumentHeadUnreadCount } from 'calypso/state/document-head/selectors/get-document-head-unread-count';
 
 const UNREAD_COUNT_CAP = 40;

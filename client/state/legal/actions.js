@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { LEGAL_REQUEST, LEGAL_SET, TOS_ACCEPT } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/legal';

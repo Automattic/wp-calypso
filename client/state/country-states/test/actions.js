@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
-import { receiveCountryStates, requestCountryStates } from '../actions';
 import {
 	COUNTRY_STATES_RECEIVE,
 	COUNTRY_STATES_REQUEST,
@@ -16,6 +8,7 @@ import {
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { receiveCountryStates, requestCountryStates } from '../actions';
 
 describe( 'actions', () => {
 	let spy;

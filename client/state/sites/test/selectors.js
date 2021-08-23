@@ -1,12 +1,8 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
+import { PLAN_BUSINESS, PLAN_ECOMMERCE, PLAN_FREE } from '@automattic/calypso-products';
 import { expect as chaiExpect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
+import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 import {
 	getSite,
 	getSiteCollisions,
@@ -52,9 +48,6 @@ import {
 	getJetpackComputedAttributes,
 	getSiteComputedAttributes,
 } from '../selectors';
-import config from '@automattic/calypso-config';
-import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
-import { PLAN_BUSINESS, PLAN_ECOMMERCE, PLAN_FREE } from '@automattic/calypso-products';
 
 jest.mock( '@automattic/calypso-config', () => {
 	const configMock = () => '';

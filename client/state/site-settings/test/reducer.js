@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import { items, requesting, saveRequests } from '../reducer';
 import {
 	MEDIA_DELETE,
 	SITE_SETTINGS_RECEIVE,
@@ -21,6 +13,7 @@ import {
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { items, requesting, saveRequests } from '../reducer';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {

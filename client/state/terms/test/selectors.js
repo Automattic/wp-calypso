@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
+import TermQueryManager from 'calypso/lib/query-manager/term';
 import {
 	countFoundTermsForQuery,
 	getTerm,
@@ -16,7 +10,6 @@ import {
 	isRequestingTermsForQuery,
 	isRequestingTermsForQueryIgnoringPage,
 } from '../selectors';
-import TermQueryManager from 'calypso/lib/query-manager/term';
 
 describe( 'selectors', () => {
 	beforeEach( () => {

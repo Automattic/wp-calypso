@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { omit } from 'lodash';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { omit } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import {
 	GUIDED_TRANSFER_HOST_DETAILS_SAVE,

@@ -1,7 +1,5 @@
 /* eslint-disable no-case-declarations */
-/**
- * Internal dependencies
- */
+
 import { withStorageKey } from '@automattic/state-utils';
 import {
 	STORED_CARDS_ADD_COMPLETED,

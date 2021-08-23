@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	ORDER_TRANSACTION_FETCH,
 	ORDER_TRANSACTION_FETCH_ERROR,

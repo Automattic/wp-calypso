@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-import sinon from 'sinon';
 import lodash from 'lodash';
-
-/**
- * Internal dependencies
- */
+import sinon from 'sinon';
 import {
 	isRequestingInvitesForSite,
 	getPendingInvitesForSite,

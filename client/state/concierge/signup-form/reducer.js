@@ -1,12 +1,9 @@
-/**
- * Internal dependencies
- */
-import { combineReducers } from 'calypso/state/utils';
+import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
 import {
 	CONCIERGE_SIGNUP_FORM_UPDATE,
 	CONCIERGE_UPDATE_BOOKING_STATUS,
 } from 'calypso/state/action-types';
-import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
+import { combineReducers } from 'calypso/state/utils';
 
 export const message = ( state = '', action ) => {
 	switch ( action.type ) {

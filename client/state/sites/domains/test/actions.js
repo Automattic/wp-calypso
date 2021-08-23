@@ -1,11 +1,6 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
+import useNock from 'calypso/test-helpers/use-nock';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import {
 	domainsReceiveAction,
 	domainsRequestAction,
@@ -23,8 +18,6 @@ import {
 	ACTION_SITE_DOMAIN_REQUEST_FAILURE,
 	ERROR_MESSAGE_RESPONSE as errorResponse,
 } from './fixture';
-import useNock from 'calypso/test-helpers/use-nock';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'actions', () => {
 	let sandbox;

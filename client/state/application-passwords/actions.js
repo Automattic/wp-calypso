@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	APPLICATION_PASSWORD_CREATE,
 	APPLICATION_PASSWORD_CREATE_SUCCESS,

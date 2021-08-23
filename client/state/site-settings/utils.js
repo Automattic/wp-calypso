@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { isPlainObject } from 'lodash';
 
 /**

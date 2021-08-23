@@ -1,13 +1,10 @@
-/**
- * Internal dependencies
- */
+import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
 import {
 	READER_SIDEBAR_LISTS_TOGGLE,
 	READER_SIDEBAR_TAGS_TOGGLE,
 	READER_SIDEBAR_ORGANIZATIONS_TOGGLE,
 	READER_SIDEBAR_FOLLOWING_TOGGLE,
 } from 'calypso/state/reader/action-types';
-import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
 
 import 'calypso/state/reader-ui/init';
 

@@ -1,12 +1,5 @@
-/**
- * External Dependencies
- */
 import { Reducer, Store, Action } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-
-/**
- * Internal dependencies
- */
 import { addReducerToStore, clear as clearReducers, WithAddReducer } from './add-reducer';
 import { getInitialState } from './initial-state';
 

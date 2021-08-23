@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { fetchAtomicTransfer, setAtomicTransfer } from '../actions';
 import {
 	ATOMIC_TRANSFER_REQUEST as TRANSFER_REQUEST,
 	ATOMIC_TRANSFER_SET as SET_TRANSFER,
 } from 'calypso/state/action-types';
+import { fetchAtomicTransfer, setAtomicTransfer } from '../actions';
 
 describe( 'action', () => {
 	describe( 'fetchAtomicTransfer', () => {

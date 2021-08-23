@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	DOCUMENT_HEAD_LINK_SET,
 	DOCUMENT_HEAD_META_SET,

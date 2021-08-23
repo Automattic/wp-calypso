@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import { popover, requesting, search } from '../reducer';
 import {
 	INLINE_HELP_POPOVER_SHOW,
 	INLINE_HELP_POPOVER_HIDE,
@@ -17,6 +9,7 @@ import {
 	INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
 	INLINE_HELP_SELECT_RESULT,
 } from 'calypso/state/action-types';
+import { popover, requesting, search } from '../reducer';
 
 const API_RESULT_FIXTURE = [
 	{

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { DefaultRootState } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import getRawSite from 'calypso/state/selectors/get-raw-site';
 
 export interface SiteProduct {

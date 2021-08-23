@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { getCustomizerFocus } from 'calypso/my-sites/customize/panels';
 import { addQueryArgs } from 'calypso/lib/url';
+import { getCustomizerFocus } from 'calypso/my-sites/customize/panels';
 import getSiteAdminUrl from './get-site-admin-url';
 import getSiteSlug from './get-site-slug';
 import isJetpackSite from './is-jetpack-site';

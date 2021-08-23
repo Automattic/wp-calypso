@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import emailForwardsReducer from '../reducer';
 import {
 	EMAIL_FORWARDING_REQUEST,
 	EMAIL_FORWARDING_REQUEST_SUCCESS,
@@ -18,6 +10,7 @@ import {
 	EMAIL_FORWARDING_REMOVE_REQUEST_SUCCESS,
 	EMAIL_FORWARDING_REMOVE_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
+import emailForwardsReducer from '../reducer';
 
 const TEST_MAILBOX_EXAMPLE_DOT_COM = {
 	email: 'test@example.com',

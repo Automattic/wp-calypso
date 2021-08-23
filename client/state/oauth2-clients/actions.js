@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import LRU from 'lru';
-
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 import { OAUTH2_CLIENT_DATA_RECEIVE } from 'calypso/state/action-types';
 

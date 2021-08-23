@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import 'calypso/state/inline-help/init';
 import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
 

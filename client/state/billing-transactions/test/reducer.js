@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import reducer, { requesting, items, sendingReceiptEmail } from '../reducer';
 import {
 	BILLING_RECEIPT_EMAIL_SEND,
 	BILLING_RECEIPT_EMAIL_SEND_FAILURE,
@@ -19,6 +11,7 @@ import {
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import reducer, { requesting, items, sendingReceiptEmail } from '../reducer';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {

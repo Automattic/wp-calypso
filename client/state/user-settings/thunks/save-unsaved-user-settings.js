@@ -1,13 +1,10 @@
-/**
- * Internal dependencies
- */
+import wp from 'calypso/lib/wp';
 import { fromApi } from 'calypso/state/data-layer/wpcom/me/settings';
+import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import {
 	clearUnsavedUserSettings,
 	saveUserSettingsSuccess,
 } from 'calypso/state/user-settings/actions';
-import wp from 'calypso/lib/wp';
-import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 
 import 'calypso/state/user-settings/init';
 

@@ -1,18 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
-import {
-	receiveSiteSettings,
-	requestSiteSettings,
-	saveSiteSettings,
-	updateSiteSettings,
-} from '../actions';
 import {
 	SITE_SETTINGS_RECEIVE,
 	SITE_SETTINGS_REQUEST,
@@ -25,6 +12,12 @@ import {
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import {
+	receiveSiteSettings,
+	requestSiteSettings,
+	saveSiteSettings,
+	updateSiteSettings,
+} from '../actions';
 
 const getState = () => ( {
 	sites: { items: { 2916284: { options: {} } } },

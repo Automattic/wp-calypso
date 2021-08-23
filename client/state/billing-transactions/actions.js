@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import wp from 'calypso/lib/wp';
 import {
 	BILLING_RECEIPT_EMAIL_SEND,
 	BILLING_RECEIPT_EMAIL_SEND_FAILURE,
@@ -15,7 +9,6 @@ import {
 	BILLING_TRANSACTIONS_REQUEST_FAILURE,
 	BILLING_TRANSACTIONS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
-import wp from 'calypso/lib/wp';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/billing-transactions/init';

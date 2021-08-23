@@ -1,12 +1,6 @@
 /* eslint-disable jest/no-identical-title */
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 
-/**
- * Internal dependencies
- */
+import { expect } from 'chai';
 import {
 	SITE_ADDRESS_CHANGE_REQUEST,
 	SITE_ADDRESS_CHANGE_REQUEST_SUCCESS,

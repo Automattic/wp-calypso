@@ -1,11 +1,4 @@
-/**
- * External Dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import getInlineHelpCurrentlySelectedResult from 'calypso/state/inline-help/selectors/get-inline-help-currently-selected-result';
 
 import 'calypso/state/inline-help/init';

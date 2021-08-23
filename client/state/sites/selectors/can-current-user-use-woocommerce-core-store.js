@@ -1,10 +1,7 @@
-/**
- * Internal dependencies
- */
+import { isBusinessPlan, isEcommercePlan } from '@automattic/calypso-products';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import canCurrentUserUseAnyWooCommerceBasedStore from 'calypso/state/sites/selectors/can-current-user-use-any-woocommerce-based-store';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { isBusinessPlan, isEcommercePlan } from '@automattic/calypso-products';
 
 /**
  * Returns true if current user can see and use the WooCommerce Core-based option in menu

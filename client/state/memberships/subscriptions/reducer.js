@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import {
 	MEMBERSHIPS_SUBSCRIPTIONS_RECEIVE,
 	MEMBERSHIPS_SUBSCRIPTION_STOP,

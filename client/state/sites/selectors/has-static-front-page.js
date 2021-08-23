@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getSiteFrontPage from './get-site-front-page';
 import getSiteFrontPageType from './get-site-front-page-type';
 

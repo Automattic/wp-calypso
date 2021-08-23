@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import reducer, { currentClientId } from '../reducer';
 import { ROUTE_SET } from 'calypso/state/action-types';
+import reducer, { currentClientId } from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {

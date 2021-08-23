@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
 import nock from 'nock';
 import { createStore, combineReducers, applyMiddleware } from 'redux'; // eslint-disable-line no-restricted-imports
 import thunk from 'redux-thunk';
-
-/**
- * Internal dependencies
- */
-import imports from 'calypso/state/imports/reducer';
 import { fetchImporterState, lockImport } from 'calypso/state/imports/actions';
+import { appStates } from 'calypso/state/imports/constants';
+import imports from 'calypso/state/imports/reducer';
 import {
 	isImporterStatusHydrated,
 	getImporterStatus,
 	getImporterStatusForSiteId,
 } from 'calypso/state/imports/selectors';
-import { appStates } from 'calypso/state/imports/constants';
 
 const createReduxStore = () => {
 	return createStore( combineReducers( { imports } ), applyMiddleware( thunk ) );

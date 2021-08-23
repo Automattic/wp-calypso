@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { createReceiptObject } from './assembler';
+import wpcom from 'calypso/lib/wp';
 import {
 	RECEIPT_FETCH,
 	RECEIPT_FETCH_COMPLETED,
 	RECEIPT_FETCH_FAILED,
 } from 'calypso/state/action-types';
-import wpcom from 'calypso/lib/wp';
+import { createReceiptObject } from './assembler';
 
 import 'calypso/state/receipts/init';
 

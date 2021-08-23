@@ -1,17 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
-import {
-	receiveGuidedTransferStatus,
-	requestGuidedTransferStatus,
-	saveHostDetails,
-} from '../actions';
 import {
 	GUIDED_TRANSFER_HOST_DETAILS_SAVE,
 	GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE,
@@ -22,6 +10,11 @@ import {
 	GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
+import {
+	receiveGuidedTransferStatus,
+	requestGuidedTransferStatus,
+	saveHostDetails,
+} from '../actions';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();

@@ -1,12 +1,5 @@
-/**
- * Internal dependencies
- */
-import { ANALYTICS_MULTI_TRACK } from 'calypso/state/action-types';
-
-/**
- * External dependencies
- */
 import { flatMap, property } from 'lodash';
+import { ANALYTICS_MULTI_TRACK } from 'calypso/state/action-types';
 
 export function composeAnalytics( ...analytics ) {
 	return {

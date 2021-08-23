@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { getInitialState } from '@automattic/state-utils';
 import type { Reducer, AnyAction, Action } from 'redux';
 

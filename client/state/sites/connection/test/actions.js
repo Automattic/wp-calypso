@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { match } from 'sinon';
-
-/**
- * Internal dependencies
- */
-import { requestConnectionStatus } from '../actions';
 import {
 	SITE_CONNECTION_STATUS_RECEIVE,
 	SITE_CONNECTION_STATUS_REQUEST,
@@ -16,6 +8,7 @@ import {
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { requestConnectionStatus } from '../actions';
 
 describe( 'actions', () => {
 	let spy;
