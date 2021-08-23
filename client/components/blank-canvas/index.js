@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 
-import './styles.scss';
+import './style.scss';
 
 export const BlankCanvas = ( { backUrl, children, onBackClick } ) => {
 	const dispatch = useDispatch();

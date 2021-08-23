@@ -13,7 +13,10 @@
 	z-index: z-index( 'root', '.masterbar' );
 
 	.blank-canvas__header {
-		padding: 1.5rem;
+		height: 4rem;
+		display: flex;
+		align-items: center;
+		padding: 0 1.5rem;
 		margin-bottom: 1.5rem;
 
 		.wordpress-logo {
@@ -29,14 +32,14 @@
 		font-size: inherit;
 		padding: 0;
 
-		svg {
+		&.has-icon.has-text svg {
 			margin-right: 0.25rem;
 		}
 	}
 
 	.formatted-header {
 		margin-top: 3rem;
-		margin-bottom: 2.5rem;
+		margin-bottom: 3rem;
 
 		.formatted-header__title {
 			color: var( --studio-gray-100 );
@@ -46,6 +49,29 @@
 		.formatted-header__subtitle {
 			color: var( --studio-gray-60 );
 			font-size: 1rem;
+		}
+	}
+
+	.components-base-control .components-base-control__field {
+		.components-input-control__label,
+		.components-base-control__label,
+		.components-select-control__input,
+		.components-textarea-control__input,
+		.components-text-control__input {
+			font-size: 0.875rem;
+		}
+
+		.components-select-control__input,
+		.components-text-control__input,
+		.components-textarea-control__input {
+			background-color: var( --studio-white );
+			padding: 0.75rem 1rem;
+			box-sizing: border-box;
+		}
+
+		.components-select-control__input,
+		.components-text-control__input {
+			height: 2.5rem;
 		}
 	}
 }
