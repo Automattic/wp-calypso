@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
-import { requestKeyringServices } from '../actions';
 import {
 	KEYRING_SERVICES_RECEIVE,
 	KEYRING_SERVICES_REQUEST,
@@ -16,6 +8,7 @@ import {
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { requestKeyringServices } from '../actions';
 
 describe( 'actions', () => {
 	let spy;

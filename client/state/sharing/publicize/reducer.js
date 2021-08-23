@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { keyBy, omit, omitBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_DELETE,
@@ -23,8 +16,8 @@ import {
 	PUBLICIZE_SHARE_DISMISS,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import { connectionsSchema } from './schema';
 import sharePostActions from './publicize-actions/reducer';
+import { connectionsSchema } from './schema';
 
 export const sharePostStatus = ( state = {}, action ) => {
 	switch ( action.type ) {

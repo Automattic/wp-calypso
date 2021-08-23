@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { keyBy, omit, without } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	KEYRING_CONNECTION_DELETE,
 	KEYRING_CONNECTIONS_RECEIVE,

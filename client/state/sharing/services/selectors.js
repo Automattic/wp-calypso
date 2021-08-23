@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import { filter } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
+import { filter } from 'lodash';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isSiteGoogleMyBusinessEligible from 'calypso/state/selectors/is-site-google-my-business-eligible';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 
 import 'calypso/state/sharing/init';
 

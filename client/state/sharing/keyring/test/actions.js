@@ -1,17 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
-import {
-	requestKeyringConnections,
-	deleteKeyringConnection,
-	deleteStoredKeyringConnection,
-} from '../actions';
 import {
 	KEYRING_CONNECTION_DELETE,
 	KEYRING_CONNECTION_DELETE_FAILURE,
@@ -22,6 +10,11 @@ import {
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import {
+	requestKeyringConnections,
+	deleteKeyringConnection,
+	deleteStoredKeyringConnection,
+} from '../actions';
 
 describe( 'actions', () => {
 	let spy;
