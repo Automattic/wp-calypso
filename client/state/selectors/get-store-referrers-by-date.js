@@ -1,5 +1,5 @@
 import { find } from 'lodash';
-import { sortBySales } from 'woocommerce/app/store-stats/referrers/helpers';
+import { sortBySales } from 'calypso/my-sites/store/app/store-stats/referrers/helpers';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 
 import 'calypso/state/stats/init';
