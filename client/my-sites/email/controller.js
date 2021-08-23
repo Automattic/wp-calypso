@@ -8,8 +8,8 @@ import TitanManagementIframe from 'calypso/my-sites/email/email-management/titan
 import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
 import GSuiteAddUsers from 'calypso/my-sites/email/gsuite-add-users';
 import TitanAddMailboxes from 'calypso/my-sites/email/titan-add-mailboxes';
-import TitanSetUpMailbox from 'calypso/my-sites/email/titan-setup-mailbox';
-import TitanSetUpThankYou from 'calypso/my-sites/email/titan-setup-thank-you';
+import TitanSetUpMailbox from 'calypso/my-sites/email/titan-set-up-mailbox';
+import TitanSetUpThankYou from 'calypso/my-sites/email/titan-set-up-thank-you';
 
 export default {
 	emailManagementAddGSuiteUsers( pageContext, next ) {

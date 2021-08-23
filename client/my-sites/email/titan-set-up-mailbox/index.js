@@ -17,7 +17,7 @@ import {
 	emailManagementPurchaseNewEmailAccount,
 	emailManagementTitanSetUpMailbox,
 } from 'calypso/my-sites/email/paths';
-import TitanSetUpMailboxForm from 'calypso/my-sites/email/titan-setup-mailbox/titan-setup-mailbox-form';
+import TitanSetUpMailboxForm from 'calypso/my-sites/email/titan-set-up-mailbox/titan-set-up-mailbox-form';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
