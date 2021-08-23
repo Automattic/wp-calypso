@@ -117,7 +117,8 @@ export default function usePrepareProductsForCart( {
 
 	// Do not strip products from url until the URL has been parsed
 	const areProductsRetrievedFromUrl = ! state.isLoading && ! isInEditor;
-	useStripProductsFromUrl( siteSlug, ! areProductsRetrievedFromUrl || isJetpackCheckout );
+	const doNotStripProducts = Boolean( ! areProductsRetrievedFromUrl || isJetpackCheckout );
+	useStripProductsFromUrl( siteSlug, doNotStripProducts );
 
 	return state;
 }
@@ -441,6 +442,8 @@ function useAddProductFromSlug( {
 		validProducts,
 		isJetpackCheckout,
 		dispatch,
+		jetpackSiteSlug,
+		jetpackPurchaseToken,
 	] );
 }
 
