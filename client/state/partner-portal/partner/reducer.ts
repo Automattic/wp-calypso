@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { AnyAction } from 'redux';
-
-/**
- * Internal dependencies
- */
 import {
 	JETPACK_PARTNER_PORTAL_PARTNER_ACTIVE_PARTNER_KEY_UPDATE,
 	JETPACK_PARTNER_PORTAL_PARTNER_REQUEST,

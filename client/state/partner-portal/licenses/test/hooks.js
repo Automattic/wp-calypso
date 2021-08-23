@@ -1,35 +1,29 @@
 /**
  * @jest-environment jsdom
  */
-/**
- * External dependencies
- */
-import React from 'react';
+
 import { renderHook, act } from '@testing-library/react-hooks';
 import nock from 'nock';
+import React from 'react';
 import { setLogger, QueryClient, QueryClientProvider } from 'react-query';
 import { useDispatch } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { LICENSES_PER_PAGE } from 'calypso/state/partner-portal/licenses/constants';
+import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 import {
 	LicenseSortDirection,
 	LicenseSortField,
 	LicenseState,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import useRefreshLicenseList from 'calypso/state/partner-portal/licenses/hooks/use-refresh-license-list';
-import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
-import useIssueLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-issue-license-mutation';
-import useRevokeLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-revoke-license-mutation';
-import useTOSConsentMutation from 'calypso/state/partner-portal/licenses/hooks/use-tos-consent-mutation';
-import useBillingDashboardQuery from 'calypso/state/partner-portal/licenses/hooks/use-billing-dashboard-query';
-import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 import {
 	JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_REQUEST,
 	JETPACK_PARTNER_PORTAL_LICENSES_REQUEST,
 } from 'calypso/state/action-types';
+import { LICENSES_PER_PAGE } from 'calypso/state/partner-portal/licenses/constants';
+import useBillingDashboardQuery from 'calypso/state/partner-portal/licenses/hooks/use-billing-dashboard-query';
+import useIssueLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-issue-license-mutation';
+import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
+import useRefreshLicenseList from 'calypso/state/partner-portal/licenses/hooks/use-refresh-license-list';
+import useRevokeLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-revoke-license-mutation';
+import useTOSConsentMutation from 'calypso/state/partner-portal/licenses/hooks/use-tos-consent-mutation';
 
 jest.mock( 'react-redux', () => ( {
 	useDispatch: jest.fn( () => null ),
