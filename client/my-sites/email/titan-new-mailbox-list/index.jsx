@@ -78,7 +78,7 @@ const TitanNewMailboxList = ( {
 							size={ 20 }
 						>
 							{ translate( 'Mailbox %(position)s', {
-								args: { position: index },
+								args: { position: index + 1 },
 								comment:
 									'%(position)s is the position of the mailbox in a list, e.g. Mailbox 1, Mailbox 2, etc',
 							} ) }
