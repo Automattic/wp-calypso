@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getTermIdsFromEdits } from 'calypso/state/posts/utils/get-term-ids-from-edits';
 
 /**

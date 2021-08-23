@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getPost } from 'calypso/state/posts/selectors/get-post';
 
 import 'calypso/state/posts/init';
