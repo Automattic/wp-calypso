@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { uploadMedia } from './upload-media';
 import wpcom from 'calypso/lib/wp';
+import { uploadMedia } from './upload-media';
 
 const getExternalUploader = ( service ) => ( file, siteId, postId = 0 ) =>
 	wpcom.req.post( `/sites/${ siteId }/external-media-upload`, {
