@@ -104,7 +104,7 @@ export async function clearAllState() {
 }
 
 function getPersistenceKey( userId, subkey ) {
-	return 'redux-state-' + userId ?? 'logged-out' + ( subkey ? ':' + subkey : '' );
+	return 'redux-state-' + ( userId ?? 'logged-out' ) + ( subkey ? ':' + subkey : '' );
 }
 
 async function persistentStoreState( reduxStateKey, storageKey, state, _timestamp ) {
@@ -236,8 +236,7 @@ function getInitialPersistedState( initialReducer, currentUserId ) {
 // This function handles both legacy and modularized Redux state.
 // `loadAllState` must have completed first.
 function getStateFromPersistence( reducer, subkey, currentUserId ) {
-	const reduxStateKey = getPersistenceKey( subkey, currentUserId );
-
+	const reduxStateKey = getPersistenceKey( currentUserId, subkey );
 	const state = stateCache[ reduxStateKey ] ?? null;
 	return deserializeState( subkey, state, reducer, false );
 }
