@@ -1,6 +1,3 @@
-/**
- * Internal Dependencies
- */
 import { getUserPurchases } from './get-user-purchases';
 
 import 'calypso/state/purchases/init';

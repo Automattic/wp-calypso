@@ -1,16 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-/**
- * External dependencies
- */
+
 import { expect } from 'chai';
 import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
-import { clearPurchases, fetchSitePurchases, fetchUserPurchases, removePurchase } from '../actions';
 import {
 	PURCHASES_REMOVE,
 	PURCHASES_SITE_FETCH,
@@ -21,6 +14,7 @@ import {
 	PURCHASE_REMOVE_FAILED,
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
+import { clearPurchases, fetchSitePurchases, fetchUserPurchases, removePurchase } from '../actions';
 
 describe( 'actions', () => {
 	const purchases = [ { ID: 1 } ];
