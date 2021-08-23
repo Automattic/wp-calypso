@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import 'calypso/state/plugins/init';
 
 export function getAllPlugins( state ) {

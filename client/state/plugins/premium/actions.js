@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import wpcom from 'calypso/lib/wp';
 import { get, keys } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import versionCompare from 'calypso/lib/version-compare';
 import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
+import versionCompare from 'calypso/lib/version-compare';
+import wpcom from 'calypso/lib/wp';
 import {
 	PLUGIN_INSTALL_REQUEST,
 	PLUGIN_INSTALL_REQUEST_FAILURE,
