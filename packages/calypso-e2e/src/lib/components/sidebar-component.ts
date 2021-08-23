@@ -12,7 +12,6 @@ const selectors = {
  */
 export class SidebarComponent {
 	private page: Page;
-	private gotoItemRetryCount: number;
 
 	/**
 	 * Constructs an instance of the component.
@@ -21,7 +20,6 @@ export class SidebarComponent {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
-		this.gotoItemRetryCount = 3;
 	}
 
 	/**
@@ -42,9 +40,10 @@ export class SidebarComponent {
 	 *
 	 * @param {string} item Plaintext representation of the top level heading.
 	 * @param {string} subitem Plaintext representation of the child level heading.
+	 * @param {number} retries Number of retries in the case of navigation failure.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async navigate( item: string, subitem?: string ): Promise< void > {
+	async navigate( item: string, subitem?: string, retries = 3 ): Promise< void > {
 		if ( getViewportName() === 'mobile' ) {
 			await this.openMobileSidebar();
 		}
@@ -78,13 +77,12 @@ export class SidebarComponent {
 			} );
 			return;
 		} catch {
-			if ( this.gotoItemRetryCount === 0 ) {
+			if ( retries === 0 ) {
 				const itemPath = subitem ? `${ item } > ${ subitem }` : item;
 				throw new Error( `Couldn't navigate to ${ itemPath }: Expected (sub)item was not active.` );
 			}
-			this.gotoItemRetryCount -= 1;
 			await this.page.reload();
-			return this.navigate( item, subitem );
+			return this.navigate( item, subitem, retries - 1 );
 		}
 	}
 
