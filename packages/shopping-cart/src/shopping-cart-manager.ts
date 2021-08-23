@@ -97,9 +97,9 @@ function createShoppingCartManager(
 			lastValidResponseCart.update( state.responseCart );
 			actionPromises.resolve( state.responseCart );
 		}
-		playQueuedActions( state, dispatch );
-
 		subscriptionManager.notifySubscribers();
+
+		playQueuedActions( state, dispatch );
 	};
 
 	// `dispatchAndWaitForValid` enhances the action dispatcher to return a
