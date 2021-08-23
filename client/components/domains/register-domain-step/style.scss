@@ -275,9 +275,7 @@ body.is-section-signup.is-white-signup {
 			margin-left: 0;
 		}
 	}
-	button {
-		display: contents;
-		margin-left: 5px;
+	.button-plain {
 		color: var( --color-link );
 	}
 }

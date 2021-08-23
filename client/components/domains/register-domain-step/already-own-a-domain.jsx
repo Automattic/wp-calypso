@@ -1,3 +1,4 @@
+import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import MaterialIcon from 'calypso/components/material-icon';
@@ -12,7 +13,7 @@ function AlreadyOwnADomain( { onClick } ) {
 					'Already own a domain? You can {{action}}use it as your site’s address{{/action}}',
 					{
 						components: {
-							action: <button onClick={ onClick } />,
+							action: <Button plain href="#" onClick={ onClick } />,
 						},
 					}
 				) }
