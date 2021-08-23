@@ -266,10 +266,11 @@ body.is-section-signup.is-white-signup {
 	align-items: center;
 	margin-top: 26px;
 	svg {
+		align-self: flex-start;
 		width: 16px;
 		height: 16px;
 		fill: var( --color-neutral-40 );
-		margin: 0 8px;
+		margin: 3px 8px 0;
 		@include break-mobile {
 			margin-left: 0;
 		}
