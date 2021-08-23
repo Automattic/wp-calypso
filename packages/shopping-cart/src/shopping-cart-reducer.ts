@@ -15,7 +15,6 @@ import type {
 	ResponseCart,
 	ShoppingCartState,
 	ShoppingCartAction,
-	ShoppingCartReducerDispatch,
 	CouponStatus,
 	CacheStatus,
 } from './types';
@@ -41,19 +40,6 @@ const cacheStatusesForIgnoringReload: CacheStatus[] = [
 
 function shouldPlayQueuedActions( state: ShoppingCartState ): boolean {
 	return state.queuedActions.length > 0 && state.cacheStatus === 'valid';
-}
-
-function playQueuedActions(
-	state: ShoppingCartState,
-	dispatch: ShoppingCartReducerDispatch
-): void {
-	const { queuedActions } = state;
-	debug( 'playing queued actions', queuedActions );
-	queuedActions.forEach( ( action: ShoppingCartAction ) => {
-		dispatch( action );
-	} );
-	dispatch( { type: 'CLEAR_QUEUED_ACTIONS' } );
-	debug( 'queued actions are dispatched and queue is cleared' );
 }
 
 function shouldQueueReducerEvent( cacheStatus: CacheStatus, action: ShoppingCartAction ): boolean {
@@ -93,9 +79,13 @@ export function reducerWithQueue(
 	state = shoppingCartReducer( state, action );
 
 	if ( shouldPlayQueuedActions( state ) ) {
-		const dispatch = ( queuedAction: ShoppingCartAction ) =>
-			( state = shoppingCartReducer( state, queuedAction ) );
-		playQueuedActions( state, dispatch );
+		debug( 'playing queued actions', state.queuedActions );
+		const actions: ShoppingCartAction[] = [
+			...state.queuedActions,
+			{ type: 'CLEAR_QUEUED_ACTIONS' },
+		];
+		state = actions.reduce( shoppingCartReducer, state );
+		debug( 'queued actions are dispatched and queue is cleared' );
 	}
 
 	return state;
