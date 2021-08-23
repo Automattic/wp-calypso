@@ -6,7 +6,7 @@ import type { Message, Link } from 'mailosaur/lib/models';
  * Wrapper client around the Mailosaur.io Node.JS client.
  */
 export class EmailClient {
-	private client: MailosaurClient;
+	private client;
 
 	/**
 	 * Construct and instance of the EmailClient.
@@ -35,7 +35,6 @@ export class EmailClient {
 		};
 
 		const message = await this.client.messages.get( inboxId, searchCriteria );
-
 		return message;
 	}
 
@@ -43,10 +42,10 @@ export class EmailClient {
 	 * Extracts and returns all links from an email message.
 	 *
 	 * @param {Message} message Representing the email message.
-	 * @returns {Promise<Link[]} Array of links contained in the email message.
+	 * @returns {Promise<string[]} Array of links contained in the email message.
 	 * @throws {Error} If the email did not contain a body or no links were found.
 	 */
-	async getLinksFromMessage( message: Message ): Promise< Link[] > {
+	async getLinksFromMessage( message: Message ): Promise< string[] > {
 		if ( ! message.html ) {
 			throw new Error( 'Email did not contain a body.' );
 		}
@@ -56,6 +55,12 @@ export class EmailClient {
 			throw new Error( 'Email did not contain any links.' );
 		}
 
-		return links;
+		const results = new Set< string >();
+		for ( const link of links ) {
+			if ( link.href ) {
+				results.add( link.href );
+			}
+		}
+		return Array.from( results );
 	}
 }

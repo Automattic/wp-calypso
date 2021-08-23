@@ -40,12 +40,13 @@ export class PeoplePage {
 	}
 
 	/**
-	 * Given an email address, click on the entry under the pending invitations.
-	 *
-	 * @param {string} emailAddress Email address of the pending invite.
+	 * Click on the `Invite` button to navigate to the invite user page.
 	 */
-	async clickInvitedUser( emailAddress: string ): Promise< void > {
-		await this.page.click( selectors.pendingInvite( emailAddress ) );
+	async clickInviteUser(): Promise< void > {
+		await Promise.all( [
+			this.page.waitForNavigation(),
+			this.page.click( 'span:text-is("Invite")' ),
+		] );
 	}
 
 	/**
@@ -54,7 +55,7 @@ export class PeoplePage {
 	 * @param {string} emailAddress Email address of the user to revoke invite.
 	 */
 	async revokeInvite( emailAddress: string ): Promise< void > {
-		await this.clickInvitedUser( emailAddress );
+		await this.page.click( selectors.pendingInvite( emailAddress ) );
 		await this.page.click( selectors.revokeInviteButton );
 		await this.page.waitForSelector( selectors.inviteRevokedMessage );
 	}

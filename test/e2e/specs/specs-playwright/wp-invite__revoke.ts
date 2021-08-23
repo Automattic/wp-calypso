@@ -1,6 +1,5 @@
 import {
 	DataHelper,
-	BrowserManager,
 	MediaHelper,
 	EmailClient,
 	LoginFlow,
@@ -22,6 +21,7 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 
 	let adjustedInviteLink: string;
 	let sidebarComponent: SidebarComponent;
+	let peoplePage: PeoplePage;
 	let page: Page;
 
 	setupHooks( ( args ) => {
@@ -35,10 +35,13 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 
 	it( 'Navigate to Users > All Users', async function () {
 		sidebarComponent = new SidebarComponent( page );
-		await sidebarComponent.gotoMenu( { item: 'Users', subitem: 'Add New' } );
+		await sidebarComponent.navigate( 'Users', 'All Users' );
 	} );
 
-	it( `Invite user ${ newUsername }`, async function () {
+	it( `Create new invite for test user`, async function () {
+		peoplePage = new PeoplePage( page );
+		await peoplePage.clickInviteUser();
+
 		const invitePeoplePage = new InvitePeoplePage( page );
 		await invitePeoplePage.invite( {
 			email: testEmailAddress,
@@ -47,30 +50,27 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 		} );
 	} );
 
-	it( 'Revoke the invite', async function () {
-		await sidebarComponent.gotoMenu( { item: 'Users', subitem: 'All users' } );
-		const peoplePage = new PeoplePage( page );
+	it( 'Revoke the invite for test user', async function () {
+		await sidebarComponent.navigate( 'Users', 'All Users' );
 		await peoplePage.clickTab( 'Invites' );
 		await peoplePage.revokeInvite( testEmailAddress );
 	} );
 
-	it( `Invite email was received for user ${ newUsername }`, async function () {
+	it( `Invite email was received for test user`, async function () {
 		const emailClient = new EmailClient();
 		const message = await emailClient.getLastEmail( {
 			inboxId: inboxId,
 			emailAddress: testEmailAddress,
 		} );
 		const links = await emailClient.getLinksFromMessage( message );
+		const acceptInviteLink = links.find( ( link: string ) => link.includes( 'accept-invite' ) );
 
-		const acceptInviteLink = links.find( ( link ) => link.href?.includes( 'accept-invite' ) );
+		adjustedInviteLink = await DataHelper.adjustInviteLink( acceptInviteLink );
 
-		expect( acceptInviteLink!.href ).toBeDefined();
-
-		adjustedInviteLink = DataHelper.adjustInviteLink( acceptInviteLink!.href! );
+		expect( acceptInviteLink ).toBeDefined();
 	} );
 
-	it( `View invite link`, async function () {
-		await BrowserManager.clearAuthenticationState( page );
+	it( `Ensure invite link is no longer valid`, async function () {
 		await page.goto( adjustedInviteLink );
 
 		await page.waitForSelector( `:text("Oops, that invite is not valid")` );
