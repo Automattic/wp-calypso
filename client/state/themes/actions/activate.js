@@ -1,6 +1,4 @@
-/**
- * Internal dependencies
- */
+import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { activateTheme } from 'calypso/state/themes/actions/activate-theme';
 import { installAndActivateTheme } from 'calypso/state/themes/actions/install-and-activate-theme';
@@ -11,7 +9,6 @@ import {
 	hasAutoLoadingHomepageModalAccepted,
 	themeHasAutoLoadingHomepage,
 } from 'calypso/state/themes/selectors';
-import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 
 import 'calypso/state/themes/init';
 

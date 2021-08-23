@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	ACTIVE_THEME_REQUEST_FAILURE,
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST,
 } from 'calypso/state/themes/action-types';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { receiveTheme } from 'calypso/state/themes/actions/receive-theme';
 
 import 'calypso/state/themes/init';

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { intersection } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getTheme } from 'calypso/state/themes/selectors/get-theme';
 import { getThemeTaxonomySlugs } from 'calypso/state/themes/utils';
 
