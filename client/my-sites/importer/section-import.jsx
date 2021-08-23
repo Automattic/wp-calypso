@@ -8,6 +8,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import SectionHeader from 'calypso/components/section-header';
@@ -287,7 +288,14 @@ class SectionImport extends Component {
 					brandFont
 					className="importer__page-heading"
 					headerText={ translate( 'Import Content' ) }
-					subHeaderText={ translate( 'Import content from another website or platform.' ) }
+					subHeaderText={ translate(
+						'Import content from another website or platform. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: <InlineSupportLink supportContext="import" showIcon={ false } />,
+							},
+						}
+					) }
 					align="left"
 					hasScreenOptions
 				/>

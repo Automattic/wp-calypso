@@ -44,6 +44,7 @@ import {
 } from 'calypso/me/concierge/constants';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import titles from 'calypso/me/purchases/titles';
 import PurchasesListHeader from './purchases-list-header';
 
@@ -180,7 +181,14 @@ class PurchasesList extends Component {
 				<FormattedHeader
 					brandFont
 					headerText={ titles.sectionTitle }
-					subHeaderText={ translate( 'View, manage, or cancel your plan and other purchases.' ) }
+					subHeaderText={ translate(
+						'View, manage, or cancel your plan and other purchases. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: <InlineSupportLink supportContext="purchases" showIcon={ false } />,
+							},
+						}
+					) }
 					align="left"
 				/>
 				<PurchasesNavigation section="activeUpgrades" />
