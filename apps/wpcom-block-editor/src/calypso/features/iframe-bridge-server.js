@@ -14,7 +14,7 @@ import { registerPlugin } from '@wordpress/plugins';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import debugFactory from 'debug';
 import $ from 'jquery';
-import { filter, find, forEach, get, map, partialRight } from 'lodash';
+import { filter, find, forEach, get, map } from 'lodash';
 import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
 import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../editing-toolkit/editing-toolkit-plugin/wpcom-block-editor-nav-sidebar/src/constants';
@@ -308,14 +308,12 @@ function handleUpdateImageBlocks( calypsoPort ) {
 	calypsoPort.start();
 
 	const imageBlocks = {
-		'core/cover': updateSingeImageBlock,
-		'core/image': updateSingeImageBlock,
-		'core/file': partialRight( updateSingeImageBlock, { url: 'href' } ),
+		'core/cover': updateSingleImageBlock,
+		'core/image': updateSingleImageBlock,
+		'core/file': ( block, image ) => updateSingleImageBlock( block, image, { url: 'href' } ),
 		'core/gallery': updateMultipleImagesBlock,
-		'core/media-text': partialRight( updateSingeImageBlock, {
-			id: 'mediaId',
-			url: 'mediaUrl',
-		} ),
+		'core/media-text': ( block, image ) =>
+			updateSingleImageBlock( block, image, { id: 'mediaId', url: 'mediaUrl' } ),
 		'jetpack/tiled-gallery': updateMultipleImagesBlock,
 	};
 
@@ -349,7 +347,7 @@ function handleUpdateImageBlocks( calypsoPort ) {
 		} );
 	}
 
-	function updateSingeImageBlock( block, image, attrNames ) {
+	function updateSingleImageBlock( block, image, attrNames ) {
 		const blockImageId = get( block, 'attributes.id' );
 		if ( blockImageId !== image.id && blockImageId !== image.transientId ) {
 			return;

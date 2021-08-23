@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { flatten, partialRight } from 'lodash';
+import { flatten } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -26,7 +26,7 @@ import { withEnhancers } from 'calypso/state/utils';
 const withToolTip = ( WrappedComponent ) => ( props ) => {
 	// inject interval props to renderTooltipForDatanum
 	const renderTooltipForDatanum = props.renderTooltipForDatanum
-		? partialRight( props.renderTooltipForDatanum, props.tooltipInterval )
+		? ( datanum ) => props.renderTooltipForDatanum( datanum, props.tooltipInterval )
 		: null;
 
 	const newProps = {
