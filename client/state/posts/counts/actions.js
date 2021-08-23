@@ -45,12 +45,8 @@ export function requestPostCounts( siteId, postType ) {
 			siteId,
 		} );
 
-		return wpcom
-			.undocumented()
-			.site( siteId )
-			.postCounts( {
-				type: postType,
-			} )
+		return wpcom.req
+			.get( `/sites/${ siteId }/post-counts/${ postType }`, { apiNamespace: 'wpcom/v2' } )
 			.then( ( data ) => {
 				dispatch( receivePostCounts( siteId, postType, data.counts ) );
 				dispatch( {

@@ -9,7 +9,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { createSiteDomainObject } from './assembler';
-import wp from 'calypso/lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	DOMAIN_PRIVACY_ENABLE,
 	DOMAIN_PRIVACY_DISABLE,
@@ -28,7 +28,6 @@ import 'calypso/state/data-layer/wpcom/domains/privacy/index.js';
  * Module vars
  */
 const debug = debugFactory( 'calypso:state:sites:domains:actions' );
-const wpcom = wp.undocumented();
 const noop = () => {};
 
 /**
@@ -119,9 +118,8 @@ export function fetchSiteDomains( siteId ) {
 	return ( dispatch ) => {
 		dispatch( domainsRequestAction( siteId ) );
 
-		return wpcom
-			.site( siteId )
-			.domains()
+		return wpcom.req
+			.get( `/sites/${ siteId }/domains`, { apiVersion: '1.2' } )
 			.then( ( data ) => {
 				const { domains = [] } = data;
 				dispatch( domainsRequestSuccessAction( siteId ) );
@@ -156,9 +154,9 @@ export function disableDomainPrivacy( siteId, domain ) {
 	};
 }
 
-export const setPrimaryDomain = ( siteId, domainName, onComplete = noop ) => ( dispatch ) => {
-	debug( 'setPrimaryDomain', siteId, domainName );
-	return wpcom.setPrimaryDomain( siteId, domainName, ( error, data ) => {
+export const setPrimaryDomain = ( siteId, domain, onComplete = noop ) => ( dispatch ) => {
+	debug( 'setPrimaryDomain', siteId, domain );
+	return wpcom.req.post( `/sites/${ siteId }/domains/primary`, { domain }, ( error, data ) => {
 		if ( error ) {
 			return onComplete( error, data );
 		}
