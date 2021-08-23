@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
-import { receivePostStats, requestPostStats } from '../actions';
 import {
 	POST_STATS_RECEIVE,
 	POST_STATS_REQUEST,
@@ -15,6 +7,7 @@ import {
 	POST_STATS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
+import { receivePostStats, requestPostStats } from '../actions';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getCountRecords, getLoadingTabs } from '../selectors';
 
 describe( 'selectors', () => {
