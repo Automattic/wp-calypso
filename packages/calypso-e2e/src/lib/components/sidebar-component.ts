@@ -40,10 +40,10 @@ export class SidebarComponent {
 	 *
 	 * @param {string} item Plaintext representation of the top level heading.
 	 * @param {string} subitem Plaintext representation of the child level heading.
-	 * @param {number} _retries Number of retries in the case of navigation failure.
+	 * @param {number} retries Number of retries in the case of navigation failure.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async navigate( item: string, subitem?: string, _retries = 3 ): Promise< void > {
+	async navigate( item: string, subitem?: string, retries = 3 ): Promise< void > {
 		if ( getViewportName() === 'mobile' ) {
 			await this.openMobileSidebar();
 		}
@@ -77,12 +77,12 @@ export class SidebarComponent {
 			} );
 			return;
 		} catch {
-			if ( _retries === 0 ) {
+			if ( retries === 0 ) {
 				const itemPath = subitem ? `${ item } > ${ subitem }` : item;
 				throw new Error( `Couldn't navigate to ${ itemPath }: Expected (sub)item was not active.` );
 			}
 			await this.page.reload();
-			return this.navigate( item, subitem, _retries - 1 );
+			return this.navigate( item, subitem, retries - 1 );
 		}
 	}
 
