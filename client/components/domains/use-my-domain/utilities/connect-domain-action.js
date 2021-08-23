@@ -11,7 +11,10 @@ import { domainManagementList, domainMappingSetup } from 'calypso/my-sites/domai
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isSiteOnPaidPlan from 'calypso/state/selectors/is-site-on-paid-plan';
 
-export const connectDomainAction = ( { domain, selectedSite } ) => ( dispatch, getState ) => {
+export const connectDomainAction = ( { domain, selectedSite }, onDone = () => {} ) => (
+	dispatch,
+	getState
+) => {
 	const siteHasPaidPlan = isSiteOnPaidPlan( getState(), selectedSite.ID );
 
 	if ( selectedSite.is_vip ) {
@@ -19,7 +22,10 @@ export const connectDomainAction = ( { domain, selectedSite } ) => ( dispatch, g
 			.site( selectedSite.ID )
 			.addVipDomainMapping( domain )
 			.then( () => page( domainManagementList( selectedSite.slug ) ) )
-			.catch( ( error ) => dispatch( errorNotice( error.message ) ) );
+			.catch( ( error ) => {
+				dispatch( errorNotice( error.message ) );
+				onDone();
+			} );
 	} else if ( siteHasPaidPlan ) {
 		wpcom
 			.site( selectedSite.ID )
@@ -36,7 +42,10 @@ export const connectDomainAction = ( { domain, selectedSite } ) => ( dispatch, g
 				);
 				page( domainMappingSetup( selectedSite.slug, domain ) );
 			} )
-			.catch( ( error ) => dispatch( errorNotice( error.message ) ) );
+			.catch( ( error ) => {
+				dispatch( errorNotice( error.message ) );
+				onDone();
+			} );
 	} else {
 		page( '/checkout/' + selectedSite.slug + '/domain-mapping:' + domain );
 	}

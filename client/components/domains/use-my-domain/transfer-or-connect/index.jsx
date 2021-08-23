@@ -6,7 +6,7 @@ import { withShoppingCart } from '@automattic/shopping-cart';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 /**
  * Internal dependencies
@@ -49,18 +49,21 @@ function DomainTransferOrConnect( {
 	siteIsOnPaidPlan,
 	transferDomainUrl,
 } ) {
+	const [ actionClicked, setActionClicked ] = useState( false );
+
 	const handleConnect = () => {
 		recordMappingButtonClickInUseYourDomain( domain );
+		setActionClicked( true );
 
 		const connectHandler = onConnect ?? defaultConnectHandler;
-		connectHandler( { domain, selectedSite } );
+		connectHandler( { domain, selectedSite }, () => setActionClicked( false ) );
 	};
 
 	const handleTransfer = () => {
 		recordTransferButtonClickInUseYourDomain( domain );
 
 		const transferHandler = onTransfer ?? defaultTransferHandler;
-		transferHandler( { domain, selectedSite, transferDomainUrl } );
+		transferHandler( { domain, selectedSite, transferDomainUrl }, () => setActionClicked( false ) );
 	};
 
 	const content = getOptionInfo( {
@@ -85,7 +88,7 @@ function DomainTransferOrConnect( {
 			<QueryProductsList />
 			<Card className={ baseClassName + '__content' }>
 				{ content.map( ( optionProps, index ) => (
-					<OptionContent key={ 'option-' + index } { ...optionProps } />
+					<OptionContent key={ 'option-' + index } disabled={ actionClicked } { ...optionProps } />
 				) ) }
 				<div className={ baseClassName + '__support-link' }>
 					{ createInterpolateElement(
