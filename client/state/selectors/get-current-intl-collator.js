@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 
 /**

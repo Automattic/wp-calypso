@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 
 import 'calypso/state/purchases/init';

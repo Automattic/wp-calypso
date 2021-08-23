@@ -1,13 +1,10 @@
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import isDirectlyReady from 'calypso/state/selectors/is-directly-ready';
-import isEligibleForUpworkSupport from 'calypso/state/selectors/is-eligible-for-upwork-support';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import isHappychatUserEligible from 'calypso/state/happychat/selectors/is-happychat-user-eligible';
 import { isTicketSupportEligible } from 'calypso/state/help/ticket/selectors';
+import isDirectlyReady from 'calypso/state/selectors/is-directly-ready';
+import isEligibleForUpworkSupport from 'calypso/state/selectors/is-eligible-for-upwork-support';
 
 export const SUPPORT_CHAT_OVERFLOW = 'SUPPORT_CHAT_OVERFLOW';
 export const SUPPORT_DIRECTLY = 'SUPPORT_DIRECTLY';

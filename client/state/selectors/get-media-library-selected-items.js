@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 
 import 'calypso/state/media/init';

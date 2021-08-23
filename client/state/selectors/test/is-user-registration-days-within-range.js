@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import isUserRegistrationDaysWithinRange from '../is-user-registration-days-within-range';
 import { getCurrentUserDate } from 'calypso/state/current-user/selectors';
+import isUserRegistrationDaysWithinRange from '../is-user-registration-days-within-range';
 jest.mock( 'calypso/state/current-user/selectors', () => ( {
 	getCurrentUserDate: require( 'sinon' ).stub(),
 } ) );

@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import type { AppState } from 'calypso/types';
 
 /**

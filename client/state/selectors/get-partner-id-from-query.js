@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 
 /**

@@ -1,10 +1,3 @@
-/**
- * External dependencies
- */
-
-/**
- * Internal dependencies
- */
 import isFetchingNextPage from 'calypso/state/selectors/is-fetching-next-page';
 
 describe( 'isFetchingNextPage()', () => {

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import isFetchingOrderTransaction from 'calypso/state/selectors/is-fetching-order-transaction';
 
 describe( 'isFetchingOrderTransaction', () => {

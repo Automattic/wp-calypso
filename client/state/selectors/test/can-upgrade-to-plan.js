@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import {
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
@@ -23,6 +19,7 @@ import {
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
 } from '@automattic/calypso-products';
+import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 
 describe( 'canUpgradeToPlan', () => {
 	const siteId = 1234567;

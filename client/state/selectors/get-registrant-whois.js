@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
 
 import 'calypso/state/domains/init';

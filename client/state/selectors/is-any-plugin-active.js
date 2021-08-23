@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import isPluginActive from 'calypso/state/selectors/is-plugin-active';
 
 /**

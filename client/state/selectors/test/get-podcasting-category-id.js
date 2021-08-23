@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import getPodcastingCategoryId from 'calypso/state/selectors/get-podcasting-category-id';
 

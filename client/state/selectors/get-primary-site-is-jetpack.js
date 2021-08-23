@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 /**

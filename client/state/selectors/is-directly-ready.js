@@ -8,9 +8,6 @@
  * @returns {boolean}        Whether the widget is ready
  */
 
-/**
- * Internal dependencies
- */
 import { STATUS_READY } from 'calypso/state/help/directly/constants';
 
 import 'calypso/state/help/init';

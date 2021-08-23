@@ -1,10 +1,7 @@
-/**
- * Internal dependencies
- */
-import { getThemeCustomizeUrl, isThemeActive } from 'calypso/state/themes/selectors';
-import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
 import getFrontPageEditorUrl from 'calypso/state/selectors/get-front-page-editor-url';
+import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
 import shouldCustomizeHomepageWithGutenberg from 'calypso/state/selectors/should-customize-homepage-with-gutenberg';
+import { getThemeCustomizeUrl, isThemeActive } from 'calypso/state/themes/selectors';
 
 /**
  * Returns the URL for opening customizing the given site in either the block editor with

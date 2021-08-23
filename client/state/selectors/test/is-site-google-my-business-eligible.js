@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-import { siteHasEligibleWpcomPlan } from '../is-site-google-my-business-eligible';
 import {
 	PLAN_FREE,
 	PLAN_BLOGGER,
@@ -17,6 +13,7 @@ import {
 	PLAN_ECOMMERCE_2_YEARS,
 } from '@automattic/calypso-products';
 import { getSitePlanSlug } from 'calypso/state/sites/selectors';
+import { siteHasEligibleWpcomPlan } from '../is-site-google-my-business-eligible';
 
 jest.mock( 'calypso/state/sites/selectors', () => ( {
 	getSitePlanSlug: jest.fn(),

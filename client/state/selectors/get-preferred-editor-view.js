@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
+import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 
 export const getPreferredEditorView = ( state, siteId, postType = 'post' ) => {
 	if ( ! isNavUnificationEnabled( state ) ) {

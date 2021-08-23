@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
 import { isFollowing } from 'calypso/state/reader/follows/selectors';
 
 describe( 'is-following', () => {

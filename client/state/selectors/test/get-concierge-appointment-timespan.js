@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getConciergeAppointmentTimespan from 'calypso/state/selectors/get-concierge-appointment-timespan';
 
 describe( 'getConciergeAppointmentTimespan()', () => {

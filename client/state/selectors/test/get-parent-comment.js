@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { getParentComment } from 'calypso/state/comments/selectors';
 
 const state = {

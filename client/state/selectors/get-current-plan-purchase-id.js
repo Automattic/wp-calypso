@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 
 /**

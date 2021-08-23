@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
 import { requests as REQUESTS_FIXTURE } from './fixtures/jetpack-modules';
 

@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
+import { planHasFeature, FEATURE_GOOGLE_MY_BUSINESS } from '@automattic/calypso-products';
 import { createSelector } from '@automattic/state-utils';
 import { getSitePlanSlug } from 'calypso/state/sites/selectors';
-import { planHasFeature, FEATURE_GOOGLE_MY_BUSINESS } from '@automattic/calypso-products';
 
 /**
  * Returns true if site has business/ecommerce plan
