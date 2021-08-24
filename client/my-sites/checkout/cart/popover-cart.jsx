@@ -36,10 +36,6 @@ class PopoverCart extends React.Component {
 	toggleButtonRef = React.createRef();
 	hasUnmounted = false;
 
-	componentDidMount() {
-		this.props.shoppingCartManager.reloadFromServer();
-	}
-
 	componentWillUnmount() {
 		this.hasUnmounted = true;
 	}
