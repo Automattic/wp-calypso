@@ -3,6 +3,7 @@ import os from 'os';
 import path from 'path';
 import config from 'config';
 import { getTimestamp } from './data-helper';
+import { TestFile } from '.';
 
 const artifacts: { [ key: string ]: string } = config.get( 'artifacts' );
 
@@ -48,7 +49,7 @@ export function getVideoDir(): string {
  * @param {{[key: string]: string}} param0 Parameter object.
  * @param {string} param0.sourceFileName Basename of the source file to be cloned.
  * @param {string} [param0.testFileName] Basename of the test file to be generated.
- * @returns {Promise<string>} Full path to the generated test file.
+ * @returns {Promise<TestFile>} Object implementing the TestFile interface.
  */
 export async function createTestFile( {
 	sourceFileName,
@@ -56,50 +57,61 @@ export async function createTestFile( {
 }: {
 	sourceFileName: string;
 	testFileName?: string;
-} ): Promise< string > {
-	let fileName = getTimestamp();
+} ): Promise< TestFile > {
+	let filename = getTimestamp();
 	// If the output `testFileName` is defined, use that as part of the final filename.
 	if ( testFileName ) {
-		fileName += `-${ testFileName }`;
+		filename += `-${ testFileName }`;
 	}
 
-	// Reassign the variable with the final name to be used, including the extension.
-	fileName = `${ fileName }.${ sourceFileName.split( '.' ).pop() }`;
-
-	const sourceFileDir = path.join( __dirname, '../../../../../test/e2e/image-uploads/' );
-	const sourceFilePath = path.join( sourceFileDir, sourceFileName );
+	const extension = sourceFileName.split( '.' ).pop();
+	if ( ! extension ) {
+		throw new Error( `Extension not found on source file ${ sourceFileName }` );
+	}
+	const basename = `${ filename }.${ sourceFileName.split( '.' ).pop() }`;
+	// Create test files in the same directory as the source file.
+	const dirname = path.join( __dirname, '' );
+	// Full path on disk of the source file, to be copied and renamed.
+	const sourceFilePath = path.join( dirname, sourceFileName );
 
 	const tempDir = await fs.mkdtemp( path.join( os.tmpdir(), 'e2e-' ) );
-	const testFilePath = path.join( tempDir, fileName );
+	const testFilePath = path.join( tempDir, basename );
 
 	await fs.copyFile( sourceFilePath, testFilePath );
 
-	return testFilePath;
+	// Return an object implementing the interface.
+	return {
+		fullpath: testFilePath,
+		dirname: dirname,
+		basename: basename,
+		filename: filename,
+		extension: extension,
+	};
 }
 
 /**
  * Returns the path to a generated temporary JPEG image file.
  *
- * @returns {Promise<string>} Full path on disk to the generated test file.
+ * @returns {Promise<TestFile>} Object implementing the TestFile interface.
  */
-export async function createTestImage(): Promise< string > {
+export async function createTestImage(): Promise< TestFile > {
 	return await createTestFile( { sourceFileName: 'image0.jpg' } );
 }
 
 /**
  * Returns the path to a generated temporary MP3 audio file.
  *
- * @returns {string} Full path on disk to the generated test file.
+ * @returns {Promise<TestFile>} Object implementing the TestFile interface.
  */
-export async function createTestAudio(): Promise< string > {
+export async function createTestAudio(): Promise< TestFile > {
 	return await createTestFile( { sourceFileName: 'bees.mp3' } );
 }
 
 /**
  * Returns the path to an unsupported file.
  *
- * @returns {string} Full path on disk to the generated test file.
+ * @returns {Promise<TestFile>} Object implementing the TestFile interface.
  */
-export async function createInvalidFile(): Promise< string > {
+export async function createInvalidFile(): Promise< TestFile > {
 	return await createTestFile( { sourceFileName: 'unsupported_extension.mkv' } );
 }

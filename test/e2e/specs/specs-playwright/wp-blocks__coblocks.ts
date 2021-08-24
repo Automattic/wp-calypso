@@ -22,7 +22,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), () => {
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let pricingTableBlock: PricingTableBlock;
 	let page: Page;
-	let logoImage: string;
+	let logoImage: TestFile;
 
 	// Test data
 	const pricingTableBlockPrice = 888;
@@ -78,7 +78,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), () => {
 	it( `Insert ${ LogosBlock.blockName } block and set image`, async function () {
 		const blockHandle = await gutenbergEditorPage.addBlock( LogosBlock.blockName );
 		const logosBlock = new LogosBlock( blockHandle );
-		await logosBlock.upload( logoImage );
+		await logosBlock.upload( logoImage.fullpath );
 	} );
 
 	it( 'Publish and visit post', async function () {
@@ -104,6 +104,6 @@ describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), () => {
 	);
 
 	it( `Confirm Logos block is visible in published post`, async () => {
-		await LogosBlock.validatePublishedContent( page, path.parse( logoImage ).name );
+		await LogosBlock.validatePublishedContent( page, logoImage.basename );
 	} );
 } );
