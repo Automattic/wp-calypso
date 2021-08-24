@@ -2,6 +2,8 @@ import { Popover } from '@automattic/components';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
+import './style.scss';
+
 const isInvalidTarget = ( target ) => {
 	return target.tagName === 'HR';
 };
@@ -73,6 +75,7 @@ class PopoverMenu extends Component {
 					ref={ this.menu }
 					id={ id }
 					role="menu"
+					// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 					className="popover__menu"
 					onKeyDown={ this._onKeyDown }
 					tabIndex="-1"
