@@ -1,10 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import {
-	createAlipayMethod,
-	createAlipayPaymentMethodStore,
-	createSofortMethod,
-	createSofortPaymentMethodStore,
-} from '@automattic/composite-checkout';
+import { createAlipayMethod, createAlipayPaymentMethodStore } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	createApplePayMethod,
@@ -20,6 +15,8 @@ import {
 	createPayPalMethod,
 	createIdealMethod,
 	createIdealPaymentMethodStore,
+	createSofortMethod,
+	createSofortPaymentMethodStore,
 } from '@automattic/wpcom-checkout';
 import { useMemo } from 'react';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
