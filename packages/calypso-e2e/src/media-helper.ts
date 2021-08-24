@@ -1,6 +1,6 @@
+import fs from 'fs';
 import path from 'path';
 import config from 'config';
-import fs from 'fs-extra';
 import { getTimestamp } from './data-helper';
 
 const artifacts: { [ key: string ]: string } = config.get( 'artifacts' );
@@ -48,7 +48,7 @@ export function getVideoDir(): string {
  * @returns {void} No return value.
  */
 export function deleteFile( filePath: string ): void {
-	fs.removeSync( filePath );
+	fs.unlinkSync( filePath );
 }
 
 /**
@@ -83,13 +83,8 @@ export function createTestFile( {
 	// EPERM: operation not permitted
 	const testFilePath = path.join( sourceFileDir, fileName );
 
-	console.dir( require( 'os' ).userInfo() );
-	console.dir( fs.statSync( sourceFilePath ) );
-	console.dir( fs.statSync( sourceFileDir ) );
-	console.dir( fs.statSync( testFilePath ) );
-
 	// Copy the source file specified to testFilePath, creating a clone differing only by name.
-	fs.copySync( sourceFilePath, testFilePath );
+	fs.copyFileSync( sourceFilePath, testFilePath );
 
 	return testFilePath;
 }
