@@ -38,6 +38,7 @@ module.exports.loader = ( { includePaths, prelude, postCssOptions } ) => ( {
 				additionalData: prelude,
 				sassOptions: {
 					includePaths,
+					quietDeps: true,
 				},
 			},
 		},

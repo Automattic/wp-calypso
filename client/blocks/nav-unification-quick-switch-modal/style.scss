@@ -19,7 +19,7 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 	&.components-modal__frame {
 		overflow: visible;
 		height: 65vh;
-		top: calc( 17.5vh - #{$modal-footer-height / 2} );
+		top: calc( 17.5vh - #{$modal-footer-height * 0.5} );
 
 		@media ( max-width: $modal-breakpoint ) {
 			width: 90vw;
@@ -31,7 +31,7 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 		@media ( min-width: $modal-breakpoint ) {
 			width: 740px;
 			height: $modal-content-min-height;
-			top: calc( 50% - #{$modal-footer-height / 2} );
+			top: calc( 50% - #{$modal-footer-height * 0.5} );
 		}
 
 		@media ( min-width: $modal-breakpoint ) and ( max-height: $modal-breakpoint-phone-height ) {
@@ -51,7 +51,7 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 
 		svg {
 			fill: white;
-			filter: drop-shadow(0px 0px 1px black);
+			filter: drop-shadow( 0px 0px 1px black );
 		}
 
 		@media ( min-width: $modal-breakpoint ) {

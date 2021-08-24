@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 $faq-gutter-width: 24px;
 
 .faq {
@@ -21,7 +23,7 @@ $faq-gutter-width: 24px;
 .faq__list {
 	display: flex;
 	flex-wrap: wrap;
-	margin: 0 ($faq-gutter-width / -2);
+	margin: 0 math.div( $faq-gutter-width, -2 );
 	list-style: none;
 }
 
@@ -31,8 +33,8 @@ $faq-gutter-width: 24px;
 	font-size: $font-body-small;
 	line-height: 21px;
 	box-sizing: border-box;
-	padding-left: ($faq-gutter-width / 2);
-	padding-right: ($faq-gutter-width / 2);
+	padding-left: ( $faq-gutter-width * 0.5 );
+	padding-right: ( $faq-gutter-width * 0.5 );
 
 	@include breakpoint-deprecated( '480px-660px' ) {
 		width: 50%;
@@ -43,7 +45,7 @@ $faq-gutter-width: 24px;
 	}
 
 	@include breakpoint-deprecated( '>1040px' ) {
-		width: (100% / 3);
+		width: math.div( 100%, 3 );
 	}
 }
 

@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 @import '@automattic/onboarding/styles/mixins';
 @import '@automattic/onboarding/styles/variables';
 
@@ -117,7 +119,7 @@
 	}
 
 	.design-picker__image-frame-portrait {
-		padding-top: 360px / 480px * 200%; // Aspect ratio for the picker
+		padding-top: math.div( 360px, 480px ) * 200%; // Aspect ratio for the picker
 	}
 
 	.design-picker__image-frame-blank {
