@@ -43,6 +43,7 @@
 	"devDependencies": {
 		"@testing-library/react": "^12.0.0",
 		"jest": "^27.0.6",
+		"jest-canvas-mock": "^2.3.0",
 		"react": "^16.12.0",
 		"react-dom": "^16.12.0",
 		"typescript": "^4.4.2"
