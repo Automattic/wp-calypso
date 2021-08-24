@@ -102,6 +102,7 @@ export type CouponStatus = 'fresh' | 'pending' | 'applied' | 'rejected';
 
 export type ShoppingCartAction =
 	| { type: 'CLEAR_QUEUED_ACTIONS' }
+	| { type: 'UPDATE_LAST_VALID_CART' }
 	| { type: 'REMOVE_CART_ITEM'; uuidToRemove: string }
 	| { type: 'CART_PRODUCTS_ADD'; products: RequestCartProduct[] }
 	| { type: 'CART_PRODUCTS_REPLACE_ALL'; products: RequestCartProduct[] }
@@ -135,6 +136,7 @@ export type ShoppingCartError = 'GET_SERVER_CART_ERROR' | 'SET_SERVER_CART_ERROR
 
 export type ShoppingCartState = {
 	responseCart: TempResponseCart;
+	lastValidResponseCart: ResponseCart;
 	couponStatus: CouponStatus;
 	cacheStatus: CacheStatus;
 	loadingError?: string;
@@ -154,11 +156,6 @@ export type DispatchAndWaitForValid = ( action: ShoppingCartAction ) => Promise<
 export interface ActionPromises {
 	resolve: ( tempResponseCart: TempResponseCart ) => void;
 	add: ( resolve: ( value: ResponseCart ) => void ) => void;
-}
-
-export interface LastValidResponseCart {
-	get: () => ResponseCart;
-	update: ( tempResponseCart: TempResponseCart ) => void;
 }
 
 export interface CartSyncManager {
