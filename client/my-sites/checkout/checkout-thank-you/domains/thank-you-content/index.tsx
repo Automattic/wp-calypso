@@ -1,5 +1,6 @@
 import { DomainThankYouPropsGetter, DomainThankYouType } from '../types';
-import { default as DomainMappingProps, default as DomainTransferProps } from './domain-mapping';
+import DomainMappingProps from './domain-mapping';
+import DomainTransferProps from './domain-transfer';
 
 const thankYouContentGetter: Record< DomainThankYouType, DomainThankYouPropsGetter > = {
 	MAPPING: DomainMappingProps,

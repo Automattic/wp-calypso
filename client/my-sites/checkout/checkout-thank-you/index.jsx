@@ -473,10 +473,13 @@ export class CheckoutThankYou extends React.Component {
 				</Main>
 			);
 		} else if ( wasDomainMappingOrTransferProduct ) {
-			const [ , domainName ] = findPurchaseAndDomain( purchases, isDomainMapping );
+			const [ purchaseType, predicate ] = purchases.some( isDomainMapping )
+				? [ 'MAPPING', isDomainMapping ]
+				: [ 'TRANSFER', isDomainTransfer ];
+			const [ , domainName ] = findPurchaseAndDomain( purchases, predicate );
 			return (
 				<DomainThankYou
-					type={ 'MAPPING' }
+					type={ purchaseType }
 					domainName={ domainName }
 					selectedSiteSlug={ this.props.selectedSiteSlug }
 				/>
