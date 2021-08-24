@@ -18,7 +18,7 @@ export function cancelPurchase( purchaseId, onComplete ) {
 export function cancelAndRefundPurchase( purchaseId, data, onComplete ) {
 	wpcom.req.post(
 		{
-			path: `/upgrades/${ purchaseId }/cancel`,
+			path: `/purchases/${ purchaseId }/cancel`,
 			body: data,
 			apiNamespace: 'wpcom/v2',
 		},

@@ -91,7 +91,7 @@ describe( 'actions', () => {
 
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
-				.post( `/wpcom/v2/me/purchases/${ purchaseId }/delete` )
+				.post( `/wpcom/v2/purchases/${ purchaseId }/delete` )
 				.reply( 200, response );
 		} );
 
@@ -113,7 +113,7 @@ describe( 'actions', () => {
 		const errorMessage = 'Unable to delete the purchase because of internal error';
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
-				.post( `/wpcom/v2/me/purchases/${ purchaseId }/delete` )
+				.post( `/wpcom/v2/purchases/${ purchaseId }/delete` )
 				.reply( 400, {
 					error: 'server_error',
 					message: errorMessage,
