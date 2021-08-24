@@ -478,10 +478,10 @@ fun seleniumBuildType( viewportName: String, buildUuid: String): BuildType  {
 					export MAGELLANDEBUG=true
 
 					chmod +x ./bin/get-calypso-live-url.sh
-					URL={'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
-					if [[ {'$'}? -ne 0 ]]; then
+					URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
+					if [[ ${'$'}? -ne 0 ]]; then
 						// Command failed. URL contains stderr
-						echo {'$'}URL
+						echo ${'$'}URL
 						exit 1
 					fi
 
@@ -627,10 +627,10 @@ fun playwrightBuildType( viewportName: String, buildUuid: String ): BuildType {
 					export TEAMCITY_VERSION=2021
 
 					chmod +x ./bin/get-calypso-live-url.sh
-					URL={'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
-					if [[ {'$'}? -ne 0 ]]; then
+					URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
+					if [[ ${'$'}? -ne 0 ]]; then
 						// Command failed. URL contains stderr
-						echo {'$'}URL
+						echo ${'$'}URL
 						exit 1
 					fi
 
