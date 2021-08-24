@@ -12,6 +12,7 @@ export { default as styled } from './styled';
 export * from './payment-methods/bancontact';
 export * from './payment-methods/giropay';
 export * from './payment-methods/ideal';
+export * from './payment-methods/sofort';
 export * from './payment-methods/p24';
 export * from './payment-methods/eps';
 export * from './use-is-web-payment-available';
