@@ -9,6 +9,7 @@ import {
 	addLocationToResponseCart,
 	doesCartLocationDifferFromResponseCartLocation,
 	doesResponseCartContainProductMatching,
+	convertTempResponseCartToResponseCart,
 } from './cart-functions';
 import { getEmptyResponseCart } from './empty-carts';
 import type {
@@ -40,6 +41,10 @@ const cacheStatusesForIgnoringReload: CacheStatus[] = [
 
 function shouldPlayQueuedActions( state: ShoppingCartState ): boolean {
 	return state.queuedActions.length > 0 && state.cacheStatus === 'valid';
+}
+
+export function isStatePendingUpdateOrQueuedAction( state: ShoppingCartState ): boolean {
+	return state.queuedActions.length > 0 || state.cacheStatus !== 'valid';
 }
 
 function shouldQueueReducerEvent( cacheStatus: CacheStatus, action: ShoppingCartAction ): boolean {
@@ -88,6 +93,17 @@ export function reducerWithQueue(
 		debug( 'queued actions are dispatched and queue is cleared' );
 	}
 
+	// When an action is dispatched that modifies the cart, the reducer modifies
+	// the `responseCart` stored in state. That data is then sent off to the
+	// server to be validated and filled-in with additional properties before
+	// being returned to the ShoppingCartManager. Because of this, optimistic
+	// updating of the cart is not possible so we don't want to return the raw
+	// `responseCart` to the consumer. Instead, we keep a copy of the
+	// `responseCart` the last time the state had a `valid` CacheStatus and pass
+	// that to our consumers. The consumers can use `isPendingUpdate` to know
+	// when the cart data is updating.
+	state = shoppingCartReducer( state, { type: 'UPDATE_LAST_VALID_CART' } );
+
 	return state;
 }
 
@@ -98,6 +114,15 @@ function shoppingCartReducer(
 	debug( 'processing requested action', action );
 	const couponStatus = state.couponStatus;
 	switch ( action.type ) {
+		case 'UPDATE_LAST_VALID_CART':
+			if ( ! isStatePendingUpdateOrQueuedAction( state ) ) {
+				return {
+					...state,
+					lastValidResponseCart: convertTempResponseCartToResponseCart( state.responseCart ),
+				};
+			}
+			return state;
+
 		case 'FETCH_INITIAL_RESPONSE_CART':
 			return { ...state, cacheStatus: 'fresh-pending' };
 
@@ -264,6 +289,7 @@ function shoppingCartReducer(
 export function getInitialShoppingCartState(): ShoppingCartState {
 	return {
 		responseCart: emptyResponseCart,
+		lastValidResponseCart: emptyResponseCart,
 		cacheStatus: 'fresh',
 		couponStatus: 'fresh',
 		queuedActions: [],
