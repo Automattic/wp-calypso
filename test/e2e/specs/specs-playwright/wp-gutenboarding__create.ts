@@ -4,7 +4,6 @@ import {
 	LoginFlow,
 	GutenbergEditorPage,
 	SidebarComponent,
-	SiteSelectComponent,
 	GutenboardingFlow,
 	GeneralSettingsPage,
 } from '@automattic/calypso-e2e';
@@ -29,8 +28,7 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 	it( 'Click on Add Site on Sidebar', async function () {
 		const sidebarComponent = new SidebarComponent( page );
 		await sidebarComponent.switchSite();
-		const siteSelectComponent = new SiteSelectComponent( page );
-		await siteSelectComponent.addSite();
+		await sidebarComponent.addSite();
 	} );
 
 	it( 'Enter new site name', async function () {

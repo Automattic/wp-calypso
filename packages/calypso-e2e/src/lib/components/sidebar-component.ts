@@ -153,4 +153,16 @@ export class SidebarComponent {
 		const layoutElement = await this.page.waitForSelector( '.layout.focus-sidebar' );
 		await layoutElement.waitForElementState( 'stable' );
 	}
+
+	/**
+	 * Clicks on the Add Site button at bottom of the site selector within the sidebar.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async addSite(): Promise< void > {
+		await Promise.all( [
+			this.page.waitForNavigation(),
+			this.page.click( 'a:text("Add New Site")' ),
+		] );
+	}
 }

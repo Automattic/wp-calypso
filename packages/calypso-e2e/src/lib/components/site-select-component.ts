@@ -56,16 +56,4 @@ export class SiteSelectComponent {
 		// Assert the resulting URL is in the form of <protocol><calypsoBaseURL>/home/<url>.
 		await this.page.waitForURL( `**/home/${ url }` );
 	}
-
-	/**
-	 * Clicks on the Add Site button at bottom of the site selector within the sidebar.
-	 *
-	 * @returns {Promise<void>} No return value.
-	 */
-	async addSite(): Promise< void > {
-		await Promise.all( [
-			this.page.waitForNavigation(),
-			this.page.click( 'a:text("Add New Site")' ),
-		] );
-	}
 }
