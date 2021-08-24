@@ -77,7 +77,7 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 		try {
 			await generalSettingsPage.deleteSite( siteURL );
 			const currentURL = await page.url();
-			expect.bind( currentURL ).not.stringContaining( siteURL );
+			expect( currentURL ).toEqual( expect.not.stringContaining( siteURL ) );
 		} catch ( e ) {
 			console.error( `Deletion of ${ siteURL } failed.` );
 			throw e;
