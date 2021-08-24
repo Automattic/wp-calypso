@@ -29,7 +29,20 @@ describe( 'ShoppingCartManager', () => {
 		} );
 	} );
 
-	it( 'addProductsToCart adds the products to the cart', async () => {
+	it( 'addProductsToCart adds the products to the cart if not queued', async () => {
+		const cartManagerClient = createShoppingCartManagerClient( {
+			getCart,
+			setCart,
+		} );
+		const manager = cartManagerClient.forCartKey( mainCartKey );
+		await manager.fetchInitialCart();
+		await manager.actions.addProductsToCart( [ planOne ] );
+		const { responseCart } = manager.getState();
+		expect( responseCart.products.length ).toBe( 1 );
+		expect( responseCart.products[ 0 ].product_slug ).toBe( planOne.product_slug );
+	} );
+
+	it( 'addProductsToCart adds the products to the cart if queued', async () => {
 		const cartManagerClient = createShoppingCartManagerClient( {
 			getCart,
 			setCart,
@@ -40,6 +53,30 @@ describe( 'ShoppingCartManager', () => {
 		const { responseCart } = manager.getState();
 		expect( responseCart.products.length ).toBe( 1 );
 		expect( responseCart.products[ 0 ].product_slug ).toBe( planOne.product_slug );
+	} );
+
+	it( 'addProductsToCart does nothing if passed an empty array', async () => {
+		const cartManagerClient = createShoppingCartManagerClient( {
+			getCart,
+			setCart,
+		} );
+		const manager = cartManagerClient.forCartKey( mainCartKey );
+		await manager.fetchInitialCart();
+		await manager.actions.addProductsToCart( [] );
+		const { responseCart } = manager.getState();
+		expect( responseCart.products.length ).toBe( 0 );
+	} );
+
+	it( 'replaceProductsInCart does nothing if passed an empty array', async () => {
+		const cartManagerClient = createShoppingCartManagerClient( {
+			getCart,
+			setCart,
+		} );
+		const manager = cartManagerClient.forCartKey( mainCartKey );
+		await manager.fetchInitialCart();
+		await manager.actions.replaceProductsInCart( [] );
+		const { responseCart } = manager.getState();
+		expect( responseCart.products.length ).toBe( 0 );
 	} );
 
 	it( 'actions taken before calling fetchInitialCart fetch the cart anyway', async () => {
