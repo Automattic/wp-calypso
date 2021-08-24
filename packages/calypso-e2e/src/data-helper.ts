@@ -2,6 +2,7 @@ import phrase from 'asana-phrase';
 import config from 'config';
 import { getViewportName } from './browser-helper';
 
+export type DateFormat = 'ISO';
 export { config };
 
 /**
@@ -15,6 +16,28 @@ export function getRandomInteger( min: number, max: number ): number {
 	min = Math.ceil( min );
 	max = Math.floor( max );
 	return Math.floor( Math.random() * ( max - min ) + min );
+}
+
+/**
+ * Returns the current date as a time stamp.
+ *
+ * @returns {string} Date represented as a timestamp.
+ */
+export function getTimestamp(): string {
+	return new Date().getTime().toString();
+}
+
+/**
+ * Returns the date string in the requested format.
+ *
+ * @param {DateFormat} format Date format supported by NodeJS.
+ * @returns {string|null} If valid date format string is supplied, string is returned. Otherwise, null.
+ */
+export function getDateString( format: DateFormat ): string | null {
+	if ( format === 'ISO' ) {
+		return new Date().toISOString();
+	}
+	return null;
 }
 
 /**
@@ -121,7 +144,7 @@ export function toTitleCase( words: string[] | string ): string {
  *
  * @returns {string} Generated text.
  */
-export function randomPhrase(): string {
+export function getRandomPhrase(): string {
 	const generated: Array< string > = phrase.default32BitFactory().randomPhrase();
 	return toTitleCase( generated );
 }

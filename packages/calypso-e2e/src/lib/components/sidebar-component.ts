@@ -64,6 +64,15 @@ export class SidebarComponent {
 		}
 
 		/**
+		 * Do not attempt to retry if we've navigated outside wp.com as the sidebar
+		 * is no longer present.
+		 */
+		const currentURL = await this.page.url();
+		if ( ! currentURL.startsWith( 'https://wordpress.com' ) ) {
+			return;
+		}
+
+		/**
 		 * Retry if the click missed the expected item. This can happen because of
 		 * the lazy-loading nature of the sidenav items.
 		 */

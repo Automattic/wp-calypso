@@ -1,7 +1,6 @@
 import path from 'path';
 import { describe, expect, test, beforeAll, afterAll } from '@jest/globals';
-import mockdate from 'mockdate';
-import { getAssetDir, getScreenshotDir, getVideoDir, getFileName } from '../src/media-helper';
+import { getAssetDir, getScreenshotDir, getVideoDir } from '../src/media-helper';
 
 let env: NodeJS.ProcessEnv;
 
@@ -84,45 +83,6 @@ describe( 'MediaHelper Tests', function () {
 			const expected = path.resolve( __dirname, '..', 'screenshots/videos' );
 			expect( getVideoDir() ).toBe( expected );
 		} );
-	} );
-
-	describe( `Test: getFileName`, function () {
-		let timestamp: number;
-
-		beforeAll( function () {
-			process.env.TEMP_ASSET_PATH = '/tmp';
-			process.env.VIDEODIR = 'recording';
-			process.env.SCREENSHOTDIR = 'screenshots';
-			process.env.LOCALE = 'en';
-			process.env.VIEWPORT_NAME = 'desktop';
-			timestamp = 1500000000;
-			mockdate.set( timestamp );
-		} );
-
-		test.each`
-			name                            | type              | expected
-			${ 'Log in' }                   | ${ 'screenshot' } | ${ path.resolve( '/tmp/screenshots', `FAILED-EN-DESKTOP-log-in-1500000000.png` ) }
-			${ 'Check for likes (manage)' } | ${ 'video' }      | ${ path.resolve( '/tmp/recording', `FAILED-EN-DESKTOP-check-for-likes--manage--1500000000.webm` ) }
-			${ '何でしょう' }               | ${ 'screenshot' } | ${ path.resolve( '/tmp/screenshots', `FAILED-EN-DESKTOP-------1500000000.png` ) }
-		`(
-			'Returns $expected when test name and artifact type is specified.',
-			function ( { name, type, expected } ) {
-				expect( getFileName( { name: name, type: type } ) ).toBe( expected );
-			}
-		);
-
-		test.each`
-			type               | expected
-			${ 'invalid' }     | ${ Error }
-			${ '' }            | ${ Error }
-			${ 'screenshots' } | ${ Error }
-			${ 'recordings' }  | ${ Error }
-		`(
-			'Throws $expected when unsupported artifact type is specified.',
-			function ( { type, expected } ) {
-				expect( () => getFileName( { name: 'test', type: type } ) ).toThrow( expected );
-			}
-		);
 	} );
 } );
 

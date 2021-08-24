@@ -41,7 +41,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), () => {
 	} );
 
 	it( 'Enter post title', async function () {
-		await gutenbergEditorPage.enterTitle( DataHelper.randomPhrase() );
+		await gutenbergEditorPage.enterTitle( DataHelper.getRandomPhrase() );
 	} );
 
 	it( `${ ImageBlock.blockName } block: upload image file`, async function () {
