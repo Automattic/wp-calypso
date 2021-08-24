@@ -54,8 +54,8 @@ A component wrapped by this HOC will receive the following additional props:
 
 The HOC has the following arguments. In order to set the cart key, you must provide the second argument to the HOC, `mapPropsToCartKey`.
 
-- `Component: React.ComponentType< P >`. The component to wrap; it will receive the additional props above.
-- `mapPropsToCartKey?: ( props: P ) => string | undefined`. A function that can be used to set the current cart key based on the component's props.
+- `Component: React.ComponentType`. The component to wrap; it will receive the additional props above.
+- `mapPropsToCartKey?: ( props ) => string | undefined`. A function that can be used to set the current cart key based on the component's props. If not set, it will try to use `props.cartKey`.
 
 ## createRequestCartProduct
 
