@@ -9,6 +9,7 @@ import type {
 	ThankYouProps,
 	ThankYouSectionProps,
 	ThankYouSupportSectionProps,
+	ThankYouNoticeProps,
 } from 'calypso/components/thank-you/types';
 
 import './style.scss';
@@ -56,6 +57,34 @@ const ThankYouNextSteps = styled.div`
 		display: flex;
 	}
 `;
+
+const ThankYouNoticeContainer = styled.div`
+	height: 32px;
+	padding: 8px;
+	font-size: 14px;
+	background: var( --studio-gray-70 );
+	color: var( --studio-white );
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	.thank-you__notice-icon {
+		padding-right: 8px;
+	}
+`;
+
+const ThankYouNotice = ( props: ThankYouNoticeProps ) => {
+	const { noticeTitle, noticeIcon } = props;
+
+	return (
+		<ThankYouNoticeContainer className="thank-you__notice">
+			{ noticeIcon && (
+				<Gridicon icon={ noticeIcon } className="thank-you__notice-icon" size={ 24 } />
+			) }
+			{ noticeTitle }
+		</ThankYouNoticeContainer>
+	);
+};
 
 const ThankYouNextStep = ( props: ThankYouNextStepProps ) => {
 	const { stepCta, stepDescription, stepKey, stepTitle } = props;
@@ -129,6 +158,7 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 		thankYouTitle,
 		thankYouSubtitle,
 		thankYouImage,
+		thankYouNotice,
 	} = props;
 
 	const ThankYouTitleContainer = styled.div`
@@ -188,6 +218,7 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 					</ThankYouTitleContainer>
 				) }
 			</ThankYouHeader>
+			{ thankYouNotice && <ThankYouNotice { ...thankYouNotice } /> }
 			<ThankYouBody className="thank-you__body">
 				<div>
 					{ thankYouSections }

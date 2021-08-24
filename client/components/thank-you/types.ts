@@ -8,6 +8,11 @@ export type ThankYouNextStepProps = {
 	stepTitle: TranslateResult;
 };
 
+export type ThankYouNoticeProps = {
+	noticeTitle: React.ReactNode | React.ReactFragment;
+	noticeIcon?: string;
+};
+
 export type ThankYouSectionProps = {
 	nextSteps: ThankYouNextStepProps[];
 	sectionKey: string;
@@ -39,4 +44,5 @@ export type ThankYouProps = {
 	};
 	thankYouTitle?: string | TranslateResult;
 	thankYouSubtitle?: string | TranslateResult;
+	thankYouNotice?: ThankYouNoticeProps;
 };

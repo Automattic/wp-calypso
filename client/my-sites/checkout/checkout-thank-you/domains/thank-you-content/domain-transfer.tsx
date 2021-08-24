@@ -13,6 +13,10 @@ const domainTransferThankYouProps = (
 	selectedSiteSlug: string,
 	domain: string
 ): DomainThankYouProps => ( {
+	thankYouNotice: {
+		noticeTitle: translate( 'The transfer process can take up to 5 days to complete' ),
+		noticeIcon: 'info',
+	},
 	sections: [
 		{
 			sectionKey: 'domain_transfer_whats_next',

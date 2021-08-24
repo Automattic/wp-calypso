@@ -4,7 +4,8 @@ export type DomainThankYouType = 'MAPPING' | 'TRANSFER';
 
 export type DomainThankYouProps = Required<
 	Pick< ThankYouProps, 'thankYouTitle' | 'thankYouSubtitle' | 'sections' | 'thankYouImage' >
->;
+> &
+	Pick< ThankYouProps, 'thankYouNotice' >;
 
 export type DomainThankYouPropsGetter = (
 	selectedSiteSlug: string,

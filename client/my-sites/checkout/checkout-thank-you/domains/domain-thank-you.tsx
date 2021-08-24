@@ -27,6 +27,7 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 			thankYouImage={ thankYouProps.thankYouImage }
 			thankYouTitle={ thankYouProps.thankYouTitle }
 			thankYouSubtitle={ thankYouProps.thankYouSubtitle }
+			thankYouNotice={ thankYouProps.thankYouNotice }
 		/>
 	);
 };
