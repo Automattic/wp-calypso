@@ -1,1 +1,1 @@
-export const cartKeysThatDoNotAllowFetch = [ 'no-site', 'no-user' ];
+export const cartKeysThatDoNotAllowFetch = [ 'no-user' ];
