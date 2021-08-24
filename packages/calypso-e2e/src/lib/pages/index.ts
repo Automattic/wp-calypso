@@ -14,3 +14,4 @@ export * from './stats-page';
 export * from './site-import-page';
 export * from './invite-people-page';
 export * from './people-page';
+export * from './reader-page';
