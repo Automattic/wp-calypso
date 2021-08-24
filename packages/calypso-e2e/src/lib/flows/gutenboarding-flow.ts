@@ -183,7 +183,7 @@ export class GutenboardingFlow {
 		await Promise.all( [
 			this.page.waitForNavigation(),
 			this.page.click(
-				`.plans-accordion-item:has(.plans-accordion-item__name:has-text("${ name }")) button:has-text("Select")'`
+				`.plans-accordion-item:has(.plans-accordion-item__name:has-text("${ name }")) button:has-text("Select")`
 			),
 		] );
 	}
