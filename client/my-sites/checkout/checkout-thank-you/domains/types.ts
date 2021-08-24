@@ -7,7 +7,10 @@ export type DomainThankYouProps = Required<
 > &
 	Pick< ThankYouProps, 'thankYouNotice' >;
 
-export type DomainThankYouPropsGetter = (
-	selectedSiteSlug: string,
-	domainName: string
-) => DomainThankYouProps;
+export type DomainThankYouParams = {
+	selectedSiteSlug: string;
+	domain: string;
+	email?: string;
+};
+
+export type DomainThankYouPropsGetter = ( params: DomainThankYouParams ) => DomainThankYouProps;

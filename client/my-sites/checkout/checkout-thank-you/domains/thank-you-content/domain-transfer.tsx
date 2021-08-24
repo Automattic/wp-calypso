@@ -2,17 +2,14 @@ import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import React from 'react';
 import domainTransferredSuccess from 'calypso/assets/images/illustrations/domain-transferred-success.svg';
-import { ThankYouProps } from 'calypso/components/thank-you/types';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
+import { DomainThankYouParams, DomainThankYouProps } from '../types';
 
-type DomainThankYouProps = Required<
-	Pick< ThankYouProps, 'thankYouTitle' | 'thankYouSubtitle' | 'sections' | 'thankYouImage' >
->;
-
-const domainTransferThankYouProps = (
-	selectedSiteSlug: string,
-	domain: string
-): DomainThankYouProps => ( {
+const domainTransferThankYouProps = ( {
+	selectedSiteSlug,
+	domain,
+	email,
+}: DomainThankYouParams ): DomainThankYouProps => ( {
 	thankYouNotice: {
 		noticeTitle: translate( 'The transfer process can take up to 5 days to complete' ),
 		noticeIcon: 'info',
@@ -26,7 +23,13 @@ const domainTransferThankYouProps = (
 					stepKey: 'domain_transfer_whats_next_wait_transfer',
 					stepTitle: translate( 'Wait for transfer to complete' ),
 					stepDescription: translate(
-						'We’ll send you an email to youremail@gmail.com when the transfer process is complete. You can always see the status in Site Domains.'
+						'We’ll send you an email to %(email)s when the transfer process is complete. You can always see the status in {{i}}Site Domains{{/i}}.',
+						{
+							components: { i: <i /> },
+							args: {
+								email,
+							},
+						}
 					),
 					stepCta: (
 						<Button

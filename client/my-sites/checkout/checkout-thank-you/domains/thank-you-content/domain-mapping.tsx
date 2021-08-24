@@ -4,12 +4,12 @@ import React from 'react';
 import domainConnectedSuccess from 'calypso/assets/images/illustrations/domain-connected-success.svg';
 import { domainMappingSetup } from 'calypso/my-sites/domains/paths';
 import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
-import { DomainThankYouProps } from '../types';
+import { DomainThankYouParams, DomainThankYouProps } from '../types';
 
-const domainMappingThankYouProps = (
-	selectedSiteSlug: string,
-	domain: string
-): DomainThankYouProps => ( {
+const domainMappingThankYouProps = ( {
+	selectedSiteSlug,
+	domain,
+}: DomainThankYouParams ): DomainThankYouProps => ( {
 	sections: [
 		{
 			sectionKey: 'domain_mapping_whats_next',

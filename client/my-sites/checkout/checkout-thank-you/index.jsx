@@ -479,8 +479,9 @@ export class CheckoutThankYou extends React.Component {
 			const [ , domainName ] = findPurchaseAndDomain( purchases, predicate );
 			return (
 				<DomainThankYou
+					email={ this.props.user?.email }
 					type={ purchaseType }
-					domainName={ domainName }
+					domain={ domainName }
 					selectedSiteSlug={ this.props.selectedSiteSlug }
 				/>
 			);
