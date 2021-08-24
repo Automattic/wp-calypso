@@ -82,6 +82,12 @@ export function createTestFile( {
 	// Attempting to copy the file elsewhere will trigger the following error on TeamCity:
 	// EPERM: operation not permitted
 	const testFilePath = path.join( sourceFileDir, fileName );
+
+	console.dir( require( 'os' ).userInfo() );
+	console.dir( fs.statSync( sourceFilePath ) );
+	console.dir( fs.statSync( sourceFileDir ) );
+	console.dir( fs.statSync( testFilePath ) );
+
 	// Copy the source file specified to testFilePath, creating a clone differing only by name.
 	fs.copySync( sourceFilePath, testFilePath );
 
