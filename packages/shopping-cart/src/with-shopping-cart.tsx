@@ -8,7 +8,9 @@ export default function withShoppingCart< ComponentProps >(
 	mapPropsToCartKey?: ( props: ComponentProps ) => string | undefined
 ): React.FC< ComponentProps > {
 	return function ShoppingCartWrapper( props ): JSX.Element {
-		const cartKey = mapPropsToCartKey?.( props );
+		const cartKey = mapPropsToCartKey
+			? mapPropsToCartKey( props )
+			: ( props as Record< string, string | undefined > ).cartKey;
 
 		// Even though managerClient isn't used here this guard will provide a
 		// better error message than waiting for the one in useShoppingCart.
