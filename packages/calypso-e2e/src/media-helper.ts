@@ -1,7 +1,7 @@
 import path from 'path';
 import config from 'config';
 import fs from 'fs-extra';
-import { getLocale, getViewportName } from './browser-helper';
+import { getTimestamp } from './data-helper';
 
 const artifacts: { [ key: string ]: string } = config.get( 'artifacts' );
 
@@ -42,64 +42,6 @@ export function getVideoDir(): string {
 }
 
 /**
- * Returns a descriptive file name for the requested artifact type.
- *
- * @param {{[key: string]: string}} param0 Object assembled by the caller.
- * @param {string} param0.name Name of the test suite or step that failed.
- * @param {string} param0.type Target type of the file name.
- * @returns {string} A Path-like string.
- * @throws {Error} If target type is not one of supported types.
- */
-export function getFileName( {
-	name,
-	type,
-}: {
-	name: string;
-	type: 'video' | 'screenshot';
-} ): string {
-	const suiteName = name.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
-	const viewportName = getViewportName().toUpperCase();
-	const locale = getLocale().toUpperCase();
-	const date = createTimestamp();
-	const fileName = `FAILED-${ locale }-${ viewportName }-${ suiteName }-${ date }`;
-
-	let dir;
-	let extension;
-
-	if ( type.toLowerCase() === 'screenshot' ) {
-		dir = getScreenshotDir();
-		extension = 'png';
-	} else if ( type.toLowerCase() === 'video' ) {
-		dir = getVideoDir();
-		extension = 'webm';
-	} else {
-		throw new Error( `Unsupported type specified, received ${ type }` );
-	}
-	return `${ dir }/${ fileName }.${ extension }`;
-}
-
-/**
- * Returns the current date as a time stamp.
- *
- * @returns {string} Date represented as a timestamp.
- */
-export function createTimestamp(): string {
-	return new Date().getTime().toString();
-}
-
-/**
- * Generates a valid filanem using the test name and a time stamp
- *
- * @param {string} testName The test name.
- * @returns The filename.
- */
-export function getTestNameWithTime( testName: string ): string {
-	const currentTestName = testName.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
-	const dateTime = new Date().toISOString().split( '.' )[ 0 ].replace( /:/g, '-' );
-	return `${ currentTestName }-${ dateTime }`;
-}
-
-/**
  * Given a full path to file on disk, remove the file.
  *
  * @param {string} filePath Full path on disk.
@@ -124,7 +66,7 @@ export function createTestFile( {
 	sourceFileName: string;
 	testFileName?: string;
 } ): string {
-	let fileName = createTimestamp();
+	let fileName = getTimestamp();
 	// If the output `testFileName` is defined, use that as part of the final filename.
 	if ( testFileName ) {
 		fileName += `-${ testFileName }`;
