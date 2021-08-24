@@ -2,19 +2,13 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
-import Modal from 'react-modal';
-import moment from 'moment';
 import { render, fireEvent, screen } from '@testing-library/react';
-import { unmountComponentAtNode } from 'react-dom';
+import moment from 'moment';
 import React from 'react';
+import { unmountComponentAtNode } from 'react-dom';
+import Modal from 'react-modal';
 import '@testing-library/jest-dom/extend-expect';
 
-/**
- * Internal dependencies
- */
 import UpcomingRenewalsDialog from '../upcoming-renewals-dialog';
 
 describe( '<UpcomingRenewalsDialog>', () => {

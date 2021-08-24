@@ -1,18 +1,8 @@
-/**
- * External dependencies
- */
+import { Dialog } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
 
-/**
- * Internal dependencies
- */
-import { Dialog } from '@automattic/components';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class AutoRenewPaymentMethodDialog extends Component {

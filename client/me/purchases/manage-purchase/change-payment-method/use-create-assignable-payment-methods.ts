@@ -1,24 +1,17 @@
-/**
- * External dependencies
- */
-import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import { useStripe } from '@automattic/calypso-stripe';
 import { useTranslate } from 'i18n-calypso';
-import type { PaymentMethod } from '@automattic/composite-checkout';
-
-/**
- * Internal Dependencies
- */
-import { getStoredCards } from 'calypso/state/stored-cards/selectors';
+import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import {
 	useCreateCreditCard,
 	useCreateExistingCards,
 	useCreatePayPal,
 } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-create-payment-methods';
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 import doesValueExist from 'calypso/my-sites/checkout/composite-checkout/lib/does-value-exist';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
+import { getStoredCards } from 'calypso/state/stored-cards/selectors';
 import useFetchAvailablePaymentMethods from './use-fetch-available-payment-methods';
+import type { PaymentMethod } from '@automattic/composite-checkout';
 
 export default function useCreateAssignablePaymentMethods(
 	currentPaymentMethodId: string

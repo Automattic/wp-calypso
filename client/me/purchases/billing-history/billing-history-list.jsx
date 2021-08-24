@@ -1,33 +1,26 @@
-/**
- * External dependencies
- */
-import { isEmpty } from 'lodash';
+import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
+import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
 import titleCase from 'to-title-case';
-import { capitalPDangit } from 'calypso/lib/formatting';
-
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Pagination from 'calypso/components/pagination';
+import { capitalPDangit } from 'calypso/lib/formatting';
 import BillingHistoryFilters from 'calypso/me/purchases/billing-history/billing-history-filters';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { sendBillingReceiptEmail as sendBillingReceiptEmailAction } from 'calypso/state/billing-transactions/actions';
+import { setPage } from 'calypso/state/billing-transactions/ui/actions';
+import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
+import getFilteredBillingTransactions from 'calypso/state/selectors/get-filtered-billing-transactions';
+import isSendingBillingReceiptEmail from 'calypso/state/selectors/is-sending-billing-receipt-email';
 import {
 	getTransactionTermLabel,
 	groupDomainProducts,
 	renderTransactionAmount,
 	renderTransactionQuantitySummary,
 } from './utils';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { setPage } from 'calypso/state/billing-transactions/ui/actions';
-import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
-import getFilteredBillingTransactions from 'calypso/state/selectors/get-filtered-billing-transactions';
-import isSendingBillingReceiptEmail from 'calypso/state/selectors/is-sending-billing-receipt-email';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { sendBillingReceiptEmail as sendBillingReceiptEmailAction } from 'calypso/state/billing-transactions/actions';
 
 class BillingHistoryList extends React.Component {
 	static displayName = 'BillingHistoryList';

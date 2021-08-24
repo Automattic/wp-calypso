@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { connect } from 'react-redux';
+import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
-import ReauthRequired from 'calypso/me/reauth-required';
-import twoStepAuthorization from 'calypso/lib/two-step-authorization';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
-import Navigation from '../navigation';
-import { Card } from '@automattic/components';
+import React from 'react';
+import { connect } from 'react-redux';
+import FormattedHeader from 'calypso/components/formatted-header';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
-import ActionButtons from '../settings-form/actions';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import ReauthRequired from 'calypso/me/reauth-required';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import {
 	fetchSettings,
 	toggleWPcomEmailSetting,
@@ -26,14 +19,11 @@ import {
 	getNotificationSettings,
 	hasUnsavedNotificationSettingsChanges,
 } from 'calypso/state/notification-settings/selectors';
-import EmailCategory from './email-category';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
-import FormattedHeader from 'calypso/components/formatted-header';
+import Navigation from '../navigation';
+import ActionButtons from '../settings-form/actions';
+import EmailCategory from './email-category';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 /**

@@ -1,24 +1,17 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import React from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import getUserSettings from 'calypso/state/selectors/get-user-settings';
-import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
-import hasUnsavedUserSettings from 'calypso/state/selectors/has-unsaved-user-settings';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
+import hasUnsavedUserSettings from 'calypso/state/selectors/has-unsaved-user-settings';
 import {
 	clearUnsavedUserSettings,
 	setUserSetting,
 	saveUserSettings,
 } from 'calypso/state/user-settings/actions';
 import { isUpdatingUserSettings } from 'calypso/state/user-settings/selectors';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 const withFormBase = ( WrappedComponent ) => {
 	class EnhancedComponent extends React.Component {

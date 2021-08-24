@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import Course from './course';
 import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import React, { Component } from 'react';
+import Course from './course';
 
 class CourseList extends Component {
 	render() {

@@ -1,43 +1,36 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import page from 'page';
-import { connect, useDispatch } from 'react-redux';
-import { localize, useTranslate } from 'i18n-calypso';
 import config from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
 import { Button, Card } from '@automattic/components';
-import FormLabel from 'calypso/components/forms/form-label';
-import TextareaAutosize from 'calypso/components/textarea-autosize';
+import { localize, useTranslate } from 'i18n-calypso';
+import page from 'page';
+import React from 'react';
+import { connect, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import HeaderCake from 'calypso/components/header-cake';
-import Main from 'calypso/components/main';
-import { withLocalizedMoment, useLocalizedMoment } from 'calypso/components/localized-moment';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { billingHistory, vatDetails as vatDetailsPath } from 'calypso/me/purchases/paths';
 import QueryBillingTransaction from 'calypso/components/data/query-billing-transaction';
+import FormattedHeader from 'calypso/components/formatted-header';
+import FormLabel from 'calypso/components/forms/form-label';
+import HeaderCake from 'calypso/components/header-cake';
+import { withLocalizedMoment, useLocalizedMoment } from 'calypso/components/localized-moment';
+import Main from 'calypso/components/main';
+import TextareaAutosize from 'calypso/components/textarea-autosize';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { PARTNER_PAYPAL_EXPRESS } from 'calypso/lib/checkout/payment-methods';
+import { billingHistory, vatDetails as vatDetailsPath } from 'calypso/me/purchases/paths';
+import titles from 'calypso/me/purchases/titles';
+import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { sendBillingReceiptEmail } from 'calypso/state/billing-transactions/actions';
+import {
+	clearBillingTransactionError,
+	requestBillingTransaction,
+} from 'calypso/state/billing-transactions/individual-transactions/actions';
+import getPastBillingTransaction from 'calypso/state/selectors/get-past-billing-transaction';
+import isPastBillingTransactionError from 'calypso/state/selectors/is-past-billing-transaction-error';
 import {
 	getTransactionTermLabel,
 	groupDomainProducts,
 	renderTransactionAmount,
 	renderTransactionQuantitySummary,
 } from './utils';
-import getPastBillingTransaction from 'calypso/state/selectors/get-past-billing-transaction';
-import isPastBillingTransactionError from 'calypso/state/selectors/is-past-billing-transaction-error';
-import {
-	clearBillingTransactionError,
-	requestBillingTransaction,
-} from 'calypso/state/billing-transactions/individual-transactions/actions';
-import { sendBillingReceiptEmail } from 'calypso/state/billing-transactions/actions';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { PARTNER_PAYPAL_EXPRESS } from 'calypso/lib/checkout/payment-methods';
-import titles from 'calypso/me/purchases/titles';
-import FormattedHeader from 'calypso/components/formatted-header';
-import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 
 class BillingReceipt extends React.Component {
 	componentDidMount() {

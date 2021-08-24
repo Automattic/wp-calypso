@@ -1,40 +1,33 @@
-/**
- * External dependencies
- */
+import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
+import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
-import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
-import HeaderCake from 'calypso/components/header-cake';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import HeaderCake from 'calypso/components/header-cake';
+import Layout from 'calypso/components/layout';
+import Column from 'calypso/components/layout/column';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
+import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserId, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { clearPurchases } from 'calypso/state/purchases/actions';
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
-import { getCurrentUserId, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { isRequestingSites } from 'calypso/state/sites/selectors';
 import {
 	getStoredCardById,
 	hasLoadedStoredCardsFromServer,
 } from 'calypso/state/stored-cards/selectors';
-import { isRequestingSites } from 'calypso/state/sites/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import Layout from 'calypso/components/layout';
-import Column from 'calypso/components/layout/column';
-import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
-import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PaymentMethodSelector from '../payment-method-selector';
 import getPaymentMethodIdFromPayment from '../payment-method-selector/get-payment-method-id-from-payment';
 import useCreateAssignablePaymentMethods from './use-create-assignable-payment-methods';

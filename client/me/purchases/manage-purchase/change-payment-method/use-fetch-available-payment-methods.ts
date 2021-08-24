@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { useReducer, useEffect, useRef } from 'react';
-
-/**
- * Internal Dependencies
- */
 import wp from 'calypso/lib/wp';
 
 const wpcom = wp.undocumented();

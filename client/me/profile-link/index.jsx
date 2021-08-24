@@ -1,23 +1,13 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { Button } from '@automattic/components';
+import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import Gridicon from 'calypso/components/gridicon';
 import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { withoutHttp } from 'calypso/lib/url';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class ProfileLink extends React.Component {

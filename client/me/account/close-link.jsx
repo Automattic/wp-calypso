@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { localize } from 'i18n-calypso';
-
 import { CompactCard } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import React from 'react';
 
-/**
- * Style dependencies
- */
 import './close-link.scss';
 
 const noop = () => {};

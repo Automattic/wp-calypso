@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import { PLAN_BUSINESS } from '@automattic/calypso-products';
 import { shallow } from 'enzyme';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
-import { PendingListItem } from '../pending-list-item';
-import { PLAN_BUSINESS } from '@automattic/calypso-products';
+import React from 'react';
 import * as localizedMoment from 'calypso/components/localized-moment';
+import { PendingListItem } from '../pending-list-item';
 
 jest.mock( 'calypso/components/localized-moment' );
 localizedMoment.useLocalizedMoment.mockReturnValue( moment );

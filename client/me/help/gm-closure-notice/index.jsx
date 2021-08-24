@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
 import 'moment-timezone'; // monkey patches the existing moment.js
 import { some } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	isEcommercePlan,
 	isBusinessPlan,
@@ -20,13 +12,10 @@ import {
 import FoldableCard from 'calypso/components/foldable-card';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const DATE_FORMAT_SHORT = 'MMMM D';

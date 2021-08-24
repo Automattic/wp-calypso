@@ -1,19 +1,8 @@
-/**
- * External dependencies
- */
+import { Card } from '@automattic/components';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
-import FormattedHeader from 'calypso/components/formatted-header';
-
-/**
- * Image dependencies
- */
 import supportIllustration from 'calypso/assets/images/illustrations/happiness-support.svg';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 class Confirmation extends Component {
 	static propTypes = {

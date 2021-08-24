@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
 import config from '@automattic/calypso-config';
 import page from 'page';
-
-/**
- * Internal Dependencies
- */
-import * as paymentMethodsController from 'calypso/me/purchases/payment-methods/controller';
-import * as billingController from 'calypso/me/purchases/billing-history/controller';
-import * as pendingController from 'calypso/me/pending-payments/controller';
-import * as membershipsController from 'calypso/me/memberships/controller';
-import * as controller from './controller';
-import * as paths from './paths';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { sidebar } from 'calypso/me/controller';
+import * as membershipsController from 'calypso/me/memberships/controller';
+import * as pendingController from 'calypso/me/pending-payments/controller';
+import * as billingController from 'calypso/me/purchases/billing-history/controller';
+import * as paymentMethodsController from 'calypso/me/purchases/payment-methods/controller';
 import { siteSelection } from 'calypso/my-sites/controller';
+import * as controller from './controller';
+import * as paths from './paths';
 
 export default ( router ) => {
 	router(
