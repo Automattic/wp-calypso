@@ -36,6 +36,10 @@ const selectors = {
 	// Plans
 	planItem: '.plans-accordion-item',
 	planName: '.plans-accordion-item__name',
+	selectPlanButton: ( name: string ) =>
+		`.plans-accordion-item:has(.plans-accordion-item__name:has-text("${ name }")) ${ selectors.button(
+			'Select'
+		) }`,
 };
 
 /**
@@ -182,9 +186,7 @@ export class GutenboardingFlow {
 		await this.page.click( ':text-is("Show all plans")' );
 		await Promise.all( [
 			this.page.waitForNavigation(),
-			this.page.click(
-				`.plans-accordion-item:has(.plans-accordion-item__name:has-text("${ name }")) button:has-text("Select")`
-			),
+			this.page.click( selectors.selectPlanButton( name ) ),
 		] );
 	}
 

@@ -61,16 +61,16 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 		await gutenboardingFlow.validateRecommendedPlan( 'Business' );
 	} );
 
-	it( 'Select free plan', async function () {
+	it.skip( 'Select free plan', async function () {
 		await gutenboardingFlow.selectPlan( 'Free' );
 	} );
 
-	it( 'See the Gutenberg editor', async function () {
+	it.skip( 'See the Gutenberg editor', async function () {
 		const gutenbergEditorPage = new GutenbergEditorPage( page );
 		await gutenbergEditorPage.waitUntilLoaded();
 	} );
 
-	it( `Delete created site`, async function () {
+	it.skip( `Delete created site`, async function () {
 		const settingsURL = DataHelper.getCalypsoURL( `settings/general/${ siteURL }` );
 		await page.goto( settingsURL, { waitUntil: 'load' } );
 		const generalSettingsPage = new GeneralSettingsPage( page );
