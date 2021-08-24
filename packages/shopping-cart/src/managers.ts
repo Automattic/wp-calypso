@@ -12,16 +12,19 @@ import type {
 	SubscriptionManager,
 	ActionPromises,
 	ShoppingCartManagerActions,
-	LastValidResponseCart,
 } from './types';
 
 const debug = debugFactory( 'shopping-cart:managers' );
 
-export function getShoppingCartManagerState(
-	state: ShoppingCartState,
-	lastValidResponseCart: ResponseCart
-): ShoppingCartManagerState {
-	const { cacheStatus, queuedActions, couponStatus, loadingErrorType, loadingError } = state;
+export function getShoppingCartManagerState( state: ShoppingCartState ): ShoppingCartManagerState {
+	const {
+		cacheStatus,
+		queuedActions,
+		couponStatus,
+		loadingErrorType,
+		loadingError,
+		lastValidResponseCart,
+	} = state;
 	const isLoading = cacheStatus === 'fresh' || cacheStatus === 'fresh-pending';
 	const isPendingUpdate = queuedActions.length > 0 || cacheStatus !== 'valid';
 	const loadingErrorForManager = cacheStatus === 'error' ? loadingError : null;
@@ -72,19 +75,6 @@ export function createSubscriptionManager( cartKey: string | undefined ): Subscr
 	};
 
 	return { subscribe, notifySubscribers };
-}
-
-export function createLastValidResponseCartManager(
-	initialState: ShoppingCartState
-): LastValidResponseCart {
-	let lastValidResponseCart = convertTempResponseCartToResponseCart( initialState.responseCart );
-
-	return {
-		get: () => lastValidResponseCart,
-		update: ( tempResponseCart ) => {
-			lastValidResponseCart = convertTempResponseCartToResponseCart( tempResponseCart );
-		},
-	};
 }
 
 export function createActionPromisesManager(): ActionPromises {

@@ -2,13 +2,13 @@ import debugFactory from 'debug';
 import {
 	getShoppingCartManagerState,
 	createSubscriptionManager,
-	createLastValidResponseCartManager,
 	createActionPromisesManager,
 	noopManager,
 } from './managers';
 import { createActions } from './shopping-cart-actions';
 import {
 	getInitialShoppingCartState,
+	isStatePendingUpdateOrQueuedAction,
 	reducerWithQueue as shoppingCartReducer,
 } from './shopping-cart-reducer';
 import { createTakeActionsBasedOnState } from './state-based-actions';
@@ -50,18 +50,6 @@ function createShoppingCartManager(
 
 	const subscriptionManager = createSubscriptionManager( cartKey );
 
-	// When an action is dispatched that modifies the cart (eg:
-	// addProductsToCart), the reducer modifies the `responseCart` stored in
-	// state. That (incomplete) data is then sent off to the server to be
-	// validated and filled-in with additional properties before being returned
-	// to the ShoppingCartManager. Because of this, optimistic updating of the
-	// cart is not possible (it may change significantly in that round trip) so
-	// we don't want to return the raw `responseCart` to the consumer. Instead,
-	// we keep a copy of the `responseCart` the last time the state had a `valid`
-	// CacheStatus and pass that to our consumers. The consumers can use
-	// `isPendingUpdate` to know when the cart data is updating.
-	const lastValidResponseCart = createLastValidResponseCartManager( state );
-
 	const syncManager = createCartSyncManager( cartKey, getCart, setCart );
 	const actionPromises = createActionPromisesManager();
 	const takeActionsBasedOnState = createTakeActionsBasedOnState( syncManager );
@@ -89,8 +77,6 @@ function createShoppingCartManager(
 		} );
 
 		if ( ! isStatePendingUpdateOrQueuedAction( state ) ) {
-			debug( 'updating lastValidResponseCart and resolving action promises' );
-			lastValidResponseCart.update( state.responseCart );
 			actionPromises.resolve( state.responseCart );
 		}
 
@@ -104,15 +90,12 @@ function createShoppingCartManager(
 	const dispatchAndWaitForValid = createDispatchAndWaitForValid( dispatch, actionPromises );
 	const actions = createActions( dispatchAndWaitForValid );
 
-	let cachedManagerState: ShoppingCartManagerState = getShoppingCartManagerState(
-		state,
-		lastValidResponseCart.get()
-	);
+	let cachedManagerState: ShoppingCartManagerState = getShoppingCartManagerState( state );
 	let lastState: ShoppingCartState = state;
 
 	const getCachedManagerState = (): ShoppingCartManagerState => {
 		if ( lastState !== state ) {
-			cachedManagerState = getShoppingCartManagerState( state, lastValidResponseCart.get() );
+			cachedManagerState = getShoppingCartManagerState( state );
 			lastState = state;
 		}
 		return cachedManagerState;
@@ -121,7 +104,7 @@ function createShoppingCartManager(
 	let didInitialFetch = false;
 	const initialFetch = () => {
 		if ( didInitialFetch ) {
-			return Promise.resolve( lastValidResponseCart.get() );
+			return Promise.resolve( state.lastValidResponseCart );
 		}
 		didInitialFetch = true;
 		takeActionsBasedOnState( state, dispatch );
@@ -163,8 +146,4 @@ export function createShoppingCartManagerClient( {
 	return {
 		forCartKey,
 	};
-}
-
-function isStatePendingUpdateOrQueuedAction( state: ShoppingCartState ) {
-	return state.queuedActions.length > 0 || state.cacheStatus !== 'valid';
 }
