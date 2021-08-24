@@ -1,39 +1,64 @@
-import styled from '@emotion/styled';
+import {
+	Button,
+	FormStatus,
+	useLineItems,
+	useFormStatus,
+	registerStore,
+	useSelect,
+	useDispatch,
+} from '@automattic/composite-checkout';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import React from 'react';
-import Button from '../../components/button';
-import Field from '../../components/field';
-import { registerStore, useSelect, useDispatch } from '../../lib/registry';
-import { FormStatus, useLineItems } from '../../public-api';
-import { useFormStatus } from '../form-status';
-import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
-import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
+import Field from '../field';
+import { PaymentMethodLogos } from '../payment-method-logos';
+import styled from '../styled';
+import { SummaryLine, SummaryDetails } from '../summary-details';
+import type {
+	PaymentMethodStore,
+	StoreSelectors,
+	StoreSelectorsWithState,
+	StoreActions,
+	StoreState,
+} from '../payment-method-store';
+import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
 
-const debug = debugFactory( 'composite-checkout:sofort-payment-method' );
+const debug = debugFactory( 'wpcom-checkout:sofort-payment-method' );
 
-export function createSofortPaymentMethodStore() {
+// Disabling this to make migration easier
+/* eslint-disable @typescript-eslint/no-use-before-define */
+
+type StoreKey = 'sofort';
+type NounsInStore = 'customerName';
+type SofortStore = PaymentMethodStore< NounsInStore >;
+
+declare module '@wordpress/data' {
+	function select( key: StoreKey ): StoreSelectors< NounsInStore >;
+	function dispatch( key: StoreKey ): StoreActions< NounsInStore >;
+}
+
+const actions: StoreActions< NounsInStore > = {
+	changeCustomerName( payload ) {
+		return { type: 'CUSTOMER_NAME_SET', payload };
+	},
+};
+
+const selectors: StoreSelectorsWithState< NounsInStore > = {
+	getCustomerName( state ) {
+		return state.customerName || '';
+	},
+};
+
+export function createSofortPaymentMethodStore(): SofortStore {
 	debug( 'creating a new sofort payment method store' );
-	const actions = {
-		changeCustomerName( payload ) {
-			return { type: 'CUSTOMER_NAME_SET', payload };
-		},
-	};
-
-	const selectors = {
-		getCustomerName( state ) {
-			return state.customerName || '';
-		},
-	};
-
 	const store = registerStore( 'sofort', {
 		reducer(
-			state = {
+			state: StoreState< NounsInStore > = {
 				customerName: { value: '', isTouched: false },
 			},
 			action
-		) {
+		): StoreState< NounsInStore > {
 			switch ( action.type ) {
 				case 'CUSTOMER_NAME_SET':
 					return { ...state, customerName: { value: action.payload, isTouched: true } };
@@ -44,23 +69,17 @@ export function createSofortPaymentMethodStore() {
 		selectors,
 	} );
 
-	return { ...store, actions, selectors };
+	return store;
 }
 
-export function createSofortMethod( { store, stripe, stripeConfiguration } ) {
+export function createSofortMethod( { store }: { store: SofortStore } ): PaymentMethod {
 	return {
 		id: 'sofort',
 		label: <SofortLabel />,
-		activeContent: <SofortFields stripe={ stripe } stripeConfiguration={ stripeConfiguration } />,
-		submitButton: (
-			<SofortPayButton
-				store={ store }
-				stripe={ stripe }
-				stripeConfiguration={ stripeConfiguration }
-			/>
-		),
+		activeContent: <SofortFields />,
+		submitButton: <SofortPayButton store={ store } />,
 		inactiveContent: <SofortSummary />,
-		getAriaLabel: ( __ ) => __( 'Sofort' ),
+		getAriaLabel: () => 'Sofort',
 	};
 }
 
@@ -118,10 +137,27 @@ const SofortField = styled( Field )`
 	}
 `;
 
-function SofortPayButton( { disabled, onClick, store, stripe, stripeConfiguration } ) {
+function SofortPayButton( {
+	disabled,
+	onClick,
+	store,
+}: {
+	disabled?: boolean;
+	onClick?: ProcessPayment;
+	store: SofortStore;
+} ) {
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
 	const customerName = useSelect( ( select ) => select( 'sofort' ).getCustomerName() );
+
+	// This must be typed as optional because it's injected by cloning the
+	// element in CheckoutSubmitButton, but the uncloned element does not have
+	// this prop yet.
+	if ( ! onClick ) {
+		throw new Error(
+			'Missing onClick prop; SofortPayButton must be used as a payment button in CheckoutSubmitButton'
+		);
+	}
 
 	return (
 		<Button
@@ -130,11 +166,9 @@ function SofortPayButton( { disabled, onClick, store, stripe, stripeConfiguratio
 				if ( isFormValid( store ) ) {
 					debug( 'submitting sofort payment' );
 					onClick( 'sofort', {
-						stripe,
 						name: customerName?.value,
 						items,
 						total,
-						stripeConfiguration,
 					} );
 				}
 			} }
@@ -147,16 +181,16 @@ function SofortPayButton( { disabled, onClick, store, stripe, stripeConfiguratio
 	);
 }
 
-function ButtonContents( { formStatus, total } ) {
+function ButtonContents( { formStatus, total }: { formStatus: FormStatus; total: LineItem } ) {
 	const { __ } = useI18n();
 	if ( formStatus === FormStatus.SUBMITTING ) {
-		return __( 'Processing…' );
+		return <>{ __( 'Processing…' ) }</>;
 	}
 	if ( formStatus === FormStatus.READY ) {
 		/* translators: %s is the total to be paid in localized currency */
-		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
+		return <>{ sprintf( __( 'Pay %s' ), total.amount.displayValue ) }</>;
 	}
-	return __( 'Please wait…' );
+	return <>{ __( 'Please wait…' ) }</>;
 }
 
 function SofortSummary() {
@@ -169,12 +203,12 @@ function SofortSummary() {
 	);
 }
 
-function isFormValid( store ) {
-	const customerName = store.selectors.getCustomerName( store.getState() );
+function isFormValid( store: SofortStore ): boolean {
+	const customerName = selectors.getCustomerName( store.getState() );
 
 	if ( ! customerName?.value.length ) {
 		// Touch the field so it displays a validation error
-		store.dispatch( store.actions.changeCustomerName( '' ) );
+		store.dispatch( actions.changeCustomerName( '' ) );
 		return false;
 	}
 	return true;
@@ -196,6 +230,6 @@ const SofortLogo = styled( SofortLogoImg )`
 	width: 64px;
 `;
 
-function SofortLogoImg( { className } ) {
+function SofortLogoImg( { className }: { className?: string } ) {
 	return <img src="/calypso/images/upgrades/sofort.svg" alt="Sofort" className={ className } />;
 }
