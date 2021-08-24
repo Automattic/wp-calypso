@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Button, Dialog } from '@automattic/components';
-import CancelAutoRenewalForm from 'calypso/components/marketing-survey/cancel-auto-renewal-form';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	isDomainRegistration,
 	isGSuiteOrGoogleWorkspace,
 	isPlan,
 	isTitanMail,
 } from '@automattic/calypso-products';
+import { Button, Dialog } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import CancelAutoRenewalForm from 'calypso/components/marketing-survey/cancel-auto-renewal-form';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSite } from 'calypso/state/sites/selectors';
 import './style.scss';

@@ -1,23 +1,13 @@
-/**
- * External dependencies
- */
-import React, { FunctionComponent } from 'react';
-import { useTranslate } from 'i18n-calypso';
 import classnames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import { useTranslate } from 'i18n-calypso';
+import React, { FunctionComponent } from 'react';
+import Gridicon from 'calypso/components/gridicon';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	getPaymentMethodImageURL,
 	getPaymentMethodSummary,
 } from 'calypso/lib/checkout/payment-methods';
-import Gridicon from 'calypso/components/gridicon';
 
-/**
- * Style dependencies
- */
 import 'calypso/me/purchases/payment-methods/style.scss';
 
 interface Props {

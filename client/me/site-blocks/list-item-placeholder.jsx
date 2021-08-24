@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import React, { PureComponent } from 'react';
 
 class SiteBlockListItemPlaceholder extends PureComponent {

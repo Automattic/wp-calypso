@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-
 import React from 'react';
 import BillingHistoryComponent from 'calypso/me/purchases/billing-history/main';
 import Receipt from './receipt';

@@ -1,20 +1,17 @@
-/**
- * External dependencies
- */
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import { times } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { times } from 'lodash';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import Main from 'calypso/components/main';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QuerySiteBlocks from 'calypso/components/data/query-site-blocks';
+import FormattedHeader from 'calypso/components/formatted-header';
+import InfiniteList from 'calypso/components/infinite-list';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
+import { requestSiteBlocks } from 'calypso/state/reader/site-blocks/actions';
 import {
 	getBlockedSites,
 	isFetchingSiteBlocks,
@@ -22,15 +19,8 @@ import {
 	getSiteBlocksLastPage,
 } from 'calypso/state/reader/site-blocks/selectors';
 import SiteBlockListItem from './list-item';
-import InfiniteList from 'calypso/components/infinite-list';
-import { requestSiteBlocks } from 'calypso/state/reader/site-blocks/actions';
 import SiteBlockListItemPlaceholder from './list-item-placeholder';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-import FormattedHeader from 'calypso/components/formatted-header';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class SiteBlockList extends Component {

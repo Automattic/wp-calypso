@@ -1,18 +1,8 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-
-/**
- * Internal dependencies
- */
-import Settings from './settings';
 import Actions from './actions';
+import Settings from './settings';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class NotificationSettingsForm extends Component {

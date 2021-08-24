@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import page from 'page';
 import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import PasswordComponent from 'calypso/me/security/main';
-import SocialLoginComponent from 'calypso/me/social-login';
+import page from 'page';
+import React from 'react';
+import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import ConnectedAppsComponent from 'calypso/me/connected-applications';
 import AccountRecoveryComponent from 'calypso/me/security-account-recovery';
 import SecurityCheckupComponent from 'calypso/me/security-checkup';
-import { getSocialServiceFromClientId } from 'calypso/lib/login';
+import PasswordComponent from 'calypso/me/security/main';
+import SocialLoginComponent from 'calypso/me/social-login';
 import { successNotice } from 'calypso/state/notices/actions';
 
 export function password( context, next ) {

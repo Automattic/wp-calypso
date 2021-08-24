@@ -1,21 +1,14 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import QueryAccountRecoverySettings from 'calypso/components/data/query-account-recovery-settings';
 import {
 	getAccountRecoveryEmail,
 	isAccountRecoveryEmailActionInProgress,
 	isAccountRecoveryEmailValidated,
 } from 'calypso/state/account-recovery/settings/selectors';
 import { getOKIcon, getWarningIcon } from './icons.js';
-import QueryAccountRecoverySettings from 'calypso/components/data/query-account-recovery-settings';
 import SecurityCheckupNavigationItem from './navigation-item';
 
 class SecurityCheckupAccountRecoveryEmail extends React.Component {

@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { useTranslate } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import { get } from 'lodash';
-import formatCurrency from '@automattic/format-currency';
-
-/**
- * Internal dependencies
- */
 import { Card, Button } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
+import { useTranslate } from 'i18n-calypso';
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import Gridicon from 'calypso/components/gridicon';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { paymentMethodName } from 'calypso/lib/cart-values';
+import { purchaseType as getPurchaseType, getName } from 'calypso/lib/purchases';
 import { getSite, getSiteTitle, getSiteDomain } from 'calypso/state/sites/selectors';
 import PurchaseSiteHeader from '../purchases/purchases-site/header';
-import { purchaseType as getPurchaseType, getName } from 'calypso/lib/purchases';
-import { paymentMethodName } from 'calypso/lib/cart-values';
 
 export function PendingListItem( {
 	paymentType,

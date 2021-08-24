@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import Gridicon from 'calypso/components/gridicon';
-
-/**
- * Internal dependencies
- */
 import { getLabelForStream } from './locales';
 
 export default class extends React.PureComponent {

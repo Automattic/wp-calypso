@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
+import { Card } from '@automattic/components';
+import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
-import { errorNotice, warningNotice, successNotice } from 'calypso/state/notices/actions';
 import { registerSecurityKey } from 'calypso/lib/webauthn';
+import { errorNotice, warningNotice, successNotice } from 'calypso/state/notices/actions';
 import Security2faKeyAddName from './name';
 import WaitForKey from './wait-for-key';
 

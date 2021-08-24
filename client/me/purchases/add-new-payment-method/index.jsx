@@ -1,31 +1,24 @@
-/**
- * External dependencies
- */
-import { useSelector, useDispatch } from 'react-redux';
-import page from 'page';
-import React, { useMemo, useEffect } from 'react';
 import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { errorNotice } from 'calypso/state/notices/actions';
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import page from 'page';
+import React, { useMemo, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
-import Main from 'calypso/components/main';
-import titles from 'calypso/me/purchases/titles';
-import { paymentMethods } from 'calypso/me/purchases/paths';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
 import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
 import PaymentMethodSelector from 'calypso/me/purchases/manage-purchase/payment-method-selector';
+import { paymentMethods } from 'calypso/me/purchases/paths';
+import titles from 'calypso/me/purchases/titles';
 import { useCreateCreditCard } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-create-payment-methods';
-import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
 
 function AddNewPaymentMethod() {
 	const goToPaymentMethods = () => page( paymentMethods );

@@ -1,12 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { mapStateToProps } from '../index';
 import {
 	PLAN_FREE,
 	PLAN_ECOMMERCE,
@@ -28,7 +19,9 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
+import React from 'react';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
+import { mapStateToProps } from '../index';
 
 jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'calypso/components/main', () => 'Main' );

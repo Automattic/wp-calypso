@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
+import { Button, Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Button, Card } from '@automattic/components';
+import Gridicon from 'calypso/components/gridicon';
+import Notice from 'calypso/components/notice';
 import SectionHeader from 'calypso/components/section-header';
-import Security2faKeyAdd from './add';
-import Security2faKeyList from './list';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { isWebAuthnSupported } from 'calypso/lib/webauthn';
 import wpcom from 'calypso/lib/wp';
-import Notice from 'calypso/components/notice';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import Security2faKeyAdd from './add';
+import Security2faKeyList from './list';
 
 class Security2faKey extends React.Component {
 	state = {

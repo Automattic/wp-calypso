@@ -1,29 +1,19 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { localize, useTranslate } from 'i18n-calypso';
-import { CompactCard, Card } from '@automattic/components';
 import config from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
-import { vatDetails as vatDetailsPath, billingHistoryReceipt } from 'calypso/me/purchases/paths';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
-import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
-import Main from 'calypso/components/main';
+import { CompactCard, Card } from '@automattic/components';
+import { localize, useTranslate } from 'i18n-calypso';
+import React from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryBillingTransactions from 'calypso/components/data/query-billing-transactions';
-import titles from 'calypso/me/purchases/titles';
 import FormattedHeader from 'calypso/components/formatted-header';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import BillingHistoryList from 'calypso/me/purchases/billing-history/billing-history-list';
+import { vatDetails as vatDetailsPath, billingHistoryReceipt } from 'calypso/me/purchases/paths';
+import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
+import titles from 'calypso/me/purchases/titles';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export function BillingHistoryContent( {

@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
-import React, { Fragment } from 'react';
-import { connect } from 'react-redux';
+import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { times } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import ProfileLink from 'calypso/me/profile-link';
+import React, { Fragment } from 'react';
+import { connect } from 'react-redux';
 import QueryProfileLinks from 'calypso/components/data/query-profile-links';
-import AddProfileLinksButtons from 'calypso/me/profile-links/add-buttons';
-import SectionHeader from 'calypso/components/section-header';
-import { Card } from '@automattic/components';
 import Notice from 'calypso/components/notice';
-import ProfileLinksAddWordPress from 'calypso/me/profile-links-add-wordpress';
+import SectionHeader from 'calypso/components/section-header';
+import ProfileLink from 'calypso/me/profile-link';
 import ProfileLinksAddOther from 'calypso/me/profile-links-add-other';
+import ProfileLinksAddWordPress from 'calypso/me/profile-links-add-wordpress';
+import AddProfileLinksButtons from 'calypso/me/profile-links/add-buttons';
 import {
 	deleteUserProfileLink,
 	resetUserProfileLinkErrors,
@@ -24,9 +17,6 @@ import {
 import getProfileLinks from 'calypso/state/selectors/get-profile-links';
 import getProfileLinksErrorType from 'calypso/state/selectors/get-profile-links-error-type';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class ProfileLinks extends React.Component {
