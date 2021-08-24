@@ -1,6 +1,4 @@
-/**
- * Internal dependencies
- */
+import wpcom from 'calypso/lib/wp';
 import {
 	MEMBERSHIPS_PRODUCTS_LIST,
 	MEMBERSHIPS_PRODUCT_RECEIVE,
@@ -11,9 +9,8 @@ import {
 	MEMBERSHIPS_PRODUCT_DELETE,
 	MEMBERSHIPS_PRODUCT_DELETE_FAILURE,
 } from 'calypso/state/action-types';
-import wpcom from 'calypso/lib/wp';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { membershipProductFromApi } from 'calypso/state/data-layer/wpcom/sites/memberships';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/memberships/init';
 

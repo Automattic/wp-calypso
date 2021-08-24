@@ -1,31 +1,24 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { wpcomJetpackLicensing } from 'calypso/lib/wp';
 import {
 	JETPACK_PARTNER_PORTAL_PARTNER_ACTIVE_PARTNER_KEY_UPDATE,
 	JETPACK_PARTNER_PORTAL_PARTNER_REQUEST,
 	JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE_ERROR,
 	JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE,
 } from 'calypso/state/action-types';
-import { ReduxDispatch } from 'calypso/state/redux-store';
+import { errorNotice } from 'calypso/state/notices/actions';
+import {
+	getActivePartnerKey,
+	getActivePartnerKeyId,
+	isFetchingPartner,
+} from 'calypso/state/partner-portal/partner/selectors';
 import {
 	APIError,
 	Partner,
 	PartnerPortalStore,
 	PartnerPortalThunkAction,
 } from 'calypso/state/partner-portal/types';
-import {
-	getActivePartnerKey,
-	getActivePartnerKeyId,
-	isFetchingPartner,
-} from 'calypso/state/partner-portal/partner/selectors';
-import { wpcomJetpackLicensing } from 'calypso/lib/wp';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { ReduxDispatch } from 'calypso/state/redux-store';
 
 // Required for modular state.
 import 'calypso/state/partner-portal/init';

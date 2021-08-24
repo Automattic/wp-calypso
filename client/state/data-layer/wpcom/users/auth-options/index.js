@@ -1,22 +1,14 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUESTING,
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_SUCCESS,
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
-import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
-
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
 export const getAuthAccountType = ( action ) =>
 	http(

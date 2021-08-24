@@ -1,12 +1,9 @@
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
 import { READER_VIEW_STREAM } from 'calypso/state/reader/action-types';
-import sidebar from './sidebar/reducer';
 import { combineReducers, withPersistence } from 'calypso/state/utils';
 import cardExpansions from './card-expansions/reducer';
 import hasUnseenPosts from './seen-posts/reducer';
+import sidebar from './sidebar/reducer';
 
 /**
  * Keep the last reader stream path selected by the user, for the purpose of autoselecting it

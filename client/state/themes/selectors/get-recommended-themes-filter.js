@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor';
 import 'calypso/state/themes/init';
 

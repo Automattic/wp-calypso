@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { receiveLanguageNames, requestLanguageNames } from '../actions';
 import { I18N_LANGUAGE_NAMES_REQUEST, I18N_LANGUAGE_NAMES_ADD } from 'calypso/state/action-types';
+import { receiveLanguageNames, requestLanguageNames } from '../actions';
 
 describe( 'language names actions', () => {
 	test( '#requestLanguageNames()', () => {

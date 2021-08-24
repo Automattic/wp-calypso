@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import type { Dispatch } from 'redux';
-
-/**
- * Internal dependencies
- */
 import { clearStore, getStoredUserId } from 'calypso/lib/user/store';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getRedirectToSanitized, isTwoFactorEnabled } from 'calypso/state/login/selectors';
+import type { Dispatch } from 'redux';
 
 export const rebootAfterLogin = ( tracksEventArgs: Record< string, unknown > ) => async (
 	dispatch: Dispatch,

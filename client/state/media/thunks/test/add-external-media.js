@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { addExternalMedia as addExternalMediaThunk } from 'calypso/state/media/thunks/add-external-media';
 import { uploadMedia } from 'calypso/state/media/thunks/upload-media';
 

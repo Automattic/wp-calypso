@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getMediaItemServerIdFromTransientId from 'calypso/state/selectors/get-media-item-server-id-from-transient-id';
 
 describe( 'getMediaItemServerIdFromTransientId()', () => {

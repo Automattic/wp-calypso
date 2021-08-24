@@ -8,6 +8,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import Search from 'calypso/components/search';
 import SectionNav from 'calypso/components/section-nav';
@@ -406,7 +407,14 @@ export class PluginsMain extends Component {
 							headerText={ this.props.translate( 'Plugins' ) }
 							align="left"
 							subHeaderText={ this.props.translate(
-								'Add new functionality and integrations to your site with plugins.'
+								'Add new functionality and integrations to your site with plugins. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+								{
+									components: {
+										learnMoreLink: (
+											<InlineSupportLink supportContext="plugins" showIcon={ false } />
+										),
+									},
+								}
 							) }
 						/>
 						<div className="plugins__main-buttons">

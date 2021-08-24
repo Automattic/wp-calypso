@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { ATOMIC_TRANSFER_REQUEST, ATOMIC_TRANSFER_SET } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/sites/transfers/latest';

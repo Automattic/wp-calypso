@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'calypso/components/gridicon';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SiteSelector from 'calypso/components/site-selector';
 import SocialLogo from 'calypso/components/social-logo';
 import ReaderPopoverMenu from 'calypso/reader/components/reader-popover/menu';

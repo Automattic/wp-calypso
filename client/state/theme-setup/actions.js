@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 import {
 	THEME_SETUP_TOGGLE_DIALOG,
@@ -22,10 +19,11 @@ export function runThemeSetup( siteId ) {
 			type: THEME_SETUP_REQUEST,
 		} );
 
-		return wpcom
-			.undocumented()
-			.site( siteId )
-			.runThemeSetup()
+		return wpcom.req
+			.post( {
+				path: `/sites/${ siteId }/theme-setup`,
+				apiNamespace: 'wpcom/v2',
+			} )
 			.then( ( response ) => {
 				dispatch( {
 					type: THEME_SETUP_RESULT,

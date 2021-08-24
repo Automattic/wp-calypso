@@ -1,14 +1,8 @@
-/**
- * External dependencies
- */
-import page from 'page';
-import { get } from 'lodash';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { get } from 'lodash';
+import page from 'page';
 import wpcom from 'calypso/lib/wp';
+import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import {
 	SITE_ADDRESS_AVAILABILITY_REQUEST,
 	SITE_ADDRESS_AVAILABILITY_SUCCESS,
@@ -18,9 +12,8 @@ import {
 	SITE_ADDRESS_CHANGE_REQUEST_FAILURE,
 	SITE_ADDRESS_CHANGE_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';

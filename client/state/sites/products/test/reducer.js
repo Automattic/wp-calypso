@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { products } from '../reducer';
 import {
 	SITE_PRODUCTS_FETCH,
 	SITE_PRODUCTS_FETCH_COMPLETED,
 	SITE_PRODUCTS_FETCH_FAILED,
 	SITE_PRODUCTS_REMOVE,
 } from 'calypso/state/action-types';
+import { products } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#products()', () => {

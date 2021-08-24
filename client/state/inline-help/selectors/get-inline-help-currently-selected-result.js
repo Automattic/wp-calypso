@@ -1,14 +1,7 @@
-/**
- * External Dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import getContextualHelpResults from 'calypso/state/inline-help/selectors/get-contextual-help-results';
 import getInlineHelpSearchResultsForQuery from 'calypso/state/inline-help/selectors/get-inline-help-search-results-for-query';
 import getSelectedResultIndex from 'calypso/state/inline-help/selectors/get-selected-result-index';
-import getContextualHelpResults from 'calypso/state/inline-help/selectors/get-contextual-help-results';
 
 import 'calypso/state/inline-help/init';
 

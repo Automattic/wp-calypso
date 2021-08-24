@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import {
 	PLANS_RECEIVE,
 	PLANS_REQUEST,

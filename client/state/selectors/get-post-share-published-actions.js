@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import { get, orderBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { enrichPublicizeActionsWithConnections } from 'calypso/state/selectors/utils/';
 import { createSelector } from '@automattic/state-utils';
+import { get, orderBy } from 'lodash';
+import { enrichPublicizeActionsWithConnections } from 'calypso/state/selectors/utils/';
 
 import 'calypso/state/sharing/init';
 

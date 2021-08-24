@@ -1,10 +1,3 @@
-/**
- * External dependencies
- */
-
-/**
- * Internal dependencies
- */
 import { initialSiteState } from 'calypso/state/sites/features/reducer';
 
 export default function isRequestingSiteFeatures( state, siteId ) {

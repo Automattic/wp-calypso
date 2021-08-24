@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import { filter, get, isEmpty, keyBy, omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	POST_EDIT,
 	POST_REVISIONS_RECEIVE,
@@ -17,8 +9,8 @@ import {
 	POST_REVISIONS_DIFF_UNIFY_VIEW,
 	SELECTED_SITE_SET,
 } from 'calypso/state/action-types';
-import authors from './authors/reducer';
 import { combineReducers } from 'calypso/state/utils';
+import authors from './authors/reducer';
 
 export function diffs( state = {}, { diffs: diffsFromServer, postId, revisions, siteId, type } ) {
 	if ( type !== POST_REVISIONS_RECEIVE ) {

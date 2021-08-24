@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 
 /**

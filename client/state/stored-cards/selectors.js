@@ -1,11 +1,4 @@
-/**
- * External Dependencies
- */
 import { groupBy } from 'lodash';
-
-/**
- * Internal Dependencies
- */
 import { isPaymentAgreement, isCreditCard } from 'calypso/lib/checkout/payment-methods';
 
 import 'calypso/state/stored-cards/init';

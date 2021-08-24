@@ -1,11 +1,8 @@
-/**
- * Internal dependencies
- */
-import { addValidationSchemas, requestValidationSchemas } from '../actions';
 import {
 	DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_REQUEST,
 	DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_ADD,
 } from 'calypso/state/action-types';
+import { addValidationSchemas, requestValidationSchemas } from '../actions';
 
 describe( 'Domain Validation Schemas Actions', () => {
 	test( '#requestValidationSchemas()', () => {

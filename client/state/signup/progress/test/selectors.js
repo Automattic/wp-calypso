@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { getSignupProgress, isPlanStepExistsAndSkipped } from '../selectors';
 
 describe( 'selectors', () => {

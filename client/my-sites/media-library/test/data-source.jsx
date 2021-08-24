@@ -14,7 +14,7 @@ const noop = () => {};
 
 // we need to check the correct children are rendered, so this mocks the
 // PopoverMenu component with one that simply renders the children
-jest.mock( 'calypso/components/popover/menu', () => {
+jest.mock( 'calypso/components/popover-menu', () => {
 	return ( props ) => <div>{ props.children }</div>;
 } );
 // only enable the external-media options, enabling everything causes an

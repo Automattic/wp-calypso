@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
+import { Card } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { Card } from '@automattic/components';
-import PrimaryHeader from './primary-header';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import PrimaryHeader from './primary-header';
 
 class NoAvailableTimes extends Component {
 	componentDidMount() {

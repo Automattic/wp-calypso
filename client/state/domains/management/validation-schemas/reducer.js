@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_ADD } from 'calypso/state/action-types';
 
 export const validationSchemas = ( state = {}, action ) => {

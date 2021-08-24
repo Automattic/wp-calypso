@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
 import { shallow } from 'enzyme';
-import React from 'react';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { PurchasePlanDetails } from '../index';
+import React from 'react';
 import PlanBillingPeriod from '../billing-period';
+import { PurchasePlanDetails } from '../index';
 
 const props = {
 	purchaseId: 123,

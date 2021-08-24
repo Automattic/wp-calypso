@@ -1,13 +1,10 @@
-/**
- * Internal dependencies
- */
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { saveDomainIpsTag, updateDomainTransfer } from 'calypso/state/domains/transfer/actions';
 import {
 	saveDomainIpsTag as doSaveDomainIpsTag,
 	handleIpsTagSaveSuccess,
 	handleIpsTagSaveFailure,
 } from '../';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { saveDomainIpsTag, updateDomainTransfer } from 'calypso/state/domains/transfer/actions';
 
 const domain = 'domain-transfer-unit-test.uk';
 const selectedRegistrar = {

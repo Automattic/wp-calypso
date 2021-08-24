@@ -1,19 +1,15 @@
-/**
- * Internal dependencies
- */
+import { VIDEO_EDITOR_UPDATE_POSTER } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { VIDEO_EDITOR_UPDATE_POSTER } from 'calypso/state/action-types';
 import {
 	setPosterUrl,
 	showError,
 	showUploadProgress,
 } from 'calypso/state/editor/video-editor/actions';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import getMediaItem from 'calypso/state/selectors/get-media-item';
 import { receiveMedia } from 'calypso/state/media/actions';
+import getMediaItem from 'calypso/state/selectors/get-media-item';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const fetch = ( action ) => {
 	if ( ! ( 'file' in action.params || 'atTime' in action.params ) ) {

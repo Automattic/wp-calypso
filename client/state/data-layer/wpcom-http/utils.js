@@ -1,17 +1,6 @@
-/**
- * External dependencies
- */
+import warn from '@wordpress/warning';
 import deterministicStringify from 'fast-json-stable-stringify';
 import { get, merge } from 'lodash';
-
-/**
- * WordPress dependencies
- */
-import warn from '@wordpress/warning';
-
-/**
- * Internal dependencies
- */
 import { keyedReducer } from 'calypso/state/utils';
 
 const noop = () => {};

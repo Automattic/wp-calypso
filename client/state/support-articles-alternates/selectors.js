@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get, has, isEmpty } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { keyToString } from 'calypso/reader/post-key';
 
 import 'calypso/state/support-articles-alternates/init';

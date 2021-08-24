@@ -1,34 +1,23 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
+import { Button } from '@automattic/components';
+import { saveAs } from 'browser-filesaver';
+import Clipboard from 'clipboard';
 import { localize } from 'i18n-calypso';
+import { flowRight as compose } from 'lodash';
+import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
-import Clipboard from 'clipboard';
-import Gridicon from 'calypso/components/gridicon';
-import { saveAs } from 'browser-filesaver';
-import { flowRight as compose } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import ButtonGroup from 'calypso/components/button-group';
 import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
-import Notice from 'calypso/components/notice';
-import ButtonGroup from 'calypso/components/button-group';
-import { Button } from '@automattic/components';
-import Tooltip from 'calypso/components/tooltip';
+import Gridicon from 'calypso/components/gridicon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { getCurrentUserName } from 'calypso/state/current-user/selectors';
+import Notice from 'calypso/components/notice';
+import Tooltip from 'calypso/components/tooltip';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class Security2faBackupCodesList extends React.Component {

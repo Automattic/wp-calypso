@@ -1,16 +1,12 @@
-/**
- * Internal dependencies
- */
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { ACTIVE_PROMOTIONS_REQUEST } from 'calypso/state/action-types';
 import {
 	activePromotionsReceiveAction,
 	activePromotionsRequestFailureAction,
 	activePromotionsRequestSuccessAction,
 } from 'calypso/state/active-promotions/actions';
-
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
 /**
  * @module state/data-layer/wpcom/active-promotions

@@ -1,9 +1,5 @@
-/**
- * Internal dependencies
- */
-
-import { combineReducers } from 'calypso/state/utils';
 import { MAILCHIMP_LISTS_RECEIVE } from 'calypso/state/action-types';
+import { combineReducers } from 'calypso/state/utils';
 
 export const items = ( state = [], action ) => {
 	switch ( action.type ) {

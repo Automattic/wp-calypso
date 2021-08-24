@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getLastGoodRewindBackup from 'calypso/state/selectors/get-last-good-rewind-backup';
 
 describe( 'getLastGoodRewindBackup()', () => {

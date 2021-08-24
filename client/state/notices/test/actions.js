@@ -1,6 +1,4 @@
-/**
- * Internal dependencies
- */
+import { NOTICE_CREATE, NOTICE_REMOVE } from 'calypso/state/action-types';
 import {
 	createNotice,
 	errorNotice,
@@ -10,7 +8,6 @@ import {
 	successNotice,
 	warningNotice,
 } from '../actions';
-import { NOTICE_CREATE, NOTICE_REMOVE } from 'calypso/state/action-types';
 
 jest.mock( 'uuid', () => ( {
 	v4: () => 'someid',

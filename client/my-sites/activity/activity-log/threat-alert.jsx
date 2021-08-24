@@ -7,7 +7,7 @@ import DiffViewer from 'calypso/components/diff-viewer';
 import FoldableCard from 'calypso/components/foldable-card';
 import InfoPopover from 'calypso/components/info-popover';
 import MarkedLines from 'calypso/components/marked-lines';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import Spinner from 'calypso/components/spinner';
 import SplitButton from 'calypso/components/split-button';
 import TimeSince from 'calypso/components/time-since';

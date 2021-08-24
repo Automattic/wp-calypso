@@ -1,36 +1,26 @@
-/**
- * External dependencies
- */
-import React, { Component, Fragment } from 'react';
-import classNames from 'classnames';
-import Gridicon from 'calypso/components/gridicon';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import AppPasswordItem from 'calypso/me/application-password-item';
 import { Button, Card } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+import QueryApplicationPasswords from 'calypso/components/data/query-application-passwords';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import QueryApplicationPasswords from 'calypso/components/data/query-application-passwords';
+import Gridicon from 'calypso/components/gridicon';
 import SectionHeader from 'calypso/components/section-header';
+import AppPasswordItem from 'calypso/me/application-password-item';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import {
 	clearNewApplicationPassword,
 	createApplicationPassword,
 } from 'calypso/state/application-passwords/actions';
 import getApplicationPasswords from 'calypso/state/selectors/get-application-passwords';
 import getNewApplicationPassword from 'calypso/state/selectors/get-new-application-password';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 class ApplicationPasswords extends Component {
 	static initialState = Object.freeze( {

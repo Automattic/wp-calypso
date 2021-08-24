@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import accept from 'calypso/lib/accept';
 import { getSiteTitle } from 'calypso/state/sites/selectors';
 import { deleteTheme } from 'calypso/state/themes/actions/delete-theme';

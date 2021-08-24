@@ -1,4 +1,4 @@
-import i18nCalypso, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -11,7 +11,7 @@ import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mod
 import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-const SiteSettingsWriting = ( { site, locale, translate } ) => (
+const SiteSettingsWriting = ( { site, translate } ) => (
 	<Main className="settings-writing site-settings">
 		<ScreenOptionsTab wpAdminPath="options-writing.php" />
 		<DocumentHead title={ translate( 'Writing Settings' ) } />
@@ -21,16 +21,7 @@ const SiteSettingsWriting = ( { site, locale, translate } ) => (
 			brandFont
 			className="settings-writing__page-heading"
 			headerText={ translate( 'Writing Settings' ) }
-			subHeaderText={
-				// TODO: Remove fallback after translation is ready
-				locale === 'en' ||
-				locale === 'en-gb' ||
-				i18nCalypso.hasTranslation( "Manage settings related to your site's content." )
-					? translate( "Manage settings related to your site's content." )
-					: translate(
-							"Manage categories, tags, and other settings related to your site's content."
-					  )
-			}
+			subHeaderText={ translate( "Manage settings related to your site's content." ) }
 			align="left"
 			hasScreenOptions
 		/>

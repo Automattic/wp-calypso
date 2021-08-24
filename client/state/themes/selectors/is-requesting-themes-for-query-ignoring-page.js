@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { isEqual, omit, some } from 'lodash';
 import { createSelector } from '@automattic/state-utils';
-
-/**
- * Internal dependencies
- */
+import { isEqual, omit, some } from 'lodash';
 import {
 	getDeserializedThemesQueryDetails,
 	getNormalizedThemesQuery,

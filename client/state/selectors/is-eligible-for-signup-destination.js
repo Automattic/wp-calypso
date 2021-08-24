@@ -1,10 +1,4 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-/**
- * Internal dependencies
- */
 import { getGoogleApps, hasGoogleApps } from 'calypso/lib/cart-values/cart-items';
 import { retrieveSignupDestination } from 'calypso/signup/storageUtils';
 

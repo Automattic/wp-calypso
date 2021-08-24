@@ -1,4 +1,3 @@
-import { partial } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 
@@ -18,17 +17,12 @@ export class VerticalMenu extends PureComponent {
 		onClick: noop,
 	};
 
-	constructor( props ) {
-		super( props );
+	state = {
+		selectedIndex: this.props.initialItemIndex,
+	};
 
-		this.state = {
-			selectedIndex: props.initialItemIndex,
-		};
-	}
-
-	select = ( selectedIndex, ...args ) => {
-		const { onClick } = this.props;
-		this.setState( { selectedIndex }, partial( onClick, ...args ) );
+	select = ( selectedIndex ) => ( ...args ) => {
+		this.setState( { selectedIndex }, () => this.props.onClick( ...args ) );
 	};
 
 	render() {
@@ -40,7 +34,7 @@ export class VerticalMenu extends PureComponent {
 				{ React.Children.map( children, ( Item, index ) =>
 					React.cloneElement( Item, {
 						isSelected: index === selectedIndex,
-						onClick: partial( this.select, index ),
+						onClick: this.select( index ),
 					} )
 				) }
 			</div>

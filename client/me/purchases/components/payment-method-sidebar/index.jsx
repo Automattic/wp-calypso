@@ -1,20 +1,10 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
-
-/**
- * Internal dependencies
- */
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import PropTypes from 'prop-types';
+import React from 'react';
 import CardHeading from 'calypso/components/card-heading';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default function PaymentMethodSidebar( { purchase } ) {

@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import { omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	SITE_PLANS_FETCH,
 	SITE_PLANS_FETCH_COMPLETED,

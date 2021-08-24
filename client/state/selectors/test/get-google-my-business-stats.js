@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getGoogleMyBusinessStats from 'calypso/state/selectors/get-google-my-business-stats';
 
 describe( 'getGoogleMyBusinessStats', () => {

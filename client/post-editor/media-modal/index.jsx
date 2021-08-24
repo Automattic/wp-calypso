@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import { flow, get, isEmpty, partial, some, values } from 'lodash';
+import { flow, get, isEmpty, some, values } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -413,7 +413,7 @@ export class EditorMediaModal extends Component {
 				label: this.props.translate( 'Continue' ),
 				isPrimary: true,
 				disabled: isDisabled || ! this.props.site,
-				onClick: partial( this.props.setView, ModalViews.GALLERY ),
+				onClick: () => this.props.setView( ModalViews.GALLERY ),
 			} );
 		} else {
 			buttons.push( {
@@ -560,7 +560,7 @@ export default connect(
 		onViewDetails: flow(
 			withAnalytics( bumpStat( 'editor_media_actions', 'edit_button_dialog' ) ),
 			withAnalytics( recordGoogleEvent( 'Media', 'Clicked Dialog Edit Button' ) ),
-			partial( setEditorMediaModalView, ModalViews.DETAIL )
+			() => setEditorMediaModalView( ModalViews.DETAIL )
 		),
 		recordEditorEvent,
 		recordEditorStat,

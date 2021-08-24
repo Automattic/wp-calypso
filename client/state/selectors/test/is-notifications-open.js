@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 
 describe( 'isNotificationsOpen()', () => {

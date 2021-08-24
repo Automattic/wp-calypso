@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import isPluginActive from 'calypso/state/selectors/is-plugin-active';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 

@@ -1,5 +1,5 @@
 /**
- **** WARNING: No ES6 modules here. Not transpiled! ****
+ * WARNING: No ES6 modules here. Not transpiled! *
  */
 /* eslint-disable import/no-nodejs-modules */
 
@@ -30,7 +30,6 @@ const cachePath = path.resolve( '.cache' );
  *
  * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
  * @see {@link https://webpack.js.org/api/cli/}
- *
  * @param  {object}  env                                 environment options
  * @param  {object}  argv                                options map
  * @param  {object}  argv.entry                          Entry point(s)
@@ -116,7 +115,6 @@ function getWebpackConfig(
 					postCssOptions: {
 						...( fs.existsSync( postCssConfigPath ) ? { config: postCssConfigPath } : {} ),
 					},
-					cacheDirectory: path.resolve( cachePath, 'css-loader' ),
 				} ),
 				FileConfig.loader(),
 			],

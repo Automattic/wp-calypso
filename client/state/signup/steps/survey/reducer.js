@@ -1,8 +1,4 @@
-/**
- * Internal dependencies
- */
 import { SIGNUP_STEPS_SURVEY_SET, SIGNUP_COMPLETE_RESET } from 'calypso/state/action-types';
-
 import { withSchemaValidation } from 'calypso/state/utils';
 import { surveyStepSchema } from './schema';
 

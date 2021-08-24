@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
-
-/**
- * Internal Dependencies
- */
+import { receiveComments } from 'calypso/state/comments/actions';
 import {
 	READER_VIEWING_FULL_POST_SET,
 	READER_VIEWING_FULL_POST_UNSET,
 } from 'calypso/state/reader/action-types';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { getSite } from 'calypso/state/reader/sites/selectors';
-import { receiveComments } from 'calypso/state/comments/actions';
 import { lasagna } from '../middleware';
 
 const debug = debugFactory( 'lasagna:channel' );

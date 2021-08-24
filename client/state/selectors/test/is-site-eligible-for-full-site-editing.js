@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import isSiteEligibleForFullSiteEditing from '../is-site-eligible-for-full-site-editing';
 
 function getSitesState( siteData = {} ) {

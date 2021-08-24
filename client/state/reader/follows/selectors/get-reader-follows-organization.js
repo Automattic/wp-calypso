@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import { sortBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
-import 'calypso/state/reader/init';
+import { sortBy } from 'lodash';
 import { sorter } from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
+import 'calypso/state/reader/init';
 
 /**
  * Get sites by organization id

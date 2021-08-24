@@ -1,11 +1,4 @@
-/**
- * External Dependencies
- */
 import { map, omitBy } from 'lodash';
-
-/**
- * Internal Dependencies
- */
 import { toValidId } from 'calypso/reader/id-helpers';
 
 export const isValidApiResponse = ( apiResponse ) => {

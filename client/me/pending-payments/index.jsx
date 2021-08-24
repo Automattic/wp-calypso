@@ -1,36 +1,26 @@
-/**
- * External dependencies
- */
+import { CompactCard } from '@automattic/components';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
-import { CompactCard } from '@automattic/components';
+import Banner from 'calypso/components/banner';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import PendingListItem from './pending-list-item';
+import { getStatsPathForTab } from 'calypso/lib/route';
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
-import PurchasesSite from '../purchases/purchases-site';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getHttpData, requestHttpData } from 'calypso/state/data-layer/http-data';
+import { convertToCamelCase } from 'calypso/state/data-layer/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
-import Banner from 'calypso/components/banner';
-import { convertToCamelCase } from 'calypso/state/data-layer/utils';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { getStatsPathForTab } from 'calypso/lib/route';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import PurchasesSite from '../purchases/purchases-site';
+import PendingListItem from './pending-list-item';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export const requestId = ( userId ) => `pending-payments:${ userId }`;

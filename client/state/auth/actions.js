@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { LOGIN_EMAIL_SEND } from 'calypso/state/action-types';
 import { getLanguage, getLocaleSlug } from 'calypso/lib/i18n-utils';
+import { LOGIN_EMAIL_SEND } from 'calypso/state/action-types';
 import 'calypso/state/data-layer/wpcom/auth/send-login-email';
 
 /**

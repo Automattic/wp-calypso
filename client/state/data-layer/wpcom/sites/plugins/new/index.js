@@ -1,26 +1,17 @@
-/**
- * External dependencies
- */
-
 import { translate } from 'i18n-calypso';
 import { find, includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { PLUGIN_INSTALL_REQUEST_SUCCESS, PLUGIN_UPLOAD } from 'calypso/state/action-types';
 import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
+import { PLUGIN_INSTALL_REQUEST_SUCCESS, PLUGIN_UPLOAD } from 'calypso/state/action-types';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
 import {
 	completePluginUpload,
 	pluginUploadError,
 	updatePluginUploadProgress,
 } from 'calypso/state/plugins/upload/actions';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { errorNotice } from 'calypso/state/notices/actions';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export const uploadPlugin = ( action ) => {
 	const { siteId, file } = action;

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getSerializedPostsQuery } from 'calypso/state/posts/utils/get-serialized-posts-query';
 
 /**

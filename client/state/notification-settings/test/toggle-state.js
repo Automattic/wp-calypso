@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import toggleState from '../toggle-state';
 
 describe( 'toggleState.wpcom', () => {

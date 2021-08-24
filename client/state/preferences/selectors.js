@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { DEFAULT_PREFERENCE_VALUES } from './constants';
 
 import 'calypso/state/preferences/init';

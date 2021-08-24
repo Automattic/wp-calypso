@@ -1,33 +1,23 @@
-/**
- * External dependencies
- */
-import React, { Fragment, PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { times } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
-import ConnectedAppItem from 'calypso/me/connected-application-item';
+import { localize } from 'i18n-calypso';
+import { times } from 'lodash';
+import PropTypes from 'prop-types';
+import React, { Fragment, PureComponent } from 'react';
+import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryConnectedApplications from 'calypso/components/data/query-connected-applications';
 import EmptyContent from 'calypso/components/empty-content';
-import getConnectedApplications from 'calypso/state/selectors/get-connected-applications';
+import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import QueryConnectedApplications from 'calypso/components/data/query-connected-applications';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import ConnectedAppItem from 'calypso/me/connected-application-item';
 import ReauthRequired from 'calypso/me/reauth-required';
 import SecuritySectionNav from 'calypso/me/security-section-nav';
-import twoStepAuthorization from 'calypso/lib/two-step-authorization';
-import FormattedHeader from 'calypso/components/formatted-header';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
+import getConnectedApplications from 'calypso/state/selectors/get-connected-applications';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class ConnectedApplications extends PureComponent {

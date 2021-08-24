@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import page from 'page';
 import * as LoadingError from 'calypso/layout/error';
 import { performanceTrackerStart } from 'calypso/lib/performance-tracking';
-import { addReducerToStore } from 'calypso/state/add-reducer';
 import { bumpStat } from 'calypso/state/analytics/actions';
 import { setSectionLoading } from 'calypso/state/ui/actions';
 import { activateNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
@@ -31,7 +30,7 @@ async function loadSection( context, sectionDefinition ) {
 		// load the section module, i.e., its webpack chunk
 		const requiredModule = await load( sectionDefinition.name, sectionDefinition.module );
 		// call the module initialization function (possibly async, registers page.js handlers etc.)
-		await requiredModule.default( controller.clientRouter, addReducerToStore( context.store ) );
+		await requiredModule.default( controller.clientRouter );
 	} finally {
 		context.store.dispatch( setSectionLoading( false ) );
 

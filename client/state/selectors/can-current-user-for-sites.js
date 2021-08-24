@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 
 /**

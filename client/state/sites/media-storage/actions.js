@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import { SITE_MEDIA_STORAGE_RECEIVE, SITE_MEDIA_STORAGE_REQUEST } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/sites/media-storage';

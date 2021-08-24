@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { get } from 'lodash';
 import { isEnabled } from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
+import { get } from 'lodash';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 
 import 'calypso/state/selected-editor/init';

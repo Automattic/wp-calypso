@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { some } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getKeyringConnectionsByName } from './keyring/selectors';

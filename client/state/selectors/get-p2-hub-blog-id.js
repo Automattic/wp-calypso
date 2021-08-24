@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 

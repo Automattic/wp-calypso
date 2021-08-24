@@ -1,17 +1,9 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-/**
- * External dependencies
- */
-
+import { CompactCard } from '@automattic/components';
 import React from 'react';
 import Gridicon from 'calypso/components/gridicon';
 import { decodeEntities } from 'calypso/lib/formatting';
-
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 export default class extends React.PureComponent {

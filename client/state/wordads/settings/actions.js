@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	WORDADS_SETTINGS_RECEIVE,
 	WORDADS_SETTINGS_REQUEST,

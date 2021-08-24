@@ -1,12 +1,7 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
+import PostQueryManager from 'calypso/lib/query-manager/post';
+import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 import {
 	getPost,
 	getNormalizedPost,
@@ -25,8 +20,6 @@ import {
 	getPostPreviewUrl,
 	getSitePostsByTerm,
 } from '../selectors';
-import PostQueryManager from 'calypso/lib/query-manager/post';
-import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 
 describe( 'selectors', () => {
 	beforeEach( () => {

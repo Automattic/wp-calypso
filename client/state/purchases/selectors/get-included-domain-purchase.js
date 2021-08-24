@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import { find } from 'lodash';
-
-/**
- * Internal Dependencies
- */
-import { isSubscription } from 'calypso/lib/purchases';
 import {
 	getIncludedDomainPurchaseAmount,
 	isDomainRegistration,
 	isDomainMapping,
 } from '@automattic/calypso-products';
+import { find } from 'lodash';
+import { isSubscription } from 'calypso/lib/purchases';
 import { getSitePurchases } from './get-site-purchases';
 
 import 'calypso/state/purchases/init';

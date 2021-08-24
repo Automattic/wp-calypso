@@ -2,7 +2,7 @@ import { localize, translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import PopoverMenuItemClipboard from 'calypso/components/popover/menu-item-clipboard';
+import PopoverMenuItemClipboard from 'calypso/components/popover-menu/item-clipboard';
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { infoNotice } from 'calypso/state/notices/actions';
 import { getPost } from 'calypso/state/posts/selectors';

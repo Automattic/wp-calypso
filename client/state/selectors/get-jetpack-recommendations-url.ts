@@ -1,16 +1,5 @@
-/**
- * External dependencies
- */
 import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
-
-/**
- * Internal dependencies
- */
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-
-/**
- * Type dependencies
- */
 import type { AppState } from 'calypso/types';
 
 export default function getJetpackRecommendationsUrl( state: AppState ): string | undefined {

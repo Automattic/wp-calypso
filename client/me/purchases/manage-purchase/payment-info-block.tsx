@@ -1,12 +1,7 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
+import React from 'react';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import PaymentLogo from 'calypso/components/payment-logo';
 import {
 	isExpiring,
 	isRechargeable,
@@ -17,8 +12,6 @@ import {
 	paymentLogoType,
 	hasPaymentMethod,
 } from 'calypso/lib/purchases';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import PaymentLogo from 'calypso/components/payment-logo';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
 export default function PaymentInfoBlock( { purchase }: { purchase: Purchase } ): JSX.Element {

@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import { mapValues, omit, map } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
-import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
+import { mapValues, omit, map } from 'lodash';
+import { decodeEntities } from 'calypso/lib/formatting';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
-import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
+import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
 import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
@@ -41,7 +34,7 @@ import {
 	THEME_HIDE_AUTO_LOADING_HOMEPAGE_WARNING,
 	THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING,
 } from 'calypso/state/themes/action-types';
-import { getSerializedThemesQuery, getThemeIdFromStylesheet } from './utils';
+import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import {
 	queriesSchema,
 	activeThemesSchema,
@@ -50,7 +43,7 @@ import {
 } from './schema';
 import themesUI from './themes-ui/reducer';
 import uploadTheme from './upload-theme/reducer';
-import { decodeEntities } from 'calypso/lib/formatting';
+import { getSerializedThemesQuery, getThemeIdFromStylesheet } from './utils';
 
 /**
  * Returns the updated active theme state after an action has been

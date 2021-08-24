@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import wpcom from 'calypso/lib/wp';
 import {
 	SHARING_BUTTONS_RECEIVE,

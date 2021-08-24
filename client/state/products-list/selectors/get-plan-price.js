@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { getPlanDiscountedRawPrice } from 'calypso/state/sites/plans/selectors';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
+import { getPlanDiscountedRawPrice } from 'calypso/state/sites/plans/selectors';
 
 /**
  * Computes a price based on plan slug/constant, including any discounts available.

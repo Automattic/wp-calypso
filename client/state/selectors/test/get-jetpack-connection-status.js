@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getJetpackConnectionStatus from 'calypso/state/selectors/get-jetpack-connection-status';
 import { items as ITEMS_FIXTURE } from './fixtures/jetpack-connection';
 

@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import getRawSite from 'calypso/state/selectors/get-raw-site';
 
 /**

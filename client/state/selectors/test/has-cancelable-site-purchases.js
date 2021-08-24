@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
 import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-site-purchases';
 
 describe( 'hasCancelableSitePurchases', () => {

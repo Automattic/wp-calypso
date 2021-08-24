@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { NOTICE_CREATE } from 'calypso/state/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { setMediaExportData } from 'calypso/state/exporter/actions';
 import { fetch, onSuccess, onError, fromApi } from '../';
 

@@ -1,17 +1,9 @@
-/**
- * External Dependencies
- */
-
-/**
- * Internal Dependencies
- */
-import { like, removeLiker } from 'calypso/state/posts/likes/actions';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { POST_UNLIKE } from 'calypso/state/action-types';
-import { bypassDataLayer } from 'calypso/state/data-layer/utils';
-
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { like, removeLiker } from 'calypso/state/posts/likes/actions';
 
 export function fromApi( response ) {
 	if ( ! response.success ) {

@@ -1,22 +1,14 @@
-/**
- * External Dependencies
- */
+import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { get } from 'lodash';
-
-/**
- * Internal Dependencies
- */
-import config from '@automattic/calypso-config';
-import { READER_FOLLOW } from 'calypso/state/reader/action-types';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { errorNotice } from 'calypso/state/notices/actions';
-import { follow, unfollow, recordFollowError } from 'calypso/state/reader/follows/actions';
-import { subscriptionFromApi } from 'calypso/state/data-layer/wpcom/read/following/mine/utils';
-import { bypassDataLayer } from 'calypso/state/data-layer/utils';
-
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { subscriptionFromApi } from 'calypso/state/data-layer/wpcom/read/following/mine/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { READER_FOLLOW } from 'calypso/state/reader/action-types';
+import { follow, unfollow, recordFollowError } from 'calypso/state/reader/follows/actions';
 
 export function requestFollow( action ) {
 	const feedUrl = get( action, 'payload.feedUrl' );

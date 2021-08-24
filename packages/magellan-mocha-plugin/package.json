@@ -20,7 +20,7 @@
 		"cli-color": "^1.2.0",
 		"lodash": "^4.17.21",
 		"pkg-up": "^3.1.0",
-		"testarmada-logger": "1.1.1"
+		"testarmada-logger": "1.2.2"
 	},
 	"devDependencies": {
 		"coffee-script": "^1.12.7",

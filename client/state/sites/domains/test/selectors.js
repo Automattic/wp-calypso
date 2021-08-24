@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { getDomainsBySite, getDomainsBySiteId, isRequestingSiteDomains } from '../selectors';
 import {
 	SITE_ID_FIRST as firstSiteId,

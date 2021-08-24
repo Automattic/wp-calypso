@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
-import PopoverMenuItem from './menu-item';
+import PopoverMenuItem from './item';
 
 const noop = () => {};
 

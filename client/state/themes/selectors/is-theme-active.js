@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getActiveTheme } from 'calypso/state/themes/selectors/get-active-theme';
 
 import 'calypso/state/themes/init';

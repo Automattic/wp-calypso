@@ -1,12 +1,9 @@
-/**
- * Internal dependencies
- */
 import {
 	FEATURE_UNLIMITED_PREMIUM_THEMES,
 	PLAN_JETPACK_SECURITY_REALTIME,
 } from '@automattic/calypso-products';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { isThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
 
 import 'calypso/state/themes/init';

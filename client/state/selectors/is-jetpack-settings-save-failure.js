@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getJetpackSettingsSaveRequestStatus from 'calypso/state/selectors/get-jetpack-settings-save-request-status';
 
 /**

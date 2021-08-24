@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 
 describe( 'getSelectedEditor()', () => {

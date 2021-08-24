@@ -1,16 +1,13 @@
-/**
- * Internal dependencies
- */
-import {
-	requestSite,
-	receiveReaderSiteRequestSuccess,
-	receiveReaderSiteRequestFailure,
-} from '../actions';
 import {
 	READER_SITE_REQUEST,
 	READER_SITE_REQUEST_SUCCESS,
 	READER_SITE_REQUEST_FAILURE,
 } from 'calypso/state/reader/action-types';
+import {
+	requestSite,
+	receiveReaderSiteRequestSuccess,
+	receiveReaderSiteRequestFailure,
+} from '../actions';
 
 describe( 'actions', () => {
 	describe( '#requestSite', () => {

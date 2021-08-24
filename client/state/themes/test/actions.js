@@ -1,36 +1,7 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import sinon from 'sinon';
 // Importing `jest-fetch-mock` adds a jest-friendly `fetch` polyfill to the global scope.
 import 'jest-fetch-mock';
-
-/**
- * Internal dependencies
- */
-import {
-	themeActivated,
-	clearActivated,
-	activateTheme,
-	installAndActivateTheme,
-	activate,
-	requestActiveTheme,
-	receiveTheme,
-	receiveThemes,
-	requestThemes,
-	requestTheme,
-	pollThemeTransferStatus,
-	initiateThemeTransfer,
-	installTheme,
-	installAndTryAndCustomizeTheme,
-	tryAndCustomizeTheme,
-	tryAndCustomize,
-	deleteTheme,
-	requestThemeFilters,
-	getRecommendedThemes,
-	receiveRecommendedThemes,
-} from '../actions';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import {
 	ACTIVE_THEME_REQUEST,
@@ -61,6 +32,28 @@ import {
 	THEMES_REQUEST_FAILURE,
 } from 'calypso/state/themes/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
+import {
+	themeActivated,
+	clearActivated,
+	activateTheme,
+	installAndActivateTheme,
+	activate,
+	requestActiveTheme,
+	receiveTheme,
+	receiveThemes,
+	requestThemes,
+	requestTheme,
+	pollThemeTransferStatus,
+	initiateThemeTransfer,
+	installTheme,
+	installAndTryAndCustomizeTheme,
+	tryAndCustomizeTheme,
+	tryAndCustomize,
+	deleteTheme,
+	requestThemeFilters,
+	getRecommendedThemes,
+	receiveRecommendedThemes,
+} from '../actions';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();

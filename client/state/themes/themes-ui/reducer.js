@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import { THEME_BACK_PATH_SET, THEMES_BOOKMARK_SET } from 'calypso/state/themes/action-types';
 import { combineReducers } from 'calypso/state/utils';
 

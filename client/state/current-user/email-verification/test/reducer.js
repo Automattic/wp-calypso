@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import reducer, { status, errorMessage } from '../reducer';
 import {
 	EMAIL_VERIFY_REQUEST,
 	EMAIL_VERIFY_REQUEST_SUCCESS,
 	EMAIL_VERIFY_REQUEST_FAILURE,
 	EMAIL_VERIFY_STATE_RESET,
 } from 'calypso/state/action-types';
+import reducer, { status, errorMessage } from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'exports expected reducer keys', () => {

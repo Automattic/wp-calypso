@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { some } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
+import { some } from 'lodash';
 import getProfileLinks from 'calypso/state/selectors/get-profile-links';
 
 /**

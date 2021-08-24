@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getSiteCollisions from './get-site-collisions';
 
 /**

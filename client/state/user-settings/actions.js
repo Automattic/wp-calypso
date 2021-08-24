@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	USER_SETTINGS_REQUEST,
 	USER_SETTINGS_REQUEST_FAILURE,

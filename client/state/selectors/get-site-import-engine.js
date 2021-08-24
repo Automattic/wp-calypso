@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-
 import { get } from 'lodash';
 /**
  * Returns The name of the import engine used for importing the site, null if no import has occurred.

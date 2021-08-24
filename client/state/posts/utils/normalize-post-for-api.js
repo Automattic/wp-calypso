@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { normalizeTermsForApi } from 'calypso/state/posts/utils/normalize-terms-for-api';
 
 /**

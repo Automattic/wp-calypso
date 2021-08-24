@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import isPluginUploadInProgress from 'calypso/state/selectors/is-plugin-upload-in-progress';
 
 const siteId = 77203074;

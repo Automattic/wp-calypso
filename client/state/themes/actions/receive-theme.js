@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { receiveThemes } from 'calypso/state/themes/actions/receive-themes';
 
 import 'calypso/state/themes/init';

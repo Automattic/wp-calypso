@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getRewindState from './get-rewind-state';
 
 /**

@@ -1,27 +1,17 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
-import page from 'page';
-
-/**
- * Internal dependencies
- */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Dialog, Button } from '@automattic/components';
-import Gridicon from 'calypso/components/gridicon';
-import FormTextInput from 'calypso/components/forms/form-text-input';
+import { localize } from 'i18n-calypso';
+import page from 'page';
+import React from 'react';
+import { connect } from 'react-redux';
 import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import Gridicon from 'calypso/components/gridicon';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { closeAccount } from 'calypso/state/account/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 
-/**
- * Style dependencies
- */
 import './confirm-dialog.scss';
 
 const noop = () => {};

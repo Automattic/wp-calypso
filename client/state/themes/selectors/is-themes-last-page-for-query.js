@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
 import { getThemesLastPageForQuery } from 'calypso/state/themes/selectors/get-themes-last-page-for-query';
 

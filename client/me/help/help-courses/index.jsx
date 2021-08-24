@@ -1,33 +1,23 @@
-/**
- * External dependencies
- */
+import { planHasFeature, FEATURE_BUSINESS_ONBOARDING } from '@automattic/calypso-products';
+import { localize } from 'i18n-calypso';
+import { find } from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { find } from 'lodash';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import CourseList, { CourseListPlaceholder } from './course-list';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { getHelpCourses } from 'calypso/state/help/courses/selectors';
-import { helpCourses } from './constants';
-import { planHasFeature, FEATURE_BUSINESS_ONBOARDING } from '@automattic/calypso-products';
 import { receiveHelpCourses } from 'calypso/state/help/courses/actions';
+import { getHelpCourses } from 'calypso/state/help/courses/selectors';
 import {
 	getUserPurchases,
 	isFetchingUserPurchases,
 	hasLoadedUserPurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { helpCourses } from './constants';
+import CourseList, { CourseListPlaceholder } from './course-list';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 class Courses extends Component {

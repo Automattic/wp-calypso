@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { expect as chaiExpect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import { items, queuedRequests, lastFetched } from '../reducer';
 import {
 	READER_SITE_BLOCKS_RECEIVE,
 	READER_SITE_REQUEST,
@@ -16,6 +8,7 @@ import {
 	READER_SITE_UPDATE,
 } from 'calypso/state/reader/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
+import { items, queuedRequests, lastFetched } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( 'items', () => {

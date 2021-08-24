@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import type { AppState } from 'calypso/types';
 
 const getActivityLogDisplayRulesRequestStatus = (

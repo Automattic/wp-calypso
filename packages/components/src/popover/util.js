@@ -1,10 +1,3 @@
-import debugFactory from 'debug';
-
-/**
- * Module variables
- */
-const debug = debugFactory( 'calypso:popover:util' );
-
 // inspired by https://github.com/jkroso/viewport
 function updateViewport() {
 	const viewport = {};
@@ -15,7 +8,6 @@ function updateViewport() {
 	viewport.right = viewport.left + viewport.width;
 	viewport.bottom = viewport.top + viewport.height;
 
-	debug( 'viewport: %o', viewport );
 	return viewport;
 }
 
@@ -54,7 +46,6 @@ export function bindWindowListeners() {
 		return;
 	}
 
-	debug( 'bind handlers to `resize` and `scroll` events' );
 	// don't debounce these because they don't so any work that requires layout
 	window.addEventListener( 'resize', onViewportChange, true );
 	window.addEventListener( 'scroll', onViewportChange, true );
@@ -65,7 +56,6 @@ export function unbindWindowListeners() {
 		return;
 	}
 
-	debug( 'unbind handlers to `resize` and `scroll` events' );
 	window.removeEventListener( 'resize', onViewportChange, true );
 	window.removeEventListener( 'scroll', onViewportChange, true );
 }

@@ -1,18 +1,7 @@
-import { getStepModuleName } from 'calypso/signup/config/step-components';
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import 'calypso/state/signup/init';
-
-/**
- * Internal dependencies
- */
+import { getStepModuleName } from 'calypso/signup/config/step-components';
 import { ProgressState } from './schema';
+import 'calypso/state/signup/init';
 
 const initialState: ProgressState = {};
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

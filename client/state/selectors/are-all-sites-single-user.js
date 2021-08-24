@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import { isSingleUserSite } from 'calypso/state/sites/selectors';

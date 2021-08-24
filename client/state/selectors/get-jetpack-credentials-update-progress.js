@@ -1,13 +1,6 @@
-/**
- * External Dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import 'calypso/state/jetpack/init';
 import { CredentialsTestProgress } from '../data-layer/wpcom/activity-log/update-credentials/vendor';
+import 'calypso/state/jetpack/init';
 
 export default function getJetpackCredentialsUpdateProgress( state, siteId ) {
 	// This is O(n²) over n updates, but even the worst update attempts have < 50 updates, and I

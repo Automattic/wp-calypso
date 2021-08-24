@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
-
+import { Card } from '@automattic/components';
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { getSite } from 'calypso/state/sites/selectors';
-import { Card } from '@automattic/components';
-import Header from './header';
 import SettingsForm from 'calypso/me/notification-settings/settings-form';
+import { getSite } from 'calypso/state/sites/selectors';
+import Header from './header';
 
 class BlogSettings extends Component {
 	static propTypes = {

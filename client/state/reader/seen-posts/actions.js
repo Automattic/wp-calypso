@@ -1,6 +1,3 @@
-/**
- * Internal Dependencies
- */
 import {
 	READER_SEEN_MARK_AS_SEEN_REQUEST,
 	READER_SEEN_MARK_AS_SEEN_RECEIVE,

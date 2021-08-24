@@ -1,12 +1,8 @@
-/**
- * Internal dependencies
- */
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { POST_TYPES_REQUEST } from 'calypso/state/action-types';
-import { receivePostTypes } from 'calypso/state/post-types/actions';
-
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { receivePostTypes } from 'calypso/state/post-types/actions';
 
 const noop = () => {};
 

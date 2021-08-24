@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getProfileLinksErrorType from 'calypso/state/selectors/get-profile-links-error-type';
 
 describe( 'getProfileLinksErrorType()', () => {

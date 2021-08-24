@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { last } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { sameXPost } from 'calypso/reader/stream/utils';
 
 /**

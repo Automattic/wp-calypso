@@ -155,7 +155,7 @@ import Thing from '../';
 describe( 'Thing', () => {
 	test( 'renders correctly', () => {
 		const store = createReduxStore();
-		setStore( store );
+		setStore( store, currentUserId );
 		// Instantiate and test component
 	} );
 } );

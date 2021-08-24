@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	PLUGINS_RECOMMENDED_RECEIVE,
 	PLUGINS_RECOMMENDED_REQUEST_FAILURE,

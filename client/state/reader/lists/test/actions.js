@@ -1,14 +1,3 @@
-/**
- * Internal dependencies
- */
-import {
-	deleteReaderList,
-	receiveLists,
-	requestList,
-	requestSubscribedLists,
-	followList,
-	unfollowList,
-} from '../actions';
 import {
 	READER_LIST_DELETE,
 	READER_LIST_REQUEST,
@@ -17,6 +6,14 @@ import {
 	READER_LIST_FOLLOW,
 	READER_LIST_UNFOLLOW,
 } from 'calypso/state/reader/action-types';
+import {
+	deleteReaderList,
+	receiveLists,
+	requestList,
+	requestSubscribedLists,
+	followList,
+	unfollowList,
+} from '../actions';
 
 describe( 'actions', () => {
 	describe( '#receiveLists()', () => {

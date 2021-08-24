@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
-import { compact, get } from 'lodash';
-import debugModule from 'debug';
 import { extendAction } from '@automattic/state-utils';
-
-/**
- * Internal dependencies
- */
+import debugModule from 'debug';
+import { compact, get } from 'lodash';
 import wpcom, { wpcomJetpackLicensing } from 'calypso/lib/wp';
 import { WPCOM_HTTP_REQUEST } from 'calypso/state/action-types';
 import {

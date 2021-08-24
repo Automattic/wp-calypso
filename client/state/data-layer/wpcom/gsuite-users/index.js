@@ -1,22 +1,14 @@
-/**
- * External Dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { GSUITE_USERS_REQUEST } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { errorNotice } from 'calypso/state/notices/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import {
 	receiveGetGSuiteUsersSuccess,
 	receiveGetGSuiteUsersFailure,
 } from 'calypso/state/gsuite-users/actions';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
+import { errorNotice } from 'calypso/state/notices/actions';
 
 export const getGSuiteUsers = ( action ) => {
 	return http(

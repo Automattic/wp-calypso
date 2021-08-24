@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	I18N_LOCALE_SUGGESTIONS_ADD,
 	I18N_LOCALE_SUGGESTIONS_REQUEST,

@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { match } from 'sinon';
-
-/**
- * Internal dependencies
- */
-import { requestSiteMonitorSettings, updateSiteMonitorSettings } from '../actions';
 import {
 	SITE_MONITOR_SETTINGS_RECEIVE,
 	SITE_MONITOR_SETTINGS_REQUEST,
@@ -19,6 +11,7 @@ import {
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { requestSiteMonitorSettings, updateSiteMonitorSettings } from '../actions';
 
 describe( 'actions', () => {
 	let spy;

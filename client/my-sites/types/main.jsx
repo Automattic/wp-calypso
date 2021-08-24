@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPostTypes from 'calypso/components/data/query-post-types';
 import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -30,9 +31,23 @@ function Types( {
 } ) {
 	let subHeaderText = '';
 	if ( 'Testimonials' === get( postType, 'label', '' ) ) {
-		subHeaderText = translate( 'Create and manage all the testimonials on your site.' );
+		subHeaderText = translate(
+			'Create and manage all the testimonials on your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+			{
+				components: {
+					learnMoreLink: <InlineSupportLink supportContext="testimonials" showIcon={ false } />,
+				},
+			}
+		);
 	} else if ( 'Projects' === get( postType, 'label', '' ) ) {
-		subHeaderText = translate( 'Create, edit, and manage the portfolio projects on your site.' );
+		subHeaderText = translate(
+			'Create, edit, and manage the portfolio projects on your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+			{
+				components: {
+					learnMoreLink: <InlineSupportLink supportContext="portfolios" showIcon={ false } />,
+				},
+			}
+		);
 	}
 
 	return (

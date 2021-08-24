@@ -5,17 +5,10 @@
  * <ChatReducedAvailabilityNotice /> component instead.
  */
 
-/**
- * External dependencies
- */
-
-import React from 'react';
 import { useTranslate } from 'i18n-calypso';
+import React from 'react';
 import 'moment-timezone'; // monkey patches the existing moment.js
 
-/**
- * Internal dependencies
- */
 import ContactFormNotice from 'calypso/me/help/contact-form-notice/index';
 
 const ChatCovidLimitedAvailabilityNotice = ( { showAt, hideAt, compact } ) => {

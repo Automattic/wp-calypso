@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 
 describe( 'hasLoadedSites()', () => {

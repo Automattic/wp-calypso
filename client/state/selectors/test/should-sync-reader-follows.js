@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import shouldSyncReaderFollows, {
 	MS_BETWEEN_SYNCS,
 } from 'calypso/state/selectors/should-sync-reader-follows';

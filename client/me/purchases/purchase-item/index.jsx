@@ -1,16 +1,16 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { isDomainTransfer, isConciergeSession } from '@automattic/calypso-products';
+import { CompactCard } from '@automattic/components';
+import classNames from 'classnames';
 import i18nCalypso, { localize } from 'i18n-calypso';
 import page from 'page';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { CompactCard } from '@automattic/components';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import payPalImage from 'calypso/assets/images/upgrades/paypal-full.svg';
+import SiteIcon from 'calypso/blocks/site-icon';
+import Gridicon from 'calypso/components/gridicon';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { getPaymentMethodImageURL } from 'calypso/lib/checkout/payment-methods';
 import {
 	getDisplayName,
 	isExpired,
@@ -27,19 +27,9 @@ import {
 	isWithinIntroductoryOfferPeriod,
 	isIntroductoryOfferFreeTrial,
 } from 'calypso/lib/purchases';
-import { isDomainTransfer, isConciergeSession } from '@automattic/calypso-products';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import SiteIcon from 'calypso/blocks/site-icon';
-import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
-import { getPaymentMethodImageURL } from 'calypso/lib/checkout/payment-methods';
-import payPalImage from 'calypso/assets/images/upgrades/paypal-full.svg';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
-import Gridicon from 'calypso/components/gridicon';
+import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
 
-/**
- * Style dependencies
- */
 import 'calypso/me/purchases/style.scss';
 
 const eventProperties = ( warning ) => ( { warning, position: 'purchase-list' } );

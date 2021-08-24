@@ -1,21 +1,13 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { convertToCamelCase } from 'calypso/state/data-layer/utils';
-import { errorNotice } from 'calypso/state/notices/actions';
-import { setVerticals } from 'calypso/state/signup/verticals/actions';
 import { SIGNUP_VERTICALS_REQUEST } from 'calypso/state/action-types';
-import { getSiteTypeId } from 'calypso/state/signup/steps/site-type/selectors';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { convertToCamelCase } from 'calypso/state/data-layer/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
+import { getSiteTypeId } from 'calypso/state/signup/steps/site-type/selectors';
+import { setVerticals } from 'calypso/state/signup/verticals/actions';
 
 // Some flows do not choose a site type before requesting verticals. In this
 // case don't send a site_type param to the API.

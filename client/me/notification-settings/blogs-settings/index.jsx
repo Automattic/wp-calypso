@@ -1,24 +1,14 @@
-/**
- * External dependencies
- */
+import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { find } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
+import InfiniteList from 'calypso/components/infinite-list';
 import getSites from 'calypso/state/selectors/get-sites';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
-import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import Blog from './blog';
-import InfiniteList from 'calypso/components/infinite-list';
 import Placeholder from './placeholder';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const createPlaceholder = () => <Placeholder />;

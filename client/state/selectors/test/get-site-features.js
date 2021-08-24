@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 
 describe( 'selectors', () => {

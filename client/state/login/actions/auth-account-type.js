@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { defer } from 'lodash';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { defer } from 'lodash';
 import {
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST,
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUESTING,

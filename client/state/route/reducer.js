@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import lastNonEditorRoute from './last-non-editor-route/reducer';

@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-
-import { includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
+import { includes } from 'lodash';
 import getJetpackModulesRequiringConnection from './get-jetpack-modules-requiring-connection';
 
 /**

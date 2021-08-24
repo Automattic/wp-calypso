@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import { cloneDeep, flow } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import pickCanonicalImage from 'calypso/lib/post-normalizer/rule-pick-canonical-image';
-import decodeEntities from 'calypso/lib/post-normalizer/rule-decode-entities';
-import detectMedia from 'calypso/lib/post-normalizer/rule-content-detect-media';
-import withContentDom from 'calypso/lib/post-normalizer/rule-with-content-dom';
-import stripHtml from 'calypso/lib/post-normalizer/rule-strip-html';
 import config from '@automattic/calypso-config';
+import { cloneDeep, flow } from 'lodash';
+import detectMedia from 'calypso/lib/post-normalizer/rule-content-detect-media';
+import decodeEntities from 'calypso/lib/post-normalizer/rule-decode-entities';
+import pickCanonicalImage from 'calypso/lib/post-normalizer/rule-pick-canonical-image';
+import stripHtml from 'calypso/lib/post-normalizer/rule-strip-html';
+import withContentDom from 'calypso/lib/post-normalizer/rule-with-content-dom';
 
 const normalizeDisplayFlow = flow( [
 	decodeEntities,
