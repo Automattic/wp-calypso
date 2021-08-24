@@ -465,6 +465,14 @@ fun seleniumBuildType( viewportName: String, buildUuid: String): BuildType  {
 					shopt -s globstar
 					set -x
 
+					chmod +x ./bin/get-calypso-live-url.sh
+					URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
+					if [[ ${'$'}? -ne 0 ]]; then
+						// Command failed. URL contains stderr
+						echo ${'$'}URL
+						exit 1
+					fi
+
 					cd test/e2e
 					mkdir temp
 
@@ -476,14 +484,6 @@ fun seleniumBuildType( viewportName: String, buildUuid: String): BuildType  {
 					# Instructs Magellan to not hide the output from individual `mocha` processes. This is required for
 					# mocha-teamcity-reporter to work.
 					export MAGELLANDEBUG=true
-
-					chmod +x ./bin/get-calypso-live-url.sh
-					URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
-					if [[ ${'$'}? -ne 0 ]]; then
-						// Command failed. URL contains stderr
-						echo ${'$'}URL
-						exit 1
-					fi
 
 					# Decrypt config
 					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
@@ -618,14 +618,6 @@ fun playwrightBuildType( viewportName: String, buildUuid: String ): BuildType {
 					shopt -s globstar
 					set -x
 
-					cd test/e2e
-					mkdir temp
-
-					export LIVEBRANCHES=true
-					export NODE_CONFIG_ENV=test
-					export PLAYWRIGHT_BROWSERS_PATH=0
-					export TEAMCITY_VERSION=2021
-
 					chmod +x ./bin/get-calypso-live-url.sh
 					URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
 					if [[ ${'$'}? -ne 0 ]]; then
@@ -633,6 +625,14 @@ fun playwrightBuildType( viewportName: String, buildUuid: String ): BuildType {
 						echo ${'$'}URL
 						exit 1
 					fi
+
+					cd test/e2e
+					mkdir temp
+
+					export LIVEBRANCHES=true
+					export NODE_CONFIG_ENV=test
+					export PLAYWRIGHT_BROWSERS_PATH=0
+					export TEAMCITY_VERSION=2021
 
 					# Decrypt config
 					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"

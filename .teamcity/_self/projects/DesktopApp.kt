@@ -85,8 +85,10 @@ object E2ETests : BuildType({
 		bashNodeScript {
 			name = "Run tests (linux)"
 			scriptContent = """
+				set -x
+
 				chmod +x ./bin/get-calypso-live-url.sh
-				URL=${'$'}}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
+				URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
 				if [[ ${'$'}? -ne 0 ]]; then
 					// Command failed. URL contains stderr
 					echo ${'$'}URL
