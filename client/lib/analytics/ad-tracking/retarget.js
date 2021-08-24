@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import { isAdTrackingAllowed, refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
+import { getCurrentUser } from '@automattic/calypso-analytics';
 
 import {
 	debug,
@@ -16,6 +17,7 @@ import {
 	isAdRollEnabled,
 	isIconMediaEnabled,
 	isGeminiEnabled,
+	isIponwebEnabled,
 	TRACKING_IDS,
 	ICON_MEDIA_RETARGETING_PIXEL_URL,
 	YAHOO_GEMINI_AUDIENCE_BUILDING_PIXEL_URL,
@@ -51,6 +53,9 @@ export async function retarget( urlPath ) {
 	await loadTrackingScripts();
 
 	debug( 'retarget:', urlPath );
+
+	// Current user.
+	const currentUser = getCurrentUser();
 
 	// Non rate limited retargeting (main trackers)
 
@@ -97,6 +102,18 @@ export async function retarget( urlPath ) {
 	if ( isAdRollEnabled ) {
 		debug( 'retarget: [AdRoll]' );
 		window.adRoll.trackPageview();
+	}
+
+	// Iponweb
+	if ( isIponwebEnabled ) {
+		debug( 'retarget: [Iponweb]' );
+		window.smartPixel( 'sendEvent', {
+			id: 'pageview',
+			data: {
+				is_new_user: 0,
+				user_id: currentUser ? currentUser.hashedPii.ID : '',
+			},
+		} );
 	}
 
 	// Rate limited retargeting (secondary trackers)

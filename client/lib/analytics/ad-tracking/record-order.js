@@ -26,6 +26,7 @@ import {
 	isAdRollEnabled,
 	isGoogleAnalyticsEnabled,
 	isGoogleAnalyticsEnhancedEcommerceEnabled,
+	isIponwebEnabled,
 	TRACKING_IDS,
 	EXPERIAN_CONVERSION_PIXEL_URL,
 	YAHOO_GEMINI_CONVERSION_PIXEL_URL,
@@ -58,6 +59,7 @@ export async function recordOrder( cart, orderId ) {
 	}
 
 	await loadTrackingScripts();
+	const currentUser = getCurrentUser();
 
 	if ( cart.is_signup ) {
 		return;
@@ -164,6 +166,30 @@ export async function recordOrder( cart, orderId ) {
 	if ( isAdRollEnabled ) {
 		debug( 'recordOrder: [AdRoll]' );
 		window.adRoll.trackPurchase();
+	}
+
+	// Iponweb
+
+	if ( isIponwebEnabled ) {
+		debug( 'recordOrder: [Iponweb]', cart );
+		window.smartPixel( 'sendEvent', {
+			id: 'purchase',
+			data: {
+				is_new_user: 0,
+				user_id: currentUser ? currentUser.hashedPii.ID : '',
+
+				order_id: orderId,
+				cur: cart.currency,
+				value: cart.total_cost,
+
+				line_items: cart.products.map( ( product ) => ( {
+					product_name: product.product_name,
+					product_id: product.product_id,
+					product_price: product.product_cost,
+					product_quantity: product.quantity || 1,
+				} ) ),
+			},
+		} );
 	}
 
 	// Uses JSON.stringify() to print the expanded object because during localhost or .live testing after firing this

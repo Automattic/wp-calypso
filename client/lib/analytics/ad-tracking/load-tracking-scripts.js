@@ -22,6 +22,7 @@ import {
 	isOutbrainEnabled,
 	isPinterestEnabled,
 	isGoogleAnalyticsEnabled,
+	isIponwebEnabled,
 	TRACKING_IDS,
 	FACEBOOK_TRACKING_SCRIPT_URL,
 	GOOGLE_GTAG_SCRIPT_URL,
@@ -32,6 +33,7 @@ import {
 	QUORA_SCRIPT_URL,
 	OUTBRAIN_SCRIPT_URL,
 	PINTEREST_SCRIPT_URL,
+	IPONWEB_SCRIPT_URL,
 } from './constants';
 
 // Ensure setup has run.
@@ -114,6 +116,10 @@ function getTrackingScriptsToLoad() {
 		scripts.push( PINTEREST_SCRIPT_URL );
 	}
 
+	if ( isIponwebEnabled ) {
+		scripts.push( IPONWEB_SCRIPT_URL );
+	}
+
 	return scripts;
 }
 
@@ -151,6 +157,14 @@ function initLoadedTrackingScripts() {
 		const currentUser = getCurrentUser();
 		const params = currentUser ? { em: currentUser.hashedPii.email } : {};
 		window.pintrk( 'load', TRACKING_IDS.pinterestInit, params );
+	}
+
+	// init Iponweb
+	if ( isIponwebEnabled ) {
+		window.smartPixel = ( command, data ) => {
+			window.smartPixel.cmd = window.smartPixel.cmd || [];
+			window.smartPixel.cmd.push( [ command, data ] );
+		};
 	}
 
 	debug( 'loadTrackingScripts: init done' );
