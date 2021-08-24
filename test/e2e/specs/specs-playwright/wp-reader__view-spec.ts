@@ -10,6 +10,7 @@ import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( 'Reader: View and Comment' ), function () {
 	let page: Page;
+	let readerPage: ReaderPage;
 	const comment = DataHelper.randomPhrase();
 
 	setupHooks( ( args ) => {
@@ -22,18 +23,18 @@ describe( DataHelper.createSuiteTitle( 'Reader: View and Comment' ), function ()
 	} );
 
 	it( 'Can see the Reader stream', async function () {
-		const readerPage = new ReaderPage( page );
+		readerPage = new ReaderPage( page );
 	} );
 
 	it( 'The latest post is on the expected test site', async function () {
 		const testSiteForNotifications = DataHelper.config.get( 'testSiteForNotifications' );
-		const readerPage = new ReaderPage( page );
+		readerPage = new ReaderPage( page );
 		const siteOfLatestPost = await readerPage.siteOfLatestPost();
 		expect( siteOfLatestPost ).toEqual( testSiteForNotifications );
 	} );
 
 	it( 'Can comment on the latest post and see the comment appear', async function () {
-		const readerPage = new ReaderPage( page );
+		readerPage = new ReaderPage( page );
 		await readerPage.commentOnLatestPost( comment );
 		await readerPage.waitForCommentToAppear( comment );
 	} );
