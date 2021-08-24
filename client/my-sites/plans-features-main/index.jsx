@@ -31,14 +31,12 @@ import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Banner from 'calypso/components/banner';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
 import FormattedHeader from 'calypso/components/formatted-header';
 import HappychatConnection from 'calypso/components/happychat/connection-connected';
 import { getTld } from 'calypso/lib/domains';
-import { Experiment } from 'calypso/lib/explat';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import PlanFeatures from 'calypso/my-sites/plan-features';
 import PlanFeaturesComparison from 'calypso/my-sites/plan-features-comparison';
@@ -400,17 +398,6 @@ export class PlansFeaturesMain extends Component {
 		return props.planTypeSelector;
 	}
 
-	getExperimentalBanner() {
-		return (
-			<Banner
-				disableHref
-				showIcon={ false }
-				title="Try the Premium plan now! We offer a 14-day money-back guarantee on all plans."
-				className="plans-features-main__experimental-copy"
-			/>
-		);
-	}
-
 	render() {
 		const { siteId, redirectToAddDomainFlow, shouldShowPlansFeatureComparison } = this.props;
 
@@ -435,14 +422,6 @@ export class PlansFeaturesMain extends Component {
 				<QuerySitePlans siteId={ siteId } />
 				<HappychatConnection />
 				<div className="plans-features-main__notice" />
-				{ this.props.isInSignup && (
-					<Experiment
-						name="emphasizing_refund_policy"
-						defaultExperience={ null }
-						treatmentExperience={ this.getExperimentalBanner() }
-						loadingExperience={ null }
-					/>
-				) }
 				{ ! hidePlanSelector && (
 					<PlanTypeSelector
 						{ ...this.props }
