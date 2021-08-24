@@ -10,19 +10,13 @@ import {
 	MediaPage,
 	SidebarComponent,
 	MediaHelper,
+	TestFile,
 } from '@automattic/calypso-e2e';
+import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
-<<<<<<< HEAD
-	let testFiles;
-=======
-	const testFiles = [
-		{ type: 'image', file: MediaHelper.createTestImage() },
-		{ type: 'audio', file: MediaHelper.createTestAudio() },
-	];
-	const invalidFile = MediaHelper.createUnsupportedFile();
->>>>>>> 72b7813078 (Define and implement interface for TestFile.)
-	let page;
+	let testFiles: { image: TestFile; audio: TestFile; unsupported: TestFile };
+	let page: Page;
 
 	setupHooks( ( args ) => {
 		page = args.page;
@@ -32,7 +26,7 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 		testFiles = {
 			image: await MediaHelper.createTestImage(),
 			audio: await MediaHelper.createTestAudio(),
-			invalid: await MediaHelper.createInvalidFile(),
+			unsupported: await MediaHelper.createUnsupportedFile(),
 		};
 	} );
 
@@ -42,7 +36,7 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 		${ 'Simple' } | ${ 'defaultUser' }
 		${ 'Atomic' } | ${ 'wooCommerceUser' }
 	`( 'Upload media files ($siteType)', ( { user } ) => {
-		let mediaPage;
+		let mediaPage: MediaPage;
 
 		it( 'Log In', async function () {
 			const loginFlow = new LoginFlow( page, user );
@@ -58,7 +52,6 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 			mediaPage = new MediaPage( page );
 		} );
 
-<<<<<<< HEAD
 		it( 'Upload image and confirm addition to gallery', async () => {
 			const uploadedItem = await mediaPage.upload( testFiles.image );
 			assert.strictEqual( await uploadedItem.isVisible(), true );
@@ -66,34 +59,15 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 
 		it( 'Upload audio and confirm addition to gallery', async () => {
 			const uploadedItem = await mediaPage.upload( testFiles.audio );
-=======
-		it.each( testFiles )( 'Upload $type and confirm addition to gallery', async ( { file } ) => {
-			const uploadedItem = await mediaPage.upload( file.fullpath );
->>>>>>> 72b7813078 (Define and implement interface for TestFile.)
 			assert.strictEqual( await uploadedItem.isVisible(), true );
 		} );
 
 		it( 'Upload an unsupported file type and see the rejection notice', async function () {
 			try {
-<<<<<<< HEAD
-				await mediaPage.upload( testFiles.invalid );
-=======
-				await mediaPage.upload( invalidFile.fullpath );
->>>>>>> 72b7813078 (Define and implement interface for TestFile.)
+				await mediaPage.upload( testFiles.unsupported );
 			} catch ( error ) {
 				assert.match( error.message, /could not be uploaded/i );
 			}
 		} );
 	} );
-<<<<<<< HEAD
-=======
-
-	// Clean up test files.
-	afterAll( () => {
-		for ( const testFile of Object.values( testFiles ) ) {
-			MediaHelper.deleteFile( testFile.file.fullpath );
-		}
-		MediaHelper.deleteFile( invalidFile.fullpath );
-	} );
->>>>>>> 72b7813078 (Define and implement interface for TestFile.)
 } );

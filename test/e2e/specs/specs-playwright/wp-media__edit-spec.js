@@ -51,7 +51,7 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 		it( 'Upload image', async function () {
 			// Ideally, we'd not want to upload an image (that's a separate test)
 			// but occasionally, the photo gallery is cleaned out leaving no images.
-			const uploadedImageHandle = await mediaPage.upload( testImage );
+			const uploadedImageHandle = await mediaPage.upload( testImage.fullpath );
 			const isVisible = await uploadedImageHandle.isVisible();
 			expect( isVisible ).toBe( true );
 		} );

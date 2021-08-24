@@ -3,7 +3,17 @@ import os from 'os';
 import path from 'path';
 import config from 'config';
 import { getTimestamp } from './data-helper';
-import { TestFile } from '.';
+
+/**
+ * Interface for holding various parts of a filepath.
+ */
+export interface TestFile {
+	fullpath: string; // eg. /usr/home/wp-calypso/test/e2e/image-uploads/image.jpg
+	dirname: string; // eg. /usr/home/wp-calypso/test/e2e/image-uploads/
+	basename: string; // eg. image.jpg
+	filename: string; // eg. image
+	extension: string; // eg. .jpg
+}
 
 const artifacts: { [ key: string ]: string } = config.get( 'artifacts' );
 
@@ -112,6 +122,6 @@ export async function createTestAudio(): Promise< TestFile > {
  *
  * @returns {Promise<TestFile>} Object implementing the TestFile interface.
  */
-export async function createInvalidFile(): Promise< TestFile > {
+export async function createUnsupportedFile(): Promise< TestFile > {
 	return await createTestFile( { sourceFileName: 'unsupported_extension.mkv' } );
 }

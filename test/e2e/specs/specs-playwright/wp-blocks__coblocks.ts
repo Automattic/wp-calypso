@@ -17,6 +17,7 @@ import {
 	LogosBlock,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
+import type { TestFile } from '@automattic/calypso-e2e';
 
 describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), () => {
 	let gutenbergEditorPage: GutenbergEditorPage;
