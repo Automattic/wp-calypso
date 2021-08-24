@@ -81,6 +81,7 @@ export function reducerWithQueue(
 		};
 	}
 
+	const lastState = state;
 	state = shoppingCartReducer( state, action );
 
 	if ( shouldPlayQueuedActions( state ) ) {
@@ -102,7 +103,9 @@ export function reducerWithQueue(
 	// `responseCart` the last time the state had a `valid` CacheStatus and pass
 	// that to our consumers. The consumers can use `isPendingUpdate` to know
 	// when the cart data is updating.
-	state = shoppingCartReducer( state, { type: 'UPDATE_LAST_VALID_CART' } );
+	if ( state !== lastState && ! isStatePendingUpdateOrQueuedAction( state ) ) {
+		state = shoppingCartReducer( state, { type: 'UPDATE_LAST_VALID_CART' } );
+	}
 
 	return state;
 }
@@ -115,13 +118,10 @@ function shoppingCartReducer(
 	const couponStatus = state.couponStatus;
 	switch ( action.type ) {
 		case 'UPDATE_LAST_VALID_CART':
-			if ( ! isStatePendingUpdateOrQueuedAction( state ) ) {
-				return {
-					...state,
-					lastValidResponseCart: convertTempResponseCartToResponseCart( state.responseCart ),
-				};
-			}
-			return state;
+			return {
+				...state,
+				lastValidResponseCart: convertTempResponseCartToResponseCart( state.responseCart ),
+			};
 
 		case 'FETCH_INITIAL_RESPONSE_CART':
 			return { ...state, cacheStatus: 'fresh-pending' };
