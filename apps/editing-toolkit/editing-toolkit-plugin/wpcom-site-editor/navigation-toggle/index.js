@@ -1,21 +1,34 @@
 import domReady from '@wordpress/dom-ready';
-import { render } from '@wordpress/element';
-import CustomNavigationToggleButton from './custom-navigation-toggle-button';
 import './style.scss';
 
-function injectNavigationToggleButton() {
+function injectNavigationToggleOnClickHandler() {
+	// Prevent adding the event listener multiple times
 	if ( document.querySelector( '.wpcom-edit-site-navigation-toggle__button' ) ) {
 		return;
 	}
+
 	const toggle = document.querySelector( '.edit-site-navigation-toggle' );
 	if ( ! toggle ) {
 		return;
 	}
-	render( <CustomNavigationToggleButton />, toggle );
+
+	// Add a CSS class to determine if the event listener has been added already
+	toggle.classList.add( 'wpcom-edit-site-navigation-toggle__button' );
+
+	toggle.addEventListener( 'click', ( event ) => {
+		event.preventDefault();
+		event.stopPropagation();
+		const calypsoCloseUrl = window?.calypsoifyGutenberg?.closeUrl;
+		if ( calypsoCloseUrl ) {
+			window.top.location.href = calypsoCloseUrl;
+		} else {
+			window.location.href = './index.php';
+		}
+	} );
 }
 
 /**
- * Renders a custom navigation sidebar toggle that will simply navigate back home on click.
+ * Customize the navigation sidebar toggle click handler to simply navigate back home.
  */
 domReady( () => {
 	if ( ! window.wp.editSite ) {
@@ -29,13 +42,13 @@ domReady( () => {
 		}
 		clearInterval( waitForNavigationToggleButton );
 
-		injectNavigationToggleButton();
+		injectNavigationToggleOnClickHandler();
 
-		// Re-inject the navigation toggle button as needed in case React re-renders the navigation sidebar
+		// Re-inject the navigation toggle click handler as needed in case React re-renders the navigation sidebar
 		const wpbody = document.getElementById( 'wpbody' );
 		if ( wpbody && typeof window.MutationObserver !== 'undefined' ) {
-			const observer = new window.MutationObserver( injectNavigationToggleButton );
-			observer.observe( document.getElementById( 'wpbody' ), { subtree: true, childList: true } );
+			const observer = new window.MutationObserver( injectNavigationToggleOnClickHandler );
+			observer.observe( wpbody, { subtree: true, childList: true } );
 		}
 	} );
 } );
