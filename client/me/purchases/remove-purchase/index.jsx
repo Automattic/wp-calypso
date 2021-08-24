@@ -30,14 +30,14 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { isDataLoading } from '../utils';
-import { getPurchasesError } from 'calypso/state/purchases/selectors';
 import { removePurchase } from 'calypso/state/purchases/actions';
+import { getPurchasesError } from 'calypso/state/purchases/selectors';
 import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { receiveDeletedSite } from 'calypso/state/sites/actions';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import { purchasesRoot } from '../paths';
+import { isDataLoading } from '../utils';
 import RemoveDomainDialog from './remove-domain-dialog';
 
 import './style.scss';

@@ -1,8 +1,3 @@
-/**
- * External Dependencies
- */
-import React from 'react';
-import { useTranslate } from 'i18n-calypso';
 import {
 	isBusinessPlan,
 	isCompletePlan,
@@ -12,10 +7,8 @@ import {
 	isSecurityDailyPlan,
 	isSecurityRealTimePlan,
 } from '@automattic/calypso-products';
-
-/**
- * Internal Dependencies
- */
+import { useTranslate } from 'i18n-calypso';
+import React from 'react';
 
 /*
  * Show a list of Jetpack benefits that do not depend on site data
