@@ -1,31 +1,24 @@
-/**
- * External Dependencies
- */
-import React from 'react';
-import { useSelector } from 'react-redux';
-
-/**
- * Internal Dependencies
- */
-import { useTranslate } from 'i18n-calypso';
 import {
 	isJetpackBackupSlug,
 	isJetpackScanSlug,
-	isJetpackPlanSlug,
+	isCompletePlan,
+	isSecurityDailyPlan,
+	isSecurityRealTimePlan,
 } from '@automattic/calypso-products';
-import getRewindState from 'calypso/state/selectors/get-rewind-state';
-import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
-import JetpackBenefitsSiteVisits from 'calypso/blocks/jetpack-benefits/site-visits';
-import JetpackBenefitsScanHistory from 'calypso/blocks/jetpack-benefits/scan-history';
-import JetpackBenefitsSiteBackups from 'calypso/blocks/jetpack-benefits/site-backups';
+import { useTranslate } from 'i18n-calypso';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import { JetpackBenefitsCard } from 'calypso/blocks/jetpack-benefits/benefit-card';
 import {
 	productHasSearch,
 	productHasBackups,
 	productHasScan,
-	productHasActivityLog,
 	productHasAntiSpam,
 } from 'calypso/blocks/jetpack-benefits/feature-checks';
+import JetpackBenefitsScanHistory from 'calypso/blocks/jetpack-benefits/scan-history';
+import JetpackBenefitsSiteBackups from 'calypso/blocks/jetpack-benefits/site-backups';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
 
 /**
  * Style dependencies
@@ -52,9 +45,6 @@ const JetpackBenefits: React.FC< Props > = ( { siteId, productSlug } ) => {
 
 	return (
 		<React.Fragment>
-			{
-				isJetpackPlanSlug( productSlug ) && <JetpackBenefitsSiteVisits siteId={ siteId } /> // makes the most sense to show visits/ stats for plans
-			}
 			{ siteHasBackups() && productHasBackups( productSlug ) && (
 				<JetpackBenefitsSiteBackups
 					siteId={ siteId }
@@ -73,7 +63,7 @@ const JetpackBenefits: React.FC< Props > = ( { siteId, productSlug } ) => {
 				<JetpackBenefitsCard
 					headline={ translate( 'Anti-spam' ) }
 					description={ translate(
-						'Jetpack anti-spam automatically clears spam from comments and forms.'
+						'Jetpack Anti-spam automatcally clears spam from comments and forms.'
 					) }
 				/>
 			) }
@@ -83,20 +73,22 @@ const JetpackBenefits: React.FC< Props > = ( { siteId, productSlug } ) => {
 					isStandalone={ isJetpackScanSlug( productSlug ) }
 				/>
 			) }
-			{
-				/*
-				 * could look to expand output by using requestActivityLogs to get this information,
-				 * there is also an endpoint for /activity/counts that has no matching state components that could get set up
-				 */
-				productHasActivityLog( productSlug ) && (
-					<JetpackBenefitsCard
-						headline={ translate( 'Activity Log' ) }
-						description={ translate(
-							'The activity log shows a full list of management events that have occurred on your site.'
-						) }
-					/>
-				)
-			}
+			{ ( isCompletePlan( productSlug ) || isSecurityRealTimePlan( productSlug ) ) && (
+				<JetpackBenefitsCard
+					headline={ translate( 'Activity Log' ) }
+					description={ translate(
+						'Your 1-year Activity Log archive will revert to the 20 most recent events.'
+					) }
+				/>
+			) }
+			{ isSecurityDailyPlan( productSlug ) && (
+				<JetpackBenefitsCard
+					headline={ translate( 'Activity Log' ) }
+					description={ translate(
+						'Your 30-day Activity Log archive will revert to the 20 most recent events.'
+					) }
+				/>
+			) }
 		</React.Fragment>
 	);
 };

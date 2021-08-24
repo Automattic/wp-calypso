@@ -1,22 +1,15 @@
-/**
- * External Dependencies
- */
-import React, { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-
-/**
- * Internal Dependencies
- */
-import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
-import { JetpackBenefitsCard } from 'calypso/blocks/jetpack-benefits/benefit-card';
-import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
-import { JetpackBenefitsStandaloneCard } from 'calypso/blocks/jetpack-benefits/standalone-benefit-card';
-import getRewindBackups from 'calypso/state/selectors/get-rewind-backups';
-import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
-import { EVERY_SECOND, Interval } from 'calypso/lib/interval';
 import { ProgressBar } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import React, { useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { JetpackBenefitsCard } from 'calypso/blocks/jetpack-benefits/benefit-card';
+import { JetpackBenefitsStandaloneCard } from 'calypso/blocks/jetpack-benefits/standalone-benefit-card';
+import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { EVERY_SECOND, Interval } from 'calypso/lib/interval';
+import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
+import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
+import getRewindBackups from 'calypso/state/selectors/get-rewind-backups';
 
 interface Props {
 	siteId: number;
@@ -164,7 +157,7 @@ const JetpackBenefitsSiteBackups: React.FC< Props > = ( { siteId, isStandalone }
 		<JetpackBenefitsCard
 			jestMarker="default-backup-output" // for test suite
 			headline={ translate( 'Site Backups' ) }
-			description={ translate( 'Your latest site backups.' ) }
+			description={ translate( 'Your latest site backup.' ) }
 			stat={ lastBackupTimeAgo }
 		/>
 	);
