@@ -1083,7 +1083,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_ANTISPAM_V2 ]: {
 		getSlug: () => FEATURE_ANTISPAM_V2,
-		getTitle: () => i18n.translate( 'Comment and form protection' ),
+		getTitle: () => i18n.translate( 'Comment and form spam protection' ),
 	},
 
 	[ FEATURE_ACTIVITY_LOG_1_YEAR_V2 ]: {
