@@ -795,7 +795,7 @@ describe( 'useShoppingCart', () => {
 			} );
 		} );
 
-		it( 'does not trigger a refetch when the window is focused and the cart key is no-site', async () => {
+		it( 'triggers a refetch when the window is focused and the cart key is no-site', async () => {
 			mockGetCart.mockResolvedValue( emptyResponseCart );
 
 			render(
@@ -814,9 +814,8 @@ describe( 'useShoppingCart', () => {
 
 			fireEvent( window, new Event( 'focus' ) );
 
-			await verifyThatTextNeverAppears( planTwo.product_name );
 			await waitFor( () => {
-				expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
+				expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planTwo.product_name );
 			} );
 		} );
 
