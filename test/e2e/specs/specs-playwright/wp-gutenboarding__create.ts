@@ -41,7 +41,7 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 
 	it( 'Search for and select a WordPress.comdomain name', async function () {
 		await gutenboardingFlow.searchDomain( siteTitle );
-		siteURL = await gutenboardingFlow.selectDomain( { name: siteTitle, tld: '.wordpress.com' } );
+		siteURL = await gutenboardingFlow.selectDomain( siteTitle.concat( '.wordpress.com' ) );
 		await gutenboardingFlow.clickButton( 'Continue' );
 	} );
 
@@ -78,8 +78,10 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 		const generalSettingsPage = new GeneralSettingsPage( page );
 		try {
 			await generalSettingsPage.deleteSite( siteURL );
+			const currentURL = await page.url();
+			expect.bind( currentURL ).not.stringContaining( siteURL );
 		} catch ( e ) {
-			console.error( `Deleting ${ siteURL } failed, manual intervention needed.` );
+			console.error( `Deletion of ${ siteURL } failed.` );
 			throw e;
 		}
 	} );

@@ -20,11 +20,11 @@ const selectors = {
 
 	// Domain
 	domainSearch: 'input[placeholder="Search for a domain"]',
-	domainSuggestionSpan: ( name: string, tld: string ) =>
-		`.domain-picker__suggestion-item-name span:has-text("${ name }${ tld }")`,
+	domainSuggestionSpan: ( target: string ) =>
+		`.domain-picker__suggestion-item-name span:has-text("${ target }")`,
 
 	// Design
-	design: ( name: string ) => `button[data-e2e-button="freeOption"] span:text("${ name }")`,
+	designButton: ( name: string ) => `button[data-e2e-button="freeOption"]:has-text("${ name }")`,
 	fontPairingButton: ( platform: 'mobile' | 'desktop', fontName: string ) => {
 		return `.style-preview__font-options-${ platform } span:text("${ fontName }")`;
 	},
@@ -63,6 +63,8 @@ export class GutenboardingFlow {
 		await this.page.click( selectors.button( text ) );
 	}
 
+	/* Initial (landing) screen */
+
 	/**
 	 * Enters the site title.
 	 *
@@ -73,6 +75,8 @@ export class GutenboardingFlow {
 	async enterSiteTitle( title: string ) {
 		await this.page.fill( selectors.siteTitle, title );
 	}
+
+	/* Domains screen */
 
 	/**
 	 * Enters the keyword into the domain search input.
@@ -89,13 +93,11 @@ export class GutenboardingFlow {
 	/**
 	 * Given a domain name and TLD, select a matching domain.
 	 *
-	 * @param param0 Keyed object parameter.
-	 * @param {string} param0.name Name portion of the domain.
-	 * @param {string} param0.tld TLD portion of the domain.
+	 * @param {string} target Target domain name to select.
 	 * @returns {Promise<string>} Selected domain.
 	 */
-	async selectDomain( { name, tld }: { name: string; tld: string } ): Promise< string > {
-		const selector = selectors.domainSuggestionSpan( name, tld );
+	async selectDomain( target: string ): Promise< string > {
+		const selector = selectors.domainSuggestionSpan( target );
 		const elementHandle = await this.page.waitForSelector( selector );
 
 		// The blog URL is the full inner text of the matching element.
@@ -105,6 +107,8 @@ export class GutenboardingFlow {
 		return url;
 	}
 
+	/* Design screen */
+
 	/**
 	 * Given a name, select a design matching the name.
 	 *
@@ -113,7 +117,7 @@ export class GutenboardingFlow {
 	async selectDesign( name: string ): Promise< void > {
 		await Promise.all( [
 			this.page.waitForNavigation(),
-			this.page.click( selectors.design( name ) ),
+			this.page.click( selectors.designButton( name ) ),
 		] );
 	}
 
@@ -148,6 +152,8 @@ export class GutenboardingFlow {
 		}
 	}
 
+	/* Feature selection screen */
+
 	/**
 	 * Given an array of feature strings, selects matching features.
 	 *
@@ -164,6 +170,8 @@ export class GutenboardingFlow {
 		}
 	}
 
+	/* Plan selection screen */
+
 	/**
 	 * Given a name, select a plan matching the name.
 	 *
@@ -172,24 +180,12 @@ export class GutenboardingFlow {
 	async selectPlan( name: Plans ): Promise< void > {
 		// First, expand the accordion.
 		await this.page.click( ':text-is("Show all plans")' );
-
-		const plans = await this.page.$$( selectors.planItem );
-
-		// Iterate through the top-level container for each plan.
-		// Then, extract name of the plan and if it finds a match with the desired plan,
-		// click on the `Select` button within the container.
-		for await ( const plan of plans ) {
-			const planName = await plan
-				.waitForSelector( selectors.planName )
-				.then( ( el ) => el.innerText() );
-
-			console.log( planName );
-			if ( planName === name ) {
-				const button = await plan.waitForSelector( selectors.button( 'Select' ) );
-				await Promise.all( [ this.page.waitForNavigation(), button.click() ] );
-				return;
-			}
-		}
+		await Promise.all( [
+			this.page.waitForNavigation(),
+			this.page.click(
+				`.plans-accordion-item:has(.plans-accordion-item__name:has-text("${ name }")) button:has-text("Select")'`
+			),
+		] );
 	}
 
 	/**

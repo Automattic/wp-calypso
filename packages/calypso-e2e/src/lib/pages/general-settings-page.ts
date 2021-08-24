@@ -1,4 +1,3 @@
-import assert from 'assert';
 import { Page } from 'playwright';
 
 const selectors = {
@@ -44,9 +43,5 @@ export class GeneralSettingsPage {
 			this.page.waitForSelector( selectors.deleteSiteConfirmationSpan ),
 			this.page.click( selectors.button( 'Delete this site' ) ),
 		] );
-
-		// Redirected page should no longer reference the deleted site in the URL.
-		const currentURL = this.page.url();
-		assert.ok( ! currentURL.includes( url ) );
 	}
 }
