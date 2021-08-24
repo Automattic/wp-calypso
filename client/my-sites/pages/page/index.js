@@ -15,9 +15,9 @@ import Gridicon from 'calypso/components/gridicon';
 import InfoPopover from 'calypso/components/info-popover';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import PopoverMenuItemClipboard from 'calypso/components/popover/menu-item-clipboard';
-import MenuSeparator from 'calypso/components/popover/menu-separator';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import PopoverMenuItemClipboard from 'calypso/components/popover-menu/item-clipboard';
+import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
 import { preloadEditor } from 'calypso/sections-preloaders';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getEditorDuplicatePostPath } from 'calypso/state/editor/selectors';
@@ -237,7 +237,7 @@ class Page extends Component {
 		}
 
 		return [
-			<MenuSeparator key="separator" />,
+			<PopoverMenuSeparator key="separator" />,
 			<PopoverMenuItem key="item" onClick={ this.setFrontPage }>
 				<Gridicon icon="house" size={ 18 } />
 				{ translate( 'Set as Homepage' ) }
@@ -265,7 +265,7 @@ class Page extends Component {
 		}
 
 		return [
-			<MenuSeparator key="separator" />,
+			<PopoverMenuSeparator key="separator" />,
 			this.props.isPostsPage && (
 				<PopoverMenuItem key="item" onClick={ this.setPostsPage( 0 ) }>
 					<Gridicon icon="undo" size={ 18 } />
@@ -292,7 +292,7 @@ class Page extends Component {
 
 		if ( this.props.page.status !== 'trash' ) {
 			return [
-				<MenuSeparator key="separator" />,
+				<PopoverMenuSeparator key="separator" />,
 				<PopoverMenuItem key="item" className="page__trash-item" onClick={ this.updateStatusTrash }>
 					<Gridicon icon="trash" size={ 18 } />
 					{ this.props.translate( 'Trash' ) }
@@ -301,7 +301,7 @@ class Page extends Component {
 		}
 
 		return [
-			<MenuSeparator key="separator" />,
+			<PopoverMenuSeparator key="separator" />,
 			<PopoverMenuItem key="item" className="page__delete-item" onClick={ this.updateStatusDelete }>
 				<Gridicon icon="trash" size={ 18 } />
 				{ this.props.translate( 'Delete' ) }
@@ -335,7 +335,7 @@ class Page extends Component {
 
 		return (
 			<>
-				<MenuSeparator key="separator" />
+				<PopoverMenuSeparator key="separator" />
 				<PopoverMenuItem onClick={ this.exportPage }>
 					<Gridicon icon="cloud-download" size={ 18 } />
 					{ this.props.translate( 'Export page' ) }
@@ -428,7 +428,7 @@ class Page extends Component {
 
 		return (
 			<div>
-				<MenuSeparator />
+				<PopoverMenuSeparator />
 				{ status }
 				{ childPageInfo }
 				{ frontPageInfo }

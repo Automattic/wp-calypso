@@ -1,6 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { isCredits } from '@automattic/calypso-products';
+import { Popover } from '@automattic/components';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
@@ -9,7 +10,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Count from 'calypso/components/count';
 import HeaderButton from 'calypso/components/header-button';
-import Popover from 'calypso/components/popover';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import CartBody from './cart-body';
 import CartBodyLoadingPlaceholder from './cart-body/loading-placeholder';

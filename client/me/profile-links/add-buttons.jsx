@@ -11,8 +11,8 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import PopoverMenu from 'calypso/components/popover/menu';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import PopoverMenu from 'calypso/components/popover-menu';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 class AddProfileLinksButtons extends React.Component {

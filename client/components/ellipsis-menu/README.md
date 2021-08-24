@@ -8,7 +8,7 @@ Render `<EllipsisMenu />` in a similar fashion as you would [the `<PopoverMenu /
 
 ```jsx
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 
 export default function MyComponent( { onMenuItemClick } ) {
 	return (

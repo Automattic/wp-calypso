@@ -1,3 +1,4 @@
+import { Popover } from '@automattic/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -6,8 +7,7 @@ import ReactDom from 'react-dom';
 import AsyncLoad from 'calypso/components/async-load';
 import Gridicon from 'calypso/components/gridicon';
 import InfiniteList from 'calypso/components/infinite-list';
-import Popover from 'calypso/components/popover';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import UserItem from 'calypso/components/user';
 import { hasTouch } from 'calypso/lib/touch-detect';
 

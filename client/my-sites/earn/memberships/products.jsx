@@ -7,7 +7,7 @@ import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import Gridicon from 'calypso/components/gridicon';
 import HeaderCake from 'calypso/components/header-cake';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SectionHeader from 'calypso/components/section-header';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import {

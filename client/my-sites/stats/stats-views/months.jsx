@@ -1,10 +1,10 @@
+import { Popover } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { map, range, flatten, keys, zipObject, times, size, concat, merge } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import Popover from 'calypso/components/popover';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
 
 class Month extends PureComponent {

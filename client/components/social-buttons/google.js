@@ -1,10 +1,10 @@
+import { Popover } from '@automattic/components';
 import { loadScript } from '@automattic/load-script';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import Popover from 'calypso/components/popover';
 import GoogleIcon from 'calypso/components/social-icons/google';
 import { preventWidows } from 'calypso/lib/formatting';
 import { localizeUrl } from 'calypso/lib/i18n-utils';

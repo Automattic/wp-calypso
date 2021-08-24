@@ -4,7 +4,7 @@ import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
 import afterLayoutFlush from 'calypso/lib/after-layout-flush';
 

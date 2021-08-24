@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Button } from '@automattic/components';
+import { Button, Popover } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { includes, isEqual, pick } from 'lodash';
@@ -11,7 +11,6 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import MaterialIcon from 'calypso/components/material-icon';
-import Popover from 'calypso/components/popover';
 import TokenField from 'calypso/components/token-field';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 

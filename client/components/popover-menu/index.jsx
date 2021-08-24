@@ -1,6 +1,6 @@
+import { Popover } from '@automattic/components';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import Popover from 'calypso/components/popover';
 
 const isInvalidTarget = ( target ) => {
 	return target.tagName === 'HR';

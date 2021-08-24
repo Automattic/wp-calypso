@@ -9,7 +9,7 @@ import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import Gridicon from 'calypso/components/gridicon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
