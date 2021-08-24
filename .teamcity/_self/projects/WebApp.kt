@@ -31,7 +31,6 @@ object BuildDockerImage : BuildType({
 
 	params {
 		text("base_image", "registry.a8c.com/calypso/base:latest", label = "Base docker image", description = "Base docker image", allowEmpty = false)
-		text("calypso_live_url", "")
 	}
 
 	vcs {
@@ -104,40 +103,6 @@ object BuildDockerImage : BuildType({
 		}
 
 		script {
-			name = "Generate calypso.live URL"
-			scriptContent = """
-				#!/usr/bin/env bash
-				IMAGE_URL="https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%";
-				MAX_LOOP=10
-				COUNTER=0
-
-				# Transform an URL like https://calypso.live?image=... into https://<container>.calypso.live
-				while [[ ${'$'}COUNTER -le ${'$'}MAX_LOOP ]]; do
-					COUNTER=${'$'}((COUNTER+1))
-					REDIRECT=${'$'}(curl --output /dev/null --silent --show-error  --write-out "%{http_code} %{redirect_url}" "${'$'}{IMAGE_URL}")
-					read HTTP_STATUS URL <<< "${'$'}{REDIRECT}"
-
-					# 202 means the image is being downloaded, retry in a few seconds
-					if [[ "${'$'}{HTTP_STATUS}" -eq "202" ]]; then
-						sleep 5
-						continue
-					fi
-
-					break
-				done
-
-				if [[ -z "${'$'}URL" ]]; then
-					echo "Can't redirect to ${'$'}{IMAGE_URL}" >&2
-					echo "Curl response: ${'$'}{REDIRECT}" >&2
-					exit 1
-				fi
-
-				echo "##teamcity[setParameter name='calypso_live_url' value='${'$'}URL']"
-				echo "Calypso.live URL is: ${'$'}URL$"
-			"""
-		}
-
-		script {
 			name = "Post PR comment with link"
 			scriptContent = """
 				#!/usr/bin/env bash
@@ -148,7 +113,7 @@ object BuildDockerImage : BuildType({
 				export GH_TOKEN="%matticbot_oauth_token%"
 				chmod +x ./bin/add-pr-comment.sh
 				./bin/add-pr-comment.sh "%teamcity.build.branch%" "calypso-live" <<- EOF || true
-				Link to Calypso live: %calypso_live_url%
+				Link to Calypso live: https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%
 				Link to Jetpack Cloud live: https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%&env=jetpack
 				EOF
 			"""
@@ -512,7 +477,13 @@ fun seleniumBuildType( viewportName: String, buildUuid: String): BuildType  {
 					# mocha-teamcity-reporter to work.
 					export MAGELLANDEBUG=true
 
-					URL="%dep.calypso_BuildDockerImage.calypso_live_url%"
+					chmod +x ./bin/get-calypso-live-url.sh
+					URL={'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
+					if [[ {'$'}? -ne 0 ]]; then
+						// Command failed. URL contains stderr
+						echo {'$'}URL
+						exit 1
+					fi
 
 					# Decrypt config
 					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
@@ -655,7 +626,13 @@ fun playwrightBuildType( viewportName: String, buildUuid: String ): BuildType {
 					export PLAYWRIGHT_BROWSERS_PATH=0
 					export TEAMCITY_VERSION=2021
 
-					URL="%dep.calypso_BuildDockerImage.calypso_live_url%"
+					chmod +x ./bin/get-calypso-live-url.sh
+					URL={'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
+					if [[ {'$'}? -ne 0 ]]; then
+						// Command failed. URL contains stderr
+						echo {'$'}URL
+						exit 1
+					fi
 
 					# Decrypt config
 					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
