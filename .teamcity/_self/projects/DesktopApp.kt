@@ -85,11 +85,20 @@ object E2ETests : BuildType({
 		bashNodeScript {
 			name = "Run tests (linux)"
 			scriptContent = """
-				export WP_DESKTOP_BASE_URL="%dep.calypso_BuildDockerImage.calypso_live_url%"
+				set -x
+
+				chmod +x ./bin/get-calypso-live-url.sh
+				URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
+				if [[ ${'$'}? -ne 0 ]]; then
+					// Command failed. URL contains stderr
+					echo ${'$'}URL
+					exit 1
+				fi
 
 				export E2EGUTENBERGUSER="%E2EGUTENBERGUSER%"
 				export E2EPASSWORD="%E2EPASSWORD%"
 				export CI=true
+				export WP_DESKTOP_BASE_URL="${'$'}URL"
 
 				# Start framebuffer
 				Xvfb ${'$'}{DISPLAY} -screen 0 1280x1024x24 &
