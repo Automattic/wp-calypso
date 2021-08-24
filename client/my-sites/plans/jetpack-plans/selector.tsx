@@ -29,6 +29,10 @@ import type {
 
 import './style.scss';
 
+const currencyCodeFallback = () => {
+	return 'RUB';
+};
+
 const SelectorPage: React.FC< SelectorPageProps > = ( {
 	defaultDuration = TERM_ANNUALLY,
 	siteSlug: siteSlugProp,
@@ -168,6 +172,8 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 		( variation: Iterations | null ) => `jetpack-plans__iteration--${ variation ?? 'default' }`
 	);
 
+	const currency = currencyCodeFallback();
+
 	return (
 		<Main className={ classNames( 'selector__main', iterationClassName ) } wideLayout>
 			<PageViewTracker
@@ -189,7 +195,11 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 				createButtonURL={ createProductURL }
 			/>
 
-			{ siteId ? <QuerySiteProducts siteId={ siteId } /> : <QueryProductsList type="jetpack" /> }
+			{ siteId ? (
+				<QuerySiteProducts siteId={ siteId } />
+			) : (
+				<QueryProductsList type="jetpack" currency={ currency } />
+			) }
 			{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 			{ siteId && <QuerySites siteId={ siteId } /> }
 

@@ -16,15 +16,16 @@ const request = ( props ) => ( dispatch, getState ) => {
  * @param {object} props 		The list of component props.
  * @param {string} [props.type] The type of products to request:
  * 								  "jetpack" for Jetpack products only, or undefined for all products.
+ * @param {?string} [props.currency] The currency to return the product list in
  * @returns {null} 				No visible output.
  */
-export default function QueryProductsList( { type } ) {
+export default function QueryProductsList( { type, currency } ) {
 	const dispatch = useDispatch();
 
 	// Only runs on mount.
 	useEffect( () => {
-		dispatch( request( { type } ) );
-	}, [ dispatch, type ] );
+		dispatch( request( { type, currency } ) );
+	}, [ dispatch, type, currency ] );
 
 	return null;
 }
