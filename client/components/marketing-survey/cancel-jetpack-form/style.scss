@@ -1,0 +1,86 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
+.cancel-jetpack-form__dialog {
+	// dialog panel
+
+	.formatted-header__title {
+		font-size: 1.5rem;
+		color: #000000;
+		line-height: 1.11;
+		margin-bottom: 1.5rem;
+		text-align: center;
+		font-weight: 700;
+	}
+
+	.formatted-header__subtitle {
+		font-size: 1.25rem;
+		color: #000000;
+		line-height: 1.25;
+		margin-bottom: 2rem;
+	}
+}
+
+.cancel-jetpack-form__dialog-content {
+	box-sizing: border-box;
+
+	@include break-medium {
+		padding: 1rem 4rem;
+	}
+
+	@include break-wide {
+		width: 1128px;
+		padding: 3rem 12rem;
+	}
+}
+
+// List of benefits at the bottom of the fist step
+.cancel-jetpack-form__jetpack-general-benefits {
+	margin-top: 2rem;
+}
+
+.cancel-jetpack-form__jetpack-general-benefits-title {
+	font-size: 1.25rem;
+	margin-bottom: 1rem;
+}
+
+// survey step of the flow
+.jetpack-cancellation-survey {
+	&__card {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 1rem;
+		width: 100%;
+		font-weight: 600;
+		color: var( --studio-black );
+		border: 1px solid var( --studio-white );
+		transition: border 0.2s ease-in-out;
+		font-size: 1rem;
+
+		&:hover, &:focus {
+			box-shadow: 0 0 0 1px var( --studio-gray-50 );
+		}
+
+		&.is-selected {
+			box-shadow: 0 0 0 1px var( --studio-black );
+			border: 1px solid var( --studio-black );
+		}
+
+		& > svg {
+			margin-left: auto;
+		}
+	}
+
+	&__card-content {
+		display: flex;
+		align-items: center;
+		width: 100%;
+	}
+}
+
+input[type='text'].form-text-input.jetpack-cancellation-survey__choice-item-text-input {
+	border: none;
+	padding: 0;
+	margin-left: 1rem;
+}
