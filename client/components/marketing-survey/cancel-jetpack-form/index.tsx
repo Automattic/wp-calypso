@@ -38,9 +38,9 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, selectedSite
 	const [ surveyAnswerId, setSurveyAnswerId ] = useState< string | null >( null );
 	const [ surveyAnswerText, setSurveyAnswerText ] = useState< TranslateResult | string >( '' );
 
-	const isAtomicSite = useSelector( ( state ) => {
-		return isSiteAutomatedTransfer( state, selectedSite.ID );
-	} );
+	const isAtomicSite = useSelector( ( state ) =>
+		isSiteAutomatedTransfer( state, selectedSite.ID )
+	);
 
 	/**
 	 * Set the cancellation flow back to the beginning
@@ -166,29 +166,30 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, selectedSite
 		const close = {
 			action: 'close',
 			disabled: disabled,
-			label: translate( "I'll Keep It" ),
+			isPrimary: true,
+			label: translate( "I'll keep it" ),
 		};
 		const next = {
 			action: 'next',
 			disabled: disabled,
-			label: translate( 'Continue Cancelling' ),
+			label: translate( 'Next step' ),
 			onClick: clickNext,
 		};
 		const prev = {
 			action: 'prev',
 			disabled,
-			label: translate( 'Previous Step' ),
+			label: translate( 'Previous step' ),
 			onClick: clickPrevious,
 		};
 
-		const cancelText = translate( 'Cancel Now' );
+		const cancelText = translate( 'Cancel my plan' );
 		const cancellingText = translate( 'Cancelling' );
 		const cancel = (
 			<Button
 				disabled={ props.disableButtons }
 				busy={ props.disableButtons }
 				onClick={ onSubmit }
-				primary
+				scary
 			>
 				{ props.disableButtons ? cancellingText : cancelText }
 			</Button>
