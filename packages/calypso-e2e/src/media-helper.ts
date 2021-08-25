@@ -1,3 +1,4 @@
+import { constants } from 'fs';
 import fs from 'fs/promises';
 import os from 'os';
 import path from 'path';
@@ -56,72 +57,56 @@ export function getVideoDir(): string {
 /**
  * Creates a temporary test file by cloning a source file under a new name.
  *
+ * @param {string} sourcePath Full path on disk of the source file.
  * @param {{[key: string]: string}} param0 Parameter object.
- * @param {string} param0.sourceFileName Basename of the source file to be cloned.
- * @param {string} [param0.testFileName] Basename of the test file to be generated.
+ * @param {string} [param0.postfix] Additional suffix to be used for the file.
  * @returns {Promise<TestFile>} Object implementing the TestFile interface.
+ * @throws {Error} If source file was not found, or source file did not contain an extension.
  */
-export async function createTestFile( {
-	sourceFileName,
-	testFileName,
-}: {
-	sourceFileName: string;
-	testFileName?: string;
-} ): Promise< TestFile > {
-	let filename = getTimestamp();
-	// If the output `testFileName` is defined, use that as part of the final filename.
-	if ( testFileName ) {
-		filename += `-${ testFileName }`;
+export async function createTestFile(
+	sourcePath: string,
+	{
+		postfix,
+	}: {
+		postfix?: string;
+	} = {}
+): Promise< TestFile > {
+	// Check whether the source file maps to a file.
+	// Note, if sourcePath is not found use console.error instead of throw:
+	// https://github.com/facebook/jest/issues/8688
+	try {
+		await fs.access( sourcePath );
+	} catch {
+		throw new Error( `Source file ${ sourcePath } not found on disk.` );
 	}
 
-	const extension = sourceFileName.split( '.' ).pop();
+	// Obtain the file extension.
+	const extension = path.extname( sourcePath );
 	if ( ! extension ) {
-		throw new Error( `Extension not found on source file ${ sourceFileName }` );
+		throw new Error( `Extension not found on source file ${ sourcePath }` );
 	}
-	const basename = `${ filename }.${ sourceFileName.split( '.' ).pop() }`;
-	// Create test files in the same directory as the source file.
-	const dirname = path.join( __dirname, '' );
-	// Full path on disk of the source file, to be copied and renamed.
-	const sourceFilePath = path.join( dirname, sourceFileName );
 
-	const tempDir = await fs.mkdtemp( path.join( os.tmpdir(), 'e2e-' ) );
-	const testFilePath = path.join( tempDir, basename );
+	// Generate a filename using current timestamp and a pseudo-randomly generated integer.
+	let filename = getTimestamp();
+	// If `postfix` is defined, use that as part of the final filename.
+	if ( postfix ) {
+		filename += `-${ postfix }`;
+	}
 
-	await fs.copyFile( sourceFilePath, testFilePath );
+	// Obtain the basename (filename with extension)
+	const basename = `${ filename }${ extension }`;
+
+	const tempDir = await fs.mkdtemp( path.join( os.tmpdir(), 'e2e' ) );
+	const targetPath = path.join( tempDir, basename );
+
+	await fs.copyFile( sourcePath, targetPath, constants.COPYFILE_EXCL );
 
 	// Return an object implementing the interface.
 	return {
-		fullpath: testFilePath,
-		dirname: dirname,
+		fullpath: targetPath,
+		dirname: tempDir,
 		basename: basename,
 		filename: filename,
 		extension: extension,
 	};
-}
-
-/**
- * Returns the path to a generated temporary JPEG image file.
- *
- * @returns {Promise<TestFile>} Object implementing the TestFile interface.
- */
-export async function createTestImage(): Promise< TestFile > {
-	return await createTestFile( { sourceFileName: 'image0.jpg' } );
-}
-
-/**
- * Returns the path to a generated temporary MP3 audio file.
- *
- * @returns {Promise<TestFile>} Object implementing the TestFile interface.
- */
-export async function createTestAudio(): Promise< TestFile > {
-	return await createTestFile( { sourceFileName: 'bees.mp3' } );
-}
-
-/**
- * Returns the path to an unsupported file.
- *
- * @returns {Promise<TestFile>} Object implementing the TestFile interface.
- */
-export async function createUnsupportedFile(): Promise< TestFile > {
-	return await createTestFile( { sourceFileName: 'unsupported_extension.mkv' } );
 }

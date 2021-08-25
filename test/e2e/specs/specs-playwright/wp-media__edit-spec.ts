@@ -9,18 +9,21 @@ import {
 	MediaPage,
 	SidebarComponent,
 	setupHooks,
+	TestFile,
 } from '@automattic/calypso-e2e';
+import { Page } from 'playwright';
+import { TEST_IMAGE_PATH } from '../constants';
 
 describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
-	let testImage;
-	let page;
+	let testImage: TestFile;
+	let page: Page;
 
 	setupHooks( ( args ) => {
 		page = args.page;
 	} );
 
 	beforeAll( async () => {
-		testImage = await MediaHelper.createTestImage();
+		testImage = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
 	} );
 
 	describe.each`
@@ -28,7 +31,7 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 		${ 'Simple' } | ${ 'defaultUser' }
 		${ 'Atomic' } | ${ 'wooCommerceUser' }
 	`( 'Edit Image ($siteType)', function ( { user } ) {
-		let mediaPage;
+		let mediaPage: MediaPage;
 
 		it( 'Log In', async function () {
 			const loginFlow = new LoginFlow( page, user );

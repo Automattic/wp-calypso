@@ -13,6 +13,7 @@ import {
 	TestFile,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
+import { TEST_IMAGE_PATH, TEST_AUDIO_PATH, UNSUPPORTED_FILE_PATH } from '../constants';
 
 describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 	let testFiles: { image: TestFile; audio: TestFile; unsupported: TestFile };
@@ -24,9 +25,9 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 
 	beforeAll( async () => {
 		testFiles = {
-			image: await MediaHelper.createTestImage(),
-			audio: await MediaHelper.createTestAudio(),
-			unsupported: await MediaHelper.createUnsupportedFile(),
+			image: await MediaHelper.createTestFile( TEST_IMAGE_PATH ),
+			audio: await MediaHelper.createTestFile( TEST_AUDIO_PATH ),
+			unsupported: await MediaHelper.createTestFile( UNSUPPORTED_FILE_PATH ),
 		};
 	} );
 
@@ -53,18 +54,18 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 		} );
 
 		it( 'Upload image and confirm addition to gallery', async () => {
-			const uploadedItem = await mediaPage.upload( testFiles.image );
+			const uploadedItem = await mediaPage.upload( testFiles.image.fullpath );
 			assert.strictEqual( await uploadedItem.isVisible(), true );
 		} );
 
 		it( 'Upload audio and confirm addition to gallery', async () => {
-			const uploadedItem = await mediaPage.upload( testFiles.audio );
+			const uploadedItem = await mediaPage.upload( testFiles.audio.fullpath );
 			assert.strictEqual( await uploadedItem.isVisible(), true );
 		} );
 
 		it( 'Upload an unsupported file type and see the rejection notice', async function () {
 			try {
-				await mediaPage.upload( testFiles.unsupported );
+				await mediaPage.upload( testFiles.unsupported.fullpath );
 			} catch ( error ) {
 				assert.match( error.message, /could not be uploaded/i );
 			}

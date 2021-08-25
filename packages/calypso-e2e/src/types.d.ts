@@ -6,5 +6,3 @@ export type viewportSize = {
 	width: number;
 	height: number;
 };
-
-export type { TestFile } from './media-helper';
