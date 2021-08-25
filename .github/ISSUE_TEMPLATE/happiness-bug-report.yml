@@ -5,13 +5,11 @@ body:
   - type: markdown
     attributes:
       value: |
-        ### Thanks for contributing to calypso! Pick a clear title and proceed.
-
-        <br>
+        ## Thanks for contributing to calypso! Pick a clear title and proceed.
   - type: textarea
     id: summary
     attributes:
-        label: Quick summary
+        label: Summary
   - type: textarea
     id: steps
     attributes:
@@ -23,11 +21,7 @@ body:
         ...
     validations:
       required: true
-  - type: markdown
-    attributes:
-      value: |
-        <br>
- - type: textarea
+  - type: textarea
     id: expected
     attributes:
       label: What I expected to happen
@@ -35,36 +29,29 @@ body:
         eg. Post should be liked.
     validations:
       required: true
-  - type: markdown
-    attributes:
-      value: |
-        <br>
   - type: textarea
     id: actual
     attributes:
       label: What actually happened
       placeholder: |
-        e.g. Clicking the button does nothing visibly.
+        eg. Clicking the button does nothing visibly.
 
         Attach screenshot(s) or recording(s) by dragging into this field.
     validations:
       required: true
-   - type: markdown
-    attributes:
-      value: |
-        <br>
- - type: textarea
+  - type: textarea
     id: issue_context
     attributes:
       label: Context
       placeholder: |
-        e.g. Customer report, exploratory testing...
+        eg. Customer report, exploratory testing...
   - type: markdown
     attributes:
       value: |
         ---
+
         <br>
- - type: dropdown
+  - type: dropdown
     id: os
     attributes:
       label: OS
@@ -76,49 +63,33 @@ body:
         - Android
         - iOS
       multiple: true
-  - type: markdown
-    attributes:
-      value: |
-        <br>
   - type: dropdown
     id: browser
     attributes:
       label: Browser
       description: Multiple selection is supported.
       options:
-        - Google Chrome/Chromium
-        - Mozilla Firefox
+        - Chrome/Chromium
+        - Firefox
         - Microsoft Edge
         - Microsoft Edge (legacy)
-        - Apple Safari
+        - Safari
       multiple: true
-  - type: markdown
-    attributes:
-      value: |
-        <br>
   - type: dropdown
     id: site-type
     attributes:
-      label: Simple, Atomic, or both?
+      label: Simple/Atomic
       description: Multiple selection is supported.
       options:
         - Simple
         - Atomic
       multiple: true
-  - type: markdown
-    attributes:
-      value: |
-        <br>
   - type: input
     id: theme
     attributes:
       label: Theme-specific issue?
       placeholder: |
         If yes - what is the theme name?
-  - type: markdown
-    attributes:
-      value: |
-        <br>
   - type: textarea
     id: other_notes
     attributes:
@@ -128,8 +99,9 @@ body:
   - type: markdown
     attributes:
       value: |
-          ----
-          <br>
+        ---
+
+        <br>
   - type: dropdown
     id: reproducibility
     attributes:
@@ -138,28 +110,20 @@ body:
         - Consistent
         - Intermittent
         - Once
-  - type: markdown
-    attributes:
-      value: |
-          <br>
   - type: dropdown
     id: users-affected
     attributes:
-      label: Number of users impacted
+      label: Number of Users Impacted
       description: How many users do you think might encounter this bug? Best guesses are fine!
       options:
         - One user
-        - Some users - < 50%
-        - Most users - > 50%
+        - Some users (<50%)
+        - Most users (>50%)
         - All users
-  - type: markdown
-    attributes:
-      value: |
-          <br>
   - type: textarea
     id: workarounds
     attributes:
-      label: Available workarounds
-      description: Are there any workarounds to this bug? How difficult are they to implement?
+      label: Available Workarounds
+      description: Are there any workarounds to this bug? How difficult are those workarounds?
       placeholder: |
-        e.g. There is alternative way to access to this setting in the sidebar, but it's not readily apparent.
+        eg. There is alternative access to this setting in the sidebar, but it's not readily apparent.
