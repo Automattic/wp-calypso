@@ -17,10 +17,10 @@ import {
 	createIdealPaymentMethodStore,
 	createSofortMethod,
 	createSofortPaymentMethodStore,
+	isValueTruthy,
 } from '@automattic/wpcom-checkout';
 import { useMemo } from 'react';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
-import doesValueExist from '../../lib/does-value-exist';
 import {
 	createCreditCardPaymentMethodStore,
 	createCreditCardMethod,
@@ -489,5 +489,5 @@ export default function useCreatePaymentMethods( {
 		epsMethod,
 		wechatMethod,
 		bancontactMethod,
-	].filter( doesValueExist );
+	].filter( isValueTruthy );
 }
