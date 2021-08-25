@@ -79,6 +79,22 @@ describe( 'ShoppingCartManager', () => {
 		expect( responseCart.products.length ).toBe( 0 );
 	} );
 
+	it( 'reloadFromServer forces the cart data to be overwritten by the server copy', async () => {
+		const mockGetCart = jest
+			.fn()
+			.mockResolvedValue( { ...getEmptyResponseCart(), products: [ planOne ] } );
+		const cartManagerClient = createShoppingCartManagerClient( {
+			getCart: mockGetCart,
+			setCart,
+		} );
+		const manager = cartManagerClient.forCartKey( mainCartKey );
+		await manager.fetchInitialCart();
+		mockGetCart.mockResolvedValue( { ...getEmptyResponseCart(), products: [ planTwo ] } );
+		await manager.actions.reloadFromServer();
+		const { responseCart } = manager.getState();
+		expect( responseCart.products[ 0 ].product_slug ).toBe( planTwo.product_slug );
+	} );
+
 	it( 'actions taken before calling fetchInitialCart fetch the cart anyway', async () => {
 		const mockGetCart = jest
 			.fn()
@@ -137,7 +153,7 @@ describe( 'ShoppingCartManager', () => {
 		} );
 		const manager = cartManagerClient.forCartKey( mainCartKey );
 		const p1 = manager.fetchInitialCart();
-		const p2 = manager.actions.reloadFromServer();
+		const p2 = manager.actions.removeCoupon();
 		const completeCart = await p2;
 		return expect( p1 ).resolves.toEqual( completeCart );
 	} );
