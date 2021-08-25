@@ -646,7 +646,6 @@ fun playwrightBuildType( viewportName: String, buildUuid: String ): BuildType {
 					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --testNamePattern @parallel --maxWorkers=%E2E_WORKERS% specs/specs-playwright
 				""".trimIndent()
 				dockerImage = "%docker_image_e2e%"
-				dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
 			}
 			bashNodeScript {
 				name = "Collect results"
