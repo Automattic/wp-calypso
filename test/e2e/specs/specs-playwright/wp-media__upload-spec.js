@@ -64,11 +64,4 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 			}
 		} );
 	} );
-
-	// Clean up test files.
-	afterAll( async () => {
-		for ( const testFile of Object.values( testFiles ) ) {
-			await MediaHelper.deleteFile( testFile.filepath );
-		}
-	} );
 } );

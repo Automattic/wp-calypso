@@ -43,16 +43,6 @@ export function getVideoDir(): string {
 }
 
 /**
- * Given a full path to file on disk, remove the file.
- *
- * @param {string} filePath Full path on disk.
- * @returns {Promise< void >} No return value.
- */
-export async function deleteFile( filePath: string ): Promise< void > {
-	await fs.unlink( filePath );
-}
-
-/**
  * Creates a temporary test file by cloning a source file under a new name.
  *
  * @param {{[key: string]: string}} param0 Parameter object.
