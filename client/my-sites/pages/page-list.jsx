@@ -273,17 +273,13 @@ class Pages extends Component {
 	}
 
 	renderPagesList( { pages } ) {
-		const { site, lastPage, query, showPublishedStatus } = this.props;
+		const { site, query, showPublishedStatus } = this.props;
 
 		// Pages only display hierarchically for published pages on single-sites when
-		// there are 100 or fewer pages and no more pages to load (last page).
+		// there are 100 or fewer pages.
 		// Pages are not displayed hierarchically for search.
 		const showHierarchical =
-			site &&
-			query.status === 'publish,private' &&
-			lastPage &&
-			pages.length <= 100 &&
-			! query.search;
+			site && query.status === 'publish,private' && pages.length <= 100 && ! query.search;
 
 		return showHierarchical
 			? this.renderHierarchical( { pages, site, showPublishedStatus } )
