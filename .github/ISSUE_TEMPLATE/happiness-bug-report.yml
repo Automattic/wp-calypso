@@ -6,9 +6,11 @@ body:
     attributes:
       value: |
         ### Thanks for contributing your report! 
-        Please write a clear title, then fill in at least the three required fields below.
-        <br>
-        If you can, please providing as much additional information and context, then hit Submit.
+        
+        Please write a clear title, then fill in the fields fields below and submit.
+        There are only **3 required fields**, but please provide as much additional information and context as you are able to.
+        
+        You can attach screenshot(s) or recording(s) in any large text field below. Click to activate it then drag you file(s) into them. for better privacy and security, please avoid image hosting servies to link to media.
         <br>
         <br>
   - type: textarea
@@ -39,7 +41,7 @@ body:
     attributes:
       label: What I expected to happen
       placeholder: |
-        eg. Post should be liked.
+        eg. The post should be liked but is not.
     validations:
       required: true
   - type: markdown
@@ -52,10 +54,7 @@ body:
       label: What actually happened
       placeholder: |
         e.g. Clicking the button does nothing visibly.
-        <br>
-        Please attach screenshot(s) or recording(s) by dragging them into this field.
-        <br>
-        No externally hosted image servies, please.
+        
     validations:
       required: true
   - type: markdown
@@ -72,13 +71,15 @@ body:
     attributes:
       value: |
         <br>
+        
         ---
+        
         <br>
   - type: dropdown
     id: os
     attributes:
-      label: OS
-      description: Multiple selection is supported.
+      label: Operating System
+      description: (You may select more than one)
       options:
         - Windows
         - macOS
@@ -94,7 +95,7 @@ body:
     id: browser
     attributes:
       label: Browser
-      description: Multiple selection is supported.
+      description: (You may select more than one)
       options:
         - Google Chrome/Chromium
         - Mozilla Firefox
@@ -110,7 +111,7 @@ body:
     id: site-type
     attributes:
       label: Simple, Atomic, or both?
-      description: Multiple selection is supported.
+      description: (You may select more than one)
       options:
         - Simple
         - Atomic
@@ -124,7 +125,7 @@ body:
     attributes:
       label: Theme-specific issue?
       placeholder: |
-        If yes - what is the theme name?
+        If yes, what is the theme name?
   - type: markdown
     attributes:
       value: |
@@ -134,12 +135,14 @@ body:
     attributes:
       label: Other notes
       placeholder: |
-        Logs, console errors, notes, observations, etc.
+        e.g. Logs, CLI or console errors, notes, observations, etc.
   - type: markdown
     attributes:
       value: |
         <br>
+        
         ---
+        
         <br>
   - type: dropdown
     id: reproducibility
@@ -157,12 +160,11 @@ body:
     id: users-affected
     attributes:
       label: Number of users impacted
-      description: How many users do you think might encounter this bug? Best guesses are fine!
       options:
-        - One user
-        - Some users - < 50%
-        - Most users - > 50%
-        - All users
+        - One
+        - Some - < 50%
+        - Most - > 50%
+        - All
   - type: markdown
     attributes:
       value: |
