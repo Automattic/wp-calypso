@@ -86,19 +86,19 @@ export function createTestFile( {
 
 	// Copy the source file specified to testFilePath, creating a clone differing only by name.
 	try {
-		console.log( cp.execSync( `ls -la ${ sourceFileDir }` ) );
+		console.log( cp.execSync( `ls -la ${ sourceFileDir }` ).toString() );
 	} catch {}
 	try {
-		console.log( cp.execSync( `ls -la ${ sourceFilePath }` ) );
+		console.log( cp.execSync( `ls -la ${ sourceFilePath }` ).toString() );
 	} catch {}
 	try {
-		console.log( cp.execSync( `ls -la ${ testFilePath }` ) );
+		console.log( cp.execSync( `ls -la ${ testFilePath }` ).toString() );
 	} catch {}
 	try {
-		console.log( cp.execSync( `cp ${ sourceFilePath } ${ testFilePath }` ) );
+		console.log( cp.execSync( `cp ${ sourceFilePath } ${ testFilePath }` ).toString() );
 	} catch {}
 	try {
-		console.log( cp.execSync( `ls -la ${ testFilePath }` ) );
+		console.log( cp.execSync( `ls -la ${ testFilePath }` ).toString() );
 	} catch {}
 
 	fs.copyFileSync( sourceFilePath, testFilePath );
