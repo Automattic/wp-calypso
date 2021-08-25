@@ -13,7 +13,7 @@ body:
         There are only ***3 required fields***, but please provide as much additional information and context as you are able to.
         
         Avoid using image hosting services such as Cloudup, Droplr, Imgur, etc., to link to media.
-        Instead, attach screenshot(s)/recording(s) *directly* in any of the text  areas below: click a field, then drag and drop.
+        Instead, attach screenshot(s) or recording(s) directly in any of the text  areas below: click, then drag and drop.
                 
         If you have any questions, please ask in: `slack-bug-herders`.
         
@@ -114,7 +114,7 @@ body:
     id: workarounds
     attributes:
       label: Available workarounds?
-      description: Is a workaround possible? What is the impact of this issue?
+      description: Is a workaround possible? What is the impact of this issue to users?
       options:
         - No and the platform is unusable
         - No but the platform is still usable 
