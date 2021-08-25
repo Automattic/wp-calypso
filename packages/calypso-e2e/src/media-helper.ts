@@ -1,3 +1,4 @@
+import cp from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import config from 'config';
@@ -84,6 +85,11 @@ export function createTestFile( {
 	const testFilePath = path.join( sourceFileDir, fileName );
 
 	// Copy the source file specified to testFilePath, creating a clone differing only by name.
+	console.log( cp.execSync( `ls -la ${ sourceFileDir }` ) );
+	console.log( cp.execSync( `ls -la ${ sourceFilePath }` ) );
+	console.log( cp.execSync( `ls -la ${ testFilePath }` ) );
+	console.log( cp.execSync( `cp ${ sourceFilePath } ${ testFilePath }` ) );
+
 	fs.copyFileSync( sourceFilePath, testFilePath );
 
 	return testFilePath;
