@@ -7,6 +7,9 @@ import {
 	isP2Plus,
 	isWpComPlan,
 	isJetpackSearch,
+	isGoogleWorkspaceProductSlug,
+	isGSuiteOrExtraLicenseProductSlug,
+	isGSuiteOrGoogleWorkspaceProductSlug,
 } from '@automattic/calypso-products';
 import {
 	CheckoutModal,
@@ -22,11 +25,6 @@ import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import {
-	isGoogleWorkspaceProductSlug,
-	isGSuiteOrExtraLicenseProductSlug,
-	isGSuiteOrGoogleWorkspaceProductSlug,
-} from 'calypso/lib/gsuite';
 import { getIntroductoryOfferIntervalDisplay } from 'calypso/lib/purchases/utils';
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import getPriceTierForUnits from 'calypso/my-sites/plans/jetpack-plans/get-price-tier-for-units';
