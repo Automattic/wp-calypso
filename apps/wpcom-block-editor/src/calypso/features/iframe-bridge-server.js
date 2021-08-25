@@ -744,10 +744,12 @@ async function openLinksInParentFrame( calypsoPort ) {
 					const componentsPanel = node.querySelector(
 						'.interface-interface-skeleton__sidebar .components-panel, .edit-post-sidebar .components-panel'
 					);
-					createNewPostLinkObserver.observe( componentsPanel, {
-						childList: true,
-						subtree: true,
-					} );
+					if ( componentsPanel ) {
+						createNewPostLinkObserver.observe( componentsPanel, {
+							childList: true,
+							subtree: true,
+						} );
+					}
 					// If a Query block is selected, then the sidebar will
 					// directly open on the block settings tab
 					tryToReplaceCreateNewPostLink();
