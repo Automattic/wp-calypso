@@ -7,17 +7,17 @@ body:
       value: |
         <br>
          
-        ### Thanks for contributing your report! 
-        
-        Please write a clear title, then fill in the fields fields below and submit.
-        
-        There are only **3 required fields**, but please provide as much additional information and context as you are able to.
-        
-        You can attach screenshot(s) or recording(s) in any large text field below. 
-        
-        Click to activate it then drag and drop file(s) in. For better privacy and security, please avoid image hosting servies to link to media.
-        
-        If you have any questions, please ask in: `slack-bug-herders`.
+        > ### Thanks for contributing your report! 
+        >
+        > Please write a clear title, then fill in the fields fields below and submit.
+        >
+        > There are only ***3 required fields***, but please provide as much additional information and context as you are able to.
+        >
+        > Attach screenshot(s) or recording(s) in any large text field below. 
+        >
+        > Click it then drag and drop file(s). Please avoid image hosting servies to link to media.
+        >
+        > If you have any questions, please ask in: `slack-bug-herders`.
         
         <br>
         
