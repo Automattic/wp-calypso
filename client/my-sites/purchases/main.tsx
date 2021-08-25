@@ -26,7 +26,6 @@ import {
 } from './paths';
 import Subscriptions from './subscriptions';
 import { getChangeOrAddPaymentMethodUrlFor } from './utils';
-
 function useLogPurchasesError( message: string ) {
 	const reduxDispatch = useDispatch();
 
