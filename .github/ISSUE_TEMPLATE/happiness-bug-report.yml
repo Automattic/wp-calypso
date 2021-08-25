@@ -26,7 +26,7 @@ body:
     attributes:
       value: |
         <br>
- - type: textarea
+  - type: textarea
     id: expected
     attributes:
       label: What I expected to happen
@@ -44,15 +44,14 @@ body:
       label: What actually happened
       placeholder: |
         e.g. Clicking the button does nothing visibly.
-
         Attach screenshot(s) or recording(s) by dragging into this field.
     validations:
       required: true
-   - type: markdown
+  - type: markdown
     attributes:
       value: |
         <br>
- - type: textarea
+  - type: textarea
     id: issue_context
     attributes:
       label: Context
@@ -63,7 +62,7 @@ body:
       value: |
         ---
         <br>
- - type: dropdown
+  - type: dropdown
     id: os
     attributes:
       label: OS
