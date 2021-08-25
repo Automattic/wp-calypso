@@ -10,8 +10,10 @@ import {
 	getCouponLineItemFromCart,
 	getTaxBreakdownLineItemsFromCart,
 	getTotalLineItemFromCart,
+	CheckoutSummaryLineItem,
+	CheckoutSummaryTotal,
+	pulse,
 } from '@automattic/wpcom-checkout';
-import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
@@ -272,14 +274,6 @@ function CheckoutSummaryPlanFeatures( { siteId } ) {
 	);
 }
 
-const pulse = keyframes`
-	0% { opacity: 1; }
-
-	70% { opacity: 0.25; }
-
-	100% { opacity: 1; }
-`;
-
 const CheckoutSummaryCard = styled( CheckoutSummaryCardUnstyled )`
 	border-bottom: none 0;
 `;
@@ -357,21 +351,6 @@ const CheckoutSummaryAmountWrapper = styled.div`
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	}
-`;
-
-const CheckoutSummaryLineItem = styled.div`
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: space-between;
-	margin-bottom: 4px;
-
-	.is-loading & {
-		animation: ${ pulse } 1.5s ease-in-out infinite;
-	}
-`;
-
-const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
-	font-weight: ${ ( props ) => props.theme.weights.bold };
 `;
 
 const LoadingCopy = styled.p`
