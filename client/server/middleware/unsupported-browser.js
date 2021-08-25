@@ -3,6 +3,7 @@
  */
 import config from '@automattic/calypso-config';
 import { addQueryArgs } from 'calypso/lib/url';
+import analytics from 'calypso/server/lib/analytics';
 
 export default () => ( req, res, next ) => {
 	if ( ! config.isEnabled( 'redirect-fallback-browsers' ) ) {
@@ -36,6 +37,13 @@ export default () => ( req, res, next ) => {
 		next();
 		return;
 	}
+
+	// The UserAgent is automatically included.
+	analytics.tracks.recordEvent(
+		'calypso_redirect_unsupported_browser',
+		{ original_url: req.originalUrl },
+		req
+	);
 
 	// `req.originalUrl` contains the full path. It's tempting to use `req.url`, but that would
 	// fail in case of multiple Express.js routers nested with `app.use`, because `req.url` contains
