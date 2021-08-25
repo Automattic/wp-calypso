@@ -193,7 +193,7 @@ body:
       value: |
           <br>
   - type: dropdown
-    id: users-affected
+    id: workarounds
     attributes:
       label: Available workarounds?
       description: Is a workaround possible? What is the impact of this issue?
@@ -208,7 +208,7 @@ body:
       value: |
           <br>
   - type: textarea
-    id: workaround-detail
+    id: workarounds-detail
     attributes:
       label: Workaround details
       description: If you are aware of a workaround, please describe it below.
