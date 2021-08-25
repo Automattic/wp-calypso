@@ -99,7 +99,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), () => {
 		}
 	);
 
-	it( `Confirm Logso block is visible in published post`, async () => {
+	it( `Confirm Logos block is visible in published post`, async () => {
 		await LogosBlock.validatePublishedContent( page, path.parse( logoImage ).name );
 	} );
 } );
