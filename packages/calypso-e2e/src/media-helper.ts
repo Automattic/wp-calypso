@@ -66,8 +66,7 @@ export function createTestFile( {
 	sourceFileName: string;
 	testFileName?: string;
 } ): string {
-	let fileName = `${ getTimestamp() }${ getRandomInteger( 100, 999 ) }`;
-	console.log( fileName );
+	let fileName = `${ getTimestamp() }-${ getRandomInteger( 100, 999 ) }`;
 	// If the output `testFileName` is defined, use that as part of the final filename.
 	if ( testFileName ) {
 		fileName += `-${ testFileName }`;
