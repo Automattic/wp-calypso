@@ -210,13 +210,9 @@ function useCreateWeChat( {
 function useCreateIdeal( {
 	isStripeLoading,
 	stripeLoadingError,
-	stripeConfiguration,
-	stripe,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
-	stripeConfiguration: StripeConfiguration | null;
-	stripe: Stripe | null;
 } ): PaymentMethod | null {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
 	const paymentMethodStore = useMemo( () => createIdealPaymentMethodStore(), [] );
@@ -225,24 +221,18 @@ function useCreateIdeal( {
 			shouldLoad
 				? createIdealMethod( {
 						store: paymentMethodStore,
-						stripe,
-						stripeConfiguration,
 				  } )
 				: null,
-		[ shouldLoad, paymentMethodStore, stripe, stripeConfiguration ]
+		[ shouldLoad, paymentMethodStore ]
 	);
 }
 
 function useCreateSofort( {
 	isStripeLoading,
 	stripeLoadingError,
-	stripeConfiguration,
-	stripe,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
-	stripeConfiguration: StripeConfiguration | null;
-	stripe: Stripe | null;
 } ): PaymentMethod | null {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
 	const paymentMethodStore = useMemo( () => createSofortPaymentMethodStore(), [] );
@@ -251,24 +241,18 @@ function useCreateSofort( {
 			shouldLoad
 				? createSofortMethod( {
 						store: paymentMethodStore,
-						stripe,
-						stripeConfiguration,
 				  } )
 				: null,
-		[ shouldLoad, paymentMethodStore, stripe, stripeConfiguration ]
+		[ shouldLoad, paymentMethodStore ]
 	);
 }
 
 function useCreateEps( {
 	isStripeLoading,
 	stripeLoadingError,
-	stripeConfiguration,
-	stripe,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
-	stripeConfiguration: StripeConfiguration | null;
-	stripe: Stripe | null;
 } ): PaymentMethod | null {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
 	const paymentMethodStore = useMemo( () => createEpsPaymentMethodStore(), [] );
@@ -277,11 +261,9 @@ function useCreateEps( {
 			shouldLoad
 				? createEpsMethod( {
 						store: paymentMethodStore,
-						stripe,
-						stripeConfiguration,
 				  } )
 				: null,
-		[ shouldLoad, paymentMethodStore, stripe, stripeConfiguration ]
+		[ shouldLoad, paymentMethodStore ]
 	);
 }
 
@@ -402,8 +384,6 @@ export default function useCreatePaymentMethods( {
 	const idealMethod = useCreateIdeal( {
 		isStripeLoading,
 		stripeLoadingError,
-		stripeConfiguration,
-		stripe,
 	} );
 
 	const alipayMethod = useCreateAlipay( {
@@ -431,8 +411,6 @@ export default function useCreatePaymentMethods( {
 	const epsMethod = useCreateEps( {
 		isStripeLoading,
 		stripeLoadingError,
-		stripeConfiguration,
-		stripe,
 	} );
 
 	const ebanxTefMethod = useCreateEbanxTef();
@@ -442,8 +420,6 @@ export default function useCreatePaymentMethods( {
 	const sofortMethod = useCreateSofort( {
 		isStripeLoading,
 		stripeLoadingError,
-		stripeConfiguration,
-		stripe,
 	} );
 
 	const wechatMethod = useCreateWeChat( {
