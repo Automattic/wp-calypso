@@ -128,7 +128,7 @@ function shoppingCartReducer(
 
 		case 'CART_RELOAD':
 			debug( 'reloading cart from server' );
-			return getInitialShoppingCartState();
+			return { ...state, cacheStatus: 'fresh' };
 
 		case 'CLEAR_QUEUED_ACTIONS':
 			return { ...state, queuedActions: [] };
