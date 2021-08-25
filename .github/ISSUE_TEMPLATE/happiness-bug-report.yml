@@ -84,62 +84,6 @@ body:
         ---
         
         <br>
-  - type: dropdown
-    id: reproducibility
-    attributes:
-      label: Reproducibility
-      options:
-        - Consistent
-        - Intermittent
-        - Once
-  - type: markdown
-    attributes:
-      value: |
-          <br>
-  - type: dropdown
-    id: users-affected
-    attributes:
-      label: Severity
-      description: Approximately how many users are impacted?
-      options:
-        - One
-        - Some (< 50%)
-        - Most (> 50%)
-        - All
-  - type: markdown
-    attributes:
-      value: |
-          <br>
-  - type: dropdown
-    id: workarounds
-    attributes:
-      label: Available workarounds?
-      description: Is a workaround possible? What is the impact of this issue to users?
-      options:
-        - No and the platform is unusable
-        - No but the platform is still usable 
-        - Yes, difficult to implement
-        - Yes, easy to implement
-        - There is no user impact
-  - type: markdown
-    attributes:
-      value: |
-          <br>
-  - type: textarea
-    id: workarounds-detail
-    attributes:
-      label: Workaround details
-      description: If you are aware of a workaround, please describe it below.
-      placeholder: |
-        e.g. There is an alternative way to access this setting in the sidebar, but it's not readily apparent.
-  - type: markdown
-    attributes:
-      value: |
-        <br>
-        
-        ---
-        
-        <br>
          
         ### Additional context
         
@@ -211,3 +155,59 @@ body:
       label: Other notes
       placeholder: |
         e.g. Logs, CLI or console errors, notes, observations, etc.
+  - type: markdown
+    attributes:
+      value: |
+        <br>
+        
+        ---
+        
+        <br>
+  - type: dropdown
+    id: reproducibility
+    attributes:
+      label: Reproducibility
+      options:
+        - Consistent
+        - Intermittent
+        - Once
+  - type: markdown
+    attributes:
+      value: |
+          <br>
+  - type: dropdown
+    id: users-affected
+    attributes:
+      label: Severity
+      description: Approximately how many users are impacted?
+      options:
+        - One
+        - Some (< 50%)
+        - Most (> 50%)
+        - All
+  - type: markdown
+    attributes:
+      value: |
+          <br>
+  - type: dropdown
+    id: workarounds
+    attributes:
+      label: Available workarounds?
+      description: Is a workaround possible? What is the impact of this issue to users?
+      options:
+        - No and the platform is unusable
+        - No but the platform is still usable 
+        - Yes, difficult to implement
+        - Yes, easy to implement
+        - There is no user impact
+  - type: markdown
+    attributes:
+      value: |
+          <br>
+  - type: textarea
+    id: workarounds-detail
+    attributes:
+      label: Workaround details
+      description: If you are aware of a workaround, please describe it below.
+      placeholder: |
+        e.g. There is an alternative way to access this setting in the sidebar, but it's not readily apparent.
