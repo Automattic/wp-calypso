@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
  */
 import FormattedHeader from 'calypso/components/formatted-header';
 import Gridicon from 'calypso/components/gridicon';
-import { checkDomainAvailability } from 'calypso/lib/domains';
+import wpcom from 'calypso/lib/wp';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import UseMyDomainInput from './domain-input';
 import DomainTransferOrConnect from './transfer-or-connect';
@@ -21,7 +21,15 @@ import { getAvailabilityErrorMessage, getDomainNameValidationErrorMessage } from
  */
 import './style.scss';
 
-function UseMyDomain( { goBack, initialQuery, selectedSite } ) {
+function UseMyDomain( {
+	goBack,
+	initialQuery,
+	isSignupStep,
+	onConnect,
+	onTransfer,
+	selectedSite,
+	transferDomainUrl,
+} ) {
 	const inputMode = {
 		domainInput: 'domain-input',
 		transferOrConnect: 'transfer-or-connect',
@@ -58,20 +66,10 @@ function UseMyDomain( { goBack, initialQuery, selectedSite } ) {
 		setIsFetchingAvailability( true );
 		setDomainAvailabilityData( {} );
 
-		checkDomainAvailability(
-			{
-				domainName,
-				blogId: selectedSite.ID,
-				isCartPreCheck: false,
-			},
-			( error, availabilityData ) => {
-				setIsFetchingAvailability( false );
-
-				if ( error ) {
-					setDomainNameValidationError( error );
-					return;
-				}
-
+		wpcom
+			.domain( domainName )
+			.isAvailable( { apiVersion: '1.3', blog_id: selectedSite.ID, is_cart_pre_check: false } )
+			.then( ( availabilityData ) => {
 				const availabilityErrorMessage = getAvailabilityErrorMessage( {
 					availabilityData,
 					domainName,
@@ -80,13 +78,13 @@ function UseMyDomain( { goBack, initialQuery, selectedSite } ) {
 
 				if ( availabilityErrorMessage ) {
 					setDomainNameValidationError( availabilityErrorMessage );
-					return;
+				} else {
+					setMode( inputMode.transferOrConnect );
+					setDomainAvailabilityData( availabilityData );
 				}
-
-				setMode( inputMode.transferOrConnect );
-				setDomainAvailabilityData( availabilityData );
-			}
-		);
+			} )
+			.catch( ( error ) => setDomainNameValidationError( error ) )
+			.finally( () => setIsFetchingAvailability( false ) );
 	}, [ domainName, inputMode.transferOrConnect, selectedSite, validateDomainName ] );
 
 	const onDomainNameChange = ( event ) => {
@@ -125,7 +123,14 @@ function UseMyDomain( { goBack, initialQuery, selectedSite } ) {
 
 	const renderTransferOrConnect = () => {
 		return (
-			<DomainTransferOrConnect domain={ domainName } availability={ domainAvailabilityData } />
+			<DomainTransferOrConnect
+				availability={ domainAvailabilityData }
+				domain={ domainName }
+				isSignupStep={ isSignupStep }
+				onConnect={ onConnect }
+				onTransfer={ onTransfer }
+				transferDomainUrl={ transferDomainUrl }
+			/>
 		);
 	};
 
@@ -156,7 +161,11 @@ function UseMyDomain( { goBack, initialQuery, selectedSite } ) {
 UseMyDomain.propTypes = {
 	goBack: PropTypes.func.isRequired,
 	initialQuery: PropTypes.string,
+	isSignupStep: PropTypes.bool,
+	onConnect: PropTypes.func,
+	onTransfer: PropTypes.func,
 	selectedSite: PropTypes.object,
+	transferDomainUrl: PropTypes.string,
 };
 
 export default connect( ( state ) => ( { selectedSite: getSelectedSite( state ) } ) )(
