@@ -85,10 +85,21 @@ export function createTestFile( {
 	const testFilePath = path.join( sourceFileDir, fileName );
 
 	// Copy the source file specified to testFilePath, creating a clone differing only by name.
-	console.log( cp.execSync( `ls -la ${ sourceFileDir }` ) );
-	console.log( cp.execSync( `ls -la ${ sourceFilePath }` ) );
-	console.log( cp.execSync( `ls -la ${ testFilePath }` ) );
-	console.log( cp.execSync( `cp ${ sourceFilePath } ${ testFilePath }` ) );
+	try {
+		console.log( cp.execSync( `ls -la ${ sourceFileDir }` ) );
+	} catch {}
+	try {
+		console.log( cp.execSync( `ls -la ${ sourceFilePath }` ) );
+	} catch {}
+	try {
+		console.log( cp.execSync( `ls -la ${ testFilePath }` ) );
+	} catch {}
+	try {
+		console.log( cp.execSync( `cp ${ sourceFilePath } ${ testFilePath }` ) );
+	} catch {}
+	try {
+		console.log( cp.execSync( `ls -la ${ testFilePath }` ) );
+	} catch {}
 
 	fs.copyFileSync( sourceFilePath, testFilePath );
 
