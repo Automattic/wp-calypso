@@ -135,7 +135,8 @@
 							}
 						}
 
-						&.has-sale-price {
+						&.has-sale-price,
+						&.is-free {
 							text-decoration: line-through;
 						}
 					}

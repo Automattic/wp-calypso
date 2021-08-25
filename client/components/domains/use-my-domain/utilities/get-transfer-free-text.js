@@ -13,7 +13,7 @@ export function getTransferFreeText( { cart, domain, isSignupStep, siteIsOnPaidP
 	let domainProductFreeText = null;
 
 	if ( isNextDomainFree( cart ) || isDomainBundledWithPlan( cart, domain ) ) {
-		domainProductFreeText = __( 'Free transfer with your plan' );
+		domainProductFreeText = __( 'Free one year renewal with your plan' );
 	} else if ( siteHasNoPaidPlan ) {
 		domainProductFreeText = __( 'Included in paid plans' );
 	}

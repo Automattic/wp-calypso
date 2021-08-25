@@ -32,6 +32,7 @@ export default function OptionContent( {
 	} );
 	const pricingCostClasses = classNames( 'option-content__pricing-cost', {
 		[ 'has-sale-price' ]: pricing?.sale,
+		[ 'is-free' ]: pricing?.isFree,
 	} );
 
 	return (
