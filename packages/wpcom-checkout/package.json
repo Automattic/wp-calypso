@@ -41,6 +41,7 @@
 		"@automattic/calypso-stripe": "^1.0.0",
 		"@automattic/composite-checkout": "^1.0.0",
 		"@automattic/shopping-cart": "^1.0.0",
+		"@emotion/react": "^11.4.1",
 		"@emotion/styled": "^11.3.0",
 		"@wordpress/i18n": "^3.20.0",
 		"@wordpress/react-i18n": "^1.0.3",
@@ -54,9 +55,6 @@
 		"react": "^16.12.0",
 		"react-dom": "^16.12.0",
 		"typescript": "^4.3.5"
-	},
-	"peerDependencies": {
-		"@emotion/react": "^11.4.1"
 	},
 	"private": true
 }
