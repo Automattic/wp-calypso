@@ -32,20 +32,18 @@ function prepareInvalidCartForSync(
 export function createTakeActionsBasedOnState(
 	syncManager: CartSyncManager
 ): ( state: ShoppingCartState, dispatch: ShoppingCartReducerDispatch ) => void {
-	let lastState: ShoppingCartState;
-	const takeActionsBasedOnState = (
-		state: ShoppingCartState,
-		dispatch: ShoppingCartReducerDispatch
-	) => {
-		if ( state === lastState ) {
-			return;
+	// We defer the state based actions so that multiple cart changes can be
+	// batched together during the same run of the event loop.
+	let scheduledStateCheck: number;
+	return ( state, dispatch ) => {
+		if ( scheduledStateCheck ) {
+			clearTimeout( scheduledStateCheck );
 		}
-		lastState = state;
-		const { cacheStatus } = state;
-		debug( 'cache status before state-based-actions is', cacheStatus );
-		prepareFreshCartForInitialFetch( state, dispatch, syncManager );
-		prepareInvalidCartForSync( state, dispatch, syncManager );
-		debug( 'running state-based-actions complete' );
+		scheduledStateCheck = setTimeout( () => {
+			debug( 'cache status before state-based-actions is', state.cacheStatus );
+			prepareFreshCartForInitialFetch( state, dispatch, syncManager );
+			prepareInvalidCartForSync( state, dispatch, syncManager );
+			debug( 'running state-based-actions complete' );
+		}, 0 );
 	};
-	return takeActionsBasedOnState;
 }

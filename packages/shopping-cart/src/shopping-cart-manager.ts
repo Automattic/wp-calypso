@@ -54,33 +54,22 @@ function createShoppingCartManager(
 	const actionPromises = createActionPromisesManager();
 	const takeActionsBasedOnState = createTakeActionsBasedOnState( syncManager );
 
-	let deferredStateCheck: ReturnType< typeof setTimeout >;
 	const dispatch = ( action: ShoppingCartAction ) => {
 		debug( `dispatching action for cartKey ${ cartKey }`, action.type );
 		const newState = shoppingCartReducer( state, action );
-		if ( newState === state ) {
-			if ( ! isStatePendingUpdateOrQueuedAction( state ) ) {
-				debug( 'state did not change; resolving action promises' );
-				actionPromises.resolve( state.responseCart );
-			}
-			return;
-		}
+		const stateChanged = newState !== state;
 		state = newState;
 
-		// We defer the state based actions so that multiple cart changes can be
-		// batched together during the same run of the event loop.
-		if ( deferredStateCheck ) {
-			clearTimeout( deferredStateCheck );
-		}
-		deferredStateCheck = setTimeout( () => {
-			takeActionsBasedOnState( state, dispatch );
-		} );
-
+		// action promises are resolved even if state hasn't changed, to make awaiting a
+		// noop modification (`await setLocation( ... )`) work.
 		if ( ! isStatePendingUpdateOrQueuedAction( state ) ) {
 			actionPromises.resolve( state.responseCart );
 		}
 
-		subscriptionManager.notifySubscribers();
+		if ( stateChanged ) {
+			takeActionsBasedOnState( state, dispatch );
+			subscriptionManager.notifySubscribers();
+		}
 	};
 
 	// `dispatchAndWaitForValid` enhances the action dispatcher to return a
