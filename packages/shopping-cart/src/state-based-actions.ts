@@ -1,10 +1,5 @@
 import debugFactory from 'debug';
-import type {
-	ShoppingCartState,
-	ShoppingCartReducerDispatch,
-	CacheStatus,
-	CartSyncManager,
-} from './types';
+import type { ShoppingCartState, ShoppingCartReducerDispatch, CartSyncManager } from './types';
 
 const debug = debugFactory( 'shopping-cart:state-based-actions' );
 
@@ -37,21 +32,19 @@ function prepareInvalidCartForSync(
 export function createTakeActionsBasedOnState(
 	syncManager: CartSyncManager
 ): ( state: ShoppingCartState, dispatch: ShoppingCartReducerDispatch ) => void {
-	let lastCacheStatus: CacheStatus | '' = '';
-
+	let lastState: ShoppingCartState;
 	const takeActionsBasedOnState = (
 		state: ShoppingCartState,
 		dispatch: ShoppingCartReducerDispatch
 	) => {
+		if ( state === lastState ) {
+			return;
+		}
+		lastState = state;
 		const { cacheStatus } = state;
 		debug( 'cache status before state-based-actions is', cacheStatus );
-		if ( lastCacheStatus !== cacheStatus ) {
-			prepareFreshCartForInitialFetch( state, dispatch, syncManager );
-			prepareInvalidCartForSync( state, dispatch, syncManager );
-		}
-
-		lastCacheStatus = cacheStatus;
-
+		prepareFreshCartForInitialFetch( state, dispatch, syncManager );
+		prepareInvalidCartForSync( state, dispatch, syncManager );
 		debug( 'running state-based-actions complete' );
 	};
 	return takeActionsBasedOnState;
