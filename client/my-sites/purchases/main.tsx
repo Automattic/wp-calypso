@@ -4,6 +4,7 @@ import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import CancelPurchase from 'calypso/me/purchases/cancel-purchase';
@@ -25,7 +26,6 @@ import {
 } from './paths';
 import Subscriptions from './subscriptions';
 import { getChangeOrAddPaymentMethodUrlFor } from './utils';
-
 function useLogPurchasesError( message: string ) {
 	const reduxDispatch = useDispatch();
 
@@ -62,7 +62,12 @@ export function Purchases(): JSX.Element {
 				className="purchases__page-heading"
 				headerText={ titles.sectionTitle }
 				subHeaderText={ translate(
-					'View, manage, or cancel your plan and other purchases for this site.'
+					'View, manage, or cancel your plan and other purchases for this site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+					{
+						components: {
+							learnMoreLink: <InlineSupportLink supportContext="purchases" showIcon={ false } />,
+						},
+					}
 				) }
 				align="left"
 			/>
