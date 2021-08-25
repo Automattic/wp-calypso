@@ -209,7 +209,7 @@ export class GutenboardingFlow {
 	async clickLanguagePicker(): Promise< void > {
 		await Promise.all( [
 			this.page.waitForNavigation(),
-			this.page.click( '.gutenboarding__header-site-language-label' ),
+			this.page.click( 'a:has(.gutenboarding__header-site-language-label)' ),
 		] );
 	}
 
