@@ -7,14 +7,14 @@ body:
       value: |
         <br>
          
-        ### Thanks for contributing your report! 
+        ### Thanks for contributing! 
         
-        Please write a clear title, then fill in the fields fields below and submit.
+        Please write a clear title, then fill in the fields below and submit.
         There are only ***3 required fields***, but please provide as much additional information and context as you are able to.
         
-        Attach screenshot(s) or recording(s) in any large text field below. 
-        Click it then drag and drop file(s). Please avoid image hosting servies to link to media.
-        
+        Avoid using image hosting services such as Cloudup, Droplr, Imgur, etc., to link to media.
+        Instead, attach screenshot(s)/recording(s) *directly* in any of the text  areas below: click a field, then drag and drop.
+                
         If you have any questions, please ask in: `slack-bug-herders`.
         
         <br>
@@ -48,7 +48,7 @@ body:
   - type: textarea
     id: expected
     attributes:
-      label: What I expected to happen
+      label: What you expected to happen
       placeholder: |
         e.g. The post should be liked.
     validations:
@@ -76,85 +76,6 @@ body:
       label: Context
       placeholder: |
         e.g. Customer report, details of your exploratory testing, etc.
-  - type: markdown
-    attributes:
-      value: |
-        <br>
-        
-        ---
-        
-        <br>
-         
-        ### Optional details below
-        
-        Please provide whatever additional information you have available. If not, scroll to the bottom and submit your issue. 
-        
-        <br>
-        
-        ---
-        
-        <br>
-  - type: dropdown
-    id: os
-    attributes:
-      label: Operating System
-      description: (You may select more than one)
-      options:
-        - Windows
-        - macOS
-        - Linux
-        - Android
-        - iOS
-      multiple: true
-  - type: markdown
-    attributes:
-      value: |
-        <br>
-  - type: dropdown
-    id: browser
-    attributes:
-      label: Browser
-      description: (You may select more than one)
-      options:
-        - Google Chrome/Chromium
-        - Mozilla Firefox
-        - Microsoft Edge
-        - Microsoft Edge (legacy)
-        - Apple Safari
-      multiple: true
-  - type: markdown
-    attributes:
-      value: |
-        <br>
-  - type: dropdown
-    id: site-type
-    attributes:
-      label: Simple, Atomic or both?
-      description: (You may select more than one)
-      options:
-        - Simple
-        - Atomic
-      multiple: true
-  - type: markdown
-    attributes:
-      value: |
-        <br>
-  - type: input
-    id: theme
-    attributes:
-      label: Theme-specific issue?
-      placeholder: |
-        If yes, what is the theme name?
-  - type: markdown
-    attributes:
-      value: |
-        <br>
-  - type: textarea
-    id: other_notes
-    attributes:
-      label: Other notes
-      placeholder: |
-        e.g. Logs, CLI or console errors, notes, observations, etc.
   - type: markdown
     attributes:
       value: |
@@ -211,3 +132,82 @@ body:
       description: If you are aware of a workaround, please describe it below.
       placeholder: |
         e.g. There is an alternative way to access this setting in the sidebar, but it's not readily apparent.
+  - type: markdown
+    attributes:
+      value: |
+        <br>
+        
+        ---
+        
+        <br>
+         
+        ### Additional context
+        
+        Please provide whatever additional information you have available to you. If not, please scroll to the bottom and submit the issue. 
+        
+        <br>
+        
+        ---
+        
+        <br>
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating System
+      description: (You may select more than one)
+      options:
+        - Windows
+        - macOS
+        - Linux
+        - Android
+        - iOS
+      multiple: true
+  - type: markdown
+    attributes:
+      value: |
+        <br>
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser
+      description: (You may select more than one)
+      options:
+        - Google Chrome/Chromium
+        - Mozilla Firefox
+        - Microsoft Edge
+        - Microsoft Edge (legacy)
+        - Apple Safari
+      multiple: true
+  - type: markdown
+    attributes:
+      value: |
+        <br>
+  - type: dropdown
+    id: site-type
+    attributes:
+      label: Simple, Atomic or both?
+      description: (You may select more than one)
+      options:
+        - Simple
+        - Atomic
+      multiple: true
+  - type: markdown
+    attributes:
+      value: |
+        <br>
+  - type: textarea
+    id: theme
+    attributes:
+      label: Theme-specific issue?
+      placeholder: |
+        If yes, what is the theme name?
+  - type: markdown
+    attributes:
+      value: |
+        <br>
+  - type: textarea
+    id: other_notes
+    attributes:
+      label: Other notes
+      placeholder: |
+        e.g. Logs, CLI or console errors, notes, observations, etc.
