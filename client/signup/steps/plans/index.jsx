@@ -12,15 +12,17 @@ import { connect } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import PulsingDot from 'calypso/components/pulsing-dot';
 import { getTld, isSubdomain } from 'calypso/lib/domains';
+import { Experiment } from 'calypso/lib/explat';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import TabbedPlans from 'calypso/signup/steps/plans/tabbed-plans';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
+import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
-import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import './style.scss';
 
@@ -113,40 +115,66 @@ export class PlansStep extends Component {
 			planTypes,
 			flowName,
 			showTreatmentPlansReorderTest,
+			// eslint-disable-next-line no-unused-vars
 			isLoadingExperiment,
 			isInVerticalScrollingPlansExperiment,
 			isReskinned,
 		} = this.props;
 
+		const loadingPlanDisplay = (
+			<div className="plans__loading-container">
+				<PulsingDot delay={ 400 } active />
+			</div>
+		);
+
+		const treatmentPlanDisplay = (
+			<TabbedPlans
+				site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
+				hideFreePlan={ hideFreePlan }
+				onUpgradeClick={ this.onSelectPlan }
+				isInSignup={ true }
+				isLaunchPage={ isLaunchPage }
+				intervalType={ this.getIntervalType() }
+				domainName={ this.getDomainName() }
+				customerType={ this.getCustomerType() }
+				planTypes={ planTypes }
+				flowName={ flowName }
+				isAllPaidPlansShown={ true }
+				shouldShowPlansFeatureComparison={ isDesktop() } // Show feature comparison layout in signup flow and desktop resolutions
+			/>
+		);
+		const defaultPlanDisplay = (
+			<PlansFeaturesMain
+				site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
+				hideFreePlan={ hideFreePlan }
+				isInSignup={ true }
+				isLaunchPage={ isLaunchPage }
+				intervalType={ this.getIntervalType() }
+				onUpgradeClick={ this.onSelectPlan }
+				showFAQ={ false }
+				domainName={ this.getDomainName() }
+				customerType={ this.getCustomerType() }
+				disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
+				plansWithScroll={ isDesktop() }
+				planTypes={ planTypes }
+				flowName={ flowName }
+				showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
+				isAllPaidPlansShown={ true }
+				isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
+				shouldShowPlansFeatureComparison={ isDesktop() } // Show feature comparison layout in signup flow and desktop resolutions
+				isReskinned={ isReskinned }
+			/>
+		);
+
 		return (
 			<div>
 				<QueryPlans />
-				{ isLoadingExperiment ? (
-					<div className="plans__loading-container">
-						<PulsingDot delay={ 400 } active />
-					</div>
-				) : (
-					<PlansFeaturesMain
-						site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
-						hideFreePlan={ hideFreePlan }
-						isInSignup={ true }
-						isLaunchPage={ isLaunchPage }
-						intervalType={ this.getIntervalType() }
-						onUpgradeClick={ this.onSelectPlan }
-						showFAQ={ false }
-						domainName={ this.getDomainName() }
-						customerType={ this.getCustomerType() }
-						disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
-						plansWithScroll={ isDesktop() }
-						planTypes={ planTypes }
-						flowName={ flowName }
-						showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
-						isAllPaidPlansShown={ true }
-						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
-						shouldShowPlansFeatureComparison={ isDesktop() } // Show feature comparison layout in signup flow and desktop resolutions
-						isReskinned={ isReskinned }
-					/>
-				) }
+				<Experiment
+					name="tabbed_plans_poc"
+					defaultExperience={ defaultPlanDisplay }
+					treatmentExperience={ treatmentPlanDisplay }
+					loadingExperience={ loadingPlanDisplay }
+				/>
 			</div>
 		);
 	}
