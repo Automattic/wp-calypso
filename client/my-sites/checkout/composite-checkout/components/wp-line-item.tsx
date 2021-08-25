@@ -1,4 +1,5 @@
 import {
+	TITAN_MAIL_MONTHLY_SLUG,
 	isDomainRegistration,
 	isPlan,
 	isMonthlyProduct,
@@ -26,7 +27,6 @@ import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getIntroductoryOfferIntervalDisplay } from 'calypso/lib/purchases/utils';
-import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import getPriceTierForUnits from 'calypso/my-sites/plans/jetpack-plans/get-price-tier-for-units';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
