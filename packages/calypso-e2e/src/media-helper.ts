@@ -79,7 +79,7 @@ export async function createTestFile( {
 	const sourceFileDir = path.join( __dirname, '../../../../../test/e2e/image-uploads/' );
 	const sourceFilePath = path.join( sourceFileDir, sourceFileName );
 
-	const tempDir = await fs.mkdtemp( path.join( os.tmpdir(), 'foo-' ) );
+	const tempDir = await fs.mkdtemp( path.join( os.tmpdir(), 'e2e-' ) );
 	const testFilePath = path.join( tempDir, fileName );
 
 	await fs.copyFile( sourceFilePath, testFilePath );
