@@ -19,6 +19,7 @@ import {
 import { login } from 'calypso/lib/paths';
 import { WPCC } from 'calypso/lib/url/support';
 import flows from 'calypso/signup/config/flows';
+import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import {
 	getFlowSteps,
@@ -469,7 +470,24 @@ export class UserStep extends Component {
 		);
 	}
 
+	renderP2SignupStep() {
+		return (
+			<P2StepWrapper
+				flowName={ this.props.flowName }
+				stepName={ this.props.stepName }
+				positionInFlow={ this.props.positionInFlow }
+				headerText={ this.props.translate( 'Signup' ) }
+			>
+				<div>Insert P2 Signup Form Here</div>
+			</P2StepWrapper>
+		);
+	}
+
 	render() {
+		if ( this.props.flowName === 'p2' ) {
+			return this.renderP2SignupStep();
+		}
+
 		return (
 			<StepWrapper
 				flowName={ this.props.flowName }
