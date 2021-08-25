@@ -7,15 +7,17 @@ body:
       value: |
         <br>
          
-        ### Thanks for contributing your report! 
+        ## Thanks for contributing your report! 
         
         Please write a clear title, then fill in the fields fields below and submit.
         
         There are only **3 required fields**, but please provide as much additional information and context as you are able to.
         
-        You can attach screenshot(s) or recording(s) in any large text field below. Click to activate it then drag and drop file(s) in. For better privacy and security, please avoid image hosting servies to link to media.
+        You can attach screenshot(s) or recording(s) in any large text field below. 
         
-        If you have any questions, please ask in slack-bug-herders.
+        Click to activate it then drag and drop file(s) in. For better privacy and security, please avoid image hosting servies to link to media.
+        
+        If you have any questions, please ask in: `slack-bug-herders`.
         
         <br>
         
@@ -83,18 +85,9 @@ body:
         
         ---
         
-        <br>
-  - type: markdown
-    attributes:
-      value: |
-        <br>
-        ### Optional details
+        ## Optional details
         
         Please provide whatever additional information you have available. If not, scroll to the bottom and submit your issue. 
-        
-        <br>
-        
-        ---
         
         <br>
   - type: dropdown
