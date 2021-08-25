@@ -7,7 +7,7 @@ body:
       value: |
         <br>
          
-        ## Thanks for contributing your report! 
+        ### Thanks for contributing your report! 
         
         Please write a clear title, then fill in the fields fields below and submit.
         
@@ -85,9 +85,15 @@ body:
         
         ---
         
-        ## Optional details
+        <br>
+         
+        ### Optional details below
         
         Please provide whatever additional information you have available. If not, scroll to the bottom and submit your issue. 
+        
+        <br>
+        
+        ---
         
         <br>
   - type: dropdown
