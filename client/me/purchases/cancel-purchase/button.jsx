@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { isDomainRegistration } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { getCurrencyDefaults } from '@automattic/format-currency';
@@ -58,9 +59,7 @@ class CancelPurchaseButton extends Component {
 			return this.goToCancelDomainConfirmation();
 		}
 
-		const variation = 'treatment';
-
-		if ( variation === 'treatment' ) {
+		if ( isEnabled( 'purchases/cancel-fullscreen-flow' ) ) {
 			return page( `/purchases/subscriptions/${ siteSlug }/${ purchase.id }/cancel/confirm` );
 		}
 

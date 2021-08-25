@@ -6,7 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import { SelectControl, TextareaControl, TextControl } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
 import getSiteImportEngine from 'calypso/state/selectors/get-site-import-engine';
@@ -163,13 +163,28 @@ const getNextAdventureTextPlaceholder = ( option ) => {
 	}
 };
 
-export const Feedback = ( { purchase } ) => {
+export const Feedback = ( { purchase, onValidate } ) => {
 	const [ cancellationReason, setCancellationReason ] = useState( '' );
 	const [ importSatisfaction, setImportSatisfaction ] = useState( '' );
 	const [ nextAdventure, setNextAdventure ] = useState( '' );
 	const [ cancellationReasonText, setCancellationReasonText ] = useState( '' );
 	const [ nextAdventureText, setNextAdventureText ] = useState( '' );
 	const [ oneBetterThing, setOneBetterThing ] = useState( '' );
+
+	useEffect( () => {
+		if (
+			! cancellationReason ||
+			( cancellationReason === 'anotherReasonOne' && ! cancellationReasonText )
+		) {
+			return onValidate( false );
+		}
+
+		if ( ! nextAdventure || ( nextAdventure === 'anotherReasonTwo' && ! nextAdventureText ) ) {
+			return onValidate( false );
+		}
+
+		return onValidate( true );
+	}, [ cancellationReason, cancellationReasonText, nextAdventure, nextAdventureText, onValidate ] );
 
 	const isImport = !! useSelector( ( state ) => getSiteImportEngine( state, purchase?.siteId ) );
 

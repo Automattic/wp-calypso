@@ -1,4 +1,4 @@
-import { Button } from '@wordpress/components';
+import { Button, Slot, SlotFillProvider } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chevronLeft } from '@wordpress/icons';
 import React, { useEffect } from 'react';
@@ -8,7 +8,7 @@ import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 
 import './style.scss';
 
-export const BlankCanvas = ( { backUrl, children, onBackClick } ) => {
+const BlankCanvas = ( { backUrl, children, onBackClick } ) => {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
@@ -19,21 +19,31 @@ export const BlankCanvas = ( { backUrl, children, onBackClick } ) => {
 	}, [] );
 
 	return (
-		<div className="blank-canvas">
-			<div className="blank-canvas__header">
-				<WordPressLogo />
-				{ ( backUrl || onBackClick ) && (
-					<Button
-						className="blank-canvas__back"
-						href={ backUrl }
-						icon={ chevronLeft }
-						onClick={ onBackClick }
-					>
-						{ __( 'Back' ) }
-					</Button>
-				) }
+		<SlotFillProvider>
+			<div className="blank-canvas">
+				<div className="blank-canvas__header">
+					<WordPressLogo />
+					{ ( backUrl || onBackClick ) && (
+						<Button
+							className="blank-canvas__back"
+							href={ backUrl }
+							icon={ chevronLeft }
+							onClick={ onBackClick }
+						>
+							{ __( 'Back' ) }
+						</Button>
+					) }
+				</div>
+				<div className="blank-canvas__content">
+					<Slot name="BlankCanvas.Content" />
+					{ children }
+				</div>
+				<div className="blank-canvas__footer">
+					<Slot name="BlankCanvas.Footer" />
+				</div>
 			</div>
-			{ children }
-		</div>
+		</SlotFillProvider>
 	);
 };
+
+export { BlankCanvas };

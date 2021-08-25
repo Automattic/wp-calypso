@@ -2,6 +2,9 @@
 @import '@wordpress/base-styles/mixins';
 
 .blank-canvas {
+	--color-accent: #117ac9;
+	--color-accent-60: #0e64a5;
+
 	position: absolute;
 	top: 0;
 	left: 0;
