@@ -8,13 +8,12 @@ import { matchesUA } from 'browserslist-useragent';
  * @returns {boolean} Whether the user agent is included in the browser list.
  */
 function isUAInBrowserslist( userAgentString, environment = 'defaults' ) {
-	// If the user agent string includes Electron, it probably comes from the
-	// desktop app. Unfortunately, browserslist then parses the UA family to be
-	// "WordPress". We need to make sure we test against the Electron version
-	// instead, or the desktop app won't be considered a supported browser.
-	const electronUA = userAgentString.match( /(Electron\/[0-9.]*\S)/ );
-
-	return matchesUA( electronUA ? electronUA[ 0 ] : userAgentString, {
+	// The desktop app sends a UserAgent including WordPress, Electron and Chrome.
+	// We need to check if the chrome portion is supported, but the UA library
+	// will select WordPress and Electron before Chrome, giving a result not
+	// based on the chrome version.
+	const sanitizedUA = userAgentString.replace( / (WordPressDesktop|Electron)\/[.\d]+/g, '' );
+	return matchesUA( sanitizedUA, {
 		env: environment,
 		ignorePatch: true,
 		ignoreMinor: true,
