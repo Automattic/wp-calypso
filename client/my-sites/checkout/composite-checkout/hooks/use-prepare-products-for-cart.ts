@@ -502,7 +502,10 @@ function createRenewalItemToAddToCart(
  * about which type of site the user has.
  */
 function getJetpackSearchForSite( productAlias: string, isJetpackNotAtomic: boolean ): string {
-	if ( productAlias && JETPACK_SEARCH_PRODUCTS.includes( productAlias ) ) {
+	if (
+		productAlias &&
+		JETPACK_SEARCH_PRODUCTS.includes( productAlias as typeof JETPACK_SEARCH_PRODUCTS[ number ] )
+	) {
 		if ( isJetpackNotAtomic ) {
 			productAlias = productAlias.includes( 'monthly' )
 				? PRODUCT_JETPACK_SEARCH_MONTHLY
