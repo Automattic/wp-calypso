@@ -5,13 +5,18 @@ body:
   - type: markdown
     attributes:
       value: |
+        <br>
+         
         ### Thanks for contributing your report! 
         
         Please write a clear title, then fill in the fields fields below and submit.
         
         There are only **3 required fields**, but please provide as much additional information and context as you are able to.
         
-        You can attach screenshot(s) or recording(s) in any large text field below. Click to activate it then drag you file(s) into them. for better privacy and security, please avoid image hosting servies to link to media.
+        You can attach screenshot(s) or recording(s) in any large text field below. Click to activate it then drag and drop file(s) in. For better privacy and security, please avoid image hosting servies to link to media.
+        
+        If you have any questions, please ask in slack-bug-herders.
+        
         <br>
         
         ---
@@ -28,12 +33,12 @@ body:
   - type: textarea
     id: steps
     attributes:
-      label: Steps to Reproduce
+      label: Steps to reproduce
       placeholder: |
-        1. Start at /home.
-        2. Click on 'View Site'.
-        3. Click on 'Like' button.
-        ...
+        1. Start at `site-domain.com/blog`.
+        2. Click on any blog post.
+        3. Click on the 'Like' button.
+        4. ...
     validations:
       required: true
   - type: markdown
@@ -45,7 +50,7 @@ body:
     attributes:
       label: What I expected to happen
       placeholder: |
-        eg. The post should be liked but is not.
+        e.g. The post should be liked.
     validations:
       required: true
   - type: markdown
@@ -70,10 +75,23 @@ body:
     attributes:
       label: Context
       placeholder: |
-        e.g. Customer report, exploratory testing...
+        e.g. Customer report, details of your exploratory testing, etc.
   - type: markdown
     attributes:
       value: |
+        <br>
+        
+        ---
+        
+        <br>
+  - type: markdown
+    attributes:
+      value: |
+        <br>
+        ### Optional details
+        
+        Please provide whatever additional information you have available. If not, scroll to the bottom and submit your issue. 
+        
         <br>
         
         ---
@@ -114,7 +132,7 @@ body:
   - type: dropdown
     id: site-type
     attributes:
-      label: Simple, Atomic, or both?
+      label: Simple, Atomic or both?
       description: (You may select more than one)
       options:
         - Simple
@@ -163,20 +181,36 @@ body:
   - type: dropdown
     id: users-affected
     attributes:
-      label: Number of users impacted
+      label: Severity
+      description: Approximately how many users are impacted?
       options:
         - One
-        - Some - < 50%
-        - Most - > 50%
+        - Some (< 50%)
+        - Most (> 50%)
         - All
   - type: markdown
     attributes:
       value: |
           <br>
-  - type: textarea
-    id: workarounds
+  - type: dropdown
+    id: users-affected
     attributes:
-      label: Available workarounds
-      description: Are there any workarounds to this bug? How difficult are they to implement?
+      label: Available workarounds?
+      description: Is a workaround possible? What is the impact of this issue?
+      options:
+        - No and the platform is unusable
+        - No but the platform is still usable 
+        - Yes, difficult to implement
+        - Yes, easy to implement
+        - There is no user impact
+  - type: markdown
+    attributes:
+      value: |
+          <br>
+  - type: textarea
+    id: workaround-detail
+    attributes:
+      label: Workaround details
+      description: If you are aware of a workaround, please describe it below.
       placeholder: |
-        e.g. There is alternative way to access to this setting in the sidebar, but it's not readily apparent.
+        e.g. There is an alternative way to access this setting in the sidebar, but it's not readily apparent.
