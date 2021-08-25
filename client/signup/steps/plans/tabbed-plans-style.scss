@@ -1,0 +1,107 @@
+.tabbed-plans__grid-container {
+	display: grid;
+	grid-template-columns: 0.8fr 1fr 1fr 1.25fr;
+	grid-template-rows: auto;
+	grid-template-areas:
+		'.		plan-header-1		plan-header-2	both-plans'
+		'. 		price-1 			price-2 		both-plans'
+		'ft-1 	feature-1-1 		feature-2-1 	both-plans'
+		'ft-2	feature-1-2 		feature-2-2		both-plans'
+		'ft-3	feature-1-3 		feature-2-3		both-plans'
+		'ft-4	feature-1-4 		feature-2-4		both-plans'
+		'ft-5	feature-1-5 		feature-2-5		both-plans'
+		'. 		button-1 			button-2 		.';
+}
+
+.tabbed-plans__tab-1 {
+	order: 1;
+}
+
+.tabbed-plans__tab-2 {
+	order: 2;
+}
+
+.tabbed-plans__header-1 {
+	grid-area: plan-header-1;
+}
+
+.tabbed-plans__header-2 {
+	grid-area: plan-header-2;
+}
+
+.tabbed-plans__price-1 {
+	grid-area: price-1;
+}
+
+.tabbed-plans__price-2 {
+	grid-area: price-2;
+}
+
+.tabbed-plans__button-1 {
+	grid-area: button-1;
+}
+
+.tabbed-plans__button-2 {
+	grid-area: button-2;
+}
+
+.tabbed-plans__feature-title-1 {
+	grid-area: ft-1;
+}
+
+.tabbed-plans__feature-title-2 {
+	grid-area: ft-2;
+}
+
+.tabbed-plans__feature-title-3 {
+	grid-area: ft-3;
+}
+
+.tabbed-plans__feature-title-4 {
+	grid-area: ft-4;
+}
+
+.tabbed-plans__feature-title-5 {
+	grid-area: ft-5;
+}
+
+.tabbed-plans__feature-1-1 {
+	grid-area: feature-1-1;
+}
+
+.tabbed-plans__feature-2-1 {
+	grid-area: feature-2-1;
+}
+
+.tabbed-plans__feature-1-2 {
+	grid-area: feature-1-2;
+}
+
+.tabbed-plans__feature-2-2 {
+	grid-area: feature-2-2;
+}
+
+.tabbed-plans__feature-1-3 {
+	grid-area: feature-1-3;
+}
+
+.tabbed-plans__feature-2-3 {
+	grid-area: feature-2-3;
+}
+
+.tabbed-plans__feature-1-4 {
+	grid-area: feature-1-4;
+}
+
+.tabbed-plans__feature-2-4 {
+	grid-area: feature-2-4;
+}
+
+.tabbed-plans__feature-1-5 {
+	grid-area: feature-1-5;
+}
+
+.tabbed-plans__feature-2-5 {
+	grid-area: feature-2-5;
+}
+

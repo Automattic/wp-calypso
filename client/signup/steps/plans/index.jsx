@@ -16,6 +16,7 @@ import { Experiment } from 'calypso/lib/explat';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import TabbedPlans from 'calypso/signup/steps/plans/tabbed-plans';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
@@ -114,40 +115,67 @@ export class PlansStep extends Component {
 			planTypes,
 			flowName,
 			showTreatmentPlansReorderTest,
+			// eslint-disable-next-line no-unused-vars
 			isLoadingExperiment,
 			isInVerticalScrollingPlansExperiment,
 			isReskinned,
 		} = this.props;
 
+		const loadingPlanDisplay = (
+			<div className="plans__loading-container">
+				<PulsingDot delay={ 400 } active />
+			</div>
+		);
+
+		const treatmentPlanDisplay = (
+			<TabbedPlans
+				customerType={ this.getCustomerType() }
+				domainName={ this.getDomainName() }
+				flowName={ flowName }
+				hideFreePlan={ hideFreePlan }
+				intervalType={ this.getIntervalType() }
+				isAllPaidPlansShown={ true }
+				isInSignup={ true }
+				isLaunchPage={ isLaunchPage }
+				onUpgradeClick={ this.onSelectPlan }
+				plans={ [ 'personal-bundle', 'value_bundle', 'business-bundle', 'ecommerce-bundle' ] }
+				planTypes={ planTypes }
+				site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
+				shouldShowPlansFeatureComparison={ isDesktop() } // Show feature comparison layout in signup flow and desktop resolutions
+			/>
+		);
+		const defaultPlanDisplay = (
+			<PlansFeaturesMain
+				site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
+				hideFreePlan={ hideFreePlan }
+				isInSignup={ true }
+				isLaunchPage={ isLaunchPage }
+				intervalType={ this.getIntervalType() }
+				onUpgradeClick={ this.onSelectPlan }
+				showFAQ={ false }
+				domainName={ this.getDomainName() }
+				customerType={ this.getCustomerType() }
+				disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
+				plansWithScroll={ isDesktop() }
+				planTypes={ planTypes }
+				flowName={ flowName }
+				showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
+				isAllPaidPlansShown={ true }
+				isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
+				shouldShowPlansFeatureComparison={ isDesktop() } // Show feature comparison layout in signup flow and desktop resolutions
+				isReskinned={ isReskinned }
+			/>
+		);
+
 		return (
 			<div>
 				<QueryPlans />
-				{ isLoadingExperiment ? (
-					<div className="plans__loading-container">
-						<PulsingDot delay={ 400 } active />
-					</div>
-				) : (
-					<PlansFeaturesMain
-						site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
-						hideFreePlan={ hideFreePlan }
-						isInSignup={ true }
-						isLaunchPage={ isLaunchPage }
-						intervalType={ this.getIntervalType() }
-						onUpgradeClick={ this.onSelectPlan }
-						showFAQ={ false }
-						domainName={ this.getDomainName() }
-						customerType={ this.getCustomerType() }
-						disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
-						plansWithScroll={ isDesktop() }
-						planTypes={ planTypes }
-						flowName={ flowName }
-						showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
-						isAllPaidPlansShown={ true }
-						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
-						shouldShowPlansFeatureComparison={ isDesktop() } // Show feature comparison layout in signup flow and desktop resolutions
-						isReskinned={ isReskinned }
-					/>
-				) }
+				<Experiment
+					name="tabbed_plans_poc"
+					defaultExperience={ defaultPlanDisplay }
+					treatmentExperience={ treatmentPlanDisplay }
+					loadingExperience={ loadingPlanDisplay }
+				/>
 			</div>
 		);
 	}
