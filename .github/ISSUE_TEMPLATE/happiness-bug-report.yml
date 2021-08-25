@@ -5,19 +5,27 @@ body:
   - type: markdown
     attributes:
       value: |
-        ### Thanks for contributing to calypso! Pick a clear title and proceed.
+        ### Thanks for contributing your report! 
+        Please write a clear title, then fill in at least the three required fields below.
+        <br>
+        If you can, please providing as much additional information and context, then hit Submit.
+        <br>
         <br>
   - type: textarea
     id: summary
     attributes:
         label: Quick summary
+  - type: markdown
+    attributes:
+      value: |
+        <br>
   - type: textarea
     id: steps
     attributes:
       label: Steps to Reproduce
       placeholder: |
         1. Start at /home.
-        2. Click on View Site.
+        2. Click on 'View Site'.
         3. Click on 'Like' button.
         ...
     validations:
@@ -44,7 +52,10 @@ body:
       label: What actually happened
       placeholder: |
         e.g. Clicking the button does nothing visibly.
-        Attach screenshot(s) or recording(s) by dragging into this field.
+        <br>
+        Please attach screenshot(s) or recording(s) by dragging them into this field.
+        <br>
+        No externally hosted image servies, please.
     validations:
       required: true
   - type: markdown
@@ -60,6 +71,7 @@ body:
   - type: markdown
     attributes:
       value: |
+        <br>
         ---
         <br>
   - type: dropdown
@@ -126,8 +138,9 @@ body:
   - type: markdown
     attributes:
       value: |
-          ----
-          <br>
+        <br>
+        ---
+        <br>
   - type: dropdown
     id: reproducibility
     attributes:
