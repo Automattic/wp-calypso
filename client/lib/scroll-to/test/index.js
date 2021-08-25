@@ -2,15 +2,8 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
 import scrollTo from '../';
 
 describe( 'scroll-to', () => {

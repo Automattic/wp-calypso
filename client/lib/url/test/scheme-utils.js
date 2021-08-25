@@ -2,9 +2,6 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
 import { addSchemeIfMissing, setUrlScheme } from '../scheme-utils';
 
 describe( 'addSchemeIfMissing()', () => {

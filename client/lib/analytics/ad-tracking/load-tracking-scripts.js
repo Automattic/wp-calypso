@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-import { loadScript } from '@automattic/load-script';
-
-/**
- * Internal dependencies
- */
 import { getCurrentUser } from '@automattic/calypso-analytics';
-
+import { loadScript } from '@automattic/load-script';
 import {
 	debug,
 	isFacebookEnabled,

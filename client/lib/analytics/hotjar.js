@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import debug from 'debug';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
-import { mayWeTrackCurrentUserGdpr, isPiiUrl } from './utils';
 import { getDoNotTrack } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
+import debug from 'debug';
 import { isE2ETest } from 'calypso/lib/e2e';
+import { mayWeTrackCurrentUserGdpr, isPiiUrl } from './utils';
 
 const hotjarDebug = debug( 'calypso:analytics:hotjar' );
 

@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-import { useDispatch } from 'react-redux';
 import React, {
 	FunctionComponent,
 	ChangeEventHandler,
@@ -9,10 +5,7 @@ import React, {
 	useEffect,
 	useState,
 } from 'react';
-
-/**
- * Internal dependencies
- */
+import { useDispatch } from 'react-redux';
 import { savePreference } from 'calypso/state/preferences/actions';
 
 interface Props {

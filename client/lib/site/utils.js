@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
+import { planHasFeature } from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
 import { get } from 'lodash';
 import { withoutHttp } from 'calypso/lib/url';
-
-/**
- * Internal dependencies
- */
-import { planHasFeature } from '@automattic/calypso-products';
 
 export function userCan( capability, site ) {
 	return site && site.capabilities && site.capabilities[ capability ];

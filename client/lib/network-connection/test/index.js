@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
 import { expect } from 'chai';
 import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
-import config from '@automattic/calypso-config';
 import NetworkConnectionApp from 'calypso/lib/network-connection';
 
 describe( 'index', () => {

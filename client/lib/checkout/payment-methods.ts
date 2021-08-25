@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-
-/**
- * Image assets
- */
 import creditCardAmexImage from 'calypso/assets/images/upgrades/cc-amex.svg';
 import creditCardDinersImage from 'calypso/assets/images/upgrades/cc-diners.svg';
 import creditCardDiscoverImage from 'calypso/assets/images/upgrades/cc-discover.svg';

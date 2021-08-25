@@ -1,9 +1,6 @@
 /**
  */
 
-/**
- * Internal dependencies
- */
 import decodeEntities from '../node';
 
 describe( 'decodeEntities', () => {

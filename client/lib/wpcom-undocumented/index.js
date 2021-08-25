@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import wpcomFactory from 'wpcom';
-import inherits from 'inherits';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import inherits from 'inherits';
+import wpcomFactory from 'wpcom';
 import Undocumented from './lib/undocumented';
 
 const debug = debugFactory( 'calypso:wpcom-undocumented' );

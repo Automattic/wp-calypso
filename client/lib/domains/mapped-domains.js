@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { type as domainTypes } from './constants';
 
 export function isMappedDomain( domain ) {

@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import { get } from 'lodash';
 import formatCurrency from '@automattic/format-currency';
+import { get } from 'lodash';
 
 export function getDomainTransferSalePrice( slug, productsList, currencyCode ) {
 	const saleCost = get( productsList, [ slug, 'sale_cost' ], null );

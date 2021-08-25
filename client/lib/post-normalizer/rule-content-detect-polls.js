@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-
-import { forEach } from 'lodash';
 import i18n from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
+import { forEach } from 'lodash';
 import { domForHtml } from './utils';
 
 const pollLinkSelectors = [

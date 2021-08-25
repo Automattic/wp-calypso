@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import KeyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
 
 describe( 'KeyboardShortcuts', () => {

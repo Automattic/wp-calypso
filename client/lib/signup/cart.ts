@@ -1,20 +1,14 @@
-/**
- * External dependencies
- */
-import type { ResponseCart, RequestCart, RequestCartProduct } from '@automattic/shopping-cart';
 import {
 	getEmptyResponseCart,
 	convertResponseCartToRequestCart,
 	createRequestCartProduct,
 } from '@automattic/shopping-cart';
-
-/**
- * Internal dependencies
- */
-import wpcom from 'calypso/lib/wp';
-import productsListFactory from 'calypso/lib/products-list';
-const productsList = productsListFactory();
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+import productsListFactory from 'calypso/lib/products-list';
+import wpcom from 'calypso/lib/wp';
+import type { ResponseCart, RequestCart, RequestCartProduct } from '@automattic/shopping-cart';
+
+const productsList = productsListFactory();
 
 function addProductsToCart( cart: ResponseCart, newCartItems: RequestCartProduct[] ): RequestCart {
 	const productsData = productsList.get();

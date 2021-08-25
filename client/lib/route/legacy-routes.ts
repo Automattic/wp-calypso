@@ -3,15 +3,8 @@
  * to reload the page.
  */
 
-/**
- * External dependencies
- */
-import { URL as URLString } from 'calypso/types';
-
-/**
- * Internal dependencies
- */
 import { isEnabled } from '@automattic/calypso-config';
+import { URL as URLString } from 'calypso/types';
 
 interface LegacyRoute {
 	match: RegExp;

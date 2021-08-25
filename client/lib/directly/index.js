@@ -6,20 +6,10 @@
  * @see https:
  */
 
-/**
- * External dependencies
- */
 import config from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
 import { loadScript } from '@automattic/load-script';
 import wpcom from 'calypso/lib/wp';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const DIRECTLY_RTM_SCRIPT_URL = 'https://widgets.wp.com/directly/embed.js';

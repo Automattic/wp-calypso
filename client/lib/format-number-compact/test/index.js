@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import formatNumberCompact, { formatNumberMetric } from 'calypso/lib/format-number-compact';
 
 describe( 'formatNumberCompact', () => {

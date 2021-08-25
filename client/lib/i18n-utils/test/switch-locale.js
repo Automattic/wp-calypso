@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { startsWith } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	getLanguageFilePathUrl,
 	getLanguageFileUrl,

@@ -1,13 +1,10 @@
-/**
- * Internal dependencies
- */
-import { createCart, addToCart } from '../cart';
-import wp from 'calypso/lib/wp';
 import {
 	getEmptyResponseCart,
 	convertResponseCartToRequestCart,
 	createRequestCartProduct,
 } from '@automattic/shopping-cart';
+import wp from 'calypso/lib/wp';
+import { createCart, addToCart } from '../cart';
 
 jest.mock( 'calypso/lib/wp' );
 

@@ -2,11 +2,8 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
-import humanDate from '..';
 import moment from 'moment';
+import humanDate from '..';
 
 describe( 'humanDate', () => {
 	it( 'should work without a provided format or locale', () => {

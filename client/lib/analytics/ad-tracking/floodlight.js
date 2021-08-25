@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
+import { getTracksAnonymousUserId, getCurrentUser } from '@automattic/calypso-analytics';
 import cookie from 'cookie';
 import { v4 as uuid } from 'uuid';
-
-/**
- * Internal dependencies
- */
 import { isAdTrackingAllowed } from 'calypso/lib/analytics/utils';
-
-import { getTracksAnonymousUserId, getCurrentUser } from '@automattic/calypso-analytics';
 import {
 	debug,
 	isFloodlightEnabled,

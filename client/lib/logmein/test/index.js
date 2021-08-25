@@ -3,14 +3,8 @@
  */
 import '@testing-library/jest-dom/extend-expect';
 
-/**
- * External Dependencies
- */
+import config from '@automattic/calypso-config';
 import { createStore } from 'redux';
-
-/**
- * Internal Dependencies
- */
 import {
 	logmeinUrl,
 	attachLogmein,
@@ -18,7 +12,6 @@ import {
 	logmeinOnRightClick,
 	setLogmeinReduxStore,
 } from '../';
-import config from '@automattic/calypso-config';
 
 jest.mock( '@automattic/calypso-config', () => {
 	const fn = () => '';

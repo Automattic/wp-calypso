@@ -1,12 +1,9 @@
 // Here be dragons...
 /* eslint-disable react/no-danger */
 
-/**
- * External dependencies
- */
+import { flatMap, map } from 'lodash';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { flatMap, map } from 'lodash';
 
 /**
  * Constants

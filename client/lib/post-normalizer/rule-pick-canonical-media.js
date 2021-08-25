@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { find, get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { isUrlLikelyAnImage } from './utils';
 import safeImageUrl from 'calypso/lib/safe-image-url';
+import { isUrlLikelyAnImage } from './utils';
 
 /** Returns true if an image is large enough to be a featured asset
  *

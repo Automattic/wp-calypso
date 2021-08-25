@@ -3,13 +3,10 @@
  *
  */
 
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
+import { stringify } from 'qs';
 
 const debug = debugFactory( 'jsonp' );
-import { stringify } from 'qs';
 
 /**
  * Module exports.
@@ -32,6 +29,7 @@ function noop() {}
  * @param {string} url
  * @param {object} query params
  * @param {Function} optional callback
+ * @param fn
  */
 function jsonp( url, query, fn ) {
 	const prefix = '__jp';

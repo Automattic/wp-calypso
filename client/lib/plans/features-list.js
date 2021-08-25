@@ -1,12 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import {
 	FEATURE_13GB_STORAGE,
 	FEATURE_200GB_STORAGE,
@@ -139,9 +130,11 @@ import {
 	FEATURE_WP_SUBDOMAIN_SIGNUP,
 	PREMIUM_DESIGN_FOR_STORES,
 } from '@automattic/calypso-products';
-import MaterialIcon from 'calypso/components/material-icon';
+import i18n from 'i18n-calypso';
+import React from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
+import MaterialIcon from 'calypso/components/material-icon';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'calypso/lib/url/support';
 
 export const FEATURES_LIST = {

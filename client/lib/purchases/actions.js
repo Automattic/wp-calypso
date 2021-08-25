@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import wpcom from 'calypso/lib/wp';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { reduxDispatch } from 'calypso/lib/redux-bridge';
 
 const debug = debugFactory( 'calypso:purchases:actions' );
 

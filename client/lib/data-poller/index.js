@@ -1,15 +1,7 @@
-/**
- * External dependencies
- */
-
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:poller' );
-
-/**
- * Internal dependencies
- */
 import Poller from './poller';
 
+const debug = debugFactory( 'calypso:poller' );
 const _pollers = {};
 
 function add( dataStore, fetcher, options ) {

@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import searchUrl from '..';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import searchUrl from '..';
 
 const SEARCH_KEYWORD = 'giraffe';
 

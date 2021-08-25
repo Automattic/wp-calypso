@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import debugModule from 'debug';
-
-/**
- * Internal dependencies
- */
-import { recordAliasInFloodlight } from 'calypso/lib/analytics/ad-tracking';
 import {
 	identifyUser as baseIdentifyUser,
 	getTracksAnonymousUserId,
 	getCurrentUser,
 } from '@automattic/calypso-analytics';
+import debugModule from 'debug';
+import { recordAliasInFloodlight } from 'calypso/lib/analytics/ad-tracking';
 
 /**
  * Module variables

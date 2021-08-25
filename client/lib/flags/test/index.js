@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { flagUrl } from '..';
 
 describe( 'flagUrl', () => {

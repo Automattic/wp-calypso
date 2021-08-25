@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { Moment } from 'moment';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { applySiteOffset } from 'calypso/lib/site/timezone';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';

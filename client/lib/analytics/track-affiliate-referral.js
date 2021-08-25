@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { pick } from 'lodash';
 import debug from 'debug';
-
-/**
- * Internal dependencies
- */
+import { pick } from 'lodash';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 const referDebug = debug( 'calypso:analytics:refer' );

@@ -4,17 +4,11 @@
  * This triggers a remote-login redirect flow that sets authentication cookies on the
  * mapped domain enabling the nav bar and other features.
  */
-/**
- * External Dependencies
- */
-import { Store } from 'redux';
 
-/**
- * Internal Dependencies
- */
-import getSitesItems from 'calypso/state/selectors/get-sites-items';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { isEnabled } from '@automattic/calypso-config';
+import { Store } from 'redux';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import getSitesItems from 'calypso/state/selectors/get-sites-items';
 
 // Used as placeholder / default domain to detect when we're looking at a relative url,
 // Note: also prevents exceptions from being raised
