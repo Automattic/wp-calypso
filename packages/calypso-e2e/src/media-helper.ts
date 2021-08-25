@@ -1,7 +1,7 @@
 import path from 'path';
 import config from 'config';
 import fs from 'fs-extra';
-import { getTimestamp } from './data-helper';
+import { getTimestamp, getRandomInteger } from './data-helper';
 
 const artifacts: { [ key: string ]: string } = config.get( 'artifacts' );
 
@@ -66,7 +66,8 @@ export function createTestFile( {
 	sourceFileName: string;
 	testFileName?: string;
 } ): string {
-	let fileName = getTimestamp();
+	let fileName = `${ getTimestamp() }${ getRandomInteger( 100, 999 ) }`;
+	console.log( fileName );
 	// If the output `testFileName` is defined, use that as part of the final filename.
 	if ( testFileName ) {
 		fileName += `-${ testFileName }`;
