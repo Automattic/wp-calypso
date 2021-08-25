@@ -173,7 +173,7 @@ function DeleteIcon( { uniqueID, product }: { uniqueID: string; product: string 
 	return <img id={ uniqueID } alt={ text } src={ deleteIcon } />;
 }
 
-export function WPNonProductLineItem( {
+function WPNonProductLineItem( {
 	lineItem,
 	coupon,
 	className = null,
