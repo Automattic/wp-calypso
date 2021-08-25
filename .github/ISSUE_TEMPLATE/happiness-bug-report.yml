@@ -7,7 +7,7 @@ body:
       value: |
         ### Thanks for contributing to calypso! Pick a clear title and proceed.
 
-        &nbsp;
+        <br>
   - type: textarea
     id: summary
     attributes:
@@ -26,7 +26,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        &nbsp;
+        <br>
  - type: textarea
     id: expected
     attributes:
@@ -38,7 +38,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        &nbsp;
+        <br>
   - type: textarea
     id: actual
     attributes:
@@ -52,7 +52,7 @@ body:
    - type: markdown
     attributes:
       value: |
-        &nbsp;
+        <br>
  - type: textarea
     id: issue_context
     attributes:
@@ -63,7 +63,7 @@ body:
     attributes:
       value: |
         ---
-        &nbsp;
+        <br>
  - type: dropdown
     id: os
     attributes:
@@ -79,7 +79,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        &nbsp;
+        <br>
   - type: dropdown
     id: browser
     attributes:
@@ -95,7 +95,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        &nbsp;
+        <br>
   - type: dropdown
     id: site-type
     attributes:
@@ -108,7 +108,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        &nbsp;
+        <br>
   - type: input
     id: theme
     attributes:
@@ -118,7 +118,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        &nbsp;
+        <br>
   - type: textarea
     id: other_notes
     attributes:
@@ -129,7 +129,7 @@ body:
     attributes:
       value: |
           ----
-          &nbsp;
+          <br>
   - type: dropdown
     id: reproducibility
     attributes:
@@ -141,7 +141,7 @@ body:
   - type: markdown
     attributes:
       value: |
-          &nbsp;
+          <br>
   - type: dropdown
     id: users-affected
     attributes:
@@ -155,7 +155,7 @@ body:
   - type: markdown
     attributes:
       value: |
-          &nbsp;
+          <br>
   - type: textarea
     id: workarounds
     attributes:
