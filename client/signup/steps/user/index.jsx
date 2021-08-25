@@ -477,8 +477,14 @@ export class UserStep extends Component {
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
 				headerText={ this.props.translate( 'Signup' ) }
+				subHeaderText={ this.props.translate(
+					"First, let's create your account. We recommend you use the {{strong}}same email address you use at work.{{/strong}}",
+					{
+						components: { strong: <strong /> },
+					}
+				) }
 			>
-				<div>Insert P2 Signup Form Here</div>
+				{ this.renderSignupForm() }
 			</P2StepWrapper>
 		);
 	}

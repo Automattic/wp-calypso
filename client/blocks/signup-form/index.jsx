@@ -49,6 +49,7 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import CrowdsignalSignupForm from './crowdsignal';
+import P2SignupForm from './p2';
 import SocialSignupForm from './social';
 
 import './style.scss';
@@ -960,6 +961,24 @@ class SignupForm extends Component {
 			);
 		}
 
+		if ( this.props.isP2Flow ) {
+			const socialProps = pick( this.props, [
+				'isSocialSignupEnabled',
+				'handleSocialResponse',
+				'socialService',
+				'socialServiceResponse',
+			] );
+
+			return (
+				<P2SignupForm
+					formFields={ this.formFields() }
+					formFooter={ this.formFooter() }
+					handleSubmit={ this.handleSubmit }
+					{ ...socialProps }
+				/>
+			);
+		}
+
 		return (
 			<div
 				className={ classNames( 'signup-form', this.props.className, {
@@ -1011,7 +1030,7 @@ function TrackRender( { children, eventName } ) {
 }
 
 export default connect(
-	( state ) => ( {
+	( state, props ) => ( {
 		oauth2Client: getCurrentOAuth2Client( state ),
 		sectionName: getSectionName( state ),
 		isJetpackWooCommerceFlow:
@@ -1019,6 +1038,7 @@ export default connect(
 		isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 		from: get( getCurrentQueryArguments( state ), 'from' ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
+		isP2Flow: props.flowName === 'p2' || get( getCurrentQueryArguments( state ), 'from' ) === 'p2',
 	} ),
 	{
 		trackLoginMidFlow: () => recordTracksEventWithClientId( 'calypso_signup_login_midflow' ),
