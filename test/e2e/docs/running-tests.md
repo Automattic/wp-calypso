@@ -136,13 +136,13 @@ The steps to run calypso e2e tests developed for Playwright are very similar to 
 
 ### All tests
 
-Specify a directory to `mocha`:
+Specify a directory to `jest`:
 
 <details>
-<summary>Example (mocha)</summary>
+<summary>Example (jest)</summary>
 
 ```
-mocha --config .mocharc_playwright.yml specs/specs-playwright
+yarn jest specs/specs-playwright
 ```
 
 </details>
@@ -158,17 +158,17 @@ yarn magellan --config=magellan-playwright.json
 
 ### Individual spec file(s)
 
-Specify the file(s) directly to `mocha`:
+Specify the file(s) directly to `jest`:
 
 ```
-mocha --config .mocharc_playwright.yml specs/specs-playwright/<spec_file>
+yarn jest specs/specs-playwright/<spec_file>
 ```
 
 <details>
-<summary>Example (mocha)</summary>
+<summary>Example (jest)</summary>
 
 ```
-mocha --config .mocharc_playwright.yml specs/specs-playwright/wp-log-in-out-spec.js
+yarn jest specs/specs-playwright/wp-likes__post-spec.js
 ```
 
 </details>
