@@ -15,18 +15,21 @@ import { Page } from 'playwright';
 describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), () => {
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let page: Page;
-
-	const testFiles = {
-		image: MediaHelper.createTestImage(),
-		image_reserved_name: MediaHelper.createTestFile( {
-			sourceFileName: 'image0.jpg',
-			testFileName: 'filewith#?#?reservedurlchars',
-		} ),
-		audio: MediaHelper.createTestAudio(),
-	};
+	let testFiles: { image: string; image_reserved_name: string; audio: string };
 
 	setupHooks( ( args ) => {
 		page = args.page;
+	} );
+
+	beforeAll( async () => {
+		testFiles = {
+			image: await MediaHelper.createTestImage(),
+			image_reserved_name: await MediaHelper.createTestFile( {
+				sourceFileName: 'image0.jpg',
+				testFileName: 'filewith#?#?reservedurlchars',
+			} ),
+			audio: await MediaHelper.createTestAudio(),
+		};
 	} );
 
 	it( 'Log in', async function () {
@@ -72,20 +75,22 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), () => {
 		await gutenbergEditorPage.publish( { visit: true } );
 	} );
 
-	// Pass in a 1D array of values or text strings to validate each block.
-	// The full filename (name.extension) is not used within the Image block, but the file name is.
-	// `path.parse` is called to trim the extension.
-	it.each`
-		block           | content
-		${ ImageBlock } | ${ [ path.parse( testFiles.image ).name ] }
-		${ ImageBlock } | ${ [ path.parse( testFiles.image_reserved_name ).name.replace( /[^a-zA-Z ]/g, '' ) ] }
-		${ AudioBlock } | ${ [ path.parse( testFiles.audio ).base ] }
-		${ FileBlock }  | ${ [ path.parse( testFiles.audio ).name ] }
-	`(
-		`Confirm $block.blockName block is visible in published post`,
-		async ( { block, content } ) => {
-			// Pass the Block object class here then call the static method to validate.
-			await block.validatePublishedContent( page, content );
-		}
-	);
+	it( `Confirm Image block is visible in published post`, async () => {
+		await ImageBlock.validatePublishedContent( page, path.parse( testFiles.image ).name );
+	} );
+
+	it( `Confirm Image block is visible in published post (reserved name)`, async () => {
+		await ImageBlock.validatePublishedContent(
+			page,
+			path.parse( testFiles.image_reserved_name ).name.replace( /[^a-zA-Z ]/g, '' )
+		);
+	} );
+
+	it( `Confirm Audio block is visible in published post`, async () => {
+		await ImageBlock.validatePublishedContent( page, path.parse( testFiles.audio ).base );
+	} );
+
+	it( `Confirm File block is visible in published post`, async () => {
+		await ImageBlock.validatePublishedContent( page, path.parse( testFiles.audio ).name );
+	} );
 } );

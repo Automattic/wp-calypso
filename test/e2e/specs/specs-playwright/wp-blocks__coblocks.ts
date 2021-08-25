@@ -18,16 +18,20 @@ describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), () => {
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let pricingTableBlock: PricingTableBlock;
 	let page: Page;
+	let logoImage: string;
 
 	// Test data
 	const pricingTableBlockPrice = 888;
 	const heroBlockHeading = 'Hero heading';
 	const clicktoTweetBlockTweet =
 		'The foolish man seeks happiness in the distance. The wise grows it under his feet. — James Oppenheim';
-	const logoImage = MediaHelper.createTestImage();
 
 	setupHooks( ( args ) => {
 		page = args.page;
+	} );
+
+	beforeAll( async () => {
+		logoImage = await MediaHelper.createTestImage();
 	} );
 
 	it( 'Log in', async function () {
@@ -87,7 +91,6 @@ describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), () => {
 		${ DynamicHRBlock }    | ${ null }
 		${ HeroBlock }         | ${ [ heroBlockHeading ] }
 		${ ClicktoTweetBlock } | ${ [ clicktoTweetBlockTweet ] }
-		${ LogosBlock }        | ${ [ path.parse( logoImage ).name ] }
 	`(
 		`Confirm $block.blockName block is visible in published post`,
 		async ( { block, content } ) => {
@@ -95,4 +98,8 @@ describe( DataHelper.createSuiteTitle( 'Blocks: CoBlocks' ), () => {
 			await block.validatePublishedContent( page, content );
 		}
 	);
+
+	it( `Confirm Logso block is visible in published post`, async () => {
+		await LogosBlock.validatePublishedContent( page, path.parse( logoImage ).name );
+	} );
 } );
