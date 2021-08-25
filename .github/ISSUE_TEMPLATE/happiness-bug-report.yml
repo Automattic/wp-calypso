@@ -8,10 +8,14 @@ body:
         ### Thanks for contributing your report! 
         
         Please write a clear title, then fill in the fields fields below and submit.
+        
         There are only **3 required fields**, but please provide as much additional information and context as you are able to.
         
         You can attach screenshot(s) or recording(s) in any large text field below. Click to activate it then drag you file(s) into them. for better privacy and security, please avoid image hosting servies to link to media.
         <br>
+        
+        ---
+        
         <br>
   - type: textarea
     id: summary
