@@ -87,10 +87,10 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), () => {
 	} );
 
 	it( `Confirm Audio block is visible in published post`, async () => {
-		await ImageBlock.validatePublishedContent( page, path.parse( testFiles.audio ).base );
+		await AudioBlock.validatePublishedContent( page );
 	} );
 
 	it( `Confirm File block is visible in published post`, async () => {
-		await ImageBlock.validatePublishedContent( page, path.parse( testFiles.audio ).name );
+		await FileBlock.validatePublishedContent( page, path.parse( testFiles.audio ).name );
 	} );
 } );
