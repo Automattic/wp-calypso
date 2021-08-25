@@ -6,14 +6,12 @@ body:
     attributes:
       value: |
         ### Thanks for contributing to calypso! Pick a clear title and proceed.
-        
+
         &nbsp;
-        
   - type: textarea
     id: summary
     attributes:
         label: Quick summary
-
   - type: textarea
     id: steps
     attributes:
@@ -23,83 +21,49 @@ body:
         2. Click on View Site.
         3. Click on 'Like' button.
         ...
-
     validations:
       required: true
-
   - type: markdown
     attributes:
       value: |
-        
         &nbsp;
-        
  - type: textarea
     id: expected
     attributes:
       label: What I expected to happen
       placeholder: |
-        e.g. Post should be liked.
+        eg. Post should be liked.
     validations:
       required: true
- 
   - type: markdown
     attributes:
       value: |
-        
         &nbsp;
-        
- - type: textarea
+  - type: textarea
     id: actual
     attributes:
       label: What actually happened
       placeholder: |
-        eg. Clicking the button does nothing visibly.
+        e.g. Clicking the button does nothing visibly.
 
         Attach screenshot(s) or recording(s) by dragging into this field.
     validations:
       required: true
-
-  - type: markdown
+   - type: markdown
     attributes:
       value: |
-        
         &nbsp;
-        
-  - type: textarea
+ - type: textarea
     id: issue_context
     attributes:
       label: Context
       placeholder: |
-        eg. Customer report, exploratory testing...
-
-  - type: markdown
-    attributes:
-      value: |
-        
-        &nbsp;
-        
+        e.g. Customer report, exploratory testing...
   - type: markdown
     attributes:
       value: |
         ---
-
-  - type: markdown
-    attributes:
-      value: |
-        
         &nbsp;
-
-   - type: markdown
-    attributes:
-      value: |
-        ### Screenshots
-        
-        &nbsp;
-
-        Please complete submit this form then upload your screenshots as a reply.
-        
-        &nbsp;
-        
  - type: dropdown
     id: os
     attributes:
@@ -112,61 +76,49 @@ body:
         - Android
         - iOS
       multiple: true
-
   - type: markdown
     attributes:
       value: |
-        
         &nbsp;
-        
   - type: dropdown
     id: browser
     attributes:
       label: Browser
       description: Multiple selection is supported.
       options:
-        - Chrome/Chromium
-        - Firefox
+        - Google Chrome/Chromium
+        - Mozilla Firefox
         - Microsoft Edge
         - Microsoft Edge (legacy)
-        - Safari
+        - Apple Safari
       multiple: true
-
   - type: markdown
     attributes:
       value: |
-        
         &nbsp;
-        
   - type: dropdown
     id: site-type
     attributes:
-      label: Simple or Atomic
+      label: Simple, Atomic, or both?
       description: Multiple selection is supported.
       options:
         - Simple
         - Atomic
       multiple: true
-  - type: input
-
   - type: markdown
     attributes:
       value: |
-        
         &nbsp;
-        
+  - type: input
     id: theme
     attributes:
       label: Theme-specific issue?
       placeholder: |
         If yes - what is the theme name?
-
   - type: markdown
     attributes:
       value: |
-        
         &nbsp;
-        
   - type: textarea
     id: other_notes
     attributes:
@@ -174,26 +126,11 @@ body:
       placeholder: |
         Logs, console errors, notes, observations, etc.
   - type: markdown
-
-  - type: markdown
     attributes:
       value: |
-        
-        &nbsp;
-        
-  - type: markdown
-    attributes:
-      value: |
-        ---
-
-  - type: markdown
-    attributes:
-      value: |
-        
-        &nbsp;
-
+          ----
+          &nbsp;
   - type: dropdown
-
     id: reproducibility
     attributes:
       label: Reproducibility
@@ -201,22 +138,28 @@ body:
         - Consistent
         - Intermittent
         - Once
+  - type: markdown
+    attributes:
+      value: |
+          &nbsp;
   - type: dropdown
-
-    id: users-affected 
+    id: users-affected
     attributes:
       label: Number of users impacted
       description: How many users do you think might encounter this bug? Best guesses are fine!
       options:
         - One user
-        - Some users (<50%)
-        - Most users (>50%)
+        - Some users - < 50%
+        - Most users - > 50%
         - All users
-
+  - type: markdown
+    attributes:
+      value: |
+          &nbsp;
   - type: textarea
     id: workarounds
     attributes:
-      label: Any available workarounds?
-      description: Are there any workarounds to this bug? How difficult are those workarounds to implement?
+      label: Available workarounds
+      description: Are there any workarounds to this bug? How difficult are they to implement?
       placeholder: |
-        e.g. There is alternative access to this setting in the sidebar, but it's not readily apparent.
+        e.g. There is alternative way to access to this setting in the sidebar, but it's not readily apparent.
