@@ -76,11 +76,11 @@ export const getContextLinks = () => ( {
 		post_id: 111349,
 	},
 	billing: {
-		link: localizeUrl( 'https://wordpress.com/support/billing-history/' ),
+		link: 'https://wordpress.com/support/billing-history/',
 		post_id: 40792,
 	},
 	payment_methods: {
-		link: localizeUrl( 'https://wordpress.com/support/payment/' ),
+		link: 'https://wordpress.com/support/payment/',
 		post_id: 76237,
 	},
 } );
