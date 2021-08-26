@@ -5,9 +5,9 @@ on: [push]
 jobs:
   build:
     name: Build ICFY stats
-
     runs-on: ubuntu-latest
-
+    env:
+      NODE_OPTIONS: --max-old-space-size=4096
     steps:
       - name: Set up Node
         uses: actions/setup-node@v1
