@@ -11,4 +11,9 @@
 		height: 2px;
 		margin: 0 auto 8px;
 	}
+
+	.is-p2.invite-accept &::before,
+	.is-p2-signup .signup__step.is-user &::before {
+		display: none;
+	}
 }

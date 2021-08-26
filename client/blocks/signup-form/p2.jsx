@@ -22,12 +22,14 @@ class P2SignupForm extends Component {
 					</LoggedOutForm>
 				) }
 
+				{ this.state.showEmailSignupForm && (
+					<div class="signup-form__p2-social-signup-separator">
+						{ this.props.translate( 'or', { context: 'alternative' } ) }
+					</div>
+				) }
+
 				{ ! this.state.showEmailSignupForm && (
-					<Button
-						primary
-						className="signup-form__p2-show-email-signup-button"
-						onClick={ this.showEmailSignupForm }
-					>
+					<Button primary onClick={ this.showEmailSignupForm }>
 						<span>{ this.props.translate( 'Continue with email' ) }</span>
 					</Button>
 				) }

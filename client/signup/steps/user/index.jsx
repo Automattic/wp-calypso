@@ -411,7 +411,11 @@ export class UserStep extends Component {
 	}
 
 	submitButtonText() {
-		const { translate } = this.props;
+		const { translate, flowName } = this.props;
+
+		if ( flowName === 'p2' ) {
+			return translate( 'Continue' );
+		}
 
 		if ( this.userCreationPending() ) {
 			return translate( 'Creating Your Account…' );

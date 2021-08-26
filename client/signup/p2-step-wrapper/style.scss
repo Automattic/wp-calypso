@@ -1,4 +1,4 @@
-@import url( 'https://fonts.googleapis.com/css2?family=Inter:wght@400;900&display=swap' );
+@import url( 'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap' );
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
@@ -118,6 +118,8 @@
 
 .signup__step.is-user .p2-step-wrapper {
 	padding-top: 120px;
+	height: 100%;
+	letter-spacing: -0.01em;
 
 	@include break-mobile {
 		padding: 120px 20px 0;
@@ -138,6 +140,8 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+		max-width: 360px;
+		margin: 24px auto 0;
 	}
 
 	.p2-step-wrapper__header-text {
@@ -151,7 +155,7 @@
 	}
 
 	button {
-		max-width: 320px;
+		max-width: 380px;
 		&.social-buttons__button {
 			box-shadow: none;
 			margin-bottom: 12px;
@@ -160,6 +164,7 @@
 
 	.signup-form__social {
 		width: 100%;
+		padding: 16px 0 0;
 	}
 
 	.signup-form__social-buttons {
@@ -174,5 +179,40 @@
 
 	.navigation-link.back {
 		display: none;
+	}
+}
+
+.signup-form__p2-social-signup-separator {
+	overflow: hidden;
+	text-align: center;
+	width: 100%;
+	max-width: 400px;
+	color: var( --p2-color-border );
+	font-size: var( --p2-font-size-form-xs );
+	margin-bottom: 10px;
+
+	&::before,
+	&::after {
+		background-color: var( --p2-color-border );
+		content: '';
+		display: inline-block;
+		height: 1px;
+		position: relative;
+		vertical-align: middle;
+		width: 50%;
+	}
+
+	&::before {
+		right: 0.5em;
+		margin-left: -50%;
+	}
+
+	&::after {
+		left: 0.5em;
+		margin-right: -50%;
+	}
+
+	.p2-step-wrapper__footer {
+		margin-bottom: 24px;
 	}
 }
