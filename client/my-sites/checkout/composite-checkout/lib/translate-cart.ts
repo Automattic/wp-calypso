@@ -8,6 +8,7 @@ import {
 	getTotalLineItemFromCart,
 	tryToGuessPostalCodeFormat,
 	isValueTruthy,
+	getLabel,
 } from '@automattic/wpcom-checkout';
 import {
 	readWPCOMPaymentMethodClass,
@@ -25,7 +26,6 @@ import type {
 	WPCOMTransactionEndpointRequestPayload,
 	TransactionRequest,
 	WPCOMCart,
-	getLabel,
 } from '@automattic/wpcom-checkout';
 
 /**
