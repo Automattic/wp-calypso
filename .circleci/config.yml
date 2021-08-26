@@ -113,7 +113,7 @@ references:
     command: |
       source "$HOME/.nvm/nvm.sh"
       nvm use
-      npm install -g yarn
+      npm install -g yarn@1.22.10
       yarn
       yarn run build-desktop:install-app-deps
   desktop-cache-paths: &desktop-cache-paths
@@ -453,7 +453,7 @@ jobs:
             nvm use $NODE_VERSION
       - run:
           name: Install Yarn
-          command: npm install -g yarn
+          command: npm install -g yarn@1.22.10
       - run:
           name: Install Make
           command: cinst make
