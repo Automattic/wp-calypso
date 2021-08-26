@@ -6,13 +6,13 @@
 		margin-bottom: 0;
 	}
 
-	.titan-new-mailbox-list__actions,
-	.titan-new-mailbox-list__supplied-actions {
+	.titan-new-mailbox-list__actions {
 		display: flex;
 		flex-direction: column-reverse;
 
 		@include break-mobile {
 			flex-direction: row;
+			justify-content: space-between;
 		}
 
 		> button:not( :last-child ) {
@@ -25,9 +25,21 @@
 		}
 	}
 
-	.titan-new-mailbox-list__actions {
+	.titan-new-mailbox-list__supplied-actions {
+		display: flex;
+		flex-direction: column;
+
 		@include break-mobile {
-			justify-content: space-between;
+			flex-direction: row;
+		}
+
+		> button:not( :first-child ) {
+			margin-top: 1em;
+
+			@include break-mobile {
+				margin-top: 0;
+				margin-left: 1.5em;
+			}
 		}
 	}
 }
