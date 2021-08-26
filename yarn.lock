@@ -627,6 +627,39 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/newspack-blocks@npm:~1.33.0":
+  version: 1.33.1
+  resolution: "@automattic/newspack-blocks@npm:1.33.1"
+  dependencies:
+    "@stripe/stripe-js": ^1.15.0
+    "@wordpress/a11y": ^2.9.0
+    "@wordpress/compose": ^3.9.0
+    "@wordpress/data": ^4.11.0
+    "@wordpress/date": ^3.7.0
+    "@wordpress/dom-ready": ^2.9.0
+    "@wordpress/edit-post": ^3.13.0
+    "@wordpress/escape-html": ^1.8.0
+    "@wordpress/hooks": ^2.6.0
+    "@wordpress/html-entities": ^2.5.0
+    "@wordpress/i18n": ^3.7.0
+    "@wordpress/icons": ^4.0.1
+    "@wordpress/keycodes": ^2.9.0
+    "@wordpress/plugins": ^2.12.0
+    fsevents: ^1.2.11
+    lodash: ^4.17.20
+    newspack-components: ^1.6.1
+    react: ^16.12.0
+    redux: ^4.0.5
+    redux-saga: ^1.1.3
+    regenerator-runtime: ^0.13.7
+    swiper: 4.5.1
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  checksum: fe94444fe576d580275d46a9aa7e05f2b907981c3fc64206fcf5e995925063380a7bd28451c0de1edb5c56c958a81727d2d35f514d3dd1ce4a4ebb91b0368aa2
+  languageName: node
+  linkType: hard
+
 "@automattic/notifications@^1.0.0, @automattic/notifications@workspace:apps/notifications":
   version: 0.0.0-use.local
   resolution: "@automattic/notifications@workspace:apps/notifications"
@@ -1117,6 +1150,7 @@ __metadata:
     "@automattic/format-currency": ^1.0.0-alpha.0
     "@automattic/i18n-utils": ^1.0.0
     "@automattic/launch": ^1.0.0
+    "@automattic/newspack-blocks": ~1.33.0
     "@automattic/onboarding": ^1.0.0
     "@automattic/page-pattern-modal": ^1.0.0-alpha.0
     "@automattic/plans-grid": ^1.0.0-alpha.0
@@ -1168,7 +1202,6 @@ __metadata:
     jest: ^27.0.6
     lodash: ^4.17.21
     moment: ^2.26.0
-    newspack-blocks: "github:Automattic/newspack-blocks#v1.33.0"
     npm-run-all: ^4.1.5
     postcss: ^8.2.6
     puppeteer: ^3.0.4
@@ -27436,39 +27469,6 @@ fsevents@~2.1.2:
   version: 0.2.1
   resolution: "new-github-issue-url@npm:0.2.1"
   checksum: 64dcfa7a181c8ac2a33f2329c7167289c4fa9b75e1f47f635f63b99d3f442cbb02f67db9fc56a17774a2a91fa94546889baf54799cb701bd5031377d6793c406
-  languageName: node
-  linkType: hard
-
-"newspack-blocks@github:Automattic/newspack-blocks#v1.33.0":
-  version: 1.33.0
-  resolution: "newspack-blocks@https://github.com/Automattic/newspack-blocks.git#commit=a10e45a23d8350b0927cbf9d3196420b5f6b9e2e"
-  dependencies:
-    "@stripe/stripe-js": ^1.15.0
-    "@wordpress/a11y": ^2.9.0
-    "@wordpress/compose": ^3.9.0
-    "@wordpress/data": ^4.11.0
-    "@wordpress/date": ^3.7.0
-    "@wordpress/dom-ready": ^2.9.0
-    "@wordpress/edit-post": ^3.13.0
-    "@wordpress/escape-html": ^1.8.0
-    "@wordpress/hooks": ^2.6.0
-    "@wordpress/html-entities": ^2.5.0
-    "@wordpress/i18n": ^3.7.0
-    "@wordpress/icons": ^4.0.1
-    "@wordpress/keycodes": ^2.9.0
-    "@wordpress/plugins": ^2.12.0
-    fsevents: ^1.2.11
-    lodash: ^4.17.20
-    newspack-components: ^1.6.1
-    react: ^16.12.0
-    redux: ^4.0.5
-    redux-saga: ^1.1.3
-    regenerator-runtime: ^0.13.7
-    swiper: 4.5.1
-  dependenciesMeta:
-    fsevents:
-      optional: true
-  checksum: a8a36309af30eb1f6b69d246022dc930b739596c88440bccfd75a966ce6a895b2106bdc93e8c7795e021ba8508315f0e6be5bf213c9e92069ed3868a812d8693
   languageName: node
   linkType: hard
 
