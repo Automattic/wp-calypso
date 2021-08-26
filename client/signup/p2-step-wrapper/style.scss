@@ -115,3 +115,62 @@
 		border: none;
 	}
 }
+
+.signup__step.is-user {
+	.p2-step-wrapper__header-logo {
+		position: absolute;
+		top: 24px;
+		left: 48px;
+	}
+
+	.p2-step-wrapper {
+		padding-top: 120px;
+
+		@include break-mobile {
+			padding: 120px 20px 0;
+			max-width: 480px;
+		}
+	}
+
+	.step-wrapper__content {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.p2-step-wrapper__header-text {
+		font-size: var( --p2-font-size-form-xl );
+		font-weight: 700;
+		text-align: center;
+	}
+
+	.p2-step-wrapper__subheader-text {
+		text-align: center;
+	}
+
+	.p2-step-wrapper button {
+		max-width: 320px;
+		&.social-buttons__button {
+			box-shadow: none;
+			margin-bottom: 12px;
+		}
+	}
+
+	.signup-form__social {
+		width: 100%;
+	}
+
+	.signup-form__social-buttons {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.signup-form__social-buttons-tos {
+		display: none;
+	}
+
+	.navigation-link.back {
+		display: none;
+	}
+}
