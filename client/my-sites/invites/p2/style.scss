@@ -207,6 +207,12 @@
 		align-items: center;
 		font-size: var( --p2-font-size-form-xs );
 	}
+
+	.signup-form {
+		max-width: 360px;
+		width: 100%;
+		margin: 0 1.5rem 2rem;
+	}
 }
 
 @keyframes p2-spinner {

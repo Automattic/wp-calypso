@@ -22,12 +22,10 @@
 
 	.signup-form__terms-of-service-link {
 		margin-bottom: 1rem;
-	}
 
-	.signup-form {
-		max-width: 360px;
-		width: 100%;
-		margin: 0 1.5rem 2rem;
+		a {
+			border-bottom: none;
+		}
 	}
 
 	.form-label {

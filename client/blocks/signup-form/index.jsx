@@ -858,6 +858,19 @@ class SignupForm extends Component {
 	footerLink() {
 		const { flowName, showRecaptchaToS, translate } = this.props;
 
+		if ( flowName === 'p2' ) {
+			return (
+				<div className="signup-form__p2-footer-link">
+					<div>{ this.props.translate( 'Already have a WordPress.com account?' ) }</div>
+					<LoggedOutFormLinks>
+						<LoggedOutFormLinkItem href={ this.getLoginLink() }>
+							{ this.props.translate( 'Log in instead.' ) }
+						</LoggedOutFormLinkItem>
+					</LoggedOutFormLinks>
+				</div>
+			);
+		}
+
 		return (
 			<>
 				{ ! this.props.isReskinned && (
@@ -975,6 +988,7 @@ class SignupForm extends Component {
 					formFooter={ this.formFooter() }
 					handleSubmit={ this.handleSubmit }
 					{ ...socialProps }
+					footerLink={ this.props.footerLink || this.footerLink() }
 				/>
 			);
 		}

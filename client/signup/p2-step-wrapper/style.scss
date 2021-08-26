@@ -177,6 +177,26 @@
 		display: none;
 	}
 
+	.signup-form__p2-footer-link {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		font-size: var( --p2-font-size-form-xs );
+		color: var( --p2-color-text );
+		margin-top: 24px;
+
+
+	}
+
+	.step-wrapper__content .signup-form__p2-footer-link .logged-out-form__links a.logged-out-form__link-item {
+		color: var( --p2-color-link );
+		text-decoration: underline;
+
+		&:hover {
+			color: var( --p2-color-link-dark );
+		}
+	}
+
 	.navigation-link.back {
 		display: none;
 	}
