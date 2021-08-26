@@ -1,11 +1,14 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { isPlan, isGoogleWorkspaceExtraLicence } from '@automattic/calypso-products';
+import {
+	isPlan,
+	isGoogleWorkspaceExtraLicence,
+	isGSuiteOrGoogleWorkspaceProductSlug,
+} from '@automattic/calypso-products';
 import {
 	getTotalLineItemFromCart,
 	tryToGuessPostalCodeFormat,
 	isValueTruthy,
 } from '@automattic/wpcom-checkout';
-import { isGSuiteOrGoogleWorkspaceProductSlug } from 'calypso/lib/gsuite';
 import {
 	readWPCOMPaymentMethodClass,
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,
