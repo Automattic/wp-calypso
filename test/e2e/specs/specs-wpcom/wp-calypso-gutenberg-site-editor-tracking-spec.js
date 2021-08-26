@@ -994,7 +994,10 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				assert.strictEqual( editEvents.length, 1 );
 				const [ , editEventData ] = editEvents[ 0 ];
 				assert.strictEqual( editEventData.item_type, 'page' );
-				assert.strictEqual( editEventData.item_slug, 'home' );
+				assert(
+					editEventData.item_slug.startsWith( 'home' ),
+					'wpcom_block_editor_nav_sidebar_item_edit content event has expected itemSlug'
+				);
 			} );
 
 			it( 'should track "wpcom_block_editor_nav_sidebar_item_edit" when switching to a category item (type = taxonomy_category)', async function () {
