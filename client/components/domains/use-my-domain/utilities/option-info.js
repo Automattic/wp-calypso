@@ -22,8 +22,8 @@ export const optionInfo = {
 		recommended: true,
 		learnMoreLink: INCOMING_DOMAIN_TRANSFER,
 		benefits: [
-			__( 'Manage everything you need in one place' ),
 			__( "We'll renew your domain for another year" ),
+			__( 'Manage everything you need in one place' ),
 			__( 'Private domain registration and SSL certificate included for free' ),
 		],
 	},
