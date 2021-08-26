@@ -311,6 +311,7 @@ jobs:
           environment:
             CSC_LINK: resource/certificates/mac.p12
             CSC_FOR_PULL_REQUEST: true
+            USE_HARD_LINKS: "false"
           command: |
             set +e
             source $HOME/.nvm/nvm.sh
@@ -389,6 +390,7 @@ jobs:
           name: Build Desktop Linux
           environment:
             CSC_LINK: resource/certificates/win.p12
+            USE_HARD_LINKS: "false"
           command: |
             set +e
             source $HOME/.nvm/nvm.sh
