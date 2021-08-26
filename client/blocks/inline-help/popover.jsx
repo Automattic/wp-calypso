@@ -14,6 +14,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resetInlineHelpContactForm } from 'calypso/state/inline-help/actions';
 import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
 import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
+import { withInlineHelpSearchQuery } from './data/use-inline-help-search-query';
 import InlineHelpRichResult from './inline-help-rich-result';
 import InlineHelpSearchCard from './inline-help-search-card';
 import InlineHelpSearchResults from './inline-help-search-results';
@@ -126,12 +127,16 @@ class InlineHelpPopover extends Component {
 				<div className="inline-help__search">
 					<InlineHelpSearchCard
 						query={ this.props.searchQuery }
-						isVisible={ ! this.state.activeSecondaryView }
+						isVisible={ ! this.state.showSecondaryView }
+						isSearching={ this.props.isSearching }
 					/>
 					<InlineHelpSearchResults
 						onSelect={ this.openResultView }
 						onAdminSectionSelect={ this.setAdminSection }
 						searchQuery={ this.props.searchQuery }
+						isSearching={ this.props.isSearching }
+						searchResults={ this.props.searchResults }
+						hasAPIResults={ this.props.hasAPIResults }
 					/>
 				</div>
 				{ this.renderSecondaryView() }
@@ -145,6 +150,7 @@ class InlineHelpPopover extends Component {
 			'inline-help__secondary-view',
 			`inline-help__${ this.state.activeSecondaryView }`
 		);
+
 		return (
 			<section ref={ this.secondaryViewRef } className={ classes }>
 				{
@@ -204,4 +210,4 @@ const mapDispatchToProps = {
 export default compose(
 	localize,
 	connect( mapStateToProps, mapDispatchToProps )
-)( withMobileBreakpoint( InlineHelpPopover ) );
+)( withMobileBreakpoint( withInlineHelpSearchQuery( InlineHelpPopover ) ) );

@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import SearchCard from 'calypso/components/search-card';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setInlineHelpSearchQuery } from 'calypso/state/inline-help/actions';
-import isRequestingInlineHelpSearchResultsForQuery from 'calypso/state/inline-help/selectors/is-requesting-inline-help-search-results-for-query';
+import { withInlineHelpSearchQuery } from './data/use-inline-help-search-query';
 
 /**
  * Module variables
@@ -73,12 +73,12 @@ InlineHelpSearchCard.propTypes = {
 	location: PropTypes.string,
 };
 
-const mapStateToProps = ( state, ownProps ) => ( {
-	isSearching: isRequestingInlineHelpSearchResultsForQuery( state, ownProps.query ),
-} );
 const mapDispatchToProps = {
 	track: recordTracksEvent,
 	setSearchQuery: setInlineHelpSearchQuery,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelpSearchCard ) );
+export default connect(
+	null,
+	mapDispatchToProps
+)( localize( withInlineHelpSearchQuery( InlineHelpSearchCard ) ) );

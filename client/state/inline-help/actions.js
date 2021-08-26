@@ -1,23 +1,11 @@
-import wpcom from 'calypso/lib/wp';
 import {
-	INLINE_HELP_SEARCH_REQUEST,
-	INLINE_HELP_SEARCH_REQUEST_FAILURE,
-	INLINE_HELP_SEARCH_REQUEST_SUCCESS,
-	INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
 	INLINE_HELP_SET_SEARCH_QUERY,
 	INLINE_HELP_CONTACT_FORM_RESET,
 	INLINE_HELP_CONTACT_FORM_SHOW_QANDA,
 	INLINE_HELP_POPOVER_SHOW,
 	INLINE_HELP_POPOVER_HIDE,
-	INLINE_HELP_SEARCH_RESET,
 } from 'calypso/state/action-types';
-import getAdminHelpResults from 'calypso/state/inline-help/selectors/get-admin-help-results';
-import getContextualHelpResults from 'calypso/state/inline-help/selectors/get-contextual-help-results';
 import 'calypso/state/inline-help/init';
-import {
-	SUPPORT_TYPE_API_HELP,
-	SUPPORT_TYPE_CONTEXTUAL_HELP,
-} from '../../blocks/inline-help/constants';
 
 /**
  * Set the search query in the state tree for the inline help.
@@ -29,112 +17,6 @@ export function setInlineHelpSearchQuery( searchQuery = '' ) {
 	return {
 		type: INLINE_HELP_SET_SEARCH_QUERY,
 		searchQuery,
-	};
-}
-
-/**
- * Map the collection, populating each result object
- * with the given support type value.
- *
- * @param {Array}   collection   - collection to populate.
- * @param {string}  support_type - Support type to add to each result item.
- * @returns {Array}                Populated collection.
- */
-function mapWithSupportTypeProp( collection, support_type ) {
-	return collection.map( ( item ) => ( { ...item, support_type } ) );
-}
-
-/**
- * Fetches search results for a given query string.
- * Triggers an API request. If this returns no results
- * then hard coded results are returned based on the context of the
- * current route (see `client/blocks/inline-help/contextual-help.js`).
- *
- * @param {string} searchQuery Search query
- * @returns {Function}        Action thunk
- */
-export function requestInlineHelpSearchResults( searchQuery = '' ) {
-	return async ( dispatch, getState ) => {
-		const state = getState();
-		const contextualResults = mapWithSupportTypeProp(
-			getContextualHelpResults( state ),
-			SUPPORT_TYPE_CONTEXTUAL_HELP
-		);
-
-		//Return help_admin results immediately to be shown in action search
-		const helpAdminResults = getAdminHelpResults( state, searchQuery, 25 );
-		dispatch( {
-			type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
-			searchQuery,
-			searchResults: helpAdminResults,
-		} );
-
-		// Ensure empty strings are removed as valid searches.
-		searchQuery = searchQuery.trim();
-
-		// If the search is empty return contextual results and exist
-		// early to avoid unwanted network requests.
-		if ( ! searchQuery ) {
-			dispatch( {
-				type: INLINE_HELP_SEARCH_RESET,
-				searchResults: contextualResults,
-			} );
-
-			// Exit early
-			return;
-		}
-
-		dispatch( {
-			type: INLINE_HELP_SEARCH_REQUEST,
-			searchQuery,
-		} );
-
-		try {
-			const { wordpress_support_links: searchResults } = await wpcom.req.get( '/help/search', {
-				query: searchQuery,
-				include_post_id: 1,
-			} );
-			// Searches will either:
-			//
-			// 1. return results from the search API endpoint
-			// ...or...
-			// 2. return hard-coded results based on the current route.
-			//
-			// A INLINE_HELP_SEARCH_REQUEST_API_RESULTS action indicates
-			// whether the search results came from the API or not. This
-			// enables UI to indicate a "no results" status and indicate
-			// that the results are contextual (if required).
-
-			const hasAPIResults = !! ( searchResults && searchResults.length );
-
-			dispatch( {
-				type: INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
-				hasAPIResults,
-			} );
-
-			dispatch( {
-				type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
-				searchQuery,
-				searchResults: hasAPIResults
-					? [
-							...mapWithSupportTypeProp( searchResults, SUPPORT_TYPE_API_HELP ),
-							...helpAdminResults,
-					  ]
-					: [ ...contextualResults, ...helpAdminResults ],
-			} );
-		} catch ( error ) {
-			dispatch( {
-				type: INLINE_HELP_SEARCH_REQUEST_FAILURE,
-				searchQuery,
-				error,
-			} );
-
-			// Force reset flag for no API results
-			dispatch( {
-				type: INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
-				hasAPIResults: false,
-			} );
-		}
 	};
 }
 
@@ -157,14 +39,6 @@ export function resetInlineHelpContactForm() {
 export function showQandAOnInlineHelpContactForm() {
 	return {
 		type: INLINE_HELP_CONTACT_FORM_SHOW_QANDA,
-	};
-}
-
-export function setSearchResults( searchQuery, searchResults ) {
-	return {
-		type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
-		searchQuery,
-		searchResults,
 	};
 }
 
