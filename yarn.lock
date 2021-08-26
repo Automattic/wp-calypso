@@ -166,6 +166,7 @@ __metadata:
     "@types/node": ^15.0.2
     asana-phrase: ^0.0.8
     config: ^3.3.6
+    mailosaur: ^7.3.1
     playwright: 1.14.0
     typescript: ^4.3.5
   languageName: unknown
@@ -25685,6 +25686,15 @@ fsevents@~2.1.2:
     bluebird: ^3.4.6
     request: ~2.36.0
   checksum: c9a1ef4e468d33a546ee1deb39573a98962492abbd3f36b8d73118737d4c91657d5b981ccebaea9a42adfaeed4a1d560bffb8a486e19b416d75b7f1131edafbf
+  languageName: node
+  linkType: hard
+
+"mailosaur@npm:^7.3.1":
+  version: 7.3.1
+  resolution: "mailosaur@npm:7.3.1"
+  dependencies:
+    https-proxy-agent: ^5.0.0
+  checksum: 7ee81791c746c9e9741bfc16a7a2866c313a2241957bf0f402ebb20d14a3b6fca52a6134db4ba398028df85f74adc216f9634ab9c0b0315319b49772aee8177b
   languageName: node
   linkType: hard
 

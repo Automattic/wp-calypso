@@ -1,6 +1,5 @@
 import {
 	DataHelper,
-	MediaHelper,
 	EmailClient,
 	LoginFlow,
 	SidebarComponent,
@@ -11,7 +10,7 @@ import {
 import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
-	const newUsername = `e2eflowtestingviewer${ MediaHelper.createTimestamp() }`;
+	const newUsername = `e2eflowtestingviewer${ DataHelper.getTimestamp() }`;
 	const inboxId = DataHelper.config.get( 'inviteInboxId' ) as string;
 	const testEmailAddress = DataHelper.getTestEmailAddress( {
 		inboxId: inboxId,
