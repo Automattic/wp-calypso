@@ -114,6 +114,7 @@ references:
       source "$HOME/.nvm/nvm.sh"
       nvm use
       npm install -g yarn
+      yarn
       yarn run build-desktop:install-app-deps
   desktop-cache-paths: &desktop-cache-paths
     - desktop/resource/certificates/win.p12
@@ -458,7 +459,7 @@ jobs:
           command: cinst make
       - run:
           name: Install Desktop Dependencies
-          command: yarn run build-desktop:install-app-deps
+          command: yarn && yarn run build-desktop:install-app-deps
       - when:
           condition: << pipeline.git.tag >>
           steps:
