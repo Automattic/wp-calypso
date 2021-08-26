@@ -179,7 +179,7 @@ const testGlobalStylesColorAndTypography = async ( driver, blocksLevel = false )
 	}
 
 	// Update link color option.
-	await changeGlobalStylesColor( driver, 3, 1 );
+	await changeGlobalStylesColor( driver, 3, 2 );
 	// The last sleep before accessing the event stack must be longer to ensure there is
 	// enough time for the function to retrieve entities and compare.
 	await driver.sleep( 500 );
@@ -582,7 +582,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 				await changeGlobalStylesFontSize( this.driver, '11' );
 				await changeGlobalStylesColor( this.driver, 1, 1 );
-				await changeGlobalStylesColor( this.driver, 3, 1 );
+				await changeGlobalStylesColor( this.driver, 3, 2 );
 				await saveGlobalStyles( this.driver );
 				const saveEvents = ( await getEventsStack( this.driver ) ).filter(
 					( event ) => event[ 0 ] === 'wpcom_block_editor_global_styles_save'
@@ -726,8 +726,15 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 						'Choose'
 					);
 					await driverHelper.clickWhenClickable( this.driver, choosePatternLocator );
+				} );
+				const confirmNameAndCreateLocator = driverHelper.createTextLocator(
+					By.css( '.wp-block-template-part__placeholder-create-new__title-form button' ),
+					'Create'
+				);
+				await driverHelper.clickWhenClickable( this.driver, confirmNameAndCreateLocator );
 
-					// Wait for this template part to load its new content.
+				// Wait for this template part to load its new content.
+				await editor.runInCanvas( async () => {
 					await driverHelper.waitUntilElementLocated(
 						this.driver,
 						By.css( `#${ blockId }.block-editor-block-list__layout` )
@@ -766,7 +773,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 				await driverHelper.clickWhenClickable(
 					this.driver,
-					By.css( '.wp-block-template-part__selection-preview-item' )
+					By.css( '.wp-block-template-part__selection-preview-item-title' )
 				);
 
 				const eventsStack = await getEventsStack( this.driver );
@@ -863,15 +870,10 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				const editor = await SiteEditorComponent.Expect( this.driver );
 
 				await editor.toggleNavigationSidebar();
-				const backButtonToTemplatesLocator = driverHelper.createTextLocator(
-					By.css( '.components-navigation__back-button' ),
-					'Templates'
-				);
-				await driverHelper.clickWhenClickable( this.driver, backButtonToTemplatesLocator );
 
 				const templateMenuItemLocator = driverHelper.createTextLocator(
 					By.css( '.edit-site-navigation-panel__template-item-title' ),
-					'404'
+					'Index'
 				);
 				await driverHelper.clickWhenClickable( this.driver, templateMenuItemLocator );
 
@@ -882,8 +884,8 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				assert.strictEqual( editEvents.length, 1 );
 				const [ , editEventData ] = editEvents[ 0 ];
 				assert.strictEqual( editEventData.item_type, 'template' );
-				assert.strictEqual( editEventData.item_id, 'pub/tt1-blocks//404' );
-				assert.strictEqual( editEventData.item_slug, '404' );
+				assert.strictEqual( editEventData.item_id, 'pub/blockbase//index' );
+				assert.strictEqual( editEventData.item_slug, 'index' );
 			} );
 
 			it( 'should track "wpcom_block_editor_nav_sidebar_item_add" when creating a new template', async function () {
@@ -956,7 +958,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				assert.strictEqual( editEvents.length, 1 );
 				const [ , editEventData ] = editEvents[ 0 ];
 				assert.strictEqual( editEventData.item_type, 'template_part' );
-				assert.strictEqual( editEventData.item_id, 'pub/tt1-blocks//header' );
+				assert.strictEqual( editEventData.item_id, 'pub/blockbase//header' );
 			} );
 
 			it( 'make sure back to dashboard button exists', async function () {
@@ -1168,7 +1170,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 				assert.strictEqual( insertedEvents.length, 1 );
 				assert.strictEqual( insertedEvents[ 0 ][ 1 ].entity_context, 'core/template-part/header' );
-				assert.strictEqual( insertedEvents[ 0 ][ 1 ].template_part_id, 'pub/tt1-blocks//header' );
+				assert.strictEqual( insertedEvents[ 0 ][ 1 ].template_part_id, 'pub/blockbase//header' );
 			} );
 
 			it( 'For "wpcom_block_moved_*" events', async function () {
@@ -1189,7 +1191,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				const matchesContext = events.filter(
 					( event ) =>
 						event[ 1 ].entity_context === 'core/template-part/header' &&
-						event[ 1 ].template_part_id === 'pub/tt1-blocks//header'
+						event[ 1 ].template_part_id === 'pub/blockbase//header'
 				);
 				assert.strictEqual( matchesContext.length, 2 );
 			} );
@@ -1211,7 +1213,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 				assert.strictEqual( events.length, 1 );
 				assert.strictEqual( events[ 0 ][ 1 ].entity_context, 'core/template-part/header' );
-				assert.strictEqual( events[ 0 ][ 1 ].template_part_id, 'pub/tt1-blocks//header' );
+				assert.strictEqual( events[ 0 ][ 1 ].template_part_id, 'pub/blockbase//header' );
 			} );
 		} );
 
