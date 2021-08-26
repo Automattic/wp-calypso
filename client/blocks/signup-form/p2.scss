@@ -1,0 +1,18 @@
+.is-p2-signup .signup__step.is-user {
+	.logged-out-form {
+		box-shadow: none;
+		max-width: none;
+		width: 100%;
+
+		.form-label {
+			font-weight: 400;
+			margin-top: 12px;
+		}
+	}
+
+	.logged-out-form__footer {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+}

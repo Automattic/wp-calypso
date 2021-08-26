@@ -116,20 +116,22 @@
 	}
 }
 
-.signup__step.is-user {
+.signup__step.is-user .p2-step-wrapper {
+	padding-top: 120px;
+
+	@include break-mobile {
+		padding: 120px 20px 0;
+		max-width: 480px;
+	}
+
+	.p2-step-wrapper__header {
+		margin-bottom: 10px;
+	}
+
 	.p2-step-wrapper__header-logo {
 		position: absolute;
 		top: 24px;
 		left: 48px;
-	}
-
-	.p2-step-wrapper {
-		padding-top: 120px;
-
-		@include break-mobile {
-			padding: 120px 20px 0;
-			max-width: 480px;
-		}
 	}
 
 	.step-wrapper__content {
@@ -148,7 +150,7 @@
 		text-align: center;
 	}
 
-	.p2-step-wrapper button {
+	button {
 		max-width: 320px;
 		&.social-buttons__button {
 			box-shadow: none;
