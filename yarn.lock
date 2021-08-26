@@ -455,6 +455,65 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/isolated-block-editor@npm:1.0.1":
+  version: 1.0.1
+  resolution: "@automattic/isolated-block-editor@npm:1.0.1"
+  dependencies:
+    "@wordpress/a11y": ^2.14.3
+    "@wordpress/annotations": ^1.24.8
+    "@wordpress/api-fetch": ^3.21.5
+    "@wordpress/autop": ^2.11.1
+    "@wordpress/blob": ^2.12.1
+    "@wordpress/block-editor": ^5.2.10
+    "@wordpress/block-library": ^2.28.7
+    "@wordpress/block-serialization-default-parser": ^3.9.1
+    "@wordpress/block-serialization-spec-parser": ^3.7.2
+    "@wordpress/blocks": ^7.0.6
+    "@wordpress/components": ^12.0.8
+    "@wordpress/compose": ^3.24.5
+    "@wordpress/core-data": ^2.25.9
+    "@wordpress/data": ^4.26.8
+    "@wordpress/data-controls": ^1.20.8
+    "@wordpress/date": ^3.13.1
+    "@wordpress/deprecated": ^2.11.1
+    "@wordpress/dom": ^2.16.2
+    "@wordpress/dom-ready": ^2.12.1
+    "@wordpress/editor": ^9.25.10
+    "@wordpress/element": ^2.19.1
+    "@wordpress/escape-html": ^1.11.1
+    "@wordpress/format-library": ^1.26.10
+    "@wordpress/hooks": ^2.11.1
+    "@wordpress/html-entities": ^2.10.1
+    "@wordpress/i18n": ^3.18.0
+    "@wordpress/icons": ^2.9.1
+    "@wordpress/interface": ^1.0.6
+    "@wordpress/is-shallow-equal": ^3.0.1
+    "@wordpress/keyboard-shortcuts": ^1.13.8
+    "@wordpress/keycodes": ^2.18.3
+    "@wordpress/list-reusable-blocks": ^1.25.8
+    "@wordpress/media-utils": ^1.19.5
+    "@wordpress/notices": ^2.12.8
+    "@wordpress/plugins": ^2.24.7
+    "@wordpress/primitives": ^1.11.1
+    "@wordpress/priority-queue": ^1.10.1
+    "@wordpress/react-i18n": ^1.0.0-next.2
+    "@wordpress/redux-routine": ^3.13.1
+    "@wordpress/reusable-blocks": ^1.1.10
+    "@wordpress/rich-text": ^3.24.8
+    "@wordpress/server-side-render": ^1.20.8
+    "@wordpress/shortcode": ^2.12.1
+    "@wordpress/token-list": ^1.14.1
+    "@wordpress/url": ^2.21.2
+    "@wordpress/viewport": ^2.25.8
+    "@wordpress/warning": ^1.3.1
+    "@wordpress/wordcount": ^2.14.1
+    classnames: ^2.2.6
+    redux-undo: ^1.0.1
+    refx: ^3.1.1
+  checksum: 787408af4b481881712f2739e7fdcb644e33334f67c7e65290ccedeb7e2131edc5fd24c130ad4c0d1d2dd06a995f97bab05d63be5c420fe2e3b467d905134439
+  languageName: node
+  linkType: hard
+
 "@automattic/js-utils@^0.1.0, @automattic/js-utils@workspace:packages/js-utils":
   version: 0.0.0-use.local
   resolution: "@automattic/js-utils@workspace:packages/js-utils"
@@ -12206,6 +12265,7 @@ __metadata:
     "@automattic/explat-client-react-helpers": ^0.0.2
     "@automattic/format-currency": ^1.0.0-alpha.0
     "@automattic/i18n-utils": ^1.0.0
+    "@automattic/isolated-block-editor": 1.0.1
     "@automattic/js-utils": ^0.1.0
     "@automattic/language-picker": ^1.0.0
     "@automattic/languages": ^1.0.0
@@ -12330,7 +12390,6 @@ __metadata:
     immutable: ^3.8.2
     inherits: ^2.0.4
     is-my-json-valid: ^2.20.5
-    isolated-block-editor: "https://github.com/Automattic/isolated-block-editor.git#1.0.0"
     jest: ^27.0.6
     jest-emotion: ^10.0.27
     jest-fetch-mock: ^3.0.3
@@ -22597,65 +22656,6 @@ fsevents@~2.1.2:
   version: 4.0.0
   resolution: "isobject@npm:4.0.0"
   checksum: 8efcda03af98cbb193737e30ffb77c71ca4e97dbf919f7aacec44b7410a166fa4e9fd71232bf5b00a919f98b5747ae359dbb5a5bc4195c93f6291423b9707df6
-  languageName: node
-  linkType: hard
-
-"isolated-block-editor@https://github.com/Automattic/isolated-block-editor.git#1.0.0":
-  version: 1.0.0
-  resolution: "isolated-block-editor@https://github.com/Automattic/isolated-block-editor.git#commit=5682ddeb940bfac9c3923491263aaf4ce44aaf0e"
-  dependencies:
-    "@wordpress/a11y": ^2.14.3
-    "@wordpress/annotations": ^1.24.8
-    "@wordpress/api-fetch": ^3.21.5
-    "@wordpress/autop": ^2.11.1
-    "@wordpress/blob": ^2.12.1
-    "@wordpress/block-editor": ^5.2.10
-    "@wordpress/block-library": ^2.28.7
-    "@wordpress/block-serialization-default-parser": ^3.9.1
-    "@wordpress/block-serialization-spec-parser": ^3.7.2
-    "@wordpress/blocks": ^7.0.6
-    "@wordpress/components": ^12.0.8
-    "@wordpress/compose": ^3.24.5
-    "@wordpress/core-data": ^2.25.9
-    "@wordpress/data": ^4.26.8
-    "@wordpress/data-controls": ^1.20.8
-    "@wordpress/date": ^3.13.1
-    "@wordpress/deprecated": ^2.11.1
-    "@wordpress/dom": ^2.16.2
-    "@wordpress/dom-ready": ^2.12.1
-    "@wordpress/editor": ^9.25.10
-    "@wordpress/element": ^2.19.1
-    "@wordpress/escape-html": ^1.11.1
-    "@wordpress/format-library": ^1.26.10
-    "@wordpress/hooks": ^2.11.1
-    "@wordpress/html-entities": ^2.10.1
-    "@wordpress/i18n": ^3.18.0
-    "@wordpress/icons": ^2.9.1
-    "@wordpress/interface": ^1.0.6
-    "@wordpress/is-shallow-equal": ^3.0.1
-    "@wordpress/keyboard-shortcuts": ^1.13.8
-    "@wordpress/keycodes": ^2.18.3
-    "@wordpress/list-reusable-blocks": ^1.25.8
-    "@wordpress/media-utils": ^1.19.5
-    "@wordpress/notices": ^2.12.8
-    "@wordpress/plugins": ^2.24.7
-    "@wordpress/primitives": ^1.11.1
-    "@wordpress/priority-queue": ^1.10.1
-    "@wordpress/react-i18n": ^1.0.0-next.2
-    "@wordpress/redux-routine": ^3.13.1
-    "@wordpress/reusable-blocks": ^1.1.10
-    "@wordpress/rich-text": ^3.24.8
-    "@wordpress/server-side-render": ^1.20.8
-    "@wordpress/shortcode": ^2.12.1
-    "@wordpress/token-list": ^1.14.1
-    "@wordpress/url": ^2.21.2
-    "@wordpress/viewport": ^2.25.8
-    "@wordpress/warning": ^1.3.1
-    "@wordpress/wordcount": ^2.14.1
-    classnames: ^2.2.6
-    redux-undo: ^1.0.1
-    refx: ^3.1.1
-  checksum: bba0f06a0a7dc88720251e30b84c814208567df2c9eac94cb1d3e5d4229e5a756a016c35d087b037d53330654f5d7b151e8ba631d00cb0a1e9f90f3510697434
   languageName: node
   linkType: hard
 
