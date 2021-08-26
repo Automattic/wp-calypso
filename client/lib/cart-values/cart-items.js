@@ -1,5 +1,4 @@
 import {
-	isRenewal,
 	formatProduct,
 	isCustomDesign,
 	isDomainMapping,
@@ -35,6 +34,7 @@ import {
 	isWpComFreePlan,
 	isWpComBloggerPlan,
 } from '@automattic/calypso-products';
+import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
 import { getTld } from 'calypso/lib/domains';
 import { domainProductSlugs } from 'calypso/lib/domains/constants';
 import {
