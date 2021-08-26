@@ -51,7 +51,7 @@ project {
 
 	params {
 		param("env.NODE_OPTIONS", "--max-old-space-size=32000")
-		param("use_cached_node_modules", "true")
+		param("use_cached_node_modules", "false")
 		text("E2E_WORKERS", "16", label = "Magellan parallel workers", description = "Number of parallel workers in Magellan (e2e tests)", allowEmpty = true)
 		text("env.JEST_MAX_WORKERS", "16", label = "Jest max workers", description = "How many tests run in parallel", allowEmpty = true)
 		password("matticbot_oauth_token", "credentialsJSON:34cb38a5-9124-41c4-8497-74ed6289d751", display = ParameterDisplay.HIDDEN)

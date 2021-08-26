@@ -3,6 +3,7 @@ const Locator = require( '../lib/locator' );
 const testFramework = require( '../index' );
 const fs = require( 'fs' ).promises;
 const os = require( 'os' );
+require( '@automattic/calypso-polyfills' );
 
 async function getTestsFrom( specs ) {
 	if ( ! Array.isArray( specs ) ) {

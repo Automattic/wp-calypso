@@ -48,10 +48,14 @@
 		"prop-types": "^15.7.2"
 	},
 	"devDependencies": {
+		"@testing-library/jest-dom": "^5.14.1",
+		"@testing-library/react": "^12.0.0",
 		"react": "^16.12.0",
 		"react-dom": "^16.12.0",
-		"@testing-library/jest-dom": "^5.14.1",
-		"@testing-library/react": "^12.0.0"
+		"typescript": "^4.3.5"
+	},
+	"peerDependencies": {
+		"@emotion/core": "^10.0.27"
 	},
 	"private": true
 }

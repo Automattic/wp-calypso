@@ -41,7 +41,11 @@ const MochaTestRun = function ( options ) {
 
 // return the command line path to the test framework binary
 MochaTestRun.prototype.getCommand = function () {
-	return './node_modules/.bin/mocha';
+	const mochaPath = path.dirname( require.resolve( 'mocha/package.json' ) );
+	const json = require( path.join( mochaPath, './package.json' ) );
+	const relativePathToBin = json.bin.mocha;
+	const absolutePathToBin = require.resolve( path.join( mochaPath, relativePathToBin ) );
+	return absolutePathToBin;
 };
 
 // return the environment
