@@ -21,3 +21,4 @@ export * from './payment-methods/google-pay';
 export * from './payment-methods/existing-credit-card';
 export { isWpComProductRenewal } from './is-wpcom-product-renewal';
 export { isValueTruthy } from './is-value-truthy';
+export * from './checkout-labels';
