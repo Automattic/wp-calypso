@@ -1,4 +1,5 @@
 import {
+	isRenewal,
 	formatProduct,
 	isCustomDesign,
 	isDomainMapping,
@@ -667,16 +668,6 @@ export function updatePrivacyForDomain( item, value ) {
  */
 function isPartialCredits( cartItem ) {
 	return cartItem.product_slug === 'wordpress-com-credits';
-}
-
-/**
- * Determines whether a cart item is a renewal
- *
- * @param {{extra?: import('@automattic/shopping-cart').ResponseCartProductExtra}} cartItem - object with `extra` property
- * @returns {boolean} true if item is a renewal
- */
-export function isRenewal( cartItem ) {
-	return cartItem.extra && cartItem.extra.purchaseType === 'renewal';
 }
 
 /**
