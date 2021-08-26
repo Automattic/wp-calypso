@@ -331,8 +331,6 @@ class RegisterDomainStep extends React.Component {
 		const query = this.state.lastQuery || storedQuery;
 
 		if ( query && ! this.state.searchResults && ! this.state.subdomainSearchResults ) {
-			this.onSearch( query );
-
 			// Delete the stored query once it is consumed.
 			globalThis?.sessionStorage?.removeItem( SESSION_STORAGE_QUERY_KEY );
 		} else {
@@ -406,8 +404,7 @@ class RegisterDomainStep extends React.Component {
 	}
 
 	render() {
-		const queryObject = getQueryObject( this.props );
-		const { isSignupStep, showAlreadyOwnADomain } = this.props;
+		const { suggestion, isSignupStep, showAlreadyOwnADomain } = this.props;
 
 		const {
 			availabilityError,
@@ -421,6 +418,8 @@ class RegisterDomainStep extends React.Component {
 			trademarkClaimsNoticeInfo,
 			isQueryInvalid,
 		} = this.state;
+
+		const queryObject = ! suggestion && getQueryObject( this.props );
 
 		if ( trademarkClaimsNoticeInfo ) {
 			return this.renderTrademarkClaimsNotice();
