@@ -455,9 +455,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/isolated-block-editor@npm:1.0.1":
-  version: 1.0.1
-  resolution: "@automattic/isolated-block-editor@npm:1.0.1"
+"@automattic/isolated-block-editor@npm:~1.0.2":
+  version: 1.0.2
+  resolution: "@automattic/isolated-block-editor@npm:1.0.2"
   dependencies:
     "@wordpress/a11y": ^2.14.3
     "@wordpress/annotations": ^1.24.8
@@ -510,7 +510,7 @@ __metadata:
     classnames: ^2.2.6
     redux-undo: ^1.0.1
     refx: ^3.1.1
-  checksum: 787408af4b481881712f2739e7fdcb644e33334f67c7e65290ccedeb7e2131edc5fd24c130ad4c0d1d2dd06a995f97bab05d63be5c420fe2e3b467d905134439
+  checksum: 0c56c6009c51bb2910ca3ca025ef69fa9aa7cb041643553b6f641b6ac0227cf65dda2ad7c4dff0c0bd14e724860254ff320e2146ad2c0b3a447ea8e404698d57
   languageName: node
   linkType: hard
 
@@ -12265,7 +12265,7 @@ __metadata:
     "@automattic/explat-client-react-helpers": ^0.0.2
     "@automattic/format-currency": ^1.0.0-alpha.0
     "@automattic/i18n-utils": ^1.0.0
-    "@automattic/isolated-block-editor": 1.0.1
+    "@automattic/isolated-block-editor": ~1.0.2
     "@automattic/js-utils": ^0.1.0
     "@automattic/language-picker": ^1.0.0
     "@automattic/languages": ^1.0.0
