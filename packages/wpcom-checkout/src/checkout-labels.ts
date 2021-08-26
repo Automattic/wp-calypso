@@ -7,9 +7,9 @@ import {
 	isTitanMail,
 	isP2Plus,
 	isJetpackSearch,
-	isRenewal,
 } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
+import { isWpComProductRenewal as isRenewal } from './is-wpcom-product-renewal';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 export function getSublabel( serverCartItem: ResponseCartProduct ): string {
