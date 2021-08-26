@@ -20,7 +20,7 @@ import {
 	Button,
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { isWpComProductRenewal } from '@automattic/wpcom-checkout';
+import { isWpComProductRenewal, getSublabel, getLabel } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -35,7 +35,6 @@ import {
 	getProductPriceTierList,
 } from 'calypso/state/products-list/selectors';
 import { useGetProductVariants } from '../hooks/product-variants';
-import { getSublabel, getLabel } from '../lib/translate-cart';
 import deleteIcon from './delete-icon.svg';
 import { ItemVariationPicker } from './item-variation-picker';
 import joinClasses from './join-classes';
