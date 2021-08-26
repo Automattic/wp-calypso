@@ -54,18 +54,7 @@ object E2ETests : BuildType({
 
 				# Install modules
 				${_self.yarn_install_cmd}
-				yarn run build-desktop:install-app-deps
-			"""
-			dockerImage = "%docker_image_desktop%"
-		}
-
-		bashNodeScript {
-			name = "Build Calypso source"
-			scriptContent = """
-				export WEBPACK_OPTIONS='--progress=profile'
-
-				# Build desktop
-				yarn run build-desktop:source
+				cd desktop && yarn install --frozen-lockfile
 			"""
 			dockerImage = "%docker_image_desktop%"
 		}
@@ -77,7 +66,7 @@ object E2ETests : BuildType({
 				export USE_HARD_LINKS=false
 
 				# Build app
-				yarn run build-desktop:app
+				cd desktop && yarn run build
 			"""
 			dockerImage = "%docker_image_desktop%"
 		}
@@ -105,7 +94,7 @@ object E2ETests : BuildType({
 
 				echo "Base URL is '${'$'}WP_DESKTOP_BASE_URL'"
 				# Run tests
-				yarn run test-desktop:e2e
+				cd desktop && node ./e2e/run.js
 			"""
 			dockerImage = "%docker_image_desktop%"
 			// See https://stackoverflow.com/a/53975412 and https://blog.jessfraz.com/post/how-to-use-new-docker-seccomp-profiles/

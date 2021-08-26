@@ -32,7 +32,6 @@ jobs:
           NODE_ENV: production
           BROWSERSLIST_ENV: defaults
           WORKERS: 2
-          WEBPACK_OPTIONS: --progress=profile
         run: yarn run analyze-icfy
       - run: mkdir icfy-stats && mv client/{chart,stats}.json icfy-stats
       - uses: actions/upload-artifact@v1

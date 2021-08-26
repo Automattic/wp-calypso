@@ -36,5 +36,8 @@
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
+	},
+	"devDependencies": {
+		"typescript": "^4.3.5"
 	}
 }

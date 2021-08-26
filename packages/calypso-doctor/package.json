@@ -14,9 +14,7 @@
 		"calypso"
 	],
 	"license": "GPL-2.0-or-later",
-	"bin": {
-		"calypso-doctor": "./cli.js"
-	},
+	"bin": "./cli.js",
 	"dependencies": {
 		"chalk": "^4.1.0",
 		"yargs": "^17.0.1"

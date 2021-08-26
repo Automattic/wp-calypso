@@ -36,5 +36,8 @@
 		"@automattic/create-calypso-config": "^1.0.0-alpha.0",
 		"cookie": "^0.4.0",
 		"tslib": "^2.3.0"
+	},
+	"devDependencies": {
+		"typescript": "^4.3.5"
 	}
 }
