@@ -88,7 +88,6 @@ import {
 import { hideSitePreview, showSitePreview } from 'calypso/state/signup/preview/actions';
 import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
 import AlreadyOwnADomain from './already-own-a-domain';
-import SearchWithTyper from './search';
 import tip from './tip';
 
 import './style.scss';
@@ -517,7 +516,6 @@ class RegisterDomainStep extends React.Component {
 	}
 
 	renderSearchBar() {
-		const { isSignupStep } = this.props;
 		const componentProps = {
 			className: this.state.clickedExampleSuggestion ? 'is-refocused' : undefined,
 			autoFocus: true,
@@ -537,18 +535,9 @@ class RegisterDomainStep extends React.Component {
 			isReskinned: this.props.isReskinned,
 		};
 
-		if ( isSignupStep ) {
-			return (
-				<>
-					<Search { ...componentProps }></Search>
-					{ this.renderSearchFilters() }
-				</>
-			);
-		}
-
 		return (
 			<>
-				<SearchWithTyper { ...componentProps }></SearchWithTyper>
+				<Search { ...componentProps }></Search>
 				{ this.renderSearchFilters() }
 			</>
 		);
