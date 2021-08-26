@@ -15,7 +15,10 @@ const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
-const siteEditorUser = 'siteEditorSimpleSiteUser';
+const siteEditorUser =
+	process.env.GUTENBERG_EDGE === 'true'
+		? 'siteEditorSimpleSiteEdgeUser'
+		: 'siteEditorSimpleSiteUser';
 
 const navigationSidebarBackToRoot = async ( driver ) => {
 	const backButtonLocator = By.css(
@@ -378,17 +381,11 @@ const GLOBAL_STYLES_BLOCK_TYPE_TAB_NAME = 'block-type';
 describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
 
-	// TODO: Create an edge user with a Site Editor enabled site
-	before( async function () {
-		if ( process.env.GUTENBERG_EDGE === 'true' ) {
-			this.skip();
-		}
-	} );
-
 	describe( 'Tracking Site Editor: @parallel', function () {
 		it( 'Log in with site editor user and Site Editor opens successfully', async function () {
 			const loginFlow = new LoginFlow( this.driver, host === 'WPCOM' ? siteEditorUser : undefined );
-			await loginFlow.loginAndSelectMySite();
+			const userConfig = dataHelper.getAccountConfig( siteEditorUser );
+			await loginFlow.loginAndSelectMySite( userConfig[ 2 ] );
 
 			const sidebar = await SidebarComponent.Expect( this.driver );
 			await sidebar.selectSiteEditor();
