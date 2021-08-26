@@ -417,7 +417,9 @@ class EmailProvidersComparison extends React.Component {
 			currencyCode,
 			domain,
 			hasCartDomain,
+			onSkipClick,
 			selectedDomainName,
+			showSkipButton,
 			titanMailProduct,
 			translate,
 		} = this.props;
@@ -477,6 +479,10 @@ class EmailProvidersComparison extends React.Component {
 				>
 					{ buttonLabel }
 				</Button>
+
+				{ showSkipButton && (
+					<Button onClick={ onSkipClick }>{ translate( 'Not interested' ) }</Button>
+				) }
 			</TitanNewMailboxList>
 		);
 
