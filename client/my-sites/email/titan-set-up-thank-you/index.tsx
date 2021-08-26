@@ -21,12 +21,12 @@ import { SiteData } from 'calypso/state/ui/selectors/site-data';
  */
 import './style.scss';
 
-type TitanSetupThankYouProps = {
+type TitanSetUpThankYouProps = {
 	domainName: string;
 	emailAddress?: string;
 };
 
-const TitanSetupThankYou = ( props: TitanSetupThankYouProps ): JSX.Element => {
+const TitanSetUpThankYou = ( props: TitanSetUpThankYouProps ): JSX.Element => {
 	const currentRoute = useSelector( getCurrentRoute );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
@@ -60,7 +60,7 @@ const TitanSetupThankYou = ( props: TitanSetupThankYouProps ): JSX.Element => {
 				stepCta: (
 					<FullWidthButton href={ getTitanEmailUrl( emailAddress ) } primary target="_blank">
 						{ translate( 'Go to Inbox' ) }
-						<Gridicon className="titan-setup-thank-you__icon-external" icon="external" />
+						<Gridicon className="titan-set-up-thank-you__icon-external" icon="external" />
 					</FullWidthButton>
 				),
 			},
@@ -73,7 +73,7 @@ const TitanSetupThankYou = ( props: TitanSetupThankYouProps ): JSX.Element => {
 				stepCta: (
 					<FullWidthButton href={ titanControlPanelUrl } target="_blank">
 						{ translate( 'Get app' ) }
-						<Gridicon className="titan-setup-thank-you__icon-external" icon="external" />
+						<Gridicon className="titan-set-up-thank-you__icon-external" icon="external" />
 					</FullWidthButton>
 				),
 			},
@@ -92,7 +92,7 @@ const TitanSetupThankYou = ( props: TitanSetupThankYouProps ): JSX.Element => {
 
 	return (
 		<ThankYou
-			headerClassName={ 'titan-setup-thank-you__header' }
+			headerClassName={ 'titan-set-up-thank-you__header' }
 			sections={ [ titanThankYouSection ] }
 			showSupportSection={ true }
 			thankYouImage={ thankYouImage }
@@ -101,7 +101,7 @@ const TitanSetupThankYou = ( props: TitanSetupThankYouProps ): JSX.Element => {
 	);
 };
 
-export default connect( ( state, ownProps: TitanSetupThankYouProps ) => {
+export default connect( ( state, ownProps: TitanSetUpThankYouProps ) => {
 	const selectedSite = getSelectedSite( state ) as SiteData;
 
 	const domain = getSelectedDomain( {
@@ -115,4 +115,4 @@ export default connect( ( state, ownProps: TitanSetupThankYouProps ) => {
 		domain,
 		selectedSite,
 	};
-} )( localize( TitanSetupThankYou ) );
+} )( localize( TitanSetUpThankYou ) );
