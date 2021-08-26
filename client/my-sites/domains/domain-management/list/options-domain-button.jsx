@@ -11,7 +11,7 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import {
 	domainAddNew,
 	domainManagementAllRoot,
-	domainUseYourDomain,
+	domainUseMyDomain,
 } from 'calypso/my-sites/domains/paths';
 import { composeAnalytics, recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -59,7 +59,7 @@ class AddDomainButton extends React.Component {
 		const { specificSiteActions, translate } = this.props;
 
 		if ( specificSiteActions ) {
-			const useYourDomainUrl = domainUseYourDomain( this.props.selectedSiteSlug );
+			const useYourDomainUrl = domainUseMyDomain( this.props.selectedSiteSlug );
 			return (
 				<React.Fragment>
 					<PopoverMenuItem onClick={ this.clickAddDomain }>
