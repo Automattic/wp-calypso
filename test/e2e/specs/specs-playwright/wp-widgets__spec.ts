@@ -22,12 +22,27 @@ describe( DataHelper.createSuiteTitle( 'Widgets' ), function () {
 		await sidebarComponent.navigate( 'Appearance', 'Widgets' );
 	} );
 
-	it( 'Dismiss the Welcome Guide Notice', async function () {
-		await page.waitForLoadState( 'networkidle' );
-		const button = 'button:text("Got it")';
+	it( 'Dismiss the Welcome Guide Notice if displayed', async function () {
+		const buttonSelector = 'button:text("Got it")';
+		const hideWelcomePopup = async (): Promise< void > => {
+			try {
+				const button = await page.waitForSelector( buttonSelector );
+				await button.click();
+				// Retry if the button doesn't get hidden after 1 second. It can
+				// sometimes happen when clicked too early.
+				await button.waitForElementState( 'hidden', { timeout: 1000 } );
+			} catch {
+				return hideWelcomePopup();
+			}
+		};
 
-		if ( await page.isVisible( button ) ) {
-			await page.click( button );
+		// Hide the Welcome popup if it's present before the network gets idle.
+		await Promise.race( [ page.waitForLoadState( 'networkidle' ), hideWelcomePopup() ] );
+
+		// In case the network finished first, look for the button and click if found.
+		const button = await page.$( buttonSelector );
+		if ( button ) {
+			await hideWelcomePopup();
 		}
 	} );
 
