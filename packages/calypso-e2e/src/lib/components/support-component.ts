@@ -8,6 +8,7 @@ const selectors = {
 	searchInput: '[aria-label="Search"]',
 	clearSearch: '[aria-label="Close Search"]',
 	supportCard: '.card.help-search',
+	spinner: '.spinner',
 
 	// Results
 	resultsPlaceholder: '.inline-help__results-placeholder-item',
@@ -250,6 +251,7 @@ export class SupportComponent {
 					{ timeout: 60000 }
 				),
 				this.page.waitForSelector( selectors.resultsPlaceholder, { state: 'detached' } ),
+				this.page.waitForSelector( selectors.spinner, { state: 'detached' } ),
 				this.page.fill( selectors.searchInput, text ),
 			] );
 		} else {
