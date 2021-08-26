@@ -86,7 +86,7 @@ class PagesMain extends React.Component {
 				<ScreenOptionsTab wpAdminPath="edit.php?post_type=page" />
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
 				<DocumentHead title={ translate( 'Pages' ) } />
-				<SidebarNavigation />
+				= <SidebarNavigation />
 				<FormattedHeader
 					brandFont
 					className="pages__page-heading"
@@ -106,7 +106,6 @@ class PagesMain extends React.Component {
 				/>
 				<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ status } />
 				<PageList siteId={ siteId } status={ status } search={ search } query={ query } />
-
 				{ /* ExPlat's Evergreen A/A Test Experiment:
 				 *
 				 * This continually starts a new experiment every week that doesn't render anything and
@@ -122,6 +121,12 @@ class PagesMain extends React.Component {
 					name={ `explat_test_aa_weekly_calypso_${ moment
 						.utc()
 						.format( 'GGGG' ) }_week_${ moment.utc().format( 'WW' ) }` }
+					defaultExperience={ null }
+					treatmentExperience={ null }
+					loadingExperience={ null }
+				/>
+				<Experiment
+					name={ 'explat_test_aaaaa_2021_08_26_18_59' }
 					defaultExperience={ null }
 					treatmentExperience={ null }
 					loadingExperience={ null }
