@@ -6,20 +6,45 @@
 		margin-bottom: 0;
 	}
 
-	.titan-new-mailbox-list__actions {
+	.titan-new-mailbox-list__actions,
+	.titan-new-mailbox-list__supplied-actions {
 		display: flex;
-		flex-direction: column;
+		flex-direction: column-reverse;
 
 		@include break-mobile {
 			flex-direction: row;
 		}
 
-		> button {
-			margin-bottom: 1em;
+		> button:not( :last-child ) {
+			margin-top: 1em;
 
 			@include break-mobile {
-				margin-bottom: 0;
+				margin-top: 0;
+				margin-right: 1.5em;
 			}
 		}
+	}
+
+	.titan-new-mailbox-list__actions {
+		@include break-mobile {
+			justify-content: space-between;
+		}
+	}
+}
+
+.titan-new-mailbox-list__numbered-heading.card-heading {
+	color: var( --color-text-subtle );
+	line-height: 2;
+	margin-top: 16px;
+	margin-bottom: 16px;
+}
+
+.titan-new-mailbox-list__separator {
+	margin-top: 1.5em;
+}
+
+.titan-new-mailbox-list__action-remove {
+	@include break-mobile {
+		margin-left: auto;
 	}
 }
