@@ -113,9 +113,10 @@ references:
     command: |
       source "$HOME/.nvm/nvm.sh"
       nvm use
-      npm install -g yarn
+      npm install -g yarn@1.22.10
       yarn
-      yarn run build-desktop:install-app-deps
+      cd desktop
+      yarn
   desktop-cache-paths: &desktop-cache-paths
     - desktop/resource/certificates/win.p12
     - desktop/resource/certificates/mac.p12
@@ -310,6 +311,7 @@ jobs:
           environment:
             CSC_LINK: resource/certificates/mac.p12
             CSC_FOR_PULL_REQUEST: true
+            USE_HARD_LINKS: "false"
           command: |
             set +e
             source $HOME/.nvm/nvm.sh
@@ -388,6 +390,7 @@ jobs:
           name: Build Desktop Linux
           environment:
             CSC_LINK: resource/certificates/win.p12
+            USE_HARD_LINKS: "false"
           command: |
             set +e
             source $HOME/.nvm/nvm.sh
@@ -397,7 +400,8 @@ jobs:
             # Otherwise only build application executable required for end-to-end testing.
             ! git diff --name-only origin/trunk...HEAD | grep -E -q 'desktop/package.json|desktop/yarn.lock' && ELECTRON_BUILDER_ARGS='-c.linux.target=dir'
 
-            ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run build-desktop
+            cd desktop
+            ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run build
       - run:
           name: e2e Tests
           command: |
@@ -453,7 +457,7 @@ jobs:
             nvm use $NODE_VERSION
       - run:
           name: Install Yarn
-          command: npm install -g yarn
+          command: npm install -g yarn@1.22.10
       - run:
           name: Install Make
           command: cinst make
@@ -461,7 +465,8 @@ jobs:
           name: Install Desktop Dependencies
           command: |
             yarn
-            yarn run build-desktop:install-app-deps
+            cd desktop
+            yarn
       - when:
           condition: << pipeline.git.tag >>
           steps:
