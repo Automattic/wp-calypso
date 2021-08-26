@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 import {
 	INLINE_HELP_SEARCH_REQUEST,
@@ -15,9 +12,8 @@ import {
 	INLINE_HELP_POPOVER_HIDE,
 	INLINE_HELP_SEARCH_RESET,
 } from 'calypso/state/action-types';
-
-import getContextualHelpResults from 'calypso/state/inline-help/selectors/get-contextual-help-results';
 import getAdminHelpResults from 'calypso/state/inline-help/selectors/get-admin-help-results';
+import getContextualHelpResults from 'calypso/state/inline-help/selectors/get-contextual-help-results';
 import 'calypso/state/inline-help/init';
 import {
 	SUPPORT_TYPE_API_HELP,

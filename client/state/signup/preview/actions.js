@@ -1,11 +1,5 @@
-/**
- * Internal dependencies
- */
 import { SIGNUP_SITE_PREVIEW_SHOW, SIGNUP_SITE_PREVIEW_HIDE } from 'calypso/state/action-types';
 
-/**
- * Internal dependencies
- */
 import 'calypso/state/signup/init';
 
 /**

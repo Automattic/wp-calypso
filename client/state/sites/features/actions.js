@@ -1,23 +1,15 @@
-/**
- * External dependencies
- */
-
 import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
-
-const debug = debugFactory( 'calypso:site-features:actions' );
-
-/**
- * Internal dependencies
- */
-import { createSiteFeaturesObject } from './assembler';
+import wpcom from 'calypso/lib/wp';
 import {
 	SITE_FEATURES_FETCH,
 	SITE_FEATURES_FETCH_COMPLETED,
 	SITE_FEATURES_FETCH_FAILED,
 	SITE_FEATURES_REMOVE,
 } from 'calypso/state/action-types';
-import wpcom from 'calypso/lib/wp';
+import { createSiteFeaturesObject } from './assembler';
+
+const debug = debugFactory( 'calypso:site-features:actions' );
 
 /**
  * Returns an action object to be used in signalling that features for the given site have been cleared.

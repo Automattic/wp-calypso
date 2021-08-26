@@ -1,7 +1,7 @@
 import { useResizeObserver } from '@wordpress/compose';
 import { Icon, arrowRight } from '@wordpress/icons';
 import classnames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, useRtl } from 'i18n-calypso';
 import { times } from 'lodash';
 import React, { Children, useState, useEffect, useRef } from 'react';
 
@@ -9,6 +9,7 @@ import './style.scss';
 
 const Controls = ( { showControlLabels = false, currentPage, numberOfPages, setCurrentPage } ) => {
 	const translate = useTranslate();
+	const isRtl = useRtl();
 	if ( numberOfPages < 2 ) {
 		return null;
 	}
@@ -43,7 +44,10 @@ const Controls = ( { showControlLabels = false, currentPage, numberOfPages, setC
 						icon={ arrowRight }
 						size={ 18 }
 						fill="currentColor"
-						style={ { transform: 'scaleX(-1)' } }
+						style={
+							/* Flip the icon for languages with LTR direction. */
+							! isRtl ? { transform: 'scaleX(-1)' } : null
+						}
 					/>
 					{ showControlLabels && translate( 'Previous' ) }
 				</button>
@@ -56,7 +60,15 @@ const Controls = ( { showControlLabels = false, currentPage, numberOfPages, setC
 					onClick={ () => setCurrentPage( currentPage + 1 ) }
 				>
 					{ showControlLabels && translate( 'Next' ) }
-					<Icon icon={ arrowRight } size={ 18 } fill="currentColor" />
+					<Icon
+						icon={ arrowRight }
+						size={ 18 }
+						fill="currentColor"
+						style={
+							/* Flip the icon for languages with RTL direction. */
+							isRtl ? { transform: 'scaleX(-1)' } : null
+						}
+					/>
 				</button>
 			</li>
 		</ul>

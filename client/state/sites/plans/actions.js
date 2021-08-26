@@ -1,17 +1,7 @@
-/**
- * External dependencies
- */
-
 import debugFactory from 'debug';
-import { map } from 'lodash';
 import i18n from 'i18n-calypso';
-
-const debug = debugFactory( 'calypso:site-plans:actions' );
-
-/**
- * Internal dependencies
- */
-import { createSitePlanObject } from './assembler';
+import { map } from 'lodash';
+import wpcom from 'calypso/lib/wp';
 import {
 	SITE_PLANS_FETCH,
 	SITE_PLANS_FETCH_COMPLETED,
@@ -22,10 +12,12 @@ import {
 	SITE_PLANS_TRIAL_CANCEL_FAILED,
 	SITE_PLAN_OWNERSHIP_TRANSFER,
 } from 'calypso/state/action-types';
-import wpcom from 'calypso/lib/wp';
+import { createSitePlanObject } from './assembler';
 
 import 'calypso/state/data-layer/wpcom/sites/plan-transfer';
 import 'calypso/state/currency-code/init';
+
+const debug = debugFactory( 'calypso:site-plans:actions' );
 
 /**
  * Cancels the specified plan trial for the given site.

@@ -2,9 +2,6 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
 import resolveRelativePath from '../resolve-relative-path';
 
 describe( 'resolveRelativePath()', () => {

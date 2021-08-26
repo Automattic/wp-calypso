@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
 import { isEnabled } from '@automattic/calypso-config';
-
-/**
- * Internal dependencies
- */
-import { addPaymentMethod, changePaymentMethod, addNewPaymentMethod } from './paths';
+import { isDomainTransfer } from '@automattic/calypso-products';
 import {
 	isExpired,
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPaidWithCreditCard,
 } from 'calypso/lib/purchases';
-import { isDomainTransfer } from '@automattic/calypso-products';
+import { addPaymentMethod, changePaymentMethod, addNewPaymentMethod } from './paths';
 
 function isDataLoading( props ) {
 	return ! props.hasLoadedSites || ! props.hasLoadedUserPurchasesFromServer;

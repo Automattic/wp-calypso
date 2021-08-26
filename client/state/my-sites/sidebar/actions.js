@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	MY_SITES_SIDEBAR_SECTION_TOGGLE,
 	MY_SITES_SIDEBAR_SECTION_EXPAND,

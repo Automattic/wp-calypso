@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
-import { requestSiteDismiss, receiveSiteDismiss, fromApi, receiveSiteDismissError } from '../';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dismissSite } from 'calypso/state/reader/site-dismissals/actions';
+import { requestSiteDismiss, receiveSiteDismiss, fromApi, receiveSiteDismissError } from '../';
 
 describe( 'site-dismissals', () => {
 	describe( 'requestSiteDismiss', () => {

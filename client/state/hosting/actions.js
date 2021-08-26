@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	HOSTING_RESTORE_DATABASE_PASSWORD,
 	HOSTING_SFTP_USER_CREATE,

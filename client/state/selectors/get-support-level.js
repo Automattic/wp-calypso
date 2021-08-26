@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
 
-/**
- * Internal dependencies
- */
 import 'calypso/state/help/init';
 
 export const SUPPORT_LEVEL_FREE = 'free';

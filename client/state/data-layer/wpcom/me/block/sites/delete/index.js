@@ -1,22 +1,14 @@
 /**
  */
 
-/**
- * External Dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
-import { READER_SITE_UNBLOCK } from 'calypso/state/reader/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, plainNotice } from 'calypso/state/notices/actions';
+import { READER_SITE_UNBLOCK } from 'calypso/state/reader/action-types';
 import { blockSite } from 'calypso/state/reader/site-blocks/actions';
-import { bypassDataLayer } from 'calypso/state/data-layer/utils';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export function requestSiteUnblock( action ) {
 	return http(

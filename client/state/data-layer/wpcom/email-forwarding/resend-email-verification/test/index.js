@@ -1,24 +1,16 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import {
-	requestResendEmailVerification,
-	resendEmailVerificationFailure,
-	resendEmailVerificationSuccess,
-} from '../';
 import {
 	EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST,
 	EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST_SUCCESS,
 	EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
-import { isSuccessNotice, isErrorNotice, noticeHasText } from '../../test-utils';
-
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import {
+	requestResendEmailVerification,
+	resendEmailVerificationFailure,
+	resendEmailVerificationSuccess,
+} from '../';
+import { isSuccessNotice, isErrorNotice, noticeHasText } from '../../test-utils';
 
 describe( 'wpcom-api', () => {
 	describe( 'email forwarding resend verification email request', () => {

@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import type { StripeConfiguration } from '@automattic/calypso-stripe';
-
-/**
- * Internal dependencies
- */
-import wpcomFactory from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import wpcomFactory from 'calypso/lib/wp';
+import type { StripeConfiguration } from '@automattic/calypso-stripe';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
 const wpcom = wpcomFactory.undocumented();

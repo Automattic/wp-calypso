@@ -1,15 +1,10 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { DEFAULT_NOTICE_DURATION } from 'calypso/state/notices/constants';
 import {
 	READER_LIST_CREATE,
 	READER_LIST_FOLLOW,
@@ -27,8 +22,6 @@ import {
 	receiveReaderList,
 	receiveUpdatedListDetails,
 } from 'calypso/state/reader/lists/actions';
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import { DEFAULT_NOTICE_DURATION } from 'calypso/state/notices/constants';
 
 const noop = () => {};
 

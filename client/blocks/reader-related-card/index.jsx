@@ -1,7 +1,7 @@
 import { CompactCard as Card } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { get, partial } from 'lodash';
+import { get } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
@@ -106,8 +106,8 @@ export function RelatedPostCard( {
 		'has-thumbnail': !! post.canonical_media,
 		'has-excerpt': post.excerpt && post.excerpt.length > 1,
 	} );
-	const postClickTracker = partial( onPostClick, post );
-	const siteClickTracker = partial( onSiteClick, post );
+	const postClickTracker = () => onPostClick( post );
+	const siteClickTracker = () => onSiteClick( post );
 
 	const canonicalMedia = post.canonical_media;
 	let featuredAsset;

@@ -1,18 +1,14 @@
-/**
- * Internal Dependencies
- */
-import { READER_SITE_REQUEST } from 'calypso/state/reader/action-types';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { bypassDataLayer } from 'calypso/state/data-layer/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { READER_SITE_REQUEST } from 'calypso/state/reader/action-types';
 import {
 	receiveReaderSiteRequestSuccess,
 	receiveReaderSiteRequestFailure,
 } from 'calypso/state/reader/sites/actions';
 import { fields } from 'calypso/state/reader/sites/fields';
-import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export function requestReadSite( action ) {
 	return http(

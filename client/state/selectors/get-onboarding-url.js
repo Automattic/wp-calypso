@@ -1,9 +1,6 @@
-/**
- * Internal dependencies
- */
+import config from '@automattic/calypso-config';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import config from '@automattic/calypso-config';
 
 /**
  * Returns the onboarding URL.

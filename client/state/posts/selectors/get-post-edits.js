@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
+import { get } from 'lodash';
 import { mergePostEdits, normalizePostForEditing } from 'calypso/state/posts/utils';
 
 import 'calypso/state/posts/init';

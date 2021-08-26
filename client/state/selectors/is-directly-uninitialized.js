@@ -8,9 +8,6 @@
  * @returns {boolean}        Whether the widget is waiting to be initialized
  */
 
-/**
- * Internal dependencies
- */
 import { STATUS_UNINITIALIZED } from 'calypso/state/help/directly/constants';
 
 import 'calypso/state/help/init';

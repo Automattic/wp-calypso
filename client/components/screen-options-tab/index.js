@@ -2,7 +2,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import QuickSwitchModal from 'calypso/blocks/nav-unification-quick-switch-modal';
 import versionCompare from 'calypso/lib/version-compare';
 import { fetchModuleList } from 'calypso/state/jetpack/modules/actions';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
@@ -94,7 +93,6 @@ const ScreenOptionsTab = ( { wpAdminPath } ) => {
 
 	return (
 		<div className="screen-options-tab" ref={ ref } data-testid="screen-options-tab">
-			<QuickSwitchModal />
 			<button className="screen-options-tab__button" onClick={ handleToggle }>
 				<span className="screen-options-tab__label">{ __( 'Screen Options' ) }</span>
 				<span

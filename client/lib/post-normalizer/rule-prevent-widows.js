@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { forEach } from 'lodash';
-
-/**
- * Internal Dependencies
- */
 import { preventWidows as preventWidowFormatting } from 'calypso/lib/formatting';
 
 export default function preventWidows( post ) {

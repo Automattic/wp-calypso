@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { guidedTours } from '../reducer';
 import { GUIDED_TOUR_UPDATE } from 'calypso/state/action-types';
+import { guidedTours } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#guidedTours()', () => {

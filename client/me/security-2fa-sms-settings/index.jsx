@@ -1,31 +1,21 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import { flowRight as compose } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import FormPhoneInput from 'calypso/components/forms/form-phone-input';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
+import FormPhoneInput from 'calypso/components/forms/form-phone-input';
 import Notice from 'calypso/components/notice';
-import Security2faProgress from 'calypso/me/security-2fa-progress';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { protectForm } from 'calypso/lib/protect-form';
+import Security2faProgress from 'calypso/me/security-2fa-progress';
 import getCountries from 'calypso/state/selectors/get-countries';
-import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { setUserSetting, saveUserSettings } from 'calypso/state/user-settings/actions';
 import { saveTwoStepSMSSettings } from 'calypso/state/user-settings/thunks';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 import { isUpdatingUserSettings } from 'calypso/state/user-settings/selectors';
 

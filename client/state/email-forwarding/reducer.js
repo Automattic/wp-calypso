@@ -1,13 +1,5 @@
-/**
- * External dependencies
- */
-import { orderBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
-import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
+import { orderBy } from 'lodash';
 import {
 	EMAIL_FORWARDING_REQUEST,
 	EMAIL_FORWARDING_REQUEST_SUCCESS,
@@ -22,6 +14,7 @@ import {
 	EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST_SUCCESS,
 	EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
+import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
 import { forwardsSchema, mxSchema, typeSchema } from './schema';
 
 export const requestingReducer = ( state = false, action ) => {

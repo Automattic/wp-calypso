@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 
 describe( 'getSiteGmtOffset()', () => {

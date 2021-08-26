@@ -1,31 +1,24 @@
-/**
- * External dependencies
- */
+import { Dialog } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { Dialog } from '@automattic/components';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import { getSelectedDomain } from 'calypso/lib/domains';
+import { getName } from 'calypso/lib/purchases';
+import { getTitanProductName, hasTitanMailWithUs } from 'calypso/lib/titan';
+import wpcom from 'calypso/lib/wp';
 import {
 	domainManagementTransferOut,
 	domainManagementNameServers,
 } from 'calypso/my-sites/domains/paths';
-import FormSectionHeading from 'calypso/components/forms/form-section-heading';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
-import { getName } from 'calypso/lib/purchases';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { getSelectedDomain } from 'calypso/lib/domains';
-import { getTitanProductName, hasTitanMailWithUs } from 'calypso/lib/titan';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import wpcom from 'calypso/lib/wp';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 class RemoveDomainDialog extends Component {
 	static propTypes = {

@@ -1,9 +1,5 @@
-/**
- * External dependencies
- */
-import TraceKit from 'tracekit';
 import debug from 'debug';
-
+import TraceKit from 'tracekit';
 import wpcom from 'calypso/lib/wp';
 
 /**

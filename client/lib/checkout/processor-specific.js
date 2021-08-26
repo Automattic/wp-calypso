@@ -2,13 +2,9 @@
  * External dependencies
  *
  */
+import { CPF, CNPJ } from 'cpf_cnpj';
 import i18n from 'i18n-calypso';
 import { pick } from 'lodash';
-import { CPF, CNPJ } from 'cpf_cnpj';
-
-/**
- * Internal dependencies
- */
 import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from 'calypso/lib/checkout/constants';
 import isPaymentMethodEnabled from 'calypso/my-sites/checkout/composite-checkout/lib/is-payment-method-enabled';
 import { translateWpcomPaymentMethodToCheckoutPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';

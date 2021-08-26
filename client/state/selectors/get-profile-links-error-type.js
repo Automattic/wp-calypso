@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
 
-/**
- * Internal dependencies
- */
 import 'calypso/state/profile-links/init';
 
 /**

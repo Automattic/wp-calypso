@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import wp from 'calypso/lib/wp';
 import {
 	PURCHASES_REMOVE,
 	PURCHASES_SITE_FETCH,
@@ -19,7 +13,6 @@ import {
 	PURCHASE_REMOVE_FAILED,
 } from 'calypso/state/action-types';
 import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
-import wp from 'calypso/lib/wp';
 
 import 'calypso/state/purchases/init';
 

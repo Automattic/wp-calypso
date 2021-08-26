@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import find from 'lodash/find';
-
-/**
- * Internal dependencies
- */
 import { Partner, PartnerKey, PartnerPortalStore } from 'calypso/state/partner-portal/types';
 // Required for modular state.
 import 'calypso/state/partner-portal/init';

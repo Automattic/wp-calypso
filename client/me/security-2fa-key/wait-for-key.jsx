@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import Spinner from 'calypso/components/spinner';
 import { useTranslate } from 'i18n-calypso';
+import React from 'react';
+import Spinner from 'calypso/components/spinner';
 
 export default function WaitForKey() {
 	const translate = useTranslate();

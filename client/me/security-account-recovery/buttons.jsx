@@ -1,14 +1,6 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import FormButton from 'calypso/components/forms/form-button';
 import Gridicon from 'calypso/components/gridicon';
 

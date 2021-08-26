@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getTimezonesLabel from 'calypso/state/selectors/get-timezones-label';
 
 describe( 'getTimezonesLabel()', () => {

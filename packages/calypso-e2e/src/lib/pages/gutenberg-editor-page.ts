@@ -54,7 +54,7 @@ export class GutenbergEditorPage {
 	 */
 	async waitUntilLoaded(): Promise< Frame > {
 		const frame = await this.getEditorFrame();
-		await this.page.waitForLoadState( 'networkidle' );
+		await this.page.waitForLoadState( 'networkidle', { timeout: 60000 } );
 		await frame.waitForSelector( selectors.editorBody );
 		return frame;
 	}

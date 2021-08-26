@@ -29,7 +29,7 @@ describe( DataHelper.createSuiteTitle( 'Plans: Purchases' ), function () {
 
 		it( 'Navigate to Plans from sidebar', async function () {
 			const sidebarComponent = new SidebarComponent( page );
-			await sidebarComponent.gotoMenu( { item: 'Upgrades', subitem: 'Plans' } );
+			await sidebarComponent.navigate( 'Upgrades', 'Plans' );
 		} );
 
 		it( 'Click on the "My Plan" tab', async function () {

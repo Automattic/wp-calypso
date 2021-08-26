@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -47,6 +48,8 @@ class PostsMain extends React.Component {
 	render() {
 		const { author, category, search, siteId, statusSlug, tag, translate } = this.props;
 		const status = mapPostStatus( statusSlug );
+		/* Check if All Sites Mode */
+		const isAllSites = siteId ? 1 : 0;
 		const query = {
 			author,
 			category,
@@ -76,11 +79,16 @@ class PostsMain extends React.Component {
 					brandFont
 					className="posts__page-heading"
 					headerText={ translate( 'Posts' ) }
-					subHeaderText={
-						siteId
-							? translate( 'Create, edit, and manage the posts on your site.' )
-							: translate( 'Create, edit, and manage the posts on your sites.' )
-					}
+					subHeaderText={ translate(
+						'Create, edit, and manage the posts on your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						'Create, edit, and manage the posts on your sites. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							count: isAllSites,
+							components: {
+								learnMoreLink: <InlineSupportLink supportContext="posts" showIcon={ false } />,
+							},
+						}
+					) }
 					align="left"
 					hasScreenOptions
 				/>

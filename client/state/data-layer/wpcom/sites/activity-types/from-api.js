@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import apiResponseSchema from './schema';
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
+import apiResponseSchema from './schema';
 
 /**
  * Transforms API response into array of activities

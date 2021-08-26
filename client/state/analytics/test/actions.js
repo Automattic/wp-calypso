@@ -1,13 +1,7 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { flowRight } from 'lodash';
 import { spy } from 'sinon';
-
-/**
- * Internal dependencies
- */
+import { ANALYTICS_MULTI_TRACK, ANALYTICS_STAT_BUMP } from 'calypso/state/action-types';
 import {
 	composeAnalytics,
 	withAnalytics,
@@ -17,8 +11,6 @@ import {
 	recordPageView,
 	recordPageViewWithClientId,
 } from '../actions';
-
-import { ANALYTICS_MULTI_TRACK, ANALYTICS_STAT_BUMP } from 'calypso/state/action-types';
 
 describe( 'middleware', () => {
 	describe( 'actions', () => {

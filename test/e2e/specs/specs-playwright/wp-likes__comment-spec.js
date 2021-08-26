@@ -22,7 +22,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 	describe( 'Comment and like on a new post', function () {
 		let commentsComponent;
 		let gutenbergEditorPage;
-		const comment = DataHelper.randomPhrase();
+		const comment = DataHelper.getRandomPhrase();
 
 		it( 'Log in', async function () {
 			const loginFlow = new LoginFlow( page, 'gutenbergSimpleSiteUser' );
@@ -36,7 +36,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 
 		it( 'Enter post title', async function () {
 			gutenbergEditorPage = new GutenbergEditorPage( page );
-			const title = DataHelper.randomPhrase();
+			const title = DataHelper.getRandomPhrase();
 			await gutenbergEditorPage.enterTitle( title );
 		} );
 

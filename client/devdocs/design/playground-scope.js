@@ -2,6 +2,7 @@ export {
 	Button,
 	Card,
 	CompactCard,
+	Popover,
 	ProgressBar,
 	Ribbon,
 	ScreenReaderText,
@@ -86,7 +87,6 @@ export { default as Notices } from 'calypso/components/notice';
 export { default as Pagination } from 'calypso/components/pagination';
 export { default as PaymentLogo } from 'calypso/components/payment-logo';
 export { default as PieChart } from 'calypso/components/pie-chart';
-export { default as Popovers } from 'calypso/components/popover';
 export { default as Ranges } from 'calypso/components/forms/range';
 export { default as Rating } from 'calypso/components/rating';
 export { default as Search } from 'calypso/components/search';

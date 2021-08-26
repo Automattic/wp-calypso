@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { isEditorIframeLoaded, getEditorIframePort } from 'calypso/state/editor/selectors';
 
 const createMediaGutenframePayload = ( status, mediaItem ) => ( {

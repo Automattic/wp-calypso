@@ -1,18 +1,12 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
+import { supported } from '@github/webauthn-json';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import PropTypes from 'prop-types';
-import { supported } from '@github/webauthn-json';
+import React from 'react';
+import { connect } from 'react-redux';
 
 const debug = debugFactory( 'calypso:me:reauth-required' );
 
-/**
- * Internal Dependencies
- */
 import { Card, Dialog } from '@automattic/components';
 import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
@@ -20,16 +14,13 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormVerificationCodeInput from 'calypso/components/forms/form-verification-code-input';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import Notice from 'calypso/components/notice';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import SecurityKeyForm from './security-key-form';
 import TwoFactorActions from './two-factor-actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 // autofocus is used for tracking purposes, not an a11y issue

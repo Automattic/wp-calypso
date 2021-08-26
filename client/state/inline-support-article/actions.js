@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	SUPPORT_ARTICLE_DIALOG_OPEN,
 	SUPPORT_ARTICLE_DIALOG_CLOSE,

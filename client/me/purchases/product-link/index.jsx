@@ -1,18 +1,3 @@
-/**
- * External dependencies
- */
-
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import i18n from 'i18n-calypso';
-
-/**
- * Internal Dependencies
- */
-import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
-import { emailManagement } from 'calypso/my-sites/email/paths';
-import { getThemeDetailsUrl } from 'calypso/state/themes/selectors';
 import {
 	isDomainProduct,
 	isGSuiteOrGoogleWorkspace,
@@ -21,6 +6,13 @@ import {
 	isTheme,
 	isTitanMail,
 } from '@automattic/calypso-products';
+import i18n from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
+import { emailManagement } from 'calypso/my-sites/email/paths';
+import { getThemeDetailsUrl } from 'calypso/state/themes/selectors';
 
 const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
 	let url;

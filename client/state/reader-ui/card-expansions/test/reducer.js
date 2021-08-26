@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import freeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import reducer from '../reducer';
 import { keyToString } from 'calypso/reader/post-key';
 import {
 	READER_EXPAND_CARD,
 	READER_RESET_CARD_EXPANSIONS,
 } from 'calypso/state/reader/action-types';
+import reducer from '../reducer';
 
 describe( 'reducer', () => {
 	const postKey = freeze( { postId: 'postId', blogId: 'blogId' } );

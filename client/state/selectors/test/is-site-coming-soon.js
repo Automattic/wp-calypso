@@ -1,10 +1,3 @@
-/**
- * External dependencies
- */
-
-/**
- * Internal dependencies
- */
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 
 describe( 'isSiteComingSoon()', () => {

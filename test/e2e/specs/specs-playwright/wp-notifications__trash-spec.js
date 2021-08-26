@@ -16,7 +16,7 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 
 	const commentingUser = 'commentingUser';
 	const notificationsUser = 'notificationsUser';
-	const comment = DataHelper.randomPhrase() + ' TBD';
+	const comment = DataHelper.getRandomPhrase() + ' TBD';
 
 	setupHooks( ( args ) => {
 		page = args.page;

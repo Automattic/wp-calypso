@@ -5,7 +5,7 @@ import ExternalLink from 'calypso/components/external-link';
 import Button from 'calypso/components/forms/form-button';
 import Gridicon from 'calypso/components/gridicon';
 import missingCredentialsIcon from 'calypso/components/jetpack/daily-backup-status/missing-credentials.svg';
-import PopoverMenu from 'calypso/components/popover/menu';
+import PopoverMenu from 'calypso/components/popover-menu';
 import { getActionableRewindId } from 'calypso/lib/jetpack/actionable-rewind-id';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
 import { backupDownloadPath, backupRestorePath } from 'calypso/my-sites/backup/paths';

@@ -1,29 +1,22 @@
-/**
- * External dependencies
- */
+import { ToggleControl } from '@wordpress/components';
+import { localize } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import page from 'page';
-import { ToggleControl } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
 import { isExpiring } from 'calypso/lib/purchases';
 import { disableAutoRenew, enableAutoRenew } from 'calypso/lib/purchases/actions';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { isFetchingUserPurchases } from 'calypso/state/purchases/selectors';
-import { fetchUserPurchases } from 'calypso/state/purchases/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { createNotice } from 'calypso/state/notices/actions';
-import AutoRenewDisablingDialog from './auto-renew-disabling-dialog';
-import AutoRenewPaymentMethodDialog from './auto-renew-payment-method-dialog';
+import { fetchUserPurchases } from 'calypso/state/purchases/actions';
+import { isFetchingUserPurchases } from 'calypso/state/purchases/selectors';
+import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { isExpired, isOneTimePurchase, isRechargeable } from '../../../../lib/purchases';
 import { getChangePaymentMethodPath } from '../../utils';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import AutoRenewDisablingDialog from './auto-renew-disabling-dialog';
+import AutoRenewPaymentMethodDialog from './auto-renew-payment-method-dialog';
 
 class AutoRenewToggle extends Component {
 	static propTypes = {

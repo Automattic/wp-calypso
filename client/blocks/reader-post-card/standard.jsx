@@ -1,4 +1,3 @@
-import { get, partial } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
@@ -7,10 +6,11 @@ import Emojify from 'calypso/components/emojify';
 import FeaturedAsset from './featured-asset';
 
 const StandardPost = ( { post, children, isDiscover, expandCard, postKey, isExpanded, site } ) => {
-	let onVideoThumbnailClick = null;
-	if ( get( post, 'canonical_media.mediaType' ) === 'video' ) {
-		onVideoThumbnailClick = partial( expandCard, { postKey, post, site } );
-	}
+	const onVideoThumbnailClick =
+		post.canonical_media?.mediaType === 'video'
+			? () => expandCard( { postKey, post, site } )
+			: null;
+
 	return (
 		<div className="reader-post-card__post">
 			<FeaturedAsset

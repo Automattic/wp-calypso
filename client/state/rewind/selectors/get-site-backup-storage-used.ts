@@ -1,11 +1,4 @@
-/**
- * Internal dependencies
- */
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
-
-/**
- * Type dependencies
- */
 import type { AppState } from 'calypso/types';
 
 // TODO: Remove once real data is available.

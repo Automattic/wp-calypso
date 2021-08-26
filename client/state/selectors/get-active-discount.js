@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { activeDiscounts } from 'calypso/lib/discounts';
 import { planMatches } from '@automattic/calypso-products';
+import { activeDiscounts } from 'calypso/lib/discounts';
 import { hasActivePromotion } from 'calypso/state/active-promotions/selectors';
 import { getSitePlanSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

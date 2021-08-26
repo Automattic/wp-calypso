@@ -7,7 +7,7 @@ A React component for displaying a button with a labeled main action plus a seco
 Render `<SplitButton />` in a similar fashion as you would [the `<PopoverMenu />` component](../popover-menu), as it is effectively a convenience wrapper for this component with a few additional options. Specifically, you'll still need to render `<PopoverMenuItem />` as children of the `<SplitButton />`.
 
 ```jsx
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
 
 export default function MyComponent( { onMenuItemClick } ) {

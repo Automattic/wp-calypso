@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { AnyAction, Reducer } from 'redux';
-
-/**
- * Internal dependencies
- */
-import { combineReducers } from 'calypso/state/utils';
 import { maskField } from 'calypso/lib/checkout';
+import { combineReducers } from 'calypso/state/utils';
 
 const initialState = {
 	fields: {},

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	ACTIVITY_LOG_DISPLAY_RULES_REQUEST,
 	ACTIVITY_LOG_DISPLAY_RULES_REQUEST_FAILURE,

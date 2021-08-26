@@ -1,27 +1,17 @@
-/**
- * External dependencies
- */
-import React from 'react';
+import i18n from 'i18n-calypso';
 import page from 'page';
-
-/**
- * Internal dependencies
- */
-import ConciergeMain from './main';
-import ConciergeCancel from './cancel';
+import React from 'react';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import BookCalendarStep from './book/calendar-step';
 import BookConfirmationStep from './book/confirmation-step';
 import BookInfoStep from './book/info-step';
 import BookSkeleton from './book/skeleton';
+import ConciergeCancel from './cancel';
+import ConciergeMain from './main';
 import RescheduleCalendarStep from './reschedule/calendar-step';
 import RescheduleConfirmationStep from './reschedule/confirmation-step';
 import RescheduleSkeleton from './reschedule/skeleton';
-import i18n from 'i18n-calypso';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const book = ( context, next ) => {

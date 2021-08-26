@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
 import { OAUTH2_CLIENT_DATA_RECEIVE } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';

@@ -1,7 +1,7 @@
 import path from 'path';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { isEqual, partial } from 'lodash';
+import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -283,10 +283,10 @@ export default connect(
 			isImageLoaded: isImageEditorImageLoaded( state ),
 		};
 	},
-	( dispatch, ownProp ) => {
+	( dispatch, ownProps ) => {
 		const defaultAspectRatio = getDefaultAspectRatio(
-			ownProp.defaultAspectRatio,
-			ownProp.allowedAspectRatios
+			ownProps.defaultAspectRatio,
+			ownProps.allowedAspectRatios
 		);
 
 		const resetActionsAdditionalData = {
@@ -297,8 +297,8 @@ export default connect(
 			{
 				setImageEditorFileInfo,
 				setImageEditorDefaultAspectRatio,
-				resetImageEditorState: partial( resetImageEditorState, resetActionsAdditionalData ),
-				resetAllImageEditorState: partial( resetAllImageEditorState, resetActionsAdditionalData ),
+				resetImageEditorState: () => resetImageEditorState( resetActionsAdditionalData ),
+				resetAllImageEditorState: () => resetAllImageEditorState( resetActionsAdditionalData ),
 			},
 			dispatch
 		);

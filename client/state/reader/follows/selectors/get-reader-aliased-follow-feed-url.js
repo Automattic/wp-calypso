@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { find, includes, some } from 'lodash';
-
-/**
- * Internal Dependencies
- */
 import { prepareComparableUrl } from 'calypso/state/reader/follows/utils';
 
 import 'calypso/state/reader/init';

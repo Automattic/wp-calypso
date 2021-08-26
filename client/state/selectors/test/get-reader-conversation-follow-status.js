@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getReaderConversationFollowStatus } from 'calypso/state/reader/conversations/selectors';
 
 describe( 'getReaderConversationFollowStatus()', () => {

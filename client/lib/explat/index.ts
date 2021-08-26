@@ -1,12 +1,5 @@
-/**
- * WordPress dependencies
- */
 import { createExPlatClient } from '@automattic/explat-client';
 import createExPlatClientReactHelpers from '@automattic/explat-client-react-helpers';
-
-/**
- * Internal dependencies
- */
 import { getAnonId, initializeAnonId } from './internals/anon-id';
 import fetchExperimentAssignment from './internals/fetch-experiment-assignment';
 import { logError } from './internals/log-error';

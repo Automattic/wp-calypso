@@ -1,16 +1,6 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
 import { ACTIVATE_PLUGIN } from 'calypso/lib/plugins/constants';
-import { isRequesting, plugins } from '../reducer';
-import status from '../status/reducer';
-import { akismet, jetpack } from './fixtures/plugins';
 import {
 	PLUGINS_RECEIVE,
 	PLUGINS_REQUEST,
@@ -27,6 +17,9 @@ import {
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
 	PLUGIN_NOTICES_REMOVE,
 } from 'calypso/state/action-types';
+import { isRequesting, plugins } from '../reducer';
+import status from '../status/reducer';
+import { akismet, jetpack } from './fixtures/plugins';
 
 describe( 'reducer:', () => {
 	describe( 'isRequesting', () => {

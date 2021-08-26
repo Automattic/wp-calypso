@@ -1,16 +1,8 @@
-/**
- * External dependencies
- */
-
-import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import ManageContact from './manage-contact';
-import EditPhone from './edit-phone';
+import React, { Component } from 'react';
 import accept from 'calypso/lib/accept';
+import EditPhone from './edit-phone';
+import ManageContact from './manage-contact';
 
 class RecoveryPhone extends Component {
 	render() {

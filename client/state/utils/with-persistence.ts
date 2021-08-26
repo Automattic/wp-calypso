@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
-import type { AnyAction } from 'redux';
 import type { SerializableReducer } from './serialize';
+import type { AnyAction } from 'redux';
 
 export interface SerializeOptions< TState > {
 	serialize?: ( state: TState ) => any;

@@ -1,18 +1,9 @@
-/**
- * External dependencies
- */
-
 import { get, map, omit, omitBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { POST_REVISIONS_AUTHORS_REQUEST } from 'calypso/state/action-types';
-import { dispatchRequest, getHeaders } from 'calypso/state/data-layer/wpcom-http/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { receivePostRevisionAuthors } from 'calypso/state/posts/revisions/authors/actions';
-
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest, getHeaders } from 'calypso/state/data-layer/wpcom-http/utils';
+import { receivePostRevisionAuthors } from 'calypso/state/posts/revisions/authors/actions';
 
 const noop = () => {};
 

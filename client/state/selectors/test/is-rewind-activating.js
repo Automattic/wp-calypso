@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
 import isRewindActivating from 'calypso/state/selectors/is-rewind-activating';
 
 const siteId = 77203074;

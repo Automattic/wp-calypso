@@ -1,6 +1,3 @@
-/**
- * Internal Dependencies
- */
 import decode from './decode';
 
 export function decodeEntities( text ) {

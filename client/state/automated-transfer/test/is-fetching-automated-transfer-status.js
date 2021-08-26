@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { isFetchingAutomatedTransferStatus } from '../selectors';
 
 describe( 'isFetchingAutomatedTransferStatus()', () => {

@@ -1,11 +1,8 @@
-/**
- * Internal dependencies
- */
-import { keyedReducer } from 'calypso/state/utils';
 import {
 	PLUGINS_RECOMMENDED_RECEIVE,
 	PLUGINS_RECOMMENDED_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
+import { keyedReducer } from 'calypso/state/utils';
 
 const reducer = keyedReducer( 'siteId', ( state = null, action ) => {
 	switch ( action.type ) {

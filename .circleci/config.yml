@@ -8,7 +8,7 @@ references:
   defaults: &defaults
     working_directory: ~/wp-calypso
     docker:
-      - image: cimg/node:16.5.0
+      - image: cimg/node:16.7.0
     environment:
       CIRCLE_ARTIFACTS: /tmp/artifacts
       CIRCLE_TEST_REPORTS: /tmp/test_results
@@ -114,6 +114,7 @@ references:
       source "$HOME/.nvm/nvm.sh"
       nvm use
       npm install -g yarn
+      yarn
       yarn run build-desktop:install-app-deps
   desktop-cache-paths: &desktop-cache-paths
     - desktop/resource/certificates/win.p12
@@ -367,7 +368,7 @@ jobs:
 
   wp-desktop-linux:
     docker:
-      - image: circleci/node:16.5.0-browsers
+      - image: circleci/node:16.7.0-browsers
     <<: *desktop_defaults
     shell: /bin/bash --login
     environment:
@@ -458,7 +459,9 @@ jobs:
           command: cinst make
       - run:
           name: Install Desktop Dependencies
-          command: yarn run build-desktop:install-app-deps
+          command: |
+            yarn
+            yarn run build-desktop:install-app-deps
       - when:
           condition: << pipeline.git.tag >>
           steps:

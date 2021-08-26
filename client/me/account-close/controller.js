@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import React from 'react';
-
-/**
- * Internal dependencies
- */
-import AccountSettingsCloseComponent from 'calypso/me/account-close/main';
 import AccountSettingsClosedComponent from 'calypso/me/account-close/closed';
+import AccountSettingsCloseComponent from 'calypso/me/account-close/main';
 
 export function accountClose( context, next ) {
 	context.primary = React.createElement( AccountSettingsCloseComponent );

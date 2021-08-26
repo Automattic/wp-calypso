@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { hasFeature } from 'calypso/state/sites/plans/selectors';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';

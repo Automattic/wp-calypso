@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { omitBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import PaginatedQueryKey from '../paginated/key';
 import { DEFAULT_POST_QUERY } from './constants';
 

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { MinimumImageDimensions } from 'calypso/state/editor/image-editor/constants';
 import getImageEditorOriginalAspectRatio from 'calypso/state/selectors/get-image-editor-original-aspect-ratio';
 

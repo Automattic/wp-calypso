@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import page from 'page';
-import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
-import { sidebar } from 'calypso/me/controller';
-import Happychat from './main';
-import { setDocumentHeadTitle } from 'calypso/state/document-head/actions';
+import { translate } from 'i18n-calypso';
+import page from 'page';
+import React from 'react';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { sidebar } from 'calypso/me/controller';
+import { setDocumentHeadTitle } from 'calypso/state/document-head/actions';
+import Happychat from './main';
 
 const renderChat = ( context, next ) => {
 	context.store.dispatch( setDocumentHeadTitle( translate( 'Chat', { textOnly: true } ) ) );

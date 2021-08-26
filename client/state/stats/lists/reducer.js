@@ -1,20 +1,14 @@
 /* eslint-disable no-case-declarations */
-/**
- * External dependencies
- */
-import { merge, get } from 'lodash';
 
-/**
- * Internal dependencies
- */
-import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import { getSerializedStatsQuery } from './utils';
-import { itemSchema } from './schema';
+import { merge, get } from 'lodash';
 import {
 	SITE_STATS_RECEIVE,
 	SITE_STATS_REQUEST,
 	SITE_STATS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
+import { itemSchema } from './schema';
+import { getSerializedStatsQuery } from './utils';
 
 /**
  * Returns the updated requests state after an action has been dispatched. The

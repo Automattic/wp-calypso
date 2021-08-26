@@ -6,8 +6,8 @@ import {
 	isWpComPersonalPlan,
 	isWpComPremiumPlan,
 } from '@automattic/calypso-products';
+import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
-import doesValueExist from './does-value-exist';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 export default function getPlanFeatures(
@@ -47,7 +47,7 @@ export default function getPlanFeatures(
 			isMonthlyPlan ? annualPlanOnly( freeOneYearDomain ) : freeOneYearDomain,
 			String( translate( 'Best-in-class hosting' ) ),
 			String( translate( 'Dozens of Free Themes' ) ),
-		].filter( doesValueExist );
+		].filter( isValueTruthy );
 	}
 
 	if ( isWpComPremiumPlan( productSlug ) ) {
@@ -59,7 +59,7 @@ export default function getPlanFeatures(
 				? String( translate( 'Subscriber-only content and Pay with PayPal buttons' ) )
 				: String( translate( 'Subscriber-only content and payment buttons' ) ),
 			googleAnalytics,
-		].filter( doesValueExist );
+		].filter( isValueTruthy );
 	}
 
 	if ( isWpComBusinessPlan( productSlug ) ) {
@@ -70,7 +70,7 @@ export default function getPlanFeatures(
 			String( translate( 'Drive traffic to your site with our advanced SEO tools' ) ),
 			String( translate( 'Track your stats with Google Analytics' ) ),
 			String( translate( 'Real-time backups and activity logs' ) ),
-		].filter( doesValueExist );
+		].filter( isValueTruthy );
 	}
 
 	if ( isWpComEcommercePlan( productSlug ) ) {
@@ -82,7 +82,7 @@ export default function getPlanFeatures(
 			String( translate( 'Integrations with top shipping carriers' ) ),
 			String( translate( 'Unlimited products or services for your online store' ) ),
 			String( translate( 'eCommerce marketing tools for emails and social networks' ) ),
-		].filter( doesValueExist );
+		].filter( isValueTruthy );
 	}
 
 	return [];

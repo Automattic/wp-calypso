@@ -1,16 +1,6 @@
-/**
- * External dependencies
- */
-import { isEqual, omit } from 'lodash';
-import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-
 import debug from 'debug';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { translate } from 'i18n-calypso';
+import { isEqual, omit } from 'lodash';
 import {
 	MEDIA_REQUEST,
 	MEDIA_ITEM_REQUEST,
@@ -18,6 +8,9 @@ import {
 	MEDIA_ITEM_EDIT,
 	MEDIA_ITEM_DELETE,
 } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import {
 	deleteMedia,
 	failMediaItemRequest,
@@ -27,12 +20,10 @@ import {
 	successMediaItemRequest,
 	successMediaRequest,
 } from 'calypso/state/media/actions';
-import { requestMediaStorage } from 'calypso/state/sites/media-storage/actions';
-import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import getNextPageQuery from 'calypso/state/selectors/get-next-page-query';
 import { gutenframeUpdateImageBlocks } from 'calypso/state/media/thunks';
+import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
+import getNextPageQuery from 'calypso/state/selectors/get-next-page-query';
+import { requestMediaStorage } from 'calypso/state/sites/media-storage/actions';
 
 /**
  * Module variables

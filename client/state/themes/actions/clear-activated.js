@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { THEME_CLEAR_ACTIVATED } from 'calypso/state/themes/action-types';
 
 import 'calypso/state/themes/init';

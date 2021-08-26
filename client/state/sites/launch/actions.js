@@ -1,11 +1,8 @@
-/**
- * Internal dependencies
- */
 import { SITE_LAUNCH } from 'calypso/state/action-types';
 import 'calypso/state/data-layer/wpcom/sites/launch';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
-import { getSiteSlug, isCurrentPlanPaid, getSiteOption } from 'calypso/state/sites/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { getSiteSlug, isCurrentPlanPaid, getSiteOption } from 'calypso/state/sites/selectors';
 
 export const launchSite = ( siteId ) => ( {
 	type: SITE_LAUNCH,

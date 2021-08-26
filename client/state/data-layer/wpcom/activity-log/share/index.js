@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { REWIND_ACTIVITY_SHARE_REQUEST } from 'calypso/state/action-types';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
-import { REWIND_ACTIVITY_SHARE_REQUEST } from 'calypso/state/action-types';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 const requestShare = ( action ) =>
 	http(

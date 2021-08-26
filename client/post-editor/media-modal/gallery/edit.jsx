@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import SortableList from 'calypso/components/forms/sortable-list';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import EditorMediaModalGalleryEditItem from './edit-item';
 
 const noop = () => {};

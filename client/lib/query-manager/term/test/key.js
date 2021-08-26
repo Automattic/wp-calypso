@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import TermQueryKey from '../key';
 
 describe( 'TermQueryKey', () => {

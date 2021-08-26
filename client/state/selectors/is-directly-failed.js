@@ -8,9 +8,6 @@
  * @returns {boolean}        Whether the widget has failed
  */
 
-/**
- * Internal dependencies
- */
 import { STATUS_ERROR } from 'calypso/state/help/directly/constants';
 
 import 'calypso/state/help/init';

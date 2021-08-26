@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	SITE_DOMAINS_RECEIVE,
 	SITE_DOMAINS_REQUEST,

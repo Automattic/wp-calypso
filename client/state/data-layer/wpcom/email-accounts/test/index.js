@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { getEmailAccounts, getEmailAccountsFailure, getEmailAccountsSuccess } from '../';
 import {
 	EMAIL_ACCOUNTS_REQUEST,
 	EMAIL_ACCOUNTS_REQUEST_SUCCESS,
 	EMAIL_ACCOUNTS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
-
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { getEmailAccounts, getEmailAccountsFailure, getEmailAccountsSuccess } from '../';
 
 const isErrorNotice = ( action ) => {
 	return action && action.notice && 'is-error' === action.notice.status;

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { isNewUser } from 'calypso/state/guided-tours/contexts';
 
 const stubTrue = () => true;

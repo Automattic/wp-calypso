@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getCanonicalTheme } from 'calypso/state/themes/selectors/get-canonical-theme';
 
 import 'calypso/state/themes/init';

@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { createSelector } from '@automattic/state-utils';
+import { includes } from 'lodash';
 import { getSerializedThemesQuery } from 'calypso/state/themes/utils';
 
 import 'calypso/state/themes/init';

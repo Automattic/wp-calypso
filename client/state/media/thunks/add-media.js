@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { uploadMedia } from './upload-media';
 import { getFileUploader } from 'calypso/lib/media/utils';
+import { uploadMedia } from './upload-media';
 
 /**
  * Upload a single media item

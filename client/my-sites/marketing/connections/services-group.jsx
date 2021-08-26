@@ -140,7 +140,7 @@ const SharingServicesGroup = ( {
 SharingServicesGroup.propTypes = {
 	isFetching: PropTypes.bool,
 	services: PropTypes.array,
-	title: PropTypes.string.isRequired,
+	title: PropTypes.node.isRequired,
 	type: PropTypes.string.isRequired,
 	expandedService: PropTypes.string,
 };

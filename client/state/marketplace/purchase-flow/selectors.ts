@@ -1,16 +1,13 @@
-/**
- * Internal dependencies
- */
 import 'calypso/state/marketplace/init';
-import { IAppState } from 'calypso/state/types';
+import { marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';
+import { getProductDefinition } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
 import {
 	IPurchaseFlowState,
 	MARKETPLACE_ASYNC_PROCESS_STATUS,
 } from 'calypso/state/marketplace/types';
-import { isFetching as getIsWporgPluginFetching } from 'calypso/state/plugins/wporg/selectors';
 import { isLoaded, isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
-import { marketplaceDebugger } from 'calypso/my-sites/marketplace/constants';
-import { getProductDefinition } from 'calypso/my-sites/marketplace/marketplace-product-definitions';
+import { isFetching as getIsWporgPluginFetching } from 'calypso/state/plugins/wporg/selectors';
+import { IAppState } from 'calypso/state/types';
 
 export function getPrimaryDomainCandidate( state: IAppState ): string | null {
 	return state.marketplace.purchaseFlow.primaryDomain;

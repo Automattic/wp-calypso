@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import cookie from 'cookie';
-
-/**
- * Internal dependencies
- */
 import debug from './debug';
 import isCurrentUserMaybeInGdprZone from './is-current-user-maybe-in-gdpr-zone';
 

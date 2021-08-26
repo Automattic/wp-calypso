@@ -6,7 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import { Card, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { get, isEqual, mapValues, omit, pickBy, partial } from 'lodash';
+import { get, isEqual, mapValues, omit, pickBy } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
 import pageTitleImage from 'calypso/assets/images/illustrations/seo-page-title.svg';
@@ -503,12 +503,12 @@ const mapDispatchToProps = {
 	refreshSiteData: requestSite,
 	requestSiteSettings,
 	saveSiteSettings,
-	trackFormSubmitted: partial( recordTracksEvent, 'calypso_seo_settings_form_submit' ),
-	trackTitleFormatsUpdated: partial( recordTracksEvent, 'calypso_seo_tools_title_formats_updated' ),
-	trackFrontPageMetaUpdated: partial(
-		recordTracksEvent,
-		'calypso_seo_tools_front_page_meta_updated'
-	),
+	trackFormSubmitted: ( properties ) =>
+		recordTracksEvent( 'calypso_seo_settings_form_submit', properties ),
+	trackTitleFormatsUpdated: ( properties ) =>
+		recordTracksEvent( 'calypso_seo_tools_title_formats_updated', properties ),
+	trackFrontPageMetaUpdated: ( properties ) =>
+		recordTracksEvent( 'calypso_seo_tools_front_page_meta_updated', properties ),
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( protectForm( localize( SeoForm ) ) );

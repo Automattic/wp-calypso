@@ -1,8 +1,4 @@
-/**
- * Internal dependencies
- */
 import { isAdTrackingAllowed, refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
-
 import {
 	debug,
 	isFacebookEnabled,

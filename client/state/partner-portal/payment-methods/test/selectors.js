@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import * as selectors from 'calypso/state/partner-portal/payment-methods/selectors';
 
 describe( 'selectors', () => {

@@ -1,6 +1,3 @@
-/**
- * Internal Dependencies
- */
 import { createSelector } from '@automattic/state-utils';
 import { createPurchasesArray } from 'calypso/lib/purchases/assembler';
 

@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import { get, isEmpty, pick, startsWith } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { withStorageKey } from '@automattic/state-utils';
-import { combineReducers } from 'calypso/state/utils';
-import magicLogin from './magic-login/reducer';
+import { get, isEmpty, pick, startsWith } from 'lodash';
+import { login } from 'calypso/lib/paths';
+import { addQueryArgs } from 'calypso/lib/route';
 import {
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST,
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE,
@@ -43,8 +36,8 @@ import {
 	TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
 	CURRENT_USER_RECEIVE,
 } from 'calypso/state/action-types';
-import { login } from 'calypso/lib/paths';
-import { addQueryArgs } from 'calypso/lib/route';
+import { combineReducers } from 'calypso/state/utils';
+import magicLogin from './magic-login/reducer';
 
 export const isRequesting = ( state = false, action ) => {
 	switch ( action.type ) {

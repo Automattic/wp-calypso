@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { shallow } from 'enzyme';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import { PendingPayments, requestId } from '../index';
 
 jest.mock( 'calypso/state/data-layer/http-data', () => ( {

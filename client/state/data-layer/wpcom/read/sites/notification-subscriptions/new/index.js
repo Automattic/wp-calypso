@@ -1,15 +1,11 @@
-/**
- * Internal dependencies
- */
-import { READER_SUBSCRIBE_TO_NEW_POST_NOTIFICATIONS } from 'calypso/state/reader/action-types';
+import { translate } from 'i18n-calypso';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { translate } from 'i18n-calypso';
-import { bypassDataLayer } from 'calypso/state/data-layer/utils';
+import { READER_SUBSCRIBE_TO_NEW_POST_NOTIFICATIONS } from 'calypso/state/reader/action-types';
 import { unsubscribeToNewPostNotifications } from 'calypso/state/reader/follows/actions';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 const noop = () => {};
 

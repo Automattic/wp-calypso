@@ -1,8 +1,8 @@
 import { Card } from '@automattic/components';
 import { map } from 'lodash';
 import React from 'react';
-import PopoverMenuItem from 'calypso/components/popover/menu-item';
-import PopoverMenuSeparator from 'calypso/components/popover/menu-separator';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
 import SplitButton from '../';
 
 const popoverItems = [

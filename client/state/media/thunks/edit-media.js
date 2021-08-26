@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { createTransientMedia } from 'calypso/lib/media/utils';
 import { editMediaItem } from 'calypso/state/media/actions';
 import getMediaItem from 'calypso/state/selectors/get-media-item';

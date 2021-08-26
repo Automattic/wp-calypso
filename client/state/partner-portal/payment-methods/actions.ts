@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { AnyAction } from 'redux';
 
 export function changeBrand( payload: string ): AnyAction {

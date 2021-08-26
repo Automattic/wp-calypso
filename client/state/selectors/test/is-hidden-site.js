@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import isHiddenSite from 'calypso/state/selectors/is-hidden-site';
 
 describe( 'isHiddenSite()', () => {

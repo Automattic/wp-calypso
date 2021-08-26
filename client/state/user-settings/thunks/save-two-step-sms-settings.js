@@ -1,13 +1,10 @@
-/**
- * Internal dependencies
- */
+import wp from 'calypso/lib/wp';
+import { USER_SETTINGS_SAVE } from 'calypso/state/action-types';
 import { fromApi } from 'calypso/state/data-layer/wpcom/me/settings';
 import {
 	saveUserSettingsFailure,
 	saveUserSettingsSuccess,
 } from 'calypso/state/user-settings/actions';
-import { USER_SETTINGS_SAVE } from 'calypso/state/action-types';
-import wp from 'calypso/lib/wp';
 
 import 'calypso/state/user-settings/init';
 

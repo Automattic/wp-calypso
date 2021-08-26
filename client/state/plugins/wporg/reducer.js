@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	PLUGINS_WPORG_LIST_RECEIVE,
 	PLUGINS_WPORG_LIST_REQUEST,

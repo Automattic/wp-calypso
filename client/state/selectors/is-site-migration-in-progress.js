@@ -1,7 +1,3 @@
-/**
- * Internal dependencies
- */
-
 import getSiteMigrationStatus from 'calypso/state/selectors/get-site-migration-status';
 
 /**

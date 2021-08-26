@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getPublicSites from 'calypso/state/selectors/get-public-sites';
 import { userState } from './fixtures/user-state';
 

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { type as domainTypes } from './constants';
 
 export function getWpcomDomain( domainObjects ) {

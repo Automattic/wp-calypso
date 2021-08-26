@@ -1,11 +1,4 @@
-/**
- * External Dependencies
- */
 import { get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	READER_ORGANIZATIONS_REQUEST,
 	READER_ORGANIZATIONS_RECEIVE,

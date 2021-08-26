@@ -11,8 +11,8 @@ import TestUtils from 'react-dom/test-utils';
 import sinon from 'sinon';
 import { Theme } from '../';
 
-jest.mock( 'calypso/components/popover/menu', () => 'components--popover--menu' );
-jest.mock( 'calypso/components/popover/menu-item', () => 'components--popover--menu-item' );
+jest.mock( 'calypso/components/popover-menu', () => 'components--popover--menu' );
+jest.mock( 'calypso/components/popover-menu/item', () => 'components--popover--menu-item' );
 
 describe( 'Theme', () => {
 	let props;

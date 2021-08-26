@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { flatMap } from 'lodash';
 import { createSelector } from '@automattic/state-utils';
-
-/**
- * Internal dependencies
- */
+import { flatMap } from 'lodash';
 import { getSerializedThemesQueryWithoutPage } from 'calypso/state/themes/utils';
 
 import 'calypso/state/themes/init';

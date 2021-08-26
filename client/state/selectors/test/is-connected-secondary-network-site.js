@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import isConnectedSecondaryNetworkSite from 'calypso/state/selectors/is-connected-secondary-network-site';
 
 describe( 'isConnectedSecondaryNetworkSite()', () => {

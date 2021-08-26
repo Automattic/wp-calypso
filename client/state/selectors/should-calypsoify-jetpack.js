@@ -1,10 +1,7 @@
-/**
- * Internal dependencies
- */
 import 'calypso/state/gutenberg-iframe-eligible/init';
+import versionCompare from 'calypso/lib/version-compare';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteOption } from 'calypso/state/sites/selectors';
-import versionCompare from 'calypso/lib/version-compare';
 
 export const shouldCalypsoifyJetpack = ( state, siteId ) => {
 	// On some Jetpack sites (9.2, not Atomic),

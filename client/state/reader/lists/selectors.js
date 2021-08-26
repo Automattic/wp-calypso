@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import { filter, find, has, includes } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { withoutHttp } from 'calypso/lib/url';
 import { createSelector } from '@automattic/state-utils';
+import { filter, find, has, includes } from 'lodash';
+import { withoutHttp } from 'calypso/lib/url';
 import getCurrentIntlCollator from 'calypso/state/selectors/get-current-intl-collator';
 import 'calypso/state/reader/init';
 

@@ -1,6 +1,3 @@
-/**
- * Internal Dependencies
- */
 import { createSelector } from '@automattic/state-utils';
 import { needsToRenewSoon } from 'calypso/lib/purchases';
 import { getSitePurchases } from './get-site-purchases';

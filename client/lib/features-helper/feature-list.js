@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
+import React from 'react';
 
 const headerClass = 'features-helper__feature-header';
 const itemClass = 'features-helper__feature-item';

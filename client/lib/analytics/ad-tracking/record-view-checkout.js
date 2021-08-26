@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { isCriteoEnabled } from './constants';
 import { recordViewCheckoutInCriteo } from './criteo';
 

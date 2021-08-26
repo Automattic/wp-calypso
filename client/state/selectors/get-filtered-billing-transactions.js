@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
+import { createSelector } from '@automattic/state-utils';
 import { getLocaleSlug } from 'i18n-calypso';
 import { compact, flatMap, omit, some } from 'lodash';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
-import { createSelector } from '@automattic/state-utils';
-import getBillingTransactionsByType from 'calypso/state/selectors/get-billing-transactions-by-type';
 import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
+import getBillingTransactionsByType from 'calypso/state/selectors/get-billing-transactions-by-type';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 
 import 'calypso/state/billing-transactions/init';

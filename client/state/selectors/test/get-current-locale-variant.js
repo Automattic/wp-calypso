@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';
 
 describe( 'getCurrentLocaleVariant()', () => {

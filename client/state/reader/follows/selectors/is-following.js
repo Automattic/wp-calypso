@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { find } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { prepareComparableUrl } from 'calypso/state/reader/follows/utils';
 import getReaderAliasedFollowFeedUrl from 'calypso/state/reader/follows/selectors/get-reader-aliased-follow-feed-url';
+import { prepareComparableUrl } from 'calypso/state/reader/follows/utils';
 
 import 'calypso/state/reader/init';
 

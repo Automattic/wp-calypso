@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import 'calypso/state/theme-setup/init';
 
 export function isThemeSetupDialogVisible( state ) {

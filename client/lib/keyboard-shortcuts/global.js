@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import page from 'page';
-
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
-import { getStatsDefaultSitePage } from 'calypso/lib/route';
+import page from 'page';
 import KeyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
 import { reduxDispatch, reduxGetState } from 'calypso/lib/redux-bridge';
-import { getSectionGroup, getSelectedSite } from 'calypso/state/ui/selectors';
+import { getStatsDefaultSitePage } from 'calypso/lib/route';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { getSectionGroup, getSelectedSite } from 'calypso/state/ui/selectors';
 
 let singleton;
 

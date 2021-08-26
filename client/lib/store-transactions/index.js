@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
+import { translatedEbanxError } from 'calypso/lib/checkout/processor-specific';
 import paymentGatewayLoader from 'calypso/lib/payment-gateway-loader';
 import wp from 'calypso/lib/wp';
-import { translatedEbanxError } from 'calypso/lib/checkout/processor-specific';
 
 const debug = debugFactory( 'calypso:store-transactions' );
 

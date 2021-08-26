@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { some } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { getUrlParts } from '@automattic/calypso-url';
+import { some } from 'lodash';
 
 /** Determine if url is likely pointed to an image
  *

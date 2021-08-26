@@ -1,11 +1,11 @@
-/**
- * External dependencies
- */
+import {
+	PLAN_FREE,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
+} from '@automattic/calypso-products';
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
+import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import {
 	getTheme,
 	getCanonicalTheme,
@@ -43,13 +43,6 @@ import {
 	getRecommendedThemesFilter,
 	areRecommendedThemesLoading,
 } from '../selectors';
-import {
-	PLAN_FREE,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-	PLAN_ECOMMERCE,
-} from '@automattic/calypso-products';
-import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 
 const twentyfifteen = {
 	id: 'twentyfifteen',

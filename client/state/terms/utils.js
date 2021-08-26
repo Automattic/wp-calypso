@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import { omit, omitBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { DEFAULT_TERMS_QUERY } from './constants';
 
 /**

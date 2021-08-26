@@ -1,20 +1,13 @@
-/**
- * External dependencies
- */
 import { assert, expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
-import { receiveUserSuggestions, requestUserSuggestions } from '../actions';
 import {
 	USER_SUGGESTIONS_RECEIVE,
 	USER_SUGGESTIONS_REQUEST,
 	USER_SUGGESTIONS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
+import { receiveUserSuggestions, requestUserSuggestions } from '../actions';
 import sampleSuccessResponse from './sample-response.json';
 const siteId = 123;
 

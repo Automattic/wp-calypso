@@ -1,15 +1,8 @@
 jest.mock( '../shared/upsell', () => 'Upsell' );
 jest.mock( '../shared/no-available-times', () => 'NoAvailableTimes' );
 
-/**
- * External dependencies
- */
 import { shallow } from 'enzyme';
 import React from 'react';
-
-/**
- * Internal dependencies
- */
 import { ConciergeMain } from '../main';
 
 const props = {

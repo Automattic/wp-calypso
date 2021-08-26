@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { apiNotReady, receiveUnregisterDevice, sendSubscriptionToWPCOM } from '../actions';
 import {
 	PUSH_NOTIFICATIONS_API_NOT_READY,
 	PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE,
@@ -14,6 +6,7 @@ import {
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { apiNotReady, receiveUnregisterDevice, sendSubscriptionToWPCOM } from '../actions';
 
 const API_DOMAIN = 'https://public-api.wordpress.com:443';
 

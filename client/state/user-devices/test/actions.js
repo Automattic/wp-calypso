@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { requestUserDevices, userDevicesAdd } from '../actions';
 import { USER_DEVICES_REQUEST, USER_DEVICES_ADD } from 'calypso/state/action-types';
+import { requestUserDevices, userDevicesAdd } from '../actions';
 
 describe( 'requestUserDevices()', () => {
 	test( 'should return an action object', () => {

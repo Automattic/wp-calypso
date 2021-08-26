@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
 
 describe( 'isSiteUpgradeable()', () => {

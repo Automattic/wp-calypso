@@ -1,37 +1,23 @@
-/**
- * External dependencies
- */
+import { CompactCard } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
+import PurchasesNavigation from 'calyspo/me/purchases/purchases-navigation';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import formatCurrency from '@automattic/format-currency';
-
-/**
- * Internal dependencies
- */
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
-import PurchasesNavigation from 'calyspo/me/purchases/purchases-navigation';
-import Main from 'calypso/components/main';
+import noMembershipsImage from 'calypso/assets/images/illustrations/no-memberships.svg';
 import DocumentHead from 'calypso/components/data/document-head';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryMembershipsSubscriptions from 'calypso/components/data/query-memberships-subscriptions';
-import SectionHeader from 'calypso/components/section-header';
-import { CompactCard } from '@automattic/components';
 import EmptyContent from 'calypso/components/empty-content';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Main from 'calypso/components/main';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import SectionHeader from 'calypso/components/section-header';
 import { getAllSubscriptions } from 'calypso/state/memberships/subscriptions/selectors';
 import titles from 'calypso/me/purchases/titles';
 import FormattedHeader from 'calypso/components/formatted-header';
 
-/**
- * Style dependencies
- */
 import './style.scss';
-
-/**
- * Image dependencies
- */
-import noMembershipsImage from 'calypso/assets/images/illustrations/no-memberships.svg';
 
 const getMembershipEndDate = ( translate, endDate, moment ) => {
 	if ( ! endDate ) {

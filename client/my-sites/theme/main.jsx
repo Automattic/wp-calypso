@@ -25,6 +25,7 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import Gridicon from 'calypso/components/gridicon';
 import HeaderCake from 'calypso/components/header-cake';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
 import SectionNav from 'calypso/components/section-nav';
@@ -501,11 +502,24 @@ class ThemeSheet extends React.Component {
 					<Card className="theme__sheet-card-support">
 						<Gridicon icon="notice-outline" size={ 48 } />
 						<div className="theme__sheet-card-support-details">
-							{ translate( 'This theme is unsupported' ) }
+							{ translate(
+								'Help and support for this theme is not offered by WordPress.com. {{InlineSupportLink/}}',
+								{
+									components: {
+										InlineSupportLink: (
+											<InlineSupportLink
+												showIcon={ false }
+												supportPostId={ 174865 }
+												supportLink={ localizeUrl(
+													'https://wordpress.com/support/plugins/third-party-plugins-and-themes-support/'
+												) }
+											/>
+										),
+									},
+								}
+							) }
 							<small>
-								{ translate( "Maybe it's a custom theme? Sorry about that.", {
-									context: 'Support message when we no support links are available',
-								} ) }
+								{ translate( 'Contact the theme developer directly for help with this theme.' ) }
 							</small>
 						</div>
 					</Card>

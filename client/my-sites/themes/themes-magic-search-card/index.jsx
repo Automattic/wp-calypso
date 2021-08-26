@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Button } from '@automattic/components';
+import { Button, Popover } from '@automattic/components';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -10,7 +10,6 @@ import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
 import Gridicon from 'calypso/components/gridicon';
 import KeyedSuggestions from 'calypso/components/keyed-suggestions';
-import Popover from 'calypso/components/popover';
 import Search from 'calypso/components/search';
 import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 import StickyPanel from 'calypso/components/sticky-panel';

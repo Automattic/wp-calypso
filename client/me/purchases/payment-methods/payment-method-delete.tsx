@@ -1,27 +1,19 @@
-/**
- * External dependencies
- */
-
+import { Button } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useTranslate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { ReduxDispatch } from 'calypso/state/redux-store';
-import { deleteStoredCard } from 'calypso/state/stored-cards/actions';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { isDeletingStoredCard } from 'calypso/state/stored-cards/selectors';
-import { Button } from '@automattic/components';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	isPaymentAgreement,
 	getPaymentMethodSummary,
 	PaymentMethod,
 } from 'calypso/lib/checkout/payment-methods';
-import PaymentMethodDetails from './payment-method-details';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { ReduxDispatch } from 'calypso/state/redux-store';
+import { deleteStoredCard } from 'calypso/state/stored-cards/actions';
+import { isDeletingStoredCard } from 'calypso/state/stored-cards/selectors';
 import PaymentMethodDeleteDialog from './payment-method-delete-dialog';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import PaymentMethodDetails from './payment-method-details';
 
 interface Props {
 	card: PaymentMethod;

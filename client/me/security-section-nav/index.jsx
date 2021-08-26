@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
-
+import i18n from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import SectionNav from 'calypso/components/section-nav';
 
 export default class SecuritySectionNav extends React.Component {
 	static propTypes = {

@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import HeaderCake from 'calypso/components/header-cake';
 import { CompactCard } from '@automattic/components';
+import React from 'react';
+import HeaderCake from 'calypso/components/header-cake';
 
 export const renderDisallowed = ( translate, siteSlug ) => {
 	return (

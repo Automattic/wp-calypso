@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	MEDIA_DELETE,
 	MEDIA_ERRORS_CLEAR,

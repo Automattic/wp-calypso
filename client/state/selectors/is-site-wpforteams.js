@@ -1,7 +1,3 @@
-/**
- * External dependencies
- */
-
 import { get } from 'lodash';
 /**
  * Returns true if site is a WP for Teams site, false if not and null if unknown

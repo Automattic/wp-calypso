@@ -1,12 +1,3 @@
-/**
- * External dependencies
- */
-import React from 'react';
-import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import {
 	FEATURE_13GB_STORAGE,
 	FEATURE_200GB_STORAGE,
@@ -139,9 +130,11 @@ import {
 	FEATURE_WP_SUBDOMAIN_SIGNUP,
 	PREMIUM_DESIGN_FOR_STORES,
 } from '@automattic/calypso-products';
-import MaterialIcon from 'calypso/components/material-icon';
+import i18n from 'i18n-calypso';
+import React from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
+import MaterialIcon from 'calypso/components/material-icon';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'calypso/lib/url/support';
 
 export const FEATURES_LIST = {
@@ -1083,7 +1076,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_ANTISPAM_V2 ]: {
 		getSlug: () => FEATURE_ANTISPAM_V2,
-		getTitle: () => i18n.translate( 'Comment and form protection' ),
+		getTitle: () => i18n.translate( 'Comment and form spam protection' ),
 	},
 
 	[ FEATURE_ACTIVITY_LOG_1_YEAR_V2 ]: {
@@ -1189,7 +1182,7 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_SECURE_STORAGE_V2 ]: {
 		getSlug: () => FEATURE_SECURE_STORAGE_V2,
-		getTitle: () => i18n.translate( 'Unlimited site storage' ),
+		getTitle: () => i18n.translate( 'Unlimited backup storage' ),
 	},
 
 	[ FEATURE_ONE_CLICK_RESTORE_V2 ]: {

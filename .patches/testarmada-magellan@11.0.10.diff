@@ -1,0 +1,17 @@
+diff --git a/src/cli.js b/src/cli.js
+index 11b11f439d73548083a58af5b5edab0ff7dd3600..b881034dd677c601689943e12864551eae8acf5d 100644
+--- a/src/cli.js
++++ b/src/cli.js
+@@ -78,11 +78,7 @@ module.exports = {
+
+       let frameworkLoadException;
+       try {
+-        //
+-        // HELP WANTED: If someone knows how to do this more gracefully, please contribute!
+-        //
+-        const frameworkModulePath = "./node_modules/" + settings.framework + "/index";
+-        settings.testFramework = require(path.resolve(frameworkModulePath));
++        settings.testFramework = require(settings.framework);
+       } catch (e) {
+         frameworkLoadException = e;
+       }

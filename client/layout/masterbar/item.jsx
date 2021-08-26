@@ -11,7 +11,7 @@ class MasterbarItem extends Component {
 		url: PropTypes.string,
 		onClick: PropTypes.func,
 		tooltip: TranslatableString,
-		icon: PropTypes.string,
+		icon: PropTypes.oneOfType( [ PropTypes.element, PropTypes.string ] ),
 		className: PropTypes.string,
 		isActive: PropTypes.bool,
 		preloadSection: PropTypes.func,
@@ -35,13 +35,15 @@ class MasterbarItem extends Component {
 	};
 
 	renderChildren() {
+		const { children, hasUnseen, icon } = this.props;
+
 		return (
 			<Fragment>
-				{ this.props.hasUnseen && (
+				{ hasUnseen && (
 					<span className="masterbar__item-bubble" aria-label="You have unseen content" />
 				) }
-				{ !! this.props.icon && <Gridicon icon={ this.props.icon } size={ 24 } /> }
-				<span className="masterbar__item-content">{ this.props.children }</span>
+				{ !! icon && ( typeof icon !== 'string' ? icon : <Gridicon icon={ icon } size={ 24 } /> ) }
+				<span className="masterbar__item-content">{ children }</span>
 			</Fragment>
 		);
 	}

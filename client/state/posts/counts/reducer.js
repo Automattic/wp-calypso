@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { get, merge, omit, pick } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	CURRENT_USER_RECEIVE,
 	POST_COUNTS_RECEIVE,

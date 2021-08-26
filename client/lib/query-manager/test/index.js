@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import QueryManager, { DELETE_PATCH_KEY } from '../';
 
 describe( 'QueryManager', () => {

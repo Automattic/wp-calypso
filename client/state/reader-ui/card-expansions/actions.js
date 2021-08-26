@@ -1,14 +1,11 @@
-/**
- * Internal dependencies
- */
+import { reduxDispatch } from 'calypso/lib/redux-bridge';
+import * as stats from 'calypso/reader/stats';
 import {
 	READER_EXPAND_CARD,
 	READER_RESET_CARD_EXPANSIONS,
 } from 'calypso/state/reader/action-types';
 import { markPostSeen } from 'calypso/state/reader/posts/actions';
-import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import DISPLAY_TYPES from 'calypso/state/reader/posts/display-types';
-import * as stats from 'calypso/reader/stats';
 
 import 'calypso/state/reader-ui/init';
 

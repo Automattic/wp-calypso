@@ -1,11 +1,8 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
+import {
+	initiateAutomatedTransferWithPluginZip,
+	setAutomatedTransferStatus,
+} from 'calypso/state/automated-transfer/actions';
 import {
 	clearPluginUpload,
 	completePluginUpload,
@@ -14,10 +11,6 @@ import {
 	uploadPlugin,
 } from '../actions';
 import { inProgress, progressPercent, uploadedPluginId, uploadError } from '../reducer';
-import {
-	initiateAutomatedTransferWithPluginZip,
-	setAutomatedTransferStatus,
-} from 'calypso/state/automated-transfer/actions';
 
 const siteId = 2916284;
 const pluginId = 'hello-dolly';

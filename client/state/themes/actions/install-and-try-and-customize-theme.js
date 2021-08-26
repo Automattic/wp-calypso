@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { installTheme } from 'calypso/state/themes/actions/install-theme';
 import { tryAndCustomizeTheme } from 'calypso/state/themes/actions/try-and-customize-theme';
 

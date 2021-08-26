@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { includes, omitBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import {
 	GalleryColumnedTypes,
 	GalleryDefaultAttrs,

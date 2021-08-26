@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { domForHtml } from 'calypso/lib/post-normalizer/utils';
 
 /**

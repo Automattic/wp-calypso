@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
-import { connect } from 'react-redux';
-import React from 'react';
-import { find, get } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { CompactCard } from '@automattic/components';
+import { find, get } from 'lodash';
+import React from 'react';
+import { connect } from 'react-redux';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import SocialLoginActionButton from './action-button';
 

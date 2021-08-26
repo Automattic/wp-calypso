@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import { errors, items } from '../reducer';
 import {
 	USER_PROFILE_LINKS_ADD_DUPLICATE,
 	USER_PROFILE_LINKS_ADD_FAILURE,
@@ -17,6 +9,7 @@ import {
 	USER_PROFILE_LINKS_RECEIVE,
 	USER_PROFILE_LINKS_RESET_ERRORS,
 } from 'calypso/state/action-types';
+import { errors, items } from '../reducer';
 
 describe( 'reducer', () => {
 	const profileLinks = [

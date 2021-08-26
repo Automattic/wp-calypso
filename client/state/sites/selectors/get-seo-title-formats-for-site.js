@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { fromApi as seoTitleFromApi } from 'calypso/components/seo/meta-title-editor/mappings';
 
 /**

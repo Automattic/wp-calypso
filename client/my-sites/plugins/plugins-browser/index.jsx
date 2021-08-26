@@ -21,6 +21,7 @@ import QuerySiteRecommendedPlugins from 'calypso/components/data/query-site-reco
 import QueryWporgPlugins from 'calypso/components/data/query-wporg-plugins';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import MainComponent from 'calypso/components/main';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
@@ -489,7 +490,14 @@ export class PluginsBrowser extends Component {
 							headerText={ this.props.translate( 'Plugins' ) }
 							align="left"
 							subHeaderText={ this.props.translate(
-								'Add new functionality and integrations to your site with plugins.'
+								'Add new functionality and integrations to your site with plugins. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+								{
+									components: {
+										learnMoreLink: (
+											<InlineSupportLink supportContext="plugins" showIcon={ false } />
+										),
+									},
+								}
 							) }
 						/>
 						<div className="plugins-browser__main-buttons">

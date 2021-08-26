@@ -1,17 +1,10 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import i18n from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
-import NotificationsComponent from 'calypso/me/notification-settings/main';
+import React from 'react';
 import CommentSettingsComponent from 'calypso/me/notification-settings/comment-settings';
-import WPcomSettingsComponent from 'calypso/me/notification-settings/wpcom-settings';
+import NotificationsComponent from 'calypso/me/notification-settings/main';
 import NotificationSubscriptions from 'calypso/me/notification-settings/reader-subscriptions';
+import WPcomSettingsComponent from 'calypso/me/notification-settings/wpcom-settings';
+import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 
 export function notifications( context, next ) {
 	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.

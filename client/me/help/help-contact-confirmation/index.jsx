@@ -1,19 +1,8 @@
-/**
- * External dependencies
- */
-
 import PropTypes from 'prop-types';
 import React from 'react';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import Gridicon from 'calypso/components/gridicon';
 
-/**
- * Internal dependencies
- */
-import FormSectionHeading from 'calypso/components/forms/form-section-heading';
-
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default class extends React.PureComponent {

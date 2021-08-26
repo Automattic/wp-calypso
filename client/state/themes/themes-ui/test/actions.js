@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { setThemesBookmark } from '../actions';
 import { THEMES_BOOKMARK_SET } from 'calypso/state/themes/action-types';
+import { setThemesBookmark } from '../actions';
 
 describe( 'actions', () => {
 	describe( 'setThemesBookmark()', () => {

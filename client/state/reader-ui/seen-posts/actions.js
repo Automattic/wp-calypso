@@ -1,6 +1,3 @@
-/**
- * Internal Dependencies
- */
 import {
 	READER_UNSEEN_STATUS_REQUEST,
 	READER_UNSEEN_STATUS_RECEIVE,

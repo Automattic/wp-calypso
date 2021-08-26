@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { MimeTypes } from 'calypso/lib/media/constants';
 import { getFileExtension } from 'calypso/lib/media/utils/get-file-extension';
 

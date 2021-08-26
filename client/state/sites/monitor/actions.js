@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import wp from 'calypso/lib/wp';
 import {
 	SITE_MONITOR_SETTINGS_RECEIVE,
 	SITE_MONITOR_SETTINGS_REQUEST,
@@ -16,7 +9,7 @@ import {
 	SITE_MONITOR_SETTINGS_UPDATE_FAILURE,
 	SITE_MONITOR_SETTINGS_UPDATE_SUCCESS,
 } from 'calypso/state/action-types';
-import wp from 'calypso/lib/wp';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 /**
  * Request the Jetpack monitor settings for a certain site.

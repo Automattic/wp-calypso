@@ -6,7 +6,7 @@ import { withShoppingCart } from '@automattic/shopping-cart';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 /**
  * Internal dependencies
@@ -20,7 +20,11 @@ import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import isSiteOnPaidPlan from 'calypso/state/selectors/is-site-on-paid-plan';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { getOptionInfo } from '../utilities/get-option-info';
+import {
+	getOptionInfo,
+	connectDomainAction,
+	transferDomainAction as defaultTransferHandler,
+} from '../utilities';
 import OptionContent from './option-content';
 
 /**
@@ -32,23 +36,34 @@ function DomainTransferOrConnect( {
 	availability,
 	cart,
 	currencyCode,
+	defaultConnectHandler,
 	domain,
 	isSignupStep,
+	onConnect,
+	onTransfer,
 	primaryWithPlansOnly,
 	productsList,
 	recordMappingButtonClickInUseYourDomain,
 	recordTransferButtonClickInUseYourDomain,
 	selectedSite,
 	siteIsOnPaidPlan,
+	transferDomainUrl,
 } ) {
+	const [ actionClicked, setActionClicked ] = useState( false );
+
 	const handleConnect = () => {
 		recordMappingButtonClickInUseYourDomain( domain );
-		// TODO: Go to the next step in mapping the domain
+		setActionClicked( true );
+
+		const connectHandler = onConnect ?? defaultConnectHandler;
+		connectHandler( { domain, selectedSite }, () => setActionClicked( false ) );
 	};
 
 	const handleTransfer = () => {
 		recordTransferButtonClickInUseYourDomain( domain );
-		// TODO: Go to the next step in transferring the domain
+
+		const transferHandler = onTransfer ?? defaultTransferHandler;
+		transferHandler( { domain, selectedSite, transferDomainUrl }, () => setActionClicked( false ) );
 	};
 
 	const content = getOptionInfo( {
@@ -63,6 +78,7 @@ function DomainTransferOrConnect( {
 		productsList,
 		selectedSite,
 		siteIsOnPaidPlan,
+		transferDomainUrl,
 	} );
 
 	const baseClassName = 'domain-transfer-or-connect';
@@ -72,7 +88,7 @@ function DomainTransferOrConnect( {
 			<QueryProductsList />
 			<Card className={ baseClassName + '__content' }>
 				{ content.map( ( optionProps, index ) => (
-					<OptionContent key={ 'option-' + index } { ...optionProps } />
+					<OptionContent key={ 'option-' + index } disabled={ actionClicked } { ...optionProps } />
 				) ) }
 				<div className={ baseClassName + '__support-link' }>
 					{ createInterpolateElement(
@@ -87,8 +103,14 @@ function DomainTransferOrConnect( {
 
 DomainTransferOrConnect.propTypes = {
 	availability: PropTypes.object.isRequired,
+	defaultConnectHandler: PropTypes.func,
+	defaultTransferHandler: PropTypes.func,
 	domain: PropTypes.string.isRequired,
+	isSignupStep: PropTypes.bool,
+	onConnect: PropTypes.func,
+	onTransfer: PropTypes.func,
 	selectedSite: PropTypes.object.isRequired,
+	transferDomainUrl: PropTypes.string,
 };
 
 const recordTransferButtonClickInUseYourDomain = ( domain_name ) =>
@@ -108,5 +130,9 @@ export default connect(
 			siteIsOnPaidPlan: isSiteOnPaidPlan( state, selectedSite?.ID ),
 		};
 	},
-	{ recordTransferButtonClickInUseYourDomain, recordMappingButtonClickInUseYourDomain }
+	{
+		defaultConnectHandler: connectDomainAction,
+		recordTransferButtonClickInUseYourDomain,
+		recordMappingButtonClickInUseYourDomain,
+	}
 )( withShoppingCart( DomainTransferOrConnect ) );

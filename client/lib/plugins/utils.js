@@ -1,11 +1,4 @@
-/**
- * External dependencies
- */
 import { filter, map, pick, sortBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { decodeEntities, parseHtml } from 'calypso/lib/formatting';
 import { sanitizeSectionContent } from './sanitize-section-content';
 

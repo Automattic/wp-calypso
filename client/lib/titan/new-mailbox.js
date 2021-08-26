@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import emailValidator from 'email-validator';
-import PropTypes from 'prop-types';
 import { translate } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
-
-/**
- * Internal dependencies
- */
 import { validatePasswordField } from 'calypso/lib/gsuite/new-users';
 import wp from 'calypso/lib/wp';
 

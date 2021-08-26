@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import items from '../reducer';
 import { USER_DEVICES_ADD } from 'calypso/state/action-types';
+import items from '../reducer';
 
 describe( 'reducer', () => {
 	describe( 'items', () => {

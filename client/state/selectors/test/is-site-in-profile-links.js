@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import isSiteInProfileLinks from 'calypso/state/selectors/is-site-in-profile-links';
 
 describe( 'isSiteInProfileLinks()', () => {

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import getConnectedApplications from 'calypso/state/selectors/get-connected-applications';
 
 describe( 'getConnectedApplications()', () => {

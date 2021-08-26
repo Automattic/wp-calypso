@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { Action, AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import {

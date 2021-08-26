@@ -1,18 +1,9 @@
-/**
- * External dependencies
- */
-
-import debugFactory from 'debug';
-
-const debug = debugFactory( 'calypso:siftscience' );
-
-/**
- * Internal dependencies
- */
-import { loadScript } from '@automattic/load-script';
 import config from '@automattic/calypso-config';
+import { loadScript } from '@automattic/load-script';
+import debugFactory from 'debug';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 
+const debug = debugFactory( 'calypso:siftscience' );
 const SIFTSCIENCE_URL = 'https://cdn.siftscience.com/s.js';
 let hasLoaded = false;
 

@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { findRegistrantWhois, findPrivacyServiceWhois } from '../utils';
 import { whoisType } from '../constants';
+import { findRegistrantWhois, findPrivacyServiceWhois } from '../utils';
 
 describe( 'utils', () => {
 	const whoisData = [

@@ -9,32 +9,25 @@
  * gather the data they need.
  */
 
-/**
- * External dependencies
- */
+import { isEmpty } from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { isEmpty } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import Main from 'calypso/components/main';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
-import QueryUserSettings from 'calypso/components/data/query-user-settings';
-import QuerySites from 'calypso/components/data/query-sites';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import QuerySites from 'calypso/components/data/query-sites';
+import QueryUserSettings from 'calypso/components/data/query-user-settings';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import ReauthRequired from 'calypso/me/reauth-required';
 import getConciergeAvailableTimes from 'calypso/state/selectors/get-concierge-available-times';
-import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
 import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
+import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { getSite } from 'calypso/state/sites/selectors';
+import AppointmentInfo from './shared/appointment-info';
 import NoAvailableTimes from './shared/no-available-times';
 import Upsell from './shared/upsell';
-import AppointmentInfo from './shared/appointment-info';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import ReauthRequired from 'calypso/me/reauth-required';
-import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 
 export class ConciergeMain extends Component {
 	constructor( props ) {

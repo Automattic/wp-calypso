@@ -1,16 +1,17 @@
-/**
- * External dependencies
- */
-import { AnyAction } from 'redux';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
+import { AnyAction } from 'redux';
 import {
 	JETPACK_PARTNER_PORTAL_LICENSES_REQUEST,
 	JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_REQUEST,
 } from 'calypso/state/action-types';
+import { http as coreHttp } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest as vanillaDispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { NoticeAction } from 'calypso/state/notices/types';
+import {
+	receiveLicenseCounts,
+	receiveLicenses,
+} from 'calypso/state/partner-portal/licenses/actions';
 import {
 	DispatchRequest,
 	HttpAction,
@@ -18,14 +19,6 @@ import {
 	LicenseCounts,
 	PaginatedItems,
 } from 'calypso/state/partner-portal/types';
-import { dispatchRequest as vanillaDispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { http as coreHttp } from 'calypso/state/data-layer/wpcom-http/actions';
-import { NoticeAction } from 'calypso/state/notices/types';
-import { errorNotice } from 'calypso/state/notices/actions';
-import {
-	receiveLicenseCounts,
-	receiveLicenses,
-} from 'calypso/state/partner-portal/licenses/actions';
 
 // Required for modular state.
 import 'calypso/state/partner-portal/init';

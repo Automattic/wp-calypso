@@ -1,15 +1,11 @@
-/**
- * Internal dependencies
- */
+import { DOMAIN_WAPI_INFO_FETCH } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import {
 	fetchWapiDomainInfoFailure,
 	fetchWapiDomainInfoSuccess,
 } from 'calypso/state/domains/transfer/actions';
-import { DOMAIN_WAPI_INFO_FETCH } from 'calypso/state/action-types';
-
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export const fetchWapiDomainInfo = ( action ) =>
 	http(

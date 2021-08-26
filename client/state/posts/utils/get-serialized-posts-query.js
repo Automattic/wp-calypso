@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getNormalizedPostsQuery } from 'calypso/state/posts/utils/get-normalized-posts-query';
 
 /**

@@ -4,7 +4,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import Gridicon from 'calypso/components/gridicon';
-import PopoverMenu from 'calypso/components/popover/menu';
+import PopoverMenu from 'calypso/components/popover-menu';
 
 import './style.scss';
 

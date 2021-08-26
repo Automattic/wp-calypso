@@ -1,25 +1,4 @@
-/**
- * External dependencies
- */
 import deepFreeze from 'deep-freeze';
-
-/**
- * Internal dependencies
- */
-import reducer, {
-	queryRequests,
-	queryRequestErrors,
-	queries,
-	lastQuery,
-	themeRequests,
-	themeRequestErrors,
-	activeThemes,
-	activationRequests,
-	activeThemeRequests,
-	themeInstalls,
-	completedActivationRequests,
-	recommendedThemes,
-} from '../reducer';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import {
 	THEME_REQUEST,
@@ -43,6 +22,20 @@ import {
 	RECOMMENDED_THEMES_FAIL,
 } from 'calypso/state/themes/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
+import reducer, {
+	queryRequests,
+	queryRequestErrors,
+	queries,
+	lastQuery,
+	themeRequests,
+	themeRequestErrors,
+	activeThemes,
+	activationRequests,
+	activeThemeRequests,
+	themeInstalls,
+	completedActivationRequests,
+	recommendedThemes,
+} from '../reducer';
 
 const twentysixteen = {
 	id: 'twentysixteen',

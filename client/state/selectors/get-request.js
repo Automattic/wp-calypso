@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { getRequestKey } from 'calypso/state/data-layer/wpcom-http/utils';
 
 /**

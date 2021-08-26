@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { READER_UNSEEN_STATUS_RECEIVE } from 'calypso/state/action-types';
 
 /**

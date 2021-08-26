@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import ThemeQueryKey from '../key';
 
 describe( 'ThemeQueryKey', () => {

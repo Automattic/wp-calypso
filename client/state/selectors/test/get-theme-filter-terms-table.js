@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
-import { state } from './fixtures/theme-filters';
 import { getThemeFilterTermsTable } from 'calypso/state/themes/selectors';
+import { state } from './fixtures/theme-filters';
 
 describe( 'getThemeFilterTermsTable()', () => {
 	test( 'should return a dictionary mapping terms to taxonomies', () => {

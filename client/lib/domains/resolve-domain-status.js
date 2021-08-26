@@ -1,19 +1,12 @@
-/**
- * External dependencies
- */
-import React from 'react';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
-import { transferStatus, type as domainTypes } from './constants';
+import React from 'react';
 import { isExpiringSoon } from 'calypso/lib/domains/utils/is-expiring-soon';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils/is-recently-registered';
 import { hasPendingGSuiteUsers } from 'calypso/lib/gsuite';
 import { shouldRenderExpiringCreditCard } from 'calypso/lib/purchases';
 import { domainMappingSetup } from 'calypso/my-sites/domains/paths';
+import { transferStatus, type as domainTypes } from './constants';
 
 export function resolveDomainStatus(
 	domain,
@@ -53,20 +46,32 @@ export function resolveDomainStatus(
 			}
 
 			if ( hasMappingError ) {
-				const status = translate(
-					"{{strong}}Connection error:{{/strong}} We couldn't verify your connection. Please {{a}}follow this setup again{{/a}}.",
-					{
-						components: {
-							strong: <strong />,
-							a: (
-								<a
-									href={ domainMappingSetup( siteSlug, domain.domain, 'suggested_update' ) }
-									onClick={ ( e ) => e.stopPropagation() }
-								/>
-							),
-						},
-					}
-				);
+				const setupStep =
+					domain.connectionMode === 'advanced' ? 'advanced_update' : 'suggested_update';
+				const options = {
+					components: {
+						strong: <strong />,
+						a: (
+							<a
+								href={ domainMappingSetup( siteSlug, domain.domain, setupStep ) }
+								onClick={ ( e ) => e.stopPropagation() }
+							/>
+						),
+					},
+				};
+
+				let status;
+				if ( domain?.connectionMode === 'advanced' ) {
+					status = translate(
+						'{{strong}}Connection error:{{/strong}} The A records are incorrect. Please {{a}}try this step{{/a}} again.',
+						options
+					);
+				} else {
+					status = translate(
+						'{{strong}}Connection error:{{/strong}} The name servers are incorrect. Please {{a}}try this step{{/a}} again.',
+						options
+					);
+				}
 				return {
 					statusText: translate( 'Connection error' ),
 					statusClass: 'status-alert',

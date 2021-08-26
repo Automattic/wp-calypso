@@ -1,9 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-/**
- * Internal dependencies
- */
+
+import flows from 'calypso/signup/config/flows';
+import { isDomainStepSkippable } from 'calypso/signup/config/steps';
+import { useNock } from 'calypso/test-helpers/use-nock';
 import {
 	createSiteWithCart,
 	isDomainFulfilled,
@@ -11,9 +12,6 @@ import {
 	isSiteTopicFulfilled,
 	isSiteTypeFulfilled,
 } from '../step-actions';
-import { useNock } from 'calypso/test-helpers/use-nock';
-import flows from 'calypso/signup/config/flows';
-import { isDomainStepSkippable } from 'calypso/signup/config/steps';
 
 jest.mock( 'calypso/signup/config/steps', () => require( './mocks/signup/config/steps' ) );
 jest.mock( 'calypso/signup/config/flows', () => require( './mocks/signup/config/flows' ) );

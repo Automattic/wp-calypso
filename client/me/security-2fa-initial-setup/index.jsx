@@ -1,15 +1,9 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import React from 'react';
 import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 const debug = debugFactory( 'calypso:me:security:2fa-initial-setup' );
 
-/**
- * Internal dependencies
- */
 import FormButton from 'calypso/components/forms/form-button';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 

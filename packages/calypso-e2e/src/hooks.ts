@@ -1,22 +1,28 @@
-/**
- * External dependencies
- */
-import { beforeAll, afterAll } from '@jest/globals';
-import type { Page, Video } from 'playwright';
-import path from 'path';
 import { mkdtemp, mkdir, rename, appendFile } from 'fs/promises';
+import path from 'path';
+import { beforeAll, afterAll } from '@jest/globals';
 import { getState } from 'expect';
-
-import { getTestNameWithTime } from './media-helper';
-
-/**
- * Internal dependencies
- */
 import { start, close } from './browser-manager';
+import { getDateString } from './data-helper';
+import type { Page, Video } from 'playwright';
 
 // These are defined in our custom Jest environment (test/e2e/lib/jest/environment.js)
 declare const __CURRENT_TEST_FAILED__: boolean;
 declare const __CURRENT_TEST_NAME__: string;
+
+/**
+ * Generates a filename using the test name and a date string.
+ *
+ * @param {string} testName The test name.
+ * @returns The filename.
+ */
+function getTestNameWithTime( testName: string ): string {
+	// Clean up the test name to be entirely lowercase and removing whitespace.
+	const currentTestName = testName.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
+	// Obtain the ISO date string and replace non-supported filename chars with hyphens.
+	const dateTime = getDateString( 'ISO' )!.split( '.' )[ 0 ].replace( /:/g, '-' );
+	return `${ currentTestName }-${ dateTime }`;
+}
 
 /**
  * Set up hoooks used for Jest tests.

@@ -1,7 +1,7 @@
+import { Popover } from '@automattic/components';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import Popover from 'calypso/components/popover';
 import SiteSelector from 'calypso/components/site-selector';
 import { hasTouch } from 'calypso/lib/touch-detect';
 
