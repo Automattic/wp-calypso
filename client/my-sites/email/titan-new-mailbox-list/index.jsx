@@ -99,7 +99,10 @@ const TitanNewMailboxList = ( {
 							</Button>
 						) }
 						{ index > 0 && (
-							<Button onClick={ onMailboxRemove( mailboxes, mailbox.uuid ) }>
+							<Button
+								className="titan-new-mailbox-list__action-remove"
+								onClick={ onMailboxRemove( mailboxes, mailbox.uuid ) }
+							>
 								<Gridicon icon="trash" />
 								<span>{ translate( 'Remove this mailbox' ) }</span>
 							</Button>
