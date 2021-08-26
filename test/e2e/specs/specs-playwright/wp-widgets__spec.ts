@@ -20,29 +20,15 @@ describe( DataHelper.createSuiteTitle( 'Widgets' ), function () {
 	it( 'Navigate to the Block Widgets Editor', async function () {
 		sidebarComponent = new SidebarComponent( page );
 		await sidebarComponent.navigate( 'Appearance', 'Widgets' );
+		const widgetsMenu = await page.waitForSelector( '"Customising ▸ Widgets"' );
+		await widgetsMenu.waitForElementState( 'stable' );
 	} );
 
 	it( 'Dismiss the Welcome Guide Notice if displayed', async function () {
-		const buttonSelector = 'button:text("Got it")';
-		const hideWelcomePopup = async (): Promise< void > => {
-			try {
-				const button = await page.waitForSelector( buttonSelector );
-				await button.click();
-				// Retry if the button doesn't get hidden after 1 second. It can
-				// sometimes happen when clicked too early.
-				await button.waitForElementState( 'hidden', { timeout: 1000 } );
-			} catch {
-				return hideWelcomePopup();
-			}
-		};
-
-		// Hide the Welcome popup if it's present before the network gets idle.
-		await Promise.race( [ page.waitForLoadState( 'networkidle' ), hideWelcomePopup() ] );
-
-		// In case the network finished first, look for the button and click if found.
-		const button = await page.$( buttonSelector );
+		const button = await page.$( 'button:text("Got it")' );
 		if ( button ) {
-			await hideWelcomePopup();
+			await button.click();
+			await button.waitForElementState( 'hidden' );
 		}
 	} );
 
@@ -52,6 +38,7 @@ describe( DataHelper.createSuiteTitle( 'Widgets' ), function () {
 			await page.fill( 'input[placeholder="Search"]', 'Top Posts and Pages' );
 			await page.click( 'button.editor-block-list-item-legacy-widget\\/top-posts' );
 		} );
+
 		it( 'Visibility options are shown for the Legacy Widget', async function () {
 			await page.click( 'a.button:text("Visibility")' );
 			await page.waitForSelector( 'div.widget-conditional' );
