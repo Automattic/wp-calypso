@@ -537,7 +537,7 @@ class EmailProvidersComparison extends React.Component {
 
 		const headerContent = skipHeaderElement ? null : (
 			<HeaderCake
-				actionButton={ this.renderSkipButton() }
+				actionButton={ this.renderHeaderSkipButton() }
 				alwaysShowActionText
 				onClick={ this.handleBack }
 			>
@@ -580,7 +580,7 @@ class EmailProvidersComparison extends React.Component {
 		);
 	}
 
-	renderSkipButton() {
+	renderHeaderSkipButton() {
 		const { showSkipButton, onSkipClick, translate } = this.props;
 
 		return showSkipButton ? (
