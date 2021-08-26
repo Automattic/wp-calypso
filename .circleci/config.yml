@@ -459,7 +459,9 @@ jobs:
           command: cinst make
       - run:
           name: Install Desktop Dependencies
-          command: yarn && yarn run build-desktop:install-app-deps
+          command: |
+            yarn
+            yarn run build-desktop:install-app-deps
       - when:
           condition: << pipeline.git.tag >>
           steps:
