@@ -34,6 +34,7 @@
 		"@automattic/calypso-analytics": "^1.0.0-alpha.1",
 		"@automattic/data-stores": "^2.0.0",
 		"@automattic/i18n-utils": "^1.0.0",
+		"@automattic/onboarding": "^1.0.0",
 		"@wordpress/base-styles": "^3.4.3",
 		"@wordpress/components": "^13.0.3",
 		"@wordpress/compose": "^3.25.3",

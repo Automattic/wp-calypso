@@ -362,6 +362,7 @@ __metadata:
     "@automattic/calypso-analytics": ^1.0.0-alpha.1
     "@automattic/data-stores": ^2.0.0
     "@automattic/i18n-utils": ^1.0.0
+    "@automattic/onboarding": ^1.0.0
     "@testing-library/jest-dom": ^5.14.1
     "@testing-library/react": ^12.0.0
     "@wordpress/base-styles": ^3.4.3
