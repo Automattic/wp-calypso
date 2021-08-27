@@ -1,6 +1,6 @@
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
-import styled from '../lib/styled';
+import styled from '@emotion/styled';
 import { CheckoutSummaryCard, useLineItems, useLineItemsOfType, useTotal } from '../public-api';
 
 export default function CheckoutOrderSummaryStep() {

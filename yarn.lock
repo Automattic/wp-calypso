@@ -257,7 +257,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-build": ^9.0.0
     "@automattic/calypso-polyfills": ^1.0.0
-    "@emotion/core": ^11.0.0
+    "@emotion/react": ^11.4.1
     "@emotion/styled": ^11.3.0
     "@storybook/addon-actions": ^6.1.10
     "@storybook/preset-scss": ^1.0.3
@@ -3123,6 +3123,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@emotion/cache@npm:^11.4.0":
+  version: 11.4.0
+  resolution: "@emotion/cache@npm:11.4.0"
+  dependencies:
+    "@emotion/memoize": ^0.7.4
+    "@emotion/sheet": ^1.0.0
+    "@emotion/utils": ^1.0.0
+    "@emotion/weak-memoize": ^0.2.5
+    stylis: ^4.0.3
+  checksum: f29542dac8ae51cb6e36d5bbaf3f80a47d7a55712d5e4d7259bc13e0ae909c0eb045fd96095ceab878340476b6909b66180318c4d34bcff404f8d18895b2b99d
+  languageName: node
+  linkType: hard
+
 "@emotion/core@npm:^10.0.27, @emotion/core@npm:^10.1.1":
   version: 10.1.1
   resolution: "@emotion/core@npm:10.1.1"
@@ -3136,13 +3149,6 @@ __metadata:
   peerDependencies:
     react: ">=16.3.0"
   checksum: 8beea9cde80631dc417cf941cfd7ae5d7d2d33eb802390d0ca8c238616e063926a6a86c80e23f7a148c7d3bf6a2f43f422ba187a28647b5a2cd435a47cdde7bd
-  languageName: node
-  linkType: hard
-
-"@emotion/core@npm:^11.0.0":
-  version: 11.0.0
-  resolution: "@emotion/core@npm:11.0.0"
-  checksum: 91151c1c52bbe47c6dbae882d7734619815ea724874aabf6de53de47cbc0660a9054dde241dc2bc51dcdd34c64aa1a72c673020509e3d6ad30dd80de067a3eed
   languageName: node
   linkType: hard
 
@@ -3235,6 +3241,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@emotion/react@npm:^11.4.1":
+  version: 11.4.1
+  resolution: "@emotion/react@npm:11.4.1"
+  dependencies:
+    "@babel/runtime": ^7.13.10
+    "@emotion/cache": ^11.4.0
+    "@emotion/serialize": ^1.0.2
+    "@emotion/sheet": ^1.0.2
+    "@emotion/utils": ^1.0.0
+    "@emotion/weak-memoize": ^0.2.5
+    hoist-non-react-statics: ^3.3.1
+  peerDependencies:
+    "@babel/core": ^7.0.0
+    react: ">=16.8.0"
+  peerDependenciesMeta:
+    "@babel/core":
+      optional: true
+    "@types/react":
+      optional: true
+  checksum: 597eaf1022afb3792ec0c5a81fc870dafe016eefa2a79b9c6ea4402a3a4b109db37a5786508231d9e38966a50204c4d48fba47789d5cf33da0957443155c022d
+  languageName: node
+  linkType: hard
+
 "@emotion/serialize@npm:^0.11.15":
   version: 0.11.15
   resolution: "@emotion/serialize@npm:0.11.15"
@@ -3265,6 +3294,13 @@ __metadata:
   version: 0.9.4
   resolution: "@emotion/sheet@npm:0.9.4"
   checksum: a37b3f619096d2576bee6b2cb0104dbe8cd008809000cb5d77482691e9539211902ef420e29b5ee6aa039d3e77468facd595bd60624c5a0af5f29a0889cd9eab
+  languageName: node
+  linkType: hard
+
+"@emotion/sheet@npm:^1.0.0, @emotion/sheet@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@emotion/sheet@npm:1.0.2"
+  checksum: f50ebd9eb7e5bafab7f6873c9ee882950e596790367d362f5114377418a3afac119402df523c3b11a27b02e87db4d2d136d23ecdfe6486ca698cf4f12437be6a
   languageName: node
   linkType: hard
 
@@ -3346,7 +3382,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/weak-memoize@npm:0.2.5":
+"@emotion/weak-memoize@npm:0.2.5, @emotion/weak-memoize@npm:^0.2.5":
   version: 0.2.5
   resolution: "@emotion/weak-memoize@npm:0.2.5"
   checksum: cabfaaecabbb407d323098afc0bb2dd2ec9aaea0672f8f2c54b84b99d5f8cc680356cf166583fd5593330ceef29f2c26554c2c65dff06c0a8f5f8c7da69d89f1
@@ -12413,7 +12449,7 @@ __metadata:
     "@babel/core": ^7.15.0
     "@babel/preset-env": ^7.15.0
     "@babel/runtime": ^7.15.3
-    "@emotion/core": ^11.0.0
+    "@emotion/react": ^11.4.1
     "@emotion/styled": ^11.3.0
     "@github/webauthn-json": ^0.4.1
     "@testing-library/jest-dom": ^5.14.1
@@ -20725,7 +20761,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"hoist-non-react-statics@npm:^3.1.0, hoist-non-react-statics@npm:^3.2.1, hoist-non-react-statics@npm:^3.3.0, hoist-non-react-statics@npm:^3.3.2":
+"hoist-non-react-statics@npm:^3.1.0, hoist-non-react-statics@npm:^3.2.1, hoist-non-react-statics@npm:^3.3.0, hoist-non-react-statics@npm:^3.3.1, hoist-non-react-statics@npm:^3.3.2":
   version: 3.3.2
   resolution: "hoist-non-react-statics@npm:3.3.2"
   dependencies:

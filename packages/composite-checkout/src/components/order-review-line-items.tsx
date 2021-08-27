@@ -1,7 +1,7 @@
+import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
 import React from 'react';
 import joinClasses from '../lib/join-classes';
-import styled from '../lib/styled';
 import type { LineItem } from '../types';
 
 /* eslint-disable @typescript-eslint/no-use-before-define */

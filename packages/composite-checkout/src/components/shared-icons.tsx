@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import styled from '../lib/styled';
+import styled from '@emotion/styled';
 
 export function CheckIcon( { className, id }: { className?: string; id: string } ) {
 	return (

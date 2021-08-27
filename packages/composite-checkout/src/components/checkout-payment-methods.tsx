@@ -4,7 +4,7 @@ import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React, { useCallback } from 'react';
 import joinClasses from '../lib/join-classes';
-import styled from '../lib/styled';
+import styled from '@emotion/styled';
 import {
 	useAllPaymentMethods,
 	usePaymentMethod,

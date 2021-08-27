@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from '../lib/styled';
+import styled from '@emotion/styled';
 
 export default function ErrorMessage( { children }: { children?: React.ReactNode } ) {
 	return <Error>{ children }</Error>;
