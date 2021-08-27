@@ -1,7 +1,7 @@
+import { ThemeProvider } from '@emotion/react';
 import { DataRegistry } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { ThemeProvider } from 'emotion-theming';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import CheckoutContext from '../lib/checkout-context';
 import { useFormStatusManager } from '../lib/form-status';
