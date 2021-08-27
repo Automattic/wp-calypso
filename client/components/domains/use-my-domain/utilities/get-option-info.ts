@@ -8,6 +8,7 @@ import { __, sprintf } from '@wordpress/i18n';
  */
 import { getTld } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
+import { OptionInfoProps } from './types';
 import {
 	getMappingFreeText,
 	getMappingPriceText,
@@ -18,19 +19,21 @@ import {
 	optionInfo,
 } from './index';
 
-export function getOptionInfo( {
-	availability,
-	cart,
-	currencyCode,
-	domain,
-	isSignupStep,
-	onConnect,
-	onTransfer,
-	primaryWithPlansOnly,
-	productsList,
-	selectedSite,
-	siteIsOnPaidPlan,
-} ) {
+export function getOptionInfo( props: OptionInfoProps ): [ undefined, undefined ] {
+	const {
+		availability,
+		cart,
+		currencyCode,
+		domain,
+		isSignupStep,
+		onConnect,
+		onTransfer,
+		primaryWithPlansOnly,
+		productsList,
+		selectedSite,
+		siteIsOnPaidPlan,
+	} = props;
+
 	const mappingFreeText = getMappingFreeText( {
 		cart,
 		domain,
