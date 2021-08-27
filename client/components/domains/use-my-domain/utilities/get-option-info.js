@@ -125,6 +125,10 @@ export function getOptionInfo( {
 		}
 	}
 
+	if ( transferContent.onSelect && connectContent.onSelect ) {
+		transferContent.recommended = true;
+	}
+
 	connectContent.primary = ! transferContent?.primary;
 
 	if ( transferContent?.primary ) {

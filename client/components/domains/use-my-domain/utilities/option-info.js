@@ -13,7 +13,6 @@ export const optionInfo = {
 		illustration: transferIllustration,
 		titleText: optionTitleText.transfer,
 		topText: __( 'Manage your domain directly on WordPress.com' ),
-		recommended: true,
 		learnMoreLink: INCOMING_DOMAIN_TRANSFER,
 		benefits: [
 			__( 'Manage everything you need in one place' ),
