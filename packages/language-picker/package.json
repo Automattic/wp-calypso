@@ -38,10 +38,10 @@
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^6.1.0",
-		"@wp-g2/create-styles": "^0.0.154",
-		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
-		"reakit-utils": "^0.15.1"
+		"react-native": "^0.65.0",
+		"reakit-utils": "^0.15.1",
+		"redux": "^4.0.5"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",

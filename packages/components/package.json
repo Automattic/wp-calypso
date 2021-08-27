@@ -35,7 +35,7 @@
 		"i18n-calypso": "^5.0.0",
 		"lodash": "^4.17.21",
 		"prop-types": "^15.7.2",
-		"react-modal": "^3.8.1",
+		"react-modal": "^3.14.3",
 		"utility-types": "^3.10.0"
 	},
 	"peerDependencies": {

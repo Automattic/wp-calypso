@@ -34,14 +34,15 @@
 		"@wordpress/i18n": "^4.2.2",
 		"@wordpress/is-shallow-equal": "^4.2.0",
 		"@wordpress/primitives": "^3.0.1",
-		"@wp-g2/create-styles": "^0.0.154",
 		"classnames": "^2.3.1",
 		"lodash": "^4.17.21",
 		"moment": "^2.26.0",
 		"new-github-issue-url": "^0.2.1",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
-		"reakit-utils": "^0.15.1"
+		"react-native": "^0.65.0",
+		"reakit-utils": "^0.15.1",
+		"redux": "^4.0.5"
 	},
 	"devDependencies": {
 		"enzyme": "^3.11.0",
