@@ -12,7 +12,7 @@ describe( DataHelper.createSuiteTitle( 'Reader: View and Comment' ), function ()
 	let page: Page;
 	let readerPage: ReaderPage;
 	let notificationsComponent: NotificationsComponent;
-	const comment = DataHelper.randomPhrase();
+	const comment = DataHelper.getRandomPhrase();
 
 	setupHooks( ( args ) => {
 		page = args.page;

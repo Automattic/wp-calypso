@@ -7,7 +7,7 @@ const selectors = {
 	siteContentLocator: '.site-selector__sites .site__content',
 	commentButtonLocator: '.comment-button',
 	commentTextAreaLocator: '.comments__form textarea',
-	commentSubmitLocator: '.comments__form button',
+	commentSubmitLocator: '.comments__form button:text("Send")',
 	commentContentLocator: ( commentText: string ) =>
 		`.comments__comment-content :text( '${ commentText }' )`,
 };
