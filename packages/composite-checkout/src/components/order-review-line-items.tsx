@@ -45,18 +45,6 @@ interface LineItemProps {
 	item: LineItem;
 }
 
-OrderReviewLineItemUnstyled.propTypes = {
-	className: PropTypes.string,
-	total: PropTypes.bool,
-	isSummaryVisible: PropTypes.bool,
-	item: PropTypes.shape( {
-		label: PropTypes.string,
-		amount: PropTypes.shape( {
-			displayValue: PropTypes.string,
-		} ),
-	} ),
-};
-
 const OrderReviewLineItem = styled( OrderReviewLineItemUnstyled )< LineItemProps >`
 	display: flex;
 	width: 100%;

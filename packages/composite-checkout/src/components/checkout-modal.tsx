@@ -1,9 +1,9 @@
 import { keyframes } from '@emotion/react';
+import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
 import React, { useEffect } from 'react';
 import joinClasses from '../lib/join-classes';
-import styled from '@emotion/styled';
 import Button from './button';
 
 /* eslint-disable @typescript-eslint/no-use-before-define */

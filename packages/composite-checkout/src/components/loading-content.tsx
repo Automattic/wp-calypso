@@ -1,7 +1,7 @@
 import { keyframes } from '@emotion/react';
+import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
-import styled from '@emotion/styled';
 
 const LoadingContentWrapper = styled.div`
 	display: flex;
