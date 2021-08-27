@@ -25,6 +25,7 @@ describe( DataHelper.createSuiteTitle( 'Reader: View and Comment' ), function ()
 
 	it( 'View the Reader stream', async function () {
 		readerPage = new ReaderPage( page );
+		await readerPage.verifyReaderPage();
 	} );
 
 	it( 'The latest post is on the expected test site', async function () {

@@ -26,7 +26,6 @@ export class ReaderPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
-		this.verifyReaderPage();
 	}
 
 	/**
