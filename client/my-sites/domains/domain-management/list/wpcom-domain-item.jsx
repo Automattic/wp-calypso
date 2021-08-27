@@ -69,7 +69,7 @@ export default function WpcomDomainItem( {
 			>
 				{ canMakePrimary && (
 					<PopoverMenuItem icon="domains" onClick={ handleMakePrimary }>
-						{ __( 'Make primary domain' ) }
+						{ __( 'Make primary address' ) }
 					</PopoverMenuItem>
 				) }
 				{ ! isAtomicSite && (
