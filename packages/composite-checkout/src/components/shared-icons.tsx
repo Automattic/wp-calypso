@@ -39,7 +39,7 @@ const CheckIconSvg = styled.svg`
 	fill: #fff;
 `;
 
-export function ErrorIcon( { className }: { className?: string } ) {
+export function ErrorIcon( { className }: { className?: string } ): JSX.Element {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -57,7 +57,7 @@ export function ErrorIcon( { className }: { className?: string } ) {
 	);
 }
 
-export function InfoIcon( { className }: { className?: string } ) {
+export function InfoIcon( { className }: { className?: string } ): JSX.Element {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
