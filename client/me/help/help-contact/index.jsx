@@ -265,7 +265,7 @@ class HelpContact extends React.Component {
 			userDeclaredUrl,
 			userRequestsHidingUrl,
 		} = contactForm;
-		const { currentUserLocale, translate } = this.props;
+		const { currentUserLocale } = this.props;
 
 		this.setState( { isSubmitting: true } );
 		this.recordCompactSubmit( 'forums' );
@@ -540,21 +540,18 @@ class HelpContact extends React.Component {
 	};
 
 	shouldShowHelpLanguagePrompt = ( variationSlug, currentUserLocale ) => {
-		if (
-			SUPPORT_HAPPYCHAT === variationSlug &&
-			config( 'livechat_support_locales' ).indexOf( currentUserLocale ) === -1
-		) {
-			return true;
-		}
+		switch ( variationSlug ) {
+			case SUPPORT_HAPPYCHAT:
+				return ! config( 'livechat_support_locales' ).includes( currentUserLocale );
 
-		if (
-			SUPPORT_UPWORK_TICKET === variationSlug &&
-			config( 'upwork_support_locales' ).indexOf( currentUserLocale ) === -1
-		) {
-			return true;
-		}
+			case SUPPORT_TICKET:
+			case SUPPORT_CHAT_OVERFLOW:
+			case SUPPORT_UPWORK_TICKET:
+				return ! config( 'upwork_support_locales' ).includes( currentUserLocale );
 
-		return false;
+			default:
+				return false;
+		}
 	};
 
 	shouldShowTicketRequestErrorNotice = ( variationSlug ) => {
