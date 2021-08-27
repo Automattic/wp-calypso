@@ -8,7 +8,8 @@ const selectors = {
 	commentButtonLocator: '.comment-button',
 	commentTextAreaLocator: '.comments__form textarea',
 	commentSubmitLocator: '.comments__form button',
-	commentContentLocator: '.comments__comment-content',
+	commentContentLocator: ( commentText: string ) =>
+		`.comments__comment-content :text( '${ commentText }' )`,
 };
 
 /**
@@ -42,14 +43,7 @@ export class ReaderPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async shareLatestPost(): Promise< void > {
-		const hasSharablePost = await this.page.$( selectors.shareButtonLocator );
-		if ( ! hasSharablePost ) {
-			// no shareable posts on this screen. try moving into a combined card
-			await this.page.click( selectors.firstComboCardPostLocator );
-		}
-
 		await this.page.click( selectors.shareButtonLocator );
-		await this.page.waitForSelector( selectors.siteContentLocator );
 		await this.page.click( selectors.siteContentLocator );
 	}
 
@@ -72,8 +66,6 @@ export class ReaderPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async waitForCommentToAppear( comment: string ): Promise< void > {
-		await this.page.waitForSelector(
-			selectors.commentContentLocator + ' :text("' + comment + '")'
-		);
+		await this.page.waitForSelector( selectors.commentContentLocator( comment ) );
 	}
 }

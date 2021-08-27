@@ -3,7 +3,7 @@ import { ElementHandle, Page } from 'playwright';
 const selectors = {
 	comment: '.wpnc__comment',
 	singleViewPanel: '.wpnc__single-view',
-	undoLocator: '.wpnc__summary.wpnc__undo-item',
+	undoLocator: '.wpnc__undo-item',
 };
 /**
  * Component representing the notifications panel and notifications themselves.
@@ -55,10 +55,6 @@ export class NotificationsComponent {
 	async clickNotificationAction( action: 'Trash' ): Promise< void > {
 		const selector = `*css=button >> text=${ action }`;
 		await this.page.click( selector );
-
-		if ( action === 'Trash' ) {
-			await this.page.waitForSelector( ':text("Comment trashed")', { state: 'hidden' } );
-		}
 	}
 
 	/**
@@ -67,7 +63,7 @@ export class NotificationsComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async waitForUndoMessage(): Promise< void > {
-		await this.page.$( selectors.undoLocator );
+		await this.page.waitForSelector( selectors.undoLocator );
 	}
 
 	/**
