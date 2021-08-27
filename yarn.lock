@@ -98,7 +98,6 @@ __metadata:
     enzyme-adapter-react-16: ^1.15.1
     enzyme-to-json: ^3.4.3
     jest-config: ^27.0.6
-    jest-emotion: ^10.0.27
     jest-enzyme: ^7.1.2
     mini-css-extract-plugin: ^1.6.0
     postcss-custom-properties: ^11.0.0
@@ -162,7 +161,7 @@ __metadata:
   resolution: "@automattic/calypso-e2e@workspace:packages/calypso-e2e"
   dependencies:
     "@types/config": ^0.0.39
-    "@types/jest": ^25.2.3
+    "@types/jest": ^27.0.1
     "@types/node": ^15.0.2
     asana-phrase: ^0.0.8
     config: ^3.3.6
@@ -268,7 +267,6 @@ __metadata:
     "@wordpress/react-i18n": ^1.0.3
     css-loader: ^3.4.2
     debug: ^4.1.1
-    emotion-theming: ^10.0.27
     enzyme: ^3.11.0
     jest: ^27.0.6
     postcss: ^8.2.15
@@ -1135,7 +1133,7 @@ __metadata:
     react-dom: ^16.12.0
     typescript: ^4.3.5
   peerDependencies:
-    "@emotion/core": ^10.0.27
+    "@emotion/react": ^11.4.1
   languageName: unknown
   linkType: soft
 
@@ -1158,7 +1156,7 @@ __metadata:
     "@automattic/typography": ^1.0.0
     "@babel/core": ^7.15.0
     "@babel/preset-typescript": ^7.15.0
-    "@emotion/core": ^10.0.27
+    "@emotion/react": ^11.4.1
     "@testing-library/jest-dom": ^5.14.1
     "@testing-library/react": ^12.0.0
     "@types/wordpress__plugins": ^2.3.7
@@ -1197,7 +1195,6 @@ __metadata:
     "@wp-g2/create-styles": ^0.0.154
     babel-jest: ^26.3.0
     classnames: ^2.3.1
-    emotion-theming: ^10.0.27
     enzyme: ^3.11.0
     eslint: ^7.32.0
     jest: ^27.0.6
@@ -3136,7 +3133,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/core@npm:^10.0.27, @emotion/core@npm:^10.1.1":
+"@emotion/core@npm:^10.1.1":
   version: 10.1.1
   resolution: "@emotion/core@npm:10.1.1"
   dependencies:
@@ -3149,6 +3146,16 @@ __metadata:
   peerDependencies:
     react: ">=16.3.0"
   checksum: 8beea9cde80631dc417cf941cfd7ae5d7d2d33eb802390d0ca8c238616e063926a6a86c80e23f7a148c7d3bf6a2f43f422ba187a28647b5a2cd435a47cdde7bd
+  languageName: node
+  linkType: hard
+
+"@emotion/css-prettifier@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@emotion/css-prettifier@npm:1.0.0"
+  dependencies:
+    "@emotion/memoize": ^0.7.4
+    stylis: ^4.0.3
+  checksum: 0df03de86cabeaa945f9f1816150e2e6cefcbbfbdb0c0bf6ef7a81e97cde6caba7c3feeab6e40af3a975088b2b388c9015084d0162001c655b885a1a6e4e3e55
   languageName: node
   linkType: hard
 
@@ -3201,6 +3208,27 @@ __metadata:
   dependencies:
     "@emotion/memoize": ^0.7.4
   checksum: 9aae94102cdbed66ac2f1775572e38025c37c6777ca2fd2bf8cc29b4e6b4b0c432879a340d3cfa842b437d4ce6eeabb69b3ec3d68bfc305f42a38662a5586a19
+  languageName: node
+  linkType: hard
+
+"@emotion/jest@npm:^11.3.0":
+  version: 11.3.0
+  resolution: "@emotion/jest@npm:11.3.0"
+  dependencies:
+    "@babel/runtime": ^7.13.10
+    "@emotion/css-prettifier": ^1.0.0
+    chalk: ^4.1.0
+    specificity: ^0.4.1
+    stylis: ^4.0.3
+  peerDependencies:
+    "@types/jest": ^26.0.14
+    enzyme-to-json: ^3.2.1
+  peerDependenciesMeta:
+    "@types/jest":
+      optional: true
+    enzyme-to-json:
+      optional: true
+  checksum: 652019ec11f75ead8d36375f04cd916985fc21884d5fbf9ebf2a2b66c61d24ef818ef7b3e76418f7d496fc18cab032c3449c4a3f9304e8dff463c08e5ce43b63
   languageName: node
   linkType: hard
 
@@ -4027,6 +4055,19 @@ __metadata:
     "@types/yargs": ^16.0.0
     chalk: ^4.0.0
   checksum: a73e6399087b6a13e713713238b862bf42219617b85116da00639305f86511ca4688aafe891e86e74350bc8d2424d42f6066416378f771e94e3f41e5ae818a18
+  languageName: node
+  linkType: hard
+
+"@jest/types@npm:^27.1.0":
+  version: 27.1.0
+  resolution: "@jest/types@npm:27.1.0"
+  dependencies:
+    "@types/istanbul-lib-coverage": ^2.0.0
+    "@types/istanbul-reports": ^3.0.0
+    "@types/node": "*"
+    "@types/yargs": ^16.0.0
+    chalk: ^4.0.0
+  checksum: 0dcc26e4589d9f8981320f7d2bd3dae7f195a45dd0e376ec5255caec385bda6e25e0beea585192ea6c064cd5f78321055ef6577dc5f13c09d17385ffc70a2c5f
   languageName: node
   linkType: hard
 
@@ -6652,7 +6693,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:*, @types/jest@npm:^25.2.3":
+"@types/jest@npm:*":
   version: 25.2.3
   resolution: "@types/jest@npm:25.2.3"
   dependencies:
@@ -6662,10 +6703,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:^23.0.2":
-  version: 23.3.14
-  resolution: "@types/jest@npm:23.3.14"
-  checksum: 174691a3e838e96a3fbda641c9c9ca811b3cc8d65f21a913eddf6aa75596f66758224ffe6cc95cf113d7d09c278130f08b5600036e218d8457ca9e0ffdc8bde0
+"@types/jest@npm:^26.0.24":
+  version: 26.0.24
+  resolution: "@types/jest@npm:26.0.24"
+  dependencies:
+    jest-diff: ^26.0.0
+    pretty-format: ^26.0.0
+  checksum: 1085ac96af43566518daf3aca60cb7881bfe2ffe1f5343738933e386ebf909095fde15273c3e99c685854dfc833b05b156fb5daf68707c0daa1c0c0db13a665b
+  languageName: node
+  linkType: hard
+
+"@types/jest@npm:^27.0.1":
+  version: 27.0.1
+  resolution: "@types/jest@npm:27.0.1"
+  dependencies:
+    jest-diff: ^27.0.0
+    pretty-format: ^27.0.0
+  checksum: 8e5581b4df2e88bafd29830866d5a0c329383b2d70ae56497b4c0d5be2cebfcbd6438ba7d9c5d2761f7e6e7d734dbade9efef0f75c3ed7df4cfab081eed928a9
   languageName: node
   linkType: hard
 
@@ -12449,12 +12503,14 @@ __metadata:
     "@babel/core": ^7.15.0
     "@babel/preset-env": ^7.15.0
     "@babel/runtime": ^7.15.3
+    "@emotion/jest": ^11.3.0
     "@emotion/react": ^11.4.1
     "@emotion/styled": ^11.3.0
     "@github/webauthn-json": ^0.4.1
     "@testing-library/jest-dom": ^5.14.1
     "@testing-library/react": ^12.0.0
     "@testing-library/react-hooks": 7.0.1
+    "@types/jest": ^26.0.24
     "@wordpress/a11y": ^2.15.3
     "@wordpress/api-fetch": ^4.0.0
     "@wordpress/base-styles": ^3.4.3
@@ -12527,7 +12583,6 @@ __metadata:
     electron-updater: ^4.2.5
     email-validator: ^2.0.4
     emoji-text: ^0.2.6
-    emotion-theming: ^10.0.27
     enzyme: ^3.11.0
     events: ^3.1.0
     express: ^4.17.1
@@ -12548,7 +12603,6 @@ __metadata:
     inherits: ^2.0.4
     is-my-json-valid: ^2.20.5
     jest: ^27.0.6
-    jest-emotion: ^10.0.27
     jest-fetch-mock: ^3.0.3
     jest-mock-process: ^1.4.1
     jquery: ^1.12.3
@@ -15007,18 +15061,6 @@ __metadata:
   version: 1.5.1
   resolution: "css.escape@npm:1.5.1"
   checksum: 5e09035e5bf6c2c422b40c6df2eb1529657a17df37fda5d0433d722609527ab98090baf25b13970ca754079a0f3161dd3dfc0e743563ded8cfa0749d861c1525
-  languageName: node
-  linkType: hard
-
-"css@npm:^2.2.1":
-  version: 2.2.4
-  resolution: "css@npm:2.2.4"
-  dependencies:
-    inherits: ^2.0.3
-    source-map: ^0.6.1
-    source-map-resolve: ^0.5.2
-    urix: ^0.1.0
-  checksum: 496fa66568ebd9e51b3153817dd36ec004a45780da6f818e13117e3c4e50b774af41fff70a6ff2fa03777b239c4028ff655fe571b20964b90e886441cd141569
   languageName: node
   linkType: hard
 
@@ -23167,7 +23209,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"jest-diff@npm:^26.6.2":
+"jest-diff@npm:^26.0.0, jest-diff@npm:^26.6.2":
   version: 26.6.2
   resolution: "jest-diff@npm:26.6.2"
   dependencies:
@@ -23176,6 +23218,18 @@ fsevents@~2.1.2:
     jest-get-type: ^26.3.0
     pretty-format: ^26.6.2
   checksum: 3a9c88c8f308487059788ab1199e12f9b4657168964a2307573760b4d41ab5b851e5bef70125ef5ceddc1e201d6753d6ceae88994c197990dd9307cb7d94b9a1
+  languageName: node
+  linkType: hard
+
+"jest-diff@npm:^27.0.0":
+  version: 27.1.0
+  resolution: "jest-diff@npm:27.1.0"
+  dependencies:
+    chalk: ^4.0.0
+    diff-sequences: ^27.0.6
+    jest-get-type: ^27.0.6
+    pretty-format: ^27.1.0
+  checksum: ffa9736fee1019617224d1f2a5a10f632333887640685309f3a30b5b83392375a2d13c90501e4c60c63d37d6bb6f6d0668a6c3a53741ef8ffd3fcf2bf5f20b29
   languageName: node
   linkType: hard
 
@@ -23232,18 +23286,6 @@ fsevents@~2.1.2:
     jest-util: ^27.0.6
     pretty-format: ^27.0.6
   checksum: 45dce49ae09bc9dc8435fafc470aece2d1636b58c98a1b3c58d067f664c0e34885dbc4381e0fe51db01f837293e994d665eeda10421ce96749c16fff538b35ee
-  languageName: node
-  linkType: hard
-
-"jest-emotion@npm:^10.0.27":
-  version: 10.0.27
-  resolution: "jest-emotion@npm:10.0.27"
-  dependencies:
-    "@babel/runtime": ^7.5.5
-    "@types/jest": ^23.0.2
-    chalk: ^2.4.1
-    css: ^2.2.1
-  checksum: 8aab8ca7152139d438f758b60434d624b3439b41cafc48097d80eeac446015e13c3970d1c87e6accf00707aab3d94be402d8cdf2605d1221770947c9faf1cb63
   languageName: node
   linkType: hard
 
@@ -31062,7 +31104,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"pretty-format@npm:^26.6.2":
+"pretty-format@npm:^26.0.0, pretty-format@npm:^26.6.2":
   version: 26.6.2
   resolution: "pretty-format@npm:26.6.2"
   dependencies:
@@ -31071,6 +31113,18 @@ fsevents@~2.1.2:
     ansi-styles: ^4.0.0
     react-is: ^17.0.1
   checksum: b5ddf0e949b874b699d313fe9407f0eb65e67d00823b2dd95335905a73457260af7612f3bff6b48611fcca9ffcff003359e4c9faba4200d6209da433a859aef3
+  languageName: node
+  linkType: hard
+
+"pretty-format@npm:^27.0.0, pretty-format@npm:^27.1.0":
+  version: 27.1.0
+  resolution: "pretty-format@npm:27.1.0"
+  dependencies:
+    "@jest/types": ^27.1.0
+    ansi-regex: ^5.0.0
+    ansi-styles: ^5.0.0
+    react-is: ^17.0.1
+  checksum: 03955b0ffbdbb3b4663d0653f494b6c65dec9560960bd01a0aa12f39e0050a9345883fa3ec4cdf34f75e966eeb58410a9f054ad1141f9100eac25e6f672502a6
   languageName: node
   linkType: hard
 
@@ -35747,7 +35801,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"source-map-resolve@npm:^0.5.0, source-map-resolve@npm:^0.5.2":
+"source-map-resolve@npm:^0.5.0":
   version: 0.5.3
   resolution: "source-map-resolve@npm:0.5.3"
   dependencies:
@@ -40037,7 +40091,6 @@ typescript@^4.3.5:
     "@types/cookie": ^0.4.1
     "@types/debug": ^4.1.7
     "@types/fast-json-stable-stringify": ^2.0.0
-    "@types/jest": ^25.2.3
     "@types/lodash": ^4.14.171
     "@types/page": ^1.11.3
     "@types/qs": ^6.9.7
@@ -40199,7 +40252,7 @@ typescript@^4.3.5:
     "@babel/register": ^7.0.0
     "@babel/runtime": ^7.3.1
     "@testim/chrome-version": ^1.0.7
-    "@types/jest": ^25.2.3
+    "@types/jest": ^27.0.1
     "@xmpp/plugins": ^0.3.0
     asana-phrase: ^0.0.8
     cached-path-relative: ">=1.0.2"

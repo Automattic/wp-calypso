@@ -55,7 +55,7 @@
 		"typescript": "^4.3.5"
 	},
 	"peerDependencies": {
-		"@emotion/core": "^10.0.27"
+		"@emotion/react": "^11.4.1"
 	},
 	"private": true
 }

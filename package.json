@@ -169,7 +169,6 @@
 		"@types/cookie": "^0.4.1",
 		"@types/debug": "^4.1.7",
 		"@types/fast-json-stable-stringify": "^2.0.0",
-		"@types/jest": "^25.2.3",
 		"@types/lodash": "^4.14.171",
 		"@types/page": "^1.11.3",
 		"@types/qs": "^6.9.7",
