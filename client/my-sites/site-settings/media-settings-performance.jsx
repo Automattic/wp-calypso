@@ -21,7 +21,7 @@ import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-t
 import getMediaStorageLimit from 'calypso/state/selectors/get-media-storage-limit';
 import getMediaStorageUsed from 'calypso/state/selectors/get-media-storage-used';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSitePlanSlug, getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class MediaSettingsPerformance extends Component {
@@ -154,6 +154,7 @@ export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const sitePlanSlug = getSitePlanSlug( state, selectedSiteId );
 	const isVideoPressAvailable =
+		isJetpackSite( state, selectedSiteId ) ||
 		planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS ) ||
 		planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM ) ||
 		planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS_JETPACK_PRO );
