@@ -1,6 +1,6 @@
-import { keyframes } from '@emotion/core';
+import { keyframes } from '@emotion/react';
 import React from 'react';
-import styled from '../lib/styled';
+import styled from '@emotion/styled';
 
 export default function Spinner( { className }: { className?: string } ) {
 	return <SpinnerWrapper className={ className } />;

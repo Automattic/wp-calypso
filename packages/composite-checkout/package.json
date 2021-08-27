@@ -37,7 +37,7 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/composite-checkout#readme",
 	"dependencies": {
-		"@emotion/core": "^11.0.0",
+		"@emotion/react": "^11.4.1",
 		"@emotion/styled": "^11.3.0",
 		"@wordpress/data": "^4.27.3",
 		"@wordpress/i18n": "^3.20.0",

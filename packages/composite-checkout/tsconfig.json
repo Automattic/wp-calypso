@@ -5,7 +5,8 @@
 		"checkJs": false,
 		"outDir": "dist/esm",
 		"declarationDir": "dist/types",
-		"rootDir": "src"
+		"rootDir": "src",
+		"typeRoots": [ "./typings" ]
 	},
-	"include": [ "src" ]
+	"include": [ "src", "typings" ]
 }
