@@ -1,9 +1,9 @@
+import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
-import styled from '@emotion/styled';
 import { CheckoutSummaryCard, useLineItems, useLineItemsOfType, useTotal } from '../public-api';
 
-export default function CheckoutOrderSummaryStep() {
+export default function CheckoutOrderSummaryStep(): JSX.Element {
 	const [ items ] = useLineItems();
 
 	return (
@@ -26,7 +26,7 @@ const ProductListItem = styled.li`
 	list-style-type: none;
 `;
 
-export function CheckoutOrderSummaryStepTitle() {
+export function CheckoutOrderSummaryStepTitle(): JSX.Element {
 	const { __ } = useI18n();
 	const total = useTotal();
 	return (
@@ -46,7 +46,7 @@ const CheckoutSummaryStepTotal = styled.span`
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 `;
 
-export function CheckoutOrderSummary() {
+export function CheckoutOrderSummary(): JSX.Element {
 	const { __ } = useI18n();
 	const taxes = useLineItemsOfType( 'tax' );
 	const total = useTotal();

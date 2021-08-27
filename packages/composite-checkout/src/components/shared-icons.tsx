@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-export function CheckIcon( { className, id }: { className?: string; id: string } ) {
+export function CheckIcon( { className, id }: { className?: string; id: string } ): JSX.Element {
 	return (
 		<CheckIconSvg
 			width="20"

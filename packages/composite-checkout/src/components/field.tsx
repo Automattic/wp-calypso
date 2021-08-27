@@ -20,7 +20,7 @@ export default function Field( {
 	errorMessage,
 	autoComplete,
 	disabled,
-}: FieldProps ) {
+}: FieldProps ): JSX.Element {
 	const fieldOnChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		if ( onChange ) {
 			onChange( event.target.value );

@@ -2,7 +2,12 @@ import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-export default function GridRow( { gap, columnWidths, className, children }: GridRowProps ) {
+export default function GridRow( {
+	gap,
+	columnWidths,
+	className,
+	children,
+}: GridRowProps ): JSX.Element {
 	return (
 		<Row gap={ gap } columnWidths={ columnWidths } className={ className }>
 			{ children }
