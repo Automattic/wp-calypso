@@ -51,7 +51,7 @@ export function getOptionInfo( props: OptionInfoProps ): [ undefined, undefined 
 
 	const transferFreeText = getTransferFreeText( {
 		cart,
-		// domain,
+		domain,
 		isSignupStep,
 		siteIsOnPaidPlan,
 	} );
