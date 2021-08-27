@@ -251,7 +251,7 @@ export class SupportComponent {
 					{ timeout: 60000 }
 				),
 				this.page.waitForSelector( selectors.resultsPlaceholder, { state: 'detached' } ),
-				this.page.waitForSelector( selectors.spinner, { state: 'detached' } ),
+				this.page.waitForSelector( selectors.spinner, { state: 'hidden', timeout: 60000 } ),
 				this.page.fill( selectors.searchInput, text ),
 			] );
 		} else {
