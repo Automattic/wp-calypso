@@ -54,9 +54,3 @@
 .titan-new-mailbox-list__separator {
 	margin-top: 1.5em;
 }
-
-.titan-new-mailbox-list__action-remove {
-	@include break-mobile {
-		margin-left: auto;
-	}
-}

@@ -92,12 +92,6 @@ const TitanNewMailboxList = ( {
 					/>
 
 					<div className="titan-new-mailbox-list__actions">
-						{ showAddAnotherMailboxButton && index === lastMailboxIndex && (
-							<Button onClick={ () => onMailboxAdd() }>
-								<Gridicon icon="plus" />
-								<span>{ translate( 'Add another mailbox' ) }</span>
-							</Button>
-						) }
 						{ index > 0 && (
 							<Button
 								className="titan-new-mailbox-list__action-remove"
@@ -113,7 +107,15 @@ const TitanNewMailboxList = ( {
 				</React.Fragment>
 			) ) }
 
-			<div className="titan-new-mailbox-list__supplied-actions">{ children }</div>
+			<div className="titan-new-mailbox-list__supplied-actions">
+				{ showAddAnotherMailboxButton && (
+					<Button onClick={ () => onMailboxAdd() }>
+						<Gridicon icon="plus" />
+						<span>{ translate( 'Add another mailbox' ) }</span>
+					</Button>
+				) }
+				{ children }
+			</div>
 		</div>
 	);
 };
