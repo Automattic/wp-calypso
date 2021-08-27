@@ -1,6 +1,7 @@
 import { Page } from 'playwright';
 
 const selectors = {
+	readerPageLocator: '.reader__content',
 	readerVisitLink: '.reader-visit-link',
 	shareButtonLocator: '.reader-share__button',
 	firstComboCardPostLocator: '.reader-combined-card__post-title-link',
@@ -25,6 +26,16 @@ export class ReaderPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+		this.verifyReaderPage();
+	}
+
+	/**
+	 * Verifies that we are actually on the Reader Page
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	private async verifyReaderPage(): Promise< void > {
+		await this.page.waitForSelector( selectors.readerPageLocator );
 	}
 
 	/**
