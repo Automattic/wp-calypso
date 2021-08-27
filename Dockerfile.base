@@ -1,11 +1,11 @@
 #### cache image
 #### This image is not pushed to any repository and it shouldn't be used as base image for any other docker build.
 #### Its main goal is to create a `/calypso/.cache` that can be copied over other images that can benefit from a warm cache.
+#### Note that yarn v3 cache lives in `/calypso/.yarn`
 FROM node:16.7.0-buster as cache
 
 ARG node_memory=8192
 WORKDIR /calypso
-ENV YARN_CACHE_FOLDER=/calypso/.cache/yarn
 ENV NPM_CONFIG_CACHE=/calypso/.cache
 ENV PERSISTENT_CACHE=true
 ENV PROFILE=true
@@ -43,7 +43,6 @@ ARG user=calypso
 ARG UID=1003
 
 WORKDIR /calypso
-ENV YARN_CACHE_FOLDER=/calypso/.cache/yarn
 ENV NPM_CONFIG_CACHE=/calypso/.cache
 ENV NVM_DIR=/calypso/.nvm
 ENV NODE_OPTIONS=--max-old-space-size=$node_memory
@@ -69,9 +68,7 @@ COPY --from=cache --chown=$UID /calypso/.nvm /calypso/.nvm
 # Copy all other caches (webpack, babel, yarn...)
 COPY --from=cache --chown=$UID /calypso/.cache /calypso/.cache
 COPY --from=cache --chown=$UID /calypso/.bashrc /calypso/.bashrc
-
-# Copy node_modules to reduce install time of future builds.
-COPY --from=cache --chown=$UID /calypso/node_modules /calypso/node_modules
+COPY --from=cache --chown=$UID /calypso/.yarn /calypso/.yarn
 
 ENTRYPOINT [ "/bin/bash" ]
 
