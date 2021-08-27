@@ -8,8 +8,6 @@ import joinClasses from './join-classes';
 import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
 import type { CouponStatus } from '@automattic/shopping-cart';
 
-/* eslint-disable @typescript-eslint/no-use-before-define */
-
 export default function Coupon( {
 	id,
 	className,

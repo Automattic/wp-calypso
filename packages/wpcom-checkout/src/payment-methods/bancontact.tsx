@@ -26,9 +26,6 @@ import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/compos
 
 const debug = debugFactory( 'wpcom-checkout:bancontact-payment-method' );
 
-// Disabling this to make migration easier
-/* eslint-disable @typescript-eslint/no-use-before-define */
-
 type StoreKey = 'bancontact';
 type NounsInStore = 'customerName';
 type BancontactStore = PaymentMethodStore< NounsInStore >;

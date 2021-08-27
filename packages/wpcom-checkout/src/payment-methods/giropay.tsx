@@ -26,9 +26,6 @@ import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/compos
 
 const debug = debugFactory( 'wpcom-checkout:giropay-payment-method' );
 
-// Disabling this to make migration easier
-/* eslint-disable @typescript-eslint/no-use-before-define */
-
 type StoreKey = 'giropay';
 type NounsInStore = 'customerName';
 type GiropayStore = PaymentMethodStore< NounsInStore >;

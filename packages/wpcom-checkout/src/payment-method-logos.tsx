@@ -2,9 +2,6 @@ import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-// Disabling this to make migration easier
-/* eslint-disable @typescript-eslint/no-use-before-define */
-
 export const PaymentMethodLogos = styled.span`
 	text-align: right;
 	transform: translateY( 3px );

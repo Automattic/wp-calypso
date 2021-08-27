@@ -63,9 +63,6 @@ import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
-// This will make converting to TS less noisy. The order of components can be reorganized later
-/* eslint-disable @typescript-eslint/no-use-before-define */
-
 const ContactFormTitle = (): JSX.Element => {
 	const translate = useTranslate();
 	const isActive = useIsStepActive();

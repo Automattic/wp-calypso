@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
-
 import {
 	getYearlyPlanByMonthly,
 	isWpComPlan,
@@ -72,7 +70,6 @@ type PopupMessageProps = {
 	isVisible: boolean;
 };
 
-// eslint-disable @typescript-eslint/no-use-before-define
 export const PopupMessages: React.FunctionComponent< PopupMessageProps > = ( {
 	context,
 	children,

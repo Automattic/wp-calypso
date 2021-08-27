@@ -24,9 +24,6 @@ import type {
 } from '../payment-method-store';
 import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
 
-// Disabling this to make migration easier
-/* eslint-disable @typescript-eslint/no-use-before-define */
-
 const debug = debugFactory( 'wpcom-checkout:p24-payment-method' );
 
 type StoreKey = 'p24';

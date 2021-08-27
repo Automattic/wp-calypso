@@ -4,9 +4,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import styled from './styled';
 
-// Disabling this to make migrating files easier
-/* eslint-disable @typescript-eslint/no-use-before-define */
-
 export default function Field( {
 	type,
 	id,

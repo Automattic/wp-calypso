@@ -26,9 +26,6 @@ import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/compos
 
 const debug = debugFactory( 'wpcom-checkout:ideal-payment-method' );
 
-// Disabling this to make migration easier
-/* eslint-disable @typescript-eslint/no-use-before-define */
-
 type StoreKey = 'ideal';
 type NounsInStore = 'customerName' | 'customerBank';
 type IdealStore = PaymentMethodStore< NounsInStore >;

@@ -15,9 +15,6 @@ import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checko
 
 const debug = debugFactory( 'wpcom-checkout:paypal' );
 
-// Disabling this rule to make migrating this easier with fewer changes
-/* eslint-disable @typescript-eslint/no-use-before-define */
-
 export function createPayPalMethod( {
 	labelText = null,
 }: {

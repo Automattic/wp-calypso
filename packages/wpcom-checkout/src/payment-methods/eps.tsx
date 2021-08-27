@@ -26,9 +26,6 @@ import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/compos
 
 const debug = debugFactory( 'wpcom-checkout:eps-payment-method' );
 
-// Disabling this to make migration easier
-/* eslint-disable @typescript-eslint/no-use-before-define */
-
 type StoreKey = 'eps';
 type NounsInStore = 'customerName';
 type EpsStore = PaymentMethodStore< NounsInStore >;

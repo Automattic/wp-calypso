@@ -16,9 +16,6 @@ import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/compos
 
 const debug = debugFactory( 'wpcom-checkout:existing-card-payment-method' );
 
-// Disabling this to make migration easier
-/* eslint-disable @typescript-eslint/no-use-before-define */
-
 export function createExistingCardMethod( {
 	id,
 	cardholderName,

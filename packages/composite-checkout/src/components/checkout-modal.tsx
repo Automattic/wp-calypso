@@ -6,8 +6,6 @@ import joinClasses from '../lib/join-classes';
 import styled from '../lib/styled';
 import Button from './button';
 
-/* eslint-disable @typescript-eslint/no-use-before-define */
-
 export default function CheckoutModal( {
 	className,
 	title,
