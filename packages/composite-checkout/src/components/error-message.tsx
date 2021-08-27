@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import React from 'react';
 
-export default function ErrorMessage( { children }: { children?: React.ReactNode } ) {
+export default function ErrorMessage( { children }: { children?: React.ReactNode } ): JSX.Element {
 	return <Error>{ children }</Error>;
 }
 
