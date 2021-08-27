@@ -305,7 +305,7 @@ export class SiteAddressChanger extends Component {
 			return (
 				<div className="site-address-changer site-address-changer__only-owner-info">
 					<Gridicon icon="info-outline" />
-					{ translate( 'You cannot change the free WordPress.com address for atomic sites.' ) }
+					{ translate( 'wpcomstaging.com addresses cannot be changed.' ) }
 				</div>
 			);
 		}
