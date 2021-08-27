@@ -19,9 +19,6 @@ import NoBackupsOnSelectedDate from '../status-card/no-backups-on-selected-date'
 import NoBackupsYet from '../status-card/no-backups-yet';
 import VisibleDaysLimit from '../status-card/visible-days-limit';
 
-/**
- * Mock dependencies
- */
 jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
 	useDispatch: jest.fn().mockImplementation( () => {} ),

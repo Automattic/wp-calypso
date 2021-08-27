@@ -12,17 +12,17 @@ import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import AppPasswords from 'calypso/me/application-passwords';
-import isTwoStepEnabled from 'calypso/state/selectors/is-two-step-enabled';
-import { fetchUserSettings } from 'calypso/state/user-settings/actions';
-import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import ReauthRequired from 'calypso/me/reauth-required';
 import Security2faBackupCodes from 'calypso/me/security-2fa-backup-codes';
 import Security2faDisable from 'calypso/me/security-2fa-disable';
 import Security2faKey from 'calypso/me/security-2fa-key';
 import Security2faSetup from 'calypso/me/security-2fa-setup';
 import SecuritySectionNav from 'calypso/me/security-section-nav';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
+import isTwoStepEnabled from 'calypso/state/selectors/is-two-step-enabled';
+import { fetchUserSettings } from 'calypso/state/user-settings/actions';
+import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 
 import './style.scss';
 

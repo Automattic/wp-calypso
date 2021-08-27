@@ -13,7 +13,7 @@ set -eou pipefail
 DIR="$1"
 
 function removeComments {
-	perl -0777 -pi -e "s/\/\*\*\n \* (External|Internal|WordPress|Module|Type|Image|Style) dependencies\n \*\///gi" "$1"
+	perl -0777 -pi -e "s/\/\*\*\n \* (External|Internal|WordPress|Module|Type|Image|Style) dependencies(\n \*)+\///gi" "$1"
 }
 
 function prettify {
@@ -25,8 +25,12 @@ function fix {
 
 while IFS= read -r -d '' file
 do
+	echo Remving comments from $file
 	removeComments "$file"
-done < <(find -E "$DIR" -type f  -regex '.*\.[jt]sx?' -print0)
+done < <(find -E "$DIR" -type f -regex '.*\.([jt]sx?|md)' -not -path "./node_modules/*" -not -path "*/node_modules/*" -print0)
 
+echo Running eslint
 fix "$DIR"
+
+echo Running prettify
 prettify "$DIR"

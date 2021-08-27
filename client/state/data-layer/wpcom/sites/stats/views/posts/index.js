@@ -1,8 +1,3 @@
-/**
- * External Dependencies
- *
- */
-
 import { STATS_RECENT_POST_VIEWS_REQUEST } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';

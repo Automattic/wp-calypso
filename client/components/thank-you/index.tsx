@@ -1,13 +1,7 @@
-/**
- * External dependencies
- */
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
-/**
- * Internal dependencies
- */
 import Gridicon from 'calypso/components/gridicon';
 import { CALYPSO_CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';
 import type {
@@ -17,9 +11,6 @@ import type {
 	ThankYouSupportSectionProps,
 } from 'calypso/components/thank-you/types';
 
-/**
- * style dependencies
- */
 import './style.scss';
 
 const ThankYouContainer = styled.div`

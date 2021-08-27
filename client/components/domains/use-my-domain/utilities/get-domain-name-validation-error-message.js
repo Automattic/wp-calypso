@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import {
 	JETPACK_ANTI_SPAM_PRODUCTS,
 	JETPACK_BACKUP_PRODUCTS,

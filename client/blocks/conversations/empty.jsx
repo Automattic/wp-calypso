@@ -7,10 +7,6 @@ import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
-/**
- * Asset dependencies
- */
-
 class ConversationsEmptyContent extends React.Component {
 	shouldComponentUpdate() {
 		return false;

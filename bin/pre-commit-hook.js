@@ -1,12 +1,9 @@
-/**
- * External dependencies
- */
 const execSync = require( 'child_process' ).execSync;
 const spawnSync = require( 'child_process' ).spawnSync;
 const existsSync = require( 'fs' ).existsSync;
+const path = require( 'path' );
 const chalk = require( 'chalk' );
 const _ = require( 'lodash' );
-const path = require( 'path' );
 
 const phpcsPath = getPathForCommand( 'phpcs' );
 const phpcbfPath = getPathForCommand( 'phpcbf' );

@@ -16,9 +16,6 @@ import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import CompositeCheckout from '../composite-checkout';
 
-/**
- * Mocked dependencies
- */
 jest.mock( 'calypso/state/sites/selectors' );
 jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
 jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );

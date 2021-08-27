@@ -1,21 +1,11 @@
-/**
- * External dependencies
- */
+import { Card } from '@automattic/components';
+import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { __ } from '@wordpress/i18n';
-import { Card } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
-import { modeType, stepSlug } from './constants';
 import CardHeading from 'calypso/components/card-heading';
 import ConnectDomainStepProgress from './connect-domain-step-progress';
+import { modeType, stepSlug } from './constants';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default function ConnectDomainStepWrapper( {

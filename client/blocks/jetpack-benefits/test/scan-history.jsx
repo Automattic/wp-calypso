@@ -1,21 +1,11 @@
-/**
- * External Dependencies
- */
-import React from 'react';
-
-/**
- * Internal Dependencies
- */
 import { shallow } from 'enzyme';
-import JetpackBenefitsScanHistory from '../scan-history';
+import React from 'react';
+import { JetpackBenefitsCard } from 'calypso/blocks/jetpack-benefits/benefit-card';
 import { JetpackBenefitsStandaloneCard } from 'calypso/blocks/jetpack-benefits/standalone-benefit-card';
 import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
 import isRequestingJetpackScan from 'calypso/state/selectors/is-requesting-jetpack-scan';
-import { JetpackBenefitsCard } from 'calypso/blocks/jetpack-benefits/benefit-card';
+import JetpackBenefitsScanHistory from '../scan-history';
 
-/**
- * Mock dependencies
- */
 jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
 	useDispatch: jest.fn().mockImplementation( () => {} ),

@@ -2,9 +2,6 @@ import classnames from 'classnames';
 import * as React from 'react';
 import ScreenReaderText from '../screen-reader-text';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export interface Props {

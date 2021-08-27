@@ -3,9 +3,6 @@ import Gridicon from 'gridicons'; // eslint-disable-line no-restricted-imports
 import React from 'react';
 import type { ElementType, ComponentProps, ReactNode, Ref } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export type TagName< P = any > = ElementType< P >; // eslint-disable-line @typescript-eslint/no-explicit-any

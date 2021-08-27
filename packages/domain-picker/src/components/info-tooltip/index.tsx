@@ -3,9 +3,6 @@ import { info } from '@wordpress/icons';
 import classnames from 'classnames';
 import React, { FunctionComponent, useState } from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface Props {

@@ -21,9 +21,9 @@
  *
  */
 
+const wpUrl = require( '@wordpress/url' );
 const captureWebsite = require( 'capture-website' );
 const sharp = require( 'sharp' );
-const wpUrl = require( '@wordpress/url' );
 const designs = require( '../packages/design-picker/src/available-designs-config.json' );
 
 // @TODO: should be using `DESIGN_IMAGE_FOLDER` from '@automattic/design-picker' package

@@ -1,9 +1,6 @@
 import classNames from 'classnames';
 import * as React from 'react';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 // @TODO: move to '@automattic/components' and reuse in Gutenboarding

@@ -7,9 +7,6 @@ import React from 'react';
 import { PLANS_STORE } from '../stores';
 import type { Plans } from '@automattic/data-stores';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const TickIcon = <Icon icon={ check } size={ 25 } />;

@@ -4,9 +4,6 @@
 import 'source-map-support/register';
 import '@automattic/calypso-polyfills';
 
-/**
- * External dependencies.
- */
 import fs from 'fs';
 import config from '@automattic/calypso-config';
 import boot from './boot';

@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { pathWithLeadingSlash } from 'calypso/lib/login';
 
 describe( 'pathWithLeadingSlash', () => {

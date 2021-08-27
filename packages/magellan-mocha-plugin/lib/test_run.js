@@ -3,10 +3,10 @@
 //   - Non-browser testing, or regular node.js mocha tests
 //
 
+const fs = require( 'fs' );
+const path = require( 'path' );
 const _ = require( 'lodash' );
 const mochaSettings = require( './settings' );
-const path = require( 'path' );
-const fs = require( 'fs' );
 
 const MochaTestRun = function ( options ) {
 	// Share assets directory with mocha tests

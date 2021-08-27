@@ -15,9 +15,6 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import getSiteBySlug from 'calypso/state/sites/selectors/get-site-by-slug';
 
-/**
- * Style and image dependencies
- */
 import './style.scss';
 
 class TitanControlPanelRedirect extends React.Component {

@@ -1,23 +1,15 @@
-/**
- * External dependencies
- */
 import { Card, Button } from '@automattic/components';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import React, { useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
-/**
- * Internal dependencies
- */
 import illustration from 'calypso/assets/images/illustrations/domain.svg';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Gridicon from 'calypso/components/gridicon';
-/**
- * Style dependencies
- */
+
 import './style.scss';
 
 function UseMyDomainInput( {

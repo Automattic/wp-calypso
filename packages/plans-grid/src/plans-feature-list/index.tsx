@@ -8,9 +8,6 @@ import type { DomainSuggestions, Plans } from '@automattic/data-stores';
 
 import '../types-patch';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface FeatureListItemContentWrapperProps {

@@ -10,8 +10,8 @@
  */
 
 const fs = require( 'fs' );
-const lunr = require( 'lunr' );
 const globby = require( 'globby' );
+const lunr = require( 'lunr' );
 const mkdirp = require( 'mkdirp' );
 
 function main() {

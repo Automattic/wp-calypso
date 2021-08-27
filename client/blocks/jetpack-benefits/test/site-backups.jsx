@@ -1,18 +1,8 @@
-/**
- * External Dependencies
- */
-import React from 'react';
 import { shallow } from 'enzyme';
-
-/**
- * Internal Dependencies
- */
+import React from 'react';
 import getRewindBackups from 'calypso/state/selectors/get-rewind-backups';
 import JetpackBenefitsSiteBackups from '../site-backups';
 
-/**
- * Mock dependencies
- */
 jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
 	useDispatch: jest.fn().mockImplementation( () => {} ),

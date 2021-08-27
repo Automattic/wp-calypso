@@ -8,32 +8,28 @@ import { connect } from 'react-redux';
 import helpPurchases from 'calypso/assets/images/customer-home/illustration--secondary-earn.svg';
 import helpSupportSession from 'calypso/assets/images/customer-home/illustration-webinars.svg';
 import helpDomains from 'calypso/assets/images/illustrations/help-domains.svg';
+import helpGetStarted from 'calypso/assets/images/illustrations/help-getstarted.svg';
+import helpPlugins from 'calypso/assets/images/illustrations/help-plugins.svg';
+import helpPrivacy from 'calypso/assets/images/illustrations/help-privacy.svg';
+import helpWebsite from 'calypso/assets/images/illustrations/help-website.svg';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import FormattedHeader from 'calypso/components/formatted-header';
 import Gridicon from 'calypso/components/gridicon';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import { getCurrentUserId, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import { getUserPurchases, isFetchingUserPurchases } from 'calypso/state/purchases/selectors';
+import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id.js';
 import HelpResult from './help-results/item';
 import HelpSearch from './help-search';
 import HelpUnverifiedWarning from './help-unverified-warning';
-import Main from 'calypso/components/main';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import FormattedHeader from 'calypso/components/formatted-header';
-import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
-import { getUserPurchases, isFetchingUserPurchases } from 'calypso/state/purchases/selectors';
 
 import './style.scss';
-
-/**
- * Images
- */
-import helpGetStarted from 'calypso/assets/images/illustrations/help-getstarted.svg';
-import helpPlugins from 'calypso/assets/images/illustrations/help-plugins.svg';
-import helpWebsite from 'calypso/assets/images/illustrations/help-website.svg';
-import helpPrivacy from 'calypso/assets/images/illustrations/help-privacy.svg';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
