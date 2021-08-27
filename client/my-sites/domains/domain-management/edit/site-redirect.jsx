@@ -1,8 +1,3 @@
-/**
- * External dependencies
- *
- */
-
 import React from 'react';
 import Edit from './index';
 

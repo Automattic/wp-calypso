@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
 import { Button } from '@automattic/components';
 import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-/**
- * Internal dependencies
- */
 import Badge from 'calypso/components/badge';
 import Gridicon from 'calypso/components/gridicon';
-/**
- * Style dependencies
- */
+
 import '../style.scss';
 
 export default function OptionContent( {

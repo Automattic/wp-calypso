@@ -1,6 +1,3 @@
-/**
- * Externap dependencies
- */
 import debugFactory from 'debug';
 import { mergeHandlers } from 'calypso/state/action-watchers/utils';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';

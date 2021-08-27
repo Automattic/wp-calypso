@@ -3,20 +3,8 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { getPurchasesBySite, getSubscriptionsBySite } from 'calypso/lib/purchases';
-import QueryMembershipsSubscriptions from 'calypso/components/data/query-memberships-subscriptions';
-import { getAllSubscriptions } from 'calypso/state/memberships/subscriptions/selectors';
-import getSites from 'calypso/state/selectors/get-sites';
-import {
-	getUserPurchases,
-	hasLoadedUserPurchasesFromServer,
-	isFetchingUserPurchases,
-} from 'calypso/state/purchases/selectors';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
-import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id.js';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
+import QueryMembershipsSubscriptions from 'calypso/components/data/query-memberships-subscriptions';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
@@ -24,6 +12,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getPurchasesBySite, getSubscriptionsBySite } from 'calypso/lib/purchases';
 import {
 	CONCIERGE_HAS_UPCOMING_APPOINTMENT,
 	CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION,
@@ -35,6 +24,17 @@ import {
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import titles from 'calypso/me/purchases/titles';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getAllSubscriptions } from 'calypso/state/memberships/subscriptions/selectors';
+import {
+	getUserPurchases,
+	hasLoadedUserPurchasesFromServer,
+	isFetchingUserPurchases,
+} from 'calypso/state/purchases/selectors';
+import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
+import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id.js';
+import getSites from 'calypso/state/selectors/get-sites';
 import isBusinessPlanUser from 'calypso/state/selectors/is-business-plan-user';
 import ConciergeBanner from '../concierge-banner';
 import MembershipSite from '../membership-site';

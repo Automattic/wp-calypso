@@ -1,19 +1,11 @@
-/**
- * External dependencies
- */
 import { Button } from '@automattic/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import React from 'react';
-/**
- * Internal dependencies
- */
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
 import { modeType, stepSlug } from './constants';
-/**
- * Style dependencies
- */
+
 import './style.scss';
 
 export default function ConnectDomainStepLogin( {

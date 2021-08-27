@@ -18,9 +18,6 @@ import { fromApi, toApi } from './api';
 import { appStates } from './constants';
 import { isImporterLocked } from './selectors';
 
-/**
- * Redux dependencies
- */
 import 'calypso/state/imports/init';
 
 const wpcom = wpLib.undocumented();

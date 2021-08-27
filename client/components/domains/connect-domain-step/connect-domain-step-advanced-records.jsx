@@ -1,23 +1,13 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
+import { __ } from '@wordpress/i18n';
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { __ } from '@wordpress/i18n';
-import { Button } from '@automattic/components';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { modeType, stepSlug } from './constants';
 import ConnectDomainStepClipboardButton from './connect-domain-step-clipboard-button';
 import ConnectDomainStepVerificationNotice from './connect-domain-step-verification-error-notice';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
+import { modeType, stepSlug } from './constants';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default function ConnectDomainStepAdvancedRecords( {

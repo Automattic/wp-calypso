@@ -2,9 +2,6 @@ import { format as formatUrl, getUrlParts, getUrlFromParts } from '@automattic/c
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-/**
- * Internal dependencies
- */
 import { connect } from 'react-redux';
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarFooter from 'calypso/layout/sidebar/footer';

@@ -1,8 +1,8 @@
-const path = require( 'path' );
-const Locator = require( '../lib/locator' );
-const testFramework = require( '../index' );
 const fs = require( 'fs' ).promises;
 const os = require( 'os' );
+const path = require( 'path' );
+const testFramework = require( '../index' );
+const Locator = require( '../lib/locator' );
 require( '@automattic/calypso-polyfills' );
 
 async function getTestsFrom( specs ) {

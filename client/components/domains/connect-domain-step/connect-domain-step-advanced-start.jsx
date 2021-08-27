@@ -1,25 +1,15 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
+import { createElement, createInterpolateElement } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { __ } from '@wordpress/i18n';
-import { createElement, createInterpolateElement } from '@wordpress/element';
-import { Button } from '@automattic/components';
-import MaterialIcon from 'calypso/components/material-icon';
-
-/**
- * Internal dependencies
- */
 import CardHeading from 'calypso/components/card-heading';
+import MaterialIcon from 'calypso/components/material-icon';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
 import { modeType, stepSlug } from './constants';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default function ConnectDomainStepAdvancedStart( {

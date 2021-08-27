@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
 import { addQueryArgs } from 'calypso/lib/url';
 import analytics from 'calypso/server/lib/analytics';

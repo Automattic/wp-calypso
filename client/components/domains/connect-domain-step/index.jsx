@@ -1,15 +1,9 @@
-/**
- * External dependencies
- */
 import { BackButton } from '@automattic/onboarding';
 import { __, sprintf } from '@wordpress/i18n';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { connect } from 'react-redux';
-/**
- * Internal dependencies
- */
 import ConnectDomainStepSupportInfoLink from 'calypso/components/domains/connect-domain-step/connect-domain-step-support-info-link';
 import DomainTransferRecommendation from 'calypso/components/domains/domain-transfer-recommendation';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -26,9 +20,7 @@ import {
 	getProgressStepList,
 	getStepsDefinition,
 } from './page-definitions';
-/**
- * Style dependencies
- */
+
 import './style.scss';
 
 function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialStep, showErrors } ) {

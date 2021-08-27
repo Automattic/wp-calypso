@@ -20,9 +20,6 @@ import JetpackBenefitsSiteBackups from 'calypso/blocks/jetpack-benefits/site-bac
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 interface Props {

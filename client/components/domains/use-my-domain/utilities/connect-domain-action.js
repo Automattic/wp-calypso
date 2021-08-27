@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import { __ } from '@wordpress/i18n';
 import page from 'page';
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList, domainMappingSetup } from 'calypso/my-sites/domains/paths';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';

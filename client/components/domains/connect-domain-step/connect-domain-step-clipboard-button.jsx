@@ -1,20 +1,10 @@
-/**
- * External dependencies
- */
-import PropTypes from 'prop-types';
-import React, { useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import Gridicon from 'calypso/components/gridicon';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default function ConnectDomainStepClipboardButton( { baseClassName, classes, text } ) {

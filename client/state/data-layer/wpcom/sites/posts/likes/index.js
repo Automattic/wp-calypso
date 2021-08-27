@@ -1,8 +1,3 @@
-/**
- * External Dependencies
- *
- */
-
 import { POST_LIKES_REQUEST } from 'calypso/state/action-types';
 import { mergeHandlers } from 'calypso/state/action-watchers/utils';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';

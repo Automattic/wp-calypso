@@ -9,9 +9,6 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useCallback, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
-import getPaymentMethodIdFromPayment from './get-payment-method-id-from-payment';
-import TosText from './tos-text';
-import type { Purchase } from 'calypso/lib/purchases/types';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import Gridicon from 'calypso/components/gridicon';
@@ -25,11 +22,14 @@ import {
 	assignNewCardProcessor,
 	assignExistingCardProcessor,
 } from './assignment-processor-functions';
+import getPaymentMethodIdFromPayment from './get-payment-method-id-from-payment';
+import TosText from './tos-text';
 import {
 	useHandleRedirectChangeError,
 	useHandleRedirectChangeComplete,
 } from './url-event-handlers';
 import type { PaymentMethod } from '@automattic/composite-checkout';
+import type { Purchase } from 'calypso/lib/purchases/types';
 import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';

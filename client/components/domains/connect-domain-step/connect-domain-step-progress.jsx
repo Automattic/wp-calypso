@@ -1,19 +1,9 @@
-/**
- * External dependencies
- */
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import Gridicon from 'calypso/components/gridicon';
 import { stepSlug } from 'calypso/components/domains/connect-domain-step/constants';
+import Gridicon from 'calypso/components/gridicon';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default function ConnectDomainStepProgress( { baseClassName, steps, currentPageSlug } ) {

@@ -1,21 +1,11 @@
-/**
- * External dependencies
- */
+import { createElement, createInterpolateElement } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { __ } from '@wordpress/i18n';
-import { createElement, createInterpolateElement } from '@wordpress/element';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { stepType, modeType } from './constants';
 import Gridicon from 'calypso/components/gridicon';
+import { stepType, modeType } from './constants';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default function ConnectDomainStepSwitchSetupInfoLink( {

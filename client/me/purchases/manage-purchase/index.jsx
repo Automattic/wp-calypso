@@ -40,6 +40,10 @@ import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import Gridicon from 'calypso/components/gridicon';
+import HeaderCake from 'calypso/components/header-cake';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	cardProcessorSupportsUpdates,
@@ -65,49 +69,45 @@ import {
 	getName,
 	shouldRenderMonthlyRenewalOption,
 } from 'calypso/lib/purchases';
+import { hasCustomDomain } from 'calypso/lib/site/utils';
+import { addQueryArgs } from 'calypso/lib/url';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
+import ProductLink from 'calypso/me/purchases/product-link';
+import titles from 'calypso/me/purchases/titles';
+import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import PlanPrice from 'calypso/my-sites/plan-price';
+import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
+import {
+	currentUserHasFlag,
+	getCurrentUser,
+	getCurrentUserId,
+} from 'calypso/state/current-user/selectors';
 import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
 	hasLoadedSitePurchasesFromServer,
 	getRenewableSitePurchases,
 } from 'calypso/state/purchases/selectors';
+import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
+import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
+import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
+import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
+import { getCanonicalTheme } from 'calypso/state/themes/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { cancelPurchase, managePurchase, purchasesRoot } from '../paths';
+import PurchaseSiteHeader from '../purchases-site/header';
+import RemovePurchase from '../remove-purchase';
 import {
 	canEditPaymentDetails,
 	getAddNewPaymentMethodPath,
 	getChangePaymentMethodPath,
 	isJetpackTemporarySitePurchase,
 } from '../utils';
-import { getCanonicalTheme } from 'calypso/state/themes/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
-import HeaderCake from 'calypso/components/header-cake';
-import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
-import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
-import ProductLink from 'calypso/me/purchases/product-link';
 import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
 import PurchaseMeta from './purchase-meta';
-import PurchaseSiteHeader from '../purchases-site/header';
-import RemovePurchase from '../remove-purchase';
-import VerticalNavItem from 'calypso/components/vertical-nav/item';
-import { cancelPurchase, managePurchase, purchasesRoot } from '../paths';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
-import titles from 'calypso/me/purchases/titles';
-import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
-import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
-import {
-	currentUserHasFlag,
-	getCurrentUser,
-	getCurrentUserId,
-} from 'calypso/state/current-user/selectors';
-import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
-import { hasCustomDomain } from 'calypso/lib/site/utils';
-import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
-import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
-import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
-import { addQueryArgs } from 'calypso/lib/url';
 
 import './style.scss';
 

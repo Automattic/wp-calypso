@@ -9,19 +9,19 @@ import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import FormSelect from 'calypso/components/forms/form-select';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
-import ReauthRequired from 'calypso/me/reauth-required';
-import twoStepAuthorization from 'calypso/lib/two-step-authorization';
-import Main from 'calypso/components/main';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { protectForm } from 'calypso/lib/protect-form';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import withFormBase from 'calypso/me/form-base/with-form-base';
 import Navigation from 'calypso/me/notification-settings/navigation';
+import ReauthRequired from 'calypso/me/reauth-required';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 class NotificationSubscriptions extends React.Component {
 	handleClickEvent( action ) {

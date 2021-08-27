@@ -10,9 +10,6 @@ import { PLANS_STORE, WPCOM_FEATURES_STORE } from '../stores';
 import type { DisabledPlansMap } from '../plans-table/types';
 import type { DomainSuggestions, Plans, WPCOMFeatures } from '@automattic/data-stores';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 type FeatureId = WPCOMFeatures.FeatureId;

@@ -10,10 +10,6 @@ const Settings = require( '../../lib/settings' );
 
 const webBase = Config.baseURL();
 
-/**
- *
- * Module dependencies
- */
 const delay = promisify( setTimeout );
 
 let notificationBadgeCount = 0;

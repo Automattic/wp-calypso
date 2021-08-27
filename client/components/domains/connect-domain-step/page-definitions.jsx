@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
 import { __ } from '@wordpress/i18n';
-
-/**
- * Internal dependencies
- */
-import { modeType, stepSlug, stepType } from './constants';
-import ConnectDomainStepAdvancedStart from './connect-domain-step-advanced-start';
 import ConnectDomainStepAdvancedRecords from './connect-domain-step-advanced-records';
+import ConnectDomainStepAdvancedStart from './connect-domain-step-advanced-start';
 import ConnectDomainStepDone from './connect-domain-step-done';
 import ConnectDomainStepLogin from './connect-domain-step-login';
 import ConnectDomainStepSuggestedRecords from './connect-domain-step-suggested-records';
 import ConnectDomainStepSuggestedStart from './connect-domain-step-suggested-start';
+import { modeType, stepSlug, stepType } from './constants';
 
 export const defaultStepsDefinition = {
 	// Suggested flow

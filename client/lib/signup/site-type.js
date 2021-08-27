@@ -1,6 +1,3 @@
-/**
- * Exernal dependencies
- */
 import i18n from 'i18n-calypso';
 import { find, get } from 'lodash';
 
@@ -47,7 +44,6 @@ const getSiteTypePropertyDefaults = ( propertyKey ) =>
  * @example
  * // Find the site type where `id === 2`, and return the value of `slug`
  * const siteTypeValue = getSiteTypePropertyValue( 'id', 2, 'slug' );
- *
  * @param {string} key A property name of a site types item
  * @param {string|number} value The value of `key` with which to filter items
  * @param {string} property The name of the property whose value you wish to return
