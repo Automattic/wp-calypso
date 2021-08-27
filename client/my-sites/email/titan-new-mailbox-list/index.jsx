@@ -63,8 +63,6 @@ const TitanNewMailboxList = ( {
 		onMailboxesChange( updatedMailboxes );
 	};
 
-	const lastMailboxIndex = mailboxes.length - 1;
-
 	return (
 		<div className="titan-new-mailbox-list__main">
 			{ mailboxes.map( ( mailbox, index ) => (
