@@ -12,7 +12,7 @@ class P2SignupForm extends Component {
 
 	render() {
 		return (
-			<>
+			<div class="signup-form">
 				{ this.state.showEmailSignupForm && (
 					<LoggedOutForm onSubmit={ this.props.handleSubmit } noValidate={ true }>
 						{ this.props.formFields }
@@ -43,7 +43,7 @@ class P2SignupForm extends Component {
 				) }
 
 				{ this.props.footerLink }
-			</>
+			</div>
 		);
 	}
 }
