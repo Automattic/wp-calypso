@@ -83,6 +83,7 @@ class EmailProvidersComparison extends React.Component {
 		promoHeaderTitle: PropTypes.string,
 		selectedDomainName: PropTypes.string.isRequired,
 		showSkipButton: PropTypes.bool,
+		skipButtonLabel: PropTypes.string,
 
 		// Props injected via connect()
 		currencyCode: PropTypes.string,
@@ -420,6 +421,7 @@ class EmailProvidersComparison extends React.Component {
 			onSkipClick,
 			selectedDomainName,
 			showSkipButton,
+			skipButtonLabel,
 			titanMailProduct,
 			translate,
 		} = this.props;
@@ -480,9 +482,7 @@ class EmailProvidersComparison extends React.Component {
 					{ buttonLabel }
 				</Button>
 
-				{ showSkipButton && (
-					<Button onClick={ onSkipClick }>{ translate( 'Not interested' ) }</Button>
-				) }
+				{ showSkipButton && <Button onClick={ onSkipClick }>{ skipButtonLabel }</Button> }
 			</TitanNewMailboxList>
 		);
 
