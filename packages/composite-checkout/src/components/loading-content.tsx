@@ -144,7 +144,7 @@ const LoadingFooter = styled.div`
 	}
 `;
 
-export default function LoadingContent() {
+export default function LoadingContent(): JSX.Element {
 	const { __ } = useI18n();
 
 	return (
