@@ -22,21 +22,44 @@ export type TransferDomainFunctionProps = {
 
 export type TransferDomainFunction = ( props: TransferDomainFunctionProps ) => void;
 
-export type OptionInfoProps = {
-	availability: Record< string, unknown >;
+export type MappingFreeTextProps = {
+	cart: ResponseCart;
+	domain: string;
+	primaryWithPlansOnly: boolean;
+	selectedSite: SiteData | undefined | null;
+};
+
+export type MappingPriceTextProps = {
 	cart: ResponseCart;
 	currencyCode: string;
 	domain: string;
-	isSignupStep: boolean;
-	onConnect: ConnectDomainFunction;
-	onTransfer: TransferDomainFunction;
-	primaryWithPlansOnly: boolean;
 	productsList: Record< string, unknown >[];
 	selectedSite: SiteData | undefined | null;
+};
+
+export type TransferFreeTextProps = {
+	cart: ResponseCart;
+	domain: string;
+	isSignupStep: boolean;
 	siteIsOnPaidPlan: boolean;
 };
 
-export type TransferFreeTextProps = Pick<
-	OptionInfoProps,
-	'cart' | 'domain' | 'isSignupStep' | 'siteIsOnPaidPlan'
->;
+export type TransferSalePriceTextProps = {
+	cart: ResponseCart;
+	currencyCode: string;
+	domain: string;
+	productsList: Record< string, unknown >[];
+};
+
+export type TransferPriceTextProps = {
+	cart: ResponseCart;
+	currencyCode: string;
+	domain: string;
+	productsList: Record< string, unknown >[];
+};
+
+export type OptionInfoProps = MappingFreeTextProps &
+	MappingPriceTextProps &
+	TransferFreeTextProps &
+	TransferSalePriceTextProps &
+	TransferPriceTextProps;

@@ -9,6 +9,8 @@ import { isDomainBundledWithPlan, isNextDomainFree } from 'calypso/lib/cart-valu
 import { TransferFreeTextProps } from './types';
 
 export function getTransferFreeText( props: TransferFreeTextProps ): string | null {
+	return null;
+
 	const siteHasNoPaidPlan: boolean = ! props.siteIsOnPaidPlan || props.isSignupStep;
 
 	let domainProductFreeText: string | null = null;
