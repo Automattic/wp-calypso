@@ -149,7 +149,7 @@
 	],
 	"restricted_me_access": true,
 	"theme_color": "#055d9c",
-	"reskinned_flows": [ "launch-site", "onboarding", "onboarding-with-email" ],
+	"reskinned_flows": [ "launch-site", "onboarding", "onboarding-with-email", "setup-site" ],
 	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js",
 	"calendly_jetpack_appointment_url": ""
 }
