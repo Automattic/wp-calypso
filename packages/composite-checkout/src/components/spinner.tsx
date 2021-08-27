@@ -1,6 +1,6 @@
 import { keyframes } from '@emotion/react';
-import React from 'react';
 import styled from '@emotion/styled';
+import React from 'react';
 
 export default function Spinner( { className }: { className?: string } ) {
 	return <SpinnerWrapper className={ className } />;

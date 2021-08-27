@@ -1,6 +1,6 @@
+import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import React, { ErrorInfo } from 'react';
-import styled from '@emotion/styled';
 
 const debug = debugFactory( 'composite-checkout:checkout-error-boundary' );
 
