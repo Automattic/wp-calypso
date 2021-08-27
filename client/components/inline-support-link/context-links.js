@@ -43,9 +43,9 @@ export const getContextLinks = () => ( {
 		link: 'https://wordpress.com/support/publicize/',
 		post_id: 4789,
 	},
-	ads: {
-		link: 'https://wordpress.com/support/wordads-and-earn/',
-		post_id: 154292,
+	earn: {
+		link: 'https://wordpress.com/support/monetize-your-site/',
+		post_id: 120172,
 	},
 	import: {
 		link: 'https://wordpress.com/support/import/',
