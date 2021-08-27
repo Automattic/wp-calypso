@@ -584,9 +584,6 @@ fun playwrightBuildType( viewportName: String, buildUuid: String ): BuildType {
 		uuid = buildUuid
 		name = "Playwright E2E Tests ($viewportName)"
 		description = "Runs Calypso e2e tests in $viewportName size using Playwright"
-		params {
-			param("use_cached_node_modules", "false")
-		}
 
 		artifactRules = """
 			reports => reports
