@@ -15,7 +15,7 @@ import Gridicon from 'calypso/components/gridicon';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
 import { creditCardHasAlreadyExpired } from 'calypso/lib/purchases';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { getStoredPaymentAgreements } from 'calypso/state/stored-cards/selectors';
 import {
 	assignPayPalProcessor,
@@ -48,10 +48,13 @@ export default function PaymentMethodSelector( {
 	const { isStripeLoading, stripe, stripeConfiguration, stripeLoadingError } = useStripe();
 	const currentlyAssignedPaymentMethodId = getPaymentMethodIdFromPayment( purchase?.payment );
 
+	const showRedirectMessage = useCallback( () => {
+		reduxDispatch( infoNotice( translate( 'Redirecting to payment partner…' ) ) );
+	}, [ reduxDispatch, translate ] );
+
 	const showErrorMessage = useCallback(
-		( { transactionError: error }: { transactionError: string | null } ) => {
-			const message = error?.toString ? error.toString() : error;
-			reduxDispatch( errorNotice( message, { displayOnNextPage: true } ) );
+		( { transactionError }: { transactionError: string | null } ) => {
+			reduxDispatch( errorNotice( transactionError ) );
 		},
 		[ reduxDispatch ]
 	);
@@ -93,6 +96,7 @@ export default function PaymentMethodSelector( {
 			onPaymentComplete={ () =>
 				onPaymentSelectComplete( { successCallback, translate, showSuccessMessage, purchase } )
 			}
+			onPaymentRedirect={ showRedirectMessage }
 			onPaymentError={ showErrorMessage }
 			paymentMethods={ paymentMethods }
 			paymentProcessors={ {
