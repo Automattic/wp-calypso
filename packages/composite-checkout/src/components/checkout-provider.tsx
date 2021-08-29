@@ -15,9 +15,16 @@ import {
 	validatePaymentMethods,
 	validateTotal,
 } from '../lib/validation';
-import { LineItem, CheckoutProviderProps, FormStatus, PaymentMethod } from '../types';
+import {
+	LineItem,
+	CheckoutProviderProps,
+	FormStatus,
+	TransactionStatus,
+	PaymentMethod,
+} from '../types';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import TransactionStatusHandler from './transaction-status-handler';
+import type { PaymentEventCallback, PaymentProcessorResponseData } from '../types';
 
 const debug = debugFactory( 'composite-checkout:checkout-provider' );
 
@@ -32,6 +39,8 @@ export function CheckoutProvider( {
 	total = emptyTotal,
 	items = [],
 	onPaymentComplete,
+	onPaymentRedirect,
+	onPaymentError,
 	showErrorMessage,
 	showInfoMessage,
 	showSuccessMessage,
@@ -49,7 +58,6 @@ export function CheckoutProvider( {
 	const propsToValidate = {
 		total,
 		items,
-		onPaymentComplete,
 		showErrorMessage,
 		showInfoMessage,
 		showSuccessMessage,
@@ -91,15 +99,17 @@ export function CheckoutProvider( {
 		Boolean( isValidating )
 	);
 	const transactionStatusManager = useTransactionStatusManager();
-	const { transactionLastResponse } = transactionStatusManager;
-	const didCallOnPaymentComplete = useRef( false );
-	useEffect( () => {
-		if ( formStatus === FormStatus.COMPLETE && ! didCallOnPaymentComplete.current ) {
-			debug( "form status is complete so I'm calling onPaymentComplete" );
-			didCallOnPaymentComplete.current = true;
-			onPaymentComplete( { paymentMethodId, transactionLastResponse } );
-		}
-	}, [ formStatus, onPaymentComplete, transactionLastResponse, paymentMethodId ] );
+	const { transactionLastResponse, transactionStatus } = transactionStatusManager;
+
+	useCallEventCallbacks( {
+		onPaymentComplete,
+		onPaymentRedirect,
+		onPaymentError,
+		formStatus,
+		transactionStatus,
+		paymentMethodId,
+		transactionLastResponse,
+	} );
 
 	// Create the registry automatically if it's not a prop
 	const registryRef = useRef< DataRegistry | undefined >( registry );
@@ -167,7 +177,6 @@ function CheckoutProviderPropValidator( {
 	const {
 		total,
 		items,
-		onPaymentComplete,
 		showErrorMessage,
 		showInfoMessage,
 		showSuccessMessage,
@@ -184,13 +193,11 @@ function CheckoutProviderPropValidator( {
 		validateArg( paymentProcessors, 'CheckoutProvider missing required prop: paymentProcessors' );
 		validateArg( paymentMethods, 'CheckoutProvider missing required prop: paymentMethods' );
 		validatePaymentMethods( paymentMethods );
-		validateArg( onPaymentComplete, 'CheckoutProvider missing required prop: onPaymentComplete' );
 		validateArg( showErrorMessage, 'CheckoutProvider missing required prop: showErrorMessage' );
 		validateArg( showInfoMessage, 'CheckoutProvider missing required prop: showInfoMessage' );
 		validateArg( showSuccessMessage, 'CheckoutProvider missing required prop: showSuccessMessage' );
 	}, [
 		items,
-		onPaymentComplete,
 		paymentMethods,
 		paymentProcessors,
 		propsToValidate,
@@ -200,4 +207,51 @@ function CheckoutProviderPropValidator( {
 		total,
 	] );
 	return null;
+}
+
+function useCallEventCallbacks( {
+	onPaymentComplete,
+	onPaymentRedirect,
+	onPaymentError,
+	formStatus,
+	transactionStatus,
+	paymentMethodId,
+	transactionLastResponse,
+}: {
+	onPaymentComplete?: PaymentEventCallback;
+	onPaymentRedirect?: PaymentEventCallback;
+	onPaymentError?: PaymentEventCallback;
+	formStatus: FormStatus;
+	transactionStatus: TransactionStatus;
+	paymentMethodId: string | null;
+	transactionLastResponse: PaymentProcessorResponseData;
+} ): void {
+	const didCallOnPaymentComplete = useRef( false );
+	useEffect( () => {
+		if (
+			onPaymentComplete &&
+			formStatus === FormStatus.COMPLETE &&
+			! didCallOnPaymentComplete.current
+		) {
+			debug( "form status is complete so I'm calling onPaymentComplete" );
+			didCallOnPaymentComplete.current = true;
+			onPaymentComplete( { paymentMethodId, transactionLastResponse } );
+		}
+	}, [ formStatus, onPaymentComplete, transactionLastResponse, paymentMethodId ] );
+
+	useEffect( () => {
+		if ( onPaymentRedirect && transactionStatus === TransactionStatus.REDIRECTING ) {
+			onPaymentRedirect( { paymentMethodId, transactionLastResponse } );
+		}
+
+		if ( onPaymentError && transactionStatus === TransactionStatus.ERROR ) {
+			onPaymentError( { paymentMethodId, transactionLastResponse } );
+		}
+	}, [
+		transactionStatus,
+		onPaymentRedirect,
+		onPaymentError,
+		paymentMethodId,
+		transactionLastResponse,
+	] );
 }
