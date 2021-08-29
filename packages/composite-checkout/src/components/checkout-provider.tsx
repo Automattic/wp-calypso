@@ -45,9 +45,6 @@ export function CheckoutProvider( {
 	onPaymentComplete,
 	onPaymentRedirect,
 	onPaymentError,
-	showErrorMessage,
-	showInfoMessage,
-	showSuccessMessage,
 	redirectToUrl,
 	theme,
 	paymentMethods,
@@ -62,9 +59,6 @@ export function CheckoutProvider( {
 	const propsToValidate = {
 		total,
 		items,
-		showErrorMessage,
-		showInfoMessage,
-		showSuccessMessage,
 		redirectToUrl,
 		theme,
 		paymentMethods,
@@ -125,9 +119,6 @@ export function CheckoutProvider( {
 			allPaymentMethods: paymentMethods,
 			paymentMethodId,
 			setPaymentMethodId,
-			showErrorMessage,
-			showInfoMessage,
-			showSuccessMessage,
 			onEvent: onEvent || noop,
 			formStatus,
 			setFormStatus,
@@ -140,9 +131,6 @@ export function CheckoutProvider( {
 			paymentMethodId,
 			paymentMethods,
 			setFormStatus,
-			showErrorMessage,
-			showInfoMessage,
-			showSuccessMessage,
 			transactionStatusManager,
 			paymentProcessors,
 		]
@@ -179,15 +167,7 @@ function CheckoutProviderPropValidator( {
 }: {
 	propsToValidate: CheckoutProviderProps;
 } ) {
-	const {
-		total,
-		items,
-		showErrorMessage,
-		showInfoMessage,
-		showSuccessMessage,
-		paymentMethods,
-		paymentProcessors,
-	} = propsToValidate;
+	const { total, items, paymentMethods, paymentProcessors } = propsToValidate;
 	useEffect( () => {
 		debug( 'propsToValidate', propsToValidate );
 
@@ -198,19 +178,7 @@ function CheckoutProviderPropValidator( {
 		validateArg( paymentProcessors, 'CheckoutProvider missing required prop: paymentProcessors' );
 		validateArg( paymentMethods, 'CheckoutProvider missing required prop: paymentMethods' );
 		validatePaymentMethods( paymentMethods );
-		validateArg( showErrorMessage, 'CheckoutProvider missing required prop: showErrorMessage' );
-		validateArg( showInfoMessage, 'CheckoutProvider missing required prop: showInfoMessage' );
-		validateArg( showSuccessMessage, 'CheckoutProvider missing required prop: showSuccessMessage' );
-	}, [
-		items,
-		paymentMethods,
-		paymentProcessors,
-		propsToValidate,
-		showErrorMessage,
-		showInfoMessage,
-		showSuccessMessage,
-		total,
-	] );
+	}, [ items, paymentMethods, paymentProcessors, propsToValidate, total ] );
 	return null;
 }
 
