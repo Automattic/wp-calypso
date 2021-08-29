@@ -33,7 +33,6 @@ function useTransactionStatusHandler( redirectToUrl: ( url: string ) => void ): 
 	const onEvent = useEvents();
 	const [ paymentMethodId ] = usePaymentMethodId();
 
-	const genericErrorMessage = __( 'An error occurred during the transaction' );
 	const redirectErrormessage = __(
 		'An error occurred while redirecting to the payment partner. Please try again or contact support.'
 	);
@@ -50,7 +49,7 @@ function useTransactionStatusHandler( redirectToUrl: ( url: string ) => void ): 
 			debug( 'showing error', transactionError );
 			onEvent( {
 				type: 'TRANSACTION_ERROR',
-				payload: { message: transactionError || genericErrorMessage, paymentMethodId },
+				payload: { message: transactionError || '', paymentMethodId },
 			} );
 			resetTransaction();
 		}
