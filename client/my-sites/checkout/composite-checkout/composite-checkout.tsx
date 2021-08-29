@@ -71,7 +71,6 @@ import {
 } from './types/wpcom-store-state';
 import type { ReactStandardAction } from './types/analytics';
 import type { PaymentProcessorOptions } from './types/payment-processors';
-import type { PaymentCompleteCallbackArguments } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
@@ -560,12 +559,23 @@ export default function CompositeCheckout( {
 	} );
 
 	const handlePaymentComplete = useCallback(
-		( args: PaymentCompleteCallbackArguments ) => {
+		( args ) => {
 			onPaymentComplete?.( args );
 			onAfterPaymentComplete?.();
 		},
 		[ onPaymentComplete, onAfterPaymentComplete ]
 	);
+
+	const handlePaymentError = useCallback(
+		( { transactionError }: { transactionError: string | null } ) => {
+			showErrorMessage( transactionError );
+		},
+		[ showErrorMessage ]
+	);
+
+	const handlePaymentRedirect = useCallback( () => {
+		showInfoMessage( translate( 'Redirecting to payment partner…' ) );
+	}, [ showInfoMessage, translate ] );
 
 	if (
 		shouldShowEmptyCartPage( {
@@ -625,6 +635,8 @@ export default function CompositeCheckout( {
 				items={ items }
 				total={ total }
 				onPaymentComplete={ handlePaymentComplete }
+				onPaymentError={ handlePaymentError }
+				onPaymentRedirect={ handlePaymentRedirect }
 				showErrorMessage={ showErrorMessage }
 				showInfoMessage={ showInfoMessage }
 				showSuccessMessage={ showSuccessMessage }
