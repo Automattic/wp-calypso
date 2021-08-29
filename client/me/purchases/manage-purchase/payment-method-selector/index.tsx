@@ -54,9 +54,14 @@ export default function PaymentMethodSelector( {
 
 	const showErrorMessage = useCallback(
 		( { transactionError }: { transactionError: string | null } ) => {
-			reduxDispatch( errorNotice( transactionError ) );
+			reduxDispatch(
+				errorNotice(
+					transactionError ||
+						translate( 'There was a problem assigning that payment method. Please try again.' )
+				)
+			);
 		},
-		[ reduxDispatch ]
+		[ reduxDispatch, translate ]
 	);
 
 	const showSuccessMessage = useCallback(
