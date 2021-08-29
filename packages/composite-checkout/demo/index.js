@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import {
 	Checkout,
 	CheckoutStepArea,
@@ -17,7 +18,6 @@ import {
 	useIsStepActive,
 	useSelect,
 	useDispatch,
-	useMessages,
 	useFormStatus,
 	makeSuccessResponse,
 } from '@automattic/composite-checkout';
@@ -244,7 +244,6 @@ function MyCheckout() {
 
 function MyCheckoutBody() {
 	const country = useSelect( ( storeSelect ) => storeSelect( 'demo' )?.getCountry() ?? '' );
-	const { showErrorMessage: showError } = useMessages();
 
 	return (
 		<Checkout>
@@ -275,7 +274,6 @@ function MyCheckoutBody() {
 							new Promise( ( resolve ) =>
 								setTimeout( () => {
 									if ( country.length === 0 ) {
-										showError( 'The country field is required' );
 										resolve( false );
 										return;
 									}
