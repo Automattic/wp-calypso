@@ -24,7 +24,11 @@ import {
 } from '../types';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import TransactionStatusHandler from './transaction-status-handler';
-import type { PaymentEventCallback, PaymentProcessorResponseData } from '../types';
+import type {
+	PaymentEventCallback,
+	PaymentErrorCallback,
+	PaymentProcessorResponseData,
+} from '../types';
 
 const debug = debugFactory( 'composite-checkout:checkout-provider' );
 
@@ -99,13 +103,14 @@ export function CheckoutProvider( {
 		Boolean( isValidating )
 	);
 	const transactionStatusManager = useTransactionStatusManager();
-	const { transactionLastResponse, transactionStatus } = transactionStatusManager;
+	const { transactionLastResponse, transactionStatus, transactionError } = transactionStatusManager;
 
 	useCallEventCallbacks( {
 		onPaymentComplete,
 		onPaymentRedirect,
 		onPaymentError,
 		formStatus,
+		transactionError,
 		transactionStatus,
 		paymentMethodId,
 		transactionLastResponse,
@@ -214,14 +219,16 @@ function useCallEventCallbacks( {
 	onPaymentRedirect,
 	onPaymentError,
 	formStatus,
+	transactionError,
 	transactionStatus,
 	paymentMethodId,
 	transactionLastResponse,
 }: {
 	onPaymentComplete?: PaymentEventCallback;
 	onPaymentRedirect?: PaymentEventCallback;
-	onPaymentError?: PaymentEventCallback;
+	onPaymentError?: PaymentErrorCallback;
 	formStatus: FormStatus;
+	transactionError: string | null;
 	transactionStatus: TransactionStatus;
 	paymentMethodId: string | null;
 	transactionLastResponse: PaymentProcessorResponseData;
@@ -243,10 +250,6 @@ function useCallEventCallbacks( {
 		if ( onPaymentRedirect && transactionStatus === TransactionStatus.REDIRECTING ) {
 			onPaymentRedirect( { paymentMethodId, transactionLastResponse } );
 		}
-
-		if ( onPaymentError && transactionStatus === TransactionStatus.ERROR ) {
-			onPaymentError( { paymentMethodId, transactionLastResponse } );
-		}
 	}, [
 		transactionStatus,
 		onPaymentRedirect,
@@ -254,4 +257,10 @@ function useCallEventCallbacks( {
 		paymentMethodId,
 		transactionLastResponse,
 	] );
+
+	useEffect( () => {
+		if ( onPaymentError && transactionStatus === TransactionStatus.ERROR ) {
+			onPaymentError( { paymentMethodId, transactionError } );
+		}
+	}, [ transactionStatus, onPaymentRedirect, onPaymentError, paymentMethodId, transactionError ] );
 }
