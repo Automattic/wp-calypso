@@ -20,7 +20,7 @@ export default function TransactionStatusHandler( {
 	return null;
 }
 
-export function useTransactionStatusHandler( redirectToUrl: ( url: string ) => void ): void {
+function useTransactionStatusHandler( redirectToUrl: ( url: string ) => void ): void {
 	const { __ } = useI18n();
 	const { showErrorMessage, showInfoMessage } = useMessages();
 	const { setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
