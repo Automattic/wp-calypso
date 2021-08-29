@@ -12,8 +12,6 @@ import {
 	useTransactionStatus,
 } from '../src/public-api';
 
-const noop = () => {};
-
 const CustomFormWithFormStatus = () => {
 	const { formStatus, setFormComplete, setFormLoading, setFormSubmitting } = useFormStatus();
 	if ( formStatus === FormStatus.LOADING ) {
@@ -112,12 +110,14 @@ describe( 'CheckoutProvider', () => {
 
 	describe( 'with formStatus directly', () => {
 		beforeEach( () => {
-			MyCheckout = ( { onPaymentComplete, isLoading } ) => (
+			MyCheckout = ( { onPaymentComplete, isLoading, onPaymentError, onPaymentRedirect } ) => (
 				<CheckoutProvider
 					items={ items }
 					total={ total }
 					isLoading={ isLoading || null }
-					onPaymentComplete={ onPaymentComplete || noop }
+					onPaymentComplete={ onPaymentComplete }
+					onPaymentError={ onPaymentError }
+					onPaymentRedirect={ onPaymentRedirect }
 					paymentMethods={ [ mockMethod ] }
 					paymentProcessors={ {} }
 					initiallySelectedPaymentMethodId={ mockMethod.id }
@@ -185,12 +185,14 @@ describe( 'CheckoutProvider', () => {
 
 	describe( 'with transactionStatus directly', () => {
 		beforeEach( () => {
-			MyCheckout = ( { onPaymentComplete, isLoading } ) => (
+			MyCheckout = ( { onPaymentComplete, isLoading, onPaymentError, onPaymentRedirect } ) => (
 				<CheckoutProvider
 					items={ items }
 					total={ total }
 					isLoading={ isLoading || null }
-					onPaymentComplete={ onPaymentComplete || noop }
+					onPaymentComplete={ onPaymentComplete }
+					onPaymentError={ onPaymentError }
+					onPaymentRedirect={ onPaymentRedirect }
 					paymentMethods={ [ mockMethod ] }
 					paymentProcessors={ {} }
 					initiallySelectedPaymentMethodId={ mockMethod.id }
@@ -239,7 +241,7 @@ describe( 'CheckoutProvider', () => {
 			expect( getByText( 'Showing Error' ) ).toBeInTheDocument();
 		} );
 
-		it( 'does not call onPaymentComplete when form status is not complete', () => {
+		it( 'does not call onPaymentComplete when form loads', () => {
 			const onPaymentComplete = jest.fn();
 			const { getByText } = render( <MyCheckout onPaymentComplete={ onPaymentComplete } /> );
 			expect( getByText( 'Submit' ) ).not.toBeDisabled();
@@ -253,6 +255,56 @@ describe( 'CheckoutProvider', () => {
 			fireEvent.click( button );
 			expect( getByText( 'Form Complete' ) ).toBeInTheDocument();
 			expect( onPaymentComplete ).toBeCalled();
+		} );
+
+		it( 'does not call onPaymentRedirect when form loads', () => {
+			const onPaymentRedirect = jest.fn();
+			const { getByText } = render( <MyCheckout onPaymentRedirect={ onPaymentRedirect } /> );
+			expect( getByText( 'Submit' ) ).not.toBeDisabled();
+			expect( onPaymentRedirect ).not.toBeCalled();
+		} );
+
+		it( 'does not call onPaymentRedirect when transaction status is complete', () => {
+			const onPaymentRedirect = jest.fn();
+			const { getByText } = render( <MyCheckout onPaymentRedirect={ onPaymentRedirect } /> );
+			const button = getByText( 'Complete' );
+			fireEvent.click( button );
+			expect( getByText( 'Form Complete' ) ).toBeInTheDocument();
+			expect( onPaymentRedirect ).not.toBeCalled();
+		} );
+
+		it( 'calls onPaymentRedirect when transaction status is redirecting', () => {
+			const onPaymentRedirect = jest.fn();
+			const { getByText } = render( <MyCheckout onPaymentRedirect={ onPaymentRedirect } /> );
+			const button = getByText( 'Redirect' );
+			fireEvent.click( button );
+			expect( getByText( 'Redirecting' ) ).toBeInTheDocument();
+			expect( onPaymentRedirect ).toBeCalled();
+		} );
+
+		it( 'does not call onPaymentError when form loads', () => {
+			const onPaymentError = jest.fn();
+			const { getByText } = render( <MyCheckout onPaymentError={ onPaymentError } /> );
+			expect( getByText( 'Submit' ) ).not.toBeDisabled();
+			expect( onPaymentError ).not.toBeCalled();
+		} );
+
+		it( 'does not call onPaymentError when transaction status is complete', () => {
+			const onPaymentError = jest.fn();
+			const { getByText } = render( <MyCheckout onPaymentError={ onPaymentError } /> );
+			const button = getByText( 'Complete' );
+			fireEvent.click( button );
+			expect( getByText( 'Form Complete' ) ).toBeInTheDocument();
+			expect( onPaymentError ).not.toBeCalled();
+		} );
+
+		it( 'calls onPaymentError when transaction status is redirecting', () => {
+			const onPaymentError = jest.fn();
+			const { getByText } = render( <MyCheckout onPaymentError={ onPaymentError } /> );
+			const button = getByText( 'Cause Error' );
+			fireEvent.click( button );
+			expect( getByText( 'Showing Error' ) ).toBeInTheDocument();
+			expect( onPaymentError ).toBeCalled();
 		} );
 	} );
 } );
