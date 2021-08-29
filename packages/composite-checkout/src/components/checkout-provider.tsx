@@ -201,21 +201,16 @@ function useCallEventCallbacks( {
 	paymentMethodId: string | null;
 	transactionLastResponse: PaymentProcessorResponseData;
 } ): void {
-	const didCallOnPaymentComplete = useRef( false );
 	useEffect( () => {
-		if (
-			onPaymentComplete &&
-			formStatus === FormStatus.COMPLETE &&
-			! didCallOnPaymentComplete.current
-		) {
+		if ( onPaymentComplete && formStatus === FormStatus.COMPLETE ) {
 			debug( "form status is complete so I'm calling onPaymentComplete" );
-			didCallOnPaymentComplete.current = true;
 			onPaymentComplete( { paymentMethodId, transactionLastResponse } );
 		}
 	}, [ formStatus, onPaymentComplete, transactionLastResponse, paymentMethodId ] );
 
 	useEffect( () => {
 		if ( onPaymentRedirect && transactionStatus === TransactionStatus.REDIRECTING ) {
+			debug( "transaction status is redirecting so I'm calling onPaymentRedirect" );
 			onPaymentRedirect( { paymentMethodId, transactionLastResponse } );
 		}
 	}, [
@@ -228,6 +223,7 @@ function useCallEventCallbacks( {
 
 	useEffect( () => {
 		if ( onPaymentError && transactionStatus === TransactionStatus.ERROR ) {
+			debug( "transaction status is error so I'm calling onPaymentError" );
 			onPaymentError( { paymentMethodId, transactionError } );
 		}
 	}, [ transactionStatus, onPaymentRedirect, onPaymentError, paymentMethodId, transactionError ] );
