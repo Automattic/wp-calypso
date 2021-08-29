@@ -51,14 +51,6 @@ const showErrorMessage = ( error ) => {
 	console.log( 'Error:', error ); /* eslint-disable-line no-console */
 	window.alert( 'There was a problem with your payment: ' + error );
 };
-const showInfoMessage = ( message ) => {
-	console.log( 'Info:', message ); /* eslint-disable-line no-console */
-	window.alert( message );
-};
-const showSuccessMessage = ( message ) => {
-	console.log( 'Success:', message ); /* eslint-disable-line no-console */
-	window.alert( message );
-};
 
 async function fetchStripeConfiguration() {
 	// This simulates the network request time
@@ -239,9 +231,6 @@ function MyCheckout() {
 			total={ total }
 			onEvent={ onEvent }
 			onPaymentComplete={ onPaymentComplete }
-			showErrorMessage={ showErrorMessage }
-			showInfoMessage={ showInfoMessage }
-			showSuccessMessage={ showSuccessMessage }
 			registry={ defaultRegistry }
 			isLoading={ isLoading }
 			paymentMethods={ paymentMethods }
