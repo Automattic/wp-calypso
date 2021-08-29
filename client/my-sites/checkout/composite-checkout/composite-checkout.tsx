@@ -163,14 +163,6 @@ export default function CompositeCheckout( {
 		[ reduxDispatch, translate ]
 	);
 
-	const showInfoMessage = useCallback(
-		( message ) => {
-			debug( 'info', message );
-			reduxDispatch( infoNotice( message ) );
-		},
-		[ reduxDispatch ]
-	);
-
 	const checkoutFlow = useCheckoutFlowTrackKey( {
 		hasJetpackSiteSlug: !! jetpackSiteSlug,
 		isJetpackCheckout,
@@ -557,8 +549,8 @@ export default function CompositeCheckout( {
 	);
 
 	const handlePaymentRedirect = useCallback( () => {
-		showInfoMessage( translate( 'Redirecting to payment partner…' ) );
-	}, [ showInfoMessage, translate ] );
+		reduxDispatch( infoNotice( translate( 'Redirecting to payment partner…' ) ) );
+	}, [ reduxDispatch, translate ] );
 
 	if (
 		shouldShowEmptyCartPage( {
