@@ -106,7 +106,9 @@ export interface CheckoutProviderProps {
 	total?: LineItem;
 	items?: LineItem[];
 	paymentMethods: PaymentMethod[];
-	onPaymentComplete: PaymentCompleteCallback;
+	onPaymentComplete?: PaymentEventCallback;
+	onPaymentRedirect?: PaymentEventCallback;
+	onPaymentError?: PaymentEventCallback;
 	showErrorMessage: ShowNoticeFunction;
 	showInfoMessage: ShowNoticeFunction;
 	showSuccessMessage: ShowNoticeFunction;
@@ -125,9 +127,9 @@ export interface PaymentProcessorProp {
 	[ key: string ]: PaymentProcessorFunction;
 }
 
-export type PaymentCompleteCallback = ( args: PaymentCompleteCallbackArguments ) => void;
+export type PaymentEventCallback = ( args: PaymentEventCallbackArguments ) => void;
 
-export type PaymentCompleteCallbackArguments = {
+export type PaymentEventCallbackArguments = {
 	paymentMethodId: string | null;
 	transactionLastResponse: PaymentProcessorResponseData;
 };
