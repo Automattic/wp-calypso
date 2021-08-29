@@ -109,9 +109,6 @@ export interface CheckoutProviderProps {
 	onPaymentComplete?: PaymentEventCallback;
 	onPaymentRedirect?: PaymentEventCallback;
 	onPaymentError?: PaymentErrorCallback;
-	showErrorMessage: ShowNoticeFunction;
-	showInfoMessage: ShowNoticeFunction;
-	showSuccessMessage: ShowNoticeFunction;
 	onEvent?: ( event: ReactStandardAction ) => void;
 	isLoading?: boolean;
 	redirectToUrl?: ( url: string ) => void;
@@ -120,8 +117,6 @@ export interface CheckoutProviderProps {
 	initiallySelectedPaymentMethodId?: string | null;
 	children: React.ReactNode;
 }
-
-export type ShowNoticeFunction = ( message: string ) => void;
 
 export interface PaymentProcessorProp {
 	[ key: string ]: PaymentProcessorFunction;
