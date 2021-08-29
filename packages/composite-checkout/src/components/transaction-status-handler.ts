@@ -6,7 +6,6 @@ import { usePaymentMethodId } from '../lib/payment-methods';
 import { useTransactionStatus } from '../lib/transaction-status';
 import { TransactionStatus } from '../types';
 import useEvents from './use-events';
-import useMessages from './use-messages';
 
 const debug = debugFactory( 'composite-checkout:transaction-status-handler' );
 
@@ -22,7 +21,6 @@ export default function TransactionStatusHandler( {
 
 function useTransactionStatusHandler( redirectToUrl: ( url: string ) => void ): void {
 	const { __ } = useI18n();
-	const { showErrorMessage, showInfoMessage } = useMessages();
 	const { setFormReady, setFormComplete, setFormSubmitting } = useFormStatus();
 	const {
 		previousTransactionStatus,
@@ -39,7 +37,6 @@ function useTransactionStatusHandler( redirectToUrl: ( url: string ) => void ): 
 	const redirectErrormessage = __(
 		'An error occurred while redirecting to the payment partner. Please try again or contact support.'
 	);
-	const redirectInfoMessage = __( 'Redirecting to payment partner…' );
 	useEffect( () => {
 		if ( transactionStatus === previousTransactionStatus ) {
 			return;
@@ -51,10 +48,9 @@ function useTransactionStatusHandler( redirectToUrl: ( url: string ) => void ): 
 		}
 		if ( transactionStatus === TransactionStatus.ERROR ) {
 			debug( 'showing error', transactionError );
-			showErrorMessage( transactionError || genericErrorMessage );
 			onEvent( {
 				type: 'TRANSACTION_ERROR',
-				payload: { message: transactionError || '', paymentMethodId },
+				payload: { message: transactionError || genericErrorMessage, paymentMethodId },
 			} );
 			resetTransaction();
 		}
@@ -69,7 +65,6 @@ function useTransactionStatusHandler( redirectToUrl: ( url: string ) => void ): 
 				return;
 			}
 			debug( 'redirecting to', transactionRedirectUrl );
-			showInfoMessage( redirectInfoMessage );
 			redirectToUrl( transactionRedirectUrl );
 		}
 		if ( transactionStatus === TransactionStatus.NOT_STARTED ) {
