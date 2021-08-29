@@ -15,7 +15,7 @@ import Gridicon from 'calypso/components/gridicon';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
 import { creditCardHasAlreadyExpired } from 'calypso/lib/purchases';
-import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getStoredPaymentAgreements } from 'calypso/state/stored-cards/selectors';
 import {
 	assignPayPalProcessor,
@@ -49,16 +49,9 @@ export default function PaymentMethodSelector( {
 	const currentlyAssignedPaymentMethodId = getPaymentMethodIdFromPayment( purchase?.payment );
 
 	const showErrorMessage = useCallback(
-		( error ) => {
+		( { transactionError: error }: { transactionError: string | null } ) => {
 			const message = error?.toString ? error.toString() : error;
 			reduxDispatch( errorNotice( message, { displayOnNextPage: true } ) );
-		},
-		[ reduxDispatch ]
-	);
-
-	const showInfoMessage = useCallback(
-		( message ) => {
-			reduxDispatch( infoNotice( message ) );
 		},
 		[ reduxDispatch ]
 	);
@@ -75,9 +68,10 @@ export default function PaymentMethodSelector( {
 	);
 
 	useHandleRedirectChangeError( () => {
-		showErrorMessage(
-			translate( 'There was a problem assigning that payment method. Please try again.' )
+		const message = translate(
+			'There was a problem assigning that payment method. Please try again.'
 		);
+		reduxDispatch( errorNotice( message ) );
 	} );
 	useHandleRedirectChangeComplete( () => {
 		onPaymentSelectComplete( { successCallback, translate, showSuccessMessage, purchase } );
@@ -90,18 +84,16 @@ export default function PaymentMethodSelector( {
 
 	useEffect( () => {
 		if ( stripeLoadingError ) {
-			showErrorMessage( stripeLoadingError );
+			reduxDispatch( errorNotice( stripeLoadingError ) );
 		}
-	}, [ stripeLoadingError, showErrorMessage ] );
+	}, [ stripeLoadingError, reduxDispatch ] );
 
 	return (
 		<CheckoutProvider
 			onPaymentComplete={ () =>
 				onPaymentSelectComplete( { successCallback, translate, showSuccessMessage, purchase } )
 			}
-			showErrorMessage={ showErrorMessage }
-			showInfoMessage={ showInfoMessage }
-			showSuccessMessage={ showSuccessMessage }
+			onPaymentError={ showErrorMessage }
 			paymentMethods={ paymentMethods }
 			paymentProcessors={ {
 				paypal: () => assignPayPalProcessor( purchase, reduxDispatch ),
