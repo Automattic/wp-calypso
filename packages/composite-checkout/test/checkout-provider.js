@@ -144,25 +144,22 @@ describe( 'CheckoutProvider', () => {
 
 		it( 'sets form status to submitting when setFormSubmitting is called', () => {
 			const { getByText, queryByText } = render( <MyCheckout /> );
-			const button = getByText( 'Submit' );
 			expect( queryByText( 'Submitting' ) ).not.toBeInTheDocument();
-			fireEvent.click( button );
+			fireEvent.click( getByText( 'Submit' ) );
 			expect( getByText( 'Submitting' ) ).toBeInTheDocument();
 		} );
 
 		it( 'sets form status to complete when setFormComplete is called', () => {
 			const { getByText, queryByText } = render( <MyCheckout /> );
-			const button = getByText( 'Complete' );
 			expect( queryByText( 'Form Complete' ) ).not.toBeInTheDocument();
-			fireEvent.click( button );
+			fireEvent.click( getByText( 'Complete' ) );
 			expect( getByText( 'Form Complete' ) ).toBeInTheDocument();
 		} );
 
 		it( 'sets form status to loading when setFormLoading is called', () => {
 			const { getByText, queryByText } = render( <MyCheckout /> );
-			const button = getByText( 'Load' );
 			expect( queryByText( 'Loading' ) ).not.toBeInTheDocument();
-			fireEvent.click( button );
+			fireEvent.click( getByText( 'Load' ) );
 			expect( getByText( 'Loading' ) ).toBeInTheDocument();
 		} );
 
@@ -176,8 +173,7 @@ describe( 'CheckoutProvider', () => {
 		it( 'calls onPaymentComplete when form status is complete', () => {
 			const onPaymentComplete = jest.fn();
 			const { getByText } = render( <MyCheckout onPaymentComplete={ onPaymentComplete } /> );
-			const button = getByText( 'Complete' );
-			fireEvent.click( button );
+			fireEvent.click( getByText( 'Complete' ) );
 			expect( getByText( 'Form Complete' ) ).toBeInTheDocument();
 			expect( onPaymentComplete ).toBeCalled();
 		} );
@@ -219,25 +215,22 @@ describe( 'CheckoutProvider', () => {
 
 		it( 'sets form status to submitting when setTransactionPending is called', () => {
 			const { getByText, queryByText } = render( <MyCheckout /> );
-			const button = getByText( 'Submit' );
 			expect( queryByText( 'Submitting' ) ).not.toBeInTheDocument();
-			fireEvent.click( button );
+			fireEvent.click( getByText( 'Submit' ) );
 			expect( getByText( 'Submitting' ) ).toBeInTheDocument();
 		} );
 
 		it( 'sets form status to complete when setTransactionComplete is called', () => {
 			const { getByText, queryByText } = render( <MyCheckout /> );
-			const button = getByText( 'Complete' );
 			expect( queryByText( 'Form Complete' ) ).not.toBeInTheDocument();
-			fireEvent.click( button );
+			fireEvent.click( getByText( 'Complete' ) );
 			expect( getByText( 'Form Complete' ) ).toBeInTheDocument();
 		} );
 
 		it( 'sets form status to ready when setTransactionError is called', () => {
 			const { getByText, queryByText } = render( <MyCheckout /> );
-			const button = getByText( 'Cause Error' );
 			expect( queryByText( 'Showing Error' ) ).not.toBeInTheDocument();
-			fireEvent.click( button );
+			fireEvent.click( getByText( 'Cause Error' ) );
 			expect( getByText( 'Showing Error' ) ).toBeInTheDocument();
 		} );
 
@@ -251,8 +244,7 @@ describe( 'CheckoutProvider', () => {
 		it( 'calls onPaymentComplete when form status is complete', () => {
 			const onPaymentComplete = jest.fn();
 			const { getByText } = render( <MyCheckout onPaymentComplete={ onPaymentComplete } /> );
-			const button = getByText( 'Complete' );
-			fireEvent.click( button );
+			fireEvent.click( getByText( 'Complete' ) );
 			expect( getByText( 'Form Complete' ) ).toBeInTheDocument();
 			expect( onPaymentComplete ).toBeCalled();
 		} );
@@ -267,8 +259,7 @@ describe( 'CheckoutProvider', () => {
 		it( 'does not call onPaymentRedirect when transaction status is complete', () => {
 			const onPaymentRedirect = jest.fn();
 			const { getByText } = render( <MyCheckout onPaymentRedirect={ onPaymentRedirect } /> );
-			const button = getByText( 'Complete' );
-			fireEvent.click( button );
+			fireEvent.click( getByText( 'Complete' ) );
 			expect( getByText( 'Form Complete' ) ).toBeInTheDocument();
 			expect( onPaymentRedirect ).not.toBeCalled();
 		} );
@@ -276,8 +267,7 @@ describe( 'CheckoutProvider', () => {
 		it( 'calls onPaymentRedirect when transaction status is redirecting', () => {
 			const onPaymentRedirect = jest.fn();
 			const { getByText } = render( <MyCheckout onPaymentRedirect={ onPaymentRedirect } /> );
-			const button = getByText( 'Redirect' );
-			fireEvent.click( button );
+			fireEvent.click( getByText( 'Redirect' ) );
 			expect( getByText( 'Redirecting' ) ).toBeInTheDocument();
 			expect( onPaymentRedirect ).toBeCalled();
 		} );
@@ -292,8 +282,7 @@ describe( 'CheckoutProvider', () => {
 		it( 'does not call onPaymentError when transaction status is complete', () => {
 			const onPaymentError = jest.fn();
 			const { getByText } = render( <MyCheckout onPaymentError={ onPaymentError } /> );
-			const button = getByText( 'Complete' );
-			fireEvent.click( button );
+			fireEvent.click( getByText( 'Complete' ) );
 			expect( getByText( 'Form Complete' ) ).toBeInTheDocument();
 			expect( onPaymentError ).not.toBeCalled();
 		} );
@@ -301,8 +290,7 @@ describe( 'CheckoutProvider', () => {
 		it( 'calls onPaymentError when transaction status is redirecting', () => {
 			const onPaymentError = jest.fn();
 			const { getByText } = render( <MyCheckout onPaymentError={ onPaymentError } /> );
-			const button = getByText( 'Cause Error' );
-			fireEvent.click( button );
+			fireEvent.click( getByText( 'Cause Error' ) );
 			expect( getByText( 'Showing Error' ) ).toBeInTheDocument();
 			expect( onPaymentError ).toBeCalled();
 		} );
