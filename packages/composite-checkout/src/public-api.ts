@@ -37,7 +37,6 @@ import {
 import RadioButton from './components/radio-button';
 import { CheckIcon as CheckoutCheckIcon } from './components/shared-icons';
 import useEvents from './components/use-events';
-import useMessages from './components/use-messages';
 import useProcessPayment from './components/use-process-payment';
 import { useFormStatus } from './lib/form-status';
 import InvalidPaymentProcessorResponseError from './lib/invalid-payment-processor-response-error';
@@ -121,7 +120,6 @@ export {
 	useIsStepComplete,
 	useLineItems,
 	useLineItemsOfType,
-	useMessages,
 	usePaymentMethod,
 	usePaymentMethodId,
 	usePaymentProcessor,
