@@ -26,7 +26,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import wp from 'calypso/lib/wp';
 import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
-import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
+import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -178,14 +178,6 @@ export default function CompositeCheckout( {
 		( message ) => {
 			debug( 'info', message );
 			reduxDispatch( infoNotice( message ) );
-		},
-		[ reduxDispatch ]
-	);
-
-	const showSuccessMessage = useCallback(
-		( message ) => {
-			debug( 'success', message );
-			reduxDispatch( successNotice( message ) );
 		},
 		[ reduxDispatch ]
 	);
@@ -637,9 +629,6 @@ export default function CompositeCheckout( {
 				onPaymentComplete={ handlePaymentComplete }
 				onPaymentError={ handlePaymentError }
 				onPaymentRedirect={ handlePaymentRedirect }
-				showErrorMessage={ showErrorMessage }
-				showInfoMessage={ showInfoMessage }
-				showSuccessMessage={ showSuccessMessage }
 				onEvent={ recordEvent }
 				paymentMethods={ paymentMethods }
 				paymentProcessors={ paymentProcessors }
