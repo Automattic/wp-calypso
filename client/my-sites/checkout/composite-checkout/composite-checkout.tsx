@@ -150,17 +150,6 @@ export default function CompositeCheckout( {
 	const isJetpackSitelessCheckout = isJetpackCheckout && ! jetpackSiteSlug;
 	const updatedSiteSlug = isJetpackCheckout ? jetpackSiteSlug : siteSlug;
 
-	const showErrorMessage = useCallback(
-		( error ) => {
-			debug( 'error', error );
-			const message = error && error.toString ? error.toString() : error;
-			reduxDispatch(
-				errorNotice( message || translate( 'An error occurred during your purchase.' ) )
-			);
-		},
-		[ reduxDispatch, translate ]
-	);
-
 	const showErrorMessageBriefly = useCallback(
 		( error ) => {
 			debug( 'error', error );
@@ -560,9 +549,11 @@ export default function CompositeCheckout( {
 
 	const handlePaymentError = useCallback(
 		( { transactionError }: { transactionError: string | null } ) => {
-			showErrorMessage( transactionError );
+			reduxDispatch(
+				errorNotice( transactionError || translate( 'An error occurred during your purchase.' ) )
+			);
 		},
-		[ showErrorMessage ]
+		[ reduxDispatch, translate ]
 	);
 
 	const handlePaymentRedirect = useCallback( () => {
