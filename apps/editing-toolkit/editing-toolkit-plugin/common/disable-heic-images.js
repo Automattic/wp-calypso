@@ -12,7 +12,17 @@ const DisableHEICImages = createHigherOrderComponent( ( MediaPlaceholder ) => {
 					'full-site-editing'
 				);
 				Object.values( files ).filter( ( file ) => {
-					if ( 'image/heic' === file.type || 'image/heif' === file.type ) {
+					const filename = file.name;
+					const extension = filename
+						.substring( filename.lastIndexOf( '.' ) + 1, filename.length )
+						.toLowerCase();
+
+					if (
+						'image/heic' === file.type ||
+						'image/heif' === file.type ||
+						'heic' === extension ||
+						'heif' === extension
+					) {
 						props.onError( error );
 						throw Error( error );
 					}
