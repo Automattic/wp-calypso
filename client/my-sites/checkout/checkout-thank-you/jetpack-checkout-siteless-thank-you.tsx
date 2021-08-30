@@ -176,6 +176,13 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 			/>
 			<Card className="jetpack-checkout-siteless-thank-you__card">
 				<div className="jetpack-checkout-siteless-thank-you__card-main">
+					{ /* This is a feature-flag test and can be removed. Please remove me! */ }
+					{ isEnabled( 'jetpack/user-licensing-m1' ) && (
+						<p>
+							<code>jetpack/user-licensing-m1</code>:<br />
+							is enabled!
+						</p>
+					) }
 					<JetpackLogo size={ 45 } />
 					{ hasProductInfo && <QueryProducts type="jetpack" /> }
 					<h1 className="jetpack-checkout-siteless-thank-you__main-message">
@@ -282,13 +289,6 @@ const JetpackCheckoutSitelessThankYou: FC< Props > = ( {
 				{ calendlyUrl !== null && (
 					<div className="jetpack-checkout-siteless-thank-you__card-footer">
 						<div>
-							{ /* This is a feature-flag test and can be removed. Please remove me! */ }
-							{ isEnabled( 'jetpack/user-licensing-m1' ) && (
-								<p>
-									<code>jetpack/user-licensing-m1</code>:<br />
-									is enabled!
-								</p>
-							) }
 							<h2>{ translate( 'Do you need help?' ) }</h2>
 							<p>{ translate( 'Setup Jetpack with the help of our Happiness Engineers.' ) }</p>
 							<Button
