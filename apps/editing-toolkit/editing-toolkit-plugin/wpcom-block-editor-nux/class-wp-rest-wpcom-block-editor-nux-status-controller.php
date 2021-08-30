@@ -78,10 +78,7 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 
 		$should_open_patterns_panel = (bool) get_option( 'was_created_with_blank_canvas_design' );
 
-		if ( wp_is_mobile() ) {
-			// Designs for welcome tour on mobile are in progress, until then do not show on mobile.
-			$variant = 'modal';
-		} elseif ( $should_open_patterns_panel ) {
+		if ( $should_open_patterns_panel ) {
 			$variant = 'blank-canvas-tour';
 		} else {
 			$variant = 'tour';
