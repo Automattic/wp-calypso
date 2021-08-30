@@ -12313,6 +12313,7 @@ __metadata:
     "@automattic/popup-monitor": ^1.0.0
     "@automattic/react-virtualized": ^9.21.2
     "@automattic/request-external-access": ^1.0.0
+    "@automattic/search": ^1.0.0
     "@automattic/shopping-cart": ^1.0.0
     "@automattic/social-previews": ^1.0.1
     "@automattic/state-utils": ^1.0.0-alpha.4
