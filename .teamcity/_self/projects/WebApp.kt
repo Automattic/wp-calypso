@@ -462,7 +462,7 @@ fun seleniumBuildType( viewportName: String, buildUuid: String): BuildType  {
 				dockerImage = "%docker_image_e2e%"
 			}
 			bashNodeScript {
-				name = "Run e2e tests (desktop)"
+				name = "Run e2e tests ($viewportName)"
 				scriptContent = """
 					shopt -s globstar
 					set -x
@@ -612,7 +612,7 @@ fun playwrightBuildType( viewportName: String, buildUuid: String ): BuildType {
 				dockerImage = "%docker_image_e2e%"
 			}
 			bashNodeScript {
-				name = "Run e2e tests (desktop)"
+				name = "Run e2e tests ($viewportName)"
 				scriptContent = """
 					shopt -s globstar
 					set -x
