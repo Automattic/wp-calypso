@@ -219,6 +219,53 @@ class RemovePurchase extends Component {
 		);
 	}
 
+	renderDomainMappingDialog() {
+		const { purchase, site } = this.props;
+
+		return (
+			<CancelPurchaseForm
+				disableButtons={ this.state.isRemoving }
+				defaultContent={ this.renderDomainMappingDialogText() }
+				purchase={ purchase }
+				selectedSite={ site }
+				isVisible={ this.state.isDialogVisible }
+				onClose={ this.closeDialog }
+				onClickFinalConfirm={ this.removePurchase }
+				flowType={ CANCEL_FLOW_TYPE.REMOVE }
+			/>
+		);
+	}
+
+	renderDomainMappingDialogText() {
+		const { purchase, translate } = this.props;
+		const productName = getName( purchase );
+		const domainProductName = getDisplayName( purchase );
+
+		return (
+			<div>
+				<p>
+					{
+						/* translators: "productName" is a product name (in this case, Domain Mapping). "domain" is something like example.wordpress.com */
+						translate( 'Are you sure you want to remove %(productName)s from {{domain/}}?', {
+							args: { productName },
+							components: { domain: <em>{ purchase.domain }</em> },
+							// ^ is the internal WPcom domain i.e. example.wordpress.com
+							// if we want to use the purchased domain we can swap with the below line
+							//{ components: { domain: <em>{ getIncludedDomain( purchase ) }</em> } }
+						} )
+					}{ ' ' }
+					{ translate(
+						'You will not be able to reuse it again without starting a new %(domainProductName)s subscription.',
+						{
+							args: { productName, domainProductName },
+							comment: "'domainProductName' refers to Domain Mapping in this case.",
+						}
+					) }
+				</p>
+			</div>
+		);
+	}
+
 	renderPlanDialog() {
 		const { purchase, site } = this.props;
 
@@ -266,7 +313,7 @@ class RemovePurchase extends Component {
 					}{ ' ' }
 					{ isDomainRegistration &&
 						translate(
-							'You will not be able to reuse %(productName)s again without starting a new %(domainProductName)s subscription.',
+							'You will not be able to reuse it again without starting a new subscription.',
 							{
 								args: { productName, domainProductName },
 								comment: "'it' refers to a product purchased by a user",
@@ -324,7 +371,11 @@ class RemovePurchase extends Component {
 			return this.renderDomainDialog();
 		}
 
-		if ( isDomainMapping( purchase ) || isDomainTransfer( purchase ) || isTitanMail( purchase ) ) {
+		if ( isDomainMapping( purchase ) ) {
+			return this.renderDomainMappingDialog();
+		}
+
+		if ( isDomainTransfer( purchase ) || isTitanMail( purchase ) ) {
 			return this.renderPlanDialog();
 		}
 
