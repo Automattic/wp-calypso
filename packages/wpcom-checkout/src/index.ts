@@ -8,7 +8,7 @@ export { createPayPalMethod } from './payment-methods/paypal';
 export { createApplePayMethod } from './payment-methods/apple-pay';
 export * from './postal-code';
 export { default as Field } from './field';
-export { default as styled } from '@emotion/styled';
+export { default as styled } from './styled';
 export * from './payment-methods/bancontact';
 export * from './payment-methods/giropay';
 export * from './payment-methods/ideal';

@@ -1,6 +1,6 @@
-import styled from '@emotion/styled';
 import React from 'react';
 import joinClasses from '../lib/join-classes';
+import styled from '../lib/styled';
 import { Theme } from '../lib/theme';
 
 const CallToAction = styled( 'button' )< CallToActionProps >`

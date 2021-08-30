@@ -1,4 +1,4 @@
-import { ThemeProvider } from '@emotion/react';
+import { ThemeProvider } from 'emotion-theming';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import React, { useEffect, useState } from 'react';

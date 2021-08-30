@@ -1,4 +1,3 @@
-import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
@@ -14,6 +13,7 @@ import React, {
 } from 'react';
 import { useFormStatus } from '../lib/form-status';
 import joinClasses from '../lib/join-classes';
+import styled from '../lib/styled';
 import theme from '../lib/theme';
 import {
 	getDefaultOrderReviewStep,

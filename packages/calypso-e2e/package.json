@@ -22,7 +22,7 @@
 	},
 	"devDependencies": {
 		"@types/config": "^0.0.39",
-		"@types/jest": "^27.0.1",
+		"@types/jest": "^25.2.3",
 		"@types/node": "^15.0.2",
 		"asana-phrase": "^0.0.8",
 		"typescript": "^4.3.5"
