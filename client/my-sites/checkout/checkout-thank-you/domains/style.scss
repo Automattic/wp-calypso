@@ -124,7 +124,7 @@
 
 		&__notice {
 			@include breakpoint-deprecated( '<480px' ) {
-				padding: 14px 8px;
+				padding: 14px 24px;
 			}
 		}
 	}
