@@ -130,6 +130,10 @@
 	input {
 		margin-bottom: 20px;
 		transition: none;
+		text-align: left;
+		/*!rtl:ignore*/
+		direction: ltr;
+
 		&.is-error {
 			margin-bottom: 0;
 		}
