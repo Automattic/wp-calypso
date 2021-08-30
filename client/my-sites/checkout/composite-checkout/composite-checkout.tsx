@@ -11,8 +11,8 @@ import {
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useIsWebPayAvailable, isValueTruthy } from '@automattic/wpcom-checkout';
+import { ThemeProvider } from '@emotion/react';
 import debugFactory from 'debug';
-import { ThemeProvider } from 'emotion-theming';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import React, { useCallback, useMemo } from 'react';
