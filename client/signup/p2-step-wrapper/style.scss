@@ -136,14 +136,6 @@
 		left: 48px;
 	}
 
-	.step-wrapper__content {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		max-width: 360px;
-		margin: 24px auto 0;
-	}
-
 	.p2-step-wrapper__header-text {
 		font-size: var( --p2-font-size-form-xl );
 		font-weight: 700;
@@ -154,85 +146,11 @@
 		text-align: center;
 	}
 
-	button {
-		max-width: 380px;
-		&.social-buttons__button {
-			box-shadow: none;
-			margin-bottom: 12px;
-		}
-	}
-
-	.signup-form__social {
-		width: 100%;
-		padding: 16px 0 0;
-	}
-
-	.signup-form__social-buttons {
+	.step-wrapper__content {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-	}
-
-	.signup-form__social-buttons-tos {
-		display: none;
-	}
-
-	.signup-form__p2-footer-link {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		font-size: var( --p2-font-size-form-xs );
-		color: var( --p2-color-text );
-		margin-top: 24px;
-
-
-	}
-
-	.step-wrapper__content .signup-form__p2-footer-link .logged-out-form__links a.logged-out-form__link-item {
-		color: var( --p2-color-link );
-		text-decoration: underline;
-
-		&:hover {
-			color: var( --p2-color-link-dark );
-		}
-	}
-
-	.navigation-link.back {
-		display: none;
-	}
-}
-
-.signup-form__p2-social-signup-separator {
-	overflow: hidden;
-	text-align: center;
-	width: 100%;
-	max-width: 400px;
-	color: var( --p2-color-border );
-	font-size: var( --p2-font-size-form-xs );
-	margin-bottom: 10px;
-
-	&::before,
-	&::after {
-		background-color: var( --p2-color-border );
-		content: '';
-		display: inline-block;
-		height: 1px;
-		position: relative;
-		vertical-align: middle;
-		width: 50%;
-	}
-
-	&::before {
-		right: 0.5em;
-		margin-left: -50%;
-	}
-
-	&::after {
-		left: 0.5em;
-		margin-right: -50%;
-	}
-
-	.p2-step-wrapper__footer {
-		margin-bottom: 24px;
+		max-width: 360px;
+		margin: 24px auto 0;
 	}
 }

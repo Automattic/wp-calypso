@@ -3,6 +3,8 @@ import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import SocialSignupForm from './social';
+
+import './p2.scss';
 class P2SignupForm extends Component {
 	state = {
 		showEmailSignupForm: false,
