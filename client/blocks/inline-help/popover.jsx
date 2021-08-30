@@ -12,8 +12,8 @@ import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-supp
 import Gridicon from 'calypso/components/gridicon';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { selectResult, resetInlineHelpContactForm } from 'calypso/state/inline-help/actions';
-import getInlineHelpCurrentlySelectedResult from 'calypso/state/inline-help/selectors/get-inline-help-currently-selected-result';
 import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
+import getSelectedResult from 'calypso/state/inline-help/selectors/get-selected-result';
 import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
 import InlineHelpRichResult from './inline-help-rich-result';
 import InlineHelpSearchCard from './inline-help-search-card';
@@ -198,7 +198,7 @@ class InlineHelpPopover extends Component {
 function mapStateToProps( state ) {
 	return {
 		searchQuery: getSearchQuery( state ),
-		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
+		selectedResult: getSelectedResult( state ),
 	};
 }
 

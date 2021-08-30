@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/inline-help/init';
 
 /**
@@ -8,6 +6,6 @@ import 'calypso/state/inline-help/init';
  * @param  {object}  state  Global state tree
  * @returns {number}        The index of the currently selected search result, integer
  */
-export default function getSelectedResultIndex( state ) {
-	return get( state, 'inlineHelp.searchResults.search.selectedResult', -1 );
+export default function getSelectedResult( state ) {
+	return state.inlineHelp.searchResults.search.selectedResult;
 }
