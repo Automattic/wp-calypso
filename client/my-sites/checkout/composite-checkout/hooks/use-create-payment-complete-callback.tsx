@@ -72,7 +72,7 @@ export default function useCreatePaymentCompleteCallback( {
 	isJetpackCheckout?: boolean;
 	checkoutFlow?: string;
 } ): PaymentCompleteCallback {
-	const { responseCart } = useShoppingCart();
+	const { responseCart, reloadFromServer: reloadCart } = useShoppingCart();
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -195,6 +195,7 @@ export default function useCreatePaymentCompleteCallback( {
 					fetchSitesAndUser(
 						domainName,
 						() => {
+							reloadCart();
 							performRedirect( url );
 						},
 						reduxStore
@@ -226,9 +227,11 @@ export default function useCreatePaymentCompleteCallback( {
 				return;
 			}
 
+			reloadCart();
 			performRedirect( url );
 		},
 		[
+			reloadCart,
 			siteSlug,
 			adminUrl,
 			redirectTo,
