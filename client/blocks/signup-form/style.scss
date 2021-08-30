@@ -11,6 +11,8 @@
 	&[name='password'] {
 		margin-bottom: 0;
 		text-align: left;
+		/*!rtl:ignore*/
+		direction: ltr;
 	}
 
 	&[name='username'] {
