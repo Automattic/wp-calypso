@@ -1,6 +1,7 @@
 import { translate } from 'i18n-calypso';
 import page from 'page';
-import { createElement } from 'react';
+import React, { createElement } from 'react';
+import DoItForMePage from 'calypso/my-sites/marketing/do-it-for-me';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
@@ -127,5 +128,10 @@ export const traffic = ( context, next ) => {
 export const ultimateTrafficGuide = ( context, next ) => {
 	context.contentComponent = createElement( UltimateTrafficGuide );
 
+	next();
+};
+
+export const doItForMe = ( context, next ) => {
+	context.primary = <DoItForMePage />;
 	next();
 };

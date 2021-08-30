@@ -13,6 +13,7 @@ import {
 	sharingButtons,
 	traffic,
 	ultimateTrafficGuide,
+	doItForMe,
 } from './controller';
 
 export default function () {
@@ -94,6 +95,15 @@ export default function () {
 		navigation,
 		ultimateTrafficGuide,
 		layout,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/marketing/do-it-for-me/:domain',
+		siteSelection,
+		sites,
+		navigation,
+		doItForMe,
 		makeLayout,
 		clientRender
 	);
