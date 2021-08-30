@@ -492,7 +492,11 @@ class EmailProvidersComparison extends React.Component {
 					{ buttonLabel }
 				</Button>
 
-				{ showSkipButton && <Button onClick={ onSkipClick }>{ skipButtonLabel }</Button> }
+				{ showSkipButton && (
+					<Button busy={ this.state.addingToCart } onClick={ onSkipClick }>
+						{ skipButtonLabel }
+					</Button>
+				) }
 			</TitanNewMailboxList>
 		);
 
