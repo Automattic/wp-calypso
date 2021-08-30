@@ -246,8 +246,8 @@ Typically, you'd wrap your exported function with `localize`:
 
 ```jsx
 // greeting.jsx
-import React from 'react';
 import { localize } from 'i18n-calypso';
+import React from 'react';
 
 function Greeting( { translate, className } ) {
 	return <h1 className={ className }>{ translate( 'Hello!' ) }</h1>;
@@ -288,8 +288,8 @@ The function can be called to return a localized value of a string, and it also 
 ### Usage
 
 ```jsx
-import React from 'react';
 import { useTranslate } from 'i18n-calypso';
+import React from 'react';
 
 function Greeting( { className } ) {
 	const translate = useTranslate();
@@ -316,9 +316,9 @@ Hook function that returns the `isRtl` boolean flag and automatically rerenders 
 Example:
 
 ```jsx
+import { useRtl } from 'i18n-calypso';
 import React from 'react';
 import Gridicon from 'calypso/components/gridicon';
-import { useRtl } from 'i18n-calypso';
 
 export default function Header() {
 	const isRtl = useRtl();
@@ -339,9 +339,9 @@ The same functionality is also exposed as a HOC that passes an `isRtl` prop to t
 Example:
 
 ```jsx
+import { withRtl } from 'i18n-calypso';
 import React from 'react';
 import Gridicon from 'calypso/components/gridicon';
-import { withRtl } from 'i18n-calypso';
 
 function Header( { isRtl } ) {
 	const icon = isRtl ? 'arrow-left' : 'arrow-right';

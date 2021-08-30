@@ -4,16 +4,16 @@ Replaces most usage of `lodash` with `lodash-es`:
 
 ```js
 import { get } from 'lodash';
-import map from 'lodash/map';
 import camelCase from 'lodash.camelcase';
+import map from 'lodash/map';
 ```
 
 Becomes:
 
 ```js
 import { get } from 'lodash-es';
-import map from 'lodash-es/map';
 import camelCase from 'lodash-es/camelCase';
+import map from 'lodash-es/map';
 ```
 
 This applies transitively to the whole codebase. However, requested versions are

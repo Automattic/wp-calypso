@@ -10,8 +10,8 @@ The `compact` prop applies styling for a more compact table. It also allows for 
 
 ```js
 import Table from 'woocommerce/components/table';
-import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
+import TableRow from 'woocommerce/components/table/table-row';
 
 function render() {
 	const titles = (
