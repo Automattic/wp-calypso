@@ -199,7 +199,7 @@ class EarningsMain extends Component {
 						'Explore tools to earn money with your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
 							components: {
-								learnMoreLink: <InlineSupportLink supportContext="ads" showIcon={ false } />,
+								learnMoreLink: <InlineSupportLink supportContext="earn" showIcon={ false } />,
 							},
 						}
 					) }
