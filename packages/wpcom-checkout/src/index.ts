@@ -15,6 +15,7 @@ export * from './payment-methods/ideal';
 export * from './payment-methods/sofort';
 export * from './payment-methods/p24';
 export * from './payment-methods/eps';
+export * from './payment-methods/alipay';
 export * from './use-is-web-payment-available';
 export * from './payment-methods/google-pay';
 export * from './payment-methods/existing-credit-card';
