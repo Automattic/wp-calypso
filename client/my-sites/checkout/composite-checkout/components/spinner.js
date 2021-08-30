@@ -1,4 +1,4 @@
-import { keyframes } from '@emotion/react';
+import { keyframes } from '@emotion/core';
 import styled from '@emotion/styled';
 import React from 'react';
 

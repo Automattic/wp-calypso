@@ -59,6 +59,7 @@
 		"enzyme-adapter-react-16": "^1.15.1",
 		"enzyme-to-json": "^3.4.3",
 		"jest-config": "^27.0.6",
+		"jest-emotion": "^10.0.27",
 		"jest-enzyme": "^7.1.2",
 		"mini-css-extract-plugin": "^1.6.0",
 		"postcss-custom-properties": "^11.0.0",

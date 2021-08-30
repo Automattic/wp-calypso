@@ -5,9 +5,9 @@ import {
 	useDispatch,
 	useFormStatus,
 } from '@automattic/composite-checkout';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
+import { useTheme } from 'emotion-theming';
 import React, { useState, useEffect } from 'react';
 import {
 	LeftColumn,

@@ -1,12 +1,6 @@
-import '@emotion/react';
 import { DataRegistry } from '@wordpress/data';
 import { ReactElement } from 'react';
-import { Theme as ThemeType } from './lib/theme';
-
-declare module '@emotion/react' {
-	// eslint-disable-next-line @typescript-eslint/no-empty-interface
-	export interface Theme extends ThemeType {}
-}
+import { Theme } from './lib/theme';
 
 export interface CheckoutStepProps {
 	stepId: string;
@@ -101,7 +95,7 @@ export type ReactStandardAction< T = string, P = unknown > = P extends void
 	  };
 
 export interface CheckoutProviderProps {
-	theme?: ThemeType;
+	theme?: Theme;
 	registry?: DataRegistry;
 	total?: LineItem;
 	items?: LineItem[];
