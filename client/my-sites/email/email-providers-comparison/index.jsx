@@ -314,7 +314,10 @@ class EmailProvidersComparison extends React.Component {
 			gSuiteProduct,
 			hasCartDomain,
 			isGSuiteSupported,
+			onSkipClick,
 			selectedDomainName,
+			showSkipButton,
+			skipButtonLabel,
 			translate,
 		} = this.props;
 
@@ -379,14 +382,21 @@ class EmailProvidersComparison extends React.Component {
 						users={ googleUsers }
 						onReturnKeyPress={ this.onGoogleFormReturnKeyPress }
 					>
-						<Button
-							className="email-providers-comparison__gsuite-user-list-action-continue"
-							primary
-							busy={ this.state.addingToCart }
-							onClick={ this.onGoogleConfirmNewUsers }
-						>
-							{ buttonLabel }
-						</Button>
+						<div className="email-providers-comparison__gsuite-user-list-actions-container">
+							<Button
+								primary
+								busy={ this.state.addingToCart }
+								onClick={ this.onGoogleConfirmNewUsers }
+							>
+								{ buttonLabel }
+							</Button>
+
+							{ showSkipButton && (
+								<Button busy={ this.state.addingToCart } onClick={ onSkipClick }>
+									{ skipButtonLabel }
+								</Button>
+							) }
+						</div>
 					</GSuiteNewUserList>
 				</FormFieldset>
 			) : null;

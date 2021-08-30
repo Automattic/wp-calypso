@@ -175,14 +175,6 @@
 			> .form-fieldset {
 				margin-bottom: 0;
 			}
-
-			.email-providers-comparison__gsuite-user-list-action-continue {
-				margin-top: 1em;
-
-				@include break-mobile {
-					margin-top: 0;
-				}
-			}
 		}
 
 		.email-provider-features {
@@ -193,6 +185,54 @@
 				margin-left: 2em;
 				margin-top: 0;
 			}
+		}
+	}
+}
+
+.email-providers-comparison__gsuite-user-list-actions-container {
+	$container-top-margin: 1em;
+	$container-left-margin: 1.5em;
+	$child-top-margin: 1em;
+	$child-left-margin: 1em;
+
+	display: flex;
+	flex-direction: column;
+	margin-top: $container-top-margin;
+
+	@include breakpoint-deprecated( '>480px' ) {
+		flex-direction: row;
+		margin-top: 0;
+		margin-left: $container-left-margin;
+	}
+
+	@include breakpoint-deprecated( '>660px' ) {
+		flex-direction: column;
+		margin-left: 0;
+		margin-top: 0;
+	}
+
+	@include breakpoint-deprecated( '>800px' ) {
+		flex-direction: row;
+		margin-top: 0;
+		margin-left: $container-left-margin;
+	}
+
+	> * + * {
+		margin-top: $child-top-margin;
+
+		@include breakpoint-deprecated( '>480px' ) {
+			margin-top: 0;
+			margin-left: $child-left-margin;
+		}
+
+		@include breakpoint-deprecated( '>660px' ) {
+			margin-left: 0;
+			margin-top: $child-top-margin;
+		}
+
+		@include breakpoint-deprecated( '>800px' ) {
+			margin-top: 0;
+			margin-left: $child-left-margin;
 		}
 	}
 }
