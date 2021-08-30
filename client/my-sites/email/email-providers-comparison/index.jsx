@@ -456,7 +456,13 @@ class EmailProvidersComparison extends React.Component {
 					comment:
 						'%(titanProductName) is the name of the product, which should be "Professional Email" translated',
 			  } )
-			: translate( 'Add Email' );
+			: translate( 'Add %(titanProductName)s', {
+					args: {
+						titanProductName: getTitanProductName(),
+					},
+					comment:
+						'%(titanProductName) is the name of the product, which should be "Professional Email" translated',
+			  } );
 
 		const formFields = (
 			<TitanNewMailboxList

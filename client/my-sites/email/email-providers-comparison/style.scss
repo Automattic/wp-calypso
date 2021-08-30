@@ -185,10 +185,7 @@
 			}
 
 			.email-providers-comparison__titan-mailbox-action-continue {
-				width: 100%;
-
 				@include break-mobile {
-					width: auto;
 					margin-left: auto;
 				}
 			}
