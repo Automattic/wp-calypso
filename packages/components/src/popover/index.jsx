@@ -1,10 +1,10 @@
-import { RootChild } from '@automattic/components';
 import classNames from 'classnames';
 import { useRtl } from 'i18n-calypso';
 import { defer } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
+import RootChild from '../root-child';
 import {
 	bindWindowListeners,
 	unbindWindowListeners,
