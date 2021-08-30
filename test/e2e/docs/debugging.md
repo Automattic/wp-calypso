@@ -12,6 +12,7 @@
   - [Playwright/Jest](#playwrightjest)
     - [Debug instance](#debug-instance)
     - [Playwright Developer Console and Gutenberg iFrame](#playwright-developer-console-and-gutenberg-iframe)
+    - [Additional notes](#additional-notes)
 
 <!-- /TOC -->
 
@@ -69,20 +70,14 @@ DEBUG=mocha:* node_modules/.bin/mocha specs/wp-manage-domains-spec.js
 
 While developing tests and/or debugging flakey e2e tests, it is often helpful to have a browser window open with Playwright hooked in.
 
-1. set Jest timeout to a long value:
+Launch Playwright with the following parameters to:
 
-```typescript
-// in-code
-jest.setTimeout(1000000000);
-
-// in default.json
-"jestTimeoutMS": 1600000000,
-```
-
-2. launch Playwright with timeout disabled and verbose logs:
+- extend Jest timeout to a long value
+- disable Playwright's internal timeout (30s)
+- output verbose logs to the command line
 
 ```bash
-export PWDEBUG=1 DEBUG=pw:api yarn jest <spec>
+export PWDEBUG=1 DEBUG=pw:api yarn jest --runInBand --setTimeout=10000000000<spec>
 ```
 
 ### Playwright Developer Console and Gutenberg iFrame
