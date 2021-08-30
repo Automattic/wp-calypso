@@ -695,7 +695,7 @@ fun playwrightBuildType( viewportName: String, buildUuid: String ): BuildType {
 		}
 
 		failureConditions {
-			executionTimeoutMin = 20
+			executionTimeoutMin = 60
 		}
 
 		dependencies {
