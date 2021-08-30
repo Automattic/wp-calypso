@@ -43,11 +43,14 @@
 	.purchase-cancel-confirm__chat {
 		display: block;
 		margin: 0 auto;
+		color: var( --studio-gray-60 );
 
 		.material-icon {
 			width: 1rem;
 			height: 1rem;
-			vertical-align: bottom;
+			margin-right: 0.5rem;
+			vertical-align: middle;
+			fill: var( --studio-gray-60 );
 		}
 	}
 }

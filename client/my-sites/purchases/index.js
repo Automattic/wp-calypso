@@ -12,7 +12,6 @@ import {
 	receiptView,
 	paymentMethods,
 	addPaymentMethod,
-	purchaseCancelConfirm,
 } from './controller';
 
 export default ( router ) => {
@@ -52,14 +51,6 @@ export default ( router ) => {
 		siteSelection,
 		navigation,
 		purchaseCancel,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		'/purchases/subscriptions/:site/:purchaseId/cancel/confirm',
-		siteSelection,
-		purchaseCancelConfirm,
 		makeLayout,
 		clientRender
 	);

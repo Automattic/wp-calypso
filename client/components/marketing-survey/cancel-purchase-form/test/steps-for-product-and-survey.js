@@ -10,18 +10,18 @@ import { expect } from 'chai';
 import * as steps from '../steps';
 import stepsForProductAndSurvey from '../steps-for-product-and-survey';
 
-const PLAN_SURVEY_STEPS = [ steps.INITIAL_STEP, steps.FINAL_STEP ];
+const PLAN_SURVEY_STEPS = [ { id: steps.INITIAL_STEP }, { id: steps.FINAL_STEP } ];
 const DEFAULT_STEPS_WITH_UPGRADE_AT_STEP = [
-	steps.INITIAL_STEP,
-	steps.UPGRADE_AT_STEP,
-	steps.FINAL_STEP,
+	{ id: steps.INITIAL_STEP },
+	{ id: steps.UPGRADE_AT_STEP },
+	{ id: steps.FINAL_STEP },
 ];
 const DEFAULT_STEPS_WITH_BUSINESS_AT_STEP = [
-	steps.INITIAL_STEP,
-	steps.BUSINESS_AT_STEP,
-	steps.FINAL_STEP,
+	{ id: steps.INITIAL_STEP },
+	{ id: steps.BUSINESS_AT_STEP },
+	{ id: steps.FINAL_STEP },
 ];
-const DEFAULT_STEPS = [ steps.FINAL_STEP ];
+const DEFAULT_STEPS = [ { id: steps.FINAL_STEP } ];
 
 describe( 'stepsForProductAndSurvey', () => {
 	test( 'should return default steps if no state or product', () => {

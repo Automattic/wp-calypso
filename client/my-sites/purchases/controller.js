@@ -12,7 +12,6 @@ import {
 	PaymentMethods,
 	SiteLevelAddNewPaymentMethod,
 } from 'calypso/my-sites/purchases/payment-methods';
-import { PurchaseCancelConfirm } from 'calypso/my-sites/purchases/purchase-cancel-confirm';
 
 export function redirectToPurchases( context ) {
 	const siteDomain = context.params.site;
@@ -42,16 +41,6 @@ export const purchaseDetails = ( context, next ) => {
 export const purchaseCancel = ( context, next ) => {
 	context.primary = (
 		<PurchaseCancel
-			siteSlug={ context.params.site }
-			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-		/>
-	);
-	next();
-};
-
-export const purchaseCancelConfirm = ( context, next ) => {
-	context.primary = (
-		<PurchaseCancelConfirm
 			siteSlug={ context.params.site }
 			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 		/>

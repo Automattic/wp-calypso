@@ -1,14 +1,15 @@
-import { Button, Slot, SlotFillProvider } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chevronLeft } from '@wordpress/icons';
 import React, { useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import { useDispatch } from 'react-redux';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 
 import './style.scss';
 
-const BlankCanvas = ( { backUrl, children, onBackClick } ) => {
+const BlankCanvas = ( { children } ) => {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
@@ -18,32 +19,25 @@ const BlankCanvas = ( { backUrl, children, onBackClick } ) => {
 		return () => document.body.classList.remove( 'has-blank-canvas' );
 	}, [] );
 
-	return (
-		<SlotFillProvider>
-			<div className="blank-canvas">
-				<div className="blank-canvas__header">
-					<WordPressLogo />
-					{ ( backUrl || onBackClick ) && (
-						<Button
-							className="blank-canvas__back"
-							href={ backUrl }
-							icon={ chevronLeft }
-							onClick={ onBackClick }
-						>
-							{ __( 'Back' ) }
-						</Button>
-					) }
-				</div>
-				<div className="blank-canvas__content">
-					<Slot name="BlankCanvas.Content" />
-					{ children }
-				</div>
-				<div className="blank-canvas__footer">
-					<Slot name="BlankCanvas.Footer" />
-				</div>
-			</div>
-		</SlotFillProvider>
-	);
+	return ReactDOM.createPortal( <div className="blank-canvas">{ children }</div>, document.body );
 };
+
+BlankCanvas.Header = ( { backUrl, children, onBackClick } ) => (
+	<div className="blank-canvas__header">
+		<WordPressLogo />
+		{ ( backUrl || onBackClick ) && (
+			<Button
+				className="blank-canvas__back"
+				href={ backUrl }
+				icon={ chevronLeft }
+				onClick={ onBackClick }
+			>
+				{ __( 'Back' ) }
+			</Button>
+		) }
+		{ children }
+	</div>
+);
+BlankCanvas.Footer = ( { children } ) => <div className="blank-canvas__footer">{ children }</div>;
 
 export { BlankCanvas };

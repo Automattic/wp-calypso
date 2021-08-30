@@ -1,5 +1,6 @@
 import {
 	isDomainTransfer,
+	isGSuiteOrGoogleWorkspace,
 	isJetpackPlan,
 	isJetpackPlanSlug,
 	isJetpackProductSlug,
@@ -9,6 +10,9 @@ import { __, sprintf } from '@wordpress/i18n';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
+import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
+import { submitSurvey } from 'calypso/lib/purchases/actions';
 import getSiteImportEngine from 'calypso/state/selectors/get-site-import-engine';
 
 import './style.scss';
@@ -25,31 +29,49 @@ const shuffleArray = ( array ) => {
 };
 
 const getCancellationReasonOptions = ( purchase ) => {
+	let options = [];
 	if ( isJetpackPlan( purchase ) ) {
-		return [ 'couldNotActivate', 'didNotInclude', 'downgradeToAnotherPlan', 'onlyNeedFree' ];
+		options = [
+			'couldNotActivate',
+			'didNotInclude',
+			'downgradeToAnotherPlan',
+			'onlyNeedFree',
+		].concat( options );
+	} else if ( isDomainTransfer( purchase ) ) {
+		options = [
+			'noLongerWantToTransfer',
+			'couldNotCompleteTransfer',
+			'useDomainWithoutTransferring',
+		].concat( options );
+	} else {
+		options = [ 'couldNotInstall', 'tooHard', 'didNotInclude', 'onlyNeedFree' ].concat( options );
 	}
 
-	if ( isDomainTransfer( purchase ) ) {
-		return [ 'noLongerWantToTransfer', 'couldNotCompleteTransfer', 'useDomainWithoutTransferring' ];
-	}
-
-	return [ 'couldNotInstall', 'tooHard', 'didNotInclude', 'onlyNeedFree' ];
+	options = shuffleArray( options );
+	options.unshift( '' ); // Placeholder.
+	options.push( 'anotherReasonOne' );
+	return options;
 };
 
 const getImportOptions = () => {
-	return [ 'happy', 'look', 'content', 'functionality' ];
+	return [ '', 'happy', 'look', 'content', 'functionality' ];
 };
 
 const getNextAdventureOptions = ( purchase ) => {
+	let options = [];
 	if ( isJetpackPlan( purchase ) ) {
-		return [ 'stayingHere', 'otherPlugin', 'leavingWP', 'noNeed' ];
+		options = [ 'stayingHere', 'otherPlugin', 'leavingWP', 'noNeed' ].concat( options );
+	} else if ( ! isDomainTransfer( purchase ) ) {
+		options = [ 'stayingHere', 'otherWordPress', 'differentService', 'noNeed' ].concat( options );
 	}
 
-	if ( isDomainTransfer( purchase ) ) {
-		return [];
+	if ( options.length ) {
+		options = shuffleArray( options );
+		options.unshift( '' ); // Placeholder.
+		options.push( 'anotherReasonTwo' );
 	}
 
-	return [ 'stayingHere', 'otherWordPress', 'differentService', 'noNeed' ];
+	return options;
 };
 
 const getCancellationReasonLabel = ( option ) => {
@@ -163,7 +185,51 @@ const getNextAdventureTextPlaceholder = ( option ) => {
 	}
 };
 
-export const Feedback = ( { purchase, onValidate } ) => {
+export const submitFeedback = ( {
+	cancellationReason,
+	cancellationReasonText,
+	importSatisfaction,
+	nextAdventure,
+	nextAdventureText,
+	oneBetterThing,
+	purchase,
+} ) => {
+	if ( isGSuiteOrGoogleWorkspace( purchase ) ) {
+		return;
+	}
+
+	const getSurveyDataType = () => {
+		switch ( this.props.flowType ) {
+			case CANCEL_FLOW_TYPE.REMOVE:
+				return 'remove';
+			case CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND:
+				return 'refund';
+			case CANCEL_FLOW_TYPE.CANCEL_AUTORENEW:
+				return 'cancel-autorenew';
+			default:
+				// Although we shouldn't allow it to reach here, we still include this default in case we forgot to add proper mappings.
+				return 'general';
+		}
+	};
+
+	const data = {
+		'why-cancel': {
+			response: cancellationReason,
+			text: cancellationReasonText,
+		},
+		'next-adventure': {
+			response: nextAdventure,
+			text: nextAdventureText,
+		},
+		'what-better': { text: oneBetterThing },
+		'import-satisfaction': { response: importSatisfaction },
+		type: getSurveyDataType(),
+	};
+
+	submitSurvey( 'calypso-remove-purchase', purchase.siteId, enrichedSurveyData( data, purchase ) );
+};
+
+export const Feedback = ( { purchase, onValidate, trackEvent } ) => {
 	const [ cancellationReason, setCancellationReason ] = useState( '' );
 	const [ importSatisfaction, setImportSatisfaction ] = useState( '' );
 	const [ nextAdventure, setNextAdventure ] = useState( '' );
@@ -171,20 +237,49 @@ export const Feedback = ( { purchase, onValidate } ) => {
 	const [ nextAdventureText, setNextAdventureText ] = useState( '' );
 	const [ oneBetterThing, setOneBetterThing ] = useState( '' );
 
+	const cancellationReasonOptions = getCancellationReasonOptions( purchase );
+	const importOptions = getImportOptions();
+	const nextAdventureOptions = getNextAdventureOptions( purchase );
+	const cancellationReasonTextPlaceholder = getCancellationReasonTextPlaceholder(
+		cancellationReason
+	);
+	const nextAdventureTextPlaceholder = getNextAdventureTextPlaceholder( nextAdventure );
+
 	useEffect( () => {
 		if (
-			! cancellationReason ||
-			( cancellationReason === 'anotherReasonOne' && ! cancellationReasonText )
+			cancellationReasonOptions.length &&
+			( ! cancellationReason ||
+				( cancellationReason === 'anotherReasonOne' && ! cancellationReasonText ) )
 		) {
 			return onValidate( false );
 		}
 
-		if ( ! nextAdventure || ( nextAdventure === 'anotherReasonTwo' && ! nextAdventureText ) ) {
+		if (
+			nextAdventureOptions.length &&
+			( ! nextAdventure || ( nextAdventure === 'anotherReasonTwo' && ! nextAdventureText ) )
+		) {
 			return onValidate( false );
 		}
 
-		return onValidate( true );
-	}, [ cancellationReason, cancellationReasonText, nextAdventure, nextAdventureText, onValidate ] );
+		return onValidate( {
+			cancellationReason,
+			cancellationReasonText,
+			importSatisfaction,
+			nextAdventure,
+			nextAdventureText,
+			oneBetterThing,
+		} );
+	}, [
+		cancellationReason,
+		cancellationReasonOptions,
+		cancellationReasonText,
+		importSatisfaction,
+		nextAdventure,
+		nextAdventureOptions,
+		nextAdventureText,
+		oneBetterThing,
+		onValidate,
+	] );
 
 	const isImport = !! useSelector( ( state ) => getSiteImportEngine( state, purchase?.siteId ) );
 
@@ -195,20 +290,6 @@ export const Feedback = ( { purchase, onValidate } ) => {
 	const isJetpack =
 		isJetpackProductSlug( purchase.productSlug ) || isJetpackPlanSlug( purchase.productSlug );
 	const productName = isJetpack ? __( 'Jetpack' ) : __( 'WordPress.com' );
-
-	const cancellationReasonOptions = shuffleArray( getCancellationReasonOptions( purchase ) );
-	cancellationReasonOptions.unshift( '' ); // Placeholder.
-	cancellationReasonOptions.push( 'anotherReasonOne' );
-	const importOptions = getImportOptions();
-	importOptions.unshift( '' ); // Placeholder.
-	const nextAdventureOptions = shuffleArray( getNextAdventureOptions( purchase ) );
-	nextAdventureOptions.unshift( '' ); // Placeholder.
-	nextAdventureOptions.push( 'anotherReasonTwo' );
-
-	const cancellationReasonTextPlaceholder = getCancellationReasonTextPlaceholder(
-		cancellationReason
-	);
-	const nextAdventureTextPlaceholder = getNextAdventureTextPlaceholder( nextAdventure );
 
 	return (
 		<div className="feedback">
@@ -223,31 +304,37 @@ export const Feedback = ( { purchase, onValidate } ) => {
 				) }
 			/>
 			<div className="feedback__form">
-				<div className="feedback__question">
-					<SelectControl
-						label={ __( 'Why are you canceling?' ) }
-						value={ cancellationReason }
-						options={ cancellationReasonOptions.map( ( option ) => ( {
-							label: getCancellationReasonLabel( option ),
-							value: option,
-							disabled: ! option,
-						} ) ) }
-						onChange={ ( newReason ) => {
-							setCancellationReason( newReason );
-							setCancellationReasonText( '' );
-						} }
-					/>
-					{ cancellationReasonTextPlaceholder !== null && (
-						<TextControl
-							placeholder={ cancellationReasonTextPlaceholder }
-							value={ cancellationReasonText }
-							onChange={ ( newCancellationReasonText ) =>
-								setCancellationReasonText( newCancellationReasonText )
-							}
+				{ cancellationReasonOptions.length && (
+					<div className="feedback__question">
+						<SelectControl
+							label={ __( 'Why are you canceling?' ) }
+							value={ cancellationReason }
+							options={ cancellationReasonOptions.map( ( option ) => ( {
+								label: getCancellationReasonLabel( option ),
+								value: option,
+								disabled: ! option,
+							} ) ) }
+							onChange={ ( newReason ) => {
+								setCancellationReason( newReason );
+								setCancellationReasonText( '' );
+								trackEvent( 'calypso_purchases_cancel_form_select_radio_option', {
+									option: 'radio_1',
+									value: newReason,
+								} );
+							} }
 						/>
-					) }
-				</div>
-				{ isImport && (
+						{ cancellationReasonTextPlaceholder !== null && (
+							<TextControl
+								placeholder={ cancellationReasonTextPlaceholder }
+								value={ cancellationReasonText }
+								onChange={ ( newCancellationReasonText ) =>
+									setCancellationReasonText( newCancellationReasonText )
+								}
+							/>
+						) }
+					</div>
+				) }
+				{ isImport && importOptions.length && (
 					<div className="feedback__question">
 						<SelectControl
 							label={ __( 'You imported from another site. How did the import go?' ) }
@@ -260,32 +347,44 @@ export const Feedback = ( { purchase, onValidate } ) => {
 							onChange={ ( newImportSatisfaction ) => {
 								setImportSatisfaction( newImportSatisfaction );
 								setCancellationReasonText( '' );
+								trackEvent( 'calypso_purchases_cancel_form_select_radio_option', {
+									option: 'import_radio',
+									value: newImportSatisfaction,
+								} );
 							} }
 						/>
 					</div>
 				) }
-				<div className="feedback__question">
-					<SelectControl
-						label={ __( 'Where is your next adventure taking you?' ) }
-						value={ nextAdventure }
-						options={ nextAdventureOptions.map( ( option ) => ( {
-							label: getNextAdventureLabel( option ),
-							value: option,
-							disabled: ! option,
-						} ) ) }
-						onChange={ ( newNextAdventure ) => {
-							setNextAdventure( newNextAdventure );
-							setNextAdventureText( '' );
-						} }
-					/>
-					{ nextAdventureTextPlaceholder !== null && (
-						<TextControl
-							placeholder={ nextAdventureTextPlaceholder }
-							value={ nextAdventureText }
-							onChange={ ( newNextAdventureText ) => setNextAdventureText( newNextAdventureText ) }
+				{ nextAdventureOptions.length && (
+					<div className="feedback__question">
+						<SelectControl
+							label={ __( 'Where is your next adventure taking you?' ) }
+							value={ nextAdventure }
+							options={ nextAdventureOptions.map( ( option ) => ( {
+								label: getNextAdventureLabel( option ),
+								value: option,
+								disabled: ! option,
+							} ) ) }
+							onChange={ ( newNextAdventure ) => {
+								setNextAdventure( newNextAdventure );
+								setNextAdventureText( '' );
+								trackEvent( 'calypso_purchases_cancel_form_select_radio_option', {
+									option: 'radio_2',
+									value: newNextAdventure,
+								} );
+							} }
 						/>
-					) }
-				</div>
+						{ nextAdventureTextPlaceholder !== null && (
+							<TextControl
+								placeholder={ nextAdventureTextPlaceholder }
+								value={ nextAdventureText }
+								onChange={ ( newNextAdventureText ) =>
+									setNextAdventureText( newNextAdventureText )
+								}
+							/>
+						) }
+					</div>
+				) }
 				{ cancellationReason && nextAdventure && ( ! isImport || importSatisfaction ) && (
 					<div className="feedback__question">
 						<TextareaControl
