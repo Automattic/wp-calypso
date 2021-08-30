@@ -19,7 +19,6 @@ export default function ConnectDomainStepSuggestedStart( {
 	pageSlug,
 	mode,
 	onNextStep,
-	// onSwitchToAdvancedSetup,
 	progressStepList,
 	setPage,
 } ) {
@@ -73,7 +72,6 @@ ConnectDomainStepSuggestedStart.propTypes = {
 	pageSlug: PropTypes.oneOf( Object.values( stepSlug ) ).isRequired,
 	mode: PropTypes.oneOf( Object.values( modeType ) ).isRequired,
 	onNextStep: PropTypes.func.isRequired,
-	// onSwitchToAdvancedSetup: PropTypes.func.isRequired,
 	progressStepList: PropTypes.object.isRequired,
 	setPage: PropTypes.func.isRequired,
 };

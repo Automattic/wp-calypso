@@ -13,8 +13,6 @@ export default function ConnectDomainStepSwitchSetupInfoLink( {
 	currentStep,
 	currentMode,
 	setPage,
-	// onSwitchToAdvancedSetup,
-	// onSwitchToSuggestedSetup,
 } ) {
 	const { __ } = useI18n();
 
@@ -59,6 +57,4 @@ ConnectDomainStepSwitchSetupInfoLink.propTypes = {
 	currentMode: PropTypes.oneOf( Object.values( modeType ) ).isRequired,
 	currentStep: PropTypes.oneOf( Object.values( stepType ) ).isRequired,
 	setPage: PropTypes.func.isRequired,
-	// onSwitchToAdvancedSetup: PropTypes.func.isRequired,
-	// onSwitchToSuggestedSetup: PropTypes.func.isRequired,
 };
