@@ -1,10 +1,6 @@
 import styled from '@emotion/styled';
 import React from 'react';
 
-export default function ErrorMessage( { children }: { children?: React.ReactNode } ): JSX.Element {
-	return <Error>{ children }</Error>;
-}
-
 const Error = styled.div< React.HTMLAttributes< HTMLDivElement > >`
 	display: block;
 	padding: 24px 16px;
@@ -18,3 +14,7 @@ const Error = styled.div< React.HTMLAttributes< HTMLDivElement > >`
 		border-left: 0 none;
 	}
 `;
+
+export default function ErrorMessage( { children }: { children?: React.ReactNode } ): JSX.Element {
+	return <Error>{ children }</Error>;
+}

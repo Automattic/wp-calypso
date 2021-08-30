@@ -2,6 +2,16 @@ import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+const Row = styled.div< GridRowProps & React.HTMLAttributes< HTMLDivElement > >`
+	display: -ms-grid;
+	display: grid;
+	width: 100%;
+	-ms-grid-columns: ${ ( props ) => props.columnWidths.replace( ' ', ' ' + props.gap + ' ' ) };
+	grid-template-columns: ${ ( props ) => props.columnWidths };
+	grid-column-gap: ${ ( props ) => props.gap };
+	justify-items: stretch;
+`;
+
 export default function GridRow( {
 	gap,
 	columnWidths,
@@ -27,13 +37,3 @@ interface GridRowProps {
 	columnWidths: string;
 	children: React.ReactNode;
 }
-
-const Row = styled.div< GridRowProps & React.HTMLAttributes< HTMLDivElement > >`
-	display: -ms-grid;
-	display: grid;
-	width: 100%;
-	-ms-grid-columns: ${ ( props ) => props.columnWidths.replace( ' ', ' ' + props.gap + ' ' ) };
-	grid-template-columns: ${ ( props ) => props.columnWidths };
-	grid-column-gap: ${ ( props ) => props.gap };
-	justify-items: stretch;
-`;

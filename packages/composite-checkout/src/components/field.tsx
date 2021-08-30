@@ -3,6 +3,74 @@ import PropTypes from 'prop-types';
 import React, { LabelHTMLAttributes, InputHTMLAttributes, HTMLAttributes } from 'react';
 import Button from './button';
 
+const Label = styled.label< { disabled?: boolean } & LabelHTMLAttributes< HTMLLabelElement > >`
+	display: block;
+	color: ${ ( props ) => props.theme.colors.textColor };
+	font-weight: ${ ( props ) => props.theme.weights.bold };
+	font-size: 14px;
+	margin-bottom: 8px;
+
+	:hover {
+		cursor: ${ ( props ) => ( props.disabled ? 'default' : 'pointer' ) };
+	}
+`;
+
+const Input = styled.input<
+	{ isError?: boolean; icon?: React.ReactNode } & InputHTMLAttributes< HTMLInputElement >
+>`
+	display: block;
+	width: 100%;
+	box-sizing: border-box;
+	font-size: 16px;
+
+	//override leaky styles from Calypso
+	&[type='text'],
+	&[type='number'] {
+		border: 1px solid
+			${ ( props ) =>
+				props.isError ? props.theme.colors.error : props.theme.colors.borderColor };
+		padding: 13px ${ ( props ) => ( props.icon ? '60px' : '10px' ) } 11px 10px;
+		line-height: 1.2;
+
+		.rtl & {
+			padding: 13px 10px 11px ${ ( props ) => ( props.icon ? '60px' : '10px' ) };
+		}
+	}
+
+	:focus {
+		outline: ${ ( props ) =>
+				props.isError ? props.theme.colors.error : props.theme.colors.outline }
+			solid 2px !important;
+	}
+
+	::-webkit-inner-spin-button,
+	::-webkit-outer-spin-button {
+		-webkit-appearance: none;
+	}
+
+	&[type='number'],
+	&[type='number'] {
+		-moz-appearance: none;
+		appearance: none;
+	}
+
+	::placeholder {
+		color: ${ ( props ) => props.theme.colors.placeHolderTextColor };
+	}
+
+	&[type='text']:disabled,
+	&[type='number']:disabled {
+		border: 1px solid
+			${ ( props ) =>
+				props.isError ? props.theme.colors.error : props.theme.colors.borderColor };
+		background: ${ ( props ) => props.theme.colors.disabledField };
+	}
+`;
+
+const InputWrapper = styled.div`
+	position: relative;
+`;
+
 export default function Field( {
 	type,
 	id,
@@ -103,74 +171,6 @@ interface FieldProps {
 	autoComplete?: string;
 	disabled?: boolean;
 }
-
-const Label = styled.label< { disabled?: boolean } & LabelHTMLAttributes< HTMLLabelElement > >`
-	display: block;
-	color: ${ ( props ) => props.theme.colors.textColor };
-	font-weight: ${ ( props ) => props.theme.weights.bold };
-	font-size: 14px;
-	margin-bottom: 8px;
-
-	:hover {
-		cursor: ${ ( props ) => ( props.disabled ? 'default' : 'pointer' ) };
-	}
-`;
-
-const Input = styled.input<
-	{ isError?: boolean; icon?: React.ReactNode } & InputHTMLAttributes< HTMLInputElement >
->`
-	display: block;
-	width: 100%;
-	box-sizing: border-box;
-	font-size: 16px;
-
-	//override leaky styles from Calypso
-	&[type='text'],
-	&[type='number'] {
-		border: 1px solid
-			${ ( props ) =>
-				props.isError ? props.theme.colors.error : props.theme.colors.borderColor };
-		padding: 13px ${ ( props ) => ( props.icon ? '60px' : '10px' ) } 11px 10px;
-		line-height: 1.2;
-
-		.rtl & {
-			padding: 13px 10px 11px ${ ( props ) => ( props.icon ? '60px' : '10px' ) };
-		}
-	}
-
-	:focus {
-		outline: ${ ( props ) =>
-				props.isError ? props.theme.colors.error : props.theme.colors.outline }
-			solid 2px !important;
-	}
-
-	::-webkit-inner-spin-button,
-	::-webkit-outer-spin-button {
-		-webkit-appearance: none;
-	}
-
-	&[type='number'],
-	&[type='number'] {
-		-moz-appearance: none;
-		appearance: none;
-	}
-
-	::placeholder {
-		color: ${ ( props ) => props.theme.colors.placeHolderTextColor };
-	}
-
-	&[type='text']:disabled,
-	&[type='number']:disabled {
-		border: 1px solid
-			${ ( props ) =>
-				props.isError ? props.theme.colors.error : props.theme.colors.borderColor };
-		background: ${ ( props ) => props.theme.colors.disabledField };
-	}
-`;
-
-const InputWrapper = styled.div`
-	position: relative;
-`;
 
 const FieldIcon = styled.div`
 	position: absolute;
