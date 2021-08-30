@@ -28,7 +28,7 @@ export default class CheckoutErrorBoundary extends React.Component< CheckoutErro
 		}
 	}
 
-	render(): JSX.Element | JSX.Element[] | undefined {
+	render(): React.ReactNode {
 		if ( this.state.hasError ) {
 			return <ErrorFallback errorMessage={ this.props.errorMessage } />;
 		}
@@ -39,7 +39,7 @@ export default class CheckoutErrorBoundary extends React.Component< CheckoutErro
 interface CheckoutErrorBoundaryProps {
 	errorMessage: React.ReactNode;
 	onError?: ( message: string ) => void | undefined;
-	children?: JSX.Element[] | JSX.Element;
+	children?: React.ReactNode;
 }
 
 function ErrorFallback( { errorMessage }: { errorMessage: React.ReactNode } ) {
