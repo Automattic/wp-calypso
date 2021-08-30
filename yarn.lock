@@ -115,8 +115,8 @@ __metadata:
     enzyme: ^3.11.0
     jest: ">=27.0.6"
     postcss: ^8.2.15
-    react: ^16.0.0
-    react-dom: ^16.0.0
+    react: ^17.0.2
+    react-dom: ^17.0.2
     webpack: ^5.46.0
   bin:
     calypso-build: ./bin/calypso-build.js
@@ -192,7 +192,7 @@ __metadata:
     "@automattic/calypso-url": ^1.0.0
     chai: ^4.3.4
     i18n-calypso: ^5.0.0
-    react: ^16.12.0
+    react: ^17.0.2
     typescript: ^4.3.5
   languageName: unknown
   linkType: soft
@@ -203,8 +203,8 @@ __metadata:
   dependencies:
     "@automattic/load-script": ^1.0.0
     debug: ^4.1.1
-    react: ^16.12.0
-    react-dom: ^16.12.0
+    react: ^17.0.2
+    react-dom: ^17.0.2
     react-stripe-elements: ^4.0.2
     typescript: ^4.3.5
   languageName: unknown
@@ -246,8 +246,8 @@ __metadata:
     utility-types: ^3.10.0
     webpack: ^5.36.2
   peerDependencies:
-    react: ^16.8
-    react-dom: ^16.12.0
+    react: ^17.0
+    react-dom: ^17.0.2
   languageName: unknown
   linkType: soft
 
@@ -273,16 +273,16 @@ __metadata:
     jest: ^27.0.6
     postcss: ^8.2.15
     prop-types: ^15.7.2
-    react: ^16.12.0
-    react-dom: ^16.12.0
+    react: ^17.0.2
+    react-dom: ^17.0.2
     react-stripe-elements: ^4.0.2
     sass-loader: ^10.1.1
     style-loader: ^1.2.1
     typescript: ^4.3.5
     webpack: ^5.46.0
   peerDependencies:
-    react: ^16.12.0
-    react-dom: ^16.12.0
+    react: ^17.0.2
+    react-dom: ^17.0.2
   languageName: unknown
   linkType: soft
 
@@ -320,7 +320,7 @@ __metadata:
     wpcom-proxy-request: ^6.0.0
   peerDependencies:
     "@wordpress/data": ^4
-    react: ^16.8
+    react: ^17.0
     react-native: ^0.63.4
   languageName: unknown
   linkType: soft
@@ -338,8 +338,8 @@ __metadata:
     "@wordpress/url": ^2.22.2
     classnames: ^2.3.1
     jest-canvas-mock: ^2.3.0
-    react: ^16.12.0
-    react-dom: ^16.12.0
+    react: ^17.0.2
+    react-dom: ^17.0.2
     tslib: ^2.3.0
     typescript: ^4.3.5
     utility-types: ^3.10.0
@@ -349,8 +349,8 @@ __metadata:
     "@wordpress/i18n": ^3.20.0
     "@wp-g2/create-styles": ^0.0.154
     debug: ^4.1.1
-    react: ^16.12.0
-    react-dom: ^16.12.0
+    react: ^17.0.2
+    react-dom: ^17.0.2
     react-native: ^0.63.4
     reakit-utils: ^0.15.1
   languageName: unknown
@@ -373,8 +373,8 @@ __metadata:
     "@wordpress/react-i18n": ^1.0.3
     classnames: ^2.3.1
     lodash: ^4.17.21
-    react: ^16.12.0
-    react-dom: ^16.12.0
+    react: ^17.0.2
+    react-dom: ^17.0.2
     tslib: ^2.3.0
     typescript: ^4.3.5
     use-debounce: ^3.1.0
@@ -384,7 +384,7 @@ __metadata:
     "@wordpress/element": ^2.20.3
     "@wordpress/i18n": ^3.20.0
     "@wp-g2/create-styles": ^0.0.154
-    react: ^16.12.0
+    react: ^17.0.2
     react-native: ^0.63.4
     reakit-utils: ^0.15.1
   languageName: unknown
@@ -410,8 +410,8 @@ __metadata:
     "@automattic/explat-client": ^0.0.2
     "@testing-library/react": ^12.0.0
     "@testing-library/react-hooks": 7.0.1
-    react: ^16.12.0
-    react-dom: ^16.12.0
+    react: ^17.0.2
+    react-dom: ^17.0.2
     tslib: ^2.3.0
     typescript: ^4.3.5
   languageName: unknown
@@ -434,7 +434,7 @@ __metadata:
     "@babel/runtime": ^7.15.3
     i18n-calypso: ^5.0.0
   peerDependencies:
-    react: ^16.8
+    react: ^17.0
   languageName: unknown
   linkType: soft
 
@@ -448,9 +448,9 @@ __metadata:
     "@types/react": ^16.14.5
     "@wordpress/compose": ^3.25.3
     "@wordpress/i18n": ^3.20.0
-    react: ^16.12.0
-    react-dom: ^16.12.0
-    react-test-renderer: ^16.12.0
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    react-test-renderer: ^17.0.2
     tslib: ^2.3.0
     typescript: ^4.3.5
   languageName: unknown
@@ -537,8 +537,8 @@ __metadata:
   peerDependencies:
     "@wordpress/data": ^4.27.3
     "@wp-g2/create-styles": ^0.0.154
-    react: ^16.8
-    react-dom: ^16.12.0
+    react: ^17.0
+    react-dom: ^17.0.2
     react-native: ^0.63.4
     reakit-utils: ^0.15.1
   languageName: unknown
@@ -583,8 +583,8 @@ __metadata:
     "@wordpress/url": ^2.22.2
     classnames: ^2.3.1
     copyfiles: ^2.3.0
-    react: ^16.12.0
-    react-dom: ^16.12.0
+    react: ^17.0.2
+    react-dom: ^17.0.2
     react-router-dom: ^5.1.2
     tslib: ^2.3.0
     typescript: ^4.3.5
@@ -594,7 +594,7 @@ __metadata:
     "@wordpress/element": ^2.20.3
     "@wordpress/i18n": ^3.20.0
     "@wp-g2/create-styles": ^0.0.154
-    react: ^16.8
+    react: ^17.0
     react-native: ^0.63.4
     reakit-utils: ^0.15.1
   languageName: unknown
@@ -679,8 +679,8 @@ __metadata:
     page: ^1.11.5
     postcss: ^8.2.6
     prop-types: ^15.7.2
-    react: ^16.12.0
-    react-dom: ^16.12.0
+    react: ^17.0.2
+    react-dom: ^17.0.2
     react-redux: ^7.2.4
     redux: ^4.0.5
     redux-thunk: ^2.3.0
@@ -717,8 +717,8 @@ __metadata:
     moment: ^2.26.0
     new-github-issue-url: ^0.2.1
     postcss: ^8.2.6
-    react: ^16.12.0
-    react-dom: ^16.12.0
+    react: ^17.0.2
+    react-dom: ^17.0.2
     react-native: ^0.63.4
     reakit-utils: ^0.15.1
     webpack: ^5.46.0
@@ -740,15 +740,15 @@ __metadata:
     classnames: ^2.3.1
     copyfiles: ^2.3.0
     history: ^5.0.0
-    react: ^16.12.0
-    react-dom: ^16.12.0
+    react: ^17.0.2
+    react-dom: ^17.0.2
     react-router-dom: ^5.1.2
     tslib: ^2.3.0
     typescript: ^4.3.5
   peerDependencies:
     "@wordpress/i18n": ^3.20.0
     "@wp-g2/create-styles": ^0.0.154
-    react: ^16.8
+    react: ^17.0
     react-native: ^0.63.4
     reakit-utils: ^0.15.1
   languageName: unknown
@@ -770,13 +770,13 @@ __metadata:
     debug: ^4.1.1
     jest: ^27.0.6
     lodash: ^4.17.21
-    react: ^16.12.0
-    react-dom: ^16.12.0
+    react: ^17.0.2
+    react-dom: ^17.0.2
     typescript: ^4.3.5
   peerDependencies:
     "@wordpress/data": ^4.27.3
     "@wp-g2/create-styles": ^0.0.154
-    react: ^16.8
+    react: ^17.0
     react-native: ^0.63.4
     reakit-utils: ^0.15.1
   languageName: unknown
@@ -808,8 +808,8 @@ __metadata:
     "@wordpress/element": ^2.20.3
     "@wordpress/i18n": ^3.20.0
     "@wp-g2/create-styles": ^0.0.154
-    react: ^16.8
-    react-dom: ^16.12.0
+    react: ^17.0
+    react-dom: ^17.0.2
     react-native: ^0.63.4
     reakit-utils: ^0.15.1
   languageName: unknown
@@ -868,8 +868,8 @@ __metadata:
     classnames: ^2.3.1
     css-loader: ^3.4.2
     lodash: ^4.17.21
-    react: ^16.12.0
-    react-dom: ^16.12.0
+    react: ^17.0.2
+    react-dom: ^17.0.2
     react-native: ^0.63.4
     reakit-utils: ^0.15.1
     sass-loader: ^10.1.1
@@ -878,8 +878,8 @@ __metadata:
     typescript: ^4.3.5
     webpack: ^5.46.0
   peerDependencies:
-    react: ^16.8
-    react-dom: ^16.12.0
+    react: ^17.0
+    react-dom: ^17.0.2
   languageName: unknown
   linkType: soft
 
@@ -892,8 +892,8 @@ __metadata:
     debug: ^4.1.1
     typescript: ^4.3.5
   peerDependencies:
-    react: ^16.12.0
-    react-dom: ^16.12.0
+    react: ^17.0.2
+    react-dom: ^17.0.2
   languageName: unknown
   linkType: soft
 
@@ -909,12 +909,12 @@ __metadata:
     lodash: ^4.17.21
     moment: ^2.26.0
     prop-types: ^15.7.2
-    react: ^16.12.0
-    react-dom: ^16.12.0
+    react: ^17.0.2
+    react-dom: ^17.0.2
   peerDependencies:
     "@wordpress/data": ^4.27.3
     "@wp-g2/create-styles": ^0.0.154
-    react: ^16.12.0
+    react: ^17.0.2
     react-native: ^0.63.4
     reakit-utils: ^0.15.1
   languageName: unknown
@@ -973,8 +973,8 @@ __metadata:
     "@wordpress/compose": ^3.25.3
     regenerator-runtime: ^0.13.4
   peerDependencies:
-    react: ^16.13.1
-    react-dom: ^16.12.0
+    react: ^17.0.2
+    react-dom: ^17.0.2
   languageName: unknown
   linkType: soft
 
@@ -1045,8 +1045,8 @@ __metadata:
   peerDependencies:
     "@wordpress/data": ^4.27.3
     "@wp-g2/create-styles": ^0.0.154
-    react: ^16.8
-    react-dom: ^16.12.0
+    react: ^17.0
+    react-dom: ^17.0.2
     react-native: ^0.63.4
     reakit-utils: ^0.15.1
   languageName: unknown
@@ -1069,7 +1069,7 @@ __metadata:
     i18n-calypso: ^5.0.0
     jest: ^27.0.6
     lodash.mergewith: ^4.6.2
-    react: ^16.12.0
+    react: ^17.0.2
     rimraf: ^3.0.0
   bin:
     wp-babel-makepot: ./cli.js
@@ -1107,8 +1107,8 @@ __metadata:
     lodash: ^4.17.21
     npm-run-all: ^4.1.5
     postcss: ^8.2.6
-    react: ^16.12.0
-    react-dom: ^16.12.0
+    react: ^17.0.2
+    react-dom: ^17.0.2
     react-native: ^0.63.4
     reakit-utils: ^0.15.1
     tinymce: ^4.9.6
@@ -1131,8 +1131,8 @@ __metadata:
     debug: ^4.1.1
     i18n-calypso: ^5.0.0
     prop-types: ^15.7.2
-    react: ^16.12.0
-    react-dom: ^16.12.0
+    react: ^17.0.2
+    react-dom: ^17.0.2
     typescript: ^4.3.5
   peerDependencies:
     "@emotion/core": ^10.0.27
@@ -1206,8 +1206,8 @@ __metadata:
     npm-run-all: ^4.1.5
     postcss: ^8.2.6
     puppeteer: ^3.0.4
-    react: ^16.12.0
-    react-dom: ^16.12.0
+    react: ^17.0.2
+    react-dom: ^17.0.2
     react-native: ^0.63.4
     reakit-utils: ^0.15.1
     redux: ^4.0.5
@@ -12458,11 +12458,11 @@ __metadata:
     prop-types: ^15.7.2
     qrcode.react: ^1.0.0
     qs: ^6.9.1
-    react: ^16.12.0
+    react: ^17.0.2
     react-calendly: ^2.2.1
     react-click-outside: ^3.0.1
     react-day-picker: ^7.4.0
-    react-dom: ^16.12.0
+    react-dom: ^17.0.2
     react-element-to-jsx-string: ^14.1.0
     react-lazily-render: ^1.2.0
     react-live: ^1.12.0
@@ -12473,7 +12473,7 @@ __metadata:
     react-router-dom: ^5.1.2
     react-spring: ^8.0.27
     react-stripe-elements: ^4.0.2
-    react-test-renderer: ^16.12.0
+    react-test-renderer: ^17.0.2
     react-transition-group: ^4.3.0
     reakit: ^1.2.3
     reakit-utils: ^0.15.1
@@ -21167,13 +21167,13 @@ fsevents@~2.1.2:
     interpolate-components: ^1.1.1
     lodash: ^4.17.21
     lru: ^3.1.0
-    react: ^16.12.0
-    react-dom: ^16.12.0
-    react-test-renderer: ^16.12.0
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    react-test-renderer: ^17.0.2
     tannin: ^1.1.1
     use-subscription: ^1.2.0
   peerDependencies:
-    react: ^16.8
+    react: ^17.0
   languageName: unknown
   linkType: soft
 
@@ -31835,7 +31835,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^0.14.3 || ^15.1.0 || ^16.0.0, react-dom@npm:^16.10.2, react-dom@npm:^16.12.0, react-dom@npm:^16.13.1":
+"react-dom@npm:^0.14.3 || ^15.1.0 || ^16.0.0, react-dom@npm:^16.10.2, react-dom@npm:^16.13.1":
   version: 16.13.1
   resolution: "react-dom@npm:16.13.1"
   dependencies:
@@ -31849,7 +31849,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^17.0.1":
+"react-dom@npm:^17.0.1, react-dom@npm:^17.0.2":
   version: 17.0.2
   resolution: "react-dom@npm:17.0.2"
   dependencies:
@@ -31969,17 +31969,17 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
+"react-is@npm:^16.12.0 || ^17.0.0, react-is@npm:^17.0.1, react-is@npm:^17.0.2":
+  version: 17.0.2
+  resolution: "react-is@npm:17.0.2"
+  checksum: 2bdb6b93fbb1820b024b496042cce405c57e2f85e777c9aabd55f9b26d145408f9f74f5934676ffdc46f3dcff656d78413a6e43968e7b3f92eea35b3052e9053
+  languageName: node
+  linkType: hard
+
 "react-is@npm:^16.12.0, react-is@npm:^16.13.1, react-is@npm:^16.6.0, react-is@npm:^16.7.0, react-is@npm:^16.8.1, react-is@npm:^16.8.4, react-is@npm:^16.8.6, react-is@npm:^16.9.0":
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
   checksum: 33977da7a5f1a287936a0c85639fec6ca74f4f15ef1e59a6bc20338fc73dc69555381e211f7a3529b8150a1f71e4225525b41b60b52965bda53ce7d47377ada1
-  languageName: node
-  linkType: hard
-
-"react-is@npm:^17.0.1":
-  version: 17.0.1
-  resolution: "react-is@npm:17.0.1"
-  checksum: 55b8b31a5904d92764e827e7a8e43bb5141e4f5887e889b47dafb386745402d8bcc78b02b74c26ee91a57e0feeaecbe3fb38d54093e3ed8f1d3d38d15307a6ba
   languageName: node
   linkType: hard
 
@@ -32252,6 +32252,18 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
+"react-shallow-renderer@npm:^16.13.1":
+  version: 16.14.1
+  resolution: "react-shallow-renderer@npm:16.14.1"
+  dependencies:
+    object-assign: ^4.1.1
+    react-is: ^16.12.0 || ^17.0.0
+  peerDependencies:
+    react: ^16.0.0 || ^17.0.0
+  checksum: b95f7ee2d88cf093e5b370663943ceb9199b8dff4217cb8cbffdf5e60966286f898a3ce7257b3c31bab54d698a3c80e70e92b0a8320bc69bdcf4d565678261c9
+  languageName: node
+  linkType: hard
+
 "react-sizeme@npm:^2.6.7":
   version: 2.6.12
   resolution: "react-sizeme@npm:2.6.12"
@@ -32307,7 +32319,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"react-test-renderer@npm:^16.0.0-0, react-test-renderer@npm:^16.12.0":
+"react-test-renderer@npm:^16.0.0-0":
   version: 16.12.0
   resolution: "react-test-renderer@npm:16.12.0"
   dependencies:
@@ -32318,6 +32330,20 @@ fsevents@~2.1.2:
   peerDependencies:
     react: ^16.0.0
   checksum: 25d6de4bfd0e5f7400689b0098fb148e3c879eefa96e851f4655eec16ddbe75b8556afb2bec2d2a42d903a01b6c4839383cafb3b92f95c6a4485687f542503f4
+  languageName: node
+  linkType: hard
+
+"react-test-renderer@npm:^17.0.2":
+  version: 17.0.2
+  resolution: "react-test-renderer@npm:17.0.2"
+  dependencies:
+    object-assign: ^4.1.1
+    react-is: ^17.0.2
+    react-shallow-renderer: ^16.13.1
+    scheduler: ^0.20.2
+  peerDependencies:
+    react: 17.0.2
+  checksum: a4ea1e745a87bb9015540d96a3077b614bf88e306a0edd639f8fb849a393fa5104e84eca4349bc4b026f2f0b115a4172d58950d7076316115795266557659276
   languageName: node
   linkType: hard
 
@@ -32415,7 +32441,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"react@npm:^17.0.1":
+"react@npm:^17.0.1, react@npm:^17.0.2":
   version: 17.0.2
   resolution: "react@npm:17.0.2"
   dependencies:
@@ -40022,8 +40048,8 @@ typescript@^4.3.5:
     postcss-custom-properties: ^11.0.0
     prettier: "npm:wp-prettier@2.2.1-beta-1"
     qs: ^6.9.1
-    react: ^16.12.0
-    react-dom: ^16.12.0
+    react: ^17.0.2
+    react-dom: ^17.0.2
     react-native: ^0.63.4
     readline-sync: ^1.4.10
     reakit-utils: ^0.15.1

@@ -184,11 +184,11 @@
 		"prop-types": "^15.7.2",
 		"qrcode.react": "^1.0.0",
 		"qs": "^6.9.1",
-		"react": "^16.12.0",
+		"react": "^17.0.2",
 		"react-calendly": "^2.2.1",
 		"react-click-outside": "^3.0.1",
 		"react-day-picker": "^7.4.0",
-		"react-dom": "^16.12.0",
+		"react-dom": "^17.0.2",
 		"react-element-to-jsx-string": "^14.1.0",
 		"react-lazily-render": "^1.2.0",
 		"react-live": "^1.12.0",
@@ -251,7 +251,7 @@
 		"component-query": "^0.0.3",
 		"pkg-dir": "^5.0.0",
 		"postcss-custom-properties": "^11.0.0",
-		"react-test-renderer": "^16.12.0",
+		"react-test-renderer": "^17.0.2",
 		"redux-mock-store": "^1.5.4"
 	}
 }

@@ -48,7 +48,7 @@
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^4",
-		"react": "^16.8",
+		"react": "^17.0",
 		"react-native": "^0.63.4"
 	},
 	"devDependencies": {
