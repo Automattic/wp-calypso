@@ -264,13 +264,14 @@ class RemovePurchase extends Component {
 							//{ components: { domain: <em>{ getIncludedDomain( purchase ) }</em> } }
 						} )
 					}{ ' ' }
-					{ translate(
-						'You will not be able to reuse %(productName)s again without starting a new %(domainProductName)s subscription.',
-						{
-							args: { productName, domainProductName },
-							comment: "'it' refers to a product purchased by a user",
-						}
-					) }
+					{ isDomainRegistration &&
+						translate(
+							'You will not be able to reuse %(productName)s again without starting a new %(domainProductName)s subscription.',
+							{
+								args: { productName, domainProductName },
+								comment: "'it' refers to a product purchased by a user",
+							}
+						) }
 				</p>
 
 				{ isPlan( purchase ) && hasIncludedDomain( purchase ) && includedDomainText }
