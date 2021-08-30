@@ -11,6 +11,9 @@ const VeticalsGrid = styled.div`
 	display: grid;
 	grid-template-columns: repeat( 3, 1fr );
 	gap: 2em;
+	@media ( max-width: 960px ) {
+		grid-template-columns: 1fr;
+	}
 `;
 
 export default function DoItForMeLandingPage(): JSX.Element {
