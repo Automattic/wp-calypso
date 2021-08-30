@@ -14,6 +14,7 @@ import Composing from './composing';
 import CustomContentTypes from './custom-content-types';
 import Masterbar from './masterbar';
 import MediaSettingsWriting from './media-settings-writing';
+import MediaSettingsWatermark from './watermark';
 import PressThis from './press-this';
 import PublishingTools from './publishing-tools';
 import ThemeEnhancements from './theme-enhancements';
@@ -93,6 +94,22 @@ class SiteSettingsFormWriting extends Component {
 						/>
 					</div>
 				) }
+
+				<SettingsSectionHeader
+					disabled={ isRequestingSettings || isSavingSettings }
+					isSaving={ isSavingSettings }
+					onButtonClick={ handleSubmitForm }
+					showButton
+					title={ translate( 'Watermark' ) }
+				/>
+				<MediaSettingsWatermark
+					siteId={ siteId }
+					handleAutosavingToggle={ handleAutosavingToggle }
+					onChangeField={ onChangeField }
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+					fields={ fields }
+				/>
 
 				<SettingsSectionHeader
 					disabled={ isRequestingSettings || isSavingSettings }
@@ -229,6 +246,7 @@ const getFormSettings = ( settings ) => {
 		'carousel',
 		'carousel_background_color',
 		'carousel_display_exif',
+		'display_watermark',
 		'date_format',
 		'start_of_week',
 		'time_format',

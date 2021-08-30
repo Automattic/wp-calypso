@@ -102,4 +102,5 @@ export default connect( ( state ) => {
 		selectedSiteId,
 		siteSlug: getSiteSlug( state, selectedSiteId ),
 	};
+	o;
 } )( localize( MediaSettingsWriting ) );
