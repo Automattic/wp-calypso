@@ -1,21 +1,23 @@
 import { Button } from '@automattic/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
 import React from 'react';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
-import { modeType, stepSlug } from './constants';
+import { modeType, stepsHeadingAdvanced, stepsHeadingSuggested, stepSlug } from './constants';
 
 import './style.scss';
 
 export default function ConnectDomainStepLogin( {
 	className,
-	currentPageSlug,
+	pageSlug,
 	domain,
 	mode,
 	onNextStep,
 	progressStepList,
 } ) {
+	const { __ } = useI18n();
 	const stepContent = (
 		<div className={ className + '__login' }>
 			<p className={ className + '__text' }>
@@ -44,12 +46,15 @@ export default function ConnectDomainStepLogin( {
 		</div>
 	);
 
+	const heading = modeType.SUGGESTED === mode ? stepsHeadingSuggested : stepsHeadingAdvanced;
+
 	return (
 		<ConnectDomainStepWrapper
 			className={ className }
+			heading={ heading }
 			mode={ mode }
 			progressStepList={ progressStepList }
-			currentPageSlug={ currentPageSlug }
+			pageSlug={ pageSlug }
 			stepContent={ stepContent }
 		/>
 	);
@@ -57,7 +62,7 @@ export default function ConnectDomainStepLogin( {
 
 ConnectDomainStepLogin.propTypes = {
 	className: PropTypes.string.isRequired,
-	currentPageSlug: PropTypes.oneOf( Object.values( stepSlug ) ).isRequired,
+	pageSlug: PropTypes.oneOf( Object.values( stepSlug ) ).isRequired,
 	domain: PropTypes.string.isRequired,
 	mode: PropTypes.oneOf( Object.values( modeType ) ).isRequired,
 	onNextStep: PropTypes.func.isRequired,
