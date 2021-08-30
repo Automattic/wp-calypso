@@ -13,7 +13,8 @@ import {
 	sharingButtons,
 	traffic,
 	ultimateTrafficGuide,
-	doItForMe,
+	doItForMeLandingPage,
+	doItForMeSiteInformationCollection,
 } from './controller';
 
 export default function () {
@@ -27,6 +28,8 @@ export default function () {
 		'/sharing',
 		'/sharing/buttons',
 		'/marketing/business-tools',
+		'/marketing/do-it-for-me/landing',
+		'/marketing/do-it-for-me/site-info',
 	];
 
 	paths.forEach( ( path ) => page( path, ...[ siteSelection, sites, makeLayout, clientRender ] ) );
@@ -99,11 +102,20 @@ export default function () {
 		clientRender
 	);
 	page(
-		'/marketing/do-it-for-me/:domain',
+		'/marketing/do-it-for-me/landing/:domain',
 		siteSelection,
 		sites,
 		navigation,
-		doItForMe,
+		doItForMeLandingPage,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/marketing/do-it-for-me/site-info/:domain',
+		siteSelection,
+		sites,
+		navigation,
+		doItForMeSiteInformationCollection,
 		makeLayout,
 		clientRender
 	);
