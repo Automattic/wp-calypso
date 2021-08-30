@@ -167,7 +167,6 @@ module.exports = {
 				'no-unused-vars': 'off',
 				'react/jsx-no-undef': 'off',
 				'react/react-in-jsx-scope': 'off',
-				'wpcalypso/import-docblock': 'off',
 				'wpcalypso/jsx-classname-namespace': 'off',
 				'@typescript-eslint/no-unused-vars': 'off',
 				'jsdoc/require-param': 'off',
@@ -372,7 +371,6 @@ module.exports = {
 			},
 		],
 
-		'wpcalypso/import-docblock': 'off',
 		'wpcalypso/no-unsafe-wp-apis': [
 			'error',
 			{

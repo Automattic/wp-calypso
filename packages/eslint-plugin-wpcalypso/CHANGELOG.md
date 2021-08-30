@@ -4,6 +4,7 @@
 
 - Breaking: Migrated from `babel-eslint` to `@babel/eslint-parser`. This requires `@babel/core` to be
   installed (added as a `peerDependency` to this package) and a valid Babel configuration file to exist.
+- Breaking: Deleted `import-docblock` rule.
 
 #### v5.1.0 (2020-12-14)
 
