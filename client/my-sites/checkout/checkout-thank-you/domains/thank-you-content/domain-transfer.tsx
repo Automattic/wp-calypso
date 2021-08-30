@@ -2,6 +2,7 @@ import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import React from 'react';
 import domainTransferredSuccess from 'calypso/assets/images/illustrations/domain-transferred-success.svg';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { DomainThankYouParams, DomainThankYouProps } from '../types';
 
@@ -45,7 +46,7 @@ const domainTransferThankYouProps = ( {
 				},
 				{
 					stepKey: 'domain_transfer_whats_next_transfer_info',
-					stepTitle: translate( 'Connect the domain to your site' ),
+					stepTitle: translate( 'Point the domain to your site' ),
 					stepDescription: translate(
 						'Once the transfer is done you can can point %(domain)s to your WordPress.com site.',
 						{
@@ -54,7 +55,35 @@ const domainTransferThankYouProps = ( {
 							},
 						}
 					),
-					stepCta: null,
+					stepCta: (
+						<Button
+							href={ localizeUrl(
+								'https://wordpress.com/support/move-domain/incoming-domain-transfer/#changing-the-dns-records-after-a-successful-transfer'
+							) }
+							className={ 'domain-transfer__thank-you-button domain-thank-you__button' }
+							busy={ false }
+							disabled={ false }
+						>
+							{ translate( 'Learn more' ) }
+						</Button>
+					),
+				},
+				{
+					stepKey: 'domain_transfer_whats_next_transfer_info',
+					stepTitle: translate( 'Connect other services' ),
+					stepDescription: translate(
+						'Once the transfer is done you can connect other services to this domain.'
+					),
+					stepCta: (
+						<Button
+							href={ localizeUrl( 'https://wordpress.com/support/add-email' ) }
+							className={ 'domain-transfer__thank-you-button domain-thank-you__button' }
+							busy={ false }
+							disabled={ false }
+						>
+							{ translate( 'Learn more' ) }
+						</Button>
+					),
 				},
 			],
 		},
