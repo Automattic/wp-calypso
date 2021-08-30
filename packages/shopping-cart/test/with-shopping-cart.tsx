@@ -1,7 +1,7 @@
 import { screen, render, waitFor, fireEvent } from '@testing-library/react';
 import React from 'react';
 import { withShoppingCart } from '../src/index';
-import { planOne } from './utils/mock-cart-api';
+import { planOne, mainCartKey } from './utils/mock-cart-api';
 import { MockProvider, ProductListWithoutHook } from './utils/mock-components';
 
 import '@testing-library/jest-dom/extend-expect';
@@ -19,6 +19,35 @@ describe( 'withShoppingCart', () => {
 
 		render(
 			<MockProvider>
+				<TestComponent />
+			</MockProvider>
+		);
+		fireEvent.click( screen.getByText( 'Click me' ) );
+		await waitFor( () => {
+			expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
+		} );
+	} );
+
+	it( 'allows setting the cart key via the mapPropsToCartKey function', async () => {
+		const WrappedProductsList = withShoppingCart(
+			ProductListWithoutHook,
+			( { productsToAddOnClick } ) => {
+				if ( productsToAddOnClick.includes( planOne ) ) {
+					return mainCartKey;
+				}
+				return undefined;
+			}
+		);
+		const TestComponent = () => {
+			return (
+				<div>
+					<WrappedProductsList productsToAddOnClick={ [ planOne ] } />
+				</div>
+			);
+		};
+
+		render(
+			<MockProvider cartKeyOverride={ 'asjdasldjaldkjasldjsld' }>
 				<TestComponent />
 			</MockProvider>
 		);

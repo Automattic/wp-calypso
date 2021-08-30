@@ -1,5 +1,4 @@
 import debugFactory from 'debug';
-import { useReducer, useEffect, Dispatch, useCallback, useRef } from 'react';
 import {
 	removeItemFromResponseCart,
 	addItemsToResponseCart,
@@ -10,6 +9,7 @@ import {
 	addLocationToResponseCart,
 	doesCartLocationDifferFromResponseCartLocation,
 	doesResponseCartContainProductMatching,
+	convertTempResponseCartToResponseCart,
 } from './cart-functions';
 import { getEmptyResponseCart } from './empty-carts';
 import type {
@@ -18,55 +18,12 @@ import type {
 	ShoppingCartAction,
 	CouponStatus,
 	CacheStatus,
-	ShoppingCartMiddleware,
 } from './types';
 
-const debug = debugFactory( 'shopping-cart:use-shopping-cart-reducer' );
+const debug = debugFactory( 'shopping-cart:shopping-cart-reducer' );
 const emptyResponseCart = getEmptyResponseCart();
 
-export default function useShoppingCartReducer(
-	middleware: ShoppingCartMiddleware[]
-): [ ShoppingCartState, Dispatch< ShoppingCartAction > ] {
-	const [ hookState, hookDispatch ] = useReducer(
-		shoppingCartReducer,
-		getInitialShoppingCartState()
-	);
-
-	// We need a copy of the state so that dispatchWithMiddleware does not need
-	// hookState as a dependency. Otherwise, dispatchWithMiddleware will change
-	// on every render, which can cause problems for other hooks that depend on
-	// it.
-	const cachedState = useRef< ShoppingCartState >( hookState );
-	cachedState.current = hookState;
-
-	useEffect( () => {
-		if ( hookState.queuedActions.length > 0 && hookState.cacheStatus === 'valid' ) {
-			debug( 'cart is loaded; playing queued actions', hookState.queuedActions );
-			hookDispatch( { type: 'CLEAR_QUEUED_ACTIONS' } );
-			hookState.queuedActions.forEach( ( action: ShoppingCartAction ) => {
-				hookDispatch( action );
-			} );
-			debug( 'cart is loaded; queued actions complete' );
-		}
-	}, [ hookState.queuedActions, hookState.cacheStatus ] );
-
-	const dispatchWithMiddleware = useCallback(
-		( action: ShoppingCartAction ) => {
-			// We want to defer the middleware actions just like the dispatcher is deferred.
-			setTimeout( () => {
-				middleware.forEach( ( middlewareFn ) =>
-					middlewareFn( action, cachedState.current, hookDispatch )
-				);
-			} );
-			hookDispatch( action );
-		},
-		[ middleware ]
-	);
-
-	return [ hookState, dispatchWithMiddleware ];
-}
-
-const alwaysAllowedActions = [
+const alwaysAllowedActions: ShoppingCartAction[ 'type' ][] = [
 	'RECEIVE_INITIAL_RESPONSE_CART',
 	'RECEIVE_UPDATED_RESPONSE_CART',
 	'FETCH_INITIAL_RESPONSE_CART',
@@ -74,6 +31,21 @@ const alwaysAllowedActions = [
 ];
 
 const cacheStatusesForQueueing: CacheStatus[] = [ 'fresh', 'pending', 'fresh-pending' ];
+
+const cacheStatusesForIgnoringReload: CacheStatus[] = [
+	'invalid',
+	'fresh',
+	'pending',
+	'fresh-pending',
+];
+
+function shouldPlayQueuedActions( state: ShoppingCartState ): boolean {
+	return state.queuedActions.length > 0 && state.cacheStatus === 'valid';
+}
+
+export function isStatePendingUpdateOrQueuedAction( state: ShoppingCartState ): boolean {
+	return state.queuedActions.length > 0 || state.cacheStatus !== 'valid';
+}
 
 function shouldQueueReducerEvent( cacheStatus: CacheStatus, action: ShoppingCartAction ): boolean {
 	if ( alwaysAllowedActions.includes( action.type ) ) {
@@ -85,21 +57,23 @@ function shouldQueueReducerEvent( cacheStatus: CacheStatus, action: ShoppingCart
 	return false;
 }
 
-function shoppingCartReducer(
+export function reducerWithQueue(
 	state: ShoppingCartState,
 	action: ShoppingCartAction
 ): ShoppingCartState {
-	const couponStatus = state.couponStatus;
+	if (
+		cacheStatusesForIgnoringReload.includes( state.cacheStatus ) &&
+		action.type === 'CART_RELOAD'
+	) {
+		debug( 'cart is pending an operation; ignoring reload action' );
+		return state;
+	}
 
 	// If the cacheStatus is 'fresh' or 'pending', then the initial cart has not
 	// yet loaded and so we cannot make changes to it yet. We therefore will
 	// queue any action that comes through during that time except for
 	// 'RECEIVE_INITIAL_RESPONSE_CART' or 'RAISE_ERROR'.
 	if ( shouldQueueReducerEvent( state.cacheStatus, action ) ) {
-		if ( action.type === 'CART_RELOAD' ) {
-			debug( 'cart has not yet loaded; ignoring reload action', action );
-			return state;
-		}
 		debug( 'cart has not yet loaded; queuing requested action', action );
 		return {
 			...state,
@@ -107,14 +81,54 @@ function shoppingCartReducer(
 		};
 	}
 
+	const lastState = state;
+	state = shoppingCartReducer( state, action );
+
+	if ( shouldPlayQueuedActions( state ) ) {
+		debug( 'playing queued actions', state.queuedActions );
+		const actions: ShoppingCartAction[] = [
+			...state.queuedActions,
+			{ type: 'CLEAR_QUEUED_ACTIONS' },
+		];
+		state = actions.reduce( shoppingCartReducer, state );
+		debug( 'queued actions are dispatched and queue is cleared' );
+	}
+
+	// When an action is dispatched that modifies the cart, the reducer modifies
+	// the `responseCart` stored in state. That data is then sent off to the
+	// server to be validated and filled-in with additional properties before
+	// being returned to the ShoppingCartManager. Because of this, optimistic
+	// updating of the cart is not possible so we don't want to return the raw
+	// `responseCart` to the consumer. Instead, we keep a copy of the
+	// `responseCart` the last time the state had a `valid` CacheStatus and pass
+	// that to our consumers. The consumers can use `isPendingUpdate` to know
+	// when the cart data is updating.
+	if ( state !== lastState && ! isStatePendingUpdateOrQueuedAction( state ) ) {
+		state = shoppingCartReducer( state, { type: 'UPDATE_LAST_VALID_CART' } );
+	}
+
+	return state;
+}
+
+function shoppingCartReducer(
+	state: ShoppingCartState,
+	action: ShoppingCartAction
+): ShoppingCartState {
 	debug( 'processing requested action', action );
+	const couponStatus = state.couponStatus;
 	switch ( action.type ) {
+		case 'UPDATE_LAST_VALID_CART':
+			return {
+				...state,
+				lastValidResponseCart: convertTempResponseCartToResponseCart( state.responseCart ),
+			};
+
 		case 'FETCH_INITIAL_RESPONSE_CART':
 			return { ...state, cacheStatus: 'fresh-pending' };
 
 		case 'CART_RELOAD':
 			debug( 'reloading cart from server' );
-			return getInitialShoppingCartState();
+			return { ...state, cacheStatus: 'fresh' };
 
 		case 'CLEAR_QUEUED_ACTIONS':
 			return { ...state, queuedActions: [] };
@@ -272,9 +286,10 @@ function shoppingCartReducer(
 	}
 }
 
-function getInitialShoppingCartState(): ShoppingCartState {
+export function getInitialShoppingCartState(): ShoppingCartState {
 	return {
 		responseCart: emptyResponseCart,
+		lastValidResponseCart: emptyResponseCart,
 		cacheStatus: 'fresh',
 		couponStatus: 'fresh',
 		queuedActions: [],

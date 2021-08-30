@@ -887,13 +887,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/shopping-cart@workspace:packages/shopping-cart"
   dependencies:
-    "@automattic/calypso-polyfills": ^1.0.0
     "@testing-library/jest-dom": ^5.14.1
     "@testing-library/react": ^12.0.0
     debug: ^4.1.1
+    typescript: ^4.3.5
+  peerDependencies:
     react: ^16.12.0
     react-dom: ^16.12.0
-    typescript: ^4.3.5
   languageName: unknown
   linkType: soft
 

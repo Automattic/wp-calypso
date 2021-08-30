@@ -531,6 +531,8 @@ export default function CompositeCheckout( {
 			arePaymentMethodsLoading: arePaymentMethodsLoading,
 			items: responseCart.products.length < 1,
 		} );
+	} else {
+		debug( 'no longer loading' );
 	}
 
 	useRecordCheckoutLoaded( {
@@ -574,6 +576,7 @@ export default function CompositeCheckout( {
 			isInitialCartLoading,
 		} )
 	) {
+		debug( 'rendering empty cart page' );
 		const goToPlans = () => {
 			recordEvent( {
 				type: 'EMPTY_CART_CTA_CLICKED',
