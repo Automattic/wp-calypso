@@ -45,10 +45,11 @@ const debug = debugFactory( 'calypso:signup:step-actions' );
 export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	const { siteId, siteSlug } = data;
 	const { cartItem, designType, siteUrl, themeSlugWithRepo } = dependencies;
+	const reduxState = reduxStore.getState();
 	const domainItem = dependencies.domainItem
 		? prepareItemForAddingToCart(
-				addPrivacyProtectionIfSupported( dependencies.domainItem, reduxStore.getState() ),
-				reduxStore.getState()
+				addPrivacyProtectionIfSupported( dependencies.domainItem, reduxState ),
+				reduxState
 		  )
 		: null;
 
@@ -74,7 +75,7 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 		};
 		const products = [ dependencies.domainItem, dependencies.privacyItem, dependencies.cartItem ]
 			.filter( Boolean )
-			.map( ( item ) => prepareItemForAddingToCart( item, reduxStore.getState() ) );
+			.map( ( item ) => prepareItemForAddingToCart( item, reduxState ) );
 
 		cartManagerClient
 			.forCartKey( siteId )
@@ -373,9 +374,10 @@ function processItemCart(
 ) {
 	const addToCartAndProceed = () => {
 		debug( 'adding cart items', newCartItems );
+		const reduxState = reduxStore.getState();
 		const newCartItemsToAdd = newCartItems
-			.map( ( item ) => addPrivacyProtectionIfSupported( item, reduxStore.getState() ) )
-			.map( ( item ) => prepareItemForAddingToCart( item, reduxStore.getState() ) );
+			.map( ( item ) => addPrivacyProtectionIfSupported( item, reduxState ) )
+			.map( ( item ) => prepareItemForAddingToCart( item, reduxState ) );
 
 		if ( newCartItemsToAdd.length ) {
 			cartManagerClient
