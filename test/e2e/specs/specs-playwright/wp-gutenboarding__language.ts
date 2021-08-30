@@ -29,18 +29,19 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Language' ), function () 
 	} );
 
 	describe.each( [
-		{ language: 'Spanish', target: 'es', acquireIntent: 'Mi página web se llama' },
-		{ language: 'Japanese', target: 'ja', acquireIntent: '私のサイトの名前は' },
-		{ language: 'Arabic', target: 'ar', acquireIntent: 'سيكون اسم موقعي' },
-		{ language: 'Hebrew', target: 'he', acquireIntent: 'האתר שלי נקרא' },
-		{ language: 'Russian', target: 'ru', acquireIntent: 'Мой сайт называется' },
-	] )( 'Change Language', function ( { language, target, acquireIntent } ) {
+		{ language: 'Spanish', target: 'es', labelText: 'Mi página web se llama' },
+		{ language: 'Japanese', target: 'ja', labelText: '私のサイトの名前は' },
+		{ language: 'Arabic', target: 'ar', labelText: 'سيكون اسم موقعي' },
+		{ language: 'Hebrew', target: 'he', labelText: 'האתר שלי נקרא' },
+		{ language: 'Russian', target: 'ru', labelText: 'Мой сайт называется' },
+	] )( 'Change Language', function ( { language, target, labelText } ) {
 		it( `Change language to ${ language }`, async function () {
 			await gutenboardingFlow.switchLanguage( target );
 		} );
 
 		it( `Acquire intent is displayed in ${ language }`, async function () {
-			await page.waitForSelector( `label:text("${ acquireIntent }")` );
+			const text = await gutenboardingFlow.getSiteTitleLabel();
+			expect( text ).toBe( labelText );
 		} );
 	} );
 } );
