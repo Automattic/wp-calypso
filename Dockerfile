@@ -13,6 +13,7 @@ FROM ${base_image} as builder-cache-true
 
 ENV NPM_CONFIG_CACHE=/calypso/.cache
 ENV PERSISTENT_CACHE=true
+ENV READONLY_CACHE=true
 
 ###################
 FROM builder-cache-${use_cache} as builder
