@@ -33,6 +33,8 @@ import {
 	renderTransactionQuantitySummary,
 } from './utils';
 
+import './style.scss';
+
 class BillingReceipt extends React.Component {
 	componentDidMount() {
 		this.redirectIfInvalidTransaction();

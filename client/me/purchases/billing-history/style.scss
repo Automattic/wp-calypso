@@ -437,6 +437,7 @@ textarea.billing-history__billing-details-editable {
 }
 
 @media print {
+	.is-section-me,
 	.is-section-billing,
 	.is-section-purchases {
 		// stylelint-disable-next-line selector-max-id
@@ -447,7 +448,7 @@ textarea.billing-history__billing-details-editable {
 		.inline-help,
 		.billing-history__billing-details-description,
 		.receipt__no-print {
-			display: none;
+			display: none !important;
 		}
 	}
 
