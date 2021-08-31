@@ -1,35 +1,28 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
+import { createElement, createInterpolateElement } from '@wordpress/element';
+import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { __ } from '@wordpress/i18n';
-import { createElement, createInterpolateElement } from '@wordpress/element';
-import { Button } from '@automattic/components';
-import MaterialIcon from 'calypso/components/material-icon';
-
-/**
- * Internal dependencies
- */
 import CardHeading from 'calypso/components/card-heading';
+import MaterialIcon from 'calypso/components/material-icon';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
-import { modeType, stepSlug } from './constants';
+import { modeType, stepSlug, stepsHeadingAdvanced } from './constants';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default function ConnectDomainStepAdvancedStart( {
 	className,
-	currentPageSlug,
+	pageSlug,
 	mode,
 	onNextStep,
-	onSwitchToSuggestedSetup,
 	progressStepList,
+	setPage,
 } ) {
+	const { __ } = useI18n();
+	const switchToSuggestedSetup = () => setPage( stepSlug.SUGGESTED_START );
+
 	const stepContent = (
 		<>
 			<Notice
@@ -40,7 +33,7 @@ export default function ConnectDomainStepAdvancedStart( {
 				{ __(
 					'We advise using our recommended setup instead, with WordPress.com name servers. Our advanced setup requires manually managing DNS records for any added services such as Professional Email yourself.'
 				) }
-				<NoticeAction onClick={ onSwitchToSuggestedSetup }>
+				<NoticeAction onClick={ switchToSuggestedSetup }>
 					{ __( 'Back to recommended setup' ) }
 				</NoticeAction>
 			</Notice>
@@ -53,7 +46,7 @@ export default function ConnectDomainStepAdvancedStart( {
 						{
 							a: createElement( 'a', {
 								className: 'connect-domain-step__change_mode_link',
-								onClick: onSwitchToSuggestedSetup,
+								onClick: switchToSuggestedSetup,
 							} ),
 						}
 					) }
@@ -77,9 +70,10 @@ export default function ConnectDomainStepAdvancedStart( {
 	return (
 		<ConnectDomainStepWrapper
 			className={ className }
+			heading={ stepsHeadingAdvanced }
 			mode={ mode }
 			progressStepList={ progressStepList }
-			currentPageSlug={ currentPageSlug }
+			pageSlug={ pageSlug }
 			stepContent={ stepContent }
 		/>
 	);
@@ -87,9 +81,9 @@ export default function ConnectDomainStepAdvancedStart( {
 
 ConnectDomainStepAdvancedStart.propTypes = {
 	className: PropTypes.string.isRequired,
-	currentPageSlug: PropTypes.oneOf( Object.values( stepSlug ) ).isRequired,
+	pageSlug: PropTypes.oneOf( Object.values( stepSlug ) ).isRequired,
 	mode: PropTypes.oneOf( Object.values( modeType ) ).isRequired,
 	onNextStep: PropTypes.func.isRequired,
-	onSwitchToSuggestedSetup: PropTypes.func.isRequired,
 	progressStepList: PropTypes.object.isRequired,
+	setPage: PropTypes.func.isRequired,
 };

@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 

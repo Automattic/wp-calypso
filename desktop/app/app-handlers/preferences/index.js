@@ -1,6 +1,3 @@
-/**
- * External Dependencies
- */
 const { dialog, ipcMain: ipc } = require( 'electron' );
 const log = require( '../../lib/logger' )( 'preferences' );
 const Settings = require( '../../lib/settings' );

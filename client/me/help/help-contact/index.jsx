@@ -15,12 +15,15 @@ import HappychatConnection from 'calypso/components/happychat/connection-connect
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { isDefaultLocale, localizeUrl } from 'calypso/lib/i18n-utils';
+import { withoutHttp } from 'calypso/lib/url';
 import wpcomLib from 'calypso/lib/wp';
 import ActiveTicketsNotice from 'calypso/me/help/active-tickets-notice';
-import HelpContactForm from 'calypso/me/help/help-contact-form';
-import HelpContactConfirmation from 'calypso/me/help/help-contact-confirmation';
 import ChatHolidayClosureNotice from 'calypso/me/help/contact-form-notice/chat-holiday-closure';
+import HelpContactConfirmation from 'calypso/me/help/help-contact-confirmation';
+import HelpContactForm from 'calypso/me/help/help-contact-form';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import {
 	getCurrentUser,
@@ -35,28 +38,18 @@ import {
 import getHappychatUserInfo from 'calypso/state/happychat/selectors/get-happychat-userinfo';
 import hasHappychatLocalizedSupport from 'calypso/state/happychat/selectors/has-happychat-localized-support';
 import isHappychatUserEligible from 'calypso/state/happychat/selectors/is-happychat-user-eligible';
-import {
-	isTicketSupportConfigurationReady,
-	getTicketSupportRequestError,
-} from 'calypso/state/help/ticket/selectors';
-import { withoutHttp } from 'calypso/lib/url';
-import { errorNotice } from 'calypso/state/notices/actions';
-import getActiveSupportTickets from 'calypso/state/selectors/get-active-support-tickets';
-import getLocalizedLanguageNames from 'calypso/state/selectors/get-localized-language-names';
-import { isRequestingSites } from 'calypso/state/sites/selectors';
-import HelpUnverifiedWarning from '../help-unverified-warning';
 import { openChat as openHappychat } from 'calypso/state/happychat/ui/actions';
 import {
 	askQuestion as askDirectlyQuestion,
 	initialize as initializeDirectly,
 } from 'calypso/state/help/directly/actions';
-import getSupportLevel from 'calypso/state/selectors/get-support-level';
-import hasUserAskedADirectlyQuestion from 'calypso/state/selectors/has-user-asked-a-directly-question';
-import isDirectlyReady from 'calypso/state/selectors/is-directly-ready';
-import isDirectlyUninitialized from 'calypso/state/selectors/is-directly-uninitialized';
 import { getHelpSelectedSiteId } from 'calypso/state/help/selectors';
-import { isDefaultLocale, localizeUrl } from 'calypso/lib/i18n-utils';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import {
+	isTicketSupportConfigurationReady,
+	getTicketSupportRequestError,
+} from 'calypso/state/help/ticket/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
+import getActiveSupportTickets from 'calypso/state/selectors/get-active-support-tickets';
 import getInlineHelpSupportVariation, {
 	SUPPORT_CHAT_OVERFLOW,
 	SUPPORT_DIRECTLY,
@@ -65,6 +58,13 @@ import getInlineHelpSupportVariation, {
 	SUPPORT_TICKET,
 	SUPPORT_UPWORK_TICKET,
 } from 'calypso/state/selectors/get-inline-help-support-variation';
+import getLocalizedLanguageNames from 'calypso/state/selectors/get-localized-language-names';
+import getSupportLevel from 'calypso/state/selectors/get-support-level';
+import hasUserAskedADirectlyQuestion from 'calypso/state/selectors/has-user-asked-a-directly-question';
+import isDirectlyReady from 'calypso/state/selectors/is-directly-ready';
+import isDirectlyUninitialized from 'calypso/state/selectors/is-directly-uninitialized';
+import { isRequestingSites } from 'calypso/state/sites/selectors';
+import HelpUnverifiedWarning from '../help-unverified-warning';
 
 import './style.scss';
 

@@ -137,7 +137,6 @@ module.exports = {
 		'wpcalypso/i18n-no-this-translate': 'error',
 		'wpcalypso/i18n-mismatched-placeholders': 'error',
 		'wpcalypso/i18n-named-placeholders': 'error',
-		'wpcalypso/import-docblock': 'error',
 		'wpcalypso/jsx-gridicon-size': 'error',
 		'wpcalypso/jsx-classname-namespace': 'error',
 		'wpcalypso/redux-no-bound-selectors': 'error',

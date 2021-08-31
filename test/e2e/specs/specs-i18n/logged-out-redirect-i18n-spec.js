@@ -1,13 +1,4 @@
-/**
- * External Dependencies
- *
- */
-
 import config from 'config';
-
-/**
- * Internal Dependencies
- */
 import * as driverManager from '../../lib/driver-manager.js';
 import WPHomePage from '../../lib/pages/wp-home-page';
 

@@ -28,10 +28,10 @@ const cacheIdentifier = require( '../build-tools/babel/babel-loader-cache-identi
 const AssetsWriter = require( '../build-tools/webpack/assets-writer-plugin.js' );
 const getAliasesForExtensions = require( '../build-tools/webpack/extensions' );
 const GenerateChunksMapPlugin = require( '../build-tools/webpack/generate-chunks-map-plugin' );
+const ReadOnlyCachePlugin = require( '../build-tools/webpack/readonly-cache-plugin' );
 const RequireChunkCallbackPlugin = require( '../build-tools/webpack/require-chunk-callback-plugin' );
 const config = require( './server/config' );
 const { workerCount } = require( './webpack.common' );
-
 /**
  * Internal variables
  */
@@ -54,6 +54,7 @@ const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
 const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
 const cachePath = path.resolve( '.cache', extraPath );
 const shouldUsePersistentCache = process.env.PERSISTENT_CACHE === 'true';
+const shouldUseReadonlyCache = process.env.READONLY_CACHE === 'true';
 const shouldProfile = process.env.PROFILE === 'true';
 
 function filterEntrypoints( entrypoints ) {
@@ -368,6 +369,8 @@ const webpackConfig = {
 
 		// Equivalent to the CLI flag --progress=profile
 		shouldProfile && new webpack.ProgressPlugin( { profile: true } ),
+
+		shouldUsePersistentCache && shouldUseReadonlyCache && new ReadOnlyCachePlugin(),
 	].filter( Boolean ),
 	externals: [ 'keytar' ],
 

@@ -11,17 +11,12 @@
  * $ node ./bin/audit-svg-colors.js
  */
 
-/**
- * External dependencies
- */
-
 const { execSync } = require( 'child_process' );
-const path = require( 'path' );
 const { readFileSync } = require( 'fs' );
-
-const _ = require( 'lodash' );
-const chroma = require( 'chroma-js' );
+const path = require( 'path' );
 const PALETTE = require( '@automattic/color-studio' );
+const chroma = require( 'chroma-js' );
+const _ = require( 'lodash' );
 
 /**
  * Palette color subsets

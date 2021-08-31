@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { isAdTrackingAllowed } from 'calypso/lib/analytics/utils';
 import { debug, isFloodlightEnabled } from './constants';
 import { recordParamsInFloodlightGtag } from './floodlight';

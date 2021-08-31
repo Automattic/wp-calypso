@@ -1,6 +1,3 @@
-/**
- * External Dependencies
- */
 const { builtinModules } = require( 'module' );
 const { join } = require( 'path' );
 const ExternalModule = require( 'webpack' ).ExternalModule;

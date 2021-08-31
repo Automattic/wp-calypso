@@ -1,6 +1,3 @@
-/**
- * Internal Dependencies
- */
 import { decodeEntities as decode } from 'calypso/lib/formatting';
 import safeImageURL from 'calypso/lib/safe-image-url';
 

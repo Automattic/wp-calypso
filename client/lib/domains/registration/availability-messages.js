@@ -1,22 +1,15 @@
 /* eslint-disable no-case-declarations */
 
-/**
- * External dependencies
- */
-import React from 'react';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
 import { getTld } from 'calypso/lib/domains';
+import { domainAvailability } from 'calypso/lib/domains/constants';
 import {
 	CALYPSO_CONTACT,
 	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
 	MAP_EXISTING_DOMAIN,
 } from 'calypso/lib/url/support';
-import { domainAvailability } from 'calypso/lib/domains/constants';
 import {
 	domainManagementTransferToOtherSite,
 	domainManagementTransferIn,

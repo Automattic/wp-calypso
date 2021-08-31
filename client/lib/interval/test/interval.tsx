@@ -2,16 +2,9 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
 import { act } from 'react-dom/test-utils';
-
-/**
- * Internal dependencies
- */
 import { Interval, EVERY_SECOND, EVERY_MINUTE } from '../index';
 
 jest.useFakeTimers();

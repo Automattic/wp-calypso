@@ -1,18 +1,11 @@
-/**
- * External dependencies
- */
+import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
 import { camelCase, isPlainObject, omit, pick, snakeCase, set } from 'lodash';
 import { stringify } from 'qs';
-
-/**
- * Internal dependencies.
- */
-import Site from './site';
-import Me from './me';
-import config from '@automattic/calypso-config';
 import { getLanguage, getLocaleSlug } from 'calypso/lib/i18n-utils';
 import readerContentWidth from 'calypso/reader/lib/content-width';
+import Me from './me';
+import Site from './site';
 
 const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
 const { Blob } = globalThis; // The linter complains if I don't do this...?

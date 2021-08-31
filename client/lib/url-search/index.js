@@ -1,16 +1,9 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import debugFactory from 'debug';
-import page from 'page';
 import url from 'url';
+import debugFactory from 'debug';
 import { pick } from 'lodash';
+import page from 'page';
+import React from 'react';
 
-/**
- * Internal dependencies
- */
 const debug = debugFactory( 'calypso:url-search' );
 
 /**

@@ -22,8 +22,11 @@
 		"prepack": "yarn run clean && yarn run build",
 		"test": "yarn jest"
 	},
+	"dependencies": {
+		"tslib": "^2.3.0"
+	},
 	"devDependencies": {
 		"@automattic/calypso-polyfills": "^1.0.0",
-		"tslib": "^2.3.0"
+		"typescript": "^4.3.5"
 	}
 }

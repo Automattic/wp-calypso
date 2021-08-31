@@ -1,8 +1,8 @@
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { useTheme } from 'emotion-theming';
 import React, { useState } from 'react';
 import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
 import Button from '../../components/button';

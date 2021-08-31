@@ -43,6 +43,8 @@ const transformApiRequest = ( { data: jitms } ) =>
 		id: jitm.id,
 		isDismissible: jitm.is_dismissible,
 		messageExpiration: jitm.message_expiration ? moment( jitm.message_expiration ) : null,
+		title: unescapeDecimalEntities( jitm.content.title || '' ),
+		disclaimer: jitm.content.disclaimer.map( unescapeDecimalEntities ),
 	} ) );
 
 /**

@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import { expect } from 'chai';
-
-/**
- * Internal Dependencies
- */
 import safeProtocolUrl from '../';
 
 describe( 'index', () => {

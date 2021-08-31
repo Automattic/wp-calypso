@@ -1,6 +1,4 @@
-/**
- * Internal dependencies
- */
+import { getCurrentUser } from '@automattic/calypso-analytics';
 import { isJetpackPlan, isJetpackProduct } from '@automattic/calypso-products';
 import {
 	costToUSD,
@@ -34,10 +32,9 @@ import {
 	GA_PRODUCT_BRAND_WPCOM,
 	GA_PRODUCT_BRAND_JETPACK,
 } from './constants';
-import { loadTrackingScripts } from './load-tracking-scripts';
-import { recordParamsInFloodlightGtag } from './floodlight';
 import { cartToCriteoItems, recordInCriteo } from './criteo';
-import { getCurrentUser } from '@automattic/calypso-analytics';
+import { recordParamsInFloodlightGtag } from './floodlight';
+import { loadTrackingScripts } from './load-tracking-scripts';
 
 // Ensure setup has run.
 import './setup';

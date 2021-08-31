@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import flows from './flows-pure';
 
 export default {

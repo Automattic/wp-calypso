@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import * as ExPlatClient from '../index';
 
 const mockLogError = jest.fn();

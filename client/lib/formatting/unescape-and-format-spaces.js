@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { decodeEntities } from './decode-entities';
 
 const nbsp = String.fromCharCode( 160 );

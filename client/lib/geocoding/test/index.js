@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { geocode, reverseGeocode } from '../';
 
 jest.mock( '@automattic/load-script', () => require( './mocks/load-script' ).default );

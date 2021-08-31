@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-
-import { get } from 'lodash';
-/**
- * Internal dependencies
- */
 import config, { isEnabled } from '@automattic/calypso-config';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from '@automattic/calypso-products';
+import { get } from 'lodash';
 import { userCan } from 'calypso/lib/site/utils';
 
 /**

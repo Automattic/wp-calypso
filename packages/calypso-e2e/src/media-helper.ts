@@ -1,6 +1,7 @@
+import fs from 'fs/promises';
+import os from 'os';
 import path from 'path';
 import config from 'config';
-import fs from 'fs-extra';
 import { getTimestamp } from './data-helper';
 
 const artifacts: { [ key: string ]: string } = config.get( 'artifacts' );
@@ -42,30 +43,20 @@ export function getVideoDir(): string {
 }
 
 /**
- * Given a full path to file on disk, remove the file.
- *
- * @param {string} filePath Full path on disk.
- * @returns {void} No return value.
- */
-export function deleteFile( filePath: string ): void {
-	fs.removeSync( filePath );
-}
-
-/**
  * Creates a temporary test file by cloning a source file under a new name.
  *
  * @param {{[key: string]: string}} param0 Parameter object.
  * @param {string} param0.sourceFileName Basename of the source file to be cloned.
  * @param {string} [param0.testFileName] Basename of the test file to be generated.
- * @returns {string} Full path to the generated test file.
+ * @returns {Promise<string>} Full path to the generated test file.
  */
-export function createTestFile( {
+export async function createTestFile( {
 	sourceFileName,
 	testFileName,
 }: {
 	sourceFileName: string;
 	testFileName?: string;
-} ): string {
+} ): Promise< string > {
 	let fileName = getTimestamp();
 	// If the output `testFileName` is defined, use that as part of the final filename.
 	if ( testFileName ) {
@@ -78,12 +69,10 @@ export function createTestFile( {
 	const sourceFileDir = path.join( __dirname, '../../../../../test/e2e/image-uploads/' );
 	const sourceFilePath = path.join( sourceFileDir, sourceFileName );
 
-	// Generated test file will also go under the source directory.
-	// Attempting to copy the file elsewhere will trigger the following error on TeamCity:
-	// EPERM: operation not permitted
-	const testFilePath = path.join( sourceFileDir, fileName );
-	// Copy the source file specified to testFilePath, creating a clone differing only by name.
-	fs.copySync( sourceFilePath, testFilePath );
+	const tempDir = await fs.mkdtemp( path.join( os.tmpdir(), 'e2e-' ) );
+	const testFilePath = path.join( tempDir, fileName );
+
+	await fs.copyFile( sourceFilePath, testFilePath );
 
 	return testFilePath;
 }
@@ -91,10 +80,10 @@ export function createTestFile( {
 /**
  * Returns the path to a generated temporary JPEG image file.
  *
- * @returns {string} Full path on disk to the generated test file.
+ * @returns {Promise<string>} Full path on disk to the generated test file.
  */
-export function createTestImage(): string {
-	return createTestFile( { sourceFileName: 'image0.jpg' } );
+export async function createTestImage(): Promise< string > {
+	return await createTestFile( { sourceFileName: 'image0.jpg' } );
 }
 
 /**
@@ -102,8 +91,8 @@ export function createTestImage(): string {
  *
  * @returns {string} Full path on disk to the generated test file.
  */
-export function createTestAudio(): string {
-	return createTestFile( { sourceFileName: 'bees.mp3' } );
+export async function createTestAudio(): Promise< string > {
+	return await createTestFile( { sourceFileName: 'bees.mp3' } );
 }
 
 /**
@@ -111,6 +100,6 @@ export function createTestAudio(): string {
  *
  * @returns {string} Full path on disk to the generated test file.
  */
-export function createInvalidFile(): string {
-	return createTestFile( { sourceFileName: 'unsupported_extension.mkv' } );
+export async function createInvalidFile(): Promise< string > {
+	return await createTestFile( { sourceFileName: 'unsupported_extension.mkv' } );
 }

@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import path from 'path';
 
 export default function getAssetFilePath( target, filePath ) {

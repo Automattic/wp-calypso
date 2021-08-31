@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import store from 'store';
-
-/**
- * Internal dependencies
- */
 import {
 	deleteOldTicket,
 	GUEST_TICKET_LOCALFORAGE_KEY,

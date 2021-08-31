@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { filter } from 'lodash';
 import validUrl from 'valid-url';
 

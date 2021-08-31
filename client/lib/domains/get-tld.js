@@ -1,8 +1,5 @@
-/**
- * Internal dependencies
- */
-import { parseDomainAgainstTldList } from './utils';
 import wpcomMultiLevelTlds from './tlds/wpcom-multi-level-tlds.json';
+import { parseDomainAgainstTldList } from './utils';
 
 /**
  * Parse the tld from a given domain name, semi-naively. The function

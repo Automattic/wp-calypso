@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import { formatPrice } from 'calypso/lib/gsuite/utils/format-price';
 
 /**

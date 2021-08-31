@@ -1,9 +1,5 @@
-/**
- * External dependencies
- */
-
-import { v4 as uuid } from 'uuid';
 import config from '@automattic/calypso-config';
+import { v4 as uuid } from 'uuid';
 
 const allHyphens = new RegExp( '-', 'g' );
 

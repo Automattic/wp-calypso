@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import config from '@automattic/calypso-config';
 import { getDomainSuggestionsVendor } from '@automattic/domain-picker';
 

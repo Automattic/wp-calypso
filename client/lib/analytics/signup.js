@@ -1,22 +1,15 @@
-/**
- * External dependencies
- */
-import debug from 'debug';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
-
-/**
- * Internal dependencies
- */
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { identifyUser } from 'calypso/lib/analytics/identify-user';
-import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
-import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import { addToQueue } from 'calypso/lib/analytics/queue';
+import debug from 'debug';
 import {
 	adTrackSignupStart,
 	adTrackSignupComplete,
 	adTrackRegistration,
 } from 'calypso/lib/analytics/ad-tracking';
+import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { identifyUser } from 'calypso/lib/analytics/identify-user';
+import { addToQueue } from 'calypso/lib/analytics/queue';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 const signupDebug = debug( 'calypso:analytics:signup' );
 

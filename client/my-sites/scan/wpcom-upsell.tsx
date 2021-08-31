@@ -17,9 +17,6 @@ import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { getSitePlan } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-/**
- * Asset dependencies
- */
 import './style.scss';
 
 export default function WPCOMScanUpsellPage(): ReactElement {

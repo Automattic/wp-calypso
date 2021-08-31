@@ -2,17 +2,10 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import { expect } from 'chai';
 import { map } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import * as MediaUtils from '../utils';
 import { ValidationErrors as MediaValidationErrors } from '../constants';
+import * as MediaUtils from '../utils';
 
 jest.mock( 'uuid', () => ( {
 	v4: () => 'someid',

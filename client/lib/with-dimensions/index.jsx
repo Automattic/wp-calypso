@@ -1,13 +1,6 @@
-/**
- * External Dependencies
- */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { debounce } from 'lodash';
-
-/**
- * Internal dependencies
- */
+import PropTypes from 'prop-types';
+import React from 'react';
 import afterLayoutFlush from 'calypso/lib/after-layout-flush';
 
 const OVERFLOW_BUFFER = 4; // fairly arbitrary. feel free to tweak

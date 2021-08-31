@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import { mapValues, zipObject } from 'lodash';
 import assert from 'assert';
-
-/**
- * Internal dependencies
- */
+import { mapValues, zipObject } from 'lodash';
 import formState from '../';
 
 function checkNthState( n, callback ) {

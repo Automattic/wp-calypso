@@ -1,6 +1,3 @@
-/**
- * Internal Dependencies
- */
 import { isGoogleWorkspaceProductSlug } from 'calypso/lib/gsuite';
 
 /**

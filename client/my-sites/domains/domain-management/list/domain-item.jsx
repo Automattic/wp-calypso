@@ -178,7 +178,7 @@ class DomainItem extends PureComponent {
 				>
 					{ this.canSetAsPrimary() && (
 						<PopoverMenuItem icon="domains" onClick={ this.makePrimary }>
-							{ translate( 'Make primary domain' ) }
+							{ translate( 'Make primary address' ) }
 						</PopoverMenuItem>
 					) }
 					{ this.canRenewDomain() && (

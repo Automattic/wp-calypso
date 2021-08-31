@@ -1,14 +1,7 @@
-/**
- * External dependencies
- */
 import { cloneDeep, includes, omit, range } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import QueryManager from '../';
-import PaginatedQueryKey from './key';
 import { DEFAULT_PAGINATED_QUERY, PAGINATION_QUERY_KEYS } from './constants';
+import PaginatedQueryKey from './key';
 
 const pageCache = new WeakMap();
 

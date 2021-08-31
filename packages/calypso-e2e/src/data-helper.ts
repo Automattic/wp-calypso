@@ -41,6 +41,15 @@ export function getDateString( format: DateFormat ): string | null {
 }
 
 /**
+ * Generates a new name for test blog with prefix `e2eflowtesting`.
+ *
+ * @returns {string} Generated blog name.
+ */
+export function getBlogName(): string {
+	return `e2eflowtesting${ getTimestamp() }${ getRandomInteger( 100, 999 ) }`;
+}
+
+/**
  * Assembles and returns the URL to a specific route/asset/query in Calypso.
  *
  * @param {string} route Additional state or page to build into the returned URL.
@@ -110,6 +119,36 @@ export function getAccountSiteURL(
 	}
 
 	return url.toString();
+}
+
+/**
+ * Returns a new test email address with the domain name `mailosaur.io` within a specific inbox.
+ *
+ * @param param0 Keyed parameter object.
+ * @param {string} param0.inboxId Existing inbox ID on mailosaur.
+ * @param {string} param0.prefix Custom prefix to be prepended to the inboxId but after the global email prefix.
+ * @returns {string} Unique test email.
+ */
+export function getTestEmailAddress( {
+	inboxId,
+	prefix = '',
+}: {
+	inboxId: string;
+	prefix: string;
+} ): string {
+	const domain = 'mailosaur.io';
+	const globalEmailPrefix = config.has( 'emailPrefix' ) ? config.get( 'emailPrefix' ) : '';
+	return `${ globalEmailPrefix }${ prefix }.${ inboxId }@${ domain }`;
+}
+
+/**
+ * Adjusts the user invite link to the correct environment.
+ *
+ * @param {string} inviteURL Invitation link.
+ * @returns {string} Adjusted invitation link with the correct hostname.
+ */
+export function adjustInviteLink( inviteURL: string ): string {
+	return inviteURL.replace( 'https://wordpress.com', config.get( 'calypsoBaseURL' ) );
 }
 
 /**

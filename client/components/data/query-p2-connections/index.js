@@ -1,12 +1,6 @@
-/**
- * External dependencies
- */
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-/**
- * Internal dependencies
- */
 import { requestP2KeyringConnections } from 'calypso/state/sharing/keyring/actions';
 import { isKeyringConnectionsFetching } from 'calypso/state/sharing/keyring/selectors';
 

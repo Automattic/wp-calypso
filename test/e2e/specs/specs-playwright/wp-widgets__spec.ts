@@ -20,14 +20,15 @@ describe( DataHelper.createSuiteTitle( 'Widgets' ), function () {
 	it( 'Navigate to the Block Widgets Editor', async function () {
 		sidebarComponent = new SidebarComponent( page );
 		await sidebarComponent.navigate( 'Appearance', 'Widgets' );
+		const widgetsMenu = await page.waitForSelector( '"Customising ▸ Widgets"' );
+		await widgetsMenu.waitForElementState( 'stable' );
 	} );
 
-	it( 'Dismiss the Welcome Guide Notice', async function () {
-		await page.waitForLoadState( 'networkidle' );
-		const button = 'button:text("Got it")';
-
-		if ( await page.isVisible( button ) ) {
-			await page.click( button );
+	it( 'Dismiss the Welcome Guide Notice if displayed', async function () {
+		const button = await page.$( 'button:text("Got it")' );
+		if ( button ) {
+			await button.click();
+			await button.waitForElementState( 'hidden' );
 		}
 	} );
 
@@ -37,6 +38,7 @@ describe( DataHelper.createSuiteTitle( 'Widgets' ), function () {
 			await page.fill( 'input[placeholder="Search"]', 'Top Posts and Pages' );
 			await page.click( 'button.editor-block-list-item-legacy-widget\\/top-posts' );
 		} );
+
 		it( 'Visibility options are shown for the Legacy Widget', async function () {
 			await page.click( 'a.button:text("Visibility")' );
 			await page.waitForSelector( 'div.widget-conditional' );

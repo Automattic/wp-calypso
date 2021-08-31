@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-/**
- * Internal dependencies
- */
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
 import { domainAddNew } from 'calypso/my-sites/domains/paths';

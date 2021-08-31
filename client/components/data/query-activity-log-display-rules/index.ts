@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { requestDisplayRules } from 'calypso/state/activity-log/display-rules/actions';

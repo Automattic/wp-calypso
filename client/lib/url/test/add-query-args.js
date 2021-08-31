@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import addQueryArgs from '../add-query-args';
 
 describe( '#addQueryArgs()', () => {

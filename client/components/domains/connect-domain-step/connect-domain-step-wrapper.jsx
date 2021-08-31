@@ -1,40 +1,27 @@
-/**
- * External dependencies
- */
+import { Card } from '@automattic/components';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { __ } from '@wordpress/i18n';
-import { Card } from '@automattic/components';
-
-/**
- * Internal dependencies
- */
-import { modeType, stepSlug } from './constants';
 import CardHeading from 'calypso/components/card-heading';
 import ConnectDomainStepProgress from './connect-domain-step-progress';
+import { stepSlug } from './constants';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default function ConnectDomainStepWrapper( {
 	className,
-	mode,
+	heading,
 	progressStepList,
-	currentPageSlug,
+	pageSlug,
 	stepContent,
 } ) {
-	const heading = modeType.SUGGESTED === mode ? __( 'Suggested setup' ) : __( 'Advanced setup' );
-
 	const StepsProgress = (
 		<ConnectDomainStepProgress
 			baseClassName={ className }
 			steps={ progressStepList }
-			currentPageSlug={ currentPageSlug }
+			pageSlug={ pageSlug }
 		/>
 	);
-	const showProgress = Object.keys( progressStepList ).includes( currentPageSlug );
+	const showProgress = Object.keys( progressStepList ).includes( pageSlug );
 
 	return (
 		<Card className={ className }>
@@ -47,8 +34,8 @@ export default function ConnectDomainStepWrapper( {
 
 ConnectDomainStepWrapper.propTypes = {
 	className: PropTypes.string,
-	mode: PropTypes.oneOf( Object.values( modeType ) ).isRequired,
+	heading: PropTypes.string,
 	progressStepList: PropTypes.object.isRequired,
-	currentPageSlug: PropTypes.oneOf( Object.values( stepSlug ) ).isRequired,
+	pageSlug: PropTypes.oneOf( Object.values( stepSlug ) ).isRequired,
 	stepContent: PropTypes.element,
 };

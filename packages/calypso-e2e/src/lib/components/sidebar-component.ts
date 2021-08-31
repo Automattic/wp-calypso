@@ -55,7 +55,7 @@ export class SidebarComponent {
 			// Click top-level item without waiting for navigation if targeting subitem.
 			await this.page.click( itemSelector );
 
-			const subitemSelector = `:text-is("${ subitem }"):visible:below(${ itemSelector })`;
+			const subitemSelector = `.is-toggle-open :text-is("${ subitem }"):visible`;
 			await this.scrollItemIntoViewIfNeeded( subitemSelector );
 
 			await Promise.all( [ this.page.waitForNavigation(), this.page.click( subitemSelector ) ] );
@@ -119,7 +119,29 @@ export class SidebarComponent {
 	}
 
 	/**
-	 * Opens the sidebar into view for mobile viewports.
+	 * Clicks on the switch site menu item in the sidebar.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async switchSite(): Promise< void > {
+		const viewportName = getViewportName();
+
+		await this.waitForSidebarInitialization();
+
+		if ( viewportName === 'mobile' ) {
+			await this.openMobileSidebar();
+		}
+
+		await this.page.click( ':text("Switch Site")' );
+		await this.page.waitForSelector( '.layout.focus-sites' );
+	}
+
+	/**
+	 * Performs the underlying click action on a sidebar menu item.
+	 *
+	 * This method ensures the sidebar is in a stable, consistent state prior to executing its actions,
+	 * scrolls the sidebar and main content to expose the target element in the viewport, then
+	 * executes a click.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
@@ -130,5 +152,17 @@ export class SidebarComponent {
 		// `focus-sidebar` attribute is added once the sidebar is opened and focused in mobile view.
 		const layoutElement = await this.page.waitForSelector( '.layout.focus-sidebar' );
 		await layoutElement.waitForElementState( 'stable' );
+	}
+
+	/**
+	 * Clicks on the Add Site button at bottom of the site selector within the sidebar.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async addSite(): Promise< void > {
+		await Promise.all( [
+			this.page.waitForNavigation(),
+			this.page.click( 'a:text("Add New Site")' ),
+		] );
 	}
 }

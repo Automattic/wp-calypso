@@ -9,9 +9,6 @@ import PlansFeatureList from '../plans-feature-list';
 import { PLANS_STORE } from '../stores';
 import type { DomainSuggestions, Plans } from '@automattic/data-stores';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const ChevronDown = (

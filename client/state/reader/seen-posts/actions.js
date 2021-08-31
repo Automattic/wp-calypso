@@ -10,9 +10,6 @@ import {
 } from 'calypso/state/reader/action-types';
 import { SOURCE_READER_WEB } from 'calypso/state/reader/seen-posts/constants';
 
-/**
- * Load data layer dependencies
- */
 import 'calypso/state/data-layer/wpcom/seen-posts/seen/new/index';
 import 'calypso/state/data-layer/wpcom/seen-posts/seen/delete/index';
 import 'calypso/state/data-layer/wpcom/seen-posts/seen/all/new/index';
@@ -27,7 +24,6 @@ import 'calypso/state/data-layer/wpcom/seen-posts/seen/blog/delete/index';
  * @param payload.feedUrl url of the feed
  * @param payload.feedItemIds list of feed item ids
  * @param payload.globalIds list of Calypso Reader specific global ids
- *
  * @returns {{seenIds: *, globalIds: *, source: *, type: string}} redux action
  */
 export const requestMarkAsSeen = ( { feedId, feedUrl, feedItemIds, globalIds } ) => ( {
@@ -46,7 +42,6 @@ export const requestMarkAsSeen = ( { feedId, feedUrl, feedItemIds, globalIds } )
  * @param payload.feedId identifier of the feed
  * @param payload.feedUrl url of the feed
  * @param payload.globalIds list of Calypso Reader specific global ids
- *
  * @returns {{globalIds: *, type: string}} redux action
  */
 export const receiveMarkAsSeen = ( { feedId, feedUrl, globalIds } ) => ( {
@@ -64,7 +59,6 @@ export const receiveMarkAsSeen = ( { feedId, feedUrl, globalIds } ) => ( {
  * @param payload.feedUrl url of the feed
  * @param payload.feedItemIds list of feed item ids
  * @param payload.globalIds list of Calypso Reader specific global ids
- *
  * @returns {{seenIds: *, globalIds: *, type: string}} redux action
  */
 export const requestMarkAsUnseen = ( { feedId, feedUrl, feedItemIds, globalIds } ) => ( {
@@ -83,7 +77,6 @@ export const requestMarkAsUnseen = ( { feedId, feedUrl, feedItemIds, globalIds }
  * @param payload.feedId identifier of the feed
  * @param payload.feedUrl url of the feed
  * @param payload.globalIds list of Calypso Reader specific global ids
- *
  * @returns {{globalIds: *, type: string}} redux action
  */
 export const receiveMarkAsUnseen = ( { feedId, feedUrl, globalIds } ) => ( {
@@ -100,7 +93,6 @@ export const receiveMarkAsUnseen = ( { feedId, feedUrl, globalIds } ) => ( {
  * @param payload.identifier given Reader section
  * @param payload.feedIds list of feed identifiers
  * @param payload.feedUrls list of feed urls
- *
  * @returns {{section: string, type: string}} redux action
  */
 export const requestMarkAllAsSeen = ( { identifier, feedIds, feedUrls } ) => ( {
@@ -117,7 +109,10 @@ export const requestMarkAllAsSeen = ( { identifier, feedIds, feedUrls } ) => ( {
  * @param {object} payload method
  * @param payload.section given Reader section
  * @param payload.globalIds list of Calypso Reader specific global ids
- *
+ * @param payload.feedIds
+ * @param payload.feedUrls
+ * @param payload.feedIds
+ * @param payload.feedUrls
  * @returns {{section: string, globalIds: *, type: string}} redux action
  */
 export const receiveMarkAllAsSeen = ( { feedIds, feedUrls, globalIds } ) => ( {
@@ -136,7 +131,6 @@ export const receiveMarkAllAsSeen = ( { feedIds, feedUrls, globalIds } ) => ( {
  * @param payload.feedId identifier of the feed
  * @param payload.feedUrl url of the feed
  * @param payload.globalIds list of Calypso Reader specific global ids
- *
  * @returns {{seenIds: *, globalIds: *, source: *, type: string}} redux action
  */
 export const requestMarkAsSeenBlog = ( { blogId, postIds, feedId, feedUrl, globalIds } ) => ( {
@@ -158,7 +152,6 @@ export const requestMarkAsSeenBlog = ( { blogId, postIds, feedId, feedUrl, globa
  * @param payload.feedUrl url of the feed
  * @param payload.postIds list of blog post ids
  * @param payload.globalIds list of Calypso Reader specific global ids
- *
  * @returns {{seenIds: *, globalIds: *, type: string}} redux action
  */
 export const requestMarkAsUnseenBlog = ( { blogId, postIds, feedId, feedUrl, globalIds } ) => ( {

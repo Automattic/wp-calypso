@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { subscribeIsMobile } from '@automattic/viewport';
+import { subscribeIsMobile, isMobile } from '@automattic/viewport';
 import { Button, Card, CardBody, CardFooter, CardMedia, Flex } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
@@ -121,10 +121,10 @@ function CardNavigation( { cardIndex, lastCardIndex, onDismiss, setCurrentCardIn
 }
 
 function CardOverlayControls( { onMinimize, onDismiss, slideNumber } ) {
-	const [ isMobile, setIsMobile ] = useState( false );
+	const [ isMobileView, setIsMobileView ] = useState( isMobile() );
 
 	useEffectOnlyOnce( () => {
-		const unsubscribe = subscribeIsMobile( ( isNarrow ) => setIsMobile( isNarrow ) );
+		const unsubscribe = subscribeIsMobile( ( isNarrow ) => setIsMobileView( isNarrow ) );
 		return function cleanup() {
 			unsubscribe();
 		};
@@ -138,7 +138,7 @@ function CardOverlayControls( { onMinimize, onDismiss, slideNumber } ) {
 		} );
 	};
 	const buttonClasses = classNames( 'welcome-tour-card__overlay-controls', {
-		'welcome-tour-card__overlay-controls-visible': isMobile,
+		'welcome-tour-card__overlay-controls-visible': isMobileView,
 	} );
 
 	return (

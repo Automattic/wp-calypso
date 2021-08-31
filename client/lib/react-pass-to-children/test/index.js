@@ -1,13 +1,6 @@
-/**
- * External dependencies
- */
-import ShallowRenderer from 'react-test-renderer/shallow';
-import React from 'react';
 import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
+import React from 'react';
+import ShallowRenderer from 'react-test-renderer/shallow';
 import passToChildren from '../';
 
 /**

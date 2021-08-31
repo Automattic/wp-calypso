@@ -1,8 +1,5 @@
 import { createSelector } from '@automattic/state-utils';
 
-/**
- * Redux dependencies
- */
 import 'calypso/state/imports/init';
 
 export function isImporterLocked( state, importerId ) {

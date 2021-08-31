@@ -43,9 +43,7 @@ import { useFormStatus } from './lib/form-status';
 import InvalidPaymentProcessorResponseError from './lib/invalid-payment-processor-response-error';
 import { useLineItems, useTotal, useLineItemsOfType } from './lib/line-items';
 import { usePaymentMethod, usePaymentMethodId, useAllPaymentMethods } from './lib/payment-methods';
-import { createAlipayPaymentMethodStore, createAlipayMethod } from './lib/payment-methods/alipay';
 import PaymentLogo from './lib/payment-methods/payment-logo';
-import { createSofortPaymentMethodStore, createSofortMethod } from './lib/payment-methods/sofort';
 import {
 	createStripeMethod,
 	createStripePaymentMethodStore,
@@ -102,11 +100,7 @@ export {
 	RadioButton,
 	SubmitButtonWrapper,
 	checkoutTheme,
-	createAlipayMethod,
-	createAlipayPaymentMethodStore,
 	createRegistry,
-	createSofortMethod,
-	createSofortPaymentMethodStore,
 	createStripeMethod,
 	createStripePaymentMethodStore,
 	defaultRegistry,

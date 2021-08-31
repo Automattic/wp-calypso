@@ -6,7 +6,6 @@ module.exports = {
 	'i18n-no-placeholders-only': require( './i18n-no-placeholders-only' ),
 	'i18n-no-this-translate': require( './i18n-no-this-translate' ),
 	'i18n-no-variables': require( './i18n-no-variables' ),
-	'import-docblock': require( './import-docblock' ),
 	'jsx-classname-namespace': require( './jsx-classname-namespace' ),
 	'jsx-gridicon-size': require( './jsx-gridicon-size' ),
 	'post-message-no-wildcard-targets': require( './post-message-no-wildcard-targets' ),

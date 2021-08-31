@@ -1,8 +1,3 @@
-/**
- * External dependencies
- *
- */
-
 import { string, node } from 'prop-types';
 import React from 'react';
 import ExternalLink from 'calypso/components/external-link';

@@ -1,15 +1,8 @@
-/**
- * External dependencies
- */
-import { forEach, startsWith, some, includes, filter } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import safeImageURL from 'calypso/lib/safe-image-url';
-import { maxWidthPhotonishURL } from './utils';
-import { resolveRelativePath } from 'calypso/lib/url';
 import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
+import { forEach, startsWith, some, includes, filter } from 'lodash';
+import safeImageURL from 'calypso/lib/safe-image-url';
+import { resolveRelativePath } from 'calypso/lib/url';
+import { maxWidthPhotonishURL } from './utils';
 
 const TRANSPARENT_GIF =
 	'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';

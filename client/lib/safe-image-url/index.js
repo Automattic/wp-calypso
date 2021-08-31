@@ -1,12 +1,5 @@
-/**
- * External dependencies
- */
-import photon from 'photon';
-
-/**
- * Internal dependencies
- */
 import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
+import photon from 'photon';
 
 /**
  * Pattern matching URLs to be left unmodified.

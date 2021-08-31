@@ -1,22 +1,11 @@
-/**
- * External dependencies
- */
-
-import React from 'react';
-import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
-
-/**
- * Internal dependencies
- */
-import { Dialog } from '@automattic/components';
 import config from '@automattic/calypso-config';
+import { Dialog } from '@automattic/components';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import React from 'react';
 import KeyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
 import KEY_BINDINGS from 'calypso/lib/keyboard-shortcuts/key-bindings';
 
-/**
- * Style dependencies
- */
 import './menu.scss';
 
 class KeyboardShortcutsMenu extends React.Component {

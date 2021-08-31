@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import formatCurrency from '@automattic/format-currency';
 import { __, sprintf } from '@wordpress/i18n';
-/**
- * Internal dependencies
- */
 import {
 	isDomainBundledWithPlan,
 	isDomainMappingFree,

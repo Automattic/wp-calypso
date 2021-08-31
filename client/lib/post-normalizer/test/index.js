@@ -1,28 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-jest.mock( 'calypso/lib/safe-image-url', () => require( './mocks/lib/safe-image-url' ) );
-
-/**
- * External dependencies
- */
 import { flow, trim } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import safeImageUrlFake from 'calypso/lib/safe-image-url';
-import decodeEntities from '../rule-decode-entities';
-import stripHtml from '../rule-strip-html';
-import preventWidows from '../rule-prevent-widows';
-import pickCanonicalImage from '../rule-pick-canonical-image';
-import makeSiteIDSafeForAPI from '../rule-make-site-id-safe-for-api';
-import pickPrimaryTag from '../rule-pick-primary-tag';
-import safeImageProperties from '../rule-safe-image-properties';
-import makeLinksSafe from '../rule-make-links-safe';
-import keepValidImages from '../rule-keep-valid-images';
-import createBetterExcerpt from '../rule-create-better-excerpt';
-import withContentDOM from '../rule-with-content-dom';
 import detectMedia from '../rule-content-detect-media';
 import detectPolls from '../rule-content-detect-polls';
 import detectSurveys from '../rule-content-detect-surveys';
@@ -33,6 +13,19 @@ import makeImagesSafe from '../rule-content-make-images-safe';
 import makeContentLinksSafe from '../rule-content-make-links-safe';
 import removeElementsBySelector from '../rule-content-remove-elements-by-selector';
 import removeStyles from '../rule-content-remove-styles';
+import createBetterExcerpt from '../rule-create-better-excerpt';
+import decodeEntities from '../rule-decode-entities';
+import keepValidImages from '../rule-keep-valid-images';
+import makeLinksSafe from '../rule-make-links-safe';
+import makeSiteIDSafeForAPI from '../rule-make-site-id-safe-for-api';
+import pickCanonicalImage from '../rule-pick-canonical-image';
+import pickPrimaryTag from '../rule-pick-primary-tag';
+import preventWidows from '../rule-prevent-widows';
+import safeImageProperties from '../rule-safe-image-properties';
+import stripHtml from '../rule-strip-html';
+import withContentDOM from '../rule-with-content-dom';
+
+jest.mock( 'calypso/lib/safe-image-url', () => require( './mocks/lib/safe-image-url' ) );
 
 describe( 'index', () => {
 	test( 'should leave an empty object alone', () => {

@@ -1,10 +1,10 @@
 import DomainPicker from '@automattic/domain-picker';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { isDesktop } from '@automattic/viewport';
+import { ThemeProvider } from '@emotion/react';
 import styled from '@emotion/styled';
 import { HorizontalRule } from '@wordpress/components';
 import classnames from 'classnames';
-import { ThemeProvider } from 'emotion-theming';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import React, { useEffect, useState } from 'react';

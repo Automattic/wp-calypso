@@ -9,7 +9,6 @@ import HelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
 import QueryInlineHelpSearch from 'calypso/components/data/query-inline-help-search';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { selectResult } from 'calypso/state/inline-help/actions';
 import getInlineHelpAdminSectionSearchResultsForQuery from 'calypso/state/inline-help/selectors/get-inline-help-admin-section-search-results-query';
 import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
 import hasInlineHelpAPIResults from 'calypso/state/selectors/has-inline-help-api-results';
@@ -77,6 +76,5 @@ export default connect(
 	} ),
 	{
 		track: recordTracksEvent,
-		selectSearchResult: selectResult,
 	}
 )( localize( PopUpSearch ) );

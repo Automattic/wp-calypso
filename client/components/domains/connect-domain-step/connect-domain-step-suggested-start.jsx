@@ -1,33 +1,30 @@
-/**
- * External dependencies
- */
+import { Button } from '@automattic/components';
+import { createElement, createInterpolateElement } from '@wordpress/element';
+import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { __ } from '@wordpress/i18n';
-import { createElement, createInterpolateElement } from '@wordpress/element';
-import { Button } from '@automattic/components';
-import MaterialIcon from 'calypso/components/material-icon';
-
-/**
- * Internal dependencies
- */
 import CardHeading from 'calypso/components/card-heading';
+import {
+	modeType,
+	stepsHeadingSuggested,
+	stepSlug,
+} from 'calypso/components/domains/connect-domain-step/constants';
+import MaterialIcon from 'calypso/components/material-icon';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
-import { modeType, stepSlug } from 'calypso/components/domains/connect-domain-step/constants';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export default function ConnectDomainStepSuggestedStart( {
 	className,
-	currentPageSlug,
+	pageSlug,
 	mode,
 	onNextStep,
-	onSwitchToAdvancedSetup,
 	progressStepList,
+	setPage,
 } ) {
+	const { __ } = useI18n();
+	const switchToAdvancedSetup = () => setPage( stepSlug.ADVANCED_START );
+
 	const stepContent = (
 		<div className={ className + '__suggested-start' }>
 			<p className={ className + '__text' }>
@@ -38,7 +35,7 @@ export default function ConnectDomainStepSuggestedStart( {
 					{
 						a: createElement( 'a', {
 							className: 'connect-domain-step__change_mode_link',
-							onClick: onSwitchToAdvancedSetup,
+							onClick: switchToAdvancedSetup,
 						} ),
 					}
 				) }
@@ -61,9 +58,10 @@ export default function ConnectDomainStepSuggestedStart( {
 	return (
 		<ConnectDomainStepWrapper
 			className={ className }
+			heading={ stepsHeadingSuggested }
 			mode={ mode }
 			progressStepList={ progressStepList }
-			currentPageSlug={ currentPageSlug }
+			pageSlug={ pageSlug }
 			stepContent={ stepContent }
 		/>
 	);
@@ -71,9 +69,9 @@ export default function ConnectDomainStepSuggestedStart( {
 
 ConnectDomainStepSuggestedStart.propTypes = {
 	className: PropTypes.string.isRequired,
-	currentPageSlug: PropTypes.oneOf( Object.values( stepSlug ) ).isRequired,
+	pageSlug: PropTypes.oneOf( Object.values( stepSlug ) ).isRequired,
 	mode: PropTypes.oneOf( Object.values( modeType ) ).isRequired,
 	onNextStep: PropTypes.func.isRequired,
-	onSwitchToAdvancedSetup: PropTypes.func.isRequired,
 	progressStepList: PropTypes.object.isRequired,
+	setPage: PropTypes.func.isRequired,
 };

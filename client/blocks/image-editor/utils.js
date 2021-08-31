@@ -1,7 +1,3 @@
-/**
- * External dependencies
- *
- */
 import { includes, get } from 'lodash';
 import { AspectRatios, AspectRatiosValues } from 'calypso/state/editor/image-editor/constants';
 

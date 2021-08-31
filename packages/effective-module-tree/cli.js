@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-const yargs = require( 'yargs' );
 const path = require( 'path' );
+const yargs = require( 'yargs' );
 const { getEffectiveTreeAsTree, getEffectiveTreeAsList } = require( './index.js' );
 
 const args = yargs

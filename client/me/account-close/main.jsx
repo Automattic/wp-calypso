@@ -13,20 +13,20 @@ import ActionPanelFigureList from 'calypso/components/action-panel/figure-list';
 import ActionPanelFigureListItem from 'calypso/components/action-panel/figure-list-item';
 import ActionPanelFooter from 'calypso/components/action-panel/footer';
 import ActionPanelLink from 'calypso/components/action-panel/link';
-import AccountCloseConfirmDialog from './confirm-dialog';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import userHasAnyAtomicSites from 'calypso/state/selectors/user-has-any-atomic-sites';
-import isAccountClosed from 'calypso/state/selectors/is-account-closed';
-import { hasLoadedUserPurchasesFromServer } from 'calypso/state/purchases/selectors';
-import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
-import getUserPurchasedPremiumThemes from 'calypso/state/selectors/get-user-purchased-premium-themes';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Gridicon from 'calypso/components/gridicon';
 import HeaderCake from 'calypso/components/header-cake';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { hasLoadedUserPurchasesFromServer } from 'calypso/state/purchases/selectors';
 import getAccountClosureSites from 'calypso/state/selectors/get-account-closure-sites';
+import getUserPurchasedPremiumThemes from 'calypso/state/selectors/get-user-purchased-premium-themes';
+import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
+import isAccountClosed from 'calypso/state/selectors/is-account-closed';
+import userHasAnyAtomicSites from 'calypso/state/selectors/user-has-any-atomic-sites';
+import AccountCloseConfirmDialog from './confirm-dialog';
 
 import './style.scss';
 

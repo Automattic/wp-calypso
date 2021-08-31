@@ -1,23 +1,16 @@
-/**
- * External dependencies
- */
+import { ProgressBar } from '@automattic/components';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import QueryJetpackScanThreatCounts from 'calypso/components/data/query-jetpack-scan-threat-counts';
-import isRequestingJetpackScan from 'calypso/state/selectors/is-requesting-jetpack-scan';
-import isRequestingJetpackScanThreatCounts from 'calypso/state/selectors/is-requesting-jetpack-scan-threat-counts';
 import { JetpackBenefitsCard } from 'calypso/blocks/jetpack-benefits/benefit-card';
 import { JetpackBenefitsStandaloneCard } from 'calypso/blocks/jetpack-benefits/standalone-benefit-card';
-import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
-import getSiteScanProgress from 'calypso/state/selectors/get-site-scan-progress';
-import { ProgressBar } from '@automattic/components';
 import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
-import { TranslateResult, useTranslate } from 'i18n-calypso';
+import QueryJetpackScanThreatCounts from 'calypso/components/data/query-jetpack-scan-threat-counts';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import getSiteScanProgress from 'calypso/state/selectors/get-site-scan-progress';
+import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
+import isRequestingJetpackScan from 'calypso/state/selectors/is-requesting-jetpack-scan';
+import isRequestingJetpackScanThreatCounts from 'calypso/state/selectors/is-requesting-jetpack-scan-threat-counts';
 
 interface Props {
 	siteId: number;

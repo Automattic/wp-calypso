@@ -19,8 +19,10 @@ yarn add wpcom
 
 ```js
 // Edit a post on a site
+const wpcomFacotory = require( 'wpcom' );
 const wpcomXhrRequest = require( 'wpcom-xhr-request' );
-const wpcom = require( 'wpcom' )( '<your-token>', wpcomXhrRequest );
+
+const wpcom = wpcomFacotory( '<your-token>', wpcomXhrRequest );
 
 wpcom
 	.site( 'your-blog.wordpress.com' )
@@ -45,8 +47,8 @@ npm install --save wpcom
 
 ```js
 // Edit a post on a site
-import wpcomXhrRequest from 'wpcom-xhr-request';
 import wpcomFactory from 'wpcom';
+import wpcomXhrRequest from 'wpcom-xhr-request';
 
 const wpcom = wpcomFactory( '<your-token>', wpcomXhrRequest );
 
@@ -92,8 +94,8 @@ If you do need a token, here are some links that will help you generate one:
 
 ```js
 // Edit a post on a site
-import wpcomXhrRequest from 'wpcom-xhr-request';
 import wpcomFactory from 'wpcom';
+import wpcomXhrRequest from 'wpcom-xhr-request';
 
 const wpcom = wpcomFactory( '<your-token>', wpcomXhrRequest );
 const blog = wpcom.site( 'your-blog.wordpress.com' );
@@ -112,8 +114,8 @@ You can omit the API token for operations that don't require permissions:
 
 ```js
 // List the last 8 posts on a site
-import wpcomXhrRequest from 'wpcom-xhr-request';
 import wpcomFactory from 'wpcom';
+import wpcomXhrRequest from 'wpcom-xhr-request';
 
 const wpcom = wpcomFactory( wpcomXhrRequest );
 const blog = wpcom.site( 'your-blog.wordpress.com' );

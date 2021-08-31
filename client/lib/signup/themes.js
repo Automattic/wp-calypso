@@ -1,12 +1,4 @@
-/**
- * External dependencies
- */
-
 import { includes, sampleSize } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import { themes } from 'calypso/lib/signup/themes-data';
 
 function getUnusedThemes( themeSet, themePool, quantity ) {

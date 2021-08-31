@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-/**
- * Internal dependencies
- */
 import { getTld } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import {
@@ -129,6 +123,10 @@ export function getOptionInfo( {
 			default:
 				connectContent = optionInfo.connectNotSupported;
 		}
+	}
+
+	if ( transferContent.onSelect && connectContent.onSelect ) {
+		transferContent.recommended = true;
 	}
 
 	connectContent.primary = ! transferContent?.primary;

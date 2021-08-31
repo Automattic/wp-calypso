@@ -23,9 +23,6 @@ import {
 import { toApi, fromApi } from 'calypso/state/imports/api';
 import { getImporterStatus } from 'calypso/state/imports/selectors';
 
-/**
- * Redux dependencies
- */
 import 'calypso/state/imports/init';
 
 const sortAndStringify = ( items ) => items.slice( 0 ).sort().join( ', ' );

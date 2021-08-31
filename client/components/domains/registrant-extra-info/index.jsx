@@ -1,8 +1,3 @@
-/**
- * Extrenal dependencies
- *
- */
-
 import config from '@automattic/calypso-config';
 import { keys, filter } from 'lodash';
 import React, { PureComponent } from 'react';

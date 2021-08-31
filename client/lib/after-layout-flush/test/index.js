@@ -2,14 +2,7 @@
  * @jest-environment jsdom
  */
 
-/**
- * External dependencies
- */
 import sinon from 'sinon';
-
-/**
- * Internal dependencies
- */
 import afterLayoutFlush from '../';
 
 jest.useFakeTimers();
