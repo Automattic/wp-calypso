@@ -310,12 +310,13 @@ export function jetpackCheckoutThankYou( context, next ) {
 }
 
 export function jetpackCheckoutThankYouCompleted( context, next ) {
-	const { siteId, receiptId } = context.query;
+	const { siteId, receiptId, activated } = context.query;
 	context.primary = (
 		<JetpackCheckoutSitelessThankYouCompleted
 			productSlug={ context.params.product }
 			jetpackTemporarySiteId={ siteId }
 			receiptId={ receiptId }
+			activated={ !! activated }
 		/>
 	);
 

@@ -675,6 +675,28 @@
 	}
 }
 
+@mixin jetpack-primary-button() {
+	// button colors imported from packages/calypso-color-schemes/src/shared/color-schemes/_jetpack-cloud.scss
+	background-color: var( --studio-jetpack-green-50 );
+	border-color: var( --studio-jetpack-green-50 );
+	color: var( --color-text-inverted );
+
+	&:hover,
+	&:focus {
+		background-color: var( --studio-jetpack-green-60 );
+		border-color: var( --studio-jetpack-green-60 );
+		color: var( --color-text-inverted );
+	}
+
+	&[disabled],
+	&:disabled,
+	&.disabled {
+		color: var( --color-neutral-20 );
+		background-color: var( --color-surface );
+		border-color: var( --color-neutral-5 );
+	}
+}
+
 .jetpack-checkout-siteless-thank-you-completed {
 	&.main.is-wide-layout {
 		max-width: 660px;
@@ -708,6 +730,11 @@
 				font-size: 18px; /* stylelint-disable-line */
 				line-height: 1.75rem;
 			}
+		}
+		.jetpack-checkout-siteless-thank-you-completed__button,
+		.jetpack-checkout-siteless-thank-you-completed__button:visited {
+			border-radius: 2px;
+			@include jetpack-primary-button;
 		}
 
 		a.jetpack-checkout-siteless-thank-you-completed__link,
@@ -953,25 +980,7 @@
 		.jetpack-checkout-thank-you__button,
 		.jetpack-checkout-thank-you__button:visited {
 			border-radius: calc( 2px * 2 );
-			// button colors imported from packages/calypso-color-schemes/src/shared/color-schemes/_jetpack-cloud.scss
-			background-color: var( --studio-jetpack-green-50 );
-			border-color: var( --studio-jetpack-green-50 );
-			color: var( --color-text-inverted );
-
-			&:hover,
-			&:focus {
-				background-color: var( --studio-jetpack-green-60 );
-				border-color: var( --studio-jetpack-green-60 );
-				color: var( --color-text-inverted );
-			}
-
-			&[disabled],
-			&:disabled,
-			&.disabled {
-				color: var( --color-neutral-20 );
-				background-color: var( --color-surface );
-				border-color: var( --color-neutral-5 );
-			}
+			@include jetpack-primary-button;
 		}
 	}
 
