@@ -1,0 +1,34 @@
+@media print {
+	.billing-history {
+		// stylelint-disable-next-line selector-max-id
+		#secondary,
+		.masterbar,
+		.billing-history__receipt-links,
+		.header-cake.card,
+		.inline-help,
+		.billing-history__billing-details-description,
+		.receipt__no-print {
+			// Some specificity rules are overriding this;
+			// we want the "don't display on print" to have top priority
+			display: none !important;
+		}
+	}
+
+	.billing-history__billing-details-description {
+		background: transparent;
+		border: 0;
+		padding: 0;
+		margin: 0;
+	}
+
+	.billing-history__billing-details-editable {
+		background: transparent;
+		border: 0;
+		padding: 0;
+		margin: 0;
+	}
+
+	body {
+		font-family: -apple-system, Segoe UI, Roboto, Oxygen-Sans, Ubuntu, Cantarell, Helvetica Neue, sans-serif;
+	}
+}

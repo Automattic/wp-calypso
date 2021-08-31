@@ -28,6 +28,8 @@ import { getReceiptUrlFor, getBillingHistoryUrlFor } from '../paths';
 import useRedirectToHistoryPageOnInvalidTransaction from './use-redirect-to-history-page-on-invalid-transaction';
 import useRedirectToHistoryPageOnWrongSiteForTransaction from './use-redirect-to-history-page-on-wrong-site-for-transaction';
 
+import './style.scss';
+
 function useLogBillingHistoryError( message: string ) {
 	const reduxDispatch = useDispatch();
 
