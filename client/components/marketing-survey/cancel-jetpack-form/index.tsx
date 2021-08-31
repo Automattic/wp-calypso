@@ -186,7 +186,7 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, selectedSite
 		const cancellingText = translate( 'Cancelling' );
 		const cancel = (
 			<Button
-				disabled={ props.disableButtons || ! surveyAnswerId }
+				disabled={ props.disableButtons }
 				busy={ props.disableButtons }
 				onClick={ onSubmit }
 				scary
