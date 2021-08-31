@@ -11,7 +11,7 @@ import { submitSurvey } from 'calypso/lib/purchases/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import nextStep from '../cancel-purchase-form/next-step';
-import previousStep from '../cancel-purchase-form/previous-step';
+// import previousStep from '../cancel-purchase-form/previous-step';
 import * as steps from './steps';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
@@ -110,9 +110,9 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, selectedSite
 		setSurveyStep( nextStep );
 	};
 
-	const clickPrevious = () => {
-		setSurveyStep( previousStep );
-	};
+	// const clickPrevious = () => {
+	// 	setSurveyStep( previousStep );
+	// };
 
 	const onSubmit = () => {
 		if ( surveyAnswerId ) {
@@ -175,18 +175,18 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, selectedSite
 			label: translate( 'Next step' ),
 			onClick: clickNext,
 		};
-		const prev = {
-			action: 'prev',
-			disabled,
-			label: translate( 'Previous step' ),
-			onClick: clickPrevious,
-		};
+		// const prev = {
+		// 	action: 'prev',
+		// 	disabled,
+		// 	label: translate( 'Previous step' ),
+		// 	onClick: clickPrevious,
+		// };
 
 		const cancelText = translate( 'Cancel my plan' );
 		const cancellingText = translate( 'Cancelling' );
 		const cancel = (
 			<Button
-				disabled={ props.disableButtons }
+				disabled={ props.disableButtons || ! surveyAnswerId }
 				busy={ props.disableButtons }
 				onClick={ onSubmit }
 				scary
@@ -200,17 +200,19 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, selectedSite
 		// on the last step
 		// show the cancel button
 		if ( steps.LAST_STEP === cancellationStep ) {
-			const stepsCount = getAvailableSurveySteps().length;
-			if ( stepsCount > 1 ) {
-				firstButtons.push( prev );
-			}
+			// const stepsCount = getAvailableSurveySteps().length;
+			// if ( stepsCount > 1 ) {
+			// 	firstButtons.push( prev );
+			// }
 			return firstButtons.concat( [ cancel ] );
 		}
 
-		return firstButtons.concat(
-			// on the first step, just show the "next" button
-			cancellationStep === steps.INITIAL_STEP ? [ next ] : [ next, prev ]
-		);
+		// return firstButtons.concat(
+		// 	// on the first step, just show the "next" button
+		// 	cancellationStep === steps.INITIAL_STEP ? [ next ] : [ next, prev ]
+		// );
+
+		return firstButtons.concat( [ next ] );
 	};
 
 	/**

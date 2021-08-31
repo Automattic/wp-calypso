@@ -4,7 +4,6 @@ import { useTranslate, TranslateResult } from 'i18n-calypso';
 import React, { useState, useCallback, ReactElement } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import Gridicon from 'calypso/components/gridicon';
 
 interface Choice {
 	id: string;
@@ -83,7 +82,6 @@ export default function JetpackCancellationSurvey( {
 				<div className="jetpack-cancellation-survey__card-content">
 					<span>{ choice.answerText }</span>
 				</div>
-				<Gridicon icon="chevron-right" size={ 12 } />
 			</Card>
 		);
 	};
@@ -120,7 +118,6 @@ export default function JetpackCancellationSurvey( {
 						placeholder={ translate( 'share your experience' ) }
 					/>
 				</div>
-				<Gridicon icon="chevron-right" size={ 12 } />
 			</Card>
 		</React.Fragment>
 	);
