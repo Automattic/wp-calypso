@@ -17,7 +17,7 @@ export class NewPostFlow {
 		this.page = page;
 	}
 
-	/**1
+	/**
 	 * Starts a new post from the navbar/masterbar button.
 	 *
 	 * @returns {Promise<void>} No return value.
