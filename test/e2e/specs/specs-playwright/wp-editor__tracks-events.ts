@@ -5,7 +5,8 @@ import {
 	GutenbergEditorPage,
 	setupHooks,
 } from '@automattic/calypso-e2e';
-import { Page, Frame } from 'playwright';
+import { Page } from 'playwright';
+import { getLatestEvent } from '../../lib/gutenberg/tracking/playwright-utils';
 
 describe( DataHelper.createSuiteTitle( `Tracks Events for Post Editor` ), function () {
 	let page: Page;
@@ -47,14 +48,3 @@ describe( DataHelper.createSuiteTitle( `Tracks Events for Post Editor` ), functi
 		] );
 	} );
 } );
-
-async function getLatestEvent( frame: Frame ) {
-	const stack = await getEventsStack( frame );
-	return stack.length ? stack[ 0 ] : undefined;
-}
-
-async function getEventsStack( frame: Frame ) {
-	return await frame.evaluate( () => {
-		return ( window as any )._e2eEventsStack;
-	} );
-}
