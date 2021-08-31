@@ -39,7 +39,6 @@ export function PopUpSearch( props ) {
 			<div className="popup-search__container" onClick={ onChildClick }>
 				<HelpSearchCard
 					query={ props.searchQuery }
-					isSearching={ props.isSearching }
 					placeholder={ translate( 'Search wordpress actions' ) }
 				/>
 				{ props.searchResults.length > 0 && (

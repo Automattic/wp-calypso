@@ -3,7 +3,6 @@ import { withMobileBreakpoint } from '@automattic/viewport-react';
 import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { flowRight as compose } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -14,7 +13,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resetInlineHelpContactForm } from 'calypso/state/inline-help/actions';
 import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
 import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
-import { withInlineHelpSearchQuery } from './data/use-inline-help-search-query';
 import InlineHelpRichResult from './inline-help-rich-result';
 import InlineHelpSearchCard from './inline-help-search-card';
 import InlineHelpSearchResults from './inline-help-search-results';
@@ -128,15 +126,11 @@ class InlineHelpPopover extends Component {
 					<InlineHelpSearchCard
 						query={ this.props.searchQuery }
 						isVisible={ ! this.state.showSecondaryView }
-						isSearching={ this.props.isSearching }
 					/>
 					<InlineHelpSearchResults
 						onSelect={ this.openResultView }
 						onAdminSectionSelect={ this.setAdminSection }
 						searchQuery={ this.props.searchQuery }
-						isSearching={ this.props.isSearching }
-						searchResults={ this.props.searchResults }
-						hasAPIResults={ this.props.hasAPIResults }
 					/>
 				</div>
 				{ this.renderSecondaryView() }
@@ -207,7 +201,6 @@ const mapDispatchToProps = {
 	resetContactForm: resetInlineHelpContactForm,
 };
 
-export default compose(
-	localize,
-	connect( mapStateToProps, mapDispatchToProps )
-)( withMobileBreakpoint( withInlineHelpSearchQuery( InlineHelpPopover ) ) );
+export default withMobileBreakpoint(
+	connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelpPopover ) )
+);
