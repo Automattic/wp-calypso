@@ -9,7 +9,7 @@ import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 
 import './style.scss';
 
-const BlankCanvas = ( { children } ) => {
+const BlankCanvas = ( { className, children } ) => {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
@@ -19,7 +19,10 @@ const BlankCanvas = ( { children } ) => {
 		return () => document.body.classList.remove( 'has-blank-canvas' );
 	}, [] );
 
-	return ReactDOM.createPortal( <div className="blank-canvas">{ children }</div>, document.body );
+	return ReactDOM.createPortal(
+		<div className={ `blank-canvas ${ className }` }>{ children }</div>,
+		document.body
+	);
 };
 
 BlankCanvas.Header = ( { backUrl, children, onBackClick } ) => (

@@ -11,9 +11,9 @@ import {
 } from '@automattic/calypso-products';
 import * as steps from './steps';
 
-const BUSINESS_PLANS = findPlansKeys( { group: GROUP_WPCOM, type: TYPE_BUSINESS } );
-const PREMIUM_PLANS = findPlansKeys( { group: GROUP_WPCOM, type: TYPE_PREMIUM } );
-const PERSONAL_PREMIUM_PLANS = []
+export const BUSINESS_PLANS = findPlansKeys( { group: GROUP_WPCOM, type: TYPE_BUSINESS } );
+export const PREMIUM_PLANS = findPlansKeys( { group: GROUP_WPCOM, type: TYPE_PREMIUM } );
+export const PERSONAL_PREMIUM_PLANS = []
 	.concat( findPlansKeys( { group: GROUP_WPCOM, type: TYPE_PERSONAL } ) )
 	.concat( findPlansKeys( { group: GROUP_WPCOM, type: TYPE_PREMIUM } ) );
 

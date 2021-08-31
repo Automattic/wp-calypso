@@ -92,3 +92,57 @@
 		fill: var( --studio-gray-60 );
 	}
 }
+
+.cancel-purchase-form__upsell {
+	padding: 1.5rem;
+	background-color: var( --studio-green-0 );
+	border: 1px solid var( --studio-green-5 );
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 5px;
+	display: flex;
+
+	.cancel-purchase-form__upsell-image {
+		width: 100px;
+		height: fit-content;
+		margin-right: 1.5rem;
+	}
+
+	.form-section-heading {
+		font-size: 1rem;
+		line-height: 1.25rem;
+		margin-bottom: 0.5rem;
+		font-weight: 600;
+	}
+
+	.form-fieldset {
+		margin-bottom: 0;
+
+		p {
+			font-size: 0.875rem;
+			line-height: 1.25rem;
+			margin-bottom: 0.5rem;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+	}
+
+	.components-button {
+		margin-top: 1rem;
+		padding: 0.625rem 2rem;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 4px;
+
+		&:not( .is-primary ) {
+			padding-left: 0.5rem;
+			padding-right: 0.5rem;
+			margin-left: 0.5rem;
+		}
+	}
+
+	.button {
+		// Hide buttons rendered by old components, so we can still re-use them for rendering rest of content.
+		display: none;
+	}
+}

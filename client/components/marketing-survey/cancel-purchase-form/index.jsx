@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import {
+	includesProduct,
 	isGSuiteOrGoogleWorkspace,
 	isJetpackPlanSlug,
 	isJetpackProductSlug,
@@ -20,6 +21,8 @@ import { shuffle } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import pluginsThemesImage from 'calypso/assets/images/customer-home/illustration--task-connect-social-accounts.svg';
+import downgradeImage from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
 import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
 import QueryPlans from 'calypso/components/data/query-plans';
@@ -61,7 +64,11 @@ import BusinessATStep from './step-components/business-at-step';
 import DowngradeStep from './step-components/downgrade-step';
 import UpgradeATStep from './step-components/upgrade-at-step';
 import * as steps from './steps';
-import stepsForProductAndSurvey from './steps-for-product-and-survey';
+import stepsForProductAndSurvey, {
+	BUSINESS_PLANS,
+	PERSONAL_PREMIUM_PLANS,
+	PREMIUM_PLANS,
+} from './steps-for-product-and-survey';
 
 import './style.scss';
 
@@ -135,6 +142,7 @@ class CancelPurchaseForm extends React.Component {
 		this.setState( {
 			surveyStep: firstStep,
 			...initialSurveyState(),
+			upsell: '',
 		} );
 	}
 
@@ -158,8 +166,8 @@ class CancelPurchaseForm extends React.Component {
 			questionTwoOrder: questionTwoOrder,
 			questionThreeText: '',
 			importQuestionText: '',
-
 			isSubmitting: false,
+			upsell: '',
 		};
 	}
 
@@ -189,7 +197,30 @@ class CancelPurchaseForm extends React.Component {
 			...this.state,
 			questionOneRadio: value,
 			questionOneText: '',
+			upsell: '',
 		};
+
+		if ( this.state.surveyStep === steps.FEEDBACK_STEP ) {
+			if ( value === 'couldNotInstall' && includesProduct( BUSINESS_PLANS, this.props.purchase ) ) {
+				newState.upsell = 'business-atomic';
+			}
+
+			if (
+				value === 'couldNotInstall' &&
+				includesProduct( PERSONAL_PREMIUM_PLANS, this.props.purchase )
+			) {
+				newState.upsell = 'upgrade-atomic';
+			}
+
+			if (
+				value === 'onlyNeedFree' &&
+				includesProduct( PREMIUM_PLANS, this.props.purchase ) &&
+				!! this.props.downgradeClick
+			) {
+				newState.upsell = 'downgrade-personal';
+			}
+		}
+
 		this.setState( newState );
 		this.props.onInputChange( newState );
 	};
@@ -334,10 +365,82 @@ class CancelPurchaseForm extends React.Component {
 		}
 	};
 
+	showUpsell = () => {
+		const { upsell } = this.state;
+
+		if ( ! upsell ) {
+			return null;
+		}
+
+		const { downgradePlanPrice, purchase, selectedSite, translate } = this.props;
+
+		const dismissUpsell = () => this.setState( { upsell: '' } );
+
+		const Upsell = ( { actionHref, actionText, actionOnClick, children, image } ) => (
+			<div className="cancel-purchase-form__upsell">
+				<img className="cancel-purchase-form__upsell-image" src={ image } alt="" />
+				<div className="cancel-purchase-form__upsell-description">
+					{ children }
+					<GutenbergButton href={ actionHref } isPrimary onClick={ actionOnClick }>
+						{ actionText }
+					</GutenbergButton>
+					<GutenbergButton onClick={ dismissUpsell }>{ translate( 'Dismiss' ) }</GutenbergButton>
+				</div>
+			</div>
+		);
+
+		switch ( upsell ) {
+			case 'business-atomic':
+				return (
+					<Upsell
+						actionOnClick={ this.closeDialog }
+						actionText={ translate( 'Keep my plan' ) }
+						image={ pluginsThemesImage }
+					>
+						<BusinessATStep />
+					</Upsell>
+				);
+			case 'upgrade-atomic':
+				return (
+					<Upsell
+						actionHref={ `/checkout/${ selectedSite.slug }/business?coupon=BIZC25` }
+						actionOnClick={ () =>
+							this.props.recordTracksEvent( 'calypso_cancellation_upgrade_at_step_upgrade_click' )
+						}
+						actionText={ translate( 'Upgrade my site' ) }
+						image={ pluginsThemesImage }
+					>
+						<UpgradeATStep />
+					</Upsell>
+				);
+			case 'downgrade-personal':
+				// eslint-disable-next-line no-case-declarations
+				const { precision } = getCurrencyDefaults( purchase.currencyCode );
+				// eslint-disable-next-line no-case-declarations
+				const planCost = parseFloat( downgradePlanPrice ).toFixed( precision );
+
+				return (
+					<Upsell
+						actionOnClick={ this.downgradeClick }
+						actionText={ translate( 'Switch to Personal' ) }
+						image={ downgradeImage }
+					>
+						<DowngradeStep
+							currencySymbol={ purchase.currencySymbol }
+							planCost={ planCost }
+							refundAmount={ this.getRefundAmount() }
+						/>
+					</Upsell>
+				);
+			default:
+				return null;
+		}
+	};
+
 	renderQuestionOne = () => {
 		const reasons = {};
 		const { translate } = this.props;
-		const { questionOneOrder, questionOneRadio, questionOneText, surveyStep } = this.state;
+		const { questionOneOrder, questionOneRadio, questionOneText, surveyStep, upsell } = this.state;
 		const { productSlug: productBeingRemoved } = this.props.purchase;
 
 		// get all downgradable plans and products for downgrade question dropdown
@@ -449,14 +552,14 @@ class CancelPurchaseForm extends React.Component {
 						} ) }
 						onChange={ this.onRadioOneChange }
 					/>
-					{ selectedOption?.textPlaceholder && (
+					{ ! upsell && selectedOption?.textPlaceholder && (
 						<TextControl
 							placeholder={ selectedOption.textPlaceholder }
 							value={ questionOneText }
 							onChange={ this.onTextOneChange }
 						/>
 					) }
-					{ selectedOption?.selectOptions && (
+					{ ! upsell && selectedOption?.selectOptions && (
 						<SelectControl
 							label={ selectedOption.selectLabel }
 							value={ selectedOption.selectInitialValue }
@@ -468,6 +571,7 @@ class CancelPurchaseForm extends React.Component {
 							onChange={ this.onSelectOneChange }
 						/>
 					) }
+					{ this.showUpsell() }
 				</div>
 			);
 		}
@@ -749,37 +853,6 @@ class CancelPurchaseForm extends React.Component {
 		);
 	};
 
-	recordClickConciergeEvent = () =>
-		this.props.recordTracksEvent( 'calypso_purchases_cancel_form_concierge_click' );
-
-	openConcierge = () => {
-		if ( ! this.props.selectedSite ) {
-			return;
-		}
-		this.recordClickConciergeEvent();
-
-		return window.open( `/me/quickstart/${ this.props.selectedSite.slug }/book` );
-	};
-
-	renderConciergeOffer = () => {
-		const { selectedSite, translate } = this.props;
-		return (
-			selectedSite && (
-				<FormFieldset>
-					<p>
-						{ translate(
-							'Schedule a 30 minute orientation with one of our Happiness Engineers. ' +
-								"We'll help you to set up your site and answer any questions you have!"
-						) }
-					</p>
-					<Button onClick={ this.openConcierge } primary>
-						{ translate( 'Schedule a session' ) }
-					</Button>
-				</FormFieldset>
-			)
-		);
-	};
-
 	onChatInitiated = () => {
 		this.recordEvent( 'calypso_purchases_cancel_form_chat_initiated' );
 		this.closeDialog();
@@ -869,17 +942,6 @@ class CancelPurchaseForm extends React.Component {
 				);
 			}
 
-			if ( surveyStep === steps.CONCIERGE_STEP ) {
-				return (
-					<div>
-						<FormSectionHeading>
-							{ translate( 'Let us help you set up your site!' ) }
-						</FormSectionHeading>
-						{ this.renderConciergeOffer() }
-					</div>
-				);
-			}
-
 			if ( surveyStep === steps.HAPPYCHAT_STEP ) {
 				return (
 					<div>
@@ -964,7 +1026,7 @@ class CancelPurchaseForm extends React.Component {
 			return (
 				<>
 					<GutenbergButton disabled={ disabled } isPrimary onClick={ this.closeDialog }>
-						{ translate( 'Keep it' ) }
+						{ translate( 'Keep my plan' ) }
 					</GutenbergButton>
 					<GutenbergButton
 						isDefault
@@ -972,8 +1034,8 @@ class CancelPurchaseForm extends React.Component {
 						onClick={ this.onSubmit }
 					>
 						{ flowType === CANCEL_FLOW_TYPE.REMOVE
-							? translate( 'Remove it' )
-							: translate( 'Cancel now' ) }
+							? translate( 'Remove plan' )
+							: translate( 'Cancel plan' ) }
 					</GutenbergButton>
 				</>
 			);
@@ -1087,7 +1149,7 @@ class CancelPurchaseForm extends React.Component {
 					{ selectedSite && <QuerySitePlans siteId={ selectedSite.ID } /> }
 					<QuerySupportTypes />
 					{ this.props.isVisible && (
-						<BlankCanvas>
+						<BlankCanvas className="cancel-purchase-form">
 							<BlankCanvas.Header onBackClick={ this.closeDialog } />
 							{ this.surveyContent() }
 							<BlankCanvas.Footer>
