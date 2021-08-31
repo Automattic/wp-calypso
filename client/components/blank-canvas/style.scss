@@ -100,6 +100,7 @@
 	padding: 0.75rem 1rem;
 	background: #fdfdfd;
 	width: 100%;
+	box-sizing: border-box;
 
 	@include break-small {
 		box-shadow: none;
