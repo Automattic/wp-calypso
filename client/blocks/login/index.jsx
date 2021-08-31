@@ -481,12 +481,13 @@ class Login extends Component {
 	}
 
 	render() {
-		const { isJetpack, oauth2Client } = this.props;
+		const { isJetpack, isP2Login, oauth2Client } = this.props;
 		return (
 			<div
 				className={ classNames( 'login', {
 					'is-jetpack': isJetpack,
 					'is-jetpack-cloud': isJetpackCloudOAuth2Client( oauth2Client ),
+					'is-p2': isP2Login,
 				} ) }
 			>
 				{ this.renderHeader() }
