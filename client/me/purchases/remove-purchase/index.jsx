@@ -239,7 +239,7 @@ class RemovePurchase extends Component {
 	renderDomainMappingDialogText() {
 		const { purchase, translate } = this.props;
 		const productName = getName( purchase );
-		const domainProductName = getDisplayName( purchase );
+		const domainProductName = purchase.productName;
 
 		return (
 			<div>
