@@ -1140,7 +1140,15 @@ class CancelPurchaseForm extends React.Component {
 			return null;
 		}
 
-		const { isChatAvailable, isChatActive, selectedSite, supportVariation, purchase } = this.props;
+		const {
+			isChatAvailable,
+			flowType,
+			isChatActive,
+			selectedSite,
+			supportVariation,
+			purchase,
+			translate,
+		} = this.props;
 
 		if ( config.isEnabled( 'purchases/cancel-plan-fullscreen-form' ) && isPlan( purchase ) ) {
 			return (
@@ -1150,8 +1158,13 @@ class CancelPurchaseForm extends React.Component {
 					<QuerySupportTypes />
 					{ this.props.isVisible && (
 						<BlankCanvas className="cancel-purchase-form">
-							<BlankCanvas.Header onBackClick={ this.closeDialog } />
-							{ this.surveyContent() }
+							<BlankCanvas.Header onBackClick={ this.closeDialog }>
+								{ flowType === CANCEL_FLOW_TYPE.REMOVE
+									? translate( 'Remove plan' )
+									: translate( 'Cancel plan' ) }
+								<span className="cancel-purchase-form__site-slug">{ selectedSite.slug }</span>
+							</BlankCanvas.Header>
+							<BlankCanvas.Content>{ this.surveyContent() }</BlankCanvas.Content>
 							<BlankCanvas.Footer>
 								<div className="cancel-purchase-form__actions">
 									<div className="cancel-purchase-form__buttons">{ this.getStepButtons() }</div>

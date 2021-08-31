@@ -38,9 +38,10 @@ BlankCanvas.Header = ( { backUrl, children, onBackClick } ) => (
 				{ __( 'Back' ) }
 			</Button>
 		) }
-		{ children }
+		{ children.length && <div className="blank-canvas__header-title">{ children }</div> }
 	</div>
 );
+BlankCanvas.Content = ( { children } ) => <div className="blank-canvas__content">{ children }</div>;
 BlankCanvas.Footer = ( { children } ) => <div className="blank-canvas__footer">{ children }</div>;
 
 export { BlankCanvas };

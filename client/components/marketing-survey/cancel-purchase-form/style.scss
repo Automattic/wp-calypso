@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .dialog__content input[type='text'].cancel-purchase-form__reason-input.form-text-input {
 	margin: 4px 0 0 24px;
 	width: calc( 100% - 24px );
@@ -31,6 +34,22 @@
 	justify-content: flex-end;
 }
 
+.cancel-purchase-form__site-slug {
+	margin-left: 0.25rem;
+	background-color: var( --studio-gray-0 );
+	color: var( --studio-gray-70 );
+	padding: 0.25rem 0.75rem;
+	font-size: 0.75rem;
+	font-weight: 600;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 4px;
+	max-width: calc( 100vw - 250px );
+	text-overflow: ellipsis;
+	overflow: hidden;
+	display: inline-block;
+	vertical-align: middle;
+}
+
 .cancel-purchase-form__feedback-questions {
 	max-width: 540px;
 	margin: 0 auto 3rem;
@@ -41,45 +60,53 @@
 }
 
 .cancel-purchase-form__actions {
-	display: block;
-	width: 700px;
-	margin: 0 auto;
-	text-align: center;
-	overflow: hidden;
+	@include break-small {
+		max-width: 700px;
+		display: block;
+		margin: 0 auto;
+		text-align: center;
+		overflow: hidden;
+	}
 }
 
 .cancel-purchase-form__buttons {
 	display: inline-block;
 	position: relative;
-	margin-bottom: 1rem;
 
-	// Line decorations.
-	&::before,
-	&::after {
-		content: '';
-		display: block;
-		width: 700px;
-		height: 0;
-		border-top: 1px solid var( --studio-gray-5 );
-		top: 50%;
-		position: absolute;
-	}
+	@include break-small {
+		// Line decorations.
+		&::before,
+		&::after {
+			content: '';
+			display: block;
+			width: 700px;
+			height: 0;
+			border-top: 1px solid var( --studio-gray-5 );
+			top: 50%;
+			position: absolute;
+		}
 
-	&::before {
-		right: 100%;
-		margin-right: 1rem;
-	}
+		&::before {
+			right: 100%;
+			margin-right: 1rem;
+		}
 
-	&::after {
-		left: 100%;
-		margin-left: 1rem;
+		&::after {
+			left: 100%;
+			margin-left: 1rem;
+		}
 	}
 
 	.components-button {
-		margin: 0 0.625rem;
-		padding: 0.625rem 2rem;
+		margin-right: 1rem;
+		padding: 0.625rem 1rem;
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 4px;
+
+		@include break-small {
+			margin: 0 0.625rem;
+			padding: 0.625rem 2rem;
+		}
 	}
 }
 
