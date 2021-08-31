@@ -2,7 +2,7 @@
 
 This document will outline tips to write successful tests for both Selenium and Playwright suites.
 
-Refer to the [Selenium style guide](docs/style-guide-selenium.md) or [Playwright style guide](docs/style-guide-playwright.md) for more information.
+Refer to the [Playwright style guide](docs/style-guide-playwright.md) for more information.
 
 ## Table of contents
 
@@ -15,53 +15,48 @@ Refer to the [Selenium style guide](docs/style-guide-selenium.md) or [Playwright
   - [Child-level block](#child-level-block)
   - [Setup](#setup)
   - [Test step](#test-step)
-  - [Variable naming](#variable-naming)
+  - [Hooks](#hooks)
 
 <!-- /TOC -->
 
 ## Get Started
 
-Create a spec file under `test/e2e/specs` in the appropriate directory.
-Follow this general structure when naming a file:
+Tests can be written in both TypeScript and JavaScript.
 
-`wp-<feature>__<subfeature or suite>-spec.js`
+1. create a spec file, following the structure:
+
+```
+test/e2e/specs/specs-playwright/wp-<major feature>__<subfeature>.ts
+```
 
 This is for multiple reasons:
 
-1. better visual identification of feature-specific specs.
-2. separation of subfeatures into separate files for parallelization.
+- grouping of test specs by feature.
+- separation of subfeatures into separate files to take advantage of parallelization.
 
-Begin the test file by importing the basics:
+2. import the basics:
 
 ```typescript
-import {
-	setupHooks,
-	DataHelper,
-	LoginFlow
-} from '@automattic/calypso-e2e';
+import { setupHooks, DataHelper, LoginFlow } from '@automattic/calypso-e2e';
 ```
 
 ## Top-level block
 
 As referenced in the [Style Guide](style-guide-playwright.md#Tests), there should only be one top-level `describe` block in a spec file.
 
-Using the `DataHelper.createSuiteTitle` function, define a name for the overall suite:
+Using the `DataHelper.createSuiteTitle` function, define a short, descriptive name for the overall suite:
 
 ```typescript
-describe( DataHelper.createSuiteTitle( 'Feature' ), function() {})
-```
-
-This will be transformed into something like:
-
-```
-[WPCOM] Feature: (desktop) @parallel
+describe( DataHelper.createSuiteTitle( 'Feature' ), function () {} );
 ```
 
 ## Child-level block
 
 Unlike top-level blocks, there are no restrictions on the number of child-level `describe` blocks.
 
-Using child-level `describe` blocks, separate out distinct test cases for the feature. Do not use `DataHelper.createSuiteTitle` for child-level blocks:
+> :warning: while there are no limits to the number of child blocks, exercise restraint - child blocks run sequentially, so if a file takes 8 minutes to complete the CI task will inevitably take that long!
+
+Using child-level `describe` blocks, group distinct test cases for the feature. Do not use `DataHelper.createSuiteTitle` for child-level blocks:
 
 ```typescript
 describe( DataHelper.createSuiteTitle( 'Feature' ), function() {
@@ -73,11 +68,9 @@ describe( DataHelper.createSuiteTitle( 'Feature' ), function() {
 })
 ```
 
-:warning: while there are no limits to the number of child blocks, exercise restraint - only the individual files are run in parallel, so if a file takes 2 minutes to complete the CI task will inevitably take that long!
-
 ## Setup
 
-At a minimum, setup steps are required to start the browser instance.
+With Playwright, the `page` instance lives until it is closed or crashes. As such, the same `page` instance can be used throughout the test.
 
 Invoke the `setupHooks` call to obtain an instance of a `Page` object:
 
@@ -88,51 +81,44 @@ describe( DataHelper.createSuiteTitle( 'Feature' ), function () {
 	setupHooks( ( args ) => {
 		page = args.page;
 	} );
-});
+} );
 ```
 
 ## Test step
 
 Test steps are where most of the action happens in a spec.
 
-Refer to the [Style Guide](style-guide-playwright.md#test-steps) for do's and don'ts of writing a test step.
+> :warning Refer to the [Style Guide](style-guide-playwright.md#test-steps) for do's and don'ts of writing a test step.
 
 Define a test step using the `it` keyword and give it a unique, descriptive name:
 
 ```typescript
-it( 'Navigate to Media', async function() {
-	await SidebarComponent.gotoMenu( 'Media' );
-	await MediaPage.viewGallery();
-})
+it( 'Navigate to Media', async function () {
+	await SidebarComponent.navigate( 'Media' );
+} );
 ```
 
 `Jest` enforces that test steps within a `describe` block must have unique names.
 
-If a test is to be parametrized, use Jest's built-in `each`:
+If a test is to be parametrized, use Jest's built-in [`each`](https://jestjs.io/docs/api#testeachtablename-fn-timeout):
 
 ```typescript
-it.each([
-	{ a: 1, b: 2},
-	{ a: 3, b: 4},
-])( 'Navigate to $a', async function( {b}) {
-
-});
+it.each( [ { target: 'Media' }, { target: 'Settings' } ] )(
+	'Navigate to $a',
+	async function ( { target } ) {
+		await SidebarComponent.navigate( target );
+	}
+);
 ```
 
-## Variable naming
+## Hooks
 
-Variables that derive from a page/component object (eg. SidebarComponent) should be named after the object it derives from following the camelCase convention.
+[Hooks](https://jestjs.io/docs/api) are steps run before/after each file or before/after each step in order to perform setup/teardown.
 
-**Avoid**:
-
-```typescript
-const bar = new SidebarComponent( page );
-const mhp = new MyHomePage( page );
-```
-
-**Instead**:
+Define hooks as follows:
 
 ```typescript
-const sidebarComponent = new SidebarComponent( page );
-const myHomePage = new MyHomePage( page );
+beforeAll( async () => {
+	logoImage = await MediaHelper.createTestImage();
+} );
 ```

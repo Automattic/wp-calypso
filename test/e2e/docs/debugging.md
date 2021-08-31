@@ -6,14 +6,17 @@
 
 - [Debugging](#debugging)
   - [Table of contents](#table-of-contents)
-  - [Mocha and Selenium](#mocha-and-selenium)
+  - [Selenium/mocha](#seleniummocha)
     - [Visual Studio Code](#visual-studio-code)
     - [Enable Mocha Debug Output](#enable-mocha-debug-output)
-  - [Jest and Playwright](#jest-and-playwright)
+  - [Playwright/Jest](#playwrightjest)
+    - [Debug instance](#debug-instance)
+    - [Playwright Developer Console and Gutenberg iFrame](#playwright-developer-console-and-gutenberg-iframe)
+    - [Additional notes](#additional-notes)
 
 <!-- /TOC -->
 
-## Mocha and Selenium
+## Selenium/mocha
 
 ### Visual Studio Code
 
@@ -61,11 +64,44 @@ eg.
 DEBUG=mocha:* node_modules/.bin/mocha specs/wp-manage-domains-spec.js
 ```
 
-## Jest and Playwright
+## Playwright/Jest
 
-Our Playwright E2E tests run on Jest. Fortunately, Jest has fanstastic documentation on setting up debuggers, which can be found here: [https://jestjs.io/docs/troubleshooting](https://jestjs.io/docs/troubleshooting).
+### Debug instance
 
-A couple notes:
+While developing tests and/or debugging flakey e2e tests, it is often helpful to have a browser window open with Playwright hooked in.
 
-- If using VSCode, setting up the debugger using the attaching method is often easier (as opposed to directly launching Jest in the `launch.json`). The attach configuration gives you more control over which script you want to run.
-- The E2E tests use the Jest binary that is installed at the root level of the repo. Put all together, if you were currently in the `e2e` directory, the command to run a single spec would look like `node --inspect-brk ../../node_modules/.bin/jest --runInBand specs/specs-playwright/wp-auth__canary-spec.ts`
+Launch Playwright with the following parameters to:
+
+- extend Jest timeout to a long value
+- disable Playwright's internal timeout (30s)
+- output verbose logs to the command line
+
+```bash
+export PWDEBUG=1 DEBUG=pw:api yarn jest --runInBand --setTimeout=10000000000<spec>
+```
+
+### Playwright Developer Console and Gutenberg iFrame
+
+As noted in [official documentation](https://playwright.dev/docs/debug#selectors-in-developer-tools-console), when Playwright is launched with `PWDEBUG` a Playwright object is available in the browser's developer console. This is a powerful tool to help debug selectors.
+
+However the Playwright object does not have visibility into elements on iFramed Gutenberg editor pages (eg. New Post) by default.
+
+To be able to select elements of the iFramed editor:
+
+1. launch developer tools (F12)
+
+2. click on Console tab.
+
+3. immediately below the top bar, click on the dropdown with text `top`
+
+4. select option `post-new.php`
+
+5. try selecting an element on page.
+
+### Additional notes
+
+Jest documentation on setting up VSCode debugger can be found [here](https://jestjs.io/docs/troubleshooting#debugging-in-vs-code).
+
+If using VSCode, setting up the debugger using the attaching method is often easier (as opposed to directly launching Jest in the `launch.json`). The attach configuration gives you more control over which script you want to run.
+
+The E2E tests use the Jest binary that is installed at the root level of the repo. Put all together, if you were currently in the `e2e` directory, the command to run a single spec would look like `node --inspect-brk ../../node_modules/.bin/jest --runInBand specs/specs-playwright/wp-auth__canary-spec.ts`

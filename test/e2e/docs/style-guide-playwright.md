@@ -8,6 +8,7 @@
   - [Components](#components)
   - [Page Objects](#page-objects)
   - [Flows](#flows)
+  - [Variable naming](#variable-naming)
   - [Async / Await](#async--await)
   - [Selectors](#selectors)
     - [Engine](#engine)
@@ -60,14 +61,14 @@ describe( DataHelper.createSuiteTitle( 'Feature' ), function () {
 		let anotherComponent: AnotherComponent;
 
 		it.each`
-		value | expected
-		${'small'} | ${'s'}
-		${'medium'} | ${'m'}
-		`( 'Click on $value on AnotherComponent', function({ value, expected }) {
+			value         | expected
+			${ 'small' }  | ${ 's' }
+			${ 'medium' } | ${ 'm' }
+		`( 'Click on $value on AnotherComponent', function ( { value, expected } ) {
 			anotherComponent = await AnotherComponent.Expect( page );
 			const resultValue = await anotherComponent.click( value );
 			assert.strictEqual( resultValue, expected );
-		})
+		} );
 	} );
 } );
 ```
@@ -92,11 +93,10 @@ Components represent a sub-portion of the page, and are often shared across mult
 <summary>Example Component Object</summary>
 
 ```typescript
-
 const selectors = {
 	sidebar: '.sidebar',
 	myHome: '.my-home',
-}
+};
 
 /**
  * JSDoc is expected for Class definitions.
@@ -109,8 +109,7 @@ export class SomeComponent extends BaseContainer {
 	 *
 	 * @param {Page} page Page object.
 	 */
-	constructor( page: Page ) {
-	}
+	constructor( page: Page ) {}
 
 	/**
 	 * JSDoc is expected for functions.
@@ -118,7 +117,7 @@ export class SomeComponent extends BaseContainer {
 	 * @param {string} menu Menu to be clicked.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async clickOnMenu( menu: string ): Promise<void> {
+	async clickOnMenu( menu: string ): Promise< void > {
 		await this.page.waitForSelector( selectors.selectorName );
 
 		await this.page.click( menu );
@@ -128,9 +127,8 @@ export class SomeComponent extends BaseContainer {
 
 // Then, in a test file, page, or flow...
 
-	const someComponent = await SomeComponent.Expect( this.page );
-	await someComponent.clickOnMenu();
-
+const someComponent = await SomeComponent.Expect( this.page );
+await someComponent.clickOnMenu();
 ```
 
 </details>
@@ -155,11 +153,10 @@ Some in-repo example pages:
 <summary>Example Page Object</summary>
 
 ```typescript
-
 const selectors = {
 	titleInput: '.editor-post-title__input',
 	publishPanelToggle: '.editor-post-publish-panel__toggle',
-}
+};
 
 /**
  * JSDoc is expected for Class definitions.
@@ -170,8 +167,7 @@ export class SomePage {
 	 *
 	 * @param {Page} page Page object.
 	 */
-	constructor( page: Page ) {
-	}
+	constructor( page: Page ) {}
 
 	/**
 	 * JSDoc is expected for functions.
@@ -179,23 +175,22 @@ export class SomePage {
 	 * @param {string} text Text to be entered into the field.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async enterText( text: string ): Promise<void> {
+	async enterText( text: string ): Promise< void > {
 		await this.page.waitForSelector( selectors.selectorName );
 
 		//Some tricky section of code
-		await Promise.all([
+		await Promise.all( [
 			// calls
-		])
+		] );
 	}
 }
 
 // Then, in a test file...
 
-it('Test case', async function() {
+it( 'Test case', async function () {
 	const somePage = new SomePage( this.page );
 	await somePage.enterText( 'blah' );
-})
-
+} );
 ```
 
 </details>
@@ -244,6 +239,26 @@ await someFlow.executeFlow();
 
 ---
 
+## Variable naming
+
+Variables that derive from a page/component object (eg. SidebarComponent) should be named after the object following camelCase convention.
+
+**Avoid**:
+
+```typescript
+const bar = new SidebarComponent( page );
+const mhp = new MyHomePage( page );
+```
+
+**Instead**:
+
+```typescript
+const sidebarComponent = new SidebarComponent( page );
+const myHomePage = new MyHomePage( page );
+```
+
+---
+
 ## Async / Await
 
 We use async functions and `await` to wait for commands to finish. This lets asynchronous methods execute like synchronous methods.
@@ -255,10 +270,8 @@ We don't chain function calls together and avoid using `.then` calls.
 
 ```typescript
 async function openModal() {
-	const modal = await this.page.waitForSelector('modal-open');
-	await modal
-		.click( )
-		.then( () => this.page.waitForSelector( 'modal-is-open' ) );
+	const modal = await this.page.waitForSelector( 'modal-open' );
+	await modal.click().then( () => this.page.waitForSelector( 'modal-is-open' ) );
 }
 ```
 
@@ -314,7 +327,7 @@ const selectors = {
 	// Buttons
 	submitButton: '#submit',
 	cancelButton: '#cancel',
-}
+};
 ```
 
 Within the class, call on selectors as follows:
@@ -457,17 +470,17 @@ Avoid the use of modal verbs such as `can`, `should`, `could` or `must`.
 **Avoid**:
 
 ```typescript
-it( 'Can log in' )
+it( 'Can log in' );
 
-it( 'Should be able to start new post' )
+it( 'Should be able to start new post' );
 ```
 
 **Instead**:
 
 ```typescript
-it( 'Log In' )
+it( 'Log In' );
 
-it( 'Start new post' )
+it( 'Start new post' );
 ```
 
 ### Step size
@@ -477,18 +490,17 @@ Prefer more of smaller steps.
 **Avoid**:
 
 ```typescript
-it( 'Log in, select home page and start a search')
-
+it( 'Log in, select home page and start a search' );
 ```
 
 **Instead**:
 
 ```typescript
-it( 'Log In' )
+it( 'Log In' );
 
-it( 'Navigate to home page' )
+it( 'Navigate to home page' );
 
-it( 'Search for ${string}' )
+it( 'Search for ${string}' );
 ```
 
 ---
