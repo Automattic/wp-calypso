@@ -3,17 +3,24 @@ import {
 	isGSuiteOrGoogleWorkspace,
 	isJetpackPlanSlug,
 	isJetpackProductSlug,
+	isPlan,
 	TERM_ANNUALLY,
 	JETPACK_PRODUCTS_LIST,
 } from '@automattic/calypso-products';
 import { Dialog, Button } from '@automattic/components';
 import { getCurrencyDefaults } from '@automattic/format-currency';
-import { SelectControl, TextareaControl, TextControl } from '@wordpress/components';
+import {
+	Button as GutenbergButton,
+	SelectControl,
+	TextareaControl,
+	TextControl,
+} from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { shuffle } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
@@ -33,6 +40,9 @@ import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-act
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import isPrecancellationChatAvailable from 'calypso/state/happychat/selectors/is-precancellation-chat-available';
 import { getDowngradePlanRawPrice } from 'calypso/state/purchases/selectors';
+import getSupportVariation, {
+	SUPPORT_HAPPYCHAT,
+} from 'calypso/state/selectors/get-inline-help-support-variation';
 import getSiteImportEngine from 'calypso/state/selectors/get-site-import-engine';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { CANCEL_FLOW_TYPE } from './constants';
@@ -85,7 +95,7 @@ class CancelPurchaseForm extends React.Component {
 		// Don't show a button to start Happychat
 		// if we're already in a chat session
 		const { surveyStep } = this.state;
-		if ( surveyStep.id === steps.HAPPYCHAT_STEP ) {
+		if ( surveyStep === steps.HAPPYCHAT_STEP ) {
 			return false;
 		}
 
@@ -110,44 +120,13 @@ class CancelPurchaseForm extends React.Component {
 		} = this.props;
 		const downgradePossible = !! downgradeClick;
 
-		const allSteps = stepsForProductAndSurvey(
+		return stepsForProductAndSurvey(
 			this.state,
 			purchase,
 			isChatAvailable || isChatActive,
 			precancellationChatAvailable,
 			downgradePossible
 		);
-
-		if ( config.isEnabled( 'purchases/cancel-fullscreen-form' ) ) {
-			// Steps asking for feedback are combined into one single step in the new fullscreen form.
-			return allSteps.reduce( ( combinedSteps, step ) => {
-				switch ( step.id ) {
-					case steps.INITIAL_STEP:
-					case steps.CONCIERGE_STEP:
-					case steps.HAPPYCHAT_STEP:
-					case steps.FINAL_STEP:
-					case steps.BUSINESS_AT_STEP:
-					case steps.UPGRADE_AT_STEP:
-					case steps.DOWNGRADE_STEP:
-						// eslint-disable-next-line no-case-declarations
-						let feedbackStep = combinedSteps.find(
-							( combinedStep ) => combinedStep.id === steps.FEEDBACK_STEP
-						);
-						if ( ! feedbackStep ) {
-							feedbackStep = { id: steps.FEEDBACK_STEP, children: [] };
-							combinedSteps.unshift( feedbackStep );
-						}
-						feedbackStep.children.push( step );
-						break;
-					default:
-						combinedSteps.push( step );
-						break;
-				}
-				return combinedSteps;
-			}, [] );
-		}
-
-		return allSteps;
 	};
 
 	initSurveyState() {
@@ -449,7 +428,7 @@ class CancelPurchaseForm extends React.Component {
 			},
 		];
 
-		if ( surveyStep.id === steps.FEEDBACK_STEP ) {
+		if ( surveyStep === steps.FEEDBACK_STEP ) {
 			const optionKeys = [ ...questionOneOrder ];
 			optionKeys.unshift( '' ); // Placeholder.
 
@@ -559,18 +538,6 @@ class CancelPurchaseForm extends React.Component {
 			return null;
 		}
 
-		const appendRadioOption = ( groupName, key, radioPrompt, textPlaceholder ) =>
-			( reasons[ key ] = radioTextOption(
-				groupName,
-				key,
-				questionTwoRadio,
-				questionTwoText,
-				this.onRadioTwoChange,
-				this.onTextTwoChange,
-				radioPrompt,
-				textPlaceholder
-			) );
-
 		const options = [
 			{
 				value: 'stayingHere',
@@ -612,7 +579,7 @@ class CancelPurchaseForm extends React.Component {
 			},
 		];
 
-		if ( surveyStep.id === steps.FEEDBACK_STEP ) {
+		if ( surveyStep === steps.FEEDBACK_STEP ) {
 			const optionKeys = [ ...questionTwoOrder ];
 			optionKeys.unshift( '' ); // Placeholder.
 
@@ -643,6 +610,18 @@ class CancelPurchaseForm extends React.Component {
 				</div>
 			);
 		}
+
+		const appendRadioOption = ( groupName, key, radioPrompt, textPlaceholder ) =>
+			( reasons[ key ] = radioTextOption(
+				groupName,
+				key,
+				questionTwoRadio,
+				questionTwoText,
+				this.onRadioTwoChange,
+				this.onTextTwoChange,
+				radioPrompt,
+				textPlaceholder
+			) );
 
 		options.forEach( ( { label, textPlaceholder, value } ) =>
 			appendRadioOption( 'questionTwo', value, label, textPlaceholder )
@@ -682,7 +661,7 @@ class CancelPurchaseForm extends React.Component {
 			},
 		];
 
-		if ( surveyStep.id === steps.FEEDBACK_STEP ) {
+		if ( surveyStep === steps.FEEDBACK_STEP ) {
 			// Add placeholder.
 			options.unshift( {
 				value: '',
@@ -733,13 +712,10 @@ class CancelPurchaseForm extends React.Component {
 
 	renderFreeformQuestion = () => {
 		const { translate, isImport } = this.props;
-		const { surveyStep, questionOneRadio, questionTwoRadio, importQuestionRadio } = this.state;
+		const { surveyStep } = this.state;
 
-		if ( surveyStep.id === steps.FEEDBACK_STEP ) {
-			if (
-				surveyStep.children.find( ( step ) => step.id === steps.INITIAL_STEP ) &&
-				( ! questionOneRadio || ! questionTwoRadio || ( isImport && ! importQuestionRadio ) )
-			) {
+		if ( surveyStep === steps.FEEDBACK_STEP ) {
+			if ( ! isSurveyFilledIn( this.state, isImport ) ) {
 				// Do not display this question unless user has already answered previous questions.
 				return null;
 			}
@@ -850,8 +826,31 @@ class CancelPurchaseForm extends React.Component {
 			isJetpackProductSlug( purchase.productSlug ) || isJetpackPlanSlug( purchase.productSlug );
 		const productName = isJetpack ? translate( 'Jetpack' ) : translate( 'WordPress.com' );
 
+		if ( surveyStep === steps.FEEDBACK_STEP ) {
+			return (
+				<>
+					<FormattedHeader
+						brandFont
+						headerText={ translate( 'Your thoughts are needed' ) }
+						subHeaderText={ translate(
+							'Before you go, please answer a few quick questions to help us improve %(productName)s.',
+							{
+								args: { productName },
+							}
+						) }
+					/>
+					<div className="cancel-purchase-form__feedback-questions">
+						{ this.renderQuestionOne() }
+						{ isImport && this.renderImportQuestion() }
+						{ this.renderQuestionTwo() }
+						{ this.renderFreeformQuestion() }
+					</div>
+				</>
+			);
+		}
+
 		if ( showSurvey ) {
-			if ( surveyStep.id === steps.INITIAL_STEP ) {
+			if ( surveyStep === steps.INITIAL_STEP ) {
 				return (
 					<div>
 						<FormSectionHeading>{ translate( 'Your thoughts are needed.' ) }</FormSectionHeading>
@@ -870,7 +869,7 @@ class CancelPurchaseForm extends React.Component {
 				);
 			}
 
-			if ( surveyStep.id === steps.CONCIERGE_STEP ) {
+			if ( surveyStep === steps.CONCIERGE_STEP ) {
 				return (
 					<div>
 						<FormSectionHeading>
@@ -881,7 +880,7 @@ class CancelPurchaseForm extends React.Component {
 				);
 			}
 
-			if ( surveyStep.id === steps.HAPPYCHAT_STEP ) {
+			if ( surveyStep === steps.HAPPYCHAT_STEP ) {
 				return (
 					<div>
 						<FormSectionHeading>{ translate( 'How can we help?' ) }</FormSectionHeading>
@@ -890,15 +889,15 @@ class CancelPurchaseForm extends React.Component {
 				);
 			}
 
-			if ( surveyStep.id === steps.BUSINESS_AT_STEP ) {
+			if ( surveyStep === steps.BUSINESS_AT_STEP ) {
 				return <BusinessATStep />;
 			}
 
-			if ( surveyStep.id === steps.UPGRADE_AT_STEP ) {
+			if ( surveyStep === steps.UPGRADE_AT_STEP ) {
 				return <UpgradeATStep />;
 			}
 
-			if ( surveyStep.id === steps.DOWNGRADE_STEP ) {
+			if ( surveyStep === steps.DOWNGRADE_STEP ) {
 				const { precision } = getCurrencyDefaults( purchase.currencyCode );
 				const planCost = parseFloat( this.props.downgradePlanPrice ).toFixed( precision );
 				return (
@@ -907,35 +906,6 @@ class CancelPurchaseForm extends React.Component {
 						planCost={ planCost }
 						refundAmount={ this.getRefundAmount() }
 					/>
-				);
-			}
-
-			if ( surveyStep.id === steps.FEEDBACK_STEP ) {
-				return (
-					<>
-						<FormattedHeader
-							brandFont
-							headerText={ translate( 'Your thoughts are needed' ) }
-							subHeaderText={ translate(
-								'Before you go, please answer a few quick questions to help us improve %(productName)s.',
-								{
-									args: { productName },
-								}
-							) }
-						/>
-						<div className="cancel-purchase-form__feedback-questions">
-							{ surveyStep.children.find( ( step ) => step.id === steps.INITIAL_STEP ) && (
-								<>
-									{ this.renderQuestionOne() }
-									{ isImport && this.renderImportQuestion() }
-									{ this.renderQuestionTwo() }
-								</>
-							) }
-							{ surveyStep.children.find( ( step ) => step.id === steps.FINAL_STEP ) && (
-								<>{ this.renderFreeformQuestion() }</>
-							) }
-						</div>
-					</>
 				);
 			}
 
@@ -967,7 +937,7 @@ class CancelPurchaseForm extends React.Component {
 
 		this.setState( { surveyStep: newStep } );
 
-		this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: newStep.id } );
+		this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: newStep } );
 	};
 
 	clickNext = () => {
@@ -990,6 +960,25 @@ class CancelPurchaseForm extends React.Component {
 		const { surveyStep } = this.state;
 		const disabled = disableButtons || this.state.isSubmitting;
 
+		if ( surveyStep === steps.FEEDBACK_STEP ) {
+			return (
+				<>
+					<GutenbergButton disabled={ disabled } isPrimary onClick={ this.closeDialog }>
+						{ translate( 'Keep it' ) }
+					</GutenbergButton>
+					<GutenbergButton
+						isDefault
+						disabled={ disabled || ! isSurveyFilledIn( this.state, isImport ) }
+						onClick={ this.onSubmit }
+					>
+						{ flowType === CANCEL_FLOW_TYPE.REMOVE
+							? translate( 'Remove it' )
+							: translate( 'Cancel now' ) }
+					</GutenbergButton>
+				</>
+			);
+		}
+
 		const close = {
 			action: 'close',
 			disabled,
@@ -999,7 +988,7 @@ class CancelPurchaseForm extends React.Component {
 			<PrecancellationChatButton
 				purchase={ purchase }
 				onClick={ this.closeDialog }
-				surveyStep={ surveyStep.id }
+				surveyStep={ surveyStep }
 			/>
 		);
 		const next = {
@@ -1060,12 +1049,12 @@ class CancelPurchaseForm extends React.Component {
 			}
 		}
 
-		if ( this.state.surveyStep.id === steps.DOWNGRADE_STEP ) {
+		if ( this.state.surveyStep === steps.DOWNGRADE_STEP ) {
 			return firstButtons.concat( [ prev, downgrade, next ] );
 		}
 
 		return firstButtons.concat(
-			this.state.surveyStep.id === steps.INITIAL_STEP ? [ next ] : [ prev, next ]
+			this.state.surveyStep === steps.INITIAL_STEP ? [ next ] : [ prev, next ]
 		);
 	};
 
@@ -1073,8 +1062,7 @@ class CancelPurchaseForm extends React.Component {
 		if (
 			! prevProps.isVisible &&
 			this.props.isVisible &&
-			this.state.surveyStep &&
-			[ steps.INITIAL_STEP, steps.FEEDBACK_STEP ].includes( this.state.surveyStep.id )
+			this.state.surveyStep === this.getAllSurveySteps()[ 0 ]
 		) {
 			this.recordEvent( 'calypso_purchases_cancel_form_start' );
 		}
@@ -1085,26 +1073,43 @@ class CancelPurchaseForm extends React.Component {
 	}
 
 	render() {
-		if ( ! this.state.surveyStep ) {
+		const { surveyStep } = this.state;
+		if ( ! surveyStep ) {
 			return null;
 		}
 
-		const { selectedSite } = this.props;
-		if ( config.isEnabled( 'purchases/cancel-fullscreen-form' ) ) {
-			if ( this.props.isVisible ) {
-				return (
-					<BlankCanvas>
-						<BlankCanvas.Header onBackClick={ this.closeDialog } />
-						{ this.surveyContent() }
-						<BlankCanvas.Footer>Footer</BlankCanvas.Footer>
-						<QueryPlans />
-						{ selectedSite && <QuerySitePlans siteId={ selectedSite.ID } /> }
-					</BlankCanvas>
-				);
-			}
+		const { isChatAvailable, isChatActive, selectedSite, supportVariation, purchase } = this.props;
 
-			return null;
+		if ( config.isEnabled( 'purchases/cancel-plan-fullscreen-form' ) && isPlan( purchase ) ) {
+			return (
+				<>
+					<QueryPlans />
+					{ selectedSite && <QuerySitePlans siteId={ selectedSite.ID } /> }
+					<QuerySupportTypes />
+					{ this.props.isVisible && (
+						<BlankCanvas>
+							<BlankCanvas.Header onBackClick={ this.closeDialog } />
+							{ this.surveyContent() }
+							<BlankCanvas.Footer>
+								<div className="cancel-purchase-form__actions">
+									<div className="cancel-purchase-form__buttons">{ this.getStepButtons() }</div>
+									{ ( isChatAvailable || isChatActive ) &&
+										supportVariation === SUPPORT_HAPPYCHAT && (
+											<PrecancellationChatButton
+												icon="chat_bubble"
+												onClick={ this.closeDialog }
+												purchase={ purchase }
+												surveyStep={ surveyStep }
+											/>
+										) }
+								</div>
+							</BlankCanvas.Footer>
+						</BlankCanvas>
+					) }
+				</>
+			);
 		}
+
 		return (
 			<Dialog
 				isVisible={ this.props.isVisible }
@@ -1128,6 +1133,7 @@ export default connect(
 		isImport: !! getSiteImportEngine( state, purchase.siteId ),
 		precancellationChatAvailable: isPrecancellationChatAvailable( state ),
 		downgradePlanPrice: getDowngradePlanRawPrice( state, purchase ),
+		supportVariation: getSupportVariation( state ),
 	} ),
 	{
 		recordTracksEvent,

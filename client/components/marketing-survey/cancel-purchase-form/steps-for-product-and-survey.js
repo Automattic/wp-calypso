@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	GROUP_WPCOM,
 	GROUP_JETPACK,
@@ -28,27 +29,23 @@ export default function stepsForProductAndSurvey(
 	precancellationChatAvailable,
 	downgradePossible
 ) {
+	if ( config.isEnabled( 'purchases/cancel-plan-fullscreen-form' ) && isPlan( product ) ) {
+		return [ steps.FEEDBACK_STEP ];
+	}
+
 	if ( survey && survey.questionOneRadio === 'couldNotInstall' ) {
 		if ( includesProduct( BUSINESS_PLANS, product ) ) {
-			return [
-				{ id: steps.INITIAL_STEP },
-				{ id: steps.BUSINESS_AT_STEP },
-				{ id: steps.FINAL_STEP },
-			];
+			return [ steps.INITIAL_STEP, steps.BUSINESS_AT_STEP, steps.FINAL_STEP ];
 		}
 
 		if ( includesProduct( PERSONAL_PREMIUM_PLANS, product ) ) {
-			return [
-				{ id: steps.INITIAL_STEP },
-				{ id: steps.UPGRADE_AT_STEP },
-				{ id: steps.FINAL_STEP },
-			];
+			return [ steps.INITIAL_STEP, steps.UPGRADE_AT_STEP, steps.FINAL_STEP ];
 		}
 	}
 
 	if ( survey && survey.questionOneRadio === 'onlyNeedFree' ) {
 		if ( includesProduct( PREMIUM_PLANS, product ) && downgradePossible ) {
-			return [ { id: steps.INITIAL_STEP }, { id: steps.DOWNGRADE_STEP }, { id: steps.FINAL_STEP } ];
+			return [ steps.INITIAL_STEP, steps.DOWNGRADE_STEP, steps.FINAL_STEP ];
 		}
 	}
 
@@ -66,8 +63,8 @@ export default function stepsForProductAndSurvey(
 	}
 
 	if ( product && isPlan( product ) ) {
-		return [ { id: steps.INITIAL_STEP }, { id: steps.FINAL_STEP } ];
+		return [ steps.INITIAL_STEP, steps.FINAL_STEP ];
 	}
 
-	return [ { id: steps.FINAL_STEP } ];
+	return [ steps.FINAL_STEP ];
 }
