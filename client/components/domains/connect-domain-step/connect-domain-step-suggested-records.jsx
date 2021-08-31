@@ -1,17 +1,17 @@
 import { Button } from '@automattic/components';
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
 import React from 'react';
 import ConnectDomainStepClipboardButton from './connect-domain-step-clipboard-button';
 import ConnectDomainStepVerificationNotice from './connect-domain-step-verification-error-notice';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
-import { modeType, stepSlug } from './constants';
+import { modeType, stepSlug, stepsHeadingSuggested } from './constants';
 
 import './style.scss';
 
 export default function ConnectDomainStepSuggestedRecords( {
 	className,
-	currentPageSlug,
+	pageSlug,
 	domainSetupInfo,
 	mode,
 	onVerifyConnection,
@@ -20,6 +20,7 @@ export default function ConnectDomainStepSuggestedRecords( {
 	verificationInProgress,
 	verificationStatus,
 } ) {
+	const { __ } = useI18n();
 	const { data } = domainSetupInfo;
 	const { wpcom_name_servers: nameServers } = data;
 
@@ -66,9 +67,10 @@ export default function ConnectDomainStepSuggestedRecords( {
 	return (
 		<ConnectDomainStepWrapper
 			className={ className }
+			heading={ stepsHeadingSuggested }
 			mode={ mode }
 			progressStepList={ progressStepList }
-			currentPageSlug={ currentPageSlug }
+			pageSlug={ pageSlug }
 			stepContent={ stepContent }
 		/>
 	);
@@ -76,7 +78,7 @@ export default function ConnectDomainStepSuggestedRecords( {
 
 ConnectDomainStepSuggestedRecords.propTypes = {
 	className: PropTypes.string.isRequired,
-	currentPageSlug: PropTypes.oneOf( Object.values( stepSlug ) ).isRequired,
+	pageSlug: PropTypes.oneOf( Object.values( stepSlug ) ).isRequired,
 	domainSetupInfo: PropTypes.object.isRequired,
 	mode: PropTypes.oneOf( Object.values( modeType ) ).isRequired,
 	onVerifyConnection: PropTypes.func.isRequired,

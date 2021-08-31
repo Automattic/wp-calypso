@@ -7,7 +7,7 @@ import ConnectDomainStepSuggestedRecords from './connect-domain-step-suggested-r
 import ConnectDomainStepSuggestedStart from './connect-domain-step-suggested-start';
 import { modeType, stepSlug, stepType } from './constants';
 
-export const defaultStepsDefinition = {
+export const connectADomainStepsDefinition = {
 	// Suggested flow
 	[ stepSlug.SUGGESTED_START ]: {
 		mode: modeType.SUGGESTED,
@@ -78,12 +78,6 @@ export const defaultStepsDefinition = {
 		component: ConnectDomainStepDone,
 		prev: stepSlug.ADVANCED_UPDATE,
 	},
-};
-
-// eslint-disable-next-line no-unused-vars
-export const getStepsDefinition = ( selectedSite, domain, domainSetupInfo ) => {
-	// This can be used to determine which steps definition to use based on the inputs.
-	return defaultStepsDefinition;
 };
 
 export const getPageSlug = ( mode, step, stepsDefinition ) => {
