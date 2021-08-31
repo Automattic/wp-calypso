@@ -11,6 +11,7 @@
 	background: white;
 	border: 1px solid var( --color-border-subtle );
 	border-bottom: 0;
+	padding: 11px;
 	transition: all 0.15s ease-in-out;
 
 	@include breakpoint-deprecated( '<660px' ) {
@@ -26,7 +27,6 @@
 	.search {
 		position: relative;
 		flex: 0 1 auto;
-		margin: 0 5px 0 10px;
 		height: 36px;
 		border: solid 1px var( --color-neutral-10 );
 
