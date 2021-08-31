@@ -114,11 +114,20 @@ export class LoginLinks extends React.Component {
 		return login( loginParameters );
 	};
 
+	getLoginLinkText = () => {
+		if ( this.props.isP2Login ) {
+			return this.props.translate( 'Get a login link on your email' );
+		}
+
+		return this.props.translate( 'Email me a login link' );
+	};
+
 	renderBackLink() {
 		if (
 			isCrowdsignalOAuth2Client( this.props.oauth2Client ) ||
 			isJetpackCloudOAuth2Client( this.props.oauth2Client ) ||
-			this.props.isGutenboarding
+			this.props.isGutenboarding ||
+			this.props.isP2Login
 		) {
 			return null;
 		}
@@ -234,7 +243,7 @@ export class LoginLinks extends React.Component {
 				key="magic-login-link"
 				data-e2e-link="magic-login-link"
 			>
-				{ this.props.translate( 'Email me a login link' ) }
+				{ this.getLoginLinkText() }
 			</a>
 		);
 	}

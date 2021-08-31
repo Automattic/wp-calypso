@@ -217,7 +217,7 @@ export class Login extends React.Component {
 		const isJetpackMagicLinkSignUpFlow =
 			isJetpack && config.isEnabled( 'jetpack/magic-link-signup' );
 
-		const shouldRenderFooter = ! socialConnect && ! isJetpackMagicLinkSignUpFlow && ! isP2Login;
+		const shouldRenderFooter = ! socialConnect && ! isJetpackMagicLinkSignUpFlow;
 
 		const footer = (
 			<>
@@ -227,6 +227,7 @@ export class Login extends React.Component {
 						privateSite={ privateSite }
 						twoFactorAuthType={ twoFactorAuthType }
 						isGutenboarding={ isGutenboarding }
+						isP2Login={ isP2Login }
 						signupUrl={ signupUrl }
 						usernameOrEmail={ this.state.usernameOrEmail }
 					/>
