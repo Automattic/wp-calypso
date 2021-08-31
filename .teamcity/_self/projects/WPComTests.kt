@@ -331,11 +331,21 @@ fun jetpackBuildType(screenSize: String): BuildType {
 	}
 }
 
-private object GutenbergPlaywrightE2E: BuildType ({
+private object GutenbergPlaywrightE2EDesktop: BuildType ({
 	name = "Playwright WPCOM E2E Tests (desktop)"
 	description = "Runs Gutenberg E2E tests in desktop size using Playwright"
 
-    name = "Hello world"
+    steps {
+        bashNodeScript {
+            scriptContent = "echo 'Hello world!'"
+        }
+    }
+})
+
+private object GutenbergPlaywrightE2EMobile: BuildType ({
+	name = "Playwright WPCOM E2E Tests (mobile)"
+	description = "Runs Gutenberg E2E tests in mobile size using Playwright"
+
     steps {
         bashNodeScript {
             scriptContent = "echo 'Hello world!'"
