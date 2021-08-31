@@ -642,7 +642,7 @@ fun playwrightBuildType( viewportName: String, buildUuid: String ): BuildType {
 					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
 					export DEBUG=pw:api
 
-					for i in {1..100}; do xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --testNamePattern @parallel --maxWorkers=%E2E_WORKERS% specs/specs-playwright/wp-likes__post-spec.js specs/specs-playwright/wp-notifications__trash-spec.js; done
+					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --testNamePattern @parallel --maxWorkers=%E2E_WORKERS% specs/specs-playwright
 				""".trimIndent()
 				dockerImage = "%docker_image_e2e%"
 			}
@@ -695,7 +695,7 @@ fun playwrightBuildType( viewportName: String, buildUuid: String ): BuildType {
 		}
 
 		failureConditions {
-			executionTimeoutMin = 60
+			executionTimeoutMin = 20
 		}
 
 		dependencies {
