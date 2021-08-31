@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
-import { useTranslate } from 'i18n-calypso';
+import i18nCalypso, { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import React, { useCallback, useMemo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -66,16 +66,22 @@ export function PaymentMethods( { siteSlug }: { siteSlug: string } ): JSX.Elemen
 				brandFont
 				className="payment-methods__page-heading"
 				headerText={ titles.sectionTitle }
-				subHeaderText={ translate(
-					'Add or delete payment methods for your account. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-					{
-						components: {
-							learnMoreLink: (
-								<InlineSupportLink supportContext="payment_methods" showIcon={ false } />
-							),
-						},
-					}
-				) }
+				subHeaderText={
+					i18nCalypso.hasTranslation(
+						'Add or delete payment methods for your account. {{learnMoreLink}}Learn more{{/learnMoreLink}}.'
+					)
+						? translate(
+								'Add or delete payment methods for your account. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+								{
+									components: {
+										learnMoreLink: (
+											<InlineSupportLink supportContext="payment_methods" showIcon={ false } />
+										),
+									},
+								}
+						  )
+						: translate( 'Add or delete payment methods for your account.' )
+				}
 				align="left"
 			/>
 			<PurchasesNavigation sectionTitle={ 'Payment Methods' } siteSlug={ siteSlug } />
