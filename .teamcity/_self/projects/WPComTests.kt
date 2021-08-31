@@ -337,7 +337,7 @@ private object GutenbergPlaywrightE2E: BuildType ({
 
     name = "Hello world"
     steps {
-        script {
+        bashNodeScript {
             scriptContent = "echo 'Hello world!'"
         }
     }
