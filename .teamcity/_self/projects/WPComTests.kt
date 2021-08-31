@@ -32,7 +32,8 @@ object WPComTests : Project({
 	// Keep the previous ID in order to preserve the historical data
 	buildType(gutenbergBuildType("desktop", "aee94c18-ee11-4c80-b6aa-245b967a97db"));
 	buildType(gutenbergBuildType("mobile","2af2eaed-87d5-41f4-ab1d-4ed589d5ae82"));
-	buildType(GutenbergPlaywrightE2E);
+	buildType(GutenbergPlaywrightE2EDesktop);
+	buildType(GutenbergPlaywrightE2EMobile);
 	buildType(jetpackBuildType("desktop"));
 	buildType(jetpackBuildType("mobile"));
 	buildType(VisualRegressionTests);
