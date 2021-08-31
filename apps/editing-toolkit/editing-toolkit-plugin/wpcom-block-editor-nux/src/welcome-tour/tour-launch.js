@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
 import { Button, Flex } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { createPortal, useEffect, useState, useRef } from '@wordpress/element';
+import { createPortal, useEffect, useState, useRef, useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon } from '@wordpress/icons';
 import maximize from './icons/maximize';
@@ -51,9 +51,52 @@ function LaunchWpcomWelcomeTour() {
 	return <div>{ createPortal( <WelcomeTourFrame />, portalParent ) }</div>;
 }
 
+const useKeyboardNavigation = (
+	ref,
+	{ onMinimize, onNextCardProgression, onPreviousCardProgression }
+) => {
+	const handleKeydown = useCallback(
+		( event ) => {
+			switch ( event.keyCode ) {
+				case 27: // Escape key
+					onMinimize( true );
+					break;
+				case 37: // left arrow
+					onPreviousCardProgression();
+					break;
+				case 39: // right arrow
+					onNextCardProgression();
+					break;
+				default:
+					break;
+			}
+		},
+		[ onMinimize, onNextCardProgression, onPreviousCardProgression ]
+	);
+
+	useEffect( () => {
+		const element = ref?.current || document;
+
+		// console.log( ref, 234 );
+		element.addEventListener( 'keydown', handleKeydown );
+
+		return () => {
+			// console.log( ref, 345 );
+			element.removeEventListener( 'keydown', handleKeydown );
+		};
+	}, [ ref, handleKeydown ] );
+};
+
+function KeyboardNavigation( { onMinimize, onNextCardProgression, onPreviousCardProgression } ) {
+	const ref = useRef();
+	useKeyboardNavigation( ref, { onMinimize, onNextCardProgression, onPreviousCardProgression } );
+	return null;
+}
+
 function WelcomeTourFrame() {
 	const localeSlug = useLocale();
 	const cardContent = getTourContent( localeSlug );
+	const lastCardIndex = cardContent.length - 1;
 	const [ isMinimized, setIsMinimized ] = useState( false );
 	const [ currentCardIndex, setCurrentCardIndex ] = useState( 0 );
 	const [ justMaximized, setJustMaximized ] = useState( false );
@@ -78,23 +121,42 @@ function WelcomeTourFrame() {
 		e.preventDefault();
 	};
 
+	const handleNextCardProgression = () => {
+		if ( lastCardIndex > currentCardIndex ) {
+			setCurrentCardIndex( currentCardIndex + 1 );
+		}
+	};
+
+	const handlePreviousCardProgression = () => {
+		currentCardIndex && setCurrentCardIndex( currentCardIndex - 1 );
+	};
+
 	return (
 		<div
 			className="wpcom-editor-welcome-tour-frame"
 			onMouseDownCapture={ captureWelcomeTourFrameClick }
 		>
 			{ ! isMinimized ? (
-				<WelcomeTourCard
-					cardContent={ cardContent[ currentCardIndex ] }
-					cardIndex={ currentCardIndex }
-					justMaximized={ justMaximized }
-					key={ currentCardIndex }
-					lastCardIndex={ cardContent.length - 1 }
-					onDismiss={ handleDismiss }
-					onMinimize={ setIsMinimized }
-					setJustMaximized={ setJustMaximized }
-					setCurrentCardIndex={ setCurrentCardIndex }
-				/>
+				<>
+					<KeyboardNavigation
+						onMinimize={ setIsMinimized }
+						onNextCardProgression={ handleNextCardProgression }
+						onPreviousCardProgression={ handlePreviousCardProgression }
+					/>
+					<WelcomeTourCard
+						cardContent={ cardContent[ currentCardIndex ] }
+						cardIndex={ currentCardIndex }
+						justMaximized={ justMaximized }
+						key={ currentCardIndex }
+						lastCardIndex={ lastCardIndex }
+						onDismiss={ handleDismiss }
+						onMinimize={ setIsMinimized }
+						setJustMaximized={ setJustMaximized }
+						setCurrentCardIndex={ setCurrentCardIndex }
+						onNextCardProgression={ handleNextCardProgression }
+						onPreviousCardProgression={ handlePreviousCardProgression }
+					/>
+				</>
 			) : (
 				<WelcomeTourMinimized
 					onMaximize={ setIsMinimized }
