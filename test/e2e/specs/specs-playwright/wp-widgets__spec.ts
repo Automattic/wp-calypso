@@ -21,7 +21,10 @@ describe( DataHelper.createSuiteTitle( 'Widgets' ), function () {
 	it( 'Navigate to the Block Widgets Editor', async function () {
 		sidebarComponent = new SidebarComponent( page );
 		await sidebarComponent.navigate( 'Appearance', 'Widgets' );
-		const widgetsMenu = await page.waitForSelector( '"Customising ▸ Widgets"' );
+		// GB 10.4.0-rc-1 changed the english label to "Customize" from "Customise"
+		// (notice the `z`) we accept both since both are considered correct and
+		// shouldn't affect the UX.
+		const widgetsMenu = await page.waitForSelector( 'text=/Customi[s|z]ing ▸ Widgets/' );
 		await widgetsMenu.waitForElementState( 'stable' );
 	} );
 
