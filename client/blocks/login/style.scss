@@ -263,3 +263,13 @@
 	position: initial;
 	text-transform: initial;
 }
+
+.layout.is-p2-login {
+	background: #fff;
+
+	.login__form-header {
+		margin-bottom: 5px;
+		font-weight: 700;
+		font-size: var( --p2-font-size-form-xl );
+	}
+}
