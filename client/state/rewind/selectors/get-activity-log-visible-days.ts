@@ -15,7 +15,7 @@ const getActivityLogVisibleDays = ( state: AppState, siteId: number ): number | 
 		return undefined;
 	}
 
-	return state.activityLog.displayRules[ siteId as number ]?.visibleDays ?? undefined;
+	return state.rewind?.[ siteId as number ]?.polices?.activityLogLimitDays ?? undefined;
 };
 
 export default getActivityLogVisibleDays;

@@ -6,8 +6,8 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import ActivityCard from 'calypso/components/activity-card';
-import QueryActivityLogDisplayRules from 'calypso/components/data/query-activity-log-display-rules';
 import QueryRewindCapabilities from 'calypso/components/data/query-rewind-capabilities';
+import QueryRewindPolicies from 'calypso/components/data/query-rewind-policies';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Pagination from 'calypso/components/pagination';
@@ -16,9 +16,9 @@ import { isActivityBackup } from 'calypso/lib/jetpack/backup-utils';
 import Filterbar from 'calypso/my-sites/activity/filterbar';
 import { updateFilter } from 'calypso/state/activity-log/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import getActivityLogDisplayRulesRequestStatus from 'calypso/state/selectors/get-activity-log-display-rules-request-status';
+import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
+import getRewindPoliciesRequestStatus from 'calypso/state/rewind/selectors/get-rewind-policies-request-status';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
-import getActivityLogVisibleDays from 'calypso/state/selectors/get-activity-log-visible-days';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import VisibleDaysLimitUpsell from './visible-days-limit-upsell';
 
@@ -250,23 +250,24 @@ class ActivityCardList extends Component {
 	render() {
 		const {
 			displayRulesEnabled,
-			requestingDisplayRules,
-			displayRulesRequestError,
+			requestingRewindPolicies,
+			rewindPoliciesRequestError,
 			siteId,
 			logs,
 		} = this.props;
 
-		if ( displayRulesEnabled && displayRulesRequestError ) {
+		if ( displayRulesEnabled && rewindPoliciesRequestError ) {
 			return this.renderLoading();
 		}
 
 		return (
 			<>
-				{ displayRulesEnabled && <QueryActivityLogDisplayRules siteId={ siteId } /> }
+				{ displayRulesEnabled && <QueryRewindPolicies siteId={ siteId } /> }
 				<QueryRewindCapabilities siteId={ siteId } />
 				<QueryRewindState siteId={ siteId } />
 
-				{ ( ! logs || ( displayRulesEnabled && requestingDisplayRules ) ) && this.renderLoading() }
+				{ ( ! logs || ( displayRulesEnabled && requestingRewindPolicies ) ) &&
+					this.renderLoading() }
 				{ logs && this.renderData() }
 			</>
 		);
@@ -281,13 +282,13 @@ const mapStateToProps = ( state ) => {
 	const userLocale = getCurrentUserLocale( state );
 	const visibleDays = getActivityLogVisibleDays( state, siteId );
 
-	const displayRulesRequestStatus = getActivityLogDisplayRulesRequestStatus( state, siteId );
+	const rewindPoliciesRequestStatus = getRewindPoliciesRequestStatus( state, siteId );
 
 	return {
 		filter,
 		displayRulesEnabled: isEnabled( 'activity-log/display-rules' ),
-		requestingDisplayRules: displayRulesRequestStatus === 'pending',
-		displayRulesRequestError: displayRulesRequestStatus === 'failure',
+		requestingRewindPolicies: rewindPoliciesRequestStatus === 'pending',
+		rewindPoliciesRequestError: rewindPoliciesRequestStatus === 'failure',
 		visibleDays,
 		siteId,
 		siteSlug,

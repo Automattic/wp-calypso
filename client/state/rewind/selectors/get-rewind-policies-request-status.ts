@@ -1,6 +1,6 @@
 import type { AppState } from 'calypso/types';
 
-const getActivityLogDisplayRulesRequestStatus = (
+const getRewindPoliciesRequestStatus = (
 	state: AppState,
 	siteId: number | null
 ): string | undefined => {
@@ -8,7 +8,7 @@ const getActivityLogDisplayRulesRequestStatus = (
 		return undefined;
 	}
 
-	return state.activityLog.displayRules[ siteId as number ]?.requestStatus;
+	return state.rewind?.[ siteId as number ]?.policies?.requestStatus;
 };
 
-export default getActivityLogDisplayRulesRequestStatus;
+export default getRewindPoliciesRequestStatus;

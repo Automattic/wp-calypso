@@ -1,19 +1,15 @@
 import {
-	ACTIVITY_LOG_DISPLAY_RULES_REQUEST,
-	ACTIVITY_LOG_DISPLAY_RULES_REQUEST_FAILURE,
-	ACTIVITY_LOG_DISPLAY_RULES_REQUEST_SUCCESS,
-	ACTIVITY_LOG_DISPLAY_RULES_SET,
+	REWIND_POLICIES_REQUEST,
+	REWIND_POLICIES_REQUEST_FAILURE,
+	REWIND_POLICIES_REQUEST_SUCCESS,
+	REWIND_POLICIES_SET,
 } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import fromApi from './from-api';
-
-/**
- * Type dependencies
- */
+import type { RewindPolicies } from 'calypso/state/rewind/policies/types';
 import type { AnyAction } from 'redux';
-import type { DisplayRules } from 'calypso/state/activity-log/display-rules/types';
 
 type RequestActionType = AnyAction & {
 	siteId: number;
@@ -32,25 +28,25 @@ const fetch = ( action: RequestActionType ) =>
 		action
 	);
 
-const onSuccess = ( { siteId }: RequestActionType, displayRules: DisplayRules ) => [
+const onSuccess = ( { siteId }: RequestActionType, policies: RewindPolicies ) => [
 	{
-		type: ACTIVITY_LOG_DISPLAY_RULES_REQUEST_SUCCESS,
+		type: REWIND_POLICIES_REQUEST_SUCCESS,
 		siteId,
 	},
 	{
-		type: ACTIVITY_LOG_DISPLAY_RULES_SET,
+		type: REWIND_POLICIES_SET,
 		siteId,
-		displayRules,
+		policies,
 	},
 ];
 
 const onError = ( { siteId }: RequestActionType ) => ( {
-	type: ACTIVITY_LOG_DISPLAY_RULES_REQUEST_FAILURE,
+	type: REWIND_POLICIES_REQUEST_FAILURE,
 	siteId,
 } );
 
-registerHandlers( 'state/data-layer/wpcom/activity-log/get-display-rules', {
-	[ ACTIVITY_LOG_DISPLAY_RULES_REQUEST ]: [
+registerHandlers( 'state/data-layer/wpcom/sites/rewind/policies', {
+	[ REWIND_POLICIES_REQUEST ]: [
 		dispatchRequest( {
 			fetch,
 			fromApi,
