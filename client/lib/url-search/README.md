@@ -25,9 +25,6 @@ ReactDom.render(
 Then in the component file, enhance with `urlSearch`:
 
 ```js
-/**
- * Internal dependencies
- */
 import urlSearch from 'calypso/lib/url-search';
 
 class SomeComponentWithSearch extends Component {

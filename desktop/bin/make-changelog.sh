@@ -26,7 +26,11 @@ function get_desktop_tags() {
 
 # fetch all tags in descending lexicographical order
 # (exclude current tag with `awk`)
-tags=$(get_desktop_tags | tr - \~ | sort -V -r | tr \~ - | awk '{if(NR>1)print}')
+all_tags=$(get_desktop_tags | tr - \~ | sort -V -r | tr \~ -)
+tags=$all_tags
+if [ ! -z "$VERSION" ]; then
+  tags=$(echo "$all_tags" | awk '{if( !(/^'"$VERSION"'/) )print}')
+fi
 
 # get tag for previous stable release from the sorted list
 # (first match without `-`, e.g. v1.2.3, not v1.2.3-alpha1)

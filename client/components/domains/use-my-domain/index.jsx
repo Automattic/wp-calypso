@@ -1,14 +1,8 @@
-/**
- * External dependencies
- */
 import { BackButton } from '@automattic/onboarding';
 import { __, sprintf } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { connect } from 'react-redux';
-/**
- * Internal dependencies
- */
 import FormattedHeader from 'calypso/components/formatted-header';
 import Gridicon from 'calypso/components/gridicon';
 import wpcom from 'calypso/lib/wp';
@@ -16,9 +10,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import UseMyDomainInput from './domain-input';
 import DomainTransferOrConnect from './transfer-or-connect';
 import { getAvailabilityErrorMessage, getDomainNameValidationErrorMessage } from './utilities';
-/**
- * Style dependencies
- */
+
 import './style.scss';
 
 function UseMyDomain( {

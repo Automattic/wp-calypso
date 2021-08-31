@@ -6,7 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import { CompactCard } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
-import { flowRight, partialRight, pick } from 'lodash';
+import { pick } from 'lodash';
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudflare-logo-small.svg';
@@ -257,9 +257,8 @@ const mapDispatchToProps = {
 
 const connectComponent = connect( mapStateToProps, mapDispatchToProps );
 
-const getFormSettings = partialRight( pick, [ 'jetpack_cloudflare_analytics' ] );
+const getFormSettings = ( settings ) => pick( settings, [ 'jetpack_cloudflare_analytics' ] );
 
-export default flowRight(
-	connectComponent,
-	wrapSettingsForm( getFormSettings )
-)( CloudflareAnalyticsSettings );
+export default connectComponent(
+	wrapSettingsForm( getFormSettings )( CloudflareAnalyticsSettings )
+);

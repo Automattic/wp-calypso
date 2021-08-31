@@ -5,7 +5,6 @@ import {
 	INLINE_HELP_SEARCH_REQUEST_SUCCESS,
 	INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
 	INLINE_HELP_SET_SEARCH_QUERY,
-	INLINE_HELP_SELECT_RESULT,
 	INLINE_HELP_CONTACT_FORM_RESET,
 	INLINE_HELP_CONTACT_FORM_SHOW_QANDA,
 	INLINE_HELP_POPOVER_SHOW,
@@ -140,30 +139,13 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 }
 
 /**
- * Selects a specific result in the inline help results list.
- *
- * @param  {number}  resultIndex Index of the result to select
- * @returns {Function}        Action thunk
- */
-export function selectResult( resultIndex ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: INLINE_HELP_SELECT_RESULT,
-			resultIndex,
-		} );
-	};
-}
-
-/**
  * Resets the inline contact form state.
  *
- * @returns {Function}  Action thunk
+ * @returns {object} Redux action
  */
 export function resetInlineHelpContactForm() {
-	return ( dispatch ) => {
-		dispatch( {
-			type: INLINE_HELP_CONTACT_FORM_RESET,
-		} );
+	return {
+		type: INLINE_HELP_CONTACT_FORM_RESET,
 	};
 }
 
@@ -173,35 +155,27 @@ export function resetInlineHelpContactForm() {
  * @returns {Function}  Action thunk
  */
 export function showQandAOnInlineHelpContactForm() {
-	return ( dispatch ) => {
-		dispatch( {
-			type: INLINE_HELP_CONTACT_FORM_SHOW_QANDA,
-		} );
+	return {
+		type: INLINE_HELP_CONTACT_FORM_SHOW_QANDA,
 	};
 }
 
 export function setSearchResults( searchQuery, searchResults ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
-			searchQuery,
-			searchResults,
-		} );
+	return {
+		type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
+		searchQuery,
+		searchResults,
 	};
 }
 
 export function showInlineHelpPopover() {
-	return ( dispatch ) => {
-		dispatch( {
-			type: INLINE_HELP_POPOVER_SHOW,
-		} );
+	return {
+		type: INLINE_HELP_POPOVER_SHOW,
 	};
 }
 
 export function hideInlineHelpPopover() {
-	return ( dispatch ) => {
-		dispatch( {
-			type: INLINE_HELP_POPOVER_HIDE,
-		} );
+	return {
+		type: INLINE_HELP_POPOVER_HIDE,
 	};
 }

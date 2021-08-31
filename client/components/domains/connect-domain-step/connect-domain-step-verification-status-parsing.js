@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-/**
- * Internal dependencies
- */
 import { modeType } from 'calypso/components/domains/connect-domain-step/constants';
 
 export function getMappingVerificationErrorMessage( mode, verificationStatus ) {

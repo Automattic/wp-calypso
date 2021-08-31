@@ -42,10 +42,6 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import './style.scss';
 import 'calypso/blocks/eligibility-warnings/style.scss';
 
-/**
- * Asset dependencies
- */
-
 interface BlockingHoldNoticeProps {
 	siteId: number;
 }

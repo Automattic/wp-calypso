@@ -8,9 +8,6 @@ import type {
 } from 'react';
 import type { NonUndefined } from 'utility-types';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 interface OwnProps {
 	className?: string;

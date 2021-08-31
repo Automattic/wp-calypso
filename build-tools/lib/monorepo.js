@@ -2,9 +2,6 @@
  * **** WARNING: No ES6 modules here. Not transpiled! ****
  */
 
-/**
- * External dependencies
- */
 const fs = require( 'fs' );
 const path = require( 'path' );
 

@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { useCallback } from 'react';
 import { useMutation } from 'react-query';
 import wpcom from 'calypso/lib/wp';

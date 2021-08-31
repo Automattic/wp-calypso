@@ -10,11 +10,14 @@ import {
 	isP2Plus,
 	isJetpackSearch,
 } from '@automattic/calypso-products';
-import { getTotalLineItemFromCart, tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
+import {
+	getTotalLineItemFromCart,
+	tryToGuessPostalCodeFormat,
+	isValueTruthy,
+} from '@automattic/wpcom-checkout';
 import { translate } from 'i18n-calypso';
 import { isRenewal } from 'calypso/lib/cart-values/cart-items';
 import { isGSuiteOrGoogleWorkspaceProductSlug } from 'calypso/lib/gsuite';
-import doesValueExist from './does-value-exist';
 import {
 	readWPCOMPaymentMethodClass,
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,
@@ -49,7 +52,7 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 
 	const allowedPaymentMethods = [ ...allowed_payment_methods, ...alwaysEnabledPaymentMethods ]
 		.map( readWPCOMPaymentMethodClass )
-		.filter( doesValueExist )
+		.filter( isValueTruthy )
 		.map( translateWpcomPaymentMethodToCheckoutPaymentMethod );
 
 	return {

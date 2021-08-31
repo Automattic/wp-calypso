@@ -1,5 +1,5 @@
 import { FEATURE_GOOGLE_ANALYTICS } from '@automattic/calypso-products';
-import { flowRight, partialRight, pick } from 'lodash';
+import { pick } from 'lodash';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -120,9 +120,6 @@ const mapDispatchToProps = {
 
 const connectComponent = connect( mapStateToProps, mapDispatchToProps );
 
-const getFormSettings = partialRight( pick, [ 'wga' ] );
+const getFormSettings = ( settings ) => pick( settings, [ 'wga' ] );
 
-export default flowRight(
-	connectComponent,
-	wrapSettingsForm( getFormSettings )
-)( GoogleAnalyticsForm );
+export default connectComponent( wrapSettingsForm( getFormSettings )( GoogleAnalyticsForm ) );

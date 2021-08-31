@@ -14,7 +14,7 @@ Render the component passing one or both of:
 ```jsx
 <ContainerComponent>
 	<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
-</ContainerComponent>
+</ContainerComponent>;
 ```
 
 It does not accept any children, nor does it render any elements to the page.

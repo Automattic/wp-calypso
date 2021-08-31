@@ -13,6 +13,7 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { protectForm } from 'calypso/lib/protect-form';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import withFormBase from 'calypso/me/form-base/with-form-base';
@@ -20,7 +21,6 @@ import ProfileLinks from 'calypso/me/profile-links';
 import ReauthRequired from 'calypso/me/reauth-required';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
 import './style.scss';
 

@@ -8,14 +8,14 @@ import noMembershipsImage from 'calypso/assets/images/illustrations/no-membershi
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryMembershipsSubscriptions from 'calypso/components/data/query-memberships-subscriptions';
 import EmptyContent from 'calypso/components/empty-content';
+import FormattedHeader from 'calypso/components/formatted-header';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import SectionHeader from 'calypso/components/section-header';
-import { getAllSubscriptions } from 'calypso/state/memberships/subscriptions/selectors';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import titles from 'calypso/me/purchases/titles';
-import FormattedHeader from 'calypso/components/formatted-header';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
+import { getAllSubscriptions } from 'calypso/state/memberships/subscriptions/selectors';
 
 import './style.scss';
 

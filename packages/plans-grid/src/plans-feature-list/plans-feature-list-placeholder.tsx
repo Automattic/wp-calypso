@@ -3,9 +3,6 @@ import React from 'react';
 
 import '../types-patch';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 export interface Props {

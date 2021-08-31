@@ -1182,7 +1182,7 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_SECURE_STORAGE_V2 ]: {
 		getSlug: () => FEATURE_SECURE_STORAGE_V2,
-		getTitle: () => i18n.translate( 'Unlimited site storage' ),
+		getTitle: () => i18n.translate( 'Unlimited backup storage' ),
 	},
 
 	[ FEATURE_ONE_CLICK_RESTORE_V2 ]: {

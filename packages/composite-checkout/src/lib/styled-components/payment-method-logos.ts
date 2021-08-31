@@ -1,4 +1,4 @@
-import styled from '../styled';
+import styled from '@emotion/styled';
 
 export const PaymentMethodLogos = styled.span`
 	flex: 1;

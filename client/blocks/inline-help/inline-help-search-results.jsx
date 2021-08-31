@@ -1,5 +1,4 @@
 import { speak } from '@wordpress/a11y';
-import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { debounce, isEmpty } from 'lodash';
 import page from 'page';
@@ -13,10 +12,7 @@ import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { selectResult } from 'calypso/state/inline-help/actions';
-import getInlineHelpCurrentlySelectedResult from 'calypso/state/inline-help/selectors/get-inline-help-currently-selected-result';
 import getSearchResultsByQuery from 'calypso/state/inline-help/selectors/get-inline-help-search-results-for-query';
-import getSelectedResultIndex from 'calypso/state/inline-help/selectors/get-selected-result-index';
 import isRequestingInlineHelpSearchResultsForQuery from 'calypso/state/inline-help/selectors/is-requesting-inline-help-search-results-for-query';
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import hasInlineHelpAPIResults from 'calypso/state/selectors/has-inline-help-api-results';
@@ -53,8 +49,6 @@ function HelpSearchResults( {
 	searchQuery = '',
 	searchResults = [],
 	sectionName,
-	selectedResultIndex = -1,
-	selectSearchResult,
 	translate,
 	placeholderLines,
 	track,
@@ -134,11 +128,6 @@ function HelpSearchResults( {
 			icon = 'domains',
 			post_id,
 		} = result;
-		const resultIndex = searchResults.findIndex( ( r ) => r.link === link );
-
-		const classes = classNames( 'inline-help__results-item', {
-			'is-selected': selectedResultIndex === resultIndex,
-		} );
 
 		const external = externalLinks && support_type !== SUPPORT_TYPE_ADMIN_SECTION;
 
@@ -157,7 +146,7 @@ function HelpSearchResults( {
 
 		return (
 			<Fragment key={ link ?? key }>
-				<li className={ classes }>
+				<li className="inline-help__results-item">
 					<div className="inline-help__results-cell">
 						<a
 							href={ localizeUrl( link ) }
@@ -165,7 +154,6 @@ function HelpSearchResults( {
 								if ( ! external ) {
 									event.preventDefault();
 								}
-								selectSearchResult( resultIndex );
 								onLinkClickHandler( event, result );
 							} }
 							{ ...( external && {
@@ -272,9 +260,7 @@ HelpSearchResults.propTypes = {
 	onAdminSectionSelect: PropTypes.func,
 	hasAPIResults: PropTypes.bool,
 	searchResults: PropTypes.array,
-	selectedResultIndex: PropTypes.number,
 	isSearching: PropTypes.bool,
-	selectedResult: PropTypes.object,
 	track: PropTypes.func,
 };
 
@@ -283,14 +269,11 @@ export default connect(
 		currentUserId: getCurrentUserId( state ),
 		searchResults: getSearchResultsByQuery( state ),
 		isSearching: isRequestingInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
-		selectedResultIndex: getSelectedResultIndex( state ),
 		hasAPIResults: hasInlineHelpAPIResults( state ),
-		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
 		hasPurchases: hasCancelableUserPurchases( state, getCurrentUserId( state ) ),
 		sectionName: getSectionName( state ),
 	} ),
 	{
 		track: recordTracksEvent,
-		selectSearchResult: selectResult,
 	}
 )( localize( HelpSearchResults ) );

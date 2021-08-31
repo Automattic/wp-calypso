@@ -1,6 +1,3 @@
-/**
- * Internal Dependencies
- */
 import {
 	FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
 	FEATURE_JETPACK_ANTI_SPAM,

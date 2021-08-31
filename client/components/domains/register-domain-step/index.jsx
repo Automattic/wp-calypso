@@ -79,6 +79,7 @@ import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import wpcom from 'calypso/lib/wp';
+import { domainUseMyDomain } from 'calypso/my-sites/domains/paths';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
 	getDomainsSuggestions,
@@ -87,7 +88,6 @@ import {
 import { hideSitePreview, showSitePreview } from 'calypso/state/signup/preview/actions';
 import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
 import AlreadyOwnADomain from './already-own-a-domain';
-import SearchWithTyper from './search';
 import tip from './tip';
 
 import './style.scss';
@@ -516,7 +516,6 @@ class RegisterDomainStep extends React.Component {
 	}
 
 	renderSearchBar() {
-		const { isSignupStep } = this.props;
 		const componentProps = {
 			className: this.state.clickedExampleSuggestion ? 'is-refocused' : undefined,
 			autoFocus: true,
@@ -536,18 +535,9 @@ class RegisterDomainStep extends React.Component {
 			isReskinned: this.props.isReskinned,
 		};
 
-		if ( isSignupStep ) {
-			return (
-				<>
-					<Search { ...componentProps }></Search>
-					{ this.renderSearchFilters() }
-				</>
-			);
-		}
-
 		return (
 			<>
-				<SearchWithTyper { ...componentProps }></SearchWithTyper>
+				<Search { ...componentProps }></Search>
 				{ this.renderSearchFilters() }
 			</>
 		);
@@ -1551,10 +1541,12 @@ class RegisterDomainStep extends React.Component {
 		if ( this.props.useYourDomainUrl ) {
 			useYourDomainUrl = this.props.useYourDomainUrl;
 		} else {
-			const query = stringify( { initialQuery: this.state.lastQuery.trim() } );
 			useYourDomainUrl = `${ this.props.basePath }/use-your-domain`;
 			if ( this.props.selectedSite ) {
-				useYourDomainUrl += `/${ this.props.selectedSite.slug }?${ query }`;
+				useYourDomainUrl = domainUseMyDomain(
+					this.props.selectedSite.slug,
+					this.state.lastQuery.trim()
+				);
 			}
 		}
 

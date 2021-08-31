@@ -43,7 +43,8 @@
 		"react": "^16.12.0"
 	},
 	"devDependencies": {
-		"chai": "^4.3.4"
+		"chai": "^4.3.4",
+		"typescript": "^4.3.5"
 	},
 	"private": true
 }

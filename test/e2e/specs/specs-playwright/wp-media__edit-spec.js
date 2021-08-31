@@ -8,11 +8,15 @@ import {
 } from '@automattic/calypso-e2e';
 
 describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
-	const testImage = MediaHelper.createTestImage();
+	let testImage;
 	let page;
 
 	setupHooks( ( args ) => {
 		page = args.page;
+	} );
+
+	beforeAll( async () => {
+		testImage = await MediaHelper.createTestImage();
 	} );
 
 	describe.each`

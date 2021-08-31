@@ -185,13 +185,15 @@ object RunAllUnitTests : BuildType({
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
 				# Duplicated packages
-				DUPLICATED_PACKAGES=${'$'}(npx yarn-deduplicate --list)
-				if [[ -n "${'$'}DUPLICATED_PACKAGES" ]]; then
+				if ! DUPLICATED_PACKAGES=${'$'}(
+					set +e
+					yarn dedupe --check
+				); then
 					echo "Repository contains duplicated packages: "
 					echo ""
 					echo "${'$'}DUPLICATED_PACKAGES"
 					echo ""
-					echo "To fix them, you need to checkout the branch, run 'npx yarn-deduplicate && yarn',"
+					echo "To fix them, you need to checkout the branch, run 'yarn dedupe',"
 					echo "verify that the new packages work and commit the changes in 'yarn.lock'."
 					exit 1
 				else
@@ -460,7 +462,7 @@ fun seleniumBuildType( viewportName: String, buildUuid: String): BuildType  {
 				dockerImage = "%docker_image_e2e%"
 			}
 			bashNodeScript {
-				name = "Run e2e tests (desktop)"
+				name = "Run e2e tests ($viewportName)"
 				scriptContent = """
 					shopt -s globstar
 					set -x
@@ -582,9 +584,6 @@ fun playwrightBuildType( viewportName: String, buildUuid: String ): BuildType {
 		uuid = buildUuid
 		name = "Playwright E2E Tests ($viewportName)"
 		description = "Runs Calypso e2e tests in $viewportName size using Playwright"
-		params {
-			param("use_cached_node_modules", "false")
-		}
 
 		artifactRules = """
 			reports => reports
@@ -613,7 +612,7 @@ fun playwrightBuildType( viewportName: String, buildUuid: String ): BuildType {
 				dockerImage = "%docker_image_e2e%"
 			}
 			bashNodeScript {
-				name = "Run e2e tests (desktop)"
+				name = "Run e2e tests ($viewportName)"
 				scriptContent = """
 					shopt -s globstar
 					set -x
@@ -646,7 +645,6 @@ fun playwrightBuildType( viewportName: String, buildUuid: String ): BuildType {
 					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --testNamePattern @parallel --maxWorkers=%E2E_WORKERS% specs/specs-playwright
 				""".trimIndent()
 				dockerImage = "%docker_image_e2e%"
-				dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json --shm-size=8gb"
 			}
 			bashNodeScript {
 				name = "Collect results"

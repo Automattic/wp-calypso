@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-const yargs = require( 'yargs' );
 const chalk = require( 'chalk' );
+const yargs = require( 'yargs' );
 const { runEvaluations } = require( './index.js' );
 
 const main = async () => {

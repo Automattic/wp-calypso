@@ -1,6 +1,7 @@
 const testFramework = require( '../index' );
 const TestRun = testFramework.TestRun;
 const mockFs = require( 'mock-fs' );
+require( '@automattic/calypso-polyfills' );
 
 describe( 'TestRun class', function () {
 	let run;
@@ -29,7 +30,9 @@ describe( 'TestRun class', function () {
 	} );
 
 	it( 'returns path to mocha', function () {
-		expect( run.getCommand() ).toBe( './node_modules/.bin/mocha' );
+		expect( mockFs.bypass( () => run.getCommand() ) ).toEqual(
+			expect.stringContaining( '/node_modules/mocha/bin/mocha' )
+		);
 	} );
 
 	it( 'returns the environment for a run', function () {

@@ -1,8 +1,3 @@
-/**
- * External dependencies
- *
- */
-
 import { createHigherOrderComponent } from '@wordpress/compose';
 import React from 'react';
 import MomentContext from './context';

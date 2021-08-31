@@ -10,9 +10,8 @@ import { Store } from 'redux';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
 
-// Used as placeholder / default domain to detect when we're looking at a relative url,
-// Note: also prevents exceptions from being raised
-const INVALID_URL = `https://__domain__.invalid`;
+// Used as default domain to detect when we're looking at a relative or invalid url
+const INVALID_URL = 'https://__domain__.invalid';
 
 type Host = string;
 
@@ -52,9 +51,6 @@ export function logmeinUrl( url: string, redirectTo = '' ): string {
 	if ( ! isValid ) {
 		return url;
 	}
-
-	// logmein doesn't work with http.
-	newurl.protocol = 'https:';
 
 	// Set the param
 	newurl.searchParams.set( 'logmein', 'direct' );

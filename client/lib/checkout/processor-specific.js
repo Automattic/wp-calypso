@@ -1,7 +1,3 @@
-/**
- * External dependencies
- *
- */
 import { CPF, CNPJ } from 'cpf_cnpj';
 import i18n from 'i18n-calypso';
 import { pick } from 'lodash';

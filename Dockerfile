@@ -11,9 +11,9 @@ FROM node:${node_version}-buster as builder-cache-false
 # for yarn, terser, css-loader and babel.
 FROM ${base_image} as builder-cache-true
 
-ENV YARN_CACHE_FOLDER=/calypso/.cache/yarn
 ENV NPM_CONFIG_CACHE=/calypso/.cache
 ENV PERSISTENT_CACHE=true
+ENV READONLY_CACHE=true
 
 ###################
 FROM builder-cache-${use_cache} as builder
@@ -57,7 +57,7 @@ RUN bash /tmp/env-config.sh
 # dependencies which end up bloating the image.
 # /apps/notifications is not removed because it is required by Calypso
 COPY . /calypso/
-RUN yarn install --frozen-lockfile
+RUN yarn install --immutable --check-cache
 
 # Build the final layer
 #

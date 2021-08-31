@@ -11,9 +11,6 @@ import getActivityLogVisibleDays from 'calypso/state/selectors/get-activity-log-
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useTrackUpsellView, useTrackUpgradeClick } from './hooks';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 const PLACEHOLDER_ACTIVITY = {

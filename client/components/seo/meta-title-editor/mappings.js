@@ -37,11 +37,8 @@ import {
 	map,
 	mapKeys,
 	mapValues,
-	partialRight,
-	rearg,
 	reduce,
 	snakeCase,
-	unary,
 } from 'lodash';
 
 const mergeStringPieces = ( a, b ) => ( {
@@ -54,32 +51,27 @@ const mergeStringPieces = ( a, b ) => ( {
  * from the API representation to a
  * Calypso-native format
  *
- * @param {Array} r List of raw format pieces
+ * @param {Array} list List of raw format pieces
  * @returns {Array} List of native format pieces
  */
-export const rawToNative = unary(
-	partialRight( map, ( p ) =>
-		Object.assign(
-			{},
-			{ type: 'string' === p.type ? 'string' : camelCase( p.value ) },
-			'string' === p.type && { value: p.value }
-		)
-	)
-);
+export const rawToNative = ( list ) =>
+	map( list, ( p ) =>
+		'string' === p.type ? { type: 'string', value: p.value } : { type: camelCase( p.value ) }
+	);
 
 /**
  * Converts an individual title format
  * from the Calypso-native representation
  * to a Calypso-native format
  *
- * @param {Array} n List of native format pieces
+ * @param {Array} listNative List of native format pieces
  * @returns {Array} List of raw format pieces
  */
-export const nativeToRaw = unary(
-	compose(
-		// combine adjacent strings
-		partialRight(
-			reduce,
+export const nativeToRaw = compose(
+	// combine adjacent strings
+	( list ) =>
+		reduce(
+			list,
 			( format, piece ) => {
 				const lastPiece = last( format );
 
@@ -91,11 +83,11 @@ export const nativeToRaw = unary(
 			},
 			[]
 		),
-		partialRight( map, ( p ) => ( {
+	( list ) =>
+		map( list, ( p ) => ( {
 			type: p.type === 'string' ? 'string' : 'token',
 			value: get( p, 'value', snakeCase( p.type ) ),
 		} ) )
-	)
 );
 
 // Not only are the format strings themselves stored differently
@@ -109,11 +101,11 @@ export const nativeToRaw = unary(
 //  - Translate formats: see above
 
 export const toApi = compose(
-	partialRight( mapKeys, rearg( snakeCase, 1 ) ), // 1 -> key from ( value, key )
-	partialRight( mapValues, nativeToRaw ) // native objects to raw objects
+	( list ) => mapKeys( list, ( value, key ) => snakeCase( key ) ),
+	( list ) => mapValues( list, nativeToRaw ) // native objects to raw objects
 );
 
 export const fromApi = compose(
-	partialRight( mapKeys, rearg( camelCase, 1 ) ), // 1 -> key from ( value, key )
-	partialRight( mapValues, rawToNative ) // raw objects to native objects
+	( list ) => mapKeys( list, ( value, key ) => camelCase( key ) ),
+	( list ) => mapValues( list, rawToNative ) // raw objects to native objects
 );

@@ -1,7 +1,3 @@
-/**
- * External dependencies
- *
- */
 import { Button, Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';

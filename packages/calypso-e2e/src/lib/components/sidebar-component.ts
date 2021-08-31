@@ -55,7 +55,7 @@ export class SidebarComponent {
 			// Click top-level item without waiting for navigation if targeting subitem.
 			await this.page.click( itemSelector );
 
-			const subitemSelector = `:text-is("${ subitem }"):visible:below(${ itemSelector })`;
+			const subitemSelector = `.is-toggle-open :text-is("${ subitem }"):visible`;
 			await this.scrollItemIntoViewIfNeeded( subitemSelector );
 
 			await Promise.all( [ this.page.waitForNavigation(), this.page.click( subitemSelector ) ] );

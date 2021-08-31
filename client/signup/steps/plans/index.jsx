@@ -194,6 +194,7 @@ export class PlansStep extends Component {
 	getSubHeaderTextForExperiment() {
 		const { hideFreePlan, flowName, translate } = this.props;
 		const defaultSubHeaderText = this.getSubHeaderText();
+		const refundWindow = 'yearly' === this.getIntervalType() ? 14 : 7;
 
 		if ( ! isDesktop() || 'onboarding' !== flowName ) {
 			return defaultSubHeaderText;
@@ -202,14 +203,22 @@ export class PlansStep extends Component {
 		let emphasizedRefundPolicyText = '';
 		if ( hideFreePlan ) {
 			emphasizedRefundPolicyText = translate(
-				'Try risk-free with a 14-day money back guarantee on all plans.'
+				'Try risk-free with a %(days)s-day money back guarantee on all plans.',
+				{
+					args: {
+						days: refundWindow,
+					},
+				}
 			);
 		} else {
 			emphasizedRefundPolicyText = translate(
-				'Try risk-free with a 14-day money back guarantee on all plans. Or {{link}}start with a free site{{/link}}.',
+				'Try risk-free with a %(days)s-day money back guarantee on all plans. Or {{link}}start with a free site{{/link}}.',
 				{
 					components: {
 						link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
+					},
+					args: {
+						days: refundWindow,
 					},
 				}
 			);
@@ -217,7 +226,7 @@ export class PlansStep extends Component {
 
 		return (
 			<Experiment
-				name="emphasizing_refund_policy"
+				name="emphasizing_refund_policy_v2"
 				defaultExperience={ defaultSubHeaderText }
 				treatmentExperience={ emphasizedRefundPolicyText }
 				loadingExperience={ '\u00A0' } // &nbsp;

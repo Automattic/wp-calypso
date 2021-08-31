@@ -20,5 +20,3 @@
 ## v1.0.0
 
 - Initial release. This actually didn't work outside of the monorepo because of an invalid TS configuration.
-
-

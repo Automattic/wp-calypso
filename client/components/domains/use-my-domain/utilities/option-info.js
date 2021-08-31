@@ -1,10 +1,4 @@
-/**
- * External dependencies
- */
 import { __ } from '@wordpress/i18n';
-/**
- * Internal dependencies
- */
 import transferIllustration from 'calypso/assets/images/customer-home/illustration-webinars.svg';
 import connectIllustration from 'calypso/assets/images/illustrations/domain-connected.svg';
 import { INCOMING_DOMAIN_TRANSFER, MAP_EXISTING_DOMAIN } from 'calypso/lib/url/support';
@@ -19,7 +13,6 @@ export const optionInfo = {
 		illustration: transferIllustration,
 		titleText: optionTitleText.transfer,
 		topText: __( 'Manage your domain directly on WordPress.com' ),
-		recommended: true,
 		learnMoreLink: INCOMING_DOMAIN_TRANSFER,
 		benefits: [
 			__( 'Manage everything you need in one place' ),

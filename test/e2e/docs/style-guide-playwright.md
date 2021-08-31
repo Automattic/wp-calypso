@@ -3,22 +3,22 @@
 <!-- TOC -->
 
 - [Style Guide](#style-guide)
-    - [Tests](#tests)
-        - [Other Notes on TypeScript Test Scripts](#other-notes-on-typescript-test-scripts)
-    - [Components](#components)
-    - [Page Objects](#page-objects)
-    - [Flows](#flows)
-    - [Async / Await](#async--await)
-    - [Selectors](#selectors)
-        - [Engine](#engine)
-        - [Naming](#naming)
-        - [Stability](#stability)
-        - [Dynamic Selectors](#dynamic-selectors)
-    - [Test steps](#test-steps)
-        - [Naming](#naming)
-        - [Step size](#step-size)
-    - [Maximum 1 top-level describe block](#maximum-1-top-level-describe-block)
-    - [Destructure parameters](#destructure-parameters)
+  - [Tests](#tests)
+    - [Other Notes on TypeScript Test Scripts](#other-notes-on-typescript-test-scripts)
+  - [Components](#components)
+  - [Page Objects](#page-objects)
+  - [Flows](#flows)
+  - [Async / Await](#async--await)
+  - [Selectors](#selectors)
+    - [Engine](#engine)
+    - [Naming](#naming)
+    - [Stability](#stability)
+    - [Dynamic Selectors](#dynamic-selectors)
+  - [Test steps](#test-steps)
+    - [Naming](#naming)
+    - [Step size](#step-size)
+  - [Maximum 1 top-level describe block](#maximum-1-top-level-describe-block)
+  - [Destructure parameters](#destructure-parameters)
 
 <!-- /TOC -->
 
@@ -60,7 +60,7 @@ describe( DataHelper.createSuiteTitle( 'Feature' ), function () {
 		let anotherComponent: AnotherComponent;
 
 		it.each`
-		value | expected 
+		value | expected
 		${'small'} | ${'s'}
 		${'medium'} | ${'m'}
 		`( 'Click on $value on AnotherComponent', function({ value, expected }) {
@@ -416,7 +416,7 @@ Where possible, use CSS selectors that rely on user-facing attributes (like an `
 
 You can read more about this in the [Playwright selector best practices](https://playwright.dev/docs/selectors/#prioritize-user-facing-attributes).
 
-Furthermore, where possible, only involve selectors that are required for the test flow. 
+Furthermore, where possible, only involve selectors that are required for the test flow.
 
 **Avoid**:
 

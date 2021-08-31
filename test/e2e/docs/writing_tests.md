@@ -9,24 +9,25 @@ Refer to the [Selenium style guide](docs/style-guide-selenium.md) or [Playwright
 <!-- TOC -->
 
 - [Writing Tests](#writing-tests)
-    - [Table of contents](#table-of-contents)
-    - [Get Started](#get-started)
-    - [Top-level block](#top-level-block)
-    - [Child-level block](#child-level-block)
-    - [Setup](#setup)
-    - [Test step](#test-step)
-    - [Variable naming](#variable-naming)
+  - [Table of contents](#table-of-contents)
+  - [Get Started](#get-started)
+  - [Top-level block](#top-level-block)
+  - [Child-level block](#child-level-block)
+  - [Setup](#setup)
+  - [Test step](#test-step)
+  - [Variable naming](#variable-naming)
 
 <!-- /TOC -->
 
 ## Get Started
 
-Create a spec file under `test/e2e/specs` in the appropriate directory. 
+Create a spec file under `test/e2e/specs` in the appropriate directory.
 Follow this general structure when naming a file:
 
 `wp-<feature>__<subfeature or suite>-spec.js`
 
 This is for multiple reasons:
+
 1. better visual identification of feature-specific specs.
 2. separation of subfeatures into separate files for parallelization.
 
@@ -42,7 +43,7 @@ import {
 
 ## Top-level block
 
-As referenced in the [Style Guide](style-guide-playwright.md#Tests), there should only be one top-level `describe` block in a spec file. 
+As referenced in the [Style Guide](style-guide-playwright.md#Tests), there should only be one top-level `describe` block in a spec file.
 
 Using the `DataHelper.createSuiteTitle` function, define a name for the overall suite:
 
@@ -135,4 +136,3 @@ const mhp = new MyHomePage( page );
 const sidebarComponent = new SidebarComponent( page );
 const myHomePage = new MyHomePage( page );
 ```
-

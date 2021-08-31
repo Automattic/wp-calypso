@@ -99,7 +99,7 @@ export class List extends React.Component {
 	}
 
 	renderNewDesign() {
-		const { selectedSite, domains, currentRoute, translate } = this.props;
+		const { selectedSite, domains, currentRoute, translate, isAtomicSite } = this.props;
 		const { settingPrimaryDomain } = this.state;
 		const disabled = settingPrimaryDomain;
 
@@ -160,6 +160,7 @@ export class List extends React.Component {
 				{ wpcomDomain && (
 					<WpcomDomainItem
 						key="wpcom-domain-item"
+						isAtomicSite={ isAtomicSite }
 						currentRoute={ currentRoute }
 						domain={ wpcomDomain }
 						disabled={ disabled }

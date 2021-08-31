@@ -10,29 +10,39 @@ import { connect } from 'react-redux';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 import ColorSchemePicker from 'calypso/blocks/color-scheme-picker';
+import QueryAllDomains from 'calypso/components/data/query-all-domains';
+import QueryUserSettings from 'calypso/components/data/query-user-settings';
+import FormattedHeader from 'calypso/components/formatted-header';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
-import FormTextValidation from 'calypso/components/forms/form-input-validation';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import LanguagePicker from 'calypso/components/language-picker';
-import Notice from 'calypso/components/notice';
-import SectionHeader from 'calypso/components/section-header';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
-import { protectForm } from 'calypso/lib/protect-form';
-import { supportsCssCustomProperties } from 'calypso/lib/feature-detection';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormTextValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormRadio from 'calypso/components/forms/form-radio';
-import { recordGoogleEvent, recordTracksEvent, bumpStat } from 'calypso/state/analytics/actions';
-import ReauthRequired from 'calypso/me/reauth-required';
-import twoStepAuthorization from 'calypso/lib/two-step-authorization';
-import NoticeAction from 'calypso/components/notice/notice-action';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import LanguagePicker from 'calypso/components/language-picker';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import SectionHeader from 'calypso/components/section-header';
 import SitesDropdown from 'calypso/components/sites-dropdown';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { type as domainTypes } from 'calypso/lib/domains/constants';
+import { supportsCssCustomProperties } from 'calypso/lib/feature-detection';
+import { getLanguage, isLocaleVariant, canBeTranslated } from 'calypso/lib/i18n-utils';
+import { ENABLE_TRANSLATOR_KEY } from 'calypso/lib/i18n-utils/constants';
+import { protectForm } from 'calypso/lib/protect-form';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import { clearStore } from 'calypso/lib/user/store';
+import wpcom from 'calypso/lib/wp';
+import ReauthRequired from 'calypso/me/reauth-required';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
+import { recordGoogleEvent, recordTracksEvent, bumpStat } from 'calypso/state/analytics/actions';
 import {
 	getCurrentUserDate,
 	getCurrentUserDisplayName,
@@ -41,7 +51,6 @@ import {
 } from 'calypso/state/current-user/selectors';
 import { requestGeoLocation } from 'calypso/state/data-getters';
 import { successNotice, errorNotice, removeNotice } from 'calypso/state/notices/actions';
-import { getLanguage, isLocaleVariant, canBeTranslated } from 'calypso/lib/i18n-utils';
 import { savePreference } from 'calypso/state/preferences/actions';
 import canDisplayCommunityTranslator from 'calypso/state/selectors/can-display-community-translator';
 import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
@@ -51,8 +60,7 @@ import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-
 import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
 import isRequestingAllDomains from 'calypso/state/selectors/is-requesting-all-domains';
 import isRequestingMissingSites from 'calypso/state/selectors/is-requesting-missing-sites';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { ENABLE_TRANSLATOR_KEY } from 'calypso/lib/i18n-utils/constants';
+import { getFlatDomainsList } from 'calypso/state/sites/domains/selectors';
 import {
 	cancelPendingEmailChange,
 	clearUnsavedUserSettings,
@@ -61,14 +69,6 @@ import {
 } from 'calypso/state/user-settings/actions';
 import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
 import AccountSettingsCloseLink from './close-link';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import FormattedHeader from 'calypso/components/formatted-header';
-import wpcom from 'calypso/lib/wp';
-import QueryUserSettings from 'calypso/components/data/query-user-settings';
-import { clearStore } from 'calypso/lib/user/store';
-import { getFlatDomainsList } from 'calypso/state/sites/domains/selectors';
-import QueryAllDomains from 'calypso/components/data/query-all-domains';
-import { type as domainTypes } from 'calypso/lib/domains/constants';
 
 export const noticeId = 'me-settings-notice';
 const noticeOptions = {

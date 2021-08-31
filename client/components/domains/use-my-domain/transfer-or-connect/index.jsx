@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { Card } from '@automattic/components';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { createElement, createInterpolateElement } from '@wordpress/element';
@@ -8,9 +5,6 @@ import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-/**
- * Internal dependencies
- */
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -27,9 +21,6 @@ import {
 } from '../utilities';
 import OptionContent from './option-content';
 
-/**
- * Style dependencies
- */
 import './style.scss';
 
 function DomainTransferOrConnect( {

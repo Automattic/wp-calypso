@@ -36,7 +36,8 @@
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/calypso-url#readme",
-	"dependencies": {},
-	"devDependencies": {},
-	"private": true
+	"private": true,
+	"devDependencies": {
+		"typescript": "^4.3.5"
+	}
 }
