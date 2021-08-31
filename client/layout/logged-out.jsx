@@ -131,7 +131,8 @@ export default withCurrentRoute(
 		const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
 		const isWhiteLogin = currentRoute.startsWith( '/log-in/new' );
 		const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
-		const noMasterbarForRoute = isJetpackLogin || isWhiteLogin || isJetpackWooDnaFlow;
+		const isP2Login = currentRoute.startsWith( '/log-in' ) && 'p2' === currentQuery?.from;
+		const noMasterbarForRoute = isJetpackLogin || isWhiteLogin || isJetpackWooDnaFlow || isP2Login;
 		const isPopup = '1' === currentQuery?.is_popup;
 		const noMasterbarForSection = [ 'signup', 'jetpack-connect' ].includes( sectionName );
 		const isJetpackWooCommerceFlow = 'woocommerce-onboarding' === currentQuery?.from;
