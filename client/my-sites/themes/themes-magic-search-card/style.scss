@@ -11,7 +11,6 @@
 	background: white;
 	border: 1px solid var( --color-border-subtle );
 	border-bottom: 0;
-	padding: 11px;
 	transition: all 0.15s ease-in-out;
 
 	@include breakpoint-deprecated( '<660px' ) {
@@ -29,6 +28,7 @@
 		flex: 0 1 auto;
 		height: 36px;
 		border: solid 1px var( --color-neutral-10 );
+		margin: 10px;
 
 		&.has-focus,
 		&.has-focus:hover {
