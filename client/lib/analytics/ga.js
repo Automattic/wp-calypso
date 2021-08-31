@@ -102,9 +102,9 @@ export const gaRecordTiming = makeGoogleAnalyticsTrackingFunction( function reco
  * @param  {Function} func Google Analytics tracking function
  * @returns {Function} Wrapped function
  */
-export function makeGoogleAnalyticsTrackingFunction( func ) {
-	return async function ( ...args ) {
-		await refreshCountryCodeCookieGdpr();
+export async function makeGoogleAnalyticsTrackingFunction( func ) {
+	await refreshCountryCodeCookieGdpr();
+	return function ( ...args ) {
 		if ( ! isGoogleAnalyticsAllowed() ) {
 			gaDebug( '[Disallowed] analytics %s( %o )', func.name, args );
 			return;
