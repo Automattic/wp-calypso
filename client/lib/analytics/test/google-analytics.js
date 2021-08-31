@@ -28,7 +28,6 @@ jest.mock( 'calypso/lib/analytics/utils', () => ( {
 	isGoogleAnalyticsAllowed: () => true,
 	isPiiUrl: () => false,
 	mayWeTrackCurrentUserGdpr: () => true,
-	refreshCountryCodeCookieGdpr: () => null,
 } ) );
 
 jest.mock( '@automattic/calypso-analytics', () => ( {
@@ -42,9 +41,9 @@ describe( 'analytics/ga', () => {
 	describe( 'makeGoogleAnalyticsTrackingFunction', () => {
 		test( 'calls the wrapped function with passed arguments when enabled', () => {
 			const wrapped = jest.fn();
-			return makeGoogleAnalyticsTrackingFunction( wrapped )( 'a', 'b', 'c' ).then( () => {
-				expect( wrapped ).toHaveBeenCalledWith( 'a', 'b', 'c' );
-			} );
+			makeGoogleAnalyticsTrackingFunction( wrapped )( 'a', 'b', 'c' );
+
+			expect( wrapped ).toHaveBeenCalledWith( 'a', 'b', 'c' );
 		} );
 	} );
 } );
