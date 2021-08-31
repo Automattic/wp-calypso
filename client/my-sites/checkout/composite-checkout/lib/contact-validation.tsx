@@ -79,14 +79,11 @@ export const validateContactDetailsAndDisplayErrors = async (
 	reduxDispatch: ReturnType< typeof useDispatch >,
 	translate: ReturnType< typeof useTranslate >
 ): Promise< boolean > => {
-	debug( 'validating contact details and reporting errors' );
 	const contactDetailsType = getContactDetailsType( responseCart );
+	debug( 'validating contact details and reporting errors for', contactDetailsType );
 
-	if ( isLoggedOutCart ) {
-		const email = contactInfo.email?.value ?? '';
-		const validationResult = await getSignupEmailValidationResult( email, ( email: string ) =>
-			getEmailTakenLoginRedirectMessage( email, reduxDispatch, translate )
-		);
+	const completeValidationCheck = ( validationResult: unknown ) => {
+		debug( 'validating contact details result', validationResult );
 		handleContactValidationResult( {
 			recordEvent: onEvent,
 			showErrorMessage: showErrorMessageBriefly,
@@ -95,54 +92,35 @@ export const validateContactDetailsAndDisplayErrors = async (
 			applyDomainContactValidationResults,
 			clearDomainContactErrorMessages,
 		} );
-		const isSignupValidationValid = isContactValidationResponseValid(
-			validationResult,
-			contactInfo
-		);
+		return isContactValidationResponseValid( validationResult, contactInfo );
+	};
 
+	if ( isLoggedOutCart ) {
+		const email = contactInfo.email?.value ?? '';
+		const isSignupValidationValid = completeValidationCheck(
+			await getSignupEmailValidationResult( email, ( newEmail: string ) =>
+				getEmailTakenLoginRedirectMessage( newEmail, reduxDispatch, translate )
+			)
+		);
 		if ( ! isSignupValidationValid ) {
 			return false;
 		}
 	}
 
-	if ( contactDetailsType === 'tax' ) {
-		const validationResult = await getTaxValidationResult( contactInfo );
-		debug( 'validating contact details result', validationResult );
-		handleContactValidationResult( {
-			recordEvent: onEvent,
-			showErrorMessage: showErrorMessageBriefly,
-			paymentMethodId: activePaymentMethod?.id ?? '',
-			validationResult,
-			applyDomainContactValidationResults,
-			clearDomainContactErrorMessages,
-		} );
-		return isContactValidationResponseValid( validationResult, contactInfo );
-	} else if ( contactDetailsType === 'domain' ) {
-		const validationResult = await getDomainValidationResult( responseCart.products, contactInfo );
-		debug( 'validating contact details result', validationResult );
-		handleContactValidationResult( {
-			recordEvent: onEvent,
-			showErrorMessage: showErrorMessageBriefly,
-			paymentMethodId: activePaymentMethod?.id ?? '',
-			validationResult,
-			applyDomainContactValidationResults,
-			clearDomainContactErrorMessages,
-		} );
-		return isContactValidationResponseValid( validationResult, contactInfo );
-	} else if ( contactDetailsType === 'gsuite' ) {
-		const validationResult = await getGSuiteValidationResult( responseCart.products, contactInfo );
-		debug( 'validating contact details result', validationResult );
-		handleContactValidationResult( {
-			recordEvent: onEvent,
-			showErrorMessage: showErrorMessageBriefly,
-			paymentMethodId: activePaymentMethod?.id ?? '',
-			validationResult,
-			applyDomainContactValidationResults,
-			clearDomainContactErrorMessages,
-		} );
-		return isContactValidationResponseValid( validationResult, contactInfo );
+	switch ( contactDetailsType ) {
+		case 'tax':
+			return completeValidationCheck( await getTaxValidationResult( contactInfo ) );
+		case 'domain':
+			return completeValidationCheck(
+				await getDomainValidationResult( responseCart.products, contactInfo )
+			);
+		case 'gsuite':
+			return completeValidationCheck(
+				await getGSuiteValidationResult( responseCart.products, contactInfo )
+			);
+		default:
+			return isCompleteAndValid( contactInfo );
 	}
-	return isCompleteAndValid( contactInfo );
 };
 
 export const validateContactDetails = async (
@@ -155,33 +133,35 @@ export const validateContactDetails = async (
 	debug( 'validating contact details without reporting errors' );
 	const contactDetailsType = getContactDetailsType( responseCart );
 
+	const completeValidationCheck = ( validationResult: unknown ) => {
+		debug( 'validating contact details result', validationResult );
+		return isContactValidationResponseValid( validationResult, contactInfo );
+	};
+
 	if ( isLoggedOutCart ) {
 		const email = contactInfo.email?.value ?? '';
-		const validationResult = await getSignupEmailValidationResult( email, ( email: string ) =>
-			getEmailTakenLoginRedirectMessage( email, reduxDispatch, translate )
+		const isSignupValidationValid = completeValidationCheck(
+			await getSignupEmailValidationResult( email, ( newEmail: string ) =>
+				getEmailTakenLoginRedirectMessage( newEmail, reduxDispatch, translate )
+			)
 		);
-		const isSignupValidationValid = isContactValidationResponseValid(
-			validationResult,
-			contactInfo
-		);
-
 		if ( ! isSignupValidationValid ) {
 			return false;
 		}
 	}
 
-	if ( contactDetailsType === 'tax' ) {
-		const validationResult = await getTaxValidationResult( contactInfo );
-		debug( 'validating contact details result', validationResult );
-		return isContactValidationResponseValid( validationResult, contactInfo );
-	} else if ( contactDetailsType === 'domain' ) {
-		const validationResult = await getDomainValidationResult( responseCart.products, contactInfo );
-		debug( 'validating contact details result', validationResult );
-		return isContactValidationResponseValid( validationResult, contactInfo );
-	} else if ( contactDetailsType === 'gsuite' ) {
-		const validationResult = await getGSuiteValidationResult( responseCart.products, contactInfo );
-		debug( 'validating contact details result', validationResult );
-		return isContactValidationResponseValid( validationResult, contactInfo );
+	switch ( contactDetailsType ) {
+		case 'tax':
+			return completeValidationCheck( await getTaxValidationResult( contactInfo ) );
+		case 'domain':
+			return completeValidationCheck(
+				await getDomainValidationResult( responseCart.products, contactInfo )
+			);
+		case 'gsuite':
+			return completeValidationCheck(
+				await getGSuiteValidationResult( responseCart.products, contactInfo )
+			);
+		default:
+			return isCompleteAndValid( contactInfo );
 	}
-	return isCompleteAndValid( contactInfo );
 };
