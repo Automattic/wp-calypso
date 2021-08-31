@@ -4,12 +4,15 @@ import { get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { useSelector } from 'react-redux';
 import Gravatar from 'calypso/components/gravatar';
 import InfoPopover from 'calypso/components/info-popover';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useExternalContributorsQuery from 'calypso/data/external-contributors/use-external-contributors';
 import { decodeEntities } from 'calypso/lib/formatting';
+import getWpcomFollowerRole from 'calypso/lib/get-wpcom-follower-role';
 import { recordTrack } from 'calypso/reader/stats';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
 
 import './style.scss';
 
@@ -18,8 +21,15 @@ const PeopleProfile = ( { siteId, type, user, invite } ) => {
 	const moment = useLocalizedMoment();
 	const { data: externalContributors } = useExternalContributorsQuery( siteId );
 
-	const getRole = () => {
+	const GetRole = () => {
+		const isPrivate = useSelector( ( state ) => isPrivateSite( state, siteId ) );
+		const wpcomFollowerRole = getWpcomFollowerRole( isPrivate, translate );
+
 		if ( invite && invite.role ) {
+			if ( 'follower' === invite.role && wpcomFollowerRole ) {
+				return wpcomFollowerRole.display_name?.toLowerCase();
+			}
+
 			return invite.role;
 		}
 
@@ -34,7 +44,7 @@ const PeopleProfile = ( { siteId, type, user, invite } ) => {
 		return;
 	};
 
-	const getRoleBadgeText = ( role = getRole() ) => {
+	const getRoleBadgeText = ( role = GetRole() ) => {
 		let text;
 		switch ( role ) {
 			case 'super admin':
@@ -70,6 +80,9 @@ const PeopleProfile = ( { siteId, type, user, invite } ) => {
 			case 'follower':
 				text = translate( 'Follower' );
 				break;
+			case 'viewer':
+				text = translate( 'Viewer' );
+				break;
 			default:
 				text = role;
 		}
@@ -77,7 +90,7 @@ const PeopleProfile = ( { siteId, type, user, invite } ) => {
 		return text;
 	};
 
-	const getRoleBadgeClass = ( role = getRole() ) => {
+	const getRoleBadgeClass = ( role = GetRole() ) => {
 		return 'role-' + role;
 	};
 
@@ -179,7 +192,7 @@ const PeopleProfile = ( { siteId, type, user, invite } ) => {
 			);
 		}
 
-		if ( getRole() ) {
+		if ( GetRole() ) {
 			roleBadge = (
 				<div className={ classNames( 'people-profile__role-badge', getRoleBadgeClass() ) }>
 					{ getRoleBadgeText() }
