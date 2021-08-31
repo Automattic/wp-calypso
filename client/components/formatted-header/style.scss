@@ -1,4 +1,7 @@
 .formatted-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 	margin: 16px 0 24px;
 	text-align: center;
 
@@ -41,6 +44,10 @@
 	&.is-right-align {
 		text-align: right;
 	}
+}
+
+.formatted-header__heading {
+	flex-grow: 1;
 }
 
 .formatted-header__title {

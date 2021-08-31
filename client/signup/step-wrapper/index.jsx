@@ -18,15 +18,15 @@ class StepWrapper extends Component {
 		allowBackFirstStep: PropTypes.bool,
 		skipLabelText: PropTypes.string,
 		skipHeadingText: PropTypes.string,
+		skipButtonAlign: PropTypes.oneOf( [ 'top', 'bottom', 'top-right' ] ),
 		// Displays an <hr> above the skip button and adds more white space
 		isLargeSkipLayout: PropTypes.bool,
-		isTopButtons: PropTypes.bool,
 		isExternalBackUrl: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		allowBackFirstStep: false,
-		isTopButtons: false,
+		skipButtonAlign: 'bottom',
 	};
 
 	renderBack() {
@@ -48,7 +48,7 @@ class StepWrapper extends Component {
 		);
 	}
 
-	renderSkip() {
+	renderSkip( { borderless } ) {
 		if ( ! this.props.shouldHideNavButtons && this.props.goToNextStep ) {
 			return (
 				<div className="step-wrapper__skip-wrapper">
@@ -63,6 +63,7 @@ class StepWrapper extends Component {
 						stepName={ this.props.stepName }
 						labelText={ this.props.skipLabelText }
 						cssClass={ this.props.skipHeadingText && 'navigation-link--has-skip-heading' }
+						borderless={ borderless }
 					/>
 				</div>
 			);
@@ -106,7 +107,7 @@ class StepWrapper extends Component {
 			hideSkip,
 			isLargeSkipLayout,
 			isWideLayout,
-			isTopButtons,
+			skipButtonAlign,
 			align,
 		} = this.props;
 		const classes = classNames( 'step-wrapper', this.props.className, {
@@ -125,21 +126,31 @@ class StepWrapper extends Component {
 							headerText={ this.headerText() }
 							subHeaderText={ this.subHeaderText() }
 							align={ align }
-						>
-							{ headerButton }
-						</FormattedHeader>
+							headerButton={
+								<>
+									{ headerButton }
+									{ ! hideSkip && skipButtonAlign === 'top-right' && (
+										<div className="step-wrapper__buttons is-top-right-buttons">
+											{ this.renderSkip( { borderless: false } ) }
+										</div>
+									) }
+								</>
+							}
+						/>
 					) }
 
-					{ ! hideSkip && isTopButtons && (
-						<div className="step-wrapper__buttons is-top-buttons">{ this.renderSkip() }</div>
+					{ ! hideSkip && skipButtonAlign === 'top' && (
+						<div className="step-wrapper__buttons is-top-buttons">
+							{ this.renderSkip( { borderless: true } ) }
+						</div>
 					) }
 
 					<div className="step-wrapper__content">{ stepContent }</div>
 
-					{ ! hideSkip && ! isTopButtons && (
+					{ ! hideSkip && skipButtonAlign === 'bottom' && (
 						<div className="step-wrapper__buttons">
 							{ isLargeSkipLayout && <hr className="step-wrapper__skip-hr" /> }
-							{ this.renderSkip() }
+							{ this.renderSkip( { borderless: true } ) }
 						</div>
 					) }
 				</div>

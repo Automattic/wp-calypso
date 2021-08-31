@@ -146,10 +146,10 @@ class EmailsStep extends React.Component {
 				allowBackFirstStep={ !! backUrl }
 				backLabelText={ translate( 'Back' ) }
 				hideSkip={ false }
-				isTopButtons={ false }
 				goToNextStep={ this.handleSkip }
 				skipHeadingText={ translate( 'Not sure yet?' ) }
 				skipLabelText={ translate( 'Buy an email later' ) }
+				skipButtonAlign={ 'bottom' }
 				align={ 'left' }
 				isWideLayout={ true }
 			/>

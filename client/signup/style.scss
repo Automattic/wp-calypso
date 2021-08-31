@@ -400,7 +400,6 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 			color: $gray-100;
 			letter-spacing: 0.2px;
 			font-size: 2.25rem; /* stylelint-disable-line */
-			text-align: center;
 			padding: 0 20px;
 
 			@include break-xlarge {
@@ -412,11 +411,29 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 		.formatted-header__subtitle {
 			color: $gray-60;
 			font-size: 1rem;
-			text-align: center;
 			padding: 0 20px;
 
 			@include break-xlarge {
 				padding: 0;
+			}
+		}
+
+		.formatted-header__title,
+		.formatted-header__subtitle {
+			text-align: center;
+		}
+
+		&.is-left-align {
+			.formatted-header__title,
+			.formatted-header__subtitle {
+				text-align: left;
+			}
+		}
+
+		&.is-right-align {
+			.formatted-header__title,
+			.formatted-header__subtitle {
+				text-align: right;
 			}
 		}
 	}
