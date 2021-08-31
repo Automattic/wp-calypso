@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { CompactCard } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
+import i18nCalypso, { useTranslate } from 'i18n-calypso';
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -72,14 +72,22 @@ export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 				brandFont
 				className="billing-history__page-heading"
 				headerText={ titles.sectionTitle }
-				subHeaderText={ translate(
-					'View, print, and email your receipts for this site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-					{
-						components: {
-							learnMoreLink: <InlineSupportLink supportContext="billing" showIcon={ false } />,
-						},
-					}
-				) }
+				subHeaderText={
+					i18nCalypso.hasTranslation(
+						'View, print, and email your receipts for this site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.'
+					)
+						? translate(
+								'View, print, and email your receipts for this site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+								{
+									components: {
+										learnMoreLink: (
+											<InlineSupportLink supportContext="billing" showIcon={ false } />
+										),
+									},
+								}
+						  )
+						: translate( 'View, print, and email your receipts for this site.' )
+				}
 				align="left"
 			/>
 			<PurchasesNavigation sectionTitle={ 'Billing History' } siteSlug={ siteSlug } />
