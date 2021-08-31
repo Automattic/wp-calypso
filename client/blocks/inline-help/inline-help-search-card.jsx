@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import SearchCard from 'calypso/components/search-card';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setInlineHelpSearchQuery } from 'calypso/state/inline-help/actions';
-import { withInlineHelpSearchQuery } from './data/use-inline-help-search-query';
+import { withInlineHelpSearchResults } from './data/use-inline-help-search-query';
 
 /**
  * Module variables
@@ -81,4 +81,4 @@ const mapDispatchToProps = {
 export default connect(
 	null,
 	mapDispatchToProps
-)( localize( withInlineHelpSearchQuery( InlineHelpSearchCard ) ) );
+)( localize( withInlineHelpSearchResults( InlineHelpSearchCard ) ) );

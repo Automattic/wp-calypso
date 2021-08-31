@@ -11,6 +11,8 @@ import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import getAdminHelpResults from 'calypso/state/inline-help/selectors/get-admin-help-results';
+import getContextualHelpResults from 'calypso/state/inline-help/selectors/get-contextual-help-results';
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import {
@@ -18,7 +20,7 @@ import {
 	SUPPORT_TYPE_API_HELP,
 	SUPPORT_TYPE_CONTEXTUAL_HELP,
 } from './constants';
-import { withInlineHelpSearchQuery } from './data/use-inline-help-search-query';
+import { withInlineHelpSearchResults } from './data/use-inline-help-search-query';
 import PlaceholderLines from './placeholder-lines';
 
 const noop = () => {};
@@ -36,9 +38,10 @@ const resultsSpeak = debounceSpeak( { message: 'Search results loaded.' } );
 const errorSpeak = debounceSpeak( { message: 'No search results found.' } );
 
 function HelpSearchResults( {
+	adminResults,
+	contextualResults,
 	currentUserId,
 	externalLinks = false,
-	hasAPIResults = false,
 	hasPurchases,
 	isSearching = false,
 	onSelect,
@@ -50,6 +53,8 @@ function HelpSearchResults( {
 	placeholderLines,
 	track,
 } ) {
+	const hasAPIResults = Array.isArray( searchResults ) && searchResults.length > 0;
+
 	useEffect( () => {
 		// Cancel all queued speak messages.
 		loadingSpeak.cancel();
@@ -69,29 +74,6 @@ function HelpSearchResults( {
 			resultsSpeak();
 		}
 	}, [ isSearching, hasAPIResults, searchQuery ] );
-
-	function getTitleBySectionType( type, query = '' ) {
-		let title = '';
-		switch ( type ) {
-			case SUPPORT_TYPE_CONTEXTUAL_HELP:
-				if ( ! query.length ) {
-					return null;
-				}
-				title = translate( 'This might interest you' );
-				break;
-
-			case SUPPORT_TYPE_API_HELP:
-				title = translate( 'Support articles' );
-				break;
-			case SUPPORT_TYPE_ADMIN_SECTION:
-				title = translate( 'Show me where to' );
-				break;
-			default:
-				return null;
-		}
-
-		return title;
-	}
 
 	const onLinkClickHandler = ( event, result ) => {
 		const { support_type: supportType, link } = result;
@@ -169,9 +151,10 @@ function HelpSearchResults( {
 		);
 	};
 
-	const renderSearchResultsSection = ( id, title, results ) => {
+	const renderSearchResultsSection = ( { id, title, results, condition } ) => {
 		/* eslint-disable jsx-a11y/no-noninteractive-element-to-interactive-role */
-		return (
+
+		return condition ? (
 			<Fragment key={ id }>
 				{ title ? (
 					<h3 id={ id } className="inline-help__results-title">
@@ -182,36 +165,33 @@ function HelpSearchResults( {
 					{ results.map( renderHelpLink ) }
 				</ul>
 			</Fragment>
-		);
+		) : null;
 		/* eslint-enable jsx-a11y/no-noninteractive-element-to-interactive-role */
 	};
 
-	const renderSearchSections = ( results, query ) => {
-		// Get the unique result types
-		// TODO: Clean this up. There has to be a simpler way to find the unique search result types
-		const searchResultTypes = results
-			.map( ( searchResult ) => searchResult.support_type )
-			.filter( ( type, index, arr ) => arr.indexOf( type ) === index );
+	const renderSearchSections = () => {
+		const sections = [
+			{
+				id: `inline-search--${ SUPPORT_TYPE_API_HELP }`,
+				title: translate( 'Support articles' ),
+				results: searchResults.slice( 0, 5 ),
+				condition: ! isSearching && searchResults.length > 0,
+			},
+			{
+				id: `inline-search--${ SUPPORT_TYPE_CONTEXTUAL_HELP }`,
+				title: ! searchQuery.length ? translate( 'This might interest you' ) : '',
+				results: contextualResults.slice( 0, 6 ),
+				condition: ! isSearching && ! searchResults.length && contextualResults.length > 0,
+			},
+			{
+				id: `inline-search--${ SUPPORT_TYPE_ADMIN_SECTION }`,
+				title: translate( 'Show me where to' ),
+				results: adminResults,
+				condition: !! searchQuery && adminResults.length > 0,
+			},
+		];
 
-		return searchResultTypes.map( ( resultType ) => {
-			let displayedResults = results;
-			switch ( resultType ) {
-				case SUPPORT_TYPE_CONTEXTUAL_HELP:
-					displayedResults = results.filter( ( r ) => r.support_type === resultType ).slice( 0, 6 );
-					break;
-				case SUPPORT_TYPE_API_HELP:
-					displayedResults = results.filter( ( r ) => r.support_type === resultType ).slice( 0, 5 );
-					break;
-				case SUPPORT_TYPE_ADMIN_SECTION:
-					displayedResults = results.filter( ( r ) => r.support_type === resultType ).slice( 0, 3 );
-					break;
-			}
-			return renderSearchResultsSection(
-				`inline-search--${ resultType }`,
-				getTitleBySectionType( resultType, query ),
-				displayedResults
-			);
-		} );
+		return sections.map( renderSearchResultsSection );
 	};
 
 	const resultsLabel = hasAPIResults
@@ -234,7 +214,7 @@ function HelpSearchResults( {
 				) }
 
 				<div className="inline-help__results" aria-label={ resultsLabel }>
-					{ renderSearchSections( searchResults, searchQuery ) }
+					{ renderSearchSections() }
 				</div>
 			</>
 		);
@@ -253,19 +233,20 @@ HelpSearchResults.propTypes = {
 	searchQuery: PropTypes.string,
 	onSelect: PropTypes.func.isRequired,
 	onAdminSectionSelect: PropTypes.func,
-	hasAPIResults: PropTypes.bool,
 	searchResults: PropTypes.array,
 	isSearching: PropTypes.bool,
 	track: PropTypes.func,
 };
 
 export default connect(
-	( state ) => ( {
+	( state, ownProps ) => ( {
 		currentUserId: getCurrentUserId( state ),
 		hasPurchases: hasCancelableUserPurchases( state, getCurrentUserId( state ) ),
 		sectionName: getSectionName( state ),
+		contextualResults: getContextualHelpResults( state ),
+		adminResults: getAdminHelpResults( state, ownProps.searchQuery, 3 ),
 	} ),
 	{
 		track: recordTracksEvent,
 	}
-)( localize( withInlineHelpSearchQuery( HelpSearchResults ) ) );
+)( localize( withInlineHelpSearchResults( HelpSearchResults ) ) );

@@ -5,7 +5,7 @@
 import { localize, useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { withInlineHelpSearchQuery } from 'calypso/blocks/inline-help/data/use-inline-help-search-query';
+import { withInlineHelpSearchResults } from 'calypso/blocks/inline-help/data/use-inline-help-search-query';
 import HelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -72,4 +72,4 @@ export default connect(
 	{
 		track: recordTracksEvent,
 	}
-)( localize( withInlineHelpSearchQuery( PopUpSearch ) ) );
+)( localize( withInlineHelpSearchResults( PopUpSearch ) ) );
