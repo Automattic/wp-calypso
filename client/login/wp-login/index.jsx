@@ -244,6 +244,7 @@ export class Login extends React.Component {
 				clientId={ clientId }
 				isJetpack={ isJetpack }
 				isGutenboarding={ isGutenboarding }
+				isP2Login={ isP2Login }
 				oauth2Client={ oauth2Client }
 				socialService={ socialService }
 				socialServiceResponse={ socialServiceResponse }
