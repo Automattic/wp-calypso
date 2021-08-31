@@ -12,7 +12,6 @@ import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { selectResult } from 'calypso/state/inline-help/actions';
 import getSearchResultsByQuery from 'calypso/state/inline-help/selectors/get-inline-help-search-results-for-query';
 import isRequestingInlineHelpSearchResultsForQuery from 'calypso/state/inline-help/selectors/is-requesting-inline-help-search-results-for-query';
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
@@ -50,7 +49,6 @@ function HelpSearchResults( {
 	searchQuery = '',
 	searchResults = [],
 	sectionName,
-	selectSearchResult,
 	translate,
 	placeholderLines,
 	track,
@@ -156,7 +154,6 @@ function HelpSearchResults( {
 								if ( ! external ) {
 									event.preventDefault();
 								}
-								selectSearchResult( result );
 								onLinkClickHandler( event, result );
 							} }
 							{ ...( external && {
@@ -278,6 +275,5 @@ export default connect(
 	} ),
 	{
 		track: recordTracksEvent,
-		selectSearchResult: selectResult,
 	}
 )( localize( HelpSearchResults ) );

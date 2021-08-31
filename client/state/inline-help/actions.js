@@ -5,7 +5,6 @@ import {
 	INLINE_HELP_SEARCH_REQUEST_SUCCESS,
 	INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
 	INLINE_HELP_SET_SEARCH_QUERY,
-	INLINE_HELP_SELECT_RESULT,
 	INLINE_HELP_CONTACT_FORM_RESET,
 	INLINE_HELP_CONTACT_FORM_SHOW_QANDA,
 	INLINE_HELP_POPOVER_SHOW,
@@ -136,19 +135,6 @@ export function requestInlineHelpSearchResults( searchQuery = '' ) {
 				hasAPIResults: false,
 			} );
 		}
-	};
-}
-
-/**
- * Selects a specific result in the inline help results list.
- *
- * @param  {object} result Result object to be selected
- * @returns {object} Redux action
- */
-export function selectResult( result ) {
-	return {
-		type: INLINE_HELP_SELECT_RESULT,
-		result,
 	};
 }
 
